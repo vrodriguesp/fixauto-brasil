@@ -2,7 +2,8 @@
 
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { mockVeiculos } from '@/lib/mock-data';
+import { useVeiculos } from '@/hooks/use-veiculos';
+import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import {
   TIPOS_SERVICO, URGENCIAS,
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
@@ -10,6 +11,8 @@ import {
 
 export default function NovaSolicitacaoPage() {
   const router = useRouter();
+  const { veiculos } = useVeiculos();
+  const { create: createSolicitacao } = useSolicitacoes();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState(1);
   const totalSteps = 5;
@@ -23,7 +26,7 @@ export default function NovaSolicitacaoPage() {
   const [endereco, setEndereco] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  const selectedVeiculo = mockVeiculos.find((v) => v.id === veiculoId);
+  const selectedVeiculo = veiculos.find((v) => v.id === veiculoId);
   const tipoConfig = TIPOS_SERVICO.find((t) => t.value === tipo);
   const needsPhoto = tipoConfig?.needsPhoto ?? true;
 
@@ -63,11 +66,24 @@ export default function NovaSolicitacaoPage() {
     });
   };
 
-  const handleSubmit = () => {
-    setSubmitted(true);
-    setTimeout(() => {
-      router.push('/cliente/dashboard');
-    }, 2000);
+  const handleSubmit = async () => {
+    if (!veiculoId || !endereco) return;
+    const fullDescricao = servicosSelecionados.length > 0
+      ? `Servicos: ${servicosSelecionados.join(', ')}${descricao ? '. ' + descricao : ''}`
+      : descricao;
+    const { error } = await createSolicitacao({
+      veiculo_id: veiculoId,
+      tipo,
+      descricao: fullDescricao,
+      urgencia,
+      latitude: -23.5505,
+      longitude: -46.6333,
+      endereco,
+    });
+    if (!error) {
+      setSubmitted(true);
+      setTimeout(() => router.push('/cliente/dashboard'), 2000);
+    }
   };
 
   if (submitted) {
@@ -108,7 +124,7 @@ export default function NovaSolicitacaoPage() {
           <div>
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Selecione o veiculo</h2>
             <div className="space-y-3">
-              {mockVeiculos.length === 0 ? (
+              {veiculos.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-gray-500 mb-4">Nenhum veiculo cadastrado</p>
                   <a href="/cliente/veiculos?add=true" className="btn-primary">
@@ -116,7 +132,7 @@ export default function NovaSolicitacaoPage() {
                   </a>
                 </div>
               ) : (
-                mockVeiculos.map((v) => (
+                veiculos.map((v) => (
                   <button
                     key={v.id}
                     type="button"

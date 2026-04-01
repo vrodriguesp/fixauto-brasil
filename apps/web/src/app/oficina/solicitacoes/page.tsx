@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
-import { mockSolicitacoes } from '@/lib/mock-data';
+import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { calcDistance, timeAgo, getUrgenciaColor } from '@/lib/utils';
+import { timeAgo, calcDistance, getUrgenciaColor } from '@/lib/utils';
 import { useState } from 'react';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 
@@ -12,13 +12,9 @@ export default function SolicitacoesOficinaPage() {
   const { oficina } = useAuth();
   const [filtroTipo, setFiltroTipo] = useState('todos');
   const [filtroStatus, setFiltroStatus] = useState('todos');
+  const { solicitacoes: allSolicitacoes } = useSolicitacoes({ nearby: true });
 
-  const solicitacoes = mockSolicitacoes
-    .filter((s) => {
-      if (!oficina) return false;
-      const dist = calcDistance(oficina.latitude, oficina.longitude, s.latitude, s.longitude);
-      return dist <= oficina.raio_atendimento_km;
-    })
+  const solicitacoes = allSolicitacoes
     .filter((s) => filtroTipo === 'todos' || s.tipo === filtroTipo)
     .filter((s) => filtroStatus === 'todos' || s.status === filtroStatus);
 

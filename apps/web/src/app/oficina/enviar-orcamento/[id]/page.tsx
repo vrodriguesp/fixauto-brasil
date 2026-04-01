@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { mockSolicitacoes } from '@/lib/mock-data';
+import { useSolicitacoes } from '@/hooks/use-solicitacoes';
+import { useOrcamentos } from '@/hooks/use-orcamentos';
 import type { TipoItemOrcamento } from '@fixauto/shared';
 import { formatCurrency } from '@/lib/utils';
 
@@ -16,7 +17,9 @@ interface ItemForm {
 export default function EnviarOrcamentoPage() {
   const params = useParams();
   const router = useRouter();
-  const solicitacao = mockSolicitacoes.find((s) => s.id === params.id);
+  const { solicitacoes } = useSolicitacoes();
+  const { create: createOrcamento } = useOrcamentos();
+  const solicitacao = solicitacoes.find((s) => s.id === params.id);
 
   const [itens, setItens] = useState<ItemForm[]>([
     { descricao: '', tipo: 'mao_de_obra', valor_unitario: 0, quantidade: 1 },
@@ -64,10 +67,36 @@ export default function EnviarOrcamentoPage() {
 
   const total = itens.reduce((acc, item) => acc + item.valor_unitario * item.quantidade, 0);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => router.push('/oficina/solicitacoes'), 2000);
+    const { error } = await createOrcamento({
+      solicitacao_id: params.id as string,
+      valor_total: total,
+      prazo_dias: prazoDias,
+      tempo_execucao_horas: tempoExecucaoHoras,
+      observacoes,
+      validade,
+      itens: itens.map(item => ({
+        descricao: item.descricao,
+        tipo: item.tipo,
+        valor_unitario: item.valor_unitario,
+        quantidade: item.quantidade,
+        valor_total: item.valor_unitario * item.quantidade,
+      })),
+      slots: slots.filter(s => s.data).map(s => ({
+        data_checkin: s.data,
+        turno: s.turno,
+        data_previsao_entrega: (() => {
+          const d = new Date(s.data + 'T12:00:00');
+          d.setDate(d.getDate() + prazoDias);
+          return d.toISOString().split('T')[0];
+        })(),
+      })),
+    });
+    if (!error) {
+      setSubmitted(true);
+      setTimeout(() => router.push('/oficina/solicitacoes'), 2000);
+    }
   };
 
   if (!solicitacao) {

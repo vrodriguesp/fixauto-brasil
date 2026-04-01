@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { mockSolicitacoes } from '@/lib/mock-data';
+import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { formatCurrency, timeAgo } from '@/lib/utils';
 
 export default function OrcamentosPage() {
-  const solicitacoes = mockSolicitacoes.filter(
+  const { solicitacoes: allSolicitacoes } = useSolicitacoes();
+  const solicitacoes = allSolicitacoes.filter(
     (s) => s.orcamentos && s.orcamentos.length > 0
   );
 

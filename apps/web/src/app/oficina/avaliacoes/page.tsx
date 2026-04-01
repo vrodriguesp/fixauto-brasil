@@ -1,13 +1,13 @@
 'use client';
 
 import { useAuth } from '@/lib/auth-context';
-import { mockAvaliacoes } from '@/lib/mock-data';
+import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StarRating from '@/components/ui/StarRating';
 import { formatDate } from '@/lib/utils';
 
 export default function AvaliacoesPage() {
   const { oficina } = useAuth();
-  const avaliacoes = mockAvaliacoes;
+  const { avaliacoes } = useAvaliacoes();
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

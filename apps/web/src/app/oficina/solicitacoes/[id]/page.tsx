@@ -2,13 +2,14 @@
 
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { mockSolicitacoes } from '@/lib/mock-data';
+import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { formatDate, getUrgenciaColor } from '@/lib/utils';
 
 export default function SolicitacaoDetalhePage() {
   const params = useParams();
-  const solicitacao = mockSolicitacoes.find((s) => s.id === params.id);
+  const { solicitacoes } = useSolicitacoes();
+  const solicitacao = solicitacoes.find((s) => s.id === params.id);
 
   if (!solicitacao) {
     return (

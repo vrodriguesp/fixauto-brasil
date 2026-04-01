@@ -2,8 +2,6 @@
 
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { isSupabaseConfigured } from '@/lib/supabase';
-import { mockVeiculos } from '@/lib/mock-data';
 import { useVeiculos } from '@/hooks/use-veiculos';
 import type { Veiculo } from '@fixauto/shared';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
@@ -19,9 +17,7 @@ export default function VeiculosPageWrapper() {
 function VeiculosPage() {
   const searchParams = useSearchParams();
   const autoOpen = searchParams.get('add') === 'true';
-  const hook = useVeiculos();
-  const [localVeiculos, setLocalVeiculos] = useState<Veiculo[]>(mockVeiculos);
-  const veiculos = isSupabaseConfigured ? hook.veiculos : localVeiculos;
+  const { veiculos, add, update, remove } = useVeiculos();
   const [showForm, setShowForm] = useState(autoOpen);
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -46,36 +42,17 @@ function VeiculosPage() {
   const handleSave = async () => {
     if (!formData.fipe_marca || !formData.fipe_modelo || !formData.fipe_ano) return;
 
-    if (isSupabaseConfigured) {
-      if (editingId) {
-        await hook.update(editingId, formData);
-      } else {
-        await hook.add({
-          ...formData,
-          fipe_codigo: formData.fipe_codigo || null,
-          fipe_valor: formData.fipe_valor || null,
-          placa: formData.placa || null,
-          cor: formData.cor || null,
-          apelido: formData.apelido || null,
-        });
-      }
+    if (editingId) {
+      await update(editingId, formData);
     } else {
-      if (editingId) {
-        setLocalVeiculos(localVeiculos.map((v) => v.id === editingId ? { ...v, ...formData } : v));
-      } else {
-        const newVeiculo: Veiculo = {
-          id: `v-${Date.now()}`,
-          profile_id: '11111111-1111-1111-1111-111111111111',
-          ...formData,
-          fipe_codigo: formData.fipe_codigo || null,
-          fipe_valor: formData.fipe_valor || null,
-          placa: formData.placa || null,
-          cor: formData.cor || null,
-          apelido: formData.apelido || null,
-          created_at: new Date().toISOString(),
-        };
-        setLocalVeiculos([...localVeiculos, newVeiculo]);
-      }
+      await add({
+        ...formData,
+        fipe_codigo: formData.fipe_codigo || null,
+        fipe_valor: formData.fipe_valor || null,
+        placa: formData.placa || null,
+        cor: formData.cor || null,
+        apelido: formData.apelido || null,
+      });
     }
     resetForm();
   };
@@ -97,11 +74,7 @@ function VeiculosPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (isSupabaseConfigured) {
-      await hook.remove(id);
-    } else {
-      setLocalVeiculos(localVeiculos.filter((v) => v.id !== id));
-    }
+    await remove(id);
   };
 
   return (

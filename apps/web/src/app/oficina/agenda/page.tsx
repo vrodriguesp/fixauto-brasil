@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { mockAgenda } from '@/lib/mock-data';
-import type { Agenda } from '@fixauto/shared';
+import { useAgenda } from '@/hooks/use-agenda';
 import { CORES_AGENDA } from '@fixauto/shared';
 
 function getDaysInMonth(year: number, month: number) {
@@ -21,8 +20,8 @@ const MESES = [
 const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
 
 export default function AgendaPage() {
-  const [eventos, setEventos] = useState<Agenda[]>(mockAgenda);
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 3, 1)); // April 2026
+  const { eventos, add: addEvento, remove: removeEvento } = useAgenda();
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState<'month' | 'day' | 'list'>('month');
@@ -55,33 +54,22 @@ export default function AgendaPage() {
     });
   };
 
-  const handleAddEvent = () => {
+  const handleAddEvent = async () => {
     if (!formData.titulo || !formData.data_inicio || !formData.data_fim) return;
-
-    const newEvento: Agenda = {
-      id: `ag-${Date.now()}`,
-      oficina_id: 'bbb22222-2222-2222-2222-222222222222',
-      solicitacao_id: null,
+    await addEvento({
       titulo: formData.titulo,
-      descricao: formData.descricao || null,
+      descricao: formData.descricao || undefined,
       data_inicio: `${formData.data_inicio}T${formData.hora_inicio}:00Z`,
       data_fim: `${formData.data_fim}T${formData.hora_fim}:00Z`,
       tipo: formData.tipo,
-      status: 'agendado',
       cor: formData.cor,
-      created_at: new Date().toISOString(),
-    };
-
-    setEventos([...eventos, newEvento]);
-    setShowForm(false);
-    setFormData({
-      titulo: '', descricao: '', data_inicio: '', hora_inicio: '08:00',
-      data_fim: '', hora_fim: '17:00', tipo: 'externo', cor: '#3B82F6',
     });
+    setShowForm(false);
+    setFormData({ titulo: '', descricao: '', data_inicio: '', hora_inicio: '08:00', data_fim: '', hora_fim: '17:00', tipo: 'externo', cor: '#3B82F6' });
   };
 
   const handleDeleteEvent = (id: string) => {
-    setEventos(eventos.filter((e) => e.id !== id));
+    removeEvento(id);
   };
 
   const upcomingEvents = [...eventos]

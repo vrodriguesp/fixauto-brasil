@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { mockSolicitacoes } from '@/lib/mock-data';
+import { useSolicitacoes } from '@/hooks/use-solicitacoes';
+import { useOrcamentos } from '@/hooks/use-orcamentos';
 import StatusBadge from '@/components/ui/StatusBadge';
 import StarRating from '@/components/ui/StarRating';
 import { formatCurrency, formatDate, getUrgenciaColor } from '@/lib/utils';
@@ -24,7 +25,9 @@ function formatSlotDate(dateStr: string): string {
 export default function OrcamentoDetalhePage() {
   const params = useParams();
   const router = useRouter();
-  const solicitacao = mockSolicitacoes.find((s) => s.id === params.id);
+  const { solicitacoes } = useSolicitacoes();
+  const { accept } = useOrcamentos();
+  const solicitacao = solicitacoes.find((s) => s.id === params.id);
   const [schedulingOrcId, setSchedulingOrcId] = useState<string | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<DisponibilidadeSlot | null>(null);
   const [accepted, setAccepted] = useState(false);
@@ -44,12 +47,15 @@ export default function OrcamentoDetalhePage() {
     setSelectedSlot(null);
   };
 
-  const handleConfirmAppointment = () => {
+  const handleConfirmAppointment = async () => {
     if (!selectedSlot || !schedulingOrcId) return;
     const orc = solicitacao.orcamentos?.find((o) => o.id === schedulingOrcId);
-    setAcceptedOficinaNome(orc?.oficina?.nome_fantasia || '');
-    setAcceptedSlot(selectedSlot);
-    setAccepted(true);
+    const { error } = await accept(schedulingOrcId, selectedSlot.id);
+    if (!error) {
+      setAcceptedOficinaNome(orc?.oficina?.nome_fantasia || '');
+      setAcceptedSlot(selectedSlot);
+      setAccepted(true);
+    }
   };
 
   if (accepted && acceptedSlot) {

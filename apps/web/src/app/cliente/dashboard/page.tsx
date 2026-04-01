@@ -2,8 +2,6 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
-import { isSupabaseConfigured } from '@/lib/supabase';
-import { mockSolicitacoes, mockNotificacoes, mockVeiculos } from '@/lib/mock-data';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useNotificacoes } from '@/hooks/use-notificacoes';
 import { useVeiculos } from '@/hooks/use-veiculos';
@@ -12,18 +10,11 @@ import { formatCurrency, timeAgo } from '@/lib/utils';
 
 export default function ClienteDashboard() {
   const { user } = useAuth();
-  const solHook = useSolicitacoes();
-  const notHook = useNotificacoes();
-  const vehHook = useVeiculos();
+  const { solicitacoes } = useSolicitacoes();
+  const { notificacoes: allNotificacoes } = useNotificacoes();
+  const { veiculos } = useVeiculos();
 
-  // Use real data if Supabase configured, otherwise mock
-  const solicitacoes = isSupabaseConfigured
-    ? solHook.solicitacoes
-    : mockSolicitacoes.filter((s) => s.cliente_id === user?.id);
-  const notificacoes = isSupabaseConfigured
-    ? notHook.notificacoes.filter((n) => !n.lida)
-    : mockNotificacoes.filter((n) => !n.lida);
-  const veiculos = isSupabaseConfigured ? vehHook.veiculos : mockVeiculos;
+  const notificacoes = allNotificacoes.filter((n) => !n.lida);
 
   const stats = {
     ativas: solicitacoes.filter((s) => ['aberta', 'em_orcamento', 'aceita', 'em_andamento'].includes(s.status)).length,

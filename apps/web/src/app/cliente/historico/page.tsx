@@ -1,11 +1,12 @@
 'use client';
 
-import { mockSolicitacoes } from '@/lib/mock-data';
+import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 export default function HistoricoPage() {
-  const historico = mockSolicitacoes.filter((s) =>
+  const { solicitacoes } = useSolicitacoes();
+  const historico = solicitacoes.filter((s) =>
     ['concluida', 'cancelada'].includes(s.status)
   );
 

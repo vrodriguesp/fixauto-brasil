@@ -2,23 +2,20 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
-import { mockSolicitacoes, mockAgenda, mockAvaliacoes } from '@/lib/mock-data';
+import { useSolicitacoes } from '@/hooks/use-solicitacoes';
+import { useAgenda } from '@/hooks/use-agenda';
+import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import StarRating from '@/components/ui/StarRating';
-import { formatCurrency, timeAgo, calcDistance, getUrgenciaColor } from '@/lib/utils';
+import { timeAgo, calcDistance, getUrgenciaColor } from '@/lib/utils';
 
 export default function OficinaDashboard() {
   const { user, oficina } = useAuth();
+  const { solicitacoes } = useSolicitacoes({ nearby: true });
+  const { eventos: agendaHoje } = useAgenda();
+  const { avaliacoes } = useAvaliacoes();
 
-  // Simulate nearby requests (within radius)
-  const solicitacoesProximas = mockSolicitacoes.filter((s) => {
-    if (!oficina) return false;
-    const dist = calcDistance(oficina.latitude, oficina.longitude, s.latitude, s.longitude);
-    return dist <= oficina.raio_atendimento_km && ['aberta', 'em_orcamento'].includes(s.status);
-  });
-
-  const agendaHoje = mockAgenda.filter((a) => a.oficina_id === oficina?.id);
-  const avaliacoes = mockAvaliacoes.filter((a) => a.oficina_id === oficina?.id);
+  const solicitacoesProximas = solicitacoes.filter(s => ['aberta', 'em_orcamento'].includes(s.status));
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -59,7 +56,7 @@ export default function OficinaDashboard() {
             </svg>
           </div>
           <div>
-            <p className="text-2xl font-bold text-gray-900">12</p>
+            <p className="text-2xl font-bold text-gray-900">0</p>
             <p className="text-sm text-gray-500">Reparos este mes</p>
           </div>
         </div>
@@ -70,7 +67,7 @@ export default function OficinaDashboard() {
             </svg>
           </div>
           <div>
-            <p className="text-2xl font-bold text-gray-900">R$ 28.500</p>
+            <p className="text-2xl font-bold text-gray-900">R$ 0</p>
             <p className="text-sm text-gray-500">Faturamento mensal</p>
           </div>
         </div>

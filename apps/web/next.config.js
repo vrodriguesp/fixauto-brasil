@@ -2,7 +2,7 @@
 const nextConfig = {
   transpilePackages: ['@fixauto/shared'],
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', 'bzlrpvlbeqckmunrldnp.supabase.co'],
   },
 };
 
