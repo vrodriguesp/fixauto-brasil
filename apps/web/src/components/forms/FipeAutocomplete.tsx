@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { FIPE_API_BASE, TIPOS_VEICULO } from '@fixauto/shared';
+import { TIPOS_VEICULO } from '@fixauto/shared';
 
 interface FipeValue {
   tipo: string;
@@ -37,7 +37,7 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
     setLoading('marcas');
     setError('');
     try {
-      const res = await fetch(`${FIPE_API_BASE}/${tipo}/brands`);
+      const res = await fetch(`/api/fipe?path=${tipo}/brands`);
       if (!res.ok) throw new Error('Erro ao buscar marcas');
       const data = await res.json();
       setMarcas(data);
@@ -70,7 +70,7 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
     setLoading('modelos');
     setError('');
     try {
-      const res = await fetch(`${FIPE_API_BASE}/${tipo}/brands/${marcaCode}/models`);
+      const res = await fetch(`/api/fipe?path=${tipo}/brands/${marcaCode}/models`);
       if (!res.ok) throw new Error('Erro ao buscar modelos');
       const data = await res.json();
       setModelos(data);
@@ -85,7 +85,7 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
     setLoading('anos');
     setError('');
     try {
-      const res = await fetch(`${FIPE_API_BASE}/${tipo}/brands/${marcaCode}/models/${modeloCode}/years`);
+      const res = await fetch(`/api/fipe?path=${tipo}/brands/${marcaCode}/models/${modeloCode}/years`);
       if (!res.ok) throw new Error('Erro ao buscar anos');
       const data = await res.json();
       setAnos(data);
@@ -140,7 +140,7 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
       setLoading('valor');
       try {
         const res = await fetch(
-          `${FIPE_API_BASE}/${value.tipo}/brands/${selectedMarcaCode}/models/${selectedModeloCode}/years/${anoCode}`
+          `/api/fipe?path=${value.tipo}/brands/${selectedMarcaCode}/models/${selectedModeloCode}/years/${anoCode}`
         );
         if (res.ok) {
           const data = await res.json();
