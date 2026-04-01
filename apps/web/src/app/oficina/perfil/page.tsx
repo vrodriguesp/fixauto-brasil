@@ -23,7 +23,7 @@ export default function PerfilOficinaPage() {
             <input type="text" className="input-field" defaultValue={oficina?.cnpj || ''} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Endereco</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
             <input type="text" className="input-field" defaultValue={oficina?.endereco || ''} />
           </div>
           <div className="grid grid-cols-3 gap-4">
@@ -99,7 +99,7 @@ export default function PerfilOficinaPage() {
       </div>
 
       <div className="flex justify-end">
-        <button className="btn-primary">Salvar Alteracoes</button>
+        <button className="btn-primary">Salvar Alterações</button>
       </div>
     </div>
   );

@@ -171,7 +171,7 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
 
       {/* Vehicle type */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de veiculo</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de veículo</label>
         <div className="flex gap-2">
           {TIPOS_VEICULO.map((t) => (
             <button
@@ -270,10 +270,10 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
           ) : value.valor ? (
             <p className="text-sm text-green-700 font-semibold mt-1">Valor FIPE: {value.valor}</p>
           ) : (
-            <p className="text-sm text-gray-500 mt-1">Valor FIPE nao disponivel</p>
+            <p className="text-sm text-gray-500 mt-1">Valor FIPE não disponível</p>
           )}
           {value.codigo && (
-            <p className="text-xs text-gray-500 mt-1">Codigo FIPE: {value.codigo}</p>
+            <p className="text-xs text-gray-500 mt-1">Código FIPE: {value.codigo}</p>
           )}
         </div>
       )}

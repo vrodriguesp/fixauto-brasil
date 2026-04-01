@@ -69,7 +69,7 @@ export default function NovaSolicitacaoPage() {
   const handleSubmit = async () => {
     if (!veiculoId || !endereco) return;
     const fullDescricao = servicosSelecionados.length > 0
-      ? `Servicos: ${servicosSelecionados.join(', ')}${descricao ? '. ' + descricao : ''}`
+      ? `Serviços: ${servicosSelecionados.join(', ')}${descricao ? '. ' + descricao : ''}`
       : descricao;
     const { error } = await createSolicitacao({
       veiculo_id: veiculoId,
@@ -94,9 +94,9 @@ export default function NovaSolicitacaoPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Solicitacao enviada!</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Solicitação enviada!</h1>
         <p className="text-gray-600 mb-4">
-          Oficinas proximas a voce foram notificadas. Voce recebera orcamentos em breve.
+          Oficinas próximas a você foram notificadas. Você receberá orçamentos em breve.
         </p>
         <p className="text-sm text-gray-500">Redirecionando para o dashboard...</p>
       </div>
@@ -105,8 +105,8 @@ export default function NovaSolicitacaoPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Nova Solicitacao</h1>
-      <p className="text-gray-600 mb-8">Descreva o problema do seu veiculo para receber orcamentos</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">Nova Solicitação</h1>
+      <p className="text-gray-600 mb-8">Descreva o problema do seu veículo para receber orçamentos</p>
 
       {/* Progress bar */}
       <div className="flex items-center gap-2 mb-8">
@@ -122,13 +122,13 @@ export default function NovaSolicitacaoPage() {
         {/* Step 1: Select vehicle */}
         {step === 1 && (
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Selecione o veiculo</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Selecione o veículo</h2>
             <div className="space-y-3">
               {veiculos.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-500 mb-4">Nenhum veiculo cadastrado</p>
+                  <p className="text-gray-500 mb-4">Nenhum veículo cadastrado</p>
                   <a href="/cliente/veiculos?add=true" className="btn-primary">
-                    Cadastrar veiculo
+                    Cadastrar veículo
                   </a>
                 </div>
               ) : (
@@ -159,7 +159,7 @@ export default function NovaSolicitacaoPage() {
             </div>
             <div className="flex justify-end mt-6">
               <button onClick={() => setStep(2)} disabled={!veiculoId} className="btn-primary">
-                Proximo
+                Próximo
               </button>
             </div>
           </div>
@@ -168,7 +168,7 @@ export default function NovaSolicitacaoPage() {
         {/* Step 2: Service type */}
         {step === 2 && (
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Tipo de servico</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Tipo de serviço</h2>
             <div className="grid grid-cols-2 gap-3">
               {TIPOS_SERVICO.map((t) => (
                 <button
@@ -184,14 +184,14 @@ export default function NovaSolicitacaoPage() {
                   <span className="text-2xl">{t.icon}</span>
                   <p className="font-medium text-gray-900 mt-2">{t.label}</p>
                   {!t.needsPhoto && (
-                    <p className="text-xs text-gray-500 mt-1">Selecione os servicos</p>
+                    <p className="text-xs text-gray-500 mt-1">Selecione os serviços</p>
                   )}
                 </button>
               ))}
             </div>
             <div className="flex justify-between mt-6">
               <button onClick={() => setStep(1)} className="btn-secondary">Voltar</button>
-              <button onClick={() => setStep(3)} disabled={!tipo} className="btn-primary">Proximo</button>
+              <button onClick={() => setStep(3)} disabled={!tipo} className="btn-primary">Próximo</button>
             </div>
           </div>
         )}
@@ -248,10 +248,10 @@ export default function NovaSolicitacaoPage() {
             ) : (
               <>
                 <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                  Selecione os servicos necessarios
+                  Selecione os serviços necessários
                 </h2>
                 <p className="text-sm text-gray-500 mb-4">
-                  Marque todos os servicos que voce precisa
+                  Marque todos os serviços que você precisa
                 </p>
 
                 <div className="space-y-2 max-h-[400px] overflow-y-auto">
@@ -278,7 +278,7 @@ export default function NovaSolicitacaoPage() {
                 {servicosSelecionados.length > 0 && (
                   <div className="mt-4 p-3 bg-primary-50 rounded-lg">
                     <p className="text-sm text-primary-800">
-                      <strong>{servicosSelecionados.length}</strong> servico(s) selecionado(s)
+                      <strong>{servicosSelecionados.length}</strong> serviço(s) selecionado(s)
                     </p>
                   </div>
                 )}
@@ -287,7 +287,7 @@ export default function NovaSolicitacaoPage() {
 
             <div className="flex justify-between mt-6">
               <button onClick={() => setStep(2)} className="btn-secondary">Voltar</button>
-              <button onClick={() => setStep(4)} className="btn-primary">Proximo</button>
+              <button onClick={() => setStep(4)} className="btn-primary">Próximo</button>
             </div>
           </div>
         )}
@@ -295,18 +295,18 @@ export default function NovaSolicitacaoPage() {
         {/* Step 4: Description & urgency */}
         {step === 4 && (
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Detalhes do servico</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Detalhes do serviço</h2>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {needsPhoto ? 'Descreva o problema' : 'Observacoes adicionais (opcional)'}
+                  {needsPhoto ? 'Descreva o problema' : 'Observações adicionais (opcional)'}
                 </label>
                 <textarea
                   className="input-field min-h-[120px]"
                   placeholder={needsPhoto
                     ? 'Descreva o que aconteceu, o que precisa ser reparado...'
-                    : 'Alguma informacao adicional sobre o servico?'
+                    : 'Alguma informação adicional sobre o serviço?'
                   }
                   value={descricao}
                   onChange={(e) => setDescricao(e.target.value)}
@@ -314,7 +314,7 @@ export default function NovaSolicitacaoPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Urgencia</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Urgência</label>
                 <div className="space-y-2">
                   {URGENCIAS.map((u) => (
                     <button
@@ -348,7 +348,7 @@ export default function NovaSolicitacaoPage() {
                 disabled={needsPhoto && !descricao}
                 className="btn-primary"
               >
-                Proximo
+                Próximo
               </button>
             </div>
           </div>
@@ -357,12 +357,12 @@ export default function NovaSolicitacaoPage() {
         {/* Step 5: Location & confirm */}
         {step === 5 && (
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Localizacao e confirmacao</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Localização e confirmação</h2>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Endereco / Regiao
+                  Endereço / Região
                 </label>
                 <input
                   type="text"
@@ -372,16 +372,16 @@ export default function NovaSolicitacaoPage() {
                   onChange={(e) => setEndereco(e.target.value)}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Oficinas proximas a este endereco serao notificadas
+                  Oficinas próximas a este endereço serão notificadas
                 </p>
               </div>
 
               {/* Summary */}
               <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                <h3 className="font-medium text-gray-900">Resumo da solicitacao</h3>
+                <h3 className="font-medium text-gray-900">Resumo da solicitação</h3>
                 <div className="text-sm space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Veiculo:</span>
+                    <span className="text-gray-500">Veículo:</span>
                     <span className="text-gray-900">
                       {selectedVeiculo?.fipe_marca} {selectedVeiculo?.fipe_modelo} {selectedVeiculo?.fipe_ano}
                     </span>
@@ -391,7 +391,7 @@ export default function NovaSolicitacaoPage() {
                     <span className="text-gray-900">{tipoConfig?.label}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Urgencia:</span>
+                    <span className="text-gray-500">Urgência:</span>
                     <span className="text-gray-900">{URGENCIAS.find((u) => u.value === urgencia)?.label}</span>
                   </div>
                   {needsPhoto && (
@@ -402,7 +402,7 @@ export default function NovaSolicitacaoPage() {
                   )}
                   {servicosSelecionados.length > 0 && (
                     <div>
-                      <span className="text-gray-500">Servicos:</span>
+                      <span className="text-gray-500">Serviços:</span>
                       <ul className="mt-1 ml-4 list-disc text-gray-700">
                         {servicosSelecionados.map((s) => (
                           <li key={s} className="text-xs">{s}</li>
@@ -422,7 +422,7 @@ export default function NovaSolicitacaoPage() {
             <div className="flex justify-between mt-6">
               <button onClick={() => setStep(4)} className="btn-secondary">Voltar</button>
               <button onClick={handleSubmit} disabled={!endereco} className="btn-success">
-                Enviar Solicitacao
+                Enviar Solicitação
               </button>
             </div>
           </div>

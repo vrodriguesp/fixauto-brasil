@@ -50,21 +50,21 @@ export default function EmergenciaPage() {
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Fotos enviadas!</h1>
         <p className="text-gray-600 mb-6">
-          Oficinas proximas a voce foram notificadas e enviarao orcamentos em breve.
-          Voce recebera por email e podera acompanhar pelo app.
+          Oficinas próximas a você foram notificadas e enviarão orçamentos em breve.
+          Você receberá por email e poderá acompanhar pelo app.
         </p>
 
         <div className="card text-left mb-6">
-          <h2 className="font-semibold text-gray-900 mb-3">Proximo passo</h2>
+          <h2 className="font-semibold text-gray-900 mb-3">Próximo passo</h2>
           <p className="text-sm text-gray-600 mb-4">
-            Registre o outro veiculo envolvido no acidente para trocar informacoes,
-            ver orcamentos e entrar em acordo sobre a reparacao.
+            Registre o outro veículo envolvido no acidente para trocar informações,
+            ver orçamentos e entrar em acordo sobre a reparação.
           </p>
           <button
             onClick={() => router.push('/emergencia/acidente/novo')}
             className="btn-primary w-full"
           >
-            Registrar outro veiculo envolvido
+            Registrar outro veículo envolvido
           </button>
         </div>
 
@@ -91,7 +91,7 @@ export default function EmergenciaPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold">Acabei de bater!</h1>
-              <p className="text-red-100 text-sm">Tire fotos e receba orcamentos rapido</p>
+              <p className="text-red-100 text-sm">Tire fotos e receba orçamentos rápido</p>
             </div>
           </div>
         </div>
@@ -113,7 +113,7 @@ export default function EmergenciaPage() {
             <div>
               <h2 className="text-lg font-semibold text-gray-900 mb-2">Tire fotos do acidente</h2>
               <p className="text-sm text-gray-500 mb-4">
-                Fotografe os danos no seu veiculo e, se possivel, a cena do acidente
+                Fotografe os danos no seu veículo e, se possível, a cena do acidente
               </p>
 
               <input
@@ -137,7 +137,7 @@ export default function EmergenciaPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   <p className="text-red-600 font-semibold text-lg">Tirar foto ou escolher imagem</p>
-                  <p className="text-sm text-gray-500 mt-1">Toque para abrir a camera</p>
+                  <p className="text-sm text-gray-500 mt-1">Toque para abrir a câmera</p>
                 </button>
               ) : (
                 <>
@@ -176,7 +176,7 @@ export default function EmergenciaPage() {
                 </label>
                 <textarea
                   className="input-field min-h-[80px]"
-                  placeholder="Ex: Bati na traseira do carro da frente no semaforo..."
+                  placeholder="Ex: Bati na traseira do carro da frente no semáforo..."
                   value={descricao}
                   onChange={(e) => setDescricao(e.target.value)}
                 />
@@ -188,7 +188,7 @@ export default function EmergenciaPage() {
                   disabled={fotos.length === 0}
                   className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
                 >
-                  Proximo
+                  Próximo
                 </button>
               </div>
             </div>
@@ -222,7 +222,7 @@ export default function EmergenciaPage() {
                   disabled={!nome || !email || !telefone}
                   className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
                 >
-                  Proximo
+                  Próximo
                 </button>
               </div>
             </div>
@@ -231,16 +231,16 @@ export default function EmergenciaPage() {
           {/* Step 3: Location & send */}
           {step === 3 && (
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">Localizacao</h2>
-              <p className="text-sm text-gray-500 mb-4">Onde voce esta? Oficinas proximas serao notificadas</p>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">Localização</h2>
+              <p className="text-sm text-gray-500 mb-4">Onde você está? Oficinas próximas serão notificadas</p>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Endereco / Regiao</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Endereço / Região</label>
                   <input
                     type="text"
                     className="input-field"
-                    placeholder="Rua, bairro ou ponto de referencia"
+                    placeholder="Rua, bairro ou ponto de referência"
                     value={localizacao}
                     onChange={(e) => setLocalizacao(e.target.value)}
                   />
@@ -248,14 +248,14 @@ export default function EmergenciaPage() {
 
                 <button
                   type="button"
-                  onClick={() => setLocalizacao('Localizacao atual detectada')}
+                  onClick={() => setLocalizacao('Localização atual detectada')}
                   className="w-full p-3 border border-gray-300 rounded-lg text-sm text-primary-600 hover:bg-primary-50 flex items-center justify-center gap-2"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  Usar minha localizacao atual
+                  Usar minha localização atual
                 </button>
               </div>
 

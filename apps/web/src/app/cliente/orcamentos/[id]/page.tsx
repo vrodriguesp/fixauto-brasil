@@ -13,7 +13,7 @@ function formatExecTime(hours: number | null): string {
   if (!hours) return '-';
   if (hours < 8) return `${hours}h`;
   const days = Math.ceil(hours / 8);
-  return `~${days} dia(s) util(eis)`;
+  return `~${days} dia(s) útil(eis)`;
 }
 
 function formatSlotDate(dateStr: string): string {
@@ -37,7 +37,7 @@ export default function OrcamentoDetalhePage() {
   if (!solicitacao) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <p className="text-gray-500">Solicitacao nao encontrada</p>
+        <p className="text-gray-500">Solicitação não encontrada</p>
       </div>
     );
   }
@@ -68,7 +68,7 @@ export default function OrcamentoDetalhePage() {
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Agendamento confirmado!</h1>
         <p className="text-gray-600 mb-6">
-          Seu veiculo esta agendado na <strong>{acceptedOficinaNome}</strong>.
+          Seu veículo está agendado na <strong>{acceptedOficinaNome}</strong>.
         </p>
 
         <div className="card text-left max-w-md mx-auto mb-8">
@@ -81,7 +81,7 @@ export default function OrcamentoDetalhePage() {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Previsao de entrega:</span>
+              <span className="text-gray-500">Previsão de entrega:</span>
               <span className="text-gray-900 font-medium">
                 {formatSlotDate(acceptedSlot.data_previsao_entrega)}
               </span>
@@ -89,7 +89,7 @@ export default function OrcamentoDetalhePage() {
           </div>
           <div className="mt-4 p-3 bg-yellow-50 rounded-lg">
             <p className="text-xs text-yellow-800">
-              Leve seu veiculo no horario marcado. A oficina entrara em contato caso haja alguma mudanca.
+              Leve seu veículo no horário marcado. A oficina entrará em contato caso haja alguma mudança.
             </p>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function OrcamentoDetalhePage() {
 
       {/* Request details */}
       <div className="card mb-6">
-        <h2 className="font-semibold text-gray-900 mb-2">Descricao</h2>
+        <h2 className="font-semibold text-gray-900 mb-2">Descrição</h2>
         <p className="text-gray-600 text-sm">{solicitacao.descricao}</p>
         <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
           <span>{solicitacao.endereco}</span>
@@ -151,12 +151,12 @@ export default function OrcamentoDetalhePage() {
 
       {/* Quotes */}
       <h2 className="text-lg font-semibold text-gray-900 mb-4">
-        Orcamentos recebidos ({solicitacao.orcamentos?.length || 0})
+        Orçamentos recebidos ({solicitacao.orcamentos?.length || 0})
       </h2>
 
       {!solicitacao.orcamentos || solicitacao.orcamentos.length === 0 ? (
         <div className="card text-center py-8">
-          <p className="text-gray-500">Aguardando orcamentos das oficinas...</p>
+          <p className="text-gray-500">Aguardando orçamentos das oficinas...</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -180,7 +180,7 @@ export default function OrcamentoDetalhePage() {
                     <div className="flex items-center gap-2">
                       <StarRating rating={orc.oficina?.avaliacao_media || 0} size="sm" />
                       <span className="text-xs text-gray-500">
-                        ({orc.oficina?.total_avaliacoes} avaliacoes)
+                        ({orc.oficina?.total_avaliacoes} avaliações)
                       </span>
                     </div>
                   </div>
@@ -194,18 +194,18 @@ export default function OrcamentoDetalhePage() {
               {/* Execution time + availability summary */}
               <div className="grid grid-cols-3 gap-3 mb-4">
                 <div className="p-3 bg-blue-50 rounded-lg text-center">
-                  <p className="text-xs text-blue-600">Tempo execucao</p>
+                  <p className="text-xs text-blue-600">Tempo execução</p>
                   <p className="text-sm font-bold text-blue-900">{formatExecTime(orc.tempo_execucao_horas)}</p>
                 </div>
                 <div className="p-3 bg-green-50 rounded-lg text-center">
-                  <p className="text-xs text-green-600">Proximo check-in</p>
+                  <p className="text-xs text-green-600">Próximo check-in</p>
                   <p className="text-sm font-bold text-green-900">
                     {orc.disponibilidade.length > 0 ? formatSlotDate(orc.disponibilidade[0].data_checkin) : 'Sem vaga'}
                   </p>
                 </div>
                 <div className="p-3 bg-purple-50 rounded-lg text-center">
-                  <p className="text-xs text-purple-600">Datas disponiveis</p>
-                  <p className="text-sm font-bold text-purple-900">{orc.disponibilidade.length} opcoes</p>
+                  <p className="text-xs text-purple-600">Datas disponíveis</p>
+                  <p className="text-sm font-bold text-purple-900">{orc.disponibilidade.length} opções</p>
                 </div>
               </div>
 
@@ -243,7 +243,7 @@ export default function OrcamentoDetalhePage() {
 
               {orc.observacoes && (
                 <p className="text-sm text-gray-600 mb-4">
-                  <strong>Observacoes:</strong> {orc.observacoes}
+                  <strong>Observações:</strong> {orc.observacoes}
                 </p>
               )}
 
@@ -274,7 +274,7 @@ export default function OrcamentoDetalhePage() {
                               </span>
                             </p>
                             <p className="text-xs text-gray-500 mt-1">
-                              Previsao de entrega: {formatSlotDate(slot.data_previsao_entrega)}
+                              Previsão de entrega: {formatSlotDate(slot.data_previsao_entrega)}
                             </p>
                           </div>
                           <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
@@ -312,7 +312,7 @@ export default function OrcamentoDetalhePage() {
               ) : (
                 <div className="flex items-center justify-between pt-4 border-t">
                   <p className="text-xs text-gray-500">
-                    Valido ate {formatDate(orc.validade)}
+                    Válido até {formatDate(orc.validade)}
                   </p>
                   <div className="flex gap-2">
                     <button className="btn-secondary !py-2 !px-4 text-sm">

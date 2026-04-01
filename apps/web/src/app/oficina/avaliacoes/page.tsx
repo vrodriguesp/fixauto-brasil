@@ -11,8 +11,8 @@ export default function AvaliacoesPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Avaliacoes</h1>
-      <p className="text-gray-600 mb-8">Veja o que seus clientes dizem sobre seus servicos</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">Avaliações</h1>
+      <p className="text-gray-600 mb-8">Veja o que seus clientes dizem sobre seus serviços</p>
 
       {/* Summary */}
       <div className="card mb-8">
@@ -20,7 +20,7 @@ export default function AvaliacoesPage() {
           <div className="text-center">
             <p className="text-4xl font-bold text-gray-900">{oficina?.avaliacao_media || 0}</p>
             <StarRating rating={oficina?.avaliacao_media || 0} size="md" />
-            <p className="text-sm text-gray-500 mt-1">{oficina?.total_avaliacoes || 0} avaliacoes</p>
+            <p className="text-sm text-gray-500 mt-1">{oficina?.total_avaliacoes || 0} avaliações</p>
           </div>
           <div className="flex-1">
             {[5, 4, 3, 2, 1].map((star) => {
@@ -46,7 +46,7 @@ export default function AvaliacoesPage() {
       {/* Reviews list */}
       {avaliacoes.length === 0 ? (
         <div className="card text-center py-12">
-          <p className="text-gray-500">Nenhuma avaliacao recebida ainda</p>
+          <p className="text-gray-500">Nenhuma avaliação recebida ainda</p>
         </div>
       ) : (
         <div className="space-y-4">

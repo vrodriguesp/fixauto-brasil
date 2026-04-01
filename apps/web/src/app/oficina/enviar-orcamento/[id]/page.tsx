@@ -102,7 +102,7 @@ export default function EnviarOrcamentoPage() {
   if (!solicitacao) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <p className="text-gray-500">Solicitacao nao encontrada</p>
+        <p className="text-gray-500">Solicitação não encontrada</p>
       </div>
     );
   }
@@ -115,8 +115,8 @@ export default function EnviarOrcamentoPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Orcamento enviado!</h1>
-        <p className="text-gray-600">O cliente foi notificado e pode aceitar seu orcamento.</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Orçamento enviado!</h1>
+        <p className="text-gray-600">O cliente foi notificado e pode aceitar seu orçamento.</p>
       </div>
     );
   }
@@ -130,7 +130,7 @@ export default function EnviarOrcamentoPage() {
         Voltar
       </button>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Enviar Orcamento</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">Enviar Orçamento</h1>
       <p className="text-gray-600 mb-6">
         {solicitacao.veiculo?.fipe_marca} {solicitacao.veiculo?.fipe_modelo} - {solicitacao.tipo}
       </p>
@@ -145,7 +145,7 @@ export default function EnviarOrcamentoPage() {
 
       <form onSubmit={handleSubmit}>
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Itens do orcamento</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Itens do orçamento</h2>
 
           <div className="space-y-4">
             {itens.map((item, index) => (
@@ -167,7 +167,7 @@ export default function EnviarOrcamentoPage() {
                     <input
                       type="text"
                       className="input-field"
-                      placeholder="Descricao do item"
+                      placeholder="Descrição do item"
                       value={item.descricao}
                       onChange={(e) => updateItem(index, 'descricao', e.target.value)}
                     />
@@ -178,8 +178,8 @@ export default function EnviarOrcamentoPage() {
                       value={item.tipo}
                       onChange={(e) => updateItem(index, 'tipo', e.target.value)}
                     >
-                      <option value="mao_de_obra">Mao de obra</option>
-                      <option value="peca">Peca</option>
+                      <option value="mao_de_obra">Mão de obra</option>
+                      <option value="peca">Peça</option>
                       <option value="material">Material</option>
                       <option value="outro">Outro</option>
                     </select>
@@ -232,7 +232,7 @@ export default function EnviarOrcamentoPage() {
 
         {/* Prazo & Execucao */}
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Prazo e Execucao</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Prazo e Execução</h2>
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -248,7 +248,7 @@ export default function EnviarOrcamentoPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Tempo de execucao (horas)
+                Tempo de execução (horas)
               </label>
               <input
                 type="number"
@@ -258,12 +258,12 @@ export default function EnviarOrcamentoPage() {
                 onChange={(e) => setTempoExecucaoHoras(parseInt(e.target.value) || 1)}
               />
               <p className="text-xs text-gray-500 mt-1">
-                ~{Math.ceil(tempoExecucaoHoras / 8)} dia(s) util(eis)
+                ~{Math.ceil(tempoExecucaoHoras / 8)} dia(s) útil(eis)
               </p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Validade do orcamento
+                Validade do orçamento
               </label>
               <input
                 type="date"
@@ -279,7 +279,7 @@ export default function EnviarOrcamentoPage() {
         <div className="card mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">Disponibilidade para check-in</h2>
           <p className="text-sm text-gray-500 mb-4">
-            Ofereca datas para o cliente deixar o veiculo. O cliente escolhera uma delas.
+            Ofereça datas para o cliente deixar o veículo. O cliente escolherá uma delas.
           </p>
 
           <div className="space-y-3">
@@ -299,7 +299,7 @@ export default function EnviarOrcamentoPage() {
                     value={slot.turno}
                     onChange={(e) => updateSlot(index, 'turno', e.target.value)}
                   >
-                    <option value="manha">Manha (8-12h)</option>
+                    <option value="manha">Manhã (8-12h)</option>
                     <option value="tarde">Tarde (13-17h)</option>
                   </select>
                 </div>
@@ -332,20 +332,20 @@ export default function EnviarOrcamentoPage() {
             onClick={addSlot}
             className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"
           >
-            + Adicionar data disponivel
+            + Adicionar data disponível
           </button>
         </div>
 
         {/* Observacoes */}
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Observacoes</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Observações</h2>
           <div className="mt-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Observacoes (opcional)
+              Observações (opcional)
             </label>
             <textarea
               className="input-field min-h-[80px]"
-              placeholder="Garantia, condicoes, informacoes adicionais..."
+              placeholder="Garantia, condições, informações adicionais..."
               value={observacoes}
               onChange={(e) => setObservacoes(e.target.value)}
             />
@@ -357,7 +357,7 @@ export default function EnviarOrcamentoPage() {
             Cancelar
           </button>
           <button type="submit" className="btn-success" disabled={total === 0}>
-            Enviar Orcamento - {formatCurrency(total)}
+            Enviar Orçamento - {formatCurrency(total)}
           </button>
         </div>
       </form>

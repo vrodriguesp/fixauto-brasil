@@ -81,12 +81,12 @@ function VeiculosPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Meus Veiculos</h1>
-          <p className="text-gray-600 mt-1">Gerencie os veiculos cadastrados</p>
+          <h1 className="text-2xl font-bold text-gray-900">Meus Veículos</h1>
+          <p className="text-gray-600 mt-1">Gerencie os veículos cadastrados</p>
         </div>
         {!showForm && (
           <button onClick={() => setShowForm(true)} className="btn-primary">
-            + Adicionar Veiculo
+            + Adicionar Veículo
           </button>
         )}
       </div>
@@ -95,7 +95,7 @@ function VeiculosPage() {
       {showForm && (
         <div className="card mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-6">
-            {editingId ? 'Editar Veiculo' : 'Novo Veiculo'}
+            {editingId ? 'Editar Veículo' : 'Novo Veículo'}
           </h2>
 
           <FipeAutocomplete
@@ -175,7 +175,7 @@ function VeiculosPage() {
             <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
             </svg>
-            <p className="text-gray-500">Nenhum veiculo cadastrado</p>
+            <p className="text-gray-500">Nenhum veículo cadastrado</p>
           </div>
         ) : (
           veiculos.map((v) => (

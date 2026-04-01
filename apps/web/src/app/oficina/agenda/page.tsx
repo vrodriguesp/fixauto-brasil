@@ -13,11 +13,11 @@ function getFirstDayOfMonth(year: number, month: number) {
 }
 
 const MESES = [
-  'Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho',
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
 ];
 
-const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
+const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
 export default function AgendaPage() {
   const { eventos, add: addEvento, remove: removeEvento } = useAgenda();
@@ -80,7 +80,7 @@ export default function AgendaPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Agenda</h1>
-          <p className="text-gray-600 mt-1">Gerencie seus servicos agendados</p>
+          <p className="text-gray-600 mt-1">Gerencie seus serviços agendados</p>
         </div>
         <div className="flex items-center gap-2 mt-4 sm:mt-0">
           <div className="flex rounded-lg border border-gray-200 overflow-hidden">
@@ -88,7 +88,7 @@ export default function AgendaPage() {
               onClick={() => setViewMode('month')}
               className={`px-3 py-2 text-sm ${viewMode === 'month' ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'}`}
             >
-              Mes
+              Mês
             </button>
             <button
               onClick={() => setViewMode('day')}
@@ -115,31 +115,31 @@ export default function AgendaPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Novo Evento</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Titulo</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
               <input
                 type="text"
                 className="input-field"
-                placeholder="Ex: Revisao - Honda Civic"
+                placeholder="Ex: Revisão - Honda Civic"
                 value={formData.titulo}
                 onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Descricao (opcional)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Descrição (opcional)</label>
               <input
                 type="text"
                 className="input-field"
-                placeholder="Detalhes do servico"
+                placeholder="Detalhes do serviço"
                 value={formData.descricao}
                 onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Data inicio</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Data início</label>
               <input type="date" className="input-field" value={formData.data_inicio} onChange={(e) => setFormData({ ...formData, data_inicio: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Hora inicio</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Hora início</label>
               <input type="time" className="input-field" value={formData.hora_inicio} onChange={(e) => setFormData({ ...formData, hora_inicio: e.target.value })} />
             </div>
             <div>
@@ -341,7 +341,7 @@ export default function AgendaPage() {
                   </div>
                   <div className="p-4 bg-orange-50 rounded-lg text-center">
                     <p className="text-2xl font-bold text-orange-700">{saidas.length}</p>
-                    <p className="text-xs text-orange-600">Saidas previstas</p>
+                    <p className="text-xs text-orange-600">Saídas previstas</p>
                   </div>
                 </div>
 

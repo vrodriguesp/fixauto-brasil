@@ -47,7 +47,7 @@ function CadastroPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nome || !email || !password) {
-      setError('Preencha todos os campos obrigatorios');
+      setError('Preencha todos os campos obrigatórios');
       return;
     }
     setError('');
@@ -125,7 +125,7 @@ function CadastroPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">Sou Motorista</p>
-                    <p className="text-sm text-gray-500">Preciso de reparo ou manutencao no meu veiculo</p>
+                    <p className="text-sm text-gray-500">Preciso de reparo ou manutenção no meu veículo</p>
                   </div>
                 </div>
               </button>
@@ -141,7 +141,7 @@ function CadastroPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">Sou Oficina</p>
-                    <p className="text-sm text-gray-500">Quero receber solicitacoes e enviar orcamentos</p>
+                    <p className="text-sm text-gray-500">Quero receber solicitações e enviar orçamentos</p>
                   </div>
                 </div>
               </button>
@@ -175,10 +175,10 @@ function CadastroPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Senha *</label>
-                <input type="password" className="input-field" placeholder="Minimo 6 caracteres" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+                <input type="password" className="input-field" placeholder="Mínimo 6 caracteres" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
               </div>
               <button type="submit" className="btn-primary w-full" disabled={loading}>
-                {loading ? 'Criando conta...' : userType === 'oficina' ? 'Proximo' : 'Criar conta'}
+                {loading ? 'Criando conta...' : userType === 'oficina' ? 'Próximo' : 'Criar conta'}
               </button>
             </form>
           )}
@@ -203,13 +203,13 @@ function CadastroPage() {
                 <input type="text" className="input-field" placeholder="00.000.000/0001-00" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Endereco</label>
-                <input type="text" className="input-field" placeholder="Rua, numero" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
+                <input type="text" className="input-field" placeholder="Rua, número" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
-                  <input type="text" className="input-field" placeholder="Sao Paulo" value={cidade} onChange={(e) => setCidade(e.target.value)} />
+                  <input type="text" className="input-field" placeholder="São Paulo" value={cidade} onChange={(e) => setCidade(e.target.value)} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
@@ -227,7 +227,7 @@ function CadastroPage() {
           )}
 
           <p className="text-center text-sm text-gray-600 mt-6">
-            Ja tem conta?{' '}
+            Já tem conta?{' '}
             <Link href="/login" className="text-primary-600 font-medium hover:text-primary-700">
               Entrar
             </Link>

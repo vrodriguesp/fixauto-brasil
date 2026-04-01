@@ -89,10 +89,10 @@ export function getUrgenciaColor(urgencia: string): string {
 export function getStatusLabel(status: string): string {
   const labels: Record<string, string> = {
     aberta: 'Aberta',
-    em_orcamento: 'Em Orcamento',
+    em_orcamento: 'Em Orçamento',
     aceita: 'Aceita',
     em_andamento: 'Em Andamento',
-    concluida: 'Concluida',
+    concluida: 'Concluída',
     cancelada: 'Cancelada',
     enviado: 'Enviado',
     visualizado: 'Visualizado',

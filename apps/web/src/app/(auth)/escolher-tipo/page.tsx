@@ -22,7 +22,7 @@ export default function EscolherTipoPage() {
               </div>
               <div>
                 <p className="font-semibold text-gray-900">Sou Motorista</p>
-                <p className="text-sm text-gray-500">Preciso de reparo no meu veiculo</p>
+                <p className="text-sm text-gray-500">Preciso de reparo no meu veículo</p>
               </div>
             </div>
           </Link>
@@ -39,7 +39,7 @@ export default function EscolherTipoPage() {
               </div>
               <div>
                 <p className="font-semibold text-gray-900">Sou Oficina</p>
-                <p className="text-sm text-gray-500">Quero receber e enviar orcamentos</p>
+                <p className="text-sm text-gray-500">Quero receber e enviar orçamentos</p>
               </div>
             </div>
           </Link>

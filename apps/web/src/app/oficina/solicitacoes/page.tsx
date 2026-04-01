@@ -20,9 +20,9 @@ export default function SolicitacoesOficinaPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Solicitacoes</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">Solicitações</h1>
       <p className="text-gray-600 mb-6">
-        Solicitacoes de reparo proximas a sua oficina (raio de {oficina?.raio_atendimento_km}km)
+        Solicitações de reparo próximas à sua oficina (raio de {oficina?.raio_atendimento_km}km)
       </p>
 
       {/* Filters */}
@@ -44,14 +44,14 @@ export default function SolicitacoesOficinaPage() {
         >
           <option value="todos">Todos os status</option>
           <option value="aberta">Aberta</option>
-          <option value="em_orcamento">Em Orcamento</option>
+          <option value="em_orcamento">Em Orçamento</option>
         </select>
       </div>
 
       {/* List */}
       {solicitacoes.length === 0 ? (
         <div className="card text-center py-12">
-          <p className="text-gray-500">Nenhuma solicitacao encontrada com esses filtros</p>
+          <p className="text-gray-500">Nenhuma solicitação encontrada com esses filtros</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -96,7 +96,7 @@ export default function SolicitacoesOficinaPage() {
                   </div>
                   <div className="flex items-center gap-2 ml-4">
                     <span className="btn-primary !py-2 !px-4 text-sm">
-                      Enviar Orcamento
+                      Enviar Orçamento
                     </span>
                   </div>
                 </div>

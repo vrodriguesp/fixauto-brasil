@@ -19,7 +19,7 @@ export default function HomePage() {
     return (
       <div className="flex items-center justify-center min-h-[80vh]">
         <div className="text-center">
-          <p className="text-gray-600 mb-4">Voce esta logado como {user?.nome}</p>
+          <p className="text-gray-600 mb-4">Você está logado como {user?.nome}</p>
           <Link href={dashPath} className="btn-primary">
             Ir para Dashboard
           </Link>
@@ -39,8 +39,8 @@ export default function HomePage() {
               <span className="text-primary-200">Encontre a melhor oficina.</span>
             </h1>
             <p className="mt-6 text-lg sm:text-xl text-primary-100 leading-relaxed">
-              Envie fotos do dano, receba orcamentos de oficinas proximas e escolha a melhor opcao.
-              Simples, rapido e transparente.
+              Envie fotos do dano, receba orçamentos de oficinas próximas e escolha a melhor opção.
+              Simples, rápido e transparente.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Link
@@ -75,8 +75,8 @@ export default function HomePage() {
                 <div className="flex-1">
                   <p className="text-xl font-bold">Acabei de bater!</p>
                   <p className="text-red-100 text-sm mt-1">
-                    Tire uma foto agora e receba orcamentos de oficinas proximas em minutos.
-                    Registre o outro veiculo envolvido.
+                    Tire uma foto agora e receba orçamentos de oficinas próximas em minutos.
+                    Registre o outro veículo envolvido.
                   </p>
                 </div>
                 <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,14 +95,14 @@ export default function HomePage() {
             Como funciona
           </h2>
           <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">
-            Em poucos passos voce recebe orcamentos das melhores oficinas da sua regiao
+            Em poucos passos você recebe orçamentos das melhores oficinas da sua região
           </p>
 
           <div className="grid md:grid-cols-4 gap-8">
             <Step
               number={1}
               title="Descreva o problema"
-              description="Envie fotos do dano e uma descricao do que aconteceu com seu veiculo"
+              description="Envie fotos do dano e uma descrição do que aconteceu com seu veículo"
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -113,7 +113,7 @@ export default function HomePage() {
             <Step
               number={2}
               title="Oficinas recebem"
-              description="Oficinas proximas a voce recebem sua solicitacao e avaliam o servico"
+              description="Oficinas próximas a você recebem sua solicitação e avaliam o serviço"
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -122,8 +122,8 @@ export default function HomePage() {
             />
             <Step
               number={3}
-              title="Compare orcamentos"
-              description="Receba orcamentos detalhados com precos, prazos e avaliacoes"
+              title="Compare orçamentos"
+              description="Receba orçamentos detalhados com preços, prazos e avaliações"
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -133,7 +133,7 @@ export default function HomePage() {
             <Step
               number={4}
               title="Escolha e repare"
-              description="Aceite o melhor orcamento e acompanhe o reparo do seu veiculo"
+              description="Aceite o melhor orçamento e acompanhe o reparo do seu veículo"
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -150,16 +150,16 @@ export default function HomePage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                Para oficinas mecanicas
+                Para oficinas mecânicas
               </h2>
               <p className="text-gray-600 text-lg mb-8">
-                Aumente sua base de clientes e organize seus servicos em uma unica plataforma.
+                Aumente sua base de clientes e organize seus serviços em uma única plataforma.
               </p>
               <ul className="space-y-4">
-                <Feature text="Receba solicitacoes de clientes proximos automaticamente" />
-                <Feature text="Envie orcamentos estruturados e profissionais" />
-                <Feature text="Gerencie sua agenda com servicos internos e externos" />
-                <Feature text="Construa sua reputacao com avaliacoes de clientes" />
+                <Feature text="Receba solicitações de clientes próximos automaticamente" />
+                <Feature text="Envie orçamentos estruturados e profissionais" />
+                <Feature text="Gerencie sua agenda com serviços internos e externos" />
+                <Feature text="Construa sua reputação com avaliações de clientes" />
               </ul>
               <Link href="/cadastro?tipo=oficina" className="btn-primary inline-block mt-8">
                 Cadastrar minha oficina
@@ -174,8 +174,8 @@ export default function HomePage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Nova solicitacao</p>
-                    <p className="text-sm text-gray-500">Colisao - VW Gol 2021 - 3km de voce</p>
+                    <p className="font-medium text-gray-900">Nova solicitação</p>
+                    <p className="text-sm text-gray-500">Colisão - VW Gol 2021 - 3km de você</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg">
@@ -185,7 +185,7 @@ export default function HomePage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Orcamento aceito!</p>
+                    <p className="font-medium text-gray-900">Orçamento aceito!</p>
                     <p className="text-sm text-gray-500">Funilaria - Chevrolet Onix 2023</p>
                   </div>
                 </div>
@@ -196,7 +196,7 @@ export default function HomePage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Nova avaliacao: 5 estrelas</p>
+                    <p className="font-medium text-gray-900">Nova avaliação: 5 estrelas</p>
                     <p className="text-sm text-gray-500">&quot;Excelente trabalho, recomendo!&quot;</p>
                   </div>
                 </div>
@@ -212,8 +212,8 @@ export default function HomePage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             <Stat number="500+" label="Oficinas cadastradas" />
             <Stat number="10.000+" label="Reparos realizados" />
-            <Stat number="4.7" label="Avaliacao media" />
-            <Stat number="R$ 850" label="Economia media" />
+            <Stat number="4.7" label="Avaliação média" />
+            <Stat number="R$ 850" label="Economia média" />
           </div>
         </div>
       </section>
@@ -232,7 +232,7 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-sm">
-                Conectando motoristas as melhores oficinas do Brasil.
+                Conectando motoristas às melhores oficinas do Brasil.
               </p>
             </div>
             <div>
@@ -256,7 +256,7 @@ export default function HomePage() {
               <ul className="space-y-2 text-sm">
                 <li>contato@fixauto.com.br</li>
                 <li>(11) 3000-0000</li>
-                <li>Sao Paulo, SP</li>
+                <li>São Paulo, SP</li>
               </ul>
             </div>
           </div>

@@ -14,7 +14,7 @@ export default function SolicitacaoDetalhePage() {
   if (!solicitacao) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <p className="text-gray-500">Solicitacao nao encontrada</p>
+        <p className="text-gray-500">Solicitação não encontrada</p>
       </div>
     );
   }
@@ -36,12 +36,12 @@ export default function SolicitacaoDetalhePage() {
           <div className="flex items-center gap-2 mt-2">
             <StatusBadge status={solicitacao.status} />
             <span className={`badge ${getUrgenciaColor(solicitacao.urgencia)}`}>
-              Urgencia: {solicitacao.urgencia}
+              Urgência: {solicitacao.urgencia}
             </span>
           </div>
         </div>
         <Link href={`/oficina/enviar-orcamento/${solicitacao.id}`} className="btn-primary">
-          Enviar Orcamento
+          Enviar Orçamento
         </Link>
       </div>
 
@@ -49,7 +49,7 @@ export default function SolicitacaoDetalhePage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Description */}
           <div className="card">
-            <h2 className="font-semibold text-gray-900 mb-2">Descricao do problema</h2>
+            <h2 className="font-semibold text-gray-900 mb-2">Descrição do problema</h2>
             <p className="text-gray-600">{solicitacao.descricao}</p>
           </div>
 
@@ -78,7 +78,7 @@ export default function SolicitacaoDetalhePage() {
         {/* Sidebar */}
         <div className="space-y-6">
           <div className="card">
-            <h2 className="font-semibold text-gray-900 mb-3">Informacoes do veiculo</h2>
+            <h2 className="font-semibold text-gray-900 mb-3">Informações do veículo</h2>
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <dt className="text-gray-500">Marca</dt>

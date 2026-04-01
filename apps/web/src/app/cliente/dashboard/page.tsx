@@ -26,11 +26,11 @@ export default function ClienteDashboard() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Ola, {user?.nome?.split(' ')[0]}!</h1>
-          <p className="text-gray-600 mt-1">Acompanhe seus reparos e orcamentos</p>
+          <h1 className="text-2xl font-bold text-gray-900">Olá, {user?.nome?.split(' ')[0]}!</h1>
+          <p className="text-gray-600 mt-1">Acompanhe seus reparos e orçamentos</p>
         </div>
         <Link href="/cliente/nova-solicitacao" className="btn-primary mt-4 sm:mt-0 text-center">
-          + Nova Solicitacao
+          + Nova Solicitação
         </Link>
       </div>
 
@@ -44,7 +44,7 @@ export default function ClienteDashboard() {
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">{stats.ativas}</p>
-            <p className="text-sm text-gray-500">Solicitacoes ativas</p>
+            <p className="text-sm text-gray-500">Solicitações ativas</p>
           </div>
         </div>
         <div className="card flex items-center gap-4">
@@ -55,7 +55,7 @@ export default function ClienteDashboard() {
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">{stats.orcamentosPendentes}</p>
-            <p className="text-sm text-gray-500">Orcamentos pendentes</p>
+            <p className="text-sm text-gray-500">Orçamentos pendentes</p>
           </div>
         </div>
         <div className="card flex items-center gap-4">
@@ -66,7 +66,7 @@ export default function ClienteDashboard() {
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">{stats.concluidas}</p>
-            <p className="text-sm text-gray-500">Reparos concluidos</p>
+            <p className="text-sm text-gray-500">Reparos concluídos</p>
           </div>
         </div>
       </div>
@@ -74,12 +74,12 @@ export default function ClienteDashboard() {
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Active requests */}
         <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Solicitacoes recentes</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Solicitações recentes</h2>
           {solicitacoes.length === 0 ? (
             <div className="card text-center py-12">
-              <p className="text-gray-500 mb-4">Voce ainda nao tem solicitacoes</p>
+              <p className="text-gray-500 mb-4">Você ainda não tem solicitações</p>
               <Link href="/cliente/nova-solicitacao" className="btn-primary">
-                Criar primeira solicitacao
+                Criar primeira solicitação
               </Link>
             </div>
           ) : (
@@ -99,7 +99,7 @@ export default function ClienteDashboard() {
                       <span>{timeAgo(sol.created_at)}</span>
                       {sol.orcamentos && sol.orcamentos.length > 0 && (
                         <span className="font-medium text-primary-600">
-                          {sol.orcamentos.length} orcamento(s)
+                          {sol.orcamentos.length} orçamento(s)
                         </span>
                       )}
                     </div>
@@ -122,9 +122,9 @@ export default function ClienteDashboard() {
         <div className="space-y-6">
           {/* Notifications */}
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Notificacoes</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Notificações</h2>
             {notificacoes.length === 0 ? (
-              <p className="text-sm text-gray-500">Nenhuma notificacao nova</p>
+              <p className="text-sm text-gray-500">Nenhuma notificação nova</p>
             ) : (
               <div className="space-y-3">
                 {notificacoes.map((n) => {
@@ -145,7 +145,7 @@ export default function ClienteDashboard() {
           {/* Vehicles quick view */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Meus Veiculos</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Meus Veículos</h2>
               <Link href="/cliente/veiculos" className="text-sm text-primary-600 hover:text-primary-700">
                 Ver todos
               </Link>
@@ -165,7 +165,7 @@ export default function ClienteDashboard() {
                 href="/cliente/veiculos?add=true"
                 className="block p-4 border-2 border-dashed border-gray-300 rounded-xl text-center hover:border-primary-400 hover:bg-primary-50 transition-colors"
               >
-                <span className="text-sm text-gray-500 hover:text-primary-600">+ Adicionar veiculo</span>
+                <span className="text-sm text-gray-500 hover:text-primary-600">+ Adicionar veículo</span>
               </Link>
             </div>
           </div>

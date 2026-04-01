@@ -31,7 +31,7 @@ export default function OficinaDashboard() {
         <div className="flex items-center gap-2 mt-4 sm:mt-0">
           <StarRating rating={oficina?.avaliacao_media || 0} size="md" />
           <span className="text-sm text-gray-500">
-            {oficina?.avaliacao_media} ({oficina?.total_avaliacoes} avaliacoes)
+            {oficina?.avaliacao_media} ({oficina?.total_avaliacoes} avaliações)
           </span>
         </div>
       </div>
@@ -46,7 +46,7 @@ export default function OficinaDashboard() {
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">{solicitacoesProximas.length}</p>
-            <p className="text-sm text-gray-500">Novas solicitacoes</p>
+            <p className="text-sm text-gray-500">Novas solicitações</p>
           </div>
         </div>
         <div className="card flex items-center gap-4">
@@ -57,7 +57,7 @@ export default function OficinaDashboard() {
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">0</p>
-            <p className="text-sm text-gray-500">Reparos este mes</p>
+            <p className="text-sm text-gray-500">Reparos este mês</p>
           </div>
         </div>
         <div className="card flex items-center gap-4">
@@ -88,14 +88,14 @@ export default function OficinaDashboard() {
         {/* Nearby requests */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Solicitacoes proximas</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Solicitações próximas</h2>
             <Link href="/oficina/solicitacoes" className="text-sm text-primary-600 hover:text-primary-700">
               Ver todas
             </Link>
           </div>
           {solicitacoesProximas.length === 0 ? (
             <div className="card text-center py-8">
-              <p className="text-gray-500">Nenhuma solicitacao nova na sua regiao</p>
+              <p className="text-gray-500">Nenhuma solicitação nova na sua região</p>
             </div>
           ) : (
             solicitacoesProximas.map((sol) => {
@@ -142,7 +142,7 @@ export default function OficinaDashboard() {
           {/* Upcoming agenda */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Proximos servicos</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Próximos serviços</h2>
               <Link href="/oficina/agenda" className="text-sm text-primary-600 hover:text-primary-700">
                 Ver agenda
               </Link>
@@ -165,13 +165,13 @@ export default function OficinaDashboard() {
           {/* Recent reviews */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Avaliacoes recentes</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Avaliações recentes</h2>
               <Link href="/oficina/avaliacoes" className="text-sm text-primary-600 hover:text-primary-700">
                 Ver todas
               </Link>
             </div>
             {avaliacoes.length === 0 ? (
-              <p className="text-sm text-gray-500">Nenhuma avaliacao ainda</p>
+              <p className="text-sm text-gray-500">Nenhuma avaliação ainda</p>
             ) : (
               <div className="space-y-3">
                 {avaliacoes.map((av) => (

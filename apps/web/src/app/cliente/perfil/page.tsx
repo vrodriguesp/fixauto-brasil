@@ -38,7 +38,7 @@ export default function PerfilClientePage() {
         </div>
 
         <div className="flex justify-end mt-6">
-          <button className="btn-primary">Salvar Alteracoes</button>
+          <button className="btn-primary">Salvar Alterações</button>
         </div>
       </div>
     </div>

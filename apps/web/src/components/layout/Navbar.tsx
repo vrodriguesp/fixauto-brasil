@@ -30,17 +30,17 @@ export default function Navbar() {
                 {isOficina ? (
                   <>
                     <NavLink href="/oficina/dashboard">Dashboard</NavLink>
-                    <NavLink href="/oficina/solicitacoes">Solicitacoes</NavLink>
+                    <NavLink href="/oficina/solicitacoes">Solicitações</NavLink>
                     <NavLink href="/oficina/agenda">Agenda</NavLink>
-                    <NavLink href="/oficina/avaliacoes">Avaliacoes</NavLink>
+                    <NavLink href="/oficina/avaliacoes">Avaliações</NavLink>
                   </>
                 ) : (
                   <>
                     <NavLink href="/cliente/dashboard">Dashboard</NavLink>
-                    <NavLink href="/cliente/veiculos">Veiculos</NavLink>
-                    <NavLink href="/cliente/nova-solicitacao">Nova Solicitacao</NavLink>
-                    <NavLink href="/cliente/orcamentos">Orcamentos</NavLink>
-                    <NavLink href="/cliente/historico">Historico</NavLink>
+                    <NavLink href="/cliente/veiculos">Veículos</NavLink>
+                    <NavLink href="/cliente/nova-solicitacao">Nova Solicitação</NavLink>
+                    <NavLink href="/cliente/orcamentos">Orçamentos</NavLink>
+                    <NavLink href="/cliente/historico">Histórico</NavLink>
                   </>
                 )}
               </div>
@@ -105,18 +105,18 @@ export default function Navbar() {
             {isOficina ? (
               <>
                 <MobileNavLink href="/oficina/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>
-                <MobileNavLink href="/oficina/solicitacoes" onClick={() => setMenuOpen(false)}>Solicitacoes</MobileNavLink>
+                <MobileNavLink href="/oficina/solicitacoes" onClick={() => setMenuOpen(false)}>Solicitações</MobileNavLink>
                 <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>Agenda</MobileNavLink>
-                <MobileNavLink href="/oficina/avaliacoes" onClick={() => setMenuOpen(false)}>Avaliacoes</MobileNavLink>
+                <MobileNavLink href="/oficina/avaliacoes" onClick={() => setMenuOpen(false)}>Avaliações</MobileNavLink>
                 <MobileNavLink href="/oficina/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
               </>
             ) : (
               <>
                 <MobileNavLink href="/cliente/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>
-                <MobileNavLink href="/cliente/veiculos" onClick={() => setMenuOpen(false)}>Veiculos</MobileNavLink>
-                <MobileNavLink href="/cliente/nova-solicitacao" onClick={() => setMenuOpen(false)}>Nova Solicitacao</MobileNavLink>
-                <MobileNavLink href="/cliente/orcamentos" onClick={() => setMenuOpen(false)}>Orcamentos</MobileNavLink>
-                <MobileNavLink href="/cliente/historico" onClick={() => setMenuOpen(false)}>Historico</MobileNavLink>
+                <MobileNavLink href="/cliente/veiculos" onClick={() => setMenuOpen(false)}>Veículos</MobileNavLink>
+                <MobileNavLink href="/cliente/nova-solicitacao" onClick={() => setMenuOpen(false)}>Nova Solicitação</MobileNavLink>
+                <MobileNavLink href="/cliente/orcamentos" onClick={() => setMenuOpen(false)}>Orçamentos</MobileNavLink>
+                <MobileNavLink href="/cliente/historico" onClick={() => setMenuOpen(false)}>Histórico</MobileNavLink>
                 <MobileNavLink href="/cliente/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
               </>
             )}

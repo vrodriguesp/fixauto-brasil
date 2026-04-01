@@ -26,13 +26,13 @@ export default function AcidenteRegistroPage() {
 
   // Chat
   const [mensagens, setMensagens] = useState<Mensagem[]>([
-    { id: '1', remetente: 'outro', texto: 'Ola, vi que voce registrou nosso acidente. Podemos conversar sobre os orcamentos?', hora: '14:30' },
+    { id: '1', remetente: 'outro', texto: 'Olá, vi que você registrou nosso acidente. Podemos conversar sobre os orçamentos?', hora: '14:30' },
   ]);
   const [novaMensagem, setNovaMensagem] = useState('');
 
   // Mock orcamentos
   const mockOrcamentos = [
-    { oficina: 'Carlos Auto Mecanica', valor: 'R$ 2.200,00', prazo: '5 dias', id: '1' },
+    { oficina: 'Carlos Auto Mecânica', valor: 'R$ 2.200,00', prazo: '5 dias', id: '1' },
     { oficina: 'Ana Funilaria & Pintura', valor: 'R$ 2.850,00', prazo: '4 dias', id: '2' },
     { oficina: 'Pedro Auto Center', valor: 'R$ 1.900,00', prazo: '7 dias', id: '3' },
   ];
@@ -68,7 +68,7 @@ export default function AcidenteRegistroPage() {
       setMensagens((prev) => [...prev, {
         id: `m-${Date.now()}`,
         remetente: 'outro',
-        texto: 'Ok, vou analisar os orcamentos e te retorno.',
+        texto: 'Ok, vou analisar os orçamentos e te retorno.',
         hora: `${now.getHours()}:${String(now.getMinutes() + 1).padStart(2, '0')}`,
       }]);
     }, 2000);
@@ -85,7 +85,7 @@ export default function AcidenteRegistroPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Registro do Acidente</h1>
-          <p className="text-gray-600 text-sm">Registre o outro veiculo e acompanhe os orcamentos</p>
+          <p className="text-gray-600 text-sm">Registre o outro veículo e acompanhe os orçamentos</p>
         </div>
       </div>
 
@@ -97,7 +97,7 @@ export default function AcidenteRegistroPage() {
             step === 'registro' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'
           }`}
         >
-          Outro Veiculo
+          Outro Veículo
         </button>
         <button
           onClick={() => setStep('chat')}
@@ -113,14 +113,14 @@ export default function AcidenteRegistroPage() {
             step === 'orcamentos' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'
           }`}
         >
-          Orcamentos
+          Orçamentos
         </button>
       </div>
 
       {/* Registration tab */}
       {step === 'registro' && !registered && (
         <div className="card">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Dados do outro veiculo</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Dados do outro veículo</h2>
 
           <div className="space-y-4">
             <div>
@@ -139,17 +139,17 @@ export default function AcidenteRegistroPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Placa do veiculo</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Placa do veículo</label>
                 <input type="text" className="input-field" placeholder="ABC-1234" value={outroPlaca} onChange={(e) => setOutroPlaca(e.target.value)} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Veiculo (marca/modelo)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Veículo (marca/modelo)</label>
                 <input type="text" className="input-field" placeholder="Ex: Fiat Argo" value={outroVeiculo} onChange={(e) => setOutroVeiculo(e.target.value)} />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Fotos do outro veiculo</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Fotos do outro veículo</label>
               <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload} />
               <div className="flex gap-3">
                 {fotosOutro.map((foto, i) => (
@@ -170,7 +170,7 @@ export default function AcidenteRegistroPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Observacoes</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
               <textarea
                 className="input-field min-h-[80px]"
                 placeholder="Detalhes sobre o acidente, acordo feito no local..."
@@ -185,7 +185,7 @@ export default function AcidenteRegistroPage() {
             disabled={!outroNome || !outroPlaca}
             className="btn-primary w-full mt-6"
           >
-            Registrar outro veiculo
+            Registrar outro veículo
           </button>
         </div>
       )}
@@ -199,7 +199,7 @@ export default function AcidenteRegistroPage() {
               </svg>
             </div>
             <div>
-              <p className="font-semibold text-gray-900">Veiculo registrado</p>
+              <p className="font-semibold text-gray-900">Veículo registrado</p>
               <p className="text-sm text-gray-500">O outro motorista foi notificado</p>
             </div>
           </div>
@@ -210,8 +210,8 @@ export default function AcidenteRegistroPage() {
               <span className="text-gray-900">{outroNome}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Veiculo:</span>
-              <span className="text-gray-900">{outroVeiculo || 'Nao informado'}</span>
+              <span className="text-gray-500">Veículo:</span>
+              <span className="text-gray-900">{outroVeiculo || 'Não informado'}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Placa:</span>
@@ -219,7 +219,7 @@ export default function AcidenteRegistroPage() {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Telefone:</span>
-              <span className="text-gray-900">{outroTelefone || 'Nao informado'}</span>
+              <span className="text-gray-900">{outroTelefone || 'Não informado'}</span>
             </div>
           </div>
 
@@ -228,7 +228,7 @@ export default function AcidenteRegistroPage() {
               Enviar mensagem
             </button>
             <button onClick={() => setStep('orcamentos')} className="btn-secondary flex-1">
-              Ver orcamentos
+              Ver orçamentos
             </button>
           </div>
         </div>
@@ -239,7 +239,7 @@ export default function AcidenteRegistroPage() {
         <div className="card !p-0 overflow-hidden">
           <div className="bg-gray-50 p-4 border-b">
             <p className="font-medium text-gray-900">{outroNome || 'Outro motorista'}</p>
-            <p className="text-xs text-gray-500">{outroVeiculo || 'Veiculo'} - {outroPlaca || 'Sem placa'}</p>
+            <p className="text-xs text-gray-500">{outroVeiculo || 'Veículo'} - {outroPlaca || 'Sem placa'}</p>
           </div>
 
           <div className="h-[400px] overflow-y-auto p-4 space-y-3">
@@ -282,8 +282,8 @@ export default function AcidenteRegistroPage() {
         <div className="space-y-4">
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <p className="text-sm text-yellow-800">
-              Compartilhe esses orcamentos com o outro motorista para entrar em acordo
-              sobre qual oficina usar para a reparacao.
+              Compartilhe esses orçamentos com o outro motorista para entrar em acordo
+              sobre qual oficina usar para a reparação.
             </p>
           </div>
 
@@ -303,7 +303,7 @@ export default function AcidenteRegistroPage() {
                   Aceitar
                 </button>
                 <button
-                  onClick={() => { setStep('chat'); setNovaMensagem(`O que acha do orcamento da ${orc.oficina} por ${orc.valor}?`); }}
+                  onClick={() => { setStep('chat'); setNovaMensagem(`O que acha do orçamento da ${orc.oficina} por ${orc.valor}?`); }}
                   className="btn-secondary flex-1 !py-2 text-sm"
                 >
                   Discutir

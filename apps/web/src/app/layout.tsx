@@ -7,8 +7,8 @@ import { AuthProvider } from '@/lib/auth-context';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'FixAuto Brasil - Conectando voce a melhor oficina',
-  description: 'Plataforma que conecta motoristas a oficinas mecanicas. Envie fotos do dano, receba orcamentos e escolha a melhor opcao.',
+  title: 'FixAuto Brasil - Conectando você à melhor oficina',
+  description: 'Plataforma que conecta motoristas a oficinas mecânicas. Envie fotos do dano, receba orçamentos e escolha a melhor opção.',
 };
 
 export default function RootLayout({
