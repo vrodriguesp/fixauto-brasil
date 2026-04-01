@@ -30,10 +30,8 @@ export default function LoginPage() {
       return;
     }
 
-    // Auth context will update the user via onAuthStateChange,
-    // redirect will happen from the layout/page when user is set
-    router.push('/');
     router.refresh();
+    router.push('/');
   };
 
   return (
