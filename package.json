@@ -1,0 +1,14 @@
+{
+  "name": "fixauto-brasil",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspace=apps/web",
+    "dev:mobile": "npm run start --workspace=apps/mobile"
+  }
+}
