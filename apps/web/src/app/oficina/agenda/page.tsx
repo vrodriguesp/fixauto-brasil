@@ -77,13 +77,26 @@ export default function AgendaPage() {
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = getFirstDayOfMonth(year, month);
 
-  // De-duplicate FIRST (including concluido), then filter out concluido
-  // This prevents a concluido event from being removed and leaving its agendado duplicate visible
+  // Filter active events:
+  // 1. Remove concluido/cancelado agenda events
+  // 2. Remove agendado events whose solicitacao is already concluida (stale duplicates)
+  // 3. De-duplicate platform events by solicitacao_id keeping highest status
   const activeEventos = useMemo(() => {
-    const seen = new Map<string, typeof eventos[0]>();
-    const others: typeof eventos = [];
-    const statusPriority: Record<string, number> = { concluido: 3, em_andamento: 2, agendado: 1, cancelado: 0 };
-    for (const ev of eventos) {
+    // Step 1: Remove events that should never show
+    const relevant = eventos.filter((ev) => {
+      if (ev.status === 'concluido' || ev.status === 'cancelado') return false;
+      // Step 2: If event is agendado but solicitacao is already done, it's stale
+      if (ev.status === 'agendado' && ev.tipo === 'plataforma' && ev.solicitacao) {
+        const solStatus = (ev.solicitacao as any).status;
+        if (solStatus === 'concluida' || solStatus === 'cancelada') return false;
+      }
+      return true;
+    });
+    // Step 3: De-duplicate platform events by solicitacao_id
+    const seen = new Map<string, typeof relevant[0]>();
+    const others: typeof relevant = [];
+    const statusPriority: Record<string, number> = { em_andamento: 2, agendado: 1 };
+    for (const ev of relevant) {
       if (ev.tipo === 'plataforma' && ev.solicitacao_id) {
         const existing = seen.get(ev.solicitacao_id);
         if (!existing ||
@@ -96,8 +109,7 @@ export default function AgendaPage() {
         others.push(ev);
       }
     }
-    // Now filter out concluido from the final list
-    return [...others, ...Array.from(seen.values())].filter((e) => e.status !== 'concluido');
+    return [...others, ...Array.from(seen.values())];
   }, [eventos]);
 
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));

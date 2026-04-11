@@ -33,12 +33,20 @@ export default function VeiculosEmServico() {
       .then(({ data }) => { if (data) setFuncionarios(data); });
   }, [oficina, isMecanico]);
 
-  // De-duplicate FIRST (including concluido), then filter. Prevents ghost agendado duplicates.
+  // Filter + de-duplicate: remove stale agendado when solicitacao is done, dedup by solicitacao_id
   const myEventos = useMemo(() => {
-    const seen = new Map<string, typeof eventos[0]>();
-    const others: typeof eventos = [];
-    const statusPriority: Record<string, number> = { concluido: 3, em_andamento: 2, agendado: 1, cancelado: 0 };
-    for (const ev of eventos) {
+    const relevant = eventos.filter((ev) => {
+      if (ev.status === 'cancelado') return false;
+      if (ev.status === 'agendado' && ev.tipo === 'plataforma' && ev.solicitacao) {
+        const solStatus = (ev.solicitacao as any).status;
+        if (solStatus === 'concluida' || solStatus === 'cancelada') return false;
+      }
+      return true;
+    });
+    const seen = new Map<string, typeof relevant[0]>();
+    const others: typeof relevant = [];
+    const statusPriority: Record<string, number> = { concluido: 3, em_andamento: 2, agendado: 1 };
+    for (const ev of relevant) {
       if (ev.tipo === 'plataforma' && ev.solicitacao_id) {
         const existing = seen.get(ev.solicitacao_id);
         if (!existing ||
@@ -52,10 +60,10 @@ export default function VeiculosEmServico() {
       }
     }
     const deduped = [...others, ...Array.from(seen.values())];
-    const filtered = isMecanico && funcionario
-      ? deduped.filter((e) => e.funcionario_id === funcionario.id)
-      : deduped;
-    return filtered;
+    if (isMecanico && funcionario) {
+      return deduped.filter((e) => e.funcionario_id === funcionario.id);
+    }
+    return deduped;
   }, [eventos, isMecanico, funcionario]);
 
   // Categorize events
