@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import Anthropic from '@anthropic-ai/sdk';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
-
-const getClient = () => new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export async function POST(req: NextRequest) {
   try {
@@ -47,61 +44,76 @@ export async function POST(req: NextRequest) {
     const veiculo = sol?.veiculo as any;
     const contexto = `Veículo: ${veiculo?.fipe_marca || ''} ${veiculo?.fipe_modelo || ''} ${veiculo?.fipe_ano || ''}. Tipo de serviço: ${sol?.tipo || 'não informado'}. Descrição do cliente: ${sol?.descricao || 'não informada'}.${veiculo?.fipe_valor ? ` Valor FIPE: ${veiculo.fipe_valor}.` : ''}`;
 
-    // Download images and convert to base64 for Claude
-    const imageContent: Anthropic.ImageBlockParam[] = [];
+    // Build image parts for Gemini
+    const imageParts: any[] = [];
     for (const foto of fotos.slice(0, 4)) {
       try {
         const res = await fetch(foto.foto_url);
         const buffer = await res.arrayBuffer();
         const base64 = Buffer.from(buffer).toString('base64');
-        const contentType = res.headers.get('content-type') || 'image/jpeg';
-        imageContent.push({
-          type: 'image',
-          source: {
-            type: 'base64',
-            media_type: contentType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
-            data: base64,
-          },
+        const mimeType = res.headers.get('content-type') || 'image/jpeg';
+        imageParts.push({
+          inline_data: { mime_type: mimeType, data: base64 },
         });
-      } catch { /* skip failed images */ }
+      } catch { /* skip */ }
     }
 
-    if (imageContent.length === 0) {
+    if (imageParts.length === 0) {
       return NextResponse.json({ error: 'Não foi possível carregar as fotos' }, { status: 500 });
     }
 
-    const client = getClient();
-    const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1500,
-      system: `Você é um especialista em reparos automotivos no Brasil. Analise as fotos de dano em veículos e responda SEMPRE em JSON com esta estrutura exata:
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({ error: 'GEMINI_API_KEY não configurada' }, { status: 500 });
+    }
+
+    // Call Gemini Vision API
+    const geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              ...imageParts,
+              {
+                text: `Você é um especialista em reparos automotivos no Brasil. Analise estas fotos de dano veicular. ${contexto}
+
+Responda APENAS em JSON com esta estrutura exata, sem texto adicional:
 {
   "resumo": "Descrição clara do dano visível para a oficina",
-  "severidade": "leve" | "moderado" | "grave" | "severo",
+  "severidade": "leve" ou "moderado" ou "grave" ou "severo",
   "checklist_inspecao": ["item 1 para verificar", "item 2", ...],
   "pecas_afetadas": ["peça 1", "peça 2", ...],
   "estimativa_custo": { "min": número_em_reais, "max": número_em_reais },
   "confianca": número entre 0 e 1
 }
-Responda APENAS o JSON, sem texto adicional. Seja preciso e prático. Considere preços do mercado brasileiro.`,
-      messages: [
-        {
-          role: 'user',
-          content: [
-            ...imageContent,
-            { type: 'text', text: `Analise estas fotos de dano veicular. ${contexto}` },
-          ],
-        },
-      ],
-    });
+Seja preciso e prático. Considere preços do mercado brasileiro.`,
+              },
+            ],
+          }],
+          generationConfig: {
+            temperature: 0.3,
+            maxOutputTokens: 1500,
+          },
+        }),
+      }
+    );
 
-    const textBlock = response.content.find((b) => b.type === 'text');
-    const content = textBlock && 'text' in textBlock ? textBlock.text : null;
+    if (!geminiRes.ok) {
+      const errData = await geminiRes.json();
+      return NextResponse.json({ error: errData.error?.message || 'Erro na API Gemini' }, { status: 500 });
+    }
+
+    const geminiData = await geminiRes.json();
+    const content = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+
     if (!content) {
       return NextResponse.json({ error: 'Sem resposta da IA' }, { status: 500 });
     }
 
-    // Extract JSON from response (Claude may wrap in ```json blocks)
+    // Extract JSON
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       return NextResponse.json({ error: 'Resposta inválida da IA' }, { status: 500 });
@@ -121,7 +133,7 @@ Responda APENAS o JSON, sem texto adicional. Seja preciso e prático. Considere 
         estimativa_custo: parsed.estimativa_custo || null,
         confianca: parsed.confianca || null,
         fotos_analisadas: fotos.map((f) => f.id),
-        modelo_usado: 'claude-sonnet-4',
+        modelo_usado: 'gemini-2.0-flash',
         raw_response: parsed,
       })
       .select()
