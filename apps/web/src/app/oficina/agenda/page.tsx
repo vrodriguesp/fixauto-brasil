@@ -77,16 +77,20 @@ export default function AgendaPage() {
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = getFirstDayOfMonth(year, month);
 
-  // Filter out concluded + de-duplicate platform events by solicitacao_id (keep most recent)
+  // Filter out concluded + de-duplicate platform events by solicitacao_id
+  // Priority: em_andamento > agendado (never show agendado if em_andamento exists)
   const activeEventos = useMemo(() => {
     const filtered = eventos.filter((e) => e.status !== 'concluido');
-    // De-duplicate: for platform events with same solicitacao_id, keep only the latest
     const seen = new Map<string, typeof filtered[0]>();
     const result: typeof filtered = [];
+    const statusPriority: Record<string, number> = { em_andamento: 2, agendado: 1, cancelado: 0 };
     for (const ev of filtered) {
       if (ev.tipo === 'plataforma' && ev.solicitacao_id) {
         const existing = seen.get(ev.solicitacao_id);
-        if (!existing || new Date(ev.created_at) > new Date(existing.created_at)) {
+        if (!existing ||
+            (statusPriority[ev.status] || 0) > (statusPriority[existing.status] || 0) ||
+            ((statusPriority[ev.status] || 0) === (statusPriority[existing.status] || 0) && new Date(ev.created_at) > new Date(existing.created_at))
+        ) {
           seen.set(ev.solicitacao_id, ev);
         }
       } else {
