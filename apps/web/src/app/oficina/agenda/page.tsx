@@ -5,7 +5,7 @@ import { useAgenda } from '@/hooks/use-agenda';
 import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
-import { CORES_AGENDA } from '@fixauto/shared';
+import { CORES_AGENDA, TIPOS_SERVICO } from '@fixauto/shared';
 
 function getDaysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate(); }
 function getFirstDayOfMonth(y: number, m: number) { return new Date(y, m, 1).getDay(); }
@@ -46,7 +46,18 @@ export default function AgendaPage() {
   const [funcionarios, setFuncionarios] = useState<any[]>([]);
 
   const [formData, setFormData] = useState({
-    titulo: '', data_inicio: '', data_fim: '', cor: '#3B82F6',
+    cliente_nome: '',
+    placa: '',
+    marca: '',
+    modelo: '',
+    tipo_servico: 'mecanica',
+    descricao: '',
+    data_inicio: '',
+    hora_inicio: '08:00',
+    data_fim: '',
+    hora_fim: '18:00',
+    funcionario_id: '',
+    cor: '#3B82F6',
   });
 
   useEffect(() => {
@@ -100,13 +111,31 @@ export default function AgendaPage() {
   };
 
   const handleAddEvent = async () => {
-    if (!formData.titulo || !formData.data_inicio || !formData.data_fim) return;
-    await addEvento({
-      titulo: formData.titulo, data_inicio: `${formData.data_inicio}T08:00:00Z`,
-      data_fim: `${formData.data_fim}T18:00:00Z`, tipo: 'externo', cor: formData.cor,
+    if (!formData.data_inicio || !formData.data_fim) return;
+    const tipoLabel = TIPOS_SERVICO.find(t => t.value === formData.tipo_servico)?.label || formData.tipo_servico;
+    const titulo = `${tipoLabel}${formData.placa ? ' - ' + formData.placa : ''}${formData.cliente_nome ? ' - ' + formData.cliente_nome : ''}`;
+    const descricao = [
+      formData.marca && formData.modelo ? `${formData.marca} ${formData.modelo}` : '',
+      formData.descricao,
+    ].filter(Boolean).join(' | ');
+
+    const result = await addEvento({
+      titulo,
+      descricao: descricao || undefined,
+      data_inicio: `${formData.data_inicio}T${formData.hora_inicio}:00Z`,
+      data_fim: `${formData.data_fim}T${formData.hora_fim}:00Z`,
+      tipo: 'externo',
+      cor: formData.cor,
     });
+
+    // Assign mechanic if selected
+    if (formData.funcionario_id && result?.data?.id) {
+      await supabase.from('agenda').update({ funcionario_id: formData.funcionario_id }).eq('id', result.data.id);
+    }
+
     setShowForm(false);
-    setFormData({ titulo: '', data_inicio: '', data_fim: '', cor: '#3B82F6' });
+    setFormData({ cliente_nome: '', placa: '', marca: '', modelo: '', tipo_servico: 'mecanica', descricao: '', data_inicio: '', hora_inicio: '08:00', data_fim: '', hora_fim: '18:00', funcionario_id: '', cor: '#3B82F6' });
+    await refresh();
   };
 
   const handleCheckIn = async (ev: any, funcId?: string) => {
@@ -294,27 +323,79 @@ export default function AgendaPage() {
 
       {showForm && (
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Novo Evento</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Novo Evento Externo</h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-              <input type="text" className="input-field" value={formData.titulo} onChange={(e) => setFormData({ ...formData, titulo: e.target.value })} />
-            </div>
-            <div><label className="block text-sm font-medium text-gray-700 mb-1">Data início</label>
-              <input type="date" className="input-field" value={formData.data_inicio} onChange={(e) => setFormData({ ...formData, data_inicio: e.target.value })} /></div>
-            <div><label className="block text-sm font-medium text-gray-700 mb-1">Data fim</label>
-              <input type="date" className="input-field" value={formData.data_fim} onChange={(e) => setFormData({ ...formData, data_fim: e.target.value })} /></div>
+            {/* Cliente */}
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nome do cliente</label>
+              <input type="text" className="input-field" placeholder="Ex: João Silva" value={formData.cliente_nome} onChange={(e) => setFormData({ ...formData, cliente_nome: e.target.value })} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Placa</label>
+              <input type="text" className="input-field" placeholder="ABC1D23" value={formData.placa} onChange={(e) => setFormData({ ...formData, placa: e.target.value.toUpperCase() })} />
+            </div>
+            {/* Veículo */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+              <input type="text" className="input-field" placeholder="Ex: Fiat" value={formData.marca} onChange={(e) => setFormData({ ...formData, marca: e.target.value })} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Modelo</label>
+              <input type="text" className="input-field" placeholder="Ex: Uno" value={formData.modelo} onChange={(e) => setFormData({ ...formData, modelo: e.target.value })} />
+            </div>
+            {/* Tipo de serviço */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de serviço</label>
+              <select className="input-field" value={formData.tipo_servico} onChange={(e) => setFormData({ ...formData, tipo_servico: e.target.value })}>
+                {TIPOS_SERVICO.map((t) => (
+                  <option key={t.value} value={t.value}>{t.icon} {t.label}</option>
+                ))}
+              </select>
+            </div>
+            {/* Mecânico */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Mecânico responsável</label>
+              <select className="input-field" value={formData.funcionario_id} onChange={(e) => setFormData({ ...formData, funcionario_id: e.target.value })}>
+                <option value="">Nenhum</option>
+                {funcionarios.map((f) => (
+                  <option key={f.id} value={f.id}>{f.profile?.nome}{f.especialidade ? ` (${f.especialidade})` : ''}</option>
+                ))}
+              </select>
+            </div>
+            {/* Datas e horários */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Data check-in</label>
+              <input type="date" className="input-field" value={formData.data_inicio} onChange={(e) => setFormData({ ...formData, data_inicio: e.target.value })} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Horário check-in</label>
+              <input type="time" className="input-field" value={formData.hora_inicio} onChange={(e) => setFormData({ ...formData, hora_inicio: e.target.value })} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Data prev. entrega</label>
+              <input type="date" className="input-field" value={formData.data_fim} onChange={(e) => setFormData({ ...formData, data_fim: e.target.value })} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Horário prev. entrega</label>
+              <input type="time" className="input-field" value={formData.hora_fim} onChange={(e) => setFormData({ ...formData, hora_fim: e.target.value })} />
+            </div>
+            {/* Descrição */}
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Descrição (opcional)</label>
+              <input type="text" className="input-field" placeholder="Detalhes do serviço" value={formData.descricao} onChange={(e) => setFormData({ ...formData, descricao: e.target.value })} />
+            </div>
+            {/* Cor */}
+            <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Cor</label>
               <div className="flex gap-2">{CORES_AGENDA.map((c) => (
                 <button key={c} type="button" onClick={() => setFormData({ ...formData, cor: c })}
-                  className={`w-8 h-8 rounded-full ${formData.cor === c ? 'scale-125 ring-2 ring-offset-2 ring-gray-400' : ''}`} style={{ backgroundColor: c }} />
+                  className={`w-8 h-8 rounded-full transition-transform ${formData.cor === c ? 'scale-125 ring-2 ring-offset-2 ring-gray-400' : ''}`} style={{ backgroundColor: c }} />
               ))}</div>
             </div>
           </div>
           <div className="flex justify-end gap-3 mt-6">
             <button onClick={() => setShowForm(false)} className="btn-secondary">Cancelar</button>
-            <button onClick={handleAddEvent} className="btn-primary">Adicionar</button>
+            <button onClick={handleAddEvent} disabled={!formData.data_inicio || !formData.data_fim} className="btn-primary disabled:opacity-50">Adicionar</button>
           </div>
         </div>
       )}
