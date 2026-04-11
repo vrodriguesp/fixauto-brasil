@@ -48,7 +48,7 @@ export default function VeiculosEmServico() {
         result.push(ev);
       }
     }
-    const deduped = [...result, ...seen.values()];
+    const deduped = [...result, ...Array.from(seen.values())];
     // Then filter by mechanic if needed
     if (!isMecanico || !funcionario) return deduped;
     return deduped.filter((e) => e.funcionario_id === funcionario.id);

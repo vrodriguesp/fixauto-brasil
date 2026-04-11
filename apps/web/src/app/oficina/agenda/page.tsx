@@ -93,7 +93,7 @@ export default function AgendaPage() {
         result.push(ev);
       }
     }
-    return [...result, ...seen.values()];
+    return [...result, ...Array.from(seen.values())];
   }, [eventos]);
 
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
