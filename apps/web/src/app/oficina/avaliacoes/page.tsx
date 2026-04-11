@@ -14,13 +14,17 @@ export default function AvaliacoesPage() {
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Avaliações</h1>
       <p className="text-gray-600 mb-8">Veja o que seus clientes dizem sobre seus serviços</p>
 
-      {/* Summary */}
+      {/* Summary - calculated from live data */}
       <div className="card mb-8">
         <div className="flex items-center gap-6">
           <div className="text-center">
-            <p className="text-4xl font-bold text-gray-900">{oficina?.avaliacao_media || 0}</p>
-            <StarRating rating={oficina?.avaliacao_media || 0} size="md" />
-            <p className="text-sm text-gray-500 mt-1">{oficina?.total_avaliacoes || 0} avaliações</p>
+            <p className="text-4xl font-bold text-gray-900">
+              {avaliacoes.length > 0
+                ? (avaliacoes.reduce((sum, a) => sum + a.nota, 0) / avaliacoes.length).toFixed(1)
+                : '0'}
+            </p>
+            <StarRating rating={avaliacoes.length > 0 ? avaliacoes.reduce((sum, a) => sum + a.nota, 0) / avaliacoes.length : 0} size="md" />
+            <p className="text-sm text-gray-500 mt-1">{avaliacoes.length} avaliações</p>
           </div>
           <div className="flex-1">
             {[5, 4, 3, 2, 1].map((star) => {

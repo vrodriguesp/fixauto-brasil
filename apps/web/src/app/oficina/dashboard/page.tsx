@@ -52,10 +52,19 @@ export default function OficinaDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-2 mt-4 sm:mt-0">
-          <StarRating rating={oficina?.avaliacao_media || 0} size="md" />
-          <span className="text-sm text-gray-500">
-            {oficina?.avaliacao_media} ({oficina?.total_avaliacoes} avaliações)
-          </span>
+          {(() => {
+            const media = avaliacoes.length > 0
+              ? avaliacoes.reduce((sum, a) => sum + a.nota, 0) / avaliacoes.length
+              : 0;
+            return (
+              <>
+                <StarRating rating={media} size="md" />
+                <span className="text-sm text-gray-500">
+                  {media.toFixed(1)} ({avaliacoes.length} avaliações)
+                </span>
+              </>
+            );
+          })()}
         </div>
       </div>
 

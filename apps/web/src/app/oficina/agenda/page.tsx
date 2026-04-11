@@ -198,7 +198,9 @@ export default function AgendaPage() {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <p className="font-semibold text-gray-900 text-sm">
-                {context === 'checkin' ? 'Check-in' : 'Check-out'} {label}
+                {context === 'checkin'
+                  ? (ev.status === 'em_andamento' ? 'Em serviço' : 'Check-in')
+                  : 'Check-out'} {label}
               </p>
               {ev.tipo === 'plataforma' && (
                 <span className="text-xs bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded">
@@ -371,11 +373,24 @@ export default function AgendaPage() {
                 >
                   <span className={`text-sm font-medium ${isToday ? 'text-primary-600' : 'text-gray-900'}`}>{day}</span>
                   <div className="mt-1 space-y-0.5">
-                    {checkIns.length > 0 && (
-                      <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-green-100 text-green-800 font-medium">
-                        {checkIns.length} Check-in
-                      </div>
-                    )}
+                    {(() => {
+                      const pendentes = checkIns.filter((e) => e.status === 'agendado');
+                      const emServico = checkIns.filter((e) => e.status === 'em_andamento');
+                      return (
+                        <>
+                          {pendentes.length > 0 && (
+                            <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-green-100 text-green-800 font-medium">
+                              {pendentes.length} Check-in
+                            </div>
+                          )}
+                          {emServico.length > 0 && (
+                            <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-blue-100 text-blue-800 font-medium">
+                              {emServico.length} Em serv.
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
                     {checkOuts.length > 0 && (
                       <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-orange-100 text-orange-800 font-medium">
                         {checkOuts.length} Entrega
@@ -404,15 +419,21 @@ export default function AgendaPage() {
 
           {(() => {
             const dayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
-            const chegadas = getCheckInsForDate(dayStr);
+            const allCheckIns = getCheckInsForDate(dayStr);
+            const pendentes = allCheckIns.filter((e) => e.status === 'agendado');
+            const emServico = allCheckIns.filter((e) => e.status === 'em_andamento');
             const saidas = getCheckOutsForDate(dayStr);
 
             return (
               <>
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-3 gap-4 mb-6">
                   <div className="p-4 bg-green-50 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-green-700">{chegadas.length}</p>
+                    <p className="text-2xl font-bold text-green-700">{pendentes.length}</p>
                     <p className="text-xs text-green-600">Check-in</p>
+                  </div>
+                  <div className="p-4 bg-blue-50 rounded-lg text-center">
+                    <p className="text-2xl font-bold text-blue-700">{emServico.length}</p>
+                    <p className="text-xs text-blue-600">Em serviço</p>
                   </div>
                   <div className="p-4 bg-orange-50 rounded-lg text-center">
                     <p className="text-2xl font-bold text-orange-700">{saidas.length}</p>
@@ -420,7 +441,7 @@ export default function AgendaPage() {
                   </div>
                 </div>
 
-                {chegadas.length > 0 && (
+                {pendentes.length > 0 && (
                   <div className="mb-6">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="inline-flex items-center justify-center w-6 h-6 bg-green-100 rounded-full">
@@ -429,11 +450,29 @@ export default function AgendaPage() {
                         </svg>
                       </span>
                       <h4 className="font-semibold text-green-800 text-sm uppercase tracking-wide">
-                        Check-in ({chegadas.length})
+                        Check-in pendente ({pendentes.length})
                       </h4>
                     </div>
                     <div className="space-y-2">
-                      {chegadas.map((ev) => renderEventCard(ev, 'checkin'))}
+                      {pendentes.map((ev) => renderEventCard(ev, 'checkin'))}
+                    </div>
+                  </div>
+                )}
+
+                {emServico.length > 0 && (
+                  <div className="mb-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full">
+                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35" />
+                        </svg>
+                      </span>
+                      <h4 className="font-semibold text-blue-800 text-sm uppercase tracking-wide">
+                        Em serviço ({emServico.length})
+                      </h4>
+                    </div>
+                    <div className="space-y-2">
+                      {emServico.map((ev) => renderEventCard(ev, 'checkin'))}
                     </div>
                   </div>
                 )}
@@ -456,7 +495,7 @@ export default function AgendaPage() {
                   </div>
                 )}
 
-                {chegadas.length === 0 && saidas.length === 0 && (
+                {pendentes.length === 0 && emServico.length === 0 && saidas.length === 0 && (
                   <p className="text-center text-gray-500 py-8">Nenhum check-in ou check-out neste dia</p>
                 )}
               </>
