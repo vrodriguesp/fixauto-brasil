@@ -42,6 +42,7 @@ export default function AgendaPage() {
   const [viewMode, setViewMode] = useState<'month' | 'day' | 'list'>('month');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [assigningId, setAssigningId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [funcionarios, setFuncionarios] = useState<any[]>([]);
 
   const [formData, setFormData] = useState({
@@ -91,8 +92,13 @@ export default function AgendaPage() {
   // - Entregue: data_fim = date AND status = concluido
   const getGroups = (dateStr: string) => {
     const checkinPendente = allEventos.filter(e => e.data_inicio.slice(0, 10) === dateStr && e.status === 'agendado');
-    const checkinFeito = allEventos.filter(e => e.data_inicio.slice(0, 10) === dateStr && (e.status === 'em_andamento' || e.status === 'concluido'));
     const entregue = allEventos.filter(e => e.data_fim.slice(0, 10) === dateStr && e.status === 'concluido');
+    const entregueIds = new Set(entregue.map(e => e.id));
+    // Check-in feito: exclui os que já aparecem em "entregue" no mesmo dia
+    const checkinFeito = allEventos.filter(e =>
+      e.data_inicio.slice(0, 10) === dateStr &&
+      (e.status === 'em_andamento' || (e.status === 'concluido' && !entregueIds.has(e.id)))
+    );
     return { checkinPendente, checkinFeito, entregue };
   };
 
@@ -153,56 +159,106 @@ export default function AgendaPage() {
     const c = sol?.cliente;
     const isUpdating = updatingId === ev.id;
     const note = type === 'entregue' ? deliveryNote(ev) : null;
+    const isExpanded = expandedId === `${ev.id}-${type}`;
 
     return (
-      <div key={`${ev.id}-${type}`} className={`p-3 rounded-lg border ${
+      <div key={`${ev.id}-${type}`} className={`rounded-lg border overflow-hidden ${
         type === 'pendente' ? 'bg-green-50 border-green-200' :
         type === 'feito' ? 'bg-gray-50 border-gray-200' :
         'bg-gray-100 border-gray-300'
       }`}>
-        <div className="flex items-start justify-between">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <p className="font-semibold text-gray-900 text-sm">
-                {type === 'pendente' ? `Check-in ${label}` :
-                 type === 'feito' ? `Check-in feito - ${label}` :
-                 `Entregue - ${label}`}
-              </p>
-              {sol?.tipo && (
-                <span className="text-xs bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded">{sol.tipo}</span>
-              )}
+        {/* Header - always visible, clickable */}
+        <div className="p-3 cursor-pointer hover:opacity-80" onClick={() => setExpandedId(isExpanded ? null : `${ev.id}-${type}`)}>
+          <div className="flex items-start justify-between">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="font-semibold text-gray-900 text-sm">
+                  {type === 'pendente' ? `Check-in ${label}` :
+                   type === 'feito' ? `Check-in feito - ${label}` :
+                   `Entregue - ${label}`}
+                </p>
+                {sol?.tipo && <span className="text-xs bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded">{sol.tipo}</span>}
+              </div>
+              {v && <p className="text-xs text-gray-600 mt-0.5">{v.fipe_marca} {v.fipe_modelo}{v.placa ? ` - ${v.placa}` : ''}</p>}
+              {note && <p className={`text-xs mt-1 font-medium ${note.includes('antes') ? 'text-green-600' : note.includes('depois') ? 'text-red-600' : 'text-gray-500'}`}>{note}</p>}
             </div>
-            {v && <p className="text-xs text-gray-600 mt-0.5">{v.fipe_marca} {v.fipe_modelo}{v.placa ? ` - ${v.placa}` : ''}</p>}
-            {c && <p className="text-xs text-gray-500">{c.nome}</p>}
-            {ev.funcionario?.profile?.nome && <p className="text-xs text-gray-400">Mec: {ev.funcionario.profile.nome}</p>}
-            {note && <p className={`text-xs mt-1 font-medium ${note.includes('antes') ? 'text-green-600' : note.includes('depois') ? 'text-red-600' : 'text-gray-500'}`}>{note}</p>}
-          </div>
-          <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-            {type === 'pendente' && (
-              assigningId === ev.id ? (
-                <div className="flex items-center gap-1">
-                  <select className="input-field !py-1 !px-2 text-xs !w-auto" defaultValue=""
-                    onChange={(e) => handleCheckIn(ev, e.target.value || undefined)}>
-                    <option value="">Sem mecânico</option>
-                    {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.profile?.nome}</option>)}
-                  </select>
-                  <button onClick={() => setAssigningId(null)} className="text-xs text-gray-400">x</button>
-                </div>
-              ) : (
-                <button onClick={() => setAssigningId(ev.id)} disabled={isUpdating}
-                  className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-xs font-medium rounded-lg">
-                  {isUpdating ? '...' : 'Check-in'}
+            <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+              {type === 'pendente' && (
+                assigningId === ev.id ? (
+                  <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                    <select className="input-field !py-1 !px-2 text-xs !w-auto" defaultValue=""
+                      onChange={(e) => handleCheckIn(ev, e.target.value || undefined)}>
+                      <option value="">Sem mecânico</option>
+                      {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.profile?.nome}</option>)}
+                    </select>
+                    <button onClick={(e) => { e.stopPropagation(); setAssigningId(null); }} className="text-xs text-gray-400">x</button>
+                  </div>
+                ) : (
+                  <button onClick={(e) => { e.stopPropagation(); setAssigningId(ev.id); }} disabled={isUpdating}
+                    className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-xs font-medium rounded-lg">
+                    {isUpdating ? '...' : 'Check-in'}
+                  </button>
+                )
+              )}
+              {type === 'feito' && ev.status === 'em_andamento' && (
+                <button onClick={(e) => { e.stopPropagation(); handleCheckOut(ev); }} disabled={isUpdating}
+                  className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white text-xs font-medium rounded-lg">
+                  {isUpdating ? '...' : 'Entrega'}
                 </button>
-              )
-            )}
-            {type === 'feito' && ev.status === 'em_andamento' && (
-              <button onClick={() => handleCheckOut(ev)} disabled={isUpdating}
-                className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white text-xs font-medium rounded-lg">
-                {isUpdating ? '...' : 'Entrega'}
-              </button>
-            )}
+              )}
+              <svg className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
           </div>
         </div>
+        {/* Expanded details */}
+        {isExpanded && (
+          <div className="px-3 pb-3 border-t border-gray-200 pt-3 space-y-2">
+            {c && (
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase">Cliente</p>
+                <p className="text-sm text-gray-900">{c.nome}</p>
+                {c.telefone && <a href={`tel:${c.telefone}`} className="text-xs text-primary-600 hover:underline">{c.telefone}</a>}
+                {c.email && <p className="text-xs text-gray-500">{c.email}</p>}
+              </div>
+            )}
+            {v && (
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase">Veículo</p>
+                <p className="text-sm text-gray-900">{v.fipe_marca} {v.fipe_modelo} {v.fipe_ano || ''}</p>
+                {v.placa && <p className="text-xs text-gray-600">Placa: <span className="font-mono">{v.placa}</span></p>}
+                {v.cor && <p className="text-xs text-gray-600">Cor: {v.cor}</p>}
+              </div>
+            )}
+            <div>
+              <p className="text-xs font-semibold text-gray-500 uppercase">Datas</p>
+              <p className="text-xs text-gray-700">Check-in: {new Date(ev.data_inicio).toLocaleDateString('pt-BR')}</p>
+              <p className="text-xs text-gray-700">Previsão entrega: {ev.data_fim_prevista ? new Date(ev.data_fim_prevista).toLocaleDateString('pt-BR') : new Date(ev.data_fim).toLocaleDateString('pt-BR')}</p>
+              {ev.status === 'concluido' && <p className="text-xs text-gray-700">Entregue em: {new Date(ev.data_fim).toLocaleDateString('pt-BR')}</p>}
+            </div>
+            {ev.funcionario?.profile?.nome && (
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase">Mecânico</p>
+                <p className="text-sm text-gray-900">{ev.funcionario.profile.nome}</p>
+              </div>
+            )}
+            {sol?.descricao && (
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase">Descrição</p>
+                <p className="text-xs text-gray-700">{sol.descricao}</p>
+              </div>
+            )}
+            {ev.solicitacao_id && (
+              <div className="pt-2 flex gap-2">
+                <a href={`/oficina/mensagens/${ev.solicitacao_id}`}
+                  className="text-xs text-primary-600 hover:text-primary-700 font-medium">Mensagem</a>
+                <a href={`/oficina/solicitacoes/${ev.solicitacao_id}`}
+                  className="text-xs text-gray-600 hover:text-gray-700 font-medium">Ver solicitação</a>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     );
   };
