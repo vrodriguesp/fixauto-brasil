@@ -364,13 +364,13 @@ export default function EnviarOrcamentoPage() {
         </div>
 
         {/* Disponibilidade */}
-        {solicitacao.status === 'em_andamento' || solicitacao.status === 'aceita' ? (
+        {solicitacao.status === 'em_andamento' ? (
           <div className="card mb-6">
             <div className="bg-blue-50 rounded-lg p-4 flex items-center gap-3">
               <span className="text-2xl">🔧</span>
               <div>
-                <p className="font-semibold text-blue-800">Veiculo ja na oficina</p>
-                <p className="text-sm text-blue-600">O check-in ja foi realizado. O novo orcamento sera aplicado ao servico em andamento.</p>
+                <p className="font-semibold text-blue-800">Veículo já na oficina</p>
+                <p className="text-sm text-blue-600">O check-in já foi realizado. O novo orçamento será aplicado ao serviço em andamento.</p>
               </div>
             </div>
           </div>

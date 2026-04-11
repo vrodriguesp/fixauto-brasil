@@ -53,8 +53,16 @@ export async function POST(req: NextRequest) {
       .eq('status', 'enviado');
 
     // 5. Find the chosen slot and create agenda entry
+    //    Delete any existing agenda for this solicitacao to avoid duplicates (e.g. re-quote)
     const slot = orc.disponibilidade?.find((s: { id: string }) => s.id === slotId);
     if (slot) {
+      await supabaseAdmin
+        .from('agenda')
+        .delete()
+        .eq('solicitacao_id', orc.solicitacao_id)
+        .eq('oficina_id', orc.oficina_id)
+        .in('status', ['agendado']);
+
       const { error: agendaError } = await supabaseAdmin.from('agenda').insert({
         oficina_id: orc.oficina_id,
         solicitacao_id: orc.solicitacao_id,

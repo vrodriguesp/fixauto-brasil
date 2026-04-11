@@ -4,16 +4,17 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
+import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { formatDate, getUrgenciaColor } from '@/lib/utils';
 
 export default function SolicitacaoDetalhePage() {
   const params = useParams();
+  const { oficina } = useAuth();
   const { solicitacoes } = useSolicitacoes();
   const solicitacao = solicitacoes.find((s) => s.id === params.id);
 
-  // Direct fetch as fallback when the hook doesn't return this solicitation
   const [directSol, setDirectSol] = useState<any>(null);
   useEffect(() => {
     if (!solicitacao && params.id) {
@@ -40,6 +41,24 @@ export default function SolicitacaoDetalhePage() {
     );
   }
 
+  const v = sol.veiculo;
+  const myQuote = sol.orcamentos?.find((o: any) => o.oficina_id === oficina?.id);
+  const isAccepted = myQuote?.status === 'aceito';
+  const isEmAndamento = sol.status === 'em_andamento';
+
+  // Determine button label and availability
+  const getActionButton = () => {
+    if (isAccepted || isEmAndamento) {
+      return { label: 'Refazer Orçamento', href: `/oficina/enviar-orcamento/${sol.id}` };
+    }
+    if (myQuote) {
+      return { label: 'Revisar Orçamento', href: `/oficina/enviar-orcamento/${sol.id}` };
+    }
+    return { label: 'Enviar Orçamento', href: `/oficina/enviar-orcamento/${sol.id}` };
+  };
+
+  const action = getActionButton();
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Link href="/oficina/solicitacoes" className="flex items-center gap-1 text-gray-500 hover:text-gray-700 mb-4">
@@ -52,7 +71,7 @@ export default function SolicitacaoDetalhePage() {
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            {sol.veiculo?.fipe_marca} {sol.veiculo?.fipe_modelo}
+            {v ? `${v.fipe_marca} ${v.fipe_modelo}` : 'Veículo'}
           </h1>
           <div className="flex items-center gap-2 mt-2">
             <StatusBadge status={sol.status} />
@@ -69,28 +88,26 @@ export default function SolicitacaoDetalhePage() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
-            Enviar Mensagem
+            Mensagem
           </Link>
-          <Link href={`/oficina/enviar-orcamento/${sol.id}`} className="btn-primary">
-            Enviar Orçamento
-          </Link>
+          {sol.status !== 'concluida' && sol.status !== 'cancelada' && (
+            <Link href={action.href} className={isAccepted ? 'btn-secondary' : 'btn-primary'}>
+              {action.label}
+            </Link>
+          )}
         </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          {/* Description */}
           <div className="card">
             <h2 className="font-semibold text-gray-900 mb-2">Descrição do problema</h2>
             <p className="text-gray-600">{sol.descricao}</p>
           </div>
 
-          {/* Photos */}
           {sol.fotos && sol.fotos.length > 0 && (
             <div className="card">
-              <h2 className="font-semibold text-gray-900 mb-3">
-                Fotos ({sol.fotos.length})
-              </h2>
+              <h2 className="font-semibold text-gray-900 mb-3">Fotos ({sol.fotos.length})</h2>
               <div className="grid grid-cols-3 gap-3">
                 {sol.fotos.map((foto: any) => (
                   <a key={foto.id} href={foto.foto_url} target="_blank" rel="noopener noreferrer" className="aspect-square bg-gray-200 rounded-lg overflow-hidden block">
@@ -114,38 +131,42 @@ export default function SolicitacaoDetalhePage() {
         <div className="space-y-6">
           <div className="card">
             <h2 className="font-semibold text-gray-900 mb-3">Informações do veículo</h2>
-            <dl className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <dt className="text-gray-500">Marca</dt>
-                <dd className="text-gray-900">{sol.veiculo?.fipe_marca}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-gray-500">Modelo</dt>
-                <dd className="text-gray-900">{sol.veiculo?.fipe_modelo}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-gray-500">Ano</dt>
-                <dd className="text-gray-900">{sol.veiculo?.fipe_ano}</dd>
-              </div>
-              {sol.veiculo?.placa && (
+            {v ? (
+              <dl className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <dt className="text-gray-500">Placa</dt>
-                  <dd className="text-gray-900">{sol.veiculo.placa}</dd>
+                  <dt className="text-gray-500">Marca</dt>
+                  <dd className="text-gray-900">{v.fipe_marca || '-'}</dd>
                 </div>
-              )}
-              {sol.veiculo?.cor && (
                 <div className="flex justify-between">
-                  <dt className="text-gray-500">Cor</dt>
-                  <dd className="text-gray-900">{sol.veiculo.cor}</dd>
+                  <dt className="text-gray-500">Modelo</dt>
+                  <dd className="text-gray-900">{v.fipe_modelo || '-'}</dd>
                 </div>
-              )}
-              {sol.veiculo?.fipe_valor && (
                 <div className="flex justify-between">
-                  <dt className="text-gray-500">Valor FIPE</dt>
-                  <dd className="text-green-600 font-medium">{sol.veiculo.fipe_valor}</dd>
+                  <dt className="text-gray-500">Ano</dt>
+                  <dd className="text-gray-900">{v.fipe_ano || '-'}</dd>
                 </div>
-              )}
-            </dl>
+                {v.placa && (
+                  <div className="flex justify-between">
+                    <dt className="text-gray-500">Placa</dt>
+                    <dd className="text-gray-900 font-mono">{v.placa}</dd>
+                  </div>
+                )}
+                {v.cor && (
+                  <div className="flex justify-between">
+                    <dt className="text-gray-500">Cor</dt>
+                    <dd className="text-gray-900">{v.cor}</dd>
+                  </div>
+                )}
+                {v.fipe_valor && (
+                  <div className="flex justify-between">
+                    <dt className="text-gray-500">Valor FIPE</dt>
+                    <dd className="text-green-600 font-medium">{v.fipe_valor}</dd>
+                  </div>
+                )}
+              </dl>
+            ) : (
+              <p className="text-sm text-gray-400">Dados do veículo não disponíveis</p>
+            )}
           </div>
 
           <div className="card">
@@ -153,11 +174,11 @@ export default function SolicitacaoDetalhePage() {
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
                 <span className="text-gray-600 font-semibold">
-                  {sol.cliente?.nome?.charAt(0)}
+                  {sol.cliente?.nome?.charAt(0) || '?'}
                 </span>
               </div>
               <div>
-                <p className="font-medium text-gray-900 text-sm">{sol.cliente?.nome}</p>
+                <p className="font-medium text-gray-900 text-sm">{sol.cliente?.nome || 'Cliente'}</p>
                 <p className="text-xs text-gray-500">{sol.endereco}</p>
               </div>
             </div>

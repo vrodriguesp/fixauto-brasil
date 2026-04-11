@@ -130,6 +130,7 @@ export function useOrcamentos() {
         revisao_numero: input.revisao_numero,
         revisado_em: new Date().toISOString(),
         status: 'enviado',
+        disponibilidade_escolhida_id: null,
       })
       .eq('id', orcamentoId);
 
