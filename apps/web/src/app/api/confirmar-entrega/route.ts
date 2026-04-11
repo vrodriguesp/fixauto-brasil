@@ -45,6 +45,46 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // 5. Register commission
+    if (solicitacaoId) {
+      try {
+        // Find the accepted orcamento
+        const { data: orc } = await supabaseAdmin
+          .from('orcamentos')
+          .select('id, oficina_id, valor_total')
+          .eq('solicitacao_id', solicitacaoId)
+          .eq('status', 'aceito')
+          .single();
+
+        if (orc) {
+          // Get or calculate commission rate
+          let taxa = 0.10; // default 10%
+          const { data: config } = await supabaseAdmin
+            .from('comissao_config')
+            .select('taxa_calculada, taxa_fixa_override, usa_override')
+            .eq('oficina_id', orc.oficina_id)
+            .single();
+
+          if (config) {
+            taxa = config.usa_override && config.taxa_fixa_override != null
+              ? config.taxa_fixa_override
+              : config.taxa_calculada;
+          }
+
+          // Insert commission entry
+          await supabaseAdmin.from('comissao_lancamento').insert({
+            oficina_id: orc.oficina_id,
+            solicitacao_id: solicitacaoId,
+            orcamento_id: orc.id,
+            valor_servico: orc.valor_total,
+            taxa_aplicada: taxa,
+            valor_comissao: Math.round(orc.valor_total * taxa * 100) / 100,
+            status: 'pendente',
+          }).then(() => {}).catch(() => {}); // non-blocking
+        }
+      } catch { /* non-blocking */ }
+    }
+
     return NextResponse.json({ success: true });
   } catch (err) {
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });

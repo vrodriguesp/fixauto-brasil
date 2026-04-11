@@ -60,6 +60,7 @@ export default function Navbar() {
                       <NavLink href="/oficina/veiculos-em-servico">Oficina</NavLink>
                       <NavLink href="/oficina/agenda">Agenda</NavLink>
                       <NavLink href="/oficina/equipe">Equipe</NavLink>
+                      <NavLink href="/oficina/comissao">Comissão</NavLink>
                       <NavLink href="/oficina/avaliacoes">Avaliações</NavLink>
                       <NavLink href="/oficina/perfil">Perfil</NavLink>
                     </>
@@ -156,6 +157,7 @@ export default function Navbar() {
                   <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>Agenda</MobileNavLink>
                   <MobileNavLink href="/oficina/equipe" onClick={() => setMenuOpen(false)}>Equipe</MobileNavLink>
                   <MobileNavLink href="/oficina/checkin" onClick={() => setMenuOpen(false)}>Check-in Manual</MobileNavLink>
+                  <MobileNavLink href="/oficina/comissao" onClick={() => setMenuOpen(false)}>Comissão</MobileNavLink>
                   <MobileNavLink href="/oficina/avaliacoes" onClick={() => setMenuOpen(false)}>Avaliações</MobileNavLink>
                   <MobileNavLink href="/oficina/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
                 </>
