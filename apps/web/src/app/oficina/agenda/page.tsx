@@ -161,11 +161,12 @@ export default function AgendaPage() {
     const note = type === 'entregue' ? deliveryNote(ev) : null;
     const isExpanded = expandedId === `${ev.id}-${type}`;
 
+    const eventName = placa || c?.nome?.split(' ').pop() || ev.titulo || '';
     const title = type === 'pendente'
-      ? `Check-in ${placa || c?.nome?.split(' ').pop() || ''}`
+      ? `Check-in ${eventName}`
       : type === 'feito'
-      ? `Check-in feito ${placa || c?.nome?.split(' ').pop() || ''}`
-      : `Entregue ${placa || c?.nome?.split(' ').pop() || ''}`;
+      ? `Check-in feito ${eventName}`
+      : `Entregue ${eventName}`;
 
     return (
       <div key={`${ev.id}-${type}`} className={`rounded-lg border overflow-hidden ${
