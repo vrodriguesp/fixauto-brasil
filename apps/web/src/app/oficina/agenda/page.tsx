@@ -43,6 +43,8 @@ export default function AgendaPage() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [assigningId, setAssigningId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editData, setEditData] = useState<any>(null);
   const [funcionarios, setFuncionarios] = useState<any[]>([]);
 
   const [formData, setFormData] = useState({
@@ -178,6 +180,41 @@ export default function AgendaPage() {
     return stats;
   }, [allEventos, year, month]);
 
+  const startEdit = (ev: any) => {
+    setEditingId(ev.id);
+    setEditData({
+      titulo: ev.titulo || '',
+      descricao: ev.descricao || '',
+      data_inicio: ev.data_inicio.slice(0, 10),
+      hora_inicio: ev.data_inicio.slice(11, 16) || '08:00',
+      data_fim: ev.data_fim.slice(0, 10),
+      hora_fim: ev.data_fim.slice(11, 16) || '18:00',
+      funcionario_id: ev.funcionario_id || '',
+      cor: ev.cor || '#3B82F6',
+    });
+  };
+
+  const handleSaveEdit = async (evId: string) => {
+    if (!editData) return;
+    setUpdatingId(evId);
+    await updateEvento(evId, {
+      titulo: editData.titulo,
+      descricao: editData.descricao || null,
+      data_inicio: `${editData.data_inicio}T${editData.hora_inicio}:00Z`,
+      data_fim: `${editData.data_fim}T${editData.hora_fim}:00Z`,
+      funcionario_id: editData.funcionario_id || null,
+      cor: editData.cor,
+    });
+    setEditingId(null);
+    setEditData(null);
+    setUpdatingId(null);
+  };
+
+  const handleDeleteEvent = async (evId: string) => {
+    if (!confirm('Excluir este evento?')) return;
+    await removeEvento(evId);
+  };
+
   const STATUS_LABEL: Record<string, string> = { agendado: 'Agendado', em_andamento: 'Em andamento', concluido: 'Entregue' };
 
   const renderCard = (ev: any, type: 'pendente' | 'feito' | 'entregue') => {
@@ -252,47 +289,112 @@ export default function AgendaPage() {
         </div>
         {/* Expanded details */}
         {isExpanded && (
-          <div className="px-3 pb-3 border-t border-gray-200 pt-3 space-y-2">
-            {c && (
-              <div>
-                <p className="text-xs font-semibold text-gray-500 uppercase">Cliente</p>
-                <p className="text-sm text-gray-900">{c.nome}</p>
-                {c.telefone && <a href={`tel:${c.telefone}`} className="text-xs text-primary-600 hover:underline">{c.telefone}</a>}
-                {c.email && <p className="text-xs text-gray-500">{c.email}</p>}
+          <div className="px-3 pb-3 border-t border-gray-200 pt-3">
+            {editingId === ev.id && editData ? (
+              /* Edit mode - external events only */
+              <div className="space-y-3">
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Título</label>
+                    <input type="text" className="input-field !py-1.5 text-sm" value={editData.titulo} onChange={(e) => setEditData({ ...editData, titulo: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Data check-in</label>
+                    <input type="date" className="input-field !py-1.5 text-sm" value={editData.data_inicio} onChange={(e) => setEditData({ ...editData, data_inicio: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Horário</label>
+                    <input type="time" className="input-field !py-1.5 text-sm" value={editData.hora_inicio} onChange={(e) => setEditData({ ...editData, hora_inicio: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Data prev. entrega</label>
+                    <input type="date" className="input-field !py-1.5 text-sm" value={editData.data_fim} onChange={(e) => setEditData({ ...editData, data_fim: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Horário</label>
+                    <input type="time" className="input-field !py-1.5 text-sm" value={editData.hora_fim} onChange={(e) => setEditData({ ...editData, hora_fim: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Mecânico</label>
+                    <select className="input-field !py-1.5 text-sm" value={editData.funcionario_id} onChange={(e) => setEditData({ ...editData, funcionario_id: e.target.value })}>
+                      <option value="">Nenhum</option>
+                      {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.profile?.nome}</option>)}
+                    </select>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Descrição</label>
+                    <input type="text" className="input-field !py-1.5 text-sm" value={editData.descricao} onChange={(e) => setEditData({ ...editData, descricao: e.target.value })} />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Cor</label>
+                    <div className="flex gap-2">{CORES_AGENDA.map((co) => (
+                      <button key={co} type="button" onClick={() => setEditData({ ...editData, cor: co })}
+                        className={`w-6 h-6 rounded-full transition-transform ${editData.cor === co ? 'scale-125 ring-2 ring-offset-1 ring-gray-400' : ''}`} style={{ backgroundColor: co }} />
+                    ))}</div>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 pt-2">
+                  <button onClick={() => { setEditingId(null); setEditData(null); }} className="btn-secondary !py-1.5 !px-3 text-xs">Cancelar</button>
+                  <button onClick={() => handleSaveEdit(ev.id)} disabled={isUpdating} className="btn-primary !py-1.5 !px-3 text-xs disabled:opacity-50">
+                    {isUpdating ? '...' : 'Salvar'}
+                  </button>
+                </div>
               </div>
-            )}
-            {v && (
-              <div>
-                <p className="text-xs font-semibold text-gray-500 uppercase">Veículo</p>
-                <p className="text-sm text-gray-900">{v.fipe_marca} {v.fipe_modelo} {v.fipe_ano || ''}</p>
-                {v.placa && <p className="text-xs text-gray-600">Placa: <span className="font-mono">{v.placa}</span></p>}
-                {v.cor && <p className="text-xs text-gray-600">Cor: {v.cor}</p>}
-              </div>
-            )}
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase">Datas</p>
-              <p className="text-xs text-gray-700">Check-in: {new Date(ev.data_inicio).toLocaleDateString('pt-BR')}</p>
-              <p className="text-xs text-gray-700">Previsão entrega: {ev.data_fim_prevista ? new Date(ev.data_fim_prevista).toLocaleDateString('pt-BR') : new Date(ev.data_fim).toLocaleDateString('pt-BR')}</p>
-              {ev.status === 'concluido' && <p className="text-xs text-gray-700">Entregue em: {new Date(ev.data_fim).toLocaleDateString('pt-BR')}</p>}
-            </div>
-            {ev.funcionario?.profile?.nome && (
-              <div>
-                <p className="text-xs font-semibold text-gray-500 uppercase">Mecânico</p>
-                <p className="text-sm text-gray-900">{ev.funcionario.profile.nome}</p>
-              </div>
-            )}
-            {sol?.descricao && (
-              <div>
-                <p className="text-xs font-semibold text-gray-500 uppercase">Descrição</p>
-                <p className="text-xs text-gray-700">{sol.descricao}</p>
-              </div>
-            )}
-            {ev.solicitacao_id && (
-              <div className="pt-2 flex gap-2">
-                <a href={`/oficina/mensagens/${ev.solicitacao_id}`}
-                  className="text-xs text-primary-600 hover:text-primary-700 font-medium">Mensagem</a>
-                <a href={`/oficina/solicitacoes/${ev.solicitacao_id}`}
-                  className="text-xs text-gray-600 hover:text-gray-700 font-medium">Ver solicitação</a>
+            ) : (
+              /* View mode */
+              <div className="space-y-2">
+                {c && (
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">Cliente</p>
+                    <p className="text-sm text-gray-900">{c.nome}</p>
+                    {c.telefone && <a href={`tel:${c.telefone}`} className="text-xs text-primary-600 hover:underline">{c.telefone}</a>}
+                  </div>
+                )}
+                {v && (
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">Veículo</p>
+                    <p className="text-sm text-gray-900">{v.fipe_marca} {v.fipe_modelo} {v.fipe_ano || ''}</p>
+                    {v.placa && <p className="text-xs text-gray-600">Placa: <span className="font-mono">{v.placa}</span></p>}
+                  </div>
+                )}
+                {!c && !v && ev.descricao && (
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">Descrição</p>
+                    <p className="text-xs text-gray-700">{ev.descricao}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 uppercase">Datas</p>
+                  <p className="text-xs text-gray-700">Check-in: {new Date(ev.data_inicio).toLocaleDateString('pt-BR')} {new Date(ev.data_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+                  <p className="text-xs text-gray-700">Prev. entrega: {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleDateString('pt-BR')} {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+                  {ev.status === 'concluido' && <p className="text-xs text-gray-700">Entregue: {new Date(ev.data_fim).toLocaleDateString('pt-BR')}</p>}
+                </div>
+                {ev.funcionario?.profile?.nome && (
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">Mecânico</p>
+                    <p className="text-sm text-gray-900">{ev.funcionario.profile.nome}</p>
+                  </div>
+                )}
+                {sol?.descricao && (
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">Descrição</p>
+                    <p className="text-xs text-gray-700">{sol.descricao}</p>
+                  </div>
+                )}
+                <div className="pt-2 flex gap-2">
+                  {ev.solicitacao_id && (
+                    <>
+                      <a href={`/oficina/mensagens/${ev.solicitacao_id}`} className="text-xs text-primary-600 hover:text-primary-700 font-medium">Mensagem</a>
+                      <a href={`/oficina/solicitacoes/${ev.solicitacao_id}`} className="text-xs text-gray-600 hover:text-gray-700 font-medium">Ver solicitação</a>
+                    </>
+                  )}
+                  {ev.tipo === 'externo' && (
+                    <>
+                      <button onClick={(e) => { e.stopPropagation(); startEdit(ev); }} className="text-xs text-blue-600 hover:text-blue-700 font-medium">Editar</button>
+                      <button onClick={(e) => { e.stopPropagation(); handleDeleteEvent(ev.id); }} className="text-xs text-red-600 hover:text-red-700 font-medium">Excluir</button>
+                    </>
+                  )}
+                </div>
               </div>
             )}
           </div>
