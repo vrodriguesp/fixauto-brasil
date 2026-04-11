@@ -12,7 +12,7 @@ const SEVERITY_CONFIG: Record<string, { label: string; color: string }> = {
 };
 
 export default function DamageAnalysis({ solicitacaoId }: { solicitacaoId: string }) {
-  const { analise, loading, analyzing, analisar } = useAnaliseDano(solicitacaoId);
+  const { analise, loading, analyzing, error, analisar } = useAnaliseDano(solicitacaoId);
   const [showChecklist, setShowChecklist] = useState(false);
 
   if (loading) {
@@ -29,12 +29,17 @@ export default function DamageAnalysis({ solicitacaoId }: { solicitacaoId: strin
       <div className="card">
         <h2 className="font-semibold text-gray-900 mb-2">Análise IA do Dano</h2>
         <p className="text-sm text-gray-500 mb-3">Use inteligência artificial para analisar as fotos do dano.</p>
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-2 mb-3">
+            <p className="text-xs text-red-800">{error}</p>
+          </div>
+        )}
         <button
           onClick={analisar}
           disabled={analyzing}
           className="btn-primary text-sm !py-2 w-full disabled:opacity-50"
         >
-          {analyzing ? 'Analisando...' : 'Analisar com IA'}
+          {analyzing ? 'Analisando fotos...' : error ? 'Tentar novamente' : 'Analisar com IA'}
         </button>
       </div>
     );

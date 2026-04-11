@@ -23,9 +23,12 @@ export function useAnaliseDano(solicitacaoId: string | undefined) {
       });
   }, [solicitacaoId]);
 
+  const [error, setError] = useState<string | null>(null);
+
   const analisar = async () => {
     if (!solicitacaoId || analyzing) return;
     setAnalyzing(true);
+    setError(null);
     try {
       const res = await fetch('/api/analisar-dano', {
         method: 'POST',
@@ -33,10 +36,16 @@ export function useAnaliseDano(solicitacaoId: string | undefined) {
         body: JSON.stringify({ solicitacao_id: solicitacaoId }),
       });
       const data = await res.json();
-      if (data.analise) setAnalise(data.analise as AnaliseDano);
-    } catch { /* non-blocking */ }
+      if (data.analise) {
+        setAnalise(data.analise as AnaliseDano);
+      } else {
+        setError(data.error || 'Erro ao analisar');
+      }
+    } catch (err) {
+      setError((err as Error).message);
+    }
     setAnalyzing(false);
   };
 
-  return { analise, loading, analyzing, analisar };
+  return { analise, loading, analyzing, error, analisar };
 }
