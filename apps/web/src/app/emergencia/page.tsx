@@ -8,11 +8,10 @@ import { supabase } from '@/lib/supabase';
 export default function EmergenciaPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const { user, isLoggedIn } = useAuth();
 
-  // If logged in, start at step 1 (photos); if not, step 1 too but step 2 will ask contact info
   const [step, setStep] = useState(1);
-
   const [fotos, setFotos] = useState<{ file: File; preview: string }[]>([]);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -23,8 +22,8 @@ export default function EmergenciaPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [emergenciaId, setEmergenciaId] = useState<string | null>(null);
+  const [coords, setCoords] = useState({ lat: -23.5505, lon: -46.6333 });
 
-  // Pre-fill contact info if user is logged in
   useEffect(() => {
     if (isLoggedIn && user) {
       setNome(user.nome);
@@ -32,6 +31,19 @@ export default function EmergenciaPage() {
       setTelefone(user.telefone || '');
     }
   }, [isLoggedIn, user]);
+
+  // Auto-detect location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+          if (!localizacao) setLocalizacao('Localização detectada automaticamente');
+        },
+        () => { /* fallback to default SP coords */ }
+      );
+    }
+  }, []);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -42,6 +54,7 @@ export default function EmergenciaPage() {
     }));
     setFotos((prev) => [...prev, ...newFotos]);
     if (fileInputRef.current) fileInputRef.current.value = '';
+    if (cameraInputRef.current) cameraInputRef.current.value = '';
   };
 
   const removePhoto = (index: number) => {
@@ -54,25 +67,19 @@ export default function EmergenciaPage() {
   };
 
   const handleNext = () => {
-    if (isLoggedIn && step === 1) {
-      // Skip contact info step for logged-in users
-      setStep(3);
-    } else {
-      setStep(step + 1);
-    }
+    if (isLoggedIn && step === 1) setStep(3);
+    else setStep(step + 1);
   };
 
   const handleBack = () => {
-    if (isLoggedIn && step === 3) {
-      setStep(1);
-    } else {
-      setStep(step - 1);
-    }
+    if (isLoggedIn && step === 3) setStep(1);
+    else setStep(step - 1);
   };
 
-  const uploadPhotos = async (emergenciaId: string) => {
+  const uploadPhotos = async (emergId: string) => {
+    const urls: string[] = [];
     for (const foto of fotos) {
-      const fileName = `emergencia/${emergenciaId}/${Date.now()}-${foto.file.name}`;
+      const fileName = `emergencia/${emergId}/${Date.now()}-${foto.file.name}`;
       const { data: uploadData } = await supabase.storage
         .from('damage-photos')
         .upload(fileName, foto.file);
@@ -83,82 +90,109 @@ export default function EmergenciaPage() {
           .getPublicUrl(uploadData.path);
 
         await supabase.from('emergencia_fotos').insert({
-          emergencia_id: emergenciaId,
+          emergencia_id: emergId,
           foto_url: publicUrl,
         });
+        urls.push(publicUrl);
       }
     }
+    return urls;
   };
 
   const handleSubmit = async () => {
     setSubmitting(true);
     setError('');
 
-    // 1. Create emergencia record
-    const { data: emergencia, error: emergError } = await supabase
-      .from('emergencias')
-      .insert({
-        profile_id: user?.id || null,
-        nome,
-        email,
-        telefone,
-        descricao: descricao || null,
-        endereco: localizacao,
-        latitude: -23.5505,
-        longitude: -46.6333,
-      })
-      .select()
-      .single();
+    try {
+      // 1. Create emergencia
+      const { data: emergencia, error: emergError } = await supabase
+        .from('emergencias')
+        .insert({
+          profile_id: user?.id || null,
+          nome,
+          email,
+          telefone,
+          descricao: descricao || null,
+          endereco: localizacao,
+          latitude: coords.lat,
+          longitude: coords.lon,
+          prioridade: 'urgente',
+        })
+        .select()
+        .single();
 
-    if (emergError || !emergencia) {
-      setError(emergError?.message || 'Erro ao registrar emergência');
-      setSubmitting(false);
-      return;
-    }
+      if (emergError || !emergencia) {
+        setError(emergError?.message || 'Erro ao registrar emergência');
+        setSubmitting(false);
+        return;
+      }
 
-    setEmergenciaId(emergencia.id);
+      setEmergenciaId(emergencia.id);
 
-    // 2. Upload photos
-    if (fotos.length > 0) {
-      await uploadPhotos(emergencia.id);
-    }
+      // 2. Upload photos
+      const photoUrls = fotos.length > 0 ? await uploadPhotos(emergencia.id) : [];
 
-    // 3. If user is logged in and has vehicles, create a solicitação automatically
-    if (user) {
-      const { data: veiculos } = await supabase
-        .from('veiculos')
-        .select('id')
-        .eq('profile_id', user.id)
-        .limit(1);
+      // 3. Create solicitação (for logged-in users)
+      let solicitacaoId: string | null = null;
+      if (user) {
+        // Get first vehicle or create solicitação without vehicle
+        const { data: veiculos } = await supabase
+          .from('veiculos')
+          .select('id')
+          .eq('profile_id', user.id)
+          .limit(1);
 
-      if (veiculos && veiculos.length > 0) {
-        const { data: solicitacao } = await supabase
-          .from('solicitacoes')
-          .insert({
-            cliente_id: user.id,
-            veiculo_id: veiculos[0].id,
-            tipo: 'colisao',
-            descricao: descricao || 'Emergência - Colisão registrada pelo fluxo "Acabei de bater"',
-            urgencia: 'alta',
-            latitude: -23.5505,
-            longitude: -46.6333,
-            endereco: localizacao,
-          })
-          .select()
-          .single();
+        const veiculoId = veiculos?.[0]?.id;
 
-        if (solicitacao) {
-          // Link solicitação to emergencia
-          await supabase
-            .from('emergencias')
-            .update({ solicitacao_id: solicitacao.id })
-            .eq('id', emergencia.id);
+        if (veiculoId) {
+          const { data: sol } = await supabase
+            .from('solicitacoes')
+            .insert({
+              cliente_id: user.id,
+              veiculo_id: veiculoId,
+              tipo: 'colisao',
+              descricao: descricao || 'Emergência - Colisão registrada pelo fluxo "Acabei de bater"',
+              urgencia: 'alta',
+              latitude: coords.lat,
+              longitude: coords.lon,
+              endereco: localizacao,
+              emergencia_id: emergencia.id,
+            })
+            .select()
+            .single();
+
+          if (sol) {
+            solicitacaoId = sol.id;
+            await supabase.from('emergencias').update({ solicitacao_id: sol.id }).eq('id', emergencia.id);
+
+            // Copy emergency photos to solicitacao_fotos
+            for (const url of photoUrls) {
+              await supabase.from('solicitacao_fotos').insert({
+                solicitacao_id: sol.id,
+                foto_url: url,
+              });
+            }
+          }
         }
       }
-    }
 
-    setSubmitting(false);
-    setSubmitted(true);
+      // 4. NOTIFY nearby oficinas
+      await fetch('/api/notificar-oficinas-emergencia', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          emergenciaId: emergencia.id,
+          latitude: coords.lat,
+          longitude: coords.lon,
+        }),
+      }).catch(() => { /* non-blocking */ });
+
+      setSubmitting(false);
+      setSubmitted(true);
+    } catch (err) {
+      setError((err as Error).message);
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -171,17 +205,13 @@ export default function EmergenciaPage() {
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Emergência registrada!</h1>
         <p className="text-gray-600 mb-6">
-          Oficinas próximas a você foram notificadas e enviarão orçamentos em breve.
-          {isLoggedIn
-            ? ' Você pode acompanhar pelo dashboard.'
-            : ' Você receberá por email e poderá acompanhar pelo app.'}
+          Oficinas próximas foram notificadas e enviarão orçamentos em breve.
         </p>
 
         <div className="card text-left mb-6">
           <h2 className="font-semibold text-gray-900 mb-3">Próximo passo</h2>
           <p className="text-sm text-gray-600 mb-4">
-            Registre o outro veículo envolvido no acidente para trocar informações,
-            ver orçamentos e entrar em acordo sobre a reparação.
+            Registre o outro veículo envolvido no acidente para trocar informações.
           </p>
           <button
             onClick={() => router.push(`/emergencia/acidente/${emergenciaId}`)}
@@ -192,19 +222,16 @@ export default function EmergenciaPage() {
         </div>
 
         {isLoggedIn ? (
-          <button
-            onClick={() => router.push('/cliente/dashboard')}
-            className="btn-secondary w-full"
-          >
+          <button onClick={() => router.push('/cliente/dashboard')} className="btn-secondary w-full">
             Ir para o Dashboard
           </button>
         ) : (
-          <button
-            onClick={() => router.push('/cadastro?tipo=cliente')}
-            className="btn-secondary w-full"
-          >
-            Criar minha conta para acompanhar
-          </button>
+          <div className="space-y-3">
+            <p className="text-sm text-gray-500">Crie uma conta para acompanhar os orçamentos e escolher uma oficina.</p>
+            <button onClick={() => router.push('/cadastro?tipo=cliente')} className="btn-primary w-full">
+              Criar minha conta
+            </button>
+          </div>
         )}
       </div>
     );
@@ -212,7 +239,6 @@ export default function EmergenciaPage() {
 
   return (
     <div className="min-h-[80vh]">
-      {/* Red header */}
       <div className="bg-red-600 text-white py-6">
         <div className="max-w-2xl mx-auto px-4">
           <div className="flex items-center gap-3">
@@ -228,14 +254,13 @@ export default function EmergenciaPage() {
           </div>
           {isLoggedIn && (
             <div className="mt-3 bg-white/10 rounded-lg px-3 py-2 text-sm">
-              Logado como <strong>{user?.nome}</strong> - seus dados já foram preenchidos
+              Logado como <strong>{user?.nome}</strong>
             </div>
           )}
         </div>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-8">
-        {/* Step indicators */}
         <div className="flex items-center gap-2 mb-8">
           {(isLoggedIn ? [1, 3] : [1, 2, 3]).map((s, i) => (
             <div key={s} className="flex-1">
@@ -254,37 +279,42 @@ export default function EmergenciaPage() {
         )}
 
         <div className="card">
-          {/* Step 1: Photos */}
           {step === 1 && (
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">Tire fotos do acidente</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">Fotos do acidente</h2>
               <p className="text-sm text-gray-500 mb-4">
-                Fotografe os danos no seu veículo e, se possível, a cena do acidente
+                Tire fotos agora ou escolha da galeria
               </p>
 
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                capture="environment"
-                className="hidden"
-                onChange={handlePhotoUpload}
-              />
+              {/* Camera input (capture) */}
+              <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoUpload} />
+              {/* Gallery input (no capture) */}
+              <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload} />
 
               {fotos.length === 0 ? (
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-16 border-2 border-dashed border-red-300 rounded-xl flex flex-col items-center justify-center hover:border-red-400 hover:bg-red-50 transition-colors"
-                >
-                  <svg className="w-16 h-16 text-red-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <p className="text-red-600 font-semibold text-lg">Tirar foto ou escolher imagem</p>
-                  <p className="text-sm text-gray-500 mt-1">Toque para abrir a câmera</p>
-                </button>
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="w-full py-12 border-2 border-dashed border-red-300 rounded-xl flex flex-col items-center justify-center hover:border-red-400 hover:bg-red-50 transition-colors"
+                  >
+                    <svg className="w-12 h-12 text-red-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <p className="text-red-600 font-semibold">Tirar foto agora</p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full py-4 border border-gray-300 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
+                  >
+                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-gray-700 font-medium">Escolher da galeria</span>
+                  </button>
+                </div>
               ) : (
                 <div className="grid grid-cols-3 gap-3 mb-4">
                   {fotos.map((foto, i) => (
@@ -301,49 +331,44 @@ export default function EmergenciaPage() {
                       </button>
                     </div>
                   ))}
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-red-400 hover:bg-red-50 transition-colors"
-                  >
-                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    <span className="text-xs text-gray-500">Mais fotos</span>
-                  </button>
+                  <div className="space-y-2">
+                    <button type="button" onClick={() => cameraInputRef.current?.click()}
+                      className="w-full aspect-video border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-red-400 transition-colors">
+                      <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      </svg>
+                      <span className="text-[10px] text-gray-500">Câmera</span>
+                    </button>
+                    <button type="button" onClick={() => fileInputRef.current?.click()}
+                      className="w-full aspect-video border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-gray-400 transition-colors">
+                      <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      <span className="text-[10px] text-gray-500">Galeria</span>
+                    </button>
+                  </div>
                 </div>
               )}
 
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Descreva o que aconteceu (opcional)
-                </label>
-                <textarea
-                  className="input-field min-h-[80px]"
-                  placeholder="Ex: Bati na traseira do carro da frente no semáforo..."
-                  value={descricao}
-                  onChange={(e) => setDescricao(e.target.value)}
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Descreva o que aconteceu (opcional)</label>
+                <textarea className="input-field min-h-[80px]" placeholder="Ex: Bati na traseira do carro da frente no semáforo..."
+                  value={descricao} onChange={(e) => setDescricao(e.target.value)} />
               </div>
 
               <div className="flex justify-end mt-6">
-                <button
-                  onClick={handleNext}
-                  disabled={fotos.length === 0}
-                  className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
-                >
+                <button onClick={handleNext} disabled={fotos.length === 0}
+                  className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50">
                   Próximo
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 2: Contact info (only for non-logged-in users) */}
           {step === 2 && !isLoggedIn && (
             <div>
               <h2 className="text-lg font-semibold text-gray-900 mb-2">Seus dados</h2>
               <p className="text-sm text-gray-500 mb-4">Para que as oficinas possam entrar em contato</p>
-
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
@@ -358,61 +383,41 @@ export default function EmergenciaPage() {
                   <input type="tel" className="input-field" placeholder="(11) 99999-0000" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
                 </div>
               </div>
-
               <div className="flex justify-between mt-6">
                 <button onClick={() => setStep(1)} className="btn-secondary">Voltar</button>
-                <button
-                  onClick={() => setStep(3)}
-                  disabled={!nome || !email || !telefone}
-                  className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
-                >
+                <button onClick={() => setStep(3)} disabled={!nome || !email || !telefone}
+                  className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50">
                   Próximo
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 3: Location & send */}
           {step === 3 && (
             <div>
               <h2 className="text-lg font-semibold text-gray-900 mb-2">Localização</h2>
-              <p className="text-sm text-gray-500 mb-4">Onde você está? Oficinas próximas serão notificadas</p>
-
+              <p className="text-sm text-gray-500 mb-4">Onde você está?</p>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Endereço / Região</label>
-                  <input
-                    type="text"
-                    className="input-field"
-                    placeholder="Rua, bairro ou ponto de referência"
-                    value={localizacao}
-                    onChange={(e) => setLocalizacao(e.target.value)}
-                  />
+                  <input type="text" className="input-field" placeholder="Rua, bairro ou ponto de referência"
+                    value={localizacao} onChange={(e) => setLocalizacao(e.target.value)} />
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (navigator.geolocation) {
-                      navigator.geolocation.getCurrentPosition(
-                        () => setLocalizacao('Localização atual detectada'),
-                        () => setLocalizacao('Localização atual detectada')
-                      );
-                    } else {
-                      setLocalizacao('Localização atual detectada');
-                    }
-                  }}
-                  className="w-full p-3 border border-gray-300 rounded-lg text-sm text-primary-600 hover:bg-primary-50 flex items-center justify-center gap-2"
-                >
+                <button type="button" onClick={() => {
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                      (pos) => { setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }); setLocalizacao('Localização atual detectada'); },
+                      () => setLocalizacao('São Paulo, SP')
+                    );
+                  }
+                }} className="w-full p-3 border border-gray-300 rounded-lg text-sm text-primary-600 hover:bg-primary-50 flex items-center justify-center gap-2">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   Usar minha localização atual
                 </button>
               </div>
 
-              {/* Summary */}
               <div className="bg-gray-50 rounded-lg p-4 mt-6 space-y-2">
                 <h3 className="font-medium text-gray-900 text-sm">Resumo</h3>
                 <p className="text-xs text-gray-600">{fotos.length} foto(s) do acidente</p>
@@ -422,11 +427,8 @@ export default function EmergenciaPage() {
 
               <div className="flex justify-between mt-6">
                 <button onClick={handleBack} className="btn-secondary">Voltar</button>
-                <button
-                  onClick={handleSubmit}
-                  disabled={!localizacao || submitting}
-                  className="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 text-lg"
-                >
+                <button onClick={handleSubmit} disabled={!localizacao || submitting}
+                  className="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 text-lg">
                   {submitting ? 'Enviando...' : 'Enviar para oficinas!'}
                 </button>
               </div>
