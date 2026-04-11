@@ -33,10 +33,25 @@ export default function VeiculosEmServico() {
       .then(({ data }) => { if (data) setFuncionarios(data); });
   }, [oficina, isMecanico]);
 
-  // Filter events by mechanic if logged in as mecanico
+  // De-duplicate platform events by solicitacao_id (keep most recent) + filter by mechanic
   const myEventos = useMemo(() => {
-    if (!isMecanico || !funcionario) return eventos;
-    return eventos.filter((e) => e.funcionario_id === funcionario.id);
+    // De-duplicate first
+    const seen = new Map<string, typeof eventos[0]>();
+    const result: typeof eventos = [];
+    for (const ev of eventos) {
+      if (ev.tipo === 'plataforma' && ev.solicitacao_id) {
+        const existing = seen.get(ev.solicitacao_id);
+        if (!existing || new Date(ev.created_at) > new Date(existing.created_at)) {
+          seen.set(ev.solicitacao_id, ev);
+        }
+      } else {
+        result.push(ev);
+      }
+    }
+    const deduped = [...result, ...seen.values()];
+    // Then filter by mechanic if needed
+    if (!isMecanico || !funcionario) return deduped;
+    return deduped.filter((e) => e.funcionario_id === funcionario.id);
   }, [eventos, isMecanico, funcionario]);
 
   // Categorize events

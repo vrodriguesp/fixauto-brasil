@@ -77,7 +77,24 @@ export default function AgendaPage() {
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = getFirstDayOfMonth(year, month);
 
-  const activeEventos = eventos.filter((e) => e.status !== 'concluido');
+  // Filter out concluded + de-duplicate platform events by solicitacao_id (keep most recent)
+  const activeEventos = useMemo(() => {
+    const filtered = eventos.filter((e) => e.status !== 'concluido');
+    // De-duplicate: for platform events with same solicitacao_id, keep only the latest
+    const seen = new Map<string, typeof filtered[0]>();
+    const result: typeof filtered = [];
+    for (const ev of filtered) {
+      if (ev.tipo === 'plataforma' && ev.solicitacao_id) {
+        const existing = seen.get(ev.solicitacao_id);
+        if (!existing || new Date(ev.created_at) > new Date(existing.created_at)) {
+          seen.set(ev.solicitacao_id, ev);
+        }
+      } else {
+        result.push(ev);
+      }
+    }
+    return [...result, ...seen.values()];
+  }, [eventos]);
 
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
