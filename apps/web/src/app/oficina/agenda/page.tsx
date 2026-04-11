@@ -92,13 +92,10 @@ export default function AgendaPage() {
   // - Entregue: data_fim = date AND status = concluido
   const getGroups = (dateStr: string) => {
     const checkinPendente = allEventos.filter(e => e.data_inicio.slice(0, 10) === dateStr && e.status === 'agendado');
+    // Check-in feito: todos que fizeram check-in nesse dia (em_andamento ou concluido) - sempre visivel
+    const checkinFeito = allEventos.filter(e => e.data_inicio.slice(0, 10) === dateStr && (e.status === 'em_andamento' || e.status === 'concluido'));
+    // Entregue: todos entregues nesse dia
     const entregue = allEventos.filter(e => e.data_fim.slice(0, 10) === dateStr && e.status === 'concluido');
-    const entregueIds = new Set(entregue.map(e => e.id));
-    // Check-in feito: exclui os que já aparecem em "entregue" no mesmo dia
-    const checkinFeito = allEventos.filter(e =>
-      e.data_inicio.slice(0, 10) === dateStr &&
-      (e.status === 'em_andamento' || (e.status === 'concluido' && !entregueIds.has(e.id)))
-    );
     return { checkinPendente, checkinFeito, entregue };
   };
 
@@ -152,34 +149,45 @@ export default function AgendaPage() {
     return stats;
   }, [allEventos, year, month]);
 
+  const STATUS_LABEL: Record<string, string> = { agendado: 'Agendado', em_andamento: 'Em andamento', concluido: 'Entregue' };
+
   const renderCard = (ev: any, type: 'pendente' | 'feito' | 'entregue') => {
-    const label = getEventLabel(ev);
     const sol = ev.solicitacao;
     const v = sol?.veiculo;
     const c = sol?.cliente;
+    const placa = v?.placa || '';
+    const evId = ev.id.slice(0, 6);
     const isUpdating = updatingId === ev.id;
     const note = type === 'entregue' ? deliveryNote(ev) : null;
     const isExpanded = expandedId === `${ev.id}-${type}`;
 
+    const title = type === 'pendente'
+      ? `Check-in ${placa || c?.nome?.split(' ').pop() || ''}`
+      : type === 'feito'
+      ? `Check-in feito ${placa || c?.nome?.split(' ').pop() || ''}`
+      : `Entregue ${placa || c?.nome?.split(' ').pop() || ''}`;
+
     return (
       <div key={`${ev.id}-${type}`} className={`rounded-lg border overflow-hidden ${
         type === 'pendente' ? 'bg-green-50 border-green-200' :
-        type === 'feito' ? 'bg-gray-50 border-gray-200' :
+        type === 'feito' ? 'bg-blue-50 border-blue-200' :
         'bg-gray-100 border-gray-300'
       }`}>
-        {/* Header - always visible, clickable */}
         <div className="p-3 cursor-pointer hover:opacity-80" onClick={() => setExpandedId(isExpanded ? null : `${ev.id}-${type}`)}>
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <p className="font-semibold text-gray-900 text-sm">
-                  {type === 'pendente' ? `Check-in ${label}` :
-                   type === 'feito' ? `Check-in feito - ${label}` :
-                   `Entregue - ${label}`}
-                </p>
+                <p className="font-semibold text-gray-900 text-sm">{title}</p>
+                <span className="text-[10px] font-mono text-gray-400">#{evId}</span>
                 {sol?.tipo && <span className="text-xs bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded">{sol.tipo}</span>}
+                {type === 'feito' && (
+                  <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${
+                    ev.status === 'concluido' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                  }`}>{STATUS_LABEL[ev.status] || ev.status}</span>
+                )}
               </div>
-              {v && <p className="text-xs text-gray-600 mt-0.5">{v.fipe_marca} {v.fipe_modelo}{v.placa ? ` - ${v.placa}` : ''}</p>}
+              {v && <p className="text-xs text-gray-600 mt-0.5">{v.fipe_marca} {v.fipe_modelo}{placa ? ` - ${placa}` : ''}</p>}
+              {c && <p className="text-xs text-gray-500">{c.nome}</p>}
               {note && <p className={`text-xs mt-1 font-medium ${note.includes('antes') ? 'text-green-600' : note.includes('depois') ? 'text-red-600' : 'text-gray-500'}`}>{note}</p>}
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-2">
