@@ -77,25 +77,21 @@ export default function AgendaPage() {
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = getFirstDayOfMonth(year, month);
 
-  // Filter active events:
-  // 1. Remove concluido/cancelado agenda events
-  // 2. Remove agendado events whose solicitacao is already concluida (stale duplicates)
-  // 3. De-duplicate platform events by solicitacao_id keeping highest status
+  // All events: remove stale duplicates, keep agendado/em_andamento/concluido
   const activeEventos = useMemo(() => {
-    // Step 1: Remove events that should never show
+    // Remove cancelado + stale agendado (solicitacao already done)
     const relevant = eventos.filter((ev) => {
-      if (ev.status === 'concluido' || ev.status === 'cancelado') return false;
-      // Step 2: If event is agendado but solicitacao is already done, it's stale
+      if (ev.status === 'cancelado') return false;
       if (ev.status === 'agendado' && ev.tipo === 'plataforma' && ev.solicitacao) {
         const solStatus = (ev.solicitacao as any).status;
         if (solStatus === 'concluida' || solStatus === 'cancelada') return false;
       }
       return true;
     });
-    // Step 3: De-duplicate platform events by solicitacao_id
+    // De-duplicate platform events by solicitacao_id (highest status wins)
     const seen = new Map<string, typeof relevant[0]>();
     const others: typeof relevant = [];
-    const statusPriority: Record<string, number> = { em_andamento: 2, agendado: 1 };
+    const statusPriority: Record<string, number> = { concluido: 3, em_andamento: 2, agendado: 1 };
     for (const ev of relevant) {
       if (ev.tipo === 'plataforma' && ev.solicitacao_id) {
         const existing = seen.get(ev.solicitacao_id);
@@ -116,10 +112,10 @@ export default function AgendaPage() {
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
   const getCheckInsForDate = (dateStr: string) =>
-    activeEventos.filter((e) => e.data_inicio.slice(0, 10) === dateStr);
+    activeEventos.filter((e) => e.data_inicio.slice(0, 10) === dateStr && e.status !== 'concluido');
 
   const getCheckOutsForDate = (dateStr: string) =>
-    activeEventos.filter((e) => e.data_fim.slice(0, 10) === dateStr);
+    activeEventos.filter((e) => e.data_fim.slice(0, 10) === dateStr && e.status === 'concluido');
 
   const handleAddEvent = async () => {
     if (!formData.titulo || !formData.data_inicio || !formData.data_fim) return;
@@ -392,8 +388,8 @@ export default function AgendaPage() {
                       );
                     })()}
                     {checkOuts.length > 0 && (
-                      <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-orange-100 text-orange-800 font-medium">
-                        {checkOuts.length} Entrega
+                      <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-gray-200 text-gray-700 font-medium">
+                        {checkOuts.length} Feito
                       </div>
                     )}
                   </div>
@@ -435,9 +431,9 @@ export default function AgendaPage() {
                     <p className="text-2xl font-bold text-blue-700">{emServico.length}</p>
                     <p className="text-xs text-blue-600">Em serviço</p>
                   </div>
-                  <div className="p-4 bg-orange-50 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-orange-700">{saidas.length}</p>
-                    <p className="text-xs text-orange-600">Check-out</p>
+                  <div className="p-4 bg-gray-100 rounded-lg text-center">
+                    <p className="text-2xl font-bold text-gray-700">{saidas.length}</p>
+                    <p className="text-xs text-gray-600">Feitos</p>
                   </div>
                 </div>
 
@@ -480,13 +476,13 @@ export default function AgendaPage() {
                 {saidas.length > 0 && (
                   <div className="mb-6">
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="inline-flex items-center justify-center w-6 h-6 bg-orange-100 rounded-full">
-                        <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l4 4m0 0l-4 4m4-4H3" />
+                      <span className="inline-flex items-center justify-center w-6 h-6 bg-gray-200 rounded-full">
+                        <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                       </span>
-                      <h4 className="font-semibold text-orange-800 text-sm uppercase tracking-wide">
-                        Check-out / Entrega ({saidas.length})
+                      <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">
+                        Feitos / Entregues ({saidas.length})
                       </h4>
                     </div>
                     <div className="space-y-2">

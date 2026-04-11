@@ -10,9 +10,12 @@ export async function POST(req: NextRequest) {
   try {
     const { eventoId, solicitacaoId } = await req.json();
 
-    // 1. Update agenda event to concluido
+    // 1. Update agenda event to concluido + set data_fim to actual delivery date
     if (eventoId) {
-      await supabaseAdmin.from('agenda').update({ status: 'concluido' }).eq('id', eventoId);
+      await supabaseAdmin.from('agenda').update({
+        status: 'concluido',
+        data_fim: new Date().toISOString(),
+      }).eq('id', eventoId);
     }
 
     // 2. Update solicitacao to concluida
