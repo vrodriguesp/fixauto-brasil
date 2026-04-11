@@ -7,36 +7,30 @@ import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
 import { CORES_AGENDA } from '@fixauto/shared';
 
-function getDaysInMonth(year: number, month: number) {
-  return new Date(year, month + 1, 0).getDate();
-}
+function getDaysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate(); }
+function getFirstDayOfMonth(y: number, m: number) { return new Date(y, m, 1).getDay(); }
 
-function getFirstDayOfMonth(year: number, month: number) {
-  return new Date(year, month, 1).getDay();
-}
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 
-const MESES = [
-  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
-];
-
-const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-
-// Helper: get label for event (plate or client surname)
 function getEventLabel(ev: any): string {
-  const sol = ev.solicitacao;
-  const veiculo = sol?.veiculo;
-  const cliente = sol?.cliente;
-  if (veiculo?.placa) return veiculo.placa;
-  if (cliente?.nome) {
-    const parts = cliente.nome.split(' ');
-    return parts[parts.length - 1]; // surname
-  }
+  const v = ev.solicitacao?.veiculo;
+  const c = ev.solicitacao?.cliente;
+  if (v?.placa) return v.placa;
+  if (c?.nome) return c.nome.split(' ').pop();
   return ev.titulo || 'Evento';
 }
 
-function getServiceType(ev: any): string {
-  return ev.solicitacao?.tipo || 'outro';
+function deliveryNote(ev: any): string | null {
+  if (ev.status !== 'concluido') return null;
+  const prevista = ev.data_fim_prevista || null;
+  if (!prevista) return null;
+  const real = new Date(ev.data_fim);
+  const plan = new Date(prevista);
+  const diff = Math.round((real.getTime() - plan.getTime()) / (1000 * 60 * 60 * 24));
+  if (diff === 0) return 'No prazo';
+  if (diff < 0) return `${Math.abs(diff)}d antes do previsto`;
+  return `${diff}d depois do previsto`;
 }
 
 export default function AgendaPage() {
@@ -51,24 +45,13 @@ export default function AgendaPage() {
   const [funcionarios, setFuncionarios] = useState<any[]>([]);
 
   const [formData, setFormData] = useState({
-    titulo: '',
-    descricao: '',
-    data_inicio: '',
-    hora_inicio: '08:00',
-    data_fim: '',
-    hora_fim: '17:00',
-    tipo: 'externo' as 'plataforma' | 'externo',
-    cor: '#3B82F6',
+    titulo: '', data_inicio: '', data_fim: '', cor: '#3B82F6',
   });
 
-  // Load funcionarios for mechanic assignment
   useEffect(() => {
     if (!oficina) return;
-    supabase
-      .from('funcionarios')
-      .select('*, profile:profiles(nome)')
-      .eq('oficina_id', oficina.id)
-      .eq('ativo', true)
+    supabase.from('funcionarios').select('*, profile:profiles(nome)')
+      .eq('oficina_id', oficina.id).eq('ativo', true)
       .then(({ data }) => { if (data) setFuncionarios(data); });
   }, [oficina]);
 
@@ -77,178 +60,144 @@ export default function AgendaPage() {
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = getFirstDayOfMonth(year, month);
 
-  // All events: remove stale duplicates, keep agendado/em_andamento/concluido
-  const activeEventos = useMemo(() => {
-    // Remove cancelado + stale agendado (solicitacao already done)
+  // De-duplicate + remove stale. Keep agendado, em_andamento, concluido.
+  const allEventos = useMemo(() => {
     const relevant = eventos.filter((ev) => {
       if (ev.status === 'cancelado') return false;
       if (ev.status === 'agendado' && ev.tipo === 'plataforma' && ev.solicitacao) {
-        const solStatus = (ev.solicitacao as any).status;
-        if (solStatus === 'concluida' || solStatus === 'cancelada') return false;
+        const s = (ev.solicitacao as any).status;
+        if (s === 'concluida' || s === 'cancelada') return false;
       }
       return true;
     });
-    // De-duplicate platform events by solicitacao_id (highest status wins)
     const seen = new Map<string, typeof relevant[0]>();
     const others: typeof relevant = [];
-    const statusPriority: Record<string, number> = { concluido: 3, em_andamento: 2, agendado: 1 };
+    const prio: Record<string, number> = { concluido: 3, em_andamento: 2, agendado: 1 };
     for (const ev of relevant) {
       if (ev.tipo === 'plataforma' && ev.solicitacao_id) {
-        const existing = seen.get(ev.solicitacao_id);
-        if (!existing ||
-            (statusPriority[ev.status] || 0) > (statusPriority[existing.status] || 0) ||
-            ((statusPriority[ev.status] || 0) === (statusPriority[existing.status] || 0) && new Date(ev.created_at) > new Date(existing.created_at))
-        ) {
+        const ex = seen.get(ev.solicitacao_id);
+        if (!ex || (prio[ev.status] || 0) > (prio[ex.status] || 0) ||
+            ((prio[ev.status] || 0) === (prio[ex.status] || 0) && new Date(ev.created_at) > new Date(ex.created_at))) {
           seen.set(ev.solicitacao_id, ev);
         }
-      } else {
-        others.push(ev);
-      }
+      } else { others.push(ev); }
     }
     return [...others, ...Array.from(seen.values())];
   }, [eventos]);
 
-  const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
-  const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
-
-  const getCheckInsForDate = (dateStr: string) =>
-    activeEventos.filter((e) => e.data_inicio.slice(0, 10) === dateStr && e.status !== 'concluido');
-
-  const getCheckOutsForDate = (dateStr: string) =>
-    activeEventos.filter((e) => e.data_fim.slice(0, 10) === dateStr && e.status === 'concluido');
+  // For a given date, get 3 groups:
+  // - Check-in pendente: data_inicio = date AND status = agendado
+  // - Check-in feito: data_inicio = date AND status IN (em_andamento, concluido)
+  // - Entregue: data_fim = date AND status = concluido
+  const getGroups = (dateStr: string) => {
+    const checkinPendente = allEventos.filter(e => e.data_inicio.slice(0, 10) === dateStr && e.status === 'agendado');
+    const checkinFeito = allEventos.filter(e => e.data_inicio.slice(0, 10) === dateStr && (e.status === 'em_andamento' || e.status === 'concluido'));
+    const entregue = allEventos.filter(e => e.data_fim.slice(0, 10) === dateStr && e.status === 'concluido');
+    return { checkinPendente, checkinFeito, entregue };
+  };
 
   const handleAddEvent = async () => {
     if (!formData.titulo || !formData.data_inicio || !formData.data_fim) return;
     await addEvento({
-      titulo: formData.titulo,
-      descricao: formData.descricao || undefined,
-      data_inicio: `${formData.data_inicio}T${formData.hora_inicio}:00Z`,
-      data_fim: `${formData.data_fim}T${formData.hora_fim}:00Z`,
-      tipo: formData.tipo,
-      cor: formData.cor,
+      titulo: formData.titulo, data_inicio: `${formData.data_inicio}T08:00:00Z`,
+      data_fim: `${formData.data_fim}T18:00:00Z`, tipo: 'externo', cor: formData.cor,
     });
     setShowForm(false);
-    setFormData({ titulo: '', descricao: '', data_inicio: '', hora_inicio: '08:00', data_fim: '', hora_fim: '17:00', tipo: 'externo', cor: '#3B82F6' });
+    setFormData({ titulo: '', data_inicio: '', data_fim: '', cor: '#3B82F6' });
   };
 
-  const handleConfirmCheckIn = async (evento: any, funcId?: string) => {
-    setUpdatingId(evento.id);
+  const handleCheckIn = async (ev: any, funcId?: string) => {
+    setUpdatingId(ev.id);
     const updates: any = { status: 'em_andamento' };
     if (funcId) updates.funcionario_id = funcId;
-    await updateEvento(evento.id, updates);
-    // Create initial etapa
+    await updateEvento(ev.id, updates);
     await supabase.from('manutencao_etapas').insert({
-      agenda_id: evento.id,
-      funcionario_id: funcId || null,
-      status: 'recebido',
-      observacao: 'Veículo recebido na oficina',
+      agenda_id: ev.id, funcionario_id: funcId || null,
+      status: 'recebido', observacao: 'Veículo recebido na oficina',
     });
     await refresh();
     setUpdatingId(null);
     setAssigningId(null);
   };
 
-  const handleConfirmCheckOut = async (evento: any) => {
-    setUpdatingId(evento.id);
+  const handleCheckOut = async (ev: any) => {
+    setUpdatingId(ev.id);
     await fetch('/api/confirmar-entrega', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventoId: evento.id, solicitacaoId: evento.solicitacao_id }),
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventoId: ev.id, solicitacaoId: ev.solicitacao_id }),
     });
     await supabase.from('manutencao_etapas').insert({
-      agenda_id: evento.id,
-      status: 'entregue',
-      observacao: 'Veículo entregue ao cliente',
+      agenda_id: ev.id, status: 'entregue', observacao: 'Veículo entregue ao cliente',
     });
-    await updateEvento(evento.id, { status: 'concluido' });
+    await refresh();
     refreshSolicitacoes();
     setUpdatingId(null);
   };
 
-  // Monthly aggregation: check-ins by service type
+  // Monthly stats
   const monthlyStats = useMemo(() => {
     const stats: Record<string, number> = {};
-    activeEventos.forEach((e) => {
-      const start = e.data_inicio.slice(0, 7); // YYYY-MM
-      const currentMonth = `${year}-${String(month + 1).padStart(2, '0')}`;
-      if (start === currentMonth) {
-        const tipo = getServiceType(e);
+    allEventos.forEach((e) => {
+      if (e.data_inicio.slice(0, 7) === `${year}-${String(month + 1).padStart(2, '0')}` && e.status !== 'concluido') {
+        const tipo = e.solicitacao?.tipo || 'outro';
         stats[tipo] = (stats[tipo] || 0) + 1;
       }
     });
     return stats;
-  }, [activeEventos, year, month]);
+  }, [allEventos, year, month]);
 
-  // Render check-in/out event detail
-  const renderEventCard = (ev: any, context: 'checkin' | 'checkout') => {
+  const renderCard = (ev: any, type: 'pendente' | 'feito' | 'entregue') => {
     const label = getEventLabel(ev);
     const sol = ev.solicitacao;
-    const veiculo = sol?.veiculo;
-    const cliente = sol?.cliente;
+    const v = sol?.veiculo;
+    const c = sol?.cliente;
     const isUpdating = updatingId === ev.id;
-    const isAssigning = assigningId === ev.id;
+    const note = type === 'entregue' ? deliveryNote(ev) : null;
 
     return (
-      <div key={ev.id} className="p-3 rounded-lg bg-gray-50 border border-gray-200">
+      <div key={`${ev.id}-${type}`} className={`p-3 rounded-lg border ${
+        type === 'pendente' ? 'bg-green-50 border-green-200' :
+        type === 'feito' ? 'bg-gray-50 border-gray-200' :
+        'bg-gray-100 border-gray-300'
+      }`}>
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <p className="font-semibold text-gray-900 text-sm">
-                {context === 'checkin'
-                  ? (ev.status === 'em_andamento' ? 'Em serviço' : 'Check-in')
-                  : 'Check-out'} {label}
+                {type === 'pendente' ? `Check-in ${label}` :
+                 type === 'feito' ? `Check-in feito - ${label}` :
+                 `Entregue - ${label}`}
               </p>
-              {ev.tipo === 'plataforma' && (
-                <span className="text-xs bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded">
-                  {sol?.tipo || 'Serviço'}
-                </span>
+              {sol?.tipo && (
+                <span className="text-xs bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded">{sol.tipo}</span>
               )}
             </div>
-            {veiculo && (
-              <p className="text-xs text-gray-600 mt-0.5">
-                {veiculo.fipe_marca} {veiculo.fipe_modelo}
-                {veiculo.placa ? ` - ${veiculo.placa}` : ''}
-              </p>
-            )}
-            {cliente && (
-              <p className="text-xs text-gray-500">{cliente.nome}</p>
-            )}
-            {ev.funcionario?.profile?.nome && (
-              <p className="text-xs text-gray-400 mt-0.5">Mec: {ev.funcionario.profile.nome}</p>
-            )}
+            {v && <p className="text-xs text-gray-600 mt-0.5">{v.fipe_marca} {v.fipe_modelo}{v.placa ? ` - ${v.placa}` : ''}</p>}
+            {c && <p className="text-xs text-gray-500">{c.nome}</p>}
+            {ev.funcionario?.profile?.nome && <p className="text-xs text-gray-400">Mec: {ev.funcionario.profile.nome}</p>}
+            {note && <p className={`text-xs mt-1 font-medium ${note.includes('antes') ? 'text-green-600' : note.includes('depois') ? 'text-red-600' : 'text-gray-500'}`}>{note}</p>}
           </div>
           <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-            {context === 'checkin' && ev.status === 'agendado' && (
-              isAssigning ? (
+            {type === 'pendente' && (
+              assigningId === ev.id ? (
                 <div className="flex items-center gap-1">
-                  <select
-                    className="input-field !py-1 !px-2 text-xs !w-auto"
-                    defaultValue=""
-                    onChange={(e) => handleConfirmCheckIn(ev, e.target.value || undefined)}
-                  >
+                  <select className="input-field !py-1 !px-2 text-xs !w-auto" defaultValue=""
+                    onChange={(e) => handleCheckIn(ev, e.target.value || undefined)}>
                     <option value="">Sem mecânico</option>
-                    {funcionarios.map((f) => (
-                      <option key={f.id} value={f.id}>{f.profile?.nome}</option>
-                    ))}
+                    {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.profile?.nome}</option>)}
                   </select>
                   <button onClick={() => setAssigningId(null)} className="text-xs text-gray-400">x</button>
                 </div>
               ) : (
-                <button
-                  onClick={() => setAssigningId(ev.id)}
-                  disabled={isUpdating}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-xs font-medium rounded-lg transition-colors"
-                >
+                <button onClick={() => setAssigningId(ev.id)} disabled={isUpdating}
+                  className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-xs font-medium rounded-lg">
                   {isUpdating ? '...' : 'Check-in'}
                 </button>
               )
             )}
-            {context === 'checkout' && ev.status === 'em_andamento' && (
-              <button
-                onClick={() => handleConfirmCheckOut(ev)}
-                disabled={isUpdating}
-                className="inline-flex items-center gap-1 px-3 py-1.5 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white text-xs font-medium rounded-lg transition-colors"
-              >
+            {type === 'feito' && ev.status === 'em_andamento' && (
+              <button onClick={() => handleCheckOut(ev)} disabled={isUpdating}
+                className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white text-xs font-medium rounded-lg">
                 {isUpdating ? '...' : 'Entrega'}
               </button>
             )}
@@ -263,50 +212,39 @@ export default function AgendaPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Agenda</h1>
-          <p className="text-gray-600 mt-1">Check-ins e check-outs agendados</p>
+          <p className="text-gray-600 mt-1">Check-ins e entregas</p>
         </div>
         <div className="flex items-center gap-2 mt-4 sm:mt-0">
           <div className="flex rounded-lg border border-gray-200 overflow-hidden">
-            {(['month', 'day', 'list'] as const).map((mode) => (
-              <button
-                key={mode}
-                onClick={() => setViewMode(mode)}
-                className={`px-3 py-2 text-sm ${viewMode === mode ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'}`}
-              >
-                {mode === 'month' ? 'Mês' : mode === 'day' ? 'Dia' : 'Lista'}
+            {(['month', 'day', 'list'] as const).map((m) => (
+              <button key={m} onClick={() => setViewMode(m)}
+                className={`px-3 py-2 text-sm ${viewMode === m ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'}`}>
+                {m === 'month' ? 'Mês' : m === 'day' ? 'Dia' : 'Lista'}
               </button>
             ))}
           </div>
-          <button onClick={() => setShowForm(true)} className="btn-primary !py-2">
-            + Evento
-          </button>
+          <button onClick={() => setShowForm(true)} className="btn-primary !py-2">+ Evento</button>
         </div>
       </div>
 
-      {/* New event form */}
       {showForm && (
         <div className="card mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Novo Evento</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-              <input type="text" className="input-field" placeholder="Ex: Revisão - Honda Civic" value={formData.titulo} onChange={(e) => setFormData({ ...formData, titulo: e.target.value })} />
+              <input type="text" className="input-field" value={formData.titulo} onChange={(e) => setFormData({ ...formData, titulo: e.target.value })} />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Data início</label>
-              <input type="date" className="input-field" value={formData.data_inicio} onChange={(e) => setFormData({ ...formData, data_inicio: e.target.value })} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Data fim</label>
-              <input type="date" className="input-field" value={formData.data_fim} onChange={(e) => setFormData({ ...formData, data_fim: e.target.value })} />
-            </div>
+            <div><label className="block text-sm font-medium text-gray-700 mb-1">Data início</label>
+              <input type="date" className="input-field" value={formData.data_inicio} onChange={(e) => setFormData({ ...formData, data_inicio: e.target.value })} /></div>
+            <div><label className="block text-sm font-medium text-gray-700 mb-1">Data fim</label>
+              <input type="date" className="input-field" value={formData.data_fim} onChange={(e) => setFormData({ ...formData, data_fim: e.target.value })} /></div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Cor</label>
-              <div className="flex gap-2">
-                {CORES_AGENDA.map((cor) => (
-                  <button key={cor} type="button" onClick={() => setFormData({ ...formData, cor })} className={`w-8 h-8 rounded-full transition-transform ${formData.cor === cor ? 'scale-125 ring-2 ring-offset-2 ring-gray-400' : ''}`} style={{ backgroundColor: cor }} />
-                ))}
-              </div>
+              <div className="flex gap-2">{CORES_AGENDA.map((c) => (
+                <button key={c} type="button" onClick={() => setFormData({ ...formData, cor: c })}
+                  className={`w-8 h-8 rounded-full ${formData.cor === c ? 'scale-125 ring-2 ring-offset-2 ring-gray-400' : ''}`} style={{ backgroundColor: c }} />
+              ))}</div>
             </div>
           </div>
           <div className="flex justify-end gap-3 mt-6">
@@ -316,14 +254,11 @@ export default function AgendaPage() {
         </div>
       )}
 
-      {/* Monthly stats */}
       {viewMode === 'month' && Object.keys(monthlyStats).length > 0 && (
         <div className="flex flex-wrap gap-2 mb-4">
           <span className="text-xs text-gray-500 py-1">Check-ins este mês:</span>
-          {Object.entries(monthlyStats).map(([tipo, count]) => (
-            <span key={tipo} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full font-medium">
-              {tipo}: {count}
-            </span>
+          {Object.entries(monthlyStats).map(([t, n]) => (
+            <span key={t} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full font-medium">{t}: {n}</span>
           ))}
         </div>
       )}
@@ -331,67 +266,33 @@ export default function AgendaPage() {
       {viewMode === 'month' ? (
         <div className="card">
           <div className="flex items-center justify-between mb-6">
-            <button onClick={prevMonth} className="p-2 hover:bg-gray-100 rounded-lg">
+            <button onClick={() => setCurrentDate(new Date(year, month - 1, 1))} className="p-2 hover:bg-gray-100 rounded-lg">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
             <h2 className="text-xl font-semibold text-gray-900">{MESES[month]} {year}</h2>
-            <button onClick={nextMonth} className="p-2 hover:bg-gray-100 rounded-lg">
+            <button onClick={() => setCurrentDate(new Date(year, month + 1, 1))} className="p-2 hover:bg-gray-100 rounded-lg">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
             </button>
           </div>
-
           <div className="grid grid-cols-7 gap-1 mb-1">
-            {DIAS_SEMANA.map((dia) => (
-              <div key={dia} className="text-center text-sm font-medium text-gray-500 py-2">{dia}</div>
-            ))}
+            {DIAS_SEMANA.map((d) => <div key={d} className="text-center text-sm font-medium text-gray-500 py-2">{d}</div>)}
           </div>
-
           <div className="grid grid-cols-7 gap-1">
-            {Array.from({ length: firstDay }, (_, i) => (
-              <div key={`empty-${i}`} className="min-h-[80px] sm:min-h-[100px] bg-gray-50 rounded-lg" />
-            ))}
-
+            {Array.from({ length: firstDay }, (_, i) => <div key={`e-${i}`} className="min-h-[80px] sm:min-h-[100px] bg-gray-50 rounded-lg" />)}
             {Array.from({ length: daysInMonth }, (_, i) => {
               const day = i + 1;
-              const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-              const checkIns = getCheckInsForDate(dateStr);
-              const checkOuts = getCheckOutsForDate(dateStr);
+              const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+              const g = getGroups(ds);
               const today = new Date();
               const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-
               return (
-                <button
-                  key={day}
-                  onClick={() => { setCurrentDate(new Date(year, month, day)); setViewMode('day'); }}
-                  className={`min-h-[80px] sm:min-h-[100px] p-1 sm:p-2 rounded-lg text-left transition-colors ${
-                    isToday ? 'bg-blue-50' : 'bg-white hover:bg-gray-50'
-                  } border border-gray-100`}
-                >
+                <button key={day} onClick={() => { setCurrentDate(new Date(year, month, day)); setViewMode('day'); }}
+                  className={`min-h-[80px] sm:min-h-[100px] p-1 sm:p-2 rounded-lg text-left transition-colors ${isToday ? 'bg-blue-50' : 'bg-white hover:bg-gray-50'} border border-gray-100`}>
                   <span className={`text-sm font-medium ${isToday ? 'text-primary-600' : 'text-gray-900'}`}>{day}</span>
                   <div className="mt-1 space-y-0.5">
-                    {(() => {
-                      const pendentes = checkIns.filter((e) => e.status === 'agendado');
-                      const emServico = checkIns.filter((e) => e.status === 'em_andamento');
-                      return (
-                        <>
-                          {pendentes.length > 0 && (
-                            <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-green-100 text-green-800 font-medium">
-                              {pendentes.length} Check-in
-                            </div>
-                          )}
-                          {emServico.length > 0 && (
-                            <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-blue-100 text-blue-800 font-medium">
-                              {emServico.length} Em serv.
-                            </div>
-                          )}
-                        </>
-                      );
-                    })()}
-                    {checkOuts.length > 0 && (
-                      <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-gray-200 text-gray-700 font-medium">
-                        {checkOuts.length} Feito
-                      </div>
-                    )}
+                    {g.checkinPendente.length > 0 && <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-green-100 text-green-800 font-medium">{g.checkinPendente.length} Pendente</div>}
+                    {g.checkinFeito.length > 0 && <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-blue-100 text-blue-800 font-medium">{g.checkinFeito.length} Feito</div>}
+                    {g.entregue.length > 0 && <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-gray-200 text-gray-700 font-medium">{g.entregue.length} Entregue</div>}
                   </div>
                 </button>
               );
@@ -399,203 +300,76 @@ export default function AgendaPage() {
           </div>
         </div>
       ) : viewMode === 'day' ? (
-        /* Day view - only check-in and check-out */
         <div className="card">
           <div className="flex items-center justify-between mb-6">
             <button onClick={() => setCurrentDate(new Date(year, month, currentDate.getDate() - 1))} className="p-2 hover:bg-gray-100 rounded-lg">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
-            <h2 className="text-xl font-semibold text-gray-900">
-              {currentDate.getDate()} de {MESES[month]} {year} - {DIAS_SEMANA[currentDate.getDay()]}
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-900">{currentDate.getDate()} de {MESES[month]} {year} - {DIAS_SEMANA[currentDate.getDay()]}</h2>
             <button onClick={() => setCurrentDate(new Date(year, month, currentDate.getDate() + 1))} className="p-2 hover:bg-gray-100 rounded-lg">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
             </button>
           </div>
-
           {(() => {
-            const dayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
-            const allCheckIns = getCheckInsForDate(dayStr);
-            const pendentes = allCheckIns.filter((e) => e.status === 'agendado');
-            const emServico = allCheckIns.filter((e) => e.status === 'em_andamento');
-            const saidas = getCheckOutsForDate(dayStr);
-
+            const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+            const g = getGroups(ds);
+            const hasAnything = g.checkinPendente.length + g.checkinFeito.length + g.entregue.length > 0;
             return (
               <>
                 <div className="grid grid-cols-3 gap-4 mb-6">
                   <div className="p-4 bg-green-50 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-green-700">{pendentes.length}</p>
-                    <p className="text-xs text-green-600">Check-in</p>
+                    <p className="text-2xl font-bold text-green-700">{g.checkinPendente.length}</p>
+                    <p className="text-xs text-green-600">Pendente</p>
                   </div>
                   <div className="p-4 bg-blue-50 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-blue-700">{emServico.length}</p>
-                    <p className="text-xs text-blue-600">Em serviço</p>
+                    <p className="text-2xl font-bold text-blue-700">{g.checkinFeito.length}</p>
+                    <p className="text-xs text-blue-600">Check-in feito</p>
                   </div>
                   <div className="p-4 bg-gray-100 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-gray-700">{saidas.length}</p>
-                    <p className="text-xs text-gray-600">Feitos</p>
+                    <p className="text-2xl font-bold text-gray-700">{g.entregue.length}</p>
+                    <p className="text-xs text-gray-600">Entregue</p>
                   </div>
                 </div>
-
-                {pendentes.length > 0 && (
+                {g.checkinPendente.length > 0 && (
                   <div className="mb-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="inline-flex items-center justify-center w-6 h-6 bg-green-100 rounded-full">
-                        <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14" />
-                        </svg>
-                      </span>
-                      <h4 className="font-semibold text-green-800 text-sm uppercase tracking-wide">
-                        Check-in pendente ({pendentes.length})
-                      </h4>
-                    </div>
-                    <div className="space-y-2">
-                      {pendentes.map((ev) => renderEventCard(ev, 'checkin'))}
-                    </div>
+                    <h4 className="font-semibold text-green-800 text-sm uppercase tracking-wide mb-3">Check-in pendente ({g.checkinPendente.length})</h4>
+                    <div className="space-y-2">{g.checkinPendente.map((ev) => renderCard(ev, 'pendente'))}</div>
                   </div>
                 )}
-
-                {emServico.length > 0 && (
+                {g.checkinFeito.length > 0 && (
                   <div className="mb-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full">
-                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35" />
-                        </svg>
-                      </span>
-                      <h4 className="font-semibold text-blue-800 text-sm uppercase tracking-wide">
-                        Em serviço ({emServico.length})
-                      </h4>
-                    </div>
-                    <div className="space-y-2">
-                      {emServico.map((ev) => renderEventCard(ev, 'checkin'))}
-                    </div>
+                    <h4 className="font-semibold text-blue-800 text-sm uppercase tracking-wide mb-3">Check-in feito ({g.checkinFeito.length})</h4>
+                    <div className="space-y-2">{g.checkinFeito.map((ev) => renderCard(ev, 'feito'))}</div>
                   </div>
                 )}
-
-                {saidas.length > 0 && (
+                {g.entregue.length > 0 && (
                   <div className="mb-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="inline-flex items-center justify-center w-6 h-6 bg-gray-200 rounded-full">
-                        <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </span>
-                      <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">
-                        Feitos / Entregues ({saidas.length})
-                      </h4>
-                    </div>
-                    <div className="space-y-2">
-                      {saidas.map((ev) => renderEventCard(ev, 'checkout'))}
-                    </div>
+                    <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-3">Entregue ({g.entregue.length})</h4>
+                    <div className="space-y-2">{g.entregue.map((ev) => renderCard(ev, 'entregue'))}</div>
                   </div>
                 )}
-
-                {pendentes.length === 0 && emServico.length === 0 && saidas.length === 0 && (
-                  <p className="text-center text-gray-500 py-8">Nenhum check-in ou check-out neste dia</p>
-                )}
+                {!hasAnything && <p className="text-center text-gray-500 py-8">Nenhum evento neste dia</p>}
               </>
             );
           })()}
         </div>
       ) : (
-        /* List view - clean, grouped by date */
         <div className="space-y-4">
           {(() => {
-            // Group events by check-in date, sorted
-            const upcoming = [...activeEventos]
+            const upcoming = allEventos.filter(e => e.status !== 'concluido')
               .sort((a, b) => new Date(a.data_inicio).getTime() - new Date(b.data_inicio).getTime());
-
-            if (upcoming.length === 0) {
-              return (
-                <div className="card text-center py-12">
-                  <p className="text-gray-500">Nenhum evento agendado</p>
-                </div>
-              );
-            }
-
-            // Group by date
+            if (upcoming.length === 0) return <div className="card text-center py-12"><p className="text-gray-500">Nenhum evento agendado</p></div>;
             const groups: Record<string, typeof upcoming> = {};
-            upcoming.forEach((ev) => {
-              const date = ev.data_inicio.slice(0, 10);
-              if (!groups[date]) groups[date] = [];
-              groups[date].push(ev);
-            });
-
+            upcoming.forEach((ev) => { const d = ev.data_inicio.slice(0, 10); if (!groups[d]) groups[d] = []; groups[d].push(ev); });
             return Object.entries(groups).map(([date, evts]) => {
               const d = new Date(date + 'T12:00:00');
-              const dateLabel = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()} - ${DIAS_SEMANA[d.getDay()]}`;
-
               return (
                 <div key={date}>
-                  <h3 className="text-sm font-semibold text-gray-500 mb-2">{dateLabel}</h3>
+                  <h3 className="text-sm font-semibold text-gray-500 mb-2">
+                    {d.getDate().toString().padStart(2,'0')}/{(d.getMonth()+1).toString().padStart(2,'0')}/{d.getFullYear()} - {DIAS_SEMANA[d.getDay()]}
+                  </h3>
                   <div className="space-y-2">
-                    {evts.map((ev) => {
-                      const label = getEventLabel(ev);
-                      const sol = ev.solicitacao;
-                      const veiculo = sol?.veiculo;
-                      const cliente = sol?.cliente;
-                      const isUpdating = updatingId === ev.id;
-
-                      return (
-                        <div key={ev.id} className="card !p-3 flex items-center justify-between" style={{ borderLeft: `4px solid ${ev.cor}` }}>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-medium text-gray-900 text-sm">
-                                {ev.tipo === 'plataforma' ? `Check-in ${label}` : ev.titulo}
-                              </span>
-                              {sol?.tipo && (
-                                <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{sol.tipo}</span>
-                              )}
-                              <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${
-                                ev.status === 'agendado' ? 'bg-yellow-100 text-yellow-800' :
-                                ev.status === 'em_andamento' ? 'bg-blue-100 text-blue-800' :
-                                'bg-gray-100 text-gray-600'
-                              }`}>
-                                {ev.status === 'agendado' ? 'Agendado' : ev.status === 'em_andamento' ? 'Em serviço' : ev.status}
-                              </span>
-                            </div>
-                            {veiculo && (
-                              <p className="text-xs text-gray-500 mt-0.5">
-                                {veiculo.fipe_marca} {veiculo.fipe_modelo} {cliente ? `- ${cliente.nome}` : ''}
-                              </p>
-                            )}
-                            <p className="text-xs text-gray-400 mt-0.5">
-                              Entrega prevista: {new Date(ev.data_fim).toLocaleDateString('pt-BR')}
-                              {ev.funcionario?.profile?.nome && ` | Mec: ${ev.funcionario.profile.nome}`}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-                            {ev.status === 'agendado' && (
-                              <button
-                                onClick={() => handleConfirmCheckIn(ev)}
-                                disabled={isUpdating}
-                                className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-xs font-medium rounded-lg"
-                              >
-                                Check-in
-                              </button>
-                            )}
-                            {ev.status === 'em_andamento' && (
-                              <button
-                                onClick={() => handleConfirmCheckOut(ev)}
-                                disabled={isUpdating}
-                                className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white text-xs font-medium rounded-lg"
-                              >
-                                Entrega
-                              </button>
-                            )}
-                            <button
-                              onClick={() => removeEvento(ev.id)}
-                              className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
+                    {evts.map((ev) => renderCard(ev, ev.status === 'agendado' ? 'pendente' : 'feito'))}
                   </div>
                 </div>
               );

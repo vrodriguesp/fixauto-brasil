@@ -70,6 +70,7 @@ export async function POST(req: NextRequest) {
         descricao: `Orçamento #${orcamentoId.slice(0, 8)}`,
         data_inicio: `${slot.data_checkin}T${slot.turno === 'manha' ? '08:00:00' : '13:00:00'}Z`,
         data_fim: `${slot.data_previsao_entrega}T18:00:00Z`,
+        data_fim_prevista: `${slot.data_previsao_entrega}T18:00:00Z`,
         tipo: 'plataforma',
         status: 'agendado',
         cor: '#3B82F6',
