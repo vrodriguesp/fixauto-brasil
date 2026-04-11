@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
             taxa_aplicada: taxa,
             valor_comissao: Math.round(orc.valor_total * taxa * 100) / 100,
             status: 'pendente',
-          }).then(() => {}).catch(() => {}); // non-blocking
+          });
         }
       } catch { /* non-blocking */ }
     }
