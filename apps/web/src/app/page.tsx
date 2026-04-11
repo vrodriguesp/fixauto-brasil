@@ -6,16 +6,24 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 
 export default function HomePage() {
-  const { isLoggedIn, user, loading } = useAuth();
+  const { isLoggedIn, user, funcionario, loading } = useAuth();
   const router = useRouter();
 
   // Auto-redirect logged-in users to their dashboard
   useEffect(() => {
     if (!loading && isLoggedIn && user) {
-      const dashPath = user.tipo === 'oficina' ? '/oficina/dashboard' : '/cliente/dashboard';
+      // First login for funcionario → force password change
+      if (funcionario?.primeiro_login) {
+        router.replace('/definir-senha');
+        return;
+      }
+      const isMecanico = funcionario?.cargo === 'mecanico';
+      const dashPath = user.tipo === 'oficina'
+        ? (isMecanico ? '/oficina/veiculos-em-servico' : '/oficina/dashboard')
+        : '/cliente/dashboard';
       router.replace(dashPath);
     }
-  }, [loading, isLoggedIn, user, router]);
+  }, [loading, isLoggedIn, user, funcionario, router]);
 
   if (loading || (isLoggedIn && user)) {
     return (

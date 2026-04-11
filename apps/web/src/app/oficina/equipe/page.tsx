@@ -15,7 +15,9 @@ export default function EquipePage() {
   const [error, setError] = useState('');
 
   const [form, setForm] = useState({
+    nome: '',
     email: '',
+    senha: '',
     cargo: 'mecanico' as 'admin' | 'mecanico',
     especialidade: '',
   });
@@ -36,7 +38,11 @@ export default function EquipePage() {
   }, [oficina]);
 
   const handleAdd = async () => {
-    if (!oficina || !form.email) return;
+    if (!oficina || !form.email || !form.senha) return;
+    if (form.senha.length < 6) {
+      setError('A senha deve ter pelo menos 6 caracteres');
+      return;
+    }
     setSaving(true);
     setError('');
 
@@ -44,7 +50,9 @@ export default function EquipePage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        nome: form.nome || undefined,
         email: form.email,
+        senha: form.senha,
         cargo: form.cargo,
         especialidade: form.especialidade || null,
         oficina_id: oficina.id,
@@ -56,7 +64,7 @@ export default function EquipePage() {
       setError(data.error);
     } else {
       setShowForm(false);
-      setForm({ email: '', cargo: 'mecanico', especialidade: '' });
+      setForm({ nome: '', email: '', senha: '', cargo: 'mecanico', especialidade: '' });
       await fetchFuncionarios();
     }
     setSaving(false);
@@ -123,8 +131,18 @@ export default function EquipePage() {
             </div>
           )}
           <div className="grid sm:grid-cols-2 gap-4">
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+              <input
+                type="text"
+                className="input-field"
+                placeholder="Nome do funcionário"
+                value={form.nome}
+                onChange={(e) => setForm({ ...form, nome: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
               <input
                 type="email"
                 className="input-field"
@@ -132,8 +150,18 @@ export default function EquipePage() {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Senha temporária *</label>
+              <input
+                type="text"
+                className="input-field"
+                placeholder="Mínimo 6 caracteres"
+                value={form.senha}
+                onChange={(e) => setForm({ ...form, senha: e.target.value })}
+              />
               <p className="text-xs text-gray-500 mt-1">
-                Se o email ainda não tem conta, será criada automaticamente e enviado convite.
+                Passe esta senha ao funcionário. No primeiro login, ele será solicitado a escolher uma nova senha.
               </p>
             </div>
             <div>
@@ -162,7 +190,7 @@ export default function EquipePage() {
             <button onClick={() => { setShowForm(false); setError(''); }} className="btn-secondary">
               Cancelar
             </button>
-            <button onClick={handleAdd} disabled={saving || !form.email} className="btn-primary disabled:opacity-50">
+            <button onClick={handleAdd} disabled={saving || !form.email || !form.senha} className="btn-primary disabled:opacity-50">
               {saving ? 'Cadastrando...' : 'Cadastrar'}
             </button>
           </div>

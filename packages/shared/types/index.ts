@@ -213,6 +213,7 @@ export interface Funcionario {
   cargo: CargoFuncionario;
   especialidade: string | null;
   ativo: boolean;
+  primeiro_login: boolean;
   created_at: string;
   // Joined
   profile?: Profile;
