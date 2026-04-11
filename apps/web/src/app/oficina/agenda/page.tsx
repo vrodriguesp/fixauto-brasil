@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
 import { CORES_AGENDA, TIPOS_SERVICO } from '@fixauto/shared';
+import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 
 function getDaysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate(); }
 function getFirstDayOfMonth(y: number, m: number) { return new Date(y, m, 1).getDay(); }
@@ -50,8 +51,10 @@ export default function AgendaPage() {
   const [formData, setFormData] = useState({
     cliente_nome: '',
     placa: '',
-    marca: '',
-    modelo: '',
+    fipe_tipo: 'cars',
+    fipe_marca: '',
+    fipe_modelo: '',
+    fipe_ano: '',
     tipo_servico: 'mecanica',
     descricao: '',
     data_inicio: '',
@@ -117,7 +120,7 @@ export default function AgendaPage() {
     const tipoLabel = TIPOS_SERVICO.find(t => t.value === formData.tipo_servico)?.label || formData.tipo_servico;
     const titulo = `${tipoLabel}${formData.placa ? ' - ' + formData.placa : ''}${formData.cliente_nome ? ' - ' + formData.cliente_nome : ''}`;
     const descricao = [
-      formData.marca && formData.modelo ? `${formData.marca} ${formData.modelo}` : '',
+      formData.fipe_marca && formData.fipe_modelo ? `${formData.fipe_marca} ${formData.fipe_modelo}${formData.fipe_ano ? ' ' + formData.fipe_ano : ''}` : '',
       formData.descricao,
     ].filter(Boolean).join(' | ');
 
@@ -136,7 +139,7 @@ export default function AgendaPage() {
     }
 
     setShowForm(false);
-    setFormData({ cliente_nome: '', placa: '', marca: '', modelo: '', tipo_servico: 'mecanica', descricao: '', data_inicio: '', hora_inicio: '08:00', data_fim: '', hora_fim: '18:00', funcionario_id: '', cor: '#3B82F6' });
+    setFormData({ cliente_nome: '', placa: '', fipe_tipo: 'cars', fipe_marca: '', fipe_modelo: '', fipe_ano: '', tipo_servico: 'mecanica', descricao: '', data_inicio: '', hora_inicio: '08:00', data_fim: '', hora_fim: '18:00', funcionario_id: '', cor: '#3B82F6' });
     await refresh();
   };
 
@@ -436,14 +439,13 @@ export default function AgendaPage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Placa</label>
               <input type="text" className="input-field" placeholder="ABC1D23" value={formData.placa} onChange={(e) => setFormData({ ...formData, placa: e.target.value.toUpperCase() })} />
             </div>
-            {/* Veículo */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
-              <input type="text" className="input-field" placeholder="Ex: Fiat" value={formData.marca} onChange={(e) => setFormData({ ...formData, marca: e.target.value })} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Modelo</label>
-              <input type="text" className="input-field" placeholder="Ex: Uno" value={formData.modelo} onChange={(e) => setFormData({ ...formData, modelo: e.target.value })} />
+            {/* Veículo - FIPE */}
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Veículo (FIPE)</label>
+              <FipeAutocomplete
+                value={{ tipo: formData.fipe_tipo, marca: formData.fipe_marca, modelo: formData.fipe_modelo, ano: formData.fipe_ano }}
+                onChange={(fipe) => setFormData({ ...formData, fipe_tipo: fipe.tipo, fipe_marca: fipe.marca, fipe_modelo: fipe.modelo, fipe_ano: fipe.ano })}
+              />
             </div>
             {/* Tipo de serviço */}
             <div>
