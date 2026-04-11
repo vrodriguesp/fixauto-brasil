@@ -96,6 +96,7 @@ Seja preciso e prático. Considere preços do mercado brasileiro.`,
           generationConfig: {
             temperature: 0.3,
             maxOutputTokens: 1500,
+            responseMimeType: 'application/json',
           },
         }),
       }
@@ -107,19 +108,28 @@ Seja preciso e prático. Considere preços do mercado brasileiro.`,
     }
 
     const geminiData = await geminiRes.json();
-    const content = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+    const parts = geminiData.candidates?.[0]?.content?.parts || [];
+    // Find the text part (skip "thought" parts from Gemini 2.5)
+    const textPart = parts.find((p: any) => p.text && !p.thought);
+    const content = textPart?.text || parts.find((p: any) => p.text)?.text;
 
     if (!content) {
+      console.error('[analisar-dano] Gemini response:', JSON.stringify(geminiData).slice(0, 500));
       return NextResponse.json({ error: 'Sem resposta da IA' }, { status: 500 });
     }
 
-    // Extract JSON
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      return NextResponse.json({ error: 'Resposta inválida da IA' }, { status: 500 });
+    // Extract JSON - handle raw JSON, ```json blocks, or mixed text
+    let parsed;
+    try {
+      parsed = JSON.parse(content);
+    } catch {
+      const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/) || content.match(/(\{[\s\S]*\})/);
+      if (!jsonMatch) {
+        console.error('[analisar-dano] Cannot parse:', content.slice(0, 300));
+        return NextResponse.json({ error: 'Resposta inválida da IA' }, { status: 500 });
+      }
+      parsed = JSON.parse(jsonMatch[1]);
     }
-
-    const parsed = JSON.parse(jsonMatch[0]);
 
     // Store in DB
     const { data: analise, error: insertError } = await supabaseAdmin
