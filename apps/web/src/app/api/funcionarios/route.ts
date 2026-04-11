@@ -108,7 +108,7 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-// DELETE: Remove funcionario
+// DELETE: Remove funcionario + profile + auth user
 export async function DELETE(req: NextRequest) {
   try {
     const { id } = await req.json();
@@ -116,6 +116,25 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 });
     }
 
+    // 1. Get the funcionario to find the profile_id
+    const { data: func } = await supabaseAdmin
+      .from('funcionarios')
+      .select('profile_id')
+      .eq('id', id)
+      .single();
+
+    if (!func) {
+      return NextResponse.json({ error: 'Funcionário não encontrado' }, { status: 404 });
+    }
+
+    // 2. Check if this profile is ONLY a funcionario (not an oficina owner)
+    const { data: ownsOficina } = await supabaseAdmin
+      .from('oficinas')
+      .select('id')
+      .eq('profile_id', func.profile_id)
+      .single();
+
+    // 3. Delete funcionario record
     const { error } = await supabaseAdmin
       .from('funcionarios')
       .delete()
@@ -123,6 +142,12 @@ export async function DELETE(req: NextRequest) {
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // 4. If they don't own an oficina, delete auth user entirely
+    //    (CASCADE will delete profile and related data)
+    if (!ownsOficina) {
+      await supabaseAdmin.auth.admin.deleteUser(func.profile_id);
     }
 
     return NextResponse.json({ success: true });
