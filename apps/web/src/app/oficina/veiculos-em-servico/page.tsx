@@ -33,11 +33,11 @@ export default function VeiculosEmServico() {
       .then(({ data }) => { if (data) setFuncionarios(data); });
   }, [oficina, isMecanico]);
 
-  // De-duplicate platform events by solicitacao_id (priority: em_andamento > agendado) + filter by mechanic
+  // De-duplicate FIRST (including concluido), then filter. Prevents ghost agendado duplicates.
   const myEventos = useMemo(() => {
     const seen = new Map<string, typeof eventos[0]>();
-    const result: typeof eventos = [];
-    const statusPriority: Record<string, number> = { em_andamento: 2, agendado: 1, cancelado: 0 };
+    const others: typeof eventos = [];
+    const statusPriority: Record<string, number> = { concluido: 3, em_andamento: 2, agendado: 1, cancelado: 0 };
     for (const ev of eventos) {
       if (ev.tipo === 'plataforma' && ev.solicitacao_id) {
         const existing = seen.get(ev.solicitacao_id);
@@ -48,12 +48,14 @@ export default function VeiculosEmServico() {
           seen.set(ev.solicitacao_id, ev);
         }
       } else {
-        result.push(ev);
+        others.push(ev);
       }
     }
-    const deduped = [...result, ...Array.from(seen.values())];
-    if (!isMecanico || !funcionario) return deduped;
-    return deduped.filter((e) => e.funcionario_id === funcionario.id);
+    const deduped = [...others, ...Array.from(seen.values())];
+    const filtered = isMecanico && funcionario
+      ? deduped.filter((e) => e.funcionario_id === funcionario.id)
+      : deduped;
+    return filtered;
   }, [eventos, isMecanico, funcionario]);
 
   // Categorize events
