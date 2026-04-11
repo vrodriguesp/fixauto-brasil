@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 
     // Call Gemini Vision API
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -95,7 +95,7 @@ Seja preciso e prático. Considere preços do mercado brasileiro.`,
           }],
           generationConfig: {
             temperature: 0.3,
-            maxOutputTokens: 1500,
+            maxOutputTokens: 2000,
             responseMimeType: 'application/json',
           },
         }),
@@ -147,7 +147,7 @@ Seja preciso e prático. Considere preços do mercado brasileiro.`,
         estimativa_custo: parsed.estimativa_custo || null,
         confianca: parsed.confianca || null,
         fotos_analisadas: fotos.map((f) => f.id),
-        modelo_usado: 'gemini-2.0-flash-lite',
+        modelo_usado: 'gemini-2.5-flash',
         raw_response: parsed,
       })
       .select()
