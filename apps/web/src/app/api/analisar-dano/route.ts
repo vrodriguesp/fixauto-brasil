@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 
     // Call Gemini Vision API
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -114,8 +114,9 @@ Seja preciso e prático. Considere preços do mercado brasileiro.`,
     const content = textPart?.text || parts.find((p: any) => p.text)?.text;
 
     if (!content) {
-      console.error('[analisar-dano] Gemini response:', JSON.stringify(geminiData).slice(0, 500));
-      return NextResponse.json({ error: 'Sem resposta da IA' }, { status: 500 });
+      const rawPreview = JSON.stringify(geminiData).slice(0, 500);
+      console.error('[analisar-dano] Gemini response:', rawPreview);
+      return NextResponse.json({ error: `Sem resposta da IA. Debug: ${rawPreview}` }, { status: 500 });
     }
 
     // Extract JSON - handle raw JSON, ```json blocks, or mixed text
@@ -125,10 +126,13 @@ Seja preciso e prático. Considere preços do mercado brasileiro.`,
     } catch {
       const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/) || content.match(/(\{[\s\S]*\})/);
       if (!jsonMatch) {
-        console.error('[analisar-dano] Cannot parse:', content.slice(0, 300));
-        return NextResponse.json({ error: 'Resposta inválida da IA' }, { status: 500 });
+        return NextResponse.json({ error: `Resposta inválida da IA: ${content.slice(0, 200)}` }, { status: 500 });
       }
-      parsed = JSON.parse(jsonMatch[1]);
+      try {
+        parsed = JSON.parse(jsonMatch[1]);
+      } catch {
+        return NextResponse.json({ error: `JSON inválido: ${jsonMatch[1].slice(0, 200)}` }, { status: 500 });
+      }
     }
 
     // Store in DB
@@ -143,7 +147,7 @@ Seja preciso e prático. Considere preços do mercado brasileiro.`,
         estimativa_custo: parsed.estimativa_custo || null,
         confianca: parsed.confianca || null,
         fotos_analisadas: fotos.map((f) => f.id),
-        modelo_usado: 'gemini-2.5-flash',
+        modelo_usado: 'gemini-2.0-flash-lite',
         raw_response: parsed,
       })
       .select()
