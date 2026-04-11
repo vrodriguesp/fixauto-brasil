@@ -130,3 +130,15 @@ export const CARGOS_FUNCIONARIO = {
   admin: { label: 'Administrador', description: 'Acesso completo ao portal da oficina' },
   mecanico: { label: 'Mecanico', description: 'Acesso a pagina de veiculos em servico' },
 } as const;
+
+export const COMISSAO_CONFIG = {
+  TAXA_BASE: 0.15,
+  TAXA_MIN: 0.05,
+  TAXA_MAX: 0.15,
+  BONUS_RESPOSTA_2H: 0.03,
+  BONUS_RESPOSTA_4H: 0.02,
+  BONUS_REVISAO_1_5: 0.02,
+  BONUS_REVISAO_1_0: 0.01,
+  BONUS_AVALIACAO_4_5: 0.03,
+  BONUS_AVALIACAO_4_0: 0.02,
+} as const;
