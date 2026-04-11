@@ -5,8 +5,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
 import { useAuth } from '@/lib/auth-context';
-import type { TipoItemOrcamento } from '@fixauto/shared';
+import type { TipoItemOrcamento, AnaliseDano } from '@fixauto/shared';
 import { formatCurrency } from '@/lib/utils';
+import { supabase } from '@/lib/supabase';
 
 interface ItemForm {
   descricao: string;
@@ -38,6 +39,15 @@ export default function EnviarOrcamentoPage() {
   const [validade, setValidade] = useState('2026-04-30');
   const [submitted, setSubmitted] = useState(false);
   const [prefilled, setPrefilled] = useState(false);
+  const [analise, setAnalise] = useState<AnaliseDano | null>(null);
+
+  // Fetch AI analysis if exists
+  useEffect(() => {
+    if (params.id) {
+      supabase.from('analise_dano').select('*').eq('solicitacao_id', params.id).single()
+        .then(({ data }) => { if (data) setAnalise(data as AnaliseDano); });
+    }
+  }, [params.id]);
 
   // Availability slots
   const [slots, setSlots] = useState<{ data: string; turno: 'manha' | 'tarde' }[]>([
@@ -230,6 +240,35 @@ export default function EnviarOrcamentoPage() {
           Cliente: {solicitacao.cliente?.nome} | {solicitacao.endereco}
         </p>
       </div>
+
+      {/* AI Insights */}
+      {analise && (
+        <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg">🤖</span>
+            <h3 className="font-semibold text-indigo-900 text-sm">Análise IA</h3>
+            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+              analise.severidade === 'leve' ? 'bg-green-100 text-green-700' :
+              analise.severidade === 'moderado' ? 'bg-yellow-100 text-yellow-700' :
+              analise.severidade === 'grave' ? 'bg-orange-100 text-orange-700' :
+              'bg-red-100 text-red-700'
+            }`}>{analise.severidade}</span>
+          </div>
+          <p className="text-sm text-indigo-800 mb-2">{analise.resumo}</p>
+          {analise.pecas_afetadas && analise.pecas_afetadas.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-2">
+              {analise.pecas_afetadas.map((p, i) => (
+                <span key={i} className="text-xs bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded">{p}</span>
+              ))}
+            </div>
+          )}
+          {analise.estimativa_custo && (
+            <p className="text-xs text-indigo-600">
+              Estimativa IA: {formatCurrency(analise.estimativa_custo.min)} - {formatCurrency(analise.estimativa_custo.max)}
+            </p>
+          )}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <div className="card mb-6">

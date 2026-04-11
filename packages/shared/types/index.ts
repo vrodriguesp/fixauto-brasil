@@ -203,6 +203,7 @@ export interface AnaliseDano {
   pecas_afetadas: string[];
   estimativa_custo: { min: number; max: number } | null;
   confianca: number | null;
+  raw_response?: { perguntas_sugeridas?: string[]; [key: string]: unknown };
   created_at: string;
 }
 

@@ -55,6 +55,8 @@ export default function OficinaMensagensPage() {
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
   const [uploadingAudio, setUploadingAudio] = useState(false);
   const { uploadAudio } = useAudioRecorder();
+  const [perguntasSugeridas, setPerguntasSugeridas] = useState<string[]>([]);
+  const [showPerguntas, setShowPerguntas] = useState(true);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -74,6 +76,13 @@ export default function OficinaMensagensPage() {
       }
     }
     fetchSolicitacao();
+
+    // Fetch AI suggested questions
+    supabase.from('analise_dano').select('raw_response').eq('solicitacao_id', id).single()
+      .then(({ data }) => {
+        const perguntas = (data?.raw_response as any)?.perguntas_sugeridas;
+        if (perguntas && Array.isArray(perguntas)) setPerguntasSugeridas(perguntas);
+      });
   }, [id]);
 
   // Fetch messages
@@ -400,6 +409,24 @@ export default function OficinaMensagensPage() {
           </div>
         )}
       </div>
+
+      {/* AI suggested questions */}
+      {perguntasSugeridas.length > 0 && showPerguntas && (
+        <div className="bg-indigo-50 border-t border-indigo-200 px-4 py-2 flex-shrink-0">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-semibold text-indigo-700">🤖 Perguntas sugeridas pela IA</span>
+            <button onClick={() => setShowPerguntas(false)} className="text-xs text-indigo-400 hover:text-indigo-600">x</button>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {perguntasSugeridas.map((p, i) => (
+              <button key={i} onClick={() => { setNewMessage(p); setShowPerguntas(false); inputRef.current?.focus(); }}
+                className="text-xs bg-white border border-indigo-200 text-indigo-800 px-2.5 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors text-left">
+                {p}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Input area */}
       <div className="bg-white border-t px-4 py-3 flex-shrink-0">

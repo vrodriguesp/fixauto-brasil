@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
               {
                 text: `Especialista em reparos automotivos Brasil. ${contexto}
 Analise as fotos e responda JSON CURTO E DIRETO:
-{"resumo":"max 2 frases","severidade":"leve|moderado|grave|severo","checklist_inspecao":["max 5 itens"],"pecas_afetadas":["max 5 pecas"],"estimativa_custo":{"min":0,"max":0},"confianca":0.8}
+{"resumo":"max 2 frases","severidade":"leve|moderado|grave|severo","checklist_inspecao":["max 5 itens"],"pecas_afetadas":["max 5 pecas"],"estimativa_custo":{"min":0,"max":0},"confianca":0.8,"perguntas_sugeridas":["max 3 perguntas para a oficina fazer ao cliente para entender melhor o dano"]}
 Seja BREVE. Preços em reais do mercado brasileiro.`,
               },
             ],
