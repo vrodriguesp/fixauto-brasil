@@ -1,6 +1,6 @@
 // === Enums ===
 
-export type TipoUsuario = 'cliente' | 'oficina';
+export type TipoUsuario = 'cliente' | 'oficina' | 'admin';
 
 export type TipoServico =
   | 'colisao'
@@ -174,11 +174,36 @@ export interface Agenda {
   tipo: TipoAgenda;
   status: StatusAgenda;
   cor: string;
+  no_show: boolean;
+  no_show_registrado_em: string | null;
   created_at: string;
   // Joined
   solicitacao?: Solicitacao;
   funcionario?: Funcionario;
   etapas?: ManutencaoEtapa[];
+}
+
+export interface NoShowHistorico {
+  id: string;
+  agenda_id: string;
+  solicitacao_id: string | null;
+  cliente_id: string | null;
+  registrado_em: string;
+  reagendado: boolean;
+  reagendado_em: string | null;
+  created_at: string;
+}
+
+export interface AnaliseDano {
+  id: string;
+  solicitacao_id: string;
+  resumo: string;
+  severidade: 'leve' | 'moderado' | 'grave' | 'severo';
+  checklist_inspecao: string[];
+  pecas_afetadas: string[];
+  estimativa_custo: { min: number; max: number } | null;
+  confianca: number | null;
+  created_at: string;
 }
 
 export interface Avaliacao {
@@ -258,4 +283,42 @@ export interface FipeVeiculo {
   priceNum: number;
   referenceMonth: string;
   vehicleType: number;
+}
+
+// === Admin / Comissao Types ===
+
+export interface ComissaoConfig {
+  id: string;
+  oficina_id: string;
+  taxa_padrao: number;
+  taxa_fixa_override: number | null;
+  usa_override: boolean;
+  created_at: string;
+  updated_at: string;
+  // Joined
+  oficina?: Oficina;
+}
+
+export interface ComissaoLancamento {
+  id: string;
+  oficina_id: string;
+  orcamento_id: string;
+  valor_servico: number;
+  taxa_aplicada: number;
+  valor_comissao: number;
+  status: 'pendente' | 'pago';
+  pago_em: string | null;
+  created_at: string;
+  // Joined
+  oficina?: Oficina;
+  orcamento?: Orcamento;
+}
+
+export interface PlataformaMetricas {
+  total_clientes: number;
+  total_oficinas: number;
+  solicitacoes_mes: number;
+  servicos_concluidos_mes: number;
+  gmv_mes: number;
+  comissao_total_mes: number;
 }

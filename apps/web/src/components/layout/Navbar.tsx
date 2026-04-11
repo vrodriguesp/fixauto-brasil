@@ -17,10 +17,13 @@ export default function Navbar() {
   };
 
   const isOficina = user?.tipo === 'oficina';
+  const isAdmin = user?.tipo === 'admin';
   const isMecanico = funcionario?.cargo === 'mecanico';
-  const dashboardPath = isOficina
-    ? (isMecanico ? '/oficina/veiculos-em-servico' : '/oficina/dashboard')
-    : '/cliente/dashboard';
+  const dashboardPath = isAdmin
+    ? '/admin/dashboard'
+    : isOficina
+      ? (isMecanico ? '/oficina/veiculos-em-servico' : '/oficina/dashboard')
+      : '/cliente/dashboard';
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -28,17 +31,24 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href={isLoggedIn ? dashboardPath : '/'} className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isOficina ? 'bg-emerald-600' : 'bg-primary-600'}`}>
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isAdmin ? 'bg-slate-700' : isOficina ? 'bg-emerald-600' : 'bg-primary-600'}`}>
                 <span className="text-white font-bold text-sm">FA</span>
               </div>
               <span className="text-xl font-bold text-gray-900">
-                Fix<span className={isOficina ? 'text-emerald-600' : 'text-primary-600'}>Auto</span>
+                Fix<span className={isAdmin ? 'text-slate-700' : isOficina ? 'text-emerald-600' : 'text-primary-600'}>Auto</span>
               </span>
             </Link>
 
             {isLoggedIn && (
               <div className="hidden md:flex items-center ml-8 gap-1">
-                {isOficina ? (
+                {isAdmin ? (
+                  <>
+                    <NavLink href="/admin/dashboard">Dashboard</NavLink>
+                    <NavLink href="/admin/usuarios">Usuarios</NavLink>
+                    <NavLink href="/admin/oficinas">Oficinas</NavLink>
+                    <NavLink href="/admin/comissoes">Comissoes</NavLink>
+                  </>
+                ) : isOficina ? (
                   isMecanico ? (
                     <>
                       <NavLink href="/oficina/veiculos-em-servico">Oficina</NavLink>
@@ -72,18 +82,18 @@ export default function Navbar() {
             {isLoggedIn ? (
               <>
                 <Link
-                  href={isOficina ? '/oficina/perfil' : '/cliente/perfil'}
+                  href={isAdmin ? '/admin/dashboard' : isOficina ? '/oficina/perfil' : '/cliente/perfil'}
                   className="hidden sm:flex items-center gap-2 hover:opacity-80 transition-opacity"
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isOficina ? 'bg-emerald-100' : 'bg-primary-100'}`}>
-                    <span className={`font-semibold text-sm ${isOficina ? 'text-emerald-700' : 'text-primary-700'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isAdmin ? 'bg-slate-200' : isOficina ? 'bg-emerald-100' : 'bg-primary-100'}`}>
+                    <span className={`font-semibold text-sm ${isAdmin ? 'text-slate-700' : isOficina ? 'text-emerald-700' : 'text-primary-700'}`}>
                       {user!.nome.charAt(0)}
                     </span>
                   </div>
                   <div className="text-sm">
                     <p className="font-medium text-gray-900">{user!.nome}</p>
                     <p className="text-gray-500 text-xs">
-                      {isOficina ? oficina?.nome_fantasia : 'Cliente'}
+                      {isAdmin ? 'Administrador' : isOficina ? oficina?.nome_fantasia : 'Cliente'}
                     </p>
                   </div>
                 </Link>
@@ -126,7 +136,14 @@ export default function Navbar() {
         {/* Mobile menu */}
         {menuOpen && isLoggedIn && (
           <div className="md:hidden pb-4 border-t border-gray-100 pt-2">
-            {isOficina ? (
+            {isAdmin ? (
+              <>
+                <MobileNavLink href="/admin/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>
+                <MobileNavLink href="/admin/usuarios" onClick={() => setMenuOpen(false)}>Usuarios</MobileNavLink>
+                <MobileNavLink href="/admin/oficinas" onClick={() => setMenuOpen(false)}>Oficinas</MobileNavLink>
+                <MobileNavLink href="/admin/comissoes" onClick={() => setMenuOpen(false)}>Comissoes</MobileNavLink>
+              </>
+            ) : isOficina ? (
               isMecanico ? (
                 <>
                   <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>Oficina</MobileNavLink>

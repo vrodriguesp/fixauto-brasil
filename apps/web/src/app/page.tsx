@@ -1,9 +1,44 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import StructuredData from '@/components/seo/StructuredData';
+import { generateFAQSchema } from '@/lib/seo-utils';
+
+const FAQ_ITEMS = [
+  {
+    pergunta: 'Como funciona o FixAuto?',
+    resposta:
+      'Voce envia fotos do dano no seu veiculo e uma descricao do problema. Oficinas proximas a voce recebem sua solicitacao, avaliam o servico e enviam orcamentos detalhados. Voce compara precos, prazos e avaliacoes, e escolhe a melhor opcao.',
+  },
+  {
+    pergunta: 'E seguro usar a plataforma?',
+    resposta:
+      'Sim! Todas as oficinas cadastradas passam por verificacao. Alem disso, o sistema de avaliacoes permite que voce veja a reputacao de cada oficina antes de tomar sua decisao. Seus dados pessoais sao protegidos e nunca compartilhados sem sua autorizacao.',
+  },
+  {
+    pergunta: 'Quanto custa usar o FixAuto?',
+    resposta:
+      'Para motoristas, a plataforma e totalmente gratuita. Voce pode enviar solicitacoes, receber orcamentos e comparar opcoes sem nenhum custo. As oficinas pagam uma pequena taxa para participar da plataforma.',
+  },
+  {
+    pergunta: 'Como as oficinas sao avaliadas?',
+    resposta:
+      'Apos cada servico concluido, o cliente pode avaliar a oficina com nota de 1 a 5 estrelas e deixar um comentario. A media de avaliacoes e exibida no perfil publico da oficina, ajudando outros motoristas a escolherem com confianca.',
+  },
+  {
+    pergunta: 'Posso usar o FixAuto em caso de emergencia?',
+    resposta:
+      'Sim! Temos um botao de emergencia "Acabei de bater" que permite registrar o incidente rapidamente, tirar fotos na hora e receber orcamentos de oficinas proximas em minutos. Voce tambem pode registrar o outro veiculo envolvido.',
+  },
+  {
+    pergunta: 'Quais tipos de servico as oficinas oferecem?',
+    resposta:
+      'As oficinas na plataforma oferecem diversos servicos como funilaria, pintura, mecanica geral, eletrica automotiva, troca de vidros, alinhamento, balanceamento, ar condicionado e muito mais. Cada oficina lista suas especialidades no perfil.',
+  },
+];
 
 export default function HomePage() {
   const { isLoggedIn, user, funcionario, loading } = useAuth();
@@ -18,9 +53,11 @@ export default function HomePage() {
         return;
       }
       const isMecanico = funcionario?.cargo === 'mecanico';
-      const dashPath = user.tipo === 'oficina'
-        ? (isMecanico ? '/oficina/veiculos-em-servico' : '/oficina/dashboard')
-        : '/cliente/dashboard';
+      const dashPath = user.tipo === 'admin'
+        ? '/admin/dashboard'
+        : user.tipo === 'oficina'
+          ? (isMecanico ? '/oficina/veiculos-em-servico' : '/oficina/dashboard')
+          : '/cliente/dashboard';
       router.replace(dashPath);
     }
   }, [loading, isLoggedIn, user, funcionario, router]);
@@ -33,19 +70,23 @@ export default function HomePage() {
     );
   }
 
+  const faqSchema = generateFAQSchema(FAQ_ITEMS);
+
   return (
     <div>
+      <StructuredData data={faqSchema} />
+
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 text-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
           <div className="max-w-3xl">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-              Seu carro precisa de reparo?{' '}
-              <span className="text-primary-200">Encontre a melhor oficina.</span>
+              Reparo do carro{' '}
+              <span className="text-primary-200">sem surpresas.</span>
             </h1>
             <p className="mt-6 text-lg sm:text-xl text-primary-100 leading-relaxed">
-              Envie fotos do dano, receba orçamentos de oficinas próximas e escolha a melhor opção.
-              Simples, rápido e transparente.
+              Transparencia do orcamento ate a entrega. Compare orcamentos detalhados de oficinas verificadas
+              e acompanhe cada etapa do reparo em tempo real. Simples, seguro e sem custos ocultos.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Link
@@ -223,6 +264,55 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Depoimentos */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
+            Depoimentos
+          </h2>
+          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+            Veja o que motoristas e oficinas dizem sobre a plataforma
+          </p>
+          <div className="grid md:grid-cols-3 gap-8">
+            <Testimonial
+              name="Marcos Silva"
+              location="Sao Paulo, SP"
+              text="Recebi 4 orcamentos em menos de 2 horas e economizei R$ 600 no reparo do meu carro. O acompanhamento em tempo real me deixou tranquilo durante todo o processo."
+              rating={5}
+            />
+            <Testimonial
+              name="Ana Beatriz Costa"
+              location="Campinas, SP"
+              text="Usei o botao de emergencia depois de uma batida e em 30 minutos ja tinha orcamentos. A oficina que escolhi fez um trabalho impecavel. Recomendo demais!"
+              rating={5}
+            />
+            <Testimonial
+              name="Roberto Mendes"
+              location="Belo Horizonte, MG"
+              text="Como dono de oficina, o FixAuto mudou meu negocio. Recebo clientes novos toda semana e a gestao da agenda ficou muito mais organizada."
+              rating={5}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
+            Perguntas Frequentes
+          </h2>
+          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+            Tire suas duvidas sobre a plataforma FixAuto
+          </p>
+          <div className="space-y-4">
+            {FAQ_ITEMS.map((faq, index) => (
+              <FAQItem key={index} pergunta={faq.pergunta} resposta={faq.resposta} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -245,15 +335,15 @@ export default function HomePage() {
               <ul className="space-y-2 text-sm">
                 <li><Link href="/cadastro?tipo=cliente" className="hover:text-white">Criar conta</Link></li>
                 <li><Link href="/emergencia" className="hover:text-white">Acabei de bater</Link></li>
-                <li><Link href="#" className="hover:text-white">Como funciona</Link></li>
+                <li><Link href="/docs/cliente" className="hover:text-white">Como funciona</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="text-white font-semibold mb-3">Para Oficinas</h3>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/cadastro?tipo=oficina" className="hover:text-white">Cadastrar oficina</Link></li>
-                <li><Link href="#" className="hover:text-white">Planos</Link></li>
-                <li><Link href="#" className="hover:text-white">Suporte</Link></li>
+                <li><Link href="/docs/oficina" className="hover:text-white">Guia da Oficina</Link></li>
+                <li><Link href="/docs" className="hover:text-white">Central de Ajuda</Link></li>
               </ul>
             </div>
             <div>
@@ -305,6 +395,52 @@ function Stat({ number, label }: { number: string; label: string }) {
     <div>
       <p className="text-3xl lg:text-4xl font-bold">{number}</p>
       <p className="text-primary-200 mt-1">{label}</p>
+    </div>
+  );
+}
+
+function Testimonial({ name, location, text, rating }: { name: string; location: string; text: string; rating: number }) {
+  return (
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+      <div className="flex gap-1 mb-4">
+        {Array.from({ length: rating }).map((_, i) => (
+          <svg key={i} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+          </svg>
+        ))}
+      </div>
+      <p className="text-gray-600 text-sm leading-relaxed mb-4">&quot;{text}&quot;</p>
+      <div>
+        <p className="font-semibold text-gray-900 text-sm">{name}</p>
+        <p className="text-gray-500 text-xs">{location}</p>
+      </div>
+    </div>
+  );
+}
+
+function FAQItem({ pergunta, resposta }: { pergunta: string; resposta: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors"
+      >
+        <span className="font-semibold text-gray-900 pr-4">{pergunta}</span>
+        <svg
+          className={`w-5 h-5 text-gray-500 flex-shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {open && (
+        <div className="px-5 pb-5 text-gray-600 leading-relaxed">
+          {resposta}
+        </div>
+      )}
     </div>
   );
 }

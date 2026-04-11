@@ -47,6 +47,7 @@ export default function AgendaPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<any>(null);
   const [funcionarios, setFuncionarios] = useState<any[]>([]);
+  const [noShowingId, setNoShowingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     cliente_nome: '',
@@ -171,6 +172,17 @@ export default function AgendaPage() {
     setUpdatingId(null);
   };
 
+  const handleNoShow = async (ev: any) => {
+    if (!confirm('Registrar falta do cliente para este agendamento?')) return;
+    setNoShowingId(ev.id);
+    await fetch('/api/registrar-no-show', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ agendaId: ev.id, solicitacaoId: ev.solicitacao_id }),
+    });
+    await refresh();
+    setNoShowingId(null);
+  };
+
   // Monthly stats
   const monthlyStats = useMemo(() => {
     const stats: Record<string, number> = {};
@@ -250,6 +262,7 @@ export default function AgendaPage() {
                 <p className="font-semibold text-gray-900 text-sm">{title}</p>
                 <span className="text-[10px] font-mono text-gray-400">#{evId}</span>
                 {sol?.tipo && <span className="text-xs bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded">{sol.tipo}</span>}
+                {ev.no_show && <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-medium">Falta</span>}
                 {type === 'feito' && (
                   <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${
                     ev.status === 'concluido' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
@@ -272,10 +285,18 @@ export default function AgendaPage() {
                     <button onClick={(e) => { e.stopPropagation(); setAssigningId(null); }} className="text-xs text-gray-400">x</button>
                   </div>
                 ) : (
-                  <button onClick={(e) => { e.stopPropagation(); setAssigningId(ev.id); }} disabled={isUpdating}
-                    className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-xs font-medium rounded-lg">
-                    {isUpdating ? '...' : 'Check-in'}
-                  </button>
+                  <div className="flex items-center gap-1">
+                    {new Date(ev.data_inicio) < new Date() && !ev.no_show && (
+                      <button onClick={(e) => { e.stopPropagation(); handleNoShow(ev); }} disabled={noShowingId === ev.id}
+                        className="px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white text-xs font-medium rounded-lg">
+                        {noShowingId === ev.id ? '...' : 'Marcar Falta'}
+                      </button>
+                    )}
+                    <button onClick={(e) => { e.stopPropagation(); setAssigningId(ev.id); }} disabled={isUpdating}
+                      className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-xs font-medium rounded-lg">
+                      {isUpdating ? '...' : 'Check-in'}
+                    </button>
+                  </div>
                 )
               )}
               {type === 'feito' && ev.status === 'em_andamento' && (

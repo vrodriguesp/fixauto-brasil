@@ -292,6 +292,8 @@ export const mockAgenda: Agenda[] = [
     tipo: 'plataforma',
     status: 'agendado',
     cor: '#3B82F6',
+    no_show: false,
+    no_show_registrado_em: null,
     created_at: '2026-03-28T10:00:00Z',
   },
   {
@@ -306,6 +308,8 @@ export const mockAgenda: Agenda[] = [
     tipo: 'externo',
     status: 'agendado',
     cor: '#10B981',
+    no_show: false,
+    no_show_registrado_em: null,
     created_at: '2026-03-28T10:00:00Z',
   },
   {
@@ -320,6 +324,8 @@ export const mockAgenda: Agenda[] = [
     tipo: 'externo',
     status: 'agendado',
     cor: '#F59E0B',
+    no_show: false,
+    no_show_registrado_em: null,
     created_at: '2026-03-28T10:00:00Z',
   },
   {
@@ -334,6 +340,8 @@ export const mockAgenda: Agenda[] = [
     tipo: 'externo',
     status: 'agendado',
     cor: '#F59E0B',
+    no_show: false,
+    no_show_registrado_em: null,
     created_at: '2026-03-29T10:00:00Z',
   },
 ];

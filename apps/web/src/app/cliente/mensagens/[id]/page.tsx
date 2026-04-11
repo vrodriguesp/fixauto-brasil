@@ -5,12 +5,20 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import AudioRecorder from '@/components/ui/AudioRecorder';
+import AudioMessage from '@/components/ui/AudioMessage';
+import { useAudioRecorder } from '@/hooks/use-audio-recorder';
 
 interface Mensagem {
   id: string;
   solicitacao_id: string;
   remetente_id: string;
   texto: string;
+  tipo?: string;
+  audio_url?: string;
+  audio_duracao_segundos?: number;
+  transcricao?: string;
+  transcricao_status?: string;
   lida: boolean;
   created_at: string;
   remetente?: {
@@ -46,6 +54,9 @@ export default function ClienteMensagensPage() {
   const [oficina, setOficina] = useState<OficinaInfo | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [showAudioRecorder, setShowAudioRecorder] = useState(false);
+  const [uploadingAudio, setUploadingAudio] = useState(false);
+  const { uploadAudio } = useAudioRecorder();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -223,6 +234,64 @@ export default function ClienteMensagensPage() {
     }
   };
 
+  const handleAudioRecorded = async (blob: Blob, audioDuration: number) => {
+    if (!user) return;
+    setShowAudioRecorder(false);
+    setUploadingAudio(true);
+
+    try {
+      const audioUrl = await uploadAudio(blob, id);
+      if (!audioUrl) return;
+
+      const { error } = await supabase.from('mensagens').insert({
+        solicitacao_id: id,
+        remetente_id: user.id,
+        texto: '[Audio]',
+        tipo: 'audio',
+        audio_url: audioUrl,
+        audio_duracao_segundos: audioDuration,
+      });
+
+      if (!error) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `temp-${Date.now()}`,
+            solicitacao_id: id,
+            remetente_id: user.id,
+            texto: '[Audio]',
+            tipo: 'audio',
+            audio_url: audioUrl,
+            audio_duracao_segundos: audioDuration,
+            lida: false,
+            created_at: new Date().toISOString(),
+            remetente: { nome: user.nome, tipo: user.tipo },
+          },
+        ]);
+
+        // Notify the oficina
+        const { data: orcs } = await supabase
+          .from('orcamentos')
+          .select('oficina:oficinas(profile_id)')
+          .eq('solicitacao_id', id)
+          .limit(1);
+        if (orcs?.[0]?.oficina) {
+          try {
+            await supabase.from('notificacoes').insert({
+              profile_id: (orcs[0].oficina as any).profile_id,
+              tipo: 'nova_mensagem',
+              titulo: 'Nova mensagem de audio do cliente',
+              mensagem: 'Mensagem de audio recebida',
+              dados: { solicitacao_id: id },
+            });
+          } catch { /* non-blocking */ }
+        }
+      }
+    } finally {
+      setUploadingAudio(false);
+    }
+  };
+
   const formatTime = (dateStr: string) => {
     const d = new Date(dateStr);
     return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -317,7 +386,17 @@ export default function ClienteMensagensPage() {
                           {msg.remetente.nome}
                         </p>
                       )}
-                      <p className="text-sm whitespace-pre-wrap break-words">{msg.texto}</p>
+                      {msg.tipo === 'audio' && msg.audio_url ? (
+                        <AudioMessage
+                          audioUrl={msg.audio_url}
+                          duration={msg.audio_duracao_segundos || 0}
+                          transcricao={msg.transcricao}
+                          transcricaoStatus={msg.transcricao_status}
+                          mensagemId={msg.id}
+                        />
+                      ) : (
+                        <p className="text-sm whitespace-pre-wrap break-words">{msg.texto}</p>
+                      )}
                       <p
                         className={`text-[10px] mt-1 ${
                           isOwn ? 'text-primary-200' : 'text-gray-400'
@@ -337,26 +416,47 @@ export default function ClienteMensagensPage() {
 
       {/* Input area */}
       <div className="bg-white border-t px-4 py-3 flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <input
-            ref={inputRef}
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Digite sua mensagem..."
-            className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          />
-          <button
-            onClick={handleSend}
-            disabled={!newMessage.trim() || sending}
-            className="w-10 h-10 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
-          </button>
-        </div>
+        {showAudioRecorder ? (
+          <AudioRecorder onRecorded={handleAudioRecorded} />
+        ) : uploadingAudio ? (
+          <div className="flex items-center justify-center gap-2 py-2">
+            <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
+            <span className="text-sm text-gray-500">Enviando audio...</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <input
+              ref={inputRef}
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Digite sua mensagem..."
+              className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            />
+            {newMessage.trim() ? (
+              <button
+                onClick={handleSend}
+                disabled={sending}
+                className="w-10 h-10 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowAudioRecorder(true)}
+                className="w-10 h-10 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                title="Gravar audio"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -7,6 +7,8 @@ import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import StatusBadge from '@/components/ui/StatusBadge';
+import NoShowWarning from '@/components/ui/NoShowWarning';
+import DamageAnalysis from '@/components/ui/DamageAnalysis';
 import { formatDate, getUrgenciaColor } from '@/lib/utils';
 
 export default function SolicitacaoDetalhePage() {
@@ -186,6 +188,12 @@ export default function SolicitacaoDetalhePage() {
               Solicitado em {formatDate(sol.created_at)}
             </p>
           </div>
+
+          {(sol.cliente?.id || sol.cliente_id) && (
+            <NoShowWarning clienteId={sol.cliente?.id || sol.cliente_id} />
+          )}
+
+          <DamageAnalysis solicitacaoId={sol.id} />
         </div>
       </div>
     </div>
