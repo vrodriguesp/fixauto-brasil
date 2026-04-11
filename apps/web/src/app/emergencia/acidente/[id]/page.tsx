@@ -1,16 +1,39 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/lib/auth-context';
 
 interface Mensagem {
   id: string;
-  remetente: 'eu' | 'outro';
+  remetente_tipo: 'proprietario' | 'outro';
   texto: string;
-  hora: string;
+  created_at: string;
+}
+
+interface OutroVeiculo {
+  id: string;
+  nome: string;
+  telefone: string;
+  email: string;
+  placa: string;
+  veiculo_descricao: string;
+  observacoes: string;
+  notificado: boolean;
+}
+
+interface Orcamento {
+  id: string;
+  valor_total: number;
+  prazo_dias: number;
+  oficina: { nome_fantasia: string } | null;
 }
 
 export default function AcidenteRegistroPage() {
+  const { id: emergenciaId } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<'registro' | 'chat' | 'orcamentos'>('registro');
 
@@ -23,19 +46,89 @@ export default function AcidenteRegistroPage() {
   const [fotosOutro, setFotosOutro] = useState<{ file: File; preview: string }[]>([]);
   const [observacoes, setObservacoes] = useState('');
   const [registered, setRegistered] = useState(false);
+  const [registering, setRegistering] = useState(false);
+  const [outroVeiculoId, setOutroVeiculoId] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
   // Chat
-  const [mensagens, setMensagens] = useState<Mensagem[]>([
-    { id: '1', remetente: 'outro', texto: 'Olá, vi que você registrou nosso acidente. Podemos conversar sobre os orçamentos?', hora: '14:30' },
-  ]);
+  const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [novaMensagem, setNovaMensagem] = useState('');
+  const [sendingMsg, setSendingMsg] = useState(false);
 
-  // Mock orcamentos
-  const mockOrcamentos = [
-    { oficina: 'Carlos Auto Mecânica', valor: 'R$ 2.200,00', prazo: '5 dias', id: '1' },
-    { oficina: 'Ana Funilaria & Pintura', valor: 'R$ 2.850,00', prazo: '4 dias', id: '2' },
-    { oficina: 'Pedro Auto Center', valor: 'R$ 1.900,00', prazo: '7 dias', id: '3' },
-  ];
+  // Orcamentos
+  const [orcamentos, setOrcamentos] = useState<Orcamento[]>([]);
+  const [loadingOrc, setLoadingOrc] = useState(false);
+
+  // Load existing data
+  const loadData = useCallback(async () => {
+    if (!emergenciaId) return;
+
+    // Check if outro veiculo already registered
+    const { data: outros } = await supabase
+      .from('emergencia_outro_veiculo')
+      .select('*')
+      .eq('emergencia_id', emergenciaId)
+      .limit(1);
+
+    if (outros && outros.length > 0) {
+      const outro = outros[0] as OutroVeiculo;
+      setOutroNome(outro.nome);
+      setOutroTelefone(outro.telefone || '');
+      setOutroEmail(outro.email || '');
+      setOutroPlaca(outro.placa);
+      setOutroVeiculo(outro.veiculo_descricao || '');
+      setObservacoes(outro.observacoes || '');
+      setOutroVeiculoId(outro.id);
+      setRegistered(true);
+    }
+
+    // Load messages
+    const { data: msgs } = await supabase
+      .from('emergencia_mensagens')
+      .select('*')
+      .eq('emergencia_id', emergenciaId)
+      .order('created_at', { ascending: true });
+
+    if (msgs) setMensagens(msgs as Mensagem[]);
+
+    // Load orcamentos if there's a linked solicitacao
+    setLoadingOrc(true);
+    const { data: emerg } = await supabase
+      .from('emergencias')
+      .select('solicitacao_id')
+      .eq('id', emergenciaId)
+      .single();
+
+    if (emerg?.solicitacao_id) {
+      const { data: orcs } = await supabase
+        .from('orcamentos')
+        .select('id, valor_total, prazo_dias, oficina:oficinas(nome_fantasia)')
+        .eq('solicitacao_id', emerg.solicitacao_id);
+
+      if (orcs) setOrcamentos(orcs as unknown as Orcamento[]);
+    }
+    setLoadingOrc(false);
+  }, [emergenciaId]);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  // Real-time messages
+  useEffect(() => {
+    if (!emergenciaId) return;
+    const channel = supabase
+      .channel(`emergencia-msgs-${emergenciaId}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'emergencia_mensagens',
+        filter: `emergencia_id=eq.${emergenciaId}`,
+      }, (payload) => {
+        setMensagens((prev) => [...prev, payload.new as Mensagem]);
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [emergenciaId]);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -48,31 +141,92 @@ export default function AcidenteRegistroPage() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
+    setRegistering(true);
+    setError('');
+
+    // 1. Save outro veiculo
+    const { data: outro, error: outroError } = await supabase
+      .from('emergencia_outro_veiculo')
+      .insert({
+        emergencia_id: emergenciaId,
+        nome: outroNome,
+        telefone: outroTelefone || null,
+        email: outroEmail || null,
+        placa: outroPlaca,
+        veiculo_descricao: outroVeiculo || null,
+        observacoes: observacoes || null,
+      })
+      .select()
+      .single();
+
+    if (outroError) {
+      setError(outroError.message);
+      setRegistering(false);
+      return;
+    }
+
+    setOutroVeiculoId(outro.id);
+
+    // 2. Upload photos
+    for (const foto of fotosOutro) {
+      const fileName = `emergencia/${emergenciaId}/outro/${Date.now()}-${foto.file.name}`;
+      const { data: uploadData } = await supabase.storage
+        .from('damage-photos')
+        .upload(fileName, foto.file);
+
+      if (uploadData?.path) {
+        const { data: { publicUrl } } = supabase.storage
+          .from('damage-photos')
+          .getPublicUrl(uploadData.path);
+
+        await supabase.from('emergencia_outro_veiculo_fotos').insert({
+          outro_veiculo_id: outro.id,
+          foto_url: publicUrl,
+        });
+      }
+    }
+
+    // 3. Notify the other person via API (sends email + WhatsApp)
+    if (outroEmail || outroTelefone) {
+      try {
+        await fetch('/api/notificar-acidente', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ emergenciaId, outroVeiculoId: outro.id }),
+        });
+      } catch {
+        // Non-blocking: notification failure shouldn't prevent registration
+        console.warn('Falha ao enviar notificação');
+      }
+    }
+
+    setRegistering(false);
     setRegistered(true);
   };
 
-  const sendMessage = () => {
-    if (!novaMensagem.trim()) return;
-    const now = new Date();
-    setMensagens([...mensagens, {
-      id: `m-${Date.now()}`,
-      remetente: 'eu',
-      texto: novaMensagem,
-      hora: `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`,
-    }]);
-    setNovaMensagem('');
+  const sendMessage = async () => {
+    if (!novaMensagem.trim() || !emergenciaId) return;
+    setSendingMsg(true);
 
-    // Simulate response
-    setTimeout(() => {
-      setMensagens((prev) => [...prev, {
-        id: `m-${Date.now()}`,
-        remetente: 'outro',
-        texto: 'Ok, vou analisar os orçamentos e te retorno.',
-        hora: `${now.getHours()}:${String(now.getMinutes() + 1).padStart(2, '0')}`,
-      }]);
-    }, 2000);
+    await supabase.from('emergencia_mensagens').insert({
+      emergencia_id: emergenciaId,
+      remetente_tipo: 'proprietario',
+      remetente_id: user?.id || null,
+      texto: novaMensagem,
+    });
+
+    setNovaMensagem('');
+    setSendingMsg(false);
   };
+
+  const formatTime = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
+  };
+
+  const formatCurrency = (val: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
@@ -88,6 +242,12 @@ export default function AcidenteRegistroPage() {
           <p className="text-gray-600 text-sm">Registre o outro veículo e acompanhe os orçamentos</p>
         </div>
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
+          <p className="text-sm text-red-800">{error}</p>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex border-b border-gray-200 mb-6">
@@ -105,7 +265,7 @@ export default function AcidenteRegistroPage() {
             step === 'chat' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'
           }`}
         >
-          Mensagens
+          Mensagens {mensagens.length > 0 && `(${mensagens.length})`}
         </button>
         <button
           onClick={() => setStep('orcamentos')}
@@ -113,7 +273,7 @@ export default function AcidenteRegistroPage() {
             step === 'orcamentos' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'
           }`}
         >
-          Orçamentos
+          Orçamentos {orcamentos.length > 0 && `(${orcamentos.length})`}
         </button>
       </div>
 
@@ -124,7 +284,7 @@ export default function AcidenteRegistroPage() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nome do outro motorista</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nome do outro motorista *</label>
               <input type="text" className="input-field" placeholder="Nome completo" value={outroNome} onChange={(e) => setOutroNome(e.target.value)} />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -133,13 +293,13 @@ export default function AcidenteRegistroPage() {
                 <input type="tel" className="input-field" placeholder="(11) 99999-0000" value={outroTelefone} onChange={(e) => setOutroTelefone(e.target.value)} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email (opcional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input type="email" className="input-field" placeholder="email@email.com" value={outroEmail} onChange={(e) => setOutroEmail(e.target.value)} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Placa do veículo</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Placa do veículo *</label>
                 <input type="text" className="input-field" placeholder="ABC-1234" value={outroPlaca} onChange={(e) => setOutroPlaca(e.target.value)} />
               </div>
               <div>
@@ -151,7 +311,7 @@ export default function AcidenteRegistroPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Fotos do outro veículo</label>
               <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload} />
-              <div className="flex gap-3">
+              <div className="flex gap-3 flex-wrap">
                 {fotosOutro.map((foto, i) => (
                   <div key={i} className="w-20 h-20 rounded-lg overflow-hidden">
                     <img src={foto.preview} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
@@ -180,12 +340,20 @@ export default function AcidenteRegistroPage() {
             </div>
           </div>
 
+          {outroEmail && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
+              <p className="text-sm text-blue-800">
+                O outro motorista receberá uma notificação por email para acompanhar o acidente e os orçamentos.
+              </p>
+            </div>
+          )}
+
           <button
             onClick={handleRegister}
-            disabled={!outroNome || !outroPlaca}
+            disabled={!outroNome || !outroPlaca || registering}
             className="btn-primary w-full mt-6"
           >
-            Registrar outro veículo
+            {registering ? 'Registrando...' : 'Registrar outro veículo'}
           </button>
         </div>
       )}
@@ -200,7 +368,9 @@ export default function AcidenteRegistroPage() {
             </div>
             <div>
               <p className="font-semibold text-gray-900">Veículo registrado</p>
-              <p className="text-sm text-gray-500">O outro motorista foi notificado</p>
+              <p className="text-sm text-gray-500">
+                {outroEmail ? 'O outro motorista foi notificado por email' : 'Registro salvo com sucesso'}
+              </p>
             </div>
           </div>
 
@@ -243,16 +413,21 @@ export default function AcidenteRegistroPage() {
           </div>
 
           <div className="h-[400px] overflow-y-auto p-4 space-y-3">
+            {mensagens.length === 0 && (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-sm text-gray-400">Nenhuma mensagem ainda. Envie a primeira!</p>
+              </div>
+            )}
             {mensagens.map((msg) => (
-              <div key={msg.id} className={`flex ${msg.remetente === 'eu' ? 'justify-end' : 'justify-start'}`}>
+              <div key={msg.id} className={`flex ${msg.remetente_tipo === 'proprietario' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[70%] rounded-2xl px-4 py-2 ${
-                  msg.remetente === 'eu'
+                  msg.remetente_tipo === 'proprietario'
                     ? 'bg-primary-600 text-white rounded-br-md'
                     : 'bg-gray-100 text-gray-900 rounded-bl-md'
                 }`}>
                   <p className="text-sm">{msg.texto}</p>
-                  <p className={`text-xs mt-1 ${msg.remetente === 'eu' ? 'text-primary-200' : 'text-gray-400'}`}>
-                    {msg.hora}
+                  <p className={`text-xs mt-1 ${msg.remetente_tipo === 'proprietario' ? 'text-primary-200' : 'text-gray-400'}`}>
+                    {formatTime(msg.created_at)}
                   </p>
                 </div>
               </div>
@@ -266,9 +441,9 @@ export default function AcidenteRegistroPage() {
               placeholder="Digite uma mensagem..."
               value={novaMensagem}
               onChange={(e) => setNovaMensagem(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+              onKeyDown={(e) => e.key === 'Enter' && !sendingMsg && sendMessage()}
             />
-            <button onClick={sendMessage} className="btn-primary !px-4">
+            <button onClick={sendMessage} disabled={sendingMsg} className="btn-primary !px-4">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
@@ -280,37 +455,58 @@ export default function AcidenteRegistroPage() {
       {/* Orcamentos tab */}
       {step === 'orcamentos' && (
         <div className="space-y-4">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <p className="text-sm text-yellow-800">
-              Compartilhe esses orçamentos com o outro motorista para entrar em acordo
-              sobre qual oficina usar para a reparação.
-            </p>
-          </div>
-
-          {mockOrcamentos.map((orc) => (
-            <div key={orc.id} className="card">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-gray-900">{orc.oficina}</h3>
-                  <p className="text-sm text-gray-500">Prazo: {orc.prazo}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-xl font-bold text-gray-900">{orc.valor}</p>
-                </div>
-              </div>
-              <div className="flex gap-2 mt-4">
-                <button className="btn-success flex-1 !py-2 text-sm">
-                  Aceitar
-                </button>
-                <button
-                  onClick={() => { setStep('chat'); setNovaMensagem(`O que acha do orçamento da ${orc.oficina} por ${orc.valor}?`); }}
-                  className="btn-secondary flex-1 !py-2 text-sm"
-                >
-                  Discutir
-                </button>
-              </div>
+          {loadingOrc ? (
+            <div className="card text-center py-8">
+              <div className="animate-pulse text-gray-400">Carregando orçamentos...</div>
             </div>
-          ))}
+          ) : orcamentos.length === 0 ? (
+            <div className="card text-center py-12">
+              <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              <h3 className="font-semibold text-gray-900 mb-2">Nenhum orçamento ainda</h3>
+              <p className="text-sm text-gray-500">
+                Oficinas próximas estão avaliando os danos. Você receberá orçamentos por email assim que estiverem prontos.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p className="text-sm text-yellow-800">
+                  Compartilhe esses orçamentos com o outro motorista para entrar em acordo
+                  sobre qual oficina usar para a reparação.
+                </p>
+              </div>
+
+              {orcamentos.map((orc) => (
+                <div key={orc.id} className="card">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{orc.oficina?.nome_fantasia || 'Oficina'}</h3>
+                      <p className="text-sm text-gray-500">Prazo: {orc.prazo_dias} dias</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xl font-bold text-gray-900">{formatCurrency(orc.valor_total)}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-4">
+                    <button className="btn-success flex-1 !py-2 text-sm">
+                      Aceitar
+                    </button>
+                    <button
+                      onClick={() => {
+                        setStep('chat');
+                        setNovaMensagem(`O que acha do orçamento da ${orc.oficina?.nome_fantasia} por ${formatCurrency(orc.valor_total)}?`);
+                      }}
+                      className="btn-secondary flex-1 !py-2 text-sm"
+                    >
+                      Discutir
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       )}
     </div>

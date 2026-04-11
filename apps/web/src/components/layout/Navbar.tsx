@@ -1,15 +1,26 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useState } from 'react';
 
 export default function Navbar() {
-  const { user, oficina, isLoggedIn, loading, signOut } = useAuth();
+  const { user, oficina, funcionario, isLoggedIn, loading, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.replace('/');
+    router.refresh();
+  };
 
   const isOficina = user?.tipo === 'oficina';
-  const dashboardPath = isOficina ? '/oficina/dashboard' : '/cliente/dashboard';
+  const isMecanico = funcionario?.cargo === 'mecanico';
+  const dashboardPath = isOficina
+    ? (isMecanico ? '/oficina/veiculos-em-servico' : '/oficina/dashboard')
+    : '/cliente/dashboard';
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -17,23 +28,32 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href={isLoggedIn ? dashboardPath : '/'} className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isOficina ? 'bg-emerald-600' : 'bg-primary-600'}`}>
                 <span className="text-white font-bold text-sm">FA</span>
               </div>
               <span className="text-xl font-bold text-gray-900">
-                Fix<span className="text-primary-600">Auto</span>
+                Fix<span className={isOficina ? 'text-emerald-600' : 'text-primary-600'}>Auto</span>
               </span>
             </Link>
 
             {isLoggedIn && (
               <div className="hidden md:flex items-center ml-8 gap-1">
                 {isOficina ? (
-                  <>
-                    <NavLink href="/oficina/dashboard">Dashboard</NavLink>
-                    <NavLink href="/oficina/solicitacoes">Solicitações</NavLink>
-                    <NavLink href="/oficina/agenda">Agenda</NavLink>
-                    <NavLink href="/oficina/avaliacoes">Avaliações</NavLink>
-                  </>
+                  isMecanico ? (
+                    <>
+                      <NavLink href="/oficina/veiculos-em-servico">Oficina</NavLink>
+                    </>
+                  ) : (
+                    <>
+                      <NavLink href="/oficina/dashboard">Dashboard</NavLink>
+                      <NavLink href="/oficina/solicitacoes">Solicitações</NavLink>
+                      <NavLink href="/oficina/veiculos-em-servico">Oficina</NavLink>
+                      <NavLink href="/oficina/agenda">Agenda</NavLink>
+                      <NavLink href="/oficina/equipe">Equipe</NavLink>
+                      <NavLink href="/oficina/avaliacoes">Avaliações</NavLink>
+                      <NavLink href="/oficina/perfil">Perfil</NavLink>
+                    </>
+                  )
                 ) : (
                   <>
                     <NavLink href="/cliente/dashboard">Dashboard</NavLink>
@@ -41,6 +61,7 @@ export default function Navbar() {
                     <NavLink href="/cliente/nova-solicitacao">Nova Solicitação</NavLink>
                     <NavLink href="/cliente/orcamentos">Orçamentos</NavLink>
                     <NavLink href="/cliente/historico">Histórico</NavLink>
+                    <NavLink href="/cliente/perfil">Perfil</NavLink>
                   </>
                 )}
               </div>
@@ -50,9 +71,12 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
               <>
-                <div className="hidden sm:flex items-center gap-2">
-                  <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                    <span className="text-primary-700 font-semibold text-sm">
+                <Link
+                  href={isOficina ? '/oficina/perfil' : '/cliente/perfil'}
+                  className="hidden sm:flex items-center gap-2 hover:opacity-80 transition-opacity"
+                >
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isOficina ? 'bg-emerald-100' : 'bg-primary-100'}`}>
+                    <span className={`font-semibold text-sm ${isOficina ? 'text-emerald-700' : 'text-primary-700'}`}>
                       {user!.nome.charAt(0)}
                     </span>
                   </div>
@@ -62,9 +86,9 @@ export default function Navbar() {
                       {isOficina ? oficina?.nome_fantasia : 'Cliente'}
                     </p>
                   </div>
-                </div>
+                </Link>
                 <button
-                  onClick={signOut}
+                  onClick={handleSignOut}
                   className="text-sm text-gray-500 hover:text-gray-700"
                 >
                   Sair
@@ -103,13 +127,22 @@ export default function Navbar() {
         {menuOpen && isLoggedIn && (
           <div className="md:hidden pb-4 border-t border-gray-100 pt-2">
             {isOficina ? (
-              <>
-                <MobileNavLink href="/oficina/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>
-                <MobileNavLink href="/oficina/solicitacoes" onClick={() => setMenuOpen(false)}>Solicitações</MobileNavLink>
-                <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>Agenda</MobileNavLink>
-                <MobileNavLink href="/oficina/avaliacoes" onClick={() => setMenuOpen(false)}>Avaliações</MobileNavLink>
-                <MobileNavLink href="/oficina/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
-              </>
+              isMecanico ? (
+                <>
+                  <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>Oficina</MobileNavLink>
+                </>
+              ) : (
+                <>
+                  <MobileNavLink href="/oficina/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>
+                  <MobileNavLink href="/oficina/solicitacoes" onClick={() => setMenuOpen(false)}>Solicitações</MobileNavLink>
+                  <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>Oficina</MobileNavLink>
+                  <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>Agenda</MobileNavLink>
+                  <MobileNavLink href="/oficina/equipe" onClick={() => setMenuOpen(false)}>Equipe</MobileNavLink>
+                  <MobileNavLink href="/oficina/checkin" onClick={() => setMenuOpen(false)}>Check-in Manual</MobileNavLink>
+                  <MobileNavLink href="/oficina/avaliacoes" onClick={() => setMenuOpen(false)}>Avaliações</MobileNavLink>
+                  <MobileNavLink href="/oficina/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
+                </>
+              )
             ) : (
               <>
                 <MobileNavLink href="/cliente/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>

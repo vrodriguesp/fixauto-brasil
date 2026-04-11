@@ -1,13 +1,14 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import type { Profile, Oficina } from '@fixauto/shared';
+import type { Profile, Oficina, Funcionario } from '@fixauto/shared';
 import { supabase, isSupabaseConfigured } from './supabase';
 import type { User } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: Profile | null;
   oficina: Oficina | null;
+  funcionario: Funcionario | null;
   authUser: User | null;
   isLoggedIn: boolean;
   loading: boolean;
@@ -21,6 +22,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   oficina: null,
+  funcionario: null,
   authUser: null,
   isLoggedIn: false,
   loading: true,
@@ -35,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [authUser, setAuthUser] = useState<User | null>(null);
   const [user, setUser] = useState<Profile | null>(null);
   const [oficina, setOficina] = useState<Oficina | null>(null);
+  const [funcionario, setFuncionario] = useState<Funcionario | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = useCallback(async (userId: string) => {
@@ -48,14 +51,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(profile as Profile);
 
       if (profile.tipo === 'oficina') {
+        // Check if this profile owns an oficina
         const { data: ofi } = await supabase
           .from('oficinas')
           .select('*')
           .eq('profile_id', userId)
           .single();
         setOficina(ofi as Oficina | null);
+
+        // Also check if they're a funcionario (admin of their own oficina doesn't need this)
+        if (!ofi) {
+          const { data: func } = await supabase
+            .from('funcionarios')
+            .select('*, oficina:oficinas(*)')
+            .eq('profile_id', userId)
+            .eq('ativo', true)
+            .single();
+          if (func) {
+            setFuncionario(func as Funcionario);
+            setOficina(func.oficina as Oficina);
+          }
+        } else {
+          setFuncionario(null);
+        }
       } else {
         setOficina(null);
+        setFuncionario(null);
       }
     }
   }, []);
@@ -83,6 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setUser(null);
         setOficina(null);
+        setFuncionario(null);
       }
     });
 
@@ -125,6 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setUser(null);
     setOficina(null);
+    setFuncionario(null);
     setAuthUser(null);
   };
 
@@ -143,6 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         oficina,
+        funcionario,
         authUser,
         isLoggedIn: !!user,
         loading,

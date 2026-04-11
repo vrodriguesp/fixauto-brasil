@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import { TIPOS_SERVICO } from '@fixauto/shared';
 
 export default function CadastroPageWrapper() {
   return (
@@ -33,6 +34,13 @@ function CadastroPage() {
   const [cidade, setCidade] = useState('');
   const [estado, setEstado] = useState('');
   const [cep, setCep] = useState('');
+  const [especialidades, setEspecialidades] = useState<string[]>([]);
+
+  const toggleEspecialidade = (value: string) => {
+    setEspecialidades((prev) =>
+      prev.includes(value) ? prev.filter((e) => e !== value) : [...prev, value]
+    );
+  };
 
   const { signUp } = useAuth();
   const router = useRouter();
@@ -77,7 +85,7 @@ function CadastroPage() {
           latitude: -23.5505,  // Default SP, user can update later
           longitude: -46.6333,
           raio_atendimento_km: 30,
-          especialidades: [],
+          especialidades: especialidades.length > 0 ? especialidades : [],
         });
         if (ofiError) {
           setError(ofiError.message);
@@ -220,7 +228,44 @@ function CadastroPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>
                 <input type="text" className="input-field" placeholder="00000-000" value={cep} onChange={(e) => setCep(e.target.value)} />
               </div>
-              <button type="submit" className="btn-primary w-full" disabled={loading}>
+
+              {/* Especialidades */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Serviços que a oficina realiza *
+                </label>
+                <p className="text-xs text-gray-500 mb-3">
+                  Selecione todos os tipos de serviço que sua oficina oferece. Você só receberá solicitações compatíveis.
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  {TIPOS_SERVICO.map((tipo) => (
+                    <label
+                      key={tipo.value}
+                      className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                        especialidades.includes(tipo.value)
+                          ? 'border-primary-500 bg-primary-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={especialidades.includes(tipo.value)}
+                        onChange={() => toggleEspecialidade(tipo.value)}
+                        className="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+                      />
+                      <span className="text-lg">{tipo.icon}</span>
+                      <span className="text-sm text-gray-900">{tipo.label}</span>
+                    </label>
+                  ))}
+                </div>
+                {especialidades.length > 0 && (
+                  <p className="text-xs text-primary-600 mt-2">
+                    {especialidades.length} serviço(s) selecionado(s)
+                  </p>
+                )}
+              </div>
+
+              <button type="submit" className="btn-primary w-full" disabled={loading || especialidades.length === 0}>
                 {loading ? 'Criando conta...' : 'Criar conta da oficina'}
               </button>
             </form>

@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
+import { useAuth } from '@/lib/auth-context';
 import type { TipoItemOrcamento } from '@fixauto/shared';
 import { formatCurrency } from '@/lib/utils';
 
@@ -18,8 +19,15 @@ export default function EnviarOrcamentoPage() {
   const params = useParams();
   const router = useRouter();
   const { solicitacoes } = useSolicitacoes();
-  const { create: createOrcamento } = useOrcamentos();
+  const { create: createOrcamento, update: updateOrcamento } = useOrcamentos();
+  const { oficina } = useAuth();
   const solicitacao = solicitacoes.find((s) => s.id === params.id);
+
+  // Check if workshop already has a quote for this solicitation
+  const existingQuote = solicitacao?.orcamentos?.find(
+    (o) => o.oficina_id === oficina?.id
+  );
+  const isRevision = !!existingQuote;
 
   const [itens, setItens] = useState<ItemForm[]>([
     { descricao: '', tipo: 'mao_de_obra', valor_unitario: 0, quantidade: 1 },
@@ -29,11 +37,41 @@ export default function EnviarOrcamentoPage() {
   const [observacoes, setObservacoes] = useState('');
   const [validade, setValidade] = useState('2026-04-30');
   const [submitted, setSubmitted] = useState(false);
+  const [prefilled, setPrefilled] = useState(false);
 
   // Availability slots
-  const [slots, setSlots] = useState([
-    { data: '2026-04-07', turno: 'manha' as const },
+  const [slots, setSlots] = useState<{ data: string; turno: 'manha' | 'tarde' }[]>([
+    { data: '2026-04-07', turno: 'manha' },
   ]);
+
+  // Pre-fill form with existing quote data for revisions
+  useEffect(() => {
+    if (existingQuote && !prefilled) {
+      setPrefilled(true);
+      if (existingQuote.itens && existingQuote.itens.length > 0) {
+        setItens(
+          existingQuote.itens.map((item: any) => ({
+            descricao: item.descricao,
+            tipo: item.tipo as TipoItemOrcamento,
+            valor_unitario: item.valor_unitario,
+            quantidade: item.quantidade,
+          }))
+        );
+      }
+      setPrazoDias(existingQuote.prazo_dias || 5);
+      setTempoExecucaoHoras(existingQuote.tempo_execucao_horas || 40);
+      setObservacoes(existingQuote.observacoes || '');
+      setValidade(existingQuote.validade || '2026-04-30');
+      if (existingQuote.disponibilidade && existingQuote.disponibilidade.length > 0) {
+        setSlots(
+          existingQuote.disponibilidade.map((s: any) => ({
+            data: s.data_checkin,
+            turno: s.turno as 'manha' | 'tarde',
+          }))
+        );
+      }
+    }
+  }, [existingQuote, prefilled]);
 
   const addSlot = () => {
     setSlots([...slots, { data: '', turno: 'manha' as const }]);
@@ -69,31 +107,66 @@ export default function EnviarOrcamentoPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await createOrcamento({
-      solicitacao_id: params.id as string,
-      valor_total: total,
-      prazo_dias: prazoDias,
-      tempo_execucao_horas: tempoExecucaoHoras,
-      observacoes,
-      validade,
-      itens: itens.map(item => ({
-        descricao: item.descricao,
-        tipo: item.tipo,
-        valor_unitario: item.valor_unitario,
-        quantidade: item.quantidade,
-        valor_total: item.valor_unitario * item.quantidade,
-      })),
-      slots: slots.filter(s => s.data).map(s => ({
-        data_checkin: s.data,
-        turno: s.turno,
-        data_previsao_entrega: (() => {
-          const d = new Date(s.data + 'T12:00:00');
-          d.setDate(d.getDate() + prazoDias);
-          return d.toISOString().split('T')[0];
-        })(),
-      })),
-    });
-    if (!error) {
+
+    const itensPayload = itens.map(item => ({
+      descricao: item.descricao,
+      tipo: item.tipo,
+      valor_unitario: item.valor_unitario,
+      quantidade: item.quantidade,
+      valor_total: item.valor_unitario * item.quantidade,
+    }));
+
+    const slotsPayload = slots.filter(s => s.data).map(s => ({
+      data_checkin: s.data,
+      turno: s.turno,
+      data_previsao_entrega: (() => {
+        const d = new Date(s.data + 'T12:00:00');
+        d.setDate(d.getDate() + prazoDias);
+        return d.toISOString().split('T')[0];
+      })(),
+    }));
+
+    let result: { data?: any; error?: any };
+
+    if (isRevision && existingQuote) {
+      // Update existing quote (revision)
+      result = await updateOrcamento(existingQuote.id, {
+        solicitacao_id: params.id as string,
+        valor_total: total,
+        prazo_dias: prazoDias,
+        tempo_execucao_horas: tempoExecucaoHoras,
+        observacoes,
+        validade,
+        valor_original: existingQuote.valor_original || existingQuote.valor_total,
+        revisao_numero: (existingQuote.revisao_numero || 0) + 1,
+        itens: itensPayload,
+        slots: slotsPayload,
+      });
+    } else {
+      // Create new quote
+      result = await createOrcamento({
+        solicitacao_id: params.id as string,
+        valor_total: total,
+        prazo_dias: prazoDias,
+        tempo_execucao_horas: tempoExecucaoHoras,
+        observacoes,
+        validade,
+        itens: itensPayload,
+        slots: slotsPayload,
+      });
+    }
+
+    if (!result.error) {
+      // Notify client via email + WhatsApp (non-blocking)
+      const orcId = result.data?.id;
+      if (orcId) {
+        fetch('/api/notificar-orcamento', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orcamentoId: orcId }),
+        }).catch(() => {});
+      }
+
       setSubmitted(true);
       setTimeout(() => router.push('/oficina/solicitacoes'), 2000);
     }
@@ -115,8 +188,14 @@ export default function EnviarOrcamentoPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Orçamento enviado!</h1>
-        <p className="text-gray-600">O cliente foi notificado e pode aceitar seu orçamento.</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          {isRevision ? 'Orçamento revisado!' : 'Orçamento enviado!'}
+        </h1>
+        <p className="text-gray-600">
+          {isRevision
+            ? 'O cliente foi notificado sobre a revisão do orçamento.'
+            : 'O cliente foi notificado e pode aceitar seu orçamento.'}
+        </p>
       </div>
     );
   }
@@ -130,7 +209,16 @@ export default function EnviarOrcamentoPage() {
         Voltar
       </button>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Enviar Orçamento</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        {isRevision ? 'Revisar Orçamento' : 'Enviar Orçamento'}
+      </h1>
+      {isRevision && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-2">
+          <p className="text-sm text-amber-800">
+            Você já enviou um orçamento para esta solicitação. Ao submeter, o orçamento anterior será atualizado (revisão #{((existingQuote?.revisao_numero) || 0) + 1}).
+          </p>
+        </div>
+      )}
       <p className="text-gray-600 mb-6">
         {solicitacao.veiculo?.fipe_marca} {solicitacao.veiculo?.fipe_modelo} - {solicitacao.tipo}
       </p>
@@ -276,65 +364,77 @@ export default function EnviarOrcamentoPage() {
         </div>
 
         {/* Disponibilidade */}
-        <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Disponibilidade para check-in</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            Ofereça datas para o cliente deixar o veículo. O cliente escolherá uma delas.
-          </p>
-
-          <div className="space-y-3">
-            {slots.map((slot, index) => (
-              <div key={index} className="flex items-center gap-3">
-                <div className="flex-1">
-                  <input
-                    type="date"
-                    className="input-field"
-                    value={slot.data}
-                    onChange={(e) => updateSlot(index, 'data', e.target.value)}
-                  />
-                </div>
-                <div className="w-36">
-                  <select
-                    className="input-field"
-                    value={slot.turno}
-                    onChange={(e) => updateSlot(index, 'turno', e.target.value)}
-                  >
-                    <option value="manha">Manhã (8-12h)</option>
-                    <option value="tarde">Tarde (13-17h)</option>
-                  </select>
-                </div>
-                {slot.data && (
-                  <div className="text-xs text-gray-500 w-28">
-                    Entrega: ~{(() => {
-                      const d = new Date(slot.data + 'T12:00:00');
-                      d.setDate(d.getDate() + prazoDias);
-                      return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
-                    })()}
-                  </div>
-                )}
-                {slots.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeSlot(index)}
-                    className="text-red-400 hover:text-red-600"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
+        {solicitacao.status === 'em_andamento' || solicitacao.status === 'aceita' ? (
+          <div className="card mb-6">
+            <div className="bg-blue-50 rounded-lg p-4 flex items-center gap-3">
+              <span className="text-2xl">🔧</span>
+              <div>
+                <p className="font-semibold text-blue-800">Veiculo ja na oficina</p>
+                <p className="text-sm text-blue-600">O check-in ja foi realizado. O novo orcamento sera aplicado ao servico em andamento.</p>
               </div>
-            ))}
+            </div>
           </div>
+        ) : (
+          <div className="card mb-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Disponibilidade para check-in</h2>
+            <p className="text-sm text-gray-500 mb-4">
+              Ofereça datas para o cliente deixar o veículo. O cliente escolherá uma delas.
+            </p>
 
-          <button
-            type="button"
-            onClick={addSlot}
-            className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"
-          >
-            + Adicionar data disponível
-          </button>
-        </div>
+            <div className="space-y-3">
+              {slots.map((slot, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <input
+                      type="date"
+                      className="input-field"
+                      value={slot.data}
+                      onChange={(e) => updateSlot(index, 'data', e.target.value)}
+                    />
+                  </div>
+                  <div className="w-36">
+                    <select
+                      className="input-field"
+                      value={slot.turno}
+                      onChange={(e) => updateSlot(index, 'turno', e.target.value)}
+                    >
+                      <option value="manha">Manhã (8-12h)</option>
+                      <option value="tarde">Tarde (13-17h)</option>
+                    </select>
+                  </div>
+                  {slot.data && (
+                    <div className="text-xs text-gray-500 w-28">
+                      Entrega: ~{(() => {
+                        const d = new Date(slot.data + 'T12:00:00');
+                        d.setDate(d.getDate() + prazoDias);
+                        return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+                      })()}
+                    </div>
+                  )}
+                  {slots.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeSlot(index)}
+                      className="text-red-400 hover:text-red-600"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={addSlot}
+              className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"
+            >
+              + Adicionar data disponivel
+            </button>
+          </div>
+        )}
 
         {/* Observacoes */}
         <div className="card mb-6">
@@ -357,7 +457,7 @@ export default function EnviarOrcamentoPage() {
             Cancelar
           </button>
           <button type="submit" className="btn-success" disabled={total === 0}>
-            Enviar Orçamento - {formatCurrency(total)}
+            {isRevision ? 'Atualizar Orçamento' : 'Enviar Orçamento'} - {formatCurrency(total)}
           </button>
         </div>
       </form>

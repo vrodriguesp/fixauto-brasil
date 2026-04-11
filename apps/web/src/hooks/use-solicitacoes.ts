@@ -25,30 +25,69 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
           *,
           itens:orcamento_itens(*),
           oficina:oficinas(*, profile:profiles(*)),
-          disponibilidade:orcamento_disponibilidade(*)
+          disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*)
         )
       `)
       .order('created_at', { ascending: false });
 
     if (user.tipo === 'cliente') {
       query = query.eq('cliente_id', user.id);
+    } else {
+      // Workshops should not see cancelled solicitations
+      query = query.neq('status', 'cancelada');
     }
 
     if (filter?.status && filter.status !== 'todos') {
       query = query.eq('status', filter.status);
     }
 
-    const { data } = await query;
+    const { data, error: fetchError } = await query;
+
+    if (fetchError) {
+      console.error('[useSolicitacoes] Fetch error:', fetchError.message, fetchError.details, fetchError.hint);
+      // Retry with simpler query but still include orcamentos for agendamentos
+      const { data: fallbackData } = await supabase
+        .from('solicitacoes')
+        .select(`
+          *,
+          veiculo:veiculos(*),
+          fotos:solicitacao_fotos(*),
+          cliente:profiles!solicitacoes_cliente_id_fkey(*),
+          orcamentos(
+            *,
+            oficina:oficinas(*, profile:profiles(*)),
+            disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*)
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .eq('cliente_id', user.id);
+      setSolicitacoes((fallbackData as Solicitacao[]) || []);
+      setLoading(false);
+      return;
+    }
+
     let results = (data as Solicitacao[]) || [];
 
-    // For workshops, filter by distance (rough bbox filter, real app would use PostGIS)
+    // For workshops, filter by distance/especialidades BUT always show accepted ones
     if (user.tipo === 'oficina' && oficina && filter?.nearby) {
       const radiusLat = oficina.raio_atendimento_km / 111;
       const radiusLon = oficina.raio_atendimento_km / (111 * Math.cos(oficina.latitude * Math.PI / 180));
-      results = results.filter((s) =>
-        Math.abs(s.latitude - oficina.latitude) <= radiusLat &&
-        Math.abs(s.longitude - oficina.longitude) <= radiusLon
-      );
+      results = results.filter((s) => {
+        // Always show solicitations where this oficina has an accepted quote
+        const hasAcceptedQuote = s.orcamentos?.some(
+          (o) => o.oficina_id === oficina.id && ['aceito'].includes(o.status)
+        );
+        if (hasAcceptedQuote) return true;
+
+        // For new solicitations, filter by distance and especialidades
+        const withinRadius =
+          Math.abs(s.latitude - oficina.latitude) <= radiusLat &&
+          Math.abs(s.longitude - oficina.longitude) <= radiusLon;
+        const matchesEspecialidade =
+          !oficina.especialidades || oficina.especialidades.length === 0 ||
+          oficina.especialidades.includes(s.tipo);
+        return withinRadius && matchesEspecialidade;
+      });
     }
 
     setSolicitacoes(results);

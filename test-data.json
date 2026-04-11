@@ -1,0 +1,180 @@
+{
+  "sheets": [
+    {
+      "title": "Cliente",
+      "sections": [
+        {
+          "name": "Autenticação do Cliente",
+          "tests": [
+            ["Autenticação", "Cadastro de novo cliente com dados válidos", "Nenhuma conta existente", "1. Acessar /cadastro\n2. Selecionar 'Sou Motorista'\n3. Preencher nome, e-mail, telefone e senha (mín. 6 caracteres)\n4. Clicar em 'Criar conta'", "Conta criada com sucesso. Usuário redirecionado para /cliente/dashboard."],
+            ["Autenticação", "Cadastro com e-mail já existente", "E-mail já cadastrado no sistema", "1. Acessar /cadastro\n2. Selecionar 'Sou Motorista'\n3. Preencher com e-mail já cadastrado\n4. Clicar em 'Criar conta'", "Mensagem de erro informando que o e-mail já está em uso."],
+            ["Autenticação", "Cadastro com senha menor que 6 caracteres", "Nenhuma conta existente", "1. Acessar /cadastro\n2. Preencher todos os campos com senha de 5 caracteres\n3. Clicar em 'Criar conta'", "Validação impede o envio. Mensagem de erro sobre senha mínima."],
+            ["Autenticação", "Login com credenciais válidas", "Conta de cliente existente", "1. Acessar /login\n2. Preencher e-mail e senha corretos\n3. Clicar em 'Entrar'", "Usuário autenticado e redirecionado para /cliente/dashboard."],
+            ["Autenticação", "Login com senha incorreta", "Conta de cliente existente", "1. Acessar /login\n2. Preencher e-mail correto e senha errada\n3. Clicar em 'Entrar'", "Mensagem de erro: credenciais inválidas."],
+            ["Autenticação", "Login com e-mail não cadastrado", "E-mail não existe no sistema", "1. Acessar /login\n2. Preencher e-mail inexistente\n3. Clicar em 'Entrar'", "Mensagem de erro: credenciais inválidas."],
+            ["Autenticação", "Logout do sistema", "Usuário logado como cliente", "1. Clicar no botão de logout no menu/navbar", "Usuário deslogado e redirecionado para a página inicial."],
+            ["Autenticação", "Acesso a rota protegida sem login", "Usuário não logado", "1. Acessar diretamente /cliente/dashboard no navegador", "Redirecionado automaticamente para /login."]
+          ]
+        },
+        {
+          "name": "Gestão de Veículos",
+          "tests": [
+            ["Veículos", "Adicionar veículo com FIPE", "Usuário logado como cliente", "1. Acessar /cliente/veiculos\n2. Clicar em '+ Adicionar Veículo'\n3. Selecionar tipo, marca, modelo e ano pelo FIPE\n4. Preencher placa, cor e apelido (opcionais)\n5. Clicar em 'Adicionar'", "Veículo adicionado e visível na lista. Valor FIPE exibido."],
+            ["Veículos", "Adicionar veículo sem campos obrigatórios", "Usuário logado como cliente", "1. Acessar /cliente/veiculos\n2. Clicar em '+ Adicionar Veículo'\n3. Não selecionar marca/modelo/ano\n4. Clicar em 'Adicionar'", "Botão desabilitado ou validação impede o envio."],
+            ["Veículos", "Editar veículo existente", "Pelo menos 1 veículo cadastrado", "1. Acessar /cliente/veiculos\n2. Clicar no ícone de edição\n3. Alterar dados (ex: placa, cor)\n4. Clicar em 'Salvar'", "Dados do veículo atualizados na lista."],
+            ["Veículos", "Excluir veículo", "Pelo menos 1 veículo cadastrado", "1. Acessar /cliente/veiculos\n2. Clicar no ícone de lixeira", "Veículo removido da lista."],
+            ["Veículos", "Consulta FIPE - buscar marca, modelo e ano", "Usuário logado como cliente", "1. No formulário de veículo, selecionar tipo 'Carro'\n2. Selecionar marca (ex: Volkswagen)\n3. Selecionar modelo\n4. Selecionar ano", "Valor FIPE carregado e exibido automaticamente."]
+          ]
+        },
+        {
+          "name": "Nova Solicitação de Reparo",
+          "tests": [
+            ["Solicitação", "Criar solicitação completa (colisão com fotos)", "Pelo menos 1 veículo cadastrado", "1. Acessar /cliente/nova-solicitacao\n2. Selecionar veículo\n3. Escolher tipo 'Colisão'\n4. Adicionar fotos do dano\n5. Descrever o problema\n6. Selecionar urgência\n7. Preencher endereço\n8. Clicar em 'Enviar Solicitação'", "Solicitação criada. Tela de sucesso exibida. Redirecionamento para o dashboard."],
+            ["Solicitação", "Criar solicitação de revisão (checklist)", "Pelo menos 1 veículo cadastrado", "1. Acessar /cliente/nova-solicitacao\n2. Selecionar veículo\n3. Escolher tipo 'Revisão'\n4. Marcar serviços no checklist\n5. Adicionar observações\n6. Selecionar urgência\n7. Preencher endereço\n8. Enviar", "Solicitação criada com serviços selecionados na descrição."],
+            ["Solicitação", "Criar solicitação sem selecionar veículo", "Usuário logado como cliente", "1. Acessar /cliente/nova-solicitacao\n2. Tentar avançar sem selecionar veículo", "Botão 'Próximo' desabilitado."],
+            ["Solicitação", "Criar solicitação sem endereço", "Veículo selecionado, tipo e descrição preenchidos", "1. Chegar ao passo 5 (localização)\n2. Não preencher endereço\n3. Tentar enviar", "Botão 'Enviar Solicitação' desabilitado."],
+            ["Solicitação", "Adicionar e remover fotos", "Estar no passo 3 (colisão)", "1. Clicar em 'Adicionar foto'\n2. Selecionar fotos\n3. Verificar pré-visualização\n4. Remover uma foto clicando no X", "Fotos aparecem com preview. Ao remover, foto desaparece."],
+            ["Solicitação", "Navegação entre passos (avançar/voltar)", "Estar em qualquer passo", "1. Avançar para passo 2\n2. Clicar 'Voltar'\n3. Verificar dados mantidos\n4. Avançar novamente", "Dados preservados ao navegar entre passos."]
+          ]
+        },
+        {
+          "name": "Dashboard do Cliente",
+          "tests": [
+            ["Dashboard", "Dashboard sem solicitações", "Cliente logado, sem solicitações", "1. Acessar /cliente/dashboard", "Mensagem 'Você ainda não tem solicitações' com botão para criar."],
+            ["Dashboard", "Dashboard com solicitações ativas", "Cliente com solicitações existentes", "1. Criar uma solicitação\n2. Acessar /cliente/dashboard", "Estatísticas corretas. Solicitações listadas com status, veículo e data."],
+            ["Dashboard", "Clicar em solicitação para ver detalhes", "Pelo menos 1 solicitação", "1. No dashboard, clicar em uma solicitação", "Navega para /cliente/orcamentos/[id] com detalhes."],
+            ["Dashboard", "Seção de veículos no sidebar", "Cliente com veículos cadastrados", "1. Acessar dashboard\n2. Verificar seção 'Meus Veículos'", "Veículos listados com link para 'Ver todos'."],
+            ["Dashboard", "Seção de notificações", "Cliente com notificações", "1. Acessar dashboard\n2. Verificar notificações", "Notificações não lidas exibidas com link clicável."]
+          ]
+        },
+        {
+          "name": "Orçamentos e Agendamento",
+          "tests": [
+            ["Orçamentos", "Lista de orçamentos recebidos", "Solicitação com orçamento recebido", "1. Acessar /cliente/orcamentos", "Solicitações com orçamentos listadas. Nome da oficina, valor e prazo visíveis."],
+            ["Orçamentos", "Detalhes de um orçamento", "Solicitação com orçamento(s)", "1. Acessar /cliente/orcamentos/[id]", "Detalhes completos: valor, itens, prazo, tempo de execução, datas disponíveis."],
+            ["Orçamentos", "Aceitar orçamento e agendar", "Orçamento com datas de disponibilidade", "1. Acessar detalhes\n2. Clicar 'Aceitar e Agendar'\n3. Selecionar data/turno\n4. Confirmar", "Tela de confirmação com check-in e previsão de entrega. Orçamento aceito. Outros recusados."],
+            ["Orçamentos", "Confirmar sem selecionar data", "Tela de agendamento aberta", "1. Clicar 'Aceitar e Agendar'\n2. Não selecionar data\n3. Tentar confirmar", "Botão 'Confirmar' desabilitado."],
+            ["Orçamentos", "Comparar múltiplos orçamentos", "Solicitação com 2+ orçamentos", "1. Acessar detalhes\n2. Analisar orçamentos", "Todos visíveis com valores, prazos, avaliação e datas para comparação."]
+          ]
+        },
+        {
+          "name": "Histórico e Perfil",
+          "tests": [
+            ["Histórico", "Histórico sem reparos concluídos", "Sem solicitações concluídas", "1. Acessar /cliente/historico", "Mensagem 'Nenhum reparo concluído ainda'."],
+            ["Histórico", "Histórico com reparos concluídos", "Solicitação concluída existente", "1. Acessar /cliente/historico", "Reparos listados com veículo, descrição, data e valor."],
+            ["Perfil", "Visualizar perfil do cliente", "Logado como cliente", "1. Acessar /cliente/perfil", "Nome, e-mail e telefone exibidos corretamente."]
+          ]
+        },
+        {
+          "name": "Emergência",
+          "tests": [
+            ["Emergência", "Acessar página de emergência", "Pode estar deslogado", "1. Acessar /emergencia", "Página carrega com opção de fotografar danos."],
+            ["Emergência", "Registrar acidente com fotos e localização", "Na página de emergência", "1. Adicionar fotos\n2. Descrever o ocorrido\n3. Preencher endereço\n4. Enviar", "Acidente registrado. Tela de confirmação exibida."]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Oficina",
+      "sections": [
+        {
+          "name": "Autenticação da Oficina",
+          "tests": [
+            ["Autenticação", "Cadastro de oficina completo", "Nenhuma conta existente", "1. Acessar /cadastro\n2. Selecionar 'Sou Oficina'\n3. Preencher dados pessoais (nome, e-mail, telefone, senha)\n4. Clicar 'Próximo'\n5. Preencher dados da oficina (nome fantasia, CNPJ, endereço, cidade, estado, CEP)\n6. Clicar 'Criar conta da oficina'", "Conta + oficina criados no Supabase. Redirecionamento para /oficina/dashboard."],
+            ["Autenticação", "Cadastro sem campos obrigatórios", "Nenhuma conta existente", "1. Acessar /cadastro\n2. Selecionar 'Sou Oficina'\n3. Deixar campos vazios\n4. Tentar avançar", "Validação impede avanço."],
+            ["Autenticação", "Login como oficina", "Conta de oficina existente", "1. Acessar /login\n2. Preencher credenciais\n3. Clicar 'Entrar'", "Redirecionamento para /oficina/dashboard com dados visíveis."],
+            ["Autenticação", "Acesso a rota de oficina sem login", "Usuário não logado", "1. Acessar /oficina/dashboard diretamente", "Redirecionado para /login."]
+          ]
+        },
+        {
+          "name": "Dashboard da Oficina",
+          "tests": [
+            ["Dashboard", "Dashboard sem dados", "Oficina recém-criada", "1. Acessar /oficina/dashboard", "Estatísticas em zero. Mensagem 'Nenhuma solicitação nova na sua região'."],
+            ["Dashboard", "Dashboard com solicitações próximas", "Solicitações na região existem", "1. Acessar /oficina/dashboard", "Solicitações listadas com tipo, urgência, veículo e distância."],
+            ["Dashboard", "Clicar em solicitação", "Solicitações visíveis", "1. Clicar em uma solicitação", "Navega para /oficina/solicitacoes/[id] com detalhes."],
+            ["Dashboard", "Agenda no sidebar", "Eventos na agenda", "1. Verificar 'Próximos serviços' no sidebar", "Eventos listados com título, tipo e cor."],
+            ["Dashboard", "Avaliações no sidebar", "Oficina com avaliações", "1. Verificar 'Avaliações recentes' no sidebar", "Avaliações com nome, nota e comentário."]
+          ]
+        },
+        {
+          "name": "Solicitações Próximas",
+          "tests": [
+            ["Solicitações", "Listar solicitações próximas", "Solicitações na região existem", "1. Acessar /oficina/solicitacoes", "Solicitações no raio listadas com veículo, tipo, urgência, distância e data."],
+            ["Solicitações", "Filtrar por tipo de serviço", "Solicitações de vários tipos", "1. Acessar /oficina/solicitacoes\n2. Selecionar filtro de tipo (ex: Colisão)", "Apenas solicitações do tipo selecionado exibidas."],
+            ["Solicitações", "Filtrar por status", "Solicitações com vários status", "1. Acessar /oficina/solicitacoes\n2. Selecionar filtro de status", "Apenas solicitações do status selecionado exibidas."],
+            ["Solicitações", "Ver detalhes de solicitação", "Solicitação na lista", "1. Clicar em uma solicitação", "Descrição, fotos, veículo (marca, modelo, ano, placa, FIPE), cliente e urgência exibidos."],
+            ["Solicitações", "Solicitação fora do raio não aparece", "Solicitação fora do raio existe", "1. Acessar /oficina/solicitacoes", "Solicitação fora do raio NÃO aparece."]
+          ]
+        },
+        {
+          "name": "Enviar Orçamento",
+          "tests": [
+            ["Orçamento", "Enviar orçamento completo", "Solicitação aberta de um cliente", "1. Acessar detalhes da solicitação\n2. Clicar 'Enviar Orçamento'\n3. Adicionar itens (descrição, tipo, valor, qtd)\n4. Preencher prazo e tempo de execução\n5. Definir validade\n6. Adicionar datas de check-in\n7. Observações (opcional)\n8. Clicar 'Enviar Orçamento'", "Orçamento criado. Tela de sucesso. Cliente notificado. Status atualizado para 'em_orcamento'."],
+            ["Orçamento", "Múltiplos itens no orçamento", "Formulário de orçamento aberto", "1. Adicionar item 1 (mão de obra)\n2. Clicar '+ Adicionar item'\n3. Adicionar item 2 (peça)\n4. Verificar total", "Total = soma de (valor_unitário x quantidade) de todos os itens."],
+            ["Orçamento", "Remover item do orçamento", "Orçamento com 2+ itens", "1. Clicar 'Remover' em um item\n2. Verificar total", "Item removido. Total recalculado."],
+            ["Orçamento", "Múltiplas datas de disponibilidade", "Formulário aberto", "1. Preencher data 1 e turno\n2. Clicar '+ Adicionar data disponível'\n3. Preencher data 2\n4. Remover uma data", "Datas adicionadas/removidas. Previsão de entrega calculada."],
+            ["Orçamento", "Enviar com valor zero", "Formulário aberto", "1. Não preencher valores\n2. Tentar enviar", "Botão desabilitado quando total é R$ 0,00."],
+            ["Orçamento", "Cálculo de previsão de entrega", "Data e prazo preenchidos", "1. Data check-in: 07/04/2026\n2. Prazo: 5 dias\n3. Verificar previsão", "Previsão mostra ~12/04 (5 dias após check-in)."]
+          ]
+        },
+        {
+          "name": "Agenda",
+          "tests": [
+            ["Agenda", "Calendário mensal", "Oficina logada", "1. Acessar /oficina/agenda", "Calendário do mês atual com eventos (se houver)."],
+            ["Agenda", "Criar evento manual", "Na página de agenda", "1. Clicar '+ Novo Evento'\n2. Preencher título, descrição, datas/horas, tipo e cor\n3. Clicar 'Adicionar'", "Evento criado e visível no calendário e lista."],
+            ["Agenda", "Excluir evento", "Evento existente", "1. Selecionar dia com evento\n2. Clicar X para excluir", "Evento removido do calendário."],
+            ["Agenda", "Alternar visualizações (Mês/Dia/Lista)", "Na página de agenda", "1. Clicar 'Mês' → verificar calendário\n2. Clicar 'Dia' → verificar timeline\n3. Clicar 'Lista' → verificar lista", "Cada visualização carrega corretamente."],
+            ["Agenda", "Navegar entre meses", "Visualização mensal", "1. Clicar seta próximo mês\n2. Clicar seta mês anterior", "Calendário atualiza para o mês correto."],
+            ["Agenda", "Evento via aceitação de orçamento", "Cliente aceitou orçamento", "1. Acessar /oficina/agenda", "Evento 'Reparo agendado' aparece com data do check-in."]
+          ]
+        },
+        {
+          "name": "Avaliações",
+          "tests": [
+            ["Avaliações", "Página sem avaliações", "Oficina sem avaliações", "1. Acessar /oficina/avaliacoes", "Média 0. Mensagem 'Nenhuma avaliação recebida ainda'."],
+            ["Avaliações", "Página com avaliações", "Oficina com avaliações", "1. Acessar /oficina/avaliacoes", "Média correta, gráfico 1-5 estrelas, lista com nome, nota, comentário e data."]
+          ]
+        },
+        {
+          "name": "Perfil da Oficina",
+          "tests": [
+            ["Perfil", "Visualizar perfil", "Oficina logada", "1. Acessar /oficina/perfil", "Dados exibidos: nome fantasia, CNPJ, endereço, cidade, estado, CEP, raio."],
+            ["Perfil", "Editar dados", "Na página de perfil", "1. Alterar campos\n2. Salvar", "Dados atualizados e refletidos na página."]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Fluxo Integrado",
+      "sections": [
+        {
+          "name": "Fluxo Completo: Cliente → Oficina → Cliente",
+          "tests": [
+            ["Integração", "Fluxo de ponta a ponta", "2 contas: 1 cliente + 1 oficina (usar 2 navegadores)", "CLIENTE:\n1. Cadastrar conta de cliente\n2. Adicionar veículo\n3. Criar solicitação de reparo\n\nOFICINA:\n4. Cadastrar/logar como oficina\n5. Verificar solicitação em /oficina/solicitacoes\n6. Abrir detalhes e enviar orçamento\n\nCLIENTE:\n7. Verificar notificação no dashboard\n8. Acessar orçamentos e ver detalhes\n9. Aceitar orçamento e agendar\n\nOFICINA:\n10. Verificar evento na agenda\n11. Verificar notificação de aceite", "Fluxo completo sem erros. Dados persistem. Notificações criadas para ambos."],
+            ["Integração", "Múltiplos orçamentos para mesma solicitação", "1 cliente + 2 oficinas", "1. Cliente cria solicitação\n2. Oficina A envia orçamento\n3. Oficina B envia orçamento\n4. Cliente compara os 2\n5. Cliente aceita da Oficina A", "Ambos visíveis. Ao aceitar um, outro marcado como 'recusado'."]
+          ]
+        },
+        {
+          "name": "Navegação e UX Geral",
+          "tests": [
+            ["Navegação", "Menu de navegação do cliente", "Logado como cliente", "1. Verificar Navbar: Dashboard, Veículos, Nova Solicitação, Orçamentos, Histórico, Perfil\n2. Clicar em cada item", "Todos os links funcionam e levam à página correta."],
+            ["Navegação", "Menu de navegação da oficina", "Logado como oficina", "1. Verificar Navbar: Dashboard, Solicitações, Agenda, Avaliações, Perfil\n2. Clicar em cada item", "Todos os links funcionam e levam à página correta."],
+            ["Navegação", "Menu mobile (hambúrguer)", "Tela pequena", "1. Verificar menu hambúrguer\n2. Clicar para abrir\n3. Verificar links\n4. Navegar", "Menu abre/fecha. Links funcionam e menu fecha ao navegar."],
+            ["Navegação", "Homepage - CTAs", "Não logado", "1. Acessar /\n2. Clicar 'Preciso de um reparo'\n3. Voltar\n4. Clicar 'Sou oficina'", "'Preciso de um reparo' → /cadastro?tipo=cliente. 'Sou oficina' → /cadastro?tipo=oficina."],
+            ["Navegação", "Homepage quando logado", "Usuário logado", "1. Acessar /", "Mensagem 'Você está logado' com botão para dashboard."],
+            ["Responsividade", "Layout em mobile", "Tela < 640px", "1. Navegar por todas as páginas\n2. Verificar que nada quebra", "Layout responsivo. Elementos empilham. Texto legível."],
+            ["Responsividade", "Layout em tablet", "Tela ~768px", "1. Navegar por todas as páginas", "Layout adapta com grid de 2 colunas onde aplicável."]
+          ]
+        },
+        {
+          "name": "Acentuação e Textos",
+          "tests": [
+            ["Acentuação", "Acentos nas páginas do cliente", "Navegar por páginas de cliente", "1. Verificar: Dashboard, Veículos, Nova Solicitação, Orçamentos, Histórico, Perfil\n2. Procurar palavras sem acento", "Todos os textos com acentuação correta."],
+            ["Acentuação", "Acentos nas páginas da oficina", "Navegar por páginas de oficina", "1. Verificar: Dashboard, Solicitações, Agenda, Avaliações, Perfil, Enviar Orçamento\n2. Procurar palavras sem acento", "Todos os textos com acentuação correta."],
+            ["Acentuação", "Acentos nas páginas públicas", "Não logado", "1. Verificar: Homepage, Login, Cadastro, Emergência", "Todos os textos com acentuação correta."]
+          ]
+        }
+      ]
+    }
+  ]
+}

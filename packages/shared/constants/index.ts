@@ -12,7 +12,7 @@ export const TIPOS_SERVICO = [
   { value: 'revisao', label: 'Revisoes', icon: '🔧', needsPhoto: false },
   { value: 'mecanica', label: 'Mecanica', icon: '⚙️', needsPhoto: false },
   { value: 'eletrica', label: 'Eletrico', icon: '⚡', needsPhoto: false },
-  { value: 'pneu', label: 'Pneu', icon: '🛞', needsPhoto: false },
+  { value: 'pneu', label: 'Pneu', icon: '🔴', needsPhoto: false },
   { value: 'outro', label: 'Outro', icon: '📋', needsPhoto: true },
 ] as const;
 
@@ -88,8 +88,8 @@ export const URGENCIAS = [
 
 export const STATUS_SOLICITACAO = {
   aberta: { label: 'Aberta', color: 'blue' },
-  em_orcamento: { label: 'Em Orcamento', color: 'yellow' },
-  aceita: { label: 'Aceita', color: 'green' },
+  em_orcamento: { label: 'Orçamento Enviado', color: 'yellow' },
+  aceita: { label: 'Orçamento Aceito', color: 'green' },
   em_andamento: { label: 'Em Andamento', color: 'purple' },
   concluida: { label: 'Concluida', color: 'gray' },
   cancelada: { label: 'Cancelada', color: 'red' },
@@ -112,3 +112,21 @@ export const CORES_AGENDA = [
   '#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6',
   '#EC4899', '#06B6D4', '#F97316',
 ] as const;
+
+export const STATUS_MANUTENCAO = {
+  recebido: { label: 'Recebido', icon: '📥', color: 'blue', description: 'Veiculo recebido na oficina' },
+  diagnostico: { label: 'Em diagnostico', icon: '🔍', color: 'indigo', description: 'Diagnosticando o problema' },
+  aguardando_pecas: { label: 'Aguardando pecas', icon: '📦', color: 'yellow', description: 'Aguardando pecas necessarias' },
+  em_execucao: { label: 'Em execucao', icon: '🔧', color: 'green', description: 'Servico em andamento' },
+  pausa_cliente: { label: 'Pausa - contato cliente', icon: '📞', color: 'orange', description: 'Aguardando retorno do cliente' },
+  pausa_pecas: { label: 'Pausa - pecas em falta', icon: '⏳', color: 'red', description: 'Parado por falta de pecas' },
+  pausa_geral: { label: 'Pausado', icon: '⏸️', color: 'gray', description: 'Servico temporariamente pausado' },
+  teste_final: { label: 'Teste final', icon: '✅', color: 'teal', description: 'Realizando testes de qualidade' },
+  concluido: { label: 'Concluido', icon: '🏁', color: 'emerald', description: 'Servico finalizado' },
+  entregue: { label: 'Entregue', icon: '🚗', color: 'slate', description: 'Veiculo entregue ao cliente' },
+} as const;
+
+export const CARGOS_FUNCIONARIO = {
+  admin: { label: 'Administrador', description: 'Acesso completo ao portal da oficina' },
+  mecanico: { label: 'Mecanico', description: 'Acesso a pagina de veiculos em servico' },
+} as const;

@@ -1,29 +1,26 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 
 export default function HomePage() {
   const { isLoggedIn, user, loading } = useAuth();
+  const router = useRouter();
 
-  if (loading) {
+  // Auto-redirect logged-in users to their dashboard
+  useEffect(() => {
+    if (!loading && isLoggedIn && user) {
+      const dashPath = user.tipo === 'oficina' ? '/oficina/dashboard' : '/cliente/dashboard';
+      router.replace(dashPath);
+    }
+  }, [loading, isLoggedIn, user, router]);
+
+  if (loading || (isLoggedIn && user)) {
     return (
       <div className="flex items-center justify-center min-h-[80vh]">
         <div className="animate-pulse text-gray-400">Carregando...</div>
-      </div>
-    );
-  }
-
-  if (isLoggedIn) {
-    const dashPath = user?.tipo === 'oficina' ? '/oficina/dashboard' : '/cliente/dashboard';
-    return (
-      <div className="flex items-center justify-center min-h-[80vh]">
-        <div className="text-center">
-          <p className="text-gray-600 mb-4">Você está logado como {user?.nome}</p>
-          <Link href={dashPath} className="btn-primary">
-            Ir para Dashboard
-          </Link>
-        </div>
       </div>
     );
   }

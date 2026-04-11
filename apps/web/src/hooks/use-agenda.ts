@@ -15,7 +15,12 @@ export function useAgenda() {
     setLoading(true);
     const { data } = await supabase
       .from('agenda')
-      .select('*, solicitacao:solicitacoes(*, veiculo:veiculos(*), cliente:profiles!solicitacoes_cliente_id_fkey(*))')
+      .select(`
+        *,
+        solicitacao:solicitacoes(*, veiculo:veiculos(*), cliente:profiles!solicitacoes_cliente_id_fkey(*)),
+        funcionario:funcionarios(*, profile:profiles(nome, email)),
+        etapas:manutencao_etapas(*, funcionario:funcionarios(*, profile:profiles(nome)))
+      `)
       .eq('oficina_id', oficina.id)
       .order('data_inicio', { ascending: true });
     setEventos((data as Agenda[]) || []);

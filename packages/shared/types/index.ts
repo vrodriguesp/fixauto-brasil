@@ -34,6 +34,20 @@ export type TipoAgenda = 'plataforma' | 'externo';
 
 export type StatusAgenda = 'agendado' | 'em_andamento' | 'concluido' | 'cancelado';
 
+export type CargoFuncionario = 'admin' | 'mecanico';
+
+export type StatusManutencao =
+  | 'recebido'
+  | 'diagnostico'
+  | 'aguardando_pecas'
+  | 'em_execucao'
+  | 'pausa_cliente'
+  | 'pausa_pecas'
+  | 'pausa_geral'
+  | 'teste_final'
+  | 'concluido'
+  | 'entregue';
+
 // === Database Models ===
 
 export interface Profile {
@@ -127,7 +141,11 @@ export interface Orcamento {
   observacoes: string | null;
   validade: string;
   disponibilidade: DisponibilidadeSlot[];
+  disponibilidade_escolhida_id: string | null;
   agendamento_escolhido: DisponibilidadeSlot | null;
+  valor_original: number | null;
+  revisao_numero: number;
+  revisado_em: string | null;
   created_at: string;
   // Joined
   itens?: OrcamentoItem[];
@@ -148,6 +166,7 @@ export interface Agenda {
   id: string;
   oficina_id: string;
   solicitacao_id: string | null;
+  funcionario_id: string | null;
   titulo: string;
   descricao: string | null;
   data_inicio: string;
@@ -158,6 +177,8 @@ export interface Agenda {
   created_at: string;
   // Joined
   solicitacao?: Solicitacao;
+  funcionario?: Funcionario;
+  etapas?: ManutencaoEtapa[];
 }
 
 export interface Avaliacao {
@@ -166,8 +187,10 @@ export interface Avaliacao {
   cliente_id: string;
   oficina_id: string;
   nota: number;
+  nota_anterior: number | null;
   comentario: string | null;
   created_at: string;
+  updated_at: string | null;
   // Joined
   cliente?: Profile;
 }
@@ -181,6 +204,30 @@ export interface Notificacao {
   lida: boolean;
   dados: Record<string, unknown> | null;
   created_at: string;
+}
+
+export interface Funcionario {
+  id: string;
+  profile_id: string;
+  oficina_id: string;
+  cargo: CargoFuncionario;
+  especialidade: string | null;
+  ativo: boolean;
+  created_at: string;
+  // Joined
+  profile?: Profile;
+  oficina?: Oficina;
+}
+
+export interface ManutencaoEtapa {
+  id: string;
+  agenda_id: string;
+  funcionario_id: string | null;
+  status: StatusManutencao;
+  observacao: string | null;
+  created_at: string;
+  // Joined
+  funcionario?: Funcionario;
 }
 
 // === FIPE API Types ===

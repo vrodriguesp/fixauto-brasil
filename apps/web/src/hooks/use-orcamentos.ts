@@ -80,65 +80,119 @@ export function useOrcamentos() {
   };
 
   const accept = async (orcamentoId: string, slotId: string) => {
-    // Update the quote status and chosen slot
+    // Call server-side API route which uses service_role key
+    // This is needed because the client user cannot insert into
+    // the oficina's agenda table due to RLS policies
+    try {
+      const res = await fetch('/api/aceitar-orcamento', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orcamentoId, slotId }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        return { error: { message: data.error || 'Erro ao aceitar orçamento' } };
+      }
+
+      return { error: null };
+    } catch (err) {
+      return { error: { message: (err as Error).message } };
+    }
+  };
+
+  const update = async (
+    orcamentoId: string,
+    input: {
+      solicitacao_id: string;
+      valor_total: number;
+      prazo_dias: number;
+      tempo_execucao_horas: number;
+      observacoes: string;
+      validade: string;
+      valor_original: number;
+      revisao_numero: number;
+      itens: Omit<OrcamentoItem, 'id' | 'orcamento_id'>[];
+      slots: { data_checkin: string; turno: string; data_previsao_entrega: string }[];
+    }
+  ) => {
+    if (!oficina) return { error: { message: 'No oficina' } };
+
     const { error } = await supabase
       .from('orcamentos')
-      .update({ status: 'aceito', disponibilidade_escolhida_id: slotId })
+      .update({
+        valor_total: input.valor_total,
+        prazo_dias: input.prazo_dias,
+        tempo_execucao_horas: input.tempo_execucao_horas,
+        observacoes: input.observacoes || null,
+        validade: input.validade,
+        valor_original: input.valor_original,
+        revisao_numero: input.revisao_numero,
+        revisado_em: new Date().toISOString(),
+        status: 'enviado',
+      })
       .eq('id', orcamentoId);
 
     if (error) return { error };
 
-    // Get quote details to update solicitacao and create agenda
-    const { data: orc } = await supabase
-      .from('orcamentos')
-      .select('*, oficina:oficinas(*), disponibilidade:orcamento_disponibilidade(*)')
-      .eq('id', orcamentoId)
+    // Replace line items
+    await supabase.from('orcamento_itens').delete().eq('orcamento_id', orcamentoId);
+    if (input.itens.length > 0) {
+      await supabase.from('orcamento_itens').insert(
+        input.itens.map((item) => ({ ...item, orcamento_id: orcamentoId }))
+      );
+    }
+
+    // Replace availability slots
+    await supabase.from('orcamento_disponibilidade').delete().eq('orcamento_id', orcamentoId);
+    if (input.slots.length > 0) {
+      await supabase.from('orcamento_disponibilidade').insert(
+        input.slots.map((s) => ({ ...s, orcamento_id: orcamentoId }))
+      );
+    }
+
+    // Reset solicitacao status so client can review again
+    await supabase
+      .from('solicitacoes')
+      .update({ status: 'em_orcamento' })
+      .eq('id', input.solicitacao_id);
+
+    // Notify client
+    const { data: sol } = await supabase
+      .from('solicitacoes')
+      .select('cliente_id')
+      .eq('id', input.solicitacao_id)
       .single();
 
-    if (orc) {
-      // Update solicitacao status
-      await supabase
-        .from('solicitacoes')
-        .update({ status: 'aceita' })
-        .eq('id', orc.solicitacao_id);
-
-      // Reject other quotes for this solicitacao
-      await supabase
-        .from('orcamentos')
-        .update({ status: 'recusado' })
-        .eq('solicitacao_id', orc.solicitacao_id)
-        .neq('id', orcamentoId)
-        .eq('status', 'enviado');
-
-      // Find the chosen slot
-      const slot = orc.disponibilidade?.find((s: { id: string }) => s.id === slotId);
-      if (slot) {
-        // Create agenda entry for the workshop
-        await supabase.from('agenda').insert({
-          oficina_id: orc.oficina_id,
-          solicitacao_id: orc.solicitacao_id,
-          titulo: `Reparo agendado`,
-          descricao: `Orcamento #${orcamentoId.slice(0, 8)}`,
-          data_inicio: `${slot.data_checkin}T${slot.turno === 'manha' ? '08:00:00' : '13:00:00'}Z`,
-          data_fim: `${slot.data_previsao_entrega}T18:00:00Z`,
-          tipo: 'plataforma',
-          status: 'agendado',
-          cor: '#3B82F6',
-        });
-      }
-
-      // Notify the workshop
+    if (sol) {
       await supabase.from('notificacoes').insert({
-        profile_id: orc.oficina?.profile_id,
-        tipo: 'orcamento_aceito',
-        titulo: 'Orcamento aceito!',
-        mensagem: `Um cliente aceitou seu orcamento e agendou o servico.`,
-        dados: { solicitacao_id: orc.solicitacao_id, orcamento_id: orcamentoId },
+        profile_id: sol.cliente_id,
+        tipo: 'novo_orcamento',
+        titulo: 'Orcamento revisado',
+        mensagem: `${oficina.nome_fantasia} revisou o orcamento para R$ ${input.valor_total.toFixed(2).replace('.', ',')}`,
+        dados: { solicitacao_id: input.solicitacao_id, orcamento_id: orcamentoId },
       });
     }
 
-    return { error: null };
+    // Send quote summary as a system message in the chat
+    try {
+      await supabase.from('mensagens').insert({
+        solicitacao_id: input.solicitacao_id,
+        remetente_id: oficina.profile_id,
+        texto: `📋 Orçamento revisado (Revisão #${input.revisao_numero})\n💰 Valor: R$ ${input.valor_total.toFixed(2).replace('.', ',')}\n📅 Prazo: ${input.prazo_dias} dias\n${input.observacoes ? '📝 ' + input.observacoes : ''}`,
+      });
+    } catch { /* non-blocking */ }
+
+    return { data: { id: orcamentoId }, error: null };
   };
 
-  return { create, accept };
+  const refuse = async (orcamentoId: string) => {
+    const { error } = await supabase
+      .from('orcamentos')
+      .update({ status: 'recusado' })
+      .eq('id', orcamentoId);
+    return { error };
+  };
+
+  return { create, update, accept, refuse };
 }

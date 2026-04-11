@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useVeiculos } from '@/hooks/use-veiculos';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
+import { supabase } from '@/lib/supabase';
 import {
   TIPOS_SERVICO, URGENCIAS,
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
@@ -12,7 +13,7 @@ import {
 export default function NovaSolicitacaoPage() {
   const router = useRouter();
   const { veiculos } = useVeiculos();
-  const { create: createSolicitacao } = useSolicitacoes();
+  const { create: createSolicitacao, addPhotos } = useSolicitacoes();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState(1);
   const totalSteps = 5;
@@ -25,6 +26,7 @@ export default function NovaSolicitacaoPage() {
   const [servicosSelecionados, setServicosSelecionados] = useState<string[]>([]);
   const [endereco, setEndereco] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const selectedVeiculo = veiculos.find((v) => v.id === veiculoId);
   const tipoConfig = TIPOS_SERVICO.find((t) => t.value === tipo);
@@ -68,21 +70,86 @@ export default function NovaSolicitacaoPage() {
 
   const handleSubmit = async () => {
     if (!veiculoId || !endereco) return;
+    setSubmitError('');
     const fullDescricao = servicosSelecionados.length > 0
       ? `Serviços: ${servicosSelecionados.join(', ')}${descricao ? '. ' + descricao : ''}`
-      : descricao;
-    const { error } = await createSolicitacao({
-      veiculo_id: veiculoId,
-      tipo,
-      descricao: fullDescricao,
-      urgencia,
-      latitude: -23.5505,
-      longitude: -46.6333,
-      endereco,
-    });
-    if (!error) {
+      : (descricao || 'Solicitação de serviço');
+
+    try {
+      const { data, error } = await createSolicitacao({
+        veiculo_id: veiculoId,
+        tipo,
+        descricao: fullDescricao,
+        urgencia,
+        latitude: -23.5505,
+        longitude: -46.6333,
+        endereco,
+      });
+
+      if (error) {
+        const msg = typeof error === 'string' ? error
+          : (error as any)?.message || (error as any)?.details || JSON.stringify(error);
+        setSubmitError(msg);
+        return;
+      }
+
+      if (!data?.id) {
+        setSubmitError('Erro inesperado: solicitação não retornou dados');
+        return;
+      }
+
+      // Upload photos to Supabase Storage if any
+      if (fotos.length > 0) {
+        const uploadedUrls: string[] = [];
+        for (const foto of fotos) {
+          const ext = foto.file.name.split('.').pop() || 'jpg';
+          const fileName = `solicitacoes/${data.id}/${Date.now()}.${ext}`;
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('damage-photos')
+            .upload(fileName, foto.file, { contentType: foto.file.type });
+
+          if (uploadError) {
+            console.error('Upload error:', uploadError.message);
+            continue;
+          }
+
+          if (uploadData?.path) {
+            const { data: urlData } = supabase.storage
+              .from('damage-photos')
+              .getPublicUrl(uploadData.path);
+            uploadedUrls.push(urlData.publicUrl);
+          }
+        }
+        if (uploadedUrls.length > 0) {
+          await addPhotos(data.id, uploadedUrls);
+        }
+      }
+
+      // Notify nearby oficinas about new solicitation
+      const tipoLabel = TIPOS_SERVICO.find(t => t.value === tipo)?.label || tipo;
+      const { data: oficinas } = await supabase
+        .from('oficinas')
+        .select('profile_id, especialidades')
+        .eq('ativa', true);
+      if (oficinas) {
+        for (const ofi of oficinas) {
+          const matchesTipo = !ofi.especialidades || ofi.especialidades.length === 0 || ofi.especialidades.includes(tipo);
+          if (matchesTipo) {
+            await supabase.from('notificacoes').insert({
+              profile_id: ofi.profile_id,
+              tipo: 'nova_solicitacao',
+              titulo: 'Nova solicitação!',
+              mensagem: `${tipoLabel} - ${selectedVeiculo?.fipe_marca} ${selectedVeiculo?.fipe_modelo} - ${endereco}`,
+              dados: { solicitacao_id: data.id },
+            });
+          }
+        }
+      }
+
       setSubmitted(true);
       setTimeout(() => router.push('/cliente/dashboard'), 2000);
+    } catch (err) {
+      setSubmitError((err as Error).message || 'Erro inesperado ao criar solicitação');
     }
   };
 
@@ -418,6 +485,12 @@ export default function NovaSolicitacaoPage() {
                 )}
               </div>
             </div>
+
+            {submitError && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-4">
+                <p className="text-sm text-red-800">{submitError}</p>
+              </div>
+            )}
 
             <div className="flex justify-between mt-6">
               <button onClick={() => setStep(4)} className="btn-secondary">Voltar</button>
