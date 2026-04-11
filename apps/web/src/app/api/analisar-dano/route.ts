@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-const getOpenAI = () => new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const getClient = () => new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export async function POST(req: NextRequest) {
   try {
@@ -47,20 +47,34 @@ export async function POST(req: NextRequest) {
     const veiculo = sol?.veiculo as any;
     const contexto = `Veículo: ${veiculo?.fipe_marca || ''} ${veiculo?.fipe_modelo || ''} ${veiculo?.fipe_ano || ''}. Tipo de serviço: ${sol?.tipo || 'não informado'}. Descrição do cliente: ${sol?.descricao || 'não informada'}.${veiculo?.fipe_valor ? ` Valor FIPE: ${veiculo.fipe_valor}.` : ''}`;
 
-    const imageContent = fotos.slice(0, 4).map((f) => ({
-      type: 'image_url' as const,
-      image_url: { url: f.foto_url, detail: 'low' as const },
-    }));
+    // Download images and convert to base64 for Claude
+    const imageContent: Anthropic.ImageBlockParam[] = [];
+    for (const foto of fotos.slice(0, 4)) {
+      try {
+        const res = await fetch(foto.foto_url);
+        const buffer = await res.arrayBuffer();
+        const base64 = Buffer.from(buffer).toString('base64');
+        const contentType = res.headers.get('content-type') || 'image/jpeg';
+        imageContent.push({
+          type: 'image',
+          source: {
+            type: 'base64',
+            media_type: contentType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+            data: base64,
+          },
+        });
+      } catch { /* skip failed images */ }
+    }
 
-    const openai = getOpenAI();
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
+    if (imageContent.length === 0) {
+      return NextResponse.json({ error: 'Não foi possível carregar as fotos' }, { status: 500 });
+    }
+
+    const client = getClient();
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-20250514',
       max_tokens: 1500,
-      response_format: { type: 'json_object' },
-      messages: [
-        {
-          role: 'system',
-          content: `Você é um especialista em reparos automotivos no Brasil. Analise as fotos de dano em veículos e responda SEMPRE em JSON com esta estrutura exata:
+      system: `Você é um especialista em reparos automotivos no Brasil. Analise as fotos de dano em veículos e responda SEMPRE em JSON com esta estrutura exata:
 {
   "resumo": "Descrição clara do dano visível para a oficina",
   "severidade": "leve" | "moderado" | "grave" | "severo",
@@ -69,24 +83,31 @@ export async function POST(req: NextRequest) {
   "estimativa_custo": { "min": número_em_reais, "max": número_em_reais },
   "confianca": número entre 0 e 1
 }
-Seja preciso e prático. Considere preços do mercado brasileiro.`,
-        },
+Responda APENAS o JSON, sem texto adicional. Seja preciso e prático. Considere preços do mercado brasileiro.`,
+      messages: [
         {
           role: 'user',
           content: [
-            { type: 'text', text: `Analise estas fotos de dano veicular. ${contexto}` },
             ...imageContent,
+            { type: 'text', text: `Analise estas fotos de dano veicular. ${contexto}` },
           ],
         },
       ],
     });
 
-    const content = response.choices[0]?.message?.content;
+    const textBlock = response.content.find((b) => b.type === 'text');
+    const content = textBlock && 'text' in textBlock ? textBlock.text : null;
     if (!content) {
       return NextResponse.json({ error: 'Sem resposta da IA' }, { status: 500 });
     }
 
-    const parsed = JSON.parse(content);
+    // Extract JSON from response (Claude may wrap in ```json blocks)
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return NextResponse.json({ error: 'Resposta inválida da IA' }, { status: 500 });
+    }
+
+    const parsed = JSON.parse(jsonMatch[0]);
 
     // Store in DB
     const { data: analise, error: insertError } = await supabaseAdmin
@@ -100,7 +121,7 @@ Seja preciso e prático. Considere preços do mercado brasileiro.`,
         estimativa_custo: parsed.estimativa_custo || null,
         confianca: parsed.confianca || null,
         fotos_analisadas: fotos.map((f) => f.id),
-        modelo_usado: 'gpt-4o',
+        modelo_usado: 'claude-sonnet-4',
         raw_response: parsed,
       })
       .select()
