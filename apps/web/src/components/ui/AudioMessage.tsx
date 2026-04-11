@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import AudioPlayer from './AudioPlayer';
-import { supabase } from '@/lib/supabase';
 
 interface AudioMessageProps {
   audioUrl: string;
@@ -24,75 +23,10 @@ export default function AudioMessage({
   const [localStatus, setLocalStatus] = useState(transcricaoStatus);
   const [transcribing, setTranscribing] = useState(false);
 
-  const handleTranscrever = useCallback(async () => {
+  const handleTranscrever = async () => {
     setTranscribing(true);
     setLocalStatus('processando');
 
-    // Try browser-native Web Speech API first (free)
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-    if (SpeechRecognition) {
-      try {
-        // Play audio through AudioContext and pipe to recognition
-        const response = await fetch(audioUrl);
-        const blob = await response.blob();
-        const audioEl = new Audio(URL.createObjectURL(blob));
-
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'pt-BR';
-        recognition.continuous = true;
-        recognition.interimResults = false;
-
-        let fullText = '';
-
-        await new Promise<void>((resolve, reject) => {
-          recognition.onresult = (event: any) => {
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-              if (event.results[i].isFinal) {
-                fullText += event.results[i][0].transcript + ' ';
-              }
-            }
-          };
-          recognition.onend = () => resolve();
-          recognition.onerror = (e: any) => {
-            if (e.error === 'no-speech') resolve();
-            else reject(e);
-          };
-
-          // Start recognition and play audio simultaneously
-          recognition.start();
-          audioEl.play();
-
-          // Stop after audio ends + small buffer
-          audioEl.onended = () => {
-            setTimeout(() => {
-              recognition.stop();
-            }, 1000);
-          };
-
-          // Timeout fallback
-          setTimeout(() => {
-            recognition.stop();
-            audioEl.pause();
-          }, (duration + 5) * 1000);
-        });
-
-        if (fullText.trim()) {
-          setLocalTranscricao(fullText.trim());
-          setLocalStatus('concluida');
-          setShowTranscricao(true);
-          // Save to DB
-          await supabase.from('mensagens').update({
-            transcricao: fullText.trim(),
-            transcricao_status: 'concluida',
-          }).eq('id', mensagemId);
-          setTranscribing(false);
-          return;
-        }
-      } catch { /* fallback to server */ }
-    }
-
-    // Fallback: server-side transcription
     try {
       const res = await fetch('/api/transcrever-audio', {
         method: 'POST',
@@ -112,7 +46,7 @@ export default function AudioMessage({
     } finally {
       setTranscribing(false);
     }
-  }, [audioUrl, duration, mensagemId]);
+  };
 
   return (
     <div className="space-y-1.5">
@@ -123,7 +57,7 @@ export default function AudioMessage({
           onClick={() => setShowTranscricao(!showTranscricao)}
           className="text-[11px] underline opacity-70 hover:opacity-100 transition-opacity"
         >
-          {showTranscricao ? 'Ouvir audio' : 'Ver transcricao'}
+          {showTranscricao ? 'Ocultar transcricao' : 'Ver transcricao'}
         </button>
       ) : localStatus === 'processando' || transcribing ? (
         <div className="flex items-center gap-1.5">
