@@ -78,24 +78,16 @@ export async function POST(req: NextRequest) {
             parts: [
               ...imageParts,
               {
-                text: `Você é um especialista em reparos automotivos no Brasil. Analise estas fotos de dano veicular. ${contexto}
-
-Responda APENAS em JSON com esta estrutura exata, sem texto adicional:
-{
-  "resumo": "Descrição clara do dano visível para a oficina",
-  "severidade": "leve" ou "moderado" ou "grave" ou "severo",
-  "checklist_inspecao": ["item 1 para verificar", "item 2", ...],
-  "pecas_afetadas": ["peça 1", "peça 2", ...],
-  "estimativa_custo": { "min": número_em_reais, "max": número_em_reais },
-  "confianca": número entre 0 e 1
-}
-Seja preciso e prático. Considere preços do mercado brasileiro.`,
+                text: `Especialista em reparos automotivos Brasil. ${contexto}
+Analise as fotos e responda JSON CURTO E DIRETO:
+{"resumo":"max 2 frases","severidade":"leve|moderado|grave|severo","checklist_inspecao":["max 5 itens"],"pecas_afetadas":["max 5 pecas"],"estimativa_custo":{"min":0,"max":0},"confianca":0.8}
+Seja BREVE. Preços em reais do mercado brasileiro.`,
               },
             ],
           }],
           generationConfig: {
             temperature: 0.3,
-            maxOutputTokens: 2000,
+            maxOutputTokens: 8192,
             responseMimeType: 'application/json',
           },
         }),
@@ -119,19 +111,51 @@ Seja preciso e prático. Considere preços do mercado brasileiro.`,
       return NextResponse.json({ error: `Sem resposta da IA. Debug: ${rawPreview}` }, { status: 500 });
     }
 
-    // Extract JSON - handle raw JSON, ```json blocks, or mixed text
+    // Parse JSON - handle truncated responses by fixing incomplete JSON
     let parsed;
+    let rawJson = content.trim();
+
+    // Remove markdown wrappers
+    const mdMatch = rawJson.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (mdMatch) rawJson = mdMatch[1].trim();
+
+    // If doesn't start with {, extract it
+    if (!rawJson.startsWith('{')) {
+      const braceMatch = rawJson.match(/\{[\s\S]*/);
+      if (braceMatch) rawJson = braceMatch[0];
+    }
+
     try {
-      parsed = JSON.parse(content);
+      parsed = JSON.parse(rawJson);
     } catch {
-      const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/) || content.match(/(\{[\s\S]*\})/);
-      if (!jsonMatch) {
-        return NextResponse.json({ error: `Resposta inválida da IA: ${content.slice(0, 200)}` }, { status: 500 });
-      }
+      // Try to fix truncated JSON by closing brackets
+      let fixed = rawJson;
+      // Remove trailing incomplete string/value
+      fixed = fixed.replace(/,\s*"[^"]*$/, '');
+      fixed = fixed.replace(/,\s*\[[^\]]*$/, '');
+      fixed = fixed.replace(/,\s*$/, '');
+      // Close open brackets
+      const openBraces = (fixed.match(/\{/g) || []).length;
+      const closeBraces = (fixed.match(/\}/g) || []).length;
+      const openBrackets = (fixed.match(/\[/g) || []).length;
+      const closeBrackets = (fixed.match(/\]/g) || []).length;
+      for (let i = 0; i < openBrackets - closeBrackets; i++) fixed += ']';
+      for (let i = 0; i < openBraces - closeBraces; i++) fixed += '}';
+
       try {
-        parsed = JSON.parse(jsonMatch[1]);
+        parsed = JSON.parse(fixed);
       } catch {
-        return NextResponse.json({ error: `JSON inválido: ${jsonMatch[1].slice(0, 200)}` }, { status: 500 });
+        // Last resort: build minimal response from what we have
+        const resumoMatch = rawJson.match(/"resumo"\s*:\s*"([^"]+)"/);
+        const sevMatch = rawJson.match(/"severidade"\s*:\s*"([^"]+)"/);
+        parsed = {
+          resumo: resumoMatch ? resumoMatch[1] : 'Análise parcial - verifique as fotos manualmente',
+          severidade: sevMatch ? sevMatch[1] : 'moderado',
+          checklist_inspecao: ['Verificar danos estruturais', 'Inspecionar pintura', 'Checar alinhamento'],
+          pecas_afetadas: ['Verificar nas fotos'],
+          estimativa_custo: null,
+          confianca: 0.3,
+        };
       }
     }
 
