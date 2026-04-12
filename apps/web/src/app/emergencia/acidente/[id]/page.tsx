@@ -28,7 +28,15 @@ interface Orcamento {
   id: string;
   valor_total: number;
   prazo_dias: number;
-  oficina: { nome_fantasia: string } | null;
+  status: string;
+  observacoes: string | null;
+  oficina: {
+    nome_fantasia: string;
+    endereco?: string;
+    cidade?: string;
+    estado?: string;
+    profile?: { telefone?: string; email?: string };
+  } | null;
 }
 
 export default function AcidenteRegistroPage() {
@@ -123,7 +131,7 @@ export default function AcidenteRegistroPage() {
     if (emerg?.solicitacao_id) {
       const { data: orcs } = await supabase
         .from('orcamentos')
-        .select('id, valor_total, prazo_dias, oficina:oficinas(nome_fantasia)')
+        .select('id, valor_total, prazo_dias, status, observacoes, oficina:oficinas(nome_fantasia, endereco, cidade, estado, profile:profiles(telefone, email))')
         .eq('solicitacao_id', emerg.solicitacao_id);
 
       if (orcs) setOrcamentos(orcs as unknown as Orcamento[]);
@@ -526,33 +534,60 @@ export default function AcidenteRegistroPage() {
                 </p>
               </div>
 
-              {orcamentos.map((orc) => (
-                <div key={orc.id} className="card">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{orc.oficina?.nome_fantasia || 'Oficina'}</h3>
-                      <p className="text-sm text-gray-500">Prazo: {orc.prazo_dias} dias</p>
+              {orcamentos.map((orc) => {
+                const ofi = orc.oficina;
+                const isAceito = orc.status === 'aceito';
+                return (
+                  <div key={orc.id} className={`card ${isAceito ? 'border-2 border-green-400' : ''}`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{ofi?.nome_fantasia || 'Oficina'}</h3>
+                        {isAceito && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Aceito</span>}
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xl font-bold text-gray-900">{formatCurrency(orc.valor_total)}</p>
+                        <p className="text-xs text-gray-500">Prazo: {orc.prazo_dias} dias</p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-xl font-bold text-gray-900">{formatCurrency(orc.valor_total)}</p>
+
+                    {/* Oficina details */}
+                    {ofi && (
+                      <div className="bg-gray-50 rounded-lg p-3 mb-3 space-y-1">
+                        <p className="text-xs font-semibold text-gray-500 uppercase">Dados da oficina</p>
+                        {ofi.endereco && <p className="text-sm text-gray-700">{ofi.endereco}</p>}
+                        {(ofi.cidade || ofi.estado) && <p className="text-sm text-gray-700">{ofi.cidade}{ofi.estado ? `, ${ofi.estado}` : ''}</p>}
+                        {ofi.profile?.telefone && (
+                          <p className="text-sm"><a href={`tel:${ofi.profile.telefone}`} className="text-primary-600 hover:underline">{ofi.profile.telefone}</a></p>
+                        )}
+                        {ofi.profile?.email && (
+                          <p className="text-sm"><a href={`mailto:${ofi.profile.email}`} className="text-primary-600 hover:underline">{ofi.profile.email}</a></p>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setStep('chat');
+                          setNovaMensagem(`O que acha do orçamento da ${ofi?.nome_fantasia} por ${formatCurrency(orc.valor_total)}? Prazo: ${orc.prazo_dias} dias.${ofi?.endereco ? ' Endereço: ' + ofi.endereco : ''}${ofi?.profile?.telefone ? ' Tel: ' + ofi.profile.telefone : ''}`);
+                        }}
+                        className="btn-primary flex-1 !py-2 text-sm"
+                      >
+                        Enviar ao outro envolvido
+                      </button>
+                      <button
+                        onClick={() => {
+                          setStep('chat');
+                          setNovaMensagem(`O que acha do orçamento da ${ofi?.nome_fantasia} por ${formatCurrency(orc.valor_total)}?`);
+                        }}
+                        className="btn-secondary flex-1 !py-2 text-sm"
+                      >
+                        Discutir
+                      </button>
                     </div>
                   </div>
-                  <div className="flex gap-2 mt-4">
-                    <button className="btn-success flex-1 !py-2 text-sm">
-                      Aceitar
-                    </button>
-                    <button
-                      onClick={() => {
-                        setStep('chat');
-                        setNovaMensagem(`O que acha do orçamento da ${orc.oficina?.nome_fantasia} por ${formatCurrency(orc.valor_total)}?`);
-                      }}
-                      className="btn-secondary flex-1 !py-2 text-sm"
-                    >
-                      Discutir
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </>
           )}
         </div>
