@@ -87,6 +87,44 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Notify the other involved person (outro envolvido) if linked to emergency
+    const { data: emergFull } = await supabaseAdmin
+      .from('emergencias')
+      .select('id')
+      .eq('solicitacao_id', (orcamento.solicitacao as any).id)
+      .single();
+
+    if (emergFull) {
+      const { data: outro } = await supabaseAdmin
+        .from('emergencia_outro_veiculo')
+        .select('nome, email')
+        .eq('emergencia_id', emergFull.id)
+        .limit(1)
+        .single();
+
+      if (outro) {
+        // Message in emergency chat
+        await supabaseAdmin.from('emergencia_mensagens').insert({
+          emergencia_id: emergFull.id,
+          remetente_tipo: 'proprietario',
+          remetente_id: null,
+          texto: `Novo orçamento recebido: ${valorTotal} da oficina ${oficinaNome}. Prazo: ${orcamento.prazo_dias} dias.`,
+        });
+
+        // Email to other person
+        if (outro.email) {
+          await sendQuoteNotificationEmail({
+            toEmail: outro.email,
+            toName: outro.nome,
+            oficinaNome,
+            valorTotal,
+            prazoDias: orcamento.prazo_dias,
+            solicitacaoId: (orcamento.solicitacao as any).id,
+          });
+        }
+      }
+    }
+
     return NextResponse.json({ success: true, results });
   } catch (err) {
     console.error('[API notificar-orcamento]', err);
