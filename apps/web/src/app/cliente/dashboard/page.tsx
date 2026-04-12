@@ -67,11 +67,13 @@ export default function ClienteDashboard() {
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
             {topNotificacoes.map((n) => {
               const solId = (n.dados as Record<string, string> | null)?.solicitacao_id;
+              const emergId = (n.dados as Record<string, string> | null)?.emergencia_id;
               const getNotificationHref = () => {
-                if (!solId) return '/cliente/orcamentos';
-                if (n.tipo === 'nova_mensagem') return `/cliente/mensagens/${solId}`;
-                if (n.tipo === 'servico_concluido') return `/cliente/orcamentos/${solId}`;
-                return `/cliente/orcamentos/${solId}`;
+                if (n.tipo === 'acidente' && emergId) return `/cliente/mensagens`;
+                if (n.tipo === 'nova_mensagem') return solId ? `/cliente/mensagens/${solId}` : '/cliente/mensagens';
+                if (n.tipo === 'servico_concluido' && solId) return `/cliente/orcamentos/${solId}`;
+                if (solId) return `/cliente/orcamentos/${solId}`;
+                return '/cliente/mensagens';
               };
               const href = getNotificationHref();
               const isServicoConcluido = n.tipo === 'servico_concluido';

@@ -121,6 +121,19 @@ export async function POST(req: NextRequest) {
             prazoDias: orcamento.prazo_dias,
             solicitacaoId: (orcamento.solicitacao as any).id,
           });
+
+          // In-app notification for the other person
+          const { data: outroProfile } = await supabaseAdmin
+            .from('profiles').select('id').eq('email', outro.email).single();
+          if (outroProfile) {
+            await supabaseAdmin.from('notificacoes').insert({
+              profile_id: outroProfile.id,
+              tipo: 'novo_orcamento',
+              titulo: 'Novo orçamento recebido',
+              mensagem: `Orçamento de ${valorTotal} da oficina ${oficinaNome} para o acidente registrado.`,
+              dados: { emergencia_id: emergFull.id },
+            });
+          }
         }
       }
     }
