@@ -49,6 +49,9 @@ export default function EnviarOrcamentoPage() {
     }
   }, [params.id]);
 
+  // Commission handling
+  const [comissaoModo, setComissaoModo] = useState<'absorver' | 'repassar'>('absorver');
+
   // Availability slots
   const [slots, setSlots] = useState<{ data: string; turno: 'manha' | 'tarde' }[]>([
     { data: new Date().toISOString().split('T')[0], turno: 'manha' },
@@ -70,7 +73,16 @@ export default function EnviarOrcamentoPage() {
       }
       setPrazoDias(existingQuote.prazo_dias || 5);
       setTempoExecucaoHoras(existingQuote.tempo_execucao_horas || 40);
-      setObservacoes(existingQuote.observacoes || '');
+
+      // Parse commission prefix from observacoes
+      const obsRaw = existingQuote.observacoes || '';
+      const comissaoMatch = obsRaw.match(/^\[COMISSAO:(absorver|repassar):(\d+)\]/);
+      if (comissaoMatch) {
+        setComissaoModo(comissaoMatch[1] as 'absorver' | 'repassar');
+        setObservacoes(obsRaw.replace(/^\[COMISSAO:[^\]]+\]\n?/, ''));
+      } else {
+        setObservacoes(obsRaw);
+      }
       setValidade(existingQuote.validade || (() => { const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0]; })());
       if (existingQuote.disponibilidade && existingQuote.disponibilidade.length > 0) {
         setSlots(
@@ -115,6 +127,11 @@ export default function EnviarOrcamentoPage() {
 
   const total = itens.reduce((acc, item) => acc + item.valor_unitario * item.quantidade, 0);
 
+  // Commission computed values (after total)
+  const COMISSAO_PERCENTUAL = 10; // BipFix commission percentage
+  const comissaoValor = total * (COMISSAO_PERCENTUAL / 100);
+  const totalCliente = comissaoModo === 'repassar' ? total + comissaoValor : total;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -136,16 +153,23 @@ export default function EnviarOrcamentoPage() {
       })(),
     }));
 
+    // Build observacoes with commission prefix
+    const comissaoPrefix = `[COMISSAO:${comissaoModo}:${COMISSAO_PERCENTUAL}]`;
+    const obsComComissao = comissaoPrefix + (observacoes ? '\n' + observacoes : '');
+
+    // Use commission-adjusted total when repassing to client
+    const valorFinal = comissaoModo === 'repassar' ? totalCliente : total;
+
     let result: { data?: any; error?: any };
 
     if (isRevision && existingQuote) {
       // Update existing quote (revision)
       result = await updateOrcamento(existingQuote.id, {
         solicitacao_id: params.id as string,
-        valor_total: total,
+        valor_total: valorFinal,
         prazo_dias: prazoDias,
         tempo_execucao_horas: tempoExecucaoHoras,
-        observacoes,
+        observacoes: obsComComissao,
         validade,
         valor_original: existingQuote.valor_original || existingQuote.valor_total,
         revisao_numero: (existingQuote.revisao_numero || 0) + 1,
@@ -156,10 +180,10 @@ export default function EnviarOrcamentoPage() {
       // Create new quote
       result = await createOrcamento({
         solicitacao_id: params.id as string,
-        valor_total: total,
+        valor_total: valorFinal,
         prazo_dias: prazoDias,
         tempo_execucao_horas: tempoExecucaoHoras,
-        observacoes,
+        observacoes: obsComComissao,
         validade,
         itens: itensPayload,
         slots: slotsPayload,
@@ -355,6 +379,72 @@ export default function EnviarOrcamentoPage() {
             <span className="text-lg font-semibold text-gray-900">Total</span>
             <span className="text-2xl font-bold text-gray-900">{formatCurrency(total)}</span>
           </div>
+
+          {/* Commission section */}
+          {total > 0 && (
+            <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-sm font-medium text-blue-800">Comissao BipFix</span>
+                </div>
+                <p className="text-sm text-blue-700">
+                  Comissao da plataforma: <strong>{COMISSAO_PERCENTUAL}%</strong> = <strong>{formatCurrency(comissaoValor)}</strong>
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <label className="flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-gray-50"
+                  style={{ borderColor: comissaoModo === 'absorver' ? '#3b82f6' : '#e5e7eb', backgroundColor: comissaoModo === 'absorver' ? '#eff6ff' : 'white' }}>
+                  <input
+                    type="radio"
+                    name="comissao"
+                    value="absorver"
+                    checked={comissaoModo === 'absorver'}
+                    onChange={() => setComissaoModo('absorver')}
+                    className="mt-0.5"
+                  />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Absorver comissao</p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Voce paga a comissao. O cliente ve {formatCurrency(total)}.
+                    </p>
+                  </div>
+                </label>
+
+                <label className="flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-gray-50"
+                  style={{ borderColor: comissaoModo === 'repassar' ? '#3b82f6' : '#e5e7eb', backgroundColor: comissaoModo === 'repassar' ? '#eff6ff' : 'white' }}>
+                  <input
+                    type="radio"
+                    name="comissao"
+                    value="repassar"
+                    checked={comissaoModo === 'repassar'}
+                    onChange={() => setComissaoModo('repassar')}
+                    className="mt-0.5"
+                  />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Repassar ao cliente</p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      A comissao de {formatCurrency(comissaoValor)} e adicionada. O cliente ve {formatCurrency(total + comissaoValor)}.
+                    </p>
+                  </div>
+                </label>
+              </div>
+
+              {comissaoModo === 'repassar' && (
+                <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                  <p className="text-sm text-amber-800">
+                    Preco final para o cliente: <strong>{formatCurrency(totalCliente)}</strong>
+                    <span className="text-xs text-amber-600 ml-1">
+                      ({formatCurrency(total)} + {formatCurrency(comissaoValor)} comissao)
+                    </span>
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Prazo & Execucao */}
@@ -496,7 +586,7 @@ export default function EnviarOrcamentoPage() {
             Cancelar
           </button>
           <button type="submit" className="btn-success" disabled={total === 0}>
-            {isRevision ? 'Atualizar Orçamento' : 'Enviar Orçamento'} - {formatCurrency(total)}
+            {isRevision ? 'Atualizar Orçamento' : 'Enviar Orçamento'} - {formatCurrency(comissaoModo === 'repassar' ? totalCliente : total)}
           </button>
         </div>
       </form>

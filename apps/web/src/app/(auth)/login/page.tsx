@@ -46,13 +46,15 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+    const res = await fetch('/api/esqueci-senha', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
     });
     setLoading(false);
 
-    if (error) {
-      setError(error.message);
+    if (!res.ok) {
+      setError('Erro ao enviar. Tente novamente.');
       return;
     }
 
@@ -68,10 +70,10 @@ export default function LoginPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Email enviado!</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Senha temporária enviada!</h1>
           <p className="text-gray-600 mb-6">
-            Enviamos um link para <strong>{email}</strong> para redefinir sua senha.
-            Verifique sua caixa de entrada e spam.
+            Enviamos uma senha temporária para <strong>{email}</strong>.
+            Use-a para fazer login e depois escolha uma nova senha.
           </p>
           <button
             onClick={() => { setForgotMode(false); setResetSent(false); }}
