@@ -1,7 +1,9 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { supabase } from '@/lib/supabase';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useNotificacoes } from '@/hooks/use-notificacoes';
 import { useVeiculos } from '@/hooks/use-veiculos';
@@ -155,6 +157,9 @@ export default function ClienteDashboard() {
           </div>
         </Link>
       </div>
+
+      {/* Accidents where user is the other involved */}
+      <AccidenteEnvolvido />
 
       {/* Scheduled / Accepted - show appointment details */}
       {agendadas.length > 0 && (
@@ -321,6 +326,45 @@ export default function ClienteDashboard() {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function AccidenteEnvolvido() {
+  const { user } = useAuth();
+  const [acidentes, setAcidentes] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!user?.email) return;
+    supabase.from('emergencia_outro_veiculo')
+      .select('emergencia_id, nome, placa, emergencia:emergencias!inner(id, nome, solicitacao_id)')
+      .eq('email', user.email)
+      .then(({ data }) => { if (data) setAcidentes(data); });
+  }, [user]);
+
+  if (acidentes.length === 0) return null;
+
+  return (
+    <div className="mb-8">
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">Acidentes envolvidos</h2>
+      <div className="grid sm:grid-cols-2 gap-4">
+        {acidentes.map((a: any) => (
+          <div key={a.emergencia_id} className="card border-l-4 border-l-red-400">
+            <p className="font-semibold text-gray-900 text-sm">Acidente registrado por {(a.emergencia as any)?.nome}</p>
+            {a.placa && <p className="text-xs text-gray-500 mt-1">Seu veículo: placa {a.placa}</p>}
+            <div className="flex gap-2 mt-3">
+              <Link href={`/emergencia/acidente/${a.emergencia_id}`}
+                className="text-xs bg-primary-600 text-white px-3 py-1.5 rounded-lg hover:bg-primary-700 font-medium">
+                Ver detalhes
+              </Link>
+              <Link href="/cliente/mensagens"
+                className="text-xs bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg hover:bg-gray-200 font-medium">
+                Mensagens
+              </Link>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

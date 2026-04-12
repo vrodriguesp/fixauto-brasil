@@ -162,6 +162,56 @@ export default function ClienteMensagensListPage() {
         }
       }
 
+      // 6. Also find emergencias where this user is the "outro envolvido"
+      const { data: outroRegistros } = await supabase
+        .from('emergencia_outro_veiculo')
+        .select('emergencia_id, nome, placa, veiculo_descricao, email')
+        .eq('email', user!.email);
+
+      if (outroRegistros && outroRegistros.length > 0) {
+        const outroEmergIds = outroRegistros.map((o: any) => o.emergencia_id);
+        const { data: outroEmergs } = await supabase
+          .from('emergencias')
+          .select('id, nome, solicitacao_id')
+          .in('id', outroEmergIds);
+
+        const { data: outroMsgs } = await supabase
+          .from('emergencia_mensagens')
+          .select('id, emergencia_id, texto, created_at')
+          .in('emergencia_id', outroEmergIds)
+          .order('created_at', { ascending: false });
+
+        for (const reg of outroRegistros) {
+          const emerg = outroEmergs?.find((e: any) => e.id === reg.emergencia_id);
+          if (!emerg) continue;
+          // Skip if already shown via own solicitacao
+          if (emerg.solicitacao_id && solIds.includes(emerg.solicitacao_id)) continue;
+
+          const msgs = outroMsgs?.filter((m: any) => m.emergencia_id === reg.emergencia_id) || [];
+          const lastMsg = msgs[0];
+
+          groupList.push({
+            id: `outro-${reg.emergencia_id}`,
+            descricao: `Acidente registrado por ${emerg.nome}`,
+            veiculo_marca: reg.veiculo_descricao || '',
+            veiculo_modelo: '',
+            placa: reg.placa || '',
+            status: 'acidente',
+            conversas_oficina: [],
+            conversa_emergencia: {
+              emergencia_id: reg.emergencia_id,
+              solicitacao_id: emerg.solicitacao_id,
+              outro_nome: emerg.nome || 'Outro motorista',
+              outro_placa: '',
+              outro_veiculo: '',
+              ultima_mensagem: lastMsg?.texto || 'Sem mensagens',
+              ultima_mensagem_at: lastMsg?.created_at || '',
+              nao_lidas: 0,
+            },
+          });
+        }
+      }
+
       setGroups(groupList);
       setLoading(false);
     }
