@@ -56,13 +56,14 @@ export async function POST(req: NextRequest) {
           nome: nome || email.split('@')[0], email, telefone: telefone || null,
         });
 
-        // Send password reset link
-        await supabaseAdmin.auth.admin.generateLink({
+        // Generate password reset link with actual token
+        const { data: linkData } = await supabaseAdmin.auth.admin.generateLink({
           type: 'recovery', email,
           options: { redirectTo: 'https://bipfix.com/reset-password' },
         });
+        const resetLink = linkData?.properties?.action_link || 'https://bipfix.com/reset-password';
 
-        // Welcome email with password setup
+        // Welcome email with working password link
         await sendEmail(email, 'Sua conta BipFix foi criada - Defina sua senha', `
           <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
             <div style="background:#0c4a6e;color:white;padding:24px;border-radius:12px 12px 0 0;">
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest) {
               <p>Sua emergência foi registrada e oficinas próximas já estão sendo notificadas.</p>
               <p>Criamos uma conta para você acompanhar os orçamentos.</p>
               <p style="margin-top:20px;">
-                <a href="https://bipfix.com/reset-password" style="display:inline-block;background:#0284c7;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">Definir minha senha e acessar</a>
+                <a href="${resetLink}" style="display:inline-block;background:#0284c7;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">Definir minha senha e acessar</a>
               </p>
               <p style="font-size:14px;color:#6b7280;margin-top:16px;">Email de acesso: <strong>${email}</strong></p>
               <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
