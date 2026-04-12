@@ -7,7 +7,7 @@ import { useAuth } from '@/lib/auth-context';
 
 export default function DefinirSenhaPage() {
   const router = useRouter();
-  const { funcionario, refreshProfile } = useAuth();
+  const { user, funcionario, refreshProfile } = useAuth();
   const [novaSenha, setNovaSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [loading, setLoading] = useState(false);
@@ -39,7 +39,7 @@ export default function DefinirSenhaPage() {
       return;
     }
 
-    // Mark primeiro_login as false
+    // Mark primeiro_login as false (funcionario)
     if (funcionario) {
       await fetch('/api/funcionarios', {
         method: 'PATCH',
@@ -48,11 +48,23 @@ export default function DefinirSenhaPage() {
       });
     }
 
+    // Clear primeiro_login from user_metadata (auto-created accounts)
+    await supabase.auth.updateUser({
+      data: { primeiro_login: false },
+    });
+
     await refreshProfile();
     setLoading(false);
 
-    // Redirect to appropriate page
-    router.replace('/oficina/veiculos-em-servico');
+    // Redirect based on user type
+    const tipo = user?.tipo;
+    if (tipo === 'oficina' && funcionario) {
+      router.replace('/oficina/veiculos-em-servico');
+    } else if (tipo === 'oficina') {
+      router.replace('/oficina/dashboard');
+    } else {
+      router.replace('/cliente/dashboard');
+    }
   };
 
   return (

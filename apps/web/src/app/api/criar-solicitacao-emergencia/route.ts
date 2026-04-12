@@ -19,6 +19,10 @@ async function sendEmail(to: string, subject: string, html: string) {
   if (!res.ok) console.error('[email]', await res.text());
 }
 
+function generatePassword(): string {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { emergenciaId, clienteId, nome, email, telefone, descricao, latitude, longitude, endereco, photoUrls, placa, veiculoInfo } = await req.json();
@@ -30,7 +34,6 @@ export async function POST(req: NextRequest) {
     let finalClienteId = clienteId;
     let contaCriada = false;
 
-    // If no logged-in user, find or create account
     if (!finalClienteId && email) {
       const { data: existingProfile } = await supabaseAdmin
         .from('profiles').select('id').eq('email', email).single();
@@ -38,10 +41,11 @@ export async function POST(req: NextRequest) {
       if (existingProfile) {
         finalClienteId = existingProfile.id;
       } else {
-        // Create auth user
-        const tempPassword = `BipFix_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        // Create account with simple 6-digit password
+        const senha = generatePassword();
         const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-          email, password: tempPassword, email_confirm: true,
+          email, password: senha, email_confirm: true,
+          user_metadata: { primeiro_login: true },
         });
 
         if (authError || !authData.user) {
@@ -56,15 +60,8 @@ export async function POST(req: NextRequest) {
           nome: nome || email.split('@')[0], email, telefone: telefone || null,
         });
 
-        // Generate password reset link with actual token
-        const { data: linkData } = await supabaseAdmin.auth.admin.generateLink({
-          type: 'recovery', email,
-          options: { redirectTo: 'https://bipfix.com/reset-password' },
-        });
-        const resetLink = linkData?.properties?.action_link || 'https://bipfix.com/reset-password';
-
-        // Welcome email with working password link
-        await sendEmail(email, 'Sua conta BipFix foi criada - Defina sua senha', `
+        // Email with login credentials
+        await sendEmail(email, 'BipFix - Sua conta foi criada', `
           <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
             <div style="background:#0c4a6e;color:white;padding:24px;border-radius:12px 12px 0 0;">
               <h1 style="margin:0;font-size:24px;">BipFix</h1>
@@ -74,10 +71,15 @@ export async function POST(req: NextRequest) {
               <p>Olá <strong>${nome || ''}</strong>,</p>
               <p>Sua emergência foi registrada e oficinas próximas já estão sendo notificadas.</p>
               <p>Criamos uma conta para você acompanhar os orçamentos.</p>
+              <div style="background:#f0f9ff;border:2px solid #0ea5e9;border-radius:8px;padding:16px;margin:20px 0;">
+                <p style="margin:0 0 8px;font-size:14px;color:#0c4a6e;font-weight:bold;">Seus dados de acesso:</p>
+                <p style="margin:0;font-size:14px;">Email: <strong>${email}</strong></p>
+                <p style="margin:4px 0 0;font-size:14px;">Senha temporária: <strong style="font-size:20px;letter-spacing:3px;">${senha}</strong></p>
+              </div>
+              <p style="font-size:13px;color:#6b7280;">No primeiro login, você será solicitado a trocar a senha.</p>
               <p style="margin-top:20px;">
-                <a href="${resetLink}" style="display:inline-block;background:#0284c7;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">Definir minha senha e acessar</a>
+                <a href="https://bipfix.com/login" style="display:inline-block;background:#0284c7;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">Acessar minha conta</a>
               </p>
-              <p style="font-size:14px;color:#6b7280;margin-top:16px;">Email de acesso: <strong>${email}</strong></p>
               <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
               <p style="font-size:12px;color:#9ca3af;">Equipe BipFix</p>
             </div>
@@ -86,7 +88,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Always update emergencia with profile_id
     if (finalClienteId) {
       await supabaseAdmin.from('emergencias').update({ profile_id: finalClienteId }).eq('id', emergenciaId);
     }
@@ -117,7 +118,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Não foi possível criar veículo' }, { status: 500 });
     }
 
-    // Create solicitacao WITH emergencia_id
     const { data: sol, error: solError } = await supabaseAdmin
       .from('solicitacoes').insert({
         cliente_id: finalClienteId, veiculo_id: veiculoId,
@@ -129,17 +129,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: solError?.message || 'Erro ao criar solicitação' }, { status: 500 });
     }
 
-    // Link emergencia → solicitacao
     await supabaseAdmin.from('emergencias').update({ solicitacao_id: sol.id }).eq('id', emergenciaId);
 
-    // Copy photos
     if (photoUrls?.length) {
       for (const url of photoUrls) {
         await supabaseAdmin.from('solicitacao_fotos').insert({ solicitacao_id: sol.id, foto_url: url });
       }
     }
 
-    // Notify oficinas
     const { data: oficinas } = await supabaseAdmin
       .from('oficinas').select('id, profile_id, especialidades').eq('ativa', true);
 

@@ -41,14 +41,14 @@ const FAQ_ITEMS = [
 ];
 
 export default function HomePage() {
-  const { isLoggedIn, user, funcionario, loading } = useAuth();
+  const { isLoggedIn, user, funcionario, authUser, loading } = useAuth();
   const router = useRouter();
 
   // Auto-redirect logged-in users to their dashboard
   useEffect(() => {
     if (!loading && isLoggedIn && user) {
-      // First login for funcionario → force password change
-      if (funcionario?.primeiro_login) {
+      // First login (funcionario or auto-created account) → force password change
+      if (funcionario?.primeiro_login || authUser?.user_metadata?.primeiro_login) {
         router.replace('/definir-senha');
         return;
       }

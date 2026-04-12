@@ -65,33 +65,52 @@ export async function POST(req: NextRequest) {
       if (existingProfile) {
         profileId = existingProfile.id;
       } else {
-        // Create account automatically for the other person
-        const tempPassword = `BipFix_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        // Create account with simple 6-digit password
+        const senha = String(Math.floor(100000 + Math.random() * 900000));
         const { data: authData } = await supabaseAdmin.auth.admin.createUser({
-          email: outroVeiculo.email,
-          password: tempPassword,
-          email_confirm: true,
+          email: outroVeiculo.email, password: senha, email_confirm: true,
+          user_metadata: { primeiro_login: true },
         });
 
         if (authData?.user) {
           profileId = authData.user.id;
           await supabaseAdmin.from('profiles').insert({
-            id: profileId,
-            tipo: 'cliente',
-            nome: outroVeiculo.nome,
-            email: outroVeiculo.email,
+            id: profileId, tipo: 'cliente',
+            nome: outroVeiculo.nome, email: outroVeiculo.email,
             telefone: outroVeiculo.telefone || null,
           });
 
-          // Create vehicle for the other person
           await supabaseAdmin.from('veiculos').insert({
-            profile_id: profileId,
-            fipe_tipo: 'cars',
+            profile_id: profileId, fipe_tipo: 'cars',
             fipe_marca: outroVeiculo.veiculo_descricao || 'A definir',
-            fipe_modelo: 'A definir',
-            fipe_ano: 'A definir',
+            fipe_modelo: 'A definir', fipe_ano: 'A definir',
             placa: outroVeiculo.placa || null,
           });
+
+          // Email with credentials to other person
+          await sendEmail(outroVeiculo.email, 'BipFix - Sua conta foi criada', `
+            <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+              <div style="background:#0c4a6e;color:white;padding:24px;border-radius:12px 12px 0 0;">
+                <h1 style="margin:0;font-size:24px;">BipFix</h1>
+              </div>
+              <div style="background:white;padding:24px;border:1px solid #e5e7eb;border-radius:0 0 12px 12px;">
+                <p>Olá <strong>${outroVeiculo.nome}</strong>,</p>
+                <p><strong>${emergencia.nome}</strong> registrou um acidente envolvendo seu veículo (placa <strong>${outroVeiculo.placa}</strong>).</p>
+                <p>Criamos uma conta para você acompanhar, completar o registro do veículo e solicitar orçamentos.</p>
+                <div style="background:#f0f9ff;border:2px solid #0ea5e9;border-radius:8px;padding:16px;margin:20px 0;">
+                  <p style="margin:0 0 8px;font-size:14px;color:#0c4a6e;font-weight:bold;">Seus dados de acesso:</p>
+                  <p style="margin:0;font-size:14px;">Email: <strong>${outroVeiculo.email}</strong></p>
+                  <p style="margin:4px 0 0;font-size:14px;">Senha temporária: <strong style="font-size:20px;letter-spacing:3px;">${senha}</strong></p>
+                </div>
+                <p style="font-size:13px;color:#6b7280;">No primeiro login, você será solicitado a trocar a senha.</p>
+                <p style="margin-top:20px;">
+                  <a href="https://bipfix.com/login" style="display:inline-block;background:#0284c7;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">Acessar minha conta</a>
+                </p>
+                <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+                <p style="font-size:12px;color:#9ca3af;">Equipe BipFix</p>
+              </div>
+            </div>
+          `);
         }
       }
     }
@@ -109,36 +128,6 @@ export async function POST(req: NextRequest) {
         isRegistered: !!profileId,
       });
 
-      // If account exists, generate reset link for the notification email
-      if (profileId) {
-        const { data: linkData } = await supabaseAdmin.auth.admin.generateLink({
-          type: 'recovery',
-          email: outroVeiculo.email,
-          options: { redirectTo: 'https://bipfix.com/reset-password' },
-        });
-        const resetLink = linkData?.properties?.action_link || 'https://bipfix.com/reset-password';
-        // Send separate email with working password link
-        if (RESEND_KEY) {
-          await sendEmail(outroVeiculo.email, 'BipFix - Defina sua senha para acessar', `
-            <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
-              <div style="background:#0c4a6e;color:white;padding:24px;border-radius:12px 12px 0 0;">
-                <h1 style="margin:0;font-size:24px;">BipFix</h1>
-              </div>
-              <div style="background:white;padding:24px;border:1px solid #e5e7eb;border-radius:0 0 12px 12px;">
-                <p>Olá <strong>${outroVeiculo.nome}</strong>,</p>
-                <p>Criamos uma conta para você acompanhar o registro do acidente envolvendo seu veículo (placa <strong>${outroVeiculo.placa}</strong>).</p>
-                <p>Defina sua senha para acessar a plataforma, completar o registro do seu veículo e solicitar orçamentos para o reparo.</p>
-                <p style="margin-top:20px;">
-                  <a href="${resetLink}" style="display:inline-block;background:#0284c7;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">Definir minha senha e acessar</a>
-                </p>
-                <p style="font-size:14px;color:#6b7280;margin-top:16px;">Email: <strong>${outroVeiculo.email}</strong></p>
-                <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
-                <p style="font-size:12px;color:#9ca3af;">Equipe BipFix</p>
-              </div>
-            </div>
-          `);
-        }
-      }
     }
 
     // Send WhatsApp notification
