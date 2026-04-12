@@ -87,6 +87,8 @@ export default function AcidenteRegistroPage() {
   // Orcamentos
   const [orcamentos, setOrcamentos] = useState<Orcamento[]>([]);
   const [loadingOrc, setLoadingOrc] = useState(false);
+  const [emergData, setEmergData] = useState<{ solicitacao_id: string | null; profile_id: string | null } | null>(null);
+  const isProprietario = user?.id === emergData?.profile_id;
 
   // Load existing data
   const loadData = useCallback(async () => {
@@ -124,9 +126,11 @@ export default function AcidenteRegistroPage() {
     setLoadingOrc(true);
     const { data: emerg } = await supabase
       .from('emergencias')
-      .select('solicitacao_id')
+      .select('solicitacao_id, profile_id')
       .eq('id', emergenciaId)
       .single();
+
+    if (emerg) setEmergData(emerg);
 
     if (emerg?.solicitacao_id) {
       const { data: orcs } = await supabase
@@ -565,15 +569,25 @@ export default function AcidenteRegistroPage() {
                       </div>
                     )}
 
-                    <button
-                      onClick={() => {
-                        setStep('chat');
-                        setNovaMensagem(`Orçamento da ${ofi?.nome_fantasia}: ${formatCurrency(orc.valor_total)}, prazo ${orc.prazo_dias} dias.${ofi?.endereco ? ' Endereço: ' + ofi.endereco + (ofi.cidade ? ', ' + ofi.cidade : '') : ''}${ofi?.profile?.telefone ? ' Tel: ' + ofi.profile.telefone : ''}`);
-                      }}
-                      className="btn-primary w-full !py-2 text-sm"
-                    >
-                      Enviar ao outro envolvido
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setStep('chat');
+                          setNovaMensagem(`Orçamento da ${ofi?.nome_fantasia}: ${formatCurrency(orc.valor_total)}, prazo ${orc.prazo_dias} dias.${ofi?.endereco ? ' Endereço: ' + ofi.endereco + (ofi.cidade ? ', ' + ofi.cidade : '') : ''}${ofi?.profile?.telefone ? ' Tel: ' + ofi.profile.telefone : ''}`);
+                        }}
+                        className="btn-secondary flex-1 !py-2 text-sm"
+                      >
+                        Enviar ao outro envolvido
+                      </button>
+                      {isProprietario && !isAceito && (
+                        <Link
+                          href={`/cliente/orcamentos/${emergData?.solicitacao_id}`}
+                          className="btn-primary flex-1 !py-2 text-sm text-center"
+                        >
+                          Aceitar orçamento
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 );
               })}
