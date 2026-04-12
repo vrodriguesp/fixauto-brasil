@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 
 export default function EmergenciaPage() {
   const router = useRouter();
@@ -28,7 +27,7 @@ export default function EmergenciaPage() {
   const [veiculoInfo, setVeiculoInfo] = useState<{ marca: string; modelo: string; ano: string; cor: string } | null>(null);
   const [buscandoPlaca, setBuscandoPlaca] = useState(false);
   const [placaNaoEncontrada, setPlacaNaoEncontrada] = useState(false);
-  const [fipeData, setFipeData] = useState({ tipo: 'cars', marca: '', modelo: '', ano: '' });
+
 
   const buscarPlaca = async (p: string) => {
     const clean = p.replace(/[^a-zA-Z0-9]/g, '');
@@ -383,12 +382,15 @@ export default function EmergenciaPage() {
                 )}
                 {placaNaoEncontrada && (
                   <div className="mt-3">
-                    <p className="text-xs text-orange-600 mb-2">Placa não encontrada. Selecione o veículo manualmente:</p>
-                    <FipeAutocomplete
-                      value={fipeData}
-                      onChange={(v) => {
-                        setFipeData(v);
-                        setVeiculoInfo({ marca: v.marca, modelo: v.modelo, ano: v.ano, cor: '' });
+                    <p className="text-xs text-orange-600 mb-2">Placa não encontrada. Digite marca e modelo:</p>
+                    <input
+                      type="text"
+                      className="input-field"
+                      placeholder="Ex: Fiat Argo"
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const parts = val.split(' ');
+                        setVeiculoInfo({ marca: parts[0] || val, modelo: parts.slice(1).join(' ') || '', ano: '', cor: '' });
                       }}
                     />
                   </div>
