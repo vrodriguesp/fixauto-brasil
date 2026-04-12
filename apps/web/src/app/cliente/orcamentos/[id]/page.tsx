@@ -8,7 +8,7 @@ import { useOrcamentos } from '@/hooks/use-orcamentos';
 import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import StarRating from '@/components/ui/StarRating';
-import { formatCurrency, formatDate, getUrgenciaColor } from '@/lib/utils';
+import { formatCurrency, formatDate, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
 import type { DisponibilidadeSlot } from '@fixauto/shared';
 
 function formatExecTime(hours: number | null): string {
@@ -254,7 +254,7 @@ export default function OrcamentoDetalhePage() {
       {/* Request details */}
       <div className="card mb-6">
         <h2 className="font-semibold text-gray-900 mb-2">Descrição</h2>
-        <p className="text-gray-600 text-sm">{solicitacao.descricao}</p>
+        <p className="text-gray-600 text-sm">{cleanDescricao(solicitacao.descricao)}</p>
         <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
           <span>{solicitacao.endereco}</span>
           <span>{formatDate(solicitacao.created_at)}</span>

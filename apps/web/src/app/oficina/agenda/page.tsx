@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
 import { CORES_AGENDA, TIPOS_SERVICO } from '@fixauto/shared';
+import { cleanDescricao } from '@/lib/utils';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 
 function getDaysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate(); }
@@ -383,7 +384,7 @@ export default function AgendaPage() {
                 {!c && !v && ev.descricao && (
                   <div>
                     <p className="text-xs font-semibold text-gray-500 uppercase">Descrição</p>
-                    <p className="text-xs text-gray-700">{ev.descricao}</p>
+                    <p className="text-xs text-gray-700">{cleanDescricao(ev.descricao)}</p>
                   </div>
                 )}
                 <div>
@@ -401,7 +402,7 @@ export default function AgendaPage() {
                 {sol?.descricao && (
                   <div>
                     <p className="text-xs font-semibold text-gray-500 uppercase">Descrição</p>
-                    <p className="text-xs text-gray-700">{sol.descricao}</p>
+                    <p className="text-xs text-gray-700">{cleanDescricao(sol.descricao)}</p>
                   </div>
                 )}
                 <div className="pt-2 flex gap-2">

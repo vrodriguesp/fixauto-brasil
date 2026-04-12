@@ -9,7 +9,7 @@ import { supabase } from '@/lib/supabase';
 import StatusBadge from '@/components/ui/StatusBadge';
 import NoShowWarning from '@/components/ui/NoShowWarning';
 import DamageAnalysis from '@/components/ui/DamageAnalysis';
-import { formatDate, getUrgenciaColor } from '@/lib/utils';
+import { formatDate, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
 
 export default function SolicitacaoDetalhePage() {
   const params = useParams();
@@ -104,7 +104,7 @@ export default function SolicitacaoDetalhePage() {
         <div className="lg:col-span-2 space-y-6">
           <div className="card">
             <h2 className="font-semibold text-gray-900 mb-2">Descrição do problema</h2>
-            <p className="text-gray-600">{sol.descricao}</p>
+            <p className="text-gray-600">{cleanDescricao(sol.descricao)}</p>
           </div>
 
           {sol.fotos && sol.fotos.length > 0 && (

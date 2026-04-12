@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { timeAgo, calcDistance, getUrgenciaColor } from '@/lib/utils';
+import { timeAgo, calcDistance, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
 import { useState } from 'react';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 
@@ -79,7 +79,7 @@ export default function SolicitacoesOficinaPage() {
                       </span>
                       <span className="badge bg-gray-100 text-gray-700 capitalize">{sol.tipo}</span>
                     </div>
-                    <p className="text-sm text-gray-600 line-clamp-2">{sol.descricao}</p>
+                    <p className="text-sm text-gray-600 line-clamp-2">{cleanDescricao(sol.descricao)}</p>
                     <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
                       <span className="flex items-center gap-1">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { formatCurrency, timeAgo } from '@/lib/utils';
+import { formatCurrency, timeAgo, cleanDescricao } from '@/lib/utils';
 
 export default function OrcamentosPage() {
   const { solicitacoes: allSolicitacoes } = useSolicitacoes();
@@ -35,7 +35,7 @@ export default function OrcamentosPage() {
                     </h2>
                     <StatusBadge status={sol.status} />
                   </div>
-                  <p className="text-sm text-gray-500">{sol.descricao}</p>
+                  <p className="text-sm text-gray-500">{cleanDescricao(sol.descricao)}</p>
                 </div>
                 <span className="text-sm text-gray-400">{timeAgo(sol.created_at)}</span>
               </div>

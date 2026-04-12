@@ -8,7 +8,7 @@ import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useNotificacoes } from '@/hooks/use-notificacoes';
 import { useVeiculos } from '@/hooks/use-veiculos';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { formatCurrency, timeAgo } from '@/lib/utils';
+import { formatCurrency, timeAgo, cleanDescricao } from '@/lib/utils';
 
 function formatDateShort(dateStr: string): string {
   const d = new Date(dateStr);
@@ -272,7 +272,7 @@ export default function ClienteDashboard() {
                       </h3>
                       <StatusBadge status={sol.status} />
                     </div>
-                    <p className="text-sm text-gray-600 line-clamp-2">{sol.descricao}</p>
+                    <p className="text-sm text-gray-600 line-clamp-2">{cleanDescricao(sol.descricao)}</p>
                     <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
                       <span>{sol.endereco}</span>
                       <span>{timeAgo(sol.created_at)}</span>

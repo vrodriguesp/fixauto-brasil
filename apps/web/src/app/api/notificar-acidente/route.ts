@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
         tipo: 'acidente',
         titulo: 'Registro de acidente',
         mensagem: `${emergencia.nome} registrou um acidente envolvendo seu veículo (placa ${outroVeiculo.placa}). Acesse para ver detalhes e orçamentos.`,
-        dados: { emergencia_id: emergenciaId },
+        dados: { emergencia_id: emergenciaId, solicitacao_id: emergencia.solicitacao_id || null },
       });
     }
 

@@ -9,7 +9,7 @@ import { useAgenda } from '@/hooks/use-agenda';
 import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import StarRating from '@/components/ui/StarRating';
-import { timeAgo, calcDistance, getUrgenciaColor, formatCurrency } from '@/lib/utils';
+import { timeAgo, calcDistance, getUrgenciaColor, formatCurrency, cleanDescricao } from '@/lib/utils';
 
 export default function OficinaDashboard() {
   const { user, oficina } = useAuth();
@@ -198,7 +198,7 @@ export default function OficinaDashboard() {
                     </div>
                     <StatusBadge status={sol.status} />
                   </div>
-                  <p className="text-sm text-gray-600 line-clamp-1 mb-2">{sol.descricao}</p>
+                  <p className="text-sm text-gray-600 line-clamp-1 mb-2">{cleanDescricao(sol.descricao)}</p>
                   {orc && (
                     <div className="flex items-center justify-between text-sm bg-green-50 rounded-lg p-2">
                       <span className="text-green-700">Orçamento aceito</span>
@@ -288,7 +288,7 @@ export default function OficinaDashboard() {
                           {sol.urgencia}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 line-clamp-2">{sol.descricao}</p>
+                      <p className="text-sm text-gray-600 line-clamp-2">{cleanDescricao(sol.descricao)}</p>
                       <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
                         <span>{sol.veiculo?.fipe_marca} {sol.veiculo?.fipe_modelo} {sol.veiculo?.fipe_ano}</span>
                         <span>{dist.toFixed(1)}km</span>

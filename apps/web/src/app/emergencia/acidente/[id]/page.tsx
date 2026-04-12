@@ -91,6 +91,15 @@ export default function AcidenteRegistroPage() {
   const [veiculoProprietario, setVeiculoProprietario] = useState<{ fipe_marca: string; fipe_modelo: string; fipe_ano: string; placa: string; cor: string } | null>(null);
   const isProprietario = user?.id === emergData?.profile_id;
 
+  // Determine if current user is the victim (only victims can accept quotes and send to responsible)
+  // eu_causei: registrant is responsible, so registrant is NOT victim
+  // outro_causou: registrant is victim
+  const isVitima = emergData?.descricao?.match(/\[TIPO:(\w+)\]/)
+    ? (emergData.descricao.match(/\[TIPO:(\w+)\]/)?.[1] === 'outro_causou'
+        ? user?.id === emergData?.profile_id   // registrant is victim
+        : user?.id !== emergData?.profile_id)  // eu_causei: registrant is NOT victim
+    : isProprietario; // fallback for legacy data
+
   // Load existing data
   const loadData = useCallback(async () => {
     if (!emergenciaId) return;
@@ -693,19 +702,31 @@ export default function AcidenteRegistroPage() {
 
                     <div className="flex gap-2">
                       {tipoAcidente !== 'sem_outro' && (
-                        <button
-                          onClick={() => {
-                            setStep('chat');
-                            setNovaMensagem(`Orçamento da ${ofi?.nome_fantasia}: ${formatCurrency(orc.valor_total)}, prazo ${orc.prazo_dias} dias.${ofi?.endereco ? ' Endereço: ' + ofi.endereco + (ofi.cidade ? ', ' + ofi.cidade : '') : ''}${ofi?.profile?.telefone ? ' Tel: ' + ofi.profile.telefone : ''}`);
-                          }}
-                          className="btn-secondary flex-1 !py-2 text-sm"
-                        >
-                          {tipoAcidente === 'eu_causei' || tipoAcidente === 'outro_causou'
-                            ? 'Enviar ao responsável'
-                            : 'Enviar ao outro envolvido'}
-                        </button>
+                        (tipoAcidente === 'eu_causei' || tipoAcidente === 'outro_causou')
+                          ? isVitima && (
+                            <button
+                              onClick={() => {
+                                setStep('chat');
+                                setNovaMensagem(`Orçamento da ${ofi?.nome_fantasia}: ${formatCurrency(orc.valor_total)}, prazo ${orc.prazo_dias} dias.${ofi?.endereco ? ' Endereço: ' + ofi.endereco + (ofi.cidade ? ', ' + ofi.cidade : '') : ''}${ofi?.profile?.telefone ? ' Tel: ' + ofi.profile.telefone : ''}`);
+                              }}
+                              className="btn-secondary flex-1 !py-2 text-sm"
+                            >
+                              Enviar ao responsável
+                            </button>
+                          )
+                          : (
+                            <button
+                              onClick={() => {
+                                setStep('chat');
+                                setNovaMensagem(`Orçamento da ${ofi?.nome_fantasia}: ${formatCurrency(orc.valor_total)}, prazo ${orc.prazo_dias} dias.${ofi?.endereco ? ' Endereço: ' + ofi.endereco + (ofi.cidade ? ', ' + ofi.cidade : '') : ''}${ofi?.profile?.telefone ? ' Tel: ' + ofi.profile.telefone : ''}`);
+                              }}
+                              className="btn-secondary flex-1 !py-2 text-sm"
+                            >
+                              Enviar ao outro envolvido
+                            </button>
+                          )
                       )}
-                      {isProprietario && !isAceito && (
+                      {isVitima && !isAceito && (
                         <Link
                           href={`/cliente/orcamentos/${emergData?.solicitacao_id}`}
                           className="btn-primary flex-1 !py-2 text-sm text-center"

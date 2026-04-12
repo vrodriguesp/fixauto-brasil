@@ -5,7 +5,7 @@ import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import StarRating from '@/components/ui/StarRating';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { formatCurrency, formatDate, cleanDescricao } from '@/lib/utils';
 
 function ReviewForm({
   solicitacaoId,
@@ -241,7 +241,7 @@ export default function HistóricoPage() {
                               <span className="text-gray-500">Oficina:</span> {oficinaNome}
                             </p>
                           )}
-                          <p className="text-sm text-gray-600 mt-1">{sol.descricao}</p>
+                          <p className="text-sm text-gray-600 mt-1">{cleanDescricao(sol.descricao)}</p>
                           <p className="text-xs text-gray-500 mt-2">{formatDate(sol.created_at)}</p>
                         </div>
                         <div className="text-right flex-shrink-0 ml-4">
@@ -446,7 +446,7 @@ export default function HistóricoPage() {
                             </h3>
                             <StatusBadge status={sol.status} />
                           </div>
-                          <p className="text-xs text-gray-500 line-clamp-1">{sol.descricao}</p>
+                          <p className="text-xs text-gray-500 line-clamp-1">{cleanDescricao(sol.descricao)}</p>
                           <p className="text-xs text-gray-400 mt-1">{formatDate(sol.created_at)}</p>
                         </div>
                       </div>

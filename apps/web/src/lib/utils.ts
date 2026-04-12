@@ -104,3 +104,8 @@ export function getStatusLabel(status: string): string {
   };
   return labels[status] || status;
 }
+
+export function cleanDescricao(desc: string | null | undefined): string {
+  if (!desc) return '';
+  return desc.replace(/\[TIPO:\w+\]\s*/g, '').replace(/\[RESP:\w+\]\s*/g, '').replace(/\[COMISSAO:[^\]]+\]\s*/g, '').trim();
+}

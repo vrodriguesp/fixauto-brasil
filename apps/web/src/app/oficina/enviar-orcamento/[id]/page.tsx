@@ -6,7 +6,7 @@ import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
 import { useAuth } from '@/lib/auth-context';
 import type { TipoItemOrcamento, AnaliseDano } from '@fixauto/shared';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, cleanDescricao } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
 
 interface ItemForm {
@@ -259,7 +259,7 @@ export default function EnviarOrcamentoPage() {
 
       {/* Request summary */}
       <div className="bg-gray-50 rounded-lg p-4 mb-6">
-        <p className="text-sm text-gray-600">{solicitacao.descricao}</p>
+        <p className="text-sm text-gray-600">{cleanDescricao(solicitacao.descricao)}</p>
         <p className="text-xs text-gray-500 mt-2">
           Cliente: {solicitacao.cliente?.nome} | {solicitacao.endereco}
         </p>
