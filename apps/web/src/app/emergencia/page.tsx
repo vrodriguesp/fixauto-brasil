@@ -77,26 +77,13 @@ export default function EmergenciaPage() {
   };
 
   const uploadPhotos = async (emergId: string) => {
-    const urls: string[] = [];
-    for (const foto of fotos) {
-      const fileName = `emergencia/${emergId}/${Date.now()}-${foto.file.name}`;
-      const { data: uploadData } = await supabase.storage
-        .from('damage-photos')
-        .upload(fileName, foto.file);
+    const formData = new FormData();
+    formData.append('emergenciaId', emergId);
+    fotos.forEach((f) => formData.append('fotos', f.file));
 
-      if (uploadData?.path) {
-        const { data: { publicUrl } } = supabase.storage
-          .from('damage-photos')
-          .getPublicUrl(uploadData.path);
-
-        await supabase.from('emergencia_fotos').insert({
-          emergencia_id: emergId,
-          foto_url: publicUrl,
-        });
-        urls.push(publicUrl);
-      }
-    }
-    return urls;
+    const res = await fetch('/api/upload-emergencia', { method: 'POST', body: formData });
+    const data = await res.json();
+    return (data.urls as string[]) || [];
   };
 
   const handleSubmit = async () => {

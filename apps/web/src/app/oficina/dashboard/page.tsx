@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
+import { supabase } from '@/lib/supabase';
 import { useAgenda } from '@/hooks/use-agenda';
 import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
@@ -18,7 +20,14 @@ export default function OficinaDashboard() {
   const solicitacoesProximas = solicitacoes.filter(s => ['aberta', 'em_orcamento'].includes(s.status));
   const solicitacoesAceitas = solicitacoes.filter(s => ['aceita', 'em_andamento'].includes(s.status));
   const solicitacoesConcluidas = solicitacoes.filter(s => s.status === 'concluida');
-  const solicitacoesNoShow = solicitacoes.filter(s => s.status === 'no_show');
+  const solicitacoesNoShow = solicitacoes.filter(s => {
+    if (s.status !== 'no_show') return false;
+    // Visible for 30 days
+    const created = new Date(s.created_at);
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    return created >= thirtyDaysAgo;
+  });
 
   // Upcoming check-ins from agenda (next 7 days)
   const now = new Date();
@@ -204,19 +213,41 @@ export default function OficinaDashboard() {
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Não compareceu</h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            {solicitacoesNoShow.map((sol) => (
-              <Link key={sol.id} href={`/oficina/solicitacoes/${sol.id}`} className="card border-l-4 border-l-orange-400 hover:shadow-md transition-shadow block">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="font-semibold text-gray-900 text-sm">
-                      {sol.veiculo?.fipe_marca} {sol.veiculo?.fipe_modelo}
-                    </h3>
-                    <StatusBadge status={sol.status} />
+            {solicitacoesNoShow.map((sol) => {
+              const myOrc = sol.orcamentos?.find((o: any) => o.oficina_id === oficina?.id);
+              return (
+                <div key={sol.id} className="card border-l-4 border-l-orange-400">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <h3 className="font-semibold text-gray-900 text-sm">
+                        {sol.veiculo?.fipe_marca} {sol.veiculo?.fipe_modelo}
+                      </h3>
+                      <StatusBadge status={sol.status} />
+                    </div>
+                    {myOrc && <p className="text-sm font-bold text-gray-900">{formatCurrency(myOrc.valor_total)}</p>}
+                  </div>
+                  <p className="text-xs text-gray-500">{sol.cliente?.nome} - {timeAgo(sol.created_at)}</p>
+                  <div className="flex gap-2 mt-3">
+                    <Link href={`/oficina/enviar-orcamento/${sol.id}`} className="text-xs bg-primary-600 text-white px-3 py-1.5 rounded-lg hover:bg-primary-700 font-medium">
+                      Enviar novas datas
+                    </Link>
+                    {myOrc && (
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (!confirm('Retirar orçamento? O cliente não verá mais sua oferta.')) return;
+                          await supabase.from('orcamentos').update({ status: 'recusado' }).eq('id', myOrc.id);
+                          window.location.reload();
+                        }}
+                        className="text-xs bg-red-50 text-red-700 px-3 py-1.5 rounded-lg hover:bg-red-100 font-medium"
+                      >
+                        Retirar orçamento
+                      </button>
+                    )}
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-2">{sol.cliente?.nome} - {sol.endereco}</p>
-              </Link>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
