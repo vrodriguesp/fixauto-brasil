@@ -22,6 +22,9 @@ export default function OficinaDashboard() {
   const solicitacoesConcluidas = solicitacoes.filter(s => s.status === 'concluida');
   const solicitacoesNoShow = solicitacoes.filter(s => {
     if (s.status !== 'no_show') return false;
+    // Only show if oficina still has an active orcamento (not recusado)
+    const myOrc = s.orcamentos?.find((o: any) => o.oficina_id === oficina?.id && o.status !== 'recusado');
+    if (!myOrc) return false;
     // Visible for 30 days
     const created = new Date(s.created_at);
     const thirtyDaysAgo = new Date();
