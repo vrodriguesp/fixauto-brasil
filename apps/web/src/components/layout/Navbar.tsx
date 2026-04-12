@@ -30,21 +30,18 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href={isLoggedIn ? dashboardPath : '/'} className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isAdmin ? 'bg-slate-700' : isOficina ? 'bg-emerald-600' : 'bg-primary-600'}`}>
-                <span className="text-white font-bold text-sm">BF</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold text-gray-900 leading-tight">
-                  Bip<span className={isAdmin ? 'text-slate-700' : isOficina ? 'text-emerald-600' : 'text-primary-600'}>Fix</span>
-                </span>
-                {isOficina && (
-                  <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider leading-none">Oficinas</span>
-                )}
-                {isAdmin && (
-                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider leading-none">Admin</span>
-                )}
-              </div>
+            <Link href={isLoggedIn ? dashboardPath : '/'} className="flex items-center gap-1">
+              <img src="/logo.png" alt="BipFix" className="h-9" />
+              {(isOficina || isAdmin) && (
+                <div className="flex flex-col ml-1">
+                  {isOficina && (
+                    <span className="text-[10px] font-semibold text-sky-700 uppercase tracking-wider leading-none">Oficinas</span>
+                  )}
+                  {isAdmin && (
+                    <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider leading-none">Admin</span>
+                  )}
+                </div>
+              )}
             </Link>
 
             {isLoggedIn && (
@@ -94,8 +91,8 @@ export default function Navbar() {
                   href={isAdmin ? '/admin/dashboard' : isOficina ? '/oficina/perfil' : '/cliente/perfil'}
                   className="hidden sm:flex items-center gap-2 hover:opacity-80 transition-opacity"
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isAdmin ? 'bg-slate-200' : isOficina ? 'bg-emerald-100' : 'bg-primary-100'}`}>
-                    <span className={`font-semibold text-sm ${isAdmin ? 'text-slate-700' : isOficina ? 'text-emerald-700' : 'text-primary-700'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isAdmin ? 'bg-slate-200' : isOficina ? 'bg-sky-100' : 'bg-primary-100'}`}>
+                    <span className={`font-semibold text-sm ${isAdmin ? 'text-slate-700' : isOficina ? 'text-sky-700' : 'text-primary-700'}`}>
                       {user!.nome.charAt(0)}
                     </span>
                   </div>
