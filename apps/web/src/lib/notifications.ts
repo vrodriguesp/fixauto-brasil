@@ -43,17 +43,22 @@ export async function sendAccidentNotificationEmail(params: {
             <p><strong>${params.fromName}</strong> registrou um acidente envolvendo seu veículo (placa <strong>${params.placa}</strong>) na plataforma BipFix.</p>
             <p>Através da plataforma, você pode:</p>
             <ul>
+              <li>Completar o registro do seu veículo</li>
               <li>Trocar mensagens com o outro motorista</li>
-              <li>Acompanhar orçamentos de oficinas próximas</li>
+              <li>Receber orçamentos de oficinas próximas para o reparo</li>
+              <li>Enviar um orçamento para o reparo do seu veículo</li>
               <li>Entrar em acordo sobre a reparação</li>
             </ul>
+            <p style="margin-top: 16px; background: #fef3c7; padding: 12px; border-radius: 8px; font-size: 14px; color: #92400e;">
+              <strong>Próximos passos:</strong> Acesse a plataforma, complete os dados do seu veículo e solicite orçamentos de oficinas para reparar os danos.
+            </p>
             <p style="margin-top: 24px;">
-              <a href="${params.isRegistered ? acidenteUrl : cadastroUrl}"
+              <a href="${params.isRegistered ? acidenteUrl : `${SITE_URL}/reset-password`}"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">
-                ${params.isRegistered ? 'Ver detalhes do acidente' : 'Criar conta e acompanhar'}
+                ${params.isRegistered ? 'Ver detalhes do acidente' : 'Definir senha e acessar'}
               </a>
             </p>
-            ${!params.isRegistered ? '<p style="font-size: 14px; color: #6b7280;">Enquanto isso, você receberá atualizações sobre orçamentos neste email.</p>' : ''}
+            ${!params.isRegistered ? '<p style="font-size: 14px; color: #6b7280;">Criamos uma conta para você. Defina sua senha para acessar e acompanhar tudo.</p>' : ''}
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
             <p style="font-size: 12px; color: #9ca3af;">
               Este email foi enviado automaticamente pela plataforma BipFix.

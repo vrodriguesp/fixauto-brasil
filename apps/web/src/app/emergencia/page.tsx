@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 
 export default function EmergenciaPage() {
   const router = useRouter();
@@ -26,11 +27,15 @@ export default function EmergenciaPage() {
   const [placa, setPlaca] = useState('');
   const [veiculoInfo, setVeiculoInfo] = useState<{ marca: string; modelo: string; ano: string; cor: string } | null>(null);
   const [buscandoPlaca, setBuscandoPlaca] = useState(false);
+  const [placaNaoEncontrada, setPlacaNaoEncontrada] = useState(false);
+  const [fipeData, setFipeData] = useState({ tipo: 'cars', marca: '', modelo: '', ano: '' });
 
   const buscarPlaca = async (p: string) => {
     const clean = p.replace(/[^a-zA-Z0-9]/g, '');
     if (clean.length < 7) return;
     setBuscandoPlaca(true);
+    setPlacaNaoEncontrada(false);
+    setVeiculoInfo(null);
     try {
       const res = await fetch('/api/consultar-placa', {
         method: 'POST',
@@ -40,8 +45,12 @@ export default function EmergenciaPage() {
       if (res.ok) {
         const data = await res.json();
         setVeiculoInfo({ marca: data.marca, modelo: data.modelo, ano: data.ano, cor: data.cor });
+      } else {
+        setPlacaNaoEncontrada(true);
       }
-    } catch { /* silencioso */ }
+    } catch {
+      setPlacaNaoEncontrada(true);
+    }
     setBuscandoPlaca(false);
   };
 
@@ -370,6 +379,18 @@ export default function EmergenciaPage() {
                     <p className="text-xs text-green-600">
                       Ano: {veiculoInfo.ano} | Cor: {veiculoInfo.cor}
                     </p>
+                  </div>
+                )}
+                {placaNaoEncontrada && (
+                  <div className="mt-3">
+                    <p className="text-xs text-orange-600 mb-2">Placa não encontrada. Selecione o veículo manualmente:</p>
+                    <FipeAutocomplete
+                      value={fipeData}
+                      onChange={(v) => {
+                        setFipeData(v);
+                        setVeiculoInfo({ marca: v.marca, modelo: v.modelo, ano: v.ano, cor: '' });
+                      }}
+                    />
                   </div>
                 )}
               </div>

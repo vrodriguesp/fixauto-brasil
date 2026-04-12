@@ -43,7 +43,28 @@ export default function AcidenteRegistroPage() {
   const [outroEmail, setOutroEmail] = useState('');
   const [outroPlaca, setOutroPlaca] = useState('');
   const [outroVeiculo, setOutroVeiculo] = useState('');
+  const [outroVeiculoDetalhes, setOutroVeiculoDetalhes] = useState<{ marca: string; modelo: string; ano: string; cor: string } | null>(null);
+  const [buscandoOutroPlaca, setBuscandoOutroPlaca] = useState(false);
   const [fotosOutro, setFotosOutro] = useState<{ file: File; preview: string }[]>([]);
+
+  const buscarOutroPlaca = async (p: string) => {
+    const clean = p.replace(/[^a-zA-Z0-9]/g, '');
+    if (clean.length < 7) return;
+    setBuscandoOutroPlaca(true);
+    try {
+      const res = await fetch('/api/consultar-placa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ placa: clean }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setOutroVeiculoDetalhes({ marca: data.marca, modelo: data.modelo, ano: data.ano, cor: data.cor });
+        setOutroVeiculo(`${data.marca} ${data.modelo}`);
+      }
+    } catch { /* silencioso */ }
+    setBuscandoOutroPlaca(false);
+  };
   const [observacoes, setObservacoes] = useState('');
   const [registered, setRegistered] = useState(false);
   const [registering, setRegistering] = useState(false);
@@ -316,7 +337,18 @@ export default function AcidenteRegistroPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Placa do veículo *</label>
-                <input type="text" className="input-field" placeholder="ABC-1234" value={outroPlaca} onChange={(e) => setOutroPlaca(e.target.value)} />
+                <div className="flex gap-2">
+                  <input type="text" className="input-field uppercase" placeholder="ABC1D23" maxLength={8} value={outroPlaca}
+                    onChange={(e) => {
+                      const v = e.target.value.toUpperCase();
+                      setOutroPlaca(v);
+                      if (v.replace(/[^a-zA-Z0-9]/g, '').length === 7) buscarOutroPlaca(v);
+                    }} />
+                  {buscandoOutroPlaca && <div className="flex items-center"><div className="w-5 h-5 border-2 border-primary-400 border-t-transparent rounded-full animate-spin" /></div>}
+                </div>
+                {outroVeiculoDetalhes && (
+                  <p className="text-xs text-green-600 mt-1">{outroVeiculoDetalhes.marca} {outroVeiculoDetalhes.modelo} - {outroVeiculoDetalhes.ano} {outroVeiculoDetalhes.cor}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Veículo (marca/modelo)</label>
