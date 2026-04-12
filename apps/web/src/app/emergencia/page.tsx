@@ -176,8 +176,8 @@ export default function EmergenciaPage() {
         }
       }
 
-      // 4. NOTIFY nearby oficinas
-      await fetch('/api/notificar-oficinas-emergencia', {
+      // 4. NOTIFY nearby oficinas (use default SP coords as fallback)
+      const notifyRes = await fetch('/api/notificar-oficinas-emergencia', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -185,7 +185,10 @@ export default function EmergenciaPage() {
           latitude: coords.lat,
           longitude: coords.lon,
         }),
-      }).catch(() => { /* non-blocking */ });
+      });
+      if (!notifyRes.ok) {
+        console.error('[emergencia] Notify failed:', await notifyRes.text());
+      }
 
       setSubmitting(false);
       setSubmitted(true);

@@ -17,13 +17,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Search radius: ~30km (same approach as use-solicitacoes.ts)
-    const RADIUS_KM = 30;
+    // Search radius: ~50km for emergencies (wider than normal)
+    const RADIUS_KM = 50;
     const radiusLat = RADIUS_KM / 111;
     const radiusLon = RADIUS_KM / (111 * Math.cos(latitude * Math.PI / 180));
 
     // Fetch oficinas within radius
-    const { data: oficinas, error: oficinasError } = await supabaseAdmin
+    let { data: oficinas, error: oficinasError } = await supabaseAdmin
       .from('oficinas')
       .select('id, profile_id, nome_fantasia, especialidades, latitude, longitude')
       .gte('latitude', latitude - radiusLat)
@@ -33,6 +33,16 @@ export async function POST(req: NextRequest) {
 
     if (oficinasError) {
       return NextResponse.json({ error: oficinasError.message }, { status: 500 });
+    }
+
+    // Fallback: if no oficinas found in radius, notify ALL active oficinas (emergency)
+    if (!oficinas || oficinas.length === 0) {
+      const { data: allOficinas } = await supabaseAdmin
+        .from('oficinas')
+        .select('id, profile_id, nome_fantasia, especialidades, latitude, longitude')
+        .eq('ativa', true)
+        .limit(20);
+      oficinas = allOficinas || [];
     }
 
     // Filter by especialidades that handle collision/body work
@@ -65,12 +75,6 @@ export async function POST(req: NextRequest) {
 
       notificadasCount++;
     }
-
-    // Update emergencia with notification count
-    await supabaseAdmin
-      .from('emergencias')
-      .update({ oficinas_notificadas: notificadasCount })
-      .eq('id', emergenciaId);
 
     return NextResponse.json({ success: true, oficinasNotificadas: notificadasCount });
   } catch (err) {
