@@ -132,24 +132,25 @@ export default function EmergenciaPage() {
       // 2. Upload photos
       const photoUrls = fotos.length > 0 ? await uploadPhotos(emergencia.id) : [];
 
-      // 3. Create solicitação via server API (works with or without vehicle)
-      if (user) {
-        const solRes = await fetch('/api/criar-solicitacao-emergencia', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            emergenciaId: emergencia.id,
-            clienteId: user.id,
-            descricao: descricao || 'Emergência - Colisão registrada pelo fluxo "Acabei de bater"',
-            latitude: coords.lat,
-            longitude: coords.lon,
-            endereco: localizacao,
-            photoUrls,
-          }),
-        });
-        if (!solRes.ok) {
-          console.error('[emergencia] Criar solicitacao failed:', await solRes.text());
-        }
+      // 3. Create account (if not logged in) + solicitação via server API
+      const solRes = await fetch('/api/criar-solicitacao-emergencia', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          emergenciaId: emergencia.id,
+          clienteId: user?.id || null,
+          nome,
+          email,
+          telefone,
+          descricao: descricao || 'Emergência - Colisão registrada pelo fluxo "Acabei de bater"',
+          latitude: coords.lat,
+          longitude: coords.lon,
+          endereco: localizacao,
+          photoUrls,
+        }),
+      });
+      if (!solRes.ok) {
+        console.error('[emergencia] Criar solicitacao failed:', await solRes.text());
       }
 
       // 4. NOTIFY nearby oficinas (use default SP coords as fallback)

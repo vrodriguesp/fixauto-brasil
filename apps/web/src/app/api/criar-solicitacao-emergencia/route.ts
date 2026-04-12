@@ -8,27 +8,109 @@ const supabaseAdmin = createClient(
 
 export async function POST(req: NextRequest) {
   try {
-    const { emergenciaId, clienteId, descricao, latitude, longitude, endereco, photoUrls } = await req.json();
+    const { emergenciaId, clienteId, nome, email, telefone, descricao, latitude, longitude, endereco, photoUrls } = await req.json();
 
-    if (!emergenciaId || !clienteId) {
-      return NextResponse.json({ error: 'emergenciaId e clienteId obrigatórios' }, { status: 400 });
+    if (!emergenciaId) {
+      return NextResponse.json({ error: 'emergenciaId obrigatório' }, { status: 400 });
     }
 
-    // Get first vehicle (if any)
+    let finalClienteId = clienteId;
+
+    // If no logged-in user, create account automatically
+    if (!finalClienteId && email) {
+      // Check if email already has an account
+      const { data: existingProfile } = await supabaseAdmin
+        .from('profiles')
+        .select('id')
+        .eq('email', email)
+        .single();
+
+      if (existingProfile) {
+        finalClienteId = existingProfile.id;
+      } else {
+        // Create auth user with temporary password
+        const tempPassword = `FixAuto_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+          email,
+          password: tempPassword,
+          email_confirm: true,
+        });
+
+        if (authError || !authData.user) {
+          console.error('[criar-solicitacao-emergencia] Auth error:', authError?.message);
+          return NextResponse.json({ error: authError?.message || 'Erro ao criar conta' }, { status: 500 });
+        }
+
+        finalClienteId = authData.user.id;
+
+        // Create profile
+        await supabaseAdmin.from('profiles').insert({
+          id: finalClienteId,
+          tipo: 'cliente',
+          nome: nome || email.split('@')[0],
+          email,
+          telefone: telefone || null,
+        });
+
+        // Send password reset email so user can set their own password
+        await supabaseAdmin.auth.admin.generateLink({
+          type: 'recovery',
+          email,
+          options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://fixauto-brasil.vercel.app'}/reset-password` },
+        });
+
+        // Send welcome email via Resend
+        if (process.env.RESEND_API_KEY) {
+          try {
+            await fetch('https://api.resend.com/emails', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                from: 'FixAuto Brasil <noreply@fixauto.com.br>',
+                to: email,
+                subject: 'Sua conta FixAuto foi criada - Defina sua senha',
+                html: `
+                  <h2>Olá ${nome || ''}!</h2>
+                  <p>Sua emergência foi registrada no FixAuto Brasil e oficinas próximas já estão sendo notificadas.</p>
+                  <p>Criamos uma conta para você acompanhar os orçamentos que chegarem.</p>
+                  <p><strong>Para acessar sua conta, defina uma senha clicando no link abaixo:</strong></p>
+                  <p><a href="https://fixauto-brasil.vercel.app/reset-password" style="background:#2563eb;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block;">Definir minha senha</a></p>
+                  <p>Seu email de acesso: <strong>${email}</strong></p>
+                  <p>Você receberá notificações por email quando oficinas enviarem orçamentos.</p>
+                  <br>
+                  <p>Equipe FixAuto Brasil</p>
+                `,
+              }),
+            });
+          } catch { /* non-blocking */ }
+        }
+
+        // Update emergencia with profile_id
+        await supabaseAdmin.from('emergencias').update({ profile_id: finalClienteId }).eq('id', emergenciaId);
+      }
+    }
+
+    if (!finalClienteId) {
+      return NextResponse.json({ error: 'Não foi possível identificar o cliente' }, { status: 400 });
+    }
+
+    // Get first vehicle or create placeholder
     const { data: veiculos } = await supabaseAdmin
       .from('veiculos')
       .select('id')
-      .eq('profile_id', clienteId)
+      .eq('profile_id', finalClienteId)
       .limit(1);
 
     let veiculoId = veiculos?.[0]?.id;
 
-    // If no vehicle, create a placeholder
     if (!veiculoId) {
       const { data: newVeiculo } = await supabaseAdmin
         .from('veiculos')
         .insert({
-          profile_id: clienteId,
+          profile_id: finalClienteId,
           fipe_tipo: 'cars',
           fipe_marca: 'A definir',
           fipe_modelo: 'A definir',
@@ -48,7 +130,7 @@ export async function POST(req: NextRequest) {
     const { data: sol, error: solError } = await supabaseAdmin
       .from('solicitacoes')
       .insert({
-        cliente_id: clienteId,
+        cliente_id: finalClienteId,
         veiculo_id: veiculoId,
         tipo: 'colisao',
         descricao: descricao || 'Emergência - Colisão',
@@ -67,7 +149,7 @@ export async function POST(req: NextRequest) {
     // Link emergencia to solicitacao
     await supabaseAdmin.from('emergencias').update({ solicitacao_id: sol.id }).eq('id', emergenciaId);
 
-    // Copy photos to solicitacao_fotos
+    // Copy photos
     if (photoUrls && Array.isArray(photoUrls)) {
       for (const url of photoUrls) {
         await supabaseAdmin.from('solicitacao_fotos').insert({
@@ -77,7 +159,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Notify nearby oficinas about the new solicitação
+    // Notify oficinas about the new solicitação
     const { data: oficinas } = await supabaseAdmin
       .from('oficinas')
       .select('id, profile_id, especialidades')
@@ -96,7 +178,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ success: true, solicitacaoId: sol.id });
+    return NextResponse.json({ success: true, solicitacaoId: sol.id, contaCriada: !clienteId });
   } catch (err) {
     console.error('[criar-solicitacao-emergencia]', err);
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
