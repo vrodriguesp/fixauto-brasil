@@ -39,10 +39,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <div className="p-6 border-b border-slate-700">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-slate-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">FA</span>
+              <span className="text-white font-bold text-sm">BF</span>
             </div>
             <div>
-              <p className="text-white font-bold text-lg leading-tight">FixAuto</p>
+              <p className="text-white font-bold text-lg leading-tight">BipFix</p>
               <p className="text-slate-400 text-xs">Admin</p>
             </div>
           </div>

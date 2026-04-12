@@ -1,4 +1,4 @@
--- FixAuto Brasil - Seed Data for Development
+-- BipFix - Seed Data for Development
 -- Note: In production, users are created through Supabase Auth.
 -- This seed data is for the prototype UI with mock data.
 

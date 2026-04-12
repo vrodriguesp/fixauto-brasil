@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         finalClienteId = existingProfile.id;
       } else {
         // Create auth user with temporary password
-        const tempPassword = `FixAuto_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        const tempPassword = `BipFix_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
         const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
           email,
           password: tempPassword,
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
         await supabaseAdmin.auth.admin.generateLink({
           type: 'recovery',
           email,
-          options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://fixauto-brasil.vercel.app'}/reset-password` },
+          options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com'}/reset-password` },
         });
 
         // Send welcome email via Resend
@@ -69,19 +69,19 @@ export async function POST(req: NextRequest) {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                from: 'FixAuto Brasil <noreply@fixauto.com.br>',
+                from: 'BipFix <onboarding@resend.dev>',
                 to: email,
-                subject: 'Sua conta FixAuto foi criada - Defina sua senha',
+                subject: 'Sua conta BipFix foi criada - Defina sua senha',
                 html: `
                   <h2>Olá ${nome || ''}!</h2>
-                  <p>Sua emergência foi registrada no FixAuto Brasil e oficinas próximas já estão sendo notificadas.</p>
+                  <p>Sua emergência foi registrada no BipFix e oficinas próximas já estão sendo notificadas.</p>
                   <p>Criamos uma conta para você acompanhar os orçamentos que chegarem.</p>
                   <p><strong>Para acessar sua conta, defina uma senha clicando no link abaixo:</strong></p>
-                  <p><a href="https://fixauto-brasil.vercel.app/reset-password" style="background:#2563eb;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block;">Definir minha senha</a></p>
+                  <p><a href="https://bipfix.com/reset-password" style="background:#2563eb;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block;">Definir minha senha</a></p>
                   <p>Seu email de acesso: <strong>${email}</strong></p>
                   <p>Você receberá notificações por email quando oficinas enviarem orçamentos.</p>
                   <br>
-                  <p>Equipe FixAuto Brasil</p>
+                  <p>Equipe BipFix</p>
                 `,
               }),
             });

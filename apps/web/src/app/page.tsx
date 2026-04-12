@@ -9,7 +9,7 @@ import { generateFAQSchema } from '@/lib/seo-utils';
 
 const FAQ_ITEMS = [
   {
-    pergunta: 'Como funciona o FixAuto?',
+    pergunta: 'Como funciona o BipFix?',
     resposta:
       'Voce envia fotos do dano no seu veiculo e uma descricao do problema. Oficinas proximas a voce recebem sua solicitacao, avaliam o servico e enviam orcamentos detalhados. Voce compara precos, prazos e avaliacoes, e escolhe a melhor opcao.',
   },
@@ -19,7 +19,7 @@ const FAQ_ITEMS = [
       'Sim! Todas as oficinas cadastradas passam por verificacao. Alem disso, o sistema de avaliacoes permite que voce veja a reputacao de cada oficina antes de tomar sua decisao. Seus dados pessoais sao protegidos e nunca compartilhados sem sua autorizacao.',
   },
   {
-    pergunta: 'Quanto custa usar o FixAuto?',
+    pergunta: 'Quanto custa usar o BipFix?',
     resposta:
       'Para motoristas, a plataforma e totalmente gratuita. Voce pode enviar solicitacoes, receber orcamentos e comparar opcoes sem nenhum custo. As oficinas pagam uma pequena taxa para participar da plataforma.',
   },
@@ -29,7 +29,7 @@ const FAQ_ITEMS = [
       'Apos cada servico concluido, o cliente pode avaliar a oficina com nota de 1 a 5 estrelas e deixar um comentario. A media de avaliacoes e exibida no perfil publico da oficina, ajudando outros motoristas a escolherem com confianca.',
   },
   {
-    pergunta: 'Posso usar o FixAuto em caso de emergencia?',
+    pergunta: 'Posso usar o BipFix em caso de emergencia?',
     resposta:
       'Sim! Temos um botao de emergencia "Acabei de bater" que permite registrar o incidente rapidamente, tirar fotos na hora e receber orcamentos de oficinas proximas em minutos. Voce tambem pode registrar o outro veiculo envolvido.',
   },
@@ -289,7 +289,7 @@ export default function HomePage() {
             <Testimonial
               name="Roberto Mendes"
               location="Belo Horizonte, MG"
-              text="Como dono de oficina, o FixAuto mudou meu negocio. Recebo clientes novos toda semana e a gestao da agenda ficou muito mais organizada."
+              text="Como dono de oficina, o BipFix mudou meu negocio. Recebo clientes novos toda semana e a gestao da agenda ficou muito mais organizada."
               rating={5}
             />
           </div>
@@ -303,7 +303,7 @@ export default function HomePage() {
             Perguntas Frequentes
           </h2>
           <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-            Tire suas duvidas sobre a plataforma FixAuto
+            Tire suas duvidas sobre a plataforma BipFix
           </p>
           <div className="space-y-4">
             {FAQ_ITEMS.map((faq, index) => (
@@ -320,10 +320,10 @@ export default function HomePage() {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">FA</span>
+                  <span className="text-white font-bold text-sm">BF</span>
                 </div>
                 <span className="text-xl font-bold text-white">
-                  Fix<span className="text-primary-400">Auto</span>
+                  Bip<span className="text-primary-400">Fix</span>
                 </span>
               </div>
               <p className="text-sm">
@@ -349,14 +349,14 @@ export default function HomePage() {
             <div>
               <h3 className="text-white font-semibold mb-3">Contato</h3>
               <ul className="space-y-2 text-sm">
-                <li>contato@fixauto.com.br</li>
+                <li>contato@bipfix.com</li>
                 <li>(11) 3000-0000</li>
                 <li>São Paulo, SP</li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-            <p>2026 FixAuto Brasil. Todos os direitos reservados.</p>
+            <p>2026 BipFix. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>

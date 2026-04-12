@@ -94,7 +94,7 @@ export default function LoginPage() {
           <p className="text-gray-600 mt-2">
             {forgotMode
               ? 'Informe seu email para receber o link de recuperação'
-              : 'Acesse sua conta FixAuto'}
+              : 'Acesse sua conta BipFix'}
           </p>
         </div>
 

@@ -2,8 +2,8 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Central de Ajuda | FixAuto Brasil',
-  description: 'Tire suas duvidas sobre como usar a plataforma FixAuto. Guias completos para motoristas e oficinas.',
+  title: 'Central de Ajuda | BipFix',
+  description: 'Tire suas duvidas sobre como usar a plataforma BipFix. Guias completos para motoristas e oficinas.',
 };
 
 export default function DocsPage() {
@@ -17,7 +17,7 @@ export default function DocsPage() {
           </svg>
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-          Central de Ajuda FixAuto
+          Central de Ajuda BipFix
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Tudo o que voce precisa saber para usar a plataforma, seja como motorista ou como oficina.
@@ -83,7 +83,7 @@ export default function DocsPage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="mailto:contato@fixauto.com.br"
+            href="mailto:contato@bipfix.com"
             className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

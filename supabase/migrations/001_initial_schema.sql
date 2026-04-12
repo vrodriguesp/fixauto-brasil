@@ -1,4 +1,4 @@
--- FixAuto Brasil - Database Schema
+-- BipFix - Database Schema
 
 -- === ENUMS ===
 CREATE TYPE tipo_usuario AS ENUM ('cliente', 'oficina');

@@ -71,7 +71,7 @@ export default function DocsClientePage() {
       {/* Sections */}
       <div className="space-y-4">
         <Accordion title="1. Como se cadastrar" defaultOpen>
-          <p>Criar sua conta no FixAuto e rapido e gratuito. Siga os passos abaixo:</p>
+          <p>Criar sua conta no BipFix e rapido e gratuito. Siga os passos abaixo:</p>
           <div className="space-y-4 mt-4">
             <StepItem
               number={1}
@@ -217,7 +217,7 @@ export default function DocsClientePage() {
 
         <Accordion title="7. Emergencia — Acabei de Bater">
           <p>
-            O FixAuto tem um fluxo especial para situacoes de emergencia:
+            O BipFix tem um fluxo especial para situacoes de emergencia:
           </p>
           <div className="space-y-4 mt-4">
             <StepItem

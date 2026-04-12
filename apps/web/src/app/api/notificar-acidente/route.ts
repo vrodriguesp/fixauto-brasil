@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
         profileId = existingProfile.id;
       } else {
         // Create account automatically for the other person
-        const tempPassword = `FixAuto_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        const tempPassword = `BipFix_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
         const { data: authData } = await supabaseAdmin.auth.admin.createUser({
           email: outroVeiculo.email,
           password: tempPassword,
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
         await supabaseAdmin.auth.admin.generateLink({
           type: 'recovery',
           email: outroVeiculo.email,
-          options: { redirectTo: 'https://fixauto-brasil.vercel.app/reset-password' },
+          options: { redirectTo: 'https://bipfix.com/reset-password' },
         });
       }
     }

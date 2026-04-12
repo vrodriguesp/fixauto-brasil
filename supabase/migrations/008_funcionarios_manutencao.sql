@@ -1,4 +1,4 @@
--- FixAuto Brasil - Migration 008: Funcionários e Acompanhamento de Manutenção
+-- BipFix - Migration 008: Funcionários e Acompanhamento de Manutenção
 
 -- === ENUMS ===
 CREATE TYPE cargo_funcionario AS ENUM ('admin', 'mecanico');

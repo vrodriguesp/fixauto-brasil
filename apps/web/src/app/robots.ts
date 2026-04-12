@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/cliente/', '/oficina/', '/api/', '/definir-senha'],
       },
     ],
-    sitemap: 'https://fixauto-brasil.vercel.app/sitemap.xml',
+    sitemap: 'https://bipfix.com/sitemap.xml',
   };
 }

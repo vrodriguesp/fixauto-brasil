@@ -107,7 +107,7 @@ function CadastroPage() {
       <div className="w-full max-w-lg">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
-          <p className="text-gray-600 mt-2">Cadastre-se gratuitamente no FixAuto</p>
+          <p className="text-gray-600 mt-2">Cadastre-se gratuitamente no BipFix</p>
         </div>
 
         <div className="card">
@@ -120,7 +120,7 @@ function CadastroPage() {
           {/* Step 1: Choose type (only if no tipo param) */}
           {step === 1 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Como deseja usar o FixAuto?</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Como deseja usar o BipFix?</h2>
               <button
                 onClick={() => { setUserType('cliente'); setStep(2); }}
                 className="w-full p-6 border-2 border-gray-200 rounded-xl hover:border-primary-500 hover:bg-primary-50 transition-all text-left group"

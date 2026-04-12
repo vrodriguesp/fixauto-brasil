@@ -60,11 +60,11 @@ export default function DefinirSenhaPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-lg">FA</span>
+            <span className="text-white font-bold text-lg">BF</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Defina sua senha</h1>
           <p className="text-gray-600 mt-2">
-            Bem-vindo ao FixAuto! Escolha uma nova senha para sua conta.
+            Bem-vindo ao BipFix! Escolha uma nova senha para sua conta.
           </p>
         </div>
 

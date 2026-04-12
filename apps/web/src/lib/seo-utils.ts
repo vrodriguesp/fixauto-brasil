@@ -27,7 +27,7 @@ interface FAQItem {
   resposta: string;
 }
 
-const BASE_URL = 'https://fixauto-brasil.vercel.app';
+const BASE_URL = 'https://bipfix.com';
 
 /**
  * Gera Schema.org JSON-LD para AutoRepair / LocalBusiness

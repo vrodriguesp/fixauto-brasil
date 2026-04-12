@@ -32,8 +32,8 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white mt-12">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-gray-500">
-          <p>Ainda tem duvidas? Entre em contato pelo e-mail <a href="mailto:contato@fixauto.com.br" className="text-primary-600 hover:underline">contato@fixauto.com.br</a> ou pelo telefone <span className="font-medium">(11) 3000-0000</span>.</p>
-          <p className="mt-2">2026 FixAuto Brasil. Todos os direitos reservados.</p>
+          <p>Ainda tem duvidas? Entre em contato pelo e-mail <a href="mailto:contato@bipfix.com" className="text-primary-600 hover:underline">contato@bipfix.com</a> ou pelo telefone <span className="font-medium">(11) 3000-0000</span>.</p>
+          <p className="mt-2">2026 BipFix. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>

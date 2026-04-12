@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
       .eq('email', outroVeiculo.email)
       .single();
 
-    const siteUrl = Deno.env.get('SITE_URL') || 'https://fixauto-brasil.vercel.app';
+    const siteUrl = Deno.env.get('SITE_URL') || 'https://bipfix.com';
     const acidenteUrl = `${siteUrl}/emergencia/acidente/${emergenciaId}`;
     const cadastroUrl = `${siteUrl}/cadastro?tipo=cliente&email=${encodeURIComponent(outroVeiculo.email)}`;
 
@@ -65,12 +65,12 @@ Deno.serve(async (req) => {
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
-          <h1 style="margin: 0; font-size: 24px;">FixAuto Brasil</h1>
+          <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
           <p style="margin: 8px 0 0; opacity: 0.8;">Registro de Acidente</p>
         </div>
         <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
           <p>Olá <strong>${outroVeiculo.nome}</strong>,</p>
-          <p><strong>${emergencia.nome}</strong> registrou um acidente envolvendo seu veículo (placa ${outroVeiculo.placa}) na plataforma FixAuto.</p>
+          <p><strong>${emergencia.nome}</strong> registrou um acidente envolvendo seu veículo (placa ${outroVeiculo.placa}) na plataforma BipFix.</p>
           <p>Através da plataforma, você pode:</p>
           <ul>
             <li>Trocar mensagens com o outro motorista</li>
@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
           }
           <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
           <p style="font-size: 12px; color: #9ca3af;">
-            Este email foi enviado automaticamente pela plataforma FixAuto Brasil.
+            Este email foi enviado automaticamente pela plataforma BipFix.
             Se você não reconhece este acidente, ignore este email.
           </p>
         </div>

@@ -32,11 +32,19 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link href={isLoggedIn ? dashboardPath : '/'} className="flex items-center gap-2">
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isAdmin ? 'bg-slate-700' : isOficina ? 'bg-emerald-600' : 'bg-primary-600'}`}>
-                <span className="text-white font-bold text-sm">FA</span>
+                <span className="text-white font-bold text-sm">BF</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">
-                Fix<span className={isAdmin ? 'text-slate-700' : isOficina ? 'text-emerald-600' : 'text-primary-600'}>Auto</span>
-              </span>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold text-gray-900 leading-tight">
+                  Bip<span className={isAdmin ? 'text-slate-700' : isOficina ? 'text-emerald-600' : 'text-primary-600'}>Fix</span>
+                </span>
+                {isOficina && (
+                  <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider leading-none">Oficinas</span>
+                )}
+                {isAdmin && (
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider leading-none">Admin</span>
+                )}
+              </div>
             </Link>
 
             {isLoggedIn && (

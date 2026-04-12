@@ -7,10 +7,10 @@ import { AuthProvider } from '@/lib/auth-context';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://fixauto-brasil.vercel.app'),
+  metadataBase: new URL('https://bipfix.com'),
   title: {
-    default: 'FixAuto Brasil - Conectando você à melhor oficina mecânica',
-    template: '%s | FixAuto Brasil',
+    default: 'BipFix - Conectando você à melhor oficina mecânica',
+    template: '%s | BipFix',
   },
   description: 'Plataforma que conecta motoristas a oficinas mecânicas no Brasil. Envie fotos do dano, receba orçamentos e escolha a melhor opção. Simples, rápido e transparente.',
   keywords: [
@@ -22,20 +22,20 @@ export const metadata: Metadata = {
     'mecânico',
     'conserto carro',
     'colisão',
-    'FixAuto',
+    'BipFix',
     'Brasil',
   ],
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    siteName: 'FixAuto Brasil',
-    title: 'FixAuto Brasil - Conectando você à melhor oficina mecânica',
+    siteName: 'BipFix',
+    title: 'BipFix - Conectando você à melhor oficina mecânica',
     description: 'Envie fotos do dano, receba orçamentos de oficinas próximas e escolha a melhor opção. Simples, rápido e transparente.',
-    url: 'https://fixauto-brasil.vercel.app',
+    url: 'https://bipfix.com',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FixAuto Brasil - Conectando você à melhor oficina mecânica',
+    title: 'BipFix - Conectando você à melhor oficina mecânica',
     description: 'Envie fotos do dano, receba orçamentos de oficinas próximas e escolha a melhor opção.',
   },
   robots: {
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: 'https://fixauto-brasil.vercel.app',
+    canonical: 'https://bipfix.com',
   },
 };
 

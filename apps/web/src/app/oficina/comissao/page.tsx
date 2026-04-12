@@ -109,7 +109,7 @@ export default function ComissaoPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Comissão FixAuto</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">Comissão BipFix</h1>
       <p className="text-gray-600 mb-8">Sua taxa de comissão e como reduzi-la</p>
 
       {/* Current rate */}

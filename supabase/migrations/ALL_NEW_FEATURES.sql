@@ -1,5 +1,5 @@
 -- ============================================================
--- FixAuto Brasil - SQL Consolidado: Todas as Novas Features
+-- BipFix - SQL Consolidado: Todas as Novas Features
 -- Rodar no Supabase SQL Editor em uma única execução
 -- ============================================================
 

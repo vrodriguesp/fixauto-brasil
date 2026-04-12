@@ -64,14 +64,14 @@ export default function DocsOficinaPage() {
         </Link>
         <h1 className="text-3xl font-bold text-gray-900 mb-3">Guia da Oficina</h1>
         <p className="text-gray-600 text-lg">
-          Aprenda a usar todas as ferramentas do FixAuto para atrair clientes, gerenciar servicos e crescer sua oficina.
+          Aprenda a usar todas as ferramentas do BipFix para atrair clientes, gerenciar servicos e crescer sua oficina.
         </p>
       </div>
 
       {/* Sections */}
       <div className="space-y-4">
         <Accordion title="1. Como cadastrar sua oficina" defaultOpen>
-          <p>O cadastro da sua oficina no FixAuto e simples e leva poucos minutos:</p>
+          <p>O cadastro da sua oficina no BipFix e simples e leva poucos minutos:</p>
           <div className="space-y-4 mt-4">
             <StepItem
               number={1}
@@ -103,7 +103,7 @@ export default function DocsOficinaPage() {
 
         <Accordion title="2. Como receber solicitacoes">
           <p>
-            O FixAuto envia solicitacoes automaticamente para oficinas que atendem aos criterios do cliente:
+            O BipFix envia solicitacoes automaticamente para oficinas que atendem aos criterios do cliente:
           </p>
           <ul className="list-disc list-inside space-y-2 mt-3">
             <li><span className="font-medium">Proximidade</span> — O cliente esta dentro do raio de atendimento que voce definiu.</li>
@@ -160,7 +160,7 @@ export default function DocsOficinaPage() {
           </p>
           <ul className="list-disc list-inside space-y-2 mt-3">
             <li><span className="font-medium">Check-in</span> — Registre a chegada do veiculo na oficina. O cliente e notificado automaticamente.</li>
-            <li><span className="font-medium">Eventos internos</span> — Crie servicos internos (que nao vieram pelo FixAuto) para manter a agenda organizada.</li>
+            <li><span className="font-medium">Eventos internos</span> — Crie servicos internos (que nao vieram pelo BipFix) para manter a agenda organizada.</li>
             <li><span className="font-medium">Atribuicao</span> — Atribua cada veiculo a um mecanico especifico da sua equipe.</li>
             <li><span className="font-medium">Check-out</span> — Quando o servico e concluido e o veiculo retirado, registre a saida.</li>
           </ul>
@@ -227,9 +227,9 @@ export default function DocsOficinaPage() {
           </p>
         </Accordion>
 
-        <Accordion title="8. Comissao FixAuto">
+        <Accordion title="8. Comissao BipFix">
           <p>
-            O FixAuto cobra uma comissao sobre servicos realizados atraves da plataforma. Veja como funciona:
+            O BipFix cobra uma comissao sobre servicos realizados atraves da plataforma. Veja como funciona:
           </p>
           <ul className="list-disc list-inside space-y-2 mt-3">
             <li><span className="font-medium">Como e cobrada</span> — A comissao e calculada sobre o valor total do orcamento aceito pelo cliente.</li>

@@ -6,7 +6,7 @@ export default function EscolherTipoPage() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="w-full max-w-md text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Como deseja usar o FixAuto?</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Como deseja usar o BipFix?</h1>
         <p className="text-gray-600 mb-8">Escolha seu perfil para continuar</p>
 
         <div className="space-y-4">

@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { MetadataRoute } from 'next';
 
-const BASE_URL = 'https://fixauto-brasil.vercel.app';
+const BASE_URL = 'https://bipfix.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createClient(

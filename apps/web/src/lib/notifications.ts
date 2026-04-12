@@ -4,8 +4,8 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://fixauto-brasil.vercel.app';
-const FROM_EMAIL = process.env.FROM_EMAIL || 'FixAuto Brasil <noreply@fixauto.com.br>';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'BipFix <onboarding@resend.dev>';
 
 // ============================================================
 // EMAIL NOTIFICATIONS
@@ -35,12 +35,12 @@ export async function sendAccidentNotificationEmail(params: {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
-            <h1 style="margin: 0; font-size: 24px;">FixAuto Brasil</h1>
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
             <p style="margin: 8px 0 0; opacity: 0.8;">Registro de Acidente</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <p>Olá <strong>${params.toName}</strong>,</p>
-            <p><strong>${params.fromName}</strong> registrou um acidente envolvendo seu veículo (placa <strong>${params.placa}</strong>) na plataforma FixAuto.</p>
+            <p><strong>${params.fromName}</strong> registrou um acidente envolvendo seu veículo (placa <strong>${params.placa}</strong>) na plataforma BipFix.</p>
             <p>Através da plataforma, você pode:</p>
             <ul>
               <li>Trocar mensagens com o outro motorista</li>
@@ -56,7 +56,7 @@ export async function sendAccidentNotificationEmail(params: {
             ${!params.isRegistered ? '<p style="font-size: 14px; color: #6b7280;">Enquanto isso, você receberá atualizações sobre orçamentos neste email.</p>' : ''}
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
             <p style="font-size: 12px; color: #9ca3af;">
-              Este email foi enviado automaticamente pela plataforma FixAuto Brasil.
+              Este email foi enviado automaticamente pela plataforma BipFix.
               Se você não reconhece este acidente, ignore este email.
             </p>
           </div>
@@ -93,7 +93,7 @@ export async function sendQuoteNotificationEmail(params: {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
-            <h1 style="margin: 0; font-size: 24px;">FixAuto Brasil</h1>
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
             <p style="margin: 8px 0 0; opacity: 0.8;">Novo Orçamento</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
@@ -175,7 +175,7 @@ export async function sendAccidentWhatsApp(params: {
   emergenciaId: string;
 }) {
   const acidenteUrl = `${SITE_URL}/emergencia/acidente/${params.emergenciaId}`;
-  const message = `Olá ${params.toName}! ${params.fromName} registrou um acidente envolvendo seu veículo (placa ${params.placa}) na FixAuto. Acesse para ver detalhes e orçamentos: ${acidenteUrl}`;
+  const message = `Olá ${params.toName}! ${params.fromName} registrou um acidente envolvendo seu veículo (placa ${params.placa}) na BipFix. Acesse para ver detalhes e orçamentos: ${acidenteUrl}`;
   return sendWhatsApp(params.toPhone, message);
 }
 
