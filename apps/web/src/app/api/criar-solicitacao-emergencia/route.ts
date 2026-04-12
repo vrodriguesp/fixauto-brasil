@@ -20,7 +20,10 @@ async function sendEmail(to: string, subject: string, html: string) {
 }
 
 function generatePassword(): string {
-  return String(Math.floor(100000 + Math.random() * 900000));
+  const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#$&';
+  let pwd = '';
+  for (let i = 0; i < 8; i++) pwd += chars[Math.floor(Math.random() * chars.length)];
+  return pwd;
 }
 
 export async function POST(req: NextRequest) {

@@ -66,7 +66,9 @@ export async function POST(req: NextRequest) {
         profileId = existingProfile.id;
       } else {
         // Create account with simple 6-digit password
-        const senha = String(Math.floor(100000 + Math.random() * 900000));
+        const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#$&';
+        let senha = '';
+        for (let i = 0; i < 8; i++) senha += chars[Math.floor(Math.random() * chars.length)];
         const { data: authData } = await supabaseAdmin.auth.admin.createUser({
           email: outroVeiculo.email, password: senha, email_confirm: true,
           user_metadata: { primeiro_login: true },
