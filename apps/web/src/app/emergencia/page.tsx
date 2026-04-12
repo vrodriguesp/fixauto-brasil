@@ -132,47 +132,23 @@ export default function EmergenciaPage() {
       // 2. Upload photos
       const photoUrls = fotos.length > 0 ? await uploadPhotos(emergencia.id) : [];
 
-      // 3. Create solicitação (for logged-in users)
-      let solicitacaoId: string | null = null;
+      // 3. Create solicitação via server API (works with or without vehicle)
       if (user) {
-        // Get first vehicle or create solicitação without vehicle
-        const { data: veiculos } = await supabase
-          .from('veiculos')
-          .select('id')
-          .eq('profile_id', user.id)
-          .limit(1);
-
-        const veiculoId = veiculos?.[0]?.id;
-
-        if (veiculoId) {
-          const { data: sol } = await supabase
-            .from('solicitacoes')
-            .insert({
-              cliente_id: user.id,
-              veiculo_id: veiculoId,
-              tipo: 'colisao',
-              descricao: descricao || 'Emergência - Colisão registrada pelo fluxo "Acabei de bater"',
-              urgencia: 'alta',
-              latitude: coords.lat,
-              longitude: coords.lon,
-              endereco: localizacao,
-              emergencia_id: emergencia.id,
-            })
-            .select()
-            .single();
-
-          if (sol) {
-            solicitacaoId = sol.id;
-            await supabase.from('emergencias').update({ solicitacao_id: sol.id }).eq('id', emergencia.id);
-
-            // Copy emergency photos to solicitacao_fotos
-            for (const url of photoUrls) {
-              await supabase.from('solicitacao_fotos').insert({
-                solicitacao_id: sol.id,
-                foto_url: url,
-              });
-            }
-          }
+        const solRes = await fetch('/api/criar-solicitacao-emergencia', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            emergenciaId: emergencia.id,
+            clienteId: user.id,
+            descricao: descricao || 'Emergência - Colisão registrada pelo fluxo "Acabei de bater"',
+            latitude: coords.lat,
+            longitude: coords.lon,
+            endereco: localizacao,
+            photoUrls,
+          }),
+        });
+        if (!solRes.ok) {
+          console.error('[emergencia] Criar solicitacao failed:', await solRes.text());
         }
       }
 
