@@ -8,6 +8,10 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://bipfix.com'),
+  icons: {
+    icon: '/favicon.png',
+    apple: '/icon.png',
+  },
   title: {
     default: 'BipFix - Conectando você à melhor oficina mecânica',
     template: '%s | BipFix',
