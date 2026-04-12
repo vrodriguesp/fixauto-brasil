@@ -23,6 +23,27 @@ export default function EmergenciaPage() {
   const [error, setError] = useState('');
   const [emergenciaId, setEmergenciaId] = useState<string | null>(null);
   const [coords, setCoords] = useState({ lat: -23.5505, lon: -46.6333 });
+  const [placa, setPlaca] = useState('');
+  const [veiculoInfo, setVeiculoInfo] = useState<{ marca: string; modelo: string; ano: string; cor: string } | null>(null);
+  const [buscandoPlaca, setBuscandoPlaca] = useState(false);
+
+  const buscarPlaca = async (p: string) => {
+    const clean = p.replace(/[^a-zA-Z0-9]/g, '');
+    if (clean.length < 7) return;
+    setBuscandoPlaca(true);
+    try {
+      const res = await fetch('/api/consultar-placa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ placa: clean }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setVeiculoInfo({ marca: data.marca, modelo: data.modelo, ano: data.ano, cor: data.cor });
+      }
+    } catch { /* silencioso */ }
+    setBuscandoPlaca(false);
+  };
 
   useEffect(() => {
     if (isLoggedIn && user) {
@@ -134,6 +155,8 @@ export default function EmergenciaPage() {
           longitude: coords.lon,
           endereco: localizacao,
           photoUrls,
+          placa: placa || null,
+          veiculoInfo: veiculoInfo || null,
         }),
       });
       if (!solRes.ok) {
@@ -316,6 +339,40 @@ export default function EmergenciaPage() {
                   </div>
                 </div>
               )}
+
+              {/* Placa lookup */}
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Placa do seu veículo</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    className="input-field flex-1 uppercase"
+                    placeholder="ABC1D23"
+                    maxLength={8}
+                    value={placa}
+                    onChange={(e) => {
+                      const v = e.target.value.toUpperCase();
+                      setPlaca(v);
+                      if (v.replace(/[^a-zA-Z0-9]/g, '').length === 7) buscarPlaca(v);
+                    }}
+                  />
+                  {buscandoPlaca && (
+                    <div className="flex items-center">
+                      <div className="w-5 h-5 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  )}
+                </div>
+                {veiculoInfo && (
+                  <div className="mt-2 bg-green-50 border border-green-200 rounded-lg p-3">
+                    <p className="text-sm font-medium text-green-800">
+                      {veiculoInfo.marca} {veiculoInfo.modelo}
+                    </p>
+                    <p className="text-xs text-green-600">
+                      Ano: {veiculoInfo.ano} | Cor: {veiculoInfo.cor}
+                    </p>
+                  </div>
+                )}
+              </div>
 
               <div className="mt-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Descreva o que aconteceu (opcional)</label>

@@ -8,7 +8,7 @@ const supabaseAdmin = createClient(
 
 export async function POST(req: NextRequest) {
   try {
-    const { emergenciaId, clienteId, nome, email, telefone, descricao, latitude, longitude, endereco, photoUrls } = await req.json();
+    const { emergenciaId, clienteId, nome, email, telefone, descricao, latitude, longitude, endereco, photoUrls, placa, veiculoInfo } = await req.json();
 
     if (!emergenciaId) {
       return NextResponse.json({ error: 'emergenciaId obrigatório' }, { status: 400 });
@@ -112,10 +112,12 @@ export async function POST(req: NextRequest) {
         .insert({
           profile_id: finalClienteId,
           fipe_tipo: 'cars',
-          fipe_marca: 'A definir',
-          fipe_modelo: 'A definir',
-          fipe_ano: 'A definir',
-          apelido: 'Veículo da emergência',
+          fipe_marca: veiculoInfo?.marca || 'A definir',
+          fipe_modelo: veiculoInfo?.modelo || 'A definir',
+          fipe_ano: veiculoInfo?.ano || 'A definir',
+          placa: placa || null,
+          cor: veiculoInfo?.cor || null,
+          apelido: placa ? `Veículo ${placa}` : 'Veículo da emergência',
         })
         .select('id')
         .single();
