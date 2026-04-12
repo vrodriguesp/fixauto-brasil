@@ -40,16 +40,53 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Outro veículo não encontrado' }, { status: 404 });
     }
 
-    // Check if the other person already has an account
-    const { data: existingProfile } = await supabaseAdmin
-      .from('profiles')
-      .select('id')
-      .eq('email', outroVeiculo.email || '')
-      .single();
+    // Check if the other person already has an account, or create one
+    let profileId: string | null = null;
+
+    if (outroVeiculo.email) {
+      const { data: existingProfile } = await supabaseAdmin
+        .from('profiles')
+        .select('id')
+        .eq('email', outroVeiculo.email)
+        .single();
+
+      if (existingProfile) {
+        profileId = existingProfile.id;
+      } else {
+        // Create account automatically for the other person
+        const tempPassword = `FixAuto_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        const { data: authData } = await supabaseAdmin.auth.admin.createUser({
+          email: outroVeiculo.email,
+          password: tempPassword,
+          email_confirm: true,
+        });
+
+        if (authData?.user) {
+          profileId = authData.user.id;
+          await supabaseAdmin.from('profiles').insert({
+            id: profileId,
+            tipo: 'cliente',
+            nome: outroVeiculo.nome,
+            email: outroVeiculo.email,
+            telefone: outroVeiculo.telefone || null,
+          });
+
+          // Create vehicle for the other person
+          await supabaseAdmin.from('veiculos').insert({
+            profile_id: profileId,
+            fipe_tipo: 'cars',
+            fipe_marca: outroVeiculo.veiculo_descricao || 'A definir',
+            fipe_modelo: 'A definir',
+            fipe_ano: 'A definir',
+            placa: outroVeiculo.placa || null,
+          });
+        }
+      }
+    }
 
     const results: { email?: { success: boolean }; whatsapp?: { success: boolean } } = {};
 
-    // Send email notification
+    // Send email notification + welcome with password reset link
     if (outroVeiculo.email) {
       results.email = await sendAccidentNotificationEmail({
         toEmail: outroVeiculo.email,
@@ -57,8 +94,17 @@ export async function POST(req: NextRequest) {
         fromName: emergencia.nome,
         placa: outroVeiculo.placa,
         emergenciaId,
-        isRegistered: !!existingProfile,
+        isRegistered: !!profileId,
       });
+
+      // If new account, also send password reset
+      if (profileId) {
+        await supabaseAdmin.auth.admin.generateLink({
+          type: 'recovery',
+          email: outroVeiculo.email,
+          options: { redirectTo: 'https://fixauto-brasil.vercel.app/reset-password' },
+        });
+      }
     }
 
     // Send WhatsApp notification
@@ -78,10 +124,10 @@ export async function POST(req: NextRequest) {
       .update({ notificado: true })
       .eq('id', outroVeiculoId);
 
-    // If the other person is already registered, create in-app notification
-    if (existingProfile) {
+    // Create in-app notification
+    if (profileId) {
       await supabaseAdmin.from('notificacoes').insert({
-        profile_id: existingProfile.id,
+        profile_id: profileId,
         tipo: 'acidente',
         titulo: 'Registro de acidente',
         mensagem: `${emergencia.nome} registrou um acidente envolvendo seu veículo (placa ${outroVeiculo.placa}). Acesse para ver detalhes e orçamentos.`,
