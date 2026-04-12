@@ -209,14 +209,30 @@ export default function AcidenteRegistroPage() {
     if (!novaMensagem.trim() || !emergenciaId) return;
     setSendingMsg(true);
 
-    await supabase.from('emergencia_mensagens').insert({
+    const texto = novaMensagem;
+    setNovaMensagem('');
+
+    // Optimistic update
+    const tempMsg: Mensagem = {
+      id: `temp-${Date.now()}`,
+      remetente_tipo: 'proprietario',
+      texto,
+      created_at: new Date().toISOString(),
+    };
+    setMensagens((prev) => [...prev, tempMsg]);
+
+    const { data: inserted } = await supabase.from('emergencia_mensagens').insert({
       emergencia_id: emergenciaId,
       remetente_tipo: 'proprietario',
       remetente_id: user?.id || null,
-      texto: novaMensagem,
-    });
+      texto,
+    }).select().single();
 
-    setNovaMensagem('');
+    // Replace temp with real
+    if (inserted) {
+      setMensagens((prev) => prev.map(m => m.id === tempMsg.id ? (inserted as Mensagem) : m));
+    }
+
     setSendingMsg(false);
   };
 
