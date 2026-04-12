@@ -108,12 +108,11 @@ export default function AgendaPage() {
   // - Check-in feito: data_inicio = date AND status IN (em_andamento, concluido)
   // - Entregue: data_fim = date AND status = concluido
   const getGroups = (dateStr: string) => {
-    const checkinPendente = allEventos.filter(e => e.data_inicio.slice(0, 10) === dateStr && e.status === 'agendado');
-    // Check-in feito: todos que fizeram check-in nesse dia (em_andamento ou concluido) - sempre visivel
+    const checkinPendente = allEventos.filter(e => e.data_inicio.slice(0, 10) === dateStr && e.status === 'agendado' && !(e as any).no_show);
+    const naoCompareceu = allEventos.filter(e => e.data_inicio.slice(0, 10) === dateStr && (e as any).no_show);
     const checkinFeito = allEventos.filter(e => e.data_inicio.slice(0, 10) === dateStr && (e.status === 'em_andamento' || e.status === 'concluido'));
-    // Entregue: todos entregues nesse dia
     const entregue = allEventos.filter(e => e.data_fim.slice(0, 10) === dateStr && e.status === 'concluido');
-    return { checkinPendente, checkinFeito, entregue };
+    return { checkinPendente, naoCompareceu, checkinFeito, entregue };
   };
 
   const handleAddEvent = async () => {
@@ -584,22 +583,28 @@ export default function AgendaPage() {
           {(() => {
             const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
             const g = getGroups(ds);
-            const hasAnything = g.checkinPendente.length + g.checkinFeito.length + g.entregue.length > 0;
+            const hasAnything = g.checkinPendente.length + g.naoCompareceu.length + g.checkinFeito.length + g.entregue.length > 0;
             return (
               <>
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                  <div className="p-4 bg-green-50 rounded-lg text-center">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                  <div className="p-3 bg-green-50 rounded-lg text-center">
                     <p className="text-2xl font-bold text-green-700">{g.checkinPendente.length}</p>
                     <p className="text-xs text-green-600">Pendente</p>
                   </div>
-                  <div className="p-4 bg-blue-50 rounded-lg text-center">
+                  <div className="p-3 bg-blue-50 rounded-lg text-center">
                     <p className="text-2xl font-bold text-blue-700">{g.checkinFeito.length}</p>
                     <p className="text-xs text-blue-600">Check-in feito</p>
                   </div>
-                  <div className="p-4 bg-gray-100 rounded-lg text-center">
+                  <div className="p-3 bg-gray-100 rounded-lg text-center">
                     <p className="text-2xl font-bold text-gray-700">{g.entregue.length}</p>
                     <p className="text-xs text-gray-600">Entregue</p>
                   </div>
+                  {g.naoCompareceu.length > 0 && (
+                    <div className="p-3 bg-red-50 rounded-lg text-center">
+                      <p className="text-2xl font-bold text-red-700">{g.naoCompareceu.length}</p>
+                      <p className="text-xs text-red-600">Não compareceu</p>
+                    </div>
+                  )}
                 </div>
                 {g.checkinPendente.length > 0 && (
                   <div className="mb-6">
@@ -617,6 +622,12 @@ export default function AgendaPage() {
                   <div className="mb-6">
                     <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-3">Entregue ({g.entregue.length})</h4>
                     <div className="space-y-2">{g.entregue.map((ev) => renderCard(ev, 'entregue'))}</div>
+                  </div>
+                )}
+                {g.naoCompareceu.length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="font-semibold text-red-700 text-sm uppercase tracking-wide mb-3">Não compareceu ({g.naoCompareceu.length})</h4>
+                    <div className="space-y-2">{g.naoCompareceu.map((ev) => renderCard(ev, 'entregue'))}</div>
                   </div>
                 )}
                 {!hasAnything && <p className="text-center text-gray-500 py-8">Nenhum evento neste dia</p>}

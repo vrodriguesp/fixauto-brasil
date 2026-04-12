@@ -36,7 +36,7 @@ export default function EnviarOrcamentoPage() {
   const [prazoDias, setPrazoDias] = useState(5);
   const [tempoExecucaoHoras, setTempoExecucaoHoras] = useState(40);
   const [observacoes, setObservacoes] = useState('');
-  const [validade, setValidade] = useState('2026-04-30');
+  const [validade, setValidade] = useState((() => { const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0]; })());
   const [submitted, setSubmitted] = useState(false);
   const [prefilled, setPrefilled] = useState(false);
   const [analise, setAnalise] = useState<AnaliseDano | null>(null);
@@ -51,7 +51,7 @@ export default function EnviarOrcamentoPage() {
 
   // Availability slots
   const [slots, setSlots] = useState<{ data: string; turno: 'manha' | 'tarde' }[]>([
-    { data: '2026-04-07', turno: 'manha' },
+    { data: new Date().toISOString().split('T')[0], turno: 'manha' },
   ]);
 
   // Pre-fill form with existing quote data for revisions
@@ -71,7 +71,7 @@ export default function EnviarOrcamentoPage() {
       setPrazoDias(existingQuote.prazo_dias || 5);
       setTempoExecucaoHoras(existingQuote.tempo_execucao_horas || 40);
       setObservacoes(existingQuote.observacoes || '');
-      setValidade(existingQuote.validade || '2026-04-30');
+      setValidade(existingQuote.validade || (() => { const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0]; })());
       if (existingQuote.disponibilidade && existingQuote.disponibilidade.length > 0) {
         setSlots(
           existingQuote.disponibilidade.map((s: any) => ({
