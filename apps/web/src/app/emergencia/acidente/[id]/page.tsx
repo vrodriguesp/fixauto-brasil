@@ -87,7 +87,8 @@ export default function AcidenteRegistroPage() {
   // Orcamentos
   const [orcamentos, setOrcamentos] = useState<Orcamento[]>([]);
   const [loadingOrc, setLoadingOrc] = useState(false);
-  const [emergData, setEmergData] = useState<{ solicitacao_id: string | null; profile_id: string | null } | null>(null);
+  const [emergData, setEmergData] = useState<{ solicitacao_id: string | null; profile_id: string | null; descricao: string | null } | null>(null);
+  const [veiculoProprietario, setVeiculoProprietario] = useState<{ fipe_marca: string; fipe_modelo: string; fipe_ano: string; placa: string; cor: string } | null>(null);
   const isProprietario = user?.id === emergData?.profile_id;
 
   // Load existing data
@@ -126,11 +127,25 @@ export default function AcidenteRegistroPage() {
     setLoadingOrc(true);
     const { data: emerg } = await supabase
       .from('emergencias')
-      .select('solicitacao_id, profile_id')
+      .select('solicitacao_id, profile_id, descricao')
       .eq('id', emergenciaId)
       .single();
 
-    if (emerg) setEmergData(emerg);
+    if (emerg) setEmergData(emerg as { solicitacao_id: string | null; profile_id: string | null; descricao: string | null });
+
+    // Fetch vehicle info for the emergency owner
+    if (emerg?.solicitacao_id) {
+      const { data: solData } = await supabase
+        .from('solicitacoes')
+        .select('veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, placa, cor)')
+        .eq('id', emerg.solicitacao_id)
+        .single();
+
+      if (solData?.veiculo) {
+        const v = solData.veiculo as unknown as { fipe_marca: string; fipe_modelo: string; fipe_ano: string; placa: string; cor: string };
+        setVeiculoProprietario(v);
+      }
+    }
 
     if (emerg?.solicitacao_id) {
       const { data: orcs } = await supabase
@@ -279,6 +294,38 @@ export default function AcidenteRegistroPage() {
   const formatCurrency = (val: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
+  // Parse accident type from emergencia descricao
+  const tipoMatch = emergData?.descricao?.match(/\[TIPO:(\w+)\]/);
+  const tipoAcidente = tipoMatch ? tipoMatch[1] : null;
+
+  // Fallback: try old format [RESP:xxx]
+  const respMatch = !tipoAcidente ? emergData?.descricao?.match(/\[RESP:(\w+)\]/) : null;
+  const responsabilidadeLegacy = respMatch ? respMatch[1] : null;
+
+  // Determine labels based on tipo_acidente
+  // eu_causei: registrant = Responsável, outro = Vítima
+  // outro_causou: registrant = Vítima, outro = Responsável
+  const registranteLabel = tipoAcidente === 'eu_causei' ? 'Responsável' : tipoAcidente === 'outro_causou' ? 'Vítima' : 'Motorista 1';
+  const outroLabel = tipoAcidente === 'eu_causei' ? 'Vítima' : tipoAcidente === 'outro_causou' ? 'Responsável' : 'Motorista 2';
+  const registranteColor = tipoAcidente === 'eu_causei' ? 'text-red-600' : tipoAcidente === 'outro_causou' ? 'text-green-600' : 'text-blue-600';
+  const outroColor = tipoAcidente === 'eu_causei' ? 'text-green-600' : tipoAcidente === 'outro_causou' ? 'text-red-600' : 'text-orange-600';
+  const registranteBorderColor = tipoAcidente === 'eu_causei' ? 'border-l-red-400' : tipoAcidente === 'outro_causou' ? 'border-l-green-400' : 'border-l-blue-400';
+  const outroBorderColor = tipoAcidente === 'eu_causei' ? 'border-l-green-400' : tipoAcidente === 'outro_causou' ? 'border-l-red-400' : 'border-l-orange-400';
+
+  const tipoBadge: Record<string, { label: string; color: string }> = {
+    eu_causei: { label: 'Você causou o acidente', color: 'bg-red-100 text-red-700' },
+    outro_causou: { label: 'O outro motorista causou', color: 'bg-green-100 text-green-700' },
+    sem_outro: { label: 'Sem outro envolvido', color: 'bg-gray-100 text-gray-700' },
+  };
+
+  // Legacy badges for old data
+  const respBadge: Record<string, { label: string; color: string }> = {
+    responsavel: { label: 'Assume responsabilidade', color: 'bg-red-100 text-red-700' },
+    vitima: { label: 'Vítima', color: 'bg-green-100 text-green-700' },
+    dividida: { label: 'Responsabilidade dividida - 50%', color: 'bg-yellow-100 text-yellow-700' },
+    individual: { label: 'Cada um paga o seu', color: 'bg-gray-100 text-gray-700' },
+  };
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       {/* Header */}
@@ -308,7 +355,7 @@ export default function AcidenteRegistroPage() {
             step === 'registro' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'
           }`}
         >
-          Outro Veículo
+          Envolvidos
         </button>
         <button
           onClick={() => setStep('chat')}
@@ -424,19 +471,67 @@ export default function AcidenteRegistroPage() {
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">Veículos envolvidos</h2>
 
-          {/* Meu veículo (proprietário) */}
-          <div className="card border-l-4 border-l-blue-400">
-            <p className="text-xs font-semibold text-blue-600 uppercase mb-2">Seu veículo</p>
-            <div className="bg-gray-50 rounded-lg p-3 space-y-1">
-              <p className="text-sm text-gray-900 font-medium">{user?.nome || 'Você'}</p>
-              {emergData?.solicitacao_id && <p className="text-xs text-gray-500">Solicitação registrada</p>}
+          {/* Accident type badge */}
+          {tipoAcidente && tipoBadge[tipoAcidente] && (
+            <div className={`inline-block px-3 py-1.5 rounded-full text-sm font-medium ${tipoBadge[tipoAcidente].color}`}>
+              {tipoBadge[tipoAcidente].label}
+            </div>
+          )}
+          {/* Legacy responsibility badge */}
+          {!tipoAcidente && responsabilidadeLegacy && respBadge[responsabilidadeLegacy] && (
+            <div className={`inline-block px-3 py-1.5 rounded-full text-sm font-medium ${respBadge[responsabilidadeLegacy].color}`}>
+              {respBadge[responsabilidadeLegacy].label}
+            </div>
+          )}
+
+          {/* Registrant (proprietário) */}
+          <div className={`card border-l-4 ${registranteBorderColor}`}>
+            <p className={`text-xs font-semibold ${registranteColor} uppercase mb-2`}>{registranteLabel}</p>
+            <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Nome:</span>
+                <span className="text-gray-900 font-medium">{user?.nome || 'Você'}</span>
+              </div>
+              {veiculoProprietario && (
+                <>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Veículo:</span>
+                    <span className="text-gray-900">{veiculoProprietario.fipe_marca} {veiculoProprietario.fipe_modelo}</span>
+                  </div>
+                  {veiculoProprietario.fipe_ano && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Ano:</span>
+                      <span className="text-gray-900">{veiculoProprietario.fipe_ano}</span>
+                    </div>
+                  )}
+                  {veiculoProprietario.placa && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Placa:</span>
+                      <span className="text-gray-900 font-mono">{veiculoProprietario.placa}</span>
+                    </div>
+                  )}
+                  {veiculoProprietario.cor && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Cor:</span>
+                      <span className="text-gray-900">{veiculoProprietario.cor}</span>
+                    </div>
+                  )}
+                </>
+              )}
+              {user?.telefone && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Telefone:</span>
+                  <a href={`tel:${user.telefone}`} className="text-primary-600 hover:underline">{user.telefone}</a>
+                </div>
+              )}
+              {emergData?.solicitacao_id && <p className="text-xs text-gray-500 mt-1">Solicitação registrada</p>}
             </div>
           </div>
 
-          {/* Outro veículo */}
-          <div className="card border-l-4 border-l-orange-400">
+          {/* Outro envolvido */}
+          <div className={`card border-l-4 ${outroBorderColor}`}>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-semibold text-orange-600 uppercase">Outro envolvido</p>
+              <p className={`text-xs font-semibold ${outroColor} uppercase`}>{outroLabel}</p>
               <div className="flex items-center gap-1">
                 <div className="w-2 h-2 bg-green-400 rounded-full" />
                 <span className="text-xs text-green-600">Notificado</span>
@@ -444,7 +539,7 @@ export default function AcidenteRegistroPage() {
             </div>
             <div className="bg-gray-50 rounded-lg p-3 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Motorista:</span>
+                <span className="text-gray-500">Nome:</span>
                 <span className="text-gray-900 font-medium">{outroNome}</span>
               </div>
               <div className="flex justify-between text-sm">
@@ -559,8 +654,9 @@ export default function AcidenteRegistroPage() {
             <>
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <p className="text-sm text-yellow-800">
-                  Compartilhe esses orçamentos com o outro motorista para entrar em acordo
-                  sobre qual oficina usar para a reparação.
+                  {tipoAcidente === 'eu_causei' || tipoAcidente === 'outro_causou'
+                    ? 'A vítima decide qual orçamento aceitar. Após aceitar, as informações da oficina serão compartilhadas com o responsável.'
+                    : 'Compartilhe esses orçamentos com o outro motorista para entrar em acordo sobre qual oficina usar para a reparação.'}
                 </p>
               </div>
 
@@ -596,15 +692,19 @@ export default function AcidenteRegistroPage() {
                     )}
 
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setStep('chat');
-                          setNovaMensagem(`Orçamento da ${ofi?.nome_fantasia}: ${formatCurrency(orc.valor_total)}, prazo ${orc.prazo_dias} dias.${ofi?.endereco ? ' Endereço: ' + ofi.endereco + (ofi.cidade ? ', ' + ofi.cidade : '') : ''}${ofi?.profile?.telefone ? ' Tel: ' + ofi.profile.telefone : ''}`);
-                        }}
-                        className="btn-secondary flex-1 !py-2 text-sm"
-                      >
-                        Enviar ao outro envolvido
-                      </button>
+                      {tipoAcidente !== 'sem_outro' && (
+                        <button
+                          onClick={() => {
+                            setStep('chat');
+                            setNovaMensagem(`Orçamento da ${ofi?.nome_fantasia}: ${formatCurrency(orc.valor_total)}, prazo ${orc.prazo_dias} dias.${ofi?.endereco ? ' Endereço: ' + ofi.endereco + (ofi.cidade ? ', ' + ofi.cidade : '') : ''}${ofi?.profile?.telefone ? ' Tel: ' + ofi.profile.telefone : ''}`);
+                          }}
+                          className="btn-secondary flex-1 !py-2 text-sm"
+                        >
+                          {tipoAcidente === 'eu_causei' || tipoAcidente === 'outro_causou'
+                            ? 'Enviar ao responsável'
+                            : 'Enviar ao outro envolvido'}
+                        </button>
+                      )}
                       {isProprietario && !isAceito && (
                         <Link
                           href={`/cliente/orcamentos/${emergData?.solicitacao_id}`}

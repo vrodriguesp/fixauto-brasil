@@ -28,7 +28,7 @@ function generatePassword(): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { emergenciaId, clienteId, nome, email, telefone, descricao, latitude, longitude, endereco, photoUrls, placa, veiculoInfo } = await req.json();
+    const { emergenciaId, clienteId, nome, email, telefone, descricao, latitude, longitude, endereco, photoUrls, placa, veiculoInfo, tipoAcidente } = await req.json();
 
     if (!emergenciaId) {
       return NextResponse.json({ error: 'emergenciaId obrigatório' }, { status: 400 });

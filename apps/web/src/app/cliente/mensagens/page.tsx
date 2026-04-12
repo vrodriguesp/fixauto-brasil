@@ -36,6 +36,7 @@ interface SolicitacaoGroup {
   status: string;
   conversas_oficina: ConversaOficina[];
   conversa_emergencia: ConversaEmergencia | null;
+  is_responsavel_pagamento?: boolean;
 }
 
 export default function ClienteMensagensListPage() {
@@ -80,7 +81,7 @@ export default function ClienteMensagensListPage() {
       // 4. Get emergencias linked to solicitacoes
       const { data: emergencias } = await supabase
         .from('emergencias')
-        .select('id, solicitacao_id')
+        .select('id, solicitacao_id, descricao, profile_id')
         .in('solicitacao_id', solIds);
 
       // 5. For each emergencia, get outro_veiculo and last message
@@ -116,6 +117,20 @@ export default function ClienteMensagensListPage() {
             ultima_mensagem_at: lastMsg?.created_at || '',
             nao_lidas: 0, // emergencia_mensagens doesn't have 'lida' column tracked per user
           };
+        }
+      }
+
+      // Build responsavel map: check if the current user is the responsible party for payment
+      const responsavelMap: Record<string, boolean> = {};
+      if (emergencias) {
+        for (const emerg of emergencias) {
+          const tipoMatch = (emerg as any).descricao?.match(/\[TIPO:(\w+)\]/);
+          const tipo = tipoMatch ? tipoMatch[1] : null;
+          if (tipo === 'eu_causei' && (emerg as any).profile_id === user!.id) {
+            // User registered and caused it - they are responsible
+            responsavelMap[emerg.solicitacao_id] = true;
+          }
+          // outro_causou + user is the "outro" is handled below in the outroRegistros section
         }
       }
 
@@ -158,6 +173,7 @@ export default function ClienteMensagensListPage() {
             status: sol.status || '',
             conversas_oficina: conversasOficina,
             conversa_emergencia: conversaEmergencia,
+            is_responsavel_pagamento: responsavelMap[sol.id] || false,
           });
         }
       }
@@ -172,7 +188,7 @@ export default function ClienteMensagensListPage() {
         const outroEmergIds = outroRegistros.map((o: any) => o.emergencia_id);
         const { data: outroEmergs } = await supabase
           .from('emergencias')
-          .select('id, nome, solicitacao_id')
+          .select('id, nome, solicitacao_id, descricao')
           .in('id', outroEmergIds);
 
         const { data: outroMsgs } = await supabase
@@ -190,6 +206,46 @@ export default function ClienteMensagensListPage() {
           const msgs = outroMsgs?.filter((m: any) => m.emergencia_id === reg.emergencia_id) || [];
           const lastMsg = msgs[0];
 
+          // Check if the user is the responsible party (outro_causou means the "outro" person is responsible)
+          const outroTipoMatch = (emerg as any).descricao?.match(/\[TIPO:(\w+)\]/);
+          const outroTipo = outroTipoMatch ? outroTipoMatch[1] : null;
+          const isResponsavelPagamento = outroTipo === 'outro_causou';
+
+          // If this user is the responsible party and there's a linked solicitacao,
+          // add an oficina conversation for payment
+          const outroConversasOficina: ConversaOficina[] = [];
+          if (isResponsavelPagamento && emerg.solicitacao_id) {
+            // Check if there are messages in the solicitacao (oficina chat created by aceitar-orcamento)
+            const { data: pagMsgs } = await supabase
+              .from('mensagens')
+              .select('id, texto, created_at')
+              .eq('solicitacao_id', emerg.solicitacao_id)
+              .order('created_at', { ascending: false })
+              .limit(1);
+
+            if (pagMsgs && pagMsgs.length > 0) {
+              // Get oficina name from orcamentos
+              const { data: pagOrc } = await supabase
+                .from('orcamentos')
+                .select('oficina:oficinas!orcamentos_oficina_id_fkey(nome_fantasia)')
+                .eq('solicitacao_id', emerg.solicitacao_id)
+                .eq('status', 'aceito')
+                .limit(1);
+
+              const pagOficinaNome = (pagOrc?.[0]?.oficina as any)?.nome_fantasia || 'Oficina';
+
+              outroConversasOficina.push({
+                solicitacao_id: emerg.solicitacao_id,
+                oficina_nome: pagOficinaNome,
+                veiculo_desc: reg.veiculo_descricao || '',
+                placa: reg.placa || '',
+                ultima_mensagem: pagMsgs[0].texto || '',
+                ultima_mensagem_at: pagMsgs[0].created_at || '',
+                nao_lidas: 0,
+              });
+            }
+          }
+
           groupList.push({
             id: `outro-${reg.emergencia_id}`,
             descricao: `Acidente registrado por ${emerg.nome}`,
@@ -197,7 +253,8 @@ export default function ClienteMensagensListPage() {
             veiculo_modelo: '',
             placa: reg.placa || '',
             status: 'acidente',
-            conversas_oficina: [],
+            conversas_oficina: outroConversasOficina,
+            is_responsavel_pagamento: isResponsavelPagamento,
             conversa_emergencia: {
               emergencia_id: reg.emergencia_id,
               solicitacao_id: emerg.solicitacao_id,
@@ -294,8 +351,8 @@ export default function ClienteMensagensListPage() {
                     href={`/cliente/mensagens/${conv.solicitacao_id}`}
                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                   >
-                    <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className={`w-10 h-10 ${group.is_responsavel_pagamento ? 'bg-red-100' : 'bg-orange-100'} rounded-full flex items-center justify-center flex-shrink-0`}>
+                      <svg className={`w-5 h-5 ${group.is_responsavel_pagamento ? 'text-red-600' : 'text-orange-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                       </svg>
                     </div>
@@ -303,6 +360,9 @@ export default function ClienteMensagensListPage() {
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium text-gray-900 truncate">
                           {conv.oficina_nome}
+                          {group.is_responsavel_pagamento && (
+                            <span className="text-xs text-red-600 font-normal ml-1">(pagamento)</span>
+                          )}
                         </p>
                         {conv.ultima_mensagem_at && (
                           <span className="text-xs text-gray-400 flex-shrink-0 ml-2">

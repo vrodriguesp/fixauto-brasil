@@ -111,15 +111,31 @@ export async function POST(req: NextRequest) {
 
         if (outroVeiculo) {
           const oficinaNome = (orc.oficina as any)?.nome_fantasia || 'Oficina';
+          const oficinaEndereco = (orc.oficina as any)?.endereco || '';
+          const oficinaCidade = (orc.oficina as any)?.cidade || '';
+          const oficinaEstado = (orc.oficina as any)?.estado || '';
+          const oficinaTelefone = (orc.oficina as any)?.profile?.telefone || '';
+          const oficinaEmail = (orc.oficina as any)?.profile?.email || '';
           const valorFormatado = `R$ ${Number(orc.valor_total).toFixed(2).replace('.', ',')}`;
 
           // Get the solicitacao vehicle plate
           const { data: solicitacaoData } = await supabaseAdmin
             .from('solicitacoes')
-            .select('veiculo:veiculos!solicitacoes_veiculo_id_fkey(placa)')
+            .select('veiculo:veiculos!solicitacoes_veiculo_id_fkey(placa), cliente_id')
             .eq('id', orc.solicitacao_id)
             .single();
           const placaVeiculo = (solicitacaoData?.veiculo as any)?.placa || '';
+          const clienteId = solicitacaoData?.cliente_id;
+
+          // Parse accident type from emergencia descricao
+          const { data: emergDescData } = await supabaseAdmin
+            .from('emergencias')
+            .select('descricao, profile_id')
+            .eq('id', emergencia.id)
+            .single();
+
+          const tipoMatch = emergDescData?.descricao?.match(/\[TIPO:(\w+)\]/);
+          const tipoAcidente = tipoMatch ? tipoMatch[1] : null;
 
           // Insert message in emergencia chat
           const resumoMsg = `O orcamento de ${valorFormatado} foi aceito na oficina ${oficinaNome}${placaVeiculo ? ` para o veiculo placa ${placaVeiculo}` : ''}. O reparo esta agendado com prazo de ${orc.prazo_dias} dias.`;
@@ -131,7 +147,125 @@ export async function POST(req: NextRequest) {
             texto: resumoMsg,
           });
 
-          // Send email to the other person
+          // === RESPONSIBLE PERSON FLOW ===
+          // When tipo is eu_causei or outro_causou, identify the responsible person
+          // and give them a private chat with the oficina for payment negotiation
+          if (tipoAcidente === 'eu_causei' || tipoAcidente === 'outro_causou') {
+            // Determine who the responsible person is:
+            // eu_causei: registrant (emergencia.profile_id) is responsible
+            // outro_causou: the "outro" person is responsible (lookup by email)
+            let responsavelProfileId: string | null = null;
+            let responsavelEmail: string | null = null;
+            let responsavelNome: string | null = null;
+
+            if (tipoAcidente === 'eu_causei') {
+              // The registrant is the responsible person
+              responsavelProfileId = emergDescData?.profile_id || null;
+              if (responsavelProfileId) {
+                const { data: respProfile } = await supabaseAdmin
+                  .from('profiles')
+                  .select('email, nome')
+                  .eq('id', responsavelProfileId)
+                  .single();
+                responsavelEmail = respProfile?.email || null;
+                responsavelNome = respProfile?.nome || null;
+              }
+            } else {
+              // outro_causou: the other person is responsible
+              responsavelEmail = outroVeiculo.email || null;
+              responsavelNome = outroVeiculo.nome || null;
+              // Try to find their profile by email
+              if (responsavelEmail) {
+                const { data: respProfile } = await supabaseAdmin
+                  .from('profiles')
+                  .select('id')
+                  .eq('email', responsavelEmail)
+                  .single();
+                responsavelProfileId = respProfile?.id || null;
+              }
+            }
+
+            // Create a system message in mensagens table to open oficina chat for the responsible person
+            if (responsavelProfileId && oficinaProfileId) {
+              await supabaseAdmin.from('mensagens').insert({
+                solicitacao_id: orc.solicitacao_id,
+                remetente_id: oficinaProfileId,
+                texto: `Orcamento aceito. Voce pode negociar o pagamento diretamente com a oficina ${oficinaNome}.`,
+                tipo: 'texto',
+                lida: false,
+              });
+
+              // Create in-app notification for the responsible person
+              await supabaseAdmin.from('notificacoes').insert({
+                profile_id: responsavelProfileId,
+                tipo: 'orcamento_aceito',
+                titulo: 'Orcamento aceito - pagamento',
+                mensagem: `O orcamento de ${valorFormatado} foi aceito na oficina ${oficinaNome}. Acesse para conversar com a oficina sobre o pagamento.`,
+                dados: { solicitacao_id: orc.solicitacao_id, orcamento_id: orcamentoId, emergencia_id: emergencia.id },
+              });
+            }
+
+            // Send email to responsible person with oficina details
+            if (responsavelEmail) {
+              const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com';
+              const FROM_EMAIL = process.env.FROM_EMAIL || 'BipFix <noreply@bipfix.com>';
+              const RESEND_KEY = process.env.RESEND_API_KEY;
+
+              if (RESEND_KEY) {
+                try {
+                  const enderecoCompleto = [oficinaEndereco, oficinaCidade, oficinaEstado].filter(Boolean).join(', ');
+                  await fetch('https://api.resend.com/emails', {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': `Bearer ${RESEND_KEY}`,
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      from: FROM_EMAIL,
+                      to: responsavelEmail,
+                      subject: `Orcamento aceito - Pagamento na oficina ${oficinaNome}`,
+                      html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                          <div style="background: #dc2626; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+                            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
+                            <p style="margin: 8px 0 0; opacity: 0.8;">Orcamento Aceito - Pagamento</p>
+                          </div>
+                          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+                            <p>Ola <strong>${responsavelNome || ''}</strong>,</p>
+                            <p>O orcamento para o reparo do acidente foi aceito. Como responsavel, voce precisa acertar o pagamento com a oficina.</p>
+                            <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 16px; border-radius: 8px; margin: 16px 0;">
+                              <p style="margin: 0; font-size: 20px; font-weight: bold; color: #991b1b;">${valorFormatado}</p>
+                              <p style="margin: 4px 0 0; color: #b91c1c;">Prazo: ${orc.prazo_dias} dias</p>
+                            </div>
+                            <div style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 16px; border-radius: 8px; margin: 16px 0;">
+                              <p style="margin: 0; font-weight: bold; color: #111827;">Dados da oficina:</p>
+                              <p style="margin: 4px 0 0; color: #374151;">Oficina: ${oficinaNome}</p>
+                              ${enderecoCompleto ? `<p style="margin: 4px 0 0; color: #374151;">Endereco: ${enderecoCompleto}</p>` : ''}
+                              ${oficinaTelefone ? `<p style="margin: 4px 0 0; color: #374151;">Telefone: ${oficinaTelefone}</p>` : ''}
+                              ${oficinaEmail ? `<p style="margin: 4px 0 0; color: #374151;">Email: ${oficinaEmail}</p>` : ''}
+                            </div>
+                            <p>Acesse a plataforma para conversar com a oficina sobre o pagamento:</p>
+                            <p style="margin-top: 24px;">
+                              <a href="${SITE_URL}/cliente/mensagens/${orc.solicitacao_id}"
+                                 style="display: inline-block; background: #dc2626; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                                Conversar com a oficina
+                              </a>
+                            </p>
+                            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+                            <p style="font-size: 12px; color: #9ca3af;">Equipe BipFix</p>
+                          </div>
+                        </div>
+                      `,
+                    }),
+                  });
+                } catch (emailErr) {
+                  console.error('[aceitar-orcamento] Email to responsavel failed:', emailErr);
+                }
+              }
+            }
+          }
+
+          // Send email to the other person (always, for general notification)
           if (outroVeiculo.email) {
             const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com';
             const FROM_EMAIL = process.env.FROM_EMAIL || 'BipFix <noreply@bipfix.com>';

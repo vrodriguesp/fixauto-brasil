@@ -23,6 +23,7 @@ export default function EmergenciaPage() {
   const [error, setError] = useState('');
   const [emergenciaId, setEmergenciaId] = useState<string | null>(null);
   const [coords, setCoords] = useState({ lat: -23.5505, lon: -46.6333 });
+  const [tipoAcidente, setTipoAcidente] = useState<'eu_causei' | 'outro_causou' | 'sem_outro'>('outro_causou');
   const [placa, setPlaca] = useState('');
   const [veiculoInfo, setVeiculoInfo] = useState<{ marca: string; modelo: string; ano: string; cor: string } | null>(null);
   const [buscandoPlaca, setBuscandoPlaca] = useState(false);
@@ -128,7 +129,7 @@ export default function EmergenciaPage() {
           nome,
           email,
           telefone,
-          descricao: descricao || null,
+          descricao: `[TIPO:${tipoAcidente}] ${descricao || 'Emergência - Colisão'}`,
           endereco: localizacao,
           latitude: coords.lat,
           longitude: coords.lon,
@@ -158,7 +159,8 @@ export default function EmergenciaPage() {
           nome,
           email,
           telefone,
-          descricao: descricao || 'Emergência - Colisão registrada pelo fluxo "Acabei de bater"',
+          tipoAcidente,
+          descricao: `[TIPO:${tipoAcidente}] ${descricao || 'Emergência - Colisão registrada pelo fluxo "Acabei de bater"'}`,
           latitude: coords.lat,
           longitude: coords.lon,
           endereco: localizacao,
@@ -206,18 +208,20 @@ export default function EmergenciaPage() {
           Oficinas próximas foram notificadas e enviarão orçamentos em breve.
         </p>
 
-        <div className="card text-left mb-6">
-          <h2 className="font-semibold text-gray-900 mb-3">Próximo passo</h2>
-          <p className="text-sm text-gray-600 mb-4">
-            Registre o outro veículo envolvido no acidente para trocar informações.
-          </p>
-          <button
-            onClick={() => router.push(`/emergencia/acidente/${emergenciaId}`)}
-            className="btn-primary w-full"
-          >
-            Registrar outro veículo envolvido
-          </button>
-        </div>
+        {tipoAcidente !== 'sem_outro' && (
+          <div className="card text-left mb-6">
+            <h2 className="font-semibold text-gray-900 mb-3">Próximo passo</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Registre o outro veículo envolvido no acidente para trocar informações.
+            </p>
+            <button
+              onClick={() => router.push(`/emergencia/acidente/${emergenciaId}`)}
+              className="btn-primary w-full"
+            >
+              Registrar outro veículo envolvido
+            </button>
+          </div>
+        )}
 
         {isLoggedIn ? (
           <button onClick={() => router.push('/cliente/dashboard')} className="btn-secondary w-full">
@@ -401,6 +405,34 @@ export default function EmergenciaPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Descreva o que aconteceu (opcional)</label>
                 <textarea className="input-field min-h-[80px]" placeholder="Ex: Bati na traseira do carro da frente no semáforo..."
                   value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">O que aconteceu?</label>
+                <div className="space-y-2">
+                  {[
+                    { value: 'eu_causei', label: 'Eu causei o acidente', desc: 'Você é o responsável pelo reparo do outro veículo' },
+                    { value: 'outro_causou', label: 'O outro motorista causou', desc: 'Você é a vítima e receberá orçamentos para reparo' },
+                    { value: 'sem_outro', label: 'Sem outro envolvido', desc: 'Ex: bateu no poste, muro, etc.' },
+                  ].map((opt) => (
+                    <label key={opt.value} className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                      tipoAcidente === opt.value ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:bg-gray-50'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="tipoAcidente"
+                        value={opt.value}
+                        checked={tipoAcidente === opt.value}
+                        onChange={(e) => setTipoAcidente(e.target.value as 'eu_causei' | 'outro_causou' | 'sem_outro')}
+                        className="accent-red-600 mt-0.5"
+                      />
+                      <div>
+                        <span className="text-sm text-gray-900 font-medium">{opt.label}</span>
+                        <p className="text-xs text-gray-500 mt-0.5">{opt.desc}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
               </div>
 
               <div className="flex justify-end mt-6">
