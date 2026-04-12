@@ -565,26 +565,15 @@ export default function AcidenteRegistroPage() {
                       </div>
                     )}
 
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setStep('chat');
-                          setNovaMensagem(`O que acha do orçamento da ${ofi?.nome_fantasia} por ${formatCurrency(orc.valor_total)}? Prazo: ${orc.prazo_dias} dias.${ofi?.endereco ? ' Endereço: ' + ofi.endereco : ''}${ofi?.profile?.telefone ? ' Tel: ' + ofi.profile.telefone : ''}`);
-                        }}
-                        className="btn-primary flex-1 !py-2 text-sm"
-                      >
-                        Enviar ao outro envolvido
-                      </button>
-                      <button
-                        onClick={() => {
-                          setStep('chat');
-                          setNovaMensagem(`O que acha do orçamento da ${ofi?.nome_fantasia} por ${formatCurrency(orc.valor_total)}?`);
-                        }}
-                        className="btn-secondary flex-1 !py-2 text-sm"
-                      >
-                        Discutir
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => {
+                        setStep('chat');
+                        setNovaMensagem(`Orçamento da ${ofi?.nome_fantasia}: ${formatCurrency(orc.valor_total)}, prazo ${orc.prazo_dias} dias.${ofi?.endereco ? ' Endereço: ' + ofi.endereco + (ofi.cidade ? ', ' + ofi.cidade : '') : ''}${ofi?.profile?.telefone ? ' Tel: ' + ofi.profile.telefone : ''}`);
+                      }}
+                      className="btn-primary w-full !py-2 text-sm"
+                    >
+                      Enviar ao outro envolvido
+                    </button>
                   </div>
                 );
               })}
