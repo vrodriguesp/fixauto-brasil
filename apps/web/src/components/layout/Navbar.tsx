@@ -31,7 +31,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href={isLoggedIn ? dashboardPath : '/'} className="flex items-center gap-1">
-              <img src="/logo.png" alt="BipFix" className="h-20 -ml-14 -my-2" />
+              <img src="/logo.png" alt="BipFix" className="h-20 -my-2" style={{marginLeft: '-80px'}} />
               {(isOficina || isAdmin) && (
                 <div className="flex flex-col ml-1">
                   {isOficina && (
