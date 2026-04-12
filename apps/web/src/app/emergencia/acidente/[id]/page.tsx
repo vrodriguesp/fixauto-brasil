@@ -245,10 +245,12 @@ export default function AcidenteRegistroPage() {
     const texto = novaMensagem;
     setNovaMensagem('');
 
+    const meuTipo = isProprietario ? 'proprietario' : 'outro';
+
     // Optimistic update
     const tempMsg: Mensagem = {
       id: `temp-${Date.now()}`,
-      remetente_tipo: 'proprietario',
+      remetente_tipo: meuTipo,
       texto,
       created_at: new Date().toISOString(),
     };
@@ -256,7 +258,7 @@ export default function AcidenteRegistroPage() {
 
     const { data: inserted } = await supabase.from('emergencia_mensagens').insert({
       emergencia_id: emergenciaId,
-      remetente_tipo: 'proprietario',
+      remetente_tipo: meuTipo,
       remetente_id: user?.id || null,
       texto,
     }).select().single();
@@ -419,37 +421,52 @@ export default function AcidenteRegistroPage() {
       )}
 
       {step === 'registro' && registered && (
-        <div className="card">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <div>
-              <p className="font-semibold text-gray-900">Veículo registrado</p>
-              <p className="text-sm text-gray-500">
-                {outroEmail ? 'O outro motorista foi notificado por email' : 'Registro salvo com sucesso'}
-              </p>
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900">Veículos envolvidos</h2>
+
+          {/* Meu veículo (proprietário) */}
+          <div className="card border-l-4 border-l-blue-400">
+            <p className="text-xs font-semibold text-blue-600 uppercase mb-2">Seu veículo</p>
+            <div className="bg-gray-50 rounded-lg p-3 space-y-1">
+              <p className="text-sm text-gray-900 font-medium">{user?.nome || 'Você'}</p>
+              {emergData?.solicitacao_id && <p className="text-xs text-gray-500">Solicitação registrada</p>}
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Motorista:</span>
-              <span className="text-gray-900">{outroNome}</span>
+          {/* Outro veículo */}
+          <div className="card border-l-4 border-l-orange-400">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-semibold text-orange-600 uppercase">Outro envolvido</p>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-green-400 rounded-full" />
+                <span className="text-xs text-green-600">Notificado</span>
+              </div>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Veículo:</span>
-              <span className="text-gray-900">{outroVeiculo || 'Não informado'}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Placa:</span>
-              <span className="text-gray-900">{outroPlaca}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Telefone:</span>
-              <span className="text-gray-900">{outroTelefone || 'Não informado'}</span>
+            <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Motorista:</span>
+                <span className="text-gray-900 font-medium">{outroNome}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Veículo:</span>
+                <span className="text-gray-900">{outroVeiculo || 'Não informado'}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Placa:</span>
+                <span className="text-gray-900 font-mono">{outroPlaca}</span>
+              </div>
+              {outroTelefone && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Telefone:</span>
+                  <a href={`tel:${outroTelefone}`} className="text-primary-600 hover:underline">{outroTelefone}</a>
+                </div>
+              )}
+              {outroEmail && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Email:</span>
+                  <span className="text-gray-900">{outroEmail}</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -478,20 +495,29 @@ export default function AcidenteRegistroPage() {
                 <p className="text-sm text-gray-400">Nenhuma mensagem ainda. Envie a primeira!</p>
               </div>
             )}
-            {mensagens.map((msg) => (
-              <div key={msg.id} className={`flex ${msg.remetente_tipo === 'proprietario' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[70%] rounded-2xl px-4 py-2 ${
-                  msg.remetente_tipo === 'proprietario'
-                    ? 'bg-primary-600 text-white rounded-br-md'
-                    : 'bg-gray-100 text-gray-900 rounded-bl-md'
-                }`}>
-                  <p className="text-sm">{msg.texto}</p>
-                  <p className={`text-xs mt-1 ${msg.remetente_tipo === 'proprietario' ? 'text-primary-200' : 'text-gray-400'}`}>
-                    {formatTime(msg.created_at)}
-                  </p>
+            {mensagens.map((msg) => {
+              const meuTipo = isProprietario ? 'proprietario' : 'outro';
+              const isMyMsg = msg.remetente_tipo === meuTipo;
+              return (
+                <div key={msg.id} className={`flex ${isMyMsg ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[70%] rounded-2xl px-4 py-2 ${
+                    isMyMsg
+                      ? 'bg-primary-600 text-white rounded-br-md'
+                      : 'bg-gray-100 text-gray-900 rounded-bl-md'
+                  }`}>
+                    {!isMyMsg && (
+                      <p className={`text-xs font-semibold mb-0.5 ${isMyMsg ? 'text-primary-200' : 'text-gray-500'}`}>
+                        {msg.remetente_tipo === 'proprietario' ? 'Motorista' : outroNome || 'Outro envolvido'}
+                      </p>
+                    )}
+                    <p className="text-sm">{msg.texto}</p>
+                    <p className={`text-xs mt-1 ${isMyMsg ? 'text-primary-200' : 'text-gray-400'}`}>
+                      {formatTime(msg.created_at)}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="p-4 border-t flex gap-2">
