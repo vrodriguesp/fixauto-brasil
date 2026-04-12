@@ -76,6 +76,7 @@ export default function Navbar() {
                     <NavLink href="/cliente/veiculos">Veículos</NavLink>
                     <NavLink href="/cliente/nova-solicitacao">Nova Solicitação</NavLink>
                     <NavLink href="/cliente/orcamentos">Orçamentos</NavLink>
+                    <NavLink href="/cliente/mensagens">Mensagens</NavLink>
                     <NavLink href="/cliente/historico">Histórico</NavLink>
                     <NavLink href="/cliente/perfil">Perfil</NavLink>
                   </>
@@ -173,6 +174,7 @@ export default function Navbar() {
                 <MobileNavLink href="/cliente/veiculos" onClick={() => setMenuOpen(false)}>Veículos</MobileNavLink>
                 <MobileNavLink href="/cliente/nova-solicitacao" onClick={() => setMenuOpen(false)}>Nova Solicitação</MobileNavLink>
                 <MobileNavLink href="/cliente/orcamentos" onClick={() => setMenuOpen(false)}>Orçamentos</MobileNavLink>
+                <MobileNavLink href="/cliente/mensagens" onClick={() => setMenuOpen(false)}>Mensagens</MobileNavLink>
                 <MobileNavLink href="/cliente/historico" onClick={() => setMenuOpen(false)}>Histórico</MobileNavLink>
                 <MobileNavLink href="/cliente/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
               </>
