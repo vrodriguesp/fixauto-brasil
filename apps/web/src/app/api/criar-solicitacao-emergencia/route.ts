@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                from: 'BipFix <onboarding@resend.dev>',
+                from: 'BipFix <noreply@bipfix.com>',
                 to: email,
                 subject: 'Sua conta BipFix foi criada - Defina sua senha',
                 html: `

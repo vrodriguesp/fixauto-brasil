@@ -5,7 +5,7 @@ const resend = process.env.RESEND_API_KEY
   : null;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com';
-const FROM_EMAIL = process.env.FROM_EMAIL || 'BipFix <onboarding@resend.dev>';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'BipFix <noreply@bipfix.com>';
 
 // ============================================================
 // EMAIL NOTIFICATIONS
