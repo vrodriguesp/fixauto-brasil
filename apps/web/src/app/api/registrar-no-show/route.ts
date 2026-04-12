@@ -46,9 +46,9 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // 4. Reset solicitacao status so client can reschedule or choose another oficina
+      // 4. Set solicitacao to no_show status
       await supabaseAdmin.from('solicitacoes')
-        .update({ status: 'em_orcamento' })
+        .update({ status: 'no_show' })
         .eq('id', solicitacaoId);
 
       // 5. Reset the orcamento to 'enviado' so client can accept again with new dates

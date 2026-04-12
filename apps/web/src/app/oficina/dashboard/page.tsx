@@ -18,6 +18,7 @@ export default function OficinaDashboard() {
   const solicitacoesProximas = solicitacoes.filter(s => ['aberta', 'em_orcamento'].includes(s.status));
   const solicitacoesAceitas = solicitacoes.filter(s => ['aceita', 'em_andamento'].includes(s.status));
   const solicitacoesConcluidas = solicitacoes.filter(s => s.status === 'concluida');
+  const solicitacoesNoShow = solicitacoes.filter(s => s.status === 'no_show');
 
   // Upcoming check-ins from agenda (next 7 days)
   const now = new Date();
@@ -195,6 +196,27 @@ export default function OficinaDashboard() {
                 </Link>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {solicitacoesNoShow.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Não compareceu</h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {solicitacoesNoShow.map((sol) => (
+              <Link key={sol.id} href={`/oficina/solicitacoes/${sol.id}`} className="card border-l-4 border-l-orange-400 hover:shadow-md transition-shadow block">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-semibold text-gray-900 text-sm">
+                      {sol.veiculo?.fipe_marca} {sol.veiculo?.fipe_modelo}
+                    </h3>
+                    <StatusBadge status={sol.status} />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">{sol.cliente?.nome} - {sol.endereco}</p>
+              </Link>
+            ))}
           </div>
         </div>
       )}
