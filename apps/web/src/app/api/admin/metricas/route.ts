@@ -8,7 +8,11 @@ const supabaseAdmin = createClient(
 );
 
 // Metrics change constantly - never let Next.js cache this route's response
+// (dynamic alone wasn't enough - the internal fetch calls made by
+// supabase-js were still being served from Next's Data Cache)
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+export const revalidate = 0;
 
 export async function GET() {
   try {

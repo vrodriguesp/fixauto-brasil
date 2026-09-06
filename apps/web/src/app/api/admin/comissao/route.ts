@@ -8,6 +8,8 @@ const supabaseAdmin = createClient(
 
 // Commission data changes constantly - never let Next.js cache this route's response
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+export const revalidate = 0;
 
 // GET: list ALL oficinas with their comissao config (if any) and lancamento totals.
 // Note: comissao_config rows only exist for oficinas whose rate was manually
