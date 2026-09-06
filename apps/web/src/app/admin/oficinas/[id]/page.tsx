@@ -12,6 +12,17 @@ interface ComissaoConfigLocal {
   usa_override: boolean;
 }
 
+interface ComissaoLancamento {
+  id: string;
+  orcamento_id: string;
+  valor_servico: number;
+  taxa_aplicada: number;
+  valor_comissao: number;
+  status: 'pendente' | 'pago';
+  pago_em: string | null;
+  created_at: string;
+}
+
 export default function AdminOficinaDetailPage() {
   const params = useParams();
   const id = params.id as string;
@@ -29,6 +40,8 @@ export default function AdminOficinaDetailPage() {
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lancamentos, setLancamentos] = useState<ComissaoLancamento[]>([]);
+  const [marcandoPagoId, setMarcandoPagoId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -79,11 +92,34 @@ export default function AdminOficinaDetailPage() {
         );
       }
 
+      // Comissao lancamentos (breakdown of what this oficina owes/paid, and why)
+      const { data: lancs } = await supabase
+        .from('comissao_lancamento')
+        .select('*')
+        .eq('oficina_id', id)
+        .order('created_at', { ascending: false });
+
+      setLancamentos((lancs as ComissaoLancamento[]) || []);
+
       setLoading(false);
     }
 
     fetchData();
   }, [id]);
+
+  const handleMarcarPago = async (lancamentoId: string, novoStatus: 'pendente' | 'pago') => {
+    setMarcandoPagoId(lancamentoId);
+    const res = await fetch('/api/admin/comissao', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lancamento_id: lancamentoId, status: novoStatus }),
+    });
+    if (res.ok) {
+      const updated = await res.json();
+      setLancamentos((prev) => prev.map((l) => (l.id === lancamentoId ? { ...l, ...updated } : l)));
+    }
+    setMarcandoPagoId(null);
+  };
 
   const handleSaveComissao = async () => {
     setSaving(true);
@@ -275,6 +311,73 @@ export default function AdminOficinaDetailPage() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Comissao lancamentos: o que essa oficina deve/pagou, e por que */}
+      <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-white">Lancamentos de Comissao</h2>
+          <div className="flex gap-4 text-sm">
+            <span className="text-amber-400 font-medium">
+              Pendente: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                lancamentos.filter((l) => l.status === 'pendente').reduce((s, l) => s + l.valor_comissao, 0)
+              )}
+            </span>
+            <span className="text-emerald-400 font-medium">
+              Pago: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                lancamentos.filter((l) => l.status === 'pago').reduce((s, l) => s + l.valor_comissao, 0)
+              )}
+            </span>
+          </div>
+        </div>
+        {lancamentos.length === 0 ? (
+          <p className="text-slate-500 text-sm">Nenhum lancamento de comissao ainda (gerado quando um servico e concluido e a entrega e confirmada).</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-700 text-slate-400 text-xs uppercase">
+                  <th className="text-left py-2 pr-4">Data</th>
+                  <th className="text-right py-2 pr-4">Valor do servico</th>
+                  <th className="text-right py-2 pr-4">Taxa</th>
+                  <th className="text-right py-2 pr-4">Comissao</th>
+                  <th className="text-left py-2 pr-4">Status</th>
+                  <th className="text-left py-2">Acao</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-700">
+                {lancamentos.map((l) => (
+                  <tr key={l.id}>
+                    <td className="py-2 pr-4 text-slate-300">{new Date(l.created_at).toLocaleDateString('pt-BR')}</td>
+                    <td className="py-2 pr-4 text-right text-white">
+                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(l.valor_servico)}
+                    </td>
+                    <td className="py-2 pr-4 text-right text-slate-300">{(l.taxa_aplicada * 100).toFixed(1)}%</td>
+                    <td className="py-2 pr-4 text-right text-white font-medium">
+                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(l.valor_comissao)}
+                    </td>
+                    <td className="py-2 pr-4">
+                      <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${
+                        l.status === 'pago' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
+                      }`}>
+                        {l.status}
+                      </span>
+                    </td>
+                    <td className="py-2">
+                      <button
+                        onClick={() => handleMarcarPago(l.id, l.status === 'pago' ? 'pendente' : 'pago')}
+                        disabled={marcandoPagoId === l.id}
+                        className="text-blue-400 hover:text-blue-300 text-xs font-medium disabled:opacity-50"
+                      >
+                        {l.status === 'pago' ? 'Marcar pendente' : 'Marcar como pago'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Recent solicitacoes */}

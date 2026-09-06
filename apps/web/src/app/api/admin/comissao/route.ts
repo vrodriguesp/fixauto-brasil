@@ -6,19 +6,28 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-// GET: list all comissao_config with oficina info
+// GET: list ALL oficinas with their comissao config (if any) and lancamento totals.
+// Note: comissao_config rows only exist for oficinas whose rate was manually
+// overridden - starting from that table hid every oficina still on the default
+// rate, even ones with real pending/paid commission.
 export async function GET() {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('comissao_config')
-      .select('*, oficina:oficinas(id, nome_fantasia, cidade, estado, ativa)')
-      .order('created_at', { ascending: false });
+    const { data: oficinas, error } = await supabaseAdmin
+      .from('oficinas')
+      .select('id, nome_fantasia, cidade, estado, ativa')
+      .order('nome_fantasia');
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Also get aggregated lancamento data per oficina
+    const { data: configs } = await supabaseAdmin
+      .from('comissao_config')
+      .select('*');
+
+    const configByOficina: Record<string, { id: string; taxa_padrao: number; taxa_fixa_override: number | null; usa_override: boolean }> = {};
+    (configs || []).forEach((c) => { configByOficina[c.oficina_id] = c; });
+
     const { data: lancamentos } = await supabaseAdmin
       .from('comissao_lancamento')
       .select('oficina_id, valor_comissao, status');
@@ -35,11 +44,19 @@ export async function GET() {
       }
     });
 
-    const result = (data || []).map((config) => ({
-      ...config,
-      total_pendente: aggregates[config.oficina_id]?.total_pendente || 0,
-      total_pago: aggregates[config.oficina_id]?.total_pago || 0,
-    }));
+    const result = (oficinas || []).map((ofi) => {
+      const config = configByOficina[ofi.id];
+      return {
+        id: config?.id || null,
+        oficina_id: ofi.id,
+        taxa_padrao: config?.taxa_padrao ?? 0.10,
+        taxa_fixa_override: config?.taxa_fixa_override ?? null,
+        usa_override: config?.usa_override ?? false,
+        total_pendente: aggregates[ofi.id]?.total_pendente || 0,
+        total_pago: aggregates[ofi.id]?.total_pago || 0,
+        oficina: ofi,
+      };
+    });
 
     return NextResponse.json(result);
   } catch (error) {
@@ -51,10 +68,30 @@ export async function GET() {
   }
 }
 
-// PATCH: update comissao_config for an oficina
+// PATCH: update comissao_config for an oficina, OR mark a comissao_lancamento as pago
+// (pass lancamento_id + status to mark a single commission entry as paid)
 export async function PATCH(req: NextRequest) {
   try {
-    const { oficina_id, taxa_fixa_override, usa_override } = await req.json();
+    const body = await req.json();
+
+    if (body.lancamento_id) {
+      const { data, error } = await supabaseAdmin
+        .from('comissao_lancamento')
+        .update({
+          status: body.status,
+          pago_em: body.status === 'pago' ? new Date().toISOString() : null,
+        })
+        .eq('id', body.lancamento_id)
+        .select()
+        .single();
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      return NextResponse.json(data);
+    }
+
+    const { oficina_id, taxa_fixa_override, usa_override } = body;
 
     if (!oficina_id) {
       return NextResponse.json({ error: 'oficina_id obrigatorio' }, { status: 400 });

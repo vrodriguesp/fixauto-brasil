@@ -77,10 +77,7 @@ export default function AdminComissoesPage() {
       {configs.length === 0 ? (
         <div className="bg-slate-800 rounded-xl border border-slate-700 p-12 text-center">
           <p className="text-slate-400">
-            Nenhuma configuracao de comissao encontrada.
-          </p>
-          <p className="text-slate-500 text-sm mt-2">
-            As configuracoes sao criadas automaticamente ao ajustar a taxa de uma oficina.
+            Nenhuma oficina cadastrada ainda.
           </p>
         </div>
       ) : (

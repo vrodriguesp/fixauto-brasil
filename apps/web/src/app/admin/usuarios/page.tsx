@@ -4,8 +4,14 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Profile } from '@fixauto/shared';
 
+interface OficinaVinculo {
+  nome: string;
+  papel: 'dono' | 'funcionario';
+}
+
 export default function AdminUsuariosPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [oficinaPorProfile, setOficinaPorProfile] = useState<Record<string, OficinaVinculo>>({});
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -23,6 +29,24 @@ export default function AdminUsuariosPage() {
 
       const { data } = await query.limit(100);
       setProfiles((data as Profile[]) || []);
+
+      // Map each profile to the oficina it owns or works for
+      const [{ data: oficinas }, { data: funcionarios }] = await Promise.all([
+        supabase.from('oficinas').select('profile_id, nome_fantasia'),
+        supabase.from('funcionarios').select('profile_id, oficina:oficinas(nome_fantasia)'),
+      ]);
+
+      const map: Record<string, OficinaVinculo> = {};
+      (oficinas || []).forEach((o) => {
+        map[o.profile_id] = { nome: o.nome_fantasia, papel: 'dono' };
+      });
+      (funcionarios || []).forEach((f: any) => {
+        if (!map[f.profile_id] && f.oficina?.nome_fantasia) {
+          map[f.profile_id] = { nome: f.oficina.nome_fantasia, papel: 'funcionario' };
+        }
+      });
+      setOficinaPorProfile(map);
+
       setLoading(false);
     }
 
@@ -78,6 +102,9 @@ export default function AdminUsuariosPage() {
                   Tipo
                 </th>
                 <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
+                  Oficina
+                </th>
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                   Cadastro
                 </th>
               </tr>
@@ -106,6 +133,16 @@ export default function AdminUsuariosPage() {
                       {profile.tipo}
                     </span>
                   </td>
+                  <td className="px-6 py-4 text-sm">
+                    {oficinaPorProfile[profile.id] ? (
+                      <span className="text-slate-300">
+                        {oficinaPorProfile[profile.id].papel === 'dono' ? 'Dono de ' : 'Pertence à '}
+                        <span className="text-white font-medium">{oficinaPorProfile[profile.id].nome}</span>
+                      </span>
+                    ) : (
+                      <span className="text-slate-600">-</span>
+                    )}
+                  </td>
                   <td className="px-6 py-4 text-slate-400 text-sm">
                     {new Date(profile.created_at).toLocaleDateString('pt-BR')}
                   </td>
@@ -113,7 +150,7 @@ export default function AdminUsuariosPage() {
               ))}
               {profiles.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
                     Nenhum usuario encontrado
                   </td>
                 </tr>

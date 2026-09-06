@@ -57,32 +57,46 @@ export async function POST(req: NextRequest) {
           .single();
 
         if (orc) {
-          // Get or calculate commission rate
-          let taxa = 0.10; // default 10%
-          const { data: config } = await supabaseAdmin
-            .from('comissao_config')
-            .select('taxa_calculada, taxa_fixa_override, usa_override')
-            .eq('oficina_id', orc.oficina_id)
+          // Avoid double-charging commission if this endpoint runs twice for the same orcamento
+          const { data: jaLancado } = await supabaseAdmin
+            .from('comissao_lancamento')
+            .select('id')
+            .eq('orcamento_id', orc.id)
             .single();
 
-          if (config) {
-            taxa = config.usa_override && config.taxa_fixa_override != null
-              ? config.taxa_fixa_override
-              : config.taxa_calculada;
-          }
+          if (!jaLancado) {
+            // Get or calculate commission rate
+            let taxa = 0.10; // default 10%
+            const { data: config } = await supabaseAdmin
+              .from('comissao_config')
+              .select('taxa_padrao, taxa_fixa_override, usa_override')
+              .eq('oficina_id', orc.oficina_id)
+              .single();
 
-          // Insert commission entry
-          await supabaseAdmin.from('comissao_lancamento').insert({
-            oficina_id: orc.oficina_id,
-            solicitacao_id: solicitacaoId,
-            orcamento_id: orc.id,
-            valor_servico: orc.valor_total,
-            taxa_aplicada: taxa,
-            valor_comissao: Math.round(orc.valor_total * taxa * 100) / 100,
-            status: 'pendente',
-          });
+            if (config) {
+              taxa = config.usa_override && config.taxa_fixa_override != null
+                ? config.taxa_fixa_override
+                : config.taxa_padrao;
+            }
+
+            // Insert commission entry
+            const { error: comissaoError } = await supabaseAdmin.from('comissao_lancamento').insert({
+              oficina_id: orc.oficina_id,
+              orcamento_id: orc.id,
+              valor_servico: orc.valor_total,
+              taxa_aplicada: taxa,
+              valor_comissao: Math.round(orc.valor_total * taxa * 100) / 100,
+              status: 'pendente',
+            });
+
+            if (comissaoError) {
+              console.error('[confirmar-entrega] Falha ao registrar comissao:', comissaoError.message);
+            }
+          }
         }
-      } catch { /* non-blocking */ }
+      } catch (err) {
+        console.error('[confirmar-entrega] Erro ao registrar comissao:', err);
+      }
     }
 
     return NextResponse.json({ success: true });
