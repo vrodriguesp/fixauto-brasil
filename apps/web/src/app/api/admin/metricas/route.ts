@@ -25,10 +25,12 @@ export async function GET() {
       .select('*', { count: 'exact', head: true })
       .eq('tipo', 'cliente');
 
+    // Count actual oficina businesses, not profiles with tipo='oficina' -
+    // that also includes funcionarios (employees), who are profiles of
+    // tipo 'oficina' too but don't each represent a separate business.
     const { count: totalOficinas } = await supabaseAdmin
-      .from('profiles')
-      .select('*', { count: 'exact', head: true })
-      .eq('tipo', 'oficina');
+      .from('oficinas')
+      .select('*', { count: 'exact', head: true });
 
     // Solicitacoes this month
     const { count: solicitacoesMes } = await supabaseAdmin

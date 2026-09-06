@@ -44,7 +44,7 @@ export function useAvaliacoes(oficinaId?: string) {
   // submitting a review isn't the oficina owner - RLS blocks a direct
   // client-side update of the oficinas row.
   const updateOficinaRating = async (oficinaId: string) => {
-    await fetch('/api/atualizar-avaliacao-oficina', {
+    await window.fetch('/api/atualizar-avaliacao-oficina', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ oficinaId }),
