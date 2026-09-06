@@ -1,17 +1,19 @@
 'use client';
 
 import { supabase } from '@/lib/supabase';
+import { compressImage } from '@/lib/image-compress';
 
 const BUCKET = 'damage-photos';
 
 export function useStorage() {
   const uploadPhoto = async (file: File, folder: string): Promise<string | null> => {
-    const ext = file.name.split('.').pop();
+    const compressed = await compressImage(file);
+    const ext = compressed.name.split('.').pop();
     const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
     const { error } = await supabase.storage
       .from(BUCKET)
-      .upload(fileName, file, { contentType: file.type });
+      .upload(fileName, compressed, { contentType: compressed.type });
 
     if (error) {
       console.error('Upload error:', error);

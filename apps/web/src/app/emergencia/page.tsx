@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import { compressImage } from '@/lib/image-compress';
 
 export default function EmergenciaPage() {
   const router = useRouter();
@@ -75,16 +76,18 @@ export default function EmergenciaPage() {
     }
   }, []);
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    const newFotos = Array.from(files).map((file) => ({
+    const picked = Array.from(files);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (cameraInputRef.current) cameraInputRef.current.value = '';
+    const compressed = await Promise.all(picked.map(compressImage));
+    const newFotos = compressed.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
     }));
     setFotos((prev) => [...prev, ...newFotos]);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-    if (cameraInputRef.current) cameraInputRef.current.value = '';
   };
 
   const removePhoto = (index: number) => {

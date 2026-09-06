@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import { compressImage } from '@/lib/image-compress';
 import { TIPOS_SERVICO, ESTADOS_BRASIL } from '@fixauto/shared';
 
 export default function PerfilOficinaPage() {
@@ -80,11 +81,12 @@ export default function PerfilOficinaPage() {
     const file = e.target.files?.[0];
     if (!file || !oficina) return;
     setUploadingLogo(true);
-    const ext = file.name.split('.').pop() || 'jpg';
+    const compressed = await compressImage(file);
+    const ext = compressed.name.split('.').pop() || 'jpg';
     const fileName = `oficinas/${oficina.id}/logo.${ext}`;
     const { data: uploadData } = await supabase.storage
       .from('damage-photos')
-      .upload(fileName, file, { contentType: file.type, upsert: true });
+      .upload(fileName, compressed, { contentType: compressed.type, upsert: true });
     if (uploadData?.path) {
       const { data: urlData } = supabase.storage.from('damage-photos').getPublicUrl(uploadData.path);
       setLogoUrl(urlData.publicUrl);
@@ -117,11 +119,12 @@ export default function PerfilOficinaPage() {
     setUploadingPhoto(true);
 
     for (const file of Array.from(files)) {
-      const ext = file.name.split('.').pop() || 'jpg';
+      const compressed = await compressImage(file);
+      const ext = compressed.name.split('.').pop() || 'jpg';
       const fileName = `oficinas/${oficina.id}/${Date.now()}.${ext}`;
       const { data: uploadData } = await supabase.storage
         .from('damage-photos')
-        .upload(fileName, file, { contentType: file.type });
+        .upload(fileName, compressed, { contentType: compressed.type });
 
       if (uploadData?.path) {
         const { data: urlData } = supabase.storage

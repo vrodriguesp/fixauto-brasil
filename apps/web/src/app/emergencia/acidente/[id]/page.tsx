@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
+import { compressImage } from '@/lib/image-compress';
 
 interface Mensagem {
   id: string;
@@ -187,15 +188,17 @@ export default function AcidenteRegistroPage() {
     return () => { supabase.removeChannel(channel); };
   }, [emergenciaId]);
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    const newFotos = Array.from(files).map((file) => ({
+    const picked = Array.from(files);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    const compressed = await Promise.all(picked.map(compressImage));
+    const newFotos = compressed.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
     }));
     setFotosOutro((prev) => [...prev, ...newFotos]);
-    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleRegister = async () => {
