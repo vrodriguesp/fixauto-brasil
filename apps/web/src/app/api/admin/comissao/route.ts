@@ -6,6 +6,9 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+// Commission data changes constantly - never let Next.js cache this route's response
+export const dynamic = 'force-dynamic';
+
 // GET: list ALL oficinas with their comissao config (if any) and lancamento totals.
 // Note: comissao_config rows only exist for oficinas whose rate was manually
 // overridden - starting from that table hid every oficina still on the default
