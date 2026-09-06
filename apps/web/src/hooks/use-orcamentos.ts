@@ -2,6 +2,7 @@
 
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
+import { cleanDescricao } from '@/lib/utils';
 import type { OrcamentoItem } from '@fixauto/shared';
 
 interface CreateOrcamentoInput {
@@ -180,7 +181,7 @@ export function useOrcamentos() {
       await supabase.from('mensagens').insert({
         solicitacao_id: input.solicitacao_id,
         remetente_id: oficina.profile_id,
-        texto: `📋 Orçamento revisado (Revisão #${input.revisao_numero})\n💰 Valor: R$ ${input.valor_total.toFixed(2).replace('.', ',')}\n📅 Prazo: ${input.prazo_dias} dias\n${input.observacoes ? '📝 ' + input.observacoes : ''}`,
+        texto: `📋 Orçamento revisado (Revisão #${input.revisao_numero})\n💰 Valor: R$ ${input.valor_total.toFixed(2).replace('.', ',')}\n📅 Prazo: ${input.prazo_dias} dias\n${cleanDescricao(input.observacoes) ? '📝 ' + cleanDescricao(input.observacoes) : ''}`,
       });
     } catch { /* non-blocking */ }
 

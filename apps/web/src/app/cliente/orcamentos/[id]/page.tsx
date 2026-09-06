@@ -574,9 +574,9 @@ export default function OrcamentoDetalhePage() {
                 </div>
               )}
 
-              {orc.observacoes && (
+              {cleanDescricao(orc.observacoes) && (
                 <p className="text-sm text-gray-600 mb-4">
-                  <strong>Observações:</strong> {orc.observacoes}
+                  <strong>Observações:</strong> {cleanDescricao(orc.observacoes)}
                 </p>
               )}
 
