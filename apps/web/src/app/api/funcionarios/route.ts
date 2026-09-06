@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { sendFuncionarioNovaSenhaEmail } from '@/lib/notifications';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
+
+function gerarSenhaTemporaria(): string {
+  const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#$&';
+  let senha = '';
+  for (let i = 0; i < 8; i++) senha += chars[Math.floor(Math.random() * chars.length)];
+  return senha;
+}
 
 // POST: Create a new funcionario with nome, email, senha temporária
 export async function POST(req: NextRequest) {
@@ -85,24 +93,73 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// PATCH: Update funcionario (toggle ativo, change cargo, primeiro_login)
+// PATCH: Update funcionario (toggle ativo, change cargo, primeiro_login,
+// dados pessoais via profiles, ou gerar nova senha temporária)
 export async function PATCH(req: NextRequest) {
   try {
-    const { id, ...updates } = await req.json();
+    const { id, nome, telefone, resetSenha, ...funcUpdates } = await req.json();
     if (!id) {
       return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 });
     }
 
-    const { error } = await supabaseAdmin
+    const { data: func } = await supabaseAdmin
       .from('funcionarios')
-      .update(updates)
-      .eq('id', id);
+      .select('*, profile:profiles(id, nome, email), oficina:oficinas(nome_fantasia)')
+      .eq('id', id)
+      .single();
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (!func) {
+      return NextResponse.json({ error: 'Funcionário não encontrado' }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true });
+    // Update personal data on profiles
+    if (nome !== undefined || telefone !== undefined) {
+      const profileUpdates: Record<string, string> = {};
+      if (nome !== undefined) profileUpdates.nome = nome;
+      if (telefone !== undefined) profileUpdates.telefone = telefone;
+      const { error: profileError } = await supabaseAdmin
+        .from('profiles')
+        .update(profileUpdates)
+        .eq('id', func.profile_id);
+      if (profileError) {
+        return NextResponse.json({ error: profileError.message }, { status: 500 });
+      }
+    }
+
+    // Generate a new temporary password and force change on next login
+    let novaSenha: string | undefined;
+    if (resetSenha) {
+      novaSenha = gerarSenhaTemporaria();
+      const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(func.profile_id, {
+        password: novaSenha,
+      });
+      if (authError) {
+        return NextResponse.json({ error: authError.message }, { status: 500 });
+      }
+      funcUpdates.primeiro_login = true;
+
+      if (func.profile?.email) {
+        await sendFuncionarioNovaSenhaEmail({
+          toEmail: func.profile.email,
+          toName: func.profile.nome || 'Funcionário',
+          oficinaNome: func.oficina?.nome_fantasia || 'Sua oficina',
+          novaSenha,
+        }).catch(() => {});
+      }
+    }
+
+    // Update role/status/specialty fields on funcionarios
+    if (Object.keys(funcUpdates).length > 0) {
+      const { error } = await supabaseAdmin
+        .from('funcionarios')
+        .update(funcUpdates)
+        .eq('id', id);
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+    }
+
+    return NextResponse.json({ success: true, novaSenha });
   } catch (err) {
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }

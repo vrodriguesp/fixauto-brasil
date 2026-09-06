@@ -22,6 +22,12 @@ export default function EquipePage() {
     especialidade: '',
   });
 
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ nome: '', telefone: '', especialidade: '' });
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [resettingId, setResettingId] = useState<string | null>(null);
+  const [novaSenhaGerada, setNovaSenhaGerada] = useState<{ nome: string; senha: string } | null>(null);
+
   const fetchFuncionarios = async () => {
     if (!oficina) return;
     const { data } = await supabase
@@ -88,6 +94,49 @@ export default function EquipePage() {
     await fetchFuncionarios();
   };
 
+  const startEdit = (func: Funcionario & { profile?: { nome: string; email: string; telefone: string | null } }) => {
+    setEditingId(func.id);
+    setEditForm({
+      nome: func.profile?.nome || '',
+      telefone: func.profile?.telefone || '',
+      especialidade: func.especialidade || '',
+    });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingId) return;
+    setSavingEdit(true);
+    await fetch('/api/funcionarios', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: editingId,
+        nome: editForm.nome,
+        telefone: editForm.telefone || null,
+        especialidade: editForm.especialidade || null,
+      }),
+    });
+    setSavingEdit(false);
+    setEditingId(null);
+    await fetchFuncionarios();
+  };
+
+  const handleResetSenha = async (func: Funcionario & { profile?: { nome: string; email: string; telefone: string | null } }) => {
+    if (!confirm(`Gerar uma nova senha temporária para ${func.profile?.nome || 'este funcionário'}? A senha atual deixará de funcionar.`)) return;
+    setResettingId(func.id);
+    const res = await fetch('/api/funcionarios', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: func.id, resetSenha: true }),
+    });
+    const data = await res.json();
+    setResettingId(null);
+    if (data.novaSenha) {
+      setNovaSenhaGerada({ nome: func.profile?.nome || 'Funcionário', senha: data.novaSenha });
+    }
+    await fetchFuncionarios();
+  };
+
   const handleDelete = async (func: Funcionario) => {
     if (!confirm(`Remover ${func.profile?.nome || 'funcionário'}?`)) return;
     await fetch('/api/funcionarios', {
@@ -111,6 +160,21 @@ export default function EquipePage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {novaSenhaGerada && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4" onClick={() => setNovaSenhaGerada(null)}>
+          <div className="bg-white rounded-xl p-6 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-semibold text-gray-900 mb-2">Nova senha gerada</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              Enviamos por e-mail para <strong>{novaSenhaGerada.nome}</strong>, mas você também pode repassar direto:
+            </p>
+            <div className="bg-sky-50 border border-sky-200 rounded-lg p-3 text-center mb-4">
+              <span className="text-xl font-mono tracking-wider text-sky-900">{novaSenhaGerada.senha}</span>
+            </div>
+            <p className="text-xs text-gray-500 mb-4">No próximo login, a pessoa será solicitada a escolher uma nova senha.</p>
+            <button onClick={() => setNovaSenhaGerada(null)} className="btn-primary w-full">Fechar</button>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Equipe</h1>
@@ -213,6 +277,46 @@ export default function EquipePage() {
               key={func.id}
               className={`card flex flex-col sm:flex-row sm:items-center gap-4 ${!func.ativo ? 'opacity-60' : ''}`}
             >
+              {editingId === func.id ? (
+                <div className="flex-1 grid sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Nome</label>
+                    <input
+                      type="text"
+                      className="input-field !py-1.5"
+                      value={editForm.nome}
+                      onChange={(e) => setEditForm({ ...editForm, nome: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Telefone</label>
+                    <input
+                      type="text"
+                      className="input-field !py-1.5"
+                      value={editForm.telefone}
+                      onChange={(e) => setEditForm({ ...editForm, telefone: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Especialidade</label>
+                    <input
+                      type="text"
+                      className="input-field !py-1.5"
+                      value={editForm.especialidade}
+                      onChange={(e) => setEditForm({ ...editForm, especialidade: e.target.value })}
+                    />
+                  </div>
+                  <div className="sm:col-span-3 flex justify-end gap-2">
+                    <button onClick={() => setEditingId(null)} className="btn-secondary !py-1.5 !px-3 text-sm">
+                      Cancelar
+                    </button>
+                    <button onClick={handleSaveEdit} disabled={savingEdit} className="btn-primary !py-1.5 !px-3 text-sm disabled:opacity-50">
+                      {savingEdit ? 'Salvando...' : 'Salvar'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+              <>
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                   func.cargo === 'admin' ? 'bg-emerald-100' : 'bg-blue-100'
@@ -266,6 +370,19 @@ export default function EquipePage() {
                   {func.ativo ? 'Desativar' : 'Ativar'}
                 </button>
                 <button
+                  onClick={() => startEdit(func)}
+                  className="px-3 py-1 text-xs rounded-lg font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
+                >
+                  Editar
+                </button>
+                <button
+                  onClick={() => handleResetSenha(func)}
+                  disabled={resettingId === func.id}
+                  className="px-3 py-1 text-xs rounded-lg font-medium bg-sky-100 text-sky-800 hover:bg-sky-200 disabled:opacity-50"
+                >
+                  {resettingId === func.id ? 'Gerando...' : 'Gerar nova senha'}
+                </button>
+                <button
                   onClick={() => handleDelete(func)}
                   className="p-1 text-gray-400 hover:text-red-500"
                 >
@@ -274,6 +391,8 @@ export default function EquipePage() {
                   </svg>
                 </button>
               </div>
+              </>
+              )}
             </div>
           ))}
         </div>

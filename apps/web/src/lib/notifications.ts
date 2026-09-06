@@ -75,6 +75,51 @@ export async function sendAccidentNotificationEmail(params: {
   }
 }
 
+export async function sendFuncionarioNovaSenhaEmail(params: {
+  toEmail: string;
+  toName: string;
+  oficinaNome: string;
+  novaSenha: string;
+}) {
+  if (!resend) {
+    console.warn('[Notifications] Resend not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: params.toEmail,
+      subject: `${params.oficinaNome} redefiniu sua senha - BipFix`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #0c4a6e; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <p>Olá <strong>${params.toName}</strong>,</p>
+            <p><strong>${params.oficinaNome}</strong> gerou uma nova senha temporária para sua conta.</p>
+            <div style="background: #f0f9ff; border: 2px solid #0ea5e9; border-radius: 8px; padding: 16px; margin: 20px 0;">
+              <p style="margin: 0 0 8px; font-size: 14px; color: #0c4a6e; font-weight: bold;">Sua senha temporária:</p>
+              <p style="margin: 0; font-size: 20px; letter-spacing: 3px;"><strong>${params.novaSenha}</strong></p>
+            </div>
+            <p style="font-size: 13px; color: #6b7280;">No próximo login, você será solicitado a escolher uma nova senha.</p>
+            <p style="margin-top: 20px;">
+              <a href="${SITE_URL}/login" style="display: inline-block; background: #0284c7; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">Acessar minha conta</a>
+            </p>
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+            <p style="font-size: 12px; color: #9ca3af;">Equipe BipFix</p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (err) {
+    console.error('[Notifications] Email error:', err);
+    return { success: false, error: (err as Error).message };
+  }
+}
+
 export async function sendQuoteNotificationEmail(params: {
   toEmail: string;
   toName: string;
