@@ -39,19 +39,16 @@ export function useAvaliacoes(oficinaId?: string) {
 
   useEffect(() => { fetch(); }, [fetch]);
 
-  // Recalculate and update oficina rating after any review change
+  // Recalculate and update oficina rating after any review change.
+  // Goes through a server route (service role key) because a cliente
+  // submitting a review isn't the oficina owner - RLS blocks a direct
+  // client-side update of the oficinas row.
   const updateOficinaRating = async (oficinaId: string) => {
-    const { data: allReviews } = await supabase
-      .from('avaliacoes')
-      .select('nota')
-      .eq('oficina_id', oficinaId);
-    if (allReviews && allReviews.length > 0) {
-      const media = allReviews.reduce((sum, r) => sum + r.nota, 0) / allReviews.length;
-      await supabase.from('oficinas').update({
-        avaliacao_media: Math.round(media * 10) / 10,
-        total_avaliacoes: allReviews.length,
-      }).eq('id', oficinaId);
-    }
+    await fetch('/api/atualizar-avaliacao-oficina', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ oficinaId }),
+    }).catch(() => {});
   };
 
   const create = async (input: { solicitacao_id: string; oficina_id: string; nota: number; comentario?: string }) => {
