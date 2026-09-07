@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { recalcularComissaoConfig } from '@/lib/comissao';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -65,19 +66,10 @@ export async function POST(req: NextRequest) {
             .single();
 
           if (!jaLancado) {
-            // Get or calculate commission rate
-            let taxa = 0.10; // default 10%
-            const { data: config } = await supabaseAdmin
-              .from('comissao_config')
-              .select('taxa_padrao, taxa_fixa_override, usa_override')
-              .eq('oficina_id', orc.oficina_id)
-              .single();
-
-            if (config) {
-              taxa = config.usa_override && config.taxa_fixa_override != null
-                ? config.taxa_fixa_override
-                : config.taxa_padrao;
-            }
+            // Taxa por performance (resposta/revisoes/avaliacao) + volume
+            // dos ultimos 90 dias, a nao ser que o admin tenha fixado uma
+            // taxa manual pra essa oficina
+            const { taxa } = await recalcularComissaoConfig(supabaseAdmin, orc.oficina_id);
 
             // Insert commission entry
             const { error: comissaoError } = await supabaseAdmin.from('comissao_lancamento').insert({
@@ -91,6 +83,9 @@ export async function POST(req: NextRequest) {
 
             if (comissaoError) {
               console.error('[confirmar-entrega] Falha ao registrar comissao:', comissaoError.message);
+            } else {
+              // Atualiza o cache de comissao_config pra refletir o novo total
+              await recalcularComissaoConfig(supabaseAdmin, orc.oficina_id);
             }
           }
         }

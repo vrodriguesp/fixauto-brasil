@@ -54,7 +54,7 @@ export default function ComissaoPage() {
 
   const taxa = config
     ? (config.usa_override && config.taxa_fixa_override != null ? config.taxa_fixa_override : config.taxa_calculada)
-    : 0.10;
+    : COMISSAO_CONFIG.TAXA_BASE;
 
   const totalPendente = lancamentos.filter(l => l.status === 'pendente').reduce((s, l) => s + l.valor_comissao, 0);
   const totalPago = lancamentos.filter(l => l.status === 'pago').reduce((s, l) => s + l.valor_comissao, 0);
@@ -87,6 +87,14 @@ export default function ComissaoPage() {
       items.push({ label: 'Boa avaliação (≥ 4.0)', bonus: C.BONUS_AVALIACAO_4_0, value: config.media_avaliacao_clientes.toFixed(1), color: 'green' });
     } else {
       items.push({ label: 'Avaliação dos clientes', bonus: 0, value: config.media_avaliacao_clientes > 0 ? config.media_avaliacao_clientes.toFixed(1) : 'N/A', color: 'gray' });
+    }
+
+    if (config.total_servicos_concluidos >= 25) {
+      items.push({ label: 'Fidelidade (≥ 25 serviços/90d)', bonus: 0.02, value: `${config.total_servicos_concluidos}`, color: 'green' });
+    } else if (config.total_servicos_concluidos >= 10) {
+      items.push({ label: 'Fidelidade (≥ 10 serviços/90d)', bonus: 0.01, value: `${config.total_servicos_concluidos}`, color: 'green' });
+    } else {
+      items.push({ label: 'Fidelidade (volume/90d)', bonus: 0, value: `${config.total_servicos_concluidos}`, color: 'gray' });
     }
 
     return items;

@@ -49,8 +49,17 @@ export default function EnviarOrcamentoPage() {
     }
   }, [params.id]);
 
-  // Commission handling
+  // Commission handling - taxa efetiva considera o tier de fidelidade/volume
   const [comissaoModo, setComissaoModo] = useState<'absorver' | 'repassar'>('absorver');
+  const [comissaoInfo, setComissaoInfo] = useState<{ taxa: number; servicos90dias: number; origem: string } | null>(null);
+
+  useEffect(() => {
+    if (!oficina?.id) return;
+    fetch(`/api/comissao-atual?oficinaId=${oficina.id}`)
+      .then((res) => res.json())
+      .then((data) => { if (data.taxa != null) setComissaoInfo(data); })
+      .catch(() => {});
+  }, [oficina?.id]);
 
   // Availability slots
   const [slots, setSlots] = useState<{ data: string; turno: 'manha' | 'tarde' }[]>([
@@ -127,8 +136,10 @@ export default function EnviarOrcamentoPage() {
 
   const total = itens.reduce((acc, item) => acc + item.valor_unitario * item.quantidade, 0);
 
-  // Commission computed values (after total)
-  const COMISSAO_PERCENTUAL = 10; // BipFix commission percentage
+  // Commission computed values (after total) - taxa real da oficina (com
+  // desconto por fidelidade/volume, se aplicavel), com 10% como fallback
+  // enquanto a chamada a /api/comissao-atual nao volta
+  const COMISSAO_PERCENTUAL = comissaoInfo ? comissaoInfo.taxa * 100 : 10;
   const comissaoValor = total * (COMISSAO_PERCENTUAL / 100);
   const totalCliente = comissaoModo === 'repassar' ? total + comissaoValor : total;
 

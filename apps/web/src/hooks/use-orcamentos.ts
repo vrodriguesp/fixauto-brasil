@@ -77,6 +77,13 @@ export function useOrcamentos() {
       });
     }
 
+    // Tempo de resposta conta pra taxa de comissao - recalcula em background
+    fetch('/api/recalcular-comissao', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ oficinaId: oficina.id }),
+    }).catch(() => {});
+
     return { data: orc, error: null };
   };
 
@@ -184,6 +191,13 @@ export function useOrcamentos() {
         texto: `📋 Orçamento revisado (Revisão #${input.revisao_numero})\n💰 Valor: R$ ${input.valor_total.toFixed(2).replace('.', ',')}\n📅 Prazo: ${input.prazo_dias} dias\n${cleanDescricao(input.observacoes) ? '📝 ' + cleanDescricao(input.observacoes) : ''}`,
       });
     } catch { /* non-blocking */ }
+
+    // Revisoes de orcamento contam pra taxa de comissao - recalcula em background
+    fetch('/api/recalcular-comissao', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ oficinaId: oficina.id }),
+    }).catch(() => {});
 
     return { data: { id: orcamentoId }, error: null };
   };

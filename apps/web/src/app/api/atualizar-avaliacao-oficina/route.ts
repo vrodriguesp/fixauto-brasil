@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { recalcularComissaoConfig } from '@/lib/comissao';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -41,6 +42,9 @@ export async function POST(req: NextRequest) {
     if (updateError) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
+
+    // Avaliacao media afeta a taxa de comissao - recalcula junto
+    await recalcularComissaoConfig(supabaseAdmin, oficinaId).catch(() => {});
 
     return NextResponse.json({ success: true, avaliacao_media: media, total_avaliacoes: total });
   } catch (err) {

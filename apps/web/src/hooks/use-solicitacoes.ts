@@ -20,7 +20,7 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
         *,
         veiculo:veiculos(*),
         fotos:solicitacao_fotos(*),
-        cliente:profiles!solicitacoes_cliente_id_fkey(*),
+        cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo),
         orcamentos(
           *,
           itens:orcamento_itens(*),
@@ -52,7 +52,7 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
           *,
           veiculo:veiculos(*),
           fotos:solicitacao_fotos(*),
-          cliente:profiles!solicitacoes_cliente_id_fkey(*),
+          cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo),
           orcamentos(
             *,
             oficina:oficinas(*, profile:profiles(*)),
