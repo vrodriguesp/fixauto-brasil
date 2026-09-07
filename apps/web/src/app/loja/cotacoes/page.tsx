@@ -57,8 +57,14 @@ export default function LojaCotacoesPage() {
     });
 
     if (!error) {
-      // Marca a cotacao como respondida (nao impede outras lojas de tambem responder)
-      await supabase.from('cotacoes_pecas').update({ status: 'respondida' }).eq('id', cotacaoId).eq('status', 'aberta');
+      // Marca a cotacao como respondida (nao impede outras lojas de tambem
+      // responder). A loja nao e dona da cotacao, entao RLS bloqueia um
+      // update direto do client - precisa passar pela rota server-side.
+      await fetch('/api/marcar-cotacao-respondida', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cotacaoId }),
+      }).catch(() => {});
 
       // Notifica a oficina
       const cotacao = cotacoes.find((c) => c.id === cotacaoId);
