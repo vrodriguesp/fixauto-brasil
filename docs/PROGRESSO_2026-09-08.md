@@ -5,9 +5,11 @@ Log passo a passo do que foi feito nesta sessão, para retomar caso algo interro
 ## Tarefas pedidas
 1. [x] Melhorar layout do header/menu da área da oficina (estava "espremido")
 2. [x] Investigar e corrigir erro ao clicar em "Configurar perfil" a partir da página de Capacidade e Produtividade
-3. [ ] Testar tudo no navegador
-4. [ ] Deploy na VM (git pull + restart PM2)
-5. [ ] Criar documento detalhado explicando tudo que foi implementado na sessão anterior (retenção de oficinas, fases 1-5, etc.)
+3. [x] Testar tudo no navegador (produção, conta real "Oficina Bona")
+4. [x] Deploy na VM (git pull + build + restart PM2)
+5. [x] Criar documento detalhado explicando tudo que foi implementado na sessão anterior (retenção de oficinas, fases 1-5, etc.) → `docs/NOVIDADES_RETENCAO_OFICINAS.md`
+
+**Commit**: `d1a0f10` — já commitado, enviado ao GitHub (`git push`) e implantado na VM (build + `pm2 restart fixauto-brasil`), confirmado rodando em produção.
 
 ## Passo a passo
 
@@ -25,11 +27,12 @@ Log passo a passo do que foi feito nesta sessão, para retomar caso algo interro
   - Menu mobile (hambúrguer) não foi alterado — já lista tudo verticalmente, sem problema de espaço.
 - Build (`npm run build`) e `tsc --noEmit` passaram sem erros.
 
-### 3. Testes no navegador
-- Pendente.
+### 3. Testes no navegador (CONCLUÍDO)
+- Testado direto em produção (`https://www.bipfix.com`), usando a conta já logada da oficina real "Bona Car Repair" no Chrome do usuário (nenhum dado foi alterado, apenas navegação e cliques de leitura/abrir menus).
+- Confirmado: menu com dropdown "Mais" abre/fecha corretamente, item ativo fica destacado, `/oficina/capacidade` → clicar em "Perfil" no texto → `/oficina/perfil` carrega sem erro, botão "Compartilhar" (usa o hook corrigido) não quebra a página. Console do navegador sem erros.
 
-### 4. Deploy na VM
-- Pendente.
+### 4. Deploy na VM (CONCLUÍDO)
+- `git push origin master` (commit `d1a0f10`) → na VM: `git pull`, `npm run build` (passou sem erros) e `pm2 restart fixauto-brasil`. Confirmado processo online e servindo a versão nova.
 
-### 5. Documento de novidades implementadas
-- Pendente — vai ficar em `docs/NOVIDADES_RETENCAO_OFICINAS.md`.
+### 5. Documento de novidades implementadas (CONCLUÍDO)
+- Criado `docs/NOVIDADES_RETENCAO_OFICINAS.md` com a explicação detalhada de tudo que foi implementado na feature de retenção de oficinas (fases 1-5).
