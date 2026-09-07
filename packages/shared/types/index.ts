@@ -78,6 +78,7 @@ export interface Oficina {
   avaliacao_media: number;
   total_avaliacoes: number;
   ativa: boolean;
+  capacidade_servicos?: Record<string, number> | null;
   created_at: string;
   // Joined
   profile?: Profile;

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { oficinaTemCapacidade } from '@/lib/capacidade';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
     // Fetch oficinas within radius
     let { data: oficinas, error: oficinasError } = await supabaseAdmin
       .from('oficinas')
-      .select('id, profile_id, nome_fantasia, especialidades, latitude, longitude')
+      .select('id, profile_id, nome_fantasia, especialidades, latitude, longitude, capacidade_servicos')
       .gte('latitude', latitude - radiusLat)
       .lte('latitude', latitude + radiusLat)
       .gte('longitude', longitude - radiusLon)
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
     if (!oficinas || oficinas.length === 0) {
       const { data: allOficinas } = await supabaseAdmin
         .from('oficinas')
-        .select('id, profile_id, nome_fantasia, especialidades, latitude, longitude')
+        .select('id, profile_id, nome_fantasia, especialidades, latitude, longitude, capacidade_servicos')
         .eq('ativa', true)
         .limit(20);
       oficinas = allOficinas || [];
@@ -53,9 +54,18 @@ export async function POST(req: NextRequest) {
       );
     });
 
+    // Gestao de capacidade: despriorizar oficinas ja no limite pro tipo
+    // "colisao" (nao notificar quem ja esta sobrecarregado) - mas nunca
+    // deixar a emergencia sem NENHUMA oficina notificada por causa disso.
+    const comCapacidade = [];
+    for (const o of oficinasColisao) {
+      if (await oficinaTemCapacidade(supabaseAdmin, o, 'colisao')) comCapacidade.push(o);
+    }
+    const destinatarias = comCapacidade.length > 0 ? comCapacidade : oficinasColisao;
+
     let notificadasCount = 0;
 
-    for (const oficina of oficinasColisao) {
+    for (const oficina of destinatarias) {
       // Record in emergencia_oficinas_notificadas
       await supabaseAdmin.from('emergencia_oficinas_notificadas').insert({
         emergencia_id: emergenciaId,

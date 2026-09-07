@@ -64,6 +64,7 @@ export default function Navbar() {
                       <NavLink href="/oficina/solicitacoes">Solicitações</NavLink>
                       <NavLink href="/oficina/veiculos-em-servico">Oficina</NavLink>
                       <NavLink href="/oficina/agenda">Agenda</NavLink>
+                      <NavLink href="/oficina/capacidade">Capacidade</NavLink>
                       <NavLink href="/oficina/equipe">Equipe</NavLink>
                       <NavLink href="/oficina/comissao">Comissão</NavLink>
                       <NavLink href="/oficina/avaliacoes">Avaliações</NavLink>
@@ -161,6 +162,7 @@ export default function Navbar() {
                   <MobileNavLink href="/oficina/solicitacoes" onClick={() => setMenuOpen(false)}>Solicitações</MobileNavLink>
                   <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>Oficina</MobileNavLink>
                   <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>Agenda</MobileNavLink>
+                  <MobileNavLink href="/oficina/capacidade" onClick={() => setMenuOpen(false)}>Capacidade</MobileNavLink>
                   <MobileNavLink href="/oficina/equipe" onClick={() => setMenuOpen(false)}>Equipe</MobileNavLink>
                   <MobileNavLink href="/oficina/checkin" onClick={() => setMenuOpen(false)}>Check-in Manual</MobileNavLink>
                   <MobileNavLink href="/oficina/comissao" onClick={() => setMenuOpen(false)}>Comissão</MobileNavLink>
