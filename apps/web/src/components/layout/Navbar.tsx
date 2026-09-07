@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Navbar() {
   const { user, oficina, funcionario, loja, isLoggedIn, loading, signOut } = useAuth();
@@ -67,11 +67,15 @@ export default function Navbar() {
                       <NavLink href="/oficina/solicitacoes">Solicitações</NavLink>
                       <NavLink href="/oficina/veiculos-em-servico">Oficina</NavLink>
                       <NavLink href="/oficina/agenda">Agenda</NavLink>
-                      <NavLink href="/oficina/capacidade">Capacidade</NavLink>
-                      <NavLink href="/oficina/pecas">Peças</NavLink>
-                      <NavLink href="/oficina/equipe">Equipe</NavLink>
-                      <NavLink href="/oficina/comissao">Comissão</NavLink>
-                      <NavLink href="/oficina/avaliacoes">Avaliações</NavLink>
+                      <MoreNavDropdown
+                        items={[
+                          { href: '/oficina/capacidade', label: 'Capacidade' },
+                          { href: '/oficina/pecas', label: 'Peças' },
+                          { href: '/oficina/equipe', label: 'Equipe' },
+                          { href: '/oficina/comissao', label: 'Comissão' },
+                          { href: '/oficina/avaliacoes', label: 'Avaliações' },
+                        ]}
+                      />
                       <NavLink href="/oficina/perfil">Perfil</NavLink>
                     </>
                   )
@@ -210,10 +214,14 @@ export default function Navbar() {
 }
 
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  const pathname = usePathname();
+  const active = pathname === href || pathname?.startsWith(href + '/');
   return (
     <Link
       href={href}
-      className="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+      className={`px-2.5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+        active ? 'text-primary-700 bg-primary-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+      }`}
     >
       {children}
     </Link>
@@ -221,13 +229,77 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
 }
 
 function MobileNavLink({ href, children, onClick }: { href: string; children: React.ReactNode; onClick: () => void }) {
+  const pathname = usePathname();
+  const active = pathname === href || pathname?.startsWith(href + '/');
   return (
     <Link
       href={href}
       onClick={onClick}
-      className="block px-3 py-2 rounded-lg text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+      className={`block px-3 py-2 rounded-lg text-base font-medium ${
+        active ? 'text-primary-700 bg-primary-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+      }`}
     >
       {children}
     </Link>
+  );
+}
+
+function MoreNavDropdown({ items }: { items: { href: string; label: string }[] }) {
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const ref = useRef<HTMLDivElement>(null);
+  const hasActiveItem = items.some((i) => pathname === i.href || pathname?.startsWith(i.href + '/'));
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [open]);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className={`flex items-center gap-1 px-2.5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+          hasActiveItem ? 'text-primary-700 bg-primary-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+        }`}
+      >
+        Mais
+        <svg className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute left-0 top-full mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50">
+          {items.map((item) => {
+            const active = pathname === item.href || pathname?.startsWith(item.href + '/');
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className={`block px-4 py-2 text-sm ${
+                  active ? 'text-primary-700 bg-primary-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }

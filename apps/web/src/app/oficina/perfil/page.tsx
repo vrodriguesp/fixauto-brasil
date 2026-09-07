@@ -23,6 +23,7 @@ export default function PerfilOficinaPage() {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [copied, setCopied] = useState(false);
 
   // Sync state when oficina/user data loads
   const [logoUrl, setLogoUrl] = useState('');
@@ -211,8 +212,7 @@ export default function PerfilOficinaPage() {
     );
   }
 
-  const [copied, setCopied] = useState(false);
-  const publicUrl = oficina ? `${window.location.origin}/oficinas/${oficina.id}` : '';
+  const publicUrl = oficina && typeof window !== 'undefined' ? `${window.location.origin}/oficinas/${oficina.id}` : '';
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(publicUrl);
