@@ -11,6 +11,7 @@ const sidebarLinks = [
   { href: '/admin/oficinas', label: 'Oficinas', icon: BuildingIcon },
   { href: '/admin/comissoes', label: 'Comissoes', icon: CurrencyIcon },
   { href: '/admin/oficinas/performance-ruim', label: 'Performance Ruim', icon: AlertIcon },
+  { href: '/admin/monitoramento', label: 'Monitoramento', icon: MonitorIcon },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -130,6 +131,14 @@ function AlertIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+    </svg>
+  );
+}
+
+function MonitorIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
     </svg>
   );
 }

@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import { AuthProvider } from '@/lib/auth-context';
+import ErrorReporter from '@/components/ErrorReporter';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -70,6 +71,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className={inter.className}>
         <AuthProvider>
+          <ErrorReporter />
           <Navbar />
           <main className="min-h-[calc(100vh-4rem)]">
             {children}
