@@ -21,11 +21,14 @@ interface Oficina {
   latitude: number | null;
   longitude: number | null;
   especialidades: string[];
+  created_at: string;
   profile: {
     telefone: string | null;
     nome: string;
   } | null;
 }
+
+const TIERS_VOLUME = [500, 100, 50, 10];
 
 interface Avaliacao {
   id: string;
@@ -64,6 +67,7 @@ export default function OficinaPublicPage() {
   const [tempoMedioResposta, setTempoMedioResposta] = useState<number | null>(null);
   const [ajusteMedio, setAjusteMedio] = useState<number | null>(null);
   const [hasRevisions, setHasRevisions] = useState(false);
+  const [totalServicosConcluidos, setTotalServicosConcluidos] = useState(0);
 
   useEffect(() => {
     if (!id) return;
@@ -72,7 +76,7 @@ export default function OficinaPublicPage() {
       setLoading(true);
       setError(null);
 
-      const [oficinaRes, avaliacoesRes, fotosRes, orcamentosRes] = await Promise.all([
+      const [oficinaRes, avaliacoesRes, fotosRes, orcamentosRes, servicosRes] = await Promise.all([
         supabase
           .from('oficinas')
           .select('*, profile:profiles(*)')
@@ -92,7 +96,19 @@ export default function OficinaPublicPage() {
           .from('orcamentos')
           .select('created_at, valor_total, valor_original, revisao_numero, solicitacao:solicitacoes(created_at)')
           .eq('oficina_id', id),
+        // comissao_lancamento e restrito por RLS a propria oficina - pra
+        // contar "servicos concluidos" num perfil publico, conta orcamentos
+        // aceitos cuja solicitacao ja foi marcada concluida (ambas tabelas
+        // sao de leitura publica)
+        supabase
+          .from('orcamentos')
+          .select('id, solicitacao:solicitacoes!inner(status)', { count: 'exact', head: true })
+          .eq('oficina_id', id)
+          .eq('status', 'aceito')
+          .eq('solicitacao.status', 'concluida'),
       ]);
+
+      setTotalServicosConcluidos(servicosRes.count || 0);
 
       if (oficinaRes.error) {
         setError('Oficina nao encontrada.');
@@ -181,6 +197,11 @@ export default function OficinaPublicPage() {
   const lng = oficina.longitude;
   const hasCoords = lat !== null && lng !== null;
 
+  const parceiraDesde = oficina.created_at
+    ? new Date(oficina.created_at).toLocaleDateString('pt-BR', { month: '2-digit', year: 'numeric' })
+    : null;
+  const tierVolume = TIERS_VOLUME.find((t) => totalServicosConcluidos >= t);
+
   const autoRepairSchema = generateAutoRepairSchema(oficina);
   const reviewSchema = generateReviewSchema(oficina, avaliacoes);
 
@@ -216,6 +237,16 @@ export default function OficinaPublicPage() {
               {tempoMedioResposta !== null && tempoMedioResposta < 2 && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
                   ⚡ Resposta Rapida
+                </span>
+              )}
+              {tierVolume && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800">
+                  🔧 {tierVolume}+ servicos concluidos
+                </span>
+              )}
+              {parceiraDesde && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-700">
+                  Parceira desde {parceiraDesde}
                 </span>
               )}
               {hasRevisions && ajusteMedio !== null ? (
