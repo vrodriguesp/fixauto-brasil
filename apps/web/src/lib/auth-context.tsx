@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import type { Profile, Oficina, Funcionario } from '@fixauto/shared';
+import type { Profile, Oficina, Funcionario, LojaPecas } from '@fixauto/shared';
 import { supabase, isSupabaseConfigured } from './supabase';
 import type { User } from '@supabase/supabase-js';
 
@@ -9,10 +9,11 @@ interface AuthContextType {
   user: Profile | null;
   oficina: Oficina | null;
   funcionario: Funcionario | null;
+  loja: LojaPecas | null;
   authUser: User | null;
   isLoggedIn: boolean;
   loading: boolean;
-  signUp: (email: string, password: string, nome: string, telefone: string, tipo: 'cliente' | 'oficina') => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, nome: string, telefone: string, tipo: 'cliente' | 'oficina' | 'loja_pecas') => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -23,6 +24,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   oficina: null,
   funcionario: null,
+  loja: null,
   authUser: null,
   isLoggedIn: false,
   loading: true,
@@ -38,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Profile | null>(null);
   const [oficina, setOficina] = useState<Oficina | null>(null);
   const [funcionario, setFuncionario] = useState<Funcionario | null>(null);
+  const [loja, setLoja] = useState<LojaPecas | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = useCallback(async (userId: string) => {
@@ -78,6 +81,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setOficina(null);
         setFuncionario(null);
       }
+
+      if (profile.tipo === 'loja_pecas') {
+        const { data: lj } = await supabase
+          .from('lojas_pecas')
+          .select('*')
+          .eq('profile_id', userId)
+          .single();
+        setLoja(lj as LojaPecas | null);
+      } else {
+        setLoja(null);
+      }
     }
   }, []);
 
@@ -105,6 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
         setOficina(null);
         setFuncionario(null);
+        setLoja(null);
       }
     });
 
@@ -116,7 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string,
     nome: string,
     telefone: string,
-    tipo: 'cliente' | 'oficina'
+    tipo: 'cliente' | 'oficina' | 'loja_pecas'
   ) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) return { error: error.message };
@@ -161,6 +176,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setOficina(null);
     setFuncionario(null);
+    setLoja(null);
     setAuthUser(null);
   };
 
@@ -180,6 +196,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         oficina,
         funcionario,
+        loja,
         authUser,
         isLoggedIn: !!user,
         loading,

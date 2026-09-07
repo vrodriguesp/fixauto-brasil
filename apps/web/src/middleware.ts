@@ -30,7 +30,7 @@ export async function middleware(req: NextRequest) {
   const { data: { session } } = await supabase.auth.getSession();
 
   const path = req.nextUrl.pathname;
-  const isProtected = path.startsWith('/cliente') || path.startsWith('/oficina') || path.startsWith('/admin');
+  const isProtected = path.startsWith('/cliente') || path.startsWith('/oficina') || path.startsWith('/admin') || path.startsWith('/loja');
   const isAuthPage = path === '/login' || path === '/cadastro' || path === '/escolher-tipo';
 
   if (isProtected && !session) {
@@ -54,6 +54,11 @@ export async function middleware(req: NextRequest) {
     if (path.startsWith('/admin') && (!profile || profile.tipo !== 'admin')) {
       return NextResponse.redirect(new URL('/', req.url));
     }
+
+    // Loja route protection: verify user tipo is 'loja_pecas'
+    if (path.startsWith('/loja') && (!profile || profile.tipo !== 'loja_pecas')) {
+      return NextResponse.redirect(new URL('/', req.url));
+    }
   }
 
   if (isAuthPage && session) {
@@ -64,5 +69,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/cliente/:path*', '/oficina/:path*', '/admin/:path*', '/login', '/cadastro', '/escolher-tipo'],
+  matcher: ['/cliente/:path*', '/oficina/:path*', '/admin/:path*', '/loja/:path*', '/login', '/cadastro', '/escolher-tipo'],
 };

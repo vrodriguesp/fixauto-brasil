@@ -17,9 +17,9 @@ export default function CadastroPageWrapper() {
 
 function CadastroPage() {
   const searchParams = useSearchParams();
-  const tipoParam = searchParams.get('tipo') as 'cliente' | 'oficina' | null;
+  const tipoParam = searchParams.get('tipo') as 'cliente' | 'oficina' | 'loja_pecas' | null;
 
-  const [userType, setUserType] = useState<'cliente' | 'oficina' | null>(tipoParam);
+  const [userType, setUserType] = useState<'cliente' | 'oficina' | 'loja_pecas' | null>(tipoParam);
   const [step, setStep] = useState(tipoParam ? 2 : 1);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -46,7 +46,7 @@ function CadastroPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (tipoParam && (tipoParam === 'cliente' || tipoParam === 'oficina')) {
+    if (tipoParam && (tipoParam === 'cliente' || tipoParam === 'oficina' || tipoParam === 'loja_pecas')) {
       setUserType(tipoParam);
       setStep(2);
     }
@@ -95,12 +95,36 @@ function CadastroPage() {
       }
     }
 
+    // If loja de pecas, also create the loja record
+    if (tipo === 'loja_pecas') {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        const { error: lojaError } = await supabase.from('lojas_pecas').insert({
+          profile_id: authUser.id,
+          nome_fantasia: nomeFantasia || nome,
+          cnpj: cnpj || null,
+          endereco: endereco || 'A definir',
+          cidade: cidade || 'A definir',
+          estado: estado || 'SP',
+          cep: cep || '00000-000',
+          latitude: -23.5505,
+          longitude: -46.6333,
+          raio_atendimento_km: 30,
+        });
+        if (lojaError) {
+          setError(lojaError.message);
+          setLoading(false);
+          return;
+        }
+      }
+    }
+
     setLoading(false);
-    router.push(tipo === 'oficina' ? '/oficina/dashboard' : '/cliente/dashboard');
+    router.push(tipo === 'oficina' ? '/oficina/dashboard' : tipo === 'loja_pecas' ? '/loja/dashboard' : '/cliente/dashboard');
     router.refresh();
   };
 
-  const title = userType === 'oficina' ? 'Cadastro da Oficina' : userType === 'cliente' ? 'Cadastro do Motorista' : 'Criar Conta';
+  const title = userType === 'oficina' ? 'Cadastro da Oficina' : userType === 'loja_pecas' ? 'Cadastro da Loja de Peças' : userType === 'cliente' ? 'Cadastro do Motorista' : 'Criar Conta';
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
@@ -153,12 +177,28 @@ function CadastroPage() {
                   </div>
                 </div>
               </button>
+              <button
+                onClick={() => { setUserType('loja_pecas'); setStep(2); }}
+                className="w-full p-6 border-2 border-gray-200 rounded-xl hover:border-primary-500 hover:bg-primary-50 transition-all text-left group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-primary-100">
+                    <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">Sou Loja de Peças</p>
+                    <p className="text-sm text-gray-500">Quero vender peças e responder cotações de oficinas</p>
+                  </div>
+                </div>
+              </button>
             </div>
           )}
 
           {/* Step 2: Personal info */}
           {step === 2 && (
-            <form onSubmit={(e) => { e.preventDefault(); userType === 'oficina' ? setStep(3) : handleSubmit(e); }} className="space-y-4">
+            <form onSubmit={(e) => { e.preventDefault(); (userType === 'oficina' || userType === 'loja_pecas') ? setStep(3) : handleSubmit(e); }} className="space-y-4">
               {!tipoParam && (
                 <div className="flex items-center gap-2 mb-4">
                   <button type="button" onClick={() => setStep(1)} className="text-gray-400 hover:text-gray-600">
@@ -186,7 +226,7 @@ function CadastroPage() {
                 <input type="password" className="input-field" placeholder="Mínimo 6 caracteres" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
               </div>
               <button type="submit" className="btn-primary w-full" disabled={loading}>
-                {loading ? 'Criando conta...' : userType === 'oficina' ? 'Próximo' : 'Criar conta'}
+                {loading ? 'Criando conta...' : (userType === 'oficina' || userType === 'loja_pecas') ? 'Próximo' : 'Criar conta'}
               </button>
             </form>
           )}
@@ -267,6 +307,49 @@ function CadastroPage() {
 
               <button type="submit" className="btn-primary w-full" disabled={loading || especialidades.length === 0}>
                 {loading ? 'Criando conta...' : 'Criar conta da oficina'}
+              </button>
+            </form>
+          )}
+
+          {/* Step 3: Parts store info */}
+          {step === 3 && userType === 'loja_pecas' && (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <button type="button" onClick={() => setStep(2)} className="text-gray-400 hover:text-gray-600">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <h2 className="text-lg font-semibold text-gray-900">Dados da loja</h2>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nome fantasia *</label>
+                <input type="text" className="input-field" placeholder="Nome da loja" value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">CNPJ (opcional)</label>
+                <input type="text" className="input-field" placeholder="00.000.000/0001-00" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
+                <input type="text" className="input-field" placeholder="Rua, número" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
+                  <input type="text" className="input-field" placeholder="São Paulo" value={cidade} onChange={(e) => setCidade(e.target.value)} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                  <input type="text" className="input-field" placeholder="SP" value={estado} onChange={(e) => setEstado(e.target.value)} />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>
+                <input type="text" className="input-field" placeholder="00000-000" value={cep} onChange={(e) => setCep(e.target.value)} />
+              </div>
+              <button type="submit" className="btn-primary w-full" disabled={loading}>
+                {loading ? 'Criando conta...' : 'Criar conta da loja'}
               </button>
             </form>
           )}

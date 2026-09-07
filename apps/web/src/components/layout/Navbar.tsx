@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useState } from 'react';
 
 export default function Navbar() {
-  const { user, oficina, funcionario, isLoggedIn, loading, signOut } = useAuth();
+  const { user, oficina, funcionario, loja, isLoggedIn, loading, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
 
@@ -18,12 +18,15 @@ export default function Navbar() {
 
   const isOficina = user?.tipo === 'oficina';
   const isAdmin = user?.tipo === 'admin';
+  const isLoja = user?.tipo === 'loja_pecas';
   const isMecanico = funcionario?.cargo === 'mecanico';
   const dashboardPath = isAdmin
     ? '/admin/dashboard'
     : isOficina
       ? (isMecanico ? '/oficina/veiculos-em-servico' : '/oficina/dashboard')
-      : '/cliente/dashboard';
+      : isLoja
+        ? '/loja/dashboard'
+        : '/cliente/dashboard';
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -65,12 +68,21 @@ export default function Navbar() {
                       <NavLink href="/oficina/veiculos-em-servico">Oficina</NavLink>
                       <NavLink href="/oficina/agenda">Agenda</NavLink>
                       <NavLink href="/oficina/capacidade">Capacidade</NavLink>
+                      <NavLink href="/oficina/pecas">Peças</NavLink>
                       <NavLink href="/oficina/equipe">Equipe</NavLink>
                       <NavLink href="/oficina/comissao">Comissão</NavLink>
                       <NavLink href="/oficina/avaliacoes">Avaliações</NavLink>
                       <NavLink href="/oficina/perfil">Perfil</NavLink>
                     </>
                   )
+                ) : isLoja ? (
+                  <>
+                    <NavLink href="/loja/dashboard">Dashboard</NavLink>
+                    <NavLink href="/loja/cotacoes">Cotações</NavLink>
+                    <NavLink href="/loja/catalogo">Catálogo</NavLink>
+                    <NavLink href="/loja/pedidos">Pedidos</NavLink>
+                    <NavLink href="/loja/perfil">Perfil</NavLink>
+                  </>
                 ) : (
                   <>
                     <NavLink href="/cliente/dashboard">Dashboard</NavLink>
@@ -90,18 +102,18 @@ export default function Navbar() {
             {isLoggedIn ? (
               <>
                 <Link
-                  href={isAdmin ? '/admin/dashboard' : isOficina ? '/oficina/perfil' : '/cliente/perfil'}
+                  href={isAdmin ? '/admin/dashboard' : isOficina ? '/oficina/perfil' : isLoja ? '/loja/perfil' : '/cliente/perfil'}
                   className="hidden sm:flex items-center gap-2 hover:opacity-80 transition-opacity"
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isAdmin ? 'bg-slate-200' : isOficina ? 'bg-sky-100' : 'bg-primary-100'}`}>
-                    <span className={`font-semibold text-sm ${isAdmin ? 'text-slate-700' : isOficina ? 'text-sky-700' : 'text-primary-700'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isAdmin ? 'bg-slate-200' : isOficina ? 'bg-sky-100' : isLoja ? 'bg-orange-100' : 'bg-primary-100'}`}>
+                    <span className={`font-semibold text-sm ${isAdmin ? 'text-slate-700' : isOficina ? 'text-sky-700' : isLoja ? 'text-orange-700' : 'text-primary-700'}`}>
                       {user!.nome.charAt(0)}
                     </span>
                   </div>
                   <div className="text-sm">
                     <p className="font-medium text-gray-900">{user!.nome}</p>
                     <p className="text-gray-500 text-xs">
-                      {isAdmin ? 'Administrador' : isOficina ? oficina?.nome_fantasia : 'Cliente'}
+                      {isAdmin ? 'Administrador' : isOficina ? oficina?.nome_fantasia : isLoja ? loja?.nome_fantasia : 'Cliente'}
                     </p>
                   </div>
                 </Link>
@@ -163,6 +175,7 @@ export default function Navbar() {
                   <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>Oficina</MobileNavLink>
                   <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>Agenda</MobileNavLink>
                   <MobileNavLink href="/oficina/capacidade" onClick={() => setMenuOpen(false)}>Capacidade</MobileNavLink>
+                  <MobileNavLink href="/oficina/pecas" onClick={() => setMenuOpen(false)}>Peças</MobileNavLink>
                   <MobileNavLink href="/oficina/equipe" onClick={() => setMenuOpen(false)}>Equipe</MobileNavLink>
                   <MobileNavLink href="/oficina/checkin" onClick={() => setMenuOpen(false)}>Check-in Manual</MobileNavLink>
                   <MobileNavLink href="/oficina/comissao" onClick={() => setMenuOpen(false)}>Comissão</MobileNavLink>
@@ -170,6 +183,14 @@ export default function Navbar() {
                   <MobileNavLink href="/oficina/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
                 </>
               )
+            ) : isLoja ? (
+              <>
+                <MobileNavLink href="/loja/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>
+                <MobileNavLink href="/loja/cotacoes" onClick={() => setMenuOpen(false)}>Cotações</MobileNavLink>
+                <MobileNavLink href="/loja/catalogo" onClick={() => setMenuOpen(false)}>Catálogo</MobileNavLink>
+                <MobileNavLink href="/loja/pedidos" onClick={() => setMenuOpen(false)}>Pedidos</MobileNavLink>
+                <MobileNavLink href="/loja/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
+              </>
             ) : (
               <>
                 <MobileNavLink href="/cliente/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>

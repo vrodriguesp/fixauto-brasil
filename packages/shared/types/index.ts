@@ -1,6 +1,6 @@
 // === Enums ===
 
-export type TipoUsuario = 'cliente' | 'oficina' | 'admin';
+export type TipoUsuario = 'cliente' | 'oficina' | 'admin' | 'loja_pecas';
 
 export type TipoServico =
   | 'colisao'
@@ -82,6 +82,87 @@ export interface Oficina {
   created_at: string;
   // Joined
   profile?: Profile;
+}
+
+export type StatusCotacaoPeca = 'aberta' | 'respondida' | 'fechada' | 'cancelada';
+export type StatusPedidoPeca = 'confirmado' | 'entregue' | 'cancelado';
+
+export interface LojaPecas {
+  id: string;
+  profile_id: string;
+  nome_fantasia: string;
+  cnpj: string | null;
+  endereco: string;
+  cidade: string;
+  estado: string;
+  cep: string;
+  latitude: number | null;
+  longitude: number | null;
+  raio_atendimento_km: number;
+  ativa: boolean;
+  created_at: string;
+  // Joined
+  profile?: Profile;
+}
+
+export interface PecaCatalogo {
+  id: string;
+  loja_id: string;
+  nome: string;
+  descricao: string | null;
+  fipe_marca: string | null;
+  fipe_modelo: string | null;
+  fipe_ano: string | null;
+  preco: number;
+  quantidade_estoque: number;
+  ativo: boolean;
+  created_at: string;
+  // Joined
+  loja?: LojaPecas;
+}
+
+export interface CotacaoPeca {
+  id: string;
+  oficina_id: string;
+  peca_descricao: string;
+  fipe_marca: string | null;
+  fipe_modelo: string | null;
+  fipe_ano: string | null;
+  quantidade: number;
+  status: StatusCotacaoPeca;
+  created_at: string;
+  // Joined
+  oficina?: Oficina;
+  respostas?: CotacaoPecaResposta[];
+}
+
+export interface CotacaoPecaResposta {
+  id: string;
+  cotacao_id: string;
+  loja_id: string;
+  peca_catalogo_id: string | null;
+  preco: number;
+  prazo_dias: number;
+  observacao: string | null;
+  created_at: string;
+  // Joined
+  loja?: LojaPecas;
+}
+
+export interface PedidoPeca {
+  id: string;
+  cotacao_id: string;
+  resposta_id: string;
+  oficina_id: string;
+  loja_id: string;
+  preco_total: number;
+  quantidade: number;
+  status: StatusPedidoPeca;
+  created_at: string;
+  // Joined
+  oficina?: Oficina;
+  loja?: LojaPecas;
+  resposta?: CotacaoPecaResposta;
 }
 
 export interface Veiculo {

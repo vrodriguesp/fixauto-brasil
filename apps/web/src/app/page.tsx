@@ -57,7 +57,9 @@ export default function HomePage() {
         ? '/admin/dashboard'
         : user.tipo === 'oficina'
           ? (isMecanico ? '/oficina/veiculos-em-servico' : '/oficina/dashboard')
-          : '/cliente/dashboard';
+          : user.tipo === 'loja_pecas'
+            ? '/loja/dashboard'
+            : '/cliente/dashboard';
       router.replace(dashPath);
     }
   }, [loading, isLoggedIn, user, funcionario, router]);

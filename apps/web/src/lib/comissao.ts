@@ -20,7 +20,8 @@ export interface TaxaComissaoInfo {
 }
 
 function clamp(taxa: number): number {
-  return Math.min(COMISSAO_CONFIG.TAXA_MAX, Math.max(COMISSAO_CONFIG.TAXA_MIN, taxa));
+  const limitada = Math.min(COMISSAO_CONFIG.TAXA_MAX, Math.max(COMISSAO_CONFIG.TAXA_MIN, taxa));
+  return Math.round(limitada * 10000) / 10000;
 }
 
 /**
