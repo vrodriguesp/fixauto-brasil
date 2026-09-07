@@ -9,27 +9,53 @@ export default function AdminOficinasPage() {
   const [oficinas, setOficinas] = useState<Oficina[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchOficinas() {
-      setLoading(true);
-      let query = supabase
-        .from('oficinas')
-        .select('*')
-        .order('created_at', { ascending: false });
+  const fetchOficinas = async () => {
+    setLoading(true);
+    let query = supabase
+      .from('oficinas')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-      if (search.trim()) {
-        query = query.ilike('nome_fantasia', `%${search}%`);
-      }
-
-      const { data } = await query.limit(100);
-      setOficinas((data as Oficina[]) || []);
-      setLoading(false);
+    if (search.trim()) {
+      query = query.ilike('nome_fantasia', `%${search}%`);
     }
 
+    const { data } = await query.limit(100);
+    setOficinas((data as Oficina[]) || []);
+    setLoading(false);
+  };
+
+  useEffect(() => {
     const debounce = setTimeout(fetchOficinas, 300);
     return () => clearTimeout(debounce);
   }, [search]);
+
+  const handleToggleAtiva = async (oficina: Oficina) => {
+    const acao = oficina.ativa ? 'desativar' : 'ativar';
+    if (!confirm(`Tem certeza que quer ${acao} "${oficina.nome_fantasia}"? ${oficina.ativa ? 'Ela deixa de aparecer pra clientes.' : ''}`)) return;
+    setBusyId(oficina.id);
+    await fetch('/api/admin/usuarios', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: oficina.profile_id, ativo: !oficina.ativa }),
+    });
+    setBusyId(null);
+    await fetchOficinas();
+  };
+
+  const handleDelete = async (oficina: Oficina) => {
+    if (!confirm(`Remover "${oficina.nome_fantasia}" permanentemente? Isso apaga a oficina, funcionários, orçamentos e agenda ligados a ela. Não pode ser desfeito.`)) return;
+    setBusyId(oficina.id);
+    await fetch('/api/admin/usuarios', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: oficina.profile_id }),
+    });
+    setBusyId(null);
+    await fetchOficinas();
+  };
 
   return (
     <div>
@@ -117,12 +143,28 @@ export default function AdminOficinasPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <Link
-                      href={`/admin/oficinas/${oficina.id}`}
-                      className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
-                    >
-                      Ver detalhes
-                    </Link>
+                    <div className="flex items-center gap-3 text-sm">
+                      <Link
+                        href={`/admin/oficinas/${oficina.id}`}
+                        className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                      >
+                        Ver detalhes
+                      </Link>
+                      <button
+                        onClick={() => handleToggleAtiva(oficina)}
+                        disabled={busyId === oficina.id}
+                        className={`font-medium disabled:opacity-50 ${oficina.ativa ? 'text-amber-400 hover:text-amber-300' : 'text-emerald-400 hover:text-emerald-300'}`}
+                      >
+                        {oficina.ativa ? 'Desativar' : 'Ativar'}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(oficina)}
+                        disabled={busyId === oficina.id}
+                        className="text-red-400 hover:text-red-300 font-medium disabled:opacity-50"
+                      >
+                        Remover
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

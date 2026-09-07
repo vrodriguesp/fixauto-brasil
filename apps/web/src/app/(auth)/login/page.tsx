@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
@@ -15,6 +15,12 @@ export default function LoginPage() {
   const [resetSent, setResetSent] = useState(false);
   const { signIn } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('desativado') === '1') {
+      setError('Esta conta foi desativada. Entre em contato com o suporte.');
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

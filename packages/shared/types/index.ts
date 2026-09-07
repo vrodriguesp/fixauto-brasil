@@ -58,6 +58,7 @@ export interface Profile {
   email: string;
   telefone: string | null;
   avatar_url: string | null;
+  ativo: boolean;
   created_at: string;
 }
 

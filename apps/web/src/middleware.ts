@@ -37,15 +37,21 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  // Admin route protection: verify user tipo is 'admin'
-  if (path.startsWith('/admin') && session) {
+  if (isProtected && session) {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('tipo')
+      .select('tipo, ativo')
       .eq('id', session.user.id)
       .single();
 
-    if (!profile || profile.tipo !== 'admin') {
+    // Deactivated accounts (admin action) can't use any protected area
+    if (profile && profile.ativo === false) {
+      await supabase.auth.signOut();
+      return NextResponse.redirect(new URL('/login?desativado=1', req.url));
+    }
+
+    // Admin route protection: verify user tipo is 'admin'
+    if (path.startsWith('/admin') && (!profile || profile.tipo !== 'admin')) {
       return NextResponse.redirect(new URL('/', req.url));
     }
   }
