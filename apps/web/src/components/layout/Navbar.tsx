@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useEffect, useRef, useState } from 'react';
+import NotificationBell from './NotificationBell';
 
 export default function Navbar() {
   const { user, oficina, funcionario, loja, isLoggedIn, loading, signOut } = useAuth();
@@ -111,6 +112,7 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
               <>
+                <NotificationBell />
                 <Link
                   href={isAdmin ? '/admin/dashboard' : isOficina ? '/oficina/perfil' : isLoja ? '/loja/perfil' : '/cliente/perfil'}
                   className="hidden sm:flex items-center gap-2 hover:opacity-80 transition-opacity"

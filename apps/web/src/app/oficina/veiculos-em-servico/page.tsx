@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { STATUS_MANUTENCAO } from '@fixauto/shared';
 import type { StatusManutencao, Funcionario } from '@fixauto/shared';
+import NotasInternas from '@/components/veiculo/NotasInternas';
 
 type FilterTab = 'todos' | 'aguardando' | 'em_servico' | 'prontos';
 
@@ -566,6 +567,15 @@ export default function VeiculosEmServico() {
                           Mensagem
                         </Link>
                       </div>
+                    )}
+
+                    {oficina && (
+                      <NotasInternas
+                        agendaId={evento.id}
+                        oficinaId={oficina.id}
+                        funcionarioResponsavelProfileId={evento.funcionario?.profile_id}
+                        veiculoLabel={veiculo ? `${veiculo.fipe_marca} ${veiculo.fipe_modelo}` : evento.titulo}
+                      />
                     )}
                   </div>
                 )}

@@ -354,6 +354,17 @@ export interface Avaliacao {
   cliente?: Profile;
 }
 
+export interface VeiculoNotaInterna {
+  id: string;
+  agenda_id: string;
+  oficina_id: string;
+  remetente_id: string;
+  texto: string;
+  created_at: string;
+  // Joined
+  remetente?: { nome: string };
+}
+
 export interface Notificacao {
   id: string;
   profile_id: string;
