@@ -168,5 +168,29 @@ Pra fazer a notificação "chegar na tela das pessoas" de verdade, teria que ins
 6. [x] `npm run build`/`tsc` sem erros. Migration aplicada na VM (policy confirmada via `pg_policies`). Deploy feito (commit `7bde071`).
 7. [x] Testado ao vivo em produção (conta real, mecânico "Marcio"): sino aparece, nota enviada e exibida em tempo real, notificação real confirmada no banco pro dono (`select * from notificacoes where tipo='nota_interna_veiculo'` retornou a linha esperada) — prova que o fix do RLS funcionou de verdade, não só na teoria.
 
+---
+
+## Rodada 9 (mesmo dia): crash pós-login causado pelo sino de notificações (rodada 8)
+
+Usuário reportou "Application error: a client-side exception has occurred" ao tentar logar com uma conta cliente de teste ("tadey"). Investigação inicial (logs de servidor, `app_errors`) não achou nada — erro de render não passa pelo `ErrorReporter` (limitação já documentada). Testei o fluxo de nova-solicitação a fundo sem reproduzir; o usuário então informou que era especificamente no login, e colou o erro exato do console assim que apareceu de novo:
+
+```
+Error: cannot add `postgres_changes` callbacks for realtime:notificacoes after `subscribe()`.
+```
+
+### Causa raiz
+Bug que eu mesmo introduzi na rodada 8: `useNotificacoes()` cria um canal Supabase Realtime com nome fixo (`'notificacoes'`). Até hoje só era usado em um lugar (`cliente/dashboard`). Ao adicionar o sino global (`NotificationBell`, montado sempre via `Navbar`), o hook passou a rodar em duas instâncias ao mesmo tempo pro mesmo usuário — a segunda tentativa de `.on(...)` num canal com nome já inscrito pela primeira lança um erro **síncrono**, que o React captura como exceção de render e derruba a página inteira. Como o Navbar (e portanto o sino) já aparece na tela de redirect pós-login, **todo cliente que logasse via essa tela quebrava a página na hora**.
+
+### Correção
+`use-notificacoes.ts`: nome do canal agora é único por instância (`useRef` com sufixo aleatório), já que múltiplas instâncias simultâneas do hook passaram a ser esperadas.
+
+### O que foi feito
+1. [x] Causa raiz confirmada pelo erro de console colado pelo usuário.
+2. [x] Fix aplicado, `npm run build`/`tsc` sem erros.
+3. [x] Deploy feito (commit `60b9a17`).
+4. [ ] Aguardando confirmação do usuário de que o login com "tadey" funciona agora.
+
+**Lição para não repetir**: ao reutilizar um hook que já existia em produção (como `useNotificacoes`) num componente novo montado globalmente (como um item de `Navbar`), verificar se ele assume implicitamente ser a única instância ativa (nomes de canal/recursos fixos) antes de multiplicar onde ele roda.
+
 ### Adiado a pedido do usuário
 - Consulta de histórico de reparos por placa (pra concessionárias): envolve dados de terceiros e precisa de um modelo de acesso definido (proposto: conta "concessionária" aprovada pelo admin, dados anonimizados). Usuário pediu pra deixar quieto por enquanto — nada foi implementado, só fica registrado aqui pra não esquecer que a ideia existe.
