@@ -3,6 +3,10 @@ import { MetadataRoute } from 'next';
 
 const BASE_URL = 'https://bipfix.com';
 
+// Sem isso, o sitemap fica congelado com os dados de quando a build rodou -
+// oficinas novas so apareceriam apos o proximo deploy manual.
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -61,15 +65,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Paginas dinamicas de oficinas ativas
+  // Paginas dinamicas de oficinas ativas.
+  // Cuidado: a tabela "oficinas" nao tem coluna "updated_at" (so
+  // "created_at") - selecionar/ordenar por "updated_at" fazia essa query
+  // falhar silenciosamente (o erro era descartado no destructuring) e o
+  // sitemap nunca listava nenhuma oficina, mesmo com oficinas ativas no banco.
   const { data: oficinas } = await supabase
     .from('oficinas')
-    .select('id, updated_at')
-    .order('updated_at', { ascending: false });
+    .select('id, created_at')
+    .eq('ativa', true)
+    .order('created_at', { ascending: false });
 
   const oficinasPages: MetadataRoute.Sitemap = (oficinas || []).map((oficina) => ({
     url: `${BASE_URL}/oficinas/${oficina.id}`,
-    lastModified: oficina.updated_at ? new Date(oficina.updated_at) : new Date(),
+    lastModified: oficina.created_at ? new Date(oficina.created_at) : new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
