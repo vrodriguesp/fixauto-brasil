@@ -60,6 +60,8 @@ export default function Navbar() {
                   isMecanico ? (
                     <>
                       <NavLink href="/oficina/veiculos-em-servico">Oficina</NavLink>
+                      <NavLink href="/oficina/agenda">Agenda</NavLink>
+                      <NavLink href="/oficina/aprender">🎓 Aprender</NavLink>
                     </>
                   ) : (
                     <>
@@ -174,6 +176,8 @@ export default function Navbar() {
               isMecanico ? (
                 <>
                   <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>Oficina</MobileNavLink>
+                  <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>Agenda</MobileNavLink>
+                  <MobileNavLink href="/oficina/aprender" onClick={() => setMenuOpen(false)}>🎓 Aprender</MobileNavLink>
                 </>
               ) : (
                 <>

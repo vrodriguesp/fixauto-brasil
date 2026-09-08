@@ -38,7 +38,8 @@ function deliveryNote(ev: any): string | null {
 export default function AgendaPage() {
   const { eventos, add: addEvento, update: updateEvento, remove: removeEvento, refresh } = useAgenda();
   const { refresh: refreshSolicitacoes } = useSolicitacoes();
-  const { oficina } = useAuth();
+  const { oficina, funcionario } = useAuth();
+  const isMecanico = funcionario?.cargo === 'mecanico';
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState<'month' | 'day' | 'list'>('month');
@@ -101,8 +102,14 @@ export default function AgendaPage() {
         }
       } else { others.push(ev); }
     }
-    return [...others, ...Array.from(seen.values())];
-  }, [eventos]);
+    const combined = [...others, ...Array.from(seen.values())];
+    // Mecanico ve so os veiculos atribuidos a ele - mesma restricao de
+    // /oficina/veiculos-em-servico ("Meus Veiculos").
+    if (isMecanico && funcionario) {
+      return combined.filter((e) => e.funcionario_id === funcionario.id);
+    }
+    return combined;
+  }, [eventos, isMecanico, funcionario]);
 
   // For a given date, get 3 groups:
   // - Check-in pendente: data_inicio = date AND status = agendado
@@ -275,7 +282,12 @@ export default function AgendaPage() {
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-2">
               {type === 'pendente' && (
-                assigningId === ev.id ? (
+                isMecanico ? (
+                  <button onClick={(e) => { e.stopPropagation(); handleCheckIn(ev, funcionario?.id); }} disabled={isUpdating}
+                    className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-xs font-medium rounded-lg">
+                    {isUpdating ? '...' : 'Check-in'}
+                  </button>
+                ) : assigningId === ev.id ? (
                   <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                     <select className="input-field !py-1 !px-2 text-xs !w-auto" defaultValue=""
                       onChange={(e) => handleCheckIn(ev, e.target.value || undefined)}>
@@ -299,7 +311,7 @@ export default function AgendaPage() {
                   </div>
                 )
               )}
-              {type === 'feito' && ev.status === 'em_andamento' && (
+              {type === 'feito' && ev.status === 'em_andamento' && !isMecanico && (
                 <button onClick={(e) => { e.stopPropagation(); handleCheckOut(ev); }} disabled={isUpdating}
                   className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white text-xs font-medium rounded-lg">
                   {isUpdating ? '...' : 'Entrega'}
@@ -412,7 +424,7 @@ export default function AgendaPage() {
                       <a href={`/oficina/solicitacoes/${ev.solicitacao_id}`} className="text-xs text-gray-600 hover:text-gray-700 font-medium">Ver solicitação</a>
                     </>
                   )}
-                  {ev.tipo === 'externo' && (
+                  {ev.tipo === 'externo' && !isMecanico && (
                     <>
                       <button onClick={(e) => { e.stopPropagation(); startEdit(ev); }} className="text-xs text-blue-600 hover:text-blue-700 font-medium">Editar</button>
                       <button onClick={(e) => { e.stopPropagation(); handleDeleteEvent(ev.id); }} className="text-xs text-red-600 hover:text-red-700 font-medium">Excluir</button>
@@ -431,8 +443,8 @@ export default function AgendaPage() {
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Agenda</h1>
-          <p className="text-gray-600 mt-1">Check-ins e entregas</p>
+          <h1 className="text-2xl font-bold text-gray-900">{isMecanico ? 'Minha Agenda' : 'Agenda'}</h1>
+          <p className="text-gray-600 mt-1">{isMecanico ? 'Check-ins e entregas dos veículos atribuídos a você' : 'Check-ins e entregas'}</p>
         </div>
         <div className="flex items-center gap-2 mt-4 sm:mt-0">
           <div className="flex rounded-lg border border-gray-200 overflow-hidden">
@@ -443,11 +455,13 @@ export default function AgendaPage() {
               </button>
             ))}
           </div>
-          <button onClick={() => setShowForm(true)} className="btn-primary !py-2">+ Evento</button>
+          {!isMecanico && (
+            <button onClick={() => setShowForm(true)} className="btn-primary !py-2">+ Evento</button>
+          )}
         </div>
       </div>
 
-      {showForm && (
+      {showForm && !isMecanico && (
         <div className="card mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Novo Evento Externo</h2>
           <div className="grid sm:grid-cols-2 gap-4">

@@ -5,10 +5,63 @@ import { supabase } from '@/lib/supabase';
 import TutorialHub, { TutorialModulo } from '@/components/tutorial/TutorialHub';
 
 export default function OficinaAprenderPage() {
-  const { oficina, loading } = useAuth();
+  const { oficina, funcionario, loading } = useAuth();
+  const isMecanico = funcionario?.cargo === 'mecanico';
 
   if (loading || !oficina) {
     return <div className="max-w-6xl mx-auto px-4 py-20 text-center text-gray-400">Carregando...</div>;
+  }
+
+  // Mecanico so tem acesso a "Meus Veiculos" no menu (nao ve Perfil,
+  // Comissao, Equipe, Pecas) - a formacao dele fica so na parte que ele
+  // de fato usa: check-in e etapas do reparo do veiculo atribuido a ele.
+  // Ele nao tem o botao "Entrega" (so quem nao e mecanico finaliza).
+  if (isMecanico) {
+    const modulosMecanico: TutorialModulo[] = [
+      {
+        id: 'meus-veiculos',
+        emoji: '🔧',
+        titulo: 'Meus Veículos: check-in e etapas',
+        resumo: 'Aqui você vê só os veículos atribuídos a você. Faz o check-in quando o carro chega, e registra cada etapa do reparo (diagnóstico, execução, etc.) pra oficina e o cliente acompanharem o progresso.',
+        passosGuiados: [
+          'Abra Oficina no menu (sua lista de veículos, chamada "Meus Veículos").',
+          'Na aba "Aguardando", clique em "Check-in" no veículo que chegou.',
+          'Clique em "+ Etapa" pra registrar o progresso (ex: Em diagnóstico, Em execução, Teste final).',
+          'Clique na linha do veículo pra ver a linha do tempo completa e conversar com o cliente se precisar.',
+        ],
+        desafio: 'Faça o check-in de um veículo atribuído a você e registre pelo menos uma etapa de manutenção.',
+        linkReal: '/oficina/veiculos-em-servico',
+        dica: 'A entrega final (fechar o serviço) é feita pelo dono da oficina ou por um administrativo, não por você.',
+        verificar: async () => {
+          if (!funcionario) return false;
+          const { count } = await supabase.from('manutencao_etapas').select('*', { count: 'exact', head: true }).eq('funcionario_id', funcionario.id);
+          return (count || 0) > 0;
+        },
+      },
+      {
+        id: 'minha-agenda',
+        emoji: '📅',
+        titulo: 'Minha Agenda',
+        resumo: 'Uma visão de calendário só dos veículos atribuídos a você: quando cada um está previsto pra chegar, quais já fizeram check-in e quais já foram entregues.',
+        passosGuiados: [
+          'Abra Agenda no menu.',
+          'Use as visões Mês, Dia ou Lista pra ver o que está previsto pra você.',
+          'Você também pode fazer o check-in direto por aqui, igual em "Oficina".',
+        ],
+        desafio: 'Confira sua agenda e identifique quando é o próximo check-in previsto pra você.',
+        linkReal: '/oficina/agenda',
+        linkRotulo: 'Ver minha agenda →',
+      },
+    ];
+
+    return (
+      <TutorialHub
+        titulo="Aprenda a usar o BipFix"
+        subtitulo="Sua formação como mecânico: check-in e etapas dos veículos sob sua responsabilidade."
+        storageKey="bipfix_tutorial_oficina_mecanico"
+        modulos={modulosMecanico}
+      />
+    );
   }
 
   const modulos: TutorialModulo[] = [
