@@ -1,12 +1,20 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import type { Notificacao } from '@fixauto/shared';
 
 export function useNotificacoes() {
   const { user } = useAuth();
+  // Canal precisa de nome unico por instancia do hook - desde que o sino
+  // global (NotificationBell, no Navbar) foi adicionado, esse hook passou
+  // a rodar em mais de um lugar ao mesmo tempo (Navbar + qualquer pagina
+  // que tambem chame useNotificacoes, ex: cliente/dashboard). Com um nome
+  // fixo ("notificacoes"), a segunda instancia reutiliza o mesmo canal ja
+  // inscrito e o Supabase Realtime lanca "cannot add postgres_changes
+  // callbacks after subscribe()" - erro sincrono que derruba a pagina.
+  const channelIdRef = useRef(`notificacoes-${Math.random().toString(36).slice(2)}`);
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -32,7 +40,7 @@ export function useNotificacoes() {
   useEffect(() => {
     if (!user) return;
     const channel = supabase
-      .channel('notificacoes')
+      .channel(channelIdRef.current)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
