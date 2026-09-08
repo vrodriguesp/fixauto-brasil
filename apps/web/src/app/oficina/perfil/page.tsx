@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { compressImage } from '@/lib/image-compress';
+import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
 import { TIPOS_SERVICO, ESTADOS_BRASIL } from '@fixauto/shared';
 
 export default function PerfilOficinaPage() {
@@ -24,6 +25,25 @@ export default function PerfilOficinaPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [buscandoCep, setBuscandoCep] = useState(false);
+  const [cepErro, setCepErro] = useState('');
+
+  const handleCepChange = async (raw: string) => {
+    const formatted = formatCep(raw);
+    setCep(formatted);
+    setCepErro('');
+    if (!cepEstaCompleto(formatted)) return;
+    setBuscandoCep(true);
+    const resultado = await buscarEnderecoPorCep(formatted);
+    setBuscandoCep(false);
+    if (!resultado) {
+      setCepErro('CEP não encontrado - confira o número ou preencha manualmente');
+      return;
+    }
+    setEndereco(resultado.logradouro || endereco);
+    setCidade(resultado.localidade);
+    setEstado(resultado.uf);
+  };
 
   // Sync state when oficina/user data loads
   const [logoUrl, setLogoUrl] = useState('');
@@ -298,10 +318,16 @@ export default function PerfilOficinaPage() {
             <input type="text" className="input-field" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
-            <input type="text" className="input-field" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+            <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>
+            <input type="text" inputMode="numeric" maxLength={9} className="input-field !w-40" placeholder="00000-000" value={cep} onChange={(e) => handleCepChange(e.target.value)} />
+            {buscandoCep && <p className="text-xs text-gray-400 mt-1">Buscando endereço...</p>}
+            {cepErro && <p className="text-xs text-red-500 mt-1">{cepErro}</p>}
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
+            <input type="text" className="input-field" placeholder="Rua, número" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
               <input type="text" className="input-field" value={cidade} onChange={(e) => setCidade(e.target.value)} />
@@ -313,10 +339,6 @@ export default function PerfilOficinaPage() {
                   <option key={e} value={e}>{e}</option>
                 ))}
               </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>
-              <input type="text" className="input-field" value={cep} onChange={(e) => setCep(e.target.value)} />
             </div>
           </div>
           <div>

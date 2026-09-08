@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { TIPOS_SERVICO } from '@fixauto/shared';
+import { TIPOS_SERVICO, ESTADOS_BRASIL } from '@fixauto/shared';
+import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
 
 export default function CadastroPageWrapper() {
   return (
@@ -34,13 +35,71 @@ function CadastroPage() {
   const [cidade, setCidade] = useState('');
   const [estado, setEstado] = useState('');
   const [cep, setCep] = useState('');
+  const [buscandoCep, setBuscandoCep] = useState(false);
+  const [cepErro, setCepErro] = useState('');
   const [especialidades, setEspecialidades] = useState<string[]>([]);
+
+  const handleCepChange = async (raw: string) => {
+    const formatted = formatCep(raw);
+    setCep(formatted);
+    setCepErro('');
+    if (!cepEstaCompleto(formatted)) return;
+    setBuscandoCep(true);
+    const resultado = await buscarEnderecoPorCep(formatted);
+    setBuscandoCep(false);
+    if (!resultado) {
+      setCepErro('CEP não encontrado - confira o número ou preencha manualmente');
+      return;
+    }
+    setEndereco(resultado.logradouro || endereco);
+    setCidade(resultado.localidade);
+    setEstado(resultado.uf);
+  };
 
   const toggleEspecialidade = (value: string) => {
     setEspecialidades((prev) =>
       prev.includes(value) ? prev.filter((e) => e !== value) : [...prev, value]
     );
   };
+
+  const renderEnderecoFields = () => (
+    <>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>
+        <input
+          type="text"
+          inputMode="numeric"
+          className="input-field"
+          placeholder="00000-000"
+          value={cep}
+          onChange={(e) => handleCepChange(e.target.value)}
+          maxLength={9}
+        />
+        {buscandoCep && <p className="text-xs text-gray-400 mt-1">Buscando endereço...</p>}
+        {cepErro && <p className="text-xs text-red-500 mt-1">{cepErro}</p>}
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
+        <input type="text" className="input-field" placeholder="Rua, número" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+        <p className="text-xs text-gray-400 mt-1">Preenchido pelo CEP - complete com o número.</p>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
+          <input type="text" className="input-field" placeholder="São Paulo" value={cidade} onChange={(e) => setCidade(e.target.value)} />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+          <select className="input-field" value={estado} onChange={(e) => setEstado(e.target.value)}>
+            <option value="">UF</option>
+            {ESTADOS_BRASIL.map((uf) => (
+              <option key={uf} value={uf}>{uf}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </>
+  );
 
   const { signUp } = useAuth();
   const router = useRouter();
@@ -250,24 +309,7 @@ function CadastroPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">CNPJ (opcional)</label>
                 <input type="text" className="input-field" placeholder="00.000.000/0001-00" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
-                <input type="text" className="input-field" placeholder="Rua, número" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
-                  <input type="text" className="input-field" placeholder="São Paulo" value={cidade} onChange={(e) => setCidade(e.target.value)} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
-                  <input type="text" className="input-field" placeholder="SP" value={estado} onChange={(e) => setEstado(e.target.value)} />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>
-                <input type="text" className="input-field" placeholder="00000-000" value={cep} onChange={(e) => setCep(e.target.value)} />
-              </div>
+              {renderEnderecoFields()}
 
               {/* Especialidades */}
               <div>
@@ -330,24 +372,7 @@ function CadastroPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">CNPJ (opcional)</label>
                 <input type="text" className="input-field" placeholder="00.000.000/0001-00" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
-                <input type="text" className="input-field" placeholder="Rua, número" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
-                  <input type="text" className="input-field" placeholder="São Paulo" value={cidade} onChange={(e) => setCidade(e.target.value)} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
-                  <input type="text" className="input-field" placeholder="SP" value={estado} onChange={(e) => setEstado(e.target.value)} />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>
-                <input type="text" className="input-field" placeholder="00000-000" value={cep} onChange={(e) => setCep(e.target.value)} />
-              </div>
+              {renderEnderecoFields()}
               <button type="submit" className="btn-primary w-full" disabled={loading}>
                 {loading ? 'Criando conta...' : 'Criar conta da loja'}
               </button>

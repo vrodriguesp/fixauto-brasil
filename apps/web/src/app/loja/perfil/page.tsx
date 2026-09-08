@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
 import { ESTADOS_BRASIL } from '@fixauto/shared';
 
 export default function PerfilLojaPage() {
@@ -20,6 +21,25 @@ export default function PerfilLojaPage() {
   const [telefone, setTelefone] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [buscandoCep, setBuscandoCep] = useState(false);
+  const [cepErro, setCepErro] = useState('');
+
+  const handleCepChange = async (raw: string) => {
+    const formatted = formatCep(raw);
+    setCep(formatted);
+    setCepErro('');
+    if (!cepEstaCompleto(formatted)) return;
+    setBuscandoCep(true);
+    const resultado = await buscarEnderecoPorCep(formatted);
+    setBuscandoCep(false);
+    if (!resultado) {
+      setCepErro('CEP não encontrado - confira o número ou preencha manualmente');
+      return;
+    }
+    setEndereco(resultado.logradouro || endereco);
+    setCidade(resultado.localidade);
+    setEstado(resultado.uf);
+  };
 
   useEffect(() => {
     if (loja) {
@@ -104,8 +124,14 @@ export default function PerfilLojaPage() {
           <input type="text" className="input-field" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
         </div>
         <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>
+          <input type="text" inputMode="numeric" maxLength={9} className="input-field !w-40" placeholder="00000-000" value={cep} onChange={(e) => handleCepChange(e.target.value)} />
+          {buscandoCep && <p className="text-xs text-gray-400 mt-1">Buscando endereço...</p>}
+          {cepErro && <p className="text-xs text-red-500 mt-1">{cepErro}</p>}
+        </div>
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
-          <input type="text" className="input-field" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+          <input type="text" className="input-field" placeholder="Rua, número" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -118,10 +144,6 @@ export default function PerfilLojaPage() {
               {ESTADOS_BRASIL.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
             </select>
           </div>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>
-          <input type="text" className="input-field" value={cep} onChange={(e) => setCep(e.target.value)} />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Raio de atendimento (km)</label>
