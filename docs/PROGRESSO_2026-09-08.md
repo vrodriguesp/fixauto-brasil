@@ -78,5 +78,28 @@ Pedido do usuário: dividir em agentes e testar massivamente todas as funcionali
 6. [ ] Itens de menor severidade da auditoria (rotas de broadcast/emergência sem rate limit, custo de API paga sem checagem) ficaram documentados como pendentes — precisam de rate limiting, não só checagem de dono, e foram deixados pra uma rodada dedicada.
 7. [ ] Backlog de bugs funcionais/UX (não-segurança) de cada área consolidado em `docs/sandbox/README.md`, aguardando priorização do usuário.
 
+---
+
+## Rodada 4 (mesmo dia): portal educativo (sandbox) construído
+
+Pedido do usuário: construir de fato o portal educativo pra oficinas e lojas de peças, dividido por funcionalidade, com casos guiados e autônomos, simples e rápido.
+
+### O que foi construído
+- `/oficina/aprender` e `/loja/aprender` — tutorial real dentro do site (não um mockup separado), reaproveitando o levantamento de `docs/sandbox/OFICINA.md` e `LOJA_PECAS.md`.
+- Componente `TutorialHub.tsx`: sidebar de módulos + barra de progresso, cada módulo com toggle **Guiado** (passo a passo clicável) / **Autônomo** (só o desafio, sem entregar a resposta), e um botão **"Já fiz — verificar"** que confere de verdade no banco (via RLS existente, sem rota nova) se a ação foi concluída — ex: tem especialidade marcada, enviou orçamento, fez check-in, cadastrou catálogo, respondeu cotação, marcou pedido entregue.
+- Progresso salvo em `localStorage` (por navegador/dispositivo, não sincroniza entre aparelhos — decisão consciente pra manter simples; pode virar tabela no banco depois se quiserem ver conclusão no admin).
+- Banner dispensável nos dashboards (`TutorialBanner.tsx`) + link no menu ("Mais" da oficina, direto na loja) pra descoberta.
+- **Decisão sobre GIFs/vídeos**: em vez de gravar telas reais (frágil — depende de dados existirem na conta de teste, cria efeitos colaterais em conta de produção), optei por passo a passo textual claro por módulo. Testado ao vivo e funcionando; GIFs de fluxos específicos podem ser adicionados depois como reforço visual se fizer falta na prática.
+- De brinde: corrigido bug do dashboard da loja (card "Pedidos confirmados" contava qualquer status).
+
+### Testado em produção (conta real "Oficina Bona")
+- Banner aparece no dashboard e leva ao tutorial.
+- Toggle Guiado/Autônomo funciona.
+- "Já fiz — verificar" detectou corretamente que a oficina já tinha especialidade marcada e já tinha enviado orçamento (2/6 módulos concluídos automaticamente, sem eu fingir nada).
+- Progresso persiste depois de recarregar a página.
+- Sem erros no console.
+
+Commit `e2d08a4`, migration não necessária (só leitura via RLS existente), build e deploy feitos.
+
 ### Adiado a pedido do usuário
 - Consulta de histórico de reparos por placa (pra concessionárias): envolve dados de terceiros e precisa de um modelo de acesso definido (proposto: conta "concessionária" aprovada pelo admin, dados anonimizados). Usuário pediu pra deixar quieto por enquanto — nada foi implementado, só fica registrado aqui pra não esquecer que a ideia existe.
