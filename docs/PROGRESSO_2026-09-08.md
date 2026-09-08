@@ -54,10 +54,12 @@ Pedido do usuário: comissão sobre venda de peças (começando em 3%, variando 
 6. [x] Capacidade por funcionário: `funcionarios.capacidade_maxima` (editável em Equipe) + seção nova em `/oficina/capacidade` mostrando carga atual x limite por mecânico (`calcularCargaPorFuncionario`).
 7. [x] Admin: página `/admin/pecas` + rota `/api/admin/pecas-fornecedores` — lista lojas e oficinas-fornecedoras com status ativo/inativo e **último login** (via `supabaseAdmin.auth.admin.listUsers()`, já que isso não fica em `profiles`), mais contadores de uso real do canal (cotações, pedidos, comissão pendente/paga) pra decidir se o canal compensa.
 8. [x] `npm run build` e `tsc --noEmit` passaram sem erros.
-9. [ ] Aplicar migration 018 no Postgres self-hosted da VM.
-10. [ ] Deploy na VM (git pull + build + restart PM2).
-11. [ ] Testar fluxo completo no navegador (produção).
+9. [x] Aplicar migration 018 no Postgres self-hosted da VM (rodou sem erros, tabelas/colunas confirmadas).
+10. [x] Deploy na VM (git pull + build + restart PM2) — commit `2ce495a` rodando em produção.
+11. [x] Testar fluxo completo no navegador (produção, conta real "Oficina Bona"): tab Comprar/Vender, toggle vende_pecas, chat (mensagem enviada e recebida em tempo real), capacidade por funcionário (editado em Equipe, refletiu em Capacidade), `/api/admin/pecas-fornecedores` validado via curl direto na VM (retornou dados reais: 1 loja, 2 cotações, 1 pedido confirmado). Sem erros no console em nenhuma tela.
 12. [x] Documento detalhado em `docs/NOVIDADES_PORTAL_PECAS_V2.md`.
+
+**Nota de segurança pré-existente**: assim como as outras rotas `/api/admin/*` já no projeto (ex: `/api/admin/monitoramento`), a nova `/api/admin/pecas-fornecedores` não valida sessão/role no servidor — só a página do admin (client-side) bloqueia quem não é admin. Isso já era assim antes de hoje em todo o admin, não é uma regressão desta sessão, mas vale o registro caso decidam endurecer isso depois (checar o JWT/role no servidor em vez de confiar só no client).
 
 ### Adiado a pedido do usuário
 - Consulta de histórico de reparos por placa (pra concessionárias): envolve dados de terceiros e precisa de um modelo de acesso definido (proposto: conta "concessionária" aprovada pelo admin, dados anonimizados). Usuário pediu pra deixar quieto por enquanto — nada foi implementado, só fica registrado aqui pra não esquecer que a ideia existe.
