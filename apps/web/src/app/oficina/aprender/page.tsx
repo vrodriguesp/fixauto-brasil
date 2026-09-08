@@ -39,6 +39,24 @@ export default function OficinaAprenderPage() {
         },
       },
       {
+        id: 'notas-internas',
+        emoji: '🔒',
+        titulo: 'Notas internas (falar com o dono sem o cliente ver)',
+        resumo: 'Dentro de cada veículo, tem uma caixa "Notas internas" só pra equipe — dono e mecânico. Use pra avisar coisas tipo "faltou peça, já pedi" ou tirar uma dúvida, sem que isso apareça pro cliente. É diferente do botão "Mensagem", que fala direto com o cliente.',
+        passosGuiados: [
+          'Abra Oficina no menu e clique num veículo pra expandir os detalhes.',
+          'Role até a caixa amarela "Notas internas (não vai pro cliente)".',
+          'Escreva sua nota e clique em Enviar — o dono recebe uma notificação na hora, no sino do menu.',
+        ],
+        desafio: 'Escreva uma nota interna em algum veículo sob sua responsabilidade.',
+        linkReal: '/oficina/veiculos-em-servico',
+        verificar: async () => {
+          if (!funcionario) return false;
+          const { count } = await supabase.from('veiculo_notas_internas').select('*', { count: 'exact', head: true }).eq('remetente_id', funcionario.profile_id);
+          return (count || 0) > 0;
+        },
+      },
+      {
         id: 'minha-agenda',
         emoji: '📅',
         titulo: 'Minha Agenda',
@@ -118,6 +136,23 @@ export default function OficinaAprenderPage() {
       dica: 'Não tem nenhum orçamento aceito ainda? Use "Check-in Manual" no menu Mais pra registrar um cliente que chegou direto na oficina, sem passar pelo site.',
       verificar: async () => {
         const { count } = await supabase.from('agenda').select('*', { count: 'exact', head: true }).eq('oficina_id', oficina.id).in('status', ['em_andamento', 'concluido']);
+        return (count || 0) > 0;
+      },
+    },
+    {
+      id: 'notas-internas',
+      emoji: '🔒',
+      titulo: 'Notas internas com a equipe',
+      resumo: 'Dentro de cada veículo, tem uma caixa "Notas internas" só pra você e seus mecânicos — combinados, avisos, dúvidas sobre o serviço, sem que nada disso apareça pro cliente (diferente do botão "Mensagem", que fala com o cliente). Quando alguém escreve, você recebe uma notificação na hora no sino do menu.',
+      passosGuiados: [
+        'Abra Oficina no menu e clique num veículo pra expandir os detalhes.',
+        'Role até a caixa amarela "Notas internas (não vai pro cliente)".',
+        'Escreva algo e clique em Enviar.',
+      ],
+      desafio: 'Escreva uma nota interna em algum veículo em serviço.',
+      linkReal: '/oficina/veiculos-em-servico',
+      verificar: async () => {
+        const { count } = await supabase.from('veiculo_notas_internas').select('*', { count: 'exact', head: true }).eq('oficina_id', oficina.id);
         return (count || 0) > 0;
       },
     },

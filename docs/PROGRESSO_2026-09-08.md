@@ -147,5 +147,26 @@ Pedido do usuário: otimizar os campos de endereço/CEP/rua pra evitar erro de d
 
 **Não fiz** (fora do pedido, mas relacionado): as coordenadas de latitude/longitude continuam fixas em São Paulo em alguns fluxos (bug já documentado em `docs/sandbox/CLIENTE.md` e `LOJA_PECAS.md`) — corrigir isso de verdade precisaria de geocodificação (Nominatim/Google Maps), escopo maior que "evitar erro de digitação".
 
+---
+
+## Rodada 8 (mesmo dia): notas internas por veículo + sino de notificações (e bug crítico de RLS achado no caminho)
+
+Pedido do usuário: comunicação interna entre mecânico e administrativo, sempre ligada a um veículo específico — ou pelo menos uma nota que não vá pro cliente. Melhorar a ideia e implementar, com notificação real na tela das pessoas.
+
+### Melhoria sobre o pedido original
+Em vez de só "uma nota" (sem resposta), implementei uma **thread de mensagens** por veículo — permite ida e volta entre mecânico e dono, não só uma anotação estática. Mesmo padrão de chat já usado no portal de peças (`ChatCotacaoPeca`), mas simplificado (só texto, sem foto) porque o pedido era mais leve.
+
+### Descoberta importante no caminho
+Pra fazer a notificação "chegar na tela das pessoas" de verdade, teria que inserir na tabela `notificacoes` — e ao investigar isso, descobri que **a tabela nunca teve permissão de INSERT nas migrations numeradas** (só existia num arquivo antigo não usado). Ou seja, **7+ fluxos diferentes já existentes** (novo orçamento, nova solicitação, cotação de peça respondida, check-in manual, nova mensagem, pedido de peça confirmado, avaliação) estavam silenciosamente falhando ao tentar notificar em produção. Além disso, **oficina e loja nunca tiveram nenhuma interface pra ver notificação nenhuma** (só o cliente tinha uma lista solta no dashboard, com um link morto pra `/cliente/notificacoes` que nem existe).
+
+### O que foi feito
+1. [x] Migration 020: policy `notificacoes_insert` (corrige o bug de 7+ fluxos quebrados) + nova tabela `veiculo_notas_internas` (RLS: visível/gravável só pela equipe da oficina — dono ou funcionário ativo — nunca pelo cliente).
+2. [x] Componente `NotasInternas.tsx`: thread de mensagens por veículo, tempo real, dentro do card expandido de `/oficina/veiculos-em-servico`. Ao enviar, notifica automaticamente o dono e o mecânico responsável (quem não for o remetente).
+3. [x] Componente `NotificationBell.tsx`: sino no Navbar (agora visível pra **qualquer** usuário logado — oficina, loja, cliente, admin), com contador de não lidas, dropdown, marcar como lida, e navegação pro contexto certo ao clicar.
+4. [x] Módulos novos no tutorial (`/oficina/aprender`), tanto na trilha do dono quanto na do mecânico, com verificação real.
+5. [x] `docs/sandbox/OFICINA.md` atualizado (seções 0.3 e 4.1).
+6. [x] `npm run build`/`tsc` sem erros. Migration aplicada na VM (policy confirmada via `pg_policies`). Deploy feito (commit `7bde071`).
+7. [x] Testado ao vivo em produção (conta real, mecânico "Marcio"): sino aparece, nota enviada e exibida em tempo real, notificação real confirmada no banco pro dono (`select * from notificacoes where tipo='nota_interna_veiculo'` retornou a linha esperada) — prova que o fix do RLS funcionou de verdade, não só na teoria.
+
 ### Adiado a pedido do usuário
 - Consulta de histórico de reparos por placa (pra concessionárias): envolve dados de terceiros e precisa de um modelo de acesso definido (proposto: conta "concessionária" aprovada pelo admin, dados anonimizados). Usuário pediu pra deixar quieto por enquanto — nada foi implementado, só fica registrado aqui pra não esquecer que a ideia existe.

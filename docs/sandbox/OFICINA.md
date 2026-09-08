@@ -38,6 +38,12 @@ Confirmado em todas as telas lidas: nenhuma funcionalidade obriga o cadastro de 
 - `funcionarios.capacidade_maxima` é opcional e `NULL` por padrão — "sem limite definido", não trava nada.
 - A comissão, os orçamentos, a agenda e o check-in funcionam 100% com o dono sozinho, sem nenhuma linha na tabela `funcionarios`.
 
+### 0.3 Sino de notificações — adicionado em 08/09/2026
+
+Antes de 08/09/2026, a oficina **não tinha nenhuma interface** pra ver suas notificações — elas só existiam na tabela do banco, sem tela nenhuma pra exibi-las (só o cliente tinha uma listinha solta no dashboard). Pior: por um bug de segurança nunca corrigido desde a criação do banco, a tabela `notificacoes` tinha a permissão de **leitura** e **atualização** liberadas, mas **nunca teve permissão de criação (INSERT)** pras chamadas feitas direto do navegador — então toda notificação criada dessa forma (novo orçamento, nova solicitação, cotação de peça respondida, check-in manual, entre outras) **falhava silenciosamente**, sem erro visível pra ninguém. Só as notificações criadas por rotas de servidor (que usam uma chave especial que ignora essa permissão) chegavam de fato.
+
+As duas coisas foram corrigidas juntas: agora existe um **sino de notificações** no canto superior direito de toda tela logada (`NotificationBell.tsx`), com contador de não lidas, lista das mais recentes, marcar como lida ao clicar e link pra abrir o contexto certo (ex: a solicitação, a cotação de peça). E a permissão de criação de notificação foi adicionada de volta ao banco — agora **todas** as notificações (as antigas e a nova de "nota interna", ver seção 4.1) chegam de verdade.
+
 ---
 
 ## 1. Dashboard (`/oficina/dashboard`)
@@ -163,6 +169,18 @@ Recebido 📥 → Em diagnóstico 🔍 → Aguardando peças 📦 → Em execuç
 - O mecânico **não vê** o link "Ver agenda" no topo.
 - O mecânico **não pode** atribuir/trocar o mecânico responsável (o bloco some).
 - O mecânico **não vê o botão "Entrega"** — só quem não é mecânico pode finalizar a entrega do veículo. O mecânico pode fazer check-in e registrar etapas normalmente.
+
+### 4.1 Notas internas por veículo — adicionado em 08/09/2026
+
+**Pra que serve**: comunicação interna da equipe sobre um veículo específico (mecânico ↔ dono/administrativo) — dúvidas, avisos ("faltou peça, já pedi"), combinados — **sem que nada disso apareça pro cliente**. Diferente do botão "Mensagem" (que é o chat com o cliente).
+
+**Onde fica**: dentro do card expandido de cada veículo em Veículos em Serviço, logo abaixo do botão "Mensagem", numa caixa amarela "NOTAS INTERNAS (NÃO VAI PRO CLIENTE)". Visível pro dono e pro mecânico igualmente — os dois podem ler e escrever.
+
+**Como funciona**:
+- Mensagens de texto simples, em ordem cronológica, com nome de quem escreveu e horário.
+- Tempo real (Supabase Realtime) — se a outra pessoa estiver com a tela aberta, a nota aparece na hora, sem recarregar.
+- Ao enviar uma nota, o sistema notifica automaticamente (ver seção 0.3) o **dono da oficina** e o **mecânico responsável** por aquele veículo (quem não for o próprio remetente) — assim quem não está olhando a tela naquele momento fica sabendo que tem novidade.
+- É por veículo (tecnicamente por evento de agenda) — cada carro tem sua própria conversa interna, não é um chat geral da equipe.
 
 ---
 
