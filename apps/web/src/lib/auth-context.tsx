@@ -144,6 +144,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       nome,
       email,
       telefone,
+      termos_aceitos_em: new Date().toISOString(),
+      termos_versao: '2026-09-08',
     });
 
     if (profileError) return { error: profileError.message };

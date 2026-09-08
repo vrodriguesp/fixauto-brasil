@@ -28,6 +28,7 @@ function CadastroPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [aceitouTermos, setAceitouTermos] = useState(false);
   // Workshop fields
   const [nomeFantasia, setNomeFantasia] = useState('');
   const [cnpj, setCnpj] = useState('');
@@ -115,6 +116,10 @@ function CadastroPage() {
     e.preventDefault();
     if (!nome || !email || !password) {
       setError('Preencha todos os campos obrigatórios');
+      return;
+    }
+    if (!aceitouTermos) {
+      setError('Você precisa aceitar os Termos de Uso e a Política de Privacidade para continuar');
       return;
     }
     setError('');
@@ -284,7 +289,21 @@ function CadastroPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Senha *</label>
                 <input type="password" className="input-field" placeholder="Mínimo 6 caracteres" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
               </div>
-              <button type="submit" className="btn-primary w-full" disabled={loading}>
+              <label className="flex items-start gap-2 text-sm text-gray-600">
+                <input
+                  type="checkbox"
+                  className="mt-1 w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+                  checked={aceitouTermos}
+                  onChange={(e) => setAceitouTermos(e.target.checked)}
+                />
+                <span>
+                  Li e aceito os{' '}
+                  <Link href="/termos" target="_blank" className="text-primary-600 hover:underline">Termos de Uso</Link>
+                  {' '}e a{' '}
+                  <Link href="/privacidade" target="_blank" className="text-primary-600 hover:underline">Política de Privacidade</Link>
+                </span>
+              </label>
+              <button type="submit" className="btn-primary w-full" disabled={loading || !aceitouTermos}>
                 {loading ? 'Criando conta...' : (userType === 'oficina' || userType === 'loja_pecas') ? 'Próximo' : 'Criar conta'}
               </button>
             </form>

@@ -194,3 +194,47 @@ Bug que eu mesmo introduzi na rodada 8: `useNotificacoes()` cria um canal Supaba
 
 ### Adiado a pedido do usuário
 - Consulta de histórico de reparos por placa (pra concessionárias): envolve dados de terceiros e precisa de um modelo de acesso definido (proposto: conta "concessionária" aprovada pelo admin, dados anonimizados). Usuário pediu pra deixar quieto por enquanto — nada foi implementado, só fica registrado aqui pra não esquecer que a ideia existe.
+
+---
+
+## Rodada 10 (mesmo dia): erro de layout raiz não era monitorado
+
+Depois de resolver o crash da Rodada 9, o usuário fez uma pergunta legítima: "este erro tem que ser sempre monitorado, como tinha no console e vc nao sabia nada?". Ele está certo — o `ErrorReporter.tsx` (montado no layout raiz) só escuta `window.onerror`/`unhandledrejection`, que **não disparam** quando o React intercepta um erro de render/effect com um Error Boundary — exatamente o que produz a tela "Application error: a client-side exception has occurred". Ou seja, o pipeline de monitoramento (`/api/log-error` → `app_errors` → `/admin/monitoramento`) já existia, mas tinha um buraco estrutural: esse tipo específico de erro nunca chegava lá.
+
+### O que foi feito
+1. [x] `lib/report-client-error.ts`: função compartilhada (`sendBeacon` com fallback `fetch keepalive`) extraída do `ErrorReporter`, reaproveitável pelos error boundaries do Next.js.
+2. [x] `app/error.tsx` (novo): Error Boundary de página/rota — captura, reporta via `reportClientError`, mostra fallback com "Tentar novamente" e "Ir para o início".
+3. [x] `app/global-error.tsx` (novo): Error Boundary do **layout raiz** — cobre exatamente a categoria de erro que causou o crash da Rodada 9 (erro dentro do Navbar/AuthProvider, fora do alcance de um `error.tsx` de página). Precisa renderizar seu próprio `<html>/<body>`.
+4. [x] `npm run build`/`tsc` sem erros.
+
+**Lição**: o `ErrorReporter` (window.onerror) e os Error Boundaries do Next.js (`error.tsx`/`global-error.tsx`) cobrem categorias de erro diferentes e complementares — um crash "Application error" só é pego pelos boundaries, nunca pelo listener global. Os dois precisam coexistir para o `/admin/monitoramento` ter cobertura completa.
+
+---
+
+## Rodada 11 (2026-09-08): pivô para aquisição — SEO, Termos/Privacidade e pesquisa de cidade-piloto
+
+Usuário decidiu pausar features de produto e focar em três frentes de negócio: (1) SEO para a plataforma ser encontrada por oficinas buscando sistema de gestão/visibilidade, (2) Termos de Uso e Política de Privacidade formais entre BipFix, parceiros e clientes, (3) análise com dados reais para escolher uma cidade-piloto e estratégia de lançamento local.
+
+*(Feature de chat pré-orçamento entre lojas/oficinas fornecedoras e a oficina compradora ficou pausada no meio, sem commit — `apps/web/src/app/loja/conversa/nova/page.tsx` criada, `loja/cotacoes/page.tsx` com link "Tirar dúvida" adicionado. Falta: réplica do lado oficina (`comprar`/`vender excedente`) e página `/oficina/pecas/conversa/nova`. Retomar quando o usuário voltar a pedir.)*
+
+### 1. SEO para aquisição de oficinas
+- Site já tinha uma base de SEO decente (metadata, Open Graph, `sitemap.ts`/`robots.ts`, JSON-LD de `AutoRepair`/`FAQPage` nos perfis públicos de oficina), mas **nenhuma página** era otimizada para a intenção de busca do *dono de oficina* (ex: "sistema de gestão para oficina mecânica", "como conseguir mais clientes oficina mecânica") — a home é 100% focada no motorista.
+- [x] Nova página `/para-oficinas` (Server Component, com `metadata` própria): título/descrição/keywords voltados a dono de oficina, seções de dor→solução, "como funciona a visibilidade", transparência sobre comissão (linkando os Termos), FAQ com `FAQPage` JSON-LD e `SoftwareApplication` JSON-LD.
+- [x] `sitemap.ts`: adicionadas `/para-oficinas` (prioridade 0.9), `/termos` e `/privacidade`.
+- [x] Home (`page.tsx`) e footer: link "Saiba mais →" pra `/para-oficinas` na seção "Para oficinas mecânicas", e links de Termos/Privacidade no rodapé.
+
+### 2. Termos de Uso e Política de Privacidade
+- [x] `/termos` (novo): papel de intermediário (não presta o serviço, não é parte no contrato), uso gratuito pro cliente, **política de comissão exatamente como o usuário pediu** — hoje sem cobrança para os parceiros iniciais, direito de cobrar no futuro com **aviso prévio mínimo de 30 dias**, conduta esperada de parceiros, e **desligamento sem aviso prévio** para fraude na comissão, notas baixas reiteradas ou práticas desleais (proporcional à gravidade — infração leve gera aviso e prazo, infração grave gera corte imediato). Referências ao CDC (Lei 8.078/90): direito à informação, garantia legal de 90 dias, responsabilidade do fornecedor, vedação a práticas abusivas, direito de acionar Procon/Judiciário.
+- [x] `/privacidade` (novo): LGPD (Lei 13.709/2018) — dados coletados, base legal de cada tratamento, com quem compartilha, retenção (citando Marco Civil da Internet, Lei 12.965/2014, pra logs), direitos do titular (art. 18), contato do encarregado.
+- [x] Migration `021_termos_aceite.sql`: `profiles.termos_aceitos_em` + `termos_versao`, pra ter registro de aceite (importante pra exigibilidade das cláusulas de comissão/desligamento).
+- [x] `auth-context.tsx`: `signUp` grava `termos_aceitos_em`/`termos_versao` no cadastro.
+- [x] `cadastro/page.tsx`: checkbox obrigatório "Li e aceito os Termos de Uso e a Política de Privacidade" antes de criar qualquer conta (cliente, oficina ou loja) — não existia nenhum aceite de termos até agora.
+- [ ] **Aviso**: os textos foram escritos com base no CDC/LGPD/Marco Civil, mas **não substituem revisão por advogado** especializado em direito do consumidor/digital antes de operar comercialmente em escala — isso está registrado como aviso no rodapé de ambas as páginas.
+
+### 3. Pesquisa de cidade-piloto (dados reais)
+- Disparados 2 agentes de pesquisa em paralelo: (a) dados duros — frota de veículos por cidade, acidentes de trânsito, densidade de oficinas (CNAE 4520-0/01 e /02), renda local, pra um shortlist de cidades médias (200k–1,2M hab.) fora das capitais; (b) penetração digital por região (CETIC.br/IBGE), concorrentes existentes (marketplaces ou softwares de gestão pra oficina), e playbook de go-to-market local (Sindirepa, autopeças, guinchos, seguradoras, custo de mídia paga local).
+- Resultado ainda **pendente** no momento deste registro — plano é sintetizar os dois relatórios numa proposta única (cidade recomendada + plano de lançamento) e entregar como documento/artifact ao usuário assim que os agentes retornarem.
+
+### Status
+- [x] Build e `tsc` sem erros com as mudanças de SEO/Termos.
+- [ ] Deploy pendente (aguardando também o resultado da pesquisa de cidade-piloto pra fechar a rodada completa antes de subir pra produção).

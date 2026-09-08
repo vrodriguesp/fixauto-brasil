@@ -209,9 +209,14 @@ export default function HomePage() {
                 <Feature text="Gerencie sua agenda com serviços internos e externos" />
                 <Feature text="Construa sua reputação com avaliações de clientes" />
               </ul>
-              <Link href="/cadastro?tipo=oficina" className="btn-primary inline-block mt-8">
-                Cadastrar minha oficina
-              </Link>
+              <div className="flex flex-wrap gap-4 mt-8">
+                <Link href="/cadastro?tipo=oficina" className="btn-primary inline-block">
+                  Cadastrar minha oficina
+                </Link>
+                <Link href="/para-oficinas" className="inline-block text-primary-600 font-medium hover:underline self-center">
+                  Saiba mais →
+                </Link>
+              </div>
             </div>
             <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
               <div className="space-y-4">
@@ -343,6 +348,7 @@ export default function HomePage() {
             <div>
               <h3 className="text-white font-semibold mb-3">Para Oficinas</h3>
               <ul className="space-y-2 text-sm">
+                <li><Link href="/para-oficinas" className="hover:text-white">Sistema de gestão e clientes</Link></li>
                 <li><Link href="/cadastro?tipo=oficina" className="hover:text-white">Cadastrar oficina</Link></li>
                 <li><Link href="/docs/oficina" className="hover:text-white">Guia da Oficina</Link></li>
                 <li><Link href="/docs" className="hover:text-white">Central de Ajuda</Link></li>
@@ -357,8 +363,12 @@ export default function HomePage() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+          <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center text-sm">
             <p>2026 BipFix. Todos os direitos reservados.</p>
+            <div className="flex gap-4">
+              <Link href="/termos" className="hover:text-white">Termos de Uso</Link>
+              <Link href="/privacidade" className="hover:text-white">Privacidade</Link>
+            </div>
           </div>
         </div>
       </footer>
