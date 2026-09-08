@@ -7,6 +7,17 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+// Oficinas digitam a cidade livremente no cadastro (ex: "sao paulo", tudo
+// minusculo, sem acento) - isso vaza pro title/description exibido no
+// Google, entao pelo menos capitaliza cada palavra aqui na exibicao, sem
+// mexer no valor salvo no banco.
+function capitalizarCidade(cidade: string): string {
+  return cidade
+    .split(' ')
+    .map((palavra) => (palavra.length > 2 ? palavra.charAt(0).toUpperCase() + palavra.slice(1) : palavra))
+    .join(' ');
+}
+
 // Metadata unica por oficina (nome + cidade no title) - antes desta pagina
 // virar um wrapper server-side, TODO perfil publico de oficina mostrava o
 // mesmo title/description genericos da home no Google e ao compartilhar,
@@ -23,8 +34,9 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     return { title: 'Oficina não encontrada' };
   }
 
-  const title = `${oficina.nome_fantasia} - Oficina Mecânica em ${oficina.cidade}, ${oficina.estado}`;
-  const description = `Avaliações, serviços oferecidos e orçamento online na ${oficina.nome_fantasia}, oficina mecânica em ${oficina.cidade} - ${oficina.estado}. Compare preços e agende seu reparo pelo BipFix.`;
+  const cidade = capitalizarCidade(oficina.cidade);
+  const title = `${oficina.nome_fantasia} - Oficina Mecânica em ${cidade}, ${oficina.estado}`;
+  const description = `Avaliações, serviços oferecidos e orçamento online na ${oficina.nome_fantasia}, oficina mecânica em ${cidade} - ${oficina.estado}. Compare preços e agende seu reparo pelo BipFix.`;
   const url = `https://bipfix.com/oficinas/${params.id}`;
 
   return {
