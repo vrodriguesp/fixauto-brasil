@@ -101,5 +101,20 @@ Pedido do usuário: construir de fato o portal educativo pra oficinas e lojas de
 
 Commit `e2d08a4`, migration não necessária (só leitura via RLS existente), build e deploy feitos.
 
+---
+
+## Rodada 5 (mesmo dia): mecânico com formação/agenda própria + bug do cliente sem veículo
+
+Feedback do usuário: (1) mecânico não tinha o menu "Aprender"; (2) mecânico deveria ter formação só da parte dele, não a do dono; (3) mecânico também não tinha uma "agenda" própria com os carros designados a ele; (4) bug real: cliente sem veículo cadastrado, ao tentar criar uma nova solicitação, era mandado pra tela de veículos e ficava travado lá, sem voltar pro fluxo.
+
+### O que foi feito
+1. [x] Link "Aprender" adicionado ao menu do mecânico (antes só tinha "Oficina").
+2. [x] `/oficina/aprender` agora detecta `isMecanico` e mostra uma trilha própria e curta (Meus Veículos + Minha Agenda), sem os módulos do dono (Perfil, Comissão, Equipe, Peças) que não fazem sentido pro papel dele.
+3. [x] `/oficina/agenda` ganhou consciência de mecânico: título vira "Minha Agenda", eventos filtrados só pros dele (mesma lógica de "Meus Veículos"), check-in de um clique (sem dropdown pra atribuir outro mecânico), e as ações administrativas (+Evento, Editar/Excluir evento externo, Entrega, Marcar Falta) ficam escondidas pra ele — mesma restrição de privilégio mínimo que já existia em Veículos em Serviço. Nav do mecânico ganhou o link "Agenda".
+4. [x] **Bug corrigido**: `/cliente/nova-solicitacao`, passo 1, quando o cliente não tem veículo — antes linkava pra `/cliente/veiculos?add=true` (saía do fluxo e não voltava). Agora o cadastro de veículo acontece inline no próprio passo 1 (mesmo componente de busca FIPE), sem sair da página — ao salvar, o veículo novo já fica selecionado e o cliente segue direto. Também disponível pra quem já tem carro ("+ Cadastrar outro veículo").
+5. [x] `npm run build`/`tsc` sem erros, deploy feito (commits `972ef68` e `dfe9927`).
+
+**Nota**: durante o teste ao vivo da rodada 5, percebi que o navegador compartilhado (mesma sessão/cookies do Chrome real do usuário) mudou de conta no meio do teste (provavelmente o usuário testando em paralelo) — parei o teste na hora pra não interferir, sem completar a verificação visual do lado do mecânico. A lógica foi validada por revisão de código (mesmo padrão já comprovado em Veículos em Serviço) mas vale um teste visual dedicado depois.
+
 ### Adiado a pedido do usuário
 - Consulta de histórico de reparos por placa (pra concessionárias): envolve dados de terceiros e precisa de um modelo de acesso definido (proposto: conta "concessionária" aprovada pelo admin, dados anonimizados). Usuário pediu pra deixar quieto por enquanto — nada foi implementado, só fica registrado aqui pra não esquecer que a ideia existe.
