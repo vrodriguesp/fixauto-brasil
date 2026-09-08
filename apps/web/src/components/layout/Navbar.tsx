@@ -74,6 +74,7 @@ export default function Navbar() {
                           { href: '/oficina/equipe', label: 'Equipe' },
                           { href: '/oficina/comissao', label: 'Comissão' },
                           { href: '/oficina/avaliacoes', label: 'Avaliações' },
+                          { href: '/oficina/aprender', label: '🎓 Aprender' },
                         ]}
                       />
                       <NavLink href="/oficina/perfil">Perfil</NavLink>
@@ -86,6 +87,7 @@ export default function Navbar() {
                     <NavLink href="/loja/catalogo">Catálogo</NavLink>
                     <NavLink href="/loja/pedidos">Pedidos</NavLink>
                     <NavLink href="/loja/comissao">Comissão</NavLink>
+                    <NavLink href="/loja/aprender">🎓 Aprender</NavLink>
                     <NavLink href="/loja/perfil">Perfil</NavLink>
                   </>
                 ) : (
@@ -185,6 +187,7 @@ export default function Navbar() {
                   <MobileNavLink href="/oficina/checkin" onClick={() => setMenuOpen(false)}>Check-in Manual</MobileNavLink>
                   <MobileNavLink href="/oficina/comissao" onClick={() => setMenuOpen(false)}>Comissão</MobileNavLink>
                   <MobileNavLink href="/oficina/avaliacoes" onClick={() => setMenuOpen(false)}>Avaliações</MobileNavLink>
+                  <MobileNavLink href="/oficina/aprender" onClick={() => setMenuOpen(false)}>🎓 Aprender</MobileNavLink>
                   <MobileNavLink href="/oficina/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
                 </>
               )
@@ -195,6 +198,7 @@ export default function Navbar() {
                 <MobileNavLink href="/loja/catalogo" onClick={() => setMenuOpen(false)}>Catálogo</MobileNavLink>
                 <MobileNavLink href="/loja/pedidos" onClick={() => setMenuOpen(false)}>Pedidos</MobileNavLink>
                 <MobileNavLink href="/loja/comissao" onClick={() => setMenuOpen(false)}>Comissão</MobileNavLink>
+                <MobileNavLink href="/loja/aprender" onClick={() => setMenuOpen(false)}>🎓 Aprender</MobileNavLink>
                 <MobileNavLink href="/loja/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
               </>
             ) : (

@@ -1,0 +1,133 @@
+'use client';
+
+import { useAuth } from '@/lib/auth-context';
+import { supabase } from '@/lib/supabase';
+import TutorialHub, { TutorialModulo } from '@/components/tutorial/TutorialHub';
+
+export default function OficinaAprenderPage() {
+  const { oficina, loading } = useAuth();
+
+  if (loading || !oficina) {
+    return <div className="max-w-6xl mx-auto px-4 py-20 text-center text-gray-400">Carregando...</div>;
+  }
+
+  const modulos: TutorialModulo[] = [
+    {
+      id: 'perfil',
+      emoji: '🏪',
+      titulo: 'Perfil e especialidades',
+      resumo: 'É o seu cadastro mestre: define que tipo de serviço você atende, seu raio de atendimento e o que os clientes veem na sua página pública. Sem especialidades marcadas, você não recebe nenhuma solicitação.',
+      passosGuiados: [
+        'Abra Perfil no menu.',
+        'Em "Especialidades", marque pelo menos um tipo de serviço que sua oficina faz (ex: Mecânica, Funilaria).',
+        'Preencha endereço, cidade, estado e raio de atendimento.',
+        '(Opcional) Adicione uma logo e fotos da oficina.',
+        'Clique em "Salvar Alterações" no fim da página.',
+      ],
+      desafio: 'Configure seu perfil de forma que você comece a receber solicitações de clientes de verdade: pelo menos uma especialidade marcada e endereço preenchido.',
+      linkReal: '/oficina/perfil',
+      verificar: async () => (oficina.especialidades?.length || 0) > 0 && !!oficina.endereco,
+    },
+    {
+      id: 'solicitacoes',
+      emoji: '📋',
+      titulo: 'Solicitações e orçamento',
+      resumo: 'É a "vitrine" de pedidos de reparo de clientes na sua região. Você escolhe quais orçar. O cliente só vê seu nome e foto até você orçar — o contato completo só aparece depois que ele aceitar.',
+      passosGuiados: [
+        'Abra Solicitações no menu.',
+        'Clique em uma solicitação da lista para ver os detalhes (fotos do dano, veículo, descrição).',
+        'Clique em "Enviar Orçamento".',
+        'Adicione ao menos um item (descrição, tipo, valor, quantidade).',
+        'Escolha se você absorve a comissão ou repassa ao cliente.',
+        'Defina prazo, datas disponíveis para check-in, e clique em "Enviar Orçamento".',
+      ],
+      desafio: 'Envie um orçamento de verdade para alguma solicitação aberta na sua região.',
+      linkReal: '/oficina/solicitacoes',
+      dica: 'Quanto mais rápido você responde, menor fica sua taxa de comissão — ver módulo "Comissão".',
+      verificar: async () => {
+        const { count } = await supabase.from('orcamentos').select('*', { count: 'exact', head: true }).eq('oficina_id', oficina.id);
+        return (count || 0) > 0;
+      },
+    },
+    {
+      id: 'checkin',
+      emoji: '🔧',
+      titulo: 'Agenda, check-in e entrega',
+      resumo: 'Depois que o cliente aceita o orçamento, o veículo entra na sua agenda. Você faz o check-in quando ele chega, registra as etapas do reparo, e confirma a entrega no final.',
+      passosGuiados: [
+        'Abra Oficina no menu (lista de veículos em serviço).',
+        'Na aba "Aguardando", clique em "Check-in" no veículo que chegou.',
+        'Clique em "+ Etapa" pra registrar o progresso (ex: Em diagnóstico, Em execução).',
+        'Quando terminar, clique em "Entrega" pra fechar o serviço.',
+      ],
+      desafio: 'Faça o check-in de um veículo (da plataforma ou manual, em Check-in Manual) e registre pelo menos uma etapa de manutenção.',
+      linkReal: '/oficina/veiculos-em-servico',
+      dica: 'Não tem nenhum orçamento aceito ainda? Use "Check-in Manual" no menu Mais pra registrar um cliente que chegou direto na oficina, sem passar pelo site.',
+      verificar: async () => {
+        const { count } = await supabase.from('agenda').select('*', { count: 'exact', head: true }).eq('oficina_id', oficina.id).in('status', ['em_andamento', 'concluido']);
+        return (count || 0) > 0;
+      },
+    },
+    {
+      id: 'comissao',
+      emoji: '💰',
+      titulo: 'Como funciona a comissão',
+      resumo: 'O BipFix cobra uma taxa sobre cada serviço concluído — mas ela não é fixa. Começa em 15% e cai até 5% conforme você responde rápido, revisa pouco o orçamento, tem boa avaliação e mantém volume de serviços.',
+      passosGuiados: [
+        'Abra Comissão no menu.',
+        'Veja sua taxa atual e o que está reduzindo (ou não) cada critério.',
+        'Leia a dica: responder rápido, evitar revisão de orçamento e pedir avaliação ao cliente reduz sua taxa.',
+      ],
+      desafio: 'Explore a tela de Comissão e identifique qual critério mais aumentaria sua taxa se você melhorasse.',
+      linkReal: '/oficina/comissao',
+      linkRotulo: 'Ver minha comissão →',
+    },
+    {
+      id: 'equipe',
+      emoji: '👥',
+      titulo: 'Equipe (opcional)',
+      resumo: 'Se você trabalha sozinho, pode pular esse módulo tranquilo — nada no site obriga ter funcionários. Mas se tiver mecânicos, você pode cadastrá-los aqui e até definir quantos carros cada um consegue atender ao mesmo tempo.',
+      opcional: true,
+      passosGuiados: [
+        'Abra Mais → Equipe no menu.',
+        'Clique em "+ Novo Funcionário".',
+        'Preencha e-mail, uma senha temporária, e escolha o cargo (Mecânico ou Administrador).',
+        'Clique em "Cadastrar" e repasse a senha pro funcionário.',
+      ],
+      desafio: 'Cadastre um funcionário mecânico e defina uma capacidade máxima de veículos simultâneos pra ele.',
+      linkReal: '/oficina/equipe',
+      verificar: async () => {
+        const { count } = await supabase.from('funcionarios').select('*', { count: 'exact', head: true }).eq('oficina_id', oficina.id);
+        return (count || 0) > 0;
+      },
+    },
+    {
+      id: 'peças',
+      emoji: '🔩',
+      titulo: 'Peças: comprar de lojas ou vender excedente',
+      resumo: 'Precisa de uma peça? Peça cotação pra lojas parceiras (e até pra outras oficinas vizinhas). E se você tem estoque sobrando, também pode virar fornecedor e vender pra oficinas perto de você.',
+      opcional: true,
+      passosGuiados: [
+        'Abra Mais → Peças no menu.',
+        'Na aba "Comprar", clique em "+ Nova Cotação" e descreva a peça que precisa.',
+        'Espere respostas de lojas/oficinas próximas, compare preço e prazo, e confirme o pedido escolhido.',
+        '(Opcional) Na aba "Vender excedente", ative o interruptor pra começar a responder cotações de oficinas vizinhas.',
+      ],
+      desafio: 'Crie uma cotação de peça pedindo algo que sua oficina realmente usa no dia a dia.',
+      linkReal: '/oficina/pecas',
+      verificar: async () => {
+        const { count } = await supabase.from('cotacoes_pecas').select('*', { count: 'exact', head: true }).eq('oficina_id', oficina.id);
+        return (count || 0) > 0;
+      },
+    },
+  ];
+
+  return (
+    <TutorialHub
+      titulo="Aprenda a usar o BipFix"
+      subtitulo="Um passo de cada vez. Escolha o modo Guiado se quiser instruções detalhadas, ou Autônomo se já quiser tentar sozinho."
+      storageKey="bipfix_tutorial_oficina"
+      modulos={modulos}
+    />
+  );
+}

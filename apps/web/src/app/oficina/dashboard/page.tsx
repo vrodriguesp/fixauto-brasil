@@ -9,6 +9,7 @@ import { useAgenda } from '@/hooks/use-agenda';
 import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import StarRating from '@/components/ui/StarRating';
+import TutorialBanner from '@/components/tutorial/TutorialBanner';
 import { timeAgo, calcDistance, getUrgenciaColor, formatCurrency, cleanDescricao } from '@/lib/utils';
 
 export default function OficinaDashboard() {
@@ -55,6 +56,7 @@ export default function OficinaDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <TutorialBanner href="/oficina/aprender" storageKey="bipfix_tutorial_banner_oficina" />
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
