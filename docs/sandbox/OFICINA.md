@@ -377,7 +377,7 @@ Não há nenhuma ação da oficina aqui (não dá para responder publicamente a 
 
 ### Seções e campos
 1. **Logo da Oficina**: upload de imagem (comprimida no navegador antes de subir), aparece na página pública e nas solicitações.
-2. **Dados da oficina**: Nome fantasia, CNPJ, Endereço, Cidade, Estado (lista de UFs), CEP, **Raio de atendimento (km)** — este raio define até onde a oficina recebe solicitações de clientes e, hoje, também é reaproveitado como raio de "quem vê o quê" na aba "Vender excedente" de Peças.
+2. **Dados da oficina**: CEP (digitando o CEP, endereço/cidade/estado são preenchidos sozinhos via ViaCEP — desde 08/09/2026, ver `lib/cep.ts`; ainda dá pra editar manualmente depois), Nome fantasia, CNPJ, Endereço, Cidade, Estado (lista de UFs), **Raio de atendimento (km)** — este raio define até onde a oficina recebe solicitações de clientes e, hoje, também é reaproveitado como raio de "quem vê o quê" na aba "Vender excedente" de Peças.
 3. **Especialidades**: checkboxes dos tipos de serviço (`TIPOS_SERVICO`). Texto explicativo: "Você só receberá solicitações compatíveis." Mostra contagem de quantas foram selecionadas.
 4. **Capacidade por Serviço** (só aparece se houver ao menos uma especialidade marcada): campo numérico por tipo de serviço selecionado — "Defina o número máximo de carros que sua oficina pode atender simultaneamente por tipo de serviço." Vazio = sem limite (não bloqueia nada, ver seção 12 de bugs sobre o comportamento de "0").
 5. **Dados pessoais** (do usuário dono, não da oficina): Nome, E-mail (bloqueado, não editável aqui), Telefone.

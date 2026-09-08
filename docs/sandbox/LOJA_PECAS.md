@@ -44,12 +44,12 @@ Arquivo: `apps/web/src/app/(auth)/cadastro/page.tsx`
 - Senha * (mínimo 6 caracteres, validado por `minLength={6}` do HTML — não há validação de força de senha)
 - Botão "Próximo" (em vez de "Criar conta", porque loja e oficina têm um passo 3). Enquanto salva, mostra "Criando conta..." — mas na real esse botão só avança de passo, a conta ainda não é criada aqui.
 
-**Passo 3 — Dados da loja**:
+**Passo 3 — Dados da loja** (atualizado em 08/09/2026 — CEP vem primeiro agora):
+- CEP (com máscara `00000-000`) — ao completar os 8 dígitos, busca automaticamente na API ViaCEP e preenche Endereço/Cidade/Estado sozinho (`lib/cep.ts`); se o CEP não existir, mostra aviso e deixa preencher manual.
 - Nome fantasia * (obrigatório)
 - CNPJ (opcional, sem máscara nem validação de formato/dígitos verificadores)
-- Endereço (**sem** `required`, apesar do rótulo não indicar isso)
-- Cidade / Estado — dois campos lado a lado. Estado é um **campo de texto livre** com placeholder "SP" (não é uma lista de UFs — ver bug #8)
-- CEP (texto livre, sem máscara)
+- Endereço (**sem** `required`, preenchido pelo CEP mas editável — ainda precisa completar o número manualmente)
+- Cidade / Estado — Estado agora **também é `<select>`** com a lista oficial de UFs (igual ao perfil — a inconsistência do bug #8 antigo foi corrigida junto)
 - Botão "Criar conta da loja" — dispara a criação de fato.
 
 ### O que acontece ao clicar em "Criar conta da loja"
@@ -312,12 +312,12 @@ Seção "Dados pessoais":
 - Email (campo travado/cinza, **não editável** — mostrado só para referência)
 - Telefone (editável)
 
-Seção "Dados da loja":
+Seção "Dados da loja" (atualizado em 08/09/2026):
+- CEP — mesmo autofill via ViaCEP do cadastro (`lib/cep.ts`); preenche Endereço/Cidade/Estado ao completar os 8 dígitos
 - Nome fantasia
 - CNPJ
 - Endereço
-- Cidade / Estado (aqui Estado **é** um `<select>` com a lista oficial de 27 UFs de `ESTADOS_BRASIL` — diferente do cadastro, que usa texto livre; ver bug #8)
-- CEP
+- Cidade / Estado (`<select>` com a lista oficial de 27 UFs de `ESTADOS_BRASIL` — agora igual ao cadastro, que usava texto livre antes; bug #8 antigo corrigido)
 - Raio de atendimento (km) — campo numérico livre (na prática, não filtra nada nas cotações que a loja vê, ver bug #7)
 - Botão "Salvar"
 
@@ -384,9 +384,9 @@ Baseado nas políticas de Row Level Security das migrations `017_portal_pecas.sq
 
 7. **"Raio de atendimento" da loja não filtra nada na prática.** O campo é coletado no cadastro (`(auth)/cadastro/page.tsx:112`) e editável no perfil (`loja/perfil/page.tsx:127-129`), mas `apps/web/src/app/loja/cotacoes/page.tsx:26-31` busca cotações abertas de **todo o Brasil**, sem nenhum filtro de distância, cidade ou estado. O raio só é efetivamente usado no fluxo de notificação por proximidade das oficinas-fornecedoras (`/api/notificar-fornecedores-cotacao-peca`), não no modelo "pull" das lojas.
 
-8. **Estado (UF) é texto livre no cadastro, mas select fechado no perfil.** `apps/web/src/app/(auth)/cadastro/page.tsx:343-345` usa `<input type="text" placeholder="SP">` para o estado da loja; `apps/web/src/app/loja/perfil/page.tsx:116-120` usa um `<select>` com a lista oficial de 27 UFs (`ESTADOS_BRASIL`). Se a loja digitar algo fora do formato exato de 2 letras maiúsculas no cadastro (ex.: "sp", "São Paulo", com espaço), o `<select>` do perfil não vai encontrar nenhuma opção correspondente e vai exibir silenciosamente a primeira UF da lista (AC), sem nenhum aviso de que o valor salvo é diferente do exibido.
+8. ~~**Estado (UF) é texto livre no cadastro, mas select fechado no perfil.**~~ **CORRIGIDO em 08/09/2026**: cadastro agora também usa `<select>` com `ESTADOS_BRASIL`, e é preenchido automaticamente pelo CEP (`lib/cep.ts`) — o valor sempre bate com uma opção válida.
 
-9. **Endereço/cidade/estado/cep opcionais no formulário, mas obrigatórios (NOT NULL) no banco.** Nenhum desses campos tem `required` no passo 3 do cadastro de loja (`(auth)/cadastro/page.tsx:333-350`), mas a tabela `lojas_pecas` os define como `NOT NULL` (`supabase/migrations/017_portal_pecas.sql:14-17`). O código contorna isso silenciosamente com valores padrão fixos ("A definir" / "SP" / "00000-000", `(auth)/cadastro/page.tsx:106-109`) — uma loja pode acabar com endereço fake sem perceber que deixou o campo em branco.
+9. **Endereço/cidade/estado/cep opcionais no formulário, mas obrigatórios (NOT NULL) no banco.** (o autofill por CEP de 08/09/2026 reduz a chance disso acontecer sem querer, mas os campos continuam tecnicamente opcionais no form — não os tornei obrigatórios, isso é uma decisão de produto separada.) Nenhum desses campos tem `required` no passo 3 do cadastro de loja (`(auth)/cadastro/page.tsx:333-350`), mas a tabela `lojas_pecas` os define como `NOT NULL` (`supabase/migrations/017_portal_pecas.sql:14-17`). O código contorna isso silenciosamente com valores padrão fixos ("A definir" / "SP" / "00000-000", `(auth)/cadastro/page.tsx:106-109`) — uma loja pode acabar com endereço fake sem perceber que deixou o campo em branco.
 
 10. **Política de UPDATE do chat de peças é totalmente aberta.** `supabase/migrations/018_comissao_fornecedor_pecas.sql:151`: `CREATE POLICY "pecas_mensagens_update" ON cotacoes_pecas_mensagens FOR UPDATE USING (true);` — sem nenhuma restrição de dono ou de participante da conversa. Qualquer usuário autenticado no sistema (loja, oficina ou motorista) pode, em teoria, atualizar qualquer mensagem de qualquer conversa de peças (inclusive reescrever o texto ou a imagem de uma mensagem alheia), não só marcar como lida.
 

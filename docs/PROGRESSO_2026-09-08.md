@@ -131,5 +131,21 @@ Pedido do usuário: (1) poder designar o responsável por um veículo antes dele
 6. [x] `npm run build`/`tsc` sem erros.
 7. [x] Deploy feito (commit `e4b144b`), testado ao vivo em produção — página renderiza corretamente, sem erros no console. **Nota**: notificação por e-mail está ativa na VM (RESEND_API_KEY configurado); WhatsApp ainda não (TWILIO_ACCOUNT_SID não configurado na VM) — mesma limitação que já existia pra notificação de "novo orçamento", não é regressão desta rodada.
 
+---
+
+## Rodada 7 (mesmo dia): preenchimento automático de endereço por CEP
+
+Pedido do usuário: otimizar os campos de endereço/CEP/rua pra evitar erro de digitação.
+
+### O que foi feito
+1. [x] Novo `lib/cep.ts` usando a **API pública do ViaCEP** (gratuita, sem chave, sem CORS) — usuário digita só o CEP (com máscara automática `00000-000`) e rua/cidade/estado são preenchidos sozinhos.
+2. [x] Aplicado em 4 lugares: cadastro de oficina, cadastro de loja de peças (campos compartilhados no formulário — unificados numa função só, `renderEnderecoFields`), `/oficina/perfil`, `/loja/perfil`.
+3. [x] De brinde, corrigida a inconsistência que a auditoria de hoje achou (bug #8 de `LOJA_PECAS.md`): Estado era texto livre no cadastro mas `<select>` fechado no perfil — agora é `<select>` nos dois lugares, e sempre correto porque vem do CEP.
+4. [x] Validado o formato de resposta da API ViaCEP direto via curl (CEP válido e inválido) — bate exatamente com o que o código espera.
+5. [x] `npm run build`/`tsc` sem erros, deploy feito (commit `58a9b1d`).
+6. [ ] Teste visual ao vivo não foi possível (sessão do navegador compartilhado estava logada como o mecânico Marcio, e o cadastro é uma página pública que desloga sessão ativa — não quis me deslogar da sua sessão pra testar). Validado por: build limpo + verificação direta da API + revisão de código.
+
+**Não fiz** (fora do pedido, mas relacionado): as coordenadas de latitude/longitude continuam fixas em São Paulo em alguns fluxos (bug já documentado em `docs/sandbox/CLIENTE.md` e `LOJA_PECAS.md`) — corrigir isso de verdade precisaria de geocodificação (Nominatim/Google Maps), escopo maior que "evitar erro de digitação".
+
 ### Adiado a pedido do usuário
 - Consulta de histórico de reparos por placa (pra concessionárias): envolve dados de terceiros e precisa de um modelo de acesso definido (proposto: conta "concessionária" aprovada pelo admin, dados anonimizados). Usuário pediu pra deixar quieto por enquanto — nada foi implementado, só fica registrado aqui pra não esquecer que a ideia existe.
