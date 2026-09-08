@@ -114,6 +114,74 @@ export default function ParaOficinasPage() {
         </div>
       </section>
 
+      {/* Resumo sintetico de todas as funcionalidades */}
+      <section className="py-20 bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
+            Tudo que sua oficina tem no BipFix
+          </h2>
+          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+            Um resumo rápido de cada funcionalidade — sem enrolação
+          </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <FuncCategoria
+              titulo="Clientes e visibilidade"
+              itens={[
+                'Perfil público indexado no Google, por cidade',
+                'Recebimento automático de solicitações da região',
+                'Avaliações e reputação exibidas no perfil',
+                'Check-in rápido na chegada do veículo',
+              ]}
+            />
+            <FuncCategoria
+              titulo="Orçamentos e atendimento"
+              itens={[
+                'Orçamentos estruturados, com opção de repassar ou absorver comissão',
+                'Acompanhamento do reparo em etapas, visível ao cliente',
+                'Notificação automática quando o veículo fica pronto',
+                'Chat direto com o cliente por solicitação',
+              ]}
+            />
+            <FuncCategoria
+              titulo="Agenda e equipe"
+              itens={[
+                'Agenda por veículo e por funcionário',
+                'Painel de distribuição de trabalho entre a equipe',
+                'Limite de capacidade por mecânico',
+                'Cadastro de equipe com cargos (dono / mecânico)',
+                'Notas internas por veículo, sem o cliente ver',
+                'Notificações em tempo real na tela de toda a equipe',
+              ]}
+            />
+            <FuncCategoria
+              titulo="Peças"
+              itens={[
+                'Cotação de peças com lojas parceiras da região',
+                'Cotação também com outras oficinas vizinhas',
+                'Venda do seu estoque excedente para outras oficinas',
+                'Chat com o fornecedor antes de fechar o pedido',
+              ]}
+            />
+            <FuncCategoria
+              titulo="Financeiro"
+              itens={[
+                'Comissão configurável por performance e fidelidade',
+                'Extrato de comissão e lançamentos',
+                'Transparência total sobre o que é cobrado e quando',
+              ]}
+            />
+            <FuncCategoria
+              titulo="Aprendizado"
+              itens={[
+                'Portal de tutorial guiado dentro do próprio sistema',
+                'Trilha separada para o dono e para o mecânico',
+                'Sem necessidade de treinamento externo',
+              ]}
+            />
+          </div>
+        </div>
+      </section>
+
       {/* Dores -> Solucao */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -210,6 +278,24 @@ export default function ParaOficinasPage() {
           </Link>
         </div>
       </section>
+    </div>
+  );
+}
+
+function FuncCategoria({ titulo, itens }: { titulo: string; itens: string[] }) {
+  return (
+    <div className="border border-gray-200 rounded-xl p-6">
+      <h3 className="font-semibold text-gray-900 mb-4">{titulo}</h3>
+      <ul className="space-y-2.5">
+        {itens.map((item, i) => (
+          <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+            <svg className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
