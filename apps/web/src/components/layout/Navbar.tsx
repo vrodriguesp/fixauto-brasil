@@ -85,6 +85,7 @@ export default function Navbar() {
                     <NavLink href="/loja/cotacoes">Cotações</NavLink>
                     <NavLink href="/loja/catalogo">Catálogo</NavLink>
                     <NavLink href="/loja/pedidos">Pedidos</NavLink>
+                    <NavLink href="/loja/comissao">Comissão</NavLink>
                     <NavLink href="/loja/perfil">Perfil</NavLink>
                   </>
                 ) : (
@@ -193,6 +194,7 @@ export default function Navbar() {
                 <MobileNavLink href="/loja/cotacoes" onClick={() => setMenuOpen(false)}>Cotações</MobileNavLink>
                 <MobileNavLink href="/loja/catalogo" onClick={() => setMenuOpen(false)}>Catálogo</MobileNavLink>
                 <MobileNavLink href="/loja/pedidos" onClick={() => setMenuOpen(false)}>Pedidos</MobileNavLink>
+                <MobileNavLink href="/loja/comissao" onClick={() => setMenuOpen(false)}>Comissão</MobileNavLink>
                 <MobileNavLink href="/loja/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
               </>
             ) : (

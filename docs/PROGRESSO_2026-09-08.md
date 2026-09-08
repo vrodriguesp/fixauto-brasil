@@ -36,3 +36,28 @@ Log passo a passo do que foi feito nesta sessão, para retomar caso algo interro
 
 ### 5. Documento de novidades implementadas (CONCLUÍDO)
 - Criado `docs/NOVIDADES_RETENCAO_OFICINAS.md` com a explicação detalhada de tudo que foi implementado na feature de retenção de oficinas (fases 1-5).
+
+---
+
+## Rodada 2 (mesmo dia, continuação): expansão do portal de peças
+
+Pedido do usuário: comissão sobre venda de peças (começando em 3%, variando por critério de resposta rápida como na comissão de serviço), canal de chat entre oficina e fornecedor de peça (texto + foto), oficinas também poderem se cadastrar como fornecedoras de peças (vendendo excedente, roteado por proximidade), gestão de capacidade por funcionário (não só da oficina como um todo), e uma visão admin de rastreabilidade do portal de peças (quem está ativo, último login). A funcionalidade de consulta de reparos por placa (concessionária) foi **explicitamente adiada a pedido do usuário** — não foi implementada.
+
+**Decisão de arquitetura**: generalizei "fornecedor de peça" pra ser `loja_pecas` OU `oficina` desde a migration (campo `fornecedor_tipo` + `oficina_fornecedora_id` nullable ao lado do `loja_id` que já existia), em vez de duplicar tabelas/lógica pra cada caso. Portal criado ontem, sem dados reais em produção ainda, então era o momento certo pra isso — teria sido bem mais caro depois.
+
+### Tarefas
+1. [x] Migration 018: `oficinas.vende_pecas`, generalização fornecedor (loja/oficina) em `cotacoes_pecas_respostas`/`pedidos_pecas`, tabelas `comissao_pecas_config`/`comissao_pecas_lancamento`, tabela `cotacoes_pecas_mensagens` (chat), `funcionarios.capacidade_maxima`.
+2. [x] `lib/comissao-pecas.ts` — cálculo da taxa (base 3%, mín 1%, máx 3%, bônus por resposta rápida + volume/fidelidade), espelhando `lib/comissao.ts`.
+3. [x] `/api/marcar-pedido-peca-entregue` — rota server-side que marca entregue + lança comissão (evita o mesmo bug de RLS já visto 2x antes).
+4. [x] Chat de peças: componente `ChatCotacaoPeca` (texto + foto, realtime) + páginas `/oficina/pecas/conversa/[respostaId]` e `/loja/conversa/[respostaId]`.
+5. [x] Oficina como fornecedora: aba "Vender excedente" em `/oficina/pecas` — toggle `vende_pecas`, lista cotações de oficinas vizinhas filtradas por `raio_atendimento_km` (reaproveitado, sem campo novo), responde, vê seus pedidos como fornecedora, comissão. `/api/notificar-fornecedores-cotacao-peca` avisa oficinas vizinhas quando uma nova cotação é aberta (lojas continuam no modelo pull, sem mudança).
+6. [x] Capacidade por funcionário: `funcionarios.capacidade_maxima` (editável em Equipe) + seção nova em `/oficina/capacidade` mostrando carga atual x limite por mecânico (`calcularCargaPorFuncionario`).
+7. [x] Admin: página `/admin/pecas` + rota `/api/admin/pecas-fornecedores` — lista lojas e oficinas-fornecedoras com status ativo/inativo e **último login** (via `supabaseAdmin.auth.admin.listUsers()`, já que isso não fica em `profiles`), mais contadores de uso real do canal (cotações, pedidos, comissão pendente/paga) pra decidir se o canal compensa.
+8. [x] `npm run build` e `tsc --noEmit` passaram sem erros.
+9. [ ] Aplicar migration 018 no Postgres self-hosted da VM.
+10. [ ] Deploy na VM (git pull + build + restart PM2).
+11. [ ] Testar fluxo completo no navegador (produção).
+12. [x] Documento detalhado em `docs/NOVIDADES_PORTAL_PECAS_V2.md`.
+
+### Adiado a pedido do usuário
+- Consulta de histórico de reparos por placa (pra concessionárias): envolve dados de terceiros e precisa de um modelo de acesso definido (proposto: conta "concessionária" aprovada pelo admin, dados anonimizados). Usuário pediu pra deixar quieto por enquanto — nada foi implementado, só fica registrado aqui pra não esquecer que a ideia existe.

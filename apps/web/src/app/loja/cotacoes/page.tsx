@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { timeAgo } from '@/lib/utils';
@@ -50,6 +51,7 @@ export default function LojaCotacoesPage() {
     setSaving(true);
     const { error } = await supabase.from('cotacoes_pecas_respostas').insert({
       cotacao_id: cotacaoId,
+      fornecedor_tipo: 'loja',
       loja_id: loja.id,
       preco: parseFloat(respostaForm.preco),
       prazo_dias: parseInt(respostaForm.prazo_dias) || 1,
@@ -127,10 +129,13 @@ export default function LojaCotacoesPage() {
               </div>
 
               {c.minhaResposta ? (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3 flex items-center justify-between gap-3">
                   <p className="text-sm text-green-800">
                     Você respondeu: R$ {c.minhaResposta.preco.toFixed(2)} - prazo {c.minhaResposta.prazo_dias} dia(s)
                   </p>
+                  <Link href={`/loja/conversa/${c.minhaResposta.id}`} className="text-xs font-medium text-primary-600 hover:underline whitespace-nowrap">
+                    Conversar
+                  </Link>
                 </div>
               ) : respondendoId === c.id ? (
                 <div className="mt-3 space-y-3 border-t pt-3">

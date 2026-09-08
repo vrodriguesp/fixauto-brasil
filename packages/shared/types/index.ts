@@ -79,6 +79,7 @@ export interface Oficina {
   total_avaliacoes: number;
   ativa: boolean;
   capacidade_servicos?: Record<string, number> | null;
+  vende_pecas?: boolean;
   created_at: string;
   // Joined
   profile?: Profile;
@@ -86,6 +87,7 @@ export interface Oficina {
 
 export type StatusCotacaoPeca = 'aberta' | 'respondida' | 'fechada' | 'cancelada';
 export type StatusPedidoPeca = 'confirmado' | 'entregue' | 'cancelado';
+export type TipoFornecedorPeca = 'loja' | 'oficina';
 
 export interface LojaPecas {
   id: string;
@@ -139,7 +141,9 @@ export interface CotacaoPeca {
 export interface CotacaoPecaResposta {
   id: string;
   cotacao_id: string;
-  loja_id: string;
+  fornecedor_tipo: TipoFornecedorPeca;
+  loja_id: string | null;
+  oficina_fornecedora_id: string | null;
   peca_catalogo_id: string | null;
   preco: number;
   prazo_dias: number;
@@ -147,6 +151,7 @@ export interface CotacaoPecaResposta {
   created_at: string;
   // Joined
   loja?: LojaPecas;
+  oficina_fornecedora?: Oficina;
 }
 
 export interface PedidoPeca {
@@ -154,7 +159,9 @@ export interface PedidoPeca {
   cotacao_id: string;
   resposta_id: string;
   oficina_id: string;
-  loja_id: string;
+  fornecedor_tipo: TipoFornecedorPeca;
+  loja_id: string | null;
+  oficina_fornecedora_id: string | null;
   preco_total: number;
   quantidade: number;
   status: StatusPedidoPeca;
@@ -162,7 +169,49 @@ export interface PedidoPeca {
   // Joined
   oficina?: Oficina;
   loja?: LojaPecas;
+  oficina_fornecedora?: Oficina;
   resposta?: CotacaoPecaResposta;
+}
+
+export interface ComissaoPecasConfig {
+  id: string;
+  fornecedor_tipo: TipoFornecedorPeca;
+  fornecedor_id: string;
+  taxa_padrao: number;
+  taxa_calculada: number | null;
+  taxa_fixa_override: number | null;
+  usa_override: boolean;
+  media_tempo_resposta_horas: number | null;
+  total_pedidos_90dias: number;
+  updated_at: string;
+  created_at: string;
+}
+
+export interface ComissaoPecasLancamento {
+  id: string;
+  fornecedor_tipo: TipoFornecedorPeca;
+  fornecedor_id: string;
+  pedido_id: string;
+  valor_pedido: number;
+  taxa_aplicada: number;
+  valor_comissao: number;
+  status: 'pendente' | 'pago';
+  pago_em: string | null;
+  created_at: string;
+}
+
+export interface CotacaoPecaMensagem {
+  id: string;
+  cotacao_id: string;
+  fornecedor_tipo: TipoFornecedorPeca;
+  fornecedor_id: string;
+  remetente_id: string;
+  texto: string | null;
+  imagem_url: string | null;
+  lida: boolean;
+  created_at: string;
+  // Joined
+  remetente?: { nome: string; tipo: string };
 }
 
 export interface Veiculo {
@@ -324,6 +373,7 @@ export interface Funcionario {
   especialidade: string | null;
   ativo: boolean;
   primeiro_login: boolean;
+  capacidade_maxima: number | null;
   created_at: string;
   // Joined
   profile?: Profile;

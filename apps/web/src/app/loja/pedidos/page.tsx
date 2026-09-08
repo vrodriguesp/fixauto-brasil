@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 interface PedidoRow {
   id: string;
+  resposta_id: string;
   preco_total: number;
   quantidade: number;
   status: string;
@@ -41,7 +43,11 @@ export default function LojaPedidosPage() {
   useEffect(() => { fetchPedidos(); }, [loja]);
 
   const handleMarcarEntregue = async (id: string) => {
-    await supabase.from('pedidos_pecas').update({ status: 'entregue' }).eq('id', id);
+    await fetch('/api/marcar-pedido-peca-entregue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pedidoId: id }),
+    });
     await fetchPedidos();
   };
 
@@ -79,7 +85,10 @@ export default function LojaPedidosPage() {
                   {formatCurrency(p.preco_total)} · Qtd: {p.quantidade} · {formatDate(p.created_at)}
                 </p>
               </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-3 flex-shrink-0">
+                <Link href={`/loja/conversa/${p.resposta_id}`} className="text-xs text-primary-600 hover:underline font-medium">
+                  Conversar
+                </Link>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                   p.status === 'entregue' ? 'bg-green-100 text-green-700' :
                   p.status === 'cancelado' ? 'bg-red-100 text-red-700' :

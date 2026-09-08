@@ -23,7 +23,7 @@ export default function EquipePage() {
   });
 
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState({ nome: '', telefone: '', especialidade: '' });
+  const [editForm, setEditForm] = useState({ nome: '', telefone: '', especialidade: '', capacidade_maxima: '' });
   const [savingEdit, setSavingEdit] = useState(false);
   const [resettingId, setResettingId] = useState<string | null>(null);
   const [novaSenhaGerada, setNovaSenhaGerada] = useState<{ nome: string; senha: string } | null>(null);
@@ -100,6 +100,7 @@ export default function EquipePage() {
       nome: func.profile?.nome || '',
       telefone: func.profile?.telefone || '',
       especialidade: func.especialidade || '',
+      capacidade_maxima: func.capacidade_maxima != null ? String(func.capacidade_maxima) : '',
     });
   };
 
@@ -114,6 +115,7 @@ export default function EquipePage() {
         nome: editForm.nome,
         telefone: editForm.telefone || null,
         especialidade: editForm.especialidade || null,
+        capacidade_maxima: editForm.capacidade_maxima === '' ? null : parseInt(editForm.capacidade_maxima),
       }),
     });
     setSavingEdit(false);
@@ -278,7 +280,7 @@ export default function EquipePage() {
               className={`card flex flex-col sm:flex-row sm:items-center gap-4 ${!func.ativo ? 'opacity-60' : ''}`}
             >
               {editingId === func.id ? (
-                <div className="flex-1 grid sm:grid-cols-3 gap-3">
+                <div className="flex-1 grid sm:grid-cols-4 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">Nome</label>
                     <input
@@ -306,7 +308,18 @@ export default function EquipePage() {
                       onChange={(e) => setEditForm({ ...editForm, especialidade: e.target.value })}
                     />
                   </div>
-                  <div className="sm:col-span-3 flex justify-end gap-2">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Capacidade (carros simultâneos)</label>
+                    <input
+                      type="number"
+                      min={0}
+                      placeholder="Sem limite"
+                      className="input-field !py-1.5"
+                      value={editForm.capacidade_maxima}
+                      onChange={(e) => setEditForm({ ...editForm, capacidade_maxima: e.target.value })}
+                    />
+                  </div>
+                  <div className="sm:col-span-4 flex justify-end gap-2">
                     <button onClick={() => setEditingId(null)} className="btn-secondary !py-1.5 !px-3 text-sm">
                       Cancelar
                     </button>
@@ -347,6 +360,9 @@ export default function EquipePage() {
                   {func.especialidade && (
                     <p className="text-xs text-gray-400 mt-0.5">Especialidade: {func.especialidade}</p>
                   )}
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    Capacidade: {func.capacidade_maxima != null ? `${func.capacidade_maxima} carro(s) simultâneos` : 'sem limite definido'}
+                  </p>
                 </div>
               </div>
 

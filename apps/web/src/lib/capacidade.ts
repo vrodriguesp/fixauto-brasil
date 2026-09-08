@@ -26,6 +26,32 @@ export async function calcularCargaAtual(
 }
 
 /**
+ * Carga atual POR FUNCIONARIO: quantos veiculos em_andamento estao
+ * atribuidos a cada mecanico da oficina agora. Complementa
+ * calcularCargaAtual (que e por tipo de servico, na oficina como um todo)
+ * pra dar ao admin visao de como distribuir a capacidade entre a equipe.
+ */
+export async function calcularCargaPorFuncionario(
+  supabase: SupabaseClient,
+  oficinaId: string
+): Promise<Record<string, number>> {
+  const { data } = await supabase
+    .from('agenda')
+    .select('funcionario_id')
+    .eq('oficina_id', oficinaId)
+    .eq('status', 'em_andamento')
+    .not('funcionario_id', 'is', null);
+
+  const carga: Record<string, number> = {};
+  for (const evento of data || []) {
+    const id = (evento as any).funcionario_id;
+    if (!id) continue;
+    carga[id] = (carga[id] || 0) + 1;
+  }
+  return carga;
+}
+
+/**
  * True se a oficina ainda tem capacidade declarada livre pro tipo de
  * servico. Oficinas que nunca configuraram capacidade_servicos pro tipo
  * (0 ou ausente) sao tratadas como "sem limite definido" - nao bloqueia

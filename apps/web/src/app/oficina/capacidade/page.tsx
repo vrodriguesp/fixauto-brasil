@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { calcularCargaAtual } from '@/lib/capacidade';
+import { calcularCargaAtual, calcularCargaPorFuncionario } from '@/lib/capacidade';
 import { TIPOS_SERVICO } from '@fixauto/shared';
+import type { Funcionario } from '@fixauto/shared';
 
 const LABELS_STATUS_MANUTENCAO: Record<string, string> = {
   recebido: 'Recebido',
@@ -22,17 +24,23 @@ export default function CapacidadePage() {
   const [carga, setCarga] = useState<Record<string, number>>({});
   const [tempoPorEtapa, setTempoPorEtapa] = useState<{ status: string; horasMedia: number; ocorrencias: number }[]>([]);
   const [loading, setLoading] = useState(true);
+  const [funcionarios, setFuncionarios] = useState<(Funcionario & { profile?: { nome: string } })[]>([]);
+  const [cargaPorFuncionario, setCargaPorFuncionario] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (!oficina) return;
 
     async function fetchData() {
       setLoading(true);
-      const [cargaAtual, { data: agendaIds }] = await Promise.all([
+      const [cargaAtual, cargaFunc, { data: agendaIds }, { data: funcs }] = await Promise.all([
         calcularCargaAtual(supabase, oficina!.id),
+        calcularCargaPorFuncionario(supabase, oficina!.id),
         supabase.from('agenda').select('id').eq('oficina_id', oficina!.id),
+        supabase.from('funcionarios').select('*, profile:profiles(nome)').eq('oficina_id', oficina!.id).eq('ativo', true).eq('cargo', 'mecanico'),
       ]);
       setCarga(cargaAtual);
+      setCargaPorFuncionario(cargaFunc);
+      setFuncionarios((funcs as any[]) || []);
 
       const ids = (agendaIds || []).map((a) => a.id);
       if (ids.length > 0) {
@@ -131,6 +139,51 @@ export default function CapacidadePage() {
             })}
             <p className="text-xs text-gray-400 mt-2">
               Quando um tipo está no limite, novas emergências desse tipo priorizam outras oficinas com capacidade livre.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Capacidade por funcionario */}
+      <div className="card mb-8">
+        <h2 className="font-semibold text-gray-900 mb-1">Capacidade por funcionário</h2>
+        <p className="text-sm text-gray-500 mb-4">Quantos veículos em serviço cada mecânico está atendendo agora</p>
+        {funcionarios.length === 0 ? (
+          <p className="text-sm text-gray-500">
+            Nenhum mecânico cadastrado ainda. Adicione sua equipe em{' '}
+            <Link href="/oficina/equipe" className="text-primary-600 hover:underline">Equipe</Link>
+            {' '}pra distribuir a carga entre eles (isso é opcional - você pode operar sozinho também).
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {funcionarios.map((f) => {
+              const atual = cargaPorFuncionario[f.id] || 0;
+              const limite = f.capacidade_maxima;
+              const pct = limite ? Math.min(100, (atual / limite) * 100) : Math.min(100, atual * 20);
+              const sobrecarga = limite != null && atual >= limite;
+              return (
+                <div key={f.id}>
+                  <div className="flex items-center justify-between text-sm mb-1">
+                    <span className="text-gray-700">{f.profile?.nome || 'Mecânico'}</span>
+                    <span className={sobrecarga ? 'text-red-600 font-semibold' : 'text-gray-600'}>
+                      {atual}{limite != null ? ` / ${limite}` : ''} {sobrecarga && '(no limite)'}
+                      {limite == null && <span className="text-gray-400"> (sem limite definido)</span>}
+                    </span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${sobrecarga ? 'bg-red-500' : pct > 70 ? 'bg-amber-400' : 'bg-green-500'}`}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+            <p className="text-xs text-gray-400 mt-2">
+              Defina o limite de cada mecânico em{' '}
+              <Link href="/oficina/equipe" className="text-primary-600 hover:underline">Equipe</Link>
+              . Use essa visão junto com a capacidade por tipo de serviço acima pra decidir quem recebe o próximo veículo em{' '}
+              <Link href="/oficina/veiculos-em-servico" className="text-primary-600 hover:underline">Oficina</Link>.
             </p>
           </div>
         )}

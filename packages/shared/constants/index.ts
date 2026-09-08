@@ -142,3 +142,15 @@ export const COMISSAO_CONFIG = {
   BONUS_AVALIACAO_4_5: 0.03,
   BONUS_AVALIACAO_4_0: 0.02,
 } as const;
+
+// Comissao sobre venda de pecas (loja de pecas OU oficina fornecedora).
+// Base bem mais baixa que a de servico (15%) porque a margem de peca e
+// mais apertada e o objetivo aqui e so aprender se o canal pega - ver
+// docs/NOVIDADES_RETENCAO_OFICINAS.md.
+export const COMISSAO_PECAS_CONFIG = {
+  TAXA_BASE: 0.03,
+  TAXA_MIN: 0.01,
+  TAXA_MAX: 0.03,
+  BONUS_RESPOSTA_2H: 0.01,
+  BONUS_RESPOSTA_6H: 0.005,
+} as const;
