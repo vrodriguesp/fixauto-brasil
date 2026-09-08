@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getSessionUserId } from '@/lib/api-auth';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -8,6 +9,11 @@ const supabaseAdmin = createClient(
 
 export async function POST(req: NextRequest) {
   try {
+    const callerId = await getSessionUserId();
+    if (!callerId) {
+      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+    }
+
     const { agendaId, solicitacaoId } = await req.json();
 
     if (!agendaId) {
@@ -17,9 +23,16 @@ export async function POST(req: NextRequest) {
     // 1. Get agenda info
     const { data: agenda } = await supabaseAdmin
       .from('agenda')
-      .select('oficina_id, data_inicio')
+      .select('oficina_id, data_inicio, oficina:oficinas(profile_id)')
       .eq('id', agendaId)
       .single();
+
+    // So a oficina dona do agendamento pode registrar a falta - sem isso,
+    // qualquer agendaId adivinhado cancelava a solicitacao e marcava
+    // "nao compareceu" contra um cliente de outra oficina.
+    if (!agenda || (agenda as any).oficina?.profile_id !== callerId) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    }
 
     // 2. Mark agenda as no_show
     await supabaseAdmin.from('agenda').update({

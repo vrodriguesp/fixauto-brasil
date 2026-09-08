@@ -4,6 +4,7 @@ import {
   sendQuoteNotificationEmail,
   sendQuoteWhatsApp,
 } from '@/lib/notifications';
+import { getSessionUserId } from '@/lib/api-auth';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,6 +13,11 @@ const supabaseAdmin = createClient(
 
 export async function POST(req: NextRequest) {
   try {
+    const callerId = await getSessionUserId();
+    if (!callerId) {
+      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+    }
+
     const { orcamentoId } = await req.json();
 
     if (!orcamentoId) {
@@ -23,7 +29,7 @@ export async function POST(req: NextRequest) {
       .from('orcamentos')
       .select(`
         *,
-        oficina:oficinas(nome_fantasia),
+        oficina:oficinas(nome_fantasia, profile_id),
         solicitacao:solicitacoes(
           id,
           cliente_id,
@@ -35,6 +41,13 @@ export async function POST(req: NextRequest) {
 
     if (!orcamento || !orcamento.solicitacao) {
       return NextResponse.json({ error: 'Orçamento não encontrado' }, { status: 404 });
+    }
+
+    // So a oficina dona do orcamento pode disparar essa notificacao - sem
+    // isso, qualquer orcamentoId existente podia ser usado pra reenviar
+    // email/WhatsApp pro cliente quantas vezes quisessem (spam).
+    if ((orcamento.oficina as any)?.profile_id !== callerId) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
     const cliente = (orcamento.solicitacao as any).cliente;

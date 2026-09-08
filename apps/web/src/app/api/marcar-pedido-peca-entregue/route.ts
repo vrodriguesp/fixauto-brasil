@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { recalcularComissaoPecasConfig } from '@/lib/comissao-pecas';
+import { getSessionUserId } from '@/lib/api-auth';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,6 +15,11 @@ const supabaseAdmin = createClient(
 // /api/marcar-cotacao-respondida.
 export async function POST(req: NextRequest) {
   try {
+    const callerId = await getSessionUserId();
+    if (!callerId) {
+      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+    }
+
     const { pedidoId } = await req.json();
     if (!pedidoId) {
       return NextResponse.json({ error: 'pedidoId e obrigatorio' }, { status: 400 });
@@ -21,12 +27,23 @@ export async function POST(req: NextRequest) {
 
     const { data: pedido, error: pedidoError } = await supabaseAdmin
       .from('pedidos_pecas')
-      .select('id, fornecedor_tipo, loja_id, oficina_fornecedora_id, preco_total, status')
+      .select('id, fornecedor_tipo, loja_id, oficina_fornecedora_id, preco_total, status, loja:lojas_pecas(profile_id), oficina_fornecedora:oficinas!pedidos_pecas_oficina_fornecedora_id_fkey(profile_id)')
       .eq('id', pedidoId)
       .single();
 
     if (pedidoError || !pedido) {
       return NextResponse.json({ error: 'Pedido nao encontrado' }, { status: 404 });
+    }
+
+    // So o proprio fornecedor (loja ou oficina fornecedora) daquele
+    // pedido pode marca-lo como entregue - sem isso, qualquer pedidoId
+    // adivinhado lancava comissao indevida contra um fornecedor de
+    // terceiro.
+    const fornecedorProfileId = pedido.fornecedor_tipo === 'loja'
+      ? (pedido as any).loja?.profile_id
+      : (pedido as any).oficina_fornecedora?.profile_id;
+    if (fornecedorProfileId !== callerId) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
     if (pedido.status === 'entregue') {

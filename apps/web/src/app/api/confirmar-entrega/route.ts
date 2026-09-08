@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { recalcularComissaoConfig } from '@/lib/comissao';
+import { getSessionUserId } from '@/lib/api-auth';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -9,7 +10,27 @@ const supabaseAdmin = createClient(
 
 export async function POST(req: NextRequest) {
   try {
+    const callerId = await getSessionUserId();
+    if (!callerId) {
+      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+    }
+
     const { eventoId, solicitacaoId } = await req.json();
+    if (!eventoId) {
+      return NextResponse.json({ error: 'eventoId obrigatório' }, { status: 400 });
+    }
+
+    // So a oficina dona do evento de agenda pode confirmar a entrega -
+    // sem isso, qualquer eventoId adivinhado concluia a solicitacao de
+    // outra oficina e lancava comissao contra ela indevidamente.
+    const { data: evento } = await supabaseAdmin
+      .from('agenda')
+      .select('oficina:oficinas(profile_id)')
+      .eq('id', eventoId)
+      .single();
+    if (!evento || (evento as any).oficina?.profile_id !== callerId) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    }
 
     // 1. Update agenda event to concluido + set data_fim to actual delivery date
     if (eventoId) {

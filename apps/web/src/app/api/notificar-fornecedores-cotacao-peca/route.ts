@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { distanciaKm } from '@/lib/utils';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -21,13 +22,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'cotacaoId, oficinaCompradoraId, latitude e longitude sao obrigatorios' }, { status: 400 });
     }
 
-    const RADIUS_KM = 50;
-    const radiusLat = RADIUS_KM / 111;
-    const radiusLon = RADIUS_KM / (111 * Math.cos(latitude * Math.PI / 180));
+    // Caixa larga (100km) so pra pre-filtrar no banco por performance - o
+    // corte de verdade e feito abaixo, por oficina, usando o raio de
+    // atendimento que cada uma configurou (o mesmo raio que decide o que
+    // ela VE na aba "Vender excedente"). Antes usava um raio fixo de
+    // 50km aqui, que podia notificar uma oficina que depois nao via a
+    // cotacao na propria tela por estar fora do raio dela.
+    const BOUNDING_BOX_KM = 100;
+    const radiusLat = BOUNDING_BOX_KM / 111;
+    const radiusLon = BOUNDING_BOX_KM / (111 * Math.cos(latitude * Math.PI / 180));
 
-    const { data: oficinas, error } = await supabaseAdmin
+    const { data: candidatas, error } = await supabaseAdmin
       .from('oficinas')
-      .select('id, profile_id, nome_fantasia')
+      .select('id, profile_id, nome_fantasia, latitude, longitude, raio_atendimento_km')
       .eq('vende_pecas', true)
       .eq('ativa', true)
       .neq('id', oficinaCompradoraId)
@@ -40,8 +47,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    const oficinas = (candidatas || []).filter((o) => {
+      if (o.latitude == null || o.longitude == null) return false;
+      const raio = o.raio_atendimento_km || 30;
+      return distanciaKm(latitude, longitude, o.latitude, o.longitude) <= raio;
+    });
+
     let notificadas = 0;
-    for (const of of oficinas || []) {
+    for (const of of oficinas) {
       if (!of.profile_id) continue;
       await supabaseAdmin.from('notificacoes').insert({
         profile_id: of.profile_id,

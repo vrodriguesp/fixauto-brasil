@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getSessionUserId } from '@/lib/api-auth';
 
 // Use service_role key to bypass RLS - the agenda insert needs
 // to be done by the server because the client user doesn't have
@@ -11,10 +12,27 @@ const supabaseAdmin = createClient(
 
 export async function POST(req: NextRequest) {
   try {
+    const callerId = await getSessionUserId();
+    if (!callerId) {
+      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+    }
+
     const { orcamentoId, slotId } = await req.json();
 
     if (!orcamentoId || !slotId) {
       return NextResponse.json({ error: 'Missing orcamentoId or slotId' }, { status: 400 });
+    }
+
+    // So o cliente dono da solicitacao pode aceitar o orcamento dela - sem
+    // isso, qualquer orcamentoId adivinhado aceitava o orcamento, recusava
+    // os concorrentes e agendava o servico em nome de outra pessoa.
+    const { data: orcamentoParaChecar } = await supabaseAdmin
+      .from('orcamentos')
+      .select('solicitacao:solicitacoes(cliente_id)')
+      .eq('id', orcamentoId)
+      .single();
+    if (!orcamentoParaChecar || (orcamentoParaChecar as any).solicitacao?.cliente_id !== callerId) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
     // 1. Update orcamento status to aceito
