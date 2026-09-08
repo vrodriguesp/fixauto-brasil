@@ -138,11 +138,11 @@ export default function AdminOficinaDetailPage() {
     });
 
     if (res.ok) {
-      setSaveMsg('Configuracao salva com sucesso!');
+      setSaveMsg('Configuração salva com sucesso!');
       const updated = await res.json();
       setComissaoConfig(updated);
     } else {
-      setSaveMsg('Erro ao salvar configuracao');
+      setSaveMsg('Erro ao salvar configuração');
     }
 
     setSaving(false);
@@ -162,7 +162,7 @@ export default function AdminOficinaDetailPage() {
   if (!oficina) {
     return (
       <div className="text-slate-400">
-        Oficina nao encontrada.{' '}
+        Oficina não encontrada.{' '}
         <Link href="/admin/oficinas" className="text-blue-400 hover:text-blue-300">
           Voltar
         </Link>
@@ -204,10 +204,10 @@ export default function AdminOficinaDetailPage() {
 
       {/* Info card */}
       <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">Informacoes</h2>
+        <h2 className="text-lg font-semibold text-white mb-4">Informações</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-slate-400">Endereco:</span>
+            <span className="text-slate-400">Endereço:</span>
             <p className="text-white">{oficina.endereco}</p>
           </div>
           <div>
@@ -228,19 +228,19 @@ export default function AdminOficinaDetailPage() {
             </div>
           </div>
           <div>
-            <span className="text-slate-400">Avaliacao:</span>
+            <span className="text-slate-400">Avaliação:</span>
             <div className="flex items-center gap-2 mt-1">
               <svg className="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
               <span className="text-white font-medium">
-                {oficina.avaliacao_media.toFixed(1)} ({oficina.total_avaliacoes} avaliacoes)
+                {oficina.avaliacao_media.toFixed(1)} ({oficina.total_avaliacoes} avaliações)
               </span>
             </div>
           </div>
           <div>
             <span className="text-slate-400">CNPJ:</span>
-            <p className="text-white">{oficina.cnpj || 'Nao informado'}</p>
+            <p className="text-white">{oficina.cnpj || 'Não informado'}</p>
           </div>
           <div>
             <span className="text-slate-400">Raio de atendimento:</span>
@@ -251,10 +251,10 @@ export default function AdminOficinaDetailPage() {
 
       {/* Commission config */}
       <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">Configuracao de Comissao</h2>
+        <h2 className="text-lg font-semibold text-white mb-4">Configuração de Comissão</h2>
         <div className="space-y-4">
           <div>
-            <p className="text-sm text-slate-400 mb-1">Taxa padrao da plataforma</p>
+            <p className="text-sm text-slate-400 mb-1">Taxa padrão da plataforma</p>
             <p className="text-white font-medium">
               {(comissaoConfig.taxa_padrao * 100).toFixed(1)}%
             </p>
@@ -316,7 +316,7 @@ export default function AdminOficinaDetailPage() {
       {/* Comissao lancamentos: o que essa oficina deve/pagou, e por que */}
       <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-white">Lancamentos de Comissao</h2>
+          <h2 className="text-lg font-semibold text-white">Lançamentos de Comissão</h2>
           <div className="flex gap-4 text-sm">
             <span className="text-amber-400 font-medium">
               Pendente: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
@@ -331,18 +331,18 @@ export default function AdminOficinaDetailPage() {
           </div>
         </div>
         {lancamentos.length === 0 ? (
-          <p className="text-slate-500 text-sm">Nenhum lancamento de comissao ainda (gerado quando um servico e concluido e a entrega e confirmada).</p>
+          <p className="text-slate-500 text-sm">Nenhum lançamento de comissão ainda (gerado quando um serviço é concluído e a entrega é confirmada).</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-700 text-slate-400 text-xs uppercase">
                   <th className="text-left py-2 pr-4">Data</th>
-                  <th className="text-right py-2 pr-4">Valor do servico</th>
+                  <th className="text-right py-2 pr-4">Valor do serviço</th>
                   <th className="text-right py-2 pr-4">Taxa</th>
-                  <th className="text-right py-2 pr-4">Comissao</th>
+                  <th className="text-right py-2 pr-4">Comissão</th>
                   <th className="text-left py-2 pr-4">Status</th>
-                  <th className="text-left py-2">Acao</th>
+                  <th className="text-left py-2">Ação</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700">
@@ -383,10 +383,10 @@ export default function AdminOficinaDetailPage() {
       {/* Recent solicitacoes */}
       <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
         <h2 className="text-lg font-semibold text-white mb-4">
-          Solicitacoes Recentes
+          Solicitações Recentes
         </h2>
         {solicitacoes.length === 0 ? (
-          <p className="text-slate-500 text-sm">Nenhuma solicitacao encontrada</p>
+          <p className="text-slate-500 text-sm">Nenhuma solicitação encontrada</p>
         ) : (
           <div className="space-y-3">
             {solicitacoes.map((sol) => (
@@ -396,7 +396,7 @@ export default function AdminOficinaDetailPage() {
               >
                 <div>
                   <p className="text-white text-sm font-medium">
-                    {sol.tipo} - {sol.veiculo?.fipe_modelo || 'Veiculo'}
+                    {sol.tipo} - {sol.veiculo?.fipe_modelo || 'Veículo'}
                   </p>
                   <p className="text-slate-400 text-xs mt-0.5">
                     {new Date(sol.created_at).toLocaleDateString('pt-BR')}
@@ -418,10 +418,10 @@ export default function AdminOficinaDetailPage() {
       {/* Recent orcamentos */}
       <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
         <h2 className="text-lg font-semibold text-white mb-4">
-          Orcamentos Recentes
+          Orçamentos Recentes
         </h2>
         {orcamentos.length === 0 ? (
-          <p className="text-slate-500 text-sm">Nenhum orcamento encontrado</p>
+          <p className="text-slate-500 text-sm">Nenhum orçamento encontrado</p>
         ) : (
           <div className="space-y-3">
             {orcamentos.map((orc) => (

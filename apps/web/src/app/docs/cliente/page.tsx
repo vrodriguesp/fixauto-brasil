@@ -64,19 +64,19 @@ export default function DocsClientePage() {
         </Link>
         <h1 className="text-3xl font-bold text-gray-900 mb-3">Guia do Motorista</h1>
         <p className="text-gray-600 text-lg">
-          Tudo o que voce precisa saber para encontrar a melhor oficina, comparar orcamentos e acompanhar o reparo do seu veiculo.
+          Tudo o que você precisa saber para encontrar a melhor oficina, comparar orçamentos e acompanhar o reparo do seu veículo.
         </p>
       </div>
 
       {/* Sections */}
       <div className="space-y-4">
         <Accordion title="1. Como se cadastrar" defaultOpen>
-          <p>Criar sua conta no BipFix e rapido e gratuito. Siga os passos abaixo:</p>
+          <p>Criar sua conta no BipFix é rápido e gratuito. Siga os passos abaixo:</p>
           <div className="space-y-4 mt-4">
             <StepItem
               number={1}
-              title="Acesse a pagina de cadastro"
-              desc="Clique em 'Preciso de um reparo' na pagina inicial ou acesse diretamente /cadastro."
+              title="Acesse a página de cadastro"
+              desc="Clique em 'Preciso de um reparo' na página inicial ou acesse diretamente /cadastro."
             />
             <StepItem
               number={2}
@@ -86,163 +86,163 @@ export default function DocsClientePage() {
             <StepItem
               number={3}
               title="Confirme seu e-mail"
-              desc="Voce recebera um e-mail de confirmacao. Clique no link para ativar sua conta."
+              desc="Você receberá um e-mail de confirmação. Clique no link para ativar sua conta."
             />
             <StepItem
               number={4}
-              title="Cadastre seu veiculo"
-              desc="Adicione a marca, modelo, ano e placa do seu veiculo. Voce pode cadastrar mais de um."
+              title="Cadastre seu veículo"
+              desc="Adicione a marca, modelo, ano e placa do seu veículo. Você pode cadastrar mais de um."
             />
           </div>
         </Accordion>
 
-        <Accordion title="2. Como criar uma solicitacao">
+        <Accordion title="2. Como criar uma solicitação">
           <p>
-            A solicitacao e o pedido de orcamento que voce envia para as oficinas. O processo tem 5 etapas simples:
+            A solicitação é o pedido de orçamento que você envia para as oficinas. O processo tem 5 etapas simples:
           </p>
           <div className="space-y-4 mt-4">
             <StepItem
               number={1}
-              title="Selecione o veiculo"
-              desc="Escolha qual dos seus veiculos cadastrados precisa de reparo."
+              title="Selecione o veículo"
+              desc="Escolha qual dos seus veículos cadastrados precisa de reparo."
             />
             <StepItem
               number={2}
-              title="Tipo de servico"
-              desc="Selecione a categoria do servico: funilaria, pintura, mecanica, eletrica, vidros, entre outras."
+              title="Tipo de serviço"
+              desc="Selecione a categoria do serviço: funilaria, pintura, mecânica, elétrica, vidros, entre outras."
             />
             <StepItem
               number={3}
-              title="Fotos e descricao"
-              desc="Tire fotos do dano ou problema e adicione uma descricao detalhada. Quanto mais informacoes, melhor sera o orcamento."
+              title="Fotos e descrição"
+              desc="Tire fotos do dano ou problema e adicione uma descrição detalhada. Quanto mais informações, melhor será o orçamento."
             />
             <StepItem
               number={4}
-              title="Localizacao"
-              desc="Confirme sua localizacao para que oficinas proximas recebam sua solicitacao. Voce pode usar o GPS ou digitar o endereco."
+              title="Localização"
+              desc="Confirme sua localização para que oficinas próximas recebam sua solicitação. Você pode usar o GPS ou digitar o endereço."
             />
             <StepItem
               number={5}
-              title="Revisao e envio"
-              desc="Revise todas as informacoes e envie. Oficinas proximas serao notificadas e comecarao a preparar orcamentos."
+              title="Revisão e envio"
+              desc="Revise todas as informações e envie. Oficinas próximas serão notificadas e começarão a preparar orçamentos."
             />
           </div>
         </Accordion>
 
-        <Accordion title="3. Como comparar orcamentos">
+        <Accordion title="3. Como comparar orçamentos">
           <p>
-            Quando oficinas enviam orcamentos, voce pode compara-los com facilidade. Cada orcamento exibe o preco total, prazo estimado, itens detalhados e a avaliacao da oficina.
+            Quando oficinas enviam orçamentos, você pode compará-los com facilidade. Cada orçamento exibe o preço total, prazo estimado, itens detalhados e a avaliação da oficina.
           </p>
           <p className="mt-3 font-medium text-gray-900">Selos de destaque:</p>
           <ul className="list-disc list-inside space-y-2 mt-2">
             <li>
-              <span className="font-medium text-green-700">Selo de Qualidade</span> — Oficinas com avaliacao media acima de 4.5 estrelas e mais de 10 servicos concluidos.
+              <span className="font-medium text-green-700">Selo de Qualidade</span> — Oficinas com avaliação média acima de 4.5 estrelas e mais de 10 serviços concluídos.
             </li>
             <li>
-              <span className="font-medium text-blue-700">Resposta Rapida</span> — Oficinas que responderam sua solicitacao em menos de 1 hora.
+              <span className="font-medium text-blue-700">Resposta Rápida</span> — Oficinas que responderam sua solicitação em menos de 1 hora.
             </li>
             <li>
-              <span className="font-medium text-orange-700">Ajuste de Preco</span> — Indica que a oficina esta disposta a negociar o valor do orcamento.
+              <span className="font-medium text-orange-700">Ajuste de Preço</span> — Indica que a oficina está disposta a negociar o valor do orçamento.
             </li>
           </ul>
           <p className="mt-3">
-            Use os filtros para ordenar por preco, prazo ou avaliacao. Clique em cada orcamento para ver o detalhamento completo dos itens e servicos.
+            Use os filtros para ordenar por preço, prazo ou avaliação. Clique em cada orçamento para ver o detalhamento completo dos itens e serviços.
           </p>
         </Accordion>
 
-        <Accordion title="4. Como agendar o servico">
+        <Accordion title="4. Como agendar o serviço">
           <p>
-            Apos comparar os orcamentos, escolha o que melhor atende suas necessidades:
+            Após comparar os orçamentos, escolha o que melhor atende suas necessidades:
           </p>
           <div className="space-y-4 mt-4">
             <StepItem
               number={1}
-              title="Aceite o orcamento"
-              desc="Clique em 'Aceitar orcamento' no orcamento escolhido. A oficina sera notificada imediatamente."
+              title="Aceite o orçamento"
+              desc="Clique em 'Aceitar orçamento' no orçamento escolhido. A oficina será notificada imediatamente."
             />
             <StepItem
               number={2}
               title="Escolha a data"
-              desc="A oficina disponibiliza horarios na agenda. Selecione o dia e horario que melhor se encaixa na sua rotina."
+              desc="A oficina disponibiliza horários na agenda. Selecione o dia e horário que melhor se encaixa na sua rotina."
             />
             <StepItem
               number={3}
-              title="Confirmacao"
-              desc="Apos a confirmacao, voce recebera os detalhes do agendamento por e-mail e na plataforma, incluindo o endereco da oficina."
+              title="Confirmação"
+              desc="Após a confirmação, você receberá os detalhes do agendamento por e-mail e na plataforma, incluindo o endereço da oficina."
             />
           </div>
         </Accordion>
 
         <Accordion title="5. Acompanhamento em tempo real">
           <p>
-            Apos levar o veiculo a oficina, voce pode acompanhar cada etapa do reparo pela plataforma:
+            Após levar o veículo à oficina, você pode acompanhar cada etapa do reparo pela plataforma:
           </p>
           <ul className="list-disc list-inside space-y-2 mt-3">
-            <li><span className="font-medium">Check-in</span> — Quando o veiculo chega na oficina, a equipe registra a entrada.</li>
-            <li><span className="font-medium">Em andamento</span> — A oficina atualiza o status conforme avanca nas etapas do servico.</li>
-            <li><span className="font-medium">Etapas detalhadas</span> — Voce ve o progresso: desmontagem, reparo, pintura, montagem, controle de qualidade.</li>
-            <li><span className="font-medium">Pronto para retirada</span> — Quando o servico e concluido, voce recebe uma notificacao para buscar o veiculo.</li>
-            <li><span className="font-medium">Check-out</span> — A oficina registra a saida e o servico e marcado como finalizado.</li>
+            <li><span className="font-medium">Check-in</span> — Quando o veículo chega na oficina, a equipe registra a entrada.</li>
+            <li><span className="font-medium">Em andamento</span> — A oficina atualiza o status conforme avança nas etapas do serviço.</li>
+            <li><span className="font-medium">Etapas detalhadas</span> — Você vê o progresso: desmontagem, reparo, pintura, montagem, controle de qualidade.</li>
+            <li><span className="font-medium">Pronto para retirada</span> — Quando o serviço é concluído, você recebe uma notificação para buscar o veículo.</li>
+            <li><span className="font-medium">Check-out</span> — A oficina registra a saída e o serviço é marcado como finalizado.</li>
           </ul>
           <p className="mt-3">
-            Acesse a pagina de acompanhamento a qualquer momento pelo menu &quot;Meus Servicos&quot; no seu painel.
+            Acesse a página de acompanhamento a qualquer momento pelo menu &quot;Meus Serviços&quot; no seu painel.
           </p>
         </Accordion>
 
-        <Accordion title="6. Como avaliar o servico">
+        <Accordion title="6. Como avaliar o serviço">
           <p>
-            Apos a conclusao do servico, voce pode avaliar a oficina para ajudar outros motoristas:
+            Após a conclusão do serviço, você pode avaliar a oficina para ajudar outros motoristas:
           </p>
           <div className="space-y-4 mt-4">
             <StepItem
               number={1}
               title="Nota de 1 a 5 estrelas"
-              desc="Avalie a qualidade geral do servico prestado."
+              desc="Avalie a qualidade geral do serviço prestado."
             />
             <StepItem
               number={2}
-              title="Comentario"
-              desc="Escreva um comentario descrevendo sua experiencia. Seja honesto e detalhado."
+              title="Comentário"
+              desc="Escreva um comentário descrevendo sua experiência. Seja honesto e detalhado."
             />
             <StepItem
               number={3}
-              title="Publicacao"
-              desc="Sua avaliacao aparecera no perfil publico da oficina, ajudando outros motoristas a decidir."
+              title="Publicação"
+              desc="Sua avaliação aparecerá no perfil público da oficina, ajudando outros motoristas a decidir."
             />
           </div>
           <p className="mt-3 text-sm bg-blue-50 p-3 rounded-lg">
-            Sua avaliacao e muito importante. Ela ajuda a manter a qualidade da plataforma e reconhece as melhores oficinas.
+            Sua avaliação é muito importante. Ela ajuda a manter a qualidade da plataforma e reconhece as melhores oficinas.
           </p>
         </Accordion>
 
-        <Accordion title="7. Emergencia — Acabei de Bater">
+        <Accordion title="7. Emergência — Acabei de Bater">
           <p>
-            O BipFix tem um fluxo especial para situacoes de emergencia:
+            O BipFix tem um fluxo especial para situações de emergência:
           </p>
           <div className="space-y-4 mt-4">
             <StepItem
               number={1}
-              title="Acesse o botao de emergencia"
-              desc="Na pagina inicial ou no seu painel, clique no botao vermelho 'Acabei de Bater'."
+              title="Acesse o botão de emergência"
+              desc="Na página inicial ou no seu painel, clique no botão vermelho 'Acabei de Bater'."
             />
             <StepItem
               number={2}
               title="Registre o incidente"
-              desc="Tire fotos do dano na hora. Voce tambem pode registrar o outro veiculo envolvido, incluindo placa e fotos."
+              desc="Tire fotos do dano na hora. Você também pode registrar o outro veículo envolvido, incluindo placa e fotos."
             />
             <StepItem
               number={3}
-              title="Localizacao automatica"
-              desc="O sistema usa seu GPS para encontrar oficinas mais proximas ao local do acidente."
+              title="Localização automática"
+              desc="O sistema usa seu GPS para encontrar oficinas mais próximas ao local do acidente."
             />
             <StepItem
               number={4}
-              title="Orcamentos rapidos"
-              desc="Oficinas proximas recebem sua solicitacao com prioridade e enviam orcamentos em minutos."
+              title="Orçamentos rápidos"
+              desc="Oficinas próximas recebem sua solicitação com prioridade e enviam orçamentos em minutos."
             />
           </div>
           <p className="mt-3 text-sm bg-red-50 p-3 rounded-lg text-red-800">
-            Em caso de acidente com vitimas, ligue primeiro para o SAMU (192) ou Bombeiros (193). Sua seguranca vem em primeiro lugar.
+            Em caso de acidente com vítimas, ligue primeiro para o SAMU (192) ou Bombeiros (193). Sua segurança vem em primeiro lugar.
           </p>
         </Accordion>
       </div>

@@ -125,7 +125,7 @@ export default function AudioRecorder({ onRecorded }: AudioRecorderProps) {
         <button
           onClick={stopRecording}
           className="w-9 h-9 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center transition-colors"
-          title="Parar gravacao"
+          title="Parar gravação"
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
             <rect x="6" y="6" width="12" height="12" rx="1" />
@@ -139,7 +139,7 @@ export default function AudioRecorder({ onRecorded }: AudioRecorderProps) {
     <button
       onClick={startRecording}
       className="w-10 h-10 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-      title="Gravar audio"
+      title="Gravar áudio"
     >
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />

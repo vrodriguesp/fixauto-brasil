@@ -280,8 +280,8 @@ export default function ClienteMensagensPage() {
             await supabase.from('notificacoes').insert({
               profile_id: (orcs[0].oficina as any).profile_id,
               tipo: 'nova_mensagem',
-              titulo: 'Nova mensagem de audio do cliente',
-              mensagem: 'Mensagem de audio recebida',
+              titulo: 'Nova mensagem de áudio do cliente',
+              mensagem: 'Mensagem de áudio recebida',
               dados: { solicitacao_id: id },
             });
           } catch { /* non-blocking */ }
@@ -421,7 +421,7 @@ export default function ClienteMensagensPage() {
         ) : uploadingAudio ? (
           <div className="flex items-center justify-center gap-2 py-2">
             <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm text-gray-500">Enviando audio...</span>
+            <span className="text-sm text-gray-500">Enviando áudio...</span>
           </div>
         ) : (
           <div className="flex items-center gap-2">
@@ -448,7 +448,7 @@ export default function ClienteMensagensPage() {
               <button
                 onClick={() => setShowAudioRecorder(true)}
                 className="w-10 h-10 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-                title="Gravar audio"
+                title="Gravar áudio"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />

@@ -126,7 +126,7 @@ export default function AdminUsuariosPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-white mb-6">Usuarios</h1>
+      <h1 className="text-2xl font-bold text-white mb-6">Usuários</h1>
 
       <div className="mb-6">
         <input
@@ -262,7 +262,7 @@ export default function AdminUsuariosPage() {
               {profiles.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
-                    Nenhum usuario encontrado
+                    Nenhum usuário encontrado
                   </td>
                 </tr>
               )}

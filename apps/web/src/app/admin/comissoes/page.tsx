@@ -29,7 +29,7 @@ export default function AdminComissoesPage() {
     setLoading(true);
     try {
       const res = await fetch('/api/admin/comissao');
-      if (!res.ok) throw new Error('Erro ao buscar comissoes');
+      if (!res.ok) throw new Error('Erro ao buscar comissões');
       const data = await res.json();
       setConfigs(data);
     } catch (err) {
@@ -72,7 +72,7 @@ export default function AdminComissoesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-white mb-6">Comissoes</h1>
+      <h1 className="text-2xl font-bold text-white mb-6">Comissões</h1>
 
       {configs.length === 0 ? (
         <div className="bg-slate-800 rounded-xl border border-slate-700 p-12 text-center">
@@ -101,7 +101,7 @@ export default function AdminComissoesPage() {
                   Total Pago
                 </th>
                 <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
-                  Acoes
+                  Ações
                 </th>
               </tr>
             </thead>
@@ -134,7 +134,7 @@ export default function AdminComissoesPage() {
                           : 'bg-slate-600 text-slate-400'
                       }`}
                     >
-                      {config.usa_override ? 'Personalizada' : 'Padrao'}
+                      {config.usa_override ? 'Personalizada' : 'Padrão'}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">

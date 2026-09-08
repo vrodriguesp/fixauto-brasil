@@ -246,7 +246,7 @@ export default function EquipePage() {
               <input
                 type="text"
                 className="input-field"
-                placeholder="Ex: Motor, Funilaria, Eletrica..."
+                placeholder="Ex: Motor, Funilaria, Elétrica..."
                 value={form.especialidade}
                 onChange={(e) => setForm({ ...form, especialidade: e.target.value })}
               />

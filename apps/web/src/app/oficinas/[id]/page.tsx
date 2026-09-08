@@ -111,7 +111,7 @@ export default function OficinaPublicPage() {
       setTotalServicosConcluidos(servicosRes.count || 0);
 
       if (oficinaRes.error) {
-        setError('Oficina nao encontrada.');
+        setError('Oficina não encontrada.');
         setLoading(false);
         return;
       }
@@ -179,9 +179,9 @@ export default function OficinaPublicPage() {
   if (error || !oficina) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <p className="text-gray-500">{error || 'Oficina nao encontrada.'}</p>
+        <p className="text-gray-500">{error || 'Oficina não encontrada.'}</p>
         <Link href="/" className="text-primary-600 hover:underline mt-4 inline-block">
-          Voltar ao inicio
+          Voltar ao início
         </Link>
       </div>
     );
@@ -236,12 +236,12 @@ export default function OficinaPublicPage() {
               )}
               {tempoMedioResposta !== null && tempoMedioResposta < 2 && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
-                  ⚡ Resposta Rapida
+                  ⚡ Resposta Rápida
                 </span>
               )}
               {tierVolume && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800">
-                  🔧 {tierVolume}+ servicos concluidos
+                  🔧 {tierVolume}+ serviços concluídos
                 </span>
               )}
               {parceiraDesde && (
@@ -252,16 +252,16 @@ export default function OficinaPublicPage() {
               {hasRevisions && ajusteMedio !== null ? (
                 ajusteMedio < 0 ? (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">
-                    Ajuste medio: {ajusteMedio.toFixed(1)}% 📉
+                    Ajuste médio: {ajusteMedio.toFixed(1)}% 📉
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-800">
-                    Ajuste medio: +{ajusteMedio.toFixed(1)}% 📈
+                    Ajuste médio: +{ajusteMedio.toFixed(1)}% 📈
                   </span>
                 )
               ) : (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600">
-                  Sem ajustes de preco
+                  Sem ajustes de preço
                 </span>
               )}
             </div>
@@ -271,7 +271,7 @@ export default function OficinaPublicPage() {
                 {calculatedMedia.toFixed(1)}
               </span>
               <span className="text-sm text-gray-500">
-                ({totalAvaliacoes} {totalAvaliacoes === 1 ? 'avaliacao' : 'avaliacoes'})
+                ({totalAvaliacoes} {totalAvaliacoes === 1 ? 'avaliação' : 'avaliações'})
               </span>
             </div>
             <p className="text-sm text-gray-500 mt-1">
@@ -279,7 +279,7 @@ export default function OficinaPublicPage() {
             </p>
             {tempoMedioResposta !== null && (
               <p className="text-xs text-gray-400 mt-1">
-                Tempo medio de resposta: {tempoMedioResposta < 1
+                Tempo médio de resposta: {tempoMedioResposta < 1
                   ? `${Math.round(tempoMedioResposta * 60)}min`
                   : `${tempoMedioResposta.toFixed(1)}h`}
               </p>
@@ -291,7 +291,7 @@ export default function OficinaPublicPage() {
       {/* Services */}
       {oficina.especialidades && oficina.especialidades.length > 0 && (
         <div className="card mb-6">
-          <h2 className="font-semibold text-gray-900 mb-3">Servicos oferecidos</h2>
+          <h2 className="font-semibold text-gray-900 mb-3">Serviços oferecidos</h2>
           <div className="flex flex-wrap gap-2">
             {oficina.especialidades.map((esp) => {
               const svc = getServiceLabel(esp);
@@ -322,7 +322,7 @@ export default function OficinaPublicPage() {
 
       {/* Address & Map */}
       <div className="card mb-6">
-        <h2 className="font-semibold text-gray-900 mb-3">Endereco</h2>
+        <h2 className="font-semibold text-gray-900 mb-3">Endereço</h2>
         <div className="text-sm text-gray-600 space-y-1 mb-4">
           <p>{oficina.endereco}</p>
           <p>
@@ -352,7 +352,7 @@ export default function OficinaPublicPage() {
 
       {/* Contact & Hours */}
       <div className="card mb-6">
-        <h2 className="font-semibold text-gray-900 mb-3">Contato e Horario</h2>
+        <h2 className="font-semibold text-gray-900 mb-3">Contato e Horário</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-gray-500 mb-1">Telefone</p>
@@ -364,14 +364,14 @@ export default function OficinaPublicPage() {
                 {oficina.profile.telefone}
               </a>
             ) : (
-              <p className="text-sm text-gray-400">Nao informado</p>
+              <p className="text-sm text-gray-400">Não informado</p>
             )}
           </div>
           <div>
-            <p className="text-sm text-gray-500 mb-1">Horario de funcionamento</p>
+            <p className="text-sm text-gray-500 mb-1">Horário de funcionamento</p>
             <div className="text-sm text-gray-700 space-y-0.5">
               <p>Seg a Sex: 08:00 - 18:00</p>
-              <p>Sab: 08:00 - 12:00</p>
+              <p>Sáb: 08:00 - 12:00</p>
               <p className="text-gray-400">Dom: Fechado</p>
             </div>
           </div>
@@ -381,11 +381,11 @@ export default function OficinaPublicPage() {
       {/* Reviews */}
       <div className="card">
         <h2 className="font-semibold text-gray-900 mb-4">
-          Avaliacoes ({totalAvaliacoes})
+          Avaliações ({totalAvaliacoes})
         </h2>
         {totalAvaliacoes === 0 ? (
           <p className="text-gray-500 text-sm text-center py-6">
-            Esta oficina ainda nao possui avaliacoes.
+            Esta oficina ainda não possui avaliações.
           </p>
         ) : (
           <div className="space-y-4">

@@ -57,7 +57,7 @@ export default function AudioMessage({
           onClick={() => setShowTranscricao(!showTranscricao)}
           className="text-[11px] underline opacity-70 hover:opacity-100 transition-opacity"
         >
-          {showTranscricao ? 'Ocultar transcricao' : 'Ver transcricao'}
+          {showTranscricao ? 'Ocultar transcrição' : 'Ver transcrição'}
         </button>
       ) : localStatus === 'processando' || transcribing ? (
         <div className="flex items-center gap-1.5">

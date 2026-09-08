@@ -20,7 +20,7 @@ function formatExecTime(hours: number | null): string {
 
 function formatSlotDate(dateStr: string): string {
   const d = new Date(dateStr + 'T12:00:00');
-  const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
+  const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
   return `${weekdays[d.getDay()]}, ${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
 }
 
@@ -245,8 +245,8 @@ export default function OrcamentoDetalhePage() {
             </svg>
           </div>
           <div>
-            <p className="font-semibold text-blue-800">Veiculo na oficina</p>
-            <p className="text-sm text-blue-600">Seu veiculo esta sendo atendido. Use o chat para acompanhar.</p>
+            <p className="font-semibold text-blue-800">Veículo na oficina</p>
+            <p className="text-sm text-blue-600">Seu veículo está sendo atendido. Use o chat para acompanhar.</p>
           </div>
         </div>
       )}
@@ -526,7 +526,7 @@ export default function OrcamentoDetalhePage() {
               {/* Revision comparison */}
               {orc.valor_original && orc.revisao_numero && orc.revisao_numero > 0 && (
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4 flex items-center gap-2 text-sm">
-                  <span className="text-gray-600">Orcamento original:</span>
+                  <span className="text-gray-600">Orçamento original:</span>
                   <span className="line-through text-gray-400">{formatCurrency(orc.valor_original)}</span>
                   <span className="text-gray-600">→ Revisado para:</span>
                   <span className={`font-bold ${
@@ -538,7 +538,7 @@ export default function OrcamentoDetalhePage() {
                   }`}>
                     {formatCurrency(orc.valor_total)}
                   </span>
-                  <span className="text-gray-500">(revisao #{orc.revisao_numero})</span>
+                  <span className="text-gray-500">(revisão #{orc.revisao_numero})</span>
                 </div>
               )}
 

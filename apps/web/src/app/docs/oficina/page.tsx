@@ -64,187 +64,187 @@ export default function DocsOficinaPage() {
         </Link>
         <h1 className="text-3xl font-bold text-gray-900 mb-3">Guia da Oficina</h1>
         <p className="text-gray-600 text-lg">
-          Aprenda a usar todas as ferramentas do BipFix para atrair clientes, gerenciar servicos e crescer sua oficina.
+          Aprenda a usar todas as ferramentas do BipFix para atrair clientes, gerenciar serviços e crescer sua oficina.
         </p>
       </div>
 
       {/* Sections */}
       <div className="space-y-4">
         <Accordion title="1. Como cadastrar sua oficina" defaultOpen>
-          <p>O cadastro da sua oficina no BipFix e simples e leva poucos minutos:</p>
+          <p>O cadastro da sua oficina no BipFix é simples e leva poucos minutos:</p>
           <div className="space-y-4 mt-4">
             <StepItem
               number={1}
               title="Crie sua conta"
-              desc="Acesse /cadastro e selecione 'Sou uma oficina'. Preencha os dados do responsavel: nome, e-mail e senha."
+              desc="Acesse /cadastro e selecione 'Sou uma oficina'. Preencha os dados do responsável: nome, e-mail e senha."
             />
             <StepItem
               number={2}
               title="Dados da oficina"
-              desc="Informe o CNPJ, razao social, nome fantasia, telefone e endereco completo da oficina."
+              desc="Informe o CNPJ, razão social, nome fantasia, telefone e endereço completo da oficina."
             />
             <StepItem
               number={3}
               title="Especialidades"
-              desc="Selecione os tipos de servico que sua oficina oferece: funilaria, pintura, mecanica, eletrica, vidros, etc."
+              desc="Selecione os tipos de serviço que sua oficina oferece: funilaria, pintura, mecânica, elétrica, vidros, etc."
             />
             <StepItem
               number={4}
               title="Raio de atendimento"
-              desc="Defina o raio de distancia (em km) que sua oficina aceita receber solicitacoes. Voce pode ajustar depois."
+              desc="Defina o raio de distância (em km) que sua oficina aceita receber solicitações. Você pode ajustar depois."
             />
             <StepItem
               number={5}
               title="Perfil completo"
-              desc="Adicione fotos da oficina, descricao, horario de funcionamento e formas de pagamento aceitas. Um perfil completo atrai mais clientes."
+              desc="Adicione fotos da oficina, descrição, horário de funcionamento e formas de pagamento aceitas. Um perfil completo atrai mais clientes."
             />
           </div>
         </Accordion>
 
-        <Accordion title="2. Como receber solicitacoes">
+        <Accordion title="2. Como receber solicitações">
           <p>
-            O BipFix envia solicitacoes automaticamente para oficinas que atendem aos criterios do cliente:
+            O BipFix envia solicitações automaticamente para oficinas que atendem aos critérios do cliente:
           </p>
           <ul className="list-disc list-inside space-y-2 mt-3">
-            <li><span className="font-medium">Proximidade</span> — O cliente esta dentro do raio de atendimento que voce definiu.</li>
-            <li><span className="font-medium">Especialidade</span> — O tipo de servico solicitado corresponde as especialidades da sua oficina.</li>
-            <li><span className="font-medium">Disponibilidade</span> — Sua oficina esta ativa na plataforma e com agenda aberta.</li>
+            <li><span className="font-medium">Proximidade</span> — O cliente está dentro do raio de atendimento que você definiu.</li>
+            <li><span className="font-medium">Especialidade</span> — O tipo de serviço solicitado corresponde às especialidades da sua oficina.</li>
+            <li><span className="font-medium">Disponibilidade</span> — Sua oficina está ativa na plataforma e com agenda aberta.</li>
           </ul>
           <p className="mt-3">
-            Voce recebe notificacoes no painel e por e-mail. Cada solicitacao inclui: fotos do dano, descricao do problema, tipo de veiculo e localizacao do cliente.
+            Você recebe notificações no painel e por e-mail. Cada solicitação inclui: fotos do dano, descrição do problema, tipo de veículo e localização do cliente.
           </p>
           <p className="mt-2 text-sm bg-blue-50 p-3 rounded-lg">
-            Dica: mantenha seu perfil atualizado e suas especialidades corretas para receber as solicitacoes mais relevantes.
+            Dica: mantenha seu perfil atualizado e suas especialidades corretas para receber as solicitações mais relevantes.
           </p>
         </Accordion>
 
-        <Accordion title="3. Como enviar orcamentos">
+        <Accordion title="3. Como enviar orçamentos">
           <p>
-            Para enviar um orcamento competitivo e detalhado:
+            Para enviar um orçamento competitivo e detalhado:
           </p>
           <div className="space-y-4 mt-4">
             <StepItem
               number={1}
-              title="Avalie a solicitacao"
-              desc="Analise as fotos e descricao do cliente. Se precisar de mais informacoes, voce pode enviar uma mensagem."
+              title="Avalie a solicitação"
+              desc="Analise as fotos e descrição do cliente. Se precisar de mais informações, você pode enviar uma mensagem."
             />
             <StepItem
               number={2}
-              title="Adicione itens ao orcamento"
-              desc="Liste cada servico e peca separadamente com descricao, quantidade e valor unitario. Quanto mais detalhado, maior a confianca do cliente."
+              title="Adicione itens ao orçamento"
+              desc="Liste cada serviço e peça separadamente com descrição, quantidade e valor unitário. Quanto mais detalhado, maior a confiança do cliente."
             />
             <StepItem
               number={3}
               title="Prazo estimado"
-              desc="Informe em quantos dias uteis o servico sera concluido."
+              desc="Informe em quantos dias úteis o serviço será concluído."
             />
             <StepItem
               number={4}
               title="Disponibilidade de agenda"
-              desc="Selecione os horarios disponiveis para o cliente agendar a entrada do veiculo."
+              desc="Selecione os horários disponíveis para o cliente agendar a entrada do veículo."
             />
             <StepItem
               number={5}
-              title="Envie o orcamento"
-              desc="Revise e envie. O cliente recebera notificacao e podera comparar com outros orcamentos."
+              title="Envie o orçamento"
+              desc="Revise e envie. O cliente receberá notificação e poderá comparar com outros orçamentos."
             />
           </div>
           <p className="mt-3 text-sm bg-green-50 p-3 rounded-lg text-green-800">
-            Orcamentos detalhados e com precos justos tem ate 3x mais chance de serem aceitos.
+            Orçamentos detalhados e com preços justos têm até 3x mais chance de serem aceitos.
           </p>
         </Accordion>
 
         <Accordion title="4. Gerenciar agenda">
           <p>
-            O painel de agenda permite organizar todos os servicos da sua oficina:
+            O painel de agenda permite organizar todos os serviços da sua oficina:
           </p>
           <ul className="list-disc list-inside space-y-2 mt-3">
-            <li><span className="font-medium">Check-in</span> — Registre a chegada do veiculo na oficina. O cliente e notificado automaticamente.</li>
-            <li><span className="font-medium">Eventos internos</span> — Crie servicos internos (que nao vieram pelo BipFix) para manter a agenda organizada.</li>
-            <li><span className="font-medium">Atribuicao</span> — Atribua cada veiculo a um mecanico especifico da sua equipe.</li>
-            <li><span className="font-medium">Check-out</span> — Quando o servico e concluido e o veiculo retirado, registre a saida.</li>
+            <li><span className="font-medium">Check-in</span> — Registre a chegada do veículo na oficina. O cliente é notificado automaticamente.</li>
+            <li><span className="font-medium">Eventos internos</span> — Crie serviços internos (que não vieram pelo BipFix) para manter a agenda organizada.</li>
+            <li><span className="font-medium">Atribuição</span> — Atribua cada veículo a um mecânico específico da sua equipe.</li>
+            <li><span className="font-medium">Check-out</span> — Quando o serviço é concluído e o veículo retirado, registre a saída.</li>
           </ul>
           <p className="mt-3">
-            A visualizacao em calendario mostra todos os servicos agendados, em andamento e concluidos num unico lugar.
+            A visualização em calendário mostra todos os serviços agendados, em andamento e concluídos num único lugar.
           </p>
         </Accordion>
 
-        <Accordion title="5. Equipe e mecanicos">
+        <Accordion title="5. Equipe e mecânicos">
           <p>
             Gerencie os membros da sua equipe diretamente pela plataforma:
           </p>
           <div className="space-y-4 mt-4">
             <StepItem
               number={1}
-              title="Cadastrar funcionarios"
-              desc="Adicione mecanicos e outros colaboradores informando nome, e-mail e cargo (mecanico, atendente, gerente)."
+              title="Cadastrar funcionários"
+              desc="Adicione mecânicos e outros colaboradores informando nome, e-mail e cargo (mecânico, atendente, gerente)."
             />
             <StepItem
               number={2}
               title="Primeiro acesso"
-              desc="O funcionario recebe um e-mail com credenciais temporarias e deve definir uma nova senha no primeiro login."
+              desc="O funcionário recebe um e-mail com credenciais temporárias e deve definir uma nova senha no primeiro login."
             />
             <StepItem
               number={3}
-              title="Atribuir veiculos"
-              desc="Atribua veiculos em servico a mecanicos especificos. Cada mecanico ve apenas os veiculos atribuidos a ele."
+              title="Atribuir veículos"
+              desc="Atribua veículos em serviço a mecânicos específicos. Cada mecânico vê apenas os veículos atribuídos a ele."
             />
             <StepItem
               number={4}
-              title="Permissoes por cargo"
-              desc="Mecanicos tem acesso limitado (veiculos atribuidos). Gerentes e administradores tem acesso completo ao painel."
+              title="Permissões por cargo"
+              desc="Mecânicos têm acesso limitado (veículos atribuídos). Gerentes e administradores têm acesso completo ao painel."
             />
           </div>
         </Accordion>
 
-        <Accordion title="6. Acompanhamento da manutencao">
+        <Accordion title="6. Acompanhamento da manutenção">
           <p>
             Mantenha o cliente informado sobre o andamento do reparo:
           </p>
           <ul className="list-disc list-inside space-y-2 mt-3">
-            <li><span className="font-medium">Atualizacao de status</span> — Mude o status do servico: recebido, em andamento, aguardando peca, concluido.</li>
-            <li><span className="font-medium">Etapas detalhadas</span> — Registre cada fase: desmontagem, reparo estrutural, preparacao, pintura, montagem, controle de qualidade.</li>
-            <li><span className="font-medium">Notificacoes automaticas</span> — Cada mudanca de status gera uma notificacao para o cliente.</li>
+            <li><span className="font-medium">Atualização de status</span> — Mude o status do serviço: recebido, em andamento, aguardando peça, concluído.</li>
+            <li><span className="font-medium">Etapas detalhadas</span> — Registre cada fase: desmontagem, reparo estrutural, preparação, pintura, montagem, controle de qualidade.</li>
+            <li><span className="font-medium">Notificações automáticas</span> — Cada mudança de status gera uma notificação para o cliente.</li>
             <li><span className="font-medium">Fotos do progresso</span> — Envie fotos das etapas para que o cliente acompanhe visualmente.</li>
           </ul>
           <p className="mt-3 text-sm bg-blue-50 p-3 rounded-lg">
-            Oficinas que atualizam o status com frequencia recebem avaliacoes mais altas e fidelizam mais clientes.
+            Oficinas que atualizam o status com frequência recebem avaliações mais altas e fidelizam mais clientes.
           </p>
         </Accordion>
 
-        <Accordion title="7. Avaliacoes e reputacao">
+        <Accordion title="7. Avaliações e reputação">
           <p>
-            Sua reputacao na plataforma e construida pelas avaliacoes dos clientes:
+            Sua reputação na plataforma é construída pelas avaliações dos clientes:
           </p>
           <ul className="list-disc list-inside space-y-2 mt-3">
-            <li><span className="font-medium">Nota de 1 a 5 estrelas</span> — A media aparece no seu perfil publico e nos resultados de busca.</li>
-            <li><span className="font-medium">Comentarios</span> — Clientes podem deixar comentarios detalhados sobre a experiencia.</li>
-            <li><span className="font-medium">Selo de Qualidade</span> — Oficinas com media acima de 4.5 e mais de 10 servicos recebem o selo verde de qualidade.</li>
-            <li><span className="font-medium">Resposta Rapida</span> — Responder orcamentos em menos de 1 hora garante o selo azul.</li>
+            <li><span className="font-medium">Nota de 1 a 5 estrelas</span> — A média aparece no seu perfil público e nos resultados de busca.</li>
+            <li><span className="font-medium">Comentários</span> — Clientes podem deixar comentários detalhados sobre a experiência.</li>
+            <li><span className="font-medium">Selo de Qualidade</span> — Oficinas com média acima de 4.5 e mais de 10 serviços recebem o selo verde de qualidade.</li>
+            <li><span className="font-medium">Resposta Rápida</span> — Responder orçamentos em menos de 1 hora garante o selo azul.</li>
           </ul>
           <p className="mt-3">
-            Voce pode responder publicamente as avaliacoes, mostrando profissionalismo e atencao ao cliente.
+            Você pode responder publicamente às avaliações, mostrando profissionalismo e atenção ao cliente.
           </p>
         </Accordion>
 
-        <Accordion title="8. Comissao BipFix">
+        <Accordion title="8. Comissão BipFix">
           <p>
-            O BipFix cobra uma comissao sobre servicos realizados atraves da plataforma. Veja como funciona:
+            O BipFix cobra uma comissão sobre serviços realizados através da plataforma. Veja como funciona:
           </p>
           <ul className="list-disc list-inside space-y-2 mt-3">
-            <li><span className="font-medium">Como e cobrada</span> — A comissao e calculada sobre o valor total do orcamento aceito pelo cliente.</li>
-            <li><span className="font-medium">Transparencia</span> — O percentual da comissao e exibido antes do envio do orcamento, sem surpresas.</li>
-            <li><span className="font-medium">Faturamento</span> — A cobranca e feita mensalmente, com relatorio detalhado de todos os servicos.</li>
+            <li><span className="font-medium">Como é cobrada</span> — A comissão é calculada sobre o valor total do orçamento aceito pelo cliente.</li>
+            <li><span className="font-medium">Transparência</span> — O percentual da comissão é exibido antes do envio do orçamento, sem surpresas.</li>
+            <li><span className="font-medium">Faturamento</span> — A cobrança é feita mensalmente, com relatório detalhado de todos os serviços.</li>
           </ul>
-          <p className="mt-4 font-medium text-gray-900">Como reduzir sua comissao:</p>
+          <p className="mt-4 font-medium text-gray-900">Como reduzir sua comissão:</p>
           <ul className="list-disc list-inside space-y-2 mt-2">
-            <li>Mantenha uma avaliacao media acima de 4.5 estrelas.</li>
-            <li>Responda solicitacoes rapidamente (menos de 1 hora).</li>
-            <li>Conclua servicos dentro do prazo estimado.</li>
+            <li>Mantenha uma avaliação média acima de 4.5 estrelas.</li>
+            <li>Responda solicitações rapidamente (menos de 1 hora).</li>
+            <li>Conclua serviços dentro do prazo estimado.</li>
             <li>Mantenha seu perfil completo e atualizado.</li>
           </ul>
           <p className="mt-3 text-sm bg-green-50 p-3 rounded-lg text-green-800">
-            Oficinas com excelente desempenho podem ter reducao de ate 30% na taxa de comissao.
+            Oficinas com excelente desempenho podem ter redução de até 30% na taxa de comissão.
           </p>
         </Accordion>
       </div>

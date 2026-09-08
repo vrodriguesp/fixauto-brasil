@@ -7,9 +7,9 @@ import { ReactNode } from 'react';
 
 const sidebarLinks = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: ChartIcon },
-  { href: '/admin/usuarios', label: 'Usuarios', icon: UsersIcon },
+  { href: '/admin/usuarios', label: 'Usuários', icon: UsersIcon },
   { href: '/admin/oficinas', label: 'Oficinas', icon: BuildingIcon },
-  { href: '/admin/comissoes', label: 'Comissoes', icon: CurrencyIcon },
+  { href: '/admin/comissoes', label: 'Comissões', icon: CurrencyIcon },
   { href: '/admin/oficinas/performance-ruim', label: 'Performance Ruim', icon: AlertIcon },
   { href: '/admin/pecas', label: 'Peças', icon: PackageIcon },
   { href: '/admin/monitoramento', label: 'Monitoramento', icon: MonitorIcon },

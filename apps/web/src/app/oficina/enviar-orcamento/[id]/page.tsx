@@ -399,10 +399,10 @@ export default function EnviarOrcamentoPage() {
                   <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span className="text-sm font-medium text-blue-800">Comissao BipFix</span>
+                  <span className="text-sm font-medium text-blue-800">Comissão BipFix</span>
                 </div>
                 <p className="text-sm text-blue-700">
-                  Comissao da plataforma: <strong>{COMISSAO_PERCENTUAL}%</strong> = <strong>{formatCurrency(comissaoValor)}</strong>
+                  Comissão da plataforma: <strong>{COMISSAO_PERCENTUAL}%</strong> = <strong>{formatCurrency(comissaoValor)}</strong>
                 </p>
               </div>
 
@@ -418,9 +418,9 @@ export default function EnviarOrcamentoPage() {
                     className="mt-0.5"
                   />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Absorver comissao</p>
+                    <p className="text-sm font-medium text-gray-900">Absorver comissão</p>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      Voce paga a comissao. O cliente ve {formatCurrency(total)}.
+                      Você paga a comissão. O cliente vê {formatCurrency(total)}.
                     </p>
                   </div>
                 </label>
@@ -438,7 +438,7 @@ export default function EnviarOrcamentoPage() {
                   <div>
                     <p className="text-sm font-medium text-gray-900">Repassar ao cliente</p>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      A comissao de {formatCurrency(comissaoValor)} e adicionada. O cliente ve {formatCurrency(total + comissaoValor)}.
+                      A comissão de {formatCurrency(comissaoValor)} é adicionada. O cliente vê {formatCurrency(total + comissaoValor)}.
                     </p>
                   </div>
                 </label>
@@ -447,9 +447,9 @@ export default function EnviarOrcamentoPage() {
               {comissaoModo === 'repassar' && (
                 <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3">
                   <p className="text-sm text-amber-800">
-                    Preco final para o cliente: <strong>{formatCurrency(totalCliente)}</strong>
+                    Preço final para o cliente: <strong>{formatCurrency(totalCliente)}</strong>
                     <span className="text-xs text-amber-600 ml-1">
-                      ({formatCurrency(total)} + {formatCurrency(comissaoValor)} comissao)
+                      ({formatCurrency(total)} + {formatCurrency(comissaoValor)} comissão)
                     </span>
                   </p>
                 </div>
@@ -571,7 +571,7 @@ export default function EnviarOrcamentoPage() {
               onClick={addSlot}
               className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"
             >
-              + Adicionar data disponivel
+              + Adicionar data disponível
             </button>
           </div>
         )}

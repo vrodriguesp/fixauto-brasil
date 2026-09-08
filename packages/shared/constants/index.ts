@@ -3,15 +3,15 @@ export const FIPE_API_BASE = 'https://parallelum.com.br/fipe/api/v2';
 export const TIPOS_VEICULO = [
   { value: 'cars', label: 'Carro' },
   { value: 'motorcycles', label: 'Moto' },
-  { value: 'trucks', label: 'Caminhao' },
+  { value: 'trucks', label: 'Caminhão' },
 ] as const;
 
 export const TIPOS_SERVICO = [
-  { value: 'colisao', label: 'Colisao', icon: '💥', needsPhoto: true },
+  { value: 'colisao', label: 'Colisão', icon: '💥', needsPhoto: true },
   { value: 'funilaria', label: 'Funilaria e Pintura', icon: '🎨', needsPhoto: true },
-  { value: 'revisao', label: 'Revisoes', icon: '🔧', needsPhoto: false },
-  { value: 'mecanica', label: 'Mecanica', icon: '⚙️', needsPhoto: false },
-  { value: 'eletrica', label: 'Eletrico', icon: '⚡', needsPhoto: false },
+  { value: 'revisao', label: 'Revisões', icon: '🔧', needsPhoto: false },
+  { value: 'mecanica', label: 'Mecânica', icon: '⚙️', needsPhoto: false },
+  { value: 'eletrica', label: 'Elétrico', icon: '⚡', needsPhoto: false },
   { value: 'pneu', label: 'Pneu', icon: '🔴', needsPhoto: false },
   { value: 'outro', label: 'Outro', icon: '📋', needsPhoto: true },
 ] as const;
@@ -82,7 +82,7 @@ export const SERVICOS_PNEU = [
 
 export const URGENCIAS = [
   { value: 'baixa', label: 'Baixa', description: 'Sem pressa, posso esperar', color: 'green' },
-  { value: 'media', label: 'Media', description: 'Preciso em algumas semanas', color: 'yellow' },
+  { value: 'media', label: 'Média', description: 'Preciso em algumas semanas', color: 'yellow' },
   { value: 'alta', label: 'Alta', description: 'Urgente, preciso o mais rapido possivel', color: 'red' },
 ] as const;
 
@@ -91,7 +91,7 @@ export const STATUS_SOLICITACAO = {
   em_orcamento: { label: 'Orçamento Enviado', color: 'yellow' },
   aceita: { label: 'Orçamento Aceito', color: 'green' },
   em_andamento: { label: 'Em Andamento', color: 'purple' },
-  concluida: { label: 'Concluida', color: 'gray' },
+  concluida: { label: 'Concluída', color: 'gray' },
   cancelada: { label: 'Cancelada', color: 'red' },
 } as const;
 
@@ -115,20 +115,20 @@ export const CORES_AGENDA = [
 
 export const STATUS_MANUTENCAO = {
   recebido: { label: 'Recebido', icon: '📥', color: 'blue', description: 'Veiculo recebido na oficina' },
-  diagnostico: { label: 'Em diagnostico', icon: '🔍', color: 'indigo', description: 'Diagnosticando o problema' },
-  aguardando_pecas: { label: 'Aguardando pecas', icon: '📦', color: 'yellow', description: 'Aguardando pecas necessarias' },
-  em_execucao: { label: 'Em execucao', icon: '🔧', color: 'green', description: 'Servico em andamento' },
+  diagnostico: { label: 'Em diagnóstico', icon: '🔍', color: 'indigo', description: 'Diagnosticando o problema' },
+  aguardando_pecas: { label: 'Aguardando peças', icon: '📦', color: 'yellow', description: 'Aguardando pecas necessarias' },
+  em_execucao: { label: 'Em execução', icon: '🔧', color: 'green', description: 'Servico em andamento' },
   pausa_cliente: { label: 'Pausa - contato cliente', icon: '📞', color: 'orange', description: 'Aguardando retorno do cliente' },
-  pausa_pecas: { label: 'Pausa - pecas em falta', icon: '⏳', color: 'red', description: 'Parado por falta de pecas' },
+  pausa_pecas: { label: 'Pausa - peças em falta', icon: '⏳', color: 'red', description: 'Parado por falta de pecas' },
   pausa_geral: { label: 'Pausado', icon: '⏸️', color: 'gray', description: 'Servico temporariamente pausado' },
   teste_final: { label: 'Teste final', icon: '✅', color: 'teal', description: 'Realizando testes de qualidade' },
-  concluido: { label: 'Concluido', icon: '🏁', color: 'emerald', description: 'Servico finalizado' },
+  concluido: { label: 'Concluído', icon: '🏁', color: 'emerald', description: 'Servico finalizado' },
   entregue: { label: 'Entregue', icon: '🚗', color: 'slate', description: 'Veiculo entregue ao cliente' },
 } as const;
 
 export const CARGOS_FUNCIONARIO = {
   admin: { label: 'Administrador', description: 'Acesso completo ao portal da oficina' },
-  mecanico: { label: 'Mecanico', description: 'Acesso a pagina de veiculos em servico' },
+  mecanico: { label: 'Mecânico', description: 'Acesso a pagina de veiculos em servico' },
 } as const;
 
 export const COMISSAO_CONFIG = {

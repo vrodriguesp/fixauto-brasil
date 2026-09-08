@@ -36,7 +36,7 @@ export default function LojaConversaPecaPage() {
   }
 
   if (!resposta) {
-    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">Conversa nao encontrada.</div>;
+    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">Conversa não encontrada.</div>;
   }
 
   return (

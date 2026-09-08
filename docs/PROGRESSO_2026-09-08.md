@@ -238,3 +238,39 @@ Usuário decidiu pausar features de produto e focar em três frentes de negócio
 ### Status
 - [x] Build e `tsc` sem erros com as mudanças de SEO/Termos.
 - [x] Deploy feito na VM (`/para-oficinas`, `/termos`, `/privacidade` confirmados no ar via curl, HTTP 200) e migration 021 aplicada no Postgres self-hosted.
+
+---
+
+## Rodada 12 (2026-09-08): home honesta + captação de parceiros fundadores
+
+Usuário apontou (corretamente) que a home estava "mentindo" — números fabricados (500+ oficinas, 10.000+ reparos, avaliação 4.7, economia média R$850) e três depoimentos fictícios com nome e cidade, num projeto que ainda nem tem parceiros reais na fase de piloto. Pediu pra deixar claro que é um projeto ambicioso em fase de seleção de parceiros, e criar uma página simples de contato para oficinas/lojas interessadas.
+
+### O que foi feito
+1. [x] Removidos da home: seção "Stats" (números fabricados) e seção "Depoimentos" (fictícios). Substituídos por duas seções honestas: "Por que estamos construindo o BipFix" (o problema real que o projeto resolve, sem números inventados) e uma chamada direta pra `/seja-parceiro`.
+2. [x] FAQ da home corrigido: a resposta de "quanto custa" dizia "as oficinas pagam uma pequena taxa" — **contradizia os Termos** que acabamos de publicar (sem comissão pros parceiros iniciais). Corrigido pra bater com a política real.
+3. [x] Nova página `/seja-parceiro`: formulário simples (tipo, responsável, negócio, cidade/estado, WhatsApp, e-mail opcional, observação) com copy inspirado em padrão real de lançamento de marketplace em fase inicial (Airbnb/Uber early-days: "seleção de parceiros fundadores", vagas limitadas, transparência de que é um projeto no começo). CTAs de oficina na home e em `/para-oficinas` agora apontam pra cá em vez de direto pro cadastro.
+4. [x] Migration `022_leads_parceiros.sql`: tabela `leads_parceiros` (insert público, leitura só admin).
+5. [x] `/api/leads-parceiros` (POST público, valida e grava via service role) + `sendLeadParceiroEmail` em `notifications.ts` (notifica `contato@bipfix.com`).
+6. [x] `/admin/leads-parceiros`: lista de interessados com filtro pendente/todos e botão "marcar contatado". Link adicionado no menu admin.
+7. [x] Build/tsc sem erros, deploy feito na VM, migration aplicada, testado ao vivo (`/seja-parceiro` HTTP 200, POST vazio retorna 400 como esperado).
+
+---
+
+## Rodada 13 (2026-09-08): correção geral de acentuação em português
+
+Usuário pediu correção geral do português do site, principalmente acentos — muitas páginas foram escritas sem acentuação (ASCII puro: "voce", "nao", "orcamento", "servico" etc.), inconsistente com outras partes já corretas.
+
+### Abordagem
+Disparados 4 agentes em paralelo, cada um cobrindo uma fatia do app (público/auth/cliente, oficina/*, loja+admin, componentes+pacote compartilhado), com instruções explícitas de **só corrigir texto exibido ao usuário** (JSX, labels, placeholders, mensagens) e **nunca tocar em**: nomes de variável/função, rotas, nomes de coluna/tabela do banco, ou valores de enum comparados contra o banco (ex: `cargo === 'mecanico'` continua sem acento, só o texto exibido vira "Mecânico"). As 3 primeiras tentativas travaram por um problema de infraestrutura (stream stalled) e foram relançadas com sucesso.
+
+### Resultado
+26 arquivos corrigidos (`docs/cliente` e `docs/oficina` praticamente reescritos — estavam quase 100% sem acento). Destaques:
+- `packages/shared/constants/index.ts`: labels de `TIPOS_SERVICO`, `STATUS_MANUTENCAO`, `CARGOS_FUNCIONARIO` etc.
+- Painel admin inteiro (`usuarios`, `oficinas`, `comissoes`, `dashboard`, `layout`) tinha títulos de menu e cabeçalhos de tabela sem acento.
+- `oficina/enviar-orcamento`: textos sobre comissão sem acento.
+- **Bug real encontrado e corrigido à parte** (fora do escopo dos agentes, que só mexem em texto literal): `oficina/distribuicao/page.tsx` exibia o valor cru do banco (`f.cargo`, ex: "mecanico") em vez de um label formatado — corrigido pra usar `CARGOS_FUNCIONARIO[f.cargo]?.label` ("Mecânico").
+- Uma inconsistência conhecida e deixada de fora por segurança: os arrays `SERVICOS_REVISAO/MECANICA/ELETRICA/PNEU` em `constants/index.ts` são ao mesmo tempo texto exibido e valor gravado no banco (usados em `cliente/nova-solicitacao`) — corrigir a acentuação ali mudaria o valor armazenado, então foi deixado como está; se quiser acentuar esses também no futuro, precisa de uma migração de dados nas solicitações já salvas com o valor antigo.
+
+### Status
+- [x] `npx tsc --noEmit` e `npm run build` sem erros após a consolidação de todos os agentes.
+- [ ] Deploy desta rodada ainda não feito (próximo passo).

@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Central de Ajuda | BipFix',
-  description: 'Tire suas duvidas sobre como usar a plataforma BipFix. Guias completos para motoristas e oficinas.',
+  description: 'Tire suas dúvidas sobre como usar a plataforma BipFix. Guias completos para motoristas e oficinas.',
 };
 
 export default function DocsPage() {
@@ -20,7 +20,7 @@ export default function DocsPage() {
           Central de Ajuda BipFix
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Tudo o que voce precisa saber para usar a plataforma, seja como motorista ou como oficina.
+          Tudo o que você precisa saber para usar a plataforma, seja como motorista ou como oficina.
         </p>
       </div>
 
@@ -40,7 +40,7 @@ export default function DocsPage() {
             Guia do Motorista
           </h2>
           <p className="text-gray-600 text-sm leading-relaxed">
-            Aprenda a criar solicitacoes, comparar orcamentos, agendar servicos e acompanhar o reparo do seu veiculo em tempo real.
+            Aprenda a criar solicitações, comparar orçamentos, agendar serviços e acompanhar o reparo do seu veículo em tempo real.
           </p>
           <span className="inline-flex items-center gap-1 text-primary-600 text-sm font-medium mt-4">
             Acessar guia
@@ -64,7 +64,7 @@ export default function DocsPage() {
             Guia da Oficina
           </h2>
           <p className="text-gray-600 text-sm leading-relaxed">
-            Saiba como cadastrar sua oficina, receber solicitacoes, enviar orcamentos, gerenciar a agenda e construir sua reputacao.
+            Saiba como cadastrar sua oficina, receber solicitações, enviar orçamentos, gerenciar a agenda e construir sua reputação.
           </p>
           <span className="inline-flex items-center gap-1 text-primary-600 text-sm font-medium mt-4">
             Acessar guia
@@ -79,7 +79,7 @@ export default function DocsPage() {
       <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center">
         <h2 className="text-xl font-bold text-gray-900 mb-2">Precisa de mais ajuda?</h2>
         <p className="text-gray-600 mb-6">
-          Nossa equipe esta pronta para te ajudar. Entre em contato por qualquer um dos canais abaixo.
+          Nossa equipe está pronta para te ajudar. Entre em contato por qualquer um dos canais abaixo.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a

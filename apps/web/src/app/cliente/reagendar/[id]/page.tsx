@@ -187,7 +187,7 @@ export default function ReagendarPage() {
         <h2 className="font-semibold text-gray-900 mb-3">Escolha uma nova data</h2>
         {disponibilidade.length === 0 ? (
           <p className="text-sm text-gray-500">
-            Nenhuma data disponivel no momento. Entre em contato com a oficina para combinar um novo horario.
+            Nenhuma data disponível no momento. Entre em contato com a oficina para combinar um novo horário.
           </p>
         ) : (
           <div className="space-y-2">

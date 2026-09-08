@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useAgenda } from '@/hooks/use-agenda';
 import { supabase } from '@/lib/supabase';
+import { CARGOS_FUNCIONARIO } from '@fixauto/shared';
 
 interface FuncionarioLeve {
   id: string;
@@ -170,7 +171,9 @@ export default function DistribuicaoTrabalhoPage() {
                 <div className={`rounded-t-xl px-3 py-2.5 border ${sobrecarga ? 'bg-red-50 border-red-200' : 'bg-primary-50 border-primary-100'}`}>
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-semibold text-gray-900">{f.nome}</p>
-                    <span className="text-[10px] uppercase tracking-wide text-gray-400">{f.cargo}</span>
+                    <span className="text-[10px] uppercase tracking-wide text-gray-400">
+                      {CARGOS_FUNCIONARIO[f.cargo as keyof typeof CARGOS_FUNCIONARIO]?.label || f.cargo}
+                    </span>
                   </div>
                   <p className={`text-xs mt-0.5 ${sobrecarga ? 'text-red-600 font-medium' : 'text-gray-500'}`}>
                     {emAndamento}{limite != null ? ` / ${limite}` : ''} em serviço agora · {cards.length} no total{sobrecarga && ' (no limite)'}

@@ -242,7 +242,7 @@ export default function OficinaMensagensPage() {
       const { error } = await supabase.from('mensagens').insert({
         solicitacao_id: id,
         remetente_id: user.id,
-        texto: '[Audio]',
+        texto: '[Áudio]',
         tipo: 'audio',
         audio_url: audioUrl,
         audio_duracao_segundos: audioDuration,
@@ -255,7 +255,7 @@ export default function OficinaMensagensPage() {
             id: `temp-${Date.now()}`,
             solicitacao_id: id,
             remetente_id: user.id,
-            texto: '[Audio]',
+            texto: '[Áudio]',
             tipo: 'audio',
             audio_url: audioUrl,
             audio_duracao_segundos: audioDuration,

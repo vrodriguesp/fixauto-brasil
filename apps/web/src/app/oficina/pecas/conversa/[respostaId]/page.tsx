@@ -46,19 +46,19 @@ export default function OficinaConversaPecaPage() {
   }
 
   if (!resposta) {
-    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">Conversa nao encontrada.</div>;
+    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">Conversa não encontrada.</div>;
   }
 
   const souFornecedor = resposta.fornecedor_tipo === 'oficina' && resposta.oficina_fornecedora_id === oficina.id;
   const outraParteNome = souFornecedor
     ? resposta.cotacao?.oficina?.nome_fantasia || 'Oficina'
     : resposta.fornecedor_tipo === 'loja'
-      ? resposta.loja?.nome_fantasia || 'Loja de pecas'
+      ? resposta.loja?.nome_fantasia || 'Loja de peças'
       : resposta.oficina_fornecedora?.nome_fantasia || 'Oficina fornecedora';
 
   const fornecedorId = resposta.loja_id || resposta.oficina_fornecedora_id;
   if (!fornecedorId) {
-    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">Conversa invalida.</div>;
+    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">Conversa inválida.</div>;
   }
 
   return (

@@ -12,7 +12,7 @@ export default function AdminDashboardPage() {
     async function fetchMetricas() {
       try {
         const res = await fetch('/api/admin/metricas');
-        if (!res.ok) throw new Error('Erro ao buscar metricas');
+        if (!res.ok) throw new Error('Erro ao buscar métricas');
         const data = await res.json();
         setMetricas(data);
       } catch (err) {
@@ -61,28 +61,28 @@ export default function AdminDashboardPage() {
       iconBg: 'bg-emerald-500/20',
     },
     {
-      label: 'Solicitacoes (mes)',
+      label: 'Solicitações (mês)',
       value: metricas?.solicitacoes_mes ?? 0,
       format: 'number',
       color: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
       iconBg: 'bg-purple-500/20',
     },
     {
-      label: 'Servicos Concluidos (mes)',
+      label: 'Serviços Concluídos (mês)',
       value: metricas?.servicos_concluidos_mes ?? 0,
       format: 'number',
       color: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
       iconBg: 'bg-amber-500/20',
     },
     {
-      label: 'GMV (mes)',
+      label: 'GMV (mês)',
       value: metricas?.gmv_mes ?? 0,
       format: 'currency',
       color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
       iconBg: 'bg-cyan-500/20',
     },
     {
-      label: 'Comissao Total (mes)',
+      label: 'Comissão Total (mês)',
       value: metricas?.comissao_total_mes ?? 0,
       format: 'currency',
       color: 'bg-rose-500/10 text-rose-400 border-rose-500/20',

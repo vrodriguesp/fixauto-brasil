@@ -154,7 +154,7 @@ export default function ClienteMensagensListPage() {
             oficina_nome: (oficinaNome as any)?.nome_fantasia || 'Oficina',
             veiculo_desc: veiculo ? `${veiculo.fipe_marca} ${veiculo.fipe_modelo}` : '',
             placa: veiculo?.placa || '',
-            ultima_mensagem: lastMsg?.tipo === 'audio' ? 'Mensagem de audio' : (lastMsg?.texto || 'Sem mensagens'),
+            ultima_mensagem: lastMsg?.tipo === 'audio' ? 'Mensagem de áudio' : (lastMsg?.texto || 'Sem mensagens'),
             ultima_mensagem_at: lastMsg?.created_at || '',
             nao_lidas: naoLidas,
           });
@@ -333,10 +333,10 @@ export default function ClienteMensagensListPage() {
                     'bg-blue-100 text-blue-700'
                   }`}>
                     {group.status === 'aberta' ? 'Aberta' :
-                     group.status === 'em_orcamento' ? 'Em orcamento' :
+                     group.status === 'em_orcamento' ? 'Em orçamento' :
                      group.status === 'aceita' ? 'Aceita' :
                      group.status === 'em_andamento' ? 'Em andamento' :
-                     group.status === 'concluida' ? 'Concluida' :
+                     group.status === 'concluida' ? 'Concluída' :
                      group.status}
                   </span>
                 </div>
