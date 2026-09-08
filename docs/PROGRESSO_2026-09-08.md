@@ -129,7 +129,7 @@ Pedido do usuário: (1) poder designar o responsável por um veículo antes dele
 4. [x] Módulo novo adicionado ao tutorial (`/oficina/aprender`), com verificação real (checa se algum evento de agenda já tem `funcionario_id` preenchido).
 5. [x] `docs/sandbox/OFICINA.md` atualizado com a nova seção 8.1 e a nota sobre a notificação reforçada.
 6. [x] `npm run build`/`tsc` sem erros.
-7. [ ] Deploy pendente de confirmação nesta mensagem (ver abaixo).
+7. [x] Deploy feito (commit `e4b144b`), testado ao vivo em produção — página renderiza corretamente, sem erros no console. **Nota**: notificação por e-mail está ativa na VM (RESEND_API_KEY configurado); WhatsApp ainda não (TWILIO_ACCOUNT_SID não configurado na VM) — mesma limitação que já existia pra notificação de "novo orçamento", não é regressão desta rodada.
 
 ### Adiado a pedido do usuário
 - Consulta de histórico de reparos por placa (pra concessionárias): envolve dados de terceiros e precisa de um modelo de acesso definido (proposto: conta "concessionária" aprovada pelo admin, dados anonimizados). Usuário pediu pra deixar quieto por enquanto — nada foi implementado, só fica registrado aqui pra não esquecer que a ideia existe.
