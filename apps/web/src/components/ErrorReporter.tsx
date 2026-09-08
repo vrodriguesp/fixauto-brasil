@@ -1,33 +1,22 @@
 'use client';
 
 import { useEffect } from 'react';
-
-function report(mensagem: string, stack?: string) {
-  try {
-    navigator.sendBeacon?.(
-      '/api/log-error',
-      new Blob([JSON.stringify({ mensagem, stack, url: window.location.href })], { type: 'application/json' })
-    ) || fetch('/api/log-error', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mensagem, stack, url: window.location.href }),
-      keepalive: true,
-    });
-  } catch {
-    // Never let error-reporting itself throw
-  }
-}
+import { reportClientError } from '@/lib/report-client-error';
 
 // Mounted once in the root layout - catches uncaught JS errors and unhandled
 // promise rejections across every page, feeding /admin/monitoramento.
+// NAO cobre erros de render/effect que o React intercepta com um Error
+// Boundary (a tela "Application error: a client-side exception has
+// occurred") - esses sao reportados por app/error.tsx e
+// app/global-error.tsx, que usam o mesmo reportClientError.
 export default function ErrorReporter() {
   useEffect(() => {
     const onError = (event: ErrorEvent) => {
-      report(event.message, event.error?.stack);
+      reportClientError(event.message, event.error?.stack);
     };
     const onRejection = (event: PromiseRejectionEvent) => {
       const reason = event.reason;
-      report(
+      reportClientError(
         reason?.message ? String(reason.message) : String(reason),
         reason?.stack
       );
