@@ -61,5 +61,22 @@ Pedido do usuário: comissão sobre venda de peças (começando em 3%, variando 
 
 **Nota de segurança pré-existente (RESOLVIDA no mesmo dia, commit `e69e213`)**: as 5 rotas `/api/admin/*` (`usuarios`, `comissao`, `metricas`, `monitoramento`, `pecas-fornecedores`) não validavam sessão/role no servidor — o `middleware.ts` só protege páginas (`matcher` não cobre `/api/*`), então qualquer um na internet, sem login nenhum, conseguia chamar essas rotas direto. Duas eram graves de verdade: `DELETE /api/admin/usuarios` apagava qualquer conta só com `{id}` no corpo, e `PATCH /api/admin/comissao` deixava mudar a taxa de qualquer oficina. Corrigido com um helper novo `lib/admin-auth.ts` (`requireAdmin()`, mesmo padrão de leitura de sessão do `middleware.ts`), aplicado no topo de todas as 5 rotas. Testado em produção: `curl` sem login agora recebe `401 {"error":"Não autenticado"}` em ambas (leitura e a rota destrutiva).
 
+---
+
+## Rodada 3 (mesmo dia): varredura completa + auditoria de segurança
+
+Pedido do usuário: dividir em agentes e testar massivamente todas as funcionalidades do site, documentando tudo em detalhe como material-base para um futuro "portal educativo" para oficinas e lojas de peças (próximo passo do projeto, ainda não construído).
+
+**Ressalva técnica explicada ao usuário**: as ferramentas de navegador compartilham a mesma sessão/cookies do Chrome real — agentes em paralelo clicando na UI simultaneamente derrubariam a sessão uns dos outros (login de um desloga o outro). Por isso os 4 agentes trabalharam só por leitura de código (sem tocar no navegador, sem editar nada), e a validação ao vivo ficou comigo, sequencial, depois.
+
+### Tarefas
+1. [x] 4 agentes em paralelo, cada um documentando uma área a fundo: `docs/sandbox/CLIENTE.md`, `OFICINA.md`, `LOJA_PECAS.md`, `ADMIN.md` (+ `docs/sandbox/README.md` como índice e backlog consolidado).
+2. [x] O agente do Admin também fez uma auditoria de segurança de toda a superfície de API (25 rotas) — `docs/AUDITORIA_SEGURANCA_API_2026-09-08.md`.
+3. [x] Corrigidas todas as vulnerabilidades críticas/médias encontradas (mesmo padrão do bug admin da rodada 2, espalhado por rotas normais): `/api/funcionarios` (POST/PATCH/DELETE), `/api/confirmar-entrega`, `/api/aceitar-orcamento`, `/api/marcar-pedido-peca-entregue`, `/api/registrar-no-show`, `/api/marcar-cotacao-respondida`, `/api/notificar-orcamento`, `/api/comissao-atual`. Novo helper `lib/api-auth.ts`.
+4. [x] Corrigidos 2 bugs que eu mesmo introduzi na rodada 2, achados por dois agentes independentes: policy de UPDATE de `cotacoes_pecas_mensagens` estava `USING (true)` (migration 019), e o raio de notificação de fornecedores usava 50km fixo em vez do raio de cada oficina.
+5. [x] `npm run build` e `tsc --noEmit` sem erros. Migration 019 aplicada na VM. Deploy feito (commit `f2729d2`). Testado em produção: rotas corrigidas recusam chamada sem login (`401`), e o dono legítimo (conta "Oficina Bona") continua conseguindo usar normalmente (testado editando funcionário via `/oficina/equipe`).
+6. [ ] Itens de menor severidade da auditoria (rotas de broadcast/emergência sem rate limit, custo de API paga sem checagem) ficaram documentados como pendentes — precisam de rate limiting, não só checagem de dono, e foram deixados pra uma rodada dedicada.
+7. [ ] Backlog de bugs funcionais/UX (não-segurança) de cada área consolidado em `docs/sandbox/README.md`, aguardando priorização do usuário.
+
 ### Adiado a pedido do usuário
 - Consulta de histórico de reparos por placa (pra concessionárias): envolve dados de terceiros e precisa de um modelo de acesso definido (proposto: conta "concessionária" aprovada pelo admin, dados anonimizados). Usuário pediu pra deixar quieto por enquanto — nada foi implementado, só fica registrado aqui pra não esquecer que a ideia existe.
