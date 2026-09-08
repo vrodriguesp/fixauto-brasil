@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { execSync } from 'child_process';
+import { requireAdmin } from '@/lib/admin-auth';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -77,6 +78,9 @@ function readServerErrors() {
 }
 
 export async function GET() {
+  const auth = await requireAdmin();
+  if (!auth.ok) return auth.response;
+
   try {
     const [{ data: clientErrors }, acessos] = await Promise.all([
       supabaseAdmin

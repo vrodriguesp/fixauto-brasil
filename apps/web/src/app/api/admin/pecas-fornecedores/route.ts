@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireAdmin } from '@/lib/admin-auth';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,6 +16,9 @@ export const revalidate = 0;
 // ativo, e quando fez login pela ultima vez (auth.users.last_sign_in_at,
 // que nao fica em profiles - so acessivel via admin API do GoTrue).
 export async function GET() {
+  const auth = await requireAdmin();
+  if (!auth.ok) return auth.response;
+
   try {
     const [
       { data: lojas, error: lojasError },

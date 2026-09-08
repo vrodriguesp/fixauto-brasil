@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireAdmin } from '@/lib/admin-auth';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,6 +13,9 @@ export const dynamic = 'force-dynamic';
 // Deactivating the owner of an oficina also deactivates the oficina itself
 // (clients shouldn't keep seeing/booking a workshop whose owner is disabled).
 export async function PATCH(req: NextRequest) {
+  const auth = await requireAdmin();
+  if (!auth.ok) return auth.response;
+
   try {
     const { id, nome, telefone, ativo } = await req.json();
     if (!id) {
@@ -45,6 +49,9 @@ export async function PATCH(req: NextRequest) {
 // DELETE: permanently remove a user (auth user + profile, cascades to
 // everything linked to them - oficina, veiculos, solicitacoes, etc).
 export async function DELETE(req: NextRequest) {
+  const auth = await requireAdmin();
+  if (!auth.ok) return auth.response;
+
   try {
     const { id } = await req.json();
     if (!id) {

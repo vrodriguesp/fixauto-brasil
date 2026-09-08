@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireAdmin } from '@/lib/admin-auth';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,6 +17,9 @@ export const revalidate = 0;
 // overridden - starting from that table hid every oficina still on the default
 // rate, even ones with real pending/paid commission.
 export async function GET() {
+  const auth = await requireAdmin();
+  if (!auth.ok) return auth.response;
+
   try {
     const { data: oficinas, error } = await supabaseAdmin
       .from('oficinas')
@@ -76,6 +80,9 @@ export async function GET() {
 // PATCH: update comissao_config for an oficina, OR mark a comissao_lancamento as pago
 // (pass lancamento_id + status to mark a single commission entry as paid)
 export async function PATCH(req: NextRequest) {
+  const auth = await requireAdmin();
+  if (!auth.ok) return auth.response;
+
   try {
     const body = await req.json();
 
