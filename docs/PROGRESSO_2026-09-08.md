@@ -233,8 +233,8 @@ Usuário decidiu pausar features de produto e focar em três frentes de negócio
 
 ### 3. Pesquisa de cidade-piloto (dados reais)
 - Disparados 2 agentes de pesquisa em paralelo: (a) dados duros — frota de veículos por cidade, acidentes de trânsito, densidade de oficinas (CNAE 4520-0/01 e /02), renda local, pra um shortlist de cidades médias (200k–1,2M hab.) fora das capitais; (b) penetração digital por região (CETIC.br/IBGE), concorrentes existentes (marketplaces ou softwares de gestão pra oficina), e playbook de go-to-market local (Sindirepa, autopeças, guinchos, seguradoras, custo de mídia paga local).
-- Resultado ainda **pendente** no momento deste registro — plano é sintetizar os dois relatórios numa proposta única (cidade recomendada + plano de lançamento) e entregar como documento/artifact ao usuário assim que os agentes retornarem.
+- [x] Ambos os agentes retornaram. Síntese entregue em `docs/ESTRATEGIA_CIDADE_PILOTO_2026-09-08.md` + artifact interativo (link no próprio doc). **Recomendação: Ribeirão Preto (SP)** como cidade-piloto, com São José do Rio Preto como alternativa; plano de lançamento de 90 dias, orçamento estimado e lacunas de dado a fechar (contato Sindirepa-SP e INFOSIGA SP) documentados lá.
 
 ### Status
 - [x] Build e `tsc` sem erros com as mudanças de SEO/Termos.
-- [ ] Deploy pendente (aguardando também o resultado da pesquisa de cidade-piloto pra fechar a rodada completa antes de subir pra produção).
+- [x] Deploy feito na VM (`/para-oficinas`, `/termos`, `/privacidade` confirmados no ar via curl, HTTP 200) e migration 021 aplicada no Postgres self-hosted.
