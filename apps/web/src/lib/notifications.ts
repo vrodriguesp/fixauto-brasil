@@ -297,3 +297,53 @@ export async function sendServicoConcluidoWhatsApp(params: {
   const message = `Olá ${params.toName}! Seu veículo ${params.veiculoNome} já está pronto na oficina ${params.oficinaNome} e pode ser retirado. Detalhes: ${url}`;
   return sendWhatsApp(params.toPhone, message);
 }
+
+export async function sendLeadParceiroEmail(params: {
+  tipo: 'oficina' | 'loja_pecas';
+  nomeResponsavel: string;
+  nomeNegocio: string;
+  cidade: string;
+  estado: string;
+  whatsapp: string;
+  email?: string | null;
+  observacao?: string | null;
+}) {
+  if (!resend) {
+    console.warn('[Notifications] Resend not configured - RESEND_API_KEY missing');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'contato@bipfix.com';
+  const tipoLabel = params.tipo === 'oficina' ? 'Oficina' : 'Loja de peças';
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: adminEmail,
+      subject: `Novo interessado (${tipoLabel}): ${params.nomeNegocio}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 22px;">Novo interessado em ser parceiro fundador</h1>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <table style="width: 100%; font-size: 14px; color: #111827;">
+              <tr><td style="padding: 4px 0; color: #6b7280;">Tipo</td><td style="padding: 4px 0;"><strong>${tipoLabel}</strong></td></tr>
+              <tr><td style="padding: 4px 0; color: #6b7280;">Negócio</td><td style="padding: 4px 0;"><strong>${params.nomeNegocio}</strong></td></tr>
+              <tr><td style="padding: 4px 0; color: #6b7280;">Responsável</td><td style="padding: 4px 0;">${params.nomeResponsavel}</td></tr>
+              <tr><td style="padding: 4px 0; color: #6b7280;">Cidade</td><td style="padding: 4px 0;">${params.cidade} - ${params.estado}</td></tr>
+              <tr><td style="padding: 4px 0; color: #6b7280;">WhatsApp</td><td style="padding: 4px 0;">${params.whatsapp}</td></tr>
+              ${params.email ? `<tr><td style="padding: 4px 0; color: #6b7280;">E-mail</td><td style="padding: 4px 0;">${params.email}</td></tr>` : ''}
+              ${params.observacao ? `<tr><td style="padding: 4px 0; color: #6b7280; vertical-align: top;">Observação</td><td style="padding: 4px 0;">${params.observacao}</td></tr>` : ''}
+            </table>
+            <p style="margin-top: 20px;"><a href="${SITE_URL}/admin/leads-parceiros" style="color: #2563eb;">Ver todos os interessados →</a></p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('[Notifications] Erro ao enviar e-mail de lead parceiro:', error);
+    return { success: false, error: 'Failed to send email' };
+  }
+}

@@ -95,10 +95,10 @@ export default function ParaOficinasPage() {
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Link
-                href="/cadastro?tipo=oficina"
+                href="/seja-parceiro"
                 className="bg-white text-primary-700 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors text-center"
               >
-                Cadastrar minha oficina grátis
+                Quero ser parceiro fundador
               </Link>
               <Link
                 href="/oficinas"
@@ -203,10 +203,10 @@ export default function ParaOficinasPage() {
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4">Pronto para organizar sua oficina e ganhar mais clientes?</h2>
           <Link
-            href="/cadastro?tipo=oficina"
+            href="/seja-parceiro"
             className="inline-block mt-4 bg-white text-primary-700 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors"
           >
-            Cadastrar minha oficina grátis
+            Quero ser parceiro fundador
           </Link>
         </div>
       </section>

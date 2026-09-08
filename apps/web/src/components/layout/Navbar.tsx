@@ -53,9 +53,10 @@ export default function Navbar() {
                 {isAdmin ? (
                   <>
                     <NavLink href="/admin/dashboard">Dashboard</NavLink>
-                    <NavLink href="/admin/usuarios">Usuarios</NavLink>
+                    <NavLink href="/admin/usuarios">Usuários</NavLink>
                     <NavLink href="/admin/oficinas">Oficinas</NavLink>
-                    <NavLink href="/admin/comissoes">Comissoes</NavLink>
+                    <NavLink href="/admin/comissoes">Comissões</NavLink>
+                    <NavLink href="/admin/leads-parceiros">Interessados</NavLink>
                   </>
                 ) : isOficina ? (
                   isMecanico ? (
@@ -171,9 +172,10 @@ export default function Navbar() {
             {isAdmin ? (
               <>
                 <MobileNavLink href="/admin/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>
-                <MobileNavLink href="/admin/usuarios" onClick={() => setMenuOpen(false)}>Usuarios</MobileNavLink>
+                <MobileNavLink href="/admin/usuarios" onClick={() => setMenuOpen(false)}>Usuários</MobileNavLink>
                 <MobileNavLink href="/admin/oficinas" onClick={() => setMenuOpen(false)}>Oficinas</MobileNavLink>
-                <MobileNavLink href="/admin/comissoes" onClick={() => setMenuOpen(false)}>Comissoes</MobileNavLink>
+                <MobileNavLink href="/admin/comissoes" onClick={() => setMenuOpen(false)}>Comissões</MobileNavLink>
+                <MobileNavLink href="/admin/leads-parceiros" onClick={() => setMenuOpen(false)}>Interessados</MobileNavLink>
               </>
             ) : isOficina ? (
               isMecanico ? (
