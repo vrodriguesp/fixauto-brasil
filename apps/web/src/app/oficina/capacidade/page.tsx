@@ -182,8 +182,8 @@ export default function CapacidadePage() {
             <p className="text-xs text-gray-400 mt-2">
               Defina o limite de cada mecânico em{' '}
               <Link href="/oficina/equipe" className="text-primary-600 hover:underline">Equipe</Link>
-              . Use essa visão junto com a capacidade por tipo de serviço acima pra decidir quem recebe o próximo veículo em{' '}
-              <Link href="/oficina/veiculos-em-servico" className="text-primary-600 hover:underline">Oficina</Link>.
+              . Pra distribuir os veículos entre eles antes mesmo de chegarem, use a{' '}
+              <Link href="/oficina/distribuicao" className="text-primary-600 hover:underline">Distribuição de Trabalho</Link>.
             </p>
           </div>
         )}

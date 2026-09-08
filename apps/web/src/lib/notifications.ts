@@ -170,6 +170,51 @@ export async function sendQuoteNotificationEmail(params: {
   }
 }
 
+export async function sendServicoConcluidoEmail(params: {
+  toEmail: string;
+  toName: string;
+  oficinaNome: string;
+  veiculoNome: string;
+  solicitacaoId: string;
+}) {
+  if (!resend) {
+    console.warn('[Notifications] Resend not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  const acompanhamentoUrl = `${SITE_URL}/cliente/acompanhamento/${params.solicitacaoId}`;
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: params.toEmail,
+      subject: `Seu veículo está pronto! - ${params.oficinaNome}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #16a34a; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
+            <p style="margin: 8px 0 0; opacity: 0.9;">Serviço concluído</p>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <p>Olá <strong>${params.toName}</strong>,</p>
+            <p>Seu veículo <strong>${params.veiculoNome}</strong> já foi finalizado na oficina <strong>${params.oficinaNome}</strong> e está pronto para retirada.</p>
+            <p style="margin-top: 24px;">
+              <a href="${acompanhamentoUrl}"
+                 style="display: inline-block; background: #16a34a; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                Ver detalhes e avaliar
+              </a>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (err) {
+    console.error('[Notifications] Email error:', err);
+    return { success: false, error: (err as Error).message };
+  }
+}
+
 // ============================================================
 // WHATSAPP NOTIFICATIONS (via Twilio)
 // ============================================================
@@ -238,5 +283,17 @@ export async function sendQuoteWhatsApp(params: {
 }) {
   const url = `${SITE_URL}/cliente/orcamentos/${params.solicitacaoId}`;
   const message = `Olá ${params.toName}! A oficina ${params.oficinaNome} enviou um orçamento de ${params.valorTotal} para seu veículo. Veja os detalhes: ${url}`;
+  return sendWhatsApp(params.toPhone, message);
+}
+
+export async function sendServicoConcluidoWhatsApp(params: {
+  toPhone: string;
+  toName: string;
+  oficinaNome: string;
+  veiculoNome: string;
+  solicitacaoId: string;
+}) {
+  const url = `${SITE_URL}/cliente/acompanhamento/${params.solicitacaoId}`;
+  const message = `Olá ${params.toName}! Seu veículo ${params.veiculoNome} já está pronto na oficina ${params.oficinaNome} e pode ser retirado. Detalhes: ${url}`;
   return sendWhatsApp(params.toPhone, message);
 }

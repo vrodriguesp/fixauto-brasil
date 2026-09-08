@@ -155,6 +155,24 @@ export default function OficinaAprenderPage() {
       },
     },
     {
+      id: 'distribuicao',
+      emoji: '🗂️',
+      titulo: 'Distribuição de trabalho (opcional)',
+      resumo: 'Um quadro visual pra organizar qual mecânico vai cuidar de cada veículo — inclusive antes dele chegar na oficina. Ajuda a planejar a semana e evitar sobrecarregar um mecânico enquanto outro está livre.',
+      opcional: true,
+      passosGuiados: [
+        'Abra Mais → Distribuição de Trabalho no menu.',
+        'Veja os veículos agendados e em serviço organizados em colunas por mecânico (e uma coluna "Não atribuído").',
+        'Escolha o responsável de cada veículo no seletor do card.',
+      ],
+      desafio: 'Atribua um responsável a pelo menos um veículo agendado, antes mesmo dele chegar.',
+      linkReal: '/oficina/distribuicao',
+      verificar: async () => {
+        const { count } = await supabase.from('agenda').select('*', { count: 'exact', head: true }).eq('oficina_id', oficina.id).not('funcionario_id', 'is', null);
+        return (count || 0) > 0;
+      },
+    },
+    {
       id: 'peças',
       emoji: '🔩',
       titulo: 'Peças: comprar de lojas ou vender excedente',

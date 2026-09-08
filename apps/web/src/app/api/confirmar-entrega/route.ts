@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { recalcularComissaoConfig } from '@/lib/comissao';
 import { getSessionUserId } from '@/lib/api-auth';
+import { sendServicoConcluidoEmail, sendServicoConcluidoWhatsApp } from '@/lib/notifications';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,12 +26,13 @@ export async function POST(req: NextRequest) {
     // outra oficina e lancava comissao contra ela indevidamente.
     const { data: evento } = await supabaseAdmin
       .from('agenda')
-      .select('oficina:oficinas(profile_id)')
+      .select('oficina:oficinas(profile_id, nome_fantasia)')
       .eq('id', eventoId)
       .single();
     if (!evento || (evento as any).oficina?.profile_id !== callerId) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
+    const oficinaNome = (evento as any).oficina?.nome_fantasia || 'a oficina';
 
     // 1. Update agenda event to concluido + set data_fim to actual delivery date
     if (eventoId) {
@@ -47,7 +49,7 @@ export async function POST(req: NextRequest) {
       // 3. Get client info from solicitacao
       const { data: sol } = await supabaseAdmin
         .from('solicitacoes')
-        .select('cliente_id, veiculo:veiculos(fipe_marca, fipe_modelo)')
+        .select('cliente_id, veiculo:veiculos(fipe_marca, fipe_modelo), cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, telefone)')
         .eq('id', solicitacaoId)
         .single();
 
@@ -55,6 +57,7 @@ export async function POST(req: NextRequest) {
         const veiculoNome = sol.veiculo
           ? `${(sol.veiculo as any).fipe_marca} ${(sol.veiculo as any).fipe_modelo}`
           : 'seu veículo';
+        const cliente = sol.cliente as any;
 
         // 4. Create notification
         await supabaseAdmin.from('notificacoes').insert({
@@ -64,6 +67,27 @@ export async function POST(req: NextRequest) {
           mensagem: `${veiculoNome} está pronto para retirada. Avalie o serviço recebido!`,
           dados: { solicitacao_id: solicitacaoId },
         });
+
+        // 4b. Email + WhatsApp - cliente pode nao estar com o app aberto
+        // pra ver a notificacao in-app na hora que o carro fica pronto.
+        if (cliente?.email) {
+          sendServicoConcluidoEmail({
+            toEmail: cliente.email,
+            toName: cliente.nome || 'Cliente',
+            oficinaNome,
+            veiculoNome,
+            solicitacaoId,
+          }).catch(() => {});
+        }
+        if (cliente?.telefone) {
+          sendServicoConcluidoWhatsApp({
+            toPhone: cliente.telefone,
+            toName: cliente.nome || 'Cliente',
+            oficinaNome,
+            veiculoNome,
+            solicitacaoId,
+          }).catch(() => {});
+        }
       }
     }
 

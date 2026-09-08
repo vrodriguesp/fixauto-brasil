@@ -148,7 +148,7 @@ Veículo + placa, status, cliente, data de check-in, data de entrega prevista, d
 ### Ações por linha
 - **Check-in** (aparece quando o evento está `agendado` e a data já chegou): muda o status para `em_andamento` e cria automaticamente a primeira etapa de manutenção `recebido` ("Veículo recebido na oficina").
 - **+ Etapa** (aparece quando `em_andamento`): abre um formulário inline para registrar uma nova etapa (ver lista completa abaixo) com observação opcional.
-- **Entrega** (aparece quando `em_andamento`, **só para quem não é mecânico**): chama `POST /api/confirmar-entrega`, insere a etapa final `entregue` e muda o evento para `concluido`.
+- **Entrega** (aparece quando `em_andamento`, **só para quem não é mecânico**): chama `POST /api/confirmar-entrega`, insere a etapa final `entregue` e muda o evento para `concluido`. Desde 08/09/2026, isso também avisa o cliente que o carro está pronto por **3 canais ao mesmo tempo**: notificação in-app, e-mail e WhatsApp (antes só existia a notificação in-app) — reduz o risco do cliente não perceber que o carro já pode ser retirado.
 - Clicar na linha expande os detalhes: descrição do serviço, contato do cliente (nome + telefone clicável), **"Mecânico Responsável"** com dropdown para atribuir/trocar (só visível para quem não é mecânico), a **linha do tempo completa** de etapas (com ícone, hora e quem registrou), e um botão "Mensagem" para o chat com o cliente.
 
 ### Etapas de manutenção disponíveis (`STATUS_MANUTENCAO`)
@@ -277,6 +277,22 @@ Só bloqueia o envio se faltar nome do cliente, marca, modelo ou tipo de serviç
 
 ### Nota técnica sobre notificação de fornecedores
 `POST /api/notificar-fornecedores-cotacao-peca` usa uma caixa de 50km fixa ao redor da oficina compradora — **não** usa o raio configurado de cada oficina fornecedora individualmente. Já a visibilidade real na aba "Vender excedente" usa o raio próprio de cada oficina fornecedora (`oficina.raio_atendimento_km`, padrão 30km) com distância haversine exata. Ou seja, uma oficina pode **receber a notificação push** (está dentro dos 50km fixos da compradora) mas, ao abrir a aba, **não ver a cotação listada** se o seu próprio raio configurado for menor que a distância real — ver "Bugs e inconsistências".
+
+---
+
+## 8.1 Distribuição de Trabalho (`/oficina/distribuicao`) — adicionado em 08/09/2026
+
+**Pra que serve**: um quadro visual (colunas por mecânico + uma coluna "Não atribuído") pra decidir quem vai cuidar de cada veículo — inclusive **antes dele chegar** na oficina, não só depois do check-in. Resolve a necessidade de planejar a semana com antecedência e balancear a carga entre a equipe, complementando a visão retrospectiva de carga que já existia em `/oficina/capacidade`.
+
+### O que aparece
+- Uma coluna por funcionário ativo (mecânico ou admin), mostrando: nome, cargo, quantos veículos estão `em_andamento` agora vs. a capacidade máxima definida em Equipe (fica vermelho e "(no limite)" quando bate o limite), e o total de veículos no quadro (agendados + em serviço).
+- Uma coluna fixa **"Não atribuído"** pra veículos que ainda não têm ninguém definido.
+- Cada card mostra: veículo (marca/modelo/placa), cliente, status (Agendado/Em serviço), data prevista, e um seletor pra mudar o responsável na hora (sem sair da tela).
+- Mostra tanto eventos `agendado` (incluindo os que ainda não chegaram, com check-in no futuro) quanto `em_andamento` — veículos entregues (`concluido`) saem do quadro.
+- **Estado vazio**: se não há nenhum funcionário cadastrado, explica que essa tela é opcional pra quem trabalha sozinho.
+
+### Como funciona por trás
+Não precisou de tabela nova — reaproveita o campo `agenda.funcionario_id` que já existia (o mesmo usado no dropdown "Atribuir mecânico" de `/oficina/veiculos-em-servico`). A novidade é só a interface: antes, só dava pra atribuir um mecânico depois que o veículo já estava em andamento ou aparecendo na lista geral; agora há uma visão dedicada que junta agendados futuros e em andamento lado a lado, pensada pra planejamento, não só operação do dia.
 
 ---
 

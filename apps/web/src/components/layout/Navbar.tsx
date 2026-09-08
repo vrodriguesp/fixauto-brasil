@@ -71,6 +71,7 @@ export default function Navbar() {
                       <NavLink href="/oficina/agenda">Agenda</NavLink>
                       <MoreNavDropdown
                         items={[
+                          { href: '/oficina/distribuicao', label: 'Distribuição de Trabalho' },
                           { href: '/oficina/capacidade', label: 'Capacidade' },
                           { href: '/oficina/pecas', label: 'Peças' },
                           { href: '/oficina/equipe', label: 'Equipe' },
@@ -185,6 +186,7 @@ export default function Navbar() {
                   <MobileNavLink href="/oficina/solicitacoes" onClick={() => setMenuOpen(false)}>Solicitações</MobileNavLink>
                   <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>Oficina</MobileNavLink>
                   <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>Agenda</MobileNavLink>
+                  <MobileNavLink href="/oficina/distribuicao" onClick={() => setMenuOpen(false)}>Distribuição de Trabalho</MobileNavLink>
                   <MobileNavLink href="/oficina/capacidade" onClick={() => setMenuOpen(false)}>Capacidade</MobileNavLink>
                   <MobileNavLink href="/oficina/pecas" onClick={() => setMenuOpen(false)}>Peças</MobileNavLink>
                   <MobileNavLink href="/oficina/equipe" onClick={() => setMenuOpen(false)}>Equipe</MobileNavLink>

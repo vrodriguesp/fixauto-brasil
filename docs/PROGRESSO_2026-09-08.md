@@ -116,5 +116,20 @@ Feedback do usuário: (1) mecânico não tinha o menu "Aprender"; (2) mecânico 
 
 **Nota**: durante o teste ao vivo da rodada 5, percebi que o navegador compartilhado (mesma sessão/cookies do Chrome real do usuário) mudou de conta no meio do teste (provavelmente o usuário testando em paralelo) — parei o teste na hora pra não interferir, sem completar a verificação visual do lado do mecânico. A lógica foi validada por revisão de código (mesmo padrão já comprovado em Veículos em Serviço) mas vale um teste visual dedicado depois.
 
+---
+
+## Rodada 6 (mesmo dia): distribuição de trabalho antecipada + notificação de carro pronto por e-mail/WhatsApp
+
+Pedido do usuário: (1) poder designar o responsável por um veículo antes dele chegar, numa "vista bem interessante" pra gestão de trabalho entre a equipe; (2) quando o serviço termina, o cliente tem que ser avisado que o carro está pronto pra retirada.
+
+### O que foi feito
+1. [x] **Notificação de carro pronto reforçada**: já existia uma notificação in-app (`/api/confirmar-entrega`), mas só isso — agora também dispara e-mail e WhatsApp pro cliente (novo `sendServicoConcluidoEmail`/`sendServicoConcluidoWhatsApp` em `lib/notifications.ts`, mesmo padrão já usado pra "novo orçamento").
+2. [x] **Nova tela `/oficina/distribuicao`** ("Distribuição de Trabalho"): quadro com uma coluna por funcionário ativo + uma coluna "Não atribuído", mostrando veículos agendados (inclusive os que ainda não chegaram) e em serviço, com indicador de carga/limite por mecânico e um seletor em cada card pra mudar o responsável na hora, sem sair da tela. Não precisou de migration — reaproveita `agenda.funcionario_id` que já existia.
+3. [x] Link adicionado ao menu (Mais → Distribuição de Trabalho) e cross-link a partir de `/oficina/capacidade`.
+4. [x] Módulo novo adicionado ao tutorial (`/oficina/aprender`), com verificação real (checa se algum evento de agenda já tem `funcionario_id` preenchido).
+5. [x] `docs/sandbox/OFICINA.md` atualizado com a nova seção 8.1 e a nota sobre a notificação reforçada.
+6. [x] `npm run build`/`tsc` sem erros.
+7. [ ] Deploy pendente de confirmação nesta mensagem (ver abaixo).
+
 ### Adiado a pedido do usuário
 - Consulta de histórico de reparos por placa (pra concessionárias): envolve dados de terceiros e precisa de um modelo de acesso definido (proposto: conta "concessionária" aprovada pelo admin, dados anonimizados). Usuário pediu pra deixar quieto por enquanto — nada foi implementado, só fica registrado aqui pra não esquecer que a ideia existe.
