@@ -274,3 +274,19 @@ Disparados 4 agentes em paralelo, cada um cobrindo uma fatia do app (público/au
 ### Status
 - [x] `npx tsc --noEmit` e `npm run build` sem erros após a consolidação de todos os agentes.
 - [ ] Deploy desta rodada ainda não feito (próximo passo).
+
+---
+
+## Rodada 14 (2026-09-08): e-mails transacionais nunca saíam do sandbox do Resend
+
+Enquanto ajudava o usuário a configurar e-mail institucional (Zoho/Namecheap Private Email), conferi o `.env.production.local` da VM por precaução e achei: `FROM_EMAIL="FixAuto Brasil <onboarding@resend.dev>\n"` — o endereço de **sandbox/teste** do Resend, não `noreply@bipfix.com`. O sandbox do Resend só consegue entregar e-mail pro endereço do próprio dono da conta, então **e-mails de recuperação de senha, orçamento aceito e notificação de acidente muito provavelmente nunca chegaram de verdade a nenhum cliente real** em produção.
+
+Boa notícia: o domínio `bipfix.com` já estava **verificado no Resend há 5 meses** (DKIM + SPF/MX via subdomínio `send.bipfix.com`, sem conflito com o MX do Private Email configurado hoje) — o problema era só o `.env` nunca ter sido atualizado pra usar o domínio próprio depois da verificação.
+
+### O que foi feito
+1. [x] Confirmado no painel do Resend: `bipfix.com` com status "Verified", pronto pra enviar.
+2. [x] `.env.production.local` na VM: `FROM_EMAIL` corrigido pra `"BipFix <noreply@bipfix.com>"` (removido também um `\n` literal que tinha ficado grudado no valor).
+3. [x] `pm2 restart fixauto-brasil --update-env` pra aplicar.
+4. [ ] Recomendado (não feito ainda): adicionar registro DMARC opcional sugerido pelo próprio Resend (`_dmarc` TXT `v=DMARC1; p=none; rua=mailto:contato@bipfix.com`) na Namecheap — melhora entregabilidade e proteção contra spoofing, não bloqueia nada em modo `p=none`.
+
+**Lição pra não repetir**: verificar um domínio no provedor de e-mail (Resend, aqui) não é o mesmo que apontar a aplicação pra usá-lo — o `.env` precisa ser atualizado manualmente depois, e isso passou despercebido por 5 meses porque o app "funcionava" (enviava, só que pro lugar errado/silenciosamente falhava pra destinatários reais) sem erro visível no `/admin/monitoramento`.
