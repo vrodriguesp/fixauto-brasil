@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useVeiculos } from '@/hooks/use-veiculos';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
+import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import {
   TIPOS_SERVICO, URGENCIAS,
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
@@ -12,13 +13,17 @@ import {
 
 export default function NovaSolicitacaoPage() {
   const router = useRouter();
-  const { veiculos } = useVeiculos();
+  const { veiculos, add: addVeiculo } = useVeiculos();
   const { create: createSolicitacao, addPhotos } = useSolicitacoes();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState(1);
   const totalSteps = 5;
 
   const [veiculoId, setVeiculoId] = useState('');
+  const [showAddVeiculo, setShowAddVeiculo] = useState(false);
+  const [novoVeiculo, setNovoVeiculo] = useState({ fipe_tipo: 'cars', fipe_marca: '', fipe_modelo: '', fipe_ano: '', fipe_codigo: '', fipe_valor: '', placa: '', cor: '', apelido: '' });
+  const [savingVeiculo, setSavingVeiculo] = useState(false);
+  const [veiculoError, setVeiculoError] = useState('');
   const [tipo, setTipo] = useState('');
   const [descricao, setDescricao] = useState('');
   const [urgencia, setUrgencia] = useState('media');
@@ -66,6 +71,31 @@ export default function NovaSolicitacaoPage() {
       updated.splice(index, 1);
       return updated;
     });
+  };
+
+  const handleAddVeiculo = async () => {
+    if (!novoVeiculo.fipe_marca || !novoVeiculo.fipe_modelo || !novoVeiculo.fipe_ano) return;
+    setSavingVeiculo(true);
+    setVeiculoError('');
+    const result = await addVeiculo({
+      ...novoVeiculo,
+      fipe_codigo: novoVeiculo.fipe_codigo || null,
+      fipe_valor: novoVeiculo.fipe_valor || null,
+      placa: novoVeiculo.placa || null,
+      cor: novoVeiculo.cor || null,
+      apelido: novoVeiculo.apelido || null,
+    } as any);
+    setSavingVeiculo(false);
+    const { data, error } = result || { data: null, error: null };
+    if (error) {
+      setVeiculoError((error as any)?.message || 'Erro ao cadastrar veículo');
+      return;
+    }
+    if (data?.id) {
+      setVeiculoId(data.id);
+      setShowAddVeiculo(false);
+      setNovoVeiculo({ fipe_tipo: 'cars', fipe_marca: '', fipe_modelo: '', fipe_ano: '', fipe_codigo: '', fipe_valor: '', placa: '', cor: '', apelido: '' });
+    }
   };
 
   const handleSubmit = async () => {
@@ -190,45 +220,99 @@ export default function NovaSolicitacaoPage() {
         {step === 1 && (
           <div>
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Selecione o veículo</h2>
-            <div className="space-y-3">
-              {veiculos.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-gray-500 mb-4">Nenhum veículo cadastrado</p>
-                  <a href="/cliente/veiculos?add=true" className="btn-primary">
-                    Cadastrar veículo
-                  </a>
+
+            {showAddVeiculo ? (
+              <div>
+                <FipeAutocomplete
+                  value={{
+                    tipo: novoVeiculo.fipe_tipo,
+                    marca: novoVeiculo.fipe_marca,
+                    modelo: novoVeiculo.fipe_modelo,
+                    ano: novoVeiculo.fipe_ano,
+                  }}
+                  onChange={(fipe) => setNovoVeiculo({
+                    ...novoVeiculo,
+                    fipe_tipo: fipe.tipo,
+                    fipe_marca: fipe.marca,
+                    fipe_modelo: fipe.modelo,
+                    fipe_ano: fipe.ano,
+                    fipe_codigo: fipe.codigo || '',
+                    fipe_valor: fipe.valor || '',
+                  })}
+                />
+                <div className="grid sm:grid-cols-3 gap-4 mt-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Placa (opcional)</label>
+                    <input type="text" className="input-field" placeholder="ABC-1234" value={novoVeiculo.placa} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, placa: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Cor (opcional)</label>
+                    <input type="text" className="input-field" placeholder="Prata" value={novoVeiculo.cor} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, cor: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Apelido (opcional)</label>
+                    <input type="text" className="input-field" placeholder="Meu carro" value={novoVeiculo.apelido} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, apelido: e.target.value })} />
+                  </div>
                 </div>
-              ) : (
-                veiculos.map((v) => (
+                {veiculoError && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-4">
+                    <p className="text-sm text-red-800">{veiculoError}</p>
+                  </div>
+                )}
+                <div className="flex justify-end gap-3 mt-6">
+                  {veiculos.length > 0 && (
+                    <button onClick={() => { setShowAddVeiculo(false); setVeiculoError(''); }} className="btn-secondary">Cancelar</button>
+                  )}
                   <button
-                    key={v.id}
-                    type="button"
-                    onClick={() => setVeiculoId(v.id)}
-                    className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
-                      veiculoId === v.id
-                        ? 'border-primary-500 bg-primary-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
+                    onClick={handleAddVeiculo}
+                    disabled={savingVeiculo || !novoVeiculo.fipe_marca || !novoVeiculo.fipe_modelo || !novoVeiculo.fipe_ano}
+                    className="btn-primary disabled:opacity-50"
                   >
-                    <p className="font-medium text-gray-900">
-                      {v.apelido && <span className="text-primary-600">{v.apelido} - </span>}
-                      {v.fipe_marca} {v.fipe_modelo}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {v.fipe_ano} {v.placa && `| ${v.placa}`} {v.cor && `| ${v.cor}`}
-                    </p>
-                    {v.fipe_valor && (
-                      <p className="text-xs text-green-600 mt-1">FIPE: {v.fipe_valor}</p>
-                    )}
+                    {savingVeiculo ? 'Salvando...' : 'Adicionar e continuar'}
                   </button>
-                ))
-              )}
-            </div>
-            <div className="flex justify-end mt-6">
-              <button onClick={() => setStep(2)} disabled={!veiculoId} className="btn-primary">
-                Próximo
-              </button>
-            </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-3">
+                  {veiculos.map((v) => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      onClick={() => setVeiculoId(v.id)}
+                      className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
+                        veiculoId === v.id
+                          ? 'border-primary-500 bg-primary-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <p className="font-medium text-gray-900">
+                        {v.apelido && <span className="text-primary-600">{v.apelido} - </span>}
+                        {v.fipe_marca} {v.fipe_modelo}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {v.fipe_ano} {v.placa && `| ${v.placa}`} {v.cor && `| ${v.cor}`}
+                      </p>
+                      {v.fipe_valor && (
+                        <p className="text-xs text-green-600 mt-1">FIPE: {v.fipe_valor}</p>
+                      )}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setShowAddVeiculo(true)}
+                    className="w-full p-4 rounded-lg border-2 border-dashed border-gray-300 text-center text-gray-500 hover:border-primary-400 hover:text-primary-600 transition-all"
+                  >
+                    + {veiculos.length === 0 ? 'Cadastrar veículo' : 'Cadastrar outro veículo'}
+                  </button>
+                </div>
+                <div className="flex justify-end mt-6">
+                  <button onClick={() => setStep(2)} disabled={!veiculoId} className="btn-primary">
+                    Próximo
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
 
