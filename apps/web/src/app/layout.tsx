@@ -4,6 +4,24 @@ import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import { AuthProvider } from '@/lib/auth-context';
 import ErrorReporter from '@/components/ErrorReporter';
+import StructuredData from '@/components/seo/StructuredData';
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'BipFix',
+  url: 'https://bipfix.com',
+  logo: 'https://bipfix.com/apple-touch-icon.png',
+  description: 'Plataforma que conecta motoristas a oficinas mecânicas e lojas de peças no Brasil.',
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'BipFix',
+  url: 'https://bipfix.com',
+  inLanguage: 'pt-BR',
+};
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -70,6 +88,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={inter.className}>
+        <StructuredData data={organizationSchema} />
+        <StructuredData data={websiteSchema} />
         <AuthProvider>
           <ErrorReporter />
           <Navbar />

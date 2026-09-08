@@ -2,7 +2,10 @@
 const nextConfig = {
   transpilePackages: ['@fixauto/shared'],
   images: {
-    domains: ['localhost', 'bzlrpvlbeqckmunrldnp.supabase.co'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'supabase.bipfix.com' },
+      { protocol: 'http', hostname: 'localhost' },
+    ],
   },
 };
 

@@ -290,3 +290,22 @@ Boa notícia: o domínio `bipfix.com` já estava **verificado no Resend há 5 me
 4. [ ] Recomendado (não feito ainda): adicionar registro DMARC opcional sugerido pelo próprio Resend (`_dmarc` TXT `v=DMARC1; p=none; rua=mailto:contato@bipfix.com`) na Namecheap — melhora entregabilidade e proteção contra spoofing, não bloqueia nada em modo `p=none`.
 
 **Lição pra não repetir**: verificar um domínio no provedor de e-mail (Resend, aqui) não é o mesmo que apontar a aplicação pra usá-lo — o `.env` precisa ser atualizado manualmente depois, e isso passou despercebido por 5 meses porque o app "funcionava" (enviava, só que pro lugar errado/silenciosamente falhava pra destinatários reais) sem erro visível no `/admin/monitoramento`.
+
+---
+
+## Rodada 15 (2026-09-08): SEO técnico geral do site
+
+Usuário pediu pra deixar o SEO "o melhor possível" pra ser encontrado em todos os meios de busca.
+
+### O que foi feito
+1. [x] **`/oficinas/[id]` (perfil público de oficina) — maior lacuna encontrada**: essa página era 100% client-side (`'use client'`), então nunca teve `title`/`description` próprios — todo perfil de oficina aparecia no Google e ao compartilhar com o título genérico da home, desperdiçando a maior superfície de SEO local do site (uma URL indexável por oficina cadastrada, tipo "Oficina Bona - Oficina Mecânica em Ribeirão Preto, SP"). Refatorado em dois arquivos: `page.tsx` virou um Server Component com `generateMetadata()` (busca nome/cidade/estado da oficina e monta title/description/OG únicos por oficina), e toda a lógica antiga foi pra `OficinaPerfilClient.tsx`.
+2. [x] `robots.ts`: faltava bloquear `/loja/` e `/admin/` (áreas privadas que nunca deveriam ser rastreadas — só `/cliente/` e `/oficina/` estavam lá). Adicionado também `/reset-password` e `/emergencia/acidente/` (páginas de acidente têm foto e dado pessoal do envolvido, não deveriam ser indexáveis).
+3. [x] `layout.tsx` raiz: adicionado JSON-LD `Organization` + `WebSite` site-wide (ajuda o Google a montar knowledge panel da marca e elegibilidade pra sitelinks).
+4. [x] Metadata própria criada (antes não tinha, herdava o genérico) pra `/docs/cliente`, `/docs/oficina` (via `layout.tsx` novo, já que a página em si é client component) e `/emergencia` (com keywords tipo "acabei de bater o carro", "o que fazer depois de um acidente").
+5. [x] `next.config.js`: `images.domains` apontava pro **projeto Supabase Cloud antigo** (`bzlrpvlbeqckmunrldnp.supabase.co`), morto desde a migração pro self-hosted — corrigido pra `remotePatterns` com `supabase.bipfix.com`. Não tinha uso de `next/image` ainda então não quebrava nada visualmente, mas ficava travando qualquer adoção futura do componente otimizado do Next (bom pra Core Web Vitals, que é fator de ranking do Google).
+6. [x] `npm run build`/`tsc` sem erros.
+
+### Recomendado, não feito ainda (fora do escopo desta rodada)
+- Migrar as tags `<img>` espalhadas pelo app pro componente `next/image` (lazy loading automático, WebP/AVIF, melhora Core Web Vitals) — escopo grande, risco de quebrar layout se feito às pressas.
+- Registrar o site no Google Search Console e Bing Webmaster Tools (precisa de acesso à conta do usuário — pode ser feito via verificação por TXT na Namecheap, mesmo padrão já usado pro Resend/Zoho).
+- Conteúdo tipo blog/artigos pra capturar buscas de cauda longa (ex: "quanto custa trocar pastilha de freio", "como escolher oficina confiável") — natural próximo passo depois que o SEO técnico estiver validado no Search Console.

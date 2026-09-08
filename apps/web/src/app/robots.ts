@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/cliente/', '/oficina/', '/api/', '/definir-senha'],
+        disallow: ['/cliente/', '/oficina/', '/loja/', '/admin/', '/api/', '/definir-senha', '/reset-password', '/emergencia/acidente/'],
       },
     ],
     sitemap: 'https://bipfix.com/sitemap.xml',
