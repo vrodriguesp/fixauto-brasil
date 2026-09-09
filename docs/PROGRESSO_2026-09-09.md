@@ -59,4 +59,7 @@ Usuário pediu pra apagar "todos os dados criados no site". Como é irreversíve
 2. [x] `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-V38TJ7W9JB` adicionado no `.env.production.local` da VM (é `NEXT_PUBLIC_*`, precisa existir antes do build).
 3. [x] Build/tsc sem erros, deploy feito, confirmado via `curl` que o script aparece no HTML de produção.
 
-**Pendência avisada ao usuário**: site ainda não tem banner de consentimento de cookies — tecnicamente exigido pela LGPD pra rastreamento não essencial, e o GA4 já está coletando sem ele. Não implementado ainda, só sinalizado.
+### Banner de consentimento de cookies (usuário confirmou implementar)
+1. [x] `components/Analytics.tsx` substitui `GoogleAnalytics.tsx`: mostra banner (Aceitar/Rejeitar + link `/privacidade`) e só injeta o `gtag.js` depois do "Aceitar". Escolha salva em `localStorage` (`bipfix_cookie_consent`), banner não reaparece depois da primeira resposta.
+2. [x] Testado localmente (`npm run dev`) via navegador: banner aparece na primeira visita, some ao clicar Aceitar, não reaparece após reload. Sem erro no console.
+3. [x] Build/tsc sem erros, deploy feito, confirmado `https://www.bipfix.com` retornando 200.
