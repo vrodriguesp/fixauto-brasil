@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import type { Profile } from '@fixauto/shared';
 
@@ -232,6 +233,11 @@ export default function AdminUsuariosPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3 text-sm">
+                          {profile.tipo === 'cliente' && (
+                            <Link href={`/admin/solicitacoes?cliente_id=${profile.id}`} className="text-slate-300 hover:text-white font-medium">
+                              Ver atividade
+                            </Link>
+                          )}
                           <button onClick={() => startEdit(profile)} className="text-blue-400 hover:text-blue-300 font-medium">
                             Editar
                           </button>

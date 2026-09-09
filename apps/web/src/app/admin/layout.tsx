@@ -7,6 +7,9 @@ import { ReactNode } from 'react';
 
 const sidebarLinks = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: ChartIcon },
+  { href: '/admin/solicitacoes', label: 'Solicitações', icon: ListIcon },
+  { href: '/admin/veiculos', label: 'Veículos', icon: CarIcon },
+  { href: '/admin/emergencias', label: 'Emergências', icon: AlertIcon },
   { href: '/admin/usuarios', label: 'Usuários', icon: UsersIcon },
   { href: '/admin/oficinas', label: 'Oficinas', icon: BuildingIcon },
   { href: '/admin/comissoes', label: 'Comissões', icon: CurrencyIcon },
@@ -100,6 +103,22 @@ function ChartIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+    </svg>
+  );
+}
+
+function ListIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+    </svg>
+  );
+}
+
+function CarIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 17h14M5 17a2 2 0 11-4 0 2 2 0 014 0zm14 0a2 2 0 11-4 0 2 2 0 014 0zM5 17V9l1.5-4.5A2 2 0 018.4 3h7.2a2 2 0 011.9 1.5L19 9v8" />
     </svg>
   );
 }

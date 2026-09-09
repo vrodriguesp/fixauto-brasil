@@ -467,7 +467,17 @@ export default function OficinaPecasPage() {
                         )}
                         <p className="text-sm text-gray-500">Quantidade: {c.quantidade}</p>
                       </div>
-                      <span className="text-xs text-gray-400 flex-shrink-0">{timeAgo(c.created_at)}</span>
+                      <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                        <span className="text-xs text-gray-400">{timeAgo(c.created_at)}</span>
+                        {!c.minhaResposta && (
+                          <Link
+                            href={`/oficina/pecas/conversa/nova?cotacaoId=${c.id}&compradoraNome=${encodeURIComponent(c.oficina?.nome_fantasia || 'Oficina')}&pecaDescricao=${encodeURIComponent(c.peca_descricao || '')}`}
+                            className="text-xs font-medium text-primary-600 hover:underline whitespace-nowrap"
+                          >
+                            Tirar dúvida
+                          </Link>
+                        )}
+                      </div>
                     </div>
 
                     {c.minhaResposta ? (
