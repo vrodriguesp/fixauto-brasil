@@ -5,7 +5,7 @@ import Navbar from '@/components/layout/Navbar';
 import { AuthProvider } from '@/lib/auth-context';
 import ErrorReporter from '@/components/ErrorReporter';
 import StructuredData from '@/components/seo/StructuredData';
-import GoogleAnalytics from '@/components/GoogleAnalytics';
+import Analytics from '@/components/Analytics';
 
 const organizationSchema = {
   '@context': 'https://schema.org',
@@ -89,7 +89,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={inter.className}>
-        <GoogleAnalytics />
+        <Analytics />
         <StructuredData data={organizationSchema} />
         <StructuredData data={websiteSchema} />
         <AuthProvider>
