@@ -59,29 +59,15 @@ export default function LojaCotacoesPage() {
     });
 
     if (!error) {
-      // Marca a cotacao como respondida (nao impede outras lojas de tambem
-      // responder). A loja nao e dona da cotacao, entao RLS bloqueia um
-      // update direto do client - precisa passar pela rota server-side.
+      // Marca a cotacao como respondida e notifica a oficina compradora
+      // (in-app + email). A loja nao e dona da cotacao, entao RLS bloqueia
+      // um update direto do client - precisa passar pela rota server-side,
+      // que tambem centraliza a notificacao.
       await fetch('/api/marcar-cotacao-respondida', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cotacaoId }),
       }).catch(() => {});
-
-      // Notifica a oficina
-      const cotacao = cotacoes.find((c) => c.id === cotacaoId);
-      if (cotacao) {
-        const { data: ofi } = await supabase.from('oficinas').select('profile_id').eq('id', cotacao.oficina_id).single();
-        if (ofi) {
-          await supabase.from('notificacoes').insert({
-            profile_id: ofi.profile_id,
-            tipo: 'cotacao_peca_respondida',
-            titulo: 'Nova resposta de cotação de peça',
-            mensagem: `${loja.nome_fantasia} respondeu sua cotação de "${cotacao.peca_descricao}"`,
-            dados: { cotacao_id: cotacaoId },
-          });
-        }
-      }
     }
 
     setRespondendoId(null);

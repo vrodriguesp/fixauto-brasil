@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { distanciaKm } from '@/lib/utils';
+import { sendCotacaoPecaDisponivelEmail } from '@/lib/notifications';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     const { data: candidatas, error } = await supabaseAdmin
       .from('oficinas')
-      .select('id, profile_id, nome_fantasia, latitude, longitude, raio_atendimento_km')
+      .select('id, profile_id, nome_fantasia, latitude, longitude, raio_atendimento_km, profile:profiles(email, nome)')
       .eq('vende_pecas', true)
       .eq('ativa', true)
       .neq('id', oficinaCompradoraId)
@@ -53,6 +54,13 @@ export async function POST(req: NextRequest) {
       return distanciaKm(latitude, longitude, o.latitude, o.longitude) <= raio;
     });
 
+    const [{ data: cotacao }, { data: oficinaCompradora }] = await Promise.all([
+      supabaseAdmin.from('cotacoes_pecas').select('peca_descricao').eq('id', cotacaoId).single(),
+      supabaseAdmin.from('oficinas').select('nome_fantasia').eq('id', oficinaCompradoraId).single(),
+    ]);
+    const pecaDescricao = cotacao?.peca_descricao || 'uma peça';
+    const oficinaCompradoraNome = oficinaCompradora?.nome_fantasia || 'Uma oficina';
+
     let notificadas = 0;
     for (const of of oficinas) {
       if (!of.profile_id) continue;
@@ -63,6 +71,15 @@ export async function POST(req: NextRequest) {
         mensagem: 'Uma oficina perto de você abriu uma cotação de peça. Responda se tiver em estoque.',
         dados: { cotacao_id: cotacaoId },
       });
+      const email = (of as any).profile?.email;
+      if (email) {
+        await sendCotacaoPecaDisponivelEmail({
+          toEmail: email,
+          toName: (of as any).profile?.nome || of.nome_fantasia,
+          pecaDescricao,
+          oficinaCompradoraNome,
+        }).catch(() => {});
+      }
       notificadas++;
     }
 

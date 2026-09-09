@@ -104,7 +104,11 @@ export default function OficinaPecasPage() {
     const tabelaFornecedor = resposta.fornecedor_tipo === 'loja' ? 'lojas_pecas' : 'oficinas';
     const idFornecedor = resposta.loja_id || resposta.oficina_fornecedora_id;
     if (idFornecedor) {
-      const { data: fornecedor } = await supabase.from(tabelaFornecedor).select('profile_id').eq('id', idFornecedor).single();
+      const { data: fornecedor } = await supabase
+        .from(tabelaFornecedor)
+        .select('profile_id, profile:profiles(email, nome)')
+        .eq('id', idFornecedor)
+        .single();
       if (fornecedor) {
         await supabase.from('notificacoes').insert({
           profile_id: fornecedor.profile_id,
@@ -113,6 +117,20 @@ export default function OficinaPecasPage() {
           mensagem: `${oficina.nome_fantasia} confirmou o pedido de "${cotacao.peca_descricao}"`,
           dados: { cotacao_id: cotacao.id },
         });
+        const fornecedorProfile = (fornecedor as any).profile;
+        if (fornecedorProfile?.email) {
+          fetch('/api/notificar-email-pedido-peca-confirmado', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              toEmail: fornecedorProfile.email,
+              toName: fornecedorProfile.nome,
+              oficinaCompradoraNome: oficina.nome_fantasia,
+              pecaDescricao: cotacao.peca_descricao,
+              valorTotal: resposta.preco * cotacao.quantidade,
+            }),
+          }).catch(() => {});
+        }
       }
     }
 
@@ -217,25 +235,13 @@ export default function OficinaPecasPage() {
     });
 
     if (!error) {
+      // Marca a cotacao como respondida e notifica a oficina compradora
+      // (in-app + email), centralizado na rota server-side.
       await fetch('/api/marcar-cotacao-respondida', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cotacaoId }),
       }).catch(() => {});
-
-      const cotacao = cotacoesVizinhas.find((c) => c.id === cotacaoId);
-      if (cotacao) {
-        const { data: ofi } = await supabase.from('oficinas').select('profile_id').eq('id', cotacao.oficina_id).single();
-        if (ofi) {
-          await supabase.from('notificacoes').insert({
-            profile_id: ofi.profile_id,
-            tipo: 'cotacao_peca_respondida',
-            titulo: 'Nova resposta de cotação de peça',
-            mensagem: `${oficina.nome_fantasia} respondeu sua cotação de "${cotacao.peca_descricao}"`,
-            dados: { cotacao_id: cotacaoId },
-          });
-        }
-      }
     }
 
     setRespondendoId(null);

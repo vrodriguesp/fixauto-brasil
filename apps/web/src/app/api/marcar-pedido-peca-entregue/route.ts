@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { recalcularComissaoPecasConfig } from '@/lib/comissao-pecas';
 import { getSessionUserId } from '@/lib/api-auth';
+import { sendPedidoPecaEntregueEmail } from '@/lib/notifications';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,7 +28,12 @@ export async function POST(req: NextRequest) {
 
     const { data: pedido, error: pedidoError } = await supabaseAdmin
       .from('pedidos_pecas')
-      .select('id, fornecedor_tipo, loja_id, oficina_fornecedora_id, preco_total, status, loja:lojas_pecas(profile_id), oficina_fornecedora:oficinas!pedidos_pecas_oficina_fornecedora_id_fkey(profile_id)')
+      .select(`
+        id, fornecedor_tipo, loja_id, oficina_fornecedora_id, preco_total, status,
+        loja:lojas_pecas(profile_id, nome_fantasia),
+        oficina_fornecedora:oficinas!pedidos_pecas_oficina_fornecedora_id_fkey(profile_id, nome_fantasia),
+        cotacao:cotacoes_pecas(peca_descricao, oficina:oficinas(profile_id, profile:profiles(email, nome)))
+      `)
       .eq('id', pedidoId)
       .single();
 
@@ -78,6 +84,33 @@ export async function POST(req: NextRequest) {
         console.error('[marcar-pedido-peca-entregue] Falha ao registrar comissao:', comissaoError.message);
       } else {
         await recalcularComissaoPecasConfig(supabaseAdmin, pedido.fornecedor_tipo, fornecedorId);
+      }
+    }
+
+    // Notifica a oficina compradora que a peca foi entregue (faltava -
+    // ela so ficava sabendo se checasse o status manualmente).
+    const cotacao = (pedido as any).cotacao;
+    const compradoraProfile = cotacao?.oficina?.profile;
+    if (compradoraProfile && cotacao.oficina?.profile_id) {
+      const fornecedorNome = pedido.fornecedor_tipo === 'loja'
+        ? (pedido as any).loja?.nome_fantasia
+        : (pedido as any).oficina_fornecedora?.nome_fantasia;
+
+      await supabaseAdmin.from('notificacoes').insert({
+        profile_id: cotacao.oficina.profile_id,
+        tipo: 'pedido_peca_entregue',
+        titulo: 'Peça entregue',
+        mensagem: `${fornecedorNome || 'O fornecedor'} marcou como entregue o pedido de "${cotacao.peca_descricao}"`,
+        dados: { pedido_id: pedidoId },
+      });
+
+      if (compradoraProfile.email) {
+        await sendPedidoPecaEntregueEmail({
+          toEmail: compradoraProfile.email,
+          toName: compradoraProfile.nome,
+          fornecedorNome: fornecedorNome || 'O fornecedor',
+          pecaDescricao: cotacao.peca_descricao,
+        }).catch(() => {});
       }
     }
 

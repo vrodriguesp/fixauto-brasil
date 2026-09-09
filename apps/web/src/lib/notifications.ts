@@ -347,3 +347,188 @@ export async function sendLeadParceiroEmail(params: {
     return { success: false, error: 'Failed to send email' };
   }
 }
+
+// ============================================================
+// EMAIL - PORTAL DE PEÇAS (cotações entre oficinas e fornecedores)
+// ============================================================
+
+export async function sendCotacaoPecaDisponivelEmail(params: {
+  toEmail: string;
+  toName: string;
+  pecaDescricao: string;
+  oficinaCompradoraNome: string;
+}) {
+  if (!resend) {
+    console.warn('[Notifications] Resend not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: params.toEmail,
+      subject: `Oficina próxima precisa de: ${params.pecaDescricao}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
+            <p style="margin: 8px 0 0; opacity: 0.8;">Nova cotação de peça próxima</p>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <p>Olá <strong>${params.toName}</strong>,</p>
+            <p>A oficina <strong>${params.oficinaCompradoraNome}</strong>, perto de você, precisa de:</p>
+            <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
+              <p style="margin: 0; font-size: 18px; font-weight: bold; color: #111827;">${params.pecaDescricao}</p>
+            </div>
+            <p>Se tiver em estoque, responda com preço e prazo pra ganhar a venda.</p>
+            <p style="margin-top: 24px;">
+              <a href="${SITE_URL}/oficina/pecas"
+                 style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                Ver cotação e responder
+              </a>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('[Notifications] Erro ao enviar e-mail de cotação de peça:', error);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+export async function sendCotacaoPecaRespondidaEmail(params: {
+  toEmail: string;
+  toName: string;
+  fornecedorNome: string;
+  pecaDescricao: string;
+  preco: number;
+  prazoDias: number;
+}) {
+  if (!resend) {
+    console.warn('[Notifications] Resend not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+  const precoFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(params.preco);
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: params.toEmail,
+      subject: `Nova resposta de cotação: ${params.pecaDescricao}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
+            <p style="margin: 8px 0 0; opacity: 0.8;">Resposta de cotação de peça</p>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <p>Olá <strong>${params.toName}</strong>,</p>
+            <p><strong>${params.fornecedorNome}</strong> respondeu sua cotação de "${params.pecaDescricao}":</p>
+            <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
+              <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${precoFormatado}</p>
+              <p style="margin: 4px 0 0; color: #6b7280;">Prazo: ${params.prazoDias} dia(s)</p>
+            </div>
+            <p style="margin-top: 24px;">
+              <a href="${SITE_URL}/oficina/pecas"
+                 style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                Ver resposta completa
+              </a>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('[Notifications] Erro ao enviar e-mail de resposta de cotação:', error);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+export async function sendPedidoPecaConfirmadoEmail(params: {
+  toEmail: string;
+  toName: string;
+  oficinaCompradoraNome: string;
+  pecaDescricao: string;
+  valorTotal: number;
+}) {
+  if (!resend) {
+    console.warn('[Notifications] Resend not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+  const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(params.valorTotal);
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: params.toEmail,
+      subject: `Pedido de peça confirmado: ${params.pecaDescricao}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
+            <p style="margin: 8px 0 0; opacity: 0.8;">Pedido confirmado!</p>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <p>Olá <strong>${params.toName}</strong>,</p>
+            <p><strong>${params.oficinaCompradoraNome}</strong> confirmou o pedido de "${params.pecaDescricao}":</p>
+            <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
+              <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${valorFormatado}</p>
+            </div>
+            <p>Combine a entrega diretamente com a oficina e marque como entregue no seu painel quando concluir.</p>
+            <p style="margin-top: 24px;">
+              <a href="${SITE_URL}/oficina/pecas"
+                 style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                Ver pedido
+              </a>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('[Notifications] Erro ao enviar e-mail de pedido confirmado:', error);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+export async function sendPedidoPecaEntregueEmail(params: {
+  toEmail: string;
+  toName: string;
+  fornecedorNome: string;
+  pecaDescricao: string;
+}) {
+  if (!resend) {
+    console.warn('[Notifications] Resend not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: params.toEmail,
+      subject: `Peça entregue: ${params.pecaDescricao}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
+            <p style="margin: 8px 0 0; opacity: 0.8;">Pedido entregue</p>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <p>Olá <strong>${params.toName}</strong>,</p>
+            <p><strong>${params.fornecedorNome}</strong> marcou como entregue o pedido de "${params.pecaDescricao}".</p>
+            <p style="margin-top: 24px;">
+              <a href="${SITE_URL}/oficina/pecas"
+                 style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                Ver detalhes
+              </a>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('[Notifications] Erro ao enviar e-mail de pedido entregue:', error);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
