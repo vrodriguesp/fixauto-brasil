@@ -63,3 +63,9 @@ Usuário pediu pra apagar "todos os dados criados no site". Como é irreversíve
 1. [x] `components/Analytics.tsx` substitui `GoogleAnalytics.tsx`: mostra banner (Aceitar/Rejeitar + link `/privacidade`) e só injeta o `gtag.js` depois do "Aceitar". Escolha salva em `localStorage` (`bipfix_cookie_consent`), banner não reaparece depois da primeira resposta.
 2. [x] Testado localmente (`npm run dev`) via navegador: banner aparece na primeira visita, some ao clicar Aceitar, não reaparece após reload. Sem erro no console.
 3. [x] Build/tsc sem erros, deploy feito, confirmado `https://www.bipfix.com` retornando 200.
+
+### Google Consent Mode avançado (usuário pediu pra seguir o guia oficial do Google)
+Guia: https://developers.google.com/tag-platform/security/guides/consent
+1. [x] Reescrito `Analytics.tsx`: `gtag('consent','default', {...denied})` roda `strategy="beforeInteractive"`, ANTES do script do `gtag.js` carregar (que agora carrega sempre, incondicionalmente). Ao aceitar/rejeitar no banner, `gtag('consent','update', {...})` muda `analytics_storage` em tempo real. Escolha salva em `localStorage` é reaplicada via `update` nas visitas seguintes, sem reexibir o banner.
+2. [x] Validado localmente (`npm run dev` + rede da extensão do Chrome): hit antes do aceite tinha `gcs=G100` (tudo negado, `pscdl=denied` — ping sem cookie); depois de aceitar, `gcs=G101` (analytics concedido). Confirma que o Google recebe sinal de modelagem mesmo sem consentimento, e passa a gravar cookie só depois do aceite — comportamento exato do modo "avançado".
+3. [x] Build/tsc sem erros, deploy feito, confirmado via `curl` que o `consent-default` e o `gtag.js` estão no HTML de produção.
