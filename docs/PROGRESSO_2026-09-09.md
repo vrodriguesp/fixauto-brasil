@@ -54,5 +54,9 @@ Usuário pediu pra apagar "todos os dados criados no site". Como é irreversíve
 3. [x] Limpeza manual extra de `comissao_pecas_config`/`comissao_pecas_lancamento` pros fornecedores apagados — essas tabelas são polimórficas (`fornecedor_id` sem FK de verdade) e não cascadeiam pela remoção do usuário.
 4. [x] Confirmado: só resta `vitor@outlook.ie` (admin) no banco; painel `/admin/usuarios` testado ao vivo mostrando a lista vazia.
 
-### Pendente (perguntado, aguardando decisão do usuário)
-- [ ] Analytics detalhado de visitantes/origem de tráfego (Google Analytics 4 sugerido — grátis, mas passa dados pro Google e tecnicamente pede banner de cookies; alternativa self-hosted seria Umami). Ainda não implementado.
+### Google Analytics 4 (usuário escolheu GA4, forneceu o Measurement ID)
+1. [x] Componente `components/GoogleAnalytics.tsx` (via `next/script`, `strategy="afterInteractive"`), carregado no layout raiz, condicional a `NEXT_PUBLIC_GA_MEASUREMENT_ID` (inerte se a env var não existir — dev/preview não rastreia).
+2. [x] `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-V38TJ7W9JB` adicionado no `.env.production.local` da VM (é `NEXT_PUBLIC_*`, precisa existir antes do build).
+3. [x] Build/tsc sem erros, deploy feito, confirmado via `curl` que o script aparece no HTML de produção.
+
+**Pendência avisada ao usuário**: site ainda não tem banner de consentimento de cookies — tecnicamente exigido pela LGPD pra rastreamento não essencial, e o GA4 já está coletando sem ele. Não implementado ainda, só sinalizado.
