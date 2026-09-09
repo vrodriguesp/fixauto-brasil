@@ -69,3 +69,8 @@ Guia: https://developers.google.com/tag-platform/security/guides/consent
 1. [x] Reescrito `Analytics.tsx`: `gtag('consent','default', {...denied})` roda `strategy="beforeInteractive"`, ANTES do script do `gtag.js` carregar (que agora carrega sempre, incondicionalmente). Ao aceitar/rejeitar no banner, `gtag('consent','update', {...})` muda `analytics_storage` em tempo real. Escolha salva em `localStorage` é reaplicada via `update` nas visitas seguintes, sem reexibir o banner.
 2. [x] Validado localmente (`npm run dev` + rede da extensão do Chrome): hit antes do aceite tinha `gcs=G100` (tudo negado, `pscdl=denied` — ping sem cookie); depois de aceitar, `gcs=G101` (analytics concedido). Confirma que o Google recebe sinal de modelagem mesmo sem consentimento, e passa a gravar cookie só depois do aceite — comportamento exato do modo "avançado".
 3. [x] Build/tsc sem erros, deploy feito, confirmado via `curl` que o `consent-default` e o `gtag.js` estão no HTML de produção.
+
+### Fix: admin não conseguia ver a home pública (não era cache, era redirect)
+Usuário reportou "o site fica logado e não consigo ir pra home". Causa raiz: `app/page.tsx` redirecionava **qualquer** usuário logado (cliente/oficina/loja/admin) pro dashboard ao acessar `/`, sem nunca mostrar a home real. Sessão persistente em si é comportamento normal (não é bug).
+1. [x] Admin passou a ficar isento do redirect — vê a home pública normalmente mesmo logado (cliente/oficina/loja continuam sendo redirecionados, como antes).
+2. [x] Build/tsc sem erros, deploy feito, testado ao vivo na sessão admin real: `/` agora carrega a home de verdade, sem redirecionar.
