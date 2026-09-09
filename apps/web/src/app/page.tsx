@@ -44,27 +44,27 @@ export default function HomePage() {
   const { isLoggedIn, user, funcionario, authUser, loading } = useAuth();
   const router = useRouter();
 
-  // Auto-redirect logged-in users to their dashboard
+  // Auto-redirect logged-in users to their dashboard - exceto admin, que
+  // precisa conseguir ver a home publica normalmente mesmo logado (pra
+  // checar SEO/marketing sem precisar deslogar).
   useEffect(() => {
-    if (!loading && isLoggedIn && user) {
-      // First login (funcionario or auto-created account) → force password change
+    if (!loading && isLoggedIn && user && user.tipo !== 'admin') {
+      // First login (funcionario ou conta auto-criada) → forca troca de senha
       if (funcionario?.primeiro_login || authUser?.user_metadata?.primeiro_login) {
         router.replace('/definir-senha');
         return;
       }
       const isMecanico = funcionario?.cargo === 'mecanico';
-      const dashPath = user.tipo === 'admin'
-        ? '/admin/dashboard'
-        : user.tipo === 'oficina'
-          ? (isMecanico ? '/oficina/veiculos-em-servico' : '/oficina/dashboard')
-          : user.tipo === 'loja_pecas'
-            ? '/loja/dashboard'
-            : '/cliente/dashboard';
+      const dashPath = user.tipo === 'oficina'
+        ? (isMecanico ? '/oficina/veiculos-em-servico' : '/oficina/dashboard')
+        : user.tipo === 'loja_pecas'
+          ? '/loja/dashboard'
+          : '/cliente/dashboard';
       router.replace(dashPath);
     }
   }, [loading, isLoggedIn, user, funcionario, router]);
 
-  if (loading || (isLoggedIn && user)) {
+  if (loading || (isLoggedIn && user && user.tipo !== 'admin')) {
     return (
       <div className="flex items-center justify-center min-h-[80vh]">
         <div className="animate-pulse text-gray-400">Carregando...</div>
