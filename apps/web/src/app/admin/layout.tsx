@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 const sidebarLinks = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: ChartIcon },
@@ -22,6 +22,10 @@ const sidebarLinks = [
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
+  const [menuAberto, setMenuAberto] = useState(false);
+
+  // Fecha o menu mobile sempre que a rota muda (clicou num link)
+  useEffect(() => { setMenuAberto(false); }, [pathname]);
 
   if (loading) {
     return (
@@ -41,9 +45,40 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-slate-900">
-      {/* Sidebar */}
-      <aside className="w-64 bg-slate-800 border-r border-slate-700 flex flex-col">
-        <div className="p-6 border-b border-slate-700">
+      {/* Barra superior só no mobile - logo + botão de menu */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-4">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 bg-slate-600 rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-xs">BF</span>
+          </div>
+          <p className="text-white font-bold text-sm">BipFix Admin</p>
+        </div>
+        <button
+          onClick={() => setMenuAberto(true)}
+          className="text-slate-300 hover:text-white p-2 -mr-2"
+          aria-label="Abrir menu"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Overlay escuro atrás do menu, só quando aberto no mobile */}
+      {menuAberto && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-black/50"
+          onClick={() => setMenuAberto(false)}
+        />
+      )}
+
+      {/* Sidebar - fixa no desktop, gaveta deslizante no mobile */}
+      <aside
+        className={`w-64 bg-slate-800 border-r border-slate-700 flex flex-col fixed inset-y-0 left-0 z-50 transform transition-transform duration-200 md:static md:translate-x-0 ${
+          menuAberto ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="p-6 border-b border-slate-700 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-slate-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">BF</span>
@@ -53,9 +88,18 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               <p className="text-slate-400 text-xs">Admin</p>
             </div>
           </div>
+          <button
+            onClick={() => setMenuAberto(false)}
+            className="md:hidden text-slate-400 hover:text-white p-1"
+            aria-label="Fechar menu"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {sidebarLinks.map((link) => {
             const isActive = pathname.startsWith(link.href);
             return (
@@ -91,8 +135,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto">
-        <div className="p-8">
+      <main className="flex-1 overflow-auto min-w-0 pt-14 md:pt-0">
+        <div className="p-4 sm:p-6 md:p-8">
           {children}
         </div>
       </main>
