@@ -74,3 +74,13 @@ Guia: https://developers.google.com/tag-platform/security/guides/consent
 Usuário reportou "o site fica logado e não consigo ir pra home". Causa raiz: `app/page.tsx` redirecionava **qualquer** usuário logado (cliente/oficina/loja/admin) pro dashboard ao acessar `/`, sem nunca mostrar a home real. Sessão persistente em si é comportamento normal (não é bug).
 1. [x] Admin passou a ficar isento do redirect — vê a home pública normalmente mesmo logado (cliente/oficina/loja continuam sendo redirecionados, como antes).
 2. [x] Build/tsc sem erros, deploy feito, testado ao vivo na sessão admin real: `/` agora carrega a home de verdade, sem redirecionar.
+
+## Rodada 3 (2026-09-12): mobile do admin, checagem de termos, planejamento de app store
+
+Usuário reportou que o site (principalmente o menu do admin) não funciona bem em celular, perguntou se a aceitação de Termos/Privacidade no cadastro já tinha sido feita, e pediu passo a passo + custos pra publicar nas lojas de app.
+
+1. [x] **Confirmado**: aceitação de Termos/Privacidade no cadastro já estava implementada desde a Rodada 11 de 08/09 (checkbox obrigatório + registro em `termos_aceitos_em`/`termos_versao`) — nada a fazer aqui.
+2. [x] **Fix mobile do admin**: `admin/layout.tsx` tinha a sidebar fixa (`w-64`) sem nenhum breakpoint responsivo — o único lugar do site sem tratamento mobile nenhum (Navbar pública e a maioria das telas de cliente/oficina já tinham `md:`/`sm:` bem aplicados). Convertida pra gaveta off-canvas no mobile (<768px): barra superior fixa com hambúrguer, overlay escuro, fecha ao navegar. Desktop continua igual.
+3. [ ] **Limitação da sessão**: não consegui emular mobile de verdade pra validar visualmente — a ferramenta de redimensionar a janela do navegador não alterou o viewport real neste ambiente (a janela do Chrome parece gerenciada/maximizada pelo Windows e ignorou o resize). O fix segue o mesmo padrão Tailwind (`md:hidden`, `-translate-x-full`) já usado e funcionando na Navbar pública, mas recomendo validar num celular de verdade.
+4. [x] Build/tsc sem erros, deploy feito.
+5. [ ] Guia de publicação em App Store/Google Play (com custos) — próximo item, ver artifact separado entregue ao usuário.
