@@ -18,6 +18,16 @@ const STATUS_BADGE: Record<string, string> = {
   aceito: 'bg-emerald-500/20 text-emerald-400',
   recusado: 'bg-red-500/20 text-red-400',
   expirado: 'bg-slate-500/20 text-slate-300',
+  agendado: 'bg-blue-500/20 text-blue-400',
+  concluido: 'bg-slate-500/20 text-slate-300',
+  cancelado: 'bg-red-500/20 text-red-400',
+};
+
+const STATUS_AGENDA_LABEL: Record<string, string> = {
+  agendado: 'Agendado',
+  em_andamento: 'Em andamento',
+  concluido: 'Concluído',
+  cancelado: 'Cancelado',
 };
 
 export default function AdminSolicitacaoDetalhePage() {
@@ -26,11 +36,17 @@ export default function AdminSolicitacaoDetalhePage() {
   const [loading, setLoading] = useState(true);
   const [cobrando, setCobrando] = useState(false);
   const [cobrancaResultado, setCobrancaResultado] = useState<string | null>(null);
+  const [novoStatus, setNovoStatus] = useState('');
+  const [salvandoStatus, setSalvandoStatus] = useState(false);
+  const [statusMsg, setStatusMsg] = useState<string | null>(null);
+  const [cancelandoAgendaId, setCancelandoAgendaId] = useState<string | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
     const res = await fetch(`/api/admin/solicitacoes/${id}`);
-    setData(res.ok ? await res.json() : null);
+    const json = res.ok ? await res.json() : null;
+    setData(json);
+    if (json) setNovoStatus(json.solicitacao.status);
     setLoading(false);
   };
 
@@ -47,6 +63,41 @@ export default function AdminSolicitacaoDetalhePage() {
         : result.error || 'Erro ao cobrar oficinas.'
     );
     setCobrando(false);
+  };
+
+  const handleSalvarStatus = async () => {
+    setSalvandoStatus(true);
+    setStatusMsg(null);
+    const res = await fetch(`/api/admin/solicitacoes/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: novoStatus }),
+    });
+    const result = await res.json().catch(() => ({}));
+    if (res.ok) {
+      setStatusMsg('Status atualizado. Cliente e oficina foram avisados.');
+      await fetchData();
+    } else {
+      setStatusMsg(result.error || 'Erro ao atualizar status.');
+    }
+    setSalvandoStatus(false);
+  };
+
+  const handleCancelarAgenda = async (agendaId: string) => {
+    if (!confirm('Cancelar este agendamento? O cliente e a oficina serão notificados.')) return;
+    setCancelandoAgendaId(agendaId);
+    const res = await fetch(`/api/admin/agenda/${agendaId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'cancelar' }),
+    });
+    const result = await res.json().catch(() => ({}));
+    if (res.ok) {
+      await fetchData();
+    } else {
+      alert(result.error || 'Erro ao cancelar agendamento.');
+    }
+    setCancelandoAgendaId(null);
   };
 
   if (loading) return <div className="text-slate-400">Carregando...</div>;
@@ -68,14 +119,35 @@ export default function AdminSolicitacaoDetalhePage() {
             <span className="text-slate-500 text-xs">Criada em {formatDateTime(solicitacao.created_at)}</span>
           </div>
         </div>
-        {(solicitacao.status === 'aberta' || solicitacao.status === 'em_orcamento') && (
-          <div className="text-right">
-            <button onClick={handleCobrar} disabled={cobrando} className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-              {cobrando ? 'Notificando...' : 'Cobrar oficinas próximas'}
+        <div className="text-right space-y-3">
+          <div className="flex items-center gap-2 justify-end">
+            <select
+              value={novoStatus}
+              onChange={(e) => setNovoStatus(e.target.value)}
+              className="bg-slate-800 border border-slate-700 text-white text-sm rounded-lg px-3 py-2"
+            >
+              {Object.entries(STATUS_SOLICITACAO).map(([key, s]) => (
+                <option key={key} value={key}>{s.label}</option>
+              ))}
+            </select>
+            <button
+              onClick={handleSalvarStatus}
+              disabled={salvandoStatus || novoStatus === solicitacao.status}
+              className="bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+            >
+              {salvandoStatus ? 'Salvando...' : 'Salvar status'}
             </button>
-            {cobrancaResultado && <p className="text-xs text-slate-400 mt-2 max-w-[220px]">{cobrancaResultado}</p>}
           </div>
-        )}
+          {statusMsg && <p className="text-xs text-slate-400 max-w-[280px]">{statusMsg}</p>}
+          {(solicitacao.status === 'aberta' || solicitacao.status === 'em_orcamento') && (
+            <div>
+              <button onClick={handleCobrar} disabled={cobrando} className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+                {cobrando ? 'Notificando...' : 'Cobrar oficinas próximas'}
+              </button>
+              {cobrancaResultado && <p className="text-xs text-slate-400 mt-2 max-w-[220px]">{cobrancaResultado}</p>}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4 mb-8">
@@ -160,7 +232,40 @@ export default function AdminSolicitacaoDetalhePage() {
         )}
       </div>
 
-      {(etapas?.length > 0 || agenda?.length > 0) && (
+      {agenda?.length > 0 && (
+        <div className="mb-8">
+          <p className="text-slate-400 text-xs uppercase tracking-wide mb-3">Agendamentos ({agenda.length})</p>
+          <div className="space-y-2">
+            {agenda.map((a: any) => (
+              <div key={a.id} className="bg-slate-800 border border-slate-700 rounded-xl p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-white font-medium">{a.titulo}</p>
+                  <p className="text-slate-400 text-sm">
+                    {formatDateTime(a.data_inicio)} — {formatDateTime(a.data_fim)}
+                    {a.funcionario?.profile?.nome && ` · ${a.funcionario.profile.nome}`}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_BADGE[a.status]}`}>
+                    {STATUS_AGENDA_LABEL[a.status] || a.status}
+                  </span>
+                  {a.status !== 'cancelado' && a.status !== 'concluido' && (
+                    <button
+                      onClick={() => handleCancelarAgenda(a.id)}
+                      disabled={cancelandoAgendaId === a.id}
+                      className="text-red-400 hover:text-red-300 disabled:opacity-40 text-xs font-medium"
+                    >
+                      {cancelandoAgendaId === a.id ? 'Cancelando...' : 'Cancelar'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {etapas?.length > 0 && (
         <div className="mb-8">
           <p className="text-slate-400 text-xs uppercase tracking-wide mb-3">Acompanhamento de manutenção</p>
           <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-2">
@@ -170,7 +275,6 @@ export default function AdminSolicitacaoDetalhePage() {
                 <span className="text-slate-500 text-xs">{e.funcionario?.profile?.nome || 'Oficina'} · {formatDateTime(e.created_at)}</span>
               </div>
             ))}
-            {etapas.length === 0 && <p className="text-slate-500 text-sm">Nenhuma etapa registrada ainda.</p>}
           </div>
         </div>
       )}

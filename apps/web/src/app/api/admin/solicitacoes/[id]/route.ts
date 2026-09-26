@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin } from '@/lib/admin-auth';
+import { STATUS_SOLICITACAO } from '@fixauto/shared';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -101,5 +102,77 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   } catch (error) {
     console.error('[admin/solicitacoes/:id]', error);
     return NextResponse.json({ error: 'Erro ao carregar solicitação' }, { status: 500 });
+  }
+}
+
+// Permite ao admin corrigir manualmente o status de uma solicitacao (ex:
+// destravar um caso preso, ou cancelar em nome do cliente/oficina). Nao
+// dispara os efeitos colaterais dos fluxos automaticos especificos (como
+// no-show ou aceite de orcamento) - so troca o status e avisa as partes
+// envolvidas via notificacao in-app.
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+  const auth = await requireAdmin();
+  if (!auth.ok) return auth.response;
+
+  try {
+    const { status } = await req.json();
+    if (!status || !(status in STATUS_SOLICITACAO)) {
+      return NextResponse.json({ error: 'Status inválido' }, { status: 400 });
+    }
+
+    const { data: solicitacao, error: fetchError } = await supabaseAdmin
+      .from('solicitacoes')
+      .select('cliente_id, status')
+      .eq('id', params.id)
+      .single();
+
+    if (fetchError || !solicitacao) {
+      return NextResponse.json({ error: 'Solicitação não encontrada' }, { status: 404 });
+    }
+
+    const { error } = await supabaseAdmin
+      .from('solicitacoes')
+      .update({ status })
+      .eq('id', params.id);
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    const label = STATUS_SOLICITACAO[status as keyof typeof STATUS_SOLICITACAO]?.label || status;
+
+    if (solicitacao.cliente_id) {
+      await supabaseAdmin.from('notificacoes').insert({
+        profile_id: solicitacao.cliente_id,
+        tipo: 'status_atualizado_admin',
+        titulo: 'Status da solicitação atualizado',
+        mensagem: `Nossa equipe atualizou o status da sua solicitação para: ${label}.`,
+        dados: { solicitacao_id: params.id, status_anterior: solicitacao.status, status_novo: status },
+      });
+    }
+
+    const { data: oficinaProfiles } = await supabaseAdmin
+      .from('orcamentos')
+      .select('oficina:oficinas(profile_id)')
+      .eq('solicitacao_id', params.id)
+      .eq('status', 'aceito');
+
+    for (const row of oficinaProfiles || []) {
+      const profileId = (row as any).oficina?.profile_id;
+      if (profileId) {
+        await supabaseAdmin.from('notificacoes').insert({
+          profile_id: profileId,
+          tipo: 'status_atualizado_admin',
+          titulo: 'Status da solicitação atualizado',
+          mensagem: `Nossa equipe atualizou o status de uma solicitação para: ${label}.`,
+          dados: { solicitacao_id: params.id, status_anterior: solicitacao.status, status_novo: status },
+        });
+      }
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('[admin/solicitacoes/:id PATCH]', error);
+    return NextResponse.json({ error: 'Erro ao atualizar solicitação' }, { status: 500 });
   }
 }
