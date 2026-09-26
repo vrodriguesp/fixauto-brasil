@@ -78,7 +78,12 @@ export async function middleware(req: NextRequest) {
 
   const { data: { session } } = await supabase.auth.getSession();
 
-  const isProtected = path.startsWith('/cliente') || path.startsWith('/oficina') || path.startsWith('/admin') || path.startsWith('/loja');
+  // path.startsWith('/oficina') tambem casava com "/oficinas" (perfil publico
+  // de oficina, sem login) - a pagina de SEO mais importante do site
+  // redirecionando pro login antes mesmo de carregar. Precisa checar limite
+  // de segmento (path === prefixo OU prefixo seguido de "/").
+  const isUnderPath = (prefix: string) => path === prefix || path.startsWith(`${prefix}/`);
+  const isProtected = isUnderPath('/cliente') || isUnderPath('/oficina') || isUnderPath('/admin') || isUnderPath('/loja');
   const isAuthPage = path === '/login' || path === '/cadastro' || path === '/escolher-tipo';
 
   const withLocale = (target: string) => new URL(`${localePrefix}${target}`, req.url);
@@ -101,7 +106,7 @@ export async function middleware(req: NextRequest) {
     }
 
     // Admin route protection: verify user tipo is 'admin'
-    if (path.startsWith('/admin') && (!profile || profile.tipo !== 'admin')) {
+    if (isUnderPath('/admin') && (!profile || profile.tipo !== 'admin')) {
       return NextResponse.redirect(new URL('/', req.url));
     }
 
@@ -109,7 +114,7 @@ export async function middleware(req: NextRequest) {
     // renovaria a sessao silenciosamente por tempo indefinido, o que nao
     // e aceitavel pra um painel administrativo (diferente de cliente/
     // oficina, onde ficar logado por dias e ate desejavel).
-    if (path.startsWith('/admin') && profile?.tipo === 'admin') {
+    if (isUnderPath('/admin') && profile?.tipo === 'admin') {
       const lastSignIn = session.user.last_sign_in_at ? new Date(session.user.last_sign_in_at).getTime() : 0;
       const hoursSinceSignIn = (Date.now() - lastSignIn) / (1000 * 60 * 60);
       if (!lastSignIn || hoursSinceSignIn > ADMIN_MAX_SESSION_HOURS) {
@@ -119,7 +124,7 @@ export async function middleware(req: NextRequest) {
     }
 
     // Loja route protection: verify user tipo is 'loja_pecas'
-    if (path.startsWith('/loja') && (!profile || profile.tipo !== 'loja_pecas')) {
+    if (isUnderPath('/loja') && (!profile || profile.tipo !== 'loja_pecas')) {
       return NextResponse.redirect(withLocale('/'));
     }
   }
