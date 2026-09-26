@@ -48,15 +48,37 @@ function CadastroPage() {
   // mesma coordenada fixa, quebrando o "oficinas proximas" pra qualquer
   // parceiro fora de Sao Paulo (inclusive o piloto na Estonia).
   const [coords, setCoords] = useState({ lat: -23.5505, lon: -46.6333 });
+  const [geoResolved, setGeoResolved] = useState(false);
 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-        () => { /* mantem o default se o usuario negar a permissao */ }
+        (pos) => { setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }); setGeoResolved(true); },
+        () => { /* sem permissao - handleSubmit tenta geocodificar o endereco digitado */ }
       );
     }
   }, []);
+
+  // Fallback quando o navegador nega geolocalizacao: geocodifica o endereco
+  // que a oficina/loja digitou via Nominatim (gratuito, mundial) em vez de
+  // deixar a coordenada presa no default de Sao Paulo.
+  const resolveCoords = async (): Promise<{ lat: number; lon: number }> => {
+    if (geoResolved) return coords;
+    const query = [endereco, cidade, estado].filter(Boolean).join(', ');
+    if (!query) return coords;
+    try {
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(query)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
+          return { lat: data.latitude, lon: data.longitude };
+        }
+      }
+    } catch {
+      // mantem o default (SP) se a geocodificacao tambem falhar
+    }
+    return coords;
+  };
 
   const handleCepChange = async (raw: string) => {
     const formatted = formatCep(raw);
@@ -149,6 +171,7 @@ function CadastroPage() {
 
     // If oficina, also create the oficina record
     if (tipo === 'oficina') {
+      const finalCoords = await resolveCoords();
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (authUser) {
         const { error: ofiError } = await supabase.from('oficinas').insert({
@@ -159,8 +182,8 @@ function CadastroPage() {
           cidade: cidade || 'A definir',
           estado: estado || 'A definir',
           cep: cep || 'A definir',
-          latitude: coords.lat,
-          longitude: coords.lon,
+          latitude: finalCoords.lat,
+          longitude: finalCoords.lon,
           raio_atendimento_km: 30,
           especialidades: especialidades.length > 0 ? especialidades : [],
         });
@@ -174,6 +197,7 @@ function CadastroPage() {
 
     // If loja de pecas, also create the loja record
     if (tipo === 'loja_pecas') {
+      const finalCoords = await resolveCoords();
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (authUser) {
         const { error: lojaError } = await supabase.from('lojas_pecas').insert({
@@ -184,8 +208,8 @@ function CadastroPage() {
           cidade: cidade || 'A definir',
           estado: estado || 'A definir',
           cep: cep || 'A definir',
-          latitude: coords.lat,
-          longitude: coords.lon,
+          latitude: finalCoords.lat,
+          longitude: finalCoords.lon,
           raio_atendimento_km: 30,
         });
         if (lojaError) {

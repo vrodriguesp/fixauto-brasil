@@ -39,15 +39,35 @@ export default function NovaSolicitacaoPage() {
   // solicitacao gravava a mesma coordenada fixa, quebrando o "oficinas
   // proximas" pra qualquer cliente fora de Sao Paulo.
   const [coords, setCoords] = useState({ lat: -23.5505, lon: -46.6333 });
+  const [geoResolved, setGeoResolved] = useState(false);
 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-        () => { /* mantem o default se o usuario negar a permissao */ }
+        (pos) => { setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }); setGeoResolved(true); },
+        () => { /* sem permissao - handleSubmit tenta geocodificar o endereco digitado */ }
       );
     }
   }, []);
+
+  // Fallback quando o navegador nega geolocalizacao: geocodifica o endereco
+  // digitado via Nominatim (gratuito, mundial) em vez de deixar a
+  // coordenada presa no default de Sao Paulo.
+  const resolveCoords = async (): Promise<{ lat: number; lon: number }> => {
+    if (geoResolved || !endereco) return coords;
+    try {
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(endereco)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
+          return { lat: data.latitude, lon: data.longitude };
+        }
+      }
+    } catch {
+      // mantem o default (SP) se a geocodificacao tambem falhar
+    }
+    return coords;
+  };
 
   const selectedVeiculo = veiculos.find((v) => v.id === veiculoId);
   const tipoConfig = TIPOS_SERVICO.find((t) => t.value === tipo);
@@ -122,13 +142,14 @@ export default function NovaSolicitacaoPage() {
       : (descricao || t('defaultServiceDescription'));
 
     try {
+      const finalCoords = await resolveCoords();
       const { data, error } = await createSolicitacao({
         veiculo_id: veiculoId,
         tipo,
         descricao: fullDescricao,
         urgencia,
-        latitude: coords.lat,
-        longitude: coords.lon,
+        latitude: finalCoords.lat,
+        longitude: finalCoords.lon,
         endereco,
       });
 
