@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import AudioRecorder from '@/components/ui/AudioRecorder';
@@ -43,6 +44,8 @@ interface OficinaInfo {
 }
 
 export default function ClienteMensagensPage() {
+  const t = useTranslations('clienteMensagemDetalhe');
+  const locale = useLocale();
   const params = useParams();
   const id = params.id as string;
   const { user } = useAuth();
@@ -294,7 +297,7 @@ export default function ClienteMensagensPage() {
 
   const formatTime = (dateStr: string) => {
     const d = new Date(dateStr);
-    return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
   };
 
   const formatDateSeparator = (dateStr: string) => {
@@ -303,9 +306,9 @@ export default function ClienteMensagensPage() {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
-    if (d.toDateString() === today.toDateString()) return 'Hoje';
-    if (d.toDateString() === yesterday.toDateString()) return 'Ontem';
-    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    if (d.toDateString() === today.toDateString()) return t('today');
+    if (d.toDateString() === yesterday.toDateString()) return t('yesterday');
+    return d.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
   const shouldShowDateSeparator = (index: number) => {
@@ -334,12 +337,12 @@ export default function ClienteMensagensPage() {
         </div>
         <div>
           <h1 className="font-semibold text-gray-900 text-sm">
-            {oficina?.nome_fantasia || 'Oficina'}
+            {oficina?.nome_fantasia || t('workshopFallback')}
           </h1>
           <p className="text-xs text-gray-500">
             {solicitacao?.veiculo
               ? `${solicitacao.veiculo.fipe_marca} ${solicitacao.veiculo.fipe_modelo}`
-              : 'Carregando...'}
+              : t('loading')}
           </p>
         </div>
       </div>
@@ -357,8 +360,8 @@ export default function ClienteMensagensPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
-            <p className="text-gray-500 text-sm">Nenhuma mensagem ainda.</p>
-            <p className="text-gray-400 text-xs mt-1">Envie a primeira mensagem para a oficina.</p>
+            <p className="text-gray-500 text-sm">{t('noMessagesYet')}</p>
+            <p className="text-gray-400 text-xs mt-1">{t('sendFirstMessage')}</p>
           </div>
         ) : (
           <div className="space-y-1">
@@ -421,7 +424,7 @@ export default function ClienteMensagensPage() {
         ) : uploadingAudio ? (
           <div className="flex items-center justify-center gap-2 py-2">
             <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm text-gray-500">Enviando áudio...</span>
+            <span className="text-sm text-gray-500">{t('sendingAudio')}</span>
           </div>
         ) : (
           <div className="flex items-center gap-2">
@@ -431,7 +434,7 @@ export default function ClienteMensagensPage() {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Digite sua mensagem..."
+              placeholder={t('messagePlaceholder')}
               className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
             {newMessage.trim() ? (
@@ -448,7 +451,7 @@ export default function ClienteMensagensPage() {
               <button
                 onClick={() => setShowAudioRecorder(true)}
                 className="w-10 h-10 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-                title="Gravar áudio"
+                title={t('recordAudio')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />

@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useRouter, Link } from '@/i18n/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 
@@ -14,6 +15,8 @@ interface SlotOption {
 }
 
 export default function ReagendarPage() {
+  const t = useTranslations('clienteReagendar');
+  const locale = useLocale();
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
@@ -42,7 +45,7 @@ export default function ReagendarPage() {
         .single();
 
       if (!agendaData) {
-        setError('Agendamento não encontrado.');
+        setError(t('appointmentNotFound'));
         setLoading(false);
         return;
       }
@@ -79,7 +82,7 @@ export default function ReagendarPage() {
 
     const slot = disponibilidade.find((s) => s.id === selectedSlot);
     if (!slot) {
-      setError('Selecione um horário válido.');
+      setError(t('selectValidTime'));
       setSubmitting(false);
       return;
     }
@@ -99,7 +102,7 @@ export default function ReagendarPage() {
       .eq('id', agendaId);
 
     if (updateError) {
-      setError('Erro ao reagendar. Tente novamente.');
+      setError(t('errorRescheduling'));
       setSubmitting(false);
       return;
     }
@@ -118,7 +121,7 @@ export default function ReagendarPage() {
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-gray-500">{t('loading')}</p>
       </div>
     );
   }
@@ -130,10 +133,10 @@ export default function ReagendarPage() {
           <svg className="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Reagendamento confirmado!</h2>
-          <p className="text-gray-600 mb-6">Seu novo horário foi registrado com sucesso.</p>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">{t('rescheduleConfirmedTitle')}</h2>
+          <p className="text-gray-600 mb-6">{t('newTimeRegistered')}</p>
           <Link href="/cliente/dashboard" className="btn-primary">
-            Voltar ao painel
+            {t('backToPanel')}
           </Link>
         </div>
       </div>
@@ -149,11 +152,11 @@ export default function ReagendarPage() {
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Voltar
+        {t('back')}
       </Link>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Reagendar atendimento</h1>
-      <p className="text-gray-600 mb-6">Escolha uma nova data para seu atendimento.</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('pageTitle')}</h1>
+      <p className="text-gray-600 mb-6">{t('pageSubtitle')}</p>
 
       {error && (
         <div className="rounded-lg border border-red-300 bg-red-50 p-3 mb-6">
@@ -163,31 +166,31 @@ export default function ReagendarPage() {
 
       {/* Current appointment info */}
       <div className="card mb-6">
-        <h2 className="font-semibold text-gray-900 mb-3">Agendamento atual</h2>
+        <h2 className="font-semibold text-gray-900 mb-3">{t('currentAppointmentTitle')}</h2>
         {v && (
           <p className="text-sm text-gray-700 mb-1">
             {v.fipe_marca} {v.fipe_modelo}{v.placa ? ` - ${v.placa}` : ''}
           </p>
         )}
         <p className="text-sm text-gray-600">
-          Data original: {new Date(agenda.data_inicio).toLocaleDateString('pt-BR')}
+          {t('originalDate', { date: new Date(agenda.data_inicio).toLocaleDateString(locale) })}
         </p>
         {agenda.no_show && (
           <div className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-red-700 bg-red-100 px-2 py-1 rounded">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01" />
             </svg>
-            Falta registrada
+            {t('noShowRegistered')}
           </div>
         )}
       </div>
 
       {/* Slot selection */}
       <div className="card mb-6">
-        <h2 className="font-semibold text-gray-900 mb-3">Escolha uma nova data</h2>
+        <h2 className="font-semibold text-gray-900 mb-3">{t('chooseNewDateTitle')}</h2>
         {disponibilidade.length === 0 ? (
           <p className="text-sm text-gray-500">
-            Nenhuma data disponível no momento. Entre em contato com a oficina para combinar um novo horário.
+            {t('noDatesAvailable')}
           </p>
         ) : (
           <div className="space-y-2">
@@ -211,19 +214,19 @@ export default function ReagendarPage() {
                   />
                   <div>
                     <p className="text-sm font-medium text-gray-900">
-                      {new Date(slot.data_checkin + 'T12:00:00').toLocaleDateString('pt-BR', {
+                      {new Date(slot.data_checkin + 'T12:00:00').toLocaleDateString(locale, {
                         weekday: 'long',
                         day: 'numeric',
                         month: 'long',
                       })}
                     </p>
                     <p className="text-xs text-gray-500">
-                      Turno: {slot.turno === 'manha' ? 'Manhã (08h - 12h)' : 'Tarde (13h - 18h)'}
+                      {t('shiftLabel', { shift: slot.turno === 'manha' ? t('morningShift') : t('afternoonShift') })}
                     </p>
                   </div>
                 </div>
                 <p className="text-xs text-gray-400">
-                  Prev. entrega: {new Date(slot.data_previsao_entrega + 'T12:00:00').toLocaleDateString('pt-BR')}
+                  {t('deliveryForecastInline', { date: new Date(slot.data_previsao_entrega + 'T12:00:00').toLocaleDateString(locale) })}
                 </p>
               </label>
             ))}
@@ -238,7 +241,7 @@ export default function ReagendarPage() {
             disabled={!selectedSlot || submitting}
             className="btn-primary disabled:opacity-50"
           >
-            {submitting ? 'Reagendando...' : 'Confirmar reagendamento'}
+            {submitting ? t('rescheduling') : t('confirmReschedule')}
           </button>
         </div>
       )}

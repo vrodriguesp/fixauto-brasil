@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 
 export default function PerfilClientePage() {
+  const t = useTranslations('clientePerfil');
   const { user, loading, refreshProfile } = useAuth();
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -48,14 +50,14 @@ export default function PerfilClientePage() {
   if (loading || !user) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-        <div className="animate-pulse text-gray-400">Carregando perfil...</div>
+        <div className="animate-pulse text-gray-400">{t('loadingProfile')}</div>
       </div>
     );
   }
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">Meu Perfil</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-8">{t('title')}</h1>
 
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
@@ -64,7 +66,7 @@ export default function PerfilClientePage() {
       )}
       {success && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
-          <p className="text-sm text-green-800">Alterações salvas com sucesso!</p>
+          <p className="text-sm text-green-800">{t('savedSuccess')}</p>
         </div>
       )}
 
@@ -77,28 +79,28 @@ export default function PerfilClientePage() {
           </div>
           <div>
             <h2 className="text-xl font-semibold text-gray-900">{nome}</h2>
-            <p className="text-gray-500">Cliente</p>
+            <p className="text-gray-500">{t('roleLabel')}</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('nameLabel')}</label>
             <input type="text" className="input-field" value={nome} onChange={(e) => setNome(e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('emailLabel')}</label>
             <input type="email" className="input-field bg-gray-50" value={email} disabled />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')}</label>
             <input type="tel" className="input-field" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
           </div>
         </div>
 
         <div className="flex justify-end mt-6">
           <button onClick={handleSave} disabled={saving} className="btn-primary">
-            {saving ? 'Salvando...' : 'Salvar Alterações'}
+            {saving ? t('saving') : t('saveChanges')}
           </button>
         </div>
       </div>

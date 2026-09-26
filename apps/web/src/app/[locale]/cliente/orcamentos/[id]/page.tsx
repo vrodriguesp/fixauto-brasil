@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useRouter, Link } from '@/i18n/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
 import { useAvaliacoes } from '@/hooks/use-avaliacoes';
@@ -11,20 +12,21 @@ import StarRating from '@/components/ui/StarRating';
 import { formatCurrency, formatDate, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
 import type { DisponibilidadeSlot } from '@fixauto/shared';
 
-function formatExecTime(hours: number | null): string {
+function formatExecTime(hours: number | null, t: (key: string, values?: Record<string, string | number | Date>) => string): string {
   if (!hours) return '-';
   if (hours < 8) return `${hours}h`;
   const days = Math.ceil(hours / 8);
-  return `~${days} dia(s) útil(eis)`;
+  return t('execDaysApprox', { days });
 }
 
-function formatSlotDate(dateStr: string): string {
+function formatSlotDate(dateStr: string, locale: string): string {
   const d = new Date(dateStr + 'T12:00:00');
-  const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-  return `${weekdays[d.getDay()]}, ${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+  return d.toLocaleDateString(locale, { weekday: 'short', day: '2-digit', month: '2-digit' });
 }
 
 export default function OrcamentoDetalhePage() {
+  const t = useTranslations('clienteOrcamentoDetalhe');
+  const locale = useLocale();
   const params = useParams();
   const router = useRouter();
   const { solicitacoes, updateStatus } = useSolicitacoes();
@@ -53,8 +55,8 @@ export default function OrcamentoDetalhePage() {
   const handleRefuse = async (orcamentoId: string) => {
     const isEmAndamento = solicitacao?.status === 'em_andamento';
     const confirmMsg = isEmAndamento
-      ? 'Tem certeza que deseja recusar este orçamento? O veículo precisa ser retirado da oficina antes de encerrar. A oficina será notificada para realizar o check-out.'
-      : 'Tem certeza que deseja recusar este orçamento?';
+      ? t('confirmRefuseInProgress')
+      : t('confirmRefuse');
     if (!confirm(confirmMsg)) return;
     setRefusing(orcamentoId);
     const { error } = await refuse(orcamentoId);
@@ -71,7 +73,7 @@ export default function OrcamentoDetalhePage() {
               titulo: 'Orçamento recusado',
               mensagem: 'O cliente recusou o orçamento revisado. Por favor realize o check-out do veículo.',
               dados: { solicitacao_id: solicitacao!.id },
-            });
+            }); // Notification consumed by the oficina (PT-only area) — intentionally left untranslated
           } catch { /* Non-blocking */ }
         }
         // Do NOT cancel the solicitation — keep em_andamento so oficina can check-out
@@ -84,7 +86,7 @@ export default function OrcamentoDetalhePage() {
         (o) => o.id !== orcamentoId && o.status === 'enviado'
       );
       if (!otherPending || otherPending.length === 0) {
-        if (confirm('Todos os orçamentos foram recusados. Deseja cancelar esta solicitação?')) {
+        if (confirm(t('confirmCancelAllRefused'))) {
           await updateStatus(solicitacao!.id, 'cancelada');
           router.push('/cliente/dashboard');
           return;
@@ -99,7 +101,7 @@ export default function OrcamentoDetalhePage() {
   const handleRefusedReviewSubmit = async (orcamentoId: string) => {
     const orc = solicitacao?.orcamentos?.find((o) => o.id === orcamentoId);
     if (!orc || refusedReviewNota === 0) {
-      setRefusedReviewError('Selecione uma nota de 1 a 5 estrelas');
+      setRefusedReviewError(t('selectRatingError'));
       return;
     }
     setRefusedReviewSubmitting(true);
@@ -123,7 +125,7 @@ export default function OrcamentoDetalhePage() {
   if (!solicitacao) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <p className="text-gray-500">Solicitação não encontrada</p>
+        <p className="text-gray-500">{t('requestNotFound')}</p>
       </div>
     );
   }
@@ -152,36 +154,36 @@ export default function OrcamentoDetalhePage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Agendamento confirmado!</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('appointmentConfirmedTitle')}</h1>
         <p className="text-gray-600 mb-6">
-          Seu veículo está agendado na <strong>{acceptedOficinaNome}</strong>.
+          {t('vehicleScheduledAt')} <strong>{acceptedOficinaNome}</strong>.
         </p>
 
         <div className="card text-left max-w-md mx-auto mb-8">
-          <h3 className="font-semibold text-gray-900 mb-3">Detalhes do agendamento</h3>
+          <h3 className="font-semibold text-gray-900 mb-3">{t('appointmentDetailsTitle')}</h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-500">Check-in:</span>
+              <span className="text-gray-500">{t('checkin')}</span>
               <span className="text-gray-900 font-medium">
-                {formatSlotDate(acceptedSlot.data_checkin)} - {acceptedSlot.turno === 'manha' ? '08:00 - 12:00' : '13:00 - 17:00'}
+                {formatSlotDate(acceptedSlot.data_checkin, locale)} - {acceptedSlot.turno === 'manha' ? '08:00 - 12:00' : '13:00 - 17:00'}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Previsão de entrega:</span>
+              <span className="text-gray-500">{t('deliveryForecast')}</span>
               <span className="text-gray-900 font-medium">
-                {formatSlotDate(acceptedSlot.data_previsao_entrega)}
+                {formatSlotDate(acceptedSlot.data_previsao_entrega, locale)}
               </span>
             </div>
           </div>
           <div className="mt-4 p-3 bg-yellow-50 rounded-lg">
             <p className="text-xs text-yellow-800">
-              Leve seu veículo no horário marcado. A oficina entrará em contato caso haja alguma mudança.
+              {t('bringVehicleNote')}
             </p>
           </div>
         </div>
 
         <button onClick={() => router.push('/cliente/dashboard')} className="btn-primary">
-          Voltar ao Dashboard
+          {t('backToDashboard')}
         </button>
       </div>
     );
@@ -193,7 +195,7 @@ export default function OrcamentoDetalhePage() {
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Voltar
+        {t('back')}
       </button>
 
       <div className="flex items-start justify-between mb-6">
@@ -216,12 +218,12 @@ export default function OrcamentoDetalhePage() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
-            Mensagem para oficina
+            {t('messageToWorkshop')}
           </Link>
           {['aberta', 'em_orcamento'].includes(solicitacao.status) && (
             <button
               onClick={async () => {
-                if (!confirm('Tem certeza que deseja cancelar esta solicitação? As oficinas não poderão mais enviar orçamentos.')) return;
+                if (!confirm(t('confirmCancelRequest'))) return;
                 setCancelling(true);
                 await updateStatus(solicitacao.id, 'cancelada');
                 setCancelling(false);
@@ -230,7 +232,7 @@ export default function OrcamentoDetalhePage() {
               disabled={cancelling}
               className="text-sm text-red-500 hover:text-red-700 border border-red-200 hover:border-red-300 px-4 py-2 rounded-lg transition-colors"
             >
-              {cancelling ? 'Cancelando...' : 'Cancelar solicitação'}
+              {cancelling ? t('cancelling') : t('cancelRequest')}
             </button>
           )}
         </div>
@@ -245,15 +247,15 @@ export default function OrcamentoDetalhePage() {
             </svg>
           </div>
           <div>
-            <p className="font-semibold text-blue-800">Veículo na oficina</p>
-            <p className="text-sm text-blue-600">Seu veículo está sendo atendido. Use o chat para acompanhar.</p>
+            <p className="font-semibold text-blue-800">{t('vehicleAtWorkshop')}</p>
+            <p className="text-sm text-blue-600">{t('vehicleBeingServiced')}</p>
           </div>
         </div>
       )}
 
       {/* Request details */}
       <div className="card mb-6">
-        <h2 className="font-semibold text-gray-900 mb-2">Descrição</h2>
+        <h2 className="font-semibold text-gray-900 mb-2">{t('descriptionTitle')}</h2>
         <p className="text-gray-600 text-sm">{cleanDescricao(solicitacao.descricao)}</p>
         <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
           <span>{solicitacao.endereco}</span>
@@ -262,12 +264,12 @@ export default function OrcamentoDetalhePage() {
 
         {solicitacao.fotos && solicitacao.fotos.length > 0 && (
           <div className="mt-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">Fotos ({solicitacao.fotos.length})</p>
+            <p className="text-sm font-medium text-gray-700 mb-2">{t('photosCount', { count: solicitacao.fotos.length })}</p>
             <div className="flex gap-2">
               {solicitacao.fotos.map((foto) => (
                 <a key={foto.id} href={foto.foto_url} target="_blank" rel="noopener noreferrer" className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden block">
                   {foto.foto_url ? (
-                    <img src={foto.foto_url} alt={foto.descricao || 'Foto'} className="w-full h-full object-cover" />
+                    <img src={foto.foto_url} alt={foto.descricao || t('photoFallback')} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -293,7 +295,7 @@ export default function OrcamentoDetalhePage() {
 
         const handleReviewSubmit = async () => {
           if (!acceptedOrc || reviewNota === 0) {
-            setReviewError('Selecione uma nota de 1 a 5 estrelas');
+            setReviewError(t('selectRatingError'));
             return;
           }
           setReviewSubmitting(true);
@@ -342,11 +344,11 @@ export default function OrcamentoDetalhePage() {
                 </svg>
               </div>
               <div>
-                <p className="font-semibold text-green-800">Serviço concluído</p>
+                <p className="font-semibold text-green-800">{t('serviceCompleted')}</p>
                 <p className="text-sm text-green-700">
                   {acceptedOrc?.oficina?.nome_fantasia
-                    ? `Realizado por ${acceptedOrc.oficina.nome_fantasia}`
-                    : 'O reparo foi finalizado com sucesso'}
+                    ? t('performedBy', { name: acceptedOrc.oficina.nome_fantasia })
+                    : t('repairFinishedSuccess')}
                 </p>
               </div>
             </div>
@@ -362,7 +364,7 @@ export default function OrcamentoDetalhePage() {
                         {existingReview.nota > existingReview.nota_anterior ? '\u2191' : '\u2193'}
                       </span>
                     )}
-                    <span className="font-semibold text-gray-800">Sua avaliação</span>
+                    <span className="font-semibold text-gray-800">{t('yourReview')}</span>
                   </div>
                   {canEdit && (
                     <button
@@ -372,7 +374,7 @@ export default function OrcamentoDetalhePage() {
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                       </svg>
-                      Editar
+                      {t('editLink')}
                     </button>
                   )}
                 </div>
@@ -382,17 +384,17 @@ export default function OrcamentoDetalhePage() {
                 <p className="text-xs text-gray-400 mt-2">
                   {formatDate(existingReview.created_at)}
                   {existingReview.updated_at && (
-                    <span className="ml-2">(editada em {formatDate(existingReview.updated_at)})</span>
+                    <span className="ml-2">{t('editedOn', { date: formatDate(existingReview.updated_at) })}</span>
                   )}
                 </p>
               </div>
             ) : (existingReview && editingReview) || (!existingReview && acceptedOrc) ? (
               <div className="card border-2 border-yellow-200 bg-yellow-50">
                 <p className="font-semibold text-gray-800 mb-3">
-                  {editingReview ? 'Editar avaliação' : 'Como foi o serviço?'}
+                  {editingReview ? t('editReviewTitle') : t('howWasService')}
                 </p>
                 {!editingReview && (
-                  <p className="text-sm text-gray-600 mb-3">Avalie o trabalho realizado por {acceptedOrc?.oficina?.nome_fantasia || 'a oficina'}</p>
+                  <p className="text-sm text-gray-600 mb-3">{t('rateWorkPerformedBy', { name: acceptedOrc?.oficina?.nome_fantasia || t('theWorkshop') })}</p>
                 )}
                 <div className="mb-3">
                   <StarRating rating={reviewNota} size="lg" interactive onChange={setReviewNota} />
@@ -400,7 +402,7 @@ export default function OrcamentoDetalhePage() {
                 <textarea
                   value={reviewComentario}
                   onChange={(e) => setReviewComentario(e.target.value)}
-                  placeholder="Deixe um comentário sobre o serviço (opcional)"
+                  placeholder={t('commentPlaceholder')}
                   className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none bg-white"
                   rows={3}
                 />
@@ -411,7 +413,7 @@ export default function OrcamentoDetalhePage() {
                       onClick={() => setEditingReview(false)}
                       className="text-sm text-gray-600 hover:text-gray-800 px-4 py-2 border border-gray-300 rounded-lg"
                     >
-                      Cancelar
+                      {t('cancel')}
                     </button>
                   )}
                   <button
@@ -419,7 +421,7 @@ export default function OrcamentoDetalhePage() {
                     disabled={reviewSubmitting || reviewNota === 0}
                     className="btn-primary !py-2 !px-6 text-sm disabled:opacity-50"
                   >
-                    {reviewSubmitting ? 'Enviando...' : editingReview ? 'Salvar alterações' : 'Enviar avaliação'}
+                    {reviewSubmitting ? t('sending') : editingReview ? t('saveChanges') : t('sendReview')}
                   </button>
                 </div>
               </div>
@@ -430,12 +432,12 @@ export default function OrcamentoDetalhePage() {
 
       {/* Quotes */}
       <h2 className="text-lg font-semibold text-gray-900 mb-4">
-        Orçamentos recebidos ({solicitacao.orcamentos?.length || 0})
+        {t('quotesReceivedTitle', { count: solicitacao.orcamentos?.length || 0 })}
       </h2>
 
       {!solicitacao.orcamentos || solicitacao.orcamentos.length === 0 ? (
         <div className="card text-center py-8">
-          <p className="text-gray-500">Aguardando orçamentos das oficinas...</p>
+          <p className="text-gray-500">{t('awaitingQuotes')}</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -463,14 +465,14 @@ export default function OrcamentoDetalhePage() {
                     <div className="flex items-center gap-2">
                       <StarRating rating={orc.oficina?.avaliacao_media || 0} size="sm" />
                       <span className="text-xs text-gray-500">
-                        {(orc.oficina?.avaliacao_media || 0).toFixed(1)} ({orc.oficina?.total_avaliacoes || 0} avaliações)
+                        {(orc.oficina?.avaliacao_media || 0).toFixed(1)} ({t('reviewsCount', { count: orc.oficina?.total_avaliacoes || 0 })})
                       </span>
                     </div>
                     {/* Seals */}
                     <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                       {(orc.oficina?.avaliacao_media || 0) >= 4 && (
                         <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold bg-yellow-400 text-yellow-900">
-                          🏆 Qualidade
+                          🏆 {t('qualitySeal')}
                         </span>
                       )}
                       {orc.valor_original && orc.revisao_numero && orc.revisao_numero > 0 && (
@@ -482,15 +484,15 @@ export default function OrcamentoDetalhePage() {
                             : 'bg-gray-100 text-gray-600'
                         }`}>
                           {orc.valor_total < orc.valor_original
-                            ? `📉 ${Math.round(((orc.valor_original - orc.valor_total) / orc.valor_original) * 100)}% menor`
+                            ? `📉 ${t('percentLower', { percent: Math.round(((orc.valor_original - orc.valor_total) / orc.valor_original) * 100) })}`
                             : orc.valor_total > orc.valor_original
-                            ? `📈 ${Math.round(((orc.valor_total - orc.valor_original) / orc.valor_original) * 100)}% maior`
-                            : 'Sem ajuste'}
+                            ? `📈 ${t('percentHigher', { percent: Math.round(((orc.valor_total - orc.valor_original) / orc.valor_original) * 100) })}`
+                            : t('noAdjustment')}
                         </span>
                       )}
                       {orc.revisao_numero && orc.revisao_numero > 0 && (
                         <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700">
-                          Revisão #{orc.revisao_numero}
+                          {t('revisionNumber', { n: orc.revisao_numero })}
                         </span>
                       )}
                     </div>
@@ -498,7 +500,7 @@ export default function OrcamentoDetalhePage() {
                 </div>
                 <div className="text-right">
                   <p className="text-2xl font-bold text-gray-900">{formatCurrency(orc.valor_total)}</p>
-                  <p className="text-sm text-gray-500">Prazo: {orc.prazo_dias} dias</p>
+                  <p className="text-sm text-gray-500">{t('deadlineDays', { days: orc.prazo_dias })}</p>
                   {orc.valor_original && orc.valor_original !== orc.valor_total && (
                     <p className="text-xs text-gray-400 line-through">{formatCurrency(orc.valor_original)}</p>
                   )}
@@ -508,27 +510,27 @@ export default function OrcamentoDetalhePage() {
               {/* Execution time + availability summary */}
               <div className="grid grid-cols-3 gap-3 mb-4">
                 <div className="p-3 bg-blue-50 rounded-lg text-center">
-                  <p className="text-xs text-blue-600">Tempo execução</p>
-                  <p className="text-sm font-bold text-blue-900">{formatExecTime(orc.tempo_execucao_horas)}</p>
+                  <p className="text-xs text-blue-600">{t('execTimeLabel')}</p>
+                  <p className="text-sm font-bold text-blue-900">{formatExecTime(orc.tempo_execucao_horas, t)}</p>
                 </div>
                 <div className="p-3 bg-green-50 rounded-lg text-center">
-                  <p className="text-xs text-green-600">Próximo check-in</p>
+                  <p className="text-xs text-green-600">{t('nextCheckinLabel')}</p>
                   <p className="text-sm font-bold text-green-900">
-                    {orc.disponibilidade.length > 0 ? formatSlotDate(orc.disponibilidade[0].data_checkin) : 'Sem vaga'}
+                    {orc.disponibilidade.length > 0 ? formatSlotDate(orc.disponibilidade[0].data_checkin, locale) : t('noSlotAvailable')}
                   </p>
                 </div>
                 <div className="p-3 bg-purple-50 rounded-lg text-center">
-                  <p className="text-xs text-purple-600">Datas disponíveis</p>
-                  <p className="text-sm font-bold text-purple-900">{orc.disponibilidade.length} opções</p>
+                  <p className="text-xs text-purple-600">{t('availableDatesLabel')}</p>
+                  <p className="text-sm font-bold text-purple-900">{t('optionsCount', { count: orc.disponibilidade.length })}</p>
                 </div>
               </div>
 
               {/* Revision comparison */}
               {orc.valor_original && orc.revisao_numero && orc.revisao_numero > 0 && (
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4 flex items-center gap-2 text-sm">
-                  <span className="text-gray-600">Orçamento original:</span>
+                  <span className="text-gray-600">{t('originalQuoteLabel')}</span>
                   <span className="line-through text-gray-400">{formatCurrency(orc.valor_original)}</span>
-                  <span className="text-gray-600">→ Revisado para:</span>
+                  <span className="text-gray-600">{t('revisedToLabel')}</span>
                   <span className={`font-bold ${
                     orc.valor_total < orc.valor_original
                       ? 'text-green-600'
@@ -538,20 +540,20 @@ export default function OrcamentoDetalhePage() {
                   }`}>
                     {formatCurrency(orc.valor_total)}
                   </span>
-                  <span className="text-gray-500">(revisão #{orc.revisao_numero})</span>
+                  <span className="text-gray-500">{t('revisionNumberParen', { n: orc.revisao_numero })}</span>
                 </div>
               )}
 
               {/* Items breakdown */}
               {orc.itens && orc.itens.length > 0 && (
                 <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                  <p className="text-sm font-medium text-gray-700 mb-2">Detalhamento</p>
+                  <p className="text-sm font-medium text-gray-700 mb-2">{t('breakdownTitle')}</p>
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="text-gray-500 text-xs">
-                        <th className="text-left pb-2">Item</th>
-                        <th className="text-left pb-2">Tipo</th>
-                        <th className="text-right pb-2">Valor</th>
+                        <th className="text-left pb-2">{t('itemColumn')}</th>
+                        <th className="text-left pb-2">{t('typeColumn')}</th>
+                        <th className="text-right pb-2">{t('valueColumn')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -565,7 +567,7 @@ export default function OrcamentoDetalhePage() {
                     </tbody>
                     <tfoot>
                       <tr className="font-semibold border-t-2">
-                        <td className="pt-2">Total</td>
+                        <td className="pt-2">{t('totalLabel')}</td>
                         <td></td>
                         <td className="pt-2 text-right">{formatCurrency(orc.valor_total)}</td>
                       </tr>
@@ -576,7 +578,7 @@ export default function OrcamentoDetalhePage() {
 
               {cleanDescricao(orc.observacoes) && (
                 <p className="text-sm text-gray-600 mb-4">
-                  <strong>Observações:</strong> {cleanDescricao(orc.observacoes)}
+                  <strong>{t('observationsLabel')}</strong> {cleanDescricao(orc.observacoes)}
                 </p>
               )}
 
@@ -584,7 +586,7 @@ export default function OrcamentoDetalhePage() {
               {schedulingOrcId === orc.id ? (
                 <div className="border-t pt-4 mt-4">
                   <h4 className="font-semibold text-gray-900 mb-3">
-                    Escolha a data de check-in
+                    {t('chooseCheckinDate')}
                   </h4>
                   <div className="space-y-2">
                     {orc.disponibilidade.map((slot) => (
@@ -601,13 +603,13 @@ export default function OrcamentoDetalhePage() {
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium text-gray-900">
-                              {formatSlotDate(slot.data_checkin)}
+                              {formatSlotDate(slot.data_checkin, locale)}
                               <span className="ml-2 text-sm font-normal text-gray-500">
                                 {slot.turno === 'manha' ? '08:00 - 12:00' : '13:00 - 17:00'}
                               </span>
                             </p>
                             <p className="text-xs text-gray-500 mt-1">
-                              Previsão de entrega: {formatSlotDate(slot.data_previsao_entrega)}
+                              {t('deliveryForecastInline', { date: formatSlotDate(slot.data_previsao_entrega, locale) })}
                             </p>
                           </div>
                           <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
@@ -631,14 +633,14 @@ export default function OrcamentoDetalhePage() {
                       onClick={() => { setSchedulingOrcId(null); setSelectedSlot(null); }}
                       className="btn-secondary flex-1"
                     >
-                      Cancelar
+                      {t('cancel')}
                     </button>
                     <button
                       onClick={handleConfirmAppointment}
                       disabled={!selectedSlot}
                       className="btn-success flex-1"
                     >
-                      Confirmar Agendamento
+                      {t('confirmAppointment')}
                     </button>
                   </div>
                 </div>
@@ -649,9 +651,9 @@ export default function OrcamentoDetalhePage() {
                       <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <p className="font-semibold text-blue-800">Veículo já na oficina</p>
+                      <p className="font-semibold text-blue-800">{t('vehicleAlreadyAtWorkshop')}</p>
                     </div>
-                    <p className="text-sm text-blue-700">Seu veículo está sendo atendido. Acompanhe pelo chat.</p>
+                    <p className="text-sm text-blue-700">{t('vehicleBeingServicedChat')}</p>
                   </div>
                 </div>
               ) : orc.status === 'aceito' ? (
@@ -661,7 +663,7 @@ export default function OrcamentoDetalhePage() {
                       <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <p className="font-semibold text-green-800">Orçamento aceito</p>
+                      <p className="font-semibold text-green-800">{t('quoteAccepted')}</p>
                     </div>
                     {orc.oficina && (
                       <div className="space-y-1 text-sm">
@@ -669,21 +671,21 @@ export default function OrcamentoDetalhePage() {
                         <p className="text-green-700">{orc.oficina.endereco}</p>
                         <p className="text-green-700">{orc.oficina.cidade} - {orc.oficina.estado}</p>
                         {orc.oficina.profile?.telefone && (
-                          <p className="text-green-700">Tel: {orc.oficina.profile.telefone}</p>
+                          <p className="text-green-700">{t('phone', { phone: orc.oficina.profile.telefone })}</p>
                         )}
                       </div>
                     )}
                     {orc.disponibilidade && orc.disponibilidade.length > 0 && (
                       <div className="mt-3 pt-3 border-t border-green-200 space-y-1 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-green-700">Check-in:</span>
+                          <span className="text-green-700">{t('checkin')}</span>
                           <span className="font-medium text-green-900">
-                            {formatSlotDate(orc.disponibilidade[0].data_checkin)} - {orc.disponibilidade[0].turno === 'manha' ? '08:00-12:00' : '13:00-17:00'}
+                            {formatSlotDate(orc.disponibilidade[0].data_checkin, locale)} - {orc.disponibilidade[0].turno === 'manha' ? '08:00-12:00' : '13:00-17:00'}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-green-700">Previsão entrega:</span>
-                          <span className="font-medium text-green-900">{formatSlotDate(orc.disponibilidade[0].data_previsao_entrega)}</span>
+                          <span className="text-green-700">{t('deliveryForecast')}</span>
+                          <span className="font-medium text-green-900">{formatSlotDate(orc.disponibilidade[0].data_previsao_entrega, locale)}</span>
                         </div>
                       </div>
                     )}
@@ -696,11 +698,11 @@ export default function OrcamentoDetalhePage() {
                       <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <p className="font-semibold text-red-700">Orçamento recusado</p>
+                      <p className="font-semibold text-red-700">{t('quoteRefused')}</p>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-red-600 line-through opacity-60">
-                      <span>Valor: {formatCurrency(orc.valor_total)}</span>
-                      <span>Prazo: {orc.prazo_dias} dias</span>
+                      <span>{t('valueLabel', { value: formatCurrency(orc.valor_total) })}</span>
+                      <span>{t('deadlineDays', { days: orc.prazo_dias })}</span>
                     </div>
                   </div>
 
@@ -714,7 +716,7 @@ export default function OrcamentoDetalhePage() {
                         <div className="bg-gray-50 rounded-lg p-4">
                           <div className="flex items-center gap-2 mb-1">
                             <StarRating rating={existingReviewForOrc.nota} size="sm" />
-                            <span className="text-sm font-medium text-gray-700">Sua avaliação</span>
+                            <span className="text-sm font-medium text-gray-700">{t('yourReview')}</span>
                           </div>
                           {existingReviewForOrc.comentario && (
                             <p className="text-sm text-gray-600">{existingReviewForOrc.comentario}</p>
@@ -725,15 +727,15 @@ export default function OrcamentoDetalhePage() {
                     if (refusedReviewOrcId === orc.id) {
                       return (
                         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                          <p className="font-semibold text-gray-800 mb-2">Avaliar esta oficina</p>
-                          <p className="text-sm text-gray-600 mb-3">Como foi sua experiência com {orc.oficina?.nome_fantasia || 'a oficina'}?</p>
+                          <p className="font-semibold text-gray-800 mb-2">{t('rateThisWorkshop')}</p>
+                          <p className="text-sm text-gray-600 mb-3">{t('howWasExperienceWith', { name: orc.oficina?.nome_fantasia || t('theWorkshop') })}</p>
                           <div className="mb-3">
                             <StarRating rating={refusedReviewNota} size="lg" interactive onChange={setRefusedReviewNota} />
                           </div>
                           <textarea
                             value={refusedReviewComentario}
                             onChange={(e) => setRefusedReviewComentario(e.target.value)}
-                            placeholder="Deixe um comentário (opcional)"
+                            placeholder={t('commentPlaceholderShort')}
                             className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none bg-white"
                             rows={3}
                           />
@@ -743,14 +745,14 @@ export default function OrcamentoDetalhePage() {
                               onClick={() => { setRefusedReviewOrcId(null); setRefusedReviewNota(0); setRefusedReviewComentario(''); setRefusedReviewError(''); }}
                               className="text-sm text-gray-600 hover:text-gray-800 px-4 py-2 border border-gray-300 rounded-lg"
                             >
-                              Cancelar
+                              {t('cancel')}
                             </button>
                             <button
                               onClick={() => handleRefusedReviewSubmit(orc.id)}
                               disabled={refusedReviewSubmitting || refusedReviewNota === 0}
                               className="btn-primary !py-2 !px-6 text-sm disabled:opacity-50"
                             >
-                              {refusedReviewSubmitting ? 'Enviando...' : 'Enviar avaliação'}
+                              {refusedReviewSubmitting ? t('sending') : t('sendReview')}
                             </button>
                           </div>
                         </div>
@@ -764,7 +766,7 @@ export default function OrcamentoDetalhePage() {
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                         </svg>
-                        Avaliar esta oficina
+                        {t('rateThisWorkshop')}
                       </button>
                     );
                   })()}
@@ -772,10 +774,10 @@ export default function OrcamentoDetalhePage() {
               ) : (
                 <div className="flex items-center justify-between pt-4 border-t">
                   <p className="text-xs text-gray-500">
-                    Válido até {formatDate(orc.validade)}
+                    {t('validUntil', { date: formatDate(orc.validade) })}
                     {orc.revisao_numero > 0 && (
                       <span className="ml-2 text-amber-600 font-medium">
-                        (Revisão #{orc.revisao_numero})
+                        {t('revisionNumberParen', { n: orc.revisao_numero })}
                       </span>
                     )}
                   </p>
@@ -785,7 +787,7 @@ export default function OrcamentoDetalhePage() {
                       disabled={refusing === orc.id}
                       className="text-sm text-red-500 hover:text-red-700 border border-red-200 hover:border-red-300 px-4 py-2 rounded-lg transition-colors"
                     >
-                      {refusing === orc.id ? 'Recusando...' : 'Recusar'}
+                      {refusing === orc.id ? t('refusing') : t('refuse')}
                     </button>
                     <button
                       onClick={() => handleStartScheduling(orc.id)}
@@ -794,7 +796,7 @@ export default function OrcamentoDetalhePage() {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      Aceitar e Agendar
+                      {t('acceptAndSchedule')}
                     </button>
                   </div>
                 </div>

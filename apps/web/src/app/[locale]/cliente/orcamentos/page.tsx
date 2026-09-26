@@ -1,11 +1,13 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { formatCurrency, timeAgo, cleanDescricao } from '@/lib/utils';
 
 export default function OrcamentosPage() {
+  const t = useTranslations('clienteOrcamentos');
   const { solicitacoes: allSolicitacoes } = useSolicitacoes();
   const solicitacoes = allSolicitacoes.filter(
     (s) => s.orcamentos && s.orcamentos.length > 0
@@ -13,14 +15,14 @@ export default function OrcamentosPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Orçamentos</h1>
-      <p className="text-gray-600 mb-8">Compare orçamentos recebidos para seus reparos</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+      <p className="text-gray-600 mb-8">{t('subtitle')}</p>
 
       {solicitacoes.length === 0 ? (
         <div className="card text-center py-12">
-          <p className="text-gray-500 mb-4">Nenhum orçamento recebido ainda</p>
+          <p className="text-gray-500 mb-4">{t('noQuotesYet')}</p>
           <Link href="/cliente/nova-solicitacao" className="btn-primary">
-            Criar solicitação
+            {t('createRequest')}
           </Link>
         </div>
       ) : (
@@ -42,7 +44,7 @@ export default function OrcamentosPage() {
 
               <div className="border-t pt-4">
                 <p className="text-sm font-medium text-gray-700 mb-3">
-                  {sol.orcamentos!.length} orçamento(s) recebido(s)
+                  {t('quotesReceivedCount', { count: sol.orcamentos!.length })}
                 </p>
                 <div className="space-y-3">
                   {sol.orcamentos!.map((orc) => (
@@ -62,7 +64,7 @@ export default function OrcamentosPage() {
                             {orc.oficina?.nome_fantasia}
                           </p>
                           <p className="text-xs text-gray-500">
-                            Prazo: {orc.prazo_dias} dias | {orc.itens?.length || 0} itens
+                            {t('deadlineDays', { days: orc.prazo_dias })} | {t('itemsCount', { count: orc.itens?.length || 0 })}
                           </p>
                         </div>
                       </div>

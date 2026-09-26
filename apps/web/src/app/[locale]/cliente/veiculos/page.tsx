@@ -2,19 +2,22 @@
 
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useVeiculos } from '@/hooks/use-veiculos';
 import type { Veiculo } from '@fixauto/shared';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 
 export default function VeiculosPageWrapper() {
+  const t = useTranslations('clienteVeiculos');
   return (
-    <Suspense fallback={<div className="max-w-4xl mx-auto px-4 py-8"><p>Carregando...</p></div>}>
+    <Suspense fallback={<div className="max-w-4xl mx-auto px-4 py-8"><p>{t('loading')}</p></div>}>
       <VeiculosPage />
     </Suspense>
   );
 }
 
 function VeiculosPage() {
+  const t = useTranslations('clienteVeiculos');
   const searchParams = useSearchParams();
   const autoOpen = searchParams.get('add') === 'true';
   const { veiculos, add, update, remove } = useVeiculos();
@@ -81,12 +84,12 @@ function VeiculosPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Meus Veículos</h1>
-          <p className="text-gray-600 mt-1">Gerencie os veículos cadastrados</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+          <p className="text-gray-600 mt-1">{t('subtitle')}</p>
         </div>
         {!showForm && (
           <button onClick={() => setShowForm(true)} className="btn-primary">
-            + Adicionar Veículo
+            {t('addButton')}
           </button>
         )}
       </div>
@@ -95,7 +98,7 @@ function VeiculosPage() {
       {showForm && (
         <div className="card mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-6">
-            {editingId ? 'Editar Veículo' : 'Novo Veículo'}
+            {editingId ? t('editTitle') : t('newTitle')}
           </h2>
 
           <FipeAutocomplete
@@ -120,7 +123,7 @@ function VeiculosPage() {
 
           <div className="grid sm:grid-cols-3 gap-4 mt-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Placa (opcional)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
               <input
                 type="text"
                 className="input-field"
@@ -130,21 +133,21 @@ function VeiculosPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cor (opcional)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('colorLabel')}</label>
               <input
                 type="text"
                 className="input-field"
-                placeholder="Prata"
+                placeholder={t('placeholderColor')}
                 value={formData.cor}
                 onChange={(e) => setFormData({ ...formData, cor: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Apelido (opcional)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('nicknameLabel')}</label>
               <input
                 type="text"
                 className="input-field"
-                placeholder="Meu carro"
+                placeholder={t('placeholderNickname')}
                 value={formData.apelido}
                 onChange={(e) => setFormData({ ...formData, apelido: e.target.value })}
               />
@@ -154,15 +157,15 @@ function VeiculosPage() {
           {formData.fipe_valor && (
             <div className="mt-4 p-3 bg-green-50 rounded-lg">
               <p className="text-sm text-green-800">
-                Valor FIPE: <strong>{formData.fipe_valor}</strong>
+                {t('fipeValueLabel')} <strong>{formData.fipe_valor}</strong>
               </p>
             </div>
           )}
 
           <div className="flex justify-end gap-3 mt-6">
-            <button onClick={resetForm} className="btn-secondary">Cancelar</button>
+            <button onClick={resetForm} className="btn-secondary">{t('cancel')}</button>
             <button onClick={handleSave} className="btn-primary">
-              {editingId ? 'Salvar' : 'Adicionar'}
+              {editingId ? t('save') : t('add')}
             </button>
           </div>
         </div>
@@ -175,7 +178,7 @@ function VeiculosPage() {
             <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
             </svg>
-            <p className="text-gray-500">Nenhum veículo cadastrado</p>
+            <p className="text-gray-500">{t('noVehicles')}</p>
           </div>
         ) : (
           veiculos.map((v) => (
@@ -187,10 +190,10 @@ function VeiculosPage() {
                     {v.fipe_marca} {v.fipe_modelo}
                   </h3>
                   <p className="text-sm text-gray-500 mt-1">
-                    Ano: {v.fipe_ano} {v.cor && `| Cor: ${v.cor}`} {v.placa && `| Placa: ${v.placa}`}
+                    {t('yearLabel', { year: v.fipe_ano })} {v.cor && t('colorInline', { color: v.cor })} {v.placa && t('plateInline', { plate: v.placa })}
                   </p>
                   {v.fipe_valor && (
-                    <p className="text-sm text-green-600 mt-1">Valor FIPE: {v.fipe_valor}</p>
+                    <p className="text-sm text-green-600 mt-1">{t('fipeValueLabel')} {v.fipe_valor}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-2">

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { timeAgo, cleanDescricao } from '@/lib/utils';
@@ -40,6 +41,7 @@ interface SolicitacaoGroup {
 }
 
 export default function ClienteMensagensListPage() {
+  const t = useTranslations('clienteMensagens');
   const { user } = useAuth();
   const [groups, setGroups] = useState<SolicitacaoGroup[]>([]);
   const [loading, setLoading] = useState(true);
@@ -110,7 +112,7 @@ export default function ClienteMensagensListPage() {
           emergenciaMsgMap[emerg.solicitacao_id] = {
             emergencia_id: emerg.id,
             solicitacao_id: emerg.solicitacao_id,
-            outro_nome: outro.nome || 'Outro motorista',
+            outro_nome: outro.nome || t('otherDriver'),
             outro_placa: outro.placa || '',
             outro_veiculo: outro.veiculo_descricao || '',
             ultima_mensagem: lastMsg?.texto || '',
@@ -151,10 +153,10 @@ export default function ClienteMensagensListPage() {
         if (solMensagens.length > 0 || orcamentos?.some((o: any) => o.solicitacao_id === sol.id)) {
           conversasOficina.push({
             solicitacao_id: sol.id,
-            oficina_nome: (oficinaNome as any)?.nome_fantasia || 'Oficina',
+            oficina_nome: (oficinaNome as any)?.nome_fantasia || t('workshopFallback'),
             veiculo_desc: veiculo ? `${veiculo.fipe_marca} ${veiculo.fipe_modelo}` : '',
             placa: veiculo?.placa || '',
-            ultima_mensagem: lastMsg?.tipo === 'audio' ? 'Mensagem de áudio' : (lastMsg?.texto || 'Sem mensagens'),
+            ultima_mensagem: lastMsg?.tipo === 'audio' ? t('audioMessage') : (lastMsg?.texto || t('noMessages')),
             ultima_mensagem_at: lastMsg?.created_at || '',
             nao_lidas: naoLidas,
           });
@@ -232,7 +234,7 @@ export default function ClienteMensagensListPage() {
                 .eq('status', 'aceito')
                 .limit(1);
 
-              const pagOficinaNome = (pagOrc?.[0]?.oficina as any)?.nome_fantasia || 'Oficina';
+              const pagOficinaNome = (pagOrc?.[0]?.oficina as any)?.nome_fantasia || t('workshopFallback');
 
               outroConversasOficina.push({
                 solicitacao_id: emerg.solicitacao_id,
@@ -248,7 +250,7 @@ export default function ClienteMensagensListPage() {
 
           groupList.push({
             id: `outro-${reg.emergencia_id}`,
-            descricao: `Acidente registrado por ${emerg.nome}`,
+            descricao: t('accidentRegisteredBy', { name: emerg.nome }),
             veiculo_marca: reg.veiculo_descricao || '',
             veiculo_modelo: '',
             placa: reg.placa || '',
@@ -258,10 +260,10 @@ export default function ClienteMensagensListPage() {
             conversa_emergencia: {
               emergencia_id: reg.emergencia_id,
               solicitacao_id: emerg.solicitacao_id,
-              outro_nome: emerg.nome || 'Outro motorista',
+              outro_nome: emerg.nome || t('otherDriver'),
               outro_placa: '',
               outro_veiculo: '',
-              ultima_mensagem: lastMsg?.texto || 'Sem mensagens',
+              ultima_mensagem: lastMsg?.texto || t('noMessages'),
               ultima_mensagem_at: lastMsg?.created_at || '',
               nao_lidas: 0,
             },
@@ -294,8 +296,8 @@ export default function ClienteMensagensListPage() {
           </svg>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Mensagens</h1>
-          <p className="text-sm text-gray-500">Todas as suas conversas</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+          <p className="text-sm text-gray-500">{t('subtitle')}</p>
         </div>
       </div>
 
@@ -306,9 +308,9 @@ export default function ClienteMensagensListPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </div>
-          <h3 className="font-semibold text-gray-900 mb-1">Nenhuma conversa</h3>
+          <h3 className="font-semibold text-gray-900 mb-1">{t('noConversation')}</h3>
           <p className="text-sm text-gray-500">
-            Suas conversas com oficinas e outros motoristas aparecerão aqui.
+            {t('conversationsWillAppear')}
           </p>
         </div>
       ) : (
@@ -332,11 +334,11 @@ export default function ClienteMensagensListPage() {
                     group.status === 'em_orcamento' ? 'bg-yellow-100 text-yellow-700' :
                     'bg-blue-100 text-blue-700'
                   }`}>
-                    {group.status === 'aberta' ? 'Aberta' :
-                     group.status === 'em_orcamento' ? 'Em orçamento' :
-                     group.status === 'aceita' ? 'Aceita' :
-                     group.status === 'em_andamento' ? 'Em andamento' :
-                     group.status === 'concluida' ? 'Concluída' :
+                    {group.status === 'aberta' ? t('statusOpen') :
+                     group.status === 'em_orcamento' ? t('statusInQuote') :
+                     group.status === 'aceita' ? t('statusAccepted') :
+                     group.status === 'em_andamento' ? t('statusInProgress') :
+                     group.status === 'concluida' ? t('statusCompleted') :
                      group.status}
                   </span>
                 </div>
@@ -361,7 +363,7 @@ export default function ClienteMensagensListPage() {
                         <p className="text-sm font-medium text-gray-900 truncate">
                           {conv.oficina_nome}
                           {group.is_responsavel_pagamento && (
-                            <span className="text-xs text-red-600 font-normal ml-1">(pagamento)</span>
+                            <span className="text-xs text-red-600 font-normal ml-1">{t('paymentTag')}</span>
                           )}
                         </p>
                         {conv.ultima_mensagem_at && (
@@ -403,7 +405,7 @@ export default function ClienteMensagensListPage() {
                         <p className="text-sm font-medium text-gray-900 truncate">
                           {group.conversa_emergencia.outro_nome}
                           <span className="text-xs text-gray-400 font-normal ml-1">
-                            (outro motorista)
+                            {t('otherDriverTag')}
                           </span>
                         </p>
                         {group.conversa_emergencia.ultima_mensagem_at && (
@@ -414,7 +416,7 @@ export default function ClienteMensagensListPage() {
                       </div>
                       <div className="flex items-center justify-between mt-0.5">
                         <p className="text-xs text-gray-500 truncate">
-                          {group.conversa_emergencia.ultima_mensagem || 'Sem mensagens'}
+                          {group.conversa_emergencia.ultima_mensagem || t('noMessages')}
                         </p>
                         {group.conversa_emergencia.outro_placa && (
                           <span className="text-xs text-gray-400 flex-shrink-0 ml-2">

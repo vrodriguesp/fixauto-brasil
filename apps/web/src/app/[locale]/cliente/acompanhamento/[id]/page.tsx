@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import { STATUS_MANUTENCAO } from '@fixauto/shared';
@@ -35,15 +36,26 @@ const STATUS_ORDER: StatusManutencao[] = [
   'entregue',
 ];
 
-// Progress steps (simplified view for client)
-const PROGRESS_STEPS: { status: StatusManutencao; label: string }[] = [
-  { status: 'recebido', label: 'Recebido' },
-  { status: 'diagnostico', label: 'Diagnóstico' },
-  { status: 'em_execucao', label: 'Em Execução' },
-  { status: 'teste_final', label: 'Teste Final' },
-  { status: 'concluido', label: 'Concluído' },
-  { status: 'entregue', label: 'Entregue' },
+// Progress steps (simplified view for client) — labels are translated at render time via getProgressSteps(t)
+const PROGRESS_STEP_STATUSES: StatusManutencao[] = [
+  'recebido',
+  'diagnostico',
+  'em_execucao',
+  'teste_final',
+  'concluido',
+  'entregue',
 ];
+
+function getProgressSteps(t: (key: string) => string): { status: StatusManutencao; label: string }[] {
+  return [
+    { status: 'recebido', label: t('progressRecebido') },
+    { status: 'diagnostico', label: t('progressDiagnostico') },
+    { status: 'em_execucao', label: t('progressEmExecucao') },
+    { status: 'teste_final', label: t('progressTesteFinal') },
+    { status: 'concluido', label: t('progressConcluido') },
+    { status: 'entregue', label: t('progressEntregue') },
+  ];
+}
 
 function getManutencaoColor(status: StatusManutencao) {
   const colors: Record<string, string> = {
@@ -78,6 +90,9 @@ function getManutencaoColorLight(status: StatusManutencao) {
 }
 
 export default function AcompanhamentoPage() {
+  const t = useTranslations('clienteAcompanhamento');
+  const locale = useLocale();
+  const progressSteps = getProgressSteps(t);
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const [agenda, setAgenda] = useState<AgendaData | null>(null);
@@ -182,8 +197,7 @@ export default function AcompanhamentoPage() {
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);
-    const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    return `${weekdays[d.getDay()]}, ${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    return d.toLocaleDateString(locale, { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
   if (loading) {
@@ -201,8 +215,8 @@ export default function AcompanhamentoPage() {
   if (!agenda) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8 text-center">
-        <p className="text-gray-500 mb-4">Nenhum agendamento encontrado para esta solicitação.</p>
-        <Link href="/cliente/dashboard" className="btn-primary">Voltar ao Dashboard</Link>
+        <p className="text-gray-500 mb-4">{t('noAppointmentFound')}</p>
+        <Link href="/cliente/dashboard" className="btn-primary">{t('backToDashboard')}</Link>
       </div>
     );
   }
@@ -215,9 +229,9 @@ export default function AcompanhamentoPage() {
       {/* Header */}
       <div className="mb-6">
         <Link href="/cliente/dashboard" className="text-sm text-primary-600 hover:text-primary-700 font-medium mb-2 inline-block">
-          ← Voltar ao Dashboard
+          ← {t('backToDashboard')}
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Acompanhamento da Manutenção</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('pageTitle')}</h1>
         {veiculo && (
           <p className="text-gray-600 mt-1">
             {veiculo.fipe_marca} {veiculo.fipe_modelo}
@@ -241,7 +255,7 @@ export default function AcompanhamentoPage() {
 
       {/* Progress bar */}
       <div className="card mb-6">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Progresso</h2>
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">{t('progressTitle')}</h2>
         <div className="flex items-center justify-between relative">
           {/* Background line */}
           <div className="absolute top-4 left-4 right-4 h-1 bg-gray-200 rounded" />
@@ -249,11 +263,11 @@ export default function AcompanhamentoPage() {
           {progressIndex >= 0 && (
             <div
               className="absolute top-4 left-4 h-1 bg-primary-500 rounded transition-all duration-500"
-              style={{ width: `${Math.min((progressIndex / (PROGRESS_STEPS.length - 1)) * 100, 100)}%` }}
+              style={{ width: `${Math.min((progressIndex / (progressSteps.length - 1)) * 100, 100)}%` }}
             />
           )}
 
-          {PROGRESS_STEPS.map((step, i) => {
+          {progressSteps.map((step, i) => {
             const isActive = progressIndex >= i;
             const isCurrent = progressIndex === i;
             return (
@@ -288,21 +302,21 @@ export default function AcompanhamentoPage() {
       <div className="card mb-6">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-xs text-gray-500">Check-in</p>
+            <p className="text-xs text-gray-500">{t('checkin')}</p>
             <p className="text-sm font-medium text-gray-900">{formatDate(agenda.data_inicio)}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Previsão de entrega</p>
+            <p className="text-xs text-gray-500">{t('deliveryForecast')}</p>
             <p className="text-sm font-medium text-gray-900">{formatDate(agenda.data_fim)}</p>
           </div>
           {agenda.funcionario?.profile?.nome && (
             <div>
-              <p className="text-xs text-gray-500">Mecânico responsável</p>
+              <p className="text-xs text-gray-500">{t('mechanicResponsible')}</p>
               <p className="text-sm font-medium text-gray-900">{agenda.funcionario.profile.nome}</p>
             </div>
           )}
           <div>
-            <p className="text-xs text-gray-500">Serviço</p>
+            <p className="text-xs text-gray-500">{t('serviceLabel')}</p>
             <p className="text-sm font-medium text-gray-900">{agenda.solicitacao?.tipo || '-'}</p>
           </div>
         </div>
@@ -311,18 +325,18 @@ export default function AcompanhamentoPage() {
       {/* Timeline */}
       <div className="card">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
-          Histórico Detalhado
+          {t('detailedHistoryTitle')}
         </h2>
         {etapas.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-400 text-sm">Aguardando início do serviço...</p>
+            <p className="text-gray-400 text-sm">{t('awaitingServiceStart')}</p>
             <div className="mt-2 flex justify-center">
               <div className="flex items-center gap-1.5 text-xs text-gray-400">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500" />
                 </span>
-                Atualização em tempo real ativa
+                {t('realtimeUpdateActive')}
               </div>
             </div>
           </div>
@@ -348,7 +362,7 @@ export default function AcompanhamentoPage() {
                       <p className="text-xs text-gray-600 mt-1">{etapa.observacao}</p>
                     )}
                     {(etapa as any).funcionario?.profile?.nome && (
-                      <p className="text-xs text-gray-400 mt-0.5">por {(etapa as any).funcionario.profile.nome}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{t('byMechanic', { name: (etapa as any).funcionario.profile.nome })}</p>
                     )}
                   </div>
                 </div>
@@ -362,7 +376,7 @@ export default function AcompanhamentoPage() {
                   <span className="relative inline-flex rounded-full h-[18px] w-[18px] bg-white border-2 border-dashed border-gray-300" />
                 </span>
               </div>
-              <p className="text-xs text-gray-400 italic pl-1 pt-1">Aguardando próxima atualização...</p>
+              <p className="text-xs text-gray-400 italic pl-1 pt-1">{t('awaitingNextUpdate')}</p>
             </div>
           </div>
         )}
@@ -378,13 +392,13 @@ export default function AcompanhamentoPage() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
-            Enviar Mensagem
+            {t('sendMessage')}
           </Link>
           <Link
             href={`/cliente/orcamentos/${agenda.solicitacao.id}`}
             className="btn-secondary flex-1 text-center"
           >
-            Ver Detalhes
+            {t('viewDetails')}
           </Link>
         </div>
       )}
