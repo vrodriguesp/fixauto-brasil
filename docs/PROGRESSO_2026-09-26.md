@@ -81,4 +81,15 @@ Essas são as páginas que sustentam o pedido do item 5 (recrutamento de "parcei
 - [ ] Home (`/`) ainda não traduzida — provável próxima página, é a porta de entrada de todo o tráfego orgânico.
 - [ ] Restante das ~50 páginas do site (cliente/oficina/loja/docs/emergencia/auth) ainda 100% em português.
 - [ ] Google Search Console aguardando o usuário criar a propriedade e passar o código de verificação (ou decidir pelo método de DNS).
-- [ ] Itens 4 (monitoramento de cliques — confirmar se GA4 basta), 5 (seção de campanha "parceiro fundador" **na home**, ainda não escrita — hoje só existe em `/seja-parceiro` e `/para-oficinas`) e 6 (admin CRUD: editar status/cancelar agenda) continuam pendentes.
+- [ ] Itens 4 (monitoramento de cliques — confirmar se GA4 basta) e 5 (seção de campanha "parceiro fundador" **na home**, ainda não escrita — hoje só existe em `/seja-parceiro` e `/para-oficinas`) continuam pendentes.
+
+## Rodada 3 (mesmo dia): admin ganha ação de editar/cancelar (item 6 do pedido original)
+
+A central de auditoria construída em 09/09 já dava visão total ao admin (solicitações, veículos, emergências, conversas), mas só de leitura. Faltava exatamente o que o usuário pediu agora: "o admin deve ser capaz de conseguir modificar os status do conserto, cancelar agendamentos".
+
+1. [x] `PATCH /api/admin/solicitacoes/[id]`: admin corrige manualmente o status de uma solicitação (aberta/em_orcamento/aceita/em_andamento/concluída/cancelada) — útil pra destravar um caso preso ou cancelar em nome do cliente/oficina. Notifica (in-app, tabela `notificacoes`) o cliente e qualquer oficina com orçamento aceito naquela solicitação.
+2. [x] `PATCH /api/admin/agenda/[id]` (rota nova): cancela um agendamento específico. Deliberadamente **não** mexe no status da solicitação vinculada (evita side-effect não solicitado) — só marca `agenda.status = 'cancelado'` e notifica cliente + oficina. Diferente do "no-show" que a oficina já registra (esse é cancelamento por decisão administrativa).
+3. [x] `/admin/solicitacoes/[id]`: novo seletor de status + botão "Salvar status" no topo da página; nova seção "Agendamentos" listando cada entrada de agenda daquela solicitação com botão "Cancelar" (some quando já cancelado/concluído).
+4. [x] Build/tsc sem erros. Testado que os 2 endpoints novos exigem autenticação de admin (401 sem sessão) tanto local quanto em produção. Deploy feito (commit `814e811`).
+5. [ ] **Teste clicando de verdade (sessão admin real) ainda não feito nesta rodada** — recomendado antes de confiar 100% no fluxo, especialmente a notificação sendo criada corretamente pro cliente/oficina certos.
+6. [ ] Escopo deliberadamente restrito a solicitação (status do "conserto") + agenda (agendamentos), que foram os dois termos exatos usados pelo usuário. Ações de editar/cancelar em cotações de peças, pedidos de peças ou avaliações **não foram adicionadas** — se o usuário quiser esse alcance mais amplo de "todas as interações", é um próximo passo natural.
