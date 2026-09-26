@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAgenda } from '@/hooks/use-agenda';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -12,6 +13,7 @@ import { Link } from '@/i18n/navigation';
 type FilterTab = 'todos' | 'aguardando' | 'em_servico' | 'prontos';
 
 export default function VeiculosEmServico() {
+  const t = useTranslations('oficinaVeiculosEmServico');
   const { eventos, loading, update, refresh } = useAgenda();
   const { oficina, funcionario } = useAuth();
   const [activeTab, setActiveTab] = useState<FilterTab>('em_servico');
@@ -167,10 +169,10 @@ export default function VeiculosEmServico() {
 
   const getStatusBadge = (status: string) => {
     const map: Record<string, { label: string; classes: string }> = {
-      agendado: { label: 'Agendado', classes: 'bg-blue-100 text-blue-800' },
-      em_andamento: { label: 'Em serviço', classes: 'bg-yellow-100 text-yellow-800' },
-      concluido: { label: 'Pronto', classes: 'bg-green-100 text-green-800' },
-      cancelado: { label: 'Cancelado', classes: 'bg-red-100 text-red-800' },
+      agendado: { label: t('statusAgendado'), classes: 'bg-blue-100 text-blue-800' },
+      em_andamento: { label: t('statusEmServico'), classes: 'bg-yellow-100 text-yellow-800' },
+      concluido: { label: t('statusPronto'), classes: 'bg-green-100 text-green-800' },
+      cancelado: { label: t('statusCancelado'), classes: 'bg-red-100 text-red-800' },
     };
     const info = map[status] || { label: status, classes: 'bg-gray-100 text-gray-800' };
     return (
@@ -197,10 +199,10 @@ export default function VeiculosEmServico() {
   };
 
   const tabs: { key: FilterTab; label: string }[] = [
-    { key: 'todos', label: 'Todos' },
-    { key: 'aguardando', label: 'Aguardando' },
-    { key: 'em_servico', label: 'Em Serviço' },
-    { key: 'prontos', label: 'Prontos' },
+    { key: 'todos', label: t('tabTodos') },
+    { key: 'aguardando', label: t('tabAguardando') },
+    { key: 'em_servico', label: t('tabEmServico') },
+    { key: 'prontos', label: t('tabProntos') },
   ];
 
   // Get latest etapa for an event
@@ -232,12 +234,12 @@ export default function VeiculosEmServico() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            {isMecanico ? 'Meus Veículos' : 'Oficina'}
+            {isMecanico ? t('meusVeiculos') : t('oficina')}
           </h1>
           <p className="text-gray-600 mt-1">
             {isMecanico
-              ? `Veículos sob sua responsabilidade`
-              : 'Gerencie os veículos em serviço na oficina'}
+              ? t('veiculosSobResponsabilidade')
+              : t('gerencieVeiculos')}
           </p>
         </div>
         {!isMecanico && (
@@ -245,7 +247,7 @@ export default function VeiculosEmServico() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            Ver agenda
+            {t('verAgenda')}
           </Link>
         )}
       </div>
@@ -263,7 +265,7 @@ export default function VeiculosEmServico() {
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">{categorized.aguardandoCheckin.length}</p>
-            <p className="text-xs text-gray-500">Aguardando check-in</p>
+            <p className="text-xs text-gray-500">{t('aguardandoCheckin')}</p>
           </div>
         </button>
 
@@ -279,7 +281,7 @@ export default function VeiculosEmServico() {
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">{categorized.emServico.length}</p>
-            <p className="text-xs text-gray-500">Em serviço</p>
+            <p className="text-xs text-gray-500">{t('statusEmServico')}</p>
           </div>
         </button>
 
@@ -294,7 +296,7 @@ export default function VeiculosEmServico() {
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">{categorized.prontos.length}</p>
-            <p className="text-xs text-gray-500">Prontos p/ retirada</p>
+            <p className="text-xs text-gray-500">{t('prontosParaRetirada')}</p>
           </div>
         </button>
 
@@ -309,7 +311,7 @@ export default function VeiculosEmServico() {
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">{categorized.agendados.length}</p>
-            <p className="text-xs text-gray-500">Agendados (futuro)</p>
+            <p className="text-xs text-gray-500">{t('agendadosFuturo')}</p>
           </div>
         </button>
       </div>
@@ -337,7 +339,7 @@ export default function VeiculosEmServico() {
           <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
           </svg>
-          <p className="text-gray-500">Nenhum veículo encontrado nesta categoria</p>
+          <p className="text-gray-500">{t('nenhumVeiculoNestaCategoria')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -380,14 +382,14 @@ export default function VeiculosEmServico() {
 
                       <div className="flex items-center gap-4 text-sm text-gray-500">
                         {cliente && <span>{cliente.nome}</span>}
-                        <span>Check-in: {formatDate(evento.data_inicio)}</span>
-                        <span>Entrega: {formatDate(evento.data_fim)}</span>
+                        <span>{t('checkinLabel')}: {formatDate(evento.data_inicio)}</span>
+                        <span>{t('entregaLabel')}: {formatDate(evento.data_fim)}</span>
                         {evento.status === 'concluido' ? (
-                          <span className="text-green-600 font-medium">Pronto</span>
+                          <span className="text-green-600 font-medium">{t('statusPronto')}</span>
                         ) : isOverdue ? (
-                          <span className="text-red-600 font-bold">{Math.abs(days)}d atrasado</span>
+                          <span className="text-red-600 font-bold">{t('diasAtrasado', { dias: Math.abs(days) })}</span>
                         ) : (
-                          <span className={days <= 1 ? 'text-orange-600' : ''}>{days}d restantes</span>
+                          <span className={days <= 1 ? 'text-orange-600' : ''}>{t('diasRestantes', { dias: days })}</span>
                         )}
                       </div>
 
@@ -404,7 +406,7 @@ export default function VeiculosEmServico() {
                         {/* Assigned mechanic */}
                         {evento.funcionario && (
                           <span className="text-xs text-gray-400">
-                            Resp: {evento.funcionario.profile?.nome || 'N/A'}
+                            {t('respLabel')}: {evento.funcionario.profile?.nome || 'N/A'}
                           </span>
                         )}
                       </div>
@@ -418,7 +420,7 @@ export default function VeiculosEmServico() {
                           disabled={actionLoading === evento.id}
                           className="btn-primary text-xs !py-1.5 !px-3 disabled:opacity-50"
                         >
-                          {actionLoading === evento.id ? '...' : 'Check-in'}
+                          {actionLoading === evento.id ? '...' : t('checkinBtn')}
                         </button>
                       )}
                       {evento.status === 'em_andamento' && (
@@ -430,7 +432,7 @@ export default function VeiculosEmServico() {
                             }}
                             className="text-xs !py-1.5 !px-3 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 rounded-lg font-medium transition-colors"
                           >
-                            + Etapa
+                            {t('maisEtapa')}
                           </button>
                           {!isMecanico && (
                             <button
@@ -438,16 +440,16 @@ export default function VeiculosEmServico() {
                               disabled={actionLoading === evento.id}
                               className="btn-primary text-xs !py-1.5 !px-3 bg-green-600 hover:bg-green-700 disabled:opacity-50"
                             >
-                              {actionLoading === evento.id ? '...' : 'Entrega'}
+                              {actionLoading === evento.id ? '...' : t('entregaBtn')}
                             </button>
                           )}
                         </>
                       )}
                       {evento.status === 'concluido' && (
-                        <span className="text-xs text-green-600 font-medium">Entregue</span>
+                        <span className="text-xs text-green-600 font-medium">{t('entregueLabel')}</span>
                       )}
                       {evento.status === 'agendado' && new Date(evento.data_inicio) > new Date() && (
-                        <span className="text-xs text-gray-400">Aguardando data</span>
+                        <span className="text-xs text-gray-400">{t('aguardandoData')}</span>
                       )}
                       <svg className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -462,13 +464,13 @@ export default function VeiculosEmServico() {
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
                       {/* Service description */}
                       <div>
-                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Serviço</h4>
-                        <p className="text-sm text-gray-900">{sol?.descricao || evento.descricao || 'Sem descrição'}</p>
+                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{t('servico')}</h4>
+                        <p className="text-sm text-gray-900">{sol?.descricao || evento.descricao || t('semDescricao')}</p>
                       </div>
 
                       {/* Client contact */}
                       <div>
-                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Cliente</h4>
+                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{t('cliente')}</h4>
                         {cliente ? (
                           <div className="space-y-1 text-sm">
                             <p className="text-gray-900 font-medium">{cliente.nome}</p>
@@ -484,7 +486,7 @@ export default function VeiculosEmServico() {
                       {/* Assign mechanic (admin only) */}
                       {!isMecanico && (
                         <div>
-                          <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Mecânico Responsável</h4>
+                          <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{t('mecanicoResponsavel')}</h4>
                           {assignForm === evento.id ? (
                             <select
                               className="input-field !py-1.5 text-sm"
@@ -493,7 +495,7 @@ export default function VeiculosEmServico() {
                               onBlur={() => setAssignForm(null)}
                               autoFocus
                             >
-                              <option value="">Nenhum</option>
+                              <option value="">{t('nenhum')}</option>
                               {funcionarios.map((f) => (
                                 <option key={f.id} value={f.id}>
                                   {f.profile?.nome || f.profile?.email} {f.especialidade ? `(${f.especialidade})` : ''}
@@ -506,8 +508,8 @@ export default function VeiculosEmServico() {
                               className="text-sm text-primary-600 hover:text-primary-700 font-medium"
                             >
                               {evento.funcionario
-                                ? `${evento.funcionario.profile?.nome} (trocar)`
-                                : '+ Atribuir mecânico'}
+                                ? t('trocarMecanico', { nome: evento.funcionario.profile?.nome || '' })
+                                : t('atribuirMecanico')}
                             </button>
                           )}
                         </div>
@@ -517,10 +519,10 @@ export default function VeiculosEmServico() {
                     {/* Maintenance timeline */}
                     <div className="mt-6">
                       <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                        Histórico da Manutenção
+                        {t('historicoManutencao')}
                       </h4>
                       {etapas.length === 0 ? (
-                        <p className="text-sm text-gray-400">Nenhuma etapa registrada</p>
+                        <p className="text-sm text-gray-400">{t('nenhumaEtapaRegistrada')}</p>
                       ) : (
                         <div className="relative pl-6 space-y-3">
                           {/* Timeline line */}
@@ -543,7 +545,7 @@ export default function VeiculosEmServico() {
                                     <p className="text-xs text-gray-600 mt-1">{etapa.observacao}</p>
                                   )}
                                   {etapa.funcionario?.profile?.nome && (
-                                    <p className="text-xs text-gray-400 mt-0.5">por {etapa.funcionario.profile.nome}</p>
+                                    <p className="text-xs text-gray-400 mt-0.5">{t('porLabel', { nome: etapa.funcionario.profile.nome })}</p>
                                   )}
                                 </div>
                               </div>
@@ -564,7 +566,7 @@ export default function VeiculosEmServico() {
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                           </svg>
-                          Mensagem
+                          {t('mensagem')}
                         </Link>
                       </div>
                     )}
@@ -583,7 +585,7 @@ export default function VeiculosEmServico() {
                 {/* Etapa form (inline) */}
                 {etapaForm?.eventoId === evento.id && (
                   <div className="px-4 pb-4 border-t border-gray-100 pt-3 bg-indigo-50/50">
-                    <h4 className="text-sm font-semibold text-gray-900 mb-3">Registrar Etapa</h4>
+                    <h4 className="text-sm font-semibold text-gray-900 mb-3">{t('registrarEtapa')}</h4>
                     <div className="flex flex-col sm:flex-row gap-3">
                       <select
                         className="input-field !py-2 text-sm flex-1"
@@ -599,7 +601,7 @@ export default function VeiculosEmServico() {
                       <input
                         type="text"
                         className="input-field !py-2 text-sm flex-1"
-                        placeholder="Observação (opcional)"
+                        placeholder={t('placeholderObservacaoOpcional')}
                         value={etapaForm.observacao}
                         onChange={(e) => setEtapaForm({ ...etapaForm, observacao: e.target.value })}
                       />
@@ -609,13 +611,13 @@ export default function VeiculosEmServico() {
                           disabled={actionLoading === evento.id}
                           className="btn-primary !py-2 !px-4 text-sm disabled:opacity-50"
                         >
-                          {actionLoading === evento.id ? '...' : 'Salvar'}
+                          {actionLoading === evento.id ? '...' : t('salvar')}
                         </button>
                         <button
                           onClick={() => setEtapaForm(null)}
                           className="btn-secondary !py-2 !px-4 text-sm"
                         >
-                          Cancelar
+                          {t('cancelar')}
                         </button>
                       </div>
                     </div>

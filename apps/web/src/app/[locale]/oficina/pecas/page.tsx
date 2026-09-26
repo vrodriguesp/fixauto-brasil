@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { formatCurrency, formatDate, timeAgo, distanciaKm } from '@/lib/utils';
@@ -21,6 +22,7 @@ interface CotacaoDeOutraOficina extends Omit<CotacaoPeca, 'oficina'> {
 }
 
 export default function OficinaPecasPage() {
+  const t = useTranslations('oficinaPecas');
   const { oficina, refreshProfile } = useAuth();
   const [tab, setTab] = useState<'comprar' | 'vender'>('comprar');
 
@@ -84,8 +86,8 @@ export default function OficinaPecasPage() {
     resposta: CotacaoComRespostas['respostas'][number]
   ) => {
     if (!oficina) return;
-    const nomeFornecedor = resposta.loja?.nome_fantasia || resposta.oficina_fornecedora?.nome_fantasia || 'fornecedor';
-    if (!confirm(`Confirmar pedido de "${cotacao.peca_descricao}" por ${formatCurrency(resposta.preco)} com ${nomeFornecedor}? O pagamento e entrega são combinados diretamente com quem vende.`)) return;
+    const nomeFornecedor = resposta.loja?.nome_fantasia || resposta.oficina_fornecedora?.nome_fantasia || t('fornecedorFallback');
+    if (!confirm(t('confirmarPedido', { peca: cotacao.peca_descricao, preco: formatCurrency(resposta.preco), fornecedor: nomeFornecedor }))) return;
     setConfirmandoId(resposta.id);
 
     await supabase.from('pedidos_pecas').insert({
@@ -113,8 +115,8 @@ export default function OficinaPecasPage() {
         await supabase.from('notificacoes').insert({
           profile_id: fornecedor.profile_id,
           tipo: 'pedido_peca_confirmado',
-          titulo: 'Pedido de peça confirmado!',
-          mensagem: `${oficina.nome_fantasia} confirmou o pedido de "${cotacao.peca_descricao}"`,
+          titulo: t('notifPedidoConfirmadoTitulo'),
+          mensagem: t('notifPedidoConfirmadoMensagem', { oficina: oficina.nome_fantasia, peca: cotacao.peca_descricao }),
           dados: { cotacao_id: cotacao.id },
         });
         const fornecedorProfile = (fornecedor as any).profile;
@@ -264,56 +266,56 @@ export default function OficinaPecasPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Peças</h1>
-        <p className="text-gray-600 mt-1">Cotações de peças com lojas parceiras e oficinas vizinhas</p>
+        <h1 className="text-2xl font-bold text-gray-900">{t('titulo')}</h1>
+        <p className="text-gray-600 mt-1">{t('subtitulo')}</p>
       </div>
 
       <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-6 w-fit">
         <button onClick={() => setTab('comprar')} className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${tab === 'comprar' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}>
-          Comprar
+          {t('tabComprar')}
         </button>
         <button onClick={() => setTab('vender')} className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${tab === 'vender' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}>
-          Vender excedente
+          {t('tabVenderExcedente')}
         </button>
       </div>
 
       {tab === 'comprar' ? (
         <>
           <div className="flex justify-end mb-4">
-            <button onClick={() => setShowForm(true)} className="btn-primary">+ Nova Cotação</button>
+            <button onClick={() => setShowForm(true)} className="btn-primary">{t('novaCotacao')}</button>
           </div>
 
           {showForm && (
             <div className="card mb-6">
-              <h2 className="font-semibold text-gray-900 mb-4">Solicitar Cotação de Peça</h2>
+              <h2 className="font-semibold text-gray-900 mb-4">{t('solicitarCotacaoPeca')}</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">O que você precisa? *</label>
-                  <input type="text" className="input-field" placeholder="Ex: Farol dianteiro direito" value={form.peca_descricao} onChange={(e) => setForm({ ...form, peca_descricao: e.target.value })} />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('oQueVocePrecisa')}</label>
+                  <input type="text" className="input-field" placeholder={t('placeholderFarol')} value={form.peca_descricao} onChange={(e) => setForm({ ...form, peca_descricao: e.target.value })} />
                 </div>
                 <div className="grid sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('marca')}</label>
                     <input type="text" className="input-field" placeholder="Fiat" value={form.fipe_marca} onChange={(e) => setForm({ ...form, fipe_marca: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Modelo</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('modelo')}</label>
                     <input type="text" className="input-field" placeholder="Argo" value={form.fipe_modelo} onChange={(e) => setForm({ ...form, fipe_modelo: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Ano</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('ano')}</label>
                     <input type="text" className="input-field" placeholder="2020" value={form.fipe_ano} onChange={(e) => setForm({ ...form, fipe_ano: e.target.value })} />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Quantidade</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('quantidade')}</label>
                   <input type="number" className="input-field !w-24" value={form.quantidade} onChange={(e) => setForm({ ...form, quantidade: e.target.value })} />
                 </div>
               </div>
               <div className="flex justify-end gap-3 mt-6">
-                <button onClick={() => setShowForm(false)} className="btn-secondary">Cancelar</button>
+                <button onClick={() => setShowForm(false)} className="btn-secondary">{t('cancelar')}</button>
                 <button onClick={handleCriar} disabled={saving || !form.peca_descricao} className="btn-primary disabled:opacity-50">
-                  {saving ? 'Enviando...' : 'Enviar cotação'}
+                  {saving ? t('enviando') : t('enviarCotacao')}
                 </button>
               </div>
             </div>
@@ -321,7 +323,7 @@ export default function OficinaPecasPage() {
 
           {cotacoes.length === 0 ? (
             <div className="card text-center py-12">
-              <p className="text-gray-500">Nenhuma cotação de peça ainda</p>
+              <p className="text-gray-500">{t('nenhumaCotacaoAinda')}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -331,7 +333,7 @@ export default function OficinaPecasPage() {
                     <div>
                       <p className="font-medium text-gray-900">{c.peca_descricao}</p>
                       {(c.fipe_marca || c.fipe_modelo) && (
-                        <p className="text-sm text-gray-500">{c.fipe_marca} {c.fipe_modelo} {c.fipe_ano} · Qtd: {c.quantidade}</p>
+                        <p className="text-sm text-gray-500">{c.fipe_marca} {c.fipe_modelo} {c.fipe_ano} · {t('qtd')}: {c.quantidade}</p>
                       )}
                     </div>
                     <div className="text-right flex-shrink-0">
@@ -341,7 +343,7 @@ export default function OficinaPecasPage() {
                         c.status === 'cancelada' ? 'bg-gray-100 text-gray-600' :
                         'bg-yellow-100 text-yellow-700'
                       }`}>
-                        {c.status === 'aberta' ? 'Aguardando respostas' : c.status === 'respondida' ? 'Respondida' : c.status === 'fechada' ? 'Pedido confirmado' : 'Cancelada'}
+                        {c.status === 'aberta' ? t('aguardandoRespostas') : c.status === 'respondida' ? t('respondida') : c.status === 'fechada' ? t('pedidoConfirmado') : t('cancelada')}
                       </span>
                       <p className="text-xs text-gray-400 mt-1">{timeAgo(c.created_at)}</p>
                     </div>
@@ -355,17 +357,17 @@ export default function OficinaPecasPage() {
                             <p className="text-sm font-medium text-gray-900">
                               {r.loja?.nome_fantasia || r.oficina_fornecedora?.nome_fantasia}
                               {r.fornecedor_tipo === 'oficina' && (
-                                <span className="ml-1.5 text-[10px] font-semibold text-sky-700 bg-sky-100 px-1.5 py-0.5 rounded-full align-middle">OFICINA</span>
+                                <span className="ml-1.5 text-[10px] font-semibold text-sky-700 bg-sky-100 px-1.5 py-0.5 rounded-full align-middle">{t('oficinaTag')}</span>
                               )}
                             </p>
                             <p className="text-sm text-gray-600">
-                              {formatCurrency(r.preco)} {c.quantidade > 1 && `x ${c.quantidade} = ${formatCurrency(r.preco * c.quantidade)}`} · Prazo: {r.prazo_dias} dia(s)
+                              {formatCurrency(r.preco)} {c.quantidade > 1 && `x ${c.quantidade} = ${formatCurrency(r.preco * c.quantidade)}`} · {t('prazoDias', { dias: r.prazo_dias })}
                             </p>
                             {r.observacao && <p className="text-xs text-gray-500 mt-0.5">{r.observacao}</p>}
                           </div>
                           <div className="flex items-center gap-2 flex-shrink-0">
                             <Link href={`/oficina/pecas/conversa/${r.id}`} className="text-xs font-medium text-primary-600 hover:underline">
-                              Conversar
+                              {t('conversar')}
                             </Link>
                             {c.status !== 'fechada' && (
                               <button
@@ -373,7 +375,7 @@ export default function OficinaPecasPage() {
                                 disabled={confirmandoId === r.id}
                                 className="btn-primary !py-1.5 !px-3 text-sm disabled:opacity-50"
                               >
-                                {confirmandoId === r.id ? 'Confirmando...' : 'Confirmar pedido'}
+                                {confirmandoId === r.id ? t('confirmando') : t('confirmarPedidoBtn')}
                               </button>
                             )}
                           </div>
@@ -390,9 +392,9 @@ export default function OficinaPecasPage() {
         <>
           <div className="card mb-6 flex items-center justify-between gap-4">
             <div>
-              <h2 className="font-semibold text-gray-900">Vender peças excedentes</h2>
+              <h2 className="font-semibold text-gray-900">{t('venderPecasExcedentes')}</h2>
               <p className="text-sm text-gray-500 mt-1">
-                Ative pra receber avisos quando uma oficina num raio de {oficina.raio_atendimento_km || 30}km precisar de uma peça, e responder com o que você tem sobrando no estoque.
+                {t('ativeParaReceberAvisos', { raio: oficina.raio_atendimento_km || 30 })}
               </p>
             </div>
             <button
@@ -406,13 +408,13 @@ export default function OficinaPecasPage() {
 
           {!vendePecas ? (
             <div className="card text-center py-12">
-              <p className="text-gray-500">Ative a opção acima pra começar a ver cotações de oficinas vizinhas</p>
+              <p className="text-gray-500">{t('ativeOpcaoAcima')}</p>
             </div>
           ) : (
             <>
           {pedidosFornecedora.length > 0 && (
             <div className="card mb-6">
-              <h2 className="font-semibold text-gray-900 mb-3">Meus pedidos como fornecedora</h2>
+              <h2 className="font-semibold text-gray-900 mb-3">{t('meusPedidosComoFornecedora')}</h2>
               <div className="space-y-2">
                 {pedidosFornecedora.map((p) => (
                   <div key={p.id} className="flex items-center justify-between gap-3 bg-gray-50 rounded-lg p-3">
@@ -424,14 +426,14 @@ export default function OficinaPecasPage() {
                     </div>
                     <div className="flex items-center gap-3 flex-shrink-0">
                       <Link href={`/oficina/pecas/conversa/${p.resposta_id}`} className="text-xs text-primary-600 hover:underline font-medium">
-                        Conversar
+                        {t('conversar')}
                       </Link>
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${p.status === 'entregue' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                        {p.status === 'entregue' ? 'Entregue' : 'Confirmado'}
+                        {p.status === 'entregue' ? t('entregue') : t('confirmado')}
                       </span>
                       {p.status === 'confirmado' && (
                         <button onClick={() => handleMarcarEntregueFornecedor(p.id)} disabled={marcandoEntregueId === p.id} className="text-xs text-primary-600 hover:underline font-medium disabled:opacity-50">
-                          {marcandoEntregueId === p.id ? 'Marcando...' : 'Marcar entregue'}
+                          {marcandoEntregueId === p.id ? t('marcando') : t('marcarEntregue')}
                         </button>
                       )}
                     </div>
@@ -442,7 +444,7 @@ export default function OficinaPecasPage() {
           )}
 
           <details className="mb-6">
-            <summary className="cursor-pointer text-sm font-medium text-primary-600 hover:underline">Ver minha comissão como fornecedora</summary>
+            <summary className="cursor-pointer text-sm font-medium text-primary-600 hover:underline">{t('verMinhaComissao')}</summary>
             <div className="mt-4">
               <ComissaoPecasCard fornecedorTipo="oficina" fornecedorId={oficina.id} />
             </div>
@@ -454,7 +456,7 @@ export default function OficinaPecasPage() {
             <div className="animate-pulse h-32 bg-gray-200 rounded-xl" />
           ) : cotacoesVizinhas.length === 0 ? (
             <div className="card text-center py-12">
-              <p className="text-gray-500">Nenhuma cotação aberta de oficinas próximas no momento</p>
+              <p className="text-gray-500">{t('nenhumaCotacaoAbertaVizinhas')}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -469,18 +471,18 @@ export default function OficinaPecasPage() {
                           {c.oficina?.nome_fantasia} - {c.oficina?.cidade}, {c.oficina?.estado} {km != null && `· ${km}km`}
                         </p>
                         {(c.fipe_marca || c.fipe_modelo) && (
-                          <p className="text-sm text-gray-500">Veículo: {c.fipe_marca} {c.fipe_modelo} {c.fipe_ano}</p>
+                          <p className="text-sm text-gray-500">{t('veiculoLabel')}: {c.fipe_marca} {c.fipe_modelo} {c.fipe_ano}</p>
                         )}
-                        <p className="text-sm text-gray-500">Quantidade: {c.quantidade}</p>
+                        <p className="text-sm text-gray-500">{t('quantidadeLabel')}: {c.quantidade}</p>
                       </div>
                       <div className="flex flex-col items-end gap-1 flex-shrink-0">
                         <span className="text-xs text-gray-400">{timeAgo(c.created_at)}</span>
                         {!c.minhaResposta && (
                           <Link
-                            href={`/oficina/pecas/conversa/nova?cotacaoId=${c.id}&compradoraNome=${encodeURIComponent(c.oficina?.nome_fantasia || 'Oficina')}&pecaDescricao=${encodeURIComponent(c.peca_descricao || '')}`}
+                            href={`/oficina/pecas/conversa/nova?cotacaoId=${c.id}&compradoraNome=${encodeURIComponent(c.oficina?.nome_fantasia || t('oficinaFallback'))}&pecaDescricao=${encodeURIComponent(c.peca_descricao || '')}`}
                             className="text-xs font-medium text-primary-600 hover:underline whitespace-nowrap"
                           >
-                            Tirar dúvida
+                            {t('tirarDuvida')}
                           </Link>
                         )}
                       </div>
@@ -489,32 +491,32 @@ export default function OficinaPecasPage() {
                     {c.minhaResposta ? (
                       <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
                         <p className="text-sm text-green-800">
-                          Você respondeu: R$ {c.minhaResposta.preco.toFixed(2)} - prazo {c.minhaResposta.prazo_dias} dia(s)
+                          {t('vocesRespondeu', { preco: c.minhaResposta.preco.toFixed(2), dias: c.minhaResposta.prazo_dias })}
                         </p>
                       </div>
                     ) : respondendoId === c.id ? (
                       <div className="mt-3 space-y-3 border-t pt-3">
                         <div className="grid sm:grid-cols-2 gap-3">
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Preço (R$)</label>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">{t('precoReais')}</label>
                             <input type="number" step="0.01" className="input-field !py-1.5" value={respostaForm.preco} onChange={(e) => setRespostaForm({ ...respostaForm, preco: e.target.value })} />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Prazo (dias)</label>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">{t('prazoDiasLabel')}</label>
                             <input type="number" className="input-field !py-1.5" value={respostaForm.prazo_dias} onChange={(e) => setRespostaForm({ ...respostaForm, prazo_dias: e.target.value })} />
                           </div>
                         </div>
-                        <input type="text" className="input-field !py-1.5" placeholder="Observação (opcional)" value={respostaForm.observacao} onChange={(e) => setRespostaForm({ ...respostaForm, observacao: e.target.value })} />
+                        <input type="text" className="input-field !py-1.5" placeholder={t('placeholderObservacaoOpcional')} value={respostaForm.observacao} onChange={(e) => setRespostaForm({ ...respostaForm, observacao: e.target.value })} />
                         <div className="flex justify-end gap-2">
-                          <button onClick={() => setRespondendoId(null)} className="btn-secondary !py-1.5 !px-3 text-sm">Cancelar</button>
+                          <button onClick={() => setRespondendoId(null)} className="btn-secondary !py-1.5 !px-3 text-sm">{t('cancelar')}</button>
                           <button onClick={() => handleResponderComoOficina(c.id)} disabled={savingResposta || !respostaForm.preco} className="btn-primary !py-1.5 !px-3 text-sm disabled:opacity-50">
-                            {savingResposta ? 'Enviando...' : 'Enviar resposta'}
+                            {savingResposta ? t('enviando') : t('enviarResposta')}
                           </button>
                         </div>
                       </div>
                     ) : (
                       <button onClick={() => setRespondendoId(c.id)} className="btn-primary !py-1.5 !px-3 text-sm mt-2">
-                        Responder cotação
+                        {t('responderCotacao')}
                       </button>
                     )}
                   </div>

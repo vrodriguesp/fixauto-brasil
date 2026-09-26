@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
@@ -13,6 +14,7 @@ import { timeAgo, calcDistance, getUrgenciaColor, formatCurrency, cleanDescricao
 import { Link } from '@/i18n/navigation';
 
 export default function OficinaDashboard() {
+  const t = useTranslations('oficinaDashboard');
   const { user, oficina } = useAuth();
   const { solicitacoes } = useSolicitacoes({ nearby: true });
   const { eventos } = useAgenda();
@@ -60,7 +62,7 @@ export default function OficinaDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            {oficina?.nome_fantasia || 'Dashboard'}
+            {oficina?.nome_fantasia || t('dashboardFallback')}
           </h1>
           <p className="text-gray-600 mt-1">
             {oficina?.endereco}, {oficina?.cidade} - {oficina?.estado}
@@ -75,7 +77,7 @@ export default function OficinaDashboard() {
               <>
                 <StarRating rating={media} size="md" />
                 <span className="text-sm text-gray-500">
-                  {media.toFixed(1)} ({avaliacoes.length} avaliações)
+                  {media.toFixed(1)} ({t('avaliacoesCount', { count: avaliacoes.length })})
                 </span>
               </>
             );
@@ -93,7 +95,7 @@ export default function OficinaDashboard() {
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">{solicitacoesProximas.length}</p>
-            <p className="text-sm text-gray-500">Novas</p>
+            <p className="text-sm text-gray-500">{t('statNovas')}</p>
           </div>
         </Link>
         <Link href="/oficina/veiculos-em-servico" className="card flex items-center gap-4 hover:shadow-md transition-shadow">
@@ -104,7 +106,7 @@ export default function OficinaDashboard() {
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">{solicitacoesAceitas.length}</p>
-            <p className="text-sm text-gray-500">Aceitas</p>
+            <p className="text-sm text-gray-500">{t('statAceitas')}</p>
           </div>
         </Link>
         <Link href="/oficina/veiculos-em-servico" className="card flex items-center gap-4 hover:shadow-md transition-shadow">
@@ -115,7 +117,7 @@ export default function OficinaDashboard() {
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">{solicitacoesConcluidas.length}</p>
-            <p className="text-sm text-gray-500">Concluídas</p>
+            <p className="text-sm text-gray-500">{t('statConcluidas')}</p>
           </div>
         </Link>
         <Link href="/oficina/agenda" className="card flex items-center gap-4 hover:shadow-md transition-shadow">
@@ -126,7 +128,7 @@ export default function OficinaDashboard() {
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900">{eventos.length}</p>
-            <p className="text-sm text-gray-500">Na agenda</p>
+            <p className="text-sm text-gray-500">{t('statNaAgenda')}</p>
           </div>
         </Link>
       </div>
@@ -135,17 +137,17 @@ export default function OficinaDashboard() {
       {proximosCheckins.length > 0 && (
         <div className="card mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Check-in / Check-out - Próximos 7 dias</h2>
-            <Link href="/oficina/agenda" className="text-sm text-primary-600 hover:text-primary-700">Ver agenda completa</Link>
+            <h2 className="text-lg font-semibold text-gray-900">{t('checkinTableTitle')}</h2>
+            <Link href="/oficina/agenda" className="text-sm text-primary-600 hover:text-primary-700">{t('verAgendaCompleta')}</Link>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-gray-500 text-xs border-b">
-                  <th className="text-left pb-3 font-medium">Serviço</th>
-                  <th className="text-left pb-3 font-medium">Check-in</th>
-                  <th className="text-left pb-3 font-medium">Previsão entrega</th>
-                  <th className="text-left pb-3 font-medium">Status</th>
+                  <th className="text-left pb-3 font-medium">{t('colServico')}</th>
+                  <th className="text-left pb-3 font-medium">{t('colCheckin')}</th>
+                  <th className="text-left pb-3 font-medium">{t('colPrevisaoEntrega')}</th>
+                  <th className="text-left pb-3 font-medium">{t('colStatus')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -169,9 +171,9 @@ export default function OficinaDashboard() {
                         ev.status === 'concluido' ? 'bg-green-100 text-green-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
-                        {ev.status === 'agendado' ? 'Agendado' :
-                         ev.status === 'em_andamento' ? 'Em andamento' :
-                         ev.status === 'concluido' ? 'Concluído' : ev.status}
+                        {ev.status === 'agendado' ? t('statusAgendado') :
+                         ev.status === 'em_andamento' ? t('statusEmAndamento') :
+                         ev.status === 'concluido' ? t('statusEntregue') : ev.status}
                       </span>
                     </td>
                   </tr>
@@ -185,7 +187,7 @@ export default function OficinaDashboard() {
       {/* Accepted solicitations */}
       {solicitacoesAceitas.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Solicitações aceitas</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('solicitacoesAceitasTitulo')}</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {solicitacoesAceitas.map((sol) => {
               const orc = sol.orcamentos?.find(o => o.status === 'aceito');
@@ -203,7 +205,7 @@ export default function OficinaDashboard() {
                   <p className="text-sm text-gray-600 line-clamp-1 mb-2">{cleanDescricao(sol.descricao)}</p>
                   {orc && (
                     <div className="flex items-center justify-between text-sm bg-green-50 rounded-lg p-2">
-                      <span className="text-green-700">Orçamento aceito</span>
+                      <span className="text-green-700">{t('orcamentoAceito')}</span>
                       <span className="font-bold text-green-800">{formatCurrency(orc.valor_total)}</span>
                     </div>
                   )}
@@ -216,7 +218,7 @@ export default function OficinaDashboard() {
 
       {solicitacoesNoShow.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Não compareceu</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('naoCompareceuTitulo')}</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {solicitacoesNoShow.map((sol) => {
               const myOrc = sol.orcamentos?.find((o: any) => o.oficina_id === oficina?.id);
@@ -234,19 +236,19 @@ export default function OficinaDashboard() {
                   <p className="text-xs text-gray-500">{sol.cliente?.nome} - {timeAgo(sol.created_at)}</p>
                   <div className="flex gap-2 mt-3">
                     <Link href={`/oficina/enviar-orcamento/${sol.id}`} className="text-xs bg-primary-600 text-white px-3 py-1.5 rounded-lg hover:bg-primary-700 font-medium">
-                      Enviar novas datas
+                      {t('enviarNovasDatas')}
                     </Link>
                     {myOrc && (
                       <button
                         onClick={async (e) => {
                           e.stopPropagation();
-                          if (!confirm('Retirar orçamento? O cliente não verá mais sua oferta.')) return;
+                          if (!confirm(t('confirmRetirarOrcamento'))) return;
                           await supabase.from('orcamentos').update({ status: 'recusado' }).eq('id', myOrc.id);
                           window.location.reload();
                         }}
                         className="text-xs bg-red-50 text-red-700 px-3 py-1.5 rounded-lg hover:bg-red-100 font-medium"
                       >
-                        Retirar orçamento
+                        {t('retirarOrcamento')}
                       </button>
                     )}
                   </div>
@@ -261,14 +263,14 @@ export default function OficinaDashboard() {
         {/* Nearby requests */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Solicitações próximas</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t('solicitacoesProximasTitulo')}</h2>
             <Link href="/oficina/solicitacoes" className="text-sm text-primary-600 hover:text-primary-700">
-              Ver todas
+              {t('verTodas')}
             </Link>
           </div>
           {solicitacoesProximas.length === 0 ? (
             <div className="card text-center py-8">
-              <p className="text-gray-500">Nenhuma solicitação nova na sua região</p>
+              <p className="text-gray-500">{t('nenhumaSolicitacaoNova')}</p>
             </div>
           ) : (
             solicitacoesProximas.slice(0, 5).map((sol) => {
@@ -296,7 +298,7 @@ export default function OficinaDashboard() {
                         <span>{dist.toFixed(1)}km</span>
                         <span>{timeAgo(sol.created_at)}</span>
                         {sol.fotos && sol.fotos.length > 0 && (
-                          <span>{sol.fotos.length} foto(s)</span>
+                          <span>{t('fotosCount', { count: sol.fotos.length })}</span>
                         )}
                       </div>
                     </div>
@@ -315,13 +317,13 @@ export default function OficinaDashboard() {
           {/* Upcoming agenda */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Próximos serviços</h2>
+              <h2 className="text-lg font-semibold text-gray-900">{t('proximosServicosTitulo')}</h2>
               <Link href="/oficina/agenda" className="text-sm text-primary-600 hover:text-primary-700">
-                Ver agenda
+                {t('verAgenda')}
               </Link>
             </div>
             {eventos.length === 0 ? (
-              <p className="text-sm text-gray-500">Nenhum serviço agendado</p>
+              <p className="text-sm text-gray-500">{t('nenhumServicoAgendado')}</p>
             ) : (
               <div className="space-y-3">
                 {eventos.slice(0, 3).map((ag) => (
@@ -331,7 +333,7 @@ export default function OficinaDashboard() {
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-xs text-gray-500">{formatDateShort(ag.data_inicio)}</span>
                       <span className={`badge ${ag.tipo === 'plataforma' ? 'bg-primary-100 text-primary-800' : 'bg-gray-100 text-gray-800'}`}>
-                        {ag.tipo === 'plataforma' ? 'Plataforma' : 'Externo'}
+                        {ag.tipo === 'plataforma' ? t('tipoPlataforma') : t('tipoExterno')}
                       </span>
                     </div>
                   </div>
@@ -343,13 +345,13 @@ export default function OficinaDashboard() {
           {/* Recent reviews */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Avaliações recentes</h2>
+              <h2 className="text-lg font-semibold text-gray-900">{t('avaliacoesRecentesTitulo')}</h2>
               <Link href="/oficina/avaliacoes" className="text-sm text-primary-600 hover:text-primary-700">
-                Ver todas
+                {t('verTodas')}
               </Link>
             </div>
             {avaliacoes.length === 0 ? (
-              <p className="text-sm text-gray-500">Nenhuma avaliação ainda</p>
+              <p className="text-sm text-gray-500">{t('nenhumaAvaliacaoAinda')}</p>
             ) : (
               <div className="space-y-3">
                 {avaliacoes.map((av) => (

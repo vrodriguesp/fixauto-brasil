@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -19,6 +20,7 @@ interface RespostaInfo {
 }
 
 export default function OficinaConversaPecaPage() {
+  const t = useTranslations('oficinaPecasConversaDetalhe');
   const { respostaId } = useParams<{ respostaId: string }>();
   const router = useRouter();
   const { oficina } = useAuth();
@@ -43,23 +45,23 @@ export default function OficinaConversaPecaPage() {
   }, [respostaId]);
 
   if (loading || !oficina) {
-    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-400">Carregando conversa...</div>;
+    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-400">{t('carregandoConversa')}</div>;
   }
 
   if (!resposta) {
-    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">Conversa não encontrada.</div>;
+    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">{t('conversaNaoEncontrada')}</div>;
   }
 
   const souFornecedor = resposta.fornecedor_tipo === 'oficina' && resposta.oficina_fornecedora_id === oficina.id;
   const outraParteNome = souFornecedor
-    ? resposta.cotacao?.oficina?.nome_fantasia || 'Oficina'
+    ? resposta.cotacao?.oficina?.nome_fantasia || t('oficinaFallback')
     : resposta.fornecedor_tipo === 'loja'
-      ? resposta.loja?.nome_fantasia || 'Loja de peças'
-      : resposta.oficina_fornecedora?.nome_fantasia || 'Oficina fornecedora';
+      ? resposta.loja?.nome_fantasia || t('lojaDePecasFallback')
+      : resposta.oficina_fornecedora?.nome_fantasia || t('oficinaFornecedoraFallback');
 
   const fornecedorId = resposta.loja_id || resposta.oficina_fornecedora_id;
   if (!fornecedorId) {
-    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">Conversa inválida.</div>;
+    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">{t('conversaInvalida')}</div>;
   }
 
   return (
@@ -69,7 +71,7 @@ export default function OficinaConversaPecaPage() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          Voltar
+          {t('voltar')}
         </button>
       </div>
       <ChatCotacaoPeca

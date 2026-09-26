@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { formatCurrency } from '@/lib/utils';
@@ -27,6 +28,7 @@ interface Lancamento {
 }
 
 export default function ComissaoPage() {
+  const t = useTranslations('oficinaComissao');
   const { oficina } = useAuth();
   const [config, setConfig] = useState<ComissaoInfo | null>(null);
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
@@ -66,35 +68,35 @@ export default function ComissaoPage() {
     const C = COMISSAO_CONFIG;
 
     if (config.media_tempo_resposta_horas > 0 && config.media_tempo_resposta_horas < 2) {
-      items.push({ label: 'Resposta rápida (< 2h)', bonus: C.BONUS_RESPOSTA_2H, value: `${config.media_tempo_resposta_horas.toFixed(1)}h`, color: 'green' });
+      items.push({ label: t('bonusRespostaRapida'), bonus: C.BONUS_RESPOSTA_2H, value: `${config.media_tempo_resposta_horas.toFixed(1)}h`, color: 'green' });
     } else if (config.media_tempo_resposta_horas > 0 && config.media_tempo_resposta_horas < 4) {
-      items.push({ label: 'Resposta boa (< 4h)', bonus: C.BONUS_RESPOSTA_4H, value: `${config.media_tempo_resposta_horas.toFixed(1)}h`, color: 'green' });
+      items.push({ label: t('bonusRespostaBoa'), bonus: C.BONUS_RESPOSTA_4H, value: `${config.media_tempo_resposta_horas.toFixed(1)}h`, color: 'green' });
     } else {
-      items.push({ label: 'Tempo de resposta', bonus: 0, value: config.media_tempo_resposta_horas > 0 ? `${config.media_tempo_resposta_horas.toFixed(1)}h` : 'N/A', color: 'gray' });
+      items.push({ label: t('bonusTempoResposta'), bonus: 0, value: config.media_tempo_resposta_horas > 0 ? `${config.media_tempo_resposta_horas.toFixed(1)}h` : 'N/A', color: 'gray' });
     }
 
     if (config.media_revisoes_orcamento < 1.0) {
-      items.push({ label: 'Pouquíssimas revisões (< 1)', bonus: C.BONUS_REVISAO_1_5 + C.BONUS_REVISAO_1_0, value: config.media_revisoes_orcamento.toFixed(1), color: 'green' });
+      items.push({ label: t('bonusPouquissimasRevisoes'), bonus: C.BONUS_REVISAO_1_5 + C.BONUS_REVISAO_1_0, value: config.media_revisoes_orcamento.toFixed(1), color: 'green' });
     } else if (config.media_revisoes_orcamento < 1.5) {
-      items.push({ label: 'Poucas revisões (< 1.5)', bonus: C.BONUS_REVISAO_1_5, value: config.media_revisoes_orcamento.toFixed(1), color: 'green' });
+      items.push({ label: t('bonusPoucasRevisoes'), bonus: C.BONUS_REVISAO_1_5, value: config.media_revisoes_orcamento.toFixed(1), color: 'green' });
     } else {
-      items.push({ label: 'Revisões de orçamento', bonus: 0, value: config.media_revisoes_orcamento.toFixed(1), color: 'gray' });
+      items.push({ label: t('bonusRevisoesOrcamento'), bonus: 0, value: config.media_revisoes_orcamento.toFixed(1), color: 'gray' });
     }
 
     if (config.media_avaliacao_clientes >= 4.5) {
-      items.push({ label: 'Avaliação excelente (≥ 4.5)', bonus: C.BONUS_AVALIACAO_4_5, value: config.media_avaliacao_clientes.toFixed(1), color: 'green' });
+      items.push({ label: t('bonusAvaliacaoExcelente'), bonus: C.BONUS_AVALIACAO_4_5, value: config.media_avaliacao_clientes.toFixed(1), color: 'green' });
     } else if (config.media_avaliacao_clientes >= 4.0) {
-      items.push({ label: 'Boa avaliação (≥ 4.0)', bonus: C.BONUS_AVALIACAO_4_0, value: config.media_avaliacao_clientes.toFixed(1), color: 'green' });
+      items.push({ label: t('bonusBoaAvaliacao'), bonus: C.BONUS_AVALIACAO_4_0, value: config.media_avaliacao_clientes.toFixed(1), color: 'green' });
     } else {
-      items.push({ label: 'Avaliação dos clientes', bonus: 0, value: config.media_avaliacao_clientes > 0 ? config.media_avaliacao_clientes.toFixed(1) : 'N/A', color: 'gray' });
+      items.push({ label: t('bonusAvaliacaoClientes'), bonus: 0, value: config.media_avaliacao_clientes > 0 ? config.media_avaliacao_clientes.toFixed(1) : 'N/A', color: 'gray' });
     }
 
     if (config.total_servicos_concluidos >= 25) {
-      items.push({ label: 'Fidelidade (≥ 25 serviços/90d)', bonus: 0.02, value: `${config.total_servicos_concluidos}`, color: 'green' });
+      items.push({ label: t('bonusFidelidade25'), bonus: 0.02, value: `${config.total_servicos_concluidos}`, color: 'green' });
     } else if (config.total_servicos_concluidos >= 10) {
-      items.push({ label: 'Fidelidade (≥ 10 serviços/90d)', bonus: 0.01, value: `${config.total_servicos_concluidos}`, color: 'green' });
+      items.push({ label: t('bonusFidelidade10'), bonus: 0.01, value: `${config.total_servicos_concluidos}`, color: 'green' });
     } else {
-      items.push({ label: 'Fidelidade (volume/90d)', bonus: 0, value: `${config.total_servicos_concluidos}`, color: 'gray' });
+      items.push({ label: t('bonusFidelidadeVolume'), bonus: 0, value: `${config.total_servicos_concluidos}`, color: 'gray' });
     }
 
     return items;
@@ -117,8 +119,8 @@ export default function ComissaoPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Comissão BipFix</h1>
-      <p className="text-gray-600 mb-8">Sua taxa de comissão e como reduzi-la</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('titulo')}</h1>
+      <p className="text-gray-600 mb-8">{t('subtitulo')}</p>
 
       {/* Current rate */}
       <div className="grid sm:grid-cols-3 gap-4 mb-8">
@@ -126,24 +128,24 @@ export default function ComissaoPage() {
           <p className="text-4xl font-bold" style={{ color: taxa <= 0.08 ? '#16a34a' : taxa <= 0.12 ? '#ca8a04' : '#dc2626' }}>
             {(taxa * 100).toFixed(1)}%
           </p>
-          <p className="text-sm text-gray-500 mt-1">Sua taxa atual</p>
+          <p className="text-sm text-gray-500 mt-1">{t('suaTaxaAtual')}</p>
         </div>
         <div className="card text-center">
           <p className="text-2xl font-bold text-orange-600">{formatCurrency(totalPendente)}</p>
-          <p className="text-sm text-gray-500 mt-1">Pendente</p>
+          <p className="text-sm text-gray-500 mt-1">{t('pendente')}</p>
         </div>
         <div className="card text-center">
           <p className="text-2xl font-bold text-green-600">{formatCurrency(totalPago)}</p>
-          <p className="text-sm text-gray-500 mt-1">Pago</p>
+          <p className="text-sm text-gray-500 mt-1">{t('pago')}</p>
         </div>
       </div>
 
       {/* Breakdown */}
       <div className="card mb-8">
-        <h2 className="font-semibold text-gray-900 mb-4">Como sua taxa é calculada</h2>
+        <h2 className="font-semibold text-gray-900 mb-4">{t('comoTaxaCalculada')}</h2>
         <div className="space-y-4">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">Taxa base</span>
+            <span className="text-gray-600">{t('taxaBase')}</span>
             <span className="font-bold text-gray-900">{(COMISSAO_CONFIG.TAXA_BASE * 100).toFixed(0)}%</span>
           </div>
 
@@ -166,7 +168,7 @@ export default function ComissaoPage() {
           ))}
 
           <div className="border-t pt-3 flex items-center justify-between">
-            <span className="font-semibold text-gray-900">Sua taxa final</span>
+            <span className="font-semibold text-gray-900">{t('suaTaxaFinal')}</span>
             <span className="text-xl font-bold" style={{ color: taxa <= 0.08 ? '#16a34a' : taxa <= 0.12 ? '#ca8a04' : '#dc2626' }}>
               {(taxa * 100).toFixed(1)}%
             </span>
@@ -175,28 +177,28 @@ export default function ComissaoPage() {
 
         <div className="mt-4 bg-blue-50 rounded-lg p-3">
           <p className="text-xs text-blue-800">
-            <strong>Dica:</strong> Para reduzir sua comissão, responda solicitações rapidamente, evite revisões de orçamento e peça avaliações aos clientes.
-            A taxa varia de {(COMISSAO_CONFIG.TAXA_MIN * 100).toFixed(0)}% a {(COMISSAO_CONFIG.TAXA_MAX * 100).toFixed(0)}%.
+            <strong>{t('dicaLabel')}</strong> {t('dicaTexto')}
+            {' '}{t('taxaVaria', { min: (COMISSAO_CONFIG.TAXA_MIN * 100).toFixed(0), max: (COMISSAO_CONFIG.TAXA_MAX * 100).toFixed(0) })}
           </p>
         </div>
       </div>
 
       {/* Ledger */}
       <div className="card">
-        <h2 className="font-semibold text-gray-900 mb-4">Extrato de Comissões</h2>
+        <h2 className="font-semibold text-gray-900 mb-4">{t('extratoComissoes')}</h2>
         {lancamentos.length === 0 ? (
-          <p className="text-sm text-gray-500 text-center py-8">Nenhuma comissão registrada ainda</p>
+          <p className="text-sm text-gray-500 text-center py-8">{t('nenhumaComissaoRegistrada')}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-xs text-gray-500 border-b">
-                  <th className="text-left py-2 font-medium">Data</th>
-                  <th className="text-left py-2 font-medium">Serviço</th>
-                  <th className="text-right py-2 font-medium">Valor</th>
-                  <th className="text-right py-2 font-medium">Taxa</th>
-                  <th className="text-right py-2 font-medium">Comissão</th>
-                  <th className="text-right py-2 font-medium">Status</th>
+                  <th className="text-left py-2 font-medium">{t('colData')}</th>
+                  <th className="text-left py-2 font-medium">{t('colServico')}</th>
+                  <th className="text-right py-2 font-medium">{t('colValor')}</th>
+                  <th className="text-right py-2 font-medium">{t('colTaxa')}</th>
+                  <th className="text-right py-2 font-medium">{t('colComissao')}</th>
+                  <th className="text-right py-2 font-medium">{t('colStatus')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -214,7 +216,7 @@ export default function ComissaoPage() {
                         l.status === 'pendente' ? 'bg-yellow-100 text-yellow-700' :
                         l.status === 'pago' ? 'bg-green-100 text-green-700' :
                         'bg-gray-100 text-gray-600'
-                      }`}>{l.status === 'pendente' ? 'Pendente' : l.status === 'pago' ? 'Pago' : l.status}</span>
+                      }`}>{l.status === 'pendente' ? t('pendente') : l.status === 'pago' ? t('pago') : l.status}</span>
                     </td>
                   </tr>
                 ))}

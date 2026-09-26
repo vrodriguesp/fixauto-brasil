@@ -5,10 +5,12 @@ import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { timeAgo, calcDistance, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import { Link } from '@/i18n/navigation';
 
 export default function SolicitacoesOficinaPage() {
+  const t = useTranslations('oficinaSolicitacoes');
   const { oficina } = useAuth();
   const [filtroTipo, setFiltroTipo] = useState('todos');
   const [filtroStatus, setFiltroStatus] = useState('todos');
@@ -20,9 +22,9 @@ export default function SolicitacoesOficinaPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Solicitações</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('titulo')}</h1>
       <p className="text-gray-600 mb-6">
-        Solicitações de reparo próximas à sua oficina (raio de {oficina?.raio_atendimento_km}km)
+        {t('subtitulo', { raio: oficina?.raio_atendimento_km ?? 0 })}
       </p>
 
       {/* Filters */}
@@ -32,9 +34,9 @@ export default function SolicitacoesOficinaPage() {
           value={filtroTipo}
           onChange={(e) => setFiltroTipo(e.target.value)}
         >
-          <option value="todos">Todos os tipos</option>
-          {TIPOS_SERVICO.map((t) => (
-            <option key={t.value} value={t.value}>{t.label}</option>
+          <option value="todos">{t('todosOsTipos')}</option>
+          {TIPOS_SERVICO.map((tipo) => (
+            <option key={tipo.value} value={tipo.value}>{tipo.label}</option>
           ))}
         </select>
         <select
@@ -42,16 +44,16 @@ export default function SolicitacoesOficinaPage() {
           value={filtroStatus}
           onChange={(e) => setFiltroStatus(e.target.value)}
         >
-          <option value="todos">Todos os status</option>
-          <option value="aberta">Aberta</option>
-          <option value="em_orcamento">Em Orçamento</option>
+          <option value="todos">{t('todosOsStatus')}</option>
+          <option value="aberta">{t('aberta')}</option>
+          <option value="em_orcamento">{t('emOrcamento')}</option>
         </select>
       </div>
 
       {/* List */}
       {solicitacoes.length === 0 ? (
         <div className="card text-center py-12">
-          <p className="text-gray-500">Nenhuma solicitação encontrada com esses filtros</p>
+          <p className="text-gray-500">{t('nenhumaSolicitacaoEncontrada')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -96,7 +98,7 @@ export default function SolicitacoesOficinaPage() {
                   </div>
                   <div className="flex items-center gap-2 ml-4">
                     <span className="btn-primary !py-2 !px-4 text-sm">
-                      Enviar Orçamento
+                      {t('enviarOrcamento')}
                     </span>
                   </div>
                 </div>

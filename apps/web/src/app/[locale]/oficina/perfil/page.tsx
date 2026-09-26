@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { compressImage } from '@/lib/image-compress';
@@ -8,6 +9,7 @@ import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
 import { TIPOS_SERVICO, ESTADOS_BRASIL } from '@fixauto/shared';
 
 export default function PerfilOficinaPage() {
+  const t = useTranslations('oficinaPerfil');
   const { user, oficina, loading, refreshProfile } = useAuth();
 
   const [nomeFantasia, setNomeFantasia] = useState('');
@@ -37,7 +39,7 @@ export default function PerfilOficinaPage() {
     const resultado = await buscarEnderecoPorCep(formatted);
     setBuscandoCep(false);
     if (!resultado) {
-      setCepErro('CEP não encontrado - confira o número ou preencha manualmente');
+      setCepErro(t('cepNaoEncontrado'));
       return;
     }
     setEndereco(resultado.logradouro || endereco);
@@ -64,10 +66,10 @@ export default function PerfilOficinaPage() {
   const [capacidade, setCapacidade] = useState<Record<string, number>>({});
 
   const DIAS = [
-    { key: 'seg', label: 'Segunda' }, { key: 'ter', label: 'Terça' },
-    { key: 'qua', label: 'Quarta' }, { key: 'qui', label: 'Quinta' },
-    { key: 'sex', label: 'Sexta' }, { key: 'sab', label: 'Sábado' },
-    { key: 'dom', label: 'Domingo' },
+    { key: 'seg', label: t('segunda') }, { key: 'ter', label: t('terca') },
+    { key: 'qua', label: t('quarta') }, { key: 'qui', label: t('quinta') },
+    { key: 'sex', label: t('sexta') }, { key: 'sab', label: t('sabado') },
+    { key: 'dom', label: t('domingo') },
   ];
 
   useEffect(() => {
@@ -227,7 +229,7 @@ export default function PerfilOficinaPage() {
   if (loading || !user) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
-        <div className="animate-pulse text-gray-400">Carregando perfil...</div>
+        <div className="animate-pulse text-gray-400">{t('carregandoPerfil')}</div>
       </div>
     );
   }
@@ -243,7 +245,7 @@ export default function PerfilOficinaPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Perfil da Oficina</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('titulo')}</h1>
         {oficina && (
           <div className="flex items-center gap-2">
             <a
@@ -256,7 +258,7 @@ export default function PerfilOficinaPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
-              Ver página pública
+              {t('verPaginaPublica')}
             </a>
             <button
               onClick={handleCopyLink}
@@ -265,7 +267,7 @@ export default function PerfilOficinaPage() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
               </svg>
-              {copied ? 'Link copiado!' : 'Compartilhar'}
+              {copied ? t('linkCopiado') : t('compartilhar')}
             </button>
           </div>
         )}
@@ -278,13 +280,13 @@ export default function PerfilOficinaPage() {
       )}
       {success && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
-          <p className="text-sm text-green-800">Alterações salvas com sucesso!</p>
+          <p className="text-sm text-green-800">{t('alteracoesSalvas')}</p>
         </div>
       )}
 
       {/* Logo */}
       <div className="card mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Logo da Oficina</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('logoDaOficina')}</h2>
         <div className="flex items-center gap-6">
           <div className="relative">
             {logoUrl ? (
@@ -298,42 +300,42 @@ export default function PerfilOficinaPage() {
           <div>
             <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
             <button onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo} className="btn-secondary !py-2 !px-4 text-sm">
-              {uploadingLogo ? 'Enviando...' : logoUrl ? 'Trocar logo' : 'Adicionar logo'}
+              {uploadingLogo ? t('enviando') : logoUrl ? t('trocarLogo') : t('adicionarLogo')}
             </button>
-            <p className="text-xs text-gray-500 mt-1">Aparece no perfil público e nas solicitações</p>
+            <p className="text-xs text-gray-500 mt-1">{t('apareceNoPerfilPublico')}</p>
           </div>
         </div>
       </div>
 
       {/* Workshop info */}
       <div className="card mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Dados da oficina</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('dadosDaOficina')}</h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nome fantasia</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('nomeFantasia')}</label>
             <input type="text" className="input-field" value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">CNPJ</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('cnpj')}</label>
             <input type="text" className="input-field" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('cep')}</label>
             <input type="text" inputMode="numeric" maxLength={9} className="input-field !w-40" placeholder="00000-000" value={cep} onChange={(e) => handleCepChange(e.target.value)} />
-            {buscandoCep && <p className="text-xs text-gray-400 mt-1">Buscando endereço...</p>}
+            {buscandoCep && <p className="text-xs text-gray-400 mt-1">{t('buscandoEndereco')}</p>}
             {cepErro && <p className="text-xs text-red-500 mt-1">{cepErro}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
-            <input type="text" className="input-field" placeholder="Rua, número" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('endereco')}</label>
+            <input type="text" className="input-field" placeholder={t('placeholderRuaNumero')} value={endereco} onChange={(e) => setEndereco(e.target.value)} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('cidade')}</label>
               <input type="text" className="input-field" value={cidade} onChange={(e) => setCidade(e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('estado')}</label>
               <select className="input-field" value={estado} onChange={(e) => setEstado(e.target.value)}>
                 {ESTADOS_BRASIL.map((e) => (
                   <option key={e} value={e}>{e}</option>
@@ -343,7 +345,7 @@ export default function PerfilOficinaPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Raio de atendimento (km)
+              {t('raioDeAtendimento')}
             </label>
             <input type="number" className="input-field" value={raio} onChange={(e) => setRaio(Number(e.target.value))} />
           </div>
@@ -352,9 +354,9 @@ export default function PerfilOficinaPage() {
 
       {/* Specialties */}
       <div className="card mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">Especialidades</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('especialidades')}</h2>
         <p className="text-sm text-gray-500 mb-4">
-          Selecione os serviços que sua oficina oferece. Você só receberá solicitações compatíveis.
+          {t('selecioneServicos')}
         </p>
         <div className="grid grid-cols-2 gap-3">
           {TIPOS_SERVICO.map((t) => {
@@ -380,7 +382,7 @@ export default function PerfilOficinaPage() {
         </div>
         {especialidades.length > 0 && (
           <p className="text-xs text-primary-600 mt-3">
-            {especialidades.length} serviço(s) selecionado(s)
+            {t('servicosSelecionados', { count: especialidades.length })}
           </p>
         )}
       </div>
@@ -388,32 +390,32 @@ export default function PerfilOficinaPage() {
       {/* Capacity per service type */}
       {especialidades.length > 0 && (
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Capacidade por Serviço</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('capacidadePorServico')}</h2>
           <p className="text-sm text-gray-500 mb-4">
-            Defina o número máximo de carros que sua oficina pode atender simultaneamente por tipo de serviço.
+            {t('defineNumeroMaximoCarros')}
           </p>
           <div className="space-y-3">
-            {TIPOS_SERVICO.filter((t) => especialidades.includes(t.value)).map((t) => (
-              <div key={t.value} className="flex items-center gap-4">
+            {TIPOS_SERVICO.filter((svc) => especialidades.includes(svc.value)).map((svc) => (
+              <div key={svc.value} className="flex items-center gap-4">
                 <div className="flex items-center gap-2 w-48">
-                  <span className="text-lg">{t.icon}</span>
-                  <span className="text-sm font-medium text-gray-700">{t.label}</span>
+                  <span className="text-lg">{svc.icon}</span>
+                  <span className="text-sm font-medium text-gray-700">{svc.label}</span>
                 </div>
                 <input
                   type="number"
                   min={0}
-                  placeholder="Sem limite"
+                  placeholder={t('semLimite')}
                   className="input-field !w-28 !py-1.5 text-sm text-center"
-                  value={capacidade[t.value] ?? ''}
+                  value={capacidade[svc.value] ?? ''}
                   onChange={(e) => {
                     const val = e.target.value;
                     setCapacidade((prev) => ({
                       ...prev,
-                      [t.value]: val === '' ? 0 : Number(val),
+                      [svc.value]: val === '' ? 0 : Number(val),
                     }));
                   }}
                 />
-                <span className="text-xs text-gray-400">carros</span>
+                <span className="text-xs text-gray-400">{t('carros')}</span>
               </div>
             ))}
           </div>
@@ -422,18 +424,18 @@ export default function PerfilOficinaPage() {
 
       {/* Personal info */}
       <div className="card mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Dados pessoais</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('dadosPessoais')}</h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('nome')}</label>
             <input type="text" className="input-field" value={nome} onChange={(e) => setNome(e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
             <input type="email" className="input-field bg-gray-50" value={email} disabled />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
             <input type="tel" className="input-field" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
           </div>
         </div>
@@ -441,7 +443,7 @@ export default function PerfilOficinaPage() {
 
       {/* Working hours */}
       <div className="card mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Horário de Funcionamento</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('horarioDeFuncionamento')}</h2>
         <div className="space-y-3">
           {DIAS.map(({ key, label }) => (
             <div key={key} className="flex items-center gap-4">
@@ -462,7 +464,7 @@ export default function PerfilOficinaPage() {
                     value={horario[key]?.inicio || '08:00'}
                     onChange={(e) => setHorario({ ...horario, [key]: { ...horario[key], inicio: e.target.value } })}
                   />
-                  <span className="text-gray-400">às</span>
+                  <span className="text-gray-400">{t('as')}</span>
                   <input
                     type="time"
                     className="input-field !py-1 !px-2 text-sm !w-28"
@@ -471,7 +473,7 @@ export default function PerfilOficinaPage() {
                   />
                 </div>
               ) : (
-                <span className="text-sm text-gray-400">Fechado</span>
+                <span className="text-sm text-gray-400">{t('fechado')}</span>
               )}
             </div>
           ))}
@@ -480,18 +482,18 @@ export default function PerfilOficinaPage() {
 
       {/* Photos */}
       <div className="card mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">Fotos da Oficina</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('fotosDaOficina')}</h2>
         <p className="text-sm text-gray-500 mb-4">
-          Adicione fotos da estrutura, equipamentos e serviços realizados. Elas aparecem na sua página pública.
+          {t('adicioneFotosEstrutura')}
         </p>
 
         <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload} />
 
         <div className="flex items-center gap-3 mb-4">
           <select className="input-field !w-auto" value={fotoTipo} onChange={(e) => setFotoTipo(e.target.value)}>
-            <option value="estrutura">Estrutura</option>
-            <option value="servico">Serviços realizados</option>
-            <option value="equipe">Equipe</option>
+            <option value="estrutura">{t('estrutura')}</option>
+            <option value="servico">{t('servicosRealizados')}</option>
+            <option value="equipe">{t('equipe')}</option>
           </select>
           <button
             type="button"
@@ -499,7 +501,7 @@ export default function PerfilOficinaPage() {
             disabled={uploadingPhoto}
             className="btn-primary !py-2 !px-4 text-sm"
           >
-            {uploadingPhoto ? 'Enviando...' : '+ Adicionar fotos'}
+            {uploadingPhoto ? t('enviando') : t('adicionarFotos')}
           </button>
         </div>
 
@@ -509,7 +511,7 @@ export default function PerfilOficinaPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            <p className="text-sm text-gray-400">Nenhuma foto adicionada</p>
+            <p className="text-sm text-gray-400">{t('nenhumaFotoAdicionada')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
@@ -527,7 +529,7 @@ export default function PerfilOficinaPage() {
                   </button>
                 </div>
                 <span className="absolute bottom-1 left-1 text-xs bg-black/50 text-white px-2 py-0.5 rounded">
-                  {foto.tipo === 'estrutura' ? 'Estrutura' : foto.tipo === 'servico' ? 'Serviço' : 'Equipe'}
+                  {foto.tipo === 'estrutura' ? t('estrutura') : foto.tipo === 'servico' ? t('servico') : t('equipe')}
                 </span>
               </div>
             ))}
@@ -537,7 +539,7 @@ export default function PerfilOficinaPage() {
 
       <div className="flex justify-end">
         <button onClick={handleSave} disabled={saving} className="btn-primary">
-          {saving ? 'Salvando...' : 'Salvar Alterações'}
+          {saving ? t('salvando') : t('salvarAlteracoes')}
         </button>
       </div>
     </div>

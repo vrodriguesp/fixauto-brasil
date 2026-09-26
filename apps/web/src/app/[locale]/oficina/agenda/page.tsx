@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAgenda } from '@/hooks/use-agenda';
 import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
@@ -12,30 +13,31 @@ import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 function getDaysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate(); }
 function getFirstDayOfMonth(y: number, m: number) { return new Date(y, m, 1).getDay(); }
 
-const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-
-function getEventLabel(ev: any): string {
-  const v = ev.solicitacao?.veiculo;
-  const c = ev.solicitacao?.cliente;
-  if (v?.placa) return v.placa;
-  if (c?.nome) return c.nome.split(' ').pop();
-  return ev.titulo || 'Evento';
-}
-
-function deliveryNote(ev: any): string | null {
-  if (ev.status !== 'concluido') return null;
-  const prevista = ev.data_fim_prevista || null;
-  if (!prevista) return null;
-  const real = new Date(ev.data_fim);
-  const plan = new Date(prevista);
-  const diff = Math.round((real.getTime() - plan.getTime()) / (1000 * 60 * 60 * 24));
-  if (diff === 0) return 'No prazo';
-  if (diff < 0) return `${Math.abs(diff)}d antes do previsto`;
-  return `${diff}d depois do previsto`;
-}
-
 export default function AgendaPage() {
+  const t = useTranslations('oficinaAgenda');
+  const MESES = [t('mes0'), t('mes1'), t('mes2'), t('mes3'), t('mes4'), t('mes5'), t('mes6'), t('mes7'), t('mes8'), t('mes9'), t('mes10'), t('mes11')];
+  const DIAS_SEMANA = [t('dia0'), t('dia1'), t('dia2'), t('dia3'), t('dia4'), t('dia5'), t('dia6')];
+
+  const getEventLabel = (ev: any): string => {
+    const v = ev.solicitacao?.veiculo;
+    const c = ev.solicitacao?.cliente;
+    if (v?.placa) return v.placa;
+    if (c?.nome) return c.nome.split(' ').pop();
+    return ev.titulo || t('evento');
+  };
+
+  const deliveryNote = (ev: any): string | null => {
+    if (ev.status !== 'concluido') return null;
+    const prevista = ev.data_fim_prevista || null;
+    if (!prevista) return null;
+    const real = new Date(ev.data_fim);
+    const plan = new Date(prevista);
+    const diff = Math.round((real.getTime() - plan.getTime()) / (1000 * 60 * 60 * 24));
+    if (diff === 0) return t('noPrazo');
+    if (diff < 0) return t('diasAntesDoPrevisto', { dias: Math.abs(diff) });
+    return t('diasDepoisDoPrevisto', { dias: diff });
+  };
+
   const { eventos, add: addEvento, update: updateEvento, remove: removeEvento, refresh } = useAgenda();
   const { refresh: refreshSolicitacoes } = useSolicitacoes();
   const { oficina, funcionario } = useAuth();
@@ -180,7 +182,7 @@ export default function AgendaPage() {
   };
 
   const handleNoShow = async (ev: any) => {
-    if (!confirm('Registrar falta do cliente para este agendamento?')) return;
+    if (!confirm(t('confirmRegistrarFalta'))) return;
     setNoShowingId(ev.id);
     await fetch('/api/registrar-no-show', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -233,11 +235,11 @@ export default function AgendaPage() {
   };
 
   const handleDeleteEvent = async (evId: string) => {
-    if (!confirm('Excluir este evento?')) return;
+    if (!confirm(t('confirmExcluirEvento'))) return;
     await removeEvento(evId);
   };
 
-  const STATUS_LABEL: Record<string, string> = { agendado: 'Agendado', em_andamento: 'Em andamento', concluido: 'Entregue' };
+  const STATUS_LABEL: Record<string, string> = { agendado: t('statusAgendado'), em_andamento: t('statusEmAndamento'), concluido: t('statusEntregue') };
 
   const renderCard = (ev: any, type: 'pendente' | 'feito' | 'entregue') => {
     const sol = ev.solicitacao;
@@ -251,10 +253,10 @@ export default function AgendaPage() {
 
     const eventName = placa || c?.nome?.split(' ').pop() || ev.titulo || '';
     const title = type === 'pendente'
-      ? `Check-in ${eventName}`
+      ? t('cardCheckin', { nome: eventName })
       : type === 'feito'
-      ? `Check-in feito ${eventName}`
-      : `Entregue ${eventName}`;
+      ? t('cardCheckinFeito', { nome: eventName })
+      : t('cardEntregue', { nome: eventName });
 
     return (
       <div key={`${ev.id}-${type}`} className={`rounded-lg border overflow-hidden ${
@@ -269,7 +271,7 @@ export default function AgendaPage() {
                 <p className="font-semibold text-gray-900 text-sm">{title}</p>
                 <span className="text-[10px] font-mono text-gray-400">#{evId}</span>
                 {sol?.tipo && <span className="text-xs bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded">{sol.tipo}</span>}
-                {ev.no_show && <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-medium">Falta</span>}
+                {ev.no_show && <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-medium">{t('falta')}</span>}
                 {type === 'feito' && (
                   <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${
                     ev.status === 'concluido' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
@@ -285,13 +287,13 @@ export default function AgendaPage() {
                 isMecanico ? (
                   <button onClick={(e) => { e.stopPropagation(); handleCheckIn(ev, funcionario?.id); }} disabled={isUpdating}
                     className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-xs font-medium rounded-lg">
-                    {isUpdating ? '...' : 'Check-in'}
+                    {isUpdating ? '...' : t('btnCheckin')}
                   </button>
                 ) : assigningId === ev.id ? (
                   <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                     <select className="input-field !py-1 !px-2 text-xs !w-auto" defaultValue=""
                       onChange={(e) => handleCheckIn(ev, e.target.value || undefined)}>
-                      <option value="">Sem mecânico</option>
+                      <option value="">{t('semMecanico')}</option>
                       {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.profile?.nome}</option>)}
                     </select>
                     <button onClick={(e) => { e.stopPropagation(); setAssigningId(null); }} className="text-xs text-gray-400">x</button>
@@ -301,12 +303,12 @@ export default function AgendaPage() {
                     {new Date(ev.data_inicio) < new Date() && !ev.no_show && (
                       <button onClick={(e) => { e.stopPropagation(); handleNoShow(ev); }} disabled={noShowingId === ev.id}
                         className="px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white text-xs font-medium rounded-lg">
-                        {noShowingId === ev.id ? '...' : 'Marcar Falta'}
+                        {noShowingId === ev.id ? '...' : t('btnMarcarFalta')}
                       </button>
                     )}
                     <button onClick={(e) => { e.stopPropagation(); setAssigningId(ev.id); }} disabled={isUpdating}
                       className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-xs font-medium rounded-lg">
-                      {isUpdating ? '...' : 'Check-in'}
+                      {isUpdating ? '...' : t('btnCheckin')}
                     </button>
                   </div>
                 )
@@ -314,7 +316,7 @@ export default function AgendaPage() {
               {type === 'feito' && ev.status === 'em_andamento' && !isMecanico && (
                 <button onClick={(e) => { e.stopPropagation(); handleCheckOut(ev); }} disabled={isUpdating}
                   className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white text-xs font-medium rounded-lg">
-                  {isUpdating ? '...' : 'Entrega'}
+                  {isUpdating ? '...' : t('btnEntrega')}
                 </button>
               )}
               <svg className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -331,38 +333,38 @@ export default function AgendaPage() {
               <div className="space-y-3">
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Título</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formTitulo')}</label>
                     <input type="text" className="input-field !py-1.5 text-sm" value={editData.titulo} onChange={(e) => setEditData({ ...editData, titulo: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Data check-in</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formDataCheckin')}</label>
                     <input type="date" className="input-field !py-1.5 text-sm" value={editData.data_inicio} onChange={(e) => setEditData({ ...editData, data_inicio: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Horário</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formHorario')}</label>
                     <input type="time" className="input-field !py-1.5 text-sm" value={editData.hora_inicio} onChange={(e) => setEditData({ ...editData, hora_inicio: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Data prev. entrega</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formDataPrevEntrega')}</label>
                     <input type="date" className="input-field !py-1.5 text-sm" value={editData.data_fim} onChange={(e) => setEditData({ ...editData, data_fim: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Horário</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formHorario')}</label>
                     <input type="time" className="input-field !py-1.5 text-sm" value={editData.hora_fim} onChange={(e) => setEditData({ ...editData, hora_fim: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Mecânico</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formMecanico')}</label>
                     <select className="input-field !py-1.5 text-sm" value={editData.funcionario_id} onChange={(e) => setEditData({ ...editData, funcionario_id: e.target.value })}>
-                      <option value="">Nenhum</option>
+                      <option value="">{t('nenhum')}</option>
                       {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.profile?.nome}</option>)}
                     </select>
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Descrição</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formDescricao')}</label>
                     <input type="text" className="input-field !py-1.5 text-sm" value={editData.descricao} onChange={(e) => setEditData({ ...editData, descricao: e.target.value })} />
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Cor</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formCor')}</label>
                     <div className="flex gap-2">{CORES_AGENDA.map((co) => (
                       <button key={co} type="button" onClick={() => setEditData({ ...editData, cor: co })}
                         className={`w-6 h-6 rounded-full transition-transform ${editData.cor === co ? 'scale-125 ring-2 ring-offset-1 ring-gray-400' : ''}`} style={{ backgroundColor: co }} />
@@ -370,9 +372,9 @@ export default function AgendaPage() {
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 pt-2">
-                  <button onClick={() => { setEditingId(null); setEditData(null); }} className="btn-secondary !py-1.5 !px-3 text-xs">Cancelar</button>
+                  <button onClick={() => { setEditingId(null); setEditData(null); }} className="btn-secondary !py-1.5 !px-3 text-xs">{t('cancelar')}</button>
                   <button onClick={() => handleSaveEdit(ev.id)} disabled={isUpdating} className="btn-primary !py-1.5 !px-3 text-xs disabled:opacity-50">
-                    {isUpdating ? '...' : 'Salvar'}
+                    {isUpdating ? '...' : t('salvar')}
                   </button>
                 </div>
               </div>
@@ -381,53 +383,53 @@ export default function AgendaPage() {
               <div className="space-y-2">
                 {c && (
                   <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase">Cliente</p>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">{t('cliente')}</p>
                     <p className="text-sm text-gray-900">{c.nome}</p>
                     {c.telefone && <a href={`tel:${c.telefone}`} className="text-xs text-primary-600 hover:underline">{c.telefone}</a>}
                   </div>
                 )}
                 {v && (
                   <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase">Veículo</p>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">{t('veiculo')}</p>
                     <p className="text-sm text-gray-900">{v.fipe_marca} {v.fipe_modelo} {v.fipe_ano || ''}</p>
-                    {v.placa && <p className="text-xs text-gray-600">Placa: <span className="font-mono">{v.placa}</span></p>}
+                    {v.placa && <p className="text-xs text-gray-600">{t('placa')}: <span className="font-mono">{v.placa}</span></p>}
                   </div>
                 )}
                 {!c && !v && ev.descricao && (
                   <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase">Descrição</p>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">{t('descricao')}</p>
                     <p className="text-xs text-gray-700">{cleanDescricao(ev.descricao)}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase">Datas</p>
-                  <p className="text-xs text-gray-700">Check-in: {new Date(ev.data_inicio).toLocaleDateString('pt-BR')} {new Date(ev.data_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
-                  <p className="text-xs text-gray-700">Prev. entrega: {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleDateString('pt-BR')} {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
-                  {ev.status === 'concluido' && <p className="text-xs text-gray-700">Entregue: {new Date(ev.data_fim).toLocaleDateString('pt-BR')}</p>}
+                  <p className="text-xs font-semibold text-gray-500 uppercase">{t('datas')}</p>
+                  <p className="text-xs text-gray-700">{t('checkinLabel')}: {new Date(ev.data_inicio).toLocaleDateString('pt-BR')} {new Date(ev.data_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+                  <p className="text-xs text-gray-700">{t('prevEntregaLabel')}: {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleDateString('pt-BR')} {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+                  {ev.status === 'concluido' && <p className="text-xs text-gray-700">{t('entregueLabel')}: {new Date(ev.data_fim).toLocaleDateString('pt-BR')}</p>}
                 </div>
                 {ev.funcionario?.profile?.nome && (
                   <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase">Mecânico</p>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">{t('mecanico')}</p>
                     <p className="text-sm text-gray-900">{ev.funcionario.profile.nome}</p>
                   </div>
                 )}
                 {sol?.descricao && (
                   <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase">Descrição</p>
+                    <p className="text-xs font-semibold text-gray-500 uppercase">{t('descricao')}</p>
                     <p className="text-xs text-gray-700">{cleanDescricao(sol.descricao)}</p>
                   </div>
                 )}
                 <div className="pt-2 flex gap-2">
                   {ev.solicitacao_id && (
                     <>
-                      <a href={`/oficina/mensagens/${ev.solicitacao_id}`} className="text-xs text-primary-600 hover:text-primary-700 font-medium">Mensagem</a>
-                      <a href={`/oficina/solicitacoes/${ev.solicitacao_id}`} className="text-xs text-gray-600 hover:text-gray-700 font-medium">Ver solicitação</a>
+                      <a href={`/oficina/mensagens/${ev.solicitacao_id}`} className="text-xs text-primary-600 hover:text-primary-700 font-medium">{t('mensagem')}</a>
+                      <a href={`/oficina/solicitacoes/${ev.solicitacao_id}`} className="text-xs text-gray-600 hover:text-gray-700 font-medium">{t('verSolicitacao')}</a>
                     </>
                   )}
                   {ev.tipo === 'externo' && !isMecanico && (
                     <>
-                      <button onClick={(e) => { e.stopPropagation(); startEdit(ev); }} className="text-xs text-blue-600 hover:text-blue-700 font-medium">Editar</button>
-                      <button onClick={(e) => { e.stopPropagation(); handleDeleteEvent(ev.id); }} className="text-xs text-red-600 hover:text-red-700 font-medium">Excluir</button>
+                      <button onClick={(e) => { e.stopPropagation(); startEdit(ev); }} className="text-xs text-blue-600 hover:text-blue-700 font-medium">{t('editar')}</button>
+                      <button onClick={(e) => { e.stopPropagation(); handleDeleteEvent(ev.id); }} className="text-xs text-red-600 hover:text-red-700 font-medium">{t('excluir')}</button>
                     </>
                   )}
                 </div>
@@ -443,40 +445,40 @@ export default function AgendaPage() {
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{isMecanico ? 'Minha Agenda' : 'Agenda'}</h1>
-          <p className="text-gray-600 mt-1">{isMecanico ? 'Check-ins e entregas dos veículos atribuídos a você' : 'Check-ins e entregas'}</p>
+          <h1 className="text-2xl font-bold text-gray-900">{isMecanico ? t('minhaAgenda') : t('agenda')}</h1>
+          <p className="text-gray-600 mt-1">{isMecanico ? t('subtituloMecanico') : t('subtituloGeral')}</p>
         </div>
         <div className="flex items-center gap-2 mt-4 sm:mt-0">
           <div className="flex rounded-lg border border-gray-200 overflow-hidden">
             {(['month', 'day', 'list'] as const).map((m) => (
               <button key={m} onClick={() => setViewMode(m)}
                 className={`px-3 py-2 text-sm ${viewMode === m ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'}`}>
-                {m === 'month' ? 'Mês' : m === 'day' ? 'Dia' : 'Lista'}
+                {m === 'month' ? t('viewMes') : m === 'day' ? t('viewDia') : t('viewLista')}
               </button>
             ))}
           </div>
           {!isMecanico && (
-            <button onClick={() => setShowForm(true)} className="btn-primary !py-2">+ Evento</button>
+            <button onClick={() => setShowForm(true)} className="btn-primary !py-2">{t('btnNovoEvento')}</button>
           )}
         </div>
       </div>
 
       {showForm && !isMecanico && (
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Novo Evento Externo</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('novoEventoExterno')}</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {/* Cliente */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nome do cliente</label>
-              <input type="text" className="input-field" placeholder="Ex: João Silva" value={formData.cliente_nome} onChange={(e) => setFormData({ ...formData, cliente_nome: e.target.value })} />
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('nomeCliente')}</label>
+              <input type="text" className="input-field" placeholder={t('placeholderNomeCliente')} value={formData.cliente_nome} onChange={(e) => setFormData({ ...formData, cliente_nome: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Placa</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('placa')}</label>
               <input type="text" className="input-field" placeholder="ABC1D23" value={formData.placa} onChange={(e) => setFormData({ ...formData, placa: e.target.value.toUpperCase() })} />
             </div>
             {/* Veículo - FIPE */}
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Veículo (FIPE)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('veiculoFipe')}</label>
               <FipeAutocomplete
                 value={{ tipo: formData.fipe_tipo, marca: formData.fipe_marca, modelo: formData.fipe_modelo, ano: formData.fipe_ano }}
                 onChange={(fipe) => setFormData({ ...formData, fipe_tipo: fipe.tipo, fipe_marca: fipe.marca, fipe_modelo: fipe.modelo, fipe_ano: fipe.ano })}
@@ -484,7 +486,7 @@ export default function AgendaPage() {
             </div>
             {/* Tipo de serviço */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de serviço</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('tipoServico')}</label>
               <select className="input-field" value={formData.tipo_servico} onChange={(e) => setFormData({ ...formData, tipo_servico: e.target.value })}>
                 {TIPOS_SERVICO.map((t) => (
                   <option key={t.value} value={t.value}>{t.icon} {t.label}</option>
@@ -493,9 +495,9 @@ export default function AgendaPage() {
             </div>
             {/* Mecânico */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Mecânico responsável</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('mecanicoResponsavel')}</label>
               <select className="input-field" value={formData.funcionario_id} onChange={(e) => setFormData({ ...formData, funcionario_id: e.target.value })}>
-                <option value="">Nenhum</option>
+                <option value="">{t('nenhum')}</option>
                 {funcionarios.map((f) => (
                   <option key={f.id} value={f.id}>{f.profile?.nome}{f.especialidade ? ` (${f.especialidade})` : ''}</option>
                 ))}
@@ -503,29 +505,29 @@ export default function AgendaPage() {
             </div>
             {/* Datas e horários */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Data check-in</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('formDataCheckin')}</label>
               <input type="date" className="input-field" value={formData.data_inicio} onChange={(e) => setFormData({ ...formData, data_inicio: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Horário check-in</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('horarioCheckin')}</label>
               <input type="time" className="input-field" value={formData.hora_inicio} onChange={(e) => setFormData({ ...formData, hora_inicio: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Data prev. entrega</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('formDataPrevEntrega')}</label>
               <input type="date" className="input-field" value={formData.data_fim} onChange={(e) => setFormData({ ...formData, data_fim: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Horário prev. entrega</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('horarioPrevEntrega')}</label>
               <input type="time" className="input-field" value={formData.hora_fim} onChange={(e) => setFormData({ ...formData, hora_fim: e.target.value })} />
             </div>
             {/* Descrição */}
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Descrição (opcional)</label>
-              <input type="text" className="input-field" placeholder="Detalhes do serviço" value={formData.descricao} onChange={(e) => setFormData({ ...formData, descricao: e.target.value })} />
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('descricaoOpcional')}</label>
+              <input type="text" className="input-field" placeholder={t('placeholderDetalhesServico')} value={formData.descricao} onChange={(e) => setFormData({ ...formData, descricao: e.target.value })} />
             </div>
             {/* Cor */}
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cor</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('formCor')}</label>
               <div className="flex gap-2">{CORES_AGENDA.map((c) => (
                 <button key={c} type="button" onClick={() => setFormData({ ...formData, cor: c })}
                   className={`w-8 h-8 rounded-full transition-transform ${formData.cor === c ? 'scale-125 ring-2 ring-offset-2 ring-gray-400' : ''}`} style={{ backgroundColor: c }} />
@@ -533,17 +535,17 @@ export default function AgendaPage() {
             </div>
           </div>
           <div className="flex justify-end gap-3 mt-6">
-            <button onClick={() => setShowForm(false)} className="btn-secondary">Cancelar</button>
-            <button onClick={handleAddEvent} disabled={!formData.data_inicio || !formData.data_fim} className="btn-primary disabled:opacity-50">Adicionar</button>
+            <button onClick={() => setShowForm(false)} className="btn-secondary">{t('cancelar')}</button>
+            <button onClick={handleAddEvent} disabled={!formData.data_inicio || !formData.data_fim} className="btn-primary disabled:opacity-50">{t('adicionar')}</button>
           </div>
         </div>
       )}
 
       {viewMode === 'month' && Object.keys(monthlyStats).length > 0 && (
         <div className="flex flex-wrap gap-2 mb-4">
-          <span className="text-xs text-gray-500 py-1">Check-ins este mês:</span>
-          {Object.entries(monthlyStats).map(([t, n]) => (
-            <span key={t} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full font-medium">{t}: {n}</span>
+          <span className="text-xs text-gray-500 py-1">{t('checkinsEsteMes')}:</span>
+          {Object.entries(monthlyStats).map(([tipo, n]) => (
+            <span key={tipo} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full font-medium">{tipo}: {n}</span>
           ))}
         </div>
       )}
@@ -575,9 +577,9 @@ export default function AgendaPage() {
                   className={`min-h-[80px] sm:min-h-[100px] p-1 sm:p-2 rounded-lg text-left transition-colors ${isToday ? 'bg-blue-50' : 'bg-white hover:bg-gray-50'} border border-gray-100`}>
                   <span className={`text-sm font-medium ${isToday ? 'text-primary-600' : 'text-gray-900'}`}>{day}</span>
                   <div className="mt-1 space-y-0.5">
-                    {g.checkinPendente.length > 0 && <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-green-100 text-green-800 font-medium">{g.checkinPendente.length} Pendente</div>}
-                    {g.checkinFeito.length > 0 && <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-blue-100 text-blue-800 font-medium">{g.checkinFeito.length} Feito</div>}
-                    {g.entregue.length > 0 && <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-gray-200 text-gray-700 font-medium">{g.entregue.length} Entregue</div>}
+                    {g.checkinPendente.length > 0 && <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-green-100 text-green-800 font-medium">{g.checkinPendente.length} {t('pendente')}</div>}
+                    {g.checkinFeito.length > 0 && <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-blue-100 text-blue-800 font-medium">{g.checkinFeito.length} {t('feito')}</div>}
+                    {g.entregue.length > 0 && <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-gray-200 text-gray-700 font-medium">{g.entregue.length} {t('statusEntregue')}</div>}
                   </div>
                 </button>
               );
@@ -590,7 +592,7 @@ export default function AgendaPage() {
             <button onClick={() => setCurrentDate(new Date(year, month, currentDate.getDate() - 1))} className="p-2 hover:bg-gray-100 rounded-lg">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
-            <h2 className="text-xl font-semibold text-gray-900">{currentDate.getDate()} de {MESES[month]} {year} - {DIAS_SEMANA[currentDate.getDay()]}</h2>
+            <h2 className="text-xl font-semibold text-gray-900">{t('dataDia', { dia: currentDate.getDate(), mes: MESES[month], ano: year })} - {DIAS_SEMANA[currentDate.getDay()]}</h2>
             <button onClick={() => setCurrentDate(new Date(year, month, currentDate.getDate() + 1))} className="p-2 hover:bg-gray-100 rounded-lg">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
             </button>
@@ -604,48 +606,48 @@ export default function AgendaPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
                   <div className="p-3 bg-green-50 rounded-lg text-center">
                     <p className="text-2xl font-bold text-green-700">{g.checkinPendente.length}</p>
-                    <p className="text-xs text-green-600">Pendente</p>
+                    <p className="text-xs text-green-600">{t('pendente')}</p>
                   </div>
                   <div className="p-3 bg-blue-50 rounded-lg text-center">
                     <p className="text-2xl font-bold text-blue-700">{g.checkinFeito.length}</p>
-                    <p className="text-xs text-blue-600">Check-in feito</p>
+                    <p className="text-xs text-blue-600">{t('checkinFeito')}</p>
                   </div>
                   <div className="p-3 bg-gray-100 rounded-lg text-center">
                     <p className="text-2xl font-bold text-gray-700">{g.entregue.length}</p>
-                    <p className="text-xs text-gray-600">Entregue</p>
+                    <p className="text-xs text-gray-600">{t('statusEntregue')}</p>
                   </div>
                   {g.naoCompareceu.length > 0 && (
                     <div className="p-3 bg-red-50 rounded-lg text-center">
                       <p className="text-2xl font-bold text-red-700">{g.naoCompareceu.length}</p>
-                      <p className="text-xs text-red-600">Não compareceu</p>
+                      <p className="text-xs text-red-600">{t('naoCompareceu')}</p>
                     </div>
                   )}
                 </div>
                 {g.checkinPendente.length > 0 && (
                   <div className="mb-6">
-                    <h4 className="font-semibold text-green-800 text-sm uppercase tracking-wide mb-3">Check-in pendente ({g.checkinPendente.length})</h4>
+                    <h4 className="font-semibold text-green-800 text-sm uppercase tracking-wide mb-3">{t('checkinPendenteCount', { count: g.checkinPendente.length })}</h4>
                     <div className="space-y-2">{g.checkinPendente.map((ev) => renderCard(ev, 'pendente'))}</div>
                   </div>
                 )}
                 {g.checkinFeito.length > 0 && (
                   <div className="mb-6">
-                    <h4 className="font-semibold text-blue-800 text-sm uppercase tracking-wide mb-3">Check-in feito ({g.checkinFeito.length})</h4>
+                    <h4 className="font-semibold text-blue-800 text-sm uppercase tracking-wide mb-3">{t('checkinFeitoCount', { count: g.checkinFeito.length })}</h4>
                     <div className="space-y-2">{g.checkinFeito.map((ev) => renderCard(ev, 'feito'))}</div>
                   </div>
                 )}
                 {g.entregue.length > 0 && (
                   <div className="mb-6">
-                    <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-3">Entregue ({g.entregue.length})</h4>
+                    <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-3">{t('entregueCount', { count: g.entregue.length })}</h4>
                     <div className="space-y-2">{g.entregue.map((ev) => renderCard(ev, 'entregue'))}</div>
                   </div>
                 )}
                 {g.naoCompareceu.length > 0 && (
                   <div className="mb-6">
-                    <h4 className="font-semibold text-red-700 text-sm uppercase tracking-wide mb-3">Não compareceu ({g.naoCompareceu.length})</h4>
+                    <h4 className="font-semibold text-red-700 text-sm uppercase tracking-wide mb-3">{t('naoCompareceuCount', { count: g.naoCompareceu.length })}</h4>
                     <div className="space-y-2">{g.naoCompareceu.map((ev) => renderCard(ev, 'entregue'))}</div>
                   </div>
                 )}
-                {!hasAnything && <p className="text-center text-gray-500 py-8">Nenhum evento neste dia</p>}
+                {!hasAnything && <p className="text-center text-gray-500 py-8">{t('nenhumEventoNesteDia')}</p>}
               </>
             );
           })()}
@@ -655,7 +657,7 @@ export default function AgendaPage() {
           {(() => {
             const upcoming = allEventos.filter(e => e.status !== 'concluido')
               .sort((a, b) => new Date(a.data_inicio).getTime() - new Date(b.data_inicio).getTime());
-            if (upcoming.length === 0) return <div className="card text-center py-12"><p className="text-gray-500">Nenhum evento agendado</p></div>;
+            if (upcoming.length === 0) return <div className="card text-center py-12"><p className="text-gray-500">{t('nenhumEventoAgendado')}</p></div>;
             const groups: Record<string, typeof upcoming> = {};
             upcoming.forEach((ev) => { const d = ev.data_inicio.slice(0, 10); if (!groups[d]) groups[d] = []; groups[d].push(ev); });
             return Object.entries(groups).map(([date, evts]) => {

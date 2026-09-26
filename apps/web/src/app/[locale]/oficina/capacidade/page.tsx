@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { calcularCargaAtual, calcularCargaPorFuncionario } from '@/lib/capacidade';
@@ -8,18 +9,18 @@ import { TIPOS_SERVICO } from '@fixauto/shared';
 import type { Funcionario } from '@fixauto/shared';
 import { Link } from '@/i18n/navigation';
 
-const LABELS_STATUS_MANUTENCAO: Record<string, string> = {
-  recebido: 'Recebido',
-  diagnostico: 'Diagnóstico',
-  aguardando_pecas: 'Aguardando peças',
-  em_execucao: 'Em execução',
-  pausa_cliente: 'Pausa (cliente)',
-  pausa_pecas: 'Pausa (peças)',
-  pausa_geral: 'Pausa (geral)',
-  teste_final: 'Teste final',
-};
-
 export default function CapacidadePage() {
+  const t = useTranslations('oficinaCapacidade');
+  const LABELS_STATUS_MANUTENCAO: Record<string, string> = {
+    recebido: t('statusRecebido'),
+    diagnostico: t('statusDiagnostico'),
+    aguardando_pecas: t('statusAguardandoPecas'),
+    em_execucao: t('statusEmExecucao'),
+    pausa_cliente: t('statusPausaCliente'),
+    pausa_pecas: t('statusPausaPecas'),
+    pausa_geral: t('statusPausaGeral'),
+    teste_final: t('statusTesteFinal'),
+  };
   const { oficina } = useAuth();
   const [carga, setCarga] = useState<Record<string, number>>({});
   const [tempoPorEtapa, setTempoPorEtapa] = useState<{ status: string; horasMedia: number; ocorrencias: number }[]>([]);
@@ -97,35 +98,35 @@ export default function CapacidadePage() {
   }
 
   const capacidadeConfigurada = oficina?.capacidade_servicos || undefined;
-  const tiposComCapacidade = TIPOS_SERVICO.filter((t) => capacidadeConfigurada?.[t.value]);
+  const tiposComCapacidade = TIPOS_SERVICO.filter((svc) => capacidadeConfigurada?.[svc.value]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Capacidade e Produtividade</h1>
-      <p className="text-gray-600 mb-8">Sua carga de trabalho atual e tempo médio por etapa do reparo</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('titulo')}</h1>
+      <p className="text-gray-600 mb-8">{t('subtitulo')}</p>
 
       {/* Capacidade por tipo */}
       <div className="card mb-8">
-        <h2 className="font-semibold text-gray-900 mb-4">Capacidade por tipo de serviço</h2>
+        <h2 className="font-semibold text-gray-900 mb-4">{t('capacidadePorTipoTitulo')}</h2>
         {tiposComCapacidade.length === 0 ? (
           <p className="text-sm text-gray-500">
-            Você ainda não configurou sua capacidade por tipo de serviço. Configure em{' '}
-            <a href="/oficina/perfil" className="text-primary-600 hover:underline">Perfil</a>{' '}
-            para receber solicitações de forma mais equilibrada e evitar sobrecarga.
+            {t('semCapacidadeConfigurada')}{' '}
+            <a href="/oficina/perfil" className="text-primary-600 hover:underline">{t('perfil')}</a>{' '}
+            {t('semCapacidadeConfiguradaFim')}
           </p>
         ) : (
           <div className="space-y-4">
-            {tiposComCapacidade.map((t) => {
-              const limite = capacidadeConfigurada![t.value];
-              const atual = carga[t.value] || 0;
+            {tiposComCapacidade.map((svc) => {
+              const limite = capacidadeConfigurada![svc.value];
+              const atual = carga[svc.value] || 0;
               const pct = Math.min(100, (atual / limite) * 100);
               const sobrecarga = atual >= limite;
               return (
-                <div key={t.value}>
+                <div key={svc.value}>
                   <div className="flex items-center justify-between text-sm mb-1">
-                    <span className="text-gray-700">{t.icon} {t.label}</span>
+                    <span className="text-gray-700">{svc.icon} {svc.label}</span>
                     <span className={sobrecarga ? 'text-red-600 font-semibold' : 'text-gray-600'}>
-                      {atual} / {limite} {sobrecarga && '(no limite)'}
+                      {atual} / {limite} {sobrecarga && t('noLimite')}
                     </span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -138,7 +139,7 @@ export default function CapacidadePage() {
               );
             })}
             <p className="text-xs text-gray-400 mt-2">
-              Quando um tipo está no limite, novas emergências desse tipo priorizam outras oficinas com capacidade livre.
+              {t('avisoTipoNoLimite')}
             </p>
           </div>
         )}
@@ -146,13 +147,13 @@ export default function CapacidadePage() {
 
       {/* Capacidade por funcionario */}
       <div className="card mb-8">
-        <h2 className="font-semibold text-gray-900 mb-1">Capacidade por funcionário</h2>
-        <p className="text-sm text-gray-500 mb-4">Quantos veículos em serviço cada mecânico está atendendo agora</p>
+        <h2 className="font-semibold text-gray-900 mb-1">{t('capacidadePorFuncionarioTitulo')}</h2>
+        <p className="text-sm text-gray-500 mb-4">{t('capacidadePorFuncionarioSubtitulo')}</p>
         {funcionarios.length === 0 ? (
           <p className="text-sm text-gray-500">
-            Nenhum mecânico cadastrado ainda. Adicione sua equipe em{' '}
-            <Link href="/oficina/equipe" className="text-primary-600 hover:underline">Equipe</Link>
-            {' '}pra distribuir a carga entre eles (isso é opcional - você pode operar sozinho também).
+            {t('semMecanicoCadastrado')}{' '}
+            <Link href="/oficina/equipe" className="text-primary-600 hover:underline">{t('equipe')}</Link>
+            {' '}{t('semMecanicoCadastradoFim')}
           </p>
         ) : (
           <div className="space-y-4">
@@ -164,10 +165,10 @@ export default function CapacidadePage() {
               return (
                 <div key={f.id}>
                   <div className="flex items-center justify-between text-sm mb-1">
-                    <span className="text-gray-700">{f.profile?.nome || 'Mecânico'}</span>
+                    <span className="text-gray-700">{f.profile?.nome || t('mecanicoFallback')}</span>
                     <span className={sobrecarga ? 'text-red-600 font-semibold' : 'text-gray-600'}>
-                      {atual}{limite != null ? ` / ${limite}` : ''} {sobrecarga && '(no limite)'}
-                      {limite == null && <span className="text-gray-400"> (sem limite definido)</span>}
+                      {atual}{limite != null ? ` / ${limite}` : ''} {sobrecarga && t('noLimite')}
+                      {limite == null && <span className="text-gray-400"> {t('semLimiteDefinido')}</span>}
                     </span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -180,10 +181,10 @@ export default function CapacidadePage() {
               );
             })}
             <p className="text-xs text-gray-400 mt-2">
-              Defina o limite de cada mecânico em{' '}
-              <Link href="/oficina/equipe" className="text-primary-600 hover:underline">Equipe</Link>
-              . Pra distribuir os veículos entre eles antes mesmo de chegarem, use a{' '}
-              <Link href="/oficina/distribuicao" className="text-primary-600 hover:underline">Distribuição de Trabalho</Link>.
+              {t('defineLimiteDeCadaMecanico')}{' '}
+              <Link href="/oficina/equipe" className="text-primary-600 hover:underline">{t('equipe')}</Link>
+              {t('defineLimiteMeio')}{' '}
+              <Link href="/oficina/distribuicao" className="text-primary-600 hover:underline">{t('distribuicaoDeTrabalho')}</Link>.
             </p>
           </div>
         )}
@@ -191,10 +192,10 @@ export default function CapacidadePage() {
 
       {/* Tempo medio por etapa */}
       <div className="card">
-        <h2 className="font-semibold text-gray-900 mb-1">Tempo médio por etapa do reparo</h2>
-        <p className="text-sm text-gray-500 mb-4">Onde seus veículos ficam parados por mais tempo</p>
+        <h2 className="font-semibold text-gray-900 mb-1">{t('tempoMedioTitulo')}</h2>
+        <p className="text-sm text-gray-500 mb-4">{t('tempoMedioSubtitulo')}</p>
         {tempoPorEtapa.length === 0 ? (
-          <p className="text-sm text-gray-500">Ainda não há dados suficientes (precisa de check-ins com etapas registradas).</p>
+          <p className="text-sm text-gray-500">{t('semDadosSuficientes')}</p>
         ) : (
           <div className="space-y-3">
             {tempoPorEtapa.map((e) => (

@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { CARGOS_FUNCIONARIO } from '@fixauto/shared';
 import type { Funcionario } from '@fixauto/shared';
 
 export default function EquipePage() {
+  const t = useTranslations('oficinaEquipe');
   const { oficina } = useAuth();
   const [funcionarios, setFuncionarios] = useState<(Funcionario & { profile?: { nome: string; email: string; telefone: string | null } })[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +48,7 @@ export default function EquipePage() {
   const handleAdd = async () => {
     if (!oficina || !form.email || !form.senha) return;
     if (form.senha.length < 6) {
-      setError('A senha deve ter pelo menos 6 caracteres');
+      setError(t('erroSenhaMinima'));
       return;
     }
     setSaving(true);
@@ -124,7 +126,7 @@ export default function EquipePage() {
   };
 
   const handleResetSenha = async (func: Funcionario & { profile?: { nome: string; email: string; telefone: string | null } }) => {
-    if (!confirm(`Gerar uma nova senha temporária para ${func.profile?.nome || 'este funcionário'}? A senha atual deixará de funcionar.`)) return;
+    if (!confirm(t('confirmResetSenha', { nome: func.profile?.nome || t('esteFuncionario') }))) return;
     setResettingId(func.id);
     const res = await fetch('/api/funcionarios', {
       method: 'PATCH',
@@ -134,13 +136,13 @@ export default function EquipePage() {
     const data = await res.json();
     setResettingId(null);
     if (data.novaSenha) {
-      setNovaSenhaGerada({ nome: func.profile?.nome || 'Funcionário', senha: data.novaSenha });
+      setNovaSenhaGerada({ nome: func.profile?.nome || t('funcionarioFallback'), senha: data.novaSenha });
     }
     await fetchFuncionarios();
   };
 
   const handleDelete = async (func: Funcionario) => {
-    if (!confirm(`Remover ${func.profile?.nome || 'funcionário'}?`)) return;
+    if (!confirm(t('confirmRemover', { nome: func.profile?.nome || t('funcionarioMinusculo') }))) return;
     await fetch('/api/funcionarios', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -165,32 +167,32 @@ export default function EquipePage() {
       {novaSenhaGerada && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4" onClick={() => setNovaSenhaGerada(null)}>
           <div className="bg-white rounded-xl p-6 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
-            <h3 className="font-semibold text-gray-900 mb-2">Nova senha gerada</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('novaSenhaGerada')}</h3>
             <p className="text-sm text-gray-600 mb-3">
-              Enviamos por e-mail para <strong>{novaSenhaGerada.nome}</strong>, mas você também pode repassar direto:
+              {t('enviamosPorEmail')} <strong>{novaSenhaGerada.nome}</strong>{t('masVocePodeRepassar')}
             </p>
             <div className="bg-sky-50 border border-sky-200 rounded-lg p-3 text-center mb-4">
               <span className="text-xl font-mono tracking-wider text-sky-900">{novaSenhaGerada.senha}</span>
             </div>
-            <p className="text-xs text-gray-500 mb-4">No próximo login, a pessoa será solicitada a escolher uma nova senha.</p>
-            <button onClick={() => setNovaSenhaGerada(null)} className="btn-primary w-full">Fechar</button>
+            <p className="text-xs text-gray-500 mb-4">{t('noProximoLogin')}</p>
+            <button onClick={() => setNovaSenhaGerada(null)} className="btn-primary w-full">{t('fechar')}</button>
           </div>
         </div>
       )}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Equipe</h1>
-          <p className="text-gray-600 mt-1">Gerencie os funcionários da oficina</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('titulo')}</h1>
+          <p className="text-gray-600 mt-1">{t('subtitulo')}</p>
         </div>
         <button onClick={() => setShowForm(true)} className="btn-primary mt-4 sm:mt-0">
-          + Novo Funcionário
+          {t('novoFuncionario')}
         </button>
       </div>
 
       {/* Add form */}
       {showForm && (
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Adicionar Funcionário</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('adicionarFuncionario')}</h2>
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
               <p className="text-sm text-red-800">{error}</p>
@@ -198,17 +200,17 @@ export default function EquipePage() {
           )}
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('nome')}</label>
               <input
                 type="text"
                 className="input-field"
-                placeholder="Nome do funcionário"
+                placeholder={t('placeholderNomeFuncionario')}
                 value={form.nome}
                 onChange={(e) => setForm({ ...form, nome: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('emailObrigatorio')}</label>
               <input
                 type="email"
                 className="input-field"
@@ -218,20 +220,20 @@ export default function EquipePage() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Senha temporária *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('senhaTemporariaObrigatorio')}</label>
               <input
                 type="text"
                 className="input-field"
-                placeholder="Mínimo 6 caracteres"
+                placeholder={t('placeholderMinimo6Caracteres')}
                 value={form.senha}
                 onChange={(e) => setForm({ ...form, senha: e.target.value })}
               />
               <p className="text-xs text-gray-500 mt-1">
-                Passe esta senha ao funcionário. No primeiro login, ele será solicitado a escolher uma nova senha.
+                {t('passeSenhaAoFuncionario')}
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cargo</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('cargo')}</label>
               <select
                 className="input-field"
                 value={form.cargo}
@@ -242,11 +244,11 @@ export default function EquipePage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Especialidade (opcional)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('especialidadeOpcional')}</label>
               <input
                 type="text"
                 className="input-field"
-                placeholder="Ex: Motor, Funilaria, Elétrica..."
+                placeholder={t('placeholderEspecialidade')}
                 value={form.especialidade}
                 onChange={(e) => setForm({ ...form, especialidade: e.target.value })}
               />
@@ -254,10 +256,10 @@ export default function EquipePage() {
           </div>
           <div className="flex justify-end gap-3 mt-6">
             <button onClick={() => { setShowForm(false); setError(''); }} className="btn-secondary">
-              Cancelar
+              {t('cancelar')}
             </button>
             <button onClick={handleAdd} disabled={saving || !form.email || !form.senha} className="btn-primary disabled:opacity-50">
-              {saving ? 'Cadastrando...' : 'Cadastrar'}
+              {saving ? t('cadastrando') : t('cadastrar')}
             </button>
           </div>
         </div>
@@ -269,8 +271,8 @@ export default function EquipePage() {
           <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
-          <p className="text-gray-500 mb-2">Nenhum funcionário cadastrado</p>
-          <p className="text-sm text-gray-400">Adicione mecânicos e administradores para gerenciar os serviços</p>
+          <p className="text-gray-500 mb-2">{t('nenhumFuncionarioCadastrado')}</p>
+          <p className="text-sm text-gray-400">{t('adicioneMecanicosAdmins')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -282,7 +284,7 @@ export default function EquipePage() {
               {editingId === func.id ? (
                 <div className="flex-1 grid sm:grid-cols-4 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Nome</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">{t('nome')}</label>
                     <input
                       type="text"
                       className="input-field !py-1.5"
@@ -291,7 +293,7 @@ export default function EquipePage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Telefone</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">{t('telefone')}</label>
                     <input
                       type="text"
                       className="input-field !py-1.5"
@@ -300,7 +302,7 @@ export default function EquipePage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Especialidade</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">{t('especialidade')}</label>
                     <input
                       type="text"
                       className="input-field !py-1.5"
@@ -309,11 +311,11 @@ export default function EquipePage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Capacidade (carros simultâneos)</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">{t('capacidadeCarrosSimultaneos')}</label>
                     <input
                       type="number"
                       min={0}
-                      placeholder="Sem limite"
+                      placeholder={t('semLimite')}
                       className="input-field !py-1.5"
                       value={editForm.capacidade_maxima}
                       onChange={(e) => setEditForm({ ...editForm, capacidade_maxima: e.target.value })}
@@ -321,10 +323,10 @@ export default function EquipePage() {
                   </div>
                   <div className="sm:col-span-4 flex justify-end gap-2">
                     <button onClick={() => setEditingId(null)} className="btn-secondary !py-1.5 !px-3 text-sm">
-                      Cancelar
+                      {t('cancelar')}
                     </button>
                     <button onClick={handleSaveEdit} disabled={savingEdit} className="btn-primary !py-1.5 !px-3 text-sm disabled:opacity-50">
-                      {savingEdit ? 'Salvando...' : 'Salvar'}
+                      {savingEdit ? t('salvando') : t('salvar')}
                     </button>
                   </div>
                 </div>
@@ -342,7 +344,7 @@ export default function EquipePage() {
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="font-medium text-gray-900 truncate">{func.profile?.nome || 'Sem nome'}</p>
+                    <p className="font-medium text-gray-900 truncate">{func.profile?.nome || t('semNome')}</p>
                     <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${
                       func.cargo === 'admin'
                         ? 'bg-emerald-100 text-emerald-800'
@@ -352,16 +354,16 @@ export default function EquipePage() {
                     </span>
                     {!func.ativo && (
                       <span className="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
-                        Inativo
+                        {t('inativo')}
                       </span>
                     )}
                   </div>
                   <p className="text-sm text-gray-500 truncate">{func.profile?.email}</p>
                   {func.especialidade && (
-                    <p className="text-xs text-gray-400 mt-0.5">Especialidade: {func.especialidade}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{t('especialidadeLabel')}: {func.especialidade}</p>
                   )}
                   <p className="text-xs text-gray-400 mt-0.5">
-                    Capacidade: {func.capacidade_maxima != null ? `${func.capacidade_maxima} carro(s) simultâneos` : 'sem limite definido'}
+                    {func.capacidade_maxima != null ? t('capacidadeCarros', { count: func.capacidade_maxima }) : t('capacidadeSemLimite')}
                   </p>
                 </div>
               </div>
@@ -372,8 +374,8 @@ export default function EquipePage() {
                   onChange={(e) => handleChangeCargo(func, e.target.value as 'admin' | 'mecanico')}
                   className="input-field !py-1 !px-2 text-xs !w-auto"
                 >
-                  <option value="mecanico">Mecânico</option>
-                  <option value="admin">Admin</option>
+                  <option value="mecanico">{t('mecanico')}</option>
+                  <option value="admin">{t('admin')}</option>
                 </select>
                 <button
                   onClick={() => handleToggleAtivo(func)}
@@ -383,20 +385,20 @@ export default function EquipePage() {
                       : 'bg-green-100 text-green-800 hover:bg-green-200'
                   }`}
                 >
-                  {func.ativo ? 'Desativar' : 'Ativar'}
+                  {func.ativo ? t('desativar') : t('ativar')}
                 </button>
                 <button
                   onClick={() => startEdit(func)}
                   className="px-3 py-1 text-xs rounded-lg font-medium bg-gray-100 text-gray-700 hover:bg-gray-200"
                 >
-                  Editar
+                  {t('editar')}
                 </button>
                 <button
                   onClick={() => handleResetSenha(func)}
                   disabled={resettingId === func.id}
                   className="px-3 py-1 text-xs rounded-lg font-medium bg-sky-100 text-sky-800 hover:bg-sky-200 disabled:opacity-50"
                 >
-                  {resettingId === func.id ? 'Gerando...' : 'Gerar nova senha'}
+                  {resettingId === func.id ? t('gerando') : t('gerarNovaSenha')}
                 </button>
                 <button
                   onClick={() => handleDelete(func)}

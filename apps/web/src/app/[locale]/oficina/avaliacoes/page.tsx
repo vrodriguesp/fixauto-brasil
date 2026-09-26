@@ -1,18 +1,20 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StarRating from '@/components/ui/StarRating';
 import { formatDate } from '@/lib/utils';
 
 export default function AvaliacoesPage() {
+  const t = useTranslations('oficinaAvaliacoes');
   const { oficina } = useAuth();
   const { avaliacoes } = useAvaliacoes();
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Avaliações</h1>
-      <p className="text-gray-600 mb-8">Veja o que seus clientes dizem sobre seus serviços</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('titulo')}</h1>
+      <p className="text-gray-600 mb-8">{t('subtitulo')}</p>
 
       {/* Summary - calculated from live data */}
       <div className="card mb-8">
@@ -24,7 +26,7 @@ export default function AvaliacoesPage() {
                 : '0'}
             </p>
             <StarRating rating={avaliacoes.length > 0 ? avaliacoes.reduce((sum, a) => sum + a.nota, 0) / avaliacoes.length : 0} size="md" />
-            <p className="text-sm text-gray-500 mt-1">{avaliacoes.length} avaliações</p>
+            <p className="text-sm text-gray-500 mt-1">{t('avaliacoesCount', { count: avaliacoes.length })}</p>
           </div>
           <div className="flex-1">
             {[5, 4, 3, 2, 1].map((star) => {
@@ -50,7 +52,7 @@ export default function AvaliacoesPage() {
       {/* Reviews list */}
       {avaliacoes.length === 0 ? (
         <div className="card text-center py-12">
-          <p className="text-gray-500">Nenhuma avaliação recebida ainda</p>
+          <p className="text-gray-500">{t('nenhumaAvaliacaoRecebida')}</p>
         </div>
       ) : (
         <div className="space-y-4">

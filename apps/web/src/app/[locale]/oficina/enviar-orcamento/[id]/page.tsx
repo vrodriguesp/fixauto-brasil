@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
@@ -18,6 +19,7 @@ interface ItemForm {
 }
 
 export default function EnviarOrcamentoPage() {
+  const t = useTranslations('oficinaEnviarOrcamento');
   const params = useParams();
   const router = useRouter();
   const { solicitacoes } = useSolicitacoes();
@@ -221,7 +223,7 @@ export default function EnviarOrcamentoPage() {
   if (!solicitacao) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <p className="text-gray-500">Solicitação não encontrada</p>
+        <p className="text-gray-500">{t('solicitacaoNaoEncontrada')}</p>
       </div>
     );
   }
@@ -235,12 +237,12 @@ export default function EnviarOrcamentoPage() {
           </svg>
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          {isRevision ? 'Orçamento revisado!' : 'Orçamento enviado!'}
+          {isRevision ? t('orcamentoRevisado') : t('orcamentoEnviado')}
         </h1>
         <p className="text-gray-600">
           {isRevision
-            ? 'O cliente foi notificado sobre a revisão do orçamento.'
-            : 'O cliente foi notificado e pode aceitar seu orçamento.'}
+            ? t('clienteNotificadoRevisao')
+            : t('clienteNotificadoAceite')}
         </p>
       </div>
     );
@@ -252,16 +254,16 @@ export default function EnviarOrcamentoPage() {
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Voltar
+        {t('voltar')}
       </button>
 
       <h1 className="text-2xl font-bold text-gray-900 mb-2">
-        {isRevision ? 'Revisar Orçamento' : 'Enviar Orçamento'}
+        {isRevision ? t('revisarOrcamento') : t('enviarOrcamento')}
       </h1>
       {isRevision && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-2">
           <p className="text-sm text-amber-800">
-            Você já enviou um orçamento para esta solicitação. Ao submeter, o orçamento anterior será atualizado (revisão #{((existingQuote?.revisao_numero) || 0) + 1}).
+            {t('jaEnviouOrcamento', { numero: ((existingQuote?.revisao_numero) || 0) + 1 })}
           </p>
         </div>
       )}
@@ -273,7 +275,7 @@ export default function EnviarOrcamentoPage() {
       <div className="bg-gray-50 rounded-lg p-4 mb-6">
         <p className="text-sm text-gray-600">{cleanDescricao(solicitacao.descricao)}</p>
         <p className="text-xs text-gray-500 mt-2">
-          Cliente: {solicitacao.cliente?.nome} | {solicitacao.endereco}
+          {t('clienteLabel')}: {solicitacao.cliente?.nome} | {solicitacao.endereco}
         </p>
       </div>
 
@@ -282,7 +284,7 @@ export default function EnviarOrcamentoPage() {
         <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-6">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg">🤖</span>
-            <h3 className="font-semibold text-indigo-900 text-sm">Análise IA</h3>
+            <h3 className="font-semibold text-indigo-900 text-sm">{t('analiseIA')}</h3>
             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
               analise.severidade === 'leve' ? 'bg-green-100 text-green-700' :
               analise.severidade === 'moderado' ? 'bg-yellow-100 text-yellow-700' :
@@ -300,7 +302,7 @@ export default function EnviarOrcamentoPage() {
           )}
           {analise.estimativa_custo && (
             <p className="text-xs text-indigo-600">
-              Estimativa IA: {formatCurrency(analise.estimativa_custo.min)} - {formatCurrency(analise.estimativa_custo.max)}
+              {t('estimativaIA')}: {formatCurrency(analise.estimativa_custo.min)} - {formatCurrency(analise.estimativa_custo.max)}
             </p>
           )}
         </div>
@@ -308,20 +310,20 @@ export default function EnviarOrcamentoPage() {
 
       <form onSubmit={handleSubmit}>
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Itens do orçamento</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('itensOrcamento')}</h2>
 
           <div className="space-y-4">
             {itens.map((item, index) => (
               <div key={index} className="p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-gray-700">Item {index + 1}</span>
+                  <span className="text-sm font-medium text-gray-700">{t('itemNumero', { numero: index + 1 })}</span>
                   {itens.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeItem(index)}
                       className="text-red-500 hover:text-red-700 text-sm"
                     >
-                      Remover
+                      {t('remover')}
                     </button>
                   )}
                 </div>
@@ -330,7 +332,7 @@ export default function EnviarOrcamentoPage() {
                     <input
                       type="text"
                       className="input-field"
-                      placeholder="Descrição do item"
+                      placeholder={t('placeholderDescricaoItem')}
                       value={item.descricao}
                       onChange={(e) => updateItem(index, 'descricao', e.target.value)}
                     />
@@ -341,10 +343,10 @@ export default function EnviarOrcamentoPage() {
                       value={item.tipo}
                       onChange={(e) => updateItem(index, 'tipo', e.target.value)}
                     >
-                      <option value="mao_de_obra">Mão de obra</option>
-                      <option value="peca">Peça</option>
-                      <option value="material">Material</option>
-                      <option value="outro">Outro</option>
+                      <option value="mao_de_obra">{t('maoDeObra')}</option>
+                      <option value="peca">{t('peca')}</option>
+                      <option value="material">{t('material')}</option>
+                      <option value="outro">{t('outro')}</option>
                     </select>
                   </div>
                   <div className="flex gap-3">
@@ -352,7 +354,7 @@ export default function EnviarOrcamentoPage() {
                       <input
                         type="number"
                         className="input-field"
-                        placeholder="Valor (R$)"
+                        placeholder={t('placeholderValor')}
                         value={item.valor_unitario || ''}
                         onChange={(e) => updateItem(index, 'valor_unitario', parseFloat(e.target.value) || 0)}
                       />
@@ -361,7 +363,7 @@ export default function EnviarOrcamentoPage() {
                       <input
                         type="number"
                         className="input-field"
-                        placeholder="Qtd"
+                        placeholder={t('placeholderQtd')}
                         min={1}
                         value={item.quantidade}
                         onChange={(e) => updateItem(index, 'quantidade', parseInt(e.target.value) || 1)}
@@ -371,7 +373,7 @@ export default function EnviarOrcamentoPage() {
                 </div>
                 {item.valor_unitario > 0 && (
                   <p className="text-sm text-gray-500 mt-2 text-right">
-                    Subtotal: {formatCurrency(item.valor_unitario * item.quantidade)}
+                    {t('subtotal')}: {formatCurrency(item.valor_unitario * item.quantidade)}
                   </p>
                 )}
               </div>
@@ -383,12 +385,12 @@ export default function EnviarOrcamentoPage() {
             onClick={addItem}
             className="mt-4 w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-primary-400 hover:text-primary-600 transition-colors"
           >
-            + Adicionar item
+            {t('adicionarItem')}
           </button>
 
           {/* Total */}
           <div className="flex justify-between items-center mt-6 pt-4 border-t">
-            <span className="text-lg font-semibold text-gray-900">Total</span>
+            <span className="text-lg font-semibold text-gray-900">{t('total')}</span>
             <span className="text-2xl font-bold text-gray-900">{formatCurrency(total)}</span>
           </div>
 
@@ -400,10 +402,10 @@ export default function EnviarOrcamentoPage() {
                   <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span className="text-sm font-medium text-blue-800">Comissão BipFix</span>
+                  <span className="text-sm font-medium text-blue-800">{t('comissaoBipfix')}</span>
                 </div>
                 <p className="text-sm text-blue-700">
-                  Comissão da plataforma: <strong>{COMISSAO_PERCENTUAL}%</strong> = <strong>{formatCurrency(comissaoValor)}</strong>
+                  {t('comissaoDaPlataforma')} <strong>{COMISSAO_PERCENTUAL}%</strong> = <strong>{formatCurrency(comissaoValor)}</strong>
                 </p>
               </div>
 
@@ -419,9 +421,9 @@ export default function EnviarOrcamentoPage() {
                     className="mt-0.5"
                   />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Absorver comissão</p>
+                    <p className="text-sm font-medium text-gray-900">{t('absorverComissao')}</p>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      Você paga a comissão. O cliente vê {formatCurrency(total)}.
+                      {t('vocePagaComissao', { valor: formatCurrency(total) })}
                     </p>
                   </div>
                 </label>
@@ -437,9 +439,9 @@ export default function EnviarOrcamentoPage() {
                     className="mt-0.5"
                   />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Repassar ao cliente</p>
+                    <p className="text-sm font-medium text-gray-900">{t('repassarAoCliente')}</p>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      A comissão de {formatCurrency(comissaoValor)} é adicionada. O cliente vê {formatCurrency(total + comissaoValor)}.
+                      {t('comissaoAdicionada', { comissao: formatCurrency(comissaoValor), total: formatCurrency(total + comissaoValor) })}
                     </p>
                   </div>
                 </label>
@@ -448,9 +450,9 @@ export default function EnviarOrcamentoPage() {
               {comissaoModo === 'repassar' && (
                 <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3">
                   <p className="text-sm text-amber-800">
-                    Preço final para o cliente: <strong>{formatCurrency(totalCliente)}</strong>
+                    {t('precoFinalCliente')} <strong>{formatCurrency(totalCliente)}</strong>
                     <span className="text-xs text-amber-600 ml-1">
-                      ({formatCurrency(total)} + {formatCurrency(comissaoValor)} comissão)
+                      {t('precoFinalDetalhe', { total: formatCurrency(total), comissao: formatCurrency(comissaoValor) })}
                     </span>
                   </p>
                 </div>
@@ -461,11 +463,11 @@ export default function EnviarOrcamentoPage() {
 
         {/* Prazo & Execucao */}
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Prazo e Execução</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('prazoExecucao')}</h2>
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Prazo total (dias)
+                {t('prazoTotalDias')}
               </label>
               <input
                 type="number"
@@ -477,7 +479,7 @@ export default function EnviarOrcamentoPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Tempo de execução (horas)
+                {t('tempoExecucaoHoras')}
               </label>
               <input
                 type="number"
@@ -487,12 +489,12 @@ export default function EnviarOrcamentoPage() {
                 onChange={(e) => setTempoExecucaoHoras(parseInt(e.target.value) || 1)}
               />
               <p className="text-xs text-gray-500 mt-1">
-                ~{Math.ceil(tempoExecucaoHoras / 8)} dia(s) útil(eis)
+                {t('diasUteis', { count: Math.ceil(tempoExecucaoHoras / 8) })}
               </p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Validade do orçamento
+                {t('validadeOrcamento')}
               </label>
               <input
                 type="date"
@@ -510,16 +512,16 @@ export default function EnviarOrcamentoPage() {
             <div className="bg-blue-50 rounded-lg p-4 flex items-center gap-3">
               <span className="text-2xl">🔧</span>
               <div>
-                <p className="font-semibold text-blue-800">Veículo já na oficina</p>
-                <p className="text-sm text-blue-600">O check-in já foi realizado. O novo orçamento será aplicado ao serviço em andamento.</p>
+                <p className="font-semibold text-blue-800">{t('veiculoJaNaOficina')}</p>
+                <p className="text-sm text-blue-600">{t('checkinJaRealizado')}</p>
               </div>
             </div>
           </div>
         ) : (
           <div className="card mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">Disponibilidade para check-in</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('disponibilidadeCheckin')}</h2>
             <p className="text-sm text-gray-500 mb-4">
-              Ofereça datas para o cliente deixar o veículo. O cliente escolherá uma delas.
+              {t('ofereceDatas')}
             </p>
 
             <div className="space-y-3">
@@ -539,17 +541,17 @@ export default function EnviarOrcamentoPage() {
                       value={slot.turno}
                       onChange={(e) => updateSlot(index, 'turno', e.target.value)}
                     >
-                      <option value="manha">Manhã (8-12h)</option>
-                      <option value="tarde">Tarde (13-17h)</option>
+                      <option value="manha">{t('manhaHorario')}</option>
+                      <option value="tarde">{t('tardeHorario')}</option>
                     </select>
                   </div>
                   {slot.data && (
                     <div className="text-xs text-gray-500 w-28">
-                      Entrega: ~{(() => {
+                      {t('entregaAprox', { data: (() => {
                         const d = new Date(slot.data + 'T12:00:00');
                         d.setDate(d.getDate() + prazoDias);
                         return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
-                      })()}
+                      })() })}
                     </div>
                   )}
                   {slots.length > 1 && (
@@ -572,21 +574,21 @@ export default function EnviarOrcamentoPage() {
               onClick={addSlot}
               className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"
             >
-              + Adicionar data disponível
+              {t('adicionarDataDisponivel')}
             </button>
           </div>
         )}
 
         {/* Observacoes */}
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Observações</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('observacoes')}</h2>
           <div className="mt-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Observações (opcional)
+              {t('observacoesOpcional')}
             </label>
             <textarea
               className="input-field min-h-[80px]"
-              placeholder="Garantia, condições, informações adicionais..."
+              placeholder={t('placeholderObservacoes')}
               value={observacoes}
               onChange={(e) => setObservacoes(e.target.value)}
             />
@@ -595,10 +597,10 @@ export default function EnviarOrcamentoPage() {
 
         <div className="flex justify-end gap-3">
           <button type="button" onClick={() => router.back()} className="btn-secondary">
-            Cancelar
+            {t('cancelar')}
           </button>
           <button type="submit" className="btn-success" disabled={total === 0}>
-            {isRevision ? 'Atualizar Orçamento' : 'Enviar Orçamento'} - {formatCurrency(comissaoModo === 'repassar' ? totalCliente : total)}
+            {isRevision ? t('atualizarOrcamento') : t('enviarOrcamento')} - {formatCurrency(comissaoModo === 'repassar' ? totalCliente : total)}
           </button>
         </div>
       </form>

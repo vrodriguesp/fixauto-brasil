@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
 import { supabase } from '@/lib/supabase';
@@ -43,6 +44,7 @@ interface SolicitacaoInfo {
 }
 
 export default function OficinaMensagensPage() {
+  const t = useTranslations('oficinaMensagemDetalhe');
   const params = useParams();
   const id = params.id as string;
   const { user, oficina } = useAuth();
@@ -211,7 +213,7 @@ export default function OficinaMensagensPage() {
           await supabase.from('notificacoes').insert({
             profile_id: sol.cliente_id,
             tipo: 'nova_mensagem',
-            titulo: 'Nova mensagem da oficina',
+            titulo: t('notifNovaMensagemTitulo'),
             mensagem: texto.slice(0, 100),
             dados: { solicitacao_id: id },
           });
@@ -242,7 +244,7 @@ export default function OficinaMensagensPage() {
       const { error } = await supabase.from('mensagens').insert({
         solicitacao_id: id,
         remetente_id: user.id,
-        texto: '[Áudio]',
+        texto: t('audioTag'),
         tipo: 'audio',
         audio_url: audioUrl,
         audio_duracao_segundos: audioDuration,
@@ -255,7 +257,7 @@ export default function OficinaMensagensPage() {
             id: `temp-${Date.now()}`,
             solicitacao_id: id,
             remetente_id: user.id,
-            texto: '[Áudio]',
+            texto: t('audioTag'),
             tipo: 'audio',
             audio_url: audioUrl,
             audio_duracao_segundos: audioDuration,
@@ -276,8 +278,8 @@ export default function OficinaMensagensPage() {
             await supabase.from('notificacoes').insert({
               profile_id: sol.cliente_id,
               tipo: 'nova_mensagem',
-              titulo: 'Nova mensagem de audio da oficina',
-              mensagem: 'Mensagem de audio recebida',
+              titulo: t('notifNovaMensagemAudioTitulo'),
+              mensagem: t('notifMensagemAudioRecebida'),
               dados: { solicitacao_id: id },
             });
           } catch { /* non-blocking */ }
@@ -299,8 +301,8 @@ export default function OficinaMensagensPage() {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
-    if (d.toDateString() === today.toDateString()) return 'Hoje';
-    if (d.toDateString() === yesterday.toDateString()) return 'Ontem';
+    if (d.toDateString() === today.toDateString()) return t('hoje');
+    if (d.toDateString() === yesterday.toDateString()) return t('ontem');
     return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
@@ -331,7 +333,7 @@ export default function OficinaMensagensPage() {
           </div>
           <div>
             <h1 className="font-semibold text-gray-900 text-sm">
-              {solicitacao?.cliente?.nome || 'Carregando...'}
+              {solicitacao?.cliente?.nome || t('carregando')}
             </h1>
             <p className="text-xs text-gray-500">
               {solicitacao?.veiculo
@@ -348,7 +350,7 @@ export default function OficinaMensagensPage() {
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
-          {hasOrcamento ? 'Refazer Orçamento' : 'Fazer Orçamento'}
+          {hasOrcamento ? t('refazerOrcamento') : t('fazerOrcamento')}
         </Link>
       </div>
 
@@ -365,8 +367,8 @@ export default function OficinaMensagensPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
-            <p className="text-gray-500 text-sm">Nenhuma mensagem ainda.</p>
-            <p className="text-gray-400 text-xs mt-1">Envie a primeira mensagem para o cliente.</p>
+            <p className="text-gray-500 text-sm">{t('nenhumaMensagemAinda')}</p>
+            <p className="text-gray-400 text-xs mt-1">{t('envieAPrimeiraMensagem')}</p>
           </div>
         ) : (
           <div className="space-y-1">
@@ -426,7 +428,7 @@ export default function OficinaMensagensPage() {
       {perguntasSugeridas.length > 0 && showPerguntas && (
         <div className="bg-indigo-50 border-t border-indigo-200 px-4 py-2 flex-shrink-0">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-xs font-semibold text-indigo-700">🤖 Perguntas sugeridas pela IA</span>
+            <span className="text-xs font-semibold text-indigo-700">{t('perguntasSugeridasIA')}</span>
             <button onClick={() => setShowPerguntas(false)} className="text-xs text-indigo-400 hover:text-indigo-600">x</button>
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -447,7 +449,7 @@ export default function OficinaMensagensPage() {
         ) : uploadingAudio ? (
           <div className="flex items-center justify-center gap-2 py-2">
             <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm text-gray-500">Enviando audio...</span>
+            <span className="text-sm text-gray-500">{t('enviandoAudio')}</span>
           </div>
         ) : (
           <div className="flex items-center gap-2">
@@ -457,7 +459,7 @@ export default function OficinaMensagensPage() {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Digite sua mensagem..."
+              placeholder={t('placeholderMensagem')}
               className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
             {newMessage.trim() ? (
@@ -474,7 +476,7 @@ export default function OficinaMensagensPage() {
               <button
                 onClick={() => setShowAudioRecorder(true)}
                 className="w-10 h-10 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-                title="Gravar audio"
+                title={t('gravarAudio')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
