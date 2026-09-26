@@ -2,11 +2,12 @@
 
 import { Fragment, useEffect, useState } from 'react';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 
 interface ComissaoPecaRow {
   fornecedor_tipo: 'loja' | 'oficina';
   fornecedor_id: string;
-  fornecedor: { id: string; nome_fantasia: string; cidade: string; estado: string; ativa: boolean };
+  fornecedor: { id: string; nome_fantasia: string; cidade: string; estado: string; pais: string | null; ativa: boolean };
   taxa_padrao: number;
   taxa_calculada: number | null;
   taxa_fixa_override: number | null;
@@ -188,10 +189,10 @@ export default function AdminComissoesPecasPage() {
                         )}
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`text-sm font-medium ${r.total_pendente > 0 ? 'text-amber-400' : 'text-slate-400'}`}>{formatCurrency(r.total_pendente)}</span>
+                        <span className={`text-sm font-medium ${r.total_pendente > 0 ? 'text-amber-400' : 'text-slate-400'}`}>{formatCurrency(r.total_pendente, currencyForCountry(r.fornecedor?.pais))}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-sm font-medium text-emerald-400">{formatCurrency(r.total_pago)}</span>
+                        <span className="text-sm font-medium text-emerald-400">{formatCurrency(r.total_pago, currencyForCountry(r.fornecedor?.pais))}</span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3 text-sm">
@@ -238,9 +239,9 @@ export default function AdminComissoesPecasPage() {
                                   <tr key={l.id}>
                                     <td className="py-2 pr-4 text-slate-300">{l.pedido?.cotacao?.peca_descricao || '—'}</td>
                                     <td className="py-2 pr-4 text-slate-400">{formatDate(l.created_at)}</td>
-                                    <td className="py-2 pr-4 text-right text-white">{formatCurrency(l.valor_pedido)}</td>
+                                    <td className="py-2 pr-4 text-right text-white">{formatCurrency(l.valor_pedido, currencyForCountry(r.fornecedor?.pais))}</td>
                                     <td className="py-2 pr-4 text-right text-slate-400">{(l.taxa_aplicada * 100).toFixed(1)}%</td>
-                                    <td className="py-2 pr-4 text-right text-white font-medium">{formatCurrency(l.valor_comissao)}</td>
+                                    <td className="py-2 pr-4 text-right text-white font-medium">{formatCurrency(l.valor_comissao, currencyForCountry(r.fornecedor?.pais))}</td>
                                     <td className="py-2 pr-4">
                                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${l.status === 'pago' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>
                                         {l.status === 'pago' ? 'Pago' : 'Pendente'}

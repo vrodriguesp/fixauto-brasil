@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -15,6 +15,7 @@ interface CotacaoComOficina extends Omit<CotacaoPeca, 'oficina'> {
 
 export default function LojaCotacoesPage() {
   const t = useTranslations('lojaCotacoes');
+  const locale = useLocale();
   const { loja } = useAuth();
   const [cotacoes, setCotacoes] = useState<CotacaoComOficina[]>([]);
   const [loading, setLoading] = useState(true);
@@ -114,7 +115,7 @@ export default function LojaCotacoesPage() {
                   <p className="text-sm text-gray-500">{t('quantidadeInfo', { quantidade: c.quantidade })}</p>
                 </div>
                 <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                  <span className="text-xs text-gray-400">{timeAgo(c.created_at)}</span>
+                  <span className="text-xs text-gray-400">{timeAgo(c.created_at, locale)}</span>
                   {!c.minhaResposta && loja && (
                     <Link
                       href={`/loja/conversa/nova?cotacaoId=${c.id}&oficinaNome=${encodeURIComponent(c.oficina?.nome_fantasia || 'Oficina')}&pecaDescricao=${encodeURIComponent(c.peca_descricao || '')}`}

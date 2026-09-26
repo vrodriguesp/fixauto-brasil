@@ -317,7 +317,43 @@
       "adminDesc": "Täielik ligipääs töökoja portaalile",
       "mecanico": "Mehaanik",
       "mecanicoDesc": "Ligipääs teeninduses olevate sõidukite lehele"
+    },
+    "noShow": {
+      "no_show": "Ei ilmunud kohale"
     }
+  },
+  "comissaoPecasCard": {
+    "suaTaxaAtual": "Sinu praegune määr",
+    "comissaoPendente": "Ootel komisjonitasu",
+    "comissaoPaga": "Makstud komisjonitasu",
+    "infoTaxa": "Määr algab {base}%-lt ja langeb kuni {min}%-ni, kui vastad hinnapäringutele kiiresti{media} ja hoiad tarnitud tellimuste mahtu. Seda võetakse alles siis, kui tellimus on märgitud tarnituks.",
+    "mediaTempoResposta": " (sinu keskmine täna: {horas}h)",
+    "extratoTitulo": "Varuosade komisjonitasu väljavõte",
+    "nenhumaComissao": "Ühtegi komisjonitasu pole veel registreeritud",
+    "colData": "Kuupäev",
+    "colValorPedido": "Tellimuse väärtus",
+    "colTaxa": "Määr",
+    "colComissao": "Komisjonitasu",
+    "colStatus": "Staatus",
+    "statusPendente": "Ootel",
+    "statusPago": "Makstud"
+  },
+  "damageAnalysis": {
+    "tituloInicial": "AI kahjustuse analüüs",
+    "descricaoInicial": "Kasuta tehisintellekti, et analüüsida kahjustuse fotosid.",
+    "analisando": "Fotode analüüsimine...",
+    "tentarNovamente": "Proovi uuesti",
+    "analisarComIA": "Analüüsi AI-ga",
+    "titulo": "AI analüüs",
+    "estimativaCusto": "Kulude hinnang",
+    "pecasAfetadas": "Mõjutatud osad",
+    "ocultarChecklist": "Peida kontrollnimekiri",
+    "checklistInspecao": "Ülevaatuse kontrollnimekiri ({count} punkti)",
+    "confianca": "Kindlus: {percent}%",
+    "severidadeLeve": "Kerge",
+    "severidadeModerado": "Mõõdukas",
+    "severidadeGrave": "Tõsine",
+    "severidadeSevero": "Kriitiline"
   },
   "cookieBanner": {
     "texto": "Kasutame küpsiseid, et mõista, kuidas sa saiti kasutad, ja parandada sinu kasutuskogemust. Nõustudes lähtud meie",

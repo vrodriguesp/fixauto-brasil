@@ -10,6 +10,7 @@ import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import StarRating from '@/components/ui/StarRating';
 import { formatCurrency, formatDate, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 import type { DisponibilidadeSlot } from '@fixauto/shared';
 
 function formatExecTime(hours: number | null, t: (key: string, values?: Record<string, string | number | Date>) => string): string {
@@ -259,7 +260,7 @@ export default function OrcamentoDetalhePage() {
         <p className="text-gray-600 text-sm">{cleanDescricao(solicitacao.descricao)}</p>
         <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
           <span>{solicitacao.endereco}</span>
-          <span>{formatDate(solicitacao.created_at)}</span>
+          <span>{formatDate(solicitacao.created_at, locale)}</span>
         </div>
 
         {solicitacao.fotos && solicitacao.fotos.length > 0 && (
@@ -382,9 +383,9 @@ export default function OrcamentoDetalhePage() {
                   <p className="text-sm text-gray-600">{existingReview.comentario}</p>
                 )}
                 <p className="text-xs text-gray-400 mt-2">
-                  {formatDate(existingReview.created_at)}
+                  {formatDate(existingReview.created_at, locale)}
                   {existingReview.updated_at && (
-                    <span className="ml-2">{t('editedOn', { date: formatDate(existingReview.updated_at) })}</span>
+                    <span className="ml-2">{t('editedOn', { date: formatDate(existingReview.updated_at, locale) })}</span>
                   )}
                 </p>
               </div>
@@ -499,10 +500,10 @@ export default function OrcamentoDetalhePage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-gray-900">{formatCurrency(orc.valor_total)}</p>
+                  <p className="text-2xl font-bold text-gray-900">{formatCurrency(orc.valor_total, currencyForCountry(orc.oficina?.pais), locale)}</p>
                   <p className="text-sm text-gray-500">{t('deadlineDays', { days: orc.prazo_dias })}</p>
                   {orc.valor_original && orc.valor_original !== orc.valor_total && (
-                    <p className="text-xs text-gray-400 line-through">{formatCurrency(orc.valor_original)}</p>
+                    <p className="text-xs text-gray-400 line-through">{formatCurrency(orc.valor_original, currencyForCountry(orc.oficina?.pais), locale)}</p>
                   )}
                 </div>
               </div>
@@ -529,7 +530,7 @@ export default function OrcamentoDetalhePage() {
               {orc.valor_original && orc.revisao_numero && orc.revisao_numero > 0 && (
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4 flex items-center gap-2 text-sm">
                   <span className="text-gray-600">{t('originalQuoteLabel')}</span>
-                  <span className="line-through text-gray-400">{formatCurrency(orc.valor_original)}</span>
+                  <span className="line-through text-gray-400">{formatCurrency(orc.valor_original, currencyForCountry(orc.oficina?.pais), locale)}</span>
                   <span className="text-gray-600">{t('revisedToLabel')}</span>
                   <span className={`font-bold ${
                     orc.valor_total < orc.valor_original
@@ -538,7 +539,7 @@ export default function OrcamentoDetalhePage() {
                       ? 'text-red-600'
                       : 'text-gray-900'
                   }`}>
-                    {formatCurrency(orc.valor_total)}
+                    {formatCurrency(orc.valor_total, currencyForCountry(orc.oficina?.pais), locale)}
                   </span>
                   <span className="text-gray-500">{t('revisionNumberParen', { n: orc.revisao_numero })}</span>
                 </div>
@@ -561,7 +562,7 @@ export default function OrcamentoDetalhePage() {
                         <tr key={item.id}>
                           <td className="py-2 text-gray-900">{item.descricao}</td>
                           <td className="py-2 text-gray-500 capitalize">{item.tipo.replace('_', ' ')}</td>
-                          <td className="py-2 text-right text-gray-900">{formatCurrency(item.valor_total)}</td>
+                          <td className="py-2 text-right text-gray-900">{formatCurrency(item.valor_total, currencyForCountry(orc.oficina?.pais), locale)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -569,7 +570,7 @@ export default function OrcamentoDetalhePage() {
                       <tr className="font-semibold border-t-2">
                         <td className="pt-2">{t('totalLabel')}</td>
                         <td></td>
-                        <td className="pt-2 text-right">{formatCurrency(orc.valor_total)}</td>
+                        <td className="pt-2 text-right">{formatCurrency(orc.valor_total, currencyForCountry(orc.oficina?.pais), locale)}</td>
                       </tr>
                     </tfoot>
                   </table>
@@ -701,7 +702,7 @@ export default function OrcamentoDetalhePage() {
                       <p className="font-semibold text-red-700">{t('quoteRefused')}</p>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-red-600 line-through opacity-60">
-                      <span>{t('valueLabel', { value: formatCurrency(orc.valor_total) })}</span>
+                      <span>{t('valueLabel', { value: formatCurrency(orc.valor_total, currencyForCountry(orc.oficina?.pais), locale) })}</span>
                       <span>{t('deadlineDays', { days: orc.prazo_dias })}</span>
                     </div>
                   </div>
@@ -774,7 +775,7 @@ export default function OrcamentoDetalhePage() {
               ) : (
                 <div className="flex items-center justify-between pt-4 border-t">
                   <p className="text-xs text-gray-500">
-                    {t('validUntil', { date: formatDate(orc.validade) })}
+                    {t('validUntil', { date: formatDate(orc.validade, locale) })}
                     {orc.revisao_numero > 0 && (
                       <span className="ml-2 text-amber-600 font-medium">
                         {t('revisionNumberParen', { n: orc.revisao_numero })}

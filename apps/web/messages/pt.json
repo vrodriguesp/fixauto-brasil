@@ -328,7 +328,43 @@
       "adminDesc": "Acesso completo ao portal da oficina",
       "mecanico": "Mecânico",
       "mecanicoDesc": "Acesso à página de veículos em serviço"
+    },
+    "noShow": {
+      "no_show": "Não compareceu"
     }
+  },
+  "comissaoPecasCard": {
+    "suaTaxaAtual": "Sua taxa atual",
+    "comissaoPendente": "Comissão pendente",
+    "comissaoPaga": "Comissão paga",
+    "infoTaxa": "A taxa parte de {base}% e cai pra até {min}% respondendo cotações rápido{media} e mantendo volume de pedidos entregues. É cobrada só quando um pedido é marcado como entregue.",
+    "mediaTempoResposta": " (sua média hoje: {horas}h)",
+    "extratoTitulo": "Extrato de comissão de peças",
+    "nenhumaComissao": "Nenhuma comissão registrada ainda",
+    "colData": "Data",
+    "colValorPedido": "Valor do pedido",
+    "colTaxa": "Taxa",
+    "colComissao": "Comissão",
+    "colStatus": "Status",
+    "statusPendente": "Pendente",
+    "statusPago": "Pago"
+  },
+  "damageAnalysis": {
+    "tituloInicial": "Análise IA do Dano",
+    "descricaoInicial": "Use inteligência artificial para analisar as fotos do dano.",
+    "analisando": "Analisando fotos...",
+    "tentarNovamente": "Tentar novamente",
+    "analisarComIA": "Analisar com IA",
+    "titulo": "Análise IA",
+    "estimativaCusto": "Estimativa de custo",
+    "pecasAfetadas": "Peças afetadas",
+    "ocultarChecklist": "Ocultar checklist",
+    "checklistInspecao": "Checklist de inspeção ({count} itens)",
+    "confianca": "Confiança: {percent}%",
+    "severidadeLeve": "Leve",
+    "severidadeModerado": "Moderado",
+    "severidadeGrave": "Grave",
+    "severidadeSevero": "Severo"
   },
   "cookieBanner": {
     "texto": "Usamos cookies para entender como você usa o site e melhorar sua experiência. Ao aceitar, você concorda com nossa",

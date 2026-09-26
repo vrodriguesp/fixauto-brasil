@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { supabase } from '@/lib/supabase';
 import StarRating from '@/components/ui/StarRating';
+import { formatDate } from '@/lib/utils';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import StructuredData from '@/components/seo/StructuredData';
 import { generateAutoRepairSchema, generateReviewSchema } from '@/lib/seo-utils';
@@ -42,15 +43,6 @@ interface Avaliacao {
   } | null;
 }
 
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-}
-
 function getServiceLabel(value: string): { label: string; icon: string } {
   const found = TIPOS_SERVICO.find((s) => s.value === value);
   return found ? { label: found.label, icon: found.icon } : { label: value, icon: '' };
@@ -58,6 +50,7 @@ function getServiceLabel(value: string): { label: string; icon: string } {
 
 export default function OficinaPerfilClient() {
   const t = useTranslations('oficinaPerfilPublico');
+  const locale = useLocale();
   const params = useParams();
   const id = params.id as string;
 
@@ -407,7 +400,7 @@ export default function OficinaPerfilClient() {
                       {av.cliente?.nome || t('clientFallback')}
                     </span>
                   </div>
-                  <span className="text-xs text-gray-400">{formatDate(av.created_at)}</span>
+                  <span className="text-xs text-gray-400">{formatDate(av.created_at, locale)}</span>
                 </div>
                 <div className="ml-10">
                   <div className="flex items-center gap-2">

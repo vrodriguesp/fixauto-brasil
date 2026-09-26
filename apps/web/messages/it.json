@@ -318,7 +318,43 @@
       "adminDesc": "Accesso completo al portale dell'officina",
       "mecanico": "Meccanico",
       "mecanicoDesc": "Accesso alla pagina dei veicoli in lavorazione"
+    },
+    "noShow": {
+      "no_show": "Assente"
     }
+  },
+  "comissaoPecasCard": {
+    "suaTaxaAtual": "La tua aliquota attuale",
+    "comissaoPendente": "Commissione in sospeso",
+    "comissaoPaga": "Commissione pagata",
+    "infoTaxa": "L'aliquota parte da {base}% e scende fino al {min}% rispondendo rapidamente ai preventivi{media} e mantenendo un buon volume di ordini consegnati. Viene addebitata solo quando un ordine viene segnato come consegnato.",
+    "mediaTempoResposta": " (la tua media oggi: {horas}h)",
+    "extratoTitulo": "Estratto conto commissioni ricambi",
+    "nenhumaComissao": "Nessuna commissione ancora registrata",
+    "colData": "Data",
+    "colValorPedido": "Valore ordine",
+    "colTaxa": "Aliquota",
+    "colComissao": "Commissione",
+    "colStatus": "Stato",
+    "statusPendente": "In sospeso",
+    "statusPago": "Pagato"
+  },
+  "damageAnalysis": {
+    "tituloInicial": "Analisi IA del Danno",
+    "descricaoInicial": "Usa l'intelligenza artificiale per analizzare le foto del danno.",
+    "analisando": "Analisi foto in corso...",
+    "tentarNovamente": "Riprova",
+    "analisarComIA": "Analizza con IA",
+    "titulo": "Analisi IA",
+    "estimativaCusto": "Stima dei costi",
+    "pecasAfetadas": "Parti interessate",
+    "ocultarChecklist": "Nascondi checklist",
+    "checklistInspecao": "Checklist di ispezione ({count} voci)",
+    "confianca": "Affidabilità: {percent}%",
+    "severidadeLeve": "Lieve",
+    "severidadeModerado": "Moderato",
+    "severidadeGrave": "Grave",
+    "severidadeSevero": "Critico"
   },
   "cookieBanner": {
     "texto": "Utilizziamo i cookie per capire come usi il sito e migliorare la tua esperienza. Accettando, accetti la nostra",

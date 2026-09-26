@@ -1,14 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { formatCurrency } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 import type { PecaCatalogo } from '@fixauto/shared';
 
 export default function LojaCatalogoPage() {
   const t = useTranslations('lojaCatalogo');
+  const locale = useLocale();
   const { loja } = useAuth();
   const [pecas, setPecas] = useState<PecaCatalogo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -138,7 +140,7 @@ export default function LojaCatalogoPage() {
                 {(peca.fipe_marca || peca.fipe_modelo) && (
                   <p className="text-sm text-gray-500">{peca.fipe_marca} {peca.fipe_modelo} {peca.fipe_ano}</p>
                 )}
-                <p className="text-sm text-gray-600 mt-1">{t('estoqueInfo', { preco: formatCurrency(peca.preco), quantidade: peca.quantidade_estoque })}</p>
+                <p className="text-sm text-gray-600 mt-1">{t('estoqueInfo', { preco: formatCurrency(peca.preco, currencyForCountry(loja?.pais), locale), quantidade: peca.quantidade_estoque })}</p>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 <button onClick={() => handleToggleAtivo(peca)} className={`px-3 py-1 text-xs rounded-lg font-medium ${peca.ativo ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>

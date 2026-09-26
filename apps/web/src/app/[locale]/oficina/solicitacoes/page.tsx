@@ -5,12 +5,13 @@ import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { timeAgo, calcDistance, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import { Link } from '@/i18n/navigation';
 
 export default function SolicitacoesOficinaPage() {
   const t = useTranslations('oficinaSolicitacoes');
+  const locale = useLocale();
   const { oficina } = useAuth();
   const [filtroTipo, setFiltroTipo] = useState('todos');
   const [filtroStatus, setFiltroStatus] = useState('todos');
@@ -90,7 +91,7 @@ export default function SolicitacoesOficinaPage() {
                         </svg>
                         {dist.toFixed(1)}km - {sol.endereco}
                       </span>
-                      <span>{timeAgo(sol.created_at)}</span>
+                      <span>{timeAgo(sol.created_at, locale)}</span>
                       {sol.fotos && sol.fotos.length > 0 && (
                         <span>{sol.fotos.length} foto(s)</span>
                       )}

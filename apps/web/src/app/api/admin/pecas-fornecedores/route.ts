@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin } from '@/lib/admin-auth';
+import { currencyForCountry } from '@/lib/currency';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -31,18 +32,18 @@ export async function GET() {
     ] = await Promise.all([
       supabaseAdmin
         .from('lojas_pecas')
-        .select('id, nome_fantasia, cidade, estado, ativa, created_at, profile_id, profile:profiles(email)')
+        .select('id, nome_fantasia, cidade, estado, pais, ativa, created_at, profile_id, profile:profiles(email)')
         .order('created_at', { ascending: false }),
       supabaseAdmin
         .from('oficinas')
-        .select('id, nome_fantasia, cidade, estado, ativa, created_at, profile_id, profile:profiles(email)')
+        .select('id, nome_fantasia, cidade, estado, pais, ativa, created_at, profile_id, profile:profiles(email)')
         .eq('vende_pecas', true)
         .order('created_at', { ascending: false }),
       supabaseAdmin.from('cotacoes_pecas').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('cotacoes_pecas').select('*', { count: 'exact', head: true }).neq('status', 'aberta'),
       supabaseAdmin.from('pedidos_pecas').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('pedidos_pecas').select('*', { count: 'exact', head: true }).eq('status', 'entregue'),
-      supabaseAdmin.from('comissao_pecas_lancamento').select('status, valor_comissao'),
+      supabaseAdmin.from('comissao_pecas_lancamento').select('status, valor_comissao, fornecedor_tipo, fornecedor_id'),
     ]);
 
     if (lojasError) return NextResponse.json({ error: lojasError.message }, { status: 500 });
@@ -66,6 +67,7 @@ export async function GET() {
       nome_fantasia: row.nome_fantasia,
       cidade: row.cidade,
       estado: row.estado,
+      pais: row.pais ?? null,
       ativa: row.ativa,
       email: row.profile?.email || null,
       created_at: row.created_at,
@@ -78,8 +80,19 @@ export async function GET() {
     ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
     const seteDiasAtras = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    const comissaoPendente = (comissoes || []).filter((c) => c.status === 'pendente').reduce((s, c) => s + Number(c.valor_comissao), 0);
-    const comissaoPaga = (comissoes || []).filter((c) => c.status === 'pago').reduce((s, c) => s + Number(c.valor_comissao), 0);
+
+    // Fornecedores tem paises (logo, moedas) diferentes - nao da pra somar
+    // tudo num numero so sem misturar BRL com EUR. Agrupa por moeda em vez
+    // de fingir que existe uma moeda unica pro platform inteiro.
+    const paisPorFornecedor = new Map(fornecedores.map((f) => [`${f.tipo}:${f.id}`, f.pais]));
+    const comissaoPendentePorMoeda: Record<string, number> = {};
+    const comissaoPagaPorMoeda: Record<string, number> = {};
+    (comissoes || []).forEach((c: any) => {
+      const pais = paisPorFornecedor.get(`${c.fornecedor_tipo}:${c.fornecedor_id}`) ?? null;
+      const moeda = currencyForCountry(pais);
+      const alvo = c.status === 'pendente' ? comissaoPendentePorMoeda : comissaoPagaPorMoeda;
+      alvo[moeda] = (alvo[moeda] || 0) + Number(c.valor_comissao);
+    });
 
     const resumo = {
       totalLojas: (lojas || []).length,
@@ -94,8 +107,8 @@ export async function GET() {
       cotacoesRespondidas: cotacoesRespondidas || 0,
       pedidosConfirmados: pedidosConfirmados || 0,
       pedidosEntregues: pedidosEntregues || 0,
-      comissaoPendente,
-      comissaoPaga,
+      comissaoPendentePorMoeda,
+      comissaoPagaPorMoeda,
     };
 
     return NextResponse.json({ fornecedores, resumo });

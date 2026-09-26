@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import { compressImage } from '@/lib/image-compress';
+import { formatCurrency } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 
 interface Mensagem {
   id: string;
@@ -37,12 +39,14 @@ interface Orcamento {
     endereco?: string;
     cidade?: string;
     estado?: string;
+    pais?: string | null;
     profile?: { telefone?: string; email?: string };
   } | null;
 }
 
 export default function AcidenteRegistroPage() {
   const t = useTranslations('emergenciaAcidenteDetalhe');
+  const locale = useLocale();
   const { id: emergenciaId } = useParams<{ id: string }>();
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -162,7 +166,7 @@ export default function AcidenteRegistroPage() {
     if (emerg?.solicitacao_id) {
       const { data: orcs } = await supabase
         .from('orcamentos')
-        .select('id, valor_total, prazo_dias, status, observacoes, oficina:oficinas(nome_fantasia, endereco, cidade, estado, profile:profiles(telefone, email))')
+        .select('id, valor_total, prazo_dias, status, observacoes, oficina:oficinas(nome_fantasia, endereco, cidade, estado, pais, profile:profiles(telefone, email))')
         .eq('solicitacao_id', emerg.solicitacao_id);
 
       if (orcs) setOrcamentos(orcs as unknown as Orcamento[]);
@@ -305,9 +309,6 @@ export default function AcidenteRegistroPage() {
     return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
   };
 
-  const formatCurrency = (val: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
-
   // Parse accident type from emergencia descricao
   const tipoMatch = emergData?.descricao?.match(/\[TIPO:(\w+)\]/);
   const tipoAcidente = tipoMatch ? tipoMatch[1] : null;
@@ -342,7 +343,7 @@ export default function AcidenteRegistroPage() {
 
   const buildQuoteMessage = (orc: Orcamento) => {
     const ofi = orc.oficina;
-    let msg = t('quoteMsgBase', { oficina: ofi?.nome_fantasia || '', valor: formatCurrency(orc.valor_total), dias: orc.prazo_dias });
+    let msg = t('quoteMsgBase', { oficina: ofi?.nome_fantasia || '', valor: formatCurrency(orc.valor_total, currencyForCountry(ofi?.pais), locale), dias: orc.prazo_dias });
     if (ofi?.endereco) {
       const endereco = ofi.cidade ? `${ofi.endereco}${t('quoteMsgCityPart', { cidade: ofi.cidade })}` : ofi.endereco;
       msg += t('quoteMsgAddressPart', { endereco });
@@ -698,7 +699,7 @@ export default function AcidenteRegistroPage() {
                         {isAceito && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">{t('quoteAcceptedBadge')}</span>}
                       </div>
                       <div className="text-right">
-                        <p className="text-xl font-bold text-gray-900">{formatCurrency(orc.valor_total)}</p>
+                        <p className="text-xl font-bold text-gray-900">{formatCurrency(orc.valor_total, currencyForCountry(ofi?.pais), locale)}</p>
                         <p className="text-xs text-gray-500">{t('deadlineLabel', { dias: orc.prazo_dias })}</p>
                       </div>
                     </div>

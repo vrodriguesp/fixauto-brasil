@@ -1,19 +1,24 @@
 'use client';
 
 import { useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useAnaliseDano } from '@/hooks/use-analise-dano';
 import { formatCurrency } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 
-const SEVERITY_CONFIG: Record<string, { label: string; color: string }> = {
-  leve: { label: 'Leve', color: 'bg-green-100 text-green-800' },
-  moderado: { label: 'Moderado', color: 'bg-yellow-100 text-yellow-800' },
-  grave: { label: 'Grave', color: 'bg-orange-100 text-orange-800' },
-  severo: { label: 'Severo', color: 'bg-red-100 text-red-800' },
-};
-
-export default function DamageAnalysis({ solicitacaoId }: { solicitacaoId: string }) {
+export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId: string; pais?: string | null }) {
+  const locale = useLocale();
+  const t = useTranslations('damageAnalysis');
+  const moeda = currencyForCountry(pais);
   const { analise, loading, analyzing, error, analisar } = useAnaliseDano(solicitacaoId);
   const [showChecklist, setShowChecklist] = useState(false);
+
+  const SEVERITY_CONFIG: Record<string, { label: string; color: string }> = {
+    leve: { label: t('severidadeLeve'), color: 'bg-green-100 text-green-800' },
+    moderado: { label: t('severidadeModerado'), color: 'bg-yellow-100 text-yellow-800' },
+    grave: { label: t('severidadeGrave'), color: 'bg-orange-100 text-orange-800' },
+    severo: { label: t('severidadeSevero'), color: 'bg-red-100 text-red-800' },
+  };
 
   if (loading) {
     return (
@@ -27,8 +32,8 @@ export default function DamageAnalysis({ solicitacaoId }: { solicitacaoId: strin
   if (!analise) {
     return (
       <div className="card">
-        <h2 className="font-semibold text-gray-900 mb-2">Análise IA do Dano</h2>
-        <p className="text-sm text-gray-500 mb-3">Use inteligência artificial para analisar as fotos do dano.</p>
+        <h2 className="font-semibold text-gray-900 mb-2">{t('tituloInicial')}</h2>
+        <p className="text-sm text-gray-500 mb-3">{t('descricaoInicial')}</p>
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-2 mb-3">
             <p className="text-xs text-red-800">{error}</p>
@@ -39,7 +44,7 @@ export default function DamageAnalysis({ solicitacaoId }: { solicitacaoId: strin
           disabled={analyzing}
           className="btn-primary text-sm !py-2 w-full disabled:opacity-50"
         >
-          {analyzing ? 'Analisando fotos...' : error ? 'Tentar novamente' : 'Analisar com IA'}
+          {analyzing ? t('analisando') : error ? t('tentarNovamente') : t('analisarComIA')}
         </button>
       </div>
     );
@@ -50,7 +55,7 @@ export default function DamageAnalysis({ solicitacaoId }: { solicitacaoId: strin
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="font-semibold text-gray-900">Análise IA</h2>
+        <h2 className="font-semibold text-gray-900">{t('titulo')}</h2>
         <span className={`text-xs font-medium px-2 py-1 rounded-full ${sev.color}`}>
           {sev.label}
         </span>
@@ -60,16 +65,16 @@ export default function DamageAnalysis({ solicitacaoId }: { solicitacaoId: strin
 
       {analise.estimativa_custo && (
         <div className="bg-gray-50 rounded-lg p-3 mb-3">
-          <p className="text-xs text-gray-500">Estimativa de custo</p>
+          <p className="text-xs text-gray-500">{t('estimativaCusto')}</p>
           <p className="text-sm font-semibold text-gray-900">
-            {formatCurrency(analise.estimativa_custo.min)} - {formatCurrency(analise.estimativa_custo.max)}
+            {formatCurrency(analise.estimativa_custo.min, moeda, locale)} - {formatCurrency(analise.estimativa_custo.max, moeda, locale)}
           </p>
         </div>
       )}
 
       {analise.pecas_afetadas && analise.pecas_afetadas.length > 0 && (
         <div className="mb-3">
-          <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Peças afetadas</p>
+          <p className="text-xs font-semibold text-gray-500 uppercase mb-1">{t('pecasAfetadas')}</p>
           <div className="flex flex-wrap gap-1">
             {analise.pecas_afetadas.map((p, i) => (
               <span key={i} className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{p}</span>
@@ -84,7 +89,7 @@ export default function DamageAnalysis({ solicitacaoId }: { solicitacaoId: strin
             onClick={() => setShowChecklist(!showChecklist)}
             className="text-xs text-primary-600 hover:text-primary-700 font-medium"
           >
-            {showChecklist ? 'Ocultar checklist' : `Checklist de inspeção (${analise.checklist_inspecao.length} itens)`}
+            {showChecklist ? t('ocultarChecklist') : t('checklistInspecao', { count: analise.checklist_inspecao.length })}
           </button>
           {showChecklist && (
             <div className="mt-2 space-y-1">
@@ -101,7 +106,7 @@ export default function DamageAnalysis({ solicitacaoId }: { solicitacaoId: strin
 
       {analise.confianca != null && (
         <p className="text-[10px] text-gray-400 mt-2">
-          Confiança: {Math.round(analise.confianca * 100)}%
+          {t('confianca', { percent: Math.round(analise.confianca * 100) })}
         </p>
       )}
     </div>

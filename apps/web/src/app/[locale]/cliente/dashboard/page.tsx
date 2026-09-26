@@ -10,6 +10,7 @@ import { useNotificacoes } from '@/hooks/use-notificacoes';
 import { useVeiculos } from '@/hooks/use-veiculos';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { formatCurrency, timeAgo, cleanDescricao } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 
 function formatDateShort(dateStr: string, locale: string): string {
   const d = new Date(dateStr);
@@ -185,7 +186,7 @@ export default function ClienteDashboard() {
                       <StatusBadge status={sol.status} />
                     </div>
                     {orcAceito && (
-                      <p className="text-lg font-bold text-gray-900">{formatCurrency(orcAceito.valor_total)}</p>
+                      <p className="text-lg font-bold text-gray-900">{formatCurrency(orcAceito.valor_total, currencyForCountry(oficina?.pais), locale)}</p>
                     )}
                   </div>
 
@@ -277,7 +278,7 @@ export default function ClienteDashboard() {
                     <p className="text-sm text-gray-600 line-clamp-2">{cleanDescricao(sol.descricao)}</p>
                     <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
                       <span>{sol.endereco}</span>
-                      <span>{timeAgo(sol.created_at)}</span>
+                      <span>{timeAgo(sol.created_at, locale)}</span>
                       {sol.orcamentos && sol.orcamentos.length > 0 && (
                         <span className="font-medium text-primary-600">
                           {t('quotesCount', { count: sol.orcamentos.length })}
@@ -289,7 +290,7 @@ export default function ClienteDashboard() {
                     <div className="text-right ml-4">
                       <p className="text-sm text-gray-500">{t('startingFrom')}</p>
                       <p className="text-lg font-bold text-gray-900">
-                        {formatCurrency(Math.min(...sol.orcamentos.map((o) => o.valor_total)))}
+                        {formatCurrency(Math.min(...sol.orcamentos.map((o) => o.valor_total)), currencyForCountry(sol.orcamentos[0]?.oficina?.pais), locale)}
                       </p>
                     </div>
                   )}

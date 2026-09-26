@@ -23,7 +23,7 @@ export async function GET() {
   try {
     const { data: oficinas, error } = await supabaseAdmin
       .from('oficinas')
-      .select('id, nome_fantasia, cidade, estado, ativa')
+      .select('id, nome_fantasia, cidade, estado, pais, ativa')
       .order('nome_fantasia');
 
     if (error) {

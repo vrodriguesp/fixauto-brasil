@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { timeAgo, cleanDescricao } from '@/lib/utils';
@@ -42,6 +42,7 @@ interface SolicitacaoGroup {
 
 export default function ClienteMensagensListPage() {
   const t = useTranslations('clienteMensagens');
+  const locale = useLocale();
   const { user } = useAuth();
   const [groups, setGroups] = useState<SolicitacaoGroup[]>([]);
   const [loading, setLoading] = useState(true);
@@ -368,7 +369,7 @@ export default function ClienteMensagensListPage() {
                         </p>
                         {conv.ultima_mensagem_at && (
                           <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
-                            {timeAgo(conv.ultima_mensagem_at)}
+                            {timeAgo(conv.ultima_mensagem_at, locale)}
                           </span>
                         )}
                       </div>
@@ -410,7 +411,7 @@ export default function ClienteMensagensListPage() {
                         </p>
                         {group.conversa_emergencia.ultima_mensagem_at && (
                           <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
-                            {timeAgo(group.conversa_emergencia.ultima_mensagem_at)}
+                            {timeAgo(group.conversa_emergencia.ultima_mensagem_at, locale)}
                           </span>
                         )}
                       </div>

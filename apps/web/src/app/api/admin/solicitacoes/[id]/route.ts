@@ -48,7 +48,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       supabaseAdmin.from('solicitacao_fotos').select('*').eq('solicitacao_id', params.id),
       supabaseAdmin
         .from('orcamentos')
-        .select('*, itens:orcamento_itens(*), oficina:oficinas(id, nome_fantasia, cidade, estado, profile_id)')
+        .select('*, itens:orcamento_itens(*), oficina:oficinas(id, nome_fantasia, cidade, estado, pais, profile_id)')
         .eq('solicitacao_id', params.id)
         .order('created_at', { ascending: true }),
       supabaseAdmin

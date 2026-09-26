@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -14,6 +14,7 @@ import { Link } from '@/i18n/navigation';
 
 export default function SolicitacaoDetalhePage() {
   const t = useTranslations('oficinaSolicitacaoDetalhe');
+  const locale = useLocale();
   const params = useParams();
   const { oficina } = useAuth();
   const { solicitacoes } = useSolicitacoes();
@@ -187,7 +188,7 @@ export default function SolicitacaoDetalhePage() {
               </div>
             </div>
             <p className="text-xs text-gray-500">
-              {t('solicitadoEm', { data: formatDate(sol.created_at) })}
+              {t('solicitadoEm', { data: formatDate(sol.created_at, locale) })}
             </p>
           </div>
 
@@ -195,7 +196,7 @@ export default function SolicitacaoDetalhePage() {
             <NoShowWarning clienteId={sol.cliente?.id || sol.cliente_id} />
           )}
 
-          <DamageAnalysis solicitacaoId={sol.id} />
+          <DamageAnalysis solicitacaoId={sol.id} pais={sol.pais} />
         </div>
       </div>
     </div>

@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { formatCurrency } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 import { COMISSAO_CONFIG } from '@fixauto/shared';
 
 interface ComissaoInfo {
@@ -29,7 +30,9 @@ interface Lancamento {
 
 export default function ComissaoPage() {
   const t = useTranslations('oficinaComissao');
+  const locale = useLocale();
   const { oficina } = useAuth();
+  const moeda = currencyForCountry(oficina?.pais);
   const [config, setConfig] = useState<ComissaoInfo | null>(null);
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
   const [loading, setLoading] = useState(true);
@@ -131,11 +134,11 @@ export default function ComissaoPage() {
           <p className="text-sm text-gray-500 mt-1">{t('suaTaxaAtual')}</p>
         </div>
         <div className="card text-center">
-          <p className="text-2xl font-bold text-orange-600">{formatCurrency(totalPendente)}</p>
+          <p className="text-2xl font-bold text-orange-600">{formatCurrency(totalPendente, moeda, locale)}</p>
           <p className="text-sm text-gray-500 mt-1">{t('pendente')}</p>
         </div>
         <div className="card text-center">
-          <p className="text-2xl font-bold text-green-600">{formatCurrency(totalPago)}</p>
+          <p className="text-2xl font-bold text-green-600">{formatCurrency(totalPago, moeda, locale)}</p>
           <p className="text-sm text-gray-500 mt-1">{t('pago')}</p>
         </div>
       </div>
@@ -208,9 +211,9 @@ export default function ComissaoPage() {
                     <td className="py-2 text-gray-900">
                       {(l.solicitacao as any)?.veiculo?.fipe_marca} {(l.solicitacao as any)?.veiculo?.fipe_modelo}
                     </td>
-                    <td className="py-2 text-right text-gray-600">{formatCurrency(l.valor_servico)}</td>
+                    <td className="py-2 text-right text-gray-600">{formatCurrency(l.valor_servico, moeda, locale)}</td>
                     <td className="py-2 text-right text-gray-600">{(l.taxa_aplicada * 100).toFixed(1)}%</td>
-                    <td className="py-2 text-right font-medium text-gray-900">{formatCurrency(l.valor_comissao)}</td>
+                    <td className="py-2 text-right font-medium text-gray-900">{formatCurrency(l.valor_comissao, moeda, locale)}</td>
                     <td className="py-2 text-right">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                         l.status === 'pendente' ? 'bg-yellow-100 text-yellow-700' :

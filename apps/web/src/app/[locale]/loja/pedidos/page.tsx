@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 
 interface PedidoRow {
   id: string;
@@ -20,6 +21,7 @@ interface PedidoRow {
 
 export default function LojaPedidosPage() {
   const t = useTranslations('lojaPedidos');
+  const locale = useLocale();
   const { loja } = useAuth();
   const [pedidos, setPedidos] = useState<PedidoRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -80,7 +82,7 @@ export default function LojaPedidosPage() {
                   {p.oficina?.profile?.telefone && ` · ${p.oficina.profile.telefone}`}
                 </p>
                 <p className="text-sm text-gray-600 mt-1">
-                  {t('infoLinha', { preco: formatCurrency(p.preco_total), quantidade: p.quantidade, data: formatDate(p.created_at) })}
+                  {t('infoLinha', { preco: formatCurrency(p.preco_total, currencyForCountry(loja?.pais), locale), quantidade: p.quantidade, data: formatDate(p.created_at, locale) })}
                 </p>
               </div>
               <div className="flex items-center gap-3 flex-shrink-0">

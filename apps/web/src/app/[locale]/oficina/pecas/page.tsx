@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { formatCurrency, formatDate, timeAgo, distanciaKm } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 import ComissaoPecasCard from '@/components/pecas/ComissaoPecasCard';
 import type { CotacaoPeca, CotacaoPecaResposta } from '@fixauto/shared';
 import { Link } from '@/i18n/navigation';
@@ -23,6 +24,7 @@ interface CotacaoDeOutraOficina extends Omit<CotacaoPeca, 'oficina'> {
 
 export default function OficinaPecasPage() {
   const t = useTranslations('oficinaPecas');
+  const locale = useLocale();
   const { oficina, refreshProfile } = useAuth();
   const [tab, setTab] = useState<'comprar' | 'vender'>('comprar');
 
@@ -39,7 +41,7 @@ export default function OficinaPecasPage() {
     setLoading(true);
     const { data } = await supabase
       .from('cotacoes_pecas')
-      .select('*, respostas:cotacoes_pecas_respostas(*, loja:lojas_pecas(nome_fantasia), oficina_fornecedora:oficinas!cotacoes_pecas_respostas_oficina_fornecedora_id_fkey(nome_fantasia))')
+      .select('*, respostas:cotacoes_pecas_respostas(*, loja:lojas_pecas(nome_fantasia, pais), oficina_fornecedora:oficinas!cotacoes_pecas_respostas_oficina_fornecedora_id_fkey(nome_fantasia, pais))')
       .eq('oficina_id', oficina.id)
       .order('created_at', { ascending: false });
     setCotacoes((data as any[]) || []);
@@ -87,7 +89,7 @@ export default function OficinaPecasPage() {
   ) => {
     if (!oficina) return;
     const nomeFornecedor = resposta.loja?.nome_fantasia || resposta.oficina_fornecedora?.nome_fantasia || t('fornecedorFallback');
-    if (!confirm(t('confirmarPedido', { peca: cotacao.peca_descricao, preco: formatCurrency(resposta.preco), fornecedor: nomeFornecedor }))) return;
+    if (!confirm(t('confirmarPedido', { peca: cotacao.peca_descricao, preco: formatCurrency(resposta.preco, currencyForCountry(resposta.loja?.pais || resposta.oficina_fornecedora?.pais), locale), fornecedor: nomeFornecedor }))) return;
     setConfirmandoId(resposta.id);
 
     await supabase.from('pedidos_pecas').insert({
@@ -345,7 +347,7 @@ export default function OficinaPecasPage() {
                       }`}>
                         {c.status === 'aberta' ? t('aguardandoRespostas') : c.status === 'respondida' ? t('respondida') : c.status === 'fechada' ? t('pedidoConfirmado') : t('cancelada')}
                       </span>
-                      <p className="text-xs text-gray-400 mt-1">{timeAgo(c.created_at)}</p>
+                      <p className="text-xs text-gray-400 mt-1">{timeAgo(c.created_at, locale)}</p>
                     </div>
                   </div>
 
@@ -361,7 +363,7 @@ export default function OficinaPecasPage() {
                               )}
                             </p>
                             <p className="text-sm text-gray-600">
-                              {formatCurrency(r.preco)} {c.quantidade > 1 && `x ${c.quantidade} = ${formatCurrency(r.preco * c.quantidade)}`} · {t('prazoDias', { dias: r.prazo_dias })}
+                              {formatCurrency(r.preco, currencyForCountry(r.loja?.pais || r.oficina_fornecedora?.pais), locale)} {c.quantidade > 1 && `x ${c.quantidade} = ${formatCurrency(r.preco * c.quantidade, currencyForCountry(r.loja?.pais || r.oficina_fornecedora?.pais), locale)}`} · {t('prazoDias', { dias: r.prazo_dias })}
                             </p>
                             {r.observacao && <p className="text-xs text-gray-500 mt-0.5">{r.observacao}</p>}
                           </div>
@@ -421,7 +423,7 @@ export default function OficinaPecasPage() {
                     <div>
                       <p className="text-sm font-medium text-gray-900">{p.cotacao?.peca_descricao}</p>
                       <p className="text-xs text-gray-500">
-                        {p.oficina?.nome_fantasia} · {formatCurrency(p.preco_total)} · {formatDate(p.created_at)}
+                        {p.oficina?.nome_fantasia} · {formatCurrency(p.preco_total, currencyForCountry(oficina?.pais), locale)} · {formatDate(p.created_at, locale)}
                       </p>
                     </div>
                     <div className="flex items-center gap-3 flex-shrink-0">
@@ -446,7 +448,7 @@ export default function OficinaPecasPage() {
           <details className="mb-6">
             <summary className="cursor-pointer text-sm font-medium text-primary-600 hover:underline">{t('verMinhaComissao')}</summary>
             <div className="mt-4">
-              <ComissaoPecasCard fornecedorTipo="oficina" fornecedorId={oficina.id} />
+              <ComissaoPecasCard fornecedorTipo="oficina" fornecedorId={oficina.id} pais={oficina.pais} />
             </div>
           </details>
             </>
@@ -476,7 +478,7 @@ export default function OficinaPecasPage() {
                         <p className="text-sm text-gray-500">{t('quantidadeLabel')}: {c.quantidade}</p>
                       </div>
                       <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                        <span className="text-xs text-gray-400">{timeAgo(c.created_at)}</span>
+                        <span className="text-xs text-gray-400">{timeAgo(c.created_at, locale)}</span>
                         {!c.minhaResposta && (
                           <Link
                             href={`/oficina/pecas/conversa/nova?cotacaoId=${c.id}&compradoraNome=${encodeURIComponent(c.oficina?.nome_fantasia || t('oficinaFallback'))}&pecaDescricao=${encodeURIComponent(c.peca_descricao || '')}`}

@@ -1,12 +1,13 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { useAgenda } from '@/hooks/use-agenda';
 import { supabase } from '@/lib/supabase';
 import { CARGOS_FUNCIONARIO } from '@fixauto/shared';
 import { Link } from '@/i18n/navigation';
+import { INTL_LOCALE } from '@/lib/utils';
 
 interface FuncionarioLeve {
   id: string;
@@ -17,6 +18,7 @@ interface FuncionarioLeve {
 
 export default function DistribuicaoTrabalhoPage() {
   const t = useTranslations('oficinaDistribuicao');
+  const locale = useLocale();
   const { oficina } = useAuth();
   const { eventos, loading, refresh } = useAgenda();
   const [funcionarios, setFuncionarios] = useState<FuncionarioLeve[]>([]);
@@ -77,8 +79,9 @@ export default function DistribuicaoTrabalhoPage() {
     amanha.setDate(hoje.getDate() + 1);
     const mesmodia = (a: Date, b: Date) => a.toDateString() === b.toDateString();
     const dataStr = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
-    if (mesmodia(d, hoje)) return t('hoje', { hora: d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) });
-    if (mesmodia(d, amanha)) return t('amanha', { hora: d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) });
+    const intlLocale = INTL_LOCALE[locale] || 'pt-BR';
+    if (mesmodia(d, hoje)) return t('hoje', { hora: d.toLocaleTimeString(intlLocale, { hour: '2-digit', minute: '2-digit' }) });
+    if (mesmodia(d, amanha)) return t('amanha', { hora: d.toLocaleTimeString(intlLocale, { hour: '2-digit', minute: '2-digit' }) });
     return dataStr;
   };
 

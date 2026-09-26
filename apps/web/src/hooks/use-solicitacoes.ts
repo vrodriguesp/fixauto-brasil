@@ -104,6 +104,7 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
     latitude: number;
     longitude: number;
     endereco: string;
+    pais?: string;
   }) => {
     if (!user) return { data: null, error: { message: 'Not logged in' } };
     const { data, error } = await supabase

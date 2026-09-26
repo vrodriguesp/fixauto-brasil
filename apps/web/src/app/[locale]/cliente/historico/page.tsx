@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import StarRating from '@/components/ui/StarRating';
 import { formatCurrency, formatDate, cleanDescricao } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 
 function ReviewForm({
   solicitacaoId,
@@ -124,6 +125,7 @@ function ReviewDisplay({
   onEdit: () => void;
 }) {
   const t = useTranslations('clienteHistorico');
+  const locale = useLocale();
   return (
     <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
       <div className="flex items-center justify-between mb-1">
@@ -148,9 +150,9 @@ function ReviewDisplay({
         <p className="text-sm text-gray-600 mt-1">{avaliacao.comentario}</p>
       )}
       <p className="text-xs text-gray-400 mt-2">
-        {formatDate(avaliacao.created_at)}
+        {formatDate(avaliacao.created_at, locale)}
         {avaliacao.updated_at && (
-          <span className="ml-2">{t('editedOn', { date: formatDate(avaliacao.updated_at) })}</span>
+          <span className="ml-2">{t('editedOn', { date: formatDate(avaliacao.updated_at, locale) })}</span>
         )}
       </p>
     </div>
@@ -159,6 +161,7 @@ function ReviewDisplay({
 
 export default function HistóricoPage() {
   const t = useTranslations('clienteHistorico');
+  const locale = useLocale();
   const { solicitacoes } = useSolicitacoes();
   const { avaliacoes, create, update } = useAvaliacoes();
   const [openReviewId, setOpenReviewId] = useState<string | null>(null);
@@ -246,17 +249,17 @@ export default function HistóricoPage() {
                             </p>
                           )}
                           <p className="text-sm text-gray-600 mt-1">{cleanDescricao(sol.descricao)}</p>
-                          <p className="text-xs text-gray-500 mt-2">{formatDate(sol.created_at)}</p>
+                          <p className="text-xs text-gray-500 mt-2">{formatDate(sol.created_at, locale)}</p>
                         </div>
                         <div className="text-right flex-shrink-0 ml-4">
                           {acceptedOrc && (
                             <p className="text-lg font-bold text-gray-900">
-                              {formatCurrency(acceptedOrc.valor_total)}
+                              {formatCurrency(acceptedOrc.valor_total, currencyForCountry(acceptedOrc.oficina?.pais), locale)}
                             </p>
                           )}
                           {!acceptedOrc && sol.orcamentos && sol.orcamentos.length > 0 && (
                             <p className="text-lg font-bold text-gray-900">
-                              {formatCurrency(sol.orcamentos[0].valor_total)}
+                              {formatCurrency(sol.orcamentos[0].valor_total, currencyForCountry(sol.orcamentos[0].oficina?.pais), locale)}
                             </p>
                           )}
                         </div>
@@ -354,7 +357,7 @@ export default function HistóricoPage() {
                                 </span>
                               </div>
                               <p className="text-sm text-gray-600">{sol.tipo}</p>
-                              <p className="text-xs text-gray-500 mt-1">{formatDate(sol.created_at)}</p>
+                              <p className="text-xs text-gray-500 mt-1">{formatDate(sol.created_at, locale)}</p>
                             </div>
                           </div>
 
@@ -365,7 +368,7 @@ export default function HistóricoPage() {
                                 {orc.oficina?.nome_fantasia || t('workshopFallback')}
                               </p>
                               <p className="text-sm text-red-500 line-through">
-                                {formatCurrency(orc.valor_total)}
+                                {formatCurrency(orc.valor_total, currencyForCountry(orc.oficina?.pais), locale)}
                               </p>
                             </div>
                             {orc.prazo_dias && (
@@ -451,7 +454,7 @@ export default function HistóricoPage() {
                             <StatusBadge status={sol.status} />
                           </div>
                           <p className="text-xs text-gray-500 line-clamp-1">{cleanDescricao(sol.descricao)}</p>
-                          <p className="text-xs text-gray-400 mt-1">{formatDate(sol.created_at)}</p>
+                          <p className="text-xs text-gray-400 mt-1">{formatDate(sol.created_at, locale)}</p>
                         </div>
                       </div>
                     </div>

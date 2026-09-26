@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { formatCurrency, formatDateTime, cleanDescricao } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 import { STATUS_SOLICITACAO, STATUS_ORCAMENTO } from '@fixauto/shared';
 
 const STATUS_BADGE: Record<string, string> = {
@@ -208,7 +209,7 @@ export default function AdminSolicitacaoDetalhePage() {
                     <p className="text-slate-400 text-sm">{o.oficina?.cidade}, {o.oficina?.estado}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-white font-semibold">{formatCurrency(o.valor_total)}</p>
+                    <p className="text-white font-semibold">{formatCurrency(o.valor_total, currencyForCountry(o.oficina?.pais))}</p>
                     <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium mt-1 ${STATUS_BADGE[o.status]}`}>
                       {STATUS_ORCAMENTO[o.status as keyof typeof STATUS_ORCAMENTO]?.label}
                     </span>
@@ -220,7 +221,7 @@ export default function AdminSolicitacaoDetalhePage() {
                     {o.itens.map((it: any) => (
                       <div key={it.id} className="flex justify-between text-xs text-slate-400">
                         <span>{it.descricao} × {it.quantidade}</span>
-                        <span>{formatCurrency(it.valor_total)}</span>
+                        <span>{formatCurrency(it.valor_total, currencyForCountry(o.oficina?.pais))}</span>
                       </div>
                     ))}
                   </div>

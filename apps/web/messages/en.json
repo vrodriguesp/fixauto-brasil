@@ -318,7 +318,43 @@
       "adminDesc": "Full access to the shop portal",
       "mecanico": "Mechanic",
       "mecanicoDesc": "Access to the in-service vehicles page"
+    },
+    "noShow": {
+      "no_show": "No-show"
     }
+  },
+  "comissaoPecasCard": {
+    "suaTaxaAtual": "Your current rate",
+    "comissaoPendente": "Pending commission",
+    "comissaoPaga": "Paid commission",
+    "infoTaxa": "The rate starts at {base}% and drops to as low as {min}% by responding to quotes quickly{media} and keeping up a steady volume of delivered orders. It's only charged once an order is marked as delivered.",
+    "mediaTempoResposta": " (your average today: {horas}h)",
+    "extratoTitulo": "Parts commission statement",
+    "nenhumaComissao": "No commission recorded yet",
+    "colData": "Date",
+    "colValorPedido": "Order value",
+    "colTaxa": "Rate",
+    "colComissao": "Commission",
+    "colStatus": "Status",
+    "statusPendente": "Pending",
+    "statusPago": "Paid"
+  },
+  "damageAnalysis": {
+    "tituloInicial": "AI Damage Analysis",
+    "descricaoInicial": "Use AI to analyze the damage photos.",
+    "analisando": "Analyzing photos...",
+    "tentarNovamente": "Try again",
+    "analisarComIA": "Analyze with AI",
+    "titulo": "AI Analysis",
+    "estimativaCusto": "Cost estimate",
+    "pecasAfetadas": "Affected parts",
+    "ocultarChecklist": "Hide checklist",
+    "checklistInspecao": "Inspection checklist ({count} items)",
+    "confianca": "Confidence: {percent}%",
+    "severidadeLeve": "Minor",
+    "severidadeModerado": "Moderate",
+    "severidadeGrave": "Severe",
+    "severidadeSevero": "Critical"
   },
   "cookieBanner": {
     "texto": "We use cookies to understand how you use the site and to improve your experience. By accepting, you agree to our",

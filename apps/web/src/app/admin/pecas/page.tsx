@@ -26,8 +26,8 @@ interface Resumo {
   cotacoesRespondidas: number;
   pedidosConfirmados: number;
   pedidosEntregues: number;
-  comissaoPendente: number;
-  comissaoPaga: number;
+  comissaoPendentePorMoeda: Record<string, number>;
+  comissaoPagaPorMoeda: Record<string, number>;
 }
 
 export default function AdminPecasPage() {
@@ -116,15 +116,23 @@ export default function AdminPecasPage() {
         </div>
         <div className="bg-slate-800 rounded-xl border border-slate-700 p-5">
           <p className="text-sm text-slate-400 mb-1">Comissão pendente</p>
-          <p className="text-2xl font-bold text-amber-400">{formatCurrency(resumo.comissaoPendente)}</p>
+          <p className="text-2xl font-bold text-amber-400">
+            {Object.keys(resumo.comissaoPendentePorMoeda).length === 0
+              ? formatCurrency(0)
+              : Object.entries(resumo.comissaoPendentePorMoeda).map(([moeda, v]) => formatCurrency(v, moeda)).join(' + ')}
+          </p>
         </div>
         <div className="bg-slate-800 rounded-xl border border-slate-700 p-5">
           <p className="text-sm text-slate-400 mb-1">Comissão paga</p>
-          <p className="text-2xl font-bold text-emerald-400">{formatCurrency(resumo.comissaoPaga)}</p>
+          <p className="text-2xl font-bold text-emerald-400">
+            {Object.keys(resumo.comissaoPagaPorMoeda).length === 0
+              ? formatCurrency(0)
+              : Object.entries(resumo.comissaoPagaPorMoeda).map(([moeda, v]) => formatCurrency(v, moeda)).join(' + ')}
+          </p>
         </div>
       </div>
 
-      {resumo.pedidosEntregues > 0 && resumo.comissaoPendente === 0 && resumo.comissaoPaga === 0 && (
+      {resumo.pedidosEntregues > 0 && Object.keys(resumo.comissaoPendentePorMoeda).length === 0 && Object.keys(resumo.comissaoPagaPorMoeda).length === 0 && (
         <div className="bg-amber-900/20 border border-amber-800 text-amber-300 p-4 rounded-lg text-sm">
           Há {resumo.pedidosEntregues} pedido(s) entregue(s) mas nenhuma comissão lançada — vale investigar antes de decidir se o canal compensa.
         </div>

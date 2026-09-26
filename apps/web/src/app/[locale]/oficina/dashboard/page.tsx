@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
@@ -11,10 +11,12 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import StarRating from '@/components/ui/StarRating';
 import TutorialBanner from '@/components/tutorial/TutorialBanner';
 import { timeAgo, calcDistance, getUrgenciaColor, formatCurrency, cleanDescricao } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 import { Link } from '@/i18n/navigation';
 
 export default function OficinaDashboard() {
   const t = useTranslations('oficinaDashboard');
+  const locale = useLocale();
   const { user, oficina } = useAuth();
   const { solicitacoes } = useSolicitacoes({ nearby: true });
   const { eventos } = useAgenda();
@@ -206,7 +208,7 @@ export default function OficinaDashboard() {
                   {orc && (
                     <div className="flex items-center justify-between text-sm bg-green-50 rounded-lg p-2">
                       <span className="text-green-700">{t('orcamentoAceito')}</span>
-                      <span className="font-bold text-green-800">{formatCurrency(orc.valor_total)}</span>
+                      <span className="font-bold text-green-800">{formatCurrency(orc.valor_total, currencyForCountry(oficina?.pais), locale)}</span>
                     </div>
                   )}
                 </Link>
@@ -231,9 +233,9 @@ export default function OficinaDashboard() {
                       </h3>
                       <StatusBadge status={sol.status} />
                     </div>
-                    {myOrc && <p className="text-sm font-bold text-gray-900">{formatCurrency(myOrc.valor_total)}</p>}
+                    {myOrc && <p className="text-sm font-bold text-gray-900">{formatCurrency(myOrc.valor_total, currencyForCountry(oficina?.pais), locale)}</p>}
                   </div>
-                  <p className="text-xs text-gray-500">{sol.cliente?.nome} - {timeAgo(sol.created_at)}</p>
+                  <p className="text-xs text-gray-500">{sol.cliente?.nome} - {timeAgo(sol.created_at, locale)}</p>
                   <div className="flex gap-2 mt-3">
                     <Link href={`/oficina/enviar-orcamento/${sol.id}`} className="text-xs bg-primary-600 text-white px-3 py-1.5 rounded-lg hover:bg-primary-700 font-medium">
                       {t('enviarNovasDatas')}
@@ -296,7 +298,7 @@ export default function OficinaDashboard() {
                       <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
                         <span>{sol.veiculo?.fipe_marca} {sol.veiculo?.fipe_modelo} {sol.veiculo?.fipe_ano}</span>
                         <span>{dist.toFixed(1)}km</span>
-                        <span>{timeAgo(sol.created_at)}</span>
+                        <span>{timeAgo(sol.created_at, locale)}</span>
                         {sol.fotos && sol.fotos.length > 0 && (
                           <span>{t('fotosCount', { count: sol.fotos.length })}</span>
                         )}

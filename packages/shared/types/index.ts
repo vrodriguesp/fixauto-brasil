@@ -71,6 +71,7 @@ export interface Oficina {
   cidade: string;
   estado: string;
   cep: string;
+  pais: string | null;
   latitude: number;
   longitude: number;
   raio_atendimento_km: number;
@@ -98,6 +99,7 @@ export interface LojaPecas {
   cidade: string;
   estado: string;
   cep: string;
+  pais: string | null;
   latitude: number | null;
   longitude: number | null;
   raio_atendimento_km: number;
@@ -240,6 +242,7 @@ export interface Solicitacao {
   latitude: number;
   longitude: number;
   endereco: string;
+  pais: string | null;
   created_at: string;
   // Joined
   veiculo?: Veiculo;

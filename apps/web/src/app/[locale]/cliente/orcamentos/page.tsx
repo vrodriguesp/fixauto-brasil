@@ -1,13 +1,15 @@
 'use client';
 
 import { Link } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { formatCurrency, timeAgo, cleanDescricao } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 
 export default function OrcamentosPage() {
   const t = useTranslations('clienteOrcamentos');
+  const locale = useLocale();
   const { solicitacoes: allSolicitacoes } = useSolicitacoes();
   const solicitacoes = allSolicitacoes.filter(
     (s) => s.orcamentos && s.orcamentos.length > 0
@@ -39,7 +41,7 @@ export default function OrcamentosPage() {
                   </div>
                   <p className="text-sm text-gray-500">{cleanDescricao(sol.descricao)}</p>
                 </div>
-                <span className="text-sm text-gray-400">{timeAgo(sol.created_at)}</span>
+                <span className="text-sm text-gray-400">{timeAgo(sol.created_at, locale)}</span>
               </div>
 
               <div className="border-t pt-4">
@@ -70,7 +72,7 @@ export default function OrcamentosPage() {
                       </div>
                       <div className="text-right">
                         <p className="text-lg font-bold text-gray-900">
-                          {formatCurrency(orc.valor_total)}
+                          {formatCurrency(orc.valor_total, currencyForCountry(orc.oficina?.pais), locale)}
                         </p>
                         <StatusBadge status={orc.status} />
                       </div>

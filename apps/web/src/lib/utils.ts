@@ -4,23 +4,35 @@ export function cn(...inputs: ClassValue[]) {
   return clsx(inputs);
 }
 
-export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', {
+// Formatacao de DATA segue o idioma de quem esta LENDO a tela
+// (useLocale()) - isso e so uma convencao de escrita, correto pra
+// qualquer pagina. Default 'pt' preserva o comportamento antigo pra quem
+// nao passar nada (ex: paginas do admin, que ficam so em portugues).
+export const INTL_LOCALE: Record<string, string> = { pt: 'pt-BR', en: 'en-US', et: 'et-EE', it: 'it-IT' };
+
+// Formatacao de MOEDA e diferente: precisa da moeda de verdade (do pais
+// da oficina/loja que emitiu o preco - ver lib/currency.ts) e,
+// separadamente, da convencao numerica de quem esta lendo (locale) - ex:
+// um cliente en lendo um preco de uma oficina estonia ve "€1,234.56"
+// (moeda EUR real, formatacao americana), nao "R$" so porque o idioma da
+// tela e pt. NUNCA decidir a moeda pelo locale/idioma - so pelo pais.
+export function formatCurrency(value: number, currency: string = 'BRL', locale: string = 'pt'): string {
+  return new Intl.NumberFormat(INTL_LOCALE[locale] || 'pt-BR', {
     style: 'currency',
-    currency: 'BRL',
+    currency,
   }).format(value);
 }
 
-export function formatDate(date: string): string {
-  return new Intl.DateTimeFormat('pt-BR', {
+export function formatDate(date: string, locale: string = 'pt'): string {
+  return new Intl.DateTimeFormat(INTL_LOCALE[locale] || 'pt-BR', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
   }).format(new Date(date));
 }
 
-export function formatDateTime(date: string): string {
-  return new Intl.DateTimeFormat('pt-BR', {
+export function formatDateTime(date: string, locale: string = 'pt'): string {
+  return new Intl.DateTimeFormat(INTL_LOCALE[locale] || 'pt-BR', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -29,19 +41,27 @@ export function formatDateTime(date: string): string {
   }).format(new Date(date));
 }
 
-export function timeAgo(date: string): string {
+const TIME_AGO_WORDS: Record<string, { agora: string; min: string; h: string; d: string }> = {
+  pt: { agora: 'agora', min: 'min atrás', h: 'h atrás', d: 'd atrás' },
+  en: { agora: 'just now', min: 'min ago', h: 'h ago', d: 'd ago' },
+  et: { agora: 'just nüüd', min: 'min tagasi', h: 't tagasi', d: 'p tagasi' },
+  it: { agora: 'adesso', min: 'min fa', h: 'h fa', d: 'g fa' },
+};
+
+export function timeAgo(date: string, locale: string = 'pt'): string {
   const now = new Date();
   const past = new Date(date);
   const diffMs = now.getTime() - past.getTime();
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
+  const words = TIME_AGO_WORDS[locale] || TIME_AGO_WORDS.pt;
 
-  if (diffMins < 1) return 'agora';
-  if (diffMins < 60) return `${diffMins}min atras`;
-  if (diffHours < 24) return `${diffHours}h atras`;
-  if (diffDays < 7) return `${diffDays}d atras`;
-  return formatDate(date);
+  if (diffMins < 1) return words.agora;
+  if (diffMins < 60) return `${diffMins}${words.min}`;
+  if (diffHours < 24) return `${diffHours}${words.h}`;
+  if (diffDays < 7) return `${diffDays}${words.d}`;
+  return formatDate(date, locale);
 }
 
 export function calcDistance(

@@ -39,12 +39,30 @@ export default function NovaSolicitacaoPage() {
   // solicitacao gravava a mesma coordenada fixa, quebrando o "oficinas
   // proximas" pra qualquer cliente fora de Sao Paulo.
   const [coords, setCoords] = useState({ lat: -23.5505, lon: -46.6333 });
+  // Pais em codigo ISO - usado pra decidir a moeda de estimativas de preco
+  // mostradas antes de qualquer oficina responder (ex: analise de dano
+  // por IA). Nunca deduzir moeda pelo idioma da tela.
+  const [pais, setPais] = useState('BR');
   const [geoResolved, setGeoResolved] = useState(false);
 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => { setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }); setGeoResolved(true); },
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          setCoords({ lat, lon });
+          setGeoResolved(true);
+          try {
+            const res = await fetch(`/api/geocode?lat=${lat}&lon=${lon}`);
+            if (res.ok) {
+              const data = await res.json();
+              if (data.paisCodigo) setPais(data.paisCodigo);
+            }
+          } catch {
+            // mantem o default BR se a geocodificacao reversa falhar
+          }
+        },
         () => { /* sem permissao - handleSubmit tenta geocodificar o endereco digitado */ }
       );
     }
@@ -52,21 +70,21 @@ export default function NovaSolicitacaoPage() {
 
   // Fallback quando o navegador nega geolocalizacao: geocodifica o endereco
   // digitado via Nominatim (gratuito, mundial) em vez de deixar a
-  // coordenada presa no default de Sao Paulo.
-  const resolveCoords = async (): Promise<{ lat: number; lon: number }> => {
-    if (geoResolved || !endereco) return coords;
+  // coordenada (e o pais) presos no default de Sao Paulo/Brasil.
+  const resolveLocation = async (): Promise<{ lat: number; lon: number; pais: string }> => {
+    if (geoResolved || !endereco) return { ...coords, pais };
     try {
       const res = await fetch(`/api/geocode?q=${encodeURIComponent(endereco)}`);
       if (res.ok) {
         const data = await res.json();
         if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
-          return { lat: data.latitude, lon: data.longitude };
+          return { lat: data.latitude, lon: data.longitude, pais: data.paisCodigo || pais };
         }
       }
     } catch {
-      // mantem o default (SP) se a geocodificacao tambem falhar
+      // mantem o default (SP/BR) se a geocodificacao tambem falhar
     }
-    return coords;
+    return { ...coords, pais };
   };
 
   const selectedVeiculo = veiculos.find((v) => v.id === veiculoId);
@@ -142,15 +160,16 @@ export default function NovaSolicitacaoPage() {
       : (descricao || t('defaultServiceDescription'));
 
     try {
-      const finalCoords = await resolveCoords();
+      const finalLocation = await resolveLocation();
       const { data, error } = await createSolicitacao({
         veiculo_id: veiculoId,
         tipo,
         descricao: fullDescricao,
         urgencia,
-        latitude: finalCoords.lat,
-        longitude: finalCoords.lon,
+        latitude: finalLocation.lat,
+        longitude: finalLocation.lon,
         endereco,
+        pais: finalLocation.pais,
       });
 
       if (error) {

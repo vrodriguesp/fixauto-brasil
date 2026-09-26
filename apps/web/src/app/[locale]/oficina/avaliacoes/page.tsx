@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StarRating from '@/components/ui/StarRating';
@@ -8,6 +8,7 @@ import { formatDate } from '@/lib/utils';
 
 export default function AvaliacoesPage() {
   const t = useTranslations('oficinaAvaliacoes');
+  const locale = useLocale();
   const { oficina } = useAuth();
   const { avaliacoes } = useAvaliacoes();
 
@@ -70,7 +71,7 @@ export default function AvaliacoesPage() {
                     <StarRating rating={av.nota} size="sm" />
                   </div>
                 </div>
-                <span className="text-xs text-gray-500">{formatDate(av.created_at)}</span>
+                <span className="text-xs text-gray-500">{formatDate(av.created_at, locale)}</span>
               </div>
               {av.comentario && (
                 <p className="text-gray-600 text-sm mt-2">{av.comentario}</p>

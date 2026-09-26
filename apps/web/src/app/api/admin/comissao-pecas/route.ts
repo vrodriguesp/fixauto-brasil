@@ -20,8 +20,8 @@ export async function GET() {
 
   try {
     const [{ data: lojas, error: lojasError }, { data: oficinasFornecedoras, error: ofiError }] = await Promise.all([
-      supabaseAdmin.from('lojas_pecas').select('id, nome_fantasia, cidade, estado, ativa'),
-      supabaseAdmin.from('oficinas').select('id, nome_fantasia, cidade, estado, ativa').eq('vende_pecas', true),
+      supabaseAdmin.from('lojas_pecas').select('id, nome_fantasia, cidade, estado, pais, ativa'),
+      supabaseAdmin.from('oficinas').select('id, nome_fantasia, cidade, estado, pais, ativa').eq('vende_pecas', true),
     ]);
     if (lojasError) return NextResponse.json({ error: lojasError.message }, { status: 500 });
     if (ofiError) return NextResponse.json({ error: ofiError.message }, { status: 500 });

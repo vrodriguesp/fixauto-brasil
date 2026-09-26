@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { formatCurrency } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 
 interface ComissaoRow {
   id: string;
@@ -16,6 +18,7 @@ interface ComissaoRow {
     nome_fantasia: string;
     cidade: string;
     estado: string;
+    pais: string | null;
     ativa: boolean;
   } | null;
 }
@@ -42,9 +45,6 @@ export default function AdminComissoesPage() {
   useEffect(() => {
     fetchConfigs();
   }, []);
-
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   const getTaxaAtual = (config: ComissaoRow) => {
     if (config.usa_override && config.taxa_fixa_override != null) {
@@ -143,12 +143,12 @@ export default function AdminComissoesPage() {
                         config.total_pendente > 0 ? 'text-amber-400' : 'text-slate-400'
                       }`}
                     >
-                      {formatCurrency(config.total_pendente)}
+                      {formatCurrency(config.total_pendente, currencyForCountry(config.oficina?.pais))}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <span className="text-sm font-medium text-emerald-400">
-                      {formatCurrency(config.total_pago)}
+                      {formatCurrency(config.total_pago, currencyForCountry(config.oficina?.pais))}
                     </span>
                   </td>
                   <td className="px-6 py-4">

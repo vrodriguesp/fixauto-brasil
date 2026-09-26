@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
 import { useAuth } from '@/lib/auth-context';
 import type { TipoItemOrcamento, AnaliseDano } from '@fixauto/shared';
 import { formatCurrency, cleanDescricao } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 import { supabase } from '@/lib/supabase';
 
 interface ItemForm {
@@ -20,11 +21,13 @@ interface ItemForm {
 
 export default function EnviarOrcamentoPage() {
   const t = useTranslations('oficinaEnviarOrcamento');
+  const locale = useLocale();
   const params = useParams();
   const router = useRouter();
   const { solicitacoes } = useSolicitacoes();
   const { create: createOrcamento, update: updateOrcamento } = useOrcamentos();
   const { oficina } = useAuth();
+  const moeda = currencyForCountry(oficina?.pais);
   const solicitacao = solicitacoes.find((s) => s.id === params.id);
 
   // Check if workshop already has a quote for this solicitation
@@ -302,7 +305,7 @@ export default function EnviarOrcamentoPage() {
           )}
           {analise.estimativa_custo && (
             <p className="text-xs text-indigo-600">
-              {t('estimativaIA')}: {formatCurrency(analise.estimativa_custo.min)} - {formatCurrency(analise.estimativa_custo.max)}
+              {t('estimativaIA')}: {formatCurrency(analise.estimativa_custo.min, moeda, locale)} - {formatCurrency(analise.estimativa_custo.max, moeda, locale)}
             </p>
           )}
         </div>
@@ -373,7 +376,7 @@ export default function EnviarOrcamentoPage() {
                 </div>
                 {item.valor_unitario > 0 && (
                   <p className="text-sm text-gray-500 mt-2 text-right">
-                    {t('subtotal')}: {formatCurrency(item.valor_unitario * item.quantidade)}
+                    {t('subtotal')}: {formatCurrency(item.valor_unitario * item.quantidade, moeda, locale)}
                   </p>
                 )}
               </div>
@@ -391,7 +394,7 @@ export default function EnviarOrcamentoPage() {
           {/* Total */}
           <div className="flex justify-between items-center mt-6 pt-4 border-t">
             <span className="text-lg font-semibold text-gray-900">{t('total')}</span>
-            <span className="text-2xl font-bold text-gray-900">{formatCurrency(total)}</span>
+            <span className="text-2xl font-bold text-gray-900">{formatCurrency(total, moeda, locale)}</span>
           </div>
 
           {/* Commission section */}
@@ -405,7 +408,7 @@ export default function EnviarOrcamentoPage() {
                   <span className="text-sm font-medium text-blue-800">{t('comissaoBipfix')}</span>
                 </div>
                 <p className="text-sm text-blue-700">
-                  {t('comissaoDaPlataforma')} <strong>{COMISSAO_PERCENTUAL}%</strong> = <strong>{formatCurrency(comissaoValor)}</strong>
+                  {t('comissaoDaPlataforma')} <strong>{COMISSAO_PERCENTUAL}%</strong> = <strong>{formatCurrency(comissaoValor, moeda, locale)}</strong>
                 </p>
               </div>
 
@@ -423,7 +426,7 @@ export default function EnviarOrcamentoPage() {
                   <div>
                     <p className="text-sm font-medium text-gray-900">{t('absorverComissao')}</p>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      {t('vocePagaComissao', { valor: formatCurrency(total) })}
+                      {t('vocePagaComissao', { valor: formatCurrency(total, moeda, locale) })}
                     </p>
                   </div>
                 </label>
@@ -441,7 +444,7 @@ export default function EnviarOrcamentoPage() {
                   <div>
                     <p className="text-sm font-medium text-gray-900">{t('repassarAoCliente')}</p>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      {t('comissaoAdicionada', { comissao: formatCurrency(comissaoValor), total: formatCurrency(total + comissaoValor) })}
+                      {t('comissaoAdicionada', { comissao: formatCurrency(comissaoValor, moeda, locale), total: formatCurrency(total + comissaoValor, moeda, locale) })}
                     </p>
                   </div>
                 </label>
@@ -450,9 +453,9 @@ export default function EnviarOrcamentoPage() {
               {comissaoModo === 'repassar' && (
                 <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3">
                   <p className="text-sm text-amber-800">
-                    {t('precoFinalCliente')} <strong>{formatCurrency(totalCliente)}</strong>
+                    {t('precoFinalCliente')} <strong>{formatCurrency(totalCliente, moeda, locale)}</strong>
                     <span className="text-xs text-amber-600 ml-1">
-                      {t('precoFinalDetalhe', { total: formatCurrency(total), comissao: formatCurrency(comissaoValor) })}
+                      {t('precoFinalDetalhe', { total: formatCurrency(total, moeda, locale), comissao: formatCurrency(comissaoValor, moeda, locale) })}
                     </span>
                   </p>
                 </div>
@@ -600,7 +603,7 @@ export default function EnviarOrcamentoPage() {
             {t('cancelar')}
           </button>
           <button type="submit" className="btn-success" disabled={total === 0}>
-            {isRevision ? t('atualizarOrcamento') : t('enviarOrcamento')} - {formatCurrency(comissaoModo === 'repassar' ? totalCliente : total)}
+            {isRevision ? t('atualizarOrcamento') : t('enviarOrcamento')} - {formatCurrency(comissaoModo === 'repassar' ? totalCliente : total, moeda, locale)}
           </button>
         </div>
       </form>
