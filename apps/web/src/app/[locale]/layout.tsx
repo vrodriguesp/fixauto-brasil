@@ -76,6 +76,13 @@ export default async function LocaleLayout({
     url: 'https://bipfix.com',
     logo: 'https://bipfix.com/apple-touch-icon.png',
     description: t('description'),
+    contactPoint: {
+      '@type': 'ContactPoint',
+      email: 'contato@bipfix.com',
+      contactType: 'customer support',
+      areaServed: ['BR', 'EE'],
+      availableLanguage: ['Portuguese', 'English', 'Estonian', 'Italian'],
+    },
   };
 
   const websiteSchema = {
