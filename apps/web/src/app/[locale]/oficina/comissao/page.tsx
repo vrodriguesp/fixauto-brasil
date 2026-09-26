@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, INTL_LOCALE } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { COMISSAO_CONFIG } from '@fixauto/shared';
 
@@ -207,7 +207,7 @@ export default function ComissaoPage() {
               <tbody className="divide-y">
                 {lancamentos.map((l) => (
                   <tr key={l.id}>
-                    <td className="py-2 text-gray-600">{new Date(l.created_at).toLocaleDateString('pt-BR')}</td>
+                    <td className="py-2 text-gray-600">{new Date(l.created_at).toLocaleDateString(INTL_LOCALE[locale] || 'pt-BR')}</td>
                     <td className="py-2 text-gray-900">
                       {(l.solicitacao as any)?.veiculo?.fipe_marca} {(l.solicitacao as any)?.veiculo?.fipe_modelo}
                     </td>

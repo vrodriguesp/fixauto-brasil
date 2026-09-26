@@ -5,6 +5,7 @@ interface OficinaSchema {
   cidade: string;
   estado: string;
   cep?: string;
+  pais?: string | null;
   latitude?: number | null;
   longitude?: number | null;
   especialidades?: string[];
@@ -45,7 +46,7 @@ export function generateAutoRepairSchema(oficina: OficinaSchema) {
       addressLocality: oficina.cidade,
       addressRegion: oficina.estado,
       postalCode: oficina.cep || undefined,
-      addressCountry: 'BR',
+      addressCountry: oficina.pais || 'BR',
     },
     areaServed: {
       '@type': 'City',

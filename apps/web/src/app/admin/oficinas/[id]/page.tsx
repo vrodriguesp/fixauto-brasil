@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { currencyForCountry } from '@/lib/currency';
 import type { Oficina, Solicitacao, Orcamento } from '@fixauto/shared';
 
 interface ComissaoConfigLocal {
@@ -148,6 +149,8 @@ export default function AdminOficinaDetailPage() {
     setSaving(false);
     setTimeout(() => setSaveMsg(null), 3000);
   };
+
+  const moeda = currencyForCountry(oficina?.pais);
 
   if (loading) {
     return (
@@ -319,12 +322,12 @@ export default function AdminOficinaDetailPage() {
           <h2 className="text-lg font-semibold text-white">Lançamentos de Comissão</h2>
           <div className="flex gap-4 text-sm">
             <span className="text-amber-400 font-medium">
-              Pendente: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+              Pendente: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: moeda }).format(
                 lancamentos.filter((l) => l.status === 'pendente').reduce((s, l) => s + l.valor_comissao, 0)
               )}
             </span>
             <span className="text-emerald-400 font-medium">
-              Pago: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+              Pago: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: moeda }).format(
                 lancamentos.filter((l) => l.status === 'pago').reduce((s, l) => s + l.valor_comissao, 0)
               )}
             </span>
@@ -350,11 +353,11 @@ export default function AdminOficinaDetailPage() {
                   <tr key={l.id}>
                     <td className="py-2 pr-4 text-slate-300">{new Date(l.created_at).toLocaleDateString('pt-BR')}</td>
                     <td className="py-2 pr-4 text-right text-white">
-                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(l.valor_servico)}
+                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: moeda }).format(l.valor_servico)}
                     </td>
                     <td className="py-2 pr-4 text-right text-slate-300">{(l.taxa_aplicada * 100).toFixed(1)}%</td>
                     <td className="py-2 pr-4 text-right text-white font-medium">
-                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(l.valor_comissao)}
+                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: moeda }).format(l.valor_comissao)}
                     </td>
                     <td className="py-2 pr-4">
                       <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${
@@ -433,7 +436,7 @@ export default function AdminOficinaDetailPage() {
                   <p className="text-white text-sm font-medium">
                     {new Intl.NumberFormat('pt-BR', {
                       style: 'currency',
-                      currency: 'BRL',
+                      currency: moeda,
                     }).format(orc.valor_total)}
                   </p>
                   <p className="text-slate-400 text-xs mt-0.5">

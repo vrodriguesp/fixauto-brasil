@@ -6,7 +6,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { supabase } from '@/lib/supabase';
 import StarRating from '@/components/ui/StarRating';
-import { formatDate } from '@/lib/utils';
+import { formatDate, INTL_LOCALE } from '@/lib/utils';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import StructuredData from '@/components/seo/StructuredData';
 import { generateAutoRepairSchema, generateReviewSchema } from '@/lib/seo-utils';
@@ -20,6 +20,7 @@ interface Oficina {
   cidade: string;
   estado: string;
   cep: string;
+  pais: string | null;
   latitude: number | null;
   longitude: number | null;
   especialidades: string[];
@@ -194,7 +195,7 @@ export default function OficinaPerfilClient() {
   const hasCoords = lat !== null && lng !== null;
 
   const parceiraDesde = oficina.created_at
-    ? new Date(oficina.created_at).toLocaleDateString('pt-BR', { month: '2-digit', year: 'numeric' })
+    ? new Date(oficina.created_at).toLocaleDateString(INTL_LOCALE[locale] || 'pt-BR', { month: '2-digit', year: 'numeric' })
     : null;
   const tierVolume = TIERS_VOLUME.find((t) => totalServicosConcluidos >= t);
 

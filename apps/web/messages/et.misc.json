@@ -106,6 +106,16 @@
     "footerDisclaimer": "Käesolev dokument on informatiivse iseloomuga. Täieliku õigusliku vastavuse tagamiseks enne kommertskasutuselevõttu on soovitatav lasta dokument üle vaadata andmekaitseõiguse (LGPD) valdkonna juristil."
   },
   "emergencia": {
+    "metaTitle": "Autoavarii? Teata sellest kohe",
+    "metaDescription": "Sattusid avariisse? Teata õnnetusest, tee kahjustusest pildid ja saa lähedal asuvatelt töökodadelt hinnapakkumised minutitega, tasuta.",
+    "metaKeywords": [
+      "autoavarii mida teha",
+      "liiklusõnnetusest teatamine",
+      "kiire kerekoja hinnapakkumine",
+      "auto sai avariisse"
+    ],
+    "ogTitle": "Autoavarii? Teata sellest kohe",
+    "ogDescription": "Tee kahjustusest pildid ja saa lähedal asuvatelt töökodadelt hinnapakkumised minutitega.",
     "successTitle": "Hädaolukord registreeritud!",
     "successText": "Lähedal asuvaid töökodasid teavitati ja nad saadavad peagi hinnapakkumised.",
     "nextStepTitle": "Järgmine samm",

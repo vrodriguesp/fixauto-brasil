@@ -468,6 +468,8 @@ export interface PlataformaMetricas {
   total_oficinas: number;
   solicitacoes_mes: number;
   servicos_concluidos_mes: number;
-  gmv_mes: number;
-  comissao_total_mes: number;
+  // Agrupado por moeda (ISO 4217) - oficinas de paises diferentes usam
+  // moedas diferentes, entao um numero unico misturaria BRL com EUR.
+  gmv_mes_por_moeda: Record<string, number>;
+  comissao_total_mes_por_moeda: Record<string, number>;
 }

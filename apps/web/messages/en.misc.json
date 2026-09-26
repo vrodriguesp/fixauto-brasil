@@ -106,6 +106,16 @@
     "footerDisclaimer": "This document is provided for informational purposes. For full legal compliance prior to commercial release, review by a lawyer specializing in data protection (LGPD) law is recommended."
   },
   "emergencia": {
+    "metaTitle": "Just Crashed Your Car? Report It Now",
+    "metaDescription": "Just had a car accident? Report it, take photos of the damage, and get quotes from nearby repair shops in minutes, for free.",
+    "metaKeywords": [
+      "just crashed my car",
+      "what to do after a car accident",
+      "report a car accident",
+      "urgent body shop quote"
+    ],
+    "ogTitle": "Just Crashed Your Car? Report It Now",
+    "ogDescription": "Take photos of the damage and get quotes from nearby repair shops in minutes.",
     "successTitle": "Emergency logged!",
     "successText": "Nearby repair shops have been notified and will send quotes shortly.",
     "nextStepTitle": "Next step",

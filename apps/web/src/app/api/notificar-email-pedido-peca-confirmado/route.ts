@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
 
-    const { toEmail, toName, oficinaCompradoraNome, pecaDescricao, valorTotal } = await req.json();
+    const { toEmail, toName, oficinaCompradoraNome, pecaDescricao, valorTotal, moeda } = await req.json();
     if (!toEmail || !pecaDescricao) {
       return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 });
     }
@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
       oficinaCompradoraNome: oficinaCompradoraNome || 'Uma oficina',
       pecaDescricao,
       valorTotal: Number(valorTotal) || 0,
+      moeda: moeda || 'BRL',
     });
 
     return NextResponse.json(result);

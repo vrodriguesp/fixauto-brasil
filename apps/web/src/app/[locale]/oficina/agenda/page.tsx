@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAgenda } from '@/hooks/use-agenda';
 import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
 import { CORES_AGENDA, TIPOS_SERVICO } from '@fixauto/shared';
-import { cleanDescricao } from '@/lib/utils';
+import { cleanDescricao, INTL_LOCALE } from '@/lib/utils';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 
 function getDaysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate(); }
@@ -15,6 +15,7 @@ function getFirstDayOfMonth(y: number, m: number) { return new Date(y, m, 1).get
 
 export default function AgendaPage() {
   const t = useTranslations('oficinaAgenda');
+  const locale = useLocale();
   const MESES = [t('mes0'), t('mes1'), t('mes2'), t('mes3'), t('mes4'), t('mes5'), t('mes6'), t('mes7'), t('mes8'), t('mes9'), t('mes10'), t('mes11')];
   const DIAS_SEMANA = [t('dia0'), t('dia1'), t('dia2'), t('dia3'), t('dia4'), t('dia5'), t('dia6')];
 
@@ -403,9 +404,9 @@ export default function AgendaPage() {
                 )}
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase">{t('datas')}</p>
-                  <p className="text-xs text-gray-700">{t('checkinLabel')}: {new Date(ev.data_inicio).toLocaleDateString('pt-BR')} {new Date(ev.data_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
-                  <p className="text-xs text-gray-700">{t('prevEntregaLabel')}: {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleDateString('pt-BR')} {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
-                  {ev.status === 'concluido' && <p className="text-xs text-gray-700">{t('entregueLabel')}: {new Date(ev.data_fim).toLocaleDateString('pt-BR')}</p>}
+                  <p className="text-xs text-gray-700">{t('checkinLabel')}: {new Date(ev.data_inicio).toLocaleDateString(INTL_LOCALE[locale] || 'pt-BR')} {new Date(ev.data_inicio).toLocaleTimeString(INTL_LOCALE[locale] || 'pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+                  <p className="text-xs text-gray-700">{t('prevEntregaLabel')}: {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleDateString(INTL_LOCALE[locale] || 'pt-BR')} {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleTimeString(INTL_LOCALE[locale] || 'pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+                  {ev.status === 'concluido' && <p className="text-xs text-gray-700">{t('entregueLabel')}: {new Date(ev.data_fim).toLocaleDateString(INTL_LOCALE[locale] || 'pt-BR')}</p>}
                 </div>
                 {ev.funcionario?.profile?.nome && (
                   <div>

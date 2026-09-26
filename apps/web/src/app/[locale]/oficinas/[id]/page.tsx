@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { getTranslations } from 'next-intl/server';
 import OficinaPerfilClient from './OficinaPerfilClient';
+import { INTL_LOCALE } from '@/lib/utils';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -49,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     alternates: { canonical: url },
     openGraph: {
       type: 'website',
-      locale: 'pt_BR',
+      locale: (INTL_LOCALE[locale] || 'pt-BR').replace('-', '_'),
       siteName: 'BipFix',
       title,
       description,

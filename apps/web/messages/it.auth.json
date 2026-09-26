@@ -33,6 +33,7 @@
     "labelNomeFantasia": "Nome commerciale *",
     "placeholderNomeOficina": "Nome dell'officina",
     "labelCnpj": "Partita IVA (opzionale)",
+    "placeholderCnpj": "Numero di partita IVA",
     "labelCep": "CAP",
     "buscandoEndereco": "Ricerca indirizzo in corso...",
     "cepNaoEncontrado": "CAP non trovato - controlla il numero o inserisci l'indirizzo manualmente",

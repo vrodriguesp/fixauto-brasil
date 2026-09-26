@@ -5,6 +5,7 @@ import {
   sendQuoteWhatsApp,
 } from '@/lib/notifications';
 import { getSessionUserId } from '@/lib/api-auth';
+import { currencyForCountry } from '@/lib/currency';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
       .from('orcamentos')
       .select(`
         *,
-        oficina:oficinas(nome_fantasia, profile_id),
+        oficina:oficinas(nome_fantasia, profile_id, pais),
         solicitacao:solicitacoes(
           id,
           cliente_id,
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
     const oficinaNome = (orcamento.oficina as any)?.nome_fantasia || 'Oficina';
     const valorTotal = new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL',
+      currency: currencyForCountry((orcamento.oficina as any)?.pais),
     }).format(orcamento.valor_total);
 
     const results: { email?: { success: boolean }; whatsapp?: { success: boolean } } = {};

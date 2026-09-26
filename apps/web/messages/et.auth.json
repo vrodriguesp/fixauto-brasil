@@ -33,6 +33,7 @@
     "labelNomeFantasia": "Ärinimi *",
     "placeholderNomeOficina": "Töökoja nimi",
     "labelCnpj": "Registrikood (valikuline)",
+    "placeholderCnpj": "Äriregistri kood",
     "labelCep": "Postiindeks",
     "buscandoEndereco": "Aadressi otsimine...",
     "cepNaoEncontrado": "Postiindeksit ei leitud - kontrolli numbrit või täida aadress käsitsi",

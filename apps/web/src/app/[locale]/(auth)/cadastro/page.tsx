@@ -386,7 +386,7 @@ function CadastroPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
-                <input type="text" className="input-field" placeholder="00.000.000/0001-00" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
+                <input type="text" className="input-field" placeholder={t('placeholderCnpj')} value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
               </div>
               {renderEnderecoFields()}
 
@@ -449,7 +449,7 @@ function CadastroPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
-                <input type="text" className="input-field" placeholder="00.000.000/0001-00" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
+                <input type="text" className="input-field" placeholder={t('placeholderCnpj')} value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
               </div>
               {renderEnderecoFields()}
               <button type="submit" className="btn-primary w-full" disabled={loading}>

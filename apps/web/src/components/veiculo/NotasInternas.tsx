@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import { INTL_LOCALE } from '@/lib/utils';
 import type { VeiculoNotaInterna } from '@fixauto/shared';
 
 interface Props {
@@ -21,6 +23,7 @@ interface Props {
  */
 export default function NotasInternas({ agendaId, oficinaId, funcionarioResponsavelProfileId, veiculoLabel }: Props) {
   const { user, oficina } = useAuth();
+  const locale = useLocale();
   const [notas, setNotas] = useState<VeiculoNotaInterna[]>([]);
   const [loading, setLoading] = useState(true);
   const [texto, setTexto] = useState('');
@@ -109,7 +112,7 @@ export default function NotasInternas({ agendaId, oficinaId, funcionarioResponsa
         <div className="space-y-1.5 mb-2 max-h-48 overflow-y-auto">
           {notas.map((n) => (
             <div key={n.id} className={`text-xs px-2.5 py-1.5 rounded-lg ${n.remetente_id === user?.id ? 'bg-amber-100 text-amber-900 ml-6' : 'bg-white text-gray-700 border border-gray-200 mr-6'}`}>
-              <p className="font-medium text-[11px] text-gray-500">{n.remetente?.nome || 'Equipe'} · {new Date(n.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+              <p className="font-medium text-[11px] text-gray-500">{n.remetente?.nome || 'Equipe'} · {new Date(n.created_at).toLocaleTimeString(INTL_LOCALE[locale] || 'pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
               <p className="whitespace-pre-wrap break-words">{n.texto}</p>
             </div>
           ))}

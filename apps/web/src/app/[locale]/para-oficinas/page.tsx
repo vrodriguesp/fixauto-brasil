@@ -6,7 +6,6 @@ import { generateFAQSchema } from '@/lib/seo-utils';
 import { routing } from '@/i18n/routing';
 
 const OG_LOCALE: Record<string, string> = { pt: 'pt_BR', en: 'en_US', et: 'et_EE', it: 'it_IT' };
-const CURRENCY: Record<string, string> = { pt: 'BRL', en: 'EUR', et: 'EUR', it: 'EUR' };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -55,7 +54,7 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
     offers: {
       '@type': 'Offer',
       price: '0',
-      priceCurrency: CURRENCY[locale] || 'EUR',
+      priceCurrency: 'EUR',
     },
   };
 

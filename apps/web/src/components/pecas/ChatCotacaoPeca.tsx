@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { compressImage } from '@/lib/image-compress';
+import { INTL_LOCALE } from '@/lib/utils';
 import type { CotacaoPecaMensagem, TipoFornecedorPeca } from '@fixauto/shared';
 
 interface Props {
@@ -22,6 +24,7 @@ interface Props {
  */
 export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorId, titulo, subtitulo }: Props) {
   const { user } = useAuth();
+  const locale = useLocale();
   const [messages, setMessages] = useState<CotacaoPecaMensagem[]>([]);
   const [loading, setLoading] = useState(true);
   const [texto, setTexto] = useState('');
@@ -113,7 +116,7 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
   };
 
   const formatTime = (dateStr: string) =>
-    new Date(dateStr).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    new Date(dateStr).toLocaleTimeString(INTL_LOCALE[locale] || 'pt-BR', { hour: '2-digit', minute: '2-digit' });
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] max-w-3xl mx-auto">

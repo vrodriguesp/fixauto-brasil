@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
 import { supabase } from '@/lib/supabase';
+import { INTL_LOCALE } from '@/lib/utils';
 import AudioRecorder from '@/components/ui/AudioRecorder';
 import AudioMessage from '@/components/ui/AudioMessage';
 import { useAudioRecorder } from '@/hooks/use-audio-recorder';
@@ -45,6 +46,7 @@ interface SolicitacaoInfo {
 
 export default function OficinaMensagensPage() {
   const t = useTranslations('oficinaMensagemDetalhe');
+  const locale = useLocale();
   const params = useParams();
   const id = params.id as string;
   const { user, oficina } = useAuth();
@@ -292,7 +294,7 @@ export default function OficinaMensagensPage() {
 
   const formatTime = (dateStr: string) => {
     const d = new Date(dateStr);
-    return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleTimeString(INTL_LOCALE[locale] || 'pt-BR', { hour: '2-digit', minute: '2-digit' });
   };
 
   const formatDateSeparator = (dateStr: string) => {
@@ -303,7 +305,7 @@ export default function OficinaMensagensPage() {
 
     if (d.toDateString() === today.toDateString()) return t('hoje');
     if (d.toDateString() === yesterday.toDateString()) return t('ontem');
-    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return d.toLocaleDateString(INTL_LOCALE[locale] || 'pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
   const shouldShowDateSeparator = (index: number) => {

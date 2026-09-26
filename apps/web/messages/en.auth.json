@@ -33,6 +33,7 @@
     "labelNomeFantasia": "Trade name *",
     "placeholderNomeOficina": "Workshop name",
     "labelCnpj": "Tax ID (optional)",
+    "placeholderCnpj": "Company registration number",
     "labelCep": "Zip code",
     "buscandoEndereco": "Looking up address...",
     "cepNaoEncontrado": "Zip code not found - check the number or fill it in manually",

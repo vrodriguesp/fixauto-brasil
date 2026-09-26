@@ -33,6 +33,7 @@
     "labelNomeFantasia": "Nome fantasia *",
     "placeholderNomeOficina": "Nome da oficina",
     "labelCnpj": "CNPJ (opcional)",
+    "placeholderCnpj": "00.000.000/0001-00",
     "labelCep": "CEP",
     "buscandoEndereco": "Buscando endereço...",
     "cepNaoEncontrado": "CEP não encontrado - confira o número ou preencha manualmente",

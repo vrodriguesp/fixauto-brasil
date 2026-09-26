@@ -3,6 +3,16 @@
 import { useEffect, useState } from 'react';
 import type { PlataformaMetricas } from '@fixauto/shared';
 
+function formatMoedaMap(porMoeda: Record<string, number> | undefined): string {
+  const entries = Object.entries(porMoeda || {});
+  if (entries.length === 0) {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(0);
+  }
+  return entries
+    .map(([moeda, valor]) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: moeda }).format(valor))
+    .join(' + ');
+}
+
 export default function AdminDashboardPage() {
   const [metricas, setMetricas] = useState<PlataformaMetricas | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,45 +58,35 @@ export default function AdminDashboardPage() {
   const cards = [
     {
       label: 'Total Clientes',
-      value: metricas?.total_clientes ?? 0,
-      format: 'number',
+      value: new Intl.NumberFormat('pt-BR').format(metricas?.total_clientes ?? 0),
       color: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-      iconBg: 'bg-blue-500/20',
     },
     {
       label: 'Total Oficinas',
-      value: metricas?.total_oficinas ?? 0,
-      format: 'number',
+      value: new Intl.NumberFormat('pt-BR').format(metricas?.total_oficinas ?? 0),
       color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-      iconBg: 'bg-emerald-500/20',
     },
     {
       label: 'Solicitações (mês)',
-      value: metricas?.solicitacoes_mes ?? 0,
-      format: 'number',
+      value: new Intl.NumberFormat('pt-BR').format(metricas?.solicitacoes_mes ?? 0),
       color: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-      iconBg: 'bg-purple-500/20',
     },
     {
       label: 'Serviços Concluídos (mês)',
-      value: metricas?.servicos_concluidos_mes ?? 0,
-      format: 'number',
+      value: new Intl.NumberFormat('pt-BR').format(metricas?.servicos_concluidos_mes ?? 0),
       color: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-      iconBg: 'bg-amber-500/20',
     },
     {
       label: 'GMV (mês)',
-      value: metricas?.gmv_mes ?? 0,
-      format: 'currency',
+      // Oficinas de paises diferentes usam moedas diferentes - um numero
+      // unico misturaria BRL com EUR, entao mostra cada moeda separada.
+      value: formatMoedaMap(metricas?.gmv_mes_por_moeda),
       color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-      iconBg: 'bg-cyan-500/20',
     },
     {
       label: 'Comissão Total (mês)',
-      value: metricas?.comissao_total_mes ?? 0,
-      format: 'currency',
+      value: formatMoedaMap(metricas?.comissao_total_mes_por_moeda),
       color: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
-      iconBg: 'bg-rose-500/20',
     },
   ];
 
@@ -101,14 +101,7 @@ export default function AdminDashboardPage() {
             className={`rounded-xl border p-6 ${card.color}`}
           >
             <p className="text-sm font-medium opacity-80 mb-2">{card.label}</p>
-            <p className="text-3xl font-bold">
-              {card.format === 'currency'
-                ? new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  }).format(card.value)
-                : new Intl.NumberFormat('pt-BR').format(card.value)}
-            </p>
+            <p className="text-2xl font-bold">{card.value}</p>
           </div>
         ))}
       </div>

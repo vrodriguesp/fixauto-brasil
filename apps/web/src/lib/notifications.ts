@@ -404,12 +404,13 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
   pecaDescricao: string;
   preco: number;
   prazoDias: number;
+  moeda?: string;
 }) {
   if (!resend) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
-  const precoFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(params.preco);
+  const precoFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: params.moeda || 'BRL' }).format(params.preco);
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
@@ -451,12 +452,13 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
   oficinaCompradoraNome: string;
   pecaDescricao: string;
   valorTotal: number;
+  moeda?: string;
 }) {
   if (!resend) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
-  const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(params.valorTotal);
+  const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: params.moeda || 'BRL' }).format(params.valorTotal);
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
