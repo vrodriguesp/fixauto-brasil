@@ -30,7 +30,7 @@
       },
       "perfil": {
         "titulo": "Profilo del negozio",
-        "resumo": "Completa i dati del tuo negozio — indirizzo, città, stato e CAP corretti sono importanti, anche se oggi non filtrano ancora i preventivi che vedi (tutti i preventivi aperti in Brasile ti vengono mostrati, senza filtro di distanza per ora).",
+        "resumo": "Completa i dati del tuo negozio — indirizzo, città, stato e CAP corretti sono importanti, anche se oggi non filtrano ancora i preventivi che vedi (tutti i preventivi aperti sulla piattaforma ti vengono mostrati, senza filtro di distanza o paese per ora).",
         "passosGuiados": [
           "Apri Profilo dal menu.",
           "Controlla/modifica ragione sociale, partita IVA, indirizzo, città e stato.",

@@ -30,7 +30,7 @@
       },
       "perfil": {
         "titulo": "Store profile",
-        "resumo": "Complete your store's details — correct address, city, state, and postal code matter, even though they don't filter the quotes you see today (every open quote in Brazil currently shows up for you, with no distance filter yet).",
+        "resumo": "Complete your store's details — correct address, city, state, and postal code matter, even though they don't filter the quotes you see today (every open quote on the platform currently shows up for you, with no distance or country filter yet).",
         "passosGuiados": [
           "Open Profile in the menu.",
           "Check/edit your trade name, tax ID, address, city, and state.",

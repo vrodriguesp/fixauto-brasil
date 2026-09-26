@@ -30,7 +30,7 @@
       },
       "perfil": {
         "titulo": "Poe profiil",
-        "resumo": "Täida oma poe andmed korrektselt — õige aadress, linn, osariik ja sihtnumber on olulised, isegi kui need praegu hinnapäringuid ei filtreeri (kõik Brasiilia avatud hinnapäringud kuvatakse sulle praegu ilma kaugusfiltrita).",
+        "resumo": "Täida oma poe andmed korrektselt — õige aadress, linn, osariik ja sihtnumber on olulised, isegi kui need praegu hinnapäringuid ei filtreeri (kõik platvormi avatud hinnapäringud kuvatakse sulle praegu ilma kaugus- või riigifiltrita).",
         "passosGuiados": [
           "Ava menüüst Profiil.",
           "Kontrolli/muuda oma ärinime, maksukohustuslase numbrit, aadressi, linna ja osariiki.",

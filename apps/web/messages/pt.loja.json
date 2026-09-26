@@ -30,7 +30,7 @@
       },
       "perfil": {
         "titulo": "Perfil da loja",
-        "resumo": "Complete os dados da sua loja — endereço, cidade, estado e CEP corretos importam, mesmo que hoje não filtrem as cotações que você vê (todas as cotações abertas do Brasil aparecem pra você, sem filtro de distância ainda).",
+        "resumo": "Complete os dados da sua loja — endereço, cidade, estado e CEP corretos importam, mesmo que hoje não filtrem as cotações que você vê (todas as cotações abertas da plataforma aparecem pra você, sem filtro de distância ou país ainda).",
         "passosGuiados": [
           "Abra Perfil no menu.",
           "Confira/edite nome fantasia, CNPJ, endereço, cidade e estado.",
