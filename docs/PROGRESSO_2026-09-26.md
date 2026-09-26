@@ -57,3 +57,28 @@ Usuário notou que ficava autenticado no admin por vários dias sem precisar log
 - [ ] Confirmar com o usuário se GA4 (já implementado) cobre o pedido de "monitoramento de cliques/interações" (item 4) ou se querem algo além (heatmap/gravação de sessão).
 - [ ] Admin CRUD (item 6): adicionar ação de editar status de solicitação/conserto e cancelar `agenda`, além da visibilidade que já existe desde a central de auditoria de 09/09.
 - [ ] Pergunta em aberto do usuário (respondida "depois de terminar tudo"): pesquisar APIs baratas/gratuitas de veículo (placa/dados) conectadas à Europa/Estônia, como alternativa às atuais focadas no Brasil (`/api/fipe`, `/api/consultar-placa`).
+
+## Rodada 2 (mesmo dia): SEO técnico multi-idioma + tradução real das 2 páginas de conversão de oficinas
+
+### SEO técnico
+
+1. [x] `sitemap.ts`: cada página estática (e cada perfil de oficina) agora gera uma entrada **por idioma**, com `alternates.languages` (hreflang) cruzado entre todas as variantes + `x-default` apontando pro locale padrão (pt, sem prefixo). Antes só existia a URL em português — o Google não tinha como saber que `/en`, `/et`, `/it` eram a mesma página traduzida.
+2. [x] `robots.ts`: o `disallow` das rotas privadas (`/cliente/`, `/oficina/`, `/loja/`, `/admin/`, etc.) agora cobre também as variantes com prefixo de idioma (`/en/admin/`, `/et/cliente/`...) — antes só bloqueava a versão sem prefixo, deixando os painéis privados das versões `en/et/it` indexáveis em teoria.
+3. [x] **Google Search Console**: adicionado suporte à verificação por tag HTML via env var `GOOGLE_SITE_VERIFICATION` (só aparece a tag `<meta name="google-site-verification">` se a env var existir — não força rebuild condicional). **Falta o usuário**: criar a propriedade em https://search.google.com/search-console, escolher método "Tag HTML", copiar o valor do atributo `content` e me passar (ou adicionar direto na env var da VM) pra eu rebuildar e confirmar a indexação. Alternativa "Domínio" (verificação por DNS TXT) cobre www + subdomínios automaticamente mas exige acesso ao DNS do domínio — perguntar ao usuário qual prefere.
+4. [x] Build/tsc sem erros, deploy feito (commit `ffda648`), confirmado em produção: `robots.txt` e `sitemap.xml` com hreflang corretos.
+
+### Tradução real das 2 páginas públicas de conversão de oficina (`/seja-parceiro`, `/para-oficinas`)
+
+Essas são as páginas que sustentam o pedido do item 5 (recrutamento de "parceiros fundadores") — priorizadas primeiro dentro do trabalho de tradução de conteúdo, que ainda está no início pro resto do site.
+
+1. [x] **Bug funcional encontrado em `/seja-parceiro`**: o campo "Estado" era um `<select>` fixo com as 27 UFs brasileiras (`ESTADOS_BRASIL`) — quebraria completamente para qualquer parceiro fora do Brasil, inclusive o piloto na Estônia (nenhum "condado"/"maakond" estonio é uma UF brasileira). Substituído por um campo livre "Estado/Região" (a coluna no banco já era `TEXT` sem constraint, então não precisou de migration).
+2. [x] `/seja-parceiro` e `/para-oficinas` convertidas pra `useTranslations`/`getTranslations`, com conteúdo traduzido de verdade (não literal) em pt/en/et/it — hero, benefícios, FAQ (schema.org `FAQPage` também atualizado, agora por idioma), lista de funcionalidades, "dores → solução", passos, transparência sobre comissão.
+3. [x] `/para-oficinas` ganhou `generateMetadata` por idioma (antes era `metadata` estático só em português) e a moeda do schema.org `SoftwareApplication` passou a variar por locale (BRL no pt, EUR nos demais).
+4. [x] Build/tsc sem erros, testado localmente (`curl`) nas 4 variantes de cada página, deploy feito, confirmado em produção.
+
+### O que falta (atualização da lista da Rodada 1)
+
+- [ ] Home (`/`) ainda não traduzida — provável próxima página, é a porta de entrada de todo o tráfego orgânico.
+- [ ] Restante das ~50 páginas do site (cliente/oficina/loja/docs/emergencia/auth) ainda 100% em português.
+- [ ] Google Search Console aguardando o usuário criar a propriedade e passar o código de verificação (ou decidir pelo método de DNS).
+- [ ] Itens 4 (monitoramento de cliques — confirmar se GA4 basta), 5 (seção de campanha "parceiro fundador" **na home**, ainda não escrita — hoje só existe em `/seja-parceiro` e `/para-oficinas`) e 6 (admin CRUD: editar status/cancelar agenda) continuam pendentes.
