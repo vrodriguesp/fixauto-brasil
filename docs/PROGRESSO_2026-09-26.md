@@ -58,6 +58,35 @@ Usuário notou que ficava autenticado no admin por vários dias sem precisar log
 - [ ] Admin CRUD (item 6): adicionar ação de editar status de solicitação/conserto e cancelar `agenda`, além da visibilidade que já existe desde a central de auditoria de 09/09.
 - [ ] Pergunta em aberto do usuário (respondida "depois de terminar tudo"): pesquisar APIs baratas/gratuitas de veículo (placa/dados) conectadas à Europa/Estônia, como alternativa às atuais focadas no Brasil (`/api/fipe`, `/api/consultar-placa`).
 
+## Rodada 4 (mesmo dia): tradução em massa via 5 agentes em paralelo + bug crítico de localização encontrado
+
+### Infraestrutura pra permitir tradução em paralelo sem conflito
+
+1. [x] Mensagens divididas por área: `messages/{locale}.json` continua sendo a base (nav, home, seja-parceiro, para-oficinas, cookieBanner, login, **constants** — ver abaixo), e cada área ganhou seu próprio arquivo `messages/{locale}.cliente.json` / `.oficina.json` / `.loja.json` / `.auth.json` / `.misc.json`, mesclados em `src/i18n/request.ts`. Permite vários agentes trabalharem em paralelo sem duas edições colidirem no mesmo arquivo.
+2. [x] Namespace **`constants`** adicionado aos 4 idiomas: traduz os labels de `STATUS_SOLICITACAO`, `STATUS_ORCAMENTO`, `STATUS_MANUTENCAO`, `TIPOS_SERVICO`, `URGENCIAS`, `CARGOS_FUNCIONARIO` (hoje só em português no pacote `shared`, usados em badges espalhados por quase toda página). O arquivo compartilhado em si (`packages/shared/constants/index.ts`) continua só em português de propósito — o admin usa direto sem passar por next-intl. **Falta ainda**: trocar cada `CONSTANTE[x].label` por `t(\`constants.grupo.${x}\`)` página por página (meio caminho andado, não finalizado).
+
+### 5 agentes em paralelo para tradução de conteúdo
+
+Rodados simultaneamente, cada um com escopo de arquivos e arquivo de mensagens exclusivo (sem sobreposição):
+1. [ ] **Cliente** (10 páginas + `NotificationBell.tsx`): dashboard, veículos, histórico, perfil, nova-solicitação, orçamentos (+detalhe), mensagens (+detalhe), acompanhamento, reagendar. *(em andamento no momento deste registro)*
+2. [x] **Auth restante** (cadastro, definir-senha, escolher-tipo, reset-password — login já tinha sido feito antes). Concluído, testado, commitado (`4ec1879`).
+3. [ ] **Oficina** (19 arquivos): dashboard, agenda, aprender, avaliações, capacidade, checkin, comissão, distribuição, enviar-orçamento, equipe, layout, mensagens, peças (+conversas), perfil, solicitações (+detalhe), veículos-em-serviço. *(em andamento no momento deste registro)*
+4. [x] **Loja** (9 páginas): dashboard, aprender, catálogo, comissão, conversas, cotações, pedidos, perfil. Concluído, testado, commitado (`7b15175`).
+5. [ ] **Docs + emergência + legal + perfil público de oficina** (12 arquivos): termos, privacidade (registro formal/impessoal, terminologia GDPR correta por idioma — diferente do tom casual do resto do site), emergência (+detalhe do acidente), docs (home/cliente/oficina), `oficinas/[id]` (perfil público). *(em andamento no momento deste registro)*
+
+**Incidente**: os 5 agentes bateram no limite de sessão da conta (rate limit, reset 17:40 horário de Roma) e pararam no meio. Retomados um a um via mensagem direta assim que o limite resetou — cada um continuou exatamente de onde parou (checando `git status`/`git diff` primeiro pra não refazer trabalho). Prática adotada a partir daqui: **commitar e dar push de cada área assim que o respectivo agente termina**, em vez de esperar todos concluírem, para não arriscar perder trabalho de novo.
+
+### Bug crítico encontrado (não relacionado a i18n): coordenadas fixas de São Paulo
+
+Ao revisar os campos de endereço durante a tradução, percebi que **tanto `/cliente/nova-solicitacao` quanto o cadastro de oficina/loja em `/cadastro` sempre gravavam `latitude=-23.5505, longitude=-46.6333` (São Paulo) no banco**, não importa o que o usuário digitasse em endereço/cidade/estado. Isso quebra o "oficinas próximas" — o núcleo do produto — pra qualquer solicitação ou oficina fora de São Paulo, inclusive (e principalmente) para o piloto na Estônia. O fluxo de emergência (`emergencia/page.tsx`) já fazia certo, via `navigator.geolocation` real do navegador.
+
+1. [x] Confirmado com o usuário antes de mexer (pergunta explícita, resposta: corrigir agora).
+2. [x] Replicado o mesmo padrão do `emergencia/page.tsx` em `/cliente/nova-solicitacao` e em `/cadastro` (oficina e loja): começa com o default de SP e sobrescreve com a coordenada real assim que o navegador concede a permissão de localização.
+3. [x] `/cadastro`: campo "Estado" da oficina/loja também era um `<select>` fixo de UFs brasileiras (mesma classe de bug já corrigida em `/seja-parceiro`) — virou campo livre. Fallback ao gravar no banco (colunas `estado`/`cep` são `NOT NULL`) trocado de `'SP'`/`'00000-000'` para `'A definir'`.
+4. [x] Build/tsc sem erros (isolado do trabalho dos agentes ainda em andamento), commit e push feitos.
+5. [ ] **Não testado ainda com geolocalização real do navegador** (precisa de teste manual/extensão do Chrome concedendo a permissão) — recomendado antes de confiar 100%.
+6. [ ] **Dado de produção potencialmente afetado**: solicitações e oficinas/lojas já cadastradas antes desta correção podem ter coordenadas de SP erradas gravadas no banco. Não investiguei nem corrigi dados existentes — só a gravação de dados novos daqui pra frente.
+
 ## Rodada 2 (mesmo dia): SEO técnico multi-idioma + tradução real das 2 páginas de conversão de oficinas
 
 ### SEO técnico
