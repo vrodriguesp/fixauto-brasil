@@ -17,8 +17,12 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('desativado') === '1') {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('desativado') === '1') {
       setError('Esta conta foi desativada. Entre em contato com o suporte.');
+    } else if (params.get('sessao_expirada') === '1') {
+      setError('Sua sessão expirou por segurança. Faça login novamente.');
     }
   }, []);
 

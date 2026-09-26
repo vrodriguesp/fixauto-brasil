@@ -2,6 +2,12 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// O refresh token do Supabase renova a sessao silenciosamente pra sempre -
+// sem isso, um admin que loga uma vez fica autenticado por dias/semanas,
+// mesmo sem usar o painel. Painel administrativo exige reautenticacao
+// periodica independente de atividade (nao é so timeout por inatividade).
+const ADMIN_MAX_SESSION_HOURS = 8;
+
 export async function middleware(req: NextRequest) {
   let res = NextResponse.next({ request: { headers: req.headers } });
 
@@ -53,6 +59,19 @@ export async function middleware(req: NextRequest) {
     // Admin route protection: verify user tipo is 'admin'
     if (path.startsWith('/admin') && (!profile || profile.tipo !== 'admin')) {
       return NextResponse.redirect(new URL('/', req.url));
+    }
+
+    // Admin exige reautenticacao periodica - o refresh token do Supabase
+    // renovaria a sessao silenciosamente por tempo indefinido, o que nao
+    // e aceitavel pra um painel administrativo (diferente de cliente/
+    // oficina, onde ficar logado por dias e ate desejavel).
+    if (path.startsWith('/admin') && profile?.tipo === 'admin') {
+      const lastSignIn = session.user.last_sign_in_at ? new Date(session.user.last_sign_in_at).getTime() : 0;
+      const hoursSinceSignIn = (Date.now() - lastSignIn) / (1000 * 60 * 60);
+      if (!lastSignIn || hoursSinceSignIn > ADMIN_MAX_SESSION_HOURS) {
+        await supabase.auth.signOut();
+        return NextResponse.redirect(new URL('/login?sessao_expirada=1', req.url));
+      }
     }
 
     // Loja route protection: verify user tipo is 'loja_pecas'
