@@ -8,7 +8,7 @@ import { routing } from './routing';
 // site em paralelo sem duas edicoes concorrentes colidirem no mesmo
 // arquivo. Cada modulo vira namespaces de nivel superior na mesma arvore
 // de mensagens (t('cliente.dashboard...'), etc via useTranslations('cliente')).
-const AREAS = ['cliente', 'oficina', 'loja', 'auth'] as const;
+const AREAS = ['cliente', 'oficina', 'loja', 'auth', 'misc'] as const;
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale;

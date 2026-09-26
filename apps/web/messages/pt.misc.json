@@ -1,0 +1,626 @@
+{
+  "termos": {
+    "metaTitle": "Termos de Uso",
+    "metaDescription": "Termos de Uso e Condições Gerais da plataforma BipFix, para clientes, oficinas e lojas de peças parceiras.",
+    "pageTitle": "Termos de Uso e Condições Gerais",
+    "lastUpdatedLabel": "Última atualização:",
+    "updatedDate": "08 de setembro de 2026",
+    "title1": "1. Quem somos e o que é o BipFix",
+    "body1a": "O BipFix é uma plataforma digital de intermediação que conecta (i) motoristas e proprietários de veículos (\"Clientes\") que precisam de serviços de reparo automotivo a (ii) oficinas mecânicas (\"Oficinas\") e (iii) lojas de autopeças (\"Lojas\"), coletivamente \"Parceiros\". Ao criar uma conta ou usar o BipFix de qualquer forma, você concorda com estes Termos de Uso e com a nossa <privacyLink>Política de Privacidade</privacyLink>.",
+    "body1b": "O BipFix <strong>não presta serviços de reparo automotivo, não vende peças e não é parte no contrato</strong> firmado entre Cliente e Parceiro. Nosso papel é o de intermediário tecnológico: viabilizamos o contato, a comparação de orçamentos, a comunicação e o acompanhamento do serviço. A relação de consumo pelo serviço executado (reparo, peça vendida, prazo, qualidade, garantia) é estabelecida diretamente entre Cliente e Parceiro, que respondem por sua própria atuação nos termos do Código de Defesa do Consumidor (Lei nº 8.078/1990).",
+    "title2": "2. Cadastro e veracidade das informações",
+    "body2": "Você deve fornecer informações verdadeiras, completas e atualizadas no cadastro (nome, CPF/CNPJ, endereço, contatos). Oficinas e Lojas declaram possuir a regularidade cadastral, licenças e alvarás exigidos para a atividade que exercem. O BipFix pode solicitar documentos comprobatórios e recusar ou suspender cadastros com dados falsos, incompletos ou não verificáveis.",
+    "title3": "3. Uso gratuito para Clientes",
+    "body3": "O uso da plataforma por Clientes é e continuará sendo gratuito: solicitar orçamentos, comparar propostas, acompanhar o andamento do serviço e avaliar Parceiros não têm custo.",
+    "title4": "4. Comissão e cobrança de Parceiros",
+    "body4a": "Atualmente, para determinados Parceiros (incluindo os que aderirem na fase inicial da plataforma), <strong>não é cobrada comissão ou mensalidade</strong> pelo uso do BipFix. O BipFix se reserva o direito de, no futuro, passar a cobrar comissão sobre serviços intermediados, mensalidade, ou ambos.",
+    "body4b": "Caso decida implementar ou alterar cobranças, o BipFix notificará os Parceiros afetados <strong>com antecedência mínima de 30 (trinta) dias</strong> antes de qualquer valor passar a ser efetivamente cobrado, por e-mail e/ou aviso dentro da plataforma, informando o novo modelo, o percentual ou valor aplicável e a data de início da cobrança. O Parceiro que não concordar com a nova condição pode encerrar sua conta antes da data de início da cobrança, sem qualquer penalidade.",
+    "title5": "5. Conduta dos Parceiros e uso da plataforma",
+    "intro5": "Ao aderir como Oficina ou Loja parceira, você se compromete a:",
+    "list5_1": "Prestar informações verdadeiras sobre preços, prazos, disponibilidade e especialidades;",
+    "list5_2": "Honrar os orçamentos e prazos informados ao Cliente dentro da plataforma;",
+    "list5_3": "Não induzir o Cliente a concluir a negociação ou o pagamento fora da plataforma com o objetivo de burlar uma comissão aplicável, quando esta estiver em vigor e tiver sido comunicada nos termos da Cláusula 4;",
+    "list5_4": "Não manipular, comprar, trocar ou de qualquer forma fraudar avaliações e notas de reputação;",
+    "list5_5": "Tratar Clientes e demais Parceiros com respeito, sem discriminação, assédio, coação ou práticas comerciais desleais ou enganosas;",
+    "list5_6": "Cumprir a legislação aplicável à sua atividade, incluindo normas de defesa do consumidor, trabalhistas, tributárias e ambientais.",
+    "title6": "6. Suspensão e desligamento de Parceiros",
+    "intro6": "O BipFix pode advertir, suspender temporariamente ou desligar definitivamente um Parceiro da plataforma, de forma proporcional à gravidade da conduta identificada. Em especial:",
+    "sub6_1Title": "6.1 Infrações que podem gerar aviso prévio e prazo para regularização",
+    "body6_1": "Infrações leves ou pontuais (ex.: atraso ocasional em responder solicitações, cadastro desatualizado) gerarão, via de regra, uma notificação e prazo razoável para correção antes de qualquer suspensão.",
+    "sub6_2Title": "6.2 Infrações graves que geram desligamento imediato, sem aviso prévio",
+    "body6_2": "Nos casos abaixo, o BipFix pode suspender ou encerrar o acesso do Parceiro <strong>imediatamente e sem aviso prévio</strong>, dada a gravidade e o risco à confiança de todo o ecossistema da plataforma:",
+    "list6_2_1": "Fraude, burla ou tentativa de burla ao modelo de comissão vigente (ex.: direcionar Clientes para fechar negócio fora da plataforma para não pagar comissão aplicável, uso de contas falsas, informação de valores divergentes dos praticados);",
+    "list6_2_2": "Reiteração de avaliações negativas de Clientes que indiquem padrão de má prestação de serviço, cobrança indevida, descumprimento de orçamento ou conduta antiética;",
+    "list6_2_3": "Prática de condutas desleais, enganosas ou fraudulentas, incluindo mas não se limitando a: informação falsa sobre peças ou serviços, cobrança de valor diferente do orçado sem justificativa, discriminação de Clientes, assédio, ou uso indevido de dados de Clientes obtidos pela plataforma;",
+    "list6_2_4": "Determinação de autoridade competente ou constatação de atividade ilegal.",
+    "body6_2b": "A gravidade da conduta e a medida aplicável (advertência, suspensão temporária ou desligamento definitivo) são avaliadas caso a caso pelo BipFix. O Parceiro desligado pode solicitar reconsideração por escrito, apresentando esclarecimentos, que serão analisados pelo BipFix.",
+    "title7": "7. Avaliações e reputação",
+    "body7": "Clientes podem avaliar o serviço prestado após sua conclusão. As avaliações refletem a opinião de quem as escreveu e são exibidas publicamente no perfil do Parceiro. O BipFix pode remover avaliações comprovadamente falsas, ofensivas ou que violem a lei, mas não se responsabiliza pelo conteúdo de opinião legítima de Clientes.",
+    "title8": "8. Direitos do consumidor (Código de Defesa do Consumidor)",
+    "intro8": "Nada nestes Termos limita os direitos garantidos aos Clientes pelo Código de Defesa do Consumidor (Lei nº 8.078/1990), em especial:",
+    "list8_1": "<strong>Direito à informação clara e adequada</strong> (art. 6º, III) sobre serviços e peças, preços, características e riscos;",
+    "list8_2": "<strong>Garantia legal</strong> (art. 26) de 90 dias para reclamar de vícios aparentes ou de fácil constatação em serviços e produtos duráveis (como reparo automotivo e peças), contados da entrega do veículo ou do produto;",
+    "list8_3": "<strong>Responsabilidade do fornecedor</strong> (arts. 12 a 25) da Oficina ou Loja pelos vícios e defeitos do serviço prestado ou da peça vendida;",
+    "list8_4": "<strong>Vedação a práticas abusivas</strong> (art. 39), como venda casada, cobrança de serviço não solicitado ou informação enganosa;",
+    "list8_5": "Canal para reclamação e mediação de conflitos entre Cliente e Parceiro, disponibilizado pelo BipFix como cortesia, sem prejuízo do direito do Cliente de acionar os órgãos de defesa do consumidor (Procon, plataforma consumidor.gov.br) ou o Poder Judiciário diretamente contra o Parceiro responsável.",
+    "title9": "9. Proteção de dados pessoais (LGPD)",
+    "body9": "O tratamento de dados pessoais realizado pelo BipFix segue a Lei Geral de Proteção de Dados (Lei nº 13.709/2018) e está detalhado na nossa <privacyLink>Política de Privacidade</privacyLink>, parte integrante destes Termos.",
+    "title10": "10. Conteúdo, propriedade intelectual e marca",
+    "body10": "A marca BipFix, seu layout, código-fonte e demais elementos da plataforma são de propriedade do BipFix ou de seus licenciantes, sendo vedada a reprodução, engenharia reversa ou uso não autorizado. O conteúdo enviado por Clientes e Parceiros (fotos, descrições, mensagens) permanece de titularidade de quem o enviou, mas você concede ao BipFix licença para exibi-lo na plataforma na medida necessária para operar o serviço.",
+    "title11": "11. Limitação de responsabilidade",
+    "body11": "O BipFix envida esforços para verificar o cadastro de Parceiros e mediar eventuais conflitos, mas não garante a qualidade, legalidade, adequação ou resultado do serviço prestado por Oficinas ou da peça vendida por Lojas, cuja responsabilidade é exclusivamente do Parceiro executor, nos termos da legislação consumerista aplicável. O BipFix também não se responsabiliza por indisponibilidades temporárias da plataforma decorrentes de manutenção, falhas de terceiros ou casos fortuitos e de força maior.",
+    "title12": "12. Alterações destes Termos",
+    "body12": "Podemos atualizar estes Termos para refletir melhorias na plataforma ou mudanças legais. Alterações relevantes (incluindo qualquer mudança na política de comissão, que segue a regra específica da Cláusula 4) serão comunicadas com antecedência razoável. O uso continuado da plataforma após a comunicação implica concordância com os novos termos.",
+    "title13": "13. Foro e legislação aplicável",
+    "body13": "Estes Termos são regidos pela legislação brasileira. Fica eleito o foro do domicílio do Cliente para dirimir eventuais controvérsias envolvendo consumidores, conforme faculta o art. 101, I, do Código de Defesa do Consumidor. Para litígios entre Parceiros e o BipFix decorrentes exclusivamente da relação comercial de intermediação, fica eleito o foro da Comarca de São Paulo/SP.",
+    "title14": "14. Contato",
+    "body14": "Dúvidas sobre estes Termos podem ser enviadas para <mailLink>contato@bipfix.com</mailLink>.",
+    "footerDisclaimer": "Este documento tem caráter informativo e reflete as regras de funcionamento da plataforma BipFix. Para fins de conformidade jurídica plena antes da divulgação comercial, recomenda-se revisão por advogado(a) especializado(a) em direito do consumidor e direito digital."
+  },
+  "privacidade": {
+    "metaTitle": "Política de Privacidade",
+    "metaDescription": "Como o BipFix coleta, usa e protege dados pessoais de clientes, oficinas e lojas parceiras, em conformidade com a LGPD.",
+    "pageTitle": "Política de Privacidade",
+    "lastUpdatedLabel": "Última atualização:",
+    "updatedDate": "08 de setembro de 2026",
+    "title1": "1. Introdução",
+    "body1": "Esta Política de Privacidade descreve como o BipFix (\"nós\") coleta, usa, compartilha e protege dados pessoais de Clientes, Oficinas e Lojas parceiras (\"você\"), em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 — LGPD) e com o Marco Civil da Internet (Lei nº 12.965/2014).",
+    "title2": "2. Quais dados coletamos",
+    "list2_1": "<strong>Dados de cadastro:</strong> nome, CPF/CNPJ, e-mail, telefone, endereço e, para Oficinas/Lojas, dados do estabelecimento e da equipe (funcionários);",
+    "list2_2": "<strong>Dados de localização:</strong> endereço e coordenadas geográficas, usados para aproximar Clientes de Parceiros próximos;",
+    "list2_3": "<strong>Dados do veículo:</strong> marca, modelo, ano, placa (quando informada) e fotos do dano relatado;",
+    "list2_4": "<strong>Dados de uso:</strong> orçamentos, mensagens trocadas na plataforma, avaliações, histórico de serviços e pedidos de peças;",
+    "list2_5": "<strong>Dados técnicos:</strong> endereço IP, identificadores de sessão e registros de acesso (logs), mantidos conforme exigido pelo Marco Civil da Internet;",
+    "list2_6": "<strong>Cookies e tecnologias similares:</strong> usados para manter sua sessão autenticada e para estatísticas de uso agregadas do site.",
+    "title3": "3. Para que usamos seus dados (finalidade e base legal)",
+    "list3_1": "<strong>Execução do contrato/prestação do serviço</strong> (art. 7º, V, LGPD): criar sua conta, conectar Clientes a Parceiros, processar orçamentos e pedidos, viabilizar o chat e as notificações;",
+    "list3_2": "<strong>Cumprimento de obrigação legal</strong> (art. 7º, II): manutenção de registros fiscais e logs de acesso;",
+    "list3_3": "<strong>Legítimo interesse</strong> (art. 7º, IX): prevenção a fraude, melhoria da plataforma, segurança da informação, e comunicação sobre novidades do serviço que você já utiliza;",
+    "list3_4": "<strong>Consentimento</strong> (art. 7º, I): quando exigido, como para comunicações de marketing distintas do relacionamento já existente — você pode revogar a qualquer momento.",
+    "title4": "4. Com quem compartilhamos seus dados",
+    "intro4": "Compartilhamos dados estritamente na medida necessária para o funcionamento da plataforma:",
+    "list4_1": "Entre Cliente e Parceiro envolvidos em uma mesma solicitação de orçamento ou pedido, para viabilizar o atendimento (nome, contato, endereço quando aplicável, fotos do veículo);",
+    "list4_2": "Com prestadores de infraestrutura técnica (hospedagem, banco de dados, envio de e-mail/WhatsApp transacional), sob obrigações contratuais de confidencialidade e segurança;",
+    "list4_3": "Com autoridades públicas, quando exigido por lei, ordem judicial ou requisição regulatória.",
+    "body4": "Não vendemos dados pessoais a terceiros para fins de publicidade.",
+    "title5": "5. Por quanto tempo guardamos seus dados",
+    "body5": "Mantemos seus dados enquanto sua conta estiver ativa e pelo prazo adicional necessário para cumprir obrigações legais, fiscais e regulatórias (por exemplo, registros de acesso a aplicações de internet são mantidos por, no mínimo, 6 meses, conforme o Marco Civil da Internet) ou para exercício regular de direitos em processos administrativos ou judiciais.",
+    "title6": "6. Seus direitos como titular de dados",
+    "intro6": "Nos termos do art. 18 da LGPD, você pode solicitar a qualquer momento:",
+    "list6_1": "Confirmação da existência de tratamento e acesso aos seus dados;",
+    "list6_2": "Correção de dados incompletos, inexatos ou desatualizados;",
+    "list6_3": "Anonimização, bloqueio ou eliminação de dados desnecessários ou tratados em desconformidade com a lei;",
+    "list6_4": "Portabilidade dos dados a outro fornecedor de serviço;",
+    "list6_5": "Eliminação dos dados tratados com base no seu consentimento;",
+    "list6_6": "Informação sobre com quem compartilhamos seus dados;",
+    "list6_7": "Revogação do consentimento, quando aplicável.",
+    "body6": "Para exercer qualquer desses direitos, entre em contato pelo e-mail <mailLink>privacidade@bipfix.com</mailLink>. Responderemos dentro do prazo legal aplicável.",
+    "title7": "7. Segurança da informação",
+    "body7": "Adotamos medidas técnicas e administrativas para proteger dados pessoais contra acessos não autorizados e situações acidentais ou ilícitas de destruição, perda, alteração, comunicação ou difusão, incluindo controle de acesso por autenticação, isolamento de dados por conta (RLS a nível de banco de dados) e criptografia em trânsito.",
+    "title8": "8. Crianças e adolescentes",
+    "body8": "O BipFix não é direcionado a menores de 18 anos e não coleta intencionalmente dados de crianças e adolescentes.",
+    "title9": "9. Alterações desta Política",
+    "body9": "Podemos atualizar esta Política periodicamente. Alterações relevantes serão comunicadas por e-mail ou aviso na plataforma antes de entrarem em vigor.",
+    "title10": "10. Contato do Encarregado de Dados (DPO)",
+    "body10": "Para questões relacionadas à proteção de dados pessoais, contate: <mailLink>privacidade@bipfix.com</mailLink>.",
+    "footerDisclaimer": "Este documento tem caráter informativo. Para fins de conformidade jurídica plena antes da divulgação comercial, recomenda-se revisão por advogado(a) especializado(a) em proteção de dados (LGPD)."
+  },
+  "emergencia": {
+    "successTitle": "Emergência registrada!",
+    "successText": "Oficinas próximas foram notificadas e enviarão orçamentos em breve.",
+    "nextStepTitle": "Próximo passo",
+    "nextStepText": "Registre o outro veículo envolvido no acidente para trocar informações.",
+    "registerOtherVehicleBtn": "Registrar outro veículo envolvido",
+    "goToDashboardBtn": "Ir para o Dashboard",
+    "createAccountText": "Crie uma conta para acompanhar os orçamentos e escolher uma oficina.",
+    "createAccountBtn": "Criar minha conta",
+    "headerTitle": "Acabei de bater!",
+    "headerSubtitle": "Tire fotos e receba orçamentos rápido",
+    "loggedInAs": "Logado como <strong>{nome}</strong>",
+    "step1Title": "Fotos do acidente",
+    "step1Subtitle": "Tire fotos agora ou escolha da galeria",
+    "takePhotoBtn": "Tirar foto agora",
+    "chooseGalleryBtn": "Escolher da galeria",
+    "cameraLabel": "Câmera",
+    "galleryLabel": "Galeria",
+    "photoAlt": "Foto {number}",
+    "plateLabel": "Placa do seu veículo",
+    "platePlaceholder": "ABC1D23",
+    "vehicleYearColor": "Ano: {ano} | Cor: {cor}",
+    "plateNotFoundText": "Placa não encontrada. Digite marca e modelo:",
+    "plateNotFoundPlaceholder": "Ex: Fiat Argo",
+    "descriptionLabel": "Descreva o que aconteceu (opcional)",
+    "descriptionPlaceholder": "Ex: Bati na traseira do carro da frente no semáforo...",
+    "whatHappenedLabel": "O que aconteceu?",
+    "optionEuCauseiLabel": "Eu causei o acidente",
+    "optionEuCauseiDesc": "Você é o responsável pelo reparo do outro veículo",
+    "optionOutroCausouLabel": "O outro motorista causou",
+    "optionOutroCausouDesc": "Você é a vítima e receberá orçamentos para reparo",
+    "optionSemOutroLabel": "Sem outro envolvido",
+    "optionSemOutroDesc": "Ex: bateu no poste, muro, etc.",
+    "nextBtn": "Próximo",
+    "step2Title": "Seus dados",
+    "step2Subtitle": "Para que as oficinas possam entrar em contato",
+    "nameLabel": "Nome",
+    "namePlaceholder": "Seu nome",
+    "emailLabel": "Email",
+    "emailPlaceholder": "seu@email.com",
+    "phoneLabel": "Telefone / WhatsApp",
+    "phonePlaceholder": "(11) 99999-0000",
+    "backBtn": "Voltar",
+    "step3Title": "Localização",
+    "step3Subtitle": "Onde você está?",
+    "addressLabel": "Endereço / Região",
+    "addressPlaceholder": "Rua, bairro ou ponto de referência",
+    "useCurrentLocationBtn": "Usar minha localização atual",
+    "summaryTitle": "Resumo",
+    "summaryPhotos": "{count} foto(s) do acidente",
+    "sendBtn": "Enviar para oficinas!",
+    "sendingBtn": "Enviando...",
+    "locationAutoDetected": "Localização detectada automaticamente",
+    "locationCurrentDetected": "Localização atual detectada",
+    "locationFallback": "São Paulo, SP",
+    "errorGenericSubmit": "Erro ao registrar emergência"
+  },
+  "emergenciaAcidenteDetalhe": {
+    "headerTitle": "Registro do Acidente",
+    "headerSubtitle": "Registre o outro veículo e acompanhe os orçamentos",
+    "tabEnvolvidos": "Envolvidos",
+    "tabMensagens": "Mensagens",
+    "tabOrcamentos": "Orçamentos",
+    "formTitle": "Dados do outro veículo",
+    "otherNameLabel": "Nome do outro motorista *",
+    "otherNamePlaceholder": "Nome completo",
+    "phoneLabel": "Telefone",
+    "phonePlaceholder": "(11) 99999-0000",
+    "emailLabel": "Email",
+    "emailPlaceholder": "email@email.com",
+    "plateLabel": "Placa do veículo *",
+    "platePlaceholder": "ABC1D23",
+    "vehicleLabel": "Veículo (marca/modelo)",
+    "vehiclePlaceholder": "Ex: Fiat Argo",
+    "photosLabel": "Fotos do outro veículo",
+    "observationsLabel": "Observações",
+    "observationsPlaceholder": "Detalhes sobre o acidente, acordo feito no local...",
+    "notifyInfo": "O outro motorista receberá uma notificação por email para acompanhar o acidente e os orçamentos.",
+    "registerBtn": "Registrar outro veículo",
+    "registeringBtn": "Registrando...",
+    "involvedTitle": "Veículos envolvidos",
+    "nameFieldLabel": "Nome:",
+    "vehicleFieldLabel": "Veículo:",
+    "yearFieldLabel": "Ano:",
+    "plateFieldLabel": "Placa:",
+    "colorFieldLabel": "Cor:",
+    "phoneFieldLabel": "Telefone:",
+    "notInformed": "Não informado",
+    "requestRegisteredNote": "Solicitação registrada",
+    "notifiedBadge": "Notificado",
+    "sendMessageBtn": "Enviar mensagem",
+    "viewQuotesBtn": "Ver orçamentos",
+    "youFallback": "Você",
+    "registranteLabelEuCausei": "Responsável",
+    "registranteLabelOutroCausou": "Vítima",
+    "registranteLabelDefault": "Motorista 1",
+    "outroLabelEuCausei": "Vítima",
+    "outroLabelOutroCausou": "Responsável",
+    "outroLabelDefault": "Motorista 2",
+    "badgeEuCausei": "Você causou o acidente",
+    "badgeOutroCausou": "O outro motorista causou",
+    "badgeSemOutro": "Sem outro envolvido",
+    "legacyResponsavel": "Assume responsabilidade",
+    "legacyVitima": "Vítima",
+    "legacyDividida": "Responsabilidade dividida - 50%",
+    "legacyIndividual": "Cada um paga o seu",
+    "chatOtherFallback": "Outro motorista",
+    "chatVehicleFallback": "Veículo",
+    "chatNoPlateFallback": "Sem placa",
+    "chatEmptyState": "Nenhuma mensagem ainda. Envie a primeira!",
+    "chatSenderProprietario": "Motorista",
+    "chatSenderOutroFallback": "Outro envolvido",
+    "chatInputPlaceholder": "Digite uma mensagem...",
+    "loadingQuotes": "Carregando orçamentos...",
+    "noQuotesTitle": "Nenhum orçamento ainda",
+    "noQuotesText": "Oficinas próximas estão avaliando os danos. Você receberá orçamentos por email assim que estiverem prontos.",
+    "victimDecidesNote": "A vítima decide qual orçamento aceitar. Após aceitar, as informações da oficina serão compartilhadas com o responsável.",
+    "shareWithOtherNote": "Compartilhe esses orçamentos com o outro motorista para entrar em acordo sobre qual oficina usar para a reparação.",
+    "quoteAcceptedBadge": "Aceito",
+    "deadlineLabel": "Prazo: {dias} dias",
+    "workshopDataTitle": "Dados da oficina",
+    "workshopFallback": "Oficina",
+    "sendToResponsibleBtn": "Enviar ao responsável",
+    "sendToOtherBtn": "Enviar ao outro envolvido",
+    "acceptQuoteBtn": "Aceitar orçamento",
+    "quoteMsgBase": "Orçamento da {oficina}: {valor}, prazo {dias} dias.",
+    "quoteMsgAddressPart": " Endereço: {endereco}",
+    "quoteMsgCityPart": ", {cidade}",
+    "quoteMsgPhonePart": " Tel: {telefone}"
+  },
+  "docsHome": {
+    "metaTitle": "Central de Ajuda | BipFix",
+    "metaDescription": "Tire suas dúvidas sobre como usar a plataforma BipFix. Guias completos para motoristas e oficinas.",
+    "heroTitle": "Central de Ajuda BipFix",
+    "heroSubtitle": "Tudo o que você precisa saber para usar a plataforma, seja como motorista ou como oficina.",
+    "clienteCardTitle": "Guia do Motorista",
+    "clienteCardText": "Aprenda a criar solicitações, comparar orçamentos, agendar serviços e acompanhar o reparo do seu veículo em tempo real.",
+    "oficinaCardTitle": "Guia da Oficina",
+    "oficinaCardText": "Saiba como cadastrar sua oficina, receber solicitações, enviar orçamentos, gerenciar a agenda e construir sua reputação.",
+    "accessGuideLink": "Acessar guia",
+    "contactTitle": "Precisa de mais ajuda?",
+    "contactText": "Nossa equipe está pronta para te ajudar. Entre em contato por qualquer um dos canais abaixo.",
+    "emailBtn": "Enviar e-mail"
+  },
+  "docsLayout": {
+    "backToSite": "Voltar ao site",
+    "helpCenterLink": "Central de Ajuda",
+    "footerContactText": "Ainda tem dúvidas? Entre em contato pelo e-mail <mailLink>contato@bipfix.com</mailLink> ou pelo telefone <strong>(11) 3000-0000</strong>.",
+    "footerCopyright": "2026 BipFix. Todos os direitos reservados."
+  },
+  "docsCliente": {
+    "pageBackLink": "Voltar para Central de Ajuda",
+    "pageTitle": "Guia do Motorista",
+    "pageSubtitle": "Tudo o que você precisa saber para encontrar a melhor oficina, comparar orçamentos e acompanhar o reparo do seu veículo.",
+    "s1Title": "1. Como se cadastrar",
+    "s1Intro": "Criar sua conta no BipFix é rápido e gratuito. Siga os passos abaixo:",
+    "s1Steps": [
+      {
+        "title": "Acesse a página de cadastro",
+        "desc": "Clique em 'Preciso de um reparo' na página inicial ou acesse diretamente /cadastro."
+      },
+      {
+        "title": "Preencha seus dados",
+        "desc": "Informe seu nome completo, e-mail, telefone (com DDD) e crie uma senha segura."
+      },
+      {
+        "title": "Confirme seu e-mail",
+        "desc": "Você receberá um e-mail de confirmação. Clique no link para ativar sua conta."
+      },
+      {
+        "title": "Cadastre seu veículo",
+        "desc": "Adicione a marca, modelo, ano e placa do seu veículo. Você pode cadastrar mais de um."
+      }
+    ],
+    "s2Title": "2. Como criar uma solicitação",
+    "s2Intro": "A solicitação é o pedido de orçamento que você envia para as oficinas. O processo tem 5 etapas simples:",
+    "s2Steps": [
+      {
+        "title": "Selecione o veículo",
+        "desc": "Escolha qual dos seus veículos cadastrados precisa de reparo."
+      },
+      {
+        "title": "Tipo de serviço",
+        "desc": "Selecione a categoria do serviço: funilaria, pintura, mecânica, elétrica, vidros, entre outras."
+      },
+      {
+        "title": "Fotos e descrição",
+        "desc": "Tire fotos do dano ou problema e adicione uma descrição detalhada. Quanto mais informações, melhor será o orçamento."
+      },
+      {
+        "title": "Localização",
+        "desc": "Confirme sua localização para que oficinas próximas recebam sua solicitação. Você pode usar o GPS ou digitar o endereço."
+      },
+      {
+        "title": "Revisão e envio",
+        "desc": "Revise todas as informações e envie. Oficinas próximas serão notificadas e começarão a preparar orçamentos."
+      }
+    ],
+    "s3Title": "3. Como comparar orçamentos",
+    "s3Intro": "Quando oficinas enviam orçamentos, você pode compará-los com facilidade. Cada orçamento exibe o preço total, prazo estimado, itens detalhados e a avaliação da oficina.",
+    "s3BadgesLabel": "Selos de destaque:",
+    "s3Badges": [
+      {
+        "name": "Selo de Qualidade",
+        "desc": "Oficinas com avaliação média acima de 4.5 estrelas e mais de 10 serviços concluídos."
+      },
+      {
+        "name": "Resposta Rápida",
+        "desc": "Oficinas que responderam sua solicitação em menos de 1 hora."
+      },
+      {
+        "name": "Ajuste de Preço",
+        "desc": "Indica que a oficina está disposta a negociar o valor do orçamento."
+      }
+    ],
+    "s3Outro": "Use os filtros para ordenar por preço, prazo ou avaliação. Clique em cada orçamento para ver o detalhamento completo dos itens e serviços.",
+    "s4Title": "4. Como agendar o serviço",
+    "s4Intro": "Após comparar os orçamentos, escolha o que melhor atende suas necessidades:",
+    "s4Steps": [
+      {
+        "title": "Aceite o orçamento",
+        "desc": "Clique em 'Aceitar orçamento' no orçamento escolhido. A oficina será notificada imediatamente."
+      },
+      {
+        "title": "Escolha a data",
+        "desc": "A oficina disponibiliza horários na agenda. Selecione o dia e horário que melhor se encaixa na sua rotina."
+      },
+      {
+        "title": "Confirmação",
+        "desc": "Após a confirmação, você receberá os detalhes do agendamento por e-mail e na plataforma, incluindo o endereço da oficina."
+      }
+    ],
+    "s5Title": "5. Acompanhamento em tempo real",
+    "s5Intro": "Após levar o veículo à oficina, você pode acompanhar cada etapa do reparo pela plataforma:",
+    "s5Items": [
+      {
+        "label": "Check-in",
+        "desc": "Quando o veículo chega na oficina, a equipe registra a entrada."
+      },
+      {
+        "label": "Em andamento",
+        "desc": "A oficina atualiza o status conforme avança nas etapas do serviço."
+      },
+      {
+        "label": "Etapas detalhadas",
+        "desc": "Você vê o progresso: desmontagem, reparo, pintura, montagem, controle de qualidade."
+      },
+      {
+        "label": "Pronto para retirada",
+        "desc": "Quando o serviço é concluído, você recebe uma notificação para buscar o veículo."
+      },
+      {
+        "label": "Check-out",
+        "desc": "A oficina registra a saída e o serviço é marcado como finalizado."
+      }
+    ],
+    "s5Outro": "Acesse a página de acompanhamento a qualquer momento pelo menu \"Meus Serviços\" no seu painel.",
+    "s6Title": "6. Como avaliar o serviço",
+    "s6Intro": "Após a conclusão do serviço, você pode avaliar a oficina para ajudar outros motoristas:",
+    "s6Steps": [
+      {
+        "title": "Nota de 1 a 5 estrelas",
+        "desc": "Avalie a qualidade geral do serviço prestado."
+      },
+      {
+        "title": "Comentário",
+        "desc": "Escreva um comentário descrevendo sua experiência. Seja honesto e detalhado."
+      },
+      {
+        "title": "Publicação",
+        "desc": "Sua avaliação aparecerá no perfil público da oficina, ajudando outros motoristas a decidir."
+      }
+    ],
+    "s6Note": "Sua avaliação é muito importante. Ela ajuda a manter a qualidade da plataforma e reconhece as melhores oficinas.",
+    "s7Title": "7. Emergência — Acabei de Bater",
+    "s7Intro": "O BipFix tem um fluxo especial para situações de emergência:",
+    "s7Steps": [
+      {
+        "title": "Acesse o botão de emergência",
+        "desc": "Na página inicial ou no seu painel, clique no botão vermelho 'Acabei de Bater'."
+      },
+      {
+        "title": "Registre o incidente",
+        "desc": "Tire fotos do dano na hora. Você também pode registrar o outro veículo envolvido, incluindo placa e fotos."
+      },
+      {
+        "title": "Localização automática",
+        "desc": "O sistema usa seu GPS para encontrar oficinas mais próximas ao local do acidente."
+      },
+      {
+        "title": "Orçamentos rápidos",
+        "desc": "Oficinas próximas recebem sua solicitação com prioridade e enviam orçamentos em minutos."
+      }
+    ],
+    "s7Warning": "Em caso de acidente com vítimas, ligue primeiro para o SAMU (192) ou Bombeiros (193). Sua segurança vem em primeiro lugar."
+  },
+  "docsClienteLayout": {
+    "metaTitle": "Guia do Motorista",
+    "metaDescription": "Aprenda a usar o BipFix para solicitar reparos, comparar orçamentos de oficinas e acompanhar o conserto do seu veículo em tempo real."
+  },
+  "docsOficina": {
+    "pageBackLink": "Voltar para Central de Ajuda",
+    "pageTitle": "Guia da Oficina",
+    "pageSubtitle": "Aprenda a usar todas as ferramentas do BipFix para atrair clientes, gerenciar serviços e crescer sua oficina.",
+    "s1Title": "1. Como cadastrar sua oficina",
+    "s1Intro": "O cadastro da sua oficina no BipFix é simples e leva poucos minutos:",
+    "s1Steps": [
+      {
+        "title": "Crie sua conta",
+        "desc": "Acesse /cadastro e selecione 'Sou uma oficina'. Preencha os dados do responsável: nome, e-mail e senha."
+      },
+      {
+        "title": "Dados da oficina",
+        "desc": "Informe o CNPJ, razão social, nome fantasia, telefone e endereço completo da oficina."
+      },
+      {
+        "title": "Especialidades",
+        "desc": "Selecione os tipos de serviço que sua oficina oferece: funilaria, pintura, mecânica, elétrica, vidros, etc."
+      },
+      {
+        "title": "Raio de atendimento",
+        "desc": "Defina o raio de distância (em km) que sua oficina aceita receber solicitações. Você pode ajustar depois."
+      },
+      {
+        "title": "Perfil completo",
+        "desc": "Adicione fotos da oficina, descrição, horário de funcionamento e formas de pagamento aceitas. Um perfil completo atrai mais clientes."
+      }
+    ],
+    "s2Title": "2. Como receber solicitações",
+    "s2Intro": "O BipFix envia solicitações automaticamente para oficinas que atendem aos critérios do cliente:",
+    "s2Items": [
+      {
+        "label": "Proximidade",
+        "desc": "O cliente está dentro do raio de atendimento que você definiu."
+      },
+      {
+        "label": "Especialidade",
+        "desc": "O tipo de serviço solicitado corresponde às especialidades da sua oficina."
+      },
+      {
+        "label": "Disponibilidade",
+        "desc": "Sua oficina está ativa na plataforma e com agenda aberta."
+      }
+    ],
+    "s2Body": "Você recebe notificações no painel e por e-mail. Cada solicitação inclui: fotos do dano, descrição do problema, tipo de veículo e localização do cliente.",
+    "s2Tip": "Dica: mantenha seu perfil atualizado e suas especialidades corretas para receber as solicitações mais relevantes.",
+    "s3Title": "3. Como enviar orçamentos",
+    "s3Intro": "Para enviar um orçamento competitivo e detalhado:",
+    "s3Steps": [
+      {
+        "title": "Avalie a solicitação",
+        "desc": "Analise as fotos e descrição do cliente. Se precisar de mais informações, você pode enviar uma mensagem."
+      },
+      {
+        "title": "Adicione itens ao orçamento",
+        "desc": "Liste cada serviço e peça separadamente com descrição, quantidade e valor unitário. Quanto mais detalhado, maior a confiança do cliente."
+      },
+      {
+        "title": "Prazo estimado",
+        "desc": "Informe em quantos dias úteis o serviço será concluído."
+      },
+      {
+        "title": "Disponibilidade de agenda",
+        "desc": "Selecione os horários disponíveis para o cliente agendar a entrada do veículo."
+      },
+      {
+        "title": "Envie o orçamento",
+        "desc": "Revise e envie. O cliente receberá notificação e poderá comparar com outros orçamentos."
+      }
+    ],
+    "s3Tip": "Orçamentos detalhados e com preços justos têm até 3x mais chance de serem aceitos.",
+    "s4Title": "4. Gerenciar agenda",
+    "s4Intro": "O painel de agenda permite organizar todos os serviços da sua oficina:",
+    "s4Items": [
+      {
+        "label": "Check-in",
+        "desc": "Registre a chegada do veículo na oficina. O cliente é notificado automaticamente."
+      },
+      {
+        "label": "Eventos internos",
+        "desc": "Crie serviços internos (que não vieram pelo BipFix) para manter a agenda organizada."
+      },
+      {
+        "label": "Atribuição",
+        "desc": "Atribua cada veículo a um mecânico específico da sua equipe."
+      },
+      {
+        "label": "Check-out",
+        "desc": "Quando o serviço é concluído e o veículo retirado, registre a saída."
+      }
+    ],
+    "s4Outro": "A visualização em calendário mostra todos os serviços agendados, em andamento e concluídos num único lugar.",
+    "s5Title": "5. Equipe e mecânicos",
+    "s5Intro": "Gerencie os membros da sua equipe diretamente pela plataforma:",
+    "s5Steps": [
+      {
+        "title": "Cadastrar funcionários",
+        "desc": "Adicione mecânicos e outros colaboradores informando nome, e-mail e cargo (mecânico, atendente, gerente)."
+      },
+      {
+        "title": "Primeiro acesso",
+        "desc": "O funcionário recebe um e-mail com credenciais temporárias e deve definir uma nova senha no primeiro login."
+      },
+      {
+        "title": "Atribuir veículos",
+        "desc": "Atribua veículos em serviço a mecânicos específicos. Cada mecânico vê apenas os veículos atribuídos a ele."
+      },
+      {
+        "title": "Permissões por cargo",
+        "desc": "Mecânicos têm acesso limitado (veículos atribuídos). Gerentes e administradores têm acesso completo ao painel."
+      }
+    ],
+    "s6Title": "6. Acompanhamento da manutenção",
+    "s6Intro": "Mantenha o cliente informado sobre o andamento do reparo:",
+    "s6Items": [
+      {
+        "label": "Atualização de status",
+        "desc": "Mude o status do serviço: recebido, em andamento, aguardando peça, concluído."
+      },
+      {
+        "label": "Etapas detalhadas",
+        "desc": "Registre cada fase: desmontagem, reparo estrutural, preparação, pintura, montagem, controle de qualidade."
+      },
+      {
+        "label": "Notificações automáticas",
+        "desc": "Cada mudança de status gera uma notificação para o cliente."
+      },
+      {
+        "label": "Fotos do progresso",
+        "desc": "Envie fotos das etapas para que o cliente acompanhe visualmente."
+      }
+    ],
+    "s6Note": "Oficinas que atualizam o status com frequência recebem avaliações mais altas e fidelizam mais clientes.",
+    "s7Title": "7. Avaliações e reputação",
+    "s7Intro": "Sua reputação na plataforma é construída pelas avaliações dos clientes:",
+    "s7Items": [
+      {
+        "label": "Nota de 1 a 5 estrelas",
+        "desc": "A média aparece no seu perfil público e nos resultados de busca."
+      },
+      {
+        "label": "Comentários",
+        "desc": "Clientes podem deixar comentários detalhados sobre a experiência."
+      },
+      {
+        "label": "Selo de Qualidade",
+        "desc": "Oficinas com média acima de 4.5 e mais de 10 serviços recebem o selo verde de qualidade."
+      },
+      {
+        "label": "Resposta Rápida",
+        "desc": "Responder orçamentos em menos de 1 hora garante o selo azul."
+      }
+    ],
+    "s7Outro": "Você pode responder publicamente às avaliações, mostrando profissionalismo e atenção ao cliente.",
+    "s8Title": "8. Comissão BipFix",
+    "s8Intro": "O BipFix cobra uma comissão sobre serviços realizados através da plataforma. Veja como funciona:",
+    "s8Items": [
+      {
+        "label": "Como é cobrada",
+        "desc": "A comissão é calculada sobre o valor total do orçamento aceito pelo cliente."
+      },
+      {
+        "label": "Transparência",
+        "desc": "O percentual da comissão é exibido antes do envio do orçamento, sem surpresas."
+      },
+      {
+        "label": "Faturamento",
+        "desc": "A cobrança é feita mensalmente, com relatório detalhado de todos os serviços."
+      }
+    ],
+    "s8ReduceTitle": "Como reduzir sua comissão:",
+    "s8ReduceList": [
+      "Mantenha uma avaliação média acima de 4.5 estrelas.",
+      "Responda solicitações rapidamente (menos de 1 hora).",
+      "Conclua serviços dentro do prazo estimado.",
+      "Mantenha seu perfil completo e atualizado."
+    ],
+    "s8Note": "Oficinas com excelente desempenho podem ter redução de até 30% na taxa de comissão."
+  },
+  "docsOficinaLayout": {
+    "metaTitle": "Guia da Oficina",
+    "metaDescription": "Aprenda a cadastrar sua oficina, receber solicitações, enviar orçamentos e gerenciar sua equipe e agenda no BipFix."
+  },
+  "oficinaPerfilPublico": {
+    "metaTitleTemplate": "{nome} - Oficina Mecânica em {cidade}, {estado}",
+    "metaDescriptionTemplate": "Avaliações, serviços oferecidos e orçamento online na {nome}, oficina mecânica em {cidade} - {estado}. Compare preços e agende seu reparo pelo BipFix.",
+    "metaNotFoundTitle": "Oficina não encontrada",
+    "loadingText": "Carregando perfil da oficina...",
+    "notFoundText": "Oficina não encontrada.",
+    "backToHomeLink": "Voltar ao início",
+    "backLink": "Voltar",
+    "qualityBadge": "Oficina de Qualidade",
+    "fastResponseBadge": "Resposta Rápida",
+    "volumeBadge": "{tier}+ serviços concluídos",
+    "partnerSinceBadge": "Parceira desde {data}",
+    "priceAdjustmentDown": "Ajuste médio: {pct}% 📉",
+    "priceAdjustmentUp": "Ajuste médio: +{pct}% 📈",
+    "noPriceAdjustment": "Sem ajustes de preço",
+    "reviewCountSingular": "({count} avaliação)",
+    "reviewCountPlural": "({count} avaliações)",
+    "avgResponseTime": "Tempo médio de resposta: {tempo}",
+    "avgResponseMinutes": "{min}min",
+    "avgResponseHours": "{horas}h",
+    "servicesOfferedTitle": "Serviços oferecidos",
+    "photosTitle": "Fotos",
+    "addressTitle": "Endereço",
+    "openInMapsLink": "Abrir no Google Maps",
+    "contactHoursTitle": "Contato e Horário",
+    "phoneLabel": "Telefone",
+    "phoneNotInformed": "Não informado",
+    "hoursLabel": "Horário de funcionamento",
+    "hoursWeekdays": "Seg a Sex: 08:00 - 18:00",
+    "hoursSaturday": "Sáb: 08:00 - 12:00",
+    "hoursSunday": "Dom: Fechado",
+    "reviewsTitle": "Avaliações ({count})",
+    "noReviewsText": "Esta oficina ainda não possui avaliações.",
+    "clientFallback": "Cliente"
+  }
+}

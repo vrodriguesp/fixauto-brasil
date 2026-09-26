@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { compressImage } from '@/lib/image-compress';
 
 export default function EmergenciaPage() {
+  const t = useTranslations('emergencia');
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -69,11 +71,12 @@ export default function EmergenciaPage() {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-          if (!localizacao) setLocalizacao('Localização detectada automaticamente');
+          if (!localizacao) setLocalizacao(t('locationAutoDetected'));
         },
         () => { /* fallback to default SP coords */ }
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,7 +145,7 @@ export default function EmergenciaPage() {
         .single();
 
       if (emergError || !emergencia) {
-        setError(emergError?.message || 'Erro ao registrar emergência');
+        setError(emergError?.message || t('errorGenericSubmit'));
         setSubmitting(false);
         return;
       }
@@ -206,35 +209,35 @@ export default function EmergenciaPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Emergência registrada!</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('successTitle')}</h1>
         <p className="text-gray-600 mb-6">
-          Oficinas próximas foram notificadas e enviarão orçamentos em breve.
+          {t('successText')}
         </p>
 
         {tipoAcidente !== 'sem_outro' && (
           <div className="card text-left mb-6">
-            <h2 className="font-semibold text-gray-900 mb-3">Próximo passo</h2>
+            <h2 className="font-semibold text-gray-900 mb-3">{t('nextStepTitle')}</h2>
             <p className="text-sm text-gray-600 mb-4">
-              Registre o outro veículo envolvido no acidente para trocar informações.
+              {t('nextStepText')}
             </p>
             <button
               onClick={() => router.push(`/emergencia/acidente/${emergenciaId}`)}
               className="btn-primary w-full"
             >
-              Registrar outro veículo envolvido
+              {t('registerOtherVehicleBtn')}
             </button>
           </div>
         )}
 
         {isLoggedIn ? (
           <button onClick={() => router.push('/cliente/dashboard')} className="btn-secondary w-full">
-            Ir para o Dashboard
+            {t('goToDashboardBtn')}
           </button>
         ) : (
           <div className="space-y-3">
-            <p className="text-sm text-gray-500">Crie uma conta para acompanhar os orçamentos e escolher uma oficina.</p>
+            <p className="text-sm text-gray-500">{t('createAccountText')}</p>
             <button onClick={() => router.push('/cadastro?tipo=cliente')} className="btn-primary w-full">
-              Criar minha conta
+              {t('createAccountBtn')}
             </button>
           </div>
         )}
@@ -253,13 +256,13 @@ export default function EmergenciaPage() {
               </svg>
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Acabei de bater!</h1>
-              <p className="text-red-100 text-sm">Tire fotos e receba orçamentos rápido</p>
+              <h1 className="text-2xl font-bold">{t('headerTitle')}</h1>
+              <p className="text-red-100 text-sm">{t('headerSubtitle')}</p>
             </div>
           </div>
           {isLoggedIn && (
             <div className="mt-3 bg-white/10 rounded-lg px-3 py-2 text-sm">
-              Logado como <strong>{user?.nome}</strong>
+              {t.rich('loggedInAs', { nome: user?.nome, strong: (chunks) => <strong>{chunks}</strong> })}
             </div>
           )}
         </div>
@@ -286,9 +289,9 @@ export default function EmergenciaPage() {
         <div className="card">
           {step === 1 && (
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">Fotos do acidente</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('step1Title')}</h2>
               <p className="text-sm text-gray-500 mb-4">
-                Tire fotos agora ou escolha da galeria
+                {t('step1Subtitle')}
               </p>
 
               {/* Camera input (capture) */}
@@ -307,7 +310,7 @@ export default function EmergenciaPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    <p className="text-red-600 font-semibold">Tirar foto agora</p>
+                    <p className="text-red-600 font-semibold">{t('takePhotoBtn')}</p>
                   </button>
                   <button
                     type="button"
@@ -317,14 +320,14 @@ export default function EmergenciaPage() {
                     <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <span className="text-gray-700 font-medium">Escolher da galeria</span>
+                    <span className="text-gray-700 font-medium">{t('chooseGalleryBtn')}</span>
                   </button>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-3 mb-4">
                   {fotos.map((foto, i) => (
                     <div key={i} className="aspect-square rounded-lg overflow-hidden relative group">
-                      <img src={foto.preview} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
+                      <img src={foto.preview} alt={t('photoAlt', { number: i + 1 })} className="w-full h-full object-cover" />
                       <button
                         type="button"
                         onClick={() => removePhoto(i)}
@@ -342,14 +345,14 @@ export default function EmergenciaPage() {
                       <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                       </svg>
-                      <span className="text-[10px] text-gray-500">Câmera</span>
+                      <span className="text-[10px] text-gray-500">{t('cameraLabel')}</span>
                     </button>
                     <button type="button" onClick={() => fileInputRef.current?.click()}
                       className="w-full aspect-video border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-gray-400 transition-colors">
                       <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                       </svg>
-                      <span className="text-[10px] text-gray-500">Galeria</span>
+                      <span className="text-[10px] text-gray-500">{t('galleryLabel')}</span>
                     </button>
                   </div>
                 </div>
@@ -357,12 +360,12 @@ export default function EmergenciaPage() {
 
               {/* Placa lookup */}
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Placa do seu veículo</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     className="input-field flex-1 uppercase"
-                    placeholder="ABC1D23"
+                    placeholder={t('platePlaceholder')}
                     maxLength={8}
                     value={placa}
                     onChange={(e) => {
@@ -383,17 +386,17 @@ export default function EmergenciaPage() {
                       {veiculoInfo.marca} {veiculoInfo.modelo}
                     </p>
                     <p className="text-xs text-green-600">
-                      Ano: {veiculoInfo.ano} | Cor: {veiculoInfo.cor}
+                      {t('vehicleYearColor', { ano: veiculoInfo.ano, cor: veiculoInfo.cor })}
                     </p>
                   </div>
                 )}
                 {placaNaoEncontrada && (
                   <div className="mt-3">
-                    <p className="text-xs text-orange-600 mb-2">Placa não encontrada. Digite marca e modelo:</p>
+                    <p className="text-xs text-orange-600 mb-2">{t('plateNotFoundText')}</p>
                     <input
                       type="text"
                       className="input-field"
-                      placeholder="Ex: Fiat Argo"
+                      placeholder={t('plateNotFoundPlaceholder')}
                       onChange={(e) => {
                         const val = e.target.value;
                         const parts = val.split(' ');
@@ -405,18 +408,18 @@ export default function EmergenciaPage() {
               </div>
 
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Descreva o que aconteceu (opcional)</label>
-                <textarea className="input-field min-h-[80px]" placeholder="Ex: Bati na traseira do carro da frente no semáforo..."
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('descriptionLabel')}</label>
+                <textarea className="input-field min-h-[80px]" placeholder={t('descriptionPlaceholder')}
                   value={descricao} onChange={(e) => setDescricao(e.target.value)} />
               </div>
 
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">O que aconteceu?</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('whatHappenedLabel')}</label>
                 <div className="space-y-2">
                   {[
-                    { value: 'eu_causei', label: 'Eu causei o acidente', desc: 'Você é o responsável pelo reparo do outro veículo' },
-                    { value: 'outro_causou', label: 'O outro motorista causou', desc: 'Você é a vítima e receberá orçamentos para reparo' },
-                    { value: 'sem_outro', label: 'Sem outro envolvido', desc: 'Ex: bateu no poste, muro, etc.' },
+                    { value: 'eu_causei', label: t('optionEuCauseiLabel'), desc: t('optionEuCauseiDesc') },
+                    { value: 'outro_causou', label: t('optionOutroCausouLabel'), desc: t('optionOutroCausouDesc') },
+                    { value: 'sem_outro', label: t('optionSemOutroLabel'), desc: t('optionSemOutroDesc') },
                   ].map((opt) => (
                     <label key={opt.value} className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                       tipoAcidente === opt.value ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:bg-gray-50'
@@ -441,7 +444,7 @@ export default function EmergenciaPage() {
               <div className="flex justify-end mt-6">
                 <button onClick={handleNext} disabled={fotos.length === 0}
                   className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50">
-                  Próximo
+                  {t('nextBtn')}
                 </button>
               </div>
             </div>
@@ -449,27 +452,27 @@ export default function EmergenciaPage() {
 
           {step === 2 && !isLoggedIn && (
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">Seus dados</h2>
-              <p className="text-sm text-gray-500 mb-4">Para que as oficinas possam entrar em contato</p>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('step2Title')}</h2>
+              <p className="text-sm text-gray-500 mb-4">{t('step2Subtitle')}</p>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-                  <input type="text" className="input-field" placeholder="Seu nome" value={nome} onChange={(e) => setNome(e.target.value)} />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('nameLabel')}</label>
+                  <input type="text" className="input-field" placeholder={t('namePlaceholder')} value={nome} onChange={(e) => setNome(e.target.value)} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input type="email" className="input-field" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('emailLabel')}</label>
+                  <input type="email" className="input-field" placeholder={t('emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefone / WhatsApp</label>
-                  <input type="tel" className="input-field" placeholder="(11) 99999-0000" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')}</label>
+                  <input type="tel" className="input-field" placeholder={t('phonePlaceholder')} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
                 </div>
               </div>
               <div className="flex justify-between mt-6">
-                <button onClick={() => setStep(1)} className="btn-secondary">Voltar</button>
+                <button onClick={() => setStep(1)} className="btn-secondary">{t('backBtn')}</button>
                 <button onClick={() => setStep(3)} disabled={!nome || !email || !telefone}
                   className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50">
-                  Próximo
+                  {t('nextBtn')}
                 </button>
               </div>
             </div>
@@ -477,41 +480,41 @@ export default function EmergenciaPage() {
 
           {step === 3 && (
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">Localização</h2>
-              <p className="text-sm text-gray-500 mb-4">Onde você está?</p>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('step3Title')}</h2>
+              <p className="text-sm text-gray-500 mb-4">{t('step3Subtitle')}</p>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Endereço / Região</label>
-                  <input type="text" className="input-field" placeholder="Rua, bairro ou ponto de referência"
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('addressLabel')}</label>
+                  <input type="text" className="input-field" placeholder={t('addressPlaceholder')}
                     value={localizacao} onChange={(e) => setLocalizacao(e.target.value)} />
                 </div>
                 <button type="button" onClick={() => {
                   if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
-                      (pos) => { setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }); setLocalizacao('Localização atual detectada'); },
-                      () => setLocalizacao('São Paulo, SP')
+                      (pos) => { setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }); setLocalizacao(t('locationCurrentDetected')); },
+                      () => setLocalizacao(t('locationFallback'))
                     );
                   }
                 }} className="w-full p-3 border border-gray-300 rounded-lg text-sm text-primary-600 hover:bg-primary-50 flex items-center justify-center gap-2">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
-                  Usar minha localização atual
+                  {t('useCurrentLocationBtn')}
                 </button>
               </div>
 
               <div className="bg-gray-50 rounded-lg p-4 mt-6 space-y-2">
-                <h3 className="font-medium text-gray-900 text-sm">Resumo</h3>
-                <p className="text-xs text-gray-600">{fotos.length} foto(s) do acidente</p>
+                <h3 className="font-medium text-gray-900 text-sm">{t('summaryTitle')}</h3>
+                <p className="text-xs text-gray-600">{t('summaryPhotos', { count: fotos.length })}</p>
                 <p className="text-xs text-gray-600">{nome} - {telefone}</p>
                 {descricao && <p className="text-xs text-gray-600">{descricao}</p>}
               </div>
 
               <div className="flex justify-between mt-6">
-                <button onClick={handleBack} className="btn-secondary">Voltar</button>
+                <button onClick={handleBack} className="btn-secondary">{t('backBtn')}</button>
                 <button onClick={handleSubmit} disabled={!localizacao || submitting}
                   className="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 text-lg">
-                  {submitting ? 'Enviando...' : 'Enviar para oficinas!'}
+                  {submitting ? t('sendingBtn') : t('sendBtn')}
                 </button>
               </div>
             </div>

@@ -1,0 +1,626 @@
+{
+  "termos": {
+    "metaTitle": "Terms of Use",
+    "metaDescription": "Terms of Use and General Conditions for the BipFix platform, for customers, partner repair shops and parts stores.",
+    "pageTitle": "Terms of Use and General Conditions",
+    "lastUpdatedLabel": "Last updated:",
+    "updatedDate": "September 8, 2026",
+    "title1": "1. Who we are and what BipFix is",
+    "body1a": "BipFix is a digital intermediation platform that connects (i) drivers and vehicle owners (\"Customers\") who need auto repair services with (ii) auto repair shops (\"Repair Shops\") and (iii) auto parts stores (\"Stores\"), collectively \"Partners\". By creating an account or using BipFix in any way, you agree to these Terms of Use and to our <privacyLink>Privacy Policy</privacyLink>.",
+    "body1b": "BipFix <strong>does not provide auto repair services, does not sell parts, and is not a party to the contract</strong> entered into between a Customer and a Partner. Our role is that of a technology intermediary: we enable contact, quote comparison, communication and service tracking. The consumer relationship for the service performed (repair, part sold, timeline, quality, warranty) is established directly between the Customer and the Partner, who are responsible for their own conduct under Brazil's Consumer Protection Code (Law No. 8,078/1990).",
+    "title2": "2. Registration and accuracy of information",
+    "body2": "You must provide true, complete and up-to-date information when registering (name, tax ID, address, contact details). Repair Shops and Stores represent that they hold the registrations, licenses and permits required for their activity. BipFix may request supporting documents and refuse or suspend registrations containing false, incomplete or unverifiable data.",
+    "title3": "3. Free use for Customers",
+    "body3": "Use of the platform by Customers is, and will remain, free of charge: requesting quotes, comparing proposals, tracking service progress and rating Partners come at no cost.",
+    "title4": "4. Commission and charges to Partners",
+    "body4a": "Currently, for certain Partners (including those who join during the platform's initial phase), <strong>no commission or subscription fee is charged</strong> for using BipFix. BipFix reserves the right to introduce, in the future, a commission on brokered services, a subscription fee, or both.",
+    "body4b": "Should BipFix decide to introduce or change any charges, it will notify affected Partners <strong>at least 30 (thirty) days in advance</strong> of any amount actually being charged, by email and/or notice within the platform, stating the new pricing model, the applicable percentage or amount, and the date the charge takes effect. A Partner who does not agree with the new terms may close their account before the charge takes effect, without any penalty.",
+    "title5": "5. Partner conduct and use of the platform",
+    "intro5": "By joining as a partner Repair Shop or Store, you agree to:",
+    "list5_1": "Provide truthful information about prices, timelines, availability and specialties;",
+    "list5_2": "Honor the quotes and timelines communicated to the Customer within the platform;",
+    "list5_3": "Not induce the Customer to complete the negotiation or payment outside the platform for the purpose of evading an applicable commission, when such commission is in effect and has been communicated under Clause 4;",
+    "list5_4": "Not manipulate, purchase, trade, or otherwise commit fraud with reviews and reputation scores;",
+    "list5_5": "Treat Customers and other Partners with respect, without discrimination, harassment, coercion, or unfair or deceptive business practices;",
+    "list5_6": "Comply with the laws applicable to their activity, including consumer protection, labor, tax and environmental regulations.",
+    "title6": "6. Suspension and removal of Partners",
+    "intro6": "BipFix may warn, temporarily suspend, or permanently remove a Partner from the platform, in proportion to the severity of the conduct identified. In particular:",
+    "sub6_1Title": "6.1 Violations that may result in a prior warning and a period to remedy",
+    "body6_1": "Minor or isolated violations (e.g., occasionally being slow to respond to requests, an outdated registration) will generally result in a notice and a reasonable period to correct the issue before any suspension.",
+    "sub6_2Title": "6.2 Serious violations resulting in immediate removal, without prior notice",
+    "body6_2": "In the cases below, BipFix may suspend or terminate a Partner's access <strong>immediately and without prior notice</strong>, given the severity involved and the risk to trust across the entire platform ecosystem:",
+    "list6_2_1": "Fraud, evasion, or attempted evasion of the commission model in effect (e.g., directing Customers to close a deal outside the platform to avoid paying an applicable commission, use of fake accounts, reporting amounts different from those actually charged);",
+    "list6_2_2": "Repeated negative Customer reviews indicating a pattern of poor service, improper charges, failure to honor a quote, or unethical conduct;",
+    "list6_2_3": "Unfair, deceptive, or fraudulent practices, including but not limited to: false information about parts or services, charging an amount different from the quote without justification, discrimination against Customers, harassment, or misuse of Customer data obtained through the platform;",
+    "list6_2_4": "A determination by a competent authority or the finding of illegal activity.",
+    "body6_2b": "The severity of the conduct and the applicable measure (warning, temporary suspension, or permanent removal) are assessed by BipFix on a case-by-case basis. A removed Partner may request reconsideration in writing, providing clarifications, which BipFix will review.",
+    "title7": "7. Reviews and reputation",
+    "body7": "Customers may rate the service provided after its completion. Reviews reflect the opinion of the person who wrote them and are displayed publicly on the Partner's profile. BipFix may remove reviews that are demonstrably false, offensive, or in violation of the law, but is not responsible for the content of Customers' legitimate opinions.",
+    "title8": "8. Consumer rights (Consumer Protection Code)",
+    "intro8": "Nothing in these Terms limits the rights guaranteed to Customers under Brazil's Consumer Protection Code (Law No. 8,078/1990), in particular:",
+    "list8_1": "<strong>The right to clear and adequate information</strong> (art. 6, III) about services and parts, prices, characteristics and risks;",
+    "list8_2": "<strong>The statutory warranty</strong> (art. 26) of 90 days to report apparent or easily identifiable defects in services and durable goods (such as auto repairs and parts), counted from delivery of the vehicle or product;",
+    "list8_3": "<strong>Supplier liability</strong> (arts. 12 to 25) of the Repair Shop or Store for defects in the service performed or the part sold;",
+    "list8_4": "<strong>The prohibition of abusive practices</strong> (art. 39), such as tie-in sales, charging for unsolicited services, or misleading information;",
+    "list8_5": "A channel for complaints and dispute mediation between Customer and Partner, provided by BipFix as a courtesy, without prejudice to the Customer's right to contact consumer protection agencies (Procon, the consumidor.gov.br platform) or the courts directly against the responsible Partner.",
+    "title9": "9. Personal data protection",
+    "body9": "The processing of personal data carried out by BipFix follows Brazil's General Data Protection Law (Law No. 13,709/2018 — LGPD) and is detailed in our <privacyLink>Privacy Policy</privacyLink>, which forms an integral part of these Terms.",
+    "title10": "10. Content, intellectual property and trademark",
+    "body10": "The BipFix brand, its layout, source code and other elements of the platform are owned by BipFix or its licensors, and reproduction, reverse engineering or unauthorized use is prohibited. Content submitted by Customers and Partners (photos, descriptions, messages) remains owned by whoever submitted it, but you grant BipFix a license to display it on the platform to the extent necessary to operate the service.",
+    "title11": "11. Limitation of liability",
+    "body11": "BipFix makes efforts to verify Partner registrations and to mediate any conflicts, but does not guarantee the quality, legality, adequacy, or outcome of the service performed by Repair Shops or the part sold by Stores, for which the performing Partner is solely responsible under applicable consumer law. BipFix is also not responsible for temporary platform unavailability resulting from maintenance, third-party failures, or unforeseeable circumstances and force majeure events.",
+    "title12": "12. Changes to these Terms",
+    "body12": "We may update these Terms to reflect platform improvements or legal changes. Material changes (including any change to the commission policy, which follows the specific rule in Clause 4) will be communicated with reasonable advance notice. Continued use of the platform after such notice constitutes acceptance of the new terms.",
+    "title13": "13. Governing law and jurisdiction",
+    "body13": "These Terms are governed by Brazilian law. The courts of the Customer's place of residence are elected to settle any disputes involving consumers, as permitted under art. 101, I of the Consumer Protection Code. For disputes between Partners and BipFix arising exclusively from the intermediation business relationship, the courts of the District of São Paulo/SP, Brazil are elected.",
+    "title14": "14. Contact",
+    "body14": "Questions about these Terms may be sent to <mailLink>contato@bipfix.com</mailLink>.",
+    "footerDisclaimer": "This document is provided for informational purposes and reflects the operating rules of the BipFix platform. For full legal compliance prior to commercial release, review by a lawyer specializing in consumer law and digital law is recommended."
+  },
+  "privacidade": {
+    "metaTitle": "Privacy Policy",
+    "metaDescription": "How BipFix collects, uses and protects the personal data of customers, partner repair shops and stores, in compliance with data protection law (LGPD).",
+    "pageTitle": "Privacy Policy",
+    "lastUpdatedLabel": "Last updated:",
+    "updatedDate": "September 8, 2026",
+    "title1": "1. Introduction",
+    "body1": "This Privacy Policy describes how BipFix (\"we\") collects, uses, shares and protects the personal data of Customers, partner Repair Shops and Stores (\"you\"), in compliance with Brazil's General Data Protection Law (Law No. 13,709/2018 — LGPD) and the Brazilian Civil Rights Framework for the Internet (Law No. 12,965/2014).",
+    "title2": "2. What data we collect",
+    "list2_1": "<strong>Registration data:</strong> name, tax ID, email, phone number, address and, for Repair Shops/Stores, business and staff (employee) details;",
+    "list2_2": "<strong>Location data:</strong> address and geographic coordinates, used to match Customers with nearby Partners;",
+    "list2_3": "<strong>Vehicle data:</strong> make, model, year, license plate (when provided) and photos of the reported damage;",
+    "list2_4": "<strong>Usage data:</strong> quotes, messages exchanged on the platform, reviews, service history and parts orders;",
+    "list2_5": "<strong>Technical data:</strong> IP address, session identifiers and access logs, retained as required by the Brazilian Civil Rights Framework for the Internet;",
+    "list2_6": "<strong>Cookies and similar technologies:</strong> used to keep you authenticated and for aggregated site usage statistics.",
+    "title3": "3. What we use your data for (purpose and legal basis)",
+    "list3_1": "<strong>Contract performance/service delivery</strong> (art. 7, V, LGPD): creating your account, connecting Customers with Partners, processing quotes and orders, enabling chat and notifications;",
+    "list3_2": "<strong>Compliance with a legal obligation</strong> (art. 7, II): maintaining tax records and access logs;",
+    "list3_3": "<strong>Legitimate interest</strong> (art. 7, IX): fraud prevention, platform improvement, information security, and communications about updates to the service you already use;",
+    "list3_4": "<strong>Consent</strong> (art. 7, I): when required, such as for marketing communications separate from the existing relationship — you may withdraw your consent at any time.",
+    "title4": "4. Who we share your data with",
+    "intro4": "We share data strictly to the extent necessary for the platform to function:",
+    "list4_1": "Between the Customer and Partner involved in the same quote request or order, to enable service delivery (name, contact details, address where applicable, vehicle photos);",
+    "list4_2": "With technical infrastructure providers (hosting, database, transactional email/WhatsApp delivery), under contractual confidentiality and security obligations;",
+    "list4_3": "With public authorities, when required by law, court order, or regulatory request.",
+    "body4": "We do not sell personal data to third parties for advertising purposes.",
+    "title5": "5. How long we keep your data",
+    "body5": "We keep your data for as long as your account is active, plus any additional period required to meet legal, tax and regulatory obligations (for example, internet application access logs are kept for a minimum of 6 months, as required by the Brazilian Civil Rights Framework for the Internet), or for the regular exercise of rights in administrative or judicial proceedings.",
+    "title6": "6. Your rights as a data subject",
+    "intro6": "Under art. 18 of the LGPD, you may request at any time:",
+    "list6_1": "Confirmation of whether processing is taking place and access to your data;",
+    "list6_2": "Correction of incomplete, inaccurate or outdated data;",
+    "list6_3": "Anonymization, blocking or deletion of unnecessary data, or data processed in violation of the law;",
+    "list6_4": "Portability of your data to another service provider;",
+    "list6_5": "Deletion of data processed on the basis of your consent;",
+    "list6_6": "Information on who we share your data with;",
+    "list6_7": "Withdrawal of consent, where applicable.",
+    "body6": "To exercise any of these rights, contact us at <mailLink>privacidade@bipfix.com</mailLink>. We will respond within the applicable legal timeframe.",
+    "title7": "7. Information security",
+    "body7": "We adopt technical and administrative measures to protect personal data against unauthorized access and accidental or unlawful destruction, loss, alteration, disclosure or dissemination, including authentication-based access control, per-account data isolation (database-level row-level security) and encryption in transit.",
+    "title8": "8. Children and minors",
+    "body8": "BipFix is not directed at individuals under 18 years of age and does not knowingly collect data from children or minors.",
+    "title9": "9. Changes to this Policy",
+    "body9": "We may update this Policy from time to time. Material changes will be communicated by email or platform notice before they take effect.",
+    "title10": "10. Data Protection Officer (DPO) contact",
+    "body10": "For questions related to personal data protection, contact: <mailLink>privacidade@bipfix.com</mailLink>.",
+    "footerDisclaimer": "This document is provided for informational purposes. For full legal compliance prior to commercial release, review by a lawyer specializing in data protection (LGPD) law is recommended."
+  },
+  "emergencia": {
+    "successTitle": "Emergency logged!",
+    "successText": "Nearby repair shops have been notified and will send quotes shortly.",
+    "nextStepTitle": "Next step",
+    "nextStepText": "Register the other vehicle involved in the accident to exchange information.",
+    "registerOtherVehicleBtn": "Register other vehicle involved",
+    "goToDashboardBtn": "Go to Dashboard",
+    "createAccountText": "Create an account to track your quotes and choose a repair shop.",
+    "createAccountBtn": "Create my account",
+    "headerTitle": "I just crashed!",
+    "headerSubtitle": "Take photos and get quotes fast",
+    "loggedInAs": "Logged in as <strong>{nome}</strong>",
+    "step1Title": "Photos of the accident",
+    "step1Subtitle": "Take photos now or choose from your gallery",
+    "takePhotoBtn": "Take a photo now",
+    "chooseGalleryBtn": "Choose from gallery",
+    "cameraLabel": "Camera",
+    "galleryLabel": "Gallery",
+    "photoAlt": "Photo {number}",
+    "plateLabel": "Your vehicle's license plate",
+    "platePlaceholder": "123 ABC",
+    "vehicleYearColor": "Year: {ano} | Color: {cor}",
+    "plateNotFoundText": "License plate not found. Enter make and model:",
+    "plateNotFoundPlaceholder": "E.g.: Fiat Argo",
+    "descriptionLabel": "Describe what happened (optional)",
+    "descriptionPlaceholder": "E.g.: I hit the car in front of me at a red light...",
+    "whatHappenedLabel": "What happened?",
+    "optionEuCauseiLabel": "I caused the accident",
+    "optionEuCauseiDesc": "You are responsible for repairing the other vehicle",
+    "optionOutroCausouLabel": "The other driver caused it",
+    "optionOutroCausouDesc": "You are the victim and will receive quotes for the repair",
+    "optionSemOutroLabel": "No one else involved",
+    "optionSemOutroDesc": "E.g.: hit a pole, a wall, etc.",
+    "nextBtn": "Next",
+    "step2Title": "Your details",
+    "step2Subtitle": "So repair shops can get in touch with you",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@email.com",
+    "phoneLabel": "Phone / WhatsApp",
+    "phonePlaceholder": "+372 5555 5555",
+    "backBtn": "Back",
+    "step3Title": "Location",
+    "step3Subtitle": "Where are you?",
+    "addressLabel": "Address / Area",
+    "addressPlaceholder": "Street, neighborhood or landmark",
+    "useCurrentLocationBtn": "Use my current location",
+    "summaryTitle": "Summary",
+    "summaryPhotos": "{count} photo(s) of the accident",
+    "sendBtn": "Send to repair shops!",
+    "sendingBtn": "Sending...",
+    "locationAutoDetected": "Location detected automatically",
+    "locationCurrentDetected": "Current location detected",
+    "locationFallback": "São Paulo, SP",
+    "errorGenericSubmit": "Error logging the emergency"
+  },
+  "emergenciaAcidenteDetalhe": {
+    "headerTitle": "Accident Report",
+    "headerSubtitle": "Register the other vehicle and track your quotes",
+    "tabEnvolvidos": "Involved",
+    "tabMensagens": "Messages",
+    "tabOrcamentos": "Quotes",
+    "formTitle": "Other vehicle's details",
+    "otherNameLabel": "Other driver's name *",
+    "otherNamePlaceholder": "Full name",
+    "phoneLabel": "Phone",
+    "phonePlaceholder": "+372 5555 5555",
+    "emailLabel": "Email",
+    "emailPlaceholder": "email@email.com",
+    "plateLabel": "Vehicle license plate *",
+    "platePlaceholder": "123 ABC",
+    "vehicleLabel": "Vehicle (make/model)",
+    "vehiclePlaceholder": "E.g.: Fiat Argo",
+    "photosLabel": "Photos of the other vehicle",
+    "observationsLabel": "Notes",
+    "observationsPlaceholder": "Details about the accident, any on-site agreement...",
+    "notifyInfo": "The other driver will receive an email notification to follow the accident and the quotes.",
+    "registerBtn": "Register other vehicle",
+    "registeringBtn": "Registering...",
+    "involvedTitle": "Vehicles involved",
+    "nameFieldLabel": "Name:",
+    "vehicleFieldLabel": "Vehicle:",
+    "yearFieldLabel": "Year:",
+    "plateFieldLabel": "Plate:",
+    "colorFieldLabel": "Color:",
+    "phoneFieldLabel": "Phone:",
+    "notInformed": "Not provided",
+    "requestRegisteredNote": "Request registered",
+    "notifiedBadge": "Notified",
+    "sendMessageBtn": "Send message",
+    "viewQuotesBtn": "View quotes",
+    "youFallback": "You",
+    "registranteLabelEuCausei": "Responsible party",
+    "registranteLabelOutroCausou": "Victim",
+    "registranteLabelDefault": "Driver 1",
+    "outroLabelEuCausei": "Victim",
+    "outroLabelOutroCausou": "Responsible party",
+    "outroLabelDefault": "Driver 2",
+    "badgeEuCausei": "You caused the accident",
+    "badgeOutroCausou": "The other driver caused it",
+    "badgeSemOutro": "No one else involved",
+    "legacyResponsavel": "Takes responsibility",
+    "legacyVitima": "Victim",
+    "legacyDividida": "Shared responsibility - 50%",
+    "legacyIndividual": "Each party pays their own",
+    "chatOtherFallback": "Other driver",
+    "chatVehicleFallback": "Vehicle",
+    "chatNoPlateFallback": "No plate",
+    "chatEmptyState": "No messages yet. Send the first one!",
+    "chatSenderProprietario": "Driver",
+    "chatSenderOutroFallback": "Other party",
+    "chatInputPlaceholder": "Type a message...",
+    "loadingQuotes": "Loading quotes...",
+    "noQuotesTitle": "No quotes yet",
+    "noQuotesText": "Nearby repair shops are assessing the damage. You'll receive quotes by email as soon as they're ready.",
+    "victimDecidesNote": "The victim decides which quote to accept. Once accepted, the repair shop's details will be shared with the responsible party.",
+    "shareWithOtherNote": "Share these quotes with the other driver to agree on which repair shop to use.",
+    "quoteAcceptedBadge": "Accepted",
+    "deadlineLabel": "Timeline: {dias} days",
+    "workshopDataTitle": "Repair shop details",
+    "workshopFallback": "Repair shop",
+    "sendToResponsibleBtn": "Send to responsible party",
+    "sendToOtherBtn": "Send to other party",
+    "acceptQuoteBtn": "Accept quote",
+    "quoteMsgBase": "Quote from {oficina}: {valor}, {dias}-day timeline.",
+    "quoteMsgAddressPart": " Address: {endereco}",
+    "quoteMsgCityPart": ", {cidade}",
+    "quoteMsgPhonePart": " Phone: {telefone}"
+  },
+  "docsHome": {
+    "metaTitle": "Help Center | BipFix",
+    "metaDescription": "Get answers about how to use the BipFix platform. Complete guides for drivers and repair shops.",
+    "heroTitle": "BipFix Help Center",
+    "heroSubtitle": "Everything you need to know to use the platform, whether you're a driver or a repair shop.",
+    "clienteCardTitle": "Driver Guide",
+    "clienteCardText": "Learn how to create requests, compare quotes, schedule services and track your vehicle's repair in real time.",
+    "oficinaCardTitle": "Repair Shop Guide",
+    "oficinaCardText": "Find out how to register your shop, receive requests, send quotes, manage your schedule and build your reputation.",
+    "accessGuideLink": "Open guide",
+    "contactTitle": "Need more help?",
+    "contactText": "Our team is ready to help. Get in touch through any of the channels below.",
+    "emailBtn": "Send an email"
+  },
+  "docsLayout": {
+    "backToSite": "Back to site",
+    "helpCenterLink": "Help Center",
+    "footerContactText": "Still have questions? Contact us by email at <mailLink>contato@bipfix.com</mailLink> or by phone at <strong>(11) 3000-0000</strong>.",
+    "footerCopyright": "2026 BipFix. All rights reserved."
+  },
+  "docsCliente": {
+    "pageBackLink": "Back to Help Center",
+    "pageTitle": "Driver Guide",
+    "pageSubtitle": "Everything you need to know to find the best repair shop, compare quotes and track your vehicle's repair.",
+    "s1Title": "1. How to sign up",
+    "s1Intro": "Creating your BipFix account is quick and free. Just follow these steps:",
+    "s1Steps": [
+      {
+        "title": "Go to the sign-up page",
+        "desc": "Click 'I need a repair' on the homepage, or go directly to /cadastro."
+      },
+      {
+        "title": "Fill in your details",
+        "desc": "Enter your full name, email, phone number and create a secure password."
+      },
+      {
+        "title": "Confirm your email",
+        "desc": "You'll receive a confirmation email. Click the link to activate your account."
+      },
+      {
+        "title": "Add your vehicle",
+        "desc": "Add the make, model, year and license plate of your vehicle. You can add more than one."
+      }
+    ],
+    "s2Title": "2. How to create a request",
+    "s2Intro": "A request is the quote request you send to repair shops. The process has 5 simple steps:",
+    "s2Steps": [
+      {
+        "title": "Select your vehicle",
+        "desc": "Choose which of your registered vehicles needs a repair."
+      },
+      {
+        "title": "Type of service",
+        "desc": "Select the service category: bodywork, paint, mechanical, electrical, glass and more."
+      },
+      {
+        "title": "Photos and description",
+        "desc": "Take photos of the damage or issue and add a detailed description. The more information you give, the better the quote will be."
+      },
+      {
+        "title": "Location",
+        "desc": "Confirm your location so nearby repair shops receive your request. You can use GPS or type in your address."
+      },
+      {
+        "title": "Review and send",
+        "desc": "Review all the information and send it. Nearby repair shops will be notified and start preparing quotes."
+      }
+    ],
+    "s3Title": "3. How to compare quotes",
+    "s3Intro": "When repair shops send quotes, you can easily compare them. Each quote shows the total price, estimated timeline, itemized details and the shop's rating.",
+    "s3BadgesLabel": "Featured badges:",
+    "s3Badges": [
+      {
+        "name": "Quality Badge",
+        "desc": "Repair shops with an average rating above 4.5 stars and more than 10 completed services."
+      },
+      {
+        "name": "Fast Response",
+        "desc": "Repair shops that responded to your request in under 1 hour."
+      },
+      {
+        "name": "Price Adjustment",
+        "desc": "Indicates the repair shop is open to negotiating the quote amount."
+      }
+    ],
+    "s3Outro": "Use the filters to sort by price, timeline or rating. Click on each quote to see the full breakdown of items and services.",
+    "s4Title": "4. How to schedule the service",
+    "s4Intro": "After comparing quotes, choose the one that best fits your needs:",
+    "s4Steps": [
+      {
+        "title": "Accept the quote",
+        "desc": "Click 'Accept quote' on the one you've chosen. The repair shop will be notified right away."
+      },
+      {
+        "title": "Choose a date",
+        "desc": "The repair shop makes time slots available on its schedule. Pick the day and time that works best for you."
+      },
+      {
+        "title": "Confirmation",
+        "desc": "Once confirmed, you'll receive the appointment details by email and on the platform, including the shop's address."
+      }
+    ],
+    "s5Title": "5. Real-time tracking",
+    "s5Intro": "After dropping off your vehicle at the repair shop, you can follow every stage of the repair through the platform:",
+    "s5Items": [
+      {
+        "label": "Check-in",
+        "desc": "When the vehicle arrives at the shop, the team logs its arrival."
+      },
+      {
+        "label": "In progress",
+        "desc": "The repair shop updates the status as it moves through each stage of the service."
+      },
+      {
+        "label": "Detailed stages",
+        "desc": "You can see the progress: disassembly, repair, painting, reassembly, quality check."
+      },
+      {
+        "label": "Ready for pickup",
+        "desc": "Once the service is complete, you get a notification to pick up your vehicle."
+      },
+      {
+        "label": "Check-out",
+        "desc": "The repair shop logs the vehicle's departure and marks the service as finished."
+      }
+    ],
+    "s5Outro": "Access the tracking page any time from the \"My Services\" menu in your dashboard.",
+    "s6Title": "6. How to rate the service",
+    "s6Intro": "Once the service is finished, you can rate the repair shop to help other drivers:",
+    "s6Steps": [
+      {
+        "title": "Rate 1 to 5 stars",
+        "desc": "Rate the overall quality of the service provided."
+      },
+      {
+        "title": "Add a comment",
+        "desc": "Write a comment describing your experience. Be honest and specific."
+      },
+      {
+        "title": "Publication",
+        "desc": "Your review will appear on the repair shop's public profile, helping other drivers decide."
+      }
+    ],
+    "s6Note": "Your review really matters. It helps keep the platform's quality high and recognizes the best repair shops.",
+    "s7Title": "7. Emergency — I Just Crashed",
+    "s7Intro": "BipFix has a special flow for emergency situations:",
+    "s7Steps": [
+      {
+        "title": "Tap the emergency button",
+        "desc": "On the homepage or in your dashboard, tap the red 'I Just Crashed' button."
+      },
+      {
+        "title": "Log the incident",
+        "desc": "Take photos of the damage right away. You can also register the other vehicle involved, including its license plate and photos."
+      },
+      {
+        "title": "Automatic location",
+        "desc": "The system uses your GPS to find the nearest repair shops to the accident location."
+      },
+      {
+        "title": "Fast quotes",
+        "desc": "Nearby repair shops receive your request as a priority and send quotes within minutes."
+      }
+    ],
+    "s7Warning": "If anyone is injured, call emergency services (112) first. Your safety comes first."
+  },
+  "docsClienteLayout": {
+    "metaTitle": "Driver Guide",
+    "metaDescription": "Learn how to use BipFix to request repairs, compare quotes from repair shops and track your vehicle's repair in real time."
+  },
+  "docsOficina": {
+    "pageBackLink": "Back to Help Center",
+    "pageTitle": "Repair Shop Guide",
+    "pageSubtitle": "Learn how to use all of BipFix's tools to attract customers, manage services and grow your business.",
+    "s1Title": "1. How to register your repair shop",
+    "s1Intro": "Registering your repair shop on BipFix is simple and takes just a few minutes:",
+    "s1Steps": [
+      {
+        "title": "Create your account",
+        "desc": "Go to /cadastro and select 'I'm a repair shop'. Fill in the details of the person in charge: name, email and password."
+      },
+      {
+        "title": "Repair shop details",
+        "desc": "Enter your business tax ID, legal name, trade name, phone number and full address."
+      },
+      {
+        "title": "Specialties",
+        "desc": "Select the types of service your shop offers: bodywork, paint, mechanical, electrical, glass, and more."
+      },
+      {
+        "title": "Service radius",
+        "desc": "Set the distance (in km) within which your shop accepts requests. You can adjust it later."
+      },
+      {
+        "title": "Complete profile",
+        "desc": "Add photos of the shop, a description, business hours and accepted payment methods. A complete profile attracts more customers."
+      }
+    ],
+    "s2Title": "2. How to receive requests",
+    "s2Intro": "BipFix automatically sends requests to repair shops that match the customer's criteria:",
+    "s2Items": [
+      {
+        "label": "Proximity",
+        "desc": "The customer is within the service radius you set."
+      },
+      {
+        "label": "Specialty",
+        "desc": "The requested service type matches your shop's specialties."
+      },
+      {
+        "label": "Availability",
+        "desc": "Your shop is active on the platform with an open schedule."
+      }
+    ],
+    "s2Body": "You'll receive notifications on your dashboard and by email. Each request includes: photos of the damage, a description of the issue, vehicle type and the customer's location.",
+    "s2Tip": "Tip: keep your profile up to date and your specialties accurate to receive the most relevant requests.",
+    "s3Title": "3. How to send quotes",
+    "s3Intro": "To send a competitive, detailed quote:",
+    "s3Steps": [
+      {
+        "title": "Review the request",
+        "desc": "Look at the customer's photos and description. If you need more information, you can send a message."
+      },
+      {
+        "title": "Add items to the quote",
+        "desc": "List each service and part separately with a description, quantity and unit price. The more detailed it is, the more confidence the customer will have."
+      },
+      {
+        "title": "Estimated timeline",
+        "desc": "State how many business days the service will take."
+      },
+      {
+        "title": "Schedule availability",
+        "desc": "Select the available time slots for the customer to schedule the vehicle drop-off."
+      },
+      {
+        "title": "Send the quote",
+        "desc": "Review and send. The customer will be notified and can compare it with other quotes."
+      }
+    ],
+    "s3Tip": "Detailed quotes with fair prices are up to 3x more likely to be accepted.",
+    "s4Title": "4. Manage your schedule",
+    "s4Intro": "The schedule dashboard lets you organize all of your shop's services:",
+    "s4Items": [
+      {
+        "label": "Check-in",
+        "desc": "Log the vehicle's arrival at the shop. The customer is notified automatically."
+      },
+      {
+        "label": "Internal jobs",
+        "desc": "Create internal jobs (ones that didn't come through BipFix) to keep your schedule organized."
+      },
+      {
+        "label": "Assignment",
+        "desc": "Assign each vehicle to a specific mechanic on your team."
+      },
+      {
+        "label": "Check-out",
+        "desc": "When the service is finished and the vehicle picked up, log its departure."
+      }
+    ],
+    "s4Outro": "The calendar view shows all scheduled, in-progress and completed services in one place.",
+    "s5Title": "5. Team and mechanics",
+    "s5Intro": "Manage your team members directly through the platform:",
+    "s5Steps": [
+      {
+        "title": "Add staff",
+        "desc": "Add mechanics and other staff by entering their name, email and role (mechanic, front desk, manager)."
+      },
+      {
+        "title": "First login",
+        "desc": "The staff member receives an email with temporary credentials and must set a new password on their first login."
+      },
+      {
+        "title": "Assign vehicles",
+        "desc": "Assign vehicles being serviced to specific mechanics. Each mechanic only sees the vehicles assigned to them."
+      },
+      {
+        "title": "Role-based permissions",
+        "desc": "Mechanics have limited access (assigned vehicles only). Managers and admins have full access to the dashboard."
+      }
+    ],
+    "s6Title": "6. Repair tracking",
+    "s6Intro": "Keep the customer informed about the repair's progress:",
+    "s6Items": [
+      {
+        "label": "Status updates",
+        "desc": "Change the service status: received, in progress, awaiting parts, completed."
+      },
+      {
+        "label": "Detailed stages",
+        "desc": "Log each stage: disassembly, structural repair, prep, painting, reassembly, quality check."
+      },
+      {
+        "label": "Automatic notifications",
+        "desc": "Every status change generates a notification for the customer."
+      },
+      {
+        "label": "Progress photos",
+        "desc": "Send photos of each stage so the customer can follow along visually."
+      }
+    ],
+    "s6Note": "Repair shops that update the status frequently get higher ratings and build more customer loyalty.",
+    "s7Title": "7. Reviews and reputation",
+    "s7Intro": "Your reputation on the platform is built through customer reviews:",
+    "s7Items": [
+      {
+        "label": "1 to 5 star rating",
+        "desc": "The average appears on your public profile and in search results."
+      },
+      {
+        "label": "Comments",
+        "desc": "Customers can leave detailed comments about their experience."
+      },
+      {
+        "label": "Quality Badge",
+        "desc": "Repair shops with an average above 4.5 and more than 10 services receive the green quality badge."
+      },
+      {
+        "label": "Fast Response",
+        "desc": "Responding to quote requests in under 1 hour earns the blue badge."
+      }
+    ],
+    "s7Outro": "You can reply publicly to reviews, showing professionalism and attention to your customers.",
+    "s8Title": "8. BipFix commission",
+    "s8Intro": "BipFix charges a commission on services carried out through the platform. Here's how it works:",
+    "s8Items": [
+      {
+        "label": "How it's charged",
+        "desc": "The commission is calculated on the total value of the quote accepted by the customer."
+      },
+      {
+        "label": "Transparency",
+        "desc": "The commission percentage is shown before the quote is sent, with no surprises."
+      },
+      {
+        "label": "Billing",
+        "desc": "Charges are made monthly, with a detailed report of all services."
+      }
+    ],
+    "s8ReduceTitle": "How to reduce your commission:",
+    "s8ReduceList": [
+      "Keep an average rating above 4.5 stars.",
+      "Respond to requests quickly (in under 1 hour).",
+      "Complete services within the estimated timeline.",
+      "Keep your profile complete and up to date."
+    ],
+    "s8Note": "Repair shops with excellent performance can get up to a 30% reduction in their commission rate."
+  },
+  "docsOficinaLayout": {
+    "metaTitle": "Repair Shop Guide",
+    "metaDescription": "Learn how to register your shop, receive requests, send quotes and manage your team and schedule on BipFix."
+  },
+  "oficinaPerfilPublico": {
+    "metaTitleTemplate": "{nome} - Auto Repair Shop in {cidade}, {estado}",
+    "metaDescriptionTemplate": "Reviews, services offered and online quotes at {nome}, an auto repair shop in {cidade} - {estado}. Compare prices and book your repair through BipFix.",
+    "metaNotFoundTitle": "Repair shop not found",
+    "loadingText": "Loading repair shop profile...",
+    "notFoundText": "Repair shop not found.",
+    "backToHomeLink": "Back to home",
+    "backLink": "Back",
+    "qualityBadge": "Quality Repair Shop",
+    "fastResponseBadge": "Fast Response",
+    "volumeBadge": "{tier}+ services completed",
+    "partnerSinceBadge": "Partner since {data}",
+    "priceAdjustmentDown": "Average adjustment: {pct}% 📉",
+    "priceAdjustmentUp": "Average adjustment: +{pct}% 📈",
+    "noPriceAdjustment": "No price adjustments",
+    "reviewCountSingular": "({count} review)",
+    "reviewCountPlural": "({count} reviews)",
+    "avgResponseTime": "Average response time: {tempo}",
+    "avgResponseMinutes": "{min}min",
+    "avgResponseHours": "{horas}h",
+    "servicesOfferedTitle": "Services offered",
+    "photosTitle": "Photos",
+    "addressTitle": "Address",
+    "openInMapsLink": "Open in Google Maps",
+    "contactHoursTitle": "Contact and Hours",
+    "phoneLabel": "Phone",
+    "phoneNotInformed": "Not provided",
+    "hoursLabel": "Business hours",
+    "hoursWeekdays": "Mon to Fri: 8:00 AM - 6:00 PM",
+    "hoursSaturday": "Sat: 8:00 AM - 12:00 PM",
+    "hoursSunday": "Sun: Closed",
+    "reviewsTitle": "Reviews ({count})",
+    "noReviewsText": "This repair shop doesn't have any reviews yet.",
+    "clientFallback": "Customer"
+  }
+}

@@ -1,0 +1,626 @@
+{
+  "termos": {
+    "metaTitle": "Kasutustingimused",
+    "metaDescription": "BipFixi platvormi kasutustingimused ja üldtingimused klientidele, partnertöökodadele ja varuosade poodidele.",
+    "pageTitle": "Kasutustingimused ja üldtingimused",
+    "lastUpdatedLabel": "Viimati uuendatud:",
+    "updatedDate": "8. september 2026",
+    "title1": "1. Kes me oleme ja mis on BipFix",
+    "body1a": "BipFix on digitaalne vahendusplatvorm, mis ühendab (i) juhte ja sõidukiomanikke (\"Kliendid\"), kes vajavad autoremonditeenuseid, (ii) autoremonditöökodadega (\"Töökojad\") ja (iii) autovaruosade poodidega (\"Poed\"), mida koos nimetatakse \"Partneriteks\". Konto loomisega või BipFixi mis tahes viisil kasutamisega nõustub kasutaja käesolevate Kasutustingimustega ja meie <privacyLink>Privaatsuspoliitikaga</privacyLink>.",
+    "body1b": "BipFix <strong>ei osuta autoremonditeenuseid, ei müü varuosi ega ole lepingupool</strong> Kliendi ja Partneri vahel sõlmitavas lepingus. BipFixi roll on tehnoloogilise vahendaja roll: platvorm võimaldab kontakti loomist, hinnapakkumiste võrdlemist, suhtlust ja teenuse kulgemise jälgimist. Osutatud teenusega (remont, müüdud varuosa, tähtaeg, kvaliteet, garantii) seotud tarbijasuhe tekib otse Kliendi ja Partneri vahel, kes vastutavad oma tegevuse eest kohaldatava tarbijakaitseõiguse alusel (Brasiilia Tarbijakaitse Seadustik, seadus nr 8.078/1990).",
+    "title2": "2. Registreerimine ja andmete tõesus",
+    "body2": "Registreerimisel tuleb esitada tõesed, täielikud ja ajakohased andmed (nimi, maksukohustuslase kood, aadress, kontaktandmed). Töökojad ja Poed kinnitavad, et neil on oma tegevuseks nõutavad registreeringud, load ja litsentsid. BipFix võib nõuda tõendavaid dokumente ning keelduda valede, puudulike või kontrollimatute andmetega registreeringutest või need peatada.",
+    "title3": "3. Tasuta kasutamine Klientidele",
+    "body3": "Platvormi kasutamine Klientide poolt on ja jääb tasuta: hinnapakkumiste küsimine, pakkumiste võrdlemine, teenuse edenemise jälgimine ja Partnerite hindamine ei ole tasulised.",
+    "title4": "4. Komisjonitasu ja Partneritelt tasu võtmine",
+    "body4a": "Praegu ei võeta teatud Partneritelt (sealhulgas neilt, kes liituvad platvormi algfaasis) BipFixi kasutamise eest <strong>komisjonitasu ega kuutasu</strong>. BipFix jätab endale õiguse tulevikus kehtestada komisjonitasu vahendatud teenustelt, kuutasu või mõlemad.",
+    "body4b": "Kui BipFix otsustab tasusid kehtestada või muuta, teavitab ta mõjutatud Partnereid <strong>vähemalt 30 (kolmkümmend) päeva ette</strong> enne, kui mis tahes summa tegelikult sisse nõutakse, e-posti teel ja/või platvormisisese teatega, näidates ära uue mudeli, kohaldatava protsendi või summa ning tasu kehtima hakkamise kuupäeva. Partner, kes uue tingimusega ei nõustu, võib oma konto sulgeda enne tasu kehtima hakkamist, ilma igasuguse trahvita.",
+    "title5": "5. Partnerite käitumine ja platvormi kasutamine",
+    "intro5": "Töökoja või Poena partneriks liitudes kohustub Partner:",
+    "list5_1": "Esitama tõest teavet hindade, tähtaegade, saadavuse ja eriala kohta;",
+    "list5_2": "Pidama kinni Kliendile platvormis edastatud hinnapakkumistest ja tähtaegadest;",
+    "list5_3": "Mitte suunama Klienti sõlmima tehingut või tasuma väljaspool platvormi eesmärgiga vältida kohaldatavat komisjonitasu, kui see on kehtiv ja Punkti 4 kohaselt teatavaks tehtud;",
+    "list5_4": "Mitte manipuleerima, ostma, vahetama ega muul viisil võltsima hinnanguid ja mainenäitajaid;",
+    "list5_5": "Kohtlema Kliente ja teisi Partnereid austusega, ilma diskrimineerimise, ahistamise, sunni või ebaausate või eksitavate äritavadeta;",
+    "list5_6": "Järgima oma tegevusele kohaldatavaid õigusakte, sealhulgas tarbijakaitse-, töö-, maksu- ja keskkonnaalaseid norme.",
+    "title6": "6. Partnerite peatamine ja platvormilt eemaldamine",
+    "intro6": "BipFix võib Partnerit hoiatada, ajutiselt peatada või platvormilt lõplikult eemaldada, proportsionaalselt tuvastatud rikkumise raskusega. Eelkõige:",
+    "sub6_1Title": "6.1 Rikkumised, mille puhul antakse eelnev hoiatus ja tähtaeg olukorra parandamiseks",
+    "body6_1": "Kergemate või üksikjuhtumitena esinevate rikkumiste puhul (nt aeg-ajalt hiline vastamine päringutele, aegunud registreerimisandmed) saadetakse reeglina teade ja mõistlik tähtaeg olukorra parandamiseks enne mis tahes peatamist.",
+    "sub6_2Title": "6.2 Rasked rikkumised, mis toovad kaasa viivitamatu eemaldamise ilma eelneva hoiatuseta",
+    "body6_2": "Allpool nimetatud juhtudel võib BipFix Partneri juurdepääsu <strong>viivitamatult ja ilma eelneva hoiatuseta</strong> peatada või lõpetada, arvestades rikkumise raskust ja ohtu kogu platvormi ökosüsteemi usaldusele:",
+    "list6_2_1": "Kehtiva komisjonimudeli pettus, sellest kõrvalehoidmine või selle katse (nt Klientide suunamine sõlmima tehing väljaspool platvormi, et vältida kohaldatava komisjonitasu maksmist, valekontode kasutamine, tegelikult küsitud summadest erineva teabe esitamine);",
+    "list6_2_2": "Korduvad negatiivsed Kliendi hinnangud, mis viitavad halva teeninduse, alusetu tasu nõudmise, hinnapakkumise mittetäitmise või ebaeetilise käitumise mustrile;",
+    "list6_2_3": "Ebaausad, eksitavad või pettuslikud tegevused, sealhulgas, kuid mitte ainult: valeteabe andmine varuosade või teenuste kohta, hinnapakkumisest erineva summa nõudmine ilma põhjenduseta, Klientide diskrimineerimine, ahistamine või platvormi kaudu saadud Kliendi andmete väärkasutamine;",
+    "list6_2_4": "Pädeva ametiasutuse otsus või ebaseadusliku tegevuse tuvastamine.",
+    "body6_2b": "Rikkumise raskust ja kohaldatavat meedet (hoiatus, ajutine peatamine või lõplik eemaldamine) hindab BipFix igal üksikjuhul eraldi. Eemaldatud Partner võib esitada kirjaliku taotluse otsuse ülevaatamiseks koos selgitustega, mida BipFix hindab.",
+    "title7": "7. Hinnangud ja maine",
+    "body7": "Kliendid saavad osutatud teenust pärast selle lõpetamist hinnata. Hinnangud kajastavad neid kirjutanud isiku arvamust ja need kuvatakse avalikult Partneri profiilil. BipFix võib eemaldada tõendatult valed, solvavad või seadust rikkuvad hinnangud, kuid ei vastuta Klientide õiguspärase arvamuse sisu eest.",
+    "title8": "8. Tarbija õigused (Tarbijakaitse Seadustik)",
+    "intro8": "Miski käesolevates Tingimustes ei piira Kliendile Tarbijakaitse Seadustikuga (seadus nr 8.078/1990) tagatud õigusi, eelkõige:",
+    "list8_1": "<strong>Õigus selgele ja asjakohasele teabele</strong> (§ 6, III) teenuste ja varuosade, hindade, omaduste ja riskide kohta;",
+    "list8_2": "<strong>Seaduslik garantii</strong> (§ 26) 90 päeva ilmsete või kergesti tuvastatavate puuduste kohta kaebamiseks kestvusteenuste ja -kaupade puhul (nagu autoremont ja varuosad), alates sõiduki või toote üleandmisest;",
+    "list8_3": "<strong>Tarnija vastutus</strong> (§-d 12–25) Töökoja või Poe poolt osutatud teenuse või müüdud varuosa puuduste ja defektide eest;",
+    "list8_4": "<strong>Kuritarvituslike tavade keeld</strong> (§ 39), näiteks seotud müük, tellimata teenuse eest tasu nõudmine või eksitav teave;",
+    "list8_5": "Kanal Kliendi ja Partneri vaheliste kaebuste ja vaidluste lahendamiseks, mille BipFix pakub tasuta lisateenusena, ilma et see piiraks Kliendi õigust pöörduda tarbijakaitseasutuste (nt Procon, platvorm consumidor.gov.br) või kohtu poole otse vastutava Partneri vastu.",
+    "title9": "9. Isikuandmete kaitse",
+    "body9": "BipFixi teostatav isikuandmete töötlemine järgib Brasiilia isikuandmete kaitse üldseadust (seadus nr 13.709/2018 — LGPD) ning on üksikasjalikult kirjeldatud meie <privacyLink>Privaatsuspoliitikas</privacyLink>, mis on käesolevate Tingimuste lahutamatu osa.",
+    "title10": "10. Sisu, intellektuaalomand ja kaubamärk",
+    "body10": "Kaubamärk BipFix, selle kujundus, lähtekood ja muud platvormi elemendid kuuluvad BipFixile või tema litsentsiandjatele ning nende reprodutseerimine, pöördprojekteerimine või loata kasutamine on keelatud. Klientide ja Partnerite esitatud sisu (fotod, kirjeldused, sõnumid) jääb selle esitanud isiku omandisse, kuid esitaja annab BipFixile litsentsi kuvada seda platvormil teenuse toimimiseks vajalikus ulatuses.",
+    "title11": "11. Vastutuse piiramine",
+    "body11": "BipFix teeb jõupingutusi Partnerite registreerimisandmete kontrollimiseks ja võimalike vaidluste vahendamiseks, kuid ei taga Töökoja osutatud teenuse või Poe müüdud varuosa kvaliteeti, seaduslikkust, sobivust ega tulemust — selle eest vastutab ainuisikuliselt teostav Partner vastavalt kohaldatavale tarbijakaitseõigusele. BipFix ei vastuta ka platvormi ajutise kättesaamatuse eest, mis tuleneb hooldustöödest, kolmandate isikute riketest või ettenägematutest asjaoludest ja vääramatust jõust.",
+    "title12": "12. Käesolevate Tingimuste muutmine",
+    "body12": "BipFix võib käesolevaid Tingimusi uuendada, et kajastada platvormi parendusi või õiguslikke muudatusi. Olulistest muudatustest (sealhulgas komisjonipoliitika muutmisest, mis järgib Punktis 4 sätestatud erireeglit) teavitatakse mõistliku etteteatamisajaga. Platvormi jätkuv kasutamine pärast teavitust tähendab uute tingimustega nõustumist.",
+    "title13": "13. Kohaldatav õigus ja kohtualluvus",
+    "body13": "Käesolevaid Tingimusi reguleerib Brasiilia õigus. Tarbijaid puudutavate vaidluste lahendamiseks on kokku lepitud Kliendi elukohajärgne kohtualluvus, nagu võimaldab Tarbijakaitse Seadustiku art 101, I. Partnerite ja BipFixi vaheliste, üksnes vahendusalasest ärisuhtest tulenevate vaidluste puhul on kokku lepitud São Paulo/SP kohtualluvus (Brasiilia).",
+    "title14": "14. Kontakt",
+    "body14": "Küsimused käesolevate Tingimuste kohta võib saata aadressile <mailLink>contato@bipfix.com</mailLink>.",
+    "footerDisclaimer": "Käesolev dokument on informatiivse iseloomuga ja kajastab BipFixi platvormi toimimise reegleid. Täieliku õigusliku vastavuse tagamiseks enne kommertskasutuselevõttu on soovitatav lasta dokument üle vaadata tarbijaõiguse ja digiõiguse valdkonna juristil."
+  },
+  "privacidade": {
+    "metaTitle": "Privaatsuspoliitika",
+    "metaDescription": "Kuidas BipFix kogub, kasutab ja kaitseb klientide, partnertöökodade ja -poodide isikuandmeid kooskõlas andmekaitsealaste õigusaktidega (LGPD).",
+    "pageTitle": "Privaatsuspoliitika",
+    "lastUpdatedLabel": "Viimati uuendatud:",
+    "updatedDate": "8. september 2026",
+    "title1": "1. Sissejuhatus",
+    "body1": "Käesolev Privaatsuspoliitika kirjeldab, kuidas BipFix (\"meie\") kogub, kasutab, jagab ja kaitseb Klientide ning partnertöökodade ja -poodide (\"kasutaja\") isikuandmeid kooskõlas Brasiilia isikuandmete kaitse üldseadusega (seadus nr 13.709/2018 — LGPD) ja Brasiilia interneti tsiviilõiguste raamseadusega (Marco Civil da Internet, seadus nr 12.965/2014).",
+    "title2": "2. Milliseid andmeid kogume",
+    "list2_1": "<strong>Registreerimisandmed:</strong> nimi, maksukohustuslase kood, e-post, telefon, aadress ning Töökodade/Poodide puhul ettevõtte ja meeskonna (töötajate) andmed;",
+    "list2_2": "<strong>Asukohaandmed:</strong> aadress ja geograafilised koordinaadid, mida kasutatakse Kliendi ühendamiseks lähedal asuvate Partneritega;",
+    "list2_3": "<strong>Sõiduki andmed:</strong> mark, mudel, aasta, registreerimismärk (kui see on esitatud) ja teatatud kahjustuse fotod;",
+    "list2_4": "<strong>Kasutusandmed:</strong> hinnapakkumised, platvormis vahetatud sõnumid, hinnangud, teenuste ajalugu ja varuosade tellimused;",
+    "list2_5": "<strong>Tehnilised andmed:</strong> IP-aadress, seansi tunnused ja juurdepääsulogid, mida säilitatakse vastavalt interneti tsiviilõiguste raamseadusele;",
+    "list2_6": "<strong>Küpsised ja sarnased tehnoloogiad:</strong> kasutatakse seansi autentimisel hoidmiseks ja veebilehe kasutuse koondstatistika koostamiseks.",
+    "title3": "3. Milleks andmeid kasutame (eesmärk ja õiguslik alus)",
+    "list3_1": "<strong>Lepingu täitmine/teenuse osutamine</strong> (LGPD § 7, V): konto loomine, Kliendi ühendamine Partneriga, hinnapakkumiste ja tellimuste töötlemine, vestluse ja teavituste võimaldamine;",
+    "list3_2": "<strong>Seadusest tuleneva kohustuse täitmine</strong> (§ 7, II): maksualaste dokumentide ja juurdepääsulogide säilitamine;",
+    "list3_3": "<strong>Õigustatud huvi</strong> (§ 7, IX): pettuse ennetamine, platvormi täiustamine, infoturve ning teavitused juba kasutatava teenuse uuenduste kohta;",
+    "list3_4": "<strong>Nõusolek</strong> (§ 7, I): kui see on nõutav, näiteks olemasolevast suhtest eraldiseisva turundussuhtluse jaoks — nõusoleku saab igal ajal tagasi võtta.",
+    "title4": "4. Kellega andmeid jagame",
+    "intro4": "Andmeid jagatakse ainult platvormi toimimiseks vajalikus ulatuses:",
+    "list4_1": "Samasse hinnapakkumise päringusse või tellimusse kaasatud Kliendi ja Partneri vahel, teeninduse võimaldamiseks (nimi, kontaktandmed, vajaduse korral aadress, sõiduki fotod);",
+    "list4_2": "Tehnilise taristu pakkujatega (majutus, andmebaas, tehinguliste e-kirjade/WhatsAppi saatmine), lepinguliste konfidentsiaalsus- ja turvakohustuste alusel;",
+    "list4_3": "Riigiasutustega, kui seda nõuab seadus, kohtumäärus või regulatiivne järelepärimine.",
+    "body4": "Isikuandmeid ei müüda kolmandatele isikutele reklaami eesmärgil.",
+    "title5": "5. Kui kaua andmeid säilitame",
+    "body5": "Andmeid säilitatakse seni, kuni konto on aktiivne, ning täiendava ajavahemiku vältel, mis on vajalik seadusest, maksuõigusest ja regulatsioonidest tulenevate kohustuste täitmiseks (näiteks interneti rakenduste juurdepääsulogisid säilitatakse vähemalt 6 kuud vastavalt interneti tsiviilõiguste raamseadusele), või õiguste teostamiseks haldus- või kohtumenetlustes.",
+    "title6": "6. Andmesubjekti õigused",
+    "intro6": "LGPD § 18 alusel võib andmesubjekt igal ajal taotleda:",
+    "list6_1": "Kinnitust töötlemise toimumise kohta ja juurdepääsu oma andmetele;",
+    "list6_2": "Puudulike, ebatäpsete või aegunud andmete parandamist;",
+    "list6_3": "Mittevajalike või seadusega vastuolus töödeldud andmete anonüümimist, blokeerimist või kustutamist;",
+    "list6_4": "Andmete ülekandmist teisele teenusepakkujale;",
+    "list6_5": "Nõusoleku alusel töödeldud andmete kustutamist;",
+    "list6_6": "Teavet selle kohta, kellega andmeid jagatakse;",
+    "list6_7": "Nõusoleku tagasivõtmist, kui see on kohaldatav.",
+    "body6": "Nende õiguste kasutamiseks võib pöörduda e-posti aadressil <mailLink>privacidade@bipfix.com</mailLink>. Vastus antakse kohaldatava seadusjärgse tähtaja jooksul.",
+    "title7": "7. Infoturve",
+    "body7": "Isikuandmete kaitseks loata juurdepääsu ning juhusliku või õigusvastase hävimise, kaotsimineku, muutmise, avalikustamise või levitamise eest rakendatakse tehnilisi ja korralduslikke meetmeid, sealhulgas autentimisel põhinevat juurdepääsukontrolli, kontopõhist andmete isoleerimist (andmebaasitasandi RLS) ja krüpteerimist andmeedastusel.",
+    "title8": "8. Lapsed ja alaealised",
+    "body8": "BipFix ei ole suunatud alla 18-aastastele isikutele ning ei kogu teadlikult laste ja alaealiste andmeid.",
+    "title9": "9. Käesoleva Poliitika muudatused",
+    "body9": "Käesolevat Poliitikat võidakse aeg-ajalt uuendada. Olulistest muudatustest teavitatakse e-posti või platvormisisese teatega enne nende jõustumist.",
+    "title10": "10. Andmekaitsespetsialisti (DPO) kontakt",
+    "body10": "Isikuandmete kaitsega seotud küsimuste korral võtke ühendust: <mailLink>privacidade@bipfix.com</mailLink>.",
+    "footerDisclaimer": "Käesolev dokument on informatiivse iseloomuga. Täieliku õigusliku vastavuse tagamiseks enne kommertskasutuselevõttu on soovitatav lasta dokument üle vaadata andmekaitseõiguse (LGPD) valdkonna juristil."
+  },
+  "emergencia": {
+    "successTitle": "Hädaolukord registreeritud!",
+    "successText": "Lähedal asuvaid töökodasid teavitati ja nad saadavad peagi hinnapakkumised.",
+    "nextStepTitle": "Järgmine samm",
+    "nextStepText": "Registreeri õnnetusse kaasatud teine sõiduk, et vahetada infot.",
+    "registerOtherVehicleBtn": "Registreeri kaasatud teine sõiduk",
+    "goToDashboardBtn": "Mine töölauale",
+    "createAccountText": "Loo konto, et jälgida hinnapakkumisi ja valida töökoda.",
+    "createAccountBtn": "Loo oma konto",
+    "headerTitle": "Sain just avarii!",
+    "headerSubtitle": "Tee fotod ja saa kiirelt hinnapakkumised",
+    "loggedInAs": "Sisse logitud kui <strong>{nome}</strong>",
+    "step1Title": "Fotod avariist",
+    "step1Subtitle": "Tee kohe fotod või vali need galeriist",
+    "takePhotoBtn": "Tee foto kohe",
+    "chooseGalleryBtn": "Vali galeriist",
+    "cameraLabel": "Kaamera",
+    "galleryLabel": "Galerii",
+    "photoAlt": "Foto {number}",
+    "plateLabel": "Sinu sõiduki registreerimismärk",
+    "platePlaceholder": "123 ABC",
+    "vehicleYearColor": "Aasta: {ano} | Värv: {cor}",
+    "plateNotFoundText": "Registreerimismärki ei leitud. Sisesta mark ja mudel:",
+    "plateNotFoundPlaceholder": "Nt: Fiat Argo",
+    "descriptionLabel": "Kirjelda, mis juhtus (valikuline)",
+    "descriptionPlaceholder": "Nt: Sõitsin foori juures eesoleva auto taha...",
+    "whatHappenedLabel": "Mis juhtus?",
+    "optionEuCauseiLabel": "Mina põhjustasin avarii",
+    "optionEuCauseiDesc": "Sina vastutad teise sõiduki remondi eest",
+    "optionOutroCausouLabel": "Teine juht põhjustas avarii",
+    "optionOutroCausouDesc": "Sina oled kannatanu ja saad remondiks hinnapakkumised",
+    "optionSemOutroLabel": "Keegi teine ei olnud kaasatud",
+    "optionSemOutroDesc": "Nt: sõitsid vastu posti, müüri jne.",
+    "nextBtn": "Edasi",
+    "step2Title": "Sinu andmed",
+    "step2Subtitle": "Et töökojad saaksid sinuga ühendust võtta",
+    "nameLabel": "Nimi",
+    "namePlaceholder": "Sinu nimi",
+    "emailLabel": "E-post",
+    "emailPlaceholder": "sina@email.com",
+    "phoneLabel": "Telefon / WhatsApp",
+    "phonePlaceholder": "+372 5555 5555",
+    "backBtn": "Tagasi",
+    "step3Title": "Asukoht",
+    "step3Subtitle": "Kus sa asud?",
+    "addressLabel": "Aadress / Piirkond",
+    "addressPlaceholder": "Tänav, linnaosa või maamärk",
+    "useCurrentLocationBtn": "Kasuta minu praegust asukohta",
+    "summaryTitle": "Kokkuvõte",
+    "summaryPhotos": "{count} foto(t) avariist",
+    "sendBtn": "Saada töökodadele!",
+    "sendingBtn": "Saadan...",
+    "locationAutoDetected": "Asukoht tuvastati automaatselt",
+    "locationCurrentDetected": "Praegune asukoht tuvastatud",
+    "locationFallback": "São Paulo, SP",
+    "errorGenericSubmit": "Viga hädaolukorra registreerimisel"
+  },
+  "emergenciaAcidenteDetalhe": {
+    "headerTitle": "Avarii registreerimine",
+    "headerSubtitle": "Registreeri teine sõiduk ja jälgi hinnapakkumisi",
+    "tabEnvolvidos": "Osalised",
+    "tabMensagens": "Sõnumid",
+    "tabOrcamentos": "Hinnapakkumised",
+    "formTitle": "Teise sõiduki andmed",
+    "otherNameLabel": "Teise juhi nimi *",
+    "otherNamePlaceholder": "Täisnimi",
+    "phoneLabel": "Telefon",
+    "phonePlaceholder": "+372 5555 5555",
+    "emailLabel": "E-post",
+    "emailPlaceholder": "email@email.com",
+    "plateLabel": "Sõiduki registreerimismärk *",
+    "platePlaceholder": "123 ABC",
+    "vehicleLabel": "Sõiduk (mark/mudel)",
+    "vehiclePlaceholder": "Nt: Fiat Argo",
+    "photosLabel": "Teise sõiduki fotod",
+    "observationsLabel": "Märkused",
+    "observationsPlaceholder": "Üksikasjad avarii kohta, kohapeal tehtud kokkulepe...",
+    "notifyInfo": "Teine juht saab e-kirja teavituse, et jälgida avariid ja hinnapakkumisi.",
+    "registerBtn": "Registreeri teine sõiduk",
+    "registeringBtn": "Registreerimine...",
+    "involvedTitle": "Osalenud sõidukid",
+    "nameFieldLabel": "Nimi:",
+    "vehicleFieldLabel": "Sõiduk:",
+    "yearFieldLabel": "Aasta:",
+    "plateFieldLabel": "Registreerimismärk:",
+    "colorFieldLabel": "Värv:",
+    "phoneFieldLabel": "Telefon:",
+    "notInformed": "Ei ole märgitud",
+    "requestRegisteredNote": "Päring registreeritud",
+    "notifiedBadge": "Teavitatud",
+    "sendMessageBtn": "Saada sõnum",
+    "viewQuotesBtn": "Vaata hinnapakkumisi",
+    "youFallback": "Sina",
+    "registranteLabelEuCausei": "Vastutav pool",
+    "registranteLabelOutroCausou": "Kannatanu",
+    "registranteLabelDefault": "1. juht",
+    "outroLabelEuCausei": "Kannatanu",
+    "outroLabelOutroCausou": "Vastutav pool",
+    "outroLabelDefault": "2. juht",
+    "badgeEuCausei": "Sina põhjustasid avarii",
+    "badgeOutroCausou": "Teine juht põhjustas avarii",
+    "badgeSemOutro": "Keegi teine ei olnud kaasatud",
+    "legacyResponsavel": "Võtab vastutuse",
+    "legacyVitima": "Kannatanu",
+    "legacyDividida": "Jagatud vastutus - 50%",
+    "legacyIndividual": "Igaüks maksab enda oma",
+    "chatOtherFallback": "Teine juht",
+    "chatVehicleFallback": "Sõiduk",
+    "chatNoPlateFallback": "Registreerimismärk puudub",
+    "chatEmptyState": "Sõnumeid veel ei ole. Saada esimene!",
+    "chatSenderProprietario": "Juht",
+    "chatSenderOutroFallback": "Teine osaline",
+    "chatInputPlaceholder": "Kirjuta sõnum...",
+    "loadingQuotes": "Laen hinnapakkumisi...",
+    "noQuotesTitle": "Hinnapakkumisi veel ei ole",
+    "noQuotesText": "Lähedal asuvad töökojad hindavad kahjustusi. Saad hinnapakkumised e-postiga niipea, kui need on valmis.",
+    "victimDecidesNote": "Kannatanu otsustab, millise hinnapakkumise vastu võtta. Pärast nõustumist jagatakse töökoja andmed vastutava poolega.",
+    "shareWithOtherNote": "Jaga neid hinnapakkumisi teise juhiga, et leppida kokku, millist töökoda remondiks kasutada.",
+    "quoteAcceptedBadge": "Vastu võetud",
+    "deadlineLabel": "Tähtaeg: {dias} päeva",
+    "workshopDataTitle": "Töökoja andmed",
+    "workshopFallback": "Töökoda",
+    "sendToResponsibleBtn": "Saada vastutavale poolele",
+    "sendToOtherBtn": "Saada teisele osalisele",
+    "acceptQuoteBtn": "Nõustu hinnapakkumisega",
+    "quoteMsgBase": "Hinnapakkumine töökojalt {oficina}: {valor}, tähtaeg {dias} päeva.",
+    "quoteMsgAddressPart": " Aadress: {endereco}",
+    "quoteMsgCityPart": ", {cidade}",
+    "quoteMsgPhonePart": " Tel: {telefone}"
+  },
+  "docsHome": {
+    "metaTitle": "Abikeskus | BipFix",
+    "metaDescription": "Leia vastused küsimustele BipFixi platvormi kasutamise kohta. Täielikud juhendid juhtidele ja töökodadele.",
+    "heroTitle": "BipFixi abikeskus",
+    "heroSubtitle": "Kõik, mida on vaja teada platvormi kasutamiseks — olgu sa juht või töökoda.",
+    "clienteCardTitle": "Juhi juhend",
+    "clienteCardText": "Õpi, kuidas luua päringuid, võrrelda hinnapakkumisi, broneerida teenuseid ja jälgida oma sõiduki remonti reaalajas.",
+    "oficinaCardTitle": "Töökoja juhend",
+    "oficinaCardText": "Uuri, kuidas registreerida oma töökoda, vastu võtta päringuid, saata hinnapakkumisi, hallata ajakava ja kasvatada oma mainet.",
+    "accessGuideLink": "Ava juhend",
+    "contactTitle": "Vajad rohkem abi?",
+    "contactText": "Meie meeskond on valmis sind aitama. Võta ühendust mõne alloleva kanali kaudu.",
+    "emailBtn": "Saada e-kiri"
+  },
+  "docsLayout": {
+    "backToSite": "Tagasi saidile",
+    "helpCenterLink": "Abikeskus",
+    "footerContactText": "Kas sul on veel küsimusi? Võta meiega ühendust e-posti aadressil <mailLink>contato@bipfix.com</mailLink> või telefonil <strong>(11) 3000-0000</strong>.",
+    "footerCopyright": "2026 BipFix. Kõik õigused kaitstud."
+  },
+  "docsCliente": {
+    "pageBackLink": "Tagasi abikeskusesse",
+    "pageTitle": "Juhi juhend",
+    "pageSubtitle": "Kõik, mida on vaja teada, et leida parim töökoda, võrrelda hinnapakkumisi ja jälgida oma sõiduki remonti.",
+    "s1Title": "1. Kuidas registreeruda",
+    "s1Intro": "BipFixi konto loomine on kiire ja tasuta. Järgi neid samme:",
+    "s1Steps": [
+      {
+        "title": "Ava registreerimisleht",
+        "desc": "Kliki avalehel nupul 'Vajan remonti' või mine otse aadressile /cadastro."
+      },
+      {
+        "title": "Täida oma andmed",
+        "desc": "Sisesta oma täisnimi, e-post, telefoninumber ja loo turvaline parool."
+      },
+      {
+        "title": "Kinnita oma e-post",
+        "desc": "Saad kinnituskirja e-postile. Kliki lingil, et oma konto aktiveerida."
+      },
+      {
+        "title": "Lisa oma sõiduk",
+        "desc": "Lisa oma sõiduki mark, mudel, aasta ja registreerimismärk. Saad lisada rohkem kui ühe sõiduki."
+      }
+    ],
+    "s2Title": "2. Kuidas luua päring",
+    "s2Intro": "Päring on hinnapakkumise soov, mille saadad töökodadele. Protsess koosneb 5 lihtsast sammust:",
+    "s2Steps": [
+      {
+        "title": "Vali sõiduk",
+        "desc": "Vali, milline oma registreeritud sõidukitest vajab remonti."
+      },
+      {
+        "title": "Teenuse liik",
+        "desc": "Vali teenuse kategooria: kerekere, värvimine, mehaanika, elektroonika, klaasid ja muu."
+      },
+      {
+        "title": "Fotod ja kirjeldus",
+        "desc": "Tee fotod kahjustusest või probleemist ja lisa üksikasjalik kirjeldus. Mida rohkem infot annad, seda parem tuleb hinnapakkumine."
+      },
+      {
+        "title": "Asukoht",
+        "desc": "Kinnita oma asukoht, et lähedal asuvad töökojad saaksid sinu päringu. Saad kasutada GPS-i või sisestada aadressi käsitsi."
+      },
+      {
+        "title": "Ülevaatus ja saatmine",
+        "desc": "Vaata kogu info üle ja saada päring. Lähedal asuvaid töökodasid teavitatakse ja nad hakkavad hinnapakkumisi koostama."
+      }
+    ],
+    "s3Title": "3. Kuidas võrrelda hinnapakkumisi",
+    "s3Intro": "Kui töökojad saadavad hinnapakkumisi, saad neid hõlpsalt võrrelda. Iga hinnapakkumine näitab kogusummat, tähtaega, üksikasjalikke kirjeid ja töökoja hinnangut.",
+    "s3BadgesLabel": "Esiletõstetud märgised:",
+    "s3Badges": [
+      {
+        "name": "Kvaliteedimärgis",
+        "desc": "Töökojad, mille keskmine hinnang on üle 4,5 tärni ja kellel on üle 10 lõpetatud teenuse."
+      },
+      {
+        "name": "Kiire vastus",
+        "desc": "Töökojad, kes vastasid sinu päringule alla 1 tunni jooksul."
+      },
+      {
+        "name": "Hinnakohandus",
+        "desc": "Näitab, et töökoda on valmis hinnapakkumise summa üle läbi rääkima."
+      }
+    ],
+    "s3Outro": "Kasuta filtreid, et sorteerida hinna, tähtaja või hinnangu järgi. Kliki igal hinnapakkumisel, et näha kirjete ja teenuste täielikku jaotust.",
+    "s4Title": "4. Kuidas teenus broneerida",
+    "s4Intro": "Pärast hinnapakkumiste võrdlemist vali see, mis sobib sulle kõige paremini:",
+    "s4Steps": [
+      {
+        "title": "Nõustu hinnapakkumisega",
+        "desc": "Kliki valitud hinnapakkumisel nupul 'Nõustu hinnapakkumisega'. Töökoda saab sellest kohe teada."
+      },
+      {
+        "title": "Vali kuupäev",
+        "desc": "Töökoda avab ajakavas vabad ajad. Vali päev ja kellaaeg, mis sulle kõige paremini sobib."
+      },
+      {
+        "title": "Kinnitus",
+        "desc": "Pärast kinnitamist saad broneeringu üksikasjad e-posti ja platvormi kaudu, sealhulgas töökoja aadressi."
+      }
+    ],
+    "s5Title": "5. Jälgimine reaalajas",
+    "s5Intro": "Pärast sõiduki töökotta viimist saad platvormi kaudu jälgida remondi iga etappi:",
+    "s5Items": [
+      {
+        "label": "Check-in",
+        "desc": "Kui sõiduk jõuab töökotta, registreerib meeskond selle saabumise."
+      },
+      {
+        "label": "Töös",
+        "desc": "Töökoda uuendab staatust, kui teenus liigub eri etappide vahel edasi."
+      },
+      {
+        "label": "Üksikasjalikud etapid",
+        "desc": "Näed edenemist: lahtivõtmine, remont, värvimine, kokkupanek, kvaliteedikontroll."
+      },
+      {
+        "label": "Valmis järele tulemiseks",
+        "desc": "Kui teenus on valmis, saad teavituse sõidukile järele tulla."
+      },
+      {
+        "label": "Check-out",
+        "desc": "Töökoda registreerib sõiduki lahkumise ja teenus märgitakse lõpetatuks."
+      }
+    ],
+    "s5Outro": "Jälgimislehele pääsed igal ajal oma töölaual asuva menüü \"Minu teenused\" kaudu.",
+    "s6Title": "6. Kuidas teenust hinnata",
+    "s6Intro": "Pärast teenuse lõppu saad töökoda hinnata, et aidata teisi juhte:",
+    "s6Steps": [
+      {
+        "title": "Hinne 1 kuni 5 tärni",
+        "desc": "Hinda osutatud teenuse üldist kvaliteeti."
+      },
+      {
+        "title": "Kommentaar",
+        "desc": "Kirjuta kommentaar, mis kirjeldab sinu kogemust. Ole aus ja täpne."
+      },
+      {
+        "title": "Avaldamine",
+        "desc": "Sinu hinnang ilmub töökoja avalikule profiilile ja aitab teistel juhtidel otsustada."
+      }
+    ],
+    "s6Note": "Sinu hinnang on väga oluline. See aitab hoida platvormi kvaliteeti kõrgel ja tunnustab parimaid töökodasid.",
+    "s7Title": "7. Hädaolukord — Sain just avarii",
+    "s7Intro": "BipFixil on hädaolukordade jaoks eraldi voog:",
+    "s7Steps": [
+      {
+        "title": "Vajuta hädaabi nuppu",
+        "desc": "Vajuta avalehel või oma töölaual punast nuppu 'Sain just avarii'."
+      },
+      {
+        "title": "Registreeri juhtum",
+        "desc": "Tee kahjustusest kohe fotod. Saad registreerida ka teise osalenud sõiduki, sealhulgas selle numbrimärgi ja fotod."
+      },
+      {
+        "title": "Automaatne asukoht",
+        "desc": "Süsteem kasutab sinu GPS-i, et leida avarii toimumiskohale kõige lähemal asuvad töökojad."
+      },
+      {
+        "title": "Kiired hinnapakkumised",
+        "desc": "Lähedal asuvad töökojad saavad sinu päringu eelisjärjekorras ja saadavad hinnapakkumised mõne minutiga."
+      }
+    ],
+    "s7Warning": "Kui õnnetuses on kannatanuid, helista kõigepealt hädaabinumbril 112. Sinu turvalisus on kõige tähtsam."
+  },
+  "docsClienteLayout": {
+    "metaTitle": "Juhi juhend",
+    "metaDescription": "Õpi kasutama BipFixit remondi tellimiseks, töökodade hinnapakkumiste võrdlemiseks ja oma sõiduki remondi jälgimiseks reaalajas."
+  },
+  "docsOficina": {
+    "pageBackLink": "Tagasi abikeskusesse",
+    "pageTitle": "Töökoja juhend",
+    "pageSubtitle": "Õpi kasutama kõiki BipFixi tööriistu, et meelitada kliente, hallata teenuseid ja kasvatada oma töökoda.",
+    "s1Title": "1. Kuidas oma töökoda registreerida",
+    "s1Intro": "Oma töökoja registreerimine BipFixis on lihtne ja võtab vaid mõne minuti:",
+    "s1Steps": [
+      {
+        "title": "Loo oma konto",
+        "desc": "Mine aadressile /cadastro ja vali 'Olen töökoda'. Täida vastutava isiku andmed: nimi, e-post ja parool."
+      },
+      {
+        "title": "Töökoja andmed",
+        "desc": "Sisesta registrikood, ametlik nimi, kaubanduslik nimi, telefon ja töökoja täielik aadress."
+      },
+      {
+        "title": "Erialad",
+        "desc": "Vali teenuste liigid, mida sinu töökoda pakub: kerekere, värvimine, mehaanika, elektroonika, klaasid jne."
+      },
+      {
+        "title": "Teeninduspiirkond",
+        "desc": "Määra vahemaa (km-des), mille ulatuses sinu töökoda päringuid vastu võtab. Saad seda hiljem muuta."
+      },
+      {
+        "title": "Täielik profiil",
+        "desc": "Lisa töökoja fotod, kirjeldus, lahtiolekuajad ja aktsepteeritavad maksevõimalused. Täielik profiil meelitab rohkem kliente."
+      }
+    ],
+    "s2Title": "2. Kuidas päringuid vastu võtta",
+    "s2Intro": "BipFix saadab päringuid automaatselt töökodadele, mis vastavad kliendi kriteeriumitele:",
+    "s2Items": [
+      {
+        "label": "Lähedus",
+        "desc": "Klient asub sinu määratud teeninduspiirkonnas."
+      },
+      {
+        "label": "Eriala",
+        "desc": "Soovitud teenuse liik vastab sinu töökoja erialadele."
+      },
+      {
+        "label": "Saadavus",
+        "desc": "Sinu töökoda on platvormil aktiivne ja ajakava on avatud."
+      }
+    ],
+    "s2Body": "Saad teavitusi töölaual ja e-postiga. Iga päring sisaldab: kahjustuse fotosid, probleemi kirjeldust, sõiduki liiki ja kliendi asukohta.",
+    "s2Tip": "Nõuanne: hoia oma profiil ajakohane ja erialad õiged, et saada kõige asjakohasemaid päringuid.",
+    "s3Title": "3. Kuidas hinnapakkumisi saata",
+    "s3Intro": "Konkurentsivõimelise ja üksikasjaliku hinnapakkumise saatmiseks:",
+    "s3Steps": [
+      {
+        "title": "Vaata päring üle",
+        "desc": "Vaata üle kliendi fotod ja kirjeldus. Kui vajad rohkem infot, saad saata sõnumi."
+      },
+      {
+        "title": "Lisa hinnapakkumisse kirjed",
+        "desc": "Loetle iga teenus ja varuosa eraldi koos kirjelduse, koguse ja ühikuhinnaga. Mida üksikasjalikum, seda suurem on kliendi usaldus."
+      },
+      {
+        "title": "Hinnanguline tähtaeg",
+        "desc": "Märgi, mitme tööpäevaga teenus valmib."
+      },
+      {
+        "title": "Ajakava saadavus",
+        "desc": "Vali vabad ajad, millal klient saab sõiduki toomise broneerida."
+      },
+      {
+        "title": "Saada hinnapakkumine",
+        "desc": "Vaata üle ja saada. Klienti teavitatakse ning ta saab seda teiste hinnapakkumistega võrrelda."
+      }
+    ],
+    "s3Tip": "Üksikasjalikel ja õiglase hinnaga hinnapakkumistel on kuni 3 korda suurem tõenäosus, et need aktsepteeritakse.",
+    "s4Title": "4. Ajakava haldamine",
+    "s4Intro": "Ajakava vaade võimaldab korraldada kõiki sinu töökoja teenuseid:",
+    "s4Items": [
+      {
+        "label": "Check-in",
+        "desc": "Registreeri sõiduki saabumine töökotta. Klienti teavitatakse automaatselt."
+      },
+      {
+        "label": "Sisemised tööd",
+        "desc": "Loo sisemisi teenuseid (mis ei tulnud BipFixi kaudu), et hoida ajakava korras."
+      },
+      {
+        "label": "Määramine",
+        "desc": "Määra iga sõiduk konkreetsele meeskonna mehaanikule."
+      },
+      {
+        "label": "Check-out",
+        "desc": "Kui teenus on valmis ja sõiduk ära toodud, registreeri väljumine."
+      }
+    ],
+    "s4Outro": "Kalendrivaade näitab kõiki broneeritud, pooleliolevaid ja lõpetatud teenuseid ühes kohas.",
+    "s5Title": "5. Meeskond ja mehaanikud",
+    "s5Intro": "Halda oma meeskonna liikmeid otse platvormi kaudu:",
+    "s5Steps": [
+      {
+        "title": "Registreeri töötajad",
+        "desc": "Lisa mehaanikud ja teised töötajad, sisestades nende nime, e-posti ja ametikoha (mehaanik, teenindaja, juht)."
+      },
+      {
+        "title": "Esimene sisselogimine",
+        "desc": "Töötaja saab e-kirja ajutiste kasutajaandmetega ja peab esimesel sisselogimisel määrama uue parooli."
+      },
+      {
+        "title": "Määra sõidukid",
+        "desc": "Määra teenindatavad sõidukid konkreetsetele mehaanikutele. Iga mehaanik näeb ainult endale määratud sõidukeid."
+      },
+      {
+        "title": "Ametikohapõhised õigused",
+        "desc": "Mehaanikutel on piiratud juurdepääs (ainult määratud sõidukid). Juhtidel ja administraatoritel on täielik juurdepääs töölauale."
+      }
+    ],
+    "s6Title": "6. Remondi jälgimine",
+    "s6Intro": "Hoia klienti kursis remondi edenemisega:",
+    "s6Items": [
+      {
+        "label": "Staatuse uuendamine",
+        "desc": "Muuda teenuse staatust: vastu võetud, töös, ootab varuosa, valmis."
+      },
+      {
+        "label": "Üksikasjalikud etapid",
+        "desc": "Registreeri iga etapp: lahtivõtmine, konstruktsiooniremont, ettevalmistus, värvimine, kokkupanek, kvaliteedikontroll."
+      },
+      {
+        "label": "Automaatsed teavitused",
+        "desc": "Iga staatuse muutus loob kliendile teavituse."
+      },
+      {
+        "label": "Edenemise fotod",
+        "desc": "Saada etappide fotod, et klient saaks visuaalselt jälgida."
+      }
+    ],
+    "s6Note": "Töökojad, kes uuendavad staatust sageli, saavad kõrgemaid hinnanguid ja hoiavad kliente paremini.",
+    "s7Title": "7. Hinnangud ja maine",
+    "s7Intro": "Sinu maine platvormil kujuneb klientide hinnangute põhjal:",
+    "s7Items": [
+      {
+        "label": "Hinne 1 kuni 5 tärni",
+        "desc": "Keskmine hinne kuvatakse sinu avalikul profiilil ja otsingutulemustes."
+      },
+      {
+        "label": "Kommentaarid",
+        "desc": "Kliendid saavad jätta üksikasjalikke kommentaare oma kogemuse kohta."
+      },
+      {
+        "label": "Kvaliteedimärgis",
+        "desc": "Töökojad, mille keskmine on üle 4,5 ja kellel on üle 10 teenuse, saavad rohelise kvaliteedimärgise."
+      },
+      {
+        "label": "Kiire vastus",
+        "desc": "Hinnapakkumistele vastamine alla 1 tunni jooksul tagab sinise märgise."
+      }
+    ],
+    "s7Outro": "Saad hinnangutele avalikult vastata, näidates professionaalsust ja tähelepanu kliendile.",
+    "s8Title": "8. BipFixi komisjonitasu",
+    "s8Intro": "BipFix võtab platvormi kaudu osutatud teenustelt komisjonitasu. Vaata, kuidas see toimib:",
+    "s8Items": [
+      {
+        "label": "Kuidas seda arvestatakse",
+        "desc": "Komisjonitasu arvutatakse kliendi poolt aktsepteeritud hinnapakkumise kogusummalt."
+      },
+      {
+        "label": "Läbipaistvus",
+        "desc": "Komisjonitasu protsent kuvatakse enne hinnapakkumise saatmist, ilma üllatusteta."
+      },
+      {
+        "label": "Arveldamine",
+        "desc": "Tasu arvestatakse igakuiselt koos kõigi teenuste üksikasjaliku aruandega."
+      }
+    ],
+    "s8ReduceTitle": "Kuidas oma komisjonitasu vähendada:",
+    "s8ReduceList": [
+      "Hoia keskmine hinnang üle 4,5 tärni.",
+      "Vasta päringutele kiiresti (alla 1 tunni).",
+      "Lõpeta teenused hinnangulise tähtaja jooksul.",
+      "Hoia oma profiil täielik ja ajakohane."
+    ],
+    "s8Note": "Suurepärase tulemuslikkusega töökojad võivad saada komisjonitasu kuni 30% väiksemaks."
+  },
+  "docsOficinaLayout": {
+    "metaTitle": "Töökoja juhend",
+    "metaDescription": "Õpi registreerima oma töökoda, vastu võtma päringuid, saatma hinnapakkumisi ning haldama meeskonda ja ajakava BipFixis."
+  },
+  "oficinaPerfilPublico": {
+    "metaTitleTemplate": "{nome} - Autoremonditöökoda linnas {cidade}, {estado}",
+    "metaDescriptionTemplate": "Hinnangud, pakutavad teenused ja veebipõhine hinnapakkumine töökojas {nome}, autoremonditöökoda linnas {cidade} - {estado}. Võrdle hindu ja broneeri remont BipFixi kaudu.",
+    "metaNotFoundTitle": "Töökoda ei leitud",
+    "loadingText": "Laadin töökoja profiili...",
+    "notFoundText": "Töökoda ei leitud.",
+    "backToHomeLink": "Tagasi avalehele",
+    "backLink": "Tagasi",
+    "qualityBadge": "Kvaliteetne töökoda",
+    "fastResponseBadge": "Kiire vastus",
+    "volumeBadge": "{tier}+ lõpetatud teenust",
+    "partnerSinceBadge": "Partner alates {data}",
+    "priceAdjustmentDown": "Keskmine kohandus: {pct}% 📉",
+    "priceAdjustmentUp": "Keskmine kohandus: +{pct}% 📈",
+    "noPriceAdjustment": "Hinnakohandusi ei ole",
+    "reviewCountSingular": "({count} hinnang)",
+    "reviewCountPlural": "({count} hinnangut)",
+    "avgResponseTime": "Keskmine vastamisaeg: {tempo}",
+    "avgResponseMinutes": "{min} min",
+    "avgResponseHours": "{horas} h",
+    "servicesOfferedTitle": "Pakutavad teenused",
+    "photosTitle": "Fotod",
+    "addressTitle": "Aadress",
+    "openInMapsLink": "Ava Google Mapsis",
+    "contactHoursTitle": "Kontakt ja lahtiolekuajad",
+    "phoneLabel": "Telefon",
+    "phoneNotInformed": "Ei ole märgitud",
+    "hoursLabel": "Lahtiolekuajad",
+    "hoursWeekdays": "E-R: 08:00 - 18:00",
+    "hoursSaturday": "L: 08:00 - 12:00",
+    "hoursSunday": "P: Suletud",
+    "reviewsTitle": "Hinnangud ({count})",
+    "noReviewsText": "Sellel töökojal pole veel hinnanguid.",
+    "clientFallback": "Klient"
+  }
+}
