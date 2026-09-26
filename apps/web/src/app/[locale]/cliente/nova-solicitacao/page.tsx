@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useVeiculos } from '@/hooks/use-veiculos';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
+import { notifNovaSolicitacaoTitulo } from '@/lib/notif-i18n';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import {
   TIPOS_SERVICO, URGENCIAS,
@@ -216,7 +217,7 @@ export default function NovaSolicitacaoPage() {
       const tipoLabel = tc(`tiposServico.${tipo}`);
       const { data: oficinas } = await supabase
         .from('oficinas')
-        .select('profile_id, especialidades')
+        .select('profile_id, especialidades, profile:profiles(idioma)')
         .eq('ativa', true);
       if (oficinas) {
         for (const ofi of oficinas) {
@@ -225,7 +226,7 @@ export default function NovaSolicitacaoPage() {
             await supabase.from('notificacoes').insert({
               profile_id: ofi.profile_id,
               tipo: 'nova_solicitacao',
-              titulo: 'Nova solicitação!',
+              titulo: notifNovaSolicitacaoTitulo((ofi as any).profile?.idioma),
               mensagem: `${tipoLabel} - ${selectedVeiculo?.fipe_marca} ${selectedVeiculo?.fipe_modelo} - ${endereco}`,
               dados: { solicitacao_id: data.id },
             });

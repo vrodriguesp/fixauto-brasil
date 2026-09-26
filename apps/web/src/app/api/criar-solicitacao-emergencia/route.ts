@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { EMAIL_I18N, resolveEmailLocale, fmt } from '@/lib/email-i18n';
+import { notifNovaSolicitacaoColisao } from '@/lib/notif-i18n';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,7 +30,8 @@ function generatePassword(): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { emergenciaId, clienteId, nome, email, telefone, descricao, latitude, longitude, endereco, photoUrls, placa, veiculoInfo, tipoAcidente } = await req.json();
+    const { emergenciaId, clienteId, nome, email, telefone, descricao, latitude, longitude, endereco, photoUrls, placa, veiculoInfo, tipoAcidente, idioma } = await req.json();
+    const emailLocale = resolveEmailLocale(idioma);
 
     if (!emergenciaId) {
       return NextResponse.json({ error: 'emergenciaId obrigatório' }, { status: 400 });
@@ -61,30 +64,32 @@ export async function POST(req: NextRequest) {
         await supabaseAdmin.from('profiles').insert({
           id: finalClienteId, tipo: 'cliente',
           nome: nome || email.split('@')[0], email, telefone: telefone || null,
+          idioma: emailLocale,
         });
 
         // Email with login credentials
-        await sendEmail(email, 'BipFix - Sua conta foi criada', `
+        const cs = EMAIL_I18N.contaCriadaEmergencia[emailLocale];
+        await sendEmail(email, cs.subject, `
           <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
             <div style="background:#0c4a6e;color:white;padding:24px;border-radius:12px 12px 0 0;">
               <h1 style="margin:0;font-size:24px;">BipFix</h1>
-              <p style="margin:8px 0 0;opacity:0.8;">Sua emergência foi registrada</p>
+              <p style="margin:8px 0 0;opacity:0.8;">${cs.headerTag}</p>
             </div>
             <div style="background:white;padding:24px;border:1px solid #e5e7eb;border-radius:0 0 12px 12px;">
-              <p>Olá <strong>${nome || ''}</strong>,</p>
-              <p>Sua emergência foi registrada e oficinas próximas já estão sendo notificadas.</p>
-              <p>Criamos uma conta para você acompanhar os orçamentos.</p>
+              <p>${fmt(cs.greeting, { name: nome || '' })}</p>
+              <p>${cs.intro}</p>
+              <p>${cs.accountNote}</p>
               <div style="background:#f0f9ff;border:2px solid #0ea5e9;border-radius:8px;padding:16px;margin:20px 0;">
-                <p style="margin:0 0 8px;font-size:14px;color:#0c4a6e;font-weight:bold;">Seus dados de acesso:</p>
-                <p style="margin:0;font-size:14px;">Email: <strong>${email}</strong></p>
-                <p style="margin:4px 0 0;font-size:14px;">Senha temporária: <strong style="font-size:20px;letter-spacing:3px;">${senha}</strong></p>
+                <p style="margin:0 0 8px;font-size:14px;color:#0c4a6e;font-weight:bold;">${cs.accessDataLabel}</p>
+                <p style="margin:0;font-size:14px;">${cs.emailLabel} <strong>${email}</strong></p>
+                <p style="margin:4px 0 0;font-size:14px;">${cs.tempPasswordLabel} <strong style="font-size:20px;letter-spacing:3px;">${senha}</strong></p>
               </div>
-              <p style="font-size:13px;color:#6b7280;">No primeiro login, você será solicitado a trocar a senha.</p>
+              <p style="font-size:13px;color:#6b7280;">${cs.nextLoginNote}</p>
               <p style="margin-top:20px;">
-                <a href="https://bipfix.com/login" style="display:inline-block;background:#0284c7;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">Acessar minha conta</a>
+                <a href="https://bipfix.com/login" style="display:inline-block;background:#0284c7;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">${cs.cta}</a>
               </p>
               <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
-              <p style="font-size:12px;color:#9ca3af;">Equipe BipFix</p>
+              <p style="font-size:12px;color:#9ca3af;">${cs.footer}</p>
             </div>
           </div>
         `);
@@ -108,9 +113,9 @@ export async function POST(req: NextRequest) {
     if (!veiculoId) {
       const { data: newV } = await supabaseAdmin.from('veiculos').insert({
         profile_id: finalClienteId, fipe_tipo: 'cars',
-        fipe_marca: veiculoInfo?.marca || 'A definir',
-        fipe_modelo: veiculoInfo?.modelo || 'A definir',
-        fipe_ano: veiculoInfo?.ano || 'A definir',
+        fipe_marca: veiculoInfo?.marca || '',
+        fipe_modelo: veiculoInfo?.modelo || '',
+        fipe_ano: veiculoInfo?.ano || '',
         placa: placa || null, cor: veiculoInfo?.cor || null,
         apelido: placa ? `Veículo ${placa}` : 'Veículo da emergência',
       }).select('id').single();
@@ -141,15 +146,16 @@ export async function POST(req: NextRequest) {
     }
 
     const { data: oficinas } = await supabaseAdmin
-      .from('oficinas').select('id, profile_id, especialidades').eq('ativa', true);
+      .from('oficinas').select('id, profile_id, especialidades, profile:profiles(idioma)').eq('ativa', true);
 
     if (oficinas) {
       for (const ofi of oficinas) {
         if (ofi.especialidades?.length > 0 && !ofi.especialidades.some((e: string) => ['colisao', 'funilaria'].includes(e))) continue;
+        const n = notifNovaSolicitacaoColisao((ofi as any).profile?.idioma);
         await supabaseAdmin.from('notificacoes').insert({
           profile_id: ofi.profile_id, tipo: 'nova_solicitacao',
-          titulo: 'Nova solicitação!',
-          mensagem: 'Emergência - Novo pedido de reparo por colisão na sua região.',
+          titulo: n.titulo,
+          mensagem: n.mensagem,
           dados: { solicitacao_id: sol.id },
         });
       }

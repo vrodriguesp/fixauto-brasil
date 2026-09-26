@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { EMAIL_I18N, WHATSAPP_I18N, resolveEmailLocale, fmt, type EmailLocale } from './email-i18n';
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -18,12 +19,14 @@ export async function sendAccidentNotificationEmail(params: {
   placa: string;
   emergenciaId: string;
   isRegistered: boolean;
+  locale?: string;
 }) {
   if (!resend) {
     console.warn('[Notifications] Resend not configured - RESEND_API_KEY missing');
     return { success: false, error: 'Email service not configured' };
   }
 
+  const s = EMAIL_I18N.accidentNotification[resolveEmailLocale(params.locale)];
   const acidenteUrl = `${SITE_URL}/emergencia/acidente/${params.emergenciaId}`;
   const cadastroUrl = `${SITE_URL}/cadastro?tipo=cliente&email=${encodeURIComponent(params.toEmail)}`;
 
@@ -31,38 +34,37 @@ export async function sendAccidentNotificationEmail(params: {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: params.toEmail,
-      subject: `Registro de acidente - Veículo ${params.placa}`,
+      subject: fmt(s.subject, { placa: params.placa }),
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
             <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
-            <p style="margin: 8px 0 0; opacity: 0.8;">Registro de Acidente</p>
+            <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>Olá <strong>${params.toName}</strong>,</p>
-            <p><strong>${params.fromName}</strong> registrou um acidente envolvendo seu veículo (placa <strong>${params.placa}</strong>) na plataforma BipFix.</p>
-            <p>Através da plataforma, você pode:</p>
+            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.intro, { fromName: params.fromName, placa: params.placa })}</p>
+            <p>${s.canList}</p>
             <ul>
-              <li>Completar o registro do seu veículo</li>
-              <li>Trocar mensagens com o outro motorista</li>
-              <li>Receber orçamentos de oficinas próximas para o reparo</li>
-              <li>Enviar um orçamento para o reparo do seu veículo</li>
-              <li>Entrar em acordo sobre a reparação</li>
+              <li>${s.li1}</li>
+              <li>${s.li2}</li>
+              <li>${s.li3}</li>
+              <li>${s.li4}</li>
+              <li>${s.li5}</li>
             </ul>
             <p style="margin-top: 16px; background: #fef3c7; padding: 12px; border-radius: 8px; font-size: 14px; color: #92400e;">
-              <strong>Próximos passos:</strong> Acesse a plataforma, complete os dados do seu veículo e solicite orçamentos de oficinas para reparar os danos.
+              <strong>${s.nextStepsLabel}</strong> ${s.nextStepsText}
             </p>
             <p style="margin-top: 24px;">
               <a href="${params.isRegistered ? acidenteUrl : `${SITE_URL}/reset-password`}"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">
-                ${params.isRegistered ? 'Ver detalhes do acidente' : 'Definir senha e acessar'}
+                ${params.isRegistered ? s.ctaRegistered : s.ctaUnregistered}
               </a>
             </p>
-            ${!params.isRegistered ? '<p style="font-size: 14px; color: #6b7280;">Criamos uma conta para você. Defina sua senha para acessar e acompanhar tudo.</p>' : ''}
+            ${!params.isRegistered ? `<p style="font-size: 14px; color: #6b7280;">${s.accountCreatedNote}</p>` : ''}
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
             <p style="font-size: 12px; color: #9ca3af;">
-              Este email foi enviado automaticamente pela plataforma BipFix.
-              Se você não reconhece este acidente, ignore este email.
+              ${s.automatedFooter}
             </p>
           </div>
         </div>
@@ -80,35 +82,38 @@ export async function sendFuncionarioNovaSenhaEmail(params: {
   toName: string;
   oficinaNome: string;
   novaSenha: string;
+  locale?: string;
 }) {
   if (!resend) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
 
+  const s = EMAIL_I18N.funcionarioNovaSenha[resolveEmailLocale(params.locale)];
+
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: params.toEmail,
-      subject: `${params.oficinaNome} redefiniu sua senha - BipFix`,
+      subject: fmt(s.subject, { oficinaNome: params.oficinaNome }),
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #0c4a6e; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
             <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>Olá <strong>${params.toName}</strong>,</p>
-            <p><strong>${params.oficinaNome}</strong> gerou uma nova senha temporária para sua conta.</p>
+            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.intro, { oficinaNome: params.oficinaNome })}</p>
             <div style="background: #f0f9ff; border: 2px solid #0ea5e9; border-radius: 8px; padding: 16px; margin: 20px 0;">
-              <p style="margin: 0 0 8px; font-size: 14px; color: #0c4a6e; font-weight: bold;">Sua senha temporária:</p>
+              <p style="margin: 0 0 8px; font-size: 14px; color: #0c4a6e; font-weight: bold;">${s.tempPasswordLabel}</p>
               <p style="margin: 0; font-size: 20px; letter-spacing: 3px;"><strong>${params.novaSenha}</strong></p>
             </div>
-            <p style="font-size: 13px; color: #6b7280;">No próximo login, você será solicitado a escolher uma nova senha.</p>
+            <p style="font-size: 13px; color: #6b7280;">${s.nextLoginNote}</p>
             <p style="margin-top: 20px;">
-              <a href="${SITE_URL}/login" style="display: inline-block; background: #0284c7; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">Acessar minha conta</a>
+              <a href="${SITE_URL}/login" style="display: inline-block; background: #0284c7; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">${s.cta}</a>
             </p>
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
-            <p style="font-size: 12px; color: #9ca3af;">Equipe BipFix</p>
+            <p style="font-size: 12px; color: #9ca3af;">${s.footer}</p>
           </div>
         </div>
       `,
@@ -127,36 +132,38 @@ export async function sendQuoteNotificationEmail(params: {
   valorTotal: string;
   prazoDias: number;
   solicitacaoId: string;
+  locale?: string;
 }) {
   if (!resend) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
 
+  const s = EMAIL_I18N.quoteNotification[resolveEmailLocale(params.locale)];
   const orcamentosUrl = `${SITE_URL}/cliente/orcamentos/${params.solicitacaoId}`;
 
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: params.toEmail,
-      subject: `Novo orçamento recebido - ${params.oficinaNome}`,
+      subject: fmt(s.subject, { oficinaNome: params.oficinaNome }),
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
             <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
-            <p style="margin: 8px 0 0; opacity: 0.8;">Novo Orçamento</p>
+            <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>Olá <strong>${params.toName}</strong>,</p>
-            <p>A oficina <strong>${params.oficinaNome}</strong> enviou um orçamento para sua solicitação:</p>
+            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.intro, { oficinaNome: params.oficinaNome })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${params.valorTotal}</p>
-              <p style="margin: 4px 0 0; color: #6b7280;">Prazo: ${params.prazoDias} dias</p>
+              <p style="margin: 4px 0 0; color: #6b7280;">${fmt(s.prazo, { prazoDias: params.prazoDias })}</p>
             </div>
             <p style="margin-top: 24px;">
               <a href="${orcamentosUrl}"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-                Ver orçamento completo
+                ${s.cta}
               </a>
             </p>
           </div>
@@ -176,32 +183,34 @@ export async function sendServicoConcluidoEmail(params: {
   oficinaNome: string;
   veiculoNome: string;
   solicitacaoId: string;
+  locale?: string;
 }) {
   if (!resend) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
 
+  const s = EMAIL_I18N.servicoConcluido[resolveEmailLocale(params.locale)];
   const acompanhamentoUrl = `${SITE_URL}/cliente/acompanhamento/${params.solicitacaoId}`;
 
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: params.toEmail,
-      subject: `Seu veículo está pronto! - ${params.oficinaNome}`,
+      subject: fmt(s.subject, { oficinaNome: params.oficinaNome }),
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #16a34a; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
             <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
-            <p style="margin: 8px 0 0; opacity: 0.9;">Serviço concluído</p>
+            <p style="margin: 8px 0 0; opacity: 0.9;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>Olá <strong>${params.toName}</strong>,</p>
-            <p>Seu veículo <strong>${params.veiculoNome}</strong> já foi finalizado na oficina <strong>${params.oficinaNome}</strong> e está pronto para retirada.</p>
+            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.intro, { veiculoNome: params.veiculoNome, oficinaNome: params.oficinaNome })}</p>
             <p style="margin-top: 24px;">
               <a href="${acompanhamentoUrl}"
                  style="display: inline-block; background: #16a34a; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-                Ver detalhes e avaliar
+                ${s.cta}
               </a>
             </p>
           </div>
@@ -268,9 +277,11 @@ export async function sendAccidentWhatsApp(params: {
   fromName: string;
   placa: string;
   emergenciaId: string;
+  locale?: string;
 }) {
   const acidenteUrl = `${SITE_URL}/emergencia/acidente/${params.emergenciaId}`;
-  const message = `Olá ${params.toName}! ${params.fromName} registrou um acidente envolvendo seu veículo (placa ${params.placa}) na BipFix. Acesse para ver detalhes e orçamentos: ${acidenteUrl}`;
+  const tmpl = WHATSAPP_I18N.accidentWhatsApp[resolveEmailLocale(params.locale)];
+  const message = fmt(tmpl, { toName: params.toName, fromName: params.fromName, placa: params.placa, url: acidenteUrl });
   return sendWhatsApp(params.toPhone, message);
 }
 
@@ -280,9 +291,11 @@ export async function sendQuoteWhatsApp(params: {
   oficinaNome: string;
   valorTotal: string;
   solicitacaoId: string;
+  locale?: string;
 }) {
   const url = `${SITE_URL}/cliente/orcamentos/${params.solicitacaoId}`;
-  const message = `Olá ${params.toName}! A oficina ${params.oficinaNome} enviou um orçamento de ${params.valorTotal} para seu veículo. Veja os detalhes: ${url}`;
+  const tmpl = WHATSAPP_I18N.quoteWhatsApp[resolveEmailLocale(params.locale)];
+  const message = fmt(tmpl, { toName: params.toName, oficinaNome: params.oficinaNome, valorTotal: params.valorTotal, url });
   return sendWhatsApp(params.toPhone, message);
 }
 
@@ -292,12 +305,16 @@ export async function sendServicoConcluidoWhatsApp(params: {
   oficinaNome: string;
   veiculoNome: string;
   solicitacaoId: string;
+  locale?: string;
 }) {
   const url = `${SITE_URL}/cliente/acompanhamento/${params.solicitacaoId}`;
-  const message = `Olá ${params.toName}! Seu veículo ${params.veiculoNome} já está pronto na oficina ${params.oficinaNome} e pode ser retirado. Detalhes: ${url}`;
+  const tmpl = WHATSAPP_I18N.servicoConcluidoWhatsApp[resolveEmailLocale(params.locale)];
+  const message = fmt(tmpl, { toName: params.toName, veiculoNome: params.veiculoNome, oficinaNome: params.oficinaNome, url });
   return sendWhatsApp(params.toPhone, message);
 }
 
+// Notifica o time interno da BipFix (sempre em portugues - e o idioma
+// operacional da equipe, nao do lead que preencheu o formulario).
 export async function sendLeadParceiroEmail(params: {
   tipo: 'oficina' | 'loja_pecas';
   nomeResponsavel: string;
@@ -357,33 +374,35 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
   toName: string;
   pecaDescricao: string;
   oficinaCompradoraNome: string;
+  locale?: string;
 }) {
   if (!resend) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
+  const s = EMAIL_I18N.cotacaoPecaDisponivel[resolveEmailLocale(params.locale)];
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: params.toEmail,
-      subject: `Oficina próxima precisa de: ${params.pecaDescricao}`,
+      subject: fmt(s.subject, { pecaDescricao: params.pecaDescricao }),
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
             <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
-            <p style="margin: 8px 0 0; opacity: 0.8;">Nova cotação de peça próxima</p>
+            <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>Olá <strong>${params.toName}</strong>,</p>
-            <p>A oficina <strong>${params.oficinaCompradoraNome}</strong>, perto de você, precisa de:</p>
+            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.intro, { oficinaCompradoraNome: params.oficinaCompradoraNome })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 18px; font-weight: bold; color: #111827;">${params.pecaDescricao}</p>
             </div>
-            <p>Se tiver em estoque, responda com preço e prazo pra ganhar a venda.</p>
+            <p>${s.callToAction}</p>
             <p style="margin-top: 24px;">
               <a href="${SITE_URL}/oficina/pecas"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-                Ver cotação e responder
+                ${s.cta}
               </a>
             </p>
           </div>
@@ -405,34 +424,37 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
   preco: number;
   prazoDias: number;
   moeda?: string;
+  locale?: string;
 }) {
   if (!resend) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
+  const locale = resolveEmailLocale(params.locale);
+  const s = EMAIL_I18N.cotacaoPecaRespondida[locale];
   const precoFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: params.moeda || 'BRL' }).format(params.preco);
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: params.toEmail,
-      subject: `Nova resposta de cotação: ${params.pecaDescricao}`,
+      subject: fmt(s.subject, { pecaDescricao: params.pecaDescricao }),
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
             <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
-            <p style="margin: 8px 0 0; opacity: 0.8;">Resposta de cotação de peça</p>
+            <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>Olá <strong>${params.toName}</strong>,</p>
-            <p><strong>${params.fornecedorNome}</strong> respondeu sua cotação de "${params.pecaDescricao}":</p>
+            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.intro, { fornecedorNome: params.fornecedorNome, pecaDescricao: params.pecaDescricao })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${precoFormatado}</p>
-              <p style="margin: 4px 0 0; color: #6b7280;">Prazo: ${params.prazoDias} dia(s)</p>
+              <p style="margin: 4px 0 0; color: #6b7280;">${fmt(s.prazo, { prazoDias: params.prazoDias })}</p>
             </div>
             <p style="margin-top: 24px;">
               <a href="${SITE_URL}/oficina/pecas"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-                Ver resposta completa
+                ${s.cta}
               </a>
             </p>
           </div>
@@ -453,34 +475,36 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
   pecaDescricao: string;
   valorTotal: number;
   moeda?: string;
+  locale?: string;
 }) {
   if (!resend) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
+  const s = EMAIL_I18N.pedidoPecaConfirmado[resolveEmailLocale(params.locale)];
   const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: params.moeda || 'BRL' }).format(params.valorTotal);
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: params.toEmail,
-      subject: `Pedido de peça confirmado: ${params.pecaDescricao}`,
+      subject: fmt(s.subject, { pecaDescricao: params.pecaDescricao }),
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
             <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
-            <p style="margin: 8px 0 0; opacity: 0.8;">Pedido confirmado!</p>
+            <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>Olá <strong>${params.toName}</strong>,</p>
-            <p><strong>${params.oficinaCompradoraNome}</strong> confirmou o pedido de "${params.pecaDescricao}":</p>
+            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.intro, { oficinaCompradoraNome: params.oficinaCompradoraNome, pecaDescricao: params.pecaDescricao })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${valorFormatado}</p>
             </div>
-            <p>Combine a entrega diretamente com a oficina e marque como entregue no seu painel quando concluir.</p>
+            <p>${s.deliveryNote}</p>
             <p style="margin-top: 24px;">
               <a href="${SITE_URL}/oficina/pecas"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-                Ver pedido
+                ${s.cta}
               </a>
             </p>
           </div>
@@ -499,29 +523,31 @@ export async function sendPedidoPecaEntregueEmail(params: {
   toName: string;
   fornecedorNome: string;
   pecaDescricao: string;
+  locale?: string;
 }) {
   if (!resend) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
+  const s = EMAIL_I18N.pedidoPecaEntregue[resolveEmailLocale(params.locale)];
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: params.toEmail,
-      subject: `Peça entregue: ${params.pecaDescricao}`,
+      subject: fmt(s.subject, { pecaDescricao: params.pecaDescricao }),
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
             <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
-            <p style="margin: 8px 0 0; opacity: 0.8;">Pedido entregue</p>
+            <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>Olá <strong>${params.toName}</strong>,</p>
-            <p><strong>${params.fornecedorNome}</strong> marcou como entregue o pedido de "${params.pecaDescricao}".</p>
+            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.intro, { fornecedorNome: params.fornecedorNome, pecaDescricao: params.pecaDescricao })}</p>
             <p style="margin-top: 24px;">
               <a href="${SITE_URL}/oficina/pecas"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-                Ver detalhes
+                ${s.cta}
               </a>
             </p>
           </div>
@@ -534,3 +560,5 @@ export async function sendPedidoPecaEntregueEmail(params: {
     return { success: false, error: 'Failed to send email' };
   }
 }
+
+export type { EmailLocale };

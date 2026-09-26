@@ -4,6 +4,15 @@ import {
   sendAccidentNotificationEmail,
   sendAccidentWhatsApp,
 } from '@/lib/notifications';
+import { EMAIL_I18N, resolveEmailLocale, fmt, type EmailLocale } from '@/lib/email-i18n';
+
+// Reaproveita as strings de "conta criada" pro bloco de credenciais, mas o
+// corpo principal (quem bateu, qual placa) precisa das strings de
+// accidentNotification - combinacao especifica desse fluxo (conta nova
+// criada especificamente por causa de um acidente relatado por outra pessoa).
+function accidentAccountEmailStrings(locale: EmailLocale) {
+  return { accident: EMAIL_I18N.accidentNotification[locale], conta: EMAIL_I18N.contaCriadaEmergencia[locale] };
+}
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -24,7 +33,8 @@ async function sendEmail(to: string, subject: string, html: string) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { emergenciaId, outroVeiculoId } = await req.json();
+    const { emergenciaId, outroVeiculoId, locale } = await req.json();
+    const emailLocale = resolveEmailLocale(locale);
 
     if (!emergenciaId || !outroVeiculoId) {
       return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
@@ -80,36 +90,39 @@ export async function POST(req: NextRequest) {
             id: profileId, tipo: 'cliente',
             nome: outroVeiculo.nome, email: outroVeiculo.email,
             telefone: outroVeiculo.telefone || null,
+            idioma: emailLocale,
           });
 
           await supabaseAdmin.from('veiculos').insert({
             profile_id: profileId, fipe_tipo: 'cars',
-            fipe_marca: outroVeiculo.veiculo_descricao || 'A definir',
-            fipe_modelo: 'A definir', fipe_ano: 'A definir',
+            fipe_marca: outroVeiculo.veiculo_descricao || '',
+            fipe_modelo: '', fipe_ano: '',
             placa: outroVeiculo.placa || null,
           });
 
-          // Email with credentials to other person
-          await sendEmail(outroVeiculo.email, 'BipFix - Sua conta foi criada', `
+          // Email with credentials to other person - corpo do accidentNotification
+          // + bloco de credenciais do contaCriadaEmergencia.
+          const { accident: acc, conta: cs } = accidentAccountEmailStrings(emailLocale);
+          await sendEmail(outroVeiculo.email, cs.subject, `
             <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
               <div style="background:#0c4a6e;color:white;padding:24px;border-radius:12px 12px 0 0;">
                 <h1 style="margin:0;font-size:24px;">BipFix</h1>
               </div>
               <div style="background:white;padding:24px;border:1px solid #e5e7eb;border-radius:0 0 12px 12px;">
-                <p>Olá <strong>${outroVeiculo.nome}</strong>,</p>
-                <p><strong>${emergencia.nome}</strong> registrou um acidente envolvendo seu veículo (placa <strong>${outroVeiculo.placa}</strong>).</p>
-                <p>Criamos uma conta para você acompanhar, completar o registro do veículo e solicitar orçamentos.</p>
+                <p>${fmt(cs.greeting, { name: outroVeiculo.nome })}</p>
+                <p>${fmt(acc.intro, { fromName: emergencia.nome, placa: outroVeiculo.placa })}</p>
+                <p>${cs.accountNote}</p>
                 <div style="background:#f0f9ff;border:2px solid #0ea5e9;border-radius:8px;padding:16px;margin:20px 0;">
-                  <p style="margin:0 0 8px;font-size:14px;color:#0c4a6e;font-weight:bold;">Seus dados de acesso:</p>
-                  <p style="margin:0;font-size:14px;">Email: <strong>${outroVeiculo.email}</strong></p>
-                  <p style="margin:4px 0 0;font-size:14px;">Senha temporária: <strong style="font-size:20px;letter-spacing:3px;">${senha}</strong></p>
+                  <p style="margin:0 0 8px;font-size:14px;color:#0c4a6e;font-weight:bold;">${cs.accessDataLabel}</p>
+                  <p style="margin:0;font-size:14px;">${cs.emailLabel} <strong>${outroVeiculo.email}</strong></p>
+                  <p style="margin:4px 0 0;font-size:14px;">${cs.tempPasswordLabel} <strong style="font-size:20px;letter-spacing:3px;">${senha}</strong></p>
                 </div>
-                <p style="font-size:13px;color:#6b7280;">No primeiro login, você será solicitado a trocar a senha.</p>
+                <p style="font-size:13px;color:#6b7280;">${cs.nextLoginNote}</p>
                 <p style="margin-top:20px;">
-                  <a href="https://bipfix.com/login" style="display:inline-block;background:#0284c7;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">Acessar minha conta</a>
+                  <a href="https://bipfix.com/login" style="display:inline-block;background:#0284c7;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">${cs.cta}</a>
                 </p>
                 <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
-                <p style="font-size:12px;color:#9ca3af;">Equipe BipFix</p>
+                <p style="font-size:12px;color:#9ca3af;">${cs.footer}</p>
               </div>
             </div>
           `);
@@ -128,6 +141,7 @@ export async function POST(req: NextRequest) {
         placa: outroVeiculo.placa,
         emergenciaId,
         isRegistered: !!profileId,
+        locale: emailLocale,
       });
 
     }
@@ -140,6 +154,7 @@ export async function POST(req: NextRequest) {
         fromName: emergencia.nome,
         placa: outroVeiculo.placa,
         emergenciaId,
+        locale: emailLocale,
       });
     }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -9,6 +9,7 @@ import { compressImage } from '@/lib/image-compress';
 
 export default function EmergenciaPage() {
   const t = useTranslations('emergencia');
+  const locale = useLocale();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -165,6 +166,7 @@ export default function EmergenciaPage() {
           nome,
           email,
           telefone,
+          idioma: locale,
           tipoAcidente,
           descricao: `[TIPO:${tipoAcidente}] ${descricao || 'Emergência - Colisão registrada pelo fluxo "Acabei de bater"'}`,
           latitude: coords.lat,

@@ -12,6 +12,7 @@ export const mockCliente: Profile = {
   telefone: '(11) 99999-1111',
   avatar_url: null,
   ativo: true,
+  idioma: 'pt',
   created_at: '2026-01-15T10:00:00Z',
 };
 
@@ -23,6 +24,7 @@ export const mockCliente2: Profile = {
   telefone: '(11) 99999-2222',
   avatar_url: null,
   ativo: true,
+  idioma: 'pt',
   created_at: '2026-02-01T10:00:00Z',
 };
 
@@ -34,6 +36,7 @@ export const mockOficinaProfile: Profile = {
   telefone: '(11) 99999-3333',
   avatar_url: null,
   ativo: true,
+  idioma: 'pt',
   created_at: '2026-01-01T10:00:00Z',
 };
 

@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/api-auth';
 import { sendCotacaoPecaRespondidaEmail } from '@/lib/notifications';
 import { currencyForCountry } from '@/lib/currency';
+import { notifCotacaoPecaRespondida } from '@/lib/notif-i18n';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
 
     const { data: cotacao } = await supabaseAdmin
       .from('cotacoes_pecas')
-      .select('peca_descricao, oficina:oficinas(profile_id, pais, profile:profiles(email, nome))')
+      .select('peca_descricao, oficina:oficinas(profile_id, pais, profile:profiles(email, nome, idioma))')
       .eq('id', cotacaoId)
       .single();
 
@@ -67,11 +68,12 @@ export async function POST(req: NextRequest) {
         ? minhaResposta.loja?.nome_fantasia
         : minhaResposta.oficina_fornecedora?.nome_fantasia;
 
+      const nn = notifCotacaoPecaRespondida(compradoraProfile.idioma, fornecedorNome, (cotacao as any).peca_descricao);
       await supabaseAdmin.from('notificacoes').insert({
         profile_id: (cotacao as any).oficina.profile_id,
         tipo: 'cotacao_peca_respondida',
-        titulo: 'Nova resposta de cotação de peça',
-        mensagem: `${fornecedorNome} respondeu sua cotação de "${(cotacao as any).peca_descricao}"`,
+        titulo: nn.titulo,
+        mensagem: nn.mensagem,
         dados: { cotacao_id: cotacaoId },
       });
 
@@ -84,6 +86,7 @@ export async function POST(req: NextRequest) {
           preco: minhaResposta.preco,
           prazoDias: minhaResposta.prazo_dias,
           moeda: currencyForCountry((cotacao as any).oficina.pais),
+          locale: compradoraProfile.idioma,
         }).catch(() => {});
       }
     }

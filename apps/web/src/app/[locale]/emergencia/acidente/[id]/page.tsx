@@ -259,7 +259,7 @@ export default function AcidenteRegistroPage() {
         await fetch('/api/notificar-acidente', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ emergenciaId, outroVeiculoId: outro.id }),
+          body: JSON.stringify({ emergenciaId, outroVeiculoId: outro.id, locale }),
         });
       } catch {
         // Non-blocking: notification failure shouldn't prevent registration

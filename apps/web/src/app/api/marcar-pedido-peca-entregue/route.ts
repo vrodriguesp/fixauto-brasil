@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { recalcularComissaoPecasConfig } from '@/lib/comissao-pecas';
 import { getSessionUserId } from '@/lib/api-auth';
 import { sendPedidoPecaEntregueEmail } from '@/lib/notifications';
+import { notifPedidoPecaEntregue } from '@/lib/notif-i18n';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
         id, fornecedor_tipo, loja_id, oficina_fornecedora_id, preco_total, status,
         loja:lojas_pecas(profile_id, nome_fantasia),
         oficina_fornecedora:oficinas!pedidos_pecas_oficina_fornecedora_id_fkey(profile_id, nome_fantasia),
-        cotacao:cotacoes_pecas(peca_descricao, oficina:oficinas(profile_id, profile:profiles(email, nome)))
+        cotacao:cotacoes_pecas(peca_descricao, oficina:oficinas(profile_id, profile:profiles(email, nome, idioma)))
       `)
       .eq('id', pedidoId)
       .single();
@@ -96,11 +97,12 @@ export async function POST(req: NextRequest) {
         ? (pedido as any).loja?.nome_fantasia
         : (pedido as any).oficina_fornecedora?.nome_fantasia;
 
+      const nn = notifPedidoPecaEntregue(compradoraProfile.idioma, fornecedorNome, cotacao.peca_descricao);
       await supabaseAdmin.from('notificacoes').insert({
         profile_id: cotacao.oficina.profile_id,
         tipo: 'pedido_peca_entregue',
-        titulo: 'Peça entregue',
-        mensagem: `${fornecedorNome || 'O fornecedor'} marcou como entregue o pedido de "${cotacao.peca_descricao}"`,
+        titulo: nn.titulo,
+        mensagem: nn.mensagem,
         dados: { pedido_id: pedidoId },
       });
 
@@ -110,6 +112,7 @@ export async function POST(req: NextRequest) {
           toName: compradoraProfile.nome,
           fornecedorNome: fornecedorNome || 'O fornecedor',
           pecaDescricao: cotacao.peca_descricao,
+          locale: compradoraProfile.idioma,
         }).catch(() => {});
       }
     }

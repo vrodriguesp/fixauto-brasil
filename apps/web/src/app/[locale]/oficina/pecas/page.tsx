@@ -110,7 +110,7 @@ export default function OficinaPecasPage() {
     if (idFornecedor) {
       const { data: fornecedor } = await supabase
         .from(tabelaFornecedor)
-        .select('profile_id, pais, profile:profiles(email, nome)')
+        .select('profile_id, pais, profile:profiles(email, nome, idioma)')
         .eq('id', idFornecedor)
         .single();
       if (fornecedor) {
@@ -133,6 +133,7 @@ export default function OficinaPecasPage() {
               pecaDescricao: cotacao.peca_descricao,
               valorTotal: resposta.preco * cotacao.quantidade,
               moeda: currencyForCountry((fornecedor as any).pais),
+              locale: fornecedorProfile.idioma,
             }),
           }).catch(() => {});
         }

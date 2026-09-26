@@ -123,7 +123,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   className="input-field"
-                  placeholder="seu@email.com"
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -150,7 +150,7 @@ export default function LoginPage() {
                   <input
                     type="email"
                     className="input-field"
-                    placeholder="seu@email.com"
+                    placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required

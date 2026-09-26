@@ -3,7 +3,7 @@
 import { Suspense, useState, useEffect } from 'react';
 import { Link, useRouter } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { TIPOS_SERVICO } from '@fixauto/shared';
@@ -21,6 +21,7 @@ export default function CadastroPageWrapper() {
 function CadastroPage() {
   const t = useTranslations('cadastro');
   const tc = useTranslations('constants');
+  const locale = useLocale();
   const searchParams = useSearchParams();
   const tipoParam = searchParams.get('tipo') as 'cliente' | 'oficina' | 'loja_pecas' | null;
 
@@ -183,7 +184,7 @@ function CadastroPage() {
     setLoading(true);
 
     const tipo = userType || 'cliente';
-    const { error: authError } = await signUp(email, password, nome, telefone, tipo);
+    const { error: authError } = await signUp(email, password, nome, telefone, tipo, locale);
 
     if (authError) {
       setError(authError);
@@ -340,7 +341,7 @@ function CadastroPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEmail')}</label>
-                <input type="email" className="input-field" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <input type="email" className="input-field" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelTelefone')}</label>

@@ -59,6 +59,9 @@ export interface Profile {
   telefone: string | null;
   avatar_url: string | null;
   ativo: boolean;
+  // Idioma preferido pra e-mails/notificacoes assincronas (pt/en/et/it) -
+  // capturado do locale da URL no cadastro, nunca do pais/moeda.
+  idioma: string;
   created_at: string;
 }
 

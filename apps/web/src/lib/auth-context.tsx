@@ -13,7 +13,7 @@ interface AuthContextType {
   authUser: User | null;
   isLoggedIn: boolean;
   loading: boolean;
-  signUp: (email: string, password: string, nome: string, telefone: string, tipo: 'cliente' | 'oficina' | 'loja_pecas') => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, nome: string, telefone: string, tipo: 'cliente' | 'oficina' | 'loja_pecas', idioma?: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -131,7 +131,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string,
     nome: string,
     telefone: string,
-    tipo: 'cliente' | 'oficina' | 'loja_pecas'
+    tipo: 'cliente' | 'oficina' | 'loja_pecas',
+    idioma: string = 'pt'
   ) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) return { error: error.message };
@@ -144,6 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       nome,
       email,
       telefone,
+      idioma,
       termos_aceitos_em: new Date().toISOString(),
       termos_versao: '2026-09-08',
     });

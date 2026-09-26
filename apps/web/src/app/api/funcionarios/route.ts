@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     }
     const { data: oficinaDoChamador } = await supabaseAdmin
       .from('oficinas')
-      .select('id')
+      .select('id, profile:profiles(idioma)')
       .eq('id', oficina_id)
       .eq('profile_id', callerId)
       .single();
@@ -67,12 +67,15 @@ export async function POST(req: NextRequest) {
 
       profileId = authData.user.id;
 
-      // Create profile as 'oficina' type so they get oficina routing
+      // Create profile as 'oficina' type so they get oficina routing -
+      // idioma herda do dono da oficina que esta convidando (mesma
+      // empresa/pais, aposta razoavel na ausencia de sinal proprio).
       await supabaseAdmin.from('profiles').insert({
         id: profileId,
         tipo: 'oficina',
         nome: nome || email.split('@')[0],
         email,
+        idioma: (oficinaDoChamador as any)?.profile?.idioma || 'pt',
       });
     }
 
@@ -128,7 +131,7 @@ export async function PATCH(req: NextRequest) {
 
     const { data: func } = await supabaseAdmin
       .from('funcionarios')
-      .select('*, profile:profiles(id, nome, email), oficina:oficinas(nome_fantasia, profile_id)')
+      .select('*, profile:profiles(id, nome, email, idioma), oficina:oficinas(nome_fantasia, profile_id)')
       .eq('id', id)
       .single();
 
@@ -175,6 +178,7 @@ export async function PATCH(req: NextRequest) {
           toName: func.profile.nome || 'Funcionário',
           oficinaNome: func.oficina?.nome_fantasia || 'Sua oficina',
           novaSenha,
+          locale: (func.profile as any)?.idioma,
         }).catch(() => {});
       }
     }

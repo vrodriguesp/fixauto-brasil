@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { distanciaKm } from '@/lib/utils';
 import { sendCotacaoPecaDisponivelEmail } from '@/lib/notifications';
+import { notifCotacaoPecaDisponivel } from '@/lib/notif-i18n';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
 
     const { data: candidatas, error } = await supabaseAdmin
       .from('oficinas')
-      .select('id, profile_id, nome_fantasia, latitude, longitude, raio_atendimento_km, profile:profiles(email, nome)')
+      .select('id, profile_id, nome_fantasia, latitude, longitude, raio_atendimento_km, profile:profiles(email, nome, idioma)')
       .eq('vende_pecas', true)
       .eq('ativa', true)
       .neq('id', oficinaCompradoraId)
@@ -64,11 +65,12 @@ export async function POST(req: NextRequest) {
     let notificadas = 0;
     for (const of of oficinas) {
       if (!of.profile_id) continue;
+      const nn = notifCotacaoPecaDisponivel((of as any).profile?.idioma);
       await supabaseAdmin.from('notificacoes').insert({
         profile_id: of.profile_id,
         tipo: 'cotacao_peca_disponivel',
-        titulo: 'Oficina próxima precisa de uma peça',
-        mensagem: 'Uma oficina perto de você abriu uma cotação de peça. Responda se tiver em estoque.',
+        titulo: nn.titulo,
+        mensagem: nn.mensagem,
         dados: { cotacao_id: cotacaoId },
       });
       const email = (of as any).profile?.email;
@@ -78,6 +80,7 @@ export async function POST(req: NextRequest) {
           toName: (of as any).profile?.nome || of.nome_fantasia,
           pecaDescricao,
           oficinaCompradoraNome,
+          locale: (of as any).profile?.idioma,
         }).catch(() => {});
       }
       notificadas++;

@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
         solicitacao:solicitacoes(
           id,
           cliente_id,
-          cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, telefone)
+          cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, telefone, idioma)
         )
       `)
       .eq('id', orcamentoId)
@@ -69,6 +69,7 @@ export async function POST(req: NextRequest) {
         valorTotal,
         prazoDias: orcamento.prazo_dias,
         solicitacaoId: (orcamento.solicitacao as any).id,
+        locale: cliente.idioma,
       });
     }
 
@@ -80,6 +81,7 @@ export async function POST(req: NextRequest) {
         oficinaNome,
         valorTotal,
         solicitacaoId: (orcamento.solicitacao as any).id,
+        locale: cliente.idioma,
       });
     }
 
@@ -127,6 +129,12 @@ export async function POST(req: NextRequest) {
 
         // Email to other person
         if (outro.email) {
+          // In-app notification for the other person - busca antes do envio
+          // do e-mail pra poder usar o idioma do perfil (se ja tiver conta)
+          // tanto no e-mail quanto na notificacao in-app.
+          const { data: outroProfile } = await supabaseAdmin
+            .from('profiles').select('id, idioma').eq('email', outro.email).single();
+
           await sendQuoteNotificationEmail({
             toEmail: outro.email,
             toName: outro.nome,
@@ -134,11 +142,9 @@ export async function POST(req: NextRequest) {
             valorTotal,
             prazoDias: orcamento.prazo_dias,
             solicitacaoId: (orcamento.solicitacao as any).id,
+            locale: outroProfile?.idioma,
           });
 
-          // In-app notification for the other person
-          const { data: outroProfile } = await supabaseAdmin
-            .from('profiles').select('id').eq('email', outro.email).single();
           if (outroProfile) {
             await supabaseAdmin.from('notificacoes').insert({
               profile_id: outroProfile.id,

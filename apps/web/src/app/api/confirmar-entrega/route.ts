@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       // 3. Get client info from solicitacao
       const { data: sol } = await supabaseAdmin
         .from('solicitacoes')
-        .select('cliente_id, veiculo:veiculos(fipe_marca, fipe_modelo), cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, telefone)')
+        .select('cliente_id, veiculo:veiculos(fipe_marca, fipe_modelo), cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, telefone, idioma)')
         .eq('id', solicitacaoId)
         .single();
 
@@ -77,6 +77,7 @@ export async function POST(req: NextRequest) {
             oficinaNome,
             veiculoNome,
             solicitacaoId,
+            locale: cliente.idioma,
           }).catch(() => {});
         }
         if (cliente?.telefone) {
@@ -86,6 +87,7 @@ export async function POST(req: NextRequest) {
             oficinaNome,
             veiculoNome,
             solicitacaoId,
+            locale: cliente.idioma,
           }).catch(() => {});
         }
       }
