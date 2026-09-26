@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "brand": "BipFix",
+    "title": "BipFix - Conectando você à melhor oficina mecânica",
+    "description": "Plataforma que conecta motoristas a oficinas mecânicas. Envie fotos do dano, receba orçamentos e escolha a melhor opção. Simples, rápido e transparente."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "solicitacoes": "Solicitações",
+    "oficina": "Oficina",
+    "agenda": "Agenda",
+    "distribuicaoTrabalho": "Distribuição de Trabalho",
+    "capacidade": "Capacidade",
+    "pecas": "Peças",
+    "equipe": "Equipe",
+    "comissao": "Comissão",
+    "avaliacoes": "Avaliações",
+    "perfil": "Perfil",
+    "aprender": "Aprender",
+    "mais": "Mais",
+    "cotacoes": "Cotações",
+    "catalogo": "Catálogo",
+    "pedidos": "Pedidos",
+    "veiculos": "Veículos",
+    "novaSolicitacao": "Nova Solicitação",
+    "orcamentos": "Orçamentos",
+    "mensagens": "Mensagens",
+    "historico": "Histórico",
+    "entrar": "Entrar",
+    "cadastrar": "Cadastrar",
+    "sair": "Sair",
+    "checkinManual": "Check-in Manual",
+    "administrador": "Administrador",
+    "cliente": "Cliente"
+  }
+}

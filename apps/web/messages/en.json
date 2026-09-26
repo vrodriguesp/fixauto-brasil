@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "brand": "BipFix",
+    "title": "BipFix - Connecting you to the best auto repair shop",
+    "description": "The platform that connects drivers to auto repair shops. Send photos of the damage, get quotes, and choose the best option. Simple, fast, and transparent."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "solicitacoes": "Requests",
+    "oficina": "Workshop",
+    "agenda": "Schedule",
+    "distribuicaoTrabalho": "Work Distribution",
+    "capacidade": "Capacity",
+    "pecas": "Parts",
+    "equipe": "Team",
+    "comissao": "Commission",
+    "avaliacoes": "Reviews",
+    "perfil": "Profile",
+    "aprender": "Learn",
+    "mais": "More",
+    "cotacoes": "Quotes",
+    "catalogo": "Catalog",
+    "pedidos": "Orders",
+    "veiculos": "Vehicles",
+    "novaSolicitacao": "New Request",
+    "orcamentos": "Quotes",
+    "mensagens": "Messages",
+    "historico": "History",
+    "entrar": "Log in",
+    "cadastrar": "Sign up",
+    "sair": "Log out",
+    "checkinManual": "Manual Check-in",
+    "administrador": "Admin",
+    "cliente": "Customer"
+  }
+}

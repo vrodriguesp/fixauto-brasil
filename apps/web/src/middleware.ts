@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
+import createIntlMiddleware from 'next-intl/middleware';
+import { routing } from '@/i18n/routing';
 
 // O refresh token do Supabase renova a sessao silenciosamente pra sempre -
 // sem isso, um admin que loga uma vez fica autenticado por dias/semanas,
@@ -8,8 +9,54 @@ import type { NextRequest } from 'next/server';
 // periodica independente de atividade (nao é so timeout por inatividade).
 const ADMIN_MAX_SESSION_HOURS = 8;
 
+const intlMiddleware = createIntlMiddleware(routing);
+
+// "pt" nao tem prefixo na URL (locale padrao); "en"/"et"/"it" tem. Separa
+// o prefixo do resto do path pra comparar rotas protegidas independente
+// do idioma, e pra poder remontar redirects preservando o idioma atual.
+function splitLocalePrefix(pathname: string): { prefix: string; path: string } {
+  const match = pathname.match(/^\/(en|et|it)(\/.*)?$/);
+  if (!match) return { prefix: '', path: pathname };
+  return { prefix: `/${match[1]}`, path: match[2] || '/' };
+}
+
+const HTML_LANG: Record<string, string> = { pt: 'pt-BR', en: 'en', et: 'et', it: 'it' };
+
 export async function middleware(req: NextRequest) {
-  let res = NextResponse.next({ request: { headers: req.headers } });
+  // /admin e /api nunca tem prefixo de idioma - next-intl so cuida do
+  // resto (matcher abaixo ja exclui essas rotas do intlMiddleware).
+  const isAdminOrApi = req.nextUrl.pathname.startsWith('/admin') || req.nextUrl.pathname.startsWith('/api');
+  const intlRes = isAdminOrApi ? null : intlMiddleware(req);
+
+  const rawPath = req.nextUrl.pathname;
+  const { prefix: localePrefix, path } = isAdminOrApi ? { prefix: '', path: rawPath } : splitLocalePrefix(rawPath);
+
+  // Repassa o idioma resolvido pro layout raiz via header de REQUISICAO
+  // (headers() no server component so le headers de request, nao de
+  // response) - precisa reconstruir a response com os headers novos,
+  // preservando os cookies que o next-intl ja tenha setado (ex: NEXT_LOCALE).
+  const htmlLang = HTML_LANG[localePrefix.slice(1) || 'pt'];
+
+  let res: NextResponse;
+  if (intlRes && !intlRes.headers.get('location')) {
+    // next-intl faz um rewrite interno (locale "pt" sem prefixo -> internamente
+    // /pt/...) via header "x-middleware-rewrite". Reconstruir a response do
+    // zero aqui perderia esse rewrite (a pagina real vive em /[locale]/*,
+    // entao "/" sem rewrite vira 404) - precisa copiar esse header especifico
+    // pra cima da nossa response, que carrega o x-locale-html.
+    const forwardedHeaders = new Headers(req.headers);
+    forwardedHeaders.set('x-locale-html', htmlLang);
+    res = NextResponse.next({ request: { headers: forwardedHeaders } });
+    const rewrite = intlRes.headers.get('x-middleware-rewrite');
+    if (rewrite) res.headers.set('x-middleware-rewrite', rewrite);
+    intlRes.cookies.getAll().forEach((c) => res.cookies.set(c));
+  } else if (intlRes) {
+    res = intlRes; // redirect do proprio next-intl (ex: "/" -> "/et" na 1a visita)
+  } else {
+    const forwardedHeaders = new Headers(req.headers);
+    forwardedHeaders.set('x-locale-html', htmlLang);
+    res = NextResponse.next({ request: { headers: forwardedHeaders } });
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -20,13 +67,9 @@ export async function middleware(req: NextRequest) {
           return req.cookies.get(name)?.value;
         },
         set(name: string, value: string, options: CookieOptions) {
-          req.cookies.set({ name, value });
-          res = NextResponse.next({ request: { headers: req.headers } });
           res.cookies.set({ name, value, ...options });
         },
         remove(name: string, options: CookieOptions) {
-          req.cookies.set({ name, value: '' });
-          res = NextResponse.next({ request: { headers: req.headers } });
           res.cookies.set({ name, value: '', ...options });
         },
       },
@@ -35,12 +78,13 @@ export async function middleware(req: NextRequest) {
 
   const { data: { session } } = await supabase.auth.getSession();
 
-  const path = req.nextUrl.pathname;
   const isProtected = path.startsWith('/cliente') || path.startsWith('/oficina') || path.startsWith('/admin') || path.startsWith('/loja');
   const isAuthPage = path === '/login' || path === '/cadastro' || path === '/escolher-tipo';
 
+  const withLocale = (target: string) => new URL(`${localePrefix}${target}`, req.url);
+
   if (isProtected && !session) {
-    return NextResponse.redirect(new URL('/login', req.url));
+    return NextResponse.redirect(withLocale('/login'));
   }
 
   if (isProtected && session) {
@@ -53,7 +97,7 @@ export async function middleware(req: NextRequest) {
     // Deactivated accounts (admin action) can't use any protected area
     if (profile && profile.ativo === false) {
       await supabase.auth.signOut();
-      return NextResponse.redirect(new URL('/login?desativado=1', req.url));
+      return NextResponse.redirect(withLocale('/login?desativado=1'));
     }
 
     // Admin route protection: verify user tipo is 'admin'
@@ -76,17 +120,20 @@ export async function middleware(req: NextRequest) {
 
     // Loja route protection: verify user tipo is 'loja_pecas'
     if (path.startsWith('/loja') && (!profile || profile.tipo !== 'loja_pecas')) {
-      return NextResponse.redirect(new URL('/', req.url));
+      return NextResponse.redirect(withLocale('/'));
     }
   }
 
   if (isAuthPage && session) {
-    return NextResponse.redirect(new URL('/', req.url));
+    return NextResponse.redirect(withLocale('/'));
   }
 
   return res;
 }
 
 export const config = {
-  matcher: ['/cliente/:path*', '/oficina/:path*', '/admin/:path*', '/loja/:path*', '/login', '/cadastro', '/escolher-tipo'],
+  matcher: [
+    // tudo, exceto arquivos estaticos/internos do Next e a pasta /api
+    '/((?!api|_next|_vercel|.*\\..*).*)',
+  ],
 };

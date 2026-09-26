@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "brand": "BipFix",
+    "title": "BipFix - Ti mettiamo in contatto con la migliore officina",
+    "description": "La piattaforma che collega gli automobilisti alle officine meccaniche. Invia le foto del danno, ricevi preventivi e scegli l'opzione migliore. Semplice, veloce e trasparente."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "solicitacoes": "Richieste",
+    "oficina": "Officina",
+    "agenda": "Agenda",
+    "distribuicaoTrabalho": "Distribuzione Lavori",
+    "capacidade": "Capacità",
+    "pecas": "Ricambi",
+    "equipe": "Team",
+    "comissao": "Commissione",
+    "avaliacoes": "Recensioni",
+    "perfil": "Profilo",
+    "aprender": "Impara",
+    "mais": "Altro",
+    "cotacoes": "Preventivi",
+    "catalogo": "Catalogo",
+    "pedidos": "Ordini",
+    "veiculos": "Veicoli",
+    "novaSolicitacao": "Nuova Richiesta",
+    "orcamentos": "Preventivi",
+    "mensagens": "Messaggi",
+    "historico": "Cronologia",
+    "entrar": "Accedi",
+    "cadastrar": "Registrati",
+    "sair": "Esci",
+    "checkinManual": "Check-in Manuale",
+    "administrador": "Amministratore",
+    "cliente": "Cliente"
+  }
+}

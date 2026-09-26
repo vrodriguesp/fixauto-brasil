@@ -1,15 +1,17 @@
 'use client';
 
-import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { Link, useRouter, usePathname } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { useEffect, useRef, useState } from 'react';
 import NotificationBell from './NotificationBell';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Navbar() {
   const { user, oficina, funcionario, loja, isLoggedIn, loading, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
+  const t = useTranslations('nav');
 
   const handleSignOut = async () => {
     await signOut();
@@ -52,7 +54,7 @@ export default function Navbar() {
               <div className="hidden md:flex items-center ml-8 gap-1">
                 {isAdmin ? (
                   <>
-                    <NavLink href="/admin/dashboard">Dashboard</NavLink>
+                    <NavLink href="/admin/dashboard">{t('dashboard')}</NavLink>
                     <NavLink href="/admin/usuarios">Usuários</NavLink>
                     <NavLink href="/admin/oficinas">Oficinas</NavLink>
                     <NavLink href="/admin/comissoes">Comissões</NavLink>
@@ -61,49 +63,50 @@ export default function Navbar() {
                 ) : isOficina ? (
                   isMecanico ? (
                     <>
-                      <NavLink href="/oficina/veiculos-em-servico">Oficina</NavLink>
-                      <NavLink href="/oficina/agenda">Agenda</NavLink>
-                      <NavLink href="/oficina/aprender">🎓 Aprender</NavLink>
+                      <NavLink href="/oficina/veiculos-em-servico">{t('oficina')}</NavLink>
+                      <NavLink href="/oficina/agenda">{t('agenda')}</NavLink>
+                      <NavLink href="/oficina/aprender">🎓 {t('aprender')}</NavLink>
                     </>
                   ) : (
                     <>
-                      <NavLink href="/oficina/dashboard">Dashboard</NavLink>
-                      <NavLink href="/oficina/solicitacoes">Solicitações</NavLink>
-                      <NavLink href="/oficina/veiculos-em-servico">Oficina</NavLink>
-                      <NavLink href="/oficina/agenda">Agenda</NavLink>
+                      <NavLink href="/oficina/dashboard">{t('dashboard')}</NavLink>
+                      <NavLink href="/oficina/solicitacoes">{t('solicitacoes')}</NavLink>
+                      <NavLink href="/oficina/veiculos-em-servico">{t('oficina')}</NavLink>
+                      <NavLink href="/oficina/agenda">{t('agenda')}</NavLink>
                       <MoreNavDropdown
+                        moreLabel={t('mais')}
                         items={[
-                          { href: '/oficina/distribuicao', label: 'Distribuição de Trabalho' },
-                          { href: '/oficina/capacidade', label: 'Capacidade' },
-                          { href: '/oficina/pecas', label: 'Peças' },
-                          { href: '/oficina/equipe', label: 'Equipe' },
-                          { href: '/oficina/comissao', label: 'Comissão' },
-                          { href: '/oficina/avaliacoes', label: 'Avaliações' },
-                          { href: '/oficina/aprender', label: '🎓 Aprender' },
+                          { href: '/oficina/distribuicao', label: t('distribuicaoTrabalho') },
+                          { href: '/oficina/capacidade', label: t('capacidade') },
+                          { href: '/oficina/pecas', label: t('pecas') },
+                          { href: '/oficina/equipe', label: t('equipe') },
+                          { href: '/oficina/comissao', label: t('comissao') },
+                          { href: '/oficina/avaliacoes', label: t('avaliacoes') },
+                          { href: '/oficina/aprender', label: `🎓 ${t('aprender')}` },
                         ]}
                       />
-                      <NavLink href="/oficina/perfil">Perfil</NavLink>
+                      <NavLink href="/oficina/perfil">{t('perfil')}</NavLink>
                     </>
                   )
                 ) : isLoja ? (
                   <>
-                    <NavLink href="/loja/dashboard">Dashboard</NavLink>
-                    <NavLink href="/loja/cotacoes">Cotações</NavLink>
-                    <NavLink href="/loja/catalogo">Catálogo</NavLink>
-                    <NavLink href="/loja/pedidos">Pedidos</NavLink>
-                    <NavLink href="/loja/comissao">Comissão</NavLink>
-                    <NavLink href="/loja/aprender">🎓 Aprender</NavLink>
-                    <NavLink href="/loja/perfil">Perfil</NavLink>
+                    <NavLink href="/loja/dashboard">{t('dashboard')}</NavLink>
+                    <NavLink href="/loja/cotacoes">{t('cotacoes')}</NavLink>
+                    <NavLink href="/loja/catalogo">{t('catalogo')}</NavLink>
+                    <NavLink href="/loja/pedidos">{t('pedidos')}</NavLink>
+                    <NavLink href="/loja/comissao">{t('comissao')}</NavLink>
+                    <NavLink href="/loja/aprender">🎓 {t('aprender')}</NavLink>
+                    <NavLink href="/loja/perfil">{t('perfil')}</NavLink>
                   </>
                 ) : (
                   <>
-                    <NavLink href="/cliente/dashboard">Dashboard</NavLink>
-                    <NavLink href="/cliente/veiculos">Veículos</NavLink>
-                    <NavLink href="/cliente/nova-solicitacao">Nova Solicitação</NavLink>
-                    <NavLink href="/cliente/orcamentos">Orçamentos</NavLink>
-                    <NavLink href="/cliente/mensagens">Mensagens</NavLink>
-                    <NavLink href="/cliente/historico">Histórico</NavLink>
-                    <NavLink href="/cliente/perfil">Perfil</NavLink>
+                    <NavLink href="/cliente/dashboard">{t('dashboard')}</NavLink>
+                    <NavLink href="/cliente/veiculos">{t('veiculos')}</NavLink>
+                    <NavLink href="/cliente/nova-solicitacao">{t('novaSolicitacao')}</NavLink>
+                    <NavLink href="/cliente/orcamentos">{t('orcamentos')}</NavLink>
+                    <NavLink href="/cliente/mensagens">{t('mensagens')}</NavLink>
+                    <NavLink href="/cliente/historico">{t('historico')}</NavLink>
+                    <NavLink href="/cliente/perfil">{t('perfil')}</NavLink>
                   </>
                 )}
               </div>
@@ -111,6 +114,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
+            <LanguageSwitcher />
             {isLoggedIn ? (
               <>
                 <NotificationBell />
@@ -126,7 +130,7 @@ export default function Navbar() {
                   <div className="text-sm">
                     <p className="font-medium text-gray-900">{user!.nome}</p>
                     <p className="text-gray-500 text-xs">
-                      {isAdmin ? 'Administrador' : isOficina ? oficina?.nome_fantasia : isLoja ? loja?.nome_fantasia : 'Cliente'}
+                      {isAdmin ? t('administrador') : isOficina ? oficina?.nome_fantasia : isLoja ? loja?.nome_fantasia : t('cliente')}
                     </p>
                   </div>
                 </Link>
@@ -134,16 +138,16 @@ export default function Navbar() {
                   onClick={handleSignOut}
                   className="text-sm text-gray-500 hover:text-gray-700"
                 >
-                  Sair
+                  {t('sair')}
                 </button>
               </>
             ) : (
               <div className="flex items-center gap-2">
                 <Link href="/login" className="btn-secondary text-sm !py-2 !px-4">
-                  Entrar
+                  {t('entrar')}
                 </Link>
                 <Link href="/cadastro" className="btn-primary text-sm !py-2 !px-4">
-                  Cadastrar
+                  {t('cadastrar')}
                 </Link>
               </div>
             )}
@@ -171,7 +175,7 @@ export default function Navbar() {
           <div className="md:hidden pb-4 border-t border-gray-100 pt-2">
             {isAdmin ? (
               <>
-                <MobileNavLink href="/admin/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>
+                <MobileNavLink href="/admin/dashboard" onClick={() => setMenuOpen(false)}>{t('dashboard')}</MobileNavLink>
                 <MobileNavLink href="/admin/usuarios" onClick={() => setMenuOpen(false)}>Usuários</MobileNavLink>
                 <MobileNavLink href="/admin/oficinas" onClick={() => setMenuOpen(false)}>Oficinas</MobileNavLink>
                 <MobileNavLink href="/admin/comissoes" onClick={() => setMenuOpen(false)}>Comissões</MobileNavLink>
@@ -180,46 +184,46 @@ export default function Navbar() {
             ) : isOficina ? (
               isMecanico ? (
                 <>
-                  <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>Oficina</MobileNavLink>
-                  <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>Agenda</MobileNavLink>
-                  <MobileNavLink href="/oficina/aprender" onClick={() => setMenuOpen(false)}>🎓 Aprender</MobileNavLink>
+                  <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>{t('oficina')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>{t('agenda')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/aprender" onClick={() => setMenuOpen(false)}>🎓 {t('aprender')}</MobileNavLink>
                 </>
               ) : (
                 <>
-                  <MobileNavLink href="/oficina/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>
-                  <MobileNavLink href="/oficina/solicitacoes" onClick={() => setMenuOpen(false)}>Solicitações</MobileNavLink>
-                  <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>Oficina</MobileNavLink>
-                  <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>Agenda</MobileNavLink>
-                  <MobileNavLink href="/oficina/distribuicao" onClick={() => setMenuOpen(false)}>Distribuição de Trabalho</MobileNavLink>
-                  <MobileNavLink href="/oficina/capacidade" onClick={() => setMenuOpen(false)}>Capacidade</MobileNavLink>
-                  <MobileNavLink href="/oficina/pecas" onClick={() => setMenuOpen(false)}>Peças</MobileNavLink>
-                  <MobileNavLink href="/oficina/equipe" onClick={() => setMenuOpen(false)}>Equipe</MobileNavLink>
-                  <MobileNavLink href="/oficina/checkin" onClick={() => setMenuOpen(false)}>Check-in Manual</MobileNavLink>
-                  <MobileNavLink href="/oficina/comissao" onClick={() => setMenuOpen(false)}>Comissão</MobileNavLink>
-                  <MobileNavLink href="/oficina/avaliacoes" onClick={() => setMenuOpen(false)}>Avaliações</MobileNavLink>
-                  <MobileNavLink href="/oficina/aprender" onClick={() => setMenuOpen(false)}>🎓 Aprender</MobileNavLink>
-                  <MobileNavLink href="/oficina/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
+                  <MobileNavLink href="/oficina/dashboard" onClick={() => setMenuOpen(false)}>{t('dashboard')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/solicitacoes" onClick={() => setMenuOpen(false)}>{t('solicitacoes')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>{t('oficina')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>{t('agenda')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/distribuicao" onClick={() => setMenuOpen(false)}>{t('distribuicaoTrabalho')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/capacidade" onClick={() => setMenuOpen(false)}>{t('capacidade')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/pecas" onClick={() => setMenuOpen(false)}>{t('pecas')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/equipe" onClick={() => setMenuOpen(false)}>{t('equipe')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/checkin" onClick={() => setMenuOpen(false)}>{t('checkinManual')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/comissao" onClick={() => setMenuOpen(false)}>{t('comissao')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/avaliacoes" onClick={() => setMenuOpen(false)}>{t('avaliacoes')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/aprender" onClick={() => setMenuOpen(false)}>🎓 {t('aprender')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/perfil" onClick={() => setMenuOpen(false)}>{t('perfil')}</MobileNavLink>
                 </>
               )
             ) : isLoja ? (
               <>
-                <MobileNavLink href="/loja/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>
-                <MobileNavLink href="/loja/cotacoes" onClick={() => setMenuOpen(false)}>Cotações</MobileNavLink>
-                <MobileNavLink href="/loja/catalogo" onClick={() => setMenuOpen(false)}>Catálogo</MobileNavLink>
-                <MobileNavLink href="/loja/pedidos" onClick={() => setMenuOpen(false)}>Pedidos</MobileNavLink>
-                <MobileNavLink href="/loja/comissao" onClick={() => setMenuOpen(false)}>Comissão</MobileNavLink>
-                <MobileNavLink href="/loja/aprender" onClick={() => setMenuOpen(false)}>🎓 Aprender</MobileNavLink>
-                <MobileNavLink href="/loja/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
+                <MobileNavLink href="/loja/dashboard" onClick={() => setMenuOpen(false)}>{t('dashboard')}</MobileNavLink>
+                <MobileNavLink href="/loja/cotacoes" onClick={() => setMenuOpen(false)}>{t('cotacoes')}</MobileNavLink>
+                <MobileNavLink href="/loja/catalogo" onClick={() => setMenuOpen(false)}>{t('catalogo')}</MobileNavLink>
+                <MobileNavLink href="/loja/pedidos" onClick={() => setMenuOpen(false)}>{t('pedidos')}</MobileNavLink>
+                <MobileNavLink href="/loja/comissao" onClick={() => setMenuOpen(false)}>{t('comissao')}</MobileNavLink>
+                <MobileNavLink href="/loja/aprender" onClick={() => setMenuOpen(false)}>🎓 {t('aprender')}</MobileNavLink>
+                <MobileNavLink href="/loja/perfil" onClick={() => setMenuOpen(false)}>{t('perfil')}</MobileNavLink>
               </>
             ) : (
               <>
-                <MobileNavLink href="/cliente/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>
-                <MobileNavLink href="/cliente/veiculos" onClick={() => setMenuOpen(false)}>Veículos</MobileNavLink>
-                <MobileNavLink href="/cliente/nova-solicitacao" onClick={() => setMenuOpen(false)}>Nova Solicitação</MobileNavLink>
-                <MobileNavLink href="/cliente/orcamentos" onClick={() => setMenuOpen(false)}>Orçamentos</MobileNavLink>
-                <MobileNavLink href="/cliente/mensagens" onClick={() => setMenuOpen(false)}>Mensagens</MobileNavLink>
-                <MobileNavLink href="/cliente/historico" onClick={() => setMenuOpen(false)}>Histórico</MobileNavLink>
-                <MobileNavLink href="/cliente/perfil" onClick={() => setMenuOpen(false)}>Perfil</MobileNavLink>
+                <MobileNavLink href="/cliente/dashboard" onClick={() => setMenuOpen(false)}>{t('dashboard')}</MobileNavLink>
+                <MobileNavLink href="/cliente/veiculos" onClick={() => setMenuOpen(false)}>{t('veiculos')}</MobileNavLink>
+                <MobileNavLink href="/cliente/nova-solicitacao" onClick={() => setMenuOpen(false)}>{t('novaSolicitacao')}</MobileNavLink>
+                <MobileNavLink href="/cliente/orcamentos" onClick={() => setMenuOpen(false)}>{t('orcamentos')}</MobileNavLink>
+                <MobileNavLink href="/cliente/mensagens" onClick={() => setMenuOpen(false)}>{t('mensagens')}</MobileNavLink>
+                <MobileNavLink href="/cliente/historico" onClick={() => setMenuOpen(false)}>{t('historico')}</MobileNavLink>
+                <MobileNavLink href="/cliente/perfil" onClick={() => setMenuOpen(false)}>{t('perfil')}</MobileNavLink>
               </>
             )}
           </div>
@@ -260,7 +264,7 @@ function MobileNavLink({ href, children, onClick }: { href: string; children: Re
   );
 }
 
-function MoreNavDropdown({ items }: { items: { href: string; label: string }[] }) {
+function MoreNavDropdown({ items, moreLabel }: { items: { href: string; label: string }[]; moreLabel: string }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const ref = useRef<HTMLDivElement>(null);
@@ -292,7 +296,7 @@ function MoreNavDropdown({ items }: { items: { href: string; label: string }[] }
           hasActiveItem ? 'text-primary-700 bg-primary-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
         }`}
       >
-        Mais
+        {moreLabel}
         <svg className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>

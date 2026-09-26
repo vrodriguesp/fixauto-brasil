@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "brand": "BipFix",
+    "title": "BipFix - Ühendame sind parima autotöökojaga",
+    "description": "Platvorm, mis ühendab autojuhid autotöökodadega. Saada kahjustuse fotod, saa hinnapakkumised ja vali parim valik. Lihtne, kiire ja läbipaistev."
+  },
+  "nav": {
+    "dashboard": "Töölaud",
+    "solicitacoes": "Päringud",
+    "oficina": "Töökoda",
+    "agenda": "Ajakava",
+    "distribuicaoTrabalho": "Töö jaotus",
+    "capacidade": "Läbilaskevõime",
+    "pecas": "Varuosad",
+    "equipe": "Meeskond",
+    "comissao": "Komisjonitasu",
+    "avaliacoes": "Hinnangud",
+    "perfil": "Profiil",
+    "aprender": "Õpi",
+    "mais": "Rohkem",
+    "cotacoes": "Hinnapakkumised",
+    "catalogo": "Kataloog",
+    "pedidos": "Tellimused",
+    "veiculos": "Sõidukid",
+    "novaSolicitacao": "Uus päring",
+    "orcamentos": "Hinnapakkumised",
+    "mensagens": "Sõnumid",
+    "historico": "Ajalugu",
+    "entrar": "Logi sisse",
+    "cadastrar": "Registreeru",
+    "sair": "Logi välja",
+    "checkinManual": "Käsitsi registreerimine",
+    "administrador": "Administraator",
+    "cliente": "Klient"
+  }
+}
