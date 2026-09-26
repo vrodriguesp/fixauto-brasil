@@ -19,7 +19,11 @@ export default function LojaDashboardPage() {
     if (!loja) return;
     async function fetchData() {
       const [{ count: cotacoes }, { count: pedidos }, { count: pecas }] = await Promise.all([
-        supabase.from('cotacoes_pecas').select('*', { count: 'exact', head: true }).eq('status', 'aberta'),
+        supabase
+          .from('cotacoes_pecas')
+          .select('*, oficina:oficinas!inner(pais)', { count: 'exact', head: true })
+          .eq('status', 'aberta')
+          .eq('oficina.pais', loja!.pais || 'BR'),
         supabase.from('pedidos_pecas').select('*', { count: 'exact', head: true }).eq('loja_id', loja!.id).eq('status', 'confirmado'),
         supabase.from('pecas_catalogo').select('*', { count: 'exact', head: true }).eq('loja_id', loja!.id).eq('ativo', true),
       ]);

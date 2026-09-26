@@ -29,8 +29,12 @@ export default function LojaCotacoesPage() {
     const [{ data: abertas }, { data: minhasRespostas }] = await Promise.all([
       supabase
         .from('cotacoes_pecas')
-        .select('*, oficina:oficinas(nome_fantasia, cidade, estado)')
+        // !inner pra poder filtrar pelo pais da oficina que pediu a peca -
+        // sem isso uma loja na Estonia veria pedidos de oficinas no Brasil
+        // (e vice-versa), o que nao faz sentido logisticamente.
+        .select('*, oficina:oficinas!inner(nome_fantasia, cidade, estado, pais)')
         .eq('status', 'aberta')
+        .eq('oficina.pais', loja.pais || 'BR')
         .order('created_at', { ascending: false }),
       supabase
         .from('cotacoes_pecas_respostas')
