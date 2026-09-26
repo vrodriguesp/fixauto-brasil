@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -17,13 +18,8 @@ interface PedidoRow {
   oficina: { nome_fantasia: string; cidade: string; estado: string; profile?: { telefone: string | null } } | null;
 }
 
-const STATUS_LABEL: Record<string, string> = {
-  confirmado: 'Confirmado',
-  entregue: 'Entregue',
-  cancelado: 'Cancelado',
-};
-
 export default function LojaPedidosPage() {
+  const t = useTranslations('lojaPedidos');
   const { loja } = useAuth();
   const [pedidos, setPedidos] = useState<PedidoRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,16 +60,18 @@ export default function LojaPedidosPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Pedidos</h1>
-      <p className="text-gray-600 mb-8">Pedidos confirmados por oficinas</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('pageTitle')}</h1>
+      <p className="text-gray-600 mb-8">{t('pageSubtitle')}</p>
 
       {pedidos.length === 0 ? (
         <div className="card text-center py-12">
-          <p className="text-gray-500">Nenhum pedido ainda</p>
+          <p className="text-gray-500">{t('emptyState')}</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {pedidos.map((p) => (
+          {pedidos.map((p) => {
+            const statusLabel = p.status === 'entregue' ? t('statusEntregue') : p.status === 'cancelado' ? t('statusCancelado') : p.status === 'confirmado' ? t('statusConfirmado') : p.status;
+            return (
             <div key={p.id} className="card flex items-center justify-between gap-4">
               <div>
                 <p className="font-medium text-gray-900">{p.cotacao?.peca_descricao}</p>
@@ -82,28 +80,29 @@ export default function LojaPedidosPage() {
                   {p.oficina?.profile?.telefone && ` · ${p.oficina.profile.telefone}`}
                 </p>
                 <p className="text-sm text-gray-600 mt-1">
-                  {formatCurrency(p.preco_total)} · Qtd: {p.quantidade} · {formatDate(p.created_at)}
+                  {t('infoLinha', { preco: formatCurrency(p.preco_total), quantidade: p.quantidade, data: formatDate(p.created_at) })}
                 </p>
               </div>
               <div className="flex items-center gap-3 flex-shrink-0">
                 <Link href={`/loja/conversa/${p.resposta_id}`} className="text-xs text-primary-600 hover:underline font-medium">
-                  Conversar
+                  {t('conversarLink')}
                 </Link>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                   p.status === 'entregue' ? 'bg-green-100 text-green-700' :
                   p.status === 'cancelado' ? 'bg-red-100 text-red-700' :
                   'bg-yellow-100 text-yellow-700'
                 }`}>
-                  {STATUS_LABEL[p.status] || p.status}
+                  {statusLabel}
                 </span>
                 {p.status === 'confirmado' && (
                   <button onClick={() => handleMarcarEntregue(p.id)} className="text-xs text-primary-600 hover:underline font-medium">
-                    Marcar entregue
+                    {t('marcarEntregueButton')}
                   </button>
                 )}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

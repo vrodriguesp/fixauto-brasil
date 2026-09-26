@@ -1,1 +1,183 @@
-{}
+{
+  "lojaDashboard": {
+    "greeting": "Tere, {nome}!",
+    "subtitle": "Jälgi töökodade hinnapäringuid ja tellimusi",
+    "statCotacoesAbertas": "Avatud hinnapäringud, millele vastata",
+    "statPedidosConfirmados": "Kinnitatud tellimused",
+    "statPecasAtivas": "Aktiivsed varuosad kataloogis",
+    "comoFuncionaTitulo": "Kuidas see töötab",
+    "comoFuncionaItens": [
+      "Töökojad avaldavad hinnapäringuid, kirjeldades varuosi, mida nad vajavad",
+      "Sina vastad hinna ja tarneajaga",
+      "Töökoda valib parima pakkumise ja kinnitab tellimuse",
+      "Lepi tarne ja makse osas kokku otse töökojaga"
+    ]
+  },
+  "lojaAprender": {
+    "loading": "Laadin...",
+    "titulo": "Õpi BipFixi kasutama",
+    "subtitulo": "Samm-sammult. Vali Juhendatud režiim, kui soovid täpseid juhiseid, või Iseseisev, kui tahad kohe ise proovida.",
+    "modulos": {
+      "como-funciona": {
+        "titulo": "Kuidas varuosade pood töötab",
+        "resumo": "Töökojad avaldavad varuosade päringuid (\"hinnapäringud\"). Sina vastad hinna ja tarneajaga. Töökoda valib parima pakkumise ja kinnitab tellimuse. Tarne ja makse lepitakse kokku otse töökojaga — BipFix seda ei vahenda. Alles siis, kui märgid tellimuse tarnituks, võtab BipFix väikese komisjonitasu.",
+        "passosGuiados": [
+          "Ava menüüst Töölaud ja loe läbi \"Kuidas see töötab\" kaart.",
+          "Pane tähele kolme numbrit: avatud hinnapäringud, kinnitatud tellimused ja aktiivsed varuosad sinu kataloogis."
+        ],
+        "desafio": "Mõista kogu protsessi enne alustamist: hinnapäring → vastus → kinnitatud tellimus → tarne → komisjonitasu.",
+        "linkRotulo": "Vaata oma töölauda →"
+      },
+      "perfil": {
+        "titulo": "Poe profiil",
+        "resumo": "Täida oma poe andmed korrektselt — õige aadress, linn, osariik ja sihtnumber on olulised, isegi kui need praegu hinnapäringuid ei filtreeri (kõik Brasiilia avatud hinnapäringud kuvatakse sulle praegu ilma kaugusfiltrita).",
+        "passosGuiados": [
+          "Ava menüüst Profiil.",
+          "Kontrolli/muuda oma ärinime, maksukohustuslase numbrit, aadressi, linna ja osariiki.",
+          "Klõpsa \"Salvesta\"."
+        ],
+        "desafio": "Täida oma poe andmed täielikult ja korrektselt (mitte jäta aadressiks \"Määramata\")."
+      },
+      "catalogo": {
+        "titulo": "Varuosade kataloog",
+        "resumo": "Lisa varuosad, mis on sul laos: nimi, ühilduvus marki/mudeli/aastaga, hind ja kogus. See toimib sinu sisemise laoarvestusena BipFixi sees.",
+        "passosGuiados": [
+          "Ava menüüst Kataloog.",
+          "Klõpsa \"+ Uus varuosa\".",
+          "Täida nimi ja hind (kohustuslikud) — mark, mudel, aasta ja kirjeldus on valikulised.",
+          "Klõpsa \"Lisa\"."
+        ],
+        "desafio": "Lisa oma kataloogi vähemalt üks varuosa."
+      },
+      "cotacoes": {
+        "titulo": "Vasta töökodade hinnapäringutele",
+        "resumo": "Siin sa võistled müügi nimel: nimekiri töökodade avaldatud varuosade päringutest, mis ootavad vastust. Hea hind ja tarneaeg suurendavad sinu võimalusi valituks osutuda. Kõiki vastuseid näeb ainult töökoda — teised poed sinu hinda ei näe.",
+        "passosGuiados": [
+          "Ava menüüst Hinnapäringud.",
+          "Leia avatud hinnapäring varuosale, mis sul on.",
+          "Klõpsa \"Vasta hinnapäringule\".",
+          "Täida hind, tarneaeg päevades ja soovi korral märkus.",
+          "Klõpsa \"Saada vastus\"."
+        ],
+        "desafio": "Vasta vähemalt ühele töökoja hinnapäringule reaalse hinna ja tarneajaga.",
+        "dica": "Kiire vastamine (alla 2 tunni) langetab hiljem sinu komisjonitasu määra."
+      },
+      "pedidos": {
+        "titulo": "Tellimused ja tarne",
+        "resumo": "Kui töökoda valib sinu vastuse, ilmub tellimus siia. Lepi tarne ja makse osas kokku otse töökojaga (väljaspool platvormi) ning kui oled tegelikult tarninud, märgi see tarnituks.",
+        "passosGuiados": [
+          "Ava menüüst Tellimused.",
+          "Lepi töökojaga kokku tarne/makse osas (kasuta vajadusel linki \"Vestlus\").",
+          "Kui oled tegelikult tarninud, klõpsa \"Märgi tarnituks\"."
+        ],
+        "desafio": "Märgi üks kinnitatud tellimus tarnituks."
+      },
+      "comissao": {
+        "titulo": "Platvormi komisjonitasu",
+        "resumo": "Määr algab 3%-st ja langeb, kui vastad kiiresti ja tarnid suuremas mahus tellimusi — praktikas minimaalselt 1,5%. Seda võetakse alles siis, kui tellimus on märgitud tarnituks, mitte varem.",
+        "passosGuiados": [
+          "Ava menüüst Komisjonitasu.",
+          "Vaata oma praegust määra, mis on ootel ja mis on juba makstud."
+        ],
+        "desafio": "Vaata oma praegust määra ja mida saad teha selle langetamiseks.",
+        "linkRotulo": "Vaata oma komisjonitasu →"
+      }
+    }
+  },
+  "lojaCatalogo": {
+    "pageTitle": "Varuosade kataloog",
+    "pageSubtitle": "Kuva laos olevaid varuosi - töökojad näevad neid ja saavad otse osta",
+    "addButton": "+ Uus varuosa",
+    "formTitle": "Lisa varuosa",
+    "labelNome": "Varuosa nimi *",
+    "placeholderNome": "Nt: Parem esituli",
+    "labelDescricao": "Kirjeldus (valikuline)",
+    "placeholderDescricao": "Üksikasjad, seisukord jne",
+    "labelMarca": "Ühilduv mark",
+    "placeholderMarca": "Nt: Fiat",
+    "labelModelo": "Ühilduv mudel",
+    "placeholderModelo": "Nt: Argo",
+    "labelAno": "Ühilduv aasta",
+    "placeholderAno": "Nt: 2020",
+    "labelPreco": "Hind (R$) *",
+    "placeholderPreco": "0,00",
+    "labelQuantidade": "Kogus laos",
+    "cancelButton": "Tühista",
+    "savingButton": "Salvestan...",
+    "addConfirmButton": "Lisa",
+    "emptyState": "Ühtegi varuosa pole veel lisatud",
+    "estoqueInfo": "{preco} · {quantidade} laos",
+    "desativarButton": "Deaktiveeri",
+    "ativarButton": "Aktiveeri",
+    "confirmRemove": "Kas eemaldada \"{nome}\" kataloogist?"
+  },
+  "lojaComissao": {
+    "loading": "Laadin...",
+    "pageTitle": "BipFixi komisjonitasu",
+    "pageSubtitle": "Tasu, mida võetakse tarnitud varuosade tellimustelt, ja kuidas seda vähendada"
+  },
+  "lojaConversaDetalhe": {
+    "loadingConversa": "Laen vestlust...",
+    "notFound": "Vestlust ei leitud.",
+    "voltar": "Tagasi",
+    "oficinaFallback": "Töökoda"
+  },
+  "lojaConversaNova": {
+    "loading": "Laadin...",
+    "invalidConversa": "Vigane vestlus.",
+    "voltar": "Tagasi",
+    "oficinaFallback": "Töökoda",
+    "subtituloComPeca": "{peca} · küsi enne vastamist üle",
+    "subtituloSemPeca": "Küsi enne vastamist üle"
+  },
+  "lojaCotacoes": {
+    "pageTitle": "Töökodade hinnapäringud",
+    "pageSubtitle": "Vasta hinna ja tarneajaga, et tellimus võita",
+    "emptyState": "Praegu pole ühtegi avatud hinnapäringut",
+    "veiculoInfo": "Sõiduk: {marca} {modelo} {ano}",
+    "quantidadeInfo": "Kogus: {quantidade}",
+    "tirarDuvida": "Küsi üle",
+    "respostaEnviada": "Sina vastasid: R$ {preco} - tarneaeg {prazo} päev(a)",
+    "conversarLink": "Vestlus",
+    "labelPreco": "Hind (R$)",
+    "labelPrazo": "Tarneaeg (päevades)",
+    "observacaoPlaceholder": "Märkus (valikuline)",
+    "cancelarButton": "Tühista",
+    "enviandoButton": "Saadan...",
+    "enviarRespostaButton": "Saada vastus",
+    "responderCotacaoButton": "Vasta hinnapäringule"
+  },
+  "lojaPedidos": {
+    "pageTitle": "Tellimused",
+    "pageSubtitle": "Töökodade kinnitatud tellimused",
+    "emptyState": "Tellimusi pole veel",
+    "statusConfirmado": "Kinnitatud",
+    "statusEntregue": "Tarnitud",
+    "statusCancelado": "Tühistatud",
+    "conversarLink": "Vestlus",
+    "marcarEntregueButton": "Märgi tarnituks",
+    "infoLinha": "{preco} · Kogus: {quantidade} · {data}"
+  },
+  "lojaPerfil": {
+    "pageTitle": "Poe profiil",
+    "dadosPessoaisTitulo": "Isikuandmed",
+    "labelNome": "Nimi",
+    "labelEmail": "E-post",
+    "labelTelefone": "Telefon",
+    "dadosLojaTitulo": "Poe andmed",
+    "labelNomeFantasia": "Ärinimi",
+    "labelCnpj": "Maksukohustuslase number (CNPJ)",
+    "labelCep": "Sihtnumber (CEP)",
+    "cepPlaceholder": "00000-000",
+    "buscandoCep": "Otsin aadressi...",
+    "cepErro": "Sihtnumbrit ei leitud - kontrolli numbrit või täida aadress käsitsi",
+    "labelEndereco": "Aadress",
+    "enderecoPlaceholder": "Tänav, majanumber",
+    "labelCidade": "Linn",
+    "labelEstado": "Osariik",
+    "labelRaio": "Teeninduspiirkonna raadius (km)",
+    "salvarButton": "Salvesta",
+    "salvandoButton": "Salvestan...",
+    "salvoMsg": "Salvestatud!"
+  }
+}

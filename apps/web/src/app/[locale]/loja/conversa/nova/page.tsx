@@ -2,25 +2,27 @@
 
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import ChatCotacaoPeca from '@/components/pecas/ChatCotacaoPeca';
 
 function LojaConversaNovaContent() {
+  const t = useTranslations('lojaConversaNova');
   const params = useSearchParams();
   const router = useRouter();
   const { loja, loading } = useAuth();
 
   const cotacaoId = params.get('cotacaoId') || '';
-  const oficinaNome = params.get('oficinaNome') || 'Oficina';
+  const oficinaNome = params.get('oficinaNome') || t('oficinaFallback');
   const pecaDescricao = params.get('pecaDescricao') || '';
 
   if (loading || !loja) {
-    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-400">Carregando...</div>;
+    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-400">{t('loading')}</div>;
   }
 
   if (!cotacaoId) {
-    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">Conversa inválida.</div>;
+    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">{t('invalidConversa')}</div>;
   }
 
   return (
@@ -30,7 +32,7 @@ function LojaConversaNovaContent() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          Voltar
+          {t('voltar')}
         </button>
       </div>
       <ChatCotacaoPeca
@@ -38,15 +40,16 @@ function LojaConversaNovaContent() {
         fornecedorTipo="loja"
         fornecedorId={loja.id}
         titulo={oficinaNome}
-        subtitulo={pecaDescricao ? `${pecaDescricao} · tire dúvidas antes de responder` : 'Tire dúvidas antes de responder'}
+        subtitulo={pecaDescricao ? t('subtituloComPeca', { peca: pecaDescricao }) : t('subtituloSemPeca')}
       />
     </div>
   );
 }
 
 export default function LojaConversaNovaPage() {
+  const t = useTranslations('lojaConversaNova');
   return (
-    <Suspense fallback={<div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-400">Carregando...</div>}>
+    <Suspense fallback={<div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-400">{t('loading')}</div>}>
       <LojaConversaNovaContent />
     </Suspense>
   );

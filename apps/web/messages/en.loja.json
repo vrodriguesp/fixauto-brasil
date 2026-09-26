@@ -1,1 +1,183 @@
-{}
+{
+  "lojaDashboard": {
+    "greeting": "Hello, {nome}!",
+    "subtitle": "Track quotes and orders from repair shops",
+    "statCotacoesAbertas": "Open quotes to respond to",
+    "statPedidosConfirmados": "Confirmed orders",
+    "statPecasAtivas": "Active parts in catalog",
+    "comoFuncionaTitulo": "How it works",
+    "comoFuncionaItens": [
+      "Repair shops post quotes requesting parts they need",
+      "You respond with a price and delivery time",
+      "The shop picks the best offer and confirms the order",
+      "Arrange delivery and payment directly with the shop"
+    ]
+  },
+  "lojaAprender": {
+    "loading": "Loading...",
+    "titulo": "Learn how to use BipFix",
+    "subtitulo": "One step at a time. Choose Guided mode for detailed instructions, or Self-paced if you'd rather try it yourself.",
+    "modulos": {
+      "como-funciona": {
+        "titulo": "How the parts store works",
+        "resumo": "Repair shops post part requests (\"quotes\"). You respond with a price and delivery time. The shop picks the best offer and confirms the order. Delivery and payment are arranged directly with the shop — BipFix doesn't process that. Only when you mark the order as delivered does BipFix charge a small commission.",
+        "passosGuiados": [
+          "Open Dashboard in the menu and read the \"How it works\" card.",
+          "Notice the 3 numbers: open quotes to respond to, confirmed orders, and active parts in your catalog."
+        ],
+        "desafio": "Understand the full flow before you start: quote → response → confirmed order → delivery → commission.",
+        "linkRotulo": "View my dashboard →"
+      },
+      "perfil": {
+        "titulo": "Store profile",
+        "resumo": "Complete your store's details — correct address, city, state, and postal code matter, even though they don't filter the quotes you see today (every open quote in Brazil currently shows up for you, with no distance filter yet).",
+        "passosGuiados": [
+          "Open Profile in the menu.",
+          "Check/edit your trade name, tax ID, address, city, and state.",
+          "Click \"Save\"."
+        ],
+        "desafio": "Make sure your store's registration is complete and accurate (no \"To be defined\" left in the address)."
+      },
+      "catalogo": {
+        "titulo": "Parts catalog",
+        "resumo": "Register the parts you have in stock: name, make/model/year compatibility, price, and quantity. It works as your internal stock tracker inside BipFix.",
+        "passosGuiados": [
+          "Open Catalog in the menu.",
+          "Click \"+ New Part\".",
+          "Fill in the name and price (required) — make, model, year, and description are optional.",
+          "Click \"Add\"."
+        ],
+        "desafio": "Register at least one part in your catalog."
+      },
+      "cotacoes": {
+        "titulo": "Respond to shop quotes",
+        "resumo": "This is where you compete for sales: a list of part requests posted by repair shops, waiting for a response. A good price and delivery time boost your chances of being picked. Only the shop sees every response — other stores can't see your price.",
+        "passosGuiados": [
+          "Open Quotes in the menu.",
+          "Find an open quote for a part you have.",
+          "Click \"Respond to quote\".",
+          "Fill in the price, delivery time in days, and a note if you'd like.",
+          "Click \"Send response\"."
+        ],
+        "desafio": "Respond to at least one shop quote with a real price and delivery time.",
+        "dica": "Responding fast (under 2 hours) lowers your commission rate later on."
+      },
+      "pedidos": {
+        "titulo": "Orders and delivery",
+        "resumo": "When a shop picks your response, the order shows up here. Arrange delivery and payment directly with the shop (outside the platform), and once you've actually delivered, mark it as delivered.",
+        "passosGuiados": [
+          "Open Orders in the menu.",
+          "Arrange delivery/payment with the shop (use the \"Chat\" link if you need to).",
+          "Once you've actually delivered, click \"Mark as delivered\"."
+        ],
+        "desafio": "Mark a confirmed order as delivered."
+      },
+      "comissao": {
+        "titulo": "Platform commission",
+        "resumo": "The rate starts at 3% and drops as you respond quickly and deliver a good volume of orders — 1.5% minimum in practice. It's only charged once the order is marked as delivered, never before.",
+        "passosGuiados": [
+          "Open Commission in the menu.",
+          "See your current rate, what's pending, and what's already been paid."
+        ],
+        "desafio": "Check your current rate and what you can do to lower it.",
+        "linkRotulo": "View my commission →"
+      }
+    }
+  },
+  "lojaCatalogo": {
+    "pageTitle": "Parts Catalog",
+    "pageSubtitle": "List parts you have in stock - shops can view and buy directly",
+    "addButton": "+ New Part",
+    "formTitle": "Add Part",
+    "labelNome": "Part name *",
+    "placeholderNome": "E.g.: Front right headlight",
+    "labelDescricao": "Description (optional)",
+    "placeholderDescricao": "Details, condition, etc.",
+    "labelMarca": "Compatible make",
+    "placeholderMarca": "E.g.: Fiat",
+    "labelModelo": "Compatible model",
+    "placeholderModelo": "E.g.: Argo",
+    "labelAno": "Compatible year",
+    "placeholderAno": "E.g.: 2020",
+    "labelPreco": "Price (R$) *",
+    "placeholderPreco": "0.00",
+    "labelQuantidade": "Quantity in stock",
+    "cancelButton": "Cancel",
+    "savingButton": "Saving...",
+    "addConfirmButton": "Add",
+    "emptyState": "No parts registered yet",
+    "estoqueInfo": "{preco} · {quantidade} in stock",
+    "desativarButton": "Deactivate",
+    "ativarButton": "Activate",
+    "confirmRemove": "Remove \"{nome}\" from the catalog?"
+  },
+  "lojaComissao": {
+    "loading": "Loading...",
+    "pageTitle": "BipFix Commission",
+    "pageSubtitle": "Fee charged on delivered part orders, and how to lower it"
+  },
+  "lojaConversaDetalhe": {
+    "loadingConversa": "Loading chat...",
+    "notFound": "Chat not found.",
+    "voltar": "Back",
+    "oficinaFallback": "Repair shop"
+  },
+  "lojaConversaNova": {
+    "loading": "Loading...",
+    "invalidConversa": "Invalid chat.",
+    "voltar": "Back",
+    "oficinaFallback": "Repair shop",
+    "subtituloComPeca": "{peca} · ask questions before responding",
+    "subtituloSemPeca": "Ask questions before responding"
+  },
+  "lojaCotacoes": {
+    "pageTitle": "Shop Quotes",
+    "pageSubtitle": "Respond with a price and delivery time to win the order",
+    "emptyState": "No open quotes right now",
+    "veiculoInfo": "Vehicle: {marca} {modelo} {ano}",
+    "quantidadeInfo": "Quantity: {quantidade}",
+    "tirarDuvida": "Ask a question",
+    "respostaEnviada": "You responded: R$ {preco} - {prazo} day(s) delivery",
+    "conversarLink": "Chat",
+    "labelPreco": "Price (R$)",
+    "labelPrazo": "Delivery time (days)",
+    "observacaoPlaceholder": "Note (optional)",
+    "cancelarButton": "Cancel",
+    "enviandoButton": "Sending...",
+    "enviarRespostaButton": "Send response",
+    "responderCotacaoButton": "Respond to quote"
+  },
+  "lojaPedidos": {
+    "pageTitle": "Orders",
+    "pageSubtitle": "Orders confirmed by repair shops",
+    "emptyState": "No orders yet",
+    "statusConfirmado": "Confirmed",
+    "statusEntregue": "Delivered",
+    "statusCancelado": "Cancelled",
+    "conversarLink": "Chat",
+    "marcarEntregueButton": "Mark as delivered",
+    "infoLinha": "{preco} · Qty: {quantidade} · {data}"
+  },
+  "lojaPerfil": {
+    "pageTitle": "Store Profile",
+    "dadosPessoaisTitulo": "Personal details",
+    "labelNome": "Name",
+    "labelEmail": "Email",
+    "labelTelefone": "Phone",
+    "dadosLojaTitulo": "Store details",
+    "labelNomeFantasia": "Trade name",
+    "labelCnpj": "Tax ID (CNPJ)",
+    "labelCep": "Postal code (CEP)",
+    "cepPlaceholder": "00000-000",
+    "buscandoCep": "Looking up address...",
+    "cepErro": "Postal code not found - check the number or fill it in manually",
+    "labelEndereco": "Address",
+    "enderecoPlaceholder": "Street, number",
+    "labelCidade": "City",
+    "labelEstado": "State",
+    "labelRaio": "Service radius (km)",
+    "salvarButton": "Save",
+    "salvandoButton": "Saving...",
+    "salvoMsg": "Saved!"
+  }
+}

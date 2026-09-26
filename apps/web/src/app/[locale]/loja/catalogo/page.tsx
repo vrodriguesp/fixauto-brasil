@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { formatCurrency } from '@/lib/utils';
 import type { PecaCatalogo } from '@fixauto/shared';
 
 export default function LojaCatalogoPage() {
+  const t = useTranslations('lojaCatalogo');
   const { loja } = useAuth();
   const [pecas, setPecas] = useState<PecaCatalogo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,7 +57,7 @@ export default function LojaCatalogoPage() {
   };
 
   const handleDelete = async (peca: PecaCatalogo) => {
-    if (!confirm(`Remover "${peca.nome}" do catálogo?`)) return;
+    if (!confirm(t('confirmRemove', { nome: peca.nome }))) return;
     await supabase.from('pecas_catalogo').delete().eq('id', peca.id);
     await fetchPecas();
   };
@@ -75,49 +77,49 @@ export default function LojaCatalogoPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Catálogo de Peças</h1>
-          <p className="text-gray-600 mt-1">Anuncie peças em estoque - oficinas podem ver e comprar direto</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('pageTitle')}</h1>
+          <p className="text-gray-600 mt-1">{t('pageSubtitle')}</p>
         </div>
-        <button onClick={() => setShowForm(true)} className="btn-primary">+ Nova Peça</button>
+        <button onClick={() => setShowForm(true)} className="btn-primary">{t('addButton')}</button>
       </div>
 
       {showForm && (
         <div className="card mb-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Adicionar Peça</h2>
+          <h2 className="font-semibold text-gray-900 mb-4">{t('formTitle')}</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nome da peça *</label>
-              <input type="text" className="input-field" placeholder="Ex: Farol dianteiro direito" value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNome')}</label>
+              <input type="text" className="input-field" placeholder={t('placeholderNome')} value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Descrição (opcional)</label>
-              <input type="text" className="input-field" placeholder="Detalhes, condição, etc." value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelDescricao')}</label>
+              <input type="text" className="input-field" placeholder={t('placeholderDescricao')} value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Marca compatível</label>
-              <input type="text" className="input-field" placeholder="Ex: Fiat" value={form.fipe_marca} onChange={(e) => setForm({ ...form, fipe_marca: e.target.value })} />
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelMarca')}</label>
+              <input type="text" className="input-field" placeholder={t('placeholderMarca')} value={form.fipe_marca} onChange={(e) => setForm({ ...form, fipe_marca: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Modelo compatível</label>
-              <input type="text" className="input-field" placeholder="Ex: Argo" value={form.fipe_modelo} onChange={(e) => setForm({ ...form, fipe_modelo: e.target.value })} />
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelModelo')}</label>
+              <input type="text" className="input-field" placeholder={t('placeholderModelo')} value={form.fipe_modelo} onChange={(e) => setForm({ ...form, fipe_modelo: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ano compatível</label>
-              <input type="text" className="input-field" placeholder="Ex: 2020" value={form.fipe_ano} onChange={(e) => setForm({ ...form, fipe_ano: e.target.value })} />
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelAno')}</label>
+              <input type="text" className="input-field" placeholder={t('placeholderAno')} value={form.fipe_ano} onChange={(e) => setForm({ ...form, fipe_ano: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Preço (R$) *</label>
-              <input type="number" step="0.01" className="input-field" placeholder="0,00" value={form.preco} onChange={(e) => setForm({ ...form, preco: e.target.value })} />
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelPreco')}</label>
+              <input type="number" step="0.01" className="input-field" placeholder={t('placeholderPreco')} value={form.preco} onChange={(e) => setForm({ ...form, preco: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Quantidade em estoque</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelQuantidade')}</label>
               <input type="number" className="input-field" value={form.quantidade_estoque} onChange={(e) => setForm({ ...form, quantidade_estoque: e.target.value })} />
             </div>
           </div>
           <div className="flex justify-end gap-3 mt-6">
-            <button onClick={() => setShowForm(false)} className="btn-secondary">Cancelar</button>
+            <button onClick={() => setShowForm(false)} className="btn-secondary">{t('cancelButton')}</button>
             <button onClick={handleAdd} disabled={saving || !form.nome || !form.preco} className="btn-primary disabled:opacity-50">
-              {saving ? 'Salvando...' : 'Adicionar'}
+              {saving ? t('savingButton') : t('addConfirmButton')}
             </button>
           </div>
         </div>
@@ -125,7 +127,7 @@ export default function LojaCatalogoPage() {
 
       {pecas.length === 0 ? (
         <div className="card text-center py-12">
-          <p className="text-gray-500">Nenhuma peça cadastrada ainda</p>
+          <p className="text-gray-500">{t('emptyState')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -136,11 +138,11 @@ export default function LojaCatalogoPage() {
                 {(peca.fipe_marca || peca.fipe_modelo) && (
                   <p className="text-sm text-gray-500">{peca.fipe_marca} {peca.fipe_modelo} {peca.fipe_ano}</p>
                 )}
-                <p className="text-sm text-gray-600 mt-1">{formatCurrency(peca.preco)} · {peca.quantidade_estoque} em estoque</p>
+                <p className="text-sm text-gray-600 mt-1">{t('estoqueInfo', { preco: formatCurrency(peca.preco), quantidade: peca.quantidade_estoque })}</p>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 <button onClick={() => handleToggleAtivo(peca)} className={`px-3 py-1 text-xs rounded-lg font-medium ${peca.ativo ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
-                  {peca.ativo ? 'Desativar' : 'Ativar'}
+                  {peca.ativo ? t('desativarButton') : t('ativarButton')}
                 </button>
                 <button onClick={() => handleDelete(peca)} className="p-1 text-gray-400 hover:text-red-500">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

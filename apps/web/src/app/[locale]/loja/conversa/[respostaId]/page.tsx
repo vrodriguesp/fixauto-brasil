@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -14,6 +15,7 @@ interface RespostaInfo {
 }
 
 export default function LojaConversaPecaPage() {
+  const t = useTranslations('lojaConversaDetalhe');
   const { respostaId } = useParams<{ respostaId: string }>();
   const router = useRouter();
   const { loja } = useAuth();
@@ -33,11 +35,11 @@ export default function LojaConversaPecaPage() {
   }, [respostaId]);
 
   if (loading || !loja) {
-    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-400">Carregando conversa...</div>;
+    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-400">{t('loadingConversa')}</div>;
   }
 
   if (!resposta) {
-    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">Conversa não encontrada.</div>;
+    return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">{t('notFound')}</div>;
   }
 
   return (
@@ -47,14 +49,14 @@ export default function LojaConversaPecaPage() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          Voltar
+          {t('voltar')}
         </button>
       </div>
       <ChatCotacaoPeca
         cotacaoId={resposta.cotacao_id}
         fornecedorTipo="loja"
         fornecedorId={loja.id}
-        titulo={resposta.cotacao?.oficina?.nome_fantasia || 'Oficina'}
+        titulo={resposta.cotacao?.oficina?.nome_fantasia || t('oficinaFallback')}
         subtitulo={resposta.cotacao?.peca_descricao}
       />
     </div>

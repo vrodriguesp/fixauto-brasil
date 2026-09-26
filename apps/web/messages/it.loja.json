@@ -1,1 +1,183 @@
-{}
+{
+  "lojaDashboard": {
+    "greeting": "Ciao, {nome}!",
+    "subtitle": "Monitora preventivi e ordini delle officine",
+    "statCotacoesAbertas": "Preventivi aperti da rispondere",
+    "statPedidosConfirmados": "Ordini confermati",
+    "statPecasAtivas": "Ricambi attivi nel catalogo",
+    "comoFuncionaTitulo": "Come funziona",
+    "comoFuncionaItens": [
+      "Le officine pubblicano richieste di preventivo per i ricambi di cui hanno bisogno",
+      "Tu rispondi con prezzo e tempi di consegna",
+      "L'officina sceglie la risposta migliore e conferma l'ordine",
+      "Concorda consegna e pagamento direttamente con l'officina"
+    ]
+  },
+  "lojaAprender": {
+    "loading": "Caricamento...",
+    "titulo": "Impara a usare BipFix",
+    "subtitulo": "Un passo alla volta. Scegli la modalità Guidata per istruzioni dettagliate, oppure Autonoma se preferisci provare da solo.",
+    "modulos": {
+      "como-funciona": {
+        "titulo": "Come funziona il negozio di ricambi",
+        "resumo": "Le officine pubblicano richieste di ricambi (\"preventivi\"). Tu rispondi con prezzo e tempi di consegna. L'officina sceglie la risposta migliore e conferma l'ordine. Consegna e pagamento vengono concordati direttamente con l'officina — BipFix non li gestisce. Solo quando segni l'ordine come consegnato, BipFix applica una piccola commissione.",
+        "passosGuiados": [
+          "Apri Dashboard dal menu e leggi la scheda \"Come funziona\".",
+          "Osserva i 3 numeri: preventivi aperti da rispondere, ordini confermati e ricambi attivi nel tuo catalogo."
+        ],
+        "desafio": "Comprendi l'intero flusso prima di iniziare: preventivo → risposta → ordine confermato → consegna → commissione.",
+        "linkRotulo": "Vai alla mia dashboard →"
+      },
+      "perfil": {
+        "titulo": "Profilo del negozio",
+        "resumo": "Completa i dati del tuo negozio — indirizzo, città, stato e CAP corretti sono importanti, anche se oggi non filtrano ancora i preventivi che vedi (tutti i preventivi aperti in Brasile ti vengono mostrati, senza filtro di distanza per ora).",
+        "passosGuiados": [
+          "Apri Profilo dal menu.",
+          "Controlla/modifica ragione sociale, partita IVA, indirizzo, città e stato.",
+          "Clicca su \"Salva\"."
+        ],
+        "desafio": "Completa la registrazione del tuo negozio in modo corretto (niente \"Da definire\" nell'indirizzo)."
+      },
+      "catalogo": {
+        "titulo": "Catalogo ricambi",
+        "resumo": "Registra i ricambi che hai in magazzino: nome, compatibilità con marca/modello/anno, prezzo e quantità. Funziona come il tuo controllo interno di magazzino dentro BipFix.",
+        "passosGuiados": [
+          "Apri Catalogo dal menu.",
+          "Clicca su \"+ Nuovo ricambio\".",
+          "Compila nome e prezzo (obbligatori) — marca, modello, anno e descrizione sono facoltativi.",
+          "Clicca su \"Aggiungi\"."
+        ],
+        "desafio": "Registra almeno un ricambio nel tuo catalogo."
+      },
+      "cotacoes": {
+        "titulo": "Rispondi ai preventivi delle officine",
+        "resumo": "È qui che ti giochi le vendite: un elenco di richieste di ricambi pubblicate dalle officine, in attesa di risposta. Un buon prezzo e tempi di consegna competitivi aumentano le tue possibilità di essere scelto. Solo l'officina vede tutte le risposte — gli altri negozi non vedono il tuo prezzo.",
+        "passosGuiados": [
+          "Apri Preventivi dal menu.",
+          "Trova un preventivo aperto per un ricambio che hai disponibile.",
+          "Clicca su \"Rispondi al preventivo\".",
+          "Compila prezzo, tempi di consegna in giorni e, se vuoi, una nota.",
+          "Clicca su \"Invia risposta\"."
+        ],
+        "desafio": "Rispondi ad almeno un preventivo di un'officina con prezzo e tempi di consegna reali.",
+        "dica": "Rispondere in fretta (meno di 2 ore) riduce in seguito la tua commissione."
+      },
+      "pedidos": {
+        "titulo": "Ordini e consegna",
+        "resumo": "Quando un'officina sceglie la tua risposta, l'ordine compare qui. Concorda consegna e pagamento direttamente con l'officina (fuori dalla piattaforma) e, una volta consegnato davvero, segnalo come consegnato.",
+        "passosGuiados": [
+          "Apri Ordini dal menu.",
+          "Concorda consegna/pagamento con l'officina (usa il link \"Chat\" se ti serve).",
+          "Dopo aver consegnato davvero, clicca su \"Segna come consegnato\"."
+        ],
+        "desafio": "Segna un ordine confermato come consegnato."
+      },
+      "comissao": {
+        "titulo": "Commissione della piattaforma",
+        "resumo": "La percentuale parte dal 3% e scende man mano che rispondi in fretta e consegni un buon volume di ordini — nella pratica, minimo 1,5%. Viene applicata solo quando l'ordine è segnato come consegnato, mai prima.",
+        "passosGuiados": [
+          "Apri Commissione dal menu.",
+          "Guarda la tua percentuale attuale, cosa è in sospeso e cosa è già stato pagato."
+        ],
+        "desafio": "Controlla la tua percentuale attuale e cosa puoi fare per ridurla.",
+        "linkRotulo": "Vai alla mia commissione →"
+      }
+    }
+  },
+  "lojaCatalogo": {
+    "pageTitle": "Catalogo Ricambi",
+    "pageSubtitle": "Metti in vetrina i ricambi in magazzino - le officine possono vederli e acquistarli direttamente",
+    "addButton": "+ Nuovo ricambio",
+    "formTitle": "Aggiungi ricambio",
+    "labelNome": "Nome del ricambio *",
+    "placeholderNome": "Es: Faro anteriore destro",
+    "labelDescricao": "Descrizione (facoltativa)",
+    "placeholderDescricao": "Dettagli, condizioni, ecc.",
+    "labelMarca": "Marca compatibile",
+    "placeholderMarca": "Es: Fiat",
+    "labelModelo": "Modello compatibile",
+    "placeholderModelo": "Es: Argo",
+    "labelAno": "Anno compatibile",
+    "placeholderAno": "Es: 2020",
+    "labelPreco": "Prezzo (R$) *",
+    "placeholderPreco": "0,00",
+    "labelQuantidade": "Quantità in magazzino",
+    "cancelButton": "Annulla",
+    "savingButton": "Salvataggio...",
+    "addConfirmButton": "Aggiungi",
+    "emptyState": "Nessun ricambio registrato ancora",
+    "estoqueInfo": "{preco} · {quantidade} in magazzino",
+    "desativarButton": "Disattiva",
+    "ativarButton": "Attiva",
+    "confirmRemove": "Rimuovere \"{nome}\" dal catalogo?"
+  },
+  "lojaComissao": {
+    "loading": "Caricamento...",
+    "pageTitle": "Commissione BipFix",
+    "pageSubtitle": "Commissione applicata sugli ordini di ricambi consegnati, e come ridurla"
+  },
+  "lojaConversaDetalhe": {
+    "loadingConversa": "Caricamento chat...",
+    "notFound": "Chat non trovata.",
+    "voltar": "Indietro",
+    "oficinaFallback": "Officina"
+  },
+  "lojaConversaNova": {
+    "loading": "Caricamento...",
+    "invalidConversa": "Chat non valida.",
+    "voltar": "Indietro",
+    "oficinaFallback": "Officina",
+    "subtituloComPeca": "{peca} · chiarisci i dubbi prima di rispondere",
+    "subtituloSemPeca": "Chiarisci i dubbi prima di rispondere"
+  },
+  "lojaCotacoes": {
+    "pageTitle": "Preventivi delle Officine",
+    "pageSubtitle": "Rispondi con prezzo e tempi di consegna per aggiudicarti l'ordine",
+    "emptyState": "Nessun preventivo aperto al momento",
+    "veiculoInfo": "Veicolo: {marca} {modelo} {ano}",
+    "quantidadeInfo": "Quantità: {quantidade}",
+    "tirarDuvida": "Fai una domanda",
+    "respostaEnviada": "Hai risposto: R$ {preco} - consegna in {prazo} giorno/i",
+    "conversarLink": "Chat",
+    "labelPreco": "Prezzo (R$)",
+    "labelPrazo": "Tempi di consegna (giorni)",
+    "observacaoPlaceholder": "Nota (facoltativa)",
+    "cancelarButton": "Annulla",
+    "enviandoButton": "Invio in corso...",
+    "enviarRespostaButton": "Invia risposta",
+    "responderCotacaoButton": "Rispondi al preventivo"
+  },
+  "lojaPedidos": {
+    "pageTitle": "Ordini",
+    "pageSubtitle": "Ordini confermati dalle officine",
+    "emptyState": "Ancora nessun ordine",
+    "statusConfirmado": "Confermato",
+    "statusEntregue": "Consegnato",
+    "statusCancelado": "Annullato",
+    "conversarLink": "Chat",
+    "marcarEntregueButton": "Segna come consegnato",
+    "infoLinha": "{preco} · Quantità: {quantidade} · {data}"
+  },
+  "lojaPerfil": {
+    "pageTitle": "Profilo del Negozio",
+    "dadosPessoaisTitulo": "Dati personali",
+    "labelNome": "Nome",
+    "labelEmail": "Email",
+    "labelTelefone": "Telefono",
+    "dadosLojaTitulo": "Dati del negozio",
+    "labelNomeFantasia": "Ragione sociale",
+    "labelCnpj": "Partita IVA (CNPJ)",
+    "labelCep": "CAP (CEP)",
+    "cepPlaceholder": "00000-000",
+    "buscandoCep": "Ricerca indirizzo...",
+    "cepErro": "CAP non trovato - controlla il numero o inserisci l'indirizzo manualmente",
+    "labelEndereco": "Indirizzo",
+    "enderecoPlaceholder": "Via, numero",
+    "labelCidade": "Città",
+    "labelEstado": "Stato",
+    "labelRaio": "Raggio di servizio (km)",
+    "salvarButton": "Salva",
+    "salvandoButton": "Salvataggio...",
+    "salvoMsg": "Salvato!"
+  }
+}

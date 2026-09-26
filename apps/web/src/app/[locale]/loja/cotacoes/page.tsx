@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -13,6 +14,7 @@ interface CotacaoComOficina extends Omit<CotacaoPeca, 'oficina'> {
 }
 
 export default function LojaCotacoesPage() {
+  const t = useTranslations('lojaCotacoes');
   const { loja } = useAuth();
   const [cotacoes, setCotacoes] = useState<CotacaoComOficina[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,12 +91,12 @@ export default function LojaCotacoesPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Cotações de Oficinas</h1>
-      <p className="text-gray-600 mb-8">Responda com preço e prazo para conseguir o pedido</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('pageTitle')}</h1>
+      <p className="text-gray-600 mb-8">{t('pageSubtitle')}</p>
 
       {cotacoes.length === 0 ? (
         <div className="card text-center py-12">
-          <p className="text-gray-500">Nenhuma cotação aberta no momento</p>
+          <p className="text-gray-500">{t('emptyState')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -107,9 +109,9 @@ export default function LojaCotacoesPage() {
                     {c.oficina?.nome_fantasia} - {c.oficina?.cidade}, {c.oficina?.estado}
                   </p>
                   {(c.fipe_marca || c.fipe_modelo) && (
-                    <p className="text-sm text-gray-500">Veículo: {c.fipe_marca} {c.fipe_modelo} {c.fipe_ano}</p>
+                    <p className="text-sm text-gray-500">{t('veiculoInfo', { marca: c.fipe_marca || '', modelo: c.fipe_modelo || '', ano: c.fipe_ano || '' })}</p>
                   )}
-                  <p className="text-sm text-gray-500">Quantidade: {c.quantidade}</p>
+                  <p className="text-sm text-gray-500">{t('quantidadeInfo', { quantidade: c.quantidade })}</p>
                 </div>
                 <div className="flex flex-col items-end gap-1 flex-shrink-0">
                   <span className="text-xs text-gray-400">{timeAgo(c.created_at)}</span>
@@ -118,7 +120,7 @@ export default function LojaCotacoesPage() {
                       href={`/loja/conversa/nova?cotacaoId=${c.id}&oficinaNome=${encodeURIComponent(c.oficina?.nome_fantasia || 'Oficina')}&pecaDescricao=${encodeURIComponent(c.peca_descricao || '')}`}
                       className="text-xs font-medium text-primary-600 hover:underline whitespace-nowrap"
                     >
-                      Tirar dúvida
+                      {t('tirarDuvida')}
                     </Link>
                   )}
                 </div>
@@ -127,35 +129,35 @@ export default function LojaCotacoesPage() {
               {c.minhaResposta ? (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3 flex items-center justify-between gap-3">
                   <p className="text-sm text-green-800">
-                    Você respondeu: R$ {c.minhaResposta.preco.toFixed(2)} - prazo {c.minhaResposta.prazo_dias} dia(s)
+                    {t('respostaEnviada', { preco: c.minhaResposta.preco.toFixed(2), prazo: c.minhaResposta.prazo_dias })}
                   </p>
                   <Link href={`/loja/conversa/${c.minhaResposta.id}`} className="text-xs font-medium text-primary-600 hover:underline whitespace-nowrap">
-                    Conversar
+                    {t('conversarLink')}
                   </Link>
                 </div>
               ) : respondendoId === c.id ? (
                 <div className="mt-3 space-y-3 border-t pt-3">
                   <div className="grid sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Preço (R$)</label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">{t('labelPreco')}</label>
                       <input type="number" step="0.01" className="input-field !py-1.5" value={respostaForm.preco} onChange={(e) => setRespostaForm({ ...respostaForm, preco: e.target.value })} />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Prazo (dias)</label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">{t('labelPrazo')}</label>
                       <input type="number" className="input-field !py-1.5" value={respostaForm.prazo_dias} onChange={(e) => setRespostaForm({ ...respostaForm, prazo_dias: e.target.value })} />
                     </div>
                   </div>
-                  <input type="text" className="input-field !py-1.5" placeholder="Observação (opcional)" value={respostaForm.observacao} onChange={(e) => setRespostaForm({ ...respostaForm, observacao: e.target.value })} />
+                  <input type="text" className="input-field !py-1.5" placeholder={t('observacaoPlaceholder')} value={respostaForm.observacao} onChange={(e) => setRespostaForm({ ...respostaForm, observacao: e.target.value })} />
                   <div className="flex justify-end gap-2">
-                    <button onClick={() => setRespondendoId(null)} className="btn-secondary !py-1.5 !px-3 text-sm">Cancelar</button>
+                    <button onClick={() => setRespondendoId(null)} className="btn-secondary !py-1.5 !px-3 text-sm">{t('cancelarButton')}</button>
                     <button onClick={() => handleResponder(c.id)} disabled={saving || !respostaForm.preco} className="btn-primary !py-1.5 !px-3 text-sm disabled:opacity-50">
-                      {saving ? 'Enviando...' : 'Enviar resposta'}
+                      {saving ? t('enviandoButton') : t('enviarRespostaButton')}
                     </button>
                   </div>
                 </div>
               ) : (
                 <button onClick={() => setRespondendoId(c.id)} className="btn-primary !py-1.5 !px-3 text-sm mt-2">
-                  Responder cotação
+                  {t('responderCotacaoButton')}
                 </button>
               )}
             </div>
