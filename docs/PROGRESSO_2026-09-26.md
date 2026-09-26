@@ -160,3 +160,33 @@ A central de auditoria construída em 09/09 já dava visão total ao admin (soli
 4. [x] Build/tsc sem erros. Testado que os 2 endpoints novos exigem autenticação de admin (401 sem sessão) tanto local quanto em produção. Deploy feito (commit `814e811`).
 5. [ ] **Teste clicando de verdade (sessão admin real) ainda não feito nesta rodada** — recomendado antes de confiar 100% no fluxo, especialmente a notificação sendo criada corretamente pro cliente/oficina certos.
 6. [ ] Escopo deliberadamente restrito a solicitação (status do "conserto") + agenda (agendamentos), que foram os dois termos exatos usados pelo usuário. Ações de editar/cancelar em cotações de peças, pedidos de peças ou avaliações **não foram adicionadas** — se o usuário quiser esse alcance mais amplo de "todas as interações", é um próximo passo natural.
+
+## Rodada 4 (mesmo dia): moeda por país da oficina (não pelo idioma) + varredura de gaps multi-país pro piloto na Estônia
+
+Contexto: preparação pro piloto na Estônia expôs que várias partes do site assumiam Brasil-only (moeda BRL fixa, CEP/placa só brasileiros, formatação de data em `pt-BR` fixo). Endereçado em duas levas.
+
+### Leva 1: arquitetura de moeda por país (commit `50dbd82`)
+
+1. [x] **Correção de rumo importante**: a primeira tentativa decidia a moeda pelo *idioma da página* (pt→BRL, en/et/it→EUR) — usuário corrigiu: a moeda tem que vir do **país real da oficina/loja/solicitação**, não do idioma de quem está olhando (senão uma oficina em Portugal ou Brasil aparece com valores errados pra quem navega em outro idioma). Todo o trabalho de "moeda por idioma" já feito foi refeito do zero por país.
+2. [x] Migrations `023`/`024`: coluna `pais` (ISO 3166-1 alpha-2) em `oficinas`, `lojas_pecas` e `solicitacoes`, aplicadas em produção.
+3. [x] `lib/currency.ts`: mapa país→moeda (BRL, GBP, CHF, NOK, SEK, DKK, PLN, CZK, HUF, RON, BGN, e EUR pros países da zona do euro; fallback EUR).
+4. [x] `/api/geocode`: agora suporta geocodificação reversa (lat/lon→país) via Nominatim, usada no cadastro pra capturar o país automaticamente a partir da geolocalização do navegador.
+5. [x] `/api/vehicle-catalog` (VehiclesDB, dataset estático e gratuito, 918 marcas/14.900 modelos de 14 países) substitui a dependência exclusiva da FIPE pra marca/modelo de veículo fora do Brasil — antes era campo livre, agora é o mesmo cascading-select que o Brasil usa.
+6. [x] ~40 arquivos (todo `formatCurrency` do site) migrados pra usar `currencyForCountry(pais)` em vez de moeda fixa. Dashboards agregados que somam comissão de fornecedores de países diferentes (`/admin/pecas`) passaram a agrupar por moeda em vez de somar tudo junto.
+7. [x] `ComissaoPecasCard` e `DamageAnalysis` (componentes que tinham escapado da tradução geral do site) ganharam i18n completo nessa mesma leva, já que precisavam ser tocados pra moeda mesmo.
+
+### Leva 2: varredura de gaps que a implementação de moeda tinha deixado passar (commit `06e6903`)
+
+1. [x] Schema.org da página pública de oficina (`addressCountry`) e o `openGraph.locale` dessa mesma página estavam fixos em `'BR'`/`'pt_BR'` — agora refletem o país real e o idioma da página.
+2. [x] `/emergencia` tinha `metadata` **estática** (não `generateMetadata`) 100% em português — toda visita em `/en`, `/et`, `/it` mostrava título/descrição em português no Google e ao compartilhar. Convertido pra `generateMetadata` por locale, com keywords/OG traduzidos.
+3. [x] Mais 6 componentes/páginas formatando data/hora com `'pt-BR'` fixo (tinham escapado da varredura anterior de locale): `NotasInternas`, `ChatCotacaoPeca`, `oficina/agenda`, `oficina/mensagens/[id]`, `oficina/comissao`, perfil público da oficina.
+4. [x] E-mails transacionais de peças (resposta de cotação, pedido confirmado) e a notificação de orçamento (e-mail + WhatsApp) formatavam preço sempre em BRL — agora usam `currencyForCountry(pais)` do fornecedor/oficina relevante.
+5. [x] Dashboard admin (`/admin/dashboard`): GMV e comissão total do mês somavam tudo num número só, misturando moeda de países diferentes — agora agrupa por moeda (mesmo padrão já usado em `/admin/pecas`). Tipo `PlataformaMetricas` atualizado (`gmv_mes` → `gmv_mes_por_moeda`, idem comissão).
+6. [x] Placeholder do campo CNPJ (opcional) no cadastro era o formato brasileiro fixo (`00.000.000/0001-00`) mesmo pra oficina/loja de outro país — virou texto traduzido por idioma ("Company registration number", "Äriregistri kood", etc.).
+7. [x] Schema JSON-LD de `/para-oficinas` também tinha moeda decidida pelo idioma da página (mesma gambiarra corrigida na leva 1, só que numa página que não tinha sido re-auditada) — removida, `priceCurrency` fixo em EUR já que a oferta anunciada ali é sempre grátis (R$0/€0, então a moeda exibida é só decorativa).
+8. [x] `tsc --noEmit` e `npm run build` limpos, deploy feito, confirmado em produção (`/api/geocode`, `/api/vehicle-catalog`, `/en/emergencia`, `/emergencia` com metadata correta por idioma).
+
+### O que fica pendente (não resolvido nesta rodada, deliberadamente)
+
+- [ ] **Tradução completa dos e-mails transacionais**: os ~12 templates de e-mail em `lib/notifications.ts` (mais outros espalhados em rotas de API individuais, ex. `criar-solicitacao-emergencia`) são 100% português fixo — corrigi só a **moeda** (bug de correção óbvia), não o idioma do texto. Pra traduzir de verdade falta: (a) persistir o idioma preferido do usuário em algum lugar (hoje não existe — `profiles` não tem coluna de idioma, e o idioma só é conhecido durante a navegação via URL, nunca em contexto assíncrono de e-mail); (b) traduzir cada template pra en/et/it; (c) passar esse idioma em cada um dos ~9 call sites. Escopo grande o suficiente pra merecer uma leva própria, então não foi atacado aqui pra evitar fazer pela metade.
+- [ ] Resto da varredura geral "tudo que falta pro site rodar bem em qualquer país" continua em andamento (próximo: teste end-to-end completo do fluxo Estônia, depois o app cliente iOS/Android).
