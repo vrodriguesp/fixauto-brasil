@@ -1,22 +1,25 @@
 'use client';
 
 import { Suspense, useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { TIPOS_SERVICO, ESTADOS_BRASIL } from '@fixauto/shared';
 import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
 
 export default function CadastroPageWrapper() {
+  const t = useTranslations('cadastro');
   return (
-    <Suspense fallback={<div className="min-h-[80vh] flex items-center justify-center"><p>Carregando...</p></div>}>
+    <Suspense fallback={<div className="min-h-[80vh] flex items-center justify-center"><p>{t('carregando')}</p></div>}>
       <CadastroPage />
     </Suspense>
   );
 }
 
 function CadastroPage() {
+  const t = useTranslations('cadastro');
   const searchParams = useSearchParams();
   const tipoParam = searchParams.get('tipo') as 'cliente' | 'oficina' | 'loja_pecas' | null;
 
@@ -49,7 +52,7 @@ function CadastroPage() {
     const resultado = await buscarEnderecoPorCep(formatted);
     setBuscandoCep(false);
     if (!resultado) {
-      setCepErro('CEP não encontrado - confira o número ou preencha manualmente');
+      setCepErro(t('cepNaoEncontrado'));
       return;
     }
     setEndereco(resultado.logradouro || endereco);
@@ -66,7 +69,7 @@ function CadastroPage() {
   const renderEnderecoFields = () => (
     <>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCep')}</label>
         <input
           type="text"
           inputMode="numeric"
@@ -76,23 +79,23 @@ function CadastroPage() {
           onChange={(e) => handleCepChange(e.target.value)}
           maxLength={9}
         />
-        {buscandoCep && <p className="text-xs text-gray-400 mt-1">Buscando endereço...</p>}
+        {buscandoCep && <p className="text-xs text-gray-400 mt-1">{t('buscandoEndereco')}</p>}
         {cepErro && <p className="text-xs text-red-500 mt-1">{cepErro}</p>}
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
-        <input type="text" className="input-field" placeholder="Rua, número" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
-        <p className="text-xs text-gray-400 mt-1">Preenchido pelo CEP - complete com o número.</p>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEndereco')}</label>
+        <input type="text" className="input-field" placeholder={t('placeholderEndereco')} value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+        <p className="text-xs text-gray-400 mt-1">{t('enderecoAjuda')}</p>
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
-          <input type="text" className="input-field" placeholder="São Paulo" value={cidade} onChange={(e) => setCidade(e.target.value)} />
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCidade')}</label>
+          <input type="text" className="input-field" placeholder={t('placeholderCidade')} value={cidade} onChange={(e) => setCidade(e.target.value)} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEstado')}</label>
           <select className="input-field" value={estado} onChange={(e) => setEstado(e.target.value)}>
-            <option value="">UF</option>
+            <option value="">{t('selecioneUf')}</option>
             {ESTADOS_BRASIL.map((uf) => (
               <option key={uf} value={uf}>{uf}</option>
             ))}
@@ -115,11 +118,11 @@ function CadastroPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nome || !email || !password) {
-      setError('Preencha todos os campos obrigatórios');
+      setError(t('errorCamposObrigatorios'));
       return;
     }
     if (!aceitouTermos) {
-      setError('Você precisa aceitar os Termos de Uso e a Política de Privacidade para continuar');
+      setError(t('errorTermos'));
       return;
     }
     setError('');
@@ -188,14 +191,14 @@ function CadastroPage() {
     router.refresh();
   };
 
-  const title = userType === 'oficina' ? 'Cadastro da Oficina' : userType === 'loja_pecas' ? 'Cadastro da Loja de Peças' : userType === 'cliente' ? 'Cadastro do Motorista' : 'Criar Conta';
+  const title = userType === 'oficina' ? t('tituloOficina') : userType === 'loja_pecas' ? t('tituloLoja') : userType === 'cliente' ? t('tituloMotorista') : t('tituloGenerico');
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-lg">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
-          <p className="text-gray-600 mt-2">Cadastre-se gratuitamente no BipFix</p>
+          <p className="text-gray-600 mt-2">{t('subtitulo')}</p>
         </div>
 
         <div className="card">
@@ -208,7 +211,7 @@ function CadastroPage() {
           {/* Step 1: Choose type (only if no tipo param) */}
           {step === 1 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Como deseja usar o BipFix?</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('comoDesejaUsar')}</h2>
               <button
                 onClick={() => { setUserType('cliente'); setStep(2); }}
                 className="w-full p-6 border-2 border-gray-200 rounded-xl hover:border-primary-500 hover:bg-primary-50 transition-all text-left group"
@@ -220,8 +223,8 @@ function CadastroPage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">Sou Motorista</p>
-                    <p className="text-sm text-gray-500">Preciso de reparo ou manutenção no meu veículo</p>
+                    <p className="font-semibold text-gray-900">{t('souMotorista')}</p>
+                    <p className="text-sm text-gray-500">{t('descMotorista')}</p>
                   </div>
                 </div>
               </button>
@@ -236,8 +239,8 @@ function CadastroPage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">Sou Oficina</p>
-                    <p className="text-sm text-gray-500">Quero receber solicitações e enviar orçamentos</p>
+                    <p className="font-semibold text-gray-900">{t('souOficina')}</p>
+                    <p className="text-sm text-gray-500">{t('descOficina')}</p>
                   </div>
                 </div>
               </button>
@@ -252,8 +255,8 @@ function CadastroPage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">Sou Loja de Peças</p>
-                    <p className="text-sm text-gray-500">Quero vender peças e responder cotações de oficinas</p>
+                    <p className="font-semibold text-gray-900">{t('souLoja')}</p>
+                    <p className="text-sm text-gray-500">{t('descLoja')}</p>
                   </div>
                 </div>
               </button>
@@ -270,24 +273,24 @@ function CadastroPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
-                  <h2 className="text-lg font-semibold text-gray-900">Dados pessoais</h2>
+                  <h2 className="text-lg font-semibold text-gray-900">{t('dadosPessoais')}</h2>
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nome completo *</label>
-                <input type="text" className="input-field" placeholder="Seu nome" value={nome} onChange={(e) => setNome(e.target.value)} required />
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNomeCompleto')}</label>
+                <input type="text" className="input-field" placeholder={t('placeholderNome')} value={nome} onChange={(e) => setNome(e.target.value)} required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEmail')}</label>
                 <input type="email" className="input-field" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelTelefone')}</label>
                 <input type="tel" className="input-field" placeholder="(11) 99999-0000" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Senha *</label>
-                <input type="password" className="input-field" placeholder="Mínimo 6 caracteres" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelSenha')}</label>
+                <input type="password" className="input-field" placeholder={t('placeholderSenhaMinima')} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
               </div>
               <label className="flex items-start gap-2 text-sm text-gray-600">
                 <input
@@ -297,14 +300,14 @@ function CadastroPage() {
                   onChange={(e) => setAceitouTermos(e.target.checked)}
                 />
                 <span>
-                  Li e aceito os{' '}
-                  <Link href="/termos" target="_blank" className="text-primary-600 hover:underline">Termos de Uso</Link>
-                  {' '}e a{' '}
-                  <Link href="/privacidade" target="_blank" className="text-primary-600 hover:underline">Política de Privacidade</Link>
+                  {t('aceiteTexto1')}{' '}
+                  <Link href="/termos" target="_blank" className="text-primary-600 hover:underline">{t('termosDeUso')}</Link>
+                  {' '}{t('aceiteTexto2')}{' '}
+                  <Link href="/privacidade" target="_blank" className="text-primary-600 hover:underline">{t('politicaDePrivacidade')}</Link>
                 </span>
               </label>
               <button type="submit" className="btn-primary w-full" disabled={loading || !aceitouTermos}>
-                {loading ? 'Criando conta...' : (userType === 'oficina' || userType === 'loja_pecas') ? 'Próximo' : 'Criar conta'}
+                {loading ? t('criandoConta') : (userType === 'oficina' || userType === 'loja_pecas') ? t('proximo') : t('criarConta')}
               </button>
             </form>
           )}
@@ -318,14 +321,14 @@ function CadastroPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <h2 className="text-lg font-semibold text-gray-900">Dados da oficina</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{t('dadosOficina')}</h2>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nome fantasia *</label>
-                <input type="text" className="input-field" placeholder="Nome da oficina" value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} required />
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNomeFantasia')}</label>
+                <input type="text" className="input-field" placeholder={t('placeholderNomeOficina')} value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">CNPJ (opcional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
                 <input type="text" className="input-field" placeholder="00.000.000/0001-00" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
               </div>
               {renderEnderecoFields()}
@@ -333,10 +336,10 @@ function CadastroPage() {
               {/* Especialidades */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Serviços que a oficina realiza *
+                  {t('labelServicosOficina')}
                 </label>
                 <p className="text-xs text-gray-500 mb-3">
-                  Selecione todos os tipos de serviço que sua oficina oferece. Você só receberá solicitações compatíveis.
+                  {t('servicosAjuda')}
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   {TIPOS_SERVICO.map((tipo) => (
@@ -361,13 +364,13 @@ function CadastroPage() {
                 </div>
                 {especialidades.length > 0 && (
                   <p className="text-xs text-primary-600 mt-2">
-                    {especialidades.length} serviço(s) selecionado(s)
+                    {t('servicosSelecionados', { count: especialidades.length })}
                   </p>
                 )}
               </div>
 
               <button type="submit" className="btn-primary w-full" disabled={loading || especialidades.length === 0}>
-                {loading ? 'Criando conta...' : 'Criar conta da oficina'}
+                {loading ? t('criandoConta') : t('criarContaOficina')}
               </button>
             </form>
           )}
@@ -381,27 +384,27 @@ function CadastroPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <h2 className="text-lg font-semibold text-gray-900">Dados da loja</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{t('dadosLoja')}</h2>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nome fantasia *</label>
-                <input type="text" className="input-field" placeholder="Nome da loja" value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} required />
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNomeFantasia')}</label>
+                <input type="text" className="input-field" placeholder={t('placeholderNomeLoja')} value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">CNPJ (opcional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
                 <input type="text" className="input-field" placeholder="00.000.000/0001-00" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
               </div>
               {renderEnderecoFields()}
               <button type="submit" className="btn-primary w-full" disabled={loading}>
-                {loading ? 'Criando conta...' : 'Criar conta da loja'}
+                {loading ? t('criandoConta') : t('criarContaLoja')}
               </button>
             </form>
           )}
 
           <p className="text-center text-sm text-gray-600 mt-6">
-            Já tem conta?{' '}
+            {t('jaTemConta')}{' '}
             <Link href="/login" className="text-primary-600 font-medium hover:text-primary-700">
-              Entrar
+              {t('entrar')}
             </Link>
           </p>
         </div>

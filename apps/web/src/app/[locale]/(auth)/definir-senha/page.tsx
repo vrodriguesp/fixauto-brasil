@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 
 export default function DefinirSenhaPage() {
+  const t = useTranslations('definirSenha');
   const router = useRouter();
   const { user, funcionario, refreshProfile } = useAuth();
   const [novaSenha, setNovaSenha] = useState('');
@@ -18,11 +20,11 @@ export default function DefinirSenhaPage() {
     setError('');
 
     if (novaSenha.length < 6) {
-      setError('A senha deve ter pelo menos 6 caracteres');
+      setError(t('erroSenhaCurta'));
       return;
     }
     if (novaSenha !== confirmarSenha) {
-      setError('As senhas não coincidem');
+      setError(t('erroSenhasNaoCoincidem'));
       return;
     }
 
@@ -74,9 +76,9 @@ export default function DefinirSenhaPage() {
           <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-lg">BF</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Defina sua senha</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t('titulo')}</h1>
           <p className="text-gray-600 mt-2">
-            Bem-vindo ao BipFix! Escolha uma nova senha para sua conta.
+            {t('subtitulo')}
           </p>
         </div>
 
@@ -88,11 +90,11 @@ export default function DefinirSenhaPage() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nova senha</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNovaSenha')}</label>
             <input
               type="password"
               className="input-field"
-              placeholder="Mínimo 6 caracteres"
+              placeholder={t('placeholderSenhaMinima')}
               value={novaSenha}
               onChange={(e) => setNovaSenha(e.target.value)}
               required
@@ -101,11 +103,11 @@ export default function DefinirSenhaPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirmar senha</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelConfirmarSenha')}</label>
             <input
               type="password"
               className="input-field"
-              placeholder="Repita a senha"
+              placeholder={t('placeholderRepitaSenha')}
               value={confirmarSenha}
               onChange={(e) => setConfirmarSenha(e.target.value)}
               required
@@ -118,7 +120,7 @@ export default function DefinirSenhaPage() {
             disabled={loading || !novaSenha || !confirmarSenha}
             className="btn-primary w-full disabled:opacity-50"
           >
-            {loading ? 'Salvando...' : 'Definir senha e entrar'}
+            {loading ? t('salvando') : t('definirEEntrar')}
           </button>
         </form>
       </div>

@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 
 export default function ResetPasswordPage() {
+  const t = useTranslations('resetPassword');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -30,11 +32,11 @@ export default function ResetPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password.length < 6) {
-      setError('A senha deve ter pelo menos 6 caracteres');
+      setError(t('erroSenhaCurta'));
       return;
     }
     if (password !== confirmPassword) {
-      setError('As senhas não coincidem');
+      setError(t('erroSenhasNaoCoincidem'));
       return;
     }
     setError('');
@@ -61,8 +63,8 @@ export default function ResetPasswordPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Senha alterada!</h1>
-          <p className="text-gray-600">Redirecionando para o login...</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('senhaAlteradaTitulo')}</h1>
+          <p className="text-gray-600">{t('redirecionando')}</p>
         </div>
       </div>
     );
@@ -72,12 +74,12 @@ export default function ResetPasswordPage() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
-          <div className="animate-pulse text-gray-400 mb-4">Verificando link...</div>
+          <div className="animate-pulse text-gray-400 mb-4">{t('verificandoLink')}</div>
           <p className="text-sm text-gray-500">
-            Se o link expirou,{' '}
-            <a href="/login" className="text-primary-600 hover:text-primary-700">
-              solicite um novo
-            </a>
+            {t('linkExpirado')}{' '}
+            <Link href="/login" className="text-primary-600 hover:text-primary-700">
+              {t('solicitarNovo')}
+            </Link>
           </p>
         </div>
       </div>
@@ -88,8 +90,8 @@ export default function ResetPasswordPage() {
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Nova senha</h1>
-          <p className="text-gray-600 mt-2">Escolha sua nova senha</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('titulo')}</h1>
+          <p className="text-gray-600 mt-2">{t('subtitulo')}</p>
         </div>
 
         <div className="card">
@@ -101,11 +103,11 @@ export default function ResetPasswordPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nova senha</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNovaSenha')}</label>
               <input
                 type="password"
                 className="input-field"
-                placeholder="Mínimo 6 caracteres"
+                placeholder={t('placeholderSenhaMinima')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -113,11 +115,11 @@ export default function ResetPasswordPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Confirmar senha</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelConfirmarSenha')}</label>
               <input
                 type="password"
                 className="input-field"
-                placeholder="Repita a senha"
+                placeholder={t('placeholderRepitaSenha')}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -126,7 +128,7 @@ export default function ResetPasswordPage() {
             </div>
 
             <button type="submit" className="btn-primary w-full" disabled={loading}>
-              {loading ? 'Salvando...' : 'Salvar nova senha'}
+              {loading ? t('salvando') : t('salvarNovaSenha')}
             </button>
           </form>
         </div>

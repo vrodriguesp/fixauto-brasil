@@ -1,13 +1,15 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 
 export default function EscolherTipoPage() {
+  const t = useTranslations('escolherTipo');
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="w-full max-w-md text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Como deseja usar o BipFix?</h1>
-        <p className="text-gray-600 mb-8">Escolha seu perfil para continuar</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('titulo')}</h1>
+        <p className="text-gray-600 mb-8">{t('subtitulo')}</p>
 
         <div className="space-y-4">
           <Link
@@ -21,8 +23,8 @@ export default function EscolherTipoPage() {
                 </svg>
               </div>
               <div>
-                <p className="font-semibold text-gray-900">Sou Motorista</p>
-                <p className="text-sm text-gray-500">Preciso de reparo no meu veículo</p>
+                <p className="font-semibold text-gray-900">{t('souMotorista')}</p>
+                <p className="text-sm text-gray-500">{t('descMotorista')}</p>
               </div>
             </div>
           </Link>
@@ -38,8 +40,8 @@ export default function EscolherTipoPage() {
                 </svg>
               </div>
               <div>
-                <p className="font-semibold text-gray-900">Sou Oficina</p>
-                <p className="text-sm text-gray-500">Quero receber e enviar orçamentos</p>
+                <p className="font-semibold text-gray-900">{t('souOficina')}</p>
+                <p className="text-sm text-gray-500">{t('descOficina')}</p>
               </div>
             </div>
           </Link>
