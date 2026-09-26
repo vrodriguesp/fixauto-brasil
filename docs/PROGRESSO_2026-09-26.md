@@ -104,8 +104,8 @@ Ao revisar os campos de endereço durante a tradução, percebi que **tanto `/cl
 **Ainda pendente** (não bloqueia o piloto, mas fica registrado):
 - Trocar `CONSTANTE[x].label` (status de solicitação/orçamento/manutenção, tipo de serviço, urgência, cargo) pelas traduções já preparadas no namespace `constants` — hoje esses badges específicos ainda aparecem em português em qualquer idioma. Tradução já existe nos 4 idiomas, falta só religar página por página.
 - `lib/notifications.ts` (todos os e-mails do sistema) — 100% português, nem discutido ainda se precisa traduzir (e como decidir o idioma de cada e-mail, já que é assíncrono).
-- Google Search Console aguardando o usuário criar a propriedade e passar o código de verificação.
-- Microsoft Clarity aguardando o usuário criar o projeto gratuito e passar o Project ID.
+- [x] **Google Search Console configurado** (via navegador, usando a conta Google já logada do usuário): propriedade `https://bipfix.com/` adicionada (URL prefix), verificada por HTML tag (`GOOGLE_SITE_VERIFICATION` já suportado desde a Rodada 2 — só faltava o valor real, agora setado em `.env.production.local` da VM e rebuildado), e `sitemap.xml` submetido com sucesso.
+- [x] **Microsoft Clarity configurado**: usuário forneceu o snippet/Project ID (`yoeb6spjv9`) direto no chat. Setado `NEXT_PUBLIC_CLARITY_PROJECT_ID` em `.env.production.local` da VM, rebuild + restart. Confirmado funcionando de verdade via navegador real (Claude in Chrome): requisições para `clarity.ms/tag/...`, `scripts.clarity.ms/.../clarity.js` e `u.clarity.ms/collect` todas com sucesso (200/204).
 - Pergunta em aberto sobre API de veículo/placa pra Europa/Estônia (pesquisa já foi feita, ver resposta na conversa — resumo: não existe um equivalente direto e barato ao `placas.app.br` brasileiro pra Estônia por causa do GDPR; a tabela FIPE já foi contornada com campo livre pra fora do Brasil).
 
 ## Rodada 2 (mesmo dia): SEO técnico multi-idioma + tradução real das 2 páginas de conversão de oficinas
