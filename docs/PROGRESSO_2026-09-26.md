@@ -68,11 +68,11 @@ Usuário notou que ficava autenticado no admin por vários dias sem precisar log
 ### 5 agentes em paralelo para tradução de conteúdo
 
 Rodados simultaneamente, cada um com escopo de arquivos e arquivo de mensagens exclusivo (sem sobreposição):
-1. [ ] **Cliente** (10 páginas + `NotificationBell.tsx`): dashboard, veículos, histórico, perfil, nova-solicitação, orçamentos (+detalhe), mensagens (+detalhe), acompanhamento, reagendar. *(em andamento no momento deste registro)*
-2. [x] **Auth restante** (cadastro, definir-senha, escolher-tipo, reset-password — login já tinha sido feito antes). Concluído, testado, commitado (`4ec1879`).
-3. [ ] **Oficina** (19 arquivos): dashboard, agenda, aprender, avaliações, capacidade, checkin, comissão, distribuição, enviar-orçamento, equipe, layout, mensagens, peças (+conversas), perfil, solicitações (+detalhe), veículos-em-serviço. *(em andamento no momento deste registro)*
-4. [x] **Loja** (9 páginas): dashboard, aprender, catálogo, comissão, conversas, cotações, pedidos, perfil. Concluído, testado, commitado (`7b15175`).
-5. [ ] **Docs + emergência + legal + perfil público de oficina** (12 arquivos): termos, privacidade (registro formal/impessoal, terminologia GDPR correta por idioma — diferente do tom casual do resto do site), emergência (+detalhe do acidente), docs (home/cliente/oficina), `oficinas/[id]` (perfil público). *(em andamento no momento deste registro)*
+1. [x] **Cliente** (10 páginas + `NotificationBell.tsx`): dashboard, veículos, histórico, perfil, nova-solicitação, orçamentos (+detalhe), mensagens (+detalhe), acompanhamento, reagendar. Commitado (`c3e7bb0`).
+2. [x] **Auth restante** (cadastro, definir-senha, escolher-tipo, reset-password — login já tinha sido feito antes). Commitado (`4ec1879`).
+3. [x] **Oficina** (19 arquivos): dashboard, agenda, aprender, avaliações, capacidade, checkin, comissão, distribuição, enviar-orçamento, equipe, layout, mensagens, peças (+conversas), perfil, solicitações (+detalhe), veículos-em-serviço. Commitado (`6a1d872`).
+4. [x] **Loja** (9 páginas): dashboard, aprender, catálogo, comissão, conversas, cotações, pedidos, perfil. Commitado (`7b15175`).
+5. [x] **Docs + emergência + legal + perfil público de oficina** (12 arquivos): termos, privacidade (registro formal/impessoal, terminologia GDPR correta por idioma — diferente do tom casual do resto do site), emergência (+detalhe do acidente), docs (home/cliente/oficina), `oficinas/[id]` (perfil público). Commitado (`c273717`, `2caa71a`).
 
 **Incidente**: os 5 agentes bateram no limite de sessão da conta (rate limit, reset 17:40 horário de Roma) e pararam no meio. Retomados um a um via mensagem direta assim que o limite resetou — cada um continuou exatamente de onde parou (checando `git status`/`git diff` primeiro pra não refazer trabalho). Prática adotada a partir daqui: **commitar e dar push de cada área assim que o respectivo agente termina**, em vez de esperar todos concluírem, para não arriscar perder trabalho de novo.
 
@@ -86,6 +86,27 @@ Ao revisar os campos de endereço durante a tradução, percebi que **tanto `/cl
 4. [x] Build/tsc sem erros (isolado do trabalho dos agentes ainda em andamento), commit e push feitos.
 5. [ ] **Não testado ainda com geolocalização real do navegador** (precisa de teste manual/extensão do Chrome concedendo a permissão) — recomendado antes de confiar 100%.
 6. [ ] **Dado de produção potencialmente afetado**: solicitações e oficinas/lojas já cadastradas antes desta correção podem ter coordenadas de SP erradas gravadas no banco. Não investiguei nem corrigi dados existentes — só a gravação de dados novos daqui pra frente.
+
+### Fechamento da rodada 4: todos os 5 agentes concluídos, build/tsc limpos, teste end-to-end, deploy
+
+1. [x] Todos os 5 agentes de tradução terminaram (após retomada pós rate-limit) — cada área foi validada (`tsc --noEmit`) e commitada/pushada individualmente assim que ficou pronta, conforme pedido explícito do usuário ("vai salvando os trabalhos para nao perder tudo").
+2. [x] Também corrigidos, aproveitando que os arquivos ficaram liberados: mesmo bug de `<select>` fixo de UFs brasileiras em `loja/perfil` e `oficina/perfil` (edição de perfil pós-cadastro) — mesma classe de bug já corrigida em `/seja-parceiro` e `/cadastro`. Confirmado por `grep` que não sobra nenhuma ocorrência de `ESTADOS_BRASIL` fora do `/admin`.
+3. [x] **Segundo bug crítico encontrado no teste end-to-end** (não relacionado a i18n): o middleware bloqueava `/oficinas` (perfil público de oficina, sem necessidade de login) porque `path.startsWith('/oficina')` também casava com o plural "/oficinas" como substring — a rota redirecionava pro `/login` antes de carregar. **Isso é exatamente a página que ganhou `hreflang`/`sitemap` nesta sessão para SEO** — o Google estaria sendo redirecionado pro login em vez de indexar o conteúdo real, inutilizando o trabalho de SEO da Rodada 2. Corrigido com um helper `isUnderPath()` que checa limite de segmento (`path === prefixo` ou `prefixo + "/"`), aplicado também em `/admin` e `/loja` por consistência.
+4. [x] `npm run build` completo do zero, sem nenhum erro ou warning.
+5. [x] Teste end-to-end via `curl` cobrindo: todas as páginas públicas x 4 idiomas (200), todas as rotas protegidas x 4 idiomas sem sessão (307 pro login), `/oficinas/[id]` x 4 idiomas (200, confirma o fix do bug #3), conteúdo traduzido visível em cada idioma (spot-check de strings específicas por página).
+6. [x] Deploy feito, **mesmo teste re-executado direto em bipfix.com com os mesmos resultados**.
+7. [ ] **Ainda não testado clicando de verdade no navegador** (extensão do Chrome) — o teste foi inteiramente via `curl`/HTTP status + grep de conteúdo. Recomendado fazer um passe visual antes de anunciar o piloto, especialmente formulários (cadastro, nova solicitação) e o seletor de idioma.
+
+### Estado final da tradução (site inteiro exceto `/admin`)
+
+**100% das páginas traduzidas para pt/en/et/it**: home, seja-parceiro, para-oficinas, termos, privacidade, docs (+2 sub-guias), emergência (+detalhe do acidente), login/cadastro/escolher-tipo/definir-senha/reset-password, toda a área cliente (10 páginas), toda a área oficina (18 páginas), toda a área loja (9 páginas), perfil público de oficina, Navbar, LanguageSwitcher, banner de cookies, NotificationBell.
+
+**Ainda pendente** (não bloqueia o piloto, mas fica registrado):
+- Trocar `CONSTANTE[x].label` (status de solicitação/orçamento/manutenção, tipo de serviço, urgência, cargo) pelas traduções já preparadas no namespace `constants` — hoje esses badges específicos ainda aparecem em português em qualquer idioma. Tradução já existe nos 4 idiomas, falta só religar página por página.
+- `lib/notifications.ts` (todos os e-mails do sistema) — 100% português, nem discutido ainda se precisa traduzir (e como decidir o idioma de cada e-mail, já que é assíncrono).
+- Google Search Console aguardando o usuário criar a propriedade e passar o código de verificação.
+- Microsoft Clarity aguardando o usuário criar o projeto gratuito e passar o Project ID.
+- Pergunta em aberto sobre API de veículo/placa pra Europa/Estônia (pesquisa já foi feita, ver resposta na conversa — resumo: não existe um equivalente direto e barato ao `placas.app.br` brasileiro pra Estônia por causa do GDPR; a tabela FIPE já foi contornada com campo livre pra fora do Brasil).
 
 ## Rodada 2 (mesmo dia): SEO técnico multi-idioma + tradução real das 2 páginas de conversão de oficinas
 
