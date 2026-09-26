@@ -33,8 +33,9 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
   const locale = useLocale();
   const t = useTranslations('veiculoForm');
   // A FIPE (tabela de precos de veiculos) so cobre o mercado brasileiro -
-  // fora do "pt", marca/modelo/ano viram campos livres (sem valor/codigo
-  // FIPE, que nao existem pra veiculos europeus).
+  // fora do "pt", marca/modelo vem do catalogo aberto VehiclesDB (CC-BY 4.0,
+  // https://github.com/vehiclesdb/vehiclesdb), sem preco (esse catalogo nao
+  // tem valor de mercado nem cascata por ano como a FIPE - o ano fica livre).
   const isBR = locale === 'pt';
   const [marcas, setMarcas] = useState<FipeOption[]>([]);
   const [modelos, setModelos] = useState<FipeOption[]>([]);
@@ -50,40 +51,48 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
     setLoading('marcas');
     setError('');
     try {
-      const res = await fetch(`/api/fipe?path=${tipo}/brands`);
+      const url = isBR ? `/api/fipe?path=${tipo}/brands` : `/api/vehicle-catalog?tipo=${tipo}`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error('Erro ao buscar marcas');
       const data = await res.json();
       setMarcas(data);
     } catch {
       setError(t('erroMarcas'));
-      setMarcas([
-        { code: '59', name: 'Volkswagen' },
-        { code: '21', name: 'Fiat' },
-        { code: '23', name: 'Chevrolet' },
-        { code: '25', name: 'Ford' },
-        { code: '26', name: 'Honda' },
-        { code: '56', name: 'Toyota' },
-        { code: '29', name: 'Hyundai' },
-        { code: '44', name: 'Renault' },
-        { code: '36', name: 'Nissan' },
-        { code: '34', name: 'Mitsubishi' },
-        { code: '48', name: 'GM - Chevrolet' },
-        { code: '7', name: 'BMW' },
-        { code: '33', name: 'Mercedes-Benz' },
-        { code: '3', name: 'Audi' },
-        { code: '40', name: 'Peugeot' },
-        { code: '10', name: 'Citroen' },
-        { code: '30', name: 'Jeep' },
-      ]);
+      setMarcas(
+        isBR
+          ? [
+              { code: '59', name: 'Volkswagen' },
+              { code: '21', name: 'Fiat' },
+              { code: '23', name: 'Chevrolet' },
+              { code: '25', name: 'Ford' },
+              { code: '26', name: 'Honda' },
+              { code: '56', name: 'Toyota' },
+              { code: '29', name: 'Hyundai' },
+              { code: '44', name: 'Renault' },
+              { code: '36', name: 'Nissan' },
+              { code: '34', name: 'Mitsubishi' },
+              { code: '48', name: 'GM - Chevrolet' },
+              { code: '7', name: 'BMW' },
+              { code: '33', name: 'Mercedes-Benz' },
+              { code: '3', name: 'Audi' },
+              { code: '40', name: 'Peugeot' },
+              { code: '10', name: 'Citroen' },
+              { code: '30', name: 'Jeep' },
+            ]
+          : []
+      );
     }
     setLoading('');
-  }, []);
+  }, [isBR, t]);
 
   const fetchModelos = useCallback(async (tipo: string, marcaCode: string) => {
     setLoading('modelos');
     setError('');
     try {
-      const res = await fetch(`/api/fipe?path=${tipo}/brands/${marcaCode}/models`);
+      const url = isBR
+        ? `/api/fipe?path=${tipo}/brands/${marcaCode}/models`
+        : `/api/vehicle-catalog?tipo=${tipo}&marca=${marcaCode}`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error('Erro ao buscar modelos');
       const data = await res.json();
       setModelos(data);
@@ -92,7 +101,7 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
       setModelos([]);
     }
     setLoading('');
-  }, []);
+  }, [isBR, t]);
 
   const fetchAnos = useCallback(async (tipo: string, marcaCode: string, modeloCode: string) => {
     setLoading('anos');
@@ -107,11 +116,11 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
       setAnos([]);
     }
     setLoading('');
-  }, []);
+  }, [t]);
 
   useEffect(() => {
-    if (isBR) fetchMarcas(value.tipo);
-  }, [isBR, value.tipo, fetchMarcas]);
+    fetchMarcas(value.tipo);
+  }, [value.tipo, fetchMarcas]);
 
   const handleTipoChange = (tipo: string) => {
     onChange({ tipo, marca: '', modelo: '', ano: '' });
@@ -141,8 +150,10 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
       setSelectedModeloCode(modeloCode);
       setSelectedAnoCode('');
       onChange({ ...value, modelo: modelo.name, ano: '', codigo: undefined, valor: undefined });
-      setAnos([]);
-      fetchAnos(value.tipo, selectedMarcaCode, modeloCode);
+      if (isBR) {
+        setAnos([]);
+        fetchAnos(value.tipo, selectedMarcaCode, modeloCode);
+      }
     }
   };
 
@@ -203,74 +214,50 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
         </div>
       </div>
 
-      {!isBR && (
-        <p className="text-sm text-gray-500 -mt-2">{t('manualNotice')}</p>
-      )}
-
       {/* Marca */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          {t('labelMarca')} {isBR && loading === 'marcas' && <span className="text-gray-400">({t('carregando')})</span>}
+          {t('labelMarca')} {loading === 'marcas' && <span className="text-gray-400">({t('carregando')})</span>}
         </label>
-        {isBR ? (
+        <select
+          className="input-field"
+          value={selectedMarcaCode}
+          onChange={(e) => handleMarcaChange(e.target.value)}
+          disabled={loading === 'marcas'}
+        >
+          <option value="">{t('selecioneMarca')}</option>
+          {marcas.map((m) => (
+            <option key={m.code} value={m.code}>
+              {m.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Modelo */}
+      {selectedMarcaCode && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {t('labelModelo')} {loading === 'modelos' && <span className="text-gray-400">({t('carregando')})</span>}
+          </label>
           <select
             className="input-field"
-            value={selectedMarcaCode}
-            onChange={(e) => handleMarcaChange(e.target.value)}
-            disabled={loading === 'marcas'}
+            value={selectedModeloCode}
+            onChange={(e) => handleModeloChange(e.target.value)}
+            disabled={loading === 'modelos'}
           >
-            <option value="">{t('selecioneMarca')}</option>
-            {marcas.map((m) => (
+            <option value="">{t('selecioneModelo')}</option>
+            {modelos.map((m) => (
               <option key={m.code} value={m.code}>
                 {m.name}
               </option>
             ))}
           </select>
-        ) : (
-          <input
-            type="text"
-            className="input-field"
-            placeholder={t('placeholderMarca')}
-            value={value.marca}
-            onChange={(e) => onChange({ ...value, marca: e.target.value })}
-          />
-        )}
-      </div>
-
-      {/* Modelo */}
-      {(isBR ? selectedMarcaCode : true) && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t('labelModelo')} {isBR && loading === 'modelos' && <span className="text-gray-400">({t('carregando')})</span>}
-          </label>
-          {isBR ? (
-            <select
-              className="input-field"
-              value={selectedModeloCode}
-              onChange={(e) => handleModeloChange(e.target.value)}
-              disabled={loading === 'modelos'}
-            >
-              <option value="">{t('selecioneModelo')}</option>
-              {modelos.map((m) => (
-                <option key={m.code} value={m.code}>
-                  {m.name}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type="text"
-              className="input-field"
-              placeholder={t('placeholderModelo')}
-              value={value.modelo}
-              onChange={(e) => onChange({ ...value, modelo: e.target.value })}
-            />
-          )}
         </div>
       )}
 
       {/* Ano */}
-      {(isBR ? selectedModeloCode : true) && (
+      {selectedModeloCode && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             {t('labelAno')} {isBR && loading === 'anos' && <span className="text-gray-400">({t('carregando')})</span>}
