@@ -262,7 +262,7 @@ export default function EmergenciaPage() {
           </div>
           {isLoggedIn && (
             <div className="mt-3 bg-white/10 rounded-lg px-3 py-2 text-sm">
-              {t.rich('loggedInAs', { nome: user?.nome, strong: (chunks) => <strong>{chunks}</strong> })}
+              {t.rich('loggedInAs', { nome: user?.nome ?? '', strong: (chunks) => <strong>{chunks}</strong> })}
             </div>
           )}
         </div>

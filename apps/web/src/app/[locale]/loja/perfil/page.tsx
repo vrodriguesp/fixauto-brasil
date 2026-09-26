@@ -5,7 +5,6 @@ import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
-import { ESTADOS_BRASIL } from '@fixauto/shared';
 
 export default function PerfilLojaPage() {
   const t = useTranslations('lojaPerfil');
@@ -142,9 +141,7 @@ export default function PerfilLojaPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEstado')}</label>
-            <select className="input-field" value={estado} onChange={(e) => setEstado(e.target.value)}>
-              {ESTADOS_BRASIL.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
-            </select>
+            <input type="text" className="input-field" value={estado} onChange={(e) => setEstado(e.target.value)} />
           </div>
         </div>
         <div>
