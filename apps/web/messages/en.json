@@ -258,6 +258,68 @@
     "footerTermos": "Terms of Use",
     "footerPrivacidade": "Privacy"
   },
+  "constants": {
+    "tiposServico": {
+      "colisao": "Collision",
+      "funilaria": "Bodywork & Paint",
+      "revisao": "Maintenance",
+      "mecanica": "Mechanical",
+      "eletrica": "Electrical",
+      "pneu": "Tires",
+      "outro": "Other"
+    },
+    "urgencias": {
+      "baixa": "Low",
+      "baixaDesc": "No rush, I can wait",
+      "media": "Medium",
+      "mediaDesc": "I need it within a few weeks",
+      "alta": "High",
+      "altaDesc": "Urgent, I need it as soon as possible"
+    },
+    "statusSolicitacao": {
+      "aberta": "Open",
+      "em_orcamento": "Quote Sent",
+      "aceita": "Quote Accepted",
+      "em_andamento": "In Progress",
+      "concluida": "Completed",
+      "cancelada": "Cancelled"
+    },
+    "statusOrcamento": {
+      "enviado": "Sent",
+      "visualizado": "Viewed",
+      "aceito": "Accepted",
+      "recusado": "Declined",
+      "expirado": "Expired"
+    },
+    "statusManutencao": {
+      "recebido": "Received",
+      "recebidoDesc": "Vehicle received at the shop",
+      "diagnostico": "Diagnosing",
+      "diagnosticoDesc": "Diagnosing the problem",
+      "aguardando_pecas": "Awaiting parts",
+      "aguardandoPecasDesc": "Waiting for the necessary parts",
+      "em_execucao": "In progress",
+      "emExecucaoDesc": "Work underway",
+      "pausa_cliente": "On hold - contacting customer",
+      "pausaClienteDesc": "Waiting for customer response",
+      "pausa_pecas": "On hold - parts missing",
+      "pausaPecasDesc": "Stopped due to missing parts",
+      "pausa_geral": "Paused",
+      "pausaGeralDesc": "Work temporarily paused",
+      "teste_final": "Final testing",
+      "testeFinalDesc": "Running quality checks",
+      "concluido": "Completed",
+      "concluidoDesc": "Work finished",
+      "entregue": "Delivered",
+      "entregueDesc": "Vehicle delivered to the customer"
+    },
+    "cargosFuncionario": {
+      "admin": "Administrator",
+      "adminDesc": "Full access to the shop portal",
+      "mecanico": "Mechanic",
+      "mecanicoDesc": "Access to the in-service vehicles page"
+    }
+  },
   "cookieBanner": {
     "texto": "We use cookies to understand how you use the site and to improve your experience. By accepting, you agree to our",
     "linkPrivacidade": "Privacy Policy",

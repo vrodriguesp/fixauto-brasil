@@ -268,6 +268,68 @@
     "footerTermos": "Termos de Uso",
     "footerPrivacidade": "Privacidade"
   },
+  "constants": {
+    "tiposServico": {
+      "colisao": "Colisão",
+      "funilaria": "Funilaria e Pintura",
+      "revisao": "Revisões",
+      "mecanica": "Mecânica",
+      "eletrica": "Elétrico",
+      "pneu": "Pneu",
+      "outro": "Outro"
+    },
+    "urgencias": {
+      "baixa": "Baixa",
+      "baixaDesc": "Sem pressa, posso esperar",
+      "media": "Média",
+      "mediaDesc": "Preciso em algumas semanas",
+      "alta": "Alta",
+      "altaDesc": "Urgente, preciso o mais rápido possível"
+    },
+    "statusSolicitacao": {
+      "aberta": "Aberta",
+      "em_orcamento": "Orçamento Enviado",
+      "aceita": "Orçamento Aceito",
+      "em_andamento": "Em Andamento",
+      "concluida": "Concluída",
+      "cancelada": "Cancelada"
+    },
+    "statusOrcamento": {
+      "enviado": "Enviado",
+      "visualizado": "Visualizado",
+      "aceito": "Aceito",
+      "recusado": "Recusado",
+      "expirado": "Expirado"
+    },
+    "statusManutencao": {
+      "recebido": "Recebido",
+      "recebidoDesc": "Veículo recebido na oficina",
+      "diagnostico": "Em diagnóstico",
+      "diagnosticoDesc": "Diagnosticando o problema",
+      "aguardando_pecas": "Aguardando peças",
+      "aguardandoPecasDesc": "Aguardando peças necessárias",
+      "em_execucao": "Em execução",
+      "emExecucaoDesc": "Serviço em andamento",
+      "pausa_cliente": "Pausa - contato cliente",
+      "pausaClienteDesc": "Aguardando retorno do cliente",
+      "pausa_pecas": "Pausa - peças em falta",
+      "pausaPecasDesc": "Parado por falta de peças",
+      "pausa_geral": "Pausado",
+      "pausaGeralDesc": "Serviço temporariamente pausado",
+      "teste_final": "Teste final",
+      "testeFinalDesc": "Realizando testes de qualidade",
+      "concluido": "Concluído",
+      "concluidoDesc": "Serviço finalizado",
+      "entregue": "Entregue",
+      "entregueDesc": "Veículo entregue ao cliente"
+    },
+    "cargosFuncionario": {
+      "admin": "Administrador",
+      "adminDesc": "Acesso completo ao portal da oficina",
+      "mecanico": "Mecânico",
+      "mecanicoDesc": "Acesso à página de veículos em serviço"
+    }
+  },
   "cookieBanner": {
     "texto": "Usamos cookies para entender como você usa o site e melhorar sua experiência. Ao aceitar, você concorda com nossa",
     "linkPrivacidade": "Política de Privacidade",

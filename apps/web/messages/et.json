@@ -257,6 +257,68 @@
     "footerTermos": "Kasutustingimused",
     "footerPrivacidade": "Privaatsus"
   },
+  "constants": {
+    "tiposServico": {
+      "colisao": "Kokkupõrge",
+      "funilaria": "Kere- ja värvitööd",
+      "revisao": "Hooldus",
+      "mecanica": "Mehaanika",
+      "eletrica": "Elektroonika",
+      "pneu": "Rehvid",
+      "outro": "Muu"
+    },
+    "urgencias": {
+      "baixa": "Madal",
+      "baixaDesc": "Kiiret ei ole, võin oodata",
+      "media": "Keskmine",
+      "mediaDesc": "Vajan mõne nädala jooksul",
+      "alta": "Kõrge",
+      "altaDesc": "Kiireloomuline, vajan võimalikult kiiresti"
+    },
+    "statusSolicitacao": {
+      "aberta": "Avatud",
+      "em_orcamento": "Hinnapakkumine saadetud",
+      "aceita": "Hinnapakkumine kinnitatud",
+      "em_andamento": "Töös",
+      "concluida": "Lõpetatud",
+      "cancelada": "Tühistatud"
+    },
+    "statusOrcamento": {
+      "enviado": "Saadetud",
+      "visualizado": "Vaadatud",
+      "aceito": "Kinnitatud",
+      "recusado": "Tagasi lükatud",
+      "expirado": "Aegunud"
+    },
+    "statusManutencao": {
+      "recebido": "Vastu võetud",
+      "recebidoDesc": "Sõiduk on töökotta vastu võetud",
+      "diagnostico": "Diagnostika",
+      "diagnosticoDesc": "Probleemi diagnoosimine",
+      "aguardando_pecas": "Ootab varuosi",
+      "aguardandoPecasDesc": "Ootab vajalikke varuosi",
+      "em_execucao": "Töös",
+      "emExecucaoDesc": "Teenus on pooleli",
+      "pausa_cliente": "Peatatud - klienti ootel",
+      "pausaClienteDesc": "Ootab kliendi tagasisidet",
+      "pausa_pecas": "Peatatud - varuosad puuduvad",
+      "pausaPecasDesc": "Peatatud varuosade puudumise tõttu",
+      "pausa_geral": "Peatatud",
+      "pausaGeralDesc": "Teenus ajutiselt peatatud",
+      "teste_final": "Lõpptestimine",
+      "testeFinalDesc": "Kvaliteedikontrolli tegemine",
+      "concluido": "Lõpetatud",
+      "concluidoDesc": "Teenus valmis",
+      "entregue": "Üle antud",
+      "entregueDesc": "Sõiduk on kliendile üle antud"
+    },
+    "cargosFuncionario": {
+      "admin": "Administraator",
+      "adminDesc": "Täielik ligipääs töökoja portaalile",
+      "mecanico": "Mehaanik",
+      "mecanicoDesc": "Ligipääs teeninduses olevate sõidukite lehele"
+    }
+  },
   "cookieBanner": {
     "texto": "Kasutame küpsiseid, et mõista, kuidas sa saiti kasutad, ja parandada sinu kasutuskogemust. Nõustudes lähtud meie",
     "linkPrivacidade": "privaatsuspoliitikast",

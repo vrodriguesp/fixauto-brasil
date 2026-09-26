@@ -258,6 +258,68 @@
     "footerTermos": "Termini di Utilizzo",
     "footerPrivacidade": "Privacy"
   },
+  "constants": {
+    "tiposServico": {
+      "colisao": "Collisione",
+      "funilaria": "Carrozzeria e Verniciatura",
+      "revisao": "Tagliando",
+      "mecanica": "Meccanica",
+      "eletrica": "Elettrauto",
+      "pneu": "Pneumatici",
+      "outro": "Altro"
+    },
+    "urgencias": {
+      "baixa": "Bassa",
+      "baixaDesc": "Nessuna fretta, posso aspettare",
+      "media": "Media",
+      "mediaDesc": "Mi serve entro poche settimane",
+      "alta": "Alta",
+      "altaDesc": "Urgente, mi serve il prima possibile"
+    },
+    "statusSolicitacao": {
+      "aberta": "Aperta",
+      "em_orcamento": "Preventivo Inviato",
+      "aceita": "Preventivo Accettato",
+      "em_andamento": "In Corso",
+      "concluida": "Completata",
+      "cancelada": "Annullata"
+    },
+    "statusOrcamento": {
+      "enviado": "Inviato",
+      "visualizado": "Visualizzato",
+      "aceito": "Accettato",
+      "recusado": "Rifiutato",
+      "expirado": "Scaduto"
+    },
+    "statusManutencao": {
+      "recebido": "Ricevuto",
+      "recebidoDesc": "Veicolo ricevuto in officina",
+      "diagnostico": "In diagnosi",
+      "diagnosticoDesc": "Diagnosi del problema in corso",
+      "aguardando_pecas": "In attesa di ricambi",
+      "aguardandoPecasDesc": "In attesa dei ricambi necessari",
+      "em_execucao": "In lavorazione",
+      "emExecucaoDesc": "Intervento in corso",
+      "pausa_cliente": "In pausa - contatto cliente",
+      "pausaClienteDesc": "In attesa di risposta dal cliente",
+      "pausa_pecas": "In pausa - ricambi mancanti",
+      "pausaPecasDesc": "Fermo per mancanza di ricambi",
+      "pausa_geral": "In pausa",
+      "pausaGeralDesc": "Intervento temporaneamente sospeso",
+      "teste_final": "Collaudo finale",
+      "testeFinalDesc": "Esecuzione dei test di qualità",
+      "concluido": "Completato",
+      "concluidoDesc": "Intervento terminato",
+      "entregue": "Consegnato",
+      "entregueDesc": "Veicolo consegnato al cliente"
+    },
+    "cargosFuncionario": {
+      "admin": "Amministratore",
+      "adminDesc": "Accesso completo al portale dell'officina",
+      "mecanico": "Meccanico",
+      "mecanicoDesc": "Accesso alla pagina dei veicoli in lavorazione"
+    }
+  },
   "cookieBanner": {
     "texto": "Utilizziamo i cookie per capire come usi il sito e migliorare la tua esperienza. Accettando, accetti la nostra",
     "linkPrivacidade": "Informativa sulla Privacy",
