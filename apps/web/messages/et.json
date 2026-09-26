@@ -34,6 +34,10 @@
     "cliente": "Klient"
   },
   "sejaParceiro": {
+    "metaTitle": "Saa asutajapartneriks",
+    "metaDescription": "BipFix on töökodade ja varuosade poodide asutajapartnerite valikufaasis. Piiratud kohtade arv, selles faasis komisjonitasu ei ole. Registreeri oma huvi.",
+    "ogTitle": "Saa asutajapartneriks",
+    "ogDescription": "BipFix on töökodade ja varuosade poodide asutajapartnerite valikufaasis. Piiratud kohtade arv, selles faasis komisjonitasu ei ole.",
     "heroTag": "ASUTAJAPARTNERITE VALIKUFAAS",
     "heroTitulo": "Ehitame midagi uut autoremondi turul — ja tahame, et sina oleksid nende esimeste seas",
     "heroTexto": "BipFix on alles algusjärgus olev ambitsioonikas projekt, millel pole veel tuhandeid kasutajaid — ja just seepärast aitab liitumine praegu kujundada platvormi ja tagab tingimused, mida hiljem enam ei pakuta.",

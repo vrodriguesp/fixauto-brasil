@@ -36,3 +36,19 @@ export function currencyForCountry(pais: string | null | undefined): string {
   if (EURO_COUNTRIES.has(code)) return 'EUR';
   return 'EUR';
 }
+
+/**
+ * Nome do pais por extenso a partir do codigo ISO alpha-2 (ex: 'EE' ->
+ * 'Estonia'), pra usar em textos/queries que precisam do nome e nao so
+ * do codigo (ex: query do embed do Google Maps). Usa Intl.DisplayNames
+ * em vez de manter uma lista propria - funciona pra qualquer pais,
+ * inclusive os que ainda nao existem em CURRENCY_BY_COUNTRY.
+ */
+export function countryNameForCode(pais: string | null | undefined, locale: string = 'en'): string | null {
+  if (!pais) return null;
+  try {
+    return new Intl.DisplayNames([locale], { type: 'region' }).of(pais.toUpperCase()) || null;
+  } catch {
+    return null;
+  }
+}

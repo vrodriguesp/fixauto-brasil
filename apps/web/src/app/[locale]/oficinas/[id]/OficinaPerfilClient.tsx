@@ -10,6 +10,7 @@ import { formatDate, INTL_LOCALE } from '@/lib/utils';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import StructuredData from '@/components/seo/StructuredData';
 import { generateAutoRepairSchema, generateReviewSchema } from '@/lib/seo-utils';
+import { countryNameForCode } from '@/lib/currency';
 
 interface Oficina {
   id: string;
@@ -329,12 +330,12 @@ export default function OficinaPerfilClient() {
         </div>
         <div className="rounded-lg overflow-hidden border border-gray-200">
           <iframe
-            title="Localização da oficina"
+            title={t('mapIframeTitle')}
             width="100%"
             height="300"
             style={{ border: 0 }}
             loading="lazy"
-            src={`https://www.google.com/maps?q=${encodeURIComponent(`${oficina.endereco}, ${oficina.cidade} - ${oficina.estado}, Brazil`)}&output=embed`}
+            src={`https://www.google.com/maps?q=${encodeURIComponent(`${oficina.endereco}, ${oficina.cidade} - ${oficina.estado}${countryNameForCode(oficina.pais) ? `, ${countryNameForCode(oficina.pais)}` : ''}`)}&output=embed`}
           />
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${oficina.endereco}, ${oficina.cidade} - ${oficina.estado}`)}`}
