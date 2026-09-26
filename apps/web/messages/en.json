@@ -32,5 +32,152 @@
     "checkinManual": "Manual Check-in",
     "administrador": "Admin",
     "cliente": "Customer"
+  },
+  "sejaParceiro": {
+    "heroTag": "FOUNDING PARTNER SELECTION PHASE",
+    "heroTitulo": "We're building something new in vehicle repair — and we want you among the first",
+    "heroTexto": "BipFix is still an ambitious project in its early days, without thousands of users yet — which is exactly why joining now means helping shape the platform and locking in terms that won't come around again.",
+    "beneficiosTitulo": "What it means to be a founding partner",
+    "beneficio1Titulo": "No commission during this phase",
+    "beneficio1Texto": "Founding partners use the full management and lead-generation system with no commission, with 30 days' notice before any future change.",
+    "beneficio2Titulo": "A real say in the product",
+    "beneficio2Texto": "As one of the first partners, your direct feedback shapes which features come next.",
+    "beneficio3Titulo": "Limited spots per region",
+    "beneficio3Texto": "We're selecting a small number of partners per city for the pilot phase, so each one gets real attention.",
+    "formTitulo": "Register your interest",
+    "formSubtitulo": "Takes under a minute. No commitment.",
+    "souOficina": "I'm a repair shop",
+    "souLoja": "I'm a parts supplier",
+    "campoResponsavel": "Contact name",
+    "campoNegocio": "Business name",
+    "placeholderNegocioOficina": "e.g. Smith Auto Repair",
+    "placeholderNegocioLoja": "e.g. Baltic Auto Parts",
+    "campoCidade": "City",
+    "placeholderCidade": "e.g. Tallinn",
+    "campoRegiao": "State/Region",
+    "placeholderRegiao": "e.g. Harju County",
+    "campoWhatsapp": "WhatsApp / Phone",
+    "placeholderWhatsapp": "e.g. +372 5555 5555",
+    "campoEmail": "Email (optional)",
+    "campoObservacao": "Anything else? (optional)",
+    "placeholderObservacao": "e.g. team size, specialties...",
+    "enviando": "Sending...",
+    "enviar": "I want to be a founding partner",
+    "concordaTermos": "By submitting, you agree to our",
+    "termosDeUso": "Terms of Use",
+    "erroObrigatorio": "Please fill in all required fields",
+    "erroGenerico": "Couldn't send it. Please try again in a moment.",
+    "sucessoTitulo": "We've received your interest!",
+    "sucessoTexto": "Our team will review your region and reach out on WhatsApp within 2 business days to explain the next steps of the pilot phase.",
+    "voltarInicio": "Back to home"
+  },
+  "paraOficinas": {
+    "metaTitle": "Management Software for Auto Repair Shops — Get More Customers",
+    "metaDescription": "Free software for auto repair shops to organize scheduling, quotes and staff, and gain visibility to win more customers in your area. Register your shop on BipFix.",
+    "metaKeywords": [
+      "auto repair shop management software",
+      "garage management system",
+      "app for auto repair shops",
+      "workshop scheduling software",
+      "how to get more customers for my garage",
+      "auto repair shop marketing",
+      "body shop management software",
+      "app to manage a garage",
+      "software for bodywork and paint shops"
+    ],
+    "ogTitle": "Management Software for Auto Repair Shops — Get More Customers",
+    "ogDescription": "Organize your shop and get in front of drivers in your area who need repairs. Free registration.",
+    "heroTitulo": "Organized management and more customers for your auto repair shop",
+    "heroTexto": "BipFix is the management system that organizes your shop's schedule, quotes and staff — while putting you in front of drivers in your area who need repairs right now.",
+    "ctaFundador": "I want to be a founding partner",
+    "ctaVerOficinas": "See shops on the platform",
+    "heroFootnote": "No monthly fee. No commission for founding partners.",
+    "funcTitulo": "Everything your shop gets with BipFix",
+    "funcSubtitulo": "A quick rundown of every feature — no fluff",
+    "funcCategorias": [
+      {
+        "titulo": "Customers and visibility",
+        "itens": [
+          "Public profile indexed on Google, by city",
+          "Automatic requests from drivers in your area",
+          "Reviews and reputation shown on your profile",
+          "Quick check-in when a vehicle arrives"
+        ]
+      },
+      {
+        "titulo": "Quotes and service",
+        "itens": [
+          "Structured quotes, with the option to pass on or absorb the commission",
+          "Step-by-step repair tracking, visible to the customer",
+          "Automatic notification when the vehicle is ready",
+          "Direct chat with the customer per request"
+        ]
+      },
+      {
+        "titulo": "Schedule and team",
+        "itens": [
+          "Schedule organized by vehicle and by staff member",
+          "Work distribution panel across the team",
+          "Capacity limit per mechanic",
+          "Staff records with roles (owner / mechanic)",
+          "Internal notes per vehicle, hidden from the customer",
+          "Real-time notifications on every team member's screen"
+        ]
+      },
+      {
+        "titulo": "Parts",
+        "itens": [
+          "Get quotes from partner parts suppliers in your area",
+          "Also request quotes from nearby shops",
+          "Sell your surplus stock to other shops",
+          "Chat with the supplier before confirming the order"
+        ]
+      },
+      {
+        "titulo": "Finance",
+        "itens": [
+          "Commission configurable by performance and loyalty",
+          "Full commission statement and entries",
+          "Total transparency on what's charged and when"
+        ]
+      },
+      {
+        "titulo": "Learning",
+        "itens": [
+          "Guided tutorial portal built into the system",
+          "Separate learning track for owners and for mechanics",
+          "No need for outside training"
+        ]
+      }
+    ],
+    "doresTitulo": "The everyday problems BipFix solves",
+    "doresSubtitulo": "Built for the real routine of running a shop, not just for big chains",
+    "dores": [
+      { "dor": "Schedule on paper or a spreadsheet, hard to see who's doing what", "solucao": "Visual schedule by vehicle and by staff member, with a work distribution panel" },
+      { "dor": "Few new customers, relying only on referrals", "solucao": "Public profile indexed on Google and automatic quote requests from your area" },
+      { "dor": "Quotes done over WhatsApp, with no tracking or history", "solucao": "Structured quotes, with repair stages and automatic customer notifications" },
+      { "dor": "No visible reputation to stand out from the competition", "solucao": "Real customer reviews and reputation badges shown on your profile" },
+      { "dor": "Messy communication between the mechanic and the front desk", "solucao": "Internal notes per vehicle and real-time notifications for the team" },
+      { "dor": "Slow to find parts and compare suppliers", "solucao": "Parts quotes from partner suppliers and other shops in your area, with direct chat" }
+    ],
+    "comoTitulo": "How your shop gains visibility",
+    "steps": [
+      { "title": "Sign up", "description": "Complete profile with address, specialties and photos, in a few minutes" },
+      { "title": "Show up in search", "description": "Your public profile is indexed on Google for anyone searching for a shop in your city" },
+      { "title": "Receive requests", "description": "Nearby drivers send repair requests directly to you" },
+      { "title": "Build reputation", "description": "Every well-rated job boosts your ranking and trust with new customers" }
+    ],
+    "transparenciaTitulo": "Transparency about costs",
+    "transparenciaTexto": "Today, registering and using the management system is free, and we don't charge founding partners any commission. If that changes in the future, you'll be notified at least 30 days before any charge takes effect, in line with our",
+    "transparenciaTermosLink": "Terms of Use",
+    "faqTitulo": "Frequently asked questions from shops",
+    "faq": [
+      { "pergunta": "How much does the BipFix management system cost my shop?", "resposta": "Registering and using the management tools (schedule, quotes, staff, reviews) has no monthly fee. Today, we don't charge founding partners any commission. If that changes in the future, we'll give at least 30 days' notice before any charge, per our Terms of Use." },
+      { "pergunta": "How does BipFix help my shop get more customers?", "resposta": "Drivers in your area who need repairs send photos of the damage and get quotes from nearby shops, including yours. Your public profile also shows up on Google for anyone searching for shops in your city, with your reviews, specialties and location." },
+      { "pergunta": "Does the system replace a spreadsheet or a scheduling notebook?", "resposta": "Yes. You organize your schedule by vehicle and by staff member, distribute work among mechanics, control your service capacity and get automatic notifications — all in one place, with no paper or loose spreadsheets." },
+      { "pergunta": "Do I need technical knowledge to use it?", "resposta": "No. The platform was designed for the everyday reality of a repair shop, with a guided learning portal built right into the system so you and your team can learn each feature in minutes." },
+      { "pergunta": "Can I buy parts from suppliers through the platform?", "resposta": "Yes. You can open parts quote requests to partner suppliers and other shops in your area, compare prices and lead times, and negotiate directly over chat before confirming the order." }
+    ],
+    "ctaFinalTitulo": "Ready to organize your shop and win more customers?"
   }
 }

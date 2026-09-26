@@ -32,5 +32,152 @@
     "checkinManual": "Check-in Manuale",
     "administrador": "Amministratore",
     "cliente": "Cliente"
+  },
+  "sejaParceiro": {
+    "heroTag": "FASE DI SELEZIONE DEI SOCI FONDATORI",
+    "heroTitulo": "Stiamo costruendo qualcosa di nuovo nel settore delle riparazioni auto — e vogliamo te tra i primi",
+    "heroTexto": "BipFix è ancora un progetto ambizioso nella sua fase iniziale, senza migliaia di utenti — ed è proprio per questo che chi entra ora aiuta a plasmare la piattaforma e si assicura condizioni che non si ripeteranno in futuro.",
+    "beneficiosTitulo": "Cosa significa essere un socio fondatore",
+    "beneficio1Titulo": "Nessuna commissione in questa fase",
+    "beneficio1Texto": "I soci fondatori usano l'intero sistema di gestione e acquisizione clienti senza pagare commissioni, con un preavviso di 30 giorni prima di qualsiasi cambiamento futuro.",
+    "beneficio2Titulo": "Voce in capitolo sul prodotto",
+    "beneficio2Texto": "Come uno dei primi, il tuo feedback diretto contribuisce a decidere quali funzionalità arriveranno sulla piattaforma.",
+    "beneficio3Titulo": "Posti limitati per regione",
+    "beneficio3Texto": "Nella fase pilota selezioniamo un numero ridotto di partner per città, per garantire attenzione reale a ciascuno.",
+    "formTitulo": "Registra il tuo interesse",
+    "formSubtitulo": "Richiede meno di un minuto. Nessun impegno.",
+    "souOficina": "Sono un'officina",
+    "souLoja": "Sono un fornitore di ricambi",
+    "campoResponsavel": "Nome del referente",
+    "campoNegocio": "Nome dell'attività",
+    "placeholderNegocioOficina": "Es: Autofficina Rossi",
+    "placeholderNegocioLoja": "Es: Ricambi Milano",
+    "campoCidade": "Città",
+    "placeholderCidade": "Es: Milano",
+    "campoRegiao": "Provincia/Regione",
+    "placeholderRegiao": "Es: Lombardia",
+    "campoWhatsapp": "WhatsApp / Telefono",
+    "placeholderWhatsapp": "Es: +39 333 123 4567",
+    "campoEmail": "Email (facoltativo)",
+    "campoObservacao": "Vuoi aggiungere altro? (facoltativo)",
+    "placeholderObservacao": "Es: numero di dipendenti, specializzazioni...",
+    "enviando": "Invio in corso...",
+    "enviar": "Voglio diventare socio fondatore",
+    "concordaTermos": "Inviando accetti i nostri",
+    "termosDeUso": "Termini di Utilizzo",
+    "erroObrigatorio": "Compila tutti i campi obbligatori",
+    "erroGenerico": "Invio non riuscito. Riprova tra qualche istante.",
+    "sucessoTitulo": "Abbiamo ricevuto il tuo interesse!",
+    "sucessoTexto": "Il nostro team analizzerà la tua zona e ti contatterà su WhatsApp entro 2 giorni lavorativi per spiegarti i prossimi passi della fase pilota.",
+    "voltarInicio": "Torna alla home"
+  },
+  "paraOficinas": {
+    "metaTitle": "Sistema di Gestione per Officine Meccaniche e Più Clienti",
+    "metaDescription": "Software gratuito per officine meccaniche per organizzare agenda, preventivi e team, e guadagnare visibilità per trovare più clienti nella tua zona. Registra la tua officina su BipFix.",
+    "metaKeywords": [
+      "sistema di gestione per officina meccanica",
+      "software per officina meccanica",
+      "app per gestire officina",
+      "programma di gestione officina",
+      "come trovare più clienti per officina meccanica",
+      "pubblicizzare officina meccanica",
+      "marketing per officina meccanica",
+      "sistema per carrozzeria",
+      "software per agenda officina"
+    ],
+    "ogTitle": "Sistema di Gestione per Officine Meccaniche e Più Clienti",
+    "ogDescription": "Organizza la tua officina e fatti trovare dagli automobilisti della tua zona che hanno bisogno di riparazioni. Registrazione gratuita.",
+    "heroTitulo": "Gestione organizzata e più clienti per la tua officina meccanica",
+    "heroTexto": "BipFix è il sistema di gestione che organizza agenda, preventivi e team della tua officina — e allo stesso tempo ti mette in vetrina agli automobilisti della tua zona che cercano una riparazione proprio adesso.",
+    "ctaFundador": "Voglio diventare socio fondatore",
+    "ctaVerOficinas": "Vedi le officine sulla piattaforma",
+    "heroFootnote": "Nessun canone mensile. Nessuna commissione per i soci fondatori.",
+    "funcTitulo": "Tutto quello che la tua officina ha con BipFix",
+    "funcSubtitulo": "Un riepilogo rapido di ogni funzionalità — senza giri di parole",
+    "funcCategorias": [
+      {
+        "titulo": "Clienti e visibilità",
+        "itens": [
+          "Profilo pubblico indicizzato su Google, per città",
+          "Ricezione automatica di richieste dalla tua zona",
+          "Recensioni e reputazione mostrate sul profilo",
+          "Check-in rapido all'arrivo del veicolo"
+        ]
+      },
+      {
+        "titulo": "Preventivi e assistenza",
+        "itens": [
+          "Preventivi strutturati, con possibilità di trasferire o assorbire la commissione",
+          "Avanzamento della riparazione per fasi, visibile al cliente",
+          "Notifica automatica quando il veicolo è pronto",
+          "Chat diretta con il cliente per ogni richiesta"
+        ]
+      },
+      {
+        "titulo": "Agenda e team",
+        "itens": [
+          "Agenda per veicolo e per dipendente",
+          "Pannello di distribuzione del lavoro tra il team",
+          "Limite di capacità per meccanico",
+          "Gestione del team con ruoli (titolare / meccanico)",
+          "Note interne per veicolo, non visibili al cliente",
+          "Notifiche in tempo reale sullo schermo di tutto il team"
+        ]
+      },
+      {
+        "titulo": "Ricambi",
+        "itens": [
+          "Richiesta preventivi ai fornitori partner della zona",
+          "Richiesta preventivi anche ad altre officine vicine",
+          "Vendita delle scorte in eccesso ad altre officine",
+          "Chat con il fornitore prima di confermare l'ordine"
+        ]
+      },
+      {
+        "titulo": "Finanza",
+        "itens": [
+          "Commissione configurabile in base a performance e fedeltà",
+          "Estratto conto e movimenti della commissione",
+          "Trasparenza totale su cosa viene addebitato e quando"
+        ]
+      },
+      {
+        "titulo": "Formazione",
+        "itens": [
+          "Portale con tutorial guidato integrato nel sistema",
+          "Percorso separato per il titolare e per il meccanico",
+          "Nessuna formazione esterna necessaria"
+        ]
+      }
+    ],
+    "doresTitulo": "I problemi quotidiani che BipFix risolve",
+    "doresSubtitulo": "Pensato per la routine reale di chi gestisce un'officina, non solo per le grandi catene",
+    "dores": [
+      { "dor": "Agenda su carta o foglio di calcolo, difficile capire chi fa cosa", "solucao": "Agenda visuale per veicolo e per dipendente, con pannello di distribuzione del lavoro" },
+      { "dor": "Pochi clienti nuovi, dipendenti solo dal passaparola", "solucao": "Profilo pubblico indicizzato su Google e richieste di preventivo automatiche dalla zona" },
+      { "dor": "Preventivi fatti su WhatsApp, senza controllo né storico", "solucao": "Preventivi strutturati, con fasi della riparazione e notifiche automatiche al cliente" },
+      { "dor": "Nessuna reputazione visibile per distinguersi dalla concorrenza", "solucao": "Recensioni reali dei clienti e badge di reputazione mostrati sul profilo" },
+      { "dor": "Comunicazione disordinata tra meccanico e reception", "solucao": "Note interne per veicolo e notifiche in tempo reale per il team" },
+      { "dor": "Tempi lunghi per trovare ricambi e confrontare fornitori", "solucao": "Preventivi ricambi da fornitori partner e altre officine della zona, con chat diretta" }
+    ],
+    "comoTitulo": "Come la tua officina guadagna visibilità",
+    "steps": [
+      { "title": "Registrati", "description": "Profilo completo con indirizzo, specializzazioni e foto, in pochi minuti" },
+      { "title": "Fatti trovare nelle ricerche", "description": "Il tuo profilo pubblico è indicizzato su Google per chi cerca un'officina nella tua città" },
+      { "title": "Ricevi richieste", "description": "Gli automobilisti nelle vicinanze inviano richieste di riparazione direttamente a te" },
+      { "title": "Costruisci reputazione", "description": "Ogni servizio ben recensito aumenta la tua posizione e la fiducia dei nuovi clienti" }
+    ],
+    "transparenciaTitulo": "Trasparenza sui costi",
+    "transparenciaTexto": "Oggi la registrazione e l'uso del sistema di gestione sono gratuiti, e non applichiamo commissioni ai soci fondatori. Se questo cambiasse in futuro, sarai avvisato con almeno 30 giorni di anticipo prima che qualsiasi addebito entri in vigore, secondo i nostri",
+    "transparenciaTermosLink": "Termini di Utilizzo",
+    "faqTitulo": "Domande frequenti delle officine",
+    "faq": [
+      { "pergunta": "Quanto costa il sistema di gestione BipFix per la mia officina?", "resposta": "La registrazione e l'uso degli strumenti di gestione (agenda, preventivi, team, recensioni) non hanno canone mensile. Oggi non applichiamo commissioni ai soci fondatori. Se questo dovesse cambiare in futuro, avviseremo con almeno 30 giorni di anticipo prima di qualsiasi addebito, secondo i nostri Termini di Utilizzo." },
+      { "pergunta": "Come aiuta BipFix la mia officina a trovare più clienti?", "resposta": "Gli automobilisti della tua zona che hanno bisogno di riparazioni inviano le foto del danno e ricevono preventivi dalle officine vicine, inclusa la tua. Il tuo profilo pubblico compare anche su Google per chi cerca officine nella tua città, con le tue recensioni, specializzazioni e posizione." },
+      { "pergunta": "Il sistema sostituisce un foglio di calcolo o un'agenda cartacea?", "resposta": "Sì. Organizzi l'agenda per veicolo e per dipendente, distribuisci il lavoro tra i meccanici, controlli la capacità di assistenza e ricevi notifiche automatiche — tutto in un unico posto, senza carta o fogli sparsi." },
+      { "pergunta": "Serve una competenza tecnica per usarlo?", "resposta": "No. La piattaforma è pensata per la vita quotidiana dell'officina, con un portale di formazione guidata integrato nel sistema perché tu e il tuo team impariate ogni funzione in pochi minuti." },
+      { "pergunta": "Posso acquistare ricambi dai fornitori tramite la piattaforma?", "resposta": "Sì. Puoi aprire richieste di preventivo per ricambi a negozi partner e altre officine della zona, confrontare prezzi e tempi di consegna, e negoziare direttamente in chat prima di confermare l'ordine." }
+    ],
+    "ctaFinalTitulo": "Pronto a organizzare la tua officina e trovare più clienti?"
   }
 }

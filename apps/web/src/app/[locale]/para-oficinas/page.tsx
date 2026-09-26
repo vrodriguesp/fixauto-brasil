@@ -1,65 +1,48 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { getTranslations } from 'next-intl/server';
 import StructuredData from '@/components/seo/StructuredData';
 import { generateFAQSchema } from '@/lib/seo-utils';
+import { routing } from '@/i18n/routing';
 
-export const metadata: Metadata = {
-  title: 'Sistema de Gestão para Oficina Mecânica e Mais Clientes',
-  description:
-    'Software gratuito para oficina mecânica organizar agenda, orçamentos e equipe, e ganhar visibilidade para conseguir mais clientes na sua região. Cadastre sua oficina no BipFix.',
-  keywords: [
-    'sistema de gestão para oficina mecânica',
-    'software para oficina mecânica',
-    'aplicativo para oficina mecânica',
-    'programa de gestão de oficina',
-    'como conseguir mais clientes para oficina mecânica',
-    'divulgar oficina mecânica',
-    'marketing para oficina mecânica',
-    'app para gerenciar oficina',
-    'sistema para funilaria e pintura',
-  ],
-  alternates: { canonical: 'https://bipfix.com/para-oficinas' },
-  openGraph: {
-    type: 'website',
-    locale: 'pt_BR',
-    siteName: 'BipFix',
-    title: 'Sistema de Gestão para Oficina Mecânica e Mais Clientes | BipFix',
-    description:
-      'Organize sua oficina e apareça para motoristas da sua região precisando de reparo. Cadastro gratuito.',
-    url: 'https://bipfix.com/para-oficinas',
-  },
-};
+const OG_LOCALE: Record<string, string> = { pt: 'pt_BR', en: 'en_US', et: 'et_EE', it: 'it_IT' };
+const CURRENCY: Record<string, string> = { pt: 'BRL', en: 'EUR', et: 'EUR', it: 'EUR' };
 
-const FAQ_ITEMS = [
-  {
-    pergunta: 'Quanto custa o sistema de gestão do BipFix para minha oficina?',
-    resposta:
-      'O cadastro e o uso das ferramentas de gestão (agenda, orçamentos, equipe, avaliações) não têm mensalidade. Hoje não cobramos comissão dos parceiros iniciais. Caso isso mude no futuro, avisamos com pelo menos 30 dias de antecedência antes de qualquer cobrança, conforme nossos Termos de Uso.',
-  },
-  {
-    pergunta: 'Como o BipFix ajuda minha oficina a conseguir mais clientes?',
-    resposta:
-      'Motoristas da sua região que precisam de reparo enviam fotos do dano e recebem orçamentos de oficinas próximas, incluindo a sua. Seu perfil público também aparece no Google para quem pesquisa oficinas na sua cidade, com suas avaliações, especialidades e localização.',
-  },
-  {
-    pergunta: 'O sistema substitui uma planilha ou caderno de agendamento?',
-    resposta:
-      'Sim. Você organiza sua agenda por veículo e funcionário, distribui o trabalho entre mecânicos, controla a capacidade de atendimento e recebe notificações automáticas — tudo em um só lugar, sem depender de papel ou planilhas soltas.',
-  },
-  {
-    pergunta: 'Preciso ter conhecimento técnico para usar?',
-    resposta:
-      'Não. A plataforma foi desenhada para o dia a dia da oficina, com um portal de aprendizado guiado dentro do próprio sistema para você e sua equipe aprenderem cada função em poucos minutos.',
-  },
-  {
-    pergunta: 'Consigo comprar peças de fornecedores pela plataforma?',
-    resposta:
-      'Sim. Você pode abrir cotações de peças para lojas parceiras e outras oficinas da região, comparar preços e prazos, e negociar diretamente pelo chat antes de confirmar o pedido.',
-  },
-];
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'paraOficinas' });
+  const path = locale === routing.defaultLocale ? '/para-oficinas' : `/${locale}/para-oficinas`;
+  return {
+    title: t('metaTitle'),
+    description: t('metaDescription'),
+    keywords: t.raw('metaKeywords') as string[],
+    alternates: { canonical: `https://bipfix.com${path}` },
+    openGraph: {
+      type: 'website',
+      locale: OG_LOCALE[locale] || 'pt_BR',
+      siteName: 'BipFix',
+      title: `${t('ogTitle')} | BipFix`,
+      description: t('ogDescription'),
+      url: `https://bipfix.com${path}`,
+    },
+  };
+}
 
-export default function ParaOficinasPage() {
-  const faqSchema = generateFAQSchema(FAQ_ITEMS);
+type FuncCategoria = { titulo: string; itens: string[] };
+type DorSolucao = { dor: string; solucao: string };
+type Step = { title: string; description: string };
+type Faq = { pergunta: string; resposta: string };
+
+export default async function ParaOficinasPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'paraOficinas' });
+
+  const funcCategorias = t.raw('funcCategorias') as FuncCategoria[];
+  const dores = t.raw('dores') as DorSolucao[];
+  const steps = t.raw('steps') as Step[];
+  const faqItems = t.raw('faq') as Faq[];
+
+  const faqSchema = generateFAQSchema(faqItems);
 
   const softwareSchema = {
     '@context': 'https://schema.org',
@@ -68,12 +51,11 @@ export default function ParaOficinasPage() {
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     url: 'https://bipfix.com/para-oficinas',
-    description:
-      'Sistema de gestão para oficina mecânica: agenda, orçamentos, equipe, cotação de peças e visibilidade para novos clientes.',
+    description: t('metaDescription'),
     offers: {
       '@type': 'Offer',
       price: '0',
-      priceCurrency: 'BRL',
+      priceCurrency: CURRENCY[locale] || 'EUR',
     },
   };
 
@@ -86,30 +68,23 @@ export default function ParaOficinasPage() {
       <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="max-w-3xl">
-            <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
-              Gestão organizada e mais clientes para sua oficina mecânica
-            </h1>
-            <p className="mt-6 text-lg sm:text-xl text-primary-100 leading-relaxed">
-              O BipFix é o sistema de gestão que organiza agenda, orçamentos e equipe da sua oficina — e ao mesmo
-              tempo te coloca na frente de motoristas da sua região procurando reparo agora.
-            </p>
+            <h1 className="text-4xl sm:text-5xl font-bold leading-tight">{t('heroTitulo')}</h1>
+            <p className="mt-6 text-lg sm:text-xl text-primary-100 leading-relaxed">{t('heroTexto')}</p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Link
                 href="/seja-parceiro"
                 className="bg-white text-primary-700 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors text-center"
               >
-                Quero ser parceiro fundador
+                {t('ctaFundador')}
               </Link>
               <Link
                 href="/oficinas"
                 className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white/10 transition-colors text-center"
               >
-                Ver oficinas na plataforma
+                {t('ctaVerOficinas')}
               </Link>
             </div>
-            <p className="mt-4 text-sm text-primary-200">
-              Sem mensalidade. Sem comissão para os parceiros iniciais.
-            </p>
+            <p className="mt-4 text-sm text-primary-200">{t('heroFootnote')}</p>
           </div>
         </div>
       </section>
@@ -117,67 +92,12 @@ export default function ParaOficinasPage() {
       {/* Resumo sintetico de todas as funcionalidades */}
       <section className="py-20 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
-            Tudo que sua oficina tem no BipFix
-          </h2>
-          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-            Um resumo rápido de cada funcionalidade — sem enrolação
-          </p>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">{t('funcTitulo')}</h2>
+          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">{t('funcSubtitulo')}</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FuncCategoria
-              titulo="Clientes e visibilidade"
-              itens={[
-                'Perfil público indexado no Google, por cidade',
-                'Recebimento automático de solicitações da região',
-                'Avaliações e reputação exibidas no perfil',
-                'Check-in rápido na chegada do veículo',
-              ]}
-            />
-            <FuncCategoria
-              titulo="Orçamentos e atendimento"
-              itens={[
-                'Orçamentos estruturados, com opção de repassar ou absorver comissão',
-                'Acompanhamento do reparo em etapas, visível ao cliente',
-                'Notificação automática quando o veículo fica pronto',
-                'Chat direto com o cliente por solicitação',
-              ]}
-            />
-            <FuncCategoria
-              titulo="Agenda e equipe"
-              itens={[
-                'Agenda por veículo e por funcionário',
-                'Painel de distribuição de trabalho entre a equipe',
-                'Limite de capacidade por mecânico',
-                'Cadastro de equipe com cargos (dono / mecânico)',
-                'Notas internas por veículo, sem o cliente ver',
-                'Notificações em tempo real na tela de toda a equipe',
-              ]}
-            />
-            <FuncCategoria
-              titulo="Peças"
-              itens={[
-                'Cotação de peças com lojas parceiras da região',
-                'Cotação também com outras oficinas vizinhas',
-                'Venda do seu estoque excedente para outras oficinas',
-                'Chat com o fornecedor antes de fechar o pedido',
-              ]}
-            />
-            <FuncCategoria
-              titulo="Financeiro"
-              itens={[
-                'Comissão configurável por performance e fidelidade',
-                'Extrato de comissão e lançamentos',
-                'Transparência total sobre o que é cobrado e quando',
-              ]}
-            />
-            <FuncCategoria
-              titulo="Aprendizado"
-              itens={[
-                'Portal de tutorial guiado dentro do próprio sistema',
-                'Trilha separada para o dono e para o mecânico',
-                'Sem necessidade de treinamento externo',
-              ]}
-            />
+            {funcCategorias.map((cat, i) => (
+              <FuncCategoriaCard key={i} titulo={cat.titulo} itens={cat.itens} />
+            ))}
           </div>
         </div>
       </section>
@@ -185,37 +105,12 @@ export default function ParaOficinasPage() {
       {/* Dores -> Solucao */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
-            Os problemas do dia a dia que o BipFix resolve
-          </h2>
-          <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">
-            Feito para a rotina real de quem administra uma oficina, não só para grandes redes
-          </p>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">{t('doresTitulo')}</h2>
+          <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">{t('doresSubtitulo')}</p>
           <div className="grid md:grid-cols-3 gap-8">
-            <DorSolucao
-              dor="Agenda em papel ou planilha, difícil de ver quem está fazendo o quê"
-              solucao="Agenda visual por veículo e por funcionário, com painel de distribuição de trabalho"
-            />
-            <DorSolucao
-              dor="Poucos clientes novos, dependendo só de indicação"
-              solucao="Perfil público indexado no Google e recebimento automático de pedidos de orçamento da região"
-            />
-            <DorSolucao
-              dor="Orçamento feito no WhatsApp, sem controle nem histórico"
-              solucao="Orçamentos estruturados, com etapas do reparo e notificação automática ao cliente"
-            />
-            <DorSolucao
-              dor="Sem visibilidade de reputação para se diferenciar da concorrência"
-              solucao="Avaliações reais de clientes e badges de reputação exibidos no seu perfil"
-            />
-            <DorSolucao
-              dor="Comunicação da equipe bagunçada entre mecânico e balcão"
-              solucao="Notas internas por veículo e notificações em tempo real para a equipe"
-            />
-            <DorSolucao
-              dor="Demora para achar peça e comparar fornecedor"
-              solucao="Cotação de peças com lojas parceiras e outras oficinas da sua região, com chat direto"
-            />
+            {dores.map((d, i) => (
+              <DorSolucaoCard key={i} dor={d.dor} solucao={d.solucao} />
+            ))}
           </div>
         </div>
       </section>
@@ -223,14 +118,11 @@ export default function ParaOficinasPage() {
       {/* Como funciona para conseguir clientes */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Como sua oficina ganha visibilidade
-          </h2>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">{t('comoTitulo')}</h2>
           <div className="grid md:grid-cols-4 gap-8">
-            <Step number={1} title="Cadastre-se" description="Perfil completo com endereço, especialidades e fotos, em poucos minutos" />
-            <Step number={2} title="Apareça na busca" description="Seu perfil público é indexado no Google para quem procura oficina na sua cidade" />
-            <Step number={3} title="Receba pedidos" description="Motoristas próximos enviam solicitações de reparo direto para você" />
-            <Step number={4} title="Construa reputação" description="Cada serviço bem avaliado aumenta sua posição e confiança com novos clientes" />
+            {steps.map((s, i) => (
+              <StepCard key={i} number={i + 1} title={s.title} description={s.description} />
+            ))}
           </div>
         </div>
       </section>
@@ -238,13 +130,11 @@ export default function ParaOficinasPage() {
       {/* Comissao / transparencia */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Transparência sobre custos</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">{t('transparenciaTitulo')}</h2>
           <p className="text-gray-600 text-lg leading-relaxed">
-            Hoje o cadastro e o uso do sistema de gestão são gratuitos, e não cobramos comissão dos parceiros
-            iniciais. Se isso mudar no futuro, você será avisado com no mínimo 30 dias de antecedência antes de
-            qualquer cobrança começar a valer, conforme nossos{' '}
+            {t('transparenciaTexto')}{' '}
             <Link href="/termos" className="text-primary-600 hover:underline font-medium">
-              Termos de Uso
+              {t('transparenciaTermosLink')}
             </Link>
             .
           </p>
@@ -254,9 +144,9 @@ export default function ParaOficinasPage() {
       {/* FAQ */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Perguntas frequentes de oficinas</h2>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">{t('faqTitulo')}</h2>
           <div className="space-y-4">
-            {FAQ_ITEMS.map((faq, i) => (
+            {faqItems.map((faq, i) => (
               <div key={i} className="bg-white border border-gray-200 rounded-lg p-5">
                 <h3 className="font-semibold text-gray-900 mb-2">{faq.pergunta}</h3>
                 <p className="text-gray-600 leading-relaxed text-sm">{faq.resposta}</p>
@@ -269,12 +159,12 @@ export default function ParaOficinasPage() {
       {/* CTA final */}
       <section className="py-16 bg-primary-700 text-white text-center">
         <div className="max-w-3xl mx-auto px-4">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-4">Pronto para organizar sua oficina e ganhar mais clientes?</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4">{t('ctaFinalTitulo')}</h2>
           <Link
             href="/seja-parceiro"
             className="inline-block mt-4 bg-white text-primary-700 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors"
           >
-            Quero ser parceiro fundador
+            {t('ctaFundador')}
           </Link>
         </div>
       </section>
@@ -282,7 +172,7 @@ export default function ParaOficinasPage() {
   );
 }
 
-function FuncCategoria({ titulo, itens }: { titulo: string; itens: string[] }) {
+function FuncCategoriaCard({ titulo, itens }: { titulo: string; itens: string[] }) {
   return (
     <div className="border border-gray-200 rounded-xl p-6">
       <h3 className="font-semibold text-gray-900 mb-4">{titulo}</h3>
@@ -300,7 +190,7 @@ function FuncCategoria({ titulo, itens }: { titulo: string; itens: string[] }) {
   );
 }
 
-function DorSolucao({ dor, solucao }: { dor: string; solucao: string }) {
+function DorSolucaoCard({ dor, solucao }: { dor: string; solucao: string }) {
   return (
     <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
       <p className="text-sm text-red-600 font-medium mb-2">✕ {dor}</p>
@@ -309,7 +199,7 @@ function DorSolucao({ dor, solucao }: { dor: string; solucao: string }) {
   );
 }
 
-function Step({ number, title, description }: { number: number; title: string; description: string }) {
+function StepCard({ number, title, description }: { number: number; title: string; description: string }) {
   return (
     <div className="text-center">
       <div className="w-10 h-10 bg-primary-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 font-bold">

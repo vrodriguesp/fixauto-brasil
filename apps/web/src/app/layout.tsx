@@ -27,6 +27,13 @@ export const metadata: Metadata = {
     template: '%s | BipFix',
   },
   description: 'Plataforma que conecta motoristas a oficinas mecânicas no Brasil. Envie fotos do dano, receba orçamentos e escolha a melhor opção. Simples, rápido e transparente.',
+  // Codigo de verificacao do Google Search Console (metodo "tag HTML" -
+  // Search Console > Adicionar propriedade > URL prefix > HTML tag,
+  // copiar so o valor do atributo content). Sem a env var, a tag nem
+  // aparece - nao precisa de rebuild condicional.
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
 };
 
 export default async function RootLayout({

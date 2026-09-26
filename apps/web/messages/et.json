@@ -32,5 +32,151 @@
     "checkinManual": "Käsitsi registreerimine",
     "administrador": "Administraator",
     "cliente": "Klient"
+  },
+  "sejaParceiro": {
+    "heroTag": "ASUTAJAPARTNERITE VALIKUFAAS",
+    "heroTitulo": "Ehitame midagi uut autoremondi turul — ja tahame, et sina oleksid nende esimeste seas",
+    "heroTexto": "BipFix on alles algusjärgus olev ambitsioonikas projekt, millel pole veel tuhandeid kasutajaid — ja just seepärast aitab liitumine praegu kujundada platvormi ja tagab tingimused, mida hiljem enam ei pakuta.",
+    "beneficiosTitulo": "Mida tähendab olla asutajapartner",
+    "beneficio1Titulo": "Selles faasis komisjonitasu ei ole",
+    "beneficio1Texto": "Asutajapartnerid kasutavad kogu haldus- ja kliendihankesüsteemi ilma komisjonitasuta ning saavad 30-päevase etteteatamise enne mistahes tulevast muudatust.",
+    "beneficio2Titulo": "Sinu hääl loeb toote arendamisel",
+    "beneficio2Texto": "Ühe esimese partnerina kujundab sinu otsene tagasiside, millised funktsioonid platvormile järgmisena lisatakse.",
+    "beneficio3Titulo": "Piiratud arv kohti piirkonna kohta",
+    "beneficio3Texto": "Pilootfaasis valime iga linna kohta välja väikese arvu partnereid, et igaühele pöörata tõelist tähelepanu.",
+    "formTitulo": "Registreeri oma huvi",
+    "formSubtitulo": "Võtab alla minuti. Ilma kohustusteta.",
+    "souOficina": "Olen autotöökoda",
+    "souLoja": "Olen varuosade müüja",
+    "campoResponsavel": "Kontaktisiku nimi",
+    "campoNegocio": "Ettevõtte nimi",
+    "placeholderNegocioOficina": "Nt: Tallinna Autoremont",
+    "placeholderNegocioLoja": "Nt: Balti Varuosad",
+    "campoCidade": "Linn",
+    "placeholderCidade": "Nt: Tallinn",
+    "campoRegiao": "Maakond",
+    "placeholderRegiao": "Nt: Harjumaa",
+    "campoWhatsapp": "WhatsApp / Telefon",
+    "placeholderWhatsapp": "Nt: +372 5555 5555",
+    "campoEmail": "E-post (valikuline)",
+    "campoObservacao": "Soovid veel midagi lisada? (valikuline)",
+    "placeholderObservacao": "Nt: töötajate arv, spetsialiseerumine...",
+    "enviando": "Saadan...",
+    "enviar": "Tahan olla asutajapartner",
+    "concordaTermos": "Saates nõustud meie",
+    "termosDeUso": "kasutustingimustega",
+    "erroObrigatorio": "Palun täida kõik kohustuslikud väljad",
+    "erroGenerico": "Saatmine ebaõnnestus. Palun proovi mõne hetke pärast uuesti.",
+    "sucessoTitulo": "Võtsime su huviavalduse vastu!",
+    "sucessoTexto": "Meie meeskond vaatab üle sinu piirkonna ja võtab kahe tööpäeva jooksul WhatsAppi teel ühendust, et selgitada pilootfaasi järgmisi samme.",
+    "voltarInicio": "Tagasi avalehele"
+  },
+  "paraOficinas": {
+    "metaTitle": "Autotöökoja Haldustarkvara ja Rohkem Kliente",
+    "metaDescription": "Tasuta tarkvara autotöökojale ajakava, hinnapakkumiste ja meeskonna korraldamiseks ning nähtavuse suurendamiseks, et saada rohkem kliente oma piirkonnas. Registreeri oma töökoda BipFixis.",
+    "metaKeywords": [
+      "autotöökoja haldustarkvara",
+      "töökoja juhtimissüsteem",
+      "rakendus autotöökoja haldamiseks",
+      "autotöökoja ajakavatarkvara",
+      "kuidas saada rohkem kliente autotöökojale",
+      "autotöökoja turundus",
+      "kere- ja värvitöökoja süsteem",
+      "töökoja broneerimissüsteem"
+    ],
+    "ogTitle": "Autotöökoja Haldustarkvara ja Rohkem Kliente",
+    "ogDescription": "Korralda oma töökoda ja jõua piirkonna juhtideni, kes vajavad remonti. Tasuta registreerimine.",
+    "heroTitulo": "Korras haldus ja rohkem kliente sinu autotöökojale",
+    "heroTexto": "BipFix on haldussüsteem, mis korraldab sinu töökoja ajakava, hinnapakkumised ja meeskonna — ning samal ajal toob sind nähtavale piirkonna juhtidele, kes vajavad remonti just praegu.",
+    "ctaFundador": "Tahan olla asutajapartner",
+    "ctaVerOficinas": "Vaata töökodasid platvormil",
+    "heroFootnote": "Ilma kuutasuta. Asutajapartneritele komisjonitasu ei ole.",
+    "funcTitulo": "Kõik, mida sinu töökoda BipFixis saab",
+    "funcSubtitulo": "Kiire ülevaade igast funktsioonist — ilma jututa",
+    "funcCategorias": [
+      {
+        "titulo": "Kliendid ja nähtavus",
+        "itens": [
+          "Avalik profiil, mis on Google'is linna järgi indekseeritud",
+          "Automaatsed päringud piirkonna juhtidelt",
+          "Hinnangud ja maine profiilil nähtaval",
+          "Kiire check-in sõiduki saabumisel"
+        ]
+      },
+      {
+        "titulo": "Hinnapakkumised ja teenindus",
+        "itens": [
+          "Struktureeritud hinnapakkumised, võimalusega komisjonitasu edasi kanda või ise katta",
+          "Remondi jälgimine etappide kaupa, kliendile nähtav",
+          "Automaatne teavitus, kui sõiduk on valmis",
+          "Otsevestlus kliendiga iga päringu juures"
+        ]
+      },
+      {
+        "titulo": "Ajakava ja meeskond",
+        "itens": [
+          "Ajakava sõiduki ja töötaja kaupa",
+          "Töö jaotamise paneel kogu meeskonnale",
+          "Mehaaniku kohta seatud töömahu piirang",
+          "Meeskonna haldus koos rollidega (omanik / mehaanik)",
+          "Sõidukipõhised sisemärkmed, mida klient ei näe",
+          "Reaalajas teavitused kogu meeskonna ekraanil"
+        ]
+      },
+      {
+        "titulo": "Varuosad",
+        "itens": [
+          "Hinnapäringud piirkonna partnerpoodidelt",
+          "Hinnapäringud ka naabertöökodadelt",
+          "Ülejäänud laoseisu müük teistele töökodadele",
+          "Vestlus tarnijaga enne tellimuse kinnitamist"
+        ]
+      },
+      {
+        "titulo": "Rahandus",
+        "itens": [
+          "Komisjonitasu, mida saab seadistada tulemuste ja lojaalsuse järgi",
+          "Komisjonitasu väljavõte ja kanded",
+          "Täielik läbipaistvus selle üle, mida ja millal arvestatakse"
+        ]
+      },
+      {
+        "titulo": "Õppimine",
+        "itens": [
+          "Juhendatud õppeportaal otse süsteemis",
+          "Eraldi õppetee omanikule ja mehaanikule",
+          "Väline koolitus pole vajalik"
+        ]
+      }
+    ],
+    "doresTitulo": "Igapäevased probleemid, mida BipFix lahendab",
+    "doresSubtitulo": "Loodud töökoja juhtimise päris argipäeva jaoks, mitte ainult suurtele kettidele",
+    "dores": [
+      { "dor": "Ajakava paberil või tabelis, raske näha, kes mida teeb", "solucao": "Visuaalne ajakava sõiduki ja töötaja kaupa, koos töö jaotamise paneeliga" },
+      { "dor": "Vähe uusi kliente, sõltuvus ainult soovitustest", "solucao": "Google'is indekseeritud avalik profiil ja automaatsed hinnapäringud piirkonnast" },
+      { "dor": "Hinnapakkumised WhatsAppis, ilma kontrolli ja ajaloota", "solucao": "Struktureeritud hinnapakkumised koos remondietappide ja automaatsete kliendi teavitustega" },
+      { "dor": "Maine pole nähtav, raske konkurentidest eristuda", "solucao": "Päris kliendihinnangud ja mainemärgid profiilil nähtaval" },
+      { "dor": "Segane suhtlus mehaaniku ja vastuvõtu vahel", "solucao": "Sõidukipõhised sisemärkmed ja reaalajas teavitused meeskonnale" },
+      { "dor": "Aeglane varuosade leidmine ja tarnijate võrdlemine", "solucao": "Varuosade hinnapäringud partnerpoodidelt ja teistelt piirkonna töökodadelt, koos otsevestlusega" }
+    ],
+    "comoTitulo": "Kuidas sinu töökoda nähtavust saab",
+    "steps": [
+      { "title": "Registreeru", "description": "Täielik profiil aadressi, eriala ja fotodega, valmis mõne minutiga" },
+      { "title": "Ilmu otsingusse", "description": "Sinu avalik profiil on Google'is nähtav kõigile, kes otsivad töökoda sinu linnas" },
+      { "title": "Saa päringuid", "description": "Lähedal asuvad juhid saadavad remondipäringud otse sinule" },
+      { "title": "Kasvata mainet", "description": "Iga hästi hinnatud töö parandab sinu positsiooni ja usaldusväärsust uute klientide seas" }
+    ],
+    "transparenciaTitulo": "Läbipaistvus kulude osas",
+    "transparenciaTexto": "Praegu on registreerimine ja haldussüsteemi kasutamine tasuta ning me ei võta asutajapartneritelt komisjonitasu. Kui see tulevikus muutub, teavitame sind vähemalt 30 päeva enne mistahes tasu kehtima hakkamist, vastavalt meie",
+    "transparenciaTermosLink": "kasutustingimustele",
+    "faqTitulo": "Töökodade korduma kippuvad küsimused",
+    "faq": [
+      { "pergunta": "Kui palju maksab BipFixi haldussüsteem minu töökojale?", "resposta": "Registreerimine ja haldustööriistade (ajakava, hinnapakkumised, meeskond, hinnangud) kasutamine ei maksa kuutasu. Praegu ei võta me asutajapartneritelt komisjonitasu. Kui see tulevikus muutub, teavitame vähemalt 30 päeva enne mistahes tasu, vastavalt meie kasutustingimustele." },
+      { "pergunta": "Kuidas aitab BipFix mu töökojal rohkem kliente saada?", "resposta": "Sinu piirkonna juhid, kes vajavad remonti, saadavad kahjustuse fotod ja saavad hinnapakkumised lähedalasuvatelt töökodadelt, sealhulgas sinult. Sinu avalik profiil ilmub ka Google'is neile, kes otsivad töökoda sinu linnas, koos sinu hinnangute, erialade ja asukohaga." },
+      { "pergunta": "Kas süsteem asendab tabelit või paberkalendrit?", "resposta": "Jah. Sa korraldad oma ajakava sõiduki ja töötaja kaupa, jaotad tööd mehaanikute vahel, kontrollid teenindusvõimekust ja saad automaatseid teavitusi — kõik ühes kohas, ilma paberi või lahtiste tabeliteta." },
+      { "pergunta": "Kas kasutamiseks on vaja tehnilisi teadmisi?", "resposta": "Ei. Platvorm on loodud töökoja igapäevaelu jaoks, koos otse süsteemi sisse ehitatud juhendatud õppeportaaliga, kus sina ja su meeskond õpite iga funktsiooni ära mõne minutiga." },
+      { "pergunta": "Kas saan platvormi kaudu varuosi tarnijatelt osta?", "resposta": "Jah. Sa saad avada varuosade hinnapäringuid partnerpoodidele ja teistele piirkonna töökodadele, võrrelda hindu ja tarneaegu ning läbirääkida otse vestluses enne tellimuse kinnitamist." }
+    ],
+    "ctaFinalTitulo": "Valmis oma töökoda korraldama ja rohkem kliente saama?"
   }
 }
