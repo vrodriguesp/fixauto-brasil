@@ -1,12 +1,12 @@
 'use client';
 
-import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { timeAgo, calcDistance, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
 import { useState } from 'react';
 import { TIPOS_SERVICO } from '@fixauto/shared';
+import { Link } from '@/i18n/navigation';
 
 export default function SolicitacoesOficinaPage() {
   const { oficina } = useAuth();

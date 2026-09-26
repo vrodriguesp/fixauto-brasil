@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import Link from 'next/link';
 import { useAgenda } from '@/hooks/use-agenda';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { STATUS_MANUTENCAO } from '@fixauto/shared';
 import type { StatusManutencao, Funcionario } from '@fixauto/shared';
 import NotasInternas from '@/components/veiculo/NotasInternas';
+import { Link } from '@/i18n/navigation';
 
 type FilterTab = 'todos' | 'aguardando' | 'em_servico' | 'prontos';
 

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
@@ -11,6 +10,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import StarRating from '@/components/ui/StarRating';
 import TutorialBanner from '@/components/tutorial/TutorialBanner';
 import { timeAgo, calcDistance, getUrgenciaColor, formatCurrency, cleanDescricao } from '@/lib/utils';
+import { Link } from '@/i18n/navigation';
 
 export default function OficinaDashboard() {
   const { user, oficina } = useAuth();

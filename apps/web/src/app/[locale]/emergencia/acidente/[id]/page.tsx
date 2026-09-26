@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import { compressImage } from '@/lib/image-compress';

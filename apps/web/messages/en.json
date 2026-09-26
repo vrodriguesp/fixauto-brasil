@@ -263,5 +263,28 @@
     "linkPrivacidade": "Privacy Policy",
     "rejeitar": "Reject",
     "aceitar": "Accept"
+  },
+  "login": {
+    "erroDesativado": "This account has been deactivated. Please contact support.",
+    "erroSessaoExpirada": "Your session expired for security reasons. Please log in again.",
+    "erroPreenchaCampos": "Enter your email and password",
+    "erroPreenchaEmail": "Enter your email",
+    "erroEnviar": "Couldn't send it. Please try again.",
+    "senhaEnviadaTitulo": "Temporary password sent!",
+    "senhaEnviadaTexto1": "We've sent a temporary password to",
+    "senhaEnviadaTexto2": "Use it to log in, then choose a new password.",
+    "voltarLogin": "Back to login",
+    "recuperarSenhaTitulo": "Reset password",
+    "entrarTitulo": "Log in",
+    "recuperarSenhaSubtitulo": "Enter your email to receive the reset link",
+    "entrarSubtitulo": "Access your BipFix account",
+    "labelEmail": "Email",
+    "labelSenha": "Password",
+    "esqueciSenha": "Forgot my password",
+    "enviando": "Sending...",
+    "enviarLinkRecuperacao": "Send reset link",
+    "entrando": "Logging in...",
+    "naoTemConta": "Don't have an account?",
+    "cadastreSe": "Sign up"
   }
 }

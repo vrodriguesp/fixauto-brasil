@@ -273,5 +273,28 @@
     "linkPrivacidade": "Política de Privacidade",
     "rejeitar": "Rejeitar",
     "aceitar": "Aceitar"
+  },
+  "login": {
+    "erroDesativado": "Esta conta foi desativada. Entre em contato com o suporte.",
+    "erroSessaoExpirada": "Sua sessão expirou por segurança. Faça login novamente.",
+    "erroPreenchaCampos": "Preencha email e senha",
+    "erroPreenchaEmail": "Preencha seu email",
+    "erroEnviar": "Erro ao enviar. Tente novamente.",
+    "senhaEnviadaTitulo": "Senha temporária enviada!",
+    "senhaEnviadaTexto1": "Enviamos uma senha temporária para",
+    "senhaEnviadaTexto2": "Use-a para fazer login e depois escolha uma nova senha.",
+    "voltarLogin": "Voltar para login",
+    "recuperarSenhaTitulo": "Recuperar senha",
+    "entrarTitulo": "Entrar",
+    "recuperarSenhaSubtitulo": "Informe seu email para receber o link de recuperação",
+    "entrarSubtitulo": "Acesse sua conta BipFix",
+    "labelEmail": "Email",
+    "labelSenha": "Senha",
+    "esqueciSenha": "Esqueci minha senha",
+    "enviando": "Enviando...",
+    "enviarLinkRecuperacao": "Enviar link de recuperação",
+    "entrando": "Entrando...",
+    "naoTemConta": "Não tem conta?",
+    "cadastreSe": "Cadastre-se"
   }
 }

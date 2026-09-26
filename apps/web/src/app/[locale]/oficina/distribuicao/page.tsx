@@ -1,11 +1,11 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useAgenda } from '@/hooks/use-agenda';
 import { supabase } from '@/lib/supabase';
 import { CARGOS_FUNCIONARIO } from '@fixauto/shared';
+import { Link } from '@/i18n/navigation';
 
 interface FuncionarioLeve {
   id: string;

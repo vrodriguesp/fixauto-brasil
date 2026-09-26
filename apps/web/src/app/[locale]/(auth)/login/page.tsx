@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
+  const t = useTranslations('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,16 +21,16 @@ export default function LoginPage() {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     if (params.get('desativado') === '1') {
-      setError('Esta conta foi desativada. Entre em contato com o suporte.');
+      setError(t('erroDesativado'));
     } else if (params.get('sessao_expirada') === '1') {
-      setError('Sua sessão expirou por segurança. Faça login novamente.');
+      setError(t('erroSessaoExpirada'));
     }
-  }, []);
+  }, [t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      setError('Preencha email e senha');
+      setError(t('erroPreenchaCampos'));
       return;
     }
     setError('');
@@ -50,7 +51,7 @@ export default function LoginPage() {
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
-      setError('Preencha seu email');
+      setError(t('erroPreenchaEmail'));
       return;
     }
     setError('');
@@ -64,7 +65,7 @@ export default function LoginPage() {
     setLoading(false);
 
     if (!res.ok) {
-      setError('Erro ao enviar. Tente novamente.');
+      setError(t('erroEnviar'));
       return;
     }
 
@@ -80,16 +81,16 @@ export default function LoginPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Senha temporária enviada!</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('senhaEnviadaTitulo')}</h1>
           <p className="text-gray-600 mb-6">
-            Enviamos uma senha temporária para <strong>{email}</strong>.
-            Use-a para fazer login e depois escolha uma nova senha.
+            {t('senhaEnviadaTexto1')} <strong>{email}</strong>.
+            {' '}{t('senhaEnviadaTexto2')}
           </p>
           <button
             onClick={() => { setForgotMode(false); setResetSent(false); }}
             className="btn-primary"
           >
-            Voltar para login
+            {t('voltarLogin')}
           </button>
         </div>
       </div>
@@ -101,12 +102,10 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            {forgotMode ? 'Recuperar senha' : 'Entrar'}
+            {forgotMode ? t('recuperarSenhaTitulo') : t('entrarTitulo')}
           </h1>
           <p className="text-gray-600 mt-2">
-            {forgotMode
-              ? 'Informe seu email para receber o link de recuperação'
-              : 'Acesse sua conta BipFix'}
+            {forgotMode ? t('recuperarSenhaSubtitulo') : t('entrarSubtitulo')}
           </p>
         </div>
 
@@ -120,7 +119,7 @@ export default function LoginPage() {
           {forgotMode ? (
             <form onSubmit={handleResetPassword} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEmail')}</label>
                 <input
                   type="email"
                   className="input-field"
@@ -132,7 +131,7 @@ export default function LoginPage() {
               </div>
 
               <button type="submit" className="btn-primary w-full" disabled={loading}>
-                {loading ? 'Enviando...' : 'Enviar link de recuperação'}
+                {loading ? t('enviando') : t('enviarLinkRecuperacao')}
               </button>
 
               <button
@@ -140,14 +139,14 @@ export default function LoginPage() {
                 onClick={() => { setForgotMode(false); setError(''); }}
                 className="w-full text-sm text-gray-500 hover:text-gray-700"
               >
-                Voltar para login
+                {t('voltarLogin')}
               </button>
             </form>
           ) : (
             <>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEmail')}</label>
                   <input
                     type="email"
                     className="input-field"
@@ -159,13 +158,13 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-sm font-medium text-gray-700">Senha</label>
+                    <label className="block text-sm font-medium text-gray-700">{t('labelSenha')}</label>
                     <button
                       type="button"
                       onClick={() => { setForgotMode(true); setError(''); }}
                       className="text-xs text-primary-600 hover:text-primary-700"
                     >
-                      Esqueci minha senha
+                      {t('esqueciSenha')}
                     </button>
                   </div>
                   <input
@@ -179,14 +178,14 @@ export default function LoginPage() {
                 </div>
 
                 <button type="submit" className="btn-primary w-full" disabled={loading}>
-                  {loading ? 'Entrando...' : 'Entrar'}
+                  {loading ? t('entrando') : t('entrarTitulo')}
                 </button>
               </form>
 
               <p className="text-center text-sm text-gray-600 mt-6">
-                Não tem conta?{' '}
+                {t('naoTemConta')}{' '}
                 <Link href="/cadastro" className="text-primary-600 font-medium hover:text-primary-700">
-                  Cadastre-se
+                  {t('cadastreSe')}
                 </Link>
               </p>
             </>

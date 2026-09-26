@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { formatCurrency, formatDate, timeAgo, distanciaKm } from '@/lib/utils';
 import ComissaoPecasCard from '@/components/pecas/ComissaoPecasCard';
 import type { CotacaoPeca, CotacaoPecaResposta } from '@fixauto/shared';
+import { Link } from '@/i18n/navigation';
 
 interface CotacaoComRespostas extends CotacaoPeca {
   respostas: (CotacaoPecaResposta & {

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -10,6 +9,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import NoShowWarning from '@/components/ui/NoShowWarning';
 import DamageAnalysis from '@/components/ui/DamageAnalysis';
 import { formatDate, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
+import { Link } from '@/i18n/navigation';
 
 export default function SolicitacaoDetalhePage() {
   const params = useParams();

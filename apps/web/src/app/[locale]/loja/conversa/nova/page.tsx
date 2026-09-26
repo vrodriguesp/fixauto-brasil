@@ -1,7 +1,8 @@
 'use client';
 
 import { Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import ChatCotacaoPeca from '@/components/pecas/ChatCotacaoPeca';
 

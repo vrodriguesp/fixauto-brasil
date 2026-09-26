@@ -263,5 +263,28 @@
     "linkPrivacidade": "Informativa sulla Privacy",
     "rejeitar": "Rifiuta",
     "aceitar": "Accetta"
+  },
+  "login": {
+    "erroDesativado": "Questo account è stato disattivato. Contatta l'assistenza.",
+    "erroSessaoExpirada": "La tua sessione è scaduta per motivi di sicurezza. Accedi di nuovo.",
+    "erroPreenchaCampos": "Inserisci email e password",
+    "erroPreenchaEmail": "Inserisci la tua email",
+    "erroEnviar": "Invio non riuscito. Riprova.",
+    "senhaEnviadaTitulo": "Password temporanea inviata!",
+    "senhaEnviadaTexto1": "Abbiamo inviato una password temporanea a",
+    "senhaEnviadaTexto2": "Usala per accedere, poi scegli una nuova password.",
+    "voltarLogin": "Torna al login",
+    "recuperarSenhaTitulo": "Recupera password",
+    "entrarTitulo": "Accedi",
+    "recuperarSenhaSubtitulo": "Inserisci la tua email per ricevere il link di recupero",
+    "entrarSubtitulo": "Accedi al tuo account BipFix",
+    "labelEmail": "Email",
+    "labelSenha": "Password",
+    "esqueciSenha": "Ho dimenticato la password",
+    "enviando": "Invio in corso...",
+    "enviarLinkRecuperacao": "Invia link di recupero",
+    "entrando": "Accesso in corso...",
+    "naoTemConta": "Non hai un account?",
+    "cadastreSe": "Registrati"
   }
 }

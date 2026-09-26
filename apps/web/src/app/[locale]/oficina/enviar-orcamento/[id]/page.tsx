@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
 import { useAuth } from '@/lib/auth-context';

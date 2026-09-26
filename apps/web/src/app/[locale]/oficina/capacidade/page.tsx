@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { calcularCargaAtual, calcularCargaPorFuncionario } from '@/lib/capacidade';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import type { Funcionario } from '@fixauto/shared';
+import { Link } from '@/i18n/navigation';
 
 const LABELS_STATUS_MANUTENCAO: Record<string, string> = {
   recebido: 'Recebido',

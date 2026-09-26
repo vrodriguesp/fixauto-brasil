@@ -262,5 +262,28 @@
     "linkPrivacidade": "privaatsuspoliitikast",
     "rejeitar": "Keeldu",
     "aceitar": "Nõustun"
+  },
+  "login": {
+    "erroDesativado": "See konto on deaktiveeritud. Võta ühendust klienditoega.",
+    "erroSessaoExpirada": "Sinu seanss aegus turvalisuse tõttu. Palun logi uuesti sisse.",
+    "erroPreenchaCampos": "Sisesta e-post ja parool",
+    "erroPreenchaEmail": "Sisesta oma e-post",
+    "erroEnviar": "Saatmine ebaõnnestus. Palun proovi uuesti.",
+    "senhaEnviadaTitulo": "Ajutine parool saadetud!",
+    "senhaEnviadaTexto1": "Saatsime ajutise parooli aadressile",
+    "senhaEnviadaTexto2": "Kasuta seda sisselogimiseks ja vali seejärel uus parool.",
+    "voltarLogin": "Tagasi sisselogimise juurde",
+    "recuperarSenhaTitulo": "Taasta parool",
+    "entrarTitulo": "Logi sisse",
+    "recuperarSenhaSubtitulo": "Sisesta oma e-post, et saada taastamislink",
+    "entrarSubtitulo": "Logi sisse oma BipFixi kontosse",
+    "labelEmail": "E-post",
+    "labelSenha": "Parool",
+    "esqueciSenha": "Unustasin parooli",
+    "enviando": "Saadan...",
+    "enviarLinkRecuperacao": "Saada taastamislink",
+    "entrando": "Sisselogimine...",
+    "naoTemConta": "Kas sul pole veel kontot?",
+    "cadastreSe": "Registreeru"
   }
 }

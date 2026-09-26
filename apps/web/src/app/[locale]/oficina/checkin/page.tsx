@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useAgenda } from '@/hooks/use-agenda';
 import { supabase } from '@/lib/supabase';
 import { TIPOS_SERVICO, CORES_AGENDA } from '@fixauto/shared';
+import { useRouter } from '@/i18n/navigation';
 
 export default function ManualCheckinPage() {
   const router = useRouter();

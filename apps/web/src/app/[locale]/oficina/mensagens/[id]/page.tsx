@@ -2,13 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
 import { supabase } from '@/lib/supabase';
 import AudioRecorder from '@/components/ui/AudioRecorder';
 import AudioMessage from '@/components/ui/AudioMessage';
 import { useAudioRecorder } from '@/hooks/use-audio-recorder';
+import { Link } from '@/i18n/navigation';
 
 interface Mensagem {
   id: string;

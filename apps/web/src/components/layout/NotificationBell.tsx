@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useNotificacoes } from '@/hooks/use-notificacoes';
 import { useAuth } from '@/lib/auth-context';
 import type { Notificacao } from '@fixauto/shared';

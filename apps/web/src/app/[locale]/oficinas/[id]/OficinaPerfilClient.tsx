@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { supabase } from '@/lib/supabase';
 import StarRating from '@/components/ui/StarRating';
 import { TIPOS_SERVICO } from '@fixauto/shared';
