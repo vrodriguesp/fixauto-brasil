@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 
 interface AccordionProps {
@@ -51,7 +52,21 @@ function StepItem({ number, title, desc }: { number: number; title: string; desc
   );
 }
 
+type Step = { title: string; desc: string };
+type Badge = { name: string; desc: string };
+type Item = { label: string; desc: string };
+
 export default function DocsClientePage() {
+  const t = useTranslations('docsCliente');
+
+  const s1Steps = t.raw('s1Steps') as Step[];
+  const s2Steps = t.raw('s2Steps') as Step[];
+  const s3Badges = t.raw('s3Badges') as Badge[];
+  const s4Steps = t.raw('s4Steps') as Step[];
+  const s5Items = t.raw('s5Items') as Item[];
+  const s6Steps = t.raw('s6Steps') as Step[];
+  const s7Steps = t.raw('s7Steps') as Step[];
+
   return (
     <div>
       {/* Header */}
@@ -60,189 +75,103 @@ export default function DocsClientePage() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          Voltar para Central de Ajuda
+          {t('pageBackLink')}
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900 mb-3">Guia do Motorista</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-3">{t('pageTitle')}</h1>
         <p className="text-gray-600 text-lg">
-          Tudo o que você precisa saber para encontrar a melhor oficina, comparar orçamentos e acompanhar o reparo do seu veículo.
+          {t('pageSubtitle')}
         </p>
       </div>
 
       {/* Sections */}
       <div className="space-y-4">
-        <Accordion title="1. Como se cadastrar" defaultOpen>
-          <p>Criar sua conta no BipFix é rápido e gratuito. Siga os passos abaixo:</p>
+        <Accordion title={t('s1Title')} defaultOpen>
+          <p>{t('s1Intro')}</p>
           <div className="space-y-4 mt-4">
-            <StepItem
-              number={1}
-              title="Acesse a página de cadastro"
-              desc="Clique em 'Preciso de um reparo' na página inicial ou acesse diretamente /cadastro."
-            />
-            <StepItem
-              number={2}
-              title="Preencha seus dados"
-              desc="Informe seu nome completo, e-mail, telefone (com DDD) e crie uma senha segura."
-            />
-            <StepItem
-              number={3}
-              title="Confirme seu e-mail"
-              desc="Você receberá um e-mail de confirmação. Clique no link para ativar sua conta."
-            />
-            <StepItem
-              number={4}
-              title="Cadastre seu veículo"
-              desc="Adicione a marca, modelo, ano e placa do seu veículo. Você pode cadastrar mais de um."
-            />
+            {s1Steps.map((s, i) => (
+              <StepItem key={i} number={i + 1} title={s.title} desc={s.desc} />
+            ))}
           </div>
         </Accordion>
 
-        <Accordion title="2. Como criar uma solicitação">
+        <Accordion title={t('s2Title')}>
           <p>
-            A solicitação é o pedido de orçamento que você envia para as oficinas. O processo tem 5 etapas simples:
+            {t('s2Intro')}
           </p>
           <div className="space-y-4 mt-4">
-            <StepItem
-              number={1}
-              title="Selecione o veículo"
-              desc="Escolha qual dos seus veículos cadastrados precisa de reparo."
-            />
-            <StepItem
-              number={2}
-              title="Tipo de serviço"
-              desc="Selecione a categoria do serviço: funilaria, pintura, mecânica, elétrica, vidros, entre outras."
-            />
-            <StepItem
-              number={3}
-              title="Fotos e descrição"
-              desc="Tire fotos do dano ou problema e adicione uma descrição detalhada. Quanto mais informações, melhor será o orçamento."
-            />
-            <StepItem
-              number={4}
-              title="Localização"
-              desc="Confirme sua localização para que oficinas próximas recebam sua solicitação. Você pode usar o GPS ou digitar o endereço."
-            />
-            <StepItem
-              number={5}
-              title="Revisão e envio"
-              desc="Revise todas as informações e envie. Oficinas próximas serão notificadas e começarão a preparar orçamentos."
-            />
+            {s2Steps.map((s, i) => (
+              <StepItem key={i} number={i + 1} title={s.title} desc={s.desc} />
+            ))}
           </div>
         </Accordion>
 
-        <Accordion title="3. Como comparar orçamentos">
+        <Accordion title={t('s3Title')}>
           <p>
-            Quando oficinas enviam orçamentos, você pode compará-los com facilidade. Cada orçamento exibe o preço total, prazo estimado, itens detalhados e a avaliação da oficina.
+            {t('s3Intro')}
           </p>
-          <p className="mt-3 font-medium text-gray-900">Selos de destaque:</p>
+          <p className="mt-3 font-medium text-gray-900">{t('s3BadgesLabel')}</p>
           <ul className="list-disc list-inside space-y-2 mt-2">
-            <li>
-              <span className="font-medium text-green-700">Selo de Qualidade</span> — Oficinas com avaliação média acima de 4.5 estrelas e mais de 10 serviços concluídos.
-            </li>
-            <li>
-              <span className="font-medium text-blue-700">Resposta Rápida</span> — Oficinas que responderam sua solicitação em menos de 1 hora.
-            </li>
-            <li>
-              <span className="font-medium text-orange-700">Ajuste de Preço</span> — Indica que a oficina está disposta a negociar o valor do orçamento.
-            </li>
+            {s3Badges.map((b, i) => (
+              <li key={i}>
+                <span className={`font-medium ${['text-green-700', 'text-blue-700', 'text-orange-700'][i % 3]}`}>{b.name}</span> — {b.desc}
+              </li>
+            ))}
           </ul>
           <p className="mt-3">
-            Use os filtros para ordenar por preço, prazo ou avaliação. Clique em cada orçamento para ver o detalhamento completo dos itens e serviços.
+            {t('s3Outro')}
           </p>
         </Accordion>
 
-        <Accordion title="4. Como agendar o serviço">
+        <Accordion title={t('s4Title')}>
           <p>
-            Após comparar os orçamentos, escolha o que melhor atende suas necessidades:
+            {t('s4Intro')}
           </p>
           <div className="space-y-4 mt-4">
-            <StepItem
-              number={1}
-              title="Aceite o orçamento"
-              desc="Clique em 'Aceitar orçamento' no orçamento escolhido. A oficina será notificada imediatamente."
-            />
-            <StepItem
-              number={2}
-              title="Escolha a data"
-              desc="A oficina disponibiliza horários na agenda. Selecione o dia e horário que melhor se encaixa na sua rotina."
-            />
-            <StepItem
-              number={3}
-              title="Confirmação"
-              desc="Após a confirmação, você receberá os detalhes do agendamento por e-mail e na plataforma, incluindo o endereço da oficina."
-            />
+            {s4Steps.map((s, i) => (
+              <StepItem key={i} number={i + 1} title={s.title} desc={s.desc} />
+            ))}
           </div>
         </Accordion>
 
-        <Accordion title="5. Acompanhamento em tempo real">
+        <Accordion title={t('s5Title')}>
           <p>
-            Após levar o veículo à oficina, você pode acompanhar cada etapa do reparo pela plataforma:
+            {t('s5Intro')}
           </p>
           <ul className="list-disc list-inside space-y-2 mt-3">
-            <li><span className="font-medium">Check-in</span> — Quando o veículo chega na oficina, a equipe registra a entrada.</li>
-            <li><span className="font-medium">Em andamento</span> — A oficina atualiza o status conforme avança nas etapas do serviço.</li>
-            <li><span className="font-medium">Etapas detalhadas</span> — Você vê o progresso: desmontagem, reparo, pintura, montagem, controle de qualidade.</li>
-            <li><span className="font-medium">Pronto para retirada</span> — Quando o serviço é concluído, você recebe uma notificação para buscar o veículo.</li>
-            <li><span className="font-medium">Check-out</span> — A oficina registra a saída e o serviço é marcado como finalizado.</li>
+            {s5Items.map((it, i) => (
+              <li key={i}><span className="font-medium">{it.label}</span> — {it.desc}</li>
+            ))}
           </ul>
           <p className="mt-3">
-            Acesse a página de acompanhamento a qualquer momento pelo menu &quot;Meus Serviços&quot; no seu painel.
+            {t('s5Outro')}
           </p>
         </Accordion>
 
-        <Accordion title="6. Como avaliar o serviço">
+        <Accordion title={t('s6Title')}>
           <p>
-            Após a conclusão do serviço, você pode avaliar a oficina para ajudar outros motoristas:
+            {t('s6Intro')}
           </p>
           <div className="space-y-4 mt-4">
-            <StepItem
-              number={1}
-              title="Nota de 1 a 5 estrelas"
-              desc="Avalie a qualidade geral do serviço prestado."
-            />
-            <StepItem
-              number={2}
-              title="Comentário"
-              desc="Escreva um comentário descrevendo sua experiência. Seja honesto e detalhado."
-            />
-            <StepItem
-              number={3}
-              title="Publicação"
-              desc="Sua avaliação aparecerá no perfil público da oficina, ajudando outros motoristas a decidir."
-            />
+            {s6Steps.map((s, i) => (
+              <StepItem key={i} number={i + 1} title={s.title} desc={s.desc} />
+            ))}
           </div>
           <p className="mt-3 text-sm bg-blue-50 p-3 rounded-lg">
-            Sua avaliação é muito importante. Ela ajuda a manter a qualidade da plataforma e reconhece as melhores oficinas.
+            {t('s6Note')}
           </p>
         </Accordion>
 
-        <Accordion title="7. Emergência — Acabei de Bater">
+        <Accordion title={t('s7Title')}>
           <p>
-            O BipFix tem um fluxo especial para situações de emergência:
+            {t('s7Intro')}
           </p>
           <div className="space-y-4 mt-4">
-            <StepItem
-              number={1}
-              title="Acesse o botão de emergência"
-              desc="Na página inicial ou no seu painel, clique no botão vermelho 'Acabei de Bater'."
-            />
-            <StepItem
-              number={2}
-              title="Registre o incidente"
-              desc="Tire fotos do dano na hora. Você também pode registrar o outro veículo envolvido, incluindo placa e fotos."
-            />
-            <StepItem
-              number={3}
-              title="Localização automática"
-              desc="O sistema usa seu GPS para encontrar oficinas mais próximas ao local do acidente."
-            />
-            <StepItem
-              number={4}
-              title="Orçamentos rápidos"
-              desc="Oficinas próximas recebem sua solicitação com prioridade e enviam orçamentos em minutos."
-            />
+            {s7Steps.map((s, i) => (
+              <StepItem key={i} number={i + 1} title={s.title} desc={s.desc} />
+            ))}
           </div>
           <p className="mt-3 text-sm bg-red-50 p-3 rounded-lg text-red-800">
-            Em caso de acidente com vítimas, ligue primeiro para o SAMU (192) ou Bombeiros (193). Sua segurança vem em primeiro lugar.
+            {t('s7Warning')}
           </p>
         </Accordion>
       </div>

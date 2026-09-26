@@ -1,8 +1,11 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
+  const t = useTranslations('docsLayout');
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top bar */}
@@ -15,11 +18,11 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Voltar ao site
+            {t('backToSite')}
           </Link>
           <span className="text-gray-300">|</span>
           <Link href="/docs" className="text-sm font-medium text-primary-600 hover:text-primary-700">
-            Central de Ajuda
+            {t('helpCenterLink')}
           </Link>
         </div>
       </div>
@@ -32,8 +35,13 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white mt-12">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-gray-500">
-          <p>Ainda tem dúvidas? Entre em contato pelo e-mail <a href="mailto:contato@bipfix.com" className="text-primary-600 hover:underline">contato@bipfix.com</a> ou pelo telefone <span className="font-medium">(11) 3000-0000</span>.</p>
-          <p className="mt-2">2026 BipFix. Todos os direitos reservados.</p>
+          <p>
+            {t.rich('footerContactText', {
+              mailLink: (chunks) => <a href="mailto:contato@bipfix.com" className="text-primary-600 hover:underline">{chunks}</a>,
+              strong: (chunks) => <span className="font-medium">{chunks}</span>,
+            })}
+          </p>
+          <p className="mt-2">{t('footerCopyright')}</p>
         </div>
       </footer>
     </div>

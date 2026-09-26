@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
@@ -41,6 +42,7 @@ interface Orcamento {
 }
 
 export default function AcidenteRegistroPage() {
+  const t = useTranslations('emergenciaAcidenteDetalhe');
   const { id: emergenciaId } = useParams<{ id: string }>();
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -317,25 +319,38 @@ export default function AcidenteRegistroPage() {
   // Determine labels based on tipo_acidente
   // eu_causei: registrant = Responsável, outro = Vítima
   // outro_causou: registrant = Vítima, outro = Responsável
-  const registranteLabel = tipoAcidente === 'eu_causei' ? 'Responsável' : tipoAcidente === 'outro_causou' ? 'Vítima' : 'Motorista 1';
-  const outroLabel = tipoAcidente === 'eu_causei' ? 'Vítima' : tipoAcidente === 'outro_causou' ? 'Responsável' : 'Motorista 2';
+  const registranteLabel = tipoAcidente === 'eu_causei' ? t('registranteLabelEuCausei') : tipoAcidente === 'outro_causou' ? t('registranteLabelOutroCausou') : t('registranteLabelDefault');
+  const outroLabel = tipoAcidente === 'eu_causei' ? t('outroLabelEuCausei') : tipoAcidente === 'outro_causou' ? t('outroLabelOutroCausou') : t('outroLabelDefault');
   const registranteColor = tipoAcidente === 'eu_causei' ? 'text-red-600' : tipoAcidente === 'outro_causou' ? 'text-green-600' : 'text-blue-600';
   const outroColor = tipoAcidente === 'eu_causei' ? 'text-green-600' : tipoAcidente === 'outro_causou' ? 'text-red-600' : 'text-orange-600';
   const registranteBorderColor = tipoAcidente === 'eu_causei' ? 'border-l-red-400' : tipoAcidente === 'outro_causou' ? 'border-l-green-400' : 'border-l-blue-400';
   const outroBorderColor = tipoAcidente === 'eu_causei' ? 'border-l-green-400' : tipoAcidente === 'outro_causou' ? 'border-l-red-400' : 'border-l-orange-400';
 
   const tipoBadge: Record<string, { label: string; color: string }> = {
-    eu_causei: { label: 'Você causou o acidente', color: 'bg-red-100 text-red-700' },
-    outro_causou: { label: 'O outro motorista causou', color: 'bg-green-100 text-green-700' },
-    sem_outro: { label: 'Sem outro envolvido', color: 'bg-gray-100 text-gray-700' },
+    eu_causei: { label: t('badgeEuCausei'), color: 'bg-red-100 text-red-700' },
+    outro_causou: { label: t('badgeOutroCausou'), color: 'bg-green-100 text-green-700' },
+    sem_outro: { label: t('badgeSemOutro'), color: 'bg-gray-100 text-gray-700' },
   };
 
   // Legacy badges for old data
   const respBadge: Record<string, { label: string; color: string }> = {
-    responsavel: { label: 'Assume responsabilidade', color: 'bg-red-100 text-red-700' },
-    vitima: { label: 'Vítima', color: 'bg-green-100 text-green-700' },
-    dividida: { label: 'Responsabilidade dividida - 50%', color: 'bg-yellow-100 text-yellow-700' },
-    individual: { label: 'Cada um paga o seu', color: 'bg-gray-100 text-gray-700' },
+    responsavel: { label: t('legacyResponsavel'), color: 'bg-red-100 text-red-700' },
+    vitima: { label: t('legacyVitima'), color: 'bg-green-100 text-green-700' },
+    dividida: { label: t('legacyDividida'), color: 'bg-yellow-100 text-yellow-700' },
+    individual: { label: t('legacyIndividual'), color: 'bg-gray-100 text-gray-700' },
+  };
+
+  const buildQuoteMessage = (orc: Orcamento) => {
+    const ofi = orc.oficina;
+    let msg = t('quoteMsgBase', { oficina: ofi?.nome_fantasia || '', valor: formatCurrency(orc.valor_total), dias: orc.prazo_dias });
+    if (ofi?.endereco) {
+      const endereco = ofi.cidade ? `${ofi.endereco}${t('quoteMsgCityPart', { cidade: ofi.cidade })}` : ofi.endereco;
+      msg += t('quoteMsgAddressPart', { endereco });
+    }
+    if (ofi?.profile?.telefone) {
+      msg += t('quoteMsgPhonePart', { telefone: ofi.profile.telefone });
+    }
+    return msg;
   };
 
   return (
@@ -348,8 +363,8 @@ export default function AcidenteRegistroPage() {
           </svg>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Registro do Acidente</h1>
-          <p className="text-gray-600 text-sm">Registre o outro veículo e acompanhe os orçamentos</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('headerTitle')}</h1>
+          <p className="text-gray-600 text-sm">{t('headerSubtitle')}</p>
         </div>
       </div>
 
@@ -367,7 +382,7 @@ export default function AcidenteRegistroPage() {
             step === 'registro' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'
           }`}
         >
-          Envolvidos
+          {t('tabEnvolvidos')}
         </button>
         <button
           onClick={() => setStep('chat')}
@@ -375,7 +390,7 @@ export default function AcidenteRegistroPage() {
             step === 'chat' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'
           }`}
         >
-          Mensagens {mensagens.length > 0 && `(${mensagens.length})`}
+          {t('tabMensagens')} {mensagens.length > 0 && `(${mensagens.length})`}
         </button>
         <button
           onClick={() => setStep('orcamentos')}
@@ -383,35 +398,35 @@ export default function AcidenteRegistroPage() {
             step === 'orcamentos' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'
           }`}
         >
-          Orçamentos {orcamentos.length > 0 && `(${orcamentos.length})`}
+          {t('tabOrcamentos')} {orcamentos.length > 0 && `(${orcamentos.length})`}
         </button>
       </div>
 
       {/* Registration tab */}
       {step === 'registro' && !registered && (
         <div className="card">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Dados do outro veículo</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('formTitle')}</h2>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nome do outro motorista *</label>
-              <input type="text" className="input-field" placeholder="Nome completo" value={outroNome} onChange={(e) => setOutroNome(e.target.value)} />
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('otherNameLabel')}</label>
+              <input type="text" className="input-field" placeholder={t('otherNamePlaceholder')} value={outroNome} onChange={(e) => setOutroNome(e.target.value)} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
-                <input type="tel" className="input-field" placeholder="(11) 99999-0000" value={outroTelefone} onChange={(e) => setOutroTelefone(e.target.value)} />
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')}</label>
+                <input type="tel" className="input-field" placeholder={t('phonePlaceholder')} value={outroTelefone} onChange={(e) => setOutroTelefone(e.target.value)} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input type="email" className="input-field" placeholder="email@email.com" value={outroEmail} onChange={(e) => setOutroEmail(e.target.value)} />
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('emailLabel')}</label>
+                <input type="email" className="input-field" placeholder={t('emailPlaceholder')} value={outroEmail} onChange={(e) => setOutroEmail(e.target.value)} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Placa do veículo *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
                 <div className="flex gap-2">
-                  <input type="text" className="input-field uppercase" placeholder="ABC1D23" maxLength={8} value={outroPlaca}
+                  <input type="text" className="input-field uppercase" placeholder={t('platePlaceholder')} maxLength={8} value={outroPlaca}
                     onChange={(e) => {
                       const v = e.target.value.toUpperCase();
                       setOutroPlaca(v);
@@ -424,18 +439,18 @@ export default function AcidenteRegistroPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Veículo (marca/modelo)</label>
-                <input type="text" className="input-field" placeholder="Ex: Fiat Argo" value={outroVeiculo} onChange={(e) => setOutroVeiculo(e.target.value)} />
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('vehicleLabel')}</label>
+                <input type="text" className="input-field" placeholder={t('vehiclePlaceholder')} value={outroVeiculo} onChange={(e) => setOutroVeiculo(e.target.value)} />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Fotos do outro veículo</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('photosLabel')}</label>
               <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload} />
               <div className="flex gap-3 flex-wrap">
                 {fotosOutro.map((foto, i) => (
                   <div key={i} className="w-20 h-20 rounded-lg overflow-hidden">
-                    <img src={foto.preview} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
+                    <img src={foto.preview} alt={`${i + 1}`} className="w-full h-full object-cover" />
                   </div>
                 ))}
                 <button
@@ -451,10 +466,10 @@ export default function AcidenteRegistroPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('observationsLabel')}</label>
               <textarea
                 className="input-field min-h-[80px]"
-                placeholder="Detalhes sobre o acidente, acordo feito no local..."
+                placeholder={t('observationsPlaceholder')}
                 value={observacoes}
                 onChange={(e) => setObservacoes(e.target.value)}
               />
@@ -464,7 +479,7 @@ export default function AcidenteRegistroPage() {
           {outroEmail && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
               <p className="text-sm text-blue-800">
-                O outro motorista receberá uma notificação por email para acompanhar o acidente e os orçamentos.
+                {t('notifyInfo')}
               </p>
             </div>
           )}
@@ -474,14 +489,14 @@ export default function AcidenteRegistroPage() {
             disabled={!outroNome || !outroPlaca || registering}
             className="btn-primary w-full mt-6"
           >
-            {registering ? 'Registrando...' : 'Registrar outro veículo'}
+            {registering ? t('registeringBtn') : t('registerBtn')}
           </button>
         </div>
       )}
 
       {step === 'registro' && registered && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Veículos envolvidos</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('involvedTitle')}</h2>
 
           {/* Accident type badge */}
           {tipoAcidente && tipoBadge[tipoAcidente] && (
@@ -501,30 +516,30 @@ export default function AcidenteRegistroPage() {
             <p className={`text-xs font-semibold ${registranteColor} uppercase mb-2`}>{registranteLabel}</p>
             <div className="bg-gray-50 rounded-lg p-3 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Nome:</span>
-                <span className="text-gray-900 font-medium">{user?.nome || 'Você'}</span>
+                <span className="text-gray-500">{t('nameFieldLabel')}</span>
+                <span className="text-gray-900 font-medium">{user?.nome || t('youFallback')}</span>
               </div>
               {veiculoProprietario && (
                 <>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Veículo:</span>
+                    <span className="text-gray-500">{t('vehicleFieldLabel')}</span>
                     <span className="text-gray-900">{veiculoProprietario.fipe_marca} {veiculoProprietario.fipe_modelo}</span>
                   </div>
                   {veiculoProprietario.fipe_ano && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Ano:</span>
+                      <span className="text-gray-500">{t('yearFieldLabel')}</span>
                       <span className="text-gray-900">{veiculoProprietario.fipe_ano}</span>
                     </div>
                   )}
                   {veiculoProprietario.placa && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Placa:</span>
+                      <span className="text-gray-500">{t('plateFieldLabel')}</span>
                       <span className="text-gray-900 font-mono">{veiculoProprietario.placa}</span>
                     </div>
                   )}
                   {veiculoProprietario.cor && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Cor:</span>
+                      <span className="text-gray-500">{t('colorFieldLabel')}</span>
                       <span className="text-gray-900">{veiculoProprietario.cor}</span>
                     </div>
                   )}
@@ -532,11 +547,11 @@ export default function AcidenteRegistroPage() {
               )}
               {user?.telefone && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Telefone:</span>
+                  <span className="text-gray-500">{t('phoneFieldLabel')}</span>
                   <a href={`tel:${user.telefone}`} className="text-primary-600 hover:underline">{user.telefone}</a>
                 </div>
               )}
-              {emergData?.solicitacao_id && <p className="text-xs text-gray-500 mt-1">Solicitação registrada</p>}
+              {emergData?.solicitacao_id && <p className="text-xs text-gray-500 mt-1">{t('requestRegisteredNote')}</p>}
             </div>
           </div>
 
@@ -546,31 +561,31 @@ export default function AcidenteRegistroPage() {
               <p className={`text-xs font-semibold ${outroColor} uppercase`}>{outroLabel}</p>
               <div className="flex items-center gap-1">
                 <div className="w-2 h-2 bg-green-400 rounded-full" />
-                <span className="text-xs text-green-600">Notificado</span>
+                <span className="text-xs text-green-600">{t('notifiedBadge')}</span>
               </div>
             </div>
             <div className="bg-gray-50 rounded-lg p-3 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Nome:</span>
+                <span className="text-gray-500">{t('nameFieldLabel')}</span>
                 <span className="text-gray-900 font-medium">{outroNome}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Veículo:</span>
-                <span className="text-gray-900">{outroVeiculo || 'Não informado'}</span>
+                <span className="text-gray-500">{t('vehicleFieldLabel')}</span>
+                <span className="text-gray-900">{outroVeiculo || t('notInformed')}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Placa:</span>
+                <span className="text-gray-500">{t('plateFieldLabel')}</span>
                 <span className="text-gray-900 font-mono">{outroPlaca}</span>
               </div>
               {outroTelefone && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Telefone:</span>
+                  <span className="text-gray-500">{t('phoneFieldLabel')}</span>
                   <a href={`tel:${outroTelefone}`} className="text-primary-600 hover:underline">{outroTelefone}</a>
                 </div>
               )}
               {outroEmail && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Email:</span>
+                  <span className="text-gray-500">{t('emailLabel')}</span>
                   <span className="text-gray-900">{outroEmail}</span>
                 </div>
               )}
@@ -579,10 +594,10 @@ export default function AcidenteRegistroPage() {
 
           <div className="flex gap-3 mt-4">
             <button onClick={() => setStep('chat')} className="btn-primary flex-1">
-              Enviar mensagem
+              {t('sendMessageBtn')}
             </button>
             <button onClick={() => setStep('orcamentos')} className="btn-secondary flex-1">
-              Ver orçamentos
+              {t('viewQuotesBtn')}
             </button>
           </div>
         </div>
@@ -592,14 +607,14 @@ export default function AcidenteRegistroPage() {
       {step === 'chat' && (
         <div className="card !p-0 overflow-hidden">
           <div className="bg-gray-50 p-4 border-b">
-            <p className="font-medium text-gray-900">{outroNome || 'Outro motorista'}</p>
-            <p className="text-xs text-gray-500">{outroVeiculo || 'Veículo'} - {outroPlaca || 'Sem placa'}</p>
+            <p className="font-medium text-gray-900">{outroNome || t('chatOtherFallback')}</p>
+            <p className="text-xs text-gray-500">{outroVeiculo || t('chatVehicleFallback')} - {outroPlaca || t('chatNoPlateFallback')}</p>
           </div>
 
           <div className="h-[400px] overflow-y-auto p-4 space-y-3">
             {mensagens.length === 0 && (
               <div className="flex items-center justify-center h-full">
-                <p className="text-sm text-gray-400">Nenhuma mensagem ainda. Envie a primeira!</p>
+                <p className="text-sm text-gray-400">{t('chatEmptyState')}</p>
               </div>
             )}
             {mensagens.map((msg) => {
@@ -614,7 +629,7 @@ export default function AcidenteRegistroPage() {
                   }`}>
                     {!isMyMsg && (
                       <p className={`text-xs font-semibold mb-0.5 ${isMyMsg ? 'text-primary-200' : 'text-gray-500'}`}>
-                        {msg.remetente_tipo === 'proprietario' ? 'Motorista' : outroNome || 'Outro envolvido'}
+                        {msg.remetente_tipo === 'proprietario' ? t('chatSenderProprietario') : outroNome || t('chatSenderOutroFallback')}
                       </p>
                     )}
                     <p className="text-sm">{msg.texto}</p>
@@ -631,7 +646,7 @@ export default function AcidenteRegistroPage() {
             <input
               type="text"
               className="input-field flex-1"
-              placeholder="Digite uma mensagem..."
+              placeholder={t('chatInputPlaceholder')}
               value={novaMensagem}
               onChange={(e) => setNovaMensagem(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && !sendingMsg && sendMessage()}
@@ -650,16 +665,16 @@ export default function AcidenteRegistroPage() {
         <div className="space-y-4">
           {loadingOrc ? (
             <div className="card text-center py-8">
-              <div className="animate-pulse text-gray-400">Carregando orçamentos...</div>
+              <div className="animate-pulse text-gray-400">{t('loadingQuotes')}</div>
             </div>
           ) : orcamentos.length === 0 ? (
             <div className="card text-center py-12">
               <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
               </svg>
-              <h3 className="font-semibold text-gray-900 mb-2">Nenhum orçamento ainda</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">{t('noQuotesTitle')}</h3>
               <p className="text-sm text-gray-500">
-                Oficinas próximas estão avaliando os danos. Você receberá orçamentos por email assim que estiverem prontos.
+                {t('noQuotesText')}
               </p>
             </div>
           ) : (
@@ -667,8 +682,8 @@ export default function AcidenteRegistroPage() {
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <p className="text-sm text-yellow-800">
                   {tipoAcidente === 'eu_causei' || tipoAcidente === 'outro_causou'
-                    ? 'A vítima decide qual orçamento aceitar. Após aceitar, as informações da oficina serão compartilhadas com o responsável.'
-                    : 'Compartilhe esses orçamentos com o outro motorista para entrar em acordo sobre qual oficina usar para a reparação.'}
+                    ? t('victimDecidesNote')
+                    : t('shareWithOtherNote')}
                 </p>
               </div>
 
@@ -679,19 +694,19 @@ export default function AcidenteRegistroPage() {
                   <div key={orc.id} className={`card ${isAceito ? 'border-2 border-green-400' : ''}`}>
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <h3 className="font-semibold text-gray-900">{ofi?.nome_fantasia || 'Oficina'}</h3>
-                        {isAceito && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Aceito</span>}
+                        <h3 className="font-semibold text-gray-900">{ofi?.nome_fantasia || t('workshopFallback')}</h3>
+                        {isAceito && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">{t('quoteAcceptedBadge')}</span>}
                       </div>
                       <div className="text-right">
                         <p className="text-xl font-bold text-gray-900">{formatCurrency(orc.valor_total)}</p>
-                        <p className="text-xs text-gray-500">Prazo: {orc.prazo_dias} dias</p>
+                        <p className="text-xs text-gray-500">{t('deadlineLabel', { dias: orc.prazo_dias })}</p>
                       </div>
                     </div>
 
                     {/* Oficina details */}
                     {ofi && (
                       <div className="bg-gray-50 rounded-lg p-3 mb-3 space-y-1">
-                        <p className="text-xs font-semibold text-gray-500 uppercase">Dados da oficina</p>
+                        <p className="text-xs font-semibold text-gray-500 uppercase">{t('workshopDataTitle')}</p>
                         {ofi.endereco && <p className="text-sm text-gray-700">{ofi.endereco}</p>}
                         {(ofi.cidade || ofi.estado) && <p className="text-sm text-gray-700">{ofi.cidade}{ofi.estado ? `, ${ofi.estado}` : ''}</p>}
                         {ofi.profile?.telefone && (
@@ -710,22 +725,22 @@ export default function AcidenteRegistroPage() {
                             <button
                               onClick={() => {
                                 setStep('chat');
-                                setNovaMensagem(`Orçamento da ${ofi?.nome_fantasia}: ${formatCurrency(orc.valor_total)}, prazo ${orc.prazo_dias} dias.${ofi?.endereco ? ' Endereço: ' + ofi.endereco + (ofi.cidade ? ', ' + ofi.cidade : '') : ''}${ofi?.profile?.telefone ? ' Tel: ' + ofi.profile.telefone : ''}`);
+                                setNovaMensagem(buildQuoteMessage(orc));
                               }}
                               className="btn-secondary flex-1 !py-2 text-sm"
                             >
-                              Enviar ao responsável
+                              {t('sendToResponsibleBtn')}
                             </button>
                           )
                           : (
                             <button
                               onClick={() => {
                                 setStep('chat');
-                                setNovaMensagem(`Orçamento da ${ofi?.nome_fantasia}: ${formatCurrency(orc.valor_total)}, prazo ${orc.prazo_dias} dias.${ofi?.endereco ? ' Endereço: ' + ofi.endereco + (ofi.cidade ? ', ' + ofi.cidade : '') : ''}${ofi?.profile?.telefone ? ' Tel: ' + ofi.profile.telefone : ''}`);
+                                setNovaMensagem(buildQuoteMessage(orc));
                               }}
                               className="btn-secondary flex-1 !py-2 text-sm"
                             >
-                              Enviar ao outro envolvido
+                              {t('sendToOtherBtn')}
                             </button>
                           )
                       )}
@@ -734,7 +749,7 @@ export default function AcidenteRegistroPage() {
                           href={`/cliente/orcamentos/${emergData?.solicitacao_id}`}
                           className="btn-primary flex-1 !py-2 text-sm text-center"
                         >
-                          Aceitar orçamento
+                          {t('acceptQuoteBtn')}
                         </Link>
                       )}
                     </div>

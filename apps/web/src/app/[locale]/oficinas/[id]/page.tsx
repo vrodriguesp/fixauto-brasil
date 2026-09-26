@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import { getTranslations } from 'next-intl/server';
 import OficinaPerfilClient from './OficinaPerfilClient';
 
 const supabase = createClient(
@@ -23,21 +24,24 @@ function capitalizarCidade(cidade: string): string {
 // mesmo title/description genericos da home no Google e ao compartilhar,
 // desperdicando o maior ativo de SEO local do site (uma URL indexavel por
 // oficina cadastrada).
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; id: string }> }): Promise<Metadata> {
+  const { locale, id } = await params;
+  const t = await getTranslations({ locale, namespace: 'oficinaPerfilPublico' });
+
   const { data: oficina } = await supabase
     .from('oficinas')
     .select('nome_fantasia, cidade, estado, avaliacao_media, total_avaliacoes')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (!oficina) {
-    return { title: 'Oficina não encontrada' };
+    return { title: t('metaNotFoundTitle') };
   }
 
   const cidade = capitalizarCidade(oficina.cidade);
-  const title = `${oficina.nome_fantasia} - Oficina Mecânica em ${cidade}, ${oficina.estado}`;
-  const description = `Avaliações, serviços oferecidos e orçamento online na ${oficina.nome_fantasia}, oficina mecânica em ${cidade} - ${oficina.estado}. Compare preços e agende seu reparo pelo BipFix.`;
-  const url = `https://bipfix.com/oficinas/${params.id}`;
+  const title = t('metaTitleTemplate', { nome: oficina.nome_fantasia, cidade, estado: oficina.estado });
+  const description = t('metaDescriptionTemplate', { nome: oficina.nome_fantasia, cidade, estado: oficina.estado });
+  const url = `https://bipfix.com/oficinas/${id}`;
 
   return {
     title,

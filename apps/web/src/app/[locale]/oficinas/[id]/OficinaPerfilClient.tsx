@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { supabase } from '@/lib/supabase';
 import StarRating from '@/components/ui/StarRating';
@@ -56,6 +57,7 @@ function getServiceLabel(value: string): { label: string; icon: string } {
 }
 
 export default function OficinaPerfilClient() {
+  const t = useTranslations('oficinaPerfilPublico');
   const params = useParams();
   const id = params.id as string;
 
@@ -111,7 +113,7 @@ export default function OficinaPerfilClient() {
       setTotalServicosConcluidos(servicosRes.count || 0);
 
       if (oficinaRes.error) {
-        setError('Oficina não encontrada.');
+        setError(t('notFoundText'));
         setLoading(false);
         return;
       }
@@ -165,13 +167,14 @@ export default function OficinaPerfilClient() {
     }
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
         <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full mx-auto" />
-        <p className="mt-4 text-gray-500">Carregando perfil da oficina...</p>
+        <p className="mt-4 text-gray-500">{t('loadingText')}</p>
       </div>
     );
   }
@@ -179,9 +182,9 @@ export default function OficinaPerfilClient() {
   if (error || !oficina) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <p className="text-gray-500">{error || 'Oficina não encontrada.'}</p>
+        <p className="text-gray-500">{error || t('notFoundText')}</p>
         <Link href="/" className="text-primary-600 hover:underline mt-4 inline-block">
-          Voltar ao início
+          {t('backToHomeLink')}
         </Link>
       </div>
     );
@@ -215,7 +218,7 @@ export default function OficinaPerfilClient() {
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Voltar
+        {t('backLink')}
       </Link>
 
       {/* Workshop Header */}
@@ -231,37 +234,37 @@ export default function OficinaPerfilClient() {
               <h1 className="text-2xl font-bold text-gray-900">{oficina.nome_fantasia}</h1>
               {calculatedMedia >= 4 && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-400 text-yellow-900">
-                  🏆 Oficina de Qualidade
+                  🏆 {t('qualityBadge')}
                 </span>
               )}
               {tempoMedioResposta !== null && tempoMedioResposta < 2 && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
-                  ⚡ Resposta Rápida
+                  ⚡ {t('fastResponseBadge')}
                 </span>
               )}
               {tierVolume && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800">
-                  🔧 {tierVolume}+ serviços concluídos
+                  🔧 {t('volumeBadge', { tier: tierVolume })}
                 </span>
               )}
               {parceiraDesde && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-700">
-                  Parceira desde {parceiraDesde}
+                  {t('partnerSinceBadge', { data: parceiraDesde })}
                 </span>
               )}
               {hasRevisions && ajusteMedio !== null ? (
                 ajusteMedio < 0 ? (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">
-                    Ajuste médio: {ajusteMedio.toFixed(1)}% 📉
+                    {t('priceAdjustmentDown', { pct: ajusteMedio.toFixed(1) })}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-800">
-                    Ajuste médio: +{ajusteMedio.toFixed(1)}% 📈
+                    {t('priceAdjustmentUp', { pct: ajusteMedio.toFixed(1) })}
                   </span>
                 )
               ) : (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600">
-                  Sem ajustes de preço
+                  {t('noPriceAdjustment')}
                 </span>
               )}
             </div>
@@ -271,7 +274,7 @@ export default function OficinaPerfilClient() {
                 {calculatedMedia.toFixed(1)}
               </span>
               <span className="text-sm text-gray-500">
-                ({totalAvaliacoes} {totalAvaliacoes === 1 ? 'avaliação' : 'avaliações'})
+                {totalAvaliacoes === 1 ? t('reviewCountSingular', { count: totalAvaliacoes }) : t('reviewCountPlural', { count: totalAvaliacoes })}
               </span>
             </div>
             <p className="text-sm text-gray-500 mt-1">
@@ -279,9 +282,11 @@ export default function OficinaPerfilClient() {
             </p>
             {tempoMedioResposta !== null && (
               <p className="text-xs text-gray-400 mt-1">
-                Tempo médio de resposta: {tempoMedioResposta < 1
-                  ? `${Math.round(tempoMedioResposta * 60)}min`
-                  : `${tempoMedioResposta.toFixed(1)}h`}
+                {t('avgResponseTime', {
+                  tempo: tempoMedioResposta < 1
+                    ? t('avgResponseMinutes', { min: Math.round(tempoMedioResposta * 60) })
+                    : t('avgResponseHours', { horas: tempoMedioResposta.toFixed(1) }),
+                })}
               </p>
             )}
           </div>
@@ -291,7 +296,7 @@ export default function OficinaPerfilClient() {
       {/* Services */}
       {oficina.especialidades && oficina.especialidades.length > 0 && (
         <div className="card mb-6">
-          <h2 className="font-semibold text-gray-900 mb-3">Serviços oferecidos</h2>
+          <h2 className="font-semibold text-gray-900 mb-3">{t('servicesOfferedTitle')}</h2>
           <div className="flex flex-wrap gap-2">
             {oficina.especialidades.map((esp) => {
               const svc = getServiceLabel(esp);
@@ -309,7 +314,7 @@ export default function OficinaPerfilClient() {
       {/* Photos */}
       {fotos.length > 0 && (
         <div className="card mb-6">
-          <h2 className="font-semibold text-gray-900 mb-3">Fotos</h2>
+          <h2 className="font-semibold text-gray-900 mb-3">{t('photosTitle')}</h2>
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
             {fotos.map((foto) => (
               <a key={foto.id} href={foto.foto_url} target="_blank" rel="noopener noreferrer" className="aspect-square rounded-lg overflow-hidden block">
@@ -322,7 +327,7 @@ export default function OficinaPerfilClient() {
 
       {/* Address & Map */}
       <div className="card mb-6">
-        <h2 className="font-semibold text-gray-900 mb-3">Endereço</h2>
+        <h2 className="font-semibold text-gray-900 mb-3">{t('addressTitle')}</h2>
         <div className="text-sm text-gray-600 space-y-1 mb-4">
           <p>{oficina.endereco}</p>
           <p>
@@ -345,17 +350,17 @@ export default function OficinaPerfilClient() {
             rel="noopener noreferrer"
             className="block text-center text-xs text-primary-600 hover:underline py-2 bg-gray-50"
           >
-            Abrir no Google Maps
+            {t('openInMapsLink')}
           </a>
         </div>
       </div>
 
       {/* Contact & Hours */}
       <div className="card mb-6">
-        <h2 className="font-semibold text-gray-900 mb-3">Contato e Horário</h2>
+        <h2 className="font-semibold text-gray-900 mb-3">{t('contactHoursTitle')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-gray-500 mb-1">Telefone</p>
+            <p className="text-sm text-gray-500 mb-1">{t('phoneLabel')}</p>
             {oficina.profile?.telefone ? (
               <a
                 href={`tel:${oficina.profile.telefone}`}
@@ -364,15 +369,15 @@ export default function OficinaPerfilClient() {
                 {oficina.profile.telefone}
               </a>
             ) : (
-              <p className="text-sm text-gray-400">Não informado</p>
+              <p className="text-sm text-gray-400">{t('phoneNotInformed')}</p>
             )}
           </div>
           <div>
-            <p className="text-sm text-gray-500 mb-1">Horário de funcionamento</p>
+            <p className="text-sm text-gray-500 mb-1">{t('hoursLabel')}</p>
             <div className="text-sm text-gray-700 space-y-0.5">
-              <p>Seg a Sex: 08:00 - 18:00</p>
-              <p>Sáb: 08:00 - 12:00</p>
-              <p className="text-gray-400">Dom: Fechado</p>
+              <p>{t('hoursWeekdays')}</p>
+              <p>{t('hoursSaturday')}</p>
+              <p className="text-gray-400">{t('hoursSunday')}</p>
             </div>
           </div>
         </div>
@@ -381,11 +386,11 @@ export default function OficinaPerfilClient() {
       {/* Reviews */}
       <div className="card">
         <h2 className="font-semibold text-gray-900 mb-4">
-          Avaliações ({totalAvaliacoes})
+          {t('reviewsTitle', { count: totalAvaliacoes })}
         </h2>
         {totalAvaliacoes === 0 ? (
           <p className="text-gray-500 text-sm text-center py-6">
-            Esta oficina ainda não possui avaliações.
+            {t('noReviewsText')}
           </p>
         ) : (
           <div className="space-y-4">
@@ -399,7 +404,7 @@ export default function OficinaPerfilClient() {
                       </span>
                     </div>
                     <span className="font-medium text-sm text-gray-900">
-                      {av.cliente?.nome || 'Cliente'}
+                      {av.cliente?.nome || t('clientFallback')}
                     </span>
                   </div>
                   <span className="text-xs text-gray-400">{formatDate(av.created_at)}</span>
@@ -409,11 +414,11 @@ export default function OficinaPerfilClient() {
                     <StarRating rating={av.nota} size="sm" />
                     {av.nota_anterior != null && av.nota_anterior !== av.nota && (
                       av.nota > av.nota_anterior ? (
-                        <span className="text-green-600 text-sm font-bold" title={`Anterior: ${av.nota_anterior}`}>
+                        <span className="text-green-600 text-sm font-bold" title={`${av.nota_anterior}`}>
                           ↑
                         </span>
                       ) : (
-                        <span className="text-red-600 text-sm font-bold" title={`Anterior: ${av.nota_anterior}`}>
+                        <span className="text-red-600 text-sm font-bold" title={`${av.nota_anterior}`}>
                           ↓
                         </span>
                       )

@@ -1,12 +1,20 @@
 import { Link } from '@/i18n/navigation';
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: 'Central de Ajuda | BipFix',
-  description: 'Tire suas dúvidas sobre como usar a plataforma BipFix. Guias completos para motoristas e oficinas.',
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'docsHome' });
+  return {
+    title: t('metaTitle'),
+    description: t('metaDescription'),
+  };
+}
 
-export default function DocsPage() {
+export default async function DocsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'docsHome' });
+
   return (
     <div>
       {/* Hero */}
@@ -17,10 +25,10 @@ export default function DocsPage() {
           </svg>
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-          Central de Ajuda BipFix
+          {t('heroTitle')}
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Tudo o que você precisa saber para usar a plataforma, seja como motorista ou como oficina.
+          {t('heroSubtitle')}
         </p>
       </div>
 
@@ -37,13 +45,13 @@ export default function DocsPage() {
             </svg>
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
-            Guia do Motorista
+            {t('clienteCardTitle')}
           </h2>
           <p className="text-gray-600 text-sm leading-relaxed">
-            Aprenda a criar solicitações, comparar orçamentos, agendar serviços e acompanhar o reparo do seu veículo em tempo real.
+            {t('clienteCardText')}
           </p>
           <span className="inline-flex items-center gap-1 text-primary-600 text-sm font-medium mt-4">
-            Acessar guia
+            {t('accessGuideLink')}
             <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
@@ -61,13 +69,13 @@ export default function DocsPage() {
             </svg>
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
-            Guia da Oficina
+            {t('oficinaCardTitle')}
           </h2>
           <p className="text-gray-600 text-sm leading-relaxed">
-            Saiba como cadastrar sua oficina, receber solicitações, enviar orçamentos, gerenciar a agenda e construir sua reputação.
+            {t('oficinaCardText')}
           </p>
           <span className="inline-flex items-center gap-1 text-primary-600 text-sm font-medium mt-4">
-            Acessar guia
+            {t('accessGuideLink')}
             <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
@@ -77,9 +85,9 @@ export default function DocsPage() {
 
       {/* Contact */}
       <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center">
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Precisa de mais ajuda?</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-2">{t('contactTitle')}</h2>
         <p className="text-gray-600 mb-6">
-          Nossa equipe está pronta para te ajudar. Entre em contato por qualquer um dos canais abaixo.
+          {t('contactText')}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
@@ -89,7 +97,7 @@ export default function DocsPage() {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
-            Enviar e-mail
+            {t('emailBtn')}
           </a>
           <a
             href="tel:+551130000000"
