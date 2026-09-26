@@ -11,6 +11,7 @@ import { Link } from '@/i18n/navigation';
 
 export default function CapacidadePage() {
   const t = useTranslations('oficinaCapacidade');
+  const tc = useTranslations('constants');
   const LABELS_STATUS_MANUTENCAO: Record<string, string> = {
     recebido: t('statusRecebido'),
     diagnostico: t('statusDiagnostico'),
@@ -124,7 +125,7 @@ export default function CapacidadePage() {
               return (
                 <div key={svc.value}>
                   <div className="flex items-center justify-between text-sm mb-1">
-                    <span className="text-gray-700">{svc.icon} {svc.label}</span>
+                    <span className="text-gray-700">{svc.icon} {tc(`tiposServico.${svc.value}`)}</span>
                     <span className={sobrecarga ? 'text-red-600 font-semibold' : 'text-gray-600'}>
                       {atual} / {limite} {sobrecarga && t('noLimite')}
                     </span>

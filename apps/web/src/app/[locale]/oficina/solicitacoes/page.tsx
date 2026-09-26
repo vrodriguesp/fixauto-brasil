@@ -11,6 +11,7 @@ import { Link } from '@/i18n/navigation';
 
 export default function SolicitacoesOficinaPage() {
   const t = useTranslations('oficinaSolicitacoes');
+  const tc = useTranslations('constants');
   const locale = useLocale();
   const { oficina } = useAuth();
   const [filtroTipo, setFiltroTipo] = useState('todos');
@@ -37,7 +38,7 @@ export default function SolicitacoesOficinaPage() {
         >
           <option value="todos">{t('todosOsTipos')}</option>
           {TIPOS_SERVICO.map((tipo) => (
-            <option key={tipo.value} value={tipo.value}>{tipo.label}</option>
+            <option key={tipo.value} value={tipo.value}>{tc(`tiposServico.${tipo.value}`)}</option>
           ))}
         </select>
         <select

@@ -10,6 +10,7 @@ import { TIPOS_SERVICO } from '@fixauto/shared';
 
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
+  const tc = useTranslations('constants');
   const { user, oficina, loading, refreshProfile } = useAuth();
 
   const [nomeFantasia, setNomeFantasia] = useState('');
@@ -321,7 +322,7 @@ export default function PerfilOficinaPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('cep')}</label>
-            <input type="text" inputMode="numeric" maxLength={9} className="input-field !w-40" placeholder="00000-000" value={cep} onChange={(e) => handleCepChange(e.target.value)} />
+            <input type="text" inputMode="numeric" maxLength={9} className="input-field !w-40" placeholder={t('placeholderCep')} value={cep} onChange={(e) => handleCepChange(e.target.value)} />
             {buscandoCep && <p className="text-xs text-gray-400 mt-1">{t('buscandoEndereco')}</p>}
             {cepErro && <p className="text-xs text-red-500 mt-1">{cepErro}</p>}
           </div>
@@ -355,11 +356,11 @@ export default function PerfilOficinaPage() {
           {t('selecioneServicos')}
         </p>
         <div className="grid grid-cols-2 gap-3">
-          {TIPOS_SERVICO.map((t) => {
-            const isSelected = especialidades.includes(t.value);
+          {TIPOS_SERVICO.map((tipo) => {
+            const isSelected = especialidades.includes(tipo.value);
             return (
               <label
-                key={t.value}
+                key={tipo.value}
                 className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
                   isSelected ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'
                 }`}
@@ -367,11 +368,11 @@ export default function PerfilOficinaPage() {
                 <input
                   type="checkbox"
                   checked={isSelected}
-                  onChange={() => toggleEspecialidade(t.value)}
+                  onChange={() => toggleEspecialidade(tipo.value)}
                   className="w-4 h-4 text-primary-600 rounded"
                 />
-                <span className="text-lg">{t.icon}</span>
-                <span className="text-sm font-medium text-gray-900">{t.label}</span>
+                <span className="text-lg">{tipo.icon}</span>
+                <span className="text-sm font-medium text-gray-900">{tc(`tiposServico.${tipo.value}`)}</span>
               </label>
             );
           })}
@@ -395,7 +396,7 @@ export default function PerfilOficinaPage() {
               <div key={svc.value} className="flex items-center gap-4">
                 <div className="flex items-center gap-2 w-48">
                   <span className="text-lg">{svc.icon}</span>
-                  <span className="text-sm font-medium text-gray-700">{svc.label}</span>
+                  <span className="text-sm font-medium text-gray-700">{tc(`tiposServico.${svc.value}`)}</span>
                 </div>
                 <input
                   type="number"

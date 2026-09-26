@@ -44,13 +44,14 @@ interface Avaliacao {
   } | null;
 }
 
-function getServiceLabel(value: string): { label: string; icon: string } {
+function getServiceIcon(value: string): string {
   const found = TIPOS_SERVICO.find((s) => s.value === value);
-  return found ? { label: found.label, icon: found.icon } : { label: value, icon: '' };
+  return found ? found.icon : '';
 }
 
 export default function OficinaPerfilClient() {
   const t = useTranslations('oficinaPerfilPublico');
+  const tc = useTranslations('constants');
   const locale = useLocale();
   const params = useParams();
   const id = params.id as string;
@@ -292,15 +293,12 @@ export default function OficinaPerfilClient() {
         <div className="card mb-6">
           <h2 className="font-semibold text-gray-900 mb-3">{t('servicesOfferedTitle')}</h2>
           <div className="flex flex-wrap gap-2">
-            {oficina.especialidades.map((esp) => {
-              const svc = getServiceLabel(esp);
-              return (
-                <span key={esp} className="badge">
-                  <span className="mr-1">{svc.icon}</span>
-                  {svc.label}
-                </span>
-              );
-            })}
+            {oficina.especialidades.map((esp) => (
+              <span key={esp} className="badge">
+                <span className="mr-1">{getServiceIcon(esp)}</span>
+                {tc(`tiposServico.${esp}`)}
+              </span>
+            ))}
           </div>
         </div>
       )}

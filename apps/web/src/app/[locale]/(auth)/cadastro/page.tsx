@@ -20,6 +20,7 @@ export default function CadastroPageWrapper() {
 
 function CadastroPage() {
   const t = useTranslations('cadastro');
+  const tc = useTranslations('constants');
   const searchParams = useSearchParams();
   const tipoParam = searchParams.get('tipo') as 'cliente' | 'oficina' | 'loja_pecas' | null;
 
@@ -132,7 +133,7 @@ function CadastroPage() {
           type="text"
           inputMode="numeric"
           className="input-field"
-          placeholder="00000-000"
+          placeholder={t('placeholderCep')}
           value={cep}
           onChange={(e) => handleCepChange(e.target.value)}
           maxLength={9}
@@ -343,7 +344,7 @@ function CadastroPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelTelefone')}</label>
-                <input type="tel" className="input-field" placeholder="(11) 99999-0000" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+                <input type="tel" className="input-field" placeholder={t('placeholderTelefone')} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelSenha')}</label>
@@ -415,7 +416,7 @@ function CadastroPage() {
                         className="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
                       />
                       <span className="text-lg">{tipo.icon}</span>
-                      <span className="text-sm text-gray-900">{tipo.label}</span>
+                      <span className="text-sm text-gray-900">{tc(`tiposServico.${tipo.value}`)}</span>
                     </label>
                   ))}
                 </div>

@@ -15,6 +15,7 @@ function getFirstDayOfMonth(y: number, m: number) { return new Date(y, m, 1).get
 
 export default function AgendaPage() {
   const t = useTranslations('oficinaAgenda');
+  const tc = useTranslations('constants');
   const locale = useLocale();
   const MESES = [t('mes0'), t('mes1'), t('mes2'), t('mes3'), t('mes4'), t('mes5'), t('mes6'), t('mes7'), t('mes8'), t('mes9'), t('mes10'), t('mes11')];
   const DIAS_SEMANA = [t('dia0'), t('dia1'), t('dia2'), t('dia3'), t('dia4'), t('dia5'), t('dia6')];
@@ -128,7 +129,7 @@ export default function AgendaPage() {
 
   const handleAddEvent = async () => {
     if (!formData.data_inicio || !formData.data_fim) return;
-    const tipoLabel = TIPOS_SERVICO.find(t => t.value === formData.tipo_servico)?.label || formData.tipo_servico;
+    const tipoLabel = tc(`tiposServico.${formData.tipo_servico}`);
     const titulo = `${tipoLabel}${formData.placa ? ' - ' + formData.placa : ''}${formData.cliente_nome ? ' - ' + formData.cliente_nome : ''}`;
     const descricao = [
       formData.fipe_marca && formData.fipe_modelo ? `${formData.fipe_marca} ${formData.fipe_modelo}${formData.fipe_ano ? ' ' + formData.fipe_ano : ''}` : '',
@@ -489,8 +490,8 @@ export default function AgendaPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t('tipoServico')}</label>
               <select className="input-field" value={formData.tipo_servico} onChange={(e) => setFormData({ ...formData, tipo_servico: e.target.value })}>
-                {TIPOS_SERVICO.map((t) => (
-                  <option key={t.value} value={t.value}>{t.icon} {t.label}</option>
+                {TIPOS_SERVICO.map((tipo) => (
+                  <option key={tipo.value} value={tipo.value}>{tipo.icon} {tc(`tiposServico.${tipo.value}`)}</option>
                 ))}
               </select>
             </div>

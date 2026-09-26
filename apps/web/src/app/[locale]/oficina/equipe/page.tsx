@@ -9,6 +9,7 @@ import type { Funcionario } from '@fixauto/shared';
 
 export default function EquipePage() {
   const t = useTranslations('oficinaEquipe');
+  const tc = useTranslations('constants');
   const { oficina } = useAuth();
   const [funcionarios, setFuncionarios] = useState<(Funcionario & { profile?: { nome: string; email: string; telefone: string | null } })[]>([]);
   const [loading, setLoading] = useState(true);
@@ -239,8 +240,8 @@ export default function EquipePage() {
                 value={form.cargo}
                 onChange={(e) => setForm({ ...form, cargo: e.target.value as 'admin' | 'mecanico' })}
               >
-                <option value="mecanico">{CARGOS_FUNCIONARIO.mecanico.label} - {CARGOS_FUNCIONARIO.mecanico.description}</option>
-                <option value="admin">{CARGOS_FUNCIONARIO.admin.label} - {CARGOS_FUNCIONARIO.admin.description}</option>
+                <option value="mecanico">{tc('cargosFuncionario.mecanico')} - {tc('cargosFuncionario.mecanicoDesc')}</option>
+                <option value="admin">{tc('cargosFuncionario.admin')} - {tc('cargosFuncionario.adminDesc')}</option>
               </select>
             </div>
             <div>
@@ -350,7 +351,7 @@ export default function EquipePage() {
                         ? 'bg-emerald-100 text-emerald-800'
                         : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {CARGOS_FUNCIONARIO[func.cargo].label}
+                      {tc(`cargosFuncionario.${func.cargo}`)}
                     </span>
                     {!func.ativo && (
                       <span className="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">

@@ -91,6 +91,7 @@ function getManutencaoColorLight(status: StatusManutencao) {
 
 export default function AcompanhamentoPage() {
   const t = useTranslations('clienteAcompanhamento');
+  const tc = useTranslations('constants');
   const locale = useLocale();
   const progressSteps = getProgressSteps(t);
   const { id } = useParams<{ id: string }>();
@@ -246,8 +247,8 @@ export default function AcompanhamentoPage() {
           <div className="flex items-center gap-3">
             <span className="text-3xl">{latestInfo.icon}</span>
             <div>
-              <p className="text-lg font-bold">{latestInfo.label}</p>
-              <p className="text-sm opacity-80">{latestInfo.description}</p>
+              <p className="text-lg font-bold">{tc(`statusManutencao.${latestStatus!}`)}</p>
+              <p className="text-sm opacity-80">{tc(`statusManutencao.${latestStatus!}Desc`)}</p>
             </div>
           </div>
         </div>
@@ -352,7 +353,7 @@ export default function AcompanhamentoPage() {
                   <div className={`p-3 rounded-lg ${isLatest ? 'bg-primary-50 border border-primary-200' : 'bg-gray-50'}`}>
                     <div className="flex items-center justify-between">
                       <span className={`text-sm font-medium ${isLatest ? 'text-primary-900' : 'text-gray-900'}`}>
-                        {statusInfo?.icon} {statusInfo?.label || etapa.status}
+                        {statusInfo?.icon} {statusInfo ? tc(`statusManutencao.${etapa.status}`) : etapa.status}
                       </span>
                       <span className="text-xs text-gray-400">
                         {formatDateTime(etapa.created_at)}

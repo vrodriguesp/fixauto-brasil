@@ -18,6 +18,7 @@ interface FuncionarioLeve {
 
 export default function DistribuicaoTrabalhoPage() {
   const t = useTranslations('oficinaDistribuicao');
+  const tc = useTranslations('constants');
   const locale = useLocale();
   const { oficina } = useAuth();
   const { eventos, loading, refresh } = useAgenda();
@@ -177,7 +178,7 @@ export default function DistribuicaoTrabalhoPage() {
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-semibold text-gray-900">{f.nome}</p>
                     <span className="text-[10px] uppercase tracking-wide text-gray-400">
-                      {CARGOS_FUNCIONARIO[f.cargo as keyof typeof CARGOS_FUNCIONARIO]?.label || f.cargo}
+                      {CARGOS_FUNCIONARIO[f.cargo as keyof typeof CARGOS_FUNCIONARIO] ? tc(`cargosFuncionario.${f.cargo}`) : f.cargo}
                     </span>
                   </div>
                   <p className={`text-xs mt-0.5 ${sobrecarga ? 'text-red-600 font-medium' : 'text-gray-500'}`}>

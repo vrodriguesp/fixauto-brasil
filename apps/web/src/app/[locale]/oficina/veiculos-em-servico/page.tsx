@@ -14,6 +14,7 @@ type FilterTab = 'todos' | 'aguardando' | 'em_servico' | 'prontos';
 
 export default function VeiculosEmServico() {
   const t = useTranslations('oficinaVeiculosEmServico');
+  const tc = useTranslations('constants');
   const { eventos, loading, update, refresh } = useAgenda();
   const { oficina, funcionario } = useAuth();
   const [activeTab, setActiveTab] = useState<FilterTab>('em_servico');
@@ -399,7 +400,7 @@ export default function VeiculosEmServico() {
                           <div className="flex items-center gap-1.5">
                             <div className={`w-2.5 h-2.5 rounded-full ${getManutencaoColor(latestEtapa.status)}`} />
                             <span className="text-xs font-medium text-gray-700">
-                              {STATUS_MANUTENCAO[latestEtapa.status as StatusManutencao]?.label || latestEtapa.status}
+                              {STATUS_MANUTENCAO[latestEtapa.status as StatusManutencao] ? tc(`statusManutencao.${latestEtapa.status}`) : latestEtapa.status}
                             </span>
                           </div>
                         )}
@@ -535,7 +536,7 @@ export default function VeiculosEmServico() {
                                 <div className={`p-3 rounded-lg ${i === 0 ? 'bg-gray-50 border border-gray-200' : 'bg-white'}`}>
                                   <div className="flex items-center justify-between">
                                     <span className="text-sm font-medium text-gray-900">
-                                      {statusInfo?.icon} {statusInfo?.label || etapa.status}
+                                      {statusInfo?.icon} {statusInfo ? tc(`statusManutencao.${etapa.status}`) : etapa.status}
                                     </span>
                                     <span className="text-xs text-gray-400">
                                       {formatDateTime(etapa.created_at)}
@@ -594,7 +595,7 @@ export default function VeiculosEmServico() {
                       >
                         {Object.entries(STATUS_MANUTENCAO).map(([key, val]) => (
                           <option key={key} value={key}>
-                            {val.icon} {val.label} - {val.description}
+                            {val.icon} {tc(`statusManutencao.${key}`)} - {tc(`statusManutencao.${key}Desc`)}
                           </option>
                         ))}
                       </select>

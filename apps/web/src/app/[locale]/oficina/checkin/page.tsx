@@ -10,6 +10,7 @@ import { useRouter } from '@/i18n/navigation';
 
 export default function ManualCheckinPage() {
   const t = useTranslations('oficinaCheckin');
+  const tc = useTranslations('constants');
   const router = useRouter();
   const { oficina } = useAuth();
   const { add: addEvento } = useAgenda();
@@ -48,7 +49,7 @@ export default function ManualCheckinPage() {
     setSaving(true);
     setError('');
 
-    const tipoLabel = TIPOS_SERVICO.find(t => t.value === tipoServico)?.label || tipoServico;
+    const tipoLabel = tc(`tiposServico.${tipoServico}`);
 
     // Create agenda event
     const { error: agendaError } = await addEvento({
@@ -144,7 +145,7 @@ export default function ManualCheckinPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
-                <input type="tel" className="input-field" placeholder="(11) 99999-0000" value={clienteTelefone} onChange={(e) => setClienteTelefone(e.target.value)} />
+                <input type="tel" className="input-field" placeholder={t('placeholderTelefone')} value={clienteTelefone} onChange={(e) => setClienteTelefone(e.target.value)} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
@@ -192,19 +193,19 @@ export default function ManualCheckinPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">{t('tipoServicoObrigatorio')}</label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {TIPOS_SERVICO.map((t) => (
+                {TIPOS_SERVICO.map((tipo) => (
                   <button
-                    key={t.value}
+                    key={tipo.value}
                     type="button"
-                    onClick={() => setTipoServico(t.value)}
+                    onClick={() => setTipoServico(tipo.value)}
                     className={`p-3 rounded-lg border-2 text-center transition-all ${
-                      tipoServico === t.value
+                      tipoServico === tipo.value
                         ? 'border-primary-500 bg-primary-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <span className="text-xl">{t.icon}</span>
-                    <p className="text-xs text-gray-900 mt-1">{t.label}</p>
+                    <span className="text-xl">{tipo.icon}</span>
+                    <p className="text-xs text-gray-900 mt-1">{tc(`tiposServico.${tipo.value}`)}</p>
                   </button>
                 ))}
               </div>

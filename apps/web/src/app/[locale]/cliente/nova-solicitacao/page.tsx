@@ -14,6 +14,7 @@ import {
 
 export default function NovaSolicitacaoPage() {
   const t = useTranslations('clienteNovaSolicitacao');
+  const tc = useTranslations('constants');
   const router = useRouter();
   const { veiculos, add: addVeiculo } = useVeiculos();
   const { create: createSolicitacao, addPhotos } = useSolicitacoes();
@@ -212,7 +213,7 @@ export default function NovaSolicitacaoPage() {
       }
 
       // Notify nearby oficinas about new solicitation
-      const tipoLabel = TIPOS_SERVICO.find(t => t.value === tipo)?.label || tipo;
+      const tipoLabel = tc(`tiposServico.${tipo}`);
       const { data: oficinas } = await supabase
         .from('oficinas')
         .select('profile_id, especialidades')
@@ -389,7 +390,7 @@ export default function NovaSolicitacaoPage() {
                   }`}
                 >
                   <span className="text-2xl">{svc.icon}</span>
-                  <p className="font-medium text-gray-900 mt-2">{svc.label}</p>
+                  <p className="font-medium text-gray-900 mt-2">{tc(`tiposServico.${svc.value}`)}</p>
                   {!svc.needsPhoto && (
                     <p className="text-xs text-gray-500 mt-1">{t('selectServices')}</p>
                   )}
@@ -539,8 +540,8 @@ export default function NovaSolicitacaoPage() {
                         u.color === 'yellow' ? 'bg-yellow-500' : 'bg-red-500'
                       }`} />
                       <div>
-                        <p className="font-medium text-gray-900 text-sm">{u.label}</p>
-                        <p className="text-xs text-gray-500">{u.description}</p>
+                        <p className="font-medium text-gray-900 text-sm">{tc(`urgencias.${u.value}`)}</p>
+                        <p className="text-xs text-gray-500">{tc(`urgencias.${u.value}Desc`)}</p>
                       </div>
                     </button>
                   ))}
@@ -595,11 +596,11 @@ export default function NovaSolicitacaoPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">{t('typeLabel')}</span>
-                    <span className="text-gray-900">{tipoConfig?.label}</span>
+                    <span className="text-gray-900">{tipoConfig ? tc(`tiposServico.${tipoConfig.value}`) : ''}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">{t('urgencyLabelColon')}</span>
-                    <span className="text-gray-900">{URGENCIAS.find((u) => u.value === urgencia)?.label}</span>
+                    <span className="text-gray-900">{tc(`urgencias.${urgencia}`)}</span>
                   </div>
                   {needsPhoto && (
                     <div className="flex justify-between">
