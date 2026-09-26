@@ -43,6 +43,7 @@
     "placeholderCidade": "São Paulo",
     "labelEstado": "Estado",
     "selecioneUf": "UF",
+    "placeholderEstado": "Ex: SP",
     "labelServicosOficina": "Serviços que a oficina realiza *",
     "servicosAjuda": "Selecione todos os tipos de serviço que sua oficina oferece. Você só receberá solicitações compatíveis.",
     "servicosSelecionados": "{count} serviço(s) selecionado(s)",

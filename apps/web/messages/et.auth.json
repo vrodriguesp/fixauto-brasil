@@ -43,6 +43,7 @@
     "placeholderCidade": "Tallinn",
     "labelEstado": "Maakond",
     "selecioneUf": "Osariik",
+    "placeholderEstado": "Nt: Harjumaa",
     "labelServicosOficina": "Teenused, mida töökoda pakub *",
     "servicosAjuda": "Vali kõik teenuseliigid, mida su töökoda pakub. Sa saad ainult neile vastavaid päringuid.",
     "servicosSelecionados": "{count, plural, one {# teenus valitud} other {# teenust valitud}}",

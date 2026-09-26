@@ -43,6 +43,7 @@
     "placeholderCidade": "New York",
     "labelEstado": "State",
     "selecioneUf": "State",
+    "placeholderEstado": "e.g. Harju County",
     "labelServicosOficina": "Services your workshop offers *",
     "servicosAjuda": "Select all the service types your workshop offers. You'll only receive matching requests.",
     "servicosSelecionados": "{count, plural, one {# service selected} other {# services selected}}",

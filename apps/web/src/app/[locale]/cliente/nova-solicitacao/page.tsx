@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useRef, useEffect } from 'react';
+import { useRouter } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { useVeiculos } from '@/hooks/use-veiculos';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
@@ -12,6 +13,7 @@ import {
 } from '@fixauto/shared';
 
 export default function NovaSolicitacaoPage() {
+  const t = useTranslations('clienteNovaSolicitacao');
   const router = useRouter();
   const { veiculos, add: addVeiculo } = useVeiculos();
   const { create: createSolicitacao, addPhotos } = useSolicitacoes();
@@ -32,6 +34,20 @@ export default function NovaSolicitacaoPage() {
   const [endereco, setEndereco] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  // Mesmo padrao de emergencia/page.tsx: comeca com um default (SP) e so
+  // sobrescreve se o navegador conceder geolocalizacao - sem isso, toda
+  // solicitacao gravava a mesma coordenada fixa, quebrando o "oficinas
+  // proximas" pra qualquer cliente fora de Sao Paulo.
+  const [coords, setCoords] = useState({ lat: -23.5505, lon: -46.6333 });
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        () => { /* mantem o default se o usuario negar a permissao */ }
+      );
+    }
+  }, []);
 
   const selectedVeiculo = veiculos.find((v) => v.id === veiculoId);
   const tipoConfig = TIPOS_SERVICO.find((t) => t.value === tipo);
@@ -88,7 +104,7 @@ export default function NovaSolicitacaoPage() {
     setSavingVeiculo(false);
     const { data, error } = result || { data: null, error: null };
     if (error) {
-      setVeiculoError((error as any)?.message || 'Erro ao cadastrar veículo');
+      setVeiculoError((error as any)?.message || t('errorAddVehicle'));
       return;
     }
     if (data?.id) {
@@ -102,8 +118,8 @@ export default function NovaSolicitacaoPage() {
     if (!veiculoId || !endereco) return;
     setSubmitError('');
     const fullDescricao = servicosSelecionados.length > 0
-      ? `Serviços: ${servicosSelecionados.join(', ')}${descricao ? '. ' + descricao : ''}`
-      : (descricao || 'Solicitação de serviço');
+      ? `${t('servicesPrefix')} ${servicosSelecionados.join(', ')}${descricao ? '. ' + descricao : ''}`
+      : (descricao || t('defaultServiceDescription'));
 
     try {
       const { data, error } = await createSolicitacao({
@@ -111,8 +127,8 @@ export default function NovaSolicitacaoPage() {
         tipo,
         descricao: fullDescricao,
         urgencia,
-        latitude: -23.5505,
-        longitude: -46.6333,
+        latitude: coords.lat,
+        longitude: coords.lon,
         endereco,
       });
 
@@ -124,7 +140,7 @@ export default function NovaSolicitacaoPage() {
       }
 
       if (!data?.id) {
-        setSubmitError('Erro inesperado: solicitação não retornou dados');
+        setSubmitError(t('errorUnexpectedNoId'));
         return;
       }
 
@@ -179,7 +195,7 @@ export default function NovaSolicitacaoPage() {
       setSubmitted(true);
       setTimeout(() => router.push('/cliente/dashboard'), 2000);
     } catch (err) {
-      setSubmitError((err as Error).message || 'Erro inesperado ao criar solicitação');
+      setSubmitError((err as Error).message || t('errorUnexpectedSubmit'));
     }
   };
 
@@ -191,19 +207,19 @@ export default function NovaSolicitacaoPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Solicitação enviada!</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('successTitle')}</h1>
         <p className="text-gray-600 mb-4">
-          Oficinas próximas a você foram notificadas. Você receberá orçamentos em breve.
+          {t('successText')}
         </p>
-        <p className="text-sm text-gray-500">Redirecionando para o dashboard...</p>
+        <p className="text-sm text-gray-500">{t('redirecting')}</p>
       </div>
     );
   }
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Nova Solicitação</h1>
-      <p className="text-gray-600 mb-8">Descreva o problema do seu veículo para receber orçamentos</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('pageTitle')}</h1>
+      <p className="text-gray-600 mb-8">{t('pageSubtitle')}</p>
 
       {/* Progress bar */}
       <div className="flex items-center gap-2 mb-8">
@@ -219,7 +235,7 @@ export default function NovaSolicitacaoPage() {
         {/* Step 1: Select vehicle */}
         {step === 1 && (
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Selecione o veículo</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('step1Title')}</h2>
 
             {showAddVeiculo ? (
               <div>
@@ -242,16 +258,16 @@ export default function NovaSolicitacaoPage() {
                 />
                 <div className="grid sm:grid-cols-3 gap-4 mt-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Placa (opcional)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
                     <input type="text" className="input-field" placeholder="ABC-1234" value={novoVeiculo.placa} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, placa: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Cor (opcional)</label>
-                    <input type="text" className="input-field" placeholder="Prata" value={novoVeiculo.cor} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, cor: e.target.value })} />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('colorLabel')}</label>
+                    <input type="text" className="input-field" placeholder={t('placeholderColor')} value={novoVeiculo.cor} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, cor: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Apelido (opcional)</label>
-                    <input type="text" className="input-field" placeholder="Meu carro" value={novoVeiculo.apelido} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, apelido: e.target.value })} />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('nicknameLabel')}</label>
+                    <input type="text" className="input-field" placeholder={t('placeholderNickname')} value={novoVeiculo.apelido} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, apelido: e.target.value })} />
                   </div>
                 </div>
                 {veiculoError && (
@@ -261,14 +277,14 @@ export default function NovaSolicitacaoPage() {
                 )}
                 <div className="flex justify-end gap-3 mt-6">
                   {veiculos.length > 0 && (
-                    <button onClick={() => { setShowAddVeiculo(false); setVeiculoError(''); }} className="btn-secondary">Cancelar</button>
+                    <button onClick={() => { setShowAddVeiculo(false); setVeiculoError(''); }} className="btn-secondary">{t('cancel')}</button>
                   )}
                   <button
                     onClick={handleAddVeiculo}
                     disabled={savingVeiculo || !novoVeiculo.fipe_marca || !novoVeiculo.fipe_modelo || !novoVeiculo.fipe_ano}
                     className="btn-primary disabled:opacity-50"
                   >
-                    {savingVeiculo ? 'Salvando...' : 'Adicionar e continuar'}
+                    {savingVeiculo ? t('saving') : t('addAndContinue')}
                   </button>
                 </div>
               </div>
@@ -303,12 +319,12 @@ export default function NovaSolicitacaoPage() {
                     onClick={() => setShowAddVeiculo(true)}
                     className="w-full p-4 rounded-lg border-2 border-dashed border-gray-300 text-center text-gray-500 hover:border-primary-400 hover:text-primary-600 transition-all"
                   >
-                    + {veiculos.length === 0 ? 'Cadastrar veículo' : 'Cadastrar outro veículo'}
+                    + {veiculos.length === 0 ? t('registerVehicle') : t('registerAnotherVehicle')}
                   </button>
                 </div>
                 <div className="flex justify-end mt-6">
                   <button onClick={() => setStep(2)} disabled={!veiculoId} className="btn-primary">
-                    Próximo
+                    {t('next')}
                   </button>
                 </div>
               </>
@@ -319,30 +335,30 @@ export default function NovaSolicitacaoPage() {
         {/* Step 2: Service type */}
         {step === 2 && (
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Tipo de serviço</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('step2Title')}</h2>
             <div className="grid grid-cols-2 gap-3">
-              {TIPOS_SERVICO.map((t) => (
+              {TIPOS_SERVICO.map((svc) => (
                 <button
-                  key={t.value}
+                  key={svc.value}
                   type="button"
-                  onClick={() => { setTipo(t.value); setServicosSelecionados([]); }}
+                  onClick={() => { setTipo(svc.value); setServicosSelecionados([]); }}
                   className={`p-4 rounded-lg border-2 text-left transition-all ${
-                    tipo === t.value
+                    tipo === svc.value
                       ? 'border-primary-500 bg-primary-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <span className="text-2xl">{t.icon}</span>
-                  <p className="font-medium text-gray-900 mt-2">{t.label}</p>
-                  {!t.needsPhoto && (
-                    <p className="text-xs text-gray-500 mt-1">Selecione os serviços</p>
+                  <span className="text-2xl">{svc.icon}</span>
+                  <p className="font-medium text-gray-900 mt-2">{svc.label}</p>
+                  {!svc.needsPhoto && (
+                    <p className="text-xs text-gray-500 mt-1">{t('selectServices')}</p>
                   )}
                 </button>
               ))}
             </div>
             <div className="flex justify-between mt-6">
-              <button onClick={() => setStep(1)} className="btn-secondary">Voltar</button>
-              <button onClick={() => setStep(3)} disabled={!tipo} className="btn-primary">Próximo</button>
+              <button onClick={() => setStep(1)} className="btn-secondary">{t('back')}</button>
+              <button onClick={() => setStep(3)} disabled={!tipo} className="btn-primary">{t('next')}</button>
             </div>
           </div>
         )}
@@ -352,8 +368,8 @@ export default function NovaSolicitacaoPage() {
           <div>
             {needsPhoto ? (
               <>
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">Fotos do dano</h2>
-                <p className="text-sm text-gray-500 mb-4">Adicione fotos para que as oficinas possam avaliar melhor</p>
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('step3PhotoTitle')}</h2>
+                <p className="text-sm text-gray-500 mb-4">{t('step3PhotoSubtitle')}</p>
 
                 <input
                   ref={fileInputRef}
@@ -369,7 +385,7 @@ export default function NovaSolicitacaoPage() {
                     <div key={i} className="aspect-square rounded-lg overflow-hidden relative group">
                       <img
                         src={foto.preview}
-                        alt={`Foto ${i + 1}`}
+                        alt={t('photoAlt', { n: i + 1 })}
                         className="w-full h-full object-cover"
                       />
                       <button
@@ -392,17 +408,17 @@ export default function NovaSolicitacaoPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    <span className="text-xs text-gray-500 mt-1">Adicionar foto</span>
+                    <span className="text-xs text-gray-500 mt-1">{t('addPhoto')}</span>
                   </button>
                 </div>
               </>
             ) : (
               <>
                 <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                  Selecione os serviços necessários
+                  {t('step3ServiceTitle')}
                 </h2>
                 <p className="text-sm text-gray-500 mb-4">
-                  Marque todos os serviços que você precisa
+                  {t('step3ServiceSubtitle')}
                 </p>
 
                 <div className="space-y-2 max-h-[400px] overflow-y-auto">
@@ -429,7 +445,7 @@ export default function NovaSolicitacaoPage() {
                 {servicosSelecionados.length > 0 && (
                   <div className="mt-4 p-3 bg-primary-50 rounded-lg">
                     <p className="text-sm text-primary-800">
-                      <strong>{servicosSelecionados.length}</strong> serviço(s) selecionado(s)
+                      <strong>{servicosSelecionados.length}</strong> {t('servicesSelectedSuffix', { count: servicosSelecionados.length })}
                     </p>
                   </div>
                 )}
@@ -437,8 +453,8 @@ export default function NovaSolicitacaoPage() {
             )}
 
             <div className="flex justify-between mt-6">
-              <button onClick={() => setStep(2)} className="btn-secondary">Voltar</button>
-              <button onClick={() => setStep(4)} className="btn-primary">Próximo</button>
+              <button onClick={() => setStep(2)} className="btn-secondary">{t('back')}</button>
+              <button onClick={() => setStep(4)} className="btn-primary">{t('next')}</button>
             </div>
           </div>
         )}
@@ -446,18 +462,18 @@ export default function NovaSolicitacaoPage() {
         {/* Step 4: Description & urgency */}
         {step === 4 && (
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Detalhes do serviço</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('step4Title')}</h2>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {needsPhoto ? 'Descreva o problema' : 'Observações adicionais (opcional)'}
+                  {needsPhoto ? t('describeProblem') : t('additionalNotesOptional')}
                 </label>
                 <textarea
                   className="input-field min-h-[120px]"
                   placeholder={needsPhoto
-                    ? 'Descreva o que aconteceu, o que precisa ser reparado...'
-                    : 'Alguma informação adicional sobre o serviço?'
+                    ? t('placeholderDescribeIssue')
+                    : t('placeholderAdditionalInfo')
                   }
                   value={descricao}
                   onChange={(e) => setDescricao(e.target.value)}
@@ -465,7 +481,7 @@ export default function NovaSolicitacaoPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Urgência</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('urgencyLabel')}</label>
                 <div className="space-y-2">
                   {URGENCIAS.map((u) => (
                     <button
@@ -493,13 +509,13 @@ export default function NovaSolicitacaoPage() {
             </div>
 
             <div className="flex justify-between mt-6">
-              <button onClick={() => setStep(3)} className="btn-secondary">Voltar</button>
+              <button onClick={() => setStep(3)} className="btn-secondary">{t('back')}</button>
               <button
                 onClick={() => setStep(5)}
                 disabled={needsPhoto && !descricao}
                 className="btn-primary"
               >
-                Próximo
+                {t('next')}
               </button>
             </div>
           </div>
@@ -508,52 +524,52 @@ export default function NovaSolicitacaoPage() {
         {/* Step 5: Location & confirm */}
         {step === 5 && (
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Localização e confirmação</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('step5Title')}</h2>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Endereço / Região
+                  {t('addressLabel')}
                 </label>
                 <input
                   type="text"
                   className="input-field"
-                  placeholder="Bairro, cidade - Estado"
+                  placeholder={t('placeholderAddress')}
                   value={endereco}
                   onChange={(e) => setEndereco(e.target.value)}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Oficinas próximas a este endereço serão notificadas
+                  {t('addressHelp')}
                 </p>
               </div>
 
               {/* Summary */}
               <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                <h3 className="font-medium text-gray-900">Resumo da solicitação</h3>
+                <h3 className="font-medium text-gray-900">{t('summaryTitle')}</h3>
                 <div className="text-sm space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Veículo:</span>
+                    <span className="text-gray-500">{t('vehicleLabel')}</span>
                     <span className="text-gray-900">
                       {selectedVeiculo?.fipe_marca} {selectedVeiculo?.fipe_modelo} {selectedVeiculo?.fipe_ano}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Tipo:</span>
+                    <span className="text-gray-500">{t('typeLabel')}</span>
                     <span className="text-gray-900">{tipoConfig?.label}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Urgência:</span>
+                    <span className="text-gray-500">{t('urgencyLabelColon')}</span>
                     <span className="text-gray-900">{URGENCIAS.find((u) => u.value === urgencia)?.label}</span>
                   </div>
                   {needsPhoto && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Fotos:</span>
-                      <span className="text-gray-900">{fotos.length} foto(s)</span>
+                      <span className="text-gray-500">{t('photosLabel')}</span>
+                      <span className="text-gray-900">{t('photosCount', { count: fotos.length })}</span>
                     </div>
                   )}
                   {servicosSelecionados.length > 0 && (
                     <div>
-                      <span className="text-gray-500">Serviços:</span>
+                      <span className="text-gray-500">{t('servicesLabel')}</span>
                       <ul className="mt-1 ml-4 list-disc text-gray-700">
                         {servicosSelecionados.map((s) => (
                           <li key={s} className="text-xs">{s}</li>
@@ -577,9 +593,9 @@ export default function NovaSolicitacaoPage() {
             )}
 
             <div className="flex justify-between mt-6">
-              <button onClick={() => setStep(4)} className="btn-secondary">Voltar</button>
+              <button onClick={() => setStep(4)} className="btn-secondary">{t('back')}</button>
               <button onClick={handleSubmit} disabled={!endereco} className="btn-success">
-                Enviar Solicitação
+                {t('sendRequest')}
               </button>
             </div>
           </div>

@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { TIPOS_SERVICO, ESTADOS_BRASIL } from '@fixauto/shared';
+import { TIPOS_SERVICO } from '@fixauto/shared';
 import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
 
 export default function CadastroPageWrapper() {
@@ -42,6 +42,21 @@ function CadastroPage() {
   const [buscandoCep, setBuscandoCep] = useState(false);
   const [cepErro, setCepErro] = useState('');
   const [especialidades, setEspecialidades] = useState<string[]>([]);
+  // Mesmo padrao de emergencia/page.tsx e cliente/nova-solicitacao: comeca
+  // com um default (SP) e so sobrescreve se o navegador conceder
+  // geolocalizacao - sem isso, toda oficina/loja cadastrada gravava a
+  // mesma coordenada fixa, quebrando o "oficinas proximas" pra qualquer
+  // parceiro fora de Sao Paulo (inclusive o piloto na Estonia).
+  const [coords, setCoords] = useState({ lat: -23.5505, lon: -46.6333 });
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        () => { /* mantem o default se o usuario negar a permissao */ }
+      );
+    }
+  }, []);
 
   const handleCepChange = async (raw: string) => {
     const formatted = formatCep(raw);
@@ -94,12 +109,7 @@ function CadastroPage() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEstado')}</label>
-          <select className="input-field" value={estado} onChange={(e) => setEstado(e.target.value)}>
-            <option value="">{t('selecioneUf')}</option>
-            {ESTADOS_BRASIL.map((uf) => (
-              <option key={uf} value={uf}>{uf}</option>
-            ))}
-          </select>
+          <input type="text" className="input-field" placeholder={t('placeholderEstado')} value={estado} onChange={(e) => setEstado(e.target.value)} />
         </div>
       </div>
     </>
@@ -147,10 +157,10 @@ function CadastroPage() {
           cnpj: cnpj || null,
           endereco: endereco || 'A definir',
           cidade: cidade || 'A definir',
-          estado: estado || 'SP',
-          cep: cep || '00000-000',
-          latitude: -23.5505,  // Default SP, user can update later
-          longitude: -46.6333,
+          estado: estado || 'A definir',
+          cep: cep || 'A definir',
+          latitude: coords.lat,
+          longitude: coords.lon,
           raio_atendimento_km: 30,
           especialidades: especialidades.length > 0 ? especialidades : [],
         });
@@ -172,10 +182,10 @@ function CadastroPage() {
           cnpj: cnpj || null,
           endereco: endereco || 'A definir',
           cidade: cidade || 'A definir',
-          estado: estado || 'SP',
-          cep: cep || '00000-000',
-          latitude: -23.5505,
-          longitude: -46.6333,
+          estado: estado || 'A definir',
+          cep: cep || 'A definir',
+          latitude: coords.lat,
+          longitude: coords.lon,
           raio_atendimento_km: 30,
         });
         if (lojaError) {
