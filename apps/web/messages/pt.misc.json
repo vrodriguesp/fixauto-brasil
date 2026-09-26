@@ -1,4 +1,8 @@
 {
+  "tutorialBanner": {
+    "texto": "Novo por aqui? <link>Aprenda a usar o BipFix</link> em poucos minutos.",
+    "dispensar": "Dispensar"
+  },
   "termos": {
     "metaTitle": "Termos de Uso",
     "metaDescription": "Termos de Uso e Condições Gerais da plataforma BipFix, para clientes, oficinas e lojas de peças parceiras.",

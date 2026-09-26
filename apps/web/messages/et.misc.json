@@ -1,4 +1,8 @@
 {
+  "tutorialBanner": {
+    "texto": "Uus siin? <link>Õpi BipFixi kasutama</link> mõne minutiga.",
+    "dispensar": "Peida"
+  },
   "termos": {
     "metaTitle": "Kasutustingimused",
     "metaDescription": "BipFixi platvormi kasutustingimused ja üldtingimused klientidele, partnertöökodadele ja varuosade poodidele.",

@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 
 export default function TutorialBanner({ href, storageKey }: { href: string; storageKey: string }) {
+  const t = useTranslations('tutorialBanner');
   const [visivel, setVisivel] = useState(false);
 
   useEffect(() => {
@@ -26,10 +28,12 @@ export default function TutorialBanner({ href, storageKey }: { href: string; sto
       <div className="flex items-center gap-3">
         <span className="text-xl">🎓</span>
         <p className="text-sm text-indigo-900">
-          Novo por aqui? <Link href={href} className="font-semibold underline hover:no-underline">Aprenda a usar o BipFix</Link> em poucos minutos.
+          {t.rich('texto', {
+            link: (chunks) => <Link href={href} className="font-semibold underline hover:no-underline">{chunks}</Link>,
+          })}
         </p>
       </div>
-      <button onClick={dispensar} className="text-indigo-400 hover:text-indigo-600 text-sm flex-shrink-0" aria-label="Dispensar">
+      <button onClick={dispensar} className="text-indigo-400 hover:text-indigo-600 text-sm flex-shrink-0" aria-label={t('dispensar')}>
         ✕
       </button>
     </div>
