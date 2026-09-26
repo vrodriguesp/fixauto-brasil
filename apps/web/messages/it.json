@@ -157,30 +157,75 @@
     "doresTitulo": "I problemi quotidiani che BipFix risolve",
     "doresSubtitulo": "Pensato per la routine reale di chi gestisce un'officina, non solo per le grandi catene",
     "dores": [
-      { "dor": "Agenda su carta o foglio di calcolo, difficile capire chi fa cosa", "solucao": "Agenda visuale per veicolo e per dipendente, con pannello di distribuzione del lavoro" },
-      { "dor": "Pochi clienti nuovi, dipendenti solo dal passaparola", "solucao": "Profilo pubblico indicizzato su Google e richieste di preventivo automatiche dalla zona" },
-      { "dor": "Preventivi fatti su WhatsApp, senza controllo né storico", "solucao": "Preventivi strutturati, con fasi della riparazione e notifiche automatiche al cliente" },
-      { "dor": "Nessuna reputazione visibile per distinguersi dalla concorrenza", "solucao": "Recensioni reali dei clienti e badge di reputazione mostrati sul profilo" },
-      { "dor": "Comunicazione disordinata tra meccanico e reception", "solucao": "Note interne per veicolo e notifiche in tempo reale per il team" },
-      { "dor": "Tempi lunghi per trovare ricambi e confrontare fornitori", "solucao": "Preventivi ricambi da fornitori partner e altre officine della zona, con chat diretta" }
+      {
+        "dor": "Agenda su carta o foglio di calcolo, difficile capire chi fa cosa",
+        "solucao": "Agenda visuale per veicolo e per dipendente, con pannello di distribuzione del lavoro"
+      },
+      {
+        "dor": "Pochi clienti nuovi, dipendenti solo dal passaparola",
+        "solucao": "Profilo pubblico indicizzato su Google e richieste di preventivo automatiche dalla zona"
+      },
+      {
+        "dor": "Preventivi fatti su WhatsApp, senza controllo né storico",
+        "solucao": "Preventivi strutturati, con fasi della riparazione e notifiche automatiche al cliente"
+      },
+      {
+        "dor": "Nessuna reputazione visibile per distinguersi dalla concorrenza",
+        "solucao": "Recensioni reali dei clienti e badge di reputazione mostrati sul profilo"
+      },
+      {
+        "dor": "Comunicazione disordinata tra meccanico e reception",
+        "solucao": "Note interne per veicolo e notifiche in tempo reale per il team"
+      },
+      {
+        "dor": "Tempi lunghi per trovare ricambi e confrontare fornitori",
+        "solucao": "Preventivi ricambi da fornitori partner e altre officine della zona, con chat diretta"
+      }
     ],
     "comoTitulo": "Come la tua officina guadagna visibilità",
     "steps": [
-      { "title": "Registrati", "description": "Profilo completo con indirizzo, specializzazioni e foto, in pochi minuti" },
-      { "title": "Fatti trovare nelle ricerche", "description": "Il tuo profilo pubblico è indicizzato su Google per chi cerca un'officina nella tua città" },
-      { "title": "Ricevi richieste", "description": "Gli automobilisti nelle vicinanze inviano richieste di riparazione direttamente a te" },
-      { "title": "Costruisci reputazione", "description": "Ogni servizio ben recensito aumenta la tua posizione e la fiducia dei nuovi clienti" }
+      {
+        "title": "Registrati",
+        "description": "Profilo completo con indirizzo, specializzazioni e foto, in pochi minuti"
+      },
+      {
+        "title": "Fatti trovare nelle ricerche",
+        "description": "Il tuo profilo pubblico è indicizzato su Google per chi cerca un'officina nella tua città"
+      },
+      {
+        "title": "Ricevi richieste",
+        "description": "Gli automobilisti nelle vicinanze inviano richieste di riparazione direttamente a te"
+      },
+      {
+        "title": "Costruisci reputazione",
+        "description": "Ogni servizio ben recensito aumenta la tua posizione e la fiducia dei nuovi clienti"
+      }
     ],
     "transparenciaTitulo": "Trasparenza sui costi",
     "transparenciaTexto": "Oggi la registrazione e l'uso del sistema di gestione sono gratuiti, e non applichiamo commissioni ai soci fondatori. Se questo cambiasse in futuro, sarai avvisato con almeno 30 giorni di anticipo prima che qualsiasi addebito entri in vigore, secondo i nostri",
     "transparenciaTermosLink": "Termini di Utilizzo",
     "faqTitulo": "Domande frequenti delle officine",
     "faq": [
-      { "pergunta": "Quanto costa il sistema di gestione BipFix per la mia officina?", "resposta": "La registrazione e l'uso degli strumenti di gestione (agenda, preventivi, team, recensioni) non hanno canone mensile. Oggi non applichiamo commissioni ai soci fondatori. Se questo dovesse cambiare in futuro, avviseremo con almeno 30 giorni di anticipo prima di qualsiasi addebito, secondo i nostri Termini di Utilizzo." },
-      { "pergunta": "Come aiuta BipFix la mia officina a trovare più clienti?", "resposta": "Gli automobilisti della tua zona che hanno bisogno di riparazioni inviano le foto del danno e ricevono preventivi dalle officine vicine, inclusa la tua. Il tuo profilo pubblico compare anche su Google per chi cerca officine nella tua città, con le tue recensioni, specializzazioni e posizione." },
-      { "pergunta": "Il sistema sostituisce un foglio di calcolo o un'agenda cartacea?", "resposta": "Sì. Organizzi l'agenda per veicolo e per dipendente, distribuisci il lavoro tra i meccanici, controlli la capacità di assistenza e ricevi notifiche automatiche — tutto in un unico posto, senza carta o fogli sparsi." },
-      { "pergunta": "Serve una competenza tecnica per usarlo?", "resposta": "No. La piattaforma è pensata per la vita quotidiana dell'officina, con un portale di formazione guidata integrato nel sistema perché tu e il tuo team impariate ogni funzione in pochi minuti." },
-      { "pergunta": "Posso acquistare ricambi dai fornitori tramite la piattaforma?", "resposta": "Sì. Puoi aprire richieste di preventivo per ricambi a negozi partner e altre officine della zona, confrontare prezzi e tempi di consegna, e negoziare direttamente in chat prima di confermare l'ordine." }
+      {
+        "pergunta": "Quanto costa il sistema di gestione BipFix per la mia officina?",
+        "resposta": "La registrazione e l'uso degli strumenti di gestione (agenda, preventivi, team, recensioni) non hanno canone mensile. Oggi non applichiamo commissioni ai soci fondatori. Se questo dovesse cambiare in futuro, avviseremo con almeno 30 giorni di anticipo prima di qualsiasi addebito, secondo i nostri Termini di Utilizzo."
+      },
+      {
+        "pergunta": "Come aiuta BipFix la mia officina a trovare più clienti?",
+        "resposta": "Gli automobilisti della tua zona che hanno bisogno di riparazioni inviano le foto del danno e ricevono preventivi dalle officine vicine, inclusa la tua. Il tuo profilo pubblico compare anche su Google per chi cerca officine nella tua città, con le tue recensioni, specializzazioni e posizione."
+      },
+      {
+        "pergunta": "Il sistema sostituisce un foglio di calcolo o un'agenda cartacea?",
+        "resposta": "Sì. Organizzi l'agenda per veicolo e per dipendente, distribuisci il lavoro tra i meccanici, controlli la capacità di assistenza e ricevi notifiche automatiche — tutto in un unico posto, senza carta o fogli sparsi."
+      },
+      {
+        "pergunta": "Serve una competenza tecnica per usarlo?",
+        "resposta": "No. La piattaforma è pensata per la vita quotidiana dell'officina, con un portale di formazione guidata integrato nel sistema perché tu e il tuo team impariate ogni funzione in pochi minuti."
+      },
+      {
+        "pergunta": "Posso acquistare ricambi dai fornitori tramite la piattaforma?",
+        "resposta": "Sì. Puoi aprire richieste di preventivo per ricambi a negozi partner e altre officine della zona, confrontare prezzi e tempi di consegna, e negoziare direttamente in chat prima di confermare l'ordine."
+      }
     ],
     "ctaFinalTitulo": "Pronto a organizzare la tua officina e trovare più clienti?"
   },
@@ -240,12 +285,30 @@
     "faqTitulo": "Domande Frequenti",
     "faqSubtitulo": "Rispondiamo alle tue domande sulla piattaforma BipFix",
     "faqItems": [
-      { "pergunta": "Come funziona BipFix?", "resposta": "Invii le foto del danno al tuo veicolo insieme a una descrizione del problema. Le officine vicine ricevono la tua richiesta, valutano l'intervento e inviano preventivi dettagliati. Confronti prezzi, tempi e recensioni e scegli l'opzione migliore." },
-      { "pergunta": "È sicuro usare la piattaforma?", "resposta": "Sì! Tutte le officine registrate passano attraverso una verifica. Inoltre, il sistema di recensioni ti permette di vedere la reputazione di ogni officina prima di decidere. I tuoi dati personali sono protetti e non vengono mai condivisi senza il tuo consenso." },
-      { "pergunta": "Quanto costa usare BipFix?", "resposta": "Per gli automobilisti, la piattaforma è completamente gratuita. Puoi inviare richieste, ricevere preventivi e confrontare le opzioni senza alcun costo. Siamo nella fase di selezione dei soci fondatori, e oggi non applichiamo commissioni né canoni mensili a officine e fornitori partner — trovi i dettagli nei nostri Termini di Utilizzo." },
-      { "pergunta": "Come vengono valutate le officine?", "resposta": "Dopo ogni lavoro completato, il cliente può valutare l'officina con un punteggio da 1 a 5 stelle e lasciare un commento. La valutazione media viene mostrata sul profilo pubblico dell'officina, aiutando altri automobilisti a scegliere con fiducia." },
-      { "pergunta": "Posso usare BipFix in caso di emergenza?", "resposta": "Sì! Abbiamo un pulsante di emergenza \"Ho appena avuto un incidente\" che ti permette di registrare rapidamente l'accaduto, scattare foto sul posto e ricevere preventivi dalle officine vicine in pochi minuti. Puoi registrare anche l'altro veicolo coinvolto." },
-      { "pergunta": "Che tipo di servizi offrono le officine?", "resposta": "Le officine sulla piattaforma offrono diversi servizi come carrozzeria, verniciatura, meccanica generale, elettrauto, sostituzione vetri, allineamento, equilibratura, climatizzazione e molto altro. Ogni officina elenca le proprie specializzazioni sul profilo." }
+      {
+        "pergunta": "Come funziona BipFix?",
+        "resposta": "Invii le foto del danno al tuo veicolo insieme a una descrizione del problema. Le officine vicine ricevono la tua richiesta, valutano l'intervento e inviano preventivi dettagliati. Confronti prezzi, tempi e recensioni e scegli l'opzione migliore."
+      },
+      {
+        "pergunta": "È sicuro usare la piattaforma?",
+        "resposta": "Sì! Tutte le officine registrate passano attraverso una verifica. Inoltre, il sistema di recensioni ti permette di vedere la reputazione di ogni officina prima di decidere. I tuoi dati personali sono protetti e non vengono mai condivisi senza il tuo consenso."
+      },
+      {
+        "pergunta": "Quanto costa usare BipFix?",
+        "resposta": "Per gli automobilisti, la piattaforma è completamente gratuita. Puoi inviare richieste, ricevere preventivi e confrontare le opzioni senza alcun costo. Siamo nella fase di selezione dei soci fondatori, e oggi non applichiamo commissioni né canoni mensili a officine e fornitori partner — trovi i dettagli nei nostri Termini di Utilizzo."
+      },
+      {
+        "pergunta": "Come vengono valutate le officine?",
+        "resposta": "Dopo ogni lavoro completato, il cliente può valutare l'officina con un punteggio da 1 a 5 stelle e lasciare un commento. La valutazione media viene mostrata sul profilo pubblico dell'officina, aiutando altri automobilisti a scegliere con fiducia."
+      },
+      {
+        "pergunta": "Posso usare BipFix in caso di emergenza?",
+        "resposta": "Sì! Abbiamo un pulsante di emergenza \"Ho appena avuto un incidente\" che ti permette di registrare rapidamente l'accaduto, scattare foto sul posto e ricevere preventivi dalle officine vicine in pochi minuti. Puoi registrare anche l'altro veicolo coinvolto."
+      },
+      {
+        "pergunta": "Che tipo di servizi offrono le officine?",
+        "resposta": "Le officine sulla piattaforma offrono diversi servizi come carrozzeria, verniciatura, meccanica generale, elettrauto, sostituzione vetri, allineamento, equilibratura, climatizzazione e molto altro. Ogni officina elenca le proprie specializzazioni sul profilo."
+      }
     ],
     "footerTagline": "Colleghiamo gli automobilisti alle migliori officine.",
     "footerMotoristas": "Per Automobilisti",
@@ -325,6 +388,66 @@
     },
     "noShow": {
       "no_show": "Assente"
+    },
+    "servicosRevisao": {
+      "troca_oleo_filtro": "Cambio olio e filtro",
+      "troca_filtro_ar": "Cambio filtro aria",
+      "troca_filtro_combustivel": "Cambio filtro carburante",
+      "troca_filtro_cabine": "Cambio filtro abitacolo",
+      "verificacao_freios": "Controllo freni",
+      "troca_pastilhas_freio": "Cambio pastiglie freni",
+      "troca_discos_freio": "Cambio dischi freni",
+      "alinhamento_balanceamento": "Allineamento e bilanciatura",
+      "troca_correia_dentada": "Cambio cinghia distribuzione",
+      "troca_velas": "Cambio candele",
+      "revisao_suspensao": "Revisione sospensioni",
+      "troca_amortecedores": "Cambio ammortizzatori",
+      "troca_fluido_freio": "Cambio liquido freni",
+      "troca_fluido_arrefecimento": "Cambio liquido di raffreddamento",
+      "revisao_completa_km": "Tagliando completo (a km)"
+    },
+    "servicosMecanica": {
+      "motor_barulho_estranho": "Motore - rumore strano",
+      "motor_perda_potencia": "Motore - perdita di potenza",
+      "motor_superaquecimento": "Motore - surriscaldamento",
+      "cambio_dificuldade_engatar": "Cambio - difficoltà a innestare le marce",
+      "cambio_barulho_troca_marcha": "Cambio - rumore durante il cambio marcia",
+      "embreagem_patinando": "Frizione - che slitta",
+      "embreagem_dura": "Frizione - dura",
+      "freio_barulho_frear": "Freni - rumore in frenata",
+      "freio_pedal_mole": "Freni - pedale morbido",
+      "suspensao_barulho": "Sospensioni - rumore",
+      "suspensao_carro_puxando": "Sospensioni - l'auto tira da un lato",
+      "escapamento_barulho": "Scarico - rumore",
+      "escapamento_vazamento": "Scarico - perdita",
+      "direcao_dura_folga": "Sterzo - duro o con gioco",
+      "vazamento_oleo": "Perdita di olio",
+      "vazamento_agua": "Perdita d'acqua",
+      "outro_problema_mecanico": "Altro problema meccanico"
+    },
+    "servicosEletrica": {
+      "bateria_nao_liga": "Batteria - non si avvia",
+      "bateria_descarregando_rapido": "Batteria - si scarica velocemente",
+      "alternador_luz_painel": "Alternatore - spia sul cruscotto",
+      "motor_arranque": "Motorino di avviamento",
+      "farois_lanternas": "Fari / Luci posteriori",
+      "vidro_eletrico": "Alzacristalli elettrico",
+      "trava_eletrica": "Chiusura elettrica",
+      "ar_condicionado": "Aria condizionata",
+      "painel_luzes_alerta": "Cruscotto - spie di allarme",
+      "central_multimidia": "Sistema multimediale",
+      "sensores_estacionamento_re": "Sensori (parcheggio, retromarcia)",
+      "chicote_eletrico": "Cablaggio elettrico",
+      "outro_problema_eletrico": "Altro problema elettrico"
+    },
+    "servicosPneu": {
+      "troca_pneus": "Cambio pneumatici",
+      "rodizio_pneus": "Rotazione pneumatici",
+      "conserto_furo": "Riparazione foratura",
+      "alinhamento": "Allineamento",
+      "balanceamento": "Bilanciatura",
+      "calibragem": "Controllo pressione pneumatici",
+      "troca_roda_calota": "Cambio ruota/coprimozzo"
     }
   },
   "comissaoPecasCard": {

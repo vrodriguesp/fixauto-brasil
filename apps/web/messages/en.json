@@ -157,30 +157,75 @@
     "doresTitulo": "The everyday problems BipFix solves",
     "doresSubtitulo": "Built for the real routine of running a shop, not just for big chains",
     "dores": [
-      { "dor": "Schedule on paper or a spreadsheet, hard to see who's doing what", "solucao": "Visual schedule by vehicle and by staff member, with a work distribution panel" },
-      { "dor": "Few new customers, relying only on referrals", "solucao": "Public profile indexed on Google and automatic quote requests from your area" },
-      { "dor": "Quotes done over WhatsApp, with no tracking or history", "solucao": "Structured quotes, with repair stages and automatic customer notifications" },
-      { "dor": "No visible reputation to stand out from the competition", "solucao": "Real customer reviews and reputation badges shown on your profile" },
-      { "dor": "Messy communication between the mechanic and the front desk", "solucao": "Internal notes per vehicle and real-time notifications for the team" },
-      { "dor": "Slow to find parts and compare suppliers", "solucao": "Parts quotes from partner suppliers and other shops in your area, with direct chat" }
+      {
+        "dor": "Schedule on paper or a spreadsheet, hard to see who's doing what",
+        "solucao": "Visual schedule by vehicle and by staff member, with a work distribution panel"
+      },
+      {
+        "dor": "Few new customers, relying only on referrals",
+        "solucao": "Public profile indexed on Google and automatic quote requests from your area"
+      },
+      {
+        "dor": "Quotes done over WhatsApp, with no tracking or history",
+        "solucao": "Structured quotes, with repair stages and automatic customer notifications"
+      },
+      {
+        "dor": "No visible reputation to stand out from the competition",
+        "solucao": "Real customer reviews and reputation badges shown on your profile"
+      },
+      {
+        "dor": "Messy communication between the mechanic and the front desk",
+        "solucao": "Internal notes per vehicle and real-time notifications for the team"
+      },
+      {
+        "dor": "Slow to find parts and compare suppliers",
+        "solucao": "Parts quotes from partner suppliers and other shops in your area, with direct chat"
+      }
     ],
     "comoTitulo": "How your shop gains visibility",
     "steps": [
-      { "title": "Sign up", "description": "Complete profile with address, specialties and photos, in a few minutes" },
-      { "title": "Show up in search", "description": "Your public profile is indexed on Google for anyone searching for a shop in your city" },
-      { "title": "Receive requests", "description": "Nearby drivers send repair requests directly to you" },
-      { "title": "Build reputation", "description": "Every well-rated job boosts your ranking and trust with new customers" }
+      {
+        "title": "Sign up",
+        "description": "Complete profile with address, specialties and photos, in a few minutes"
+      },
+      {
+        "title": "Show up in search",
+        "description": "Your public profile is indexed on Google for anyone searching for a shop in your city"
+      },
+      {
+        "title": "Receive requests",
+        "description": "Nearby drivers send repair requests directly to you"
+      },
+      {
+        "title": "Build reputation",
+        "description": "Every well-rated job boosts your ranking and trust with new customers"
+      }
     ],
     "transparenciaTitulo": "Transparency about costs",
     "transparenciaTexto": "Today, registering and using the management system is free, and we don't charge founding partners any commission. If that changes in the future, you'll be notified at least 30 days before any charge takes effect, in line with our",
     "transparenciaTermosLink": "Terms of Use",
     "faqTitulo": "Frequently asked questions from shops",
     "faq": [
-      { "pergunta": "How much does the BipFix management system cost my shop?", "resposta": "Registering and using the management tools (schedule, quotes, staff, reviews) has no monthly fee. Today, we don't charge founding partners any commission. If that changes in the future, we'll give at least 30 days' notice before any charge, per our Terms of Use." },
-      { "pergunta": "How does BipFix help my shop get more customers?", "resposta": "Drivers in your area who need repairs send photos of the damage and get quotes from nearby shops, including yours. Your public profile also shows up on Google for anyone searching for shops in your city, with your reviews, specialties and location." },
-      { "pergunta": "Does the system replace a spreadsheet or a scheduling notebook?", "resposta": "Yes. You organize your schedule by vehicle and by staff member, distribute work among mechanics, control your service capacity and get automatic notifications — all in one place, with no paper or loose spreadsheets." },
-      { "pergunta": "Do I need technical knowledge to use it?", "resposta": "No. The platform was designed for the everyday reality of a repair shop, with a guided learning portal built right into the system so you and your team can learn each feature in minutes." },
-      { "pergunta": "Can I buy parts from suppliers through the platform?", "resposta": "Yes. You can open parts quote requests to partner suppliers and other shops in your area, compare prices and lead times, and negotiate directly over chat before confirming the order." }
+      {
+        "pergunta": "How much does the BipFix management system cost my shop?",
+        "resposta": "Registering and using the management tools (schedule, quotes, staff, reviews) has no monthly fee. Today, we don't charge founding partners any commission. If that changes in the future, we'll give at least 30 days' notice before any charge, per our Terms of Use."
+      },
+      {
+        "pergunta": "How does BipFix help my shop get more customers?",
+        "resposta": "Drivers in your area who need repairs send photos of the damage and get quotes from nearby shops, including yours. Your public profile also shows up on Google for anyone searching for shops in your city, with your reviews, specialties and location."
+      },
+      {
+        "pergunta": "Does the system replace a spreadsheet or a scheduling notebook?",
+        "resposta": "Yes. You organize your schedule by vehicle and by staff member, distribute work among mechanics, control your service capacity and get automatic notifications — all in one place, with no paper or loose spreadsheets."
+      },
+      {
+        "pergunta": "Do I need technical knowledge to use it?",
+        "resposta": "No. The platform was designed for the everyday reality of a repair shop, with a guided learning portal built right into the system so you and your team can learn each feature in minutes."
+      },
+      {
+        "pergunta": "Can I buy parts from suppliers through the platform?",
+        "resposta": "Yes. You can open parts quote requests to partner suppliers and other shops in your area, compare prices and lead times, and negotiate directly over chat before confirming the order."
+      }
     ],
     "ctaFinalTitulo": "Ready to organize your shop and win more customers?"
   },
@@ -240,12 +285,30 @@
     "faqTitulo": "Frequently Asked Questions",
     "faqSubtitulo": "Get your questions about the BipFix platform answered",
     "faqItems": [
-      { "pergunta": "How does BipFix work?", "resposta": "You send photos of the damage to your vehicle along with a description of the problem. Nearby repair shops receive your request, assess the job and send detailed quotes. You compare prices, timelines and reviews, and choose the best option." },
-      { "pergunta": "Is it safe to use the platform?", "resposta": "Yes! Every registered shop goes through verification. On top of that, the review system lets you see each shop's reputation before deciding. Your personal data is protected and never shared without your consent." },
-      { "pergunta": "How much does BipFix cost?", "resposta": "For drivers, the platform is completely free. You can send requests, receive quotes and compare options at no cost. We're in the founding-partner selection phase, and today we charge no commission or monthly fee to partner shops and suppliers — see the details in our Terms of Use." },
-      { "pergunta": "How are repair shops rated?", "resposta": "After each completed job, the customer can rate the shop from 1 to 5 stars and leave a comment. The average rating is shown on the shop's public profile, helping other drivers choose with confidence." },
-      { "pergunta": "Can I use BipFix in an emergency?", "resposta": "Yes! We have an \"I've just crashed\" emergency button that lets you log the incident quickly, take photos on the spot and get quotes from nearby shops within minutes. You can also log the other vehicle involved." },
-      { "pergunta": "What kinds of services do the shops offer?", "resposta": "Shops on the platform offer a wide range of services such as bodywork, paint, general mechanics, auto electrics, glass replacement, wheel alignment, balancing, air conditioning and much more. Each shop lists its specialties on its profile." }
+      {
+        "pergunta": "How does BipFix work?",
+        "resposta": "You send photos of the damage to your vehicle along with a description of the problem. Nearby repair shops receive your request, assess the job and send detailed quotes. You compare prices, timelines and reviews, and choose the best option."
+      },
+      {
+        "pergunta": "Is it safe to use the platform?",
+        "resposta": "Yes! Every registered shop goes through verification. On top of that, the review system lets you see each shop's reputation before deciding. Your personal data is protected and never shared without your consent."
+      },
+      {
+        "pergunta": "How much does BipFix cost?",
+        "resposta": "For drivers, the platform is completely free. You can send requests, receive quotes and compare options at no cost. We're in the founding-partner selection phase, and today we charge no commission or monthly fee to partner shops and suppliers — see the details in our Terms of Use."
+      },
+      {
+        "pergunta": "How are repair shops rated?",
+        "resposta": "After each completed job, the customer can rate the shop from 1 to 5 stars and leave a comment. The average rating is shown on the shop's public profile, helping other drivers choose with confidence."
+      },
+      {
+        "pergunta": "Can I use BipFix in an emergency?",
+        "resposta": "Yes! We have an \"I've just crashed\" emergency button that lets you log the incident quickly, take photos on the spot and get quotes from nearby shops within minutes. You can also log the other vehicle involved."
+      },
+      {
+        "pergunta": "What kinds of services do the shops offer?",
+        "resposta": "Shops on the platform offer a wide range of services such as bodywork, paint, general mechanics, auto electrics, glass replacement, wheel alignment, balancing, air conditioning and much more. Each shop lists its specialties on its profile."
+      }
     ],
     "footerTagline": "Connecting drivers to the best auto repair shops.",
     "footerMotoristas": "For Drivers",
@@ -325,6 +388,66 @@
     },
     "noShow": {
       "no_show": "No-show"
+    },
+    "servicosRevisao": {
+      "troca_oleo_filtro": "Oil and filter change",
+      "troca_filtro_ar": "Air filter change",
+      "troca_filtro_combustivel": "Fuel filter change",
+      "troca_filtro_cabine": "Cabin filter change",
+      "verificacao_freios": "Brake check",
+      "troca_pastilhas_freio": "Brake pad change",
+      "troca_discos_freio": "Brake disc change",
+      "alinhamento_balanceamento": "Alignment and balancing",
+      "troca_correia_dentada": "Timing belt change",
+      "troca_velas": "Spark plug change",
+      "revisao_suspensao": "Suspension check",
+      "troca_amortecedores": "Shock absorber change",
+      "troca_fluido_freio": "Brake fluid change",
+      "troca_fluido_arrefecimento": "Coolant change",
+      "revisao_completa_km": "Full service (mileage-based)"
+    },
+    "servicosMecanica": {
+      "motor_barulho_estranho": "Engine - strange noise",
+      "motor_perda_potencia": "Engine - loss of power",
+      "motor_superaquecimento": "Engine - overheating",
+      "cambio_dificuldade_engatar": "Gearbox - difficulty shifting",
+      "cambio_barulho_troca_marcha": "Gearbox - noise when shifting",
+      "embreagem_patinando": "Clutch - slipping",
+      "embreagem_dura": "Clutch - stiff",
+      "freio_barulho_frear": "Brakes - noise when braking",
+      "freio_pedal_mole": "Brakes - soft pedal",
+      "suspensao_barulho": "Suspension - noise",
+      "suspensao_carro_puxando": "Suspension - car pulling to one side",
+      "escapamento_barulho": "Exhaust - noise",
+      "escapamento_vazamento": "Exhaust - leak",
+      "direcao_dura_folga": "Steering - stiff or with play",
+      "vazamento_oleo": "Oil leak",
+      "vazamento_agua": "Water leak",
+      "outro_problema_mecanico": "Other mechanical problem"
+    },
+    "servicosEletrica": {
+      "bateria_nao_liga": "Battery - won't start",
+      "bateria_descarregando_rapido": "Battery - draining fast",
+      "alternador_luz_painel": "Alternator - dashboard light",
+      "motor_arranque": "Starter motor",
+      "farois_lanternas": "Headlights / taillights",
+      "vidro_eletrico": "Power window",
+      "trava_eletrica": "Power lock",
+      "ar_condicionado": "Air conditioning",
+      "painel_luzes_alerta": "Dashboard - warning lights",
+      "central_multimidia": "Infotainment system",
+      "sensores_estacionamento_re": "Sensors (parking, reverse)",
+      "chicote_eletrico": "Wiring harness",
+      "outro_problema_eletrico": "Other electrical problem"
+    },
+    "servicosPneu": {
+      "troca_pneus": "Tire change",
+      "rodizio_pneus": "Tire rotation",
+      "conserto_furo": "Puncture repair",
+      "alinhamento": "Alignment",
+      "balanceamento": "Balancing",
+      "calibragem": "Tire pressure check",
+      "troca_roda_calota": "Wheel/hubcap change"
     }
   },
   "comissaoPecasCard": {

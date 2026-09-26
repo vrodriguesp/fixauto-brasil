@@ -156,30 +156,75 @@
     "doresTitulo": "Igapäevased probleemid, mida BipFix lahendab",
     "doresSubtitulo": "Loodud töökoja juhtimise päris argipäeva jaoks, mitte ainult suurtele kettidele",
     "dores": [
-      { "dor": "Ajakava paberil või tabelis, raske näha, kes mida teeb", "solucao": "Visuaalne ajakava sõiduki ja töötaja kaupa, koos töö jaotamise paneeliga" },
-      { "dor": "Vähe uusi kliente, sõltuvus ainult soovitustest", "solucao": "Google'is indekseeritud avalik profiil ja automaatsed hinnapäringud piirkonnast" },
-      { "dor": "Hinnapakkumised WhatsAppis, ilma kontrolli ja ajaloota", "solucao": "Struktureeritud hinnapakkumised koos remondietappide ja automaatsete kliendi teavitustega" },
-      { "dor": "Maine pole nähtav, raske konkurentidest eristuda", "solucao": "Päris kliendihinnangud ja mainemärgid profiilil nähtaval" },
-      { "dor": "Segane suhtlus mehaaniku ja vastuvõtu vahel", "solucao": "Sõidukipõhised sisemärkmed ja reaalajas teavitused meeskonnale" },
-      { "dor": "Aeglane varuosade leidmine ja tarnijate võrdlemine", "solucao": "Varuosade hinnapäringud partnerpoodidelt ja teistelt piirkonna töökodadelt, koos otsevestlusega" }
+      {
+        "dor": "Ajakava paberil või tabelis, raske näha, kes mida teeb",
+        "solucao": "Visuaalne ajakava sõiduki ja töötaja kaupa, koos töö jaotamise paneeliga"
+      },
+      {
+        "dor": "Vähe uusi kliente, sõltuvus ainult soovitustest",
+        "solucao": "Google'is indekseeritud avalik profiil ja automaatsed hinnapäringud piirkonnast"
+      },
+      {
+        "dor": "Hinnapakkumised WhatsAppis, ilma kontrolli ja ajaloota",
+        "solucao": "Struktureeritud hinnapakkumised koos remondietappide ja automaatsete kliendi teavitustega"
+      },
+      {
+        "dor": "Maine pole nähtav, raske konkurentidest eristuda",
+        "solucao": "Päris kliendihinnangud ja mainemärgid profiilil nähtaval"
+      },
+      {
+        "dor": "Segane suhtlus mehaaniku ja vastuvõtu vahel",
+        "solucao": "Sõidukipõhised sisemärkmed ja reaalajas teavitused meeskonnale"
+      },
+      {
+        "dor": "Aeglane varuosade leidmine ja tarnijate võrdlemine",
+        "solucao": "Varuosade hinnapäringud partnerpoodidelt ja teistelt piirkonna töökodadelt, koos otsevestlusega"
+      }
     ],
     "comoTitulo": "Kuidas sinu töökoda nähtavust saab",
     "steps": [
-      { "title": "Registreeru", "description": "Täielik profiil aadressi, eriala ja fotodega, valmis mõne minutiga" },
-      { "title": "Ilmu otsingusse", "description": "Sinu avalik profiil on Google'is nähtav kõigile, kes otsivad töökoda sinu linnas" },
-      { "title": "Saa päringuid", "description": "Lähedal asuvad juhid saadavad remondipäringud otse sinule" },
-      { "title": "Kasvata mainet", "description": "Iga hästi hinnatud töö parandab sinu positsiooni ja usaldusväärsust uute klientide seas" }
+      {
+        "title": "Registreeru",
+        "description": "Täielik profiil aadressi, eriala ja fotodega, valmis mõne minutiga"
+      },
+      {
+        "title": "Ilmu otsingusse",
+        "description": "Sinu avalik profiil on Google'is nähtav kõigile, kes otsivad töökoda sinu linnas"
+      },
+      {
+        "title": "Saa päringuid",
+        "description": "Lähedal asuvad juhid saadavad remondipäringud otse sinule"
+      },
+      {
+        "title": "Kasvata mainet",
+        "description": "Iga hästi hinnatud töö parandab sinu positsiooni ja usaldusväärsust uute klientide seas"
+      }
     ],
     "transparenciaTitulo": "Läbipaistvus kulude osas",
     "transparenciaTexto": "Praegu on registreerimine ja haldussüsteemi kasutamine tasuta ning me ei võta asutajapartneritelt komisjonitasu. Kui see tulevikus muutub, teavitame sind vähemalt 30 päeva enne mistahes tasu kehtima hakkamist, vastavalt meie",
     "transparenciaTermosLink": "kasutustingimustele",
     "faqTitulo": "Töökodade korduma kippuvad küsimused",
     "faq": [
-      { "pergunta": "Kui palju maksab BipFixi haldussüsteem minu töökojale?", "resposta": "Registreerimine ja haldustööriistade (ajakava, hinnapakkumised, meeskond, hinnangud) kasutamine ei maksa kuutasu. Praegu ei võta me asutajapartneritelt komisjonitasu. Kui see tulevikus muutub, teavitame vähemalt 30 päeva enne mistahes tasu, vastavalt meie kasutustingimustele." },
-      { "pergunta": "Kuidas aitab BipFix mu töökojal rohkem kliente saada?", "resposta": "Sinu piirkonna juhid, kes vajavad remonti, saadavad kahjustuse fotod ja saavad hinnapakkumised lähedalasuvatelt töökodadelt, sealhulgas sinult. Sinu avalik profiil ilmub ka Google'is neile, kes otsivad töökoda sinu linnas, koos sinu hinnangute, erialade ja asukohaga." },
-      { "pergunta": "Kas süsteem asendab tabelit või paberkalendrit?", "resposta": "Jah. Sa korraldad oma ajakava sõiduki ja töötaja kaupa, jaotad tööd mehaanikute vahel, kontrollid teenindusvõimekust ja saad automaatseid teavitusi — kõik ühes kohas, ilma paberi või lahtiste tabeliteta." },
-      { "pergunta": "Kas kasutamiseks on vaja tehnilisi teadmisi?", "resposta": "Ei. Platvorm on loodud töökoja igapäevaelu jaoks, koos otse süsteemi sisse ehitatud juhendatud õppeportaaliga, kus sina ja su meeskond õpite iga funktsiooni ära mõne minutiga." },
-      { "pergunta": "Kas saan platvormi kaudu varuosi tarnijatelt osta?", "resposta": "Jah. Sa saad avada varuosade hinnapäringuid partnerpoodidele ja teistele piirkonna töökodadele, võrrelda hindu ja tarneaegu ning läbirääkida otse vestluses enne tellimuse kinnitamist." }
+      {
+        "pergunta": "Kui palju maksab BipFixi haldussüsteem minu töökojale?",
+        "resposta": "Registreerimine ja haldustööriistade (ajakava, hinnapakkumised, meeskond, hinnangud) kasutamine ei maksa kuutasu. Praegu ei võta me asutajapartneritelt komisjonitasu. Kui see tulevikus muutub, teavitame vähemalt 30 päeva enne mistahes tasu, vastavalt meie kasutustingimustele."
+      },
+      {
+        "pergunta": "Kuidas aitab BipFix mu töökojal rohkem kliente saada?",
+        "resposta": "Sinu piirkonna juhid, kes vajavad remonti, saadavad kahjustuse fotod ja saavad hinnapakkumised lähedalasuvatelt töökodadelt, sealhulgas sinult. Sinu avalik profiil ilmub ka Google'is neile, kes otsivad töökoda sinu linnas, koos sinu hinnangute, erialade ja asukohaga."
+      },
+      {
+        "pergunta": "Kas süsteem asendab tabelit või paberkalendrit?",
+        "resposta": "Jah. Sa korraldad oma ajakava sõiduki ja töötaja kaupa, jaotad tööd mehaanikute vahel, kontrollid teenindusvõimekust ja saad automaatseid teavitusi — kõik ühes kohas, ilma paberi või lahtiste tabeliteta."
+      },
+      {
+        "pergunta": "Kas kasutamiseks on vaja tehnilisi teadmisi?",
+        "resposta": "Ei. Platvorm on loodud töökoja igapäevaelu jaoks, koos otse süsteemi sisse ehitatud juhendatud õppeportaaliga, kus sina ja su meeskond õpite iga funktsiooni ära mõne minutiga."
+      },
+      {
+        "pergunta": "Kas saan platvormi kaudu varuosi tarnijatelt osta?",
+        "resposta": "Jah. Sa saad avada varuosade hinnapäringuid partnerpoodidele ja teistele piirkonna töökodadele, võrrelda hindu ja tarneaegu ning läbirääkida otse vestluses enne tellimuse kinnitamist."
+      }
     ],
     "ctaFinalTitulo": "Valmis oma töökoda korraldama ja rohkem kliente saama?"
   },
@@ -239,12 +284,30 @@
     "faqTitulo": "Korduma Kippuvad Küsimused",
     "faqSubtitulo": "Leia vastused oma küsimustele BipFixi platvormi kohta",
     "faqItems": [
-      { "pergunta": "Kuidas BipFix toimib?", "resposta": "Saadad oma sõiduki kahjustuse fotod ja probleemi kirjelduse. Lähedal asuvad töökojad saavad sinu päringu, hindavad tööd ja saadavad detailsed hinnapakkumised. Sina võrdled hindu, tähtaegu ja hinnanguid ning valid parima variandi." },
-      { "pergunta": "Kas platvormi kasutamine on turvaline?", "resposta": "Jah! Kõik registreeritud töökojad läbivad kontrolli. Lisaks näitab hinnangute süsteem iga töökoja mainet enne otsuse tegemist. Sinu isikuandmed on kaitstud ega jagata kunagi ilma sinu nõusolekuta." },
-      { "pergunta": "Kui palju BipFixi kasutamine maksab?", "resposta": "Juhtidele on platvorm täiesti tasuta. Saad saata päringuid, saada hinnapakkumisi ja võrrelda valikuid ilma kuludeta. Oleme asutajapartnerite valikufaasis ning praegu ei võta me partnertöökodadelt ja -müüjatelt komisjonitasu ega kuutasu — vaata täpsemalt meie kasutustingimustest." },
-      { "pergunta": "Kuidas töökodasid hinnatakse?", "resposta": "Pärast iga lõpetatud tööd saab klient anda töökojale hinnangu 1-5 tärniga ja lisada kommentaari. Keskmine hinnang kuvatakse töökoja avalikul profiilil, aidates teistel juhtidel usaldusega valida." },
-      { "pergunta": "Kas saan BipFixi kasutada õnnetuse korral?", "resposta": "Jah! Meil on hädaolukorra nupp \"Sain just avarii\", millega saad juhtunu kiiresti registreerida, teha kohapeal fotod ja saada lähedal asuvatelt töökodadelt hinnapakkumised mõne minutiga. Saad registreerida ka teise osalenud sõiduki." },
-      { "pergunta": "Milliseid teenuseid töökojad pakuvad?", "resposta": "Platvormil olevad töökojad pakuvad mitmesuguseid teenuseid nagu kerekahjustuste parandus, värvimine, üldmehaanika, autoelektroonika, klaasivahetus, rataste joondamine, tasakaalustamine, kliimaseadmed ja palju muud. Iga töökoda toob oma erialad profiilil välja." }
+      {
+        "pergunta": "Kuidas BipFix toimib?",
+        "resposta": "Saadad oma sõiduki kahjustuse fotod ja probleemi kirjelduse. Lähedal asuvad töökojad saavad sinu päringu, hindavad tööd ja saadavad detailsed hinnapakkumised. Sina võrdled hindu, tähtaegu ja hinnanguid ning valid parima variandi."
+      },
+      {
+        "pergunta": "Kas platvormi kasutamine on turvaline?",
+        "resposta": "Jah! Kõik registreeritud töökojad läbivad kontrolli. Lisaks näitab hinnangute süsteem iga töökoja mainet enne otsuse tegemist. Sinu isikuandmed on kaitstud ega jagata kunagi ilma sinu nõusolekuta."
+      },
+      {
+        "pergunta": "Kui palju BipFixi kasutamine maksab?",
+        "resposta": "Juhtidele on platvorm täiesti tasuta. Saad saata päringuid, saada hinnapakkumisi ja võrrelda valikuid ilma kuludeta. Oleme asutajapartnerite valikufaasis ning praegu ei võta me partnertöökodadelt ja -müüjatelt komisjonitasu ega kuutasu — vaata täpsemalt meie kasutustingimustest."
+      },
+      {
+        "pergunta": "Kuidas töökodasid hinnatakse?",
+        "resposta": "Pärast iga lõpetatud tööd saab klient anda töökojale hinnangu 1-5 tärniga ja lisada kommentaari. Keskmine hinnang kuvatakse töökoja avalikul profiilil, aidates teistel juhtidel usaldusega valida."
+      },
+      {
+        "pergunta": "Kas saan BipFixi kasutada õnnetuse korral?",
+        "resposta": "Jah! Meil on hädaolukorra nupp \"Sain just avarii\", millega saad juhtunu kiiresti registreerida, teha kohapeal fotod ja saada lähedal asuvatelt töökodadelt hinnapakkumised mõne minutiga. Saad registreerida ka teise osalenud sõiduki."
+      },
+      {
+        "pergunta": "Milliseid teenuseid töökojad pakuvad?",
+        "resposta": "Platvormil olevad töökojad pakuvad mitmesuguseid teenuseid nagu kerekahjustuste parandus, värvimine, üldmehaanika, autoelektroonika, klaasivahetus, rataste joondamine, tasakaalustamine, kliimaseadmed ja palju muud. Iga töökoda toob oma erialad profiilil välja."
+      }
     ],
     "footerTagline": "Ühendame juhid parimate autotöökodadega.",
     "footerMotoristas": "Juhtidele",
@@ -324,6 +387,66 @@
     },
     "noShow": {
       "no_show": "Ei ilmunud kohale"
+    },
+    "servicosRevisao": {
+      "troca_oleo_filtro": "Õli- ja filtrivahetus",
+      "troca_filtro_ar": "Õhufiltri vahetus",
+      "troca_filtro_combustivel": "Kütusefiltri vahetus",
+      "troca_filtro_cabine": "Salongifiltri vahetus",
+      "verificacao_freios": "Pidurite kontroll",
+      "troca_pastilhas_freio": "Piduriklotside vahetus",
+      "troca_discos_freio": "Piduriketaste vahetus",
+      "alinhamento_balanceamento": "Rataste joondamine ja tasakaalustamine",
+      "troca_correia_dentada": "Hammasrihma vahetus",
+      "troca_velas": "Süüteküünalde vahetus",
+      "revisao_suspensao": "Vedrustuse ülevaatus",
+      "troca_amortecedores": "Amortisaatorite vahetus",
+      "troca_fluido_freio": "Pidurivedeliku vahetus",
+      "troca_fluido_arrefecimento": "Jahutusvedeliku vahetus",
+      "revisao_completa_km": "Täisülevaatus (läbisõidu järgi)"
+    },
+    "servicosMecanica": {
+      "motor_barulho_estranho": "Mootor - kummaline müra",
+      "motor_perda_potencia": "Mootor - võimsuse kadu",
+      "motor_superaquecimento": "Mootor - ülekuumenemine",
+      "cambio_dificuldade_engatar": "Käigukast - raskustega käigu sisselülitamine",
+      "cambio_barulho_troca_marcha": "Käigukast - müra käigu vahetamisel",
+      "embreagem_patinando": "Sidur - libisemine",
+      "embreagem_dura": "Sidur - jäik",
+      "freio_barulho_frear": "Pidurid - müra pidurdamisel",
+      "freio_pedal_mole": "Pidurid - pehme pedaal",
+      "suspensao_barulho": "Vedrustus - müra",
+      "suspensao_carro_puxando": "Vedrustus - auto tõmbab kõrvale",
+      "escapamento_barulho": "Summuti - müra",
+      "escapamento_vazamento": "Summuti - leke",
+      "direcao_dura_folga": "Roolimine - jäik või mängus",
+      "vazamento_oleo": "Õlileke",
+      "vazamento_agua": "Veeleke",
+      "outro_problema_mecanico": "Muu mehaaniline probleem"
+    },
+    "servicosEletrica": {
+      "bateria_nao_liga": "Aku - ei käivitu",
+      "bateria_descarregando_rapido": "Aku - tühjeneb kiiresti",
+      "alternador_luz_painel": "Generaator - armatuurlaua tuli",
+      "motor_arranque": "Starter",
+      "farois_lanternas": "Esituled / tagatuled",
+      "vidro_eletrico": "Elektriaken",
+      "trava_eletrica": "Elektriline lukustus",
+      "ar_condicionado": "Kliimaseade",
+      "painel_luzes_alerta": "Armatuurlaud - hoiatustuled",
+      "central_multimidia": "Multimeediakeskus",
+      "sensores_estacionamento_re": "Andurid (parkimine, tagurdamine)",
+      "chicote_eletrico": "Elektrijuhtmestik",
+      "outro_problema_eletrico": "Muu elektriprobleem"
+    },
+    "servicosPneu": {
+      "troca_pneus": "Rehvide vahetus",
+      "rodizio_pneus": "Rehvide rotatsioon",
+      "conserto_furo": "Punktsiooni parandus",
+      "alinhamento": "Joondamine",
+      "balanceamento": "Tasakaalustamine",
+      "calibragem": "Rehvirõhu kontroll",
+      "troca_roda_calota": "Ratta / rattakapi vahetus"
     }
   },
   "comissaoPecasCard": {

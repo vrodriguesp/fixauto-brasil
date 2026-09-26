@@ -93,6 +93,10 @@ export default function NovaSolicitacaoPage() {
   const tipoConfig = TIPOS_SERVICO.find((t) => t.value === tipo);
   const needsPhoto = tipoConfig?.needsPhoto ?? true;
 
+  const SERVICO_NAMESPACE: Record<string, string> = {
+    revisao: 'servicosRevisao', mecanica: 'servicosMecanica', eletrica: 'servicosEletrica', pneu: 'servicosPneu',
+  };
+
   const getServiceList = () => {
     switch (tipo) {
       case 'revisao': return SERVICOS_REVISAO;
@@ -101,6 +105,11 @@ export default function NovaSolicitacaoPage() {
       case 'pneu': return SERVICOS_PNEU;
       default: return [];
     }
+  };
+
+  const getServicoLabel = (value: string) => {
+    const namespace = SERVICO_NAMESPACE[tipo];
+    return namespace ? tc(`${namespace}.${value}`) : value;
   };
 
   const toggleServico = (servico: string) => {
@@ -158,7 +167,7 @@ export default function NovaSolicitacaoPage() {
     if (!veiculoId || !endereco) return;
     setSubmitError('');
     const fullDescricao = servicosSelecionados.length > 0
-      ? `${t('servicesPrefix')} ${servicosSelecionados.join(', ')}${descricao ? '. ' + descricao : ''}`
+      ? `${t('servicesPrefix')} ${servicosSelecionados.map(getServicoLabel).join(', ')}${descricao ? '. ' + descricao : ''}`
       : (descricao || t('defaultServiceDescription'));
 
     try {
@@ -466,20 +475,20 @@ export default function NovaSolicitacaoPage() {
                 <div className="space-y-2 max-h-[400px] overflow-y-auto">
                   {getServiceList().map((servico) => (
                     <label
-                      key={servico}
+                      key={servico.value}
                       className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                        servicosSelecionados.includes(servico)
+                        servicosSelecionados.includes(servico.value)
                           ? 'border-primary-500 bg-primary-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
                       <input
                         type="checkbox"
-                        checked={servicosSelecionados.includes(servico)}
-                        onChange={() => toggleServico(servico)}
+                        checked={servicosSelecionados.includes(servico.value)}
+                        onChange={() => toggleServico(servico.value)}
                         className="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
                       />
-                      <span className="text-sm text-gray-900">{servico}</span>
+                      <span className="text-sm text-gray-900">{getServicoLabel(servico.value)}</span>
                     </label>
                   ))}
                 </div>
@@ -614,7 +623,7 @@ export default function NovaSolicitacaoPage() {
                       <span className="text-gray-500">{t('servicesLabel')}</span>
                       <ul className="mt-1 ml-4 list-disc text-gray-700">
                         {servicosSelecionados.map((s) => (
-                          <li key={s} className="text-xs">{s}</li>
+                          <li key={s} className="text-xs">{getServicoLabel(s)}</li>
                         ))}
                       </ul>
                     </div>
