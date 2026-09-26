@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { TIPOS_VEICULO } from '@fixauto/shared';
 
 interface FipeValue {
@@ -22,7 +23,19 @@ interface FipeOption {
   name: string;
 }
 
+const TIPO_LABEL_KEY: Record<string, 'tipoCarro' | 'tipoMoto' | 'tipoCaminhao'> = {
+  cars: 'tipoCarro',
+  motorcycles: 'tipoMoto',
+  trucks: 'tipoCaminhao',
+};
+
 export default function FipeAutocomplete({ value, onChange }: FipeAutocompleteProps) {
+  const locale = useLocale();
+  const t = useTranslations('veiculoForm');
+  // A FIPE (tabela de precos de veiculos) so cobre o mercado brasileiro -
+  // fora do "pt", marca/modelo/ano viram campos livres (sem valor/codigo
+  // FIPE, que nao existem pra veiculos europeus).
+  const isBR = locale === 'pt';
   const [marcas, setMarcas] = useState<FipeOption[]>([]);
   const [modelos, setModelos] = useState<FipeOption[]>([]);
   const [anos, setAnos] = useState<FipeOption[]>([]);
@@ -42,7 +55,7 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
       const data = await res.json();
       setMarcas(data);
     } catch {
-      setError('Erro ao carregar marcas da FIPE. Usando dados de exemplo.');
+      setError(t('erroMarcas'));
       setMarcas([
         { code: '59', name: 'Volkswagen' },
         { code: '21', name: 'Fiat' },
@@ -75,7 +88,7 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
       const data = await res.json();
       setModelos(data);
     } catch {
-      setError('Erro ao carregar modelos.');
+      setError(t('erroModelos'));
       setModelos([]);
     }
     setLoading('');
@@ -90,15 +103,15 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
       const data = await res.json();
       setAnos(data);
     } catch {
-      setError('Erro ao carregar anos.');
+      setError(t('erroAnos'));
       setAnos([]);
     }
     setLoading('');
   }, []);
 
   useEffect(() => {
-    fetchMarcas(value.tipo);
-  }, [value.tipo, fetchMarcas]);
+    if (isBR) fetchMarcas(value.tipo);
+  }, [isBR, value.tipo, fetchMarcas]);
 
   const handleTipoChange = (tipo: string) => {
     onChange({ tipo, marca: '', modelo: '', ano: '' });
@@ -171,91 +184,125 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
 
       {/* Vehicle type */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de veículo</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelTipo')}</label>
         <div className="flex gap-2">
-          {TIPOS_VEICULO.map((t) => (
+          {TIPOS_VEICULO.map((tipo) => (
             <button
-              key={t.value}
+              key={tipo.value}
               type="button"
-              onClick={() => handleTipoChange(t.value)}
+              onClick={() => handleTipoChange(tipo.value)}
               className={`flex-1 py-3 rounded-lg text-sm font-medium border transition-colors ${
-                value.tipo === t.value
+                value.tipo === tipo.value
                   ? 'bg-primary-600 text-white border-primary-600'
                   : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
               }`}
             >
-              {t.label}
+              {t(TIPO_LABEL_KEY[tipo.value])}
             </button>
           ))}
         </div>
       </div>
 
+      {!isBR && (
+        <p className="text-sm text-gray-500 -mt-2">{t('manualNotice')}</p>
+      )}
+
       {/* Marca */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Marca {loading === 'marcas' && <span className="text-gray-400">(carregando...)</span>}
+          {t('labelMarca')} {isBR && loading === 'marcas' && <span className="text-gray-400">({t('carregando')})</span>}
         </label>
-        <select
-          className="input-field"
-          value={selectedMarcaCode}
-          onChange={(e) => handleMarcaChange(e.target.value)}
-          disabled={loading === 'marcas'}
-        >
-          <option value="">Selecione a marca</option>
-          {marcas.map((m) => (
-            <option key={m.code} value={m.code}>
-              {m.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Modelo */}
-      {selectedMarcaCode && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Modelo {loading === 'modelos' && <span className="text-gray-400">(carregando...)</span>}
-          </label>
+        {isBR ? (
           <select
             className="input-field"
-            value={selectedModeloCode}
-            onChange={(e) => handleModeloChange(e.target.value)}
-            disabled={loading === 'modelos'}
+            value={selectedMarcaCode}
+            onChange={(e) => handleMarcaChange(e.target.value)}
+            disabled={loading === 'marcas'}
           >
-            <option value="">Selecione o modelo</option>
-            {modelos.map((m) => (
+            <option value="">{t('selecioneMarca')}</option>
+            {marcas.map((m) => (
               <option key={m.code} value={m.code}>
                 {m.name}
               </option>
             ))}
           </select>
+        ) : (
+          <input
+            type="text"
+            className="input-field"
+            placeholder={t('placeholderMarca')}
+            value={value.marca}
+            onChange={(e) => onChange({ ...value, marca: e.target.value })}
+          />
+        )}
+      </div>
+
+      {/* Modelo */}
+      {(isBR ? selectedMarcaCode : true) && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {t('labelModelo')} {isBR && loading === 'modelos' && <span className="text-gray-400">({t('carregando')})</span>}
+          </label>
+          {isBR ? (
+            <select
+              className="input-field"
+              value={selectedModeloCode}
+              onChange={(e) => handleModeloChange(e.target.value)}
+              disabled={loading === 'modelos'}
+            >
+              <option value="">{t('selecioneModelo')}</option>
+              {modelos.map((m) => (
+                <option key={m.code} value={m.code}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type="text"
+              className="input-field"
+              placeholder={t('placeholderModelo')}
+              value={value.modelo}
+              onChange={(e) => onChange({ ...value, modelo: e.target.value })}
+            />
+          )}
         </div>
       )}
 
       {/* Ano */}
-      {selectedModeloCode && (
+      {(isBR ? selectedModeloCode : true) && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Ano {loading === 'anos' && <span className="text-gray-400">(carregando...)</span>}
+            {t('labelAno')} {isBR && loading === 'anos' && <span className="text-gray-400">({t('carregando')})</span>}
           </label>
-          <select
-            className="input-field"
-            value={selectedAnoCode}
-            onChange={(e) => handleAnoChange(e.target.value)}
-            disabled={loading === 'anos'}
-          >
-            <option value="">Selecione o ano</option>
-            {anos.map((a) => (
-              <option key={a.code} value={a.code}>
-                {a.name}
-              </option>
-            ))}
-          </select>
+          {isBR ? (
+            <select
+              className="input-field"
+              value={selectedAnoCode}
+              onChange={(e) => handleAnoChange(e.target.value)}
+              disabled={loading === 'anos'}
+            >
+              <option value="">{t('selecioneAno')}</option>
+              {anos.map((a) => (
+                <option key={a.code} value={a.code}>
+                  {a.name}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type="number"
+              className="input-field"
+              placeholder={t('placeholderAno')}
+              value={value.ano}
+              onChange={(e) => onChange({ ...value, ano: e.target.value })}
+            />
+          )}
         </div>
       )}
 
       {/* Selected summary */}
-      {value.marca && value.modelo && value.ano && (
+      {isBR && value.marca && value.modelo && value.ano && (
         <div className="p-4 bg-primary-50 rounded-lg border border-primary-200">
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -266,14 +313,14 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
             </p>
           </div>
           {loading === 'valor' ? (
-            <p className="text-sm text-primary-600 mt-1">Buscando valor FIPE...</p>
+            <p className="text-sm text-primary-600 mt-1">{t('buscandoValor')}</p>
           ) : value.valor ? (
-            <p className="text-sm text-green-700 font-semibold mt-1">Valor FIPE: {value.valor}</p>
+            <p className="text-sm text-green-700 font-semibold mt-1">{t('valorFipe')}: {value.valor}</p>
           ) : (
-            <p className="text-sm text-gray-500 mt-1">Valor FIPE não disponível</p>
+            <p className="text-sm text-gray-500 mt-1">{t('valorFipeIndisponivel')}</p>
           )}
           {value.codigo && (
-            <p className="text-xs text-gray-500 mt-1">Código FIPE: {value.codigo}</p>
+            <p className="text-xs text-gray-500 mt-1">{t('codigoFipe')}: {value.codigo}</p>
           )}
         </div>
       )}

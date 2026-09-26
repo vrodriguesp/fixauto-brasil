@@ -1,48 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import StructuredData from '@/components/seo/StructuredData';
 import { generateFAQSchema } from '@/lib/seo-utils';
 
-const FAQ_ITEMS = [
-  {
-    pergunta: 'Como funciona o BipFix?',
-    resposta:
-      'Você envia fotos do dano no seu veículo e uma descrição do problema. Oficinas próximas a você recebem sua solicitação, avaliam o serviço e enviam orçamentos detalhados. Você compara preços, prazos e avaliações, e escolhe a melhor opção.',
-  },
-  {
-    pergunta: 'É seguro usar a plataforma?',
-    resposta:
-      'Sim! Todas as oficinas cadastradas passam por verificação. Além disso, o sistema de avaliações permite que você veja a reputação de cada oficina antes de tomar sua decisão. Seus dados pessoais são protegidos e nunca compartilhados sem sua autorização.',
-  },
-  {
-    pergunta: 'Quanto custa usar o BipFix?',
-    resposta:
-      'Para motoristas, a plataforma é totalmente gratuita. Você pode enviar solicitações, receber orçamentos e comparar opções sem nenhum custo. Estamos na fase de seleção de parceiros fundadores, e hoje não cobramos comissão nem mensalidade das oficinas e lojas parceiras — veja os detalhes nos nossos Termos de Uso.',
-  },
-  {
-    pergunta: 'Como as oficinas são avaliadas?',
-    resposta:
-      'Após cada serviço concluído, o cliente pode avaliar a oficina com nota de 1 a 5 estrelas e deixar um comentário. A média de avaliações é exibida no perfil público da oficina, ajudando outros motoristas a escolherem com confiança.',
-  },
-  {
-    pergunta: 'Posso usar o BipFix em caso de emergência?',
-    resposta:
-      'Sim! Temos um botão de emergência "Acabei de bater" que permite registrar o incidente rapidamente, tirar fotos na hora e receber orçamentos de oficinas próximas em minutos. Você também pode registrar o outro veículo envolvido.',
-  },
-  {
-    pergunta: 'Quais tipos de serviço as oficinas oferecem?',
-    resposta:
-      'As oficinas na plataforma oferecem diversos serviços como funilaria, pintura, mecânica geral, elétrica automotiva, troca de vidros, alinhamento, balanceamento, ar condicionado e muito mais. Cada oficina lista suas especialidades no perfil.',
-  },
-];
-
 export default function HomePage() {
   const { isLoggedIn, user, funcionario, authUser, loading } = useAuth();
   const router = useRouter();
+  const t = useTranslations('home');
+  const locale = useLocale();
 
   // Auto-redirect logged-in users to their dashboard - exceto admin, que
   // precisa conseguir ver a home publica normalmente mesmo logado (pra
@@ -62,17 +31,18 @@ export default function HomePage() {
           : '/cliente/dashboard';
       router.replace(dashPath);
     }
-  }, [loading, isLoggedIn, user, funcionario, router]);
+  }, [loading, isLoggedIn, user, funcionario, authUser, router]);
 
   if (loading || (isLoggedIn && user && user.tipo !== 'admin')) {
     return (
       <div className="flex items-center justify-center min-h-[80vh]">
-        <div className="animate-pulse text-gray-400">Carregando...</div>
+        <div className="animate-pulse text-gray-400">{t('carregando')}</div>
       </div>
     );
   }
 
-  const faqSchema = generateFAQSchema(FAQ_ITEMS);
+  const faqItems = t.raw('faqItems') as { pergunta: string; resposta: string }[];
+  const faqSchema = generateFAQSchema(faqItems);
 
   return (
     <div>
@@ -83,25 +53,22 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
           <div className="max-w-3xl">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-              Reparo do carro{' '}
-              <span className="text-primary-200">sem surpresas.</span>
+              {t('heroTitulo')}{' '}
+              <span className="text-primary-200">{t('heroTituloDestaque')}</span>
             </h1>
-            <p className="mt-6 text-lg sm:text-xl text-primary-100 leading-relaxed">
-              Transparência do orçamento até a entrega. Compare orçamentos detalhados de oficinas verificadas
-              e acompanhe cada etapa do reparo em tempo real. Simples, seguro e sem custos ocultos.
-            </p>
+            <p className="mt-6 text-lg sm:text-xl text-primary-100 leading-relaxed">{t('heroTexto')}</p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Link
                 href="/cadastro?tipo=cliente"
                 className="bg-white text-primary-700 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors text-center"
               >
-                Preciso de um reparo
+                {t('ctaCliente')}
               </Link>
               <Link
                 href="/seja-parceiro"
                 className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white/10 transition-colors text-center"
               >
-                Sou uma oficina ou loja de peças
+                {t('ctaOficina')}
               </Link>
             </div>
           </div>
@@ -121,11 +88,8 @@ export default function HomePage() {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <p className="text-xl font-bold">Acabei de bater!</p>
-                  <p className="text-red-100 text-sm mt-1">
-                    Tire uma foto agora e receba orçamentos de oficinas próximas em minutos.
-                    Registre o outro veículo envolvido.
-                  </p>
+                  <p className="text-xl font-bold">{t('emergenciaTitulo')}</p>
+                  <p className="text-red-100 text-sm mt-1">{t('emergenciaTexto')}</p>
                 </div>
                 <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -139,18 +103,14 @@ export default function HomePage() {
       {/* How it works */}
       <section className="pt-28 pb-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
-            Como funciona
-          </h2>
-          <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">
-            Em poucos passos você recebe orçamentos das melhores oficinas da sua região
-          </p>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">{t('comoFuncionaTitulo')}</h2>
+          <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">{t('comoFuncionaSubtitulo')}</p>
 
           <div className="grid md:grid-cols-4 gap-8">
             <Step
               number={1}
-              title="Descreva o problema"
-              description="Envie fotos do dano e uma descrição do que aconteceu com seu veículo"
+              title={t('step1Titulo')}
+              description={t('step1Texto')}
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -160,8 +120,8 @@ export default function HomePage() {
             />
             <Step
               number={2}
-              title="Oficinas recebem"
-              description="Oficinas próximas a você recebem sua solicitação e avaliam o serviço"
+              title={t('step2Titulo')}
+              description={t('step2Texto')}
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -170,8 +130,8 @@ export default function HomePage() {
             />
             <Step
               number={3}
-              title="Compare orçamentos"
-              description="Receba orçamentos detalhados com preços, prazos e avaliações"
+              title={t('step3Titulo')}
+              description={t('step3Texto')}
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -180,8 +140,8 @@ export default function HomePage() {
             />
             <Step
               number={4}
-              title="Escolha e repare"
-              description="Aceite o melhor orçamento e acompanhe o reparo do seu veículo"
+              title={t('step4Titulo')}
+              description={t('step4Texto')}
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -198,27 +158,22 @@ export default function HomePage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <span className="inline-block bg-primary-100 text-primary-700 text-xs font-semibold px-3 py-1 rounded-full mb-4 tracking-wide">
-                SELEÇÃO DE PARCEIROS FUNDADORES ABERTA
+                {t('oficinasBadge')}
               </span>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                Para oficinas mecânicas e lojas de peças
-              </h2>
-              <p className="text-gray-600 text-lg mb-8">
-                Organize seus serviços em uma única plataforma e ganhe visibilidade para novos clientes na sua
-                região — sem pagar comissão nesta fase inicial.
-              </p>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">{t('oficinasTitulo')}</h2>
+              <p className="text-gray-600 text-lg mb-8">{t('oficinasTexto')}</p>
               <ul className="space-y-4">
-                <Feature text="Receba solicitações de clientes próximos automaticamente" />
-                <Feature text="Envie orçamentos estruturados e profissionais" />
-                <Feature text="Gerencie sua agenda com serviços internos e externos" />
-                <Feature text="Construa sua reputação com avaliações de clientes" />
+                <Feature text={t('feature1')} />
+                <Feature text={t('feature2')} />
+                <Feature text={t('feature3')} />
+                <Feature text={t('feature4')} />
               </ul>
               <div className="flex flex-wrap gap-4 mt-8">
                 <Link href="/seja-parceiro" className="btn-primary inline-block">
-                  Quero ser parceiro fundador
+                  {t('ctaFundador')}
                 </Link>
                 <Link href="/para-oficinas" className="inline-block text-primary-600 font-medium hover:underline self-center">
-                  Saiba mais →
+                  {t('saibaMais')} →
                 </Link>
               </div>
             </div>
@@ -231,8 +186,8 @@ export default function HomePage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Nova solicitação</p>
-                    <p className="text-sm text-gray-500">Colisão - VW Gol 2021 - 3km de você</p>
+                    <p className="font-medium text-gray-900">{t('mock1Titulo')}</p>
+                    <p className="text-sm text-gray-500">{t('mock1Texto')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg">
@@ -242,8 +197,8 @@ export default function HomePage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Orçamento aceito!</p>
-                    <p className="text-sm text-gray-500">Funilaria - Chevrolet Onix 2023</p>
+                    <p className="font-medium text-gray-900">{t('mock2Titulo')}</p>
+                    <p className="text-sm text-gray-500">{t('mock2Texto')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-4 bg-yellow-50 rounded-lg">
@@ -253,8 +208,8 @@ export default function HomePage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Nova avaliação: 5 estrelas</p>
-                    <p className="text-sm text-gray-500">&quot;Excelente trabalho, recomendo!&quot;</p>
+                    <p className="font-medium text-gray-900">{t('mock3Titulo')}</p>
+                    <p className="text-sm text-gray-500">{t('mock3Texto')}</p>
                   </div>
                 </div>
               </div>
@@ -267,34 +222,21 @@ export default function HomePage() {
       <section className="py-16 bg-primary-600 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-block bg-white/15 text-white text-xs font-semibold px-3 py-1 rounded-full mb-5 tracking-wide">
-            UM PROJETO AMBICIOSO, NO COMEÇO DA JORNADA
+            {t('porQueBadge')}
           </span>
-          <h2 className="text-3xl font-bold mb-6">Por que estamos construindo o BipFix</h2>
-          <p className="text-lg text-primary-100 leading-relaxed">
-            Hoje, escolher onde consertar o carro costuma depender só de indicação ou de qual oficina está mais
-            perto — sem comparar preço, prazo ou histórico de quem vai fazer o serviço. Acreditamos que motoristas
-            merecem transparência, e que boas oficinas merecem ser encontradas pelo trabalho que entregam.
-          </p>
-          <p className="text-lg text-primary-100 leading-relaxed mt-4">
-            Estamos, literalmente, no começo: selecionando as primeiras oficinas e lojas de peças parceiras para
-            lançar com atenção total em uma cidade por vez, em vez de crescer rápido sem controle de qualidade.
-          </p>
+          <h2 className="text-3xl font-bold mb-6">{t('porQueTitulo')}</h2>
+          <p className="text-lg text-primary-100 leading-relaxed">{t('porQueTexto1')}</p>
+          <p className="text-lg text-primary-100 leading-relaxed mt-4">{t('porQueTexto2')}</p>
         </div>
       </section>
 
       {/* Chamada para parceiros */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Ainda dá tempo de entrar como parceiro fundador
-          </h2>
-          <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
-            Se você é motorista, já pode usar a plataforma hoje. Se você tem uma oficina ou loja de peças,
-            estamos selecionando um número limitado de parceiros para a fase piloto — sem comissão neste
-            momento.
-          </p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('parceiroTitulo')}</h2>
+          <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">{t('parceiroTexto')}</p>
           <Link href="/seja-parceiro" className="btn-primary inline-block">
-            Quero ser parceiro fundador
+            {t('ctaFundador')}
           </Link>
         </div>
       </section>
@@ -302,14 +244,10 @@ export default function HomePage() {
       {/* FAQ Section */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
-            Perguntas Frequentes
-          </h2>
-          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-            Tire suas duvidas sobre a plataforma BipFix
-          </p>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">{t('faqTitulo')}</h2>
+          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">{t('faqSubtitulo')}</p>
           <div className="space-y-4">
-            {FAQ_ITEMS.map((faq, index) => (
+            {faqItems.map((faq, index) => (
               <FAQItem key={index} pergunta={faq.pergunta} resposta={faq.resposta} />
             ))}
           </div>
@@ -329,41 +267,38 @@ export default function HomePage() {
                   Bip<span className="text-primary-400">Fix</span>
                 </span>
               </div>
-              <p className="text-sm">
-                Conectando motoristas às melhores oficinas do Brasil.
-              </p>
+              <p className="text-sm">{t('footerTagline')}</p>
             </div>
             <div>
-              <h3 className="text-white font-semibold mb-3">Para Motoristas</h3>
+              <h3 className="text-white font-semibold mb-3">{t('footerMotoristas')}</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/cadastro?tipo=cliente" className="hover:text-white">Criar conta</Link></li>
-                <li><Link href="/emergencia" className="hover:text-white">Acabei de bater</Link></li>
-                <li><Link href="/docs/cliente" className="hover:text-white">Como funciona</Link></li>
+                <li><Link href="/cadastro?tipo=cliente" className="hover:text-white">{t('footerCriarConta')}</Link></li>
+                <li><Link href="/emergencia" className="hover:text-white">{t('footerAcabeiDeBater')}</Link></li>
+                <li><Link href="/docs/cliente" className="hover:text-white">{t('footerComoFunciona')}</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-white font-semibold mb-3">Para Oficinas</h3>
+              <h3 className="text-white font-semibold mb-3">{t('footerOficinas')}</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/para-oficinas" className="hover:text-white">Sistema de gestão e clientes</Link></li>
-                <li><Link href="/seja-parceiro" className="hover:text-white">Seja parceiro fundador</Link></li>
-                <li><Link href="/docs/oficina" className="hover:text-white">Guia da Oficina</Link></li>
-                <li><Link href="/docs" className="hover:text-white">Central de Ajuda</Link></li>
+                <li><Link href="/para-oficinas" className="hover:text-white">{t('footerSistemaGestao')}</Link></li>
+                <li><Link href="/seja-parceiro" className="hover:text-white">{t('footerSejaParceiro')}</Link></li>
+                <li><Link href="/docs/oficina" className="hover:text-white">{t('footerGuiaOficina')}</Link></li>
+                <li><Link href="/docs" className="hover:text-white">{t('footerCentralAjuda')}</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-white font-semibold mb-3">Contato</h3>
+              <h3 className="text-white font-semibold mb-3">{t('footerContato')}</h3>
               <ul className="space-y-2 text-sm">
                 <li>contato@bipfix.com</li>
-                <li>(11) 3000-0000</li>
-                <li>São Paulo, SP</li>
+                {locale === 'pt' && <li>São Paulo, SP</li>}
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center text-sm">
-            <p>2026 BipFix. Todos os direitos reservados.</p>
+            <p>{t('footerDireitos')}</p>
             <div className="flex gap-4">
-              <Link href="/termos" className="hover:text-white">Termos de Uso</Link>
-              <Link href="/privacidade" className="hover:text-white">Privacidade</Link>
+              <Link href="/termos" className="hover:text-white">{t('footerTermos')}</Link>
+              <Link href="/privacidade" className="hover:text-white">{t('footerPrivacidade')}</Link>
             </div>
           </div>
         </div>
