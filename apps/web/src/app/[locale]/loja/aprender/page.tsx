@@ -36,7 +36,7 @@ export default function LojaAprenderPage() {
       emoji: '🏬',
       ...modulosTexto['perfil'],
       linkReal: '/loja/perfil',
-      verificar: async () => loja.cidade !== 'A definir' && loja.endereco !== 'A definir',
+      verificar: async () => !!loja.cidade && !!loja.endereco,
     },
     {
       id: 'catalogo',
