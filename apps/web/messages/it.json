@@ -257,5 +257,11 @@
     "footerDireitos": "2026 BipFix. Tutti i diritti riservati.",
     "footerTermos": "Termini di Utilizzo",
     "footerPrivacidade": "Privacy"
+  },
+  "cookieBanner": {
+    "texto": "Utilizziamo i cookie per capire come usi il sito e migliorare la tua esperienza. Accettando, accetti la nostra",
+    "linkPrivacidade": "Informativa sulla Privacy",
+    "rejeitar": "Rifiuta",
+    "aceitar": "Accetta"
   }
 }

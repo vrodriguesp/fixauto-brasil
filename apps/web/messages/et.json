@@ -256,5 +256,11 @@
     "footerDireitos": "2026 BipFix. Kõik õigused kaitstud.",
     "footerTermos": "Kasutustingimused",
     "footerPrivacidade": "Privaatsus"
+  },
+  "cookieBanner": {
+    "texto": "Kasutame küpsiseid, et mõista, kuidas sa saiti kasutad, ja parandada sinu kasutuskogemust. Nõustudes lähtud meie",
+    "linkPrivacidade": "privaatsuspoliitikast",
+    "rejeitar": "Keeldu",
+    "aceitar": "Nõustun"
   }
 }

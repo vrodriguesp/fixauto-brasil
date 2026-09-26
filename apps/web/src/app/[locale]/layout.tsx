@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
+import Analytics from '@/components/Analytics';
 import StructuredData from '@/components/seo/StructuredData';
 import { routing, type Locale } from '@/i18n/routing';
 
@@ -89,6 +90,7 @@ export default async function LocaleLayout({
     <NextIntlClientProvider messages={messages}>
       <StructuredData data={organizationSchema} />
       <StructuredData data={websiteSchema} />
+      <Analytics />
       <Navbar />
       <main className="min-h-[calc(100vh-4rem)]">{children}</main>
     </NextIntlClientProvider>
