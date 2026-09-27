@@ -1,0 +1,151 @@
+{
+  "common": {
+    "carregando": "Laadimine...",
+    "salvar": "Salvesta",
+    "cancelar": "Tühista",
+    "continuar": "Jätka",
+    "voltar": "Tagasi",
+    "tentarNovamente": "Proovi uuesti",
+    "erroGenerico": "Midagi läks valesti. Palun proovi uuesti.",
+    "semConexao": "Interneti-ühendus puudub.",
+    "confirmar": "Kinnita",
+    "enviar": "Saada",
+    "sim": "Jah",
+    "nao": "Ei",
+    "opcional": "valikuline"
+  },
+  "tabs": {
+    "inicio": "Avaleht",
+    "solicitacoes": "Päringud",
+    "mensagens": "Sõnumid",
+    "veiculos": "Sõidukid",
+    "perfil": "Profiil"
+  },
+  "auth": {
+    "loginTitulo": "Logi sisse",
+    "email": "E-post",
+    "senha": "Parool",
+    "entrar": "Logi sisse",
+    "esqueciSenha": "Unustasid parooli?",
+    "naoTemConta": "Sul pole veel kontot?",
+    "criarConta": "Loo konto",
+    "cadastroTitulo": "Loo konto",
+    "nome": "Täisnimi",
+    "telefone": "Telefon",
+    "confirmarSenha": "Kinnita parool",
+    "jaTemConta": "Sul on juba konto?",
+    "credenciaisInvalidas": "Vale e-post või parool.",
+    "senhasNaoConferem": "Paroolid ei kattu.",
+    "recuperarTitulo": "Taasta parool",
+    "recuperarTexto": "Sisesta oma e-post ja saadame sulle parooli lähtestamise lingi.",
+    "linkEnviado": "Kui see e-post on meil olemas, saatsime lähtestamislingi.",
+    "definirSenhaTitulo": "Määra oma parool",
+    "definirSenhaTexto": "See on sinu esimene sisselogimine — jätkamiseks määra parool."
+  },
+  "emergencia": {
+    "titulo": "Sattusin avariisse",
+    "subtitulo": "Teata õnnetusest kohe ja saa lähedal asuvatelt töökodadelt hinnapakkumised mõne minutiga.",
+    "botaoIniciar": "Teata õnnetusest kohe",
+    "fotoTitulo": "Sõiduki fotod",
+    "fotoTexto": "Tee või lae üles fotod kahjustusest.",
+    "localTitulo": "Sinu asukoht",
+    "localPermitir": "Luba juurdepääs asukohale",
+    "localTexto": "Kasutame sinu asukohta lähedal asuvate töökodade leidmiseks.",
+    "descricaoLabel": "Mis juhtus?",
+    "descricaoPlaceholder": "Kirjelda lühidalt õnnetust...",
+    "enviarRegistro": "Saada teade",
+    "sucessoTitulo": "Teade saadetud",
+    "sucessoTexto": "Lähedal asuvatele töökodadele on teatatud. Jälgi hinnapakkumisi menüüs Päringud."
+  },
+  "novaSolicitacao": {
+    "titulo": "Uus päring",
+    "passoVeiculo": "Vali sõiduk",
+    "adicionarVeiculo": "Lisa sõiduk",
+    "passoServico": "Teenuse liik",
+    "passoSintomas": "Mis toimub?",
+    "passoFotos": "Fotod probleemist",
+    "passoLocal": "Teeninduse asukoht",
+    "passoUrgencia": "Kiireloomulisus",
+    "urgenciaBaixa": "Võin oodata",
+    "urgenciaMedia": "Järgmise paari päeva jooksul",
+    "urgenciaAlta": "See on kiireloomuline",
+    "revisar": "Vaata üle ja saada",
+    "enviarSolicitacao": "Saada päring",
+    "sucessoTitulo": "Päring saadetud!",
+    "sucessoTexto": "Lähedal asuvad töökojad saadavad peagi hinnapakkumised."
+  },
+  "dashboard": {
+    "saudacao": "Tere, {nome}",
+    "solicitacoesAtivas": "Aktiivsed päringud",
+    "nenhumaSolicitacao": "Sul pole veel ühtegi päringut.",
+    "novaSolicitacaoBotao": "Uus päring",
+    "emergenciaBotao": "Sattusin avariisse"
+  },
+  "orcamentos": {
+    "titulo": "Hinnapakkumised",
+    "recebidoDe": "Saatja: {oficina}",
+    "valor": "Kogusumma",
+    "aceitar": "Nõustu pakkumisega",
+    "recusar": "Keeldu",
+    "verDetalhes": "Vaata detaile",
+    "statusEnviado": "Saadetud",
+    "statusVisualizado": "Vaadatud",
+    "statusAceito": "Vastu võetud",
+    "statusRecusado": "Tagasi lükatud",
+    "statusExpirado": "Aegunud"
+  },
+  "acompanhamento": {
+    "titulo": "Remondi jälgimine",
+    "etapaAtual": "Praegune etapp",
+    "previsaoEntrega": "Eeldatav valmimisaeg"
+  },
+  "mensagens": {
+    "titulo": "Sõnumid",
+    "nenhumaConversa": "Vestlusi pole veel.",
+    "digiteMensagem": "Kirjuta sõnum...",
+    "gravarAudio": "Hoia all, et salvestada häälsõnum"
+  },
+  "veiculos": {
+    "titulo": "Minu sõidukid",
+    "adicionar": "Lisa sõiduk",
+    "marca": "Mark",
+    "modelo": "Mudel",
+    "ano": "Aasta",
+    "placa": "Registreerimismärk",
+    "nenhumVeiculo": "Sa pole veel ühtegi sõidukit lisanud."
+  },
+  "constants": {
+    "tiposServico": {
+      "colisao": "Kokkupõrge",
+      "funilaria": "Kere- ja värvitööd",
+      "revisao": "Hooldus",
+      "mecanica": "Mehaanika",
+      "eletrica": "Elektroonika",
+      "pneu": "Rehvid",
+      "outro": "Muu"
+    },
+    "urgencias": {
+      "baixa": "Madal",
+      "baixaDesc": "Kiiret ei ole, võin oodata",
+      "media": "Keskmine",
+      "mediaDesc": "Vajan mõne nädala jooksul",
+      "alta": "Kõrge",
+      "altaDesc": "Kiireloomuline, vajan võimalikult kiiresti"
+    },
+    "statusSolicitacao": {
+      "aberta": "Avatud",
+      "em_orcamento": "Hinnapakkumine saadetud",
+      "aceita": "Hinnapakkumine kinnitatud",
+      "em_andamento": "Töös",
+      "concluida": "Lõpetatud",
+      "cancelada": "Tühistatud"
+    }
+  },
+  "perfil": {
+    "titulo": "Profiil",
+    "meusDados": "Minu andmed",
+    "idioma": "Keel",
+    "sair": "Logi välja",
+    "avaliacoes": "Minu hinnangud"
+  }
+}

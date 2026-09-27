@@ -1,0 +1,151 @@
+{
+  "common": {
+    "carregando": "Loading...",
+    "salvar": "Save",
+    "cancelar": "Cancel",
+    "continuar": "Continue",
+    "voltar": "Back",
+    "tentarNovamente": "Try again",
+    "erroGenerico": "Something went wrong. Please try again.",
+    "semConexao": "No internet connection.",
+    "confirmar": "Confirm",
+    "enviar": "Send",
+    "sim": "Yes",
+    "nao": "No",
+    "opcional": "optional"
+  },
+  "tabs": {
+    "inicio": "Home",
+    "solicitacoes": "Requests",
+    "mensagens": "Messages",
+    "veiculos": "Vehicles",
+    "perfil": "Profile"
+  },
+  "auth": {
+    "loginTitulo": "Sign in",
+    "email": "Email",
+    "senha": "Password",
+    "entrar": "Sign in",
+    "esqueciSenha": "Forgot your password?",
+    "naoTemConta": "Don't have an account?",
+    "criarConta": "Create account",
+    "cadastroTitulo": "Create account",
+    "nome": "Full name",
+    "telefone": "Phone",
+    "confirmarSenha": "Confirm password",
+    "jaTemConta": "Already have an account?",
+    "credenciaisInvalidas": "Incorrect email or password.",
+    "senhasNaoConferem": "Passwords don't match.",
+    "recuperarTitulo": "Reset password",
+    "recuperarTexto": "Enter your email and we'll send you a link to reset your password.",
+    "linkEnviado": "If that email is in our records, we've sent a reset link.",
+    "definirSenhaTitulo": "Set your password",
+    "definirSenhaTexto": "This is your first time signing in — set a password to continue."
+  },
+  "emergencia": {
+    "titulo": "I've just crashed",
+    "subtitulo": "Report the accident now and get quotes from nearby repair shops in minutes.",
+    "botaoIniciar": "Report the accident now",
+    "fotoTitulo": "Vehicle photos",
+    "fotoTexto": "Take or upload photos of the damage.",
+    "localTitulo": "Your location",
+    "localPermitir": "Allow location access",
+    "localTexto": "We use your location to find nearby repair shops.",
+    "descricaoLabel": "What happened?",
+    "descricaoPlaceholder": "Briefly describe the accident...",
+    "enviarRegistro": "Submit report",
+    "sucessoTitulo": "Report submitted",
+    "sucessoTexto": "Nearby repair shops have been notified. Track quotes under Requests."
+  },
+  "novaSolicitacao": {
+    "titulo": "New request",
+    "passoVeiculo": "Select your vehicle",
+    "adicionarVeiculo": "Add vehicle",
+    "passoServico": "Service type",
+    "passoSintomas": "What's going on?",
+    "passoFotos": "Photos of the issue",
+    "passoLocal": "Service location",
+    "passoUrgencia": "Urgency",
+    "urgenciaBaixa": "I can wait",
+    "urgenciaMedia": "In the next few days",
+    "urgenciaAlta": "It's urgent",
+    "revisar": "Review and submit",
+    "enviarSolicitacao": "Submit request",
+    "sucessoTitulo": "Request submitted!",
+    "sucessoTexto": "Nearby repair shops will send you quotes shortly."
+  },
+  "dashboard": {
+    "saudacao": "Hi, {nome}",
+    "solicitacoesAtivas": "Active requests",
+    "nenhumaSolicitacao": "You don't have any requests yet.",
+    "novaSolicitacaoBotao": "New request",
+    "emergenciaBotao": "I've just crashed"
+  },
+  "orcamentos": {
+    "titulo": "Quotes",
+    "recebidoDe": "Sent by {oficina}",
+    "valor": "Total amount",
+    "aceitar": "Accept quote",
+    "recusar": "Decline",
+    "verDetalhes": "View details",
+    "statusEnviado": "Sent",
+    "statusVisualizado": "Viewed",
+    "statusAceito": "Accepted",
+    "statusRecusado": "Declined",
+    "statusExpirado": "Expired"
+  },
+  "acompanhamento": {
+    "titulo": "Repair tracking",
+    "etapaAtual": "Current stage",
+    "previsaoEntrega": "Estimated delivery"
+  },
+  "mensagens": {
+    "titulo": "Messages",
+    "nenhumaConversa": "No conversations yet.",
+    "digiteMensagem": "Type a message...",
+    "gravarAudio": "Hold to record a voice message"
+  },
+  "veiculos": {
+    "titulo": "My vehicles",
+    "adicionar": "Add vehicle",
+    "marca": "Make",
+    "modelo": "Model",
+    "ano": "Year",
+    "placa": "License plate",
+    "nenhumVeiculo": "You haven't added any vehicles yet."
+  },
+  "constants": {
+    "tiposServico": {
+      "colisao": "Collision",
+      "funilaria": "Bodywork & Paint",
+      "revisao": "Maintenance",
+      "mecanica": "Mechanical",
+      "eletrica": "Electrical",
+      "pneu": "Tires",
+      "outro": "Other"
+    },
+    "urgencias": {
+      "baixa": "Low",
+      "baixaDesc": "No rush, I can wait",
+      "media": "Medium",
+      "mediaDesc": "I need it within a few weeks",
+      "alta": "High",
+      "altaDesc": "Urgent, I need it as soon as possible"
+    },
+    "statusSolicitacao": {
+      "aberta": "Open",
+      "em_orcamento": "Quote Sent",
+      "aceita": "Quote Accepted",
+      "em_andamento": "In Progress",
+      "concluida": "Completed",
+      "cancelada": "Cancelled"
+    }
+  },
+  "perfil": {
+    "titulo": "Profile",
+    "meusDados": "My details",
+    "idioma": "Language",
+    "sair": "Sign out",
+    "avaliacoes": "My reviews"
+  }
+}

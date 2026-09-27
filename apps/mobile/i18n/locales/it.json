@@ -1,0 +1,151 @@
+{
+  "common": {
+    "carregando": "Caricamento...",
+    "salvar": "Salva",
+    "cancelar": "Annulla",
+    "continuar": "Continua",
+    "voltar": "Indietro",
+    "tentarNovamente": "Riprova",
+    "erroGenerico": "Qualcosa è andato storto. Riprova.",
+    "semConexao": "Nessuna connessione a internet.",
+    "confirmar": "Conferma",
+    "enviar": "Invia",
+    "sim": "Sì",
+    "nao": "No",
+    "opcional": "facoltativo"
+  },
+  "tabs": {
+    "inicio": "Home",
+    "solicitacoes": "Richieste",
+    "mensagens": "Messaggi",
+    "veiculos": "Veicoli",
+    "perfil": "Profilo"
+  },
+  "auth": {
+    "loginTitulo": "Accedi",
+    "email": "Email",
+    "senha": "Password",
+    "entrar": "Accedi",
+    "esqueciSenha": "Hai dimenticato la password?",
+    "naoTemConta": "Non hai un account?",
+    "criarConta": "Crea account",
+    "cadastroTitulo": "Crea account",
+    "nome": "Nome completo",
+    "telefone": "Telefono",
+    "confirmarSenha": "Conferma password",
+    "jaTemConta": "Hai già un account?",
+    "credenciaisInvalidas": "Email o password errati.",
+    "senhasNaoConferem": "Le password non coincidono.",
+    "recuperarTitulo": "Recupera password",
+    "recuperarTexto": "Inserisci la tua email e ti invieremo un link per reimpostare la password.",
+    "linkEnviado": "Se questa email è nei nostri archivi, ti abbiamo inviato un link di recupero.",
+    "definirSenhaTitulo": "Imposta la tua password",
+    "definirSenhaTexto": "È il tuo primo accesso: imposta una password per continuare."
+  },
+  "emergencia": {
+    "titulo": "Ho appena avuto un incidente",
+    "subtitulo": "Segnala subito l'incidente e ricevi preventivi da officine vicine in pochi minuti.",
+    "botaoIniciar": "Segnala subito l'incidente",
+    "fotoTitulo": "Foto del veicolo",
+    "fotoTexto": "Scatta o carica foto del danno.",
+    "localTitulo": "La tua posizione",
+    "localPermitir": "Consenti l'accesso alla posizione",
+    "localTexto": "Usiamo la tua posizione per trovare officine vicine.",
+    "descricaoLabel": "Cos'è successo?",
+    "descricaoPlaceholder": "Descrivi brevemente l'incidente...",
+    "enviarRegistro": "Invia segnalazione",
+    "sucessoTitulo": "Segnalazione inviata",
+    "sucessoTexto": "Le officine vicine sono già state avvisate. Segui i preventivi in Richieste."
+  },
+  "novaSolicitacao": {
+    "titulo": "Nuova richiesta",
+    "passoVeiculo": "Seleziona il veicolo",
+    "adicionarVeiculo": "Aggiungi veicolo",
+    "passoServico": "Tipo di servizio",
+    "passoSintomas": "Cosa sta succedendo?",
+    "passoFotos": "Foto del problema",
+    "passoLocal": "Luogo dell'intervento",
+    "passoUrgencia": "Urgenza",
+    "urgenciaBaixa": "Posso aspettare",
+    "urgenciaMedia": "Nei prossimi giorni",
+    "urgenciaAlta": "È urgente",
+    "revisar": "Rivedi e invia",
+    "enviarSolicitacao": "Invia richiesta",
+    "sucessoTitulo": "Richiesta inviata!",
+    "sucessoTexto": "Le officine vicine ti invieranno presto dei preventivi."
+  },
+  "dashboard": {
+    "saudacao": "Ciao, {nome}",
+    "solicitacoesAtivas": "Richieste attive",
+    "nenhumaSolicitacao": "Non hai ancora nessuna richiesta.",
+    "novaSolicitacaoBotao": "Nuova richiesta",
+    "emergenciaBotao": "Ho appena avuto un incidente"
+  },
+  "orcamentos": {
+    "titulo": "Preventivi",
+    "recebidoDe": "Inviato da {oficina}",
+    "valor": "Importo totale",
+    "aceitar": "Accetta preventivo",
+    "recusar": "Rifiuta",
+    "verDetalhes": "Vedi dettagli",
+    "statusEnviado": "Inviato",
+    "statusVisualizado": "Visualizzato",
+    "statusAceito": "Accettato",
+    "statusRecusado": "Rifiutato",
+    "statusExpirado": "Scaduto"
+  },
+  "acompanhamento": {
+    "titulo": "Stato riparazione",
+    "etapaAtual": "Fase attuale",
+    "previsaoEntrega": "Consegna prevista"
+  },
+  "mensagens": {
+    "titulo": "Messaggi",
+    "nenhumaConversa": "Ancora nessuna conversazione.",
+    "digiteMensagem": "Scrivi un messaggio...",
+    "gravarAudio": "Tieni premuto per registrare un audio"
+  },
+  "veiculos": {
+    "titulo": "I miei veicoli",
+    "adicionar": "Aggiungi veicolo",
+    "marca": "Marca",
+    "modelo": "Modello",
+    "ano": "Anno",
+    "placa": "Targa",
+    "nenhumVeiculo": "Non hai ancora aggiunto nessun veicolo."
+  },
+  "constants": {
+    "tiposServico": {
+      "colisao": "Collisione",
+      "funilaria": "Carrozzeria e Verniciatura",
+      "revisao": "Tagliando",
+      "mecanica": "Meccanica",
+      "eletrica": "Elettrauto",
+      "pneu": "Pneumatici",
+      "outro": "Altro"
+    },
+    "urgencias": {
+      "baixa": "Bassa",
+      "baixaDesc": "Nessuna fretta, posso aspettare",
+      "media": "Media",
+      "mediaDesc": "Mi serve entro poche settimane",
+      "alta": "Alta",
+      "altaDesc": "Urgente, mi serve il prima possibile"
+    },
+    "statusSolicitacao": {
+      "aberta": "Aperta",
+      "em_orcamento": "Preventivo Inviato",
+      "aceita": "Preventivo Accettato",
+      "em_andamento": "In Corso",
+      "concluida": "Completata",
+      "cancelada": "Annullata"
+    }
+  },
+  "perfil": {
+    "titulo": "Profilo",
+    "meusDados": "I miei dati",
+    "idioma": "Lingua",
+    "sair": "Esci",
+    "avaliacoes": "Le mie recensioni"
+  }
+}

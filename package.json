@@ -10,5 +10,8 @@
     "dev": "npm run dev --workspace=apps/web",
     "build": "npm run build --workspace=apps/web",
     "dev:mobile": "npm run start --workspace=apps/mobile"
+  },
+  "overrides": {
+    "react-native-reanimated": "4.5.1"
   }
 }

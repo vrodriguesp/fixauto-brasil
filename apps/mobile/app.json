@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "BipFix",
+    "slug": "bipfix-cliente",
+    "scheme": "bipfix",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bipfix.cliente",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Usamos sua localização para encontrar oficinas próximas de você.",
+        "NSCameraUsageDescription": "Usamos a câmera para você fotografar o dano do veículo.",
+        "NSPhotoLibraryUsageDescription": "Usamos sua galeria para você enviar fotos do dano do veículo."
+      }
+    },
+    "android": {
+      "package": "com.bipfix.cliente",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "CAMERA"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-localization",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Usamos sua galeria para você enviar fotos do dano do veículo.",
+          "cameraPermission": "Usamos a câmera para você fotografar o dano do veículo."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Usamos sua localização para encontrar oficinas próximas de você."
+        }
+      ]
+    ]
+  }
+}

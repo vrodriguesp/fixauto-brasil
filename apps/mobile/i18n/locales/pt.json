@@ -1,0 +1,151 @@
+{
+  "common": {
+    "carregando": "Carregando...",
+    "salvar": "Salvar",
+    "cancelar": "Cancelar",
+    "continuar": "Continuar",
+    "voltar": "Voltar",
+    "tentarNovamente": "Tentar novamente",
+    "erroGenerico": "Algo deu errado. Tente novamente.",
+    "semConexao": "Sem conexão com a internet.",
+    "confirmar": "Confirmar",
+    "enviar": "Enviar",
+    "sim": "Sim",
+    "nao": "Não",
+    "opcional": "opcional"
+  },
+  "tabs": {
+    "inicio": "Início",
+    "solicitacoes": "Solicitações",
+    "mensagens": "Mensagens",
+    "veiculos": "Veículos",
+    "perfil": "Perfil"
+  },
+  "auth": {
+    "loginTitulo": "Entrar",
+    "email": "E-mail",
+    "senha": "Senha",
+    "entrar": "Entrar",
+    "esqueciSenha": "Esqueci minha senha",
+    "naoTemConta": "Não tem uma conta?",
+    "criarConta": "Criar conta",
+    "cadastroTitulo": "Criar conta",
+    "nome": "Nome completo",
+    "telefone": "Telefone",
+    "confirmarSenha": "Confirmar senha",
+    "jaTemConta": "Já tem uma conta?",
+    "credenciaisInvalidas": "E-mail ou senha incorretos.",
+    "senhasNaoConferem": "As senhas não conferem.",
+    "recuperarTitulo": "Recuperar senha",
+    "recuperarTexto": "Digite seu e-mail e enviaremos um link para redefinir sua senha.",
+    "linkEnviado": "Se esse e-mail existir na nossa base, enviamos um link de recuperação.",
+    "definirSenhaTitulo": "Defina sua senha",
+    "definirSenhaTexto": "Essa é a primeira vez que você acessa — defina uma senha para continuar."
+  },
+  "emergencia": {
+    "titulo": "Acabei de bater",
+    "subtitulo": "Registre o acidente agora e receba orçamentos de oficinas próximas em minutos.",
+    "botaoIniciar": "Registrar acidente agora",
+    "fotoTitulo": "Fotos do veículo",
+    "fotoTexto": "Tire ou envie fotos do dano.",
+    "localTitulo": "Sua localização",
+    "localPermitir": "Permitir acesso à localização",
+    "localTexto": "Usamos sua localização para encontrar oficinas próximas.",
+    "descricaoLabel": "O que aconteceu?",
+    "descricaoPlaceholder": "Descreva brevemente o acidente...",
+    "enviarRegistro": "Enviar registro",
+    "sucessoTitulo": "Registro enviado",
+    "sucessoTexto": "Oficinas próximas já foram notificadas. Acompanhe os orçamentos em Solicitações."
+  },
+  "novaSolicitacao": {
+    "titulo": "Nova solicitação",
+    "passoVeiculo": "Selecione o veículo",
+    "adicionarVeiculo": "Adicionar veículo",
+    "passoServico": "Tipo de serviço",
+    "passoSintomas": "O que está acontecendo?",
+    "passoFotos": "Fotos do problema",
+    "passoLocal": "Local do atendimento",
+    "passoUrgencia": "Urgência",
+    "urgenciaBaixa": "Posso esperar",
+    "urgenciaMedia": "Nos próximos dias",
+    "urgenciaAlta": "É urgente",
+    "revisar": "Revisar e enviar",
+    "enviarSolicitacao": "Enviar solicitação",
+    "sucessoTitulo": "Solicitação enviada!",
+    "sucessoTexto": "Oficinas próximas vão enviar orçamentos em breve."
+  },
+  "dashboard": {
+    "saudacao": "Olá, {nome}",
+    "solicitacoesAtivas": "Solicitações ativas",
+    "nenhumaSolicitacao": "Você ainda não tem nenhuma solicitação.",
+    "novaSolicitacaoBotao": "Nova solicitação",
+    "emergenciaBotao": "Acabei de bater"
+  },
+  "orcamentos": {
+    "titulo": "Orçamentos",
+    "recebidoDe": "Enviado por {oficina}",
+    "valor": "Valor total",
+    "aceitar": "Aceitar orçamento",
+    "recusar": "Recusar",
+    "verDetalhes": "Ver detalhes",
+    "statusEnviado": "Enviado",
+    "statusVisualizado": "Visualizado",
+    "statusAceito": "Aceito",
+    "statusRecusado": "Recusado",
+    "statusExpirado": "Expirado"
+  },
+  "acompanhamento": {
+    "titulo": "Acompanhamento",
+    "etapaAtual": "Etapa atual",
+    "previsaoEntrega": "Previsão de entrega"
+  },
+  "mensagens": {
+    "titulo": "Mensagens",
+    "nenhumaConversa": "Nenhuma conversa ainda.",
+    "digiteMensagem": "Digite uma mensagem...",
+    "gravarAudio": "Segure para gravar um áudio"
+  },
+  "veiculos": {
+    "titulo": "Meus veículos",
+    "adicionar": "Adicionar veículo",
+    "marca": "Marca",
+    "modelo": "Modelo",
+    "ano": "Ano",
+    "placa": "Placa",
+    "nenhumVeiculo": "Você ainda não cadastrou nenhum veículo."
+  },
+  "constants": {
+    "tiposServico": {
+      "colisao": "Colisão",
+      "funilaria": "Funilaria e Pintura",
+      "revisao": "Revisões",
+      "mecanica": "Mecânica",
+      "eletrica": "Elétrico",
+      "pneu": "Pneu",
+      "outro": "Outro"
+    },
+    "urgencias": {
+      "baixa": "Baixa",
+      "baixaDesc": "Sem pressa, posso esperar",
+      "media": "Média",
+      "mediaDesc": "Preciso em algumas semanas",
+      "alta": "Alta",
+      "altaDesc": "Urgente, preciso o mais rápido possível"
+    },
+    "statusSolicitacao": {
+      "aberta": "Aberta",
+      "em_orcamento": "Orçamento Enviado",
+      "aceita": "Orçamento Aceito",
+      "em_andamento": "Em Andamento",
+      "concluida": "Concluída",
+      "cancelada": "Cancelada"
+    }
+  },
+  "perfil": {
+    "titulo": "Perfil",
+    "meusDados": "Meus dados",
+    "idioma": "Idioma",
+    "sair": "Sair",
+    "avaliacoes": "Minhas avaliações"
+  }
+}

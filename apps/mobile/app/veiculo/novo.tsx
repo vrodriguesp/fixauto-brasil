@@ -1,0 +1,66 @@
+import { useState } from 'react';
+import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { router, Stack } from 'expo-router';
+import { useAuth } from '../../lib/auth-context';
+import { supabase } from '../../lib/supabase';
+import VehicleCatalogPicker from '../../components/VehicleCatalogPicker';
+
+export default function NovoVeiculoScreen() {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const [marca, setMarca] = useState<{ code: string; name: string } | null>(null);
+  const [modelo, setModelo] = useState<{ code: string; name: string } | null>(null);
+  const [ano, setAno] = useState('');
+  const [placa, setPlaca] = useState('');
+  const [apelido, setApelido] = useState('');
+  const [salvando, setSalvando] = useState(false);
+
+  const handleSalvar = async () => {
+    if (!user || !marca || !modelo) return;
+    setSalvando(true);
+    await supabase.from('veiculos').insert({
+      profile_id: user.id,
+      fipe_tipo: 'cars',
+      fipe_marca: marca.name,
+      fipe_modelo: modelo.name,
+      fipe_ano: ano || '-',
+      fipe_codigo: null,
+      fipe_valor: null,
+      placa: placa || null,
+      cor: null,
+      apelido: apelido || null,
+    });
+    setSalvando(false);
+    router.back();
+  };
+
+  return (
+    <ScrollView className="flex-1 bg-white px-4 pt-4">
+      <Stack.Screen options={{ headerShown: true, title: t('veiculos.adicionar') }} />
+
+      <VehicleCatalogPicker label={t('veiculos.marca')} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" />
+
+      {marca && (
+        <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={`/api/vehicle-catalog?tipo=cars&marca=${marca.code}`} />
+      )}
+
+      <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.ano')}</Text>
+      <TextInput value={ano} onChangeText={setAno} keyboardType="number-pad" className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
+
+      <Text className="text-sm font-medium text-gray-700 mb-1">
+        {t('veiculos.placa')} <Text className="text-gray-400">({t('common.opcional')})</Text>
+      </Text>
+      <TextInput value={placa} onChangeText={setPlaca} autoCapitalize="characters" className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
+
+      <Text className="text-sm font-medium text-gray-700 mb-1">
+        {t('perfil.meusDados')} <Text className="text-gray-400">({t('common.opcional')})</Text>
+      </Text>
+      <TextInput value={apelido} onChangeText={setApelido} className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-base" />
+
+      <Pressable onPress={handleSalvar} disabled={!marca || !modelo || salvando} className="bg-primary-600 rounded-lg py-4 items-center mb-8 disabled:opacity-50">
+        {salvando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold text-base">{t('common.salvar')}</Text>}
+      </Pressable>
+    </ScrollView>
+  );
+}
