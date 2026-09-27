@@ -51,6 +51,7 @@
     "localTitulo": "La tua posizione",
     "localPermitir": "Consenti l'accesso alla posizione",
     "localTexto": "Usiamo la tua posizione per trovare officine vicine.",
+    "erroLocalizacao": "Non è stato possibile rilevare la tua posizione. Inserisci l'indirizzo manualmente.",
     "descricaoLabel": "Cos'è successo?",
     "descricaoPlaceholder": "Descrivi brevemente l'incidente...",
     "enviarRegistro": "Invia segnalazione",

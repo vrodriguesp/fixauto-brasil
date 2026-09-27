@@ -51,6 +51,7 @@
     "localTitulo": "Your location",
     "localPermitir": "Allow location access",
     "localTexto": "We use your location to find nearby repair shops.",
+    "erroLocalizacao": "We couldn't get your location. Enter the address manually.",
     "descricaoLabel": "What happened?",
     "descricaoPlaceholder": "Briefly describe the accident...",
     "enviarRegistro": "Submit report",

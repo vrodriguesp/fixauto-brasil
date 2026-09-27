@@ -104,7 +104,7 @@ export async function sendFuncionarioNovaSenhaEmail(params: {
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
-            <p>${fmt(s.intro, { oficinaNome: params.oficinaNome })}</p>
+            <p>${fmt(s.intro, { oficinaNome: escapeHtml(params.oficinaNome) })}</p>
             <div style="background: #f0f9ff; border: 2px solid #0ea5e9; border-radius: 8px; padding: 16px; margin: 20px 0;">
               <p style="margin: 0 0 8px; font-size: 14px; color: #0c4a6e; font-weight: bold;">${s.tempPasswordLabel}</p>
               <p style="margin: 0; font-size: 20px; letter-spacing: 3px;"><strong>${params.novaSenha}</strong></p>
@@ -156,7 +156,7 @@ export async function sendQuoteNotificationEmail(params: {
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
-            <p>${fmt(s.intro, { oficinaNome: params.oficinaNome })}</p>
+            <p>${fmt(s.intro, { oficinaNome: escapeHtml(params.oficinaNome) })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${params.valorTotal}</p>
               <p style="margin: 4px 0 0; color: #6b7280;">${fmt(s.prazo, { prazoDias: params.prazoDias })}</p>
@@ -207,7 +207,7 @@ export async function sendServicoConcluidoEmail(params: {
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
-            <p>${fmt(s.intro, { veiculoNome: params.veiculoNome, oficinaNome: params.oficinaNome })}</p>
+            <p>${fmt(s.intro, { veiculoNome: escapeHtml(params.veiculoNome), oficinaNome: escapeHtml(params.oficinaNome) })}</p>
             <p style="margin-top: 24px;">
               <a href="${acompanhamentoUrl}"
                  style="display: inline-block; background: #16a34a; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
@@ -347,12 +347,12 @@ export async function sendLeadParceiroEmail(params: {
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <table style="width: 100%; font-size: 14px; color: #111827;">
               <tr><td style="padding: 4px 0; color: #6b7280;">Tipo</td><td style="padding: 4px 0;"><strong>${tipoLabel}</strong></td></tr>
-              <tr><td style="padding: 4px 0; color: #6b7280;">Negócio</td><td style="padding: 4px 0;"><strong>${params.nomeNegocio}</strong></td></tr>
-              <tr><td style="padding: 4px 0; color: #6b7280;">Responsável</td><td style="padding: 4px 0;">${params.nomeResponsavel}</td></tr>
-              <tr><td style="padding: 4px 0; color: #6b7280;">Cidade</td><td style="padding: 4px 0;">${params.cidade} - ${params.estado}</td></tr>
-              <tr><td style="padding: 4px 0; color: #6b7280;">WhatsApp</td><td style="padding: 4px 0;">${params.whatsapp}</td></tr>
-              ${params.email ? `<tr><td style="padding: 4px 0; color: #6b7280;">E-mail</td><td style="padding: 4px 0;">${params.email}</td></tr>` : ''}
-              ${params.observacao ? `<tr><td style="padding: 4px 0; color: #6b7280; vertical-align: top;">Observação</td><td style="padding: 4px 0;">${params.observacao}</td></tr>` : ''}
+              <tr><td style="padding: 4px 0; color: #6b7280;">Negócio</td><td style="padding: 4px 0;"><strong>${escapeHtml(params.nomeNegocio)}</strong></td></tr>
+              <tr><td style="padding: 4px 0; color: #6b7280;">Responsável</td><td style="padding: 4px 0;">${escapeHtml(params.nomeResponsavel)}</td></tr>
+              <tr><td style="padding: 4px 0; color: #6b7280;">Cidade</td><td style="padding: 4px 0;">${escapeHtml(params.cidade)} - ${escapeHtml(params.estado)}</td></tr>
+              <tr><td style="padding: 4px 0; color: #6b7280;">WhatsApp</td><td style="padding: 4px 0;">${escapeHtml(params.whatsapp)}</td></tr>
+              ${params.email ? `<tr><td style="padding: 4px 0; color: #6b7280;">E-mail</td><td style="padding: 4px 0;">${escapeHtml(params.email)}</td></tr>` : ''}
+              ${params.observacao ? `<tr><td style="padding: 4px 0; color: #6b7280; vertical-align: top;">Observação</td><td style="padding: 4px 0;">${escapeHtml(params.observacao)}</td></tr>` : ''}
             </table>
             <p style="margin-top: 20px;"><a href="${SITE_URL}/admin/leads-parceiros" style="color: #2563eb;">Ver todos os interessados →</a></p>
           </div>
@@ -395,9 +395,9 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
-            <p>${fmt(s.intro, { oficinaCompradoraNome: params.oficinaCompradoraNome })}</p>
+            <p>${fmt(s.intro, { oficinaCompradoraNome: escapeHtml(params.oficinaCompradoraNome) })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
-              <p style="margin: 0; font-size: 18px; font-weight: bold; color: #111827;">${params.pecaDescricao}</p>
+              <p style="margin: 0; font-size: 18px; font-weight: bold; color: #111827;">${escapeHtml(params.pecaDescricao)}</p>
             </div>
             <p>${s.callToAction}</p>
             <p style="margin-top: 24px;">
@@ -447,7 +447,7 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
-            <p>${fmt(s.intro, { fornecedorNome: params.fornecedorNome, pecaDescricao: params.pecaDescricao })}</p>
+            <p>${fmt(s.intro, { fornecedorNome: escapeHtml(params.fornecedorNome), pecaDescricao: escapeHtml(params.pecaDescricao) })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${precoFormatado}</p>
               <p style="margin: 4px 0 0; color: #6b7280;">${fmt(s.prazo, { prazoDias: params.prazoDias })}</p>
@@ -544,7 +544,7 @@ export async function sendPedidoPecaEntregueEmail(params: {
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
-            <p>${fmt(s.intro, { fornecedorNome: params.fornecedorNome, pecaDescricao: params.pecaDescricao })}</p>
+            <p>${fmt(s.intro, { fornecedorNome: escapeHtml(params.fornecedorNome), pecaDescricao: escapeHtml(params.pecaDescricao) })}</p>
             <p style="margin-top: 24px;">
               <a href="${SITE_URL}/oficina/pecas"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
@@ -601,10 +601,10 @@ export async function sendOrcamentoAceitoPagamentoEmail(params: {
             </div>
             <div style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-weight: bold; color: #111827;">${s.dadosOficinaLabel}</p>
-              <p style="margin: 4px 0 0; color: #374151;">${fmt(s.oficinaLabel, { oficinaNome: params.oficinaNome })}</p>
-              ${params.oficinaEndereco ? `<p style="margin: 4px 0 0; color: #374151;">${fmt(s.enderecoLabel, { endereco: params.oficinaEndereco })}</p>` : ''}
-              ${params.oficinaTelefone ? `<p style="margin: 4px 0 0; color: #374151;">${fmt(s.telefoneLabel, { telefone: params.oficinaTelefone })}</p>` : ''}
-              ${params.oficinaEmail ? `<p style="margin: 4px 0 0; color: #374151;">${fmt(s.emailLabel, { email: params.oficinaEmail })}</p>` : ''}
+              <p style="margin: 4px 0 0; color: #374151;">${fmt(s.oficinaLabel, { oficinaNome: escapeHtml(params.oficinaNome) })}</p>
+              ${params.oficinaEndereco ? `<p style="margin: 4px 0 0; color: #374151;">${fmt(s.enderecoLabel, { endereco: escapeHtml(params.oficinaEndereco) })}</p>` : ''}
+              ${params.oficinaTelefone ? `<p style="margin: 4px 0 0; color: #374151;">${fmt(s.telefoneLabel, { telefone: escapeHtml(params.oficinaTelefone) })}</p>` : ''}
+              ${params.oficinaEmail ? `<p style="margin: 4px 0 0; color: #374151;">${fmt(s.emailLabel, { email: escapeHtml(params.oficinaEmail) })}</p>` : ''}
             </div>
             <p>${s.ctaText}</p>
             <p style="margin-top: 24px;">
@@ -656,10 +656,10 @@ export async function sendOrcamentoAceitoOutroEmail(params: {
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
-            <p>${params.placaVeiculo ? fmt(s.introComPlaca, { placa: params.placaVeiculo }) : s.introSemPlaca}</p>
+            <p>${params.placaVeiculo ? fmt(s.introComPlaca, { placa: escapeHtml(params.placaVeiculo) }) : s.introSemPlaca}</p>
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 20px; font-weight: bold; color: #166534;">${params.valorFormatado}</p>
-              <p style="margin: 4px 0 0; color: #15803d;">${fmt(s.oficinaLabel, { oficinaNome: params.oficinaNome })}</p>
+              <p style="margin: 4px 0 0; color: #15803d;">${fmt(s.oficinaLabel, { oficinaNome: escapeHtml(params.oficinaNome) })}</p>
               <p style="margin: 4px 0 0; color: #15803d;">${fmt(s.prazo, { dias: params.prazoDias })}</p>
             </div>
             <p>${s.ctaText}</p>

@@ -48,6 +48,10 @@ export default function NovaSolicitacaoScreen() {
         const data = await res.json();
         if (data.cidade) setEndereco([data.cidade, data.estado, data.pais].filter(Boolean).join(', '));
         if (data.paisCodigo) setPais(data.paisCodigo);
+      } catch {
+        // Localização indisponível (GPS desligado, indoors, timeout) - o
+        // campo de endereço continua editável manualmente, sem bloquear o
+        // fluxo nem precisar de Alert (falha silenciosa e recuperável).
       } finally {
         setBuscandoLocal(false);
       }

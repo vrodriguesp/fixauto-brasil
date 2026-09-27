@@ -51,6 +51,7 @@
     "localTitulo": "Sua localização",
     "localPermitir": "Permitir acesso à localização",
     "localTexto": "Usamos sua localização para encontrar oficinas próximas.",
+    "erroLocalizacao": "Não foi possível obter sua localização. Digite o endereço manualmente.",
     "descricaoLabel": "O que aconteceu?",
     "descricaoPlaceholder": "Descreva brevemente o acidente...",
     "enviarRegistro": "Enviar registro",

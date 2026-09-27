@@ -54,6 +54,11 @@ export default function EmergenciaScreen() {
       const res = await fetch(`${API_BASE_URL}/api/geocode?lat=${lat}&lon=${lon}`);
       const data = await res.json();
       if (data.cidade) setEndereco([data.cidade, data.estado, data.pais].filter(Boolean).join(', '));
+    } catch {
+      // Ação disparada explicitamente pelo usuário (botão "usar localização"),
+      // diferente do auto-fetch silencioso de nova-solicitacao.tsx - aqui
+      // ele espera um resultado, então avisamos que falhou.
+      Alert.alert(t('common.erroGenerico'), t('emergencia.erroLocalizacao'));
     } finally {
       setBuscandoLocal(false);
     }

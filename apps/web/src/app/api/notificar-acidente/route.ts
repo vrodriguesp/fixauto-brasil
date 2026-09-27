@@ -4,7 +4,7 @@ import {
   sendAccidentNotificationEmail,
   sendAccidentWhatsApp,
 } from '@/lib/notifications';
-import { EMAIL_I18N, resolveEmailLocale, fmt, type EmailLocale } from '@/lib/email-i18n';
+import { EMAIL_I18N, resolveEmailLocale, fmt, escapeHtml, type EmailLocale } from '@/lib/email-i18n';
 import { notifRegistroAcidente } from '@/lib/notif-i18n';
 
 // Reaproveita as strings de "conta criada" pro bloco de credenciais, mas o
@@ -116,12 +116,12 @@ export async function POST(req: NextRequest) {
                 <h1 style="margin:0;font-size:24px;">BipFix</h1>
               </div>
               <div style="background:white;padding:24px;border:1px solid #e5e7eb;border-radius:0 0 12px 12px;">
-                <p>${fmt(cs.greeting, { name: outroVeiculo.nome })}</p>
-                <p>${fmt(acc.intro, { fromName: emergencia.nome, placa: outroVeiculo.placa })}</p>
+                <p>${fmt(cs.greeting, { name: escapeHtml(outroVeiculo.nome) })}</p>
+                <p>${fmt(acc.intro, { fromName: escapeHtml(emergencia.nome), placa: escapeHtml(outroVeiculo.placa) })}</p>
                 <p>${cs.accountNote}</p>
                 <div style="background:#f0f9ff;border:2px solid #0ea5e9;border-radius:8px;padding:16px;margin:20px 0;">
                   <p style="margin:0 0 8px;font-size:14px;color:#0c4a6e;font-weight:bold;">${cs.accessDataLabel}</p>
-                  <p style="margin:0;font-size:14px;">${cs.emailLabel} <strong>${outroVeiculo.email}</strong></p>
+                  <p style="margin:0;font-size:14px;">${cs.emailLabel} <strong>${escapeHtml(outroVeiculo.email)}</strong></p>
                   <p style="margin:4px 0 0;font-size:14px;">${cs.tempPasswordLabel} <strong style="font-size:20px;letter-spacing:3px;">${senha}</strong></p>
                 </div>
                 <p style="font-size:13px;color:#6b7280;">${cs.nextLoginNote}</p>

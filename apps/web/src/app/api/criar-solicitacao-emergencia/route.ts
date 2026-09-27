@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { EMAIL_I18N, resolveEmailLocale, fmt } from '@/lib/email-i18n';
+import { EMAIL_I18N, resolveEmailLocale, fmt, escapeHtml } from '@/lib/email-i18n';
 import { notifNovaSolicitacaoColisao } from '@/lib/notif-i18n';
 
 const supabaseAdmin = createClient(
@@ -76,12 +76,12 @@ export async function POST(req: NextRequest) {
               <p style="margin:8px 0 0;opacity:0.8;">${cs.headerTag}</p>
             </div>
             <div style="background:white;padding:24px;border:1px solid #e5e7eb;border-radius:0 0 12px 12px;">
-              <p>${fmt(cs.greeting, { name: nome || '' })}</p>
+              <p>${fmt(cs.greeting, { name: escapeHtml(nome) })}</p>
               <p>${cs.intro}</p>
               <p>${cs.accountNote}</p>
               <div style="background:#f0f9ff;border:2px solid #0ea5e9;border-radius:8px;padding:16px;margin:20px 0;">
                 <p style="margin:0 0 8px;font-size:14px;color:#0c4a6e;font-weight:bold;">${cs.accessDataLabel}</p>
-                <p style="margin:0;font-size:14px;">${cs.emailLabel} <strong>${email}</strong></p>
+                <p style="margin:0;font-size:14px;">${cs.emailLabel} <strong>${escapeHtml(email)}</strong></p>
                 <p style="margin:4px 0 0;font-size:14px;">${cs.tempPasswordLabel} <strong style="font-size:20px;letter-spacing:3px;">${senha}</strong></p>
               </div>
               <p style="font-size:13px;color:#6b7280;">${cs.nextLoginNote}</p>
