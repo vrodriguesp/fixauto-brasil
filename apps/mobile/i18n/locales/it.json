@@ -112,6 +112,7 @@
     "titulo": "Messaggi",
     "nenhumaConversa": "Ancora nessuna conversazione.",
     "digiteMensagem": "Scrivi un messaggio...",
+    "erroEnviar": "Impossibile inviare il messaggio. Riprova.",
     "gravarAudio": "Tieni premuto per registrare un audio"
   },
   "veiculos": {
@@ -121,6 +122,8 @@
     "modelo": "Modello",
     "ano": "Anno",
     "placa": "Targa",
+    "apelido": "Soprannome del veicolo",
+    "erroSalvar": "Non è stato possibile salvare il veicolo. Riprova.",
     "nenhumVeiculo": "Non hai ancora aggiunto nessun veicolo."
   },
   "constants": {

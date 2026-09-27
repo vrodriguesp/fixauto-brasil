@@ -13,6 +13,26 @@ function fmt(str: string, vars: Record<string, string | number> = {}): string {
   return str.replace(/\{(\w+)\}/g, (_, key) => String(vars[key] ?? ''));
 }
 
+// Varios templates de e-mail interpolam texto livre digitado por quem nao
+// necessariamente tem conta (ex: nome do "outro motorista" no fluxo de
+// acidente, preenchido num formulario publico sem login) direto no HTML do
+// e-mail via fmt() - sem isso, alguem podia colocar `<img src=x
+// onerror=...>` ou um link falso no proprio nome e o Resend mandaria esse
+// HTML de verdade, assinado como um e-mail legitimo da BipFix. Use sempre
+// que o valor interpolado vier de um campo de texto livre (nome,
+// descricao, comentario), nunca necessario pra valores que a propria
+// aplicacao gera (datas, moeda ja formatada, textos fixos dos dicionarios
+// abaixo).
+export function escapeHtml(value: string | null | undefined): string {
+  if (!value) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export { fmt };
 
 type Dict = Record<string, string>;

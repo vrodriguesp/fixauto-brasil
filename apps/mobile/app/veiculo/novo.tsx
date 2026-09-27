@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router, Stack } from 'expo-router';
 import { useAuth } from '../../lib/auth-context';
@@ -19,7 +19,7 @@ export default function NovoVeiculoScreen() {
   const handleSalvar = async () => {
     if (!user || !marca || !modelo) return;
     setSalvando(true);
-    await supabase.from('veiculos').insert({
+    const { error } = await supabase.from('veiculos').insert({
       profile_id: user.id,
       fipe_tipo: 'cars',
       fipe_marca: marca.name,
@@ -32,6 +32,10 @@ export default function NovoVeiculoScreen() {
       apelido: apelido || null,
     });
     setSalvando(false);
+    if (error) {
+      Alert.alert(t('common.erroGenerico'), t('veiculos.erroSalvar'));
+      return;
+    }
     router.back();
   };
 
@@ -54,7 +58,7 @@ export default function NovoVeiculoScreen() {
       <TextInput value={placa} onChangeText={setPlaca} autoCapitalize="characters" className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
 
       <Text className="text-sm font-medium text-gray-700 mb-1">
-        {t('perfil.meusDados')} <Text className="text-gray-400">({t('common.opcional')})</Text>
+        {t('veiculos.apelido')} <Text className="text-gray-400">({t('common.opcional')})</Text>
       </Text>
       <TextInput value={apelido} onChangeText={setApelido} className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-base" />
 

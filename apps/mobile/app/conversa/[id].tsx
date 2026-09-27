@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, Pressable, FlatList, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, FlatList, KeyboardAvoidingView, Platform, ActivityIndicator, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -61,10 +61,16 @@ export default function ConversaScreen() {
   const handleEnviar = async () => {
     if (!texto.trim() || !user || enviando) return;
     const conteudo = texto.trim();
-    setTexto('');
     setEnviando(true);
-    await supabase.from('mensagens').insert({ solicitacao_id: id, remetente_id: user.id, texto: conteudo });
+    const { error } = await supabase.from('mensagens').insert({ solicitacao_id: id, remetente_id: user.id, texto: conteudo });
     setEnviando(false);
+    if (error) {
+      // Nao limpa a caixa de texto - o usuario nao perde o que escreveu se
+      // o envio falhar (rede caiu, RLS, etc.), e pode tentar de novo.
+      Alert.alert(t('common.erroGenerico'), t('mensagens.erroEnviar'));
+      return;
+    }
+    setTexto('');
   };
 
   if (loading) {

@@ -5,7 +5,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { useAgenda } from '@/hooks/use-agenda';
 import { supabase } from '@/lib/supabase';
-import { TIPOS_SERVICO, CORES_AGENDA } from '@fixauto/shared';
+import { TIPOS_SERVICO, CORES_AGENDA, parseFlexibleNumber } from '@fixauto/shared';
 import { useRouter } from '@/i18n/navigation';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
@@ -58,7 +58,7 @@ export default function ManualCheckinPage() {
     // Create agenda event
     const { error: agendaError } = await addEvento({
       titulo: `${tipoLabel} - ${veiculoMarca} ${veiculoModelo}`,
-      descricao: `${t('descricaoLabelCliente')}: ${clienteNome} | ${t('descricaoLabelPlaca')}: ${veiculoPlaca || t('descricaoNaoInformado')} | ${t('descricaoLabelTelefone')}: ${clienteTelefone || t('descricaoNaoInformado')}${descricao ? ' | ' + descricao : ''}${valorEstimado ? ` | ${t('descricaoLabelValor')}: ${formatCurrency(Number(valorEstimado.replace(',', '.')) || 0, currencyForCountry(oficina?.pais), locale)}` : ''}`,
+      descricao: `${t('descricaoLabelCliente')}: ${clienteNome} | ${t('descricaoLabelPlaca')}: ${veiculoPlaca || t('descricaoNaoInformado')} | ${t('descricaoLabelTelefone')}: ${clienteTelefone || t('descricaoNaoInformado')}${descricao ? ' | ' + descricao : ''}${valorEstimado ? ` | ${t('descricaoLabelValor')}: ${formatCurrency(parseFlexibleNumber(valorEstimado), currencyForCountry(oficina?.pais), locale)}` : ''}`,
       data_inicio: `${dataCheckin}T${turnoCheckin === 'manha' ? '08:00:00' : '13:00:00'}Z`,
       data_fim: `${dataEntrega}T18:00:00Z`,
       tipo: 'externo',

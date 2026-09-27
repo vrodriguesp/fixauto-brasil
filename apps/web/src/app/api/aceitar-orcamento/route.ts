@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/api-auth';
-import { notifOrcamentoAceito, notifReparoAgendadoTitulo, notifOrcamentoAceitoPagamento } from '@/lib/notif-i18n';
+import { notifOrcamentoAceito, notifReparoAgendadoTitulo, notifOrcamentoAceitoPagamento, chatResumoOrcamentoAceito, chatOrcamentoAceitoNegociarPagamento } from '@/lib/notif-i18n';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { sendOrcamentoAceitoPagamentoEmail, sendOrcamentoAceitoOutroEmail } from '@/lib/notifications';
@@ -140,7 +140,12 @@ export async function POST(req: NextRequest) {
           const oficinaTelefone = (orc.oficina as any)?.profile?.telefone || '';
           const oficinaEmail = (orc.oficina as any)?.profile?.email || '';
           const oficinaIdioma = (orc.oficina as any)?.profile?.idioma;
-          const valorFormatado = formatCurrency(Number(orc.valor_total), currencyForCountry((orc.oficina as any)?.pais), oficinaIdioma);
+          const moedaOrcamento = currencyForCountry((orc.oficina as any)?.pais);
+          // So pra mensagem no chat compartilhado (linha abaixo) - onde nao
+          // ha um unico "destinatario" pra localizar por. Pra notificacoes
+          // in-app/e-mails com destinatario proprio, cada um formata o
+          // valor no SEU idioma mais abaixo (nao reaproveita este).
+          const valorFormatado = formatCurrency(Number(orc.valor_total), moedaOrcamento, oficinaIdioma);
 
           // Get the solicitacao vehicle plate
           const { data: solicitacaoData } = await supabaseAdmin
@@ -161,8 +166,10 @@ export async function POST(req: NextRequest) {
           const tipoMatch = emergDescData?.descricao?.match(/\[TIPO:(\w+)\]/);
           const tipoAcidente = tipoMatch ? tipoMatch[1] : null;
 
-          // Insert message in emergencia chat
-          const resumoMsg = `O orcamento de ${valorFormatado} foi aceito na oficina ${oficinaNome}${placaVeiculo ? ` para o veiculo placa ${placaVeiculo}` : ''}. O reparo esta agendado com prazo de ${orc.prazo_dias} dias.`;
+          // Insert message in emergencia chat - idioma da oficina (decisao
+          // do usuario: mensagens de chat compartilhadas assumem o idioma
+          // do pais/mercado da transacao, sem tradutor por destinatario).
+          const resumoMsg = chatResumoOrcamentoAceito(oficinaIdioma, valorFormatado, oficinaNome, orc.prazo_dias, placaVeiculo || undefined);
 
           await supabaseAdmin.from('emergencia_mensagens').insert({
             emergencia_id: emergencia.id,
@@ -212,18 +219,23 @@ export async function POST(req: NextRequest) {
               }
             }
 
+            // Valor formatado no idioma do PROPRIO responsavel, reaproveitado
+            // tanto na notificacao in-app quanto no e-mail pra ele abaixo.
+            const valorFormatadoResponsavel = formatCurrency(Number(orc.valor_total), moedaOrcamento, responsavelIdioma || undefined);
+
             // Create a system message in mensagens table to open oficina chat for the responsible person
             if (responsavelProfileId && oficinaProfileId) {
               await supabaseAdmin.from('mensagens').insert({
                 solicitacao_id: orc.solicitacao_id,
                 remetente_id: oficinaProfileId,
-                texto: `Orcamento aceito. Voce pode negociar o pagamento diretamente com a oficina ${oficinaNome}.`,
+                texto: chatOrcamentoAceitoNegociarPagamento(oficinaIdioma, oficinaNome),
                 tipo: 'texto',
                 lida: false,
               });
 
-              // Create in-app notification for the responsible person
-              const nPagamento = notifOrcamentoAceitoPagamento(responsavelIdioma, valorFormatado, oficinaNome);
+              // Create in-app notification for the responsible person -
+              // formata o valor no idioma DELE, nao no da oficina.
+              const nPagamento = notifOrcamentoAceitoPagamento(responsavelIdioma, valorFormatadoResponsavel, oficinaNome);
               await supabaseAdmin.from('notificacoes').insert({
                 profile_id: responsavelProfileId,
                 tipo: 'orcamento_aceito',
@@ -244,7 +256,7 @@ export async function POST(req: NextRequest) {
                   oficinaEndereco: enderecoCompleto || undefined,
                   oficinaTelefone: oficinaTelefone || undefined,
                   oficinaEmail: oficinaEmail || undefined,
-                  valorFormatado,
+                  valorFormatado: valorFormatadoResponsavel,
                   prazoDias: orc.prazo_dias,
                   solicitacaoId: orc.solicitacao_id,
                   locale: responsavelIdioma || undefined,
@@ -266,7 +278,7 @@ export async function POST(req: NextRequest) {
                 toName: outroVeiculo.nome,
                 oficinaNome,
                 placaVeiculo: placaVeiculo || undefined,
-                valorFormatado,
+                valorFormatado: formatCurrency(Number(orc.valor_total), moedaOrcamento, outroProfileLookup?.idioma),
                 prazoDias: orc.prazo_dias,
                 emergenciaId: emergencia.id,
                 locale: outroProfileLookup?.idioma || undefined,

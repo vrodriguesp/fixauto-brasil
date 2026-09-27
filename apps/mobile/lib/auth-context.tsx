@@ -37,15 +37,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = useCallback(async (userId: string) => {
-    const { data: profile } = await supabase.from('profiles').select('*').eq('id', userId).single();
-    if (profile) {
-      setUser(profile as Profile);
-      if (profile.idioma && i18n.language !== profile.idioma) {
-        i18n.changeLanguage(profile.idioma);
-      }
+  // Unico lugar que decide se uma sessao autenticada vira um `user` valido
+  // no app - tanto a checagem de tipo/ativo quanto o `setUser` acontecem
+  // aqui dentro, nunca em dois lugares separados. Antes, o listener de
+  // onAuthStateChange definia `user` (e liberava a navegacao) assim que
+  // QUALQUER sessao existisse, e so DEPOIS o signIn() checava tipo/ativo e
+  // deslogava se invalido - abrindo uma janela real onde uma conta de
+  // oficina/loja/admin (ou desativada) entrava no app por um instante antes
+  // de ser expulsa. Centralizando aqui, nenhum caminho consegue definir
+  // `user` sem passar por essas duas checagens primeiro.
+  const fetchProfile = useCallback(async (userId: string): Promise<{ profile: Profile | null; error: string | null }> => {
+    const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+
+    // Erro de leitura (RLS, rede, linha ainda nao visivel logo apos o
+    // cadastro) tem que ser tratado como login INVALIDO (fail-closed) - a
+    // versao anterior ignorava esse erro, o que fazia os dois `if (profile
+    // && ...)` seguintes serem pulados e o login ser aceito como valido
+    // mesmo sem nunca ter confirmado tipo/ativo.
+    if (error || !profile) {
+      setUser(null);
+      return { profile: null, error: error?.message || 'Perfil não encontrado' };
     }
-    return profile as Profile | null;
+    if (profile.ativo === false) {
+      await supabase.auth.signOut();
+      setUser(null);
+      return { profile: null, error: 'Esta conta foi desativada. Entre em contato com o suporte.' };
+    }
+    if (profile.tipo !== 'cliente') {
+      await supabase.auth.signOut();
+      setUser(null);
+      return { profile: null, error: ERRO_TIPO_NAO_SUPORTADO };
+    }
+
+    setUser(profile as Profile);
+    if (profile.idioma && i18n.language !== profile.idioma) {
+      i18n.changeLanguage(profile.idioma);
+    }
+    return { profile: profile as Profile, error: null };
   }, []);
 
   useEffect(() => {
@@ -65,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setAuthUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id);
+        fetchProfile(session.user.id).catch(() => {});
       } else {
         setUser(null);
       }
@@ -89,10 +117,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       termos_aceitos_em: new Date().toISOString(),
       termos_versao: '2026-09-08',
     });
-    if (profileError) return { error: profileError.message };
+    if (profileError) {
+      // Nao da pra apagar a conta de auth ja criada a partir do app (isso
+      // exige a service role key, que o mobile nao tem) - mas pelo menos
+      // desloga pra nao deixar a pessoa "autenticada" sem perfil nenhum
+      // (estado que antes causava um loop de redirecionamento silencioso
+      // no login seguinte). Ela pode tentar o cadastro de novo depois.
+      await supabase.auth.signOut();
+      return { error: profileError.message };
+    }
 
-    await fetchProfile(data.user.id);
-    return { error: null };
+    const { error: fetchError } = await fetchProfile(data.user.id);
+    return { error: fetchError };
   };
 
   const signIn = async (email: string, password: string) => {
@@ -100,22 +136,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) return { error: error.message };
     if (!data.user) return { error: null };
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('tipo, ativo')
-      .eq('id', data.user.id)
-      .single();
-
-    if (profile && profile.ativo === false) {
-      await supabase.auth.signOut();
-      return { error: 'Esta conta foi desativada. Entre em contato com o suporte.' };
-    }
-    if (profile && profile.tipo !== 'cliente') {
-      await supabase.auth.signOut();
-      return { error: ERRO_TIPO_NAO_SUPORTADO };
-    }
-
-    return { error: null };
+    const { error: profileError } = await fetchProfile(data.user.id);
+    return { error: profileError };
   };
 
   const signOut = async () => {

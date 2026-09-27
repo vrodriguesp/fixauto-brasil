@@ -9,7 +9,7 @@ import type { Veiculo } from '@fixauto/shared';
 import { useAuth } from '../lib/auth-context';
 import { supabase } from '../lib/supabase';
 import { API_BASE_URL } from '../lib/api';
-import { notifNovaSolicitacaoTitulo } from '../lib/notif-i18n';
+import { notifNovaSolicitacaoTitulo, tipoServicoLabel } from '../lib/notif-i18n';
 
 const COORDS_DEFAULT = { lat: -23.5505, lon: -46.6333 };
 
@@ -69,7 +69,7 @@ export default function NovaSolicitacaoScreen() {
       if (!finalCoords) {
         const res = await fetch(`${API_BASE_URL}/api/geocode?q=${encodeURIComponent(endereco)}`);
         const data = await res.json();
-        if (data.lat && data.lon) finalCoords = { lat: data.lat, lon: data.lon };
+        if (data.latitude && data.longitude) finalCoords = { lat: data.latitude, lon: data.longitude };
       }
       finalCoords = finalCoords || COORDS_DEFAULT;
 
@@ -112,11 +112,14 @@ export default function NovaSolicitacaoScreen() {
 
       const { data: oficinas } = await supabase.from('oficinas').select('profile_id, especialidades, profile:profiles(idioma)').eq('ativa', true);
       const veiculo = veiculos.find((v) => v.id === veiculoId);
-      const tipoLabel = t(`constants.tiposServico.${tipo}`);
       if (oficinas) {
         for (const ofi of oficinas as any[]) {
           const matches = !ofi.especialidades || ofi.especialidades.length === 0 || ofi.especialidades.includes(tipo);
           if (matches) {
+            // Idioma da OFICINA destinataria, nao do cliente criando a
+            // solicitacao - t() do proprio app so reflete o idioma de quem
+            // esta com o app aberto agora.
+            const tipoLabel = tipoServicoLabel(ofi.profile?.idioma, tipo);
             await supabase.from('notificacoes').insert({
               profile_id: ofi.profile_id,
               tipo: 'nova_solicitacao',

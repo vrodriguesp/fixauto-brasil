@@ -1,10 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/api-auth';
 import { sendPedidoPecaConfirmadoEmail } from '@/lib/notifications';
+import { currencyForCountry } from '@fixauto/shared';
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 // So o envio do e-mail (a notificacao in-app ja e inserida direto pelo
 // client, permitida pela policy publica de notificacoes) - separado numa
 // rota minima porque o Resend so pode ser chamado do servidor.
+//
+// Antes, essa rota confiava em toEmail/toName/pecaDescricao/valorTotal
+// mandados pelo proprio cliente, so checando que quem chamava estava
+// logado (sem checar em NADA que o pedido/cotacao referenciado fosse dele)
+// - qualquer conta logada (inclusive uma recem-criada) podia mandar a rota
+// enviar um e-mail de verdade, assinado como BipFix, com HTML arbitrario,
+// pra qualquer endereco. Agora a rota recebe so o `respostaId` e busca
+// tudo (destinatario, nome da oficina, preco) direto do banco, verificando
+// que quem chama e de fato a oficina dona da cotacao.
 export async function POST(req: NextRequest) {
   try {
     const callerId = await getSessionUserId(req);
@@ -12,19 +28,47 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
 
-    const { toEmail, toName, oficinaCompradoraNome, pecaDescricao, valorTotal, moeda, locale } = await req.json();
-    if (!toEmail || !pecaDescricao) {
-      return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 });
+    const { respostaId } = await req.json();
+    if (!respostaId) {
+      return NextResponse.json({ error: 'respostaId obrigatório' }, { status: 400 });
+    }
+
+    const { data: resposta } = await supabaseAdmin
+      .from('cotacoes_pecas_respostas')
+      .select(`
+        id, preco, fornecedor_tipo, loja_id, oficina_fornecedora_id,
+        cotacao:cotacoes_pecas(id, peca_descricao, oficina:oficinas(profile_id, nome_fantasia)),
+        loja:lojas_pecas(profile_id, pais, profile:profiles(email, nome, idioma)),
+        oficina_fornecedora:oficinas!cotacoes_pecas_respostas_oficina_fornecedora_id_fkey(profile_id, pais, profile:profiles(email, nome, idioma))
+      `)
+      .eq('id', respostaId)
+      .single();
+
+    if (!resposta) {
+      return NextResponse.json({ error: 'Resposta não encontrada' }, { status: 404 });
+    }
+
+    // So a oficina dona da cotacao (quem esta confirmando o pedido) pode
+    // disparar essa notificacao por e-mail pro fornecedor.
+    const cotacao = resposta.cotacao as any;
+    if (!cotacao || cotacao.oficina?.profile_id !== callerId) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    }
+
+    const fornecedor = resposta.fornecedor_tipo === 'loja' ? (resposta.loja as any) : (resposta.oficina_fornecedora as any);
+    const fornecedorProfile = fornecedor?.profile;
+    if (!fornecedorProfile?.email) {
+      return NextResponse.json({ success: true, skipped: true });
     }
 
     const result = await sendPedidoPecaConfirmadoEmail({
-      toEmail,
-      toName: toName || 'Fornecedor',
-      oficinaCompradoraNome: oficinaCompradoraNome || 'Uma oficina',
-      pecaDescricao,
-      valorTotal: Number(valorTotal) || 0,
-      moeda: moeda || 'BRL',
-      locale,
+      toEmail: fornecedorProfile.email,
+      toName: fornecedorProfile.nome || 'Fornecedor',
+      oficinaCompradoraNome: cotacao.oficina?.nome_fantasia || 'Uma oficina',
+      pecaDescricao: cotacao.peca_descricao,
+      valorTotal: Number(resposta.preco) || 0,
+      moeda: currencyForCountry(fornecedor?.pais),
+      locale: fornecedorProfile.idioma,
     });
 
     return NextResponse.json(result);

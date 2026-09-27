@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 
@@ -11,8 +11,17 @@ export default function EsqueciSenhaScreen() {
 
   const handleEnviar = async () => {
     setLoading(true);
-    await supabase.auth.resetPasswordForEmail(email.trim());
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim());
     setLoading(false);
+    // O Supabase ja e "anti-enumeracao" por padrao (nunca diz se o e-mail
+    // existe ou nao - sempre resolve como sucesso pra isso) - um erro
+    // retornado aqui e sempre uma falha de verdade (rede, limite de taxa,
+    // e-mail mal formado), nao um sinal de "conta nao existe", entao e
+    // seguro mostrar pro usuario em vez de sempre fingir sucesso.
+    if (error) {
+      Alert.alert(t('common.erroGenerico'), error.message);
+      return;
+    }
     setEnviado(true);
   };
 

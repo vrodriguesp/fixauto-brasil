@@ -112,6 +112,7 @@
     "titulo": "Messages",
     "nenhumaConversa": "No conversations yet.",
     "digiteMensagem": "Type a message...",
+    "erroEnviar": "Couldn't send the message. Please try again.",
     "gravarAudio": "Hold to record a voice message"
   },
   "veiculos": {
@@ -121,6 +122,8 @@
     "modelo": "Model",
     "ano": "Year",
     "placa": "License plate",
+    "apelido": "Vehicle nickname",
+    "erroSalvar": "Couldn't save the vehicle. Please try again.",
     "nenhumVeiculo": "You haven't added any vehicles yet."
   },
   "constants": {

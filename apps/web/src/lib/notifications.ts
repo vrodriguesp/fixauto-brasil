@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
-import { EMAIL_I18N, WHATSAPP_I18N, resolveEmailLocale, fmt, type EmailLocale } from './email-i18n';
+import { EMAIL_I18N, WHATSAPP_I18N, resolveEmailLocale, fmt, escapeHtml, type EmailLocale } from './email-i18n';
+import { formatCurrency } from '@fixauto/shared';
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -42,8 +43,8 @@ export async function sendAccidentNotificationEmail(params: {
             <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>${fmt(s.greeting, { name: params.toName })}</p>
-            <p>${fmt(s.intro, { fromName: params.fromName, placa: params.placa })}</p>
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
+            <p>${fmt(s.intro, { fromName: escapeHtml(params.fromName), placa: escapeHtml(params.placa) })}</p>
             <p>${s.canList}</p>
             <ul>
               <li>${s.li1}</li>
@@ -102,7 +103,7 @@ export async function sendFuncionarioNovaSenhaEmail(params: {
             <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
             <p>${fmt(s.intro, { oficinaNome: params.oficinaNome })}</p>
             <div style="background: #f0f9ff; border: 2px solid #0ea5e9; border-radius: 8px; padding: 16px; margin: 20px 0;">
               <p style="margin: 0 0 8px; font-size: 14px; color: #0c4a6e; font-weight: bold;">${s.tempPasswordLabel}</p>
@@ -154,7 +155,7 @@ export async function sendQuoteNotificationEmail(params: {
             <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
             <p>${fmt(s.intro, { oficinaNome: params.oficinaNome })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${params.valorTotal}</p>
@@ -205,7 +206,7 @@ export async function sendServicoConcluidoEmail(params: {
             <p style="margin: 8px 0 0; opacity: 0.9;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
             <p>${fmt(s.intro, { veiculoNome: params.veiculoNome, oficinaNome: params.oficinaNome })}</p>
             <p style="margin-top: 24px;">
               <a href="${acompanhamentoUrl}"
@@ -393,7 +394,7 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
             <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
             <p>${fmt(s.intro, { oficinaCompradoraNome: params.oficinaCompradoraNome })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 18px; font-weight: bold; color: #111827;">${params.pecaDescricao}</p>
@@ -445,7 +446,7 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
             <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
             <p>${fmt(s.intro, { fornecedorNome: params.fornecedorNome, pecaDescricao: params.pecaDescricao })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${precoFormatado}</p>
@@ -482,7 +483,7 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
     return { success: false, error: 'Email service not configured' };
   }
   const s = EMAIL_I18N.pedidoPecaConfirmado[resolveEmailLocale(params.locale)];
-  const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: params.moeda || 'BRL' }).format(params.valorTotal);
+  const valorFormatado = formatCurrency(params.valorTotal, params.moeda || 'BRL', params.locale || 'pt');
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
@@ -495,8 +496,8 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
             <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>${fmt(s.greeting, { name: params.toName })}</p>
-            <p>${fmt(s.intro, { oficinaCompradoraNome: params.oficinaCompradoraNome, pecaDescricao: params.pecaDescricao })}</p>
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
+            <p>${fmt(s.intro, { oficinaCompradoraNome: escapeHtml(params.oficinaCompradoraNome), pecaDescricao: escapeHtml(params.pecaDescricao) })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${valorFormatado}</p>
             </div>
@@ -542,7 +543,7 @@ export async function sendPedidoPecaEntregueEmail(params: {
             <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
             <p>${fmt(s.intro, { fornecedorNome: params.fornecedorNome, pecaDescricao: params.pecaDescricao })}</p>
             <p style="margin-top: 24px;">
               <a href="${SITE_URL}/oficina/pecas"
@@ -592,7 +593,7 @@ export async function sendOrcamentoAceitoPagamentoEmail(params: {
             <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
             <p>${s.intro}</p>
             <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 20px; font-weight: bold; color: #991b1b;">${params.valorFormatado}</p>
@@ -654,7 +655,7 @@ export async function sendOrcamentoAceitoOutroEmail(params: {
             <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
             <p>${params.placaVeiculo ? fmt(s.introComPlaca, { placa: params.placaVeiculo }) : s.introSemPlaca}</p>
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 20px; font-weight: bold; color: #166534;">${params.valorFormatado}</p>

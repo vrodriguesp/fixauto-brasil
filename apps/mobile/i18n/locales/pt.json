@@ -112,6 +112,7 @@
     "titulo": "Mensagens",
     "nenhumaConversa": "Nenhuma conversa ainda.",
     "digiteMensagem": "Digite uma mensagem...",
+    "erroEnviar": "Não foi possível enviar a mensagem. Tente novamente.",
     "gravarAudio": "Segure para gravar um áudio"
   },
   "veiculos": {
@@ -121,6 +122,8 @@
     "modelo": "Modelo",
     "ano": "Ano",
     "placa": "Placa",
+    "apelido": "Apelido do veículo",
+    "erroSalvar": "Não foi possível salvar o veículo. Tente novamente.",
     "nenhumVeiculo": "Você ainda não cadastrou nenhum veículo."
   },
   "constants": {

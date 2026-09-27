@@ -290,4 +290,70 @@ export function notifPedidoConfirmado(locale: string | null | undefined, oficina
   return { titulo: s.titulo, mensagem: fmt(s.mensagem, { oficina, peca }) };
 }
 
+// Mensagens de CHAT compartilhado entre cliente e oficina (tabelas
+// `mensagens`/`emergencia_mensagens`) - diferente de notificacao/e-mail,
+// nao tem um destinatario unico pra localizar por (as duas partes leem a
+// mesma mensagem). Decisao do usuario: nao usar tradutor automatico aqui -
+// assume-se que cliente e oficina se falam no idioma do pais onde a
+// transacao acontece, entao essas mensagens usam o idioma da OFICINA
+// (representa o mercado/local da transacao) em vez de portugues fixo.
+const resumoOrcamentoAceitoChat: Record<EmailLocale, string> = {
+  pt: 'O orçamento de {valor} foi aceito na oficina {oficinaNome}{placaTexto}. O reparo está agendado com prazo de {dias} dias.',
+  en: 'The {valor} quote was accepted at {oficinaNome}{placaTexto}. The repair is scheduled with a {dias}-day timeline.',
+  et: 'Hinnapakkumine {valor} kinnitati töökojas {oficinaNome}{placaTexto}. Remont on planeeritud tähtajaga {dias} päeva.',
+  it: 'Il preventivo di {valor} è stato accettato presso {oficinaNome}{placaTexto}. La riparazione è programmata con un tempo di {dias} giorni.',
+};
+const resumoOrcamentoAceitoChatPlaca: Record<EmailLocale, string> = {
+  pt: ' para o veículo placa {placa}',
+  en: ' for the vehicle with plate {placa}',
+  et: ' sõidukile registreerimismärgiga {placa}',
+  it: ' per il veicolo targato {placa}',
+};
+
+export function chatResumoOrcamentoAceito(locale: string | null | undefined, valor: string, oficinaNome: string, dias: number, placa?: string) {
+  const l = resolveEmailLocale(locale);
+  const placaTexto = placa ? fmt(resumoOrcamentoAceitoChatPlaca[l], { placa }) : '';
+  return fmt(resumoOrcamentoAceitoChat[l], { valor, oficinaNome, dias, placaTexto });
+}
+
+const orcamentoAceitoNegociarPagamentoChat: Record<EmailLocale, string> = {
+  pt: 'Orçamento aceito. Você pode negociar o pagamento diretamente com a oficina {oficinaNome}.',
+  en: 'Quote accepted. You can arrange payment directly with {oficinaNome}.',
+  et: 'Hinnapakkumine kinnitatud. Saad maksega töökojaga {oficinaNome} otse kokku leppida.',
+  it: 'Preventivo accettato. Puoi concordare il pagamento direttamente con {oficinaNome}.',
+};
+
+export function chatOrcamentoAceitoNegociarPagamento(locale: string | null | undefined, oficinaNome: string) {
+  return fmt(orcamentoAceitoNegociarPagamentoChat[resolveEmailLocale(locale)], { oficinaNome });
+}
+
+const novoOrcamentoRecebidoChat: Record<EmailLocale, string> = {
+  pt: 'Novo orçamento recebido: {valor} da oficina {oficinaNome}. Prazo: {dias} dias.',
+  en: 'New quote received: {valor} from {oficinaNome}. Timeline: {dias} days.',
+  et: 'Uus hinnapakkumine saabus: {valor} töökojalt {oficinaNome}. Tähtaeg: {dias} päeva.',
+  it: 'Nuovo preventivo ricevuto: {valor} da {oficinaNome}. Tempi: {dias} giorni.',
+};
+
+export function chatNovoOrcamentoRecebido(locale: string | null | undefined, valor: string, oficinaNome: string, dias: number) {
+  return fmt(novoOrcamentoRecebidoChat[resolveEmailLocale(locale)], { valor, oficinaNome, dias });
+}
+
+const orcamentoRevisadoChat: Record<EmailLocale, { revisado: string; valor: string; prazo: string }> = {
+  pt: { revisado: 'Orçamento revisado (Revisão #{numero})', valor: 'Valor: {valor}', prazo: 'Prazo: {dias} dias' },
+  en: { revisado: 'Quote revised (Revision #{numero})', valor: 'Amount: {valor}', prazo: 'Timeline: {dias} days' },
+  et: { revisado: 'Hinnapakkumine muudetud (versioon #{numero})', valor: 'Summa: {valor}', prazo: 'Tähtaeg: {dias} päeva' },
+  it: { revisado: 'Preventivo rivisto (Revisione #{numero})', valor: 'Importo: {valor}', prazo: 'Tempi: {dias} giorni' },
+};
+
+export function chatOrcamentoRevisado(locale: string | null | undefined, numero: number, valor: string, dias: number, observacoes: string) {
+  const s = orcamentoRevisadoChat[resolveEmailLocale(locale)];
+  const linhas = [
+    `📋 ${fmt(s.revisado, { numero })}`,
+    `💰 ${fmt(s.valor, { valor })}`,
+    `📅 ${fmt(s.prazo, { dias })}`,
+  ];
+  if (observacoes) linhas.push(`📝 ${observacoes}`);
+  return linhas.join('\n');
+}
+
 export { fmt };

@@ -112,6 +112,7 @@
     "titulo": "Sõnumid",
     "nenhumaConversa": "Vestlusi pole veel.",
     "digiteMensagem": "Kirjuta sõnum...",
+    "erroEnviar": "Sõnumit ei õnnestunud saata. Proovi uuesti.",
     "gravarAudio": "Hoia all, et salvestada häälsõnum"
   },
   "veiculos": {
@@ -121,6 +122,8 @@
     "modelo": "Mudel",
     "ano": "Aasta",
     "placa": "Registreerimismärk",
+    "apelido": "Sõiduki hüüdnimi",
+    "erroSalvar": "Sõidukit ei õnnestunud salvestada. Proovi uuesti.",
     "nenhumVeiculo": "Sa pole veel ühtegi sõidukit lisanud."
   },
   "constants": {

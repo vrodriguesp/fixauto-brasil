@@ -78,7 +78,7 @@ export default function EmergenciaScreen() {
       if (!localCoords && endereco) {
         const res = await fetch(`${API_BASE_URL}/api/geocode?q=${encodeURIComponent(endereco)}`);
         const data = await res.json();
-        if (data.lat && data.lon) localCoords = { lat: data.lat, lon: data.lon };
+        if (data.latitude && data.longitude) localCoords = { lat: data.latitude, lon: data.longitude };
       }
       const finalCoords = localCoords || COORDS_DEFAULT;
 

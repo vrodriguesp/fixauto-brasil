@@ -116,6 +116,32 @@ export function timeAgo(date: string, locale: string = 'pt'): string {
   return formatDate(date, locale);
 }
 
+/**
+ * Converte texto digitado livremente num campo de valor monetario (sem
+ * mascara) pra numero, aceitando tanto a convencao "1.234,56" (pt/it/et -
+ * ponto de milhar, virgula decimal) quanto "1,234.56" (en - virgula de
+ * milhar, ponto decimal). Faz isso tratando o ULTIMO separador (`,` ou
+ * `.`) encontrado como o decimal, e removendo todos os outros (assumidos
+ * como separador de milhar) - funciona pras duas convencoes sem precisar
+ * saber de antemao qual o usuario ia usar. Retorna 0 se nao conseguir
+ * interpretar nada (nunca NaN).
+ */
+export function parseFlexibleNumber(input: string): number {
+  const clean = input.trim();
+  if (!clean) return 0;
+  const lastComma = clean.lastIndexOf(',');
+  const lastDot = clean.lastIndexOf('.');
+  const decimalIndex = Math.max(lastComma, lastDot);
+  if (decimalIndex === -1) {
+    const n = Number(clean.replace(/[^\d-]/g, ''));
+    return Number.isFinite(n) ? n : 0;
+  }
+  const integerPart = clean.slice(0, decimalIndex).replace(/[.,]/g, '');
+  const decimalPart = clean.slice(decimalIndex + 1).replace(/[^\d]/g, '');
+  const n = Number(`${integerPart}.${decimalPart}`);
+  return Number.isFinite(n) ? n : 0;
+}
+
 /** Distancia em km entre duas coordenadas (formula de haversine). */
 export function distanciaKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371;

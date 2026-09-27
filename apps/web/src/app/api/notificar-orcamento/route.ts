@@ -7,7 +7,7 @@ import {
 import { getSessionUserId } from '@/lib/api-auth';
 import { currencyForCountry } from '@/lib/currency';
 import { formatCurrency } from '@/lib/utils';
-import { notifNovoOrcamento } from '@/lib/notif-i18n';
+import { notifNovoOrcamento, chatNovoOrcamentoRecebido } from '@/lib/notif-i18n';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       .from('orcamentos')
       .select(`
         *,
-        oficina:oficinas(nome_fantasia, profile_id, pais),
+        oficina:oficinas(nome_fantasia, profile_id, pais, profile:profiles(idioma)),
         solicitacao:solicitacoes(
           id,
           cliente_id,
@@ -55,7 +55,13 @@ export async function POST(req: NextRequest) {
 
     const cliente = (orcamento.solicitacao as any).cliente;
     const oficinaNome = (orcamento.oficina as any)?.nome_fantasia || 'Oficina';
-    const valorTotal = formatCurrency(orcamento.valor_total, currencyForCountry((orcamento.oficina as any)?.pais), cliente?.idioma);
+    const oficinaIdioma = (orcamento.oficina as any)?.profile?.idioma;
+    const moeda = currencyForCountry((orcamento.oficina as any)?.pais);
+    // A moeda e sempre a mesma (pais real da oficina), mas a FORMATACAO do
+    // numero (separador de milhar/decimal) segue o idioma de quem esta
+    // lendo - por isso um valorTotal por destinatario, nao um unico valor
+    // calculado com o idioma do cliente e reaproveitado pra todo mundo.
+    const valorTotal = formatCurrency(orcamento.valor_total, moeda, cliente?.idioma);
 
     const results: { email?: { success: boolean }; whatsapp?: { success: boolean } } = {};
 
@@ -92,13 +98,17 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (emergencia && emergencia.email && emergencia.email !== cliente?.email) {
+      // Idioma proprio dessa pessoa se ela ja tiver conta, nao o do cliente.
+      const { data: emergenciaProfile } = await supabaseAdmin
+        .from('profiles').select('idioma').eq('email', emergencia.email).single();
       await sendQuoteNotificationEmail({
         toEmail: emergencia.email,
         toName: emergencia.nome,
         oficinaNome,
-        valorTotal,
+        valorTotal: formatCurrency(orcamento.valor_total, moeda, emergenciaProfile?.idioma),
         prazoDias: orcamento.prazo_dias,
         solicitacaoId: (orcamento.solicitacao as any).id,
+        locale: emergenciaProfile?.idioma,
       });
     }
 
@@ -118,12 +128,14 @@ export async function POST(req: NextRequest) {
         .single();
 
       if (outro) {
-        // Message in emergency chat
+        // Message in emergency chat - idioma da oficina (chat compartilhado
+        // assume o idioma do pais/mercado da transacao, sem tradutor).
+        const valorTotalChat = formatCurrency(orcamento.valor_total, moeda, oficinaIdioma);
         await supabaseAdmin.from('emergencia_mensagens').insert({
           emergencia_id: emergFull.id,
           remetente_tipo: 'proprietario',
           remetente_id: null,
-          texto: `Novo orçamento recebido: ${valorTotal} da oficina ${oficinaNome}. Prazo: ${orcamento.prazo_dias} dias.`,
+          texto: chatNovoOrcamentoRecebido(oficinaIdioma, valorTotalChat, oficinaNome, orcamento.prazo_dias),
         });
 
         // Email to other person
@@ -134,18 +146,19 @@ export async function POST(req: NextRequest) {
           const { data: outroProfile } = await supabaseAdmin
             .from('profiles').select('id, idioma').eq('email', outro.email).single();
 
+          const valorTotalOutro = formatCurrency(orcamento.valor_total, moeda, outroProfile?.idioma);
           await sendQuoteNotificationEmail({
             toEmail: outro.email,
             toName: outro.nome,
             oficinaNome,
-            valorTotal,
+            valorTotal: valorTotalOutro,
             prazoDias: orcamento.prazo_dias,
             solicitacaoId: (orcamento.solicitacao as any).id,
             locale: outroProfile?.idioma,
           });
 
           if (outroProfile) {
-            const n = notifNovoOrcamento(outroProfile.idioma, oficinaNome, valorTotal);
+            const n = notifNovoOrcamento(outroProfile.idioma, oficinaNome, valorTotalOutro);
             await supabaseAdmin.from('notificacoes').insert({
               profile_id: outroProfile.id,
               tipo: 'novo_orcamento',

@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import { cleanDescricao, formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
-import { notifNovoOrcamento, notifOrcamentoRevisado } from '@/lib/notif-i18n';
+import { notifNovoOrcamento, notifOrcamentoRevisado, chatOrcamentoRevisado } from '@/lib/notif-i18n';
 import type { OrcamentoItem } from '@fixauto/shared';
 
 interface CreateOrcamentoInput {
@@ -19,7 +19,7 @@ interface CreateOrcamentoInput {
 }
 
 export function useOrcamentos() {
-  const { oficina } = useAuth();
+  const { oficina, user } = useAuth();
 
   const create = async (input: CreateOrcamentoInput) => {
     if (!oficina) return { error: { message: 'No oficina' } };
@@ -193,10 +193,13 @@ export function useOrcamentos() {
 
     // Send quote summary as a system message in the chat
     try {
+      const valorFormatadoChat = formatCurrency(input.valor_total, currencyForCountry(oficina.pais), user?.idioma);
       await supabase.from('mensagens').insert({
         solicitacao_id: input.solicitacao_id,
         remetente_id: oficina.profile_id,
-        texto: `📋 Orçamento revisado (Revisão #${input.revisao_numero})\n💰 Valor: R$ ${input.valor_total.toFixed(2).replace('.', ',')}\n📅 Prazo: ${input.prazo_dias} dias\n${cleanDescricao(input.observacoes) ? '📝 ' + cleanDescricao(input.observacoes) : ''}`,
+        // Idioma da oficina (decisao do usuario: chat compartilhado assume
+        // o idioma do pais/mercado da transacao, sem tradutor).
+        texto: chatOrcamentoRevisado(user?.idioma, input.revisao_numero, valorFormatadoChat, input.prazo_dias, cleanDescricao(input.observacoes)),
       });
     } catch { /* non-blocking */ }
 

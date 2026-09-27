@@ -65,16 +65,22 @@ export async function POST(req: NextRequest) {
 
     // Check if the other person already has an account, or create one
     let profileId: string | null = null;
+    // Se a pessoa ja tem conta, a notificacao final usa o idioma que ela
+    // mesma escolheu (profiles.idioma) - nao o idioma de quem esta
+    // registrando o acidente. So cai pro idioma da requisicao (emailLocale)
+    // se a conta for nova nesta mesma chamada.
+    let existingIdioma: string | null = null;
 
     if (outroVeiculo.email) {
       const { data: existingProfile } = await supabaseAdmin
         .from('profiles')
-        .select('id')
+        .select('id, idioma')
         .eq('email', outroVeiculo.email)
         .single();
 
       if (existingProfile) {
         profileId = existingProfile.id;
+        existingIdioma = existingProfile.idioma;
       } else {
         // Create account with simple 6-digit password
         const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#$&';
@@ -131,6 +137,11 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Se a pessoa ja tinha conta antes desta chamada, respeita o idioma que
+    // ela mesma escolheu - so usa o idioma vindo desta requisicao
+    // (emailLocale) pra conta nova, que ainda nao tem preferencia salva.
+    const notifyLocale = existingIdioma || emailLocale;
+
     const results: { email?: { success: boolean }; whatsapp?: { success: boolean } } = {};
 
     // Send email notification + welcome with password reset link
@@ -142,7 +153,7 @@ export async function POST(req: NextRequest) {
         placa: outroVeiculo.placa,
         emergenciaId,
         isRegistered: !!profileId,
-        locale: emailLocale,
+        locale: notifyLocale,
       });
 
     }
@@ -155,7 +166,7 @@ export async function POST(req: NextRequest) {
         fromName: emergencia.nome,
         placa: outroVeiculo.placa,
         emergenciaId,
-        locale: emailLocale,
+        locale: notifyLocale,
       });
     }
 
@@ -167,7 +178,7 @@ export async function POST(req: NextRequest) {
 
     // Create in-app notification
     if (profileId) {
-      const n = notifRegistroAcidente(emailLocale, emergencia.nome, outroVeiculo.placa);
+      const n = notifRegistroAcidente(notifyLocale, emergencia.nome, outroVeiculo.placa);
       await supabaseAdmin.from('notificacoes').insert({
         profile_id: profileId,
         tipo: 'acidente',

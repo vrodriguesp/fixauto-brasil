@@ -125,18 +125,13 @@ export default function OficinaPecasPage() {
         });
         const fornecedorProfile = (fornecedor as any).profile;
         if (fornecedorProfile?.email) {
+          // A rota busca destinatario/preco/nome direto do banco a partir
+          // do respostaId (e confere que quem chama e dono da cotacao) -
+          // nao manda mais esses dados prontos, pra nao dar pra forjar.
           fetch('/api/notificar-email-pedido-peca-confirmado', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              toEmail: fornecedorProfile.email,
-              toName: fornecedorProfile.nome,
-              oficinaCompradoraNome: oficina.nome_fantasia,
-              pecaDescricao: cotacao.peca_descricao,
-              valorTotal: resposta.preco * cotacao.quantidade,
-              moeda: currencyForCountry((fornecedor as any).pais),
-              locale: fornecedorProfile.idioma,
-            }),
+            body: JSON.stringify({ respostaId: resposta.id }),
           }).catch(() => {});
         }
       }
