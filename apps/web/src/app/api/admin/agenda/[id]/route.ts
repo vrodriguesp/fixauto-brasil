@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin } from '@/lib/admin-auth';
+import { notifAgendamentoCancelado } from '@/lib/notif-i18n';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,7 +26,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
     const { data: agenda, error: fetchError } = await supabaseAdmin
       .from('agenda')
-      .select('titulo, status, solicitacao_id, oficina:oficinas(profile_id), solicitacao:solicitacoes(cliente_id)')
+      .select('titulo, status, solicitacao_id, oficina:oficinas(profile_id, profile:profiles!oficinas_profile_id_fkey(idioma)), solicitacao:solicitacoes(cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(idioma))')
       .eq('id', params.id)
       .single();
 
@@ -47,15 +48,21 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     }
 
     const clienteId = (agenda as any).solicitacao?.cliente_id;
+    const clienteIdioma = (agenda as any).solicitacao?.cliente?.idioma;
     const oficinaProfileId = (agenda as any).oficina?.profile_id;
+    const oficinaIdioma = (agenda as any).oficina?.profile?.idioma;
 
-    const destinatarios = [clienteId, oficinaProfileId].filter(Boolean) as string[];
-    for (const profileId of destinatarios) {
+    const destinatarios = [
+      { profileId: clienteId, idioma: clienteIdioma },
+      { profileId: oficinaProfileId, idioma: oficinaIdioma },
+    ].filter((d) => d.profileId);
+    for (const { profileId, idioma } of destinatarios) {
+      const n = notifAgendamentoCancelado(idioma, agenda.titulo);
       await supabaseAdmin.from('notificacoes').insert({
         profile_id: profileId,
         tipo: 'agendamento_cancelado_admin',
-        titulo: 'Agendamento cancelado',
-        mensagem: `Nossa equipe cancelou o agendamento "${agenda.titulo}". Entre em contato caso precise reagendar.`,
+        titulo: n.titulo,
+        mensagem: n.mensagem,
         dados: { agenda_id: params.id, solicitacao_id: agenda.solicitacao_id },
       });
     }

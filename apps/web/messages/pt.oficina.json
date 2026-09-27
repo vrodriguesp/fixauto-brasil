@@ -282,6 +282,14 @@
     "tempoMedioSubtitulo": "Onde seus veículos ficam parados por mais tempo",
     "semDadosSuficientes": "Ainda não há dados suficientes (precisa de check-ins com etapas registradas)."
   },
+  "notasInternas": {
+    "titulo": "Notas internas (não vai pro cliente)",
+    "carregando": "Carregando...",
+    "vazio": "Nenhuma nota ainda. Use pra avisar a equipe sobre esse veículo.",
+    "equipe": "Equipe",
+    "placeholder": "Escrever nota pra equipe...",
+    "enviar": "Enviar"
+  },
   "oficinaCheckin": {
     "descricaoLabelCliente": "Cliente",
     "descricaoLabelPlaca": "Placa",

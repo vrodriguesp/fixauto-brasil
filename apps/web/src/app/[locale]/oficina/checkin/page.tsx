@@ -9,6 +9,7 @@ import { TIPOS_SERVICO, CORES_AGENDA } from '@fixauto/shared';
 import { useRouter } from '@/i18n/navigation';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
+import { notifCheckinManual } from '@/lib/notif-i18n';
 
 export default function ManualCheckinPage() {
   const t = useTranslations('oficinaCheckin');
@@ -74,17 +75,19 @@ export default function ManualCheckinPage() {
     if (clienteEmail) {
       const { data: existingProfile } = await supabase
         .from('profiles')
-        .select('id')
+        .select('id, idioma')
         .eq('email', clienteEmail)
         .single();
 
       if (existingProfile) {
-        // Create notification for the client
+        // Create notification for the client (idioma do cliente, nao de
+        // quem esta fazendo o check-in manual)
+        const n = notifCheckinManual(existingProfile.idioma, { oficina: oficina?.nome_fantasia || '', marca: veiculoMarca, modelo: veiculoModelo });
         await supabase.from('notificacoes').insert({
           profile_id: existingProfile.id,
           tipo: 'checkin_manual',
-          titulo: t('notifTitulo'),
-          mensagem: t('notifMensagem', { oficina: oficina?.nome_fantasia || '', marca: veiculoMarca, modelo: veiculoModelo }),
+          titulo: n.titulo,
+          mensagem: n.mensagem,
           dados: { oficina_id: oficina?.id },
         });
       }

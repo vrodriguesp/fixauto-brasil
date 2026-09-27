@@ -11,6 +11,7 @@ import AudioRecorder from '@/components/ui/AudioRecorder';
 import AudioMessage from '@/components/ui/AudioMessage';
 import { useAudioRecorder } from '@/hooks/use-audio-recorder';
 import { Link } from '@/i18n/navigation';
+import { notifNovaMensagem } from '@/lib/notif-i18n';
 
 interface Mensagem {
   id: string;
@@ -208,14 +209,15 @@ export default function OficinaMensagensPage() {
         remetente: { nome: user.nome, tipo: user.tipo },
       }]);
 
-      // Notify the client
-      const { data: sol } = await supabase.from('solicitacoes').select('cliente_id').eq('id', id).single();
+      // Notify the client (idioma do CLIENTE, nao de quem esta navegando -
+      // a oficina pode estar em /et enquanto o cliente prefere /pt)
+      const { data: sol } = await supabase.from('solicitacoes').select('cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(idioma)').eq('id', id).single();
       if (sol) {
         try {
           await supabase.from('notificacoes').insert({
             profile_id: sol.cliente_id,
             tipo: 'nova_mensagem',
-            titulo: t('notifNovaMensagemTitulo'),
+            titulo: notifNovaMensagem((sol.cliente as any)?.idioma).titulo,
             mensagem: texto.slice(0, 100),
             dados: { solicitacao_id: id },
           });
@@ -269,19 +271,20 @@ export default function OficinaMensagensPage() {
           },
         ]);
 
-        // Notify the client
+        // Notify the client (idioma do cliente, nao de quem esta navegando)
         const { data: sol } = await supabase
           .from('solicitacoes')
-          .select('cliente_id')
+          .select('cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(idioma)')
           .eq('id', id)
           .single();
         if (sol) {
           try {
+            const nAudio = notifNovaMensagem((sol.cliente as any)?.idioma);
             await supabase.from('notificacoes').insert({
               profile_id: sol.cliente_id,
               tipo: 'nova_mensagem',
-              titulo: t('notifNovaMensagemAudioTitulo'),
-              mensagem: t('notifMensagemAudioRecebida'),
+              titulo: nAudio.tituloAudio,
+              mensagem: nAudio.mensagemAudio,
               dados: { solicitacao_id: id },
             });
           } catch { /* non-blocking */ }

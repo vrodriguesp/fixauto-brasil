@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { oficinaTemCapacidade } from '@/lib/capacidade';
+import { notifEmergenciaAcidenteProximo } from '@/lib/notif-i18n';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
     // Fetch oficinas within radius
     let { data: oficinas, error: oficinasError } = await supabaseAdmin
       .from('oficinas')
-      .select('id, profile_id, nome_fantasia, especialidades, latitude, longitude, capacidade_servicos')
+      .select('id, profile_id, nome_fantasia, especialidades, latitude, longitude, capacidade_servicos, profile:profiles!oficinas_profile_id_fkey(idioma)')
       .gte('latitude', latitude - radiusLat)
       .lte('latitude', latitude + radiusLat)
       .gte('longitude', longitude - radiusLon)
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
     if (!oficinas || oficinas.length === 0) {
       const { data: allOficinas } = await supabaseAdmin
         .from('oficinas')
-        .select('id, profile_id, nome_fantasia, especialidades, latitude, longitude, capacidade_servicos')
+        .select('id, profile_id, nome_fantasia, especialidades, latitude, longitude, capacidade_servicos, profile:profiles!oficinas_profile_id_fkey(idioma)')
         .eq('ativa', true)
         .limit(20);
       oficinas = allOficinas || [];
@@ -74,11 +75,12 @@ export async function POST(req: NextRequest) {
 
       // Create notification for the oficina owner
       if (oficina.profile_id) {
+        const n = notifEmergenciaAcidenteProximo((oficina.profile as any)?.idioma);
         await supabaseAdmin.from('notificacoes').insert({
           profile_id: oficina.profile_id,
           tipo: 'emergencia',
-          titulo: 'Emergência - Acidente próximo',
-          mensagem: `Um motorista próximo à sua oficina acabou de sofrer um acidente e precisa de atendimento urgente. Envie um orçamento rápido!`,
+          titulo: n.titulo,
+          mensagem: n.mensagem,
           dados: { emergencia_id: emergenciaId },
         });
       }

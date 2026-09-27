@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/api-auth';
+import { notifOrcamentoAceito, notifReparoAgendadoTitulo, notifOrcamentoAceitoPagamento } from '@/lib/notif-i18n';
+import { formatCurrency } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 
 // Use service_role key to bypass RLS - the agenda insert needs
 // to be done by the server because the client user doesn't have
@@ -84,7 +87,7 @@ export async function POST(req: NextRequest) {
       const { error: agendaError } = await supabaseAdmin.from('agenda').insert({
         oficina_id: orc.oficina_id,
         solicitacao_id: orc.solicitacao_id,
-        titulo: `Reparo agendado`,
+        titulo: notifReparoAgendadoTitulo((orc.oficina as any)?.profile?.idioma),
         descricao: `Orçamento #${orcamentoId.slice(0, 8)}`,
         data_inicio: `${slot.data_checkin}T${slot.turno === 'manha' ? '08:00:00' : '13:00:00'}Z`,
         data_fim: `${slot.data_previsao_entrega}T18:00:00Z`,
@@ -102,11 +105,12 @@ export async function POST(req: NextRequest) {
     // 6. Notify the workshop
     const oficinaProfileId = (orc.oficina as any)?.profile_id;
     if (oficinaProfileId) {
+      const n = notifOrcamentoAceito((orc.oficina as any)?.profile?.idioma);
       await supabaseAdmin.from('notificacoes').insert({
         profile_id: oficinaProfileId,
         tipo: 'orcamento_aceito',
-        titulo: 'Orçamento aceito!',
-        mensagem: 'Um cliente aceitou seu orçamento e agendou o serviço.',
+        titulo: n.titulo,
+        mensagem: n.mensagem,
         dados: { solicitacao_id: orc.solicitacao_id, orcamento_id: orcamentoId },
       });
     }
@@ -134,7 +138,8 @@ export async function POST(req: NextRequest) {
           const oficinaEstado = (orc.oficina as any)?.estado || '';
           const oficinaTelefone = (orc.oficina as any)?.profile?.telefone || '';
           const oficinaEmail = (orc.oficina as any)?.profile?.email || '';
-          const valorFormatado = `R$ ${Number(orc.valor_total).toFixed(2).replace('.', ',')}`;
+          const oficinaIdioma = (orc.oficina as any)?.profile?.idioma;
+          const valorFormatado = formatCurrency(Number(orc.valor_total), currencyForCountry((orc.oficina as any)?.pais), oficinaIdioma);
 
           // Get the solicitacao vehicle plate
           const { data: solicitacaoData } = await supabaseAdmin
@@ -175,6 +180,7 @@ export async function POST(req: NextRequest) {
             let responsavelProfileId: string | null = null;
             let responsavelEmail: string | null = null;
             let responsavelNome: string | null = null;
+            let responsavelIdioma: string | null = null;
 
             if (tipoAcidente === 'eu_causei') {
               // The registrant is the responsible person
@@ -182,11 +188,12 @@ export async function POST(req: NextRequest) {
               if (responsavelProfileId) {
                 const { data: respProfile } = await supabaseAdmin
                   .from('profiles')
-                  .select('email, nome')
+                  .select('email, nome, idioma')
                   .eq('id', responsavelProfileId)
                   .single();
                 responsavelEmail = respProfile?.email || null;
                 responsavelNome = respProfile?.nome || null;
+                responsavelIdioma = respProfile?.idioma || null;
               }
             } else {
               // outro_causou: the other person is responsible
@@ -196,10 +203,11 @@ export async function POST(req: NextRequest) {
               if (responsavelEmail) {
                 const { data: respProfile } = await supabaseAdmin
                   .from('profiles')
-                  .select('id')
+                  .select('id, idioma')
                   .eq('email', responsavelEmail)
                   .single();
                 responsavelProfileId = respProfile?.id || null;
+                responsavelIdioma = respProfile?.idioma || null;
               }
             }
 
@@ -214,11 +222,12 @@ export async function POST(req: NextRequest) {
               });
 
               // Create in-app notification for the responsible person
+              const nPagamento = notifOrcamentoAceitoPagamento(responsavelIdioma, valorFormatado, oficinaNome);
               await supabaseAdmin.from('notificacoes').insert({
                 profile_id: responsavelProfileId,
                 tipo: 'orcamento_aceito',
-                titulo: 'Orcamento aceito - pagamento',
-                mensagem: `O orcamento de ${valorFormatado} foi aceito na oficina ${oficinaNome}. Acesse para conversar com a oficina sobre o pagamento.`,
+                titulo: nPagamento.titulo,
+                mensagem: nPagamento.mensagem,
                 dados: { solicitacao_id: orc.solicitacao_id, orcamento_id: orcamentoId, emergencia_id: emergencia.id },
               });
             }

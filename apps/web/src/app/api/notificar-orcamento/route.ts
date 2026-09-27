@@ -6,6 +6,8 @@ import {
 } from '@/lib/notifications';
 import { getSessionUserId } from '@/lib/api-auth';
 import { currencyForCountry } from '@/lib/currency';
+import { formatCurrency } from '@/lib/utils';
+import { notifNovoOrcamento } from '@/lib/notif-i18n';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -53,10 +55,7 @@ export async function POST(req: NextRequest) {
 
     const cliente = (orcamento.solicitacao as any).cliente;
     const oficinaNome = (orcamento.oficina as any)?.nome_fantasia || 'Oficina';
-    const valorTotal = new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: currencyForCountry((orcamento.oficina as any)?.pais),
-    }).format(orcamento.valor_total);
+    const valorTotal = formatCurrency(orcamento.valor_total, currencyForCountry((orcamento.oficina as any)?.pais), cliente?.idioma);
 
     const results: { email?: { success: boolean }; whatsapp?: { success: boolean } } = {};
 
@@ -146,11 +145,12 @@ export async function POST(req: NextRequest) {
           });
 
           if (outroProfile) {
+            const n = notifNovoOrcamento(outroProfile.idioma, oficinaNome, valorTotal);
             await supabaseAdmin.from('notificacoes').insert({
               profile_id: outroProfile.id,
               tipo: 'novo_orcamento',
-              titulo: 'Novo orçamento recebido',
-              mensagem: `Orçamento de ${valorTotal} da oficina ${oficinaNome} para o acidente registrado.`,
+              titulo: n.titulo,
+              mensagem: n.mensagem,
               dados: { emergencia_id: emergFull.id },
             });
           }

@@ -282,6 +282,14 @@
     "tempoMedioSubtitulo": "Dove i tuoi veicoli restano fermi più a lungo",
     "semDadosSuficientes": "Non ci sono ancora dati sufficienti (servono check-in con fasi registrate)."
   },
+  "notasInternas": {
+    "titulo": "Note interne (non visibili al cliente)",
+    "carregando": "Caricamento...",
+    "vazio": "Ancora nessuna nota. Usala per aggiornare il team su questo veicolo.",
+    "equipe": "Team",
+    "placeholder": "Scrivi una nota per il team...",
+    "enviar": "Invia"
+  },
   "oficinaCheckin": {
     "descricaoLabelCliente": "Cliente",
     "descricaoLabelPlaca": "Targa",

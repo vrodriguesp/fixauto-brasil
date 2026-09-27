@@ -5,6 +5,7 @@ import {
   sendAccidentWhatsApp,
 } from '@/lib/notifications';
 import { EMAIL_I18N, resolveEmailLocale, fmt, type EmailLocale } from '@/lib/email-i18n';
+import { notifRegistroAcidente } from '@/lib/notif-i18n';
 
 // Reaproveita as strings de "conta criada" pro bloco de credenciais, mas o
 // corpo principal (quem bateu, qual placa) precisa das strings de
@@ -166,11 +167,12 @@ export async function POST(req: NextRequest) {
 
     // Create in-app notification
     if (profileId) {
+      const n = notifRegistroAcidente(emailLocale, emergencia.nome, outroVeiculo.placa);
       await supabaseAdmin.from('notificacoes').insert({
         profile_id: profileId,
         tipo: 'acidente',
-        titulo: 'Registro de acidente',
-        mensagem: `${emergencia.nome} registrou um acidente envolvendo seu veículo (placa ${outroVeiculo.placa}). Acesse para ver detalhes e orçamentos.`,
+        titulo: n.titulo,
+        mensagem: n.mensagem,
         dados: { emergencia_id: emergenciaId, solicitacao_id: emergencia.solicitacao_id || null },
       });
     }

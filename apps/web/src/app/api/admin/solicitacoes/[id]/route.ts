@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin } from '@/lib/admin-auth';
 import { STATUS_SOLICITACAO } from '@fixauto/shared';
+import { notifStatusSolicitacaoAtualizado, statusSolicitacaoLabelFor } from '@/lib/notif-i18n';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -122,7 +123,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
     const { data: solicitacao, error: fetchError } = await supabaseAdmin
       .from('solicitacoes')
-      .select('cliente_id, status')
+      .select('cliente_id, status, cliente:profiles!solicitacoes_cliente_id_fkey(idioma)')
       .eq('id', params.id)
       .single();
 
@@ -139,32 +140,34 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    const label = STATUS_SOLICITACAO[status as keyof typeof STATUS_SOLICITACAO]?.label || status;
-
     if (solicitacao.cliente_id) {
+      const clienteIdioma = (solicitacao.cliente as any)?.idioma;
+      const n = notifStatusSolicitacaoAtualizado(clienteIdioma, statusSolicitacaoLabelFor(clienteIdioma, status));
       await supabaseAdmin.from('notificacoes').insert({
         profile_id: solicitacao.cliente_id,
         tipo: 'status_atualizado_admin',
-        titulo: 'Status da solicitação atualizado',
-        mensagem: `Nossa equipe atualizou o status da sua solicitação para: ${label}.`,
+        titulo: n.titulo,
+        mensagem: n.mensagem,
         dados: { solicitacao_id: params.id, status_anterior: solicitacao.status, status_novo: status },
       });
     }
 
     const { data: oficinaProfiles } = await supabaseAdmin
       .from('orcamentos')
-      .select('oficina:oficinas(profile_id)')
+      .select('oficina:oficinas(profile_id, profile:profiles!oficinas_profile_id_fkey(idioma))')
       .eq('solicitacao_id', params.id)
       .eq('status', 'aceito');
 
     for (const row of oficinaProfiles || []) {
       const profileId = (row as any).oficina?.profile_id;
+      const oficinaIdioma = (row as any).oficina?.profile?.idioma;
       if (profileId) {
+        const n = notifStatusSolicitacaoAtualizado(oficinaIdioma, statusSolicitacaoLabelFor(oficinaIdioma, status));
         await supabaseAdmin.from('notificacoes').insert({
           profile_id: profileId,
           tipo: 'status_atualizado_admin',
-          titulo: 'Status da solicitação atualizado',
-          mensagem: `Nossa equipe atualizou o status de uma solicitação para: ${label}.`,
+          titulo: n.titulo,
+          mensagem: n.mensagem,
           dados: { solicitacao_id: params.id, status_anterior: solicitacao.status, status_novo: status },
         });
       }

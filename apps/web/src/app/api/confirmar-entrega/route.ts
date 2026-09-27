@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { recalcularComissaoConfig } from '@/lib/comissao';
 import { getSessionUserId } from '@/lib/api-auth';
 import { sendServicoConcluidoEmail, sendServicoConcluidoWhatsApp } from '@/lib/notifications';
+import { notifServicoConcluido } from '@/lib/notif-i18n';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -60,11 +61,12 @@ export async function POST(req: NextRequest) {
         const cliente = sol.cliente as any;
 
         // 4. Create notification
+        const nConcluido = notifServicoConcluido(cliente?.idioma, veiculoNome);
         await supabaseAdmin.from('notificacoes').insert({
           profile_id: sol.cliente_id,
           tipo: 'servico_concluido',
-          titulo: 'Serviço concluído!',
-          mensagem: `${veiculoNome} está pronto para retirada. Avalie o serviço recebido!`,
+          titulo: nConcluido.titulo,
+          mensagem: nConcluido.mensagem,
           dados: { solicitacao_id: solicitacaoId },
         });
 

@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase';
 import AudioRecorder from '@/components/ui/AudioRecorder';
 import AudioMessage from '@/components/ui/AudioMessage';
 import { useAudioRecorder } from '@/hooks/use-audio-recorder';
+import { notifNovaMensagem } from '@/lib/notif-i18n';
 
 interface Mensagem {
   id: string;
@@ -211,14 +212,15 @@ export default function ClienteMensagensPage() {
         remetente: { nome: user.nome, tipo: user.tipo },
       }]);
 
-      // Notify the oficina
-      const { data: orcs } = await supabase.from('orcamentos').select('oficina:oficinas(profile_id)').eq('solicitacao_id', id).limit(1);
+      // Notify the oficina (idioma da oficina, nao do cliente que esta enviando)
+      const { data: orcs } = await supabase.from('orcamentos').select('oficina:oficinas(profile_id, profile:profiles!oficinas_profile_id_fkey(idioma))').eq('solicitacao_id', id).limit(1);
       if (orcs?.[0]?.oficina) {
         try {
+          const oficinaIdioma = (orcs[0].oficina as any).profile?.idioma;
           await supabase.from('notificacoes').insert({
             profile_id: (orcs[0].oficina as any).profile_id,
             tipo: 'nova_mensagem',
-            titulo: 'Nova mensagem do cliente',
+            titulo: notifNovaMensagem(oficinaIdioma).titulo,
             mensagem: texto.slice(0, 100),
             dados: { solicitacao_id: id },
           });
@@ -272,19 +274,20 @@ export default function ClienteMensagensPage() {
           },
         ]);
 
-        // Notify the oficina
+        // Notify the oficina (idioma da oficina)
         const { data: orcs } = await supabase
           .from('orcamentos')
-          .select('oficina:oficinas(profile_id)')
+          .select('oficina:oficinas(profile_id, profile:profiles!oficinas_profile_id_fkey(idioma))')
           .eq('solicitacao_id', id)
           .limit(1);
         if (orcs?.[0]?.oficina) {
           try {
+            const nAudio = notifNovaMensagem((orcs[0].oficina as any).profile?.idioma);
             await supabase.from('notificacoes').insert({
               profile_id: (orcs[0].oficina as any).profile_id,
               tipo: 'nova_mensagem',
-              titulo: 'Nova mensagem de áudio do cliente',
-              mensagem: 'Mensagem de áudio recebida',
+              titulo: nAudio.tituloAudio,
+              mensagem: nAudio.mensagemAudio,
               dados: { solicitacao_id: id },
             });
           } catch { /* non-blocking */ }

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/api-auth';
+import { notifFaltaRegistrada } from '@/lib/notif-i18n';
+import { resolveEmailLocale } from '@/lib/email-i18n';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -43,17 +45,19 @@ export async function POST(req: NextRequest) {
 
     // 3. Get client info
     let clienteId: string | null = null;
-    let veiculoNome = 'seu veículo';
+    let clienteIdioma: string | null = null;
+    let veiculoNome: string | null = null;
 
     if (solicitacaoId) {
       const { data: sol } = await supabaseAdmin
         .from('solicitacoes')
-        .select('cliente_id, veiculo:veiculos(fipe_marca, fipe_modelo)')
+        .select('cliente_id, veiculo:veiculos(fipe_marca, fipe_modelo), cliente:profiles!solicitacoes_cliente_id_fkey(idioma)')
         .eq('id', solicitacaoId)
         .single();
 
       if (sol) {
         clienteId = sol.cliente_id;
+        clienteIdioma = (sol.cliente as any)?.idioma;
         if (sol.veiculo) {
           veiculoNome = `${(sol.veiculo as any).fipe_marca} ${(sol.veiculo as any).fipe_modelo}`;
         }
@@ -84,11 +88,13 @@ export async function POST(req: NextRequest) {
 
     // 7. Notify client
     if (clienteId) {
+      const veiculoFallback: Record<string, string> = { pt: 'seu veículo', en: 'your vehicle', et: 'sinu sõiduk', it: 'il tuo veicolo' };
+      const n = notifFaltaRegistrada(clienteIdioma, veiculoNome || veiculoFallback[resolveEmailLocale(clienteIdioma)]);
       await supabaseAdmin.from('notificacoes').insert({
         profile_id: clienteId,
         tipo: 'no_show',
-        titulo: 'Falta registrada',
-        mensagem: `Você não compareceu ao agendamento para ${veiculoNome}. O orçamento continua disponível para reagendamento.`,
+        titulo: n.titulo,
+        mensagem: n.mensagem,
         dados: { agenda_id: agendaId, solicitacao_id: solicitacaoId },
       });
     }

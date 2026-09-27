@@ -282,6 +282,14 @@
     "tempoMedioSubtitulo": "Where your vehicles spend the most time waiting",
     "semDadosSuficientes": "Not enough data yet (needs check-ins with logged stages)."
   },
+  "notasInternas": {
+    "titulo": "Internal notes (not visible to the customer)",
+    "carregando": "Loading...",
+    "vazio": "No notes yet. Use this to update the team about this vehicle.",
+    "equipe": "Team",
+    "placeholder": "Write a note for the team...",
+    "enviar": "Send"
+  },
   "oficinaCheckin": {
     "descricaoLabelCliente": "Customer",
     "descricaoLabelPlaca": "Plate",

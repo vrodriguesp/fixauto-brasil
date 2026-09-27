@@ -282,6 +282,14 @@
     "tempoMedioSubtitulo": "Kus sinu sõidukid kõige kauem ootel seisavad",
     "semDadosSuficientes": "Piisavalt andmeid pole veel (vajab registreeritud etappidega check-ineid)."
   },
+  "notasInternas": {
+    "titulo": "Sisemärkused (kliendile ei kuvata)",
+    "carregando": "Laadimine...",
+    "vazio": "Märkusi pole veel. Kasuta seda, et anda meeskonnale sellest sõidukist teada.",
+    "equipe": "Meeskond",
+    "placeholder": "Kirjuta märkus meeskonnale...",
+    "enviar": "Saada"
+  },
   "oficinaCheckin": {
     "descricaoLabelCliente": "Klient",
     "descricaoLabelPlaca": "Reg.märk",

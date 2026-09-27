@@ -12,6 +12,7 @@ import StarRating from '@/components/ui/StarRating';
 import { formatCurrency, formatDate, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import type { DisponibilidadeSlot } from '@fixauto/shared';
+import { notifOrcamentoRecusado } from '@/lib/notif-i18n';
 
 function formatExecTime(hours: number | null, t: (key: string, values?: Record<string, string | number | Date>) => string): string {
   if (!hours) return '-';
@@ -68,13 +69,14 @@ export default function OrcamentoDetalhePage() {
         if (orc?.oficina?.profile?.id) {
           try {
             const { supabase: sb } = await import('@/lib/supabase').then(m => ({ supabase: m.supabase }));
+            const n = notifOrcamentoRecusado((orc.oficina.profile as any)?.idioma);
             await sb.from('notificacoes').insert({
               profile_id: orc.oficina.profile.id,
               tipo: 'orcamento_recusado',
-              titulo: 'Orçamento recusado',
-              mensagem: 'O cliente recusou o orçamento revisado. Por favor realize o check-out do veículo.',
+              titulo: n.titulo,
+              mensagem: n.mensagem,
               dados: { solicitacao_id: solicitacao!.id },
-            }); // Notification consumed by the oficina (PT-only area) — intentionally left untranslated
+            });
           } catch { /* Non-blocking */ }
         }
         // Do NOT cancel the solicitation — keep em_andamento so oficina can check-out

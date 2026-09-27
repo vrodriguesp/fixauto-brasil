@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
+import { notifAvaliacaoRecebida } from '@/lib/notif-i18n';
 import type { Avaliacao } from '@fixauto/shared';
 
 export function useAvaliacoes(oficinaId?: string) {
@@ -63,17 +64,20 @@ export function useAvaliacoes(oficinaId?: string) {
       // Notify the workshop about the new review
       const { data: ofi } = await supabase
         .from('oficinas')
-        .select('profile_id, nome_fantasia')
+        .select('profile_id, nome_fantasia, profile:profiles!oficinas_profile_id_fkey(idioma)')
         .eq('id', input.oficina_id)
         .single();
       if (ofi) {
         const stars = '★'.repeat(input.nota) + '☆'.repeat(5 - input.nota);
+        const idioma = (ofi.profile as any)?.idioma;
+        const comentario = input.comentario ? `: "${input.comentario.slice(0, 80)}"` : '.';
+        const n = notifAvaliacaoRecebida(idioma, stars, user.nome, comentario);
         try {
           await supabase.from('notificacoes').insert({
             profile_id: ofi.profile_id,
             tipo: 'nova_avaliacao',
-            titulo: `Nova avaliação: ${stars}`,
-            mensagem: `${user.nome} avaliou seu serviço${input.comentario ? ': "' + input.comentario.slice(0, 80) + '"' : ''}.`,
+            titulo: n.titulo,
+            mensagem: n.mensagem,
             dados: { solicitacao_id: input.solicitacao_id, avaliacao_id: (data as any).id },
           });
         } catch { /* Non-blocking */ }

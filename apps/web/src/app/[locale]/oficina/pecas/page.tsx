@@ -9,6 +9,7 @@ import { currencyForCountry } from '@/lib/currency';
 import ComissaoPecasCard from '@/components/pecas/ComissaoPecasCard';
 import type { CotacaoPeca, CotacaoPecaResposta } from '@fixauto/shared';
 import { Link } from '@/i18n/navigation';
+import { notifPedidoConfirmado } from '@/lib/notif-i18n';
 
 interface CotacaoComRespostas extends CotacaoPeca {
   respostas: (CotacaoPecaResposta & {
@@ -114,11 +115,12 @@ export default function OficinaPecasPage() {
         .eq('id', idFornecedor)
         .single();
       if (fornecedor) {
+        const nPedido = notifPedidoConfirmado((fornecedor as any).profile?.idioma, oficina.nome_fantasia, cotacao.peca_descricao);
         await supabase.from('notificacoes').insert({
           profile_id: fornecedor.profile_id,
           tipo: 'pedido_peca_confirmado',
-          titulo: t('notifPedidoConfirmadoTitulo'),
-          mensagem: t('notifPedidoConfirmadoMensagem', { oficina: oficina.nome_fantasia, peca: cotacao.peca_descricao }),
+          titulo: nPedido.titulo,
+          mensagem: nPedido.mensagem,
           dados: { cotacao_id: cotacao.id },
         });
         const fornecedorProfile = (fornecedor as any).profile;

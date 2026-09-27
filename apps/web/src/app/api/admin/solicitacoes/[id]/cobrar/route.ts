@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin } from '@/lib/admin-auth';
+import { notifClienteEsperandoOrcamento } from '@/lib/notif-i18n';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -38,7 +39,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
 
     const { data: oficinasProximas, error } = await supabaseAdmin
       .from('oficinas')
-      .select('id, profile_id, nome_fantasia, especialidades')
+      .select('id, profile_id, nome_fantasia, especialidades, profile:profiles!oficinas_profile_id_fkey(idioma)')
       .eq('ativa', true)
       .gte('latitude', solicitacao.latitude - radiusLat)
       .lte('latitude', solicitacao.latitude + radiusLat)
@@ -56,11 +57,12 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
     let notificadas = 0;
     for (const oficina of destinatarias) {
       if (!oficina.profile_id) continue;
+      const n = notifClienteEsperandoOrcamento((oficina.profile as any)?.idioma, solicitacao.descricao.slice(0, 60));
       await supabaseAdmin.from('notificacoes').insert({
         profile_id: oficina.profile_id,
         tipo: 'cobranca_admin_solicitacao',
-        titulo: 'Cliente esperando orçamento',
-        mensagem: `A equipe BipFix identificou uma solicitação próxima ("${solicitacao.descricao.slice(0, 60)}") ainda sem resposta. Que tal enviar um orçamento?`,
+        titulo: n.titulo,
+        mensagem: n.mensagem,
         dados: { solicitacao_id: solicitacao.id },
       });
       notificadas++;
