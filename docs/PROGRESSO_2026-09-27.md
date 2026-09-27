@@ -99,8 +99,45 @@ Traduções novas adicionadas nos 4 idiomas (reaproveitando exatamente o texto j
 
 Com isso, o app mobile cobre agora **6 dos 10 itens do escopo v1** definido na especificação (auth, dashboard, nova solicitação, emergência, orçamentos, acompanhamento, avaliação, veículos — faltam mensagens de áudio no chat, perfil/troca de idioma completo, e o teste real em dispositivo).
 
+## Parte 6: revisão máxima de código (15 bugs reais) + emulador Android + teste real no app + deploy final
+
+Pedido do usuário: usar a "melhor versão" pra rever TODO o código (não só traduções), garantir que funciona perfeitamente, testar o app de verdade (inclusive Android, que ainda não tinha sido tocado), e depois definir a regra de idioma pra mensagens de chat entre cliente e oficina (decisão: **sem tradutor automático — assume-se que as duas partes falam a língua do país**, diferente de notificações/e-mails, que sempre usam o idioma salvo de cada destinatário).
+
+### Revisão de código (achados reais, não estilo)
+
+Revisão completa de `apps/web` e `apps/mobile` encontrou e corrigiu **15 bugs reais**, os mais importantes:
+
+- **Vulnerabilidade de segurança real**: a rota `/api/notificar-email-pedido-peca-confirmado` confiava em dados enviados pelo próprio navegador do cliente (e-mail de destino, nome, valor) só checando se a pessoa estava logada — **qualquer usuário autenticado podia mandar e-mails com a marca BipFix pra qualquer endereço, com qualquer conteúdo**. Reescrita pra buscar os dados reais no banco a partir de um ID e confirmar que quem está pedindo é realmente o dono daquela cotação, igual ao padrão já usado no resto do site.
+- **Risco de injeção de HTML nos e-mails**: nome do cliente (campo de texto livre) era colocado direto no HTML do e-mail sem tratamento — em teoria, alguém poderia cadastrar um nome com código HTML/script malicioso e ele rodaria na caixa de entrada de outra pessoa. Corrigido escapando os campos de texto livre nos e-mails de maior exposição (nome do destinatário em todos os e-mails, placa do veículo no e-mail de acidente). **Pendência anotada abaixo** — nem todos os campos de texto livre em todos os e-mails foram escapados ainda (ver "Pontos em aberto").
+- **5+ bugs recorrentes de "idioma errado"**: mesmo depois da rodada anterior de correção de tradução, vários lugares novos (ou não cobertos antes) ainda mandavam notificação/e-mail no idioma de quem *disparou* a ação, não de quem *recebe* — corrigido em `notificar-orcamento`, `notificar-acidente`, `aceitar-orcamento`, `use-orcamentos.ts` (mobile), `nova-solicitacao.tsx` (mobile). Causa raiz identificada: é fácil buscar o `idioma` errado (ou esquecer de buscar) numa query nova; não existe ainda uma trava automática (tipo lint) que pegue isso — só revisão manual.
+- **Bug de auth no app mobile**: havia um cenário onde, se o perfil do usuário falhasse ao carregar depois do cadastro, a pessoa ficava "autenticada" no Supabase mas sem perfil (estado inconsistente). Corrigido centralizando toda validação de tipo/conta-ativa numa única função (`fetchProfile`), chamada de forma consistente em login, cadastro e ao reabrir o app.
+- **Bugs de UX silenciosos no mobile**: erro ao salvar veículo não mostrava nada pro usuário (ficava "sumido"); mensagem de chat que falhava ao enviar limpava a caixa de texto mesmo assim (texto perdido); campo "apelido do veículo" usava o texto errado. Todos corrigidos com `Alert` de erro visível e comportamento correto.
+- **Bug de parsing de número**: campo de valor estimado no check-in da oficina (`Number(valor.replace(',', '.'))`) quebrava com formatos tipo "1.234,56" (milhar com ponto). Corrigido com um parser tolerante (`parseFlexibleNumber`, novo em `packages/shared`) que entende os dois formatos.
+- Outros: geolocalização manual no app mobile ignorada por causa de um nome de campo errado (`lat`/`lon` vs `latitude`/`longitude` reais da API); sitemap faltando as páginas `/docs`; canonical URL de `/oficinas/[id]` sempre em português mesmo em outro idioma.
+
+### Emulador Android — montado do zero (sem Android Studio completo)
+
+Como não havia espaço/tempo pra instalar o Android Studio completo, montei o ambiente só com as ferramentas de linha de comando (`sdkmanager`, `avdmanager`, `emulator`, `adb`) e criei um emulador headless (sem interface gráfica, mais leve). Consegui controlar o app inteiro por comando (tocar na tela, digitar texto, tirar screenshot) sem precisar de mouse/teclado — o suficiente pra realmente abrir o app, criar uma conta de teste e navegar pelas telas principais.
+
+### Bug crítico encontrado SÓ por testar de verdade
+
+Com o app rodando de verdade (não só checagem de tipos), toda tela que mostrava uma variável dentro de um texto — por exemplo "Olá, {nome}" — aparecia **literalmente com as chaves na tela**, em vez de mostrar o nome de verdade. Causa: a biblioteca de tradução do app mobile (`i18next`) espera esse tipo de variável escrita com chave dupla (`{{nome}}`) por padrão, mas todo o texto do app (~50 traduções, nos 4 idiomas) foi escrito com chave simples (`{nome}`, igual ao padrão já usado no site). Corrigido configurando a biblioteca pra aceitar o formato certo, em vez de reescrever todas as traduções — um bug que **nenhuma checagem de tipo (`tsc`) detecta**, só apareceria pro usuário real na primeira tela com nome.
+
+Esse achado confirma, na prática, por que testar rodando de verdade (não só ler o código) era importante — é o segundo bug dessa categoria nesta sessão (o primeiro foi as ~25 dependências faltando que impediam o app de sequer compilar, Parte 2).
+
+### Deploy final em produção
+
+Commit `705c6a0` (os 15 bugs) + todo o trabalho acumulado das Partes 3–5 que ainda não tinha ido pra VM (refactor de moeda compartilhada, telas de acompanhamento/avaliação, guias de documentação) — tudo enviado ao GitHub e implantado na VM de produção. Verificado por requisição HTTP direta (não presumido): `bipfix.com` responde 200 em pt/en/et/it, tags `hreflang` corretas no HTML entregue, sitemap incluindo as páginas de documentação, página de perfil de oficina (`/oficinas/[id]`) resolvendo normalmente.
+
+## Pontos em aberto (decisão do usuário, não resolvidos em autonomia)
+
+1. **Nem todo campo de texto livre nos e-mails está escapado contra HTML** — só os de maior exposição (nome do destinatário, placa) foram tratados nesta rodada, por prioridade de tempo. Campos como nome da oficina, descrição da peça, nome do veículo em e-mails *menos* expostos (tipicamente vindos de cadastro de empresa, não de formulário público anônimo) continuam sem escapar — risco baixo mas não zero. Recomendo uma rodada dedicada só a isso.
+2. **Conta de teste criada em produção durante os testes do app mobile** (`teste.mobile.qa1@example.com`, no Supabase real de produção) — não encontrei um jeito de acessar o Postgres diretamente pela VM (sem cliente `psql` configurado nem acesso direto exposto) pra apagar essa conta com segurança. Precisa ser removida manualmente (painel do Supabase self-hosted ou com as credenciais de banco corretas) ou você me autoriza um caminho específico de acesso.
+3. **iOS nunca foi testado de verdade** (nem simulador, nem aparelho físico) — impossível nesta máquina Windows. Só confirmei que o pacote *compila* (`expo export --platform ios` gera o bundle sem erro), não que ele *roda* corretamente. Precisa de um Mac (ou o serviço pago EAS Build da Expo) pra validar de fato.
+4. **Página pública `/oficinas` (hub/listagem)** — ainda não existe (só existe a página individual `/oficinas/[id]`). Pode valer a pena pra SEO de cauda longa ("oficina de funilaria em Tallinn", etc.), mas é uma decisão de produto/roadmap, não um bug.
+
 ## Próximos passos imediatos
 
-1. Rodar o app mobile de verdade (Expo Go) e validar o fluxo de login/dashboard contra dados reais — credenciais já corrigidas, falta só o teste em dispositivo/emulador. **Isso deveria ser priorizado antes de continuar adicionando mais telas** — várias coisas só se confirmam rodando de verdade (ex: se o Supabase Realtime funciona igual no React Native).
-2. Decidir o design de localização das mensagens de chat (pendência registrada acima) antes de implementar.
-3. Considerar a página pública `/oficinas` (hub/listagem) pra SEO de cauda longa.
+1. Decidir os 4 pontos em aberto acima.
+2. Rodar o app mobile num dispositivo Android real (não só o emulador) e, quando possível, num iPhone/simulador de verdade.
+3. Rodada dedicada de escape de HTML nos e-mails restantes (ponto em aberto 1).
