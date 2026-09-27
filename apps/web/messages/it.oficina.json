@@ -75,6 +75,8 @@
     "mecanico": "Meccanico",
     "mensagem": "Messaggio",
     "verSolicitacao": "Vedi richiesta",
+    "notaVeiculoRecebido": "Veicolo ricevuto in officina",
+    "notaVeiculoEntregue": "Veicolo consegnato al cliente",
     "editar": "Modifica",
     "excluir": "Elimina",
     "minhaAgenda": "La mia agenda",
@@ -376,7 +378,8 @@
     "noLimite": "(al limite)",
     "nadaAtribuido": "Niente assegnato",
     "mostraVeiculos": "Mostra i veicoli programmati (anche prima dell'arrivo) e in lavorazione. I veicoli consegnati escono dalla bacheca. Vedi il carico completo in",
-    "capacidade": "Capacità"
+    "capacidade": "Capacità",
+    "semNome": "Senza nome"
   },
   "oficinaEnviarOrcamento": {
     "solicitacaoNaoEncontrada": "Richiesta non trovata",
@@ -630,7 +633,8 @@
     "aberta": "Aperta",
     "emOrcamento": "In Preventivo",
     "nenhumaSolicitacaoEncontrada": "Nessuna richiesta trovata con questi filtri",
-    "enviarOrcamento": "Invia Preventivo"
+    "enviarOrcamento": "Invia Preventivo",
+    "fotosCount": "{count} foto"
   },
   "oficinaSolicitacaoDetalhe": {
     "solicitacaoNaoEncontrada": "Richiesta non trovata",
@@ -643,6 +647,7 @@
     "mensagem": "Messaggio",
     "descricaoDoProblema": "Descrizione del problema",
     "fotosCount": "Foto ({count})",
+    "fotoDoDanoAlt": "Foto del danno",
     "informacoesDoVeiculo": "Informazioni sul veicolo",
     "marca": "Marca",
     "modelo": "Modello",
@@ -656,6 +661,8 @@
     "solicitadoEm": "Richiesto il {data}"
   },
   "oficinaVeiculosEmServico": {
+    "notaVeiculoRecebido": "Veicolo ricevuto in officina",
+    "notaVeiculoEntregue": "Veicolo consegnato al cliente",
     "statusAgendado": "Programmato",
     "statusEmServico": "In lavorazione",
     "statusPronto": "Pronto",

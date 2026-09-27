@@ -137,7 +137,7 @@
     "veiculoInfo": "Veículo: {marca} {modelo} {ano}",
     "quantidadeInfo": "Quantidade: {quantidade}",
     "tirarDuvida": "Tirar dúvida",
-    "respostaEnviada": "Você respondeu: R$ {preco} - prazo {prazo} dia(s)",
+    "respostaEnviada": "Você respondeu: {preco} - prazo {prazo} dia(s)",
     "conversarLink": "Conversar",
     "labelPreco": "Preço (R$)",
     "labelPrazo": "Prazo (dias)",

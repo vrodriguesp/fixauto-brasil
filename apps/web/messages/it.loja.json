@@ -137,7 +137,7 @@
     "veiculoInfo": "Veicolo: {marca} {modelo} {ano}",
     "quantidadeInfo": "Quantità: {quantidade}",
     "tirarDuvida": "Fai una domanda",
-    "respostaEnviada": "Hai risposto: R$ {preco} - consegna in {prazo} giorno/i",
+    "respostaEnviada": "Hai risposto: {preco} - consegna in {prazo} giorno/i",
     "conversarLink": "Chat",
     "labelPreco": "Prezzo (R$)",
     "labelPrazo": "Tempi di consegna (giorni)",

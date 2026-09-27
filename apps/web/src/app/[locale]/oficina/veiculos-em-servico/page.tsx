@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAgenda } from '@/hooks/use-agenda';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -9,12 +9,14 @@ import { STATUS_MANUTENCAO } from '@fixauto/shared';
 import type { StatusManutencao, Funcionario } from '@fixauto/shared';
 import NotasInternas from '@/components/veiculo/NotasInternas';
 import { Link } from '@/i18n/navigation';
+import { INTL_LOCALE } from '@/lib/utils';
 
 type FilterTab = 'todos' | 'aguardando' | 'em_servico' | 'prontos';
 
 export default function VeiculosEmServico() {
   const t = useTranslations('oficinaVeiculosEmServico');
   const tc = useTranslations('constants');
+  const locale = useLocale();
   const { eventos, loading, update, refresh } = useAgenda();
   const { oficina, funcionario } = useAuth();
   const [activeTab, setActiveTab] = useState<FilterTab>('em_servico');
@@ -108,7 +110,7 @@ export default function VeiculosEmServico() {
       agenda_id: eventoId,
       funcionario_id: funcionario?.id || null,
       status: 'recebido',
-      observacao: 'Veículo recebido na oficina',
+      observacao: t('notaVeiculoRecebido'),
     });
     await refresh();
     setActionLoading(null);
@@ -126,7 +128,7 @@ export default function VeiculosEmServico() {
       agenda_id: evento.id,
       funcionario_id: funcionario?.id || null,
       status: 'entregue',
-      observacao: 'Veículo entregue ao cliente',
+      observacao: t('notaVeiculoEntregue'),
     });
     await update(evento.id, { status: 'concluido' });
     setActionLoading(null);
@@ -159,13 +161,13 @@ export default function VeiculosEmServico() {
   };
 
   const formatDate = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    return new Date(dateStr).toLocaleDateString(INTL_LOCALE[locale] || 'pt-BR');
   };
 
   const formatDateTime = (dateStr: string) => {
     const d = new Date(dateStr);
-    return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+    const intlLocale = INTL_LOCALE[locale] || 'pt-BR';
+    return `${d.toLocaleDateString(intlLocale)} ${d.toLocaleTimeString(intlLocale, { hour: '2-digit', minute: '2-digit' })}`;
   };
 
   const getStatusBadge = (status: string) => {

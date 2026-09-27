@@ -117,7 +117,7 @@ export default function SolicitacaoDetalhePage() {
                 {sol.fotos.map((foto: any) => (
                   <a key={foto.id} href={foto.foto_url} target="_blank" rel="noopener noreferrer" className="aspect-square bg-gray-200 rounded-lg overflow-hidden block">
                     {foto.foto_url ? (
-                      <img src={foto.foto_url} alt={foto.descricao || 'Foto do dano'} className="w-full h-full object-cover hover:opacity-90 transition-opacity" />
+                      <img src={foto.foto_url} alt={foto.descricao || t('fotoDoDanoAlt')} className="w-full h-full object-cover hover:opacity-90 transition-opacity" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

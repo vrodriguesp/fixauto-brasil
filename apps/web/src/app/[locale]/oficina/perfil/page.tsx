@@ -1,16 +1,19 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { routing } from '@/i18n/routing';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { compressImage } from '@/lib/image-compress';
 import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
 import { TIPOS_SERVICO } from '@fixauto/shared';
+import { Link } from '@/i18n/navigation';
 
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
   const tc = useTranslations('constants');
+  const locale = useLocale();
   const { user, oficina, loading, refreshProfile } = useAuth();
 
   const [nomeFantasia, setNomeFantasia] = useState('');
@@ -235,7 +238,8 @@ export default function PerfilOficinaPage() {
     );
   }
 
-  const publicUrl = oficina && typeof window !== 'undefined' ? `${window.location.origin}/oficinas/${oficina.id}` : '';
+  const localePrefix = locale === routing.defaultLocale ? '' : `/${locale}`;
+  const publicUrl = oficina && typeof window !== 'undefined' ? `${window.location.origin}${localePrefix}/oficinas/${oficina.id}` : '';
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(publicUrl);
@@ -249,7 +253,7 @@ export default function PerfilOficinaPage() {
         <h1 className="text-2xl font-bold text-gray-900">{t('titulo')}</h1>
         {oficina && (
           <div className="flex items-center gap-2">
-            <a
+            <Link
               href={`/oficinas/${oficina.id}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -260,7 +264,7 @@ export default function PerfilOficinaPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
               {t('verPaginaPublica')}
-            </a>
+            </Link>
             <button
               onClick={handleCopyLink}
               className="btn-secondary !py-2 !px-4 text-sm flex items-center gap-2"

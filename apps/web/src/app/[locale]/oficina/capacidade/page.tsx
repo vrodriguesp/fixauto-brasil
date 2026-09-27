@@ -112,7 +112,7 @@ export default function CapacidadePage() {
         {tiposComCapacidade.length === 0 ? (
           <p className="text-sm text-gray-500">
             {t('semCapacidadeConfigurada')}{' '}
-            <a href="/oficina/perfil" className="text-primary-600 hover:underline">{t('perfil')}</a>{' '}
+            <Link href="/oficina/perfil" className="text-primary-600 hover:underline">{t('perfil')}</Link>{' '}
             {t('semCapacidadeConfiguradaFim')}
           </p>
         ) : (

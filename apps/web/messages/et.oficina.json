@@ -75,6 +75,8 @@
     "mecanico": "Mehaanik",
     "mensagem": "Sõnum",
     "verSolicitacao": "Vaata päringut",
+    "notaVeiculoRecebido": "Sõiduk vastu võetud töökojas",
+    "notaVeiculoEntregue": "Sõiduk üle antud kliendile",
     "editar": "Muuda",
     "excluir": "Kustuta",
     "minhaAgenda": "Minu ajakava",
@@ -376,7 +378,8 @@
     "noLimite": "(piiril)",
     "nadaAtribuido": "Midagi pole määratud",
     "mostraVeiculos": "Näitab planeeritud sõidukeid (isegi enne saabumist) ja teeninduses olevaid sõidukeid. Väljastatud sõidukid kaovad tahvlilt. Vaata kogu koormust",
-    "capacidade": "Läbilaskevõimes"
+    "capacidade": "Läbilaskevõimes",
+    "semNome": "Nimeta"
   },
   "oficinaEnviarOrcamento": {
     "solicitacaoNaoEncontrada": "Päringut ei leitud",
@@ -630,7 +633,8 @@
     "aberta": "Avatud",
     "emOrcamento": "Hinnapakkumisel",
     "nenhumaSolicitacaoEncontrada": "Nende filtritega ühtegi päringut ei leitud",
-    "enviarOrcamento": "Saada hinnapakkumine"
+    "enviarOrcamento": "Saada hinnapakkumine",
+    "fotosCount": "{count} foto"
   },
   "oficinaSolicitacaoDetalhe": {
     "solicitacaoNaoEncontrada": "Päringut ei leitud",
@@ -643,6 +647,7 @@
     "mensagem": "Sõnum",
     "descricaoDoProblema": "Probleemi kirjeldus",
     "fotosCount": "Fotod ({count})",
+    "fotoDoDanoAlt": "Kahjustuse foto",
     "informacoesDoVeiculo": "Sõiduki andmed",
     "marca": "Mark",
     "modelo": "Mudel",
@@ -656,6 +661,8 @@
     "solicitadoEm": "Esitatud {data}"
   },
   "oficinaVeiculosEmServico": {
+    "notaVeiculoRecebido": "Sõiduk vastu võetud töökojas",
+    "notaVeiculoEntregue": "Sõiduk üle antud kliendile",
     "statusAgendado": "Planeeritud",
     "statusEmServico": "Teeninduses",
     "statusPronto": "Valmis",

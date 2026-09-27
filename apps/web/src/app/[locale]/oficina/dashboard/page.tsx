@@ -10,7 +10,7 @@ import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import StarRating from '@/components/ui/StarRating';
 import TutorialBanner from '@/components/tutorial/TutorialBanner';
-import { timeAgo, calcDistance, getUrgenciaColor, formatCurrency, cleanDescricao } from '@/lib/utils';
+import { timeAgo, calcDistance, getUrgenciaColor, formatCurrency, cleanDescricao, INTL_LOCALE } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { Link } from '@/i18n/navigation';
 
@@ -49,8 +49,8 @@ export default function OficinaDashboard() {
 
   const formatDateShort = (dateStr: string) => {
     const d = new Date(dateStr);
-    const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    return `${weekdays[d.getDay()]}, ${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+    const weekday = new Intl.DateTimeFormat(INTL_LOCALE[locale] || 'pt-BR', { weekday: 'short' }).format(d);
+    return `${weekday}, ${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
   };
 
   const formatTime = (dateStr: string) => {

@@ -75,6 +75,8 @@
     "mecanico": "Mechanic",
     "mensagem": "Message",
     "verSolicitacao": "View request",
+    "notaVeiculoRecebido": "Vehicle received at the shop",
+    "notaVeiculoEntregue": "Vehicle delivered to the customer",
     "editar": "Edit",
     "excluir": "Delete",
     "minhaAgenda": "My Schedule",
@@ -376,7 +378,8 @@
     "noLimite": "(at limit)",
     "nadaAtribuido": "Nothing assigned",
     "mostraVeiculos": "Shows scheduled vehicles (even before arrival) and vehicles in service. Delivered vehicles leave the board. See the full workload in",
-    "capacidade": "Capacity"
+    "capacidade": "Capacity",
+    "semNome": "No name"
   },
   "oficinaEnviarOrcamento": {
     "solicitacaoNaoEncontrada": "Request not found",
@@ -630,7 +633,8 @@
     "aberta": "Open",
     "emOrcamento": "Quoting",
     "nenhumaSolicitacaoEncontrada": "No requests found with these filters",
-    "enviarOrcamento": "Send Quote"
+    "enviarOrcamento": "Send Quote",
+    "fotosCount": "{count} photo(s)"
   },
   "oficinaSolicitacaoDetalhe": {
     "solicitacaoNaoEncontrada": "Request not found",
@@ -643,6 +647,7 @@
     "mensagem": "Message",
     "descricaoDoProblema": "Problem description",
     "fotosCount": "Photos ({count})",
+    "fotoDoDanoAlt": "Damage photo",
     "informacoesDoVeiculo": "Vehicle information",
     "marca": "Make",
     "modelo": "Model",
@@ -656,6 +661,8 @@
     "solicitadoEm": "Requested on {data}"
   },
   "oficinaVeiculosEmServico": {
+    "notaVeiculoRecebido": "Vehicle received at the shop",
+    "notaVeiculoEntregue": "Vehicle delivered to the customer",
     "statusAgendado": "Scheduled",
     "statusEmServico": "In service",
     "statusPronto": "Ready",

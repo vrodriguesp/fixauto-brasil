@@ -94,7 +94,7 @@ export default function SolicitacoesOficinaPage() {
                       </span>
                       <span>{timeAgo(sol.created_at, locale)}</span>
                       {sol.fotos && sol.fotos.length > 0 && (
-                        <span>{sol.fotos.length} foto(s)</span>
+                        <span>{t('fotosCount', { count: sol.fotos.length })}</span>
                       )}
                     </div>
                   </div>

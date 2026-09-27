@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase';
 import { CORES_AGENDA, TIPOS_SERVICO } from '@fixauto/shared';
 import { cleanDescricao, INTL_LOCALE } from '@/lib/utils';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
+import { Link } from '@/i18n/navigation';
 
 function getDaysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate(); }
 function getFirstDayOfMonth(y: number, m: number) { return new Date(y, m, 1).getDay(); }
@@ -162,7 +163,7 @@ export default function AgendaPage() {
     await updateEvento(ev.id, updates);
     await supabase.from('manutencao_etapas').insert({
       agenda_id: ev.id, funcionario_id: funcId || null,
-      status: 'recebido', observacao: 'Veículo recebido na oficina',
+      status: 'recebido', observacao: t('notaVeiculoRecebido'),
     });
     await refresh();
     setUpdatingId(null);
@@ -176,7 +177,7 @@ export default function AgendaPage() {
       body: JSON.stringify({ eventoId: ev.id, solicitacaoId: ev.solicitacao_id }),
     });
     await supabase.from('manutencao_etapas').insert({
-      agenda_id: ev.id, status: 'entregue', observacao: 'Veículo entregue ao cliente',
+      agenda_id: ev.id, status: 'entregue', observacao: t('notaVeiculoEntregue'),
     });
     await refresh();
     refreshSolicitacoes();
@@ -424,8 +425,8 @@ export default function AgendaPage() {
                 <div className="pt-2 flex gap-2">
                   {ev.solicitacao_id && (
                     <>
-                      <a href={`/oficina/mensagens/${ev.solicitacao_id}`} className="text-xs text-primary-600 hover:text-primary-700 font-medium">{t('mensagem')}</a>
-                      <a href={`/oficina/solicitacoes/${ev.solicitacao_id}`} className="text-xs text-gray-600 hover:text-gray-700 font-medium">{t('verSolicitacao')}</a>
+                      <Link href={`/oficina/mensagens/${ev.solicitacao_id}`} className="text-xs text-primary-600 hover:text-primary-700 font-medium">{t('mensagem')}</Link>
+                      <Link href={`/oficina/solicitacoes/${ev.solicitacao_id}`} className="text-xs text-gray-600 hover:text-gray-700 font-medium">{t('verSolicitacao')}</Link>
                     </>
                   )}
                   {ev.tipo === 'externo' && !isMecanico && (

@@ -325,7 +325,7 @@ export default function OficinaPerfilClient() {
           <p>{oficina.endereco}</p>
           <p>
             {oficina.cidade} - {oficina.estado}
-            {oficina.cep && `, CEP: ${oficina.cep}`}
+            {oficina.cep && `, ${t('cepLabel')}: ${oficina.cep}`}
           </p>
         </div>
         <div className="rounded-lg overflow-hidden border border-gray-200">

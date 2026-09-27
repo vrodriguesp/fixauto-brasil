@@ -625,6 +625,7 @@
     "servicesOfferedTitle": "Services offered",
     "photosTitle": "Photos",
     "addressTitle": "Address",
+    "cepLabel": "Postal code",
     "mapIframeTitle": "Shop location",
     "openInMapsLink": "Open in Google Maps",
     "contactHoursTitle": "Contact and Hours",

@@ -37,7 +37,7 @@ export default function DistribuicaoTrabalhoPage() {
         setFuncionarios(
           ((data as any[]) || []).map((f) => ({
             id: f.id,
-            nome: f.profile?.nome || 'Sem nome',
+            nome: f.profile?.nome || t('semNome'),
             cargo: f.cargo,
             capacidade_maxima: f.capacidade_maxima,
           }))

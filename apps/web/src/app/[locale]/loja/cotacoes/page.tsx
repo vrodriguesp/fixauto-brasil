@@ -5,7 +5,8 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { timeAgo } from '@/lib/utils';
+import { timeAgo, formatCurrency } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 import type { CotacaoPeca } from '@fixauto/shared';
 
 interface CotacaoComOficina extends Omit<CotacaoPeca, 'oficina'> {
@@ -122,7 +123,7 @@ export default function LojaCotacoesPage() {
                   <span className="text-xs text-gray-400">{timeAgo(c.created_at, locale)}</span>
                   {!c.minhaResposta && loja && (
                     <Link
-                      href={`/loja/conversa/nova?cotacaoId=${c.id}&oficinaNome=${encodeURIComponent(c.oficina?.nome_fantasia || 'Oficina')}&pecaDescricao=${encodeURIComponent(c.peca_descricao || '')}`}
+                      href={`/loja/conversa/nova?cotacaoId=${c.id}${c.oficina?.nome_fantasia ? `&oficinaNome=${encodeURIComponent(c.oficina.nome_fantasia)}` : ''}&pecaDescricao=${encodeURIComponent(c.peca_descricao || '')}`}
                       className="text-xs font-medium text-primary-600 hover:underline whitespace-nowrap"
                     >
                       {t('tirarDuvida')}
@@ -134,7 +135,7 @@ export default function LojaCotacoesPage() {
               {c.minhaResposta ? (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3 flex items-center justify-between gap-3">
                   <p className="text-sm text-green-800">
-                    {t('respostaEnviada', { preco: c.minhaResposta.preco.toFixed(2), prazo: c.minhaResposta.prazo_dias })}
+                    {t('respostaEnviada', { preco: formatCurrency(c.minhaResposta.preco, currencyForCountry(loja?.pais), locale), prazo: c.minhaResposta.prazo_dias })}
                   </p>
                   <Link href={`/loja/conversa/${c.minhaResposta.id}`} className="text-xs font-medium text-primary-600 hover:underline whitespace-nowrap">
                     {t('conversarLink')}

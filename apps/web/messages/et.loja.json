@@ -137,7 +137,7 @@
     "veiculoInfo": "Sõiduk: {marca} {modelo} {ano}",
     "quantidadeInfo": "Kogus: {quantidade}",
     "tirarDuvida": "Küsi üle",
-    "respostaEnviada": "Sina vastasid: R$ {preco} - tarneaeg {prazo} päev(a)",
+    "respostaEnviada": "Sina vastasid: {preco} - tarneaeg {prazo} päev(a)",
     "conversarLink": "Vestlus",
     "labelPreco": "Hind (R$)",
     "labelPrazo": "Tarneaeg (päevades)",
