@@ -88,9 +88,19 @@ Aproveitei pra fazer a correção "da forma mais limpa" (como pedido): em vez de
 
 Testado (`tsc`/build limpos nos dois apps), commitado e enviado ao GitHub (commit `b124294`). **Não precisou de novo deploy na VM** — o comportamento do site em produção não mudou (mesmas funções, só moradia diferente).
 
+## Parte 5: telas de "acompanhamento" e "avaliação" no app mobile
+
+Continuando a lista de paridade com o site (item explícito da especificação do app, ainda não construído): a tela de detalhe de uma solicitação no app mobile (`solicitacao/[id].tsx`) ganhou duas coisas novas:
+
+1. **Linha do tempo do reparo** ("acompanhamento"): busca as etapas que a oficina foi registrando (recebido → diagnóstico → em execução → ... → entregue, as mesmas 10 etapas já usadas no site) e mostra como uma lista simples, com a etapa mais recente destacada.
+2. **Avaliação pós-serviço**: quando a solicitação está concluída, o cliente vê um formulário de 1 a 5 estrelas + comentário opcional pra avaliar a oficina — a mesma lógica do site (grava a nota, depois pede pra recalcular a média da oficina). Se já avaliou antes, mostra só a nota já dada, sem deixar avaliar de novo.
+
+Traduções novas adicionadas nos 4 idiomas (reaproveitando exatamente o texto já usado no site, pra manter consistência). `tsc --noEmit` limpo. Commitado e enviado (`b6f6e4e`).
+
+Com isso, o app mobile cobre agora **6 dos 10 itens do escopo v1** definido na especificação (auth, dashboard, nova solicitação, emergência, orçamentos, acompanhamento, avaliação, veículos — faltam mensagens de áudio no chat, perfil/troca de idioma completo, e o teste real em dispositivo).
+
 ## Próximos passos imediatos
 
-1. Rodar o app mobile de verdade (Expo Go) e validar o fluxo de login/dashboard contra dados reais — credenciais já corrigidas, falta só o teste em dispositivo/emulador.
-2. Continuar as telas do app mobile até paridade completa com a área cliente do web (orçamentos, acompanhamento, avaliação).
-3. Decidir o design de localização das mensagens de chat (pendência registrada acima) antes de implementar.
-4. Considerar a página pública `/oficinas` (hub/listagem) pra SEO de cauda longa.
+1. Rodar o app mobile de verdade (Expo Go) e validar o fluxo de login/dashboard contra dados reais — credenciais já corrigidas, falta só o teste em dispositivo/emulador. **Isso deveria ser priorizado antes de continuar adicionando mais telas** — várias coisas só se confirmam rodando de verdade (ex: se o Supabase Realtime funciona igual no React Native).
+2. Decidir o design de localização das mensagens de chat (pendência registrada acima) antes de implementar.
+3. Considerar a página pública `/oficinas` (hub/listagem) pra SEO de cauda longa.
