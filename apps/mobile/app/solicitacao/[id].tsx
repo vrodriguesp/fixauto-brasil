@@ -3,11 +3,13 @@ import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert } from 'rea
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useFocusEffect, router, Stack } from 'expo-router';
 import type { Solicitacao, Orcamento, DisponibilidadeSlot } from '@fixauto/shared';
+import { formatCurrency, formatDate, currencyForCountry } from '@fixauto/shared';
 import { supabase } from '../../lib/supabase';
 import { apiFetch } from '../../lib/api';
 
 export default function SolicitacaoDetailScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language;
   const { id } = useLocalSearchParams<{ id: string }>();
   const [solicitacao, setSolicitacao] = useState<Solicitacao | null>(null);
   const [loading, setLoading] = useState(true);
@@ -17,7 +19,7 @@ export default function SolicitacaoDetailScreen() {
   const carregar = useCallback(async () => {
     const { data } = await supabase
       .from('solicitacoes')
-      .select('*, veiculo:veiculos(*), orcamentos(*, oficina:oficinas(nome_fantasia))')
+      .select('*, veiculo:veiculos(*), orcamentos(*, oficina:oficinas(nome_fantasia, pais))')
       .eq('id', id)
       .single();
     setSolicitacao(data as Solicitacao);
@@ -82,7 +84,7 @@ export default function SolicitacaoDetailScreen() {
         {(solicitacao.orcamentos || []).map((orc) => (
           <View key={orc.id} className="bg-white rounded-xl p-4 mb-3 border border-gray-200">
             <Text className="font-semibold text-gray-900 mb-1">{t('orcamentos.recebidoDe', { oficina: orc.oficina?.nome_fantasia || '-' })}</Text>
-            <Text className="text-2xl font-bold text-gray-900 mb-2">R$ {orc.valor_total.toFixed(2)}</Text>
+            <Text className="text-2xl font-bold text-gray-900 mb-2">{formatCurrency(orc.valor_total, currencyForCountry((orc.oficina as any)?.pais), locale)}</Text>
             <Text className="text-xs text-gray-500 mb-3">{t(`orcamentos.status${orc.status.charAt(0).toUpperCase()}${orc.status.slice(1)}`)}</Text>
 
             {orc.status === 'enviado' || orc.status === 'visualizado' ? (
@@ -93,7 +95,7 @@ export default function SolicitacaoDetailScreen() {
                     onPress={() => setSlotSelecionado((prev) => ({ ...prev, [orc.id]: slot.id }))}
                     className={`border rounded-lg px-3 py-2 mb-2 ${slotSelecionado[orc.id] === slot.id ? 'border-primary-600 bg-primary-50' : 'border-gray-200'}`}
                   >
-                    <Text className="text-sm text-gray-700">{new Date(slot.data_checkin).toLocaleDateString()} - {slot.turno}</Text>
+                    <Text className="text-sm text-gray-700">{formatDate(slot.data_checkin, locale)} - {slot.turno}</Text>
                   </Pressable>
                 ))}
                 <View className="flex-row gap-2 mt-2">
