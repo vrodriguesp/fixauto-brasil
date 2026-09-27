@@ -248,7 +248,8 @@
     "statusInProgress": "In corso",
     "statusCompleted": "Completata",
     "paymentTag": "(pagamento)",
-    "otherDriverTag": "(altro conducente)"
+    "otherDriverTag": "(altro conducente)",
+    "platePrefix": "Targa {plate} - "
   },
   "clienteMensagemDetalhe": {
     "today": "Oggi",

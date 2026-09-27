@@ -58,7 +58,7 @@
     "title13": "13. Foro e legislação aplicável",
     "body13": "Estes Termos são regidos pela legislação brasileira. Fica eleito o foro do domicílio do Cliente para dirimir eventuais controvérsias envolvendo consumidores, conforme faculta o art. 101, I, do Código de Defesa do Consumidor. Para litígios entre Parceiros e o BipFix decorrentes exclusivamente da relação comercial de intermediação, fica eleito o foro da Comarca de São Paulo/SP.",
     "title14": "14. Contato",
-    "body14": "Dúvidas sobre estes Termos podem ser enviadas para <mailLink>contato@bipfix.com</mailLink>.",
+    "body14": "Dúvidas sobre estes Termos podem ser enviadas para <mailLink>support@bipfix.com</mailLink>.",
     "footerDisclaimer": "Este documento tem caráter informativo e reflete as regras de funcionamento da plataforma BipFix. Para fins de conformidade jurídica plena antes da divulgação comercial, recomenda-se revisão por advogado(a) especializado(a) em direito do consumidor e direito digital."
   },
   "privacidade": {
@@ -98,7 +98,7 @@
     "list6_5": "Eliminação dos dados tratados com base no seu consentimento;",
     "list6_6": "Informação sobre com quem compartilhamos seus dados;",
     "list6_7": "Revogação do consentimento, quando aplicável.",
-    "body6": "Para exercer qualquer desses direitos, entre em contato pelo e-mail <mailLink>privacidade@bipfix.com</mailLink>. Responderemos dentro do prazo legal aplicável.",
+    "body6": "Para exercer qualquer desses direitos, entre em contato pelo e-mail <mailLink>privacy@bipfix.com</mailLink>. Responderemos dentro do prazo legal aplicável.",
     "title7": "7. Segurança da informação",
     "body7": "Adotamos medidas técnicas e administrativas para proteger dados pessoais contra acessos não autorizados e situações acidentais ou ilícitas de destruição, perda, alteração, comunicação ou difusão, incluindo controle de acesso por autenticação, isolamento de dados por conta (RLS a nível de banco de dados) e criptografia em trânsito.",
     "title8": "8. Crianças e adolescentes",
@@ -106,7 +106,7 @@
     "title9": "9. Alterações desta Política",
     "body9": "Podemos atualizar esta Política periodicamente. Alterações relevantes serão comunicadas por e-mail ou aviso na plataforma antes de entrarem em vigor.",
     "title10": "10. Contato do Encarregado de Dados (DPO)",
-    "body10": "Para questões relacionadas à proteção de dados pessoais, contate: <mailLink>privacidade@bipfix.com</mailLink>.",
+    "body10": "Para questões relacionadas à proteção de dados pessoais, contate: <mailLink>privacy@bipfix.com</mailLink>.",
     "footerDisclaimer": "Este documento tem caráter informativo. Para fins de conformidade jurídica plena antes da divulgação comercial, recomenda-se revisão por advogado(a) especializado(a) em proteção de dados (LGPD)."
   },
   "emergencia": {
@@ -266,7 +266,7 @@
   "docsLayout": {
     "backToSite": "Voltar ao site",
     "helpCenterLink": "Central de Ajuda",
-    "footerContactText": "Ainda tem dúvidas? Entre em contato pelo e-mail <mailLink>contato@bipfix.com</mailLink> ou pelo telefone <strong>(11) 3000-0000</strong>.",
+    "footerContactText": "Ainda tem dúvidas? Entre em contato pelo e-mail <mailLink>support@bipfix.com</mailLink>.",
     "footerCopyright": "2026 BipFix. Todos os direitos reservados."
   },
   "docsCliente": {
@@ -637,5 +637,17 @@
     "reviewsTitle": "Avaliações ({count})",
     "noReviewsText": "Esta oficina ainda não possui avaliações.",
     "clientFallback": "Cliente"
+  },
+  "audioMessage": {
+    "hideTranscription": "Ocultar transcrição",
+    "showTranscription": "Ver transcrição",
+    "transcribing": "Transcrevendo...",
+    "errorRetry": "Erro. Tentar novamente?",
+    "transcribe": "Transcrever"
+  },
+  "audioRecorder": {
+    "microphonePermission": "Permita o acesso ao microfone",
+    "stopRecording": "Parar gravação",
+    "recordAudio": "Gravar áudio"
   }
 }

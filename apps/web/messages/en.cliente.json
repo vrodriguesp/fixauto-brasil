@@ -248,7 +248,8 @@
     "statusInProgress": "In progress",
     "statusCompleted": "Completed",
     "paymentTag": "(payment)",
-    "otherDriverTag": "(other driver)"
+    "otherDriverTag": "(other driver)",
+    "platePrefix": "Plate {plate} - "
   },
   "clienteMensagemDetalhe": {
     "today": "Today",

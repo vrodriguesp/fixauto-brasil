@@ -326,7 +326,7 @@ export default function ClienteMensagensListPage() {
                       {group.veiculo_marca} {group.veiculo_modelo}
                     </p>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      {group.placa ? `Placa ${group.placa} - ` : ''}{cleanDescricao(group.descricao)?.slice(0, 60)}{(cleanDescricao(group.descricao)?.length || 0) > 60 ? '...' : ''}
+                      {group.placa ? t('platePrefix', { plate: group.placa }) : ''}{cleanDescricao(group.descricao)?.slice(0, 60)}{(cleanDescricao(group.descricao)?.length || 0) > 60 ? '...' : ''}
                     </p>
                   </div>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${

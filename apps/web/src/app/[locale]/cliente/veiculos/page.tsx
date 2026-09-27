@@ -127,7 +127,6 @@ function VeiculosPage() {
               <input
                 type="text"
                 className="input-field"
-                placeholder="ABC-1234"
                 value={formData.placa}
                 onChange={(e) => setFormData({ ...formData, placa: e.target.value })}
               />

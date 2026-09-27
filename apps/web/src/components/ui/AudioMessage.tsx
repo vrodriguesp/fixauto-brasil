@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import AudioPlayer from './AudioPlayer';
 
 interface AudioMessageProps {
@@ -18,6 +19,7 @@ export default function AudioMessage({
   transcricaoStatus,
   mensagemId,
 }: AudioMessageProps) {
+  const t = useTranslations('audioMessage');
   const [showTranscricao, setShowTranscricao] = useState(false);
   const [localTranscricao, setLocalTranscricao] = useState(transcricao);
   const [localStatus, setLocalStatus] = useState(transcricaoStatus);
@@ -57,26 +59,26 @@ export default function AudioMessage({
           onClick={() => setShowTranscricao(!showTranscricao)}
           className="text-[11px] underline opacity-70 hover:opacity-100 transition-opacity"
         >
-          {showTranscricao ? 'Ocultar transcrição' : 'Ver transcrição'}
+          {showTranscricao ? t('hideTranscription') : t('showTranscription')}
         </button>
       ) : localStatus === 'processando' || transcribing ? (
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin opacity-60" />
-          <span className="text-[11px] opacity-70">Transcrevendo...</span>
+          <span className="text-[11px] opacity-70">{t('transcribing')}</span>
         </div>
       ) : localStatus === 'erro' ? (
         <button
           onClick={handleTranscrever}
           className="text-[11px] underline opacity-70 hover:opacity-100 transition-opacity"
         >
-          Erro. Tentar novamente?
+          {t('errorRetry')}
         </button>
       ) : (
         <button
           onClick={handleTranscrever}
           className="text-[11px] underline opacity-70 hover:opacity-100 transition-opacity"
         >
-          Transcrever
+          {t('transcribe')}
         </button>
       )}
 

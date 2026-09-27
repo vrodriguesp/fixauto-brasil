@@ -248,7 +248,8 @@
     "statusInProgress": "Em andamento",
     "statusCompleted": "Concluída",
     "paymentTag": "(pagamento)",
-    "otherDriverTag": "(outro motorista)"
+    "otherDriverTag": "(outro motorista)",
+    "platePrefix": "Placa {plate} - "
   },
   "clienteMensagemDetalhe": {
     "today": "Hoje",

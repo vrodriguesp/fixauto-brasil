@@ -58,7 +58,7 @@
     "title13": "13. Governing law and jurisdiction",
     "body13": "Disputes involving a Customer are governed by, and the courts of, the Customer's country of residence, to the extent mandatory consumer protection law so requires (for Customers in Brazil, this means Brazilian law and the courts of the Customer's place of residence, as permitted under art. 101, I of the Consumer Protection Code). For disputes between Partners and BipFix arising exclusively from the intermediation business relationship, and where not otherwise required by mandatory local law, the courts of the District of São Paulo/SP, Brazil are elected. <strong>Note:</strong> the governing-law provisions of this clause for markets outside Brazil are provisional pending review by local counsel, and do not override any mandatory consumer-protection rule of the Customer's country.",
     "title14": "14. Contact",
-    "body14": "Questions about these Terms may be sent to <mailLink>contato@bipfix.com</mailLink>.",
+    "body14": "Questions about these Terms may be sent to <mailLink>support@bipfix.com</mailLink>.",
     "footerDisclaimer": "This document is provided for informational purposes and reflects the operating rules of the BipFix platform. It was originally drafted for the Brazilian market; the generic, jurisdiction-neutral language used for other countries is a provisional draft, and full legal compliance in each country where BipFix operates requires review by a lawyer specializing in local consumer and data protection law before commercial release there."
   },
   "privacidade": {
@@ -98,7 +98,7 @@
     "list6_5": "Deletion of data processed on the basis of your consent;",
     "list6_6": "Information on who we share your data with;",
     "list6_7": "Withdrawal of consent, where applicable.",
-    "body6": "To exercise any of these rights, contact us at <mailLink>privacidade@bipfix.com</mailLink>. We will respond within the applicable legal timeframe.",
+    "body6": "To exercise any of these rights, contact us at <mailLink>privacy@bipfix.com</mailLink>. We will respond within the applicable legal timeframe.",
     "title7": "7. Information security",
     "body7": "We adopt technical and administrative measures to protect personal data against unauthorized access and accidental or unlawful destruction, loss, alteration, disclosure or dissemination, including authentication-based access control, per-account data isolation (database-level row-level security) and encryption in transit.",
     "title8": "8. Children and minors",
@@ -106,7 +106,7 @@
     "title9": "9. Changes to this Policy",
     "body9": "We may update this Policy from time to time. Material changes will be communicated by email or platform notice before they take effect.",
     "title10": "10. Data Protection Officer (DPO) contact",
-    "body10": "For questions related to personal data protection, contact: <mailLink>privacidade@bipfix.com</mailLink>.",
+    "body10": "For questions related to personal data protection, contact: <mailLink>privacy@bipfix.com</mailLink>.",
     "footerDisclaimer": "This document is provided for informational purposes. It was originally drafted for the Brazilian market (LGPD); the generic, jurisdiction-neutral language used for other countries is a provisional draft, and full legal compliance in each country where BipFix operates (including GDPR compliance in the European Union) requires review by a lawyer specializing in local data protection law before commercial release there."
   },
   "emergencia": {
@@ -266,7 +266,7 @@
   "docsLayout": {
     "backToSite": "Back to site",
     "helpCenterLink": "Help Center",
-    "footerContactText": "Still have questions? Contact us by email at <mailLink>contato@bipfix.com</mailLink> or by phone at <strong>(11) 3000-0000</strong>.",
+    "footerContactText": "Still have questions? Contact us by email at <mailLink>support@bipfix.com</mailLink>.",
     "footerCopyright": "2026 BipFix. All rights reserved."
   },
   "docsCliente": {
@@ -637,5 +637,17 @@
     "reviewsTitle": "Reviews ({count})",
     "noReviewsText": "This repair shop doesn't have any reviews yet.",
     "clientFallback": "Customer"
+  },
+  "audioMessage": {
+    "hideTranscription": "Hide transcript",
+    "showTranscription": "View transcript",
+    "transcribing": "Transcribing...",
+    "errorRetry": "Error. Try again?",
+    "transcribe": "Transcribe"
+  },
+  "audioRecorder": {
+    "microphonePermission": "Please allow microphone access",
+    "stopRecording": "Stop recording",
+    "recordAudio": "Record audio"
   }
 }

@@ -193,7 +193,7 @@ export default function AcompanhamentoPage() {
 
   const formatDateTime = (dateStr: string) => {
     const d = new Date(dateStr);
-    return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+    return d.toLocaleString(locale, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
   const formatDate = (dateStr: string) => {
@@ -318,7 +318,7 @@ export default function AcompanhamentoPage() {
           )}
           <div>
             <p className="text-xs text-gray-500">{t('serviceLabel')}</p>
-            <p className="text-sm font-medium text-gray-900">{agenda.solicitacao?.tipo || '-'}</p>
+            <p className="text-sm font-medium text-gray-900">{agenda.solicitacao?.tipo ? tc(`tiposServico.${agenda.solicitacao.tipo}`) : '-'}</p>
           </div>
         </div>
       </div>

@@ -248,7 +248,8 @@
     "statusInProgress": "Töös",
     "statusCompleted": "Lõpetatud",
     "paymentTag": "(makse)",
-    "otherDriverTag": "(teine juht)"
+    "otherDriverTag": "(teine juht)",
+    "platePrefix": "Number {plate} - "
   },
   "clienteMensagemDetalhe": {
     "today": "Täna",

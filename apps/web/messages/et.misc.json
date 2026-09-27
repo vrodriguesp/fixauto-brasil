@@ -58,7 +58,7 @@
     "title13": "13. Kohaldatav õigus ja kohtualluvus",
     "body13": "Kliendiga seotud vaidlusi reguleerib ja neid lahendab Kliendi elukohariigi õigus ja kohtualluvus, niivõrd kui seda nõuab kohustuslik tarbijakaitseõigus (Brasiilias elavate Klientide puhul tähendab see Brasiilia õigust ja Kliendi elukohajärgset kohtualluvust, nagu võimaldab Tarbijakaitse Seadustiku art 101, I). Partnerite ja BipFixi vaheliste, üksnes vahendusalasest ärisuhtest tulenevate vaidluste puhul, kui kohustuslik kohalik õigus ei sätesta teisiti, on kokku lepitud São Paulo/SP kohtualluvus (Brasiilia). <strong>Märkus:</strong> käesoleva punkti kohaldatava õiguse sätted väljaspool Brasiiliat asuvate turgude jaoks on ajutised ja ootavad kohaliku õigusnõustaja ülevaatust ega tühista Kliendi riigi kohustuslikke tarbijakaitsenorme.",
     "title14": "14. Kontakt",
-    "body14": "Küsimused käesolevate Tingimuste kohta võib saata aadressile <mailLink>contato@bipfix.com</mailLink>.",
+    "body14": "Küsimused käesolevate Tingimuste kohta võib saata aadressile <mailLink>support@bipfix.com</mailLink>.",
     "footerDisclaimer": "Käesolev dokument on informatiivse iseloomuga ja kajastab BipFixi platvormi toimimise reegleid. See koostati algselt Brasiilia turu jaoks; teiste riikide jaoks kasutatud üldine, jurisdiktsiooniüleselt neutraalne sõnastus on ajutine mustand ning täielik õiguslik vastavus igas riigis, kus BipFix tegutseb, eeldab enne sealset kommertskasutuselevõttu kohaliku tarbija- ja andmekaitseõiguse valdkonna juristi ülevaatust."
   },
   "privacidade": {
@@ -98,7 +98,7 @@
     "list6_5": "Nõusoleku alusel töödeldud andmete kustutamist;",
     "list6_6": "Teavet selle kohta, kellega andmeid jagatakse;",
     "list6_7": "Nõusoleku tagasivõtmist, kui see on kohaldatav.",
-    "body6": "Nende õiguste kasutamiseks võib pöörduda e-posti aadressil <mailLink>privacidade@bipfix.com</mailLink>. Vastus antakse kohaldatava seadusjärgse tähtaja jooksul.",
+    "body6": "Nende õiguste kasutamiseks võib pöörduda e-posti aadressil <mailLink>privacy@bipfix.com</mailLink>. Vastus antakse kohaldatava seadusjärgse tähtaja jooksul.",
     "title7": "7. Infoturve",
     "body7": "Isikuandmete kaitseks loata juurdepääsu ning juhusliku või õigusvastase hävimise, kaotsimineku, muutmise, avalikustamise või levitamise eest rakendatakse tehnilisi ja korralduslikke meetmeid, sealhulgas autentimisel põhinevat juurdepääsukontrolli, kontopõhist andmete isoleerimist (andmebaasitasandi RLS) ja krüpteerimist andmeedastusel.",
     "title8": "8. Lapsed ja alaealised",
@@ -106,7 +106,7 @@
     "title9": "9. Käesoleva Poliitika muudatused",
     "body9": "Käesolevat Poliitikat võidakse aeg-ajalt uuendada. Olulistest muudatustest teavitatakse e-posti või platvormisisese teatega enne nende jõustumist.",
     "title10": "10. Andmekaitsespetsialisti (DPO) kontakt",
-    "body10": "Isikuandmete kaitsega seotud küsimuste korral võtke ühendust: <mailLink>privacidade@bipfix.com</mailLink>.",
+    "body10": "Isikuandmete kaitsega seotud küsimuste korral võtke ühendust: <mailLink>privacy@bipfix.com</mailLink>.",
     "footerDisclaimer": "Käesolev dokument on informatiivse iseloomuga. See koostati algselt Brasiilia turu jaoks (LGPD); teiste riikide jaoks kasutatud üldine, jurisdiktsiooniüleselt neutraalne sõnastus on ajutine mustand ning täielik õiguslik vastavus igas riigis, kus BipFix tegutseb (sealhulgas GDPR-iga vastavus Euroopa Liidus), eeldab enne sealset kommertskasutuselevõttu kohaliku andmekaitseõiguse valdkonna juristi ülevaatust."
   },
   "emergencia": {
@@ -266,7 +266,7 @@
   "docsLayout": {
     "backToSite": "Tagasi saidile",
     "helpCenterLink": "Abikeskus",
-    "footerContactText": "Kas sul on veel küsimusi? Võta meiega ühendust e-posti aadressil <mailLink>contato@bipfix.com</mailLink> või telefonil <strong>(11) 3000-0000</strong>.",
+    "footerContactText": "Kas sul on veel küsimusi? Võta meiega ühendust e-posti aadressil <mailLink>support@bipfix.com</mailLink>.",
     "footerCopyright": "2026 BipFix. Kõik õigused kaitstud."
   },
   "docsCliente": {
@@ -637,5 +637,17 @@
     "reviewsTitle": "Hinnangud ({count})",
     "noReviewsText": "Sellel töökojal pole veel hinnanguid.",
     "clientFallback": "Klient"
+  },
+  "audioMessage": {
+    "hideTranscription": "Peida transkriptsioon",
+    "showTranscription": "Vaata transkriptsiooni",
+    "transcribing": "Transkribeerimine...",
+    "errorRetry": "Viga. Proovida uuesti?",
+    "transcribe": "Transkribeeri"
+  },
+  "audioRecorder": {
+    "microphonePermission": "Palun luba mikrofoni kasutamine",
+    "stopRecording": "Peata salvestamine",
+    "recordAudio": "Salvesta heli"
   }
 }

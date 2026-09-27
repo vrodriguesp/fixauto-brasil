@@ -161,6 +161,7 @@ function ReviewDisplay({
 
 export default function HistóricoPage() {
   const t = useTranslations('clienteHistorico');
+  const tc = useTranslations('constants');
   const locale = useLocale();
   const { solicitacoes } = useSolicitacoes();
   const { avaliacoes, create, update } = useAvaliacoes();
@@ -356,7 +357,7 @@ export default function HistóricoPage() {
                                   {t('refusedBadge')}
                                 </span>
                               </div>
-                              <p className="text-sm text-gray-600">{sol.tipo}</p>
+                              <p className="text-sm text-gray-600">{tc(`tiposServico.${sol.tipo}`)}</p>
                               <p className="text-xs text-gray-500 mt-1">{formatDate(sol.created_at, locale)}</p>
                             </div>
                           </div>

@@ -58,7 +58,7 @@
     "title13": "13. Foro competente e legge applicabile",
     "body13": "Le controversie che coinvolgono un Cliente sono disciplinate dalla legge del paese di residenza del Cliente, e sono di competenza del foro dello stesso, nella misura richiesta dalla normativa consumeristica inderogabile (per i Clienti in Brasile, ciò significa la legge brasiliana e il foro del domicilio del Cliente, come consentito dall'art. 101, I, del Codice di Difesa del Consumatore). Per le controversie tra Partner e BipFix derivanti esclusivamente dal rapporto commerciale di intermediazione, e salvo quanto diversamente richiesto da norme locali inderogabili, è eletto il foro di San Paolo/SP, Brasile. <strong>Nota:</strong> le disposizioni sulla legge applicabile della presente clausola per i mercati fuori dal Brasile sono provvisorie, in attesa di revisione da parte di un legale locale, e non pregiudicano alcuna norma inderogabile a tutela del consumatore del paese del Cliente.",
     "title14": "14. Contatti",
-    "body14": "Eventuali domande sui presenti Termini possono essere inviate a <mailLink>contato@bipfix.com</mailLink>.",
+    "body14": "Eventuali domande sui presenti Termini possono essere inviate a <mailLink>support@bipfix.com</mailLink>.",
     "footerDisclaimer": "Il presente documento ha carattere puramente informativo e riflette le regole di funzionamento della piattaforma BipFix. È stato redatto originariamente per il mercato brasiliano; il linguaggio generico e neutro rispetto alla giurisdizione utilizzato per gli altri paesi è una bozza provvisoria, e la piena conformità giuridica in ciascun paese in cui BipFix opera richiede una revisione da parte di un avvocato specializzato in diritto dei consumatori e protezione dei dati locale prima della diffusione commerciale in quel paese."
   },
   "privacidade": {
@@ -98,7 +98,7 @@
     "list6_5": "Cancellazione dei dati trattati sulla base del consenso;",
     "list6_6": "Informazioni su chi riceve i dati in condivisione;",
     "list6_7": "Revoca del consenso, ove applicabile.",
-    "body6": "Per esercitare uno di questi diritti, contattaci all'indirizzo <mailLink>privacidade@bipfix.com</mailLink>. Risponderemo entro il termine di legge applicabile.",
+    "body6": "Per esercitare uno di questi diritti, contattaci all'indirizzo <mailLink>privacy@bipfix.com</mailLink>. Risponderemo entro il termine di legge applicabile.",
     "title7": "7. Sicurezza delle informazioni",
     "body7": "Adottiamo misure tecniche e organizzative per proteggere i dati personali da accessi non autorizzati e da eventi accidentali o illeciti di distruzione, perdita, alterazione, comunicazione o diffusione, tra cui il controllo degli accessi tramite autenticazione, l'isolamento dei dati per account (row-level security a livello di database) e la crittografia dei dati in transito.",
     "title8": "8. Minori",
@@ -106,7 +106,7 @@
     "title9": "9. Modifiche alla presente Informativa",
     "body9": "Possiamo aggiornare periodicamente la presente Informativa. Le modifiche rilevanti saranno comunicate via e-mail o tramite avviso sulla piattaforma prima della loro entrata in vigore.",
     "title10": "10. Contatto del Responsabile della Protezione dei Dati (DPO)",
-    "body10": "Per domande relative alla protezione dei dati personali, contattaci: <mailLink>privacidade@bipfix.com</mailLink>.",
+    "body10": "Per domande relative alla protezione dei dati personali, contattaci: <mailLink>privacy@bipfix.com</mailLink>.",
     "footerDisclaimer": "Il presente documento ha carattere puramente informativo. È stato redatto originariamente per il mercato brasiliano (LGPD); il linguaggio generico e neutro rispetto alla giurisdizione utilizzato per gli altri paesi è una bozza provvisoria, e la piena conformità giuridica in ciascun paese in cui BipFix opera (inclusa la conformità al GDPR nell'Unione Europea) richiede una revisione da parte di un avvocato specializzato in protezione dei dati locale prima della diffusione commerciale in quel paese."
   },
   "emergencia": {
@@ -266,7 +266,7 @@
   "docsLayout": {
     "backToSite": "Torna al sito",
     "helpCenterLink": "Centro Assistenza",
-    "footerContactText": "Hai ancora domande? Contattaci via e-mail all'indirizzo <mailLink>contato@bipfix.com</mailLink> o telefonicamente al <strong>(11) 3000-0000</strong>.",
+    "footerContactText": "Hai ancora domande? Contattaci via e-mail all'indirizzo <mailLink>support@bipfix.com</mailLink>.",
     "footerCopyright": "2026 BipFix. Tutti i diritti riservati."
   },
   "docsCliente": {
@@ -637,5 +637,17 @@
     "reviewsTitle": "Recensioni ({count})",
     "noReviewsText": "Questa officina non ha ancora recensioni.",
     "clientFallback": "Cliente"
+  },
+  "audioMessage": {
+    "hideTranscription": "Nascondi trascrizione",
+    "showTranscription": "Vedi trascrizione",
+    "transcribing": "Trascrizione in corso...",
+    "errorRetry": "Errore. Riprovare?",
+    "transcribe": "Trascrivi"
+  },
+  "audioRecorder": {
+    "microphonePermission": "Consenti l'accesso al microfono",
+    "stopRecording": "Ferma registrazione",
+    "recordAudio": "Registra audio"
   }
 }
