@@ -55,7 +55,10 @@ export default function MensagensScreen() {
       const solMsgs = (mensagens || []).filter((m: any) => m.solicitacao_id === sol.id);
       if (solMsgs.length === 0) continue;
       const last = solMsgs[0];
-      const oficina = (orcamentos || []).find((o: any) => o.solicitacao_id === sol.id)?.oficina;
+      // O cliente supabase-js sem tipos gerados do schema infere join
+      // to-one (orcamentos.oficina_id -> oficinas.id) como array - em
+      // runtime o Supabase sempre retorna um objeto unico aqui.
+      const oficina = (orcamentos || []).find((o: any) => o.solicitacao_id === sol.id)?.oficina as { nome_fantasia: string } | undefined;
       items.push({
         solicitacaoId: sol.id,
         oficinaNome: oficina?.nome_fantasia || '-',
