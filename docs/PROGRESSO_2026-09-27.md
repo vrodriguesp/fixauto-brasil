@@ -136,8 +136,33 @@ Commit `705c6a0` (os 15 bugs) + todo o trabalho acumulado das Partes 3–5 que a
 3. **iOS nunca foi testado de verdade** (nem simulador, nem aparelho físico) — impossível nesta máquina Windows. Só confirmei que o pacote *compila* (`expo export --platform ios` gera o bundle sem erro), não que ele *roda* corretamente. Precisa de um Mac (ou o serviço pago EAS Build da Expo) pra validar de fato.
 4. **Página pública `/oficinas` (hub/listagem)** — ainda não existe (só existe a página individual `/oficinas/[id]`). Pode valer a pena pra SEO de cauda longa ("oficina de funilaria em Tallinn", etc.), mas é uma decisão de produto/roadmap, não um bug.
 
+## Parte 7: correção do que ficou em aberto, autorizado pelo usuário à noite
+
+Usuário deu autorização explícita pra seguir resolvendo os pontos em aberto da Parte 6 com a solução mais limpa, mesmo que desse mais trabalho, deixando só o que dependesse realmente dele pra decidir amanhã ("continua com o test... voce sabe a probabilidade das minhas respostas").
+
+### 1. Escape de HTML — finalizado (era o ponto em aberto 1)
+
+Cobertura completa agora: todo o `notifications.ts` (oficinaNome, veiculoNome, descrição de peça, nome de fornecedor, placa, dados de contato da oficina) mais **3 rotas que montavam e-mail HTML na mão sem nenhum escape** — a mais grave era `criar-solicitacao-emergencia`, que roda a partir de um **formulário público sem login nenhum** (qualquer pessoa pode preencher "fulano bateu no meu carro" e o nome digitado ali ia direto pro HTML do e-mail de outra pessoa). As outras duas (`notificar-acidente`, `esqueci-senha`) também corrigidas. `tsc` e `npm run build` limpos, implantado em produção (commit `439977f`).
+
+### 2. Teste real no emulador Android — outro bug real encontrado
+
+Reaproveitando o emulador já montado na Parte 6: criei um veículo de verdade (Toyota 4-Runner, catálogo FIPE em cascata funcionando certinho) e enviei uma nova solicitação de ponta a ponta pelo app, em estoniano. Fluxo completo funcionou, incluindo a tela de sucesso.
+
+No meio do teste, a permissão de localização falhou (esperado — emulador sem GPS de verdade configurado) e **o app não tratava esse erro**: virava uma exceção não capturada, sem aviso nenhum pro usuário, só um campo de endereço vazio que dava pra preencher na mão (o que mascarava o problema em teste manual, mas travaria silenciosamente qualquer usuário real com GPS desligado ou sinal ruim, cenário comum principalmente em prédios). Corrigido nos dois lugares que buscam localização (`nova-solicitacao.tsx`, `emergencia.tsx`) — o primeiro falha em silêncio porque é automático em segundo plano e o campo continua editável; o segundo (botão explícito "usar minha localização") agora avisa com uma mensagem clara. Novas traduções (`erroLocalizacao`) nos 4 idiomas.
+
+### 3. Limpeza da conta de teste em produção — resolvido (era o ponto em aberto 2)
+
+Com o usuário presente na conversa (política do modo automático libera acesso a produção só nesse caso), consegui acesso direto ao Postgres da VM (`docker exec supabase-db psql`) e removi com segurança as **4 linhas reais** que o teste tinha criado (conta, veículo, e a própria solicitação de teste enviada acima) — confirmei antes que **nenhuma oficina real havia sido notificada** por essa solicitação de teste (nenhuma linha em `notificacoes` ligada a ela), então nenhum dono de oficina de verdade recebeu spam. Limpeza confirmada por reconsulta (0 linhas restantes nas 4 tabelas).
+
+### 4. Descoberta importante: banco de produção está vazio
+
+Ao investigar dados pra decidir sobre a página `/oficinas` (ponto em aberto 4), descobri que **o banco de produção não tem nenhuma oficina, nenhum cliente e nenhuma loja de peças cadastrados** — só existe 1 perfil, o admin. Ou seja: o BipFix está tecnicamente no ar, testado, com SEO pronto, mas **ainda pré-lançamento na prática** — nenhum parceiro real entrou na plataforma ainda.
+
+Isso muda a resposta sobre a página `/oficinas` (hub/listagem): construir uma página pública de "encontre oficinas perto de você" **sem nenhuma oficina cadastrada** não ajuda em SEO (o Google não indexa bem página de listagem vazia) e não ajuda usuário nenhum agora. Por isso **não construí a página ainda** — é menos uma decisão técnica (que eu resolveria sozinho) e mais uma decisão de negócio/operação (quando e como recrutar as primeiras oficinas parceiras) que só faz sentido depois que a primeira leva de oficinas se cadastrar. Registrado como ponto em aberto 4 revisado, não mais "posso simplesmente construir".
+
 ## Próximos passos imediatos
 
-1. Decidir os 4 pontos em aberto acima.
-2. Rodar o app mobile num dispositivo Android real (não só o emulador) e, quando possível, num iPhone/simulador de verdade.
-3. Rodada dedicada de escape de HTML nos e-mails restantes (ponto em aberto 1).
+1. **Prioridade real, não é mais código**: recrutar as primeiras oficinas parceiras na Estônia — sem isso, todo o site e app funcionam perfeitamente mas não têm ninguém do lado da oferta. Isso é decisão/execução do usuário, não algo que eu resolvo com código.
+2. Depois que houver as primeiras oficinas ativas, revisitar a página `/oficinas` (hub/listagem) — nesse momento sim vale a pena construir, com conteúdo de verdade pra indexar.
+3. Rodar o app mobile num dispositivo Android real (não só o emulador) e, quando possível, num iPhone/simulador de verdade.
+4. iOS segue sem teste real (precisa de Mac ou do serviço pago EAS Build da Expo — decisão do usuário, envolve custo/conta Apple).
