@@ -80,6 +80,14 @@ Contexto: nas partes 1 e 2 (acima), todo o trabalho tinha sido feito e commitado
 
 O app mobile **não foi publicado em lugar nenhum** (não existe processo de "deploy" pra ele ainda — só roda localmente via Expo Go quando alguém testar) — só o site foi ao ar.
 
+## Parte 4: verificação autônoma pós-deploy encontra e corrige mais um bug de moeda (app mobile)
+
+Depois do deploy, numa checagem de rotina, revisei a tela de orçamentos do app mobile (`solicitacao/[id].tsx`) e encontrei o mesmo bug já corrigido várias vezes no site: o valor do orçamento aparecia sempre como `R$ 1234.56` (moeda brasileira fixa), mesmo que a oficina fosse de outro país.
+
+Aproveitei pra fazer a correção "da forma mais limpa" (como pedido): em vez de copiar a lógica de moeda pro app mobile (duplicando código), **movi as funções de formatação de moeda/data** (`formatCurrency`, `currencyForCountry`, `formatDate`, etc. — que não dependem de Next.js nem de React, só da funcionalidade nativa `Intl` do JavaScript) pra `packages/shared/format.ts`, a "caixa de ferramentas compartilhada" que já existia no projeto pra outras coisas (tipos, constantes). Assim, tanto o site quanto o app mobile usam exatamente a mesma lógica, escrita uma vez só — se um bug de moeda aparecer de novo no futuro, corrige-se num lugar só. Os arquivos antigos do site continuam funcionando exatamente igual (não precisei tocar nos ~40 arquivos que já usavam essas funções), só passaram a "pegar emprestado" da caixa compartilhada.
+
+Testado (`tsc`/build limpos nos dois apps), commitado e enviado ao GitHub (commit `b124294`). **Não precisou de novo deploy na VM** — o comportamento do site em produção não mudou (mesmas funções, só moradia diferente).
+
 ## Próximos passos imediatos
 
 1. Rodar o app mobile de verdade (Expo Go) e validar o fluxo de login/dashboard contra dados reais — credenciais já corrigidas, falta só o teste em dispositivo/emulador.
