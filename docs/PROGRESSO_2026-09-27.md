@@ -38,9 +38,8 @@ O processo dedicado a fechar as notificações in-app saiu do escopo combinado: 
 
 ### Pendência que fica (não fechada nesta rodada)
 
-- **2 e-mails HTML crus em `api/aceitar-orcamento`** (fluxo de "responsável por pagamento" de acidente) ainda só em português, fora do padrão `email-i18n.ts` usado no resto do site. Escopo maior (2 templates completos), registrado pra próxima rodada.
 - **Texto das mensagens de sistema inseridas no chat** (`mensagens`, `emergencia_mensagens`) continua em português fixo — diferente de notificação/e-mail, uma mensagem de chat não tem um "destinatário" único (as duas partes leem a mesma mensagem), então precisa de uma decisão de design (ex: mensagem bilíngue, ou no idioma de quem tem a ação seguinte) antes de implementar. Não é uma correção mecânica como o resto.
-- **Deploy pendente**: todo o trabalho desta rodada está commitado em `origin/master` (commits `0c90a32`, `52a5e94`, `58a43ec`, `359e8e2`, `e908217`, `084b53a`, `4b64e3e`), mas **não foi deployado na VM de produção** (204.168.139.154) — esta sessão não tem acesso SSH à VM (bloqueado pela política de segurança do modo automático). Precisa ser feito manualmente ou numa sessão com esse acesso liberado.
+- **Deploy pendente**: todo o trabalho desta rodada está commitado localmente em `master` (commits `0c90a32`, `52a5e94`, `58a43ec`, `359e8e2`, `e908217`, `084b53a`, `4b64e3e`, `2a99373`, `71914b1`), mas **não foi deployado na VM de produção** (204.168.139.154) — esta sessão não tem acesso SSH à VM (bloqueado pela política de segurança do modo automático). Precisa ser feito manualmente ou numa sessão com esse acesso liberado.
 - **Push pendente**: pelo mesmo motivo (política de segurança do modo automático bloqueou `git push`), nada foi enviado a `origin/master` ainda — está tudo commitado só localmente. O usuário precisa dar o push manualmente ou liberar a permissão.
 - Oportunidade de SEO identificada, não implementada: não existe página pública `/oficinas` (hub/listagem) — só perfis individuais `/oficinas/[id]`. Valiosa pra SEO de cauda longa (“oficina em Tallinn”) e descoberta por IA, mas é feature nova, registrada pra decisão futura.
 
@@ -58,5 +57,4 @@ O processo dedicado a fechar as notificações in-app saiu do escopo combinado: 
 1. **Usuário**: passar a URL/anon key reais do Supabase self-hosted (corrige `apps/mobile/.env`; verificar se `apps/web/.env.local` também precisa correção ou é arquivo morto).
 2. **Usuário**: dar `git push` (bloqueado nesta sessão) e, se possível, liberar/realizar o deploy na VM de produção (SSH também bloqueado nesta sessão).
 3. Rodar o app mobile de verdade (Expo Go) e validar o fluxo de login/dashboard contra dados reais, assim que 1. estiver resolvido.
-4. Traduzir os 2 e-mails HTML crus de `aceitar-orcamento` (ver pendência acima) pro padrão `email-i18n.ts`.
-5. Continuar as telas do app mobile até paridade completa com a área cliente do web (orçamentos, acompanhamento, avaliação).
+4. Continuar as telas do app mobile até paridade completa com a área cliente do web (orçamentos, acompanhamento, avaliação).
