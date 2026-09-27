@@ -561,4 +561,124 @@ export async function sendPedidoPecaEntregueEmail(params: {
   }
 }
 
+export async function sendOrcamentoAceitoPagamentoEmail(params: {
+  toEmail: string;
+  toName: string;
+  oficinaNome: string;
+  oficinaEndereco?: string;
+  oficinaTelefone?: string;
+  oficinaEmail?: string;
+  valorFormatado: string;
+  prazoDias: number;
+  solicitacaoId: string;
+  locale?: string;
+}) {
+  if (!resend) {
+    console.warn('[Notifications] Resend not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  const s = EMAIL_I18N.orcamentoAceitoPagamento[resolveEmailLocale(params.locale)];
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: params.toEmail,
+      subject: fmt(s.subject, { oficinaNome: params.oficinaNome }),
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #dc2626; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
+            <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${s.intro}</p>
+            <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 16px; border-radius: 8px; margin: 16px 0;">
+              <p style="margin: 0; font-size: 20px; font-weight: bold; color: #991b1b;">${params.valorFormatado}</p>
+              <p style="margin: 4px 0 0; color: #b91c1c;">${fmt(s.prazo, { dias: params.prazoDias })}</p>
+            </div>
+            <div style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 16px; border-radius: 8px; margin: 16px 0;">
+              <p style="margin: 0; font-weight: bold; color: #111827;">${s.dadosOficinaLabel}</p>
+              <p style="margin: 4px 0 0; color: #374151;">${fmt(s.oficinaLabel, { oficinaNome: params.oficinaNome })}</p>
+              ${params.oficinaEndereco ? `<p style="margin: 4px 0 0; color: #374151;">${fmt(s.enderecoLabel, { endereco: params.oficinaEndereco })}</p>` : ''}
+              ${params.oficinaTelefone ? `<p style="margin: 4px 0 0; color: #374151;">${fmt(s.telefoneLabel, { telefone: params.oficinaTelefone })}</p>` : ''}
+              ${params.oficinaEmail ? `<p style="margin: 4px 0 0; color: #374151;">${fmt(s.emailLabel, { email: params.oficinaEmail })}</p>` : ''}
+            </div>
+            <p>${s.ctaText}</p>
+            <p style="margin-top: 24px;">
+              <a href="${SITE_URL}/cliente/mensagens/${params.solicitacaoId}"
+                 style="display: inline-block; background: #dc2626; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                ${s.cta}
+              </a>
+            </p>
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+            <p style="font-size: 12px; color: #9ca3af;">${s.footer}</p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (err) {
+    console.error('[Notifications] Email error:', err);
+    return { success: false, error: (err as Error).message };
+  }
+}
+
+export async function sendOrcamentoAceitoOutroEmail(params: {
+  toEmail: string;
+  toName: string;
+  oficinaNome: string;
+  placaVeiculo?: string;
+  valorFormatado: string;
+  prazoDias: number;
+  emergenciaId: string;
+  locale?: string;
+}) {
+  if (!resend) {
+    console.warn('[Notifications] Resend not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+
+  const s = EMAIL_I18N.orcamentoAceitoOutro[resolveEmailLocale(params.locale)];
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: params.toEmail,
+      subject: fmt(s.subject, { oficinaNome: params.oficinaNome }),
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
+            <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <p>${fmt(s.greeting, { name: params.toName })}</p>
+            <p>${params.placaVeiculo ? fmt(s.introComPlaca, { placa: params.placaVeiculo }) : s.introSemPlaca}</p>
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 8px; margin: 16px 0;">
+              <p style="margin: 0; font-size: 20px; font-weight: bold; color: #166534;">${params.valorFormatado}</p>
+              <p style="margin: 4px 0 0; color: #15803d;">${fmt(s.oficinaLabel, { oficinaNome: params.oficinaNome })}</p>
+              <p style="margin: 4px 0 0; color: #15803d;">${fmt(s.prazo, { dias: params.prazoDias })}</p>
+            </div>
+            <p>${s.ctaText}</p>
+            <p style="margin-top: 24px;">
+              <a href="${SITE_URL}/emergencia/acidente/${params.emergenciaId}"
+                 style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                ${s.cta}
+              </a>
+            </p>
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+            <p style="font-size: 12px; color: #9ca3af;">${s.footer}</p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (err) {
+    console.error('[Notifications] Email error:', err);
+    return { success: false, error: (err as Error).message };
+  }
+}
+
 export type { EmailLocale };

@@ -4,6 +4,7 @@ import { getSessionUserId } from '@/lib/api-auth';
 import { notifOrcamentoAceito, notifReparoAgendadoTitulo, notifOrcamentoAceitoPagamento } from '@/lib/notif-i18n';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
+import { sendOrcamentoAceitoPagamentoEmail, sendOrcamentoAceitoOutroEmail } from '@/lib/notifications';
 
 // Use service_role key to bypass RLS - the agenda insert needs
 // to be done by the server because the client user doesn't have
@@ -234,113 +235,44 @@ export async function POST(req: NextRequest) {
 
             // Send email to responsible person with oficina details
             if (responsavelEmail) {
-              const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com';
-              const FROM_EMAIL = process.env.FROM_EMAIL || 'BipFix <noreply@bipfix.com>';
-              const RESEND_KEY = process.env.RESEND_API_KEY;
-
-              if (RESEND_KEY) {
-                try {
-                  const enderecoCompleto = [oficinaEndereco, oficinaCidade, oficinaEstado].filter(Boolean).join(', ');
-                  await fetch('https://api.resend.com/emails', {
-                    method: 'POST',
-                    headers: {
-                      'Authorization': `Bearer ${RESEND_KEY}`,
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      from: FROM_EMAIL,
-                      to: responsavelEmail,
-                      subject: `Orcamento aceito - Pagamento na oficina ${oficinaNome}`,
-                      html: `
-                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                          <div style="background: #dc2626; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
-                            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
-                            <p style="margin: 8px 0 0; opacity: 0.8;">Orcamento Aceito - Pagamento</p>
-                          </div>
-                          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-                            <p>Ola <strong>${responsavelNome || ''}</strong>,</p>
-                            <p>O orcamento para o reparo do acidente foi aceito. Como responsavel, voce precisa acertar o pagamento com a oficina.</p>
-                            <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 16px; border-radius: 8px; margin: 16px 0;">
-                              <p style="margin: 0; font-size: 20px; font-weight: bold; color: #991b1b;">${valorFormatado}</p>
-                              <p style="margin: 4px 0 0; color: #b91c1c;">Prazo: ${orc.prazo_dias} dias</p>
-                            </div>
-                            <div style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 16px; border-radius: 8px; margin: 16px 0;">
-                              <p style="margin: 0; font-weight: bold; color: #111827;">Dados da oficina:</p>
-                              <p style="margin: 4px 0 0; color: #374151;">Oficina: ${oficinaNome}</p>
-                              ${enderecoCompleto ? `<p style="margin: 4px 0 0; color: #374151;">Endereco: ${enderecoCompleto}</p>` : ''}
-                              ${oficinaTelefone ? `<p style="margin: 4px 0 0; color: #374151;">Telefone: ${oficinaTelefone}</p>` : ''}
-                              ${oficinaEmail ? `<p style="margin: 4px 0 0; color: #374151;">Email: ${oficinaEmail}</p>` : ''}
-                            </div>
-                            <p>Acesse a plataforma para conversar com a oficina sobre o pagamento:</p>
-                            <p style="margin-top: 24px;">
-                              <a href="${SITE_URL}/cliente/mensagens/${orc.solicitacao_id}"
-                                 style="display: inline-block; background: #dc2626; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-                                Conversar com a oficina
-                              </a>
-                            </p>
-                            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
-                            <p style="font-size: 12px; color: #9ca3af;">Equipe BipFix</p>
-                          </div>
-                        </div>
-                      `,
-                    }),
-                  });
-                } catch (emailErr) {
-                  console.error('[aceitar-orcamento] Email to responsavel failed:', emailErr);
-                }
+              const enderecoCompleto = [oficinaEndereco, oficinaCidade, oficinaEstado].filter(Boolean).join(', ');
+              try {
+                await sendOrcamentoAceitoPagamentoEmail({
+                  toEmail: responsavelEmail,
+                  toName: responsavelNome || '',
+                  oficinaNome,
+                  oficinaEndereco: enderecoCompleto || undefined,
+                  oficinaTelefone: oficinaTelefone || undefined,
+                  oficinaEmail: oficinaEmail || undefined,
+                  valorFormatado,
+                  prazoDias: orc.prazo_dias,
+                  solicitacaoId: orc.solicitacao_id,
+                  locale: responsavelIdioma || undefined,
+                });
+              } catch (emailErr) {
+                console.error('[aceitar-orcamento] Email to responsavel failed:', emailErr);
               }
             }
           }
 
           // Send email to the other person (always, for general notification)
           if (outroVeiculo.email) {
-            const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com';
-            const FROM_EMAIL = process.env.FROM_EMAIL || 'BipFix <noreply@bipfix.com>';
-            const RESEND_KEY = process.env.RESEND_API_KEY;
-
-            if (RESEND_KEY) {
-              try {
-                await fetch('https://api.resend.com/emails', {
-                  method: 'POST',
-                  headers: {
-                    'Authorization': `Bearer ${RESEND_KEY}`,
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    from: FROM_EMAIL,
-                    to: outroVeiculo.email,
-                    subject: `Orcamento aceito - ${oficinaNome}`,
-                    html: `
-                      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                        <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
-                          <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
-                          <p style="margin: 8px 0 0; opacity: 0.8;">Orcamento Aceito</p>
-                        </div>
-                        <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-                          <p>Ola <strong>${outroVeiculo.nome}</strong>,</p>
-                          <p>O orcamento para o reparo do veiculo ${placaVeiculo ? `placa <strong>${placaVeiculo}</strong>` : ''} foi aceito:</p>
-                          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 8px; margin: 16px 0;">
-                            <p style="margin: 0; font-size: 20px; font-weight: bold; color: #166534;">${valorFormatado}</p>
-                            <p style="margin: 4px 0 0; color: #15803d;">Oficina: ${oficinaNome}</p>
-                            <p style="margin: 4px 0 0; color: #15803d;">Prazo: ${orc.prazo_dias} dias</p>
-                          </div>
-                          <p>Acesse a plataforma para acompanhar o andamento do reparo e trocar mensagens.</p>
-                          <p style="margin-top: 24px;">
-                            <a href="${SITE_URL}/emergencia/acidente/${emergencia.id}"
-                               style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-                              Ver detalhes
-                            </a>
-                          </p>
-                          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
-                          <p style="font-size: 12px; color: #9ca3af;">Equipe BipFix</p>
-                        </div>
-                      </div>
-                    `,
-                  }),
-                });
-              } catch (emailErr) {
-                console.error('[aceitar-orcamento] Email to outro motorista failed:', emailErr);
-              }
+            try {
+              // Se a pessoa ja tiver conta, usa o idioma preferido dela.
+              const { data: outroProfileLookup } = await supabaseAdmin
+                .from('profiles').select('idioma').eq('email', outroVeiculo.email).single();
+              await sendOrcamentoAceitoOutroEmail({
+                toEmail: outroVeiculo.email,
+                toName: outroVeiculo.nome,
+                oficinaNome,
+                placaVeiculo: placaVeiculo || undefined,
+                valorFormatado,
+                prazoDias: orc.prazo_dias,
+                emergenciaId: emergencia.id,
+                locale: outroProfileLookup?.idioma || undefined,
+              });
+            } catch (emailErr) {
+              console.error('[aceitar-orcamento] Email to outro motorista failed:', emailErr);
             }
           }
         }
