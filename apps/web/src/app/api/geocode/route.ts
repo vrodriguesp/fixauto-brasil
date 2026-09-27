@@ -16,7 +16,7 @@ import { NextRequest, NextResponse } from 'next/server';
 // volume de um cadastro/solicitacao isolados, nao usar em loop/bulk.
 const NOMINATIM_SEARCH = 'https://nominatim.openstreetmap.org/search';
 const NOMINATIM_REVERSE = 'https://nominatim.openstreetmap.org/reverse';
-const USER_AGENT = 'BipFix/1.0 (+https://bipfix.com; contato@bipfix.com)';
+const USER_AGENT = 'BipFix/1.0 (+https://bipfix.com; support@bipfix.com)';
 
 function fromAddress(addr: Record<string, string>) {
   return {

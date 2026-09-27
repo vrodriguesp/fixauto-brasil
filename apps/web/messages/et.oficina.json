@@ -283,6 +283,11 @@
     "semDadosSuficientes": "Piisavalt andmeid pole veel (vajab registreeritud etappidega check-ineid)."
   },
   "oficinaCheckin": {
+    "descricaoLabelCliente": "Klient",
+    "descricaoLabelPlaca": "Reg.märk",
+    "descricaoLabelTelefone": "Tel",
+    "descricaoLabelValor": "Summa",
+    "descricaoNaoInformado": "pole täidetud",
     "erroCamposObrigatorios": "Täida kohustuslikud väljad",
     "erroAoRegistrar": "Registreerimise viga",
     "notifTitulo": "Sõiduk registreeritud töökojas",
@@ -545,7 +550,7 @@
     "quantidadeLabel": "Kogus",
     "oficinaFallback": "Töökoda",
     "tirarDuvida": "Küsi täpsustust",
-    "vocesRespondeu": "Sina vastasid: {preco} € - tähtaeg {dias} päev(a)",
+    "vocesRespondeu": "Sina vastasid: {preco} - tähtaeg {dias} päev(a)",
     "precoReais": "Hind (€)",
     "prazoDiasLabel": "Tähtaeg (päevades)",
     "placeholderObservacaoOpcional": "Märkus (valikuline)",

@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     // qualquer um passando um oficina_id de terceiro criava uma conta e
     // se auto-cadastrava como funcionario daquela oficina (account
     // takeover). Ver docs/AUDITORIA_SEGURANCA_API_2026-09-08.md.
-    const callerId = await getSessionUserId();
+    const callerId = await getSessionUserId(req);
     if (!callerId) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
 // dados pessoais via profiles, ou gerar nova senha temporária)
 export async function PATCH(req: NextRequest) {
   try {
-    const callerId = await getSessionUserId();
+    const callerId = await getSessionUserId(req);
     if (!callerId) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
@@ -203,7 +203,7 @@ export async function PATCH(req: NextRequest) {
 // DELETE: Remove funcionario + profile + auth user
 export async function DELETE(req: NextRequest) {
   try {
-    const callerId = await getSessionUserId();
+    const callerId = await getSessionUserId(req);
     if (!callerId) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }

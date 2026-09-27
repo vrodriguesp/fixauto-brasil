@@ -495,7 +495,7 @@ export default function OficinaPecasPage() {
                     {c.minhaResposta ? (
                       <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
                         <p className="text-sm text-green-800">
-                          {t('vocesRespondeu', { preco: c.minhaResposta.preco.toFixed(2), dias: c.minhaResposta.prazo_dias })}
+                          {t('vocesRespondeu', { preco: formatCurrency(c.minhaResposta.preco, currencyForCountry(oficina?.pais), locale), dias: c.minhaResposta.prazo_dias })}
                         </p>
                       </div>
                     ) : respondendoId === c.id ? (

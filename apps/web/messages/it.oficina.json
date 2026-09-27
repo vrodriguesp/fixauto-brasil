@@ -283,6 +283,11 @@
     "semDadosSuficientes": "Non ci sono ancora dati sufficienti (servono check-in con fasi registrate)."
   },
   "oficinaCheckin": {
+    "descricaoLabelCliente": "Cliente",
+    "descricaoLabelPlaca": "Targa",
+    "descricaoLabelTelefone": "Tel",
+    "descricaoLabelValor": "Importo",
+    "descricaoNaoInformado": "non indicato",
     "erroCamposObrigatorios": "Compila i campi obbligatori",
     "erroAoRegistrar": "Errore durante la registrazione",
     "notifTitulo": "Veicolo registrato in officina",
@@ -545,7 +550,7 @@
     "quantidadeLabel": "Quantità",
     "oficinaFallback": "Officina",
     "tirarDuvida": "Fai una domanda",
-    "vocesRespondeu": "Hai risposto: {preco} € - tempi {dias} giorno/i",
+    "vocesRespondeu": "Hai risposto: {preco} - tempi {dias} giorno/i",
     "precoReais": "Prezzo (€)",
     "prazoDiasLabel": "Tempi (giorni)",
     "placeholderObservacaoOpcional": "Nota (opzionale)",

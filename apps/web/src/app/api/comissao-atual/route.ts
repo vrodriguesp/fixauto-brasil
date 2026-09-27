@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   // Taxa de comissao e dado comercial da propria oficina - sem essa
   // checagem, qualquer um sabendo o oficinaId (aparece em URL publica)
   // conseguia ler a taxa e o volume de servicos de um concorrente.
-  const callerId = await getSessionUserId();
+  const callerId = await getSessionUserId(req);
   const { data: oficina } = await supabaseAdmin.from('oficinas').select('profile_id').eq('id', oficinaId).single();
   if (!callerId || !oficina || oficina.profile_id !== callerId) {
     return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });

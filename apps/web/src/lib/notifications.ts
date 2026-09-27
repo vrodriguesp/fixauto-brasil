@@ -330,7 +330,7 @@ export async function sendLeadParceiroEmail(params: {
     return { success: false, error: 'Email service not configured' };
   }
 
-  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'contato@bipfix.com';
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'support@bipfix.com';
   const tipoLabel = params.tipo === 'oficina' ? 'Oficina' : 'Loja de peças';
 
   try {

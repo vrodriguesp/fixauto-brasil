@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { getTranslations } from 'next-intl/server';
 import OficinaPerfilClient from './OficinaPerfilClient';
 import { INTL_LOCALE } from '@/lib/utils';
+import { hreflangAlternates } from '@/lib/seo-utils';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -42,19 +43,19 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const cidade = capitalizarCidade(oficina.cidade);
   const title = t('metaTitleTemplate', { nome: oficina.nome_fantasia, cidade, estado: oficina.estado });
   const description = t('metaDescriptionTemplate', { nome: oficina.nome_fantasia, cidade, estado: oficina.estado });
-  const url = `https://bipfix.com/oficinas/${id}`;
+  const alternates = hreflangAlternates(locale, `/oficinas/${id}`);
 
   return {
     title,
     description,
-    alternates: { canonical: url },
+    alternates,
     openGraph: {
       type: 'website',
       locale: (INTL_LOCALE[locale] || 'pt-BR').replace('-', '_'),
       siteName: 'BipFix',
       title,
       description,
-      url,
+      url: alternates.canonical,
     },
     twitter: {
       card: 'summary',

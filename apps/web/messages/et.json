@@ -242,6 +242,11 @@
     "placeholderAno": "Nt: 2018"
   },
   "home": {
+    "metaTitle": "BipFix - Võrdle usaldusväärsete autotöökodade hinnapakkumisi",
+    "metaDescription": "Tee oma auto kahjustusest pildid, saa hinnapakkumised kontrollitud töökodadelt sinu lähedal ja broneeri remont mõne minutiga. BipFix käivitub esmalt Tallinnas.",
+    "metaKeywords": ["autotöökoda minu lähedal", "auto remondi hinnapakkumine", "usaldusväärne autotöökoda Tallinnas", "kerekoja hinnapakkumine", "auto remont Tallinn"],
+    "ogTitle": "BipFix - Leia õige töökoda oma autole",
+    "ogDescription": "Võrdle kontrollitud autotöökodade hinnapakkumisi sinu lähedal mõne minutiga.",
     "carregando": "Laadin...",
     "heroTitulo": "Auto remont,",
     "heroTituloDestaque": "ilma üllatusteta.",

@@ -54,6 +54,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...localizedEntries('/seja-parceiro', { changeFrequency: 'monthly', priority: 0.9 }),
     ...localizedEntries('/termos', { changeFrequency: 'yearly', priority: 0.3 }),
     ...localizedEntries('/privacidade', { changeFrequency: 'yearly', priority: 0.3 }),
+    ...localizedEntries('/docs', { changeFrequency: 'monthly', priority: 0.6 }),
+    ...localizedEntries('/docs/cliente', { changeFrequency: 'monthly', priority: 0.5 }),
+    ...localizedEntries('/docs/oficina', { changeFrequency: 'monthly', priority: 0.5 }),
   ];
 
   // Paginas dinamicas de oficinas ativas.

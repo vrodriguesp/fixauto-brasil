@@ -283,6 +283,11 @@
     "semDadosSuficientes": "Not enough data yet (needs check-ins with logged stages)."
   },
   "oficinaCheckin": {
+    "descricaoLabelCliente": "Customer",
+    "descricaoLabelPlaca": "Plate",
+    "descricaoLabelTelefone": "Phone",
+    "descricaoLabelValor": "Amount",
+    "descricaoNaoInformado": "not provided",
     "erroCamposObrigatorios": "Fill in the required fields",
     "erroAoRegistrar": "Error registering",
     "notifTitulo": "Vehicle registered at the shop",
@@ -545,7 +550,7 @@
     "quantidadeLabel": "Quantity",
     "oficinaFallback": "Shop",
     "tirarDuvida": "Ask a question",
-    "vocesRespondeu": "You replied: €{preco} - {dias} day(s) lead time",
+    "vocesRespondeu": "You replied: {preco} - {dias} day(s) lead time",
     "precoReais": "Price (€)",
     "prazoDiasLabel": "Lead time (days)",
     "placeholderObservacaoOpcional": "Note (optional)",

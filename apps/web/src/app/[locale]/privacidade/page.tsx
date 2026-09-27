@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { hreflangAlternates } from '@/lib/seo-utils';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -7,7 +8,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
-    alternates: { canonical: 'https://bipfix.com/privacidade' },
+    alternates: hreflangAlternates(locale, '/privacidade'),
     robots: { index: true, follow: true },
   };
 }
@@ -18,7 +19,7 @@ export default async function PrivacidadePage({ params }: { params: Promise<{ lo
 
   const strong = (chunks: React.ReactNode) => <strong>{chunks}</strong>;
   const mailLink = (chunks: React.ReactNode) => (
-    <a href="mailto:privacidade@bipfix.com" className="text-primary-600 hover:underline">{chunks}</a>
+    <a href="mailto:privacy@bipfix.com" className="text-primary-600 hover:underline">{chunks}</a>
   );
 
   return (

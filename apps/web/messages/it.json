@@ -243,6 +243,11 @@
     "placeholderAno": "Es: 2018"
   },
   "home": {
+    "metaTitle": "BipFix - Confronta preventivi di officine meccaniche affidabili",
+    "metaDescription": "Invia le foto del danno alla tua auto, ricevi preventivi da officine verificate vicino a te e prenota la riparazione in pochi minuti.",
+    "metaKeywords": ["officina meccanica vicino a me", "preventivo riparazione auto online", "trovare un'officina affidabile", "app per riparazione auto", "preventivo carrozzeria"],
+    "ogTitle": "BipFix - L'officina giusta per la tua auto",
+    "ogDescription": "Confronta preventivi di officine verificate vicino a te in pochi minuti.",
     "carregando": "Caricamento...",
     "heroTitulo": "Riparazione auto,",
     "heroTituloDestaque": "senza sorprese.",

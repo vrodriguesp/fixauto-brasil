@@ -253,6 +253,11 @@
     "placeholderAno": "Ex: 2018"
   },
   "home": {
+    "metaTitle": "BipFix - Compare orçamentos de oficina mecânica perto de você",
+    "metaDescription": "Envie fotos do dano do seu carro, receba orçamentos de oficinas mecânicas verificadas perto de você e agende o reparo em minutos. Rápido, transparente e sem sair de casa.",
+    "metaKeywords": ["oficina mecânica perto de mim", "orçamento de conserto de carro online", "encontrar oficina de confiança", "aplicativo para conserto de carro", "orçamento de funilaria e pintura"],
+    "ogTitle": "BipFix - A oficina certa para o seu carro, sem sair de casa",
+    "ogDescription": "Compare orçamentos de oficinas mecânicas verificadas perto de você em minutos.",
     "carregando": "Carregando...",
     "heroTitulo": "Reparo do carro",
     "heroTituloDestaque": "sem surpresas.",

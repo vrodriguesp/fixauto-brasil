@@ -283,6 +283,11 @@
     "semDadosSuficientes": "Ainda não há dados suficientes (precisa de check-ins com etapas registradas)."
   },
   "oficinaCheckin": {
+    "descricaoLabelCliente": "Cliente",
+    "descricaoLabelPlaca": "Placa",
+    "descricaoLabelTelefone": "Tel",
+    "descricaoLabelValor": "Valor",
+    "descricaoNaoInformado": "não informado",
     "erroCamposObrigatorios": "Preencha os campos obrigatórios",
     "erroAoRegistrar": "Erro ao registrar",
     "notifTitulo": "Veículo registrado na oficina",
@@ -545,7 +550,7 @@
     "quantidadeLabel": "Quantidade",
     "oficinaFallback": "Oficina",
     "tirarDuvida": "Tirar dúvida",
-    "vocesRespondeu": "Você respondeu: R$ {preco} - prazo {dias} dia(s)",
+    "vocesRespondeu": "Você respondeu: {preco} - prazo {dias} dia(s)",
     "precoReais": "Preço (R$)",
     "prazoDiasLabel": "Prazo (dias)",
     "placeholderObservacaoOpcional": "Observação (opcional)",

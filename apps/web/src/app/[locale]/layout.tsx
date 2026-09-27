@@ -78,7 +78,7 @@ export default async function LocaleLayout({
     description: t('description'),
     contactPoint: {
       '@type': 'ContactPoint',
-      email: 'contato@bipfix.com',
+      email: 'support@bipfix.com',
       contactType: 'customer support',
       areaServed: ['BR', 'EE'],
       availableLanguage: ['Portuguese', 'English', 'Estonian', 'Italian'],

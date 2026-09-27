@@ -7,7 +7,7 @@ import { sendPedidoPecaConfirmadoEmail } from '@/lib/notifications';
 // rota minima porque o Resend so pode ser chamado do servidor.
 export async function POST(req: NextRequest) {
   try {
-    const callerId = await getSessionUserId();
+    const callerId = await getSessionUserId(req);
     if (!callerId) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
