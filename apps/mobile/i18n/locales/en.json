@@ -97,7 +97,16 @@
   "acompanhamento": {
     "titulo": "Repair tracking",
     "etapaAtual": "Current stage",
-    "previsaoEntrega": "Estimated delivery"
+    "previsaoEntrega": "Estimated delivery",
+    "semEtapas": "The shop hasn't started tracking this service yet."
+  },
+  "avaliacao": {
+    "titulo": "Rate the service",
+    "subtitulo": "How was your experience with this shop?",
+    "comentarioPlaceholder": "Leave a comment (optional)",
+    "enviar": "Submit rating",
+    "obrigado": "Thanks for your feedback!",
+    "jaAvaliado": "You've already rated this service"
   },
   "mensagens": {
     "titulo": "Messages",
@@ -139,6 +148,18 @@
       "em_andamento": "In Progress",
       "concluida": "Completed",
       "cancelada": "Cancelled"
+    },
+    "statusManutencao": {
+      "recebido": "Received",
+      "diagnostico": "Diagnosing",
+      "aguardando_pecas": "Awaiting parts",
+      "em_execucao": "In progress",
+      "pausa_cliente": "On hold - contacting customer",
+      "pausa_pecas": "On hold - parts missing",
+      "pausa_geral": "Paused",
+      "teste_final": "Final testing",
+      "concluido": "Completed",
+      "entregue": "Delivered"
     }
   },
   "perfil": {

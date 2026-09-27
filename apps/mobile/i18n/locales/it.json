@@ -97,7 +97,16 @@
   "acompanhamento": {
     "titulo": "Stato riparazione",
     "etapaAtual": "Fase attuale",
-    "previsaoEntrega": "Consegna prevista"
+    "previsaoEntrega": "Consegna prevista",
+    "semEtapas": "L'officina non ha ancora iniziato a monitorare questo servizio."
+  },
+  "avaliacao": {
+    "titulo": "Valuta il servizio",
+    "subtitulo": "Com'è stata la tua esperienza con questa officina?",
+    "comentarioPlaceholder": "Lascia un commento (facoltativo)",
+    "enviar": "Invia valutazione",
+    "obrigado": "Grazie per la tua valutazione!",
+    "jaAvaliado": "Hai già valutato questo servizio"
   },
   "mensagens": {
     "titulo": "Messaggi",
@@ -139,6 +148,18 @@
       "em_andamento": "In Corso",
       "concluida": "Completata",
       "cancelada": "Annullata"
+    },
+    "statusManutencao": {
+      "recebido": "Ricevuto",
+      "diagnostico": "In diagnosi",
+      "aguardando_pecas": "In attesa di ricambi",
+      "em_execucao": "In lavorazione",
+      "pausa_cliente": "In pausa - contatto cliente",
+      "pausa_pecas": "In pausa - ricambi mancanti",
+      "pausa_geral": "In pausa",
+      "teste_final": "Collaudo finale",
+      "concluido": "Completato",
+      "entregue": "Consegnato"
     }
   },
   "perfil": {

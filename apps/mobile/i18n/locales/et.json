@@ -97,7 +97,16 @@
   "acompanhamento": {
     "titulo": "Remondi jälgimine",
     "etapaAtual": "Praegune etapp",
-    "previsaoEntrega": "Eeldatav valmimisaeg"
+    "previsaoEntrega": "Eeldatav valmimisaeg",
+    "semEtapas": "Töökoda ei ole selle teenuse jälgimist veel alustanud."
+  },
+  "avaliacao": {
+    "titulo": "Hinda teenust",
+    "subtitulo": "Milline oli sinu kogemus selle töökojaga?",
+    "comentarioPlaceholder": "Jäta kommentaar (valikuline)",
+    "enviar": "Saada hinnang",
+    "obrigado": "Täname tagasiside eest!",
+    "jaAvaliado": "Sa oled seda teenust juba hinnanud"
   },
   "mensagens": {
     "titulo": "Sõnumid",
@@ -139,6 +148,18 @@
       "em_andamento": "Töös",
       "concluida": "Lõpetatud",
       "cancelada": "Tühistatud"
+    },
+    "statusManutencao": {
+      "recebido": "Vastu võetud",
+      "diagnostico": "Diagnostika",
+      "aguardando_pecas": "Ootab varuosi",
+      "em_execucao": "Töös",
+      "pausa_cliente": "Peatatud - klienti ootel",
+      "pausa_pecas": "Peatatud - varuosad puuduvad",
+      "pausa_geral": "Peatatud",
+      "teste_final": "Lõpptestimine",
+      "concluido": "Lõpetatud",
+      "entregue": "Üle antud"
     }
   },
   "perfil": {

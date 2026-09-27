@@ -97,7 +97,16 @@
   "acompanhamento": {
     "titulo": "Acompanhamento",
     "etapaAtual": "Etapa atual",
-    "previsaoEntrega": "Previsão de entrega"
+    "previsaoEntrega": "Previsão de entrega",
+    "semEtapas": "A oficina ainda não iniciou o acompanhamento deste serviço."
+  },
+  "avaliacao": {
+    "titulo": "Avalie o serviço",
+    "subtitulo": "Como foi sua experiência com esta oficina?",
+    "comentarioPlaceholder": "Deixe um comentário (opcional)",
+    "enviar": "Enviar avaliação",
+    "obrigado": "Obrigado pela sua avaliação!",
+    "jaAvaliado": "Você já avaliou este serviço"
   },
   "mensagens": {
     "titulo": "Mensagens",
@@ -139,6 +148,18 @@
       "em_andamento": "Em Andamento",
       "concluida": "Concluída",
       "cancelada": "Cancelada"
+    },
+    "statusManutencao": {
+      "recebido": "Recebido",
+      "diagnostico": "Em diagnóstico",
+      "aguardando_pecas": "Aguardando peças",
+      "em_execucao": "Em execução",
+      "pausa_cliente": "Pausa - contato cliente",
+      "pausa_pecas": "Pausa - peças em falta",
+      "pausa_geral": "Pausado",
+      "teste_final": "Teste final",
+      "concluido": "Concluído",
+      "entregue": "Entregue"
     }
   },
   "perfil": {
