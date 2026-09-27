@@ -26,7 +26,11 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "CAMERA"]
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -47,7 +51,9 @@
         {
           "locationWhenInUsePermission": "Usamos sua localização para encontrar oficinas próximas de você."
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-font"
     ]
   }
 }
