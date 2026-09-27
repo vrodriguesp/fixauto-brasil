@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { Link } from '@/i18n/navigation';
+import { hreflangAlternates } from '@/lib/seo-utils';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -7,7 +9,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
-    alternates: { canonical: 'https://bipfix.com/termos' },
+    alternates: hreflangAlternates(locale, '/termos'),
     robots: { index: true, follow: true },
   };
 }
@@ -18,10 +20,10 @@ export default async function TermosPage({ params }: { params: Promise<{ locale:
 
   const strong = (chunks: React.ReactNode) => <strong>{chunks}</strong>;
   const privacyLink = (chunks: React.ReactNode) => (
-    <a href="/privacidade" className="text-primary-600 hover:underline">{chunks}</a>
+    <Link href="/privacidade" className="text-primary-600 hover:underline">{chunks}</Link>
   );
   const mailLink = (chunks: React.ReactNode) => (
-    <a href="mailto:contato@bipfix.com" className="text-primary-600 hover:underline">{chunks}</a>
+    <a href="mailto:support@bipfix.com" className="text-primary-600 hover:underline">{chunks}</a>
   );
 
   return (

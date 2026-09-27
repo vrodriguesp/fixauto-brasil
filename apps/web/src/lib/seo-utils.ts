@@ -1,3 +1,5 @@
+import { routing } from '@/i18n/routing';
+
 interface OficinaSchema {
   id: string;
   nome_fantasia: string;
@@ -46,7 +48,10 @@ export function generateAutoRepairSchema(oficina: OficinaSchema) {
       addressLocality: oficina.cidade,
       addressRegion: oficina.estado,
       postalCode: oficina.cep || undefined,
-      addressCountry: oficina.pais || 'BR',
+      // Sem fallback fixo pra 'BR': a oficina pode ser de qualquer pais
+      // (piloto e europeu) - melhor omitir o campo que declarar um pais
+      // errado quando o cadastro ainda nao tem `pais` preenchido.
+      addressCountry: oficina.pais || undefined,
     },
     areaServed: {
       '@type': 'City',
@@ -124,6 +129,33 @@ export function generateReviewSchema(
         },
         reviewBody: a.comentario,
       })),
+  };
+}
+
+/**
+ * Gera { canonical, languages } pro campo `alternates` do generateMetadata.
+ *
+ * IMPORTANTE: quando uma pagina/layout define seu proprio `alternates` no
+ * generateMetadata, isso SUBSTITUI por completo o `alternates` herdado do
+ * layout pai (Next.js nao faz merge profundo de campos de objeto aninhados,
+ * so merge raso por chave de topo) - o `languages` (hreflang) do
+ * `[locale]/layout.tsx`, que so cobre a home, se perde silenciosamente em
+ * qualquer pagina com metadata propria. Toda pagina que define `alternates`
+ * deve usar este helper para nao perder o hreflang.
+ *
+ * `path` e relativo ao locale, sem prefixo (ex: '/seja-parceiro', '/oficinas/123').
+ */
+export function hreflangAlternates(locale: string, path: string) {
+  const localizedUrl = (l: string) => (l === routing.defaultLocale ? `${BASE_URL}${path}` : `${BASE_URL}/${l}${path}`);
+
+  const languages: Record<string, string> = { 'x-default': localizedUrl(routing.defaultLocale) };
+  for (const l of routing.locales) {
+    languages[l] = localizedUrl(l);
+  }
+
+  return {
+    canonical: localizedUrl(locale),
+    languages,
   };
 }
 

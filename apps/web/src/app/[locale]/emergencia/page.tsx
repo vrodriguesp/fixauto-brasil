@@ -26,7 +26,13 @@ export default function EmergenciaPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [emergenciaId, setEmergenciaId] = useState<string | null>(null);
+  // Mesmo padrao de cliente/nova-solicitacao: comeca com um default (SP) e
+  // so sobrescreve se o navegador conceder geolocalizacao - sem isso, toda
+  // emergencia gravava a mesma coordenada fixa, e "oficinas proximas"
+  // notificava sempre ao redor de Sao Paulo pra qualquer usuario fora do
+  // Brasil que negasse a permissao (ex: piloto na Estonia).
   const [coords, setCoords] = useState({ lat: -23.5505, lon: -46.6333 });
+  const [geoResolved, setGeoResolved] = useState(false);
   const [tipoAcidente, setTipoAcidente] = useState<'eu_causei' | 'outro_causou' | 'sem_outro'>('outro_causou');
   const [placa, setPlaca] = useState('');
   const [veiculoInfo, setVeiculoInfo] = useState<{ marca: string; modelo: string; ano: string; cor: string } | null>(null);
@@ -72,13 +78,33 @@ export default function EmergenciaPage() {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+          setGeoResolved(true);
           if (!localizacao) setLocalizacao(t('locationAutoDetected'));
         },
-        () => { /* fallback to default SP coords */ }
+        () => { /* sem permissao - handleSubmit tenta geocodificar o endereco digitado */ }
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Fallback quando o navegador nega geolocalizacao: geocodifica o
+  // endereco digitado via Nominatim (gratuito, mundial) em vez de deixar a
+  // coordenada presa no default de Sao Paulo/Brasil.
+  const resolveLocation = async (): Promise<{ lat: number; lon: number }> => {
+    if (geoResolved || !localizacao) return coords;
+    try {
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(localizacao)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
+          return { lat: data.latitude, lon: data.longitude };
+        }
+      }
+    } catch {
+      // mantem o default (SP) se a geocodificacao tambem falhar
+    }
+    return coords;
+  };
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -128,6 +154,8 @@ export default function EmergenciaPage() {
     setError('');
 
     try {
+      const loc = await resolveLocation();
+
       // 1. Create emergencia
       const { data: emergencia, error: emergError } = await supabase
         .from('emergencias')
@@ -138,8 +166,8 @@ export default function EmergenciaPage() {
           telefone,
           descricao: `[TIPO:${tipoAcidente}] ${descricao || 'Emergência - Colisão'}`,
           endereco: localizacao,
-          latitude: coords.lat,
-          longitude: coords.lon,
+          latitude: loc.lat,
+          longitude: loc.lon,
           prioridade: 'urgente',
         })
         .select()
@@ -169,8 +197,8 @@ export default function EmergenciaPage() {
           idioma: locale,
           tipoAcidente,
           descricao: `[TIPO:${tipoAcidente}] ${descricao || 'Emergência - Colisão registrada pelo fluxo "Acabei de bater"'}`,
-          latitude: coords.lat,
-          longitude: coords.lon,
+          latitude: loc.lat,
+          longitude: loc.lon,
           endereco: localizacao,
           photoUrls,
           placa: placa || null,
@@ -181,14 +209,15 @@ export default function EmergenciaPage() {
         console.error('[emergencia] Criar solicitacao failed:', await solRes.text());
       }
 
-      // 4. NOTIFY nearby oficinas (use default SP coords as fallback)
+      // 4. NOTIFY nearby oficinas (usa a localizacao resolvida acima, nunca
+      // o default fixo de Sao Paulo)
       const notifyRes = await fetch('/api/notificar-oficinas-emergencia', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           emergenciaId: emergencia.id,
-          latitude: coords.lat,
-          longitude: coords.lon,
+          latitude: loc.lat,
+          longitude: loc.lon,
         }),
       });
       if (!notifyRes.ok) {
@@ -493,7 +522,7 @@ export default function EmergenciaPage() {
                 <button type="button" onClick={() => {
                   if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
-                      (pos) => { setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }); setLocalizacao(t('locationCurrentDetected')); },
+                      (pos) => { setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }); setGeoResolved(true); setLocalizacao(t('locationCurrentDetected')); },
                       () => setLocalizacao(t('locationFallback'))
                     );
                   }

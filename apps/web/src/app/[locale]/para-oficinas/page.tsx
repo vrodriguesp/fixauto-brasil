@@ -2,27 +2,26 @@ import type { Metadata } from 'next';
 import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import StructuredData from '@/components/seo/StructuredData';
-import { generateFAQSchema } from '@/lib/seo-utils';
-import { routing } from '@/i18n/routing';
+import { generateFAQSchema, hreflangAlternates } from '@/lib/seo-utils';
 
 const OG_LOCALE: Record<string, string> = { pt: 'pt_BR', en: 'en_US', et: 'et_EE', it: 'it_IT' };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'paraOficinas' });
-  const path = locale === routing.defaultLocale ? '/para-oficinas' : `/${locale}/para-oficinas`;
+  const alternates = hreflangAlternates(locale, '/para-oficinas');
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
     keywords: t.raw('metaKeywords') as string[],
-    alternates: { canonical: `https://bipfix.com${path}` },
+    alternates,
     openGraph: {
       type: 'website',
       locale: OG_LOCALE[locale] || 'pt_BR',
       siteName: 'BipFix',
       title: `${t('ogTitle')} | BipFix`,
       description: t('ogDescription'),
-      url: `https://bipfix.com${path}`,
+      url: alternates.canonical,
     },
   };
 }
@@ -46,7 +45,7 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
   const softwareSchema = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'BipFix para Oficinas',
+    name: t('ogTitle'),
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     url: 'https://bipfix.com/para-oficinas',
