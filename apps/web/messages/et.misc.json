@@ -5,61 +5,161 @@
   },
   "termos": {
     "metaTitle": "Kasutustingimused",
-    "metaDescription": "BipFixi platvormi kasutustingimused ja üldtingimused klientidele, partnertöökodadele ja varuosade poodidele.",
-    "pageTitle": "Kasutustingimused ja üldtingimused",
+    "metaDescription": "BipFixi platvormi kasutustingimused autojuhtidele, autotöökodadele ja varuosade müüjatele Euroopa Liidus.",
+    "pageTitle": "Kasutustingimused",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "8. september 2026",
-    "title1": "1. Kes me oleme ja mis on BipFix",
-    "body1a": "BipFix on digitaalne vahendusplatvorm, mis ühendab (i) juhte ja sõidukiomanikke (\"Kliendid\"), kes vajavad autoremonditeenuseid, (ii) autoremonditöökodadega (\"Töökojad\") ja (iii) autovaruosade poodidega (\"Poed\"), mida koos nimetatakse \"Partneriteks\". Konto loomisega või BipFixi mis tahes viisil kasutamisega nõustub kasutaja käesolevate Kasutustingimustega ja meie <privacyLink>Privaatsuspoliitikaga</privacyLink>.",
-    "body1b": "BipFix <strong>ei osuta autoremonditeenuseid, ei müü varuosi ega ole lepingupool</strong> Kliendi ja Partneri vahel sõlmitavas lepingus. BipFixi roll on tehnoloogilise vahendaja roll: platvorm võimaldab kontakti loomist, hinnapakkumiste võrdlemist, suhtlust ja teenuse kulgemise jälgimist. Osutatud teenusega (remont, müüdud varuosa, tähtaeg, kvaliteet, garantii) seotud tarbijasuhe tekib otse Kliendi ja Partneri vahel, kes vastutavad oma tegevuse eest Kliendi elukohariigis kohaldatava tarbijakaitseõiguse alusel.",
-    "title2": "2. Registreerimine ja andmete tõesus",
-    "body2": "Registreerimisel tuleb esitada tõesed, täielikud ja ajakohased andmed (nimi, maksukohustuslase kood, aadress, kontaktandmed). Töökojad ja Poed kinnitavad, et neil on oma tegevuseks nõutavad registreeringud, load ja litsentsid. BipFix võib nõuda tõendavaid dokumente ning keelduda valede, puudulike või kontrollimatute andmetega registreeringutest või need peatada.",
-    "title3": "3. Tasuta kasutamine Klientidele",
-    "body3": "Platvormi kasutamine Klientide poolt on ja jääb tasuta: hinnapakkumiste küsimine, pakkumiste võrdlemine, teenuse edenemise jälgimine ja Partnerite hindamine ei ole tasulised.",
-    "title4": "4. Komisjonitasu ja Partneritelt tasu võtmine",
-    "body4a": "Praegu ei võeta teatud Partneritelt (sealhulgas neilt, kes liituvad platvormi algfaasis) BipFixi kasutamise eest <strong>komisjonitasu ega kuutasu</strong>. BipFix jätab endale õiguse tulevikus kehtestada komisjonitasu vahendatud teenustelt, kuutasu või mõlemad.",
-    "body4b": "Kui BipFix otsustab tasusid kehtestada või muuta, teavitab ta mõjutatud Partnereid <strong>vähemalt 30 (kolmkümmend) päeva ette</strong> enne, kui mis tahes summa tegelikult sisse nõutakse, e-posti teel ja/või platvormisisese teatega, näidates ära uue mudeli, kohaldatava protsendi või summa ning tasu kehtima hakkamise kuupäeva. Partner, kes uue tingimusega ei nõustu, võib oma konto sulgeda enne tasu kehtima hakkamist, ilma igasuguse trahvita.",
-    "title5": "5. Partnerite käitumine ja platvormi kasutamine",
-    "intro5": "Töökoja või Poena partneriks liitudes kohustub Partner:",
-    "list5_1": "Esitama tõest teavet hindade, tähtaegade, saadavuse ja eriala kohta;",
-    "list5_2": "Pidama kinni Kliendile platvormis edastatud hinnapakkumistest ja tähtaegadest;",
-    "list5_3": "Mitte suunama Klienti sõlmima tehingut või tasuma väljaspool platvormi eesmärgiga vältida kohaldatavat komisjonitasu, kui see on kehtiv ja Punkti 4 kohaselt teatavaks tehtud;",
-    "list5_4": "Mitte manipuleerima, ostma, vahetama ega muul viisil võltsima hinnanguid ja mainenäitajaid;",
-    "list5_5": "Kohtlema Kliente ja teisi Partnereid austusega, ilma diskrimineerimise, ahistamise, sunni või ebaausate või eksitavate äritavadeta;",
-    "list5_6": "Järgima oma tegevusele kohaldatavaid õigusakte, sealhulgas tarbijakaitse-, töö-, maksu- ja keskkonnaalaseid norme.",
-    "title6": "6. Partnerite peatamine ja platvormilt eemaldamine",
-    "intro6": "BipFix võib Partnerit hoiatada, ajutiselt peatada või platvormilt lõplikult eemaldada, proportsionaalselt tuvastatud rikkumise raskusega. Eelkõige:",
-    "sub6_1Title": "6.1 Rikkumised, mille puhul antakse eelnev hoiatus ja tähtaeg olukorra parandamiseks",
-    "body6_1": "Kergemate või üksikjuhtumitena esinevate rikkumiste puhul (nt aeg-ajalt hiline vastamine päringutele, aegunud registreerimisandmed) saadetakse reeglina teade ja mõistlik tähtaeg olukorra parandamiseks enne mis tahes peatamist.",
-    "sub6_2Title": "6.2 Rasked rikkumised, mis toovad kaasa viivitamatu eemaldamise ilma eelneva hoiatuseta",
-    "body6_2": "Allpool nimetatud juhtudel võib BipFix Partneri juurdepääsu <strong>viivitamatult ja ilma eelneva hoiatuseta</strong> peatada või lõpetada, arvestades rikkumise raskust ja ohtu kogu platvormi ökosüsteemi usaldusele:",
-    "list6_2_1": "Kehtiva komisjonimudeli pettus, sellest kõrvalehoidmine või selle katse (nt Klientide suunamine sõlmima tehing väljaspool platvormi, et vältida kohaldatava komisjonitasu maksmist, valekontode kasutamine, tegelikult küsitud summadest erineva teabe esitamine);",
-    "list6_2_2": "Korduvad negatiivsed Kliendi hinnangud, mis viitavad halva teeninduse, alusetu tasu nõudmise, hinnapakkumise mittetäitmise või ebaeetilise käitumise mustrile;",
-    "list6_2_3": "Ebaausad, eksitavad või pettuslikud tegevused, sealhulgas, kuid mitte ainult: valeteabe andmine varuosade või teenuste kohta, hinnapakkumisest erineva summa nõudmine ilma põhjenduseta, Klientide diskrimineerimine, ahistamine või platvormi kaudu saadud Kliendi andmete väärkasutamine;",
-    "list6_2_4": "Pädeva ametiasutuse otsus või ebaseadusliku tegevuse tuvastamine.",
-    "body6_2b": "Rikkumise raskust ja kohaldatavat meedet (hoiatus, ajutine peatamine või lõplik eemaldamine) hindab BipFix igal üksikjuhul eraldi. Eemaldatud Partner võib esitada kirjaliku taotluse otsuse ülevaatamiseks koos selgitustega, mida BipFix hindab.",
-    "title7": "7. Hinnangud ja maine",
-    "body7": "Kliendid saavad osutatud teenust pärast selle lõpetamist hinnata. Hinnangud kajastavad neid kirjutanud isiku arvamust ja need kuvatakse avalikult Partneri profiilil. BipFix võib eemaldada tõendatult valed, solvavad või seadust rikkuvad hinnangud, kuid ei vastuta Klientide õiguspärase arvamuse sisu eest.",
-    "title8": "8. Tarbija õigused",
-    "intro8": "Miski käesolevates Tingimustes ei piira Kliendile tema elukohariigis kohaldatava tarbijakaitseõigusega tagatud õigusi (näiteks Brasiilia Tarbijakaitse Seadustik Brasiilias elavatele Klientidele, või Euroopa Liidu tarbijakaitseõigus — sealhulgas kaupade müügi ja garantiide direktiivist tulenev seaduslik garantii — Euroopa Liidus elavatele Klientidele). Need õigused hõlmavad üldjuhul muu hulgas:",
-    "list8_1": "<strong>Õigus selgele ja asjakohasele teabele</strong> teenuste ja varuosade, hindade, omaduste ja riskide kohta;",
-    "list8_2": "<strong>Seadusest tulenevat garantiiaega</strong> ilmsete või kergesti tuvastatavate puuduste kohta kaebamiseks kestvusteenuste ja -kaupade puhul (nagu autoremont ja varuosad), vastavalt Kliendi riigis kohaldatavale õigusele, alates sõiduki või toote üleandmisest;",
-    "list8_3": "<strong>Tarnija vastutust</strong> Töökoja või Poe poolt osutatud teenuse või müüdud varuosa puuduste ja defektide eest;",
-    "list8_4": "<strong>Ebaausate ja kuritarvituslike äritavade keeldu</strong>, näiteks seotud müük, tellimata teenuse eest tasu nõudmine või eksitav teave;",
-    "list8_5": "Kanal Kliendi ja Partneri vaheliste kaebuste ja vaidluste lahendamiseks, mille BipFix pakub tasuta lisateenusena, ilma et see piiraks Kliendi õigust pöörduda oma riigi tarbijakaitseasutuse (nt Procon ja platvorm consumidor.gov.br Brasiilias) või kohtu poole otse vastutava Partneri vastu.",
-    "title9": "9. Isikuandmete kaitse",
-    "body9": "BipFixi teostatav isikuandmete töötlemine järgib kasutajale kohalduvat andmekaitseõigust (Euroopa Liidus asuvatele Klientidele ja Partneritele isikuandmete kaitse üldmäärust — GDPR; Brasiilias asuvatele Brasiilia isikuandmete kaitse üldseadust — LGPD) ning on üksikasjalikult kirjeldatud meie <privacyLink>Privaatsuspoliitikas</privacyLink>, mis on käesolevate Tingimuste lahutamatu osa.",
-    "title10": "10. Sisu, intellektuaalomand ja kaubamärk",
-    "body10": "Kaubamärk BipFix, selle kujundus, lähtekood ja muud platvormi elemendid kuuluvad BipFixile või tema litsentsiandjatele ning nende reprodutseerimine, pöördprojekteerimine või loata kasutamine on keelatud. Klientide ja Partnerite esitatud sisu (fotod, kirjeldused, sõnumid) jääb selle esitanud isiku omandisse, kuid esitaja annab BipFixile litsentsi kuvada seda platvormil teenuse toimimiseks vajalikus ulatuses.",
-    "title11": "11. Vastutuse piiramine",
-    "body11": "BipFix teeb jõupingutusi Partnerite registreerimisandmete kontrollimiseks ja võimalike vaidluste vahendamiseks, kuid ei taga Töökoja osutatud teenuse või Poe müüdud varuosa kvaliteeti, seaduslikkust, sobivust ega tulemust — selle eest vastutab ainuisikuliselt teostav Partner vastavalt kohaldatavale tarbijakaitseõigusele. BipFix ei vastuta ka platvormi ajutise kättesaamatuse eest, mis tuleneb hooldustöödest, kolmandate isikute riketest või ettenägematutest asjaoludest ja vääramatust jõust.",
-    "title12": "12. Käesolevate Tingimuste muutmine",
-    "body12": "BipFix võib käesolevaid Tingimusi uuendada, et kajastada platvormi parendusi või õiguslikke muudatusi. Olulistest muudatustest (sealhulgas komisjonipoliitika muutmisest, mis järgib Punktis 4 sätestatud erireeglit) teavitatakse mõistliku etteteatamisajaga. Platvormi jätkuv kasutamine pärast teavitust tähendab uute tingimustega nõustumist.",
-    "title13": "13. Kohaldatav õigus ja kohtualluvus",
-    "body13": "Kliendiga seotud vaidlusi reguleerib ja neid lahendab Kliendi elukohariigi õigus ja kohtualluvus, niivõrd kui seda nõuab kohustuslik tarbijakaitseõigus (Brasiilias elavate Klientide puhul tähendab see Brasiilia õigust ja Kliendi elukohajärgset kohtualluvust, nagu võimaldab Tarbijakaitse Seadustiku art 101, I). Partnerite ja BipFixi vaheliste, üksnes vahendusalasest ärisuhtest tulenevate vaidluste puhul, kui kohustuslik kohalik õigus ei sätesta teisiti, on kokku lepitud São Paulo/SP kohtualluvus (Brasiilia). <strong>Märkus:</strong> käesoleva punkti kohaldatava õiguse sätted väljaspool Brasiiliat asuvate turgude jaoks on ajutised ja ootavad kohaliku õigusnõustaja ülevaatust ega tühista Kliendi riigi kohustuslikke tarbijakaitsenorme.",
-    "title14": "14. Kontakt",
-    "body14": "Küsimused käesolevate Tingimuste kohta võib saata aadressile <mailLink>support@bipfix.com</mailLink>.",
-    "footerDisclaimer": "Käesolev dokument on informatiivse iseloomuga ja kajastab BipFixi platvormi toimimise reegleid. See koostati algselt Brasiilia turu jaoks; teiste riikide jaoks kasutatud üldine, jurisdiktsiooniüleselt neutraalne sõnastus on ajutine mustand ning täielik õiguslik vastavus igas riigis, kus BipFix tegutseb, eeldab enne sealset kommertskasutuselevõttu kohaliku tarbija- ja andmekaitseõiguse valdkonna juristi ülevaatust."
+    "updatedDate": "28. september 2026",
+    "secoes": [
+      {
+        "titulo": "1. Kes me oleme ja millal need tingimused kehtivad",
+        "paragrafos": [
+          "BipFix („meie“) haldab veebilehte bipfix.com ja BipFixi mobiilirakendust (koos „platvorm“). BipFix on praegu Eestis osaühinguna registreerimisel. Kuni registreerimise lõpuni haldab platvormi selle asutaja füüsilise isikuna. Pärast äriühingu registreerimist lisame siia selle ärinime, registrikoodi ja registrijärgse aadressi. Meiega saab ühendust aadressil <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>.",
+          "Need tingimused kehtivad platvormi inglis-, eesti- ja itaaliakeelse versiooni ning kõigi selle kasutajate kohta Euroopa Majanduspiirkonnas. Platvormi portugalikeelne versioon on mõeldud Brasiilia kasutajatele ja sellele kehtivad eraldi, Brasiilia õigusel põhinevad tingimused. Konto loomisega või platvormi kasutamisega nõustud nende tingimustega. Seda, kuidas me isikuandmeid töötleme, selgitab meie <a href=\"/privacidade\">privaatsuspoliitika</a>."
+        ]
+      },
+      {
+        "titulo": "2. Mida BipFix teeb",
+        "paragrafos": [
+          "BipFix on internetipõhine vahendusplatvorm. See ühendab remonti vajavaid autojuhte ja sõidukiomanikke („kliendid“) autotöökodade („töökojad“) ja varuosade müüjatega („poed“), koos „partnerid“. Platvormi kaudu kirjeldavad kliendid oma muret ja saavad hinnapakkumisi ning partnerid saavad saata hinnapakkumisi, suhelda klientidega, jälgida tööd ning osta ja müüa üksteisele varuosi.",
+          "<strong>BipFix ei tee remonti ega müü varuosi ega ole kliendi ja partneri vahelise lepingu pool.</strong> Kui nõustud hinnapakkumisega, sõlmitakse remondi- või varuosalepingu otse sinu ja partneri vahel ning partner vastutab töö, hinna, tähtaegade ja garantii eest.",
+          "Kõik partnerid registreeruvad BipFixis ettevõtetena ja kinnitavad, et tegutsevad kauplejana. See tähendab, et tarbijana kohaldatakse sinu lepingule partneriga ELi tarbijakaitse reegleid (vt punkt 11)."
+        ]
+      },
+      {
+        "titulo": "3. Sinu konto",
+        "itens": [
+          "Konto loomiseks pead olema vähemalt 18-aastane.",
+          "Esitatud andmed (nimi, kontaktandmed ning partnerite puhul ärinimi, registri- või KMKR-kood ja aadress) peavad olema õiged, täielikud ja ajakohased.",
+          "Vastutad oma parooli saladuses hoidmise ja oma kontol toimuva eest. Kui kahtlustad volitamata kasutamist, teata meile kohe aadressil <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>.",
+          "Partnerid kinnitavad, et neil on oma tegevuseks vajalikud registreeringud, litsentsid ja load. Võime küsida tõendavaid dokumente ja keelduda registreerimisest, kui andmed on valed, puudulikud või kontrollimatud."
+        ]
+      },
+      {
+        "titulo": "4. Klientidele tasuta",
+        "paragrafos": [
+          "Platvormi kasutamine on klientidele tasuta: hinnapakkumiste küsimine, nende võrdlemine, remondi jälgimine ja arvustuste kirjutamine ei maksa midagi. Maksad ainult partnerile tema kokkulepitud remondi või varuosa eest."
+        ]
+      },
+      {
+        "titulo": "5. Tasud partneritele",
+        "paragrafos": [
+          "Praeguses asutajafaasis <strong>ei maksa partnerid BipFixi kasutamise eest kuutasu ega komisjonitasu</strong>. Võime tulevikus kehtestada komisjonitasu platvormi kaudu tehtud tehingutelt, kuutasu või mõlemad.",
+          "Enne mistahes tasu võtmist teavitame asjaomaseid partnereid e-posti teel ja platvormil <strong>vähemalt 30 päeva ette</strong>, kirjeldades hinnamudelit, summat või protsenti, tasu mõjutavaid kriteeriume (näiteks töömahtu) ja kuupäeva, millest alates see kehtib. Partner, kes uute tingimustega ei nõustu, võib oma konto enne seda kuupäeva ilma trahvita sulgeda."
+        ]
+      },
+      {
+        "titulo": "6. Kuidas päringuid jagatakse ja tulemusi näidatakse",
+        "paragrafos": [
+          "Peamised parameetrid, mis määravad, mida partnerid ja kliendid näevad, on järgmised:"
+        ],
+        "itens": [
+          "<strong>Päringute jagamine partneritele:</strong> kliendi päringut näidatakse töökodadele, mille teeninduspiirkond (iga töökoja määratud raadius, vaikimisi 30 km) hõlmab päringu aadressi ja mis pakuvad soovitud teenust. Kiireloomulised päringud (näiteks pärast avariid) saadetakse kere- ja avariiremondiga tegelevatele töökodadele, eelistades neid, kellel on nende deklareeritud võimsuse järgi selleks tööks veel vaba aega.",
+          "<strong>Klientidele näidatavad hinnapakkumised:</strong> iga pakkumise juures on hind, tähtaeg ja töökoja hinnang, et klient saaks neid võrrelda. Ükski partner ei saa maksta selle eest, et tema pakkumist näidataks paremal kohal.",
+          "<strong>Töökodade avalik nimekiri:</strong> partnertöökodade avalik nimekiri on järjestatud keskmise hinnangu, seejärel arvustuste arvu ja seejärel platvormil oldud aja järgi. Ükski partner ei saa maksta selle eest, et olla nimekirjas kõrgemal."
+        ],
+        "depois": [
+          "Kui muudame neid parameetreid, uuendame seda punkti ja teavitame partnereid ette vastavalt punktile 17."
+        ]
+      },
+      {
+        "titulo": "7. Partnerite kohustused",
+        "paragrafos": [
+          "Partnerina nõustud:"
+        ],
+        "itens": [
+          "andma tõest teavet oma hindade, tähtaegade, saadavuse ja teenuste kohta;",
+          "täitma klientidele platvormi kaudu antud hinnapakkumisi ja tähtaegu, välja arvatud juhul, kui klient nõustub muudatusega;",
+          "mitte suunama kliente tehingut sõlmima või maksma väljaspool platvormi, et vältida punkti 5 alusel teatatud ja kehtivat tasu;",
+          "mitte manipuleerima, ostma ega vahetama arvustusi ega hinnanguid;",
+          "kohtlema kliente ja teisi partnereid lugupidavalt, ilma diskrimineerimise, ahistamise, survestamise ning ebaausate või eksitavate kaubandustavadeta;",
+          "järgima oma tegevusele kohalduvaid seadusi, sealhulgas tarbijakaitse-, maksu-, töö- ja keskkonnaõigust, ning kasutama klientide isikuandmeid ainult nende soovitud teenuse osutamiseks."
+        ]
+      },
+      {
+        "titulo": "8. Partneri konto piiramine, peatamine ja lõpetamine",
+        "itens": [
+          "<strong>Väiksemad või üksikud probleemid</strong> (näiteks aeglane vastamine või aegunud andmed) toovad tavaliselt kaasa hoiatuse ja mõistliku aja probleemi lahendamiseks.",
+          "<strong>Piiramine või peatamine:</strong> kui piirame või peatame partneri konto, saadame partnerile põhjenduse koos konkreetsete asjaolude ja nende tingimuste alustega enne meetme jõustumist või hiljemalt selle jõustumisel.",
+          "<strong>Lõpetamine:</strong> kui otsustame partneri platvormi kasutamise täielikult lõpetada, teatame sellest koos põhjendusega vähemalt 30 päeva ette. Võime lõpetada või peatada viivitamata, kuid samuti koos põhjendusega, ainult siis, kui seadus seda nõuab, või raskete või korduvate rikkumiste korral, näiteks: pettus või kehtiva tasu vältimise katse; valeteave varuosade, teenuste või hindade kohta; põhjendamatult nõustutud pakkumisest erineva summa nõudmine; klientide ahistamine või diskrimineerimine; klientide isikuandmete väärkasutamine; korduvad tõsised kliendikaebused; või pädeva asutuse tuvastatud ebaseaduslik tegevus.",
+          "Partner võib asjaolusid selgitada ja paluda otsuse uuesti läbivaatamist, kirjutades aadressil <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>. Kui meetme põhjus on ära langenud, taastame konto põhjendamatu viivituseta."
+        ]
+      },
+      {
+        "titulo": "9. Arvustused",
+        "itens": [
+          "<strong>Töökoda saavad hinnata ainult kliendid, kellele see töökoda on BipFixi kaudu teenuse osutanud:</strong> platvorm lubab tehniliselt arvustust ainult selle töökoja kohta, kelle hinnapakkumisega klient nõustus, ja alles pärast seda, kui päring on märgitud lõpetatuks. Iga lõpetatud teenust saab hinnata üks kord.",
+          "Autor saab oma arvustust muuta kuni 2 kuud pärast avaldamist. Arvustusi näidatakse koos autori kontol näidatud nime ja kuupäevaga.",
+          "Me ei maksa arvustuste eest ega peida ega järjesta arvustusi ümber sõltuvalt sellest, kas need on positiivsed või negatiivsed. Eemaldame arvustuse ainult siis, kui see on ebaseaduslik, tõendatult vale, solvav või teenusega mitteseotud, ning teatame autorile põhjuse.",
+          "Töökoja avalik hinnang on kõigi tema avaldatud arvustuste keskmine."
+        ]
+      },
+      {
+        "titulo": "10. Sinu sisu ja ebaseaduslikust sisust teatamine",
+        "paragrafos": [
+          "Vastutad platvormil avaldatud sisu eest (kirjeldused, fotod, sõnumid, arvustused, profiiliandmed). See ei tohi olla ebaseaduslik, eksitav ega rikkuda teiste õigusi. Õigused sinu sisule jäävad sulle ning annad BipFixile tasuta litsentsi seda platvormil säilitada ja näidata ulatuses, mis on vajalik teenuse osutamiseks.",
+          "Igaüks võib teatada sisust, mida ta peab ebaseaduslikuks, kirjutades aadressil <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a> ja lisades: selgituse, miks sisu on ebaseaduslik, sisu täpse asukoha (näiteks lehe aadressi), teataja nime ja e-posti aadressi (välja arvatud teatud teated laste seksuaalse väärkohtlemise materjali kohta) ning kinnituse, et teade on esitatud heauskselt ning on täpne ja täielik. Kinnitame teate kättesaamist, käsitleme seda õigeaegselt, hoolikalt ja objektiivselt ning teatame teatajale oma otsusest.",
+          "Kui eemaldame sisu, piirame selle nähtavust või piirame kontot, saadame asjaomasele kasutajale põhjenduse ja selgitame, kuidas otsust vaidlustada. Meie ühtne kontaktpunkt kasutajatele ja ELi liikmesriikide ametiasutustele on <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>; võid meile kirjutada eesti või inglise keeles."
+        ]
+      },
+      {
+        "titulo": "11. Tarbija õigused",
+        "paragrafos": [
+          "Miski nendes tingimustes ei piira sinu kui tarbija õigusi, mis tulenevad sinu elukohariigi kohustuslikust õigusest. Eelkõige kehtivad sinu seadusjärgsed õigused remondi või varuosa suhtes (näiteks õigus nõuda puuduliku remondi parandamist või esitada nõudeid puuduliku varuosa kohta) selle partneri vastu, kes töö tegi või varuosa müüs.",
+          "Kui sul tekib partneriga probleem, võid kirjutada meile aadressil <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a> ja püüame tasuta aidata lahendust leida. See ei mõjuta sinu õigust pöörduda oma riigi tarbijakaitseasutuse või kohtu poole. Eestis saavad tarbijad pöörduda tasuta Tarbijakaitse ja Tehnilise Järelevalve Ameti juures tegutseva tarbijavaidluste komisjoni poole (<a href=\"https://www.ttja.ee\" target=\"_blank\" rel=\"noopener noreferrer\">www.ttja.ee</a>)."
+        ]
+      },
+      {
+        "titulo": "12. Partnerite kaebused",
+        "paragrafos": [
+          "Partnerid saavad saata kaebusi platvormi, tehniliste probleemide või nende konto suhtes võetud meetmete kohta aadressil <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>. Kaebuste esitamine on tasuta; vaatame need hoolikalt läbi ja vastame mõistliku aja jooksul. BipFix on praegu väikeettevõtja komisjoni soovituse 2003/361/EÜ tähenduses, mistõttu määruse (EL) 2019/1150 kohane kohustus nimetada välised vahendajad meile veel ei kehti."
+        ]
+      },
+      {
+        "titulo": "13. Intellektuaalomand",
+        "paragrafos": [
+          "BipFixi nimi ja logo, platvormi kujundus ja lähtekood kuuluvad BipFixile või selle litsentsiandjatele. Neid ei tohi ilma meie loata kopeerida, pöördprojekteerida ega kasutada, välja arvatud seadusega lubatud ulatuses."
+        ]
+      },
+      {
+        "titulo": "14. Vastutus",
+        "paragrafos": [
+          "Kontrollime hoolikalt partnerite registreeringuid ja platvormi toimimist, kuid remondi kvaliteedi ja tulemuse ning müüdud varuosa eest vastutab partner, mitte BipFix.",
+          "Me ei taga, et platvorm on alati katkestusteta kättesaadav; võib esineda hoolduspause, kolmandate osapoolte teenuste tõrkeid või meist sõltumatuid sündmusi.",
+          "Miski nendes tingimustes ei välista ega piira meie vastutust tahtlikult või raske hooletuse tõttu tekitatud kahju, surma või tervisekahjustuse eest ega muudel juhtudel, kus vastutust ei saa seadusega piirata."
+        ]
+      },
+      {
+        "titulo": "15. Konto sulgemine",
+        "paragrafos": [
+          "Võid igal ajal platvormi kasutamise lõpetada ja paluda oma konto sulgeda, kirjutades aadressil <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>. Konto sulgemine ei mõjuta partneriga juba sõlmitud lepinguid. Seda, mis juhtub sinu andmetega pärast sulgemist, selgitab privaatsuspoliitika."
+        ]
+      },
+      {
+        "titulo": "16. Muud kasutusreeglid",
+        "paragrafos": [
+          "Platvormi ei tohi kasutada ebaseaduslikel eesmärkidel, püüda pääseda ligi teiste kasutajate andmetele või kontodele, häirida platvormi toimimist ega koguda sealt ilma meie loata automaatselt andmeid."
+        ]
+      },
+      {
+        "titulo": "17. Tingimuste muutmine",
+        "paragrafos": [
+          "Võime neid tingimusi muuta, näiteks pärast äriühingu registreerimist, uute funktsioonide lisamisel või seaduse muutumisel. Olulistest muudatustest teavitame registreeritud kasutajaid e-posti teel või platvormil enne nende jõustumist: partnereid puudutavatest muudatustest vähemalt 30 päeva ette (või kauem, kui kohandumiseks on vaja) ja kliente mõistliku aja jooksul. Kui sa muudatustega ei nõustu, võid oma konto enne nende jõustumist sulgeda."
+        ]
+      },
+      {
+        "titulo": "18. Kohaldatav õigus ja kohtualluvus",
+        "paragrafos": [
+          "Nendele tingimustele kohaldatakse Eesti õigust. Kui oled tarbija, ei võta see õiguse valik sinult oma elukohariigi kohustuslike normide kaitset ning võid pöörduda selle riigi kohtusse.",
+          "BipFixi ja partnerite vahelised vaidlused lahendab Harju Maakohus Tallinnas, kui kohustuslikust õigusest ei tulene teisiti."
+        ]
+      },
+      {
+        "titulo": "19. Kontakt",
+        "paragrafos": [
+          "Küsimused nende tingimuste kohta: <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>. Küsimused isikuandmete kohta: <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+        ]
+      }
+    ]
   },
   "privacidade": {
     "metaTitle": "Privaatsuspoliitika",
@@ -146,8 +246,8 @@
         "subsecao": true,
         "itens": [
           "<strong>Tehnilised andmed:</strong> IP-aadress, brauseri ja seadme tüüp, päritud lehed ja veateated, mis salvestatakse serverilogidesse, et hoida platvorm turvalisena, ennetada pettusi ja kuritarvitusi ning parandada vigu.",
-          "<strong>Külastuste kokkuvõtted:</strong> veebilehe sirvimise ajal hoitakse külastatud lehti ja igal lehel veedetud aega ajutiselt sinu brauseri vahekaardil (seansisalvestus, mis kustub vahekaardi sulgemisel) ja saadetakse meie serverisse. Server ühendab need suunava saidi (näiteks Google või Instagram), seadme ja brauseri tüübi, keele ning IP-aadressi põhjal hinnatud ligikaudse linna ja riigiga külastuse kokkuvõtteks, mis saadetakse e-postiga ainult BipFixi meeskonnale. Kasutame seda, et mõista, kuidas veebilehte meie käivitamise ajal kasutatakse, ja seda parandada. Kokkuvõttes on IP-aadress näidatud ainult osaliselt ja seda ei salvestata meie andmebaasi. BipFixi administraatorina sisse loginud inimeste külastusi ei arvestata.",
-          "<strong>Õiguslik alus:</strong> meie õigustatud huvi pakkuda turvalist veebilehte ja mõista, kuidas seda kasutatakse (art 6 lg 1 p f). Külastuste kokkuvõtetele võid igal ajal vastu vaielda, kirjutades aadressil <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+          "<strong>Külastuste kokkuvõtted (ainult siis, kui nõustud küpsistega):</strong> kui klõpsad küpsiste ribal „Nõustun“, hoitakse külastatud lehti ja igal lehel veedetud aega ajutiselt sinu brauseri vahekaardil (seansisalvestus, mis kustub vahekaardi sulgemisel) ja saadetakse meie serverisse. Server ühendab need suunava saidi (näiteks Google või Instagram), seadme ja brauseri tüübi, keele ning IP-aadressi põhjal hinnatud ligikaudse linna ja riigiga külastuse kokkuvõtteks, mis saadetakse e-postiga ainult BipFixi meeskonnale. Kasutame seda, et mõista, kuidas veebilehte meie käivitamise ajal kasutatakse, ja seda parandada. Kokkuvõttes on IP-aadress näidatud ainult osaliselt ja seda ei salvestata meie andmebaasi. BipFixi administraatorina sisse loginud inimeste külastusi ei arvestata.",
+          "<strong>Õiguslik alus:</strong> tehniliste andmete puhul meie õigustatud huvi pakkuda turvalist veebilehte (art 6 lg 1 p f); külastuste kokkuvõtete puhul sinu nõusolek (art 6 lg 1 p a), mille võid igal ajal tagasi võtta (vt punkt 9), ilma et see mõjutaks enne tagasivõtmist toimunud töötlemise seaduslikkust."
         ]
       },
       {
@@ -238,7 +338,7 @@
       {
         "titulo": "9. Küpsised ja sarnased tehnoloogiad",
         "paragrafos": [
-          "Kasutame brauserisse teavet salvestavaid tehnoloogiaid, mis on veebilehe toimimiseks hädavajalikud: sisselogituna püsimine, keele meelespidamine ja sinu küpsisevaliku meelespidamine. Need ei vaja nõusolekut. Analüütikaküpsiseid (Google Analytics ja Microsoft Clarity) kasutatakse ainult siis, kui nõustud nendega küpsiste ribal. Punktis 3.7 kirjeldatud külastuste kokkuvõtted kasutavad seansisalvestust, mis kustub vahekaardi sulgemisel.",
+          "Kasutame brauserisse teavet salvestavaid tehnoloogiaid, mis on veebilehe toimimiseks hädavajalikud: sisselogituna püsimine, keele meelespidamine ja sinu küpsisevaliku meelespidamine. Need ei vaja nõusolekut. Analüütikaküpsiseid (Google Analytics ja Microsoft Clarity) ning punktis 3.7 kirjeldatud külastuste kokkuvõtteid kasutatakse ainult siis, kui klõpsad küpsiste ribal „Nõustun“; kui keeldud või riba eirad, neid ei kasutata.",
           "Küpsisevaliku muutmiseks kustuta brauseri seadetes bipfix.com salvestatud andmed; küpsiste riba ilmub järgmisel külastusel uuesti."
         ]
       },

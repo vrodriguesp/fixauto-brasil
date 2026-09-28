@@ -4,62 +4,162 @@
     "dispensar": "Chiudi"
   },
   "termos": {
-    "metaTitle": "Termini di Utilizzo",
-    "metaDescription": "Termini di Utilizzo e Condizioni Generali della piattaforma BipFix, per clienti, officine e negozi di ricambi partner.",
-    "pageTitle": "Termini di Utilizzo e Condizioni Generali",
+    "metaTitle": "Termini di utilizzo",
+    "metaDescription": "Termini di utilizzo della piattaforma BipFix per automobilisti, officine e rivenditori di ricambi nell'Unione europea.",
+    "pageTitle": "Termini di utilizzo",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
-    "updatedDate": "8 settembre 2026",
-    "title1": "1. Chi siamo e cosa è BipFix",
-    "body1a": "BipFix è una piattaforma digitale di intermediazione che mette in contatto (i) automobilisti e proprietari di veicoli (\"Clienti\") che necessitano di servizi di riparazione auto con (ii) officine meccaniche (\"Officine\") e (iii) rivenditori di ricambi auto (\"Negozi\"), definiti collettivamente \"Partner\". Creando un account o utilizzando BipFix in qualsiasi modo, l'utente accetta i presenti Termini di Utilizzo e la nostra <privacyLink>Informativa sulla Privacy</privacyLink>.",
-    "body1b": "BipFix <strong>non fornisce servizi di riparazione auto, non vende ricambi e non è parte del contratto</strong> stipulato tra Cliente e Partner. Il nostro ruolo è quello di intermediario tecnologico: rendiamo possibile il contatto, il confronto dei preventivi, la comunicazione e il monitoraggio del servizio. Il rapporto di consumo relativo al servizio eseguito (riparazione, ricambio venduto, tempistiche, qualità, garanzia) si instaura direttamente tra Cliente e Partner, che rispondono della propria condotta ai sensi della normativa a tutela del consumatore applicabile nel paese di residenza del Cliente.",
-    "title2": "2. Registrazione e veridicità delle informazioni",
-    "body2": "È necessario fornire informazioni veritiere, complete e aggiornate in fase di registrazione (nome, codice fiscale/partita IVA, indirizzo, contatti). Le Officine e i Negozi dichiarano di essere in regola con le registrazioni, le licenze e le autorizzazioni richieste per la propria attività. BipFix può richiedere documenti giustificativi e rifiutare o sospendere account con dati falsi, incompleti o non verificabili.",
-    "title3": "3. Utilizzo gratuito per i Clienti",
-    "body3": "L'utilizzo della piattaforma da parte dei Clienti è e resterà gratuito: richiedere preventivi, confrontare le proposte, seguire l'andamento del servizio e valutare i Partner non comportano alcun costo.",
-    "title4": "4. Commissioni e addebiti ai Partner",
-    "body4a": "Attualmente, per determinati Partner (compresi quelli che aderiscono nella fase iniziale della piattaforma), <strong>non viene addebitata alcuna commissione o canone mensile</strong> per l'utilizzo di BipFix. BipFix si riserva il diritto di introdurre in futuro una commissione sui servizi intermediati, un canone mensile, o entrambi.",
-    "body4b": "Qualora BipFix decida di introdurre o modificare eventuali addebiti, ne darà comunicazione ai Partner interessati <strong>con un preavviso minimo di 30 (trenta) giorni</strong> prima che qualsiasi importo venga effettivamente addebitato, tramite e-mail e/o avviso all'interno della piattaforma, indicando il nuovo modello, la percentuale o l'importo applicabile e la data di decorrenza. Il Partner che non accetti le nuove condizioni può chiudere il proprio account prima della data di decorrenza, senza alcuna penale.",
-    "title5": "5. Condotta dei Partner e utilizzo della piattaforma",
-    "intro5": "Aderendo come Officina o Negozio partner, ci si impegna a:",
-    "list5_1": "Fornire informazioni veritiere su prezzi, tempistiche, disponibilità e specializzazioni;",
-    "list5_2": "Rispettare i preventivi e le tempistiche comunicati al Cliente all'interno della piattaforma;",
-    "list5_3": "Non indurre il Cliente a concludere la trattativa o il pagamento al di fuori della piattaforma allo scopo di eludere una commissione applicabile, quando questa sia in vigore e sia stata comunicata ai sensi della Clausola 4;",
-    "list5_4": "Non manipolare, acquistare, scambiare o in altro modo falsificare recensioni e punteggi di reputazione;",
-    "list5_5": "Trattare Clienti e altri Partner con rispetto, senza discriminazioni, molestie, coercizione o pratiche commerciali sleali o ingannevoli;",
-    "list5_6": "Rispettare la normativa applicabile alla propria attività, comprese le norme in materia di tutela del consumatore, lavoro, fiscalità e ambiente.",
-    "title6": "6. Sospensione ed esclusione dei Partner",
-    "intro6": "BipFix può ammonire, sospendere temporaneamente o escludere definitivamente un Partner dalla piattaforma, in modo proporzionale alla gravità della condotta riscontrata. In particolare:",
-    "sub6_1Title": "6.1 Violazioni che possono comportare un avviso preventivo e un termine per la regolarizzazione",
-    "body6_1": "Le violazioni lievi o occasionali (ad es. ritardi occasionali nel rispondere alle richieste, registrazione non aggiornata) comportano di norma una notifica e un termine ragionevole per la correzione prima di qualsiasi sospensione.",
-    "sub6_2Title": "6.2 Violazioni gravi che comportano l'esclusione immediata, senza preavviso",
-    "body6_2": "Nei casi indicati di seguito, BipFix può sospendere o interrompere l'accesso del Partner <strong>immediatamente e senza preavviso</strong>, data la gravità e il rischio per la fiducia nell'intero ecosistema della piattaforma:",
-    "list6_2_1": "Frode, elusione o tentativo di elusione del modello di commissione vigente (ad es. indirizzare i Clienti a concludere l'affare al di fuori della piattaforma per non pagare la commissione applicabile, uso di account falsi, comunicazione di importi diversi da quelli praticati);",
-    "list6_2_2": "Ripetute recensioni negative da parte dei Clienti che indichino un andamento di scarsa qualità del servizio, addebiti indebiti, mancato rispetto del preventivo o condotta non etica;",
-    "list6_2_3": "Pratiche sleali, ingannevoli o fraudolente, incluse a titolo esemplificativo ma non esaustivo: informazioni false su ricambi o servizi, addebito di un importo diverso da quello preventivato senza giustificazione, discriminazione dei Clienti, molestie o uso improprio dei dati dei Clienti ottenuti tramite la piattaforma;",
-    "list6_2_4": "Provvedimento di un'autorità competente o accertamento di un'attività illecita.",
-    "body6_2b": "La gravità della condotta e la misura applicabile (ammonimento, sospensione temporanea o esclusione definitiva) sono valutate da BipFix caso per caso. Il Partner escluso può richiedere per iscritto un riesame della decisione, fornendo chiarimenti, che saranno valutati da BipFix.",
-    "title7": "7. Recensioni e reputazione",
-    "body7": "I Clienti possono valutare il servizio ricevuto dopo il suo completamento. Le recensioni riflettono l'opinione di chi le ha scritte e vengono mostrate pubblicamente sul profilo del Partner. BipFix può rimuovere recensioni comprovatamente false, offensive o che violino la legge, ma non risponde del contenuto delle opinioni legittime dei Clienti.",
-    "title8": "8. Diritti del consumatore",
-    "intro8": "Nulla nei presenti Termini limita i diritti garantiti ai Clienti dalla normativa a tutela del consumatore applicabile nel loro paese di residenza (ad esempio, il Codice di Difesa del Consumatore brasiliano per i Clienti in Brasile, oppure la normativa consumeristica dell'Unione Europea — inclusa la garanzia legale prevista dalla direttiva sulla vendita di beni e sulle garanzie — per i Clienti nell'Unione Europea). Tali diritti comprendono generalmente, tra l'altro:",
-    "list8_1": "<strong>Il diritto a un'informazione chiara e adeguata</strong> su servizi e ricambi, prezzi, caratteristiche e rischi;",
-    "list8_2": "<strong>Un periodo di garanzia legale</strong> per contestare vizi apparenti o facilmente riscontrabili in servizi e beni durevoli (come le riparazioni auto e i ricambi), secondo quanto previsto dalla normativa applicabile nel paese del Cliente, a decorrere dalla consegna del veicolo o del prodotto;",
-    "list8_3": "<strong>La responsabilità del fornitore</strong> dell'Officina o del Negozio per i vizi e i difetti del servizio prestato o del ricambio venduto;",
-    "list8_4": "<strong>Il divieto di pratiche commerciali sleali o abusive</strong>, come le vendite abbinate, l'addebito di servizi non richiesti o informazioni ingannevoli;",
-    "list8_5": "Un canale per reclami e mediazione delle controversie tra Cliente e Partner, messo a disposizione da BipFix come cortesia, fatto salvo il diritto del Cliente di rivolgersi direttamente all'ente di tutela dei consumatori del proprio paese (ad esempio, Procon e la piattaforma consumidor.gov.br in Brasile) o all'autorità giudiziaria nei confronti del Partner responsabile.",
-    "title9": "9. Protezione dei dati personali",
-    "body9": "Il trattamento dei dati personali effettuato da BipFix segue la normativa sulla protezione dei dati applicabile all'utente (ad esempio il GDPR per Clienti e Partner nell'Unione Europea, oppure la Legge Generale brasiliana sulla Protezione dei Dati — LGPD — per chi si trova in Brasile) ed è descritto in dettaglio nella nostra <privacyLink>Informativa sulla Privacy</privacyLink>, parte integrante dei presenti Termini.",
-    "title10": "10. Contenuti, proprietà intellettuale e marchio",
-    "body10": "Il marchio BipFix, il suo layout, il codice sorgente e gli altri elementi della piattaforma sono di proprietà di BipFix o dei suoi licenzianti; ne sono vietati la riproduzione, l'ingegneria inversa o l'uso non autorizzato. I contenuti caricati da Clienti e Partner (foto, descrizioni, messaggi) restano di proprietà di chi li ha caricati, ma l'utente concede a BipFix una licenza per mostrarli sulla piattaforma nella misura necessaria al funzionamento del servizio.",
-    "title11": "11. Limitazione di responsabilità",
-    "body11": "BipFix si adopera per verificare la registrazione dei Partner e per mediare eventuali controversie, ma non garantisce la qualità, la legalità, l'adeguatezza o il risultato del servizio prestato dalle Officine o del ricambio venduto dai Negozi, di cui è responsabile esclusivamente il Partner esecutore, ai sensi della normativa consumeristica applicabile. BipFix non risponde inoltre di eventuali indisponibilità temporanee della piattaforma dovute a manutenzione, guasti di terzi o casi fortuiti e di forza maggiore.",
-    "title12": "12. Modifiche ai presenti Termini",
-    "body12": "Possiamo aggiornare i presenti Termini per riflettere miglioramenti della piattaforma o modifiche normative. Le modifiche rilevanti (compresa qualsiasi modifica alla politica delle commissioni, soggetta alla regola specifica della Clausola 4) saranno comunicate con ragionevole preavviso. L'uso continuato della piattaforma dopo la comunicazione implica l'accettazione dei nuovi termini.",
-    "title13": "13. Foro competente e legge applicabile",
-    "body13": "Le controversie che coinvolgono un Cliente sono disciplinate dalla legge del paese di residenza del Cliente, e sono di competenza del foro dello stesso, nella misura richiesta dalla normativa consumeristica inderogabile (per i Clienti in Brasile, ciò significa la legge brasiliana e il foro del domicilio del Cliente, come consentito dall'art. 101, I, del Codice di Difesa del Consumatore). Per le controversie tra Partner e BipFix derivanti esclusivamente dal rapporto commerciale di intermediazione, e salvo quanto diversamente richiesto da norme locali inderogabili, è eletto il foro di San Paolo/SP, Brasile. <strong>Nota:</strong> le disposizioni sulla legge applicabile della presente clausola per i mercati fuori dal Brasile sono provvisorie, in attesa di revisione da parte di un legale locale, e non pregiudicano alcuna norma inderogabile a tutela del consumatore del paese del Cliente.",
-    "title14": "14. Contatti",
-    "body14": "Eventuali domande sui presenti Termini possono essere inviate a <mailLink>support@bipfix.com</mailLink>.",
-    "footerDisclaimer": "Il presente documento ha carattere puramente informativo e riflette le regole di funzionamento della piattaforma BipFix. È stato redatto originariamente per il mercato brasiliano; il linguaggio generico e neutro rispetto alla giurisdizione utilizzato per gli altri paesi è una bozza provvisoria, e la piena conformità giuridica in ciascun paese in cui BipFix opera richiede una revisione da parte di un avvocato specializzato in diritto dei consumatori e protezione dei dati locale prima della diffusione commerciale in quel paese."
+    "updatedDate": "28 settembre 2026",
+    "secoes": [
+      {
+        "titulo": "1. Chi siamo e quando si applicano questi Termini",
+        "paragrafos": [
+          "BipFix (\"noi\") gestisce il sito bipfix.com e l'app mobile BipFix (insieme, la \"Piattaforma\"). BipFix è attualmente in fase di registrazione come società a responsabilità limitata (osaühing) in Estonia. Fino al completamento della registrazione, la Piattaforma è gestita dal suo fondatore in qualità di persona fisica. Una volta registrata la società, in questa sezione indicheremo la sua denominazione legale, il numero di registro e la sede legale. Puoi contattarci all'indirizzo <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>.",
+          "Questi Termini si applicano alle versioni in inglese, estone e italiano della Piattaforma e a tutti coloro che la utilizzano dallo Spazio economico europeo. La versione in portoghese della Piattaforma è destinata agli utenti in Brasile ed è disciplinata da termini separati basati sulla legge brasiliana. Creando un account o usando la Piattaforma accetti questi Termini. Il modo in cui trattiamo i dati personali è spiegato nella nostra <a href=\"/privacidade\">Informativa sulla privacy</a>."
+        ]
+      },
+      {
+        "titulo": "2. Cosa fa BipFix",
+        "paragrafos": [
+          "BipFix è una piattaforma di intermediazione online. Mette in contatto automobilisti e proprietari di veicoli che hanno bisogno di una riparazione (\"Clienti\") con officine (\"Officine\") e rivenditori di ricambi (\"Rivenditori\"), insieme \"Partner\". Tramite la Piattaforma i Clienti descrivono il problema e ricevono preventivi, e i Partner possono inviare preventivi, comunicare con i Clienti, seguire il lavoro e comprare o vendere ricambi tra loro.",
+          "<strong>BipFix non esegue riparazioni né vende ricambi e non è parte del contratto tra Cliente e Partner.</strong> Quando accetti un preventivo, il contratto per la riparazione o il ricambio è concluso direttamente tra te e il Partner, che è responsabile del lavoro, del prezzo, dei tempi e della garanzia.",
+          "Tutti i Partner si registrano su BipFix come imprese e dichiarano di agire in qualità di professionisti. Ciò significa che, se sei un consumatore, al tuo contratto con il Partner si applicano le norme UE a tutela dei consumatori (vedi sezione 11)."
+        ]
+      },
+      {
+        "titulo": "3. Il tuo account",
+        "itens": [
+          "Per creare un account devi avere almeno 18 anni.",
+          "Le informazioni che fornisci (nome, recapiti e, per i Partner, ragione sociale, numero di registro o partita IVA e indirizzo) devono essere veritiere, complete e aggiornate.",
+          "Sei responsabile della riservatezza della tua password e delle attività svolte con il tuo account. Avvisaci subito a <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a> se sospetti un uso non autorizzato.",
+          "I Partner confermano di possedere le iscrizioni, licenze e autorizzazioni necessarie per la loro attività. Possiamo chiedere documenti a supporto e rifiutare una registrazione con informazioni false, incomplete o non verificabili."
+        ]
+      },
+      {
+        "titulo": "4. Gratuito per i Clienti",
+        "paragrafos": [
+          "L'uso della Piattaforma è gratuito per i Clienti: richiedere preventivi, confrontarli, seguire la riparazione e lasciare recensioni non costa nulla. Paghi solo il Partner, per la riparazione o il ricambio concordati con lui."
+        ]
+      },
+      {
+        "titulo": "5. Costi per i Partner",
+        "paragrafos": [
+          "Nell'attuale fase dei partner fondatori, <strong>i Partner non pagano alcun canone né alcuna commissione</strong> per l'uso di BipFix. In futuro potremo introdurre una commissione sulle transazioni concluse tramite la Piattaforma, un canone o entrambi.",
+          "Prima di addebitare qualsiasi costo, informeremo i Partner interessati via email e sulla Piattaforma <strong>con almeno 30 giorni di anticipo</strong>, descrivendo il modello di prezzo, l'importo o la percentuale, gli eventuali criteri che lo fanno variare (ad esempio il volume di lavoro) e la data da cui si applica. Il Partner che non accetta le nuove condizioni può chiudere il proprio account prima di tale data senza alcuna penale."
+        ]
+      },
+      {
+        "titulo": "6. Come vengono distribuite le richieste e mostrati i risultati",
+        "paragrafos": [
+          "I principali parametri che determinano ciò che vedono Partner e Clienti sono i seguenti:"
+        ],
+        "itens": [
+          "<strong>Distribuzione delle richieste ai Partner:</strong> la richiesta di un Cliente viene mostrata alle Officine la cui area di servizio (il raggio impostato da ciascuna Officina, 30 km per impostazione predefinita) comprende l'indirizzo della richiesta e che offrono il tipo di servizio richiesto. Le richieste urgenti (ad esempio dopo un incidente) vengono inviate alle Officine che si occupano di collisioni o carrozzeria, dando priorità a quelle che hanno ancora capacità libera per quel tipo di lavoro in base alla capacità dichiarata.",
+          "<strong>Preventivi mostrati ai Clienti:</strong> ogni preventivo è mostrato con prezzo, tempi e valutazione dell'Officina, in modo che il Cliente possa confrontarli. Nessun Partner può pagare per far comparire il proprio preventivo in una posizione migliore.",
+          "<strong>Elenco pubblico delle Officine:</strong> l'elenco pubblico delle Officine partner è ordinato per valutazione media, poi per numero di recensioni, poi per anzianità sulla Piattaforma. Nessun Partner può pagare per comparire più in alto nell'elenco."
+        ],
+        "depois": [
+          "Se modifichiamo questi parametri, aggiorneremo questa sezione e informeremo in anticipo i Partner secondo la sezione 17."
+        ]
+      },
+      {
+        "titulo": "7. Obblighi dei Partner",
+        "paragrafos": [
+          "In qualità di Partner ti impegni a:"
+        ],
+        "itens": [
+          "fornire informazioni veritiere su prezzi, tempi, disponibilità e servizi;",
+          "rispettare i preventivi e i tempi comunicati ai Clienti tramite la Piattaforma, salvo che il Cliente accetti una modifica;",
+          "non indurre i Clienti a concludere l'affare o a pagare fuori dalla Piattaforma per evitare un costo in vigore e comunicato ai sensi della sezione 5;",
+          "non manipolare, comprare o scambiare recensioni o valutazioni;",
+          "trattare Clienti e altri Partner con rispetto, senza discriminazioni, molestie, pressioni o pratiche commerciali sleali o ingannevoli;",
+          "rispettare le leggi applicabili alla tua attività, comprese quelle su tutela dei consumatori, fisco, lavoro e ambiente, e usare i dati personali dei Clienti solo per fornire il servizio richiesto."
+        ]
+      },
+      {
+        "titulo": "8. Limitazione, sospensione e cessazione degli account dei Partner",
+        "itens": [
+          "<strong>Problemi minori o isolati</strong> (ad esempio risposte lente o informazioni non aggiornate) comportano di norma un avviso e un periodo ragionevole per risolvere il problema.",
+          "<strong>Limitazione o sospensione:</strong> se limitiamo o sospendiamo l'account di un Partner, inviamo al Partner una motivazione con i fatti specifici e i motivi previsti da questi Termini, prima o al più tardi nel momento in cui la misura diventa efficace.",
+          "<strong>Cessazione:</strong> se decidiamo di cessare del tutto l'uso della Piattaforma da parte di un Partner, diamo un preavviso di almeno 30 giorni con la motivazione. Possiamo cessare o sospendere immediatamente, sempre con motivazione, solo quando la legge lo impone o in caso di violazioni gravi o ripetute, ad esempio: frode o tentativi di eludere un costo in vigore; informazioni false su ricambi, servizi o prezzi; richiesta senza giustificazione di importi diversi dal preventivo accettato; molestie o discriminazioni nei confronti dei Clienti; uso improprio dei dati personali dei Clienti; reclami gravi e ripetuti dei Clienti; oppure attività illecita accertata da un'autorità competente.",
+          "Il Partner può chiarire i fatti e chiederci di riconsiderare la decisione scrivendo a <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>. Se il motivo della misura viene meno, ripristineremo l'account senza ingiustificato ritardo."
+        ]
+      },
+      {
+        "titulo": "9. Recensioni",
+        "itens": [
+          "<strong>Solo i Clienti che hanno ricevuto un servizio completato da un'Officina tramite BipFix possono recensirla:</strong> la Piattaforma consente tecnicamente la recensione solo per l'Officina di cui il Cliente ha accettato il preventivo, e solo dopo che la richiesta è stata segnata come completata. Ogni servizio completato può essere recensito una sola volta.",
+          "L'autore può modificare la propria recensione fino a 2 mesi dopo la pubblicazione. Le recensioni sono mostrate con il nome indicato nell'account dell'autore e la data.",
+          "Non paghiamo per le recensioni e non nascondiamo né riordiniamo le recensioni in base al fatto che siano positive o negative. Rimuoviamo una recensione solo se è illecita, dimostrabilmente falsa, offensiva o estranea al servizio, e in tal caso ne comunichiamo il motivo all'autore.",
+          "La valutazione pubblica di un'Officina è la media di tutte le sue recensioni pubblicate."
+        ]
+      },
+      {
+        "titulo": "10. I tuoi contenuti e la segnalazione di contenuti illegali",
+        "paragrafos": [
+          "Sei responsabile dei contenuti che pubblichi sulla Piattaforma (descrizioni, foto, messaggi, recensioni, informazioni del profilo). Non devono essere illeciti, ingannevoli né violare i diritti altrui. I diritti sui tuoi contenuti restano tuoi, e concedi a BipFix una licenza gratuita per conservarli e mostrarli sulla Piattaforma nella misura necessaria a fornire il servizio.",
+          "Chiunque può segnalare contenuti che ritiene illegali scrivendo a <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a> con: una spiegazione del perché il contenuto è illegale, l'ubicazione esatta del contenuto (ad esempio l'indirizzo della pagina), il nome e l'indirizzo email di chi segnala (salvo alcune segnalazioni relative a materiale pedopornografico) e una dichiarazione che la segnalazione è fatta in buona fede ed è accurata e completa. Confermeremo la ricezione, tratteremo la segnalazione in modo tempestivo, diligente e obiettivo e comunicheremo la nostra decisione a chi l'ha fatta.",
+          "Se rimuoviamo un contenuto, ne limitiamo la visibilità o limitiamo un account, inviamo all'utente interessato una motivazione e spieghiamo come contestare la decisione. Il nostro punto di contatto unico per gli utenti e per le autorità degli Stati membri dell'UE è <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>; puoi scriverci in inglese o in estone."
+        ]
+      },
+      {
+        "titulo": "11. Diritti dei consumatori",
+        "paragrafos": [
+          "Nulla in questi Termini limita i diritti che hai come consumatore in base alle norme imperative del tuo paese di residenza. In particolare, i tuoi diritti di legge relativi alla riparazione o al ricambio (ad esempio il diritto di ottenere la correzione di una riparazione difettosa o di far valere la garanzia legale su un ricambio difettoso) valgono nei confronti del Partner che ha eseguito il lavoro o venduto il ricambio.",
+          "Se hai un problema con un Partner, puoi scriverci a <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a> e cercheremo gratuitamente di aiutarti a trovare una soluzione. Ciò non pregiudica il tuo diritto di rivolgerti all'autorità nazionale per la tutela dei consumatori o al giudice. In Estonia i consumatori possono sottoporre gratuitamente le controversie alla Commissione per le controversie dei consumatori presso l'Autorità per la tutela dei consumatori e la vigilanza tecnica (Tarbijakaitse ja Tehnilise Järelevalve Amet, <a href=\"https://www.ttja.ee\" target=\"_blank\" rel=\"noopener noreferrer\">www.ttja.ee</a>)."
+        ]
+      },
+      {
+        "titulo": "12. Reclami dei Partner",
+        "paragrafos": [
+          "I Partner possono inviare reclami sulla Piattaforma, su problemi tecnici o su qualsiasi misura adottata nei confronti del loro account a <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>. I reclami sono gratuiti; li esamineremo con la dovuta attenzione e risponderemo entro un termine ragionevole. BipFix è attualmente una piccola impresa ai sensi della Raccomandazione 2003/361/CE della Commissione, pertanto l'obbligo di indicare mediatori esterni previsto dal Regolamento (UE) 2019/1150 non si applica ancora a noi."
+        ]
+      },
+      {
+        "titulo": "13. Proprietà intellettuale",
+        "paragrafos": [
+          "Il nome e il logo BipFix, il design della Piattaforma e il suo codice sorgente appartengono a BipFix o ai suoi licenzianti. Non puoi copiarli, decompilarli o usarli senza il nostro permesso, salvo quanto consentito dalla legge."
+        ]
+      },
+      {
+        "titulo": "14. Responsabilità",
+        "paragrafos": [
+          "Verifichiamo con cura le registrazioni dei Partner e il funzionamento della Piattaforma, ma è il Partner, e non BipFix, a essere responsabile della qualità e del risultato della riparazione e del ricambio venduto.",
+          "Non garantiamo che la Piattaforma sia sempre disponibile senza interruzioni; possono esserci pause per manutenzione, guasti di servizi di terzi o eventi al di fuori del nostro controllo.",
+          "Nulla in questi Termini esclude o limita la nostra responsabilità per danni causati con dolo o colpa grave, per morte o lesioni personali, o in qualsiasi altro caso in cui la responsabilità non può essere limitata per legge."
+        ]
+      },
+      {
+        "titulo": "15. Chiusura dell'account",
+        "paragrafos": [
+          "Puoi smettere di usare la Piattaforma e chiederci di chiudere il tuo account in qualsiasi momento scrivendo a <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>. La chiusura dell'account non incide sui contratti già conclusi con un Partner. Cosa succede ai tuoi dati dopo la chiusura è spiegato nell'Informativa sulla privacy."
+        ]
+      },
+      {
+        "titulo": "16. Altre regole d'uso",
+        "paragrafos": [
+          "Non puoi usare la Piattaforma per scopi illeciti, tentare di accedere ai dati o agli account di altri utenti, interferire con il funzionamento della Piattaforma o raccoglierne dati in modo automatizzato senza il nostro permesso."
+        ]
+      },
+      {
+        "titulo": "17. Modifiche a questi Termini",
+        "paragrafos": [
+          "Possiamo modificare questi Termini, ad esempio quando sarà completata la registrazione della società, quando introduciamo nuove funzioni o quando cambia la legge. Informeremo gli utenti registrati delle modifiche rilevanti via email o sulla Piattaforma prima della loro entrata in vigore: con almeno 30 giorni di anticipo per le modifiche che riguardano i Partner (o più, se necessario per adeguarsi) e con un anticipo ragionevole per i Clienti. Se non sei d'accordo con le modifiche, puoi chiudere il tuo account prima della loro entrata in vigore."
+        ]
+      },
+      {
+        "titulo": "18. Legge applicabile e foro competente",
+        "paragrafos": [
+          "Questi Termini sono disciplinati dalla legge estone. Se sei un consumatore, questa scelta di legge non ti priva della tutela delle norme imperative del paese in cui vivi, e puoi agire davanti ai giudici di quel paese.",
+          "Per le controversie tra BipFix e i Partner è competente il Tribunale della contea di Harju (Harju Maakohus) a Tallinn, salvo diversa disposizione di legge inderogabile."
+        ]
+      },
+      {
+        "titulo": "19. Contatti",
+        "paragrafos": [
+          "Domande su questi Termini: <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>. Domande sui dati personali: <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+        ]
+      }
+    ]
   },
   "privacidade": {
     "metaTitle": "Informativa sulla privacy",
@@ -146,8 +246,8 @@
         "subsecao": true,
         "itens": [
           "<strong>Dati tecnici:</strong> indirizzo IP, tipo di browser e dispositivo, pagine richieste e segnalazioni di errore, registrati nei log del server per mantenere sicura la piattaforma, prevenire frodi e abusi e correggere gli errori.",
-          "<strong>Riepiloghi delle visite:</strong> mentre navighi sul sito, le pagine visitate e il tempo trascorso su ciascuna vengono conservati temporaneamente nella scheda del browser (session storage, cancellato alla chiusura della scheda) e inviati al nostro server. Il server li combina con il sito di provenienza (ad esempio Google o Instagram), il tipo di dispositivo e browser, la lingua e la città e il paese approssimativi stimati dal tuo indirizzo IP in un riepilogo della visita, che viene inviato via email solo al team BipFix. Lo usiamo per capire come viene usato il sito durante il nostro lancio e per migliorarlo. Il riepilogo mostra l'indirizzo IP solo in parte e non viene salvato nel nostro database. Le visite delle persone collegate come amministratori di BipFix sono escluse.",
-          "<strong>Base giuridica:</strong> il nostro legittimo interesse a gestire un sito sicuro e a capire come viene usato (art. 6, par. 1, lett. f). Puoi opporti in qualsiasi momento ai riepiloghi delle visite scrivendo a <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+          "<strong>Riepiloghi delle visite (solo se accetti i cookie):</strong> se clicchi su \"Accetta\" nel banner dei cookie, le pagine visitate e il tempo trascorso su ciascuna vengono conservati temporaneamente nella scheda del browser (session storage, cancellato alla chiusura della scheda) e inviati al nostro server. Il server li combina con il sito di provenienza (ad esempio Google o Instagram), il tipo di dispositivo e browser, la lingua e la città e il paese approssimativi stimati dal tuo indirizzo IP in un riepilogo della visita, che viene inviato via email solo al team BipFix. Lo usiamo per capire come viene usato il sito durante il nostro lancio e per migliorarlo. Il riepilogo mostra l'indirizzo IP solo in parte e non viene salvato nel nostro database. Le visite delle persone collegate come amministratori di BipFix sono escluse.",
+          "<strong>Base giuridica:</strong> per i dati tecnici, il nostro legittimo interesse a gestire un sito sicuro (art. 6, par. 1, lett. f); per i riepiloghi delle visite, il tuo consenso (art. 6, par. 1, lett. a), che puoi revocare in qualsiasi momento (vedi sezione 9) senza pregiudicare la liceità del trattamento effettuato prima della revoca."
         ]
       },
       {
@@ -238,7 +338,7 @@
       {
         "titulo": "9. Cookie e tecnologie simili",
         "paragrafos": [
-          "Usiamo tecnologie che memorizzano informazioni nel browser strettamente necessarie al funzionamento del sito: mantenere l'accesso, ricordare la lingua e ricordare la tua scelta sui cookie. Queste non richiedono consenso. I cookie analitici (Google Analytics e Microsoft Clarity) vengono usati solo se li accetti nel banner dei cookie. I riepiloghi delle visite descritti nella sezione 3.7 usano il session storage, che viene cancellato alla chiusura della scheda.",
+          "Usiamo tecnologie che memorizzano informazioni nel browser strettamente necessarie al funzionamento del sito: mantenere l'accesso, ricordare la lingua e ricordare la tua scelta sui cookie. Queste non richiedono consenso. I cookie analitici (Google Analytics e Microsoft Clarity) e i riepiloghi delle visite descritti nella sezione 3.7 vengono usati solo se clicchi su \"Accetta\" nel banner dei cookie; se rifiuti o ignori il banner, non vengono usati.",
           "Per modificare la tua scelta sui cookie, cancella i dati memorizzati da bipfix.com nelle impostazioni del browser; il banner dei cookie comparirà di nuovo alla visita successiva."
         ]
       },

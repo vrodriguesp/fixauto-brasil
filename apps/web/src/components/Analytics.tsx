@@ -65,6 +65,9 @@ export default function Analytics() {
     } catch {}
     setConsent(valor);
     aplicarConsentimento(valor);
+    // Avisa o VisitTracker (mesma aba - o evento "storage" do navegador so
+    // dispara em OUTRAS abas) pra comecar a registrar a visita ja nesta pagina.
+    window.dispatchEvent(new Event('bipfix-consentimento'));
   };
 
   if (!GA_MEASUREMENT_ID && !CLARITY_PROJECT_ID) return null;

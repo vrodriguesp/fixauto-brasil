@@ -1,19 +1,24 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 
 // Registra as paginas de cada visita (uma "visita" = uma aba, via
-// sessionStorage, sem cookie) e manda o percurso pra /api/visita quando a
-// aba sai de foco. O servidor espera a visita "esfriar" e manda UM e-mail
-// por visita pro dono do site (ver api/visita/route.ts).
+// sessionStorage) e manda o percurso pra /api/visita quando a aba sai de
+// foco. O servidor espera a visita "esfriar" e manda UM e-mail por visita
+// pro dono do site (ver api/visita/route.ts).
+//
+// So funciona depois que o visitante clica em "Aceitar" no aviso de cookies
+// (components/Analytics.tsx): sem esse consentimento nada e guardado no
+// navegador nem enviado. Isso vale para o site todo (LGPD e GDPR).
 //
 // Pra este navegador nunca mais ser monitorado (o proprio dono navegando
 // deslogado), basta abrir qualquer pagina com ?nao_monitorar=1 uma vez.
 
 const CHAVE_VISITA = 'bipfix_visita';
 const CHAVE_OPT_OUT = 'bipfix_nao_monitorar';
+const CHAVE_CONSENTIMENTO = 'bipfix_cookie_consent';
 const MAX_PAGINAS = 50;
 
 interface Pagina {
@@ -36,12 +41,12 @@ function lerVisita(): Visita | null {
   }
 }
 
-function monitoramentoDesligado(): boolean {
+function podeMonitorar(): boolean {
   try {
     if (new URLSearchParams(window.location.search).get('nao_monitorar') === '1') {
       localStorage.setItem(CHAVE_OPT_OUT, '1');
     }
-    return localStorage.getItem(CHAVE_OPT_OUT) === '1';
+    return localStorage.getItem(CHAVE_CONSENTIMENTO) === 'accepted' && localStorage.getItem(CHAVE_OPT_OUT) !== '1';
   } catch {
     return false;
   }
@@ -54,8 +59,8 @@ export default function VisitTracker() {
   const usuario = useRef(user);
   usuario.current = user;
 
-  useEffect(() => {
-    if (!pathname || pathname.startsWith('/admin') || monitoramentoDesligado()) return;
+  const registrarPagina = useCallback(() => {
+    if (!pathname || pathname.startsWith('/admin') || !podeMonitorar()) return;
 
     const v: Visita = visita.current ||
       lerVisita() || {
@@ -77,10 +82,17 @@ export default function VisitTracker() {
   }, [pathname]);
 
   useEffect(() => {
+    registrarPagina();
+    // Aceitou os cookies no meio da visita: comeca a contar a partir desta pagina
+    window.addEventListener('bipfix-consentimento', registrarPagina);
+    return () => window.removeEventListener('bipfix-consentimento', registrarPagina);
+  }, [registrarPagina]);
+
+  useEffect(() => {
     const enviar = () => {
       const v = visita.current;
       const u = usuario.current;
-      if (!v || !v.paginas.length || u?.tipo === 'admin' || monitoramentoDesligado()) return;
+      if (!v || !v.paginas.length || u?.tipo === 'admin' || !podeMonitorar()) return;
 
       const corpo = JSON.stringify({
         ...v,

@@ -5,61 +5,161 @@
   },
   "termos": {
     "metaTitle": "Terms of Use",
-    "metaDescription": "Terms of Use and General Conditions for the BipFix platform, for customers, partner repair shops and parts stores.",
-    "pageTitle": "Terms of Use and General Conditions",
+    "metaDescription": "Terms of Use of the BipFix platform for drivers, repair shops and parts stores in the European Union.",
+    "pageTitle": "Terms of Use",
     "lastUpdatedLabel": "Last updated:",
-    "updatedDate": "September 8, 2026",
-    "title1": "1. Who we are and what BipFix is",
-    "body1a": "BipFix is a digital intermediation platform that connects (i) drivers and vehicle owners (\"Customers\") who need auto repair services with (ii) auto repair shops (\"Repair Shops\") and (iii) auto parts stores (\"Stores\"), collectively \"Partners\". By creating an account or using BipFix in any way, you agree to these Terms of Use and to our <privacyLink>Privacy Policy</privacyLink>.",
-    "body1b": "BipFix <strong>does not provide auto repair services, does not sell parts, and is not a party to the contract</strong> entered into between a Customer and a Partner. Our role is that of a technology intermediary: we enable contact, quote comparison, communication and service tracking. The consumer relationship for the service performed (repair, part sold, timeline, quality, warranty) is established directly between the Customer and the Partner, who are responsible for their own conduct under the consumer protection law applicable in the Customer's country of residence.",
-    "title2": "2. Registration and accuracy of information",
-    "body2": "You must provide true, complete and up-to-date information when registering (name, tax ID, address, contact details). Repair Shops and Stores represent that they hold the registrations, licenses and permits required for their activity. BipFix may request supporting documents and refuse or suspend registrations containing false, incomplete or unverifiable data.",
-    "title3": "3. Free use for Customers",
-    "body3": "Use of the platform by Customers is, and will remain, free of charge: requesting quotes, comparing proposals, tracking service progress and rating Partners come at no cost.",
-    "title4": "4. Commission and charges to Partners",
-    "body4a": "Currently, for certain Partners (including those who join during the platform's initial phase), <strong>no commission or subscription fee is charged</strong> for using BipFix. BipFix reserves the right to introduce, in the future, a commission on brokered services, a subscription fee, or both.",
-    "body4b": "Should BipFix decide to introduce or change any charges, it will notify affected Partners <strong>at least 30 (thirty) days in advance</strong> of any amount actually being charged, by email and/or notice within the platform, stating the new pricing model, the applicable percentage or amount, and the date the charge takes effect. A Partner who does not agree with the new terms may close their account before the charge takes effect, without any penalty.",
-    "title5": "5. Partner conduct and use of the platform",
-    "intro5": "By joining as a partner Repair Shop or Store, you agree to:",
-    "list5_1": "Provide truthful information about prices, timelines, availability and specialties;",
-    "list5_2": "Honor the quotes and timelines communicated to the Customer within the platform;",
-    "list5_3": "Not induce the Customer to complete the negotiation or payment outside the platform for the purpose of evading an applicable commission, when such commission is in effect and has been communicated under Clause 4;",
-    "list5_4": "Not manipulate, purchase, trade, or otherwise commit fraud with reviews and reputation scores;",
-    "list5_5": "Treat Customers and other Partners with respect, without discrimination, harassment, coercion, or unfair or deceptive business practices;",
-    "list5_6": "Comply with the laws applicable to their activity, including consumer protection, labor, tax and environmental regulations.",
-    "title6": "6. Suspension and removal of Partners",
-    "intro6": "BipFix may warn, temporarily suspend, or permanently remove a Partner from the platform, in proportion to the severity of the conduct identified. In particular:",
-    "sub6_1Title": "6.1 Violations that may result in a prior warning and a period to remedy",
-    "body6_1": "Minor or isolated violations (e.g., occasionally being slow to respond to requests, an outdated registration) will generally result in a notice and a reasonable period to correct the issue before any suspension.",
-    "sub6_2Title": "6.2 Serious violations resulting in immediate removal, without prior notice",
-    "body6_2": "In the cases below, BipFix may suspend or terminate a Partner's access <strong>immediately and without prior notice</strong>, given the severity involved and the risk to trust across the entire platform ecosystem:",
-    "list6_2_1": "Fraud, evasion, or attempted evasion of the commission model in effect (e.g., directing Customers to close a deal outside the platform to avoid paying an applicable commission, use of fake accounts, reporting amounts different from those actually charged);",
-    "list6_2_2": "Repeated negative Customer reviews indicating a pattern of poor service, improper charges, failure to honor a quote, or unethical conduct;",
-    "list6_2_3": "Unfair, deceptive, or fraudulent practices, including but not limited to: false information about parts or services, charging an amount different from the quote without justification, discrimination against Customers, harassment, or misuse of Customer data obtained through the platform;",
-    "list6_2_4": "A determination by a competent authority or the finding of illegal activity.",
-    "body6_2b": "The severity of the conduct and the applicable measure (warning, temporary suspension, or permanent removal) are assessed by BipFix on a case-by-case basis. A removed Partner may request reconsideration in writing, providing clarifications, which BipFix will review.",
-    "title7": "7. Reviews and reputation",
-    "body7": "Customers may rate the service provided after its completion. Reviews reflect the opinion of the person who wrote them and are displayed publicly on the Partner's profile. BipFix may remove reviews that are demonstrably false, offensive, or in violation of the law, but is not responsible for the content of Customers' legitimate opinions.",
-    "title8": "8. Consumer rights",
-    "intro8": "Nothing in these Terms limits the rights guaranteed to Customers under the consumer protection law applicable in their country of residence (for example, Brazil's Consumer Protection Code for Customers in Brazil, or EU consumer protection law — including the statutory guarantee under the Consumer Sales and Guarantees Directive — for Customers in the European Union). Those rights generally include, among others:",
-    "list8_1": "<strong>The right to clear and adequate information</strong> about services and parts, prices, characteristics and risks;",
-    "list8_2": "<strong>A statutory warranty period</strong> to report apparent or easily identifiable defects in services and durable goods (such as auto repairs and parts), as set by the law applicable in the Customer's country, counted from delivery of the vehicle or product;",
-    "list8_3": "<strong>Supplier liability</strong> of the Repair Shop or Store for defects in the service performed or the part sold;",
-    "list8_4": "<strong>The prohibition of unfair or abusive commercial practices</strong>, such as tie-in sales, charging for unsolicited services, or misleading information;",
-    "list8_5": "A channel for complaints and dispute mediation between Customer and Partner, provided by BipFix as a courtesy, without prejudice to the Customer's right to contact the consumer protection agency of their country (for example, Procon and the consumidor.gov.br platform in Brazil) or the courts directly against the responsible Partner.",
-    "title9": "9. Personal data protection",
-    "body9": "The processing of personal data carried out by BipFix follows the data protection law applicable to you (for example, the GDPR for Customers and Partners in the European Union, or Brazil's General Data Protection Law — LGPD — for those in Brazil) and is detailed in our <privacyLink>Privacy Policy</privacyLink>, which forms an integral part of these Terms.",
-    "title10": "10. Content, intellectual property and trademark",
-    "body10": "The BipFix brand, its layout, source code and other elements of the platform are owned by BipFix or its licensors, and reproduction, reverse engineering or unauthorized use is prohibited. Content submitted by Customers and Partners (photos, descriptions, messages) remains owned by whoever submitted it, but you grant BipFix a license to display it on the platform to the extent necessary to operate the service.",
-    "title11": "11. Limitation of liability",
-    "body11": "BipFix makes efforts to verify Partner registrations and to mediate any conflicts, but does not guarantee the quality, legality, adequacy, or outcome of the service performed by Repair Shops or the part sold by Stores, for which the performing Partner is solely responsible under applicable consumer law. BipFix is also not responsible for temporary platform unavailability resulting from maintenance, third-party failures, or unforeseeable circumstances and force majeure events.",
-    "title12": "12. Changes to these Terms",
-    "body12": "We may update these Terms to reflect platform improvements or legal changes. Material changes (including any change to the commission policy, which follows the specific rule in Clause 4) will be communicated with reasonable advance notice. Continued use of the platform after such notice constitutes acceptance of the new terms.",
-    "title13": "13. Governing law and jurisdiction",
-    "body13": "Disputes involving a Customer are governed by, and the courts of, the Customer's country of residence, to the extent mandatory consumer protection law so requires (for Customers in Brazil, this means Brazilian law and the courts of the Customer's place of residence, as permitted under art. 101, I of the Consumer Protection Code). For disputes between Partners and BipFix arising exclusively from the intermediation business relationship, and where not otherwise required by mandatory local law, the courts of the District of São Paulo/SP, Brazil are elected. <strong>Note:</strong> the governing-law provisions of this clause for markets outside Brazil are provisional pending review by local counsel, and do not override any mandatory consumer-protection rule of the Customer's country.",
-    "title14": "14. Contact",
-    "body14": "Questions about these Terms may be sent to <mailLink>support@bipfix.com</mailLink>.",
-    "footerDisclaimer": "This document is provided for informational purposes and reflects the operating rules of the BipFix platform. It was originally drafted for the Brazilian market; the generic, jurisdiction-neutral language used for other countries is a provisional draft, and full legal compliance in each country where BipFix operates requires review by a lawyer specializing in local consumer and data protection law before commercial release there."
+    "updatedDate": "September 28, 2026",
+    "secoes": [
+      {
+        "titulo": "1. Who we are and when these Terms apply",
+        "paragrafos": [
+          "BipFix (\"we\", \"us\") operates the bipfix.com website and the BipFix mobile app (together, the \"Platform\"). BipFix is currently being registered as a private limited company (osaühing) in Estonia. Until the registration is completed, the Platform is operated by its founder as a natural person. Once the company is registered, this section will state its legal name, registry code and registered address. You can contact us at <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>.",
+          "These Terms apply to the English, Estonian and Italian versions of the Platform and to everyone who uses it from the European Economic Area. The Portuguese version of the Platform is intended for users in Brazil and is governed by separate terms based on Brazilian law. By creating an account or using the Platform you accept these Terms. How we process personal data is explained in our <a href=\"/privacidade\">Privacy Policy</a>."
+        ]
+      },
+      {
+        "titulo": "2. What BipFix does",
+        "paragrafos": [
+          "BipFix is an online intermediation platform. It connects drivers and vehicle owners who need a repair (\"Customers\") with auto repair shops (\"Repair Shops\") and auto parts stores (\"Stores\"), together \"Partners\". Through the Platform, Customers describe their problem and receive quotes, and Partners can send quotes, communicate with Customers, track the work and buy or sell parts from each other.",
+          "<strong>BipFix does not carry out repairs or sell parts and is not a party to the contract between a Customer and a Partner.</strong> When you accept a quote, the contract for the repair or the part is concluded directly between you and the Partner, who is responsible for the work, the price, the deadlines and the guarantee.",
+          "All Partners register on BipFix as businesses and declare that they act as traders. This means that, as a consumer, the EU consumer protection rules apply to your contract with the Partner (see section 11)."
+        ]
+      },
+      {
+        "titulo": "3. Your account",
+        "itens": [
+          "You must be at least 18 years old to create an account.",
+          "The information you provide (name, contact details and, for Partners, business name, registry or VAT code and address) must be true, complete and kept up to date.",
+          "You are responsible for keeping your password confidential and for activity on your account. Tell us immediately at <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a> if you suspect unauthorised use.",
+          "Partners confirm that they hold the registrations, licences and permits required for their activity. We may ask for supporting documents and may refuse a registration that contains false, incomplete or unverifiable information."
+        ]
+      },
+      {
+        "titulo": "4. Free for Customers",
+        "paragrafos": [
+          "Using the Platform is free for Customers: requesting quotes, comparing them, tracking the repair and leaving reviews cost nothing. You pay only the Partner, for the repair or part you agree with them."
+        ]
+      },
+      {
+        "titulo": "5. Fees for Partners",
+        "paragrafos": [
+          "During the current founding phase, <strong>Partners pay no subscription and no commission</strong> for using BipFix. We may introduce a commission on transactions arranged through the Platform, a subscription fee, or both.",
+          "Before any fee is charged, we will inform the affected Partners by email and on the Platform <strong>at least 30 days in advance</strong>, describing the pricing model, the amount or percentage, any criteria that make the fee vary (for example, the volume of work) and the date from which it applies. A Partner who does not accept the new conditions may close its account before that date without any penalty."
+        ]
+      },
+      {
+        "titulo": "6. How requests are distributed and how results are shown",
+        "paragrafos": [
+          "The main parameters that determine what Partners and Customers see are the following:"
+        ],
+        "itens": [
+          "<strong>Distribution of requests to Partners:</strong> a Customer's request is shown to the Repair Shops whose service area (the radius set by each Repair Shop, 30 km by default) covers the address of the request and that offer the type of service requested. Emergency requests (for example after an accident) are sent to Repair Shops that do collision or body work, giving priority to those that still have free capacity for that type of work according to the capacity they have declared.",
+          "<strong>Quotes shown to Customers:</strong> each quote is shown with its price, deadline and the Repair Shop's rating, so that the Customer can compare them. No Partner can pay to have its quote shown in a better position.",
+          "<strong>Public list of Repair Shops:</strong> the public list of partner Repair Shops is ordered by average rating, then by number of reviews, then by how long the Repair Shop has been on the Platform. No Partner can pay to appear higher in the list."
+        ],
+        "depois": [
+          "If we change these parameters, we will update this section and inform Partners in advance in accordance with section 17."
+        ]
+      },
+      {
+        "titulo": "7. Obligations of Partners",
+        "paragrafos": [
+          "As a Partner you agree to:"
+        ],
+        "itens": [
+          "provide truthful information about your prices, deadlines, availability and services;",
+          "honour the quotes and deadlines you give to Customers through the Platform, unless the Customer agrees to a change;",
+          "not encourage Customers to conclude the deal or pay outside the Platform in order to avoid a fee that is in force and has been announced under section 5;",
+          "not manipulate, buy or exchange reviews or ratings;",
+          "treat Customers and other Partners with respect, without discrimination, harassment, pressure or unfair or misleading commercial practices;",
+          "comply with the laws that apply to your business, including consumer protection, tax, labour and environmental law, and use the personal data of Customers only to provide the service they requested."
+        ]
+      },
+      {
+        "titulo": "8. Restriction, suspension and termination of Partner accounts",
+        "itens": [
+          "<strong>Minor or isolated issues</strong> (for example slow responses or outdated information) will normally lead to a warning and a reasonable period to fix the problem.",
+          "<strong>Restriction or suspension:</strong> if we restrict or suspend a Partner's account, we will send the Partner a statement of reasons, with the specific facts and the grounds under these Terms, before or at the latest when the measure takes effect.",
+          "<strong>Termination:</strong> if we decide to terminate a Partner's use of the Platform entirely, we will give at least 30 days' notice with a statement of reasons. We may terminate or suspend immediately, still with a statement of reasons, only where the law requires it or in case of serious or repeated breaches, such as: fraud or attempts to evade a fee in force; false information about parts, services or prices; charging amounts different from the accepted quote without justification; harassment or discrimination of Customers; misuse of Customers' personal data; a pattern of serious Customer complaints; or illegal activity established by a competent authority.",
+          "The Partner may clarify the facts and ask us to reconsider by writing to <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>. If the reason for the measure no longer applies, we will restore the account without undue delay."
+        ]
+      },
+      {
+        "titulo": "9. Reviews",
+        "itens": [
+          "<strong>Only Customers who had a service completed by a Repair Shop through BipFix can review it:</strong> the Platform technically allows a review only for the Repair Shop whose quote the Customer accepted, and only after the request has been marked as completed. Each completed service can be reviewed once.",
+          "The author can edit their review for up to 2 months after publishing it. Reviews are shown with the name displayed in the author's account and the date.",
+          "We do not pay for reviews, and we do not hide or reorder reviews depending on whether they are positive or negative. We remove a review only if it is illegal, demonstrably false, offensive or unrelated to the service, and in that case we inform the author of the reason.",
+          "The public rating of a Repair Shop is the average of all its published reviews."
+        ]
+      },
+      {
+        "titulo": "10. Your content and reporting illegal content",
+        "paragrafos": [
+          "You are responsible for the content you publish on the Platform (descriptions, photos, messages, reviews, profile information). It must not be illegal, misleading or infringe the rights of others. You keep the rights to your content, and you give BipFix a free licence to store and display it on the Platform to the extent needed to provide the service.",
+          "Anyone can report content they consider illegal by writing to <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a> with: an explanation of why the content is illegal, the exact location of the content (for example the page address), the reporter's name and email address (except for certain reports about child sexual abuse material), and a statement that the report is made in good faith and is accurate and complete. We will confirm receipt, handle the report in a timely, diligent and objective manner and inform the reporter of our decision.",
+          "If we remove content, restrict its visibility or restrict an account, we will send the user concerned a statement of reasons and explain how to contest the decision. Our single point of contact for users and for the authorities of the EU Member States is <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>; you can write to us in English or Estonian."
+        ]
+      },
+      {
+        "titulo": "11. Consumer rights",
+        "paragrafos": [
+          "Nothing in these Terms limits the rights you have as a consumer under the mandatory law of your country of residence. In particular, your statutory rights regarding the repair or the part (for example the right to have a defective repair corrected or to claim remedies for a defective part) exist against the Partner who carried out the work or sold the part.",
+          "If you have a problem with a Partner, you can write to us at <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a> and we will try to help find a solution, free of charge. This does not affect your right to contact your national consumer protection authority or to go to court. In Estonia, consumers can refer disputes free of charge to the Consumer Disputes Committee of the Consumer Protection and Technical Regulatory Authority (Tarbijakaitse ja Tehnilise Järelevalve Amet, <a href=\"https://www.ttja.ee\" target=\"_blank\" rel=\"noopener noreferrer\">www.ttja.ee</a>)."
+        ]
+      },
+      {
+        "titulo": "12. Complaints from Partners",
+        "paragrafos": [
+          "Partners can send complaints about the Platform, about technical problems or about any measure we have taken against their account to <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>. Complaints are free of charge; we will consider them with due care and reply within a reasonable time. BipFix is currently a small enterprise within the meaning of Commission Recommendation 2003/361/EC, so the obligation to name external mediators under Regulation (EU) 2019/1150 does not yet apply to us."
+        ]
+      },
+      {
+        "titulo": "13. Intellectual property",
+        "paragrafos": [
+          "The BipFix name and logo, the design of the Platform and its source code belong to BipFix or its licensors. You may not copy, reverse-engineer or use them without our permission, except as allowed by law."
+        ]
+      },
+      {
+        "titulo": "14. Liability",
+        "paragrafos": [
+          "We take care in verifying Partner registrations and in running the Platform, but the Partner, not BipFix, is responsible for the quality and result of the repair and for the part sold.",
+          "We do not guarantee that the Platform will always be available without interruption; there may be pauses for maintenance, failures of third-party services or events beyond our control.",
+          "Nothing in these Terms excludes or limits our liability for damage caused intentionally or through gross negligence, for death or personal injury, or in any other case where liability cannot be limited by law."
+        ]
+      },
+      {
+        "titulo": "15. Closing your account",
+        "paragrafos": [
+          "You can stop using the Platform and ask us to close your account at any time by writing to <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>. Closing your account does not affect contracts already concluded with a Partner. What happens to your data after closing is explained in the Privacy Policy."
+        ]
+      },
+      {
+        "titulo": "16. Other rules of use",
+        "paragrafos": [
+          "You may not use the Platform for illegal purposes, try to access other users' data or accounts, interfere with the operation of the Platform, or collect data from it in an automated way without our permission."
+        ]
+      },
+      {
+        "titulo": "17. Changes to these Terms",
+        "paragrafos": [
+          "We may change these Terms, for example when the company registration is completed, when we introduce new features or when the law changes. We will inform registered users of significant changes by email or on the Platform before they take effect: at least 30 days in advance for changes that affect Partners (or longer if needed to adapt), and within a reasonable period for Customers. If you do not agree with the changes, you can close your account before they take effect."
+        ]
+      },
+      {
+        "titulo": "18. Governing law and courts",
+        "paragrafos": [
+          "These Terms are governed by Estonian law. If you are a consumer, this choice of law does not deprive you of the protection of the mandatory rules of the country where you live, and you can bring proceedings in the courts of that country.",
+          "For disputes between BipFix and Partners, Harju County Court (Harju Maakohus) in Tallinn has jurisdiction, unless mandatory law provides otherwise."
+        ]
+      },
+      {
+        "titulo": "19. Contact",
+        "paragrafos": [
+          "Questions about these Terms: <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>. Questions about personal data: <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+        ]
+      }
+    ]
   },
   "privacidade": {
     "metaTitle": "Privacy Policy",
@@ -146,8 +246,8 @@
         "subsecao": true,
         "itens": [
           "<strong>Technical data:</strong> IP address, browser and device type, pages requested and error reports, recorded in server logs to keep the platform secure, prevent fraud and abuse, and fix errors.",
-          "<strong>Visit summaries:</strong> while you browse the website, the pages you visit and the time spent on each are kept temporarily in your browser tab (session storage, deleted when you close the tab) and sent to our server. The server combines them with the referring site (for example Google or Instagram), device and browser type, language and approximate city and country estimated from your IP address into a summary of the visit, which is emailed only to the BipFix team. We use it to understand how the website is used during our launch and to improve it. The summary shows the IP address only partially and it is not stored in our database. Visits by people logged in as BipFix administrators are excluded.",
-          "<strong>Legal basis:</strong> our legitimate interest in operating a secure website and in understanding how it is used (Art. 6(1)(f)). You can object to visit summaries at any time by writing to <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+          "<strong>Visit summaries (only if you accept cookies):</strong> if you click \"Accept\" in the cookie banner, the pages you visit and the time spent on each are kept temporarily in your browser tab (session storage, deleted when you close the tab) and sent to our server. The server combines them with the referring site (for example Google or Instagram), device and browser type, language and approximate city and country estimated from your IP address into a summary of the visit, which is emailed only to the BipFix team. We use it to understand how the website is used during our launch and to improve it. The summary shows the IP address only partially and it is not stored in our database. Visits by people logged in as BipFix administrators are excluded.",
+          "<strong>Legal basis:</strong> for technical data, our legitimate interest in operating a secure website (Art. 6(1)(f)); for visit summaries, your consent (Art. 6(1)(a)), which you can withdraw at any time (see section 9) without affecting the lawfulness of processing before withdrawal."
         ]
       },
       {
@@ -238,7 +338,7 @@
       {
         "titulo": "9. Cookies and similar technologies",
         "paragrafos": [
-          "We use technologies that store information in your browser that are strictly necessary for the website to work: keeping you logged in, remembering your language and remembering your cookie choice. These do not require consent. Analytics cookies (Google Analytics and Microsoft Clarity) are only used if you accept them in the cookie banner. The visit summaries described in section 3.7 use session storage that is deleted when you close the tab.",
+          "We use technologies that store information in your browser that are strictly necessary for the website to work: keeping you logged in, remembering your language and remembering your cookie choice. These do not require consent. Analytics cookies (Google Analytics and Microsoft Clarity) and the visit summaries described in section 3.7 are only used if you click \"Accept\" in the cookie banner; if you reject or ignore the banner, they are not used.",
           "To change your cookie choice, delete the data stored by bipfix.com in your browser settings; the cookie banner will appear again on your next visit."
         ]
       },
