@@ -3,23 +3,12 @@ import { createClient } from '@supabase/supabase-js';
 import { getTranslations } from 'next-intl/server';
 import OficinaPerfilClient from './OficinaPerfilClient';
 import { INTL_LOCALE } from '@/lib/utils';
-import { hreflangAlternates } from '@/lib/seo-utils';
+import { capitalizarCidade, hreflangAlternates } from '@/lib/seo-utils';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
-
-// Oficinas digitam a cidade livremente no cadastro (ex: "sao paulo", tudo
-// minusculo, sem acento) - isso vaza pro title/description exibido no
-// Google, entao pelo menos capitaliza cada palavra aqui na exibicao, sem
-// mexer no valor salvo no banco.
-function capitalizarCidade(cidade: string): string {
-  return cidade
-    .split(' ')
-    .map((palavra) => (palavra.length > 2 ? palavra.charAt(0).toUpperCase() + palavra.slice(1) : palavra))
-    .join(' ');
-}
 
 // Metadata unica por oficina (nome + cidade no title) - antes desta pagina
 // virar um wrapper server-side, TODO perfil publico de oficina mostrava o

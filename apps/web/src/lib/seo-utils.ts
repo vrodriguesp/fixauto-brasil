@@ -32,6 +32,30 @@ interface FAQItem {
 
 const BASE_URL = 'https://bipfix.com';
 
+// Oficinas digitam a cidade livremente no cadastro (ex: "sao paulo", tudo
+// minusculo, sem acento) - isso vaza pro title/description exibido no
+// Google, entao pelo menos capitaliza cada palavra aqui na exibicao, sem
+// mexer no valor salvo no banco.
+export function capitalizarCidade(cidade: string): string {
+  return cidade
+    .trim()
+    .split(/\s+/)
+    .map((palavra) => (palavra.length > 2 ? palavra.charAt(0).toUpperCase() + palavra.slice(1) : palavra))
+    .join(' ');
+}
+
+// Chave estavel de cidade pra filtro/URL (?cidade=sao-paulo): "São Paulo",
+// "sao paulo" e "SAO PAULO " viram a mesma cidade.
+export function slugCidade(cidade: string): string {
+  return cidade
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 /**
  * Gera Schema.org JSON-LD para AutoRepair / LocalBusiness
  */

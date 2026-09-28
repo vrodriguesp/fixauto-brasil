@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
+import { slugCidade } from '@/lib/seo-utils';
 
 const BASE_URL = 'https://bipfix.com';
 
@@ -66,7 +67,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // sitemap nunca listava nenhuma oficina, mesmo com oficinas ativas no banco.
   const { data: oficinas } = await supabase
     .from('oficinas')
-    .select('id, created_at')
+    .select('id, cidade, created_at')
     .eq('ativa', true)
     .order('created_at', { ascending: false });
 
@@ -78,5 +79,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   );
 
-  return [...staticPages, ...oficinasPages];
+  // Listagem /oficinas (e uma pagina por cidade) so entra no sitemap quando
+  // ha oficina ativa - vazia ela sai com noindex (ver oficinas/page.tsx).
+  const cidadeSlugs = Array.from(new Set((oficinas || []).map((o) => slugCidade(o.cidade || '')).filter(Boolean)));
+  const listagemPages: MetadataRoute.Sitemap =
+    (oficinas || []).length > 0
+      ? [
+          ...localizedEntries('/oficinas', { changeFrequency: 'daily', priority: 0.9 }),
+          ...cidadeSlugs.flatMap((slug) =>
+            localizedEntries(`/oficinas?cidade=${slug}`, { changeFrequency: 'daily', priority: 0.8 })
+          ),
+        ]
+      : [];
+
+  return [...staticPages, ...listagemPages, ...oficinasPages];
 }
