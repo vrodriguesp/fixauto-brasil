@@ -13,10 +13,26 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [sessionReady, setSessionReady] = useState(false);
+  const [linkInvalido, setLinkInvalido] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    // Supabase handles the token exchange automatically via onAuthStateChange
+    // Link do e-mail de /api/esqueci-senha: ?token_hash=...&type=recovery.
+    // verifyOtp troca o token (uso unico, validade 1 h) por uma sessao - so
+    // entao a pessoa pode definir a senha nova. O token sai da barra de
+    // endereco logo em seguida, pra nao ficar no historico do navegador.
+    const params = new URLSearchParams(window.location.search);
+    const tokenHash = params.get('token_hash');
+    if (tokenHash && params.get('type') === 'recovery') {
+      window.history.replaceState(null, '', window.location.pathname);
+      supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'recovery' }).then(({ error }) => {
+        if (error) setLinkInvalido(true);
+        else setSessionReady(true);
+      });
+      return;
+    }
+
+    // Fluxo antigo do Supabase (link com #access_token / ?code)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
         setSessionReady(true);
@@ -74,7 +90,7 @@ export default function ResetPasswordPage() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
-          <div className="animate-pulse text-gray-400 mb-4">{t('verificandoLink')}</div>
+          {!linkInvalido && <div className="animate-pulse text-gray-400 mb-4">{t('verificandoLink')}</div>}
           <p className="text-sm text-gray-500">
             {t('linkExpirado')}{' '}
             <Link href="/login" className="text-primary-600 hover:text-primary-700">

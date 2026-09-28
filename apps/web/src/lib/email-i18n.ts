@@ -522,7 +522,51 @@ const orcamentoAceitoOutro: Record<EmailLocale, Dict> = {
   },
 };
 
+const recuperarSenha: Record<EmailLocale, Dict> = {
+  pt: {
+    subject: 'Redefina sua senha - BipFix',
+    headerTag: 'Recuperação de senha',
+    greeting: 'Olá <strong>{name}</strong>,',
+    intro: 'Recebemos um pedido para redefinir a senha da sua conta BipFix. Clique no botão abaixo para escolher uma nova senha.',
+    cta: 'Escolher nova senha',
+    expiry: 'O link vale por 1 hora e só pode ser usado uma vez.',
+    ignore: 'Se não foi você que pediu, ignore este e-mail: sua senha atual continua valendo e nada foi alterado.',
+    footer: 'Equipe BipFix',
+  },
+  en: {
+    subject: 'Reset your password - BipFix',
+    headerTag: 'Password recovery',
+    greeting: 'Hi <strong>{name}</strong>,',
+    intro: 'We received a request to reset the password for your BipFix account. Click the button below to choose a new password.',
+    cta: 'Choose a new password',
+    expiry: 'The link is valid for 1 hour and can only be used once.',
+    ignore: "If you didn't ask for this, just ignore this email: your current password still works and nothing has changed.",
+    footer: 'The BipFix team',
+  },
+  et: {
+    subject: 'Parooli lähtestamine - BipFix',
+    headerTag: 'Parooli taastamine',
+    greeting: 'Tere <strong>{name}</strong>,',
+    intro: 'Saime taotluse sinu BipFixi konto parooli lähtestamiseks. Uue parooli valimiseks klõpsa alloleval nupul.',
+    cta: 'Vali uus parool',
+    expiry: 'Link kehtib 1 tund ja seda saab kasutada ainult üks kord.',
+    ignore: 'Kui sa seda ei taotlenud, eira seda kirja: sinu praegune parool kehtib edasi ja midagi ei muutunud.',
+    footer: 'BipFixi meeskond',
+  },
+  it: {
+    subject: 'Reimposta la tua password - BipFix',
+    headerTag: 'Recupero password',
+    greeting: 'Ciao <strong>{name}</strong>,',
+    intro: 'Abbiamo ricevuto una richiesta di reimpostare la password del tuo account BipFix. Clicca sul pulsante qui sotto per sceglierne una nuova.',
+    cta: 'Scegli una nuova password',
+    expiry: 'Il link è valido per 1 ora e può essere usato una sola volta.',
+    ignore: 'Se non sei stato tu a chiederlo, ignora questa email: la tua password attuale resta valida e non è cambiato nulla.',
+    footer: 'Il team BipFix',
+  },
+};
+
 export const EMAIL_I18N = {
+  recuperarSenha,
   accidentNotification,
   funcionarioNovaSenha,
   quoteNotification,

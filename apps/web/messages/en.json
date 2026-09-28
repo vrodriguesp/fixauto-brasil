@@ -245,7 +245,13 @@
   "home": {
     "metaTitle": "BipFix - Compare Quotes from Trusted Auto Repair Shops",
     "metaDescription": "Send photos of your car's damage, get quotes from verified repair shops near you, and book the fix in minutes. Now piloting in Tallinn, Estonia.",
-    "metaKeywords": ["find a car repair shop near me", "compare auto repair quotes online", "trusted mechanic near me", "car body shop quote app", "auto repair shop Tallinn Estonia"],
+    "metaKeywords": [
+      "find a car repair shop near me",
+      "compare auto repair quotes online",
+      "trusted mechanic near me",
+      "car body shop quote app",
+      "auto repair shop Tallinn Estonia"
+    ],
     "ogTitle": "BipFix - Find the right repair shop for your car",
     "ogDescription": "Compare quotes from verified repair shops near you in minutes.",
     "carregando": "Loading...",
@@ -500,9 +506,9 @@
     "erroPreenchaCampos": "Enter your email and password",
     "erroPreenchaEmail": "Enter your email",
     "erroEnviar": "Couldn't send it. Please try again.",
-    "senhaEnviadaTitulo": "Temporary password sent!",
-    "senhaEnviadaTexto1": "We've sent a temporary password to",
-    "senhaEnviadaTexto2": "Use it to log in, then choose a new password.",
+    "senhaEnviadaTitulo": "Link sent!",
+    "senhaEnviadaTexto1": "We sent a link to choose a new password to",
+    "senhaEnviadaTexto2": "The link is valid for 1 hour. If it does not arrive within a few minutes, check your spam folder and that the email is correct.",
     "voltarLogin": "Back to login",
     "recuperarSenhaTitulo": "Reset password",
     "entrarTitulo": "Log in",

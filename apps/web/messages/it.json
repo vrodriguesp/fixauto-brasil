@@ -245,7 +245,13 @@
   "home": {
     "metaTitle": "BipFix - Confronta preventivi di officine meccaniche affidabili",
     "metaDescription": "Invia le foto del danno alla tua auto, ricevi preventivi da officine verificate vicino a te e prenota la riparazione in pochi minuti.",
-    "metaKeywords": ["officina meccanica vicino a me", "preventivo riparazione auto online", "trovare un'officina affidabile", "app per riparazione auto", "preventivo carrozzeria"],
+    "metaKeywords": [
+      "officina meccanica vicino a me",
+      "preventivo riparazione auto online",
+      "trovare un'officina affidabile",
+      "app per riparazione auto",
+      "preventivo carrozzeria"
+    ],
     "ogTitle": "BipFix - L'officina giusta per la tua auto",
     "ogDescription": "Confronta preventivi di officine verificate vicino a te in pochi minuti.",
     "carregando": "Caricamento...",
@@ -500,9 +506,9 @@
     "erroPreenchaCampos": "Inserisci email e password",
     "erroPreenchaEmail": "Inserisci la tua email",
     "erroEnviar": "Invio non riuscito. Riprova.",
-    "senhaEnviadaTitulo": "Password temporanea inviata!",
-    "senhaEnviadaTexto1": "Abbiamo inviato una password temporanea a",
-    "senhaEnviadaTexto2": "Usala per accedere, poi scegli una nuova password.",
+    "senhaEnviadaTitulo": "Link inviato!",
+    "senhaEnviadaTexto1": "Abbiamo inviato un link per scegliere una nuova password a",
+    "senhaEnviadaTexto2": "Il link è valido per 1 ora. Se non arriva entro qualche minuto, controlla la cartella spam e che l'email sia corretta.",
     "voltarLogin": "Torna al login",
     "recuperarSenhaTitulo": "Recupera password",
     "entrarTitulo": "Accedi",

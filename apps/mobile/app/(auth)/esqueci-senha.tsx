@@ -1,28 +1,32 @@
 import { useState } from 'react';
 import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '../../lib/supabase';
+import { apiFetch } from '../../lib/api';
 
 export default function EsqueciSenhaScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [enviado, setEnviado] = useState(false);
 
   const handleEnviar = async () => {
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim());
-    setLoading(false);
-    // O Supabase ja e "anti-enumeracao" por padrao (nunca diz se o e-mail
-    // existe ou nao - sempre resolve como sucesso pra isso) - um erro
-    // retornado aqui e sempre uma falha de verdade (rede, limite de taxa,
-    // e-mail mal formado), nao um sinal de "conta nao existe", entao e
-    // seguro mostrar pro usuario em vez de sempre fingir sucesso.
-    if (error) {
-      Alert.alert(t('common.erroGenerico'), error.message);
-      return;
+    // Mesma rota do site: manda (via Resend, no idioma da pessoa) um link
+    // pra /reset-password no site. Antes o app usava o envio de e-mail do
+    // proprio Supabase, que depende do SMTP do Supabase self-hosted estar
+    // configurado. A rota e "anti-enumeracao" (responde sucesso exista ou
+    // nao a conta) - um erro aqui e sempre falha de verdade (rede, envio).
+    try {
+      await apiFetch('/api/esqueci-senha', {
+        method: 'POST',
+        body: JSON.stringify({ email: email.trim(), locale: i18n.language }),
+      });
+      setEnviado(true);
+    } catch (err) {
+      Alert.alert(t('common.erroGenerico'), (err as Error).message);
+    } finally {
+      setLoading(false);
     }
-    setEnviado(true);
   };
 
   return (
