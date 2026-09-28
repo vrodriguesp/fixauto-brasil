@@ -9,6 +9,16 @@ const resend = process.env.RESEND_API_KEY
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com';
 const FROM_EMAIL = process.env.FROM_EMAIL || 'BipFix <noreply@bipfix.com>';
 
+// O SDK do Resend (v6) NAO lanca excecao quando o envio falha (dominio nao
+// verificado, destinatario invalido, limite de envio...) - so devolve
+// { error }. Sem esta checagem, toda funcao abaixo retornava success: true
+// e nada ia pro log, mesmo sem o e-mail ter saido. Lancando aqui, o catch
+// que cada funcao ja tem passa a registrar a falha e retornar success: false.
+async function sendOrThrow(payload: Parameters<Resend['emails']['send']>[0]) {
+  const { error } = await resend!.emails.send(payload);
+  if (error) throw new Error(`Resend recusou o e-mail: ${error.name} - ${error.message}`);
+}
+
 // ============================================================
 // EMAIL NOTIFICATIONS
 // ============================================================
@@ -32,7 +42,7 @@ export async function sendAccidentNotificationEmail(params: {
   const cadastroUrl = `${SITE_URL}/cadastro?tipo=cliente&email=${encodeURIComponent(params.toEmail)}`;
 
   try {
-    await resend.emails.send({
+    await sendOrThrow({
       from: FROM_EMAIL,
       to: params.toEmail,
       subject: fmt(s.subject, { placa: params.placa }),
@@ -93,7 +103,7 @@ export async function sendFuncionarioNovaSenhaEmail(params: {
   const s = EMAIL_I18N.funcionarioNovaSenha[resolveEmailLocale(params.locale)];
 
   try {
-    await resend.emails.send({
+    await sendOrThrow({
       from: FROM_EMAIL,
       to: params.toEmail,
       subject: fmt(s.subject, { oficinaNome: params.oficinaNome }),
@@ -144,7 +154,7 @@ export async function sendQuoteNotificationEmail(params: {
   const orcamentosUrl = `${SITE_URL}/cliente/orcamentos/${params.solicitacaoId}`;
 
   try {
-    await resend.emails.send({
+    await sendOrThrow({
       from: FROM_EMAIL,
       to: params.toEmail,
       subject: fmt(s.subject, { oficinaNome: params.oficinaNome }),
@@ -195,7 +205,7 @@ export async function sendServicoConcluidoEmail(params: {
   const acompanhamentoUrl = `${SITE_URL}/cliente/acompanhamento/${params.solicitacaoId}`;
 
   try {
-    await resend.emails.send({
+    await sendOrThrow({
       from: FROM_EMAIL,
       to: params.toEmail,
       subject: fmt(s.subject, { oficinaNome: params.oficinaNome }),
@@ -335,7 +345,7 @@ export async function sendLeadParceiroEmail(params: {
   const tipoLabel = params.tipo === 'oficina' ? 'Oficina' : 'Loja de peças';
 
   try {
-    await resend.emails.send({
+    await sendOrThrow({
       from: FROM_EMAIL,
       to: adminEmail,
       subject: `Novo interessado (${tipoLabel}): ${params.nomeNegocio}`,
@@ -383,7 +393,7 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
   }
   const s = EMAIL_I18N.cotacaoPecaDisponivel[resolveEmailLocale(params.locale)];
   try {
-    await resend.emails.send({
+    await sendOrThrow({
       from: FROM_EMAIL,
       to: params.toEmail,
       subject: fmt(s.subject, { pecaDescricao: params.pecaDescricao }),
@@ -435,7 +445,7 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
   const s = EMAIL_I18N.cotacaoPecaRespondida[locale];
   const precoFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: params.moeda || 'BRL' }).format(params.preco);
   try {
-    await resend.emails.send({
+    await sendOrThrow({
       from: FROM_EMAIL,
       to: params.toEmail,
       subject: fmt(s.subject, { pecaDescricao: params.pecaDescricao }),
@@ -485,7 +495,7 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
   const s = EMAIL_I18N.pedidoPecaConfirmado[resolveEmailLocale(params.locale)];
   const valorFormatado = formatCurrency(params.valorTotal, params.moeda || 'BRL', params.locale || 'pt');
   try {
-    await resend.emails.send({
+    await sendOrThrow({
       from: FROM_EMAIL,
       to: params.toEmail,
       subject: fmt(s.subject, { pecaDescricao: params.pecaDescricao }),
@@ -532,7 +542,7 @@ export async function sendPedidoPecaEntregueEmail(params: {
   }
   const s = EMAIL_I18N.pedidoPecaEntregue[resolveEmailLocale(params.locale)];
   try {
-    await resend.emails.send({
+    await sendOrThrow({
       from: FROM_EMAIL,
       to: params.toEmail,
       subject: fmt(s.subject, { pecaDescricao: params.pecaDescricao }),
@@ -582,7 +592,7 @@ export async function sendOrcamentoAceitoPagamentoEmail(params: {
   const s = EMAIL_I18N.orcamentoAceitoPagamento[resolveEmailLocale(params.locale)];
 
   try {
-    await resend.emails.send({
+    await sendOrThrow({
       from: FROM_EMAIL,
       to: params.toEmail,
       subject: fmt(s.subject, { oficinaNome: params.oficinaNome }),
@@ -644,7 +654,7 @@ export async function sendOrcamentoAceitoOutroEmail(params: {
   const s = EMAIL_I18N.orcamentoAceitoOutro[resolveEmailLocale(params.locale)];
 
   try {
-    await resend.emails.send({
+    await sendOrThrow({
       from: FROM_EMAIL,
       to: params.toEmail,
       subject: fmt(s.subject, { oficinaNome: params.oficinaNome }),
