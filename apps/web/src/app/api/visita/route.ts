@@ -216,7 +216,13 @@ async function enviar(sid: string) {
     return;
   }
   try {
-    await resend.emails.send({ from: FROM_EMAIL, to: DESTINO, subject: assunto, html });
+    // O SDK do Resend nao lanca excecao em falha de envio - devolve { error }.
+    const { data, error } = await resend.emails.send({ from: FROM_EMAIL, to: DESTINO, subject: assunto, html });
+    if (error) {
+      console.error('[visita] Resend recusou o e-mail', error);
+      return;
+    }
+    console.log(`[visita] e-mail enviado (${data?.id}): ${assunto}`);
     envios.push(agora);
     descartadasPorLimite = 0;
   } catch (e) {
