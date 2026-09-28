@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 import ErrorReporter from '@/components/ErrorReporter';
+import VisitTracker from '@/components/VisitTracker';
 
 // Layout raiz de verdade - unico lugar onde <html>/<body> podem ser
 // declarados, entao precisa envolver TANTO as rotas localizadas
@@ -48,6 +49,7 @@ export default async function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <ErrorReporter />
+          <VisitTracker />
           {children}
         </AuthProvider>
       </body>
