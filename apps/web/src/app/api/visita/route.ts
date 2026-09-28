@@ -83,9 +83,14 @@ function validar(corpo: any): Visita | null {
   };
 }
 
+// O nginx da VM seta X-Real-IP com o IP de quem conectou (confiavel) e
+// ACRESCENTA esse IP no fim do X-Forwarded-For - o comeco do X-Forwarded-For
+// pode ter sido inventado pelo proprio visitante, entao so o ultimo item vale.
 function ipDoVisitante(req: NextRequest): string {
+  const realIp = req.headers.get('x-real-ip');
+  if (realIp) return realIp.trim();
   const xff = req.headers.get('x-forwarded-for');
-  return (xff ? xff.split(',')[0] : req.headers.get('x-real-ip') || '').trim();
+  return xff ? xff.split(',').pop()!.trim() : '';
 }
 
 // Mostra so o comeco do IP no e-mail: basta pra ver se e a mesma rede,
