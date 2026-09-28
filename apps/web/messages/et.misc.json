@@ -63,52 +63,210 @@
   },
   "privacidade": {
     "metaTitle": "Privaatsuspoliitika",
-    "metaDescription": "Kuidas BipFix kogub, kasutab ja kaitseb klientide, partnertöökodade ja -poodide isikuandmeid kooskõlas kohaldatavate andmekaitsealaste õigusaktidega (GDPR / LGPD).",
+    "metaDescription": "Kuidas BipFix töötleb Euroopa Liidus autojuhtide, autotöökodade ja varuosade müüjate isikuandmeid kooskõlas isikuandmete kaitse üldmäärusega (GDPR).",
     "pageTitle": "Privaatsuspoliitika",
     "lastUpdatedLabel": "Viimati uuendatud:",
     "updatedDate": "28. september 2026",
-    "title1": "1. Sissejuhatus",
-    "body1": "Käesolev Privaatsuspoliitika kirjeldab, kuidas BipFix (\"meie\") kogub, kasutab, jagab ja kaitseb Klientide ning partnertöökodade ja -poodide (\"kasutaja\") isikuandmeid kooskõlas kasutajale kohalduva andmekaitseõigusega — Euroopa Liidus asuvate kasutajate jaoks isikuandmete kaitse üldmäärusega (GDPR); Brasiilias asuvate kasutajate jaoks Brasiilia isikuandmete kaitse üldseadusega (seadus nr 13.709/2018 — LGPD) ja Brasiilia interneti tsiviilõiguste raamseadusega (Marco Civil da Internet, seadus nr 12.965/2014).",
-    "title2": "2. Milliseid andmeid kogume",
-    "list2_1": "<strong>Registreerimisandmed:</strong> nimi, maksukohustuslase kood, e-post, telefon, aadress ning Töökodade/Poodide puhul ettevõtte ja meeskonna (töötajate) andmed;",
-    "list2_2": "<strong>Asukohaandmed:</strong> aadress ja geograafilised koordinaadid, mida kasutatakse Kliendi ühendamiseks lähedal asuvate Partneritega;",
-    "list2_3": "<strong>Sõiduki andmed:</strong> mark, mudel, aasta, registreerimismärk (kui see on esitatud) ja teatatud kahjustuse fotod;",
-    "list2_4": "<strong>Kasutusandmed:</strong> hinnapakkumised, platvormis vahetatud sõnumid, hinnangud, teenuste ajalugu ja varuosade tellimused;",
-    "list2_5": "<strong>Tehnilised andmed:</strong> IP-aadress, seansi tunnused ja juurdepääsulogid, mida säilitatakse vastavalt kohaldatavale õigusele (Brasiilias asuvate kasutajate puhul näiteks interneti tsiviilõiguste raamseadusele);",
-    "list2_6": "<strong>Küpsised ja sarnased tehnoloogiad:</strong> kasutatakse seansi autentimisel hoidmiseks ja veebilehe kasutuse koondstatistika koostamiseks.",
-    "list2_7": "<strong>Sirvimisandmed:</strong> külastatud lehed ja igal lehel veedetud aeg, suunav sait (näiteks Google või Instagram), seadme ja brauseri tüüp, keel ning IP-aadressi põhjal hinnatud ligikaudne linn/riik. Need andmed koondatakse iga külastuse kokkuvõtteks, mis saadetakse e-postiga ainult BipFixi meeskonnale, et mõista, kuidas saiti kasutatakse, ja seda parandada. Selleks ei kasutata küpsiseid, IP-aadress on kokkuvõttes näidatud ainult osaliselt ja seda ei salvestata meie andmebaasi.",
-    "title3": "3. Milleks andmeid kasutame (eesmärk ja õiguslik alus)",
-    "list3_1": "<strong>Lepingu täitmine/teenuse osutamine:</strong> konto loomine, Kliendi ühendamine Partneriga, hinnapakkumiste ja tellimuste töötlemine, vestluse ja teavituste võimaldamine;",
-    "list3_2": "<strong>Seadusest tuleneva kohustuse täitmine:</strong> maksualaste dokumentide ja juurdepääsulogide säilitamine;",
-    "list3_3": "<strong>Õigustatud huvi:</strong> pettuse ennetamine, platvormi täiustamine, infoturve ning teavitused juba kasutatava teenuse uuenduste kohta;",
-    "list3_4": "<strong>Nõusolek:</strong> kui see on nõutav, näiteks olemasolevast suhtest eraldiseisva turundussuhtluse jaoks — nõusoleku saab igal ajal tagasi võtta.",
-    "title4": "4. Kellega andmeid jagame",
-    "intro4": "Andmeid jagatakse ainult platvormi toimimiseks vajalikus ulatuses:",
-    "list4_1": "Samasse hinnapakkumise päringusse või tellimusse kaasatud Kliendi ja Partneri vahel, teeninduse võimaldamiseks (nimi, kontaktandmed, vajaduse korral aadress, sõiduki fotod);",
-    "list4_2": "Tehnilise taristu pakkujatega (majutus, andmebaas, tehinguliste e-kirjade/WhatsAppi saatmine), lepinguliste konfidentsiaalsus- ja turvakohustuste alusel;",
-    "list4_3": "Riigiasutustega, kui seda nõuab seadus, kohtumäärus või regulatiivne järelepärimine.",
-    "body4": "Isikuandmeid ei müüda kolmandatele isikutele reklaami eesmärgil.",
-    "title5": "5. Kui kaua andmeid säilitame",
-    "body5": "Andmeid säilitatakse seni, kuni konto on aktiivne, ning täiendava ajavahemiku vältel, mis on vajalik seadusest, maksuõigusest ja regulatsioonidest tulenevate kohustuste täitmiseks (näiteks Brasiilias asuvate kasutajate puhul säilitatakse interneti rakenduste juurdepääsulogisid vähemalt 6 kuud vastavalt interneti tsiviilõiguste raamseadusele), või õiguste teostamiseks haldus- või kohtumenetlustes.",
-    "title6": "6. Andmesubjekti õigused",
-    "intro6": "Kasutajale kohalduva andmekaitseõiguse alusel võib andmesubjekt igal ajal taotleda:",
-    "list6_1": "Kinnitust töötlemise toimumise kohta ja juurdepääsu oma andmetele;",
-    "list6_2": "Puudulike, ebatäpsete või aegunud andmete parandamist;",
-    "list6_3": "Mittevajalike või seadusega vastuolus töödeldud andmete anonüümimist, blokeerimist või kustutamist;",
-    "list6_4": "Andmete ülekandmist teisele teenusepakkujale;",
-    "list6_5": "Nõusoleku alusel töödeldud andmete kustutamist;",
-    "list6_6": "Teavet selle kohta, kellega andmeid jagatakse;",
-    "list6_7": "Nõusoleku tagasivõtmist, kui see on kohaldatav.",
-    "body6": "Nende õiguste kasutamiseks võib pöörduda e-posti aadressil <mailLink>privacy@bipfix.com</mailLink>. Vastus antakse kohaldatava seadusjärgse tähtaja jooksul.",
-    "title7": "7. Infoturve",
-    "body7": "Isikuandmete kaitseks loata juurdepääsu ning juhusliku või õigusvastase hävimise, kaotsimineku, muutmise, avalikustamise või levitamise eest rakendatakse tehnilisi ja korralduslikke meetmeid, sealhulgas autentimisel põhinevat juurdepääsukontrolli, kontopõhist andmete isoleerimist (andmebaasitasandi RLS) ja krüpteerimist andmeedastusel.",
-    "title8": "8. Lapsed ja alaealised",
-    "body8": "BipFix ei ole suunatud alla 18-aastastele isikutele ning ei kogu teadlikult laste ja alaealiste andmeid.",
-    "title9": "9. Käesoleva Poliitika muudatused",
-    "body9": "Käesolevat Poliitikat võidakse aeg-ajalt uuendada. Olulistest muudatustest teavitatakse e-posti või platvormisisese teatega enne nende jõustumist.",
-    "title10": "10. Andmekaitsespetsialisti (DPO) kontakt",
-    "body10": "Isikuandmete kaitsega seotud küsimuste korral võtke ühendust: <mailLink>privacy@bipfix.com</mailLink>.",
-    "footerDisclaimer": "Käesolev dokument on informatiivse iseloomuga. See koostati algselt Brasiilia turu jaoks (LGPD); teiste riikide jaoks kasutatud üldine, jurisdiktsiooniüleselt neutraalne sõnastus on ajutine mustand ning täielik õiguslik vastavus igas riigis, kus BipFix tegutseb (sealhulgas GDPR-iga vastavus Euroopa Liidus), eeldab enne sealset kommertskasutuselevõttu kohaliku andmekaitseõiguse valdkonna juristi ülevaatust."
+    "secoes": [
+      {
+        "titulo": "1. Kes vastutab sinu andmete eest",
+        "paragrafos": [
+          "Sinu isikuandmete vastutav töötleja isikuandmete kaitse üldmääruse (EL) 2016/679 („GDPR“) tähenduses on BipFix („meie“).",
+          "BipFix on praegu Eestis osaühinguna registreerimisel. Kuni registreerimise lõpuni tegutseb BipFix oma asutaja kui füüsilise isiku kaudu, kes on vastutav töötleja. Pärast äriühingu registreerimist lisame siia selle ärinime, registrikoodi ja registrijärgse aadressi.",
+          "Kõigi sinu isikuandmetega seotud küsimuste ja taotluste korral kirjuta aadressil <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>. Me ei ole määranud andmekaitseametnikku, sest see ei ole meile kohustuslik; sellele aadressile saadetud taotlusi käsitlevad otse BipFixi andmekaitse eest vastutavad inimesed."
+        ]
+      },
+      {
+        "titulo": "2. Kellele see poliitika kehtib",
+        "paragrafos": [
+          "See poliitika kehtib bipfix.com inglis-, eesti- ja itaaliakeelse versiooni, BipFixi mobiilirakenduse ning kõigi nende kasutajate kohta Euroopa Majanduspiirkonnas: autojuhid („kliendid“), autotöökojad ja varuosade müüjad („partnerid“) ja nende töötajad ning veebilehe külastajad. Samuti kehtib see autotöökodade ja varuosade müüjate kohta, kellega võtame ühendust koostöö pakkumiseks (punkt 3.8).",
+          "Veebilehe portugalikeelne versioon on mõeldud Brasiilia kasutajatele ja sellele kehtib eraldi, Brasiilia õigusel (LGPD) põhinev poliitika."
+        ]
+      },
+      {
+        "titulo": "3. Milliseid andmeid me töötleme, miks ja millisel õiguslikul alusel",
+        "paragrafos": [
+          "Iga eesmärgi juures märgime õigusliku aluse GDPR artikli 6 lõike 1 järgi."
+        ]
+      },
+      {
+        "titulo": "3.1 Sinu konto",
+        "subsecao": true,
+        "itens": [
+          "<strong>Andmed:</strong> nimi, e-posti aadress, telefoninumber, parool (salvestatakse ainult krüpteeritud/räsitud kujul), eelistatud keel ja konto tüüp. Partnerite puhul lisaks: ärinimi, registri- või KMKR-kood, aadress, pakutavad teenused, lahtiolekuajad, logo ja fotod ning nende lisatud töötajate nimi, e-post ja roll.",
+          "<strong>Eesmärk:</strong> konto loomine ja haldamine ning platvormi kasutamise võimaldamine.",
+          "<strong>Õiguslik alus:</strong> sinuga sõlmitud lepingu täitmine (art 6 lg 1 p b)."
+        ]
+      },
+      {
+        "titulo": "3.2 Remondipäringud, hinnapakkumised, sõnumid ja arvustused",
+        "subsecao": true,
+        "itens": [
+          "<strong>Andmed:</strong> sõiduki andmed (mark, mudel, aasta ja, kui need esitad, registreerimisnumber), probleemi kirjeldus, fotod, häälsõnumid, kiireloomulisus, teenuse osutamise aadress, hinnapakkumised, vestlussõnumid, tellimused, teenuste ajalugu ja arvustused.",
+          "<strong>Eesmärk:</strong> sinu päringu saatmine sobivatele partneritele sinu lähedal, partneritel hinnapakkumiste saatmise võimaldamine, suhtluse võimaldamine sinu ja partneri vahel, remondi jälgimine ning arvustuste näitamine partnerite profiilidel.",
+          "<strong>Õiguslik alus:</strong> lepingu täitmine (art 6 lg 1 p b). Arvustuste avaldamine koos sinu kontol näidatud nimega põhineb meie ja teiste autojuhtide õigustatud huvil saada autotöökodade kohta läbipaistvat teavet (art 6 lg 1 p f)."
+        ]
+      },
+      {
+        "titulo": "3.3 Asukoht",
+        "subsecao": true,
+        "itens": [
+          "<strong>Andmed:</strong> sinu sisestatud aadress ja selle geograafilised koordinaadid või, ainult siis, kui sa seda oma seadmes lubad, sinu praegune asukoht.",
+          "<strong>Eesmärk:</strong> sinu lähedal asuvate partnerite leidmine ja partnerite näitamine kaardil.",
+          "<strong>Õiguslik alus:</strong> lepingu täitmine (art 6 lg 1 p b). Seadme asukoha jagamise asemel võid alati aadressi ise sisestada."
+        ]
+      },
+      {
+        "titulo": "3.4 Kahjustuste analüüs ja kõne transkribeerimine tehisintellektiga",
+        "subsecao": true,
+        "itens": [
+          "<strong>Andmed:</strong> kahjustuse fotod ja häälsõnumid, mille otsustad nende funktsioonide kaudu saata.",
+          "<strong>Eesmärk:</strong> kahjustuse esialgse kirjelduse ja häälsõnumite tekstiks kirjutamise koostamine, et aidata partneritel hinnapakkumist ette valmistada. Tulemus on ainult abivahend: hinna ja diagnoosi otsustab alati partner ning sinu kohta ei tehta automaatselt ühtegi õiguslike või sarnaselt oluliste tagajärgedega otsust (art 22).",
+          "<strong>Õiguslik alus:</strong> lepingu täitmine (art 6 lg 1 p b). Töötlemist teeb meie nimel Google (Gemini) (vt punkt 4)."
+        ]
+      },
+      {
+        "titulo": "3.5 Teatised avarii kohta, milles osales teine sõiduk",
+        "subsecao": true,
+        "itens": [
+          "Kui kasutaja registreerib BipFixis avarii ja esitab teise osalenud sõiduki andmed (näiteks registreerimisnumbri ning teise juhi nime, e-posti või telefoninumbri), kasutame neid andmeid, et teavitada teist juhti registreeritud avariist ja sellest, kuidas remondiga edasi minna.",
+          "<strong>Õiguslik alus:</strong> mõlema juhi õigustatud huvi avarii tagajärgedega tegelemiseks (art 6 lg 1 p f). Kui said sellise sõnumi ega soovi BipFixi kasutada, võid paluda oma andmed kustutada."
+        ]
+      },
+      {
+        "titulo": "3.6 Teenusega seotud teated",
+        "subsecao": true,
+        "itens": [
+          "Saadame e-kirju sinu konto ja päringute kohta, näiteks uued ja kinnitatud hinnapakkumised, lõpetatud tööd ning parooli taastamise lingid.",
+          "<strong>Õiguslik alus:</strong> lepingu täitmine (art 6 lg 1 p b). Turundussõnumeid saadame klientidele ainult nende nõusolekul (art 6 lg 1 p a) ja nende tellimisest saab igal ajal loobuda."
+        ]
+      },
+      {
+        "titulo": "3.7 Turvalisus, veebilehe toimimine ja külastuste kokkuvõtted",
+        "subsecao": true,
+        "itens": [
+          "<strong>Tehnilised andmed:</strong> IP-aadress, brauseri ja seadme tüüp, päritud lehed ja veateated, mis salvestatakse serverilogidesse, et hoida platvorm turvalisena, ennetada pettusi ja kuritarvitusi ning parandada vigu.",
+          "<strong>Külastuste kokkuvõtted:</strong> veebilehe sirvimise ajal hoitakse külastatud lehti ja igal lehel veedetud aega ajutiselt sinu brauseri vahekaardil (seansisalvestus, mis kustub vahekaardi sulgemisel) ja saadetakse meie serverisse. Server ühendab need suunava saidi (näiteks Google või Instagram), seadme ja brauseri tüübi, keele ning IP-aadressi põhjal hinnatud ligikaudse linna ja riigiga külastuse kokkuvõtteks, mis saadetakse e-postiga ainult BipFixi meeskonnale. Kasutame seda, et mõista, kuidas veebilehte meie käivitamise ajal kasutatakse, ja seda parandada. Kokkuvõttes on IP-aadress näidatud ainult osaliselt ja seda ei salvestata meie andmebaasi. BipFixi administraatorina sisse loginud inimeste külastusi ei arvestata.",
+          "<strong>Õiguslik alus:</strong> meie õigustatud huvi pakkuda turvalist veebilehte ja mõista, kuidas seda kasutatakse (art 6 lg 1 p f). Külastuste kokkuvõtetele võid igal ajal vastu vaielda, kirjutades aadressil <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+        ]
+      },
+      {
+        "titulo": "3.8 Autotöökodade ja varuosade müüjatega ühenduse võtmine koostöö pakkumiseks",
+        "subsecao": true,
+        "itens": [
+          "<strong>Andmed:</strong> autotöökodade ja varuosade müüjate ärinimi, ettevõtte e-post, telefon, veebileht ja registrijärgne aadress, mis on saadud avalikest allikatest, näiteks Eesti äriregistrist ja ettevõtte enda veebilehelt.",
+          "<strong>Eesmärk:</strong> ettevõttega ühe või mõne korra ühenduse võtmine, et tutvustada BipFixi partnerlust.",
+          "<strong>Õiguslik alus:</strong> meie õigustatud huvi pakkuda oma teenust ettevõtetele (art 6 lg 1 p f). Igas sõnumis on kirjas, kuidas nende saamisest loobuda; kui palud meil lõpetada, ei võta me sinuga enam ühendust ja säilitame ainult selle, mis on vajalik sinu soovi järgimiseks."
+        ]
+      },
+      {
+        "titulo": "3.9 Analüütika ja seansisalvestus (ainult sinu nõusolekul)",
+        "subsecao": true,
+        "itens": [
+          "Kui nõustud küpsiste ribal analüütikaküpsistega, kasutame Google Analyticsit koondstatistika koostamiseks ja Microsoft Clarityt, et mõista, kuidas lehti kasutatakse (näiteks klikid, kerimine ja anonümiseeritud seansisalvestused).",
+          "<strong>Õiguslik alus:</strong> sinu nõusolek (art 6 lg 1 p a), mille võid igal ajal tagasi võtta, ilma et see mõjutaks enne tagasivõtmist toimunud töötlemise seaduslikkust. Enne nõusoleku andmist töötavad need tööriistad piiratud režiimis, ilma analüütikaküpsisteta."
+        ]
+      },
+      {
+        "titulo": "3.10 Seadusest tulenevad kohustused",
+        "subsecao": true,
+        "itens": [
+          "Säilitame raamatupidamisdokumente ja vastame ametiasutuste õiguspärastele päringutele, kui seadus seda nõuab (art 6 lg 1 p c)."
+        ]
+      },
+      {
+        "titulo": "4. Kes sinu andmeid saavad",
+        "paragrafos": [
+          "Jagame isikuandmeid ainult vajalikus ulatuses:"
+        ],
+        "itens": [
+          "<strong>Teised kasutajad:</strong> sama päringu või tellimusega seotud klient ja partner näevad teineteise andmeid, mida on vaja teenuse osutamiseks (nimi, kontaktandmed, sõiduki andmed ja fotod, vajaduse korral aadress). Partnerite profiilid ja arvustused on avalikud.",
+          "<strong>Majutus:</strong> meie serverid ja andmebaas asuvad Madalmaades (Euroopa Liit).",
+          "<strong>Resend</strong> (Ameerika Ühendriigid): e-kirjade saatmine.",
+          "<strong>Google</strong> (Ameerika Ühendriigid): tehisintellekt Gemini kahjustuste analüüsiks ja kõne transkribeerimiseks; Google Analytics (ainult nõusolekul); Google Maps, mida näidatakse partnerite profiilidel.",
+          "<strong>Microsoft</strong> (Ameerika Ühendriigid): Microsoft Clarity (ainult nõusolekul).",
+          "<strong>OpenStreetMap Foundation</strong> (Ühendkuningriik): aadresside teisendamine kaardikoordinaatideks (teenus Nominatim).",
+          "<strong>Ametiasutused</strong>, kui meil on seadusest tulenev kohustus andmeid avaldada."
+        ],
+        "depois": [
+          "Need teenuseosutajad töötlevad andmeid meie juhiste järgi andmetöötlustingimuste alusel, mis vastavad GDPR artikli 28 nõuetele. Me ei müü isikuandmeid."
+        ]
+      },
+      {
+        "titulo": "5. Andmete edastamine väljapoole Euroopa Majanduspiirkonda",
+        "paragrafos": [
+          "Mõned eespool nimetatud teenuseosutajad asuvad Ameerika Ühendriikides või Ühendkuningriigis. Edastamine Ühendkuningriiki põhineb Euroopa Komisjoni kaitse piisavuse otsusel. Edastamine Ameerika Ühendriikidesse põhineb ELi-USA andmekaitseraamistiku (Data Privacy Framework) kaitse piisavuse otsusel, kui teenuseosutaja on selle raamistiku alusel sertifitseeritud, ja muul juhul Euroopa Komisjoni tüüptingimustel (GDPR art 46 lg 2 p c). Nende kaitsemeetmete kohta saad lisateavet aadressil <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+        ]
+      },
+      {
+        "titulo": "6. Kui kaua me sinu andmeid säilitame",
+        "itens": [
+          "<strong>Konto andmed:</strong> seni, kuni sinu konto on aktiivne. Pärast seda, kui palud oma konto kustutada, kustutame või anonüümime sinu andmed 30 päeva jooksul, välja arvatud allpool loetletud andmed, mida peame või võime kauem säilitada.",
+          "<strong>Päringud, hinnapakkumised, tellimused ja sõnumid:</strong> seni, kuni sinu konto on aktiivne, ja kuni 3 aastat pärast viimast tehingut, et lahendada võimalikke vaidlusi ja garantiinõudeid.",
+          "<strong>Raamatupidamisdokumendid:</strong> 7 aastat, nagu nõuab raamatupidamise seadus.",
+          "<strong>Serverilogid:</strong> kuni 14 päeva.",
+          "<strong>Külastuste kokkuvõtted:</strong> kustutatakse meeskonna postkastist hiljemalt 12 kuu möödudes.",
+          "<strong>Analüütika (ainult nõusolekul):</strong> vastavalt Google Analyticsi ja Microsoft Clarity säilitamisseadetele, kõige rohkem 14 kuud.",
+          "<strong>Koostöökontaktid (punkt 3.8):</strong> kuni palud meil ühenduse võtmise lõpetada, kuid mitte kauem kui 24 kuud pärast meie viimast kontakti."
+        ]
+      },
+      {
+        "titulo": "7. Sinu õigused",
+        "paragrafos": [
+          "GDPR alusel on sul õigus:"
+        ],
+        "itens": [
+          "tutvuda oma isikuandmetega ja saada neist koopia (art 15);",
+          "lasta ebaõiged või puudulikud andmed parandada (art 16);",
+          "lasta oma andmed kustutada (art 17);",
+          "piirata oma andmete töötlemist (art 18);",
+          "saada meile esitatud andmed struktureeritud, masinloetavas vormingus ja lasta need edastada teisele vastutavale töötlejale (art 20);",
+          "<strong>esitada igal ajal vastuväide</strong> meie õigustatud huvil põhinevale töötlemisele ning otseturundusele, ilma et peaksid põhjust esitama (art 21);",
+          "võtta igal ajal tagasi oma nõusolek, kui töötlemine põhineb nõusolekul (art 7 lg 3)."
+        ],
+        "depois": [
+          "Nende õiguste kasutamiseks kirjuta aadressil <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>. Vastame põhjendamatu viivituseta ja hiljemalt ühe kuu jooksul; keerukate taotluste korral võib seda tähtaega pikendada kahe kuu võrra, millest anname sulle koos põhjendusega teada. Õiguste kasutamine on tasuta. Enne taotluse täitmist võime paluda sul oma isikut kinnitada.",
+          "Sul on ka õigus esitada kaebus andmekaitse järelevalveasutusele, eelkõige selles ELi riigis, kus elad või töötad. Eestis on selleks Andmekaitse Inspektsioon, Tatari 39, 10134 Tallinn, <a href=\"mailto:info@aki.ee\">info@aki.ee</a>, <a href=\"https://www.aki.ee\" target=\"_blank\" rel=\"noopener noreferrer\">www.aki.ee</a>. Oleksime tänulikud, kui annaksid meile esmalt võimaluse sinu murele lahendus leida."
+        ]
+      },
+      {
+        "titulo": "8. Kas andmete esitamine on kohustuslik?",
+        "paragrafos": [
+          "Registreerimisel või päringu saatmisel kohustuslikuks märgitud andmed on vajalikud teenuse osutamiseks; ilma nendeta ei saa me sinu kontot luua ega päringut töödelda. Muud andmed, näiteks seadme asukoht, analüütikaküpsised või häälsõnumid, on vabatahtlikud."
+        ]
+      },
+      {
+        "titulo": "9. Küpsised ja sarnased tehnoloogiad",
+        "paragrafos": [
+          "Kasutame brauserisse teavet salvestavaid tehnoloogiaid, mis on veebilehe toimimiseks hädavajalikud: sisselogituna püsimine, keele meelespidamine ja sinu küpsisevaliku meelespidamine. Need ei vaja nõusolekut. Analüütikaküpsiseid (Google Analytics ja Microsoft Clarity) kasutatakse ainult siis, kui nõustud nendega küpsiste ribal. Punktis 3.7 kirjeldatud külastuste kokkuvõtted kasutavad seansisalvestust, mis kustub vahekaardi sulgemisel.",
+          "Küpsisevaliku muutmiseks kustuta brauseri seadetes bipfix.com salvestatud andmed; küpsiste riba ilmub järgmisel külastusel uuesti."
+        ]
+      },
+      {
+        "titulo": "10. Turvalisus",
+        "paragrafos": [
+          "Kaitseme isikuandmeid asjakohaste tehniliste ja korralduslike meetmetega, sealhulgas krüpteeritud ühendused (HTTPS), räsitud paroolid, autentimisel põhinev juurdepääsukontroll, kontode eraldamine andmebaasi tasemel (reataseme turvalisus), piiratud administraatorijuurdepääs ja majutus Euroopa Liidus."
+        ]
+      },
+      {
+        "titulo": "11. Lapsed",
+        "paragrafos": [
+          "BipFix ei ole mõeldud alla 18-aastastele ja me ei kogu teadlikult nende isikuandmeid."
+        ]
+      },
+      {
+        "titulo": "12. Poliitika muudatused",
+        "paragrafos": [
+          "Võime seda poliitikat uuendada, näiteks pärast äriühingu registreerimist või uue teenuseosutaja kasutuselevõttu. Olulistest muudatustest teavitame registreeritud kasutajaid e-posti teel või platvormil enne nende jõustumist."
+        ]
+      },
+      {
+        "titulo": "13. Kontakt",
+        "paragrafos": [
+          "Küsimused ja taotlused sinu isikuandmete kohta: <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+        ]
+      }
+    ]
   },
   "emergencia": {
     "metaTitle": "Autoavarii? Teata sellest kohe",

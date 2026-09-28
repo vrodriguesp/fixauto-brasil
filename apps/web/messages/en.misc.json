@@ -63,52 +63,210 @@
   },
   "privacidade": {
     "metaTitle": "Privacy Policy",
-    "metaDescription": "How BipFix collects, uses and protects the personal data of customers, partner repair shops and stores, in compliance with applicable data protection law (GDPR / LGPD).",
+    "metaDescription": "How BipFix processes the personal data of drivers, repair shops and parts stores in the European Union, in accordance with the GDPR.",
     "pageTitle": "Privacy Policy",
     "lastUpdatedLabel": "Last updated:",
     "updatedDate": "September 28, 2026",
-    "title1": "1. Introduction",
-    "body1": "This Privacy Policy describes how BipFix (\"we\") collects, uses, shares and protects the personal data of Customers, partner Repair Shops and Stores (\"you\"), in compliance with the data protection law applicable to you — for those in the European Union, the General Data Protection Regulation (GDPR); for those in Brazil, the General Data Protection Law (Law No. 13,709/2018 — LGPD) and the Brazilian Civil Rights Framework for the Internet (Law No. 12,965/2014).",
-    "title2": "2. What data we collect",
-    "list2_1": "<strong>Registration data:</strong> name, tax ID, email, phone number, address and, for Repair Shops/Stores, business and staff (employee) details;",
-    "list2_2": "<strong>Location data:</strong> address and geographic coordinates, used to match Customers with nearby Partners;",
-    "list2_3": "<strong>Vehicle data:</strong> make, model, year, license plate (when provided) and photos of the reported damage;",
-    "list2_4": "<strong>Usage data:</strong> quotes, messages exchanged on the platform, reviews, service history and parts orders;",
-    "list2_5": "<strong>Technical data:</strong> IP address, session identifiers and access logs, retained as required by applicable law (for example, the Brazilian Civil Rights Framework for the Internet, for those in Brazil);",
-    "list2_6": "<strong>Cookies and similar technologies:</strong> used to keep you authenticated and for aggregated site usage statistics.",
-    "list2_7": "<strong>Browsing data:</strong> pages visited and time spent on each, referring site (for example, Google or Instagram), device and browser type, language, and approximate city/country estimated from the IP address. This data is combined into a summary of each visit that is emailed only to the BipFix team, so we can understand how the site is used and improve it. No cookies are used for this, the IP address is shown only partially in the summary, and it is not stored in our database.",
-    "title3": "3. What we use your data for (purpose and legal basis)",
-    "list3_1": "<strong>Contract performance/service delivery:</strong> creating your account, connecting Customers with Partners, processing quotes and orders, enabling chat and notifications;",
-    "list3_2": "<strong>Compliance with a legal obligation:</strong> maintaining tax records and access logs;",
-    "list3_3": "<strong>Legitimate interest:</strong> fraud prevention, platform improvement, information security, and communications about updates to the service you already use;",
-    "list3_4": "<strong>Consent:</strong> when required, such as for marketing communications separate from the existing relationship — you may withdraw your consent at any time.",
-    "title4": "4. Who we share your data with",
-    "intro4": "We share data strictly to the extent necessary for the platform to function:",
-    "list4_1": "Between the Customer and Partner involved in the same quote request or order, to enable service delivery (name, contact details, address where applicable, vehicle photos);",
-    "list4_2": "With technical infrastructure providers (hosting, database, transactional email/WhatsApp delivery), under contractual confidentiality and security obligations;",
-    "list4_3": "With public authorities, when required by law, court order, or regulatory request.",
-    "body4": "We do not sell personal data to third parties for advertising purposes.",
-    "title5": "5. How long we keep your data",
-    "body5": "We keep your data for as long as your account is active, plus any additional period required to meet legal, tax and regulatory obligations (for example, internet application access logs are kept for a minimum of 6 months, as required by the Brazilian Civil Rights Framework for the Internet, for those in Brazil), or for the regular exercise of rights in administrative or judicial proceedings.",
-    "title6": "6. Your rights as a data subject",
-    "intro6": "Under the data protection law applicable to you, you may request at any time:",
-    "list6_1": "Confirmation of whether processing is taking place and access to your data;",
-    "list6_2": "Correction of incomplete, inaccurate or outdated data;",
-    "list6_3": "Anonymization, blocking or deletion of unnecessary data, or data processed in violation of the law;",
-    "list6_4": "Portability of your data to another service provider;",
-    "list6_5": "Deletion of data processed on the basis of your consent;",
-    "list6_6": "Information on who we share your data with;",
-    "list6_7": "Withdrawal of consent, where applicable.",
-    "body6": "To exercise any of these rights, contact us at <mailLink>privacy@bipfix.com</mailLink>. We will respond within the applicable legal timeframe.",
-    "title7": "7. Information security",
-    "body7": "We adopt technical and administrative measures to protect personal data against unauthorized access and accidental or unlawful destruction, loss, alteration, disclosure or dissemination, including authentication-based access control, per-account data isolation (database-level row-level security) and encryption in transit.",
-    "title8": "8. Children and minors",
-    "body8": "BipFix is not directed at individuals under 18 years of age and does not knowingly collect data from children or minors.",
-    "title9": "9. Changes to this Policy",
-    "body9": "We may update this Policy from time to time. Material changes will be communicated by email or platform notice before they take effect.",
-    "title10": "10. Data Protection Officer (DPO) contact",
-    "body10": "For questions related to personal data protection, contact: <mailLink>privacy@bipfix.com</mailLink>.",
-    "footerDisclaimer": "This document is provided for informational purposes. It was originally drafted for the Brazilian market (LGPD); the generic, jurisdiction-neutral language used for other countries is a provisional draft, and full legal compliance in each country where BipFix operates (including GDPR compliance in the European Union) requires review by a lawyer specializing in local data protection law before commercial release there."
+    "secoes": [
+      {
+        "titulo": "1. Who is responsible for your data",
+        "paragrafos": [
+          "The controller of your personal data under the General Data Protection Regulation (EU) 2016/679 (\"GDPR\") is BipFix (\"we\", \"us\").",
+          "BipFix is currently being registered as a private limited company (osaühing) in Estonia. Until the registration is completed, BipFix is operated by its founder as a natural person, who is the controller. Once the company is registered, this section will state its legal name, registry code and registered address.",
+          "For any question or request about your personal data, write to <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>. We have not appointed a Data Protection Officer because we are not required to; requests sent to this address are handled directly by the people responsible for data protection at BipFix."
+        ]
+      },
+      {
+        "titulo": "2. Who this policy applies to",
+        "paragrafos": [
+          "This policy applies to the English, Estonian and Italian versions of bipfix.com, to the BipFix mobile app and to everyone who uses them from the European Economic Area: drivers (\"Customers\"), repair shops and parts stores (\"Partners\") and their staff, and visitors of the website. It also applies to repair shops and parts stores that we contact about a partnership (section 3.8).",
+          "The Portuguese version of the website is intended for users in Brazil and is governed by a separate policy based on Brazilian law (LGPD)."
+        ]
+      },
+      {
+        "titulo": "3. What data we process, why, and on what legal basis",
+        "paragrafos": [
+          "For each purpose we indicate the legal basis under Article 6(1) GDPR."
+        ]
+      },
+      {
+        "titulo": "3.1 Your account",
+        "subsecao": true,
+        "itens": [
+          "<strong>Data:</strong> name, email address, phone number, password (stored only in encrypted/hashed form), preferred language and account type. For Partners also: business name, registry or VAT code, address, services offered, opening hours, logo and photos, and the name, email and role of staff members they add.",
+          "<strong>Purpose:</strong> creating and managing your account and letting you use the platform.",
+          "<strong>Legal basis:</strong> performance of a contract with you (Art. 6(1)(b))."
+        ]
+      },
+      {
+        "titulo": "3.2 Repair requests, quotes, messages and reviews",
+        "subsecao": true,
+        "itens": [
+          "<strong>Data:</strong> vehicle details (make, model, year and, if you provide it, the licence plate), description of the problem, photos, voice messages, urgency, the address where the service is needed, quotes, chat messages, orders, service history and reviews.",
+          "<strong>Purpose:</strong> sending your request to suitable Partners near you, letting Partners send quotes, enabling communication between you and the Partner, tracking the repair, and showing reviews on Partner profiles.",
+          "<strong>Legal basis:</strong> performance of a contract (Art. 6(1)(b)). Publishing reviews together with the name shown in your account is based on our legitimate interest, and that of other drivers, in transparent information about repair shops (Art. 6(1)(f))."
+        ]
+      },
+      {
+        "titulo": "3.3 Location",
+        "subsecao": true,
+        "itens": [
+          "<strong>Data:</strong> the address you enter and its geographic coordinates or, only if you allow it on your device, your current location.",
+          "<strong>Purpose:</strong> matching you with Partners close to you and showing Partners on a map.",
+          "<strong>Legal basis:</strong> performance of a contract (Art. 6(1)(b)). You can always type an address instead of sharing your device location."
+        ]
+      },
+      {
+        "titulo": "3.4 Damage analysis and voice transcription with artificial intelligence",
+        "subsecao": true,
+        "itens": [
+          "<strong>Data:</strong> the photos of the damage and the voice messages you choose to send through these features.",
+          "<strong>Purpose:</strong> producing an indicative description of the damage and a text transcription of voice messages, to help Partners prepare a quote. The result is only an aid: the price and the diagnosis are always decided by the Partner, and no decision with legal or similarly significant effects is made about you automatically (Art. 22).",
+          "<strong>Legal basis:</strong> performance of a contract (Art. 6(1)(b)). The processing is carried out by Google (Gemini) on our behalf (see section 4)."
+        ]
+      },
+      {
+        "titulo": "3.5 Accident reports involving another vehicle",
+        "subsecao": true,
+        "itens": [
+          "If a user reports an accident on BipFix and provides details of the other vehicle involved (such as its licence plate and the other driver's name, email or phone number), we use those details to inform the other driver about the report and about how to follow up on the repair.",
+          "<strong>Legal basis:</strong> the legitimate interest of both drivers in dealing with the consequences of the accident (Art. 6(1)(f)). If you received such a message and do not want to use BipFix, you can ask us to delete your details."
+        ]
+      },
+      {
+        "titulo": "3.6 Service communications",
+        "subsecao": true,
+        "itens": [
+          "We send emails about your account and your requests, for example new quotes, accepted quotes, completed services and password recovery links.",
+          "<strong>Legal basis:</strong> performance of a contract (Art. 6(1)(b)). We only send marketing messages to Customers who have given their consent (Art. 6(1)(a)), and you can unsubscribe at any time."
+        ]
+      },
+      {
+        "titulo": "3.7 Security, website operation and visit summaries",
+        "subsecao": true,
+        "itens": [
+          "<strong>Technical data:</strong> IP address, browser and device type, pages requested and error reports, recorded in server logs to keep the platform secure, prevent fraud and abuse, and fix errors.",
+          "<strong>Visit summaries:</strong> while you browse the website, the pages you visit and the time spent on each are kept temporarily in your browser tab (session storage, deleted when you close the tab) and sent to our server. The server combines them with the referring site (for example Google or Instagram), device and browser type, language and approximate city and country estimated from your IP address into a summary of the visit, which is emailed only to the BipFix team. We use it to understand how the website is used during our launch and to improve it. The summary shows the IP address only partially and it is not stored in our database. Visits by people logged in as BipFix administrators are excluded.",
+          "<strong>Legal basis:</strong> our legitimate interest in operating a secure website and in understanding how it is used (Art. 6(1)(f)). You can object to visit summaries at any time by writing to <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+        ]
+      },
+      {
+        "titulo": "3.8 Contacting repair shops and parts stores about a partnership",
+        "subsecao": true,
+        "itens": [
+          "<strong>Data:</strong> business name, business email, phone, website and registered address of repair shops and parts stores, taken from public sources such as the Estonian Business Register (äriregister) and the business's own website.",
+          "<strong>Purpose:</strong> contacting the business once or a few times to present the BipFix partnership.",
+          "<strong>Legal basis:</strong> our legitimate interest in offering our service to businesses (Art. 6(1)(f)). Every message explains how to stop receiving them; if you ask us to stop, we will not contact you again and will keep only what is needed to respect that request."
+        ]
+      },
+      {
+        "titulo": "3.9 Analytics and session recording (only with your consent)",
+        "subsecao": true,
+        "itens": [
+          "If you accept analytics cookies in the cookie banner, we use Google Analytics to produce aggregated statistics and Microsoft Clarity to understand how pages are used (for example clicks, scrolling and anonymised session recordings).",
+          "<strong>Legal basis:</strong> your consent (Art. 6(1)(a)), which you can withdraw at any time without affecting the lawfulness of processing before withdrawal. Before you give consent, these tools run in a restricted mode without analytics cookies."
+        ]
+      },
+      {
+        "titulo": "3.10 Legal obligations",
+        "subsecao": true,
+        "itens": [
+          "We keep accounting records and respond to lawful requests from public authorities where the law requires it (Art. 6(1)(c))."
+        ]
+      },
+      {
+        "titulo": "4. Who receives your data",
+        "paragrafos": [
+          "We share personal data only as far as necessary:"
+        ],
+        "itens": [
+          "<strong>Other users:</strong> the Customer and the Partner involved in the same request or order see each other's details needed to carry out the service (name, contact details, vehicle details and photos, address where relevant). Partner profiles and reviews are public.",
+          "<strong>Hosting:</strong> our servers and database are located in the Netherlands (European Union).",
+          "<strong>Resend</strong> (United States): sending of emails.",
+          "<strong>Google</strong> (United States): Gemini artificial intelligence for damage analysis and voice transcription; Google Analytics (only with consent); Google Maps, shown on Partner profile pages.",
+          "<strong>Microsoft</strong> (United States): Microsoft Clarity (only with consent).",
+          "<strong>OpenStreetMap Foundation</strong> (United Kingdom): converting addresses into map coordinates (Nominatim service).",
+          "<strong>Public authorities</strong>, when we are legally required to disclose data."
+        ],
+        "depois": [
+          "These service providers process data on our instructions under data processing terms that meet the requirements of Article 28 GDPR. We do not sell personal data."
+        ]
+      },
+      {
+        "titulo": "5. Transfers outside the European Economic Area",
+        "paragrafos": [
+          "Some of the providers above are located in the United States or the United Kingdom. Transfers to the United Kingdom rely on the European Commission's adequacy decision. Transfers to the United States rely on the EU-U.S. Data Privacy Framework adequacy decision where the provider is certified under it, and otherwise on the European Commission's Standard Contractual Clauses (Art. 46(2)(c) GDPR). You can ask us for more information about these safeguards at <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+        ]
+      },
+      {
+        "titulo": "6. How long we keep your data",
+        "itens": [
+          "<strong>Account data:</strong> as long as your account is active. After you ask us to delete your account, we delete or anonymise your data within 30 days, except for the data listed below that we must or may keep for longer.",
+          "<strong>Requests, quotes, orders and messages:</strong> as long as your account is active and up to 3 years after the last transaction, to deal with possible disputes and warranty claims.",
+          "<strong>Accounting records:</strong> 7 years, as required by the Estonian Accounting Act.",
+          "<strong>Server logs:</strong> up to 14 days.",
+          "<strong>Visit summaries:</strong> deleted from the team mailbox after 12 months at the latest.",
+          "<strong>Analytics (only with consent):</strong> according to the retention settings of Google Analytics and Microsoft Clarity, at most 14 months.",
+          "<strong>Partnership contacts (section 3.8):</strong> until you ask us to stop contacting you, and at most 24 months after our last contact."
+        ]
+      },
+      {
+        "titulo": "7. Your rights",
+        "paragrafos": [
+          "Under the GDPR you have the right to:"
+        ],
+        "itens": [
+          "access your personal data and receive a copy of it (Art. 15);",
+          "have inaccurate or incomplete data corrected (Art. 16);",
+          "have your data erased (Art. 17);",
+          "restrict the processing of your data (Art. 18);",
+          "receive the data you provided to us in a structured, machine-readable format and have it transmitted to another controller (Art. 20);",
+          "<strong>object at any time</strong> to processing based on our legitimate interest, and to direct marketing without having to give a reason (Art. 21);",
+          "withdraw your consent at any time, where processing is based on consent (Art. 7(3))."
+        ],
+        "depois": [
+          "To exercise any of these rights, write to <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>. We will reply without undue delay and at the latest within one month; this period may be extended by two further months for complex requests, in which case we will tell you why. Exercising your rights is free of charge. We may ask you to confirm your identity before acting on a request.",
+          "You also have the right to lodge a complaint with a data protection supervisory authority, in particular in the EU country where you live or work. In Estonia this is the Data Protection Inspectorate (Andmekaitse Inspektsioon), Tatari 39, 10134 Tallinn, <a href=\"mailto:info@aki.ee\">info@aki.ee</a>, <a href=\"https://www.aki.ee\" target=\"_blank\" rel=\"noopener noreferrer\">www.aki.ee</a>. We would appreciate the chance to address your concern first."
+        ]
+      },
+      {
+        "titulo": "8. Is providing your data required?",
+        "paragrafos": [
+          "The data marked as required when you register or send a request is needed to provide the service; without it we cannot create your account or process your request. Other data, such as your device location, analytics cookies or voice messages, is optional."
+        ]
+      },
+      {
+        "titulo": "9. Cookies and similar technologies",
+        "paragrafos": [
+          "We use technologies that store information in your browser that are strictly necessary for the website to work: keeping you logged in, remembering your language and remembering your cookie choice. These do not require consent. Analytics cookies (Google Analytics and Microsoft Clarity) are only used if you accept them in the cookie banner. The visit summaries described in section 3.7 use session storage that is deleted when you close the tab.",
+          "To change your cookie choice, delete the data stored by bipfix.com in your browser settings; the cookie banner will appear again on your next visit."
+        ]
+      },
+      {
+        "titulo": "10. Security",
+        "paragrafos": [
+          "We protect personal data with appropriate technical and organisational measures, including encrypted connections (HTTPS), hashed passwords, authentication-based access control, database-level isolation between accounts (row-level security), limited administrative access and hosting within the European Union."
+        ]
+      },
+      {
+        "titulo": "11. Children",
+        "paragrafos": [
+          "BipFix is not intended for people under 18 years of age, and we do not knowingly collect their personal data."
+        ]
+      },
+      {
+        "titulo": "12. Changes to this policy",
+        "paragrafos": [
+          "We may update this policy, for example when the company registration is completed or when we start using a new service provider. We will inform registered users of significant changes by email or with a notice on the platform before they take effect."
+        ]
+      },
+      {
+        "titulo": "13. Contact",
+        "paragrafos": [
+          "Questions and requests about your personal data: <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+        ]
+      }
+    ]
   },
   "emergencia": {
     "metaTitle": "Just Crashed Your Car? Report It Now",

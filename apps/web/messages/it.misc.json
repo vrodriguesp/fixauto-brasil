@@ -62,53 +62,211 @@
     "footerDisclaimer": "Il presente documento ha carattere puramente informativo e riflette le regole di funzionamento della piattaforma BipFix. È stato redatto originariamente per il mercato brasiliano; il linguaggio generico e neutro rispetto alla giurisdizione utilizzato per gli altri paesi è una bozza provvisoria, e la piena conformità giuridica in ciascun paese in cui BipFix opera richiede una revisione da parte di un avvocato specializzato in diritto dei consumatori e protezione dei dati locale prima della diffusione commerciale in quel paese."
   },
   "privacidade": {
-    "metaTitle": "Informativa sulla Privacy",
-    "metaDescription": "Come BipFix raccoglie, utilizza e protegge i dati personali di clienti, officine e negozi di ricambi partner, in conformità con la normativa applicabile sulla protezione dei dati (GDPR / LGPD).",
-    "pageTitle": "Informativa sulla Privacy",
+    "metaTitle": "Informativa sulla privacy",
+    "metaDescription": "Come BipFix tratta i dati personali di automobilisti, officine e rivenditori di ricambi nell'Unione europea, in conformità al GDPR.",
+    "pageTitle": "Informativa sulla privacy",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
     "updatedDate": "28 settembre 2026",
-    "title1": "1. Introduzione",
-    "body1": "La presente Informativa sulla Privacy descrive come BipFix (\"noi\") raccoglie, utilizza, condivide e protegge i dati personali di Clienti, Officine e Negozi partner (\"l'utente\"), in conformità con la normativa sulla protezione dei dati applicabile all'utente — per chi si trova nell'Unione Europea, il Regolamento Generale sulla Protezione dei Dati (GDPR); per chi si trova in Brasile, la Legge Generale sulla Protezione dei Dati (Legge n. 13.709/2018 — LGPD) e il Marco Civil da Internet brasiliano (Legge n. 12.965/2014).",
-    "title2": "2. Quali dati raccogliamo",
-    "list2_1": "<strong>Dati di registrazione:</strong> nome, codice fiscale/partita IVA, e-mail, telefono, indirizzo e, per Officine/Negozi, dati dell'attività e del personale (dipendenti);",
-    "list2_2": "<strong>Dati di localizzazione:</strong> indirizzo e coordinate geografiche, utilizzati per mettere in contatto i Clienti con i Partner più vicini;",
-    "list2_3": "<strong>Dati del veicolo:</strong> marca, modello, anno, targa (se indicata) e foto del danno segnalato;",
-    "list2_4": "<strong>Dati di utilizzo:</strong> preventivi, messaggi scambiati sulla piattaforma, recensioni, cronologia dei servizi e ordini di ricambi;",
-    "list2_5": "<strong>Dati tecnici:</strong> indirizzo IP, identificativi di sessione e registri di accesso (log), conservati come richiesto dalla normativa applicabile (ad esempio dal Marco Civil da Internet, per chi si trova in Brasile);",
-    "list2_6": "<strong>Cookie e tecnologie simili:</strong> utilizzati per mantenere la sessione autenticata e per statistiche aggregate sull'utilizzo del sito.",
-    "list2_7": "<strong>Dati di navigazione:</strong> pagine visitate e tempo trascorso su ciascuna, sito di provenienza (ad esempio Google o Instagram), tipo di dispositivo e browser, lingua e città/paese approssimativi stimati dall'indirizzo IP. Questi dati vengono riuniti in un riepilogo di ogni visita, inviato via email solo al team BipFix, per capire come viene usato il sito e migliorarlo. Non usiamo cookie per questo, l'indirizzo IP compare solo in parte nel riepilogo e non viene salvato nel nostro database.",
-    "title3": "3. Per quali finalità utilizziamo i dati (finalità e base giuridica)",
-    "list3_1": "<strong>Esecuzione del contratto/erogazione del servizio:</strong> creazione dell'account, collegamento tra Clienti e Partner, gestione di preventivi e ordini, funzionamento della chat e delle notifiche;",
-    "list3_2": "<strong>Adempimento di un obbligo legale:</strong> conservazione dei registri fiscali e dei log di accesso;",
-    "list3_3": "<strong>Legittimo interesse:</strong> prevenzione delle frodi, miglioramento della piattaforma, sicurezza delle informazioni e comunicazioni relative a novità del servizio già utilizzato;",
-    "list3_4": "<strong>Consenso:</strong> quando richiesto, ad esempio per comunicazioni di marketing distinte dal rapporto già esistente — il consenso può essere revocato in qualsiasi momento.",
-    "title4": "4. Con chi condividiamo i dati",
-    "intro4": "I dati vengono condivisi esclusivamente nella misura necessaria al funzionamento della piattaforma:",
-    "list4_1": "Tra Cliente e Partner coinvolti nella stessa richiesta di preventivo o ordine, per consentire l'erogazione del servizio (nome, contatti, indirizzo se applicabile, foto del veicolo);",
-    "list4_2": "Con fornitori di infrastruttura tecnica (hosting, database, invio di e-mail/WhatsApp transazionali), soggetti a obblighi contrattuali di riservatezza e sicurezza;",
-    "list4_3": "Con le autorità pubbliche, quando richiesto dalla legge, da un ordine giudiziario o da una richiesta regolamentare.",
-    "body4": "Non vendiamo dati personali a terzi per finalità pubblicitarie.",
-    "title5": "5. Per quanto tempo conserviamo i dati",
-    "body5": "Conserviamo i dati per tutto il periodo in cui l'account resta attivo, oltre al periodo aggiuntivo necessario per adempiere agli obblighi legali, fiscali e regolamentari (ad esempio, per chi si trova in Brasile, i log di accesso alle applicazioni internet sono conservati per almeno 6 mesi, come previsto dal Marco Civil da Internet), o per l'esercizio regolare di diritti in procedimenti amministrativi o giudiziari.",
-    "title6": "6. I diritti dell'interessato",
-    "intro6": "Ai sensi della normativa sulla protezione dei dati applicabile all'utente, quest'ultimo può richiedere in qualsiasi momento:",
-    "list6_1": "Conferma dell'esistenza di trattamenti e accesso ai propri dati;",
-    "list6_2": "Rettifica di dati incompleti, inesatti o non aggiornati;",
-    "list6_3": "Anonimizzazione, blocco o cancellazione di dati non necessari o trattati in violazione di legge;",
-    "list6_4": "Portabilità dei dati verso un altro fornitore di servizi;",
-    "list6_5": "Cancellazione dei dati trattati sulla base del consenso;",
-    "list6_6": "Informazioni su chi riceve i dati in condivisione;",
-    "list6_7": "Revoca del consenso, ove applicabile.",
-    "body6": "Per esercitare uno di questi diritti, contattaci all'indirizzo <mailLink>privacy@bipfix.com</mailLink>. Risponderemo entro il termine di legge applicabile.",
-    "title7": "7. Sicurezza delle informazioni",
-    "body7": "Adottiamo misure tecniche e organizzative per proteggere i dati personali da accessi non autorizzati e da eventi accidentali o illeciti di distruzione, perdita, alterazione, comunicazione o diffusione, tra cui il controllo degli accessi tramite autenticazione, l'isolamento dei dati per account (row-level security a livello di database) e la crittografia dei dati in transito.",
-    "title8": "8. Minori",
-    "body8": "BipFix non è rivolto a persone di età inferiore a 18 anni e non raccoglie intenzionalmente dati di bambini e minori.",
-    "title9": "9. Modifiche alla presente Informativa",
-    "body9": "Possiamo aggiornare periodicamente la presente Informativa. Le modifiche rilevanti saranno comunicate via e-mail o tramite avviso sulla piattaforma prima della loro entrata in vigore.",
-    "title10": "10. Contatto del Responsabile della Protezione dei Dati (DPO)",
-    "body10": "Per domande relative alla protezione dei dati personali, contattaci: <mailLink>privacy@bipfix.com</mailLink>.",
-    "footerDisclaimer": "Il presente documento ha carattere puramente informativo. È stato redatto originariamente per il mercato brasiliano (LGPD); il linguaggio generico e neutro rispetto alla giurisdizione utilizzato per gli altri paesi è una bozza provvisoria, e la piena conformità giuridica in ciascun paese in cui BipFix opera (inclusa la conformità al GDPR nell'Unione Europea) richiede una revisione da parte di un avvocato specializzato in protezione dei dati locale prima della diffusione commerciale in quel paese."
+    "secoes": [
+      {
+        "titulo": "1. Chi è responsabile dei tuoi dati",
+        "paragrafos": [
+          "Il titolare del trattamento dei tuoi dati personali ai sensi del Regolamento generale sulla protezione dei dati (UE) 2016/679 (\"GDPR\") è BipFix (\"noi\").",
+          "BipFix è attualmente in fase di registrazione come società a responsabilità limitata (osaühing) in Estonia. Fino al completamento della registrazione, BipFix è gestita dal suo fondatore in qualità di persona fisica, che è il titolare del trattamento. Una volta registrata la società, in questa sezione indicheremo la sua denominazione legale, il numero di registro e la sede legale.",
+          "Per qualsiasi domanda o richiesta relativa ai tuoi dati personali, scrivi a <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>. Non abbiamo nominato un Responsabile della protezione dei dati (DPO) perché non siamo tenuti a farlo; le richieste inviate a questo indirizzo sono gestite direttamente dalle persone responsabili della protezione dei dati in BipFix."
+        ]
+      },
+      {
+        "titulo": "2. A chi si applica questa informativa",
+        "paragrafos": [
+          "Questa informativa si applica alle versioni in inglese, estone e italiano di bipfix.com, all'app mobile BipFix e a tutti coloro che le utilizzano dallo Spazio economico europeo: automobilisti (\"Clienti\"), officine e rivenditori di ricambi (\"Partner\") e il loro personale, e i visitatori del sito. Si applica anche alle officine e ai rivenditori di ricambi che contattiamo per proporre una collaborazione (sezione 3.8).",
+          "La versione in portoghese del sito è destinata agli utenti in Brasile ed è disciplinata da un'informativa separata basata sulla legge brasiliana (LGPD)."
+        ]
+      },
+      {
+        "titulo": "3. Quali dati trattiamo, perché e su quale base giuridica",
+        "paragrafos": [
+          "Per ogni finalità indichiamo la base giuridica ai sensi dell'articolo 6, paragrafo 1, del GDPR."
+        ]
+      },
+      {
+        "titulo": "3.1 Il tuo account",
+        "subsecao": true,
+        "itens": [
+          "<strong>Dati:</strong> nome, indirizzo email, numero di telefono, password (conservata solo in forma cifrata/hash), lingua preferita e tipo di account. Per i Partner anche: ragione sociale, numero di registro o partita IVA, indirizzo, servizi offerti, orari di apertura, logo e foto, e nome, email e ruolo dei membri del personale che aggiungono.",
+          "<strong>Finalità:</strong> creare e gestire il tuo account e consentirti di usare la piattaforma.",
+          "<strong>Base giuridica:</strong> esecuzione di un contratto con te (art. 6, par. 1, lett. b)."
+        ]
+      },
+      {
+        "titulo": "3.2 Richieste di riparazione, preventivi, messaggi e recensioni",
+        "subsecao": true,
+        "itens": [
+          "<strong>Dati:</strong> dati del veicolo (marca, modello, anno e, se la fornisci, la targa), descrizione del problema, foto, messaggi vocali, urgenza, indirizzo in cui serve il servizio, preventivi, messaggi in chat, ordini, storico dei servizi e recensioni.",
+          "<strong>Finalità:</strong> inviare la tua richiesta ai Partner adatti vicino a te, permettere ai Partner di inviare preventivi, consentire la comunicazione tra te e il Partner, seguire la riparazione e mostrare le recensioni nei profili dei Partner.",
+          "<strong>Base giuridica:</strong> esecuzione di un contratto (art. 6, par. 1, lett. b). La pubblicazione delle recensioni insieme al nome mostrato nel tuo account si basa sul nostro legittimo interesse, e su quello degli altri automobilisti, a un'informazione trasparente sulle officine (art. 6, par. 1, lett. f)."
+        ]
+      },
+      {
+        "titulo": "3.3 Posizione",
+        "subsecao": true,
+        "itens": [
+          "<strong>Dati:</strong> l'indirizzo che inserisci e le sue coordinate geografiche oppure, solo se lo consenti sul tuo dispositivo, la tua posizione attuale.",
+          "<strong>Finalità:</strong> metterti in contatto con Partner vicini a te e mostrare i Partner su una mappa.",
+          "<strong>Base giuridica:</strong> esecuzione di un contratto (art. 6, par. 1, lett. b). Puoi sempre inserire un indirizzo invece di condividere la posizione del dispositivo."
+        ]
+      },
+      {
+        "titulo": "3.4 Analisi dei danni e trascrizione vocale con intelligenza artificiale",
+        "subsecao": true,
+        "itens": [
+          "<strong>Dati:</strong> le foto del danno e i messaggi vocali che scegli di inviare tramite queste funzioni.",
+          "<strong>Finalità:</strong> produrre una descrizione indicativa del danno e una trascrizione testuale dei messaggi vocali, per aiutare i Partner a preparare un preventivo. Il risultato è solo un supporto: il prezzo e la diagnosi sono sempre decisi dal Partner, e nessuna decisione che produca effetti giuridici o effetti analogamente significativi su di te viene presa in modo automatizzato (art. 22).",
+          "<strong>Base giuridica:</strong> esecuzione di un contratto (art. 6, par. 1, lett. b). Il trattamento è effettuato per nostro conto da Google (Gemini) (vedi sezione 4)."
+        ]
+      },
+      {
+        "titulo": "3.5 Segnalazioni di incidenti con un altro veicolo",
+        "subsecao": true,
+        "itens": [
+          "Se un utente segnala un incidente su BipFix e fornisce i dati dell'altro veicolo coinvolto (ad esempio la targa e il nome, l'email o il telefono dell'altro conducente), usiamo questi dati per informare l'altro conducente della segnalazione e di come procedere con la riparazione.",
+          "<strong>Base giuridica:</strong> il legittimo interesse di entrambi i conducenti a gestire le conseguenze dell'incidente (art. 6, par. 1, lett. f). Se hai ricevuto un messaggio di questo tipo e non vuoi usare BipFix, puoi chiederci di cancellare i tuoi dati."
+        ]
+      },
+      {
+        "titulo": "3.6 Comunicazioni di servizio",
+        "subsecao": true,
+        "itens": [
+          "Inviamo email relative al tuo account e alle tue richieste, ad esempio nuovi preventivi, preventivi accettati, servizi completati e link per il recupero della password.",
+          "<strong>Base giuridica:</strong> esecuzione di un contratto (art. 6, par. 1, lett. b). Inviamo messaggi di marketing ai Clienti solo con il loro consenso (art. 6, par. 1, lett. a) e puoi annullare l'iscrizione in qualsiasi momento."
+        ]
+      },
+      {
+        "titulo": "3.7 Sicurezza, funzionamento del sito e riepiloghi delle visite",
+        "subsecao": true,
+        "itens": [
+          "<strong>Dati tecnici:</strong> indirizzo IP, tipo di browser e dispositivo, pagine richieste e segnalazioni di errore, registrati nei log del server per mantenere sicura la piattaforma, prevenire frodi e abusi e correggere gli errori.",
+          "<strong>Riepiloghi delle visite:</strong> mentre navighi sul sito, le pagine visitate e il tempo trascorso su ciascuna vengono conservati temporaneamente nella scheda del browser (session storage, cancellato alla chiusura della scheda) e inviati al nostro server. Il server li combina con il sito di provenienza (ad esempio Google o Instagram), il tipo di dispositivo e browser, la lingua e la città e il paese approssimativi stimati dal tuo indirizzo IP in un riepilogo della visita, che viene inviato via email solo al team BipFix. Lo usiamo per capire come viene usato il sito durante il nostro lancio e per migliorarlo. Il riepilogo mostra l'indirizzo IP solo in parte e non viene salvato nel nostro database. Le visite delle persone collegate come amministratori di BipFix sono escluse.",
+          "<strong>Base giuridica:</strong> il nostro legittimo interesse a gestire un sito sicuro e a capire come viene usato (art. 6, par. 1, lett. f). Puoi opporti in qualsiasi momento ai riepiloghi delle visite scrivendo a <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+        ]
+      },
+      {
+        "titulo": "3.8 Contatto con officine e rivenditori di ricambi per una collaborazione",
+        "subsecao": true,
+        "itens": [
+          "<strong>Dati:</strong> ragione sociale, email aziendale, telefono, sito web e sede legale di officine e rivenditori di ricambi, ricavati da fonti pubbliche come il Registro delle imprese estone (äriregister) e il sito web dell'impresa.",
+          "<strong>Finalità:</strong> contattare l'impresa una o poche volte per presentare la collaborazione con BipFix.",
+          "<strong>Base giuridica:</strong> il nostro legittimo interesse a offrire il nostro servizio alle imprese (art. 6, par. 1, lett. f). Ogni messaggio spiega come non riceverne più; se ci chiedi di smettere, non ti contatteremo più e conserveremo solo quanto necessario per rispettare la tua richiesta."
+        ]
+      },
+      {
+        "titulo": "3.9 Statistiche e registrazione delle sessioni (solo con il tuo consenso)",
+        "subsecao": true,
+        "itens": [
+          "Se accetti i cookie analitici nel banner dei cookie, usiamo Google Analytics per produrre statistiche aggregate e Microsoft Clarity per capire come vengono usate le pagine (ad esempio clic, scorrimento e registrazioni anonimizzate delle sessioni).",
+          "<strong>Base giuridica:</strong> il tuo consenso (art. 6, par. 1, lett. a), che puoi revocare in qualsiasi momento senza pregiudicare la liceità del trattamento effettuato prima della revoca. Prima del consenso questi strumenti funzionano in modalità limitata, senza cookie analitici."
+        ]
+      },
+      {
+        "titulo": "3.10 Obblighi di legge",
+        "subsecao": true,
+        "itens": [
+          "Conserviamo le scritture contabili e rispondiamo alle richieste legittime delle autorità pubbliche quando la legge lo impone (art. 6, par. 1, lett. c)."
+        ]
+      },
+      {
+        "titulo": "4. Chi riceve i tuoi dati",
+        "paragrafos": [
+          "Condividiamo i dati personali solo nella misura necessaria:"
+        ],
+        "itens": [
+          "<strong>Altri utenti:</strong> il Cliente e il Partner coinvolti nella stessa richiesta o ordine vedono i dati dell'altro necessari per svolgere il servizio (nome, recapiti, dati e foto del veicolo, indirizzo se pertinente). I profili dei Partner e le recensioni sono pubblici.",
+          "<strong>Hosting:</strong> i nostri server e il database si trovano nei Paesi Bassi (Unione europea).",
+          "<strong>Resend</strong> (Stati Uniti): invio delle email.",
+          "<strong>Google</strong> (Stati Uniti): intelligenza artificiale Gemini per l'analisi dei danni e la trascrizione vocale; Google Analytics (solo con consenso); Google Maps, mostrato nelle pagine profilo dei Partner.",
+          "<strong>Microsoft</strong> (Stati Uniti): Microsoft Clarity (solo con consenso).",
+          "<strong>OpenStreetMap Foundation</strong> (Regno Unito): conversione degli indirizzi in coordinate geografiche (servizio Nominatim).",
+          "<strong>Autorità pubbliche</strong>, quando siamo obbligati per legge a comunicare i dati."
+        ],
+        "depois": [
+          "Questi fornitori trattano i dati secondo le nostre istruzioni, in base a condizioni di trattamento conformi all'articolo 28 del GDPR. Non vendiamo dati personali."
+        ]
+      },
+      {
+        "titulo": "5. Trasferimenti al di fuori dello Spazio economico europeo",
+        "paragrafos": [
+          "Alcuni dei fornitori sopra indicati si trovano negli Stati Uniti o nel Regno Unito. I trasferimenti verso il Regno Unito si basano sulla decisione di adeguatezza della Commissione europea. I trasferimenti verso gli Stati Uniti si basano sulla decisione di adeguatezza relativa al quadro UE-USA per la protezione dei dati (Data Privacy Framework) quando il fornitore è certificato, e altrimenti sulle clausole contrattuali tipo della Commissione europea (art. 46, par. 2, lett. c, GDPR). Puoi chiederci maggiori informazioni su queste garanzie scrivendo a <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+        ]
+      },
+      {
+        "titulo": "6. Per quanto tempo conserviamo i tuoi dati",
+        "itens": [
+          "<strong>Dati dell'account:</strong> finché il tuo account è attivo. Dopo che ci chiedi di eliminare l'account, cancelliamo o anonimizziamo i tuoi dati entro 30 giorni, tranne i dati elencati di seguito che dobbiamo o possiamo conservare più a lungo.",
+          "<strong>Richieste, preventivi, ordini e messaggi:</strong> finché il tuo account è attivo e fino a 3 anni dopo l'ultima transazione, per gestire eventuali controversie e richieste di garanzia.",
+          "<strong>Scritture contabili:</strong> 7 anni, come previsto dalla legge estone sulla contabilità.",
+          "<strong>Log del server:</strong> fino a 14 giorni.",
+          "<strong>Riepiloghi delle visite:</strong> cancellati dalla casella email del team al più tardi dopo 12 mesi.",
+          "<strong>Statistiche (solo con consenso):</strong> secondo le impostazioni di conservazione di Google Analytics e Microsoft Clarity, al massimo 14 mesi.",
+          "<strong>Contatti per collaborazioni (sezione 3.8):</strong> finché non ci chiedi di smettere di contattarti, e al massimo 24 mesi dopo il nostro ultimo contatto."
+        ]
+      },
+      {
+        "titulo": "7. I tuoi diritti",
+        "paragrafos": [
+          "Ai sensi del GDPR hai il diritto di:"
+        ],
+        "itens": [
+          "accedere ai tuoi dati personali e riceverne una copia (art. 15);",
+          "ottenere la rettifica dei dati inesatti o incompleti (art. 16);",
+          "ottenere la cancellazione dei tuoi dati (art. 17);",
+          "ottenere la limitazione del trattamento (art. 18);",
+          "ricevere i dati che ci hai fornito in un formato strutturato e leggibile da dispositivo automatico e farli trasmettere a un altro titolare (art. 20);",
+          "<strong>opporti in qualsiasi momento</strong> al trattamento basato sul nostro legittimo interesse e al marketing diretto, senza dover fornire una motivazione (art. 21);",
+          "revocare il consenso in qualsiasi momento, quando il trattamento si basa sul consenso (art. 7, par. 3)."
+        ],
+        "depois": [
+          "Per esercitare questi diritti scrivi a <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>. Risponderemo senza ingiustificato ritardo e al più tardi entro un mese; per richieste complesse questo termine può essere prorogato di altri due mesi, nel qual caso te ne spiegheremo il motivo. L'esercizio dei diritti è gratuito. Prima di dare seguito a una richiesta potremmo chiederti di confermare la tua identità.",
+          "Hai inoltre il diritto di proporre reclamo a un'autorità di controllo per la protezione dei dati, in particolare nel paese dell'UE in cui vivi o lavori (in Italia, il Garante per la protezione dei dati personali). In Estonia l'autorità competente è l'Ispettorato per la protezione dei dati (Andmekaitse Inspektsioon), Tatari 39, 10134 Tallinn, <a href=\"mailto:info@aki.ee\">info@aki.ee</a>, <a href=\"https://www.aki.ee\" target=\"_blank\" rel=\"noopener noreferrer\">www.aki.ee</a>. Ti saremmo grati se ci dessi prima la possibilità di risolvere il problema."
+        ]
+      },
+      {
+        "titulo": "8. Il conferimento dei dati è obbligatorio?",
+        "paragrafos": [
+          "I dati indicati come obbligatori durante la registrazione o l'invio di una richiesta sono necessari per fornire il servizio; senza di essi non possiamo creare il tuo account né gestire la tua richiesta. Gli altri dati, come la posizione del dispositivo, i cookie analitici o i messaggi vocali, sono facoltativi."
+        ]
+      },
+      {
+        "titulo": "9. Cookie e tecnologie simili",
+        "paragrafos": [
+          "Usiamo tecnologie che memorizzano informazioni nel browser strettamente necessarie al funzionamento del sito: mantenere l'accesso, ricordare la lingua e ricordare la tua scelta sui cookie. Queste non richiedono consenso. I cookie analitici (Google Analytics e Microsoft Clarity) vengono usati solo se li accetti nel banner dei cookie. I riepiloghi delle visite descritti nella sezione 3.7 usano il session storage, che viene cancellato alla chiusura della scheda.",
+          "Per modificare la tua scelta sui cookie, cancella i dati memorizzati da bipfix.com nelle impostazioni del browser; il banner dei cookie comparirà di nuovo alla visita successiva."
+        ]
+      },
+      {
+        "titulo": "10. Sicurezza",
+        "paragrafos": [
+          "Proteggiamo i dati personali con misure tecniche e organizzative adeguate, tra cui connessioni cifrate (HTTPS), password protette da hash, controllo degli accessi basato sull'autenticazione, isolamento tra account a livello di database (row-level security), accesso amministrativo limitato e hosting nell'Unione europea."
+        ]
+      },
+      {
+        "titulo": "11. Minori",
+        "paragrafos": [
+          "BipFix non è destinato a persone di età inferiore a 18 anni e non raccogliamo consapevolmente i loro dati personali."
+        ]
+      },
+      {
+        "titulo": "12. Modifiche a questa informativa",
+        "paragrafos": [
+          "Potremmo aggiornare questa informativa, ad esempio quando sarà completata la registrazione della società o quando inizieremo a usare un nuovo fornitore. Informeremo gli utenti registrati delle modifiche rilevanti via email o con un avviso sulla piattaforma prima della loro entrata in vigore."
+        ]
+      },
+      {
+        "titulo": "13. Contatti",
+        "paragrafos": [
+          "Domande e richieste sui tuoi dati personali: <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>."
+        ]
+      }
+    ]
   },
   "emergencia": {
     "metaTitle": "Hai avuto un incidente? Segnalalo subito",
