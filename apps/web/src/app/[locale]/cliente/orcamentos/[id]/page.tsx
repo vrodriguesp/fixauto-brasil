@@ -48,11 +48,6 @@ export default function OrcamentoDetalhePage() {
   const [editingReview, setEditingReview] = useState(false);
   const [refusing, setRefusing] = useState<string | null>(null);
 
-  const [refusedReviewOrcId, setRefusedReviewOrcId] = useState<string | null>(null);
-  const [refusedReviewNota, setRefusedReviewNota] = useState(0);
-  const [refusedReviewComentario, setRefusedReviewComentario] = useState('');
-  const [refusedReviewSubmitting, setRefusedReviewSubmitting] = useState(false);
-  const [refusedReviewError, setRefusedReviewError] = useState('');
 
   const handleRefuse = async (orcamentoId: string) => {
     const isEmAndamento = solicitacao?.status === 'em_andamento';
@@ -99,30 +94,6 @@ export default function OrcamentoDetalhePage() {
       window.location.reload();
     }
     setRefusing(null);
-  };
-
-  const handleRefusedReviewSubmit = async (orcamentoId: string) => {
-    const orc = solicitacao?.orcamentos?.find((o) => o.id === orcamentoId);
-    if (!orc || refusedReviewNota === 0) {
-      setRefusedReviewError(t('selectRatingError'));
-      return;
-    }
-    setRefusedReviewSubmitting(true);
-    setRefusedReviewError('');
-    const result = await createAvaliacao({
-      solicitacao_id: solicitacao!.id,
-      oficina_id: orc.oficina_id,
-      nota: refusedReviewNota,
-      comentario: refusedReviewComentario.trim() || undefined,
-    });
-    if (result.error) {
-      setRefusedReviewError(result.error.message);
-    } else {
-      setRefusedReviewOrcId(null);
-      setRefusedReviewNota(0);
-      setRefusedReviewComentario('');
-    }
-    setRefusedReviewSubmitting(false);
   };
 
   if (!solicitacao) {
@@ -709,70 +680,6 @@ export default function OrcamentoDetalhePage() {
                     </div>
                   </div>
 
-                  {/* Review form for refused quote */}
-                  {(() => {
-                    const existingReviewForOrc = avaliacoes.find(
-                      (a) => a.solicitacao_id === solicitacao.id && a.oficina_id === orc.oficina_id
-                    );
-                    if (existingReviewForOrc) {
-                      return (
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <div className="flex items-center gap-2 mb-1">
-                            <StarRating rating={existingReviewForOrc.nota} size="sm" />
-                            <span className="text-sm font-medium text-gray-700">{t('yourReview')}</span>
-                          </div>
-                          {existingReviewForOrc.comentario && (
-                            <p className="text-sm text-gray-600">{existingReviewForOrc.comentario}</p>
-                          )}
-                        </div>
-                      );
-                    }
-                    if (refusedReviewOrcId === orc.id) {
-                      return (
-                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                          <p className="font-semibold text-gray-800 mb-2">{t('rateThisWorkshop')}</p>
-                          <p className="text-sm text-gray-600 mb-3">{t('howWasExperienceWith', { name: orc.oficina?.nome_fantasia || t('theWorkshop') })}</p>
-                          <div className="mb-3">
-                            <StarRating rating={refusedReviewNota} size="lg" interactive onChange={setRefusedReviewNota} />
-                          </div>
-                          <textarea
-                            value={refusedReviewComentario}
-                            onChange={(e) => setRefusedReviewComentario(e.target.value)}
-                            placeholder={t('commentPlaceholderShort')}
-                            className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none bg-white"
-                            rows={3}
-                          />
-                          {refusedReviewError && <p className="text-sm text-red-600 mt-1">{refusedReviewError}</p>}
-                          <div className="flex gap-2 mt-3">
-                            <button
-                              onClick={() => { setRefusedReviewOrcId(null); setRefusedReviewNota(0); setRefusedReviewComentario(''); setRefusedReviewError(''); }}
-                              className="text-sm text-gray-600 hover:text-gray-800 px-4 py-2 border border-gray-300 rounded-lg"
-                            >
-                              {t('cancel')}
-                            </button>
-                            <button
-                              onClick={() => handleRefusedReviewSubmit(orc.id)}
-                              disabled={refusedReviewSubmitting || refusedReviewNota === 0}
-                              className="btn-primary !py-2 !px-6 text-sm disabled:opacity-50"
-                            >
-                              {refusedReviewSubmitting ? t('sending') : t('sendReview')}
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    }
-                    return (
-                      <button
-                        onClick={() => { setRefusedReviewOrcId(orc.id); setRefusedReviewNota(0); setRefusedReviewComentario(''); setRefusedReviewError(''); }}
-                        className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                        </svg>
-                        {t('rateThisWorkshop')}
-                      </button>
-                    );
-                  })()}
                 </div>
               ) : (
                 <div className="flex items-center justify-between pt-4 border-t">

@@ -76,7 +76,9 @@ export default function SolicitacaoDetailScreen() {
         .insert({ solicitacao_id: solicitacao.id, oficina_id: oficinaId, cliente_id: user.id, nota: notaSelecionada, comentario: comentario.trim() || null })
         .select()
         .single();
-      if (!error && data) {
+      if (error) {
+        Alert.alert(t('common.erroGenerico'), error.message);
+      } else if (data) {
         setAvaliacao(data as Avaliacao);
         await apiFetch('/api/atualizar-avaliacao-oficina', { method: 'POST', body: JSON.stringify({ oficinaId }) }).catch(() => {});
       }
