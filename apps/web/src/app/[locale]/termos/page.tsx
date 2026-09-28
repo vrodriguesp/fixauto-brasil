@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { hreflangAlternates } from '@/lib/seo-utils';
+import DocumentoLegalSecoes from '@/components/legal/DocumentoLegalSecoes';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -14,8 +15,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
+// Dois textos, um por jurisdicao: o site em portugues atende o Brasil (lei
+// brasileira, CDC - TermosBrasil, abaixo) e as versoes en/et/it atendem a
+// Europa (direito da UE e da Estonia - DocumentoLegalSecoes).
 export default async function TermosPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  return locale === 'pt' ? <TermosBrasil locale={locale} /> : <DocumentoLegalSecoes locale={locale} namespace="termos" />;
+}
+
+async function TermosBrasil({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'termos' });
 
   const strong = (chunks: React.ReactNode) => <strong>{chunks}</strong>;
