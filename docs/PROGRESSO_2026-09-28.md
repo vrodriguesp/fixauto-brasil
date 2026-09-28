@@ -17,7 +17,7 @@ Commit `5bbb125`.
 - Manda um e-mail por visita, com as páginas visitadas e o tempo em cada, a origem (Google, Instagram, UTM, QR code), a cidade e o país (geoip-lite local), o dispositivo, o idioma e a duração.
 - Filtra robôs pelo user-agent e ignora `/admin`, o admin logado e navegadores marcados com `?nao_monitorar=1`. Limite de 40 e-mails por hora.
 - Testado localmente com visita simulada de um celular em Tallinn e no build de produção. Um e-mail de teste real foi enviado a vitor@outlook.ie pelo Resend (id `01a0e6b9-ce5e-74a2-9f49-827812d11be1`).
-- Achado: o SDK do Resend v6 **não lança exceção** em falha, só devolve `{ error }`. O código novo confere isso. **O `lib/notifications.ts` existente não confere** e reporta sucesso mesmo quando o envio falha; fica para corrigir.
+- Achado: o SDK do Resend v6 **não lança exceção** em falha, só devolve `{ error }`. O código novo confere isso. O `lib/notifications.ts` também não conferia e reportava sucesso mesmo quando o envio falhava. **Corrigido no commit `a90c07c`** (as 11 funções), testado com endereço inválido.
 
 ## Pendente — precisa de você
 1. **Deploy.** O acesso SSH à VM foi bloqueado pela regra de segurança do modo automático. Na VM:
