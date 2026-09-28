@@ -30,7 +30,15 @@ Commit `5bbb125`.
 - O nginx seta `X-Real-IP` e acrescenta o IP real no fim do `X-Forwarded-For`. A rota de visitas usa `X-Real-IP`, porque o início do XFF pode ser forjado.
 - Verificado por requisição real: `/oficinas` nos 4 idiomas (200, noindex, no-store), sitemap sem `/oficinas` (banco vazio), `/api/esqueci-senha` respondendo sem revelar contas, `/api/visita` ignorando robôs.
 
+## 6. Política de privacidade separada por jurisdição — commits `204109d` e `aab56c5`, publicada
+- `pt` (Brasil): continua a política LGPD, agora com o item "Dados de navegação" (registro de visitas).
+- `en`/`et`/`it` (Europa): política nova escrita com base no GDPR (namespace `privacidade` com lista `secoes`, renderizada por `PrivacidadeGdpr` em `privacidade/page.tsx`).
+  - Controlador: BipFix, em registro como OÜ na Estônia; até lá, o fundador como pessoa física (sem citar o nome). **Quando a OÜ sair, completar a seção 1 com ärinimi, registrikood e endereço.**
+  - Base legal do art. 6 por finalidade; destinatários com país; transferências (DPF/SCC, adequação do Reino Unido); direitos dos arts. 15–22; reclamação à Andmekaitse Inspektsioon (Tatari 39, 10134 Tallinn, info@aki.ee).
+- Rotação de logs do PM2 ligada na VM (`pm2-logrotate`: diária, retém 14 dias, comprime, corta em 50 MB). A política promete "logs do servidor até 14 dias" e antes os logs do PM2 nunca eram apagados.
+- **Promessas da política que precisam ser cumpridas na prática:** apagar a conta em até 30 dias após o pedido; apagar os e-mails de resumo de visita com mais de 12 meses da caixa de entrada; parar de contatar e esquecer oficinas prospectadas em até 24 meses; responder pedidos de privacidade em até 1 mês; o endereço privacy@bipfix.com precisa receber e-mail de verdade.
+
 ## Pendente — precisa de você
-1. Política de privacidade: o monitoramento processa o IP do visitante (mascarado no e-mail, não fica gravado). Vale mencionar isso na política. Decisão legal, não alterei o texto.
+1. Revisão jurídica da política GDPR (e, no futuro, dos termos de uso, que ainda misturam Brasil e Europa).
 2. Revisão por um nativo do estoniano nos materiais antes de imprimir ou enviar.
 3. Android físico: o `adb` está em `C:\Android\platform-tools`. Basta conectar o celular por USB com a "Depuração USB" ligada.
