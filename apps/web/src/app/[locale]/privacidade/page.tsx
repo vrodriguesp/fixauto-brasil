@@ -43,6 +43,7 @@ export default async function PrivacidadePage({ params }: { params: Promise<{ lo
             <li>{t.rich('list2_4', { strong })}</li>
             <li>{t.rich('list2_5', { strong })}</li>
             <li>{t.rich('list2_6', { strong })}</li>
+            <li>{t.rich('list2_7', { strong })}</li>
           </ul>
         </section>
 
