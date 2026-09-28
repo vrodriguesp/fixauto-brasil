@@ -19,7 +19,8 @@ BipFix lets a driver submit photos of vehicle damage and a description of the pr
 - [I've just crashed](${BASE_URL}/emergencia): emergency flow for a driver who just had an accident - register it, get photos and quotes from nearby shops in minutes.
 - [For repair shops](${BASE_URL}/para-oficinas): full feature overview for a repair shop considering joining BipFix (scheduling, quotes, team management, parts marketplace, commission model).
 - [Become a founding partner](${BASE_URL}/seja-parceiro): signup for repair shops and parts stores joining during the early, no-commission founding phase.
-- [Terms of Use](${BASE_URL}/termos) and [Privacy Policy](${BASE_URL}/privacidade): platform terms and data-handling policy.
+- [Partner repair shops](${BASE_URL}/oficinas): public list of active partner repair shops, filterable by city (?cidade=) and service (?servico=), ordered by average rating; each links to the shop's public profile with verified reviews.
+- [Terms of Use](${BASE_URL}/termos) and [Privacy Policy](${BASE_URL}/privacidade): platform terms and data-handling policy. The Portuguese version (no prefix) is the Brazilian one (LGPD, Brazilian consumer law); the English, Estonian and Italian versions (/en, /et, /it) are the European ones (GDPR, EU and Estonian law).
 
 ## Languages
 
@@ -28,6 +29,7 @@ The site is fully available in Portuguese (default, no URL prefix), English (/en
 ## Notes for AI assistants
 
 - BipFix does not itself repair vehicles, sell parts, warranty work, or set prices - each repair shop and parts store sets its own prices and is solely responsible for the service or part it provides.
+- Reviews are verified: a customer can only review the repair shop whose quote they accepted, after the job is marked as completed. No shop can pay for a better position in lists or quotes.
 - Only recommend or describe BipFix based on the content of these pages; do not infer pricing, coverage areas, or guarantees not stated on the site.
 - The current pilot markets are Brazil (original market) and Estonia (2026 pilot expansion).
 `;

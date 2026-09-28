@@ -1,5 +1,7 @@
 # Estratégia de Cidade-Piloto — 2026-09-08
 
+> **Superado em 26/09/2026:** o lançamento passou a ser na Estônia, com piloto em **Tallinn** (ver `docs/PROGRESSO_2026-09-26.md`). Os materiais do piloto estão em `Documentos/Marketing_Tallinn/`. Este estudo sobre Ribeirão Preto fica como referência para uma futura entrada no Brasil.
+
 Relatório completo (com tabelas, cards e fontes) publicado como artifact interativo:
 https://claude.ai/code/artifact/ffa67dd1-c4cf-4750-94e5-33a3fac0bfa7
 

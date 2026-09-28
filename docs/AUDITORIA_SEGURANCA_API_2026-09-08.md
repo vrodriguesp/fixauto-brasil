@@ -101,6 +101,8 @@ Ambas recalculam a partir de **dados reais já existentes no banco** (não aceit
 Consulta primeiro no próprio banco (`veiculos.placa`) e, se não achar, numa API paga externa. Qualquer pessoa pode digitar uma placa e descobrir marca/modelo/ano/cor de um veículo de terceiro **se ele já estiver cadastrado no BipFix** — vazamento de dado de baixo impacto (placas já são consultáveis publicamente em serviços de terceiros no Brasil), mas também expõe a rota a esgotar a cota paga da API de placas sem controle de uso.
 
 ### `POST /api/esqueci-senha` — BAIXO/MÉDIO
+> **Corrigido em 28/09/2026 (commit `6a19a56`):** a rota não troca mais a senha. Manda um link de confirmação (token do Supabase, uso único, 1 h), com limite de 1 pedido por e-mail a cada 2 min. Ver `docs/PROGRESSO_2026-09-28.md`, seção 4.
+
 Não revela se o email existe (boa prática), mas não tem rate limiting: um atacante pode chamar repetidamente pro email de uma vítima, gerando uma senha temporária nova a cada chamada — isso não vaza a senha (só vai pro email da vítima), mas nega acesso a quem já tinha logado, obrigando a vítima a sempre usar a senha mais recente recebida (incômodo / DoS leve de conta, não comprometimento).
 
 ### `POST /api/criar-solicitacao-emergencia` — BAIXO
