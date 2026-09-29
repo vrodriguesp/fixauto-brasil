@@ -14,7 +14,7 @@
         "titulo": "1. Kes me oleme ja millal need tingimused kehtivad",
         "paragrafos": [
           "BipFix („meie“) haldab veebilehte bipfix.com ja BipFixi mobiilirakendust (koos „platvorm“). BipFix on praegu Eestis osaühinguna registreerimisel. Kuni registreerimise lõpuni haldab platvormi selle asutaja füüsilise isikuna. Pärast äriühingu registreerimist lisame siia selle ärinime, registrikoodi ja registrijärgse aadressi. Meiega saab ühendust aadressil <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>.",
-          "Need tingimused kehtivad platvormi inglis-, eesti- ja itaaliakeelse versiooni ning kõigi selle kasutajate kohta Euroopa Majanduspiirkonnas. Platvormi portugalikeelne versioon on mõeldud Brasiilia kasutajatele ja sellele kehtivad eraldi, Brasiilia õigusel põhinevad tingimused. Konto loomisega või platvormi kasutamisega nõustud nende tingimustega. Seda, kuidas me isikuandmeid töötleme, selgitab meie <a href=\"/privacidade\">privaatsuspoliitika</a>."
+          "Need tingimused kehtivad platvormi inglis-, eesti-, itaalia-, Euroopa portugali- ja venekeelse versiooni ning kõigi selle kasutajate kohta Euroopa Majanduspiirkonnas. Platvormi Brasiilia portugalikeelne versioon on mõeldud Brasiilia kasutajatele ja sellele kehtivad eraldi, Brasiilia õigusel põhinevad tingimused. Konto loomisega või platvormi kasutamisega nõustud nende tingimustega. Seda, kuidas me isikuandmeid töötleme, selgitab meie <a href=\"/privacidade\">privaatsuspoliitika</a>."
         ]
       },
       {
@@ -179,7 +179,7 @@
       {
         "titulo": "2. Kellele see poliitika kehtib",
         "paragrafos": [
-          "See poliitika kehtib bipfix.com inglis-, eesti- ja itaaliakeelse versiooni, BipFixi mobiilirakenduse ning kõigi nende kasutajate kohta Euroopa Majanduspiirkonnas: autojuhid („kliendid“), autotöökojad ja varuosade müüjad („partnerid“) ja nende töötajad ning veebilehe külastajad. Samuti kehtib see autotöökodade ja varuosade müüjate kohta, kellega võtame ühendust koostöö pakkumiseks (punkt 3.8).",
+          "See poliitika kehtib bipfix.com inglis-, eesti-, itaalia-, Euroopa portugali- ja venekeelse versiooni, BipFixi mobiilirakenduse ning kõigi nende kasutajate kohta Euroopa Majanduspiirkonnas: autojuhid („kliendid“), autotöökojad ja varuosade müüjad („partnerid“) ja nende töötajad ning veebilehe külastajad. Samuti kehtib see autotöökodade ja varuosade müüjate kohta, kellega võtame ühendust koostöö pakkumiseks (punkt 3.8).",
           "Veebilehe portugalikeelne versioon on mõeldud Brasiilia kasutajatele ja sellele kehtib eraldi, Brasiilia õigusel (LGPD) põhinev poliitika."
         ]
       },
@@ -926,7 +926,7 @@
     "filterAllServices": "Kõik teenused",
     "filterSubmit": "Filtreeri",
     "filterClear": "Tühjenda filtrid",
-    "resultsCount": "Leitud töökodasid: {count}",
+    "resultsCount": "{count, plural, one {Leitud # töökoda} other {Leitud # töökoda}}",
     "reviewsCount": "{count, plural, one {(# arvustus)} other {(# arvustust)}}",
     "newOnPlatform": "Uus BipFixis",
     "moreServices": "+{count}",
