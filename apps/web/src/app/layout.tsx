@@ -31,9 +31,12 @@ export const metadata: Metadata = {
   // Search Console > Adicionar propriedade > URL prefix > HTML tag,
   // copiar so o valor do atributo content). Sem a env var, a tag nem
   // aparece - nao precisa de rebuild condicional.
-  ...(process.env.GOOGLE_SITE_VERIFICATION
-    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
-    : {}),
+  // Bing Webmaster Tools (metodo "meta tag"): o codigo e publico por definicao
+  // (fica no HTML), por isso vai direto aqui. Gera <meta name="msvalidate.01">.
+  verification: {
+    ...(process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : {}),
+    other: { 'msvalidate.01': 'C7B81E734E62DB400C7C08C162E15260' },
+  },
 };
 
 export default async function RootLayout({
