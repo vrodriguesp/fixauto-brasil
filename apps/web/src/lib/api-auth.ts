@@ -45,6 +45,9 @@ export async function getSessionUserId(req?: Request): Promise<string | null> {
     }
   );
 
-  const { data: { session } } = await supabase.auth.getSession();
-  return session?.user.id ?? null;
+  // getUser() valida o token no servidor de autenticacao; getSession() so le
+  // o cookie e aceitaria um token forjado (docs do Supabase: nunca confiar
+  // em getSession() no servidor).
+  const { data: { user } } = await supabase.auth.getUser();
+  return user?.id ?? null;
 }
