@@ -1,0 +1,49 @@
+# Progresso — 29/09/2026: SEO para todos os buscadores e IAs, português de Portugal e guias
+
+## Problema relatado
+No google.it, os resumos do BipFix apareciam em inglês, e o site tinha 0 cliques orgânicos.
+
+## Causas encontradas (auditoria do HTML que os robôs recebem)
+1. **A home entregava só "Carregando…"** (12–16 palavras) em todos os idiomas. O Google via `/it`, `/et` e `/en` como cópias vazias umas das outras e escolheu a inglesa como canônica. É a causa direta do resumo em inglês.
+2. **`www.bipfix.com` era um segundo site** (200, sem redirecionamento). O Google indexou a versão `www`, com título antigo do Brasil.
+3. Login e cadastro herdavam o canonical e o título da home.
+4. x-default apontava para o Brasil; `hreflang` sem região (`pt`).
+5. Seletor de idioma com botões (os robôs não descobriam as outras versões); rodapé só na home.
+6. Português de Portugal inexistente: Portugal recebia a versão brasileira (LGPD, CPF).
+7. Search Console: `/et` (mercado-piloto) **nem existia** para o Google; `/it` e `/en` estavam indexadas com o conteúdo antigo, rastreado em 26/09.
+
+## O que foi feito (commits `10eadba`, `0039e9c`, `329ad59` e intermediários)
+- **nginx (VM):** `www` → 301 para `bipfix.com`; HTTP/2; HSTS, nosniff e Referrer-Policy. Backups em `/root/nginx-fixauto-backup-20260929` e `…20260929b`. WebSocket do Supabase testado antes e depois (101).
+- **Home renderizada no servidor** (400–517 palavras por idioma); respostas do FAQ sempre no HTML.
+- **Novo idioma `pt-PT` (`/pt-pt`)**, com textos traduzidos do inglês (a versão da UE) pelo Fable 5.1 e validados (2.157 textos, 0 erros). Política RGPD e termos da UE. `pt` continua Brasil.
+- **Sem redirecionamento automático por idioma** (prática recomendada pelo Google). Um aviso (`SugestaoIdioma`) sugere a versão do navegador.
+- `hreflang` com região (pt-BR, pt-PT, en, et, it) e x-default → en; `Content-Language` por resposta (Bing); `<html lang>` com região.
+- Mapas de idioma centralizados em `src/i18n/routing.ts` (`LOCALE_PREFIX`, `HREFLANG`, `OG_LOCALE`, `caminhoNoIdioma`, `isBrasil`).
+- Rodapé comum com links para as páginas-chave e para as 5 versões (`<a hreflang>`); seletor de idioma com links.
+- Login e cadastro com `noindex, follow` e fora do sitemap; 404 traduzido.
+- **Guias** (`content/guias/*.json`, `/guias`, `/guias/[slug]`): 4 guias em 11 versões, pesquisados pelo Fable 5.1 em fontes oficiais estonianas e reconferidos:
+  - pneus de inverno na Estônia;
+  - o que fazer depois de um acidente na Estônia;
+  - inspeção técnica (tehnoülevaatus);
+  - como comparar orçamentos de oficina, em 5 idiomas.
+
+  Cada guia tem Article + FAQPage + BreadcrumbList. O validador é `scripts/validar-guias.mjs`, com fallback para curl porque os sites do governo estoniano bloqueiam o cliente HTTP do Node.
+- **Perfil da oficina renderizado no servidor** (`perfil-dados.ts`):
+  - 404 real para oficina inexistente ou desativada;
+  - só campos públicos do dono (antes, `profiles(*)` expunha o e-mail);
+  - horário real, em vez do texto fixo "Seg–Sex 08–18" igual para todas;
+  - sem `priceRange` inventado.
+- **Sitemap:** homes sem barra final, `lastmod` real, guias só nos idiomas existentes.
+- **`robots.txt`** com os prefixos públicos e buscadores e IAs explícitos; `llms.txt` gerado a partir dos guias.
+- **Peso das páginas públicas:** 170 KB → 81 KB. Só os textos usados pelos componentes de navegador vão no HTML; os painéis logados recebem todos via `MensagensDaArea`.
+- **IndexNow** (chave pública em `public/`, `npm run indexnow` depois de cada deploy): 61 URLs enviadas.
+- **Search Console:** sitemap reenviado; indexação pedida para `/it`, `/pt-pt`, `/et`, `/en` e `/et/guias/winter-tyres-estonia`.
+- **Verificação:** auditoria em produção de 60 páginas × 5 idiomas, 0 problemas; revisão independente de SEO pelo Fable 5.1, todos os achados de código resolvidos e reauditados.
+
+## Pendente — precisa do usuário
+1. **Bing Webmaster Tools** (importar do Search Console) e **Yandex Webmaster** (usado pelos falantes de russo em Tallinn): exigem login na conta do usuário.
+2. **Versão em russo (`/ru`)**: cerca de 1/3 de Tallinn fala russo; é a maior oportunidade de busca de baixa concorrência. Decisão do usuário (antes ele escolheu estoniano + inglês para o marketing).
+3. **Perfis em redes sociais** (LinkedIn, Facebook, Instagram), para os dados estruturados `sameAs`, e endereço da OÜ quando registrada.
+4. **Google Business Profile:** um marketplace só online **não é elegível**. A alavanca é ajudar cada oficina parceira a completar o próprio perfil, com link para a página dela no BipFix.
+5. Revisão por um nativo do estoniano dos títulos novos ("Autoremont Tallinnas, ilma üllatusteta.") e dos guias.
+6. **Ao mudar o texto de uma página estática:** atualizar a data em `MUDOU` no `src/app/sitemap.ts`.
