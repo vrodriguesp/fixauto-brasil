@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { Link } from '@/i18n/navigation';
+import { Link, redirect } from '@/i18n/navigation';
 import StructuredData from '@/components/seo/StructuredData';
 import { OG_LOCALE, HREFLANG, type Locale } from '@/i18n/routing';
 import { localizedUrl } from '@/lib/seo-utils';
@@ -44,8 +44,15 @@ const html = (s: string) => ({ __html: s });
 export default async function GuiaPage({ params }: Params) {
   const { locale, slug } = await params;
   const guia = guiaPorSlug(slug);
-  const v = guia?.versoes[locale as Locale];
-  if (!guia || !v) notFound();
+  if (!guia) notFound();
+  const v = guia.versoes[locale as Locale];
+  // Guia que existe, mas nao neste idioma (ex: regras da Estonia em italiano):
+  // o seletor de idioma e o rodape linkam todas as versoes da pagina atual, entao
+  // em vez de um 404 (link interno quebrado) leva para os guias deste idioma.
+  if (!v) {
+    redirect({ href: '/guias', locale });
+    return null;
+  }
 
   const t = await getTranslations({ locale, namespace: 'guias' });
   const url = localizedUrl(locale, `/guias/${guia.slug}`);
