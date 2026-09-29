@@ -40,9 +40,35 @@ No google.it, os resumos do BipFix apareciam em inglês, e o site tinha 0 clique
 - **Search Console:** sitemap reenviado; indexação pedida para `/it`, `/pt-pt`, `/et`, `/en` e `/et/guias/winter-tyres-estonia`.
 - **Verificação:** auditoria em produção de 60 páginas × 5 idiomas, 0 problemas; revisão independente de SEO pelo Fable 5.1, todos os achados de código resolvidos e reauditados.
 
+## Noite de 29/09 — russo, flyers, comissão e correções do admin
+- **Versão em russo `/ru`** no ar (commit `937d3ff`):
+  - interface completa e os 4 guias;
+  - revisão independente do Fable 5.1 (8→9/10, cerca de 70 correções, nenhum fato alterado);
+  - seletor de idioma **sem bandeira** (idioma, não país) e `hreflang="ru"` no sitemap (69 URLs);
+  - IndexNow: 75 URLs aceitas.
+- **Flyers:** o endereço impresso era `bipfix.com/seja-parceiro` (sem idioma, abria a versão do Brasil). Agora é `bipfix.com/et/partner`, `/en/partner` (e `/ru`, `/it`, `/pt-pt`), um redirecionamento 307 para a página no idioma certo com `utm_source=endereco_curto`. Os 20 materiais foram regerados. O QR continua abrindo direto `/{idioma}/seja-parceiro` com `utm_source=flyer_a/b/c`.
+- Termos e privacidade europeus listam todas as versões (inclui pt-PT e russo).
+- **Comissão em hierarquia** (migração 027, `lib/comissao-regras.ts`, único lugar que decide a taxa):
+  1. **Taxa individual** da oficina ou fornecedor, com prazo (`override_ate`) e motivo. Vale sobre a global.
+  2. Senão, a **regra global** (`plataforma_config`): `isento` (0%, estado atual, como o site promete), `fixa` ou `desempenho` (5–15% serviços, 1–3% peças).
+
+  Com 0% nada é lançado. A oficina vê de onde vem a taxa (fase sem comissão / condição especial até X / taxa fixa) nos 6 idiomas; o orçamento sem comissão mostra um aviso em vez da caixa "absorver/repassar". O teste `scripts/teste-comissao-hierarquia.ts` passa nos 9 cenários e limpa o que criou.
+- **Parceiro fundador:** selo em `oficinas` e `lojas_pecas`, protegido por trigger (a oficina ou loja não consegue se marcar; só o admin). Em Admin → Comissões:
+  - marcar/desmarcar o selo;
+  - filtrar as fundadoras;
+  - "Oferta para parceiras fundadoras", que aplica a mesma taxa individual, com prazo, a todas de uma vez.
+- **Correções do admin** (`/api/admin/corrigir`, motivo obrigatório, cliente e oficina avisados):
+  - status de orçamento;
+  - agendamento (status e datas);
+  - etapas do conserto (acrescentar/remover);
+  - status de emergência e de pedido de peça.
+
+  A troca de status da solicitação e o cancelamento de agendamento também passam a ser registrados. O registro fica em `admin_auditoria`, com a tela **Admin → Histórico do admin** e o histórico no detalhe de cada solicitação. Correção manual não dispara efeitos automáticos (por exemplo, marcar pedido como entregue não lança comissão).
+- Bug corrigido: a página da oficina no admin lia `comissao_config` pelo navegador, que a RLS bloqueia para o admin. Por isso mostrava sempre a taxa padrão.
+
 ## Pendente — precisa do usuário
-1. **Bing Webmaster Tools** (importar do Search Console) e **Yandex Webmaster** (usado pelos falantes de russo em Tallinn): exigem login na conta do usuário.
-2. **Versão em russo (`/ru`)**: cerca de 1/3 de Tallinn fala russo; é a maior oportunidade de busca de baixa concorrência. Decisão do usuário (antes ele escolheu estoniano + inglês para o marketing).
+1. **Bing Webmaster Tools** e **Yandex Webmaster:** clicar em "Verificar" (a meta tag e o arquivo já estão no ar) e depois enviar o sitemap.
+2. **Search Console:** pedir a indexação de `/ru` e `/ru/guias`.
 3. **Perfis em redes sociais** (LinkedIn, Facebook, Instagram), para os dados estruturados `sameAs`, e endereço da OÜ quando registrada.
 4. **Google Business Profile:** um marketplace só online **não é elegível**. A alavanca é ajudar cada oficina parceira a completar o próprio perfil, com link para a página dela no BipFix.
 5. Revisão por um nativo do estoniano dos títulos novos ("Autoremont Tallinnas, ilma üllatusteta.") e dos guias.
