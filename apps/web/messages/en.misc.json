@@ -509,7 +509,7 @@
     "quoteMsgPhonePart": " Phone: {telefone}"
   },
   "docsHome": {
-    "metaTitle": "Help Center | BipFix",
+    "metaTitle": "Help Center",
     "metaDescription": "Get answers about how to use the BipFix platform. Complete guides for drivers and repair shops.",
     "heroTitle": "BipFix Help Center",
     "heroSubtitle": "Everything you need to know to use the platform, whether you're a driver or a repair shop.",
@@ -938,5 +938,31 @@
     "ownerCtaTitle": "Do you run a repair shop?",
     "ownerCtaText": "Get quote requests from customers in your area, with no monthly fee.",
     "ownerCtaButton": "BipFix for repair shops"
+  },
+  "guias": {
+    "indexTitulo": "Car guides for drivers",
+    "indexDescricao": "Practical guides on car maintenance and repair: tyres, roadworthiness inspection, what to do after an accident and how to compare repair quotes.",
+    "indexIntro": "Practical, checked information to look after your car, with the rules of each country and links to the official sources.",
+    "nenhumGuia": "There are no guides in this language yet.",
+    "atualizadoEm": "Updated on {data}",
+    "faqTitulo": "Frequently asked questions",
+    "fontesTitulo": "Official sources",
+    "cta": {
+      "pedido": {
+        "titulo": "Need a repair quote?",
+        "texto": "Describe the problem and get quotes from verified repair shops near you.",
+        "botao": "Get quotes"
+      },
+      "emergencia": {
+        "titulo": "Just had an accident?",
+        "texto": "Report the accident and request quotes from repair shops near you.",
+        "botao": "Report the accident"
+      },
+      "parceiro": {
+        "titulo": "Do you run a repair shop?",
+        "texto": "Get quote requests from drivers in your area.",
+        "botao": "Become a partner"
+      }
+    }
   }
 }

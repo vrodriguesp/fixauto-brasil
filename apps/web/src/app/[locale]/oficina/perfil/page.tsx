@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import { routing } from '@/i18n/routing';
+import { localePrefix as prefixoDoIdioma } from '@/i18n/routing';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { compressImage } from '@/lib/image-compress';
@@ -238,7 +238,7 @@ export default function PerfilOficinaPage() {
     );
   }
 
-  const localePrefix = locale === routing.defaultLocale ? '' : `/${locale}`;
+  const localePrefix = prefixoDoIdioma(locale);
   const publicUrl = oficina && typeof window !== 'undefined' ? `${window.location.origin}${localePrefix}/oficinas/${oficina.id}` : '';
 
   const handleCopyLink = () => {

@@ -509,7 +509,7 @@
     "quoteMsgPhonePart": " Tel: {telefone}"
   },
   "docsHome": {
-    "metaTitle": "Abikeskus | BipFix",
+    "metaTitle": "Abikeskus",
     "metaDescription": "Leia vastused küsimustele BipFixi platvormi kasutamise kohta. Täielikud juhendid juhtidele ja töökodadele.",
     "heroTitle": "BipFixi abikeskus",
     "heroSubtitle": "Kõik, mida on vaja teada platvormi kasutamiseks — olgu sa juht või töökoda.",
@@ -938,5 +938,31 @@
     "ownerCtaTitle": "Kas sul on töökoda?",
     "ownerCtaText": "Saa oma piirkonna klientidelt hinnapäringuid ilma kuutasuta.",
     "ownerCtaButton": "BipFix töökodadele"
+  },
+  "guias": {
+    "indexTitulo": "Juhendid autojuhtidele",
+    "indexDescricao": "Praktilised juhendid auto hoolduse ja remondi kohta: rehvid, tehnoülevaatus, mida teha pärast liiklusõnnetust ja kuidas remondipakkumisi võrrelda.",
+    "indexIntro": "Praktiline ja kontrollitud teave oma auto eest hoolitsemiseks, koos iga riigi reeglite ja viidetega ametlikele allikatele.",
+    "nenhumGuia": "Selles keeles juhendeid veel ei ole.",
+    "atualizadoEm": "Uuendatud {data}",
+    "faqTitulo": "Korduma kippuvad küsimused",
+    "fontesTitulo": "Ametlikud allikad",
+    "cta": {
+      "pedido": {
+        "titulo": "Vajad remondipakkumist?",
+        "texto": "Kirjelda muret ja saa pakkumised kontrollitud töökodadelt sinu lähedal.",
+        "botao": "Küsi pakkumist"
+      },
+      "emergencia": {
+        "titulo": "Juhtus liiklusõnnetus?",
+        "texto": "Registreeri õnnetus ja küsi pakkumisi lähedal asuvatelt töökodadelt.",
+        "botao": "Registreeri õnnetus"
+      },
+      "parceiro": {
+        "titulo": "Kas sul on autotöökoda?",
+        "texto": "Saa hinnapäringuid oma piirkonna autojuhtidelt.",
+        "botao": "Hakka partneriks"
+      }
+    }
   }
 }

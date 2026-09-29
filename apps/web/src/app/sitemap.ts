@@ -1,35 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
 import { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
-import { slugCidade } from '@/lib/seo-utils';
+import { hreflangAlternates, localizedUrl, slugCidade } from '@/lib/seo-utils';
+import { alternatesDoGuia, todosOsGuias } from '@/lib/guias';
 
-const BASE_URL = 'https://bipfix.com';
 
 // Sem isso, o sitemap fica congelado com os dados de quando a build rodou -
 // oficinas novas so apareceriam apos o proximo deploy manual.
 export const revalidate = 3600;
 
-function localizedUrl(locale: string, path: string): string {
-  return locale === routing.defaultLocale ? `${BASE_URL}${path}` : `${BASE_URL}/${locale}${path}`;
-}
-
-// hreflang: cada variante de idioma de uma pagina lista todas as outras
-// (incluindo "x-default" apontando pro locale padrao, sem prefixo) - assim
-// o Google sabe que sao a mesma pagina em idiomas diferentes, nao conteudo
-// duplicado.
-function alternateLanguages(path: string): Record<string, string> {
-  const languages: Record<string, string> = { 'x-default': localizedUrl(routing.defaultLocale, path) };
-  for (const locale of routing.locales) {
-    languages[locale] = localizedUrl(locale, path);
-  }
-  return languages;
-}
-
 function localizedEntries(
   path: string,
   opts: { changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number; lastModified?: Date }
 ): MetadataRoute.Sitemap {
-  const languages = alternateLanguages(path);
+  const { languages } = hreflangAlternates(routing.defaultLocale, path);
   return routing.locales.map((locale) => ({
     url: localizedUrl(locale, path),
     lastModified: opts.lastModified || new Date(),
@@ -48,8 +32,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Paginas estaticas, uma entrada por idioma (com hreflang cruzado)
   const staticPages: MetadataRoute.Sitemap = [
     ...localizedEntries('/', { changeFrequency: 'daily', priority: 1 }),
-    ...localizedEntries('/login', { changeFrequency: 'monthly', priority: 0.5 }),
-    ...localizedEntries('/cadastro', { changeFrequency: 'monthly', priority: 0.7 }),
     ...localizedEntries('/emergencia', { changeFrequency: 'monthly', priority: 0.8 }),
     ...localizedEntries('/para-oficinas', { changeFrequency: 'monthly', priority: 0.9 }),
     ...localizedEntries('/seja-parceiro', { changeFrequency: 'monthly', priority: 0.9 }),
@@ -92,5 +74,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ]
       : [];
 
-  return [...staticPages, ...listagemPages, ...oficinasPages];
+  // Guias: cada guia so nos idiomas em que existe, com hreflang so entre eles
+  // (mesma regra da pagina - ver lib/guias.ts). O indice /guias entra so nos
+  // idiomas que tem pelo menos um guia (vazio ele sai com noindex).
+  const guias = todosOsGuias();
+  const guiasPages: MetadataRoute.Sitemap = guias.flatMap((guia) => {
+    const { languages } = alternatesDoGuia(guia, routing.defaultLocale);
+    return routing.locales
+      .filter((l) => guia.versoes[l])
+      .map((l) => ({
+        url: localizedUrl(l, `/guias/${guia.slug}`),
+        lastModified: new Date(guia.atualizado),
+        changeFrequency: 'monthly' as const,
+        priority: 0.8,
+        alternates: { languages },
+      }));
+  });
+  const idiomasComGuia = routing.locales.filter((l) => guias.some((g) => g.versoes[l]));
+  const guiasIndex: MetadataRoute.Sitemap = idiomasComGuia.map((l) => ({
+    url: localizedUrl(l, '/guias'),
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...listagemPages, ...guiasIndex, ...guiasPages, ...oficinasPages];
 }

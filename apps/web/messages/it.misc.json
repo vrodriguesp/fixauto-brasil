@@ -509,7 +509,7 @@
     "quoteMsgPhonePart": " Tel: {telefone}"
   },
   "docsHome": {
-    "metaTitle": "Centro Assistenza | BipFix",
+    "metaTitle": "Centro Assistenza",
     "metaDescription": "Trova le risposte alle tue domande su come usare la piattaforma BipFix. Guide complete per automobilisti e officine.",
     "heroTitle": "Centro Assistenza BipFix",
     "heroSubtitle": "Tutto quello che devi sapere per usare la piattaforma, sia che tu sia un automobilista o un'officina.",
@@ -938,5 +938,31 @@
     "ownerCtaTitle": "Hai un'officina?",
     "ownerCtaText": "Ricevi richieste di preventivo dai clienti della tua zona, senza canone mensile.",
     "ownerCtaButton": "BipFix per le officine"
+  },
+  "guias": {
+    "indexTitulo": "Guide per automobilisti",
+    "indexDescricao": "Guide pratiche su manutenzione e riparazione dell’auto: pneumatici, revisione, cosa fare dopo un incidente e come confrontare i preventivi delle officine.",
+    "indexIntro": "Informazioni pratiche e verificate per prenderti cura della tua auto, con le regole di ogni paese e i link alle fonti ufficiali.",
+    "nenhumGuia": "Non ci sono ancora guide in questa lingua.",
+    "atualizadoEm": "Aggiornato il {data}",
+    "faqTitulo": "Domande frequenti",
+    "fontesTitulo": "Fonti ufficiali",
+    "cta": {
+      "pedido": {
+        "titulo": "Ti serve un preventivo?",
+        "texto": "Descrivi il problema e ricevi preventivi da officine verificate vicino a te.",
+        "botao": "Richiedi preventivi"
+      },
+      "emergencia": {
+        "titulo": "Hai appena avuto un incidente?",
+        "texto": "Registra l’incidente e richiedi preventivi alle officine vicine.",
+        "botao": "Registra l’incidente"
+      },
+      "parceiro": {
+        "titulo": "Hai un’officina?",
+        "texto": "Ricevi richieste di preventivo dagli automobilisti della tua zona.",
+        "botao": "Diventa partner"
+      }
+    }
   }
 }

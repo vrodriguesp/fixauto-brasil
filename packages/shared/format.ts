@@ -6,7 +6,7 @@
 // Formatacao de DATA segue o idioma de quem esta LENDO a tela - isso e so
 // uma convencao de escrita, correto pra qualquer pagina/tela. Default 'pt'
 // preserva o comportamento antigo pra quem nao passar nada.
-export const INTL_LOCALE: Record<string, string> = { pt: 'pt-BR', en: 'en-US', et: 'et-EE', it: 'it-IT' };
+export const INTL_LOCALE: Record<string, string> = { pt: 'pt-BR', 'pt-PT': 'pt-PT', en: 'en-GB', et: 'et-EE', it: 'it-IT' };
 
 // Moeda decidida pelo PAIS DA OFICINA/LOJA que emitiu o preco - nunca
 // pelo idioma de quem esta olhando a tela. Um usuario em pt pode ser

@@ -251,7 +251,7 @@
     "quoteMsgPhonePart": " Tel: {telefone}"
   },
   "docsHome": {
-    "metaTitle": "Central de Ajuda | BipFix",
+    "metaTitle": "Central de Ajuda",
     "metaDescription": "Tire suas dúvidas sobre como usar a plataforma BipFix. Guias completos para motoristas e oficinas.",
     "heroTitle": "Central de Ajuda BipFix",
     "heroSubtitle": "Tudo o que você precisa saber para usar a plataforma, seja como motorista ou como oficina.",
@@ -680,5 +680,31 @@
     "ownerCtaTitle": "Tem uma oficina?",
     "ownerCtaText": "Receba pedidos de orçamento de clientes da sua região, sem mensalidade.",
     "ownerCtaButton": "Conheça o BipFix para oficinas"
+  },
+  "guias": {
+    "indexTitulo": "Guias para motoristas",
+    "indexDescricao": "Guias práticos sobre manutenção e reparo do carro: pneus, inspeção, o que fazer depois de um acidente e como comparar orçamentos de oficinas.",
+    "indexIntro": "Informação prática e verificada para cuidar do seu carro, com as regras de cada país e links para as fontes oficiais.",
+    "nenhumGuia": "Ainda não há guias neste idioma.",
+    "atualizadoEm": "Atualizado em {data}",
+    "faqTitulo": "Perguntas frequentes",
+    "fontesTitulo": "Fontes oficiais",
+    "cta": {
+      "pedido": {
+        "titulo": "Precisa de um orçamento?",
+        "texto": "Descreva o problema e receba orçamentos de oficinas verificadas perto de você.",
+        "botao": "Pedir orçamento"
+      },
+      "emergencia": {
+        "titulo": "Acabou de bater?",
+        "texto": "Registre o acidente e peça orçamentos de oficinas perto de você.",
+        "botao": "Registrar o acidente"
+      },
+      "parceiro": {
+        "titulo": "Tem uma oficina?",
+        "texto": "Receba pedidos de orçamento de motoristas da sua região.",
+        "botao": "Quero ser parceiro"
+      }
+    }
   }
 }

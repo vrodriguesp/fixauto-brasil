@@ -32,7 +32,12 @@ export default function HomeClient() {
     }
   }, [loading, isLoggedIn, user, funcionario, authUser, router]);
 
-  if (loading || (isLoggedIn && user && user.tipo !== 'admin')) {
+  // So esconde o conteudo quando JA se sabe que e um usuario logado (que vai
+  // ser redirecionado ao painel). Antes, o "loading" inicial da autenticacao
+  // tambem escondia - e esse estado e o que o servidor renderiza: Google,
+  // Bing e IAs recebiam so "Carregando..." na pagina inicial, em todos os
+  // idiomas, e tratavam /it, /et, /en como copias vazias umas das outras.
+  if (!loading && isLoggedIn && user && user.tipo !== 'admin') {
     return (
       <div className="flex items-center justify-center min-h-[80vh]">
         <div className="animate-pulse text-gray-400">{t('carregando')}</div>
@@ -254,53 +259,6 @@ export default function HomeClient() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">BF</span>
-                </div>
-                <span className="text-xl font-bold text-white">
-                  Bip<span className="text-primary-400">Fix</span>
-                </span>
-              </div>
-              <p className="text-sm">{t('footerTagline')}</p>
-            </div>
-            <div>
-              <h3 className="text-white font-semibold mb-3">{t('footerMotoristas')}</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/cadastro?tipo=cliente" className="hover:text-white">{t('footerCriarConta')}</Link></li>
-                <li><Link href="/emergencia" className="hover:text-white">{t('footerAcabeiDeBater')}</Link></li>
-                <li><Link href="/docs/cliente" className="hover:text-white">{t('footerComoFunciona')}</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-white font-semibold mb-3">{t('footerOficinas')}</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/para-oficinas" className="hover:text-white">{t('footerSistemaGestao')}</Link></li>
-                <li><Link href="/seja-parceiro" className="hover:text-white">{t('footerSejaParceiro')}</Link></li>
-                <li><Link href="/docs/oficina" className="hover:text-white">{t('footerGuiaOficina')}</Link></li>
-                <li><Link href="/docs" className="hover:text-white">{t('footerCentralAjuda')}</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-white font-semibold mb-3">{t('footerContato')}</h3>
-              <ul className="space-y-2 text-sm">
-                <li>support@bipfix.com</li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center text-sm">
-            <p>{t('footerDireitos')}</p>
-            <div className="flex gap-4">
-              <Link href="/termos" className="hover:text-white">{t('footerTermos')}</Link>
-              <Link href="/privacidade" className="hover:text-white">{t('footerPrivacidade')}</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

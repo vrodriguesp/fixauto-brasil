@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { routing } from '@/i18n/routing';
+import { localePrefix } from '@/i18n/routing';
 
 // Documento legal (politica de privacidade, termos de uso) escrito como uma
 // lista de secoes nos arquivos de mensagens: usado pelas versoes europeias
@@ -23,7 +23,7 @@ export default async function DocumentoLegalSecoes({ locale, namespace }: { loca
   // isso pode ir como HTML. Links internos (href="/privacidade") sao
   // escritos sem idioma; aqui ganham o prefixo do idioma atual, senao o
   // leitor europeu cairia na versao brasileira (sem prefixo).
-  const prefixo = locale === routing.defaultLocale ? '' : `/${locale}`;
+  const prefixo = localePrefix(locale);
   const html = (s: string) => ({ __html: s.replace(/href="\/(?!\/)/g, `href="${prefixo}/`) });
 
   return (

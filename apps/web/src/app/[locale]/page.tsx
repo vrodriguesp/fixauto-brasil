@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { hreflangAlternates } from '@/lib/seo-utils';
+import { OG_LOCALE, type Locale } from '@/i18n/routing';
 import HomeClient from './HomeClient';
 
-const OG_LOCALE: Record<string, string> = { pt: 'pt_BR', en: 'en_US', et: 'et_EE', it: 'it_IT' };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     alternates,
     openGraph: {
       type: 'website',
-      locale: OG_LOCALE[locale] || 'pt_BR',
+      locale: OG_LOCALE[locale as Locale] || 'pt_BR',
       siteName: 'BipFix',
       title: t('ogTitle'),
       description: t('ogDescription'),

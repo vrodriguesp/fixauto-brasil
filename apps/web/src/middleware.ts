@@ -1,7 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
-import { routing } from '@/i18n/routing';
+import { routing, LOCALE_PREFIX, HREFLANG, type Locale } from '@/i18n/routing';
 
 // O refresh token do Supabase renova a sessao silenciosamente pra sempre -
 // sem isso, um admin que loga uma vez fica autenticado por dias/semanas,
@@ -11,16 +11,21 @@ const ADMIN_MAX_SESSION_HOURS = 8;
 
 const intlMiddleware = createIntlMiddleware(routing);
 
-// "pt" nao tem prefixo na URL (locale padrao); "en"/"et"/"it" tem. Separa
-// o prefixo do resto do path pra comparar rotas protegidas independente
+// "pt" (Brasil) nao tem prefixo na URL; os outros tem (/pt-pt, /en, /et, /it).
+// Separa o prefixo do resto do path pra comparar rotas protegidas independente
 // do idioma, e pra poder remontar redirects preservando o idioma atual.
-function splitLocalePrefix(pathname: string): { prefix: string; path: string } {
-  const match = pathname.match(/^\/(en|et|it)(\/.*)?$/);
-  if (!match) return { prefix: '', path: pathname };
-  return { prefix: `/${match[1]}`, path: match[2] || '/' };
-}
+const PREFIX_TO_LOCALE: [string, Locale][] = (Object.entries(LOCALE_PREFIX) as [Locale, string][])
+  .filter(([, p]) => p)
+  .map(([l, p]) => [p, l]);
 
-const HTML_LANG: Record<string, string> = { pt: 'pt-BR', en: 'en', et: 'et', it: 'it' };
+function splitLocalePrefix(pathname: string): { prefix: string; path: string; locale: Locale } {
+  for (const [prefix, locale] of PREFIX_TO_LOCALE) {
+    if (pathname === prefix || pathname.startsWith(prefix + '/')) {
+      return { prefix, path: pathname.slice(prefix.length) || '/', locale };
+    }
+  }
+  return { prefix: '', path: pathname, locale: routing.defaultLocale };
+}
 
 export async function middleware(req: NextRequest) {
   // /admin e /api nunca tem prefixo de idioma - next-intl so cuida do
@@ -29,13 +34,15 @@ export async function middleware(req: NextRequest) {
   const intlRes = isAdminOrApi ? null : intlMiddleware(req);
 
   const rawPath = req.nextUrl.pathname;
-  const { prefix: localePrefix, path } = isAdminOrApi ? { prefix: '', path: rawPath } : splitLocalePrefix(rawPath);
+  const { prefix: localePrefix, path, locale: pathLocale } = isAdminOrApi
+    ? { prefix: '', path: rawPath, locale: routing.defaultLocale }
+    : splitLocalePrefix(rawPath);
 
   // Repassa o idioma resolvido pro layout raiz via header de REQUISICAO
   // (headers() no server component so le headers de request, nao de
   // response) - precisa reconstruir a response com os headers novos,
   // preservando os cookies que o next-intl ja tenha setado (ex: NEXT_LOCALE).
-  const htmlLang = HTML_LANG[localePrefix.slice(1) || 'pt'];
+  const htmlLang = HREFLANG[pathLocale];
 
   let res: NextResponse;
   if (intlRes && !intlRes.headers.get('location')) {
@@ -50,6 +57,9 @@ export async function middleware(req: NextRequest) {
     const rewrite = intlRes.headers.get('x-middleware-rewrite');
     if (rewrite) res.headers.set('x-middleware-rewrite', rewrite);
     intlRes.cookies.getAll().forEach((c) => res.cookies.set(c));
+    // Bing usa o Content-Language (mais que hreflang) para saber o idioma da
+    // pagina; o Google usa hreflang + <html lang>. Mandar os tres.
+    res.headers.set('Content-Language', htmlLang);
   } else if (intlRes) {
     res = intlRes; // redirect do proprio next-intl (ex: "/" -> "/et" na 1a visita)
   } else {

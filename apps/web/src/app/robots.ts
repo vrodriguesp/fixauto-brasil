@@ -1,16 +1,16 @@
 import { MetadataRoute } from 'next';
-import { routing } from '@/i18n/routing';
+import { LOCALE_PREFIX } from '@/i18n/routing';
 
 const PRIVATE_PATHS = ['cliente', 'oficina', 'loja', 'admin', 'api', 'definir-senha', 'reset-password', 'emergencia/acidente'];
 
 export default function robots(): MetadataRoute.Robots {
-  // "pt" (locale padrao) nao tem prefixo de URL, en/et/it tem - o disallow
-  // precisa cobrir os dois formatos (ex: "/cliente/" e "/en/cliente/") ou os
-  // paineis privados das rotas com prefixo ficariam indexaveis.
-  const disallow = PRIVATE_PATHS.flatMap((path) => [
-    `/${path}/`,
-    ...routing.locales.filter((l) => l !== routing.defaultLocale).map((l) => `/${l}/${path}/`),
-  ]);
+  // Cada idioma tem o seu prefixo publico ('' para o Brasil, /pt-pt, /en,
+  // /et, /it) - o disallow cobre todos, senao os paineis privados das rotas
+  // com prefixo ficariam rastreaveis. Usa o prefixo publico (/pt-pt), nao o
+  // nome interno do idioma (pt-PT).
+  const disallow = PRIVATE_PATHS.flatMap((path) =>
+    Object.values(LOCALE_PREFIX).map((prefix) => `${prefix}/${path}/`)
+  );
 
   return {
     rules: [
@@ -19,12 +19,17 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow,
       },
-      // Crawlers de IA (treino de modelo e/ou resposta em tempo real) -
-      // permitidos explicitamente: o objetivo do site e ser encontrado
-      // tanto em busca organica quanto em respostas de IA, entao nao faz
-      // sentido bloquear esses agentes so por serem menos comuns.
+      // Buscadores e crawlers de IA (indice de busca, resposta em tempo real e
+      // treino) - permitidos explicitamente: o objetivo do site e ser
+      // encontrado em busca organica (Google, Bing, DuckDuckGo, Yandex...) e
+      // citado em respostas de assistentes de IA.
       {
         userAgent: [
+          'Googlebot',
+          'Bingbot',
+          'DuckDuckBot',
+          'YandexBot',
+          'Applebot',
           'GPTBot',
           'ChatGPT-User',
           'OAI-SearchBot',
@@ -36,6 +41,9 @@ export default function robots(): MetadataRoute.Robots {
           'Perplexity-User',
           'Google-Extended',
           'Applebot-Extended',
+          'Meta-ExternalAgent',
+          'MistralAI-User',
+          'DuckAssistBot',
           'CCBot',
           'Bytespider',
           'Amazonbot',
@@ -45,5 +53,6 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: 'https://bipfix.com/sitemap.xml',
+    host: 'https://bipfix.com',
   };
 }

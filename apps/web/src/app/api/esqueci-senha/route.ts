@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { EMAIL_I18N, resolveEmailLocale, fmt, escapeHtml } from '@/lib/email-i18n';
+import { localePrefix, routing } from '@/i18n/routing';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -66,7 +67,11 @@ export async function POST(req: NextRequest) {
     // body.locale vem do app mobile, as vezes no formato "en-US"
     const locale = resolveEmailLocale(profile.idioma || String(body.locale || '').slice(0, 2));
     const s = EMAIL_I18N.recuperarSenha[locale];
-    const prefixo = locale === 'pt' ? '' : `/${locale}`;
+    // Idioma do site para o link: o do perfil ou o do app ("en-US" -> "en");
+    // "pt-PT" continua pt-PT (Portugal), qualquer outro desconhecido -> locale do e-mail.
+    const idiomaPedido = profile.idioma || String(body.locale || '');
+    const idiomaSite = (routing.locales as readonly string[]).includes(idiomaPedido) ? idiomaPedido : locale;
+    const prefixo = localePrefix(idiomaSite);
     const url = `${SITE_URL}${prefixo}/reset-password?token_hash=${encodeURIComponent(tokenHash)}&type=recovery`;
 
     if (!RESEND_KEY) {

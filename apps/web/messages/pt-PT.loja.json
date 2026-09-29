@@ -1,0 +1,183 @@
+{
+  "lojaDashboard": {
+    "greeting": "Olá, {nome}!",
+    "subtitle": "Acompanhe as cotações e encomendas das oficinas",
+    "statCotacoesAbertas": "Cotações abertas por responder",
+    "statPedidosConfirmados": "Encomendas confirmadas",
+    "statPecasAtivas": "Peças ativas no catálogo",
+    "comoFuncionaTitulo": "Como funciona",
+    "comoFuncionaItens": [
+      "As oficinas publicam cotações a pedir as peças de que precisam",
+      "Responde com um preço e um prazo de entrega",
+      "A oficina escolhe a melhor oferta e confirma a encomenda",
+      "Combine a entrega e o pagamento diretamente com a oficina"
+    ]
+  },
+  "lojaAprender": {
+    "loading": "A carregar...",
+    "titulo": "Aprenda a usar a BipFix",
+    "subtitulo": "Um passo de cada vez. Escolha o modo Guiado para instruções detalhadas, ou Autónomo se preferir experimentar por si.",
+    "modulos": {
+      "como-funciona": {
+        "titulo": "Como funciona a loja de peças",
+        "resumo": "As oficinas publicam pedidos de peças (\"cotações\"). Responde com um preço e um prazo de entrega. A oficina escolhe a melhor oferta e confirma a encomenda. A entrega e o pagamento são combinados diretamente com a oficina — a BipFix não processa isso. Só quando marca a encomenda como entregue é que a BipFix cobra uma pequena comissão.",
+        "passosGuiados": [
+          "Abra Painel no menu e leia o cartão \"Como funciona\".",
+          "Repare nos 3 números: cotações abertas por responder, encomendas confirmadas e peças ativas no seu catálogo."
+        ],
+        "desafio": "Perceba o fluxo completo antes de começar: cotação → resposta → encomenda confirmada → entrega → comissão.",
+        "linkRotulo": "Ver o meu painel →"
+      },
+      "perfil": {
+        "titulo": "Perfil da loja",
+        "resumo": "Complete os dados da sua loja — a morada, a cidade, a região e o código postal corretos são importantes, mesmo que hoje não filtrem as cotações que vê (neste momento, todas as cotações abertas na plataforma aparecem para si, ainda sem filtro de distância ou de país).",
+        "passosGuiados": [
+          "Abra Perfil no menu.",
+          "Verifique/edite o nome comercial, o NIF/NIPC, a morada, a cidade e a região.",
+          "Clique em \"Guardar\"."
+        ],
+        "desafio": "Garanta que o registo da sua loja está completo e correto (sem nenhum \"A definir\" na morada)."
+      },
+      "catalogo": {
+        "titulo": "Catálogo de peças",
+        "resumo": "Registe as peças que tem em stock: nome, compatibilidade de marca/modelo/ano, preço e quantidade. Funciona como o seu controlo de stock interno dentro da BipFix.",
+        "passosGuiados": [
+          "Abra Catálogo no menu.",
+          "Clique em \"+ Nova Peça\".",
+          "Preencha o nome e o preço (obrigatórios) — marca, modelo, ano e descrição são opcionais.",
+          "Clique em \"Adicionar\"."
+        ],
+        "desafio": "Registe pelo menos uma peça no seu catálogo."
+      },
+      "cotacoes": {
+        "titulo": "Responder às cotações das oficinas",
+        "resumo": "É aqui que compete pelas vendas: uma lista de pedidos de peças publicados pelas oficinas, à espera de resposta. Um bom preço e um bom prazo de entrega aumentam as suas hipóteses de ser escolhido. Só a oficina vê todas as respostas — as outras lojas não veem o seu preço.",
+        "passosGuiados": [
+          "Abra Cotações no menu.",
+          "Encontre uma cotação aberta para uma peça que tenha.",
+          "Clique em \"Responder à cotação\".",
+          "Preencha o preço, o prazo de entrega em dias e, se quiser, uma nota.",
+          "Clique em \"Enviar resposta\"."
+        ],
+        "desafio": "Responda a pelo menos uma cotação de oficina com um preço e um prazo de entrega reais.",
+        "dica": "Responder depressa (em menos de 2 horas) reduz mais tarde a sua taxa de comissão."
+      },
+      "pedidos": {
+        "titulo": "Encomendas e entrega",
+        "resumo": "Quando uma oficina escolhe a sua resposta, a encomenda aparece aqui. Combine a entrega e o pagamento diretamente com a oficina (fora da plataforma) e, depois de entregar de facto, marque-a como entregue.",
+        "passosGuiados": [
+          "Abra Encomendas no menu.",
+          "Combine a entrega/pagamento com a oficina (use o link \"Chat\" se precisar).",
+          "Depois de entregar de facto, clique em \"Marcar como entregue\"."
+        ],
+        "desafio": "Marque uma encomenda confirmada como entregue."
+      },
+      "comissao": {
+        "titulo": "Comissão da plataforma",
+        "resumo": "A taxa começa em 3% e desce à medida que responde depressa e entrega um bom volume de encomendas — 1,5% no mínimo, na prática. Só é cobrada quando a encomenda é marcada como entregue, nunca antes.",
+        "passosGuiados": [
+          "Abra Comissão no menu.",
+          "Veja a sua taxa atual, o que está pendente e o que já foi pago."
+        ],
+        "desafio": "Consulte a sua taxa atual e o que pode fazer para a baixar.",
+        "linkRotulo": "Ver a minha comissão →"
+      }
+    }
+  },
+  "lojaCatalogo": {
+    "pageTitle": "Catálogo de Peças",
+    "pageSubtitle": "Liste as peças que tem em stock - as oficinas podem ver e comprar diretamente",
+    "addButton": "+ Nova Peça",
+    "formTitle": "Adicionar Peça",
+    "labelNome": "Nome da peça *",
+    "placeholderNome": "Ex.: Farol dianteiro direito",
+    "labelDescricao": "Descrição (opcional)",
+    "placeholderDescricao": "Detalhes, estado, etc.",
+    "labelMarca": "Marca compatível",
+    "placeholderMarca": "Ex.: Fiat",
+    "labelModelo": "Modelo compatível",
+    "placeholderModelo": "Ex.: Argo",
+    "labelAno": "Ano compatível",
+    "placeholderAno": "Ex.: 2020",
+    "labelPreco": "Preço (€) *",
+    "placeholderPreco": "0,00",
+    "labelQuantidade": "Quantidade em stock",
+    "cancelButton": "Cancelar",
+    "savingButton": "A guardar...",
+    "addConfirmButton": "Adicionar",
+    "emptyState": "Ainda não há peças registadas",
+    "estoqueInfo": "{preco} · {quantidade} em stock",
+    "desativarButton": "Desativar",
+    "ativarButton": "Ativar",
+    "confirmRemove": "Remover \"{nome}\" do catálogo?"
+  },
+  "lojaComissao": {
+    "loading": "A carregar...",
+    "pageTitle": "Comissão BipFix",
+    "pageSubtitle": "Taxa cobrada sobre encomendas de peças entregues, e como a baixar"
+  },
+  "lojaConversaDetalhe": {
+    "loadingConversa": "A carregar conversa...",
+    "notFound": "Conversa não encontrada.",
+    "voltar": "Voltar",
+    "oficinaFallback": "Oficina"
+  },
+  "lojaConversaNova": {
+    "loading": "A carregar...",
+    "invalidConversa": "Conversa inválida.",
+    "voltar": "Voltar",
+    "oficinaFallback": "Oficina",
+    "subtituloComPeca": "{peca} · esclareça dúvidas antes de responder",
+    "subtituloSemPeca": "Esclareça dúvidas antes de responder"
+  },
+  "lojaCotacoes": {
+    "pageTitle": "Cotações das Oficinas",
+    "pageSubtitle": "Responda com um preço e um prazo de entrega para ganhar a encomenda",
+    "emptyState": "Não há cotações abertas neste momento",
+    "veiculoInfo": "Veículo: {marca} {modelo} {ano}",
+    "quantidadeInfo": "Quantidade: {quantidade}",
+    "tirarDuvida": "Esclarecer uma dúvida",
+    "respostaEnviada": "Respondeu: {preco} - entrega em {prazo} dia(s)",
+    "conversarLink": "Chat",
+    "labelPreco": "Preço (€)",
+    "labelPrazo": "Prazo de entrega (dias)",
+    "observacaoPlaceholder": "Nota (opcional)",
+    "cancelarButton": "Cancelar",
+    "enviandoButton": "A enviar...",
+    "enviarRespostaButton": "Enviar resposta",
+    "responderCotacaoButton": "Responder à cotação"
+  },
+  "lojaPedidos": {
+    "pageTitle": "Encomendas",
+    "pageSubtitle": "Encomendas confirmadas pelas oficinas",
+    "emptyState": "Ainda não há encomendas",
+    "statusConfirmado": "Confirmada",
+    "statusEntregue": "Entregue",
+    "statusCancelado": "Cancelada",
+    "conversarLink": "Chat",
+    "marcarEntregueButton": "Marcar como entregue",
+    "infoLinha": "{preco} · Qtd.: {quantidade} · {data}"
+  },
+  "lojaPerfil": {
+    "pageTitle": "Perfil da Loja",
+    "dadosPessoaisTitulo": "Dados pessoais",
+    "labelNome": "Nome",
+    "labelEmail": "E-mail",
+    "labelTelefone": "Telemóvel",
+    "dadosLojaTitulo": "Dados da loja",
+    "labelNomeFantasia": "Nome comercial",
+    "labelCnpj": "NIF/NIPC",
+    "labelCep": "Código postal",
+    "cepPlaceholder": "0000-000",
+    "buscandoCep": "A procurar morada...",
+    "cepErro": "Código postal não encontrado - verifique o número ou preencha manualmente",
+    "labelEndereco": "Morada",
+    "enderecoPlaceholder": "Rua, número",
+    "labelCidade": "Cidade",
+    "labelEstado": "Distrito/Região",
+    "labelRaio": "Raio de atuação (km)",
+    "salvarButton": "Guardar",
+    "salvandoButton": "A guardar...",
+    "salvoMsg": "Guardado!"
+  }
+}

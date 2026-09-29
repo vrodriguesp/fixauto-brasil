@@ -1,0 +1,528 @@
+{
+  "meta": {
+    "brand": "BipFix",
+    "title": "BipFix - Ligamo-lo à melhor oficina automóvel",
+    "description": "A plataforma que liga condutores a oficinas automóveis. Envie fotografias do dano, receba orçamentos e escolha a melhor opção. Simples, rápido e transparente."
+  },
+  "nav": {
+    "dashboard": "Painel",
+    "solicitacoes": "Pedidos",
+    "oficina": "Oficina",
+    "agenda": "Agenda",
+    "distribuicaoTrabalho": "Distribuição de Trabalho",
+    "capacidade": "Capacidade",
+    "pecas": "Peças",
+    "equipe": "Equipa",
+    "comissao": "Comissão",
+    "avaliacoes": "Avaliações",
+    "perfil": "Perfil",
+    "aprender": "Aprender",
+    "mais": "Mais",
+    "cotacoes": "Cotações",
+    "catalogo": "Catálogo",
+    "pedidos": "Encomendas",
+    "veiculos": "Veículos",
+    "novaSolicitacao": "Novo Pedido",
+    "orcamentos": "Orçamentos",
+    "mensagens": "Mensagens",
+    "historico": "Histórico",
+    "entrar": "Iniciar sessão",
+    "cadastrar": "Criar conta",
+    "sair": "Terminar sessão",
+    "checkinManual": "Check-in Manual",
+    "administrador": "Administrador",
+    "cliente": "Cliente"
+  },
+  "sejaParceiro": {
+    "metaTitle": "Seja um Parceiro Fundador",
+    "metaDescription": "A BipFix está em fase de seleção de oficinas e lojas de peças parceiras fundadoras. Vagas limitadas, sem comissão nesta fase. Registe o seu interesse.",
+    "ogTitle": "Seja um Parceiro Fundador",
+    "ogDescription": "A BipFix está em fase de seleção de oficinas e lojas de peças parceiras fundadoras. Vagas limitadas, sem comissão nesta fase.",
+    "heroTag": "FASE DE SELEÇÃO DE PARCEIROS FUNDADORES",
+    "heroTitulo": "Estamos a construir algo novo na reparação automóvel — e queremos que esteja entre os primeiros",
+    "heroTexto": "A BipFix ainda é um projeto ambicioso em fase inicial, sem milhares de utilizadores — e é precisamente por isso que quem entra agora ajuda a moldar a plataforma e garante condições que não se vão repetir.",
+    "beneficiosTitulo": "O que significa ser parceiro fundador",
+    "beneficio1Titulo": "Sem comissão nesta fase",
+    "beneficio1Texto": "Os parceiros fundadores usam o sistema completo de gestão e de captação de clientes sem comissão, com um aviso prévio de 30 dias antes de qualquer alteração futura.",
+    "beneficio2Titulo": "Voz ativa no produto",
+    "beneficio2Texto": "Como um dos primeiros parceiros, o seu feedback direto define quais as funcionalidades que chegam a seguir.",
+    "beneficio3Titulo": "Vagas limitadas por região",
+    "beneficio3Texto": "Estamos a selecionar um número reduzido de parceiros por cidade para a fase piloto, para que cada um receba atenção real.",
+    "formTitulo": "Registe o seu interesse",
+    "formSubtitulo": "Demora menos de um minuto. Sem compromisso.",
+    "souOficina": "Sou uma oficina",
+    "souLoja": "Sou um fornecedor de peças",
+    "campoResponsavel": "Nome do responsável",
+    "campoNegocio": "Nome do negócio",
+    "placeholderNegocioOficina": "ex.: Oficina Silva",
+    "placeholderNegocioLoja": "ex.: Baltic Auto Parts",
+    "campoCidade": "Cidade",
+    "placeholderCidade": "ex.: Tallinn",
+    "campoRegiao": "Distrito/Região",
+    "placeholderRegiao": "ex.: Condado de Harju",
+    "campoWhatsapp": "WhatsApp / Telefone",
+    "placeholderWhatsapp": "ex.: +372 5555 5555",
+    "campoEmail": "E-mail (opcional)",
+    "campoObservacao": "Quer contar-nos mais alguma coisa? (opcional)",
+    "placeholderObservacao": "ex.: dimensão da equipa, especialidades...",
+    "enviando": "A enviar...",
+    "enviar": "Quero ser parceiro fundador",
+    "concordaTermos": "Ao enviar, concorda com os nossos",
+    "termosDeUso": "Termos de Utilização",
+    "erroObrigatorio": "Preencha todos os campos obrigatórios",
+    "erroGenerico": "Não foi possível enviar. Tente novamente dentro de instantes.",
+    "sucessoTitulo": "Recebemos o seu interesse!",
+    "sucessoTexto": "A nossa equipa vai analisar a sua região e entrar em contacto por WhatsApp no prazo de 2 dias úteis para explicar os próximos passos da fase piloto.",
+    "voltarInicio": "Voltar ao início"
+  },
+  "paraOficinas": {
+    "metaTitle": "Software de Gestão para Oficinas Automóveis — Ganhe Mais Clientes",
+    "metaDescription": "Software gratuito para oficinas automóveis organizarem a agenda, os orçamentos e a equipa, e ganharem visibilidade para conquistar mais clientes na sua zona. Registe a sua oficina na BipFix.",
+    "metaKeywords": [
+      "software de gestão para oficina automóvel",
+      "sistema de gestão de oficinas",
+      "aplicação para oficinas automóveis",
+      "software de agendamento para oficinas",
+      "como conseguir mais clientes para a minha oficina",
+      "marketing para oficina automóvel",
+      "software de gestão para oficina de chapa e pintura",
+      "aplicação para gerir uma oficina",
+      "software para oficinas de bate-chapa e pintura"
+    ],
+    "ogTitle": "Software de Gestão para Oficinas Automóveis — Ganhe Mais Clientes",
+    "ogDescription": "Organize a sua oficina e apareça aos condutores da sua zona que precisam de reparações. Registo gratuito.",
+    "heroTitulo": "Gestão organizada e mais clientes para a sua oficina automóvel",
+    "heroTexto": "A BipFix é o sistema de gestão que organiza a agenda, os orçamentos e a equipa da sua oficina — enquanto o coloca à frente dos condutores da sua zona que precisam de reparações agora mesmo.",
+    "ctaFundador": "Quero ser parceiro fundador",
+    "ctaVerOficinas": "Ver oficinas na plataforma",
+    "heroFootnote": "Sem mensalidade. Sem comissão para parceiros fundadores.",
+    "funcTitulo": "Tudo o que a sua oficina recebe com a BipFix",
+    "funcSubtitulo": "Um resumo rápido de todas as funcionalidades — sem rodeios",
+    "funcCategorias": [
+      {
+        "titulo": "Clientes e visibilidade",
+        "itens": [
+          "Perfil público indexado no Google, por cidade",
+          "Pedidos automáticos de condutores da sua zona",
+          "Avaliações e reputação apresentadas no seu perfil",
+          "Check-in rápido quando a viatura chega"
+        ]
+      },
+      {
+        "titulo": "Orçamentos e serviço",
+        "itens": [
+          "Orçamentos estruturados, com a opção de repercutir ou absorver a comissão",
+          "Acompanhamento da reparação etapa a etapa, visível para o cliente",
+          "Notificação automática quando a viatura está pronta",
+          "Chat direto com o cliente em cada pedido"
+        ]
+      },
+      {
+        "titulo": "Agenda e equipa",
+        "itens": [
+          "Agenda organizada por viatura e por colaborador",
+          "Painel de distribuição de trabalho pela equipa",
+          "Limite de capacidade por mecânico",
+          "Registo de colaboradores com funções (proprietário / mecânico)",
+          "Notas internas por viatura, ocultas ao cliente",
+          "Notificações em tempo real no ecrã de todos os membros da equipa"
+        ]
+      },
+      {
+        "titulo": "Peças",
+        "itens": [
+          "Receba cotações de fornecedores de peças parceiros na sua zona",
+          "Peça cotações também a oficinas próximas",
+          "Venda o seu stock excedente a outras oficinas",
+          "Converse com o fornecedor antes de confirmar a encomenda"
+        ]
+      },
+      {
+        "titulo": "Finanças",
+        "itens": [
+          "Comissão configurável por desempenho e fidelidade",
+          "Extrato completo de comissões e lançamentos",
+          "Transparência total sobre o que é cobrado e quando"
+        ]
+      },
+      {
+        "titulo": "Aprendizagem",
+        "itens": [
+          "Portal de tutoriais guiados integrado no sistema",
+          "Percurso de aprendizagem separado para proprietários e para mecânicos",
+          "Sem necessidade de formação externa"
+        ]
+      }
+    ],
+    "doresTitulo": "Os problemas do dia a dia que a BipFix resolve",
+    "doresSubtitulo": "Feita para a rotina real de gerir uma oficina, não só para grandes redes",
+    "dores": [
+      {
+        "dor": "Agenda em papel ou numa folha de cálculo, difícil de ver quem está a fazer o quê",
+        "solucao": "Agenda visual por viatura e por colaborador, com painel de distribuição de trabalho"
+      },
+      {
+        "dor": "Poucos clientes novos, a depender só de recomendações",
+        "solucao": "Perfil público indexado no Google e pedidos de orçamento automáticos da sua zona"
+      },
+      {
+        "dor": "Orçamentos feitos pelo WhatsApp, sem acompanhamento nem histórico",
+        "solucao": "Orçamentos estruturados, com etapas da reparação e notificações automáticas ao cliente"
+      },
+      {
+        "dor": "Sem reputação visível para se destacar da concorrência",
+        "solucao": "Avaliações reais de clientes e selos de reputação apresentados no seu perfil"
+      },
+      {
+        "dor": "Comunicação confusa entre o mecânico e a receção",
+        "solucao": "Notas internas por viatura e notificações em tempo real para a equipa"
+      },
+      {
+        "dor": "Demora a encontrar peças e a comparar fornecedores",
+        "solucao": "Cotações de peças de fornecedores parceiros e de outras oficinas da sua zona, com chat direto"
+      }
+    ],
+    "comoTitulo": "Como a sua oficina ganha visibilidade",
+    "steps": [
+      {
+        "title": "Registe-se",
+        "description": "Perfil completo com morada, especialidades e fotografias, em poucos minutos"
+      },
+      {
+        "title": "Apareça nas pesquisas",
+        "description": "O seu perfil público é indexado no Google para quem procura uma oficina na sua cidade"
+      },
+      {
+        "title": "Receba pedidos",
+        "description": "Os condutores próximos enviam-lhe pedidos de reparação diretamente"
+      },
+      {
+        "title": "Construa reputação",
+        "description": "Cada trabalho bem avaliado melhora a sua posição e a confiança de novos clientes"
+      }
+    ],
+    "transparenciaTitulo": "Transparência sobre os custos",
+    "transparenciaTexto": "Hoje, registar-se e usar o sistema de gestão é gratuito, e não cobramos qualquer comissão aos parceiros fundadores. Se isso mudar no futuro, será avisado com pelo menos 30 dias de antecedência antes de qualquer cobrança entrar em vigor, de acordo com os nossos",
+    "transparenciaTermosLink": "Termos de Utilização",
+    "faqTitulo": "Perguntas frequentes das oficinas",
+    "faq": [
+      {
+        "pergunta": "Quanto custa o sistema de gestão BipFix à minha oficina?",
+        "resposta": "Registar-se e usar as ferramentas de gestão (agenda, orçamentos, equipa, avaliações) não tem mensalidade. Hoje, não cobramos qualquer comissão aos parceiros fundadores. Se isso mudar no futuro, avisaremos com pelo menos 30 dias de antecedência antes de qualquer cobrança, conforme os nossos Termos de Utilização."
+      },
+      {
+        "pergunta": "Como é que a BipFix ajuda a minha oficina a conseguir mais clientes?",
+        "resposta": "Os condutores da sua zona que precisam de reparações enviam fotografias do dano e recebem orçamentos de oficinas próximas, incluindo a sua. O seu perfil público também aparece no Google para quem procura oficinas na sua cidade, com as suas avaliações, especialidades e localização."
+      },
+      {
+        "pergunta": "O sistema substitui uma folha de cálculo ou um caderno de marcações?",
+        "resposta": "Sim. Organiza a agenda por viatura e por colaborador, distribui o trabalho pelos mecânicos, controla a capacidade de atendimento e recebe notificações automáticas — tudo num só lugar, sem papel nem folhas de cálculo soltas."
+      },
+      {
+        "pergunta": "Preciso de conhecimentos técnicos para o usar?",
+        "resposta": "Não. A plataforma foi desenhada para a realidade do dia a dia de uma oficina, com um portal de aprendizagem guiado integrado no próprio sistema, para que possa, juntamente com a sua equipa, aprender cada funcionalidade em minutos."
+      },
+      {
+        "pergunta": "Posso comprar peças a fornecedores através da plataforma?",
+        "resposta": "Sim. Pode abrir pedidos de cotação de peças a fornecedores parceiros e a outras oficinas da sua zona, comparar preços e prazos de entrega, e negociar diretamente por chat antes de confirmar a encomenda."
+      }
+    ],
+    "ctaFinalTitulo": "Pronto para organizar a sua oficina e ganhar mais clientes?"
+  },
+  "veiculoForm": {
+    "labelTipo": "Tipo de veículo",
+    "tipoCarro": "Carro",
+    "tipoMoto": "Mota",
+    "tipoCaminhao": "Camião",
+    "labelMarca": "Marca",
+    "labelModelo": "Modelo",
+    "labelAno": "Ano",
+    "manualNotice": "Introduza abaixo os dados do seu veículo.",
+    "placeholderMarca": "ex.: Volkswagen",
+    "placeholderModelo": "ex.: Golf",
+    "placeholderAno": "ex.: 2018"
+  },
+  "home": {
+    "metaTitle": "BipFix - Compare Orçamentos de Oficinas Automóveis de Confiança",
+    "metaDescription": "Envie fotografias do dano do seu carro, receba orçamentos de oficinas verificadas perto de si e marque a reparação em minutos. Agora em fase piloto em Tallinn, Estónia.",
+    "metaKeywords": [
+      "oficina automóvel perto de mim",
+      "comparar orçamentos de reparação automóvel online",
+      "mecânico de confiança perto de mim",
+      "aplicação de orçamentos de bate-chapa",
+      "oficina automóvel Tallinn Estónia"
+    ],
+    "ogTitle": "BipFix - Encontre a oficina certa para o seu carro",
+    "ogDescription": "Compare orçamentos de oficinas verificadas perto de si em minutos.",
+    "carregando": "A carregar...",
+    "heroTitulo": "Reparações automóveis,",
+    "heroTituloDestaque": "sem surpresas.",
+    "heroTexto": "Transparência total do orçamento à entrega. Compare orçamentos detalhados de oficinas verificadas e acompanhe cada etapa da reparação em tempo real. Simples, seguro e sem custos escondidos.",
+    "ctaCliente": "Preciso de uma reparação",
+    "ctaOficina": "Sou uma oficina ou fornecedor de peças",
+    "emergenciaTitulo": "Acabei de bater!",
+    "emergenciaTexto": "Tire uma fotografia agora mesmo e receba orçamentos de oficinas próximas em minutos. Pode também registar o outro veículo envolvido.",
+    "comoFuncionaTitulo": "Como funciona",
+    "comoFuncionaSubtitulo": "Em poucos passos, recebe orçamentos das melhores oficinas da sua zona",
+    "step1Titulo": "Descreva o problema",
+    "step1Texto": "Envie fotografias do dano e uma descrição do que aconteceu ao seu veículo",
+    "step2Titulo": "As oficinas recebem",
+    "step2Texto": "As oficinas próximas recebem o seu pedido e avaliam o trabalho",
+    "step3Titulo": "Compare orçamentos",
+    "step3Texto": "Receba orçamentos detalhados com preços, prazos e avaliações",
+    "step4Titulo": "Escolha e repare",
+    "step4Texto": "Aceite o melhor orçamento e acompanhe a reparação do seu veículo",
+    "oficinasBadge": "SELEÇÃO DE PARCEIROS FUNDADORES ABERTA",
+    "oficinasTitulo": "Para oficinas automóveis e fornecedores de peças",
+    "oficinasTexto": "Organize a sua operação numa única plataforma e ganhe visibilidade junto de novos clientes na sua zona — sem comissão durante esta fase inicial.",
+    "feature1": "Receba automaticamente pedidos de clientes próximos",
+    "feature2": "Envie orçamentos estruturados e profissionais",
+    "feature3": "Gira a sua agenda com trabalhos da plataforma e externos",
+    "feature4": "Construa a sua reputação com avaliações de clientes",
+    "ctaFundador": "Quero ser parceiro fundador",
+    "saibaMais": "Saber mais",
+    "mock1Titulo": "Novo pedido",
+    "mock1Texto": "Colisão - VW Golf 2021 - a 3 km de si",
+    "mock2Titulo": "Orçamento aceite!",
+    "mock2Texto": "Bate-chapa - Toyota Corolla 2023",
+    "mock3Titulo": "Nova avaliação: 5 estrelas",
+    "mock3Texto": "\"Excelente trabalho, recomendo vivamente!\"",
+    "porQueBadge": "UM PROJETO AMBICIOSO, NO INÍCIO DO PERCURSO",
+    "porQueTitulo": "Porque estamos a construir a BipFix",
+    "porQueTexto1": "Hoje, escolher onde reparar o carro resume-se normalmente a uma recomendação ou à oficina mais próxima — sem forma de comparar preço, prazo ou historial. Acreditamos que os condutores merecem transparência, e que as boas oficinas merecem ser encontradas pelo trabalho que fazem.",
+    "porQueTexto2": "Estamos, literalmente, a começar: a selecionar as primeiras oficinas e fornecedores de peças parceiros para lançar com total atenção numa cidade de cada vez, em vez de crescer depressa sem controlo de qualidade.",
+    "parceiroTitulo": "Ainda vai a tempo de entrar como parceiro fundador",
+    "parceiroTexto": "Se é condutor, já pode usar a plataforma hoje. Se gere uma oficina ou um negócio de peças, estamos a selecionar um número limitado de parceiros para a fase piloto — sem comissão neste momento.",
+    "faqTitulo": "Perguntas Frequentes",
+    "faqSubtitulo": "Esclareça as suas dúvidas sobre a plataforma BipFix",
+    "faqItems": [
+      {
+        "pergunta": "Como funciona a BipFix?",
+        "resposta": "Envia fotografias do dano no seu veículo juntamente com uma descrição do problema. As oficinas próximas recebem o seu pedido, avaliam o trabalho e enviam orçamentos detalhados. Compara preços, prazos e avaliações, e escolhe a melhor opção."
+      },
+      {
+        "pergunta": "É seguro usar a plataforma?",
+        "resposta": "Sim! Todas as oficinas registadas passam por verificação. Além disso, o sistema de avaliações permite-lhe ver a reputação de cada oficina antes de decidir. Os seus dados pessoais estão protegidos e nunca são partilhados sem o seu consentimento."
+      },
+      {
+        "pergunta": "Quanto custa a BipFix?",
+        "resposta": "Para os condutores, a plataforma é totalmente gratuita. Pode enviar pedidos, receber orçamentos e comparar opções sem qualquer custo. Estamos na fase de seleção de parceiros fundadores e, hoje, não cobramos comissão nem mensalidade às oficinas e fornecedores parceiros — veja os detalhes nos nossos Termos de Utilização."
+      },
+      {
+        "pergunta": "Como são avaliadas as oficinas?",
+        "resposta": "Depois de cada trabalho concluído, o cliente pode avaliar a oficina de 1 a 5 estrelas e deixar um comentário. A classificação média é apresentada no perfil público da oficina, ajudando outros condutores a escolher com confiança."
+      },
+      {
+        "pergunta": "Posso usar a BipFix numa emergência?",
+        "resposta": "Sim! Temos um botão de emergência \"Acabei de bater\" que lhe permite registar o incidente rapidamente, tirar fotografias no local e receber orçamentos de oficinas próximas em minutos. Pode também registar o outro veículo envolvido."
+      },
+      {
+        "pergunta": "Que tipos de serviços oferecem as oficinas?",
+        "resposta": "As oficinas na plataforma oferecem uma vasta gama de serviços, como bate-chapa, pintura, mecânica geral, eletricidade automóvel, substituição de vidros, alinhamento de direção, calibragem de rodas, ar condicionado e muito mais. Cada oficina indica as suas especialidades no perfil."
+      }
+    ],
+    "footerTagline": "A ligar condutores às melhores oficinas automóveis.",
+    "footerMotoristas": "Para Condutores",
+    "footerCriarConta": "Criar conta",
+    "footerAcabeiDeBater": "Acabei de bater",
+    "footerVerOficinas": "Oficinas parceiras",
+    "footerComoFunciona": "Como funciona",
+    "footerGuias": "Guias para condutores",
+    "footerOficinas": "Para Oficinas",
+    "footerSistemaGestao": "Sistema de gestão e clientes",
+    "footerSejaParceiro": "Seja parceiro fundador",
+    "footerGuiaOficina": "Guia da Oficina",
+    "footerCentralAjuda": "Centro de Ajuda",
+    "footerContato": "Contacto",
+    "footerDireitos": "2026 BipFix. Todos os direitos reservados.",
+    "footerTermos": "Termos de Utilização",
+    "footerPrivacidade": "Privacidade"
+  },
+  "constants": {
+    "tiposServico": {
+      "colisao": "Colisão",
+      "funilaria": "Bate-chapa e Pintura",
+      "revisao": "Manutenção",
+      "mecanica": "Mecânica",
+      "eletrica": "Eletricidade",
+      "pneu": "Pneus",
+      "outro": "Outro"
+    },
+    "urgencias": {
+      "baixa": "Baixa",
+      "baixaDesc": "Sem pressa, posso esperar",
+      "media": "Média",
+      "mediaDesc": "Preciso dentro de algumas semanas",
+      "alta": "Alta",
+      "altaDesc": "Urgente, preciso o mais depressa possível"
+    },
+    "statusSolicitacao": {
+      "aberta": "Aberto",
+      "em_orcamento": "Orçamento Enviado",
+      "aceita": "Orçamento Aceite",
+      "em_andamento": "Em Curso",
+      "concluida": "Concluído",
+      "cancelada": "Cancelado"
+    },
+    "statusOrcamento": {
+      "enviado": "Enviado",
+      "visualizado": "Visualizado",
+      "aceito": "Aceite",
+      "recusado": "Recusado",
+      "expirado": "Expirado"
+    },
+    "statusManutencao": {
+      "recebido": "Recebido",
+      "recebidoDesc": "Viatura recebida na oficina",
+      "diagnostico": "Em diagnóstico",
+      "diagnosticoDesc": "A diagnosticar o problema",
+      "aguardando_pecas": "À espera de peças",
+      "aguardandoPecasDesc": "À espera das peças necessárias",
+      "em_execucao": "Em execução",
+      "emExecucaoDesc": "Trabalho em curso",
+      "pausa_cliente": "Em pausa - a contactar o cliente",
+      "pausaClienteDesc": "À espera de resposta do cliente",
+      "pausa_pecas": "Em pausa - faltam peças",
+      "pausaPecasDesc": "Parado por falta de peças",
+      "pausa_geral": "Em pausa",
+      "pausaGeralDesc": "Trabalho temporariamente em pausa",
+      "teste_final": "Teste final",
+      "testeFinalDesc": "A realizar verificações de qualidade",
+      "concluido": "Concluído",
+      "concluidoDesc": "Trabalho terminado",
+      "entregue": "Entregue",
+      "entregueDesc": "Viatura entregue ao cliente"
+    },
+    "cargosFuncionario": {
+      "admin": "Administrador",
+      "adminDesc": "Acesso completo ao portal da oficina",
+      "mecanico": "Mecânico",
+      "mecanicoDesc": "Acesso à página de viaturas em serviço"
+    },
+    "noShow": {
+      "no_show": "Não compareceu"
+    },
+    "servicosRevisao": {
+      "troca_oleo_filtro": "Mudança de óleo e filtro",
+      "troca_filtro_ar": "Substituição do filtro de ar",
+      "troca_filtro_combustivel": "Substituição do filtro de combustível",
+      "troca_filtro_cabine": "Substituição do filtro de habitáculo",
+      "verificacao_freios": "Verificação dos travões",
+      "troca_pastilhas_freio": "Substituição das pastilhas de travão",
+      "troca_discos_freio": "Substituição dos discos de travão",
+      "alinhamento_balanceamento": "Alinhamento de direção e calibragem de rodas",
+      "troca_correia_dentada": "Substituição da correia de distribuição",
+      "troca_velas": "Substituição das velas",
+      "revisao_suspensao": "Verificação da suspensão",
+      "troca_amortecedores": "Substituição dos amortecedores",
+      "troca_fluido_freio": "Substituição do líquido dos travões",
+      "troca_fluido_arrefecimento": "Substituição do líquido de refrigeração",
+      "revisao_completa_km": "Revisão completa (por quilometragem)"
+    },
+    "servicosMecanica": {
+      "motor_barulho_estranho": "Motor - ruído estranho",
+      "motor_perda_potencia": "Motor - perda de potência",
+      "motor_superaquecimento": "Motor - sobreaquecimento",
+      "cambio_dificuldade_engatar": "Caixa de velocidades - dificuldade em engatar",
+      "cambio_barulho_troca_marcha": "Caixa de velocidades - ruído ao mudar de mudança",
+      "embreagem_patinando": "Embraiagem - a patinar",
+      "embreagem_dura": "Embraiagem - dura",
+      "freio_barulho_frear": "Travões - ruído ao travar",
+      "freio_pedal_mole": "Travões - pedal mole",
+      "suspensao_barulho": "Suspensão - ruído",
+      "suspensao_carro_puxando": "Suspensão - carro a puxar para um lado",
+      "escapamento_barulho": "Escape - ruído",
+      "escapamento_vazamento": "Escape - fuga",
+      "direcao_dura_folga": "Direção - dura ou com folga",
+      "vazamento_oleo": "Fuga de óleo",
+      "vazamento_agua": "Fuga de água",
+      "outro_problema_mecanico": "Outro problema mecânico"
+    },
+    "servicosEletrica": {
+      "bateria_nao_liga": "Bateria - não pega",
+      "bateria_descarregando_rapido": "Bateria - descarrega depressa",
+      "alternador_luz_painel": "Alternador - luz no painel",
+      "motor_arranque": "Motor de arranque",
+      "farois_lanternas": "Faróis / Farolins",
+      "vidro_eletrico": "Vidro elétrico",
+      "trava_eletrica": "Fecho centralizado",
+      "ar_condicionado": "Ar condicionado",
+      "painel_luzes_alerta": "Painel - luzes de aviso",
+      "central_multimidia": "Sistema multimédia",
+      "sensores_estacionamento_re": "Sensores (estacionamento, marcha-atrás)",
+      "chicote_eletrico": "Cablagem elétrica",
+      "outro_problema_eletrico": "Outro problema elétrico"
+    },
+    "servicosPneu": {
+      "troca_pneus": "Substituição de pneus",
+      "rodizio_pneus": "Rotação de pneus",
+      "conserto_furo": "Reparação de furo",
+      "alinhamento": "Alinhamento de direção",
+      "balanceamento": "Calibragem de rodas",
+      "calibragem": "Verificação da pressão dos pneus",
+      "troca_roda_calota": "Substituição de roda/tampão"
+    }
+  },
+  "comissaoPecasCard": {
+    "suaTaxaAtual": "A sua taxa atual",
+    "comissaoPendente": "Comissão pendente",
+    "comissaoPaga": "Comissão paga",
+    "infoTaxa": "A taxa começa em {base}% e desce até um mínimo de {min}% ao responder rapidamente às cotações{media} e ao manter um volume constante de encomendas entregues. Só é cobrada quando uma encomenda é marcada como entregue.",
+    "mediaTempoResposta": " (a sua média hoje: {horas}h)",
+    "extratoTitulo": "Extrato de comissões de peças",
+    "nenhumaComissao": "Ainda não há comissões registadas",
+    "colData": "Data",
+    "colValorPedido": "Valor da encomenda",
+    "colTaxa": "Taxa",
+    "colComissao": "Comissão",
+    "colStatus": "Estado",
+    "statusPendente": "Pendente",
+    "statusPago": "Paga"
+  },
+  "damageAnalysis": {
+    "tituloInicial": "Análise de Danos com IA",
+    "descricaoInicial": "Use a IA para analisar as fotografias do dano.",
+    "analisando": "A analisar fotografias...",
+    "tentarNovamente": "Tentar novamente",
+    "analisarComIA": "Analisar com IA",
+    "titulo": "Análise por IA",
+    "estimativaCusto": "Estimativa de custo",
+    "pecasAfetadas": "Peças afetadas",
+    "ocultarChecklist": "Ocultar lista de verificação",
+    "checklistInspecao": "Lista de verificação da inspeção ({count} itens)",
+    "confianca": "Confiança: {percent}%",
+    "severidadeLeve": "Ligeiro",
+    "severidadeModerado": "Moderado",
+    "severidadeGrave": "Grave",
+    "severidadeSevero": "Crítico"
+  },
+  "cookieBanner": {
+    "texto": "Utilizamos cookies para perceber como usa o site e para melhorar a sua experiência. Ao aceitar, concorda com a nossa",
+    "linkPrivacidade": "Política de Privacidade",
+    "rejeitar": "Rejeitar",
+    "aceitar": "Aceitar"
+  },
+  "login": {
+    "erroDesativado": "Esta conta foi desativada. Contacte o suporte.",
+    "erroSessaoExpirada": "A sua sessão expirou por motivos de segurança. Inicie sessão novamente.",
+    "erroPreenchaCampos": "Introduza o seu e-mail e a palavra-passe",
+    "erroPreenchaEmail": "Introduza o seu e-mail",
+    "erroEnviar": "Não foi possível enviar. Tente novamente.",
+    "senhaEnviadaTitulo": "Link enviado!",
+    "senhaEnviadaTexto1": "Enviámos um link para escolher uma nova palavra-passe para",
+    "senhaEnviadaTexto2": "O link é válido durante 1 hora. Se não chegar dentro de alguns minutos, verifique a pasta de spam e confirme que o e-mail está correto.",
+    "voltarLogin": "Voltar ao início de sessão",
+    "recuperarSenhaTitulo": "Repor palavra-passe",
+    "entrarTitulo": "Iniciar sessão",
+    "recuperarSenhaSubtitulo": "Introduza o seu e-mail para receber o link de reposição",
+    "entrarSubtitulo": "Aceda à sua conta BipFix",
+    "labelEmail": "E-mail",
+    "labelSenha": "Palavra-passe",
+    "esqueciSenha": "Esqueci-me da palavra-passe",
+    "enviando": "A enviar...",
+    "enviarLinkRecuperacao": "Enviar link de reposição",
+    "entrando": "A iniciar sessão...",
+    "naoTemConta": "Ainda não tem conta?",
+    "cadastreSe": "Criar conta"
+  }
+}

@@ -3,15 +3,15 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
+import SiteFooter from '@/components/layout/SiteFooter';
 import Analytics from '@/components/Analytics';
 import StructuredData from '@/components/seo/StructuredData';
-import { routing, type Locale } from '@/i18n/routing';
+import { routing, type Locale, OG_LOCALE, HREFLANG } from '@/i18n/routing';
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-const OG_LOCALE: Record<string, string> = { pt: 'pt_BR', en: 'en_US', et: 'et_EE', it: 'it_IT' };
 
 export async function generateMetadata({
   params,
@@ -21,11 +21,6 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta' });
 
-  const languages: Record<string, string> = {};
-  for (const l of routing.locales) {
-    languages[l] = l === routing.defaultLocale ? '/' : `/${l}`;
-  }
-
   return {
     title: {
       default: t('title'),
@@ -34,21 +29,20 @@ export async function generateMetadata({
     description: t('description'),
     openGraph: {
       type: 'website',
-      locale: OG_LOCALE[locale] || 'pt_BR',
+      locale: OG_LOCALE[locale as Locale] || 'pt_BR',
       siteName: t('brand'),
       title: t('title'),
       description: t('description'),
-      url: locale === routing.defaultLocale ? '/' : `/${locale}`,
     },
     twitter: {
       card: 'summary_large_image',
       title: t('title'),
       description: t('description'),
     },
-    alternates: {
-      canonical: locale === routing.defaultLocale ? '/' : `/${locale}`,
-      languages,
-    },
+    // Sem canonical/hreflang aqui de proposito: o layout vale para TODAS as
+    // paginas, e um canonical herdado apontava login, cadastro etc. para a
+    // home (sinal de conteudo duplicado). Cada pagina publica declara os
+    // seus via hreflangAlternates().
   };
 }
 
@@ -90,7 +84,7 @@ export default async function LocaleLayout({
     '@type': 'WebSite',
     name: 'BipFix',
     url: 'https://bipfix.com',
-    inLanguage: locale,
+    inLanguage: HREFLANG[locale as Locale],
   };
 
   return (
@@ -100,6 +94,7 @@ export default async function LocaleLayout({
       <Analytics />
       <Navbar />
       <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+      <SiteFooter />
     </NextIntlClientProvider>
   );
 }

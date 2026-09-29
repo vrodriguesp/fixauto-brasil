@@ -7,6 +7,7 @@ import { TIPOS_SERVICO } from '@fixauto/shared';
 import StarRating from '@/components/ui/StarRating';
 import StructuredData from '@/components/seo/StructuredData';
 import { capitalizarCidade, hreflangAlternates, slugCidade } from '@/lib/seo-utils';
+import { OG_LOCALE, localePrefix as prefixoDoIdioma, type Locale } from '@/i18n/routing';
 import { countryNameForCode } from '@/lib/currency';
 
 // Sem isso o build pre-renderiza a pagina como estatica (o
@@ -15,7 +16,6 @@ import { countryNameForCode } from '@/lib/currency';
 // ficaria congelada no estado do momento do build.
 export const dynamic = 'force-dynamic';
 
-const OG_LOCALE: Record<string, string> = { pt: 'pt_BR', en: 'en_US', et: 'et_EE', it: 'it_IT' };
 const BASE_URL = 'https://bipfix.com';
 const MAX_BADGES_SERVICO = 4;
 
@@ -126,7 +126,7 @@ export async function generateMetadata({
     robots: { index: indexavel, follow: true },
     openGraph: {
       type: 'website',
-      locale: OG_LOCALE[locale] || 'pt_BR',
+      locale: OG_LOCALE[locale as Locale] || 'pt_BR',
       siteName: 'BipFix',
       title,
       description,
@@ -148,7 +148,7 @@ export default async function OficinasPage({
   const { oficinas, cidades, cidade, servico, filtradas } = await resolverFiltros(searchParams);
 
   const filtrando = Boolean(cidade || servico);
-  const localePrefix = locale === 'pt' ? '' : `/${locale}`;
+  const localePrefix = prefixoDoIdioma(locale);
 
   const itemListSchema =
     filtradas.length > 0
