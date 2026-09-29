@@ -67,8 +67,10 @@ No google.it, os resumos do BipFix apareciam em inglês, e o site tinha 0 clique
 - Bug corrigido: a página da oficina no admin lia `comissao_config` pelo navegador, que a RLS bloqueia para o admin. Por isso mostrava sempre a taxa padrão.
 
 ## Pendente — precisa do usuário
-1. **Bing Webmaster Tools** e **Yandex Webmaster:** clicar em "Verificar" (a meta tag e o arquivo já estão no ar) e depois enviar o sitemap.
-2. **Search Console:** pedir a indexação de `/ru` e `/ru/guias`.
+1. ~~Bing, Yandex e Search Console~~ **feito em 29/09 pelo navegador do usuário:**
+   - **Bing:** sitemap enviado na propriedade `https://bipfix.com/` (processando).
+   - **Yandex:** adicionada e verificada a propriedade certa, `https://bipfix.com` (antes só existia `http://www.bipfix.com`), com o sitemap na fila (1–2 semanas).
+   - **Search Console:** indexação pedida para `/ru`, `/ru/guias` e `/ru/para-oficinas`.
 3. **Perfis em redes sociais** (LinkedIn, Facebook, Instagram), para os dados estruturados `sameAs`, e endereço da OÜ quando registrada.
 4. **Google Business Profile:** um marketplace só online **não é elegível**. A alavanca é ajudar cada oficina parceira a completar o próprio perfil, com link para a página dela no BipFix.
 5. Revisão por um nativo do estoniano dos títulos novos ("Autoremont Tallinnas, ilma üllatusteta.") e dos guias.
