@@ -53,8 +53,8 @@ Qualquer coisa estranha, mande print ou descrição.
 ## Como conferir o site
 
 - `https://bipfix.com` (português), `/et`, `/en`, `/it`
-- `https://bipfix.com/et/oficinas`: lista pública de oficinas
-- `https://bipfix.com/et/privacidade` e `/et/termos`: versões europeias; sem `/et` são as brasileiras
+- `https://bipfix.com/et/tookojad`: lista pública de oficinas
+- `https://bipfix.com/et/privaatsus` e `/et/tingimused`: versões europeias; sem `/et` são as brasileiras
 - Para o seu próprio navegador nunca gerar e-mail de visita: abra uma vez qualquer página com `?nao_monitorar=1` no fim do endereço
 
 ## Decisão de produto ainda pendente

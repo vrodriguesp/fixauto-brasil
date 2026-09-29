@@ -75,3 +75,26 @@ No google.it, os resumos do BipFix apareciam em inglês, e o site tinha 0 clique
 4. **Google Business Profile:** um marketplace só online **não é elegível**. A alavanca é ajudar cada oficina parceira a completar o próprio perfil, com link para a página dela no BipFix.
 5. Revisão por um nativo do estoniano dos títulos novos ("Autoremont Tallinnas, ilma üllatusteta.") e dos guias.
 6. **Ao mudar o texto de uma página estática:** atualizar a data em `MUDOU` no `src/app/sitemap.ts`.
+
+## 30/09 — endereços no idioma do público, home internacional, menu no celular
+Método (pedido do usuário): 1) identificar o problema; 2) documentação oficial + como grandes sites fazem; 3) implementar; 4) testar tudo.
+- **Documentação seguida:** Google "Managing multi-regional sites" (evitar redirecionar uma versão de idioma para outra), posts do Google sobre x-default (2013, também válido para o Yandex, e 2023: "página para onde você redireciona o usuário" / "versão padrão") e "URL structure" ("use palavras no idioma do seu público na URL, e se aplicável transliteradas").
+- **Estrutura nova:**
+  - todo idioma com prefixo (Brasil em `/pt-br`);
+  - a raiz `/` é a home internacional: encaminha pela escolha salva no seletor (cookie `bipfix_idioma`), senão pelo idioma do navegador, senão para o inglês; sem olhar o navegador/robô;
+  - x-default de cada página = inglês.
+- **Nomes das páginas no idioma** (`PATHNAMES` em `src/i18n/routing.ts`): en `/for-repair-shops`, et `/tookodadele`, ru `/dlya-avtoservisov` (transliterado) etc. Os guias têm slug por idioma (`versoes.<idioma>.slug`, com o índice gerado no prebuild por `scripts/indice-guias.mjs`). **Mudar um nome ali muda URL indexada.**
+- **301 permanente:** todos os endereços antigos sem prefixo (`/termos` → `/pt-br/termos`), os nomes antigos em português dentro de outro idioma (`/et/seja-parceiro` → `/et/hakka-partneriks`) e os slugs antigos de guia.
+- **Links de e-mail** no idioma de quem recebe (`lib/site-url.ts`); antes sempre abriam a versão do Brasil.
+- **Seletor de idioma:**
+  - código do idioma (PT-BR, ET, RU…) em vez de bandeira (o Windows mostrava só letras do país e o russo ficava vazio);
+  - no celular, com a largura da tela (antes saía 53px pela esquerda).
+- **Testes** (scripts no scratchpad da sessão; recriar se precisar):
+  - rotas/SEO do sitemap: 75 URLs e 99 links internos, 0 problemas (em produção);
+  - visual no celular em 390px e 360px, com menus abertos: 0 problemas (em produção);
+  - ponta a ponta das áreas logadas (cliente, oficina, loja) em et e ru com contas temporárias apagadas no fim: achou e corrigiu links de idioma duplicados nas áreas logadas, a consulta quebrada da comissão da oficina (400) e da loja (406) e o link de voltar das mensagens.
+- **Buscadores:**
+  - Google: sitemap reenviado e indexação pedida para `/et`, `/pt-br`, `/en` (`/et`, `/en` e `/ru` já estavam indexadas);
+  - IndexNow: 75 URLs aceitas (avisa Bing e Yandex);
+  - Yandex: propriedade certa `https://bipfix.com` adicionada e verificada, com sitemap enviado.
+- **Materiais:** 20 peças regeradas (QR → `/et/hakka-partneriks`, `/en/become-a-partner`; endereço impresso `bipfix.com/et/partner`). E-mails, legendas e LEIA-ME atualizados.

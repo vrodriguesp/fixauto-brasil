@@ -37,12 +37,12 @@ Envie fotos do dano, receba orcamentos, agende o servico e acompanhe o reparo em
 
 ### Post 3 - Emergencia
 **Texto:** Acabou de bater? Calma. Abra o BipFix, tire uma foto do dano e receba orcamentos de oficinas proximas em minutos. Nosso botao de emergencia foi feito pra esse momento.
-**CTA:** Baixe o app ou acesse bipfix.com/emergencia
+**CTA:** Baixe o app ou acesse bipfix.com/pt-br/emergencia
 **Hashtags:** #BipFix #Acidente #Emergencia #BateuOCarro #SOS
 
 ### Post 4 - Para Oficinas
 **Texto:** Dono de oficina? O BipFix traz clientes ate voce. Receba solicitacoes de motoristas proximos, envie orcamentos profissionais e construa sua reputacao com avaliacoes reais. Cadastro rapido e sem burocracia.
-**CTA:** Cadastre sua oficina em bipfix.com/cadastro
+**CTA:** Cadastre sua oficina em bipfix.com/pt-br/cadastro
 **Hashtags:** #BipFix #OficinasMecanicas #NovoClientes #GestaoDeOficina
 
 ### Post 5 - Acompanhamento
@@ -61,7 +61,7 @@ Ola! Tudo bem? Sou [nome] da equipe BipFix Brasil. Estamos conectando motoristas
 Oi [nome], tudo certo? Passando pra lembrar do BipFix. Oficinas que ja estao na plataforma estao recebendo em media 15 novas solicitacoes por mes de clientes da regiao. O cadastro e rapido e voce so paga quando um servico e realizado. Posso te ajudar com o cadastro?
 
 ### Mensagem 3 - Convite Direto
-Ola [nome]! Quero te convidar pra fazer parte do BipFix. A plataforma e gratuita pra comecar, voce recebe solicitacoes de clientes proximos automaticamente e pode gerenciar sua agenda e equipe pelo painel. Cadastre-se aqui: bipfix.com/cadastro?tipo=oficina. Qualquer duvida, estou a disposicao!
+Ola [nome]! Quero te convidar pra fazer parte do BipFix. A plataforma e gratuita pra comecar, voce recebe solicitacoes de clientes proximos automaticamente e pode gerenciar sua agenda e equipe pelo painel. Cadastre-se aqui: bipfix.com/pt-br/cadastro?tipo=oficina. Qualquer duvida, estou a disposicao!
 
 ---
 
