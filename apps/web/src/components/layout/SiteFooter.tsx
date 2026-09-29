@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 import { routing, HREFLANG, caminhoNoIdioma, type Locale } from '@/i18n/routing';
+import { lembrarIdioma } from '@/lib/idioma-escolhido';
 
 const NOME_IDIOMA: Record<Locale, string> = {
   pt: 'Português (Brasil)',
@@ -73,6 +74,7 @@ export default function SiteFooter() {
               <li key={l}>
                 <a
                   href={caminhoNoIdioma(l, pathname)}
+                  onClick={() => lembrarIdioma(l)}
                   hrefLang={HREFLANG[l]}
                   lang={HREFLANG[l]}
                   aria-current={l === locale ? 'true' : undefined}

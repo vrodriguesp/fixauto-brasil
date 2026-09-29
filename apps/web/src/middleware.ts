@@ -1,7 +1,8 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
-import { routing, LOCALE_PREFIX, HREFLANG, type Locale } from '@/i18n/routing';
+import { routing, LOCALE_PREFIX, HREFLANG, X_DEFAULT_LOCALE, type Locale } from '@/i18n/routing';
+import { COOKIE_IDIOMA } from '@/lib/idioma-escolhido';
 
 // O refresh token do Supabase renova a sessao silenciosamente pra sempre -
 // sem isso, um admin que loga uma vez fica autenticado por dias/semanas,
@@ -27,7 +28,50 @@ function splitLocalePrefix(pathname: string): { prefix: string; path: string; lo
   return { prefix: '', path: pathname, locale: routing.defaultLocale };
 }
 
+// Robos (buscadores, IAs, previews de redes sociais) nunca sao
+// redirecionados por idioma: precisam ver cada versao no proprio endereco.
+const ROBO = /bot|crawl|spider|slurp|facebookexternalhit|embedly|preview|lighthouse|headless|curl|wget|python|node-fetch|axios/i;
+
+// Idioma para a HOME ("/"): 1) escolha explicita da pessoa (cookie gravado
+// pelo seletor/rodape/aviso); 2) idioma do navegador. So a home e
+// redirecionada - links diretos para outras paginas abrem o que foi pedido
+// (com o aviso SugestaoIdioma, se o navegador preferir outro idioma).
+function idiomaParaHome(req: NextRequest): Locale | null {
+  const ua = req.headers.get('user-agent') || '';
+  if (!ua || ROBO.test(ua)) return null;
+
+  const escolhido = req.cookies.get(COOKIE_IDIOMA)?.value;
+  if (escolhido && (routing.locales as readonly string[]).includes(escolhido)) return escolhido as Locale;
+
+  const accept = req.headers.get('accept-language');
+  if (!accept) return null;
+  for (const parte of accept.split(',')) {
+    const [tag, ...params] = parte.trim().toLowerCase().split(';');
+    if (params.some((p) => p.trim() === 'q=0')) continue;
+    if (tag === 'pt-pt') return 'pt-PT';
+    if (tag.startsWith('pt')) return 'pt';
+    if (tag.startsWith('et')) return 'et';
+    if (tag.startsWith('it')) return 'it';
+    if (tag.startsWith('ru')) return 'ru';
+    if (tag.startsWith('en')) return 'en';
+  }
+  // Nenhum idioma do site (ex.: frances): ingles, a versao x-default
+  return X_DEFAULT_LOCALE;
+}
+
 export async function middleware(req: NextRequest) {
+  // Home: abre direto no idioma da pessoa (307, nao cacheavel).
+  if (req.nextUrl.pathname === '/' && req.method === 'GET') {
+    const alvo = idiomaParaHome(req);
+    if (alvo && alvo !== routing.defaultLocale) {
+      const destino = new URL(`${LOCALE_PREFIX[alvo]}${req.nextUrl.search}`, req.url);
+      const r = NextResponse.redirect(destino, 307);
+      r.headers.set('Vary', 'Accept-Language, Cookie');
+      r.headers.set('Cache-Control', 'private, no-store');
+      return r;
+    }
+  }
+
   // /admin e /api nunca tem prefixo de idioma - next-intl so cuida do
   // resto (matcher abaixo ja exclui essas rotas do intlMiddleware).
   // A imagem de compartilhamento (app/[locale]/opengraph-image.tsx) e anunciada
@@ -69,6 +113,7 @@ export async function middleware(req: NextRequest) {
     // Bing usa o Content-Language (mais que hreflang) para saber o idioma da
     // pagina; o Google usa hreflang + <html lang>. Mandar os tres.
     res.headers.set('Content-Language', htmlLang);
+    if (rawPath === '/') res.headers.set('Vary', 'Accept-Language, Cookie');
   } else if (intlRes) {
     res = intlRes; // redirect do proprio next-intl (ex: "/" -> "/et" na 1a visita)
   } else {

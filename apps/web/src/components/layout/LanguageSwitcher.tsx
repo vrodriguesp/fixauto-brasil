@@ -4,6 +4,7 @@ import { useLocale } from 'next-intl';
 import { useState, useRef, useEffect } from 'react';
 import { usePathname } from '@/i18n/navigation';
 import { routing, HREFLANG, caminhoNoIdioma, type Locale } from '@/i18n/routing';
+import { lembrarIdioma } from '@/lib/idioma-escolhido';
 
 const LOCALE_LABEL: Record<Locale, { flag: string; label: string }> = {
   pt: { flag: '🇧🇷', label: 'Português (Brasil)' },
@@ -61,7 +62,7 @@ export default function LanguageSwitcher() {
               href={caminhoNoIdioma(l, pathname)}
               hrefLang={HREFLANG[l]}
               lang={HREFLANG[l]}
-              onClick={() => setOpen(false)}
+              onClick={() => { lembrarIdioma(l); setOpen(false); }}
               aria-current={l === locale ? 'true' : undefined}
               className={`w-full flex items-center gap-2 px-4 py-2 text-sm text-left ${
                 l === locale ? 'text-primary-700 bg-primary-50 font-medium' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'

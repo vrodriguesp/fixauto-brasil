@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { usePathname } from '@/i18n/navigation';
 import { LOCALE_PREFIX, HREFLANG, type Locale } from '@/i18n/routing';
+import { lembrarIdioma } from '@/lib/idioma-escolhido';
 
 // Sugere (sem redirecionar) a versao do site no idioma do navegador. O
 // Google recomenda nao redirecionar automaticamente por idioma: o
@@ -55,6 +56,8 @@ export default function SugestaoIdioma() {
     try {
       localStorage.setItem(CHAVE_FECHADA, '1');
     } catch {}
+    // Dispensou a sugestao: prefere a versao em que esta
+    lembrarIdioma(locale);
     setSugerido(null);
   };
 
@@ -62,7 +65,7 @@ export default function SugestaoIdioma() {
     <div lang={HREFLANG[sugerido]} className="bg-primary-50 border-b border-primary-100 text-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
         <span className="text-gray-700">{t.msg}</span>
-        <a href={`${LOCALE_PREFIX[sugerido]}${pathname === '/' ? '' : pathname}` || '/'} hrefLang={HREFLANG[sugerido]} className="font-medium text-primary-700 hover:underline">
+        <a href={`${LOCALE_PREFIX[sugerido]}${pathname === '/' ? '' : pathname}` || '/'} onClick={() => lembrarIdioma(sugerido)} hrefLang={HREFLANG[sugerido]} className="font-medium text-primary-700 hover:underline">
           {t.ir} →
         </a>
         <button type="button" onClick={fechar} className="text-gray-500 hover:text-gray-700" aria-label={t.fechar}>
