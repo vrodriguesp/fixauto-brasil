@@ -34,9 +34,25 @@
     "nenhumaAvaliacaoAinda": "Nessuna recensione ancora"
   },
   "oficinaAgenda": {
-    "mes0": "Gennaio", "mes1": "Febbraio", "mes2": "Marzo", "mes3": "Aprile", "mes4": "Maggio", "mes5": "Giugno",
-    "mes6": "Luglio", "mes7": "Agosto", "mes8": "Settembre", "mes9": "Ottobre", "mes10": "Novembre", "mes11": "Dicembre",
-    "dia0": "Dom", "dia1": "Lun", "dia2": "Mar", "dia3": "Mer", "dia4": "Gio", "dia5": "Ven", "dia6": "Sab",
+    "mes0": "Gennaio",
+    "mes1": "Febbraio",
+    "mes2": "Marzo",
+    "mes3": "Aprile",
+    "mes4": "Maggio",
+    "mes5": "Giugno",
+    "mes6": "Luglio",
+    "mes7": "Agosto",
+    "mes8": "Settembre",
+    "mes9": "Ottobre",
+    "mes10": "Novembre",
+    "mes11": "Dicembre",
+    "dia0": "Dom",
+    "dia1": "Lun",
+    "dia2": "Mar",
+    "dia3": "Mer",
+    "dia4": "Gio",
+    "dia5": "Ven",
+    "dia6": "Sab",
     "evento": "Evento",
     "noPrazo": "Nei tempi",
     "diasAntesDoPrevisto": "{dias}gg in anticipo",
@@ -370,7 +386,15 @@
     "colValor": "Valore",
     "colTaxa": "Tariffa",
     "colComissao": "Commissione",
-    "colStatus": "Stato"
+    "colStatus": "Stato",
+    "seloFundador": "Partner fondatore",
+    "faseFundadorTitulo": "Nessuna commissione in questa fase",
+    "faseFundadorTexto": "Durante la fase dei partner fondatori, i lavori conclusi tramite BipFix non pagano commissioni. Ti avviseremo con 30 giorni di anticipo prima di qualsiasi modifica.",
+    "condicaoEspecialTitulo": "Una condizione speciale per la tua officina",
+    "condicaoEspecialTexto": "BipFix ha concordato una tariffa del {taxa} per la tua officina.",
+    "validaAte": "Valida fino al {data}; dopo si applica la regola generale della piattaforma.",
+    "semPrazo": "Nessuna data di scadenza.",
+    "taxaFixaTexto": "In questa fase la commissione della piattaforma è uguale per tutte le officine: {taxa}."
   },
   "oficinaDistribuicao": {
     "hoje": "Oggi, {hora}",
@@ -445,7 +469,8 @@
     "observacoesOpcional": "Note (opzionale)",
     "placeholderObservacoes": "Garanzia, condizioni, informazioni aggiuntive...",
     "cancelar": "Annulla",
-    "atualizarOrcamento": "Aggiorna Preventivo"
+    "atualizarOrcamento": "Aggiorna Preventivo",
+    "semComissaoOrcamento": "BipFix non applica commissioni su questo preventivo. L'importo che invii è quello che vede il cliente."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "La password deve avere almeno 6 caratteri",

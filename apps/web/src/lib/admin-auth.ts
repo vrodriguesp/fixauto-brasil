@@ -18,7 +18,7 @@ const supabaseAdmin = createClient(
  *   const auth = await requireAdmin();
  *   if (!auth.ok) return auth.response;
  */
-export async function requireAdmin(): Promise<{ ok: true } | { ok: false; response: NextResponse }> {
+export async function requireAdmin(): Promise<{ ok: true; userId: string } | { ok: false; response: NextResponse }> {
   const cookieStore = cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -49,5 +49,5 @@ export async function requireAdmin(): Promise<{ ok: true } | { ok: false; respon
     return { ok: false, response: NextResponse.json({ error: 'Acesso negado' }, { status: 403 }) };
   }
 
-  return { ok: true };
+  return { ok: true, userId: session.user.id };
 }

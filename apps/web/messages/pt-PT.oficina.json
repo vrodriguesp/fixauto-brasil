@@ -34,9 +34,25 @@
     "nenhumaAvaliacaoAinda": "Ainda não há avaliações"
   },
   "oficinaAgenda": {
-    "mes0": "Janeiro", "mes1": "Fevereiro", "mes2": "Março", "mes3": "Abril", "mes4": "Maio", "mes5": "Junho",
-    "mes6": "Julho", "mes7": "Agosto", "mes8": "Setembro", "mes9": "Outubro", "mes10": "Novembro", "mes11": "Dezembro",
-    "dia0": "Dom", "dia1": "Seg", "dia2": "Ter", "dia3": "Qua", "dia4": "Qui", "dia5": "Sex", "dia6": "Sáb",
+    "mes0": "Janeiro",
+    "mes1": "Fevereiro",
+    "mes2": "Março",
+    "mes3": "Abril",
+    "mes4": "Maio",
+    "mes5": "Junho",
+    "mes6": "Julho",
+    "mes7": "Agosto",
+    "mes8": "Setembro",
+    "mes9": "Outubro",
+    "mes10": "Novembro",
+    "mes11": "Dezembro",
+    "dia0": "Dom",
+    "dia1": "Seg",
+    "dia2": "Ter",
+    "dia3": "Qua",
+    "dia4": "Qui",
+    "dia5": "Sex",
+    "dia6": "Sáb",
     "evento": "Evento",
     "noPrazo": "Dentro do prazo",
     "diasAntesDoPrevisto": "{dias}d antes do previsto",
@@ -370,7 +386,15 @@
     "colValor": "Valor",
     "colTaxa": "Taxa",
     "colComissao": "Comissão",
-    "colStatus": "Estado"
+    "colStatus": "Estado",
+    "seloFundador": "Parceiro fundador",
+    "faseFundadorTitulo": "Sem comissão nesta fase",
+    "faseFundadorTexto": "Durante a fase de parceiros fundadores, os serviços fechados através da BipFix não pagam comissão. Avisamos com 30 dias de antecedência antes de qualquer alteração.",
+    "condicaoEspecialTitulo": "Condição especial da sua oficina",
+    "condicaoEspecialTexto": "A BipFix acordou uma taxa de {taxa} para a sua oficina.",
+    "validaAte": "Válida até {data}; depois aplica-se a regra geral da plataforma.",
+    "semPrazo": "Sem data de fim.",
+    "taxaFixaTexto": "Nesta fase, a taxa da plataforma é igual para todas as oficinas: {taxa}."
   },
   "oficinaDistribuicao": {
     "hoje": "Hoje, {hora}",
@@ -445,7 +469,8 @@
     "observacoesOpcional": "Notas (opcional)",
     "placeholderObservacoes": "Garantia, condições, informações adicionais...",
     "cancelar": "Cancelar",
-    "atualizarOrcamento": "Atualizar Orçamento"
+    "atualizarOrcamento": "Atualizar Orçamento",
+    "semComissaoOrcamento": "A BipFix não cobra comissão sobre este orçamento. O valor que enviar é o valor que o cliente vê."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "A palavra-passe deve ter pelo menos 6 caracteres",

@@ -16,7 +16,7 @@ const BONUS_VOLUME = [
 export interface TaxaComissaoInfo {
   taxa: number;
   servicos90dias: number;
-  origem: 'override' | 'calculada';
+  origem: 'calculada';
 }
 
 function clamp(taxa: number): number {
@@ -30,6 +30,9 @@ function clamp(taxa: number): number {
  * por orcamento, media de avaliacao dos clientes e volume de servicos nos
  * ultimos 90 dias. Chamar depois de qualquer evento que mude uma dessas
  * metricas (orcamento enviado/revisado, servico concluido, nova avaliacao).
+ *
+ * E so a taxa "por desempenho". Qual taxa vale de fato (individual do
+ * admin > regra global) e decidido em lib/comissao-regras.ts.
  */
 export async function recalcularComissaoConfig(
   supabaseAdmin: SupabaseClient,
@@ -37,8 +40,7 @@ export async function recalcularComissaoConfig(
 ): Promise<TaxaComissaoInfo> {
   const desde = new Date(Date.now() - JANELA_DIAS * 24 * 60 * 60 * 1000).toISOString();
 
-  const [{ data: existingConfig }, { data: orcamentos }, { data: oficina }, { count: servicos90Count }] = await Promise.all([
-    supabaseAdmin.from('comissao_config').select('*').eq('oficina_id', oficinaId).single(),
+  const [{ data: orcamentos }, { data: oficina }, { count: servicos90Count }] = await Promise.all([
     supabaseAdmin
       .from('orcamentos')
       .select('created_at, revisao_numero, solicitacao:solicitacoes(created_at)')
@@ -51,10 +53,6 @@ export async function recalcularComissaoConfig(
       .eq('oficina_id', oficinaId)
       .gte('created_at', desde),
   ]);
-
-  if (existingConfig?.usa_override && existingConfig.taxa_fixa_override != null) {
-    return { taxa: existingConfig.taxa_fixa_override, servicos90dias: 0, origem: 'override' };
-  }
 
   const orcs = orcamentos || [];
   const temposResposta = orcs
@@ -107,25 +105,4 @@ export async function recalcularComissaoConfig(
   );
 
   return { taxa, servicos90dias: totalServicos90, origem: 'calculada' };
-}
-
-/** So le a taxa atual (sem recalcular) - usa quando so precisa do numero rapido. */
-export async function obterTaxaComissao(
-  supabaseAdmin: SupabaseClient,
-  oficinaId: string
-): Promise<TaxaComissaoInfo> {
-  const { data: config } = await supabaseAdmin
-    .from('comissao_config')
-    .select('taxa_calculada, taxa_fixa_override, usa_override')
-    .eq('oficina_id', oficinaId)
-    .single();
-
-  if (config?.usa_override && config.taxa_fixa_override != null) {
-    return { taxa: config.taxa_fixa_override, servicos90dias: 0, origem: 'override' };
-  }
-  if (config?.taxa_calculada != null) {
-    return { taxa: config.taxa_calculada, servicos90dias: 0, origem: 'calculada' };
-  }
-  // Sem config ainda (oficina nova) - calcula na hora
-  return recalcularComissaoConfig(supabaseAdmin, oficinaId);
 }

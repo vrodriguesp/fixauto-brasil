@@ -10,8 +10,6 @@ import { COMISSAO_CONFIG } from '@fixauto/shared';
 
 interface ComissaoInfo {
   taxa_calculada: number;
-  taxa_fixa_override: number | null;
-  usa_override: boolean;
   media_tempo_resposta_horas: number;
   media_revisoes_orcamento: number;
   media_avaliacao_clientes: number;
@@ -34,16 +32,36 @@ export default function ComissaoPage() {
   const { oficina } = useAuth();
   const moeda = currencyForCountry(oficina?.pais);
   const [config, setConfig] = useState<ComissaoInfo | null>(null);
+  // Taxa que vale hoje pela hierarquia (individual do admin > regra global),
+  // calculada no servidor - a oficina so ve o resultado e de onde ele vem.
+  const [efetiva, setEfetiva] = useState<{
+    taxa: number;
+    origem: 'individual' | 'global';
+    modoGlobal: 'isento' | 'fixa' | 'desempenho';
+    ate: string | null;
+    fundador: boolean;
+  } | null>(null);
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!oficina) return;
 
-    // Fetch commission config
-    supabase.from('comissao_config').select('*').eq('oficina_id', oficina.id).single()
-      .then(({ data }) => {
-        if (data) setConfig(data as ComissaoInfo);
+    fetch(`/api/comissao-atual?oficinaId=${oficina.id}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data) return;
+        setEfetiva(data);
+        if (data.metricas) {
+          const m = data.metricas;
+          setConfig({
+            taxa_calculada: Number(m.taxa_calculada),
+            media_tempo_resposta_horas: Number(m.media_tempo_resposta_horas),
+            media_revisoes_orcamento: Number(m.media_revisoes_orcamento),
+            media_avaliacao_clientes: Number(m.media_avaliacao_clientes),
+            total_servicos_concluidos: Number(m.total_servicos_concluidos),
+          });
+        }
       });
 
     // Fetch lancamentos
@@ -57,9 +75,12 @@ export default function ComissaoPage() {
       });
   }, [oficina]);
 
-  const taxa = config
-    ? (config.usa_override && config.taxa_fixa_override != null ? config.taxa_fixa_override : config.taxa_calculada)
-    : COMISSAO_CONFIG.TAXA_BASE;
+  const taxa = efetiva ? efetiva.taxa : COMISSAO_CONFIG.TAXA_BASE;
+  // O detalhamento por desempenho so faz sentido quando e ele que define a taxa
+  const mostraDesempenho = efetiva?.origem === 'global' && efetiva.modoGlobal === 'desempenho';
+  const pctTexto = (v: number) => `${(v * 100).toLocaleString(INTL_LOCALE[locale as keyof typeof INTL_LOCALE] || 'en-GB', { maximumFractionDigits: 2 })}%`;
+  const dataTexto = (iso: string) =>
+    new Date(iso + 'T12:00:00').toLocaleDateString(INTL_LOCALE[locale as keyof typeof INTL_LOCALE] || 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
   const totalPendente = lancamentos.filter(l => l.status === 'pendente').reduce((s, l) => s + l.valor_comissao, 0);
   const totalPago = lancamentos.filter(l => l.status === 'pago').reduce((s, l) => s + l.valor_comissao, 0);
@@ -122,14 +143,41 @@ export default function ComissaoPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('titulo')}</h1>
-      <p className="text-gray-600 mb-8">{t('subtitulo')}</p>
+      <div className="flex flex-wrap items-center gap-3 mb-2">
+        <h1 className="text-2xl font-bold text-gray-900">{t('titulo')}</h1>
+        {efetiva?.fundador && (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-200">
+            ⭐ {t('seloFundador')}
+          </span>
+        )}
+      </div>
+      <p className="text-gray-600 mb-6">{t('subtitulo')}</p>
+
+      {/* De onde vem a taxa */}
+      {efetiva && (efetiva.origem === 'individual' ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 mb-8">
+          <p className="font-semibold text-amber-900">{t('condicaoEspecialTitulo')}</p>
+          <p className="text-sm text-amber-800 mt-1">
+            {t('condicaoEspecialTexto', { taxa: pctTexto(efetiva.taxa) })}{' '}
+            {efetiva.ate ? t('validaAte', { data: dataTexto(efetiva.ate) }) : t('semPrazo')}
+          </p>
+        </div>
+      ) : efetiva.modoGlobal === 'isento' ? (
+        <div className="rounded-xl border border-green-200 bg-green-50 p-4 mb-8">
+          <p className="font-semibold text-green-900">{t('faseFundadorTitulo')}</p>
+          <p className="text-sm text-green-800 mt-1">{t('faseFundadorTexto')}</p>
+        </div>
+      ) : efetiva.modoGlobal === 'fixa' ? (
+        <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 mb-8">
+          <p className="text-sm text-blue-800">{t('taxaFixaTexto', { taxa: pctTexto(efetiva.taxa) })}</p>
+        </div>
+      ) : null)}
 
       {/* Current rate */}
       <div className="grid sm:grid-cols-3 gap-4 mb-8">
         <div className="card text-center">
           <p className="text-4xl font-bold" style={{ color: taxa <= 0.08 ? '#16a34a' : taxa <= 0.12 ? '#ca8a04' : '#dc2626' }}>
-            {(taxa * 100).toFixed(1)}%
+            {pctTexto(taxa)}
           </p>
           <p className="text-sm text-gray-500 mt-1">{t('suaTaxaAtual')}</p>
         </div>
@@ -144,6 +192,7 @@ export default function ComissaoPage() {
       </div>
 
       {/* Breakdown */}
+      {mostraDesempenho && (
       <div className="card mb-8">
         <h2 className="font-semibold text-gray-900 mb-4">{t('comoTaxaCalculada')}</h2>
         <div className="space-y-4">
@@ -185,6 +234,7 @@ export default function ComissaoPage() {
           </p>
         </div>
       </div>
+      )}
 
       {/* Ledger */}
       <div className="card">

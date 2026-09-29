@@ -31,6 +31,42 @@ const STATUS_AGENDA_LABEL: Record<string, string> = {
   cancelado: 'Cancelado',
 };
 
+const ETAPA_LABEL: Record<string, string> = {
+  recebido: 'Veículo recebido',
+  diagnostico: 'Diagnóstico',
+  aguardando_pecas: 'Aguardando peças',
+  em_execucao: 'Em execução',
+  pausa_cliente: 'Pausa (cliente)',
+  pausa_pecas: 'Pausa (peças)',
+  pausa_geral: 'Pausa',
+  teste_final: 'Teste final',
+  concluido: 'Concluído',
+  entregue: 'Entregue ao cliente',
+};
+
+const ACAO_LABEL: Record<string, string> = {
+  corrigir_status: 'Status corrigido',
+  corrigir_agendamento: 'Agendamento corrigido',
+  cancelar_agendamento: 'Agendamento cancelado',
+  adicionar_etapa: 'Etapa adicionada',
+  remover_etapa: 'Etapa removida',
+};
+
+// <input type="datetime-local"> trabalha no horario local, sem fuso
+function paraInputLocal(iso: string) {
+  const d = new Date(iso);
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+function resumo(v: any): string {
+  if (!v || typeof v !== 'object') return '—';
+  return Object.entries(v)
+    .filter(([k]) => !['id', 'agenda_id', 'funcionario_id', 'created_at'].includes(k))
+    .map(([k, val]) => `${k}: ${typeof val === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(val) ? formatDateTime(val) : String(val ?? '—')}`)
+    .join(' · ');
+}
+
 export default function AdminSolicitacaoDetalhePage() {
   const { id } = useParams<{ id: string }>();
   const [data, setData] = useState<any>(null);
@@ -41,14 +77,51 @@ export default function AdminSolicitacaoDetalhePage() {
   const [salvandoStatus, setSalvandoStatus] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [cancelandoAgendaId, setCancelandoAgendaId] = useState<string | null>(null);
+  // Modo correcao: toda correcao exige motivo e fica no historico
+  const [corrigindo, setCorrigindo] = useState(false);
+  const [motivo, setMotivo] = useState('');
+  const [corrMsg, setCorrMsg] = useState<string | null>(null);
+  const [enviandoCorr, setEnviandoCorr] = useState(false);
+  const [historico, setHistorico] = useState<any[]>([]);
+  const [orcStatus, setOrcStatus] = useState<Record<string, string>>({});
+  const [agendaEdit, setAgendaEdit] = useState<Record<string, { status: string; inicio: string; fim: string }>>({});
+  const [novaEtapa, setNovaEtapa] = useState<Record<string, { status: string; observacao: string }>>({});
 
   const fetchData = async () => {
     setLoading(true);
     const res = await fetch(`/api/admin/solicitacoes/${id}`);
     const json = res.ok ? await res.json() : null;
     setData(json);
-    if (json) setNovoStatus(json.solicitacao.status);
+    if (json) {
+      setNovoStatus(json.solicitacao.status);
+      setOrcStatus(Object.fromEntries(json.orcamentos.map((o: any) => [o.id, o.status])));
+      setAgendaEdit(Object.fromEntries((json.agenda || []).map((a: any) => [a.id, { status: a.status, inicio: paraInputLocal(a.data_inicio), fim: paraInputLocal(a.data_fim) }])));
+    }
+    const h = await fetch(`/api/admin/auditoria?solicitacao_id=${id}`);
+    setHistorico(h.ok ? await h.json() : []);
     setLoading(false);
+  };
+
+  const corrigir = async (body: Record<string, unknown>, ok: string) => {
+    if (motivo.trim().length < 3) {
+      setCorrMsg('Escreva o motivo da correção antes (fica no histórico).');
+      return;
+    }
+    setEnviandoCorr(true);
+    setCorrMsg(null);
+    const res = await fetch('/api/admin/corrigir', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...body, motivo }),
+    });
+    const r = await res.json().catch(() => ({}));
+    setEnviandoCorr(false);
+    if (!res.ok) {
+      setCorrMsg(r.error || 'Erro ao corrigir.');
+      return;
+    }
+    setCorrMsg(ok);
+    await fetchData();
   };
 
   useEffect(() => { fetchData(); }, [id]);
@@ -67,12 +140,17 @@ export default function AdminSolicitacaoDetalhePage() {
   };
 
   const handleSalvarStatus = async () => {
+    if (motivo.trim().length < 3) {
+      setStatusMsg('Escreva o motivo da correção (campo abaixo) antes de salvar.');
+      setCorrigindo(true);
+      return;
+    }
     setSalvandoStatus(true);
     setStatusMsg(null);
     const res = await fetch(`/api/admin/solicitacoes/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: novoStatus }),
+      body: JSON.stringify({ status: novoStatus, motivo }),
     });
     const result = await res.json().catch(() => ({}));
     if (res.ok) {
@@ -90,7 +168,7 @@ export default function AdminSolicitacaoDetalhePage() {
     const res = await fetch(`/api/admin/agenda/${agendaId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'cancelar' }),
+      body: JSON.stringify({ action: 'cancelar', motivo }),
     });
     const result = await res.json().catch(() => ({}));
     if (res.ok) {
@@ -149,6 +227,33 @@ export default function AdminSolicitacaoDetalhePage() {
             </div>
           )}
         </div>
+      </div>
+
+      <div className={`rounded-xl border p-4 mb-8 ${corrigindo ? 'bg-amber-500/10 border-amber-500/40' : 'bg-slate-800 border-slate-700'}`}>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-white font-medium text-sm">✏️ Corrigir dados deste serviço</p>
+            <p className="text-slate-400 text-xs">Status, orçamentos, agendamentos e etapas. Cliente e oficina são avisados; nada de automático é disparado (comissão, avisos a oficinas etc.).</p>
+          </div>
+          <button
+            onClick={() => setCorrigindo(!corrigindo)}
+            className={`text-sm font-medium px-4 py-2 rounded-lg ${corrigindo ? 'bg-slate-700 text-white' : 'bg-amber-600 hover:bg-amber-500 text-white'}`}
+          >
+            {corrigindo ? 'Sair do modo correção' : 'Corrigir dados'}
+          </button>
+        </div>
+        {corrigindo && (
+          <div className="mt-4">
+            <label className="block text-xs text-amber-200 mb-1">Motivo da correção (obrigatório, fica no histórico)</label>
+            <input
+              value={motivo}
+              onChange={(e) => setMotivo(e.target.value)}
+              placeholder="Ex.: oficina marcou a etapa errada por engano"
+              className="w-full bg-slate-900 border border-slate-600 text-white text-sm rounded-lg px-3 py-2"
+            />
+            {corrMsg && <p className="text-sm text-amber-100 mt-2">{corrMsg}</p>}
+          </div>
+        )}
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4 mb-8">
@@ -227,6 +332,24 @@ export default function AdminSolicitacaoDetalhePage() {
                   </div>
                 )}
                 <p className="text-slate-500 text-xs mt-2">Enviado em {formatDateTime(o.created_at)} · Prazo {o.prazo_dias} dia(s)</p>
+                {corrigindo && (
+                  <div className="flex items-center gap-2 mt-3">
+                    <select
+                      value={orcStatus[o.id] || o.status}
+                      onChange={(e) => setOrcStatus({ ...orcStatus, [o.id]: e.target.value })}
+                      className="bg-slate-900 border border-slate-600 text-white text-xs rounded-lg px-2 py-1.5"
+                    >
+                      {Object.entries(STATUS_ORCAMENTO).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                    </select>
+                    <button
+                      disabled={enviandoCorr || (orcStatus[o.id] || o.status) === o.status}
+                      onClick={() => corrigir({ entidade: 'orcamento', id: o.id, alteracoes: { status: orcStatus[o.id] } }, 'Status do orçamento corrigido.')}
+                      className="bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-white text-xs font-medium px-3 py-1.5 rounded-lg"
+                    >
+                      Corrigir status
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -238,7 +361,8 @@ export default function AdminSolicitacaoDetalhePage() {
           <p className="text-slate-400 text-xs uppercase tracking-wide mb-3">Agendamentos ({agenda.length})</p>
           <div className="space-y-2">
             {agenda.map((a: any) => (
-              <div key={a.id} className="bg-slate-800 border border-slate-700 rounded-xl p-4 flex items-center justify-between">
+              <div key={a.id} className="bg-slate-800 border border-slate-700 rounded-xl p-4">
+              <div className="flex items-center justify-between">
                 <div>
                   <p className="text-white font-medium">{a.titulo}</p>
                   <p className="text-slate-400 text-sm">
@@ -261,6 +385,84 @@ export default function AdminSolicitacaoDetalhePage() {
                   )}
                 </div>
               </div>
+              {corrigindo && agendaEdit[a.id] && (
+                <div className="mt-3 pt-3 border-t border-slate-700 space-y-3">
+                  <div className="flex flex-wrap items-end gap-2">
+                    <label className="text-xs text-slate-400">
+                      Status
+                      <select
+                        value={agendaEdit[a.id].status}
+                        onChange={(e) => setAgendaEdit({ ...agendaEdit, [a.id]: { ...agendaEdit[a.id], status: e.target.value } })}
+                        className="block mt-1 bg-slate-900 border border-slate-600 text-white text-xs rounded-lg px-2 py-1.5"
+                      >
+                        {Object.entries(STATUS_AGENDA_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                      </select>
+                    </label>
+                    <label className="text-xs text-slate-400">
+                      Início
+                      <input
+                        type="datetime-local"
+                        value={agendaEdit[a.id].inicio}
+                        onChange={(e) => setAgendaEdit({ ...agendaEdit, [a.id]: { ...agendaEdit[a.id], inicio: e.target.value } })}
+                        className="block mt-1 bg-slate-900 border border-slate-600 text-white text-xs rounded-lg px-2 py-1.5"
+                      />
+                    </label>
+                    <label className="text-xs text-slate-400">
+                      Fim
+                      <input
+                        type="datetime-local"
+                        value={agendaEdit[a.id].fim}
+                        onChange={(e) => setAgendaEdit({ ...agendaEdit, [a.id]: { ...agendaEdit[a.id], fim: e.target.value } })}
+                        className="block mt-1 bg-slate-900 border border-slate-600 text-white text-xs rounded-lg px-2 py-1.5"
+                      />
+                    </label>
+                    <button
+                      disabled={enviandoCorr}
+                      onClick={() => {
+                        const ed = agendaEdit[a.id];
+                        const alteracoes: Record<string, string> = {};
+                        if (ed.status !== a.status) alteracoes.status = ed.status;
+                        if (ed.inicio !== paraInputLocal(a.data_inicio)) alteracoes.data_inicio = new Date(ed.inicio).toISOString();
+                        if (ed.fim !== paraInputLocal(a.data_fim)) alteracoes.data_fim = new Date(ed.fim).toISOString();
+                        if (Object.keys(alteracoes).length === 0) return setCorrMsg('Nada mudou neste agendamento.');
+                        corrigir({ entidade: 'agenda', id: a.id, alteracoes }, 'Agendamento corrigido.');
+                      }}
+                      className="bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-white text-xs font-medium px-3 py-1.5 rounded-lg"
+                    >
+                      Salvar agendamento
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap items-end gap-2">
+                    <label className="text-xs text-slate-400">
+                      Acrescentar etapa do conserto
+                      <select
+                        value={novaEtapa[a.id]?.status || 'recebido'}
+                        onChange={(e) => setNovaEtapa({ ...novaEtapa, [a.id]: { status: e.target.value, observacao: novaEtapa[a.id]?.observacao || '' } })}
+                        className="block mt-1 bg-slate-900 border border-slate-600 text-white text-xs rounded-lg px-2 py-1.5"
+                      >
+                        {Object.entries(ETAPA_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                      </select>
+                    </label>
+                    <input
+                      value={novaEtapa[a.id]?.observacao || ''}
+                      onChange={(e) => setNovaEtapa({ ...novaEtapa, [a.id]: { status: novaEtapa[a.id]?.status || 'recebido', observacao: e.target.value } })}
+                      placeholder="Observação visível no acompanhamento (opcional)"
+                      className="flex-1 min-w-[200px] bg-slate-900 border border-slate-600 text-white text-xs rounded-lg px-2 py-1.5"
+                    />
+                    <button
+                      disabled={enviandoCorr}
+                      onClick={() => corrigir(
+                        { entidade: 'etapa_add', id: a.id, alteracoes: { status: novaEtapa[a.id]?.status || 'recebido', observacao: novaEtapa[a.id]?.observacao || '' } },
+                        'Etapa acrescentada.'
+                      )}
+                      className="bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-white text-xs font-medium px-3 py-1.5 rounded-lg"
+                    >
+                      Acrescentar etapa
+                    </button>
+                  </div>
+                </div>
+              )}
+              </div>
             ))}
           </div>
         </div>
@@ -272,8 +474,19 @@ export default function AdminSolicitacaoDetalhePage() {
           <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-2">
             {etapas.map((e: any) => (
               <div key={e.id} className="flex items-center justify-between text-sm">
-                <span className="text-white">{e.status}{e.observacao ? ` — ${e.observacao}` : ''}</span>
-                <span className="text-slate-500 text-xs">{e.funcionario?.profile?.nome || 'Oficina'} · {formatDateTime(e.created_at)}</span>
+                <span className="text-white">{ETAPA_LABEL[e.status] || e.status}{e.observacao ? ` — ${e.observacao}` : ''}</span>
+                <span className="text-slate-500 text-xs flex items-center gap-3">
+                  {e.funcionario?.profile?.nome || 'Oficina'} · {formatDateTime(e.created_at)}
+                  {corrigindo && (
+                    <button
+                      disabled={enviandoCorr}
+                      onClick={() => confirm('Remover esta etapa? Ela fica guardada no histórico.') && corrigir({ entidade: 'etapa_remover', id: e.id }, 'Etapa removida.')}
+                      className="text-red-400 hover:text-red-300"
+                    >
+                      Remover
+                    </button>
+                  )}
+                </span>
               </div>
             ))}
           </div>
@@ -322,6 +535,24 @@ export default function AdminSolicitacaoDetalhePage() {
           <div className="bg-slate-800 border border-slate-700 rounded-xl p-4">
             <p className="text-amber-400 font-semibold">{'★'.repeat(avaliacao.nota)}{'☆'.repeat(5 - avaliacao.nota)}</p>
             {avaliacao.comentario && <p className="text-slate-300 text-sm mt-2">{avaliacao.comentario}</p>}
+          </div>
+        </div>
+      )}
+
+      {historico.length > 0 && (
+        <div className="mb-8">
+          <p className="text-slate-400 text-xs uppercase tracking-wide mb-3">Histórico de correções do admin ({historico.length})</p>
+          <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-3">
+            {historico.map((h: any) => (
+              <div key={h.id} className="text-sm border-b border-slate-700/60 last:border-0 pb-3 last:pb-0">
+                <p className="text-white">
+                  {ACAO_LABEL[h.acao] || h.acao} <span className="text-slate-500">({h.entidade})</span>
+                  <span className="text-slate-500 text-xs ml-2">{formatDateTime(h.created_at)} · {h.admin?.nome || h.admin?.email || 'admin'}</span>
+                </p>
+                {h.motivo && <p className="text-amber-200/90 text-xs mt-0.5">Motivo: {h.motivo}</p>}
+                <p className="text-slate-400 text-xs mt-0.5">Antes: {resumo(h.antes)} → Depois: {resumo(h.depois)}</p>
+              </div>
+            ))}
           </div>
         </div>
       )}

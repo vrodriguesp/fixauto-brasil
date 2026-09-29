@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { recalcularComissaoConfig } from '@/lib/comissao';
+import { taxaEfetivaServicos } from '@/lib/comissao-regras';
 import { getSessionUserId } from '@/lib/api-auth';
 import { sendServicoConcluidoEmail, sendServicoConcluidoWhatsApp } from '@/lib/notifications';
 import { notifServicoConcluido } from '@/lib/notif-i18n';
@@ -114,11 +115,12 @@ export async function POST(req: NextRequest) {
             .eq('orcamento_id', orc.id)
             .single();
 
-          if (!jaLancado) {
-            // Taxa por performance (resposta/revisoes/avaliacao) + volume
-            // dos ultimos 90 dias, a nao ser que o admin tenha fixado uma
-            // taxa manual pra essa oficina
-            const { taxa } = await recalcularComissaoConfig(supabaseAdmin, orc.oficina_id);
+          // Taxa pela hierarquia (individual do admin > regra global).
+          // 0% (fase de parceiros fundadores ou oferta individual) nao gera
+          // lancamento - a oficina nao deve ver "comissao pendente".
+          const { taxa } = jaLancado ? { taxa: 0 } : await taxaEfetivaServicos(supabaseAdmin, orc.oficina_id);
+
+          if (!jaLancado && taxa > 0) {
 
             // Insert commission entry
             const { error: comissaoError } = await supabaseAdmin.from('comissao_lancamento').insert({

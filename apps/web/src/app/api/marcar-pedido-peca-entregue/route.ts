@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { recalcularComissaoPecasConfig } from '@/lib/comissao-pecas';
+import { taxaEfetivaPecas } from '@/lib/comissao-regras';
 import { getSessionUserId } from '@/lib/api-auth';
 import { sendPedidoPecaEntregueEmail } from '@/lib/notifications';
 import { notifPedidoPecaEntregue } from '@/lib/notif-i18n';
@@ -68,8 +69,13 @@ export async function POST(req: NextRequest) {
       .eq('pedido_id', pedidoId)
       .single();
 
-    if (!jaLancado && fornecedorId) {
-      const { taxa } = await recalcularComissaoPecasConfig(supabaseAdmin, pedido.fornecedor_tipo, fornecedorId);
+    // Taxa pela hierarquia (individual do admin > regra global); 0% nao
+    // gera lancamento.
+    const { taxa } = !jaLancado && fornecedorId
+      ? await taxaEfetivaPecas(supabaseAdmin, pedido.fornecedor_tipo, fornecedorId)
+      : { taxa: 0 };
+
+    if (!jaLancado && fornecedorId && taxa > 0) {
 
       const { error: comissaoError } = await supabaseAdmin.from('comissao_pecas_lancamento').insert({
         fornecedor_tipo: pedido.fornecedor_tipo,

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { formatCurrency } from '@/lib/utils';
+import PedidosPecasAdmin from '@/components/admin/PedidosPecasAdmin';
 
 interface Fornecedor {
   id: string;
@@ -196,6 +197,8 @@ export default function AdminPecasPage() {
           </div>
         )}
       </div>
+
+      <PedidosPecasAdmin />
     </div>
   );
 }

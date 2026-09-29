@@ -34,9 +34,25 @@
     "nenhumaAvaliacaoAinda": "No reviews yet"
   },
   "oficinaAgenda": {
-    "mes0": "January", "mes1": "February", "mes2": "March", "mes3": "April", "mes4": "May", "mes5": "June",
-    "mes6": "July", "mes7": "August", "mes8": "September", "mes9": "October", "mes10": "November", "mes11": "December",
-    "dia0": "Sun", "dia1": "Mon", "dia2": "Tue", "dia3": "Wed", "dia4": "Thu", "dia5": "Fri", "dia6": "Sat",
+    "mes0": "January",
+    "mes1": "February",
+    "mes2": "March",
+    "mes3": "April",
+    "mes4": "May",
+    "mes5": "June",
+    "mes6": "July",
+    "mes7": "August",
+    "mes8": "September",
+    "mes9": "October",
+    "mes10": "November",
+    "mes11": "December",
+    "dia0": "Sun",
+    "dia1": "Mon",
+    "dia2": "Tue",
+    "dia3": "Wed",
+    "dia4": "Thu",
+    "dia5": "Fri",
+    "dia6": "Sat",
     "evento": "Event",
     "noPrazo": "On time",
     "diasAntesDoPrevisto": "{dias}d ahead of schedule",
@@ -370,7 +386,15 @@
     "colValor": "Amount",
     "colTaxa": "Rate",
     "colComissao": "Commission",
-    "colStatus": "Status"
+    "colStatus": "Status",
+    "seloFundador": "Founding partner",
+    "faseFundadorTitulo": "No commission in this phase",
+    "faseFundadorTexto": "During the founding-partner phase, jobs closed through BipFix carry no commission. We will give you 30 days' notice before any change.",
+    "condicaoEspecialTitulo": "A special rate for your shop",
+    "condicaoEspecialTexto": "BipFix has agreed a rate of {taxa} for your shop.",
+    "validaAte": "Valid until {data}; after that the platform's general rule applies.",
+    "semPrazo": "No end date.",
+    "taxaFixaTexto": "In this phase the platform fee is the same for every shop: {taxa}."
   },
   "oficinaDistribuicao": {
     "hoje": "Today, {hora}",
@@ -445,7 +469,8 @@
     "observacoesOpcional": "Notes (optional)",
     "placeholderObservacoes": "Warranty, terms, additional information...",
     "cancelar": "Cancel",
-    "atualizarOrcamento": "Update Quote"
+    "atualizarOrcamento": "Update Quote",
+    "semComissaoOrcamento": "BipFix charges no commission on this quote. The amount you send is the amount the customer sees."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Password must be at least 6 characters",

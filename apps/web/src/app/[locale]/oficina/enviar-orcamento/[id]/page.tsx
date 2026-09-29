@@ -397,8 +397,17 @@ export default function EnviarOrcamentoPage() {
             <span className="text-2xl font-bold text-gray-900">{formatCurrency(total, moeda, locale)}</span>
           </div>
 
+          {/* Sem comissao (fase de fundadores ou oferta individual): nada a absorver/repassar */}
+          {total > 0 && comissaoInfo && comissaoInfo.taxa === 0 && (
+            <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm text-green-800">
+                {t('semComissaoOrcamento')}
+              </div>
+            </div>
+          )}
+
           {/* Commission section */}
-          {total > 0 && (
+          {total > 0 && comissaoInfo && comissaoInfo.taxa > 0 && (
             <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                 <div className="flex items-center gap-2 mb-2">

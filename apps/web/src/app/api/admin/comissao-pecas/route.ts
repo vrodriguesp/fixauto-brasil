@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin } from '@/lib/admin-auth';
+import { registrarAuditoria } from '@/lib/admin-auditoria';
+import { individualVigente, lerPlataformaConfig } from '@/lib/comissao-regras';
+import { COMISSAO_PECAS_CONFIG } from '@fixauto/shared';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -20,8 +23,8 @@ export async function GET() {
 
   try {
     const [{ data: lojas, error: lojasError }, { data: oficinasFornecedoras, error: ofiError }] = await Promise.all([
-      supabaseAdmin.from('lojas_pecas').select('id, nome_fantasia, cidade, estado, pais, ativa'),
-      supabaseAdmin.from('oficinas').select('id, nome_fantasia, cidade, estado, pais, ativa').eq('vende_pecas', true),
+      supabaseAdmin.from('lojas_pecas').select('id, nome_fantasia, cidade, estado, pais, ativa, parceiro_fundador, parceiro_fundador_desde'),
+      supabaseAdmin.from('oficinas').select('id, nome_fantasia, cidade, estado, pais, ativa, parceiro_fundador, parceiro_fundador_desde').eq('vende_pecas', true),
     ]);
     if (lojasError) return NextResponse.json({ error: lojasError.message }, { status: 500 });
     if (ofiError) return NextResponse.json({ error: ofiError.message }, { status: 500 });
@@ -31,7 +34,8 @@ export async function GET() {
       ...(oficinasFornecedoras || []).map((f) => ({ ...f, tipo: 'oficina' as const })),
     ];
 
-    const [{ data: configs }, { data: lancamentos }] = await Promise.all([
+    const [global, { data: configs }, { data: lancamentos }] = await Promise.all([
+      lerPlataformaConfig(supabaseAdmin),
       supabaseAdmin.from('comissao_pecas_config').select('*'),
       supabaseAdmin.from('comissao_pecas_lancamento').select('fornecedor_tipo, fornecedor_id, valor_comissao, status'),
     ]);
@@ -58,12 +62,24 @@ export async function GET() {
         taxa_calculada: config?.taxa_calculada ?? null,
         taxa_fixa_override: config?.taxa_fixa_override ?? null,
         usa_override: config?.usa_override ?? false,
+        override_ate: config?.override_ate ?? null,
+        override_motivo: config?.override_motivo ?? null,
+        individual_vigente: individualVigente(config),
+        // Hierarquia: individual (no prazo) > regra global de pecas
+        efetiva: individualVigente(config)
+          ? { taxa: Number(config.taxa_fixa_override), origem: 'individual' as const }
+          : {
+              taxa: global.comissao_pecas_modo === 'isento' ? 0
+                : global.comissao_pecas_modo === 'fixa' ? global.comissao_pecas_taxa
+                : config?.taxa_calculada != null ? Number(config.taxa_calculada) : COMISSAO_PECAS_CONFIG.TAXA_BASE,
+              origem: 'global' as const,
+            },
         total_pendente: agg.total_pendente,
         total_pago: agg.total_pago,
       };
     });
 
-    return NextResponse.json(resultado);
+    return NextResponse.json({ global, fornecedores: resultado });
   } catch (error) {
     console.error('[admin/comissao-pecas]', error);
     return NextResponse.json({ error: 'Erro ao buscar comissões de peças' }, { status: 500 });
@@ -88,13 +104,30 @@ export async function PATCH(req: NextRequest) {
         .select()
         .single();
       if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+      await registrarAuditoria(supabaseAdmin, {
+        adminId: auth.userId, entidade: 'comissao_pecas_lancamento', entidadeId: body.lancamento_id,
+        acao: `marcar_${body.status}`, depois: { status: body.status },
+      });
       return NextResponse.json(data);
     }
 
-    const { fornecedor_tipo, fornecedor_id, taxa_fixa_override, usa_override } = body;
+    const { fornecedor_tipo, fornecedor_id, taxa_fixa_override, usa_override, override_ate, override_motivo } = body;
     if (!fornecedor_tipo || !fornecedor_id) {
       return NextResponse.json({ error: 'fornecedor_tipo e fornecedor_id obrigatórios' }, { status: 400 });
     }
+    if (usa_override && !(typeof taxa_fixa_override === 'number' && taxa_fixa_override >= 0 && taxa_fixa_override <= 0.5)) {
+      return NextResponse.json({ error: 'Taxa inválida (entre 0% e 50%)' }, { status: 400 });
+    }
+    if (override_ate && !/^\d{4}-\d{2}-\d{2}$/.test(override_ate)) {
+      return NextResponse.json({ error: 'Data inválida' }, { status: 400 });
+    }
+
+    const { data: antes } = await supabaseAdmin
+      .from('comissao_pecas_config')
+      .select('usa_override, taxa_fixa_override, override_ate, override_motivo')
+      .eq('fornecedor_tipo', fornecedor_tipo)
+      .eq('fornecedor_id', fornecedor_id)
+      .maybeSingle();
 
     const { data, error } = await supabaseAdmin
       .from('comissao_pecas_config')
@@ -104,6 +137,8 @@ export async function PATCH(req: NextRequest) {
           fornecedor_id,
           taxa_fixa_override: usa_override ? taxa_fixa_override : null,
           usa_override: !!usa_override,
+          override_ate: usa_override ? override_ate || null : null,
+          override_motivo: usa_override ? override_motivo?.trim() || null : null,
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'fornecedor_tipo,fornecedor_id' }
@@ -111,6 +146,11 @@ export async function PATCH(req: NextRequest) {
       .select()
       .single();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    await registrarAuditoria(supabaseAdmin, {
+      adminId: auth.userId, entidade: fornecedor_tipo === 'loja' ? 'loja' : 'oficina', entidadeId: fornecedor_id,
+      acao: usa_override ? 'definir_taxa_individual_pecas' : 'remover_taxa_individual_pecas',
+      antes, depois: { usa_override: !!usa_override, taxa_fixa_override, override_ate, override_motivo }, motivo: override_motivo,
+    });
     return NextResponse.json(data);
   } catch (error) {
     console.error('[admin/comissao-pecas PATCH]', error);

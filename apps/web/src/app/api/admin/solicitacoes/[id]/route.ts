@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin } from '@/lib/admin-auth';
+import { registrarAuditoria } from '@/lib/admin-auditoria';
 import { STATUS_SOLICITACAO } from '@fixauto/shared';
 import { notifStatusSolicitacaoAtualizado, statusSolicitacaoLabelFor } from '@/lib/notif-i18n';
 
@@ -116,7 +117,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   if (!auth.ok) return auth.response;
 
   try {
-    const { status } = await req.json();
+    const { status, motivo } = await req.json();
     if (!status || !(status in STATUS_SOLICITACAO)) {
       return NextResponse.json({ error: 'Status inválido' }, { status: 400 });
     }
@@ -139,6 +140,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    await registrarAuditoria(supabaseAdmin, {
+      adminId: auth.userId, entidade: 'solicitacao', entidadeId: params.id, acao: 'corrigir_status',
+      antes: { status: solicitacao.status }, depois: { status }, motivo, solicitacaoId: params.id,
+    });
 
     if (solicitacao.cliente_id) {
       const clienteIdioma = (solicitacao.cliente as any)?.idioma;

@@ -17,6 +17,7 @@ const sidebarLinks = [
   { href: '/admin/pecas', label: 'Peças', icon: PackageIcon },
   { href: '/admin/comissoes-pecas', label: 'Comissão de Peças', icon: CurrencyIcon },
   { href: '/admin/monitoramento', label: 'Monitoramento', icon: MonitorIcon },
+  { href: '/admin/auditoria', label: 'Histórico do admin', icon: ListIcon },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

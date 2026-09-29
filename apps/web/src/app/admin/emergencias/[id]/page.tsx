@@ -4,18 +4,27 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { formatDateTime } from '@/lib/utils';
+import CorrigirStatus from '@/components/admin/CorrigirStatus';
+
+const STATUS_EMERGENCIA: Record<string, string> = {
+  aberta: 'Aberta',
+  em_orcamento: 'Em orçamento',
+  resolvida: 'Resolvida',
+  cancelada: 'Cancelada',
+};
 
 export default function AdminEmergenciaDetalhePage() {
   const { id } = useParams<{ id: string }>();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const carregar = () =>
     fetch(`/api/admin/emergencias/${id}`)
       .then((res) => (res.ok ? res.json() : null))
       .then(setData)
       .finally(() => setLoading(false));
-  }, [id]);
+
+  useEffect(() => { carregar(); }, [id]);
 
   if (loading) return <div className="text-slate-400">Carregando...</div>;
   if (!data) return <div className="text-slate-400">Emergência não encontrada.</div>;
@@ -27,6 +36,12 @@ export default function AdminEmergenciaDetalhePage() {
       <Link href="/admin/emergencias" className="text-slate-400 hover:text-white text-sm mb-2 inline-block">← Voltar</Link>
       <h1 className="text-2xl font-bold text-white">Acidente — {emergencia.nome}</h1>
       <p className="text-slate-400 text-sm mt-1">{emergencia.endereco} · {formatDateTime(emergencia.created_at)}</p>
+      <div className="mt-2">
+        <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-slate-700 text-slate-200">
+          {STATUS_EMERGENCIA[emergencia.status] || emergencia.status}
+        </span>
+        <CorrigirStatus key={emergencia.status} entidade="emergencia" id={emergencia.id} atual={emergencia.status} opcoes={STATUS_EMERGENCIA} onFeito={carregar} />
+      </div>
 
       <div className="grid sm:grid-cols-2 gap-4 my-6">
         <div className="bg-slate-800 border border-slate-700 rounded-xl p-4">

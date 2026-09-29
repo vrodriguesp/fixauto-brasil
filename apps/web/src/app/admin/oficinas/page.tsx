@@ -110,6 +110,9 @@ export default function AdminOficinasPage() {
                 >
                   <td className="px-6 py-4 text-white font-medium">
                     {oficina.nome_fantasia}
+                    {(oficina as any).parceiro_fundador && (
+                      <span className="ml-2 inline-flex px-2 py-0.5 rounded text-xs font-medium bg-yellow-500/15 text-yellow-300 border border-yellow-500/40">⭐ Fundadora</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 text-slate-300 text-sm">
                     {oficina.cidade}, {oficina.estado}

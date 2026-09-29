@@ -34,9 +34,25 @@
     "nenhumaAvaliacaoAinda": "Hinnanguid veel ei ole"
   },
   "oficinaAgenda": {
-    "mes0": "Jaanuar", "mes1": "Veebruar", "mes2": "Märts", "mes3": "Aprill", "mes4": "Mai", "mes5": "Juuni",
-    "mes6": "Juuli", "mes7": "August", "mes8": "September", "mes9": "Oktoober", "mes10": "November", "mes11": "Detsember",
-    "dia0": "P", "dia1": "E", "dia2": "T", "dia3": "K", "dia4": "N", "dia5": "R", "dia6": "L",
+    "mes0": "Jaanuar",
+    "mes1": "Veebruar",
+    "mes2": "Märts",
+    "mes3": "Aprill",
+    "mes4": "Mai",
+    "mes5": "Juuni",
+    "mes6": "Juuli",
+    "mes7": "August",
+    "mes8": "September",
+    "mes9": "Oktoober",
+    "mes10": "November",
+    "mes11": "Detsember",
+    "dia0": "P",
+    "dia1": "E",
+    "dia2": "T",
+    "dia3": "K",
+    "dia4": "N",
+    "dia5": "R",
+    "dia6": "L",
     "evento": "Sündmus",
     "noPrazo": "Tähtajaks valmis",
     "diasAntesDoPrevisto": "{dias} päeva enne kavandatut",
@@ -370,7 +386,15 @@
     "colValor": "Summa",
     "colTaxa": "Määr",
     "colComissao": "Komisjonitasu",
-    "colStatus": "Staatus"
+    "colStatus": "Staatus",
+    "seloFundador": "Asutajapartner",
+    "faseFundadorTitulo": "Selles faasis komisjonitasu ei ole",
+    "faseFundadorTexto": "Asutajapartnerite faasis ei võeta BipFixi kaudu sõlmitud tööde eest komisjonitasu. Teatame igast muudatusest 30 päeva ette.",
+    "condicaoEspecialTitulo": "Sinu töökoja eritingimused",
+    "condicaoEspecialTexto": "BipFix on sinu töökojaga kokku leppinud tasumäära {taxa}.",
+    "validaAte": "Kehtib kuni {data}; seejärel kehtib platvormi üldreegel.",
+    "semPrazo": "Lõppkuupäev puudub.",
+    "taxaFixaTexto": "Selles faasis on platvormi tasu kõigile töökodadele sama: {taxa}."
   },
   "oficinaDistribuicao": {
     "hoje": "Täna, {hora}",
@@ -445,7 +469,8 @@
     "observacoesOpcional": "Märkused (valikuline)",
     "placeholderObservacoes": "Garantii, tingimused, lisainfo...",
     "cancelar": "Tühista",
-    "atualizarOrcamento": "Uuenda hinnapakkumist"
+    "atualizarOrcamento": "Uuenda hinnapakkumist",
+    "semComissaoOrcamento": "BipFix ei võta selle pakkumise pealt komisjonitasu. Summa, mille saadad, on summa, mida klient näeb."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Parool peab olema vähemalt 6 tähemärki",

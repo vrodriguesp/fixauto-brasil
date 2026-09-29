@@ -5,12 +5,13 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { currencyForCountry } from '@/lib/currency';
+import { formatDate } from '@/lib/utils';
 import type { Oficina, Solicitacao, Orcamento } from '@fixauto/shared';
 
-interface ComissaoConfigLocal {
-  taxa_padrao: number;
-  taxa_fixa_override: number | null;
-  usa_override: boolean;
+interface ComissaoResumo {
+  individual: { taxa: number | null; ate: string | null; motivo: string | null; vigente: boolean } | null;
+  efetiva: { taxa: number; origem: 'individual' | 'global' };
+  oficina: { parceiro_fundador: boolean; parceiro_fundador_desde: string | null };
 }
 
 interface ComissaoLancamento {
@@ -31,15 +32,8 @@ export default function AdminOficinaDetailPage() {
   const [oficina, setOficina] = useState<Oficina | null>(null);
   const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
   const [orcamentos, setOrcamentos] = useState<Orcamento[]>([]);
-  const [comissaoConfig, setComissaoConfig] = useState<ComissaoConfigLocal>({
-    taxa_padrao: 0.10,
-    taxa_fixa_override: null,
-    usa_override: false,
-  });
-  const [overrideRate, setOverrideRate] = useState('10');
-  const [useOverride, setUseOverride] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [saveMsg, setSaveMsg] = useState<string | null>(null);
+  const [comissao, setComissao] = useState<ComissaoResumo | null>(null);
+  const [modoGlobal, setModoGlobal] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [lancamentos, setLancamentos] = useState<ComissaoLancamento[]>([]);
   const [marcandoPagoId, setMarcandoPagoId] = useState<string | null>(null);
@@ -76,21 +70,13 @@ export default function AdminOficinaDetailPage() {
         setSolicitacoes(Array.from(solMap.values()));
       }
 
-      // Comissao config
-      const { data: config } = await supabase
-        .from('comissao_config')
-        .select('*')
-        .eq('oficina_id', id)
-        .single();
-
-      if (config) {
-        setComissaoConfig(config as ComissaoConfigLocal);
-        setUseOverride(config.usa_override);
-        setOverrideRate(
-          config.taxa_fixa_override
-            ? (config.taxa_fixa_override * 100).toFixed(1)
-            : (config.taxa_padrao * 100).toFixed(1)
-        );
+      // Taxa que vale hoje (hierarquia individual > global). Vem da API
+      // do admin: comissao_config so e legivel pela propria oficina (RLS).
+      const resCom = await fetch('/api/admin/comissao');
+      if (resCom.ok) {
+        const dados = await resCom.json();
+        setModoGlobal(dados.global?.comissao_servicos_modo || '');
+        setComissao((dados.oficinas || []).find((o: any) => o.oficina_id === id) || null);
       }
 
       // Comissao lancamentos (breakdown of what this oficina owes/paid, and why)
@@ -120,34 +106,6 @@ export default function AdminOficinaDetailPage() {
       setLancamentos((prev) => prev.map((l) => (l.id === lancamentoId ? { ...l, ...updated } : l)));
     }
     setMarcandoPagoId(null);
-  };
-
-  const handleSaveComissao = async () => {
-    setSaving(true);
-    setSaveMsg(null);
-
-    const taxaValue = parseFloat(overrideRate) / 100;
-
-    const res = await fetch('/api/admin/comissao', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        oficina_id: id,
-        taxa_fixa_override: taxaValue,
-        usa_override: useOverride,
-      }),
-    });
-
-    if (res.ok) {
-      setSaveMsg('Configuração salva com sucesso!');
-      const updated = await res.json();
-      setComissaoConfig(updated);
-    } else {
-      setSaveMsg('Erro ao salvar configuração');
-    }
-
-    setSaving(false);
-    setTimeout(() => setSaveMsg(null), 3000);
   };
 
   const moeda = currencyForCountry(oficina?.pais);
@@ -252,68 +210,45 @@ export default function AdminOficinaDetailPage() {
         </div>
       </div>
 
-      {/* Commission config */}
+      {/* Comissao: o que vale hoje e de onde vem (edicao em /admin/comissoes) */}
       <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">Configuração de Comissão</h2>
-        <div className="space-y-4">
-          <div>
-            <p className="text-sm text-slate-400 mb-1">Taxa padrão da plataforma</p>
-            <p className="text-white font-medium">
-              {(comissaoConfig.taxa_padrao * 100).toFixed(1)}%
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={useOverride}
-                onChange={(e) => setUseOverride(e.target.checked)}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-slate-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
-            </label>
-            <span className="text-sm text-slate-300">
-              Usar taxa fixa personalizada para esta oficina
-            </span>
-          </div>
-
-          {useOverride && (
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">
-                Taxa fixa (%)
-              </label>
-              <input
-                type="number"
-                value={overrideRate}
-                onChange={(e) => setOverrideRate(e.target.value)}
-                step="0.5"
-                min="0"
-                max="50"
-                className="w-32 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          )}
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleSaveComissao}
-              disabled={saving}
-              className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-            >
-              {saving ? 'Salvando...' : 'Salvar'}
-            </button>
-            {saveMsg && (
-              <span
-                className={`text-sm ${
-                  saveMsg.includes('sucesso') ? 'text-emerald-400' : 'text-red-400'
-                }`}
-              >
-                {saveMsg}
-              </span>
-            )}
-          </div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-white">Comissão</h2>
+          <Link href="/admin/comissoes" className="text-blue-400 hover:text-blue-300 text-sm">Editar em Comissões →</Link>
         </div>
+        {comissao ? (
+          <div className="flex flex-wrap items-start gap-8 text-sm">
+            <div>
+              <p className="text-slate-400 mb-1">Taxa que vale hoje</p>
+              <p className="text-white text-2xl font-semibold">{(comissao.efetiva.taxa * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%</p>
+              <span className={`inline-flex mt-1 px-2 py-0.5 rounded text-xs font-medium ${comissao.efetiva.origem === 'individual' ? 'bg-amber-500/20 text-amber-300' : 'bg-blue-500/20 text-blue-300'}`}>
+                {comissao.efetiva.origem === 'individual' ? 'Taxa individual' : `Regra global · ${modoGlobal === 'isento' ? 'sem comissão' : modoGlobal === 'fixa' ? 'taxa fixa' : 'desempenho'}`}
+              </span>
+            </div>
+            {comissao.individual && (
+              <div>
+                <p className="text-slate-400 mb-1">Taxa individual</p>
+                <p className={comissao.individual.vigente ? 'text-white' : 'text-slate-500 line-through'}>
+                  {comissao.individual.taxa != null ? `${(comissao.individual.taxa * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%` : '—'}
+                </p>
+                <p className="text-slate-400 text-xs">
+                  {comissao.individual.ate ? `${comissao.individual.vigente ? 'até' : 'venceu em'} ${formatDate(comissao.individual.ate + 'T12:00:00')}` : 'sem prazo'}
+                  {comissao.individual.motivo && ` · ${comissao.individual.motivo}`}
+                </p>
+              </div>
+            )}
+            <div>
+              <p className="text-slate-400 mb-1">Parceira fundadora</p>
+              <p className={comissao.oficina.parceiro_fundador ? 'text-yellow-300' : 'text-slate-500'}>
+                {comissao.oficina.parceiro_fundador
+                  ? `⭐ Sim${comissao.oficina.parceiro_fundador_desde ? `, desde ${formatDate(comissao.oficina.parceiro_fundador_desde)}` : ''}`
+                  : 'Não'}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <p className="text-slate-500 text-sm">Não foi possível carregar a comissão.</p>
+        )}
       </div>
 
       {/* Comissao lancamentos: o que essa oficina deve/pagou, e por que */}

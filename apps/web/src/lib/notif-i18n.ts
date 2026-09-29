@@ -357,3 +357,24 @@ export function chatOrcamentoRevisado(locale: string | null | undefined, numero:
 }
 
 export { fmt };
+
+// Correcao feita pelo admin (agendamento, etapa, orcamento, pedido...) -
+// texto generico: o detalhe fica na tela do servico.
+const correcaoSuporte: Record<EmailLocale, { titulo: string; mensagem: string }> = {
+  pt: { titulo: 'Atualização feita pelo suporte', mensagem: 'A equipe BipFix corrigiu uma informação do seu serviço ({item}). Abra o serviço para ver os detalhes.' },
+  en: { titulo: 'Updated by BipFix support', mensagem: 'The BipFix team corrected some information on your job ({item}). Open the job to see the details.' },
+  et: { titulo: 'Tugi uuendas andmeid', mensagem: 'BipFixi meeskond parandas sinu töö andmeid ({item}). Ava töö, et näha üksikasju.' },
+  it: { titulo: 'Aggiornamento dal supporto BipFix', mensagem: 'Il team BipFix ha corretto un dato del tuo lavoro ({item}). Apri il lavoro per vedere i dettagli.' },
+};
+
+const itemCorrecao: Record<EmailLocale, Record<string, string>> = {
+  pt: { agenda: 'agendamento', etapa: 'etapa do conserto', orcamento: 'orçamento', pedido_peca: 'pedido de peça', emergencia: 'registro do acidente' },
+  en: { agenda: 'appointment', etapa: 'repair stage', orcamento: 'quote', pedido_peca: 'parts order', emergencia: 'accident report' },
+  et: { agenda: 'broneering', etapa: 'remondi etapp', orcamento: 'hinnapakkumine', pedido_peca: 'varuosa tellimus', emergencia: 'õnnetuse registreerimine' },
+  it: { agenda: 'appuntamento', etapa: 'fase della riparazione', orcamento: 'preventivo', pedido_peca: 'ordine di ricambi', emergencia: 'segnalazione di incidente' },
+};
+
+export function notifCorrecaoSuporte(locale: string | null | undefined, entidade: string) {
+  const l = resolveEmailLocale(locale);
+  return { titulo: correcaoSuporte[l].titulo, mensagem: fmt(correcaoSuporte[l].mensagem, { item: itemCorrecao[l][entidade] || entidade }) };
+}

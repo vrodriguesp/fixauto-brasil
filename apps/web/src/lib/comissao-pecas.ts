@@ -15,7 +15,7 @@ const BONUS_VOLUME = [
 export interface TaxaComissaoPecasInfo {
   taxa: number;
   pedidos90dias: number;
-  origem: 'override' | 'calculada';
+  origem: 'calculada';
 }
 
 function clamp(taxa: number): number {
@@ -38,13 +38,7 @@ export async function recalcularComissaoPecasConfig(
 
   const colunaFornecedor = fornecedorTipo === 'loja' ? 'loja_id' : 'oficina_fornecedora_id';
 
-  const [{ data: existingConfig }, { data: respostas }, { count: pedidos90Count }] = await Promise.all([
-    supabaseAdmin
-      .from('comissao_pecas_config')
-      .select('*')
-      .eq('fornecedor_tipo', fornecedorTipo)
-      .eq('fornecedor_id', fornecedorId)
-      .single(),
+  const [{ data: respostas }, { count: pedidos90Count }] = await Promise.all([
     supabaseAdmin
       .from('cotacoes_pecas_respostas')
       .select('created_at, cotacao:cotacoes_pecas(created_at)')
@@ -59,10 +53,6 @@ export async function recalcularComissaoPecasConfig(
       .eq('status', 'entregue')
       .gte('created_at', desde),
   ]);
-
-  if (existingConfig?.usa_override && existingConfig.taxa_fixa_override != null) {
-    return { taxa: existingConfig.taxa_fixa_override, pedidos90dias: 0, origem: 'override' };
-  }
 
   const resps = respostas || [];
   const temposResposta = resps
@@ -103,26 +93,4 @@ export async function recalcularComissaoPecasConfig(
   );
 
   return { taxa, pedidos90dias: totalPedidos90, origem: 'calculada' };
-}
-
-/** So le a taxa atual (sem recalcular) - usa quando so precisa do numero rapido. */
-export async function obterTaxaComissaoPecas(
-  supabaseAdmin: SupabaseClient,
-  fornecedorTipo: TipoFornecedorPeca,
-  fornecedorId: string
-): Promise<TaxaComissaoPecasInfo> {
-  const { data: config } = await supabaseAdmin
-    .from('comissao_pecas_config')
-    .select('taxa_calculada, taxa_fixa_override, usa_override')
-    .eq('fornecedor_tipo', fornecedorTipo)
-    .eq('fornecedor_id', fornecedorId)
-    .single();
-
-  if (config?.usa_override && config.taxa_fixa_override != null) {
-    return { taxa: config.taxa_fixa_override, pedidos90dias: 0, origem: 'override' };
-  }
-  if (config?.taxa_calculada != null) {
-    return { taxa: config.taxa_calculada, pedidos90dias: 0, origem: 'calculada' };
-  }
-  return recalcularComissaoPecasConfig(supabaseAdmin, fornecedorTipo, fornecedorId);
 }

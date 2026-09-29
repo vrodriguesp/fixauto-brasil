@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin } from '@/lib/admin-auth';
+import { registrarAuditoria } from '@/lib/admin-auditoria';
 import { notifAgendamentoCancelado } from '@/lib/notif-i18n';
 
 const supabaseAdmin = createClient(
@@ -19,7 +20,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   if (!auth.ok) return auth.response;
 
   try {
-    const { action } = await req.json();
+    const { action, motivo } = await req.json();
     if (action !== 'cancelar') {
       return NextResponse.json({ error: 'Ação inválida' }, { status: 400 });
     }
@@ -46,6 +47,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    await registrarAuditoria(supabaseAdmin, {
+      adminId: auth.userId, entidade: 'agenda', entidadeId: params.id, acao: 'cancelar_agendamento',
+      antes: { status: agenda.status }, depois: { status: 'cancelado' }, motivo, solicitacaoId: agenda.solicitacao_id,
+    });
 
     const clienteId = (agenda as any).solicitacao?.cliente_id;
     const clienteIdioma = (agenda as any).solicitacao?.cliente?.idioma;

@@ -7,11 +7,15 @@ import { currencyForCountry } from '@/lib/currency';
 interface ComissaoPecaRow {
   fornecedor_tipo: 'loja' | 'oficina';
   fornecedor_id: string;
-  fornecedor: { id: string; nome_fantasia: string; cidade: string; estado: string; pais: string | null; ativa: boolean };
+  fornecedor: { id: string; nome_fantasia: string; cidade: string; estado: string; pais: string | null; ativa: boolean; parceiro_fundador: boolean };
   taxa_padrao: number;
   taxa_calculada: number | null;
   taxa_fixa_override: number | null;
   usa_override: boolean;
+  override_ate: string | null;
+  override_motivo: string | null;
+  individual_vigente: boolean;
+  efetiva: { taxa: number; origem: 'individual' | 'global' };
   total_pendente: number;
   total_pago: number;
 }
@@ -30,10 +34,12 @@ const rowKey = (r: { fornecedor_tipo: string; fornecedor_id: string }) => `${r.f
 
 export default function AdminComissoesPecasPage() {
   const [rows, setRows] = useState<ComissaoPecaRow[]>([]);
+  const [modoGlobal, setModoGlobal] = useState('');
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<'todos' | 'loja' | 'oficina'>('todos');
   const [editKey, setEditKey] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState({ taxa: '3.0', usaOverride: false });
+  const [editForm, setEditForm] = useState({ taxa: '3.0', usaOverride: false, ate: '', motivo: '' });
+  const [erro, setErro] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
@@ -43,25 +49,28 @@ export default function AdminComissoesPecasPage() {
   const fetchRows = async () => {
     setLoading(true);
     const res = await fetch('/api/admin/comissao-pecas');
-    setRows(res.ok ? await res.json() : []);
+    const dados = res.ok ? await res.json() : null;
+    setRows(dados?.fornecedores || []);
+    setModoGlobal(dados?.global?.comissao_pecas_modo || '');
     setLoading(false);
   };
 
   useEffect(() => { fetchRows(); }, []);
 
-  const getTaxaAtual = (r: ComissaoPecaRow) => {
-    if (r.usa_override && r.taxa_fixa_override != null) return r.taxa_fixa_override;
-    return r.taxa_calculada ?? r.taxa_padrao;
-  };
-
   const startEdit = (r: ComissaoPecaRow) => {
     setEditKey(rowKey(r));
-    setEditForm({ taxa: (getTaxaAtual(r) * 100).toFixed(1), usaOverride: r.usa_override });
+    setEditForm({
+      taxa: ((r.taxa_fixa_override ?? r.efetiva.taxa) * 100).toFixed(1),
+      usaOverride: r.usa_override,
+      ate: r.override_ate || '',
+      motivo: r.override_motivo || '',
+    });
   };
 
   const handleSaveEdit = async (r: ComissaoPecaRow) => {
     setSaving(true);
-    await fetch('/api/admin/comissao-pecas', {
+    setErro(null);
+    const res = await fetch('/api/admin/comissao-pecas', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -69,10 +78,28 @@ export default function AdminComissoesPecasPage() {
         fornecedor_id: r.fornecedor_id,
         taxa_fixa_override: parseFloat(editForm.taxa) / 100,
         usa_override: editForm.usaOverride,
+        override_ate: editForm.ate || null,
+        override_motivo: editForm.motivo,
       }),
     });
     setSaving(false);
+    if (!res.ok) {
+      setErro((await res.json().catch(() => ({}))).error || 'Erro ao salvar');
+      return;
+    }
     setEditKey(null);
+    await fetchRows();
+  };
+
+  // Selo de fundador de loja: mesma rota do selo das oficinas
+  const alternarFundador = async (r: ComissaoPecaRow) => {
+    const valor = !r.fornecedor.parceiro_fundador;
+    if (!confirm(valor ? `Marcar ${r.fornecedor.nome_fantasia} como parceira fundadora?` : `Tirar o selo de fundadora de ${r.fornecedor.nome_fantasia}?`)) return;
+    await fetch('/api/admin/comissao', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'fundador', valor, ...(r.fornecedor_tipo === 'loja' ? { loja_id: r.fornecedor_id } : { oficina_id: r.fornecedor_id }) }),
+    });
     await fetchRows();
   };
 
@@ -118,6 +145,11 @@ export default function AdminComissoesPecasPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">Comissão de Peças</h1>
         <p className="text-slate-400 text-sm mt-1">Taxa por fornecedor (loja de peças ou oficina vendendo excedente) e lançamentos por pedido</p>
+        <p className="text-slate-400 text-sm mt-2">
+          Regra global de peças: <strong className="text-white">{modoGlobal === 'isento' ? 'sem comissão (0%)' : modoGlobal === 'fixa' ? 'taxa fixa' : 'por desempenho (1–3%)'}</strong>
+          {' '}(muda em <a href="/admin/comissoes" className="text-blue-400 hover:underline">Comissões</a>). A taxa individual de um fornecedor vale sobre a global até a data de término.
+        </p>
+        {erro && <p className="text-red-400 text-sm mt-2">{erro}</p>}
       </div>
 
       <div className="flex gap-1 bg-slate-800 rounded-lg p-1 mb-6 w-fit border border-slate-700">
@@ -141,7 +173,7 @@ export default function AdminComissoesPecasPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-700">
-                {['Fornecedor', 'Tipo', 'Taxa atual', 'Override', 'Pendente', 'Pago', 'Ações'].map((h) => (
+                {['Fornecedor', 'Tipo', 'Taxa que vale', 'Taxa individual', 'Pendente', 'Pago', 'Ações'].map((h) => (
                   <th key={h} className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3 whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -157,6 +189,12 @@ export default function AdminComissoesPecasPage() {
                       <td className="px-6 py-4">
                         <p className="text-white font-medium text-sm">{r.fornecedor.nome_fantasia}</p>
                         <p className="text-slate-500 text-xs">{r.fornecedor.cidade}, {r.fornecedor.estado}</p>
+                        <button
+                          onClick={() => alternarFundador(r)}
+                          className={`mt-1 text-xs px-2 py-0.5 rounded border ${r.fornecedor.parceiro_fundador ? 'bg-yellow-500/15 border-yellow-500/40 text-yellow-300' : 'border-slate-600 text-slate-500 hover:text-slate-300'}`}
+                        >
+                          {r.fornecedor.parceiro_fundador ? '⭐ Fundadora' : '☆ Marcar fundadora'}
+                        </button>
                       </td>
                       <td className="px-6 py-4">
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${r.fornecedor_tipo === 'loja' ? 'bg-orange-900/40 text-orange-300' : 'bg-sky-900/40 text-sky-300'}`}>
@@ -173,19 +211,38 @@ export default function AdminComissoesPecasPage() {
                             className="w-20 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm"
                           />
                         ) : (
-                          <span className="text-white font-medium text-sm">{(getTaxaAtual(r) * 100).toFixed(1)}%</span>
+                          <div>
+                            <span className="text-white font-medium text-sm">{(r.efetiva.taxa * 100).toFixed(1)}%</span>
+                            <span className={`ml-2 inline-flex px-2 py-0.5 rounded text-xs font-medium ${r.efetiva.origem === 'individual' ? 'bg-amber-500/20 text-amber-300' : 'bg-blue-500/20 text-blue-300'}`}>
+                              {r.efetiva.origem === 'individual' ? 'Individual' : 'Global'}
+                            </span>
+                          </div>
                         )}
                       </td>
                       <td className="px-6 py-4">
                         {isEditing ? (
-                          <label className="flex items-center gap-2 text-xs text-slate-300">
-                            <input type="checkbox" checked={editForm.usaOverride} onChange={(e) => setEditForm({ ...editForm, usaOverride: e.target.checked })} />
-                            Fixar manualmente
-                          </label>
+                          <div className="space-y-1.5 w-52">
+                            <label className="flex items-center gap-2 text-xs text-slate-300">
+                              <input type="checkbox" checked={editForm.usaOverride} onChange={(e) => setEditForm({ ...editForm, usaOverride: e.target.checked })} />
+                              Usar taxa individual
+                            </label>
+                            {editForm.usaOverride && (
+                              <>
+                                <input type="date" value={editForm.ate} onChange={(e) => setEditForm({ ...editForm, ate: e.target.value })} title="Válida até (vazio = sem prazo)" className="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-xs" />
+                                <input value={editForm.motivo} onChange={(e) => setEditForm({ ...editForm, motivo: e.target.value })} placeholder="Motivo" className="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-xs" />
+                              </>
+                            )}
+                          </div>
+                        ) : r.usa_override ? (
+                          <div className="text-xs">
+                            <span className={r.individual_vigente ? 'text-white' : 'text-slate-500 line-through'}>{((r.taxa_fixa_override ?? 0) * 100).toFixed(1)}%</span>
+                            <p className="text-slate-400">
+                              {r.override_ate ? `${r.individual_vigente ? 'até' : 'venceu em'} ${formatDate(r.override_ate + 'T12:00:00')}` : 'sem prazo'}
+                              {r.override_motivo && ` · ${r.override_motivo}`}
+                            </p>
+                          </div>
                         ) : (
-                          <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${r.usa_override ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-600 text-slate-400'}`}>
-                            {r.usa_override ? 'Manual' : 'Automática'}
-                          </span>
+                          <span className="text-slate-500 text-xs">—</span>
                         )}
                       </td>
                       <td className="px-6 py-4">
