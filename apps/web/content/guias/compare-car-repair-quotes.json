@@ -1,0 +1,657 @@
+{
+  "slug": "compare-car-repair-quotes",
+  "publicado": "2026-09-29",
+  "atualizado": "2026-09-29",
+  "versoes": {
+    "en": {
+      "titulo": "How to compare car repair quotes: parts, labour, warranty and red flags",
+      "tituloSeo": "How to compare car repair quotes",
+      "descricao": "How to read and compare car repair quotes: parts vs labour, OEM vs aftermarket, labour hours, diagnosis fees, VAT, warranty, validity and red flags.",
+      "resumo": "A good car repair quote lists parts and labour separately, names the type of parts, states the labour hours and hourly rate, says whether VAT is included, and tells you how long the quote is valid and what warranty covers the work. To compare quotes fairly, make sure they describe the same repair with the same kind of parts – the cheapest total is not a bargain if it leaves out a part or quotes fewer hours than the job really takes.",
+      "secoes": [
+        {
+          "titulo": "What a car repair quote should contain",
+          "paragrafos": [
+            "A quote (or estimate) is the workshop's written description of what it proposes to do and what it will cost. Before comparing prices, check that every quote has the same building blocks. If one is missing, ask for it – a serious workshop will not mind."
+          ],
+          "itens": [
+            "Your vehicle's identification: make, model, year, VIN or registration number, and mileage.",
+            "A description of the problem you reported and of the diagnosis, if one was made.",
+            "A list of parts, one per line, with quantity, unit price and the type of part (original, equivalent or used).",
+            "Labour as a separate line: the operations, the hours for each and the hourly rate.",
+            "Consumables and small items (oil, fluids, gaskets, clips, workshop supplies) – either itemised or as a stated percentage.",
+            "Any diagnosis or inspection fee, and whether it is deducted if you approve the repair.",
+            "Whether prices include VAT or not, and the total both ways.",
+            "Validity of the quote (until when the price holds), the expected time in the workshop, and the warranty on parts and labour.",
+            "The workshop's name, contact details and the date."
+          ]
+        },
+        {
+          "titulo": "Parts vs labour: how to read the lines",
+          "paragrafos": [
+            "Almost every repair bill is made of two very different things: <strong>parts</strong>, which are bought in and whose price depends on the brand and supplier, and <strong>labour</strong>, which depends on how long the job takes and what the workshop charges per hour. Two quotes can arrive at the same total in completely different ways – one with expensive parts and quick labour, the other with cheap parts and many hours. You need to see both columns to know what you are buying.",
+            "Compare part by part: does each quote replace the same components? A brake job quoted as 'pads' on one estimate and 'pads and discs' on another is not the same job. If a quote bundles everything into one line ('brake repair – total'), ask for it to be broken down before you compare."
+          ]
+        },
+        {
+          "titulo": "OEM, OES and aftermarket parts: what is the difference?",
+          "paragrafos": [
+            "<strong>OEM (original)</strong> parts are sold by the vehicle manufacturer in its own packaging, usually through the brand's dealer network, and are typically the most expensive. <strong>OES</strong> or 'original equipment supplier' parts are made by the same company that supplies the factory, but sold under the supplier's own brand – often the same part at a lower price. <strong>Aftermarket</strong> parts are made by other manufacturers to fit the vehicle; quality ranges from equal to the original to poor, so the brand matters. <strong>Used or reconditioned</strong> parts can make sense for body panels or older cars, but should always be declared as such.",
+            "None of these is automatically right. For safety-critical items like brakes, steering and suspension, a reputable brand of any category is more important than the label 'original'. For a newer car still under manufacturer warranty, ask what the warranty conditions require. What matters when comparing quotes is that <strong>the parts category is stated</strong>, so that a quote with aftermarket parts is not mistaken for one with originals – or the other way round."
+          ]
+        },
+        {
+          "titulo": "Labour hours and hourly rate",
+          "paragrafos": [
+            "Labour is usually quoted as hours multiplied by a rate. The hours should follow the manufacturer's or an industry standard time for the operation, plus any extra the mechanic expects for a rusty or hard-to-reach component. The rate varies by workshop type – a brand dealer, an independent specialist and a general garage will charge differently – and by region.",
+            "When quotes differ a lot in hours for the same operation, ask why. A workshop that quotes far fewer hours than the others may be underestimating the job and will come back with extras; one that quotes far more may be padding. Also check whether the rate is per hour or per 'unit' of some other length, and whether it already includes VAT."
+          ]
+        },
+        {
+          "titulo": "Diagnosis fees: when are they fair?",
+          "paragrafos": [
+            "Finding an intermittent electrical fault or a noise can take real time and equipment, so a diagnosis fee is legitimate as long as it is announced <strong>before</strong> the work starts and you know what you get for it: a written finding with the cause and a quote for the repair. Many workshops deduct the fee from the bill if you go ahead with the repair; ask if that is the case.",
+            "Be wary of a 'free diagnosis' that produces a vague result and pressure to approve a large repair immediately, and of a diagnosis fee that appears only on the final invoice."
+          ]
+        },
+        {
+          "titulo": "VAT, validity and payment terms",
+          "paragrafos": [
+            "Quotes aimed at private customers should show prices <strong>including VAT</strong>, but some workshops quote net prices out of habit. Always check which one you are looking at before comparing totals – the difference can be a fifth of the price or more, depending on the rate in your country.",
+            "A quote should say until when it is valid, because parts prices change. It should also say what happens if the mechanic finds additional problems once the car is open: the good practice is that any work not in the quote needs your approval before it is done. Ask about payment terms, deposits for special-order parts, and whether the workshop keeps the replaced parts for you to see."
+          ]
+        },
+        {
+          "titulo": "Warranty on the work and on the parts",
+          "paragrafos": [
+            "A repair comes with two warranties: the part manufacturer's warranty on the component and the workshop's warranty on the labour. Ask for both in writing, with the duration (in months or kilometres) and what they cover. A workshop that stands behind its work will state this without hesitation.",
+            "In many countries consumer law gives you a statutory guarantee on services and goods regardless of what the workshop writes, so a very short 'warranty' printed on the quote does not necessarily limit your rights. Check the consumer rules that apply where you live."
+          ]
+        },
+        {
+          "titulo": "Red flags in a repair quote",
+          "itens": [
+            "A single lump sum with no breakdown of parts and labour.",
+            "No mention of the type or brand of parts.",
+            "A verbal quote only, or a refusal to put it in writing.",
+            "Pressure to decide immediately, or a 'today only' price.",
+            "Extra work that appears on the invoice without prior approval.",
+            "A total far below the other quotes with no explanation – something is probably missing.",
+            "Vague descriptions like 'engine repair' or 'electrical fault' with no diagnosis.",
+            "No warranty on labour, or a refusal to state one.",
+            "Replaced parts 'thrown away' before you could see them.",
+            "No date, no validity period, no workshop details."
+          ]
+        },
+        {
+          "titulo": "Questions to ask the workshop before you approve",
+          "itens": [
+            "What exactly is being replaced, and why is each part necessary now?",
+            "Are the parts original, equivalent or aftermarket, and which brand?",
+            "How many hours of labour, and what is the hourly rate including VAT?",
+            "Is there a diagnosis fee, and is it deducted if I approve the repair?",
+            "Until when is this price valid?",
+            "What warranty do you give on the labour, and what warranty do the parts carry?",
+            "If you find something else once the car is open, will you call me before doing it?",
+            "How long will the car be in the workshop, and can I get a courtesy car?",
+            "Can I have the old parts back?",
+            "Is there a cheaper option that is still safe – for example repairing instead of replacing, or a different parts category?"
+          ]
+        },
+        {
+          "titulo": "Why getting several quotes matters",
+          "paragrafos": [
+            "Workshops differ in hourly rates, in the parts suppliers they use and in how they diagnose the same symptom. With one quote you cannot tell whether the diagnosis is right or the price reasonable; with three, patterns appear – the same part on every list, or one workshop quoting a much bigger job than the others. That difference is worth a conversation, not just a discount.",
+            "Comparing also lets you choose on more than price: distance, availability, specialisation in your make, and how clearly the workshop explains itself. On BipFix you describe the problem once, add photos, and receive quotes from nearby workshops – a straightforward way to get comparable, written quotes. If you had an accident, register it at <a href=\"/emergencia\">/emergencia</a>; for anything else, start at <a href=\"/cadastro\">/cadastro</a>."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "pergunta": "Should a car repair quote be free?",
+          "resposta": "A quote for work that is visible without disassembly is usually free. When finding the fault takes diagnostic time, a fee is reasonable if it is agreed beforehand and you get a written finding; many workshops deduct it if you go ahead with the repair."
+        },
+        {
+          "pergunta": "Is the cheapest repair quote the best?",
+          "resposta": "Only if it covers the same work with comparable parts and a clear warranty. A much lower total often means a part is missing, hours are underestimated or the parts are of a lower category. Compare line by line, not by the total."
+        },
+        {
+          "pergunta": "Are aftermarket parts worse than original parts?",
+          "resposta": "Not necessarily. Many aftermarket and OES parts are made by the same suppliers as the originals. Quality depends on the brand, so ask which brand is quoted and prefer known names for brakes, steering and suspension."
+        },
+        {
+          "pergunta": "Can the workshop charge more than the quote?",
+          "resposta": "Good practice – and in many countries the law – is that work not in the quote needs your approval before it is done. Agree in advance that the workshop will call you if it finds anything extra, and keep the written quote."
+        },
+        {
+          "pergunta": "How many quotes should I get?",
+          "resposta": "Two or three is usually enough to see whether the diagnosis and price are consistent. For a large repair or accident damage, more can be worthwhile."
+        }
+      ],
+      "fontes": [
+        { "nome": "Your Europe – Consumer guarantees and returns (EU)", "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_en.htm" }
+      ],
+      "cta": "pedido"
+    },
+    "et": {
+      "titulo": "Kuidas võrrelda autoremondi hinnapakkumisi: varuosad, töötunnid, garantii ja ohumärgid",
+      "tituloSeo": "Kuidas võrrelda autoremondi hinnapakkumisi",
+      "descricao": "Kuidas lugeda ja võrrelda autoremondi hinnapakkumisi: varuosad ja töö eraldi, originaal- või asendusosad, töötunnid, käibemaks, garantii ja ohumärgid.",
+      "resumo": "Korralik autoremondi hinnapakkumine näitab varuosad ja töö eraldi ridadel, ütleb, mis tüüpi varuosi kasutatakse, toob välja töötundide arvu ja tunnihinna, näitab, kas käibemaks on sees, ning ütleb, kui kaua pakkumine kehtib ja milline garantii tööle kehtib. Pakkumiste ausaks võrdlemiseks veendu, et need kirjeldavad sama tööd samasuguste varuosadega – odavaim lõppsumma pole soodne, kui sealt puudub mõni osa või tunde on vähem, kui töö tegelikult võtab.",
+      "secoes": [
+        {
+          "titulo": "Mida autoremondi hinnapakkumine peab sisaldama?",
+          "paragrafos": [
+            "Hinnapakkumine on töökoja kirjalik kirjeldus sellest, mida ta kavatseb teha ja mis see maksab. Enne hindade võrdlemist kontrolli, et igas pakkumises on samad koostisosad. Kui midagi puudub, küsi juurde – tõsiseltvõetav töökoda ei pane seda pahaks."
+          ],
+          "itens": [
+            "Sõiduki andmed: mark, mudel, aasta, VIN-kood või registreerimismärk ja läbisõit.",
+            "Sinu kirjeldatud probleem ja diagnoosi tulemus, kui diagnostika tehti.",
+            "Varuosade loetelu, iga osa eraldi real koos koguse, ühikuhinna ja osa tüübiga (originaal, samaväärne või kasutatud).",
+            "Töö eraldi reana: tööoperatsioonid, iga operatsiooni tunnid ja tunnihind.",
+            "Kulumaterjalid ja pisiosad (õli, vedelikud, tihendid, klambrid) – kas rea kaupa või kokkulepitud protsendina.",
+            "Diagnostika- või ülevaatustasu ja see, kas tasu arvestatakse remondi hinnast maha, kui töö tellid.",
+            "Kas hinnad sisaldavad käibemaksu või mitte, ja lõppsumma mõlemal viisil.",
+            "Pakkumise kehtivusaeg, eeldatav tööaeg ja garantii varuosadele ning tööle.",
+            "Töökoja nimi, kontaktandmed ja kuupäev."
+          ]
+        },
+        {
+          "titulo": "Varuosad ja töö: kuidas ridu lugeda",
+          "paragrafos": [
+            "Peaaegu iga remondiarve koosneb kahest väga erinevast asjast: <strong>varuosadest</strong>, mis ostetakse sisse ja mille hind sõltub tootjast ja tarnijast, ning <strong>tööst</strong>, mille hind sõltub töö kestusest ja töökoja tunnihinnast. Kaks pakkumist võivad jõuda sama lõppsummani täiesti erinevat teed pidi – üks kallite osade ja kiire tööga, teine odavate osade ja paljude tundidega. Mõlemat veergu on vaja näha, et teada, mida ostad.",
+            "Võrdle osa kaupa: kas iga pakkumine vahetab samad komponendid? Piduriremont, mis ühes pakkumises tähendab „klotsid” ja teises „klotsid ja kettad”, ei ole sama töö. Kui pakkumises on kõik ühel real („piduriremont – kokku”), küsi enne võrdlemist lahtikirjutust."
+          ]
+        },
+        {
+          "titulo": "Originaalosa, OES ja asendusosa: mis vahe on?",
+          "paragrafos": [
+            "<strong>Originaalosi (OEM)</strong> müüb autotootja oma pakendis, tavaliselt margiesinduse kaudu, ja need on enamasti kõige kallimad. <strong>OES</strong>-osi toodab sama ettevõte, kes tarnib tehasele, kuid müüb neid oma kaubamärgi all – sageli sama osa madalama hinnaga. <strong>Asendusosi</strong> toodavad teised tootjad; kvaliteet ulatub originaaliga võrdsest kehvani, seega on kaubamärk oluline. <strong>Kasutatud või taastatud</strong> osad võivad sobida kereosade või vanema auto puhul, kuid neid tuleb alati sellisena ka nimetada.",
+            "Ükski neist pole automaatselt õige valik. Ohutuse seisukohalt kriitiliste osade – pidurid, rool, vedrustus – puhul on hea kaubamärk tähtsam kui silt „originaal”. Uuema, veel tootjagarantii all oleva auto puhul küsi, mida garantiitingimused nõuavad. Pakkumiste võrdlemisel on oluline, et <strong>osade tüüp oleks kirjas</strong>, et asendusosadega pakkumist ei aetaks segi originaalosadega – või vastupidi."
+          ]
+        },
+        {
+          "titulo": "Töötunnid ja tunnihind",
+          "paragrafos": [
+            "Töö hind arvutatakse tavaliselt tundide ja tunnihinna korrutisena. Tunnid peaksid lähtuma tootja või valdkonna normajast konkreetsele operatsioonile, millele lisandub mehaaniku hinnang roostes või raskesti ligipääsetava sõlme puhul. Tunnihind sõltub töökoja tüübist – margiesindus, sõltumatu spetsialist ja üldtöökoda küsivad erinevalt – ning asukohast.",
+            "Kui sama töö tundide arv erineb pakkumistes palju, küsi põhjust. Töökoda, kes pakub teistest oluliselt vähem tunde, võib tööd alahinnata ja tuleb hiljem lisatööde jutuga; kes pakub palju rohkem, võib arvet paisutada. Kontrolli ka, kas hind on tunni või mõne muu pikkusega „ühiku” kohta ja kas see sisaldab juba käibemaksu."
+          ]
+        },
+        {
+          "titulo": "Diagnostikatasu: millal on see õigustatud?",
+          "paragrafos": [
+            "Katkendliku elektririkke või kolina leidmine võtab päriselt aega ja seadmeid, seega on diagnostikatasu õigustatud, kui see teatatakse <strong>enne</strong> töö alustamist ja sa tead, mida selle eest saad: kirjaliku järelduse põhjuse kohta ja remondi hinnapakkumise. Paljud töökojad arvestavad tasu remondiarvest maha, kui töö tellid; küsi, kas see nii on.",
+            "Ole ettevaatlik „tasuta diagnostikaga”, mille tulemus on ebamäärane ja millega kaasneb surve suur remont kohe kinnitada, ning diagnostikatasuga, mis ilmub alles lõpparvele."
+          ]
+        },
+        {
+          "titulo": "Käibemaks, kehtivus ja maksetingimused",
+          "paragrafos": [
+            "Eraklientidele mõeldud pakkumises peaksid hinnad olema <strong>koos käibemaksuga</strong>, kuid osa töökodasid näitab harjumusest netohindu. Kontrolli alati, kumba sa vaatad, enne kui lõppsummasid võrdled – vahe võib olla viiendik hinnast või rohkem.",
+            "Pakkumises peaks olema kirjas, kui kaua see kehtib, sest varuosade hinnad muutuvad. Samuti see, mis saab siis, kui mehaanik leiab lahtivõetud autolt lisaprobleeme: hea tava on, et pakkumises puuduv töö vajab enne tegemist sinu nõusolekut. Küsi maksetingimusi, eritellimusel osade ettemaksu ja seda, kas töökoda hoiab vahetatud osad sulle näitamiseks alles."
+          ]
+        },
+        {
+          "titulo": "Garantii tööle ja varuosadele",
+          "paragrafos": [
+            "Remondiga kaasneb kaks garantiid: osa tootja garantii komponendile ja töökoja garantii tööle. Küsi mõlemad kirjalikult koos kestuse (kuudes või kilomeetrites) ja katteala kirjeldusega. Töökoda, kes oma töö taga seisab, ütleb selle kõhklemata välja.",
+            "Paljudes riikides annab tarbijakaitseõigus teenusele ja kaubale seadusest tuleneva garantii sõltumata sellest, mida töökoda pakkumisse kirjutab, seega väga lühike „garantii” pakkumisel ei pruugi sinu õigusi piirata. Kontrolli oma elukohariigi tarbijakaitse reegleid."
+          ]
+        },
+        {
+          "titulo": "Ohumärgid hinnapakkumises",
+          "itens": [
+            "Üks summa ilma varuosade ja töö lahtikirjutuseta.",
+            "Varuosade tüüpi ega kaubamärki pole nimetatud.",
+            "Ainult suuline pakkumine või keeldumine seda kirja panna.",
+            "Surve otsustada kohe või „ainult täna” kehtiv hind.",
+            "Lisatööd, mis ilmuvad arvele ilma eelneva nõusolekuta.",
+            "Teistest oluliselt madalam lõppsumma ilma selgituseta – tõenäoliselt on midagi puudu.",
+            "Ebamäärased kirjeldused nagu „mootori remont” või „elektririke” ilma diagnoosita.",
+            "Tööle garantiid ei anta või seda ei taheta nimetada.",
+            "Vahetatud osad „visati ära”, enne kui sa neid näha said.",
+            "Puudub kuupäev, kehtivusaeg või töökoja andmed."
+          ]
+        },
+        {
+          "titulo": "Küsimused töökojale enne töö kinnitamist",
+          "itens": [
+            "Mida täpselt vahetatakse ja miks on iga osa praegu vajalik?",
+            "Kas osad on originaal-, samaväärsed või asendusosad, ja mis kaubamärk?",
+            "Mitu töötundi ja milline on tunnihind koos käibemaksuga?",
+            "Kas on diagnostikatasu ja kas see arvestatakse remondi tellimisel maha?",
+            "Kui kaua see hind kehtib?",
+            "Millise garantii annate tööle ja milline garantii on varuosadel?",
+            "Kui leiate lahtivõetud autolt midagi muud, kas helistate mulle enne tegemist?",
+            "Kui kaua auto töökojas on ja kas saan asendusauto?",
+            "Kas saan vanad osad tagasi?",
+            "Kas on odavam, kuid ikkagi ohutu variant – näiteks parandada vahetamise asemel või kasutada teist osade kategooriat?"
+          ]
+        },
+        {
+          "titulo": "Miks tasub küsida mitu hinnapakkumist?",
+          "paragrafos": [
+            "Töökojad erinevad tunnihinna, varuosade tarnijate ja sama sümptomi diagnoosimise poolest. Ühe pakkumise järgi ei saa öelda, kas diagnoos on õige ja hind mõistlik; kolme puhul ilmnevad mustrid – sama osa igas nimekirjas või üks töökoda, kes pakub teistest palju suuremat tööd. Selline erinevus väärib vestlust, mitte ainult allahindlust.",
+            "Võrdlemine võimaldab valida ka muu kui hinna järgi: kaugus, vaba aeg, sinu automargi spetsialiseerumine ja see, kui selgelt töökoda end selgitab. BipFixis kirjeldad probleemi ühe korra, lisad fotod ja saad pakkumised lähedal asuvatelt töökodadelt – lihtne viis saada võrreldavaid kirjalikke pakkumisi. Avarii korral registreeri juhtum lehel <a href=\"/emergencia\">/emergencia</a>; muul juhul alusta lehelt <a href=\"/cadastro\">/cadastro</a>."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "pergunta": "Kas autoremondi hinnapakkumine peab olema tasuta?",
+          "resposta": "Ilma lahtivõtmiseta nähtava töö pakkumine on tavaliselt tasuta. Kui vea leidmine nõuab diagnostikaaega, on tasu mõistlik, kui see lepitakse eelnevalt kokku ja saad kirjaliku järelduse; paljud töökojad arvestavad selle remondi tellimisel maha."
+        },
+        {
+          "pergunta": "Kas odavaim hinnapakkumine on parim?",
+          "resposta": "Ainult siis, kui see katab sama töö võrreldavate osadega ja selge garantiiga. Palju madalam summa tähendab sageli, et mõni osa puudub, tunnid on alahinnatud või osad on madalamast kategooriast. Võrdle ridade, mitte lõppsumma järgi."
+        },
+        {
+          "pergunta": "Kas asendusosad on originaalosadest kehvemad?",
+          "resposta": "Mitte tingimata. Paljud asendus- ja OES-osad tulevad samadelt tootjatelt kui originaalid. Kvaliteet sõltub kaubamärgist, seega küsi, mis marki pakutakse, ja eelista pidurite, rooli ja vedrustuse puhul tuntud tootjaid."
+        },
+        {
+          "pergunta": "Kas töökoda tohib küsida rohkem, kui pakkumises kirjas?",
+          "resposta": "Hea tava – ja paljudes riikides ka seadus – on, et pakkumises puuduv töö vajab enne tegemist sinu nõusolekut. Lepi ette kokku, et töökoda helistab, kui midagi lisandub, ja hoia kirjalik pakkumine alles."
+        },
+        {
+          "pergunta": "Mitu hinnapakkumist peaks küsima?",
+          "resposta": "Kahest-kolmest tavaliselt piisab, et näha, kas diagnoos ja hind on kooskõlas. Suure remondi või avariikahju puhul tasub küsida rohkem."
+        }
+      ],
+      "fontes": [
+        { "nome": "Your Europe – Tarbija garantiid ja tagastamine (EL)", "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_et.htm" }
+      ],
+      "cta": "pedido"
+    },
+    "it": {
+      "titulo": "Come confrontare i preventivi di riparazione auto: ricambi, manodopera, garanzia e segnali d'allarme",
+      "tituloSeo": "Come confrontare i preventivi di riparazione auto",
+      "descricao": "Come leggere e confrontare i preventivi dell'officina: ricambi e manodopera, originali o aftermarket, ore di lavoro, IVA, garanzia e segnali d'allarme.",
+      "resumo": "Un buon preventivo di riparazione auto elenca ricambi e manodopera su righe separate, indica il tipo di ricambi, riporta le ore di lavoro e la tariffa oraria, precisa se l'IVA è inclusa e dice fino a quando è valido e quale garanzia copre il lavoro. Per confrontare i preventivi in modo corretto, verifica che descrivano la stessa riparazione con lo stesso tipo di ricambi: il totale più basso non è un affare se manca un pezzo o se le ore indicate sono meno di quelle che il lavoro richiede davvero.",
+      "secoes": [
+        {
+          "titulo": "Cosa deve contenere un preventivo di riparazione auto",
+          "paragrafos": [
+            "Il preventivo è la descrizione scritta di ciò che l'officina propone di fare e di quanto costerà. Prima di confrontare i prezzi, controlla che ogni preventivo contenga gli stessi elementi. Se ne manca uno, chiedilo: un'officina seria non avrà nulla in contrario."
+          ],
+          "itens": [
+            "I dati del veicolo: marca, modello, anno, numero di telaio o targa e chilometraggio.",
+            "La descrizione del problema segnalato e della diagnosi, se è stata fatta.",
+            "L'elenco dei ricambi, uno per riga, con quantità, prezzo unitario e tipo di ricambio (originale, equivalente o usato).",
+            "La manodopera su una riga separata: le operazioni, le ore per ciascuna e la tariffa oraria.",
+            "Materiali di consumo e minuteria (olio, liquidi, guarnizioni, clip) – dettagliati o come percentuale dichiarata.",
+            "L'eventuale costo della diagnosi e se viene scalato dal conto quando approvi la riparazione.",
+            "Se i prezzi sono IVA inclusa o esclusa, e il totale in entrambi i casi.",
+            "La validità del preventivo (fino a quando vale il prezzo), i tempi previsti e la garanzia su ricambi e manodopera.",
+            "Nome, contatti dell'officina e data."
+          ]
+        },
+        {
+          "titulo": "Ricambi e manodopera: come leggere le righe",
+          "paragrafos": [
+            "Quasi ogni conto di riparazione è fatto di due cose molto diverse: i <strong>ricambi</strong>, acquistati da fornitori e il cui prezzo dipende dalla marca, e la <strong>manodopera</strong>, che dipende da quanto dura il lavoro e da quanto l'officina chiede all'ora. Due preventivi possono arrivare allo stesso totale per strade completamente diverse: uno con ricambi costosi e poche ore, l'altro con ricambi economici e molte ore. Devi vedere entrambe le colonne per sapere cosa stai comprando.",
+            "Confronta pezzo per pezzo: ogni preventivo sostituisce gli stessi componenti? Un intervento ai freni indicato come 'pastiglie' in un preventivo e 'pastiglie e dischi' in un altro non è lo stesso lavoro. Se un preventivo raggruppa tutto in una riga ('riparazione freni – totale'), chiedi il dettaglio prima di confrontare."
+          ]
+        },
+        {
+          "titulo": "Ricambi originali, OES e aftermarket: che differenza c'è?",
+          "paragrafos": [
+            "I ricambi <strong>originali (OEM)</strong> sono venduti dalla casa automobilistica nella propria confezione, di solito tramite la rete ufficiale, e sono in genere i più costosi. I ricambi <strong>OES</strong> (original equipment supplier) sono prodotti dalla stessa azienda che rifornisce la fabbrica, ma venduti con il marchio del fornitore: spesso lo stesso pezzo a un prezzo inferiore. I ricambi <strong>aftermarket</strong> sono prodotti da altri costruttori; la qualità va da pari all'originale a scarsa, quindi la marca conta. I ricambi <strong>usati o rigenerati</strong> possono avere senso per la carrozzeria o per auto più vecchie, ma vanno sempre dichiarati come tali.",
+            "Nessuna categoria è automaticamente quella giusta. Per componenti critici per la sicurezza come freni, sterzo e sospensioni, una marca affidabile di qualsiasi categoria conta più dell'etichetta 'originale'. Per un'auto recente ancora in garanzia del costruttore, chiedi cosa richiedono le condizioni di garanzia. Nel confronto ciò che conta è che <strong>la categoria dei ricambi sia scritta</strong>, così un preventivo con ricambi aftermarket non viene scambiato per uno con originali, o viceversa."
+          ]
+        },
+        {
+          "titulo": "Ore di manodopera e tariffa oraria",
+          "paragrafos": [
+            "La manodopera viene di norma indicata come ore moltiplicate per una tariffa. Le ore dovrebbero seguire i tempari del costruttore o di settore per quell'operazione, più l'eventuale extra che il meccanico prevede per un componente arrugginito o difficile da raggiungere. La tariffa varia con il tipo di officina – concessionaria, specialista indipendente o officina generica – e con la zona.",
+            "Quando le ore per la stessa operazione differiscono molto tra i preventivi, chiedi il perché. Un'officina che indica molte meno ore delle altre potrebbe sottostimare il lavoro e tornare con degli extra; una che ne indica molte di più potrebbe gonfiare il conto. Verifica anche se la tariffa è per ora o per un'altra 'unità' di tempo e se include già l'IVA."
+          ]
+        },
+        {
+          "titulo": "Costo della diagnosi: quando è corretto?",
+          "paragrafos": [
+            "Trovare un guasto elettrico intermittente o un rumore richiede tempo e strumenti, quindi un costo di diagnosi è legittimo purché sia comunicato <strong>prima</strong> di iniziare e tu sappia cosa ricevi: un esito scritto con la causa e un preventivo per la riparazione. Molte officine scalano il costo dal conto se poi fai eseguire la riparazione; chiedi se è così.",
+            "Diffida della 'diagnosi gratuita' che produce un risultato vago e pressioni per approvare subito una riparazione importante, e del costo di diagnosi che compare solo nella fattura finale."
+          ]
+        },
+        {
+          "titulo": "IVA, validità e condizioni di pagamento",
+          "paragrafos": [
+            "I preventivi rivolti ai privati dovrebbero riportare i prezzi <strong>IVA inclusa</strong>, ma alcune officine per abitudine indicano prezzi netti. Controlla sempre quale dei due stai guardando prima di confrontare i totali: la differenza può essere un quinto del prezzo o più, a seconda dell'aliquota del tuo paese.",
+            "Il preventivo dovrebbe indicare fino a quando è valido, perché i prezzi dei ricambi cambiano. Dovrebbe anche dire cosa succede se il meccanico trova altri problemi ad auto aperta: la buona pratica è che ogni lavoro non previsto nel preventivo richieda la tua approvazione prima di essere eseguito. Chiedi le condizioni di pagamento, eventuali acconti per ricambi su ordinazione e se l'officina conserva i pezzi sostituiti per mostrarteli."
+          ]
+        },
+        {
+          "titulo": "Garanzia sul lavoro e sui ricambi",
+          "paragrafos": [
+            "Una riparazione ha due garanzie: quella del produttore sul ricambio e quella dell'officina sulla manodopera. Chiedile entrambe per iscritto, con la durata (in mesi o chilometri) e cosa coprono. Un'officina che sta dietro al proprio lavoro lo dichiara senza esitazioni.",
+            "In molti paesi la normativa a tutela dei consumatori prevede una garanzia legale su servizi e beni indipendentemente da ciò che scrive l'officina, quindi una 'garanzia' molto breve stampata sul preventivo non limita necessariamente i tuoi diritti. Verifica le regole che si applicano dove vivi."
+          ]
+        },
+        {
+          "titulo": "Segnali d'allarme in un preventivo",
+          "itens": [
+            "Una cifra unica senza dettaglio di ricambi e manodopera.",
+            "Nessuna indicazione del tipo o della marca dei ricambi.",
+            "Solo un preventivo verbale, o il rifiuto di metterlo per iscritto.",
+            "Pressioni per decidere subito, o un prezzo 'valido solo oggi'.",
+            "Lavori extra che compaiono in fattura senza approvazione preventiva.",
+            "Un totale molto più basso degli altri senza spiegazione: probabilmente manca qualcosa.",
+            "Descrizioni vaghe come 'riparazione motore' o 'guasto elettrico' senza diagnosi.",
+            "Nessuna garanzia sulla manodopera, o rifiuto di indicarla.",
+            "Pezzi sostituiti 'buttati via' prima che tu potessi vederli.",
+            "Nessuna data, nessuna validità, nessun dato dell'officina."
+          ]
+        },
+        {
+          "titulo": "Domande da fare all'officina prima di approvare",
+          "itens": [
+            "Cosa viene sostituito esattamente e perché ogni pezzo è necessario adesso?",
+            "I ricambi sono originali, equivalenti o aftermarket, e di quale marca?",
+            "Quante ore di manodopera e qual è la tariffa oraria IVA inclusa?",
+            "C'è un costo di diagnosi e viene scalato se approvo la riparazione?",
+            "Fino a quando è valido questo prezzo?",
+            "Che garanzia date sulla manodopera e che garanzia hanno i ricambi?",
+            "Se trovate altro ad auto aperta, mi chiamate prima di intervenire?",
+            "Quanto tempo resterà l'auto in officina e posso avere un'auto di cortesia?",
+            "Posso riavere i pezzi vecchi?",
+            "C'è un'opzione più economica ma comunque sicura, per esempio riparare invece di sostituire o una categoria di ricambi diversa?"
+          ]
+        },
+        {
+          "titulo": "Perché conviene chiedere più preventivi",
+          "paragrafos": [
+            "Le officine differiscono per tariffa oraria, fornitori di ricambi e modo di diagnosticare lo stesso sintomo. Con un solo preventivo non puoi sapere se la diagnosi è giusta o il prezzo ragionevole; con tre emergono gli schemi: lo stesso pezzo in ogni elenco, oppure un'officina che propone un lavoro molto più grande delle altre. Quella differenza merita una conversazione, non solo uno sconto.",
+            "Confrontare ti permette anche di scegliere in base a più del prezzo: distanza, disponibilità, specializzazione nella tua marca e chiarezza con cui l'officina si spiega. Su BipFix descrivi il problema una volta sola, aggiungi le foto e ricevi preventivi dalle officine vicine: un modo semplice per ottenere preventivi scritti e confrontabili. Se hai avuto un incidente, registralo su <a href=\"/emergencia\">/emergencia</a>; per tutto il resto, inizia da <a href=\"/cadastro\">/cadastro</a>."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "pergunta": "Il preventivo dell'officina deve essere gratuito?",
+          "resposta": "Un preventivo per un lavoro visibile senza smontaggio è di solito gratuito. Quando trovare il guasto richiede tempo di diagnosi, un costo è ragionevole se concordato prima e se ricevi un esito scritto; molte officine lo scalano se poi fai eseguire la riparazione."
+        },
+        {
+          "pergunta": "Il preventivo più basso è il migliore?",
+          "resposta": "Solo se copre lo stesso lavoro con ricambi comparabili e una garanzia chiara. Un totale molto più basso spesso significa che manca un pezzo, che le ore sono sottostimate o che i ricambi sono di categoria inferiore. Confronta riga per riga, non il totale."
+        },
+        {
+          "pergunta": "I ricambi aftermarket sono peggiori degli originali?",
+          "resposta": "Non necessariamente. Molti ricambi aftermarket e OES sono prodotti dagli stessi fornitori degli originali. La qualità dipende dalla marca: chiedi quale marca è preventivata e preferisci nomi conosciuti per freni, sterzo e sospensioni."
+        },
+        {
+          "pergunta": "L'officina può farmi pagare più del preventivo?",
+          "resposta": "La buona pratica – e in molti paesi la legge – è che i lavori non previsti nel preventivo richiedano la tua approvazione prima di essere eseguiti. Concorda in anticipo che l'officina ti chiami se trova qualcosa in più e conserva il preventivo scritto."
+        },
+        {
+          "pergunta": "Quanti preventivi dovrei chiedere?",
+          "resposta": "Due o tre di solito bastano per capire se diagnosi e prezzo sono coerenti. Per una riparazione importante o un danno da incidente può valere la pena chiederne di più."
+        }
+      ],
+      "fontes": [
+        { "nome": "La tua Europa – Garanzie e restituzioni per i consumatori (UE)", "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_it.htm" }
+      ],
+      "cta": "pedido"
+    },
+    "pt-PT": {
+      "titulo": "Como comparar orçamentos de reparação automóvel: peças, mão de obra, garantia e sinais de alerta",
+      "tituloSeo": "Como comparar orçamentos de reparação automóvel",
+      "descricao": "Como ler e comparar orçamentos de oficina: peças e mão de obra, originais ou alternativas, horas de trabalho, IVA, garantia e sinais de alerta.",
+      "resumo": "Um bom orçamento de reparação automóvel apresenta peças e mão de obra em linhas separadas, indica o tipo de peças, mostra as horas de trabalho e o valor à hora, diz se o IVA está incluído e informa até quando o orçamento é válido e que garantia cobre o trabalho. Para comparar orçamentos de forma justa, confirme que descrevem a mesma reparação com o mesmo tipo de peças – o total mais baixo não é uma pechincha se faltar uma peça ou se as horas indicadas forem menos do que o trabalho realmente exige.",
+      "secoes": [
+        {
+          "titulo": "O que um orçamento de reparação automóvel deve conter",
+          "paragrafos": [
+            "O orçamento é a descrição escrita do que a oficina se propõe fazer e de quanto vai custar. Antes de comparar preços, verifique se todos os orçamentos têm os mesmos elementos. Se faltar algum, peça-o – uma oficina séria não se importa."
+          ],
+          "itens": [
+            "Identificação da viatura: marca, modelo, ano, número de chassis ou matrícula e quilometragem.",
+            "Descrição do problema que relatou e do diagnóstico, se foi feito.",
+            "Lista de peças, uma por linha, com quantidade, preço unitário e tipo de peça (original, equivalente ou usada).",
+            "Mão de obra em linha separada: as operações, as horas de cada uma e o valor à hora.",
+            "Consumíveis e miudezas (óleo, líquidos, juntas, clipes) – discriminados ou como percentagem declarada.",
+            "Eventual custo de diagnóstico e se é descontado quando aprova a reparação.",
+            "Se os preços incluem IVA ou não, e o total das duas formas.",
+            "Validade do orçamento (até quando o preço se mantém), tempo previsto na oficina e garantia das peças e da mão de obra.",
+            "Nome e contactos da oficina e a data."
+          ]
+        },
+        {
+          "titulo": "Peças e mão de obra: como ler as linhas",
+          "paragrafos": [
+            "Quase toda a fatura de reparação é feita de duas coisas muito diferentes: as <strong>peças</strong>, compradas a fornecedores e cujo preço depende da marca, e a <strong>mão de obra</strong>, que depende do tempo que o trabalho demora e do valor que a oficina cobra à hora. Dois orçamentos podem chegar ao mesmo total por caminhos completamente diferentes – um com peças caras e poucas horas, outro com peças baratas e muitas horas. Precisa de ver as duas colunas para saber o que está a comprar.",
+            "Compare peça a peça: cada orçamento substitui os mesmos componentes? Uma intervenção nos travões orçamentada como 'pastilhas' num orçamento e 'pastilhas e discos' noutro não é o mesmo trabalho. Se um orçamento junta tudo numa linha ('reparação de travões – total'), peça a discriminação antes de comparar."
+          ]
+        },
+        {
+          "titulo": "Peças originais, OES e alternativas: qual é a diferença?",
+          "paragrafos": [
+            "As peças <strong>originais (OEM)</strong> são vendidas pelo fabricante do automóvel na sua própria embalagem, normalmente através da rede de concessionários, e costumam ser as mais caras. As peças <strong>OES</strong> (original equipment supplier) são fabricadas pela mesma empresa que fornece a fábrica, mas vendidas com a marca do fornecedor – muitas vezes a mesma peça a um preço mais baixo. As peças <strong>alternativas (aftermarket)</strong> são feitas por outros fabricantes; a qualidade vai de igual à original a fraca, por isso a marca importa. As peças <strong>usadas ou recondicionadas</strong> podem fazer sentido em chapa ou em carros mais antigos, mas devem ser sempre declaradas como tal.",
+            "Nenhuma categoria é automaticamente a certa. Em componentes críticos para a segurança – travões, direção, suspensão – uma marca de confiança de qualquer categoria vale mais do que o rótulo 'original'. Num carro recente ainda com garantia do fabricante, pergunte o que as condições da garantia exigem. Ao comparar orçamentos, o que importa é que <strong>a categoria das peças esteja escrita</strong>, para que um orçamento com peças alternativas não seja confundido com um de peças originais – ou o contrário."
+          ]
+        },
+        {
+          "titulo": "Horas de mão de obra e valor à hora",
+          "paragrafos": [
+            "A mão de obra é normalmente orçamentada como horas multiplicadas por um valor. As horas devem seguir os tempos padrão do fabricante ou do setor para a operação, mais o extra que o mecânico prevê para um componente enferrujado ou de difícil acesso. O valor à hora varia com o tipo de oficina – concessionário, especialista independente ou oficina generalista – e com a região.",
+            "Quando as horas para a mesma operação diferem muito entre orçamentos, pergunte porquê. Uma oficina que orçamenta muito menos horas do que as outras pode estar a subestimar o trabalho e voltar com extras; uma que orçamenta muito mais pode estar a inflacionar. Confirme também se o valor é à hora ou por outra 'unidade' de tempo e se já inclui IVA."
+          ]
+        },
+        {
+          "titulo": "Custo do diagnóstico: quando é justo?",
+          "paragrafos": [
+            "Encontrar uma avaria elétrica intermitente ou um ruído leva tempo e exige equipamento, por isso cobrar o diagnóstico é legítimo desde que seja anunciado <strong>antes</strong> de começar e saiba o que recebe em troca: uma conclusão escrita com a causa e um orçamento para a reparação. Muitas oficinas descontam este valor na fatura se avançar com a reparação; pergunte se é o caso.",
+            "Desconfie do 'diagnóstico gratuito' que produz um resultado vago e pressão para aprovar de imediato uma reparação grande, e do custo de diagnóstico que só aparece na fatura final."
+          ]
+        },
+        {
+          "titulo": "IVA, validade e condições de pagamento",
+          "paragrafos": [
+            "Os orçamentos para particulares devem apresentar preços <strong>com IVA incluído</strong>, mas algumas oficinas indicam por hábito preços sem IVA. Verifique sempre qual dos dois está a ver antes de comparar totais – a diferença pode ser um quinto do preço ou mais, consoante a taxa do seu país.",
+            "O orçamento deve dizer até quando é válido, porque os preços das peças mudam. Deve também dizer o que acontece se o mecânico encontrar mais problemas com o carro aberto: a boa prática é que qualquer trabalho fora do orçamento precise da sua aprovação antes de ser feito. Pergunte pelas condições de pagamento, por sinais para peças de encomenda e se a oficina guarda as peças substituídas para lhe mostrar."
+          ]
+        },
+        {
+          "titulo": "Garantia do trabalho e das peças",
+          "paragrafos": [
+            "Uma reparação tem duas garantias: a do fabricante da peça e a da oficina sobre a mão de obra. Peça as duas por escrito, com a duração (em meses ou quilómetros) e o que cobrem. Uma oficina que confia no seu trabalho diz isto sem hesitar.",
+            "Em muitos países, a legislação de defesa do consumidor dá uma garantia legal sobre serviços e bens independentemente do que a oficina escreve, por isso uma 'garantia' muito curta impressa no orçamento não limita necessariamente os seus direitos. Consulte as regras que se aplicam onde vive."
+          ]
+        },
+        {
+          "titulo": "Sinais de alerta num orçamento",
+          "itens": [
+            "Um valor único sem discriminação de peças e mão de obra.",
+            "Nenhuma indicação do tipo ou da marca das peças.",
+            "Orçamento apenas verbal, ou recusa em pô-lo por escrito.",
+            "Pressão para decidir já, ou um preço 'só hoje'.",
+            "Trabalhos extra que aparecem na fatura sem aprovação prévia.",
+            "Um total muito abaixo dos outros sem explicação – provavelmente falta alguma coisa.",
+            "Descrições vagas como 'reparação do motor' ou 'avaria elétrica' sem diagnóstico.",
+            "Sem garantia da mão de obra, ou recusa em indicá-la.",
+            "Peças substituídas 'deitadas fora' antes de as poder ver.",
+            "Sem data, sem prazo de validade, sem dados da oficina."
+          ]
+        },
+        {
+          "titulo": "Perguntas a fazer à oficina antes de aprovar",
+          "itens": [
+            "O que é substituído exatamente e porque é que cada peça é necessária agora?",
+            "As peças são originais, equivalentes ou alternativas, e de que marca?",
+            "Quantas horas de mão de obra e qual é o valor à hora com IVA?",
+            "Há custo de diagnóstico e é descontado se aprovar a reparação?",
+            "Até quando é válido este preço?",
+            "Que garantia dão à mão de obra e que garantia têm as peças?",
+            "Se encontrarem outra coisa com o carro aberto, ligam-me antes de avançar?",
+            "Quanto tempo fica o carro na oficina e posso ter viatura de substituição?",
+            "Posso ficar com as peças velhas?",
+            "Há uma opção mais barata mas ainda segura – por exemplo reparar em vez de substituir, ou outra categoria de peças?"
+          ]
+        },
+        {
+          "titulo": "Porque vale a pena pedir vários orçamentos",
+          "paragrafos": [
+            "As oficinas diferem no valor à hora, nos fornecedores de peças e na forma como diagnosticam o mesmo sintoma. Com um orçamento não consegue saber se o diagnóstico está certo ou se o preço é razoável; com três, aparecem padrões – a mesma peça em todas as listas, ou uma oficina a propor um trabalho muito maior do que as outras. Essa diferença merece uma conversa, não apenas um desconto.",
+            "Comparar também permite escolher por mais do que o preço: distância, disponibilidade, especialização na sua marca e a clareza com que a oficina se explica. Na BipFix descreve o problema uma vez, junta fotografias pelo telemóvel e recebe orçamentos de oficinas próximas – uma forma simples de obter orçamentos escritos e comparáveis. Se teve um acidente, registe-o em <a href=\"/emergencia\">/emergencia</a>; para o resto, comece em <a href=\"/cadastro\">/cadastro</a>."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "pergunta": "O orçamento da oficina deve ser gratuito?",
+          "resposta": "Um orçamento para trabalho visível sem desmontagem é normalmente gratuito. Quando encontrar a avaria exige tempo de diagnóstico, cobrar é razoável se for combinado antes e receber uma conclusão escrita; muitas oficinas descontam esse valor se avançar com a reparação."
+        },
+        {
+          "pergunta": "O orçamento mais barato é o melhor?",
+          "resposta": "Só se cobrir o mesmo trabalho com peças comparáveis e uma garantia clara. Um total muito mais baixo significa muitas vezes que falta uma peça, que as horas estão subestimadas ou que as peças são de categoria inferior. Compare linha a linha, não pelo total."
+        },
+        {
+          "pergunta": "As peças alternativas são piores do que as originais?",
+          "resposta": "Não necessariamente. Muitas peças alternativas e OES são feitas pelos mesmos fornecedores das originais. A qualidade depende da marca, por isso pergunte que marca está orçamentada e prefira nomes conhecidos em travões, direção e suspensão."
+        },
+        {
+          "pergunta": "A oficina pode cobrar mais do que o orçamento?",
+          "resposta": "A boa prática – e em muitos países a lei – é que trabalho fora do orçamento precise da sua aprovação antes de ser feito. Combine antecipadamente que a oficina lhe liga se encontrar algo mais e guarde o orçamento escrito."
+        },
+        {
+          "pergunta": "Quantos orçamentos devo pedir?",
+          "resposta": "Dois ou três costumam chegar para perceber se o diagnóstico e o preço são coerentes. Numa reparação grande ou em danos de acidente, pode valer a pena pedir mais."
+        }
+      ],
+      "fontes": [
+        { "nome": "A sua Europa – Garantias e devoluções para consumidores (UE)", "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_pt.htm" }
+      ],
+      "cta": "pedido"
+    },
+    "pt": {
+      "titulo": "Como comparar orçamentos de reparo de carro: peças, mão de obra, garantia e sinais de alerta",
+      "tituloSeo": "Como comparar orçamentos de reparo de carro",
+      "descricao": "Como ler e comparar orçamentos de oficina mecânica: peças e mão de obra, originais ou paralelas, horas de serviço, impostos, garantia e sinais de alerta.",
+      "resumo": "Um bom orçamento de reparo de carro lista peças e mão de obra em linhas separadas, informa o tipo de peça, mostra as horas de serviço e o valor da hora, diz se os impostos estão incluídos e indica até quando o orçamento vale e qual garantia cobre o serviço. Para comparar orçamentos com justiça, confira se eles descrevem o mesmo reparo com o mesmo tipo de peça – o total mais baixo não é vantagem se faltar uma peça ou se as horas forem menos do que o serviço realmente leva.",
+      "secoes": [
+        {
+          "titulo": "O que um orçamento de reparo de carro precisa ter",
+          "paragrafos": [
+            "O orçamento é a descrição por escrito do que a oficina propõe fazer e de quanto vai custar. Antes de comparar preços, verifique se todos os orçamentos têm os mesmos itens. Se faltar algum, peça – uma oficina séria não se incomoda."
+          ],
+          "itens": [
+            "Identificação do veículo: marca, modelo, ano, chassi ou placa e quilometragem.",
+            "Descrição do problema que você relatou e do diagnóstico, se foi feito.",
+            "Lista de peças, uma por linha, com quantidade, preço unitário e tipo de peça (original, similar ou usada).",
+            "Mão de obra em linha separada: os serviços, as horas de cada um e o valor da hora.",
+            "Consumíveis e miudezas (óleo, fluidos, juntas, presilhas) – discriminados ou como percentual declarado.",
+            "Eventual taxa de diagnóstico e se ela é abatida quando você aprova o reparo.",
+            "Se os preços incluem impostos ou não, e o total das duas formas.",
+            "Validade do orçamento (até quando o preço vale), prazo previsto na oficina e garantia das peças e da mão de obra.",
+            "Nome e contatos da oficina e a data."
+          ]
+        },
+        {
+          "titulo": "Peças e mão de obra: como ler as linhas",
+          "paragrafos": [
+            "Quase toda conta de reparo é feita de duas coisas bem diferentes: as <strong>peças</strong>, compradas de fornecedores e cujo preço depende da marca, e a <strong>mão de obra</strong>, que depende do tempo que o serviço leva e do valor que a oficina cobra por hora. Dois orçamentos podem chegar ao mesmo total por caminhos totalmente diferentes – um com peças caras e poucas horas, outro com peças baratas e muitas horas. Você precisa ver as duas colunas para saber o que está comprando.",
+            "Compare peça por peça: cada orçamento troca os mesmos componentes? Um serviço de freio orçado como 'pastilhas' em um orçamento e 'pastilhas e discos' em outro não é o mesmo serviço. Se um orçamento junta tudo em uma linha ('reparo dos freios – total'), peça a discriminação antes de comparar."
+          ]
+        },
+        {
+          "titulo": "Peça original, OES e paralela: qual é a diferença?",
+          "paragrafos": [
+            "As peças <strong>originais (OEM)</strong> são vendidas pela montadora na embalagem dela, normalmente pela rede de concessionárias, e costumam ser as mais caras. As peças <strong>OES</strong> (original equipment supplier) são fabricadas pela mesma empresa que fornece para a fábrica, mas vendidas com a marca do fornecedor – muitas vezes a mesma peça por um preço menor. As peças <strong>paralelas (aftermarket)</strong> são feitas por outros fabricantes; a qualidade vai de igual à original a ruim, por isso a marca importa. Peças <strong>usadas ou recondicionadas</strong> podem fazer sentido em lataria ou em carros mais antigos, mas devem sempre ser declaradas como tal.",
+            "Nenhuma categoria é automaticamente a certa. Em itens críticos para a segurança – freios, direção, suspensão – uma marca confiável de qualquer categoria vale mais do que o rótulo 'original'. Em um carro novo ainda na garantia de fábrica, pergunte o que as condições da garantia exigem. Ao comparar orçamentos, o que importa é que <strong>a categoria das peças esteja escrita</strong>, para que um orçamento com peças paralelas não seja confundido com um de peças originais – ou o contrário."
+          ]
+        },
+        {
+          "titulo": "Horas de mão de obra e valor da hora",
+          "paragrafos": [
+            "A mão de obra costuma ser orçada como horas multiplicadas por um valor. As horas devem seguir o tempo padrão da montadora ou do setor para aquele serviço, mais o extra que o mecânico prevê para um componente enferrujado ou de difícil acesso. O valor da hora varia com o tipo de oficina – concessionária, especialista independente ou oficina generalista – e com a região.",
+            "Quando as horas para o mesmo serviço variam muito entre os orçamentos, pergunte o motivo. Uma oficina que orça bem menos horas que as outras pode estar subestimando o serviço e voltar com extras; uma que orça bem mais pode estar inflando. Confira também se o valor é por hora ou por outra 'unidade' de tempo e se já inclui impostos."
+          ]
+        },
+        {
+          "titulo": "Taxa de diagnóstico: quando é justa?",
+          "paragrafos": [
+            "Encontrar uma falha elétrica intermitente ou um barulho leva tempo e exige equipamento, então cobrar o diagnóstico é legítimo desde que seja avisado <strong>antes</strong> de começar e você saiba o que recebe em troca: um laudo por escrito com a causa e um orçamento para o reparo. Muitas oficinas abatem esse valor da conta se você fechar o serviço; pergunte se é o caso.",
+            "Desconfie do 'diagnóstico grátis' que gera um resultado vago e pressão para aprovar na hora um reparo grande, e da taxa de diagnóstico que só aparece na nota final."
+          ]
+        },
+        {
+          "titulo": "Impostos, validade e condições de pagamento",
+          "paragrafos": [
+            "Os orçamentos para pessoa física devem mostrar preços <strong>com impostos incluídos</strong>, mas algumas oficinas informam por costume valores sem impostos ou sem a nota fiscal. Confira sempre qual dos dois você está vendo antes de comparar totais – a diferença pode ser grande, dependendo dos tributos do seu estado e do tipo de serviço.",
+            "O orçamento deve dizer até quando vale, porque os preços das peças mudam. Também deve dizer o que acontece se o mecânico encontrar mais problemas com o carro aberto: a boa prática é que qualquer serviço fora do orçamento precise da sua aprovação antes de ser feito. Em muitos países a lei de defesa do consumidor exige orçamento prévio por escrito e proíbe cobrar serviço não autorizado – consulte a legislação que se aplica onde você mora. Pergunte pelas condições de pagamento, por sinal para peças sob encomenda e se a oficina guarda as peças trocadas para você ver."
+          ]
+        },
+        {
+          "titulo": "Garantia do serviço e das peças",
+          "paragrafos": [
+            "Um reparo tem duas garantias: a do fabricante da peça e a da oficina sobre a mão de obra. Peça as duas por escrito, com o prazo (em meses ou quilômetros) e o que cobrem. Uma oficina que confia no próprio trabalho diz isso sem hesitar.",
+            "Em muitos países, a lei do consumidor dá uma garantia legal sobre serviços e produtos independentemente do que a oficina escreve, então uma 'garantia' muito curta impressa no orçamento não limita necessariamente os seus direitos. Confira as regras que valem onde você mora."
+          ]
+        },
+        {
+          "titulo": "Sinais de alerta em um orçamento",
+          "itens": [
+            "Um valor único sem discriminação de peças e mão de obra.",
+            "Nenhuma indicação do tipo ou da marca das peças.",
+            "Orçamento só verbal, ou recusa em colocá-lo por escrito.",
+            "Pressão para decidir na hora, ou um preço 'só hoje'.",
+            "Serviços extras que aparecem na nota sem aprovação prévia.",
+            "Um total muito abaixo dos outros sem explicação – provavelmente falta alguma coisa.",
+            "Descrições vagas como 'reparo do motor' ou 'problema elétrico' sem diagnóstico.",
+            "Sem garantia da mão de obra, ou recusa em informá-la.",
+            "Peças trocadas 'jogadas fora' antes de você poder ver.",
+            "Sem data, sem prazo de validade, sem dados da oficina."
+          ]
+        },
+        {
+          "titulo": "Perguntas para fazer à oficina antes de aprovar",
+          "itens": [
+            "O que exatamente vai ser trocado e por que cada peça é necessária agora?",
+            "As peças são originais, similares ou paralelas, e de qual marca?",
+            "Quantas horas de mão de obra e qual é o valor da hora com impostos?",
+            "Tem taxa de diagnóstico e ela é abatida se eu aprovar o reparo?",
+            "Até quando esse preço vale?",
+            "Qual garantia vocês dão para a mão de obra e qual garantia as peças têm?",
+            "Se encontrarem outra coisa com o carro aberto, vocês me ligam antes de fazer?",
+            "Quanto tempo o carro fica na oficina e tem carro reserva?",
+            "Posso ficar com as peças velhas?",
+            "Existe uma opção mais barata e ainda segura – por exemplo consertar em vez de trocar, ou outra categoria de peça?"
+          ]
+        },
+        {
+          "titulo": "Por que vale a pena pedir vários orçamentos",
+          "paragrafos": [
+            "As oficinas diferem no valor da hora, nos fornecedores de peças e na forma de diagnosticar o mesmo sintoma. Com um orçamento só, você não sabe se o diagnóstico está certo nem se o preço é razoável; com três, aparecem padrões – a mesma peça em todas as listas, ou uma oficina propondo um serviço muito maior que as outras. Essa diferença merece uma conversa, não só um desconto.",
+            "Comparar também permite escolher por mais do que o preço: distância, disponibilidade, especialização na sua marca e a clareza com que a oficina se explica. Na BipFix você descreve o problema uma vez, anexa fotos pelo celular e recebe orçamentos de oficinas próximas – um jeito simples de conseguir orçamentos por escrito e comparáveis. Se sofreu um acidente, registre em <a href=\"/emergencia\">/emergencia</a>; para o resto, comece em <a href=\"/cadastro\">/cadastro</a>."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "pergunta": "O orçamento da oficina tem que ser grátis?",
+          "resposta": "Um orçamento para serviço visível sem desmontagem costuma ser grátis. Quando encontrar o defeito exige tempo de diagnóstico, cobrar é razoável se for combinado antes e você receber um laudo por escrito; muitas oficinas abatem esse valor se você fechar o reparo."
+        },
+        {
+          "pergunta": "O orçamento mais barato é o melhor?",
+          "resposta": "Só se cobrir o mesmo serviço com peças comparáveis e uma garantia clara. Um total muito mais baixo muitas vezes significa que falta uma peça, que as horas estão subestimadas ou que as peças são de categoria inferior. Compare linha por linha, não pelo total."
+        },
+        {
+          "pergunta": "Peça paralela é pior que peça original?",
+          "resposta": "Não necessariamente. Muitas peças paralelas e OES são feitas pelos mesmos fornecedores das originais. A qualidade depende da marca, então pergunte qual marca está no orçamento e prefira nomes conhecidos em freios, direção e suspensão."
+        },
+        {
+          "pergunta": "A oficina pode cobrar mais do que o orçamento?",
+          "resposta": "A boa prática – e em muitos países a lei – é que serviço fora do orçamento precise da sua aprovação antes de ser feito. Combine antes que a oficina vai ligar se encontrar algo a mais e guarde o orçamento por escrito."
+        },
+        {
+          "pergunta": "Quantos orçamentos devo pedir?",
+          "resposta": "Dois ou três costumam bastar para perceber se o diagnóstico e o preço são coerentes. Em um reparo grande ou em dano de acidente, pode valer a pena pedir mais."
+        }
+      ],
+      "fontes": [
+        { "nome": "Planalto – Código de Defesa do Consumidor (Lei 8.078/1990)", "url": "https://www.planalto.gov.br/ccivil_03/leis/l8078compilado.htm" }
+      ],
+      "cta": "pedido"
+    }
+  }
+}

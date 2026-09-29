@@ -56,8 +56,21 @@ for (const f of fs.readdirSync(DIR).filter((f) => f.endsWith('.json'))) {
 if (!semRede) {
   for (const [u, o] of urls) {
     try {
-      const r = await fetch(u, { method: 'GET', redirect: 'follow', headers: { 'User-Agent': 'Mozilla/5.0 BipFix link check' } });
-      if (r.status >= 400) erro(o, `fonte responde ${r.status}: ${u}`);
+      const r = await fetch(u, { method: 'GET', redirect: 'follow', headers: {
+        // Sites do governo estoniano (riigiteataja, transpordiamet, politsei) devolvem
+        // 403 para clientes sem cabecalhos de navegador - nao e link quebrado.
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
+        Accept: 'text/html,application/xhtml+xml',
+        'Accept-Language': 'et,en;q=0.8',
+      } });
+      let status = r.status;
+      // Alguns sites bloqueiam a conexao do Node pela "impressao digital" TLS,
+      // mesmo com cabecalhos de navegador; o curl passa. Reconfirma com ele.
+      if (status === 403) {
+        const { execFileSync } = await import('node:child_process');
+        status = Number(execFileSync('curl', ['-s', '-o', process.platform === 'win32' ? 'NUL' : '/dev/null', '-L', '--max-time', '30', '-A', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/140.0.0.0 Safari/537.36', '-H', 'Accept: text/html', '-w', '%{http_code}', u]).toString());
+      }
+      if (status >= 400) erro(o, `fonte responde ${status}: ${u}`);
     } catch (e) {
       erro(o, `fonte inacessivel: ${u} (${e.message})`);
     }

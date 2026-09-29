@@ -1,0 +1,283 @@
+{
+  "slug": "roadworthiness-inspection-estonia",
+  "pais": "EE",
+  "publicado": "2026-09-29",
+  "atualizado": "2026-09-29",
+  "versoes": {
+    "et": {
+      "titulo": "Tehnoülevaatus Eestis: kui tihti, kus ja mida kontrollitakse",
+      "tituloSeo": "Tehnoülevaatus Eestis: kui tihti ja mida kontrollitakse",
+      "descricao": "Tehnoülevaatus Eestis: sõiduauto esimene ülevaatus 48 kuu pärast, siis iga 24 või 12 kuu järel. Mida kontrollitakse, kuidas valmistuda, mis saab aegumisel.",
+      "resumo": "Uus sõiduauto (M1) tuleb Eestis esimest korda tehnoülevaatusele viia <strong>48 kuud pärast esmaregistreerimist</strong>, seejärel iga 24 kuu järel ja üle 10 aasta vanuselt igal aastal. Kaubik (N1) läheb esimest korda 24 kuu möödumisel ja edaspidi iga 12 kuu järel. Ülevaatust tehakse Transpordiameti volitatud ülevaatuspunktides, kus kontrollitakse pidureid, juhtimisseadet, nähtavust, tulesid, veermikku, keret, varustust ja saastet. Aegunud ülevaatusega ei tohi liikluses osaleda.",
+      "secoes": [
+        {
+          "titulo": "Kui tihti tuleb sõiduk tehnoülevaatusele viia?",
+          "paragrafos": [
+            "Ülevaatuse sagedus sõltub sõiduki kategooriast ja vanusest. Transpordiameti avaldatud tähtajad on järgmised (esimene tähtaeg arvestatakse esmaregistreerimisest, edasised viimasest ülevaatusest):"
+          ],
+          "itens": [
+            "<strong>Sõiduautod (M1) ja mootorrattad (L3e, L4e, L5e, L6e, L7e):</strong> esimene ülevaatus 48 kuu möödumisel esmaregistreerimisest; kasutatud sõiduk alla 10 aasta iga 24 kuu järel; üle 10 aasta vana sõiduk iga 12 kuu järel.",
+            "<strong>Kaubikud (N1):</strong> esimene ülevaatus 24 kuu möödumisel, edaspidi iga 12 kuu järel.",
+            "<strong>Kerghaagised (O1):</strong> esimene ülevaatus 48 kuu möödumisel, edaspidi iga 24 kuu järel.",
+            "<strong>Veoautod ja raskemad haagised (N2, N3, O2, O3, O4):</strong> 12 kuu möödumisel esmaregistreerimisest ja edaspidi iga 12 kuu järel.",
+            "<strong>Bussid (M2, M3):</strong> 12 kuu möödumisel ja edaspidi iga 12 kuu järel; üle 10 aasta vanad bussid iga 6 kuu järel.",
+            "<strong>Vanasõidukid:</strong> 48 kuu möödumisel vanasõidukina tunnustamisest või viimasest ülevaatusest; enne 1973. aastat esmaregistreeritud sõidukil 12 aastat tunnustamisest."
+          ]
+        },
+        {
+          "titulo": "Millal ülevaatusele minna: kahe kuu reegel",
+          "paragrafos": [
+            "Ülevaatuse tulemusena määratakse sõiduki järgmise ülevaatuse kuu ja aasta. Kui viid sõiduki korralisele ülevaatusele <strong>kahe kuu jooksul enne</strong> määratud aega, loetakse see esitatuks määratud ajal ja järgmine tähtaeg arvestatakse senise ülevaatuse lõppemisest – varem minek ei „söö” kehtivusaega ära. Sama kehtib, kui sõiduk esitatakse kahe kuu jooksul pärast tähtaja lõppu: järgmine aeg arvestatakse ikkagi senise lõppemisest.",
+            "Kehtivat ülevaatuse tähtaega saab kontrollida Transpordiameti e-teeninduses sõiduki registreerimismärgi järgi. Tähtaeg on kirjas ka liiklusregistris ja registreerimistunnistusel, kui sinna on kanne tehtud."
+          ]
+        },
+        {
+          "titulo": "Kes ei pea tehnoülevaatust läbima?",
+          "paragrafos": [
+            "Korralisele perioodilisele ülevaatusele ei pea esitama mopeede (L1e, L2e), maastikusõidukeid nagu ATV-d ja mootorsaanid (MS1, MS2) ega põllumajanduslikke liikurmasinaid, mille registreerimistunnistusel on vastav märge. Liiklusseaduse § 73 lõike 2 järgi ei pea kehtivat ülevaatust omama ka üksnes väikesaarel kasutatav mootorsõiduk ja haagis. Sõiduki omanik ja vastutav kasutaja peavad siiski alati tagama, et sõiduk on tehniliselt korras."
+          ]
+        },
+        {
+          "titulo": "Kus tehnoülevaatust tehakse ja mida kaasa võtta?",
+          "paragrafos": [
+            "Ülevaatust teevad Transpordiametiga halduslepingu sõlminud ülevaatuspunktid. Sõiduki võib olenemata registreerimiskohast viia <strong>mistahes ülevaatuspunkti</strong>, millel on õigus kontrollida selle kategooria sõidukeid – Tallinnas ja Harjumaal on neid kümneid, täielik nimekiri on Transpordiameti lehel. Korduvülevaatuseks tuleb sõiduk viia samasse punkti, kus korduvülevaatus määrati.",
+            "Kaasa tuleb võtta sõiduki registreerimistunnistus või selle B-osa; erakorralise ülevaatuse korral ka liiklusjärelevalve väljastatud kontrollkaart, vanasõidukil tunnustamise akt ja taksol taksomeetri kohandamistunnistus. Ülevaatusel kontrollitakse ka kohustuslikku lisavarustust:"
+          ],
+          "itens": [
+            "Tõkiskingad (v.a L-kategooria sõidukil).",
+            "Ohukolmnurk (v.a L-kategooria sõidukil ja haagisel).",
+            "Tulekustuti: kuni 3,5 t täismassiga M1/N1 sõidukil üks vähemalt 1 kg kustutusainega kustuti.",
+            "Esmaabivahendid, kui tegemist on ettevõtte sõidukiga (töökoht) või ühissõidukiga."
+          ]
+        },
+        {
+          "titulo": "Mida tehnoülevaatusel kontrollitakse?",
+          "paragrafos": [
+            "Korralise ülevaatuse töömahu kehtestab majandus- ja kommunikatsiooniministri määrus nr 77 „Mootorsõiduki ja selle haagise tehnonõuetele vastavuse kontrollimise tingimused ja kord”. Selle § 8 järgi kontrollitakse kohustuslikult sõiduki registriandmeid ning määruse lisas 4 loetletud osi, seadmeid ja varustust järgmistes valdkondades:"
+          ],
+          "itens": [
+            "Identifitseerimine – VIN-kood, registreerimismärgid ja andmete vastavus liiklusregistrile.",
+            "Pidurisüsteem – pidurdusjõud, tasakaal telgede vahel, seisupidur, torud ja voolikud.",
+            "Juhtimisseade – rool, roolilatt, roolivõimendi, lõtkud.",
+            "Nähtavus – esiklaasi praod ja kiled, klaasipuhastid, peeglid.",
+            "Tuled, helkurid ja elektriseadmed – kõigi tulede töö ja värv, tulede kõrgus, aku ja juhtmestik.",
+            "Veermik ja vedrustus – rehvid, veljed, amordid, vedrud, õõtshoovad, laagrid.",
+            "Raam, kere ja sellele kinnituvad osad – korrosioon kandvates osades, kere kinnitused, haakeseade.",
+            "Muu varustus – turvavööd, signaal, kohustuslik lisavarustus, eCall-süsteem sõidukitel, millel see peab olema.",
+            "Saaste – heitgaasid, müra, kütuse- ja õlilekked."
+          ]
+        },
+        {
+          "titulo": "Ülevaatuse tulemus: korras, korduvülevaatus või sõitmiseks kõlbmatu",
+          "paragrafos": [
+            "Rikked jagunevad kolme raskusastmesse. <strong>Väheolulise</strong> rikke puhul on otsus „tehniliselt korras”: puudus kantakse kontrollkaardile ja omanik peab selle esimesel võimalusel kõrvaldama, kuid korduvülevaatusele minema ei pea. <strong>Olulise</strong> rikke puhul on otsus „esitada korduvülevaatusele”: sõiduk loetakse kuni vea kõrvaldamiseni nõuetele mittevastavaks, kuid sellega tohib liikluses osaleda kuni kehtiva korralise ülevaatuse lõpuni ja 30 päeva pärast seda – või 30 päeva, kui kehtivat ülevaatust polnud – kuid mitte kauem kui 60 päeva korduvülevaatuse määramisest.",
+            "<strong>Ohtliku</strong> rikke puhul on otsus „omal jõul sõitmiseks kõlbmatu”: sõidukiga ei tohi liikluses osaleda; pärast vea parandamist tohib sellega sõita ainult lühimat teed pidi ülevaatuspunkti. Korduvülevaatus tehakse samas ülevaatuspunktis, kus see määrati, ja sõiduk tuleb sinna esitada eespool nimetatud tähtaja jooksul. Kui tähtaeg möödub, ei tohi sõidukiga enam liikluses osaleda enne, kui ülevaatus on uuesti läbitud."
+          ]
+        },
+        {
+          "titulo": "Levinumad põhjused, miks auto ülevaatust ei läbi, ja kuidas valmistuda",
+          "paragrafos": [
+            "Suur osa korduvülevaatustest tuleb pisiasjadest, mida saab enne ülevaatust ise või töökojas odavalt korda teha. Käi enne ülevaatust läbi vähemalt see nimekiri:"
+          ],
+          "itens": [
+            "Kõik tuled töötavad ja on õiget värvi: lähi- ja kaugtuled, suunatuled, pidurituled, numbrituli, tagumine udutuli; katkine pirn on üks sagedasemaid puudusi.",
+            "Esiklaasil pole juhi vaateväljas pragusid ja klaasipuhastid ei jäta triipe; pesuvedelikku on paagis.",
+            "Rehvide muster on üle miinimumi (suverehvil 1,6 mm, talverehvil 3 mm), rehvid on ühel teljel sama tüüpi ja ilma kahjustusteta, rõhk on paigas.",
+            "Pidurid ei tõmba küljele, seisupidur hoiab; kulunud klotsid ja kettad tasub vahetada enne, mitte pärast ülevaatust.",
+            "Roolis ja vedrustuses pole lõtku ega kolinat; amordid ei leki.",
+            "Summuti on terve ja mootor ei suitseta; heitgaaside kontroll ebaõnnestub sageli hooldamata mootori või vigase lambdaanduri tõttu.",
+            "Kere kandvates osades pole läbiroostetanud kohti; numbrimärgid on loetavad ja korralikult kinnitatud.",
+            "Turvavööd lukustuvad ja tõmbuvad tagasi, helisignaal töötab, armatuurlaual ei põle rikketulesid (ABS, turvapadi, mootor).",
+            "Kohustuslik varustus on kaasas: tõkiskingad, ohukolmnurk, tulekustuti, mis pole aegunud."
+          ]
+        },
+        {
+          "titulo": "Mis juhtub, kui tehnoülevaatus on aegunud?",
+          "paragrafos": [
+            "Liiklusseaduse § 73 järgi peab liikluses kasutatav mootorsõiduk olema tähtaegselt läbinud tehnonõuetele vastavuse kontrolli. Tähtaja möödumisel kaotab sõiduk kehtivatele tehnonõuetele vastavuse ja sellega ei tohi liikluses osaleda. Ülevaatuse mitteläbinud mootorsõiduki juhtimise eest näeb liiklusseaduse § 207 ette rahatrahvi <strong>kuni 100 trahviühikut</strong> (bussi või üle 3500 kg täismassiga veoauto puhul kuni 300 trahviühikut või arest); sama karistus ähvardab § 208 järgi omanikku, kes sellise sõiduki juhtima lubab. Karistusseadustiku § 47 järgi on trahviühik alates 1. jaanuarist 2025 <strong>8 eurot</strong>, seega on sõiduauto puhul maksimumtrahv 800 eurot.",
+            "Kui ülevaatus on aegunud, on kõige kindlam viia auto ülevaatuspunkti treileriga või puksiiriga, või leppida kokku erakorraline lahendus ülevaatuspunktiga. Ka kindlustuse ja liiklusregistri toimingute puhul võib aegunud ülevaatus tekitada probleeme, seega ära lase tähtajal mööda minna – kahe kuu reegel lubab minna varem ilma kehtivusaega kaotamata."
+          ]
+        },
+        {
+          "titulo": "Remont enne ülevaatust: küsi hinnapakkumised",
+          "paragrafos": [
+            "Kui tead, et autol on puudusi – kulunud pidurid, lekkivad amordid, roostes summuti –, tasub need enne ülevaatust korda teha ja säästa korduvülevaatuse aeg ja tasu. BipFixis saad kirjeldada, mida on vaja teha, ja küsida hinnapakkumisi Tallinna töökodadelt; töökodade nimekiri on lehel <a href=\"/oficinas\">/oficinas</a>. Kui ülevaatus on juba läbitud ja kontrollkaardil on puuduste loetelu, lisa see pakkumise küsimisel – töökojal on siis lihtne täpne pakkumine teha."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "pergunta": "Millal peab uus auto esimest korda tehnoülevaatusele minema?",
+          "resposta": "Sõiduauto (M1) esimene korraline ülevaatus on 48 kuu möödumisel esmaregistreerimisest. Kaubik (N1) läheb esimest korda 24 kuu möödumisel, veoauto või buss 12 kuu möödumisel."
+        },
+        {
+          "pergunta": "Kui tihti peab üle 10 aasta vana auto ülevaatusel käima?",
+          "resposta": "Üle 10 aasta vanuse sõiduauto ülevaatus kehtib 12 kuud, seega tuleb käia igal aastal. Alla 10 aasta vanuse sõiduauto puhul on intervall 24 kuud."
+        },
+        {
+          "pergunta": "Kas võin ülevaatusele minna varem, ilma et kaotaksin kehtivusaega?",
+          "resposta": "Jah. Kui viid sõiduki ülevaatusele kahe kuu jooksul enne määratud aega, arvestatakse järgmine tähtaeg senise ülevaatuse lõppemisest, mitte varasemast kuupäevast."
+        },
+        {
+          "pergunta": "Kui kaua tohib sõita, kui määrati korduvülevaatus?",
+          "resposta": "Olulise rikke korral tohib liikluses osaleda kuni kehtiva korralise ülevaatuse lõpuni ja 30 päeva pärast seda (või 30 päeva, kui kehtivat ülevaatust polnud), kuid mitte kauem kui 60 päeva korduvülevaatuse määramisest. Ohtliku rikke korral ei tohi sõita üldse, kuni viga on parandatud."
+        },
+        {
+          "pergunta": "Mis on trahv aegunud ülevaatusega sõitmise eest?",
+          "resposta": "Liiklusseaduse § 207 järgi karistatakse ülevaatuse mitteläbinud mootorsõiduki juhtimise eest rahatrahviga kuni 100 trahviühikut ehk kuni 800 eurot (trahviühik on alates 2025. aastast 8 eurot); bussi või üle 3500 kg veoauto puhul kuni 300 trahviühikut või arestiga."
+        },
+        {
+          "pergunta": "Kas võin ülevaatusele minna ükskõik millisesse ülevaatuspunkti?",
+          "resposta": "Jah, korralisele ja erakorralisele ülevaatusele võib sõiduki viia mistahes ülevaatuspunkti, kellel on õigus selle kategooria sõidukeid kontrollida. Korduvülevaatus tuleb aga teha samas punktis, kus see määrati."
+        }
+      ],
+      "fontes": [
+        { "nome": "Transpordiamet – Sõiduki ülevaatus (tähtajad, dokumendid, varustus)", "url": "https://www.transpordiamet.ee/soiduki-ulevaatus" },
+        { "nome": "Transpordiamet – Sõidukite tehnoülevaatus", "url": "https://www.transpordiamet.ee/soidukite-tehnoulevaatus" },
+        { "nome": "Transpordiamet – Sõidukite tehnoülevaatuspunktid", "url": "https://www.transpordiamet.ee/ulevaatuspunktid" },
+        { "nome": "Riigi Teataja – Mootorsõiduki ja selle haagise tehnonõuetele vastavuse kontrollimise tingimused ja kord (määrus nr 77)", "url": "https://www.riigiteataja.ee/akt/113042023008" },
+        { "nome": "Riigi Teataja – Liiklusseadus (§ 73, § 207, § 208)", "url": "https://www.riigiteataja.ee/akt/107042026003" },
+        { "nome": "Riigi Teataja – Karistusseadustik (§ 47 trahviühik)", "url": "https://www.riigiteataja.ee/akt/129062024005" }
+      ],
+      "cta": "pedido"
+    },
+    "en": {
+      "titulo": "Roadworthiness inspection in Estonia (tehnoülevaatus): how often, where and what is checked",
+      "tituloSeo": "Roadworthiness inspection in Estonia: intervals and checks",
+      "descricao": "Vehicle inspection in Estonia: a new car is inspected after 48 months, then every 24 or 12 months. Where to go, what is checked and what happens if overdue.",
+      "resumo": "In Estonia a new passenger car (category M1) must pass its first roadworthiness inspection (tehnoülevaatus) <strong>48 months after first registration</strong>, then every 24 months, and every 12 months once it is over 10 years old. Vans (N1) are inspected first after 24 months and then every 12 months. Inspections are done at inspection stations authorised by the Transport Administration (Transpordiamet), which check brakes, steering, visibility, lights, suspension, body, equipment and emissions. A vehicle with an expired inspection may not be used on the road.",
+      "secoes": [
+        {
+          "titulo": "How often is a vehicle inspection required in Estonia?",
+          "paragrafos": [
+            "The interval depends on the vehicle category and age. The deadlines published by the Transport Administration are as follows (the first deadline counts from first registration, later ones from the last inspection):"
+          ],
+          "itens": [
+            "<strong>Passenger cars (M1) and motorcycles (L3e, L4e, L5e, L6e, L7e):</strong> first inspection 48 months after first registration; used vehicles under 10 years old every 24 months; vehicles over 10 years old every 12 months.",
+            "<strong>Vans (N1):</strong> first inspection after 24 months, then every 12 months.",
+            "<strong>Light trailers (O1):</strong> first inspection after 48 months, then every 24 months.",
+            "<strong>Trucks and heavier trailers (N2, N3, O2, O3, O4):</strong> 12 months after first registration and every 12 months thereafter.",
+            "<strong>Buses (M2, M3):</strong> after 12 months and then every 12 months; buses over 10 years old every 6 months.",
+            "<strong>Historic vehicles:</strong> 48 months after recognition as a historic vehicle or after the last inspection; vehicles first registered before 1973, 12 years after recognition."
+          ]
+        },
+        {
+          "titulo": "When to go: the two-month rule",
+          "paragrafos": [
+            "The inspection sets the month and year of the next inspection. If you present the vehicle <strong>within two months before</strong> the due date, it counts as presented on time and the next deadline is calculated from the end of the current validity – going early does not cost you validity. The same applies if the vehicle is presented within two months after the deadline: the next date is still calculated from the previous expiry.",
+            "You can check a vehicle's current inspection deadline by registration number in the Transport Administration's e-service. The date is also recorded in the traffic register and, where an entry has been made, on the registration certificate."
+          ]
+        },
+        {
+          "titulo": "Which vehicles are exempt?",
+          "paragrafos": [
+            "Mopeds (L1e, L2e), off-road vehicles such as ATVs and snowmobiles (MS1, MS2) and agricultural mobile machinery marked as such on the registration certificate do not have to undergo periodic inspection. Under section 73(2) of the Traffic Act, a motor vehicle and trailer used only on a small island also does not need a valid inspection. The owner and responsible user must nevertheless always keep the vehicle in a technically sound condition."
+          ]
+        },
+        {
+          "titulo": "Where is the inspection done and what to bring?",
+          "paragrafos": [
+            "Inspections are carried out by inspection stations that have an administrative contract with the Transport Administration. Regardless of where the vehicle is registered, you may take it to <strong>any inspection station</strong> authorised for that vehicle category – there are dozens in Tallinn and Harju County, and the full list is on the Transport Administration's website. A repeat inspection must be done at the same station that ordered it.",
+            "Bring the vehicle registration certificate or its part B; for an extraordinary inspection also the check card issued during a roadside check, for historic vehicles the recognition certificate, and for taxis the taximeter adjustment certificate. The mandatory equipment is checked as well:"
+          ],
+          "itens": [
+            "Wheel chocks (except L-category vehicles).",
+            "Warning triangle (except L-category vehicles and trailers).",
+            "Fire extinguisher: for M1/N1 vehicles up to 3.5 t, one extinguisher with at least 1 kg of extinguishing agent.",
+            "First-aid kit, if the vehicle is a company vehicle (a workplace) or public transport."
+          ]
+        },
+        {
+          "titulo": "What is checked at the inspection?",
+          "paragrafos": [
+            "The scope of the periodic inspection is set by Regulation No 77 of the Minister of Economic Affairs and Communications on the conditions and procedure for checking the compliance of motor vehicles and trailers with technical requirements. Under its section 8, the inspector must check the vehicle's register data and the parts, systems and equipment listed in Annex 4, grouped into these areas:"
+          ],
+          "itens": [
+            "Identification – VIN, registration plates and consistency with the traffic register.",
+            "Braking system – braking force, balance between axles, parking brake, pipes and hoses.",
+            "Steering – steering wheel, rack, power steering, play.",
+            "Visibility – windscreen cracks and films, wipers, mirrors.",
+            "Lights, reflectors and electrical equipment – operation and colour of all lights, headlight aim, battery and wiring.",
+            "Axles, wheels, tyres and suspension – tyres, rims, shock absorbers, springs, control arms, bearings.",
+            "Chassis, body and attachments – corrosion in load-bearing parts, body mountings, tow bar.",
+            "Other equipment – seat belts, horn, mandatory equipment, the eCall system on vehicles that must have it.",
+            "Nuisance – exhaust emissions, noise, fuel and oil leaks."
+          ]
+        },
+        {
+          "titulo": "The result: pass, repeat inspection or unfit to drive",
+          "paragrafos": [
+            "Defects fall into three classes. A <strong>minor</strong> defect gives the decision 'technically in order': the defect is noted on the check card and the owner must fix it at the first opportunity, but no repeat inspection is needed. A <strong>major</strong> defect gives 'present for repeat inspection': until the fault is fixed the vehicle is considered non-compliant, but it may still be driven until the end of the current inspection validity plus 30 days – or for 30 days if there was no valid inspection – and never longer than 60 days after the repeat inspection was ordered.",
+            "A <strong>dangerous</strong> defect gives 'unfit to drive under its own power': the vehicle may not be used in traffic; after the repair it may only be driven by the shortest route to the inspection station. The repeat inspection is done at the station that ordered it, and the vehicle must be presented there within the deadlines above. Once the deadline passes, the vehicle may not be used on the road until it has passed an inspection again."
+          ]
+        },
+        {
+          "titulo": "Common reasons for failing and how to prepare",
+          "paragrafos": [
+            "Many repeat inspections are caused by small items that can be fixed cheaply beforehand, by yourself or at a workshop. Go through at least this checklist before your appointment:"
+          ],
+          "itens": [
+            "All lights work and are the right colour: dipped and main beam, indicators, brake lights, number plate light, rear fog light; a blown bulb is one of the most common defects.",
+            "No cracks in the windscreen in the driver's field of view, wipers do not streak, and there is washer fluid in the tank.",
+            "Tyre tread is above the minimum (1.6 mm for summer tyres, 3 mm for winter tyres), tyres on the same axle are of the same type and undamaged, pressures are correct.",
+            "Brakes do not pull to one side and the parking brake holds; replace worn pads and discs before the inspection, not after.",
+            "No play or knocking in the steering and suspension; shock absorbers do not leak.",
+            "The exhaust is intact and the engine does not smoke; emissions tests often fail because of a poorly maintained engine or a faulty lambda sensor.",
+            "No rust holes in load-bearing parts of the body; number plates are legible and properly fixed.",
+            "Seat belts latch and retract, the horn works, and no warning lights (ABS, airbag, engine) are on in the dashboard.",
+            "Mandatory equipment is on board: wheel chocks, warning triangle and a fire extinguisher that has not expired."
+          ]
+        },
+        {
+          "titulo": "What happens if the inspection is overdue?",
+          "paragrafos": [
+            "Under section 73 of the Traffic Act, a motor vehicle used on the road must have passed its inspection on time. Once the deadline passes, the vehicle loses its compliance with technical requirements and may not be used in traffic. Section 207 of the Traffic Act sets a fine of <strong>up to 100 fine units</strong> for driving a motor vehicle that has not passed inspection (up to 300 fine units or detention for a bus or a truck over 3,500 kg); under section 208 the owner who allows such a vehicle to be driven faces the same penalty. Under section 47 of the Penal Code a fine unit has been <strong>EUR 8</strong> since 1 January 2025, so the maximum for a passenger car is EUR 800.",
+            "If your inspection has expired, the safest option is to take the car to the inspection station on a trailer or by tow truck, or to agree a solution with the station. An expired inspection can also complicate insurance and register transactions, so do not let the deadline slip – the two-month rule lets you go early without losing validity."
+          ]
+        },
+        {
+          "titulo": "Repairs before the inspection: get quotes first",
+          "paragrafos": [
+            "If you know the car has defects – worn brakes, leaking shock absorbers, a rusty exhaust – fix them before the inspection and save yourself the time and fee of a repeat visit. On BipFix you can describe what needs doing and request quotes from Tallinn workshops; the list of workshops is at <a href=\"/oficinas\">/oficinas</a>. If you have already failed and hold the check card with the list of defects, attach it to your request – it lets the workshop give an accurate quote."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "pergunta": "When does a new car need its first inspection in Estonia?",
+          "resposta": "A passenger car (M1) has its first periodic inspection 48 months after first registration. A van (N1) goes first after 24 months, a truck or bus after 12 months."
+        },
+        {
+          "pergunta": "How often must a car over 10 years old be inspected?",
+          "resposta": "For a passenger car over 10 years old the inspection is valid for 12 months, so it must be done every year. For cars under 10 years old the interval is 24 months."
+        },
+        {
+          "pergunta": "Can I go early without losing validity?",
+          "resposta": "Yes. If you present the vehicle within two months before the due date, the next deadline is calculated from the end of the current validity, not from the earlier date."
+        },
+        {
+          "pergunta": "How long may I drive after a repeat inspection is ordered?",
+          "resposta": "With a major defect you may drive until the end of the current inspection validity plus 30 days (or for 30 days if there was no valid inspection), but never more than 60 days after the repeat inspection was ordered. With a dangerous defect you may not drive at all until it is fixed."
+        },
+        {
+          "pergunta": "What is the fine for driving with an expired inspection?",
+          "resposta": "Under section 207 of the Traffic Act, driving a motor vehicle that has not passed inspection is punishable by a fine of up to 100 fine units, i.e. up to EUR 800 (a fine unit has been EUR 8 since 2025); for a bus or a truck over 3,500 kg up to 300 fine units or detention."
+        },
+        {
+          "pergunta": "Can I use any inspection station?",
+          "resposta": "Yes, a periodic or extraordinary inspection can be done at any station authorised for your vehicle's category. A repeat inspection, however, must be done at the station that ordered it."
+        }
+      ],
+      "fontes": [
+        { "nome": "Transpordiamet – Sõiduki ülevaatus (intervals, documents, equipment)", "url": "https://www.transpordiamet.ee/soiduki-ulevaatus" },
+        { "nome": "Transpordiamet – Sõidukite tehnoülevaatus", "url": "https://www.transpordiamet.ee/soidukite-tehnoulevaatus" },
+        { "nome": "Transpordiamet – Inspection stations (ülevaatuspunktid)", "url": "https://www.transpordiamet.ee/ulevaatuspunktid" },
+        { "nome": "Riigi Teataja – Regulation No 77 on checking compliance of motor vehicles and trailers with technical requirements", "url": "https://www.riigiteataja.ee/akt/113042023008" },
+        { "nome": "Riigi Teataja – Traffic Act (English translation)", "url": "https://www.riigiteataja.ee/en/eli/ee/Riigikogu/act/507042026001/consolide" },
+        { "nome": "Riigi Teataja – Liiklusseadus (§ 73, § 207, § 208)", "url": "https://www.riigiteataja.ee/akt/107042026003" },
+        { "nome": "Riigi Teataja – Penal Code / Karistusseadustik (§ 47 fine unit)", "url": "https://www.riigiteataja.ee/akt/129062024005" }
+      ],
+      "cta": "pedido"
+    }
+  }
+}
