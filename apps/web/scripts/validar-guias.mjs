@@ -7,7 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const LOCALES = ['pt', 'pt-PT', 'en', 'et', 'it'];
+const LOCALES = ['pt', 'pt-PT', 'en', 'et', 'it', 'ru'];
 const DIR = path.join(process.cwd(), 'content', 'guias');
 const semRede = process.argv.includes('--sem-rede');
 let erros = 0;

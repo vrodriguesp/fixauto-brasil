@@ -11,6 +11,8 @@ const LOCALE_LABEL: Record<Locale, { flag: string; label: string }> = {
   en: { flag: '🇬🇧', label: 'English' },
   et: { flag: '🇪🇪', label: 'Eesti' },
   it: { flag: '🇮🇹', label: 'Italiano' },
+  // Idioma, nao pais: sem bandeira (publico = russofonos da Estonia)
+  ru: { flag: '', label: 'Русский' },
 };
 
 // As opcoes sao LINKS de verdade (<a href hreflang>), sempre presentes no HTML
@@ -44,7 +46,7 @@ export default function LanguageSwitcher() {
         aria-label={current.label}
         className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
       >
-        <span aria-hidden="true">{current.flag}</span>
+        {current.flag && <span aria-hidden="true">{current.flag}</span>}
         <span className="hidden sm:inline">{current.label}</span>
         <svg className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -65,7 +67,7 @@ export default function LanguageSwitcher() {
                 l === locale ? 'text-primary-700 bg-primary-50 font-medium' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
-              <span aria-hidden="true">{LOCALE_LABEL[l].flag}</span>
+              {LOCALE_LABEL[l].flag ? <span aria-hidden="true">{LOCALE_LABEL[l].flag}</span> : <span aria-hidden="true" className="inline-block w-5" />}
               {LOCALE_LABEL[l].label}
             </a>
           </li>

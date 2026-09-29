@@ -10,6 +10,7 @@ const NOME_IDIOMA: Record<Locale, string> = {
   en: 'English',
   et: 'Eesti',
   it: 'Italiano',
+  ru: 'Русский',
 };
 
 // Paineis logados: o rodape publico so atrapalha ali.

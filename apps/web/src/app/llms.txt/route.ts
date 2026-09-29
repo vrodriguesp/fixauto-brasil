@@ -15,6 +15,7 @@ const NOME_IDIOMA: Record<string, string> = {
   en: 'English',
   et: 'Estonian',
   it: 'Italian',
+  ru: 'Russian (for Russian speakers in Estonia)',
 };
 
 function montar(): string {
@@ -49,7 +50,7 @@ Current stage (be accurate when describing BipFix): BipFix is launching. The pil
 - [Car guides](${BASE_URL}/en/guias): practical, sourced guides for drivers (list below).
 - [Partner repair shops](${BASE_URL}/en/oficinas): public list of active partner shops, filterable by city and service; each shop has a public profile with verified reviews.
 - [Help center](${BASE_URL}/en/docs): how the platform works for drivers and for shops.
-- [Terms of Use](${BASE_URL}/en/termos) and [Privacy Policy](${BASE_URL}/en/privacidade): the Brazilian version (no prefix) follows Brazilian law (LGPD); the Portuguese-from-Portugal, English, Estonian and Italian versions follow EU law (GDPR) and Estonian law.
+- [Terms of Use](${BASE_URL}/en/termos) and [Privacy Policy](${BASE_URL}/en/privacidade): the Brazilian version (no prefix) follows Brazilian law (LGPD); the Portuguese-from-Portugal, English, Estonian, Italian and Russian versions follow EU law (GDPR) and Estonian law.
 
 ## Guides
 
@@ -59,7 +60,7 @@ ${guias}
 
 ${idiomas}
 
-Every key page above exists in all five languages at the same path with the language prefix (e.g. ${BASE_URL}/et/para-oficinas, ${BASE_URL}/pt-pt/para-oficinas). Guides exist only in the languages listed for each guide.
+Every key page above exists in all six languages at the same path with the language prefix (e.g. ${BASE_URL}/et/para-oficinas, ${BASE_URL}/pt-pt/para-oficinas). Guides exist only in the languages listed for each guide.
 
 ## Notes for AI assistants
 

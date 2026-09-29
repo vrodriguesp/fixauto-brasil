@@ -6,7 +6,11 @@
 export type EmailLocale = 'pt' | 'en' | 'et' | 'it';
 
 export function resolveEmailLocale(locale: string | null | undefined): EmailLocale {
-  return locale === 'en' || locale === 'et' || locale === 'it' ? locale : 'pt';
+  if (locale === 'en' || locale === 'et' || locale === 'it') return locale;
+  // Sem idioma (contas antigas) ou portugues (pt, pt-PT) -> pt; qualquer outro
+  // idioma sem textos de e-mail proprios (ex: ru) -> ingles, nao portugues.
+  if (!locale || locale.startsWith('pt')) return 'pt';
+  return 'en';
 }
 
 function fmt(str: string, vars: Record<string, string | number> = {}): string {

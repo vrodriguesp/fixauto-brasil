@@ -19,6 +19,7 @@ const TEXTO: Record<Locale, { msg: string; ir: string; fechar: string }> = {
   en: { msg: 'This page is also available in English.', ir: 'View in English', fechar: 'Close' },
   et: { msg: 'See leht on saadaval ka eesti keeles.', ir: 'Vaata eesti keeles', fechar: 'Sulge' },
   it: { msg: 'Questa pagina è disponibile anche in italiano.', ir: 'Vedi in italiano', fechar: 'Chiudi' },
+  ru: { msg: 'Эта страница есть и на русском языке.', ir: 'Открыть на русском', fechar: 'Закрыть' },
 };
 
 function idiomaDoNavegador(): Locale | null {
@@ -28,6 +29,7 @@ function idiomaDoNavegador(): Locale | null {
     if (l.startsWith('pt')) return 'pt';
     if (l.startsWith('et')) return 'et';
     if (l.startsWith('it')) return 'it';
+    if (l.startsWith('ru')) return 'ru';
     if (l.startsWith('en')) return 'en';
   }
   return null;

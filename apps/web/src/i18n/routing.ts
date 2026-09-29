@@ -9,6 +9,8 @@ import { defineRouting } from 'next-intl/routing';
 // - en    = ingles (fallback universal e x-default para o Google)
 // - et    = estoniano (piloto em Tallinn)
 // - it    = italiano
+// - ru    = russo, para a comunidade russofona da ESTONIA (~1/3 de Tallinn):
+//           conteudo europeu/estoniano (GDPR, euro), nao da Russia.
 // Pratica recomendada pelo Google para sites multilingues: uma URL por
 // idioma/variante + hreflang com a regiao (pt-BR / pt-PT) e NENHUM
 // redirecionamento automatico por idioma do navegador, cookie ou IP - o
@@ -17,7 +19,7 @@ import { defineRouting } from 'next-intl/routing';
 // components/layout/SugestaoIdioma.tsx sugere (sem redirecionar) a versao
 // no idioma do navegador.
 export const routing = defineRouting({
-  locales: ['pt', 'pt-PT', 'en', 'et', 'it'],
+  locales: ['pt', 'pt-PT', 'en', 'et', 'it', 'ru'],
   defaultLocale: 'pt',
   localePrefix: {
     mode: 'as-needed',
@@ -35,6 +37,7 @@ export const LOCALE_PREFIX: Record<Locale, string> = {
   en: '/en',
   et: '/et',
   it: '/it',
+  ru: '/ru',
 };
 
 // Codigo BCP 47 com regiao: <html lang>, hreflang, formatacao de datas.
@@ -44,6 +47,7 @@ export const HREFLANG: Record<Locale, string> = {
   en: 'en',
   et: 'et',
   it: 'it',
+  ru: 'ru',
 };
 
 // og:locale (formato com underscore)
@@ -53,6 +57,7 @@ export const OG_LOCALE: Record<Locale, string> = {
   en: 'en_GB',
   et: 'et_EE',
   it: 'it_IT',
+  ru: 'ru_RU',
 };
 
 // Versao mostrada pelo Google a quem nao bate com nenhum idioma (hreflang
