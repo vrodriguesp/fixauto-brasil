@@ -77,7 +77,7 @@
   },
   "paraOficinas": {
     "metaTitle": "Sistema de Gestão para Oficina Mecânica e Mais Clientes",
-    "metaDescription": "Software gratuito para oficina mecânica organizar agenda, orçamentos e equipe, e ganhar visibilidade para conseguir mais clientes na sua região. Cadastre sua oficina no BipFix.",
+    "metaDescription": "Sistema de gestão para oficina mecânica: agenda, orçamentos e equipe num só lugar, mais pedidos de orçamento de motoristas da região. Sem mensalidade.",
     "metaKeywords": [
       "sistema de gestão para oficina mecânica",
       "software para oficina mecânica",
@@ -254,7 +254,7 @@
   },
   "home": {
     "metaTitle": "BipFix - Compare orçamentos de oficina mecânica perto de você",
-    "metaDescription": "Envie fotos do dano do seu carro, receba orçamentos de oficinas mecânicas verificadas perto de você e agende o reparo em minutos. Rápido, transparente e sem sair de casa.",
+    "metaDescription": "Envie fotos do dano do carro, receba orçamentos de oficinas mecânicas verificadas perto de você e agende o reparo em minutos. Rápido e transparente.",
     "metaKeywords": [
       "oficina mecânica perto de mim",
       "orçamento de conserto de carro online",
@@ -534,5 +534,12 @@
     "entrando": "Entrando...",
     "naoTemConta": "Não tem conta?",
     "cadastreSe": "Cadastre-se"
+  },
+  "naoEncontrado": {
+    "titulo": "Página não encontrada",
+    "texto": "O endereço pode estar errado ou a página foi removida.",
+    "inicio": "Ir para a página inicial",
+    "guias": "Ver os guias para motoristas",
+    "emergencia": "Acabei de bater"
   }
 }

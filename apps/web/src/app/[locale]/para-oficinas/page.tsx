@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import StructuredData from '@/components/seo/StructuredData';
-import { OG_LOCALE, type Locale } from '@/i18n/routing';
-import { generateFAQSchema, hreflangAlternates } from '@/lib/seo-utils';
+import { OG_LOCALE, isBrasil, type Locale } from '@/i18n/routing';
+import { generateFAQSchema, hreflangAlternates, localizedUrl } from '@/lib/seo-utils';
 
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -48,12 +48,12 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
     name: t('ogTitle'),
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
-    url: 'https://bipfix.com/para-oficinas',
+    url: localizedUrl(locale, '/para-oficinas'),
     description: t('metaDescription'),
     offers: {
       '@type': 'Offer',
       price: '0',
-      priceCurrency: 'EUR',
+      priceCurrency: isBrasil(locale) ? 'BRL' : 'EUR',
     },
   };
 

@@ -15,7 +15,19 @@ interface OficinaSchema {
     telefone?: string | null;
     nome?: string;
   } | null;
+  horario_funcionamento?: Partial<Record<keyof typeof DIA_SCHEMA, { aberto: boolean; inicio: string; fim: string }>> | null;
 }
+
+// Chaves de oficinas.horario_funcionamento -> dia da semana do schema.org
+const DIA_SCHEMA = {
+  seg: 'Monday',
+  ter: 'Tuesday',
+  qua: 'Wednesday',
+  qui: 'Thursday',
+  sex: 'Friday',
+  sab: 'Saturday',
+  dom: 'Sunday',
+} as const;
 
 interface AvaliacaoSchema {
   nota: number;
@@ -59,13 +71,15 @@ export function slugCidade(cidade: string): string {
 /**
  * Gera Schema.org JSON-LD para AutoRepair / LocalBusiness
  */
-export function generateAutoRepairSchema(oficina: OficinaSchema) {
+export function generateAutoRepairSchema(oficina: OficinaSchema, locale: string = routing.defaultLocale) {
   const schema: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': ['AutoRepair', 'LocalBusiness'],
+    // @id identifica a oficina (mesma em todos os idiomas); url e a pagina
+    // deste idioma, igual ao canonical dela.
     '@id': `${BASE_URL}/oficinas/${oficina.id}`,
     name: oficina.nome_fantasia,
-    url: `${BASE_URL}/oficinas/${oficina.id}`,
+    url: localizedUrl(locale, `/oficinas/${oficina.id}`),
     address: {
       '@type': 'PostalAddress',
       streetAddress: oficina.endereco,
@@ -81,22 +95,25 @@ export function generateAutoRepairSchema(oficina: OficinaSchema) {
       '@type': 'City',
       name: oficina.cidade,
     },
-    priceRange: '$$',
-    openingHoursSpecification: [
-      {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        opens: '08:00',
-        closes: '18:00',
-      },
-      {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: 'Saturday',
-        opens: '08:00',
-        closes: '12:00',
-      },
-    ],
   };
+
+  // Horario REAL cadastrado pela oficina; sem horario o campo fica de fora.
+  // Antes era Seg-Sex 08-18 / Sab 08-12 fixo para toda oficina, mais um
+  // priceRange '$$' inventado - dado estruturado falso e pior que ausente.
+  const horario = oficina.horario_funcionamento;
+  if (horario) {
+    const abertos = (Object.keys(DIA_SCHEMA) as (keyof typeof DIA_SCHEMA)[])
+      .map((chave) => ({ dayOfWeek: DIA_SCHEMA[chave], h: horario[chave] }))
+      .filter(({ h }) => h?.aberto && h.inicio && h.fim);
+    if (abertos.length) {
+      schema.openingHoursSpecification = abertos.map(({ dayOfWeek, h }) => ({
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek,
+        opens: h!.inicio,
+        closes: h!.fim,
+      }));
+    }
+  }
 
   if (oficina.profile?.telefone) {
     schema.telephone = oficina.profile.telefone;

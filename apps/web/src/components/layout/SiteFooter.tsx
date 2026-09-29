@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
-import { routing, HREFLANG, type Locale } from '@/i18n/routing';
+import { routing, HREFLANG, caminhoNoIdioma, type Locale } from '@/i18n/routing';
 
 const NOME_IDIOMA: Record<Locale, string> = {
   pt: 'Português (Brasil)',
@@ -70,16 +70,15 @@ export default function SiteFooter() {
           <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
             {routing.locales.map((l) => (
               <li key={l}>
-                <Link
-                  href={pathname}
-                  locale={l}
+                <a
+                  href={caminhoNoIdioma(l, pathname)}
                   hrefLang={HREFLANG[l]}
                   lang={HREFLANG[l]}
                   aria-current={l === locale ? 'true' : undefined}
                   className={l === locale ? 'text-white' : 'hover:text-white'}
                 >
                   {NOME_IDIOMA[l]}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>

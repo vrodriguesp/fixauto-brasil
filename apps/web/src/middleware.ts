@@ -30,6 +30,15 @@ function splitLocalePrefix(pathname: string): { prefix: string; path: string; lo
 export async function middleware(req: NextRequest) {
   // /admin e /api nunca tem prefixo de idioma - next-intl so cuida do
   // resto (matcher abaixo ja exclui essas rotas do intlMiddleware).
+  // A imagem de compartilhamento (app/[locale]/opengraph-image.tsx) e anunciada
+  // pelo Next com o nome INTERNO do idioma (/pt/opengraph-image,
+  // /pt-PT/opengraph-image). O next-intl redirecionaria esses enderecos (pt nao
+  // tem prefixo; pt-PT e /pt-pt) - e redes sociais e IAs nao seguem redirect de
+  // imagem. Deixa passar direto para a rota, que existe para esses segmentos.
+  if (/^\/(pt|pt-PT)\/opengraph-image(\/|$)/.test(req.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
+
   const isAdminOrApi = req.nextUrl.pathname.startsWith('/admin') || req.nextUrl.pathname.startsWith('/api');
   const intlRes = isAdminOrApi ? null : intlMiddleware(req);
 

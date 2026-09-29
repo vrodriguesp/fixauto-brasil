@@ -894,6 +894,8 @@
     "hoursWeekdays": "E-R: 08:00 - 18:00",
     "hoursSaturday": "L: 08:00 - 12:00",
     "hoursSunday": "P: Suletud",
+    "hoursClosed": "Suletud",
+    "hoursNotInformed": "Lahtiolekuajad pole lisatud",
     "reviewsTitle": "Hinnangud ({count})",
     "noReviewsText": "Sellel töökojal pole veel hinnanguid.",
     "clientFallback": "Klient"

@@ -894,6 +894,8 @@
     "hoursWeekdays": "Lun-Ven: 08:00 - 18:00",
     "hoursSaturday": "Sab: 08:00 - 12:00",
     "hoursSunday": "Dom: Chiuso",
+    "hoursClosed": "Chiuso",
+    "hoursNotInformed": "Orari non indicati",
     "reviewsTitle": "Recensioni ({count})",
     "noReviewsText": "Questa officina non ha ancora recensioni.",
     "clientFallback": "Cliente"

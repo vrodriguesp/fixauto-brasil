@@ -296,6 +296,7 @@ function FAQItem({ pergunta, resposta }: { pergunta: string; resposta: string })
     <div className="border border-gray-200 rounded-lg overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
         className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors"
       >
         <span className="font-semibold text-gray-900 pr-4">{pergunta}</span>
@@ -308,11 +309,11 @@ function FAQItem({ pergunta, resposta }: { pergunta: string; resposta: string })
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
-      {open && (
-        <div className="px-5 pb-5 text-gray-600 leading-relaxed">
-          {resposta}
-        </div>
-      )}
+      {/* Resposta sempre no HTML (so escondida ate abrir): buscadores e IAs leem
+          o texto, e o Google exige que o FAQ dos dados estruturados esteja na pagina. */}
+      <div hidden={!open} className="px-5 pb-5 text-gray-600 leading-relaxed">
+        {resposta}
+      </div>
     </div>
   );
 }

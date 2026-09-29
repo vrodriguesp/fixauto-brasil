@@ -2,7 +2,7 @@
   "meta": {
     "brand": "BipFix",
     "title": "BipFix - Ti mettiamo in contatto con la migliore officina",
-    "description": "La piattaforma che collega gli automobilisti alle officine meccaniche. Invia le foto del danno, ricevi preventivi e scegli l'opzione migliore. Semplice, veloce e trasparente."
+    "description": "Confronta i preventivi di officine verificate vicino a te: invia le foto del danno, ricevi le offerte e segui la riparazione. Semplice e trasparente."
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -77,7 +77,7 @@
   },
   "paraOficinas": {
     "metaTitle": "Sistema di Gestione per Officine Meccaniche e Più Clienti",
-    "metaDescription": "Software gratuito per officine meccaniche per organizzare agenda, preventivi e team, e guadagnare visibilità per trovare più clienti nella tua zona. Registra la tua officina su BipFix.",
+    "metaDescription": "Software per officine: agenda, preventivi e team in un unico posto, più richieste di preventivo dagli automobilisti della zona. Senza canone mensile.",
     "metaKeywords": [
       "sistema di gestione per officina meccanica",
       "software per officina meccanica",
@@ -524,5 +524,12 @@
     "entrando": "Accesso in corso...",
     "naoTemConta": "Non hai un account?",
     "cadastreSe": "Registrati"
+  },
+  "naoEncontrado": {
+    "titulo": "Pagina non trovata",
+    "texto": "L’indirizzo potrebbe essere sbagliato o la pagina è stata rimossa.",
+    "inicio": "Vai alla pagina iniziale",
+    "guias": "Guarda le guide per automobilisti",
+    "emergencia": "Ho appena avuto un incidente"
   }
 }

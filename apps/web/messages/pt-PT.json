@@ -76,8 +76,8 @@
     "voltarInicio": "Voltar ao início"
   },
   "paraOficinas": {
-    "metaTitle": "Software de Gestão para Oficinas Automóveis — Ganhe Mais Clientes",
-    "metaDescription": "Software gratuito para oficinas automóveis organizarem a agenda, os orçamentos e a equipa, e ganharem visibilidade para conquistar mais clientes na sua zona. Registe a sua oficina na BipFix.",
+    "metaTitle": "Software para Oficinas e Mais Clientes",
+    "metaDescription": "Software de gestão para oficinas: agenda, orçamentos e equipa num só lugar, mais pedidos de orçamento de condutores da zona. Sem mensalidade.",
     "metaKeywords": [
       "software de gestão para oficina automóvel",
       "sistema de gestão de oficinas",
@@ -243,8 +243,8 @@
     "placeholderAno": "ex.: 2018"
   },
   "home": {
-    "metaTitle": "BipFix - Compare Orçamentos de Oficinas Automóveis de Confiança",
-    "metaDescription": "Envie fotografias do dano do seu carro, receba orçamentos de oficinas verificadas perto de si e marque a reparação em minutos. Agora em fase piloto em Tallinn, Estónia.",
+    "metaTitle": "BipFix - Compare Orçamentos de Oficinas de Confiança",
+    "metaDescription": "Envie fotografias do dano do carro, receba orçamentos de oficinas verificadas perto de si e marque a reparação em minutos. Piloto em Tallinn, Estónia.",
     "metaKeywords": [
       "oficina automóvel perto de mim",
       "comparar orçamentos de reparação automóvel online",
@@ -524,5 +524,12 @@
     "entrando": "A iniciar sessão...",
     "naoTemConta": "Ainda não tem conta?",
     "cadastreSe": "Criar conta"
+  },
+  "naoEncontrado": {
+    "titulo": "Página não encontrada",
+    "texto": "O endereço pode estar errado ou a página foi removida.",
+    "inicio": "Ir para a página inicial",
+    "guias": "Ver os guias para condutores",
+    "emergencia": "Tive um acidente"
   }
 }

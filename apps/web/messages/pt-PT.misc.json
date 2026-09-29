@@ -894,6 +894,8 @@
     "hoursWeekdays": "Seg. a Sex.: 8:00 - 18:00",
     "hoursSaturday": "Sáb.: 8:00 - 12:00",
     "hoursSunday": "Dom.: Fechado",
+    "hoursClosed": "Encerrado",
+    "hoursNotInformed": "Horário não indicado",
     "reviewsTitle": "Avaliações ({count})",
     "noReviewsText": "Esta oficina ainda não tem avaliações.",
     "clientFallback": "Cliente"

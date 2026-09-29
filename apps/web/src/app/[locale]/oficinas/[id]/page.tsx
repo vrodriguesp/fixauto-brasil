@@ -1,34 +1,22 @@
 import type { Metadata } from 'next';
-import { createClient } from '@supabase/supabase-js';
+import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import OficinaPerfilClient from './OficinaPerfilClient';
-import { INTL_LOCALE } from '@/lib/utils';
+import { carregarPerfilOficina } from './perfil-dados';
+import { OG_LOCALE, type Locale } from '@/i18n/routing';
 import { capitalizarCidade, hreflangAlternates } from '@/lib/seo-utils';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+type Params = { params: Promise<{ locale: string; id: string }> };
 
-// Metadata unica por oficina (nome + cidade no title) - antes desta pagina
-// virar um wrapper server-side, TODO perfil publico de oficina mostrava o
-// mesmo title/description genericos da home no Google e ao compartilhar,
-// desperdicando o maior ativo de SEO local do site (uma URL indexavel por
-// oficina cadastrada).
-export async function generateMetadata({ params }: { params: Promise<{ locale: string; id: string }> }): Promise<Metadata> {
+// Metadata unica por oficina (nome + cidade no title): cada perfil e uma URL
+// indexavel por idioma - o principal ativo de SEO local do site.
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { locale, id } = await params;
   const t = await getTranslations({ locale, namespace: 'oficinaPerfilPublico' });
+  const dados = await carregarPerfilOficina(id);
+  if (!dados) return { title: t('metaNotFoundTitle') };
 
-  const { data: oficina } = await supabase
-    .from('oficinas')
-    .select('nome_fantasia, cidade, estado, avaliacao_media, total_avaliacoes')
-    .eq('id', id)
-    .single();
-
-  if (!oficina) {
-    return { title: t('metaNotFoundTitle') };
-  }
-
+  const { oficina } = dados;
   const cidade = capitalizarCidade(oficina.cidade);
   const title = t('metaTitleTemplate', { nome: oficina.nome_fantasia, cidade, estado: oficina.estado });
   const description = t('metaDescriptionTemplate', { nome: oficina.nome_fantasia, cidade, estado: oficina.estado });
@@ -40,20 +28,22 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     alternates,
     openGraph: {
       type: 'website',
-      locale: (INTL_LOCALE[locale] || 'pt-BR').replace('-', '_'),
+      locale: OG_LOCALE[locale as Locale],
       siteName: 'BipFix',
       title,
       description,
       url: alternates.canonical,
     },
-    twitter: {
-      card: 'summary',
-      title,
-      description,
-    },
+    twitter: { card: 'summary', title, description },
   };
 }
 
-export default function OficinaPublicPage() {
-  return <OficinaPerfilClient />;
+// Pagina renderizada no servidor com os dados completos (nome, endereco,
+// servicos, horario, avaliacoes, dados estruturados). Oficina inexistente ou
+// desativada -> 404 de verdade (antes: 200 com "Carregando...", um soft 404).
+export default async function OficinaPublicPage({ params }: Params) {
+  const { id } = await params;
+  const dados = await carregarPerfilOficina(id);
+  if (!dados) notFound();
+  return <OficinaPerfilClient dados={dados} />;
 }

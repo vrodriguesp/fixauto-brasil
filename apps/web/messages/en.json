@@ -76,8 +76,8 @@
     "voltarInicio": "Back to home"
   },
   "paraOficinas": {
-    "metaTitle": "Management Software for Auto Repair Shops — Get More Customers",
-    "metaDescription": "Free software for auto repair shops to organize scheduling, quotes and staff, and gain visibility to win more customers in your area. Register your shop on BipFix.",
+    "metaTitle": "Repair Shop Software & More Customers",
+    "metaDescription": "Software for car repair shops: schedule, quotes and team in one place, plus quote requests from drivers near you. No monthly fee for founding partners.",
     "metaKeywords": [
       "auto repair shop management software",
       "garage management system",
@@ -243,7 +243,7 @@
     "placeholderAno": "e.g. 2018"
   },
   "home": {
-    "metaTitle": "BipFix - Compare Quotes from Trusted Auto Repair Shops",
+    "metaTitle": "Car Repair Quotes in Tallinn – Compare Garages | BipFix",
     "metaDescription": "Send photos of your car's damage, get quotes from verified repair shops near you, and book the fix in minutes. Now piloting in Tallinn, Estonia.",
     "metaKeywords": [
       "find a car repair shop near me",
@@ -524,5 +524,12 @@
     "entrando": "Logging in...",
     "naoTemConta": "Don't have an account?",
     "cadastreSe": "Sign up"
+  },
+  "naoEncontrado": {
+    "titulo": "Page not found",
+    "texto": "The address may be wrong or the page has been removed.",
+    "inicio": "Go to the home page",
+    "guias": "Browse the driver guides",
+    "emergencia": "I just had an accident"
   }
 }

@@ -4,6 +4,7 @@ import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
 import SiteFooter from '@/components/layout/SiteFooter';
+import SugestaoIdioma from '@/components/layout/SugestaoIdioma';
 import Analytics from '@/components/Analytics';
 import StructuredData from '@/components/seo/StructuredData';
 import { routing, type Locale, OG_LOCALE, HREFLANG } from '@/i18n/routing';
@@ -44,6 +45,22 @@ export async function generateMetadata({
     // home (sinal de conteudo duplicado). Cada pagina publica declara os
     // seus via hreflangAlternates().
   };
+}
+
+// Textos que os componentes de NAVEGADOR das paginas publicas usam (os de
+// servidor leem as mensagens direto, sem passar pelo HTML). Os paineis
+// logados recebem todos via components/i18n/MensagensDaArea. Ao criar um
+// componente 'use client' numa pagina publica com um namespace novo,
+// acrescente-o aqui (senao o texto aparece como a chave).
+const NAMESPACES_PUBLICOS = [
+  'home', 'nav', 'cookieBanner', 'notificationBell', 'tutorialBanner', 'constants',
+  'oficinaPerfilPublico', 'emergencia', 'emergenciaAcidenteDetalhe', 'damageAnalysis',
+  'audioRecorder', 'audioMessage', 'veiculoForm', 'docsLayout', 'docsCliente', 'docsOficina',
+  'sejaParceiro', 'login', 'cadastro', 'definirSenha', 'escolherTipo', 'resetPassword',
+];
+
+function mensagensPublicas(messages: Record<string, unknown>) {
+  return Object.fromEntries(NAMESPACES_PUBLICOS.filter((n) => n in messages).map((n) => [n, messages[n]]));
 }
 
 export default async function LocaleLayout({
@@ -88,10 +105,11 @@ export default async function LocaleLayout({
   };
 
   return (
-    <NextIntlClientProvider messages={messages}>
+    <NextIntlClientProvider messages={mensagensPublicas(messages)}>
       <StructuredData data={organizationSchema} />
       <StructuredData data={websiteSchema} />
       <Analytics />
+      <SugestaoIdioma />
       <Navbar />
       <main className="min-h-[calc(100vh-4rem)]">{children}</main>
       <SiteFooter />

@@ -1,190 +1,31 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { supabase } from '@/lib/supabase';
 import StarRating from '@/components/ui/StarRating';
 import { formatDate, INTL_LOCALE } from '@/lib/utils';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import StructuredData from '@/components/seo/StructuredData';
 import { generateAutoRepairSchema, generateReviewSchema } from '@/lib/seo-utils';
 import { countryNameForCode } from '@/lib/currency';
-
-interface Oficina {
-  id: string;
-  nome_fantasia: string;
-  avaliacao_media: number;
-  total_avaliacoes: number;
-  endereco: string;
-  cidade: string;
-  estado: string;
-  cep: string;
-  pais: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  especialidades: string[];
-  created_at: string;
-  profile: {
-    telefone: string | null;
-    nome: string;
-  } | null;
-}
+import type { PerfilOficina } from './perfil-dados';
 
 const TIERS_VOLUME = [500, 100, 50, 10];
 
-interface Avaliacao {
-  id: string;
-  nota: number;
-  nota_anterior: number | null;
-  comentario: string | null;
-  created_at: string;
-  cliente: {
-    nome: string;
-  } | null;
-}
+// Chaves de horario_funcionamento, de segunda (2024-01-01 foi segunda) a domingo
+const DIAS = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'] as const;
 
 function getServiceIcon(value: string): string {
   const found = TIPOS_SERVICO.find((s) => s.value === value);
   return found ? found.icon : '';
 }
 
-export default function OficinaPerfilClient() {
+export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina }) {
   const t = useTranslations('oficinaPerfilPublico');
   const tc = useTranslations('constants');
   const locale = useLocale();
-  const params = useParams();
-  const id = params.id as string;
-
-  const [oficina, setOficina] = useState<Oficina | null>(null);
-  const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([]);
-  const [fotos, setFotos] = useState<{ id: string; foto_url: string; tipo: string }[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [tempoMedioResposta, setTempoMedioResposta] = useState<number | null>(null);
-  const [ajusteMedio, setAjusteMedio] = useState<number | null>(null);
-  const [hasRevisions, setHasRevisions] = useState(false);
-  const [totalServicosConcluidos, setTotalServicosConcluidos] = useState(0);
-
-  useEffect(() => {
-    if (!id) return;
-
-    async function fetchData() {
-      setLoading(true);
-      setError(null);
-
-      const [oficinaRes, avaliacoesRes, fotosRes, orcamentosRes, servicosRes] = await Promise.all([
-        supabase
-          .from('oficinas')
-          .select('*, profile:profiles(*)')
-          .eq('id', id)
-          .single(),
-        supabase
-          .from('avaliacoes')
-          .select('*, cliente:profiles!avaliacoes_cliente_id_fkey(nome)')
-          .eq('oficina_id', id)
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('oficina_fotos')
-          .select('*')
-          .eq('oficina_id', id)
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('orcamentos')
-          .select('created_at, valor_total, valor_original, revisao_numero, solicitacao:solicitacoes(created_at)')
-          .eq('oficina_id', id),
-        // comissao_lancamento e restrito por RLS a propria oficina - pra
-        // contar "servicos concluidos" num perfil publico, conta orcamentos
-        // aceitos cuja solicitacao ja foi marcada concluida (ambas tabelas
-        // sao de leitura publica)
-        supabase
-          .from('orcamentos')
-          .select('id, solicitacao:solicitacoes!inner(status)', { count: 'exact', head: true })
-          .eq('oficina_id', id)
-          .eq('status', 'aceito')
-          .eq('solicitacao.status', 'concluida'),
-      ]);
-
-      setTotalServicosConcluidos(servicosRes.count || 0);
-
-      if (oficinaRes.error) {
-        setError(t('notFoundText'));
-        setLoading(false);
-        return;
-      }
-
-      setOficina(oficinaRes.data as Oficina);
-      setAvaliacoes((avaliacoesRes.data || []) as Avaliacao[]);
-      setFotos((fotosRes.data || []) as any[]);
-
-      // Calculate average response time from orcamentos
-      const orcamentos = orcamentosRes.data || [];
-      if (orcamentos.length > 0) {
-        let totalMs = 0;
-        let validCount = 0;
-        for (const orc of orcamentos) {
-          const solicitacao = orc.solicitacao as any;
-          if (solicitacao?.created_at && orc.created_at) {
-            const diff = new Date(orc.created_at).getTime() - new Date(solicitacao.created_at).getTime();
-            if (diff >= 0) {
-              totalMs += diff;
-              validCount++;
-            }
-          }
-        }
-        if (validCount > 0) {
-          const avgHours = totalMs / validCount / (1000 * 60 * 60);
-          setTempoMedioResposta(avgHours);
-        }
-      }
-
-      // Calculate pricing adjustment seal
-      const revisedQuotes = orcamentos.filter(
-        (orc: any) => orc.valor_original && orc.revisao_numero > 0
-      );
-      if (revisedQuotes.length > 0) {
-        setHasRevisions(true);
-        let totalAdjustment = 0;
-        for (const orc of revisedQuotes) {
-          const orig = Number((orc as any).valor_original);
-          const current = Number((orc as any).valor_total);
-          if (orig > 0) {
-            totalAdjustment += ((current - orig) / orig) * 100;
-          }
-        }
-        setAjusteMedio(totalAdjustment / revisedQuotes.length);
-      } else {
-        setHasRevisions(false);
-        setAjusteMedio(null);
-      }
-
-      setLoading(false);
-    }
-
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full mx-auto" />
-        <p className="mt-4 text-gray-500">{t('loadingText')}</p>
-      </div>
-    );
-  }
-
-  if (error || !oficina) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <p className="text-gray-500">{error || t('notFoundText')}</p>
-        <Link href="/" className="text-primary-600 hover:underline mt-4 inline-block">
-          {t('backToHomeLink')}
-        </Link>
-      </div>
-    );
-  }
+  // Dados ja vem do servidor (perfil-dados.ts): a pagina sai completa no HTML.
+  const { oficina, avaliacoes, fotos, tempoMedioResposta, ajusteMedio, hasRevisions, totalServicosConcluidos } = dados;
 
   // Calculate rating from actual reviews
   const calculatedMedia = avaliacoes.length > 0
@@ -201,7 +42,7 @@ export default function OficinaPerfilClient() {
     : null;
   const tierVolume = TIERS_VOLUME.find((t) => totalServicosConcluidos >= t);
 
-  const autoRepairSchema = generateAutoRepairSchema(oficina);
+  const autoRepairSchema = generateAutoRepairSchema(oficina, locale);
   const reviewSchema = generateReviewSchema(oficina, avaliacoes);
 
   return (
@@ -367,11 +208,24 @@ export default function OficinaPerfilClient() {
           </div>
           <div>
             <p className="text-sm text-gray-500 mb-1">{t('hoursLabel')}</p>
-            <div className="text-sm text-gray-700 space-y-0.5">
-              <p>{t('hoursWeekdays')}</p>
-              <p>{t('hoursSaturday')}</p>
-              <p className="text-gray-400">{t('hoursSunday')}</p>
-            </div>
+            {/* Horario real cadastrado pela oficina (antes era um texto fixo
+                "Seg a Sex 08-18", igual para todas). */}
+            {oficina.horario_funcionamento ? (
+              <div className="text-sm text-gray-700 space-y-0.5">
+                {DIAS.map((dia, i) => {
+                  const h = oficina.horario_funcionamento?.[dia];
+                  const nome = new Intl.DateTimeFormat(INTL_LOCALE[locale] || 'pt-BR', { weekday: 'short' }).format(new Date(2024, 0, 1 + i));
+                  return (
+                    <p key={dia}>
+                      <span className="inline-block w-12 capitalize">{nome}</span>
+                      {h?.aberto && h.inicio && h.fim ? `${h.inicio} – ${h.fim}` : <span className="text-gray-400">{t('hoursClosed')}</span>}
+                    </p>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-400">{t('hoursNotInformed')}</p>
+            )}
           </div>
         </div>
       </div>

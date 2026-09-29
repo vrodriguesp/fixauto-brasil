@@ -2,8 +2,8 @@
 
 import { useLocale } from 'next-intl';
 import { useState, useRef, useEffect } from 'react';
-import { Link, usePathname } from '@/i18n/navigation';
-import { routing, HREFLANG, type Locale } from '@/i18n/routing';
+import { usePathname } from '@/i18n/navigation';
+import { routing, HREFLANG, caminhoNoIdioma, type Locale } from '@/i18n/routing';
 
 const LOCALE_LABEL: Record<Locale, { flag: string; label: string }> = {
   pt: { flag: '🇧🇷', label: 'Português (Brasil)' },
@@ -55,9 +55,8 @@ export default function LanguageSwitcher() {
       >
         {routing.locales.map((l) => (
           <li key={l}>
-            <Link
-              href={pathname}
-              locale={l}
+            <a
+              href={caminhoNoIdioma(l, pathname)}
               hrefLang={HREFLANG[l]}
               lang={HREFLANG[l]}
               onClick={() => setOpen(false)}
@@ -68,7 +67,7 @@ export default function LanguageSwitcher() {
             >
               <span aria-hidden="true">{LOCALE_LABEL[l].flag}</span>
               {LOCALE_LABEL[l].label}
-            </Link>
+            </a>
           </li>
         ))}
       </ul>

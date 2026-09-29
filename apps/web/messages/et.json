@@ -77,7 +77,7 @@
   },
   "paraOficinas": {
     "metaTitle": "Autotöökoja Haldustarkvara ja Rohkem Kliente",
-    "metaDescription": "Tasuta tarkvara autotöökojale ajakava, hinnapakkumiste ja meeskonna korraldamiseks ning nähtavuse suurendamiseks, et saada rohkem kliente oma piirkonnas. Registreeri oma töökoda BipFixis.",
+    "metaDescription": "Haldustarkvara autotöökojale: ajakava, hinnapakkumised ja meeskond ühes kohas ning uued kliendid Tallinnast. Asutajapartneritele ilma kuutasuta.",
     "metaKeywords": [
       "autotöökoja haldustarkvara",
       "töökoja juhtimissüsteem",
@@ -242,7 +242,7 @@
     "placeholderAno": "Nt: 2018"
   },
   "home": {
-    "metaTitle": "BipFix - Võrdle usaldusväärsete autotöökodade hinnapakkumisi",
+    "metaTitle": "Autoremont Tallinnas: võrdle hinnapakkumisi | BipFix",
     "metaDescription": "Tee oma auto kahjustusest pildid, saa hinnapakkumised kontrollitud töökodadelt sinu lähedal ja broneeri remont mõne minutiga. BipFix käivitub esmalt Tallinnas.",
     "metaKeywords": [
       "autotöökoda minu lähedal",
@@ -254,7 +254,7 @@
     "ogTitle": "BipFix - Leia õige töökoda oma autole",
     "ogDescription": "Võrdle kontrollitud autotöökodade hinnapakkumisi sinu lähedal mõne minutiga.",
     "carregando": "Laadin...",
-    "heroTitulo": "Auto remont,",
+    "heroTitulo": "Autoremont Tallinnas,",
     "heroTituloDestaque": "ilma üllatusteta.",
     "heroTexto": "Täielik läbipaistvus hinnapakkumisest kuni üleandmiseni. Võrdle kontrollitud töökodade detailseid hinnapakkumisi ja jälgi remondi iga etappi reaalajas. Lihtne, turvaline ja ilma varjatud kuludeta.",
     "ctaCliente": "Vajan remonti",
@@ -523,5 +523,12 @@
     "entrando": "Sisselogimine...",
     "naoTemConta": "Kas sul pole veel kontot?",
     "cadastreSe": "Registreeru"
+  },
+  "naoEncontrado": {
+    "titulo": "Lehte ei leitud",
+    "texto": "Aadress võib olla vale või leht on eemaldatud.",
+    "inicio": "Mine avalehele",
+    "guias": "Vaata juhendeid autojuhtidele",
+    "emergencia": "Juhtus liiklusõnnetus"
   }
 }

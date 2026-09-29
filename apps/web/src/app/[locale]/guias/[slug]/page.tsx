@@ -3,10 +3,16 @@ import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { Link, redirect } from '@/i18n/navigation';
 import StructuredData from '@/components/seo/StructuredData';
-import { OG_LOCALE, HREFLANG, type Locale } from '@/i18n/routing';
+import { OG_LOCALE, HREFLANG, localePrefix, type Locale } from '@/i18n/routing';
 import { localizedUrl } from '@/lib/seo-utils';
 import { alternatesDoGuia, guiaPorSlug } from '@/lib/guias';
 import { formatDate } from '@/lib/utils';
+
+// Pais pelo nome (e sameAs no Wikidata), nao pelo codigo ISO - schema.org
+// espera o nome do pais em Country.name.
+const PAISES: Record<string, { name: string; sameAs: string }> = {
+  EE: { name: 'Estonia', sameAs: 'https://www.wikidata.org/wiki/Q191' },
+};
 
 type Params = { params: Promise<{ locale: string; slug: string }> };
 
@@ -39,7 +45,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 // Os textos dos guias sao arquivos nossos, versionados no repositorio, e so
 // usam <strong> e <a> - por isso podem ir como HTML.
-const html = (s: string) => ({ __html: s });
+// Links internos escritos sem idioma nos arquivos (href="/emergencia") ganham o
+// prefixo do idioma do guia; sem isso levavam o leitor estoniano a versao brasileira.
+const htmlNoIdioma = (locale: string) => (s: string) => ({
+  __html: s.replace(/href="\/(?!\/)/g, `href="${localePrefix(locale)}/`),
+});
 
 export default async function GuiaPage({ params }: Params) {
   const { locale, slug } = await params;
@@ -55,6 +65,7 @@ export default async function GuiaPage({ params }: Params) {
   }
 
   const t = await getTranslations({ locale, namespace: 'guias' });
+  const html = htmlNoIdioma(locale);
   const url = localizedUrl(locale, `/guias/${guia.slug}`);
   const texto = (s: string) => s.replace(/<[^>]+>/g, '');
 
@@ -73,7 +84,7 @@ export default async function GuiaPage({ params }: Params) {
       name: 'BipFix',
       logo: { '@type': 'ImageObject', url: 'https://bipfix.com/apple-touch-icon.png' },
     },
-    ...(guia.pais ? { about: { '@type': 'Country', name: guia.pais } } : {}),
+    ...(guia.pais && PAISES[guia.pais] ? { about: { '@type': 'Country', ...PAISES[guia.pais] } } : {}),
   };
   const faq = v.faq?.length
     ? {

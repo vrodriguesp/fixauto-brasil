@@ -9,10 +9,13 @@ import { defineRouting } from 'next-intl/routing';
 // - en    = ingles (fallback universal e x-default para o Google)
 // - et    = estoniano (piloto em Tallinn)
 // - it    = italiano
-// Pratica recomendada pelo Google para variantes regionais: uma URL por
-// variante + hreflang com a regiao (pt-BR / pt-PT), sem redirecionar por IP.
-// Na primeira visita a "/", o next-intl escolhe pelo Accept-Language do
-// navegador (pt-PT -> /pt-pt, it -> /it...).
+// Pratica recomendada pelo Google para sites multilingues: uma URL por
+// idioma/variante + hreflang com a regiao (pt-BR / pt-PT) e NENHUM
+// redirecionamento automatico por idioma do navegador, cookie ou IP - o
+// idioma vem so da URL. Redirecionar escondia a versao brasileira (/) de
+// todo robo que manda Accept-Language (Bing, IAs). Para o visitante humano,
+// components/layout/SugestaoIdioma.tsx sugere (sem redirecionar) a versao
+// no idioma do navegador.
 export const routing = defineRouting({
   locales: ['pt', 'pt-PT', 'en', 'et', 'it'],
   defaultLocale: 'pt',
@@ -20,7 +23,7 @@ export const routing = defineRouting({
     mode: 'as-needed',
     prefixes: { 'pt-PT': '/pt-pt' },
   },
-  localeDetection: true,
+  localeDetection: false,
 });
 
 export type Locale = (typeof routing.locales)[number];
@@ -47,7 +50,7 @@ export const HREFLANG: Record<Locale, string> = {
 export const OG_LOCALE: Record<Locale, string> = {
   pt: 'pt_BR',
   'pt-PT': 'pt_PT',
-  en: 'en_US',
+  en: 'en_GB',
   et: 'et_EE',
   it: 'it_IT',
 };
@@ -63,4 +66,13 @@ export function localePrefix(locale: string): string {
 // Brasil = unico idioma com regras juridicas/de cadastro brasileiras.
 export function isBrasil(locale: string): boolean {
   return locale === 'pt';
+}
+
+// Endereco publico de `pathname` (sem prefixo de idioma, ex: '/termos') no
+// idioma `locale`: '/termos' -> '/termos' (pt), '/pt-pt/termos', '/en/termos'.
+// Usado nos links de troca de idioma: aponta direto para a URL final, sem
+// passar por '/pt' (que redirecionava).
+export function caminhoNoIdioma(locale: string, pathname: string): string {
+  const caminho = pathname === '/' ? '' : pathname;
+  return `${localePrefix(locale)}${caminho}` || '/';
 }

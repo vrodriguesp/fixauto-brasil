@@ -894,6 +894,8 @@
     "hoursWeekdays": "Mon to Fri: 8:00 AM - 6:00 PM",
     "hoursSaturday": "Sat: 8:00 AM - 12:00 PM",
     "hoursSunday": "Sun: Closed",
+    "hoursClosed": "Closed",
+    "hoursNotInformed": "Opening hours not provided",
     "reviewsTitle": "Reviews ({count})",
     "noReviewsText": "This repair shop doesn't have any reviews yet.",
     "clientFallback": "Customer"
