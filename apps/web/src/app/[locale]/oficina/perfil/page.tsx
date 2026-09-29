@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { compressImage } from '@/lib/image-compress';
 import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
 import { TIPOS_SERVICO } from '@fixauto/shared';
-import { Link } from '@/i18n/navigation';
+import { Link, rota } from '@/i18n/navigation';
 
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
@@ -254,7 +254,7 @@ export default function PerfilOficinaPage() {
         {oficina && (
           <div className="flex items-center gap-2">
             <Link
-              href={`/oficinas/${oficina.id}`}
+              href={rota('/oficinas/[id]', { id: oficina.id })}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-secondary !py-2 !px-4 text-sm flex items-center gap-2"

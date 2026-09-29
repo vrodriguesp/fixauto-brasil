@@ -6,7 +6,7 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com';
+import { SITE_URL, siteNoIdioma, urlNoIdioma } from './site-url';
 const FROM_EMAIL = process.env.FROM_EMAIL || 'BipFix <noreply@bipfix.com>';
 
 // O SDK do Resend (v6) NAO lanca excecao quando o envio falha (dominio nao
@@ -38,8 +38,8 @@ export async function sendAccidentNotificationEmail(params: {
   }
 
   const s = EMAIL_I18N.accidentNotification[resolveEmailLocale(params.locale)];
-  const acidenteUrl = `${SITE_URL}/emergencia/acidente/${params.emergenciaId}`;
-  const cadastroUrl = `${SITE_URL}/cadastro?tipo=cliente&email=${encodeURIComponent(params.toEmail)}`;
+  const acidenteUrl = `${urlNoIdioma(params.locale, `/emergencia/acidente/${params.emergenciaId}`)}`;
+  const cadastroUrl = `${urlNoIdioma(params.locale, `/cadastro?tipo=cliente&email=${encodeURIComponent(params.toEmail)}`)}`;
 
   try {
     await sendOrThrow({
@@ -67,7 +67,7 @@ export async function sendAccidentNotificationEmail(params: {
               <strong>${s.nextStepsLabel}</strong> ${s.nextStepsText}
             </p>
             <p style="margin-top: 24px;">
-              <a href="${params.isRegistered ? acidenteUrl : `${SITE_URL}/reset-password`}"
+              <a href="${params.isRegistered ? acidenteUrl : `${siteNoIdioma(params.locale)}/reset-password`}"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">
                 ${params.isRegistered ? s.ctaRegistered : s.ctaUnregistered}
               </a>
@@ -121,7 +121,7 @@ export async function sendFuncionarioNovaSenhaEmail(params: {
             </div>
             <p style="font-size: 13px; color: #6b7280;">${s.nextLoginNote}</p>
             <p style="margin-top: 20px;">
-              <a href="${SITE_URL}/login" style="display: inline-block; background: #0284c7; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">${s.cta}</a>
+              <a href="${siteNoIdioma(params.locale)}/login" style="display: inline-block; background: #0284c7; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">${s.cta}</a>
             </p>
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
             <p style="font-size: 12px; color: #9ca3af;">${s.footer}</p>
@@ -151,7 +151,7 @@ export async function sendQuoteNotificationEmail(params: {
   }
 
   const s = EMAIL_I18N.quoteNotification[resolveEmailLocale(params.locale)];
-  const orcamentosUrl = `${SITE_URL}/cliente/orcamentos/${params.solicitacaoId}`;
+  const orcamentosUrl = `${siteNoIdioma(params.locale)}/cliente/orcamentos/${params.solicitacaoId}`;
 
   try {
     await sendOrThrow({
@@ -202,7 +202,7 @@ export async function sendServicoConcluidoEmail(params: {
   }
 
   const s = EMAIL_I18N.servicoConcluido[resolveEmailLocale(params.locale)];
-  const acompanhamentoUrl = `${SITE_URL}/cliente/acompanhamento/${params.solicitacaoId}`;
+  const acompanhamentoUrl = `${siteNoIdioma(params.locale)}/cliente/acompanhamento/${params.solicitacaoId}`;
 
   try {
     await sendOrThrow({
@@ -290,7 +290,7 @@ export async function sendAccidentWhatsApp(params: {
   emergenciaId: string;
   locale?: string;
 }) {
-  const acidenteUrl = `${SITE_URL}/emergencia/acidente/${params.emergenciaId}`;
+  const acidenteUrl = `${urlNoIdioma(params.locale, `/emergencia/acidente/${params.emergenciaId}`)}`;
   const tmpl = WHATSAPP_I18N.accidentWhatsApp[resolveEmailLocale(params.locale)];
   const message = fmt(tmpl, { toName: params.toName, fromName: params.fromName, placa: params.placa, url: acidenteUrl });
   return sendWhatsApp(params.toPhone, message);
@@ -304,7 +304,7 @@ export async function sendQuoteWhatsApp(params: {
   solicitacaoId: string;
   locale?: string;
 }) {
-  const url = `${SITE_URL}/cliente/orcamentos/${params.solicitacaoId}`;
+  const url = `${siteNoIdioma(params.locale)}/cliente/orcamentos/${params.solicitacaoId}`;
   const tmpl = WHATSAPP_I18N.quoteWhatsApp[resolveEmailLocale(params.locale)];
   const message = fmt(tmpl, { toName: params.toName, oficinaNome: params.oficinaNome, valorTotal: params.valorTotal, url });
   return sendWhatsApp(params.toPhone, message);
@@ -318,7 +318,7 @@ export async function sendServicoConcluidoWhatsApp(params: {
   solicitacaoId: string;
   locale?: string;
 }) {
-  const url = `${SITE_URL}/cliente/acompanhamento/${params.solicitacaoId}`;
+  const url = `${siteNoIdioma(params.locale)}/cliente/acompanhamento/${params.solicitacaoId}`;
   const tmpl = WHATSAPP_I18N.servicoConcluidoWhatsApp[resolveEmailLocale(params.locale)];
   const message = fmt(tmpl, { toName: params.toName, veiculoNome: params.veiculoNome, oficinaNome: params.oficinaNome, url });
   return sendWhatsApp(params.toPhone, message);
@@ -411,7 +411,7 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
             </div>
             <p>${s.callToAction}</p>
             <p style="margin-top: 24px;">
-              <a href="${SITE_URL}/oficina/pecas"
+              <a href="${siteNoIdioma(params.locale)}/oficina/pecas"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>
@@ -463,7 +463,7 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
               <p style="margin: 4px 0 0; color: #6b7280;">${fmt(s.prazo, { prazoDias: params.prazoDias })}</p>
             </div>
             <p style="margin-top: 24px;">
-              <a href="${SITE_URL}/oficina/pecas"
+              <a href="${siteNoIdioma(params.locale)}/oficina/pecas"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>
@@ -513,7 +513,7 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
             </div>
             <p>${s.deliveryNote}</p>
             <p style="margin-top: 24px;">
-              <a href="${SITE_URL}/oficina/pecas"
+              <a href="${siteNoIdioma(params.locale)}/oficina/pecas"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>
@@ -556,7 +556,7 @@ export async function sendPedidoPecaEntregueEmail(params: {
             <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
             <p>${fmt(s.intro, { fornecedorNome: escapeHtml(params.fornecedorNome), pecaDescricao: escapeHtml(params.pecaDescricao) })}</p>
             <p style="margin-top: 24px;">
-              <a href="${SITE_URL}/oficina/pecas"
+              <a href="${siteNoIdioma(params.locale)}/oficina/pecas"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>
@@ -618,7 +618,7 @@ export async function sendOrcamentoAceitoPagamentoEmail(params: {
             </div>
             <p>${s.ctaText}</p>
             <p style="margin-top: 24px;">
-              <a href="${SITE_URL}/cliente/mensagens/${params.solicitacaoId}"
+              <a href="${siteNoIdioma(params.locale)}/cliente/mensagens/${params.solicitacaoId}"
                  style="display: inline-block; background: #dc2626; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>
@@ -674,7 +674,7 @@ export async function sendOrcamentoAceitoOutroEmail(params: {
             </div>
             <p>${s.ctaText}</p>
             <p style="margin-top: 24px;">
-              <a href="${SITE_URL}/emergencia/acidente/${params.emergenciaId}"
+              <a href="${urlNoIdioma(params.locale, `/emergencia/acidente/${params.emergenciaId}`)}"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>

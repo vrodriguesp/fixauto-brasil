@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import { useRouter } from '@/i18n/navigation';
+import { useRouter, rota } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { compressImage } from '@/lib/image-compress';
@@ -252,7 +252,7 @@ export default function EmergenciaPage() {
               {t('nextStepText')}
             </p>
             <button
-              onClick={() => router.push(`/emergencia/acidente/${emergenciaId}`)}
+              onClick={() => router.push(rota('/emergencia/acidente/[id]', { id: emergenciaId }))}
               className="btn-primary w-full"
             >
               {t('registerOtherVehicleBtn')}
@@ -267,7 +267,7 @@ export default function EmergenciaPage() {
         ) : (
           <div className="space-y-3">
             <p className="text-sm text-gray-500">{t('createAccountText')}</p>
-            <button onClick={() => router.push('/cadastro?tipo=cliente')} className="btn-primary w-full">
+            <button onClick={() => router.push(rota('/cadastro', undefined, { tipo: 'cliente' }))} className="btn-primary w-full">
               {t('createAccountBtn')}
             </button>
           </div>

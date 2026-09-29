@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { Link, redirect } from '@/i18n/navigation';
+import { Link, redirect, rota } from '@/i18n/navigation';
 import StructuredData from '@/components/seo/StructuredData';
-import { OG_LOCALE, HREFLANG, localePrefix, type Locale } from '@/i18n/routing';
+import { OG_LOCALE, HREFLANG, hrefNoIdioma, type Locale } from '@/i18n/routing';
 import { localizedUrl } from '@/lib/seo-utils';
-import { alternatesDoGuia, guiaPorSlug } from '@/lib/guias';
+import { alternatesDoGuia, caminhoDoGuia, guiaPorSlug } from '@/lib/guias';
 import { formatDate } from '@/lib/utils';
 
 // Pais pelo nome (e sameAs no Wikidata), nao pelo codigo ISO - schema.org
@@ -21,9 +21,10 @@ export const dynamicParams = true;
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { locale, slug } = await params;
-  const guia = guiaPorSlug(slug);
+  const achado = guiaPorSlug(slug, locale);
+  const guia = achado?.guia;
   const v = guia?.versoes[locale as Locale];
-  if (!guia || !v) return {};
+  if (!guia || !v || !achado.exato) return {};
   const alternates = alternatesDoGuia(guia, locale);
   return {
     title: v.tituloSeo || v.titulo,
@@ -48,13 +49,14 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 // Links internos escritos sem idioma nos arquivos (href="/emergencia") ganham o
 // prefixo do idioma do guia; sem isso levavam o leitor estoniano a versao brasileira.
 const htmlNoIdioma = (locale: string) => (s: string) => ({
-  __html: s.replace(/href="\/(?!\/)/g, `href="${localePrefix(locale)}/`),
+  __html: s.replace(/href="(\/(?!\/)[^"]*)"/g, (_, p) => `href="${hrefNoIdioma(locale, p)}"`),
 });
 
 export default async function GuiaPage({ params }: Params) {
   const { locale, slug } = await params;
-  const guia = guiaPorSlug(slug);
-  if (!guia) notFound();
+  const achado = guiaPorSlug(slug, locale);
+  if (!achado) notFound();
+  const { guia } = achado;
   const v = guia.versoes[locale as Locale];
   // Guia que existe, mas nao neste idioma (ex: regras da Estonia em italiano):
   // o seletor de idioma e o rodape linkam todas as versoes da pagina atual, entao
@@ -63,10 +65,12 @@ export default async function GuiaPage({ params }: Params) {
     redirect({ href: '/guias', locale });
     return null;
   }
+  // Slug de outro idioma ou antigo -> endereco deste idioma (301)
+  if (!achado.exato) permanentRedirect(hrefNoIdioma(locale, caminhoDoGuia(guia, locale)));
 
   const t = await getTranslations({ locale, namespace: 'guias' });
   const html = htmlNoIdioma(locale);
-  const url = localizedUrl(locale, `/guias/${guia.slug}`);
+  const url = localizedUrl(locale, caminhoDoGuia(guia, locale));
   const texto = (s: string) => s.replace(/<[^>]+>/g, '');
 
   const artigo = {
@@ -109,7 +113,7 @@ export default async function GuiaPage({ params }: Params) {
   };
 
   const cta = v.cta || 'pedido';
-  const ctaHref = cta === 'emergencia' ? '/emergencia' : cta === 'parceiro' ? '/seja-parceiro' : '/cadastro?tipo=cliente';
+  const ctaHref = cta === 'emergencia' ? '/emergencia' : cta === 'parceiro' ? '/seja-parceiro' : rota('/cadastro', undefined, { tipo: 'cliente' });
 
   return (
     <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">

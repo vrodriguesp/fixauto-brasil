@@ -1,0 +1,25 @@
+{
+  "car-accident-estonia-what-to-do": {
+    "et": "liiklusonnetus-eestis-mida-teha",
+    "en": "car-accident-estonia-what-to-do",
+    "ru": "dtp-v-estonii-chto-delat"
+  },
+  "compare-car-repair-quotes": {
+    "en": "compare-car-repair-quotes",
+    "et": "autoremondi-hinnapakkumiste-vordlemine",
+    "it": "confrontare-preventivi-riparazione-auto",
+    "pt-PT": "comparar-orcamentos-de-oficina",
+    "pt": "comparar-orcamentos-de-oficina",
+    "ru": "sravnenie-smet-na-remont-avto"
+  },
+  "roadworthiness-inspection-estonia": {
+    "et": "tehnoulevaatus-eestis",
+    "en": "roadworthiness-inspection-estonia",
+    "ru": "tehosmotr-v-estonii"
+  },
+  "winter-tyres-estonia": {
+    "et": "talverehvid-eestis",
+    "en": "winter-tyres-estonia",
+    "ru": "zimnie-shiny-v-estonii"
+  }
+}

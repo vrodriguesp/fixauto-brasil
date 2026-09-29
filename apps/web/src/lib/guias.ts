@@ -16,6 +16,7 @@ export interface GuiaSecao {
 }
 
 export interface GuiaVersao {
+  slug?: string; // endereco no idioma (Google: palavras do idioma do publico); padrao = slug do arquivo
   titulo: string; // <h1> e base do <title>
   tituloSeo?: string; // <title> quando diferente do h1 (ate ~60 caracteres)
   descricao: string; // meta description (ate ~155 caracteres)
@@ -55,19 +56,33 @@ export function todosOsGuias(): Guia[] {
   return lerTodos();
 }
 
-export function guiaPorSlug(slug: string): Guia | null {
-  if (!/^[a-z0-9-]+$/.test(slug)) return null;
-  const f = path.join(DIR, `${slug}.json`);
-  return fs.existsSync(f) ? (JSON.parse(fs.readFileSync(f, 'utf8')) as Guia) : null;
+export function slugDoGuia(guia: Guia, locale: string): string {
+  return guia.versoes[locale as Locale]?.slug || guia.slug;
 }
 
-// hreflang so entre os idiomas que o guia tem; x-default = ingles se existir.
+export function caminhoDoGuia(guia: Guia, locale: string): string {
+  return `/guias/${slugDoGuia(guia, locale)}`;
+}
+
+// Acha o guia pelo slug do endereco. `exato` = o slug e o deste idioma; se
+// nao for (slug de outro idioma ou o antigo, em ingles, vindo do seletor de
+// idioma ou de link antigo), a pagina redireciona (301) para o slug certo.
+export function guiaPorSlug(slug: string, locale: string): { guia: Guia; exato: boolean } | null {
+  if (!/^[a-z0-9-]+$/.test(slug)) return null;
+  const todos = lerTodos();
+  const exato = todos.find((g) => g.versoes[locale as Locale]?.slug === slug);
+  if (exato) return { guia: exato, exato: true };
+  const outro = todos.find((g) => g.slug === slug || Object.values(g.versoes).some((v) => v?.slug === slug));
+  return outro ? { guia: outro, exato: false } : null;
+}
+
+// hreflang so entre os idiomas que o guia tem, cada um com o proprio slug;
+// x-default = ingles se existir.
 export function alternatesDoGuia(guia: Guia, locale: string) {
-  const caminho = `/guias/${guia.slug}`;
   const idiomas = routing.locales.filter((l) => guia.versoes[l]);
   const languages: Record<string, string> = {};
-  for (const l of idiomas) languages[HREFLANG[l]] = localizedUrl(l, caminho);
+  for (const l of idiomas) languages[HREFLANG[l]] = localizedUrl(l, caminhoDoGuia(guia, l));
   const padrao = guia.versoes[X_DEFAULT_LOCALE] ? X_DEFAULT_LOCALE : idiomas[0];
-  if (padrao) languages['x-default'] = localizedUrl(padrao, caminho);
-  return { canonical: localizedUrl(locale, caminho), languages };
+  if (padrao) languages['x-default'] = localizedUrl(padrao, caminhoDoGuia(guia, padrao));
+  return { canonical: localizedUrl(locale, caminhoDoGuia(guia, locale)), languages };
 }

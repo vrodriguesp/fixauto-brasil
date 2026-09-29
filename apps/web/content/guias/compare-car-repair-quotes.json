@@ -4,6 +4,7 @@
   "atualizado": "2026-09-30",
   "versoes": {
     "en": {
+      "slug": "compare-car-repair-quotes",
       "titulo": "How to compare car repair quotes: parts, labour, warranty and red flags",
       "tituloSeo": "How to compare car repair quotes",
       "descricao": "How to read and compare car repair quotes: parts vs labour, OEM vs aftermarket, labour hours, diagnosis fees, VAT, warranty, validity and red flags.",
@@ -129,11 +130,15 @@
         }
       ],
       "fontes": [
-        { "nome": "Your Europe – Consumer guarantees and returns (EU)", "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_en.htm" }
+        {
+          "nome": "Your Europe – Consumer guarantees and returns (EU)",
+          "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_en.htm"
+        }
       ],
       "cta": "pedido"
     },
     "et": {
+      "slug": "autoremondi-hinnapakkumiste-vordlemine",
       "titulo": "Kuidas võrrelda autoremondi hinnapakkumisi: varuosad, töötunnid, garantii ja ohumärgid",
       "tituloSeo": "Kuidas võrrelda autoremondi hinnapakkumisi",
       "descricao": "Kuidas lugeda ja võrrelda autoremondi hinnapakkumisi: varuosad ja töö eraldi, originaal- või asendusosad, töötunnid, käibemaks, garantii ja ohumärgid.",
@@ -259,11 +264,15 @@
         }
       ],
       "fontes": [
-        { "nome": "Your Europe – Tarbija garantiid ja tagastamine (EL)", "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_et.htm" }
+        {
+          "nome": "Your Europe – Tarbija garantiid ja tagastamine (EL)",
+          "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_et.htm"
+        }
       ],
       "cta": "pedido"
     },
     "it": {
+      "slug": "confrontare-preventivi-riparazione-auto",
       "titulo": "Come confrontare i preventivi di riparazione auto: ricambi, manodopera, garanzia e segnali d'allarme",
       "tituloSeo": "Come confrontare i preventivi di riparazione auto",
       "descricao": "Come leggere e confrontare i preventivi dell'officina: ricambi e manodopera, originali o aftermarket, ore di lavoro, IVA, garanzia e segnali d'allarme.",
@@ -389,11 +398,15 @@
         }
       ],
       "fontes": [
-        { "nome": "La tua Europa – Garanzie e restituzioni per i consumatori (UE)", "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_it.htm" }
+        {
+          "nome": "La tua Europa – Garanzie e restituzioni per i consumatori (UE)",
+          "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_it.htm"
+        }
       ],
       "cta": "pedido"
     },
     "pt-PT": {
+      "slug": "comparar-orcamentos-de-oficina",
       "titulo": "Como comparar orçamentos de reparação automóvel: peças, mão de obra, garantia e sinais de alerta",
       "tituloSeo": "Como comparar orçamentos de reparação automóvel",
       "descricao": "Como ler e comparar orçamentos de oficina: peças e mão de obra, originais ou alternativas, horas de trabalho, IVA, garantia e sinais de alerta.",
@@ -519,11 +532,15 @@
         }
       ],
       "fontes": [
-        { "nome": "A sua Europa – Garantias e devoluções para consumidores (UE)", "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_pt.htm" }
+        {
+          "nome": "A sua Europa – Garantias e devoluções para consumidores (UE)",
+          "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_pt.htm"
+        }
       ],
       "cta": "pedido"
     },
     "pt": {
+      "slug": "comparar-orcamentos-de-oficina",
       "titulo": "Como comparar orçamentos de reparo de carro: peças, mão de obra, garantia e sinais de alerta",
       "tituloSeo": "Como comparar orçamentos de reparo de carro",
       "descricao": "Como ler e comparar orçamentos de oficina mecânica: peças e mão de obra, originais ou paralelas, horas de serviço, impostos, garantia e sinais de alerta.",
@@ -649,11 +666,15 @@
         }
       ],
       "fontes": [
-        { "nome": "Planalto – Código de Defesa do Consumidor (Lei 8.078/1990)", "url": "https://www.planalto.gov.br/ccivil_03/leis/l8078compilado.htm" }
+        {
+          "nome": "Planalto – Código de Defesa do Consumidor (Lei 8.078/1990)",
+          "url": "https://www.planalto.gov.br/ccivil_03/leis/l8078compilado.htm"
+        }
       ],
       "cta": "pedido"
     },
     "ru": {
+      "slug": "sravnenie-smet-na-remont-avto",
       "titulo": "Как сравнить сметы автосервиса: запчасти, работа, гарантия и тревожные сигналы",
       "tituloSeo": "Как сравнить сметы автосервиса и выбрать автосервис",
       "descricao": "Как читать и сравнивать сметы автосервиса: запчасти и работа отдельно, оригинал или аналог, нормо-часы, НДС, гарантия и тревожные сигналы.",
@@ -779,7 +800,10 @@
         }
       ],
       "fontes": [
-        { "nome": "Your Europe – Гарантии и возврат товаров для потребителей (ЕС, на английском)", "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_en.htm" }
+        {
+          "nome": "Your Europe – Гарантии и возврат товаров для потребителей (ЕС, на английском)",
+          "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_en.htm"
+        }
       ],
       "cta": "pedido"
     }

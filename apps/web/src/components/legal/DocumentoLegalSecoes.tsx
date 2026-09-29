@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { localePrefix } from '@/i18n/routing';
+import { hrefNoIdioma } from '@/i18n/routing';
 
 // Documento legal (politica de privacidade, termos de uso) escrito como uma
 // lista de secoes nos arquivos de mensagens: usado pelas versoes europeias
@@ -21,10 +21,9 @@ export default async function DocumentoLegalSecoes({ locale, namespace }: { loca
   // O texto vem dos nossos proprios arquivos de mensagens (versionados no
   // repositorio) e so usa <strong> e <a> - nao e conteudo de usuario, por
   // isso pode ir como HTML. Links internos (href="/privacidade") sao
-  // escritos sem idioma; aqui ganham o prefixo do idioma atual, senao o
-  // leitor europeu cairia na versao brasileira (sem prefixo).
-  const prefixo = localePrefix(locale);
-  const html = (s: string) => ({ __html: s.replace(/href="\/(?!\/)/g, `href="${prefixo}/`) });
+  // escritos sem idioma; aqui ganham o idioma atual e o nome traduzido da
+  // pagina (ex.: /privacidade -> /et/privaatsus).
+  const html = (s: string) => ({ __html: s.replace(/href="(\/(?!\/)[^"]*)"/g, (_, p) => `href="${hrefNoIdioma(locale, p)}"`) });
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

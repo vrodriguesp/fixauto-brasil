@@ -14,13 +14,20 @@ const nextConfig = {
   // e em portugues e sem o prefixo de idioma cairia na versao do Brasil.
   // 307 (nao permanente) para poder mudar o destino depois da campanha.
   async redirects() {
-    return [
-      {
-        source: '/:lang(et|en|ru|it|pt-pt)/partner',
-        destination: '/:lang/seja-parceiro?utm_source=endereco_curto&utm_medium=print&utm_campaign=tallinn_founding',
-        permanent: false,
-      },
-    ];
+    // Destino = nome da pagina no idioma (PATHNAMES em src/i18n/routing.ts)
+    const paginaParceiro = {
+      et: '/et/hakka-partneriks',
+      en: '/en/become-a-partner',
+      ru: '/ru/stat-partnerom',
+      it: '/it/diventa-partner',
+      'pt-pt': '/pt-pt/seja-parceiro',
+      'pt-br': '/pt-br/seja-parceiro',
+    };
+    return Object.entries(paginaParceiro).map(([lang, destino]) => ({
+      source: `/${lang}/partner`,
+      destination: `${destino}?utm_source=endereco_curto&utm_medium=print&utm_campaign=tallinn_founding`,
+      permanent: false,
+    }));
   },
   images: {
     remotePatterns: [

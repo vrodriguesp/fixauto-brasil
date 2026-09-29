@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
 import { hreflangAlternates, localizedUrl, slugCidade } from '@/lib/seo-utils';
-import { alternatesDoGuia, todosOsGuias } from '@/lib/guias';
+import { alternatesDoGuia, caminhoDoGuia, todosOsGuias } from '@/lib/guias';
 
 
 // Sem isso, o sitemap fica congelado com os dados de quando a build rodou -
@@ -96,7 +96,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return routing.locales
       .filter((l) => guia.versoes[l])
       .map((l) => ({
-        url: localizedUrl(l, `/guias/${guia.slug}`),
+        url: localizedUrl(l, caminhoDoGuia(guia, l)),
         lastModified: new Date(guia.atualizado),
         changeFrequency: 'monthly' as const,
         priority: 0.8,

@@ -6,6 +6,7 @@ import {
 } from '@/lib/notifications';
 import { EMAIL_I18N, resolveEmailLocale, fmt, escapeHtml, type EmailLocale } from '@/lib/email-i18n';
 import { notifRegistroAcidente } from '@/lib/notif-i18n';
+import { siteNoIdioma } from '@/lib/site-url';
 
 // Reaproveita as strings de "conta criada" pro bloco de credenciais, mas o
 // corpo principal (quem bateu, qual placa) precisa das strings de
@@ -126,7 +127,7 @@ export async function POST(req: NextRequest) {
                 </div>
                 <p style="font-size:13px;color:#6b7280;">${cs.nextLoginNote}</p>
                 <p style="margin-top:20px;">
-                  <a href="https://bipfix.com/login" style="display:inline-block;background:#0284c7;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">${cs.cta}</a>
+                  <a href="${siteNoIdioma(locale)}/login" style="display:inline-block;background:#0284c7;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">${cs.cta}</a>
                 </p>
                 <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
                 <p style="font-size:12px;color:#9ca3af;">${cs.footer}</p>

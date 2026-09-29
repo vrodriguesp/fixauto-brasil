@@ -155,7 +155,11 @@ export default function Navbar() {
             {/* Mobile menu button */}
             {isLoggedIn && (
               <button
+                type="button"
                 onClick={() => setMenuOpen(!menuOpen)}
+                aria-label="Menu"
+                aria-expanded={menuOpen}
+                aria-controls="menu-mobile"
                 className="md:hidden p-2 rounded-lg hover:bg-gray-100"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,7 +176,7 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {menuOpen && isLoggedIn && (
-          <div className="md:hidden pb-4 border-t border-gray-100 pt-2">
+          <div id="menu-mobile" className="md:hidden pb-4 border-t border-gray-100 pt-2">
             {isAdmin ? (
               <>
                 <MobileNavLink href="/admin/dashboard" onClick={() => setMenuOpen(false)}>{t('dashboard')}</MobileNavLink>

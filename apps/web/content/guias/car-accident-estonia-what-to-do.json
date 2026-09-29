@@ -5,6 +5,7 @@
   "atualizado": "2026-09-30",
   "versoes": {
     "et": {
+      "slug": "liiklusonnetus-eestis-mida-teha",
       "titulo": "Liiklusõnnetus Eestis: mida teha pärast avariid samm-sammult",
       "tituloSeo": "Liiklusõnnetus Eestis: mida teha pärast avariid",
       "descricao": "Mida teha liiklusõnnetuse korral Eestis: millal kutsuda politsei (112), kuidas täita liiklusõnnetuse teade või avarii.lkf.ee, kindlustusele teatamine ja remont.",
@@ -122,19 +123,47 @@
         }
       ],
       "fontes": [
-        { "nome": "Riigi Teataja – Liiklusseadus (§ 169, § 237)", "url": "https://www.riigiteataja.ee/akt/107042026003" },
-        { "nome": "Riigi Teataja – Liikluskindlustuse seadus (§ 37–39, § 45–46)", "url": "https://www.riigiteataja.ee/akt/129062024012" },
-        { "nome": "Riigi Teataja – Karistusseadustik (§ 47 trahviühik)", "url": "https://www.riigiteataja.ee/akt/129062024005" },
-        { "nome": "Politsei- ja Piirivalveamet – What to do in the event of a traffic accident", "url": "https://www.politsei.ee/en/what-to-do-in-the-event-of-a-traffic-accident" },
-        { "nome": "LKF – Mida teha liiklusõnnetuse korral", "url": "https://www.lkf.ee/et/mida-teha-liiklus%C3%B5nnetuse-korral" },
-        { "nome": "LKF – Juhtus avarii", "url": "https://lkf.ee/et/liiklus%C3%B5nnetus/juhtus-avarii" },
-        { "nome": "LKF – LKF-i hüvitatav kahju", "url": "https://www.lkf.ee/et/liiklus%C3%B5nnetus/lkf-i-h%C3%BCvitatav-kahju" },
-        { "nome": "LKF – Digitaalne liiklusõnnetuse teade avarii.lkf.ee", "url": "https://avarii.lkf.ee/" },
-        { "nome": "LKF – Teade liiklusõnnetusest (vorm, PDF)", "url": "https://www.lkf.ee/sites/default/files/Teade_liiklusonnetusest_2015_A4.pdf" }
+        {
+          "nome": "Riigi Teataja – Liiklusseadus (§ 169, § 237)",
+          "url": "https://www.riigiteataja.ee/akt/107042026003"
+        },
+        {
+          "nome": "Riigi Teataja – Liikluskindlustuse seadus (§ 37–39, § 45–46)",
+          "url": "https://www.riigiteataja.ee/akt/129062024012"
+        },
+        {
+          "nome": "Riigi Teataja – Karistusseadustik (§ 47 trahviühik)",
+          "url": "https://www.riigiteataja.ee/akt/129062024005"
+        },
+        {
+          "nome": "Politsei- ja Piirivalveamet – What to do in the event of a traffic accident",
+          "url": "https://www.politsei.ee/en/what-to-do-in-the-event-of-a-traffic-accident"
+        },
+        {
+          "nome": "LKF – Mida teha liiklusõnnetuse korral",
+          "url": "https://www.lkf.ee/et/mida-teha-liiklus%C3%B5nnetuse-korral"
+        },
+        {
+          "nome": "LKF – Juhtus avarii",
+          "url": "https://lkf.ee/et/liiklus%C3%B5nnetus/juhtus-avarii"
+        },
+        {
+          "nome": "LKF – LKF-i hüvitatav kahju",
+          "url": "https://www.lkf.ee/et/liiklus%C3%B5nnetus/lkf-i-h%C3%BCvitatav-kahju"
+        },
+        {
+          "nome": "LKF – Digitaalne liiklusõnnetuse teade avarii.lkf.ee",
+          "url": "https://avarii.lkf.ee/"
+        },
+        {
+          "nome": "LKF – Teade liiklusõnnetusest (vorm, PDF)",
+          "url": "https://www.lkf.ee/sites/default/files/Teade_liiklusonnetusest_2015_A4.pdf"
+        }
       ],
       "cta": "emergencia"
     },
     "en": {
+      "slug": "car-accident-estonia-what-to-do",
       "titulo": "Car accident in Estonia: what to do step by step",
       "descricao": "Car accident in Estonia: when to call 112, how to fill in the accident report or avarii.lkf.ee, notifying your insurer, LKF and getting the car repaired.",
       "resumo": "After a traffic accident in Estonia, stop immediately, switch on the hazard lights and make the scene safe. If anyone is injured, call <strong>112</strong> at once. If nobody is hurt, the drivers agree on who is liable and everyone's details can be written down, you do not need to call the police – fill in the accident report on paper or online at avarii.lkf.ee and notify the insurer without delay.",
@@ -251,19 +280,47 @@
         }
       ],
       "fontes": [
-        { "nome": "Riigi Teataja – Traffic Act (English translation)", "url": "https://www.riigiteataja.ee/en/eli/ee/Riigikogu/act/507042026001/consolide" },
-        { "nome": "Riigi Teataja – Liiklusseadus (§ 169, § 237)", "url": "https://www.riigiteataja.ee/akt/107042026003" },
-        { "nome": "Riigi Teataja – Liikluskindlustuse seadus / Motor Insurance Act (§ 37–39, § 45–46)", "url": "https://www.riigiteataja.ee/akt/129062024012" },
-        { "nome": "Riigi Teataja – Penal Code / Karistusseadustik (§ 47 fine unit)", "url": "https://www.riigiteataja.ee/akt/129062024005" },
-        { "nome": "Police and Border Guard Board – What to do in the event of a traffic accident", "url": "https://www.politsei.ee/en/what-to-do-in-the-event-of-a-traffic-accident" },
-        { "nome": "LKF – Mida teha liiklusõnnetuse korral", "url": "https://www.lkf.ee/et/mida-teha-liiklus%C3%B5nnetuse-korral" },
-        { "nome": "LKF – LKF-i hüvitatav kahju", "url": "https://www.lkf.ee/et/liiklus%C3%B5nnetus/lkf-i-h%C3%BCvitatav-kahju" },
-        { "nome": "LKF – Digital accident report avarii.lkf.ee", "url": "https://avarii.lkf.ee/" },
-        { "nome": "LKF – Accident report form (PDF)", "url": "https://www.lkf.ee/sites/default/files/Teade_liiklusonnetusest_2015_A4.pdf" }
+        {
+          "nome": "Riigi Teataja – Traffic Act (English translation)",
+          "url": "https://www.riigiteataja.ee/en/eli/ee/Riigikogu/act/507042026001/consolide"
+        },
+        {
+          "nome": "Riigi Teataja – Liiklusseadus (§ 169, § 237)",
+          "url": "https://www.riigiteataja.ee/akt/107042026003"
+        },
+        {
+          "nome": "Riigi Teataja – Liikluskindlustuse seadus / Motor Insurance Act (§ 37–39, § 45–46)",
+          "url": "https://www.riigiteataja.ee/akt/129062024012"
+        },
+        {
+          "nome": "Riigi Teataja – Penal Code / Karistusseadustik (§ 47 fine unit)",
+          "url": "https://www.riigiteataja.ee/akt/129062024005"
+        },
+        {
+          "nome": "Police and Border Guard Board – What to do in the event of a traffic accident",
+          "url": "https://www.politsei.ee/en/what-to-do-in-the-event-of-a-traffic-accident"
+        },
+        {
+          "nome": "LKF – Mida teha liiklusõnnetuse korral",
+          "url": "https://www.lkf.ee/et/mida-teha-liiklus%C3%B5nnetuse-korral"
+        },
+        {
+          "nome": "LKF – LKF-i hüvitatav kahju",
+          "url": "https://www.lkf.ee/et/liiklus%C3%B5nnetus/lkf-i-h%C3%BCvitatav-kahju"
+        },
+        {
+          "nome": "LKF – Digital accident report avarii.lkf.ee",
+          "url": "https://avarii.lkf.ee/"
+        },
+        {
+          "nome": "LKF – Accident report form (PDF)",
+          "url": "https://www.lkf.ee/sites/default/files/Teade_liiklusonnetusest_2015_A4.pdf"
+        }
       ],
       "cta": "emergencia"
     },
     "ru": {
+      "slug": "dtp-v-estonii-chto-delat",
       "titulo": "ДТП в Эстонии: что делать после аварии — пошаговая инструкция",
       "tituloSeo": "Что делать после ДТП в Эстонии: пошаговая инструкция",
       "descricao": "Что делать при ДТП в Эстонии: когда звонить 112, как заполнить извещение о ДТП или оформить аварию на avarii.lkf.ee, уведомить страховщика, LKF и ремонт.",
@@ -381,15 +438,42 @@
         }
       ],
       "fontes": [
-        { "nome": "Riigi Teataja – Закон о дорожном движении / Traffic Act (перевод на английский)", "url": "https://www.riigiteataja.ee/en/eli/ee/Riigikogu/act/507042026001/consolide" },
-        { "nome": "Riigi Teataja – Liiklusseadus (§ 169, § 237)", "url": "https://www.riigiteataja.ee/akt/107042026003" },
-        { "nome": "Riigi Teataja – Liikluskindlustuse seadus / Закон о дорожном страховании (§ 37–39, § 45–46)", "url": "https://www.riigiteataja.ee/akt/129062024012" },
-        { "nome": "Riigi Teataja – Karistusseadustik / Пенитенциарный кодекс (§ 47 штрафная единица)", "url": "https://www.riigiteataja.ee/akt/129062024005" },
-        { "nome": "Politsei- ja Piirivalveamet – What to do in the event of a traffic accident", "url": "https://www.politsei.ee/en/what-to-do-in-the-event-of-a-traffic-accident" },
-        { "nome": "LKF – Mida teha liiklusõnnetuse korral", "url": "https://www.lkf.ee/et/mida-teha-liiklus%C3%B5nnetuse-korral" },
-        { "nome": "LKF – LKF-i hüvitatav kahju", "url": "https://www.lkf.ee/et/liiklus%C3%B5nnetus/lkf-i-h%C3%BCvitatav-kahju" },
-        { "nome": "LKF – Электронное извещение о ДТП avarii.lkf.ee", "url": "https://avarii.lkf.ee/" },
-        { "nome": "LKF – Бланк извещения о ДТП (Teade liiklusõnnetusest, PDF)", "url": "https://www.lkf.ee/sites/default/files/Teade_liiklusonnetusest_2015_A4.pdf" }
+        {
+          "nome": "Riigi Teataja – Закон о дорожном движении / Traffic Act (перевод на английский)",
+          "url": "https://www.riigiteataja.ee/en/eli/ee/Riigikogu/act/507042026001/consolide"
+        },
+        {
+          "nome": "Riigi Teataja – Liiklusseadus (§ 169, § 237)",
+          "url": "https://www.riigiteataja.ee/akt/107042026003"
+        },
+        {
+          "nome": "Riigi Teataja – Liikluskindlustuse seadus / Закон о дорожном страховании (§ 37–39, § 45–46)",
+          "url": "https://www.riigiteataja.ee/akt/129062024012"
+        },
+        {
+          "nome": "Riigi Teataja – Karistusseadustik / Пенитенциарный кодекс (§ 47 штрафная единица)",
+          "url": "https://www.riigiteataja.ee/akt/129062024005"
+        },
+        {
+          "nome": "Politsei- ja Piirivalveamet – What to do in the event of a traffic accident",
+          "url": "https://www.politsei.ee/en/what-to-do-in-the-event-of-a-traffic-accident"
+        },
+        {
+          "nome": "LKF – Mida teha liiklusõnnetuse korral",
+          "url": "https://www.lkf.ee/et/mida-teha-liiklus%C3%B5nnetuse-korral"
+        },
+        {
+          "nome": "LKF – LKF-i hüvitatav kahju",
+          "url": "https://www.lkf.ee/et/liiklus%C3%B5nnetus/lkf-i-h%C3%BCvitatav-kahju"
+        },
+        {
+          "nome": "LKF – Электронное извещение о ДТП avarii.lkf.ee",
+          "url": "https://avarii.lkf.ee/"
+        },
+        {
+          "nome": "LKF – Бланк извещения о ДТП (Teade liiklusõnnetusest, PDF)",
+          "url": "https://www.lkf.ee/sites/default/files/Teade_liiklusonnetusest_2015_A4.pdf"
+        }
       ],
       "cta": "emergencia"
     }

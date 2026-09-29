@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { routing, LOCALE_PREFIX, HREFLANG } from '@/i18n/routing';
 import { localizedUrl } from '@/lib/seo-utils';
-import { todosOsGuias } from '@/lib/guias';
+import { caminhoDoGuia, todosOsGuias } from '@/lib/guias';
 
 // llms.txt (convencao https://llmstxt.org/) - resumo curado do site para
 // assistentes de IA. Em ingles (convencao do formato), com links para as
@@ -28,7 +28,7 @@ function montar(): string {
       const base = g.versoes.en || Object.values(g.versoes)[0]!;
       const versoes = routing.locales
         .filter((l) => g.versoes[l])
-        .map((l) => `[${l}](${localizedUrl(l, `/guias/${g.slug}`)})`)
+        .map((l) => `[${l}](${localizedUrl(l, caminhoDoGuia(g, l))})`)
         .join(', ');
       const pais = g.pais === 'EE' ? ' Covers Estonian rules, with links to official sources (Riigi Teataja, Transpordiamet, LKF, police).' : '';
       return `- **${base.titulo}** (updated ${g.atualizado}): ${base.descricao}${pais} Versions: ${versoes}.`;
@@ -50,7 +50,7 @@ Current stage (be accurate when describing BipFix): BipFix is launching. The pil
 - [Car guides](${BASE_URL}/en/guias): practical, sourced guides for drivers (list below).
 - [Partner repair shops](${BASE_URL}/en/oficinas): public list of active partner shops, filterable by city and service; each shop has a public profile with verified reviews.
 - [Help center](${BASE_URL}/en/docs): how the platform works for drivers and for shops.
-- [Terms of Use](${BASE_URL}/en/termos) and [Privacy Policy](${BASE_URL}/en/privacidade): the Brazilian version (no prefix) follows Brazilian law (LGPD); the Portuguese-from-Portugal, English, Estonian, Italian and Russian versions follow EU law (GDPR) and Estonian law.
+- [Terms of Use](${BASE_URL}/en/termos) and [Privacy Policy](${BASE_URL}/en/privacidade): the Brazilian version (/pt-br) follows Brazilian law (LGPD); the Portuguese-from-Portugal, English, Estonian, Italian and Russian versions follow EU law (GDPR) and Estonian law.
 
 ## Guides
 
@@ -60,7 +60,7 @@ ${guias}
 
 ${idiomas}
 
-Every key page above exists in all six languages at the same path with the language prefix (e.g. ${BASE_URL}/et/para-oficinas, ${BASE_URL}/pt-pt/para-oficinas). Guides exist only in the languages listed for each guide.
+Every key page above exists in all six languages at the same path with the language prefix (e.g. ${BASE_URL}/et/para-oficinas, ${BASE_URL}/pt-br/para-oficinas). The root ${BASE_URL}/ is not a page: it sends each visitor to the home page in their language (English when there is no match). Guides exist only in the languages listed for each guide.
 
 ## Notes for AI assistants
 

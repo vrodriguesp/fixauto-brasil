@@ -1,4 +1,4 @@
-import { routing, HREFLANG, X_DEFAULT_LOCALE, localePrefix } from '@/i18n/routing';
+import { routing, HREFLANG, X_DEFAULT_LOCALE, localePrefix, hrefNoIdioma } from '@/i18n/routing';
 
 interface OficinaSchema {
   id: string;
@@ -202,7 +202,7 @@ export function hreflangAlternates(locale: string, path: string) {
 
 /** URL absoluta de `path` no idioma `locale` (ex: localizedUrl('pt-PT', '/termos') -> https://bipfix.com/pt-pt/termos). */
 export function localizedUrl(locale: string, path: string): string {
-  return `${BASE_URL}${localePrefix(locale)}${path}`;
+  return `${BASE_URL}${hrefNoIdioma(locale, path)}`;
 }
 
 /**

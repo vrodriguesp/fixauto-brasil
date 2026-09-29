@@ -1,7 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
-import { routing, LOCALE_PREFIX, HREFLANG, X_DEFAULT_LOCALE, type Locale } from '@/i18n/routing';
+import { routing, LOCALE_PREFIX, HREFLANG, X_DEFAULT_LOCALE, caminhoLocal, hrefNoIdioma, type Locale } from '@/i18n/routing';
 import { COOKIE_IDIOMA } from '@/lib/idioma-escolhido';
 
 // O refresh token do Supabase renova a sessao silenciosamente pra sempre -
@@ -12,7 +12,7 @@ const ADMIN_MAX_SESSION_HOURS = 8;
 
 const intlMiddleware = createIntlMiddleware(routing);
 
-// "pt" (Brasil) nao tem prefixo na URL; os outros tem (/pt-pt, /en, /et, /it).
+// Todo idioma tem prefixo na URL (/pt-br, /pt-pt, /en, /et, /it, /ru).
 // Separa o prefixo do resto do path pra comparar rotas protegidas independente
 // do idioma, e pra poder remontar redirects preservando o idioma atual.
 const PREFIX_TO_LOCALE: [string, Locale][] = (Object.entries(LOCALE_PREFIX) as [Locale, string][])
@@ -25,29 +25,22 @@ function splitLocalePrefix(pathname: string): { prefix: string; path: string; lo
       return { prefix, path: pathname.slice(prefix.length) || '/', locale };
     }
   }
-  return { prefix: '', path: pathname, locale: routing.defaultLocale };
+  return { prefix: '', path: pathname, locale: 'pt' };
 }
 
-// Robos (buscadores, IAs, previews de redes sociais) nunca sao
-// redirecionados por idioma: precisam ver cada versao no proprio endereco.
-const ROBO = /bot|crawl|spider|slurp|facebookexternalhit|embedly|preview|lighthouse|headless|curl|wget|python|node-fetch|axios/i;
-
-// Idioma para a HOME ("/"): 1) escolha explicita da pessoa (cookie gravado
-// pelo seletor/rodape/aviso); 2) idioma do navegador. So a home e
-// redirecionada - links diretos para outras paginas abrem o que foi pedido
-// (com o aviso SugestaoIdioma, se o navegador preferir outro idioma).
-function idiomaParaHome(req: NextRequest): Locale | null {
-  const ua = req.headers.get('user-agent') || '';
-  if (!ua || ROBO.test(ua)) return null;
-
+// Home internacional ("/", x-default): nao e versao de idioma, so encaminha.
+// 1) idioma escolhido pela pessoa (cookie gravado pelo seletor/rodape/aviso);
+// 2) idioma do navegador (Accept-Language); 3) ingles. Sem olhar user-agent:
+// robos seguem a mesma regra (o Googlebot nao manda Accept-Language, entao
+// cai no ingles, a versao x-default) - ninguem recebe tratamento diferente.
+function idiomaParaHome(req: NextRequest): Locale {
   const escolhido = req.cookies.get(COOKIE_IDIOMA)?.value;
   if (escolhido && (routing.locales as readonly string[]).includes(escolhido)) return escolhido as Locale;
 
-  const accept = req.headers.get('accept-language');
-  if (!accept) return null;
+  const accept = req.headers.get('accept-language') || '';
   for (const parte of accept.split(',')) {
     const [tag, ...params] = parte.trim().toLowerCase().split(';');
-    if (params.some((p) => p.trim() === 'q=0')) continue;
+    if (!tag || params.some((p) => p.trim() === 'q=0')) continue;
     if (tag === 'pt-pt') return 'pt-PT';
     if (tag.startsWith('pt')) return 'pt';
     if (tag.startsWith('et')) return 'et';
@@ -55,20 +48,41 @@ function idiomaParaHome(req: NextRequest): Locale | null {
     if (tag.startsWith('ru')) return 'ru';
     if (tag.startsWith('en')) return 'en';
   }
-  // Nenhum idioma do site (ex.: frances): ingles, a versao x-default
   return X_DEFAULT_LOCALE;
 }
 
+const PREFIXOS_IDIOMA = Object.values(LOCALE_PREFIX);
+
 export async function middleware(req: NextRequest) {
-  // Home: abre direto no idioma da pessoa (307, nao cacheavel).
-  if (req.nextUrl.pathname === '/' && req.method === 'GET') {
+  const pathname = req.nextUrl.pathname;
+
+  // Home internacional: 307 (temporario - depende de quem pede), nao cacheavel.
+  if (pathname === '/') {
     const alvo = idiomaParaHome(req);
-    if (alvo && alvo !== routing.defaultLocale) {
-      const destino = new URL(`${LOCALE_PREFIX[alvo]}${req.nextUrl.search}`, req.url);
-      const r = NextResponse.redirect(destino, 307);
-      r.headers.set('Vary', 'Accept-Language, Cookie');
-      r.headers.set('Cache-Control', 'private, no-store');
-      return r;
+    const r = NextResponse.redirect(new URL(`${LOCALE_PREFIX[alvo]}${req.nextUrl.search}`, req.url), 307);
+    r.headers.set('Vary', 'Accept-Language, Cookie');
+    r.headers.set('Cache-Control', 'private, no-store');
+    return r;
+  }
+
+  // Enderecos antigos da versao do Brasil (sem prefixo, ate 30/09/2026):
+  // 301 permanente para /pt-br/... - preserva o que o Google ja indexou.
+  // "/pt/..." (nome interno do idioma) tambem vai para /pt-br.
+  const isAdminOrApiEarly = pathname.startsWith('/admin') || pathname.startsWith('/api');
+  const temPrefixo = PREFIXOS_IDIOMA.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  const imagemInterna = /^\/(pt|pt-PT)\/opengraph-image(\/|$)/.test(pathname);
+  if (!isAdminOrApiEarly && !temPrefixo && !imagemInterna) {
+    const resto = pathname === '/pt' ? '/' : pathname.startsWith('/pt/') ? pathname.slice(3) : pathname;
+    return NextResponse.redirect(new URL(`${hrefNoIdioma('pt', resto)}${req.nextUrl.search}`, req.url), 301);
+  }
+
+  // Nome antigo (interno, em portugues) dentro de um idioma que tem nome
+  // proprio para a pagina: /et/seja-parceiro -> /et/hakka-partneriks (301).
+  if (temPrefixo && !imagemInterna) {
+    const { prefix, path: resto, locale } = splitLocalePrefix(pathname);
+    const traduzido = caminhoLocal(locale, resto);
+    if (prefix && resto !== '/' && traduzido !== resto) {
+      return NextResponse.redirect(new URL(`${prefix}${traduzido}${req.nextUrl.search}`, req.url), 301);
     }
   }
 
@@ -88,7 +102,7 @@ export async function middleware(req: NextRequest) {
 
   const rawPath = req.nextUrl.pathname;
   const { prefix: localePrefix, path, locale: pathLocale } = isAdminOrApi
-    ? { prefix: '', path: rawPath, locale: routing.defaultLocale }
+    ? { prefix: '', path: rawPath, locale: 'pt' as Locale } // painel admin e em portugues
     : splitLocalePrefix(rawPath);
 
   // Repassa o idioma resolvido pro layout raiz via header de REQUISICAO
@@ -113,7 +127,6 @@ export async function middleware(req: NextRequest) {
     // Bing usa o Content-Language (mais que hreflang) para saber o idioma da
     // pagina; o Google usa hreflang + <html lang>. Mandar os tres.
     res.headers.set('Content-Language', htmlLang);
-    if (rawPath === '/') res.headers.set('Vary', 'Accept-Language, Cookie');
   } else if (intlRes) {
     res = intlRes; // redirect do proprio next-intl (ex: "/" -> "/et" na 1a visita)
   } else {
@@ -150,7 +163,8 @@ export async function middleware(req: NextRequest) {
   const isProtected = isUnderPath('/cliente') || isUnderPath('/oficina') || isUnderPath('/admin') || isUnderPath('/loja');
   const isAuthPage = path === '/login' || path === '/cadastro' || path === '/escolher-tipo';
 
-  const withLocale = (target: string) => new URL(`${localePrefix}${target}`, req.url);
+  // /admin nao tem idioma: o login dele e o da versao em portugues
+  const withLocale = (target: string) => new URL(`${localePrefix || LOCALE_PREFIX.pt}${target}`, req.url);
 
   if (isProtected && !session) {
     return NextResponse.redirect(withLocale('/login'));
@@ -183,7 +197,7 @@ export async function middleware(req: NextRequest) {
       const hoursSinceSignIn = (Date.now() - lastSignIn) / (1000 * 60 * 60);
       if (!lastSignIn || hoursSinceSignIn > ADMIN_MAX_SESSION_HOURS) {
         await supabase.auth.signOut();
-        return NextResponse.redirect(new URL('/login?sessao_expirada=1', req.url));
+        return NextResponse.redirect(withLocale('/login?sessao_expirada=1'));
       }
     }
 

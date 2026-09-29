@@ -66,11 +66,12 @@ export default function ComissaoPage() {
 
     // Fetch lancamentos
     supabase.from('comissao_lancamento')
-      .select('*, solicitacao:solicitacoes(descricao, veiculo:veiculos(fipe_marca, fipe_modelo))')
+      .select('*, orcamento:orcamentos(solicitacao:solicitacoes(descricao, veiculo:veiculos(fipe_marca, fipe_modelo)))')
       .eq('oficina_id', oficina.id)
       .order('created_at', { ascending: false })
       .then(({ data }) => {
-        if (data) setLancamentos(data as Lancamento[]);
+        // comissao_lancamento liga ao orcamento (nao direto a solicitacao)
+        if (data) setLancamentos(data.map((l: any) => ({ ...l, solicitacao: l.orcamento?.solicitacao })) as Lancamento[]);
         setLoading(false);
       });
   }, [oficina]);

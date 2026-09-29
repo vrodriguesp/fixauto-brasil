@@ -5,6 +5,7 @@
   "atualizado": "2026-09-30",
   "versoes": {
     "et": {
+      "slug": "talverehvid-eestis",
       "titulo": "Talverehvid Eestis: millal on talverehvid kohustuslikud ja naastrehvid lubatud?",
       "tituloSeo": "Talverehvid ja naastrehvid Eestis: tähtajad ja nõuded",
       "descricao": "Talverehvid on Eestis kohustuslikud 1. detsembrist 1. märtsini, naastrehvid lubatud 15. oktoobrist 31. märtsini. Mustri sügavus, 3PMSF-märgis ja nõuanded.",
@@ -102,14 +103,27 @@
         }
       ],
       "fontes": [
-        { "nome": "Transpordiamet – Homsest on lubatud kasutada naastrehve (14.10.2024)", "url": "https://www.transpordiamet.ee/uudised/homsest-lubatud-kasutada-naastrehve" },
-        { "nome": "Transpordiamet – Talverehvide vahetamisega võib veel oodata (27.03.2024)", "url": "https://www.transpordiamet.ee/uudised/talverehvide-vahetamisega-voib-veel-oodata" },
-        { "nome": "Transpordiamet – Rakendub talverehvide nõuete muudatus (27.10.2022)", "url": "https://www.transpordiamet.ee/uudised/rakendub-talverehvide-nouete-muudatus" },
-        { "nome": "Riigi Teataja – Mootorsõiduki ja selle haagise tehnonõuded ning nõuded varustusele (määrus nr 42)", "url": "https://www.riigiteataja.ee/akt/116062011008?leiaKehtiv" }
+        {
+          "nome": "Transpordiamet – Homsest on lubatud kasutada naastrehve (14.10.2024)",
+          "url": "https://www.transpordiamet.ee/uudised/homsest-lubatud-kasutada-naastrehve"
+        },
+        {
+          "nome": "Transpordiamet – Talverehvide vahetamisega võib veel oodata (27.03.2024)",
+          "url": "https://www.transpordiamet.ee/uudised/talverehvide-vahetamisega-voib-veel-oodata"
+        },
+        {
+          "nome": "Transpordiamet – Rakendub talverehvide nõuete muudatus (27.10.2022)",
+          "url": "https://www.transpordiamet.ee/uudised/rakendub-talverehvide-nouete-muudatus"
+        },
+        {
+          "nome": "Riigi Teataja – Mootorsõiduki ja selle haagise tehnonõuded ning nõuded varustusele (määrus nr 42)",
+          "url": "https://www.riigiteataja.ee/akt/116062011008?leiaKehtiv"
+        }
       ],
       "cta": "pedido"
     },
     "en": {
+      "slug": "winter-tyres-estonia",
       "titulo": "Winter tyres in Estonia: mandatory dates, studded tyre period and tread depth",
       "tituloSeo": "Winter tyres in Estonia: dates, studs and tread depth",
       "descricao": "Winter tyres are mandatory in Estonia from 1 December to 1 March, studs allowed from 15 October to 31 March. Tread depth, 3PMSF marking and when to change.",
@@ -207,15 +221,31 @@
         }
       ],
       "fontes": [
-        { "nome": "Estonian Transport Administration – Winter tyres are allowed from 15th October", "url": "https://www.transpordiamet.ee/en/news/winter-tyres-are-allowed-15th-october" },
-        { "nome": "Transpordiamet – Homsest on lubatud kasutada naastrehve (14.10.2024)", "url": "https://www.transpordiamet.ee/uudised/homsest-lubatud-kasutada-naastrehve" },
-        { "nome": "Transpordiamet – Talverehvide vahetamisega võib veel oodata (27.03.2024)", "url": "https://www.transpordiamet.ee/uudised/talverehvide-vahetamisega-voib-veel-oodata" },
-        { "nome": "Transpordiamet – Rakendub talverehvide nõuete muudatus (27.10.2022)", "url": "https://www.transpordiamet.ee/uudised/rakendub-talverehvide-nouete-muudatus" },
-        { "nome": "Riigi Teataja – Regulation No 42 on technical requirements for motor vehicles and trailers", "url": "https://www.riigiteataja.ee/akt/116062011008?leiaKehtiv" }
+        {
+          "nome": "Estonian Transport Administration – Winter tyres are allowed from 15th October",
+          "url": "https://www.transpordiamet.ee/en/news/winter-tyres-are-allowed-15th-october"
+        },
+        {
+          "nome": "Transpordiamet – Homsest on lubatud kasutada naastrehve (14.10.2024)",
+          "url": "https://www.transpordiamet.ee/uudised/homsest-lubatud-kasutada-naastrehve"
+        },
+        {
+          "nome": "Transpordiamet – Talverehvide vahetamisega võib veel oodata (27.03.2024)",
+          "url": "https://www.transpordiamet.ee/uudised/talverehvide-vahetamisega-voib-veel-oodata"
+        },
+        {
+          "nome": "Transpordiamet – Rakendub talverehvide nõuete muudatus (27.10.2022)",
+          "url": "https://www.transpordiamet.ee/uudised/rakendub-talverehvide-nouete-muudatus"
+        },
+        {
+          "nome": "Riigi Teataja – Regulation No 42 on technical requirements for motor vehicles and trailers",
+          "url": "https://www.riigiteataja.ee/akt/116062011008?leiaKehtiv"
+        }
       ],
       "cta": "pedido"
     },
     "ru": {
+      "slug": "zimnie-shiny-v-estonii",
       "titulo": "Зимняя резина в Эстонии: сроки, шипованные шины и глубина протектора",
       "tituloSeo": "Зимняя резина в Эстонии: сроки, шипованные шины, протектор",
       "descricao": "Зимняя резина в Эстонии обязательна с 1 декабря по 1 марта, шипы разрешены с 15 октября по 31 марта. Глубина протектора, маркировка 3PMSF и когда менять шины.",
@@ -313,13 +343,34 @@
         }
       ],
       "fontes": [
-        { "nome": "Transpordiamet – С 15 октября в Эстонии можно использовать шипованную резину", "url": "https://www.transpordiamet.ee/ru/novosti/s-15-oktyabrya-v-estonii-mozhno-ispolzovat-shipovannuyu-rezinu" },
-        { "nome": "Transpordiamet – Меняются требования к зимним шинам (28.10.2022)", "url": "https://www.transpordiamet.ee/ru/novosti/menyayutsya-trebovaniya-k-zimnim-shinam" },
-        { "nome": "Estonian Transport Administration – Winter tyres are allowed from 15th October", "url": "https://www.transpordiamet.ee/en/news/winter-tyres-are-allowed-15th-october" },
-        { "nome": "Transpordiamet – Homsest on lubatud kasutada naastrehve (14.10.2024)", "url": "https://www.transpordiamet.ee/uudised/homsest-lubatud-kasutada-naastrehve" },
-        { "nome": "Transpordiamet – Talverehvide vahetamisega võib veel oodata (27.03.2024)", "url": "https://www.transpordiamet.ee/uudised/talverehvide-vahetamisega-voib-veel-oodata" },
-        { "nome": "Transpordiamet – Rakendub talverehvide nõuete muudatus (27.10.2022)", "url": "https://www.transpordiamet.ee/uudised/rakendub-talverehvide-nouete-muudatus" },
-        { "nome": "Riigi Teataja – Постановление № 42 о технических требованиях к механическим транспортным средствам и прицепам (на эстонском)", "url": "https://www.riigiteataja.ee/akt/116062011008?leiaKehtiv" }
+        {
+          "nome": "Transpordiamet – С 15 октября в Эстонии можно использовать шипованную резину",
+          "url": "https://www.transpordiamet.ee/ru/novosti/s-15-oktyabrya-v-estonii-mozhno-ispolzovat-shipovannuyu-rezinu"
+        },
+        {
+          "nome": "Transpordiamet – Меняются требования к зимним шинам (28.10.2022)",
+          "url": "https://www.transpordiamet.ee/ru/novosti/menyayutsya-trebovaniya-k-zimnim-shinam"
+        },
+        {
+          "nome": "Estonian Transport Administration – Winter tyres are allowed from 15th October",
+          "url": "https://www.transpordiamet.ee/en/news/winter-tyres-are-allowed-15th-october"
+        },
+        {
+          "nome": "Transpordiamet – Homsest on lubatud kasutada naastrehve (14.10.2024)",
+          "url": "https://www.transpordiamet.ee/uudised/homsest-lubatud-kasutada-naastrehve"
+        },
+        {
+          "nome": "Transpordiamet – Talverehvide vahetamisega võib veel oodata (27.03.2024)",
+          "url": "https://www.transpordiamet.ee/uudised/talverehvide-vahetamisega-voib-veel-oodata"
+        },
+        {
+          "nome": "Transpordiamet – Rakendub talverehvide nõuete muudatus (27.10.2022)",
+          "url": "https://www.transpordiamet.ee/uudised/rakendub-talverehvide-nouete-muudatus"
+        },
+        {
+          "nome": "Riigi Teataja – Постановление № 42 о технических требованиях к механическим транспортным средствам и прицепам (на эстонском)",
+          "url": "https://www.riigiteataja.ee/akt/116062011008?leiaKehtiv"
+        }
       ],
       "cta": "pedido"
     }

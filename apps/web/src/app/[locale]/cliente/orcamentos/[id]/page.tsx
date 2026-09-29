@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useRouter, Link } from '@/i18n/navigation';
+import { useRouter, Link, rota } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
@@ -432,7 +432,7 @@ export default function OrcamentoDetalhePage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">
-                      <Link href={`/oficinas/${orc.oficina?.id}`} className="hover:text-primary-600 hover:underline">
+                      <Link href={rota('/oficinas/[id]', { id: orc.oficina?.id })} className="hover:text-primary-600 hover:underline">
                         {orc.oficina?.nome_fantasia}
                       </Link>
                     </h3>

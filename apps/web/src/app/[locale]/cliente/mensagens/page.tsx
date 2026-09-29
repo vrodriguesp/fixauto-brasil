@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Link } from '@/i18n/navigation';
+import { Link, rota } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -291,7 +291,7 @@ export default function ClienteMensagensListPage() {
     <div className="max-w-2xl mx-auto px-4 py-6">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/cliente" className="text-gray-400 hover:text-gray-600">
+        <Link href="/cliente/dashboard" className="text-gray-400 hover:text-gray-600">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
@@ -393,7 +393,7 @@ export default function ClienteMensagensListPage() {
                 {/* Emergency conversation */}
                 {group.conversa_emergencia && (
                   <Link
-                    href={`/emergencia/acidente/${group.conversa_emergencia.emergencia_id}`}
+                    href={rota('/emergencia/acidente/[id]', { id: group.conversa_emergencia.emergencia_id })}
                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                   >
                     <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">

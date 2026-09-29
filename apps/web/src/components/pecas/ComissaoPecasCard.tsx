@@ -43,7 +43,7 @@ export default function ComissaoPecasCard({ fornecedorTipo, fornecedorId, pais }
     if (!fornecedorId) return;
     setLoading(true);
     Promise.all([
-      supabase.from('comissao_pecas_config').select('*').eq('fornecedor_tipo', fornecedorTipo).eq('fornecedor_id', fornecedorId).single(),
+      supabase.from('comissao_pecas_config').select('*').eq('fornecedor_tipo', fornecedorTipo).eq('fornecedor_id', fornecedorId).maybeSingle(),
       supabase.from('comissao_pecas_lancamento').select('*').eq('fornecedor_tipo', fornecedorTipo).eq('fornecedor_id', fornecedorId).order('created_at', { ascending: false }),
     ]).then(([{ data: cfg }, { data: lancs }]) => {
       setConfig(cfg as ConfigInfo | null);

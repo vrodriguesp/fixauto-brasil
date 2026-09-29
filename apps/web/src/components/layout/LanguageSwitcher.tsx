@@ -5,16 +5,27 @@ import { useState, useRef, useEffect } from 'react';
 import { usePathname } from '@/i18n/navigation';
 import { routing, HREFLANG, caminhoNoIdioma, type Locale } from '@/i18n/routing';
 import { lembrarIdioma } from '@/lib/idioma-escolhido';
+import { useParams } from 'next/navigation';
 
-const LOCALE_LABEL: Record<Locale, { flag: string; label: string }> = {
-  pt: { flag: '🇧🇷', label: 'Português (Brasil)' },
-  'pt-PT': { flag: '🇵🇹', label: 'Português (Portugal)' },
-  en: { flag: '🇬🇧', label: 'English' },
-  et: { flag: '🇪🇪', label: 'Eesti' },
-  it: { flag: '🇮🇹', label: 'Italiano' },
-  // Idioma, nao pais: sem bandeira (publico = russofonos da Estonia)
-  ru: { flag: '', label: 'Русский' },
+// Codigo do IDIOMA em texto, nao bandeira: bandeira representa pais (W3C
+// i18n desaconselha para idioma) e o Windows nao desenha bandeiras-emoji -
+// mostrava so as letras do pais ("EE", "GB") e nada para o russo.
+const LOCALE_LABEL: Record<Locale, { codigo: string; label: string }> = {
+  pt: { codigo: 'PT-BR', label: 'Português (Brasil)' },
+  'pt-PT': { codigo: 'PT-PT', label: 'Português (Portugal)' },
+  en: { codigo: 'EN', label: 'English' },
+  et: { codigo: 'ET', label: 'Eesti' },
+  it: { codigo: 'IT', label: 'Italiano' },
+  ru: { codigo: 'RU', label: 'Русский' },
 };
+
+function Codigo({ c }: { c: string }) {
+  return (
+    <span aria-hidden="true" className="inline-flex min-w-[2.75rem] justify-center rounded border border-gray-300 px-1 py-px text-[11px] font-semibold tracking-wide text-gray-700">
+      {c}
+    </span>
+  );
+}
 
 // As opcoes sao LINKS de verdade (<a href hreflang>), sempre presentes no HTML
 // (so escondidas visualmente quando o menu esta fechado): buscadores e IAs
@@ -23,8 +34,19 @@ const LOCALE_LABEL: Record<Locale, { flag: string; label: string }> = {
 export default function LanguageSwitcher() {
   const locale = useLocale() as Locale;
   const pathname = usePathname();
+  const params = useParams() as Record<string, string>;
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const botaoRef = useRef<HTMLButtonElement>(null);
+  // Celular: o menu vira uma folha com a largura da tela logo abaixo do botao
+  // (preso a borda direita do botao ele saia pela esquerda da tela).
+  const [posMobile, setPosMobile] = useState<{ top: number } | null>(null);
+
+  const alternar = () => {
+    const b = botaoRef.current?.getBoundingClientRect();
+    setPosMobile(b && window.innerWidth < 640 ? { top: Math.round(b.bottom + 6) } : null);
+    setOpen((v) => !v);
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -40,26 +62,28 @@ export default function LanguageSwitcher() {
   return (
     <div className="relative" ref={ref}>
       <button
+        ref={botaoRef}
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={alternar}
         aria-expanded={open}
         aria-haspopup="true"
         aria-label={current.label}
         className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
       >
-        {current.flag && <span aria-hidden="true">{current.flag}</span>}
+        <Codigo c={current.codigo} />
         <span className="hidden sm:inline">{current.label}</span>
         <svg className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
       <ul
-        className={`absolute right-0 top-full mt-1 w-56 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 ${open ? '' : 'hidden'}`}
+        style={open && posMobile ? { top: posMobile.top, maxHeight: `calc(100dvh - ${posMobile.top + 16}px)` } : undefined}
+        className={`${posMobile ? 'fixed left-4 right-4 overflow-y-auto' : 'absolute right-0 top-full mt-1 w-56'} bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 ${open ? '' : 'hidden'}`}
       >
         {routing.locales.map((l) => (
           <li key={l}>
             <a
-              href={caminhoNoIdioma(l, pathname)}
+              href={caminhoNoIdioma(l, pathname, params)}
               hrefLang={HREFLANG[l]}
               lang={HREFLANG[l]}
               onClick={() => { lembrarIdioma(l); setOpen(false); }}
@@ -68,7 +92,7 @@ export default function LanguageSwitcher() {
                 l === locale ? 'text-primary-700 bg-primary-50 font-medium' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
-              {LOCALE_LABEL[l].flag ? <span aria-hidden="true">{LOCALE_LABEL[l].flag}</span> : <span aria-hidden="true" className="inline-block w-5" />}
+              <Codigo c={LOCALE_LABEL[l].codigo} />
               {LOCALE_LABEL[l].label}
             </a>
           </li>

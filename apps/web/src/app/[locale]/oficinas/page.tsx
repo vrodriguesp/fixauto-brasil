@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { cache } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { getTranslations } from 'next-intl/server';
-import { Link } from '@/i18n/navigation';
+import { Link, rota } from '@/i18n/navigation';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import StarRating from '@/components/ui/StarRating';
 import StructuredData from '@/components/seo/StructuredData';
@@ -254,7 +254,7 @@ export default async function OficinasPage({
                 return (
                   <li key={o.id}>
                     <Link
-                      href={`/oficinas/${o.id}`}
+                      href={rota('/oficinas/[id]', { id: o.id })}
                       className="card h-full flex flex-col hover:shadow-md hover:border-primary-200 transition-shadow"
                     >
                       <div className="flex items-start gap-3">

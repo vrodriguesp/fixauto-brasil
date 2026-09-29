@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Link, useRouter } from '@/i18n/navigation';
+import { Link, useRouter, rota } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import StructuredData from '@/components/seo/StructuredData';
@@ -63,7 +63,7 @@ export default function HomeClient() {
             <p className="mt-6 text-lg sm:text-xl text-primary-100 leading-relaxed">{t('heroTexto')}</p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Link
-                href="/cadastro?tipo=cliente"
+                href={rota('/cadastro', undefined, { tipo: 'cliente' })}
                 className="bg-white text-primary-700 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors text-center"
               >
                 {t('ctaCliente')}

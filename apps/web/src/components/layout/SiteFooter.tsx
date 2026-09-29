@@ -1,9 +1,10 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { Link, usePathname } from '@/i18n/navigation';
+import { Link, usePathname, rota } from '@/i18n/navigation';
 import { routing, HREFLANG, caminhoNoIdioma, type Locale } from '@/i18n/routing';
 import { lembrarIdioma } from '@/lib/idioma-escolhido';
+import { useParams } from 'next/navigation';
 
 const NOME_IDIOMA: Record<Locale, string> = {
   pt: 'Português (Brasil)',
@@ -25,6 +26,7 @@ export default function SiteFooter() {
   const t = useTranslations('home');
   const locale = useLocale() as Locale;
   const pathname = usePathname();
+  const params = useParams() as Record<string, string>;
 
   if (AREAS_PRIVADAS.some((p) => pathname === p || pathname.startsWith(p + '/'))) return null;
 
@@ -44,7 +46,7 @@ export default function SiteFooter() {
           <nav aria-label={t('footerMotoristas')}>
             <h2 className="text-white font-semibold mb-3 text-base">{t('footerMotoristas')}</h2>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/cadastro?tipo=cliente" className="hover:text-white">{t('footerCriarConta')}</Link></li>
+              <li><Link href={rota('/cadastro', undefined, { tipo: 'cliente' })} className="hover:text-white">{t('footerCriarConta')}</Link></li>
               <li><Link href="/emergencia" className="hover:text-white">{t('footerAcabeiDeBater')}</Link></li>
               <li><Link href="/oficinas" className="hover:text-white">{t('footerVerOficinas')}</Link></li>
               <li><Link href="/docs/cliente" className="hover:text-white">{t('footerComoFunciona')}</Link></li>
@@ -73,7 +75,7 @@ export default function SiteFooter() {
             {routing.locales.map((l) => (
               <li key={l}>
                 <a
-                  href={caminhoNoIdioma(l, pathname)}
+                  href={caminhoNoIdioma(l, pathname, params)}
                   onClick={() => lembrarIdioma(l)}
                   hrefLang={HREFLANG[l]}
                   lang={HREFLANG[l]}

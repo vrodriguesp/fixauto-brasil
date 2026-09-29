@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Link } from '@/i18n/navigation';
+import { Link, rota } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -358,7 +358,7 @@ function AccidenteEnvolvido() {
             <p className="font-semibold text-gray-900 text-sm">{t('accidentRegisteredBy', { name: (a.emergencia as any)?.nome })}</p>
             {a.placa && <p className="text-xs text-gray-500 mt-1">{t('yourVehiclePlate', { plate: a.placa })}</p>}
             <div className="flex gap-2 mt-3">
-              <Link href={`/emergencia/acidente/${a.emergencia_id}`}
+              <Link href={rota('/emergencia/acidente/[id]', { id: a.emergencia_id })}
                 className="text-xs bg-primary-600 text-white px-3 py-1.5 rounded-lg hover:bg-primary-700 font-medium">
                 {t('viewDetails')}
               </Link>
