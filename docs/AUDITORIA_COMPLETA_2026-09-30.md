@@ -441,7 +441,7 @@ Commits `eff350f`, `677aaef`, `c87d939`. Verificado em produção: teste de regr
 | 2.7 Cookies | **Corrigido** — Secure/SameSite; `NEXT_LOCALE` desligado |
 | 2.8 FIPE/geocode | **Corrigido** — caminhos permitidos; cache 24 h + fila 1/s + limite |
 | 2.9 / 1.1 Cliente admin e e-mail | **Corrigido** — `lib/supabase-admin.ts` (falha sem a chave) e `lib/email.ts` |
-| 2.10 | **Corrigido**: security.txt, chave do Gemini no cabeçalho, nomes de avaliadores abreviados, sessão do app cifrada (LargeSecureStore), aceite dos termos para contas criadas no acidente. **Pendente (usuário)**: DMARC `p=quarantine` e CAA no DNS |
+| 2.10 | **Corrigido**: security.txt, chave do Gemini no cabeçalho, nomes de avaliadores abreviados, sessão do app cifrada (LargeSecureStore), aceite dos termos para contas criadas no acidente. DMARC `p=quarantine` e CAA `letsencrypt.org` **feitos pelo usuário** (conferidos no DNS) |
 | 1.2 Erros da API | **Corrigido** nas telas voltadas ao usuário (código traduzido: `erros.*`) |
 | 1.3 | **Corrigido** (cliente morto removido, fallback en-GB, migrações antigas em `supabase/migrations_legado`). Adiado: mover `notif-i18n` do app para o pacote compartilhado (baixo impacto) |
 | 3.1–3.4 | **Corrigido** |
@@ -454,7 +454,7 @@ Commits `eff350f`, `677aaef`, `c87d939`. Verificado em produção: teste de regr
 | 6.1–6.4 | **Corrigido** (contraste medido: 15 → 0) |
 | 7.1–7.5 | **Corrigido** (app com ru/pt-PT, fallback en, permissões iOS localizadas, termos no cadastro do app, ANPD, tutorial traduzido). Pendente: revisão de nativo do estoniano |
 | 8.2 | **Corrigido**: texto honesto + aviso por e-mail ao admin de todo pedido/acidente enquanto não há oficina ativa |
-| 8.3 | **Corrigido**: "o que acontece depois" e "quem está por trás". **Decisão do usuário**: publicar as faixas de comissão futura; **material do usuário**: capturas/vídeo do painel, telefone +372 |
+| 8.3 | **Corrigido**: "o que acontece depois" e "quem está por trás". **Decidido**: não publicar números (faixa em aberto até depois do piloto; o admin já configura percentual, faixa por desempenho ou valor fixo por serviço); **material do usuário**: capturas/vídeo do painel, telefone +372 |
 | 8.4 | FAQ "o preço do orçamento é o final?" e "alguma oficina paga para aparecer?". **Decisão do usuário**: manter ou não a opção "repassar comissão" |
 | 8.5 | **Corrigido**: FAQ do seguro/kasko, registrikood no perfil público, consulta de placa só no Brasil. Opcional: campo "quem paga o reparo" no fluxo de acidente |
 | 8.6 | **Corrigido** parcialmente: títulos/descrições de it e pt-pt dizem Tallinn/"para quem vive na Estônia" |
@@ -462,3 +462,11 @@ Commits `eff350f`, `677aaef`, `c87d939`. Verificado em produção: teste de regr
 ### Achado novo desta rodada
 - **Confirmação de e-mail desligada** no Supabase (`ENABLE_EMAIL_AUTOCONFIRM=true`, SMTP do GoTrue não configurado): qualquer pessoa cria conta com o e-mail de outra. As regras de acesso novas já não confiam no e-mail, mas o certo é exigir confirmação. Exige configurar o SMTP (Resend) no GoTrue e mover a criação do perfil para o servidor (gatilho no banco), porque hoje o cadastro cria o perfil logo após o `signUp`, o que só funciona sem confirmação. Recomendado como próxima tarefa.
 - **Não testado em aparelho**: o app de celular (compila; sessão cifrada, idiomas e cadastro novos precisam de teste num iPhone/Android).
+
+### Rodada da tarde (30/09/2026, publicado)
+- **Confirmação de e-mail: feita.** Cadastro pelo servidor (`/api/cadastro`), link de uso único no idioma da pessoa, login só depois de confirmar, cadastro direto no GoTrue desligado (`DISABLE_SIGNUP=true`, `AUTOCONFIRM=false`).
+- **Oficina/loja nova nasce inativa** até o admin conferir o registro da empresa (registro obrigatório; e-mail ao admin; o dono não consegue se ativar).
+- **Termos** (Brasil e UE, 6 idiomas): gratuito hoje, cobrança futura só com aviso de 30 dias corridos; declaração de responsável pela empresa no cadastro.
+- **Comissão configurável** (global e por oficina): isento, percentual, desempenho numa faixa escolhida, valor fixo por serviço por moeda. Continua "isento".
+- **Bug achado e corrigido**: os painéis logados apareciam em inglês em todos os idiomas.
+- Testes em produção: cadastro de ponta a ponta, painéis nos 6 idiomas, regras de acesso, acidente, celular 390/360 px, rotas/SEO e contraste — sem falhas.
