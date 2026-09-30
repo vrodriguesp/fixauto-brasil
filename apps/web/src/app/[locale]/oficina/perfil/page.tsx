@@ -370,10 +370,10 @@ export default function PerfilOficinaPage() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="c83a1-101" className="block text-sm font-medium text-gray-700 mb-1">
               {t('raioDeAtendimento')}
             </label>
-            <input type="number" className="input-field" value={raio} onChange={(e) => setRaio(Number(e.target.value))} />
+            <input id="c83a1-101" type="number" className="input-field" value={raio} onChange={(e) => setRaio(Number(e.target.value))} />
           </div>
         </div>
       </div>

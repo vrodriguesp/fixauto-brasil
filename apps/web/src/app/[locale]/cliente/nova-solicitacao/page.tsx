@@ -527,10 +527,10 @@ export default function NovaSolicitacaoPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="caee7-101" className="block text-sm font-medium text-gray-700 mb-1">
                   {needsPhoto ? t('describeProblem') : t('additionalNotesOptional')}
                 </label>
-                <textarea
+                <textarea id="caee7-101"
                   className="input-field min-h-[120px]"
                   placeholder={needsPhoto
                     ? t('placeholderDescribeIssue')
@@ -589,10 +589,10 @@ export default function NovaSolicitacaoPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="caee7-102" className="block text-sm font-medium text-gray-700 mb-1">
                   {t('addressLabel')}
                 </label>
-                <EnderecoAutocomplete
+                <EnderecoAutocomplete id="caee7-102"
                   value={endereco}
                   onChange={setEndereco}
                   placeholder={t('placeholderAddress')}

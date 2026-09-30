@@ -216,10 +216,10 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
 
       {/* Marca */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="cbbe3-101" className="block text-sm font-medium text-gray-700 mb-1">
           {t('labelMarca')} {loading === 'marcas' && <span className="text-gray-400">({t('carregando')})</span>}
         </label>
-        <select
+        <select id="cbbe3-101"
           className="input-field"
           value={selectedMarcaCode}
           onChange={(e) => handleMarcaChange(e.target.value)}
@@ -237,10 +237,10 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
       {/* Modelo */}
       {selectedMarcaCode && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="cbbe3-102" className="block text-sm font-medium text-gray-700 mb-1">
             {t('labelModelo')} {loading === 'modelos' && <span className="text-gray-400">({t('carregando')})</span>}
           </label>
-          <select
+          <select id="cbbe3-102"
             className="input-field"
             value={selectedModeloCode}
             onChange={(e) => handleModeloChange(e.target.value)}
@@ -259,11 +259,11 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
       {/* Ano */}
       {selectedModeloCode && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="cbbe3-103" className="block text-sm font-medium text-gray-700 mb-1">
             {t('labelAno')} {isBR && loading === 'anos' && <span className="text-gray-400">({t('carregando')})</span>}
           </label>
           {isBR ? (
-            <select
+            <select id="cbbe3-103"
               className="input-field"
               value={selectedAnoCode}
               onChange={(e) => handleAnoChange(e.target.value)}

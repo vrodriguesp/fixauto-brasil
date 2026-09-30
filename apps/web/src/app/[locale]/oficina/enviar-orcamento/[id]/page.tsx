@@ -488,10 +488,10 @@ export default function EnviarOrcamentoPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('prazoExecucao')}</h2>
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="cacb1-101" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('prazoTotalDias')}
               </label>
-              <input
+              <input id="cacb1-101"
                 type="number"
                 className="input-field"
                 min={1}
@@ -500,10 +500,10 @@ export default function EnviarOrcamentoPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="cacb1-102" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('tempoExecucaoHoras')}
               </label>
-              <input
+              <input id="cacb1-102"
                 type="number"
                 className="input-field"
                 min={1}
@@ -515,10 +515,10 @@ export default function EnviarOrcamentoPage() {
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="cacb1-103" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('validadeOrcamento')}
               </label>
-              <input
+              <input id="cacb1-103"
                 type="date"
                 className="input-field"
                 value={validade}
@@ -605,10 +605,10 @@ export default function EnviarOrcamentoPage() {
         <div className="card mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('observacoes')}</h2>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="cacb1-104" className="block text-sm font-medium text-gray-700 mb-1">
               {t('observacoesOpcional')}
             </label>
-            <textarea
+            <textarea id="cacb1-104"
               className="input-field min-h-[80px]"
               placeholder={t('placeholderObservacoes')}
               value={observacoes}

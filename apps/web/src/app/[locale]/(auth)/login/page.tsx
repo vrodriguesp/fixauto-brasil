@@ -192,7 +192,7 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-sm font-medium text-gray-700">{t('labelSenha')}</label>
+                    <label htmlFor="login-senha" className="block text-sm font-medium text-gray-700">{t('labelSenha')}</label>
                     <button
                       type="button"
                       onClick={() => { setForgotMode(true); setError(''); }}
@@ -202,6 +202,7 @@ export default function LoginPage() {
                     </button>
                   </div>
                   <input
+                    id="login-senha"
                     type="password"
                     className="input-field"
                     placeholder="********"
