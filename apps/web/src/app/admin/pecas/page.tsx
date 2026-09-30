@@ -11,6 +11,8 @@ interface Fornecedor {
   cidade: string;
   estado: string;
   ativa: boolean;
+  cnpj: string | null;
+  profile_id: string;
   email: string | null;
   created_at: string;
   ultimo_login: string | null;
@@ -53,6 +55,20 @@ export default function AdminPecasPage() {
   };
 
   useEffect(() => { fetchData(); }, []);
+
+  // Loja nova nasce inativa: o admin confere o registro da empresa e ativa
+  const [ocupado, setOcupado] = useState<string | null>(null);
+  const alternarAtiva = async (f: Fornecedor) => {
+    if (!confirm(`${f.ativa ? 'Desativar' : 'Ativar'} "${f.nome_fantasia}"?${f.ativa ? '' : ` Registro: ${f.cnpj || '-'}`}`)) return;
+    setOcupado(f.id);
+    await fetch('/api/admin/usuarios', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: f.profile_id, ativo: !f.ativa }),
+    });
+    setOcupado(null);
+    await fetchData();
+  };
 
   const formatUltimoLogin = (iso: string | null) => {
     if (!iso) return { texto: 'Nunca logou', classe: 'text-red-400' };
@@ -168,6 +184,7 @@ export default function AdminPecasPage() {
                   <th className="text-left py-2.5 px-4 font-medium">Status</th>
                   <th className="text-left py-2.5 px-4 font-medium">Cadastro</th>
                   <th className="text-left py-2.5 px-4 font-medium">Último login</th>
+                  <th className="text-left py-2.5 px-4 font-medium">Ação</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700">
@@ -175,7 +192,7 @@ export default function AdminPecasPage() {
                   const login = formatUltimoLogin(f.ultimo_login);
                   return (
                     <tr key={`${f.tipo}-${f.id}`}>
-                      <td className="py-2.5 px-4 text-white">{f.nome_fantasia}<p className="text-xs text-slate-500">{f.email}</p></td>
+                      <td className="py-2.5 px-4 text-white">{f.nome_fantasia}<p className="text-xs text-slate-500">{f.email}</p><p className="text-xs text-slate-500">Registro: {f.cnpj || '-'}</p></td>
                       <td className="py-2.5 px-4">
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${f.tipo === 'loja' ? 'bg-orange-900/40 text-orange-300' : 'bg-sky-900/40 text-sky-300'}`}>
                           {f.tipo === 'loja' ? 'Loja de peças' : 'Oficina fornecedora'}
@@ -189,6 +206,17 @@ export default function AdminPecasPage() {
                       </td>
                       <td className="py-2.5 px-4 text-slate-400">{new Date(f.created_at).toLocaleDateString('pt-BR')}</td>
                       <td className={`py-2.5 px-4 font-medium ${login.classe}`}>{login.texto}</td>
+                      <td className="py-2.5 px-4">
+                        {f.tipo === 'loja' && (
+                          <button
+                            onClick={() => alternarAtiva(f)}
+                            disabled={ocupado === f.id}
+                            className={`font-medium disabled:opacity-50 ${f.ativa ? 'text-amber-400 hover:text-amber-300' : 'text-emerald-400 hover:text-emerald-300'}`}
+                          >
+                            {f.ativa ? 'Desativar' : 'Ativar'}
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   );
                 })}

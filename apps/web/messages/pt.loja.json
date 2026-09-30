@@ -11,7 +11,8 @@
       "Você responde com preço e prazo de entrega",
       "A oficina escolhe a melhor resposta e confirma o pedido",
       "Combine a entrega e o pagamento diretamente com a oficina"
-    ]
+    ],
+    "cadastroEmAnalise": "Seu cadastro está em análise: conferimos o registro da empresa antes de mostrar seu perfil aos clientes. Enquanto isso, você já pode completar os dados do painel."
   },
   "lojaAprender": {
     "loading": "Carregando...",
@@ -74,12 +75,12 @@
       },
       "comissao": {
         "titulo": "Comissão da plataforma",
-        "resumo": "A taxa começa em 3% e cai conforme você responde rápido e entrega volume de pedidos — mínimo de 1,5% na prática. Só é cobrada quando o pedido é marcado como entregue, nunca antes disso.",
+        "resumo": "Hoje o uso da BipFix é gratuito para as lojas. Se no futuro houver cobrança sobre as vendas de peças, você será avisado com 30 dias corridos de antecedência — e ela só incidirá sobre pedidos marcados como entregues, nunca antes disso.",
         "passosGuiados": [
           "Abra Comissão no menu.",
           "Veja sua taxa atual, o que está pendente e o que já foi pago."
         ],
-        "desafio": "Confira sua taxa atual e o que você pode fazer pra reduzi-la.",
+        "desafio": "Veja qual condição vale hoje para a sua loja.",
         "linkRotulo": "Ver minha comissão →"
       }
     }

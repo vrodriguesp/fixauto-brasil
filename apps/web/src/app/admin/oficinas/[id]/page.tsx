@@ -10,7 +10,7 @@ import type { Oficina, Solicitacao, Orcamento } from '@fixauto/shared';
 
 interface ComissaoResumo {
   individual: { taxa: number | null; ate: string | null; motivo: string | null; vigente: boolean } | null;
-  efetiva: { taxa: number; origem: 'individual' | 'global' };
+  efetiva: { tipo?: 'percentual' | 'valor_fixo'; taxa: number; valorFixo?: number | null; moeda?: string; origem: 'individual' | 'global' };
   oficina: { parceiro_fundador: boolean; parceiro_fundador_desde: string | null };
 }
 
@@ -219,10 +219,14 @@ export default function AdminOficinaDetailPage() {
         {comissao ? (
           <div className="flex flex-wrap items-start gap-8 text-sm">
             <div>
-              <p className="text-slate-400 mb-1">Taxa que vale hoje</p>
-              <p className="text-white text-2xl font-semibold">{(comissao.efetiva.taxa * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%</p>
+              <p className="text-slate-400 mb-1">Condição que vale hoje</p>
+              <p className="text-white text-2xl font-semibold">
+                {comissao.efetiva.tipo === 'valor_fixo'
+                  ? `${(comissao.efetiva.valorFixo || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} ${comissao.efetiva.moeda || ''}/serviço`
+                  : `${(comissao.efetiva.taxa * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%`}
+              </p>
               <span className={`inline-flex mt-1 px-2 py-0.5 rounded text-xs font-medium ${comissao.efetiva.origem === 'individual' ? 'bg-amber-500/20 text-amber-300' : 'bg-blue-500/20 text-blue-300'}`}>
-                {comissao.efetiva.origem === 'individual' ? 'Taxa individual' : `Regra global · ${modoGlobal === 'isento' ? 'sem comissão' : modoGlobal === 'fixa' ? 'taxa fixa' : 'desempenho'}`}
+                {comissao.efetiva.origem === 'individual' ? 'Condição individual' : `Regra global · ${({ isento: 'sem comissão', fixa: 'percentual fixo', desempenho: 'desempenho', por_servico: 'valor por serviço' } as Record<string, string>)[modoGlobal] || modoGlobal}`}
               </span>
             </div>
             {comissao.individual && (

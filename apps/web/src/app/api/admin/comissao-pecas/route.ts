@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-auth';
 import { registrarAuditoria } from '@/lib/admin-auditoria';
-import { individualVigente, lerPlataformaConfig } from '@/lib/comissao-regras';
-import { COMISSAO_PECAS_CONFIG } from '@fixauto/shared';
+import { individualVigente, lerPlataformaConfig, resolverPecas } from '@/lib/comissao-regras';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
 
@@ -62,14 +61,10 @@ export async function GET() {
         override_motivo: config?.override_motivo ?? null,
         individual_vigente: individualVigente(config),
         // Hierarquia: individual (no prazo) > regra global de pecas
-        efetiva: individualVigente(config)
-          ? { taxa: Number(config.taxa_fixa_override), origem: 'individual' as const }
-          : {
-              taxa: global.comissao_pecas_modo === 'isento' ? 0
-                : global.comissao_pecas_modo === 'fixa' ? global.comissao_pecas_taxa
-                : config?.taxa_calculada != null ? Number(config.taxa_calculada) : COMISSAO_PECAS_CONFIG.TAXA_BASE,
-              origem: 'global' as const,
-            },
+        efetiva: (() => {
+          const e = resolverPecas(config, global, config?.taxa_calculada != null ? Number(config.taxa_calculada) : null);
+          return { taxa: e.taxa, origem: e.origem };
+        })(),
         total_pendente: agg.total_pendente,
         total_pago: agg.total_pago,
       };

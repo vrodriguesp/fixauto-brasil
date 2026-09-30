@@ -4,7 +4,7 @@ import { routing, hrefNoIdioma } from '@/i18n/routing';
 // Areas privadas por idioma, pelo endereco PUBLICO de cada uma (o acidente,
 // por exemplo, e /et/avarii/teade/ em estoniano - as regras do robots.txt sao
 // literais, entao o nome interno nao serviria).
-const PRIVADAS_POR_IDIOMA = ['/cliente', '/oficina', '/loja', '/definir-senha', '/reset-password'];
+const PRIVADAS_POR_IDIOMA = ['/cliente', '/oficina', '/loja', '/definir-senha', '/reset-password', '/confirmar-email'];
 const acidente = (l: string) => hrefNoIdioma(l, '/emergencia/acidente/X').replace(/\/X$/, '');
 
 export default function robots(): MetadataRoute.Robots {

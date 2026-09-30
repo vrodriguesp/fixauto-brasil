@@ -11,7 +11,8 @@
       "Tu rispondi con prezzo e tempi di consegna",
       "L'officina sceglie la risposta migliore e conferma l'ordine",
       "Concorda consegna e pagamento direttamente con l'officina"
-    ]
+    ],
+    "cadastroEmAnalise": "La tua registrazione è in verifica: controlliamo la registrazione dell'impresa prima di mostrare il tuo profilo ai clienti. Nel frattempo puoi già completare i dati nel pannello."
   },
   "lojaAprender": {
     "loading": "Caricamento...",
@@ -74,12 +75,12 @@
       },
       "comissao": {
         "titulo": "Commissione della piattaforma",
-        "resumo": "La percentuale parte dal 3% e scende man mano che rispondi in fretta e consegni un buon volume di ordini — nella pratica, minimo 1,5%. Viene applicata solo quando l'ordine è segnato come consegnato, mai prima.",
+        "resumo": "Attualmente l'uso di BipFix è gratuito per i rivenditori. Se in futuro verrà introdotto un costo sulle vendite di ricambi, sarai avvisato con 30 giorni di calendario di anticipo — e si applicherà solo agli ordini segnati come consegnati, mai prima.",
         "passosGuiados": [
           "Apri Commissione dal menu.",
           "Guarda la tua percentuale attuale, cosa è in sospeso e cosa è già stato pagato."
         ],
-        "desafio": "Controlla la tua percentuale attuale e cosa puoi fare per ridurla.",
+        "desafio": "Verifica quale condizione vale oggi per il tuo negozio.",
         "linkRotulo": "Vai alla mia commissione →"
       }
     }

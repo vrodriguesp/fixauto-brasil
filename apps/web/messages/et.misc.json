@@ -8,7 +8,7 @@
     "metaDescription": "BipFixi platvormi kasutustingimused autojuhtidele, autotöökodadele ja varuosade müüjatele Euroopa Liidus.",
     "pageTitle": "Kasutustingimused",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "28. september 2026",
+    "updatedDate": "30. september 2026",
     "secoes": [
       {
         "titulo": "1. Kes me oleme ja millal need tingimused kehtivad",
@@ -31,6 +31,7 @@
           "Konto loomiseks pead olema vähemalt 18-aastane.",
           "Esitatud andmed (nimi, kontaktandmed ning partnerite puhul ärinimi, registri- või KMKR-kood ja aadress) peavad olema õiged, täielikud ja ajakohased.",
           "Vastutad oma parooli saladuses hoidmise ja oma kontol toimuva eest. Kui kahtlustad volitamata kasutamist, teata meile kohe aadressil <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>.",
+          "Töökoja või poe registreerija kinnitab, et ta on selle ettevõtte eest vastutav isik (omanik, juhatuse liige või esindusõigusega isik) ning on teadlik, et praegu tasuta platvormi kasutamine võib tulevikus kaasa tuua kulusid vastavalt punktile 5.",
           "Partnerid kinnitavad, et neil on oma tegevuseks vajalikud registreeringud, litsentsid ja load. Võime küsida tõendavaid dokumente ja keelduda registreerimisest, kui andmed on valed, puudulikud või kontrollimatud."
         ]
       },
@@ -43,8 +44,8 @@
       {
         "titulo": "5. Tasud partneritele",
         "paragrafos": [
-          "Praeguses asutajafaasis <strong>ei maksa partnerid BipFixi kasutamise eest kuutasu ega komisjonitasu</strong>. Võime tulevikus kehtestada komisjonitasu platvormi kaudu tehtud tehingutelt, kuutasu või mõlemad.",
-          "Enne mistahes tasu võtmist teavitame asjaomaseid partnereid e-posti teel ja platvormil <strong>vähemalt 30 päeva ette</strong>, kirjeldades hinnamudelit, summat või protsenti, tasu mõjutavaid kriteeriume (näiteks töömahtu) ja kuupäeva, millest alates see kehtib. Partner, kes uute tingimustega ei nõustu, võib oma konto enne seda kuupäeva ilma trahvita sulgeda."
+          "Praegu on BipFixi kasutamine <strong>tasuta ka partneritele</strong>: kuutasu, komisjonitasu ega tööpõhist tasu ei võeta. Tulevikus võime hakata partneritelt tasu võtma, näiteks protsendina platvormi kaudu vahendatud töödelt, fikseeritud tasuna töö kohta, kuutasuna või nende kombinatsioonina; tingimused võivad olla kõigile partneritele ühesugused või määratud iga partneri jaoks eraldi.",
+          "Enne mistahes tasu võtmist teavitame asjaomaseid partnereid e-posti teel ja platvormil <strong>vähemalt 30 kalendripäeva ette</strong>, kirjeldades hinnamudelit, summat või protsenti, tasu mõjutavaid kriteeriume (näiteks töömahtu) ja kuupäeva, millest alates see kehtib. Partner, kes uute tingimustega ei nõustu, võib oma konto enne seda kuupäeva ilma trahvita sulgeda."
         ]
       },
       {

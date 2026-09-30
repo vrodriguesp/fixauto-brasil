@@ -49,6 +49,12 @@ export default function LojaDashboardPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <TutorialBanner href="/loja/aprender" storageKey="bipfix_tutorial_banner_loja" />
+      {/* parceiro novo: inativo ate o admin conferir o registro da empresa */}
+      {(loja as { ativa?: boolean } | null)?.ativa === false && (
+        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" role="status">
+          {t('cadastroEmAnalise')}
+        </div>
+      )}
       <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('greeting', { nome: loja?.nome_fantasia || '' })}</h1>
       <p className="text-gray-600 mb-8">{t('subtitle')}</p>
 

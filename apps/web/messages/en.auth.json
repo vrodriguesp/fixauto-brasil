@@ -33,7 +33,7 @@
     "dadosOficina": "Workshop details",
     "labelNomeFantasia": "Trade name *",
     "placeholderNomeOficina": "Workshop name",
-    "labelCnpj": "Tax ID (optional)",
+    "labelCnpj": "Company registration number",
     "placeholderCnpj": "Company registration number",
     "labelCep": "Zip code",
     "placeholderCep": "Postal code",
@@ -55,7 +55,14 @@
     "placeholderNomeLoja": "Parts store name",
     "criarContaLoja": "Create parts store account",
     "jaTemConta": "Already have an account?",
-    "entrar": "Log in"
+    "entrar": "Log in",
+    "verifiqueTitulo": "Check your email",
+    "verifiqueTexto1": "We sent a confirmation link to",
+    "verifiqueTexto2": "Open the email and click the link to activate your account. If you cannot find it, check your spam folder too.",
+    "verifiqueAnalise": "After you confirm, we check your company registration and activate your profile for customers. We will let you know by email.",
+    "reenviarLink": "I didn't get the email: send it again",
+    "linkReenviado": "If an account is waiting for confirmation, we have sent a new link.",
+    "declaracaoResponsavel": "I declare that I am the person responsible for this business (owner, director or someone authorised to represent it) and that I am aware that using BipFix, which is free today, may be charged in the future, with 30 calendar days' prior notice."
   },
   "definirSenha": {
     "erroSenhaCurta": "Password must be at least 8 characters",
@@ -93,5 +100,16 @@
     "placeholderRepitaSenha": "Repeat the password",
     "salvando": "Saving...",
     "salvarNovaSenha": "Save new password"
+  },
+  "confirmarEmail": {
+    "titulo": "Email confirmation",
+    "verificando": "Confirming your email…",
+    "sucesso": "Email confirmed! Opening your account…",
+    "invalidoTitulo": "This link is no longer valid",
+    "invalidoTexto": "The confirmation link is valid for 1 hour and can be used only once. Enter your email to get a new one.",
+    "labelEmail": "Email",
+    "reenviar": "Send a new link",
+    "reenviado": "If an account is waiting for confirmation, we have sent a new link. Check your email.",
+    "irLogin": "Go to sign in"
   }
 }

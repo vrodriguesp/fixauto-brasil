@@ -57,7 +57,7 @@ export default function EnviarOrcamentoPage() {
 
   // Commission handling - taxa efetiva considera o tier de fidelidade/volume
   const [comissaoModo, setComissaoModo] = useState<'absorver' | 'repassar'>('absorver');
-  const [comissaoInfo, setComissaoInfo] = useState<{ taxa: number; servicos90dias: number; origem: string } | null>(null);
+  const [comissaoInfo, setComissaoInfo] = useState<{ tipo?: 'percentual' | 'valor_fixo'; taxa: number; valorFixo?: number | null; origem: string } | null>(null);
 
   useEffect(() => {
     if (!oficina?.id) return;
@@ -91,7 +91,7 @@ export default function EnviarOrcamentoPage() {
 
       // Parse commission prefix from observacoes
       const obsRaw = existingQuote.observacoes || '';
-      const comissaoMatch = obsRaw.match(/^\[COMISSAO:(absorver|repassar):(\d+)\]/);
+      const comissaoMatch = obsRaw.match(/^\[COMISSAO:(absorver|repassar):([\d.]+)\]/);
       if (comissaoMatch) {
         setComissaoModo(comissaoMatch[1] as 'absorver' | 'repassar');
         setObservacoes(obsRaw.replace(/^\[COMISSAO:[^\]]+\]\n?/, ''));
@@ -145,8 +145,11 @@ export default function EnviarOrcamentoPage() {
   // Commission computed values (after total) - taxa real da oficina (com
   // desconto por fidelidade/volume, se aplicavel), com 10% como fallback
   // enquanto a chamada a /api/comissao-atual nao volta
-  const COMISSAO_PERCENTUAL = comissaoInfo ? comissaoInfo.taxa * 100 : 10;
-  const comissaoValor = total * (COMISSAO_PERCENTUAL / 100);
+  // Valor fixo por servico (condicao do admin) ou percentual sobre o total
+  const valorFixoComissao = comissaoInfo?.tipo === 'valor_fixo' ? Math.min(comissaoInfo.valorFixo || 0, total) : null;
+  const comissaoValor = valorFixoComissao != null ? valorFixoComissao : total * (comissaoInfo ? comissaoInfo.taxa : 0.1);
+  const COMISSAO_PERCENTUAL = total > 0 ? Math.round((comissaoValor / total) * 10000) / 100 : 0;
+  const semComissao = !!comissaoInfo && comissaoValor === 0;
   const totalCliente = comissaoModo === 'repassar' ? total + comissaoValor : total;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -398,7 +401,7 @@ export default function EnviarOrcamentoPage() {
           </div>
 
           {/* Sem comissao (fase de fundadores ou oferta individual): nada a absorver/repassar */}
-          {total > 0 && comissaoInfo && comissaoInfo.taxa === 0 && (
+          {total > 0 && semComissao && (
             <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
               <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm text-green-800">
                 {t('semComissaoOrcamento')}
@@ -407,7 +410,7 @@ export default function EnviarOrcamentoPage() {
           )}
 
           {/* Commission section */}
-          {total > 0 && comissaoInfo && comissaoInfo.taxa > 0 && (
+          {total > 0 && comissaoInfo && !semComissao && (
             <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                 <div className="flex items-center gap-2 mb-2">
@@ -417,7 +420,9 @@ export default function EnviarOrcamentoPage() {
                   <span className="text-sm font-medium text-blue-800">{t('comissaoBipfix')}</span>
                 </div>
                 <p className="text-sm text-blue-700">
-                  {t('comissaoDaPlataforma')} <strong>{COMISSAO_PERCENTUAL}%</strong> = <strong>{formatCurrency(comissaoValor, moeda, locale)}</strong>
+                  {t('comissaoDaPlataforma')}{' '}
+                  {valorFixoComissao == null && <><strong>{COMISSAO_PERCENTUAL}%</strong> = </>}
+                  <strong>{formatCurrency(comissaoValor, moeda, locale)}</strong>
                 </p>
               </div>
 

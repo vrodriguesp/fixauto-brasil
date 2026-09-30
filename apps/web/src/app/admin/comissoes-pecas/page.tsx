@@ -35,6 +35,7 @@ const rowKey = (r: { fornecedor_tipo: string; fornecedor_id: string }) => `${r.f
 export default function AdminComissoesPecasPage() {
   const [rows, setRows] = useState<ComissaoPecaRow[]>([]);
   const [modoGlobal, setModoGlobal] = useState('');
+  const [faixaGlobal, setFaixaGlobal] = useState('');
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<'todos' | 'loja' | 'oficina'>('todos');
   const [editKey, setEditKey] = useState<string | null>(null);
@@ -52,6 +53,10 @@ export default function AdminComissoesPecasPage() {
     const dados = res.ok ? await res.json() : null;
     setRows(dados?.fornecedores || []);
     setModoGlobal(dados?.global?.comissao_pecas_modo || '');
+    if (dados?.global) {
+      const p = (t: number) => `${(Number(t) * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%`;
+      setFaixaGlobal(`${p(dados.global.comissao_pecas_min ?? 0.01)}–${p(dados.global.comissao_pecas_max ?? 0.03)}`);
+    }
     setLoading(false);
   };
 
@@ -146,7 +151,7 @@ export default function AdminComissoesPecasPage() {
         <h1 className="text-2xl font-bold text-white">Comissão de Peças</h1>
         <p className="text-slate-400 text-sm mt-1">Taxa por fornecedor (loja de peças ou oficina vendendo excedente) e lançamentos por pedido</p>
         <p className="text-slate-400 text-sm mt-2">
-          Regra global de peças: <strong className="text-white">{modoGlobal === 'isento' ? 'sem comissão (0%)' : modoGlobal === 'fixa' ? 'taxa fixa' : 'por desempenho (1–3%)'}</strong>
+          Regra global de peças: <strong className="text-white">{modoGlobal === 'isento' ? 'sem comissão (0%)' : modoGlobal === 'fixa' ? 'taxa fixa' : `por desempenho (${faixaGlobal})`}</strong>
           {' '}(muda em <a href="/admin/comissoes" className="text-blue-400 hover:underline">Comissões</a>). A taxa individual de um fornecedor vale sobre a global até a data de término.
         </p>
         {erro && <p className="text-red-400 text-sm mt-2">{erro}</p>}

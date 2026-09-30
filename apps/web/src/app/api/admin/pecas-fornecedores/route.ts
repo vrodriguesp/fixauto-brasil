@@ -28,11 +28,11 @@ export async function GET() {
     ] = await Promise.all([
       supabaseAdmin
         .from('lojas_pecas')
-        .select('id, nome_fantasia, cidade, estado, pais, ativa, created_at, profile_id, profile:profiles(email)')
+        .select('id, nome_fantasia, cnpj, cidade, estado, pais, ativa, created_at, profile_id, profile:profiles(email)')
         .order('created_at', { ascending: false }),
       supabaseAdmin
         .from('oficinas')
-        .select('id, nome_fantasia, cidade, estado, pais, ativa, created_at, profile_id, profile:profiles(email)')
+        .select('id, nome_fantasia, cnpj, cidade, estado, pais, ativa, created_at, profile_id, profile:profiles(email)')
         .eq('vende_pecas', true)
         .order('created_at', { ascending: false }),
       supabaseAdmin.from('cotacoes_pecas').select('*', { count: 'exact', head: true }),
@@ -65,6 +65,8 @@ export async function GET() {
       estado: row.estado,
       pais: row.pais ?? null,
       ativa: row.ativa,
+      cnpj: row.cnpj ?? null,
+      profile_id: row.profile_id,
       email: row.profile?.email || null,
       created_at: row.created_at,
       ultimo_login: ultimoLoginPorProfile.get(row.profile_id) ?? null,

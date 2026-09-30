@@ -8,7 +8,8 @@
     "tituloEscolherTipo": "Vali konto tüüp",
     "tituloRedefinirSenha": "Lähtesta parool",
     "tituloDefinirSenha": "Määra parool",
-    "pularConteudo": "Liigu sisu juurde"
+    "pularConteudo": "Liigu sisu juurde",
+    "tituloConfirmarEmail": "E-posti kinnitamine"
   },
   "nav": {
     "dashboard": "Töölaud",
@@ -314,7 +315,7 @@
       },
       {
         "pergunta": "Kas platvormi kasutamine on turvaline?",
-        "resposta": "Jah. Enne töökoja aktiveerimist kontrollime ettevõtte registreeringut ja räägime vastutava isikuga. Pärast iga lõpetatud tööd saab hinnangu anda ainult klient, kes töö tellis — nii näed töökoja tegelikku mainet enne otsustamist. Sinu isikuandmed on kaitstud ja neid ei jagata ilma sinu nõusolekuta."
+        "resposta": "Jah. Enne töökoja aktiveerimist kontrollime ettevõtte registreeringut. Pärast iga lõpetatud tööd saab hinnangu anda ainult klient, kes töö tellis — nii näed töökoja tegelikku mainet enne otsustamist. Sinu isikuandmed on kaitstud ja neid ei jagata ilma sinu nõusolekuta."
       },
       {
         "pergunta": "Kui palju BipFixi kasutamine maksab?",
@@ -548,7 +549,12 @@
     "enviarLinkRecuperacao": "Saada taastamislink",
     "entrando": "Sisselogimine...",
     "naoTemConta": "Kas sul pole veel kontot?",
-    "cadastreSe": "Registreeru"
+    "cadastreSe": "Registreeru",
+    "erroNaoConfirmado": "Sa pole veel oma e-posti aadressi kinnitanud. Konto aktiveerimiseks ava link, mille registreerimisel saatsime.",
+    "reenviarConfirmacao": "Saada kinnituslink uuesti",
+    "confirmacaoReenviada": "Valmis: kui konto ootab kinnitamist, saatsime uue lingi.",
+    "erroCredenciais": "Vale e-posti aadress või parool.",
+    "erroMuitasTentativas": "Liiga palju katseid lühikese aja jooksul. Oota mõni minut ja proovi uuesti."
   },
   "naoEncontrado": {
     "titulo": "Lehte ei leitud",
@@ -568,7 +574,10 @@
     "NAO_AUTENTICADO": "Sinu seanss aegus. Logi uuesti sisse.",
     "DADOS_INVALIDOS": "Kontrolli sisestatud andmeid.",
     "GENERICO": "Midagi läks valesti. Proovi hetke pärast uuesti.",
-    "FUNCIONARIO_JA_CADASTRADO": "See töötaja on sinu töökojas juba registreeritud."
+    "FUNCIONARIO_JA_CADASTRADO": "See töötaja on sinu töökojas juba registreeritud.",
+    "SENHA_CURTA": "Parool peab olema vähemalt 8 tähemärki.",
+    "TERMOS_OBRIGATORIOS": "Jätkamiseks nõustu kasutustingimuste ja privaatsuspoliitikaga.",
+    "DECLARACAO_OBRIGATORIA": "Ettevõtte registreerimiseks kinnita, et oled selle eest vastutav isik."
   },
   "sobre": {
     "metaTitle": "BipFixist",

@@ -11,7 +11,8 @@
       "Sina vastad hinna ja tarneajaga",
       "Töökoda valib parima pakkumise ja kinnitab tellimuse",
       "Lepi tarne ja makse osas kokku otse töökojaga"
-    ]
+    ],
+    "cadastroEmAnalise": "Sinu registreerimine on ülevaatamisel: kontrollime ettevõtte registreeringut enne, kui sinu profiil klientidele nähtavaks muutub. Seni saad juba töölaual oma andmed täita."
   },
   "lojaAprender": {
     "loading": "Laadin...",
@@ -74,12 +75,12 @@
       },
       "comissao": {
         "titulo": "Platvormi komisjonitasu",
-        "resumo": "Määr algab 3%-st ja langeb, kui vastad kiiresti ja tarnid suuremas mahus tellimusi — praktikas minimaalselt 1,5%. Seda võetakse alles siis, kui tellimus on märgitud tarnituks, mitte varem.",
+        "resumo": "Praegu on BipFixi kasutamine poodidele tasuta. Kui tulevikus kehtestatakse varuosade müügilt tasu, teatame sellest vähemalt 30 kalendripäeva ette — ja see kehtib ainult tellimustele, mis on märgitud kohaletoimetatuks, mitte kunagi varem.",
         "passosGuiados": [
           "Ava menüüst Komisjonitasu.",
           "Vaata oma praegust määra, mis on ootel ja mis on juba makstud."
         ],
-        "desafio": "Vaata oma praegust määra ja mida saad teha selle langetamiseks.",
+        "desafio": "Vaata, milline tingimus sinu poele täna kehtib.",
         "linkRotulo": "Vaata oma komisjonitasu →"
       }
     }

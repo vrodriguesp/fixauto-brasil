@@ -3,6 +3,7 @@ import type { Profile } from '@fixauto/shared';
 import type { User } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from './supabase';
 import i18n from '../i18n';
+import { API_BASE_URL } from './api';
 
 interface AuthContextType {
   user: Profile | null;
@@ -102,38 +103,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, [fetchProfile]);
 
+  // Conta criada no servidor (mesma rota do site): o GoTrue nao aceita mais
+  // cadastro direto, e o login so funciona depois que a pessoa abre o link
+  // de confirmacao enviado para o e-mail.
   const signUp = async (email: string, password: string, nome: string, telefone: string) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) return { error: error.message };
-    if (!data.user) return { error: 'Erro ao criar usuário' };
-
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: data.user.id,
-      tipo: 'cliente',
-      nome,
-      email,
-      telefone,
-      idioma: i18n.language,
-      termos_aceitos_em: new Date().toISOString(),
-      termos_versao: '2026-09-08',
-    });
-    if (profileError) {
-      // Nao da pra apagar a conta de auth ja criada a partir do app (isso
-      // exige a service role key, que o mobile nao tem) - mas pelo menos
-      // desloga pra nao deixar a pessoa "autenticada" sem perfil nenhum
-      // (estado que antes causava um loop de redirecionamento silencioso
-      // no login seguinte). Ela pode tentar o cadastro de novo depois.
-      await supabase.auth.signOut();
-      return { error: profileError.message };
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/cadastro`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha: password, nome, telefone, tipo: 'cliente', idioma: i18n.language, aceitouTermos: true }),
+      });
+      if (res.ok) return { error: null };
+      const corpo = await res.json().catch(() => ({}));
+      if (corpo.codigo === 'SENHA_CURTA') return { error: i18n.t('auth.senhaCurta') };
+      if (res.status === 429) return { error: i18n.t('auth.muitasTentativas') };
+      if (res.status === 400) return { error: i18n.t('auth.dadosInvalidos') };
+      return { error: i18n.t('common.erroGenerico') };
+    } catch {
+      return { error: i18n.t('common.erroGenerico') };
     }
-
-    const { error: fetchError } = await fetchProfile(data.user.id);
-    return { error: fetchError };
   };
 
   const signIn = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return { error: error.message };
+    // codigo estavel, traduzido na tela (email_not_confirmed, invalid_credentials...)
+    if (error) return { error: error.code || 'invalid_credentials' };
     if (!data.user) return { error: null };
 
     const { error: profileError } = await fetchProfile(data.user.id);

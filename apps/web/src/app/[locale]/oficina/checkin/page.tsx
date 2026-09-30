@@ -211,7 +211,7 @@ export default function ManualCheckinPage() {
                     }`}
                   >
                     <span className="text-xl">{tipo.icon}</span>
-                    <p className="text-xs text-gray-900 mt-1">{tc(`tiposServico.${tipo.value}`)}</p>
+                    <p className="text-xs text-gray-900 mt-1 break-words">{tc(`tiposServico.${tipo.value}`)}</p>
                   </button>
                 ))}
               </div>

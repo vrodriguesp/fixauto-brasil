@@ -31,7 +31,8 @@
     "tipoPlataforma": "Piattaforma",
     "tipoExterno": "Esterno",
     "avaliacoesRecentesTitulo": "Recensioni recenti",
-    "nenhumaAvaliacaoAinda": "Nessuna recensione ancora"
+    "nenhumaAvaliacaoAinda": "Nessuna recensione ancora",
+    "cadastroEmAnalise": "La tua registrazione è in verifica: controlliamo la registrazione dell'impresa prima di mostrare il tuo profilo ai clienti. Nel frattempo puoi già completare i dati nel pannello."
   },
   "oficinaAgenda": {
     "mes0": "Gennaio",
@@ -218,13 +219,13 @@
       },
       "comissao": {
         "titulo": "Come funziona la commissione",
-        "resumo": "BipFix applica una commissione su ogni servizio completato — ma non è fissa. Parte dal 15% e scende fino al 5% a seconda di quanto rispondi velocemente, quante revisioni fai al preventivo, quanto è buona la tua valutazione e quanto volume di servizi mantieni.",
+        "resumo": "Attualmente l'uso di BipFix è gratuito per le officine. In futuro potrà esserci un costo — una percentuale su ogni lavoro completato o un importo fisso per lavoro — sempre comunicato con 30 giorni di calendario di anticipo. La schermata Commissione mostra la condizione valida per la tua officina.",
         "passosGuiados": [
           "Apri Commissione nel menu.",
           "Guarda la tua tariffa attuale e cosa sta riducendo (o meno) ogni criterio.",
-          "Leggi il consiglio: rispondere velocemente, evitare revisioni del preventivo e chiedere recensioni ai clienti riducono la tua tariffa."
+          "Se il costo dipende dalle prestazioni, rispondere in fretta, evitare revisioni dei preventivi e chiedere recensioni ai clienti mantengono la tua tariffa più bassa."
         ],
-        "desafio": "Esplora la schermata Commissione e individua quale criterio ridurrebbe di più la tua tariffa se lo migliorassi.",
+        "desafio": "Apri la schermata Commissione e verifica quale condizione vale oggi per la tua officina.",
         "linkRotulo": "Vedi la mia commissione →"
       },
       "equipe": {
@@ -388,13 +389,15 @@
     "colComissao": "Commissione",
     "colStatus": "Stato",
     "seloFundador": "Partner fondatore",
-    "faseFundadorTitulo": "Nessuna commissione in questa fase",
-    "faseFundadorTexto": "Durante la fase dei partner fondatori, i lavori conclusi tramite BipFix non pagano commissioni. Ti avviseremo con 30 giorni di anticipo prima di qualsiasi modifica.",
+    "faseFundadorTitulo": "Nessuna commissione oggi",
+    "faseFundadorTexto": "Attualmente l'uso di BipFix è gratuito: i lavori conclusi tramite la piattaforma non pagano commissioni. Se questo cambierà, ti avviseremo con 30 giorni di calendario di anticipo.",
     "condicaoEspecialTitulo": "Una condizione speciale per la tua officina",
     "condicaoEspecialTexto": "BipFix ha concordato una tariffa del {taxa} per la tua officina.",
     "validaAte": "Valida fino al {data}; dopo si applica la regola generale della piattaforma.",
     "semPrazo": "Nessuna data di scadenza.",
-    "taxaFixaTexto": "In questa fase la commissione della piattaforma è uguale per tutte le officine: {taxa}."
+    "taxaFixaTexto": "In questa fase la commissione della piattaforma è uguale per tutte le officine: {taxa}.",
+    "porServico": "{valor} per lavoro",
+    "valorPorServicoTexto": "Attualmente la commissione della piattaforma è un importo fisso di {valor} per ogni lavoro completato, uguale per tutte le officine."
   },
   "oficinaDistribuicao": {
     "hoje": "Oggi, {hora}",

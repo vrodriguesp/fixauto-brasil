@@ -8,7 +8,8 @@
     "tituloEscolherTipo": "Escolha o tipo de conta",
     "tituloRedefinirSenha": "Redefinir senha",
     "tituloDefinirSenha": "Definir senha",
-    "pularConteudo": "Pular para o conteúdo"
+    "pularConteudo": "Pular para o conteúdo",
+    "tituloConfirmarEmail": "Confirmar e-mail"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -324,7 +325,7 @@
       },
       {
         "pergunta": "É seguro usar a plataforma?",
-        "resposta": "Sim. Antes de ativar uma oficina, conferimos o cadastro da empresa e conversamos com o responsável. Depois de cada serviço concluído, só o cliente que contratou pode avaliar — assim você vê a reputação real antes de decidir. Seus dados pessoais são protegidos e nunca compartilhados sem seu consentimento."
+        "resposta": "Sim. Antes de ativar uma oficina, conferimos o registro da empresa (CNPJ). Depois de cada serviço concluído, só o cliente que contratou pode avaliar — assim você vê a reputação real antes de decidir. Seus dados pessoais são protegidos e nunca compartilhados sem seu consentimento."
       },
       {
         "pergunta": "Quanto custa usar o BipFix?",
@@ -558,7 +559,12 @@
     "enviarLinkRecuperacao": "Enviar link de recuperação",
     "entrando": "Entrando...",
     "naoTemConta": "Não tem conta?",
-    "cadastreSe": "Cadastre-se"
+    "cadastreSe": "Cadastre-se",
+    "erroNaoConfirmado": "Você ainda não confirmou seu e-mail. Abra o link que enviamos no cadastro para ativar a conta.",
+    "reenviarConfirmacao": "Enviar o link de confirmação de novo",
+    "confirmacaoReenviada": "Pronto: se a conta estiver aguardando confirmação, enviamos um novo link.",
+    "erroCredenciais": "E-mail ou senha incorretos.",
+    "erroMuitasTentativas": "Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente de novo."
   },
   "naoEncontrado": {
     "titulo": "Página não encontrada",
@@ -578,7 +584,10 @@
     "NAO_AUTENTICADO": "Sua sessão expirou. Entre de novo.",
     "DADOS_INVALIDOS": "Confira os dados informados.",
     "GENERICO": "Algo deu errado. Tente de novo em instantes.",
-    "FUNCIONARIO_JA_CADASTRADO": "Este funcionário já está cadastrado na sua oficina."
+    "FUNCIONARIO_JA_CADASTRADO": "Este funcionário já está cadastrado na sua oficina.",
+    "SENHA_CURTA": "A senha precisa ter pelo menos 8 caracteres.",
+    "TERMOS_OBRIGATORIOS": "Para continuar, aceite os Termos de Uso e a Política de Privacidade.",
+    "DECLARACAO_OBRIGATORIA": "Para cadastrar uma empresa, confirme que você é o responsável por ela."
   },
   "sobre": {
     "metaTitle": "Sobre o BipFix",

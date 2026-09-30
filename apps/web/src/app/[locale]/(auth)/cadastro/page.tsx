@@ -1,11 +1,10 @@
 'use client';
 
 import { Suspense, useState, useEffect } from 'react';
-import { Link, useRouter } from '@/i18n/navigation';
+import { Link } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
-import { useAuth } from '@/lib/auth-context';
-import { supabase } from '@/lib/supabase';
+import { textoErroApi } from '@/lib/erro-api';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
 
@@ -21,6 +20,7 @@ export default function CadastroPageWrapper() {
 function CadastroPage() {
   const t = useTranslations('cadastro');
   const tc = useTranslations('constants');
+  const te = useTranslations('erros');
   const locale = useLocale();
   const searchParams = useSearchParams();
   const tipoParam = searchParams.get('tipo') as 'cliente' | 'oficina' | 'loja_pecas' | null;
@@ -34,6 +34,11 @@ function CadastroPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [aceitouTermos, setAceitouTermos] = useState(false);
+  // oficina/loja: declara ser responsavel pela empresa e estar ciente de
+  // possivel cobranca futura (aviso previo de 30 dias corridos)
+  const [declaracao, setDeclaracao] = useState(false);
+  const [enviado, setEnviado] = useState(false);
+  const [reenviado, setReenviado] = useState(false);
   // Workshop fields
   const [nomeFantasia, setNomeFantasia] = useState('');
   const [cnpj, setCnpj] = useState('');
@@ -160,8 +165,6 @@ function CadastroPage() {
     </>
   );
 
-  const { signUp } = useAuth();
-  const router = useRouter();
 
   useEffect(() => {
     if (tipoParam && (tipoParam === 'cliente' || tipoParam === 'oficina' || tipoParam === 'loja_pecas')) {
@@ -180,75 +183,83 @@ function CadastroPage() {
       setError(t('errorTermos'));
       return;
     }
+    const tipo = userType || 'cliente';
+    const parceiro = tipo === 'oficina' || tipo === 'loja_pecas';
+    if (parceiro && !declaracao) {
+      setError(te('DECLARACAO_OBRIGATORIA'));
+      return;
+    }
     setError('');
     setLoading(true);
 
-    const tipo = userType || 'cliente';
-    const { error: authError } = await signUp(email, password, nome, telefone, tipo, locale);
-
-    if (authError) {
-      setError(authError);
-      setLoading(false);
+    // Conta, perfil e oficina/loja sao criados no servidor; o login so
+    // funciona depois que a pessoa confirma o e-mail pelo link enviado.
+    const local = parceiro ? await resolveLocation() : null;
+    const res = await fetch('/api/cadastro', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email, senha: password, nome, telefone, tipo, idioma: locale,
+        aceitouTermos, declaracaoResponsavel: parceiro ? declaracao : undefined,
+        empresa: local && {
+          nome_fantasia: nomeFantasia || nome,
+          cnpj,
+          endereco, cidade, estado, cep,
+          pais: local.pais,
+          latitude: local.lat,
+          longitude: local.lon,
+          especialidades: tipo === 'oficina' ? especialidades : undefined,
+        },
+      }),
+    }).catch(() => null);
+    setLoading(false);
+    if (!res || !res.ok) {
+      const corpo = res ? await res.json().catch(() => null) : null;
+      setError(textoErroApi(te, res?.status || 500, corpo));
       return;
     }
-
-    // If oficina, also create the oficina record
-    if (tipo === 'oficina') {
-      const finalLocation = await resolveLocation();
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        const { error: ofiError } = await supabase.from('oficinas').insert({
-          profile_id: authUser.id,
-          nome_fantasia: nomeFantasia || nome,
-          cnpj: cnpj || null,
-          endereco: endereco || '',
-          cidade: cidade || '',
-          estado: estado || '',
-          cep: cep || '',
-          pais: finalLocation.pais,
-          latitude: finalLocation.lat,
-          longitude: finalLocation.lon,
-          raio_atendimento_km: 30,
-          especialidades: especialidades.length > 0 ? especialidades : [],
-        });
-        if (ofiError) {
-          setError(ofiError.message);
-          setLoading(false);
-          return;
-        }
-      }
-    }
-
-    // If loja de pecas, also create the loja record
-    if (tipo === 'loja_pecas') {
-      const finalLocation = await resolveLocation();
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        const { error: lojaError } = await supabase.from('lojas_pecas').insert({
-          profile_id: authUser.id,
-          nome_fantasia: nomeFantasia || nome,
-          cnpj: cnpj || null,
-          endereco: endereco || '',
-          cidade: cidade || '',
-          estado: estado || '',
-          cep: cep || '',
-          pais: finalLocation.pais,
-          latitude: finalLocation.lat,
-          longitude: finalLocation.lon,
-          raio_atendimento_km: 30,
-        });
-        if (lojaError) {
-          setError(lojaError.message);
-          setLoading(false);
-          return;
-        }
-      }
-    }
-
-    setLoading(false);
-    router.push(tipo === 'oficina' ? '/oficina/dashboard' : tipo === 'loja_pecas' ? '/loja/dashboard' : '/cliente/dashboard');
-    router.refresh();
+    setEnviado(true);
   };
+
+  const reenviar = async () => {
+    setLoading(true);
+    await fetch('/api/cadastro/reenviar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, idioma: locale }),
+    }).catch(() => {});
+    setLoading(false);
+    setReenviado(true);
+  };
+
+  if (enviado) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md text-center">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6" aria-hidden="true">
+            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">{t('verifiqueTitulo')}</h1>
+          <p className="text-gray-600">{t('verifiqueTexto1')} <strong className="break-all">{email}</strong>.</p>
+          <p className="text-gray-600 mt-2">{t('verifiqueTexto2')}</p>
+          {(userType === 'oficina' || userType === 'loja_pecas') && (
+            <p className="text-sm text-gray-600 mt-4 bg-blue-50 border border-blue-100 rounded-lg p-3">{t('verifiqueAnalise')}</p>
+          )}
+          <div className="mt-6">
+            {reenviado ? (
+              <p className="text-sm text-green-700" role="status">{t('linkReenviado')}</p>
+            ) : (
+              <button type="button" onClick={reenviar} disabled={loading} className="text-sm font-medium text-primary-600 hover:underline">
+                {t('reenviarLink')}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const title = userType === 'oficina' ? t('tituloOficina') : userType === 'loja_pecas' ? t('tituloLoja') : userType === 'cliente' ? t('tituloMotorista') : t('tituloGenerico');
 
@@ -388,7 +399,7 @@ function CadastroPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
-                <input type="text" className="input-field" placeholder={t('placeholderCnpj')} value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
+                <input type="text" className="input-field" placeholder={t('placeholderCnpj')} value={cnpj} onChange={(e) => setCnpj(e.target.value)} required />
               </div>
               {renderEnderecoFields()}
 
@@ -400,11 +411,11 @@ function CadastroPage() {
                 <p className="text-xs text-gray-500 mb-3">
                   {t('servicosAjuda')}
                 </p>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-2">
                   {TIPOS_SERVICO.map((tipo) => (
                     <label
                       key={tipo.value}
-                      className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                      className={`flex items-center gap-2 p-3 min-w-0 rounded-lg border-2 cursor-pointer transition-all ${
                         especialidades.includes(tipo.value)
                           ? 'border-primary-500 bg-primary-50'
                           : 'border-gray-200 hover:border-gray-300'
@@ -414,10 +425,10 @@ function CadastroPage() {
                         type="checkbox"
                         checked={especialidades.includes(tipo.value)}
                         onChange={() => toggleEspecialidade(tipo.value)}
-                        className="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+                        className="w-4 h-4 flex-shrink-0 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
                       />
-                      <span className="text-lg">{tipo.icon}</span>
-                      <span className="text-sm text-gray-900">{tc(`tiposServico.${tipo.value}`)}</span>
+                      <span className="text-lg flex-shrink-0">{tipo.icon}</span>
+                      <span className="text-sm text-gray-900 min-w-0 break-words">{tc(`tiposServico.${tipo.value}`)}</span>
                     </label>
                   ))}
                 </div>
@@ -428,7 +439,16 @@ function CadastroPage() {
                 )}
               </div>
 
-              <button type="submit" className="btn-primary w-full" disabled={loading || especialidades.length === 0}>
+              <label className="flex items-start gap-2 text-sm text-gray-600">
+                <input
+                  type="checkbox"
+                  className="mt-1 w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+                  checked={declaracao}
+                  onChange={(e) => setDeclaracao(e.target.checked)}
+                />
+                <span>{t('declaracaoResponsavel')}</span>
+              </label>
+              <button type="submit" className="btn-primary w-full" disabled={loading || especialidades.length === 0 || !declaracao}>
                 {loading ? t('criandoConta') : t('criarContaOficina')}
               </button>
             </form>
@@ -451,10 +471,19 @@ function CadastroPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
-                <input type="text" className="input-field" placeholder={t('placeholderCnpj')} value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
+                <input type="text" className="input-field" placeholder={t('placeholderCnpj')} value={cnpj} onChange={(e) => setCnpj(e.target.value)} required />
               </div>
               {renderEnderecoFields()}
-              <button type="submit" className="btn-primary w-full" disabled={loading}>
+              <label className="flex items-start gap-2 text-sm text-gray-600">
+                <input
+                  type="checkbox"
+                  className="mt-1 w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+                  checked={declaracao}
+                  onChange={(e) => setDeclaracao(e.target.checked)}
+                />
+                <span>{t('declaracaoResponsavel')}</span>
+              </label>
+              <button type="submit" className="btn-primary w-full" disabled={loading || !declaracao}>
                 {loading ? t('criandoConta') : t('criarContaLoja')}
               </button>
             </form>

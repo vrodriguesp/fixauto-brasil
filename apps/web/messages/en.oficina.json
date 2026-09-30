@@ -31,7 +31,8 @@
     "tipoPlataforma": "Platform",
     "tipoExterno": "External",
     "avaliacoesRecentesTitulo": "Recent reviews",
-    "nenhumaAvaliacaoAinda": "No reviews yet"
+    "nenhumaAvaliacaoAinda": "No reviews yet",
+    "cadastroEmAnalise": "Your registration is under review: we check your company registration before showing your profile to customers. Meanwhile, you can already complete your details in the dashboard."
   },
   "oficinaAgenda": {
     "mes0": "January",
@@ -218,13 +219,13 @@
       },
       "comissao": {
         "titulo": "How commission works",
-        "resumo": "BipFix charges a fee on every completed service — but it isn't fixed. It starts at 15% and drops to as low as 5% the faster you respond, the fewer quote revisions you need, the better your rating, and the more volume you keep up.",
+        "resumo": "Using BipFix is currently free for repair shops. In the future there may be a fee — a percentage of each completed job or a fixed amount per job — always announced 30 calendar days in advance. The Commission screen shows the condition that applies to your shop.",
         "passosGuiados": [
           "Open Commission in the menu.",
           "See your current rate and what's reducing (or not) each criterion.",
-          "Read the tip: responding fast, avoiding quote revisions, and asking customers for reviews all lower your rate."
+          "If the fee is performance-based, responding fast, avoiding quote revisions and asking customers for reviews keep your rate lower."
         ],
-        "desafio": "Explore the Commission screen and identify which criterion would lower your rate the most if you improved it.",
+        "desafio": "Open the Commission screen and check which condition applies to your shop today.",
         "linkRotulo": "View my commission →"
       },
       "equipe": {
@@ -388,13 +389,15 @@
     "colComissao": "Commission",
     "colStatus": "Status",
     "seloFundador": "Founding partner",
-    "faseFundadorTitulo": "No commission in this phase",
-    "faseFundadorTexto": "During the founding-partner phase, jobs closed through BipFix carry no commission. We will give you 30 days' notice before any change.",
+    "faseFundadorTitulo": "No commission today",
+    "faseFundadorTexto": "Using BipFix is currently free: jobs closed through the platform carry no commission. If this changes, we will give you 30 calendar days' notice.",
     "condicaoEspecialTitulo": "A special rate for your shop",
     "condicaoEspecialTexto": "BipFix has agreed a rate of {taxa} for your shop.",
     "validaAte": "Valid until {data}; after that the platform's general rule applies.",
     "semPrazo": "No end date.",
-    "taxaFixaTexto": "In this phase the platform fee is the same for every shop: {taxa}."
+    "taxaFixaTexto": "In this phase the platform fee is the same for every shop: {taxa}.",
+    "porServico": "{valor} per job",
+    "valorPorServicoTexto": "The platform fee is currently a fixed {valor} per completed job, the same for every shop."
   },
   "oficinaDistribuicao": {
     "hoje": "Today, {hora}",

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { COMISSAO_CONFIG } from '@fixauto/shared';
 import { requireAdmin } from '@/lib/admin-auth';
 import { registrarAuditoria } from '@/lib/admin-auditoria';
-import { individualVigente, lerPlataformaConfig, type ModoComissao } from '@/lib/comissao-regras';
+import { individualVigente, lerPlataformaConfig, resolverServicos, type ModoComissao } from '@/lib/comissao-regras';
+import { currencyForCountry } from '@/lib/currency';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
 
@@ -11,10 +11,16 @@ export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 export const revalidate = 0;
 
-const MODOS: ModoComissao[] = ['isento', 'fixa', 'desempenho'];
+const MODOS_SERVICOS: ModoComissao[] = ['isento', 'fixa', 'desempenho', 'por_servico'];
+const MODOS_PECAS: ModoComissao[] = ['isento', 'fixa', 'desempenho'];
+const MOEDAS = ['EUR', 'BRL'];
 
 function taxaValida(v: unknown): v is number {
   return typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 0.5;
+}
+
+function valorValido(v: unknown): v is number {
+  return typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 100000;
 }
 
 function dataValida(v: unknown): v is string {
@@ -52,12 +58,6 @@ export async function GET() {
       else a.total_pago += Number(l.valor_comissao);
     });
 
-    const taxaGlobalPara = (cfg: any): number => {
-      if (global.comissao_servicos_modo === 'isento') return 0;
-      if (global.comissao_servicos_modo === 'fixa') return global.comissao_servicos_taxa;
-      return cfg?.taxa_calculada != null ? Number(cfg.taxa_calculada) : COMISSAO_CONFIG.TAXA_BASE;
-    };
-
     const result = (oficinas || []).map((ofi) => {
       const cfg = configByOficina[ofi.id];
       const vigente = individualVigente(cfg);
@@ -66,16 +66,20 @@ export async function GET() {
         oficina: ofi,
         individual: cfg?.usa_override
           ? {
+              tipo: cfg.override_tipo === 'valor_fixo' ? 'valor_fixo' : 'percentual',
               taxa: cfg.taxa_fixa_override != null ? Number(cfg.taxa_fixa_override) : null,
+              valor: cfg.valor_fixo_override != null ? Number(cfg.valor_fixo_override) : null,
               ate: cfg.override_ate || null,
               motivo: cfg.override_motivo || null,
               vigente,
             }
           : null,
         taxa_calculada: cfg?.taxa_calculada != null ? Number(cfg.taxa_calculada) : null,
-        efetiva: vigente
-          ? { taxa: Number(cfg.taxa_fixa_override), origem: 'individual' as const }
-          : { taxa: taxaGlobalPara(cfg), origem: 'global' as const },
+        efetiva: (() => {
+          const moeda = currencyForCountry(ofi.pais);
+          const e = resolverServicos(cfg, global, moeda, cfg?.taxa_calculada != null ? Number(cfg.taxa_calculada) : null);
+          return { tipo: e.tipo, taxa: e.taxa, valorFixo: e.valorFixo, moeda, origem: e.origem };
+        })(),
         total_pendente: aggregates[ofi.id]?.total_pendente || 0,
         total_pago: aggregates[ofi.id]?.total_pago || 0,
       };
@@ -127,16 +131,35 @@ export async function PATCH(req: NextRequest) {
     }
 
     if (acao === 'global') {
-      const { servicos_modo, servicos_taxa, pecas_modo, pecas_taxa, motivo } = body;
-      if (!MODOS.includes(servicos_modo) || !MODOS.includes(pecas_modo) || !taxaValida(servicos_taxa) || !taxaValida(pecas_taxa)) {
-        return NextResponse.json({ error: 'Modo ou taxa inválidos (taxa entre 0% e 50%)' }, { status: 400 });
+      const { servicos_modo, servicos_taxa, servicos_min, servicos_max, servicos_valores, pecas_modo, pecas_taxa, pecas_min, pecas_max, motivo } = body;
+      if (!MODOS_SERVICOS.includes(servicos_modo) || !MODOS_PECAS.includes(pecas_modo)
+        || ![servicos_taxa, servicos_min, servicos_max, pecas_taxa, pecas_min, pecas_max].every(taxaValida)) {
+        return NextResponse.json({ error: 'Modo ou taxa inválidos (taxas entre 0% e 50%)' }, { status: 400 });
+      }
+      if (servicos_min > servicos_max || pecas_min > pecas_max) {
+        return NextResponse.json({ error: 'Na faixa, o mínimo não pode ser maior que o máximo' }, { status: 400 });
+      }
+      const valores: Record<string, number> = {};
+      for (const m of MOEDAS) {
+        const v = servicos_valores?.[m];
+        if (v == null || v === '') continue;
+        if (!valorValido(v)) return NextResponse.json({ error: `Valor por serviço inválido (${m})` }, { status: 400 });
+        valores[m] = Math.round(v * 100) / 100;
+      }
+      if (servicos_modo === 'por_servico' && Object.keys(valores).length === 0) {
+        return NextResponse.json({ error: 'Informe o valor por serviço em pelo menos uma moeda' }, { status: 400 });
       }
       const antes = await lerPlataformaConfig(supabaseAdmin);
       const depois = {
         comissao_servicos_modo: servicos_modo,
         comissao_servicos_taxa: servicos_taxa,
+        comissao_servicos_min: servicos_min,
+        comissao_servicos_max: servicos_max,
+        comissao_servicos_valor_por_moeda: valores,
         comissao_pecas_modo: pecas_modo,
         comissao_pecas_taxa: pecas_taxa,
+        comissao_pecas_min: pecas_min,
+        comissao_pecas_max: pecas_max,
       };
       const { error } = await supabaseAdmin
         .from('plataforma_config')
@@ -149,29 +172,42 @@ export async function PATCH(req: NextRequest) {
     }
 
     if (acao === 'individual') {
-      const { oficina_id, taxa, ate, motivo } = body;
+      const { oficina_id, taxa, valor, ate, motivo } = body;
+      // tipo 'valor_fixo' = valor por servico concluido, na moeda da oficina
+      const tipo = body.tipo === 'valor_fixo' ? 'valor_fixo' : 'percentual';
       if (!oficina_id) return NextResponse.json({ error: 'oficina_id obrigatório' }, { status: 400 });
-      if (taxa != null && !taxaValida(taxa)) {
+      const remover = tipo === 'percentual' ? taxa == null : valor == null;
+      if (tipo === 'percentual' && taxa != null && !taxaValida(taxa)) {
         return NextResponse.json({ error: 'Taxa inválida (entre 0% e 50%)' }, { status: 400 });
+      }
+      if (tipo === 'valor_fixo' && valor != null && !valorValido(valor)) {
+        return NextResponse.json({ error: 'Valor por serviço inválido' }, { status: 400 });
       }
       if (ate != null && ate !== '' && !dataValida(ate)) {
         return NextResponse.json({ error: 'Data inválida' }, { status: 400 });
       }
       const { data: antes } = await supabaseAdmin
         .from('comissao_config')
-        .select('usa_override, taxa_fixa_override, override_ate, override_motivo')
+        .select('usa_override, taxa_fixa_override, override_tipo, valor_fixo_override, override_ate, override_motivo')
         .eq('oficina_id', oficina_id)
         .maybeSingle();
-      const depois = taxa == null
-        ? { usa_override: false, taxa_fixa_override: null, override_ate: null, override_motivo: null }
-        : { usa_override: true, taxa_fixa_override: taxa, override_ate: ate || null, override_motivo: motivo?.trim() || null };
+      const depois = remover
+        ? { usa_override: false, taxa_fixa_override: null, override_tipo: 'percentual', valor_fixo_override: null, override_ate: null, override_motivo: null }
+        : {
+            usa_override: true,
+            override_tipo: tipo,
+            taxa_fixa_override: tipo === 'percentual' ? taxa : null,
+            valor_fixo_override: tipo === 'valor_fixo' ? Math.round(valor * 100) / 100 : null,
+            override_ate: ate || null,
+            override_motivo: motivo?.trim() || null,
+          };
       const { error } = await supabaseAdmin
         .from('comissao_config')
         .upsert({ oficina_id, ...depois, updated_at: new Date().toISOString() }, { onConflict: 'oficina_id' });
       if (error) return NextResponse.json({ error: error.message }, { status: 500 });
       await registrarAuditoria(supabaseAdmin, {
         adminId, entidade: 'oficina', entidadeId: oficina_id,
-        acao: taxa == null ? 'remover_taxa_individual' : 'definir_taxa_individual', antes, depois, motivo,
+        acao: remover ? 'remover_taxa_individual' : 'definir_taxa_individual', antes, depois, motivo,
       });
       return NextResponse.json({ ok: true });
     }
@@ -204,7 +240,7 @@ export async function PATCH(req: NextRequest) {
       const agora = new Date().toISOString();
       const { error } = await supabaseAdmin.from('comissao_config').upsert(
         ids.map((oficina_id) => ({
-          oficina_id, usa_override: true, taxa_fixa_override: taxa,
+          oficina_id, usa_override: true, override_tipo: 'percentual', taxa_fixa_override: taxa, valor_fixo_override: null,
           override_ate: ate || null, override_motivo: motivo?.trim() || 'Oferta parceiros fundadores', updated_at: agora,
         })),
         { onConflict: 'oficina_id' }

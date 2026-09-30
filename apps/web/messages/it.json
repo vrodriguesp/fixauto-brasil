@@ -8,7 +8,8 @@
     "tituloEscolherTipo": "Scegli il tipo di account",
     "tituloRedefinirSenha": "Reimposta la password",
     "tituloDefinirSenha": "Imposta la password",
-    "pularConteudo": "Vai al contenuto"
+    "pularConteudo": "Vai al contenuto",
+    "tituloConfirmarEmail": "Conferma email"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -314,7 +315,7 @@
       },
       {
         "pergunta": "È sicuro usare la piattaforma?",
-        "resposta": "Sì. Prima di attivare un'officina verifichiamo la registrazione dell'impresa e parliamo con il responsabile. Dopo ogni lavoro completato, può lasciare una recensione solo il cliente che l'ha commissionato: così vedi la reputazione reale prima di decidere. I tuoi dati personali sono protetti e non vengono mai condivisi senza il tuo consenso."
+        "resposta": "Sì. Prima di attivare un'officina verifichiamo la registrazione dell'impresa. Dopo ogni lavoro completato, può lasciare una recensione solo il cliente che l'ha commissionato: così vedi la reputazione reale prima di decidere. I tuoi dati personali sono protetti e non vengono mai condivisi senza il tuo consenso."
       },
       {
         "pergunta": "Quanto costa usare BipFix?",
@@ -548,7 +549,12 @@
     "enviarLinkRecuperacao": "Invia link di recupero",
     "entrando": "Accesso in corso...",
     "naoTemConta": "Non hai un account?",
-    "cadastreSe": "Registrati"
+    "cadastreSe": "Registrati",
+    "erroNaoConfirmado": "Non hai ancora confermato la tua email. Apri il link che ti abbiamo inviato alla registrazione per attivare l'account.",
+    "reenviarConfirmacao": "Invia di nuovo il link di conferma",
+    "confirmacaoReenviada": "Fatto: se l'account è in attesa di conferma, abbiamo inviato un nuovo link.",
+    "erroCredenciais": "Email o password non corretti.",
+    "erroMuitasTentativas": "Troppi tentativi in poco tempo. Attendi qualche minuto e riprova."
   },
   "naoEncontrado": {
     "titulo": "Pagina non trovata",
@@ -568,7 +574,10 @@
     "NAO_AUTENTICADO": "La sessione è scaduta. Accedi di nuovo.",
     "DADOS_INVALIDOS": "Controlla i dati inseriti.",
     "GENERICO": "Qualcosa è andato storto. Riprova tra un momento.",
-    "FUNCIONARIO_JA_CADASTRADO": "Questo dipendente è già registrato nella tua officina."
+    "FUNCIONARIO_JA_CADASTRADO": "Questo dipendente è già registrato nella tua officina.",
+    "SENHA_CURTA": "La password deve avere almeno 8 caratteri.",
+    "TERMOS_OBRIGATORIOS": "Per continuare, accetta i Termini di utilizzo e l'Informativa sulla privacy.",
+    "DECLARACAO_OBRIGATORIA": "Per registrare un'impresa, conferma di esserne il responsabile."
   },
   "sobre": {
     "metaTitle": "Chi è BipFix",

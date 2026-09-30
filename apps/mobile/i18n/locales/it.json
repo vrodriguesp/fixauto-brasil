@@ -34,7 +34,7 @@
     "telefone": "Telefono",
     "confirmarSenha": "Conferma password",
     "jaTemConta": "Hai già un account?",
-    "credenciaisInvalidas": "Email o password errati.",
+    "credenciaisInvalidas": "Email o password non corretti.",
     "senhasNaoConferem": "Le password non coincidono.",
     "recuperarTitulo": "Recupera password",
     "recuperarTexto": "Inserisci la tua email e ti invieremo un link per reimpostare la password.",
@@ -45,7 +45,16 @@
     "termos": "Termini di utilizzo",
     "aceiteTexto2": "e la",
     "privacidade": "Informativa sulla privacy",
-    "senhaCurta": "La password deve avere almeno 8 caratteri."
+    "senhaCurta": "La password deve avere almeno 8 caratteri.",
+    "verifiqueTitulo": "Controlla la tua email",
+    "verifiqueTexto": "Abbiamo inviato un link di conferma a {{email}}. Apri l'email e tocca il link per attivare il tuo account.",
+    "verifiqueDepois": "Dopo la conferma, torna nell'app e accedi con email e password. Se non trovi l'email, controlla anche la cartella spam.",
+    "irLogin": "Vai all'accesso",
+    "naoConfirmado": "Non hai ancora confermato la tua email. Apri il link che ti abbiamo inviato alla registrazione per attivare l'account.",
+    "reenviarLink": "Invia di nuovo il link di conferma",
+    "linkReenviado": "Fatto: se l'account è in attesa di conferma, abbiamo inviato un nuovo link.",
+    "muitasTentativas": "Troppi tentativi in poco tempo. Attendi qualche minuto e riprova.",
+    "dadosInvalidos": "Controlla i dati inseriti."
   },
   "emergencia": {
     "titulo": "Ho appena avuto un incidente",

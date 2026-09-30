@@ -8,7 +8,7 @@
     "metaDescription": "Termini di utilizzo della piattaforma BipFix per automobilisti, officine e rivenditori di ricambi nell'Unione europea.",
     "pageTitle": "Termini di utilizzo",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
-    "updatedDate": "28 settembre 2026",
+    "updatedDate": "30 settembre 2026",
     "secoes": [
       {
         "titulo": "1. Chi siamo e quando si applicano questi Termini",
@@ -31,6 +31,7 @@
           "Per creare un account devi avere almeno 18 anni.",
           "Le informazioni che fornisci (nome, recapiti e, per i Partner, ragione sociale, numero di registro o partita IVA e indirizzo) devono essere veritiere, complete e aggiornate.",
           "Sei responsabile della riservatezza della tua password e delle attività svolte con il tuo account. Avvisaci subito a <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a> se sospetti un uso non autorizzato.",
+          "Chi registra un'Officina o un Rivenditore dichiara di essere il responsabile di tale impresa (titolare, amministratore o persona con poteri di rappresentanza) e di essere consapevole che l'uso della Piattaforma, oggi gratuito, potrà comportare costi in futuro, secondo quanto previsto dalla sezione 5.",
           "I Partner confermano di possedere le iscrizioni, licenze e autorizzazioni necessarie per la loro attività. Possiamo chiedere documenti a supporto e rifiutare una registrazione con informazioni false, incomplete o non verificabili."
         ]
       },
@@ -43,8 +44,8 @@
       {
         "titulo": "5. Costi per i Partner",
         "paragrafos": [
-          "Nell'attuale fase dei partner fondatori, <strong>i Partner non pagano alcun canone né alcuna commissione</strong> per l'uso di BipFix. In futuro potremo introdurre una commissione sulle transazioni concluse tramite la Piattaforma, un canone o entrambi.",
-          "Prima di addebitare qualsiasi costo, informeremo i Partner interessati via email e sulla Piattaforma <strong>con almeno 30 giorni di anticipo</strong>, descrivendo il modello di prezzo, l'importo o la percentuale, gli eventuali criteri che lo fanno variare (ad esempio il volume di lavoro) e la data da cui si applica. Il Partner che non accetta le nuove condizioni può chiudere il proprio account prima di tale data senza alcuna penale."
+          "Attualmente l'uso di BipFix è <strong>gratuito anche per i Partner</strong>: non ci sono canoni, commissioni né costi per singolo lavoro. In futuro potremo iniziare ad addebitare un costo ai Partner, ad esempio una percentuale sui lavori conclusi tramite la Piattaforma, un importo fisso per lavoro, un canone o una combinazione di questi modelli; le condizioni possono essere uguali per tutti i Partner o definite per ciascun Partner.",
+          "Prima di addebitare qualsiasi costo, informeremo i Partner interessati via email e sulla Piattaforma <strong>con almeno 30 giorni di calendario di anticipo</strong>, descrivendo il modello di prezzo, l'importo o la percentuale, gli eventuali criteri che lo fanno variare (ad esempio il volume di lavoro) e la data da cui si applica. Il Partner che non accetta le nuove condizioni può chiudere il proprio account prima di tale data senza alcuna penale."
         ]
       },
       {

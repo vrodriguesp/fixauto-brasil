@@ -45,7 +45,16 @@
     "termos": "Termos de Utilização",
     "aceiteTexto2": "e a",
     "privacidade": "Política de Privacidade",
-    "senhaCurta": "A palavra-passe tem de ter pelo menos 8 caracteres."
+    "senhaCurta": "A palavra-passe tem de ter pelo menos 8 caracteres.",
+    "verifiqueTitulo": "Verifique o seu e-mail",
+    "verifiqueTexto": "Enviámos uma ligação de confirmação para {{email}}. Abra o e-mail e toque na ligação para ativar a sua conta.",
+    "verifiqueDepois": "Depois de confirmar, volte à aplicação e inicie sessão com o seu e-mail e palavra-passe. Se não encontrar o e-mail, veja também a pasta de spam.",
+    "irLogin": "Ir para o início de sessão",
+    "naoConfirmado": "Ainda não confirmou o seu e-mail. Abra a ligação que enviámos no registo para ativar a conta.",
+    "reenviarLink": "Enviar novamente a ligação de confirmação",
+    "linkReenviado": "Feito: se a conta estiver a aguardar confirmação, enviámos uma nova ligação.",
+    "muitasTentativas": "Demasiadas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.",
+    "dadosInvalidos": "Verifique os dados introduzidos."
   },
   "emergencia": {
     "titulo": "Acabei de bater",

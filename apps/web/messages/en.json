@@ -8,7 +8,8 @@
     "tituloEscolherTipo": "Choose your account type",
     "tituloRedefinirSenha": "Reset password",
     "tituloDefinirSenha": "Set your password",
-    "pularConteudo": "Skip to content"
+    "pularConteudo": "Skip to content",
+    "tituloConfirmarEmail": "Confirm email"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -314,7 +315,7 @@
       },
       {
         "pergunta": "Is it safe to use the platform?",
-        "resposta": "Yes. Before a shop is activated, we check its company registration and talk to the person in charge. After each completed job, only the customer who hired the shop can leave a review — so you see its real reputation before deciding. Your personal data is protected and never shared without your consent."
+        "resposta": "Yes. Before a shop is activated, we check its company registration. After each completed job, only the customer who hired the shop can leave a review — so you see its real reputation before deciding. Your personal data is protected and never shared without your consent."
       },
       {
         "pergunta": "How much does BipFix cost?",
@@ -548,7 +549,12 @@
     "enviarLinkRecuperacao": "Send reset link",
     "entrando": "Logging in...",
     "naoTemConta": "Don't have an account?",
-    "cadastreSe": "Sign up"
+    "cadastreSe": "Sign up",
+    "erroNaoConfirmado": "You haven't confirmed your email yet. Open the link we sent when you signed up to activate your account.",
+    "reenviarConfirmacao": "Send the confirmation link again",
+    "confirmacaoReenviada": "Done: if the account is waiting for confirmation, we have sent a new link.",
+    "erroCredenciais": "Incorrect email or password.",
+    "erroMuitasTentativas": "Too many attempts in a short time. Please wait a few minutes and try again."
   },
   "naoEncontrado": {
     "titulo": "Page not found",
@@ -568,7 +574,10 @@
     "NAO_AUTENTICADO": "Your session has expired. Please sign in again.",
     "DADOS_INVALIDOS": "Please check the details you entered.",
     "GENERICO": "Something went wrong. Please try again in a moment.",
-    "FUNCIONARIO_JA_CADASTRADO": "This employee is already registered at your shop."
+    "FUNCIONARIO_JA_CADASTRADO": "This employee is already registered at your shop.",
+    "SENHA_CURTA": "Password must be at least 8 characters.",
+    "TERMOS_OBRIGATORIOS": "To continue, please accept the Terms of Use and the Privacy Policy.",
+    "DECLARACAO_OBRIGATORIA": "To register a business, please confirm that you are the person responsible for it."
   },
   "sobre": {
     "metaTitle": "About BipFix",

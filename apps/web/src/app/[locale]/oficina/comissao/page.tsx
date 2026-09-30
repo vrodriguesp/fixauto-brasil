@@ -35,9 +35,12 @@ export default function ComissaoPage() {
   // Taxa que vale hoje pela hierarquia (individual do admin > regra global),
   // calculada no servidor - a oficina so ve o resultado e de onde ele vem.
   const [efetiva, setEfetiva] = useState<{
+    tipo: 'percentual' | 'valor_fixo';
     taxa: number;
+    valorFixo: number | null;
     origem: 'individual' | 'global';
-    modoGlobal: 'isento' | 'fixa' | 'desempenho';
+    modoGlobal: 'isento' | 'fixa' | 'desempenho' | 'por_servico';
+    faixaGlobal: { min: number; max: number } | null;
     ate: string | null;
     fundador: boolean;
   } | null>(null);
@@ -76,7 +79,14 @@ export default function ComissaoPage() {
       });
   }, [oficina]);
 
-  const taxa = efetiva ? efetiva.taxa : COMISSAO_CONFIG.TAXA_BASE;
+  const taxa = efetiva ? efetiva.taxa : 0;
+  // Faixa do modo "por desempenho" definida pelo admin (ex.: 1%..5%); a
+  // escala de calculo (COMISSAO_CONFIG) e convertida proporcionalmente.
+  const faixa = efetiva?.faixaGlobal || { min: COMISSAO_CONFIG.TAXA_MIN, max: COMISSAO_CONFIG.TAXA_MAX };
+  const escala = (faixa.max - faixa.min) / (COMISSAO_CONFIG.TAXA_MAX - COMISSAO_CONFIG.TAXA_MIN);
+  const valorFixoTexto = efetiva?.tipo === 'valor_fixo' ? formatCurrency(efetiva.valorFixo || 0, moeda, locale) : null;
+  const corTaxa = efetiva?.tipo === 'valor_fixo' || faixa.max <= faixa.min ? '#111827'
+    : taxa <= faixa.min + (faixa.max - faixa.min) / 3 ? '#16a34a' : taxa <= faixa.min + (2 * (faixa.max - faixa.min)) / 3 ? '#ca8a04' : '#dc2626';
   // O detalhamento por desempenho so faz sentido quando e ele que define a taxa
   const mostraDesempenho = efetiva?.origem === 'global' && efetiva.modoGlobal === 'desempenho';
   const pctTexto = (v: number) => `${(v * 100).toLocaleString(INTL_LOCALE[locale as keyof typeof INTL_LOCALE] || 'en-GB', { maximumFractionDigits: 2 })}%`;
@@ -159,7 +169,7 @@ export default function ComissaoPage() {
         <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 mb-8">
           <p className="font-semibold text-amber-900">{t('condicaoEspecialTitulo')}</p>
           <p className="text-sm text-amber-800 mt-1">
-            {t('condicaoEspecialTexto', { taxa: pctTexto(efetiva.taxa) })}{' '}
+            {t('condicaoEspecialTexto', { taxa: valorFixoTexto ? t('porServico', { valor: valorFixoTexto }) : pctTexto(efetiva.taxa) })}{' '}
             {efetiva.ate ? t('validaAte', { data: dataTexto(efetiva.ate) }) : t('semPrazo')}
           </p>
         </div>
@@ -172,13 +182,17 @@ export default function ComissaoPage() {
         <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 mb-8">
           <p className="text-sm text-blue-800">{t('taxaFixaTexto', { taxa: pctTexto(efetiva.taxa) })}</p>
         </div>
+      ) : efetiva.modoGlobal === 'por_servico' ? (
+        <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 mb-8">
+          <p className="text-sm text-blue-800">{t('valorPorServicoTexto', { valor: valorFixoTexto || '' })}</p>
+        </div>
       ) : null)}
 
       {/* Current rate */}
       <div className="grid sm:grid-cols-3 gap-4 mb-8">
         <div className="card text-center">
-          <p className="text-4xl font-bold" style={{ color: taxa <= 0.08 ? '#16a34a' : taxa <= 0.12 ? '#ca8a04' : '#dc2626' }}>
-            {pctTexto(taxa)}
+          <p className={`${valorFixoTexto ? 'text-3xl' : 'text-4xl'} font-bold`} style={{ color: corTaxa }}>
+            {valorFixoTexto ? t('porServico', { valor: valorFixoTexto }) : pctTexto(taxa)}
           </p>
           <p className="text-sm text-gray-500 mt-1">{t('suaTaxaAtual')}</p>
         </div>
@@ -199,7 +213,7 @@ export default function ComissaoPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">{t('taxaBase')}</span>
-            <span className="font-bold text-gray-900">{(COMISSAO_CONFIG.TAXA_BASE * 100).toFixed(0)}%</span>
+            <span className="font-bold text-gray-900">{pctTexto(faixa.max)}</span>
           </div>
 
           {bonuses.map((b, i) => (
@@ -210,20 +224,20 @@ export default function ComissaoPage() {
                   <span className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-500">{b.value}</span>
                 </div>
                 <span className={`font-medium ${b.bonus > 0 ? 'text-green-600' : 'text-gray-400'}`}>
-                  {b.bonus > 0 ? `-${(b.bonus * 100).toFixed(0)}%` : '-'}
+                  {b.bonus > 0 ? `-${pctTexto(b.bonus * escala)}` : '-'}
                 </span>
               </div>
               <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div className={`h-full rounded-full ${b.bonus > 0 ? 'bg-green-400' : 'bg-gray-200'}`}
-                  style={{ width: `${Math.min((b.bonus / COMISSAO_CONFIG.TAXA_BASE) * 100, 100)}%` }} />
+                  style={{ width: `${Math.min((b.bonus / (COMISSAO_CONFIG.TAXA_MAX - COMISSAO_CONFIG.TAXA_MIN)) * 100, 100)}%` }} />
               </div>
             </div>
           ))}
 
           <div className="border-t pt-3 flex items-center justify-between">
             <span className="font-semibold text-gray-900">{t('suaTaxaFinal')}</span>
-            <span className="text-xl font-bold" style={{ color: taxa <= 0.08 ? '#16a34a' : taxa <= 0.12 ? '#ca8a04' : '#dc2626' }}>
-              {(taxa * 100).toFixed(1)}%
+            <span className="text-xl font-bold" style={{ color: corTaxa }}>
+              {pctTexto(taxa)}
             </span>
           </div>
         </div>
@@ -231,7 +245,7 @@ export default function ComissaoPage() {
         <div className="mt-4 bg-blue-50 rounded-lg p-3">
           <p className="text-xs text-blue-800">
             <strong>{t('dicaLabel')}</strong> {t('dicaTexto')}
-            {' '}{t('taxaVaria', { min: (COMISSAO_CONFIG.TAXA_MIN * 100).toFixed(0), max: (COMISSAO_CONFIG.TAXA_MAX * 100).toFixed(0) })}
+            {' '}{t('taxaVaria', { min: pctTexto(faixa.min).replace('%', ''), max: pctTexto(faixa.max).replace('%', '') })}
           </p>
         </div>
       </div>

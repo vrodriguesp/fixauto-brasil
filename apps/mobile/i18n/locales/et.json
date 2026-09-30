@@ -34,7 +34,7 @@
     "telefone": "Telefon",
     "confirmarSenha": "Kinnita parool",
     "jaTemConta": "Sul on juba konto?",
-    "credenciaisInvalidas": "Vale e-post või parool.",
+    "credenciaisInvalidas": "Vale e-posti aadress või parool.",
     "senhasNaoConferem": "Paroolid ei kattu.",
     "recuperarTitulo": "Taasta parool",
     "recuperarTexto": "Sisesta oma e-post ja saadame sulle parooli lähtestamise lingi.",
@@ -45,7 +45,16 @@
     "termos": "kasutustingimustega",
     "aceiteTexto2": "ning",
     "privacidade": "privaatsuspoliitikaga",
-    "senhaCurta": "Parool peab olema vähemalt 8 tähemärki."
+    "senhaCurta": "Parool peab olema vähemalt 8 tähemärki.",
+    "verifiqueTitulo": "Kontrolli oma e-posti",
+    "verifiqueTexto": "Saatsime kinnituslingi aadressile {{email}}. Ava kiri ja puuduta linki, et konto aktiveerida.",
+    "verifiqueDepois": "Pärast kinnitamist tule rakendusse tagasi ja logi sisse oma e-posti ja parooliga. Kui sa kirja ei leia, vaata ka rämpspostikausta.",
+    "irLogin": "Mine sisselogimise lehele",
+    "naoConfirmado": "Sa pole veel oma e-posti aadressi kinnitanud. Konto aktiveerimiseks ava link, mille registreerimisel saatsime.",
+    "reenviarLink": "Saada kinnituslink uuesti",
+    "linkReenviado": "Valmis: kui konto ootab kinnitamist, saatsime uue lingi.",
+    "muitasTentativas": "Liiga palju katseid lühikese aja jooksul. Oota mõni minut ja proovi uuesti.",
+    "dadosInvalidos": "Kontrolli sisestatud andmeid."
   },
   "emergencia": {
     "titulo": "Sattusin avariisse",

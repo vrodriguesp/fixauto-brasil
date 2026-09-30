@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useRouter } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 
@@ -14,6 +14,9 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [forgotMode, setForgotMode] = useState(false);
   const [resetSent, setResetSent] = useState(false);
+  const [naoConfirmado, setNaoConfirmado] = useState(false);
+  const [confirmacaoReenviada, setConfirmacaoReenviada] = useState(false);
+  const locale = useLocale();
   const { signIn } = useAuth();
   const router = useRouter();
 
@@ -36,16 +39,38 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
+    setNaoConfirmado(false);
     const { error: authError } = await signIn(email, password);
     setLoading(false);
 
     if (authError) {
-      setError(authError);
+      // conta criada mas e-mail ainda nao confirmado: oferece novo link
+      if (authError === 'email_not_confirmed') {
+        setNaoConfirmado(true);
+        setError(t('erroNaoConfirmado'));
+      } else if (authError === 'conta_desativada') {
+        setError(t('erroDesativado'));
+      } else if (authError === 'over_request_rate_limit' || authError === 'over_email_send_rate_limit') {
+        setError(t('erroMuitasTentativas'));
+      } else {
+        setError(t('erroCredenciais'));
+      }
       return;
     }
 
     router.refresh();
     router.push('/');
+  };
+
+  const reenviarConfirmacao = async () => {
+    setLoading(true);
+    await fetch('/api/cadastro/reenviar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, idioma: locale }),
+    }).catch(() => {});
+    setLoading(false);
+    setConfirmacaoReenviada(true);
   };
 
   const handleResetPassword = async (e: React.FormEvent) => {
@@ -113,6 +138,15 @@ export default function LoginPage() {
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
               <p className="text-sm text-red-800">{error}</p>
+              {naoConfirmado && !forgotMode && (
+                confirmacaoReenviada ? (
+                  <p className="text-sm text-green-700 mt-2" role="status">{t('confirmacaoReenviada')}</p>
+                ) : (
+                  <button type="button" onClick={reenviarConfirmacao} disabled={loading} className="mt-2 text-sm font-medium text-primary-700 underline">
+                    {t('reenviarConfirmacao')}
+                  </button>
+                )
+              )}
             </div>
           )}
 

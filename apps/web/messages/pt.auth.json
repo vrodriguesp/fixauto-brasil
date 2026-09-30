@@ -33,7 +33,7 @@
     "dadosOficina": "Dados da oficina",
     "labelNomeFantasia": "Nome fantasia *",
     "placeholderNomeOficina": "Nome da oficina",
-    "labelCnpj": "CNPJ (opcional)",
+    "labelCnpj": "CNPJ",
     "placeholderCnpj": "00.000.000/0001-00",
     "labelCep": "CEP",
     "placeholderCep": "00000-000",
@@ -55,7 +55,14 @@
     "placeholderNomeLoja": "Nome da loja",
     "criarContaLoja": "Criar conta da loja",
     "jaTemConta": "Já tem conta?",
-    "entrar": "Entrar"
+    "entrar": "Entrar",
+    "verifiqueTitulo": "Confira seu e-mail",
+    "verifiqueTexto1": "Enviamos um link de confirmação para",
+    "verifiqueTexto2": "Abra o e-mail e clique no link para ativar sua conta. Se não encontrar, olhe também na pasta de spam.",
+    "verifiqueAnalise": "Depois da confirmação, conferimos o registro da empresa e ativamos seu perfil para os clientes. Avisamos você por e-mail.",
+    "reenviarLink": "Não recebi o e-mail: enviar de novo",
+    "linkReenviado": "Se houver uma conta aguardando confirmação, enviamos um novo link.",
+    "declaracaoResponsavel": "Declaro que sou o responsável por esta empresa (sócio, administrador ou pessoa com poderes para representá-la) e que estou ciente de que o uso do BipFix, hoje gratuito, poderá ser cobrado no futuro, com aviso prévio de 30 dias corridos."
   },
   "definirSenha": {
     "erroSenhaCurta": "A senha deve ter pelo menos 8 caracteres",
@@ -93,5 +100,16 @@
     "placeholderRepitaSenha": "Repita a senha",
     "salvando": "Salvando...",
     "salvarNovaSenha": "Salvar nova senha"
+  },
+  "confirmarEmail": {
+    "titulo": "Confirmação de e-mail",
+    "verificando": "Confirmando seu e-mail…",
+    "sucesso": "E-mail confirmado! Abrindo sua conta…",
+    "invalidoTitulo": "Este link não é mais válido",
+    "invalidoTexto": "O link de confirmação vale por 1 hora e só pode ser usado uma vez. Digite seu e-mail para receber um novo.",
+    "labelEmail": "E-mail",
+    "reenviar": "Enviar novo link",
+    "reenviado": "Se houver uma conta aguardando confirmação, enviamos um novo link. Confira seu e-mail.",
+    "irLogin": "Ir para o login"
   }
 }

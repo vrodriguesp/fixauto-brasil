@@ -359,13 +359,13 @@ export default function PerfilOficinaPage() {
         <p className="text-sm text-gray-500 mb-4">
           {t('selecioneServicos')}
         </p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-3">
           {TIPOS_SERVICO.map((tipo) => {
             const isSelected = especialidades.includes(tipo.value);
             return (
               <label
                 key={tipo.value}
-                className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                className={`flex items-center gap-3 p-3 min-w-0 rounded-lg border-2 cursor-pointer transition-all ${
                   isSelected ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
@@ -373,10 +373,10 @@ export default function PerfilOficinaPage() {
                   type="checkbox"
                   checked={isSelected}
                   onChange={() => toggleEspecialidade(tipo.value)}
-                  className="w-4 h-4 text-primary-600 rounded"
+                  className="w-4 h-4 flex-shrink-0 text-primary-600 rounded"
                 />
-                <span className="text-lg">{tipo.icon}</span>
-                <span className="text-sm font-medium text-gray-900">{tc(`tiposServico.${tipo.value}`)}</span>
+                <span className="text-lg flex-shrink-0">{tipo.icon}</span>
+                <span className="text-sm font-medium text-gray-900 min-w-0 break-words">{tc(`tiposServico.${tipo.value}`)}</span>
               </label>
             );
           })}

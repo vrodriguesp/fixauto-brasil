@@ -17,6 +17,7 @@ export default function CadastroScreen() {
   const [erro, setErro] = useState<string | null>(null);
   // Aceite explicito dos Termos e da Politica (App Store 5.1.1 / Google Play)
   const [aceitou, setAceitou] = useState(false);
+  const [enviado, setEnviado] = useState(false);
 
   const handleCriarConta = async () => {
     setErro(null);
@@ -36,8 +37,21 @@ export default function CadastroScreen() {
       setErro(error);
       return;
     }
-    router.replace('/(tabs)');
+    setEnviado(true);
   };
+
+  if (enviado) {
+    return (
+      <View className="flex-1 bg-white justify-center px-6">
+        <Text className="text-2xl font-bold text-gray-900 mb-3">{t('auth.verifiqueTitulo')}</Text>
+        <Text className="text-base text-gray-700 mb-2">{t('auth.verifiqueTexto', { email: email.trim() })}</Text>
+        <Text className="text-sm text-gray-500 mb-8">{t('auth.verifiqueDepois')}</Text>
+        <Pressable onPress={() => router.replace('/(auth)/login')} className="bg-primary-600 rounded-lg py-4 items-center">
+          <Text className="text-white font-semibold text-base">{t('auth.irLogin')}</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-white">

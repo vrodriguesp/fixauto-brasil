@@ -33,7 +33,7 @@
     "dadosOficina": "Dados da oficina",
     "labelNomeFantasia": "Nome comercial *",
     "placeholderNomeOficina": "Nome da oficina",
-    "labelCnpj": "NIF/NIPC (opcional)",
+    "labelCnpj": "NIPC / NIF",
     "placeholderCnpj": "Número de identificação da empresa",
     "labelCep": "Código postal",
     "placeholderCep": "Código postal",
@@ -55,7 +55,14 @@
     "placeholderNomeLoja": "Nome da loja de peças",
     "criarContaLoja": "Criar conta de loja de peças",
     "jaTemConta": "Já tem conta?",
-    "entrar": "Iniciar sessão"
+    "entrar": "Iniciar sessão",
+    "verifiqueTitulo": "Verifique o seu e-mail",
+    "verifiqueTexto1": "Enviámos uma ligação de confirmação para",
+    "verifiqueTexto2": "Abra o e-mail e clique na ligação para ativar a sua conta. Se não o encontrar, veja também a pasta de spam.",
+    "verifiqueAnalise": "Depois da confirmação, verificamos o registo da empresa e ativamos o seu perfil para os clientes. Avisamos por e-mail.",
+    "reenviarLink": "Não recebi o e-mail: enviar novamente",
+    "linkReenviado": "Se existir uma conta a aguardar confirmação, enviámos uma nova ligação.",
+    "declaracaoResponsavel": "Declaro que sou o responsável por esta empresa (sócio, gerente ou pessoa com poderes para a representar) e que tenho conhecimento de que a utilização da BipFix, hoje gratuita, poderá ser cobrada no futuro, com um aviso prévio de 30 dias de calendário."
   },
   "definirSenha": {
     "erroSenhaCurta": "A palavra-passe deve ter pelo menos 8 caracteres",
@@ -93,5 +100,16 @@
     "placeholderRepitaSenha": "Repita a palavra-passe",
     "salvando": "A guardar...",
     "salvarNovaSenha": "Guardar nova palavra-passe"
+  },
+  "confirmarEmail": {
+    "titulo": "Confirmação de e-mail",
+    "verificando": "A confirmar o seu e-mail…",
+    "sucesso": "E-mail confirmado! A abrir a sua conta…",
+    "invalidoTitulo": "Esta ligação já não é válida",
+    "invalidoTexto": "A ligação de confirmação é válida durante 1 hora e só pode ser usada uma vez. Introduza o seu e-mail para receber uma nova.",
+    "labelEmail": "E-mail",
+    "reenviar": "Enviar nova ligação",
+    "reenviado": "Se existir uma conta a aguardar confirmação, enviámos uma nova ligação. Verifique o seu e-mail.",
+    "irLogin": "Ir para o início de sessão"
   }
 }

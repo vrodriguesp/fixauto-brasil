@@ -11,7 +11,8 @@
       "You respond with a price and delivery time",
       "The shop picks the best offer and confirms the order",
       "Arrange delivery and payment directly with the shop"
-    ]
+    ],
+    "cadastroEmAnalise": "Your registration is under review: we check your company registration before showing your profile to customers. Meanwhile, you can already complete your details in the dashboard."
   },
   "lojaAprender": {
     "loading": "Loading...",
@@ -74,12 +75,12 @@
       },
       "comissao": {
         "titulo": "Platform commission",
-        "resumo": "The rate starts at 3% and drops as you respond quickly and deliver a good volume of orders — 1.5% minimum in practice. It's only charged once the order is marked as delivered, never before.",
+        "resumo": "Using BipFix is currently free for stores. If a fee on parts sales is introduced in the future, you will be notified 30 calendar days in advance — and it will only apply to orders marked as delivered, never before.",
         "passosGuiados": [
           "Open Commission in the menu.",
           "See your current rate, what's pending, and what's already been paid."
         ],
-        "desafio": "Check your current rate and what you can do to lower it.",
+        "desafio": "Check which condition applies to your store today.",
         "linkRotulo": "View my commission →"
       }
     }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { recalcularComissaoConfig } from '@/lib/comissao';
-import { taxaEfetivaServicos } from '@/lib/comissao-regras';
+import { taxaEfetivaServicos, valorDaComissao } from '@/lib/comissao-regras';
 import { getSessionUserId } from '@/lib/api-auth';
 import { sendServicoConcluidoEmail, sendServicoConcluidoWhatsApp } from '@/lib/notifications';
 import { notifServicoConcluido } from '@/lib/notif-i18n';
@@ -111,12 +111,15 @@ export async function POST(req: NextRequest) {
             .eq('orcamento_id', orc.id)
             .single();
 
-          // Taxa pela hierarquia (individual do admin > regra global).
-          // 0% (fase de parceiros fundadores ou oferta individual) nao gera
-          // lancamento - a oficina nao deve ver "comissao pendente".
-          const { taxa } = jaLancado ? { taxa: 0 } : await taxaEfetivaServicos(supabaseAdmin, orc.oficina_id);
+          // Condicao pela hierarquia (individual do admin > regra global):
+          // percentual ou valor fixo por servico. Zero (fase de parceiros
+          // fundadores ou oferta individual) nao gera lancamento - a oficina
+          // nao deve ver "comissao pendente".
+          const info = jaLancado ? null : await taxaEfetivaServicos(supabaseAdmin, orc.oficina_id);
+          const valorComissao = info ? valorDaComissao(info, Number(orc.valor_total)) : 0;
 
-          if (!jaLancado && taxa > 0) {
+          if (!jaLancado && valorComissao > 0) {
+            const taxa = Number(orc.valor_total) > 0 ? Math.round((valorComissao / Number(orc.valor_total)) * 10000) / 10000 : 0;
 
             // Insert commission entry
             const { error: comissaoError } = await supabaseAdmin.from('comissao_lancamento').insert({
@@ -124,7 +127,7 @@ export async function POST(req: NextRequest) {
               orcamento_id: orc.id,
               valor_servico: orc.valor_total,
               taxa_aplicada: taxa,
-              valor_comissao: Math.round(orc.valor_total * taxa * 100) / 100,
+              valor_comissao: valorComissao,
               status: 'pendente',
             });
 

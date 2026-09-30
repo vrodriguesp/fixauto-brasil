@@ -8,7 +8,7 @@
     "metaDescription": "Termos de Utilização da plataforma BipFix para condutores, oficinas e lojas de peças na União Europeia.",
     "pageTitle": "Termos de Utilização",
     "lastUpdatedLabel": "Última atualização:",
-    "updatedDate": "28 de setembro de 2026",
+    "updatedDate": "30 de setembro de 2026",
     "secoes": [
       {
         "titulo": "1. Quem somos e quando se aplicam estes Termos",
@@ -31,6 +31,7 @@
           "Tem de ter pelo menos 18 anos para criar uma conta.",
           "As informações que fornece (nome, contactos e, no caso dos Parceiros, denominação da empresa, código de registo ou NIF/número de IVA e morada) têm de ser verdadeiras, completas e mantidas atualizadas.",
           "É responsável por manter a sua palavra-passe confidencial e pela atividade na sua conta. Avise-nos imediatamente através de <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a> se suspeitar de uma utilização não autorizada.",
+          "Quem regista uma Oficina ou Loja declara ser o responsável por essa empresa (sócio, gerente ou pessoa com poderes para a representar) e ter conhecimento de que a utilização da Plataforma, hoje gratuita, poderá implicar custos no futuro, nos termos da secção 5.",
           "Os Parceiros confirmam que possuem os registos, licenças e autorizações exigidos para a sua atividade. Podemos pedir documentos comprovativos e recusar um registo que contenha informações falsas, incompletas ou impossíveis de verificar."
         ]
       },
@@ -43,8 +44,8 @@
       {
         "titulo": "5. Taxas para os Parceiros",
         "paragrafos": [
-          "Durante a atual fase de fundação, <strong>os Parceiros não pagam qualquer subscrição nem comissão</strong> pela utilização da BipFix. Poderemos introduzir uma comissão sobre as transações intermediadas pela Plataforma, uma taxa de subscrição, ou ambas.",
-          "Antes de ser cobrada qualquer taxa, informaremos os Parceiros afetados por e-mail e na Plataforma <strong>com pelo menos 30 dias de antecedência</strong>, descrevendo o modelo de preços, o montante ou a percentagem, os critérios que fazem variar a taxa (por exemplo, o volume de trabalho) e a data a partir da qual se aplica. Um Parceiro que não aceite as novas condições pode encerrar a sua conta antes dessa data, sem qualquer penalização."
+          "Atualmente, a utilização da BipFix é <strong>gratuita também para os Parceiros</strong>: não há subscrição, comissão nem taxa por serviço. No futuro, poderemos passar a cobrar aos Parceiros, por exemplo uma percentagem dos serviços intermediados pela Plataforma, uma taxa fixa por serviço, uma subscrição ou uma combinação destes modelos; as condições podem ser definidas de forma geral ou específica para cada Parceiro.",
+          "Antes de ser cobrada qualquer taxa, informaremos os Parceiros afetados por e-mail e na Plataforma <strong>com pelo menos 30 dias de calendário de antecedência</strong>, descrevendo o modelo de preços, o montante ou a percentagem, os critérios que fazem variar a taxa (por exemplo, o volume de trabalho) e a data a partir da qual se aplica. Um Parceiro que não aceite as novas condições pode encerrar a sua conta antes dessa data, sem qualquer penalização."
         ]
       },
       {

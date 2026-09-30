@@ -33,7 +33,7 @@
     "dadosOficina": "Dati dell'officina",
     "labelNomeFantasia": "Nome commerciale *",
     "placeholderNomeOficina": "Nome dell'officina",
-    "labelCnpj": "Partita IVA (opzionale)",
+    "labelCnpj": "Partita IVA / numero di registro",
     "placeholderCnpj": "Numero di partita IVA",
     "labelCep": "CAP",
     "placeholderCep": "Codice postale",
@@ -55,7 +55,14 @@
     "placeholderNomeLoja": "Nome del negozio",
     "criarContaLoja": "Crea account negozio",
     "jaTemConta": "Hai già un account?",
-    "entrar": "Accedi"
+    "entrar": "Accedi",
+    "verifiqueTitulo": "Controlla la tua email",
+    "verifiqueTexto1": "Abbiamo inviato un link di conferma a",
+    "verifiqueTexto2": "Apri l'email e clicca sul link per attivare il tuo account. Se non la trovi, controlla anche la cartella spam.",
+    "verifiqueAnalise": "Dopo la conferma verifichiamo la registrazione dell'impresa e attiviamo il tuo profilo per i clienti. Ti avvisiamo via email.",
+    "reenviarLink": "Non ho ricevuto l'email: inviala di nuovo",
+    "linkReenviado": "Se un account è in attesa di conferma, abbiamo inviato un nuovo link.",
+    "declaracaoResponsavel": "Dichiaro di essere il responsabile di questa impresa (titolare, amministratore o persona con poteri di rappresentanza) e di essere consapevole che l'uso di BipFix, oggi gratuito, potrà diventare a pagamento in futuro, con un preavviso di 30 giorni di calendario."
   },
   "definirSenha": {
     "erroSenhaCurta": "La password deve contenere almeno 8 caratteri",
@@ -93,5 +100,16 @@
     "placeholderRepitaSenha": "Ripeti la password",
     "salvando": "Salvataggio in corso...",
     "salvarNovaSenha": "Salva nuova password"
+  },
+  "confirmarEmail": {
+    "titulo": "Conferma email",
+    "verificando": "Stiamo confermando la tua email…",
+    "sucesso": "Email confermata! Stiamo aprendo il tuo account…",
+    "invalidoTitulo": "Questo link non è più valido",
+    "invalidoTexto": "Il link di conferma è valido per 1 ora e può essere usato una sola volta. Inserisci la tua email per riceverne uno nuovo.",
+    "labelEmail": "Email",
+    "reenviar": "Invia un nuovo link",
+    "reenviado": "Se un account è in attesa di conferma, abbiamo inviato un nuovo link. Controlla la tua email.",
+    "irLogin": "Vai all'accesso"
   }
 }

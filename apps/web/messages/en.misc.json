@@ -8,7 +8,7 @@
     "metaDescription": "Terms of Use of the BipFix platform for drivers, repair shops and parts stores in the European Union.",
     "pageTitle": "Terms of Use",
     "lastUpdatedLabel": "Last updated:",
-    "updatedDate": "September 28, 2026",
+    "updatedDate": "September 30, 2026",
     "secoes": [
       {
         "titulo": "1. Who we are and when these Terms apply",
@@ -31,6 +31,7 @@
           "You must be at least 18 years old to create an account.",
           "The information you provide (name, contact details and, for Partners, business name, registry or VAT code and address) must be true, complete and kept up to date.",
           "You are responsible for keeping your password confidential and for activity on your account. Tell us immediately at <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a> if you suspect unauthorised use.",
+          "Whoever registers a Repair Shop or Store declares that they are the person responsible for that business (owner, director or someone authorised to represent it) and that they are aware that using the Platform, which is free today, may involve costs in the future under section 5.",
           "Partners confirm that they hold the registrations, licences and permits required for their activity. We may ask for supporting documents and may refuse a registration that contains false, incomplete or unverifiable information."
         ]
       },
@@ -43,8 +44,8 @@
       {
         "titulo": "5. Fees for Partners",
         "paragrafos": [
-          "During the current founding phase, <strong>Partners pay no subscription and no commission</strong> for using BipFix. We may introduce a commission on transactions arranged through the Platform, a subscription fee, or both.",
-          "Before any fee is charged, we will inform the affected Partners by email and on the Platform <strong>at least 30 days in advance</strong>, describing the pricing model, the amount or percentage, any criteria that make the fee vary (for example, the volume of work) and the date from which it applies. A Partner who does not accept the new conditions may close its account before that date without any penalty."
+          "Using BipFix is currently <strong>free for Partners as well</strong>: there is no subscription, no commission and no per-job fee. In the future we may start charging Partners, for example a percentage of the jobs arranged through the Platform, a fixed fee per job, a subscription, or a combination of these; the conditions may be set for all Partners or specifically for each Partner.",
+          "Before any fee is charged, we will inform the affected Partners by email and on the Platform <strong>at least 30 calendar days in advance</strong>, describing the pricing model, the amount or percentage, any criteria that make the fee vary (for example, the volume of work) and the date from which it applies. A Partner who does not accept the new conditions may close its account before that date without any penalty."
         ]
       },
       {

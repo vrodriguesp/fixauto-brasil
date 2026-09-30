@@ -31,7 +31,8 @@
     "tipoPlataforma": "Plataforma",
     "tipoExterno": "Externo",
     "avaliacoesRecentesTitulo": "Avaliações recentes",
-    "nenhumaAvaliacaoAinda": "Nenhuma avaliação ainda"
+    "nenhumaAvaliacaoAinda": "Nenhuma avaliação ainda",
+    "cadastroEmAnalise": "Seu cadastro está em análise: conferimos o registro da empresa antes de mostrar seu perfil aos clientes. Enquanto isso, você já pode completar os dados do painel."
   },
   "oficinaAgenda": {
     "mes0": "Janeiro",
@@ -218,13 +219,13 @@
       },
       "comissao": {
         "titulo": "Como funciona a comissão",
-        "resumo": "O BipFix cobra uma taxa sobre cada serviço concluído — mas ela não é fixa. Começa em 15% e cai até 5% conforme você responde rápido, revisa pouco o orçamento, tem boa avaliação e mantém volume de serviços.",
+        "resumo": "Hoje o uso da BipFix é gratuito para as oficinas. No futuro poderá haver uma cobrança — um percentual sobre cada serviço concluído ou um valor fixo por serviço —, sempre com aviso de 30 dias corridos antes. A tela de Comissão mostra a condição que vale para a sua oficina.",
         "passosGuiados": [
           "Abra Comissão no menu.",
           "Veja sua taxa atual e o que está reduzindo (ou não) cada critério.",
-          "Leia a dica: responder rápido, evitar revisão de orçamento e pedir avaliação ao cliente reduz sua taxa."
+          "Se a cobrança for por desempenho, responder rápido, evitar revisões de orçamento e pedir avaliações aos clientes deixam a sua taxa mais baixa."
         ],
-        "desafio": "Explore a tela de Comissão e identifique qual critério mais aumentaria sua taxa se você melhorasse.",
+        "desafio": "Abra a tela de Comissão e veja qual condição vale hoje para a sua oficina.",
         "linkRotulo": "Ver minha comissão →"
       },
       "equipe": {
@@ -388,13 +389,15 @@
     "colComissao": "Comissão",
     "colStatus": "Status",
     "seloFundador": "Parceiro fundador",
-    "faseFundadorTitulo": "Sem comissão nesta fase",
-    "faseFundadorTexto": "Durante a fase de parceiros fundadores, os serviços fechados pela BipFix não pagam comissão. Avisaremos com 30 dias de antecedência antes de qualquer mudança.",
+    "faseFundadorTitulo": "Sem comissão hoje",
+    "faseFundadorTexto": "Hoje o uso da BipFix é gratuito: os serviços fechados pela plataforma não pagam comissão. Se isso mudar, avisaremos com 30 dias corridos de antecedência.",
     "condicaoEspecialTitulo": "Condição especial da sua oficina",
     "condicaoEspecialTexto": "A BipFix combinou uma taxa de {taxa} para a sua oficina.",
     "validaAte": "Válida até {data}; depois vale a regra geral da plataforma.",
     "semPrazo": "Sem data de término.",
-    "taxaFixaTexto": "Nesta fase, a taxa da plataforma é a mesma para todas as oficinas: {taxa}."
+    "taxaFixaTexto": "Nesta fase, a taxa da plataforma é a mesma para todas as oficinas: {taxa}.",
+    "porServico": "{valor} por serviço",
+    "valorPorServicoTexto": "Hoje a taxa da plataforma é um valor fixo de {valor} por serviço concluído, igual para todas as oficinas."
   },
   "oficinaDistribuicao": {
     "hoje": "Hoje, {hora}",

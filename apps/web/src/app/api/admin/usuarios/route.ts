@@ -34,6 +34,7 @@ export async function PATCH(req: NextRequest) {
 
     if (ativo !== undefined) {
       await supabaseAdmin.from('oficinas').update({ ativa: ativo }).eq('profile_id', id);
+      await supabaseAdmin.from('lojas_pecas').update({ ativa: ativo }).eq('profile_id', id);
     }
 
     return NextResponse.json({ success: true });

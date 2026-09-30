@@ -8,7 +8,8 @@
     "tituloEscolherTipo": "Escolha o tipo de conta",
     "tituloRedefinirSenha": "Redefinir palavra-passe",
     "tituloDefinirSenha": "Definir palavra-passe",
-    "pularConteudo": "Saltar para o conteúdo"
+    "pularConteudo": "Saltar para o conteúdo",
+    "tituloConfirmarEmail": "Confirmar e-mail"
   },
   "nav": {
     "dashboard": "Painel",
@@ -314,7 +315,7 @@
       },
       {
         "pergunta": "É seguro usar a plataforma?",
-        "resposta": "Sim. Antes de ativar uma oficina, confirmamos o registo da empresa e falamos com o responsável. Depois de cada serviço concluído, só o cliente que o contratou pode avaliar — assim vê a reputação real antes de decidir. Os seus dados pessoais estão protegidos e nunca são partilhados sem o seu consentimento."
+        "resposta": "Sim. Antes de ativar uma oficina, confirmamos o registo da empresa. Depois de cada serviço concluído, só o cliente que o contratou pode avaliar — assim vê a reputação real antes de decidir. Os seus dados pessoais estão protegidos e nunca são partilhados sem o seu consentimento."
       },
       {
         "pergunta": "Quanto custa a BipFix?",
@@ -548,7 +549,12 @@
     "enviarLinkRecuperacao": "Enviar link de reposição",
     "entrando": "A iniciar sessão...",
     "naoTemConta": "Ainda não tem conta?",
-    "cadastreSe": "Criar conta"
+    "cadastreSe": "Criar conta",
+    "erroNaoConfirmado": "Ainda não confirmou o seu e-mail. Abra a ligação que enviámos no registo para ativar a conta.",
+    "reenviarConfirmacao": "Enviar novamente a ligação de confirmação",
+    "confirmacaoReenviada": "Feito: se a conta estiver a aguardar confirmação, enviámos uma nova ligação.",
+    "erroCredenciais": "E-mail ou palavra-passe incorretos.",
+    "erroMuitasTentativas": "Demasiadas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente."
   },
   "naoEncontrado": {
     "titulo": "Página não encontrada",
@@ -568,7 +574,10 @@
     "NAO_AUTENTICADO": "A sua sessão expirou. Inicie sessão novamente.",
     "DADOS_INVALIDOS": "Confirme os dados indicados.",
     "GENERICO": "Algo correu mal. Tente novamente dentro de instantes.",
-    "FUNCIONARIO_JA_CADASTRADO": "Este funcionário já está registado na sua oficina."
+    "FUNCIONARIO_JA_CADASTRADO": "Este funcionário já está registado na sua oficina.",
+    "SENHA_CURTA": "A palavra-passe tem de ter pelo menos 8 caracteres.",
+    "TERMOS_OBRIGATORIOS": "Para continuar, aceite os Termos de Utilização e a Política de Privacidade.",
+    "DECLARACAO_OBRIGATORIA": "Para registar uma empresa, confirme que é o responsável por ela."
   },
   "sobre": {
     "metaTitle": "Sobre a BipFix",

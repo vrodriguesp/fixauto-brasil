@@ -13,7 +13,8 @@ interface AuthContextType {
   authUser: User | null;
   isLoggedIn: boolean;
   loading: boolean;
-  signUp: (email: string, password: string, nome: string, telefone: string, tipo: 'cliente' | 'oficina' | 'loja_pecas', idioma?: string) => Promise<{ error: string | null }>;
+  // error = codigo estavel (traduzido na tela): email_not_confirmed,
+  // invalid_credentials, conta_desativada ou outro codigo do GoTrue
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -28,7 +29,6 @@ const AuthContext = createContext<AuthContextType>({
   authUser: null,
   isLoggedIn: false,
   loading: true,
-  signUp: async () => ({ error: null }),
   signIn: async () => ({ error: null }),
   signOut: async () => {},
   refreshProfile: async () => {},
@@ -126,39 +126,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, [fetchProfile]);
 
-  const signUp = async (
-    email: string,
-    password: string,
-    nome: string,
-    telefone: string,
-    tipo: 'cliente' | 'oficina' | 'loja_pecas',
-    idioma: string = 'pt'
-  ) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) return { error: error.message };
-    if (!data.user) return { error: 'Erro ao criar usuario' };
-
-    // Create profile
-    const { error: profileError } = await supabase.from('profiles').insert({
-      id: data.user.id,
-      tipo,
-      nome,
-      email,
-      telefone,
-      idioma,
-      termos_aceitos_em: new Date().toISOString(),
-      termos_versao: '2026-09-08',
-    });
-
-    if (profileError) return { error: profileError.message };
-
-    await fetchProfile(data.user.id);
-    return { error: null };
-  };
-
   const signIn = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return { error: error.message };
+    if (error) return { error: error.code || 'invalid_credentials' };
 
     if (data.user) {
       const { data: profile } = await supabase
@@ -168,7 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .single();
       if (profile && profile.ativo === false) {
         await supabase.auth.signOut();
-        return { error: 'Esta conta foi desativada. Entre em contato com o suporte.' };
+        return { error: 'conta_desativada' };
       }
     }
 
@@ -204,7 +174,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         authUser,
         isLoggedIn: !!user,
         loading,
-        signUp,
         signIn,
         signOut,
         refreshProfile,

@@ -3,22 +3,35 @@ import { View, Text, TextInput, Pressable, ActivityIndicator, KeyboardAvoidingVi
 import { useTranslation } from 'react-i18next';
 import { Link, router } from 'expo-router';
 import { useAuth } from '../../lib/auth-context';
+import { API_BASE_URL } from '../../lib/api';
 
 export default function LoginScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [naoConfirmado, setNaoConfirmado] = useState(false);
+  const [reenviado, setReenviado] = useState(false);
 
   const handleEntrar = async () => {
     setErro(null);
+    setNaoConfirmado(false);
     setLoading(true);
     const { error } = await signIn(email.trim(), senha);
     setLoading(false);
     if (error) {
-      setErro(error);
+      if (error === 'email_not_confirmed') {
+        setNaoConfirmado(true);
+        setErro(t('auth.naoConfirmado'));
+      } else if (error === 'invalid_credentials') {
+        setErro(t('auth.credenciaisInvalidas'));
+      } else if (error.startsWith('over_')) {
+        setErro(t('auth.muitasTentativas'));
+      } else {
+        setErro(t('common.erroGenerico'));
+      }
       return;
     }
     router.replace('/(tabs)');
@@ -36,6 +49,23 @@ export default function LoginScreen() {
         {erro && (
           <View className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4">
             <Text className="text-red-700 text-sm">{erro}</Text>
+            {naoConfirmado && (reenviado ? (
+              <Text className="text-green-700 text-sm mt-2">{t('auth.linkReenviado')}</Text>
+            ) : (
+              <Pressable
+                onPress={async () => {
+                  await fetch(`${API_BASE_URL}/api/cadastro/reenviar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email.trim(), idioma: i18n.language }),
+                  }).catch(() => {});
+                  setReenviado(true);
+                }}
+                className="mt-2 py-2"
+              >
+                <Text className="text-primary-600 text-sm font-medium underline">{t('auth.reenviarLink')}</Text>
+              </Pressable>
+            ))}
           </View>
         )}
 

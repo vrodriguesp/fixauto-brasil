@@ -5,13 +5,19 @@ import Link from 'next/link';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 
-type Modo = 'isento' | 'fixa' | 'desempenho';
+type Modo = 'isento' | 'fixa' | 'desempenho' | 'por_servico';
+type Tipo = 'percentual' | 'valor_fixo';
 
 interface Global {
   comissao_servicos_modo: Modo;
   comissao_servicos_taxa: number;
+  comissao_servicos_min: number;
+  comissao_servicos_max: number;
+  comissao_servicos_valor_por_moeda: Record<string, number>;
   comissao_pecas_modo: Modo;
   comissao_pecas_taxa: number;
+  comissao_pecas_min: number;
+  comissao_pecas_max: number;
   updated_at?: string;
 }
 
@@ -27,18 +33,20 @@ interface Linha {
     parceiro_fundador: boolean;
     parceiro_fundador_desde: string | null;
   };
-  individual: { taxa: number | null; ate: string | null; motivo: string | null; vigente: boolean } | null;
+  individual: { tipo: Tipo; taxa: number | null; valor: number | null; ate: string | null; motivo: string | null; vigente: boolean } | null;
   taxa_calculada: number | null;
-  efetiva: { taxa: number; origem: 'individual' | 'global' };
+  efetiva: { tipo: Tipo; taxa: number; valorFixo: number | null; moeda: string; origem: 'individual' | 'global' };
   total_pendente: number;
   total_pago: number;
 }
 
 const MODO_LABEL: Record<Modo, string> = {
-  isento: 'Sem comissão (fase de fundadores)',
-  fixa: 'Taxa fixa para todos',
-  desempenho: 'Por desempenho (5–15%)',
+  isento: 'Sem comissão (gratuito)',
+  fixa: 'Percentual fixo para todos',
+  desempenho: 'Percentual por desempenho, dentro de uma faixa',
+  por_servico: 'Valor fixo por serviço concluído',
 };
+const MOEDAS = ['EUR', 'BRL'] as const;
 
 const pct = (t: number) => `${(t * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%`;
 const paraTaxa = (s: string) => {
@@ -72,6 +80,12 @@ export default function AdminComissoesPage() {
   const [gServTaxa, setGServTaxa] = useState('10');
   const [gPecModo, setGPecModo] = useState<Modo>('isento');
   const [gPecTaxa, setGPecTaxa] = useState('3');
+  // faixa do modo "por desempenho" (%) e valor por servico (por moeda)
+  const [gServMin, setGServMin] = useState('1');
+  const [gServMax, setGServMax] = useState('5');
+  const [gPecMin, setGPecMin] = useState('1');
+  const [gPecMax, setGPecMax] = useState('3');
+  const [gValores, setGValores] = useState<Record<string, string>>({ EUR: '', BRL: '' });
   const [gMotivo, setGMotivo] = useState('');
 
   // Oferta para fundadoras
@@ -81,6 +95,7 @@ export default function AdminComissoesPage() {
 
   // Edicao da taxa individual (uma oficina por vez)
   const [editando, setEditando] = useState<string | null>(null);
+  const [iTipo, setITipo] = useState<Tipo>('percentual');
   const [iTaxa, setITaxa] = useState('');
   const [iAte, setIAte] = useState('');
   const [iMotivo, setIMotivo] = useState('');
@@ -98,6 +113,11 @@ export default function AdminComissoesPage() {
       setGServTaxa(String(data.global.comissao_servicos_taxa * 100));
       setGPecModo(data.global.comissao_pecas_modo);
       setGPecTaxa(String(data.global.comissao_pecas_taxa * 100));
+      setGServMin(String(data.global.comissao_servicos_min * 100));
+      setGServMax(String(data.global.comissao_servicos_max * 100));
+      setGPecMin(String(data.global.comissao_pecas_min * 100));
+      setGPecMax(String(data.global.comissao_pecas_max * 100));
+      setGValores(Object.fromEntries(MOEDAS.map((m) => [m, data.global.comissao_servicos_valor_por_moeda?.[m] != null ? String(data.global.comissao_servicos_valor_por_moeda[m]) : ''])));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro desconhecido');
     } finally {
@@ -127,11 +147,20 @@ export default function AdminComissoesPage() {
   };
 
   const salvarGlobal = () => {
-    const servicos_taxa = paraTaxa(gServTaxa);
-    const pecas_taxa = paraTaxa(gPecTaxa);
-    if (!Number.isFinite(servicos_taxa) || !Number.isFinite(pecas_taxa)) return setMsg('Taxa inválida');
+    const taxas = {
+      servicos_taxa: paraTaxa(gServTaxa), servicos_min: paraTaxa(gServMin), servicos_max: paraTaxa(gServMax),
+      pecas_taxa: paraTaxa(gPecTaxa), pecas_min: paraTaxa(gPecMin), pecas_max: paraTaxa(gPecMax),
+    };
+    if (!Object.values(taxas).every(Number.isFinite)) return setMsg('Taxa inválida');
+    const servicos_valores: Record<string, number> = {};
+    for (const m of MOEDAS) {
+      if (gValores[m].trim() === '') continue;
+      const v = parseFloat(gValores[m].replace(',', '.'));
+      if (!Number.isFinite(v)) return setMsg(`Valor por serviço inválido (${m})`);
+      servicos_valores[m] = v;
+    }
     enviar(
-      { acao: 'global', servicos_modo: gServModo, servicos_taxa, pecas_modo: gPecModo, pecas_taxa, motivo: gMotivo },
+      { acao: 'global', servicos_modo: gServModo, pecas_modo: gPecModo, ...taxas, servicos_valores, motivo: gMotivo },
       'Regra global salva. Vale para toda oficina sem taxa individual.'
     ).then((ok) => ok && setGMotivo(''));
   };
@@ -146,15 +175,19 @@ export default function AdminComissoesPage() {
 
   const abrirEdicao = (l: Linha) => {
     setEditando(l.oficina_id);
-    setITaxa(l.individual?.taxa != null ? String(l.individual.taxa * 100) : '');
+    setITipo(l.individual?.tipo || 'percentual');
+    setITaxa(l.individual?.tipo === 'valor_fixo'
+      ? (l.individual.valor != null ? String(l.individual.valor) : '')
+      : l.individual?.taxa != null ? String(l.individual.taxa * 100) : '');
     setIAte(l.individual?.ate || '');
     setIMotivo(l.individual?.motivo || '');
   };
 
   const salvarIndividual = async (oficinaId: string) => {
-    const taxa = paraTaxa(iTaxa);
-    if (!Number.isFinite(taxa)) return setMsg('Taxa inválida');
-    if (await enviar({ acao: 'individual', oficina_id: oficinaId, taxa, ate: iAte || null, motivo: iMotivo }, 'Taxa individual salva.')) setEditando(null);
+    const numero = iTipo === 'valor_fixo' ? parseFloat(iTaxa.replace(',', '.')) : paraTaxa(iTaxa);
+    if (!Number.isFinite(numero)) return setMsg(iTipo === 'valor_fixo' ? 'Valor inválido' : 'Taxa inválida');
+    const corpo = iTipo === 'valor_fixo' ? { tipo: 'valor_fixo', valor: numero } : { tipo: 'percentual', taxa: numero };
+    if (await enviar({ acao: 'individual', oficina_id: oficinaId, ...corpo, ate: iAte || null, motivo: iMotivo }, 'Condição individual salva.')) setEditando(null);
   };
 
   const removerIndividual = async (oficinaId: string) => {
@@ -190,15 +223,20 @@ export default function AdminComissoesPage() {
     return <div className="bg-red-900/20 border border-red-800 text-red-300 p-4 rounded-lg">{error}</div>;
   }
 
-  const descreverGlobal = (modo: Modo, taxa: number) =>
-    modo === 'isento' ? 'Sem comissão (0%)' : modo === 'fixa' ? `Taxa fixa ${pct(taxa)}` : 'Por desempenho (5–15%)';
+  const descreverGlobal = (modo: Modo, taxa: number, min: number, max: number, valores?: Record<string, number>) =>
+    modo === 'isento' ? 'Sem comissão (gratuito)'
+      : modo === 'fixa' ? `Percentual fixo ${pct(taxa)}`
+      : modo === 'desempenho' ? `Por desempenho (${pct(min)}–${pct(max)})`
+      : `Valor por serviço (${Object.entries(valores || {}).map(([m, v]) => formatCurrency(v, m)).join(' · ') || 'sem valor'})`;
+  const condicao = (e: Linha['efetiva']) =>
+    e.tipo === 'valor_fixo' ? `${formatCurrency(e.valorFixo || 0, e.moeda)}/serviço` : pct(e.taxa);
 
   return (
     <div className="max-w-6xl">
       <h1 className="text-2xl font-bold text-white mb-2">Comissões</h1>
       <p className="text-slate-400 text-sm mb-6">
-        Hoje vale para as oficinas: <strong className="text-white">{descreverGlobal(global.comissao_servicos_modo, global.comissao_servicos_taxa)}</strong>
-        {' · '}peças: <strong className="text-white">{descreverGlobal(global.comissao_pecas_modo, global.comissao_pecas_taxa)}</strong>
+        Hoje vale para as oficinas: <strong className="text-white">{descreverGlobal(global.comissao_servicos_modo, global.comissao_servicos_taxa, global.comissao_servicos_min, global.comissao_servicos_max, global.comissao_servicos_valor_por_moeda)}</strong>
+        {' · '}peças: <strong className="text-white">{descreverGlobal(global.comissao_pecas_modo, global.comissao_pecas_taxa, global.comissao_pecas_min, global.comissao_pecas_max)}</strong>
         {' · '}{nIndividual} oficina(s) com taxa individual · {nFundadoras} fundadora(s)
       </p>
 
@@ -221,29 +259,60 @@ export default function AdminComissoesPage() {
         {/* Regra global */}
         <div className="bg-slate-800 border border-slate-700 rounded-xl p-5 space-y-4">
           <h2 className="text-white font-semibold">Regra global</h2>
-          <div className="grid sm:grid-cols-[1fr_110px] gap-3">
-            <Campo label="Serviços das oficinas">
-              <select className={input} value={gServModo} onChange={(e) => setGServModo(e.target.value as Modo)}>
-                {Object.entries(MODO_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-              </select>
+          <Campo label="Serviços das oficinas">
+            <select className={input} value={gServModo} onChange={(e) => setGServModo(e.target.value as Modo)}>
+              {Object.entries(MODO_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+            </select>
+          </Campo>
+          {gServModo === 'fixa' && (
+            <Campo label="Percentual (%)">
+              <input className={input} value={gServTaxa} onChange={(e) => setGServTaxa(e.target.value)} inputMode="decimal" />
             </Campo>
-            <Campo label="Taxa (%)">
-              <input className={input} value={gServTaxa} onChange={(e) => setGServTaxa(e.target.value)} disabled={gServModo !== 'fixa'} inputMode="decimal" />
+          )}
+          {gServModo === 'desempenho' && (
+            <div className="grid grid-cols-2 gap-3">
+              <Campo label="Mínimo (%) - melhor desempenho">
+                <input className={input} value={gServMin} onChange={(e) => setGServMin(e.target.value)} inputMode="decimal" />
+              </Campo>
+              <Campo label="Máximo (%)">
+                <input className={input} value={gServMax} onChange={(e) => setGServMax(e.target.value)} inputMode="decimal" />
+              </Campo>
+            </div>
+          )}
+          {gServModo === 'por_servico' && (
+            <div className="grid grid-cols-2 gap-3">
+              {MOEDAS.map((m) => (
+                <Campo key={m} label={`Valor por serviço (${m})`}>
+                  <input className={input} value={gValores[m]} onChange={(e) => setGValores({ ...gValores, [m]: e.target.value })} inputMode="decimal" placeholder="vazio = não cobra" />
+                </Campo>
+              ))}
+            </div>
+          )}
+          <Campo label="Venda de peças">
+            <select className={input} value={gPecModo} onChange={(e) => setGPecModo(e.target.value as Modo)}>
+              {Object.entries(MODO_LABEL).filter(([k]) => k !== 'por_servico').map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+            </select>
+          </Campo>
+          {gPecModo === 'fixa' && (
+            <Campo label="Percentual (%)">
+              <input className={input} value={gPecTaxa} onChange={(e) => setGPecTaxa(e.target.value)} inputMode="decimal" />
             </Campo>
-            <Campo label="Venda de peças">
-              <select className={input} value={gPecModo} onChange={(e) => setGPecModo(e.target.value as Modo)}>
-                {Object.entries(MODO_LABEL).map(([k, v]) => <option key={k} value={k}>{k === 'desempenho' ? 'Por desempenho (1–3%)' : v}</option>)}
-              </select>
-            </Campo>
-            <Campo label="Taxa (%)">
-              <input className={input} value={gPecTaxa} onChange={(e) => setGPecTaxa(e.target.value)} disabled={gPecModo !== 'fixa'} inputMode="decimal" />
-            </Campo>
-          </div>
+          )}
+          {gPecModo === 'desempenho' && (
+            <div className="grid grid-cols-2 gap-3">
+              <Campo label="Mínimo (%)">
+                <input className={input} value={gPecMin} onChange={(e) => setGPecMin(e.target.value)} inputMode="decimal" />
+              </Campo>
+              <Campo label="Máximo (%)">
+                <input className={input} value={gPecMax} onChange={(e) => setGPecMax(e.target.value)} inputMode="decimal" />
+              </Campo>
+            </div>
+          )}
           <Campo label="Motivo (fica no histórico)">
             <input className={input} value={gMotivo} onChange={(e) => setGMotivo(e.target.value)} placeholder="Ex.: fim da fase de fundadores" />
           </Campo>
           <p className="text-xs text-slate-500">
-            O site promete 0% na fase de fundadores e 30 dias de aviso antes de qualquer mudança. Avise as oficinas antes de sair de &quot;Sem comissão&quot;.
+            Os Termos dizem que hoje o uso é gratuito e que qualquer cobrança é avisada com 30 dias corridos de antecedência. Avise as oficinas antes de sair de &quot;Sem comissão&quot;.
           </p>
           <button className={botao} onClick={salvarGlobal} disabled={salvando}>Salvar regra global</button>
         </div>
@@ -327,20 +396,24 @@ export default function AdminComissoesPage() {
                       </button>
                     </td>
                     <td className="px-5 py-4">
-                      <p className="text-white font-semibold text-lg">{pct(l.efetiva.taxa)}</p>
+                      <p className="text-white font-semibold text-lg">{condicao(l.efetiva)}</p>
                       <span
                         className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${
                           l.efetiva.origem === 'individual' ? 'bg-amber-500/20 text-amber-300' : 'bg-blue-500/20 text-blue-300'
                         }`}
                       >
-                        {l.efetiva.origem === 'individual' ? 'Individual' : `Global · ${global.comissao_servicos_modo === 'isento' ? 'sem comissão' : global.comissao_servicos_modo === 'fixa' ? 'fixa' : 'desempenho'}`}
+                        {l.efetiva.origem === 'individual' ? 'Individual' : `Global · ${({ isento: 'sem comissão', fixa: 'percentual fixo', desempenho: 'desempenho', por_servico: 'por serviço' } as Record<Modo, string>)[global.comissao_servicos_modo]}`}
                       </span>
                     </td>
                     <td className="px-5 py-4 text-sm">
                       {editando === l.oficina_id ? (
                         <div className="space-y-2 w-64">
+                          <select className={input} value={iTipo} onChange={(e) => { setITipo(e.target.value as Tipo); setITaxa(''); }}>
+                            <option value="percentual">Percentual (%)</option>
+                            <option value="valor_fixo">Valor fixo por serviço ({l.efetiva.moeda})</option>
+                          </select>
                           <div className="grid grid-cols-2 gap-2">
-                            <input className={input} value={iTaxa} onChange={(e) => setITaxa(e.target.value)} placeholder="% ex.: 0" inputMode="decimal" />
+                            <input className={input} value={iTaxa} onChange={(e) => setITaxa(e.target.value)} placeholder={iTipo === 'valor_fixo' ? `${l.efetiva.moeda} ex.: 5` : '% ex.: 0'} inputMode="decimal" />
                             <input type="date" className={input} value={iAte} onChange={(e) => setIAte(e.target.value)} title="Válida até (vazio = sem prazo)" />
                           </div>
                           <input className={input} value={iMotivo} onChange={(e) => setIMotivo(e.target.value)} placeholder="Motivo (ex.: acordo de parceria)" />
@@ -355,7 +428,9 @@ export default function AdminComissoesPage() {
                       ) : l.individual ? (
                         <div>
                           <p className={vencida ? 'text-slate-500 line-through' : 'text-white'}>
-                            {l.individual.taxa != null ? pct(l.individual.taxa) : '—'}
+                            {l.individual.tipo === 'valor_fixo'
+                              ? (l.individual.valor != null ? `${formatCurrency(l.individual.valor, l.efetiva.moeda)}/serviço` : '—')
+                              : l.individual.taxa != null ? pct(l.individual.taxa) : '—'}
                           </p>
                           <p className="text-xs text-slate-400">
                             {l.individual.ate ? `${vencida ? 'venceu em' : 'até'} ${dataBR(l.individual.ate)}` : 'sem prazo'}
@@ -364,7 +439,7 @@ export default function AdminComissoesPage() {
                           <button className="text-blue-400 hover:text-blue-300 text-xs mt-1" onClick={() => abrirEdicao(l)}>Editar</button>
                         </div>
                       ) : (
-                        <button className="text-blue-400 hover:text-blue-300 text-xs" onClick={() => abrirEdicao(l)}>+ Definir taxa individual</button>
+                        <button className="text-blue-400 hover:text-blue-300 text-xs" onClick={() => abrirEdicao(l)}>+ Definir condição individual</button>
                       )}
                     </td>
                     <td className={`px-5 py-4 text-right text-sm ${l.total_pendente > 0 ? 'text-amber-400' : 'text-slate-400'}`}>

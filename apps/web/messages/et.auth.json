@@ -33,7 +33,7 @@
     "dadosOficina": "Töökoja andmed",
     "labelNomeFantasia": "Ärinimi *",
     "placeholderNomeOficina": "Töökoja nimi",
-    "labelCnpj": "Registrikood (valikuline)",
+    "labelCnpj": "Registrikood",
     "placeholderCnpj": "Äriregistri kood",
     "labelCep": "Postiindeks",
     "placeholderCep": "Nt: 10111",
@@ -55,7 +55,14 @@
     "placeholderNomeLoja": "Varuosade poe nimi",
     "criarContaLoja": "Loo varuosade poe konto",
     "jaTemConta": "Kas sul on juba konto?",
-    "entrar": "Logi sisse"
+    "entrar": "Logi sisse",
+    "verifiqueTitulo": "Kontrolli oma e-posti",
+    "verifiqueTexto1": "Saatsime kinnituslingi aadressile",
+    "verifiqueTexto2": "Ava kiri ja klõpsa lingil, et konto aktiveerida. Kui sa kirja ei leia, vaata ka rämpspostikausta.",
+    "verifiqueAnalise": "Pärast kinnitamist kontrollime ettevõtte registreeringut ja aktiveerime sinu profiili klientidele. Anname sulle e-posti teel teada.",
+    "reenviarLink": "Ma ei saanud kirja: saada uuesti",
+    "linkReenviado": "Kui mõni konto ootab kinnitamist, saatsime uue lingi.",
+    "declaracaoResponsavel": "Kinnitan, et olen selle ettevõtte eest vastutav isik (omanik, juhatuse liige või esindusõigusega isik) ja olen teadlik, et praegu tasuta BipFixi kasutamine võib tulevikus muutuda tasuliseks, millest teatatakse vähemalt 30 kalendripäeva ette."
   },
   "definirSenha": {
     "erroSenhaCurta": "Parool peab olema vähemalt 8 tähemärki pikk",
@@ -93,5 +100,16 @@
     "placeholderRepitaSenha": "Korda parooli",
     "salvando": "Salvestamine...",
     "salvarNovaSenha": "Salvesta uus parool"
+  },
+  "confirmarEmail": {
+    "titulo": "E-posti kinnitamine",
+    "verificando": "Kinnitame sinu e-posti aadressi…",
+    "sucesso": "E-posti aadress on kinnitatud! Avame sinu konto…",
+    "invalidoTitulo": "See link ei kehti enam",
+    "invalidoTexto": "Kinnituslink kehtib 1 tund ja seda saab kasutada ainult üks kord. Sisesta oma e-posti aadress, et saada uus link.",
+    "labelEmail": "E-post",
+    "reenviar": "Saada uus link",
+    "reenviado": "Kui mõni konto ootab kinnitamist, saatsime uue lingi. Kontrolli oma e-posti.",
+    "irLogin": "Mine sisselogimise lehele"
   }
 }

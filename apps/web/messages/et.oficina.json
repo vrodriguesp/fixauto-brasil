@@ -31,7 +31,8 @@
     "tipoPlataforma": "Platvorm",
     "tipoExterno": "Väline",
     "avaliacoesRecentesTitulo": "Hiljutised hinnangud",
-    "nenhumaAvaliacaoAinda": "Hinnanguid veel ei ole"
+    "nenhumaAvaliacaoAinda": "Hinnanguid veel ei ole",
+    "cadastroEmAnalise": "Sinu registreerimine on ülevaatamisel: kontrollime ettevõtte registreeringut enne, kui sinu profiil klientidele nähtavaks muutub. Seni saad juba töölaual oma andmed täita."
   },
   "oficinaAgenda": {
     "mes0": "Jaanuar",
@@ -218,13 +219,13 @@
       },
       "comissao": {
         "titulo": "Kuidas komisjonitasu töötab",
-        "resumo": "BipFix võtab iga lõpetatud teenuse pealt tasu — kuid see pole fikseeritud. See algab 15%-st ja langeb kuni 5%-ni, olenevalt sellest, kui kiiresti vastad, kui vähe hinnapakkumist muudad, milline on su hinnang ja kui suur on su teenuste maht.",
+        "resumo": "Praegu on BipFixi kasutamine töökodadele tasuta. Tulevikus võidakse kehtestada tasu — protsent igalt lõpetatud töölt või fikseeritud summa töö kohta —, millest teatatakse alati vähemalt 30 kalendripäeva ette. Komisjonitasu vaade näitab, milline tingimus sinu töökojale kehtib.",
         "passosGuiados": [
           "Ava menüüst Komisjonitasu.",
           "Vaata oma praegust määra ja seda, mis iga kriteeriumit vähendab (või mitte).",
-          "Loe nõuannet: kiire vastamine, hinnapakkumise muutmise vältimine ja kliendilt hinnangu küsimine vähendavad sinu tasu."
+          "Kui tasu sõltub tulemuslikkusest, hoiavad kiire vastamine, vähesed hinnapakkumiste muudatused ja klientidelt hinnangute küsimine sinu määra madalamal."
         ],
-        "desafio": "Uuri Komisjonitasu vaadet ja leia, milline kriteerium alandaks su määra kõige rohkem, kui seda parandaksid.",
+        "desafio": "Ava komisjonitasu vaade ja vaata, milline tingimus sinu töökojale täna kehtib.",
         "linkRotulo": "Vaata minu komisjonitasu →"
       },
       "equipe": {
@@ -388,13 +389,15 @@
     "colComissao": "Komisjonitasu",
     "colStatus": "Staatus",
     "seloFundador": "Asutajapartner",
-    "faseFundadorTitulo": "Selles faasis komisjonitasu ei ole",
-    "faseFundadorTexto": "Asutajapartnerite faasis ei võeta BipFixi kaudu sõlmitud tööde eest komisjonitasu. Teatame igast muudatusest 30 päeva ette.",
+    "faseFundadorTitulo": "Praegu komisjonitasu ei ole",
+    "faseFundadorTexto": "Praegu on BipFixi kasutamine tasuta: platvormi kaudu kokku lepitud töödelt komisjonitasu ei võeta. Kui see muutub, teatame sellest vähemalt 30 kalendripäeva ette.",
     "condicaoEspecialTitulo": "Sinu töökoja eritingimused",
     "condicaoEspecialTexto": "BipFix on sinu töökojaga kokku leppinud tasumäära {taxa}.",
     "validaAte": "Kehtib kuni {data}; seejärel kehtib platvormi üldreegel.",
     "semPrazo": "Lõppkuupäev puudub.",
-    "taxaFixaTexto": "Selles faasis on platvormi tasu kõigile töökodadele sama: {taxa}."
+    "taxaFixaTexto": "Selles faasis on platvormi tasu kõigile töökodadele sama: {taxa}.",
+    "porServico": "{valor} töö kohta",
+    "valorPorServicoTexto": "Praegu on platvormi tasu fikseeritud summa {valor} iga lõpetatud töö kohta, kõigile töökodadele ühesugune."
   },
   "oficinaDistribuicao": {
     "hoje": "Täna, {hora}",
