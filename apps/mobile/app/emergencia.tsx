@@ -43,6 +43,11 @@ export default function EmergenciaScreen() {
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
   const [tipo, setTipo] = useState<Tipo>('outro_causou');
+  // sem login: contato para os orcamentos (o servidor cria a conta e manda o link de senha)
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const faltaContato = !user && (!nome.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || !telefone.trim());
   // quem paga o reparo (opcional) - a oficina ve no pedido
   const [pagamento, setPagamento] = useState<Pagamento | ''>('');
   const [seguradora, setSeguradora] = useState('');
@@ -108,6 +113,7 @@ export default function EmergenciaScreen() {
       form.append('dados', JSON.stringify({
         idioma: i18n.language,
         tipoAcidente: tipo,
+        ...(user ? {} : { nome: nome.trim(), email: email.trim(), telefone: telefone.trim() }),
         pagamento_reparo: pagamento || null,
         seguradora,
         sinistro_numero: sinistro,
@@ -143,7 +149,7 @@ export default function EmergenciaScreen() {
       <View className="flex-1 bg-white items-center justify-center px-6">
         <Ionicons name="checkmark-circle" size={64} color="#16a34a" />
         <Text className="text-xl font-bold text-gray-900 mt-4 mb-2 text-center">{t('emergencia.sucessoTitulo')}</Text>
-        <Text className="text-gray-600 text-center mb-6">{t('emergencia.sucessoTexto')}</Text>
+        <Text className="text-gray-600 text-center mb-6">{t(user ? 'emergencia.sucessoTexto' : 'emergencia.sucessoSemConta', { email: email.trim() })}</Text>
         <View className="self-stretch bg-gray-50 rounded-lg p-4 mb-6">
           <Text className="font-semibold text-gray-900 mb-2">{t('seguro.proximosTitulo')}</Text>
           {[
@@ -156,8 +162,8 @@ export default function EmergenciaScreen() {
             <Text key={i} className="text-sm text-gray-700 mb-1.5">{i + 1}. {p}</Text>
           ))}
         </View>
-        <Pressable onPress={() => router.replace('/(tabs)')} className="bg-primary-600 rounded-lg px-6 py-3">
-          <Text className="text-white font-semibold">{t('tabs.solicitacoes')}</Text>
+        <Pressable onPress={() => router.replace(user ? '/(tabs)' : '/(auth)/login')} className="bg-primary-600 rounded-lg px-6 py-3">
+          <Text className="text-white font-semibold">{user ? t('tabs.solicitacoes') : t('emergencia.voltarInicio')}</Text>
         </Pressable>
       </View>
     );
@@ -246,9 +252,22 @@ export default function EmergenciaScreen() {
         className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-base"
       />
 
+      {!user && (
+        <View className="bg-gray-50 rounded-lg p-3 mb-6">
+          <Text className="text-sm font-semibold text-gray-900 mb-1">{t('emergencia.contatoTitulo')}</Text>
+          <Text className="text-xs text-gray-500 mb-3">{t('emergencia.contatoTexto')}</Text>
+          <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.nome')}</Text>
+          <TextInput value={nome} onChangeText={setNome} autoComplete="name" textContentType="name" maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-base" />
+          <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</Text>
+          <TextInput value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" textContentType="emailAddress" maxLength={254} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-base" />
+          <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.telefone')}</Text>
+          <TextInput value={telefone} onChangeText={setTelefone} keyboardType="phone-pad" autoComplete="tel" textContentType="telephoneNumber" maxLength={30} className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base" />
+        </View>
+      )}
+
       <Pressable
         onPress={handleEnviar}
-        disabled={enviando || (!coords && !endereco)}
+        disabled={enviando || (!coords && !endereco) || faltaContato}
         className="bg-red-600 rounded-lg py-4 items-center mb-10 disabled:opacity-50"
       >
         {enviando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold text-base">{t('emergencia.enviarRegistro')}</Text>}

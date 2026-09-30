@@ -47,14 +47,22 @@
     "privacidade": "privaatsuspoliitikaga",
     "senhaCurta": "Parool peab olema vähemalt 8 tähemärki.",
     "verifiqueTitulo": "Kontrolli oma e-posti",
-    "verifiqueTexto": "Saatsime kinnituslingi aadressile {{email}}. Ava kiri ja puuduta linki, et konto aktiveerida.",
+    "verifiqueTexto": "Saatsime kinnituslingi aadressile {email}. Ava kiri ja puuduta linki, et konto aktiveerida.",
     "verifiqueDepois": "Pärast kinnitamist tule rakendusse tagasi ja logi sisse oma e-posti ja parooliga. Kui sa kirja ei leia, vaata ka rämpspostikausta.",
     "irLogin": "Mine sisselogimise lehele",
     "naoConfirmado": "Sa pole veel oma e-posti aadressi kinnitanud. Konto aktiveerimiseks ava link, mille registreerimisel saatsime.",
     "reenviarLink": "Saada kinnituslink uuesti",
     "linkReenviado": "Valmis: kui konto ootab kinnitamist, saatsime uue lingi.",
     "muitasTentativas": "Liiga palju katseid lühikese aja jooksul. Oota mõni minut ja proovi uuesti.",
-    "dadosInvalidos": "Kontrolli sisestatud andmeid."
+    "dadosInvalidos": "Kontrolli sisestatud andmeid.",
+    "slogan": "Hinnapakkumised lähedal asuvatelt töökodadelt minutitega.",
+    "emergenciaTexto": "Registreeri avarii kohe, kontot pole vaja",
+    "selo1": "Kontrollitud äriregistri andmetega töökojad",
+    "selo2": "Autojuhtidele tasuta",
+    "selo3": "Sinu andmed on kaitstud",
+    "idioma": "Keel",
+    "mostrarSenha": "Näita parooli",
+    "ocultarSenha": "Peida parool"
   },
   "emergencia": {
     "titulo": "Sattusin avariisse",
@@ -78,7 +86,11 @@
     "optionOutroCausouDesc": "Sina oled kannatanu ja saad remondiks hinnapakkumised",
     "optionSemOutroLabel": "Keegi teine ei olnud kaasatud",
     "optionSemOutroDesc": "Nt: sõitsid vastu posti, müüri jne.",
-    "fotoDica": "Vihje: pildista auto 4 nurka, kahjustust lähedalt ja teise sõiduki numbrimärki."
+    "fotoDica": "Vihje: pildista auto 4 nurka, kahjustust lähedalt ja teise sõiduki numbrimärki.",
+    "contatoTitulo": "Sinu kontaktandmed",
+    "contatoTexto": "Saadame sulle hinnapakkumised ja e-posti teel lingi parooli loomiseks.",
+    "sucessoSemConta": "Lähedal asuvaid töökodasid on teavitatud. Saatsime aadressile {email} lingi, et saaksid luua parooli ja hinnapakkumisi jälgida.",
+    "voltarInicio": "Tagasi algusesse"
   },
   "novaSolicitacao": {
     "titulo": "Uus päring",

@@ -47,14 +47,22 @@
     "privacidade": "Política de Privacidade",
     "senhaCurta": "A palavra-passe tem de ter pelo menos 8 caracteres.",
     "verifiqueTitulo": "Verifique o seu e-mail",
-    "verifiqueTexto": "Enviámos uma ligação de confirmação para {{email}}. Abra o e-mail e toque na ligação para ativar a sua conta.",
+    "verifiqueTexto": "Enviámos uma ligação de confirmação para {email}. Abra o e-mail e toque na ligação para ativar a sua conta.",
     "verifiqueDepois": "Depois de confirmar, volte à aplicação e inicie sessão com o seu e-mail e palavra-passe. Se não encontrar o e-mail, veja também a pasta de spam.",
     "irLogin": "Ir para o início de sessão",
     "naoConfirmado": "Ainda não confirmou o seu e-mail. Abra a ligação que enviámos no registo para ativar a conta.",
     "reenviarLink": "Enviar novamente a ligação de confirmação",
     "linkReenviado": "Feito: se a conta estiver a aguardar confirmação, enviámos uma nova ligação.",
     "muitasTentativas": "Demasiadas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.",
-    "dadosInvalidos": "Verifique os dados introduzidos."
+    "dadosInvalidos": "Verifique os dados introduzidos.",
+    "slogan": "Orçamentos de oficinas perto de si, em minutos.",
+    "emergenciaTexto": "Registe o acidente agora, sem precisar de conta",
+    "selo1": "Oficinas com registo da empresa verificado",
+    "selo2": "Gratuito para condutores",
+    "selo3": "Os seus dados protegidos",
+    "idioma": "Idioma",
+    "mostrarSenha": "Mostrar palavra-passe",
+    "ocultarSenha": "Ocultar palavra-passe"
   },
   "emergencia": {
     "titulo": "Acabei de bater",
@@ -78,7 +86,11 @@
     "optionOutroCausouDesc": "É a vítima e vai receber orçamentos para a reparação",
     "optionSemOutroLabel": "Não houve mais ninguém envolvido",
     "optionSemOutroDesc": "Ex.: bati num poste, num muro, etc.",
-    "fotoDica": "Dica: fotografe os 4 cantos do carro, o dano de perto e a matrícula do outro veículo."
+    "fotoDica": "Dica: fotografe os 4 cantos do carro, o dano de perto e a matrícula do outro veículo.",
+    "contatoTitulo": "Os seus dados de contacto",
+    "contatoTexto": "Enviamos-lhe os orçamentos e uma ligação por e-mail para criar a sua palavra-passe.",
+    "sucessoSemConta": "As oficinas próximas já foram avisadas. Enviámos para {email} uma ligação para criar a sua palavra-passe e acompanhar os orçamentos.",
+    "voltarInicio": "Voltar ao início"
   },
   "novaSolicitacao": {
     "titulo": "Novo pedido",

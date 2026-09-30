@@ -3,22 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
-import i18n from '../../i18n';
-
-const IDIOMAS = [
-  { code: 'pt', label: 'Português' },
-  { code: 'en', label: 'English' },
-  { code: 'et', label: 'Eesti' },
-  { code: 'it', label: 'Italiano' },
-] as const;
+import { IDIOMAS, escolherIdioma } from '../../lib/idiomas';
 
 export default function PerfilScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, signOut, refreshProfile } = useAuth();
 
   const handleTrocarIdioma = async (codigo: string) => {
     if (!user) return;
-    await i18n.changeLanguage(codigo);
+    await escolherIdioma(codigo);
     await supabase.from('profiles').update({ idioma: codigo }).eq('id', user.id);
     await refreshProfile();
   };

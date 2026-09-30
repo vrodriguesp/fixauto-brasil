@@ -47,14 +47,22 @@
     "privacidade": "Informativa sulla privacy",
     "senhaCurta": "La password deve avere almeno 8 caratteri.",
     "verifiqueTitulo": "Controlla la tua email",
-    "verifiqueTexto": "Abbiamo inviato un link di conferma a {{email}}. Apri l'email e tocca il link per attivare il tuo account.",
+    "verifiqueTexto": "Abbiamo inviato un link di conferma a {email}. Apri l'email e tocca il link per attivare il tuo account.",
     "verifiqueDepois": "Dopo la conferma, torna nell'app e accedi con email e password. Se non trovi l'email, controlla anche la cartella spam.",
     "irLogin": "Vai all'accesso",
     "naoConfirmado": "Non hai ancora confermato la tua email. Apri il link che ti abbiamo inviato alla registrazione per attivare l'account.",
     "reenviarLink": "Invia di nuovo il link di conferma",
     "linkReenviado": "Fatto: se l'account è in attesa di conferma, abbiamo inviato un nuovo link.",
     "muitasTentativas": "Troppi tentativi in poco tempo. Attendi qualche minuto e riprova.",
-    "dadosInvalidos": "Controlla i dati inseriti."
+    "dadosInvalidos": "Controlla i dati inseriti.",
+    "slogan": "Preventivi dalle officine vicino a te, in pochi minuti.",
+    "emergenciaTexto": "Segnala l'incidente ora, senza bisogno di un account",
+    "selo1": "Officine con registrazione dell'impresa verificata",
+    "selo2": "Gratis per gli automobilisti",
+    "selo3": "I tuoi dati sono protetti",
+    "idioma": "Lingua",
+    "mostrarSenha": "Mostra password",
+    "ocultarSenha": "Nascondi password"
   },
   "emergencia": {
     "titulo": "Ho appena avuto un incidente",
@@ -78,7 +86,11 @@
     "optionOutroCausouDesc": "Sei la parte lesa e riceverai i preventivi per la riparazione",
     "optionSemOutroLabel": "Nessun altro coinvolto",
     "optionSemOutroDesc": "Es: hai colpito un palo, un muro, ecc.",
-    "fotoDica": "Consiglio: fotografa i 4 angoli dell'auto, il danno da vicino e la targa dell'altro veicolo."
+    "fotoDica": "Consiglio: fotografa i 4 angoli dell'auto, il danno da vicino e la targa dell'altro veicolo.",
+    "contatoTitulo": "I tuoi recapiti",
+    "contatoTexto": "Ti inviamo i preventivi e un link via email per creare la tua password.",
+    "sucessoSemConta": "Le officine vicine sono state avvisate. Abbiamo inviato a {email} un link per creare la password e seguire i preventivi.",
+    "voltarInicio": "Torna all'inizio"
   },
   "novaSolicitacao": {
     "titulo": "Nuova richiesta",

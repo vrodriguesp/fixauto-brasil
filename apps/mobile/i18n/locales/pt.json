@@ -47,14 +47,22 @@
     "privacidade": "Política de Privacidade",
     "senhaCurta": "A senha precisa ter pelo menos 8 caracteres.",
     "verifiqueTitulo": "Confira seu e-mail",
-    "verifiqueTexto": "Enviamos um link de confirmação para {{email}}. Abra o e-mail e toque no link para ativar sua conta.",
+    "verifiqueTexto": "Enviamos um link de confirmação para {email}. Abra o e-mail e toque no link para ativar sua conta.",
     "verifiqueDepois": "Depois de confirmar, volte ao app e entre com seu e-mail e senha. Se não encontrar o e-mail, olhe também na pasta de spam.",
     "irLogin": "Ir para o login",
     "naoConfirmado": "Você ainda não confirmou seu e-mail. Abra o link que enviamos no cadastro para ativar a conta.",
     "reenviarLink": "Enviar o link de confirmação de novo",
     "linkReenviado": "Pronto: se a conta estiver aguardando confirmação, enviamos um novo link.",
     "muitasTentativas": "Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente de novo.",
-    "dadosInvalidos": "Confira os dados informados."
+    "dadosInvalidos": "Confira os dados informados.",
+    "slogan": "Orçamentos de oficinas perto de você, em minutos.",
+    "emergenciaTexto": "Registre o acidente agora, sem precisar de conta",
+    "selo1": "Oficinas com registro da empresa conferido",
+    "selo2": "Grátis para motoristas",
+    "selo3": "Seus dados protegidos",
+    "idioma": "Idioma",
+    "mostrarSenha": "Mostrar senha",
+    "ocultarSenha": "Ocultar senha"
   },
   "emergencia": {
     "titulo": "Acabei de bater",
@@ -78,7 +86,11 @@
     "optionOutroCausouDesc": "Você é a vítima e receberá orçamentos para reparo",
     "optionSemOutroLabel": "Sem outro envolvido",
     "optionSemOutroDesc": "Ex: bateu no poste, muro, etc.",
-    "fotoDica": "Dica: fotografe os 4 cantos do carro, o dano de perto e a placa do outro veículo."
+    "fotoDica": "Dica: fotografe os 4 cantos do carro, o dano de perto e a placa do outro veículo.",
+    "contatoTitulo": "Seus dados para contato",
+    "contatoTexto": "Enviamos os orçamentos para você e um link por e-mail para criar sua senha.",
+    "sucessoSemConta": "Oficinas próximas já foram avisadas. Enviamos para {email} um link para você criar sua senha e acompanhar os orçamentos.",
+    "voltarInicio": "Voltar ao início"
   },
   "novaSolicitacao": {
     "titulo": "Nova solicitação",
