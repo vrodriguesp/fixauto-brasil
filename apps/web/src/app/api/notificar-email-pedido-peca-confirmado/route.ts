@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/api-auth';
 import { sendPedidoPecaConfirmadoEmail } from '@/lib/notifications';
 import { currencyForCountry } from '@fixauto/shared';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 // So o envio do e-mail (a notificacao in-app ja e inserida direto pelo
 // client, permitida pela policy publica de notificacoes) - separado numa

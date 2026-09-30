@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { compressImage } from '@/lib/image-compress';
 import { INTL_LOCALE } from '@/lib/utils';
 import type { CotacaoPecaMensagem, TipoFornecedorPeca } from '@fixauto/shared';
+import MidiaPrivada from '@/components/midia/MidiaPrivada';
 
 interface Props {
   cotacaoId: string;
@@ -146,9 +147,11 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
                       <p className="text-xs font-medium text-primary-600 mb-0.5">{msg.remetente.nome}</p>
                     )}
                     {msg.imagem_url ? (
-                      <a href={msg.imagem_url} target="_blank" rel="noopener noreferrer">
-                        <img src={msg.imagem_url} alt="Foto enviada" className="rounded-lg max-w-full max-h-64 object-cover" />
+                      <MidiaPrivada url={msg.imagem_url}>{(u) => (
+<a href={u} target="_blank" rel="noopener noreferrer">
+                        <img src={u} alt="Foto enviada" className="rounded-lg max-w-full max-h-64 object-cover" />
                       </a>
+)}</MidiaPrivada>
                     ) : (
                       <p className="text-sm whitespace-pre-wrap break-words">{msg.texto}</p>
                     )}

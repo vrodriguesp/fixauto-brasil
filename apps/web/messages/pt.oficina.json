@@ -473,7 +473,7 @@
     "semComissaoOrcamento": "A BipFix não cobra comissão sobre este orçamento. O valor que você enviar é o valor que o cliente vê."
   },
   "oficinaEquipe": {
-    "erroSenhaMinima": "A senha deve ter pelo menos 6 caracteres",
+    "erroSenhaMinima": "A senha deve ter pelo menos 8 caracteres",
     "confirmResetSenha": "Gerar uma nova senha temporária para {nome}? A senha atual deixará de funcionar.",
     "esteFuncionario": "este funcionário",
     "funcionarioFallback": "Funcionário",

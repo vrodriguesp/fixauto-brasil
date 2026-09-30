@@ -248,7 +248,10 @@
     "quoteMsgBase": "Orçamento da {oficina}: {valor}, prazo {dias} dias.",
     "quoteMsgAddressPart": " Endereço: {endereco}",
     "quoteMsgCityPart": ", {cidade}",
-    "quoteMsgPhonePart": " Tel: {telefone}"
+    "quoteMsgPhonePart": " Tel: {telefone}",
+    "semAcessoTitulo": "Entre para ver este acidente",
+    "semAcessoTexto": "Por segurança, os dados do acidente só aparecem para quem participa dele. Entre com a conta ligada a este acidente (a do e-mail que recebeu o aviso).",
+    "semAcessoEntrar": "Entrar"
   },
   "docsHome": {
     "metaTitle": "Central de Ajuda",

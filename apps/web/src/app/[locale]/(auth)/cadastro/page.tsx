@@ -349,7 +349,7 @@ function CadastroPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelSenha')}</label>
-                <input type="password" className="input-field" placeholder={t('placeholderSenhaMinima')} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+                <input type="password" className="input-field" placeholder={t('placeholderSenhaMinima')} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
               </div>
               <label className="flex items-start gap-2 text-sm text-gray-600">
                 <input

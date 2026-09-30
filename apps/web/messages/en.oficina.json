@@ -473,7 +473,7 @@
     "semComissaoOrcamento": "BipFix charges no commission on this quote. The amount you send is the amount the customer sees."
   },
   "oficinaEquipe": {
-    "erroSenhaMinima": "Password must be at least 6 characters",
+    "erroSenhaMinima": "Password must be at least 8 characters",
     "confirmResetSenha": "Generate a new temporary password for {nome}? The current password will stop working.",
     "esteFuncionario": "this employee",
     "funcionarioFallback": "Employee",

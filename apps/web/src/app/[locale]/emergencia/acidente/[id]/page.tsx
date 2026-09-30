@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { supabase } from '@/lib/supabase';
+import { headersEmergencia } from '@/lib/emergencia-token';
 import { useAuth } from '@/lib/auth-context';
 import { compressImage } from '@/lib/image-compress';
 import { formatCurrency } from '@/lib/utils';
@@ -96,30 +96,34 @@ export default function AcidenteRegistroPage() {
   const [loadingOrc, setLoadingOrc] = useState(false);
   const [emergData, setEmergData] = useState<{ solicitacao_id: string | null; profile_id: string | null; descricao: string | null } | null>(null);
   const [veiculoProprietario, setVeiculoProprietario] = useState<{ fipe_marca: string; fipe_modelo: string; fipe_ano: string; placa: string; cor: string } | null>(null);
-  const isProprietario = user?.id === emergData?.profile_id;
+  const [papel, setPapel] = useState<'proprietario' | 'outro' | 'oficina' | 'admin' | null>(null);
+  const isProprietario = papel === 'proprietario';
 
   // Determine if current user is the victim (only victims can accept quotes and send to responsible)
   // eu_causei: registrant is responsible, so registrant is NOT victim
   // outro_causou: registrant is victim
   const isVitima = emergData?.descricao?.match(/\[TIPO:(\w+)\]/)
     ? (emergData.descricao.match(/\[TIPO:(\w+)\]/)?.[1] === 'outro_causou'
-        ? user?.id === emergData?.profile_id   // registrant is victim
-        : user?.id !== emergData?.profile_id)  // eu_causei: registrant is NOT victim
+        ? isProprietario   // registrant is victim
+        : papel === 'outro')  // eu_causei: the other driver is the victim
     : isProprietario; // fallback for legacy data
 
-  // Load existing data
+  // Dados do acidente pela API (acesso verificado no servidor: codigo
+  // secreto deste navegador ou participante logado)
+  const [semAcesso, setSemAcesso] = useState(false);
   const loadData = useCallback(async () => {
     if (!emergenciaId) return;
-
-    // Check if outro veiculo already registered
-    const { data: outros } = await supabase
-      .from('emergencia_outro_veiculo')
-      .select('*')
-      .eq('emergencia_id', emergenciaId)
-      .limit(1);
-
-    if (outros && outros.length > 0) {
-      const outro = outros[0] as OutroVeiculo;
+    const res = await fetch(`/api/emergencia/${emergenciaId}`, { headers: headersEmergencia(emergenciaId), cache: 'no-store' });
+    if (res.status === 403 || res.status === 404) {
+      setSemAcesso(true);
+      setLoadingOrc(false);
+      return;
+    }
+    if (!res.ok) return;
+    const d = await res.json();
+    setSemAcesso(false);
+    const outro = d.outro as OutroVeiculo | null;
+    if (outro) {
       setOutroNome(outro.nome);
       setOutroTelefone(outro.telefone || '');
       setOutroEmail(outro.email || '');
@@ -129,70 +133,26 @@ export default function AcidenteRegistroPage() {
       setOutroVeiculoId(outro.id);
       setRegistered(true);
     }
-
-    // Load messages
-    const { data: msgs } = await supabase
-      .from('emergencia_mensagens')
-      .select('*')
-      .eq('emergencia_id', emergenciaId)
-      .order('created_at', { ascending: true });
-
-    if (msgs) setMensagens(msgs as Mensagem[]);
-
-    // Load orcamentos if there's a linked solicitacao
-    setLoadingOrc(true);
-    const { data: emerg } = await supabase
-      .from('emergencias')
-      .select('solicitacao_id, profile_id, descricao')
-      .eq('id', emergenciaId)
-      .single();
-
-    if (emerg) setEmergData(emerg as { solicitacao_id: string | null; profile_id: string | null; descricao: string | null });
-
-    // Fetch vehicle info for the emergency owner
-    if (emerg?.solicitacao_id) {
-      const { data: solData } = await supabase
-        .from('solicitacoes')
-        .select('veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, placa, cor)')
-        .eq('id', emerg.solicitacao_id)
-        .single();
-
-      if (solData?.veiculo) {
-        const v = solData.veiculo as unknown as { fipe_marca: string; fipe_modelo: string; fipe_ano: string; placa: string; cor: string };
-        setVeiculoProprietario(v);
-      }
-    }
-
-    if (emerg?.solicitacao_id) {
-      const { data: orcs } = await supabase
-        .from('orcamentos')
-        .select('id, valor_total, prazo_dias, status, observacoes, oficina:oficinas(nome_fantasia, endereco, cidade, estado, pais, profile:profiles(telefone, email))')
-        .eq('solicitacao_id', emerg.solicitacao_id);
-
-      if (orcs) setOrcamentos(orcs as unknown as Orcamento[]);
-    }
+    setMensagens((prev) => {
+      const pendentes = prev.filter((m) => m.id.startsWith('temp-'));
+      return [...(d.mensagens as Mensagem[]), ...pendentes];
+    });
+    setEmergData(d.emergencia);
+    setPapel(d.papel);
+    if (d.veiculo) setVeiculoProprietario(d.veiculo);
+    setOrcamentos(d.orcamentos as Orcamento[]);
     setLoadingOrc(false);
   }, [emergenciaId]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
-  // Real-time messages
+  // Atualiza a cada 5 s (o chat do acidente nao usa mais o tempo real do
+  // banco, que exigiria deixar a tabela aberta a quem nao tem login)
   useEffect(() => {
     if (!emergenciaId) return;
-    const channel = supabase
-      .channel(`emergencia-msgs-${emergenciaId}`)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'emergencia_mensagens',
-        filter: `emergencia_id=eq.${emergenciaId}`,
-      }, (payload) => {
-        setMensagens((prev) => [...prev, payload.new as Mensagem]);
-      })
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
-  }, [emergenciaId]);
+    const t = setInterval(loadData, 5000);
+    return () => clearInterval(t);
+  }, [emergenciaId, loadData]);
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -210,63 +170,29 @@ export default function AcidenteRegistroPage() {
   const handleRegister = async () => {
     setRegistering(true);
     setError('');
-
-    // 1. Save outro veiculo
-    const { data: outro, error: outroError } = await supabase
-      .from('emergencia_outro_veiculo')
-      .insert({
-        emergencia_id: emergenciaId,
-        nome: outroNome,
-        telefone: outroTelefone || null,
-        email: outroEmail || null,
-        placa: outroPlaca,
-        veiculo_descricao: outroVeiculo || null,
-        observacoes: observacoes || null,
-      })
-      .select()
-      .single();
-
-    if (outroError) {
-      setError(outroError.message);
+    const form = new FormData();
+    form.append('dados', JSON.stringify({
+      nome: outroNome,
+      telefone: outroTelefone || null,
+      email: outroEmail || null,
+      placa: outroPlaca,
+      veiculo: outroVeiculo || null,
+      observacoes: observacoes || null,
+      idioma: locale,
+    }));
+    fotosOutro.forEach((f) => form.append('fotos', f.file));
+    const res = await fetch(`/api/emergencia/${emergenciaId}/outro-veiculo`, {
+      method: 'POST',
+      headers: headersEmergencia(emergenciaId),
+      body: form,
+    });
+    const r = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      setError(r.error || 'Error');
       setRegistering(false);
       return;
     }
-
-    setOutroVeiculoId(outro.id);
-
-    // 2. Upload photos
-    for (const foto of fotosOutro) {
-      const fileName = `emergencia/${emergenciaId}/outro/${Date.now()}-${foto.file.name}`;
-      const { data: uploadData } = await supabase.storage
-        .from('damage-photos')
-        .upload(fileName, foto.file);
-
-      if (uploadData?.path) {
-        const { data: { publicUrl } } = supabase.storage
-          .from('damage-photos')
-          .getPublicUrl(uploadData.path);
-
-        await supabase.from('emergencia_outro_veiculo_fotos').insert({
-          outro_veiculo_id: outro.id,
-          foto_url: publicUrl,
-        });
-      }
-    }
-
-    // 3. Notify the other person via API (sends email + WhatsApp)
-    if (outroEmail || outroTelefone) {
-      try {
-        await fetch('/api/notificar-acidente', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ emergenciaId, outroVeiculoId: outro.id, locale }),
-        });
-      } catch {
-        // Non-blocking: notification failure shouldn't prevent registration
-        console.warn('Falha ao enviar notificação');
-      }
-    }
-
+    setOutroVeiculoId(r.id);
     setRegistering(false);
     setRegistered(true);
   };
@@ -278,7 +204,7 @@ export default function AcidenteRegistroPage() {
     const texto = novaMensagem;
     setNovaMensagem('');
 
-    const meuTipo = isProprietario ? 'proprietario' : 'outro';
+    const meuTipo = papel === 'outro' ? 'outro' : 'proprietario';
 
     // Optimistic update
     const tempMsg: Mensagem = {
@@ -289,12 +215,13 @@ export default function AcidenteRegistroPage() {
     };
     setMensagens((prev) => [...prev, tempMsg]);
 
-    const { data: inserted } = await supabase.from('emergencia_mensagens').insert({
-      emergencia_id: emergenciaId,
-      remetente_tipo: meuTipo,
-      remetente_id: user?.id || null,
-      texto,
-    }).select().single();
+    const res = await fetch(`/api/emergencia/${emergenciaId}/mensagens`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...headersEmergencia(emergenciaId) },
+      body: JSON.stringify({ texto }),
+    });
+    const inserted = res.ok ? await res.json() : null;
+    if (!inserted) setMensagens((prev) => prev.filter((m) => m.id !== tempMsg.id));
 
     // Replace temp with real
     if (inserted) {
@@ -353,6 +280,16 @@ export default function AcidenteRegistroPage() {
     }
     return msg;
   };
+
+  if (semAcesso) {
+    return (
+      <div className="max-w-md mx-auto px-4 py-16 text-center">
+        <h1 className="text-xl font-bold text-gray-900 mb-2">{t('semAcessoTitulo')}</h1>
+        <p className="text-gray-600 mb-6">{t('semAcessoTexto')}</p>
+        <Link href="/login" className="btn-primary inline-block">{t('semAcessoEntrar')}</Link>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
@@ -619,7 +556,7 @@ export default function AcidenteRegistroPage() {
               </div>
             )}
             {mensagens.map((msg) => {
-              const meuTipo = isProprietario ? 'proprietario' : 'outro';
+              const meuTipo = papel === 'outro' ? 'outro' : 'proprietario';
               const isMyMsg = msg.remetente_tipo === meuTipo;
               return (
                 <div key={msg.id} className={`flex ${isMyMsg ? 'justify-end' : 'justify-start'}`}>

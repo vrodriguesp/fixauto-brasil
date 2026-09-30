@@ -20,7 +20,7 @@
     "labelTelefone": "Телефон",
     "placeholderTelefone": "Номер телефона с кодом страны",
     "labelSenha": "Пароль *",
-    "placeholderSenhaMinima": "Не менее 6 символов",
+    "placeholderSenhaMinima": "Не менее 8 символов",
     "aceiteTexto1": "Я прочитал(а) и принимаю",
     "termosDeUso": "Условия использования",
     "aceiteTexto2": "и",
@@ -58,12 +58,12 @@
     "entrar": "Войти"
   },
   "definirSenha": {
-    "erroSenhaCurta": "Пароль должен содержать не менее 6 символов",
+    "erroSenhaCurta": "Пароль должен содержать не менее 8 символов",
     "erroSenhasNaoCoincidem": "Пароли не совпадают",
     "titulo": "Задайте пароль",
     "subtitulo": "Добро пожаловать в BipFix! Выберите новый пароль для вашего аккаунта.",
     "labelNovaSenha": "Новый пароль",
-    "placeholderSenhaMinima": "Не менее 6 символов",
+    "placeholderSenhaMinima": "Не менее 8 символов",
     "labelConfirmarSenha": "Подтвердите пароль",
     "placeholderRepitaSenha": "Повторите пароль",
     "salvando": "Сохраняем...",
@@ -78,7 +78,7 @@
     "descOficina": "Хочу получать заявки и отправлять сметы"
   },
   "resetPassword": {
-    "erroSenhaCurta": "Пароль должен содержать не менее 6 символов",
+    "erroSenhaCurta": "Пароль должен содержать не менее 8 символов",
     "erroSenhasNaoCoincidem": "Пароли не совпадают",
     "senhaAlteradaTitulo": "Пароль изменён!",
     "redirecionando": "Переходим на страницу входа...",
@@ -88,7 +88,7 @@
     "titulo": "Новый пароль",
     "subtitulo": "Выберите новый пароль",
     "labelNovaSenha": "Новый пароль",
-    "placeholderSenhaMinima": "Не менее 6 символов",
+    "placeholderSenhaMinima": "Не менее 8 символов",
     "labelConfirmarSenha": "Подтвердите пароль",
     "placeholderRepitaSenha": "Повторите пароль",
     "salvando": "Сохраняем...",

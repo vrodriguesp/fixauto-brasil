@@ -506,7 +506,10 @@
     "quoteMsgBase": "Preventivo di {oficina}: {valor}, tempi {dias} giorni.",
     "quoteMsgAddressPart": " Indirizzo: {endereco}",
     "quoteMsgCityPart": ", {cidade}",
-    "quoteMsgPhonePart": " Tel: {telefone}"
+    "quoteMsgPhonePart": " Tel: {telefone}",
+    "semAcessoTitulo": "Accedi per vedere questo incidente",
+    "semAcessoTexto": "Per sicurezza, i dati dell'incidente sono visibili solo a chi è coinvolto. Accedi con l'account collegato a questo incidente (l'e-mail che ha ricevuto l'avviso).",
+    "semAcessoEntrar": "Accedi"
   },
   "docsHome": {
     "metaTitle": "Centro Assistenza",

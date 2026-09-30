@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { formatDateTime } from '@/lib/utils';
 import CorrigirStatus from '@/components/admin/CorrigirStatus';
+import MidiaPrivada from '@/components/midia/MidiaPrivada';
 
 const STATUS_EMERGENCIA: Record<string, string> = {
   aberta: 'Aberta',
@@ -71,9 +72,11 @@ export default function AdminEmergenciaDetalhePage() {
           <p className="text-slate-400 text-xs uppercase tracking-wide mb-3">Fotos do acidente ({fotos.length})</p>
           <div className="flex gap-3 overflow-x-auto pb-2">
             {fotos.map((f: any) => (
-              <a key={f.id} href={f.foto_url} target="_blank" rel="noopener noreferrer" className="flex-shrink-0">
-                <img src={f.foto_url} alt="Foto" className="w-32 h-32 object-cover rounded-lg border border-slate-700" />
+              <MidiaPrivada key={f.id} url={f.foto_url}>{(u) => (
+<a href={u} target="_blank" rel="noopener noreferrer" className="flex-shrink-0">
+                <img src={u} alt="Foto" className="w-32 h-32 object-cover rounded-lg border border-slate-700" />
               </a>
+)}</MidiaPrivada>
             ))}
           </div>
         </div>

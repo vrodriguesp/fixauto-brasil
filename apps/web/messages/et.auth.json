@@ -20,7 +20,7 @@
     "labelTelefone": "Telefon",
     "placeholderTelefone": "Telefoninumber koos suunakoodiga",
     "labelSenha": "Parool *",
-    "placeholderSenhaMinima": "Vähemalt 6 tähemärki",
+    "placeholderSenhaMinima": "Vähemalt 8 tähemärki",
     "aceiteTexto1": "Olen lugenud ja nõustun",
     "termosDeUso": "kasutustingimustega",
     "aceiteTexto2": "ning",
@@ -58,12 +58,12 @@
     "entrar": "Logi sisse"
   },
   "definirSenha": {
-    "erroSenhaCurta": "Parool peab olema vähemalt 6 tähemärki pikk",
+    "erroSenhaCurta": "Parool peab olema vähemalt 8 tähemärki pikk",
     "erroSenhasNaoCoincidem": "Paroolid ei kattu",
     "titulo": "Määra oma parool",
     "subtitulo": "Tere tulemast BipFixi! Vali oma kontole uus parool.",
     "labelNovaSenha": "Uus parool",
-    "placeholderSenhaMinima": "Vähemalt 6 tähemärki",
+    "placeholderSenhaMinima": "Vähemalt 8 tähemärki",
     "labelConfirmarSenha": "Kinnita parool",
     "placeholderRepitaSenha": "Korda parooli",
     "salvando": "Salvestamine...",
@@ -78,7 +78,7 @@
     "descOficina": "Soovin saada ja saata hinnapakkumisi"
   },
   "resetPassword": {
-    "erroSenhaCurta": "Parool peab olema vähemalt 6 tähemärki pikk",
+    "erroSenhaCurta": "Parool peab olema vähemalt 8 tähemärki pikk",
     "erroSenhasNaoCoincidem": "Paroolid ei kattu",
     "senhaAlteradaTitulo": "Parool muudetud!",
     "redirecionando": "Suunamine sisselogimisse...",
@@ -88,7 +88,7 @@
     "titulo": "Uus parool",
     "subtitulo": "Vali oma uus parool",
     "labelNovaSenha": "Uus parool",
-    "placeholderSenhaMinima": "Vähemalt 6 tähemärki",
+    "placeholderSenhaMinima": "Vähemalt 8 tähemärki",
     "labelConfirmarSenha": "Kinnita parool",
     "placeholderRepitaSenha": "Korda parooli",
     "salvando": "Salvestamine...",

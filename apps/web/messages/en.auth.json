@@ -20,7 +20,7 @@
     "labelTelefone": "Phone",
     "placeholderTelefone": "Phone number with country code",
     "labelSenha": "Password *",
-    "placeholderSenhaMinima": "At least 6 characters",
+    "placeholderSenhaMinima": "At least 8 characters",
     "aceiteTexto1": "I have read and accept the",
     "termosDeUso": "Terms of Use",
     "aceiteTexto2": "and the",
@@ -58,12 +58,12 @@
     "entrar": "Log in"
   },
   "definirSenha": {
-    "erroSenhaCurta": "Password must be at least 6 characters",
+    "erroSenhaCurta": "Password must be at least 8 characters",
     "erroSenhasNaoCoincidem": "Passwords don't match",
     "titulo": "Set your password",
     "subtitulo": "Welcome to BipFix! Choose a new password for your account.",
     "labelNovaSenha": "New password",
-    "placeholderSenhaMinima": "At least 6 characters",
+    "placeholderSenhaMinima": "At least 8 characters",
     "labelConfirmarSenha": "Confirm password",
     "placeholderRepitaSenha": "Repeat the password",
     "salvando": "Saving...",
@@ -78,7 +78,7 @@
     "descOficina": "I want to receive and send quotes"
   },
   "resetPassword": {
-    "erroSenhaCurta": "Password must be at least 6 characters",
+    "erroSenhaCurta": "Password must be at least 8 characters",
     "erroSenhasNaoCoincidem": "Passwords don't match",
     "senhaAlteradaTitulo": "Password changed!",
     "redirecionando": "Redirecting to login...",
@@ -88,7 +88,7 @@
     "titulo": "New password",
     "subtitulo": "Choose your new password",
     "labelNovaSenha": "New password",
-    "placeholderSenhaMinima": "At least 6 characters",
+    "placeholderSenhaMinima": "At least 8 characters",
     "labelConfirmarSenha": "Confirm password",
     "placeholderRepitaSenha": "Repeat the password",
     "salvando": "Saving...",

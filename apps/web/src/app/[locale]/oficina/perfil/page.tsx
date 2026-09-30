@@ -112,10 +112,10 @@ export default function PerfilOficinaPage() {
     const ext = compressed.name.split('.').pop() || 'jpg';
     const fileName = `oficinas/${oficina.id}/logo.${ext}`;
     const { data: uploadData } = await supabase.storage
-      .from('damage-photos')
+      .from('publico')
       .upload(fileName, compressed, { contentType: compressed.type, upsert: true });
     if (uploadData?.path) {
-      const { data: urlData } = supabase.storage.from('damage-photos').getPublicUrl(uploadData.path);
+      const { data: urlData } = supabase.storage.from('publico').getPublicUrl(uploadData.path);
       setLogoUrl(urlData.publicUrl);
       await supabase.from('oficinas').update({ logo_url: urlData.publicUrl }).eq('id', oficina.id);
     }
@@ -150,12 +150,12 @@ export default function PerfilOficinaPage() {
       const ext = compressed.name.split('.').pop() || 'jpg';
       const fileName = `oficinas/${oficina.id}/${Date.now()}.${ext}`;
       const { data: uploadData } = await supabase.storage
-        .from('damage-photos')
+        .from('publico')
         .upload(fileName, compressed, { contentType: compressed.type });
 
       if (uploadData?.path) {
         const { data: urlData } = supabase.storage
-          .from('damage-photos')
+          .from('publico')
           .getPublicUrl(uploadData.path);
 
         const { data: fotoData } = await supabase

@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { randomInt } from 'node:crypto';
 import { sendFuncionarioNovaSenhaEmail } from '@/lib/notifications';
 import { getSessionUserId } from '@/lib/api-auth';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
+// Gerador criptografico (Math.random() e previsivel - OWASP); 12 caracteres
 function gerarSenhaTemporaria(): string {
   const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#$&';
   let senha = '';
-  for (let i = 0; i < 8; i++) senha += chars[Math.floor(Math.random() * chars.length)];
+  for (let i = 0; i < 12; i++) senha += chars[randomInt(chars.length)];
   return senha;
 }
 

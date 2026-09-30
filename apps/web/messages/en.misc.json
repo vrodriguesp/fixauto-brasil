@@ -506,7 +506,10 @@
     "quoteMsgBase": "Quote from {oficina}: {valor}, {dias}-day timeline.",
     "quoteMsgAddressPart": " Address: {endereco}",
     "quoteMsgCityPart": ", {cidade}",
-    "quoteMsgPhonePart": " Phone: {telefone}"
+    "quoteMsgPhonePart": " Phone: {telefone}",
+    "semAcessoTitulo": "Sign in to see this accident",
+    "semAcessoTexto": "For security, accident details are only shown to the people involved. Sign in with the account linked to this accident (the email that received the notice).",
+    "semAcessoEntrar": "Sign in"
   },
   "docsHome": {
     "metaTitle": "Help Center",

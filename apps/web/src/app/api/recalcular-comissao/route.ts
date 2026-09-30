@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { recalcularComissaoConfig } from '@/lib/comissao';
+import { getSessionUserId } from '@/lib/api-auth';
+import { dentroDoLimite } from '@/lib/rate-limit';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 // Chamado (fire-and-forget) sempre que algo que afeta a taxa de comissao
 // muda do lado do cliente: orcamento enviado/revisado, nova avaliacao.
@@ -16,6 +14,14 @@ export async function POST(req: NextRequest) {
     const { oficinaId } = await req.json();
     if (!oficinaId) {
       return NextResponse.json({ error: 'oficinaId obrigatório' }, { status: 400 });
+    }
+    // Quem pode pedir o recalculo: pessoa ligada a oficina (dona/funcionaria)
+    // ou o cliente cuja acao mudou a metrica (avaliacao, aceite) - basta
+    // estar logado e dentro do limite; o calculo so le dados do banco.
+    const userId = await getSessionUserId(req);
+    if (!userId) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+    if (!dentroDoLimite(`recalcular:${userId}`, 60, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Muitas requisições' }, { status: 429 });
     }
     const info = await recalcularComissaoConfig(supabaseAdmin, oficinaId);
     return NextResponse.json(info);

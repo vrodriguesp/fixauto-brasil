@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter, rota } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { supabase } from '@/lib/supabase';
+import { salvarTokenEmergencia } from '@/lib/emergencia-token';
 import { compressImage } from '@/lib/image-compress';
 
 export default function EmergenciaPage() {
@@ -139,16 +139,6 @@ export default function EmergenciaPage() {
     else setStep(step - 1);
   };
 
-  const uploadPhotos = async (emergId: string) => {
-    const formData = new FormData();
-    formData.append('emergenciaId', emergId);
-    fotos.forEach((f) => formData.append('fotos', f.file));
-
-    const res = await fetch('/api/upload-emergencia', { method: 'POST', body: formData });
-    const data = await res.json();
-    return (data.urls as string[]) || [];
-  };
-
   const handleSubmit = async () => {
     setSubmitting(true);
     setError('');
@@ -156,73 +146,32 @@ export default function EmergenciaPage() {
     try {
       const loc = await resolveLocation();
 
-      // 1. Create emergencia
-      const { data: emergencia, error: emergError } = await supabase
-        .from('emergencias')
-        .insert({
-          profile_id: user?.id || null,
-          nome,
-          email,
-          telefone,
-          descricao: `[TIPO:${tipoAcidente}] ${descricao || 'Emergência - Colisão'}`,
-          endereco: localizacao,
-          latitude: loc.lat,
-          longitude: loc.lon,
-          prioridade: 'urgente',
-        })
-        .select()
-        .single();
-
-      if (emergError || !emergencia) {
-        setError(emergError?.message || t('errorGenericSubmit'));
+      // Tudo no servidor numa chamada so: acidente, fotos, conta (se nao
+      // estiver logado), solicitacao e aviso as oficinas proximas.
+      const form = new FormData();
+      form.append('dados', JSON.stringify({
+        nome,
+        email,
+        telefone,
+        idioma: locale,
+        tipoAcidente,
+        descricao,
+        endereco: localizacao,
+        latitude: loc.lat,
+        longitude: loc.lon,
+        placa: placa || null,
+        veiculoInfo: veiculoInfo || null,
+      }));
+      fotos.forEach((f) => form.append('fotos', f.file));
+      const res = await fetch('/api/emergencia', { method: 'POST', body: form });
+      const r = await res.json().catch(() => ({}));
+      if (!res.ok || !r.id) {
+        setError(r.error || t('errorGenericSubmit'));
         setSubmitting(false);
         return;
       }
-
-      setEmergenciaId(emergencia.id);
-
-      // 2. Upload photos
-      const photoUrls = fotos.length > 0 ? await uploadPhotos(emergencia.id) : [];
-
-      // 3. Create account (if not logged in) + solicitação via server API
-      const solRes = await fetch('/api/criar-solicitacao-emergencia', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          emergenciaId: emergencia.id,
-          clienteId: user?.id || null,
-          nome,
-          email,
-          telefone,
-          idioma: locale,
-          tipoAcidente,
-          descricao: `[TIPO:${tipoAcidente}] ${descricao || 'Emergência - Colisão registrada pelo fluxo "Acabei de bater"'}`,
-          latitude: loc.lat,
-          longitude: loc.lon,
-          endereco: localizacao,
-          photoUrls,
-          placa: placa || null,
-          veiculoInfo: veiculoInfo || null,
-        }),
-      });
-      if (!solRes.ok) {
-        console.error('[emergencia] Criar solicitacao failed:', await solRes.text());
-      }
-
-      // 4. NOTIFY nearby oficinas (usa a localizacao resolvida acima, nunca
-      // o default fixo de Sao Paulo)
-      const notifyRes = await fetch('/api/notificar-oficinas-emergencia', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          emergenciaId: emergencia.id,
-          latitude: loc.lat,
-          longitude: loc.lon,
-        }),
-      });
-      if (!notifyRes.ok) {
-        console.error('[emergencia] Notify failed:', await notifyRes.text());
-      }
+      salvarTokenEmergencia(r.id, r.token);
+      setEmergenciaId(r.id);
 
       setSubmitting(false);
       setSubmitted(true);

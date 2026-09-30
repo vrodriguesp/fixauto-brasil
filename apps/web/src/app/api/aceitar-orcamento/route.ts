@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/api-auth';
 import { notifOrcamentoAceito, notifReparoAgendadoTitulo, notifOrcamentoAceitoPagamento, chatResumoOrcamentoAceito, chatOrcamentoAceitoNegociarPagamento } from '@/lib/notif-i18n';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { sendOrcamentoAceitoPagamentoEmail, sendOrcamentoAceitoOutroEmail } from '@/lib/notifications';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
 // Use service_role key to bypass RLS - the agenda insert needs
 // to be done by the server because the client user doesn't have
 // permission to insert into the oficina's agenda table.
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 export async function POST(req: NextRequest) {
   try {

@@ -473,7 +473,7 @@
     "semComissaoOrcamento": "BipFix ei võta selle pakkumise pealt komisjonitasu. Summa, mille saadad, on summa, mida klient näeb."
   },
   "oficinaEquipe": {
-    "erroSenhaMinima": "Parool peab olema vähemalt 6 tähemärki",
+    "erroSenhaMinima": "Parool peab olema vähemalt 8 tähemärki",
     "confirmResetSenha": "Genereerida uus ajutine parool kasutajale {nome}? Praegune parool lakkab töötamast.",
     "esteFuncionario": "sellele töötajale",
     "funcionarioFallback": "Töötaja",

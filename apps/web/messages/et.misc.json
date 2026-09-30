@@ -506,7 +506,10 @@
     "quoteMsgBase": "Hinnapakkumine töökojalt {oficina}: {valor}, tähtaeg {dias} päeva.",
     "quoteMsgAddressPart": " Aadress: {endereco}",
     "quoteMsgCityPart": ", {cidade}",
-    "quoteMsgPhonePart": " Tel: {telefone}"
+    "quoteMsgPhonePart": " Tel: {telefone}",
+    "semAcessoTitulo": "Logi sisse, et avariid näha",
+    "semAcessoTexto": "Turvalisuse huvides näevad avarii andmeid ainult selles osalejad. Logi sisse kontoga, mis on selle avariiga seotud (e-post, kuhu teade saadeti).",
+    "semAcessoEntrar": "Logi sisse"
   },
   "docsHome": {
     "metaTitle": "Abikeskus",

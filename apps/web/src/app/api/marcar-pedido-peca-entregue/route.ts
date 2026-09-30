@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { recalcularComissaoPecasConfig } from '@/lib/comissao-pecas';
 import { taxaEfetivaPecas } from '@/lib/comissao-regras';
 import { getSessionUserId } from '@/lib/api-auth';
 import { sendPedidoPecaEntregueEmail } from '@/lib/notifications';
 import { notifPedidoPecaEntregue } from '@/lib/notif-i18n';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 // Marca um pedido de peca como entregue e lanca a comissao da plataforma.
 // Rota de servidor (service role) pra sempre conseguir gravar

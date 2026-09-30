@@ -11,6 +11,7 @@ import NoShowWarning from '@/components/ui/NoShowWarning';
 import DamageAnalysis from '@/components/ui/DamageAnalysis';
 import { formatDate, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
 import { Link } from '@/i18n/navigation';
+import MidiaPrivada from '@/components/midia/MidiaPrivada';
 
 export default function SolicitacaoDetalhePage() {
   const t = useTranslations('oficinaSolicitacaoDetalhe');
@@ -115,9 +116,10 @@ export default function SolicitacaoDetalhePage() {
               <h2 className="font-semibold text-gray-900 mb-3">{t('fotosCount', { count: sol.fotos.length })}</h2>
               <div className="grid grid-cols-3 gap-3">
                 {sol.fotos.map((foto: any) => (
-                  <a key={foto.id} href={foto.foto_url} target="_blank" rel="noopener noreferrer" className="aspect-square bg-gray-200 rounded-lg overflow-hidden block">
+                  <MidiaPrivada key={foto.id} url={foto.foto_url}>{(u) => (
+<a href={u} target="_blank" rel="noopener noreferrer" className="aspect-square bg-gray-200 rounded-lg overflow-hidden block">
                     {foto.foto_url ? (
-                      <img src={foto.foto_url} alt={foto.descricao || t('fotoDoDanoAlt')} className="w-full h-full object-cover hover:opacity-90 transition-opacity" />
+                      <img src={u} alt={foto.descricao || t('fotoDoDanoAlt')} className="w-full h-full object-cover hover:opacity-90 transition-opacity" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,6 +128,7 @@ export default function SolicitacaoDetalhePage() {
                       </div>
                     )}
                   </a>
+)}</MidiaPrivada>
                 ))}
               </div>
             </div>

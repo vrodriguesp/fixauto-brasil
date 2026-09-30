@@ -1,16 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getSessionUserId } from '@/lib/api-auth';
+import { dentroDoLimite } from '@/lib/rate-limit';
+import { podeVerSolicitacao } from '@/lib/acesso-servico';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 export async function POST(req: NextRequest) {
   try {
     const { solicitacao_id } = await req.json();
     if (!solicitacao_id) {
       return NextResponse.json({ error: 'solicitacao_id obrigatório' }, { status: 400 });
+    }
+
+    // So quem pode ver o pedido (cliente, oficinas enquanto aberto, oficina
+    // envolvida, admin); limite por pessoa porque cada analise nova custa.
+    const userId = await getSessionUserId(req);
+    if (!userId) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+    if (!(await podeVerSolicitacao(userId, solicitacao_id))) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    }
+    if (!dentroDoLimite(`analisar:${userId}`, 20, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Muitas requisições' }, { status: 429 });
     }
 
     // Check cached analysis
@@ -69,10 +79,11 @@ export async function POST(req: NextRequest) {
 
     // Call Gemini Vision API
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      // Chave no cabecalho, nao na URL (URLs aparecem em logs de proxy)
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
         body: JSON.stringify({
           contents: [{
             parts: [

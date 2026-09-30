@@ -13,6 +13,7 @@ import { formatCurrency, formatDate, getUrgenciaColor, cleanDescricao } from '@/
 import { currencyForCountry } from '@/lib/currency';
 import type { DisponibilidadeSlot } from '@fixauto/shared';
 import { notifOrcamentoRecusado } from '@/lib/notif-i18n';
+import MidiaPrivada from '@/components/midia/MidiaPrivada';
 
 function formatExecTime(hours: number | null, t: (key: string, values?: Record<string, string | number | Date>) => string): string {
   if (!hours) return '-';
@@ -241,9 +242,10 @@ export default function OrcamentoDetalhePage() {
             <p className="text-sm font-medium text-gray-700 mb-2">{t('photosCount', { count: solicitacao.fotos.length })}</p>
             <div className="flex gap-2">
               {solicitacao.fotos.map((foto) => (
-                <a key={foto.id} href={foto.foto_url} target="_blank" rel="noopener noreferrer" className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden block">
+                <MidiaPrivada key={foto.id} url={foto.foto_url}>{(u) => (
+<a href={u} target="_blank" rel="noopener noreferrer" className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden block">
                   {foto.foto_url ? (
-                    <img src={foto.foto_url} alt={foto.descricao || t('photoFallback')} className="w-full h-full object-cover" />
+                    <img src={u} alt={foto.descricao || t('photoFallback')} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -252,6 +254,7 @@ export default function OrcamentoDetalhePage() {
                     </div>
                   )}
                 </a>
+)}</MidiaPrivada>
               ))}
             </div>
           </div>

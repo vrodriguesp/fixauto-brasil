@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import AudioPlayer from './AudioPlayer';
+import { useUrlMidia } from '@/components/midia/MidiaPrivada';
 
 interface AudioMessageProps {
   audioUrl: string;
@@ -24,6 +25,7 @@ export default function AudioMessage({
   const [localTranscricao, setLocalTranscricao] = useState(transcricao);
   const [localStatus, setLocalStatus] = useState(transcricaoStatus);
   const [transcribing, setTranscribing] = useState(false);
+  const urlAssinada = useUrlMidia(audioUrl);
 
   const handleTranscrever = async () => {
     setTranscribing(true);
@@ -52,7 +54,7 @@ export default function AudioMessage({
 
   return (
     <div className="space-y-1.5">
-      <AudioPlayer src={audioUrl} duration={duration} />
+      {urlAssinada && <AudioPlayer src={urlAssinada} duration={duration} />}
 
       {localTranscricao && localStatus === 'concluida' ? (
         <button

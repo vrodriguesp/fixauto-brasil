@@ -48,7 +48,7 @@ export default function EquipePage() {
 
   const handleAdd = async () => {
     if (!oficina || !form.email || !form.senha) return;
-    if (form.senha.length < 6) {
+    if (form.senha.length < 8) {
       setError(t('erroSenhaMinima'));
       return;
     }

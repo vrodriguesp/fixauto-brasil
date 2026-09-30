@@ -473,7 +473,7 @@
     "semComissaoOrcamento": "A BipFix não cobra comissão sobre este orçamento. O valor que enviar é o valor que o cliente vê."
   },
   "oficinaEquipe": {
-    "erroSenhaMinima": "A palavra-passe deve ter pelo menos 6 caracteres",
+    "erroSenhaMinima": "A palavra-passe deve ter pelo menos 8 caracteres",
     "confirmResetSenha": "Gerar uma nova palavra-passe temporária para {nome}? A palavra-passe atual deixará de funcionar.",
     "esteFuncionario": "este colaborador",
     "funcionarioFallback": "Colaborador",

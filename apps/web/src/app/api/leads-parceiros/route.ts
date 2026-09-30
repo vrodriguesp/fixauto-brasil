@@ -1,19 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { sendLeadParceiroEmail } from '@/lib/notifications';
+import { limitarPorIp } from '@/lib/rate-limit';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 // Rota publica (sem login) usada pelo formulario de /seja-parceiro. Usa a
 // service role pra poder validar/sanitizar no servidor antes de gravar, em
 // vez de deixar o client anonimo inserir direto na tabela.
 export async function POST(req: NextRequest) {
   try {
+    // Formulario publico: limite por IP (cada lead manda e-mail ao admin)
+    if (!limitarPorIp(req, 'leads', 5, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Muitas requisições' }, { status: 429 });
+    }
     const body = await req.json();
     const { tipo, nomeResponsavel, nomeNegocio, cidade, estado, whatsapp, email, observacao } = body;
+    const longo = (v: unknown, max: number) => typeof v === 'string' && v.length > max;
+    if (longo(nomeResponsavel, 100) || longo(nomeNegocio, 150) || longo(cidade, 100) || longo(estado, 60) || longo(whatsapp, 30) || longo(email, 254) || longo(observacao, 2000)) {
+      return NextResponse.json({ error: 'Campo muito longo' }, { status: 400 });
+    }
 
     if (!tipo || !['oficina', 'loja_pecas'].includes(tipo)) {
       return NextResponse.json({ error: 'Tipo inválido' }, { status: 400 });

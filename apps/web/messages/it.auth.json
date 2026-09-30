@@ -20,7 +20,7 @@
     "labelTelefone": "Telefono",
     "placeholderTelefone": "Numero di telefono con prefisso internazionale",
     "labelSenha": "Password *",
-    "placeholderSenhaMinima": "Minimo 6 caratteri",
+    "placeholderSenhaMinima": "Minimo 8 caratteri",
     "aceiteTexto1": "Ho letto e accetto i",
     "termosDeUso": "Termini di Utilizzo",
     "aceiteTexto2": "e la",
@@ -58,12 +58,12 @@
     "entrar": "Accedi"
   },
   "definirSenha": {
-    "erroSenhaCurta": "La password deve contenere almeno 6 caratteri",
+    "erroSenhaCurta": "La password deve contenere almeno 8 caratteri",
     "erroSenhasNaoCoincidem": "Le password non coincidono",
     "titulo": "Imposta la tua password",
     "subtitulo": "Benvenuto su BipFix! Scegli una nuova password per il tuo account.",
     "labelNovaSenha": "Nuova password",
-    "placeholderSenhaMinima": "Minimo 6 caratteri",
+    "placeholderSenhaMinima": "Minimo 8 caratteri",
     "labelConfirmarSenha": "Conferma password",
     "placeholderRepitaSenha": "Ripeti la password",
     "salvando": "Salvataggio in corso...",
@@ -78,7 +78,7 @@
     "descOficina": "Voglio ricevere e inviare preventivi"
   },
   "resetPassword": {
-    "erroSenhaCurta": "La password deve contenere almeno 6 caratteri",
+    "erroSenhaCurta": "La password deve contenere almeno 8 caratteri",
     "erroSenhasNaoCoincidem": "Le password non coincidono",
     "senhaAlteradaTitulo": "Password modificata!",
     "redirecionando": "Reindirizzamento al login in corso...",
@@ -88,7 +88,7 @@
     "titulo": "Nuova password",
     "subtitulo": "Scegli la tua nuova password",
     "labelNovaSenha": "Nuova password",
-    "placeholderSenhaMinima": "Minimo 6 caratteri",
+    "placeholderSenhaMinima": "Minimo 8 caratteri",
     "labelConfirmarSenha": "Conferma password",
     "placeholderRepitaSenha": "Ripeti la password",
     "salvando": "Salvataggio in corso...",

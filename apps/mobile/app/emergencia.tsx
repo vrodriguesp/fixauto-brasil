@@ -12,7 +12,6 @@ import i18n from '../i18n';
 
 // Coordenada default de Sao Paulo, so pro caso raro de geolocalizacao E
 // geocodificacao por endereco falharem - mesmo fallback do site.
-const COORDS_DEFAULT = { lat: -23.5505, lon: -46.6333 };
 
 export default function EmergenciaScreen() {
   const { t } = useTranslation();
@@ -64,18 +63,8 @@ export default function EmergenciaScreen() {
     }
   };
 
-  const uploadFotos = async (emergenciaId: string): Promise<string[]> => {
-    if (fotos.length === 0) return [];
-    const formData = new FormData();
-    formData.append('emergenciaId', emergenciaId);
-    fotos.forEach((foto, i) => {
-      formData.append('fotos', { uri: foto.uri, name: `foto-${i}.jpg`, type: 'image/jpeg' } as any);
-    });
-    const res = await fetch(`${API_BASE_URL}/api/upload-emergencia`, { method: 'POST', body: formData });
-    const data = await res.json();
-    return data.urls || [];
-  };
-
+  // Tudo no servidor numa chamada so (/api/emergencia): acidente, fotos,
+  // solicitacao e aviso as oficinas. O dono vem do login (Authorization).
   const handleEnviar = async () => {
     setEnviando(true);
     try {
@@ -85,52 +74,31 @@ export default function EmergenciaScreen() {
         const data = await res.json();
         if (data.latitude && data.longitude) localCoords = { lat: data.latitude, lon: data.longitude };
       }
-      const finalCoords = localCoords || COORDS_DEFAULT;
+      // Sem localizacao nao ha como avisar oficinas proximas (antes caia
+      // num ponto fixo em Sao Paulo, mesmo para acidentes na Europa)
+      if (!localCoords) throw new Error(t('emergencia.erroLocalizacao'));
 
-      const { data: emergencia, error: emergError } = await supabase
-        .from('emergencias')
-        .insert({
-          profile_id: user?.id || null,
-          nome: user?.nome || '',
-          email: user?.email || '',
-          telefone: user?.telefone || '',
-          descricao: `[TIPO:outro_causou] ${descricao || 'Emergência - Colisão'}`,
-          endereco,
-          latitude: finalCoords.lat,
-          longitude: finalCoords.lon,
-          prioridade: 'urgente',
-        })
-        .select()
-        .single();
-
-      if (emergError || !emergencia) throw new Error(emergError?.message || t('common.erroGenerico'));
-
-      const photoUrls = await uploadFotos(emergencia.id);
-
-      await fetch(`${API_BASE_URL}/api/criar-solicitacao-emergencia`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          emergenciaId: emergencia.id,
-          clienteId: user?.id || null,
-          nome: user?.nome || '',
-          email: user?.email || '',
-          telefone: user?.telefone || '',
-          idioma: i18n.language,
-          tipoAcidente: 'outro_causou',
-          descricao: `[TIPO:outro_causou] ${descricao || 'Emergência - Colisão registrada pelo app'}`,
-          latitude: finalCoords.lat,
-          longitude: finalCoords.lon,
-          endereco,
-          photoUrls,
-        }),
+      const form = new FormData();
+      form.append('dados', JSON.stringify({
+        idioma: i18n.language,
+        tipoAcidente: 'outro_causou',
+        descricao: descricao || null,
+        endereco,
+        latitude: localCoords.lat,
+        longitude: localCoords.lon,
+      }));
+      fotos.forEach((foto, i) => {
+        form.append('fotos', { uri: foto.uri, name: `foto-${i}.jpg`, type: 'image/jpeg' } as any);
       });
 
-      await fetch(`${API_BASE_URL}/api/notificar-oficinas-emergencia`, {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${API_BASE_URL}/api/emergencia`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emergenciaId: emergencia.id, latitude: finalCoords.lat, longitude: finalCoords.lon }),
+        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : undefined,
+        body: form,
       });
+      const r = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(r.error || t('common.erroGenerico'));
 
       setEnviado(true);
     } catch (e) {

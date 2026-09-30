@@ -1,13 +1,9 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import type { PlataformaMetricas } from '@fixauto/shared';
 import { requireAdmin } from '@/lib/admin-auth';
 import { currencyForCountry } from '@/lib/currency';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 // Metrics change constantly - never let Next.js cache this route's response
 // (dynamic alone wasn't enough - the internal fetch calls made by

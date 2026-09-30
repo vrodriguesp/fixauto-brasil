@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { distanciaKm } from '@/lib/utils';
 import { sendCotacaoPecaDisponivelEmail } from '@/lib/notifications';
 import { notifCotacaoPecaDisponivel } from '@/lib/notif-i18n';
+import { getSessionUserId } from '@/lib/api-auth';
+import { dentroDoLimite } from '@/lib/rate-limit';
+import { oficinaDoUsuarioEhDona } from '@/lib/acesso-servico';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 // Notifica oficinas que se inscreveram como fornecedoras de pecas
 // (oficinas.vende_pecas = true) e estao dentro do raio de atendimento da
@@ -22,6 +21,17 @@ export async function POST(req: NextRequest) {
 
     if (!cotacaoId || !oficinaCompradoraId || latitude == null || longitude == null) {
       return NextResponse.json({ error: 'cotacaoId, oficinaCompradoraId, latitude e longitude sao obrigatorios' }, { status: 400 });
+    }
+
+    // So a dona da oficina que pediu a cotacao, para a cotacao dela
+    const userId = await getSessionUserId(req);
+    if (!userId) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+    const { data: cot } = await supabaseAdmin.from('cotacoes_pecas').select('oficina_id').eq('id', cotacaoId).maybeSingle();
+    if (!cot || cot.oficina_id !== oficinaCompradoraId || !(await oficinaDoUsuarioEhDona(userId, oficinaCompradoraId))) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    }
+    if (!dentroDoLimite(`fornecedores:${userId}`, 20, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Muitas requisições' }, { status: 429 });
     }
 
     // Caixa larga (100km) so pra pre-filtrar no banco por performance - o

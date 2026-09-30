@@ -144,7 +144,7 @@ export async function middleware(req: NextRequest) {
           return req.cookies.get(name)?.value;
         },
         set(name: string, value: string, options: CookieOptions) {
-          res.cookies.set({ name, value, ...options });
+          res.cookies.set({ name, value, ...options, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' });
         },
         remove(name: string, options: CookieOptions) {
           res.cookies.set({ name, value: '', ...options });
@@ -153,7 +153,9 @@ export async function middleware(req: NextRequest) {
     }
   );
 
-  const { data: { session } } = await supabase.auth.getSession();
+  // getUser() valida o token no servidor de autenticacao (e renova a sessao);
+  // getSession() so lia o cookie e aceitaria um token forjado (docs do Supabase).
+  const { data: { user: usuario } } = await supabase.auth.getUser();
 
   // path.startsWith('/oficina') tambem casava com "/oficinas" (perfil publico
   // de oficina, sem login) - a pagina de SEO mais importante do site
@@ -166,15 +168,15 @@ export async function middleware(req: NextRequest) {
   // /admin nao tem idioma: o login dele e o da versao em portugues
   const withLocale = (target: string) => new URL(`${localePrefix || LOCALE_PREFIX.pt}${target}`, req.url);
 
-  if (isProtected && !session) {
+  if (isProtected && !usuario) {
     return NextResponse.redirect(withLocale('/login'));
   }
 
-  if (isProtected && session) {
+  if (isProtected && usuario) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('tipo, ativo')
-      .eq('id', session.user.id)
+      .eq('id', usuario.id)
       .single();
 
     // Deactivated accounts (admin action) can't use any protected area
@@ -193,7 +195,7 @@ export async function middleware(req: NextRequest) {
     // e aceitavel pra um painel administrativo (diferente de cliente/
     // oficina, onde ficar logado por dias e ate desejavel).
     if (isUnderPath('/admin') && profile?.tipo === 'admin') {
-      const lastSignIn = session.user.last_sign_in_at ? new Date(session.user.last_sign_in_at).getTime() : 0;
+      const lastSignIn = usuario.last_sign_in_at ? new Date(usuario.last_sign_in_at).getTime() : 0;
       const hoursSinceSignIn = (Date.now() - lastSignIn) / (1000 * 60 * 60);
       if (!lastSignIn || hoursSinceSignIn > ADMIN_MAX_SESSION_HOURS) {
         await supabase.auth.signOut();
@@ -207,7 +209,7 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  if (isAuthPage && session) {
+  if (isAuthPage && usuario) {
     return NextResponse.redirect(withLocale('/'));
   }
 

@@ -20,7 +20,7 @@
     "labelTelefone": "Telemóvel",
     "placeholderTelefone": "Número de telefone com indicativo do país",
     "labelSenha": "Palavra-passe *",
-    "placeholderSenhaMinima": "Pelo menos 6 caracteres",
+    "placeholderSenhaMinima": "Pelo menos 8 caracteres",
     "aceiteTexto1": "Li e aceito os",
     "termosDeUso": "Termos de Utilização",
     "aceiteTexto2": "e a",
@@ -58,12 +58,12 @@
     "entrar": "Iniciar sessão"
   },
   "definirSenha": {
-    "erroSenhaCurta": "A palavra-passe deve ter pelo menos 6 caracteres",
+    "erroSenhaCurta": "A palavra-passe deve ter pelo menos 8 caracteres",
     "erroSenhasNaoCoincidem": "As palavras-passe não coincidem",
     "titulo": "Defina a sua palavra-passe",
     "subtitulo": "Bem-vindo à BipFix! Escolha uma nova palavra-passe para a sua conta.",
     "labelNovaSenha": "Nova palavra-passe",
-    "placeholderSenhaMinima": "Pelo menos 6 caracteres",
+    "placeholderSenhaMinima": "Pelo menos 8 caracteres",
     "labelConfirmarSenha": "Confirmar palavra-passe",
     "placeholderRepitaSenha": "Repita a palavra-passe",
     "salvando": "A guardar...",
@@ -78,7 +78,7 @@
     "descOficina": "Quero receber pedidos e enviar orçamentos"
   },
   "resetPassword": {
-    "erroSenhaCurta": "A palavra-passe deve ter pelo menos 6 caracteres",
+    "erroSenhaCurta": "A palavra-passe deve ter pelo menos 8 caracteres",
     "erroSenhasNaoCoincidem": "As palavras-passe não coincidem",
     "senhaAlteradaTitulo": "Palavra-passe alterada!",
     "redirecionando": "A redirecionar para o início de sessão...",
@@ -88,7 +88,7 @@
     "titulo": "Nova palavra-passe",
     "subtitulo": "Escolha a sua nova palavra-passe",
     "labelNovaSenha": "Nova palavra-passe",
-    "placeholderSenhaMinima": "Pelo menos 6 caracteres",
+    "placeholderSenhaMinima": "Pelo menos 8 caracteres",
     "labelConfirmarSenha": "Confirmar palavra-passe",
     "placeholderRepitaSenha": "Repita a palavra-passe",
     "salvando": "A guardar...",

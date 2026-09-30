@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { limitarPorIp } from '@/lib/rate-limit';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 // Public endpoint (called from any page, including anonymous visitors) that
 // records a client-side JS error so it shows up in /admin/monitoramento.
 // Inputs are truncated defensively since this is reachable by anyone.
 export async function POST(req: NextRequest) {
   try {
+    if (!limitarPorIp(req, 'log-error', 30, 60 * 60 * 1000)) return NextResponse.json({ success: true });
     const body = await req.json();
     const mensagem = String(body.mensagem || 'Erro desconhecido').slice(0, 500);
     const stack = body.stack ? String(body.stack).slice(0, 3000) : null;

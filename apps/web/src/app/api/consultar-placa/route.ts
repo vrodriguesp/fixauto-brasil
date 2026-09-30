@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getSessionUserId } from '@/lib/api-auth';
+import { limitarPorIp } from '@/lib/rate-limit';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 let cachedToken: string | null = null;
 let tokenExpiry = 0;
@@ -28,20 +26,29 @@ async function getToken(): Promise<string> {
 
 export async function POST(req: NextRequest) {
   try {
+    // API paga: limite por IP (quem registra acidente sem login tambem usa)
+    const userId = await getSessionUserId(req);
+    if (!limitarPorIp(req, 'placa', userId ? 30 : 5, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Muitas requisições' }, { status: 429 });
+    }
     const { placa } = await req.json();
-    const clean = (placa || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    const clean = String(placa || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 10);
 
     if (!clean || clean.length < 7) {
       return NextResponse.json({ error: 'Placa inválida' }, { status: 400 });
     }
 
-    // 1. Check DB first (any vehicle with this placa)
-    const { data: dbVeiculo } = await supabaseAdmin
-      .from('veiculos')
-      .select('fipe_marca, fipe_modelo, fipe_ano, cor, placa')
-      .eq('placa', clean)
-      .limit(1)
-      .single();
+    // 1. Veiculos da PROPRIA pessoa primeiro (antes buscava em todos os
+    // veiculos do banco e revelava o carro de outra pessoa pela placa)
+    const { data: dbVeiculo } = userId
+      ? await supabaseAdmin
+          .from('veiculos')
+          .select('fipe_marca, fipe_modelo, fipe_ano, cor, placa')
+          .eq('placa', clean)
+          .eq('profile_id', userId)
+          .limit(1)
+          .maybeSingle()
+      : { data: null };
 
     if (dbVeiculo && dbVeiculo.fipe_marca !== 'A definir') {
       return NextResponse.json({

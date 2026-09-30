@@ -103,6 +103,9 @@ export const routing = defineRouting({
     prefixes: { pt: '/pt-br', 'pt-PT': '/pt-pt' },
   },
   localeDetection: false,
+  // O idioma vem so da URL (e da escolha salva em bipfix_idioma); o cookie
+  // NEXT_LOCALE nao e usado - desligado (ia sem Secure).
+  localeCookie: false,
   pathnames: PATHNAMES as any, // areas logadas ficam fora da tabela (mesmo nome em todo idioma)
 });
 

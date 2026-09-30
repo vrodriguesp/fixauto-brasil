@@ -6,6 +6,7 @@ export const COOKIE_IDIOMA = 'bipfix_idioma';
 
 export function lembrarIdioma(locale: string) {
   try {
-    document.cookie = `${COOKIE_IDIOMA}=${encodeURIComponent(locale)}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
+    const seguro = window.location.protocol === 'https:' ? '; secure' : '';
+    document.cookie = `${COOKIE_IDIOMA}=${encodeURIComponent(locale)}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax${seguro}`;
   } catch {}
 }

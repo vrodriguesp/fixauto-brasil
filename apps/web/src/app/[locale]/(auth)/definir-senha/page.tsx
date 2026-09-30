@@ -19,7 +19,7 @@ export default function DefinirSenhaPage() {
     e.preventDefault();
     setError('');
 
-    if (novaSenha.length < 6) {
+    if (novaSenha.length < 8) {
       setError(t('erroSenhaCurta'));
       return;
     }
@@ -98,7 +98,7 @@ export default function DefinirSenhaPage() {
               value={novaSenha}
               onChange={(e) => setNovaSenha(e.target.value)}
               required
-              minLength={6}
+              minLength={8}
             />
           </div>
 
@@ -111,7 +111,7 @@ export default function DefinirSenhaPage() {
               value={confirmarSenha}
               onChange={(e) => setConfirmarSenha(e.target.value)}
               required
-              minLength={6}
+              minLength={8}
             />
           </div>
 

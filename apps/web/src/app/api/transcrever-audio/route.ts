@@ -1,16 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getSessionUserId } from '@/lib/api-auth';
+import { dentroDoLimite } from '@/lib/rate-limit';
+import { participaDaSolicitacao } from '@/lib/acesso-servico';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 export async function POST(request: NextRequest) {
   try {
     const { mensagemId } = await request.json();
     if (!mensagemId) {
       return NextResponse.json({ error: 'mensagemId obrigatório' }, { status: 400 });
+    }
+
+    // So quem participa da conversa (cliente ou oficina envolvida) - antes
+    // qualquer um lia a transcricao de qualquer audio e gastava o Gemini.
+    const userId = await getSessionUserId(request);
+    if (!userId) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+    const { data: dono } = await supabaseAdmin.from('mensagens').select('solicitacao_id').eq('id', mensagemId).maybeSingle();
+    if (!dono || !(await participaDaSolicitacao(userId, dono.solicitacao_id))) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    }
+    if (!dentroDoLimite(`transcrever:${userId}`, 30, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Muitas requisições' }, { status: 429 });
     }
 
     // Fetch the message
@@ -50,10 +61,11 @@ export async function POST(request: NextRequest) {
 
     // Use Gemini to transcribe
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      // Chave no cabecalho, nao na URL (URLs aparecem em logs de proxy)
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
         body: JSON.stringify({
           contents: [{
             parts: [

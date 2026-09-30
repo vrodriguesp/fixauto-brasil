@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { recalcularComissaoConfig } from '@/lib/comissao';
+import { getSessionUserId } from '@/lib/api-auth';
+import { dentroDoLimite } from '@/lib/rate-limit';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 export const dynamic = 'force-dynamic';
 
@@ -18,6 +16,12 @@ export async function POST(req: NextRequest) {
     const { oficinaId } = await req.json();
     if (!oficinaId) {
       return NextResponse.json({ error: 'oficinaId obrigatório' }, { status: 400 });
+    }
+    // Recalculo a partir do banco (idempotente): exige login e limite
+    const userId = await getSessionUserId(req);
+    if (!userId) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+    if (!dentroDoLimite(`avaliacao:${userId}`, 30, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Muitas requisições' }, { status: 429 });
     }
 
     const { data: reviews, error } = await supabaseAdmin

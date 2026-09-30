@@ -20,7 +20,7 @@
     "labelTelefone": "Telefone",
     "placeholderTelefone": "(11) 99999-0000",
     "labelSenha": "Senha *",
-    "placeholderSenhaMinima": "Mínimo 6 caracteres",
+    "placeholderSenhaMinima": "Mínimo 8 caracteres",
     "aceiteTexto1": "Li e aceito os",
     "termosDeUso": "Termos de Uso",
     "aceiteTexto2": "e a",
@@ -58,12 +58,12 @@
     "entrar": "Entrar"
   },
   "definirSenha": {
-    "erroSenhaCurta": "A senha deve ter pelo menos 6 caracteres",
+    "erroSenhaCurta": "A senha deve ter pelo menos 8 caracteres",
     "erroSenhasNaoCoincidem": "As senhas não coincidem",
     "titulo": "Defina sua senha",
     "subtitulo": "Bem-vindo ao BipFix! Escolha uma nova senha para sua conta.",
     "labelNovaSenha": "Nova senha",
-    "placeholderSenhaMinima": "Mínimo 6 caracteres",
+    "placeholderSenhaMinima": "Mínimo 8 caracteres",
     "labelConfirmarSenha": "Confirmar senha",
     "placeholderRepitaSenha": "Repita a senha",
     "salvando": "Salvando...",
@@ -78,7 +78,7 @@
     "descOficina": "Quero receber e enviar orçamentos"
   },
   "resetPassword": {
-    "erroSenhaCurta": "A senha deve ter pelo menos 6 caracteres",
+    "erroSenhaCurta": "A senha deve ter pelo menos 8 caracteres",
     "erroSenhasNaoCoincidem": "As senhas não coincidem",
     "senhaAlteradaTitulo": "Senha alterada!",
     "redirecionando": "Redirecionando para o login...",
@@ -88,7 +88,7 @@
     "titulo": "Nova senha",
     "subtitulo": "Escolha sua nova senha",
     "labelNovaSenha": "Nova senha",
-    "placeholderSenhaMinima": "Mínimo 6 caracteres",
+    "placeholderSenhaMinima": "Mínimo 8 caracteres",
     "labelConfirmarSenha": "Confirmar senha",
     "placeholderRepitaSenha": "Repita a senha",
     "salvando": "Salvando...",

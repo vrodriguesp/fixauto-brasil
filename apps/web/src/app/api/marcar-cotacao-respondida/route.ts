@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { getSessionUserId } from '@/lib/api-auth';
 import { sendCotacaoPecaRespondidaEmail } from '@/lib/notifications';
 import { currencyForCountry } from '@/lib/currency';
 import { notifCotacaoPecaRespondida } from '@/lib/notif-i18n';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 // A loja/oficina que responde uma cotacao nao e dona dela (a oficina
 // compradora e), entao a policy de UPDATE de cotacoes_pecas bloqueia

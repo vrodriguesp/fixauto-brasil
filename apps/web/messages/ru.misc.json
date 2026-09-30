@@ -506,7 +506,10 @@
     "quoteMsgBase": "Смета от {oficina}: {valor}, срок {dias} дн.",
     "quoteMsgAddressPart": " Адрес: {endereco}",
     "quoteMsgCityPart": ", {cidade}",
-    "quoteMsgPhonePart": " Телефон: {telefone}"
+    "quoteMsgPhonePart": " Телефон: {telefone}",
+    "semAcessoTitulo": "Войдите, чтобы увидеть это ДТП",
+    "semAcessoTexto": "В целях безопасности данные о ДТП видны только его участникам. Войдите в аккаунт, связанный с этим ДТП (адрес эл. почты, на который пришло уведомление).",
+    "semAcessoEntrar": "Войти"
   },
   "docsHome": {
     "metaTitle": "Центр помощи",

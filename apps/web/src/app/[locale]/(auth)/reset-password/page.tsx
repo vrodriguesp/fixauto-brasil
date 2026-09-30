@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 
 export default function ResetPasswordPage() {
   const t = useTranslations('resetPassword');
+  const tc = useTranslations('cadastro');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -14,6 +15,10 @@ export default function ResetPasswordPage() {
   const [success, setSuccess] = useState(false);
   const [sessionReady, setSessionReady] = useState(false);
   const [linkInvalido, setLinkInvalido] = useState(false);
+  // Conta criada pelo fluxo de acidente (sem cadastro): ainda nao aceitou os
+  // termos - pede o aceite aqui, junto com a definicao da senha.
+  const [precisaTermos, setPrecisaTermos] = useState(false);
+  const [aceitouTermos, setAceitouTermos] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -45,9 +50,19 @@ export default function ResetPasswordPage() {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (!sessionReady) return;
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return;
+      const { data } = await supabase.from('profiles').select('termos_aceitos_em').eq('id', user.id).maybeSingle();
+      setPrecisaTermos(!!data && !data.termos_aceitos_em);
+    });
+  }, [sessionReady]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) {
+    if (precisaTermos && !aceitouTermos) return;
+    if (password.length < 8) {
       setError(t('erroSenhaCurta'));
       return;
     }
@@ -64,6 +79,16 @@ export default function ResetPasswordPage() {
     if (error) {
       setError(error.message);
       return;
+    }
+
+    if (precisaTermos) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('profiles')
+          .update({ termos_aceitos_em: new Date().toISOString(), termos_versao: '2026-09-08' })
+          .eq('id', user.id);
+      }
     }
 
     setSuccess(true);
@@ -127,7 +152,7 @@ export default function ResetPasswordPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                minLength={8}
               />
             </div>
             <div>
@@ -139,11 +164,28 @@ export default function ResetPasswordPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                minLength={6}
+                minLength={8}
               />
             </div>
 
-            <button type="submit" className="btn-primary w-full" disabled={loading}>
+            {precisaTermos && (
+              <label className="flex items-start gap-2 text-sm text-gray-600">
+                <input
+                  type="checkbox"
+                  className="mt-1 w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
+                  checked={aceitouTermos}
+                  onChange={(e) => setAceitouTermos(e.target.checked)}
+                />
+                <span>
+                  {tc('aceiteTexto1')}{' '}
+                  <Link href="/termos" target="_blank" className="text-primary-600 hover:underline">{tc('termosDeUso')}</Link>
+                  {' '}{tc('aceiteTexto2')}{' '}
+                  <Link href="/privacidade" target="_blank" className="text-primary-600 hover:underline">{tc('politicaDePrivacidade')}</Link>
+                </span>
+              </label>
+            )}
+
+            <button type="submit" className="btn-primary w-full" disabled={loading || (precisaTermos && !aceitouTermos)}>
               {loading ? t('salvando') : t('salvarNovaSenha')}
             </button>
           </form>

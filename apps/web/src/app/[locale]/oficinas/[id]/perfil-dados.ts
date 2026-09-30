@@ -1,5 +1,5 @@
 import { cache } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
 // Dados do perfil publico de uma oficina, carregados NO SERVIDOR: o HTML ja
 // sai com nome, endereco, servicos, avaliacoes e dados estruturados (antes a
@@ -51,12 +51,21 @@ export interface PerfilOficina {
   totalServicosConcluidos: number;
 }
 
+function abreviarNome(nome: string): string {
+  const partes = (nome || '').trim().split(/\s+/).filter(Boolean);
+  if (partes.length <= 1) return partes[0] || '';
+  return `${partes[0]} ${partes[partes.length - 1][0].toUpperCase()}.`;
+}
+
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const carregarPerfilOficina = cache(async (id: string): Promise<PerfilOficina | null> => {
   if (!UUID.test(id)) return null;
 
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+  // So no servidor, com campos publicos escolhidos a dedo: com as regras de
+  // acesso por relacao (migracao 028), a chave publica nao le mais perfis
+  // nem orcamentos, que este perfil usa para telefone e estatisticas.
+  const supabase = supabaseAdmin;
 
   const [oficinaRes, avaliacoesRes, fotosRes, orcamentosRes, servicosRes] = await Promise.all([
     supabase
@@ -120,7 +129,11 @@ export const carregarPerfilOficina = cache(async (id: string): Promise<PerfilOfi
 
   return {
     oficina,
-    avaliacoes: (avaliacoesRes.data || []) as unknown as AvaliacaoPublica[],
+    // Nome de quem avaliou abreviado ("Maria K."): minimizacao de dados, RGPD art. 5(1)(c)
+    avaliacoes: ((avaliacoesRes.data || []) as unknown as AvaliacaoPublica[]).map((a) => ({
+      ...a,
+      cliente: a.cliente ? { nome: abreviarNome(a.cliente.nome) } : null,
+    })),
     fotos: (fotosRes.data || []) as PerfilOficina['fotos'],
     tempoMedioResposta: validos ? totalMs / validos / 3_600_000 : null,
     ajusteMedio,

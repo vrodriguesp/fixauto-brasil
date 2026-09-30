@@ -473,7 +473,7 @@
     "semComissaoOrcamento": "BipFix non applica commissioni su questo preventivo. L'importo che invii è quello che vede il cliente."
   },
   "oficinaEquipe": {
-    "erroSenhaMinima": "La password deve avere almeno 6 caratteri",
+    "erroSenhaMinima": "La password deve avere almeno 8 caratteri",
     "confirmResetSenha": "Generare una nuova password temporanea per {nome}? La password attuale smetterà di funzionare.",
     "esteFuncionario": "questo dipendente",
     "funcionarioFallback": "Dipendente",
