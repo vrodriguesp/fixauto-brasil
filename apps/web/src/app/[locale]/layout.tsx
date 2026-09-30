@@ -56,7 +56,7 @@ const NAMESPACES_PUBLICOS = [
   'home', 'nav', 'cookieBanner', 'notificationBell', 'tutorialBanner', 'constants',
   'oficinaPerfilPublico', 'emergencia', 'emergenciaAcidenteDetalhe', 'damageAnalysis',
   'audioRecorder', 'audioMessage', 'veiculoForm', 'docsLayout', 'docsCliente', 'docsOficina',
-  'sejaParceiro', 'login', 'cadastro', 'confirmarEmail', 'definirSenha', 'escolherTipo', 'resetPassword', 'erros',
+  'sejaParceiro', 'login', 'cadastro', 'confirmarEmail', 'definirSenha', 'escolherTipo', 'resetPassword', 'erros', 'seguroReparo',
 ];
 
 function mensagensPublicas(messages: Record<string, unknown>) {

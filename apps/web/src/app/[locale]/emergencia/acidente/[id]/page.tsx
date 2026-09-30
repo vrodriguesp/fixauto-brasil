@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { headersEmergencia } from '@/lib/emergencia-token';
+import { SeguroReparoEditor, type ValorSeguro } from '@/components/emergencia/SeguroReparo';
 import { useAuth } from '@/lib/auth-context';
 import { compressImage } from '@/lib/image-compress';
 import { formatCurrency } from '@/lib/utils';
@@ -100,6 +101,8 @@ export default function AcidenteRegistroPage() {
   const [loadingOrc, setLoadingOrc] = useState(false);
   const [emergData, setEmergData] = useState<{ solicitacao_id: string | null; profile_id: string | null; descricao: string | null } | null>(null);
   const [veiculoProprietario, setVeiculoProprietario] = useState<{ fipe_marca: string; fipe_modelo: string; fipe_ano: string; placa: string; cor: string } | null>(null);
+  // quem paga o reparo (null = ainda carregando / sem acesso a esse dado)
+  const [seguro, setSeguro] = useState<ValorSeguro | null>(null);
   const [papel, setPapel] = useState<'proprietario' | 'outro' | 'oficina' | 'admin' | null>(null);
   const isProprietario = papel === 'proprietario';
 
@@ -143,6 +146,14 @@ export default function AcidenteRegistroPage() {
     });
     setEmergData(d.emergencia);
     setPapel(d.papel);
+    if (d.seguro) {
+      setSeguro((atual) => atual ?? {
+        pagamento_reparo: d.seguro.pagamento_reparo || '',
+        seguradora: d.seguro.seguradora || '',
+        sinistro_numero: d.seguro.sinistro_numero || '',
+        franquia: d.seguro.franquia != null ? String(d.seguro.franquia) : '',
+      });
+    }
     if (d.veiculo) setVeiculoProprietario(d.veiculo);
     setOrcamentos(d.orcamentos as Orcamento[]);
     setLoadingOrc(false);
@@ -314,6 +325,23 @@ export default function AcidenteRegistroPage() {
         <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
           <p className="text-sm text-red-800">{error}</p>
         </div>
+      )}
+
+      {/* Quem paga o reparo: o dono completa depois (ex.: numero do sinistro) */}
+      {seguro && (papel === 'proprietario' || papel === 'admin' || papel === 'oficina') && (
+        <SeguroReparoEditor
+          inicial={seguro}
+          tipoAcidente={(tipoAcidente as 'eu_causei' | 'outro_causou' | 'sem_outro') || 'outro_causou'}
+          podeEditar={papel === 'proprietario'}
+          salvar={async (v) => {
+            const res = await fetch(`/api/emergencia/${emergenciaId}/seguro`, {
+              method: 'POST',
+              headers: { ...headersEmergencia(emergenciaId), 'Content-Type': 'application/json' },
+              body: JSON.stringify(v),
+            }).catch(() => null);
+            return !!res?.ok;
+          }}
+        />
       )}
 
       {/* Tabs */}

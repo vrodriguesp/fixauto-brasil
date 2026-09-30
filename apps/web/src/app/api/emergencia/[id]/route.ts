@@ -29,12 +29,13 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   ]);
 
   let veiculo = null;
+  let seguro: Record<string, unknown> | null = null;
   let orcamentos: unknown[] = [];
   if (e.solicitacao_id) {
     const [{ data: sol }, { data: orcs }] = await Promise.all([
       supabaseAdmin
         .from('solicitacoes')
-        .select('veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, placa, cor)')
+        .select('pagamento_reparo, seguradora, sinistro_numero, franquia, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, placa, cor)')
         .eq('id', e.solicitacao_id)
         .maybeSingle(),
       supabaseAdmin
@@ -45,6 +46,11 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         .eq('solicitacao_id', e.solicitacao_id),
     ]);
     veiculo = (sol as { veiculo?: unknown } | null)?.veiculo ?? null;
+    // dados do seguro: nao vao para o outro motorista
+    if (sol && acesso.papel !== 'outro') {
+      const { veiculo: _v, ...resto } = sol as Record<string, unknown>;
+      seguro = resto;
+    }
     orcamentos = orcs || [];
   }
 
@@ -54,6 +60,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     outro: outro ?? null,
     mensagens: mensagens || [],
     veiculo,
+    seguro,
     orcamentos,
   });
 }

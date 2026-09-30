@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/auth-context';
 import { salvarTokenEmergencia } from '@/lib/emergencia-token';
 import { compressImage } from '@/lib/image-compress';
 import { textoErroApi } from '@/lib/erro-api';
+import { SeguroReparoCampos, ProximosPassosSeguro, SEGURO_VAZIO, type ValorSeguro } from '@/components/emergencia/SeguroReparo';
 
 export default function EmergenciaPage() {
   const t = useTranslations('emergencia');
@@ -39,6 +40,8 @@ export default function EmergenciaPage() {
   const [geoResolved, setGeoResolved] = useState(false);
   const [tipoAcidente, setTipoAcidente] = useState<'eu_causei' | 'outro_causou' | 'sem_outro'>('outro_causou');
   const [placa, setPlaca] = useState('');
+  // quem paga o reparo (opcional) - a oficina ve no pedido
+  const [seguro, setSeguro] = useState<ValorSeguro>(SEGURO_VAZIO);
   const [veiculoInfo, setVeiculoInfo] = useState<{ marca: string; modelo: string; ano: string; cor: string } | null>(null);
   const [buscandoPlaca, setBuscandoPlaca] = useState(false);
   const [placaNaoEncontrada, setPlacaNaoEncontrada] = useState(false);
@@ -172,6 +175,7 @@ export default function EmergenciaPage() {
         longitude: loc.lon,
         placa: placa || null,
         veiculoInfo: veiculoInfo || null,
+        ...seguro,
       }));
       fotos.forEach((f) => form.append('fotos', f.file));
       const res = await fetch('/api/emergencia', { method: 'POST', body: form });
@@ -204,6 +208,8 @@ export default function EmergenciaPage() {
         <p className="text-gray-600 mb-6">
           {t('successText')}
         </p>
+
+        <ProximosPassosSeguro pagamento={seguro.pagamento_reparo} tipoAcidente={tipoAcidente} />
 
         {tipoAcidente !== 'sem_outro' && (
           <div className="card text-left mb-6">
@@ -281,9 +287,10 @@ export default function EmergenciaPage() {
           {step === 1 && (
             <div>
               <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('step1Title')}</h2>
-              <p className="text-sm text-gray-500 mb-4">
+              <p className="text-sm text-gray-500 mb-1">
                 {t('step1Subtitle')}
               </p>
+              <p className="text-xs text-gray-500 mb-4">{t('fotoDica')}</p>
 
               {/* Camera input (capture) */}
               <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoUpload} />
@@ -492,6 +499,10 @@ export default function EmergenciaPage() {
                   </svg>
                   {t('useCurrentLocationBtn')}
                 </button>
+              </div>
+
+              <div className="mt-6">
+                <SeguroReparoCampos valor={seguro} onChange={setSeguro} tipoAcidente={tipoAcidente} />
               </div>
 
               <div className="bg-gray-50 rounded-lg p-4 mt-6 space-y-2">

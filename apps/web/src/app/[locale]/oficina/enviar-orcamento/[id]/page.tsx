@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import SeguroDoPedido from '@/components/oficina/SeguroDoPedido';
 import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
@@ -21,6 +22,7 @@ interface ItemForm {
 
 export default function EnviarOrcamentoPage() {
   const t = useTranslations('oficinaEnviarOrcamento');
+  const tc = useTranslations('constants');
   const locale = useLocale();
   const params = useParams();
   const router = useRouter();
@@ -274,7 +276,7 @@ export default function EnviarOrcamentoPage() {
         </div>
       )}
       <p className="text-gray-600 mb-6">
-        {solicitacao.veiculo?.fipe_marca} {solicitacao.veiculo?.fipe_modelo} - {solicitacao.tipo}
+        {solicitacao.veiculo?.fipe_marca} {solicitacao.veiculo?.fipe_modelo} - {tc.has(`tiposServico.${solicitacao.tipo}`) ? tc(`tiposServico.${solicitacao.tipo}`) : solicitacao.tipo}
       </p>
 
       {/* Request summary */}
@@ -284,6 +286,9 @@ export default function EnviarOrcamentoPage() {
           {t('clienteLabel')}: {solicitacao.cliente?.nome} | {solicitacao.endereco}
         </p>
       </div>
+
+      {/* Quem paga o reparo (seguro?) */}
+      <SeguroDoPedido sol={solicitacao as any} />
 
       {/* AI Insights */}
       {analise && (

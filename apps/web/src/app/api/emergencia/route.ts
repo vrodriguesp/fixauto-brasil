@@ -9,6 +9,7 @@ import { garantirContaCliente } from '@/lib/conta-convite';
 import { avisarOficinasDoAcidente } from '@/lib/emergencia-oficinas';
 import { notifNovaSolicitacaoColisao } from '@/lib/notif-i18n';
 import { avisarAdminSeSemOficinas } from '@/lib/concierge';
+import { validarSeguro } from '@/lib/seguro-reparo';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,6 +49,8 @@ export async function POST(req: NextRequest) {
     const longitude = numero(d.longitude, 'longitude', -180, 180);
     const idioma = texto(d.idioma, 'idioma', 10);
     const placa = texto(d.placa, 'placa', 15);
+    // quem paga o reparo (opcional; pode ser completado depois na pagina do acidente)
+    const seguro = validarSeguro(d);
     const vInfo = (d.veiculoInfo && typeof d.veiculoInfo === 'object' ? d.veiculoInfo : {}) as Record<string, unknown>;
 
     let nome = texto(d.nome, 'nome', 100);
@@ -132,7 +135,10 @@ export async function POST(req: NextRequest) {
     if (veiculoId) {
       const { data: sol } = await supabaseAdmin
         .from('solicitacoes')
-        .insert({ cliente_id: clienteId, veiculo_id: veiculoId, tipo: 'colisao', descricao, urgencia: 'alta', latitude, longitude, endereco, emergencia_id: emergencia.id })
+        .insert({
+          cliente_id: clienteId, veiculo_id: veiculoId, tipo: 'colisao', descricao, urgencia: 'alta', latitude, longitude, endereco, emergencia_id: emergencia.id,
+          ...seguro, seguro_atualizado_em: seguro.pagamento_reparo ? new Date().toISOString() : null,
+        })
         .select('id')
         .single();
       solicitacaoId = sol?.id ?? null;

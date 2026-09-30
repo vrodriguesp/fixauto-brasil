@@ -12,6 +12,7 @@ import { Link } from '@/i18n/navigation';
 export default function SolicitacoesOficinaPage() {
   const t = useTranslations('oficinaSolicitacoes');
   const tc = useTranslations('constants');
+  const ts = useTranslations('seguroReparo');
   const locale = useLocale();
   const { oficina } = useAuth();
   const [filtroTipo, setFiltroTipo] = useState('todos');
@@ -79,9 +80,12 @@ export default function SolicitacoesOficinaPage() {
                     <div className="flex items-center gap-2 mb-2">
                       <StatusBadge status={sol.status} />
                       <span className={`badge ${getUrgenciaColor(sol.urgencia)}`}>
-                        {sol.urgencia}
+                        {tc.has(`urgencias.${sol.urgencia}`) ? tc(`urgencias.${sol.urgencia}`) : sol.urgencia}
                       </span>
-                      <span className="badge bg-gray-100 text-gray-700 capitalize">{sol.tipo}</span>
+                      <span className="badge bg-gray-100 text-gray-700">{tc.has(`tiposServico.${sol.tipo}`) ? tc(`tiposServico.${sol.tipo}`) : sol.tipo}</span>
+                      {((sol as any).pagamento_reparo === 'seguro_terceiro' || (sol as any).pagamento_reparo === 'seguro_proprio') && (
+                        <span className="badge bg-emerald-100 text-emerald-800">🛡️ {ts('chipSeguro')}</span>
+                      )}
                     </div>
                     <p className="text-sm text-gray-600 line-clamp-2">{cleanDescricao(sol.descricao)}</p>
                     <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
