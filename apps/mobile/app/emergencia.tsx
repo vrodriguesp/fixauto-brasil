@@ -10,8 +10,27 @@ import { supabase } from '../lib/supabase';
 import { API_BASE_URL } from '../lib/api';
 import i18n from '../i18n';
 
-// Coordenada default de Sao Paulo, so pro caso raro de geolocalizacao E
-// geocodificacao por endereco falharem - mesmo fallback do site.
+type Tipo = 'eu_causei' | 'outro_causou' | 'sem_outro';
+type Pagamento = 'proprio' | 'seguro_terceiro' | 'seguro_proprio' | 'nao_sei';
+const usaSeguro = (p: Pagamento | '') => p === 'seguro_terceiro' || p === 'seguro_proprio';
+// Mesma ordem do site: com culpa do outro, o seguro dele primeiro; sem outro
+// veiculo, o seguro do outro nem aparece.
+const opcoesPagamento = (tipo: Tipo): Pagamento[] =>
+  tipo === 'outro_causou' ? ['seguro_terceiro', 'seguro_proprio', 'proprio', 'nao_sei'] : ['seguro_proprio', 'proprio', 'nao_sei'];
+
+function Opcao({ ativo, onPress, titulo, desc }: { ativo: boolean; onPress: () => void; titulo: string; desc?: string }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="radio"
+      accessibilityState={{ checked: ativo }}
+      className={`border-2 rounded-lg px-4 py-3 mb-2 ${ativo ? 'border-red-400 bg-red-50' : 'border-gray-200'}`}
+    >
+      <Text className="text-gray-900 font-medium">{titulo}</Text>
+      {desc ? <Text className="text-gray-500 text-xs mt-0.5">{desc}</Text> : null}
+    </Pressable>
+  );
+}
 
 export default function EmergenciaScreen() {
   const { t } = useTranslation();
@@ -23,6 +42,13 @@ export default function EmergenciaScreen() {
   const [buscandoLocal, setBuscandoLocal] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
+  const [tipo, setTipo] = useState<Tipo>('outro_causou');
+  // quem paga o reparo (opcional) - a oficina ve no pedido
+  const [pagamento, setPagamento] = useState<Pagamento | ''>('');
+  const [seguradora, setSeguradora] = useState('');
+  const [sinistro, setSinistro] = useState('');
+  const [franquia, setFranquia] = useState('');
+  const regiao = i18n.language === 'pt' ? 'br' : 'ee';
 
   const handleFoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -81,7 +107,11 @@ export default function EmergenciaScreen() {
       const form = new FormData();
       form.append('dados', JSON.stringify({
         idioma: i18n.language,
-        tipoAcidente: 'outro_causou',
+        tipoAcidente: tipo,
+        pagamento_reparo: pagamento || null,
+        seguradora,
+        sinistro_numero: sinistro,
+        franquia,
         descricao: descricao || null,
         endereco,
         latitude: localCoords.lat,
@@ -113,7 +143,19 @@ export default function EmergenciaScreen() {
       <View className="flex-1 bg-white items-center justify-center px-6">
         <Ionicons name="checkmark-circle" size={64} color="#16a34a" />
         <Text className="text-xl font-bold text-gray-900 mt-4 mb-2 text-center">{t('emergencia.sucessoTitulo')}</Text>
-        <Text className="text-gray-600 text-center mb-8">{t('emergencia.sucessoTexto')}</Text>
+        <Text className="text-gray-600 text-center mb-6">{t('emergencia.sucessoTexto')}</Text>
+        <View className="self-stretch bg-gray-50 rounded-lg p-4 mb-6">
+          <Text className="font-semibold text-gray-900 mb-2">{t('seguro.proximosTitulo')}</Text>
+          {[
+            t(`seguro.passo_emergencia_${regiao}`),
+            ...(tipo !== 'sem_outro' ? [t(`seguro.passo_registro_${regiao}`)] : []),
+            ...(usaSeguro(pagamento)
+              ? [t('seguro.passo_seguro'), t('seguro.passo_oficina_seguro')]
+              : [t(pagamento === 'proprio' ? 'seguro.passo_proprio' : 'seguro.passo_nao_sei')]),
+          ].map((p, i) => (
+            <Text key={i} className="text-sm text-gray-700 mb-1.5">{i + 1}. {p}</Text>
+          ))}
+        </View>
         <Pressable onPress={() => router.replace('/(tabs)')} className="bg-primary-600 rounded-lg px-6 py-3">
           <Text className="text-white font-semibold">{t('tabs.solicitacoes')}</Text>
         </Pressable>
@@ -126,7 +168,8 @@ export default function EmergenciaScreen() {
       <Stack.Screen options={{ headerShown: true, title: t('emergencia.titulo'), presentation: 'modal' }} />
       <Text className="text-gray-600 mb-6">{t('emergencia.subtitulo')}</Text>
 
-      <Text className="text-sm font-medium text-gray-700 mb-2">{t('emergencia.fotoTitulo')}</Text>
+      <Text className="text-sm font-medium text-gray-700 mb-1">{t('emergencia.fotoTitulo')}</Text>
+      <Text className="text-xs text-gray-500 mb-2">{t('emergencia.fotoDica')}</Text>
       <View className="flex-row flex-wrap gap-2 mb-2">
         {fotos.map((f, i) => (
           <Image key={i} source={{ uri: f.uri }} className="w-20 h-20 rounded-lg" />
@@ -154,7 +197,43 @@ export default function EmergenciaScreen() {
         style={{ textAlignVertical: 'top' }}
       />
 
-      <Text className="text-sm font-medium text-gray-700 mb-2">{t('emergencia.localTitulo')}</Text>
+      <Text className="text-sm font-medium text-gray-700 mb-2">{t('emergencia.whatHappenedLabel')}</Text>
+      {(['eu_causei', 'outro_causou', 'sem_outro'] as Tipo[]).map((op) => {
+        const k = op === 'eu_causei' ? 'EuCausei' : op === 'outro_causou' ? 'OutroCausou' : 'SemOutro';
+        return (
+          <Opcao key={op} ativo={tipo === op} titulo={t(`emergencia.option${k}Label`)} desc={t(`emergencia.option${k}Desc`)}
+            onPress={() => { setTipo(op); if (op !== 'outro_causou' && pagamento === 'seguro_terceiro') setPagamento(''); }} />
+        );
+      })}
+
+      <Text className="text-sm font-medium text-gray-700 mt-4 mb-1">{t('seguro.titulo')}</Text>
+      <Text className="text-xs text-gray-500 mb-2">{t('seguro.subtitulo')}</Text>
+      {opcoesPagamento(tipo).map((op) => (
+        <Opcao key={op} ativo={pagamento === op} titulo={t(`seguro.opcao_${op}`)} onPress={() => setPagamento(op)} />
+      ))}
+      {usaSeguro(pagamento) && (
+        <View className="bg-gray-50 rounded-lg p-3 mb-2">
+          <Text className="text-sm font-medium text-gray-700 mb-1">{t('seguro.labelSeguradora')}</Text>
+          <TextInput value={seguradora} onChangeText={setSeguradora} maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-base" />
+          <Text className="text-sm font-medium text-gray-700 mb-1">{t('seguro.labelSinistro')}</Text>
+          <TextInput value={sinistro} onChangeText={setSinistro} maxLength={60} autoCapitalize="characters" className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base" />
+          <Text className="text-xs text-gray-500 mt-1 mb-3">{t('seguro.ajudaSinistro')}</Text>
+          {pagamento === 'seguro_proprio' && (
+            <>
+              <Text className="text-sm font-medium text-gray-700 mb-1">{t('seguro.labelFranquia')}</Text>
+              <TextInput value={franquia} onChangeText={(v) => setFranquia(v.replace(/[^\d.,]/g, ''))} keyboardType="decimal-pad" maxLength={12} className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base" />
+              <Text className="text-xs text-gray-500 mt-1">{t('seguro.ajudaFranquia')}</Text>
+            </>
+          )}
+        </View>
+      )}
+      {pagamento ? (
+        <Text className="text-sm text-blue-900 bg-blue-50 rounded-lg p-3 mb-2">
+          {t(usaSeguro(pagamento) ? `seguro.dica_${pagamento}_${regiao}` : `seguro.dica_${pagamento}`)}
+        </Text>
+      ) : null}
+
+      <Text className="text-sm font-medium text-gray-700 mt-4 mb-2">{t('emergencia.localTitulo')}</Text>
       <Pressable onPress={handleUsarLocalizacao} className="flex-row items-center gap-2 border border-gray-300 rounded-lg py-3 px-4 mb-2">
         <Ionicons name="location-outline" size={18} color="#374151" />
         <Text className="text-gray-700">{buscandoLocal ? t('common.carregando') : t('emergencia.localPermitir')}</Text>
