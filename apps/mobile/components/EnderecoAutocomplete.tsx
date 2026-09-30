@@ -16,8 +16,9 @@ export interface SugestaoEndereco {
 // Endereco com sugestoes enquanto digita (mesma rota do site, a partir de 3
 // letras). Aceita texto livre; ao escolher, devolve coordenadas e pais.
 export default function EnderecoAutocomplete({
-  value, onChange, onSelect, placeholder, perto,
+  value, onChange, onSelect, placeholder, perto, rotulo,
 }: {
+  rotulo?: string;
   value: string;
   onChange: (v: string) => void;
   onSelect: (s: SugestaoEndereco) => void;
@@ -46,6 +47,7 @@ export default function EnderecoAutocomplete({
   return (
     <View className="mb-6">
       <TextInput
+        accessibilityLabel={rotulo || placeholder}
         value={value}
         onChangeText={onChange}
         placeholder={placeholder}

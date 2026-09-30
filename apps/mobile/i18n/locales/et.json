@@ -130,7 +130,10 @@
     "statusVisualizado": "Vaadatud",
     "statusAceito": "Vastu võetud",
     "statusRecusado": "Tagasi lükatud",
-    "statusExpirado": "Aegunud"
+    "statusExpirado": "Aegunud",
+    "escolhaData": "Vali, millal auto tuua:",
+    "turno_manha": "hommik",
+    "turno_tarde": "pärastlõuna"
   },
   "acompanhamento": {
     "titulo": "Remondi jälgimine",
@@ -151,7 +154,8 @@
     "nenhumaConversa": "Vestlusi pole veel.",
     "digiteMensagem": "Kirjuta sõnum...",
     "erroEnviar": "Sõnumit ei õnnestunud saata. Proovi uuesti.",
-    "gravarAudio": "Hoia all, et salvestada häälsõnum"
+    "gravarAudio": "Hoia all, et salvestada häälsõnum",
+    "enviar": "Saada sõnum"
   },
   "veiculos": {
     "titulo": "Minu sõidukid",

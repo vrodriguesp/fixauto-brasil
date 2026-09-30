@@ -337,35 +337,35 @@ export default function AgendaPage() {
               <div className="space-y-3">
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formTitulo')}</label>
-                    <input type="text" className="input-field !py-1.5 text-sm" value={editData.titulo} onChange={(e) => setEditData({ ...editData, titulo: e.target.value })} />
+                    <label htmlFor="c06c6-1" className="block text-xs font-medium text-gray-500 mb-1">{t('formTitulo')}</label>
+                    <input id="c06c6-1" type="text" className="input-field !py-1.5 text-sm" value={editData.titulo} onChange={(e) => setEditData({ ...editData, titulo: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formDataCheckin')}</label>
-                    <input type="date" className="input-field !py-1.5 text-sm" value={editData.data_inicio} onChange={(e) => setEditData({ ...editData, data_inicio: e.target.value })} />
+                    <label htmlFor="c06c6-2" className="block text-xs font-medium text-gray-500 mb-1">{t('formDataCheckin')}</label>
+                    <input id="c06c6-2" type="date" className="input-field !py-1.5 text-sm" value={editData.data_inicio} onChange={(e) => setEditData({ ...editData, data_inicio: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formHorario')}</label>
-                    <input type="time" className="input-field !py-1.5 text-sm" value={editData.hora_inicio} onChange={(e) => setEditData({ ...editData, hora_inicio: e.target.value })} />
+                    <label htmlFor="c06c6-3" className="block text-xs font-medium text-gray-500 mb-1">{t('formHorario')}</label>
+                    <input id="c06c6-3" type="time" className="input-field !py-1.5 text-sm" value={editData.hora_inicio} onChange={(e) => setEditData({ ...editData, hora_inicio: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formDataPrevEntrega')}</label>
-                    <input type="date" className="input-field !py-1.5 text-sm" value={editData.data_fim} onChange={(e) => setEditData({ ...editData, data_fim: e.target.value })} />
+                    <label htmlFor="c06c6-4" className="block text-xs font-medium text-gray-500 mb-1">{t('formDataPrevEntrega')}</label>
+                    <input id="c06c6-4" type="date" className="input-field !py-1.5 text-sm" value={editData.data_fim} onChange={(e) => setEditData({ ...editData, data_fim: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formHorario')}</label>
-                    <input type="time" className="input-field !py-1.5 text-sm" value={editData.hora_fim} onChange={(e) => setEditData({ ...editData, hora_fim: e.target.value })} />
+                    <label htmlFor="c06c6-5" className="block text-xs font-medium text-gray-500 mb-1">{t('formHorario')}</label>
+                    <input id="c06c6-5" type="time" className="input-field !py-1.5 text-sm" value={editData.hora_fim} onChange={(e) => setEditData({ ...editData, hora_fim: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formMecanico')}</label>
-                    <select className="input-field !py-1.5 text-sm" value={editData.funcionario_id} onChange={(e) => setEditData({ ...editData, funcionario_id: e.target.value })}>
+                    <label htmlFor="c06c6-6" className="block text-xs font-medium text-gray-500 mb-1">{t('formMecanico')}</label>
+                    <select id="c06c6-6" className="input-field !py-1.5 text-sm" value={editData.funcionario_id} onChange={(e) => setEditData({ ...editData, funcionario_id: e.target.value })}>
                       <option value="">{t('nenhum')}</option>
                       {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.profile?.nome}</option>)}
                     </select>
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-medium text-gray-500 mb-1">{t('formDescricao')}</label>
-                    <input type="text" className="input-field !py-1.5 text-sm" value={editData.descricao} onChange={(e) => setEditData({ ...editData, descricao: e.target.value })} />
+                    <label htmlFor="c06c6-7" className="block text-xs font-medium text-gray-500 mb-1">{t('formDescricao')}</label>
+                    <input id="c06c6-7" type="text" className="input-field !py-1.5 text-sm" value={editData.descricao} onChange={(e) => setEditData({ ...editData, descricao: e.target.value })} />
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-medium text-gray-500 mb-1">{t('formCor')}</label>
@@ -473,12 +473,12 @@ export default function AgendaPage() {
           <div className="grid sm:grid-cols-2 gap-4">
             {/* Cliente */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('nomeCliente')}</label>
-              <input type="text" className="input-field" placeholder={t('placeholderNomeCliente')} value={formData.cliente_nome} onChange={(e) => setFormData({ ...formData, cliente_nome: e.target.value })} />
+              <label htmlFor="c06c6-8" className="block text-sm font-medium text-gray-700 mb-1">{t('nomeCliente')}</label>
+              <input id="c06c6-8" type="text" className="input-field" placeholder={t('placeholderNomeCliente')} value={formData.cliente_nome} onChange={(e) => setFormData({ ...formData, cliente_nome: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('placa')}</label>
-              <input type="text" className="input-field" placeholder={exemploPlaca(locale)} value={formData.placa} onChange={(e) => setFormData({ ...formData, placa: e.target.value.toUpperCase() })} />
+              <label htmlFor="c06c6-9" className="block text-sm font-medium text-gray-700 mb-1">{t('placa')}</label>
+              <input id="c06c6-9" type="text" className="input-field" placeholder={exemploPlaca(locale)} value={formData.placa} onChange={(e) => setFormData({ ...formData, placa: e.target.value.toUpperCase() })} />
             </div>
             {/* Veículo - FIPE */}
             <div className="sm:col-span-2">
@@ -490,8 +490,8 @@ export default function AgendaPage() {
             </div>
             {/* Tipo de serviço */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('tipoServico')}</label>
-              <select className="input-field" value={formData.tipo_servico} onChange={(e) => setFormData({ ...formData, tipo_servico: e.target.value })}>
+              <label htmlFor="c06c6-10" className="block text-sm font-medium text-gray-700 mb-1">{t('tipoServico')}</label>
+              <select id="c06c6-10" className="input-field" value={formData.tipo_servico} onChange={(e) => setFormData({ ...formData, tipo_servico: e.target.value })}>
                 {TIPOS_SERVICO.map((tipo) => (
                   <option key={tipo.value} value={tipo.value}>{tipo.icon} {tc(`tiposServico.${tipo.value}`)}</option>
                 ))}
@@ -499,8 +499,8 @@ export default function AgendaPage() {
             </div>
             {/* Mecânico */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('mecanicoResponsavel')}</label>
-              <select className="input-field" value={formData.funcionario_id} onChange={(e) => setFormData({ ...formData, funcionario_id: e.target.value })}>
+              <label htmlFor="c06c6-11" className="block text-sm font-medium text-gray-700 mb-1">{t('mecanicoResponsavel')}</label>
+              <select id="c06c6-11" className="input-field" value={formData.funcionario_id} onChange={(e) => setFormData({ ...formData, funcionario_id: e.target.value })}>
                 <option value="">{t('nenhum')}</option>
                 {funcionarios.map((f) => (
                   <option key={f.id} value={f.id}>{f.profile?.nome}{f.especialidade ? ` (${f.especialidade})` : ''}</option>
@@ -509,25 +509,25 @@ export default function AgendaPage() {
             </div>
             {/* Datas e horários */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('formDataCheckin')}</label>
-              <input type="date" className="input-field" value={formData.data_inicio} onChange={(e) => setFormData({ ...formData, data_inicio: e.target.value })} />
+              <label htmlFor="c06c6-12" className="block text-sm font-medium text-gray-700 mb-1">{t('formDataCheckin')}</label>
+              <input id="c06c6-12" type="date" className="input-field" value={formData.data_inicio} onChange={(e) => setFormData({ ...formData, data_inicio: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('horarioCheckin')}</label>
-              <input type="time" className="input-field" value={formData.hora_inicio} onChange={(e) => setFormData({ ...formData, hora_inicio: e.target.value })} />
+              <label htmlFor="c06c6-13" className="block text-sm font-medium text-gray-700 mb-1">{t('horarioCheckin')}</label>
+              <input id="c06c6-13" type="time" className="input-field" value={formData.hora_inicio} onChange={(e) => setFormData({ ...formData, hora_inicio: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('formDataPrevEntrega')}</label>
-              <input type="date" className="input-field" value={formData.data_fim} onChange={(e) => setFormData({ ...formData, data_fim: e.target.value })} />
+              <label htmlFor="c06c6-14" className="block text-sm font-medium text-gray-700 mb-1">{t('formDataPrevEntrega')}</label>
+              <input id="c06c6-14" type="date" className="input-field" value={formData.data_fim} onChange={(e) => setFormData({ ...formData, data_fim: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('horarioPrevEntrega')}</label>
-              <input type="time" className="input-field" value={formData.hora_fim} onChange={(e) => setFormData({ ...formData, hora_fim: e.target.value })} />
+              <label htmlFor="c06c6-15" className="block text-sm font-medium text-gray-700 mb-1">{t('horarioPrevEntrega')}</label>
+              <input id="c06c6-15" type="time" className="input-field" value={formData.hora_fim} onChange={(e) => setFormData({ ...formData, hora_fim: e.target.value })} />
             </div>
             {/* Descrição */}
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('descricaoOpcional')}</label>
-              <input type="text" className="input-field" placeholder={t('placeholderDetalhesServico')} value={formData.descricao} onChange={(e) => setFormData({ ...formData, descricao: e.target.value })} />
+              <label htmlFor="c06c6-16" className="block text-sm font-medium text-gray-700 mb-1">{t('descricaoOpcional')}</label>
+              <input id="c06c6-16" type="text" className="input-field" placeholder={t('placeholderDetalhesServico')} value={formData.descricao} onChange={(e) => setFormData({ ...formData, descricao: e.target.value })} />
             </div>
             {/* Cor */}
             <div className="sm:col-span-2">

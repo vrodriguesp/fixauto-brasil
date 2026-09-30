@@ -161,8 +161,8 @@ function CadastroPage() {
   const renderEnderecoFields = () => (
     <>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCep')}</label>
-        <input
+        <label htmlFor="c6791-1" className="block text-sm font-medium text-gray-700 mb-1">{t('labelCep')}</label>
+        <input id="c6791-1"
           type="text"
           inputMode="numeric"
           className="input-field"
@@ -175,8 +175,8 @@ function CadastroPage() {
         {cepErro && <p className="text-xs text-red-500 mt-1">{cepErro}</p>}
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEndereco')}</label>
-        <EnderecoAutocomplete
+        <label htmlFor="c6791-2" className="block text-sm font-medium text-gray-700 mb-1">{t('labelEndereco')}</label>
+        <EnderecoAutocomplete id="c6791-2"
           value={endereco}
           onChange={setEndereco}
           placeholder={t('placeholderEndereco')}
@@ -195,12 +195,12 @@ function CadastroPage() {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCidade')}</label>
-          <input type="text" className="input-field" placeholder={t('placeholderCidade')} value={cidade} onChange={(e) => setCidade(e.target.value)} />
+          <label htmlFor="c6791-3" className="block text-sm font-medium text-gray-700 mb-1">{t('labelCidade')}</label>
+          <input id="c6791-3" type="text" className="input-field" placeholder={t('placeholderCidade')} value={cidade} onChange={(e) => setCidade(e.target.value)} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEstado')}</label>
-          <input type="text" className="input-field" placeholder={t('placeholderEstado')} value={estado} onChange={(e) => setEstado(e.target.value)} />
+          <label htmlFor="c6791-4" className="block text-sm font-medium text-gray-700 mb-1">{t('labelEstado')}</label>
+          <input id="c6791-4" type="text" className="input-field" placeholder={t('placeholderEstado')} value={estado} onChange={(e) => setEstado(e.target.value)} />
         </div>
       </div>
     </>
@@ -389,20 +389,20 @@ function CadastroPage() {
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNomeCompleto')}</label>
-                <input type="text" className="input-field" placeholder={t('placeholderNome')} value={nome} onChange={(e) => setNome(e.target.value)} required />
+                <label htmlFor="c6791-5" className="block text-sm font-medium text-gray-700 mb-1">{t('labelNomeCompleto')}</label>
+                <input id="c6791-5" type="text" className="input-field" placeholder={t('placeholderNome')} value={nome} onChange={(e) => setNome(e.target.value)} required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEmail')}</label>
-                <input type="email" className="input-field" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <label htmlFor="c6791-6" className="block text-sm font-medium text-gray-700 mb-1">{t('labelEmail')}</label>
+                <input id="c6791-6" type="email" className="input-field" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelTelefone')}</label>
-                <input type="tel" className="input-field" placeholder={t('placeholderTelefone')} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+                <label htmlFor="c6791-7" className="block text-sm font-medium text-gray-700 mb-1">{t('labelTelefone')}</label>
+                <input id="c6791-7" type="tel" className="input-field" placeholder={t('placeholderTelefone')} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelSenha')}</label>
-                <input type="password" className="input-field" placeholder={t('placeholderSenhaMinima')} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
+                <label htmlFor="c6791-8" className="block text-sm font-medium text-gray-700 mb-1">{t('labelSenha')}</label>
+                <input id="c6791-8" type="password" className="input-field" placeholder={t('placeholderSenhaMinima')} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
               </div>
               <label className="flex items-start gap-2 text-sm text-gray-600">
                 <input
@@ -436,12 +436,12 @@ function CadastroPage() {
                 <h2 className="text-lg font-semibold text-gray-900">{t('dadosOficina')}</h2>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNomeFantasia')}</label>
-                <input type="text" className="input-field" placeholder={t('placeholderNomeOficina')} value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} required />
+                <label htmlFor="c6791-9" className="block text-sm font-medium text-gray-700 mb-1">{t('labelNomeFantasia')}</label>
+                <input id="c6791-9" type="text" className="input-field" placeholder={t('placeholderNomeOficina')} value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
-                <input type="text" className="input-field" placeholder={t('placeholderCnpj')} value={cnpj} onChange={(e) => setCnpj(e.target.value)} required />
+                <label htmlFor="c6791-10" className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
+                <input id="c6791-10" type="text" className="input-field" placeholder={t('placeholderCnpj')} value={cnpj} onChange={(e) => setCnpj(e.target.value)} required />
               </div>
               {renderEnderecoFields()}
 
@@ -508,12 +508,12 @@ function CadastroPage() {
                 <h2 className="text-lg font-semibold text-gray-900">{t('dadosLoja')}</h2>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNomeFantasia')}</label>
-                <input type="text" className="input-field" placeholder={t('placeholderNomeLoja')} value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} required />
+                <label htmlFor="c6791-11" className="block text-sm font-medium text-gray-700 mb-1">{t('labelNomeFantasia')}</label>
+                <input id="c6791-11" type="text" className="input-field" placeholder={t('placeholderNomeLoja')} value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
-                <input type="text" className="input-field" placeholder={t('placeholderCnpj')} value={cnpj} onChange={(e) => setCnpj(e.target.value)} required />
+                <label htmlFor="c6791-12" className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
+                <input id="c6791-12" type="text" className="input-field" placeholder={t('placeholderCnpj')} value={cnpj} onChange={(e) => setCnpj(e.target.value)} required />
               </div>
               {renderEnderecoFields()}
               <label className="flex items-start gap-2 text-sm text-gray-600">

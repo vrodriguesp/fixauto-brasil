@@ -245,8 +245,8 @@ export default function AdminSolicitacaoDetalhePage() {
         </div>
         {corrigindo && (
           <div className="mt-4">
-            <label className="block text-xs text-amber-200 mb-1">Motivo da correção (obrigatório, fica no histórico)</label>
-            <input
+            <label htmlFor="cd553-1" className="block text-xs text-amber-200 mb-1">Motivo da correção (obrigatório, fica no histórico)</label>
+            <input id="cd553-1"
               value={motivo}
               onChange={(e) => setMotivo(e.target.value)}
               placeholder="Ex.: oficina marcou a etapa errada por engano"

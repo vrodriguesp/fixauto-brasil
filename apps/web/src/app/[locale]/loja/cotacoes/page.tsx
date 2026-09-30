@@ -145,12 +145,12 @@ export default function LojaCotacoesPage() {
                 <div className="mt-3 space-y-3 border-t pt-3">
                   <div className="grid sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">{t('labelPreco')}</label>
-                      <input type="number" step="0.01" className="input-field !py-1.5" value={respostaForm.preco} onChange={(e) => setRespostaForm({ ...respostaForm, preco: e.target.value })} />
+                      <label htmlFor="c40f3-1" className="block text-xs font-medium text-gray-700 mb-1">{t('labelPreco')}</label>
+                      <input id="c40f3-1" type="number" step="0.01" className="input-field !py-1.5" value={respostaForm.preco} onChange={(e) => setRespostaForm({ ...respostaForm, preco: e.target.value })} />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">{t('labelPrazo')}</label>
-                      <input type="number" className="input-field !py-1.5" value={respostaForm.prazo_dias} onChange={(e) => setRespostaForm({ ...respostaForm, prazo_dias: e.target.value })} />
+                      <label htmlFor="c40f3-2" className="block text-xs font-medium text-gray-700 mb-1">{t('labelPrazo')}</label>
+                      <input id="c40f3-2" type="number" className="input-field !py-1.5" value={respostaForm.prazo_dias} onChange={(e) => setRespostaForm({ ...respostaForm, prazo_dias: e.target.value })} />
                     </div>
                   </div>
                   <input type="text" className="input-field !py-1.5" placeholder={t('observacaoPlaceholder')} value={respostaForm.observacao} onChange={(e) => setRespostaForm({ ...respostaForm, observacao: e.target.value })} />

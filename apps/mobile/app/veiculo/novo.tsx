@@ -50,17 +50,17 @@ export default function NovoVeiculoScreen() {
       )}
 
       <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.ano')}</Text>
-      <TextInput value={ano} onChangeText={setAno} keyboardType="number-pad" className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
+      <TextInput accessibilityLabel={t('veiculos.ano')} value={ano} onChangeText={setAno} keyboardType="number-pad" className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
 
       <Text className="text-sm font-medium text-gray-700 mb-1">
         {t('veiculos.placa')} <Text className="text-gray-400">({t('common.opcional')})</Text>
       </Text>
-      <TextInput value={placa} onChangeText={setPlaca} autoCapitalize="characters" className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
+      <TextInput accessibilityLabel={t('veiculos.placa')} value={placa} onChangeText={setPlaca} autoCapitalize="characters" className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
 
       <Text className="text-sm font-medium text-gray-700 mb-1">
         {t('veiculos.apelido')} <Text className="text-gray-400">({t('common.opcional')})</Text>
       </Text>
-      <TextInput value={apelido} onChangeText={setApelido} className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-base" />
+      <TextInput accessibilityLabel={t('veiculos.apelido')} value={apelido} onChangeText={setApelido} className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-base" />
 
       <Pressable onPress={handleSalvar} disabled={!marca || !modelo || salvando} className="bg-primary-600 rounded-lg py-4 items-center mb-8 disabled:opacity-50">
         {salvando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold text-base">{t('common.salvar')}</Text>}

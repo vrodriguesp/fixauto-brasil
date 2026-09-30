@@ -204,8 +204,8 @@ export default function EquipePage() {
           )}
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('nome')}</label>
-              <input
+              <label htmlFor="cdcf5-1" className="block text-sm font-medium text-gray-700 mb-1">{t('nome')}</label>
+              <input id="cdcf5-1"
                 type="text"
                 className="input-field"
                 placeholder={t('placeholderNomeFuncionario')}
@@ -214,8 +214,8 @@ export default function EquipePage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('emailObrigatorio')}</label>
-              <input
+              <label htmlFor="cdcf5-2" className="block text-sm font-medium text-gray-700 mb-1">{t('emailObrigatorio')}</label>
+              <input id="cdcf5-2"
                 type="email"
                 className="input-field"
                 placeholder={EXEMPLO_EMAIL}
@@ -224,8 +224,8 @@ export default function EquipePage() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('senhaTemporariaObrigatorio')}</label>
-              <input
+              <label htmlFor="cdcf5-3" className="block text-sm font-medium text-gray-700 mb-1">{t('senhaTemporariaObrigatorio')}</label>
+              <input id="cdcf5-3"
                 type="text"
                 className="input-field"
                 placeholder={t('placeholderMinimo6Caracteres')}
@@ -237,8 +237,8 @@ export default function EquipePage() {
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('cargo')}</label>
-              <select
+              <label htmlFor="cdcf5-4" className="block text-sm font-medium text-gray-700 mb-1">{t('cargo')}</label>
+              <select id="cdcf5-4"
                 className="input-field"
                 value={form.cargo}
                 onChange={(e) => setForm({ ...form, cargo: e.target.value as 'admin' | 'mecanico' })}
@@ -248,8 +248,8 @@ export default function EquipePage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('especialidadeOpcional')}</label>
-              <input
+              <label htmlFor="cdcf5-5" className="block text-sm font-medium text-gray-700 mb-1">{t('especialidadeOpcional')}</label>
+              <input id="cdcf5-5"
                 type="text"
                 className="input-field"
                 placeholder={t('placeholderEspecialidade')}
@@ -288,8 +288,8 @@ export default function EquipePage() {
               {editingId === func.id ? (
                 <div className="flex-1 grid sm:grid-cols-4 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">{t('nome')}</label>
-                    <input
+                    <label htmlFor="cdcf5-6" className="block text-xs font-medium text-gray-700 mb-1">{t('nome')}</label>
+                    <input id="cdcf5-6"
                       type="text"
                       className="input-field !py-1.5"
                       value={editForm.nome}
@@ -297,8 +297,8 @@ export default function EquipePage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">{t('telefone')}</label>
-                    <input
+                    <label htmlFor="cdcf5-7" className="block text-xs font-medium text-gray-700 mb-1">{t('telefone')}</label>
+                    <input id="cdcf5-7"
                       type="text"
                       className="input-field !py-1.5"
                       value={editForm.telefone}
@@ -306,8 +306,8 @@ export default function EquipePage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">{t('especialidade')}</label>
-                    <input
+                    <label htmlFor="cdcf5-8" className="block text-xs font-medium text-gray-700 mb-1">{t('especialidade')}</label>
+                    <input id="cdcf5-8"
                       type="text"
                       className="input-field !py-1.5"
                       value={editForm.especialidade}
@@ -315,8 +315,8 @@ export default function EquipePage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">{t('capacidadeCarrosSimultaneos')}</label>
-                    <input
+                    <label htmlFor="cdcf5-9" className="block text-xs font-medium text-gray-700 mb-1">{t('capacidadeCarrosSimultaneos')}</label>
+                    <input id="cdcf5-9"
                       type="number"
                       min={0}
                       placeholder={t('semLimite')}

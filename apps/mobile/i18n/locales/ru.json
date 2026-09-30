@@ -130,7 +130,10 @@
     "statusVisualizado": "Просмотрена",
     "statusAceito": "Принята",
     "statusRecusado": "Отклонена",
-    "statusExpirado": "Истекла"
+    "statusExpirado": "Истекла",
+    "escolhaData": "Выберите, когда привезти машину:",
+    "turno_manha": "утро",
+    "turno_tarde": "после обеда"
   },
   "acompanhamento": {
     "titulo": "Отслеживание ремонта",
@@ -151,7 +154,8 @@
     "nenhumaConversa": "Переписок пока нет.",
     "digiteMensagem": "Введите сообщение...",
     "erroEnviar": "Не удалось отправить сообщение. Попробуйте ещё раз.",
-    "gravarAudio": "Удерживайте, чтобы записать голосовое сообщение"
+    "gravarAudio": "Удерживайте, чтобы записать голосовое сообщение",
+    "enviar": "Отправить сообщение"
   },
   "veiculos": {
     "titulo": "Мои автомобили",

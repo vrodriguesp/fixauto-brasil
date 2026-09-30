@@ -123,8 +123,8 @@ function VeiculosPage() {
 
           <div className="grid sm:grid-cols-3 gap-4 mt-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
-              <input
+              <label htmlFor="c94de-1" className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
+              <input id="c94de-1"
                 type="text"
                 className="input-field"
                 value={formData.placa}
@@ -132,8 +132,8 @@ function VeiculosPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('colorLabel')}</label>
-              <input
+              <label htmlFor="c94de-2" className="block text-sm font-medium text-gray-700 mb-1">{t('colorLabel')}</label>
+              <input id="c94de-2"
                 type="text"
                 className="input-field"
                 placeholder={t('placeholderColor')}
@@ -142,8 +142,8 @@ function VeiculosPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('nicknameLabel')}</label>
-              <input
+              <label htmlFor="c94de-3" className="block text-sm font-medium text-gray-700 mb-1">{t('nicknameLabel')}</label>
+              <input id="c94de-3"
                 type="text"
                 className="input-field"
                 placeholder={t('placeholderNickname')}

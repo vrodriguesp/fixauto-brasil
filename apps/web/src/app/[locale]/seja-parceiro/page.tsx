@@ -139,34 +139,34 @@ export default function SejaParceiroPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('campoResponsavel')} *</label>
-                <input type="text" className="input-field" value={nomeResponsavel} onChange={(e) => setNomeResponsavel(e.target.value)} required />
+                <label htmlFor="c931f-1" className="block text-sm font-medium text-gray-700 mb-1">{t('campoResponsavel')} *</label>
+                <input id="c931f-1" type="text" className="input-field" value={nomeResponsavel} onChange={(e) => setNomeResponsavel(e.target.value)} required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('campoNegocio')} *</label>
-                <input type="text" className="input-field" placeholder={tipo === 'oficina' ? t('placeholderNegocioOficina') : t('placeholderNegocioLoja')} value={nomeNegocio} onChange={(e) => setNomeNegocio(e.target.value)} required />
+                <label htmlFor="c931f-2" className="block text-sm font-medium text-gray-700 mb-1">{t('campoNegocio')} *</label>
+                <input id="c931f-2" type="text" className="input-field" placeholder={tipo === 'oficina' ? t('placeholderNegocioOficina') : t('placeholderNegocioLoja')} value={nomeNegocio} onChange={(e) => setNomeNegocio(e.target.value)} required />
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('campoCidade')} *</label>
-                  <input type="text" className="input-field" placeholder={t('placeholderCidade')} value={cidade} onChange={(e) => setCidade(e.target.value)} required />
+                  <label htmlFor="c931f-3" className="block text-sm font-medium text-gray-700 mb-1">{t('campoCidade')} *</label>
+                  <input id="c931f-3" type="text" className="input-field" placeholder={t('placeholderCidade')} value={cidade} onChange={(e) => setCidade(e.target.value)} required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('campoRegiao')} *</label>
-                  <input type="text" className="input-field" placeholder={t('placeholderRegiao')} value={estado} onChange={(e) => setEstado(e.target.value)} required />
+                  <label htmlFor="c931f-4" className="block text-sm font-medium text-gray-700 mb-1">{t('campoRegiao')} *</label>
+                  <input id="c931f-4" type="text" className="input-field" placeholder={t('placeholderRegiao')} value={estado} onChange={(e) => setEstado(e.target.value)} required />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('campoWhatsapp')} *</label>
-                <input type="tel" className="input-field" placeholder={t('placeholderWhatsapp')} value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} required />
+                <label htmlFor="c931f-5" className="block text-sm font-medium text-gray-700 mb-1">{t('campoWhatsapp')} *</label>
+                <input id="c931f-5" type="tel" className="input-field" placeholder={t('placeholderWhatsapp')} value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('campoEmail')}</label>
-                <input type="email" className="input-field" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <label htmlFor="c931f-6" className="block text-sm font-medium text-gray-700 mb-1">{t('campoEmail')}</label>
+                <input id="c931f-6" type="email" className="input-field" value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('campoObservacao')}</label>
-                <textarea className="input-field" rows={2} placeholder={t('placeholderObservacao')} value={observacao} onChange={(e) => setObservacao(e.target.value)} />
+                <label htmlFor="c931f-7" className="block text-sm font-medium text-gray-700 mb-1">{t('campoObservacao')}</label>
+                <textarea id="c931f-7" className="input-field" rows={2} placeholder={t('placeholderObservacao')} value={observacao} onChange={(e) => setObservacao(e.target.value)} />
               </div>
 
               <button type="submit" disabled={enviando} className="btn-primary w-full disabled:opacity-50">

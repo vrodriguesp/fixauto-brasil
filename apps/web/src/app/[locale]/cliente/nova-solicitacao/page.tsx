@@ -319,16 +319,16 @@ export default function NovaSolicitacaoPage() {
                 />
                 <div className="grid sm:grid-cols-3 gap-4 mt-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
-                    <input type="text" className="input-field" placeholder={exemploPlaca(locale)} value={novoVeiculo.placa} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, placa: e.target.value })} />
+                    <label htmlFor="caee7-1" className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
+                    <input id="caee7-1" type="text" className="input-field" placeholder={exemploPlaca(locale)} value={novoVeiculo.placa} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, placa: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('colorLabel')}</label>
-                    <input type="text" className="input-field" placeholder={t('placeholderColor')} value={novoVeiculo.cor} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, cor: e.target.value })} />
+                    <label htmlFor="caee7-2" className="block text-sm font-medium text-gray-700 mb-1">{t('colorLabel')}</label>
+                    <input id="caee7-2" type="text" className="input-field" placeholder={t('placeholderColor')} value={novoVeiculo.cor} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, cor: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('nicknameLabel')}</label>
-                    <input type="text" className="input-field" placeholder={t('placeholderNickname')} value={novoVeiculo.apelido} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, apelido: e.target.value })} />
+                    <label htmlFor="caee7-3" className="block text-sm font-medium text-gray-700 mb-1">{t('nicknameLabel')}</label>
+                    <input id="caee7-3" type="text" className="input-field" placeholder={t('placeholderNickname')} value={novoVeiculo.apelido} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, apelido: e.target.value })} />
                   </div>
                 </div>
                 {veiculoError && (

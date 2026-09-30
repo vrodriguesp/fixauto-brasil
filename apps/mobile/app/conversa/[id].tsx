@@ -100,14 +100,14 @@ export default function ConversaScreen() {
         }}
       />
       <View className="flex-row items-center gap-2 px-4 py-3 bg-white border-t border-gray-200">
-        <TextInput
+        <TextInput accessibilityLabel={t('mensagens.digiteMensagem')}
           value={texto}
           onChangeText={setTexto}
           placeholder={t('mensagens.digiteMensagem')}
           className="flex-1 border border-gray-300 rounded-full px-4 py-2"
           multiline
         />
-        <Pressable onPress={handleEnviar} disabled={!texto.trim() || enviando} className="bg-primary-600 rounded-full w-10 h-10 items-center justify-center disabled:opacity-50">
+        <Pressable onPress={handleEnviar} disabled={!texto.trim() || enviando} accessibilityRole="button" accessibilityLabel={t('mensagens.enviar')} className="bg-primary-600 rounded-full w-10 h-10 items-center justify-center" style={{ opacity: !texto.trim() || enviando ? 0.5 : 1 }}>
           <Ionicons name="send" size={18} color="#fff" />
         </Pressable>
       </View>

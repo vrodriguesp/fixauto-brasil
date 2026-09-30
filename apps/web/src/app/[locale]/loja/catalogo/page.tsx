@@ -90,32 +90,32 @@ export default function LojaCatalogoPage() {
           <h2 className="font-semibold text-gray-900 mb-4">{t('formTitle')}</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNome')}</label>
-              <input type="text" className="input-field" placeholder={t('placeholderNome')} value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
+              <label htmlFor="c50c4-1" className="block text-sm font-medium text-gray-700 mb-1">{t('labelNome')}</label>
+              <input id="c50c4-1" type="text" className="input-field" placeholder={t('placeholderNome')} value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelDescricao')}</label>
-              <input type="text" className="input-field" placeholder={t('placeholderDescricao')} value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
+              <label htmlFor="c50c4-2" className="block text-sm font-medium text-gray-700 mb-1">{t('labelDescricao')}</label>
+              <input id="c50c4-2" type="text" className="input-field" placeholder={t('placeholderDescricao')} value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelMarca')}</label>
-              <input type="text" className="input-field" placeholder={t('placeholderMarca')} value={form.fipe_marca} onChange={(e) => setForm({ ...form, fipe_marca: e.target.value })} />
+              <label htmlFor="c50c4-3" className="block text-sm font-medium text-gray-700 mb-1">{t('labelMarca')}</label>
+              <input id="c50c4-3" type="text" className="input-field" placeholder={t('placeholderMarca')} value={form.fipe_marca} onChange={(e) => setForm({ ...form, fipe_marca: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelModelo')}</label>
-              <input type="text" className="input-field" placeholder={t('placeholderModelo')} value={form.fipe_modelo} onChange={(e) => setForm({ ...form, fipe_modelo: e.target.value })} />
+              <label htmlFor="c50c4-4" className="block text-sm font-medium text-gray-700 mb-1">{t('labelModelo')}</label>
+              <input id="c50c4-4" type="text" className="input-field" placeholder={t('placeholderModelo')} value={form.fipe_modelo} onChange={(e) => setForm({ ...form, fipe_modelo: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelAno')}</label>
-              <input type="text" className="input-field" placeholder={t('placeholderAno')} value={form.fipe_ano} onChange={(e) => setForm({ ...form, fipe_ano: e.target.value })} />
+              <label htmlFor="c50c4-5" className="block text-sm font-medium text-gray-700 mb-1">{t('labelAno')}</label>
+              <input id="c50c4-5" type="text" className="input-field" placeholder={t('placeholderAno')} value={form.fipe_ano} onChange={(e) => setForm({ ...form, fipe_ano: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelPreco')}</label>
-              <input type="number" step="0.01" className="input-field" placeholder={t('placeholderPreco')} value={form.preco} onChange={(e) => setForm({ ...form, preco: e.target.value })} />
+              <label htmlFor="c50c4-6" className="block text-sm font-medium text-gray-700 mb-1">{t('labelPreco')}</label>
+              <input id="c50c4-6" type="number" step="0.01" className="input-field" placeholder={t('placeholderPreco')} value={form.preco} onChange={(e) => setForm({ ...form, preco: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelQuantidade')}</label>
-              <input type="number" className="input-field" value={form.quantidade_estoque} onChange={(e) => setForm({ ...form, quantidade_estoque: e.target.value })} />
+              <label htmlFor="c50c4-7" className="block text-sm font-medium text-gray-700 mb-1">{t('labelQuantidade')}</label>
+              <input id="c50c4-7" type="number" className="input-field" value={form.quantidade_estoque} onChange={(e) => setForm({ ...form, quantidade_estoque: e.target.value })} />
             </div>
           </div>
           <div className="flex justify-end gap-3 mt-6">

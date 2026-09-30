@@ -91,8 +91,8 @@ export default function DefinirSenhaPage() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNovaSenha')}</label>
-            <input
+            <label htmlFor="c52c9-1" className="block text-sm font-medium text-gray-700 mb-1">{t('labelNovaSenha')}</label>
+            <input id="c52c9-1"
               type="password"
               className="input-field"
               placeholder={t('placeholderSenhaMinima')}
@@ -104,8 +104,8 @@ export default function DefinirSenhaPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelConfirmarSenha')}</label>
-            <input
+            <label htmlFor="c52c9-2" className="block text-sm font-medium text-gray-700 mb-1">{t('labelConfirmarSenha')}</label>
+            <input id="c52c9-2"
               type="password"
               className="input-field"
               placeholder={t('placeholderRepitaSenha')}

@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import 'react-native-url-polyfill/auto';
 import 'react-native-get-random-values';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -54,7 +55,9 @@ export const supabase = createClient(
   supabaseAnonKey || 'placeholder-key',
   {
     auth: {
-      storage: new LargeSecureStore(),
+      // Versao web do app (so para testes automatizados no navegador): SecureStore
+      // nao existe na web, usa o AsyncStorage (localStorage).
+      storage: Platform.OS === 'web' ? AsyncStorage : new LargeSecureStore(),
       autoRefreshToken: true,
       persistSession: true,
       detectSessionInUrl: false,

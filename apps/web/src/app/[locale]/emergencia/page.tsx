@@ -360,9 +360,9 @@ export default function EmergenciaPage() {
 
               {/* Placa lookup */}
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
+                <label htmlFor="cc5ef-1" className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
                 <div className="flex gap-2">
-                  <input
+                  <input id="cc5ef-1"
                     type="text"
                     className="input-field flex-1 uppercase"
                     placeholder={t('platePlaceholder')}
@@ -408,8 +408,8 @@ export default function EmergenciaPage() {
               </div>
 
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('descriptionLabel')}</label>
-                <textarea className="input-field min-h-[80px]" placeholder={t('descriptionPlaceholder')}
+                <label htmlFor="cc5ef-2" className="block text-sm font-medium text-gray-700 mb-1">{t('descriptionLabel')}</label>
+                <textarea id="cc5ef-2" className="input-field min-h-[80px]" placeholder={t('descriptionPlaceholder')}
                   value={descricao} onChange={(e) => setDescricao(e.target.value)} />
               </div>
 
@@ -456,16 +456,16 @@ export default function EmergenciaPage() {
               <p className="text-sm text-gray-500 mb-4">{t('step2Subtitle')}</p>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('nameLabel')}</label>
-                  <input type="text" className="input-field" placeholder={t('namePlaceholder')} value={nome} onChange={(e) => setNome(e.target.value)} />
+                  <label htmlFor="cc5ef-3" className="block text-sm font-medium text-gray-700 mb-1">{t('nameLabel')}</label>
+                  <input id="cc5ef-3" type="text" className="input-field" placeholder={t('namePlaceholder')} value={nome} onChange={(e) => setNome(e.target.value)} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('emailLabel')}</label>
-                  <input type="email" className="input-field" placeholder={t('emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <label htmlFor="cc5ef-4" className="block text-sm font-medium text-gray-700 mb-1">{t('emailLabel')}</label>
+                  <input id="cc5ef-4" type="email" className="input-field" placeholder={t('emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')}</label>
-                  <input type="tel" className="input-field" placeholder={t('phonePlaceholder')} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+                  <label htmlFor="cc5ef-5" className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')}</label>
+                  <input id="cc5ef-5" type="tel" className="input-field" placeholder={t('phonePlaceholder')} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
                 </div>
               </div>
               <div className="flex justify-between mt-6">
@@ -484,8 +484,8 @@ export default function EmergenciaPage() {
               <p className="text-sm text-gray-500 mb-4">{t('step3Subtitle')}</p>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('addressLabel')}</label>
-                  <EnderecoAutocomplete
+                  <label htmlFor="cc5ef-6" className="block text-sm font-medium text-gray-700 mb-1">{t('addressLabel')}</label>
+                  <EnderecoAutocomplete id="cc5ef-6"
                     value={localizacao}
                     onChange={setLocalizacao}
                     placeholder={t('addressPlaceholder')}

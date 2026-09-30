@@ -379,24 +379,24 @@ export default function AcidenteRegistroPage() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('otherNameLabel')}</label>
-              <input type="text" className="input-field" placeholder={t('otherNamePlaceholder')} value={outroNome} onChange={(e) => setOutroNome(e.target.value)} />
+              <label htmlFor="cbacc-1" className="block text-sm font-medium text-gray-700 mb-1">{t('otherNameLabel')}</label>
+              <input id="cbacc-1" type="text" className="input-field" placeholder={t('otherNamePlaceholder')} value={outroNome} onChange={(e) => setOutroNome(e.target.value)} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')}</label>
-                <input type="tel" className="input-field" placeholder={t('phonePlaceholder')} value={outroTelefone} onChange={(e) => setOutroTelefone(e.target.value)} />
+                <label htmlFor="cbacc-2" className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')}</label>
+                <input id="cbacc-2" type="tel" className="input-field" placeholder={t('phonePlaceholder')} value={outroTelefone} onChange={(e) => setOutroTelefone(e.target.value)} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('emailLabel')}</label>
-                <input type="email" className="input-field" placeholder={t('emailPlaceholder')} value={outroEmail} onChange={(e) => setOutroEmail(e.target.value)} />
+                <label htmlFor="cbacc-3" className="block text-sm font-medium text-gray-700 mb-1">{t('emailLabel')}</label>
+                <input id="cbacc-3" type="email" className="input-field" placeholder={t('emailPlaceholder')} value={outroEmail} onChange={(e) => setOutroEmail(e.target.value)} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
+                <label htmlFor="cbacc-4" className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
                 <div className="flex gap-2">
-                  <input type="text" className="input-field uppercase" placeholder={t('platePlaceholder')} maxLength={8} value={outroPlaca}
+                  <input id="cbacc-4" type="text" className="input-field uppercase" placeholder={t('platePlaceholder')} maxLength={8} value={outroPlaca}
                     onChange={(e) => {
                       const v = e.target.value.toUpperCase();
                       setOutroPlaca(v);
@@ -409,14 +409,14 @@ export default function AcidenteRegistroPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('vehicleLabel')}</label>
-                <input type="text" className="input-field" placeholder={t('vehiclePlaceholder')} value={outroVeiculo} onChange={(e) => setOutroVeiculo(e.target.value)} />
+                <label htmlFor="cbacc-5" className="block text-sm font-medium text-gray-700 mb-1">{t('vehicleLabel')}</label>
+                <input id="cbacc-5" type="text" className="input-field" placeholder={t('vehiclePlaceholder')} value={outroVeiculo} onChange={(e) => setOutroVeiculo(e.target.value)} />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('photosLabel')}</label>
-              <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload} />
+              <label htmlFor="cbacc-6" className="block text-sm font-medium text-gray-700 mb-1">{t('photosLabel')}</label>
+              <input id="cbacc-6" ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload} />
               <div className="flex gap-3 flex-wrap">
                 {fotosOutro.map((foto, i) => (
                   <div key={i} className="w-20 h-20 rounded-lg overflow-hidden">
@@ -436,8 +436,8 @@ export default function AcidenteRegistroPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('observationsLabel')}</label>
-              <textarea
+              <label htmlFor="cbacc-7" className="block text-sm font-medium text-gray-700 mb-1">{t('observationsLabel')}</label>
+              <textarea id="cbacc-7"
                 className="input-field min-h-[80px]"
                 placeholder={t('observationsPlaceholder')}
                 value={observacoes}

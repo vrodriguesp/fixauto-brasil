@@ -38,13 +38,14 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
   return (
     <View className="mb-4">
       <Text className="text-sm font-medium text-gray-700 mb-1">{label}</Text>
-      <Pressable onPress={() => setOpen(true)} className="border border-gray-300 rounded-lg px-4 py-3">
+      <Pressable onPress={() => setOpen(true)} accessibilityRole="button" accessibilityLabel={label} className="border border-gray-300 rounded-lg px-4 py-3">
         <Text className={value ? 'text-gray-900' : 'text-gray-400'}>{value?.name || t('common.continuar')}</Text>
       </Pressable>
 
       <Modal visible={open} animationType="slide" onRequestClose={() => setOpen(false)}>
         <View className="flex-1 bg-white pt-16 px-4">
           <TextInput
+            accessibilityLabel={label}
             value={busca}
             onChangeText={setBusca}
             placeholder={label}

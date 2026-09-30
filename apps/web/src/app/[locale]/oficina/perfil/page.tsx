@@ -325,8 +325,8 @@ export default function PerfilOficinaPage() {
         <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('dadosDaOficina')}</h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('nomeFantasia')}</label>
-            <input type="text" className="input-field" value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} />
+            <label htmlFor="c83a1-1" className="block text-sm font-medium text-gray-700 mb-1">{t('nomeFantasia')}</label>
+            <input id="c83a1-1" type="text" className="input-field" value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} />
           </div>
           <div>
             <label htmlFor="descricao-oficina" className="block text-sm font-medium text-gray-700 mb-1">{t('descricaoLabel')}</label>
@@ -334,18 +334,18 @@ export default function PerfilOficinaPage() {
             <p className="text-xs text-gray-500 mt-1">{t('descricaoAjuda')} ({descricao.length}/1000)</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('cnpj')}</label>
-            <input type="text" className="input-field" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
+            <label htmlFor="c83a1-2" className="block text-sm font-medium text-gray-700 mb-1">{t('cnpj')}</label>
+            <input id="c83a1-2" type="text" className="input-field" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('cep')}</label>
-            <input type="text" inputMode="numeric" maxLength={9} className="input-field !w-40" placeholder={t('placeholderCep')} value={cep} onChange={(e) => handleCepChange(e.target.value)} />
+            <label htmlFor="c83a1-3" className="block text-sm font-medium text-gray-700 mb-1">{t('cep')}</label>
+            <input id="c83a1-3" type="text" inputMode="numeric" maxLength={9} className="input-field !w-40" placeholder={t('placeholderCep')} value={cep} onChange={(e) => handleCepChange(e.target.value)} />
             {buscandoCep && <p className="text-xs text-gray-400 mt-1">{t('buscandoEndereco')}</p>}
             {cepErro && <p className="text-xs text-red-500 mt-1">{cepErro}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('endereco')}</label>
-            <EnderecoAutocomplete
+            <label htmlFor="c83a1-4" className="block text-sm font-medium text-gray-700 mb-1">{t('endereco')}</label>
+            <EnderecoAutocomplete id="c83a1-4"
               value={endereco}
               onChange={setEndereco}
               placeholder={t('placeholderRuaNumero')}
@@ -361,12 +361,12 @@ export default function PerfilOficinaPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('cidade')}</label>
-              <input type="text" className="input-field" value={cidade} onChange={(e) => setCidade(e.target.value)} />
+              <label htmlFor="c83a1-5" className="block text-sm font-medium text-gray-700 mb-1">{t('cidade')}</label>
+              <input id="c83a1-5" type="text" className="input-field" value={cidade} onChange={(e) => setCidade(e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('estado')}</label>
-              <input type="text" className="input-field" value={estado} onChange={(e) => setEstado(e.target.value)} />
+              <label htmlFor="c83a1-6" className="block text-sm font-medium text-gray-700 mb-1">{t('estado')}</label>
+              <input id="c83a1-6" type="text" className="input-field" value={estado} onChange={(e) => setEstado(e.target.value)} />
             </div>
           </div>
           <div>
@@ -453,16 +453,16 @@ export default function PerfilOficinaPage() {
         <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('dadosPessoais')}</h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('nome')}</label>
-            <input type="text" className="input-field" value={nome} onChange={(e) => setNome(e.target.value)} />
+            <label htmlFor="c83a1-7" className="block text-sm font-medium text-gray-700 mb-1">{t('nome')}</label>
+            <input id="c83a1-7" type="text" className="input-field" value={nome} onChange={(e) => setNome(e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
-            <input type="email" className="input-field bg-gray-50" value={email} disabled />
+            <label htmlFor="c83a1-8" className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
+            <input id="c83a1-8" type="email" className="input-field bg-gray-50" value={email} disabled />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
-            <input type="tel" className="input-field" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+            <label htmlFor="c83a1-9" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
+            <input id="c83a1-9" type="tel" className="input-field" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
           </div>
         </div>
       </div>

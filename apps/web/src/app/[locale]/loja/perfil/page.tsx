@@ -101,52 +101,52 @@ export default function PerfilLojaPage() {
       <div className="card mb-6 space-y-4">
         <h2 className="font-semibold text-gray-900">{t('dadosPessoaisTitulo')}</h2>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNome')}</label>
-          <input type="text" className="input-field" value={nome} onChange={(e) => setNome(e.target.value)} />
+          <label htmlFor="c9a81-1" className="block text-sm font-medium text-gray-700 mb-1">{t('labelNome')}</label>
+          <input id="c9a81-1" type="text" className="input-field" value={nome} onChange={(e) => setNome(e.target.value)} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEmail')}</label>
-          <input type="email" className="input-field bg-gray-50" value={email} disabled />
+          <label htmlFor="c9a81-2" className="block text-sm font-medium text-gray-700 mb-1">{t('labelEmail')}</label>
+          <input id="c9a81-2" type="email" className="input-field bg-gray-50" value={email} disabled />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelTelefone')}</label>
-          <input type="tel" className="input-field" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+          <label htmlFor="c9a81-3" className="block text-sm font-medium text-gray-700 mb-1">{t('labelTelefone')}</label>
+          <input id="c9a81-3" type="tel" className="input-field" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
         </div>
       </div>
 
       <div className="card space-y-4">
         <h2 className="font-semibold text-gray-900">{t('dadosLojaTitulo')}</h2>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNomeFantasia')}</label>
-          <input type="text" className="input-field" value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} />
+          <label htmlFor="c9a81-4" className="block text-sm font-medium text-gray-700 mb-1">{t('labelNomeFantasia')}</label>
+          <input id="c9a81-4" type="text" className="input-field" value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
-          <input type="text" className="input-field" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
+          <label htmlFor="c9a81-5" className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
+          <input id="c9a81-5" type="text" className="input-field" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCep')}</label>
-          <input type="text" inputMode="numeric" maxLength={9} className="input-field !w-40" placeholder={t('cepPlaceholder')} value={cep} onChange={(e) => handleCepChange(e.target.value)} />
+          <label htmlFor="c9a81-6" className="block text-sm font-medium text-gray-700 mb-1">{t('labelCep')}</label>
+          <input id="c9a81-6" type="text" inputMode="numeric" maxLength={9} className="input-field !w-40" placeholder={t('cepPlaceholder')} value={cep} onChange={(e) => handleCepChange(e.target.value)} />
           {buscandoCep && <p className="text-xs text-gray-400 mt-1">{t('buscandoCep')}</p>}
           {cepErro && <p className="text-xs text-red-500 mt-1">{cepErro}</p>}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEndereco')}</label>
-          <input type="text" className="input-field" placeholder={t('enderecoPlaceholder')} value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+          <label htmlFor="c9a81-7" className="block text-sm font-medium text-gray-700 mb-1">{t('labelEndereco')}</label>
+          <input id="c9a81-7" type="text" className="input-field" placeholder={t('enderecoPlaceholder')} value={endereco} onChange={(e) => setEndereco(e.target.value)} />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelCidade')}</label>
-            <input type="text" className="input-field" value={cidade} onChange={(e) => setCidade(e.target.value)} />
+            <label htmlFor="c9a81-8" className="block text-sm font-medium text-gray-700 mb-1">{t('labelCidade')}</label>
+            <input id="c9a81-8" type="text" className="input-field" value={cidade} onChange={(e) => setCidade(e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEstado')}</label>
-            <input type="text" className="input-field" value={estado} onChange={(e) => setEstado(e.target.value)} />
+            <label htmlFor="c9a81-9" className="block text-sm font-medium text-gray-700 mb-1">{t('labelEstado')}</label>
+            <input id="c9a81-9" type="text" className="input-field" value={estado} onChange={(e) => setEstado(e.target.value)} />
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelRaio')}</label>
-          <input type="number" className="input-field" value={raio} onChange={(e) => setRaio(Number(e.target.value))} />
+          <label htmlFor="c9a81-10" className="block text-sm font-medium text-gray-700 mb-1">{t('labelRaio')}</label>
+          <input id="c9a81-10" type="number" className="input-field" value={raio} onChange={(e) => setRaio(Number(e.target.value))} />
         </div>
 
         <div className="flex items-center gap-3">

@@ -130,7 +130,10 @@
     "statusVisualizado": "Visualizzato",
     "statusAceito": "Accettato",
     "statusRecusado": "Rifiutato",
-    "statusExpirado": "Scaduto"
+    "statusExpirado": "Scaduto",
+    "escolhaData": "Scegli quando portare l'auto:",
+    "turno_manha": "mattina",
+    "turno_tarde": "pomeriggio"
   },
   "acompanhamento": {
     "titulo": "Stato riparazione",
@@ -151,7 +154,8 @@
     "nenhumaConversa": "Ancora nessuna conversazione.",
     "digiteMensagem": "Scrivi un messaggio...",
     "erroEnviar": "Impossibile inviare il messaggio. Riprova.",
-    "gravarAudio": "Tieni premuto per registrare un audio"
+    "gravarAudio": "Tieni premuto per registrare un audio",
+    "enviar": "Invia messaggio"
   },
   "veiculos": {
     "titulo": "I miei veicoli",

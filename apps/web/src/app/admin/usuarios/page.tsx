@@ -166,8 +166,8 @@ export default function AdminUsuariosPage() {
                     <td colSpan={7} className="px-6 py-4">
                       <div className="flex flex-wrap items-end gap-3">
                         <div>
-                          <label className="block text-xs text-slate-400 mb-1">Nome</label>
-                          <input
+                          <label htmlFor="cf7d7-1" className="block text-xs text-slate-400 mb-1">Nome</label>
+                          <input id="cf7d7-1"
                             type="text"
                             value={editForm.nome}
                             onChange={(e) => setEditForm({ ...editForm, nome: e.target.value })}
@@ -175,8 +175,8 @@ export default function AdminUsuariosPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-xs text-slate-400 mb-1">Telefone</label>
-                          <input
+                          <label htmlFor="cf7d7-2" className="block text-xs text-slate-400 mb-1">Telefone</label>
+                          <input id="cf7d7-2"
                             type="text"
                             value={editForm.telefone}
                             onChange={(e) => setEditForm({ ...editForm, telefone: e.target.value })}

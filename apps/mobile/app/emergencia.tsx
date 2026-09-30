@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router, Stack } from 'expo-router';
@@ -71,7 +71,7 @@ export default function EmergenciaScreen() {
     if (!result.canceled) setFotos((prev) => [...prev, ...result.assets]);
   };
 
-  const handleUsarLocalizacao = async () => {
+  const handleUsarLocalizacao = async (silencioso = false) => {
     setBuscandoLocal(true);
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -90,11 +90,18 @@ export default function EmergenciaScreen() {
       // Ação disparada explicitamente pelo usuário (botão "usar localização"),
       // diferente do auto-fetch silencioso de nova-solicitacao.tsx - aqui
       // ele espera um resultado, então avisamos que falhou.
-      Alert.alert(t('common.erroGenerico'), t('emergencia.erroLocalizacao'));
+      if (!silencioso) Alert.alert(t('common.erroGenerico'), t('emergencia.erroLocalizacao'));
     } finally {
       setBuscandoLocal(false);
     }
   };
+
+  // Num acidente a localizacao e essencial: pede ao abrir a tela (o botao
+  // continua para quem negou e quer tentar de novo). Tambem aproxima as
+  // sugestoes de endereco de onde a pessoa esta.
+  useEffect(() => {
+    handleUsarLocalizacao(true).catch(() => {});
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Tudo no servidor numa chamada so (/api/emergencia): acidente, fotos,
   // solicitacao e aviso as oficinas. O dono vem do login (Authorization).
@@ -195,7 +202,7 @@ export default function EmergenciaScreen() {
       </View>
 
       <Text className="text-sm font-medium text-gray-700 mb-1">{t('emergencia.descricaoLabel')}</Text>
-      <TextInput
+      <TextInput accessibilityLabel={t('emergencia.descricaoLabel')}
         value={descricao}
         onChangeText={setDescricao}
         placeholder={t('emergencia.descricaoPlaceholder')}
@@ -222,14 +229,14 @@ export default function EmergenciaScreen() {
       {usaSeguro(pagamento) && (
         <View className="bg-gray-50 rounded-lg p-3 mb-2">
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('seguro.labelSeguradora')}</Text>
-          <TextInput value={seguradora} onChangeText={setSeguradora} maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-base" />
+          <TextInput accessibilityLabel={t('seguro.labelSeguradora')} value={seguradora} onChangeText={setSeguradora} maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-base" />
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('seguro.labelSinistro')}</Text>
-          <TextInput value={sinistro} onChangeText={setSinistro} maxLength={60} autoCapitalize="characters" className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base" />
+          <TextInput accessibilityLabel={t('seguro.labelSinistro')} value={sinistro} onChangeText={setSinistro} maxLength={60} autoCapitalize="characters" className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base" />
           <Text className="text-xs text-gray-500 mt-1 mb-3">{t('seguro.ajudaSinistro')}</Text>
           {pagamento === 'seguro_proprio' && (
             <>
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('seguro.labelFranquia')}</Text>
-              <TextInput value={franquia} onChangeText={(v) => setFranquia(v.replace(/[^\d.,]/g, ''))} keyboardType="decimal-pad" maxLength={12} className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base" />
+              <TextInput accessibilityLabel={t('seguro.labelFranquia')} value={franquia} onChangeText={(v) => setFranquia(v.replace(/[^\d.,]/g, ''))} keyboardType="decimal-pad" maxLength={12} className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base" />
               <Text className="text-xs text-gray-500 mt-1">{t('seguro.ajudaFranquia')}</Text>
             </>
           )}
@@ -242,7 +249,7 @@ export default function EmergenciaScreen() {
       ) : null}
 
       <Text className="text-sm font-medium text-gray-700 mt-4 mb-2">{t('emergencia.localTitulo')}</Text>
-      <Pressable onPress={handleUsarLocalizacao} className="flex-row items-center gap-2 border border-gray-300 rounded-lg py-3 px-4 mb-2">
+      <Pressable onPress={() => handleUsarLocalizacao()} className="flex-row items-center gap-2 border border-gray-300 rounded-lg py-3 px-4 mb-2">
         <Ionicons name="location-outline" size={18} color="#374151" />
         <Text className="text-gray-700">{buscandoLocal ? t('common.carregando') : t('emergencia.localPermitir')}</Text>
         {buscandoLocal && <ActivityIndicator size="small" color="#2563eb" />}
@@ -252,6 +259,7 @@ export default function EmergenciaScreen() {
         onChange={setEndereco}
         placeholder={t('emergencia.localTexto')}
         perto={coords}
+        rotulo={t('emergencia.localTitulo')}
         onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); }}
       />
 
@@ -260,11 +268,11 @@ export default function EmergenciaScreen() {
           <Text className="text-sm font-semibold text-gray-900 mb-1">{t('emergencia.contatoTitulo')}</Text>
           <Text className="text-xs text-gray-500 mb-3">{t('emergencia.contatoTexto')}</Text>
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.nome')}</Text>
-          <TextInput value={nome} onChangeText={setNome} autoComplete="name" textContentType="name" maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-base" />
+          <TextInput accessibilityLabel={t('auth.nome')} value={nome} onChangeText={setNome} autoComplete="name" textContentType="name" maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-base" />
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</Text>
-          <TextInput value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" textContentType="emailAddress" maxLength={254} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-base" />
+          <TextInput accessibilityLabel={t('auth.email')} value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" textContentType="emailAddress" maxLength={254} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-base" />
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.telefone')}</Text>
-          <TextInput value={telefone} onChangeText={setTelefone} keyboardType="phone-pad" autoComplete="tel" textContentType="telephoneNumber" maxLength={30} className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base" />
+          <TextInput accessibilityLabel={t('auth.telefone')} value={telefone} onChangeText={setTelefone} keyboardType="phone-pad" autoComplete="tel" textContentType="telephoneNumber" maxLength={30} className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base" />
         </View>
       )}
 

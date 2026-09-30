@@ -6,6 +6,7 @@ import type { Solicitacao } from '@fixauto/shared';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
 import SolicitacaoCard from '../../components/SolicitacaoCard';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function DashboardScreen() {
   const { t } = useTranslation();
@@ -36,11 +37,13 @@ export default function DashboardScreen() {
       <Text className="text-2xl font-bold text-gray-900 mb-1">{t('dashboard.saudacao', { nome: user?.nome?.split(' ')[0] || '' })}</Text>
 
       <View className="flex-row gap-3 my-4">
-        <Pressable onPress={() => router.push('/emergencia')} className="flex-1 bg-red-600 rounded-xl py-4 items-center">
-          <Text className="text-white font-semibold">{t('dashboard.emergenciaBotao')}</Text>
+        <Pressable onPress={() => router.push('/emergencia')} accessibilityRole="button" className="flex-1 bg-red-600 rounded-2xl px-3 py-4 items-center justify-center gap-2 active:opacity-90">
+          <Ionicons name="car-sport" size={26} color="#fff" />
+          <Text className="text-white font-semibold text-center">{t('dashboard.emergenciaBotao')}</Text>
         </Pressable>
-        <Pressable onPress={() => router.push('/nova-solicitacao')} className="flex-1 bg-primary-600 rounded-xl py-4 items-center">
-          <Text className="text-white font-semibold">{t('dashboard.novaSolicitacaoBotao')}</Text>
+        <Pressable onPress={() => router.push('/nova-solicitacao')} accessibilityRole="button" className="flex-1 bg-primary-600 rounded-2xl px-3 py-4 items-center justify-center gap-2 active:opacity-90">
+          <Ionicons name="construct-outline" size={26} color="#fff" />
+          <Text className="text-white font-semibold text-center">{t('dashboard.novaSolicitacaoBotao')}</Text>
         </Pressable>
       </View>
 

@@ -19,7 +19,7 @@ export default function TabsLayout() {
   if (!isLoggedIn) return <Redirect href="/(auth)/login" />;
 
   return (
-    <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: '#2563eb' }}>
+    <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: '#2563eb', tabBarLabelStyle: { fontSize: 11 } }}>
       <Tabs.Screen
         name="index"
         options={{ title: t('tabs.inicio'), tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" size={size} color={color} /> }}

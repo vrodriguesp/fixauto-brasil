@@ -42,7 +42,7 @@ export default function EsqueciSenhaScreen() {
       ) : (
         <>
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</Text>
-          <TextInput
+          <TextInput accessibilityLabel={t('auth.email')}
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"

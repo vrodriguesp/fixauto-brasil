@@ -130,7 +130,10 @@
     "statusVisualizado": "Visualizado",
     "statusAceito": "Aceito",
     "statusRecusado": "Recusado",
-    "statusExpirado": "Expirado"
+    "statusExpirado": "Expirado",
+    "escolhaData": "Escolha quando levar o carro:",
+    "turno_manha": "manhã",
+    "turno_tarde": "tarde"
   },
   "acompanhamento": {
     "titulo": "Acompanhamento",
@@ -151,7 +154,8 @@
     "nenhumaConversa": "Nenhuma conversa ainda.",
     "digiteMensagem": "Digite uma mensagem...",
     "erroEnviar": "Não foi possível enviar a mensagem. Tente novamente.",
-    "gravarAudio": "Segure para gravar um áudio"
+    "gravarAudio": "Segure para gravar um áudio",
+    "enviar": "Enviar mensagem"
   },
   "veiculos": {
     "titulo": "Meus veículos",

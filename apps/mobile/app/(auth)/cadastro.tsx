@@ -66,10 +66,10 @@ export default function CadastroScreen() {
         )}
 
         <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.nome')}</Text>
-        <TextInput value={nome} onChangeText={setNome} className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
+        <TextInput accessibilityLabel={t('auth.nome')} value={nome} onChangeText={setNome} className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
 
         <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</Text>
-        <TextInput
+        <TextInput accessibilityLabel={t('auth.email')}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -80,7 +80,7 @@ export default function CadastroScreen() {
         <Text className="text-sm font-medium text-gray-700 mb-1">
           {t('auth.telefone')} <Text className="text-gray-400">({t('common.opcional')})</Text>
         </Text>
-        <TextInput
+        <TextInput accessibilityLabel={t('auth.telefone')}
           value={telefone}
           onChangeText={setTelefone}
           keyboardType="phone-pad"
@@ -88,10 +88,10 @@ export default function CadastroScreen() {
         />
 
         <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.senha')}</Text>
-        <TextInput value={senha} onChangeText={setSenha} secureTextEntry className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
+        <TextInput accessibilityLabel={t('auth.senha')} value={senha} onChangeText={setSenha} secureTextEntry className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
 
         <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.confirmarSenha')}</Text>
-        <TextInput
+        <TextInput accessibilityLabel={t('auth.confirmarSenha')}
           value={confirmarSenha}
           onChangeText={setConfirmarSenha}
           secureTextEntry

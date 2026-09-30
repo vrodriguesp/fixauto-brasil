@@ -130,7 +130,10 @@
     "statusVisualizado": "Viewed",
     "statusAceito": "Accepted",
     "statusRecusado": "Declined",
-    "statusExpirado": "Expired"
+    "statusExpirado": "Expired",
+    "escolhaData": "Choose when to bring the car:",
+    "turno_manha": "morning",
+    "turno_tarde": "afternoon"
   },
   "acompanhamento": {
     "titulo": "Repair tracking",
@@ -151,7 +154,8 @@
     "nenhumaConversa": "No conversations yet.",
     "digiteMensagem": "Type a message...",
     "erroEnviar": "Couldn't send the message. Please try again.",
-    "gravarAudio": "Hold to record a voice message"
+    "gravarAudio": "Hold to record a voice message",
+    "enviar": "Send message"
   },
   "veiculos": {
     "titulo": "My vehicles",

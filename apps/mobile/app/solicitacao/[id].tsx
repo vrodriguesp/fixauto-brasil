@@ -28,7 +28,7 @@ export default function SolicitacaoDetailScreen() {
   const carregar = useCallback(async () => {
     const { data } = await supabase
       .from('solicitacoes')
-      .select('*, veiculo:veiculos(*), orcamentos(*, oficina:oficinas(id, nome_fantasia, pais, profile_id))')
+      .select('*, veiculo:veiculos(*), orcamentos(*, oficina:oficinas(id, nome_fantasia, pais, profile_id), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))')
       .eq('id', id)
       .single();
     setSolicitacao(data as Solicitacao);
@@ -147,13 +147,16 @@ export default function SolicitacaoDetailScreen() {
 
             {orc.status === 'enviado' || orc.status === 'visualizado' ? (
               <>
+                {(orc.disponibilidade || []).length > 0 && (
+                  <Text className="text-sm font-medium text-gray-700 mb-2">{t('orcamentos.escolhaData')}</Text>
+                )}
                 {(orc.disponibilidade || []).map((slot: DisponibilidadeSlot) => (
                   <Pressable
                     key={slot.id}
                     onPress={() => setSlotSelecionado((prev) => ({ ...prev, [orc.id]: slot.id }))}
                     className={`border rounded-lg px-3 py-2 mb-2 ${slotSelecionado[orc.id] === slot.id ? 'border-primary-600 bg-primary-50' : 'border-gray-200'}`}
                   >
-                    <Text className="text-sm text-gray-700">{formatDate(slot.data_checkin, locale)} - {slot.turno}</Text>
+                    <Text className="text-sm text-gray-700">{formatDate(slot.data_checkin, locale)} - {t(`orcamentos.turno_${slot.turno}`, slot.turno)}</Text>
                   </Pressable>
                 ))}
                 <View className="flex-row gap-2 mt-2">
@@ -167,7 +170,9 @@ export default function SolicitacaoDetailScreen() {
                   <Pressable
                     onPress={() => handleAceitar(orc)}
                     disabled={processando === orc.id || !slotSelecionado[orc.id]}
-                    className="flex-1 bg-primary-600 rounded-lg py-3 items-center disabled:opacity-50"
+                    accessibilityState={{ disabled: processando === orc.id || !slotSelecionado[orc.id] }}
+                    className="flex-1 bg-primary-600 rounded-lg py-3 items-center"
+                    style={{ opacity: processando === orc.id || !slotSelecionado[orc.id] ? 0.45 : 1 }}
                   >
                     {processando === orc.id ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-medium">{t('orcamentos.aceitar')}</Text>}
                   </Pressable>
@@ -218,7 +223,7 @@ export default function SolicitacaoDetailScreen() {
                     </Pressable>
                   ))}
                 </View>
-                <TextInput
+                <TextInput accessibilityLabel={t('avaliacao.comentarioPlaceholder')}
                   value={comentario}
                   onChangeText={setComentario}
                   placeholder={t('avaliacao.comentarioPlaceholder')}

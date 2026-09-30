@@ -153,8 +153,8 @@ export default function LoginPage() {
           {forgotMode ? (
             <form onSubmit={handleResetPassword} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEmail')}</label>
-                <input
+                <label htmlFor="c0862-1" className="block text-sm font-medium text-gray-700 mb-1">{t('labelEmail')}</label>
+                <input id="c0862-1"
                   type="email"
                   className="input-field"
                   placeholder="you@example.com"
@@ -180,8 +180,8 @@ export default function LoginPage() {
             <>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEmail')}</label>
-                  <input
+                  <label htmlFor="c0862-2" className="block text-sm font-medium text-gray-700 mb-1">{t('labelEmail')}</label>
+                  <input id="c0862-2"
                     type="email"
                     className="input-field"
                     placeholder="you@example.com"

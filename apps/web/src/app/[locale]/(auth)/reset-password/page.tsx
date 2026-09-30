@@ -145,8 +145,8 @@ export default function ResetPasswordPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelNovaSenha')}</label>
-              <input
+              <label htmlFor="c1fd9-1" className="block text-sm font-medium text-gray-700 mb-1">{t('labelNovaSenha')}</label>
+              <input id="c1fd9-1"
                 type="password"
                 className="input-field"
                 placeholder={t('placeholderSenhaMinima')}
@@ -157,8 +157,8 @@ export default function ResetPasswordPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelConfirmarSenha')}</label>
-              <input
+              <label htmlFor="c1fd9-2" className="block text-sm font-medium text-gray-700 mb-1">{t('labelConfirmarSenha')}</label>
+              <input id="c1fd9-2"
                 type="password"
                 className="input-field"
                 placeholder={t('placeholderRepitaSenha')}

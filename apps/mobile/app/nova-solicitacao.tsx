@@ -191,7 +191,7 @@ export default function NovaSolicitacaoScreen() {
       </View>
 
       <Text className="text-sm font-medium text-gray-700 mb-1">{t('novaSolicitacao.passoSintomas')}</Text>
-      <TextInput
+      <TextInput accessibilityLabel={t('novaSolicitacao.passoSintomas')}
         value={descricao}
         onChangeText={setDescricao}
         multiline
@@ -217,6 +217,7 @@ export default function NovaSolicitacaoScreen() {
         value={endereco}
         onChange={setEndereco}
         perto={coords}
+        rotulo={t('novaSolicitacao.passoLocal')}
         onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); if (s.paisCodigo) setPais(s.paisCodigo); }}
       />
 

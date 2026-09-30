@@ -292,26 +292,26 @@ export default function OficinaPecasPage() {
               <h2 className="font-semibold text-gray-900 mb-4">{t('solicitarCotacaoPeca')}</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('oQueVocePrecisa')}</label>
-                  <input type="text" className="input-field" placeholder={t('placeholderFarol')} value={form.peca_descricao} onChange={(e) => setForm({ ...form, peca_descricao: e.target.value })} />
+                  <label htmlFor="c8551-1" className="block text-sm font-medium text-gray-700 mb-1">{t('oQueVocePrecisa')}</label>
+                  <input id="c8551-1" type="text" className="input-field" placeholder={t('placeholderFarol')} value={form.peca_descricao} onChange={(e) => setForm({ ...form, peca_descricao: e.target.value })} />
                 </div>
                 <div className="grid sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('marca')}</label>
-                    <input type="text" className="input-field" placeholder={exemploVeiculo(locale).marca} value={form.fipe_marca} onChange={(e) => setForm({ ...form, fipe_marca: e.target.value })} />
+                    <label htmlFor="c8551-2" className="block text-sm font-medium text-gray-700 mb-1">{t('marca')}</label>
+                    <input id="c8551-2" type="text" className="input-field" placeholder={exemploVeiculo(locale).marca} value={form.fipe_marca} onChange={(e) => setForm({ ...form, fipe_marca: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('modelo')}</label>
-                    <input type="text" className="input-field" placeholder={exemploVeiculo(locale).modelo} value={form.fipe_modelo} onChange={(e) => setForm({ ...form, fipe_modelo: e.target.value })} />
+                    <label htmlFor="c8551-3" className="block text-sm font-medium text-gray-700 mb-1">{t('modelo')}</label>
+                    <input id="c8551-3" type="text" className="input-field" placeholder={exemploVeiculo(locale).modelo} value={form.fipe_modelo} onChange={(e) => setForm({ ...form, fipe_modelo: e.target.value })} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('ano')}</label>
-                    <input type="text" className="input-field" placeholder="2020" value={form.fipe_ano} onChange={(e) => setForm({ ...form, fipe_ano: e.target.value })} />
+                    <label htmlFor="c8551-4" className="block text-sm font-medium text-gray-700 mb-1">{t('ano')}</label>
+                    <input id="c8551-4" type="text" className="input-field" placeholder="2020" value={form.fipe_ano} onChange={(e) => setForm({ ...form, fipe_ano: e.target.value })} />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('quantidade')}</label>
-                  <input type="number" className="input-field !w-24" value={form.quantidade} onChange={(e) => setForm({ ...form, quantidade: e.target.value })} />
+                  <label htmlFor="c8551-5" className="block text-sm font-medium text-gray-700 mb-1">{t('quantidade')}</label>
+                  <input id="c8551-5" type="number" className="input-field !w-24" value={form.quantidade} onChange={(e) => setForm({ ...form, quantidade: e.target.value })} />
                 </div>
               </div>
               <div className="flex justify-end gap-3 mt-6">
@@ -500,12 +500,12 @@ export default function OficinaPecasPage() {
                       <div className="mt-3 space-y-3 border-t pt-3">
                         <div className="grid sm:grid-cols-2 gap-3">
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">{t('precoReais')}</label>
-                            <input type="number" step="0.01" className="input-field !py-1.5" value={respostaForm.preco} onChange={(e) => setRespostaForm({ ...respostaForm, preco: e.target.value })} />
+                            <label htmlFor="c8551-6" className="block text-xs font-medium text-gray-700 mb-1">{t('precoReais')}</label>
+                            <input id="c8551-6" type="number" step="0.01" className="input-field !py-1.5" value={respostaForm.preco} onChange={(e) => setRespostaForm({ ...respostaForm, preco: e.target.value })} />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">{t('prazoDiasLabel')}</label>
-                            <input type="number" className="input-field !py-1.5" value={respostaForm.prazo_dias} onChange={(e) => setRespostaForm({ ...respostaForm, prazo_dias: e.target.value })} />
+                            <label htmlFor="c8551-7" className="block text-xs font-medium text-gray-700 mb-1">{t('prazoDiasLabel')}</label>
+                            <input id="c8551-7" type="number" className="input-field !py-1.5" value={respostaForm.prazo_dias} onChange={(e) => setRespostaForm({ ...respostaForm, prazo_dias: e.target.value })} />
                           </div>
                         </div>
                         <input type="text" className="input-field !py-1.5" placeholder={t('placeholderObservacaoOpcional')} value={respostaForm.observacao} onChange={(e) => setRespostaForm({ ...respostaForm, observacao: e.target.value })} />

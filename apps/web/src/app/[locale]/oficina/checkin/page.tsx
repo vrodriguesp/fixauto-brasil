@@ -146,17 +146,17 @@ export default function ManualCheckinPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('dadosCliente')}</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('nomeClienteObrigatorio')}</label>
-              <input type="text" className="input-field" placeholder={t('placeholderNomeCompleto')} value={clienteNome} onChange={(e) => setClienteNome(e.target.value)} required />
+              <label htmlFor="c7917-1" className="block text-sm font-medium text-gray-700 mb-1">{t('nomeClienteObrigatorio')}</label>
+              <input id="c7917-1" type="text" className="input-field" placeholder={t('placeholderNomeCompleto')} value={clienteNome} onChange={(e) => setClienteNome(e.target.value)} required />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
-                <input type="tel" className="input-field" placeholder={t('placeholderTelefone')} value={clienteTelefone} onChange={(e) => setClienteTelefone(e.target.value)} />
+                <label htmlFor="c7917-2" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
+                <input id="c7917-2" type="tel" className="input-field" placeholder={t('placeholderTelefone')} value={clienteTelefone} onChange={(e) => setClienteTelefone(e.target.value)} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
-                <input type="email" className="input-field" placeholder={EXEMPLO_EMAIL} value={clienteEmail} onChange={(e) => setClienteEmail(e.target.value)} />
+                <label htmlFor="c7917-3" className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
+                <input id="c7917-3" type="email" className="input-field" placeholder={EXEMPLO_EMAIL} value={clienteEmail} onChange={(e) => setClienteEmail(e.target.value)} />
               </div>
             </div>
           </div>
@@ -168,26 +168,26 @@ export default function ManualCheckinPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('marcaObrigatorio')}</label>
-                <input type="text" className="input-field" placeholder={t('placeholderMarca')} value={veiculoMarca} onChange={(e) => setVeiculoMarca(e.target.value)} required />
+                <label htmlFor="c7917-4" className="block text-sm font-medium text-gray-700 mb-1">{t('marcaObrigatorio')}</label>
+                <input id="c7917-4" type="text" className="input-field" placeholder={t('placeholderMarca')} value={veiculoMarca} onChange={(e) => setVeiculoMarca(e.target.value)} required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('modeloObrigatorio')}</label>
-                <input type="text" className="input-field" placeholder={t('placeholderModelo')} value={veiculoModelo} onChange={(e) => setVeiculoModelo(e.target.value)} required />
+                <label htmlFor="c7917-5" className="block text-sm font-medium text-gray-700 mb-1">{t('modeloObrigatorio')}</label>
+                <input id="c7917-5" type="text" className="input-field" placeholder={t('placeholderModelo')} value={veiculoModelo} onChange={(e) => setVeiculoModelo(e.target.value)} required />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('ano')}</label>
-                <input type="text" className="input-field" placeholder="2023" value={veiculoAno} onChange={(e) => setVeiculoAno(e.target.value)} />
+                <label htmlFor="c7917-6" className="block text-sm font-medium text-gray-700 mb-1">{t('ano')}</label>
+                <input id="c7917-6" type="text" className="input-field" placeholder="2023" value={veiculoAno} onChange={(e) => setVeiculoAno(e.target.value)} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('placa')}</label>
-                <input type="text" className="input-field" placeholder={exemploPlaca(locale)} value={veiculoPlaca} onChange={(e) => setVeiculoPlaca(e.target.value)} />
+                <label htmlFor="c7917-7" className="block text-sm font-medium text-gray-700 mb-1">{t('placa')}</label>
+                <input id="c7917-7" type="text" className="input-field" placeholder={exemploPlaca(locale)} value={veiculoPlaca} onChange={(e) => setVeiculoPlaca(e.target.value)} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('cor')}</label>
-                <input type="text" className="input-field" placeholder={t('placeholderCor')} value={veiculoCor} onChange={(e) => setVeiculoCor(e.target.value)} />
+                <label htmlFor="c7917-8" className="block text-sm font-medium text-gray-700 mb-1">{t('cor')}</label>
+                <input id="c7917-8" type="text" className="input-field" placeholder={t('placeholderCor')} value={veiculoCor} onChange={(e) => setVeiculoCor(e.target.value)} />
               </div>
             </div>
           </div>
@@ -218,12 +218,12 @@ export default function ManualCheckinPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('descricaoServico')}</label>
-              <textarea className="input-field min-h-[80px]" placeholder={t('placeholderDetalhesServico')} value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+              <label htmlFor="c7917-9" className="block text-sm font-medium text-gray-700 mb-1">{t('descricaoServico')}</label>
+              <textarea id="c7917-9" className="input-field min-h-[80px]" placeholder={t('placeholderDetalhesServico')} value={descricao} onChange={(e) => setDescricao(e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('valorEstimado')}</label>
-              <input type="text" className="input-field" placeholder={exemploValor(locale)} value={valorEstimado} onChange={(e) => setValorEstimado(e.target.value)} />
+              <label htmlFor="c7917-10" className="block text-sm font-medium text-gray-700 mb-1">{t('valorEstimado')}</label>
+              <input id="c7917-10" type="text" className="input-field" placeholder={exemploValor(locale)} value={valorEstimado} onChange={(e) => setValorEstimado(e.target.value)} />
             </div>
           </div>
         </div>
@@ -233,23 +233,23 @@ export default function ManualCheckinPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('agendamento')}</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('dataCheckin')}</label>
-              <input type="date" className="input-field" value={dataCheckin} onChange={(e) => setDataCheckin(e.target.value)} />
+              <label htmlFor="c7917-11" className="block text-sm font-medium text-gray-700 mb-1">{t('dataCheckin')}</label>
+              <input id="c7917-11" type="date" className="input-field" value={dataCheckin} onChange={(e) => setDataCheckin(e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('turno')}</label>
-              <select className="input-field" value={turnoCheckin} onChange={(e) => setTurnoCheckin(e.target.value)}>
+              <label htmlFor="c7917-12" className="block text-sm font-medium text-gray-700 mb-1">{t('turno')}</label>
+              <select id="c7917-12" className="input-field" value={turnoCheckin} onChange={(e) => setTurnoCheckin(e.target.value)}>
                 <option value="manha">{t('manha')}</option>
                 <option value="tarde">{t('tarde')}</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('prazoDias')}</label>
-              <input type="number" className="input-field" min={1} value={prazoDias} onChange={(e) => setPrazoDias(parseInt(e.target.value) || 1)} />
+              <label htmlFor="c7917-13" className="block text-sm font-medium text-gray-700 mb-1">{t('prazoDias')}</label>
+              <input id="c7917-13" type="number" className="input-field" min={1} value={prazoDias} onChange={(e) => setPrazoDias(parseInt(e.target.value) || 1)} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('previsaoEntrega')}</label>
-              <input type="date" className="input-field bg-gray-50" value={dataEntrega} disabled />
+              <label htmlFor="c7917-14" className="block text-sm font-medium text-gray-700 mb-1">{t('previsaoEntrega')}</label>
+              <input id="c7917-14" type="date" className="input-field bg-gray-50" value={dataEntrega} disabled />
             </div>
           </div>
           <div className="mt-4">

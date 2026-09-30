@@ -86,16 +86,16 @@ export default function PerfilClientePage() {
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('nameLabel')}</label>
-            <input type="text" className="input-field" value={nome} onChange={(e) => setNome(e.target.value)} />
+            <label htmlFor="c31d9-1" className="block text-sm font-medium text-gray-700 mb-1">{t('nameLabel')}</label>
+            <input id="c31d9-1" type="text" className="input-field" value={nome} onChange={(e) => setNome(e.target.value)} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('emailLabel')}</label>
-            <input type="email" className="input-field bg-gray-50" value={email} disabled />
+            <label htmlFor="c31d9-2" className="block text-sm font-medium text-gray-700 mb-1">{t('emailLabel')}</label>
+            <input id="c31d9-2" type="email" className="input-field bg-gray-50" value={email} disabled />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')}</label>
-            <input type="tel" className="input-field" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+            <label htmlFor="c31d9-3" className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')}</label>
+            <input id="c31d9-3" type="tel" className="input-field" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
           </div>
         </div>
 
