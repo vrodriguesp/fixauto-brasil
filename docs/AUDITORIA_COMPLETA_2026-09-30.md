@@ -423,3 +423,42 @@ Verificação ao final de cada semana: rodar `teste-rotas.mjs` e `mobile-audit.j
 - **Concorrentes na Estônia** (8.5): não pesquisados fora do site; as alternativas listadas são hipóteses a confirmar.
 - **Comportamento da tela de orçamento com comissão > 0** (8.4): inferido do código/progresso; não executado.
 - **Lojas de aplicativos**: sem `eas.json`/builds no repositório; não há como verificar metadados, política de privacidade cadastrada ou revisão da Apple/Google.
+
+---
+
+## 11. Status das correções (30/09/2026, publicado em produção)
+
+Commits `eff350f`, `677aaef`, `c87d939`. Verificado em produção: teste de regras de acesso (48 verificações, era 27 falhas), rotas/SEO (sitemap inteiro e 105 links, 0 problemas), celular 390/360 px com menus abertos (0), contraste WCAG AA em 12 páginas (0), áreas logadas de cliente/oficina/loja em et e ru, fluxo de acidente de ponta a ponta, análise de dano por IA com foto privada.
+
+| Item | Status |
+|---|---|
+| 2.1 RLS | **Corrigido** — migração 028 (acesso por relação, fim de `USING (true)`), `scripts/teste-rls.mjs` |
+| 2.2 `getSession()` | **Corrigido** — `getUser()` em api-auth, admin-auth e middleware |
+| 2.3 Rotas sem autenticação | **Corrigido** — acidente numa rota só no servidor (dono pela sessão, código secreto para quem registrou sem login, conta por link de definir senha), login + relação + limite nas demais, 4 rotas abertas removidas |
+| 2.4 Storage | **Corrigido** — fotos/áudios privados com link assinado; fotos de oficina em bucket público próprio; fim do envio/sobrescrita anônimos |
+| 2.5 Cabeçalhos | **Corrigido** — CSP, X-Frame-Options, Permissions-Policy, sem X-Powered-By, `server_tokens off`, HSTS com subdomínios |
+| 2.6 Senhas | **Corrigido** — mínimo 8 (formulários e GoTrue), gerador criptográfico, sem senha por e-mail |
+| 2.7 Cookies | **Corrigido** — Secure/SameSite; `NEXT_LOCALE` desligado |
+| 2.8 FIPE/geocode | **Corrigido** — caminhos permitidos; cache 24 h + fila 1/s + limite |
+| 2.9 / 1.1 Cliente admin e e-mail | **Corrigido** — `lib/supabase-admin.ts` (falha sem a chave) e `lib/email.ts` |
+| 2.10 | **Corrigido**: security.txt, chave do Gemini no cabeçalho, nomes de avaliadores abreviados, sessão do app cifrada (LargeSecureStore), aceite dos termos para contas criadas no acidente. **Pendente (usuário)**: DMARC `p=quarantine` e CAA no DNS |
+| 1.2 Erros da API | **Corrigido** nas telas voltadas ao usuário (código traduzido: `erros.*`) |
+| 1.3 | **Corrigido** (cliente morto removido, fallback en-GB, migrações antigas em `supabase/migrations_legado`). Adiado: mover `notif-i18n` do app para o pacote compartilhado (baixo impacto) |
+| 3.1–3.4 | **Corrigido** |
+| 3.5 | Mantido (sem ação, como recomendado) |
+| 3.6 | **Corrigido**: logo 139→16 KB e cache de `/public`. **Adiado**: ISR/cache das páginas (1 dia de trabalho; hoje TTFB 0,2–0,3 s) |
+| 3.7 | Aceito: lista vazia mostra "primeiras oficinas chegando" com texto honesto |
+| 4.1 | Sem ação (conforme Google); reavaliar com o Search Console em 2–3 semanas |
+| 4.2–4.4 | **Corrigido** |
+| 5.1–5.4 | **Corrigido** — llms.txt gerado, llms-full.txt, afirmações no presente real, página Sobre |
+| 6.1–6.4 | **Corrigido** (contraste medido: 15 → 0) |
+| 7.1–7.5 | **Corrigido** (app com ru/pt-PT, fallback en, permissões iOS localizadas, termos no cadastro do app, ANPD, tutorial traduzido). Pendente: revisão de nativo do estoniano |
+| 8.2 | **Corrigido**: texto honesto + aviso por e-mail ao admin de todo pedido/acidente enquanto não há oficina ativa |
+| 8.3 | **Corrigido**: "o que acontece depois" e "quem está por trás". **Decisão do usuário**: publicar as faixas de comissão futura; **material do usuário**: capturas/vídeo do painel, telefone +372 |
+| 8.4 | FAQ "o preço do orçamento é o final?" e "alguma oficina paga para aparecer?". **Decisão do usuário**: manter ou não a opção "repassar comissão" |
+| 8.5 | **Corrigido**: FAQ do seguro/kasko, registrikood no perfil público, consulta de placa só no Brasil. Opcional: campo "quem paga o reparo" no fluxo de acidente |
+| 8.6 | **Corrigido** parcialmente: títulos/descrições de it e pt-pt dizem Tallinn/"para quem vive na Estônia" |
+
+### Achado novo desta rodada
+- **Confirmação de e-mail desligada** no Supabase (`ENABLE_EMAIL_AUTOCONFIRM=true`, SMTP do GoTrue não configurado): qualquer pessoa cria conta com o e-mail de outra. As regras de acesso novas já não confiam no e-mail, mas o certo é exigir confirmação. Exige configurar o SMTP (Resend) no GoTrue e mover a criação do perfil para o servidor (gatilho no banco), porque hoje o cadastro cria o perfil logo após o `signUp`, o que só funciona sem confirmação. Recomendado como próxima tarefa.
+- **Não testado em aparelho**: o app de celular (compila; sessão cifrada, idiomas e cadastro novos precisam de teste num iPhone/Android).
