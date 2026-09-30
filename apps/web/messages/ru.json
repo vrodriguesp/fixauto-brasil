@@ -253,7 +253,18 @@
     "manualNotice": "Введите данные вашего автомобиля ниже.",
     "placeholderMarca": "напр. Volkswagen",
     "placeholderModelo": "напр. Golf",
-    "placeholderAno": "напр. 2018"
+    "placeholderAno": "напр. 2018",
+    "carregando": "загрузка...",
+    "selecioneMarca": "Выберите марку",
+    "selecioneModelo": "Выберите модель",
+    "selecioneAno": "Выберите год",
+    "erroMarcas": "Не удалось загрузить марки. Используем примерный список.",
+    "erroModelos": "Не удалось загрузить модели.",
+    "erroAnos": "Не удалось загрузить годы.",
+    "buscandoValor": "Ищем стоимость...",
+    "valorFipe": "Ориентировочная стоимость",
+    "valorFipeIndisponivel": "Ориентировочная стоимость недоступна",
+    "codigoFipe": "Код"
   },
   "home": {
     "metaTitle": "Ремонт авто в Таллинне: сравните сметы автосервисов | BipFix",

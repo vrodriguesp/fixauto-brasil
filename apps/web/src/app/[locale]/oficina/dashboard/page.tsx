@@ -13,6 +13,7 @@ import TutorialBanner from '@/components/tutorial/TutorialBanner';
 import { timeAgo, calcDistance, getUrgenciaColor, formatCurrency, cleanDescricao, INTL_LOCALE } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { Link } from '@/i18n/navigation';
+import PerfilCompleto from '@/components/oficina/PerfilCompleto';
 
 export default function OficinaDashboard() {
   const t = useTranslations('oficinaDashboard');
@@ -61,6 +62,7 @@ export default function OficinaDashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <TutorialBanner href="/oficina/aprender" storageKey="bipfix_tutorial_banner_oficina" />
+      <PerfilCompleto />
       {/* parceiro novo: inativo ate o admin conferir o registro da empresa */}
       {(oficina as { ativa?: boolean } | null)?.ativa === false && (
         <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" role="status">

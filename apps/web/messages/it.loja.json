@@ -167,7 +167,7 @@
     "labelTelefone": "Telefono",
     "dadosLojaTitulo": "Dati del negozio",
     "labelNomeFantasia": "Ragione sociale",
-    "labelCnpj": "Partita IVA (CNPJ)",
+    "labelCnpj": "Partita IVA",
     "labelCep": "CAP (CEP)",
     "cepPlaceholder": "00000-000",
     "buscandoCep": "Ricerca indirizzo...",

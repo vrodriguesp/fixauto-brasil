@@ -9,6 +9,8 @@ import { useAuth } from '../lib/auth-context';
 import { supabase } from '../lib/supabase';
 import { API_BASE_URL } from '../lib/api';
 import i18n from '../i18n';
+import { ErroApi, ErroUsuario, mensagemErro } from '../lib/erro';
+import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
 
 type Tipo = 'eu_causei' | 'outro_causou' | 'sem_outro';
 type Pagamento = 'proprio' | 'seguro_terceiro' | 'seguro_proprio' | 'nao_sei';
@@ -107,7 +109,7 @@ export default function EmergenciaScreen() {
       }
       // Sem localizacao nao ha como avisar oficinas proximas (antes caia
       // num ponto fixo em Sao Paulo, mesmo para acidentes na Europa)
-      if (!localCoords) throw new Error(t('emergencia.erroLocalizacao'));
+      if (!localCoords) throw new ErroUsuario(t('emergencia.erroLocalizacao'));
 
       const form = new FormData();
       form.append('dados', JSON.stringify({
@@ -134,11 +136,11 @@ export default function EmergenciaScreen() {
         body: form,
       });
       const r = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(r.error || t('common.erroGenerico'));
+      if (!res.ok) throw new ErroApi(res.status, r.codigo);
 
       setEnviado(true);
     } catch (e) {
-      Alert.alert(t('common.erroGenerico'), (e as Error).message);
+      Alert.alert(t('common.erroGenerico'), mensagemErro(e));
     } finally {
       setEnviando(false);
     }
@@ -245,11 +247,12 @@ export default function EmergenciaScreen() {
         <Text className="text-gray-700">{buscandoLocal ? t('common.carregando') : t('emergencia.localPermitir')}</Text>
         {buscandoLocal && <ActivityIndicator size="small" color="#2563eb" />}
       </Pressable>
-      <TextInput
+      <EnderecoAutocomplete
         value={endereco}
-        onChangeText={setEndereco}
+        onChange={setEndereco}
         placeholder={t('emergencia.localTexto')}
-        className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-base"
+        perto={coords}
+        onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); }}
       />
 
       {!user && (

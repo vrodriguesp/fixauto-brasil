@@ -32,7 +32,18 @@
     "tipoExterno": "Väline",
     "avaliacoesRecentesTitulo": "Hiljutised hinnangud",
     "nenhumaAvaliacaoAinda": "Hinnanguid veel ei ole",
-    "cadastroEmAnalise": "Sinu registreerimine on ülevaatamisel: kontrollime ettevõtte registreeringut enne, kui sinu profiil klientidele nähtavaks muutub. Seni saad juba töölaual oma andmed täita."
+    "cadastroEmAnalise": "Sinu registreerimine on ülevaatamisel: kontrollime ettevõtte registreeringut enne, kui sinu profiil klientidele nähtavaks muutub. Seni saad juba töölaual oma andmed täita.",
+    "perfilTitulo": "Sinu profiil on {pct}% täidetud",
+    "perfilBotao": "Täida profiil",
+    "perfilTexto": "Täielikud profiilid saavad rohkem päringuid: klient võrdleb enne valimist fotosid, lahtiolekuaegu ja teenuseid.",
+    "item_logo": "Töökoja logo",
+    "item_descricao": "Töökoja kirjeldus (vähemalt 80 tähemärki)",
+    "item_telefone": "Kontakttelefon",
+    "item_endereco": "Täielik aadress",
+    "item_servicos": "Töökoja teenused",
+    "item_horario": "Lahtiolekuajad",
+    "item_fotos": "Vähemalt 3 fotot töökojast",
+    "item_registro": "Registrikood"
   },
   "oficinaAgenda": {
     "mes0": "Jaanuar",
@@ -495,7 +506,7 @@
     "placeholderNomeFuncionario": "Töötaja nimi",
     "emailObrigatorio": "E-post *",
     "senhaTemporariaObrigatorio": "Ajutine parool *",
-    "placeholderMinimo6Caracteres": "Vähemalt 6 tähemärki",
+    "placeholderMinimo6Caracteres": "Vähemalt 8 tähemärki",
     "passeSenhaAoFuncionario": "Anna see parool töötajale edasi. Esimesel sisselogimisel palutakse tal valida uus parool.",
     "cargo": "Amet",
     "especialidadeOpcional": "Eriala (valikuline)",
@@ -664,7 +675,10 @@
     "nenhumaFotoAdicionada": "Ühtegi fotot pole lisatud",
     "servico": "Teenus",
     "salvando": "Salvestamine...",
-    "salvarAlteracoes": "Salvesta muudatused"
+    "salvarAlteracoes": "Salvesta muudatused",
+    "descricaoLabel": "Töökojast",
+    "descricaoPlaceholder": "Nt: pereettevõte aastast 2005, spetsialiseerunud kere- ja värvitöödele. Asendusauto, hinnapakkumine 24 tunni jooksul.",
+    "descricaoAjuda": "Kuvatakse sinu avalikus profiilis. Kirjelda, mis teeb sinu töökoja eriliseks."
   },
   "oficinaSolicitacoes": {
     "titulo": "Päringud",

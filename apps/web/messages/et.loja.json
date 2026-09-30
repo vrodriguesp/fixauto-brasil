@@ -167,7 +167,7 @@
     "labelTelefone": "Telefon",
     "dadosLojaTitulo": "Poe andmed",
     "labelNomeFantasia": "Ärinimi",
-    "labelCnpj": "Maksukohustuslase number (CNPJ)",
+    "labelCnpj": "Maksukohustuslase number",
     "labelCep": "Sihtnumber (CEP)",
     "cepPlaceholder": "00000-000",
     "buscandoCep": "Otsin aadressi...",

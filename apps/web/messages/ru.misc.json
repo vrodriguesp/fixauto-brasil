@@ -904,7 +904,8 @@
     "reviewsTitle": "Отзывы ({count})",
     "noReviewsText": "У этого автосервиса пока нет отзывов.",
     "clientFallback": "Клиент",
-    "registroEmpresa": "Регистрационный код"
+    "registroEmpresa": "Регистрационный код",
+    "sobreTitulo": "Об автосервисе"
   },
   "audioMessage": {
     "hideTranscription": "Скрыть расшифровку",
@@ -1039,5 +1040,11 @@
     "oficinaOpcao_seguro_terceiro": "Страховка другого водителя",
     "oficinaOpcao_seguro_proprio": "Страховка клиента (каско)",
     "oficinaOpcao_nao_sei": "Клиент пока не знает"
+  },
+  "chatCotacaoPeca": {
+    "nenhuma": "Сообщений пока нет.",
+    "dica": "Задайте вопрос о запчасти или сроках или отправьте фото.",
+    "enviandoFoto": "Отправка фото...",
+    "placeholder": "Введите сообщение..."
   }
 }

@@ -71,6 +71,12 @@ export async function middleware(req: NextRequest) {
     return r;
   }
 
+  // Painel admin nao tem idioma: /pt-br/admin/... (ou qualquer idioma) -> /admin/...
+  const adminComIdioma = pathname.match(/^\/(?:pt-br|pt-pt|en|et|it|ru|pt|pt-PT)(\/admin(?:\/.*)?)$/);
+  if (adminComIdioma) {
+    return NextResponse.redirect(new URL(`${adminComIdioma[1]}${req.nextUrl.search}`, req.url), 308);
+  }
+
   // Enderecos antigos da versao do Brasil (sem prefixo, ate 30/09/2026):
   // 301 permanente para /pt-br/... - preserva o que o Google ja indexou.
   // "/pt/..." (nome interno do idioma) tambem vai para /pt-br.

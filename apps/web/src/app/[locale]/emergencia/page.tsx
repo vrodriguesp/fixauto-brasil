@@ -8,6 +8,7 @@ import { salvarTokenEmergencia } from '@/lib/emergencia-token';
 import { compressImage } from '@/lib/image-compress';
 import { textoErroApi } from '@/lib/erro-api';
 import { SeguroReparoCampos, ProximosPassosSeguro, SEGURO_VAZIO, type ValorSeguro } from '@/components/emergencia/SeguroReparo';
+import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 
 export default function EmergenciaPage() {
   const t = useTranslations('emergencia');
@@ -191,7 +192,8 @@ export default function EmergenciaPage() {
       setSubmitting(false);
       setSubmitted(true);
     } catch (err) {
-      setError((err as Error).message);
+      console.error(err);
+      setError(tErros('GENERICO'));
       setSubmitting(false);
     }
   };
@@ -483,8 +485,13 @@ export default function EmergenciaPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{t('addressLabel')}</label>
-                  <input type="text" className="input-field" placeholder={t('addressPlaceholder')}
-                    value={localizacao} onChange={(e) => setLocalizacao(e.target.value)} />
+                  <EnderecoAutocomplete
+                    value={localizacao}
+                    onChange={setLocalizacao}
+                    placeholder={t('addressPlaceholder')}
+                    perto={coords}
+                    onSelect={(s) => { setLocalizacao(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); setGeoResolved(true); }}
+                  />
                 </div>
                 <button type="button" onClick={() => {
                   if (navigator.geolocation) {

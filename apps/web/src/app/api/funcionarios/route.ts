@@ -21,6 +21,9 @@ export async function POST(req: NextRequest) {
     if (!email || !senha || !cargo || !oficina_id) {
       return NextResponse.json({ error: 'Campos obrigatórios: email, senha, cargo, oficina_id' }, { status: 400 });
     }
+    if (typeof senha !== 'string' || senha.length < 8) {
+      return NextResponse.json({ error: 'Senha curta', codigo: 'SENHA_CURTA' }, { status: 400 });
+    }
 
     // So o dono da oficina pode cadastrar funcionario nela - sem isso,
     // qualquer um passando um oficina_id de terceiro criava uma conta e

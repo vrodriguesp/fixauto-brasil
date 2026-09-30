@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     const { data: u } = await supabaseAdmin.auth.admin.getUserById(perfil.id);
     if (!u?.user || u.user.email_confirmed_at) return NextResponse.json({ ok: true });
 
-    await enviarConfirmacaoEmail(email, perfil.nome, perfil.idioma || b.idioma);
+    await enviarConfirmacaoEmail(email, perfil.nome, perfil.idioma || b.idioma, b.origem === 'app');
     return NextResponse.json({ ok: true });
   } catch (e) {
     if (e instanceof ErroValidacao) return NextResponse.json({ error: e.message, codigo: e.codigo }, { status: 400 });

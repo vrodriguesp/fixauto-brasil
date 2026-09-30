@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth-context';
 
 export default function DefinirSenhaPage() {
   const t = useTranslations('definirSenha');
+  const tErr = useTranslations('erros');
   const router = useRouter();
   const { user, funcionario, refreshProfile } = useAuth();
   const [novaSenha, setNovaSenha] = useState('');
@@ -36,7 +37,7 @@ export default function DefinirSenhaPage() {
     });
 
     if (authError) {
-      setError(authError.message);
+      console.error(authError); setError(tErr((authError as { code?: string }).code === 'weak_password' ? 'SENHA_CURTA' : 'GENERICO'));
       setLoading(false);
       return;
     }

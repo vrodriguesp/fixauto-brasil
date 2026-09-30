@@ -62,7 +62,10 @@
     "selo3": "Seus dados protegidos",
     "idioma": "Idioma",
     "mostrarSenha": "Mostrar senha",
-    "ocultarSenha": "Ocultar senha"
+    "ocultarSenha": "Ocultar senha",
+    "confirmando": "Confirmando seu e-mail…",
+    "linkInvalidoTitulo": "Este link não é mais válido",
+    "linkInvalidoTexto": "O link vale por 1 hora e só pode ser usado uma vez. Tente entrar: vamos oferecer um novo link."
   },
   "emergencia": {
     "titulo": "Acabei de bater",
@@ -157,7 +160,7 @@
     "modelo": "Modelo",
     "ano": "Ano",
     "placa": "Placa",
-    "apelido": "Apelido do veículo",
+    "apelido": "Nome para identificar o veículo",
     "erroSalvar": "Não foi possível salvar o veículo. Tente novamente.",
     "nenhumVeiculo": "Você ainda não cadastrou nenhum veículo."
   },
@@ -244,5 +247,21 @@
     "erroSalvar": "Não foi possível salvar. Tente de novo.",
     "naoInformado": "Ainda não informado.",
     "lembreteSinistro": "Falta o número do sinistro: quando a seguradora enviar, adicione aqui para a oficina ver."
+  },
+  "erros": {
+    "CAMPO_OBRIGATORIO": "Preencha todos os campos obrigatórios.",
+    "EMAIL_INVALIDO": "Confira o e-mail informado.",
+    "FOTOS_MAX": "Envie no máximo 6 fotos.",
+    "FOTO_TIPO": "Envie fotos em JPG, PNG, WebP ou HEIC.",
+    "FOTO_TAMANHO": "Cada foto pode ter no máximo 10 MB.",
+    "MUITAS_TENTATIVAS": "Muitas tentativas em pouco tempo. Tente de novo mais tarde.",
+    "SEM_ACESSO": "Você não tem acesso a isso.",
+    "NAO_AUTENTICADO": "Sua sessão expirou. Entre de novo.",
+    "DADOS_INVALIDOS": "Confira os dados informados.",
+    "GENERICO": "Algo deu errado. Tente de novo em instantes.",
+    "FUNCIONARIO_JA_CADASTRADO": "Este funcionário já está cadastrado na sua oficina.",
+    "SENHA_CURTA": "A senha precisa ter pelo menos 8 caracteres.",
+    "TERMOS_OBRIGATORIOS": "Para continuar, aceite os Termos de Uso e a Política de Privacidade.",
+    "DECLARACAO_OBRIGATORIA": "Para cadastrar uma empresa, confirme que você é o responsável por ela."
   }
 }

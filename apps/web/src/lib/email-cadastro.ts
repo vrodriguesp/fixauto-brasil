@@ -123,7 +123,7 @@ const botao = (url: string, texto: string) =>
  * "magiclink": ao abrir, o GoTrue marca o e-mail como confirmado e ja
  * devolve a sessao - a pessoa cai logada no painel.
  */
-export async function enviarConfirmacaoEmail(email: string, nome: string, idioma: string | null | undefined): Promise<boolean> {
+export async function enviarConfirmacaoEmail(email: string, nome: string, idioma: string | null | undefined, doApp = false): Promise<boolean> {
   const loc = idiomaDoSite(idioma);
   const { data, error } = await supabaseAdmin.auth.admin.generateLink({ type: 'magiclink', email });
   const tokenHash = data?.properties?.hashed_token;
@@ -132,7 +132,8 @@ export async function enviarConfirmacaoEmail(email: string, nome: string, idioma
     return false;
   }
   const s = TEXTOS[loc];
-  const url = urlNoIdioma(loc, `/confirmar-email?token_hash=${encodeURIComponent(tokenHash)}`);
+  // app=1: quem se cadastrou pelo app volta para ele depois de confirmar
+  const url = urlNoIdioma(loc, `/confirmar-email?token_hash=${encodeURIComponent(tokenHash)}${doApp ? '&app=1' : ''}`);
   return enviarEmail({
     para: email,
     assunto: s.assunto,

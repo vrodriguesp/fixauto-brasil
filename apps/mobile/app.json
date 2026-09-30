@@ -20,7 +20,10 @@
         "NSLocationWhenInUseUsageDescription": "We use your location to find repair shops near you.",
         "NSCameraUsageDescription": "We use the camera so you can photograph the damage to your vehicle.",
         "NSPhotoLibraryUsageDescription": "We use your photo library so you can send photos of the damage to your vehicle."
-      }
+      },
+      "associatedDomains": [
+        "applinks:bipfix.com"
+      ]
     },
     "android": {
       "package": "com.bipfix.cliente",
@@ -35,6 +38,23 @@
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
         "CAMERA"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "bipfix.com",
+              "pathPattern": "/.*/confirmar-email"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
       ]
     },
     "web": {
@@ -58,7 +78,8 @@
         }
       ],
       "expo-asset",
-      "expo-font"
+      "expo-font",
+      "expo-web-browser"
     ],
     "locales": {
       "en": "./i18n/permissoes/en.json",

@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { exemploPlaca } from '@/lib/exemplos';
 import { useRouter } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useVeiculos } from '@/hooks/use-veiculos';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
 import { notifNovaSolicitacaoTitulo } from '@/lib/notif-i18n';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
+import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 import {
   TIPOS_SERVICO, URGENCIAS,
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
@@ -15,6 +17,7 @@ import {
 
 export default function NovaSolicitacaoPage() {
   const t = useTranslations('clienteNovaSolicitacao');
+  const locale = useLocale();
   const tc = useTranslations('constants');
   const router = useRouter();
   const { veiculos, add: addVeiculo } = useVeiculos();
@@ -317,7 +320,7 @@ export default function NovaSolicitacaoPage() {
                 <div className="grid sm:grid-cols-3 gap-4 mt-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
-                    <input type="text" className="input-field" placeholder="ABC-1234" value={novoVeiculo.placa} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, placa: e.target.value })} />
+                    <input type="text" className="input-field" placeholder={exemploPlaca(locale)} value={novoVeiculo.placa} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, placa: e.target.value })} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('colorLabel')}</label>
@@ -589,12 +592,17 @@ export default function NovaSolicitacaoPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {t('addressLabel')}
                 </label>
-                <input
-                  type="text"
-                  className="input-field"
-                  placeholder={t('placeholderAddress')}
+                <EnderecoAutocomplete
                   value={endereco}
-                  onChange={(e) => setEndereco(e.target.value)}
+                  onChange={setEndereco}
+                  placeholder={t('placeholderAddress')}
+                  perto={geoResolved ? coords : null}
+                  onSelect={(s) => {
+                    setEndereco(s.rotulo);
+                    setCoords({ lat: s.latitude, lon: s.longitude });
+                    if (s.paisCodigo) setPais(s.paisCodigo);
+                    setGeoResolved(true);
+                  }}
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   {t('addressHelp')}

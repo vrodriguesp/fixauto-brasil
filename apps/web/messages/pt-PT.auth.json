@@ -110,6 +110,8 @@
     "labelEmail": "E-mail",
     "reenviar": "Enviar nova ligação",
     "reenviado": "Se existir uma conta a aguardar confirmação, enviámos uma nova ligação. Verifique o seu e-mail.",
-    "irLogin": "Ir para o início de sessão"
+    "irLogin": "Ir para o início de sessão",
+    "voltarAoApp": "E-mail confirmado! Volte à aplicação BipFix e inicie sessão com o seu e-mail e palavra-passe.",
+    "abrirApp": "Abrir a aplicação BipFix"
   }
 }

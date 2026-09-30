@@ -904,7 +904,8 @@
     "reviewsTitle": "Recensioni ({count})",
     "noReviewsText": "Questa officina non ha ancora recensioni.",
     "clientFallback": "Cliente",
-    "registroEmpresa": "Codice di registro delle imprese"
+    "registroEmpresa": "Codice di registro delle imprese",
+    "sobreTitulo": "Chi siamo"
   },
   "audioMessage": {
     "hideTranscription": "Nascondi trascrizione",
@@ -1039,5 +1040,11 @@
     "oficinaOpcao_seguro_terceiro": "Assicurazione dell'altro conducente",
     "oficinaOpcao_seguro_proprio": "Assicurazione del cliente (kasko)",
     "oficinaOpcao_nao_sei": "Il cliente non lo sa ancora"
+  },
+  "chatCotacaoPeca": {
+    "nenhuma": "Ancora nessun messaggio.",
+    "dica": "Chiedi informazioni sul ricambio o sui tempi, oppure invia una foto.",
+    "enviandoFoto": "Invio della foto...",
+    "placeholder": "Scrivi il tuo messaggio..."
   }
 }

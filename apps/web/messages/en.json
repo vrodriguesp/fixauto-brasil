@@ -253,7 +253,18 @@
     "manualNotice": "Enter your vehicle's details below.",
     "placeholderMarca": "e.g. Volkswagen",
     "placeholderModelo": "e.g. Golf",
-    "placeholderAno": "e.g. 2018"
+    "placeholderAno": "e.g. 2018",
+    "carregando": "loading...",
+    "selecioneMarca": "Select the make",
+    "selecioneModelo": "Select the model",
+    "selecioneAno": "Select the year",
+    "erroMarcas": "Could not load the makes. Using a sample list.",
+    "erroModelos": "Could not load the models.",
+    "erroAnos": "Could not load the years.",
+    "buscandoValor": "Looking up the value...",
+    "valorFipe": "Reference value",
+    "valorFipeIndisponivel": "Reference value not available",
+    "codigoFipe": "Code"
   },
   "home": {
     "metaTitle": "Car Repair Quotes in Tallinn – Compare Garages | BipFix",

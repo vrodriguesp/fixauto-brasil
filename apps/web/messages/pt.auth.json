@@ -110,6 +110,8 @@
     "labelEmail": "E-mail",
     "reenviar": "Enviar novo link",
     "reenviado": "Se houver uma conta aguardando confirmação, enviamos um novo link. Confira seu e-mail.",
-    "irLogin": "Ir para o login"
+    "irLogin": "Ir para o login",
+    "voltarAoApp": "E-mail confirmado! Volte ao app BipFix e entre com seu e-mail e senha.",
+    "abrirApp": "Abrir o app BipFix"
   }
 }

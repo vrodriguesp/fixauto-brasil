@@ -110,7 +110,7 @@ export default function LoginScreen() {
                       await fetch(`${API_BASE_URL}/api/cadastro/reenviar`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: email.trim(), idioma: i18n.language }),
+                        body: JSON.stringify({ email: email.trim(), idioma: i18n.language, origem: 'app' }),
                       }).catch(() => {});
                       setReenviado(true);
                     }}

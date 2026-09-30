@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
       if (eErro) throw new Error(eErro.message);
     }
 
-    const enviado = await enviarConfirmacaoEmail(email, nome, idioma);
+    const enviado = await enviarConfirmacaoEmail(email, nome, idioma, b.origem === 'app');
     if (!enviado) throw new Error('e-mail de confirmacao nao enviado');
 
     if (empresa && process.env.VISITAS_EMAIL_PARA) {

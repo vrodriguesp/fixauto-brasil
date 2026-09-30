@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { compressImage } from '@/lib/image-compress';
@@ -26,6 +26,7 @@ interface Props {
 export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorId, titulo, subtitulo }: Props) {
   const { user } = useAuth();
   const locale = useLocale();
+  const tChat = useTranslations('chatCotacaoPeca');
   const [messages, setMessages] = useState<CotacaoPecaMensagem[]>([]);
   const [loading, setLoading] = useState(true);
   const [texto, setTexto] = useState('');
@@ -133,8 +134,8 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
           </div>
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
-            <p className="text-gray-500 text-sm">Nenhuma mensagem ainda.</p>
-            <p className="text-gray-400 text-xs mt-1">Tire dúvidas sobre a peça, prazo ou envie uma foto.</p>
+            <p className="text-gray-500 text-sm">{tChat('nenhuma')}</p>
+            <p className="text-gray-400 text-xs mt-1">{tChat('dica')}</p>
           </div>
         ) : (
           <div className="space-y-1">
@@ -171,7 +172,7 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
         {uploadingImg ? (
           <div className="flex items-center justify-center gap-2 py-2">
             <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm text-gray-500">Enviando foto...</span>
+            <span className="text-sm text-gray-500">{tChat('enviandoFoto')}</span>
           </div>
         ) : (
           <div className="flex items-center gap-2">
@@ -192,7 +193,7 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
               value={texto}
               onChange={(e) => setTexto(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-              placeholder="Digite sua mensagem..."
+              placeholder={tChat('placeholder')}
               className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
             <button

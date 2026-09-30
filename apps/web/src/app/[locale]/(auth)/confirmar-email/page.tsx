@@ -14,7 +14,7 @@ export default function ConfirmarEmailPage() {
   const t = useTranslations('confirmarEmail');
   const locale = useLocale();
   const router = useRouter();
-  const [estado, setEstado] = useState<'verificando' | 'invalido' | 'ok'>('verificando');
+  const [estado, setEstado] = useState<'verificando' | 'invalido' | 'ok' | 'app'>('verificando');
   const [email, setEmail] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [reenviado, setReenviado] = useState(false);
@@ -23,7 +23,10 @@ export default function ConfirmarEmailPage() {
   useEffect(() => {
     if (iniciado.current) return;
     iniciado.current = true;
-    const tokenHash = new URLSearchParams(window.location.search).get('token_hash');
+    const busca = new URLSearchParams(window.location.search);
+    const tokenHash = busca.get('token_hash');
+    // cadastro feito pelo app: confirma aqui e manda a pessoa de volta ao app
+    const doApp = busca.get('app') === '1';
     window.history.replaceState(null, '', window.location.pathname);
     if (!tokenHash) {
       setEstado('invalido');
@@ -32,6 +35,10 @@ export default function ConfirmarEmailPage() {
     supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'email' }).then(async ({ data, error }) => {
       if (error || !data.user) {
         setEstado('invalido');
+        return;
+      }
+      if (doApp) {
+        setEstado('app');
         return;
       }
       setEstado('ok');
@@ -58,7 +65,12 @@ export default function ConfirmarEmailPage() {
     <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md text-center">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('titulo')}</h1>
-        {estado !== 'invalido' ? (
+        {estado === 'app' ? (
+          <div className="card" role="status">
+            <p className="text-gray-700 mb-5">{t('voltarAoApp')}</p>
+            <a href="bipfix://login" className="btn-primary inline-block w-full">{t('abrirApp')}</a>
+          </div>
+        ) : estado !== 'invalido' ? (
           <p className="text-gray-600" role="status">{estado === 'ok' ? t('sucesso') : t('verificando')}</p>
         ) : (
           <div className="card text-left">

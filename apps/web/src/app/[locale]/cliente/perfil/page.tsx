@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 
 export default function PerfilClientePage() {
   const t = useTranslations('clientePerfil');
+  const tErr = useTranslations('erros');
   const { user, loading, refreshProfile } = useAuth();
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -36,7 +37,7 @@ export default function PerfilClientePage() {
       .eq('id', user.id);
 
     if (profError) {
-      setError(profError.message);
+      console.error(profError); setError(tErr((profError as { code?: string }).code === 'weak_password' ? 'SENHA_CURTA' : 'GENERICO'));
       setSaving(false);
       return;
     }

@@ -62,7 +62,10 @@
     "selo3": "Your data is protected",
     "idioma": "Language",
     "mostrarSenha": "Show password",
-    "ocultarSenha": "Hide password"
+    "ocultarSenha": "Hide password",
+    "confirmando": "Confirming your email…",
+    "linkInvalidoTitulo": "This link is no longer valid",
+    "linkInvalidoTexto": "The link is valid for 1 hour and can be used only once. Try to sign in and we will offer you a new link."
   },
   "emergencia": {
     "titulo": "I've just crashed",
@@ -157,7 +160,7 @@
     "modelo": "Model",
     "ano": "Year",
     "placa": "License plate",
-    "apelido": "Vehicle nickname",
+    "apelido": "Name to recognise this vehicle",
     "erroSalvar": "Couldn't save the vehicle. Please try again.",
     "nenhumVeiculo": "You haven't added any vehicles yet."
   },
@@ -244,5 +247,21 @@
     "erroSalvar": "Couldn't save. Please try again.",
     "naoInformado": "Not provided yet.",
     "lembreteSinistro": "The claim number is missing: when your insurer sends it, add it here so the shop can see it."
+  },
+  "erros": {
+    "CAMPO_OBRIGATORIO": "Please fill in all required fields.",
+    "EMAIL_INVALIDO": "Please check the email address.",
+    "FOTOS_MAX": "You can send up to 6 photos.",
+    "FOTO_TIPO": "Please send photos in JPG, PNG, WebP or HEIC.",
+    "FOTO_TAMANHO": "Each photo can be up to 10 MB.",
+    "MUITAS_TENTATIVAS": "Too many attempts in a short time. Please try again later.",
+    "SEM_ACESSO": "You don't have access to this.",
+    "NAO_AUTENTICADO": "Your session has expired. Please sign in again.",
+    "DADOS_INVALIDOS": "Please check the details you entered.",
+    "GENERICO": "Something went wrong. Please try again in a moment.",
+    "FUNCIONARIO_JA_CADASTRADO": "This employee is already registered at your shop.",
+    "SENHA_CURTA": "Password must be at least 8 characters.",
+    "TERMOS_OBRIGATORIOS": "To continue, please accept the Terms of Use and the Privacy Policy.",
+    "DECLARACAO_OBRIGATORIA": "To register a business, please confirm that you are the person responsible for it."
   }
 }

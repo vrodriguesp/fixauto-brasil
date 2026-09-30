@@ -110,6 +110,8 @@
     "labelEmail": "E-post",
     "reenviar": "Saada uus link",
     "reenviado": "Kui mõni konto ootab kinnitamist, saatsime uue lingi. Kontrolli oma e-posti.",
-    "irLogin": "Mine sisselogimise lehele"
+    "irLogin": "Mine sisselogimise lehele",
+    "voltarAoApp": "E-post on kinnitatud! Mine tagasi BipFixi rakendusse ja logi sisse oma e-posti ja parooliga.",
+    "abrirApp": "Ava BipFixi rakendus"
   }
 }

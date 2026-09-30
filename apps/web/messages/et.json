@@ -253,7 +253,18 @@
     "manualNotice": "Sisesta oma sõiduki andmed allpool.",
     "placeholderMarca": "Nt: Volkswagen",
     "placeholderModelo": "Nt: Golf",
-    "placeholderAno": "Nt: 2018"
+    "placeholderAno": "Nt: 2018",
+    "carregando": "laadimine...",
+    "selecioneMarca": "Vali mark",
+    "selecioneModelo": "Vali mudel",
+    "selecioneAno": "Vali aasta",
+    "erroMarcas": "Marke ei õnnestunud laadida. Kasutame näidisloendit.",
+    "erroModelos": "Mudeleid ei õnnestunud laadida.",
+    "erroAnos": "Aastaid ei õnnestunud laadida.",
+    "buscandoValor": "Otsime väärtust...",
+    "valorFipe": "Võrdlusväärtus",
+    "valorFipeIndisponivel": "Võrdlusväärtus pole saadaval",
+    "codigoFipe": "Kood"
   },
   "home": {
     "metaTitle": "Autoremont Tallinnas: võrdle hinnapakkumisi | BipFix",

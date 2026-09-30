@@ -167,7 +167,7 @@
     "labelTelefone": "Phone",
     "dadosLojaTitulo": "Store details",
     "labelNomeFantasia": "Trade name",
-    "labelCnpj": "Tax ID (CNPJ)",
+    "labelCnpj": "Tax ID",
     "labelCep": "Postal code (CEP)",
     "cepPlaceholder": "00000-000",
     "buscandoCep": "Looking up address...",

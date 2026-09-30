@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform, Linking } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
 import { useTranslation } from 'react-i18next';
 import { Link, router } from 'expo-router';
 import { useAuth } from '../../lib/auth-context';
@@ -108,9 +109,9 @@ export default function CadastroScreen() {
           </View>
           <Text className="flex-1 text-sm text-gray-700">
             {t('auth.aceiteTexto1')}{' '}
-            <Text className="text-primary-600 underline" onPress={() => Linking.openURL(urlTermos(i18n.language))}>{t('auth.termos')}</Text>
+            <Text className="text-primary-600 underline" onPress={() => WebBrowser.openBrowserAsync(urlTermos(i18n.language))}>{t('auth.termos')}</Text>
             {' '}{t('auth.aceiteTexto2')}{' '}
-            <Text className="text-primary-600 underline" onPress={() => Linking.openURL(urlPrivacidade(i18n.language))}>{t('auth.privacidade')}</Text>
+            <Text className="text-primary-600 underline" onPress={() => WebBrowser.openBrowserAsync(urlPrivacidade(i18n.language))}>{t('auth.privacidade')}</Text>
           </Text>
         </Pressable>
 

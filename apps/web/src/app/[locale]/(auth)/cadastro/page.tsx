@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { textoErroApi } from '@/lib/erro-api';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
+import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 
 export default function CadastroPageWrapper() {
   const t = useTranslations('cadastro');
@@ -60,6 +61,32 @@ function CadastroPage() {
   // moeda pelo idioma da interface - so pelo pais real do negocio.
   const [pais, setPais] = useState('BR');
   const [geoResolved, setGeoResolved] = useState(false);
+
+  // Rascunho do formulario: quem abre os Termos (nova aba) e volta nao perde o
+  // que ja digitou, mesmo se o celular recarregar a pagina. A senha nunca e salva.
+  const RASCUNHO = 'bipfix_cadastro_rascunho';
+  const [rascunhoLido, setRascunhoLido] = useState(false);
+  useEffect(() => {
+    try {
+      const r = JSON.parse(sessionStorage.getItem(RASCUNHO) || 'null');
+      if (r && (!tipoParam || r.userType === tipoParam)) {
+        if (r.userType) setUserType(r.userType);
+        if (r.step) setStep(r.step);
+        setNome(r.nome || ''); setEmail(r.email || ''); setTelefone(r.telefone || '');
+        setAceitouTermos(!!r.aceitouTermos); setDeclaracao(!!r.declaracao);
+        setNomeFantasia(r.nomeFantasia || ''); setCnpj(r.cnpj || ''); setEndereco(r.endereco || '');
+        setCidade(r.cidade || ''); setEstado(r.estado || ''); setCep(r.cep || '');
+        setEspecialidades(Array.isArray(r.especialidades) ? r.especialidades : []);
+      }
+    } catch { /* sem armazenamento: segue sem rascunho */ }
+    setRascunhoLido(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!rascunhoLido) return;
+    try {
+      sessionStorage.setItem(RASCUNHO, JSON.stringify({ userType, step, nome, email, telefone, aceitouTermos, declaracao, nomeFantasia, cnpj, endereco, cidade, estado, cep, especialidades }));
+    } catch { /* ignora */ }
+  }, [rascunhoLido, userType, step, nome, email, telefone, aceitouTermos, declaracao, nomeFantasia, cnpj, endereco, cidade, estado, cep, especialidades]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -149,7 +176,21 @@ function CadastroPage() {
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">{t('labelEndereco')}</label>
-        <input type="text" className="input-field" placeholder={t('placeholderEndereco')} value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+        <EnderecoAutocomplete
+          value={endereco}
+          onChange={setEndereco}
+          placeholder={t('placeholderEndereco')}
+          perto={geoResolved ? coords : null}
+          onSelect={(s) => {
+            setEndereco(s.endereco || s.rotulo);
+            if (s.cidade) setCidade(s.cidade);
+            if (s.estado) setEstado(s.estado);
+            if (s.cep) setCep(s.cep);
+            setCoords({ lat: s.latitude, lon: s.longitude });
+            if (s.paisCodigo) setPais(s.paisCodigo);
+            setGeoResolved(true);
+          }}
+        />
         <p className="text-xs text-gray-400 mt-1">{t('enderecoAjuda')}</p>
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -169,7 +210,7 @@ function CadastroPage() {
   useEffect(() => {
     if (tipoParam && (tipoParam === 'cliente' || tipoParam === 'oficina' || tipoParam === 'loja_pecas')) {
       setUserType(tipoParam);
-      setStep(2);
+      setStep((atual) => (atual >= 2 ? atual : 2)); // nao volta do passo 3 restaurado
     }
   }, [tipoParam]);
 
@@ -218,6 +259,7 @@ function CadastroPage() {
       setError(textoErroApi(te, res?.status || 500, corpo));
       return;
     }
+    try { sessionStorage.removeItem(RASCUNHO); } catch { /* ignora */ }
     setEnviado(true);
   };
 

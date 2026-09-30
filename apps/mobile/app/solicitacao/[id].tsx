@@ -8,6 +8,7 @@ import { formatCurrency, formatDate, currencyForCountry } from '@fixauto/shared'
 import { supabase } from '../../lib/supabase';
 import { apiFetch } from '../../lib/api';
 import { useAuth } from '../../lib/auth-context';
+import { mensagemErro } from '../../lib/erro';
 
 export default function SolicitacaoDetailScreen() {
   const { t, i18n } = useTranslation();
@@ -77,13 +78,13 @@ export default function SolicitacaoDetailScreen() {
         .select()
         .single();
       if (error) {
-        Alert.alert(t('common.erroGenerico'), error.message);
+        Alert.alert(t('common.erroGenerico'), mensagemErro(error));
       } else if (data) {
         setAvaliacao(data as Avaliacao);
         await apiFetch('/api/atualizar-avaliacao-oficina', { method: 'POST', body: JSON.stringify({ oficinaId }) }).catch(() => {});
       }
     } catch (e) {
-      Alert.alert(t('common.erroGenerico'), (e as Error).message);
+      Alert.alert(t('common.erroGenerico'), mensagemErro(e));
     } finally {
       setEnviandoAvaliacao(false);
     }
@@ -97,7 +98,7 @@ export default function SolicitacaoDetailScreen() {
       await apiFetch('/api/aceitar-orcamento', { method: 'POST', body: JSON.stringify({ orcamentoId: orcamento.id, slotId }) });
       await carregar();
     } catch (e) {
-      Alert.alert(t('common.erroGenerico'), (e as Error).message);
+      Alert.alert(t('common.erroGenerico'), mensagemErro(e));
     } finally {
       setProcessando(null);
     }

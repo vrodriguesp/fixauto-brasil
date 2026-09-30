@@ -62,7 +62,10 @@
     "selo3": "Sinu andmed on kaitstud",
     "idioma": "Keel",
     "mostrarSenha": "Näita parooli",
-    "ocultarSenha": "Peida parool"
+    "ocultarSenha": "Peida parool",
+    "confirmando": "Kinnitame sinu e-posti aadressi…",
+    "linkInvalidoTitulo": "See link ei kehti enam",
+    "linkInvalidoTexto": "Link kehtib 1 tund ja seda saab kasutada ainult üks kord. Proovi sisse logida – pakume uue lingi."
   },
   "emergencia": {
     "titulo": "Sattusin avariisse",
@@ -157,7 +160,7 @@
     "modelo": "Mudel",
     "ano": "Aasta",
     "placa": "Registreerimismärk",
-    "apelido": "Sõiduki hüüdnimi",
+    "apelido": "Nimi sõiduki eristamiseks",
     "erroSalvar": "Sõidukit ei õnnestunud salvestada. Proovi uuesti.",
     "nenhumVeiculo": "Sa pole veel ühtegi sõidukit lisanud."
   },
@@ -244,5 +247,21 @@
     "erroSalvar": "Salvestamine ebaõnnestus. Proovi uuesti.",
     "naoInformado": "Veel lisamata.",
     "lembreteSinistro": "Kahjuasja number puudub: kui kindlustusandja selle saadab, lisa see siia, et töökoda seda näeks."
+  },
+  "erros": {
+    "CAMPO_OBRIGATORIO": "Täida kõik kohustuslikud väljad.",
+    "EMAIL_INVALIDO": "Kontrolli e-posti aadressi.",
+    "FOTOS_MAX": "Saad saata kuni 6 fotot.",
+    "FOTO_TIPO": "Saada fotod JPG-, PNG-, WebP- või HEIC-vormingus.",
+    "FOTO_TAMANHO": "Iga foto võib olla kuni 10 MB.",
+    "MUITAS_TENTATIVAS": "Liiga palju katseid lühikese aja jooksul. Proovi hiljem uuesti.",
+    "SEM_ACESSO": "Sul ei ole sellele juurdepääsu.",
+    "NAO_AUTENTICADO": "Sinu seanss aegus. Logi uuesti sisse.",
+    "DADOS_INVALIDOS": "Kontrolli sisestatud andmeid.",
+    "GENERICO": "Midagi läks valesti. Proovi hetke pärast uuesti.",
+    "FUNCIONARIO_JA_CADASTRADO": "See töötaja on sinu töökojas juba registreeritud.",
+    "SENHA_CURTA": "Parool peab olema vähemalt 8 tähemärki.",
+    "TERMOS_OBRIGATORIOS": "Jätkamiseks nõustu kasutustingimuste ja privaatsuspoliitikaga.",
+    "DECLARACAO_OBRIGATORIA": "Ettevõtte registreerimiseks kinnita, et oled selle eest vastutav isik."
   }
 }

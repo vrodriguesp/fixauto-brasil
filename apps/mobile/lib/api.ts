@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import i18n from '../i18n';
+import { ErroApi } from './erro';
 
 // O app fala com as MESMAS rotas de API do site (apps/web/src/app/api) -
 // nao existe um backend separado pro app. Rotas que usam a service_role key
@@ -20,7 +21,7 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
   const res = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
   const json = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(json.error || i18n.t('common.erroGenerico'));
+    throw new ErroApi(res.status, json.codigo);
   }
   return json;
 }

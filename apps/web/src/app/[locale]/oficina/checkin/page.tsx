@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { exemploPlaca, EXEMPLO_EMAIL, exemploValor } from '@/lib/exemplos';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { useAgenda } from '@/hooks/use-agenda';
@@ -155,7 +156,7 @@ export default function ManualCheckinPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
-                <input type="email" className="input-field" placeholder="email@email.com" value={clienteEmail} onChange={(e) => setClienteEmail(e.target.value)} />
+                <input type="email" className="input-field" placeholder={EXEMPLO_EMAIL} value={clienteEmail} onChange={(e) => setClienteEmail(e.target.value)} />
               </div>
             </div>
           </div>
@@ -182,7 +183,7 @@ export default function ManualCheckinPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('placa')}</label>
-                <input type="text" className="input-field" placeholder="ABC-1234" value={veiculoPlaca} onChange={(e) => setVeiculoPlaca(e.target.value)} />
+                <input type="text" className="input-field" placeholder={exemploPlaca(locale)} value={veiculoPlaca} onChange={(e) => setVeiculoPlaca(e.target.value)} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('cor')}</label>
@@ -222,7 +223,7 @@ export default function ManualCheckinPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t('valorEstimado')}</label>
-              <input type="text" className="input-field" placeholder="0,00" value={valorEstimado} onChange={(e) => setValorEstimado(e.target.value)} />
+              <input type="text" className="input-field" placeholder={exemploValor(locale)} value={valorEstimado} onChange={(e) => setValorEstimado(e.target.value)} />
             </div>
           </div>
         </div>

@@ -36,6 +36,13 @@ const CABECALHOS = [
 const nextConfig = {
   // Nao anunciar a tecnologia do servidor (OWASP)
   poweredByHeader: false,
+  // Universal Links (iOS) / App Links (Android): ver src/app/api/app-links
+  async rewrites() {
+    return [
+      { source: '/.well-known/apple-app-site-association', destination: '/api/app-links?f=aasa' },
+      { source: '/.well-known/assetlinks.json', destination: '/api/app-links?f=assetlinks' },
+    ];
+  },
   async headers() {
     return [
       { source: '/(.*)', headers: CABECALHOS },

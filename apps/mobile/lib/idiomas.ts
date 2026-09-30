@@ -26,3 +26,8 @@ export async function restaurarIdioma() {
     if (salvo && IDIOMAS.some((i) => i.code === salvo) && i18n.language !== salvo) await i18n.changeLanguage(salvo);
   } catch { /* segue com o idioma do aparelho */ }
 }
+
+/** Idioma escolhido explicitamente no app (null = segue aparelho/conta). */
+export async function idiomaEscolhido(): Promise<string | null> {
+  try { return await AsyncStorage.getItem(CHAVE); } catch { return null; }
+}

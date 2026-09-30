@@ -32,7 +32,18 @@
     "tipoExterno": "Esterno",
     "avaliacoesRecentesTitulo": "Recensioni recenti",
     "nenhumaAvaliacaoAinda": "Nessuna recensione ancora",
-    "cadastroEmAnalise": "La tua registrazione è in verifica: controlliamo la registrazione dell'impresa prima di mostrare il tuo profilo ai clienti. Nel frattempo puoi già completare i dati nel pannello."
+    "cadastroEmAnalise": "La tua registrazione è in verifica: controlliamo la registrazione dell'impresa prima di mostrare il tuo profilo ai clienti. Nel frattempo puoi già completare i dati nel pannello.",
+    "perfilTitulo": "Il tuo profilo è completo al {pct}%",
+    "perfilBotao": "Completa il profilo",
+    "perfilTexto": "I profili completi ricevono più richieste: il cliente confronta foto, orari e servizi prima di scegliere.",
+    "item_logo": "Logo dell'officina",
+    "item_descricao": "Descrizione dell'officina (almeno 80 caratteri)",
+    "item_telefone": "Telefono di contatto",
+    "item_endereco": "Indirizzo completo",
+    "item_servicos": "Servizi offerti dall'officina",
+    "item_horario": "Orari di apertura",
+    "item_fotos": "Almeno 3 foto dell'officina",
+    "item_registro": "Partita IVA / numero di registro"
   },
   "oficinaAgenda": {
     "mes0": "Gennaio",
@@ -495,7 +506,7 @@
     "placeholderNomeFuncionario": "Nome del dipendente",
     "emailObrigatorio": "Email *",
     "senhaTemporariaObrigatorio": "Password temporanea *",
-    "placeholderMinimo6Caracteres": "Minimo 6 caratteri",
+    "placeholderMinimo6Caracteres": "Minimo 8 caratteri",
     "passeSenhaAoFuncionario": "Passa questa password al dipendente. Al primo accesso, gli verrà chiesto di sceglierne una nuova.",
     "cargo": "Ruolo",
     "especialidadeOpcional": "Specializzazione (opzionale)",
@@ -664,7 +675,10 @@
     "nenhumaFotoAdicionada": "Nessuna foto aggiunta",
     "servico": "Servizio",
     "salvando": "Salvataggio...",
-    "salvarAlteracoes": "Salva Modifiche"
+    "salvarAlteracoes": "Salva Modifiche",
+    "descricaoLabel": "Chi siamo",
+    "descricaoPlaceholder": "Es.: officina di famiglia dal 2005, specializzata in carrozzeria e verniciatura. Auto sostitutiva, preventivo in 24 ore.",
+    "descricaoAjuda": "Compare nel tuo profilo pubblico. Racconta cosa distingue la tua officina."
   },
   "oficinaSolicitacoes": {
     "titulo": "Richieste",

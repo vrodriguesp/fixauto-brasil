@@ -6,6 +6,13 @@ import { useAuth } from '@/lib/auth-context';
 import { useEffect, useRef, useState } from 'react';
 import NotificationBell from './NotificationBell';
 import LanguageSwitcher from './LanguageSwitcher';
+import NextLink from 'next/link';
+
+// /admin nao tem idioma: link comum. O Link do next-intl poria /pt-br na
+// frente (/pt-br/admin/oficinas -> 404) - achado no teste do admin, 30/09.
+function LinkPainel(props: React.ComponentProps<typeof NextLink> & { href: string }) {
+  return props.href.startsWith('/admin') ? <NextLink {...props} /> : <Link {...(props as any)} />;
+}
 
 export default function Navbar() {
   const { user, oficina, funcionario, loja, isLoggedIn, loading, signOut } = useAuth();
@@ -36,7 +43,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href={isLoggedIn ? dashboardPath : '/'} className="flex items-center gap-1">
+            <LinkPainel href={isLoggedIn ? dashboardPath : '/'} className="flex items-center gap-1">
               <img src="/logo-80.webp" alt="BipFix" width={188} height={40} className="h-7 sm:h-10 w-auto" />
               {(isOficina || isAdmin) && (
                 // No celular nao ha espaco ao lado do logo (sobrepunha o seletor de idioma)
@@ -49,7 +56,7 @@ export default function Navbar() {
                   )}
                 </div>
               )}
-            </Link>
+            </LinkPainel>
 
             {isLoggedIn && (
               <div className="hidden md:flex items-center ml-8 gap-1">
@@ -119,7 +126,7 @@ export default function Navbar() {
             {isLoggedIn ? (
               <>
                 <NotificationBell />
-                <Link
+                <LinkPainel
                   href={isAdmin ? '/admin/dashboard' : isOficina ? '/oficina/perfil' : isLoja ? '/loja/perfil' : '/cliente/perfil'}
                   className="hidden sm:flex items-center gap-2 hover:opacity-80 transition-opacity"
                 >
@@ -134,7 +141,7 @@ export default function Navbar() {
                       {isAdmin ? t('administrador') : isOficina ? oficina?.nome_fantasia : isLoja ? loja?.nome_fantasia : t('cliente')}
                     </p>
                   </div>
-                </Link>
+                </LinkPainel>
                 <button
                   onClick={handleSignOut}
                   className="text-sm text-gray-500 hover:text-gray-700"
@@ -144,12 +151,12 @@ export default function Navbar() {
               </>
             ) : (
               <div className="flex items-center gap-2">
-                <Link href="/login" className="btn-secondary text-sm !py-2 !px-3 sm:!px-4 whitespace-nowrap">
+                <LinkPainel href="/login" className="btn-secondary text-sm !py-2 !px-3 sm:!px-4 whitespace-nowrap">
                   {t('entrar')}
-                </Link>
-                <Link href="/cadastro" className="btn-primary text-sm !py-2 !px-3 sm:!px-4 whitespace-nowrap">
+                </LinkPainel>
+                <LinkPainel href="/cadastro" className="btn-primary text-sm !py-2 !px-3 sm:!px-4 whitespace-nowrap">
                   {t('cadastrar')}
-                </Link>
+                </LinkPainel>
               </div>
             )}
 
@@ -242,14 +249,14 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   const pathname = usePathname();
   const active = pathname === href || pathname?.startsWith(href + '/');
   return (
-    <Link
+    <LinkPainel
       href={href}
       className={`px-2.5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
         active ? 'text-primary-700 bg-primary-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
       }`}
     >
       {children}
-    </Link>
+    </LinkPainel>
   );
 }
 
@@ -257,7 +264,7 @@ function MobileNavLink({ href, children, onClick }: { href: string; children: Re
   const pathname = usePathname();
   const active = pathname === href || pathname?.startsWith(href + '/');
   return (
-    <Link
+    <LinkPainel
       href={href}
       onClick={onClick}
       className={`block px-3 py-2 rounded-lg text-base font-medium ${
@@ -265,7 +272,7 @@ function MobileNavLink({ href, children, onClick }: { href: string; children: Re
       }`}
     >
       {children}
-    </Link>
+    </LinkPainel>
   );
 }
 
@@ -311,7 +318,7 @@ function MoreNavDropdown({ items, moreLabel }: { items: { href: string; label: s
           {items.map((item) => {
             const active = pathname === item.href || pathname?.startsWith(item.href + '/');
             return (
-              <Link
+              <LinkPainel
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
@@ -320,7 +327,7 @@ function MoreNavDropdown({ items, moreLabel }: { items: { href: string; label: s
                 }`}
               >
                 {item.label}
-              </Link>
+              </LinkPainel>
             );
           })}
         </div>

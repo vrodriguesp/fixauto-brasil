@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 
 export default function ResetPasswordPage() {
   const t = useTranslations('resetPassword');
+  const tErr = useTranslations('erros');
   const tc = useTranslations('cadastro');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -77,7 +78,7 @@ export default function ResetPasswordPage() {
     setLoading(false);
 
     if (error) {
-      setError(error.message);
+      console.error(error); setError(tErr((error as { code?: string }).code === 'weak_password' ? 'SENHA_CURTA' : 'GENERICO'));
       return;
     }
 

@@ -62,7 +62,10 @@
     "selo3": "Os seus dados protegidos",
     "idioma": "Idioma",
     "mostrarSenha": "Mostrar palavra-passe",
-    "ocultarSenha": "Ocultar palavra-passe"
+    "ocultarSenha": "Ocultar palavra-passe",
+    "confirmando": "A confirmar o seu e-mail…",
+    "linkInvalidoTitulo": "Esta ligação já não é válida",
+    "linkInvalidoTexto": "A ligação é válida durante 1 hora e só pode ser usada uma vez. Tente iniciar sessão: iremos oferecer uma nova ligação."
   },
   "emergencia": {
     "titulo": "Acabei de bater",
@@ -157,7 +160,7 @@
     "modelo": "Modelo",
     "ano": "Ano",
     "placa": "Matrícula",
-    "apelido": "Alcunha do veículo",
+    "apelido": "Nome para identificar o veículo",
     "erroSalvar": "Não foi possível guardar o veículo. Tente novamente.",
     "nenhumVeiculo": "Ainda não adicionou nenhum veículo."
   },
@@ -244,5 +247,21 @@
     "erroSalvar": "Não foi possível guardar. Tente novamente.",
     "naoInformado": "Ainda não indicado.",
     "lembreteSinistro": "Falta o número do sinistro: quando a seguradora o enviar, acrescente-o aqui para a oficina o ver."
+  },
+  "erros": {
+    "CAMPO_OBRIGATORIO": "Preencha todos os campos obrigatórios.",
+    "EMAIL_INVALIDO": "Confirme o e-mail indicado.",
+    "FOTOS_MAX": "Envie no máximo 6 fotografias.",
+    "FOTO_TIPO": "Envie fotografias em JPG, PNG, WebP ou HEIC.",
+    "FOTO_TAMANHO": "Cada fotografia pode ter no máximo 10 MB.",
+    "MUITAS_TENTATIVAS": "Demasiadas tentativas em pouco tempo. Tente novamente mais tarde.",
+    "SEM_ACESSO": "Não tem acesso a isto.",
+    "NAO_AUTENTICADO": "A sua sessão expirou. Inicie sessão novamente.",
+    "DADOS_INVALIDOS": "Confirme os dados indicados.",
+    "GENERICO": "Algo correu mal. Tente novamente dentro de instantes.",
+    "FUNCIONARIO_JA_CADASTRADO": "Este funcionário já está registado na sua oficina.",
+    "SENHA_CURTA": "A palavra-passe tem de ter pelo menos 8 caracteres.",
+    "TERMOS_OBRIGATORIOS": "Para continuar, aceite os Termos de Utilização e a Política de Privacidade.",
+    "DECLARACAO_OBRIGATORIA": "Para registar uma empresa, confirme que é o responsável por ela."
   }
 }

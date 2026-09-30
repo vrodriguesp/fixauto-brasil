@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { apiFetch } from '../../lib/api';
+import { mensagemErro } from '../../lib/erro';
 
 export default function EsqueciSenhaScreen() {
   const { t, i18n } = useTranslation();
@@ -23,7 +24,7 @@ export default function EsqueciSenhaScreen() {
       });
       setEnviado(true);
     } catch (err) {
-      Alert.alert(t('common.erroGenerico'), (err as Error).message);
+      Alert.alert(t('common.erroGenerico'), mensagemErro(err));
     } finally {
       setLoading(false);
     }

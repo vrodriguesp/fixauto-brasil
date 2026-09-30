@@ -110,6 +110,8 @@
     "labelEmail": "Email",
     "reenviar": "Send a new link",
     "reenviado": "If an account is waiting for confirmation, we have sent a new link. Check your email.",
-    "irLogin": "Go to sign in"
+    "irLogin": "Go to sign in",
+    "voltarAoApp": "Email confirmed! Go back to the BipFix app and sign in with your email and password.",
+    "abrirApp": "Open the BipFix app"
   }
 }

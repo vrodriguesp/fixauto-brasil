@@ -904,7 +904,8 @@
     "reviewsTitle": "Hinnangud ({count})",
     "noReviewsText": "Sellel töökojal pole veel hinnanguid.",
     "clientFallback": "Klient",
-    "registroEmpresa": "Registrikood"
+    "registroEmpresa": "Registrikood",
+    "sobreTitulo": "Töökojast"
   },
   "audioMessage": {
     "hideTranscription": "Peida transkriptsioon",
@@ -1039,5 +1040,11 @@
     "oficinaOpcao_seguro_terceiro": "Teise juhi kindlustus",
     "oficinaOpcao_seguro_proprio": "Kliendi kaskokindlustus",
     "oficinaOpcao_nao_sei": "Klient ei tea veel"
+  },
+  "chatCotacaoPeca": {
+    "nenhuma": "Sõnumeid veel pole.",
+    "dica": "Küsi varuosa või tarneaja kohta või saada foto.",
+    "enviandoFoto": "Foto saatmine...",
+    "placeholder": "Kirjuta oma sõnum..."
   }
 }

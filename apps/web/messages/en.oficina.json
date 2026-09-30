@@ -32,7 +32,18 @@
     "tipoExterno": "External",
     "avaliacoesRecentesTitulo": "Recent reviews",
     "nenhumaAvaliacaoAinda": "No reviews yet",
-    "cadastroEmAnalise": "Your registration is under review: we check your company registration before showing your profile to customers. Meanwhile, you can already complete your details in the dashboard."
+    "cadastroEmAnalise": "Your registration is under review: we check your company registration before showing your profile to customers. Meanwhile, you can already complete your details in the dashboard.",
+    "perfilTitulo": "Your profile is {pct}% complete",
+    "perfilBotao": "Complete profile",
+    "perfilTexto": "Complete profiles get more requests: customers compare photos, opening hours and what the shop does before choosing.",
+    "item_logo": "Shop logo",
+    "item_descricao": "Shop description (at least 80 characters)",
+    "item_telefone": "Contact phone",
+    "item_endereco": "Full address",
+    "item_servicos": "Services the shop offers",
+    "item_horario": "Opening hours",
+    "item_fotos": "At least 3 photos of the shop",
+    "item_registro": "Company registration number"
   },
   "oficinaAgenda": {
     "mes0": "January",
@@ -495,7 +506,7 @@
     "placeholderNomeFuncionario": "Employee's name",
     "emailObrigatorio": "Email *",
     "senhaTemporariaObrigatorio": "Temporary password *",
-    "placeholderMinimo6Caracteres": "Minimum 6 characters",
+    "placeholderMinimo6Caracteres": "Minimum 8 characters",
     "passeSenhaAoFuncionario": "Give this password to the employee. At their first login, they'll be asked to choose a new one.",
     "cargo": "Role",
     "especialidadeOpcional": "Specialty (optional)",
@@ -664,7 +675,10 @@
     "nenhumaFotoAdicionada": "No photos added",
     "servico": "Service",
     "salvando": "Saving...",
-    "salvarAlteracoes": "Save Changes"
+    "salvarAlteracoes": "Save Changes",
+    "descricaoLabel": "About the shop",
+    "descricaoPlaceholder": "E.g. Family-run shop since 2005, specialising in bodywork and paint. Courtesy car, quote within 24 h.",
+    "descricaoAjuda": "Shown on your public profile. Tell customers what makes your shop different."
   },
   "oficinaSolicitacoes": {
     "titulo": "Requests",

@@ -9,19 +9,24 @@ import { compressImage } from '@/lib/image-compress';
 import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import { Link, rota } from '@/i18n/navigation';
+import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
+  const tErr = useTranslations('erros');
   const tc = useTranslations('constants');
   const locale = useLocale();
   const { user, oficina, loading, refreshProfile } = useAuth();
 
   const [nomeFantasia, setNomeFantasia] = useState('');
+  const [descricao, setDescricao] = useState('');
   const [cnpj, setCnpj] = useState('');
   const [endereco, setEndereco] = useState('');
   const [cidade, setCidade] = useState('');
   const [estado, setEstado] = useState('');
   const [cep, setCep] = useState('');
+  // posicao nova quando o endereco e escolhido na lista (senao a distancia ficava na posicao antiga)
+  const [novaPosicao, setNovaPosicao] = useState<{ latitude: number; longitude: number; pais?: string } | null>(null);
   const [raio, setRaio] = useState(30);
   const [especialidades, setEspecialidades] = useState<string[]>([]);
   const [nome, setNome] = useState('');
@@ -82,6 +87,7 @@ export default function PerfilOficinaPage() {
       setCnpj(oficina.cnpj || '');
       setEndereco(oficina.endereco || '');
       setCidade(oficina.cidade || '');
+      setDescricao((oficina as { descricao?: string | null }).descricao || '');
       setEstado(oficina.estado || '');
       setCep(oficina.cep || '');
       setRaio(oficina.raio_atendimento_km || 30);
@@ -193,6 +199,7 @@ export default function PerfilOficinaPage() {
         .from('oficinas')
         .update({
           nome_fantasia: nomeFantasia,
+          descricao: descricao.trim() || null,
           cnpj: cnpj || null,
           endereco,
           cidade,
@@ -202,10 +209,11 @@ export default function PerfilOficinaPage() {
           especialidades,
           horario_funcionamento: horario,
           capacidade_servicos: capacidade,
+          ...(novaPosicao ? { latitude: novaPosicao.latitude, longitude: novaPosicao.longitude, ...(novaPosicao.pais ? { pais: novaPosicao.pais } : {}) } : {}),
         })
         .eq('id', oficina.id);
       if (ofiError) {
-        setError(ofiError.message);
+        console.error(ofiError); setError(tErr((ofiError as { code?: string }).code === 'weak_password' ? 'SENHA_CURTA' : 'GENERICO'));
         setSaving(false);
         return;
       }
@@ -218,7 +226,7 @@ export default function PerfilOficinaPage() {
         .update({ nome, telefone })
         .eq('id', user.id);
       if (profError) {
-        setError(profError.message);
+        console.error(profError); setError(tErr((profError as { code?: string }).code === 'weak_password' ? 'SENHA_CURTA' : 'GENERICO'));
         setSaving(false);
         return;
       }
@@ -321,6 +329,11 @@ export default function PerfilOficinaPage() {
             <input type="text" className="input-field" value={nomeFantasia} onChange={(e) => setNomeFantasia(e.target.value)} />
           </div>
           <div>
+            <label htmlFor="descricao-oficina" className="block text-sm font-medium text-gray-700 mb-1">{t('descricaoLabel')}</label>
+            <textarea id="descricao-oficina" className="input-field min-h-[110px]" maxLength={1000} value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder={t('descricaoPlaceholder')} />
+            <p className="text-xs text-gray-500 mt-1">{t('descricaoAjuda')} ({descricao.length}/1000)</p>
+          </div>
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('cnpj')}</label>
             <input type="text" className="input-field" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
           </div>
@@ -332,7 +345,19 @@ export default function PerfilOficinaPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('endereco')}</label>
-            <input type="text" className="input-field" placeholder={t('placeholderRuaNumero')} value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+            <EnderecoAutocomplete
+              value={endereco}
+              onChange={setEndereco}
+              placeholder={t('placeholderRuaNumero')}
+              perto={oficina?.latitude != null && oficina?.longitude != null ? { lat: Number(oficina.latitude), lon: Number(oficina.longitude) } : null}
+              onSelect={(s) => {
+                setEndereco(s.endereco || s.rotulo);
+                if (s.cidade) setCidade(s.cidade);
+                if (s.estado) setEstado(s.estado);
+                if (s.cep) setCep(s.cep);
+                setNovaPosicao({ latitude: s.latitude, longitude: s.longitude, pais: s.paisCodigo || undefined });
+              }}
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>

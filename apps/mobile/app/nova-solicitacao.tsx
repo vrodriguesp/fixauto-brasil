@@ -10,6 +10,8 @@ import { useAuth } from '../lib/auth-context';
 import { supabase } from '../lib/supabase';
 import { API_BASE_URL } from '../lib/api';
 import { notifNovaSolicitacaoTitulo, tipoServicoLabel } from '../lib/notif-i18n';
+import { mensagemErro } from '../lib/erro';
+import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
 
 const COORDS_DEFAULT = { lat: -23.5505, lon: -46.6333 };
 
@@ -93,7 +95,7 @@ export default function NovaSolicitacaoScreen() {
         .select()
         .single();
 
-      if (error || !sol) throw new Error(error?.message || t('common.erroGenerico'));
+      if (error || !sol) throw error || new Error('solicitacao nao criada');
 
       if (fotos.length > 0) {
         const urls: string[] = [];
@@ -137,7 +139,7 @@ export default function NovaSolicitacaoScreen() {
 
       setEnviado(true);
     } catch (e) {
-      Alert.alert(t('common.erroGenerico'), (e as Error).message);
+      Alert.alert(t('common.erroGenerico'), mensagemErro(e));
     } finally {
       setEnviando(false);
     }
@@ -211,7 +213,12 @@ export default function NovaSolicitacaoScreen() {
       <Text className="text-sm font-medium text-gray-700 mb-1">
         {t('novaSolicitacao.passoLocal')} {buscandoLocal && <ActivityIndicator size="small" color="#2563eb" />}
       </Text>
-      <TextInput value={endereco} onChangeText={setEndereco} className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-base" />
+      <EnderecoAutocomplete
+        value={endereco}
+        onChange={setEndereco}
+        perto={coords}
+        onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); if (s.paisCodigo) setPais(s.paisCodigo); }}
+      />
 
       <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoUrgencia')}</Text>
       <View className="gap-2 mb-8">

@@ -29,6 +29,7 @@ function formatSlotDate(dateStr: string, locale: string): string {
 
 export default function OrcamentoDetalhePage() {
   const t = useTranslations('clienteOrcamentoDetalhe');
+  const tErr = useTranslations('erros');
   const locale = useLocale();
   const params = useParams();
   const router = useRouter();
@@ -296,7 +297,7 @@ export default function OrcamentoDetalhePage() {
           }
 
           if (result.error) {
-            setReviewError(result.error.message);
+            console.error(result.error); setReviewError(tErr((result.error as { code?: string }).code === 'weak_password' ? 'SENHA_CURTA' : 'GENERICO'));
           } else {
             setEditingReview(false);
           }

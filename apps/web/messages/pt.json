@@ -263,7 +263,8 @@
     "codigoFipe": "Código FIPE",
     "placeholderMarca": "Ex: Volkswagen",
     "placeholderModelo": "Ex: Golf",
-    "placeholderAno": "Ex: 2018"
+    "placeholderAno": "Ex: 2018",
+    "manualNotice": "Informe os dados do seu veículo abaixo."
   },
   "home": {
     "metaTitle": "Orçamentos de oficina mecânica: compare e agende | BipFix",

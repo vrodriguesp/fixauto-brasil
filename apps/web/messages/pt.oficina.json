@@ -32,7 +32,18 @@
     "tipoExterno": "Externo",
     "avaliacoesRecentesTitulo": "Avaliações recentes",
     "nenhumaAvaliacaoAinda": "Nenhuma avaliação ainda",
-    "cadastroEmAnalise": "Seu cadastro está em análise: conferimos o registro da empresa antes de mostrar seu perfil aos clientes. Enquanto isso, você já pode completar os dados do painel."
+    "cadastroEmAnalise": "Seu cadastro está em análise: conferimos o registro da empresa antes de mostrar seu perfil aos clientes. Enquanto isso, você já pode completar os dados do painel.",
+    "perfilTitulo": "Seu perfil está {pct}% completo",
+    "perfilBotao": "Completar perfil",
+    "perfilTexto": "Perfis completos recebem mais pedidos: o cliente compara fotos, horários e o que a oficina faz antes de escolher.",
+    "item_logo": "Logo da oficina",
+    "item_descricao": "Descrição da oficina (pelo menos 80 letras)",
+    "item_telefone": "Telefone de contato",
+    "item_endereco": "Endereço completo",
+    "item_servicos": "Serviços que a oficina faz",
+    "item_horario": "Horário de funcionamento",
+    "item_fotos": "Pelo menos 3 fotos da oficina",
+    "item_registro": "Registro da empresa (CNPJ)"
   },
   "oficinaAgenda": {
     "mes0": "Janeiro",
@@ -495,7 +506,7 @@
     "placeholderNomeFuncionario": "Nome do funcionário",
     "emailObrigatorio": "Email *",
     "senhaTemporariaObrigatorio": "Senha temporária *",
-    "placeholderMinimo6Caracteres": "Mínimo 6 caracteres",
+    "placeholderMinimo6Caracteres": "Mínimo 8 caracteres",
     "passeSenhaAoFuncionario": "Passe esta senha ao funcionário. No primeiro login, ele será solicitado a escolher uma nova senha.",
     "cargo": "Cargo",
     "especialidadeOpcional": "Especialidade (opcional)",
@@ -664,7 +675,10 @@
     "nenhumaFotoAdicionada": "Nenhuma foto adicionada",
     "servico": "Serviço",
     "salvando": "Salvando...",
-    "salvarAlteracoes": "Salvar Alterações"
+    "salvarAlteracoes": "Salvar Alterações",
+    "descricaoLabel": "Sobre a oficina",
+    "descricaoPlaceholder": "Ex.: Oficina familiar desde 2005, especializada em funilaria e pintura. Carro reserva, orçamento em 24 h.",
+    "descricaoAjuda": "Aparece no seu perfil público. Conte o que diferencia a sua oficina."
   },
   "oficinaSolicitacoes": {
     "titulo": "Solicitações",

@@ -130,6 +130,14 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
         </div>
       </div>
 
+      {/* Sobre a oficina (texto do dono) */}
+      {oficina.descricao && (
+        <div className="card mb-6">
+          <h2 className="font-semibold text-gray-900 mb-2">{t('sobreTitulo')}</h2>
+          <p className="text-gray-700 whitespace-pre-line">{oficina.descricao}</p>
+        </div>
+      )}
+
       {/* Services */}
       {oficina.especialidades && oficina.especialidades.length > 0 && (
         <div className="card mb-6">

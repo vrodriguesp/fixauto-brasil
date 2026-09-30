@@ -904,7 +904,8 @@
     "reviewsTitle": "Reviews ({count})",
     "noReviewsText": "This repair shop doesn't have any reviews yet.",
     "clientFallback": "Customer",
-    "registroEmpresa": "Company registry code"
+    "registroEmpresa": "Company registry code",
+    "sobreTitulo": "About the shop"
   },
   "audioMessage": {
     "hideTranscription": "Hide transcript",
@@ -1039,5 +1040,11 @@
     "oficinaOpcao_seguro_terceiro": "The other driver's insurance",
     "oficinaOpcao_seguro_proprio": "The customer's own insurance (casco)",
     "oficinaOpcao_nao_sei": "The customer doesn't know yet"
+  },
+  "chatCotacaoPeca": {
+    "nenhuma": "No messages yet.",
+    "dica": "Ask about the part or delivery time, or send a photo.",
+    "enviandoFoto": "Sending photo...",
+    "placeholder": "Type your message..."
   }
 }

@@ -62,7 +62,10 @@
     "selo3": "I tuoi dati sono protetti",
     "idioma": "Lingua",
     "mostrarSenha": "Mostra password",
-    "ocultarSenha": "Nascondi password"
+    "ocultarSenha": "Nascondi password",
+    "confirmando": "Stiamo confermando la tua email…",
+    "linkInvalidoTitulo": "Questo link non è più valido",
+    "linkInvalidoTexto": "Il link è valido per 1 ora e può essere usato una sola volta. Prova ad accedere: ti proporremo un nuovo link."
   },
   "emergencia": {
     "titulo": "Ho appena avuto un incidente",
@@ -157,7 +160,7 @@
     "modelo": "Modello",
     "ano": "Anno",
     "placa": "Targa",
-    "apelido": "Soprannome del veicolo",
+    "apelido": "Nome per riconoscere il veicolo",
     "erroSalvar": "Non è stato possibile salvare il veicolo. Riprova.",
     "nenhumVeiculo": "Non hai ancora aggiunto nessun veicolo."
   },
@@ -244,5 +247,21 @@
     "erroSalvar": "Salvataggio non riuscito. Riprova.",
     "naoInformado": "Non ancora indicato.",
     "lembreteSinistro": "Manca il numero di sinistro: quando la compagnia te lo invia, aggiungilo qui perché l'officina lo veda."
+  },
+  "erros": {
+    "CAMPO_OBRIGATORIO": "Compila tutti i campi obbligatori.",
+    "EMAIL_INVALIDO": "Controlla l'indirizzo e-mail.",
+    "FOTOS_MAX": "Puoi inviare al massimo 6 foto.",
+    "FOTO_TIPO": "Invia foto in formato JPG, PNG, WebP o HEIC.",
+    "FOTO_TAMANHO": "Ogni foto può pesare al massimo 10 MB.",
+    "MUITAS_TENTATIVAS": "Troppi tentativi in poco tempo. Riprova più tardi.",
+    "SEM_ACESSO": "Non hai accesso a questo contenuto.",
+    "NAO_AUTENTICADO": "La sessione è scaduta. Accedi di nuovo.",
+    "DADOS_INVALIDOS": "Controlla i dati inseriti.",
+    "GENERICO": "Qualcosa è andato storto. Riprova tra un momento.",
+    "FUNCIONARIO_JA_CADASTRADO": "Questo dipendente è già registrato nella tua officina.",
+    "SENHA_CURTA": "La password deve avere almeno 8 caratteri.",
+    "TERMOS_OBRIGATORIOS": "Per continuare, accetta i Termini di utilizzo e l'Informativa sulla privacy.",
+    "DECLARACAO_OBRIGATORIA": "Per registrare un'impresa, conferma di esserne il responsabile."
   }
 }

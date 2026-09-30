@@ -97,6 +97,16 @@ try {
   confere('A NAO le pedido de B', !(await ve(A.c, 'solicitacoes', S2.id)));
   confere('A le os dois orcamentos do pedido dele', (await ve(A.c, 'orcamentos', O1.id)) && (await ve(A.c, 'orcamentos', O2.id)));
   confere('A le a conversa dele', await ve(A.c, 'mensagens', M1.id));
+
+  // --- criar e ler de volta no mesmo comando, como o app e o site fazem
+  // (.insert().select().single()); falhava antes da 032
+  const novoA = await A.c.from('solicitacoes').insert({ cliente_id: A.id, veiculo_id: vA.id, tipo: 'mecanica', descricao: 'rls app', urgencia: 'media', latitude: 59.4, longitude: 24.7, endereco: 'x' }).select().single();
+  if (novoA.data) limpar.push(['solicitacoes', novoA.data.id]);
+  confere(`A cria pedido e le de volta (como o app)${novoA.error ? ' - ' + novoA.error.message : ''}`, !novoA.error && !!novoA.data);
+  confere('A NAO cria pedido em nome de B', !!(await A.c.from('solicitacoes').insert({ cliente_id: Bc.id, veiculo_id: vB.id, tipo: 'mecanica', descricao: 'x', urgencia: 'media', latitude: 0, longitude: 0, endereco: 'x' }).select().single()).error);
+  const novoV = await A.c.from('veiculos').insert({ profile_id: A.id, fipe_tipo: 'cars', fipe_marca: 'X', fipe_modelo: 'Y', fipe_ano: '2021' }).select().single();
+  if (novoV.data) limpar.push(['veiculos', novoV.data.id]);
+  confere(`A cadastra veiculo e le de volta${novoV.error ? ' - ' + novoV.error.message : ''}`, !novoV.error && !!novoV.data);
   confere('A envia mensagem no pedido dele', !(await A.c.from('mensagens').insert({ solicitacao_id: S1.id, remetente_id: A.id, texto: 'x' })).error);
   confere('A NAO envia mensagem no pedido de B', !!(await A.c.from('mensagens').insert({ solicitacao_id: S2.id, remetente_id: A.id, texto: 'x' })).error);
   confere('A le o acidente dele', await ve(A.c, 'emergencias', E1.id));
@@ -113,6 +123,9 @@ try {
   confere('B NAO altera mensagens de A', ((await Bc.c.from('mensagens').update({ texto: 'hack' }).eq('id', M1.id).select()).data || []).length === 0);
 
   // --- oficina X (orcou S1)
+  const novoO = await X.c.from('orcamentos').insert({ solicitacao_id: novoA.data?.id || S1.id, oficina_id: ofX.id, valor_total: 90, prazo_dias: 2, status: 'enviado', validade: '2030-01-01' }).select().single();
+  if (novoO.data) limpar.push(['orcamentos', novoO.data.id]);
+  confere(`X envia orcamento e le de volta (como o site)${novoO.error ? ' - ' + novoO.error.message : ''}`, !novoO.error && !!novoO.data);
   confere('X le o pedido aberto S1', await ve(X.c, 'solicitacoes', S1.id));
   confere('X NAO le pedido concluido de outro S2', !(await ve(X.c, 'solicitacoes', S2.id)));
   confere('X le o proprio orcamento', await ve(X.c, 'orcamentos', O1.id));

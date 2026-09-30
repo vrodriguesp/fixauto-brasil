@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { EXEMPLO_EMAIL } from '@/lib/exemplos';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -217,7 +218,7 @@ export default function EquipePage() {
               <input
                 type="email"
                 className="input-field"
-                placeholder="email@exemplo.com"
+                placeholder={EXEMPLO_EMAIL}
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />

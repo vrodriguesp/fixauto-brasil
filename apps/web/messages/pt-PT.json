@@ -253,7 +253,18 @@
     "manualNotice": "Introduza abaixo os dados do seu veículo.",
     "placeholderMarca": "ex.: Volkswagen",
     "placeholderModelo": "ex.: Golf",
-    "placeholderAno": "ex.: 2018"
+    "placeholderAno": "ex.: 2018",
+    "carregando": "a carregar...",
+    "selecioneMarca": "Selecione a marca",
+    "selecioneModelo": "Selecione o modelo",
+    "selecioneAno": "Selecione o ano",
+    "erroMarcas": "Não foi possível carregar as marcas. A usar uma lista de exemplo.",
+    "erroModelos": "Não foi possível carregar os modelos.",
+    "erroAnos": "Não foi possível carregar os anos.",
+    "buscandoValor": "A procurar o valor...",
+    "valorFipe": "Valor de referência",
+    "valorFipeIndisponivel": "Valor de referência indisponível",
+    "codigoFipe": "Código"
   },
   "home": {
     "metaTitle": "Reparação automóvel em Tallinn: compare orçamentos | BipFix",

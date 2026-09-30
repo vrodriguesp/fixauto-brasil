@@ -4,6 +4,7 @@ import type { User } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from './supabase';
 import i18n from '../i18n';
 import { API_BASE_URL } from './api';
+import { idiomaEscolhido } from './idiomas';
 
 interface AuthContextType {
   user: Profile | null;
@@ -71,7 +72,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     setUser(profile as Profile);
-    if (profile.idioma && i18n.language !== profile.idioma) {
+    // Idioma: a escolha feita no app (tela de entrada ou Perfil) vale sobre a
+    // da conta, e a conta passa a seguir essa escolha (e-mails no mesmo
+    // idioma). Sem escolha salva, o app segue o idioma da conta.
+    const escolhido = await idiomaEscolhido();
+    if (escolhido && escolhido !== profile.idioma) {
+      supabase.from('profiles').update({ idioma: escolhido }).eq('id', userId).then(() => {});
+      if (i18n.language !== escolhido) i18n.changeLanguage(escolhido);
+    } else if (!escolhido && profile.idioma && i18n.language !== profile.idioma) {
       i18n.changeLanguage(profile.idioma);
     }
     return { profile: profile as Profile, error: null };
@@ -111,7 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await fetch(`${API_BASE_URL}/api/cadastro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, senha: password, nome, telefone, tipo: 'cliente', idioma: i18n.language, aceitouTermos: true }),
+        body: JSON.stringify({ email, senha: password, nome, telefone, tipo: 'cliente', idioma: i18n.language, aceitouTermos: true, origem: 'app' }),
       });
       if (res.ok) return { error: null };
       const corpo = await res.json().catch(() => ({}));

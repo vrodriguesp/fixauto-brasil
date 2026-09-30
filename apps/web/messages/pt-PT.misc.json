@@ -904,7 +904,8 @@
     "reviewsTitle": "Avaliações ({count})",
     "noReviewsText": "Esta oficina ainda não tem avaliações.",
     "clientFallback": "Cliente",
-    "registroEmpresa": "N.º de registo comercial"
+    "registroEmpresa": "N.º de registo comercial",
+    "sobreTitulo": "Sobre a oficina"
   },
   "audioMessage": {
     "hideTranscription": "Ocultar transcrição",
@@ -1039,5 +1040,11 @@
     "oficinaOpcao_seguro_terceiro": "Seguro do outro condutor",
     "oficinaOpcao_seguro_proprio": "Seguro do próprio cliente (danos próprios)",
     "oficinaOpcao_nao_sei": "O cliente ainda não sabe"
+  },
+  "chatCotacaoPeca": {
+    "nenhuma": "Ainda não há mensagens.",
+    "dica": "Esclareça dúvidas sobre a peça, o prazo ou envie uma foto.",
+    "enviandoFoto": "A enviar a foto...",
+    "placeholder": "Escreva a sua mensagem..."
   }
 }

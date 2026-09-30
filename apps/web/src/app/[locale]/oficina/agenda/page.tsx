@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { exemploPlaca } from '@/lib/exemplos';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAgenda } from '@/hooks/use-agenda';
 import { useAuth } from '@/lib/auth-context';
@@ -477,7 +478,7 @@ export default function AgendaPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t('placa')}</label>
-              <input type="text" className="input-field" placeholder="ABC1D23" value={formData.placa} onChange={(e) => setFormData({ ...formData, placa: e.target.value.toUpperCase() })} />
+              <input type="text" className="input-field" placeholder={exemploPlaca(locale)} value={formData.placa} onChange={(e) => setFormData({ ...formData, placa: e.target.value.toUpperCase() })} />
             </div>
             {/* Veículo - FIPE */}
             <div className="sm:col-span-2">

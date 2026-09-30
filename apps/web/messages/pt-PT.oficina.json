@@ -32,7 +32,18 @@
     "tipoExterno": "Externo",
     "avaliacoesRecentesTitulo": "Avaliações recentes",
     "nenhumaAvaliacaoAinda": "Ainda não há avaliações",
-    "cadastroEmAnalise": "O seu registo está em análise: verificamos o registo da empresa antes de mostrar o seu perfil aos clientes. Entretanto, já pode completar os dados do painel."
+    "cadastroEmAnalise": "O seu registo está em análise: verificamos o registo da empresa antes de mostrar o seu perfil aos clientes. Entretanto, já pode completar os dados do painel.",
+    "perfilTitulo": "O seu perfil está {pct}% completo",
+    "perfilBotao": "Completar perfil",
+    "perfilTexto": "Perfis completos recebem mais pedidos: o cliente compara fotografias, horários e o que a oficina faz antes de escolher.",
+    "item_logo": "Logótipo da oficina",
+    "item_descricao": "Descrição da oficina (pelo menos 80 caracteres)",
+    "item_telefone": "Telefone de contacto",
+    "item_endereco": "Morada completa",
+    "item_servicos": "Serviços que a oficina faz",
+    "item_horario": "Horário de funcionamento",
+    "item_fotos": "Pelo menos 3 fotografias da oficina",
+    "item_registro": "Registo da empresa (NIPC)"
   },
   "oficinaAgenda": {
     "mes0": "Janeiro",
@@ -495,7 +506,7 @@
     "placeholderNomeFuncionario": "Nome do colaborador",
     "emailObrigatorio": "E-mail *",
     "senhaTemporariaObrigatorio": "Palavra-passe temporária *",
-    "placeholderMinimo6Caracteres": "Mínimo de 6 caracteres",
+    "placeholderMinimo6Caracteres": "Mínimo de 8 caracteres",
     "passeSenhaAoFuncionario": "Transmita esta palavra-passe ao colaborador. No primeiro início de sessão, ser-lhe-á pedido que escolha uma nova.",
     "cargo": "Função",
     "especialidadeOpcional": "Especialidade (opcional)",
@@ -664,7 +675,10 @@
     "nenhumaFotoAdicionada": "Nenhuma fotografia adicionada",
     "servico": "Serviço",
     "salvando": "A guardar...",
-    "salvarAlteracoes": "Guardar Alterações"
+    "salvarAlteracoes": "Guardar Alterações",
+    "descricaoLabel": "Sobre a oficina",
+    "descricaoPlaceholder": "Ex.: Oficina familiar desde 2005, especializada em bate-chapa e pintura. Carro de substituição, orçamento em 24 h.",
+    "descricaoAjuda": "Aparece no seu perfil público. Conte o que distingue a sua oficina."
   },
   "oficinaSolicitacoes": {
     "titulo": "Pedidos",

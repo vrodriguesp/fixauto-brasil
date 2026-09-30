@@ -29,6 +29,7 @@ function ReviewForm({
   onCancel?: () => void;
 }) {
   const t = useTranslations('clienteHistorico');
+  const tErr = useTranslations('erros');
   const [nota, setNota] = useState(initialNota || 0);
   const [comentario, setComentario] = useState(initialComentario || '');
   const [submitting, setSubmitting] = useState(false);
@@ -61,7 +62,7 @@ function ReviewForm({
     }
 
     if (result.error) {
-      setError(result.error.message);
+      console.error(result.error); setError(tErr((result.error as { code?: string }).code === 'weak_password' ? 'SENHA_CURTA' : 'GENERICO'));
     } else if (onCancel) {
       onCancel();
     }
