@@ -122,7 +122,7 @@ export default function NotasInternas({ agendaId, oficinaId, funcionarioResponsa
         <div className="space-y-1.5 mb-2 max-h-48 overflow-y-auto">
           {notas.map((n) => (
             <div key={n.id} className={`text-xs px-2.5 py-1.5 rounded-lg ${n.remetente_id === user?.id ? 'bg-amber-100 text-amber-900 ml-6' : 'bg-white text-gray-700 border border-gray-200 mr-6'}`}>
-              <p className="font-medium text-[11px] text-gray-500">{n.remetente?.nome || t('equipe')} · {new Date(n.created_at).toLocaleTimeString(INTL_LOCALE[locale] || 'pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+              <p className="font-medium text-[11px] text-gray-500">{n.remetente?.nome || t('equipe')} · {new Date(n.created_at).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
               <p className="whitespace-pre-wrap break-words">{n.texto}</p>
             </div>
           ))}

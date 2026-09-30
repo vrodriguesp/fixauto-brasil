@@ -2,7 +2,13 @@
   "meta": {
     "brand": "BipFix",
     "title": "BipFix - Ühendame sind parima autotöökojaga",
-    "description": "Platvorm, mis ühendab autojuhid autotöökodadega. Saada kahjustuse fotod, saa hinnapakkumised ja vali parim valik. Lihtne, kiire ja läbipaistev."
+    "description": "Platvorm, mis ühendab autojuhid autotöökodadega. Saada kahjustuse fotod, saa hinnapakkumised ja vali parim valik. Lihtne, kiire ja läbipaistev.",
+    "tituloLogin": "Logi sisse",
+    "tituloCadastro": "Loo konto",
+    "tituloEscolherTipo": "Vali konto tüüp",
+    "tituloRedefinirSenha": "Lähtesta parool",
+    "tituloDefinirSenha": "Määra parool",
+    "pularConteudo": "Liigu sisu juurde"
   },
   "nav": {
     "dashboard": "Töölaud",
@@ -73,7 +79,13 @@
     "erroGenerico": "Saatmine ebaõnnestus. Palun proovi mõne hetke pärast uuesti.",
     "sucessoTitulo": "Võtsime su huviavalduse vastu!",
     "sucessoTexto": "Meie meeskond vaatab üle sinu piirkonna ja võtab kahe tööpäeva jooksul WhatsAppi teel ühendust, et selgitada pilootfaasi järgmisi samme.",
-    "voltarInicio": "Tagasi avalehele"
+    "voltarInicio": "Tagasi avalehele",
+    "depoisTitulo": "Mis juhtub pärast avalduse saatmist",
+    "depois1": "Vastame 1 tööpäeva jooksul e-posti või WhatsAppi teel.",
+    "depois2": "Seame koos sinuga üles töökoja profiili (umbes 30 minutit) ja kontrollime ettevõtte registreeringut.",
+    "depois3": "Hakkad saama päringuid oma töökoja lähedal olevatelt autojuhtidelt.",
+    "quemSomosTitulo": "Kes on BipFixi taga",
+    "quemSomosTexto": "BipFix on noor Tallinnas asuv ettevõte, mida registreeritakse Eesti osaühinguna (OÜ). Vastame igale avaldusele isiklikult: support@bipfix.com."
   },
   "paraOficinas": {
     "metaTitle": "Autotöökoja Haldustarkvara ja Rohkem Kliente",
@@ -292,7 +304,7 @@
     "porQueTexto1": "Täna sõltub auto remondikoha valik tavaliselt ainult soovitusest või sellest, milline töökoda on lähim — ilma võimaluseta võrrelda hinda, tähtaega või tehtud tööde tausta. Usume, et juhid väärivad läbipaistvust ja head töökojad väärivad, et nende tehtud töö leitakse üles.",
     "porQueTexto2": "Oleme sõna otseses mõttes alles alguses: valime esimesed partnertöökojad ja varuosade müüjad, et käivituda täie tähelepanuga üks linn korraga, mitte kasvada kiiresti ilma kvaliteedikontrollita.",
     "parceiroTitulo": "Veel jõuab liituda asutajapartnerina",
-    "parceiroTexto": "Kui oled juht, saad platvormi kasutada juba täna. Kui sul on autotöökoda või varuosade äri, valime pilootfaasi jaoks välja piiratud arvu partnereid — praegu ilma komisjonitasuta.",
+    "parceiroTexto": "Liidame praegu esimesi partnertöökodasid Tallinnas. Kui oled autojuht, saad oma päringu juba saata: edastame selle töökodadele kohe, kui nad liituvad, ja anname sulle teada. Kui sul on autotöökoda või varuosade äri, valime välja väikese arvu asutajapartnereid — selles faasis ilma komisjonitasuta.",
     "faqTitulo": "Korduma Kippuvad Küsimused",
     "faqSubtitulo": "Leia vastused oma küsimustele BipFixi platvormi kohta",
     "faqItems": [
@@ -302,7 +314,7 @@
       },
       {
         "pergunta": "Kas platvormi kasutamine on turvaline?",
-        "resposta": "Jah! Kõik registreeritud töökojad läbivad kontrolli. Lisaks näitab hinnangute süsteem iga töökoja mainet enne otsuse tegemist. Sinu isikuandmed on kaitstud ega jagata kunagi ilma sinu nõusolekuta."
+        "resposta": "Jah. Enne töökoja aktiveerimist kontrollime ettevõtte registreeringut ja räägime vastutava isikuga. Pärast iga lõpetatud tööd saab hinnangu anda ainult klient, kes töö tellis — nii näed töökoja tegelikku mainet enne otsustamist. Sinu isikuandmed on kaitstud ja neid ei jagata ilma sinu nõusolekuta."
       },
       {
         "pergunta": "Kui palju BipFixi kasutamine maksab?",
@@ -319,6 +331,18 @@
       {
         "pergunta": "Milliseid teenuseid töökojad pakuvad?",
         "resposta": "Platvormil olevad töökojad pakuvad mitmesuguseid teenuseid nagu kerekahjustuste parandus, värvimine, üldmehaanika, autoelektroonika, klaasivahetus, rataste joondamine, tasakaalustamine, kliimaseadmed ja palju muud. Iga töökoda toob oma erialad profiilil välja."
+      },
+      {
+        "pergunta": "Kas mõni töökoda maksab, et olla eespool?",
+        "resposta": "Ei. Ükski töökoda ei saa maksta parema koha eest nimekirjas ega hinnapakkumiste seas. Sina võrdled hinda, tähtaega, kaugust ja klientide hinnanguid."
+      },
+      {
+        "pergunta": "Mis siis, kui remondi eest maksab kindlustus?",
+        "resposta": "Saad BipFixi ikka kasutada: küsi siit hinnapakkumised ja näita neid kindlustusandjale. Kaskoga või teise juhi liikluskindlustusega remondi puhul küsi enne remonti kindlustusandjalt, kas ta aktsepteerib valitud töökoda."
+      },
+      {
+        "pergunta": "Kas hinnapakkumise hind on lõplik?",
+        "resposta": "Hinnapakkumise kogusumma on see, mida töökoda kirjeldatud töö eest küsib. BipFix ei võta autojuhtidelt midagi ega lisa kunagi omalt poolt tasu. Kui remondi ajal ilmneb midagi uut, saadab töökoda sulle kinnitamiseks uuendatud hinnapakkumise."
       }
     ],
     "footerTagline": "Ühendame juhid parimate autotöökodadega.",
@@ -336,7 +360,8 @@
     "footerContato": "Kontakt",
     "footerDireitos": "2026 BipFix. Kõik õigused kaitstud.",
     "footerTermos": "Kasutustingimused",
-    "footerPrivacidade": "Privaatsus"
+    "footerPrivacidade": "Privaatsus",
+    "footerSobre": "BipFixist"
   },
   "constants": {
     "tiposServico": {
@@ -531,5 +556,35 @@
     "inicio": "Mine avalehele",
     "guias": "Vaata juhendeid autojuhtidele",
     "emergencia": "Juhtus liiklusõnnetus"
+  },
+  "erros": {
+    "CAMPO_OBRIGATORIO": "Täida kõik kohustuslikud väljad.",
+    "EMAIL_INVALIDO": "Kontrolli e-posti aadressi.",
+    "FOTOS_MAX": "Saad saata kuni 6 fotot.",
+    "FOTO_TIPO": "Saada fotod JPG-, PNG-, WebP- või HEIC-vormingus.",
+    "FOTO_TAMANHO": "Iga foto võib olla kuni 10 MB.",
+    "MUITAS_TENTATIVAS": "Liiga palju katseid lühikese aja jooksul. Proovi hiljem uuesti.",
+    "SEM_ACESSO": "Sul ei ole sellele juurdepääsu.",
+    "NAO_AUTENTICADO": "Sinu seanss aegus. Logi uuesti sisse.",
+    "DADOS_INVALIDOS": "Kontrolli sisestatud andmeid.",
+    "GENERICO": "Midagi läks valesti. Proovi hetke pärast uuesti.",
+    "FUNCIONARIO_JA_CADASTRADO": "See töötaja on sinu töökojas juba registreeritud."
+  },
+  "sobre": {
+    "metaTitle": "BipFixist",
+    "metaDescription": "Kes me oleme, millises faasis oleme ja kuidas BipFix töötab: läbipaistvad remondipakkumised, kontrollitud hinnangud ja mitte ühtegi tasulist kohta.",
+    "titulo": "BipFixist",
+    "intro": "BipFix ühendab remonti vajavad autojuhid sõltumatute töökodadega: kirjeldad probleemi fotodega, saad üksikasjalikud hinnapakkumised, võrdled neid ja jälgid remonti. BipFix on ainult platvorm — me ei remondi autosid ega müü varuosi.",
+    "estagioTitulo": "Kus me praegu oleme",
+    "estagioTexto": "Oleme alles alguses. Meie pilootlinn on Tallinn ja esimesi partnertöökodasid liidetakse praegu, asutajapartnerite faasis. Meil ei ole veel suurt töökodade võrgustikku — ja ütleme selle pigem otse välja.",
+    "empresaTitulo": "Ettevõte",
+    "empresaTexto": "BipFixi registreeritakse Eesti osaühinguna. Kuni registreerimise lõpuni haldab platvormi asutaja füüsilise isikuna. Ettevõtte täielikud andmed avaldame siin kohe, kui registreerimine on lõpetatud.",
+    "principiosTitulo": "Kuidas me töötame",
+    "principio1": "Ükski töökoda ei saa maksta, et olla eespool.",
+    "principio2": "Hinnangu saab anda ainult see, kes töö tellis ja lõpetas.",
+    "principio3": "Hinnad määravad töökojad; autojuhtidele on BipFix tasuta.",
+    "principio4": "Sinu andmeid töödeldakse isikuandmete kaitse üldmääruse (GDPR) järgi ja neid ei müüda kunagi.",
+    "contatoTitulo": "Kontakt",
+    "contatoTexto": "Küsimused, tagasiside või koostöö: support@bipfix.com. Isikuandmed: privacy@bipfix.com."
   }
 }

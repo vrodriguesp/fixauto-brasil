@@ -53,6 +53,12 @@ function idiomaParaHome(req: NextRequest): Locale {
 
 const PREFIXOS_IDIOMA = Object.values(LOCALE_PREFIX);
 
+// Primeiro trecho dos enderecos publicos da versao do Brasil antes de 30/09/2026
+const CAMINHOS_ANTIGOS_BR = new Set([
+  'para-oficinas', 'seja-parceiro', 'emergencia', 'oficinas', 'guias', 'termos', 'privacidade', 'docs',
+  'login', 'cadastro', 'escolher-tipo', 'reset-password', 'definir-senha', 'cliente', 'oficina', 'loja',
+]);
+
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
@@ -71,9 +77,15 @@ export async function middleware(req: NextRequest) {
   const isAdminOrApiEarly = pathname.startsWith('/admin') || pathname.startsWith('/api');
   const temPrefixo = PREFIXOS_IDIOMA.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   const imagemInterna = /^\/(pt|pt-PT)\/opengraph-image(\/|$)/.test(pathname);
+  // So os caminhos que existiam na versao sem prefixo; qualquer outro vai
+  // direto para o 404 (antes: 301 -> /pt-br/... -> 404, cadeia inutil).
   if (!isAdminOrApiEarly && !temPrefixo && !imagemInterna) {
     const resto = pathname === '/pt' ? '/' : pathname.startsWith('/pt/') ? pathname.slice(3) : pathname;
-    return NextResponse.redirect(new URL(`${hrefNoIdioma('pt', resto)}${req.nextUrl.search}`, req.url), 301);
+    const primeiro = resto.split('/')[1] || '';
+    if (resto === '/' || CAMINHOS_ANTIGOS_BR.has(primeiro)) {
+      return NextResponse.redirect(new URL(`${hrefNoIdioma('pt', resto)}${req.nextUrl.search}`, req.url), 301);
+    }
+    return NextResponse.rewrite(new URL(`/en/pagina-inexistente`, req.url), { status: 404 });
   }
 
   // Nome antigo (interno, em portugues) dentro de um idioma que tem nome

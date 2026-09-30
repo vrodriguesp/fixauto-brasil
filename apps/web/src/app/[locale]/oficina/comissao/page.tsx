@@ -258,7 +258,7 @@ export default function ComissaoPage() {
               <tbody className="divide-y">
                 {lancamentos.map((l) => (
                   <tr key={l.id}>
-                    <td className="py-2 text-gray-600">{new Date(l.created_at).toLocaleDateString(INTL_LOCALE[locale] || 'pt-BR')}</td>
+                    <td className="py-2 text-gray-600">{new Date(l.created_at).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB')}</td>
                     <td className="py-2 text-gray-900">
                       {(l.solicitacao as any)?.veiculo?.fipe_marca} {(l.solicitacao as any)?.veiculo?.fipe_modelo}
                     </td>

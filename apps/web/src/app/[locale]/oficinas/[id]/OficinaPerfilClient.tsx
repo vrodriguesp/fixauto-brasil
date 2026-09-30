@@ -38,7 +38,7 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
   const hasCoords = lat !== null && lng !== null;
 
   const parceiraDesde = oficina.created_at
-    ? new Date(oficina.created_at).toLocaleDateString(INTL_LOCALE[locale] || 'pt-BR', { month: '2-digit', year: 'numeric' })
+    ? new Date(oficina.created_at).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { month: '2-digit', year: 'numeric' })
     : null;
   const tierVolume = TIERS_VOLUME.find((t) => totalServicosConcluidos >= t);
 
@@ -168,6 +168,7 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
             {oficina.cidade} - {oficina.estado}
             {oficina.cep && `, ${t('cepLabel')}: ${oficina.cep}`}
           </p>
+          {oficina.cnpj && <p>{t('registroEmpresa')}: {oficina.cnpj}</p>}
         </div>
         <div className="rounded-lg overflow-hidden border border-gray-200">
           <iframe
@@ -214,7 +215,7 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
               <div className="text-sm text-gray-700 space-y-0.5">
                 {DIAS.map((dia, i) => {
                   const h = oficina.horario_funcionamento?.[dia];
-                  const nome = new Intl.DateTimeFormat(INTL_LOCALE[locale] || 'pt-BR', { weekday: 'short' }).format(new Date(2024, 0, 1 + i));
+                  const nome = new Intl.DateTimeFormat(INTL_LOCALE[locale] || 'en-GB', { weekday: 'short' }).format(new Date(2024, 0, 1 + i));
                   return (
                     <p key={dia}>
                       <span className="inline-block w-12 capitalize">{nome}</span>

@@ -108,7 +108,7 @@ export default function ComissaoPecasCard({ fornecedorTipo, fornecedorId, pais }
               <tbody className="divide-y">
                 {lancamentos.map((l) => (
                   <tr key={l.id}>
-                    <td className="py-2 text-gray-600">{new Date(l.created_at).toLocaleDateString(INTL_LOCALE[locale] || 'pt-BR')}</td>
+                    <td className="py-2 text-gray-600">{new Date(l.created_at).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB')}</td>
                     <td className="py-2 text-right text-gray-600">{formatCurrency(l.valor_pedido, moeda, locale)}</td>
                     <td className="py-2 text-right text-gray-600">{(l.taxa_aplicada * 100).toFixed(1)}%</td>
                     <td className="py-2 text-right font-medium text-gray-900">{formatCurrency(l.valor_comissao, moeda, locale)}</td>

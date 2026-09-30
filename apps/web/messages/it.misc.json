@@ -432,8 +432,8 @@
     "sendingBtn": "Invio in corso...",
     "locationAutoDetected": "Posizione rilevata automaticamente",
     "locationCurrentDetected": "Posizione attuale rilevata",
-    "locationFallback": "São Paulo, SP",
-    "errorGenericSubmit": "Errore durante la registrazione dell'emergenza"
+    "errorGenericSubmit": "Errore durante la registrazione dell'emergenza",
+    "erroLocalizacao": "Non riusciamo a trovare l'indirizzo. Attiva la posizione o scrivi via e città."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Registrazione dell'incidente",
@@ -901,7 +901,8 @@
     "hoursNotInformed": "Orari non indicati",
     "reviewsTitle": "Recensioni ({count})",
     "noReviewsText": "Questa officina non ha ancora recensioni.",
-    "clientFallback": "Cliente"
+    "clientFallback": "Cliente",
+    "registroEmpresa": "Codice di registro delle imprese"
   },
   "audioMessage": {
     "hideTranscription": "Nascondi trascrizione",
@@ -969,5 +970,23 @@
         "botao": "Diventa partner"
       }
     }
+  },
+  "tutorialHub": {
+    "concluidos": "{feitos}/{total} completati",
+    "opcionalMinusculo": "facoltativo",
+    "opcional": "Facoltativo",
+    "modoGuiado": "Guidato (passo passo)",
+    "modoAutonomo": "In autonomia (solo la sfida)",
+    "sigaPassos": "Segui questi passi sulla schermata reale:",
+    "desafio": "Sfida:",
+    "desafioNota": "Qui non c'è il passo passo di proposito — prova prima da solo. Se ti blocchi, torna alla modalità Guidata.",
+    "dica": "Suggerimento:",
+    "irFazer": "Vai a farlo ora →",
+    "verificando": "Verifica in corso...",
+    "jaFizVerificar": "Fatto — verifica",
+    "marcadoEntendido": "Segnato come capito ✓",
+    "marcarConcluido": "Ho capito, segna come completato",
+    "encontrei": "Trovato! Modulo completato.",
+    "aindaNao": "Non lo troviamo ancora nel tuo profilo. Fallo sulla schermata reale e premi di nuovo verifica."
   }
 }

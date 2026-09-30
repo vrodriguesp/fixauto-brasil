@@ -1,20 +1,8 @@
 import { supabaseAdmin } from './supabase-admin';
+import { enviarEmail } from './email';
 import { senhaAleatoria } from './segredos';
 import { EMAIL_I18N, resolveEmailLocale, fmt, escapeHtml } from './email-i18n';
 import { urlNoIdioma, idiomaDoSite } from './site-url';
-
-const RESEND_KEY = process.env.RESEND_API_KEY;
-const FROM = 'BipFix <noreply@bipfix.com>';
-
-async function enviarEmail(para: string, assunto: string, html: string) {
-  if (!RESEND_KEY) return;
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: FROM, to: para, subject: assunto, html }),
-  });
-  if (!res.ok) console.error('[conta-convite] e-mail', await res.text());
-}
 
 /**
  * Conta de cliente para quem registrou (ou foi citado em) um acidente sem
@@ -63,7 +51,7 @@ export async function garantirContaCliente(p: {
     : urlNoIdioma(idiomaSite, '/login');
 
   const cs = EMAIL_I18N.contaCriadaEmergencia[resolveEmailLocale(idiomaSite)];
-  await enviarEmail(p.email, cs.subject, `
+  await enviarEmail({ para: p.email, assunto: cs.subject, html: `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
       <div style="background:#0c4a6e;color:white;padding:24px;border-radius:12px 12px 0 0;">
         <h1 style="margin:0;font-size:24px;">BipFix</h1>
@@ -81,6 +69,6 @@ export async function garantirContaCliente(p: {
         <p style="font-size:12px;color:#9ca3af;">${cs.footer}</p>
       </div>
     </div>
-  `);
+  ` });
   return { id, idioma: idiomaSite, criada: true };
 }

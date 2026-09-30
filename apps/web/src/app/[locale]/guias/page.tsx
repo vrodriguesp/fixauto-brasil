@@ -3,7 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import NextLink from 'next/link';
 import { OG_LOCALE, hrefNoIdioma, type Locale } from '@/i18n/routing';
-import { hreflangAlternates } from '@/lib/seo-utils';
+import { hreflangAlternates, imagemCompartilhamento } from '@/lib/seo-utils';
 import { caminhoDoGuia, guiasDoIdioma } from '@/lib/guias';
 import { formatDate } from '@/lib/utils';
 
@@ -18,6 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     // Sem nenhum guia no idioma, a pagina e so um cabecalho: fica fora do indice.
     robots: { index: guiasDoIdioma(locale).length > 0, follow: true },
     openGraph: {
+      images: imagemCompartilhamento(locale),
       type: 'website',
       locale: OG_LOCALE[locale as Locale],
       siteName: 'BipFix',
@@ -47,7 +48,7 @@ export default async function GuiasPage({ params }: { params: Promise<{ locale: 
               <NextLink href={hrefNoIdioma(locale, caminhoDoGuia(guia, locale))} className="card h-full block hover:shadow-md transition-shadow">
                 <h2 className="text-lg font-semibold text-gray-900">{versao.titulo}</h2>
                 <p className="text-sm text-gray-600 mt-2">{versao.descricao}</p>
-                <p className="text-xs text-gray-400 mt-3">{t('atualizadoEm', { data: formatDate(guia.atualizado, locale) })}</p>
+                <p className="text-xs text-gray-500 mt-3">{t('atualizadoEm', { data: formatDate(guia.atualizado, locale) })}</p>
               </NextLink>
             </li>
           ))}

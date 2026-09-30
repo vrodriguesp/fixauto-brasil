@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth-context';
 import { compressImage } from '@/lib/image-compress';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
+import { textoErroApi } from '@/lib/erro-api';
 
 interface Mensagem {
   id: string;
@@ -46,6 +47,7 @@ interface Orcamento {
 
 export default function AcidenteRegistroPage() {
   const t = useTranslations('emergenciaAcidenteDetalhe');
+  const tErros = useTranslations('erros');
   const locale = useLocale();
   const { id: emergenciaId } = useParams<{ id: string }>();
   const { user } = useAuth();
@@ -64,7 +66,9 @@ export default function AcidenteRegistroPage() {
 
   const buscarOutroPlaca = async (p: string) => {
     const clean = p.replace(/[^a-zA-Z0-9]/g, '');
-    if (clean.length < 7) return;
+    // A consulta de placa usa uma base so do Brasil: fora da versao
+    // brasileira ela sempre falharia (placas da Estonia tem outro formato)
+    if (clean.length < 7 || locale !== 'pt') return;
     setBuscandoOutroPlaca(true);
     try {
       const res = await fetch('/api/consultar-placa', {
@@ -188,7 +192,7 @@ export default function AcidenteRegistroPage() {
     });
     const r = await res.json().catch(() => ({}));
     if (!res.ok) {
-      setError(r.error || 'Error');
+      setError(textoErroApi(tErros, res.status, r));
       setRegistering(false);
       return;
     }
@@ -566,12 +570,12 @@ export default function AcidenteRegistroPage() {
                       : 'bg-gray-100 text-gray-900 rounded-bl-md'
                   }`}>
                     {!isMyMsg && (
-                      <p className={`text-xs font-semibold mb-0.5 ${isMyMsg ? 'text-primary-200' : 'text-gray-500'}`}>
+                      <p className={`text-xs font-semibold mb-0.5 ${isMyMsg ? 'text-white' : 'text-gray-600'}`}>
                         {msg.remetente_tipo === 'proprietario' ? t('chatSenderProprietario') : outroNome || t('chatSenderOutroFallback')}
                       </p>
                     )}
                     <p className="text-sm">{msg.texto}</p>
-                    <p className={`text-xs mt-1 ${isMyMsg ? 'text-primary-200' : 'text-gray-400'}`}>
+                    <p className={`text-xs mt-1 ${isMyMsg ? 'text-white' : 'text-gray-500'}`}>
                       {formatTime(msg.created_at)}
                     </p>
                   </div>

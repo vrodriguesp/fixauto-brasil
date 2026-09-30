@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { Link, redirect, rota } from '@/i18n/navigation';
 import StructuredData from '@/components/seo/StructuredData';
 import { OG_LOCALE, HREFLANG, hrefNoIdioma, type Locale } from '@/i18n/routing';
-import { localizedUrl } from '@/lib/seo-utils';
+import { localizedUrl, imagemCompartilhamento } from '@/lib/seo-utils';
 import { alternatesDoGuia, caminhoDoGuia, guiaPorSlug } from '@/lib/guias';
 import { formatDate } from '@/lib/utils';
 
@@ -31,6 +31,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     description: v.descricao,
     alternates,
     openGraph: {
+      images: imagemCompartilhamento(locale),
       type: 'article',
       locale: OG_LOCALE[locale as Locale],
       siteName: 'BipFix',
@@ -82,6 +83,7 @@ export default async function GuiaPage({ params }: Params) {
     datePublished: guia.publicado,
     dateModified: guia.atualizado,
     mainEntityOfPage: url,
+    image: imagemCompartilhamento(locale).map((i) => i.url),
     author: { '@type': 'Organization', name: 'BipFix', url: 'https://bipfix.com' },
     publisher: {
       '@type': 'Organization',

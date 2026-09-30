@@ -80,7 +80,7 @@ export default function DistribuicaoTrabalhoPage() {
     amanha.setDate(hoje.getDate() + 1);
     const mesmodia = (a: Date, b: Date) => a.toDateString() === b.toDateString();
     const dataStr = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
-    const intlLocale = INTL_LOCALE[locale] || 'pt-BR';
+    const intlLocale = INTL_LOCALE[locale] || 'en-GB';
     if (mesmodia(d, hoje)) return t('hoje', { hora: d.toLocaleTimeString(intlLocale, { hour: '2-digit', minute: '2-digit' }) });
     if (mesmodia(d, amanha)) return t('amanha', { hora: d.toLocaleTimeString(intlLocale, { hour: '2-digit', minute: '2-digit' }) });
     return dataStr;

@@ -432,8 +432,8 @@
     "sendingBtn": "Sending...",
     "locationAutoDetected": "Location detected automatically",
     "locationCurrentDetected": "Current location detected",
-    "locationFallback": "São Paulo, SP",
-    "errorGenericSubmit": "Error logging the emergency"
+    "errorGenericSubmit": "Error logging the emergency",
+    "erroLocalizacao": "We couldn't find that address. Turn on location or type the street and city."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Accident Report",
@@ -901,7 +901,8 @@
     "hoursNotInformed": "Opening hours not provided",
     "reviewsTitle": "Reviews ({count})",
     "noReviewsText": "This repair shop doesn't have any reviews yet.",
-    "clientFallback": "Customer"
+    "clientFallback": "Customer",
+    "registroEmpresa": "Company registry code"
   },
   "audioMessage": {
     "hideTranscription": "Hide transcript",
@@ -969,5 +970,23 @@
         "botao": "Become a partner"
       }
     }
+  },
+  "tutorialHub": {
+    "concluidos": "{feitos}/{total} completed",
+    "opcionalMinusculo": "optional",
+    "opcional": "Optional",
+    "modoGuiado": "Guided (step by step)",
+    "modoAutonomo": "On your own (challenge only)",
+    "sigaPassos": "Follow these steps on the real screen:",
+    "desafio": "Challenge:",
+    "desafioNota": "No step-by-step here on purpose — try it on your own first. If you get stuck, switch back to Guided mode.",
+    "dica": "Tip:",
+    "irFazer": "Go do it now →",
+    "verificando": "Checking...",
+    "jaFizVerificar": "Done — check it",
+    "marcadoEntendido": "Marked as understood ✓",
+    "marcarConcluido": "Got it, mark as completed",
+    "encontrei": "Found it! Module completed.",
+    "aindaNao": "We can't find this in your profile yet. Do it on the real screen and click check again."
   }
 }

@@ -40,7 +40,12 @@
     "recuperarTexto": "Sisesta oma e-post ja saadame sulle parooli lähtestamise lingi.",
     "linkEnviado": "Kui see e-post on meil olemas, saatsime lähtestamislingi.",
     "definirSenhaTitulo": "Määra oma parool",
-    "definirSenhaTexto": "See on sinu esimene sisselogimine — jätkamiseks määra parool."
+    "definirSenhaTexto": "See on sinu esimene sisselogimine — jätkamiseks määra parool.",
+    "aceiteTexto1": "Olen lugenud ja nõustun",
+    "termos": "kasutustingimustega",
+    "aceiteTexto2": "ning",
+    "privacidade": "privaatsuspoliitikaga",
+    "senhaCurta": "Parool peab olema vähemalt 8 tähemärki."
   },
   "emergencia": {
     "titulo": "Sattusin avariisse",

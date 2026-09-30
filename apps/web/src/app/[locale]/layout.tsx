@@ -56,7 +56,7 @@ const NAMESPACES_PUBLICOS = [
   'home', 'nav', 'cookieBanner', 'notificationBell', 'tutorialBanner', 'constants',
   'oficinaPerfilPublico', 'emergencia', 'emergenciaAcidenteDetalhe', 'damageAnalysis',
   'audioRecorder', 'audioMessage', 'veiculoForm', 'docsLayout', 'docsCliente', 'docsOficina',
-  'sejaParceiro', 'login', 'cadastro', 'definirSenha', 'escolherTipo', 'resetPassword',
+  'sejaParceiro', 'login', 'cadastro', 'definirSenha', 'escolherTipo', 'resetPassword', 'erros',
 ];
 
 function mensagensPublicas(messages: Record<string, unknown>) {
@@ -83,17 +83,22 @@ export default async function LocaleLayout({
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
+    '@id': 'https://bipfix.com/#organization',
     name: 'BipFix',
     url: 'https://bipfix.com',
-    logo: 'https://bipfix.com/apple-touch-icon.png',
+    logo: { '@type': 'ImageObject', url: 'https://bipfix.com/icon-512.png', width: 512, height: 512 },
+    email: 'support@bipfix.com',
     description: t('description'),
+    areaServed: [{ '@type': 'Country', name: 'Estonia' }, { '@type': 'Country', name: 'Brazil' }],
     contactPoint: {
       '@type': 'ContactPoint',
       email: 'support@bipfix.com',
       contactType: 'customer support',
-      areaServed: ['BR', 'EE'],
-      availableLanguage: ['Portuguese', 'English', 'Estonian', 'Italian'],
+      areaServed: ['EE', 'BR'],
+      availableLanguage: ['Estonian', 'English', 'Russian', 'Portuguese', 'Italian'],
     },
+    // sameAs (perfis oficiais em redes) e address (sede da OU) entram
+    // quando existirem - pendencia do usuario.
   };
 
   const websiteSchema = {
@@ -110,8 +115,12 @@ export default async function LocaleLayout({
       <StructuredData data={websiteSchema} />
       <Analytics />
       <SugestaoIdioma />
+      {/* WCAG 2.4.1: pular direto para o conteudo (teclado/leitor de tela) */}
+      <a href="#conteudo" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-white focus:text-primary-700 focus:px-4 focus:py-2 focus:rounded-lg focus:shadow">
+        {t('pularConteudo')}
+      </a>
       <Navbar />
-      <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+      <main id="conteudo" className="min-h-[calc(100vh-4rem)]">{children}</main>
       <SiteFooter />
     </NextIntlClientProvider>
   );

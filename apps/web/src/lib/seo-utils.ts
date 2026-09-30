@@ -222,3 +222,10 @@ export function generateFAQSchema(faqs: FAQItem[]) {
     })),
   };
 }
+
+// Imagem de compartilhamento (og:image) pelo endereco publico do idioma.
+// Paginas que definem `openGraph` proprio substituem o do layout inteiro e
+// perdiam a imagem; por isso cada uma repassa esta.
+export function imagemCompartilhamento(locale: string) {
+  return [{ url: `${BASE_URL}${localePrefix(locale)}/opengraph-image`, width: 1200, height: 630, alt: 'BipFix' }];
+}

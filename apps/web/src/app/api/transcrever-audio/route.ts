@@ -3,6 +3,7 @@ import { getSessionUserId } from '@/lib/api-auth';
 import { dentroDoLimite } from '@/lib/rate-limit';
 import { participaDaSolicitacao } from '@/lib/acesso-servico';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { baixarMidia } from '@/lib/midia-servidor';
 
 
 export async function POST(request: NextRequest) {
@@ -54,10 +55,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Download audio
-    const audioRes = await fetch(msg.audio_url);
-    const audioBuffer = await audioRes.arrayBuffer();
-    const base64Audio = Buffer.from(audioBuffer).toString('base64');
-    const mimeType = audioRes.headers.get('content-type') || 'audio/webm';
+    // Espaco privado: baixa pelo servidor (o endereco publico nao abre mais)
+    const midia = await baixarMidia(msg.audio_url);
+    if (!midia) {
+      await supabaseAdmin.from('mensagens').update({ transcricao_status: 'erro' }).eq('id', mensagemId);
+      return NextResponse.json({ error: 'Áudio indisponível' }, { status: 500 });
+    }
+    const base64Audio = midia.buffer.toString('base64');
+    const mimeType = midia.tipo.startsWith('audio/') ? midia.tipo : 'audio/webm';
 
     // Use Gemini to transcribe
     const geminiRes = await fetch(
@@ -70,7 +75,7 @@ export async function POST(request: NextRequest) {
           contents: [{
             parts: [
               { inline_data: { mime_type: mimeType, data: base64Audio } },
-              { text: 'Transcreva este áudio em português brasileiro. Retorne APENAS o texto falado, sem formatação, sem aspas, sem explicação.' },
+              { text: 'Transcreva este áudio no MESMO idioma em que foi falado (não traduza). Retorne APENAS o texto falado, sem formatação, sem aspas, sem explicação.' },
             ],
           }],
           generationConfig: { maxOutputTokens: 2000 },

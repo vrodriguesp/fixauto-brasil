@@ -85,6 +85,10 @@ export const PATHNAMES = {
     pt: '/ajuda/oficinas', 'pt-PT': '/ajuda/oficinas', en: '/help/repair-shops',
     et: '/abi/tookojad', it: '/aiuto/officine', ru: '/pomoshch/avtoservisam',
   },
+  '/sobre': {
+    pt: '/sobre', 'pt-PT': '/sobre', en: '/about',
+    et: '/meist', it: '/chi-siamo', ru: '/o-nas',
+  },
   '/cadastro': {
     pt: '/cadastro', 'pt-PT': '/registo', en: '/sign-up',
     et: '/registreeru', it: '/registrati', ru: '/registratsiya',

@@ -1,0 +1,181 @@
+{
+  "common": {
+    "carregando": "A carregar...",
+    "salvar": "Guardar",
+    "cancelar": "Cancelar",
+    "continuar": "Continuar",
+    "voltar": "Voltar",
+    "tentarNovamente": "Tentar novamente",
+    "erroGenerico": "Algo correu mal. Tente novamente.",
+    "semConexao": "Sem ligação à internet.",
+    "confirmar": "Confirmar",
+    "enviar": "Enviar",
+    "sim": "Sim",
+    "nao": "Não",
+    "opcional": "opcional"
+  },
+  "tabs": {
+    "inicio": "Início",
+    "solicitacoes": "Pedidos",
+    "mensagens": "Mensagens",
+    "veiculos": "Veículos",
+    "perfil": "Perfil"
+  },
+  "auth": {
+    "loginTitulo": "Iniciar sessão",
+    "email": "E-mail",
+    "senha": "Palavra-passe",
+    "entrar": "Iniciar sessão",
+    "esqueciSenha": "Esqueci-me da palavra-passe",
+    "naoTemConta": "Ainda não tem conta?",
+    "criarConta": "Criar conta",
+    "cadastroTitulo": "Criar conta",
+    "nome": "Nome completo",
+    "telefone": "Telemóvel",
+    "confirmarSenha": "Confirmar palavra-passe",
+    "jaTemConta": "Já tem conta?",
+    "credenciaisInvalidas": "E-mail ou palavra-passe incorretos.",
+    "senhasNaoConferem": "As palavras-passe não coincidem.",
+    "recuperarTitulo": "Repor palavra-passe",
+    "recuperarTexto": "Introduza o seu e-mail e enviaremos um link para repor a palavra-passe.",
+    "linkEnviado": "Se esse e-mail existir nos nossos registos, enviámos um link de reposição.",
+    "definirSenhaTitulo": "Defina a sua palavra-passe",
+    "definirSenhaTexto": "É a primeira vez que inicia sessão — defina uma palavra-passe para continuar.",
+    "aceiteTexto1": "Li e aceito os",
+    "termos": "Termos de Utilização",
+    "aceiteTexto2": "e a",
+    "privacidade": "Política de Privacidade",
+    "senhaCurta": "A palavra-passe tem de ter pelo menos 8 caracteres."
+  },
+  "emergencia": {
+    "titulo": "Acabei de bater",
+    "subtitulo": "Registe o acidente agora e receba orçamentos de oficinas próximas em minutos.",
+    "botaoIniciar": "Registar o acidente agora",
+    "fotoTitulo": "Fotografias do veículo",
+    "fotoTexto": "Tire ou envie fotografias do dano.",
+    "localTitulo": "A sua localização",
+    "localPermitir": "Permitir acesso à localização",
+    "localTexto": "Usamos a sua localização para encontrar oficinas próximas.",
+    "erroLocalizacao": "Não conseguimos obter a sua localização. Introduza a morada manualmente.",
+    "descricaoLabel": "O que aconteceu?",
+    "descricaoPlaceholder": "Descreva brevemente o acidente...",
+    "enviarRegistro": "Enviar registo",
+    "sucessoTitulo": "Registo enviado",
+    "sucessoTexto": "As oficinas próximas foram notificadas. Acompanhe os orçamentos em Pedidos."
+  },
+  "novaSolicitacao": {
+    "titulo": "Novo pedido",
+    "passoVeiculo": "Selecione o seu veículo",
+    "adicionarVeiculo": "Adicionar veículo",
+    "passoServico": "Tipo de serviço",
+    "passoSintomas": "O que se passa?",
+    "passoFotos": "Fotografias do problema",
+    "passoLocal": "Local do serviço",
+    "passoUrgencia": "Urgência",
+    "urgenciaBaixa": "Posso esperar",
+    "urgenciaMedia": "Nos próximos dias",
+    "urgenciaAlta": "É urgente",
+    "revisar": "Rever e enviar",
+    "enviarSolicitacao": "Enviar pedido",
+    "sucessoTitulo": "Pedido enviado!",
+    "sucessoTexto": "As oficinas próximas vão enviar-lhe orçamentos em breve."
+  },
+  "dashboard": {
+    "saudacao": "Olá, {nome}",
+    "solicitacoesAtivas": "Pedidos ativos",
+    "nenhumaSolicitacao": "Ainda não tem pedidos.",
+    "novaSolicitacaoBotao": "Novo pedido",
+    "emergenciaBotao": "Acabei de bater"
+  },
+  "orcamentos": {
+    "titulo": "Orçamentos",
+    "recebidoDe": "Enviado por {oficina}",
+    "valor": "Valor total",
+    "aceitar": "Aceitar orçamento",
+    "recusar": "Recusar",
+    "verDetalhes": "Ver detalhes",
+    "statusEnviado": "Enviado",
+    "statusVisualizado": "Visualizado",
+    "statusAceito": "Aceite",
+    "statusRecusado": "Recusado",
+    "statusExpirado": "Expirado"
+  },
+  "acompanhamento": {
+    "titulo": "Acompanhamento da reparação",
+    "etapaAtual": "Etapa atual",
+    "previsaoEntrega": "Entrega prevista",
+    "semEtapas": "A oficina ainda não iniciou o acompanhamento deste serviço."
+  },
+  "avaliacao": {
+    "titulo": "Avalie o serviço",
+    "subtitulo": "Como foi a sua experiência com esta oficina?",
+    "comentarioPlaceholder": "Deixe um comentário (opcional)",
+    "enviar": "Enviar avaliação",
+    "obrigado": "Obrigado pela sua avaliação!",
+    "jaAvaliado": "Já avaliou este serviço"
+  },
+  "mensagens": {
+    "titulo": "Mensagens",
+    "nenhumaConversa": "Ainda não há conversas.",
+    "digiteMensagem": "Escreva uma mensagem...",
+    "erroEnviar": "Não foi possível enviar a mensagem. Tente novamente.",
+    "gravarAudio": "Mantenha premido para gravar uma mensagem de voz"
+  },
+  "veiculos": {
+    "titulo": "Os meus veículos",
+    "adicionar": "Adicionar veículo",
+    "marca": "Marca",
+    "modelo": "Modelo",
+    "ano": "Ano",
+    "placa": "Matrícula",
+    "apelido": "Alcunha do veículo",
+    "erroSalvar": "Não foi possível guardar o veículo. Tente novamente.",
+    "nenhumVeiculo": "Ainda não adicionou nenhum veículo."
+  },
+  "constants": {
+    "tiposServico": {
+      "colisao": "Colisão",
+      "funilaria": "Bate-chapa e Pintura",
+      "revisao": "Manutenção",
+      "mecanica": "Mecânica",
+      "eletrica": "Eletricidade",
+      "pneu": "Pneus",
+      "outro": "Outro"
+    },
+    "urgencias": {
+      "baixa": "Baixa",
+      "baixaDesc": "Sem pressa, posso esperar",
+      "media": "Média",
+      "mediaDesc": "Preciso dentro de algumas semanas",
+      "alta": "Alta",
+      "altaDesc": "Urgente, preciso o mais depressa possível"
+    },
+    "statusSolicitacao": {
+      "aberta": "Aberto",
+      "em_orcamento": "Orçamento Enviado",
+      "aceita": "Orçamento Aceite",
+      "em_andamento": "Em Curso",
+      "concluida": "Concluído",
+      "cancelada": "Cancelado"
+    },
+    "statusManutencao": {
+      "recebido": "Recebido",
+      "diagnostico": "Em diagnóstico",
+      "aguardando_pecas": "À espera de peças",
+      "em_execucao": "Em execução",
+      "pausa_cliente": "Em pausa - a contactar o cliente",
+      "pausa_pecas": "Em pausa - faltam peças",
+      "pausa_geral": "Em pausa",
+      "teste_final": "Teste final",
+      "concluido": "Concluído",
+      "entregue": "Entregue"
+    }
+  },
+  "perfil": {
+    "titulo": "Perfil",
+    "meusDados": "Os meus dados",
+    "idioma": "Idioma",
+    "sair": "Terminar sessão",
+    "avaliacoes": "As minhas avaliações"
+  }
+}

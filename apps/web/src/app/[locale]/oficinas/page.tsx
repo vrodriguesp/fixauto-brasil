@@ -6,7 +6,7 @@ import { Link, rota } from '@/i18n/navigation';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import StarRating from '@/components/ui/StarRating';
 import StructuredData from '@/components/seo/StructuredData';
-import { capitalizarCidade, hreflangAlternates, slugCidade } from '@/lib/seo-utils';
+import { capitalizarCidade, hreflangAlternates, slugCidade, imagemCompartilhamento } from '@/lib/seo-utils';
 import { OG_LOCALE, localePrefix as prefixoDoIdioma, type Locale } from '@/i18n/routing';
 import { countryNameForCode } from '@/lib/currency';
 
@@ -125,6 +125,7 @@ export async function generateMetadata({
     alternates,
     robots: { index: indexavel, follow: true },
     openGraph: {
+      images: imagemCompartilhamento(locale),
       type: 'website',
       locale: OG_LOCALE[locale as Locale] || 'pt_BR',
       siteName: 'BipFix',
@@ -176,7 +177,7 @@ export default async function OficinasPage({
           <h1 className="text-3xl sm:text-4xl font-bold leading-tight">
             {cidade ? t('heroTitleCidade', { cidade: cidade.nome }) : t('heroTitle')}
           </h1>
-          <p className="mt-4 text-lg text-primary-100 max-w-2xl leading-relaxed">{t('heroText')}</p>
+          <p className="mt-4 text-lg text-white max-w-2xl leading-relaxed">{t('heroText')}</p>
         </div>
       </section>
 

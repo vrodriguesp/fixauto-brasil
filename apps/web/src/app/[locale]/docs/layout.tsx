@@ -20,7 +20,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
             </svg>
             {t('backToSite')}
           </Link>
-          <span className="text-gray-300">|</span>
+          <span className="text-gray-300" aria-hidden="true">|</span>
           <Link href="/docs" className="text-sm font-medium text-primary-600 hover:text-primary-700">
             {t('helpCenterLink')}
           </Link>

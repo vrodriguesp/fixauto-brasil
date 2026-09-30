@@ -40,7 +40,12 @@
     "recuperarTexto": "Digite seu e-mail e enviaremos um link para redefinir sua senha.",
     "linkEnviado": "Se esse e-mail existir na nossa base, enviamos um link de recuperação.",
     "definirSenhaTitulo": "Defina sua senha",
-    "definirSenhaTexto": "Essa é a primeira vez que você acessa — defina uma senha para continuar."
+    "definirSenhaTexto": "Essa é a primeira vez que você acessa — defina uma senha para continuar.",
+    "aceiteTexto1": "Li e aceito os",
+    "termos": "Termos de Uso",
+    "aceiteTexto2": "e a",
+    "privacidade": "Política de Privacidade",
+    "senhaCurta": "A senha precisa ter pelo menos 8 caracteres."
   },
   "emergencia": {
     "titulo": "Acabei de bater",

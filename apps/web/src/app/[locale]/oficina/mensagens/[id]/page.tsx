@@ -297,7 +297,7 @@ export default function OficinaMensagensPage() {
 
   const formatTime = (dateStr: string) => {
     const d = new Date(dateStr);
-    return d.toLocaleTimeString(INTL_LOCALE[locale] || 'pt-BR', { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit' });
   };
 
   const formatDateSeparator = (dateStr: string) => {
@@ -308,7 +308,7 @@ export default function OficinaMensagensPage() {
 
     if (d.toDateString() === today.toDateString()) return t('hoje');
     if (d.toDateString() === yesterday.toDateString()) return t('ontem');
-    return d.toLocaleDateString(INTL_LOCALE[locale] || 'pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return d.toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
   const shouldShowDateSeparator = (index: number) => {

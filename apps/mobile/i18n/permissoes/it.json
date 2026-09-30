@@ -1,0 +1,7 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "Usiamo la tua posizione per trovare le officine vicino a te.",
+    "NSCameraUsageDescription": "Usiamo la fotocamera per fotografare il danno al veicolo.",
+    "NSPhotoLibraryUsageDescription": "Usiamo la tua galleria per inviare le foto del danno al veicolo."
+  }
+}

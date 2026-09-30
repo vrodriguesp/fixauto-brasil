@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
+import { textoErroApi } from '@/lib/erro-api';
 
 export default function SejaParceiroPage() {
   const t = useTranslations('sejaParceiro');
+  const tErros = useTranslations('erros');
   const [tipo, setTipo] = useState<'oficina' | 'loja_pecas'>('oficina');
   const [nomeResponsavel, setNomeResponsavel] = useState('');
   const [nomeNegocio, setNomeNegocio] = useState('');
@@ -36,7 +38,7 @@ export default function SejaParceiroPage() {
       setEnviado(true);
     } else {
       const data = await res.json().catch(() => ({}));
-      setErro(data.error || t('erroGenerico'));
+      setErro(textoErroApi(tErros, res.status, data));
     }
   };
 
@@ -68,7 +70,7 @@ export default function SejaParceiroPage() {
             {t('heroTag')}
           </span>
           <h1 className="text-3xl sm:text-4xl font-bold leading-tight">{t('heroTitulo')}</h1>
-          <p className="mt-5 text-lg text-primary-100 leading-relaxed max-w-2xl mx-auto">{t('heroTexto')}</p>
+          <p className="mt-5 text-lg text-white leading-relaxed max-w-2xl mx-auto">{t('heroTexto')}</p>
         </div>
       </section>
 
@@ -80,6 +82,27 @@ export default function SejaParceiroPage() {
             <Benefit title={t('beneficio1Titulo')} text={t('beneficio1Texto')} />
             <Benefit title={t('beneficio2Titulo')} text={t('beneficio2Texto')} />
             <Benefit title={t('beneficio3Titulo')} text={t('beneficio3Texto')} />
+          </div>
+        </div>
+      </section>
+
+      {/* O que acontece depois + quem esta por tras (auditoria 30/09, 8.3) */}
+      <section className="pb-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-6">
+          <div className="card">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">{t('depoisTitulo')}</h2>
+            <ol className="space-y-3">
+              {[t('depois1'), t('depois2'), t('depois3')].map((passo, i) => (
+                <li key={i} className="flex gap-3 text-gray-700">
+                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary-600 text-white text-sm font-bold flex items-center justify-center">{i + 1}</span>
+                  <span>{passo}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div className="card">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">{t('quemSomosTitulo')}</h2>
+            <p className="text-gray-700 leading-relaxed">{t('quemSomosTexto')}</p>
           </div>
         </div>
       </section>
@@ -149,7 +172,7 @@ export default function SejaParceiroPage() {
               <button type="submit" disabled={enviando} className="btn-primary w-full disabled:opacity-50">
                 {enviando ? t('enviando') : t('enviar')}
               </button>
-              <p className="text-xs text-gray-400 text-center">
+              <p className="text-xs text-gray-600 text-center">
                 {t('concordaTermos')}{' '}
                 <Link href="/termos" target="_blank" className="underline">{t('termosDeUso')}</Link>.
               </p>

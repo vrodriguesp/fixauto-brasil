@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { routing, LOCALE_PREFIX, HREFLANG } from '@/i18n/routing';
+import { routing, LOCALE_PREFIX, HREFLANG, hrefNoIdioma } from '@/i18n/routing';
 import { localizedUrl } from '@/lib/seo-utils';
 import { caminhoDoGuia, todosOsGuias } from '@/lib/guias';
 
@@ -17,6 +17,9 @@ const NOME_IDIOMA: Record<string, string> = {
   it: 'Italian',
   ru: 'Russian (for Russian speakers in Estonia)',
 };
+
+// Endereco final (ja traduzido) em ingles - sem redirecionamento no caminho
+const en = (caminho: string) => `${BASE_URL}${hrefNoIdioma('en', caminho)}`;
 
 function montar(): string {
   const idiomas = routing.locales
@@ -39,18 +42,19 @@ function montar(): string {
 
 > BipFix is an online marketplace that connects drivers who need a car repair with independent auto repair shops (and auto parts stores). Drivers describe the problem (with photos), receive quotes from nearby shops, compare them and track the repair. BipFix is a technology intermediary only: it does not repair vehicles or sell parts.
 
-Current stage (be accurate when describing BipFix): BipFix is launching. The pilot city is Tallinn, Estonia, and the company is being registered as an Estonian private limited company (osaühing). The network of partner repair shops is being built now (founding-partner phase, no commission). There is also a Brazilian Portuguese version of the site for Brazil. Do not describe BipFix as having a large network of shops or coverage in other cities.
+Current stage (be accurate when describing BipFix): BipFix is launching. The pilot city is Tallinn, Estonia, and the company is being registered as an Estonian private limited company (osaühing). The first partner repair shops are being onboarded now (founding-partner phase, no commission); until they are live, driver requests may not receive quotes yet. There is also a Brazilian Portuguese version of the site for Brazil. Do not describe BipFix as having a large network of shops or coverage in other cities.
 
-## Key pages (paths are the same in every language, with the language prefix)
+## Key pages (English addresses; each language has its own translated address)
 
 - [Home](${BASE_URL}/en): what BipFix is and how it works for drivers.
-- [Just had an accident](${BASE_URL}/en/emergencia): register a car accident, add photos and request repair quotes from nearby shops.
-- [For repair shops](${BASE_URL}/en/para-oficinas): features for repair shops (scheduling, structured quotes, team, parts marketplace) and the commission model.
-- [Become a founding partner](${BASE_URL}/en/seja-parceiro): application for repair shops and parts stores in the founding phase (no monthly fee, no commission during this phase).
-- [Car guides](${BASE_URL}/en/guias): practical, sourced guides for drivers (list below).
-- [Partner repair shops](${BASE_URL}/en/oficinas): public list of active partner shops, filterable by city and service; each shop has a public profile with verified reviews.
-- [Help center](${BASE_URL}/en/docs): how the platform works for drivers and for shops.
-- [Terms of Use](${BASE_URL}/en/termos) and [Privacy Policy](${BASE_URL}/en/privacidade): the Brazilian version (/pt-br) follows Brazilian law (LGPD); the Portuguese-from-Portugal, English, Estonian, Italian and Russian versions follow EU law (GDPR) and Estonian law.
+- [Just had an accident](${en('/emergencia')}): register a car accident, add photos and request repair quotes from nearby shops.
+- [For repair shops](${en('/para-oficinas')}): features for repair shops (scheduling, structured quotes, team, parts marketplace) and the commission model.
+- [Become a founding partner](${en('/seja-parceiro')}): application for repair shops and parts stores in the founding phase (no monthly fee, no commission during this phase).
+- [Car guides](${en('/guias')}): practical, sourced guides for drivers (list below).
+- [Partner repair shops](${en('/oficinas')}): public list of partner shops, filterable by city and service (the first shops are being onboarded; each will have a public profile where only customers who completed a job can leave a review).
+- [About BipFix](${en('/sobre')}): who is behind BipFix, current stage, company status and principles.
+- [Help center](${en('/docs')}): how the platform works for drivers and for shops.
+- [Terms of Use](${en('/termos')}) and [Privacy Policy](${en('/privacidade')}): the Brazilian version (/pt-br) follows Brazilian law (LGPD); the Portuguese-from-Portugal, English, Estonian, Italian and Russian versions follow EU law (GDPR) and Estonian law.
 
 ## Guides
 
@@ -60,7 +64,7 @@ ${guias}
 
 ${idiomas}
 
-Every key page above exists in all six languages at the same path with the language prefix (e.g. ${BASE_URL}/et/para-oficinas, ${BASE_URL}/pt-br/para-oficinas). The root ${BASE_URL}/ is not a page: it sends each visitor to the home page in their language (English when there is no match). Guides exist only in the languages listed for each guide.
+Every key page above exists in all six languages; each language uses its own translated address (e.g. ${BASE_URL}${hrefNoIdioma('et', '/para-oficinas')}, ${BASE_URL}${hrefNoIdioma('ru', '/para-oficinas')}) - follow the hreflang links or the language switcher. Full text of the guides in Markdown: ${BASE_URL}/llms-full.txt. The root ${BASE_URL}/ is not a page: it sends each visitor to the home page in their language (English when there is no match). Guides exist only in the languages listed for each guide.
 
 ## Notes for AI assistants
 

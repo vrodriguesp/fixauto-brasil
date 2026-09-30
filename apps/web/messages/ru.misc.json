@@ -432,8 +432,8 @@
     "sendingBtn": "Отправляем...",
     "locationAutoDetected": "Местоположение определено автоматически",
     "locationCurrentDetected": "Текущее местоположение определено",
-    "locationFallback": "Таллинн",
-    "errorGenericSubmit": "Ошибка при регистрации происшествия"
+    "errorGenericSubmit": "Ошибка при регистрации происшествия",
+    "erroLocalizacao": "Не удалось найти адрес. Включите геолокацию или введите улицу и город."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Сообщение о ДТП",
@@ -901,7 +901,8 @@
     "hoursNotInformed": "Часы работы не указаны",
     "reviewsTitle": "Отзывы ({count})",
     "noReviewsText": "У этого автосервиса пока нет отзывов.",
-    "clientFallback": "Клиент"
+    "clientFallback": "Клиент",
+    "registroEmpresa": "Регистрационный код"
   },
   "audioMessage": {
     "hideTranscription": "Скрыть расшифровку",
@@ -969,5 +970,23 @@
         "botao": "Стать партнёром"
       }
     }
+  },
+  "tutorialHub": {
+    "concluidos": "Выполнено: {feitos} из {total}",
+    "opcionalMinusculo": "необязательно",
+    "opcional": "Необязательно",
+    "modoGuiado": "С подсказками (пошагово)",
+    "modoAutonomo": "Самостоятельно (только задание)",
+    "sigaPassos": "Выполните эти шаги на настоящем экране:",
+    "desafio": "Задание:",
+    "desafioNota": "Пошаговой инструкции здесь нет намеренно — сначала попробуйте сами. Если не получится, вернитесь в режим «С подсказками».",
+    "dica": "Совет:",
+    "irFazer": "Перейти и сделать →",
+    "verificando": "Проверяем...",
+    "jaFizVerificar": "Готово — проверить",
+    "marcadoEntendido": "Отмечено как понятное ✓",
+    "marcarConcluido": "Понятно, отметить как выполненное",
+    "encontrei": "Нашли! Модуль выполнен.",
+    "aindaNao": "Пока не видим этого в вашем профиле. Выполните действие на настоящем экране и снова нажмите «Проверить»."
   }
 }

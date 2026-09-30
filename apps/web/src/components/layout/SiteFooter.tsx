@@ -46,26 +46,27 @@ export default function SiteFooter() {
           <nav aria-label={t('footerMotoristas')}>
             <h2 className="text-white font-semibold mb-3 text-base">{t('footerMotoristas')}</h2>
             <ul className="space-y-2 text-sm">
-              <li><Link href={rota('/cadastro', undefined, { tipo: 'cliente' })} className="hover:text-white">{t('footerCriarConta')}</Link></li>
-              <li><Link href="/emergencia" className="hover:text-white">{t('footerAcabeiDeBater')}</Link></li>
-              <li><Link href="/oficinas" className="hover:text-white">{t('footerVerOficinas')}</Link></li>
-              <li><Link href="/docs/cliente" className="hover:text-white">{t('footerComoFunciona')}</Link></li>
-              <li><Link href="/guias" className="hover:text-white">{t('footerGuias')}</Link></li>
+              <li><Link href={rota('/cadastro', undefined, { tipo: 'cliente' })} className="inline-block py-1.5 hover:text-white">{t('footerCriarConta')}</Link></li>
+              <li><Link href="/emergencia" className="inline-block py-1.5 hover:text-white">{t('footerAcabeiDeBater')}</Link></li>
+              <li><Link href="/oficinas" className="inline-block py-1.5 hover:text-white">{t('footerVerOficinas')}</Link></li>
+              <li><Link href="/docs/cliente" className="inline-block py-1.5 hover:text-white">{t('footerComoFunciona')}</Link></li>
+              <li><Link href="/guias" className="inline-block py-1.5 hover:text-white">{t('footerGuias')}</Link></li>
+              <li><Link href="/sobre" className="inline-block py-1.5 hover:text-white">{t('footerSobre')}</Link></li>
             </ul>
           </nav>
           <nav aria-label={t('footerOficinas')}>
             <h2 className="text-white font-semibold mb-3 text-base">{t('footerOficinas')}</h2>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/para-oficinas" className="hover:text-white">{t('footerSistemaGestao')}</Link></li>
-              <li><Link href="/seja-parceiro" className="hover:text-white">{t('footerSejaParceiro')}</Link></li>
-              <li><Link href="/docs/oficina" className="hover:text-white">{t('footerGuiaOficina')}</Link></li>
-              <li><Link href="/docs" className="hover:text-white">{t('footerCentralAjuda')}</Link></li>
+              <li><Link href="/para-oficinas" className="inline-block py-1.5 hover:text-white">{t('footerSistemaGestao')}</Link></li>
+              <li><Link href="/seja-parceiro" className="inline-block py-1.5 hover:text-white">{t('footerSejaParceiro')}</Link></li>
+              <li><Link href="/docs/oficina" className="inline-block py-1.5 hover:text-white">{t('footerGuiaOficina')}</Link></li>
+              <li><Link href="/docs" className="inline-block py-1.5 hover:text-white">{t('footerCentralAjuda')}</Link></li>
             </ul>
           </nav>
           <div>
             <h2 className="text-white font-semibold mb-3 text-base">{t('footerContato')}</h2>
             <ul className="space-y-2 text-sm">
-              <li><a href="mailto:support@bipfix.com" className="hover:text-white">support@bipfix.com</a></li>
+              <li><a href="mailto:support@bipfix.com" className="inline-block py-1.5 hover:text-white">support@bipfix.com</a></li>
             </ul>
           </div>
         </div>
@@ -92,8 +93,8 @@ export default function SiteFooter() {
         <div className="border-t border-gray-800 mt-6 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center text-sm">
           <p>{t('footerDireitos')}</p>
           <div className="flex gap-4">
-            <Link href="/termos" className="hover:text-white">{t('footerTermos')}</Link>
-            <Link href="/privacidade" className="hover:text-white">{t('footerPrivacidade')}</Link>
+            <Link href="/termos" className="inline-block py-1.5 hover:text-white">{t('footerTermos')}</Link>
+            <Link href="/privacidade" className="inline-block py-1.5 hover:text-white">{t('footerPrivacidade')}</Link>
           </div>
         </div>
       </div>

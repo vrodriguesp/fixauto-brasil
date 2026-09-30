@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
 import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import { Link, usePathname } from '@/i18n/navigation';
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const CLARITY_PROJECT_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
@@ -44,6 +44,7 @@ function aplicarConsentimento(valor: 'accepted' | 'rejected') {
 // vinculada apos o consentimento via ConsentV2.
 export default function Analytics() {
   const t = useTranslations('cookieBanner');
+  const pathname = usePathname();
   const [consent, setConsent] = useState<Consent>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -112,18 +113,21 @@ export default function Analytics() {
         </Script>
       )}
 
-      {mounted && consent === null && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg">
-          <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center gap-4">
-            <p className="text-sm text-gray-600 flex-1">
+      {/* Aviso compacto (Google: banner de cookies "de tamanho razoavel";
+          EDPB 05/2020: recusar tao facil quanto aceitar) e ausente no fluxo
+          de acidente, onde cobria o formulario e nao ha o que medir. */}
+      {mounted && consent === null && !pathname.startsWith('/emergencia') && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+          <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-4 flex items-center gap-3 sm:gap-4">
+            <p className="text-xs sm:text-sm text-gray-700 flex-1 leading-snug">
               {t('texto')}{' '}
-              <Link href="/privacidade" className="text-primary-600 hover:underline">{t('linkPrivacidade')}</Link>.
+              <Link href="/privacidade" className="text-primary-700 underline">{t('linkPrivacidade')}</Link>.
             </p>
-            <div className="flex gap-3 flex-shrink-0">
-              <button onClick={() => responder('rejected')} className="btn-secondary !py-2 !px-4 text-sm">
+            <div className="flex gap-2 sm:gap-3 flex-shrink-0">
+              <button onClick={() => responder('rejected')} className="btn-secondary !py-2 !px-3 sm:!px-4 text-sm min-h-[40px]">
                 {t('rejeitar')}
               </button>
-              <button onClick={() => responder('accepted')} className="btn-primary !py-2 !px-4 text-sm">
+              <button onClick={() => responder('accepted')} className="btn-primary !py-2 !px-3 sm:!px-4 text-sm min-h-[40px]">
                 {t('aceitar')}
               </button>
             </div>

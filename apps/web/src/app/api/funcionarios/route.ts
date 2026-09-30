@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (existing) {
-      return NextResponse.json({ error: 'Este funcionário já está cadastrado nesta oficina' }, { status: 409 });
+      return NextResponse.json({ error: 'Este funcionário já está cadastrado nesta oficina', codigo: 'FUNCIONARIO_JA_CADASTRADO' }, { status: 409 });
     }
 
     // 4. Create funcionario record with primeiro_login = true

@@ -6,10 +6,12 @@ import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { CARGOS_FUNCIONARIO } from '@fixauto/shared';
 import type { Funcionario } from '@fixauto/shared';
+import { textoErroApi } from '@/lib/erro-api';
 
 export default function EquipePage() {
   const t = useTranslations('oficinaEquipe');
   const tc = useTranslations('constants');
+  const tErros = useTranslations('erros');
   const { oficina } = useAuth();
   const [funcionarios, setFuncionarios] = useState<(Funcionario & { profile?: { nome: string; email: string; telefone: string | null } })[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +72,7 @@ export default function EquipePage() {
 
     const data = await res.json();
     if (!res.ok) {
-      setError(data.error);
+      setError(textoErroApi(tErros, res.status, data));
     } else {
       setShowForm(false);
       setForm({ nome: '', email: '', senha: '', cargo: 'mecanico', especialidade: '' });

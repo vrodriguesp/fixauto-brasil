@@ -12,9 +12,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.bipfix.cliente",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Usamos sua localização para encontrar oficinas próximas de você.",
-        "NSCameraUsageDescription": "Usamos a câmera para você fotografar o dano do veículo.",
-        "NSPhotoLibraryUsageDescription": "Usamos sua galeria para você enviar fotos do dano do veículo."
+        "NSLocationWhenInUseUsageDescription": "We use your location to find repair shops near you.",
+        "NSCameraUsageDescription": "We use the camera so you can photograph the damage to your vehicle.",
+        "NSPhotoLibraryUsageDescription": "We use your photo library so you can send photos of the damage to your vehicle."
       }
     },
     "android": {
@@ -42,18 +42,26 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Usamos sua galeria para você enviar fotos do dano do veículo.",
-          "cameraPermission": "Usamos a câmera para você fotografar o dano do veículo."
+          "photosPermission": "We use your photo library so you can send photos of the damage to your vehicle.",
+          "cameraPermission": "We use the camera so you can photograph the damage to your vehicle."
         }
       ],
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Usamos sua localização para encontrar oficinas próximas de você."
+          "locationWhenInUsePermission": "We use your location to find repair shops near you."
         }
       ],
       "expo-asset",
       "expo-font"
-    ]
+    ],
+    "locales": {
+      "en": "./i18n/permissoes/en.json",
+      "pt": "./i18n/permissoes/pt.json",
+      "pt-PT": "./i18n/permissoes/pt-PT.json",
+      "et": "./i18n/permissoes/et.json",
+      "it": "./i18n/permissoes/it.json",
+      "ru": "./i18n/permissoes/ru.json"
+    }
   }
 }

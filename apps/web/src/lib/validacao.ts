@@ -1,23 +1,28 @@
 // Validacao de entrada das rotas de API (OWASP: validar tipo, tamanho e
 // formato de tudo que vem do cliente antes de usar).
 
-export class ErroValidacao extends Error {}
+// `codigo` e estavel e traduzido na tela (messages: erros.<codigo>)
+export class ErroValidacao extends Error {
+  constructor(mensagem: string, public codigo: string = 'DADOS_INVALIDOS') {
+    super(mensagem);
+  }
+}
 
 export function texto(v: unknown, campo: string, max: number, obrigatorio = false): string | null {
   if (v == null || v === '') {
-    if (obrigatorio) throw new ErroValidacao(`${campo} obrigatório`);
+    if (obrigatorio) throw new ErroValidacao(`${campo} obrigatório`, 'CAMPO_OBRIGATORIO');
     return null;
   }
   if (typeof v !== 'string') throw new ErroValidacao(`${campo} inválido`);
   const s = v.trim();
-  if (obrigatorio && !s) throw new ErroValidacao(`${campo} obrigatório`);
+  if (obrigatorio && !s) throw new ErroValidacao(`${campo} obrigatório`, 'CAMPO_OBRIGATORIO');
   if (s.length > max) throw new ErroValidacao(`${campo} muito longo`);
   return s || null;
 }
 
 export function email(v: unknown, obrigatorio = false): string | null {
   const s = texto(v, 'email', 254, obrigatorio);
-  if (s && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)) throw new ErroValidacao('email inválido');
+  if (s && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)) throw new ErroValidacao('email inválido', 'EMAIL_INVALIDO');
   return s ? s.toLowerCase() : null;
 }
 
@@ -43,10 +48,10 @@ export const IMAGEM_TIPOS = ['image/jpeg', 'image/png', 'image/webp', 'image/hei
 export const IMAGEM_MAX_BYTES = 10 * 1024 * 1024;
 
 export function validarImagens(arquivos: File[], max: number): File[] {
-  if (arquivos.length > max) throw new ErroValidacao(`no máximo ${max} fotos`);
+  if (arquivos.length > max) throw new ErroValidacao(`no máximo ${max} fotos`, 'FOTOS_MAX');
   for (const f of arquivos) {
-    if (!(IMAGEM_TIPOS as readonly string[]).includes(f.type)) throw new ErroValidacao('tipo de arquivo não permitido');
-    if (f.size > IMAGEM_MAX_BYTES) throw new ErroValidacao('foto maior que 10 MB');
+    if (!(IMAGEM_TIPOS as readonly string[]).includes(f.type)) throw new ErroValidacao('tipo de arquivo não permitido', 'FOTO_TIPO');
+    if (f.size > IMAGEM_MAX_BYTES) throw new ErroValidacao('foto maior que 10 MB', 'FOTO_TAMANHO');
   }
   return arquivos;
 }

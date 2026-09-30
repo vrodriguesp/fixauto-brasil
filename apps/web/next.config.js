@@ -37,7 +37,11 @@ const nextConfig = {
   // Nao anunciar a tecnologia do servidor (OWASP)
   poweredByHeader: false,
   async headers() {
-    return [{ source: '/(.*)', headers: CABECALHOS }];
+    return [
+      { source: '/(.*)', headers: CABECALHOS },
+      // Imagens e icones de /public: cache de 1 semana (os nomes nao tem hash)
+      { source: '/:arquivo*.(png|webp|ico|svg|jpg)', headers: [{ key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' }] },
+    ];
   },
   transpilePackages: ['@fixauto/shared'],
   experimental: {

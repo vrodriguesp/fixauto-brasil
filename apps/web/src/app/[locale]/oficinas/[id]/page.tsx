@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import OficinaPerfilClient from './OficinaPerfilClient';
 import { carregarPerfilOficina } from './perfil-dados';
 import { OG_LOCALE, type Locale } from '@/i18n/routing';
-import { capitalizarCidade, hreflangAlternates } from '@/lib/seo-utils';
+import { capitalizarCidade, hreflangAlternates, imagemCompartilhamento } from '@/lib/seo-utils';
 
 type Params = { params: Promise<{ locale: string; id: string }> };
 
@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     description,
     alternates,
     openGraph: {
+      images: imagemCompartilhamento(locale),
       type: 'website',
       locale: OG_LOCALE[locale as Locale],
       siteName: 'BipFix',

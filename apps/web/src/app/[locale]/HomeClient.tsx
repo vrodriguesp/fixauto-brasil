@@ -58,9 +58,9 @@ export default function HomeClient() {
           <div className="max-w-3xl">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
               {t('heroTitulo')}{' '}
-              <span className="text-primary-200">{t('heroTituloDestaque')}</span>
+              <span className="text-white">{t('heroTituloDestaque')}</span>
             </h1>
-            <p className="mt-6 text-lg sm:text-xl text-primary-100 leading-relaxed">{t('heroTexto')}</p>
+            <p className="mt-6 text-lg sm:text-xl text-white leading-relaxed">{t('heroTexto')}</p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Link
                 href={rota('/cadastro', undefined, { tipo: 'cliente' })}
@@ -93,7 +93,7 @@ export default function HomeClient() {
                 </div>
                 <div className="flex-1">
                   <p className="text-xl font-bold">{t('emergenciaTitulo')}</p>
-                  <p className="text-red-100 text-sm mt-1">{t('emergenciaTexto')}</p>
+                  <p className="text-white text-sm mt-1">{t('emergenciaTexto')}</p>
                 </div>
                 <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -191,7 +191,7 @@ export default function HomeClient() {
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">{t('mock1Titulo')}</p>
-                    <p className="text-sm text-gray-500">{t('mock1Texto')}</p>
+                    <p className="text-sm text-gray-600">{t('mock1Texto')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg">
@@ -202,7 +202,7 @@ export default function HomeClient() {
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">{t('mock2Titulo')}</p>
-                    <p className="text-sm text-gray-500">{t('mock2Texto')}</p>
+                    <p className="text-sm text-gray-600">{t('mock2Texto')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-4 bg-yellow-50 rounded-lg">
@@ -213,7 +213,7 @@ export default function HomeClient() {
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">{t('mock3Titulo')}</p>
-                    <p className="text-sm text-gray-500">{t('mock3Texto')}</p>
+                    <p className="text-sm text-gray-600">{t('mock3Texto')}</p>
                   </div>
                 </div>
               </div>
@@ -229,8 +229,8 @@ export default function HomeClient() {
             {t('porQueBadge')}
           </span>
           <h2 className="text-3xl font-bold mb-6">{t('porQueTitulo')}</h2>
-          <p className="text-lg text-primary-100 leading-relaxed">{t('porQueTexto1')}</p>
-          <p className="text-lg text-primary-100 leading-relaxed mt-4">{t('porQueTexto2')}</p>
+          <p className="text-lg text-white leading-relaxed">{t('porQueTexto1')}</p>
+          <p className="text-lg text-white leading-relaxed mt-4">{t('porQueTexto2')}</p>
         </div>
       </section>
 

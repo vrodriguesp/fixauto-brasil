@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 
@@ -81,6 +82,7 @@ export default function TutorialHub({ titulo, subtitulo, storageKey, modulos }: 
     }
   };
 
+  const tt = useTranslations('tutorialHub');
   if (!selecionado) return null;
 
   return (
@@ -95,7 +97,7 @@ export default function TutorialHub({ titulo, subtitulo, storageKey, modulos }: 
               style={{ width: `${(totalConcluidos / modulos.length) * 100}%` }}
             />
           </div>
-          <span className="text-sm text-gray-500 whitespace-nowrap">{totalConcluidos}/{modulos.length} concluídos</span>
+          <span className="text-sm text-gray-500 whitespace-nowrap">{tt('concluidos', { feitos: totalConcluidos, total: modulos.length })}</span>
         </div>
       </div>
 
@@ -115,7 +117,7 @@ export default function TutorialHub({ titulo, subtitulo, storageKey, modulos }: 
               >
                 <span className="text-base">{feito ? '✅' : m.emoji}</span>
                 <span>{m.titulo}</span>
-                {m.opcional && !feito && <span className="text-[10px] text-gray-400 ml-auto md:ml-1">opcional</span>}
+                {m.opcional && !feito && <span className="text-[10px] text-gray-500 ml-auto md:ml-1">{tt('opcionalMinusculo')}</span>}
               </button>
             );
           })}
@@ -126,7 +128,7 @@ export default function TutorialHub({ titulo, subtitulo, storageKey, modulos }: 
           <div className="flex items-start justify-between gap-3 mb-1">
             <h2 className="text-xl font-semibold text-gray-900">{selecionado.emoji} {selecionado.titulo}</h2>
             {selecionado.opcional && (
-              <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full flex-shrink-0">Opcional</span>
+              <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full flex-shrink-0">{tt('opcional')}</span>
             )}
           </div>
           <p className="text-gray-600 mb-5">{selecionado.resumo}</p>
@@ -137,19 +139,19 @@ export default function TutorialHub({ titulo, subtitulo, storageKey, modulos }: 
               onClick={() => setModo('guiado')}
               className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${modo === 'guiado' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
             >
-              Guiado (passo a passo)
+              {tt('modoGuiado')}
             </button>
             <button
               onClick={() => setModo('autonomo')}
               className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${modo === 'autonomo' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
             >
-              Autônomo (só o desafio)
+              {tt('modoAutonomo')}
             </button>
           </div>
 
           {modo === 'guiado' ? (
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-5">
-              <p className="text-sm font-semibold text-gray-900 mb-2">Siga esses passos na tela real:</p>
+              <p className="text-sm font-semibold text-gray-900 mb-2">{tt('sigaPassos')}</p>
               <ol className="space-y-1.5 text-sm text-gray-700 list-decimal list-inside">
                 {selecionado.passosGuiados.map((passo, i) => (
                   <li key={i}>{passo}</li>
@@ -158,42 +160,42 @@ export default function TutorialHub({ titulo, subtitulo, storageKey, modulos }: 
             </div>
           ) : (
             <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-5">
-              <p className="text-sm font-semibold text-indigo-900 mb-1">Desafio:</p>
+              <p className="text-sm font-semibold text-indigo-900 mb-1">{tt('desafio')}</p>
               <p className="text-sm text-indigo-800">{selecionado.desafio}</p>
-              <p className="text-xs text-indigo-500 mt-2">Sem passo a passo aqui de propósito — tenta sozinho primeiro. Se travar, volta pro modo Guiado.</p>
+              <p className="text-xs text-indigo-700 mt-2">{tt('desafioNota')}</p>
             </div>
           )}
 
           {selecionado.dica && (
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-5">
-              <p className="text-xs text-amber-800"><strong>💡 Dica:</strong> {selecionado.dica}</p>
+              <p className="text-xs text-amber-800"><strong>💡 {tt('dica')}</strong> {selecionado.dica}</p>
             </div>
           )}
 
           <div className="flex flex-wrap items-center gap-3">
             <Link href={selecionado.linkReal} target="_blank" className="btn-primary">
-              {selecionado.linkRotulo || 'Ir fazer isso agora →'}
+              {selecionado.linkRotulo || tt('irFazer')}
             </Link>
 
             {selecionado.verificar ? (
               <button onClick={handleVerificar} disabled={verificando} className="btn-secondary disabled:opacity-50">
-                {verificando ? 'Verificando...' : 'Já fiz — verificar'}
+                {verificando ? tt('verificando') : tt('jaFizVerificar')}
               </button>
             ) : (
               <button
                 onClick={() => marcarConcluido(selecionado.id, !progresso[selecionado.id])}
                 className="btn-secondary"
               >
-                {progresso[selecionado.id] ? 'Marcado como entendido ✓' : 'Entendi, marcar como concluído'}
+                {progresso[selecionado.id] ? tt('marcadoEntendido') : tt('marcarConcluido')}
               </button>
             )}
           </div>
 
           {resultado === 'ok' && (
-            <p className="text-sm text-green-700 mt-3">✅ Encontrei! Módulo concluído.</p>
+            <p className="text-sm text-green-700 mt-3">✅ {tt('encontrei')}</p>
           )}
           {resultado === 'faltando' && (
-            <p className="text-sm text-amber-700 mt-3">Ainda não encontrei isso no seu perfil. Faça a ação na tela real e clique em verificar de novo.</p>
+            <p className="text-sm text-amber-700 mt-3">{tt('aindaNao')}</p>
           )}
         </div>
       </div>

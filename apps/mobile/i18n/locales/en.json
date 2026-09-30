@@ -40,7 +40,12 @@
     "recuperarTexto": "Enter your email and we'll send you a link to reset your password.",
     "linkEnviado": "If that email is in our records, we've sent a reset link.",
     "definirSenhaTitulo": "Set your password",
-    "definirSenhaTexto": "This is your first time signing in — set a password to continue."
+    "definirSenhaTexto": "This is your first time signing in — set a password to continue.",
+    "aceiteTexto1": "I have read and accept the",
+    "termos": "Terms of Use",
+    "aceiteTexto2": "and the",
+    "privacidade": "Privacy Policy",
+    "senhaCurta": "Password must be at least 8 characters."
   },
   "emergencia": {
     "titulo": "I've just crashed",

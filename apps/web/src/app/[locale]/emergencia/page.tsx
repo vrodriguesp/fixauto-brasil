@@ -6,9 +6,11 @@ import { useRouter, rota } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { salvarTokenEmergencia } from '@/lib/emergencia-token';
 import { compressImage } from '@/lib/image-compress';
+import { textoErroApi } from '@/lib/erro-api';
 
 export default function EmergenciaPage() {
   const t = useTranslations('emergencia');
+  const tErros = useTranslations('erros');
   const locale = useLocale();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -31,7 +33,9 @@ export default function EmergenciaPage() {
   // emergencia gravava a mesma coordenada fixa, e "oficinas proximas"
   // notificava sempre ao redor de Sao Paulo pra qualquer usuario fora do
   // Brasil que negasse a permissao (ex: piloto na Estonia).
-  const [coords, setCoords] = useState({ lat: -23.5505, lon: -46.6333 });
+  // Sem localizacao padrao: um ponto fixo (antes, Sao Paulo) mandaria o aviso
+  // as oficinas erradas. Sem GPS nem endereco encontrado, pede o endereco.
+  const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [geoResolved, setGeoResolved] = useState(false);
   const [tipoAcidente, setTipoAcidente] = useState<'eu_causei' | 'outro_causou' | 'sem_outro'>('outro_causou');
   const [placa, setPlaca] = useState('');
@@ -42,7 +46,9 @@ export default function EmergenciaPage() {
 
   const buscarPlaca = async (p: string) => {
     const clean = p.replace(/[^a-zA-Z0-9]/g, '');
-    if (clean.length < 7) return;
+    // A consulta de placa usa uma base so do Brasil: fora da versao
+    // brasileira ela sempre falharia (placas da Estonia tem outro formato)
+    if (clean.length < 7 || locale !== 'pt') return;
     setBuscandoPlaca(true);
     setPlacaNaoEncontrada(false);
     setVeiculoInfo(null);
@@ -90,7 +96,7 @@ export default function EmergenciaPage() {
   // Fallback quando o navegador nega geolocalizacao: geocodifica o
   // endereco digitado via Nominatim (gratuito, mundial) em vez de deixar a
   // coordenada presa no default de Sao Paulo/Brasil.
-  const resolveLocation = async (): Promise<{ lat: number; lon: number }> => {
+  const resolveLocation = async (): Promise<{ lat: number; lon: number } | null> => {
     if (geoResolved || !localizacao) return coords;
     try {
       const res = await fetch(`/api/geocode?q=${encodeURIComponent(localizacao)}`);
@@ -101,7 +107,7 @@ export default function EmergenciaPage() {
         }
       }
     } catch {
-      // mantem o default (SP) se a geocodificacao tambem falhar
+      // sem conexao com a geocodificacao: segue sem coordenadas
     }
     return coords;
   };
@@ -145,6 +151,11 @@ export default function EmergenciaPage() {
 
     try {
       const loc = await resolveLocation();
+      if (!loc) {
+        setError(t('erroLocalizacao'));
+        setSubmitting(false);
+        return;
+      }
 
       // Tudo no servidor numa chamada so: acidente, fotos, conta (se nao
       // estiver logado), solicitacao e aviso as oficinas proximas.
@@ -166,7 +177,7 @@ export default function EmergenciaPage() {
       const res = await fetch('/api/emergencia', { method: 'POST', body: form });
       const r = await res.json().catch(() => ({}));
       if (!res.ok || !r.id) {
-        setError(r.error || t('errorGenericSubmit'));
+        setError(textoErroApi(tErros, res.status, r));
         setSubmitting(false);
         return;
       }
@@ -237,7 +248,7 @@ export default function EmergenciaPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold">{t('headerTitle')}</h1>
-              <p className="text-red-100 text-sm">{t('headerSubtitle')}</p>
+              <p className="text-white text-sm">{t('headerSubtitle')}</p>
             </div>
           </div>
           {isLoggedIn && (
@@ -410,11 +421,11 @@ export default function EmergenciaPage() {
                         value={opt.value}
                         checked={tipoAcidente === opt.value}
                         onChange={(e) => setTipoAcidente(e.target.value as 'eu_causei' | 'outro_causou' | 'sem_outro')}
-                        className="accent-red-600 mt-0.5"
+                        className="accent-red-600 mt-0.5 w-5 h-5 shrink-0"
                       />
                       <div>
                         <span className="text-sm text-gray-900 font-medium">{opt.label}</span>
-                        <p className="text-xs text-gray-500 mt-0.5">{opt.desc}</p>
+                        <p className="text-xs text-gray-600 mt-0.5">{opt.desc}</p>
                       </div>
                     </label>
                   ))}
@@ -472,7 +483,7 @@ export default function EmergenciaPage() {
                   if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                       (pos) => { setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }); setGeoResolved(true); setLocalizacao(t('locationCurrentDetected')); },
-                      () => setLocalizacao(t('locationFallback'))
+                      () => setLocalizacao('')
                     );
                   }
                 }} className="w-full p-3 border border-gray-300 rounded-lg text-sm text-primary-600 hover:bg-primary-50 flex items-center justify-center gap-2">

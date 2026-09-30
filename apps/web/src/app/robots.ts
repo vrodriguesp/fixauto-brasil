@@ -1,16 +1,20 @@
 import { MetadataRoute } from 'next';
-import { LOCALE_PREFIX } from '@/i18n/routing';
+import { routing, hrefNoIdioma } from '@/i18n/routing';
 
-const PRIVATE_PATHS = ['cliente', 'oficina', 'loja', 'admin', 'api', 'definir-senha', 'reset-password', 'emergencia/acidente'];
+// Areas privadas por idioma, pelo endereco PUBLICO de cada uma (o acidente,
+// por exemplo, e /et/avarii/teade/ em estoniano - as regras do robots.txt sao
+// literais, entao o nome interno nao serviria).
+const PRIVADAS_POR_IDIOMA = ['/cliente', '/oficina', '/loja', '/definir-senha', '/reset-password'];
+const acidente = (l: string) => hrefNoIdioma(l, '/emergencia/acidente/X').replace(/\/X$/, '');
 
 export default function robots(): MetadataRoute.Robots {
-  // Cada idioma tem o seu prefixo publico ('' para o Brasil, /pt-pt, /en,
-  // /et, /it) - o disallow cobre todos, senao os paineis privados das rotas
-  // com prefixo ficariam rastreaveis. Usa o prefixo publico (/pt-pt), nao o
-  // nome interno do idioma (pt-PT).
-  const disallow = PRIVATE_PATHS.flatMap((path) =>
-    Object.values(LOCALE_PREFIX).map((prefix) => `${prefix}/${path}/`)
-  );
+  const disallow = [
+    // Sem prefixo de idioma: painel e API
+    '/admin/',
+    '/api/',
+    ...PRIVADAS_POR_IDIOMA.flatMap((p) => routing.locales.map((l) => `${hrefNoIdioma(l, p)}/`)),
+    ...routing.locales.map((l) => `${acidente(l)}/`),
+  ];
 
   return {
     rules: [
@@ -52,7 +56,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow,
       },
     ],
+    // Sem a diretiva Host: o Google ignora e o Yandex deixou de usar em 2018
     sitemap: 'https://bipfix.com/sitemap.xml',
-    host: 'https://bipfix.com',
   };
 }

@@ -49,7 +49,7 @@ export default function OficinaDashboard() {
 
   const formatDateShort = (dateStr: string) => {
     const d = new Date(dateStr);
-    const weekday = new Intl.DateTimeFormat(INTL_LOCALE[locale] || 'pt-BR', { weekday: 'short' }).format(d);
+    const weekday = new Intl.DateTimeFormat(INTL_LOCALE[locale] || 'en-GB', { weekday: 'short' }).format(d);
     return `${weekday}, ${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
   };
 

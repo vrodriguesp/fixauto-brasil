@@ -432,8 +432,8 @@
     "sendingBtn": "A enviar...",
     "locationAutoDetected": "Localização detetada automaticamente",
     "locationCurrentDetected": "Localização atual detetada",
-    "locationFallback": "São Paulo, SP",
-    "errorGenericSubmit": "Erro ao registar a emergência"
+    "errorGenericSubmit": "Erro ao registar a emergência",
+    "erroLocalizacao": "Não conseguimos localizar a morada. Ative a localização ou escreva a rua e a cidade."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Registo de Acidente",
@@ -901,7 +901,8 @@
     "hoursNotInformed": "Horário não indicado",
     "reviewsTitle": "Avaliações ({count})",
     "noReviewsText": "Esta oficina ainda não tem avaliações.",
-    "clientFallback": "Cliente"
+    "clientFallback": "Cliente",
+    "registroEmpresa": "N.º de registo comercial"
   },
   "audioMessage": {
     "hideTranscription": "Ocultar transcrição",
@@ -969,5 +970,23 @@
         "botao": "Tornar-se parceiro"
       }
     }
+  },
+  "tutorialHub": {
+    "concluidos": "{feitos}/{total} concluídos",
+    "opcionalMinusculo": "opcional",
+    "opcional": "Opcional",
+    "modoGuiado": "Guiado (passo a passo)",
+    "modoAutonomo": "Autónomo (só o desafio)",
+    "sigaPassos": "Siga estes passos no ecrã real:",
+    "desafio": "Desafio:",
+    "desafioNota": "Aqui não há passo a passo de propósito — tente primeiro sozinho. Se ficar preso, volte ao modo Guiado.",
+    "dica": "Dica:",
+    "irFazer": "Fazer isto agora →",
+    "verificando": "A verificar...",
+    "jaFizVerificar": "Já fiz — verificar",
+    "marcadoEntendido": "Marcado como percebido ✓",
+    "marcarConcluido": "Percebi, marcar como concluído",
+    "encontrei": "Encontrei! Módulo concluído.",
+    "aindaNao": "Ainda não encontrei isto no seu perfil. Faça a ação no ecrã real e clique novamente em verificar."
   }
 }

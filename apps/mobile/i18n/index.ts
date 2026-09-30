@@ -6,13 +6,19 @@ import pt from './locales/pt.json';
 import en from './locales/en.json';
 import et from './locales/et.json';
 import it from './locales/it.json';
+import ptPT from './locales/pt-PT.json';
+import ru from './locales/ru.json';
 
-const SUPPORTED = ['pt', 'en', 'et', 'it'] as const;
+const SUPPORTED = ['pt', 'pt-PT', 'en', 'et', 'it', 'ru'] as const;
 export type SupportedLocale = (typeof SUPPORTED)[number];
 
+// Portugues de Portugal pela regiao do aparelho; idioma sem versao -> ingles
+// (antes caia no portugues do Brasil, inclusive para quem usa russo).
 function detectDeviceLocale(): SupportedLocale {
-  const deviceLocale = Localization.getLocales()[0]?.languageCode;
-  return (SUPPORTED as readonly string[]).includes(deviceLocale || '') ? (deviceLocale as SupportedLocale) : 'pt';
+  const l = Localization.getLocales()[0];
+  const idioma = l?.languageCode || '';
+  if (idioma === 'pt') return l?.regionCode === 'PT' ? 'pt-PT' : 'pt';
+  return (SUPPORTED as readonly string[]).includes(idioma) ? (idioma as SupportedLocale) : 'en';
 }
 
 i18n.use(initReactI18next).init({
@@ -21,9 +27,11 @@ i18n.use(initReactI18next).init({
     en: { translation: en },
     et: { translation: et },
     it: { translation: it },
+    'pt-PT': { translation: ptPT },
+    ru: { translation: ru },
   },
   lng: detectDeviceLocale(),
-  fallbackLng: 'pt',
+  fallbackLng: 'en',
   // i18next por padrao interpola com chave DUPLA ({{variavel}}), mas todos
   // os textos em locales/*.json foram escritos com chave SIMPLES
   // ({variavel} - mesma convencao usada no site e no lib/notif-i18n.ts) -

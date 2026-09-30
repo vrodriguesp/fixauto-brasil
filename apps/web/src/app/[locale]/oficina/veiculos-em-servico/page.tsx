@@ -161,12 +161,12 @@ export default function VeiculosEmServico() {
   };
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString(INTL_LOCALE[locale] || 'pt-BR');
+    return new Date(dateStr).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB');
   };
 
   const formatDateTime = (dateStr: string) => {
     const d = new Date(dateStr);
-    const intlLocale = INTL_LOCALE[locale] || 'pt-BR';
+    const intlLocale = INTL_LOCALE[locale] || 'en-GB';
     return `${d.toLocaleDateString(intlLocale)} ${d.toLocaleTimeString(intlLocale, { hour: '2-digit', minute: '2-digit' })}`;
   };
 

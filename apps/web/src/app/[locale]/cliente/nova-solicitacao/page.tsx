@@ -243,6 +243,13 @@ export default function NovaSolicitacaoPage() {
         }
       }
 
+      // Sem oficinas ativas ainda: o servidor avisa o admin (atendimento manual)
+      fetch('/api/pedido-criado', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ solicitacaoId: data.id }),
+      }).catch(() => {});
+
       setSubmitted(true);
       setTimeout(() => router.push('/cliente/dashboard'), 2000);
     } catch (err) {

@@ -2,7 +2,13 @@
   "meta": {
     "brand": "BipFix",
     "title": "BipFix - Conectando você à melhor oficina mecânica",
-    "description": "Plataforma que conecta motoristas a oficinas mecânicas. Envie fotos do dano, receba orçamentos e escolha a melhor opção. Simples, rápido e transparente."
+    "description": "Plataforma que conecta motoristas a oficinas mecânicas. Envie fotos do dano, receba orçamentos e escolha a melhor opção. Simples, rápido e transparente.",
+    "tituloLogin": "Entrar",
+    "tituloCadastro": "Criar conta",
+    "tituloEscolherTipo": "Escolha o tipo de conta",
+    "tituloRedefinirSenha": "Redefinir senha",
+    "tituloDefinirSenha": "Definir senha",
+    "pularConteudo": "Pular para o conteúdo"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -73,7 +79,13 @@
     "erroGenerico": "Não foi possível enviar. Tente novamente em instantes.",
     "sucessoTitulo": "Recebemos seu interesse!",
     "sucessoTexto": "Nossa equipe vai analisar sua região e entrar em contato pelo WhatsApp em até 48 horas úteis para explicar os próximos passos da fase piloto.",
-    "voltarInicio": "Voltar para o início"
+    "voltarInicio": "Voltar para o início",
+    "depoisTitulo": "O que acontece depois da inscrição",
+    "depois1": "Respondemos em até 1 dia útil, por e-mail ou WhatsApp.",
+    "depois2": "Montamos o perfil da sua oficina junto com você (cerca de 30 minutos) e conferimos o cadastro da empresa.",
+    "depois3": "Você começa a receber pedidos de motoristas perto da sua oficina.",
+    "quemSomosTitulo": "Quem está por trás do BipFix",
+    "quemSomosTexto": "O BipFix é uma empresa nova, com base em Tallinn, em processo de registro como sociedade limitada na Estônia (OÜ). Respondemos pessoalmente cada inscrição: support@bipfix.com."
   },
   "paraOficinas": {
     "metaTitle": "Sistema de Gestão para Oficina Mecânica e Mais Clientes",
@@ -253,7 +265,7 @@
     "placeholderAno": "Ex: 2018"
   },
   "home": {
-    "metaTitle": "BipFix - Compare orçamentos de oficina mecânica perto de você",
+    "metaTitle": "Orçamentos de oficina mecânica: compare e agende | BipFix",
     "metaDescription": "Envie fotos do dano do carro, receba orçamentos de oficinas mecânicas verificadas perto de você e agende o reparo em minutos. Rápido e transparente.",
     "metaKeywords": [
       "oficina mecânica perto de mim",
@@ -302,7 +314,7 @@
     "porQueTexto1": "Hoje, escolher onde consertar o carro costuma depender só de indicação ou de qual oficina está mais perto — sem comparar preço, prazo ou histórico de quem vai fazer o serviço. Acreditamos que motoristas merecem transparência, e que boas oficinas merecem ser encontradas pelo trabalho que entregam.",
     "porQueTexto2": "Estamos, literalmente, no começo: selecionando as primeiras oficinas e lojas de peças parceiras para lançar com atenção total em uma cidade por vez, em vez de crescer rápido sem controle de qualidade.",
     "parceiroTitulo": "Ainda dá tempo de entrar como parceiro fundador",
-    "parceiroTexto": "Se você é motorista, já pode usar a plataforma hoje. Se você tem uma oficina ou loja de peças, estamos selecionando um número limitado de parceiros para a fase piloto — sem comissão neste momento.",
+    "parceiroTexto": "Estamos cadastrando as primeiras oficinas parceiras agora. Se você é motorista, já pode enviar seu pedido: nós o repassamos às oficinas assim que elas entram e avisamos você. Se você tem uma oficina ou loja de peças, estamos selecionando poucos parceiros fundadores — sem comissão nesta fase.",
     "faqTitulo": "Perguntas Frequentes",
     "faqSubtitulo": "Tire suas dúvidas sobre a plataforma BipFix",
     "faqItems": [
@@ -312,7 +324,7 @@
       },
       {
         "pergunta": "É seguro usar a plataforma?",
-        "resposta": "Sim! Todas as oficinas cadastradas passam por verificação. Além disso, o sistema de avaliações permite que você veja a reputação de cada oficina antes de tomar sua decisão. Seus dados pessoais são protegidos e nunca compartilhados sem sua autorização."
+        "resposta": "Sim. Antes de ativar uma oficina, conferimos o cadastro da empresa e conversamos com o responsável. Depois de cada serviço concluído, só o cliente que contratou pode avaliar — assim você vê a reputação real antes de decidir. Seus dados pessoais são protegidos e nunca compartilhados sem seu consentimento."
       },
       {
         "pergunta": "Quanto custa usar o BipFix?",
@@ -329,6 +341,18 @@
       {
         "pergunta": "Quais tipos de serviço as oficinas oferecem?",
         "resposta": "As oficinas na plataforma oferecem diversos serviços como funilaria, pintura, mecânica geral, elétrica automotiva, troca de vidros, alinhamento, balanceamento, ar condicionado e muito mais. Cada oficina lista suas especialidades no perfil."
+      },
+      {
+        "pergunta": "Alguma oficina paga para aparecer primeiro?",
+        "resposta": "Não. Nenhuma oficina pode pagar por uma posição melhor na lista ou entre os orçamentos. Você compara preço, prazo, distância e avaliações de clientes."
+      },
+      {
+        "pergunta": "E se o seguro vai pagar o conserto?",
+        "resposta": "Você pode usar o BipFix do mesmo jeito: receba os orçamentos aqui e apresente-os à seguradora. Antes do reparo, confirme com a seguradora se ela aceita a oficina escolhida."
+      },
+      {
+        "pergunta": "O preço do orçamento é o preço final?",
+        "resposta": "O total do orçamento é o valor que a oficina cobra pelo serviço descrito. O BipFix não cobra nada dos motoristas e nunca acrescenta taxa por cima. Se surgir algo novo durante o reparo, a oficina envia um orçamento revisado para você aprovar."
       }
     ],
     "footerTagline": "Conectando motoristas às melhores oficinas.",
@@ -346,7 +370,8 @@
     "footerContato": "Contato",
     "footerDireitos": "2026 BipFix. Todos os direitos reservados.",
     "footerTermos": "Termos de Uso",
-    "footerPrivacidade": "Privacidade"
+    "footerPrivacidade": "Privacidade",
+    "footerSobre": "Sobre o BipFix"
   },
   "constants": {
     "tiposServico": {
@@ -541,5 +566,35 @@
     "inicio": "Ir para a página inicial",
     "guias": "Ver os guias para motoristas",
     "emergencia": "Acabei de bater"
+  },
+  "erros": {
+    "CAMPO_OBRIGATORIO": "Preencha todos os campos obrigatórios.",
+    "EMAIL_INVALIDO": "Confira o e-mail informado.",
+    "FOTOS_MAX": "Envie no máximo 6 fotos.",
+    "FOTO_TIPO": "Envie fotos em JPG, PNG, WebP ou HEIC.",
+    "FOTO_TAMANHO": "Cada foto pode ter no máximo 10 MB.",
+    "MUITAS_TENTATIVAS": "Muitas tentativas em pouco tempo. Tente de novo mais tarde.",
+    "SEM_ACESSO": "Você não tem acesso a isso.",
+    "NAO_AUTENTICADO": "Sua sessão expirou. Entre de novo.",
+    "DADOS_INVALIDOS": "Confira os dados informados.",
+    "GENERICO": "Algo deu errado. Tente de novo em instantes.",
+    "FUNCIONARIO_JA_CADASTRADO": "Este funcionário já está cadastrado na sua oficina."
+  },
+  "sobre": {
+    "metaTitle": "Sobre o BipFix",
+    "metaDescription": "Quem somos, em que fase estamos e como funciona o BipFix: orçamentos de oficina transparentes, avaliações verificadas e nenhuma posição paga.",
+    "titulo": "Sobre o BipFix",
+    "intro": "O BipFix conecta motoristas que precisam de um conserto a oficinas independentes: você descreve o problema com fotos, recebe orçamentos detalhados, compara e acompanha o reparo. O BipFix é só a plataforma — não faz reparos nem vende peças.",
+    "estagioTitulo": "Em que fase estamos",
+    "estagioTexto": "Estamos começando. A cidade piloto é Tallinn, na Estônia, e as primeiras oficinas parceiras estão sendo cadastradas agora, na fase de parceiros fundadores. Não temos, ainda, uma grande rede de oficinas — e preferimos dizer isso com clareza.",
+    "empresaTitulo": "A empresa",
+    "empresaTexto": "O BipFix está em processo de registro como sociedade limitada estoniana (osaühing). Até a conclusão do registro, a plataforma é operada pelo fundador como pessoa física. Os dados completos da empresa serão publicados aqui assim que o registro for concluído.",
+    "principiosTitulo": "Como trabalhamos",
+    "principio1": "Nenhuma oficina paga para aparecer primeiro.",
+    "principio2": "Só avalia quem contratou e concluiu o serviço.",
+    "principio3": "Os preços são definidos pelas oficinas; o BipFix é gratuito para motoristas.",
+    "principio4": "Seus dados são tratados de acordo com a lei de proteção de dados e nunca vendidos.",
+    "contatoTitulo": "Contato",
+    "contatoTexto": "Dúvidas, sugestões ou parcerias: support@bipfix.com. Dados pessoais: privacy@bipfix.com."
   }
 }

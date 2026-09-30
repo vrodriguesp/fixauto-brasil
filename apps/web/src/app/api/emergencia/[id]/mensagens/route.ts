@@ -28,7 +28,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     if (error) throw error;
     return NextResponse.json(data);
   } catch (e) {
-    if (e instanceof ErroValidacao) return NextResponse.json({ error: e.message }, { status: 400 });
+    if (e instanceof ErroValidacao) return NextResponse.json({ error: e.message, codigo: e.codigo }, { status: 400 });
     console.error('[emergencia/mensagens]', e);
     return NextResponse.json({ error: 'Erro ao enviar' }, { status: 500 });
   }

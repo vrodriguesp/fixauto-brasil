@@ -3,7 +3,7 @@ import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import StructuredData from '@/components/seo/StructuredData';
 import { OG_LOCALE, isBrasil, type Locale } from '@/i18n/routing';
-import { generateFAQSchema, hreflangAlternates, localizedUrl } from '@/lib/seo-utils';
+import { generateFAQSchema, hreflangAlternates, localizedUrl, imagemCompartilhamento } from '@/lib/seo-utils';
 
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -16,6 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     keywords: t.raw('metaKeywords') as string[],
     alternates,
     openGraph: {
+      images: imagemCompartilhamento(locale),
       type: 'website',
       locale: OG_LOCALE[locale as Locale] || 'pt_BR',
       siteName: 'BipFix',
@@ -67,7 +68,7 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="max-w-3xl">
             <h1 className="text-4xl sm:text-5xl font-bold leading-tight">{t('heroTitulo')}</h1>
-            <p className="mt-6 text-lg sm:text-xl text-primary-100 leading-relaxed">{t('heroTexto')}</p>
+            <p className="mt-6 text-lg sm:text-xl text-white leading-relaxed">{t('heroTexto')}</p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Link
                 href="/seja-parceiro"
@@ -82,7 +83,7 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
                 {t('ctaVerOficinas')}
               </Link>
             </div>
-            <p className="mt-4 text-sm text-primary-200">{t('heroFootnote')}</p>
+            <p className="mt-4 text-sm text-white">{t('heroFootnote')}</p>
           </div>
         </div>
       </section>

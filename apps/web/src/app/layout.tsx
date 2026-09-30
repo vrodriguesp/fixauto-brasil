@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { headers } from 'next/headers';
 import './globals.css';
@@ -12,6 +12,9 @@ import VisitTracker from '@/components/VisitTracker';
 // O <html lang> e dinamico via header setado pelo middleware, ja que
 // /admin nao tem o parametro de rota [locale] disponivel.
 const inter = Inter({ subsets: ['latin'] });
+
+// Cor da barra do navegador no celular (site so em tema claro, por decisao)
+export const viewport: Viewport = { themeColor: '#2563eb', colorScheme: 'light' };
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://bipfix.com'),

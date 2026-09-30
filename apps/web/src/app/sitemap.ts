@@ -45,6 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...localizedEntries('/emergencia', { changeFrequency: 'monthly', priority: 0.8, lastModified: MUDOU.paginas }),
     ...localizedEntries('/para-oficinas', { changeFrequency: 'monthly', priority: 0.9, lastModified: MUDOU.paginas }),
     ...localizedEntries('/seja-parceiro', { changeFrequency: 'monthly', priority: 0.9, lastModified: MUDOU.paginas }),
+    ...localizedEntries('/sobre', { changeFrequency: 'monthly', priority: 0.6, lastModified: MUDOU.paginas }),
     ...localizedEntries('/termos', { changeFrequency: 'yearly', priority: 0.3, lastModified: MUDOU.legal }),
     ...localizedEntries('/privacidade', { changeFrequency: 'yearly', priority: 0.3, lastModified: MUDOU.legal }),
     ...localizedEntries('/docs', { changeFrequency: 'monthly', priority: 0.6, lastModified: MUDOU.paginas }),

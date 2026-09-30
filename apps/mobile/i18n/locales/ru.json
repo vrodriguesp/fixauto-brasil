@@ -1,0 +1,181 @@
+{
+  "common": {
+    "carregando": "Загрузка...",
+    "salvar": "Сохранить",
+    "cancelar": "Отмена",
+    "continuar": "Продолжить",
+    "voltar": "Назад",
+    "tentarNovamente": "Попробовать ещё раз",
+    "erroGenerico": "Что-то пошло не так. Попробуйте ещё раз.",
+    "semConexao": "Нет подключения к интернету.",
+    "confirmar": "Подтвердить",
+    "enviar": "Отправить",
+    "sim": "Да",
+    "nao": "Нет",
+    "opcional": "необязательно"
+  },
+  "tabs": {
+    "inicio": "Главная",
+    "solicitacoes": "Заявки",
+    "mensagens": "Сообщения",
+    "veiculos": "Автомобили",
+    "perfil": "Профиль"
+  },
+  "auth": {
+    "loginTitulo": "Вход",
+    "email": "Эл. почта",
+    "senha": "Пароль",
+    "entrar": "Войти",
+    "esqueciSenha": "Забыли пароль?",
+    "naoTemConta": "Нет аккаунта?",
+    "criarConta": "Создать аккаунт",
+    "cadastroTitulo": "Создать аккаунт",
+    "nome": "Полное имя",
+    "telefone": "Телефон",
+    "confirmarSenha": "Подтвердите пароль",
+    "jaTemConta": "Уже есть аккаунт?",
+    "credenciaisInvalidas": "Неверная эл. почта или пароль.",
+    "senhasNaoConferem": "Пароли не совпадают.",
+    "recuperarTitulo": "Восстановление пароля",
+    "recuperarTexto": "Введите эл. почту, и мы отправим вам ссылку для восстановления пароля.",
+    "linkEnviado": "Если эта эл. почта есть в нашей базе, мы отправили ссылку для восстановления.",
+    "definirSenhaTitulo": "Задайте пароль",
+    "definirSenhaTexto": "Вы входите впервые — задайте пароль, чтобы продолжить.",
+    "aceiteTexto1": "Я прочитал(а) и принимаю",
+    "termos": "Условия использования",
+    "aceiteTexto2": "и",
+    "privacidade": "Политику конфиденциальности",
+    "senhaCurta": "Пароль должен содержать не менее 8 символов."
+  },
+  "emergencia": {
+    "titulo": "Я только что попал в ДТП",
+    "subtitulo": "Зарегистрируйте ДТП прямо сейчас и получите сметы от ближайших автосервисов за несколько минут.",
+    "botaoIniciar": "Зарегистрировать ДТП сейчас",
+    "fotoTitulo": "Фотографии автомобиля",
+    "fotoTexto": "Сфотографируйте повреждения или загрузите фотографии.",
+    "localTitulo": "Ваше местоположение",
+    "localPermitir": "Разрешить доступ к местоположению",
+    "localTexto": "Мы используем ваше местоположение, чтобы найти ближайшие автосервисы.",
+    "erroLocalizacao": "Не удалось определить ваше местоположение. Введите адрес вручную.",
+    "descricaoLabel": "Что произошло?",
+    "descricaoPlaceholder": "Кратко опишите ДТП...",
+    "enviarRegistro": "Отправить заявку",
+    "sucessoTitulo": "Заявка отправлена",
+    "sucessoTexto": "Ближайшие автосервисы уведомлены. Следите за сметами в разделе «Заявки»."
+  },
+  "novaSolicitacao": {
+    "titulo": "Новая заявка",
+    "passoVeiculo": "Выберите автомобиль",
+    "adicionarVeiculo": "Добавить автомобиль",
+    "passoServico": "Вид услуги",
+    "passoSintomas": "Что случилось?",
+    "passoFotos": "Фотографии проблемы",
+    "passoLocal": "Место обслуживания",
+    "passoUrgencia": "Срочность",
+    "urgenciaBaixa": "Могу подождать",
+    "urgenciaMedia": "В ближайшие дни",
+    "urgenciaAlta": "Это срочно",
+    "revisar": "Проверить и отправить",
+    "enviarSolicitacao": "Отправить заявку",
+    "sucessoTitulo": "Заявка отправлена!",
+    "sucessoTexto": "Ближайшие автосервисы скоро отправят вам сметы."
+  },
+  "dashboard": {
+    "saudacao": "Здравствуйте, {nome}",
+    "solicitacoesAtivas": "Активные заявки",
+    "nenhumaSolicitacao": "У вас пока нет заявок.",
+    "novaSolicitacaoBotao": "Новая заявка",
+    "emergenciaBotao": "Я только что попал в ДТП"
+  },
+  "orcamentos": {
+    "titulo": "Сметы",
+    "recebidoDe": "Отправлена автосервисом {oficina}",
+    "valor": "Итоговая сумма",
+    "aceitar": "Принять смету",
+    "recusar": "Отклонить",
+    "verDetalhes": "Подробнее",
+    "statusEnviado": "Отправлена",
+    "statusVisualizado": "Просмотрена",
+    "statusAceito": "Принята",
+    "statusRecusado": "Отклонена",
+    "statusExpirado": "Истекла"
+  },
+  "acompanhamento": {
+    "titulo": "Отслеживание ремонта",
+    "etapaAtual": "Текущий этап",
+    "previsaoEntrega": "Ожидаемая выдача",
+    "semEtapas": "Автосервис ещё не начал отслеживание этой услуги."
+  },
+  "avaliacao": {
+    "titulo": "Оцените услугу",
+    "subtitulo": "Как вам обслуживание в этом автосервисе?",
+    "comentarioPlaceholder": "Оставьте комментарий (необязательно)",
+    "enviar": "Отправить отзыв",
+    "obrigado": "Спасибо за ваш отзыв!",
+    "jaAvaliado": "Вы уже оценили эту услугу"
+  },
+  "mensagens": {
+    "titulo": "Сообщения",
+    "nenhumaConversa": "Переписок пока нет.",
+    "digiteMensagem": "Введите сообщение...",
+    "erroEnviar": "Не удалось отправить сообщение. Попробуйте ещё раз.",
+    "gravarAudio": "Удерживайте, чтобы записать голосовое сообщение"
+  },
+  "veiculos": {
+    "titulo": "Мои автомобили",
+    "adicionar": "Добавить автомобиль",
+    "marca": "Марка",
+    "modelo": "Модель",
+    "ano": "Год",
+    "placa": "Регистрационный номер",
+    "apelido": "Название автомобиля",
+    "erroSalvar": "Не удалось сохранить автомобиль. Попробуйте ещё раз.",
+    "nenhumVeiculo": "Вы ещё не добавили ни одного автомобиля."
+  },
+  "constants": {
+    "tiposServico": {
+      "colisao": "ДТП",
+      "funilaria": "Кузовной ремонт и покраска",
+      "revisao": "Техобслуживание",
+      "mecanica": "Механика",
+      "eletrica": "Электрика",
+      "pneu": "Шины",
+      "outro": "Другое"
+    },
+    "urgencias": {
+      "baixa": "Низкая",
+      "baixaDesc": "Не срочно, могу подождать",
+      "media": "Средняя",
+      "mediaDesc": "Нужно в течение нескольких недель",
+      "alta": "Высокая",
+      "altaDesc": "Срочно, нужно как можно скорее"
+    },
+    "statusSolicitacao": {
+      "aberta": "Открыта",
+      "em_orcamento": "Смета отправлена",
+      "aceita": "Смета принята",
+      "em_andamento": "В работе",
+      "concluida": "Завершена",
+      "cancelada": "Отменена"
+    },
+    "statusManutencao": {
+      "recebido": "Принят",
+      "diagnostico": "Диагностика",
+      "aguardando_pecas": "Ожидание запчастей",
+      "em_execucao": "В работе",
+      "pausa_cliente": "Пауза — связываемся с клиентом",
+      "pausa_pecas": "Пауза — нет запчастей",
+      "pausa_geral": "Пауза",
+      "teste_final": "Финальная проверка",
+      "concluido": "Завершено",
+      "entregue": "Выдан"
+    }
+  },
+  "perfil": {
+    "titulo": "Профиль",
+    "meusDados": "Мои данные",
+    "idioma": "Язык",
+    "sair": "Выйти",
+    "avaliacoes": "Мои отзывы"
+  }
+}

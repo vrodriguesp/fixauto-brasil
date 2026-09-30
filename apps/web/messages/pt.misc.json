@@ -99,7 +99,7 @@
     "list6_5": "Eliminação dos dados tratados com base no seu consentimento;",
     "list6_6": "Informação sobre com quem compartilhamos seus dados;",
     "list6_7": "Revogação do consentimento, quando aplicável.",
-    "body6": "Para exercer qualquer desses direitos, entre em contato pelo e-mail <mailLink>privacy@bipfix.com</mailLink>. Responderemos dentro do prazo legal aplicável.",
+    "body6": "Para exercer qualquer desses direitos, entre em contato pelo e-mail <mailLink>privacy@bipfix.com</mailLink>. Responderemos dentro do prazo legal aplicável. Se não ficar satisfeito com a nossa resposta, você também pode apresentar reclamação à Autoridade Nacional de Proteção de Dados (ANPD), em gov.br/anpd (LGPD, art. 18, § 1º).",
     "title7": "7. Segurança da informação",
     "body7": "Adotamos medidas técnicas e administrativas para proteger dados pessoais contra acessos não autorizados e situações acidentais ou ilícitas de destruição, perda, alteração, comunicação ou difusão, incluindo controle de acesso por autenticação, isolamento de dados por conta (RLS a nível de banco de dados) e criptografia em trânsito.",
     "title8": "8. Crianças e adolescentes",
@@ -174,8 +174,8 @@
     "sendingBtn": "Enviando...",
     "locationAutoDetected": "Localização detectada automaticamente",
     "locationCurrentDetected": "Localização atual detectada",
-    "locationFallback": "São Paulo, SP",
-    "errorGenericSubmit": "Erro ao registrar emergência"
+    "errorGenericSubmit": "Erro ao registrar emergência",
+    "erroLocalizacao": "Não conseguimos localizar o endereço. Ative a localização ou escreva a rua e a cidade."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Registro do Acidente",
@@ -643,7 +643,8 @@
     "hoursNotInformed": "Horário não informado",
     "reviewsTitle": "Avaliações ({count})",
     "noReviewsText": "Esta oficina ainda não possui avaliações.",
-    "clientFallback": "Cliente"
+    "clientFallback": "Cliente",
+    "registroEmpresa": "CNPJ"
   },
   "audioMessage": {
     "hideTranscription": "Ocultar transcrição",
@@ -711,5 +712,23 @@
         "botao": "Quero ser parceiro"
       }
     }
+  },
+  "tutorialHub": {
+    "concluidos": "{feitos}/{total} concluídos",
+    "opcionalMinusculo": "opcional",
+    "opcional": "Opcional",
+    "modoGuiado": "Guiado (passo a passo)",
+    "modoAutonomo": "Autônomo (só o desafio)",
+    "sigaPassos": "Siga estes passos na tela real:",
+    "desafio": "Desafio:",
+    "desafioNota": "Sem passo a passo aqui de propósito — tente sozinho primeiro. Se travar, volte ao modo Guiado.",
+    "dica": "Dica:",
+    "irFazer": "Ir fazer isso agora →",
+    "verificando": "Verificando...",
+    "jaFizVerificar": "Já fiz — verificar",
+    "marcadoEntendido": "Marcado como entendido ✓",
+    "marcarConcluido": "Entendi, marcar como concluído",
+    "encontrei": "Encontrei! Módulo concluído.",
+    "aindaNao": "Ainda não encontrei isso no seu perfil. Faça a ação na tela real e clique em verificar de novo."
   }
 }

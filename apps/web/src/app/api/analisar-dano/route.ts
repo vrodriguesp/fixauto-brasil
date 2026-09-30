@@ -3,6 +3,9 @@ import { getSessionUserId } from '@/lib/api-auth';
 import { dentroDoLimite } from '@/lib/rate-limit';
 import { podeVerSolicitacao } from '@/lib/acesso-servico';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { baixarMidia } from '@/lib/midia-servidor';
+import { idiomaDoSite } from '@/lib/site-url';
+import { currencyForCountry } from '@/lib/currency';
 
 
 export async function POST(req: NextRequest) {
@@ -47,23 +50,33 @@ export async function POST(req: NextRequest) {
     // Fetch solicitacao for context
     const { data: sol } = await supabaseAdmin
       .from('solicitacoes')
-      .select('tipo, descricao, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, fipe_valor)')
+      .select('tipo, descricao, pais, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, fipe_valor)')
       .eq('id', solicitacao_id)
       .single();
 
     const veiculo = sol?.veiculo as any;
     const contexto = `Veículo: ${veiculo?.fipe_marca || ''} ${veiculo?.fipe_modelo || ''} ${veiculo?.fipe_ano || ''}. Tipo de serviço: ${sol?.tipo || 'não informado'}. Descrição do cliente: ${sol?.descricao || 'não informada'}.${veiculo?.fipe_valor ? ` Valor FIPE: ${veiculo.fipe_valor}.` : ''}`;
 
+    // Idioma de quem pediu a analise (o texto e mostrado a ela) e moeda/
+    // mercado do pais do pedido - antes era sempre portugues do Brasil e reais,
+    // tambem para oficinas de Tallinn.
+    const { data: perfil } = await supabaseAdmin.from('profiles').select('idioma').eq('id', userId).maybeSingle();
+    const idioma = idiomaDoSite(perfil?.idioma);
+    const NOMES: Record<string, string> = { pt: 'portugues do Brasil', 'pt-PT': 'portugues europeu', en: 'ingles', et: 'estoniano', it: 'italiano', ru: 'russo' };
+    const nomeIdioma = NOMES[idioma] || 'ingles';
+    const pais = (sol as { pais?: string | null } | null)?.pais || (idioma === 'pt' ? 'BR' : 'EE');
+    const moeda = currencyForCountry(pais) === 'BRL' ? 'reais (BRL)' : 'euros (EUR)';
+    const mercado = pais === 'BR' ? 'Brasil' : pais === 'EE' ? 'Estonia' : pais;
+
     // Build image parts for Gemini
     const imageParts: any[] = [];
     for (const foto of fotos.slice(0, 4)) {
       try {
-        const res = await fetch(foto.foto_url);
-        const buffer = await res.arrayBuffer();
-        const base64 = Buffer.from(buffer).toString('base64');
-        const mimeType = res.headers.get('content-type') || 'image/jpeg';
+        // Espaco privado: baixa pelo servidor (o endereco publico nao abre mais)
+        const midia = await baixarMidia(foto.foto_url);
+        if (!midia) continue;
         imageParts.push({
-          inline_data: { mime_type: mimeType, data: base64 },
+          inline_data: { mime_type: midia.tipo.startsWith('image/') ? midia.tipo : 'image/jpeg', data: midia.buffer.toString('base64') },
         });
       } catch { /* skip */ }
     }
@@ -89,10 +102,10 @@ export async function POST(req: NextRequest) {
             parts: [
               ...imageParts,
               {
-                text: `Especialista em reparos automotivos Brasil. ${contexto}
+                text: `Especialista em reparos automotivos (${mercado}). ${contexto}
 Analise as fotos e responda JSON CURTO E DIRETO:
 {"resumo":"max 2 frases","severidade":"leve|moderado|grave|severo","checklist_inspecao":["max 5 itens"],"pecas_afetadas":["max 5 pecas"],"estimativa_custo":{"min":0,"max":0},"confianca":0.8,"perguntas_sugeridas":["max 3 perguntas para a oficina fazer ao cliente para entender melhor o dano"]}
-Seja BREVE. Preços em reais do mercado brasileiro.`,
+Seja BREVE. Escreva os textos (resumo, checklist_inspecao, pecas_afetadas, perguntas_sugeridas) em ${nomeIdioma}. O campo severidade deve ser EXATAMENTE um destes valores, sem traduzir: leve, moderado, grave, severo. Precos em ${moeda} do mercado de ${mercado}.`,
               },
             ],
           }],
@@ -161,7 +174,7 @@ Seja BREVE. Preços em reais do mercado brasileiro.`,
         const sevMatch = rawJson.match(/"severidade"\s*:\s*"([^"]+)"/);
         parsed = {
           resumo: resumoMatch ? resumoMatch[1] : 'Análise parcial - verifique as fotos manualmente',
-          severidade: sevMatch ? sevMatch[1] : 'moderado',
+          severidade: sevMatch && ['leve', 'moderado', 'grave', 'severo'].includes(sevMatch[1]) ? sevMatch[1] : 'moderado',
           checklist_inspecao: ['Verificar danos estruturais', 'Inspecionar pintura', 'Checar alinhamento'],
           pecas_afetadas: ['Verificar nas fotos'],
           estimativa_custo: null,
@@ -176,7 +189,7 @@ Seja BREVE. Preços em reais do mercado brasileiro.`,
       .insert({
         solicitacao_id,
         resumo: parsed.resumo || '',
-        severidade: parsed.severidade || 'moderado',
+        severidade: ['leve', 'moderado', 'grave', 'severo'].includes(parsed.severidade) ? parsed.severidade : 'moderado',
         checklist_inspecao: parsed.checklist_inspecao || [],
         pecas_afetadas: parsed.pecas_afetadas || [],
         estimativa_custo: parsed.estimativa_custo || null,

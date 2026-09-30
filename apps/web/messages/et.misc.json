@@ -432,8 +432,8 @@
     "sendingBtn": "Saadan...",
     "locationAutoDetected": "Asukoht tuvastati automaatselt",
     "locationCurrentDetected": "Praegune asukoht tuvastatud",
-    "locationFallback": "São Paulo, SP",
-    "errorGenericSubmit": "Viga hädaolukorra registreerimisel"
+    "errorGenericSubmit": "Viga hädaolukorra registreerimisel",
+    "erroLocalizacao": "Aadressi ei õnnestunud leida. Luba asukoht või kirjuta tänav ja linn."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Avarii registreerimine",
@@ -901,7 +901,8 @@
     "hoursNotInformed": "Lahtiolekuajad pole lisatud",
     "reviewsTitle": "Hinnangud ({count})",
     "noReviewsText": "Sellel töökojal pole veel hinnanguid.",
-    "clientFallback": "Klient"
+    "clientFallback": "Klient",
+    "registroEmpresa": "Registrikood"
   },
   "audioMessage": {
     "hideTranscription": "Peida transkriptsioon",
@@ -969,5 +970,23 @@
         "botao": "Hakka partneriks"
       }
     }
+  },
+  "tutorialHub": {
+    "concluidos": "{feitos}/{total} tehtud",
+    "opcionalMinusculo": "valikuline",
+    "opcional": "Valikuline",
+    "modoGuiado": "Juhendatud (samm-sammult)",
+    "modoAutonomo": "Iseseisvalt (ainult ülesanne)",
+    "sigaPassos": "Järgi neid samme päris vaates:",
+    "desafio": "Ülesanne:",
+    "desafioNota": "Siin pole meelega samm-sammulist juhendit — proovi esmalt ise. Kui jääd hätta, vali uuesti juhendatud režiim.",
+    "dica": "Nõuanne:",
+    "irFazer": "Mine seda kohe tegema →",
+    "verificando": "Kontrollin...",
+    "jaFizVerificar": "Tehtud — kontrolli",
+    "marcadoEntendido": "Märgitud arusaaduks ✓",
+    "marcarConcluido": "Sain aru, märgi tehtuks",
+    "encontrei": "Leitud! Moodul on tehtud.",
+    "aindaNao": "Me ei leia seda veel sinu profiilist. Tee toiming päris vaates ja vajuta uuesti „kontrolli“."
   }
 }

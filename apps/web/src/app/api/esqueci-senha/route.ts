@@ -6,7 +6,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 
 const RESEND_KEY = process.env.RESEND_API_KEY;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com';
-const FROM_EMAIL = process.env.FROM_EMAIL || 'BipFix <noreply@bipfix.com>';
+import { FROM_EMAIL } from '@/lib/email';
 
 // Um pedido por e-mail a cada 2 min - sem isso, qualquer um encheria a
 // caixa de entrada de outra pessoa de e-mails de recuperacao. Em memoria:

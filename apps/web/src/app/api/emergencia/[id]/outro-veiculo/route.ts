@@ -66,7 +66,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
     return NextResponse.json({ id: outro.id });
   } catch (e) {
-    if (e instanceof ErroValidacao) return NextResponse.json({ error: e.message }, { status: 400 });
+    if (e instanceof ErroValidacao) return NextResponse.json({ error: e.message, codigo: e.codigo }, { status: 400 });
     console.error('[emergencia/outro-veiculo]', e);
     return NextResponse.json({ error: 'Erro ao registrar o outro veículo' }, { status: 500 });
   }

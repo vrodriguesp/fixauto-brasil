@@ -2,7 +2,13 @@
   "meta": {
     "brand": "BipFix",
     "title": "BipFix - Ti mettiamo in contatto con la migliore officina",
-    "description": "Confronta i preventivi di officine verificate vicino a te: invia le foto del danno, ricevi le offerte e segui la riparazione. Semplice e trasparente."
+    "description": "Confronta i preventivi di officine verificate vicino a te: invia le foto del danno, ricevi le offerte e segui la riparazione. Semplice e trasparente.",
+    "tituloLogin": "Accedi",
+    "tituloCadastro": "Crea un account",
+    "tituloEscolherTipo": "Scegli il tipo di account",
+    "tituloRedefinirSenha": "Reimposta la password",
+    "tituloDefinirSenha": "Imposta la password",
+    "pularConteudo": "Vai al contenuto"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -73,7 +79,13 @@
     "erroGenerico": "Invio non riuscito. Riprova tra qualche istante.",
     "sucessoTitulo": "Abbiamo ricevuto il tuo interesse!",
     "sucessoTexto": "Il nostro team analizzerà la tua zona e ti contatterà su WhatsApp entro 2 giorni lavorativi per spiegarti i prossimi passi della fase pilota.",
-    "voltarInicio": "Torna alla home"
+    "voltarInicio": "Torna alla home",
+    "depoisTitulo": "Cosa succede dopo la candidatura",
+    "depois1": "Rispondiamo entro 1 giorno lavorativo, via e-mail o WhatsApp.",
+    "depois2": "Configuriamo con te il profilo dell'officina (circa 30 minuti) e verifichiamo la registrazione dell'impresa.",
+    "depois3": "Inizi a ricevere richieste da automobilisti vicini alla tua officina.",
+    "quemSomosTitulo": "Chi c'è dietro BipFix",
+    "quemSomosTexto": "BipFix è una giovane impresa con sede a Tallinn, in fase di registrazione come società a responsabilità limitata estone (OÜ). Rispondiamo personalmente a ogni candidatura: support@bipfix.com."
   },
   "paraOficinas": {
     "metaTitle": "Sistema di Gestione per Officine Meccaniche e Più Clienti",
@@ -243,8 +255,8 @@
     "placeholderAno": "Es: 2018"
   },
   "home": {
-    "metaTitle": "BipFix - Confronta preventivi di officine meccaniche affidabili",
-    "metaDescription": "Invia le foto del danno alla tua auto, ricevi preventivi da officine verificate vicino a te e prenota la riparazione in pochi minuti.",
+    "metaTitle": "Riparazione auto a Tallinn: confronta i preventivi | BipFix",
+    "metaDescription": "Invia le foto del danno, ricevi preventivi dalle officine di Tallinn e prenota la riparazione in pochi minuti. Per chi vive in Estonia.",
     "metaKeywords": [
       "officina meccanica vicino a me",
       "preventivo riparazione auto online",
@@ -292,7 +304,7 @@
     "porQueTexto1": "Oggi, scegliere dove riparare l'auto dipende di solito solo da un passaparola o da quale officina è più vicina — senza poter confrontare prezzo, tempi o storico di chi farà il lavoro. Crediamo che gli automobilisti meritino trasparenza, e che le buone officine meritino di essere trovate per il lavoro che offrono.",
     "porQueTexto2": "Siamo, letteralmente, agli inizi: stiamo selezionando le prime officine e i primi fornitori di ricambi partner per lanciarci con la massima attenzione in una città alla volta, invece di crescere in fretta senza controllo di qualità.",
     "parceiroTitulo": "C'è ancora tempo per entrare come socio fondatore",
-    "parceiroTexto": "Se sei un automobilista, puoi già usare la piattaforma da oggi. Se hai un'officina o un'attività di ricambi, stiamo selezionando un numero limitato di partner per la fase pilota — senza commissioni in questo momento.",
+    "parceiroTexto": "Stiamo registrando ora le prime officine partner a Tallinn. Se sei un automobilista, puoi già inviare la tua richiesta: la inoltriamo alle officine man mano che entrano e ti teniamo aggiornato. Se hai un'officina o un negozio di ricambi, stiamo selezionando pochi partner fondatori — senza commissioni in questa fase.",
     "faqTitulo": "Domande Frequenti",
     "faqSubtitulo": "Rispondiamo alle tue domande sulla piattaforma BipFix",
     "faqItems": [
@@ -302,7 +314,7 @@
       },
       {
         "pergunta": "È sicuro usare la piattaforma?",
-        "resposta": "Sì! Tutte le officine registrate passano attraverso una verifica. Inoltre, il sistema di recensioni ti permette di vedere la reputazione di ogni officina prima di decidere. I tuoi dati personali sono protetti e non vengono mai condivisi senza il tuo consenso."
+        "resposta": "Sì. Prima di attivare un'officina verifichiamo la registrazione dell'impresa e parliamo con il responsabile. Dopo ogni lavoro completato, può lasciare una recensione solo il cliente che l'ha commissionato: così vedi la reputazione reale prima di decidere. I tuoi dati personali sono protetti e non vengono mai condivisi senza il tuo consenso."
       },
       {
         "pergunta": "Quanto costa usare BipFix?",
@@ -319,6 +331,18 @@
       {
         "pergunta": "Che tipo di servizi offrono le officine?",
         "resposta": "Le officine sulla piattaforma offrono diversi servizi come carrozzeria, verniciatura, meccanica generale, elettrauto, sostituzione vetri, allineamento, equilibratura, climatizzazione e molto altro. Ogni officina elenca le proprie specializzazioni sul profilo."
+      },
+      {
+        "pergunta": "Qualche officina paga per comparire per prima?",
+        "resposta": "No. Nessuna officina può pagare per una posizione migliore nell'elenco o tra i preventivi. Confronti prezzo, tempi, distanza e recensioni dei clienti."
+      },
+      {
+        "pergunta": "E se la riparazione la paga l'assicurazione?",
+        "resposta": "Puoi comunque usare BipFix: ricevi qui i preventivi e mostrali all'assicurazione. In Estonia, con la kasko o con l'assicurazione obbligatoria dell'altro conducente (liikluskindlustus), verifica con l'assicuratore prima della riparazione se accetta l'officina scelta."
+      },
+      {
+        "pergunta": "Il prezzo del preventivo è quello finale?",
+        "resposta": "Il totale del preventivo è quanto l'officina chiede per il lavoro descritto. BipFix non fa pagare nulla agli automobilisti e non aggiunge mai costi. Se durante la riparazione emerge qualcosa di nuovo, l'officina ti invia un preventivo aggiornato da approvare."
       }
     ],
     "footerTagline": "Colleghiamo gli automobilisti alle migliori officine.",
@@ -336,7 +360,8 @@
     "footerContato": "Contatti",
     "footerDireitos": "2026 BipFix. Tutti i diritti riservati.",
     "footerTermos": "Termini di Utilizzo",
-    "footerPrivacidade": "Privacy"
+    "footerPrivacidade": "Privacy",
+    "footerSobre": "Chi è BipFix"
   },
   "constants": {
     "tiposServico": {
@@ -531,5 +556,35 @@
     "inicio": "Vai alla pagina iniziale",
     "guias": "Guarda le guide per automobilisti",
     "emergencia": "Ho appena avuto un incidente"
+  },
+  "erros": {
+    "CAMPO_OBRIGATORIO": "Compila tutti i campi obbligatori.",
+    "EMAIL_INVALIDO": "Controlla l'indirizzo e-mail.",
+    "FOTOS_MAX": "Puoi inviare al massimo 6 foto.",
+    "FOTO_TIPO": "Invia foto in formato JPG, PNG, WebP o HEIC.",
+    "FOTO_TAMANHO": "Ogni foto può pesare al massimo 10 MB.",
+    "MUITAS_TENTATIVAS": "Troppi tentativi in poco tempo. Riprova più tardi.",
+    "SEM_ACESSO": "Non hai accesso a questo contenuto.",
+    "NAO_AUTENTICADO": "La sessione è scaduta. Accedi di nuovo.",
+    "DADOS_INVALIDOS": "Controlla i dati inseriti.",
+    "GENERICO": "Qualcosa è andato storto. Riprova tra un momento.",
+    "FUNCIONARIO_JA_CADASTRADO": "Questo dipendente è già registrato nella tua officina."
+  },
+  "sobre": {
+    "metaTitle": "Chi è BipFix",
+    "metaDescription": "Chi siamo, in che fase siamo e come funziona BipFix: preventivi di officina trasparenti, recensioni verificate e nessuna posizione a pagamento.",
+    "titulo": "Chi è BipFix",
+    "intro": "BipFix mette in contatto gli automobilisti che hanno bisogno di una riparazione con officine indipendenti: descrivi il problema con le foto, ricevi preventivi dettagliati, li confronti e segui la riparazione. BipFix è solo la piattaforma: non ripara auto e non vende ricambi.",
+    "estagioTitulo": "In che fase siamo",
+    "estagioTexto": "Siamo all'inizio. La città pilota è Tallinn, in Estonia, e le prime officine partner si stanno registrando ora, nella fase dei partner fondatori. Non abbiamo ancora una grande rete di officine — e preferiamo dirlo chiaramente.",
+    "empresaTitulo": "L'impresa",
+    "empresaTexto": "BipFix è in fase di registrazione come società a responsabilità limitata estone (osaühing). Fino al completamento della registrazione, la piattaforma è gestita dal fondatore come persona fisica. I dati completi dell'impresa saranno pubblicati qui non appena la registrazione sarà completata.",
+    "principiosTitulo": "Come lavoriamo",
+    "principio1": "Nessuna officina può pagare per comparire per prima.",
+    "principio2": "Recensisce solo chi ha commissionato e completato il lavoro.",
+    "principio3": "I prezzi li decidono le officine; per gli automobilisti BipFix è gratuito.",
+    "principio4": "I tuoi dati sono trattati secondo il GDPR e non vengono mai venduti.",
+    "contatoTitulo": "Contatti",
+    "contatoTexto": "Domande, suggerimenti o collaborazioni: support@bipfix.com. Dati personali: privacy@bipfix.com."
   }
 }

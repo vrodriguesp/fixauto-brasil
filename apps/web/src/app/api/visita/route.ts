@@ -18,7 +18,7 @@ const DESTINO = process.env.VISITAS_EMAIL_PARA;
 const ESPERA_MS = Number(process.env.VISITAS_ESPERA_MS) || 3 * 60 * 1000;
 const MAX_EMAILS_HORA = 40;
 const MAX_PENDENTES = 500;
-const FROM_EMAIL = process.env.FROM_EMAIL || 'BipFix <noreply@bipfix.com>';
+import { FROM_EMAIL } from '@/lib/email';
 const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;

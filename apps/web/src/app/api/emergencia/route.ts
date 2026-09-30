@@ -8,6 +8,7 @@ import { tokenAleatorio, hashToken } from '@/lib/segredos';
 import { garantirContaCliente } from '@/lib/conta-convite';
 import { avisarOficinasDoAcidente } from '@/lib/emergencia-oficinas';
 import { notifNovaSolicitacaoColisao } from '@/lib/notif-i18n';
+import { avisarAdminSeSemOficinas } from '@/lib/concierge';
 
 export const dynamic = 'force-dynamic';
 
@@ -142,6 +143,7 @@ export async function POST(req: NextRequest) {
     }
 
     const avisadas = await avisarOficinasDoAcidente(emergencia.id, latitude, longitude);
+    await avisarAdminSeSemOficinas('acidente', emergencia.id, `${descricao} - ${endereco || ''}`).catch((e) => console.error('[emergencia] concierge', e));
 
     // Oficinas de colisao ativas recebem tambem o aviso de nova solicitacao
     if (solicitacaoId) {
@@ -164,7 +166,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ id: emergencia.id, token, solicitacaoId, contaCriada, oficinasNotificadas: avisadas });
   } catch (e) {
-    if (e instanceof ErroValidacao) return NextResponse.json({ error: e.message }, { status: 400 });
+    if (e instanceof ErroValidacao) return NextResponse.json({ error: e.message, codigo: e.codigo }, { status: 400 });
     console.error('[api/emergencia]', e);
     return NextResponse.json({ error: 'Erro ao registrar o acidente' }, { status: 500 });
   }

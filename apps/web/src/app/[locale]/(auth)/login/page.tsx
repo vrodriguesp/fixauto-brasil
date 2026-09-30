@@ -162,7 +162,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => { setForgotMode(true); setError(''); }}
-                      className="text-xs text-primary-600 hover:text-primary-700"
+                      className="text-sm py-2 -my-2 text-primary-600 hover:text-primary-700"
                     >
                       {t('esqueciSenha')}
                     </button>

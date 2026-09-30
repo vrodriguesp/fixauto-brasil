@@ -40,7 +40,12 @@
     "recuperarTexto": "Inserisci la tua email e ti invieremo un link per reimpostare la password.",
     "linkEnviado": "Se questa email è nei nostri archivi, ti abbiamo inviato un link di recupero.",
     "definirSenhaTitulo": "Imposta la tua password",
-    "definirSenhaTexto": "È il tuo primo accesso: imposta una password per continuare."
+    "definirSenhaTexto": "È il tuo primo accesso: imposta una password per continuare.",
+    "aceiteTexto1": "Ho letto e accetto i",
+    "termos": "Termini di utilizzo",
+    "aceiteTexto2": "e la",
+    "privacidade": "Informativa sulla privacy",
+    "senhaCurta": "La password deve avere almeno 8 caratteri."
   },
   "emergencia": {
     "titulo": "Ho appena avuto un incidente",

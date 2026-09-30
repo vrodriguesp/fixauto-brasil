@@ -2,7 +2,13 @@
   "meta": {
     "brand": "BipFix",
     "title": "BipFix - Connecting you to the best auto repair shop",
-    "description": "The platform that connects drivers to auto repair shops. Send photos of the damage, get quotes, and choose the best option. Simple, fast, and transparent."
+    "description": "The platform that connects drivers to auto repair shops. Send photos of the damage, get quotes, and choose the best option. Simple, fast, and transparent.",
+    "tituloLogin": "Sign in",
+    "tituloCadastro": "Create an account",
+    "tituloEscolherTipo": "Choose your account type",
+    "tituloRedefinirSenha": "Reset password",
+    "tituloDefinirSenha": "Set your password",
+    "pularConteudo": "Skip to content"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -73,7 +79,13 @@
     "erroGenerico": "Couldn't send it. Please try again in a moment.",
     "sucessoTitulo": "We've received your interest!",
     "sucessoTexto": "Our team will review your region and reach out on WhatsApp within 2 business days to explain the next steps of the pilot phase.",
-    "voltarInicio": "Back to home"
+    "voltarInicio": "Back to home",
+    "depoisTitulo": "What happens after you apply",
+    "depois1": "We reply within 1 business day, by email or WhatsApp.",
+    "depois2": "We set up your shop profile with you (about 30 minutes) and check your company registration.",
+    "depois3": "You start receiving requests from drivers near your shop.",
+    "quemSomosTitulo": "Who's behind BipFix",
+    "quemSomosTexto": "BipFix is a young company based in Tallinn, being registered as an Estonian private limited company (OÜ). We answer every application personally: support@bipfix.com."
   },
   "paraOficinas": {
     "metaTitle": "Repair Shop Software & More Customers",
@@ -292,7 +304,7 @@
     "porQueTexto1": "Today, choosing where to get your car fixed usually comes down to a referral or whichever shop is closest — with no way to compare price, timeline or track record. We believe drivers deserve transparency, and that good repair shops deserve to be found for the work they deliver.",
     "porQueTexto2": "We're, literally, just getting started: selecting the first partner shops and parts suppliers to launch with full attention in one city at a time, instead of growing fast with no quality control.",
     "parceiroTitulo": "There's still time to join as a founding partner",
-    "parceiroTexto": "If you're a driver, you can already use the platform today. If you run a repair shop or parts business, we're selecting a limited number of partners for the pilot phase — with no commission right now.",
+    "parceiroTexto": "We're onboarding the first partner repair shops in Tallinn now. If you're a driver, you can already send your request: we pass it on to shops as they join and keep you posted. If you run a repair shop or parts business, we're selecting a small number of founding partners — with no commission in this phase.",
     "faqTitulo": "Frequently Asked Questions",
     "faqSubtitulo": "Get your questions about the BipFix platform answered",
     "faqItems": [
@@ -302,7 +314,7 @@
       },
       {
         "pergunta": "Is it safe to use the platform?",
-        "resposta": "Yes! Every registered shop goes through verification. On top of that, the review system lets you see each shop's reputation before deciding. Your personal data is protected and never shared without your consent."
+        "resposta": "Yes. Before a shop is activated, we check its company registration and talk to the person in charge. After each completed job, only the customer who hired the shop can leave a review — so you see its real reputation before deciding. Your personal data is protected and never shared without your consent."
       },
       {
         "pergunta": "How much does BipFix cost?",
@@ -319,6 +331,18 @@
       {
         "pergunta": "What kinds of services do the shops offer?",
         "resposta": "Shops on the platform offer a wide range of services such as bodywork, paint, general mechanics, auto electrics, glass replacement, wheel alignment, balancing, air conditioning and much more. Each shop lists its specialties on its profile."
+      },
+      {
+        "pergunta": "Does any shop pay to appear first?",
+        "resposta": "No. No repair shop can pay for a better position in the list or among the quotes. You compare price, timing, distance and customer reviews."
+      },
+      {
+        "pergunta": "What if my insurance pays for the repair?",
+        "resposta": "You can still use BipFix: get the quotes here and show them to your insurer. In Estonia, with kasko or the other driver's motor insurance (liikluskindlustus), check with the insurer before the repair whether they accept the shop you chose."
+      },
+      {
+        "pergunta": "Is the price in the quote the final price?",
+        "resposta": "The total in the quote is what the shop charges for the job described. BipFix charges drivers nothing and never adds a fee on top. If something new comes up during the repair, the shop sends you a revised quote to approve."
       }
     ],
     "footerTagline": "Connecting drivers to the best auto repair shops.",
@@ -336,7 +360,8 @@
     "footerContato": "Contact",
     "footerDireitos": "2026 BipFix. All rights reserved.",
     "footerTermos": "Terms of Use",
-    "footerPrivacidade": "Privacy"
+    "footerPrivacidade": "Privacy",
+    "footerSobre": "About BipFix"
   },
   "constants": {
     "tiposServico": {
@@ -531,5 +556,35 @@
     "inicio": "Go to the home page",
     "guias": "Browse the driver guides",
     "emergencia": "I just had an accident"
+  },
+  "erros": {
+    "CAMPO_OBRIGATORIO": "Please fill in all required fields.",
+    "EMAIL_INVALIDO": "Please check the email address.",
+    "FOTOS_MAX": "You can send up to 6 photos.",
+    "FOTO_TIPO": "Please send photos in JPG, PNG, WebP or HEIC.",
+    "FOTO_TAMANHO": "Each photo can be up to 10 MB.",
+    "MUITAS_TENTATIVAS": "Too many attempts in a short time. Please try again later.",
+    "SEM_ACESSO": "You don't have access to this.",
+    "NAO_AUTENTICADO": "Your session has expired. Please sign in again.",
+    "DADOS_INVALIDOS": "Please check the details you entered.",
+    "GENERICO": "Something went wrong. Please try again in a moment.",
+    "FUNCIONARIO_JA_CADASTRADO": "This employee is already registered at your shop."
+  },
+  "sobre": {
+    "metaTitle": "About BipFix",
+    "metaDescription": "Who we are, what stage we are at and how BipFix works: transparent repair quotes, verified reviews and no paid rankings.",
+    "titulo": "About BipFix",
+    "intro": "BipFix connects drivers who need a car repair with independent repair shops: you describe the problem with photos, receive detailed quotes, compare them and follow the repair. BipFix is only the platform — it does not repair cars or sell parts.",
+    "estagioTitulo": "Where we are",
+    "estagioTexto": "We're just getting started. Our pilot city is Tallinn, Estonia, and the first partner repair shops are being onboarded now, in the founding-partner phase. We don't have a large network of shops yet — and we'd rather say so clearly.",
+    "empresaTitulo": "The company",
+    "empresaTexto": "BipFix is being registered as an Estonian private limited company (osaühing). Until the registration is complete, the platform is operated by its founder as a private individual. Full company details will be published here as soon as the registration is complete.",
+    "principiosTitulo": "How we work",
+    "principio1": "No repair shop can pay to appear first.",
+    "principio2": "Only customers who hired a shop and completed the job can review it.",
+    "principio3": "Prices are set by the repair shops; BipFix is free for drivers.",
+    "principio4": "Your data is handled under the GDPR and never sold.",
+    "contatoTitulo": "Contact",
+    "contatoTexto": "Questions, feedback or partnerships: support@bipfix.com. Personal data: privacy@bipfix.com."
   }
 }

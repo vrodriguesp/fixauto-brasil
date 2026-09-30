@@ -6,8 +6,11 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-import { SITE_URL, siteNoIdioma, urlNoIdioma } from './site-url';
-const FROM_EMAIL = process.env.FROM_EMAIL || 'BipFix <noreply@bipfix.com>';
+import { SITE_URL, siteNoIdioma, urlNoIdioma, idiomaDoSite } from './site-url';
+
+// Sem moeda informada: reais so para a versao do Brasil; euro no resto
+const moedaPadrao = (idioma?: string | null) => (idiomaDoSite(idioma) === 'pt' ? 'BRL' : 'EUR');
+import { FROM_EMAIL } from '@/lib/email';
 
 // O SDK do Resend (v6) NAO lanca excecao quando o envio falha (dominio nao
 // verificado, destinatario invalido, limite de envio...) - so devolve
@@ -443,7 +446,8 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
   }
   const locale = resolveEmailLocale(params.locale);
   const s = EMAIL_I18N.cotacaoPecaRespondida[locale];
-  const precoFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: params.moeda || 'BRL' }).format(params.preco);
+  // Moeda e formato do idioma de quem recebe (antes: sempre pt-BR/BRL, tambem na Europa)
+  const precoFormatado = formatCurrency(params.preco, params.moeda || moedaPadrao(params.locale), params.locale || 'en');
   try {
     await sendOrThrow({
       from: FROM_EMAIL,
@@ -493,7 +497,7 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
     return { success: false, error: 'Email service not configured' };
   }
   const s = EMAIL_I18N.pedidoPecaConfirmado[resolveEmailLocale(params.locale)];
-  const valorFormatado = formatCurrency(params.valorTotal, params.moeda || 'BRL', params.locale || 'pt');
+  const valorFormatado = formatCurrency(params.valorTotal, params.moeda || moedaPadrao(params.locale), params.locale || 'en');
   try {
     await sendOrThrow({
       from: FROM_EMAIL,
