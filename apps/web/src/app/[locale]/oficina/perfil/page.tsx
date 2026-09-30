@@ -472,8 +472,8 @@ export default function PerfilOficinaPage() {
         <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('horarioDeFuncionamento')}</h2>
         <div className="space-y-3">
           {DIAS.map(({ key, label }) => (
-            <div key={key} className="flex items-center gap-4">
-              <label className="flex items-center gap-2 w-28">
+            <div key={key} className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <label className="flex items-center gap-2 w-28 shrink-0">
                 <input
                   type="checkbox"
                   checked={horario[key]?.aberto ?? false}
@@ -483,17 +483,18 @@ export default function PerfilOficinaPage() {
                 <span className="text-sm text-gray-700">{label}</span>
               </label>
               {horario[key]?.aberto ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 min-w-0">
                   <input
                     type="time"
-                    className="input-field !py-1 !px-2 text-sm !w-28"
+                    aria-label={label}
+                    className="input-field !py-1 !px-2 text-sm !w-[6.75rem] min-w-0"
                     value={horario[key]?.inicio || '08:00'}
                     onChange={(e) => setHorario({ ...horario, [key]: { ...horario[key], inicio: e.target.value } })}
                   />
                   <span className="text-gray-400">{t('as')}</span>
                   <input
                     type="time"
-                    className="input-field !py-1 !px-2 text-sm !w-28"
+                    className="input-field !py-1 !px-2 text-sm !w-[6.75rem] min-w-0"
                     value={horario[key]?.fim || '18:00'}
                     onChange={(e) => setHorario({ ...horario, [key]: { ...horario[key], fim: e.target.value } })}
                   />
