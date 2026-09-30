@@ -1034,6 +1034,10 @@
     "oficinaDica_proprio": "Il cliente paga direttamente l'officina.",
     "oficinaDica_nao_sei": "Il cliente non sa ancora se userà l'assicurazione. Conviene chiederlo prima di chiudere il preventivo.",
     "aindaSemNumero": "non ancora indicato",
-    "chipSeguro": "Assicurazione"
+    "chipSeguro": "Assicurazione",
+    "oficinaOpcao_proprio": "Paga il cliente",
+    "oficinaOpcao_seguro_terceiro": "Assicurazione dell'altro conducente",
+    "oficinaOpcao_seguro_proprio": "Assicurazione del cliente (kasko)",
+    "oficinaOpcao_nao_sei": "Il cliente non lo sa ancora"
   }
 }

@@ -775,6 +775,10 @@
     "oficinaDica_proprio": "O cliente paga direto à oficina.",
     "oficinaDica_nao_sei": "O cliente ainda não sabe se vai usar seguro. Vale perguntar antes de fechar o orçamento.",
     "aindaSemNumero": "ainda não informado",
-    "chipSeguro": "Seguro"
+    "chipSeguro": "Seguro",
+    "oficinaOpcao_proprio": "O cliente paga",
+    "oficinaOpcao_seguro_terceiro": "Seguro do outro motorista",
+    "oficinaOpcao_seguro_proprio": "Seguro do próprio cliente",
+    "oficinaOpcao_nao_sei": "O cliente ainda não sabe"
   }
 }

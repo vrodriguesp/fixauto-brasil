@@ -1034,6 +1034,10 @@
     "oficinaDica_proprio": "Klient maksab otse töökojale.",
     "oficinaDica_nao_sei": "Klient ei tea veel, kas ta kasutab kindlustust. Tasub enne pakkumise lõpetamist küsida.",
     "aindaSemNumero": "veel lisamata",
-    "chipSeguro": "Kindlustus"
+    "chipSeguro": "Kindlustus",
+    "oficinaOpcao_proprio": "Klient maksab ise",
+    "oficinaOpcao_seguro_terceiro": "Teise juhi kindlustus",
+    "oficinaOpcao_seguro_proprio": "Kliendi kaskokindlustus",
+    "oficinaOpcao_nao_sei": "Klient ei tea veel"
   }
 }

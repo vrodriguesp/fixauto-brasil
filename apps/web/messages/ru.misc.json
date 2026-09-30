@@ -1034,6 +1034,10 @@
     "oficinaDica_proprio": "Клиент платит автосервису напрямую.",
     "oficinaDica_nao_sei": "Клиент пока не знает, будет ли использовать страховку. Стоит спросить до того, как закрыть смету.",
     "aindaSemNumero": "пока не указано",
-    "chipSeguro": "Страховка"
+    "chipSeguro": "Страховка",
+    "oficinaOpcao_proprio": "Платит клиент",
+    "oficinaOpcao_seguro_terceiro": "Страховка другого водителя",
+    "oficinaOpcao_seguro_proprio": "Страховка клиента (каско)",
+    "oficinaOpcao_nao_sei": "Клиент пока не знает"
   }
 }

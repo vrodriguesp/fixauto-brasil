@@ -1034,6 +1034,10 @@
     "oficinaDica_proprio": "The customer pays the shop directly.",
     "oficinaDica_nao_sei": "The customer doesn't know yet whether they will use insurance. Worth asking before finalising the quote.",
     "aindaSemNumero": "not provided yet",
-    "chipSeguro": "Insurance"
+    "chipSeguro": "Insurance",
+    "oficinaOpcao_proprio": "The customer pays",
+    "oficinaOpcao_seguro_terceiro": "The other driver's insurance",
+    "oficinaOpcao_seguro_proprio": "The customer's own insurance (casco)",
+    "oficinaOpcao_nao_sei": "The customer doesn't know yet"
   }
 }
