@@ -498,6 +498,12 @@
       "balanceamento": "Tasakaalustamine",
       "calibragem": "Rehvirõhu kontroll",
       "troca_roda_calota": "Ratta / rattakapi vahetus"
+    },
+    "tiposItem": {
+      "mao_de_obra": "Töötasu",
+      "peca": "Varuosa",
+      "material": "Materjal",
+      "outro": "Muu"
     }
   },
   "comissaoPecasCard": {

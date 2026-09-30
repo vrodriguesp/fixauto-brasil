@@ -498,6 +498,12 @@
       "balanceamento": "Balancing",
       "calibragem": "Tire pressure check",
       "troca_roda_calota": "Wheel/hubcap change"
+    },
+    "tiposItem": {
+      "mao_de_obra": "Labor",
+      "peca": "Part",
+      "material": "Material",
+      "outro": "Other"
     }
   },
   "comissaoPecasCard": {

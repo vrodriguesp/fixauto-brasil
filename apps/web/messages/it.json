@@ -498,6 +498,12 @@
       "balanceamento": "Bilanciatura",
       "calibragem": "Controllo pressione pneumatici",
       "troca_roda_calota": "Cambio ruota/coprimozzo"
+    },
+    "tiposItem": {
+      "mao_de_obra": "Manodopera",
+      "peca": "Ricambio",
+      "material": "Materiale",
+      "outro": "Altro"
     }
   },
   "comissaoPecasCard": {

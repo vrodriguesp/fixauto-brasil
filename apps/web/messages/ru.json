@@ -498,6 +498,12 @@
       "balanceamento": "Балансировка",
       "calibragem": "Проверка давления в шинах",
       "troca_roda_calota": "Замена колеса/колпака"
+    },
+    "tiposItem": {
+      "mao_de_obra": "Работа",
+      "peca": "Запчасть",
+      "material": "Материал",
+      "outro": "Другое"
     }
   },
   "comissaoPecasCard": {

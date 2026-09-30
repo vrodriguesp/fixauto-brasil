@@ -29,6 +29,7 @@ function formatSlotDate(dateStr: string, locale: string): string {
 
 export default function OrcamentoDetalhePage() {
   const t = useTranslations('clienteOrcamentoDetalhe');
+  const tc = useTranslations('constants');
   const tErr = useTranslations('erros');
   const locale = useLocale();
   const params = useParams();
@@ -182,7 +183,7 @@ export default function OrcamentoDetalhePage() {
           <div className="flex items-center gap-2 mt-1">
             <StatusBadge status={solicitacao.status} />
             <span className={`badge ${getUrgenciaColor(solicitacao.urgencia)}`}>
-              {solicitacao.urgencia}
+              {tc.has(`urgencias.${solicitacao.urgencia}`) ? tc(`urgencias.${solicitacao.urgencia}`) : solicitacao.urgencia}
             </span>
           </div>
         </div>
@@ -453,7 +454,7 @@ export default function OrcamentoDetalhePage() {
                           🏆 {t('qualitySeal')}
                         </span>
                       )}
-                      {orc.valor_original && orc.revisao_numero && orc.revisao_numero > 0 && (
+                      {!!orc.valor_original && (orc.revisao_numero ?? 0) > 0 && (
                         <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold ${
                           orc.valor_total < orc.valor_original
                             ? 'bg-green-100 text-green-800'
@@ -468,7 +469,7 @@ export default function OrcamentoDetalhePage() {
                             : t('noAdjustment')}
                         </span>
                       )}
-                      {orc.revisao_numero && orc.revisao_numero > 0 && (
+                      {(orc.revisao_numero ?? 0) > 0 && (
                         <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700">
                           {t('revisionNumber', { n: orc.revisao_numero })}
                         </span>
@@ -504,7 +505,7 @@ export default function OrcamentoDetalhePage() {
               </div>
 
               {/* Revision comparison */}
-              {orc.valor_original && orc.revisao_numero && orc.revisao_numero > 0 && (
+              {!!orc.valor_original && (orc.revisao_numero ?? 0) > 0 && (
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4 flex items-center gap-2 text-sm">
                   <span className="text-gray-600">{t('originalQuoteLabel')}</span>
                   <span className="line-through text-gray-400">{formatCurrency(orc.valor_original, currencyForCountry(orc.oficina?.pais), locale)}</span>
@@ -538,7 +539,7 @@ export default function OrcamentoDetalhePage() {
                       {orc.itens.map((item) => (
                         <tr key={item.id}>
                           <td className="py-2 text-gray-900">{item.descricao}</td>
-                          <td className="py-2 text-gray-500 capitalize">{item.tipo.replace('_', ' ')}</td>
+                          <td className="py-2 text-gray-500">{tc.has(`tiposItem.${item.tipo}`) ? tc(`tiposItem.${item.tipo}`) : item.tipo}</td>
                           <td className="py-2 text-right text-gray-900">{formatCurrency(item.valor_total, currencyForCountry(orc.oficina?.pais), locale)}</td>
                         </tr>
                       ))}

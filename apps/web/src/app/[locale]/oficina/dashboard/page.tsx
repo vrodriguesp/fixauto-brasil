@@ -17,6 +17,7 @@ import PerfilCompleto from '@/components/oficina/PerfilCompleto';
 
 export default function OficinaDashboard() {
   const t = useTranslations('oficinaDashboard');
+  const tc = useTranslations('constants');
   const locale = useLocale();
   const { user, oficina } = useAuth();
   const { solicitacoes } = useSolicitacoes({ nearby: true });
@@ -299,7 +300,7 @@ export default function OficinaDashboard() {
                         <h3 className="font-semibold text-gray-900 capitalize">{sol.tipo}</h3>
                         <StatusBadge status={sol.status} />
                         <span className={`badge ${getUrgenciaColor(sol.urgencia)}`}>
-                          {sol.urgencia}
+                          {tc.has(`urgencias.${sol.urgencia}`) ? tc(`urgencias.${sol.urgencia}`) : sol.urgencia}
                         </span>
                       </div>
                       <p className="text-sm text-gray-600 line-clamp-2">{cleanDescricao(sol.descricao)}</p>

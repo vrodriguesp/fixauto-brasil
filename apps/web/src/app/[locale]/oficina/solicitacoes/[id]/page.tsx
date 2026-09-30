@@ -15,6 +15,7 @@ import MidiaPrivada from '@/components/midia/MidiaPrivada';
 
 export default function SolicitacaoDetalhePage() {
   const t = useTranslations('oficinaSolicitacaoDetalhe');
+  const tc = useTranslations('constants');
   const locale = useLocale();
   const params = useParams();
   const { oficina } = useAuth();
@@ -82,7 +83,7 @@ export default function SolicitacaoDetalhePage() {
           <div className="flex items-center gap-2 mt-2">
             <StatusBadge status={sol.status} />
             <span className={`badge ${getUrgenciaColor(sol.urgencia)}`}>
-              {t('urgencia')}: {sol.urgencia}
+              {t('urgencia')}: {tc.has(`urgencias.${sol.urgencia}`) ? tc(`urgencias.${sol.urgencia}`) : sol.urgencia}
             </span>
           </div>
         </div>

@@ -498,6 +498,12 @@
       "balanceamento": "Calibragem de rodas",
       "calibragem": "Verificação da pressão dos pneus",
       "troca_roda_calota": "Substituição de roda/tampão"
+    },
+    "tiposItem": {
+      "mao_de_obra": "Mão de obra",
+      "peca": "Peça",
+      "material": "Material",
+      "outro": "Outro"
     }
   },
   "comissaoPecasCard": {
