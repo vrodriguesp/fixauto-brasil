@@ -278,7 +278,9 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
             </select>
           ) : (
             <input
+              id="cbbe3-103"
               type="number"
+              inputMode="numeric"
               className="input-field"
               placeholder={t('placeholderAno')}
               value={value.ano}
