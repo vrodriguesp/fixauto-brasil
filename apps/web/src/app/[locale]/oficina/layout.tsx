@@ -1,8 +1,9 @@
 import MensagensDaArea from '@/components/i18n/MensagensDaArea';
 
-export default function OficinaLayout({ children }: { children: React.ReactNode }) {
+export default async function OficinaLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   return (
-    <MensagensDaArea>
+    <MensagensDaArea locale={locale}>
       <div className="oficina-theme">{children}</div>
     </MensagensDaArea>
   );

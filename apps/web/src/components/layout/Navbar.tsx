@@ -39,9 +39,10 @@ export default function Navbar() {
             <Link href={isLoggedIn ? dashboardPath : '/'} className="flex items-center gap-1">
               <img src="/logo-80.webp" alt="BipFix" width={188} height={40} className="h-7 sm:h-10 w-auto" />
               {(isOficina || isAdmin) && (
-                <div className="flex flex-col ml-1">
+                // No celular nao ha espaco ao lado do logo (sobrepunha o seletor de idioma)
+                <div className="hidden sm:flex flex-col ml-1">
                   {isOficina && (
-                    <span className="text-[10px] font-semibold text-sky-700 uppercase tracking-wider leading-none">Oficinas</span>
+                    <span className="text-[10px] font-semibold text-sky-700 uppercase tracking-wider leading-none">{t('oficina')}</span>
                   )}
                   {isAdmin && (
                     <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider leading-none">Admin</span>
