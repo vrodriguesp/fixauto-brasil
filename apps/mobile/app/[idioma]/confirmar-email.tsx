@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { View, Text, ActivityIndicator, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
@@ -11,6 +11,7 @@ import { useAuth } from '../../lib/auth-context';
 // Links / App Links, ver app.json e /.well-known no site). Confirma e ja entra.
 export default function ConfirmarEmailApp() {
   const { t } = useTranslation();
+  const opcoesTela = useMemo(() => ({ headerShown: false }), []);
   const { token_hash } = useLocalSearchParams<{ token_hash?: string }>();
   const { refreshProfile } = useAuth();
   const [estado, setEstado] = useState<'verificando' | 'erro'>('verificando');
@@ -29,7 +30,7 @@ export default function ConfirmarEmailApp() {
 
   return (
     <View className="flex-1 bg-white items-center justify-center px-6">
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen options={opcoesTela} />
       {estado === 'verificando' ? (
         <>
           <ActivityIndicator color="#0284c7" />

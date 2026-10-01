@@ -77,7 +77,7 @@
     "localPermitir": "Allow location access",
     "localTexto": "We use your location to find nearby repair shops.",
     "erroLocalizacao": "We couldn't get your location. Enter the address manually.",
-    "descricaoLabel": "What happened?",
+    "descricaoLabel": "Describe the accident (optional)",
     "descricaoPlaceholder": "Briefly describe the accident...",
     "enviarRegistro": "Submit report",
     "sucessoTitulo": "Report submitted",
@@ -93,7 +93,8 @@
     "contatoTitulo": "Your contact details",
     "contatoTexto": "We will send you the quotes and an email link to create your password.",
     "sucessoSemConta": "Nearby shops have been notified. We sent a link to {email} so you can create your password and follow the quotes.",
-    "voltarInicio": "Back to start"
+    "voltarInicio": "Back to start",
+    "galeria": "Gallery"
   },
   "novaSolicitacao": {
     "titulo": "New request",

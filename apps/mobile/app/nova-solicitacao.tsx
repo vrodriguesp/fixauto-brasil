@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router, Stack, useFocusEffect } from 'expo-router';
@@ -17,6 +17,10 @@ const COORDS_DEFAULT = { lat: -23.5505, lon: -46.6333 };
 
 export default function NovaSolicitacaoScreen() {
   const { t } = useTranslation();
+  // Opcoes do cabecalho criadas uma vez: objeto novo a cada desenho fazia o
+  // cabecalho e a tela se redesenharem sem fim no iPhone ("Maximum update depth").
+  const tituloTela = t('novaSolicitacao.titulo');
+  const opcoesTela = useMemo(() => ({ headerShown: true, title: tituloTela, presentation: 'modal' as const }), [tituloTela]);
   const { user } = useAuth();
   const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
   const [veiculoId, setVeiculoId] = useState('');
@@ -159,7 +163,7 @@ export default function NovaSolicitacaoScreen() {
 
   return (
     <ScrollView className="flex-1 bg-white px-4 pt-4">
-      <Stack.Screen options={{ headerShown: true, title: t('novaSolicitacao.titulo'), presentation: 'modal' }} />
+      <Stack.Screen options={opcoesTela} />
 
       <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoVeiculo')}</Text>
       <View className="flex-row flex-wrap gap-2 mb-2">

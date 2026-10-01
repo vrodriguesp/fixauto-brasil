@@ -77,7 +77,7 @@
     "localPermitir": "Permitir acesso à localização",
     "localTexto": "Usamos a sua localização para encontrar oficinas próximas.",
     "erroLocalizacao": "Não conseguimos obter a sua localização. Introduza a morada manualmente.",
-    "descricaoLabel": "O que aconteceu?",
+    "descricaoLabel": "Descreva o acidente (opcional)",
     "descricaoPlaceholder": "Descreva brevemente o acidente...",
     "enviarRegistro": "Enviar registo",
     "sucessoTitulo": "Registo enviado",
@@ -93,7 +93,8 @@
     "contatoTitulo": "Os seus dados de contacto",
     "contatoTexto": "Enviamos-lhe os orçamentos e uma ligação por e-mail para criar a sua palavra-passe.",
     "sucessoSemConta": "As oficinas próximas já foram avisadas. Enviámos para {email} uma ligação para criar a sua palavra-passe e acompanhar os orçamentos.",
-    "voltarInicio": "Voltar ao início"
+    "voltarInicio": "Voltar ao início",
+    "galeria": "Galeria"
   },
   "novaSolicitacao": {
     "titulo": "Novo pedido",

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useFocusEffect, router, Stack } from 'expo-router';
@@ -12,6 +12,10 @@ import { mensagemErro } from '../../lib/erro';
 
 export default function SolicitacaoDetailScreen() {
   const { t, i18n } = useTranslation();
+  // Opcoes do cabecalho criadas uma vez: objeto novo a cada desenho fazia o
+  // cabecalho e a tela se redesenharem sem fim no iPhone ("Maximum update depth").
+  const tituloTela = t('acompanhamento.titulo');
+  const opcoesTela = useMemo(() => ({ headerShown: true, title: tituloTela }), [tituloTela]);
   const locale = i18n.language;
   const { user } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -123,7 +127,7 @@ export default function SolicitacaoDetailScreen() {
 
   return (
     <ScrollView className="flex-1 bg-gray-50">
-      <Stack.Screen options={{ headerShown: true, title: t('acompanhamento.titulo') }} />
+      <Stack.Screen options={opcoesTela} />
       <View className="p-4">
         <Text className="text-xl font-bold text-gray-900">{veiculo ? `${veiculo.fipe_marca} ${veiculo.fipe_modelo}` : ''}</Text>
         <Text className="text-gray-600 mb-1">{solicitacao.descricao}</Text>

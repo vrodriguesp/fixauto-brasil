@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router, Stack } from 'expo-router';
@@ -8,6 +8,10 @@ import VehicleCatalogPicker from '../../components/VehicleCatalogPicker';
 
 export default function NovoVeiculoScreen() {
   const { t } = useTranslation();
+  // Opcoes do cabecalho criadas uma vez: objeto novo a cada desenho fazia o
+  // cabecalho e a tela se redesenharem sem fim no iPhone ("Maximum update depth").
+  const tituloTela = t('veiculos.adicionar');
+  const opcoesTela = useMemo(() => ({ headerShown: true, title: tituloTela }), [tituloTela]);
   const { user } = useAuth();
   const [marca, setMarca] = useState<{ code: string; name: string } | null>(null);
   const [modelo, setModelo] = useState<{ code: string; name: string } | null>(null);
@@ -41,7 +45,7 @@ export default function NovoVeiculoScreen() {
 
   return (
     <ScrollView className="flex-1 bg-white px-4 pt-4">
-      <Stack.Screen options={{ headerShown: true, title: t('veiculos.adicionar') }} />
+      <Stack.Screen options={opcoesTela} />
 
       <VehicleCatalogPicker label={t('veiculos.marca')} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" />
 

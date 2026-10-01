@@ -74,7 +74,7 @@ try {
     await page.goto(APP, { waitUntil: 'networkidle' });
     await clicaTexto(page, T('emergencia.titulo'));
     await page.waitForTimeout(800);
-    const [fc] = await Promise.all([page.waitForEvent('filechooser'), clicaTexto(page, T('veiculos.adicionar'))]);
+    const [fc] = await Promise.all([page.waitForEvent('filechooser'), clicaTexto(page, T('emergencia.galeria'))]);
     await fc.setFiles(FOTO);
     await page.waitForTimeout(500);
     await campo(page, T('emergencia.descricaoLabel')).fill('Test automatico: urto al paraurti posteriore');

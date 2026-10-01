@@ -77,7 +77,7 @@
     "localPermitir": "Luba juurdepääs asukohale",
     "localTexto": "Kasutame sinu asukohta lähedal asuvate töökodade leidmiseks.",
     "erroLocalizacao": "Sinu asukohta ei õnnestunud tuvastada. Sisesta aadress käsitsi.",
-    "descricaoLabel": "Mis juhtus?",
+    "descricaoLabel": "Kirjelda avariid (valikuline)",
     "descricaoPlaceholder": "Kirjelda lühidalt õnnetust...",
     "enviarRegistro": "Saada teade",
     "sucessoTitulo": "Teade saadetud",
@@ -93,7 +93,8 @@
     "contatoTitulo": "Sinu kontaktandmed",
     "contatoTexto": "Saadame sulle hinnapakkumised ja e-posti teel lingi parooli loomiseks.",
     "sucessoSemConta": "Lähedal asuvaid töökodasid on teavitatud. Saatsime aadressile {email} lingi, et saaksid luua parooli ja hinnapakkumisi jälgida.",
-    "voltarInicio": "Tagasi algusesse"
+    "voltarInicio": "Tagasi algusesse",
+    "galeria": "Galerii"
   },
   "novaSolicitacao": {
     "titulo": "Uus päring",

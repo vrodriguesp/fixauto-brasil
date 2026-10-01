@@ -77,7 +77,7 @@
     "localPermitir": "Consenti l'accesso alla posizione",
     "localTexto": "Usiamo la tua posizione per trovare officine vicine.",
     "erroLocalizacao": "Non è stato possibile rilevare la tua posizione. Inserisci l'indirizzo manualmente.",
-    "descricaoLabel": "Cos'è successo?",
+    "descricaoLabel": "Descrivi l'incidente (facoltativo)",
     "descricaoPlaceholder": "Descrivi brevemente l'incidente...",
     "enviarRegistro": "Invia segnalazione",
     "sucessoTitulo": "Segnalazione inviata",
@@ -93,7 +93,8 @@
     "contatoTitulo": "I tuoi recapiti",
     "contatoTexto": "Ti inviamo i preventivi e un link via email per creare la tua password.",
     "sucessoSemConta": "Le officine vicine sono state avvisate. Abbiamo inviato a {email} un link per creare la password e seguire i preventivi.",
-    "voltarInicio": "Torna all'inizio"
+    "voltarInicio": "Torna all'inizio",
+    "galeria": "Galleria"
   },
   "novaSolicitacao": {
     "titulo": "Nuova richiesta",

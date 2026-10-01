@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { View, Text, TextInput, Pressable, FlatList, KeyboardAvoidingView, Platform, ActivityIndicator, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, Stack } from 'expo-router';
@@ -20,6 +20,10 @@ interface Mensagem {
 // leva - ver docs/ESPECIFICACAO_APP_MOBILE_CLIENTE.md.
 export default function ConversaScreen() {
   const { t } = useTranslation();
+  // Opcoes do cabecalho criadas uma vez: objeto novo a cada desenho fazia o
+  // cabecalho e a tela se redesenharem sem fim no iPhone ("Maximum update depth").
+  const tituloTela = t('mensagens.titulo');
+  const opcoesTela = useMemo(() => ({ headerShown: true, title: tituloTela }), [tituloTela]);
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
@@ -83,7 +87,7 @@ export default function ConversaScreen() {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-gray-50" keyboardVerticalOffset={90}>
-      <Stack.Screen options={{ headerShown: true, title: t('mensagens.titulo') }} />
+      <Stack.Screen options={opcoesTela} />
       <FlatList
         ref={listRef}
         data={mensagens}
