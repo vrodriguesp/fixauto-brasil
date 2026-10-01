@@ -12,7 +12,9 @@
     "enviar": "Invia",
     "sim": "Sì",
     "nao": "No",
-    "opcional": "facoltativo"
+    "opcional": "facoltativo",
+    "selecione": "Seleziona",
+    "nenhumResultado": "Nessun risultato"
   },
   "tabs": {
     "inicio": "Home",

@@ -12,7 +12,9 @@
     "enviar": "Отправить",
     "sim": "Да",
     "nao": "Нет",
-    "opcional": "необязательно"
+    "opcional": "необязательно",
+    "selecione": "Выберите",
+    "nenhumResultado": "Ничего не найдено"
   },
   "tabs": {
     "inicio": "Главная",

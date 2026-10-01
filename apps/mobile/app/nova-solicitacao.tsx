@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router, Stack, useFocusEffect } from 'expo-router';
@@ -12,11 +12,15 @@ import { API_BASE_URL } from '../lib/api';
 import { notifNovaSolicitacaoTitulo, tipoServicoLabel } from '../lib/notif-i18n';
 import { mensagemErro } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
+import { obterPosicao } from '../lib/posicao';
 
 const COORDS_DEFAULT = { lat: -23.5505, lon: -46.6333 };
 
 export default function NovaSolicitacaoScreen() {
   const { t } = useTranslation();
+  // campo de endereco: ao focar, a tela rola para ele ficar no alto e as sugestoes aparecerem acima do teclado
+  const rolagem = useRef<ScrollView>(null);
+  const posEndereco = useRef(0);
   // Opcoes do cabecalho criadas uma vez: objeto novo a cada desenho fazia o
   // cabecalho e a tela se redesenharem sem fim no iPhone ("Maximum update depth").
   const tituloTela = t('novaSolicitacao.titulo');
@@ -48,7 +52,7 @@ export default function NovaSolicitacaoScreen() {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') return;
-        const pos = await Location.getCurrentPositionAsync({});
+        const pos = await obterPosicao();
         setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
         const res = await fetch(`${API_BASE_URL}/api/geocode?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
         const data = await res.json();
@@ -162,7 +166,7 @@ export default function NovaSolicitacaoScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-white px-4 pt-4">
+    <ScrollView ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       <Stack.Screen options={opcoesTela} />
 
       <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoVeiculo')}</Text>
@@ -217,7 +221,9 @@ export default function NovaSolicitacaoScreen() {
       <Text className="text-sm font-medium text-gray-700 mb-1">
         {t('novaSolicitacao.passoLocal')} {buscandoLocal && <ActivityIndicator size="small" color="#2563eb" />}
       </Text>
+      <View onLayout={(e) => { posEndereco.current = e.nativeEvent.layout.y; }} />
       <EnderecoAutocomplete
+        aoFocar={() => setTimeout(() => rolagem.current?.scrollTo({ y: Math.max(0, posEndereco.current - 40), animated: true }), 250)}
         value={endereco}
         onChange={setEndereco}
         perto={coords}

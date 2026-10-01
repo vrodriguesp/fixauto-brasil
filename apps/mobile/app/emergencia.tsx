@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router, Stack } from 'expo-router';
@@ -11,6 +11,7 @@ import { API_BASE_URL } from '../lib/api';
 import i18n from '../i18n';
 import { ErroApi, ErroUsuario, mensagemErro } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
+import { obterPosicao } from '../lib/posicao';
 
 type Tipo = 'eu_causei' | 'outro_causou' | 'sem_outro';
 type Pagamento = 'proprio' | 'seguro_terceiro' | 'seguro_proprio' | 'nao_sei';
@@ -36,6 +37,9 @@ function Opcao({ ativo, onPress, titulo, desc }: { ativo: boolean; onPress: () =
 
 export default function EmergenciaScreen() {
   const { t } = useTranslation();
+  // campo de endereco: ao focar, a tela rola para ele ficar no alto e as sugestoes aparecerem acima do teclado
+  const rolagem = useRef<ScrollView>(null);
+  const posEndereco = useRef(0);
   // Opcoes do cabecalho criadas uma vez: objeto novo a cada desenho fazia o
   // cabecalho e a tela se redesenharem sem fim no iPhone ("Maximum update depth").
   const tituloTela = t('emergencia.titulo');
@@ -83,7 +87,7 @@ export default function EmergenciaScreen() {
         setBuscandoLocal(false);
         return;
       }
-      const pos = await Location.getCurrentPositionAsync({});
+      const pos = await obterPosicao();
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
       setCoords({ lat, lon });
@@ -183,7 +187,7 @@ export default function EmergenciaScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-white px-4 pt-4">
+    <ScrollView ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       <Stack.Screen options={opcoesTela} />
       <Text className="text-gray-600 mb-6">{t('emergencia.subtitulo')}</Text>
 
@@ -258,7 +262,9 @@ export default function EmergenciaScreen() {
         <Text className="text-gray-700">{buscandoLocal ? t('common.carregando') : t('emergencia.localPermitir')}</Text>
         {buscandoLocal && <ActivityIndicator size="small" color="#2563eb" />}
       </Pressable>
+      <View onLayout={(e) => { posEndereco.current = e.nativeEvent.layout.y; }} />
       <EnderecoAutocomplete
+        aoFocar={() => setTimeout(() => rolagem.current?.scrollTo({ y: Math.max(0, posEndereco.current - 40), animated: true }), 250)}
         value={endereco}
         onChange={setEndereco}
         placeholder={t('emergencia.localTexto')}

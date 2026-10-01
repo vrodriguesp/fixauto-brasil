@@ -1,6 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, Pressable } from 'react-native';
+import * as Localization from 'expo-localization';
 import { API_BASE_URL } from '../lib/api';
+
+// Enquanto o GPS nao responde, prioriza a regiao do aparelho (capital do pais)
+// para as sugestoes nao virem de outra cidade; com a posicao real, ela vale.
+const CENTRO_REGIAO: Record<string, { lat: number; lon: number }> = {
+  EE: { lat: 59.437, lon: 24.745 }, BR: { lat: -23.55, lon: -46.63 }, PT: { lat: 38.72, lon: -9.14 },
+  IT: { lat: 41.9, lon: 12.5 }, LV: { lat: 56.95, lon: 24.11 }, LT: { lat: 54.69, lon: 25.28 }, FI: { lat: 60.17, lon: 24.94 },
+};
+const centroDaRegiao = () => CENTRO_REGIAO[Localization.getLocales()[0]?.regionCode || ''] || null;
 
 export interface SugestaoEndereco {
   rotulo: string;
@@ -16,9 +25,11 @@ export interface SugestaoEndereco {
 // Endereco com sugestoes enquanto digita (mesma rota do site, a partir de 3
 // letras). Aceita texto livre; ao escolher, devolve coordenadas e pais.
 export default function EnderecoAutocomplete({
-  value, onChange, onSelect, placeholder, perto, rotulo,
+  value, onChange, onSelect, placeholder, perto, rotulo, aoFocar,
 }: {
   rotulo?: string;
+  /** a tela rola para deixar o campo no alto: a lista de sugestoes fica acima do teclado */
+  aoFocar?: () => void;
   value: string;
   onChange: (v: string) => void;
   onSelect: (s: SugestaoEndereco) => void;
@@ -35,7 +46,8 @@ export default function EnderecoAutocomplete({
     let cancelado = false;
     const tmr = setTimeout(async () => {
       try {
-        const p = perto ? `&lat=${perto.lat}&lon=${perto.lon}` : '';
+        const ref = perto || centroDaRegiao();
+        const p = ref ? `&lat=${ref.lat}&lon=${ref.lon}` : '';
         const r = await fetch(`${API_BASE_URL}/api/endereco/sugestoes?q=${encodeURIComponent(q)}${p}`);
         const d = r.ok ? ((await r.json()) as SugestaoEndereco[]) : [];
         if (!cancelado) setSugestoes(d);
@@ -51,7 +63,7 @@ export default function EnderecoAutocomplete({
         value={value}
         onChangeText={onChange}
         placeholder={placeholder}
-        onFocus={() => { focado.current = true; }}
+        onFocus={() => { focado.current = true; aoFocar?.(); }}
         onBlur={() => { focado.current = false; }}
         autoCorrect={false}
         className="border border-gray-300 rounded-lg px-4 py-3 text-base"

@@ -12,7 +12,9 @@
     "enviar": "Send",
     "sim": "Yes",
     "nao": "No",
-    "opcional": "optional"
+    "opcional": "optional",
+    "selecione": "Select",
+    "nenhumResultado": "No results"
   },
   "tabs": {
     "inicio": "Home",

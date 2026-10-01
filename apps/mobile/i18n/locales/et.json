@@ -12,7 +12,9 @@
     "enviar": "Saada",
     "sim": "Jah",
     "nao": "Ei",
-    "opcional": "valikuline"
+    "opcional": "valikuline",
+    "selecione": "Vali",
+    "nenhumResultado": "Tulemusi pole"
   },
   "tabs": {
     "inicio": "Avaleht",

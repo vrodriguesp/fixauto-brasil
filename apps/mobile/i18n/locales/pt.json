@@ -12,7 +12,9 @@
     "enviar": "Enviar",
     "sim": "Sim",
     "nao": "Não",
-    "opcional": "opcional"
+    "opcional": "opcional",
+    "selecione": "Selecione",
+    "nenhumResultado": "Nenhum resultado"
   },
   "tabs": {
     "inicio": "Início",
