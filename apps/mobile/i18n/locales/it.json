@@ -161,7 +161,10 @@
     "digiteMensagem": "Scrivi un messaggio...",
     "erroEnviar": "Impossibile inviare il messaggio. Riprova.",
     "gravarAudio": "Tieni premuto per registrare un audio",
-    "enviar": "Invia messaggio"
+    "enviar": "Invia messaggio",
+    "escolherOficina": "Con quale officina?",
+    "escolherOficinaTexto": "Ogni officina ha la sua conversazione con te.",
+    "semConversaAinda": "Nessuna officina ha ancora scritto. Quando un'officina invia un preventivo o un messaggio, la conversazione apparirà qui."
   },
   "veiculos": {
     "titulo": "I miei veicoli",

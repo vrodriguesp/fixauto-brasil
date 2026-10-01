@@ -57,6 +57,8 @@ export default function ClienteMensagensPage() {
   const [loading, setLoading] = useState(true);
   const [solicitacao, setSolicitacao] = useState<SolicitacaoInfo | null>(null);
   const [oficina, setOficina] = useState<OficinaInfo | null>(null);
+  const [oficinaId, setOficinaId] = useState<string | null>(null);
+  const [opcoesOficina, setOpcoesOficina] = useState<{ id: string; nome: string }[] | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
@@ -67,7 +69,9 @@ export default function ClienteMensagensPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Fetch solicitacao info and the oficina from the accepted orcamento
+  // Cada oficina tem a sua conversa com o cliente: ?oficina=<id> diz qual.
+  // Sem ele (link antigo, notificacao, botao geral): orcamento aceito -> essa
+  // oficina; uma so oficina na conversa -> ela; varias -> o cliente escolhe.
   useEffect(() => {
     async function fetchInfo() {
       const { data: sol } = await supabase
@@ -80,41 +84,55 @@ export default function ClienteMensagensPage() {
         setSolicitacao(sol as unknown as SolicitacaoInfo);
       }
 
-      // Try to find the oficina from orcamentos for this solicitacao
-      const { data: orc } = await supabase
-        .from('orcamentos')
-        .select('oficina:oficinas!orcamentos_oficina_id_fkey(nome_fantasia)')
-        .eq('solicitacao_id', id)
-        .eq('status', 'aceito')
-        .single();
-
-      if (orc?.oficina) {
-        setOficina(orc.oficina as unknown as OficinaInfo);
-      } else {
-        // Fallback: get any oficina that sent an orcamento
-        const { data: anyOrc } = await supabase
-          .from('orcamentos')
-          .select('oficina:oficinas!orcamentos_oficina_id_fkey(nome_fantasia)')
-          .eq('solicitacao_id', id)
-          .limit(1)
-          .single();
-
-        if (anyOrc?.oficina) {
-          setOficina(anyOrc.oficina as unknown as OficinaInfo);
-        }
+      const pedida = new URLSearchParams(window.location.search).get('oficina');
+      if (pedida) {
+        setOficinaId(pedida);
+        return;
       }
+      const [{ data: orcs }, { data: msgs }] = await Promise.all([
+        supabase.from('orcamentos').select('oficina_id, status, oficina:oficinas!orcamentos_oficina_id_fkey(nome_fantasia)').eq('solicitacao_id', id),
+        supabase.from('mensagens').select('oficina_id').eq('solicitacao_id', id),
+      ]);
+      const aceito = (orcs || []).find((o: any) => o.status === 'aceito');
+      if (aceito) {
+        setOficinaId(aceito.oficina_id);
+        return;
+      }
+      const nomes = new Map<string, string>();
+      (orcs || []).forEach((o: any) => nomes.set(o.oficina_id, o.oficina?.nome_fantasia || ''));
+      const semNome = (msgs || []).map((m: any) => m.oficina_id).filter((o: string) => !nomes.has(o));
+      if (semNome.length) {
+        const { data: ofs } = await supabase.from('oficinas').select('id, nome_fantasia').in('id', Array.from(new Set(semNome)));
+        (ofs || []).forEach((o: any) => nomes.set(o.id, o.nome_fantasia || ''));
+        semNome.forEach((o: string) => { if (!nomes.has(o)) nomes.set(o, ''); });
+      }
+      if (nomes.size === 1) {
+        setOficinaId(Array.from(nomes.keys())[0]);
+        return;
+      }
+      setOpcoesOficina(Array.from(nomes.entries()).map(([oid, nome]) => ({ id: oid, nome })));
+      setLoading(false);
     }
     fetchInfo();
   }, [id]);
 
+  // Nome da oficina desta conversa
+  useEffect(() => {
+    if (!oficinaId) return;
+    supabase.from('oficinas').select('nome_fantasia').eq('id', oficinaId).maybeSingle()
+      .then(({ data }) => { if (data) setOficina(data as OficinaInfo); });
+  }, [oficinaId]);
+
   // Fetch messages
   useEffect(() => {
+    if (!oficinaId) return;
     async function fetchMessages() {
       setLoading(true);
       const { data } = await supabase
         .from('mensagens')
         .select('*, remetente:profiles!mensagens_remetente_id_fkey(nome, tipo)')
         .eq('solicitacao_id', id)
+        .eq('oficina_id', oficinaId!)
         .order('created_at', { ascending: true });
 
       if (data) {
@@ -123,26 +141,28 @@ export default function ClienteMensagensPage() {
       setLoading(false);
     }
     fetchMessages();
-  }, [id]);
+  }, [id, oficinaId]);
 
   // Mark messages as read
   useEffect(() => {
-    if (!user || messages.length === 0) return;
+    if (!user || !oficinaId || messages.length === 0) return;
     const unread = messages.filter((m) => !m.lida && m.remetente_id !== user.id);
     if (unread.length > 0) {
       supabase
         .from('mensagens')
         .update({ lida: true })
         .eq('solicitacao_id', id)
+        .eq('oficina_id', oficinaId)
         .neq('remetente_id', user.id)
         .then();
     }
-  }, [messages, user, id]);
+  }, [messages, user, id, oficinaId]);
 
   // Real-time subscription
   useEffect(() => {
+    if (!oficinaId) return;
     const channel = supabase
-      .channel(`msgs-cliente-${id}`)
+      .channel(`msgs-cliente-${id}-${oficinaId}`)
       .on(
         'postgres_changes',
         {
@@ -152,6 +172,7 @@ export default function ClienteMensagensPage() {
           filter: `solicitacao_id=eq.${id}`,
         },
         async (payload) => {
+          if ((payload.new as any).oficina_id !== oficinaId) return;
           const { data } = await supabase
             .from('mensagens')
             .select('*, remetente:profiles!mensagens_remetente_id_fkey(nome, tipo)')
@@ -181,7 +202,7 @@ export default function ClienteMensagensPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [id]);
+  }, [id, oficinaId]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -189,7 +210,7 @@ export default function ClienteMensagensPage() {
   }, [messages]);
 
   const handleSend = async () => {
-    if (!newMessage.trim() || !user || sending) return;
+    if (!newMessage.trim() || !user || !oficinaId || sending) return;
 
     const texto = newMessage.trim();
     setNewMessage('');
@@ -197,6 +218,7 @@ export default function ClienteMensagensPage() {
 
     const { error } = await supabase.from('mensagens').insert({
       solicitacao_id: id,
+      oficina_id: oficinaId,
       remetente_id: user.id,
       texto,
     });
@@ -224,16 +246,16 @@ export default function ClienteMensagensPage() {
       }]);
 
       // Notify the oficina (idioma da oficina, nao do cliente que esta enviando)
-      const { data: orcs } = await supabase.from('orcamentos').select('oficina:oficinas(profile_id, profile:profiles!oficinas_profile_id_fkey(idioma))').eq('solicitacao_id', id).limit(1);
-      if (orcs?.[0]?.oficina) {
+      const { data: ofDest } = await supabase.from('oficinas').select('profile_id, profile:profiles!oficinas_profile_id_fkey(idioma)').eq('id', oficinaId).maybeSingle();
+      if (ofDest?.profile_id) {
         try {
-          const oficinaIdioma = (orcs[0].oficina as any).profile?.idioma;
+          const oficinaIdioma = (ofDest as any).profile?.idioma;
           await supabase.from('notificacoes').insert({
-            profile_id: (orcs[0].oficina as any).profile_id,
+            profile_id: ofDest.profile_id,
             tipo: 'nova_mensagem',
             titulo: notifNovaMensagem(oficinaIdioma).titulo,
             mensagem: texto.slice(0, 100),
-            dados: { solicitacao_id: id },
+            dados: { solicitacao_id: id, oficina_id: oficinaId },
           });
         } catch { /* non-blocking */ }
       }
@@ -251,16 +273,17 @@ export default function ClienteMensagensPage() {
   };
 
   const handleAudioRecorded = async (blob: Blob, audioDuration: number) => {
-    if (!user) return;
+    if (!user || !oficinaId) return;
     setShowAudioRecorder(false);
     setUploadingAudio(true);
 
     try {
-      const audioUrl = await uploadAudio(blob, id);
+      const audioUrl = await uploadAudio(blob, id, oficinaId);
       if (!audioUrl) return;
 
       const { error } = await supabase.from('mensagens').insert({
         solicitacao_id: id,
+        oficina_id: oficinaId,
         remetente_id: user.id,
         texto: '[Audio]',
         tipo: 'audio',
@@ -286,20 +309,20 @@ export default function ClienteMensagensPage() {
         ]);
 
         // Notify the oficina (idioma da oficina)
-        const { data: orcs } = await supabase
-          .from('orcamentos')
-          .select('oficina:oficinas(profile_id, profile:profiles!oficinas_profile_id_fkey(idioma))')
-          .eq('solicitacao_id', id)
-          .limit(1);
-        if (orcs?.[0]?.oficina) {
+        const { data: ofDest } = await supabase
+          .from('oficinas')
+          .select('profile_id, profile:profiles!oficinas_profile_id_fkey(idioma)')
+          .eq('id', oficinaId)
+          .maybeSingle();
+        if (ofDest?.profile_id) {
           try {
-            const nAudio = notifNovaMensagem((orcs[0].oficina as any).profile?.idioma);
+            const nAudio = notifNovaMensagem((ofDest as any).profile?.idioma);
             await supabase.from('notificacoes').insert({
-              profile_id: (orcs[0].oficina as any).profile_id,
+              profile_id: ofDest.profile_id,
               tipo: 'nova_mensagem',
               titulo: nAudio.tituloAudio,
               mensagem: nAudio.mensagemAudio,
-              dados: { solicitacao_id: id },
+              dados: { solicitacao_id: id, oficina_id: oficinaId },
             });
           } catch { /* non-blocking */ }
         }
@@ -331,6 +354,28 @@ export default function ClienteMensagensPage() {
     const previous = new Date(messages[index - 1].created_at).toDateString();
     return current !== previous;
   };
+
+  if (!oficinaId && opcoesOficina) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        <Link href="/cliente/mensagens" className="text-sm text-gray-500 hover:text-gray-700">&larr; {t('voltarConversas')}</Link>
+        <h1 className="text-xl font-bold text-gray-900 mt-3 mb-1">{t('escolherOficinaTitulo')}</h1>
+        <p className="text-sm text-gray-500 mb-4">{t('escolherOficinaTexto')}</p>
+        {opcoesOficina.length === 0 ? (
+          <p className="text-sm text-gray-500 bg-white border border-gray-200 rounded-xl p-4">{t('semConversaAinda')}</p>
+        ) : (
+          <div className="bg-white border border-gray-200 rounded-xl divide-y divide-gray-100">
+            {opcoesOficina.map((o) => (
+              <button key={o.id} type="button" onClick={() => setOficinaId(o.id)}
+                className="w-full text-left px-4 py-4 min-h-[44px] hover:bg-gray-50 font-medium text-gray-900">
+                {o.nome || t('workshopFallback')}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] h-[calc(100dvh-4rem)] max-w-4xl mx-auto">

@@ -196,6 +196,7 @@ export function useOrcamentos() {
       const valorFormatadoChat = formatCurrency(input.valor_total, currencyForCountry(oficina.pais), user?.idioma);
       await supabase.from('mensagens').insert({
         solicitacao_id: input.solicitacao_id,
+        oficina_id: oficina.id,
         remetente_id: oficina.profile_id,
         // Idioma da oficina (decisao do usuario: chat compartilhado assume
         // o idioma do pais/mercado da transacao, sem tradutor).

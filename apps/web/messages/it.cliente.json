@@ -263,7 +263,11 @@
     "sendingAudio": "Invio audio in corso...",
     "messagePlaceholder": "Scrivi il tuo messaggio...",
     "recordAudio": "Registra audio",
-    "erroEnviar": "Invio non riuscito. Il messaggio è ancora nel campo; riprova."
+    "erroEnviar": "Invio non riuscito. Il messaggio è ancora nel campo; riprova.",
+    "voltarConversas": "Conversazioni",
+    "escolherOficinaTitulo": "Con quale officina?",
+    "escolherOficinaTexto": "Ogni officina ha la sua conversazione con te.",
+    "semConversaAinda": "Nessuna officina ha ancora scritto. Quando un'officina invia un preventivo o un messaggio, la conversazione apparirà qui."
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Ricevuto",

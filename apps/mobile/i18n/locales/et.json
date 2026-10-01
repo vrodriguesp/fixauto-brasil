@@ -161,7 +161,10 @@
     "digiteMensagem": "Kirjuta sõnum...",
     "erroEnviar": "Sõnumit ei õnnestunud saata. Proovi uuesti.",
     "gravarAudio": "Hoia all, et salvestada häälsõnum",
-    "enviar": "Saada sõnum"
+    "enviar": "Saada sõnum",
+    "escolherOficina": "Millise töökojaga?",
+    "escolherOficinaTexto": "Igal töökojal on teiega oma vestlus.",
+    "semConversaAinda": "Ükski töökoda pole veel kirjutanud. Kui töökoda saadab hinnapakkumise või sõnumi, ilmub vestlus siia."
   },
   "veiculos": {
     "titulo": "Minu sõidukid",

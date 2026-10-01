@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionUserId } from '@/lib/api-auth';
 import { dentroDoLimite } from '@/lib/rate-limit';
-import { participaDaSolicitacao } from '@/lib/acesso-servico';
+import { participaDaConversa } from '@/lib/acesso-servico';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { baixarMidia } from '@/lib/midia-servidor';
 
@@ -17,8 +17,8 @@ export async function POST(request: NextRequest) {
     // qualquer um lia a transcricao de qualquer audio e gastava o Gemini.
     const userId = await getSessionUserId(request);
     if (!userId) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
-    const { data: dono } = await supabaseAdmin.from('mensagens').select('solicitacao_id').eq('id', mensagemId).maybeSingle();
-    if (!dono || !(await participaDaSolicitacao(userId, dono.solicitacao_id))) {
+    const { data: dono } = await supabaseAdmin.from('mensagens').select('solicitacao_id, oficina_id').eq('id', mensagemId).maybeSingle();
+    if (!dono || !(await participaDaConversa(userId, dono.solicitacao_id, dono.oficina_id))) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
     if (!dentroDoLimite(`transcrever:${userId}`, 30, 60 * 60 * 1000)) {

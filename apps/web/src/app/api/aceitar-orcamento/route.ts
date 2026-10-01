@@ -223,6 +223,7 @@ export async function POST(req: NextRequest) {
             if (responsavelProfileId && oficinaProfileId) {
               await supabaseAdmin.from('mensagens').insert({
                 solicitacao_id: orc.solicitacao_id,
+                oficina_id: orc.oficina_id,
                 remetente_id: oficinaProfileId,
                 texto: chatOrcamentoAceitoNegociarPagamento(oficinaIdioma, oficinaNome),
                 tipo: 'texto',

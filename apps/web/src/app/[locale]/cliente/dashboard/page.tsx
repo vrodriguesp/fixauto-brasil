@@ -73,9 +73,10 @@ export default function ClienteDashboard() {
             {topNotificacoes.map((n) => {
               const solId = (n.dados as Record<string, string> | null)?.solicitacao_id;
               const emergId = (n.dados as Record<string, string> | null)?.emergencia_id;
+              const ofId = (n.dados as Record<string, string> | null)?.oficina_id;
               const getNotificationHref = () => {
                 if (n.tipo === 'acidente' && emergId) return `/cliente/mensagens`;
-                if (n.tipo === 'nova_mensagem') return solId ? `/cliente/mensagens/${solId}` : '/cliente/mensagens';
+                if (n.tipo === 'nova_mensagem') return solId ? `/cliente/mensagens/${solId}${ofId ? `?oficina=${ofId}` : ''}` : '/cliente/mensagens';
                 if (n.tipo === 'servico_concluido' && solId) return `/cliente/orcamentos/${solId}`;
                 if (solId) return `/cliente/orcamentos/${solId}`;
                 return '/cliente/mensagens';

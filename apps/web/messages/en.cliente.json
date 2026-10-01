@@ -263,7 +263,11 @@
     "sendingAudio": "Sending audio...",
     "messagePlaceholder": "Type your message...",
     "recordAudio": "Record audio",
-    "erroEnviar": "Could not send. Your message is still in the box; please try again."
+    "erroEnviar": "Could not send. Your message is still in the box; please try again.",
+    "voltarConversas": "Conversations",
+    "escolherOficinaTitulo": "Which workshop?",
+    "escolherOficinaTexto": "Each workshop has its own conversation with you.",
+    "semConversaAinda": "No workshop has written yet. When a workshop sends a quote or a message, the conversation will appear here."
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Received",

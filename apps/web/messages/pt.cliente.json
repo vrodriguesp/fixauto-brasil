@@ -263,7 +263,11 @@
     "sendingAudio": "Enviando áudio...",
     "messagePlaceholder": "Digite sua mensagem...",
     "recordAudio": "Gravar áudio",
-    "erroEnviar": "Não foi possível enviar. A mensagem continua no campo; tente de novo."
+    "erroEnviar": "Não foi possível enviar. A mensagem continua no campo; tente de novo.",
+    "voltarConversas": "Conversas",
+    "escolherOficinaTitulo": "Com qual oficina?",
+    "escolherOficinaTexto": "Cada oficina tem a sua conversa com você.",
+    "semConversaAinda": "Nenhuma oficina escreveu ainda. Quando uma oficina mandar orçamento ou mensagem, a conversa aparece aqui."
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Recebido",

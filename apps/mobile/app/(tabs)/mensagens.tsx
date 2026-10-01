@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase';
 
 interface ConversaItem {
   solicitacaoId: string;
+  oficinaId: string;
   oficinaNome: string;
   veiculoDesc: string;
   ultimaMensagem: string;
@@ -41,33 +42,44 @@ export default function MensagensScreen() {
     const solIds = solicitacoes.map((s: any) => s.id);
     const { data: mensagens } = await supabase
       .from('mensagens')
-      .select('solicitacao_id, remetente_id, texto, tipo, lida, created_at')
+      .select('solicitacao_id, oficina_id, remetente_id, texto, tipo, lida, created_at')
       .in('solicitacao_id', solIds)
       .order('created_at', { ascending: false });
 
     const { data: orcamentos } = await supabase
       .from('orcamentos')
-      .select('solicitacao_id, oficina:oficinas(nome_fantasia)')
+      .select('solicitacao_id, oficina_id, oficina:oficinas(nome_fantasia)')
       .in('solicitacao_id', solIds);
+
+    // nome das oficinas (as que so escreveram ainda nao tem orcamento)
+    const nomes = new Map<string, string>();
+    (orcamentos || []).forEach((o: any) => nomes.set(o.oficina_id, o.oficina?.nome_fantasia || ''));
+    const faltam = Array.from(new Set((mensagens || []).map((m: any) => m.oficina_id).filter((o: string) => !nomes.has(o))));
+    if (faltam.length) {
+      const { data: ofs } = await supabase.from('oficinas').select('id, nome_fantasia').in('id', faltam);
+      (ofs || []).forEach((o: any) => nomes.set(o.id, o.nome_fantasia || ''));
+    }
 
     const items: ConversaItem[] = [];
     for (const sol of solicitacoes as any[]) {
       const solMsgs = (mensagens || []).filter((m: any) => m.solicitacao_id === sol.id);
-      if (solMsgs.length === 0) continue;
-      const last = solMsgs[0];
-      // O cliente supabase-js sem tipos gerados do schema infere join
-      // to-one (orcamentos.oficina_id -> oficinas.id) como array - em
-      // runtime o Supabase sempre retorna um objeto unico aqui.
-      const oficina = (orcamentos || []).find((o: any) => o.solicitacao_id === sol.id)?.oficina as { nome_fantasia: string } | undefined;
-      items.push({
-        solicitacaoId: sol.id,
-        oficinaNome: oficina?.nome_fantasia || '-',
-        veiculoDesc: sol.veiculo ? `${sol.veiculo.fipe_marca} ${sol.veiculo.fipe_modelo}` : '',
-        ultimaMensagem: last.tipo === 'audio' ? '🎤' : last.texto,
-        ultimaMensagemAt: last.created_at,
-        naoLidas: solMsgs.filter((m: any) => !m.lida && m.remetente_id !== user.id).length,
-      });
+      // cada oficina tem a sua conversa com o cliente
+      const oficinas = Array.from(new Set(solMsgs.map((m: any) => m.oficina_id as string)));
+      for (const oficinaId of oficinas) {
+        const daOficina = solMsgs.filter((m: any) => m.oficina_id === oficinaId);
+        const last = daOficina[0];
+        items.push({
+          solicitacaoId: sol.id,
+          oficinaId,
+          oficinaNome: nomes.get(oficinaId) || '-',
+          veiculoDesc: sol.veiculo ? `${sol.veiculo.fipe_marca} ${sol.veiculo.fipe_modelo}` : '',
+          ultimaMensagem: last.tipo === 'audio' ? '🎤' : last.texto,
+          ultimaMensagemAt: last.created_at,
+          naoLidas: daOficina.filter((m: any) => !m.lida && m.remetente_id !== user.id).length,
+        });
+      }
     }
+    items.sort((a, b) => b.ultimaMensagemAt.localeCompare(a.ultimaMensagemAt));
     setConversas(items);
     setLoading(false);
   }, [user]);
@@ -83,16 +95,17 @@ export default function MensagensScreen() {
       <Text className="text-2xl font-bold text-gray-900 mb-4">{t('mensagens.titulo')}</Text>
       <FlatList
         data={conversas}
-        keyExtractor={(item) => item.solicitacaoId}
+        keyExtractor={(item) => `${item.solicitacaoId}-${item.oficinaId}`}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={carregar} />}
         ListEmptyComponent={!loading ? <Text className="text-gray-500 text-center mt-8">{t('mensagens.nenhumaConversa')}</Text> : null}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => router.push(`/conversa/${item.solicitacaoId}`)}
+            onPress={() => router.push({ pathname: '/conversa/[id]', params: { id: item.solicitacaoId, oficina: item.oficinaId } })}
             className="bg-white rounded-xl p-4 mb-3 border border-gray-200 flex-row justify-between items-center"
           >
             <View className="flex-1 mr-2">
               <Text className="font-semibold text-gray-900">{item.oficinaNome}</Text>
+              {!!item.veiculoDesc && <Text className="text-gray-400 text-xs">{item.veiculoDesc}</Text>}
               <Text className="text-gray-500 text-sm" numberOfLines={1}>{item.ultimaMensagem}</Text>
             </View>
             {item.naoLidas > 0 && (

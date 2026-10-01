@@ -441,6 +441,12 @@ export default function OrcamentoDetalhePage() {
                         {orc.oficina?.nome_fantasia}
                       </Link>
                     </h3>
+                    {orc.oficina?.id && (
+                      <Link href={`/cliente/mensagens/${solicitacao.id}?oficina=${orc.oficina.id}`}
+                        className="inline-flex items-center gap-1 text-xs font-medium text-primary-700 hover:underline py-1">
+                        {t('messageToWorkshop')}
+                      </Link>
+                    )}
                     <div className="flex items-center gap-2">
                       <StarRating rating={orc.oficina?.avaliacao_media || 0} size="sm" />
                       <span className="text-xs text-gray-500">

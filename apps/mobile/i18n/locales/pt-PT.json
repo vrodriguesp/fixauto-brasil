@@ -161,7 +161,10 @@
     "digiteMensagem": "Escreva uma mensagem...",
     "erroEnviar": "Não foi possível enviar a mensagem. Tente novamente.",
     "gravarAudio": "Mantenha premido para gravar uma mensagem de voz",
-    "enviar": "Enviar mensagem"
+    "enviar": "Enviar mensagem",
+    "escolherOficina": "Com que oficina?",
+    "escolherOficinaTexto": "Cada oficina tem a sua conversa consigo.",
+    "semConversaAinda": "Nenhuma oficina escreveu ainda. Quando uma oficina enviar orçamento ou mensagem, a conversa aparece aqui."
   },
   "veiculos": {
     "titulo": "Os meus veículos",

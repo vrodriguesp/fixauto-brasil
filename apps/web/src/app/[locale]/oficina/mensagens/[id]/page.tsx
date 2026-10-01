@@ -105,14 +105,16 @@ export default function OficinaMensagensPage() {
     }
   }, [id, oficina]);
 
-  // Fetch messages
+  // Fetch messages - so a conversa desta oficina com o cliente
   useEffect(() => {
+    if (!oficina) return;
     async function fetchMessages() {
       setLoading(true);
       const { data } = await supabase
         .from('mensagens')
         .select('*, remetente:profiles!mensagens_remetente_id_fkey(nome, tipo)')
         .eq('solicitacao_id', id)
+        .eq('oficina_id', oficina!.id)
         .order('created_at', { ascending: true });
 
       if (data) {
@@ -121,26 +123,28 @@ export default function OficinaMensagensPage() {
       setLoading(false);
     }
     fetchMessages();
-  }, [id]);
+  }, [id, oficina]);
 
   // Mark messages as read
   useEffect(() => {
-    if (!user || messages.length === 0) return;
+    if (!user || !oficina || messages.length === 0) return;
     const unread = messages.filter((m) => !m.lida && m.remetente_id !== user.id);
     if (unread.length > 0) {
       supabase
         .from('mensagens')
         .update({ lida: true })
         .eq('solicitacao_id', id)
+        .eq('oficina_id', oficina.id)
         .neq('remetente_id', user.id)
         .then();
     }
-  }, [messages, user, id]);
+  }, [messages, user, id, oficina]);
 
   // Real-time subscription
   useEffect(() => {
+    if (!oficina) return;
     const channel = supabase
-      .channel(`msgs-oficina-${id}`)
+      .channel(`msgs-oficina-${id}-${oficina.id}`)
       .on(
         'postgres_changes',
         {
@@ -150,6 +154,7 @@ export default function OficinaMensagensPage() {
           filter: `solicitacao_id=eq.${id}`,
         },
         async (payload) => {
+          if ((payload.new as any).oficina_id !== oficina.id) return;
           // Fetch complete message with remetente info
           const { data } = await supabase
             .from('mensagens')
@@ -180,7 +185,7 @@ export default function OficinaMensagensPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [id]);
+  }, [id, oficina]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -188,7 +193,7 @@ export default function OficinaMensagensPage() {
   }, [messages]);
 
   const handleSend = async () => {
-    if (!newMessage.trim() || !user || sending) return;
+    if (!newMessage.trim() || !user || !oficina || sending) return;
 
     const texto = newMessage.trim();
     setNewMessage('');
@@ -196,6 +201,7 @@ export default function OficinaMensagensPage() {
 
     const { error } = await supabase.from('mensagens').insert({
       solicitacao_id: id,
+      oficina_id: oficina.id,
       remetente_id: user.id,
       texto,
     });
@@ -232,7 +238,7 @@ export default function OficinaMensagensPage() {
             tipo: 'nova_mensagem',
             titulo: notifNovaMensagem((sol.cliente as any)?.idioma).titulo,
             mensagem: texto.slice(0, 100),
-            dados: { solicitacao_id: id },
+            dados: { solicitacao_id: id, oficina_id: oficina.id },
           });
         } catch { /* non-blocking */ }
       }
@@ -250,16 +256,17 @@ export default function OficinaMensagensPage() {
   };
 
   const handleAudioRecorded = async (blob: Blob, audioDuration: number) => {
-    if (!user) return;
+    if (!user || !oficina) return;
     setShowAudioRecorder(false);
     setUploadingAudio(true);
 
     try {
-      const audioUrl = await uploadAudio(blob, id);
+      const audioUrl = await uploadAudio(blob, id, oficina.id);
       if (!audioUrl) return;
 
       const { error } = await supabase.from('mensagens').insert({
         solicitacao_id: id,
+        oficina_id: oficina.id,
         remetente_id: user.id,
         texto: t('audioTag'),
         tipo: 'audio',
@@ -298,7 +305,7 @@ export default function OficinaMensagensPage() {
               tipo: 'nova_mensagem',
               titulo: nAudio.tituloAudio,
               mensagem: nAudio.mensagemAudio,
-              dados: { solicitacao_id: id },
+              dados: { solicitacao_id: id, oficina_id: oficina.id },
             });
           } catch { /* non-blocking */ }
         }
@@ -462,13 +469,6 @@ export default function OficinaMensagensPage() {
 
       {/* Input area */}
       <div className="bg-white border-t px-4 py-3 flex-shrink-0">
-        {/* a conversa do pedido e uma so: a oficina entra nela ao mandar o orcamento */}
-        {!hasOrcamento && (
-          <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-2">
-            {t('precisaOrcamento')}{' '}
-            <Link href={`/oficina/enviar-orcamento/${id}`} className="font-semibold underline">{t('fazerOrcamento')}</Link>
-          </p>
-        )}
         {erroEnvio && <p className="text-xs text-red-700 mb-2" role="alert">{t('erroEnviar')}</p>}
         {showAudioRecorder ? (
           <AudioRecorder onRecorded={handleAudioRecorded} />

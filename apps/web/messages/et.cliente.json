@@ -263,7 +263,11 @@
     "sendingAudio": "Saadan heli...",
     "messagePlaceholder": "Kirjuta sõnum...",
     "recordAudio": "Salvesta heli",
-    "erroEnviar": "Saatmine ebaõnnestus. Sõnum on endiselt väljal; proovi uuesti."
+    "erroEnviar": "Saatmine ebaõnnestus. Sõnum on endiselt väljal; proovi uuesti.",
+    "voltarConversas": "Vestlused",
+    "escolherOficinaTitulo": "Millise töökojaga?",
+    "escolherOficinaTexto": "Igal töökojal on teiega oma vestlus.",
+    "semConversaAinda": "Ükski töökoda pole veel kirjutanud. Kui töökoda saadab hinnapakkumise või sõnumi, ilmub vestlus siia."
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Vastu võetud",

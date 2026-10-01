@@ -9,6 +9,7 @@ import { timeAgo, cleanDescricao } from '@/lib/utils';
 
 interface ConversaOficina {
   solicitacao_id: string;
+  oficina_id: string;
   oficina_nome: string;
   veiculo_desc: string;
   placa: string;
@@ -71,15 +72,24 @@ export default function ClienteMensagensListPage() {
       // 2. Get last message per solicitacao from mensagens table
       const { data: mensagens } = await supabase
         .from('mensagens')
-        .select('id, solicitacao_id, remetente_id, texto, tipo, lida, created_at')
+        .select('id, solicitacao_id, oficina_id, remetente_id, texto, tipo, lida, created_at')
         .in('solicitacao_id', solIds)
         .order('created_at', { ascending: false });
 
       // 3. Get oficinas linked via orcamentos
       const { data: orcamentos } = await supabase
         .from('orcamentos')
-        .select('solicitacao_id, oficina:oficinas!orcamentos_oficina_id_fkey(nome_fantasia)')
+        .select('solicitacao_id, oficina_id, oficina:oficinas!orcamentos_oficina_id_fkey(nome_fantasia)')
         .in('solicitacao_id', solIds);
+
+      // nome das oficinas que so conversaram (ainda sem orcamento)
+      const nomeOficina = new Map<string, string>();
+      (orcamentos || []).forEach((o: any) => nomeOficina.set(o.oficina_id, o.oficina?.nome_fantasia || ''));
+      const soConversa = Array.from(new Set((mensagens || []).map((m: any) => m.oficina_id).filter((o: string) => !nomeOficina.has(o))));
+      if (soConversa.length) {
+        const { data: ofs } = await supabase.from('oficinas').select('id, nome_fantasia').in('id', soConversa);
+        (ofs || []).forEach((o: any) => nomeOficina.set(o.id, o.nome_fantasia || ''));
+      }
 
       // 4. Get emergencias linked to solicitacoes
       const { data: emergencias } = await supabase
@@ -143,25 +153,26 @@ export default function ClienteMensagensListPage() {
       for (const sol of solicitacoes) {
         const veiculo = sol.veiculo as any;
         const solMensagens = mensagens?.filter((m: any) => m.solicitacao_id === sol.id) || [];
-        const lastMsg = solMensagens[0];
-        const naoLidas = solMensagens.filter(
-          (m: any) => !m.lida && m.remetente_id !== user!.id
-        ).length;
 
-        const oficinaNome = orcamentos?.find((o: any) => o.solicitacao_id === sol.id)?.oficina;
-
-        const conversasOficina: ConversaOficina[] = [];
-        if (solMensagens.length > 0 || orcamentos?.some((o: any) => o.solicitacao_id === sol.id)) {
-          conversasOficina.push({
+        // uma conversa por oficina: as que orcaram e as que ja escreveram
+        const oficinasDoPedido = Array.from(new Set([
+          ...solMensagens.map((m: any) => m.oficina_id),
+          ...(orcamentos || []).filter((o: any) => o.solicitacao_id === sol.id).map((o: any) => o.oficina_id),
+        ]));
+        const conversasOficina: ConversaOficina[] = oficinasDoPedido.map((oficinaId) => {
+          const daOficina = solMensagens.filter((m: any) => m.oficina_id === oficinaId);
+          const lastMsg = daOficina[0];
+          return {
             solicitacao_id: sol.id,
-            oficina_nome: (oficinaNome as any)?.nome_fantasia || t('workshopFallback'),
+            oficina_id: oficinaId,
+            oficina_nome: nomeOficina.get(oficinaId) || t('workshopFallback'),
             veiculo_desc: veiculo ? `${veiculo.fipe_marca} ${veiculo.fipe_modelo}` : '',
             placa: veiculo?.placa || '',
             ultima_mensagem: lastMsg?.tipo === 'audio' ? t('audioMessage') : (lastMsg?.texto || t('noMessages')),
             ultima_mensagem_at: lastMsg?.created_at || '',
-            nao_lidas: naoLidas,
-          });
-        }
+            nao_lidas: daOficina.filter((m: any) => !m.lida && m.remetente_id !== user!.id).length,
+          };
+        }).sort((a, b) => (b.ultima_mensagem_at || '').localeCompare(a.ultima_mensagem_at || ''));
 
         const conversaEmergencia = emergenciaMsgMap[sol.id] || null;
 
@@ -230,7 +241,7 @@ export default function ClienteMensagensListPage() {
               // Get oficina name from orcamentos
               const { data: pagOrc } = await supabase
                 .from('orcamentos')
-                .select('oficina:oficinas!orcamentos_oficina_id_fkey(nome_fantasia)')
+                .select('oficina_id, oficina:oficinas!orcamentos_oficina_id_fkey(nome_fantasia)')
                 .eq('solicitacao_id', emerg.solicitacao_id)
                 .eq('status', 'aceito')
                 .limit(1);
@@ -239,6 +250,7 @@ export default function ClienteMensagensListPage() {
 
               outroConversasOficina.push({
                 solicitacao_id: emerg.solicitacao_id,
+                oficina_id: (pagOrc?.[0] as any)?.oficina_id || '',
                 oficina_nome: pagOficinaNome,
                 veiculo_desc: reg.veiculo_descricao || '',
                 placa: reg.placa || '',
@@ -350,8 +362,8 @@ export default function ClienteMensagensListPage() {
                 {/* Oficina conversations */}
                 {group.conversas_oficina.map((conv) => (
                   <Link
-                    key={`oficina-${conv.solicitacao_id}`}
-                    href={`/cliente/mensagens/${conv.solicitacao_id}`}
+                    key={`oficina-${conv.solicitacao_id}-${conv.oficina_id}`}
+                    href={conv.oficina_id ? `/cliente/mensagens/${conv.solicitacao_id}?oficina=${conv.oficina_id}` : `/cliente/mensagens/${conv.solicitacao_id}`}
                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                   >
                     <div className={`w-10 h-10 ${group.is_responsavel_pagamento ? 'bg-red-100' : 'bg-orange-100'} rounded-full flex items-center justify-center flex-shrink-0`}>

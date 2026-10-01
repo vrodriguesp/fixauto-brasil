@@ -161,7 +161,10 @@
     "digiteMensagem": "Type a message...",
     "erroEnviar": "Couldn't send the message. Please try again.",
     "gravarAudio": "Hold to record a voice message",
-    "enviar": "Send message"
+    "enviar": "Send message",
+    "escolherOficina": "Which workshop?",
+    "escolherOficinaTexto": "Each workshop has its own conversation with you.",
+    "semConversaAinda": "No workshop has written yet. When a workshop sends a quote or a message, the conversation will appear here."
   },
   "veiculos": {
     "titulo": "My vehicles",
