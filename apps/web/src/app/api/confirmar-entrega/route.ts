@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
 
-    const { eventoId, solicitacaoId } = await req.json();
+    const { eventoId } = await req.json();
     if (!eventoId) {
       return NextResponse.json({ error: 'eventoId obrigatório' }, { status: 400 });
     }
@@ -24,13 +24,19 @@ export async function POST(req: NextRequest) {
     // outra oficina e lancava comissao contra ela indevidamente.
     const { data: evento } = await supabaseAdmin
       .from('agenda')
-      .select('oficina:oficinas(profile_id, nome_fantasia)')
+      .select('oficina_id, solicitacao_id, oficina:oficinas(profile_id, nome_fantasia)')
       .eq('id', eventoId)
       .single();
     if (!evento || (evento as any).oficina?.profile_id !== callerId) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
     const oficinaNome = (evento as any).oficina?.nome_fantasia || 'a oficina';
+    // O pedido vem do PROPRIO evento, nunca do corpo da requisicao: senao uma
+    // oficina podia mandar o id de um pedido de outra e conclui-lo/gerar
+    // comissao nele. Check-in manual (tipo 'externo') nao tem pedido, entao
+    // nunca gera comissao.
+    const solicitacaoId: string | null = (evento as any).solicitacao_id || null;
+    const oficinaDoEvento: string = (evento as any).oficina_id;
 
     // 1. Update agenda event to concluido + set data_fim to actual delivery date
     if (eventoId) {
@@ -100,8 +106,9 @@ export async function POST(req: NextRequest) {
           .from('orcamentos')
           .select('id, oficina_id, valor_total')
           .eq('solicitacao_id', solicitacaoId)
+          .eq('oficina_id', oficinaDoEvento)
           .eq('status', 'aceito')
-          .single();
+          .maybeSingle();
 
         if (orc) {
           // Avoid double-charging commission if this endpoint runs twice for the same orcamento
@@ -109,7 +116,7 @@ export async function POST(req: NextRequest) {
             .from('comissao_lancamento')
             .select('id')
             .eq('orcamento_id', orc.id)
-            .single();
+            .maybeSingle();
 
           // Condicao pela hierarquia (individual do admin > regra global):
           // percentual ou valor fixo por servico. Zero (fase de parceiros

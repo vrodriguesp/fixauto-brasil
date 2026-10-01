@@ -230,7 +230,9 @@
     "validUntil": "Действительна до {date}",
     "refusing": "Отклоняем...",
     "refuse": "Отклонить",
-    "acceptAndSchedule": "Принять и записаться"
+    "acceptAndSchedule": "Принять и записаться",
+    "escolhaHorarioDica": "Нажмите на день и время, когда вы привезёте машину в автосервис.",
+    "escolhaHorarioAntes": "Выберите время выше"
   },
   "clienteMensagens": {
     "workshopFallback": "Автосервис",

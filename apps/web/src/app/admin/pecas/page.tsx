@@ -174,7 +174,33 @@ export default function AdminPecasPage() {
         {linhas.length === 0 ? (
           <p className="text-slate-500 text-sm text-center py-10">Nenhum fornecedor cadastrado ainda</p>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+          {/* Celular: cartoes com o botao Ativar a vista */}
+          <div className="md:hidden divide-y divide-slate-700">
+            {[...linhas].sort((x, y) => Number(x.ativa) - Number(y.ativa)).map((f) => (
+              <div key={`m-${f.tipo}-${f.id}`} className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-white font-semibold break-words">{f.nome_fantasia}</p>
+                    <p className="text-xs text-slate-400">{f.tipo === 'loja' ? 'Loja de peças' : 'Oficina fornecedora'} · {f.cidade}, {f.estado}</p>
+                    <p className="text-xs text-slate-400">Registro: {f.cnpj || '—'}</p>
+                    <p className="text-xs text-slate-500 break-all">{f.email}</p>
+                  </div>
+                  <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-medium ${f.ativa ? 'bg-emerald-900/40 text-emerald-300' : 'bg-slate-700 text-slate-400'}`}>{f.ativa ? 'Ativa' : 'Inativa'}</span>
+                </div>
+                {f.tipo === 'loja' && (
+                  <button
+                    onClick={() => alternarAtiva(f)}
+                    disabled={ocupado === f.id}
+                    className={`mt-3 w-full min-h-[44px] rounded-lg font-semibold disabled:opacity-50 ${f.ativa ? 'bg-amber-500/20 text-amber-300' : 'bg-emerald-600 text-white'}`}
+                  >
+                    {f.ativa ? 'Desativar' : 'Ativar'}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-xs text-slate-500 border-b border-slate-700">
@@ -223,6 +249,7 @@ export default function AdminPecasPage() {
               </tbody>
             </table>
           </div>
+          </>
         )}
       </div>
 

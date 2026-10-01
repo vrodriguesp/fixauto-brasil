@@ -11,6 +11,8 @@ import ComissaoPecasCard from '@/components/pecas/ComissaoPecasCard';
 import type { CotacaoPeca, CotacaoPecaResposta } from '@fixauto/shared';
 import { Link } from '@/i18n/navigation';
 import { notifPedidoConfirmado } from '@/lib/notif-i18n';
+import DetalhesPedidoPeca from '@/components/pecas/DetalhesPedidoPeca';
+import { compressImage } from '@/lib/image-compress';
 
 interface CotacaoComRespostas extends CotacaoPeca {
   respostas: (CotacaoPecaResposta & {
@@ -36,7 +38,9 @@ export default function OficinaPecasPage() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [confirmandoId, setConfirmandoId] = useState<string | null>(null);
-  const [form, setForm] = useState({ peca_descricao: '', fipe_marca: '', fipe_modelo: '', fipe_ano: '', quantidade: '1' });
+  const [form, setForm] = useState({ peca_descricao: '', fipe_marca: '', fipe_modelo: '', fipe_ano: '', quantidade: '1', observacao: '' });
+  // fotos da peca (ate 4), enviadas depois de criar o pedido
+  const [fotosPeca, setFotosPeca] = useState<File[]>([]);
 
   const fetchCotacoes = async () => {
     if (!oficina) return;
@@ -62,7 +66,20 @@ export default function OficinaPecasPage() {
       fipe_modelo: form.fipe_modelo || null,
       fipe_ano: form.fipe_ano || null,
       quantidade: parseInt(form.quantidade) || 1,
+      observacao: form.observacao.trim() || null,
     }).select().single();
+
+    // fotos: pasta publica da propria oficina (a regra de envio ja permite)
+    if (nova && fotosPeca.length) {
+      const urls: string[] = [];
+      for (const original of fotosPeca.slice(0, 4)) {
+        const foto = await compressImage(original);
+        const caminho = `oficinas/${oficina.id}/pecas/${nova.id}/${crypto.randomUUID()}.jpg`;
+        const { error: eUp } = await supabase.storage.from('publico').upload(caminho, foto, { contentType: foto.type || 'image/jpeg' });
+        if (!eUp) urls.push(supabase.storage.from('publico').getPublicUrl(caminho).data.publicUrl);
+      }
+      if (urls.length) await supabase.from('cotacoes_pecas').update({ fotos: urls }).eq('id', nova.id);
+    }
 
     // Avisa oficinas vizinhas que se inscreveram como fornecedoras de pecas
     // (lojas de pecas continuam no modelo pull, navegando /loja/cotacoes)
@@ -79,7 +96,8 @@ export default function OficinaPecasPage() {
       }).catch(() => {});
     }
 
-    setForm({ peca_descricao: '', fipe_marca: '', fipe_modelo: '', fipe_ano: '', quantidade: '1' });
+    setForm({ peca_descricao: '', fipe_marca: '', fipe_modelo: '', fipe_ano: '', quantidade: '1', observacao: '' });
+    setFotosPeca([]);
     setShowForm(false);
     setSaving(false);
     await fetchCotacoes();
@@ -313,6 +331,16 @@ export default function OficinaPecasPage() {
                   <label htmlFor="c8551-5" className="block text-sm font-medium text-gray-700 mb-1">{t('quantidade')}</label>
                   <input id="c8551-5" type="number" className="input-field !w-24" value={form.quantidade} onChange={(e) => setForm({ ...form, quantidade: e.target.value })} />
                 </div>
+                <div className="sm:col-span-2">
+                  <label htmlFor="peca-detalhes" className="block text-sm font-medium text-gray-700 mb-1">{t('detalhesLabel')}</label>
+                  <textarea id="peca-detalhes" className="input-field min-h-[90px]" maxLength={1000} placeholder={t('detalhesPlaceholder')} value={form.observacao} onChange={(e) => setForm({ ...form, observacao: e.target.value })} />
+                </div>
+                <div className="sm:col-span-2">
+                  <label htmlFor="peca-fotos" className="block text-sm font-medium text-gray-700 mb-1">{t('fotosLabel')}</label>
+                  <input id="peca-fotos" type="file" accept="image/*" multiple className="block w-full text-sm text-gray-700 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-50 file:text-primary-700"
+                    onChange={(e) => setFotosPeca(Array.from(e.target.files || []).slice(0, 4))} />
+                  <p className="text-xs text-gray-500 mt-1">{t('fotosAjuda')}{fotosPeca.length ? ` (${fotosPeca.length})` : ''}</p>
+                </div>
               </div>
               <div className="flex justify-end gap-3 mt-6">
                 <button onClick={() => setShowForm(false)} className="btn-secondary">{t('cancelar')}</button>
@@ -476,6 +504,7 @@ export default function OficinaPecasPage() {
                           <p className="text-sm text-gray-500">{t('veiculoLabel')}: {c.fipe_marca} {c.fipe_modelo} {c.fipe_ano}</p>
                         )}
                         <p className="text-sm text-gray-500">{t('quantidadeLabel')}: {c.quantidade}</p>
+                        <DetalhesPedidoPeca observacao={c.observacao} fotos={c.fotos} />
                       </div>
                       <div className="flex flex-col items-end gap-1 flex-shrink-0">
                         <span className="text-xs text-gray-400">{timeAgo(c.created_at, locale)}</span>

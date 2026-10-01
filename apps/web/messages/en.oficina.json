@@ -605,7 +605,11 @@
     "prazoDiasLabel": "Lead time (days)",
     "placeholderObservacaoOpcional": "Note (optional)",
     "enviarResposta": "Send reply",
-    "responderCotacao": "Reply to request"
+    "responderCotacao": "Reply to request",
+    "detalhesLabel": "Details (optional)",
+    "detalhesPlaceholder": "E.g. driver's side, part number, whether it must be original…",
+    "fotosLabel": "Photos of the part (optional)",
+    "fotosAjuda": "Up to 4 photos. Helps the store get the right part."
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Loading conversation...",

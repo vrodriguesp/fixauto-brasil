@@ -78,7 +78,42 @@ export default function AdminOficinasPage() {
           ))}
         </div>
       ) : (
-        <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+        <>
+        {/* Celular: um cartao por oficina, com o botao Ativar a vista (na tabela ele
+            ficava escondido a direita - relato do teste no celular, 01/10) */}
+        <div className="md:hidden space-y-3">
+          {[...oficinas].sort((x, y) => Number(x.ativa) - Number(y.ativa)).map((oficina) => (
+            <div key={oficina.id} className="bg-slate-800 rounded-xl border border-slate-700 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-white font-semibold break-words">{oficina.nome_fantasia}</p>
+                  <p className="text-slate-400 text-sm">{oficina.cidade}, {oficina.estado}</p>
+                  <p className="text-slate-400 text-sm">Registro: {(oficina as any).cnpj || '—'}</p>
+                </div>
+                <span className={`shrink-0 inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${oficina.ativa ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                  {oficina.ativa ? 'Ativa' : 'Inativa'}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <button
+                  onClick={() => handleToggleAtiva(oficina)}
+                  disabled={busyId === oficina.id}
+                  className={`flex-1 min-h-[44px] rounded-lg font-semibold disabled:opacity-50 ${oficina.ativa ? 'bg-amber-500/20 text-amber-300' : 'bg-emerald-600 text-white'}`}
+                >
+                  {oficina.ativa ? 'Desativar' : 'Ativar'}
+                </button>
+                <Link href={`/admin/oficinas/${oficina.id}`} className="flex-1 min-h-[44px] rounded-lg bg-slate-700 text-blue-300 font-medium flex items-center justify-center">
+                  Ver detalhes
+                </Link>
+                <button onClick={() => handleDelete(oficina)} disabled={busyId === oficina.id} className="min-h-[44px] px-3 rounded-lg text-red-400 font-medium disabled:opacity-50">
+                  Remover
+                </button>
+              </div>
+            </div>
+          ))}
+          {oficinas.length === 0 && <p className="text-center text-slate-500 py-8">Nenhuma oficina encontrada</p>}
+        </div>
+        <div className="hidden md:block bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-700">
@@ -181,6 +216,7 @@ export default function AdminOficinasPage() {
             </tbody>
           </table>
         </div>
+        </>
       )}
     </div>
   );

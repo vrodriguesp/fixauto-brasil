@@ -93,8 +93,8 @@ export default function ComissaoPage() {
   const dataTexto = (iso: string) =>
     new Date(iso + 'T12:00:00').toLocaleDateString(INTL_LOCALE[locale as keyof typeof INTL_LOCALE] || 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
-  const totalPendente = lancamentos.filter(l => l.status === 'pendente').reduce((s, l) => s + l.valor_comissao, 0);
-  const totalPago = lancamentos.filter(l => l.status === 'pago').reduce((s, l) => s + l.valor_comissao, 0);
+  const totalPendente = lancamentos.filter(l => l.status === 'pendente').reduce((s, l) => s + Number(l.valor_comissao || 0), 0);
+  const totalPago = lancamentos.filter(l => l.status === 'pago').reduce((s, l) => s + Number(l.valor_comissao || 0), 0);
 
   // Calculate bonuses for breakdown
   const calcBonus = () => {

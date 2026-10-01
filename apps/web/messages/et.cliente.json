@@ -230,7 +230,9 @@
     "validUntil": "Kehtib kuni {date}",
     "refusing": "Lükkan tagasi...",
     "refuse": "Lükka tagasi",
-    "acceptAndSchedule": "Nõustu ja broneeri aeg"
+    "acceptAndSchedule": "Nõustu ja broneeri aeg",
+    "escolhaHorarioDica": "Puuduta päeva ja kellaaega, millal tood auto töökotta.",
+    "escolhaHorarioAntes": "Vali ülal aeg"
   },
   "clienteMensagens": {
     "workshopFallback": "Töökoda",

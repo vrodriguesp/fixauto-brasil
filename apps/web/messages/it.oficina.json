@@ -605,7 +605,11 @@
     "prazoDiasLabel": "Tempi (giorni)",
     "placeholderObservacaoOpcional": "Nota (opzionale)",
     "enviarResposta": "Invia risposta",
-    "responderCotacao": "Rispondi alla richiesta"
+    "responderCotacao": "Rispondi alla richiesta",
+    "detalhesLabel": "Dettagli (facoltativo)",
+    "detalhesPlaceholder": "Es.: lato guidatore, codice del ricambio, se deve essere originale…",
+    "fotosLabel": "Foto del ricambio (facoltativo)",
+    "fotosAjuda": "Fino a 4 foto. Aiuta il rivenditore a trovare il ricambio giusto."
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Caricamento conversazione...",

@@ -230,7 +230,9 @@
     "validUntil": "Valido fino al {date}",
     "refusing": "Rifiuto in corso...",
     "refuse": "Rifiuta",
-    "acceptAndSchedule": "Accetta e programma"
+    "acceptAndSchedule": "Accetta e programma",
+    "escolhaHorarioDica": "Tocca il giorno e l'orario in cui porterai l'auto in officina.",
+    "escolhaHorarioAntes": "Scegli un orario qui sopra"
   },
   "clienteMensagens": {
     "workshopFallback": "Officina",

@@ -605,7 +605,11 @@
     "prazoDiasLabel": "Prazo (dias)",
     "placeholderObservacaoOpcional": "Nota (opcional)",
     "enviarResposta": "Enviar resposta",
-    "responderCotacao": "Responder ao pedido"
+    "responderCotacao": "Responder ao pedido",
+    "detalhesLabel": "Detalhes (opcional)",
+    "detalhesPlaceholder": "Ex.: lado do condutor, referência da peça, se tem de ser original…",
+    "fotosLabel": "Fotografias da peça (opcional)",
+    "fotosAjuda": "Até 4 fotografias. Ajuda a loja a acertar na peça."
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "A carregar conversa...",

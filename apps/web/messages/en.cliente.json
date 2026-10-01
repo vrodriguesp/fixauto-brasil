@@ -230,7 +230,9 @@
     "validUntil": "Valid until {date}",
     "refusing": "Declining...",
     "refuse": "Decline",
-    "acceptAndSchedule": "Accept and Schedule"
+    "acceptAndSchedule": "Accept and Schedule",
+    "escolhaHorarioDica": "Tap the day and time you will bring the car to the shop.",
+    "escolhaHorarioAntes": "Choose a time above"
   },
   "clienteMensagens": {
     "workshopFallback": "Repair shop",

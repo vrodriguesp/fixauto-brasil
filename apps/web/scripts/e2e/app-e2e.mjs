@@ -249,7 +249,7 @@ try {
   for (const id of limpar.oficinas) {
     const { data: orcs } = await admin.from('orcamentos').select('id').eq('oficina_id', id);
     for (const o of orcs || []) { await admin.from('orcamento_disponibilidade').delete().eq('orcamento_id', o.id); await admin.from('orcamento_itens').delete().eq('orcamento_id', o.id); }
-    await admin.from('agenda_eventos').delete().eq('oficina_id', id);
+    await admin.from('agenda').delete().eq('oficina_id', id);
     await admin.from('orcamentos').delete().eq('oficina_id', id);
     await admin.from('emergencia_oficinas_notificadas').delete().eq('oficina_id', id);
     await admin.from('oficinas').delete().eq('id', id);
@@ -258,7 +258,7 @@ try {
     const { data: sols } = await admin.from('solicitacoes').select('id').eq('cliente_id', id);
     for (const s of sols || []) {
       const { data: orcs } = await admin.from('orcamentos').select('id').eq('solicitacao_id', s.id);
-      for (const o of orcs || []) { await admin.from('orcamento_disponibilidade').delete().eq('orcamento_id', o.id); await admin.from('agenda_eventos').delete().eq('orcamento_id', o.id); }
+      for (const o of orcs || []) { await admin.from('orcamento_disponibilidade').delete().eq('orcamento_id', o.id); await admin.from('agenda').delete().eq('orcamento_id', o.id); }
       for (const t of ['orcamentos', 'mensagens', 'solicitacao_fotos', 'analise_dano']) await admin.from(t).delete().eq('solicitacao_id', s.id);
     }
     const { data: ems } = await admin.from('emergencias').select('id').eq('profile_id', id);

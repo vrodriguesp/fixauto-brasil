@@ -230,7 +230,9 @@
     "validUntil": "Válido até {date}",
     "refusing": "A recusar...",
     "refuse": "Recusar",
-    "acceptAndSchedule": "Aceitar e Marcar"
+    "acceptAndSchedule": "Aceitar e Marcar",
+    "escolhaHorarioDica": "Toque no dia e hora em que vai levar o carro à oficina.",
+    "escolhaHorarioAntes": "Escolha um horário acima"
   },
   "clienteMensagens": {
     "workshopFallback": "Oficina",

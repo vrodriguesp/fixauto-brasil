@@ -63,7 +63,7 @@ try {
 } finally {
   if (solId) {
     const { data: orcs } = await sb.from('orcamentos').select('id').eq('solicitacao_id', solId);
-    for (const o of orcs || []) { await sb.from('orcamento_disponibilidade').delete().eq('orcamento_id', o.id); await sb.from('agenda_eventos').delete().eq('orcamento_id', o.id); }
+    for (const o of orcs || []) { await sb.from('orcamento_disponibilidade').delete().eq('orcamento_id', o.id); await sb.from('agenda').delete().eq('orcamento_id', o.id); }
     for (const t of ['orcamentos', 'mensagens']) await sb.from(t).delete().eq('solicitacao_id', solId);
     await sb.from('solicitacoes').delete().eq('id', solId);
   }

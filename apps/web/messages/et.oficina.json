@@ -605,7 +605,11 @@
     "prazoDiasLabel": "Tähtaeg (päevades)",
     "placeholderObservacaoOpcional": "Märkus (valikuline)",
     "enviarResposta": "Saada vastus",
-    "responderCotacao": "Vasta hinnapäringule"
+    "responderCotacao": "Vasta hinnapäringule",
+    "detalhesLabel": "Üksikasjad (valikuline)",
+    "detalhesPlaceholder": "Nt juhi pool, varuosa kood, kas peab olema originaal…",
+    "fotosLabel": "Varuosa fotod (valikuline)",
+    "fotosAjuda": "Kuni 4 fotot. Aitab poel õige varuosa leida."
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Vestluse laadimine...",

@@ -605,7 +605,11 @@
     "prazoDiasLabel": "Prazo (dias)",
     "placeholderObservacaoOpcional": "Observação (opcional)",
     "enviarResposta": "Enviar resposta",
-    "responderCotacao": "Responder cotação"
+    "responderCotacao": "Responder cotação",
+    "detalhesLabel": "Detalhes (opcional)",
+    "detalhesPlaceholder": "Ex.: lado do motorista, código da peça, se precisa ser original…",
+    "fotosLabel": "Fotos da peça (opcional)",
+    "fotosAjuda": "Até 4 fotos. Ajuda a loja a acertar a peça."
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Carregando conversa...",

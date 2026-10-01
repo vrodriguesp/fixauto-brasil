@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { timeAgo, formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import type { CotacaoPeca } from '@fixauto/shared';
+import DetalhesPedidoPeca from '@/components/pecas/DetalhesPedidoPeca';
 
 interface CotacaoComOficina extends Omit<CotacaoPeca, 'oficina'> {
   oficina: { nome_fantasia: string; cidade: string; estado: string } | null;
@@ -118,6 +119,7 @@ export default function LojaCotacoesPage() {
                     <p className="text-sm text-gray-500">{t('veiculoInfo', { marca: c.fipe_marca || '', modelo: c.fipe_modelo || '', ano: c.fipe_ano || '' })}</p>
                   )}
                   <p className="text-sm text-gray-500">{t('quantidadeInfo', { quantidade: c.quantidade })}</p>
+                  <DetalhesPedidoPeca observacao={c.observacao} fotos={c.fotos} />
                 </div>
                 <div className="flex flex-col items-end gap-1 flex-shrink-0">
                   <span className="text-xs text-gray-400">{timeAgo(c.created_at, locale)}</span>

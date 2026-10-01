@@ -39,7 +39,7 @@ export default function AdminDashboardPage() {
       <div className="animate-pulse space-y-6">
         <div className="h-8 bg-slate-700 rounded w-48" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
+          {[...Array(8)].map((_, i) => (
             <div key={i} className="h-32 bg-slate-800 rounded-xl" />
           ))}
         </div>
@@ -77,16 +77,28 @@ export default function AdminDashboardPage() {
       color: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
     },
     {
-      label: 'GMV (mês)',
+      label: 'Valor dos serviços entregues (mês)',
       // Oficinas de paises diferentes usam moedas diferentes - um numero
       // unico misturaria BRL com EUR, entao mostra cada moeda separada.
       value: formatMoedaMap(metricas?.gmv_mes_por_moeda),
       color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
     },
     {
-      label: 'Comissão Total (mês)',
+      label: 'Comissão de serviços (mês)',
       value: formatMoedaMap(metricas?.comissao_total_mes_por_moeda),
+      nota: metricas?.modo_comissao_servicos === 'isento' ? 'Regra atual: isento - nenhuma comissão é gerada' : undefined,
       color: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+    },
+    {
+      label: 'Comissão de peças (mês)',
+      value: formatMoedaMap(metricas?.comissao_pecas_mes_por_moeda),
+      nota: metricas?.modo_comissao_pecas === 'isento' ? 'Regra atual: isento - nenhuma comissão é gerada' : undefined,
+      color: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+    },
+    {
+      label: 'Comissão a receber (pendente, todos os meses)',
+      value: formatMoedaMap(metricas?.comissao_pendente_por_moeda),
+      color: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
     },
   ];
 
@@ -102,6 +114,7 @@ export default function AdminDashboardPage() {
           >
             <p className="text-sm font-medium opacity-80 mb-2">{card.label}</p>
             <p className="text-2xl font-bold">{card.value}</p>
+            {'nota' in card && card.nota && <p className="text-xs opacity-70 mt-2">{card.nota}</p>}
           </div>
         ))}
       </div>

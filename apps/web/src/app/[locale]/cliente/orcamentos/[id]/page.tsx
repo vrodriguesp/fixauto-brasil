@@ -564,9 +564,10 @@ export default function OrcamentoDetalhePage() {
               {/* Scheduling section - shown when user clicks "Agendar" */}
               {schedulingOrcId === orc.id ? (
                 <div className="border-t pt-4 mt-4">
-                  <h4 className="font-semibold text-gray-900 mb-3">
+                  <h4 className="font-semibold text-gray-900 mb-1">
                     {t('chooseCheckinDate')}
                   </h4>
+                  <p className="text-sm text-gray-600 mb-3">{t('escolhaHorarioDica')}</p>
                   <div className="space-y-2">
                     {orc.disponibilidade.map((slot) => (
                       <button
@@ -619,7 +620,7 @@ export default function OrcamentoDetalhePage() {
                       disabled={!selectedSlot}
                       className="btn-success flex-1"
                     >
-                      {t('confirmAppointment')}
+                      {selectedSlot ? t('confirmAppointment') : t('escolhaHorarioAntes')}
                     </button>
                   </div>
                 </div>

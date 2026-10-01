@@ -605,7 +605,11 @@
     "prazoDiasLabel": "Срок поставки (дней)",
     "placeholderObservacaoOpcional": "Примечание (необязательно)",
     "enviarResposta": "Отправить ответ",
-    "responderCotacao": "Ответить на запрос"
+    "responderCotacao": "Ответить на запрос",
+    "detalhesLabel": "Подробности (необязательно)",
+    "detalhesPlaceholder": "Напр.: сторона водителя, номер детали, нужна ли оригинальная…",
+    "fotosLabel": "Фото детали (необязательно)",
+    "fotosAjuda": "До 4 фото. Помогает магазину подобрать нужную деталь."
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Загружаем переписку...",

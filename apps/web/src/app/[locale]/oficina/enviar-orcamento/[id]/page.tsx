@@ -548,17 +548,20 @@ export default function EnviarOrcamentoPage() {
 
             <div className="space-y-3">
               {slots.map((slot, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <div className="flex-1">
+                // celular: data e turno um embaixo do outro (o turno ficava espremido ao lado da data)
+                <div key={index} className="flex flex-wrap items-center gap-2 sm:gap-3 rounded-lg border border-gray-200 p-3 sm:border-0 sm:p-0">
+                  <div className="w-full sm:w-auto sm:flex-1">
                     <input
+                      aria-label={t('disponibilidadeCheckin')}
                       type="date"
                       className="input-field"
                       value={slot.data}
                       onChange={(e) => updateSlot(index, 'data', e.target.value)}
                     />
                   </div>
-                  <div className="w-36">
+                  <div className="flex-1 sm:flex-none sm:w-44">
                     <select
+                      aria-label={t('manhaHorario') + ' / ' + t('tardeHorario')}
                       className="input-field"
                       value={slot.turno}
                       onChange={(e) => updateSlot(index, 'turno', e.target.value)}
@@ -568,7 +571,7 @@ export default function EnviarOrcamentoPage() {
                     </select>
                   </div>
                   {slot.data && (
-                    <div className="text-xs text-gray-500 w-28">
+                    <div className="text-xs text-gray-500 sm:w-28">
                       {t('entregaAprox', { data: (() => {
                         const d = new Date(slot.data + 'T12:00:00');
                         d.setDate(d.getDate() + prazoDias);
@@ -580,7 +583,8 @@ export default function EnviarOrcamentoPage() {
                     <button
                       type="button"
                       onClick={() => removeSlot(index)}
-                      className="text-red-400 hover:text-red-600"
+                      aria-label="✕"
+                      className="text-red-400 hover:text-red-600 p-2 -m-2"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

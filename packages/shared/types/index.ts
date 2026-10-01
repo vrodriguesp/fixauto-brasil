@@ -136,6 +136,8 @@ export interface CotacaoPeca {
   fipe_modelo: string | null;
   fipe_ano: string | null;
   quantidade: number;
+  observacao?: string | null;
+  fotos?: string[] | null;
   status: StatusCotacaoPeca;
   created_at: string;
   // Joined
@@ -475,4 +477,9 @@ export interface PlataformaMetricas {
   // moedas diferentes, entao um numero unico misturaria BRL com EUR.
   gmv_mes_por_moeda: Record<string, number>;
   comissao_total_mes_por_moeda: Record<string, number>;
+  comissao_pecas_mes_por_moeda: Record<string, number>;
+  // a receber (status pendente), servicos + pecas, de qualquer mes
+  comissao_pendente_por_moeda: Record<string, number>;
+  modo_comissao_servicos: string;
+  modo_comissao_pecas: string;
 }
