@@ -21,7 +21,7 @@ const browser = await chromium.launch({ executablePath: path.join(process.env.LO
 const celular = async () => { const c = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }); await c.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} }); return c; };
 const entrar = async (ctx, email, senha, pre) => { const p = await ctx.newPage(); await p.goto(`${SITE}/${pre}/login`, { waitUntil: 'networkidle' }); await p.fill('input[type=email]', email); await p.fill('input[type=password]', senha); await p.click('button[type=submit]'); await p.waitForTimeout(4000); return p; };
 const conta = async (tipo, idioma) => {
-  const email = `msg-${tipo}-${tag}@example.test`; const senha = `Msg${tag}Senha9`;
+  const email = `msg-${tipo}${contas.length}-${tag}@example.test`; const senha = `Msg${tag}Senha9`;
   const { data } = await sb.auth.admin.createUser({ email, password: senha, email_confirm: true });
   contas.push(data.user.id);
   await sb.from('profiles').insert({ id: data.user.id, tipo, nome: `TESTE ${tipo.toUpperCase()}`, email, idioma });
@@ -31,8 +31,8 @@ try {
   const cli = await conta('cliente', 'it'); const ofi = await conta('oficina', 'et'); const ofi2 = await conta('oficina', 'pt');
   const { data: of } = await sb.from('oficinas').insert({ profile_id: ofi.id, nome_fantasia: `MSG SHOP ${tag}`, endereco: 'x', cidade: 'Tallinn', estado: 'Harju', cep: '1', pais: 'EE', latitude: 59.43, longitude: 24.75, ativa: true }).select('id').single();
   ofId = of.id;
-  const { data: of2 } = await sb.from('oficinas').insert({ profile_id: ofi2.id, nome_fantasia: `OUTRA SHOP ${tag}`, endereco: 'x', cidade: 'Tallinn', estado: 'Harju', cep: '1', pais: 'EE', latitude: 59.43, longitude: 24.75, ativa: true }).select('id').single();
-  of2Id = of2.id;
+  const { data: of2, error: e2 } = await sb.from('oficinas').insert({ profile_id: ofi2.id, nome_fantasia: `OUTRA SHOP ${tag}`, endereco: 'x', cidade: 'Tallinn', estado: 'Harju', cep: '1', pais: 'EE', latitude: 59.43, longitude: 24.75, ativa: true }).select('id').single();
+  if (!of2) throw new Error('oficina B: ' + JSON.stringify(e2)); of2Id = of2.id;
   const { data: v } = await sb.from('veiculos').insert({ profile_id: cli.id, fipe_tipo: 'cars', fipe_marca: 'Toyota', fipe_modelo: 'Yaris', fipe_ano: '2018' }).select('id').single();
   const { data: s } = await sb.from('solicitacoes').insert({ cliente_id: cli.id, veiculo_id: v.id, tipo: 'mecanica', descricao: 'msg test', urgencia: 'media', latitude: 59.43, longitude: 24.75, endereco: 'Tallinn' }).select('id').single();
   solId = s.id;
@@ -114,7 +114,7 @@ try {
     ok('pagina do orcamento abriu sem o cookie', false, nome.slice(0, 120));
   }
   await ctxO.close(); await ctxO2.close(); await ctxC.close();
-} catch (e) { falhas++; console.log('FALHA parou:', String(e.message).slice(0, 400)); }
+} catch (e) { falhas++; console.log('FALHA parou:', String(e.stack).slice(0, 600)); }
 finally {
   await browser.close();
   if (solId) {

@@ -79,7 +79,8 @@ try {
   await pA.goto(`${SITE}/admin/pecas`, { waitUntil: 'networkidle' });
   await pA.waitForTimeout(2000);
   pA.once('dialog', (d) => d.accept());
-  await pA.locator('tr', { hasText: `TEST PARTS ${tag}` }).getByRole('button', { name: 'Ativar' }).click();
+  // celular: cartao; computador: tabela - clica no que estiver visivel
+  await pA.locator('tr, div.p-4', { hasText: `TEST PARTS ${tag}` }).getByRole('button', { name: 'Ativar', exact: true }).locator('visible=true').first().click();
   await pA.waitForTimeout(3000);
   const { data: lj2 } = await sb.from('lojas_pecas').select('ativa').eq('id', lojaId).single();
   ok('admin: ativou a loja em /admin/pecas', lj2.ativa === true);

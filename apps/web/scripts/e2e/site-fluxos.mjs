@@ -103,7 +103,8 @@ try {
   await pA.goto(`${SITE}/admin/oficinas`, { waitUntil: 'networkidle' });
   ok('admin: lista de oficinas abre (sem 404)', pA.url().endsWith('/admin/oficinas') && (await pA.innerText('body')).includes(`TESTE FLUXO ${tag}`));
   pA.once('dialog', (d) => d.accept());
-  await pA.locator('tr', { hasText: `TESTE FLUXO ${tag}` }).getByRole('button', { name: 'Ativar' }).click();
+  // celular: cartao; computador: tabela - clica no que estiver visivel
+  await pA.locator('tr, div.bg-slate-800', { hasText: `TESTE FLUXO ${tag}` }).getByRole('button', { name: 'Ativar', exact: true }).locator('visible=true').first().click();
   await pA.waitForTimeout(3000);
   const { data: of3 } = await sb.from('oficinas').select('ativa').eq('id', oficinaId).single();
   ok('admin: ativou a oficina pela tela', of3.ativa === true);
