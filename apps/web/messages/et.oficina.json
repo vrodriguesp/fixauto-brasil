@@ -550,7 +550,10 @@
     "perguntasSugeridasIA": "🤖 Tehisintellekti soovitatud küsimused",
     "enviandoAudio": "Helisõnumi saatmine...",
     "placeholderMensagem": "Kirjuta oma sõnum...",
-    "gravarAudio": "Salvesta helisõnum"
+    "gravarAudio": "Salvesta helisõnum",
+    "erroEnviar": "Saatmine ebaõnnestus. Sõnum on endiselt väljal; proovi uuesti.",
+    "precisaOrcamento": "Kliendiga suhtlemiseks saada esmalt hinnapakkumine.",
+    "clienteFallback": "Klient"
   },
   "oficinaPecas": {
     "fornecedorFallback": "tarnija",

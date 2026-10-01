@@ -96,7 +96,10 @@
     "contatoTexto": "Saadame sulle hinnapakkumised ja e-posti teel lingi parooli loomiseks.",
     "sucessoSemConta": "Lähedal asuvaid töökodasid on teavitatud. Saatsime aadressile {email} lingi, et saaksid luua parooli ja hinnapakkumisi jälgida.",
     "voltarInicio": "Tagasi algusesse",
-    "galeria": "Galerii"
+    "galeria": "Galerii",
+    "localNegadaTitulo": "Asukoht on välja lülitatud",
+    "localNegadaTexto": "Lähedal asuvate töökodade teavitamiseks luba seadetes asukoha kasutamine. Võid ka aadressi sisestada.",
+    "abrirAjustes": "Ava seaded"
   },
   "novaSolicitacao": {
     "titulo": "Uus päring",

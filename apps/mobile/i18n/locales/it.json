@@ -96,7 +96,10 @@
     "contatoTexto": "Ti inviamo i preventivi e un link via email per creare la tua password.",
     "sucessoSemConta": "Le officine vicine sono state avvisate. Abbiamo inviato a {email} un link per creare la password e seguire i preventivi.",
     "voltarInicio": "Torna all'inizio",
-    "galeria": "Galleria"
+    "galeria": "Galleria",
+    "localNegadaTitulo": "Posizione disattivata",
+    "localNegadaTexto": "Per avvisare le officine vicine, consenti l'accesso alla posizione nelle Impostazioni. Puoi anche scrivere l'indirizzo.",
+    "abrirAjustes": "Apri Impostazioni"
   },
   "novaSolicitacao": {
     "titulo": "Nuova richiesta",

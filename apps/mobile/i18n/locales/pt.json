@@ -96,7 +96,10 @@
     "contatoTexto": "Enviamos os orçamentos para você e um link por e-mail para criar sua senha.",
     "sucessoSemConta": "Oficinas próximas já foram avisadas. Enviamos para {email} um link para você criar sua senha e acompanhar os orçamentos.",
     "voltarInicio": "Voltar ao início",
-    "galeria": "Galeria"
+    "galeria": "Galeria",
+    "localNegadaTitulo": "Localização desativada",
+    "localNegadaTexto": "Para avisar as oficinas próximas, permita o acesso à localização nos Ajustes. Você também pode digitar o endereço.",
+    "abrirAjustes": "Abrir Ajustes"
   },
   "novaSolicitacao": {
     "titulo": "Nova solicitação",

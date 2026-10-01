@@ -57,6 +57,8 @@ export default function OficinaMensagensPage() {
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
   const [solicitacao, setSolicitacao] = useState<SolicitacaoInfo | null>(null);
+  const [solCarregada, setSolCarregada] = useState(false);
+  const [erroEnvio, setErroEnvio] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
@@ -81,6 +83,7 @@ export default function OficinaMensagensPage() {
       if (data) {
         setSolicitacao(data as unknown as SolicitacaoInfo);
       }
+      setSolCarregada(true);
     }
     fetchSolicitacao();
 
@@ -196,6 +199,16 @@ export default function OficinaMensagensPage() {
       remetente_id: user.id,
       texto,
     });
+
+    if (error) {
+      // nao some o texto: devolve ao campo e avisa
+      console.error(error);
+      setNewMessage(texto);
+      setErroEnvio(true);
+      setSending(false);
+      return;
+    }
+    setErroEnvio(false);
 
     if (!error) {
       // Optimistically add to local state
@@ -319,7 +332,7 @@ export default function OficinaMensagensPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] max-w-4xl mx-auto">
+    <div className="flex flex-col h-[calc(100vh-4rem)] h-[calc(100dvh-4rem)] max-w-4xl mx-auto">
       {/* Header */}
       <div className="bg-white border-b px-4 py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
@@ -338,7 +351,7 @@ export default function OficinaMensagensPage() {
           </div>
           <div>
             <h1 className="font-semibold text-gray-900 text-sm">
-              {solicitacao?.cliente?.nome || t('carregando')}
+              {solicitacao?.cliente?.nome || (solCarregada ? t('clienteFallback') : t('carregando'))}
             </h1>
             <p className="text-xs text-gray-500">
               {solicitacao?.veiculo
@@ -449,6 +462,14 @@ export default function OficinaMensagensPage() {
 
       {/* Input area */}
       <div className="bg-white border-t px-4 py-3 flex-shrink-0">
+        {/* a conversa do pedido e uma so: a oficina entra nela ao mandar o orcamento */}
+        {!hasOrcamento && (
+          <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-2">
+            {t('precisaOrcamento')}{' '}
+            <Link href={`/oficina/enviar-orcamento/${id}`} className="font-semibold underline">{t('fazerOrcamento')}</Link>
+          </p>
+        )}
+        {erroEnvio && <p className="text-xs text-red-700 mb-2" role="alert">{t('erroEnviar')}</p>}
         {showAudioRecorder ? (
           <AudioRecorder onRecorded={handleAudioRecorded} />
         ) : uploadingAudio ? (

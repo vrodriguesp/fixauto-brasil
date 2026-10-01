@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router, Stack } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -12,6 +12,7 @@ import i18n from '../i18n';
 import { ErroApi, ErroUsuario, mensagemErro } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
 import { obterPosicao } from '../lib/posicao';
+import { arquivoDaFoto } from '../lib/anexo';
 
 type Tipo = 'eu_causei' | 'outro_causou' | 'sem_outro';
 type Pagamento = 'proprio' | 'seguro_terceiro' | 'seguro_proprio' | 'nao_sei';
@@ -82,9 +83,16 @@ export default function EmergenciaScreen() {
   const handleUsarLocalizacao = async (silencioso = false) => {
     setBuscandoLocal(true);
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      const { status, canAskAgain } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setBuscandoLocal(false);
+        // negada antes: o sistema nao pergunta de novo - explica e leva aos Ajustes
+        if (!silencioso && !canAskAgain) {
+          Alert.alert(t('emergencia.localNegadaTitulo'), t('emergencia.localNegadaTexto'), [
+            { text: t('common.cancelar'), style: 'cancel' },
+            { text: t('emergencia.abrirAjustes'), onPress: () => Linking.openSettings() },
+          ]);
+        }
         return;
       }
       const pos = await obterPosicao();
@@ -140,9 +148,9 @@ export default function EmergenciaScreen() {
         latitude: localCoords.lat,
         longitude: localCoords.lon,
       }));
-      fotos.forEach((foto, i) => {
-        form.append('fotos', { uri: foto.uri, name: `foto-${i}.jpg`, type: 'image/jpeg' } as any);
-      });
+      for (const [i, foto] of fotos.entries()) {
+        form.append('fotos', await arquivoDaFoto(foto.uri), `foto-${i}.jpg`);
+      }
 
       const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch(`${API_BASE_URL}/api/emergencia`, {

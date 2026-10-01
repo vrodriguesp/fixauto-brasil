@@ -260,7 +260,8 @@
     "sendFirstMessage": "Отправьте первое сообщение автосервису.",
     "sendingAudio": "Отправляем аудио...",
     "messagePlaceholder": "Введите сообщение...",
-    "recordAudio": "Записать аудио"
+    "recordAudio": "Записать аудио",
+    "erroEnviar": "Не удалось отправить. Сообщение осталось в поле; попробуйте ещё раз."
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Принят",

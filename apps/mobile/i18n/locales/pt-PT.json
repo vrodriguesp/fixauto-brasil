@@ -96,7 +96,10 @@
     "contatoTexto": "Enviamos-lhe os orçamentos e uma ligação por e-mail para criar a sua palavra-passe.",
     "sucessoSemConta": "As oficinas próximas já foram avisadas. Enviámos para {email} uma ligação para criar a sua palavra-passe e acompanhar os orçamentos.",
     "voltarInicio": "Voltar ao início",
-    "galeria": "Galeria"
+    "galeria": "Galeria",
+    "localNegadaTitulo": "Localização desativada",
+    "localNegadaTexto": "Para avisar as oficinas próximas, permita o acesso à localização nas Definições. Também pode escrever a morada.",
+    "abrirAjustes": "Abrir Definições"
   },
   "novaSolicitacao": {
     "titulo": "Novo pedido",

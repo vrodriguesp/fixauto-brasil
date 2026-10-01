@@ -96,7 +96,10 @@
     "contatoTexto": "We will send you the quotes and an email link to create your password.",
     "sucessoSemConta": "Nearby shops have been notified. We sent a link to {email} so you can create your password and follow the quotes.",
     "voltarInicio": "Back to start",
-    "galeria": "Gallery"
+    "galeria": "Gallery",
+    "localNegadaTitulo": "Location is off",
+    "localNegadaTexto": "To alert nearby repair shops, allow location access in Settings. You can also type the address.",
+    "abrirAjustes": "Open Settings"
   },
   "novaSolicitacao": {
     "titulo": "New request",

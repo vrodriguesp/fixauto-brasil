@@ -550,7 +550,10 @@
     "perguntasSugeridasIA": "🤖 Domande suggerite dall'IA",
     "enviandoAudio": "Invio audio in corso...",
     "placeholderMensagem": "Scrivi il tuo messaggio...",
-    "gravarAudio": "Registra audio"
+    "gravarAudio": "Registra audio",
+    "erroEnviar": "Invio non riuscito. Il messaggio è ancora nel campo; riprova.",
+    "precisaOrcamento": "Per scrivere al cliente, invia prima un preventivo.",
+    "clienteFallback": "Cliente"
   },
   "oficinaPecas": {
     "fornecedorFallback": "fornitore",

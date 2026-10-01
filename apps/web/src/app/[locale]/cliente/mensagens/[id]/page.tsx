@@ -46,6 +46,7 @@ interface OficinaInfo {
 
 export default function ClienteMensagensPage() {
   const t = useTranslations('clienteMensagemDetalhe');
+  const [erroEnvio, setErroEnvio] = useState(false);
   const locale = useLocale();
   const params = useParams();
   const id = params.id as string;
@@ -200,6 +201,16 @@ export default function ClienteMensagensPage() {
       texto,
     });
 
+    if (error) {
+      // nao some o texto: devolve ao campo e avisa
+      console.error(error);
+      setNewMessage(texto);
+      setErroEnvio(true);
+      setSending(false);
+      return;
+    }
+    setErroEnvio(false);
+
     if (!error) {
       // Optimistically add to local state
       setMessages(prev => [...prev, {
@@ -322,7 +333,7 @@ export default function ClienteMensagensPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] max-w-4xl mx-auto">
+    <div className="flex flex-col h-[calc(100vh-4rem)] h-[calc(100dvh-4rem)] max-w-4xl mx-auto">
       {/* Header */}
       <div className="bg-white border-b px-4 py-3 flex items-center gap-3 flex-shrink-0">
         <Link
@@ -422,6 +433,7 @@ export default function ClienteMensagensPage() {
 
       {/* Input area */}
       <div className="bg-white border-t px-4 py-3 flex-shrink-0">
+        {erroEnvio && <p className="text-xs text-red-700 mb-2" role="alert">{t('erroEnviar')}</p>}
         {showAudioRecorder ? (
           <AudioRecorder onRecorded={handleAudioRecorded} />
         ) : uploadingAudio ? (

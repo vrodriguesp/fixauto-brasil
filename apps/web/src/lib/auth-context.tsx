@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect, ReactNode, useCallback 
 import type { Profile, Oficina, Funcionario, LojaPecas } from '@fixauto/shared';
 import { supabase, isSupabaseConfigured } from './supabase';
 import type { User } from '@supabase/supabase-js';
+import { instalarSessaoNasApis } from './sessao-api';
 
 interface AuthContextType {
   user: Profile | null;
@@ -94,6 +95,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
   }, []);
+
+  // renova o login antes de cada chamada as rotas /api (evita "sessao expirada" no celular)
+  useEffect(() => { instalarSessaoNasApis(); }, []);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {

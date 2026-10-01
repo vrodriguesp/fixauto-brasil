@@ -13,6 +13,7 @@ import { notifNovaSolicitacaoTitulo, tipoServicoLabel } from '../lib/notif-i18n'
 import { mensagemErro } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
 import { obterPosicao } from '../lib/posicao';
+import { arquivoDaFoto } from '../lib/anexo';
 
 const COORDS_DEFAULT = { lat: -23.5505, lon: -46.6333 };
 
@@ -110,8 +111,7 @@ export default function NovaSolicitacaoScreen() {
         for (const foto of fotos) {
           const ext = foto.uri.split('.').pop() || 'jpg';
           const fileName = `solicitacoes/${sol.id}/${Date.now()}.${ext}`;
-          const response = await fetch(foto.uri);
-          const blob = await response.blob();
+          const blob = await arquivoDaFoto(foto.uri);
           const { data: uploadData, error: uploadError } = await supabase.storage.from('damage-photos').upload(fileName, blob, { contentType: `image/${ext}` });
           if (uploadError) continue;
           if (uploadData?.path) {

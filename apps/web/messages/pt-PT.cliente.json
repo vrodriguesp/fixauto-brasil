@@ -260,7 +260,8 @@
     "sendFirstMessage": "Envie a primeira mensagem à oficina.",
     "sendingAudio": "A enviar áudio...",
     "messagePlaceholder": "Escreva a sua mensagem...",
-    "recordAudio": "Gravar áudio"
+    "recordAudio": "Gravar áudio",
+    "erroEnviar": "Não foi possível enviar. A mensagem continua no campo; tente novamente."
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Recebido",

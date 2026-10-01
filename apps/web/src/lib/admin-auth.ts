@@ -1,4 +1,5 @@
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
+import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
@@ -32,7 +33,12 @@ export async function requireAdmin(): Promise<{ ok: true; userId: string } | { o
 
   // getUser() valida o token no servidor de autenticacao (getSession() so le
   // o cookie e aceitaria um token forjado - docs do Supabase).
-  const { data: { user } } = await supabase.auth.getUser();
+  // cabecalho Authorization (enviado pelo navegador com o login renovado,
+  // lib/sessao-api.ts) vale antes do cookie, que pode estar vencido
+  const bearer = headers().get('authorization');
+  const { data: { user } } = bearer?.startsWith('Bearer ')
+    ? await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!).auth.getUser(bearer.slice(7))
+    : await supabase.auth.getUser();
   if (!user) {
     return { ok: false, response: NextResponse.json({ error: 'Não autenticado' }, { status: 401 }) };
   }

@@ -550,7 +550,10 @@
     "perguntasSugeridasIA": "🤖 Вопросы, предложенные ИИ",
     "enviandoAudio": "Отправляем аудио...",
     "placeholderMensagem": "Введите сообщение...",
-    "gravarAudio": "Записать аудио"
+    "gravarAudio": "Записать аудио",
+    "erroEnviar": "Не удалось отправить. Сообщение осталось в поле; попробуйте ещё раз.",
+    "precisaOrcamento": "Чтобы написать клиенту, сначала отправьте смету.",
+    "clienteFallback": "Клиент"
   },
   "oficinaPecas": {
     "fornecedorFallback": "поставщик",

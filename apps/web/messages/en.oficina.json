@@ -550,7 +550,10 @@
     "perguntasSugeridasIA": "🤖 AI-suggested questions",
     "enviandoAudio": "Sending audio...",
     "placeholderMensagem": "Type your message...",
-    "gravarAudio": "Record audio"
+    "gravarAudio": "Record audio",
+    "erroEnviar": "Could not send. Your message is still in the box; please try again.",
+    "precisaOrcamento": "To chat with the customer, send a quote first.",
+    "clienteFallback": "Customer"
   },
   "oficinaPecas": {
     "fornecedorFallback": "supplier",

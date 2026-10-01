@@ -260,7 +260,8 @@
     "sendFirstMessage": "Send the first message to the repair shop.",
     "sendingAudio": "Sending audio...",
     "messagePlaceholder": "Type your message...",
-    "recordAudio": "Record audio"
+    "recordAudio": "Record audio",
+    "erroEnviar": "Could not send. Your message is still in the box; please try again."
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Received",

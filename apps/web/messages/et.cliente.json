@@ -260,7 +260,8 @@
     "sendFirstMessage": "Saada töökojale esimene sõnum.",
     "sendingAudio": "Saadan heli...",
     "messagePlaceholder": "Kirjuta sõnum...",
-    "recordAudio": "Salvesta heli"
+    "recordAudio": "Salvesta heli",
+    "erroEnviar": "Saatmine ebaõnnestus. Sõnum on endiselt väljal; proovi uuesti."
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Vastu võetud",

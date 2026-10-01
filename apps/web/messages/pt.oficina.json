@@ -550,7 +550,10 @@
     "perguntasSugeridasIA": "🤖 Perguntas sugeridas pela IA",
     "enviandoAudio": "Enviando audio...",
     "placeholderMensagem": "Digite sua mensagem...",
-    "gravarAudio": "Gravar audio"
+    "gravarAudio": "Gravar audio",
+    "erroEnviar": "Não foi possível enviar. A mensagem continua no campo; tente de novo.",
+    "precisaOrcamento": "Para conversar com o cliente, envie primeiro um orçamento.",
+    "clienteFallback": "Cliente"
   },
   "oficinaPecas": {
     "fornecedorFallback": "fornecedor",
