@@ -72,8 +72,9 @@ export default function NotificationBell() {
         )}
       </button>
 
+      {/* celular: largura da tela com margem (ancorado no sino, saia pela lateral) */}
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-hidden flex flex-col">
+        <div className="fixed inset-x-3 top-[4.5rem] max-h-[70dvh] sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 sm:max-h-96 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden flex flex-col">
           <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100">
             <span className="text-sm font-semibold text-gray-900">{t('title')}</span>
             {unreadCount > 0 && (

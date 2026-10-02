@@ -41,9 +41,11 @@ export default function AudioRecorder({ onRecorded }: AudioRecorderProps) {
       streamRef.current = stream;
 
       const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: MediaRecorder.isTypeSupported('audio/webm')
-          ? 'audio/webm'
-          : 'audio/mp4',
+        // MP4 (AAC) primeiro: o app no iPhone nao toca WebM; Chrome e Safari
+        // gravam MP4. WebM so onde MP4 nao existe.
+        mimeType: MediaRecorder.isTypeSupported('audio/mp4')
+          ? 'audio/mp4'
+          : 'audio/webm',
       });
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];

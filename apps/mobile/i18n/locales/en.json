@@ -99,7 +99,12 @@
     "galeria": "Gallery",
     "localNegadaTitulo": "Location is off",
     "localNegadaTexto": "To alert nearby repair shops, allow location access in Settings. You can also type the address.",
-    "abrirAjustes": "Open Settings"
+    "abrirAjustes": "Open Settings",
+    "seuCarro": "Your car",
+    "seuCarroDica": "Helps the workshop prepare the quote. It is saved in your vehicles.",
+    "outroCarro": "Another car",
+    "localEncontrada": "Location found. Check the address below.",
+    "tentarDeNovo": "Try again"
   },
   "novaSolicitacao": {
     "titulo": "New request",
@@ -139,13 +144,19 @@
     "statusExpirado": "Expired",
     "escolhaData": "Choose when to bring the car:",
     "turno_manha": "morning",
-    "turno_tarde": "afternoon"
+    "turno_tarde": "afternoon",
+    "horariosVencidos": "The offered times have passed. Ask the workshop for new dates by message."
   },
   "acompanhamento": {
     "titulo": "Repair tracking",
     "etapaAtual": "Current stage",
     "previsaoEntrega": "Estimated delivery",
-    "semEtapas": "The shop hasn't started tracking this service yet."
+    "semEtapas": "The shop hasn't started tracking this service yet.",
+    "acidente": "Accident",
+    "completarCarro": "Add your car details",
+    "completarCarroDica": "Make, model and plate help the workshop prepare the quote. Tap to add.",
+    "editarPedido": "Edit request",
+    "descricaoPedido": "Description"
   },
   "avaliacao": {
     "titulo": "Rate the service",
@@ -160,12 +171,19 @@
     "nenhumaConversa": "No conversations yet.",
     "digiteMensagem": "Type a message...",
     "erroEnviar": "Couldn't send the message. Please try again.",
-    "gravarAudio": "Hold to record a voice message",
+    "gravarAudio": "Record audio",
     "enviar": "Send message",
     "escolherOficina": "Which workshop?",
     "escolherOficinaTexto": "Each workshop has its own conversation with you.",
     "semConversaAinda": "No workshop has written yet. When a workshop sends a quote or a message, the conversation will appear here.",
-    "pagamentoReparo": "Repair payment (accident)"
+    "pagamentoReparo": "Repair payment (accident)",
+    "enviarAudio": "Send audio",
+    "gravando": "Recording…",
+    "ouvir": "Play",
+    "pausar": "Pause",
+    "audioIndisponivel": "Audio unavailable",
+    "microfoneTitulo": "Microphone off",
+    "microfoneTexto": "To send audio, allow microphone access in Settings."
   },
   "veiculos": {
     "titulo": "My vehicles",
@@ -176,7 +194,8 @@
     "placa": "License plate",
     "apelido": "Name to recognise this vehicle",
     "erroSalvar": "Couldn't save the vehicle. Please try again.",
-    "nenhumVeiculo": "You haven't added any vehicles yet."
+    "nenhumVeiculo": "You haven't added any vehicles yet.",
+    "semDados": "Accident car (no details)"
   },
   "constants": {
     "tiposServico": {
@@ -260,7 +279,19 @@
     "salvo": "Saved.",
     "erroSalvar": "Couldn't save. Please try again.",
     "naoInformado": "Not provided yet.",
-    "lembreteSinistro": "The claim number is missing: when your insurer sends it, add it here so the shop can see it."
+    "lembreteSinistro": "The claim number is missing: when your insurer sends it, add it here so the shop can see it.",
+    "passo_emergencia_it": "If anyone is hurt, call 112. If you cannot agree or the other driver has left, call the police on 112.",
+    "passo_registro_it": "Fill in the CAI form (Constatazione Amichevole di Incidente) with the other driver, on paper or digitally, and both sign it. Send it to your insurer within 3 days.",
+    "dica_seguro_terceiro_it": "The other driver's compulsory insurance (RC Auto) pays. With direct compensation (CARD) you open the claim with your own insurer, which settles with theirs.",
+    "dica_seguro_proprio_it": "Comprehensive cover (kasko) pays for your car even if you were at fault. You usually pay only the excess set in your policy.",
+    "passo_emergencia_pt": "If anyone is hurt, call 112. If you cannot agree or the other driver has left, call the police on 112.",
+    "passo_registro_pt": "Fill in the Declaração Amigável (friendly accident report) with the other driver and both sign it. Each driver sends their copy to their insurer within 8 days.",
+    "dica_seguro_terceiro_pt": "The other driver's compulsory insurance pays. If both cars are insured in Portugal, your own insurer can handle the claim (IDS system).",
+    "dica_seguro_proprio_pt": "Own-damage cover pays for your car even if you were at fault. You usually pay only the excess set in your policy.",
+    "passo_emergencia_geral": "If anyone is hurt, call the local emergency number (112 in Europe).",
+    "passo_registro_geral": "Write down the other driver's plate, name, phone and insurer, and take photos. In Europe you can fill in the European Accident Statement, signed by both drivers, and send it to your insurer as soon as possible.",
+    "dica_seguro_terceiro_geral": "The other driver's liability insurance pays for your repair. Tell your own insurer too: they can help with the claim.",
+    "dica_seguro_proprio_geral": "If your policy covers damage to your own car, it pays for the repair; you usually pay the excess set in the policy."
   },
   "erros": {
     "CAMPO_OBRIGATORIO": "Please fill in all required fields.",

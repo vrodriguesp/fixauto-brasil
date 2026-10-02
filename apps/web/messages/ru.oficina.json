@@ -484,7 +484,8 @@
     "placeholderObservacoes": "Гарантия, условия, дополнительная информация...",
     "cancelar": "Отмена",
     "atualizarOrcamento": "Обновить смету",
-    "semComissaoOrcamento": "BipFix не берёт комиссию с этой сметы. Сумма, которую вы отправите, — это сумма, которую увидит клиент."
+    "semComissaoOrcamento": "BipFix не берёт комиссию с этой сметы. Сумма, которую вы отправите, — это сумма, которую увидит клиент.",
+    "horarioPassado": "Одно из времён уже прошло. Выберите сегодня ещё не закончившийся период или более поздний день."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Пароль должен содержать не менее 8 символов",
@@ -698,7 +699,9 @@
     "emOrcamento": "Смета отправлена",
     "nenhumaSolicitacaoEncontrada": "По этим фильтрам заявок не найдено",
     "enviarOrcamento": "Отправить смету",
-    "fotosCount": "{count} фото"
+    "fotosCount": "{count} фото",
+    "orcamentoEnviado": "Смета отправлена",
+    "verModificarOrcamento": "Смотреть / изменить смету"
   },
   "oficinaSolicitacaoDetalhe": {
     "solicitacaoNaoEncontrada": "Заявка не найдена",
@@ -722,7 +725,18 @@
     "dadosVeiculoIndisponiveis": "Данные об автомобиле недоступны",
     "cliente": "Клиент",
     "clienteFallback": "Клиент",
-    "solicitadoEm": "Заявка от {data}"
+    "solicitadoEm": "Заявка от {data}",
+    "verOrcamento": "Смотреть смету",
+    "modificarOrcamento": "Изменить смету",
+    "seuOrcamento": "Ваша смета",
+    "prazoDias": "Срок: {dias} дн.",
+    "statusOrcamento": {
+      "enviado": "Отправлена",
+      "visualizado": "Клиент видел",
+      "aceito": "Принята",
+      "recusado": "Отклонена",
+      "expirado": "Истекла"
+    }
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Автомобиль принят в автосервисе",

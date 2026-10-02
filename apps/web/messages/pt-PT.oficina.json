@@ -484,7 +484,8 @@
     "placeholderObservacoes": "Garantia, condições, informações adicionais...",
     "cancelar": "Cancelar",
     "atualizarOrcamento": "Atualizar Orçamento",
-    "semComissaoOrcamento": "A BipFix não cobra comissão sobre este orçamento. O valor que enviar é o valor que o cliente vê."
+    "semComissaoOrcamento": "A BipFix não cobra comissão sobre este orçamento. O valor que enviar é o valor que o cliente vê.",
+    "horarioPassado": "Há um horário que já passou. Escolha hoje num período que ainda não terminou, ou um dia seguinte."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "A palavra-passe deve ter pelo menos 8 caracteres",
@@ -698,7 +699,9 @@
     "emOrcamento": "Em orçamento",
     "nenhumaSolicitacaoEncontrada": "Não foram encontrados pedidos com estes filtros",
     "enviarOrcamento": "Enviar Orçamento",
-    "fotosCount": "{count} fotografia(s)"
+    "fotosCount": "{count} fotografia(s)",
+    "orcamentoEnviado": "Orçamento enviado",
+    "verModificarOrcamento": "Ver / alterar orçamento"
   },
   "oficinaSolicitacaoDetalhe": {
     "solicitacaoNaoEncontrada": "Pedido não encontrado",
@@ -722,7 +725,18 @@
     "dadosVeiculoIndisponiveis": "Dados do veículo não disponíveis",
     "cliente": "Cliente",
     "clienteFallback": "Cliente",
-    "solicitadoEm": "Pedido em {data}"
+    "solicitadoEm": "Pedido em {data}",
+    "verOrcamento": "Ver orçamento",
+    "modificarOrcamento": "Alterar orçamento",
+    "seuOrcamento": "O seu orçamento",
+    "prazoDias": "Prazo: {dias} dia(s)",
+    "statusOrcamento": {
+      "enviado": "Enviado",
+      "visualizado": "Visto pelo cliente",
+      "aceito": "Aceite",
+      "recusado": "Recusado",
+      "expirado": "Expirado"
+    }
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Viatura recebida na oficina",

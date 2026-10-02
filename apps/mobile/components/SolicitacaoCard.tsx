@@ -2,6 +2,7 @@ import { View, Text, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
 import type { Solicitacao } from '@fixauto/shared';
+import { limparDescricao, ehAcidente } from '../lib/texto';
 
 const STATUS_COLOR: Record<string, string> = {
   aberta: 'bg-gray-100 text-gray-700',
@@ -16,6 +17,11 @@ export default function SolicitacaoCard({ solicitacao }: { solicitacao: Solicita
   const { t } = useTranslation();
   const veiculo = solicitacao.veiculo;
   const qtdOrcamentos = solicitacao.orcamentos?.length || 0;
+  // carro sem dados (acidente registrado sem o carro): titulo "Acidente"
+  const titulo = veiculo?.fipe_marca
+    ? `${veiculo.fipe_marca} ${veiculo.fipe_modelo}`
+    : ehAcidente(solicitacao.descricao) ? t('acompanhamento.acidente') : limparDescricao(solicitacao.descricao);
+  const texto = limparDescricao(solicitacao.descricao);
 
   return (
     <Pressable
@@ -24,15 +30,17 @@ export default function SolicitacaoCard({ solicitacao }: { solicitacao: Solicita
     >
       <View className="flex-row justify-between items-start mb-2">
         <Text className="font-semibold text-gray-900 flex-1" numberOfLines={1}>
-          {veiculo ? `${veiculo.fipe_marca} ${veiculo.fipe_modelo}` : solicitacao.descricao}
+          {titulo}
         </Text>
         <View className={`px-2 py-1 rounded-full ${STATUS_COLOR[solicitacao.status] || 'bg-gray-100'}`}>
           <Text className="text-xs font-medium">{t(`constants.statusSolicitacao.${solicitacao.status}`, solicitacao.status)}</Text>
         </View>
       </View>
-      <Text className="text-gray-600 text-sm mb-2" numberOfLines={2}>
-        {solicitacao.descricao}
-      </Text>
+      {texto && texto !== titulo ? (
+        <Text className="text-gray-600 text-sm mb-2" numberOfLines={2}>
+          {texto}
+        </Text>
+      ) : null}
       {qtdOrcamentos > 0 && (
         <Text className="text-primary-600 text-sm font-medium">
           {t('orcamentos.titulo')}: {qtdOrcamentos}

@@ -18,7 +18,19 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
     headers.set('Authorization', `Bearer ${session.access_token}`);
   }
 
-  const res = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
+  let res = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
+  if (res.status === 401 && session) {
+    // login recusado pelo servidor (encerrado em outro aparelho, ou o token
+    // guardado ficou para tras): renova uma vez e tenta de novo; se nem assim,
+    // sai so deste aparelho e a pessoa entra de novo
+    const { data: novo } = await supabase.auth.refreshSession();
+    if (novo.session?.access_token) {
+      headers.set('Authorization', `Bearer ${novo.session.access_token}`);
+      res = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
+    } else {
+      await supabase.auth.signOut({ scope: 'local' });
+    }
+  }
   const json = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new ErroApi(res.status, json.codigo);

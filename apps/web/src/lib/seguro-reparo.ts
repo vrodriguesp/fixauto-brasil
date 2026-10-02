@@ -29,10 +29,22 @@ export interface SeguroReparo {
 export const usaSeguro = (p: string | null | undefined) => p === 'seguro_terceiro' || p === 'seguro_proprio';
 
 /** Regiao das dicas: versao do Brasil (pt) ou Europa/Estonia (demais idiomas). */
-export const regiaoSeguro = (locale: string): 'br' | 'ee' => (locale === 'pt' ? 'br' : 'ee');
+// Regras do pos-acidente (numero de emergencia, formulario amigavel, seguro)
+// sao do PAIS onde a batida aconteceu, nao do idioma: um italiano na Estonia
+// segue as regras da Estonia. Pais vem da localizacao do acidente; sem ela,
+// do idioma (pt-BR -> Brasil, pt-PT -> Portugal...). Pais sem regras
+// proprias aqui recebe conselho generico (112 na Europa, declaracao europeia).
+export type RegiaoSeguro = 'br' | 'ee' | 'it' | 'pt' | 'geral';
+const POR_PAIS: Record<string, RegiaoSeguro> = { BR: 'br', EE: 'ee', IT: 'it', PT: 'pt' };
+const POR_IDIOMA: Record<string, RegiaoSeguro> = { pt: 'br', 'pt-PT': 'pt', et: 'ee', it: 'it' };
+export const regiaoSeguro = (locale: string, pais?: string | null): RegiaoSeguro =>
+  pais ? POR_PAIS[pais.toUpperCase()] || 'geral' : POR_IDIOMA[locale] || 'geral';
 
 // Sugestoes para o campo "seguradora" (texto livre; lista so ajuda a digitar)
-export const SEGURADORAS: Record<'br' | 'ee', string[]> = {
+export const SEGURADORAS: Record<RegiaoSeguro, string[]> = {
+  it: ['Generali', 'Unipol', 'Allianz', 'AXA', 'Reale Mutua', 'Zurich', 'Sara Assicurazioni', 'Vittoria', 'Verti', 'Prima'],
+  pt: ['Fidelidade', 'Tranquilidade', 'Ageas', 'Allianz', 'Generali', 'Zurich', 'Liberty', 'Ok! Teleseguros', 'Lusitania', 'Caravela'],
+  geral: [],
   ee: ['If', 'ERGO', 'Swedbank', 'LHV Kindlustus', 'Gjensidige', 'Compensa', 'BTA', 'Salva', 'Balcia', 'Inges'],
   br: ['Porto Seguro', 'Azul Seguros', 'Itaú Seguros', 'Bradesco Seguros', 'Allianz', 'Tokio Marine', 'HDI', 'Yelum', 'Mapfre', 'Suhai'],
 };

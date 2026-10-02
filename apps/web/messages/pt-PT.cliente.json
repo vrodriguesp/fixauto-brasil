@@ -232,7 +232,8 @@
     "refuse": "Recusar",
     "acceptAndSchedule": "Aceitar e Marcar",
     "escolhaHorarioDica": "Toque no dia e hora em que vai levar o carro à oficina.",
-    "escolhaHorarioAntes": "Escolha um horário acima"
+    "escolhaHorarioAntes": "Escolha um horário acima",
+    "horariosVencidos": "Os horários oferecidos já passaram. Peça novas datas à oficina por mensagem."
   },
   "clienteMensagens": {
     "workshopFallback": "Oficina",
@@ -325,5 +326,19 @@
     "title": "Notificações",
     "markAllRead": "Marcar todas como lidas",
     "empty": "Ainda não há notificações"
+  },
+  "editarPedido": {
+    "acidente": "Acidente",
+    "completarCarro": "Complete os dados do carro",
+    "completarCarroDica": "Marca, modelo e matrícula ajudam a oficina a fazer o orçamento. Toque para completar.",
+    "editar": "Editar pedido",
+    "marca": "Marca",
+    "modelo": "Modelo",
+    "ano": "Ano",
+    "placa": "Matrícula",
+    "descricao": "Descrição",
+    "erro": "Não foi possível guardar. Tente novamente.",
+    "cancelar": "Cancelar",
+    "salvar": "Guardar"
   }
 }

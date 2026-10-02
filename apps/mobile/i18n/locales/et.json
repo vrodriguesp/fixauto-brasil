@@ -99,7 +99,12 @@
     "galeria": "Galerii",
     "localNegadaTitulo": "Asukoht on välja lülitatud",
     "localNegadaTexto": "Lähedal asuvate töökodade teavitamiseks luba seadetes asukoha kasutamine. Võid ka aadressi sisestada.",
-    "abrirAjustes": "Ava seaded"
+    "abrirAjustes": "Ava seaded",
+    "seuCarro": "Teie auto",
+    "seuCarroDica": "Aitab töökojal pakkumist teha. Salvestatakse teie sõidukite hulka.",
+    "outroCarro": "Muu auto",
+    "localEncontrada": "Asukoht leitud. Kontrollige allolevat aadressi.",
+    "tentarDeNovo": "Proovi uuesti"
   },
   "novaSolicitacao": {
     "titulo": "Uus päring",
@@ -139,13 +144,19 @@
     "statusExpirado": "Aegunud",
     "escolhaData": "Vali, millal auto tuua:",
     "turno_manha": "hommik",
-    "turno_tarde": "pärastlõuna"
+    "turno_tarde": "pärastlõuna",
+    "horariosVencidos": "Pakutud ajad on möödas. Küsige töökojalt sõnumiga uusi aegu."
   },
   "acompanhamento": {
     "titulo": "Remondi jälgimine",
     "etapaAtual": "Praegune etapp",
     "previsaoEntrega": "Eeldatav valmimisaeg",
-    "semEtapas": "Töökoda ei ole selle teenuse jälgimist veel alustanud."
+    "semEtapas": "Töökoda ei ole selle teenuse jälgimist veel alustanud.",
+    "acidente": "Õnnetus",
+    "completarCarro": "Lisage auto andmed",
+    "completarCarroDica": "Mark, mudel ja numbrimärk aitavad töökojal pakkumist teha. Puudutage lisamiseks.",
+    "editarPedido": "Muuda päringut",
+    "descricaoPedido": "Kirjeldus"
   },
   "avaliacao": {
     "titulo": "Hinda teenust",
@@ -160,12 +171,19 @@
     "nenhumaConversa": "Vestlusi pole veel.",
     "digiteMensagem": "Kirjuta sõnum...",
     "erroEnviar": "Sõnumit ei õnnestunud saata. Proovi uuesti.",
-    "gravarAudio": "Hoia all, et salvestada häälsõnum",
+    "gravarAudio": "Salvesta heli",
     "enviar": "Saada sõnum",
     "escolherOficina": "Millise töökojaga?",
     "escolherOficinaTexto": "Igal töökojal on teiega oma vestlus.",
     "semConversaAinda": "Ükski töökoda pole veel kirjutanud. Kui töökoda saadab hinnapakkumise või sõnumi, ilmub vestlus siia.",
-    "pagamentoReparo": "Remondi eest tasumine (õnnetus)"
+    "pagamentoReparo": "Remondi eest tasumine (õnnetus)",
+    "enviarAudio": "Saada helisõnum",
+    "gravando": "Salvestan…",
+    "ouvir": "Kuula",
+    "pausar": "Paus",
+    "audioIndisponivel": "Heli pole saadaval",
+    "microfoneTitulo": "Mikrofon on välja lülitatud",
+    "microfoneTexto": "Helisõnumi saatmiseks lubage seadetes juurdepääs mikrofonile."
   },
   "veiculos": {
     "titulo": "Minu sõidukid",
@@ -176,7 +194,8 @@
     "placa": "Registreerimismärk",
     "apelido": "Nimi sõiduki eristamiseks",
     "erroSalvar": "Sõidukit ei õnnestunud salvestada. Proovi uuesti.",
-    "nenhumVeiculo": "Sa pole veel ühtegi sõidukit lisanud."
+    "nenhumVeiculo": "Sa pole veel ühtegi sõidukit lisanud.",
+    "semDados": "Õnnetuse auto (andmeteta)"
   },
   "constants": {
     "tiposServico": {
@@ -260,7 +279,19 @@
     "salvo": "Salvestatud.",
     "erroSalvar": "Salvestamine ebaõnnestus. Proovi uuesti.",
     "naoInformado": "Veel lisamata.",
-    "lembreteSinistro": "Kahjuasja number puudub: kui kindlustusandja selle saadab, lisa see siia, et töökoda seda näeks."
+    "lembreteSinistro": "Kahjuasja number puudub: kui kindlustusandja selle saadab, lisa see siia, et töökoda seda näeks.",
+    "passo_emergencia_it": "Kui keegi sai viga, helistage 112. Kui kokkuleppele ei jõuta või teine juht lahkus, kutsuge politsei numbril 112.",
+    "passo_registro_it": "Täitke koos teise juhiga CAI vorm (Constatazione Amichevole di Incidente) paberil või digitaalselt ja allkirjastage mõlemad. Saatke see oma kindlustusele 3 päeva jooksul.",
+    "dica_seguro_terceiro_it": "Maksab teise juhi kohustuslik kindlustus (RC Auto). Otsehüvitise (CARD) korral avate kahjujuhtumi oma kindlustuses, mis arveldab teisega.",
+    "dica_seguro_proprio_it": "Kasko katab teie auto ka siis, kui süü oli teie. Tavaliselt maksate ainult poliisis märgitud omavastutuse.",
+    "passo_emergencia_pt": "Kui keegi sai viga, helistage 112. Kui kokkuleppele ei jõuta või teine juht lahkus, kutsuge politsei numbril 112.",
+    "passo_registro_pt": "Täitke koos teise juhiga Declaração Amigável (õnnetuse kokkuleppevorm) ja allkirjastage mõlemad. Kumbki saadab oma eksemplari oma kindlustusele 8 päeva jooksul.",
+    "dica_seguro_terceiro_pt": "Maksab teise juhi kohustuslik kindlustus. Kui mõlemad autod on kindlustatud Portugalis, saab teie enda kindlustus kahjujuhtumi lahendada (IDS-süsteem).",
+    "dica_seguro_proprio_pt": "Oma kahjude kindlustus katab teie auto ka siis, kui süü oli teie. Tavaliselt maksate ainult poliisis märgitud omavastutuse.",
+    "passo_emergencia_geral": "Kui keegi sai viga, helistage kohalikul hädaabinumbril (Euroopas 112).",
+    "passo_registro_geral": "Pange kirja teise juhi numbrimärk, nimi, telefon ja kindlustus ning tehke fotod. Euroopas saate täita Euroopa õnnetusteate, mille mõlemad juhid allkirjastavad, ja saata selle kindlustusele esimesel võimalusel.",
+    "dica_seguro_terceiro_geral": "Remondi eest maksab teise juhi vastutuskindlustus. Teavitage ka oma kindlustust: see aitab kahjujuhtumiga.",
+    "dica_seguro_proprio_geral": "Kui teie poliis katab oma auto kahjud, maksab see remondi; tavaliselt maksate poliisis märgitud omavastutuse."
   },
   "erros": {
     "CAMPO_OBRIGATORIO": "Täida kõik kohustuslikud väljad.",

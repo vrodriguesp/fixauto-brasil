@@ -2,6 +2,7 @@
   "ios": {
     "NSLocationWhenInUseUsageDescription": "Usamos sua localização para encontrar oficinas próximas de você.",
     "NSCameraUsageDescription": "Usamos a câmera para você fotografar o dano do veículo.",
-    "NSPhotoLibraryUsageDescription": "Usamos sua galeria para você enviar fotos do dano do veículo."
+    "NSPhotoLibraryUsageDescription": "Usamos sua galeria para você enviar fotos do dano do veículo.",
+    "NSMicrophoneUsageDescription": "Usamos o microfone para você enviar mensagens de voz para a oficina."
   }
 }

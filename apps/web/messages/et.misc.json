@@ -1039,7 +1039,19 @@
     "oficinaOpcao_proprio": "Klient maksab ise",
     "oficinaOpcao_seguro_terceiro": "Teise juhi kindlustus",
     "oficinaOpcao_seguro_proprio": "Kliendi kaskokindlustus",
-    "oficinaOpcao_nao_sei": "Klient ei tea veel"
+    "oficinaOpcao_nao_sei": "Klient ei tea veel",
+    "passo_emergencia_it": "Kui keegi sai viga, helistage 112. Kui kokkuleppele ei jõuta või teine juht lahkus, kutsuge politsei numbril 112.",
+    "passo_registro_it": "Täitke koos teise juhiga CAI vorm (Constatazione Amichevole di Incidente) paberil või digitaalselt ja allkirjastage mõlemad. Saatke see oma kindlustusele 3 päeva jooksul.",
+    "dica_seguro_terceiro_it": "Maksab teise juhi kohustuslik kindlustus (RC Auto). Otsehüvitise (CARD) korral avate kahjujuhtumi oma kindlustuses, mis arveldab teisega.",
+    "dica_seguro_proprio_it": "Kasko katab teie auto ka siis, kui süü oli teie. Tavaliselt maksate ainult poliisis märgitud omavastutuse.",
+    "passo_emergencia_pt": "Kui keegi sai viga, helistage 112. Kui kokkuleppele ei jõuta või teine juht lahkus, kutsuge politsei numbril 112.",
+    "passo_registro_pt": "Täitke koos teise juhiga Declaração Amigável (õnnetuse kokkuleppevorm) ja allkirjastage mõlemad. Kumbki saadab oma eksemplari oma kindlustusele 8 päeva jooksul.",
+    "dica_seguro_terceiro_pt": "Maksab teise juhi kohustuslik kindlustus. Kui mõlemad autod on kindlustatud Portugalis, saab teie enda kindlustus kahjujuhtumi lahendada (IDS-süsteem).",
+    "dica_seguro_proprio_pt": "Oma kahjude kindlustus katab teie auto ka siis, kui süü oli teie. Tavaliselt maksate ainult poliisis märgitud omavastutuse.",
+    "passo_emergencia_geral": "Kui keegi sai viga, helistage kohalikul hädaabinumbril (Euroopas 112).",
+    "passo_registro_geral": "Pange kirja teise juhi numbrimärk, nimi, telefon ja kindlustus ning tehke fotod. Euroopas saate täita Euroopa õnnetusteate, mille mõlemad juhid allkirjastavad, ja saata selle kindlustusele esimesel võimalusel.",
+    "dica_seguro_terceiro_geral": "Remondi eest maksab teise juhi vastutuskindlustus. Teavitage ka oma kindlustust: see aitab kahjujuhtumiga.",
+    "dica_seguro_proprio_geral": "Kui teie poliis katab oma auto kahjud, maksab see remondi; tavaliselt maksate poliisis märgitud omavastutuse."
   },
   "chatCotacaoPeca": {
     "nenhuma": "Sõnumeid veel pole.",

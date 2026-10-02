@@ -14,6 +14,8 @@ import { currencyForCountry } from '@/lib/currency';
 import type { DisponibilidadeSlot } from '@fixauto/shared';
 import { notifOrcamentoRecusado } from '@/lib/notif-i18n';
 import MidiaPrivada from '@/components/midia/MidiaPrivada';
+import { turnoDisponivel, type Turno } from '@/lib/turnos';
+import EditarPedido from '@/components/cliente/EditarPedido';
 
 function formatExecTime(hours: number | null, t: (key: string, values?: Record<string, string | number | Date>) => string): string {
   if (!hours) return '-';
@@ -29,12 +31,13 @@ function formatSlotDate(dateStr: string, locale: string): string {
 
 export default function OrcamentoDetalhePage() {
   const t = useTranslations('clienteOrcamentoDetalhe');
+  const te = useTranslations('editarPedido');
   const tc = useTranslations('constants');
   const tErr = useTranslations('erros');
   const locale = useLocale();
   const params = useParams();
   const router = useRouter();
-  const { solicitacoes, updateStatus } = useSolicitacoes();
+  const { solicitacoes, updateStatus, refresh } = useSolicitacoes();
   const { accept, refuse } = useOrcamentos();
   const { avaliacoes, create: createAvaliacao, update: updateAvaliacao } = useAvaliacoes();
   const [cancelling, setCancelling] = useState(false);
@@ -175,12 +178,15 @@ export default function OrcamentoDetalhePage() {
         {t('back')}
       </button>
 
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {solicitacao.veiculo?.fipe_marca} {solicitacao.veiculo?.fipe_modelo}
+      {/* celular: titulo e botoes empilhados */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-6">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold text-gray-900 break-words">
+            {solicitacao.veiculo?.fipe_marca
+              ? `${solicitacao.veiculo.fipe_marca} ${solicitacao.veiculo.fipe_modelo}`
+              : /\[TIPO:\w+\]/.test(solicitacao.descricao || '') ? te('acidente') : ''}
           </h1>
-          <div className="flex items-center gap-2 mt-1">
+          <div className="flex flex-wrap items-center gap-2 mt-1">
             <StatusBadge status={solicitacao.status} />
             <span className={`badge ${getUrgenciaColor(solicitacao.urgencia)}`}>
               {tc.has(`urgencias.${solicitacao.urgencia}`) ? tc(`urgencias.${solicitacao.urgencia}`) : solicitacao.urgencia}
@@ -214,6 +220,11 @@ export default function OrcamentoDetalhePage() {
           )}
         </div>
       </div>
+
+      {['aberta', 'em_orcamento'].includes(solicitacao.status) && (
+        <EditarPedido key={`${solicitacao.id}-${solicitacao.veiculo?.fipe_marca || ''}`} solicitacaoId={solicitacao.id}
+          descricao={solicitacao.descricao} veiculo={(solicitacao.veiculo as any) || null} aoSalvar={refresh} />
+      )}
 
       {/* Vehicle at workshop banner */}
       {solicitacao.status === 'em_andamento' && (
@@ -575,7 +586,11 @@ export default function OrcamentoDetalhePage() {
                   </h4>
                   <p className="text-sm text-gray-600 mb-3">{t('escolhaHorarioDica')}</p>
                   <div className="space-y-2">
-                    {orc.disponibilidade.map((slot) => (
+                    {/* horario que ja passou nao se escolhe (a oficina pode ter oferecido hoje de manha) */}
+                    {orc.disponibilidade.every((slot) => !turnoDisponivel(slot.data_checkin, slot.turno as Turno)) && (
+                      <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3">{t('horariosVencidos')}</p>
+                    )}
+                    {orc.disponibilidade.filter((slot) => turnoDisponivel(slot.data_checkin, slot.turno as Turno)).map((slot) => (
                       <button
                         key={slot.id}
                         type="button"

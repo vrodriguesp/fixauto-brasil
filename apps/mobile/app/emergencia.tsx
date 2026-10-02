@@ -11,7 +11,9 @@ import { API_BASE_URL } from '../lib/api';
 import i18n from '../i18n';
 import { ErroApi, ErroUsuario, mensagemErro } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
-import { obterPosicao } from '../lib/posicao';
+import { obterPosicao, enderecoDaPosicao } from '../lib/posicao';
+import { regiaoSeguro } from '../lib/regiao';
+import VehicleCatalogPicker from '../components/VehicleCatalogPicker';
 import { arquivoDaFoto } from '../lib/anexo';
 
 type Tipo = 'eu_causei' | 'outro_causou' | 'sem_outro';
@@ -51,6 +53,15 @@ export default function EmergenciaScreen() {
   const [endereco, setEndereco] = useState('');
   const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [buscandoLocal, setBuscandoLocal] = useState(false);
+  // resultado da localizacao na tela (antes falhava em silencio)
+  const [estadoLocal, setEstadoLocal] = useState<'' | 'ok' | 'negado' | 'negadoAjustes' | 'falhou'>('');
+  const [paisAcidente, setPaisAcidente] = useState<string | null>(null);
+  // carro (opcional): um dos cadastrados, ou marca/modelo/placa - vira um carro dele
+  const [meusVeiculos, setMeusVeiculos] = useState<{ id: string; fipe_marca: string; fipe_modelo: string; placa: string | null }[]>([]);
+  const [veiculoEscolhido, setVeiculoEscolhido] = useState<string | null>(null);
+  const [marca, setMarca] = useState<{ code: string; name: string } | null>(null);
+  const [modelo, setModelo] = useState<{ code: string; name: string } | null>(null);
+  const [placa, setPlaca] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
   const [tipo, setTipo] = useState<Tipo>('outro_causou');
@@ -64,7 +75,17 @@ export default function EmergenciaScreen() {
   const [seguradora, setSeguradora] = useState('');
   const [sinistro, setSinistro] = useState('');
   const [franquia, setFranquia] = useState('');
-  const regiao = i18n.language === 'pt' ? 'br' : 'ee';
+  const regiao = regiaoSeguro(i18n.language, paisAcidente);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from('veiculos').select('id, fipe_marca, fipe_modelo, placa').eq('profile_id', user.id).order('created_at')
+      .then(({ data }) => {
+        const lista = (data || []).filter((v: any) => v.fipe_marca);
+        setMeusVeiculos(lista as any);
+        if (lista.length === 1) setVeiculoEscolhido(lista[0].id);
+      });
+  }, [user]);
 
   const handleFoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -83,11 +104,13 @@ export default function EmergenciaScreen() {
   const handleUsarLocalizacao = async (silencioso = false) => {
     setBuscandoLocal(true);
     try {
-      const { status, canAskAgain } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setBuscandoLocal(false);
-        // negada antes: o sistema nao pergunta de novo - explica e leva aos Ajustes
-        if (!silencioso && !canAskAgain) {
+      // ja negada: o sistema nao mostra o pedido de novo - entao vai direto
+      // aos Ajustes; senao o sistema pergunta (permitir uma vez / sempre)
+      let perm = await Location.getForegroundPermissionsAsync();
+      if (perm.status !== 'granted' && perm.canAskAgain) perm = await Location.requestForegroundPermissionsAsync();
+      if (perm.status !== 'granted') {
+        setEstadoLocal(perm.canAskAgain ? 'negado' : 'negadoAjustes');
+        if (!silencioso && !perm.canAskAgain) {
           Alert.alert(t('emergencia.localNegadaTitulo'), t('emergencia.localNegadaTexto'), [
             { text: t('common.cancelar'), style: 'cancel' },
             { text: t('emergencia.abrirAjustes'), onPress: () => Linking.openSettings() },
@@ -99,14 +122,17 @@ export default function EmergenciaScreen() {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
       setCoords({ lat, lon });
-      const res = await fetch(`${API_BASE_URL}/api/geocode?lat=${lat}&lon=${lon}`);
-      const data = await res.json();
-      if (data.cidade) setEndereco([data.cidade, data.estado, data.pais].filter(Boolean).join(', '));
+      setEstadoLocal('ok');
+      // endereco com rua e numero (antes so a cidade, e so se o servidor respondesse)
+      const end = await enderecoDaPosicao(lat, lon);
+      if (end) {
+        setEndereco(end.texto);
+        if (end.paisCodigo) setPaisAcidente(end.paisCodigo);
+      }
     } catch {
-      // Ação disparada explicitamente pelo usuário (botão "usar localização"),
-      // diferente do auto-fetch silencioso de nova-solicitacao.tsx - aqui
-      // ele espera um resultado, então avisamos que falhou.
-      if (!silencioso) Alert.alert(t('common.erroGenerico'), t('emergencia.erroLocalizacao'));
+      // Permitido mas o GPS nao respondeu: avisa na tela (mesmo na busca
+      // automatica ao abrir) - antes falhava calado e parecia nao ter feito nada
+      setEstadoLocal('falhou');
     } finally {
       setBuscandoLocal(false);
     }
@@ -147,6 +173,10 @@ export default function EmergenciaScreen() {
         endereco,
         latitude: localCoords.lat,
         longitude: localCoords.lon,
+        // carro: um dos cadastrados, ou o que a pessoa informou agora (opcional)
+        ...(veiculoEscolhido
+          ? { veiculoId: veiculoEscolhido }
+          : { placa: placa.trim() || null, veiculoInfo: marca ? { marca: marca.name, modelo: modelo?.name || '' } : null }),
       }));
       for (const [i, foto] of fotos.entries()) {
         form.append('fotos', await arquivoDaFoto(foto.uri), `foto-${i}.jpg`);
@@ -228,6 +258,39 @@ export default function EmergenciaScreen() {
         style={{ textAlignVertical: 'top' }}
       />
 
+      {/* Seu carro (opcional): um toque se ja cadastrado; senao marca/modelo/placa */}
+      <Text className="text-sm font-medium text-gray-700 mb-1">
+        {t('emergencia.seuCarro')} <Text className="text-gray-400">({t('common.opcional')})</Text>
+      </Text>
+      <Text className="text-xs text-gray-500 mb-2">{t('emergencia.seuCarroDica')}</Text>
+      {meusVeiculos.length > 0 && (
+        <View className="flex-row flex-wrap gap-2 mb-2">
+          {meusVeiculos.map((v) => (
+            <Pressable key={v.id} onPress={() => setVeiculoEscolhido(v.id)} accessibilityRole="radio" accessibilityState={{ checked: veiculoEscolhido === v.id }}
+              className={`border-2 rounded-lg px-3 py-2 ${veiculoEscolhido === v.id ? 'border-red-400 bg-red-50' : 'border-gray-200'}`}>
+              <Text className="text-gray-900 text-sm font-medium">{v.fipe_marca} {v.fipe_modelo}</Text>
+              {v.placa ? <Text className="text-gray-500 text-xs">{v.placa}</Text> : null}
+            </Pressable>
+          ))}
+          <Pressable onPress={() => setVeiculoEscolhido(null)} accessibilityRole="radio" accessibilityState={{ checked: veiculoEscolhido === null }}
+            className={`border-2 rounded-lg px-3 py-2 justify-center ${veiculoEscolhido === null ? 'border-red-400 bg-red-50' : 'border-gray-200'}`}>
+            <Text className="text-gray-900 text-sm font-medium">{t('emergencia.outroCarro')}</Text>
+          </Pressable>
+        </View>
+      )}
+      {veiculoEscolhido === null && (
+        <View className="mb-2">
+          <VehicleCatalogPicker label={t('veiculos.marca')} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" />
+          {marca && (
+            <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={`/api/vehicle-catalog?tipo=cars&marca=${marca.code}`} />
+          )}
+          <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.placa')}</Text>
+          <TextInput accessibilityLabel={t('veiculos.placa')} value={placa} onChangeText={setPlaca} autoCapitalize="characters" maxLength={15}
+            className="border border-gray-300 rounded-lg px-4 py-3 text-base" />
+        </View>
+      )}
+      <View className="mb-6" />
+
       <Text className="text-sm font-medium text-gray-700 mb-2">{t('emergencia.whatHappenedLabel')}</Text>
       {(['eu_causei', 'outro_causou', 'sem_outro'] as Tipo[]).map((op) => {
         const k = op === 'eu_causei' ? 'EuCausei' : op === 'outro_causou' ? 'OutroCausou' : 'SemOutro';
@@ -270,6 +333,27 @@ export default function EmergenciaScreen() {
         <Text className="text-gray-700">{buscandoLocal ? t('common.carregando') : t('emergencia.localPermitir')}</Text>
         {buscandoLocal && <ActivityIndicator size="small" color="#2563eb" />}
       </Pressable>
+      {estadoLocal === 'ok' && !buscandoLocal && (
+        <Text className="text-sm text-green-800 bg-green-50 rounded-lg p-3 mb-2">📍 {t('emergencia.localEncontrada')}</Text>
+      )}
+      {(estadoLocal === 'falhou' || estadoLocal === 'negado' || estadoLocal === 'negadoAjustes') && !buscandoLocal && (
+        <View className="bg-amber-50 rounded-lg p-3 mb-2">
+          <Text className="text-sm text-amber-900 mb-2">
+            {estadoLocal === 'falhou' ? t('emergencia.erroLocalizacao') : t('emergencia.localNegadaTexto')}
+          </Text>
+          <View className="flex-row gap-2">
+            {estadoLocal === 'negadoAjustes' ? (
+              <Pressable onPress={() => Linking.openSettings()} accessibilityRole="button" className="bg-white border border-amber-300 rounded-lg px-3 py-2">
+                <Text className="text-amber-900 font-medium">{t('emergencia.abrirAjustes')}</Text>
+              </Pressable>
+            ) : (
+              <Pressable onPress={() => handleUsarLocalizacao()} accessibilityRole="button" className="bg-white border border-amber-300 rounded-lg px-3 py-2">
+                <Text className="text-amber-900 font-medium">{t('emergencia.tentarDeNovo')}</Text>
+              </Pressable>
+            )}
+          </View>
+        </View>
+      )}
       <View onLayout={(e) => { posEndereco.current = e.nativeEvent.layout.y; }} />
       <EnderecoAutocomplete
         aoFocar={() => setTimeout(() => rolagem.current?.scrollTo({ y: Math.max(0, posEndereco.current - 40), animated: true }), 250)}
@@ -278,7 +362,7 @@ export default function EmergenciaScreen() {
         placeholder={t('emergencia.localTexto')}
         perto={coords}
         rotulo={t('emergencia.localTitulo')}
-        onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); }}
+        onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); if (s.paisCodigo) setPaisAcidente(s.paisCodigo); setEstadoLocal(''); }}
       />
 
       {!user && (

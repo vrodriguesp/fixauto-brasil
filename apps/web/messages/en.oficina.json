@@ -484,7 +484,8 @@
     "placeholderObservacoes": "Warranty, terms, additional information...",
     "cancelar": "Cancel",
     "atualizarOrcamento": "Update Quote",
-    "semComissaoOrcamento": "BipFix charges no commission on this quote. The amount you send is the amount the customer sees."
+    "semComissaoOrcamento": "BipFix charges no commission on this quote. The amount you send is the amount the customer sees.",
+    "horarioPassado": "One of the times has already passed. Pick a period today that has not ended yet, or a later day."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Password must be at least 8 characters",
@@ -698,7 +699,9 @@
     "emOrcamento": "Quoting",
     "nenhumaSolicitacaoEncontrada": "No requests found with these filters",
     "enviarOrcamento": "Send Quote",
-    "fotosCount": "{count} photo(s)"
+    "fotosCount": "{count} photo(s)",
+    "orcamentoEnviado": "Quote sent",
+    "verModificarOrcamento": "View / edit quote"
   },
   "oficinaSolicitacaoDetalhe": {
     "solicitacaoNaoEncontrada": "Request not found",
@@ -722,7 +725,18 @@
     "dadosVeiculoIndisponiveis": "Vehicle data not available",
     "cliente": "Customer",
     "clienteFallback": "Customer",
-    "solicitadoEm": "Requested on {data}"
+    "solicitadoEm": "Requested on {data}",
+    "verOrcamento": "View quote",
+    "modificarOrcamento": "Edit quote",
+    "seuOrcamento": "Your quote",
+    "prazoDias": "Time: {dias} day(s)",
+    "statusOrcamento": {
+      "enviado": "Sent",
+      "visualizado": "Seen by customer",
+      "aceito": "Accepted",
+      "recusado": "Declined",
+      "expirado": "Expired"
+    }
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Vehicle received at the shop",

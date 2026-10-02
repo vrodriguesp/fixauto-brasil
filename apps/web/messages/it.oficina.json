@@ -484,7 +484,8 @@
     "placeholderObservacoes": "Garanzia, condizioni, informazioni aggiuntive...",
     "cancelar": "Annulla",
     "atualizarOrcamento": "Aggiorna Preventivo",
-    "semComissaoOrcamento": "BipFix non applica commissioni su questo preventivo. L'importo che invii è quello che vede il cliente."
+    "semComissaoOrcamento": "BipFix non applica commissioni su questo preventivo. L'importo che invii è quello che vede il cliente.",
+    "horarioPassado": "Uno degli orari è già passato. Scegli oggi una fascia non ancora finita, oppure un giorno successivo."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "La password deve avere almeno 8 caratteri",
@@ -698,7 +699,9 @@
     "emOrcamento": "In Preventivo",
     "nenhumaSolicitacaoEncontrada": "Nessuna richiesta trovata con questi filtri",
     "enviarOrcamento": "Invia Preventivo",
-    "fotosCount": "{count} foto"
+    "fotosCount": "{count} foto",
+    "orcamentoEnviado": "Preventivo inviato",
+    "verModificarOrcamento": "Vedi / modifica preventivo"
   },
   "oficinaSolicitacaoDetalhe": {
     "solicitacaoNaoEncontrada": "Richiesta non trovata",
@@ -722,7 +725,18 @@
     "dadosVeiculoIndisponiveis": "Dati del veicolo non disponibili",
     "cliente": "Cliente",
     "clienteFallback": "Cliente",
-    "solicitadoEm": "Richiesto il {data}"
+    "solicitadoEm": "Richiesto il {data}",
+    "verOrcamento": "Vedi preventivo",
+    "modificarOrcamento": "Modifica preventivo",
+    "seuOrcamento": "Il tuo preventivo",
+    "prazoDias": "Tempi: {dias} giorno/i",
+    "statusOrcamento": {
+      "enviado": "Inviato",
+      "visualizado": "Visto dal cliente",
+      "aceito": "Accettato",
+      "recusado": "Rifiutato",
+      "expirado": "Scaduto"
+    }
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Veicolo ricevuto in officina",

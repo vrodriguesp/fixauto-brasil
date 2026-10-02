@@ -2,6 +2,7 @@
   "ios": {
     "NSLocationWhenInUseUsageDescription": "Kasutame sinu asukohta, et leida sinu lähedal asuvad töökojad.",
     "NSCameraUsageDescription": "Kasutame kaamerat, et saaksid sõiduki kahjustusest pildi teha.",
-    "NSPhotoLibraryUsageDescription": "Kasutame sinu fotogaleriid, et saaksid saata pilte sõiduki kahjustusest."
+    "NSPhotoLibraryUsageDescription": "Kasutame sinu fotogaleriid, et saaksid saata pilte sõiduki kahjustusest.",
+    "NSMicrophoneUsageDescription": "Kasutame mikrofoni, et saaksite töökojale häälsõnumeid saata."
   }
 }

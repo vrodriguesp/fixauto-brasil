@@ -1039,7 +1039,19 @@
     "oficinaOpcao_proprio": "Paga il cliente",
     "oficinaOpcao_seguro_terceiro": "Assicurazione dell'altro conducente",
     "oficinaOpcao_seguro_proprio": "Assicurazione del cliente (kasko)",
-    "oficinaOpcao_nao_sei": "Il cliente non lo sa ancora"
+    "oficinaOpcao_nao_sei": "Il cliente non lo sa ancora",
+    "passo_emergencia_it": "Se qualcuno è ferito, chiama il 112. Se non c'è accordo o l'altro conducente se n'è andato, chiama le forze dell'ordine al 112.",
+    "passo_registro_it": "Compila con l'altro conducente il modulo CAI (Constatazione Amichevole di Incidente), cartaceo o digitale, e firmatelo entrambi. Invialo alla tua compagnia entro 3 giorni.",
+    "dica_seguro_terceiro_it": "Paga l'RC Auto dell'altro conducente. Con il risarcimento diretto (CARD) apri il sinistro con la tua compagnia, che poi regola con l'altra.",
+    "dica_seguro_proprio_it": "La kasko copre la tua auto anche se la colpa è tua. Di solito paghi solo la franchigia prevista dalla polizza.",
+    "passo_emergencia_pt": "Se qualcuno è ferito, chiama il 112. Se non c'è accordo o l'altro conducente se n'è andato, chiama la polizia al 112.",
+    "passo_registro_pt": "Compila con l'altro conducente la Declaração Amigável (constatazione amichevole portoghese) e firmatela entrambi. Ognuno invia la sua copia alla propria compagnia entro 8 giorni.",
+    "dica_seguro_terceiro_pt": "Paga l'assicurazione obbligatoria dell'altro conducente. Se entrambe le auto sono assicurate in Portogallo, può occuparsene la tua compagnia (sistema IDS).",
+    "dica_seguro_proprio_pt": "La copertura danni propri vale anche se la colpa è tua. Di solito paghi solo la franchigia prevista dalla polizza.",
+    "passo_emergencia_geral": "Se qualcuno è ferito, chiama il numero di emergenza locale (112 in Europa).",
+    "passo_registro_geral": "Annota targa, nome, telefono e compagnia dell'altro conducente e scatta delle foto. In Europa potete compilare la Constatazione amichevole europea, firmata da entrambi, e inviarla alla compagnia il prima possibile.",
+    "dica_seguro_terceiro_geral": "La riparazione la paga l'assicurazione di responsabilità civile dell'altro conducente. Avvisa anche la tua compagnia: ti aiuta con il sinistro.",
+    "dica_seguro_proprio_geral": "Se la tua polizza copre i danni alla tua auto, paga la riparazione; di solito paghi la franchigia prevista."
   },
   "chatCotacaoPeca": {
     "nenhuma": "Ancora nessun messaggio.",

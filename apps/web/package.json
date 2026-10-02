@@ -11,7 +11,7 @@
     "prebuild": "node scripts/indice-guias.mjs"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.1.0",
+    "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.39.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.3.0",

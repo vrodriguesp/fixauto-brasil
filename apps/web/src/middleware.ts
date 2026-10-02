@@ -1,4 +1,4 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
 import { routing, LOCALE_PREFIX, HREFLANG, X_DEFAULT_LOCALE, caminhoLocal, hrefNoIdioma, type Locale } from '@/i18n/routing';
@@ -157,15 +157,19 @@ export async function middleware(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      // getAll/setAll (@supabase/ssr atual): le e grava TODOS os pedacos do
+      // cookie de login juntos. A versao antiga (get/set por nome) deixava
+      // pedacos do login anterior ao trocar de conta - o servidor lia um
+      // login ja encerrado e mandava de volta para a tela de entrar.
       cookies: {
-        get(name: string) {
-          return req.cookies.get(name)?.value;
+        getAll() {
+          return req.cookies.getAll();
         },
-        set(name: string, value: string, options: CookieOptions) {
-          res.cookies.set({ name, value, ...options, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' });
-        },
-        remove(name: string, options: CookieOptions) {
-          res.cookies.set({ name, value: '', ...options });
+        setAll(lista, cabecalhos) {
+          lista.forEach(({ name, value, options }) =>
+            res.cookies.set(name, value, { ...options, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' })
+          );
+          Object.entries(cabecalhos || {}).forEach(([k, v]) => res.headers.set(k, v));
         },
       },
     }
@@ -216,7 +220,7 @@ export async function middleware(req: NextRequest) {
       const lastSignIn = usuario.last_sign_in_at ? new Date(usuario.last_sign_in_at).getTime() : 0;
       const hoursSinceSignIn = (Date.now() - lastSignIn) / (1000 * 60 * 60);
       if (!lastSignIn || hoursSinceSignIn > ADMIN_MAX_SESSION_HOURS) {
-        await supabase.auth.signOut();
+        await supabase.auth.signOut({ scope: 'local' });
         return NextResponse.redirect(withLocale('/login?sessao_expirada=1'));
       }
     }

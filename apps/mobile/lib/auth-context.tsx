@@ -61,12 +61,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { profile: null, error: error?.message || 'Perfil não encontrado' };
     }
     if (profile.ativo === false) {
-      await supabase.auth.signOut();
+      await supabase.auth.signOut({ scope: 'local' });
       setUser(null);
       return { profile: null, error: 'Esta conta foi desativada. Entre em contato com o suporte.' };
     }
     if (profile.tipo !== 'cliente') {
-      await supabase.auth.signOut();
+      await supabase.auth.signOut({ scope: 'local' });
       setUser(null);
       return { profile: null, error: ERRO_TIPO_NAO_SUPORTADO };
     }
@@ -143,7 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await supabase.auth.signOut({ scope: 'local' });
     setUser(null);
     setAuthUser(null);
   };

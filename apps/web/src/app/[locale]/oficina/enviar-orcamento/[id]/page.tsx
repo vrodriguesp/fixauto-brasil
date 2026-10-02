@@ -12,6 +12,7 @@ import type { TipoItemOrcamento, AnaliseDano } from '@fixauto/shared';
 import { formatCurrency, cleanDescricao } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { supabase } from '@/lib/supabase';
+import { hojeLocal, turnoDisponivel, primeiroTurnoLivre, type Turno } from '@/lib/turnos';
 
 interface ItemForm {
   descricao: string;
@@ -70,9 +71,9 @@ export default function EnviarOrcamentoPage() {
   }, [oficina?.id]);
 
   // Availability slots
-  const [slots, setSlots] = useState<{ data: string; turno: 'manha' | 'tarde' }[]>([
-    { data: new Date().toISOString().split('T')[0], turno: 'manha' },
-  ]);
+  // comeca no primeiro periodo ainda valido (antes: hoje de manha, mesmo a tarde)
+  const [slots, setSlots] = useState<{ data: string; turno: 'manha' | 'tarde' }[]>(() => [primeiroTurnoLivre()]);
+  const [erroHorario, setErroHorario] = useState(false);
 
   // Pre-fill form with existing quote data for revisions
   useEffect(() => {
@@ -121,7 +122,14 @@ export default function EnviarOrcamentoPage() {
   };
 
   const updateSlot = (index: number, field: 'data' | 'turno', value: string) => {
-    setSlots(slots.map((s, i) => i === index ? { ...s, [field]: value } : s));
+    setErroHorario(false);
+    setSlots(slots.map((s, i) => {
+      if (i !== index) return s;
+      const novo = { ...s, [field]: value } as { data: string; turno: Turno };
+      // trocou para hoje e a manha ja passou: vai para a tarde
+      if (field === 'data' && !turnoDisponivel(novo.data, novo.turno) && turnoDisponivel(novo.data, 'tarde')) novo.turno = 'tarde';
+      return novo;
+    }));
   };
 
   const addItem = () => {
@@ -156,6 +164,10 @@ export default function EnviarOrcamentoPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (slots.some((s) => s.data && !turnoDisponivel(s.data, s.turno))) {
+      setErroHorario(true);
+      return;
+    }
 
     const itensPayload = itens.map(item => ({
       descricao: item.descricao,
@@ -546,6 +558,7 @@ export default function EnviarOrcamentoPage() {
               {t('ofereceDatas')}
             </p>
 
+            {erroHorario && <p className="text-sm text-red-700 mb-3" role="alert">{t('horarioPassado')}</p>}
             <div className="space-y-3">
               {slots.map((slot, index) => (
                 // celular: data e turno um embaixo do outro (o turno ficava espremido ao lado da data)
@@ -555,6 +568,7 @@ export default function EnviarOrcamentoPage() {
                       aria-label={t('disponibilidadeCheckin')}
                       type="date"
                       className="input-field"
+                      min={hojeLocal()}
                       value={slot.data}
                       onChange={(e) => updateSlot(index, 'data', e.target.value)}
                     />
@@ -562,12 +576,12 @@ export default function EnviarOrcamentoPage() {
                   <div className="flex-1 sm:flex-none sm:w-44">
                     <select
                       aria-label={t('manhaHorario') + ' / ' + t('tardeHorario')}
-                      className="input-field"
+                      className={`input-field ${!turnoDisponivel(slot.data, slot.turno) ? '!border-red-400' : ''}`}
                       value={slot.turno}
                       onChange={(e) => updateSlot(index, 'turno', e.target.value)}
                     >
-                      <option value="manha">{t('manhaHorario')}</option>
-                      <option value="tarde">{t('tardeHorario')}</option>
+                      <option value="manha" disabled={!turnoDisponivel(slot.data, 'manha')}>{t('manhaHorario')}</option>
+                      <option value="tarde" disabled={!turnoDisponivel(slot.data, 'tarde')}>{t('tardeHorario')}</option>
                     </select>
                   </div>
                   {slot.data && (

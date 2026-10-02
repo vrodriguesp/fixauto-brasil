@@ -73,7 +73,8 @@ export async function POST(req: NextRequest) {
       contaCriada = conta.criada;
     }
 
-    const descricao = `[TIPO:${tipoAcidente}] ${descricaoLivre || 'Emergência - Colisão'}`;
+    // sem texto livre fica so a marca do tipo (a tela mostra "Acidente" traduzido)
+    const descricao = `[TIPO:${tipoAcidente}] ${descricaoLivre || ''}`.trim();
     const token = tokenAleatorio();
 
     const { data: emergencia, error: eErr } = await supabaseAdmin
@@ -110,21 +111,35 @@ export async function POST(req: NextRequest) {
       await supabaseAdmin.from('emergencia_fotos').insert({ emergencia_id: emergencia.id, foto_url: url });
     }
 
-    // Veiculo + solicitacao de colisao vinculada
-    const { data: veiculos } = await supabaseAdmin.from('veiculos').select('id').eq('profile_id', clienteId).limit(1);
-    let veiculoId = veiculos?.[0]?.id;
+    // Carro do acidente: (1) um dos carros da pessoa, escolhido no formulario;
+    // (2) mesma placa de um carro dela; (3) o que ela informou agora vira um
+    // carro cadastrado dela; (4) nada informado: com um so carro, e ele; senao
+    // um carro "a completar" (antes pegava o primeiro carro da lista, mesmo
+    // que fosse outro). Os dados podem ser completados depois no pedido.
+    const veiculoPedido = typeof d.veiculoId === 'string' ? d.veiculoId : null;
+    const marcaInf = String(vInfo.marca || '').trim().slice(0, 60);
+    const modeloInf = String(vInfo.modelo || '').trim().slice(0, 80);
+    const { data: meus } = await supabaseAdmin.from('veiculos').select('id, placa, fipe_marca').eq('profile_id', clienteId);
+    const normPlaca = (p: string | null | undefined) => (p || '').replace(/[^a-z0-9]/gi, '').toUpperCase();
+    let veiculoId: string | undefined =
+      (veiculoPedido && meus?.find((v) => v.id === veiculoPedido)?.id) ||
+      (placa ? meus?.find((v) => normPlaca(v.placa) && normPlaca(v.placa) === normPlaca(placa))?.id : undefined);
+    if (!veiculoId && !placa && !marcaInf) {
+      const completos = (meus || []).filter((v) => v.fipe_marca);
+      if (completos.length === 1) veiculoId = completos[0].id;
+    }
     if (!veiculoId) {
       const { data: v } = await supabaseAdmin
         .from('veiculos')
         .insert({
           profile_id: clienteId,
           fipe_tipo: 'cars',
-          fipe_marca: String(vInfo.marca || '').slice(0, 60),
-          fipe_modelo: String(vInfo.modelo || '').slice(0, 80),
+          fipe_marca: marcaInf,
+          fipe_modelo: modeloInf,
           fipe_ano: String(vInfo.ano || '').slice(0, 10),
           placa,
           cor: vInfo.cor ? String(vInfo.cor).slice(0, 30) : null,
-          apelido: placa ? `Veículo ${placa}` : 'Veículo da emergência',
+          apelido: null,
         })
         .select('id')
         .single();

@@ -232,7 +232,8 @@
     "refuse": "Decline",
     "acceptAndSchedule": "Accept and Schedule",
     "escolhaHorarioDica": "Tap the day and time you will bring the car to the shop.",
-    "escolhaHorarioAntes": "Choose a time above"
+    "escolhaHorarioAntes": "Choose a time above",
+    "horariosVencidos": "The offered times have passed. Ask the workshop for new dates by message."
   },
   "clienteMensagens": {
     "workshopFallback": "Repair shop",
@@ -325,5 +326,19 @@
     "title": "Notifications",
     "markAllRead": "Mark all as read",
     "empty": "No notifications yet"
+  },
+  "editarPedido": {
+    "acidente": "Accident",
+    "completarCarro": "Add your car details",
+    "completarCarroDica": "Make, model and plate help the workshop prepare the quote. Tap to add.",
+    "editar": "Edit request",
+    "marca": "Make",
+    "modelo": "Model",
+    "ano": "Year",
+    "placa": "Plate",
+    "descricao": "Description",
+    "erro": "Could not save. Please try again.",
+    "cancelar": "Cancel",
+    "salvar": "Save"
   }
 }

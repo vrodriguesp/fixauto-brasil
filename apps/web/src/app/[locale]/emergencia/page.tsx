@@ -38,6 +38,13 @@ export default function EmergenciaPage() {
   // Sem localizacao padrao: um ponto fixo (antes, Sao Paulo) mandaria o aviso
   // as oficinas erradas. Sem GPS nem endereco encontrado, pede o endereco.
   const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
+  // pais do acidente: decide numero de emergencia, formulario e dicas de seguro
+  const [paisAcidente, setPaisAcidente] = useState<string | null>(null);
+  useEffect(() => {
+    if (!coords) return;
+    fetch(`/api/geocode?lat=${coords.lat}&lon=${coords.lon}`).then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d?.paisCodigo) setPaisAcidente(d.paisCodigo); }).catch(() => {});
+  }, [coords]);
   const [geoResolved, setGeoResolved] = useState(false);
   const [tipoAcidente, setTipoAcidente] = useState<'eu_causei' | 'outro_causou' | 'sem_outro'>('outro_causou');
   const [placa, setPlaca] = useState('');
@@ -211,7 +218,7 @@ export default function EmergenciaPage() {
           {t('successText')}
         </p>
 
-        <ProximosPassosSeguro pagamento={seguro.pagamento_reparo} tipoAcidente={tipoAcidente} />
+        <ProximosPassosSeguro pagamento={seguro.pagamento_reparo} tipoAcidente={tipoAcidente} pais={paisAcidente} />
 
         {tipoAcidente !== 'sem_outro' && (
           <div className="card text-left mb-6">
@@ -509,7 +516,7 @@ export default function EmergenciaPage() {
               </div>
 
               <div className="mt-6">
-                <SeguroReparoCampos valor={seguro} onChange={setSeguro} tipoAcidente={tipoAcidente} />
+                <SeguroReparoCampos valor={seguro} onChange={setSeguro} tipoAcidente={tipoAcidente} pais={paisAcidente} />
               </div>
 
               <div className="bg-gray-50 rounded-lg p-4 mt-6 space-y-2">

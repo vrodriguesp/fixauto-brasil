@@ -9,7 +9,8 @@ import { supabase } from '@/lib/supabase';
 import StatusBadge from '@/components/ui/StatusBadge';
 import NoShowWarning from '@/components/ui/NoShowWarning';
 import DamageAnalysis from '@/components/ui/DamageAnalysis';
-import { formatDate, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
+import { formatDate, formatCurrency, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 import { Link } from '@/i18n/navigation';
 import MidiaPrivada from '@/components/midia/MidiaPrivada';
 
@@ -59,7 +60,7 @@ export default function SolicitacaoDetalhePage() {
       return { label: t('refazerOrcamento'), href: `/oficina/enviar-orcamento/${sol.id}` };
     }
     if (myQuote) {
-      return { label: t('revisarOrcamento'), href: `/oficina/enviar-orcamento/${sol.id}` };
+      return { label: t('modificarOrcamento'), href: `/oficina/enviar-orcamento/${sol.id}` };
     }
     return { label: t('enviarOrcamento'), href: `/oficina/enviar-orcamento/${sol.id}` };
   };
@@ -75,22 +76,23 @@ export default function SolicitacaoDetalhePage() {
         {t('voltar')}
       </Link>
 
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+      {/* celular: titulo, selos e botoes empilhados (antes ficavam lado a lado e desalinhados) */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-6">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold text-gray-900 break-words">
             {v ? `${v.fipe_marca} ${v.fipe_modelo}` : t('veiculoFallback')}
           </h1>
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex flex-wrap items-center gap-2 mt-2">
             <StatusBadge status={sol.status} />
             <span className={`badge ${getUrgenciaColor(sol.urgencia)}`}>
               {t('urgencia')}: {tc.has(`urgencias.${sol.urgencia}`) ? tc(`urgencias.${sol.urgencia}`) : sol.urgencia}
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:flex-shrink-0">
           <Link
             href={`/oficina/mensagens/${sol.id}`}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] text-sm font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -98,15 +100,47 @@ export default function SolicitacaoDetalhePage() {
             {t('mensagem')}
           </Link>
           {sol.status !== 'concluida' && sol.status !== 'cancelada' && (
-            <Link href={action.href} className={isAccepted ? 'btn-secondary' : 'btn-primary'}>
+            <Link href={action.href} className={`${isAccepted || myQuote ? 'btn-secondary' : 'btn-primary'} text-center min-h-[44px] inline-flex items-center justify-center`}>
               {action.label}
             </Link>
+          )}
+          {myQuote && (
+            <a href="#meu-orcamento" className="btn-primary text-center min-h-[44px] inline-flex items-center justify-center col-span-2 sm:col-span-1">
+              {t('verOrcamento')}
+            </a>
           )}
         </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
+          {myQuote && (
+            <div id="meu-orcamento" className="card border-2 border-primary-100 scroll-mt-24">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <h2 className="font-semibold text-gray-900">{t('seuOrcamento')}</h2>
+                <span className="badge bg-gray-100 text-gray-700">{t(`statusOrcamento.${myQuote.status}`)}</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(Number(myQuote.valor_total), currencyForCountry(oficina?.pais), locale)}</p>
+              <p className="text-sm text-gray-600 mt-1">{t('prazoDias', { dias: myQuote.prazo_dias })}</p>
+              {(myQuote.itens || []).length > 0 && (
+                <ul className="mt-3 divide-y divide-gray-100 text-sm">
+                  {myQuote.itens.map((it: any) => (
+                    <li key={it.id} className="flex justify-between gap-3 py-2">
+                      <span className="text-gray-700 break-words min-w-0">{it.quantidade > 1 ? `${it.quantidade}× ` : ''}{it.descricao}</span>
+                      <span className="text-gray-900 whitespace-nowrap">{formatCurrency(Number(it.valor_total), currencyForCountry(oficina?.pais), locale)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {myQuote.observacoes && <p className="text-sm text-gray-600 mt-3 whitespace-pre-line">{cleanDescricao(myQuote.observacoes)}</p>}
+              {sol.status !== 'concluida' && sol.status !== 'cancelada' && (
+                <Link href={`/oficina/enviar-orcamento/${sol.id}`} className="btn-secondary mt-4 w-full sm:w-auto inline-flex justify-center">
+                  {t('modificarOrcamento')}
+                </Link>
+              )}
+            </div>
+          )}
+
           <div className="card">
             <h2 className="font-semibold text-gray-900 mb-2">{t('descricaoDoProblema')}</h2>
             <p className="text-gray-600">{cleanDescricao(sol.descricao)}</p>

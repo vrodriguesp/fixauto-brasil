@@ -40,8 +40,8 @@ export default function VeiculosScreen() {
         ListEmptyComponent={!loading ? <Text className="text-gray-500 text-center mt-8">{t('veiculos.nenhumVeiculo')}</Text> : null}
         renderItem={({ item }) => (
           <View className="bg-white rounded-xl p-4 mb-3 border border-gray-200">
-            <Text className="font-semibold text-gray-900">{item.apelido || `${item.fipe_marca} ${item.fipe_modelo}`}</Text>
-            <Text className="text-gray-500 text-sm">{item.fipe_marca} {item.fipe_modelo} - {item.fipe_ano}</Text>
+            <Text className="font-semibold text-gray-900">{item.apelido || (item.fipe_marca ? `${item.fipe_marca} ${item.fipe_modelo}` : t('veiculos.semDados'))}</Text>
+            {item.fipe_marca ? <Text className="text-gray-500 text-sm">{item.fipe_marca} {item.fipe_modelo}{item.fipe_ano && item.fipe_ano !== '-' ? ` - ${item.fipe_ano}` : ''}</Text> : null}
             {item.placa ? <Text className="text-gray-400 text-xs mt-1">{item.placa}</Text> : null}
           </View>
         )}

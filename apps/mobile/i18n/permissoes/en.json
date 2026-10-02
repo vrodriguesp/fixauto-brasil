@@ -2,6 +2,7 @@
   "ios": {
     "NSLocationWhenInUseUsageDescription": "We use your location to find repair shops near you.",
     "NSCameraUsageDescription": "We use the camera so you can photograph the damage to your vehicle.",
-    "NSPhotoLibraryUsageDescription": "We use your photo library so you can send photos of the damage to your vehicle."
+    "NSPhotoLibraryUsageDescription": "We use your photo library so you can send photos of the damage to your vehicle.",
+    "NSMicrophoneUsageDescription": "We use the microphone so you can send voice messages to the repair shop."
   }
 }

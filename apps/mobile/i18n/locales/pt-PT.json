@@ -99,7 +99,12 @@
     "galeria": "Galeria",
     "localNegadaTitulo": "Localização desativada",
     "localNegadaTexto": "Para avisar as oficinas próximas, permita o acesso à localização nas Definições. Também pode escrever a morada.",
-    "abrirAjustes": "Abrir Definições"
+    "abrirAjustes": "Abrir Definições",
+    "seuCarro": "O seu carro",
+    "seuCarroDica": "Ajuda a oficina a fazer o orçamento. Fica guardado nos seus veículos.",
+    "outroCarro": "Outro carro",
+    "localEncontrada": "Localização encontrada. Confirme a morada abaixo.",
+    "tentarDeNovo": "Tentar de novo"
   },
   "novaSolicitacao": {
     "titulo": "Novo pedido",
@@ -139,13 +144,19 @@
     "statusExpirado": "Expirado",
     "escolhaData": "Escolha quando levar o carro:",
     "turno_manha": "manhã",
-    "turno_tarde": "tarde"
+    "turno_tarde": "tarde",
+    "horariosVencidos": "Os horários oferecidos já passaram. Peça novas datas à oficina por mensagem."
   },
   "acompanhamento": {
     "titulo": "Acompanhamento da reparação",
     "etapaAtual": "Etapa atual",
     "previsaoEntrega": "Entrega prevista",
-    "semEtapas": "A oficina ainda não iniciou o acompanhamento deste serviço."
+    "semEtapas": "A oficina ainda não iniciou o acompanhamento deste serviço.",
+    "acidente": "Acidente",
+    "completarCarro": "Complete os dados do carro",
+    "completarCarroDica": "Marca, modelo e matrícula ajudam a oficina a fazer o orçamento. Toque para completar.",
+    "editarPedido": "Editar pedido",
+    "descricaoPedido": "Descrição"
   },
   "avaliacao": {
     "titulo": "Avalie o serviço",
@@ -160,12 +171,19 @@
     "nenhumaConversa": "Ainda não há conversas.",
     "digiteMensagem": "Escreva uma mensagem...",
     "erroEnviar": "Não foi possível enviar a mensagem. Tente novamente.",
-    "gravarAudio": "Mantenha premido para gravar uma mensagem de voz",
+    "gravarAudio": "Gravar áudio",
     "enviar": "Enviar mensagem",
     "escolherOficina": "Com que oficina?",
     "escolherOficinaTexto": "Cada oficina tem a sua conversa consigo.",
     "semConversaAinda": "Nenhuma oficina escreveu ainda. Quando uma oficina enviar orçamento ou mensagem, a conversa aparece aqui.",
-    "pagamentoReparo": "Pagamento da reparação (acidente)"
+    "pagamentoReparo": "Pagamento da reparação (acidente)",
+    "enviarAudio": "Enviar áudio",
+    "gravando": "A gravar…",
+    "ouvir": "Ouvir",
+    "pausar": "Pausar",
+    "audioIndisponivel": "Áudio indisponível",
+    "microfoneTitulo": "Microfone desativado",
+    "microfoneTexto": "Para enviar áudio, permita o acesso ao microfone nas Definições."
   },
   "veiculos": {
     "titulo": "Os meus veículos",
@@ -176,7 +194,8 @@
     "placa": "Matrícula",
     "apelido": "Nome para identificar o veículo",
     "erroSalvar": "Não foi possível guardar o veículo. Tente novamente.",
-    "nenhumVeiculo": "Ainda não adicionou nenhum veículo."
+    "nenhumVeiculo": "Ainda não adicionou nenhum veículo.",
+    "semDados": "Carro do acidente (sem dados)"
   },
   "constants": {
     "tiposServico": {
@@ -260,7 +279,19 @@
     "salvo": "Guardado.",
     "erroSalvar": "Não foi possível guardar. Tente novamente.",
     "naoInformado": "Ainda não indicado.",
-    "lembreteSinistro": "Falta o número do sinistro: quando a seguradora o enviar, acrescente-o aqui para a oficina o ver."
+    "lembreteSinistro": "Falta o número do sinistro: quando a seguradora o enviar, acrescente-o aqui para a oficina o ver.",
+    "passo_emergencia_it": "Se alguém ficou ferido, ligue para o 112. Se não houver acordo ou o outro condutor tiver ido embora, chame a polícia pelo 112.",
+    "passo_registro_it": "Preencha com o outro condutor a CAI (Constatazione Amichevole di Incidente), em papel ou digital, e assinem os dois. Envie-a à sua seguradora no prazo de 3 dias.",
+    "dica_seguro_terceiro_it": "Paga o seguro obrigatório (RC Auto) do outro condutor. Com a indemnização direta (CARD), participa o sinistro à sua própria seguradora, que trata com a outra.",
+    "dica_seguro_proprio_it": "A cobertura do seu carro (kasko) aplica-se mesmo que a culpa seja sua. Normalmente paga apenas a franquia prevista na apólice.",
+    "passo_emergencia_pt": "Se alguém ficou ferido, ligue para o 112. Se não houver acordo ou o outro condutor tiver ido embora, chame a polícia pelo 112.",
+    "passo_registro_pt": "Preencha com o outro condutor a Declaração Amigável de Acidente Automóvel e assinem os dois. Cada um envia o seu exemplar à sua seguradora no prazo de 8 dias.",
+    "dica_seguro_terceiro_pt": "Paga o seguro obrigatório do outro condutor. Se os dois veículos estiverem seguros em Portugal, a sua própria seguradora pode tratar do sinistro (sistema IDS).",
+    "dica_seguro_proprio_pt": "A cobertura de danos próprios aplica-se mesmo que a culpa seja sua. Normalmente paga apenas a franquia prevista na apólice.",
+    "passo_emergencia_geral": "Se alguém ficou ferido, ligue para o número de emergência local (112 na Europa).",
+    "passo_registro_geral": "Anote a matrícula, o nome, o telefone e a seguradora do outro condutor e tire fotografias. Na Europa podem preencher a Declaração Europeia de Acidente, assinada pelos dois, e enviá-la à seguradora o mais depressa possível.",
+    "dica_seguro_terceiro_geral": "Quem paga a reparação é o seguro de responsabilidade civil do outro condutor. Avise também a sua seguradora: ela ajuda com o sinistro.",
+    "dica_seguro_proprio_geral": "Se a sua apólice cobre danos no seu carro, ela paga a reparação; normalmente paga a franquia prevista."
   },
   "erros": {
     "CAMPO_OBRIGATORIO": "Preencha todos os campos obrigatórios.",

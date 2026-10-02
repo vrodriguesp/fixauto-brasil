@@ -24,9 +24,9 @@ function opcoesPara(tipo: TipoAcidente): PagamentoReparo[] {
 }
 
 /** Pergunta "quem vai pagar o conserto?" com os campos do seguro e uma dica. */
-export function SeguroReparoCampos({ valor, onChange, tipoAcidente }: { valor: ValorSeguro; onChange: (v: ValorSeguro) => void; tipoAcidente: TipoAcidente }) {
+export function SeguroReparoCampos({ valor, onChange, tipoAcidente, pais }: { valor: ValorSeguro; onChange: (v: ValorSeguro) => void; tipoAcidente: TipoAcidente; pais?: string | null }) {
   const t = useTranslations('seguroReparo');
-  const regiao = regiaoSeguro(useLocale());
+  const regiao = regiaoSeguro(useLocale(), pais);
   const set = (p: Partial<ValorSeguro>) => onChange({ ...valor, ...p });
   const p = valor.pagamento_reparo;
 
@@ -77,9 +77,9 @@ export function SeguroReparoCampos({ valor, onChange, tipoAcidente }: { valor: V
 }
 
 /** Lista "o que fazer agora" da tela de sucesso, conforme o caso. */
-export function ProximosPassosSeguro({ pagamento, tipoAcidente }: { pagamento: PagamentoReparo | ''; tipoAcidente: TipoAcidente }) {
+export function ProximosPassosSeguro({ pagamento, tipoAcidente, pais }: { pagamento: PagamentoReparo | ''; tipoAcidente: TipoAcidente; pais?: string | null }) {
   const t = useTranslations('seguroReparo');
-  const regiao = regiaoSeguro(useLocale());
+  const regiao = regiaoSeguro(useLocale(), pais);
   const passos: string[] = [t(`passo_emergencia_${regiao}`)];
   if (tipoAcidente !== 'sem_outro') passos.push(t(`passo_registro_${regiao}`));
   if (usaSeguro(pagamento)) {

@@ -232,7 +232,8 @@
     "refuse": "Lükka tagasi",
     "acceptAndSchedule": "Nõustu ja broneeri aeg",
     "escolhaHorarioDica": "Puuduta päeva ja kellaaega, millal tood auto töökotta.",
-    "escolhaHorarioAntes": "Vali ülal aeg"
+    "escolhaHorarioAntes": "Vali ülal aeg",
+    "horariosVencidos": "Pakutud ajad on möödas. Küsige töökojalt sõnumiga uusi aegu."
   },
   "clienteMensagens": {
     "workshopFallback": "Töökoda",
@@ -325,5 +326,19 @@
     "title": "Teated",
     "markAllRead": "Märgi kõik loetuks",
     "empty": "Teateid pole veel"
+  },
+  "editarPedido": {
+    "acidente": "Õnnetus",
+    "completarCarro": "Lisage auto andmed",
+    "completarCarroDica": "Mark, mudel ja numbrimärk aitavad töökojal pakkumist teha. Puudutage lisamiseks.",
+    "editar": "Muuda päringut",
+    "marca": "Mark",
+    "modelo": "Mudel",
+    "ano": "Aasta",
+    "placa": "Numbrimärk",
+    "descricao": "Kirjeldus",
+    "erro": "Salvestamine ebaõnnestus. Proovige uuesti.",
+    "cancelar": "Tühista",
+    "salvar": "Salvesta"
   }
 }

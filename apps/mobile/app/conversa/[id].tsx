@@ -5,6 +5,10 @@ import { useLocalSearchParams, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
+import { apiFetch } from '../../lib/api';
+import { File } from 'expo-file-system';
+import { useAudioRecorder, useAudioRecorderState, RecordingPresets, requestRecordingPermissionsAsync, setAudioModeAsync } from 'expo-audio';
+import AudioMensagem from '../../components/AudioMensagem';
 
 interface Mensagem {
   id: string;
@@ -13,12 +17,14 @@ interface Mensagem {
   remetente_id: string;
   texto: string;
   tipo?: string;
+  audio_url?: string | null;
+  audio_duracao_segundos?: number | null;
+  transcricao?: string | null;
   lida: boolean;
   created_at: string;
 }
 
-// v1: chat de texto com a oficina. Audio (que o web ja tem) fica pra proxima
-// leva - ver docs/ESPECIFICACAO_APP_MOBILE_CLIENTE.md.
+// Conversa com a oficina: texto e audio (gravado aqui ou recebido do site).
 export default function ConversaScreen() {
   const { t } = useTranslation();
   // Opcoes do cabecalho criadas uma vez: objeto novo a cada desenho fazia o
@@ -102,12 +108,60 @@ export default function ConversaScreen() {
     }
   }, [mensagens, user, id, oficinaId, pagadorId]);
 
+  // audio: toca o microfone para gravar; depois enviar ou descartar
+  const gravador = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+  const estadoGravacao = useAudioRecorderState(gravador);
+  const [gravando, setGravando] = useState(false);
+
+  const comecarGravacao = async () => {
+    const perm = await requestRecordingPermissionsAsync();
+    if (!perm.granted) {
+      Alert.alert(t('mensagens.microfoneTitulo'), t('mensagens.microfoneTexto'));
+      return;
+    }
+    await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
+    await gravador.prepareToRecordAsync();
+    gravador.record();
+    setGravando(true);
+  };
+
+  const pararGravacao = async (enviar: boolean) => {
+    const duracao = Math.max(1, Math.round((estadoGravacao.durationMillis || 0) / 1000));
+    await gravador.stop();
+    setGravando(false);
+    await setAudioModeAsync({ allowsRecording: false, playsInSilentMode: true });
+    if (!enviar || !gravador.uri || !user || !oficinaId) return;
+    setEnviando(true);
+    try {
+      // mesma pasta do site: audio/<pedido>/<oficina>/[<quem paga>/]<arquivo>
+      const caminho = `audio/${id}/${oficinaId}/${pagadorId ? `${pagadorId}/` : ''}${Date.now()}.m4a`;
+      const bytes = await new File(gravador.uri).arrayBuffer();
+      const { error: eUp } = await supabase.storage.from('damage-photos').upload(caminho, bytes, { contentType: 'audio/mp4' });
+      if (eUp) throw eUp;
+      const audioUrl = supabase.storage.from('damage-photos').getPublicUrl(caminho).data.publicUrl;
+      const { data: nova, error } = await supabase.from('mensagens').insert({
+        solicitacao_id: id, oficina_id: oficinaId, pagador_id: pagadorId, remetente_id: user.id,
+        texto: '[Audio]', tipo: 'audio', audio_url: audioUrl, audio_duracao_segundos: duracao,
+      }).select('*').single();
+      if (error) throw error;
+      if (nova) setMensagens((prev) => (prev.some((m) => m.id === nova.id) ? prev : [...prev, nova as Mensagem]));
+      if (nova?.id) apiFetch('/api/avisar-mensagem', { method: 'POST', body: JSON.stringify({ mensagemId: nova.id }) }).catch(() => {});
+    } catch {
+      Alert.alert(t('common.erroGenerico'), t('mensagens.erroEnviar'));
+    } finally {
+      setEnviando(false);
+    }
+  };
+
   const handleEnviar = async () => {
     if (!texto.trim() || !user || !oficinaId || enviando) return;
     const conteudo = texto.trim();
     setEnviando(true);
-    const { error } = await supabase.from('mensagens').insert({ solicitacao_id: id, oficina_id: oficinaId, pagador_id: pagadorId, remetente_id: user.id, texto: conteudo });
+    const { data: nova, error } = await supabase.from('mensagens')
+      .insert({ solicitacao_id: id, oficina_id: oficinaId, pagador_id: pagadorId, remetente_id: user.id, texto: conteudo }).select('id').single();
     setEnviando(false);
+    // aviso para a oficina (o site ja avisava; o app nao)
+    if (!error && nova?.id) apiFetch('/api/avisar-mensagem', { method: 'POST', body: JSON.stringify({ mensagemId: nova.id }) }).catch(() => {});
     if (error) {
       // Nao limpa a caixa de texto - o usuario nao perde o que escreveu se
       // o envio falhar (rede caiu, RLS, etc.), e pode tentar de novo.
@@ -158,23 +212,48 @@ export default function ConversaScreen() {
           const minha = item.remetente_id === user?.id;
           return (
             <View className={`max-w-[80%] rounded-2xl px-4 py-2 mb-2 ${minha ? 'self-end bg-primary-600' : 'self-start bg-white border border-gray-200'}`}>
-              <Text className={minha ? 'text-white' : 'text-gray-900'}>{item.texto}</Text>
+              {item.tipo === 'audio' && item.audio_url ? (
+                <AudioMensagem url={item.audio_url} duracao={item.audio_duracao_segundos} transcricao={item.transcricao} minha={minha} />
+              ) : (
+                <Text className={minha ? 'text-white' : 'text-gray-900'}>{item.texto}</Text>
+              )}
             </View>
           );
         }}
       />
-      <View className="flex-row items-center gap-2 px-4 py-3 bg-white border-t border-gray-200">
-        <TextInput accessibilityLabel={t('mensagens.digiteMensagem')}
-          value={texto}
-          onChangeText={setTexto}
-          placeholder={t('mensagens.digiteMensagem')}
-          className="flex-1 border border-gray-300 rounded-full px-4 py-2"
-          multiline
-        />
-        <Pressable onPress={handleEnviar} disabled={!texto.trim() || enviando} accessibilityRole="button" accessibilityLabel={t('mensagens.enviar')} className="bg-primary-600 rounded-full w-10 h-10 items-center justify-center" style={{ opacity: !texto.trim() || enviando ? 0.5 : 1 }}>
-          <Ionicons name="send" size={18} color="#fff" />
-        </Pressable>
-      </View>
+      {gravando ? (
+        <View className="flex-row items-center gap-3 px-4 py-3 bg-white border-t border-gray-200">
+          <View className="w-3 h-3 rounded-full bg-red-500" />
+          <Text className="flex-1 text-gray-800">
+            {t('mensagens.gravando')} {Math.floor((estadoGravacao.durationMillis || 0) / 60000)}:{String(Math.floor(((estadoGravacao.durationMillis || 0) / 1000) % 60)).padStart(2, '0')}
+          </Text>
+          <Pressable onPress={() => pararGravacao(false)} accessibilityRole="button" accessibilityLabel={t('common.cancelar')} className="w-11 h-11 rounded-full border border-gray-300 items-center justify-center">
+            <Ionicons name="trash-outline" size={20} color="#6b7280" />
+          </Pressable>
+          <Pressable onPress={() => pararGravacao(true)} accessibilityRole="button" accessibilityLabel={t('mensagens.enviarAudio')} className="w-11 h-11 rounded-full bg-primary-600 items-center justify-center">
+            <Ionicons name="send" size={18} color="#fff" />
+          </Pressable>
+        </View>
+      ) : (
+        <View className="flex-row items-center gap-2 px-4 py-3 bg-white border-t border-gray-200">
+          <TextInput accessibilityLabel={t('mensagens.digiteMensagem')}
+            value={texto}
+            onChangeText={setTexto}
+            placeholder={t('mensagens.digiteMensagem')}
+            className="flex-1 border border-gray-300 rounded-full px-4 py-2"
+            multiline
+          />
+          {texto.trim() ? (
+            <Pressable onPress={handleEnviar} disabled={enviando} accessibilityRole="button" accessibilityLabel={t('mensagens.enviar')} className="bg-primary-600 rounded-full w-11 h-11 items-center justify-center" style={{ opacity: enviando ? 0.5 : 1 }}>
+              <Ionicons name="send" size={18} color="#fff" />
+            </Pressable>
+          ) : (
+            <Pressable onPress={comecarGravacao} disabled={enviando} accessibilityRole="button" accessibilityLabel={t('mensagens.gravarAudio')} className="bg-green-600 rounded-full w-11 h-11 items-center justify-center" style={{ opacity: enviando ? 0.5 : 1 }}>
+              {enviando ? <ActivityIndicator color="#fff" /> : <Ionicons name="mic" size={20} color="#fff" />}
+            </Pressable>
+          )}
+        </View>
+      )}
     </KeyboardAvoidingView>
   );
 }

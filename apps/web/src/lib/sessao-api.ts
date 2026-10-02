@@ -20,6 +20,13 @@ export function instalarSessaoNasApis() {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.access_token) {
           headers.set('authorization', `Bearer ${session.access_token}`);
+          const res = await original(entrada, { ...init, headers });
+          if (res.status !== 401) return res;
+          // login recusado pelo servidor (encerrado em outro aparelho ou o
+          // token local ficou para tras): renova uma vez e tenta de novo
+          const { data: novo } = await supabase.auth.refreshSession();
+          if (!novo.session?.access_token) return res;
+          headers.set('authorization', `Bearer ${novo.session.access_token}`);
           return original(entrada, { ...init, headers });
         }
       }

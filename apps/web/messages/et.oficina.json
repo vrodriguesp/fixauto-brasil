@@ -484,7 +484,8 @@
     "placeholderObservacoes": "Garantii, tingimused, lisainfo...",
     "cancelar": "Tühista",
     "atualizarOrcamento": "Uuenda hinnapakkumist",
-    "semComissaoOrcamento": "BipFix ei võta selle pakkumise pealt komisjonitasu. Summa, mille saadad, on summa, mida klient näeb."
+    "semComissaoOrcamento": "BipFix ei võta selle pakkumise pealt komisjonitasu. Summa, mille saadad, on summa, mida klient näeb.",
+    "horarioPassado": "Üks aegadest on juba möödas. Valige täna veel lõppemata ajavahemik või hilisem päev."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Parool peab olema vähemalt 8 tähemärki",
@@ -698,7 +699,9 @@
     "emOrcamento": "Hinnapakkumisel",
     "nenhumaSolicitacaoEncontrada": "Nende filtritega ühtegi päringut ei leitud",
     "enviarOrcamento": "Saada hinnapakkumine",
-    "fotosCount": "{count} foto"
+    "fotosCount": "{count} foto",
+    "orcamentoEnviado": "Hinnapakkumine saadetud",
+    "verModificarOrcamento": "Vaata / muuda pakkumist"
   },
   "oficinaSolicitacaoDetalhe": {
     "solicitacaoNaoEncontrada": "Päringut ei leitud",
@@ -722,7 +725,18 @@
     "dadosVeiculoIndisponiveis": "Sõiduki andmed pole saadaval",
     "cliente": "Klient",
     "clienteFallback": "Klient",
-    "solicitadoEm": "Esitatud {data}"
+    "solicitadoEm": "Esitatud {data}",
+    "verOrcamento": "Vaata pakkumist",
+    "modificarOrcamento": "Muuda pakkumist",
+    "seuOrcamento": "Teie hinnapakkumine",
+    "prazoDias": "Tähtaeg: {dias} päev(a)",
+    "statusOrcamento": {
+      "enviado": "Saadetud",
+      "visualizado": "Klient nägi",
+      "aceito": "Vastu võetud",
+      "recusado": "Tagasi lükatud",
+      "expirado": "Aegunud"
+    }
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Sõiduk vastu võetud töökojas",

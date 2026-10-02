@@ -177,7 +177,7 @@ export default function NovaSolicitacaoScreen() {
             onPress={() => setVeiculoId(v.id)}
             className={`px-4 py-2 rounded-full border ${veiculoId === v.id ? 'bg-primary-600 border-primary-600' : 'border-gray-300'}`}
           >
-            <Text className={veiculoId === v.id ? 'text-white' : 'text-gray-700'}>{v.fipe_marca} {v.fipe_modelo}</Text>
+            <Text className={veiculoId === v.id ? 'text-white' : 'text-gray-700'}>{v.fipe_marca ? `${v.fipe_marca} ${v.fipe_modelo}` : v.placa || t('veiculos.semDados')}</Text>
           </Pressable>
         ))}
       </View>

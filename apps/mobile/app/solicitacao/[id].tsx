@@ -9,6 +9,9 @@ import { supabase } from '../../lib/supabase';
 import { apiFetch } from '../../lib/api';
 import { useAuth } from '../../lib/auth-context';
 import { mensagemErro } from '../../lib/erro';
+import { turnoDisponivel, type Turno } from '../../lib/turnos';
+import { limparDescricao, ehAcidente } from '../../lib/texto';
+import EditarPedido from '../../components/EditarPedido';
 
 export default function SolicitacaoDetailScreen() {
   const { t, i18n } = useTranslation();
@@ -129,9 +132,15 @@ export default function SolicitacaoDetailScreen() {
     <ScrollView className="flex-1 bg-gray-50">
       <Stack.Screen options={opcoesTela} />
       <View className="p-4">
-        <Text className="text-xl font-bold text-gray-900">{veiculo ? `${veiculo.fipe_marca} ${veiculo.fipe_modelo}` : ''}</Text>
-        <Text className="text-gray-600 mb-1">{solicitacao.descricao}</Text>
+        <Text className="text-xl font-bold text-gray-900">
+          {veiculo?.fipe_marca ? `${veiculo.fipe_marca} ${veiculo.fipe_modelo}` : ehAcidente(solicitacao.descricao) ? t('acompanhamento.acidente') : ''}
+        </Text>
+        {limparDescricao(solicitacao.descricao) ? <Text className="text-gray-600 mb-1">{limparDescricao(solicitacao.descricao)}</Text> : null}
         <Text className="text-sm text-gray-500 mb-4">{t(`constants.statusSolicitacao.${solicitacao.status}`, solicitacao.status)}</Text>
+
+        {['aberta', 'em_orcamento'].includes(solicitacao.status) && (
+          <EditarPedido key={`${solicitacao.id}-${veiculo?.fipe_marca || ''}`} solicitacaoId={solicitacao.id} descricao={solicitacao.descricao} veiculo={(veiculo as any) || null} aoSalvar={carregar} />
+        )}
 
         <Pressable onPress={() => router.push(`/conversa/${solicitacao.id}`)} className="bg-primary-50 rounded-lg py-3 items-center mb-6">
           <Text className="text-primary-700 font-medium">{t('mensagens.titulo')}</Text>
@@ -154,13 +163,17 @@ export default function SolicitacaoDetailScreen() {
                 {(orc.disponibilidade || []).length > 0 && (
                   <Text className="text-sm font-medium text-gray-700 mb-2">{t('orcamentos.escolhaData')}</Text>
                 )}
-                {(orc.disponibilidade || []).map((slot: DisponibilidadeSlot) => (
+                {/* horario que ja passou nao se escolhe */}
+                {(orc.disponibilidade || []).length > 0 && (orc.disponibilidade || []).every((slot: DisponibilidadeSlot) => !turnoDisponivel(slot.data_checkin, slot.turno as Turno)) && (
+                  <Text className="text-sm text-amber-800 bg-amber-50 rounded-lg p-3 mb-2">{t('orcamentos.horariosVencidos')}</Text>
+                )}
+                {(orc.disponibilidade || []).filter((slot: DisponibilidadeSlot) => turnoDisponivel(slot.data_checkin, slot.turno as Turno)).map((slot: DisponibilidadeSlot) => (
                   <Pressable
                     key={slot.id}
                     onPress={() => setSlotSelecionado((prev) => ({ ...prev, [orc.id]: slot.id }))}
                     className={`border rounded-lg px-3 py-2 mb-2 ${slotSelecionado[orc.id] === slot.id ? 'border-primary-600 bg-primary-50' : 'border-gray-200'}`}
                   >
-                    <Text className="text-sm text-gray-700">{formatDate(slot.data_checkin, locale)} - {t(`orcamentos.turno_${slot.turno}`, slot.turno)}</Text>
+                    <Text className="text-sm text-gray-700">{formatDate(slot.data_checkin, locale)} - {t(`orcamentos.turno_${slot.turno}`, slot.turno)} ({slot.turno === 'manha' ? '08:00-12:00' : '13:00-17:00'})</Text>
                   </Pressable>
                 ))}
                 <View className="flex-row gap-2 mt-2">

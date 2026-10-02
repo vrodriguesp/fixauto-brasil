@@ -141,7 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq('id', data.user.id)
         .single();
       if (profile && profile.ativo === false) {
-        await supabase.auth.signOut();
+        await supabase.auth.signOut({ scope: 'local' });
         return { error: 'conta_desativada' };
       }
     }
@@ -150,7 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await supabase.auth.signOut({ scope: 'local' });
     setUser(null);
     setOficina(null);
     setFuncionario(null);

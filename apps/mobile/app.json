@@ -79,7 +79,13 @@
       ],
       "expo-asset",
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "We use the microphone so you can send voice messages to the repair shop."
+        }
+      ]
     ],
     "locales": {
       "en": "./i18n/permissoes/en.json",

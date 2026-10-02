@@ -99,7 +99,12 @@
     "galeria": "Galleria",
     "localNegadaTitulo": "Posizione disattivata",
     "localNegadaTexto": "Per avvisare le officine vicine, consenti l'accesso alla posizione nelle Impostazioni. Puoi anche scrivere l'indirizzo.",
-    "abrirAjustes": "Apri Impostazioni"
+    "abrirAjustes": "Apri Impostazioni",
+    "seuCarro": "La tua auto",
+    "seuCarroDica": "Aiuta l'officina a fare il preventivo. Viene salvata tra i tuoi veicoli.",
+    "outroCarro": "Altra auto",
+    "localEncontrada": "Posizione trovata. Controlla l'indirizzo qui sotto.",
+    "tentarDeNovo": "Riprova"
   },
   "novaSolicitacao": {
     "titulo": "Nuova richiesta",
@@ -139,13 +144,19 @@
     "statusExpirado": "Scaduto",
     "escolhaData": "Scegli quando portare l'auto:",
     "turno_manha": "mattina",
-    "turno_tarde": "pomeriggio"
+    "turno_tarde": "pomeriggio",
+    "horariosVencidos": "Gli orari proposti sono già passati. Chiedi all'officina nuove date tramite messaggio."
   },
   "acompanhamento": {
     "titulo": "Stato riparazione",
     "etapaAtual": "Fase attuale",
     "previsaoEntrega": "Consegna prevista",
-    "semEtapas": "L'officina non ha ancora iniziato a monitorare questo servizio."
+    "semEtapas": "L'officina non ha ancora iniziato a monitorare questo servizio.",
+    "acidente": "Incidente",
+    "completarCarro": "Completa i dati dell'auto",
+    "completarCarroDica": "Marca, modello e targa aiutano l'officina a fare il preventivo. Tocca per completare.",
+    "editarPedido": "Modifica richiesta",
+    "descricaoPedido": "Descrizione"
   },
   "avaliacao": {
     "titulo": "Valuta il servizio",
@@ -160,12 +171,19 @@
     "nenhumaConversa": "Ancora nessuna conversazione.",
     "digiteMensagem": "Scrivi un messaggio...",
     "erroEnviar": "Impossibile inviare il messaggio. Riprova.",
-    "gravarAudio": "Tieni premuto per registrare un audio",
+    "gravarAudio": "Registra audio",
     "enviar": "Invia messaggio",
     "escolherOficina": "Con quale officina?",
     "escolherOficinaTexto": "Ogni officina ha la sua conversazione con te.",
     "semConversaAinda": "Nessuna officina ha ancora scritto. Quando un'officina invia un preventivo o un messaggio, la conversazione apparirà qui.",
-    "pagamentoReparo": "Pagamento della riparazione (incidente)"
+    "pagamentoReparo": "Pagamento della riparazione (incidente)",
+    "enviarAudio": "Invia audio",
+    "gravando": "Registrazione…",
+    "ouvir": "Ascolta",
+    "pausar": "Pausa",
+    "audioIndisponivel": "Audio non disponibile",
+    "microfoneTitulo": "Microfono disattivato",
+    "microfoneTexto": "Per inviare un audio, consenti l'accesso al microfono nelle Impostazioni."
   },
   "veiculos": {
     "titulo": "I miei veicoli",
@@ -176,7 +194,8 @@
     "placa": "Targa",
     "apelido": "Nome per riconoscere il veicolo",
     "erroSalvar": "Non è stato possibile salvare il veicolo. Riprova.",
-    "nenhumVeiculo": "Non hai ancora aggiunto nessun veicolo."
+    "nenhumVeiculo": "Non hai ancora aggiunto nessun veicolo.",
+    "semDados": "Auto dell'incidente (senza dati)"
   },
   "constants": {
     "tiposServico": {
@@ -260,7 +279,19 @@
     "salvo": "Salvato.",
     "erroSalvar": "Salvataggio non riuscito. Riprova.",
     "naoInformado": "Non ancora indicato.",
-    "lembreteSinistro": "Manca il numero di sinistro: quando la compagnia te lo invia, aggiungilo qui perché l'officina lo veda."
+    "lembreteSinistro": "Manca il numero di sinistro: quando la compagnia te lo invia, aggiungilo qui perché l'officina lo veda.",
+    "passo_emergencia_it": "Se qualcuno è ferito, chiama il 112. Se non c'è accordo o l'altro conducente se n'è andato, chiama le forze dell'ordine al 112.",
+    "passo_registro_it": "Compila con l'altro conducente il modulo CAI (Constatazione Amichevole di Incidente), cartaceo o digitale, e firmatelo entrambi. Invialo alla tua compagnia entro 3 giorni.",
+    "dica_seguro_terceiro_it": "Paga l'RC Auto dell'altro conducente. Con il risarcimento diretto (CARD) apri il sinistro con la tua compagnia, che poi regola con l'altra.",
+    "dica_seguro_proprio_it": "La kasko copre la tua auto anche se la colpa è tua. Di solito paghi solo la franchigia prevista dalla polizza.",
+    "passo_emergencia_pt": "Se qualcuno è ferito, chiama il 112. Se non c'è accordo o l'altro conducente se n'è andato, chiama la polizia al 112.",
+    "passo_registro_pt": "Compila con l'altro conducente la Declaração Amigável (constatazione amichevole portoghese) e firmatela entrambi. Ognuno invia la sua copia alla propria compagnia entro 8 giorni.",
+    "dica_seguro_terceiro_pt": "Paga l'assicurazione obbligatoria dell'altro conducente. Se entrambe le auto sono assicurate in Portogallo, può occuparsene la tua compagnia (sistema IDS).",
+    "dica_seguro_proprio_pt": "La copertura danni propri vale anche se la colpa è tua. Di solito paghi solo la franchigia prevista dalla polizza.",
+    "passo_emergencia_geral": "Se qualcuno è ferito, chiama il numero di emergenza locale (112 in Europa).",
+    "passo_registro_geral": "Annota targa, nome, telefono e compagnia dell'altro conducente e scatta delle foto. In Europa potete compilare la Constatazione amichevole europea, firmata da entrambi, e inviarla alla compagnia il prima possibile.",
+    "dica_seguro_terceiro_geral": "La riparazione la paga l'assicurazione di responsabilità civile dell'altro conducente. Avvisa anche la tua compagnia: ti aiuta con il sinistro.",
+    "dica_seguro_proprio_geral": "Se la tua polizza copre i danni alla tua auto, paga la riparazione; di solito paghi la franchigia prevista."
   },
   "erros": {
     "CAMPO_OBRIGATORIO": "Compila tutti i campi obbligatori.",
