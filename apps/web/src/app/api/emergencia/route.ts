@@ -44,9 +44,11 @@ export async function POST(req: NextRequest) {
 
     const tipoAcidente = umDe(d.tipoAcidente ?? 'outro_causou', 'tipoAcidente', TIPOS);
     const descricaoLivre = texto(d.descricao, 'descricao', 2000);
-    const endereco = texto(d.endereco, 'endereco', 300);
     const latitude = numero(d.latitude, 'latitude', -90, 90);
     const longitude = numero(d.longitude, 'longitude', -180, 180);
+    // so o GPS respondeu (sem rua): guarda as coordenadas como endereco
+    const endereco = texto(d.endereco, 'endereco', 300)
+      || (latitude != null && longitude != null ? `${latitude.toFixed(5)}, ${longitude.toFixed(5)}` : null);
     const idioma = texto(d.idioma, 'idioma', 10);
     const placa = texto(d.placa, 'placa', 15);
     // quem paga o reparo (opcional; pode ser completado depois na pagina do acidente)
