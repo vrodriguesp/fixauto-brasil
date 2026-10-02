@@ -164,7 +164,8 @@
     "enviar": "Invia messaggio",
     "escolherOficina": "Con quale officina?",
     "escolherOficinaTexto": "Ogni officina ha la sua conversazione con te.",
-    "semConversaAinda": "Nessuna officina ha ancora scritto. Quando un'officina invia un preventivo o un messaggio, la conversazione apparirà qui."
+    "semConversaAinda": "Nessuna officina ha ancora scritto. Quando un'officina invia un preventivo o un messaggio, la conversazione apparirà qui.",
+    "pagamentoReparo": "Pagamento della riparazione (incidente)"
   },
   "veiculos": {
     "titulo": "I miei veicoli",

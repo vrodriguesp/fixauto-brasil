@@ -8,6 +8,7 @@ import { supabase } from '../../lib/supabase';
 interface ConversaItem {
   solicitacaoId: string;
   oficinaId: string;
+  pagador?: boolean;
   oficinaNome: string;
   veiculoDesc: string;
   ultimaMensagem: string;
@@ -33,13 +34,10 @@ export default function MensagensScreen() {
       .eq('cliente_id', user.id)
       .order('created_at', { ascending: false });
 
-    if (!solicitacoes || solicitacoes.length === 0) {
-      setConversas([]);
-      setLoading(false);
-      return;
-    }
-
-    const solIds = solicitacoes.map((s: any) => s.id);
+    // Sem pedidos proprios ainda pode haver conversa de acidente (eu sou o
+    // outro motorista e pago o reparo) - entao nao para aqui.
+    const minhas = (solicitacoes || []) as any[];
+    const solIds = minhas.length ? minhas.map((s: any) => s.id) : ['00000000-0000-0000-0000-000000000000'];
     const { data: mensagens } = await supabase
       .from('mensagens')
       .select('solicitacao_id, oficina_id, remetente_id, texto, tipo, lida, created_at')
@@ -62,7 +60,7 @@ export default function MensagensScreen() {
     }
 
     const items: ConversaItem[] = [];
-    for (const sol of solicitacoes as any[]) {
+    for (const sol of minhas) {
       const solMsgs = (mensagens || []).filter((m: any) => m.solicitacao_id === sol.id);
       // cada oficina tem a sua conversa com o cliente
       const oficinas = Array.from(new Set(solMsgs.map((m: any) => m.oficina_id as string)));
@@ -80,10 +78,37 @@ export default function MensagensScreen() {
         });
       }
     }
+    // conversas de pagamento de acidente: particular com a oficina
+    const { data: pagas } = await supabase
+      .from('mensagens')
+      .select('solicitacao_id, oficina_id, remetente_id, texto, tipo, lida, created_at')
+      .eq('pagador_id', user.id)
+      .order('created_at', { ascending: false });
+    const chaves = Array.from(new Set((pagas || []).map((m: any) => `${m.solicitacao_id}|${m.oficina_id}`)));
+    const faltamPag = Array.from(new Set((pagas || []).map((m: any) => m.oficina_id as string).filter((o) => !nomes.has(o))));
+    if (faltamPag.length) {
+      const { data: ofs } = await supabase.from('oficinas').select('id, nome_fantasia').in('id', faltamPag);
+      (ofs || []).forEach((o: any) => nomes.set(o.id, o.nome_fantasia || ''));
+    }
+    for (const chave of chaves) {
+      const [solicitacaoId, oficinaId] = chave.split('|');
+      const daConversa = (pagas || []).filter((m: any) => m.solicitacao_id === solicitacaoId && m.oficina_id === oficinaId);
+      const last = daConversa[0] as any;
+      items.push({
+        solicitacaoId,
+        oficinaId,
+        pagador: true,
+        oficinaNome: nomes.get(oficinaId) || '-',
+        veiculoDesc: t('mensagens.pagamentoReparo'),
+        ultimaMensagem: last.tipo === 'audio' ? '🎤' : last.texto,
+        ultimaMensagemAt: last.created_at,
+        naoLidas: daConversa.filter((m: any) => !m.lida && m.remetente_id !== user.id).length,
+      });
+    }
     items.sort((a, b) => b.ultimaMensagemAt.localeCompare(a.ultimaMensagemAt));
     setConversas(items);
     setLoading(false);
-  }, [user]);
+  }, [user, t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -96,12 +121,12 @@ export default function MensagensScreen() {
       <Text className="text-2xl font-bold text-gray-900 mb-4">{t('mensagens.titulo')}</Text>
       <FlatList
         data={conversas}
-        keyExtractor={(item) => `${item.solicitacaoId}-${item.oficinaId}`}
+        keyExtractor={(item) => `${item.solicitacaoId}-${item.oficinaId}-${item.pagador ? 'p' : 'c'}`}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={carregar} />}
         ListEmptyComponent={!loading ? <Text className="text-gray-500 text-center mt-8">{t('mensagens.nenhumaConversa')}</Text> : null}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => router.push({ pathname: '/conversa/[id]', params: { id: item.solicitacaoId, oficina: item.oficinaId } })}
+            onPress={() => router.push({ pathname: '/conversa/[id]', params: { id: item.solicitacaoId, oficina: item.oficinaId, ...(item.pagador ? { pagador: '1' } : {}) } })}
             className="bg-white rounded-xl p-4 mb-3 border border-gray-200 flex-row justify-between items-center"
           >
             <View className="flex-1 mr-2">

@@ -62,19 +62,18 @@ export default function ClienteMensagensListPage() {
         .eq('cliente_id', user!.id)
         .order('created_at', { ascending: false });
 
-      if (!solicitacoes || solicitacoes.length === 0) {
-        setGroups([]);
-        setLoading(false);
-        return;
-      }
-
-      const solIds = solicitacoes.map((s: any) => s.id);
+      // Sem pedidos proprios ainda pode haver conversas de acidente (o outro
+      // motorista que paga o reparo) - entao nao para aqui.
+      const minhas = solicitacoes || [];
+      const solIds = minhas.map((s: any) => s.id);
+      // .in() com lista vazia nao e aceito: busca por um id que nao existe
+      const idsBusca = solIds.length ? solIds : ['00000000-0000-0000-0000-000000000000'];
 
       // 2. Get last message per solicitacao from mensagens table
       const { data: mensagens } = await supabase
         .from('mensagens')
         .select('id, solicitacao_id, oficina_id, remetente_id, texto, tipo, lida, created_at')
-        .in('solicitacao_id', solIds)
+        .in('solicitacao_id', idsBusca)
         .is('pagador_id', null)
         .order('created_at', { ascending: false });
 
@@ -82,7 +81,7 @@ export default function ClienteMensagensListPage() {
       const { data: orcamentos } = await supabase
         .from('orcamentos')
         .select('solicitacao_id, oficina_id, oficina:oficinas!orcamentos_oficina_id_fkey(nome_fantasia)')
-        .in('solicitacao_id', solIds);
+        .in('solicitacao_id', idsBusca);
 
       // nome das oficinas que so conversaram (ainda sem orcamento)
       const nomeOficina = new Map<string, string>();
@@ -97,7 +96,7 @@ export default function ClienteMensagensListPage() {
       const { data: emergencias } = await supabase
         .from('emergencias')
         .select('id, solicitacao_id, descricao, profile_id')
-        .in('solicitacao_id', solIds);
+        .in('solicitacao_id', idsBusca);
 
       // 5. For each emergencia, get outro_veiculo and last message
       let emergenciaMsgMap: Record<string, ConversaEmergencia> = {};
@@ -152,7 +151,7 @@ export default function ClienteMensagensListPage() {
       // Build groups
       const groupList: SolicitacaoGroup[] = [];
 
-      for (const sol of solicitacoes) {
+      for (const sol of minhas) {
         const veiculo = sol.veiculo as any;
         const solMensagens = mensagens?.filter((m: any) => m.solicitacao_id === sol.id) || [];
 

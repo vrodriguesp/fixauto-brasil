@@ -164,7 +164,8 @@
     "enviar": "Enviar mensagem",
     "escolherOficina": "Com qual oficina?",
     "escolherOficinaTexto": "Cada oficina tem a sua conversa com você.",
-    "semConversaAinda": "Nenhuma oficina escreveu ainda. Quando uma oficina mandar orçamento ou mensagem, a conversa aparece aqui."
+    "semConversaAinda": "Nenhuma oficina escreveu ainda. Quando uma oficina mandar orçamento ou mensagem, a conversa aparece aqui.",
+    "pagamentoReparo": "Pagamento do reparo (acidente)"
   },
   "veiculos": {
     "titulo": "Meus veículos",

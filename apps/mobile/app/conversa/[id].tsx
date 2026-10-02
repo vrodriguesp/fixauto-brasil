@@ -23,7 +23,7 @@ export default function ConversaScreen() {
   const { t } = useTranslation();
   // Opcoes do cabecalho criadas uma vez: objeto novo a cada desenho fazia o
   // cabecalho e a tela se redesenharem sem fim no iPhone ("Maximum update depth").
-  const { id, oficina: oficinaParam } = useLocalSearchParams<{ id: string; oficina?: string }>();
+  const { id, oficina: oficinaParam, pagador } = useLocalSearchParams<{ id: string; oficina?: string; pagador?: string }>();
   // Cada oficina tem a sua conversa. Sem ?oficina: orcamento aceito -> essa;
   // uma so oficina -> ela; varias -> o cliente escolhe.
   const [oficinaId, setOficinaId] = useState<string | null>(oficinaParam || null);
@@ -32,6 +32,9 @@ export default function ConversaScreen() {
   const tituloTela = oficinaNome || t('mensagens.titulo');
   const opcoesTela = useMemo(() => ({ headerShown: true, title: tituloTela }), [tituloTela]);
   const { user } = useAuth();
+  // pagador=1: sou o outro motorista do acidente e pago o reparo - conversa
+  // particular minha com a oficina (o cliente do pedido nao a ve)
+  const pagadorId = pagador === '1' ? (user?.id ?? null) : null;
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [texto, setTexto] = useState('');
   const [loading, setLoading] = useState(true);
@@ -59,7 +62,7 @@ export default function ConversaScreen() {
       setOpcoes(Array.from(nomes.entries()).map(([oid, nome]) => ({ id: oid, nome })));
       setLoading(false);
     })();
-  }, [id, oficinaId]);
+  }, [id, oficinaId, pagadorId]);
 
   useEffect(() => {
     if (!oficinaId) return;
@@ -68,10 +71,11 @@ export default function ConversaScreen() {
   }, [oficinaId]);
 
   useEffect(() => {
-    if (!id || !oficinaId) return;
+    if (!id || !oficinaId || (pagador === '1' && !pagadorId)) return;
 
     async function fetchMensagens() {
-      const { data } = await supabase.from('mensagens').select('*').eq('solicitacao_id', id).eq('oficina_id', oficinaId!).is('pagador_id', null).order('created_at', { ascending: true });
+      const { data } = await supabase.from('mensagens').select('*').eq('solicitacao_id', id).eq('oficina_id', oficinaId!)
+        .filter('pagador_id', pagadorId ? 'eq' : 'is', pagadorId ?? null).order('created_at', { ascending: true });
       setMensagens((data as Mensagem[]) || []);
       setLoading(false);
     }
@@ -80,7 +84,7 @@ export default function ConversaScreen() {
     const channel = supabase
       .channel(`msgs-mobile-${id}-${oficinaId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensagens', filter: `solicitacao_id=eq.${id}` }, (payload) => {
-        if ((payload.new as any).oficina_id !== oficinaId || (payload.new as any).pagador_id) return;
+        if ((payload.new as any).oficina_id !== oficinaId || ((payload.new as any).pagador_id || null) !== pagadorId) return;
         setMensagens((prev) => (prev.some((m) => m.id === payload.new.id) ? prev : [...prev, payload.new as Mensagem]));
       })
       .subscribe();
@@ -88,21 +92,21 @@ export default function ConversaScreen() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [id, oficinaId]);
+  }, [id, oficinaId, pagadorId]);
 
   useEffect(() => {
     if (!user || !oficinaId || mensagens.length === 0) return;
     const naoLidas = mensagens.filter((m) => !m.lida && m.remetente_id !== user.id);
     if (naoLidas.length > 0) {
-      supabase.from('mensagens').update({ lida: true }).eq('solicitacao_id', id).eq('oficina_id', oficinaId).is('pagador_id', null).neq('remetente_id', user.id).then();
+      supabase.from('mensagens').update({ lida: true }).eq('solicitacao_id', id).eq('oficina_id', oficinaId).filter('pagador_id', pagadorId ? 'eq' : 'is', pagadorId ?? null).neq('remetente_id', user.id).then();
     }
-  }, [mensagens, user, id, oficinaId]);
+  }, [mensagens, user, id, oficinaId, pagadorId]);
 
   const handleEnviar = async () => {
     if (!texto.trim() || !user || !oficinaId || enviando) return;
     const conteudo = texto.trim();
     setEnviando(true);
-    const { error } = await supabase.from('mensagens').insert({ solicitacao_id: id, oficina_id: oficinaId, remetente_id: user.id, texto: conteudo });
+    const { error } = await supabase.from('mensagens').insert({ solicitacao_id: id, oficina_id: oficinaId, pagador_id: pagadorId, remetente_id: user.id, texto: conteudo });
     setEnviando(false);
     if (error) {
       // Nao limpa a caixa de texto - o usuario nao perde o que escreveu se

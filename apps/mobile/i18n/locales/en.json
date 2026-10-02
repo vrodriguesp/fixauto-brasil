@@ -164,7 +164,8 @@
     "enviar": "Send message",
     "escolherOficina": "Which workshop?",
     "escolherOficinaTexto": "Each workshop has its own conversation with you.",
-    "semConversaAinda": "No workshop has written yet. When a workshop sends a quote or a message, the conversation will appear here."
+    "semConversaAinda": "No workshop has written yet. When a workshop sends a quote or a message, the conversation will appear here.",
+    "pagamentoReparo": "Repair payment (accident)"
   },
   "veiculos": {
     "titulo": "My vehicles",

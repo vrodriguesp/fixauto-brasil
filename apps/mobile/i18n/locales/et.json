@@ -164,7 +164,8 @@
     "enviar": "Saada sõnum",
     "escolherOficina": "Millise töökojaga?",
     "escolherOficinaTexto": "Igal töökojal on teiega oma vestlus.",
-    "semConversaAinda": "Ükski töökoda pole veel kirjutanud. Kui töökoda saadab hinnapakkumise või sõnumi, ilmub vestlus siia."
+    "semConversaAinda": "Ükski töökoda pole veel kirjutanud. Kui töökoda saadab hinnapakkumise või sõnumi, ilmub vestlus siia.",
+    "pagamentoReparo": "Remondi eest tasumine (õnnetus)"
   },
   "veiculos": {
     "titulo": "Minu sõidukid",
