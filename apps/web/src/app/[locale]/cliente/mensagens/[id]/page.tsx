@@ -58,6 +58,10 @@ export default function ClienteMensagensPage() {
   const [solicitacao, setSolicitacao] = useState<SolicitacaoInfo | null>(null);
   const [oficina, setOficina] = useState<OficinaInfo | null>(null);
   const [oficinaId, setOficinaId] = useState<string | null>(null);
+  // ?pagador=1: quem abre e o responsavel pelo pagamento de um acidente -
+  // conversa particular dele com a oficina (o cliente do pedido nao a ve)
+  const [modoPagador, setModoPagador] = useState(false);
+  const pagadorId = modoPagador ? (user?.id ?? null) : null;
   const [opcoesOficina, setOpcoesOficina] = useState<{ id: string; nome: string }[] | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -74,6 +78,8 @@ export default function ClienteMensagensPage() {
   // oficina; uma so oficina na conversa -> ela; varias -> o cliente escolhe.
   useEffect(() => {
     async function fetchInfo() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('pagador') === '1') setModoPagador(true);
       const { data: sol } = await supabase
         .from('solicitacoes')
         .select('id, descricao, veiculo:veiculos!solicitacoes_veiculo_id_fkey(fipe_marca, fipe_modelo, fipe_ano, placa)')
@@ -125,15 +131,16 @@ export default function ClienteMensagensPage() {
 
   // Fetch messages
   useEffect(() => {
-    if (!oficinaId) return;
+    if (!oficinaId || (modoPagador && !pagadorId)) return;
     async function fetchMessages() {
       setLoading(true);
-      const { data } = await supabase
+      let q = supabase
         .from('mensagens')
         .select('*, remetente:profiles!mensagens_remetente_id_fkey(nome, tipo)')
         .eq('solicitacao_id', id)
-        .eq('oficina_id', oficinaId!)
-        .order('created_at', { ascending: true });
+        .eq('oficina_id', oficinaId!);
+      q = pagadorId ? q.eq('pagador_id', pagadorId) : q.is('pagador_id', null);
+      const { data } = await q.order('created_at', { ascending: true });
 
       if (data) {
         setMessages(data as Mensagem[]);
@@ -141,22 +148,23 @@ export default function ClienteMensagensPage() {
       setLoading(false);
     }
     fetchMessages();
-  }, [id, oficinaId]);
+  }, [id, oficinaId, modoPagador, pagadorId]);
 
   // Mark messages as read
   useEffect(() => {
     if (!user || !oficinaId || messages.length === 0) return;
     const unread = messages.filter((m) => !m.lida && m.remetente_id !== user.id);
     if (unread.length > 0) {
-      supabase
+      let q = supabase
         .from('mensagens')
         .update({ lida: true })
         .eq('solicitacao_id', id)
         .eq('oficina_id', oficinaId)
-        .neq('remetente_id', user.id)
-        .then();
+        .neq('remetente_id', user.id);
+      q = pagadorId ? q.eq('pagador_id', pagadorId) : q.is('pagador_id', null);
+      q.then();
     }
-  }, [messages, user, id, oficinaId]);
+  }, [messages, user, id, oficinaId, pagadorId]);
 
   // Real-time subscription
   useEffect(() => {
@@ -172,7 +180,7 @@ export default function ClienteMensagensPage() {
           filter: `solicitacao_id=eq.${id}`,
         },
         async (payload) => {
-          if ((payload.new as any).oficina_id !== oficinaId) return;
+          if ((payload.new as any).oficina_id !== oficinaId || ((payload.new as any).pagador_id || null) !== pagadorId) return;
           const { data } = await supabase
             .from('mensagens')
             .select('*, remetente:profiles!mensagens_remetente_id_fkey(nome, tipo)')
@@ -202,7 +210,7 @@ export default function ClienteMensagensPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [id, oficinaId]);
+  }, [id, oficinaId, pagadorId]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -219,6 +227,7 @@ export default function ClienteMensagensPage() {
     const { error } = await supabase.from('mensagens').insert({
       solicitacao_id: id,
       oficina_id: oficinaId,
+      pagador_id: pagadorId,
       remetente_id: user.id,
       texto,
     });
@@ -255,7 +264,7 @@ export default function ClienteMensagensPage() {
             tipo: 'nova_mensagem',
             titulo: notifNovaMensagem(oficinaIdioma).titulo,
             mensagem: texto.slice(0, 100),
-            dados: { solicitacao_id: id, oficina_id: oficinaId },
+            dados: { solicitacao_id: id, oficina_id: oficinaId, ...(pagadorId ? { pagador_id: pagadorId } : {}) },
           });
         } catch { /* non-blocking */ }
       }
@@ -278,12 +287,13 @@ export default function ClienteMensagensPage() {
     setUploadingAudio(true);
 
     try {
-      const audioUrl = await uploadAudio(blob, id, oficinaId);
+      const audioUrl = await uploadAudio(blob, id, oficinaId, pagadorId);
       if (!audioUrl) return;
 
       const { error } = await supabase.from('mensagens').insert({
         solicitacao_id: id,
         oficina_id: oficinaId,
+        pagador_id: pagadorId,
         remetente_id: user.id,
         texto: '[Audio]',
         tipo: 'audio',
@@ -322,7 +332,7 @@ export default function ClienteMensagensPage() {
               tipo: 'nova_mensagem',
               titulo: nAudio.tituloAudio,
               mensagem: nAudio.mensagemAudio,
-              dados: { solicitacao_id: id, oficina_id: oficinaId },
+              dados: { solicitacao_id: id, oficina_id: oficinaId, ...(pagadorId ? { pagador_id: pagadorId } : {}) },
             });
           } catch { /* non-blocking */ }
         }
@@ -382,7 +392,7 @@ export default function ClienteMensagensPage() {
       {/* Header */}
       <div className="bg-white border-b px-4 py-3 flex items-center gap-3 flex-shrink-0">
         <Link
-          href={`/cliente/orcamentos/${id}`}
+          href={modoPagador ? '/cliente/mensagens' : `/cliente/orcamentos/${id}`}
           className="text-gray-500 hover:text-gray-700"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -399,9 +409,11 @@ export default function ClienteMensagensPage() {
             {oficina?.nome_fantasia || t('workshopFallback')}
           </h1>
           <p className="text-xs text-gray-500">
-            {solicitacao?.veiculo
-              ? `${solicitacao.veiculo.fipe_marca} ${solicitacao.veiculo.fipe_modelo}`
-              : t('loading')}
+            {modoPagador
+              ? t('pagadorSubtitulo')
+              : solicitacao?.veiculo
+                ? `${solicitacao.veiculo.fipe_marca} ${solicitacao.veiculo.fipe_modelo}`
+                : ''}
           </p>
         </div>
       </div>

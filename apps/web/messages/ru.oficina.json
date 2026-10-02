@@ -553,7 +553,9 @@
     "gravarAudio": "Записать аудио",
     "erroEnviar": "Не удалось отправить. Сообщение осталось в поле; попробуйте ещё раз.",
     "precisaOrcamento": "Чтобы написать клиенту, сначала отправьте смету.",
-    "clienteFallback": "Клиент"
+    "clienteFallback": "Клиент",
+    "abaCliente": "Клиент",
+    "abaPagador": "Кто оплачивает ремонт"
   },
   "oficinaPecas": {
     "fornecedorFallback": "поставщик",

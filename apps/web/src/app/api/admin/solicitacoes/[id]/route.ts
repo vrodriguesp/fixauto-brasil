@@ -54,6 +54,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
         .select('*, remetente:profiles(nome, tipo), oficina:oficinas(nome_fantasia)')
         .eq('solicitacao_id', params.id)
         .order('oficina_id', { ascending: true })
+        .order('pagador_id', { ascending: true, nullsFirst: true })
         .order('created_at', { ascending: true }),
       supabaseAdmin.from('avaliacoes').select('*').eq('solicitacao_id', params.id).maybeSingle(),
       supabaseAdmin.from('analise_dano').select('*').eq('solicitacao_id', params.id).maybeSingle(),

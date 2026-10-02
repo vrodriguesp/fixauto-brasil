@@ -53,6 +53,10 @@ export default function OficinaMensagensPage() {
   const { user, oficina } = useAuth();
   const [messages, setMessages] = useState<Mensagem[]>([]);
   const [hasOrcamento, setHasOrcamento] = useState(false);
+  // conversa particular com o responsavel pelo pagamento de um acidente
+  // (null = conversa com o cliente do pedido)
+  const [pagadorId, setPagadorId] = useState<string | null>(null);
+  const [pagadores, setPagadores] = useState<{ id: string; nome: string }[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -105,17 +109,40 @@ export default function OficinaMensagensPage() {
     }
   }, [id, oficina]);
 
+  useEffect(() => {
+    if (!oficina) return;
+    const pedido = new URLSearchParams(window.location.search).get('pagador');
+    if (pedido) setPagadorId(pedido);
+    (async () => {
+      const { data: ms } = await supabase.from('mensagens').select('pagador_id')
+        .eq('solicitacao_id', id).eq('oficina_id', oficina.id).not('pagador_id', 'is', null);
+      const ids = Array.from(new Set((ms || []).map((m: any) => m.pagador_id as string)));
+      if (pedido && !ids.includes(pedido)) ids.push(pedido);
+      if (!ids.length) return;
+      const { data: perfis } = await supabase.from('profiles').select('id, nome').in('id', ids);
+      setPagadores(ids.map((pid) => ({ id: pid, nome: (perfis || []).find((p: any) => p.id === pid)?.nome || '' })));
+    })();
+  }, [id, oficina]);
+
+  const trocarConversa = (novo: string | null) => {
+    if (novo === pagadorId) return;
+    setMessages([]);
+    setPagadorId(novo);
+    window.history.replaceState(null, '', novo ? `${window.location.pathname}?pagador=${novo}` : window.location.pathname);
+  };
+
   // Fetch messages - so a conversa desta oficina com o cliente
   useEffect(() => {
     if (!oficina) return;
     async function fetchMessages() {
       setLoading(true);
-      const { data } = await supabase
+      let q = supabase
         .from('mensagens')
         .select('*, remetente:profiles!mensagens_remetente_id_fkey(nome, tipo)')
         .eq('solicitacao_id', id)
-        .eq('oficina_id', oficina!.id)
-        .order('created_at', { ascending: true });
+        .eq('oficina_id', oficina!.id);
+      q = pagadorId ? q.eq('pagador_id', pagadorId) : q.is('pagador_id', null);
+      const { data } = await q.order('created_at', { ascending: true });
 
       if (data) {
         setMessages(data as Mensagem[]);
@@ -123,22 +150,23 @@ export default function OficinaMensagensPage() {
       setLoading(false);
     }
     fetchMessages();
-  }, [id, oficina]);
+  }, [id, oficina, pagadorId]);
 
   // Mark messages as read
   useEffect(() => {
     if (!user || !oficina || messages.length === 0) return;
     const unread = messages.filter((m) => !m.lida && m.remetente_id !== user.id);
     if (unread.length > 0) {
-      supabase
+      let q = supabase
         .from('mensagens')
         .update({ lida: true })
         .eq('solicitacao_id', id)
         .eq('oficina_id', oficina.id)
-        .neq('remetente_id', user.id)
-        .then();
+        .neq('remetente_id', user.id);
+      q = pagadorId ? q.eq('pagador_id', pagadorId) : q.is('pagador_id', null);
+      q.then();
     }
-  }, [messages, user, id, oficina]);
+  }, [messages, user, id, oficina, pagadorId]);
 
   // Real-time subscription
   useEffect(() => {
@@ -154,7 +182,7 @@ export default function OficinaMensagensPage() {
           filter: `solicitacao_id=eq.${id}`,
         },
         async (payload) => {
-          if ((payload.new as any).oficina_id !== oficina.id) return;
+          if ((payload.new as any).oficina_id !== oficina.id || ((payload.new as any).pagador_id || null) !== pagadorId) return;
           // Fetch complete message with remetente info
           const { data } = await supabase
             .from('mensagens')
@@ -185,7 +213,7 @@ export default function OficinaMensagensPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [id, oficina]);
+  }, [id, oficina, pagadorId]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -202,6 +230,7 @@ export default function OficinaMensagensPage() {
     const { error } = await supabase.from('mensagens').insert({
       solicitacao_id: id,
       oficina_id: oficina.id,
+      pagador_id: pagadorId,
       remetente_id: user.id,
       texto,
     });
@@ -234,11 +263,11 @@ export default function OficinaMensagensPage() {
       if (sol) {
         try {
           await supabase.from('notificacoes').insert({
-            profile_id: sol.cliente_id,
+            profile_id: pagadorId || sol.cliente_id,
             tipo: 'nova_mensagem',
             titulo: notifNovaMensagem((sol.cliente as any)?.idioma).titulo,
             mensagem: texto.slice(0, 100),
-            dados: { solicitacao_id: id, oficina_id: oficina.id },
+            dados: { solicitacao_id: id, oficina_id: oficina.id, ...(pagadorId ? { pagador_id: pagadorId } : {}) },
           });
         } catch { /* non-blocking */ }
       }
@@ -261,12 +290,13 @@ export default function OficinaMensagensPage() {
     setUploadingAudio(true);
 
     try {
-      const audioUrl = await uploadAudio(blob, id, oficina.id);
+      const audioUrl = await uploadAudio(blob, id, oficina.id, pagadorId);
       if (!audioUrl) return;
 
       const { error } = await supabase.from('mensagens').insert({
         solicitacao_id: id,
         oficina_id: oficina.id,
+        pagador_id: pagadorId,
         remetente_id: user.id,
         texto: t('audioTag'),
         tipo: 'audio',
@@ -301,11 +331,11 @@ export default function OficinaMensagensPage() {
           try {
             const nAudio = notifNovaMensagem((sol.cliente as any)?.idioma);
             await supabase.from('notificacoes').insert({
-              profile_id: sol.cliente_id,
+              profile_id: pagadorId || sol.cliente_id,
               tipo: 'nova_mensagem',
               titulo: nAudio.tituloAudio,
               mensagem: nAudio.mensagemAudio,
-              dados: { solicitacao_id: id, oficina_id: oficina.id },
+              dados: { solicitacao_id: id, oficina_id: oficina.id, ...(pagadorId ? { pagador_id: pagadorId } : {}) },
             });
           } catch { /* non-blocking */ }
         }
@@ -378,6 +408,21 @@ export default function OficinaMensagensPage() {
           {hasOrcamento ? t('refazerOrcamento') : t('fazerOrcamento')}
         </Link>
       </div>
+
+      {pagadores.length > 0 && (
+        <div className="bg-white border-b px-4 py-2 flex gap-2 overflow-x-auto flex-shrink-0" role="tablist">
+          <button type="button" role="tab" aria-selected={!pagadorId} onClick={() => trocarConversa(null)}
+            className={`px-3 py-2 min-h-[40px] rounded-full text-sm font-medium whitespace-nowrap ${!pagadorId ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700'}`}>
+            {t('abaCliente')}
+          </button>
+          {pagadores.map((p) => (
+            <button key={p.id} type="button" role="tab" aria-selected={pagadorId === p.id} onClick={() => trocarConversa(p.id)}
+              className={`px-3 py-2 min-h-[40px] rounded-full text-sm font-medium whitespace-nowrap ${pagadorId === p.id ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700'}`}>
+              {t('abaPagador')}{p.nome ? ` · ${p.nome}` : ''}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto px-4 py-4 bg-gray-50">

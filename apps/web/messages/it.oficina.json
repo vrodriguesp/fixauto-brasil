@@ -553,7 +553,9 @@
     "gravarAudio": "Registra audio",
     "erroEnviar": "Invio non riuscito. Il messaggio è ancora nel campo; riprova.",
     "precisaOrcamento": "Per scrivere al cliente, invia prima un preventivo.",
-    "clienteFallback": "Cliente"
+    "clienteFallback": "Cliente",
+    "abaCliente": "Cliente",
+    "abaPagador": "Chi paga la riparazione"
   },
   "oficinaPecas": {
     "fornecedorFallback": "fornitore",

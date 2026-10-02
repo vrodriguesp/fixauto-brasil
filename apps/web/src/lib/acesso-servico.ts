@@ -42,10 +42,11 @@ export async function participaDaSolicitacao(userId: string, solicitacaoId: stri
 }
 
 /** Conversa de UMA oficina com o cliente: o cliente, essa oficina (dono ou funcionario) ou admin. */
-export async function participaDaConversa(userId: string, solicitacaoId: string, oficinaId: string): Promise<boolean> {
+export async function participaDaConversa(userId: string, solicitacaoId: string, oficinaId: string, pagadorId?: string | null): Promise<boolean> {
   const { data: sol } = await supabaseAdmin.from('solicitacoes').select('cliente_id').eq('id', solicitacaoId).maybeSingle();
   if (!sol) return false;
-  if (sol.cliente_id === userId) return true;
+  // conversa do responsavel pelo pagamento: ele, a oficina ou admin (o cliente nao)
+  if (pagadorId ? pagadorId === userId : sol.cliente_id === userId) return true;
   if ((await oficinasDoUsuario(userId)).includes(oficinaId)) return true;
   return ehAdmin(userId);
 }

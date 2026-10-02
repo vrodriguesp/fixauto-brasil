@@ -267,7 +267,8 @@
     "voltarConversas": "Vestlused",
     "escolherOficinaTitulo": "Millise töökojaga?",
     "escolherOficinaTexto": "Igal töökojal on teiega oma vestlus.",
-    "semConversaAinda": "Ükski töökoda pole veel kirjutanud. Kui töökoda saadab hinnapakkumise või sõnumi, ilmub vestlus siia."
+    "semConversaAinda": "Ükski töökoda pole veel kirjutanud. Kui töökoda saadab hinnapakkumise või sõnumi, ilmub vestlus siia.",
+    "pagadorSubtitulo": "Remondi eest tasumine (õnnetus)"
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Vastu võetud",

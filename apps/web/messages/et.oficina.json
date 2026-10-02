@@ -553,7 +553,9 @@
     "gravarAudio": "Salvesta helisõnum",
     "erroEnviar": "Saatmine ebaõnnestus. Sõnum on endiselt väljal; proovi uuesti.",
     "precisaOrcamento": "Kliendiga suhtlemiseks saada esmalt hinnapakkumine.",
-    "clienteFallback": "Klient"
+    "clienteFallback": "Klient",
+    "abaCliente": "Klient",
+    "abaPagador": "Remondi eest maksja"
   },
   "oficinaPecas": {
     "fornecedorFallback": "tarnija",

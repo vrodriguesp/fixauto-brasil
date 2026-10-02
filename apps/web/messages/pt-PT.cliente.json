@@ -267,7 +267,8 @@
     "voltarConversas": "Conversas",
     "escolherOficinaTitulo": "Com que oficina?",
     "escolherOficinaTexto": "Cada oficina tem a sua conversa consigo.",
-    "semConversaAinda": "Nenhuma oficina escreveu ainda. Quando uma oficina enviar orçamento ou mensagem, a conversa aparece aqui."
+    "semConversaAinda": "Nenhuma oficina escreveu ainda. Quando uma oficina enviar orçamento ou mensagem, a conversa aparece aqui.",
+    "pagadorSubtitulo": "Pagamento da reparação (acidente)"
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Recebido",

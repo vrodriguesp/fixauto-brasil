@@ -90,11 +90,11 @@ export function useAudioRecorder() {
   };
 
   // audio/<pedido>/<oficina>/: cada conversa (pedido + oficina) tem a sua pasta
-  const uploadAudio = async (blob: Blob, solicitacaoId: string, oficinaId: string): Promise<string | null> => {
+  const uploadAudio = async (blob: Blob, solicitacaoId: string, oficinaId: string, pagadorId?: string | null): Promise<string | null> => {
     setUploading(true);
     try {
       const ext = blob.type.includes('webm') ? 'webm' : 'mp4';
-      const fileName = `audio/${solicitacaoId}/${oficinaId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const fileName = `audio/${solicitacaoId}/${oficinaId}/${pagadorId ? `${pagadorId}/` : ''}${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
       const { error } = await supabase.storage
         .from(BUCKET)

@@ -519,8 +519,10 @@ export default function AdminSolicitacaoDetalhePage() {
           <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-3 max-h-96 overflow-y-auto">
             {mensagens.map((m: any, i: number) => (
               <div key={m.id} className="text-sm">
-                {(i === 0 || mensagens[i - 1].oficina_id !== m.oficina_id) && (
-                  <p className="text-amber-300 text-xs uppercase tracking-wide mt-2 mb-1">Conversa com {m.oficina?.nome_fantasia || 'oficina'}</p>
+                {(i === 0 || mensagens[i - 1].oficina_id !== m.oficina_id || mensagens[i - 1].pagador_id !== m.pagador_id) && (
+                  <p className="text-amber-300 text-xs uppercase tracking-wide mt-2 mb-1">
+                    Conversa com {m.oficina?.nome_fantasia || 'oficina'}{m.pagador_id ? ' — responsável pelo pagamento (outro motorista)' : ''}
+                  </p>
                 )}
                 <span className="text-slate-300 font-medium">{m.remetente?.nome} <span className="text-slate-500 text-xs">({m.remetente?.tipo})</span>:</span>{' '}
                 {m.audio_url ? (

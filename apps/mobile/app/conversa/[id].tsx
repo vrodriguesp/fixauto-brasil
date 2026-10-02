@@ -71,7 +71,7 @@ export default function ConversaScreen() {
     if (!id || !oficinaId) return;
 
     async function fetchMensagens() {
-      const { data } = await supabase.from('mensagens').select('*').eq('solicitacao_id', id).eq('oficina_id', oficinaId!).order('created_at', { ascending: true });
+      const { data } = await supabase.from('mensagens').select('*').eq('solicitacao_id', id).eq('oficina_id', oficinaId!).is('pagador_id', null).order('created_at', { ascending: true });
       setMensagens((data as Mensagem[]) || []);
       setLoading(false);
     }
@@ -80,7 +80,7 @@ export default function ConversaScreen() {
     const channel = supabase
       .channel(`msgs-mobile-${id}-${oficinaId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensagens', filter: `solicitacao_id=eq.${id}` }, (payload) => {
-        if ((payload.new as any).oficina_id !== oficinaId) return;
+        if ((payload.new as any).oficina_id !== oficinaId || (payload.new as any).pagador_id) return;
         setMensagens((prev) => (prev.some((m) => m.id === payload.new.id) ? prev : [...prev, payload.new as Mensagem]));
       })
       .subscribe();
@@ -94,7 +94,7 @@ export default function ConversaScreen() {
     if (!user || !oficinaId || mensagens.length === 0) return;
     const naoLidas = mensagens.filter((m) => !m.lida && m.remetente_id !== user.id);
     if (naoLidas.length > 0) {
-      supabase.from('mensagens').update({ lida: true }).eq('solicitacao_id', id).eq('oficina_id', oficinaId).neq('remetente_id', user.id).then();
+      supabase.from('mensagens').update({ lida: true }).eq('solicitacao_id', id).eq('oficina_id', oficinaId).is('pagador_id', null).neq('remetente_id', user.id).then();
     }
   }, [mensagens, user, id, oficinaId]);
 

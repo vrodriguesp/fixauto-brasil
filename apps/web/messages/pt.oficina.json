@@ -553,7 +553,9 @@
     "gravarAudio": "Gravar audio",
     "erroEnviar": "Não foi possível enviar. A mensagem continua no campo; tente de novo.",
     "precisaOrcamento": "Para conversar com o cliente, envie primeiro um orçamento.",
-    "clienteFallback": "Cliente"
+    "clienteFallback": "Cliente",
+    "abaCliente": "Cliente",
+    "abaPagador": "Quem paga o reparo"
   },
   "oficinaPecas": {
     "fornecedorFallback": "fornecedor",

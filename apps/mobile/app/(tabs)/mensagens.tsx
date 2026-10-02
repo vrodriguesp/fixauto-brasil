@@ -44,6 +44,7 @@ export default function MensagensScreen() {
       .from('mensagens')
       .select('solicitacao_id, oficina_id, remetente_id, texto, tipo, lida, created_at')
       .in('solicitacao_id', solIds)
+      .is('pagador_id', null)
       .order('created_at', { ascending: false });
 
     const { data: orcamentos } = await supabase

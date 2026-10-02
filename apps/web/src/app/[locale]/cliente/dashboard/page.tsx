@@ -74,8 +74,11 @@ export default function ClienteDashboard() {
               const solId = (n.dados as Record<string, string> | null)?.solicitacao_id;
               const emergId = (n.dados as Record<string, string> | null)?.emergencia_id;
               const ofId = (n.dados as Record<string, string> | null)?.oficina_id;
+              const pagaReparo = !!(n.dados as Record<string, string> | null)?.pagador_id;
               const getNotificationHref = () => {
                 if (n.tipo === 'acidente' && emergId) return `/cliente/mensagens`;
+                // responsavel pelo pagamento nao ve o pedido do outro, so a conversa dele com a oficina
+                if (pagaReparo && solId && ofId) return `/cliente/mensagens/${solId}?oficina=${ofId}&pagador=1`;
                 if (n.tipo === 'nova_mensagem') return solId ? `/cliente/mensagens/${solId}${ofId ? `?oficina=${ofId}` : ''}` : '/cliente/mensagens';
                 if (n.tipo === 'servico_concluido' && solId) return `/cliente/orcamentos/${solId}`;
                 if (solId) return `/cliente/orcamentos/${solId}`;

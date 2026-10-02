@@ -224,6 +224,9 @@ export async function POST(req: NextRequest) {
               await supabaseAdmin.from('mensagens').insert({
                 solicitacao_id: orc.solicitacao_id,
                 oficina_id: orc.oficina_id,
+                // outro motorista que paga: conversa particular dele com a
+                // oficina; se quem paga e o proprio cliente, a conversa normal
+                pagador_id: responsavelProfileId !== clienteId ? responsavelProfileId : null,
                 remetente_id: oficinaProfileId,
                 texto: chatOrcamentoAceitoNegociarPagamento(oficinaIdioma, oficinaNome),
                 tipo: 'texto',
@@ -238,7 +241,10 @@ export async function POST(req: NextRequest) {
                 tipo: 'orcamento_aceito',
                 titulo: nPagamento.titulo,
                 mensagem: nPagamento.mensagem,
-                dados: { solicitacao_id: orc.solicitacao_id, orcamento_id: orcamentoId, emergencia_id: emergencia.id },
+                dados: {
+                  solicitacao_id: orc.solicitacao_id, orcamento_id: orcamentoId, emergencia_id: emergencia.id, oficina_id: orc.oficina_id,
+                  ...(responsavelProfileId !== clienteId ? { pagador_id: responsavelProfileId } : {}),
+                },
               });
             }
 

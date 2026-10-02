@@ -553,7 +553,9 @@
     "gravarAudio": "Record audio",
     "erroEnviar": "Could not send. Your message is still in the box; please try again.",
     "precisaOrcamento": "To chat with the customer, send a quote first.",
-    "clienteFallback": "Customer"
+    "clienteFallback": "Customer",
+    "abaCliente": "Customer",
+    "abaPagador": "Who pays the repair"
   },
   "oficinaPecas": {
     "fornecedorFallback": "supplier",

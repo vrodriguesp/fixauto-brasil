@@ -10,6 +10,7 @@ import { timeAgo, cleanDescricao } from '@/lib/utils';
 interface ConversaOficina {
   solicitacao_id: string;
   oficina_id: string;
+  pagador?: boolean;
   oficina_nome: string;
   veiculo_desc: string;
   placa: string;
@@ -74,6 +75,7 @@ export default function ClienteMensagensListPage() {
         .from('mensagens')
         .select('id, solicitacao_id, oficina_id, remetente_id, texto, tipo, lida, created_at')
         .in('solicitacao_id', solIds)
+        .is('pagador_id', null)
         .order('created_at', { ascending: false });
 
       // 3. Get oficinas linked via orcamentos
@@ -230,33 +232,34 @@ export default function ClienteMensagensListPage() {
           const outroConversasOficina: ConversaOficina[] = [];
           if (isResponsavelPagamento && emerg.solicitacao_id) {
             // Check if there are messages in the solicitacao (oficina chat created by aceitar-orcamento)
+            // conversa particular dele com a oficina do orcamento aceito
             const { data: pagMsgs } = await supabase
               .from('mensagens')
-              .select('id, texto, created_at')
+              .select('id, oficina_id, texto, tipo, lida, remetente_id, created_at')
               .eq('solicitacao_id', emerg.solicitacao_id)
-              .order('created_at', { ascending: false })
-              .limit(1);
+              .eq('pagador_id', user!.id)
+              .order('created_at', { ascending: false });
+            const pagOficinaId = pagMsgs?.[0]?.oficina_id as string | undefined;
 
-            if (pagMsgs && pagMsgs.length > 0) {
-              // Get oficina name from orcamentos
+            if (pagOficinaId) {
               const { data: pagOrc } = await supabase
-                .from('orcamentos')
-                .select('oficina_id, oficina:oficinas!orcamentos_oficina_id_fkey(nome_fantasia)')
-                .eq('solicitacao_id', emerg.solicitacao_id)
-                .eq('status', 'aceito')
+                .from('oficinas')
+                .select('id, nome_fantasia')
+                .eq('id', pagOficinaId)
                 .limit(1);
 
-              const pagOficinaNome = (pagOrc?.[0]?.oficina as any)?.nome_fantasia || t('workshopFallback');
+              const pagOficinaNome = (pagOrc?.[0] as any)?.nome_fantasia || t('workshopFallback');
 
               outroConversasOficina.push({
                 solicitacao_id: emerg.solicitacao_id,
-                oficina_id: (pagOrc?.[0] as any)?.oficina_id || '',
+                oficina_id: pagOficinaId,
+                pagador: true,
                 oficina_nome: pagOficinaNome,
                 veiculo_desc: reg.veiculo_descricao || '',
                 placa: reg.placa || '',
-                ultima_mensagem: pagMsgs[0].texto || '',
-                ultima_mensagem_at: pagMsgs[0].created_at || '',
-                nao_lidas: 0,
+                ultima_mensagem: pagMsgs![0].tipo === 'audio' ? t('audioMessage') : (pagMsgs![0].texto || ''),
+                ultima_mensagem_at: pagMsgs![0].created_at || '',
+                nao_lidas: pagMsgs!.filter((m: any) => !m.lida && m.remetente_id !== user!.id).length,
               });
             }
           }
@@ -363,7 +366,7 @@ export default function ClienteMensagensListPage() {
                 {group.conversas_oficina.map((conv) => (
                   <Link
                     key={`oficina-${conv.solicitacao_id}-${conv.oficina_id}`}
-                    href={conv.oficina_id ? `/cliente/mensagens/${conv.solicitacao_id}?oficina=${conv.oficina_id}` : `/cliente/mensagens/${conv.solicitacao_id}`}
+                    href={conv.oficina_id ? `/cliente/mensagens/${conv.solicitacao_id}?oficina=${conv.oficina_id}${conv.pagador ? '&pagador=1' : ''}` : `/cliente/mensagens/${conv.solicitacao_id}`}
                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                   >
                     <div className={`w-10 h-10 ${group.is_responsavel_pagamento ? 'bg-red-100' : 'bg-orange-100'} rounded-full flex items-center justify-center flex-shrink-0`}>
