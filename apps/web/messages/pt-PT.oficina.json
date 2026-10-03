@@ -701,7 +701,8 @@
     "enviarOrcamento": "Enviar Orçamento",
     "fotosCount": "{count} fotografia(s)",
     "orcamentoEnviado": "Orçamento enviado",
-    "verModificarOrcamento": "Ver / alterar orçamento"
+    "verModificarOrcamento": "Ver / alterar orçamento",
+    "veiculoSemDados": "Carro ainda sem dados"
   },
   "oficinaSolicitacaoDetalhe": {
     "solicitacaoNaoEncontrada": "Pedido não encontrado",

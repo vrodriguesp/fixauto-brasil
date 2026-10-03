@@ -701,7 +701,8 @@
     "enviarOrcamento": "Invia Preventivo",
     "fotosCount": "{count} foto",
     "orcamentoEnviado": "Preventivo inviato",
-    "verModificarOrcamento": "Vedi / modifica preventivo"
+    "verModificarOrcamento": "Vedi / modifica preventivo",
+    "veiculoSemDados": "Dati auto non ancora inseriti"
   },
   "oficinaSolicitacaoDetalhe": {
     "solicitacaoNaoEncontrada": "Richiesta non trovata",

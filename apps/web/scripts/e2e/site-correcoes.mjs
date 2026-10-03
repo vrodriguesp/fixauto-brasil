@@ -85,17 +85,17 @@ try {
   const ctxQ = await celular(); const pQ = await ctxQ.newPage();
   await entrar(pQ, ofi.email, ofi.senha, 'it');
   await pQ.clock.setFixedTime(new Date().setHours(15, 0, 0, 0));
-  await pQ.goto(`${SITE}/it/oficina/enviar-orcamento/${s.id}`, { waitUntil: 'load' }); await pQ.locator('input[type=date]').first().waitFor(); await pQ.waitForTimeout(1500);
+  await pQ.goto(`${SITE}/it/oficina/enviar-orcamento/${s.id}`, { waitUntil: 'load' }); await pQ.locator('input[type=date][aria-label]').first().waitFor(); await pQ.waitForTimeout(1500);
   const hoje = iso(new Date());
-  const dataSlot = await pQ.locator('input[type=date]').first().inputValue();
+  const dataSlot = await pQ.locator('input[type=date][aria-label]').first().inputValue();
   const turnoSlot = await pQ.locator('select[aria-label*="/"]').first().inputValue();
   const manhaDesligada = await pQ.locator('select[aria-label*="/"] option[value=manha]').first().isDisabled();
   ok('6 as 15h: comeca hoje a tarde e a manha de hoje fica bloqueada', dataSlot === hoje && turnoSlot === 'tarde' && manhaDesligada, `${dataSlot} ${turnoSlot} manhaBloq=${manhaDesligada}`);
-  ok('6 data minima = hoje', (await pQ.locator('input[type=date]').first().getAttribute('min')) === hoje);
+  ok('6 data minima = hoje', (await pQ.locator('input[type=date][aria-label]').first().getAttribute('min')) === hoje);
   await pQ.clock.setFixedTime(new Date().setHours(18, 0, 0, 0));
-  await pQ.reload({ waitUntil: 'load' }); await pQ.locator('input[type=date]').first().waitFor(); await pQ.waitForTimeout(1500);
+  await pQ.reload({ waitUntil: 'load' }); await pQ.locator('input[type=date][aria-label]').first().waitFor(); await pQ.waitForTimeout(1500);
   const amanha = iso(new Date(Date.now() + 86400000));
-  ok('6 as 18h: comeca amanha de manha', (await pQ.locator('input[type=date]').first().inputValue()) === amanha && (await pQ.locator('select[aria-label*="/"]').first().inputValue()) === 'manha');
+  ok('6 as 18h: comeca amanha de manha', (await pQ.locator('input[type=date][aria-label]').first().inputValue()) === amanha && (await pQ.locator('select[aria-label*="/"]').first().inputValue()) === 'manha');
   await pQ.screenshot({ path: 'cor-orcamento-horarios.png', fullPage: true });
   await ctxQ.close();
 

@@ -701,7 +701,8 @@
     "enviarOrcamento": "Отправить смету",
     "fotosCount": "{count} фото",
     "orcamentoEnviado": "Смета отправлена",
-    "verModificarOrcamento": "Смотреть / изменить смету"
+    "verModificarOrcamento": "Смотреть / изменить смету",
+    "veiculoSemDados": "Данные машины ещё не указаны"
   },
   "oficinaSolicitacaoDetalhe": {
     "solicitacaoNaoEncontrada": "Заявка не найдена",

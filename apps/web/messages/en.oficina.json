@@ -701,7 +701,8 @@
     "enviarOrcamento": "Send Quote",
     "fotosCount": "{count} photo(s)",
     "orcamentoEnviado": "Quote sent",
-    "verModificarOrcamento": "View / edit quote"
+    "verModificarOrcamento": "View / edit quote",
+    "veiculoSemDados": "Car details not given yet"
   },
   "oficinaSolicitacaoDetalhe": {
     "solicitacaoNaoEncontrada": "Request not found",

@@ -1,21 +1,29 @@
 import * as Location from 'expo-location';
 import { API_BASE_URL } from './api';
 
+// a primeira que der certo (Promise.any nao existe em todo motor de JS do celular)
+const primeira = <T,>(ps: Promise<T>[]) => new Promise<T>((ok, falha) => {
+  let falhas = 0;
+  ps.forEach((p) => p.then(ok, (e) => { if (++falhas === ps.length) falha(e); }));
+});
+
 const comPrazo = <T,>(p: Promise<T>, ms: number) =>
   Promise.race([p, new Promise<never>((_, rej) => setTimeout(() => rej(new Error('localizacao demorou')), ms))]);
 
 // Posicao do aparelho sem deixar a tela girando para sempre: usa a ultima
-// posicao conhecida (instantanea, ate 5 min); senao pede a atual com precisao
-// media; se o GPS nao responder (dentro de casa/garagem, logo depois de
-// permitir no iPhone), tenta de novo com precisao baixa (antena/Wi-Fi).
+// posicao conhecida (instantanea, ate 5 min); senao pede ao mesmo tempo pela
+// rede (Wi-Fi/antena, rapido dentro de casa) e pelo GPS de satelite (no local
+// do acidente, ao ar livre e as vezes sem Wi-Fi) e usa a primeira que chegar.
 export async function obterPosicao(): Promise<Location.LocationObject> {
   const ultima = await Location.getLastKnownPositionAsync({ maxAge: 5 * 60 * 1000 }).catch(() => null);
   if (ultima) return ultima;
-  try {
-    return await comPrazo(Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }), 12000);
-  } catch {
-    return comPrazo(Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low }), 10000);
-  }
+  return comPrazo(
+    primeira([
+      Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }),
+      Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High }),
+    ]),
+    20000,
+  );
 }
 
 export interface EnderecoDaPosicao {

@@ -38,7 +38,7 @@ export default function EditarPedido({ solicitacaoId, descricao, veiculo, aoSalv
       if (error) { setEstado('erro'); return; }
     }
     const { error } = await supabase.from('solicitacoes')
-      .update({ descricao: `${marcas(descricao)}${texto.trim()}`.trim() }).eq('id', solicitacaoId);
+      .update({ descricao: `${marcas(descricao).trim()} ${texto.trim()}`.trim() }).eq('id', solicitacaoId);
     if (error) { setEstado('erro'); return; }
     setEstado('');
     setAberto(false);

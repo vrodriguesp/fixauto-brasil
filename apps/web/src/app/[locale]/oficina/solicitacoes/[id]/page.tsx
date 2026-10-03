@@ -80,7 +80,7 @@ export default function SolicitacaoDetalhePage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-6">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold text-gray-900 break-words">
-            {v ? `${v.fipe_marca} ${v.fipe_modelo}` : t('veiculoFallback')}
+            {v?.fipe_marca ? `${v.fipe_marca} ${v.fipe_modelo}` : t('veiculoFallback')}
           </h1>
           <div className="flex flex-wrap items-center gap-2 mt-2">
             <StatusBadge status={sol.status} />
@@ -174,7 +174,7 @@ export default function SolicitacaoDetalhePage() {
         <div className="space-y-6">
           <div className="card">
             <h2 className="font-semibold text-gray-900 mb-3">{t('informacoesDoVeiculo')}</h2>
-            {v ? (
+            {v?.fipe_marca ? (
               <dl className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <dt className="text-gray-500">{t('marca')}</dt>

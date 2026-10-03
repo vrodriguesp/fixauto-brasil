@@ -701,7 +701,8 @@
     "enviarOrcamento": "Saada hinnapakkumine",
     "fotosCount": "{count} foto",
     "orcamentoEnviado": "Hinnapakkumine saadetud",
-    "verModificarOrcamento": "Vaata / muuda pakkumist"
+    "verModificarOrcamento": "Vaata / muuda pakkumist",
+    "veiculoSemDados": "Auto andmed puuduvad"
   },
   "oficinaSolicitacaoDetalhe": {
     "solicitacaoNaoEncontrada": "Päringut ei leitud",

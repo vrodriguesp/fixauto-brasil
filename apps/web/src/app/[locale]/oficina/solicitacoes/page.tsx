@@ -77,7 +77,9 @@ export default function SolicitacoesOficinaPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="font-semibold text-gray-900 break-words">
-                        {sol.veiculo?.fipe_marca} {sol.veiculo?.fipe_modelo} {sol.veiculo?.fipe_ano}
+                        {sol.veiculo?.fipe_marca
+                          ? `${sol.veiculo.fipe_marca} ${sol.veiculo.fipe_modelo} ${sol.veiculo.fipe_ano && sol.veiculo.fipe_ano !== '-' ? sol.veiculo.fipe_ano : ''}`
+                          : t('veiculoSemDados')}
                       </h3>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 mb-2">
