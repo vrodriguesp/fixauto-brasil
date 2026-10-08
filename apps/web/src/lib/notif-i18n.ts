@@ -146,10 +146,10 @@ export function notifOrcamentoAceitoPagamento(locale: string | null | undefined,
 }
 
 const servicoConcluido: Record<EmailLocale, { titulo: string; mensagem: string }> = {
-  pt: { titulo: 'Serviço concluído!', mensagem: '{veiculoNome} está pronto para retirada. Avalie o serviço recebido!' },
-  en: { titulo: 'Service completed!', mensagem: '{veiculoNome} is ready for pickup. Rate the service you received!' },
-  et: { titulo: 'Teenus valmis!', mensagem: '{veiculoNome} on valmis kättesaamiseks. Hinda saadud teenust!' },
-  it: { titulo: 'Servizio completato!', mensagem: '{veiculoNome} è pronto per il ritiro. Valuta il servizio ricevuto!' },
+  pt: { titulo: 'Serviço concluído!', mensagem: '{veiculoNome} foi entregue. Como foi? Avalie o serviço recebido!' },
+  en: { titulo: 'Service completed!', mensagem: '{veiculoNome} has been handed back. How did it go? Rate the service you received!' },
+  et: { titulo: 'Teenus valmis!', mensagem: '{veiculoNome} on üle antud. Kuidas läks? Hinda saadud teenust!' },
+  it: { titulo: 'Servizio completato!', mensagem: "{veiculoNome} è stata consegnata. Com'è andata? Valuta il servizio ricevuto!" },
 };
 
 export function notifServicoConcluido(locale: string | null | undefined, veiculoNome: string) {
