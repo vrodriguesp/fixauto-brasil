@@ -64,3 +64,15 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
 ## Admin: trocar email de acesso (08/10)
 - `/admin/oficinas/<id>` (campo "Email de acesso") e `/admin/usuarios` (coluna email): "Mudar email" pede motivo e confirmação; o novo email já fica confirmado e a senha não muda. Recusa email de outra conta; registrado em "Histórico do admin". Rota `POST /api/admin/usuarios/email`. Teste: `site-admin-email.mjs`.
 - Oficina "Italiano" (Estônia), cadastrada com um email sem acesso, passou para `oficina-estonia@example.test` (confirmado).
+
+## Lote da noite 2 (08/10)
+- **Tela de erro** no idioma do endereço (antes sempre em português). O erro do teste na Estônia era "Loading chunk failed": página aberta antes de uma publicação nova. Agora a página recarrega sozinha uma vez (`lib/erro-pagina.ts`).
+- **Transcrição de áudio:** a chave do Gemini está no **plano gratuito (20 pedidos/dia no gemini-2.5-flash)** — acabou e a transcrição falhava. Agora: `gemini-3.5-flash` primeiro (acertou o estoniano "Tere, see on test"), depois 2.5 e 3.5-lite, com nova tentativa; tipo do áudio do iPhone (.mp4) certo; idioma de quem fala como dica. **Recomendado ativar o faturamento no Google AI Studio.**
+- Pedido do "acabei de bater" aparece para a oficina como acidente/ocorrência (`constants.tiposOcorrencia`), não "colisão".
+- Campos de data no iPhone dentro da caixa (CSS global); check-in avulso com ano/placa/cor sem sobrepor.
+- App: aviso de notificação com fundo sólido e X para fechar.
+- Localização com prazo em tudo (site, app e servidor): nunca fica buscando para sempre.
+- Avaliação pendente: o aviso aparece antes do formulário; se o banco recusar, mostra o aviso.
+- Veículos em serviço: "Pronto para retirar" = etapa Concluso; entregue sai da tela; caixas cabem em estoniano.
+- Teste novo: `site-estonia.mjs`. Dados de teste apagados (só o admin).
+- **Search Console (3 meses):** 1 clique, 159 impressões, posição média 12; 64 páginas indexadas, 26 "descobertas, ainda não indexadas". Buscas: pneus de inverno na Estônia (et/ru).
