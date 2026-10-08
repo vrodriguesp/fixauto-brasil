@@ -644,5 +644,23 @@
     "sem": "Garantiita",
     "documento": "Ava pakkumise dokument",
     "conversaEncerrada": "Vestlus on suletud: töö on lõpetatud ja garantii on lõppenud (või seda töökoda ei valitud)."
+  },
+  "excluirConta": {
+    "titulo": "BipFixi konto kustutamine",
+    "intro": "Saad oma konto igal ajal kustutada rakenduses (Profiil › Kustuta konto) või sellel lehel. Mis juhtub:",
+    "item1": "Sinu sisselogimine kaob: selle e-postiga ei saa enam sisse logida.",
+    "item2": "Kustutame nime, e-posti, telefoni, numbrimärgid, päringuteta sõidukid ja sinu teated.",
+    "item3": "Avatud päringud tühistatakse ja töökojad neid enam ei näe.",
+    "item4": "Tehtud tööde ajalugu jääb alles anonüümselt (ilma sinu andmeteta), sest see kuulub ka töökojale (garantii ja raamatupidamine).",
+    "emServico": "Töökojas on praegu auto. Kustuta konto pärast auto üleandmist.",
+    "botao": "Kustuta minu konto",
+    "confirmar": "Kas oled kindel? Seda ei saa tagasi võtta.",
+    "sim": "Jah, kustuta",
+    "cancelar": "Tühista",
+    "feito": "Konto on kustutatud. Aitäh, et kasutasid BipFixi.",
+    "entrar": "Kustutamiseks logi esmalt sisse kontole, mida soovid eemaldada.",
+    "entrarBotao": "Logi sisse",
+    "erro": "Praegu ei õnnestunud kustutada. Proovi mõne minuti pärast uuesti.",
+    "link": "Kustuta konto"
   }
 }

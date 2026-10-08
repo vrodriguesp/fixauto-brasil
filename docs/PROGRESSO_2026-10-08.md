@@ -76,3 +76,12 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
 - Veículos em serviço: "Pronto para retirar" = etapa Concluso; entregue sai da tela; caixas cabem em estoniano.
 - Teste novo: `site-estonia.mjs`. Dados de teste apagados (só o admin).
 - **Search Console (3 meses):** 1 clique, 159 impressões, posição média 12; 64 páginas indexadas, 26 "descobertas, ainda não indexadas". Buscas: pneus de inverno na Estônia (et/ru).
+
+## Decisão do dono (08/10 noite)
+- **IA:** por ora continua a chave **gratuita** do Gemini (20 pedidos/dia por modelo). As rotas usam modelos de reserva (3.5-flash, 2.5-flash, 3.5-flash-lite) com nova tentativa; se todos esgotarem, a tela avisa "IA ocupada". Rever quando houver uso real.
+
+## Noite 3 (08/10) — em andamento
+- **Excluir conta** (exigência Apple 5.1.1(v) e Google Play): `POST /api/conta/excluir`; página pública `/[locale]/excluir-conta` (pt `/excluir-conta`, pt-PT `/eliminar-conta`, en `/delete-account`, et `/kustuta-konto`, it `/elimina-account`, ru `/udalit-akkaunt`) — usar esta URL no Google Play; link no perfil (site) e botão no Perfil do app. Sem histórico: apaga tudo; com histórico: login desativado e dados pessoais anonimizados (pedidos/comissões ficam anônimos); carro em serviço bloqueia até a entrega. Login aceita `?voltar=`.
+- **Lojas:** `apps/mobile/eas.json` (development/preview/production, submit); app.json: só celular (sem iPad), criptografia isenta, microfone no Android. Falta do dono: conta Apple Developer (99 US$/ano), Google Play Console (25 US$), `npx eas login` + `eas init` (gera o projectId), criar o app no App Store Connect (ascAppId no eas.json), chave de serviço do Google Play, capturas de tela, textos da loja nos 6 idiomas. Sem notificações push (expo-notifications não instalado) — avisos só com o app aberto.
+- **Buscadores (dados reais, 08/10):** Google 1 clique/159 impressões, 64 páginas indexadas. **Bing: 0 páginas indexadas — `/et` e `/en` "Blocked — URL cannot appear on Bing" (violação das diretrizes, a investigar; afeta também DuckDuckGo/Yahoo).** Yandex: `/` indexado com o título antigo em português (de quando `/` era a página do Brasil) por causa do redirecionamento 307; `/et` marcado "baixo valor".
+- Auditorias Fable em andamento → `docs/AUDITORIA_FABLE_2026-10-08/` (SEO_ESTONIA, WEB_CLIENTE_PUBLICO, WEB_OFICINA_ADMIN_SERVIDOR, APP_MOBILE, TRADUCOES).

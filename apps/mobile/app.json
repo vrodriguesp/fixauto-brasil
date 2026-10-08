@@ -14,16 +14,21 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.bipfix.cliente",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "We use your location to find repair shops near you.",
         "NSCameraUsageDescription": "We use the camera so you can photograph the damage to your vehicle.",
-        "NSPhotoLibraryUsageDescription": "We use your photo library so you can send photos of the damage to your vehicle."
+        "NSPhotoLibraryUsageDescription": "We use your photo library so you can send photos of the damage to your vehicle.",
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSMicrophoneUsageDescription": "We use the microphone so you can send voice messages to the repair shop."
       },
       "associatedDomains": [
         "applinks:bipfix.com"
-      ]
+      ],
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.bipfix.cliente",
@@ -37,7 +42,8 @@
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
-        "CAMERA"
+        "CAMERA",
+        "RECORD_AUDIO"
       ],
       "intentFilters": [
         {
@@ -55,6 +61,11 @@
             "DEFAULT"
           ]
         }
+      ],
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
       ]
     },
     "web": {

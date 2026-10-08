@@ -252,7 +252,15 @@
     "meusDados": "I miei dati",
     "idioma": "Lingua",
     "sair": "Esci",
-    "avaliacoes": "Le mie recensioni"
+    "avaliacoes": "Le mie recensioni",
+    "excluirConta": "Elimina account",
+    "excluirContaTexto": "Il tuo accesso viene eliminato: non potrai più entrare con questa email.",
+    "excluirContaConfirmar": "Sei sicuro? Non si può annullare.",
+    "excluirContaSim": "Sì, elimina",
+    "excluirContaEmServico": "C'è un'auto in officina in questo momento. Elimina l'account dopo la consegna.",
+    "excluirContaFeita": "Account eliminato. Grazie per aver usato BipFix.",
+    "excluirContaErro": "Non è stato possibile eliminare ora. Riprova tra qualche minuto.",
+    "excluirContaDetalhes": "Lo storico dei servizi già svolti resta anonimo (senza i tuoi dati), perché appartiene anche all'officina (garanzia e contabilità)."
   },
   "seguro": {
     "titulo": "Chi pagherà la riparazione?",

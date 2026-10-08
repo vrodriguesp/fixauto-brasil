@@ -69,6 +69,10 @@ export const PATHNAMES = {
     pt: '/termos', 'pt-PT': '/termos', en: '/terms',
     et: '/tingimused', it: '/termini', ru: '/usloviya',
   },
+  '/excluir-conta': {
+    pt: '/excluir-conta', 'pt-PT': '/eliminar-conta', en: '/delete-account',
+    et: '/kustuta-konto', it: '/elimina-account', ru: '/udalit-akkaunt',
+  },
   '/privacidade': {
     pt: '/privacidade', 'pt-PT': '/privacidade', en: '/privacy',
     et: '/privaatsus', it: '/privacy', ru: '/konfidentsialnost',

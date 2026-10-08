@@ -644,5 +644,23 @@
     "sem": "No warranty",
     "documento": "Open the quote document",
     "conversaEncerrada": "Conversation closed: the job is finished and the warranty has ended (or this workshop was not chosen)."
+  },
+  "excluirConta": {
+    "titulo": "Delete your BipFix account",
+    "intro": "You can delete your account at any time, in the app (Profile › Delete account) or on this page. Here is what happens:",
+    "item1": "Your login stops existing: you will no longer be able to sign in with this email.",
+    "item2": "We erase your name, email, phone, plate numbers, vehicles without requests and your notifications.",
+    "item3": "Open requests are cancelled and repair shops no longer see them.",
+    "item4": "The history of completed jobs is kept anonymously (without your data), because it also belongs to the shop (warranty and accounting).",
+    "emServico": "A car is at the shop right now. Delete the account after it is handed back.",
+    "botao": "Delete my account",
+    "confirmar": "Are you sure? This cannot be undone.",
+    "sim": "Yes, delete",
+    "cancelar": "Cancel",
+    "feito": "Account deleted. Thank you for using BipFix.",
+    "entrar": "To delete it, first sign in to the account you want to remove.",
+    "entrarBotao": "Sign in",
+    "erro": "Could not delete right now. Please try again in a few minutes.",
+    "link": "Delete account"
   }
 }

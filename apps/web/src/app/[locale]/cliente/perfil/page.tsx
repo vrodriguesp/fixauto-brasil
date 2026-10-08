@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 
 export default function PerfilClientePage() {
   const t = useTranslations('clientePerfil');
   const tErr = useTranslations('erros');
+  const tx = useTranslations('excluirConta');
   const { user, loading, refreshProfile } = useAuth();
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -103,6 +105,9 @@ export default function PerfilClientePage() {
           <button onClick={handleSave} disabled={saving} className="btn-primary">
             {saving ? t('saving') : t('saveChanges')}
           </button>
+        </div>
+        <div className="mt-10 pt-6 border-t border-gray-200 text-right">
+          <Link href="/excluir-conta" className="text-sm text-red-700 hover:underline">{tx('link')}</Link>
         </div>
       </div>
     </div>

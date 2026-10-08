@@ -252,7 +252,15 @@
     "meusDados": "My details",
     "idioma": "Language",
     "sair": "Sign out",
-    "avaliacoes": "My reviews"
+    "avaliacoes": "My reviews",
+    "excluirConta": "Delete account",
+    "excluirContaTexto": "Your login stops existing: you will no longer be able to sign in with this email.",
+    "excluirContaConfirmar": "Are you sure? This cannot be undone.",
+    "excluirContaSim": "Yes, delete",
+    "excluirContaEmServico": "A car is at the shop right now. Delete the account after it is handed back.",
+    "excluirContaFeita": "Account deleted. Thank you for using BipFix.",
+    "excluirContaErro": "Could not delete right now. Please try again in a few minutes.",
+    "excluirContaDetalhes": "The history of completed jobs is kept anonymously (without your data), because it also belongs to the shop (warranty and accounting)."
   },
   "seguro": {
     "titulo": "Who will pay for the repair?",

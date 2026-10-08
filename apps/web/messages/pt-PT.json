@@ -644,5 +644,23 @@
     "sem": "Sem garantia",
     "documento": "Ver o documento do orçamento",
     "conversaEncerrada": "Conversa encerrada: o serviço terminou e a garantia acabou (ou não foi escolhida esta oficina)."
+  },
+  "excluirConta": {
+    "titulo": "Eliminar a sua conta BipFix",
+    "intro": "Pode eliminar a sua conta a qualquer momento, na app (Perfil › Eliminar conta) ou nesta página. Veja o que acontece:",
+    "item1": "O seu acesso deixa de existir: deixará de ser possível entrar com este e-mail.",
+    "item2": "Apagamos nome, e-mail, telefone, matrículas, veículos sem pedidos e os seus avisos.",
+    "item3": "Os pedidos em aberto são cancelados e as oficinas deixam de os ver.",
+    "item4": "O histórico de serviços já feitos fica anónimo (sem os seus dados), porque também pertence à oficina (garantia e contabilidade).",
+    "emServico": "Tem um carro na oficina neste momento. Elimine a conta depois da entrega.",
+    "botao": "Eliminar a minha conta",
+    "confirmar": "Tem a certeza? Isto não pode ser anulado.",
+    "sim": "Sim, eliminar",
+    "cancelar": "Cancelar",
+    "feito": "Conta eliminada. Obrigado por ter usado o BipFix.",
+    "entrar": "Para eliminar, entre primeiro na conta que pretende apagar.",
+    "entrarBotao": "Entrar",
+    "erro": "Não foi possível eliminar agora. Tente novamente dentro de alguns minutos.",
+    "link": "Eliminar conta"
   }
 }

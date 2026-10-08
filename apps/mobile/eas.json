@@ -1,0 +1,34 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": { "EXPO_PUBLIC_API_BASE_URL": "https://bipfix.com" }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": { "buildType": "apk" },
+      "env": { "EXPO_PUBLIC_API_BASE_URL": "https://bipfix.com" }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": { "EXPO_PUBLIC_API_BASE_URL": "https://bipfix.com" }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascAppId": "PREENCHER_DEPOIS_DE_CRIAR_O_APP_NO_APP_STORE_CONNECT"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./google-play-service-account.json",
+        "track": "internal",
+        "releaseStatus": "draft"
+      }
+    }
+  }
+}

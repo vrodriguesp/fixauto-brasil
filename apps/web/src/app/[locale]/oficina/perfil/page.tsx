@@ -14,6 +14,7 @@ import { seguradorasDoPais } from '@/lib/seguradoras';
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
   const tErr = useTranslations('erros');
+  const tx = useTranslations('excluirConta');
   const tc = useTranslations('constants');
   const locale = useLocale();
   const { user, oficina, loading, refreshProfile } = useAuth();
@@ -562,6 +563,9 @@ export default function PerfilOficinaPage() {
           {saving ? t('salvando') : t('salvarAlteracoes')}
         </button>
       </div>
+      <div className="mt-10 pt-6 border-t border-gray-200 text-right">
+          <Link href="/excluir-conta" className="text-sm text-red-700 hover:underline">{tx('link')}</Link>
+        </div>
     </div>
   );
 }

@@ -252,7 +252,15 @@
     "meusDados": "Meus dados",
     "idioma": "Idioma",
     "sair": "Sair",
-    "avaliacoes": "Minhas avaliações"
+    "avaliacoes": "Minhas avaliações",
+    "excluirConta": "Excluir conta",
+    "excluirContaTexto": "O seu acesso deixa de existir: não será mais possível entrar com este e-mail.",
+    "excluirContaConfirmar": "Tem certeza? Isto não pode ser desfeito.",
+    "excluirContaSim": "Sim, excluir",
+    "excluirContaEmServico": "Você tem um carro na oficina agora. Exclua a conta depois da entrega.",
+    "excluirContaFeita": "Conta excluída. Obrigado por ter usado o BipFix.",
+    "excluirContaErro": "Não foi possível excluir agora. Tente de novo em alguns minutos.",
+    "excluirContaDetalhes": "O histórico de serviços já feitos fica anônimo (sem os seus dados), porque também pertence à oficina (garantia e contabilidade)."
   },
   "seguro": {
     "titulo": "Quem vai pagar o conserto?",

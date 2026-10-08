@@ -58,6 +58,12 @@ export default function LoginPage() {
       return;
     }
 
+    // ?voltar=/et/kustuta-konto : volta para a pagina que pediu o login (so caminho do proprio site)
+    const voltar = new URLSearchParams(window.location.search).get('voltar');
+    if (voltar && /^\/[a-zA-Z0-9\-/]*$/.test(voltar) && !voltar.startsWith('//')) {
+      window.location.assign(voltar);
+      return;
+    }
     router.refresh();
     router.push('/');
   };

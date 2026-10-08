@@ -40,3 +40,9 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# chave da conta de servico do Google Play (envio pelo EAS) - nunca no git
+google-play-service-account.json
+*.p8
+*.p12
+*.mobileprovision

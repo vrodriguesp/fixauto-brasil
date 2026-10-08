@@ -252,7 +252,15 @@
     "meusDados": "Minu andmed",
     "idioma": "Keel",
     "sair": "Logi välja",
-    "avaliacoes": "Minu hinnangud"
+    "avaliacoes": "Minu hinnangud",
+    "excluirConta": "Kustuta konto",
+    "excluirContaTexto": "Sinu sisselogimine kaob: selle e-postiga ei saa enam sisse logida.",
+    "excluirContaConfirmar": "Kas oled kindel? Seda ei saa tagasi võtta.",
+    "excluirContaSim": "Jah, kustuta",
+    "excluirContaEmServico": "Töökojas on praegu auto. Kustuta konto pärast auto üleandmist.",
+    "excluirContaFeita": "Konto on kustutatud. Aitäh, et kasutasid BipFixi.",
+    "excluirContaErro": "Praegu ei õnnestunud kustutada. Proovi mõne minuti pärast uuesti.",
+    "excluirContaDetalhes": "Tehtud tööde ajalugu jääb alles anonüümselt (ilma sinu andmeteta), sest see kuulub ka töökojale (garantii ja raamatupidamine)."
   },
   "seguro": {
     "titulo": "Kes maksab remondi eest?",

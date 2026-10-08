@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
+import { API_BASE_URL } from '../../lib/api';
 import { IDIOMAS, escolherIdioma } from '../../lib/idiomas';
 
 export default function PerfilScreen() {
@@ -20,6 +21,38 @@ export default function PerfilScreen() {
     Alert.alert(t('perfil.sair'), '', [
       { text: t('common.cancelar'), style: 'cancel' },
       { text: t('perfil.sair'), style: 'destructive', onPress: () => { signOut(); router.replace('/(auth)/login'); } },
+    ]);
+  };
+
+  // excluir a conta (exigido pela Apple e pelo Google): confirma duas vezes e
+  // usa a mesma rota do site (/api/conta/excluir)
+  const handleExcluir = () => {
+    Alert.alert(t('perfil.excluirConta'), `${t('perfil.excluirContaTexto')}
+
+${t('perfil.excluirContaDetalhes')}
+
+${t('perfil.excluirContaConfirmar')}`, [
+      { text: t('common.cancelar'), style: 'cancel' },
+      {
+        text: t('perfil.excluirContaSim'), style: 'destructive', onPress: async () => {
+          try {
+            const { data: { session } } = await supabase.auth.getSession();
+            const res = await fetch(`${API_BASE_URL}/api/conta/excluir`, {
+              method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session?.access_token || ''}` }, body: JSON.stringify({ confirmar: true }),
+            });
+            const d = await res.json().catch(() => ({}));
+            if (!res.ok) {
+              Alert.alert(t('perfil.excluirConta'), d.codigo === 'CARRO_EM_SERVICO' ? t('perfil.excluirContaEmServico') : t('perfil.excluirContaErro'));
+              return;
+            }
+            Alert.alert(t('perfil.excluirConta'), t('perfil.excluirContaFeita'));
+            await signOut();
+            router.replace('/(auth)/login');
+          } catch {
+            Alert.alert(t('perfil.excluirConta'), t('perfil.excluirContaErro'));
+          }
+        },
+      },
     ]);
   };
 
@@ -47,6 +80,10 @@ export default function PerfilScreen() {
 
       <Pressable onPress={handleSair} className="border border-red-300 rounded-lg py-4 items-center">
         <Text className="text-red-600 font-semibold">{t('perfil.sair')}</Text>
+      </Pressable>
+
+      <Pressable onPress={handleExcluir} accessibilityRole="button" className="py-4 items-center mt-4">
+        <Text className="text-gray-500 underline">{t('perfil.excluirConta')}</Text>
       </Pressable>
     </View>
   );
