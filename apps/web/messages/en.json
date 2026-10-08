@@ -504,6 +504,11 @@
       "peca": "Part",
       "material": "Material",
       "outro": "Other"
+    },
+    "tiposOcorrencia": {
+      "eu_causei": "🚨 Accident (caused by the customer)",
+      "outro_causou": "🚨 Accident (caused by another vehicle)",
+      "sem_outro": "🚨 Roadside incident (no other vehicle)"
     }
   },
   "comissaoPecasCard": {

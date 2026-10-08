@@ -5,6 +5,20 @@ import { participaDaConversa } from '@/lib/acesso-servico';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { baixarMidia } from '@/lib/midia-servidor';
 
+// Mesmo esquema do leitor de orcamento: com o modelo ocupado (429/503) tenta
+// de novo e passa para o seguinte, em vez de falhar na primeira.
+// 3.5-flash primeiro: no teste com audio real em estoniano acertou ("Tere, see on test"), o 2.5 nao
+const MODELOS = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-3.5-flash-lite'];
+const IDIOMA_NOME: Record<string, string> = { pt: 'Brazilian Portuguese', 'pt-PT': 'European Portuguese', en: 'English', et: 'Estonian', it: 'Italian', ru: 'Russian' };
+
+// O iPhone grava .mp4/.m4a e o armazenamento as vezes devolve video/mp4 ou
+// octet-stream: o tipo vem da extensao quando o do arquivo nao e de audio.
+function tipoDoAudio(url: string, tipo: string) {
+  if (tipo.startsWith('audio/')) return tipo;
+  const ext = url.split('?')[0].split('.').pop()?.toLowerCase();
+  return ({ mp4: 'audio/mp4', m4a: 'audio/mp4', aac: 'audio/aac', mp3: 'audio/mpeg', wav: 'audio/wav', ogg: 'audio/ogg', webm: 'audio/webm', caf: 'audio/x-caf' } as Record<string, string>)[ext || ''] || 'audio/webm';
+}
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,7 +42,7 @@ export async function POST(request: NextRequest) {
     // Fetch the message
     const { data: msg } = await supabaseAdmin
       .from('mensagens')
-      .select('audio_url, transcricao, transcricao_status')
+      .select('audio_url, transcricao, transcricao_status, remetente:profiles!mensagens_remetente_id_fkey(idioma)')
       .eq('id', mensagemId)
       .single();
 
@@ -62,31 +76,41 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Áudio indisponível' }, { status: 500 });
     }
     const base64Audio = midia.buffer.toString('base64');
-    const mimeType = midia.tipo.startsWith('audio/') ? midia.tipo : 'audio/webm';
+    const mimeType = tipoDoAudio(msg.audio_url, midia.tipo);
+    // idioma do app de quem falou: dica forte para frases curtas (sem ela,
+    // "Tere, see on test" em estoniano virava "Teray, say on test")
+    const idioma = (msg as any).remetente?.idioma as string | undefined;
+    const dica = idioma && IDIOMA_NOME[idioma] ? ` The speaker uses the app in ${IDIOMA_NOME[idioma]}, so the audio is most likely in ${IDIOMA_NOME[idioma]} (but keep whatever language is actually spoken).` : '';
+    const corpo = JSON.stringify({
+      contents: [{
+        parts: [
+          { inline_data: { mime_type: mimeType, data: base64Audio } },
+          { text: `Transcribe this audio word for word in the SAME language it was spoken (do not translate), with that language's correct spelling and punctuation.${dica} Return ONLY the spoken text, no formatting, no quotes, no explanation.` },
+        ],
+      }],
+      // sem "pensamento": ele consumia o limite de saida e a resposta vinha vazia
+      generationConfig: { maxOutputTokens: 2000, temperature: 0, thinkingConfig: { thinkingBudget: 0 } },
+    });
 
-    // Use Gemini to transcribe
-    const geminiRes = await fetch(
-      // Chave no cabecalho, nao na URL (URLs aparecem em logs de proxy)
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              { inline_data: { mime_type: mimeType, data: base64Audio } },
-              { text: 'Transcreva este áudio no MESMO idioma em que foi falado (não traduza). Retorne APENAS o texto falado, sem formatação, sem aspas, sem explicação.' },
-            ],
-          }],
-          generationConfig: { maxOutputTokens: 2000 },
-        }),
+    let geminiRes: Response | null = null;
+    for (const modelo of MODELOS) {
+      for (let tentativa = 0; tentativa < 2; tentativa++) {
+        // Chave no cabecalho, nao na URL (URLs aparecem em logs de proxy)
+        geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+          body: modelo.startsWith('gemini-2.5') ? corpo : corpo.replace(',"thinkingConfig":{"thinkingBudget":0}', ''),
+        }).catch(() => null);
+        if (geminiRes?.ok || (geminiRes && ![429, 500, 503].includes(geminiRes.status))) break;
+        await new Promise((r) => setTimeout(r, 1500));
       }
-    );
+      if (geminiRes?.ok) break;
+    }
 
-    if (!geminiRes.ok) {
-      const err = await geminiRes.json();
+    if (!geminiRes?.ok) {
+      const err = geminiRes ? await geminiRes.json().catch(() => ({})) : {};
+      console.error('[transcrever-audio] gemini', geminiRes?.status, JSON.stringify(err).slice(0, 300));
       await supabaseAdmin.from('mensagens').update({ transcricao_status: 'erro' }).eq('id', mensagemId);
-      return NextResponse.json({ error: err.error?.message || 'Erro Gemini' }, { status: 500 });
+      return NextResponse.json({ error: 'IA ocupada', codigo: 'IA_OCUPADA' }, { status: 503 });
     }
 
     const geminiData = await geminiRes.json();

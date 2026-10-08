@@ -15,9 +15,10 @@ export function useAvaliacaoPendente(recarregar?: number) {
   const [pendente, setPendente] = useState<Pendente | null | undefined>(undefined);
   const carregar = useCallback(async () => {
     if (!user) return;
-    const { data } = await supabase.from('solicitacoes')
+    const { data, error } = await supabase.from('solicitacoes')
       .select('id, created_at, orcamentos(status, oficina:oficinas(nome_fantasia)), avaliacoes(id)')
       .eq('cliente_id', user.id).eq('status', 'concluida').order('created_at', { ascending: false });
+    if (error) { setPendente(null); return; }
     const s = ((data || []) as any[]).find((x) => !(x.avaliacoes || []).length && (x.orcamentos || []).some((o: any) => o.status === 'aceito'));
     setPendente(s ? { solicitacaoId: s.id, oficina: s.orcamentos.find((o: any) => o.status === 'aceito')?.oficina?.nome_fantasia || '' } : null);
   }, [user]);

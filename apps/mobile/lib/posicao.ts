@@ -1,5 +1,6 @@
 import * as Location from 'expo-location';
 import { API_BASE_URL } from './api';
+import { fetchComPrazo } from './rede';
 
 // a primeira que der certo (Promise.any nao existe em todo motor de JS do celular)
 const primeira = <T,>(ps: Promise<T>[]) => new Promise<T>((ok, falha) => {
@@ -22,7 +23,7 @@ export async function obterPosicao(): Promise<Location.LocationObject> {
       Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }),
       Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High }),
     ]),
-    20000,
+    15000,
   );
 }
 
@@ -44,7 +45,7 @@ export async function enderecoDaPosicao(lat: number, lon: number): Promise<Ender
     }
   } catch { /* segue para o servidor */ }
   try {
-    const res = await fetch(`${API_BASE_URL}/api/geocode?lat=${lat}&lon=${lon}`);
+    const res = await fetchComPrazo(`${API_BASE_URL}/api/geocode?lat=${lat}&lon=${lon}`);
     const d = await res.json();
     const texto = [d.cidade, d.estado, d.pais].filter(Boolean).join(', ');
     return texto ? { texto, paisCodigo: d.paisCodigo || null } : null;

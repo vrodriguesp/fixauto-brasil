@@ -11,19 +11,20 @@ interface Pendente { solicitacaoId: string; oficina: string }
 // Servico entregue sem avaliacao (como no Uber): aviso fixo no painel ate o
 // cliente avaliar. Com `bloqueio`, toma o lugar do formulario de pedido novo
 // (o banco tambem recusa - tem_avaliacao_pendente); o acidente nao e bloqueado.
-export function useAvaliacaoPendente() {
+export function useAvaliacaoPendente(versao = 0) {
   const { user } = useAuth();
   const [pendente, setPendente] = useState<Pendente | null | undefined>(undefined);
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const { data } = await supabase.from('solicitacoes')
+      const { data, error } = await supabase.from('solicitacoes')
         .select('id, created_at, orcamentos(status, oficina:oficinas(nome_fantasia)), avaliacoes(id)')
         .eq('cliente_id', user.id).eq('status', 'concluida').order('created_at', { ascending: false });
+      if (error) { setPendente(null); return; }
       const s = ((data || []) as any[]).find((x) => !(x.avaliacoes || []).length && (x.orcamentos || []).some((o: any) => o.status === 'aceito'));
       setPendente(s ? { solicitacaoId: s.id, oficina: s.orcamentos.find((o: any) => o.status === 'aceito')?.oficina?.nome_fantasia || '' } : null);
     })();
-  }, [user]);
+  }, [user, versao]);
   return pendente;
 }
 

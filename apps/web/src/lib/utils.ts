@@ -77,3 +77,13 @@ export function cleanDescricao(desc: string | null | undefined): string {
 
 // "aguardando_pecas" -> "aguardandoPecasDesc" (chave da descricao da etapa nas mensagens)
 export const chaveDesc = (status: string) => status.replace(/_([a-z])/g, (_, l: string) => l.toUpperCase()) + 'Desc';
+
+// Pedido do "acabei de bater" leva [TIPO:eu_causei|outro_causou|sem_outro] na
+// descricao e tipo "colisao" (para chegar as oficinas de carroceria). Para a
+// oficina, o rotulo certo e o da ocorrencia - um pneu furado sem outro
+// veiculo nao e "colisao".
+export function rotuloTipoPedido(tc: { (k: string): string; has: (k: string) => boolean }, tipo: string, descricao?: string | null) {
+  const oc = descricao?.match(/\[TIPO:(\w+)\]/)?.[1];
+  if (oc && tc.has(`tiposOcorrencia.${oc}`)) return tc(`tiposOcorrencia.${oc}`);
+  return tc.has(`tiposServico.${tipo}`) ? tc(`tiposServico.${tipo}`) : tipo;
+}

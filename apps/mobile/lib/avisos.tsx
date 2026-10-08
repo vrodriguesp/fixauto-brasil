@@ -78,7 +78,12 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
     if (tmr.current) clearTimeout(tmr.current);
     tmr.current = setTimeout(() => {
       Animated.timing(opacidade, { toValue: 0, duration: 250, useNativeDriver: true }).start(() => setBanner(null));
-    }, 6000);
+    }, 5000);
+  }, [opacidade]);
+
+  const fechar = useCallback(() => {
+    if (tmr.current) clearTimeout(tmr.current);
+    Animated.timing(opacidade, { toValue: 0, duration: 150, useNativeDriver: true }).start(() => setBanner(null));
   }, [opacidade]);
 
   const abrir = useCallback((a: Aviso) => {
@@ -107,16 +112,22 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
     <AvisosCtx.Provider value={{ chegou, naoLidos, mensagensNaoLidas, abrir, atualizar }}>
       {children}
       {banner && (
-        <Animated.View style={{ position: 'absolute', left: 12, right: 12, top: insets.top + 8, opacity: opacidade, zIndex: 1000 }}>
-          <Pressable onPress={() => abrir(banner)} accessibilityRole="button" accessibilityLabel={banner.titulo}
-            className="bg-gray-900 rounded-xl px-4 py-3 flex-row items-center gap-3" style={{ elevation: 8 }}>
-            <Ionicons name="notifications" size={20} color="#fff" />
-            <View className="flex-1">
-              <Text className="text-white font-semibold" numberOfLines={1}>{banner.titulo}</Text>
-              {banner.mensagem ? <Text className="text-gray-200 text-sm" numberOfLines={2}>{banner.mensagem}</Text> : null}
-            </View>
-            <Ionicons name="chevron-forward" size={18} color="#9ca3af" />
-          </Pressable>
+        // cartao solido (estilo fixo, nao depende das classes) para nao ficar
+        // so o texto por cima da tela; toque abre, o X fecha na hora
+        <Animated.View pointerEvents="box-none" style={{ position: 'absolute', left: 12, right: 12, top: insets.top + 6, opacity: opacidade, zIndex: 1000, elevation: 12 }}>
+          <View style={{ backgroundColor: '#111827', borderRadius: 14, flexDirection: 'row', alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 12 }}>
+            <Pressable onPress={() => abrir(banner)} accessibilityRole="button" accessibilityLabel={banner.titulo}
+              style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingLeft: 16 }}>
+              <Ionicons name="notifications" size={20} color="#fff" />
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: '#fff', fontWeight: '600' }} numberOfLines={1}>{banner.titulo}</Text>
+                {banner.mensagem ? <Text style={{ color: '#e5e7eb', fontSize: 13 }} numberOfLines={2}>{banner.mensagem}</Text> : null}
+              </View>
+            </Pressable>
+            <Pressable onPress={fechar} accessibilityRole="button" accessibilityLabel="OK" hitSlop={10} style={{ paddingHorizontal: 14, paddingVertical: 12 }}>
+              <Ionicons name="close" size={20} color="#9ca3af" />
+            </Pressable>
+          </View>
         </Animated.View>
       )}
     </AvisosCtx.Provider>

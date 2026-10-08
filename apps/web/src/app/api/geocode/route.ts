@@ -51,7 +51,7 @@ function aguardarVez(): Promise<void> {
 
 async function nominatim(url: string): Promise<Response> {
   await aguardarVez();
-  return fetch(url, { headers: { 'User-Agent': USER_AGENT, 'Accept-Language': 'en' } });
+  return fetch(url, { headers: { 'User-Agent': USER_AGENT, 'Accept-Language': 'en' }, signal: AbortSignal.timeout(8000) });
 }
 
 function responder(chave: string, corpo: unknown, status = 200) {

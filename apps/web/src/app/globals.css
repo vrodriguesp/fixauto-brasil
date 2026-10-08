@@ -53,7 +53,22 @@
   .input-field {
     @apply w-full px-4 py-3 rounded-lg border border-gray-300
            focus:ring-2 focus:ring-primary-500 focus:border-primary-500
-           outline-none transition-all bg-white;
+           outline-none transition-all bg-white min-w-0 max-w-full;
+  }
+  /* iPhone (Safari): campo de data tem largura propria e passava da tela/
+     da caixa mesmo com width:100%. Sem a aparencia nativa ele obedece a
+     largura; altura minima e texto a esquerda como os outros campos. */
+  input[type='date'], input[type='datetime-local'], input[type='time'], input[type='month'] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 3rem;
+    text-align: left;
+  }
+  input[type='date']::-webkit-date-and-time-value, input[type='datetime-local']::-webkit-date-and-time-value, input[type='time']::-webkit-date-and-time-value {
+    text-align: left;
+    margin: 0;
   }
   .card {
     @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;

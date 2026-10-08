@@ -3,7 +3,7 @@
 import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { timeAgo, calcDistance, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
+import { timeAgo, calcDistance, getUrgenciaColor, cleanDescricao, rotuloTipoPedido } from '@/lib/utils';
 import { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { TIPOS_SERVICO } from '@fixauto/shared';
@@ -87,7 +87,7 @@ export default function SolicitacoesOficinaPage() {
                       <span className={`badge ${getUrgenciaColor(sol.urgencia)}`}>
                         {tc.has(`urgencias.${sol.urgencia}`) ? tc(`urgencias.${sol.urgencia}`) : sol.urgencia}
                       </span>
-                      <span className="badge bg-gray-100 text-gray-700">{tc.has(`tiposServico.${sol.tipo}`) ? tc(`tiposServico.${sol.tipo}`) : sol.tipo}</span>
+                      <span className="badge bg-gray-100 text-gray-700">{rotuloTipoPedido(tc, sol.tipo, sol.descricao)}</span>
                       {((sol as any).pagamento_reparo === 'seguro_terceiro' || (sol as any).pagamento_reparo === 'seguro_proprio') && (
                         <span className="badge bg-emerald-100 text-emerald-800">🛡️ {ts('chipSeguro')}</span>
                       )}

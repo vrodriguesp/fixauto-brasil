@@ -25,7 +25,8 @@ export default function NovaSolicitacaoPage() {
   const { create: createSolicitacao, addPhotos } = useSolicitacoes();
   const fileInputRef = useRef<HTMLInputElement>(null);
   // servico entregue sem avaliacao: avaliar antes de pedir de novo (como no Uber)
-  const avaliacaoPendente = useAvaliacaoPendente();
+  const [versaoAval, setVersaoAval] = useState(0);
+  const avaliacaoPendente = useAvaliacaoPendente(versaoAval);
   const [step, setStep] = useState(1);
   const totalSteps = 5;
 
@@ -62,7 +63,7 @@ export default function NovaSolicitacaoPage() {
           setCoords({ lat, lon });
           setGeoResolved(true);
           try {
-            const res = await fetch(`/api/geocode?lat=${lat}&lon=${lon}`);
+            const res = await fetch(`/api/geocode?lat=${lat}&lon=${lon}`, { signal: AbortSignal.timeout(10000) });
             if (res.ok) {
               const data = await res.json();
               if (data.paisCodigo) setPais(data.paisCodigo);
@@ -71,7 +72,8 @@ export default function NovaSolicitacaoPage() {
             // mantem o default BR se a geocodificacao reversa falhar
           }
         },
-        () => { /* sem permissao - handleSubmit tenta geocodificar o endereco digitado */ }
+        () => { /* sem permissao ou sem sinal - handleSubmit tenta geocodificar o endereco digitado */ },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 },
       );
     }
   }, []);
@@ -82,7 +84,7 @@ export default function NovaSolicitacaoPage() {
   const resolveLocation = async (): Promise<{ lat: number; lon: number; pais: string }> => {
     if (geoResolved || !endereco) return { ...coords, pais };
     try {
-      const res = await fetch(`/api/geocode?q=${encodeURIComponent(endereco)}`);
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(endereco)}`, { signal: AbortSignal.timeout(10000) });
       if (res.ok) {
         const data = await res.json();
         if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
@@ -192,6 +194,8 @@ export default function NovaSolicitacaoPage() {
       if (error) {
         const msg = typeof error === 'string' ? error
           : (error as any)?.message || (error as any)?.details || JSON.stringify(error);
+        // banco recusou por avaliacao pendente (tem_avaliacao_pendente): mostra o aviso
+        if (/row-level security/i.test(msg)) { setVersaoAval((v) => v + 1); return; }
         setSubmitError(msg);
         return;
       }
@@ -280,6 +284,10 @@ export default function NovaSolicitacaoPage() {
     );
   }
 
+  // enquanto confere se falta avaliar, nao mostra o formulario (ele aparecia e depois sumia)
+  if (avaliacaoPendente === undefined) {
+    return <div className="max-w-2xl mx-auto px-4 py-20 flex justify-center"><div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin" /></div>;
+  }
   if (avaliacaoPendente) {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

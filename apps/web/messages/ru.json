@@ -504,6 +504,11 @@
       "peca": "Запчасть",
       "material": "Материал",
       "outro": "Другое"
+    },
+    "tiposOcorrencia": {
+      "eu_causei": "🚨 ДТП (виноват клиент)",
+      "outro_causou": "🚨 ДТП (виноват другой водитель)",
+      "sem_outro": "🚨 Происшествие в пути (без другой машины)"
     }
   },
   "comissaoPecasCard": {

@@ -98,7 +98,8 @@ export default function EmergenciaPage() {
           setGeoResolved(true);
           if (!localizacao) setLocalizacao(t('locationAutoDetected'));
         },
-        () => { /* sem permissao - handleSubmit tenta geocodificar o endereco digitado */ }
+        () => { /* sem permissao ou sem sinal - handleSubmit tenta geocodificar o endereco digitado */ },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 },
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -110,7 +111,7 @@ export default function EmergenciaPage() {
   const resolveLocation = async (): Promise<{ lat: number; lon: number } | null> => {
     if (geoResolved || !localizacao) return coords;
     try {
-      const res = await fetch(`/api/geocode?q=${encodeURIComponent(localizacao)}`);
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(localizacao)}`, { signal: AbortSignal.timeout(10000) });
       if (res.ok) {
         const data = await res.json();
         if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
@@ -504,7 +505,8 @@ export default function EmergenciaPage() {
                   if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                       (pos) => { setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }); setGeoResolved(true); setLocalizacao(t('locationCurrentDetected')); },
-                      () => setLocalizacao('')
+                      () => setLocalizacao(''),
+                      { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 },
                     );
                   }
                 }} className="w-full p-3 border border-gray-300 rounded-lg text-sm text-primary-600 hover:bg-primary-50 flex items-center justify-center gap-2">

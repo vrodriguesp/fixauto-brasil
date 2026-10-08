@@ -9,7 +9,7 @@ import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
 import { useAuth } from '@/lib/auth-context';
 import type { TipoItemOrcamento, AnaliseDano } from '@fixauto/shared';
-import { formatCurrency, cleanDescricao } from '@/lib/utils';
+import { formatCurrency, cleanDescricao, rotuloTipoPedido } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { supabase } from '@/lib/supabase';
 import { hojeLocal, turnoDisponivel, primeiroTurnoLivre, type Turno } from '@/lib/turnos';
@@ -300,7 +300,7 @@ export default function EnviarOrcamentoPage() {
         </div>
       )}
       <p className="text-gray-600 mb-6">
-        {solicitacao.veiculo?.fipe_marca} {solicitacao.veiculo?.fipe_modelo} - {tc.has(`tiposServico.${solicitacao.tipo}`) ? tc(`tiposServico.${solicitacao.tipo}`) : solicitacao.tipo}
+        {solicitacao.veiculo?.fipe_marca} {solicitacao.veiculo?.fipe_modelo} - {rotuloTipoPedido(tc, solicitacao.tipo, solicitacao.descricao)}
       </p>
 
       {/* Request summary */}

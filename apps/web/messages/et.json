@@ -504,6 +504,11 @@
       "peca": "Varuosa",
       "material": "Materjal",
       "outro": "Muu"
+    },
+    "tiposOcorrencia": {
+      "eu_causei": "🚨 Õnnetus (põhjustas klient)",
+      "outro_causou": "🚨 Õnnetus (põhjustas teine sõiduk)",
+      "sem_outro": "🚨 Teejuhtum (teist sõidukit polnud)"
     }
   },
   "comissaoPecasCard": {

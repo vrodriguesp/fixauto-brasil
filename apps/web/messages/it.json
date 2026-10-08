@@ -504,6 +504,11 @@
       "peca": "Ricambio",
       "material": "Materiale",
       "outro": "Altro"
+    },
+    "tiposOcorrencia": {
+      "eu_causei": "🚨 Incidente (causato dal cliente)",
+      "outro_causou": "🚨 Incidente (causato da un altro veicolo)",
+      "sem_outro": "🚨 Imprevisto su strada (senza altri veicoli)"
     }
   },
   "comissaoPecasCard": {

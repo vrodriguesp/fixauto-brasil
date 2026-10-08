@@ -504,6 +504,11 @@
       "peca": "Peça",
       "material": "Material",
       "outro": "Outro"
+    },
+    "tiposOcorrencia": {
+      "eu_causei": "🚨 Acidente (o cliente causou)",
+      "outro_causou": "🚨 Acidente (outro veículo causou)",
+      "sem_outro": "🚨 Ocorrência na estrada (sem outro veículo)"
     }
   },
   "comissaoPecasCard": {

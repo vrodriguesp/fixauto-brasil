@@ -9,6 +9,7 @@ import type { Veiculo } from '@fixauto/shared';
 import { useAuth } from '../lib/auth-context';
 import { supabase } from '../lib/supabase';
 import { API_BASE_URL } from '../lib/api';
+import { fetchComPrazo } from '../lib/rede';
 import { notifNovaSolicitacaoTitulo, tipoServicoLabel } from '../lib/notif-i18n';
 import { mensagemErro } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
@@ -29,7 +30,8 @@ export default function NovaSolicitacaoScreen() {
   const opcoesTela = useMemo(() => ({ headerShown: true, title: tituloTela, presentation: 'modal' as const }), [tituloTela]);
   const { user } = useAuth();
   // servico entregue sem avaliacao: avaliar antes de pedir de novo (como no Uber)
-  const avaliacaoPendente = useAvaliacaoPendente();
+  const [versaoAval, setVersaoAval] = useState(0);
+  const avaliacaoPendente = useAvaliacaoPendente(versaoAval);
   const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
   const [veiculoId, setVeiculoId] = useState('');
   const [tipo, setTipo] = useState('');
@@ -58,7 +60,7 @@ export default function NovaSolicitacaoScreen() {
         if (status !== 'granted') return;
         const pos = await obterPosicao();
         setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-        const res = await fetch(`${API_BASE_URL}/api/geocode?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+        const res = await fetchComPrazo(`${API_BASE_URL}/api/geocode?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
         const data = await res.json();
         if (data.cidade) setEndereco([data.cidade, data.estado, data.pais].filter(Boolean).join(', '));
         if (data.paisCodigo) setPais(data.paisCodigo);
@@ -85,8 +87,8 @@ export default function NovaSolicitacaoScreen() {
     try {
       let finalCoords = coords;
       if (!finalCoords) {
-        const res = await fetch(`${API_BASE_URL}/api/geocode?q=${encodeURIComponent(endereco)}`);
-        const data = await res.json();
+        const res = await fetchComPrazo(`${API_BASE_URL}/api/geocode?q=${encodeURIComponent(endereco)}`).catch(() => null);
+        const data = res ? await res.json().catch(() => ({})) : {};
         if (data.latitude && data.longitude) finalCoords = { lat: data.latitude, lon: data.longitude };
       }
       finalCoords = finalCoords || COORDS_DEFAULT;
@@ -107,6 +109,8 @@ export default function NovaSolicitacaoScreen() {
         .select()
         .single();
 
+      // banco recusou por avaliacao pendente: mostra o aviso para avaliar
+      if (error && /row-level security/i.test(error.message || '')) { setVersaoAval((v) => v + 1); return; }
       if (error || !sol) throw error || new Error('solicitacao nao criada');
 
       if (fotos.length > 0) {
@@ -168,6 +172,14 @@ export default function NovaSolicitacaoScreen() {
     );
   }
 
+  if (avaliacaoPendente === undefined) {
+    return (
+      <View className="flex-1 bg-white items-center justify-center">
+        <Stack.Screen options={opcoesTela} />
+        <ActivityIndicator color="#2563eb" />
+      </View>
+    );
+  }
   if (avaliacaoPendente) {
     return (
       <View className="flex-1 bg-white items-center justify-center px-6">
