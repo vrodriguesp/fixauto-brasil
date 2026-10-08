@@ -60,3 +60,7 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
 - **App:** contagem da garantia também dentro do pedido e recarregada ao voltar à tela (antes só carregava uma vez); botão voltar sem "(tabs)"; puxar para atualizar no pedido e na conversa; horários com a entrega prevista em duas linhas.
 - Etapas sem chave crua (`aguardando_pecas` → `aguardandoPecasDesc`); página pública com estrelas dentro da tela no celular.
 - Teste novo: `site-conclusao.mjs` (produção, 390 px) — tudo OK.
+
+## Admin: trocar email de acesso (08/10)
+- `/admin/oficinas/<id>` (campo "Email de acesso") e `/admin/usuarios` (coluna email): "Mudar email" pede motivo e confirmação; o novo email já fica confirmado e a senha não muda. Recusa email de outra conta; registrado em "Histórico do admin". Rota `POST /api/admin/usuarios/email`. Teste: `site-admin-email.mjs`.
+- Oficina "Italiano" (Estônia), cadastrada com um email sem acesso, passou para `oficina-estonia@example.test` (confirmado).
