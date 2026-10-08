@@ -63,3 +63,10 @@ O `apps/mobile/.env` foi criado copiando `apps/web/.env.local` (única credencia
 - Desenvolvimento e teste do dia a dia: `npx expo start`, testado via app **Expo Go** no celular do usuário (Android e iOS) escaneando o QR code — não depende de emulador nem de macOS.
 - Emulador Android: possível localmente se o usuário instalar Android Studio (não obrigatório pro fluxo acima).
 - Simulador iOS: **não é possível nesta máquina** (exige macOS/Xcode) — build via `eas build --platform ios` roda na nuvem da Expo e gera um `.ipa` instalável via TestFlight ou registrado em dispositivo físico, sem precisar do simulador.
+
+
+## Atualização 08/10/2026 (já implementado)
+- **Mensagens:** uma conversa por oficina; áudio (gravar com `expo-audio`, ouvir com link temporário, transcrição); aviso à oficina via `/api/avisar-mensagem`.
+- **Avisos dentro do app** (`lib/avisos.tsx`): aviso no alto da tela em tempo real (tabela `notificacoes`), números nas abas Pedidos/Mensagens, lista "Avisos" no início. Push com o app fechado: só em versão própria (EAS Build) — o Expo Go não recebe push desde o SDK 54.
+- **Acabei de bater:** localização com rua (geocodificação do próprio aparelho), rede + GPS, "Tentar de novo"/"Abrir Ajustes"; "Seu carro" opcional; dicas pelo país do acidente (`lib/regiao.ts`).
+- **Pedido:** completar/editar carro e descrição (`components/EditarPedido.tsx`); horários vencidos não aparecem.

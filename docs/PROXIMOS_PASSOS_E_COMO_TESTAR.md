@@ -1,4 +1,16 @@
-# Onde paramos e como testar — 28/09/2026
+# Onde paramos e como testar — 08/10/2026
+
+> Referência rápida do "e agora, o que eu faço". O que mudou de 01 a 08/10 está em `docs/PROGRESSO_2026-10-08.md`; o histórico anterior nos arquivos `PROGRESSO_*`.
+
+## Estado em 08/10/2026
+
+- Site e app corrigidos com base nos testes no iPhone, publicados e testados em produção (6 idiomas). **Banco limpo: só a conta admin.**
+- Para testar de novo no iPhone: `npx expo start -c` (entrou a biblioteca de áudio) e criar as contas do zero.
+- Decisões pendentes: valores da comissão (hoje isento); chave `GEOAPIFY_KEY` para sugestões de endereço rápidas; push no celular (precisa do app como versão própria, EAS Build).
+
+---
+
+## Situação em 28/09/2026 (anterior)
 
 > Referência rápida do "e agora, o que eu faço". O histórico detalhado está em `docs/PROGRESSO_2026-09-28.md` (e nos arquivos `PROGRESSO_*` anteriores).
 
