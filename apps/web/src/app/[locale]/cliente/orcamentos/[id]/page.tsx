@@ -462,11 +462,6 @@ export default function OrcamentoDetalhePage() {
                     {(orc as any).garantia_dias != null && (
                       <p className="text-xs text-gray-600 mt-1">🛡️ {(orc as any).garantia_dias > 0 ? tg('noOrcamento', { dias: (orc as any).garantia_dias }) : tg('sem')}</p>
                     )}
-                    {(orc as any).anexo_url && (
-                      <MidiaPrivada url={(orc as any).anexo_url}>{(u) => (
-                        <a href={u} target="_blank" rel="noopener noreferrer" className="block text-xs font-medium text-primary-700 hover:underline mt-1">📄 {tg('documento')}</a>
-                      )}</MidiaPrivada>
-                    )}
                     {orc.oficina?.id && (
                       <Link href={`/cliente/mensagens/${solicitacao.id}?oficina=${orc.oficina.id}`}
                         className="inline-flex items-center gap-1 text-xs font-medium text-primary-700 hover:underline py-1">

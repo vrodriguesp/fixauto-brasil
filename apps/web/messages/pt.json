@@ -124,7 +124,7 @@
       {
         "titulo": "Orçamentos e atendimento",
         "itens": [
-          "Orçamentos estruturados, com opção de repassar ou absorver comissão",
+          "Orçamentos estruturados; a comissão é paga pela oficina — o cliente não paga nada a mais",
           "Acompanhamento do reparo em etapas, visível ao cliente",
           "Notificação automática quando o veículo fica pronto",
           "Chat direto com o cliente por solicitação"

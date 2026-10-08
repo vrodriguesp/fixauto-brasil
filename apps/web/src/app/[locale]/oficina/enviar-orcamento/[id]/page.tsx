@@ -51,7 +51,6 @@ export default function EnviarOrcamentoPage() {
   const [garantiaDias, setGarantiaDias] = useState<string>('');
   // orcamento feito em outro sistema: foto/PDF lido pela IA e (opcional) anexado
   const [docArquivo, setDocArquivo] = useState<File | null>(null);
-  const [anexarDoc, setAnexarDoc] = useState(true);
   const [lendoDoc, setLendoDoc] = useState<'' | 'lendo' | 'ok' | 'erro' | 'ocupada'>('');
   const [prefilled, setPrefilled] = useState(false);
   const [analise, setAnalise] = useState<AnaliseDano | null>(null);
@@ -65,7 +64,8 @@ export default function EnviarOrcamentoPage() {
   }, [params.id]);
 
   // Commission handling - taxa efetiva considera o tier de fidelidade/volume
-  const [comissaoModo, setComissaoModo] = useState<'absorver' | 'repassar'>('absorver');
+  // a comissao e sempre da oficina (o cliente nao paga nada a mais): sem opcao de repassar
+  const comissaoModo = 'absorver' as const;
   const [comissaoInfo, setComissaoInfo] = useState<{ tipo?: 'percentual' | 'valor_fixo'; taxa: number; valorFixo?: number | null; origem: string } | null>(null);
 
   useEffect(() => {
@@ -102,7 +102,6 @@ export default function EnviarOrcamentoPage() {
       const obsRaw = existingQuote.observacoes || '';
       const comissaoMatch = obsRaw.match(/^\[COMISSAO:(absorver|repassar):([\d.]+)\]/);
       if (comissaoMatch) {
-        setComissaoModo(comissaoMatch[1] as 'absorver' | 'repassar');
         setObservacoes(obsRaw.replace(/^\[COMISSAO:[^\]]+\]\n?/, ''));
       } else {
         setObservacoes(obsRaw);
@@ -167,7 +166,6 @@ export default function EnviarOrcamentoPage() {
   const comissaoValor = valorFixoComissao != null ? valorFixoComissao : total * (comissaoInfo ? comissaoInfo.taxa : 0.1);
   const COMISSAO_PERCENTUAL = total > 0 ? Math.round((comissaoValor / total) * 10000) / 100 : 0;
   const semComissao = !!comissaoInfo && comissaoValor === 0;
-  const totalCliente = comissaoModo === 'repassar' ? total + comissaoValor : total;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -199,18 +197,10 @@ export default function EnviarOrcamentoPage() {
     const obsComComissao = comissaoPrefix + (observacoes ? '\n' + observacoes : '');
 
     // Use commission-adjusted total when repassing to client
-    const valorFinal = comissaoModo === 'repassar' ? totalCliente : total;
+    const valorFinal = total;
 
     let result: { data?: any; error?: any };
 
-    // documento do orcamento (se a oficina escolheu anexar)
-    let anexoUrl: string | null | undefined = undefined;
-    if (docArquivo && anexarDoc && oficina) {
-      const ext = docArquivo.type === 'application/pdf' ? 'pdf' : (docArquivo.type.split('/')[1] || 'jpg');
-      const caminho = `orcamentos/${params.id}/${oficina.id}/${crypto.randomUUID()}.${ext}`;
-      const { error: eUp } = await supabase.storage.from('damage-photos').upload(caminho, docArquivo, { contentType: docArquivo.type });
-      if (!eUp) anexoUrl = supabase.storage.from('damage-photos').getPublicUrl(caminho).data.publicUrl;
-    }
     const garantia = garantiaDias === '' ? null : Number(garantiaDias);
 
     if (isRevision && existingQuote) {
@@ -225,7 +215,6 @@ export default function EnviarOrcamentoPage() {
         valor_original: existingQuote.valor_original || existingQuote.valor_total,
         revisao_numero: (existingQuote.revisao_numero || 0) + 1,
         garantia_dias: garantia,
-        ...(anexoUrl !== undefined ? { anexo_url: anexoUrl } : {}),
         itens: itensPayload,
         slots: slotsPayload,
       });
@@ -239,7 +228,6 @@ export default function EnviarOrcamentoPage() {
         observacoes: obsComComissao,
         validade,
         garantia_dias: garantia,
-        anexo_url: anexoUrl ?? null,
         itens: itensPayload,
         slots: slotsPayload,
       });
@@ -382,12 +370,6 @@ export default function EnviarOrcamentoPage() {
           {lendoDoc === 'ok' && <p className="text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-lg p-2 mt-2" role="status">{t('importarConfira')}</p>}
           {lendoDoc === 'erro' && <p className="text-sm text-red-700 mt-2" role="alert">{t('importarErro')}</p>}
           {lendoDoc === 'ocupada' && <p className="text-sm text-red-700 mt-2" role="alert">{t('importarOcupada')}</p>}
-          {docArquivo && (
-            <label className="flex items-center gap-2 mt-3 text-sm text-gray-700">
-              <input type="checkbox" checked={anexarDoc} onChange={(e) => setAnexarDoc(e.target.checked)} />
-              {t('importarAnexar')}
-            </label>
-          )}
         </div>
 
         <div className="card mb-6">
@@ -501,54 +483,7 @@ export default function EnviarOrcamentoPage() {
                 </p>
               </div>
 
-              <div className="space-y-3">
-                <label className="flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-gray-50"
-                  style={{ borderColor: comissaoModo === 'absorver' ? '#3b82f6' : '#e5e7eb', backgroundColor: comissaoModo === 'absorver' ? '#eff6ff' : 'white' }}>
-                  <input
-                    type="radio"
-                    name="comissao"
-                    value="absorver"
-                    checked={comissaoModo === 'absorver'}
-                    onChange={() => setComissaoModo('absorver')}
-                    className="mt-0.5"
-                  />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{t('absorverComissao')}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      {t('vocePagaComissao', { valor: formatCurrency(total, moeda, locale) })}
-                    </p>
-                  </div>
-                </label>
-
-                <label className="flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-gray-50"
-                  style={{ borderColor: comissaoModo === 'repassar' ? '#3b82f6' : '#e5e7eb', backgroundColor: comissaoModo === 'repassar' ? '#eff6ff' : 'white' }}>
-                  <input
-                    type="radio"
-                    name="comissao"
-                    value="repassar"
-                    checked={comissaoModo === 'repassar'}
-                    onChange={() => setComissaoModo('repassar')}
-                    className="mt-0.5"
-                  />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{t('repassarAoCliente')}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      {t('comissaoAdicionada', { comissao: formatCurrency(comissaoValor, moeda, locale), total: formatCurrency(total + comissaoValor, moeda, locale) })}
-                    </p>
-                  </div>
-                </label>
-              </div>
-
-              {comissaoModo === 'repassar' && (
-                <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3">
-                  <p className="text-sm text-amber-800">
-                    {t('precoFinalCliente')} <strong>{formatCurrency(totalCliente, moeda, locale)}</strong>
-                    <span className="text-xs text-amber-600 ml-1">
-                      {t('precoFinalDetalhe', { total: formatCurrency(total, moeda, locale), comissao: formatCurrency(comissaoValor, moeda, locale) })}
-                    </span>
-                  </p>
-                </div>
-              )}
+              <p className="text-sm text-gray-600">{t('comissaoPagaNoFim', { valor: formatCurrency(comissaoValor, moeda, locale), total: formatCurrency(total, moeda, locale) })}</p>
             </div>
           )}
         </div>
@@ -708,7 +643,7 @@ export default function EnviarOrcamentoPage() {
             {t('cancelar')}
           </button>
           <button type="submit" className="btn-success" disabled={total === 0}>
-            {isRevision ? t('atualizarOrcamento') : t('enviarOrcamento')} - {formatCurrency(comissaoModo === 'repassar' ? totalCliente : total, moeda, locale)}
+            {isRevision ? t('atualizarOrcamento') : t('enviarOrcamento')} - {formatCurrency(total, moeda, locale)}
           </button>
         </div>
       </form>
