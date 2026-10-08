@@ -646,7 +646,8 @@
     "noReviewsText": "Esta oficina ainda não possui avaliações.",
     "clientFallback": "Cliente",
     "registroEmpresa": "CNPJ",
-    "sobreTitulo": "Sobre a oficina"
+    "sobreTitulo": "Sobre a oficina",
+    "seguradorasConvencionadas": "Seguradoras conveniadas"
   },
   "audioMessage": {
     "hideTranscription": "Ocultar transcrição",

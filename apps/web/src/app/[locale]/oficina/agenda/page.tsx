@@ -11,6 +11,7 @@ import { CORES_AGENDA, TIPOS_SERVICO } from '@fixauto/shared';
 import { cleanDescricao, INTL_LOCALE } from '@/lib/utils';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import { Link } from '@/i18n/navigation';
+import { nomeFuncionario } from '@/lib/funcionario';
 
 function getDaysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate(); }
 function getFirstDayOfMonth(y: number, m: number) { return new Date(y, m, 1).getDay(); }
@@ -51,6 +52,8 @@ export default function AgendaPage() {
   const [viewMode, setViewMode] = useState<'month' | 'day' | 'list'>('month');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [assigningId, setAssigningId] = useState<string | null>(null);
+  // check-in de carro agendado para outro dia: confirma antes
+  const [antecipar, setAntecipar] = useState<{ ev: any; funcId?: string; data: string } | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<any>(null);
@@ -157,15 +160,17 @@ export default function AgendaPage() {
     await refresh();
   };
 
-  const handleCheckIn = async (ev: any, funcId?: string) => {
+  // pelo servidor (/api/servico): pedido do cliente vai para "em andamento",
+  // o cliente e avisado e fica no historico; sem mecanico tambem funciona
+  const handleCheckIn = async (ev: any, funcId?: string, confirmado = false) => {
     setUpdatingId(ev.id);
-    const updates: any = { status: 'em_andamento' };
-    if (funcId) updates.funcionario_id = funcId;
-    await updateEvento(ev.id, updates);
-    await supabase.from('manutencao_etapas').insert({
-      agenda_id: ev.id, funcionario_id: funcId || null,
-      status: 'recebido', observacao: t('notaVeiculoRecebido'),
+    const res = await fetch('/api/servico', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'checkin', eventoId: ev.id, antecipar: confirmado, ...(funcId ? { funcionarioId: funcId } : {}) }),
     });
+    const dados = await res.json().catch(() => ({}));
+    if (res.status === 409 && dados.codigo === 'CHECKIN_FUTURO') setAntecipar({ ev, funcId, data: dados.dataAgendada });
+    else setAntecipar(null);
     await refresh();
     setUpdatingId(null);
     setAssigningId(null);
@@ -298,7 +303,7 @@ export default function AgendaPage() {
                     <select className="input-field !py-1 !px-2 text-xs !w-auto" defaultValue=""
                       onChange={(e) => handleCheckIn(ev, e.target.value || undefined)}>
                       <option value="">{t('semMecanico')}</option>
-                      {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.profile?.nome}</option>)}
+                      {funcionarios.map((f) => <option key={f.id} value={f.id}>{nomeFuncionario(f)}</option>)}
                     </select>
                     <button onClick={(e) => { e.stopPropagation(); setAssigningId(null); }} className="text-xs text-gray-400">x</button>
                   </div>
@@ -310,7 +315,7 @@ export default function AgendaPage() {
                         {noShowingId === ev.id ? '...' : t('btnMarcarFalta')}
                       </button>
                     )}
-                    <button onClick={(e) => { e.stopPropagation(); setAssigningId(ev.id); }} disabled={isUpdating}
+                    <button onClick={(e) => { e.stopPropagation(); if (funcionarios.length) setAssigningId(ev.id); else handleCheckIn(ev); }} disabled={isUpdating}
                       className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-xs font-medium rounded-lg">
                       {isUpdating ? '...' : t('btnCheckin')}
                     </button>
@@ -360,7 +365,7 @@ export default function AgendaPage() {
                     <label htmlFor="c06c6-6" className="block text-xs font-medium text-gray-500 mb-1">{t('formMecanico')}</label>
                     <select id="c06c6-6" className="input-field !py-1.5 text-sm" value={editData.funcionario_id} onChange={(e) => setEditData({ ...editData, funcionario_id: e.target.value })}>
                       <option value="">{t('nenhum')}</option>
-                      {funcionarios.map((f) => <option key={f.id} value={f.id}>{f.profile?.nome}</option>)}
+                      {funcionarios.map((f) => <option key={f.id} value={f.id}>{nomeFuncionario(f)}</option>)}
                     </select>
                   </div>
                   <div className="sm:col-span-2">
@@ -678,6 +683,15 @@ export default function AgendaPage() {
               );
             });
           })()}
+        </div>
+      )}
+      {antecipar && (
+        <div className="fixed inset-x-3 bottom-4 z-50 sm:left-auto sm:right-6 sm:max-w-md bg-white border border-amber-300 shadow-lg rounded-xl p-4" role="alertdialog">
+          <p className="text-sm text-amber-900 mb-3">{t('checkinAntecipadoTexto', { data: new Date(antecipar.data).toLocaleString(INTL_LOCALE[locale] || 'en-GB', { dateStyle: 'short', timeStyle: 'short' }) })}</p>
+          <div className="flex gap-2">
+            <button onClick={() => handleCheckIn(antecipar.ev, antecipar.funcId, true)} className="btn-primary !py-2 text-sm flex-1">{t('checkinAntecipadoConfirmar')}</button>
+            <button onClick={() => setAntecipar(null)} className="btn-secondary !py-2 text-sm">{t('cancelarAntecipado')}</button>
+          </div>
         </div>
       )}
     </div>

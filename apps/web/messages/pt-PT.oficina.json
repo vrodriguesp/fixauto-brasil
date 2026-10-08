@@ -137,7 +137,10 @@
     "entregueCount": "Entregues ({count})",
     "naoCompareceuCount": "Faltas ({count})",
     "nenhumEventoNesteDia": "Não há eventos neste dia",
-    "nenhumEventoAgendado": "Não há eventos marcados"
+    "nenhumEventoAgendado": "Não há eventos marcados",
+    "checkinAntecipadoTexto": "Este carro está agendado para {data}. Fazer o check-in agora? A data de entrada passa a ser hoje e pode seguir com todas as etapas.",
+    "checkinAntecipadoConfirmar": "Sim, fazer o check-in agora",
+    "cancelarAntecipado": "Cancelar"
   },
   "oficinaAprender": {
     "carregando": "A carregar...",
@@ -534,7 +537,13 @@
     "ativar": "Ativar",
     "editar": "Editar",
     "gerando": "A gerar...",
-    "gerarNovaSenha": "Gerar nova palavra-passe"
+    "gerarNovaSenha": "Gerar nova palavra-passe",
+    "darAcessoPortal": "Dar acesso ao portal",
+    "darAcessoPortalDica": "Com login próprio, o mecânico vê os carros atribuídos e regista as etapas. Sem acesso, a oficina atribui e regista em nome dele.",
+    "semAcessoPortal": "Sem acesso ao portal",
+    "darAcesso": "Dar acesso",
+    "erroNomeObrigatorio": "Indique o nome.",
+    "avisoDesativadoHistorico": "{nome} já trabalhou em serviços: foi desativado(a) em vez de removido(a), para manter o histórico."
   },
   "oficinaMensagemDetalhe": {
     "notifNovaMensagemTitulo": "Nova mensagem da oficina",
@@ -688,7 +697,11 @@
     "salvarAlteracoes": "Guardar Alterações",
     "descricaoLabel": "Sobre a oficina",
     "descricaoPlaceholder": "Ex.: Oficina familiar desde 2005, especializada em bate-chapa e pintura. Carro de substituição, orçamento em 24 h.",
-    "descricaoAjuda": "Aparece no seu perfil público. Conte o que distingue a sua oficina."
+    "descricaoAjuda": "Aparece no seu perfil público. Conte o que distingue a sua oficina.",
+    "seguradorasTitulo": "Seguradoras convencionadas",
+    "seguradorasTexto": "Marque as seguradoras com que a oficina tem acordo. O cliente com uma delas vê o selo no seu orçamento.",
+    "seguradoraOutra": "Outra seguradora",
+    "seguradoraAdicionar": "Adicionar"
   },
   "oficinaSolicitacoes": {
     "titulo": "Pedidos",
@@ -783,6 +796,18 @@
     "registrarEtapa": "Registar Etapa",
     "placeholderObservacaoOpcional": "Nota (opcional)",
     "salvar": "Guardar",
-    "cancelar": "Cancelar"
+    "cancelar": "Cancelar",
+    "checkinAntecipadoTexto": "Este carro está agendado para {data}. Fazer o check-in agora? A data de entrada passa a ser hoje e pode seguir com todas as etapas.",
+    "checkinAntecipadoConfirmar": "Sim, fazer o check-in agora",
+    "erroAcao": "Não foi possível guardar. Tente novamente.",
+    "historicoAcoes": "Histórico",
+    "feitoPor": "Feito por",
+    "feitoPorOficina": "A oficina",
+    "feitoPorNome": "Em nome de {nome}",
+    "hist_checkin": "Check-in",
+    "hist_checkin_antecipado": "Check-in antes da data agendada",
+    "hist_atribuido": "Mecânico responsável",
+    "hist_etapa": "Etapa registada",
+    "hist_entregue": "Entregue"
   }
 }

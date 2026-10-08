@@ -153,6 +153,18 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
         </div>
       )}
 
+      {/* Seguradoras convencionadas */}
+      {((oficina as any).seguradoras_convencionadas || []).length > 0 && (
+        <div className="card mb-6">
+          <h2 className="font-semibold text-gray-900 mb-3">{t('seguradorasConvencionadas')}</h2>
+          <div className="flex flex-wrap gap-2">
+            {((oficina as any).seguradoras_convencionadas as string[]).map((s) => (
+              <span key={s} className="badge bg-emerald-50 text-emerald-800">🛡️ {s}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Photos */}
       {fotos.length > 0 && (
         <div className="card mb-6">

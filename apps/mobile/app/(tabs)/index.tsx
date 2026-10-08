@@ -7,10 +7,12 @@ import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
 import SolicitacaoCard from '../../components/SolicitacaoCard';
 import { Ionicons } from '@expo/vector-icons';
+import { useAvisos } from '../../lib/avisos';
 
 export default function DashboardScreen() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { naoLidos, abrir, atualizar } = useAvisos();
   const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,7 +31,8 @@ export default function DashboardScreen() {
   useFocusEffect(
     useCallback(() => {
       carregar();
-    }, [carregar])
+      atualizar();
+    }, [carregar, atualizar])
   );
 
   return (
@@ -46,6 +49,21 @@ export default function DashboardScreen() {
           <Text className="text-white font-semibold text-center">{t('dashboard.novaSolicitacaoBotao')}</Text>
         </Pressable>
       </View>
+
+      {naoLidos.length > 0 && (
+        <View className="mb-4">
+          <Text className="text-base font-semibold text-gray-900 mb-2">{t('dashboard.avisos')}</Text>
+          {naoLidos.slice(0, 3).map((a) => (
+            <Pressable key={a.id} onPress={() => abrir(a)} accessibilityRole="button" className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-2 flex-row items-center gap-3">
+              <Ionicons name="notifications-outline" size={18} color="#92400e" />
+              <View className="flex-1">
+                <Text className="text-amber-900 font-semibold" numberOfLines={1}>{a.titulo}</Text>
+                {a.mensagem ? <Text className="text-amber-800 text-sm" numberOfLines={2}>{a.mensagem}</Text> : null}
+              </View>
+            </Pressable>
+          ))}
+        </View>
+      )}
 
       <Text className="text-base font-semibold text-gray-900 mb-2">{t('dashboard.solicitacoesAtivas')}</Text>
 

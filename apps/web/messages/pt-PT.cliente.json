@@ -233,7 +233,8 @@
     "acceptAndSchedule": "Aceitar e Marcar",
     "escolhaHorarioDica": "Toque no dia e hora em que vai levar o carro à oficina.",
     "escolhaHorarioAntes": "Escolha um horário acima",
-    "horariosVencidos": "Os horários oferecidos já passaram. Peça novas datas à oficina por mensagem."
+    "horariosVencidos": "Os horários oferecidos já passaram. Peça novas datas à oficina por mensagem.",
+    "convencionadaComSeguradora": "Convencionada com {seguradora}"
   },
   "clienteMensagens": {
     "workshopFallback": "Oficina",

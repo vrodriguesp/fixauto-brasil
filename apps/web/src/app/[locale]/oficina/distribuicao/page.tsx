@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { CARGOS_FUNCIONARIO } from '@fixauto/shared';
 import { Link } from '@/i18n/navigation';
 import { INTL_LOCALE } from '@/lib/utils';
+import { nomeFuncionario } from '@/lib/funcionario';
 
 interface FuncionarioLeve {
   id: string;
@@ -37,7 +38,7 @@ export default function DistribuicaoTrabalhoPage() {
         setFuncionarios(
           ((data as any[]) || []).map((f) => ({
             id: f.id,
-            nome: f.profile?.nome || t('semNome'),
+            nome: nomeFuncionario(f) || t('semNome'),
             cargo: f.cargo,
             capacidade_maxima: f.capacidade_maxima,
           }))

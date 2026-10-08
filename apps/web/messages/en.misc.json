@@ -905,7 +905,8 @@
     "noReviewsText": "This repair shop doesn't have any reviews yet.",
     "clientFallback": "Customer",
     "registroEmpresa": "Company registry code",
-    "sobreTitulo": "About the shop"
+    "sobreTitulo": "About the shop",
+    "seguradorasConvencionadas": "Partner insurers"
   },
   "audioMessage": {
     "hideTranscription": "Hide transcript",

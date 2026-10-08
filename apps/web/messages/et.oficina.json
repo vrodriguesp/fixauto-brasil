@@ -137,7 +137,10 @@
     "entregueCount": "Väljastatud ({count})",
     "naoCompareceuCount": "Ei ilmunud kohale ({count})",
     "nenhumEventoNesteDia": "Sel päeval pole ühtegi sündmust",
-    "nenhumEventoAgendado": "Ühtegi sündmust pole planeeritud"
+    "nenhumEventoAgendado": "Ühtegi sündmust pole planeeritud",
+    "checkinAntecipadoTexto": "See auto on broneeritud ajale {data}. Kas registreerida saabumine kohe? Saabumise kuupäevaks saab täna ja saate jätkata kõigi etappidega.",
+    "checkinAntecipadoConfirmar": "Jah, registreeri kohe",
+    "cancelarAntecipado": "Tühista"
   },
   "oficinaAprender": {
     "carregando": "Laadin...",
@@ -534,7 +537,13 @@
     "ativar": "Aktiveeri",
     "editar": "Muuda",
     "gerando": "Genereerimine...",
-    "gerarNovaSenha": "Genereeri uus parool"
+    "gerarNovaSenha": "Genereeri uus parool",
+    "darAcessoPortal": "Anna portaali juurdepääs",
+    "darAcessoPortalDica": "Oma kontoga näeb mehaanik talle määratud autosid ja lisab etappe. Ilma juurdepääsuta määrab ja lisab töökoda tema nimel.",
+    "semAcessoPortal": "Portaali juurdepääs puudub",
+    "darAcesso": "Anna juurdepääs",
+    "erroNomeObrigatorio": "Sisestage nimi.",
+    "avisoDesativadoHistorico": "{nome} on teinud töid: ajaloo säilitamiseks deaktiveeriti, mitte ei eemaldatud."
   },
   "oficinaMensagemDetalhe": {
     "notifNovaMensagemTitulo": "Uus sõnum töökojalt",
@@ -688,7 +697,11 @@
     "salvarAlteracoes": "Salvesta muudatused",
     "descricaoLabel": "Töökojast",
     "descricaoPlaceholder": "Nt: pereettevõte aastast 2005, spetsialiseerunud kere- ja värvitöödele. Asendusauto, hinnapakkumine 24 tunni jooksul.",
-    "descricaoAjuda": "Kuvatakse sinu avalikus profiilis. Kirjelda, mis teeb sinu töökoja eriliseks."
+    "descricaoAjuda": "Kuvatakse sinu avalikus profiilis. Kirjelda, mis teeb sinu töökoja eriliseks.",
+    "seguradorasTitulo": "Lepingulised kindlustusseltsid",
+    "seguradorasTexto": "Märkige kindlustusseltsid, kellega töökojal on leping. Nende klient näeb teie pakkumisel märki.",
+    "seguradoraOutra": "Muu kindlustusselts",
+    "seguradoraAdicionar": "Lisa"
   },
   "oficinaSolicitacoes": {
     "titulo": "Päringud",
@@ -783,6 +796,18 @@
     "registrarEtapa": "Registreeri etapp",
     "placeholderObservacaoOpcional": "Märkus (valikuline)",
     "salvar": "Salvesta",
-    "cancelar": "Tühista"
+    "cancelar": "Tühista",
+    "checkinAntecipadoTexto": "See auto on broneeritud ajale {data}. Kas registreerida saabumine kohe? Saabumise kuupäevaks saab täna ja saate jätkata kõigi etappidega.",
+    "checkinAntecipadoConfirmar": "Jah, registreeri kohe",
+    "erroAcao": "Salvestamine ebaõnnestus. Proovige uuesti.",
+    "historicoAcoes": "Ajalugu",
+    "feitoPor": "Tegija",
+    "feitoPorOficina": "Töökoda",
+    "feitoPorNome": "Nimel: {nome}",
+    "hist_checkin": "Saabumine",
+    "hist_checkin_antecipado": "Saabus enne broneeritud aega",
+    "hist_atribuido": "Vastutav mehaanik",
+    "hist_etapa": "Etapp lisatud",
+    "hist_entregue": "Üle antud"
   }
 }

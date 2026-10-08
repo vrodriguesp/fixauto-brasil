@@ -128,7 +128,8 @@
     "solicitacoesAtivas": "Активные заявки",
     "nenhumaSolicitacao": "У вас пока нет заявок.",
     "novaSolicitacaoBotao": "Новая заявка",
-    "emergenciaBotao": "Я только что попал в ДТП"
+    "emergenciaBotao": "Я только что попал в ДТП",
+    "avisos": "Уведомления"
   },
   "orcamentos": {
     "titulo": "Сметы",

@@ -9,6 +9,7 @@ import { apiFetch } from '../../lib/api';
 import { File } from 'expo-file-system';
 import { useAudioRecorder, useAudioRecorderState, RecordingPresets, requestRecordingPermissionsAsync, setAudioModeAsync } from 'expo-audio';
 import AudioMensagem from '../../components/AudioMensagem';
+import { useAvisos } from '../../lib/avisos';
 
 interface Mensagem {
   id: string;
@@ -38,6 +39,7 @@ export default function ConversaScreen() {
   const tituloTela = oficinaNome || t('mensagens.titulo');
   const opcoesTela = useMemo(() => ({ headerShown: true, title: tituloTela }), [tituloTela]);
   const { user } = useAuth();
+  const { atualizar: atualizarAvisos } = useAvisos();
   // pagador=1: sou o outro motorista do acidente e pago o reparo - conversa
   // particular minha com a oficina (o cliente do pedido nao a ve)
   const pagadorId = pagador === '1' ? (user?.id ?? null) : null;
@@ -104,7 +106,9 @@ export default function ConversaScreen() {
     if (!user || !oficinaId || mensagens.length === 0) return;
     const naoLidas = mensagens.filter((m) => !m.lida && m.remetente_id !== user.id);
     if (naoLidas.length > 0) {
-      supabase.from('mensagens').update({ lida: true }).eq('solicitacao_id', id).eq('oficina_id', oficinaId).filter('pagador_id', pagadorId ? 'eq' : 'is', pagadorId ?? null).neq('remetente_id', user.id).then();
+      supabase.from('mensagens').update({ lida: true }).eq('solicitacao_id', id).eq('oficina_id', oficinaId).filter('pagador_id', pagadorId ? 'eq' : 'is', pagadorId ?? null).neq('remetente_id', user.id)
+        .then(() => supabase.from('notificacoes').update({ lida: true }).eq('profile_id', user.id).eq('tipo', 'nova_mensagem').eq('dados->>solicitacao_id', id))
+        .then(() => atualizarAvisos());
     }
   }, [mensagens, user, id, oficinaId, pagadorId]);
 

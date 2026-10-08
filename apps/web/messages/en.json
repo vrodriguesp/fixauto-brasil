@@ -537,7 +537,10 @@
     "severidadeLeve": "Minor",
     "severidadeModerado": "Moderate",
     "severidadeGrave": "Severe",
-    "severidadeSevero": "Critical"
+    "severidadeSevero": "Critical",
+    "erroIaOcupada": "The automatic analysis is busy right now. Try again in a minute.",
+    "erroSemFotos": "This request has no photos to analyse yet.",
+    "erroGenerico": "Could not analyse right now. Please try again."
   },
   "cookieBanner": {
     "texto": "We use cookies to understand how you use the site and to improve your experience. By accepting, you agree to our",
@@ -612,5 +615,18 @@
     "principio4": "Your data is handled under the GDPR and never sold.",
     "contatoTitulo": "Contact",
     "contatoTexto": "Questions, feedback or partnerships: support@bipfix.com. Personal data: privacy@bipfix.com."
+  },
+  "enderecoEstruturado": {
+    "rua": "Street",
+    "ruaPlaceholder": "E.g. High Street",
+    "numero": "Number",
+    "cep": "Postcode",
+    "cidade": "City",
+    "estado": "Region / state",
+    "conferir": "Check on the map",
+    "conferindo": "Checking…",
+    "encontrado": "Address found on the map",
+    "semNumero": "Street found, but this number is not on the map: we use the street position.",
+    "naoEncontrado": "We could not find this address. Check street, number and city."
   }
 }

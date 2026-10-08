@@ -537,7 +537,10 @@
     "severidadeLeve": "Leve",
     "severidadeModerado": "Moderado",
     "severidadeGrave": "Grave",
-    "severidadeSevero": "Severo"
+    "severidadeSevero": "Severo",
+    "erroIaOcupada": "A análise automática está ocupada agora. Tente de novo em 1 minuto.",
+    "erroSemFotos": "Este pedido ainda não tem fotos para analisar.",
+    "erroGenerico": "Não foi possível analisar agora. Tente de novo."
   },
   "cookieBanner": {
     "texto": "Usamos cookies para entender como você usa o site e melhorar sua experiência. Ao aceitar, você concorda com nossa",
@@ -612,5 +615,18 @@
     "principio4": "Seus dados são tratados de acordo com a lei de proteção de dados e nunca vendidos.",
     "contatoTitulo": "Contato",
     "contatoTexto": "Dúvidas, sugestões ou parcerias: support@bipfix.com. Dados pessoais: privacy@bipfix.com."
+  },
+  "enderecoEstruturado": {
+    "rua": "Rua / avenida",
+    "ruaPlaceholder": "Ex.: Rua Augusta",
+    "numero": "Número",
+    "cep": "CEP",
+    "cidade": "Cidade",
+    "estado": "Estado",
+    "conferir": "Conferir no mapa",
+    "conferindo": "Conferindo…",
+    "encontrado": "Endereço encontrado no mapa",
+    "semNumero": "Rua encontrada, mas este número não está no mapa: usamos a posição da rua.",
+    "naoEncontrado": "Não encontramos este endereço. Confira rua, número e cidade."
   }
 }

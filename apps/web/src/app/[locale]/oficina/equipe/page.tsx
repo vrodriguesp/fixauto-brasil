@@ -8,19 +8,26 @@ import { supabase } from '@/lib/supabase';
 import { CARGOS_FUNCIONARIO } from '@fixauto/shared';
 import type { Funcionario } from '@fixauto/shared';
 import { textoErroApi } from '@/lib/erro-api';
+import { nomeFuncionario } from '@/lib/funcionario';
 
 export default function EquipePage() {
   const t = useTranslations('oficinaEquipe');
   const tc = useTranslations('constants');
   const tErros = useTranslations('erros');
   const { oficina } = useAuth();
-  const [funcionarios, setFuncionarios] = useState<(Funcionario & { profile?: { nome: string; email: string; telefone: string | null } })[]>([]);
+  const [funcionarios, setFuncionarios] = useState<(Funcionario & { nome?: string | null; telefone?: string | null; acesso_portal?: boolean; profile?: { nome: string; email: string; telefone: string | null } | null })[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
+  // acesso ao portal e opcional: sem ele, o mecanico e so um nome na equipe
+  const [comAcesso, setComAcesso] = useState(false);
+  const [acessoPara, setAcessoPara] = useState<string | null>(null);
+  const [acessoForm, setAcessoForm] = useState({ email: '', senha: '' });
+  const [aviso, setAviso] = useState('');
   const [form, setForm] = useState({
+    telefone: '',
     nome: '',
     email: '',
     senha: '',
@@ -50,8 +57,10 @@ export default function EquipePage() {
   }, [oficina]);
 
   const handleAdd = async () => {
-    if (!oficina || !form.email || !form.senha) return;
-    if (form.senha.length < 8) {
+    if (!oficina) return;
+    if (!comAcesso && !form.nome.trim()) { setError(t('erroNomeObrigatorio')); return; }
+    if (comAcesso && (!form.email || !form.senha)) return;
+    if (comAcesso && form.senha.length < 8) {
       setError(t('erroSenhaMinima'));
       return;
     }
@@ -61,7 +70,10 @@ export default function EquipePage() {
     const res = await fetch('/api/funcionarios', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      body: JSON.stringify(!comAcesso ? {
+        nome: form.nome, telefone: form.telefone || null, acesso_portal: false,
+        cargo: form.cargo, especialidade: form.especialidade || null, oficina_id: oficina.id,
+      } : {
         nome: form.nome || undefined,
         email: form.email,
         senha: form.senha,
@@ -76,7 +88,7 @@ export default function EquipePage() {
       setError(textoErroApi(tErros, res.status, data));
     } else {
       setShowForm(false);
-      setForm({ nome: '', email: '', senha: '', cargo: 'mecanico', especialidade: '' });
+      setForm({ telefone: '', nome: '', email: '', senha: '', cargo: 'mecanico', especialidade: '' });
       await fetchFuncionarios();
     }
     setSaving(false);
@@ -100,11 +112,11 @@ export default function EquipePage() {
     await fetchFuncionarios();
   };
 
-  const startEdit = (func: Funcionario & { profile?: { nome: string; email: string; telefone: string | null } }) => {
+  const startEdit = (func: Funcionario & { nome?: string | null; telefone?: string | null; profile?: { nome: string; email: string; telefone: string | null } | null }) => {
     setEditingId(func.id);
     setEditForm({
-      nome: func.profile?.nome || '',
-      telefone: func.profile?.telefone || '',
+      nome: nomeFuncionario(func),
+      telefone: func.profile?.telefone || func.telefone || '',
       especialidade: func.especialidade || '',
       capacidade_maxima: func.capacidade_maxima != null ? String(func.capacidade_maxima) : '',
     });
@@ -129,8 +141,8 @@ export default function EquipePage() {
     await fetchFuncionarios();
   };
 
-  const handleResetSenha = async (func: Funcionario & { profile?: { nome: string; email: string; telefone: string | null } }) => {
-    if (!confirm(t('confirmResetSenha', { nome: func.profile?.nome || t('esteFuncionario') }))) return;
+  const handleResetSenha = async (func: Funcionario & { nome?: string | null; telefone?: string | null; profile?: { nome: string; email: string; telefone: string | null } | null }) => {
+    if (!confirm(t('confirmResetSenha', { nome: nomeFuncionario(func) || t('esteFuncionario') }))) return;
     setResettingId(func.id);
     const res = await fetch('/api/funcionarios', {
       method: 'PATCH',
@@ -140,18 +152,33 @@ export default function EquipePage() {
     const data = await res.json();
     setResettingId(null);
     if (data.novaSenha) {
-      setNovaSenhaGerada({ nome: func.profile?.nome || t('funcionarioFallback'), senha: data.novaSenha });
+      setNovaSenhaGerada({ nome: nomeFuncionario(func) || t('funcionarioFallback'), senha: data.novaSenha });
     }
     await fetchFuncionarios();
   };
 
   const handleDelete = async (func: Funcionario) => {
-    if (!confirm(t('confirmRemover', { nome: func.profile?.nome || t('funcionarioMinusculo') }))) return;
-    await fetch('/api/funcionarios', {
+    if (!confirm(t('confirmRemover', { nome: nomeFuncionario(func) || t('funcionarioMinusculo') }))) return;
+    const r = await fetch('/api/funcionarios', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: func.id }),
     });
+    const d = await r.json().catch(() => ({}));
+    setAviso(d.desativado ? t('avisoDesativadoHistorico', { nome: nomeFuncionario(func) }) : '');
+    await fetchFuncionarios();
+  };
+
+  const handleDarAcesso = async (func: Funcionario) => {
+    setError('');
+    const r = await fetch('/api/funcionarios', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: func.id, concederAcesso: acessoForm }),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) { setError(textoErroApi(tErros, r.status, d)); return; }
+    setAcessoPara(null);
+    setAcessoForm({ email: '', senha: '' });
     await fetchFuncionarios();
   };
 
@@ -193,6 +220,8 @@ export default function EquipePage() {
         </button>
       </div>
 
+      {aviso && <p className="text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4" role="status">{aviso}</p>}
+
       {/* Add form */}
       {showForm && (
         <div className="card mb-6">
@@ -213,6 +242,18 @@ export default function EquipePage() {
                 onChange={(e) => setForm({ ...form, nome: e.target.value })}
               />
             </div>
+            <div>
+              <label htmlFor="cdcf5-tel" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
+              <input id="cdcf5-tel" type="tel" className="input-field" value={form.telefone} onChange={(e) => setForm({ ...form, telefone: e.target.value })} />
+            </div>
+            <label className="sm:col-span-2 flex items-start gap-3 p-3 rounded-lg border border-gray-200 cursor-pointer">
+              <input type="checkbox" className="mt-1" checked={comAcesso} onChange={(e) => setComAcesso(e.target.checked)} />
+              <span>
+                <span className="block text-sm font-medium text-gray-900">{t('darAcessoPortal')}</span>
+                <span className="block text-xs text-gray-500">{t('darAcessoPortalDica')}</span>
+              </span>
+            </label>
+            {comAcesso && (<>
             <div>
               <label htmlFor="cdcf5-2" className="block text-sm font-medium text-gray-700 mb-1">{t('emailObrigatorio')}</label>
               <input id="cdcf5-2"
@@ -236,6 +277,7 @@ export default function EquipePage() {
                 {t('passeSenhaAoFuncionario')}
               </p>
             </div>
+            </>)}
             <div>
               <label htmlFor="cdcf5-4" className="block text-sm font-medium text-gray-700 mb-1">{t('cargo')}</label>
               <select id="cdcf5-4"
@@ -262,7 +304,7 @@ export default function EquipePage() {
             <button onClick={() => { setShowForm(false); setError(''); }} className="btn-secondary">
               {t('cancelar')}
             </button>
-            <button onClick={handleAdd} disabled={saving || !form.email || !form.senha} className="btn-primary disabled:opacity-50">
+            <button onClick={handleAdd} disabled={saving || (comAcesso ? !form.email || !form.senha : !form.nome.trim())} className="btn-primary disabled:opacity-50">
               {saving ? t('cadastrando') : t('cadastrar')}
             </button>
           </div>
@@ -343,12 +385,12 @@ export default function EquipePage() {
                   <span className={`font-semibold text-sm ${
                     func.cargo === 'admin' ? 'text-emerald-700' : 'text-blue-700'
                   }`}>
-                    {(func.profile?.nome || '?').charAt(0).toUpperCase()}
+                    {(nomeFuncionario(func) || '?').charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="font-medium text-gray-900 truncate">{func.profile?.nome || t('semNome')}</p>
+                    <p className="font-medium text-gray-900 truncate">{nomeFuncionario(func) || t('semNome')}</p>
                     <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${
                       func.cargo === 'admin'
                         ? 'bg-emerald-100 text-emerald-800'
@@ -362,7 +404,9 @@ export default function EquipePage() {
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500 truncate">{func.profile?.email}</p>
+                  <p className="text-sm text-gray-500 truncate">
+                    {func.profile?.email || <span className="text-gray-400">{t('semAcessoPortal')}{func.telefone ? ` · ${func.telefone}` : ''}</span>}
+                  </p>
                   {func.especialidade && (
                     <p className="text-xs text-gray-400 mt-0.5">{t('especialidadeLabel')}: {func.especialidade}</p>
                   )}
@@ -372,7 +416,7 @@ export default function EquipePage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
                 <select
                   value={func.cargo}
                   onChange={(e) => handleChangeCargo(func, e.target.value as 'admin' | 'mecanico')}
@@ -397,6 +441,7 @@ export default function EquipePage() {
                 >
                   {t('editar')}
                 </button>
+                {func.profile_id ? (
                 <button
                   onClick={() => handleResetSenha(func)}
                   disabled={resettingId === func.id}
@@ -404,6 +449,12 @@ export default function EquipePage() {
                 >
                   {resettingId === func.id ? t('gerando') : t('gerarNovaSenha')}
                 </button>
+                ) : (
+                  <button onClick={() => { setAcessoPara(acessoPara === func.id ? null : func.id); setError(''); }}
+                    className="px-3 py-1 text-xs rounded-lg font-medium bg-sky-100 text-sky-800 hover:bg-sky-200">
+                    {t('darAcesso')}
+                  </button>
+                )}
                 <button
                   onClick={() => handleDelete(func)}
                   className="p-1 text-gray-400 hover:text-red-500"
@@ -413,6 +464,14 @@ export default function EquipePage() {
                   </svg>
                 </button>
               </div>
+              {acessoPara === func.id && (
+                <div className="w-full grid sm:grid-cols-3 gap-2 pt-3 border-t border-gray-100">
+                  <input aria-label={t('emailObrigatorio')} type="email" className="input-field !py-1.5" placeholder={t('emailObrigatorio')} value={acessoForm.email} onChange={(e) => setAcessoForm({ ...acessoForm, email: e.target.value })} />
+                  <input aria-label={t('senhaTemporariaObrigatorio')} type="text" className="input-field !py-1.5" placeholder={t('senhaTemporariaObrigatorio')} value={acessoForm.senha} onChange={(e) => setAcessoForm({ ...acessoForm, senha: e.target.value })} />
+                  <button onClick={() => handleDarAcesso(func)} disabled={!acessoForm.email || acessoForm.senha.length < 8} className="btn-primary !py-1.5 text-sm disabled:opacity-50">{t('darAcesso')}</button>
+                  {error && <p className="sm:col-span-3 text-xs text-red-700">{error}</p>}
+                </div>
+              )}
               </>
               )}
             </div>

@@ -16,7 +16,25 @@ function gerarSenhaTemporaria(): string {
 // POST: Create a new funcionario with nome, email, senha temporária
 export async function POST(req: NextRequest) {
   try {
-    const { nome, email, senha, cargo, especialidade, oficina_id } = await req.json();
+    const { nome, email, senha, cargo, especialidade, oficina_id, telefone, acesso_portal } = await req.json();
+
+    // Mecanico SEM acesso ao portal: so nome (e telefone) para a oficina
+    // atribuir servicos e registrar etapas em nome dele - sem conta de login.
+    if (acesso_portal === false) {
+      const callerSemAcesso = await getSessionUserId(req);
+      if (!callerSemAcesso) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+      const { data: minha } = await supabaseAdmin.from('oficinas').select('id').eq('id', oficina_id).eq('profile_id', callerSemAcesso).maybeSingle();
+      if (!minha) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+      const nomeLimpo = typeof nome === 'string' ? nome.trim().slice(0, 100) : '';
+      if (!nomeLimpo) return NextResponse.json({ error: 'Nome obrigatório', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
+      const { data: novo, error: eNovo } = await supabaseAdmin.from('funcionarios').insert({
+        oficina_id, profile_id: null, acesso_portal: false, nome: nomeLimpo,
+        telefone: typeof telefone === 'string' ? telefone.trim().slice(0, 30) || null : null,
+        cargo: cargo === 'admin' ? 'admin' : 'mecanico', especialidade: especialidade || null, primeiro_login: false,
+      }).select('*').single();
+      if (eNovo) return NextResponse.json({ error: eNovo.message }, { status: 500 });
+      return NextResponse.json({ success: true, funcionario: novo });
+    }
 
     if (!email || !senha || !cargo || !oficina_id) {
       return NextResponse.json({ error: 'Campos obrigatórios: email, senha, cargo, oficina_id' }, { status: 400 });
@@ -125,7 +143,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
 
-    const { id, nome, telefone, resetSenha, ...funcUpdates } = await req.json();
+    const { id, nome, telefone, resetSenha, concederAcesso, ...funcUpdates } = await req.json();
     if (!id) {
       return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 });
     }
@@ -147,8 +165,41 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
+    // So campos conhecidos (antes qualquer coluna do corpo ia para o update)
+    for (const k of Object.keys(funcUpdates)) {
+      if (!['ativo', 'cargo', 'especialidade', 'capacidade_maxima', 'primeiro_login'].includes(k)) delete funcUpdates[k];
+    }
+
+    // Dar acesso ao portal a um mecanico cadastrado sem login
+    if (concederAcesso && !func.profile_id) {
+      const emailNovo = String(concederAcesso.email || '').trim().toLowerCase();
+      const senhaNova = String(concederAcesso.senha || '');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailNovo)) return NextResponse.json({ error: 'E-mail inválido', codigo: 'EMAIL_INVALIDO' }, { status: 400 });
+      if (senhaNova.length < 8) return NextResponse.json({ error: 'Senha curta', codigo: 'SENHA_CURTA' }, { status: 400 });
+      const { data: jaExiste } = await supabaseAdmin.from('profiles').select('id').eq('email', emailNovo).maybeSingle();
+      let novoProfileId = jaExiste?.id as string | undefined;
+      if (!novoProfileId) {
+        const { data: criado, error: eCriar } = await supabaseAdmin.auth.admin.createUser({ email: emailNovo, password: senhaNova, email_confirm: true });
+        if (eCriar || !criado.user) return NextResponse.json({ error: eCriar?.message || 'Erro ao criar usuário' }, { status: 500 });
+        novoProfileId = criado.user.id;
+        const { data: dono } = await supabaseAdmin.from('profiles').select('idioma').eq('id', callerId).maybeSingle();
+        await supabaseAdmin.from('profiles').insert({ id: novoProfileId, tipo: 'oficina', nome: (func as any).nome || emailNovo.split('@')[0], email: emailNovo, telefone: (func as any).telefone || null, idioma: dono?.idioma || 'pt' });
+      }
+      const { error: eLig } = await supabaseAdmin.from('funcionarios').update({ profile_id: novoProfileId, acesso_portal: true, primeiro_login: true }).eq('id', id);
+      if (eLig) return NextResponse.json({ error: eLig.message, codigo: eLig.code === '23505' ? 'FUNCIONARIO_JA_CADASTRADO' : undefined }, { status: eLig.code === '23505' ? 409 : 500 });
+      return NextResponse.json({ success: true });
+    }
+
+    // Sem login: nome e telefone ficam no proprio cadastro do mecanico
+    if (!func.profile_id && (nome !== undefined || telefone !== undefined)) {
+      await supabaseAdmin.from('funcionarios').update({
+        ...(nome !== undefined ? { nome: String(nome).trim().slice(0, 100) || (func as any).nome } : {}),
+        ...(telefone !== undefined ? { telefone: telefone ? String(telefone).slice(0, 30) : null } : {}),
+      }).eq('id', id);
+    }
+
     // Update personal data on profiles
-    if (nome !== undefined || telefone !== undefined) {
+    if (func.profile_id && (nome !== undefined || telefone !== undefined)) {
       const profileUpdates: Record<string, string> = {};
       if (nome !== undefined) profileUpdates.nome = nome;
       if (telefone !== undefined) profileUpdates.telefone = telefone;
@@ -163,7 +214,7 @@ export async function PATCH(req: NextRequest) {
 
     // Generate a new temporary password and force change on next login
     let novaSenha: string | undefined;
-    if (resetSenha) {
+    if (resetSenha && func.profile_id) {
       novaSenha = gerarSenhaTemporaria();
       const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(func.profile_id, {
         password: novaSenha,
@@ -239,6 +290,17 @@ export async function DELETE(req: NextRequest) {
       .eq('profile_id', func.profile_id)
       .single();
 
+    // Ja trabalhou em algum servico: so desativa, para o historico continuar
+    // mostrando quem fez cada etapa
+    const [{ count: nEtapas }, { count: nAgenda }] = await Promise.all([
+      supabaseAdmin.from('manutencao_etapas').select('id', { count: 'exact', head: true }).eq('funcionario_id', id),
+      supabaseAdmin.from('agenda').select('id', { count: 'exact', head: true }).eq('funcionario_id', id),
+    ]);
+    if ((nEtapas || 0) + (nAgenda || 0) > 0) {
+      await supabaseAdmin.from('funcionarios').update({ ativo: false }).eq('id', id);
+      return NextResponse.json({ success: true, desativado: true });
+    }
+
     // 3. Delete funcionario record
     const { error } = await supabaseAdmin
       .from('funcionarios')
@@ -251,7 +313,7 @@ export async function DELETE(req: NextRequest) {
 
     // 4. If they don't own an oficina, delete auth user entirely
     //    (CASCADE will delete profile and related data)
-    if (!ownsOficina) {
+    if (!ownsOficina && func.profile_id) {
       await supabaseAdmin.auth.admin.deleteUser(func.profile_id);
     }
 

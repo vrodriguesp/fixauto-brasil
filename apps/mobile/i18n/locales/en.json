@@ -128,7 +128,8 @@
     "solicitacoesAtivas": "Active requests",
     "nenhumaSolicitacao": "You don't have any requests yet.",
     "novaSolicitacaoBotao": "New request",
-    "emergenciaBotao": "I've just crashed"
+    "emergenciaBotao": "I've just crashed",
+    "avisos": "Updates"
   },
   "orcamentos": {
     "titulo": "Quotes",

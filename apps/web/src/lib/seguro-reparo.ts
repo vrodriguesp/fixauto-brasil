@@ -41,6 +41,7 @@ export const regiaoSeguro = (locale: string, pais?: string | null): RegiaoSeguro
   pais ? POR_PAIS[pais.toUpperCase()] || 'geral' : POR_IDIOMA[locale] || 'geral';
 
 // Sugestoes para o campo "seguradora" (texto livre; lista so ajuda a digitar)
+// (it/pt: listas completas em lib/seguradoras.ts)
 export const SEGURADORAS: Record<RegiaoSeguro, string[]> = {
   it: ['Generali', 'Unipol', 'Allianz', 'AXA', 'Reale Mutua', 'Zurich', 'Sara Assicurazioni', 'Vittoria', 'Verti', 'Prima'],
   pt: ['Fidelidade', 'Tranquilidade', 'Ageas', 'Allianz', 'Generali', 'Zurich', 'Liberty', 'Ok! Teleseguros', 'Lusitania', 'Caravela'],

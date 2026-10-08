@@ -905,7 +905,8 @@
     "noReviewsText": "Esta oficina ainda não tem avaliações.",
     "clientFallback": "Cliente",
     "registroEmpresa": "N.º de registo comercial",
-    "sobreTitulo": "Sobre a oficina"
+    "sobreTitulo": "Sobre a oficina",
+    "seguradorasConvencionadas": "Seguradoras convencionadas"
   },
   "audioMessage": {
     "hideTranscription": "Ocultar transcrição",

@@ -905,7 +905,8 @@
     "noReviewsText": "Questa officina non ha ancora recensioni.",
     "clientFallback": "Cliente",
     "registroEmpresa": "Codice di registro delle imprese",
-    "sobreTitulo": "Chi siamo"
+    "sobreTitulo": "Chi siamo",
+    "seguradorasConvencionadas": "Assicurazioni convenzionate"
   },
   "audioMessage": {
     "hideTranscription": "Nascondi trascrizione",

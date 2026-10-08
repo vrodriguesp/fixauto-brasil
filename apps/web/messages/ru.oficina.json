@@ -137,7 +137,10 @@
     "entregueCount": "Выданы ({count})",
     "naoCompareceuCount": "Неявки ({count})",
     "nenhumEventoNesteDia": "В этот день событий нет",
-    "nenhumEventoAgendado": "Запланированных событий нет"
+    "nenhumEventoAgendado": "Запланированных событий нет",
+    "checkinAntecipadoTexto": "Эта машина записана на {data}. Принять её сейчас? Датой приёма станет сегодня, и можно продолжать все этапы.",
+    "checkinAntecipadoConfirmar": "Да, принять сейчас",
+    "cancelarAntecipado": "Отмена"
   },
   "oficinaAprender": {
     "carregando": "Загрузка...",
@@ -534,7 +537,13 @@
     "ativar": "Активировать",
     "editar": "Редактировать",
     "gerando": "Создаём...",
-    "gerarNovaSenha": "Создать новый пароль"
+    "gerarNovaSenha": "Создать новый пароль",
+    "darAcessoPortal": "Дать доступ к порталу",
+    "darAcessoPortalDica": "Со своим входом механик видит назначенные ему машины и записывает этапы. Без доступа мастерская назначает и записывает от его имени.",
+    "semAcessoPortal": "Без доступа к порталу",
+    "darAcesso": "Дать доступ",
+    "erroNomeObrigatorio": "Укажите имя.",
+    "avisoDesativadoHistorico": "{nome} уже работал(а) над заказами: деактивирован(а), а не удалён(а), чтобы сохранить историю."
   },
   "oficinaMensagemDetalhe": {
     "notifNovaMensagemTitulo": "Новое сообщение от автосервиса",
@@ -688,7 +697,11 @@
     "salvarAlteracoes": "Сохранить изменения",
     "descricaoLabel": "Об автосервисе",
     "descricaoPlaceholder": "Напр.: семейный автосервис с 2005 года, кузовной ремонт и покраска. Подменный автомобиль, смета за 24 часа.",
-    "descricaoAjuda": "Показывается в вашем публичном профиле. Расскажите, чем отличается ваш автосервис."
+    "descricaoAjuda": "Показывается в вашем публичном профиле. Расскажите, чем отличается ваш автосервис.",
+    "seguradorasTitulo": "Страховые-партнёры",
+    "seguradorasTexto": "Отметьте страховые компании, с которыми работает мастерская. Клиент с такой страховкой увидит значок в вашей смете.",
+    "seguradoraOutra": "Другая страховая",
+    "seguradoraAdicionar": "Добавить"
   },
   "oficinaSolicitacoes": {
     "titulo": "Заявки",
@@ -783,6 +796,18 @@
     "registrarEtapa": "Зафиксировать этап",
     "placeholderObservacaoOpcional": "Примечание (необязательно)",
     "salvar": "Сохранить",
-    "cancelar": "Отмена"
+    "cancelar": "Отмена",
+    "checkinAntecipadoTexto": "Эта машина записана на {data}. Принять её сейчас? Датой приёма станет сегодня, и можно продолжать все этапы.",
+    "checkinAntecipadoConfirmar": "Да, принять сейчас",
+    "erroAcao": "Не удалось сохранить. Попробуйте ещё раз.",
+    "historicoAcoes": "История",
+    "feitoPor": "Кто выполнил",
+    "feitoPorOficina": "Мастерская",
+    "feitoPorNome": "От имени: {nome}",
+    "hist_checkin": "Приём",
+    "hist_checkin_antecipado": "Принята раньше записи",
+    "hist_atribuido": "Ответственный механик",
+    "hist_etapa": "Этап записан",
+    "hist_entregue": "Выдана"
   }
 }

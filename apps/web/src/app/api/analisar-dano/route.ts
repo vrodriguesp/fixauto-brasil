@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       .eq('solicitacao_id', solicitacao_id);
 
     if (!fotos || fotos.length === 0) {
-      return NextResponse.json({ error: 'Nenhuma foto encontrada' }, { status: 404 });
+      return NextResponse.json({ error: 'Nenhuma foto encontrada', codigo: 'SEM_FOTOS' }, { status: 404 });
     }
 
     // Fetch solicitacao for context
@@ -90,14 +90,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'GEMINI_API_KEY não configurada' }, { status: 500 });
     }
 
-    // Call Gemini Vision API
-    const geminiRes = await fetch(
-      // Chave no cabecalho, nao na URL (URLs aparecem em logs de proxy)
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-        body: JSON.stringify({
+    // Gemini as vezes responde "alta demanda" (503/429): tenta de novo e,
+    // se continuar, usa outro modelo - antes a oficina via o erro em ingles.
+    const corpoGemini = JSON.stringify({
           contents: [{
             parts: [
               ...imageParts,
@@ -114,13 +109,29 @@ Seja BREVE. Escreva os textos (resumo, checklist_inspecao, pecas_afetadas, pergu
             maxOutputTokens: 8192,
             responseMimeType: 'application/json',
           },
-        }),
+        });
+    const MODELOS = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.5-flash-lite'];
+    let geminiRes: Response | null = null;
+    let modeloUsado = MODELOS[0];
+    for (const modelo of MODELOS) {
+      for (let tentativa = 0; tentativa < 2; tentativa++) {
+        geminiRes = await fetch(
+          // Chave no cabecalho, nao na URL (URLs aparecem em logs de proxy)
+          `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`,
+          { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey }, body: corpoGemini },
+        ).catch(() => null);
+        modeloUsado = modelo;
+        if (geminiRes && geminiRes.ok) break;
+        if (geminiRes && ![429, 500, 503].includes(geminiRes.status)) break;
+        await new Promise((r) => setTimeout(r, 1500));
       }
-    );
+      if (geminiRes && geminiRes.ok) break;
+    }
 
-    if (!geminiRes.ok) {
-      const errData = await geminiRes.json();
-      return NextResponse.json({ error: errData.error?.message || 'Erro na API Gemini' }, { status: 500 });
+    if (!geminiRes || !geminiRes.ok) {
+      const errData = geminiRes ? await geminiRes.json().catch(() => ({})) : {};
+      console.error('[analisar-dano] Gemini', geminiRes?.status, (errData as any).error?.message);
+      return NextResponse.json({ error: 'IA ocupada', codigo: 'IA_OCUPADA' }, { status: 503 });
     }
 
     const geminiData = await geminiRes.json();
@@ -195,7 +206,7 @@ Seja BREVE. Escreva os textos (resumo, checklist_inspecao, pecas_afetadas, pergu
         estimativa_custo: parsed.estimativa_custo || null,
         confianca: parsed.confianca || null,
         fotos_analisadas: fotos.map((f) => f.id),
-        modelo_usado: 'gemini-2.5-flash',
+        modelo_usado: modeloUsado,
         raw_response: parsed,
       })
       .select()

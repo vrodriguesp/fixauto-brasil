@@ -128,7 +128,8 @@
     "solicitacoesAtivas": "Aktiivsed päringud",
     "nenhumaSolicitacao": "Sul pole veel ühtegi päringut.",
     "novaSolicitacaoBotao": "Uus päring",
-    "emergenciaBotao": "Sattusin avariisse"
+    "emergenciaBotao": "Sattusin avariisse",
+    "avisos": "Teated"
   },
   "orcamentos": {
     "titulo": "Hinnapakkumised",

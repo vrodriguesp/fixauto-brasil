@@ -36,7 +36,7 @@ export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId:
         <p className="text-sm text-gray-500 mb-3">{t('descricaoInicial')}</p>
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-2 mb-3">
-            <p className="text-xs text-red-800">{error}</p>
+            <p className="text-xs text-red-800">{error === 'IA_OCUPADA' ? t('erroIaOcupada') : error === 'SEM_FOTOS' ? t('erroSemFotos') : t('erroGenerico')}</p>
           </div>
         )}
         <button

@@ -166,7 +166,7 @@ export default function OficinaDashboard() {
                   <tr key={ev.id} className="hover:bg-gray-50">
                     <td className="py-3">
                       <p className="font-medium text-gray-900">{ev.titulo}</p>
-                      <p className="text-xs text-gray-500">{ev.descricao}</p>
+                      <p className="text-xs text-gray-500">{cleanDescricao(ev.descricao)}</p>
                     </td>
                     <td className="py-3">
                       <p className="text-gray-900">{formatDateShort(ev.data_inicio)}</p>
@@ -340,7 +340,7 @@ export default function OficinaDashboard() {
                 {eventos.slice(0, 3).map((ag) => (
                   <div key={ag.id} className="card !p-4" style={{ borderLeft: `4px solid ${ag.cor}` }}>
                     <p className="font-medium text-gray-900 text-sm">{ag.titulo}</p>
-                    <p className="text-xs text-gray-500 mt-1">{ag.descricao}</p>
+                    <p className="text-xs text-gray-500 mt-1">{cleanDescricao(ag.descricao)}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-xs text-gray-500">{formatDateShort(ag.data_inicio)}</span>
                       <span className={`badge ${ag.tipo === 'plataforma' ? 'bg-primary-100 text-primary-800' : 'bg-gray-100 text-gray-800'}`}>

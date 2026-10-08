@@ -72,7 +72,7 @@ export const carregarPerfilOficina = cache(async (id: string): Promise<PerfilOfi
   const [oficinaRes, avaliacoesRes, fotosRes, orcamentosRes, servicosRes] = await Promise.all([
     supabase
       .from('oficinas')
-      .select('id, nome_fantasia, descricao, cnpj, endereco, cidade, estado, cep, pais, latitude, longitude, especialidades, created_at, logo_url, horario_funcionamento, ativa, profile:profiles(telefone)')
+      .select('id, nome_fantasia, descricao, cnpj, endereco, cidade, estado, cep, pais, latitude, longitude, especialidades, seguradoras_convencionadas, created_at, logo_url, horario_funcionamento, ativa, profile:profiles(telefone)')
       .eq('id', id)
       .maybeSingle(),
     supabase

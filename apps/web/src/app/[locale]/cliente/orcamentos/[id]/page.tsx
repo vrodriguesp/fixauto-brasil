@@ -16,6 +16,7 @@ import { notifOrcamentoRecusado } from '@/lib/notif-i18n';
 import MidiaPrivada from '@/components/midia/MidiaPrivada';
 import { turnoDisponivel, type Turno } from '@/lib/turnos';
 import EditarPedido from '@/components/cliente/EditarPedido';
+import { ehConvencionada } from '@/lib/seguradoras';
 
 function formatExecTime(hours: number | null, t: (key: string, values?: Record<string, string | number | Date>) => string): string {
   if (!hours) return '-';
@@ -452,6 +453,11 @@ export default function OrcamentoDetalhePage() {
                         {orc.oficina?.nome_fantasia}
                       </Link>
                     </h3>
+                    {ehConvencionada((orc.oficina as any)?.seguradoras_convencionadas, (solicitacao as any).seguradora) && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-emerald-100 text-emerald-800 mt-1">
+                        🛡️ {t('convencionadaComSeguradora', { seguradora: (solicitacao as any).seguradora })}
+                      </span>
+                    )}
                     {orc.oficina?.id && (
                       <Link href={`/cliente/mensagens/${solicitacao.id}?oficina=${orc.oficina.id}`}
                         className="inline-flex items-center gap-1 text-xs font-medium text-primary-700 hover:underline py-1">

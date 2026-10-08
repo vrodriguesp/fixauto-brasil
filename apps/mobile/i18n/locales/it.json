@@ -128,7 +128,8 @@
     "solicitacoesAtivas": "Richieste attive",
     "nenhumaSolicitacao": "Non hai ancora nessuna richiesta.",
     "novaSolicitacaoBotao": "Nuova richiesta",
-    "emergenciaBotao": "Ho appena avuto un incidente"
+    "emergenciaBotao": "Ho appena avuto un incidente",
+    "avisos": "Avvisi"
   },
   "orcamentos": {
     "titulo": "Preventivi",

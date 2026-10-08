@@ -6,8 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { textoErroApi } from '@/lib/erro-api';
 import { TIPOS_SERVICO } from '@fixauto/shared';
-import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
-import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
+import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEndereco } from '@/components/forms/EnderecoEstruturado';
 
 export default function CadastroPageWrapper() {
   const t = useTranslations('cadastro');
@@ -47,9 +46,10 @@ function CadastroPage() {
   const [cidade, setCidade] = useState('');
   const [estado, setEstado] = useState('');
   const [cep, setCep] = useState('');
-  const [buscandoCep, setBuscandoCep] = useState(false);
-  const [cepErro, setCepErro] = useState('');
   const [especialidades, setEspecialidades] = useState<string[]>([]);
+  // posicao conferida do endereco digitado (rua + numero) e rua/numero separados
+  const [posEnd, setPosEnd] = useState<{ lat: number; lon: number } | null>(null);
+  const [ruaNumero, setRuaNumero] = useState<{ rua: string; numero: string } | null>(null);
   // Mesmo padrao de emergencia/page.tsx e cliente/nova-solicitacao: comeca
   // com um default (SP) e so sobrescreve se o navegador conceder
   // geolocalizacao - sem isso, toda oficina/loja cadastrada gravava a
@@ -135,77 +135,32 @@ function CadastroPage() {
     return { ...coords, pais };
   };
 
-  const handleCepChange = async (raw: string) => {
-    const formatted = formatCep(raw);
-    setCep(formatted);
-    setCepErro('');
-    if (!cepEstaCompleto(formatted)) return;
-    setBuscandoCep(true);
-    const resultado = await buscarEnderecoPorCep(formatted);
-    setBuscandoCep(false);
-    if (!resultado) {
-      setCepErro(t('cepNaoEncontrado'));
-      return;
-    }
-    setEndereco(resultado.logradouro || endereco);
-    setCidade(resultado.localidade);
-    setEstado(resultado.uf);
-  };
-
   const toggleEspecialidade = (value: string) => {
     setEspecialidades((prev) =>
       prev.includes(value) ? prev.filter((e) => e !== value) : [...prev, value]
     );
   };
 
+  // endereco em campos separados (rua, numero, CEP, cidade), conferido no mapa;
+  // espelha nos campos de sempre (endereco/cidade/estado/cep, posicao e pais)
+  const valorEndereco: ValorEndereco = {
+    ...separarEndereco(endereco), cidade, estado, cep,
+    latitude: posEnd?.lat ?? null, longitude: posEnd?.lon ?? null, pais,
+  };
   const renderEnderecoFields = () => (
-    <>
-      <div>
-        <label htmlFor="c6791-1" className="block text-sm font-medium text-gray-700 mb-1">{t('labelCep')}</label>
-        <input id="c6791-1"
-          type="text"
-          inputMode="numeric"
-          className="input-field"
-          placeholder={t('placeholderCep')}
-          value={cep}
-          onChange={(e) => handleCepChange(e.target.value)}
-          maxLength={9}
-        />
-        {buscandoCep && <p className="text-xs text-gray-400 mt-1">{t('buscandoEndereco')}</p>}
-        {cepErro && <p className="text-xs text-red-500 mt-1">{cepErro}</p>}
-      </div>
-      <div>
-        <label htmlFor="c6791-2" className="block text-sm font-medium text-gray-700 mb-1">{t('labelEndereco')}</label>
-        <EnderecoAutocomplete id="c6791-2"
-          value={endereco}
-          onChange={setEndereco}
-          placeholder={t('placeholderEndereco')}
-          perto={geoResolved ? coords : null}
-          onSelect={(s) => {
-            setEndereco(s.endereco || s.rotulo);
-            if (s.cidade) setCidade(s.cidade);
-            if (s.estado) setEstado(s.estado);
-            if (s.cep) setCep(s.cep);
-            setCoords({ lat: s.latitude, lon: s.longitude });
-            if (s.paisCodigo) setPais(s.paisCodigo);
-            setGeoResolved(true);
-          }}
-        />
-        <p className="text-xs text-gray-400 mt-1">{t('enderecoAjuda')}</p>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="c6791-3" className="block text-sm font-medium text-gray-700 mb-1">{t('labelCidade')}</label>
-          <input id="c6791-3" type="text" className="input-field" placeholder={t('placeholderCidade')} value={cidade} onChange={(e) => setCidade(e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="c6791-4" className="block text-sm font-medium text-gray-700 mb-1">{t('labelEstado')}</label>
-          <input id="c6791-4" type="text" className="input-field" placeholder={t('placeholderEstado')} value={estado} onChange={(e) => setEstado(e.target.value)} />
-        </div>
-      </div>
-    </>
+    <EnderecoEstruturado idBase="cadastro-end"
+      valor={{ ...valorEndereco, ...(ruaNumero || {}) }}
+      perto={geoResolved ? coords : null}
+      onChange={(v) => {
+        setRuaNumero({ rua: v.rua, numero: v.numero });
+        setEndereco(juntarEndereco(v.rua, v.numero));
+        setCidade(v.cidade); setEstado(v.estado); setCep(v.cep);
+        if (v.pais) setPais(v.pais);
+        if (v.latitude != null && v.longitude != null) { setPosEnd({ lat: v.latitude, lon: v.longitude }); setCoords({ lat: v.latitude, lon: v.longitude }); setGeoResolved(true); }
+        else setPosEnd(null);
+      }}
+    />
   );
-
 
   useEffect(() => {
     if (tipoParam && (tipoParam === 'cliente' || tipoParam === 'oficina' || tipoParam === 'loja_pecas')) {

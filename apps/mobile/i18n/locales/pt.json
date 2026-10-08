@@ -128,7 +128,8 @@
     "solicitacoesAtivas": "Solicitações ativas",
     "nenhumaSolicitacao": "Você ainda não tem nenhuma solicitação.",
     "novaSolicitacaoBotao": "Nova solicitação",
-    "emergenciaBotao": "Acabei de bater"
+    "emergenciaBotao": "Acabei de bater",
+    "avisos": "Avisos"
   },
   "orcamentos": {
     "titulo": "Orçamentos",

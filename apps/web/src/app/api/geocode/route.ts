@@ -68,14 +68,47 @@ export async function GET(req: NextRequest) {
   // Coordenadas arredondadas (~100 m): melhora o cache e nao muda o pais/cidade
   const lat = searchParams.get('lat') ? Number(searchParams.get('lat')).toFixed(3) : null;
   const lon = searchParams.get('lon') ? Number(searchParams.get('lon')).toFixed(3) : null;
-  const chave = lat && lon ? `r:${lat},${lon}` : `q:${(q || '').toLowerCase()}`;
+  // Modo estruturado (endereco da oficina): rua, numero, cidade, CEP e pais
+  // separados - acha o numero muito melhor que o texto livre.
+  const rua = searchParams.get('rua')?.trim().slice(0, 120) || null;
+  const numeroCasa = searchParams.get('numero')?.trim().slice(0, 20) || '';
+  const cidadeQ = searchParams.get('cidade')?.trim().slice(0, 80) || '';
+  const cepQ = searchParams.get('cep')?.trim().slice(0, 15) || '';
+  const paisQ = (searchParams.get('pais') || '').trim().slice(0, 2).toLowerCase();
+  const chave = rua ? `e:${rua}|${numeroCasa}|${cidadeQ}|${cepQ}|${paisQ}`.toLowerCase() : lat && lon ? `r:${lat},${lon}` : `q:${(q || '').toLowerCase()}`;
   const guardado = cache.get(chave);
   if (guardado && Date.now() - guardado.em < CACHE_MS) return NextResponse.json(guardado.corpo, { status: guardado.status });
-  if (!limitarPorIp(req, 'geocode', 30, 60 * 60 * 1000)) {
+  if (!limitarPorIp(req, 'geocode', 60, 60 * 60 * 1000)) {
     return NextResponse.json({ error: 'Muitas requisições' }, { status: 429 });
   }
 
   try {
+    if (rua) {
+      const buscar = async (comNumero: boolean) => {
+        const p = new URLSearchParams({ format: 'jsonv2', addressdetails: '1', limit: '1', street: comNumero && numeroCasa ? `${numeroCasa} ${rua}` : rua });
+        if (cidadeQ) p.set('city', cidadeQ);
+        if (cepQ) p.set('postalcode', cepQ);
+        if (paisQ) p.set('countrycodes', paisQ);
+        const r = await nominatim(`${NOMINATIM_SEARCH}?${p}`);
+        if (!r.ok) return null;
+        const lista = await r.json();
+        return Array.isArray(lista) && lista.length ? lista[0] : null;
+      };
+      let hit = await buscar(true);
+      let numeroEncontrado = !!(hit && numeroCasa && hit.address?.house_number);
+      // numero que nao esta no mapa: usa a rua (e avisa)
+      if (!hit && numeroCasa) hit = await buscar(false);
+      if (!hit) return responder(chave, { error: 'Endereco nao encontrado' }, 404);
+      if (!numeroCasa) numeroEncontrado = true;
+      return responder(chave, {
+        latitude: parseFloat(hit.lat),
+        longitude: parseFloat(hit.lon),
+        numeroEncontrado,
+        enderecoCompleto: hit.display_name || '',
+        ...fromAddress(hit.address || {}),
+      });
+    }
+
     if (lat && lon) {
       const url = `${NOMINATIM_REVERSE}?format=jsonv2&addressdetails=1&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
       const res = await nominatim(url);

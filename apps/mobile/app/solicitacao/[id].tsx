@@ -12,6 +12,7 @@ import { mensagemErro } from '../../lib/erro';
 import { turnoDisponivel, type Turno } from '../../lib/turnos';
 import { limparDescricao, ehAcidente } from '../../lib/texto';
 import EditarPedido from '../../components/EditarPedido';
+import { useAvisos } from '../../lib/avisos';
 
 export default function SolicitacaoDetailScreen() {
   const { t, i18n } = useTranslation();
@@ -21,6 +22,7 @@ export default function SolicitacaoDetailScreen() {
   const opcoesTela = useMemo(() => ({ headerShown: true, title: tituloTela }), [tituloTela]);
   const locale = i18n.language;
   const { user } = useAuth();
+  const { atualizar: atualizarAvisos } = useAvisos();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [solicitacao, setSolicitacao] = useState<Solicitacao | null>(null);
   const [etapas, setEtapas] = useState<ManutencaoEtapa[]>([]);
@@ -39,6 +41,11 @@ export default function SolicitacaoDetailScreen() {
       .eq('id', id)
       .single();
     setSolicitacao(data as Solicitacao);
+    // avisos deste pedido (orcamento novo, carro chegou, etapas) ficam lidos
+    if (user) {
+      supabase.from('notificacoes').update({ lida: true }).eq('profile_id', user.id).neq('tipo', 'nova_mensagem').eq('dados->>solicitacao_id', id)
+        .then(() => atualizarAvisos());
+    }
 
     const { data: agendaRows } = await supabase
       .from('agenda')

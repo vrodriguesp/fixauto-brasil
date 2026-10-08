@@ -6,10 +6,10 @@ import { localePrefix as prefixoDoIdioma } from '@/i18n/routing';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { compressImage } from '@/lib/image-compress';
-import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import { Link, rota } from '@/i18n/navigation';
-import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
+import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEndereco } from '@/components/forms/EnderecoEstruturado';
+import { seguradorasDoPais } from '@/lib/seguradoras';
 
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
@@ -21,14 +21,13 @@ export default function PerfilOficinaPage() {
   const [nomeFantasia, setNomeFantasia] = useState('');
   const [descricao, setDescricao] = useState('');
   const [cnpj, setCnpj] = useState('');
-  const [endereco, setEndereco] = useState('');
-  const [cidade, setCidade] = useState('');
-  const [estado, setEstado] = useState('');
-  const [cep, setCep] = useState('');
-  // posicao nova quando o endereco e escolhido na lista (senao a distancia ficava na posicao antiga)
-  const [novaPosicao, setNovaPosicao] = useState<{ latitude: number; longitude: number; pais?: string } | null>(null);
+  // endereco em campos separados (rua, numero, CEP, cidade), conferido no mapa
+  const [end, setEnd] = useState<ValorEndereco>({ rua: '', numero: '', cidade: '', estado: '', cep: '', latitude: null, longitude: null, pais: '' });
   const [raio, setRaio] = useState(30);
   const [especialidades, setEspecialidades] = useState<string[]>([]);
+  // seguradoras convencionadas (lista do pais + outras digitadas)
+  const [convencionadas, setConvencionadas] = useState<string[]>([]);
+  const [outraSeguradora, setOutraSeguradora] = useState('');
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
@@ -36,25 +35,6 @@ export default function PerfilOficinaPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
-  const [buscandoCep, setBuscandoCep] = useState(false);
-  const [cepErro, setCepErro] = useState('');
-
-  const handleCepChange = async (raw: string) => {
-    const formatted = formatCep(raw);
-    setCep(formatted);
-    setCepErro('');
-    if (!cepEstaCompleto(formatted)) return;
-    setBuscandoCep(true);
-    const resultado = await buscarEnderecoPorCep(formatted);
-    setBuscandoCep(false);
-    if (!resultado) {
-      setCepErro(t('cepNaoEncontrado'));
-      return;
-    }
-    setEndereco(resultado.logradouro || endereco);
-    setCidade(resultado.localidade);
-    setEstado(resultado.uf);
-  };
 
   // Sync state when oficina/user data loads
   const [logoUrl, setLogoUrl] = useState('');
@@ -85,13 +65,16 @@ export default function PerfilOficinaPage() {
     if (oficina) {
       setNomeFantasia(oficina.nome_fantasia || '');
       setCnpj(oficina.cnpj || '');
-      setEndereco(oficina.endereco || '');
-      setCidade(oficina.cidade || '');
+      const partes = separarEndereco(oficina.endereco || '', (oficina as { numero?: string | null }).numero);
+      setEnd({
+        rua: partes.rua, numero: partes.numero, cidade: oficina.cidade || '', estado: oficina.estado || '', cep: oficina.cep || '',
+        latitude: oficina.latitude != null ? Number(oficina.latitude) : null, longitude: oficina.longitude != null ? Number(oficina.longitude) : null,
+        pais: (oficina as { pais?: string | null }).pais || '',
+      });
       setDescricao((oficina as { descricao?: string | null }).descricao || '');
-      setEstado(oficina.estado || '');
-      setCep(oficina.cep || '');
       setRaio(oficina.raio_atendimento_km || 30);
       setEspecialidades(oficina.especialidades || []);
+      setConvencionadas((oficina as { seguradoras_convencionadas?: string[] }).seguradoras_convencionadas || []);
       setLogoUrl((oficina as any).logo_url || '');
       if ((oficina as any).horario_funcionamento) {
         setHorario((oficina as any).horario_funcionamento);
@@ -201,15 +184,19 @@ export default function PerfilOficinaPage() {
           nome_fantasia: nomeFantasia,
           descricao: descricao.trim() || null,
           cnpj: cnpj || null,
-          endereco,
-          cidade,
-          estado,
-          cep,
+          endereco: juntarEndereco(end.rua, end.numero),
+          numero: end.numero.trim() || null,
+          cidade: end.cidade,
+          estado: end.estado,
+          cep: end.cep,
           raio_atendimento_km: raio,
           especialidades,
+          seguradoras_convencionadas: convencionadas,
           horario_funcionamento: horario,
           capacidade_servicos: capacidade,
-          ...(novaPosicao ? { latitude: novaPosicao.latitude, longitude: novaPosicao.longitude, ...(novaPosicao.pais ? { pais: novaPosicao.pais } : {}) } : {}),
+          // posicao conferida no mapa (distancia ate os clientes)
+          ...(end.latitude != null && end.longitude != null ? { latitude: end.latitude, longitude: end.longitude } : {}),
+          ...(end.pais ? { pais: end.pais } : {}),
         })
         .eq('id', oficina.id);
       if (ofiError) {
@@ -337,44 +324,41 @@ export default function PerfilOficinaPage() {
             <label htmlFor="c83a1-2" className="block text-sm font-medium text-gray-700 mb-1">{t('cnpj')}</label>
             <input id="c83a1-2" type="text" className="input-field" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
           </div>
-          <div>
-            <label htmlFor="c83a1-3" className="block text-sm font-medium text-gray-700 mb-1">{t('cep')}</label>
-            <input id="c83a1-3" type="text" inputMode="numeric" maxLength={9} className="input-field !w-40" placeholder={t('placeholderCep')} value={cep} onChange={(e) => handleCepChange(e.target.value)} />
-            {buscandoCep && <p className="text-xs text-gray-400 mt-1">{t('buscandoEndereco')}</p>}
-            {cepErro && <p className="text-xs text-red-500 mt-1">{cepErro}</p>}
-          </div>
-          <div>
-            <label htmlFor="c83a1-4" className="block text-sm font-medium text-gray-700 mb-1">{t('endereco')}</label>
-            <EnderecoAutocomplete id="c83a1-4"
-              value={endereco}
-              onChange={setEndereco}
-              placeholder={t('placeholderRuaNumero')}
-              perto={oficina?.latitude != null && oficina?.longitude != null ? { lat: Number(oficina.latitude), lon: Number(oficina.longitude) } : null}
-              onSelect={(s) => {
-                setEndereco(s.endereco || s.rotulo);
-                if (s.cidade) setCidade(s.cidade);
-                if (s.estado) setEstado(s.estado);
-                if (s.cep) setCep(s.cep);
-                setNovaPosicao({ latitude: s.latitude, longitude: s.longitude, pais: s.paisCodigo || undefined });
-              }}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="c83a1-5" className="block text-sm font-medium text-gray-700 mb-1">{t('cidade')}</label>
-              <input id="c83a1-5" type="text" className="input-field" value={cidade} onChange={(e) => setCidade(e.target.value)} />
-            </div>
-            <div>
-              <label htmlFor="c83a1-6" className="block text-sm font-medium text-gray-700 mb-1">{t('estado')}</label>
-              <input id="c83a1-6" type="text" className="input-field" value={estado} onChange={(e) => setEstado(e.target.value)} />
-            </div>
-          </div>
+          <EnderecoEstruturado idBase="oficina-end" valor={end} onChange={setEnd}
+            perto={end.latitude != null && end.longitude != null ? { lat: end.latitude, lon: end.longitude } : null} />
           <div>
             <label htmlFor="c83a1-101" className="block text-sm font-medium text-gray-700 mb-1">
               {t('raioDeAtendimento')}
             </label>
             <input id="c83a1-101" type="number" className="input-field" value={raio} onChange={(e) => setRaio(Number(e.target.value))} />
           </div>
+        </div>
+      </div>
+
+      {/* Seguradoras convencionadas */}
+      <div className="card mb-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('seguradorasTitulo')}</h2>
+        <p className="text-sm text-gray-500 mb-4">{t('seguradorasTexto')}</p>
+        <div className="flex flex-wrap gap-2">
+          {Array.from(new Set([...seguradorasDoPais(end.pais), ...convencionadas])).map((s) => {
+            const marcada = convencionadas.includes(s);
+            return (
+              <button key={s} type="button" aria-pressed={marcada}
+                onClick={() => setConvencionadas((l) => (marcada ? l.filter((x) => x !== s) : [...l, s]))}
+                className={`px-3 py-2 min-h-[40px] rounded-full text-sm border ${marcada ? 'bg-primary-600 border-primary-600 text-white' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}>
+                {marcada ? '✓ ' : ''}{s}
+              </button>
+            );
+          })}
+        </div>
+        <div className="flex gap-2 mt-4">
+          <input aria-label={t('seguradoraOutra')} type="text" maxLength={60} className="input-field flex-1" placeholder={t('seguradoraOutra')}
+            value={outraSeguradora} onChange={(e) => setOutraSeguradora(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); const v = outraSeguradora.trim(); if (v && !convencionadas.includes(v)) setConvencionadas([...convencionadas, v]); setOutraSeguradora(''); } }} />
+          <button type="button" className="btn-secondary" disabled={!outraSeguradora.trim()}
+            onClick={() => { const v = outraSeguradora.trim(); if (v && !convencionadas.includes(v)) setConvencionadas([...convencionadas, v]); setOutraSeguradora(''); }}>
+            {t('seguradoraAdicionar')}
+          </button>
         </div>
       </div>
 

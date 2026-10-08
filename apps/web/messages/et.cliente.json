@@ -233,7 +233,8 @@
     "acceptAndSchedule": "Nõustu ja broneeri aeg",
     "escolhaHorarioDica": "Puuduta päeva ja kellaaega, millal tood auto töökotta.",
     "escolhaHorarioAntes": "Vali ülal aeg",
-    "horariosVencidos": "Pakutud ajad on möödas. Küsige töökojalt sõnumiga uusi aegu."
+    "horariosVencidos": "Pakutud ajad on möödas. Küsige töökojalt sõnumiga uusi aegu.",
+    "convencionadaComSeguradora": "Leping: {seguradora}"
   },
   "clienteMensagens": {
     "workshopFallback": "Töökoda",

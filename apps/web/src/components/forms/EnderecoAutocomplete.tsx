@@ -24,14 +24,17 @@ export default function EnderecoAutocomplete({
   const [sugestoes, setSugestoes] = useState<SugestaoEndereco[]>([]);
   const [aberto, setAberto] = useState(false);
   const [ativo, setAtivo] = useState(-1);
-  const escolhido = useRef('');
+  // textos que vieram de uma sugestao escolhida (nao buscar de novo)
+  const escolhidos = useRef<string[]>([]);
+  const [procurando, setProcurando] = useState(false);
   const focado = useRef(false);
 
   useEffect(() => {
     const q = value.trim();
-    if (q.length < 3 || q === escolhido.current || !focado.current) { setSugestoes([]); return; }
+    if (q.length < 3 || escolhidos.current.includes(q) || !focado.current) { setSugestoes([]); setProcurando(false); return; }
     const ctl = new AbortController();
     const tmr = setTimeout(async () => {
+      setProcurando(true);
       try {
         const p = perto ? `&lat=${perto.lat}&lon=${perto.lon}` : '';
         const r = await fetch(`/api/endereco/sugestoes?q=${encodeURIComponent(q)}${p}`, { signal: ctl.signal });
@@ -40,12 +43,13 @@ export default function EnderecoAutocomplete({
         setAberto(d.length > 0);
         setAtivo(-1);
       } catch { /* sem sugestoes: segue texto livre */ }
+      if (!ctl.signal.aborted) setProcurando(false);
     }, 300);
     return () => { clearTimeout(tmr); ctl.abort(); };
   }, [value, perto]);
 
   const escolher = (s: SugestaoEndereco) => {
-    escolhido.current = s.endereco || s.rotulo;
+    escolhidos.current = [s.endereco, s.rua, s.rotulo].filter(Boolean);
     onSelect(s);
     setAberto(false);
     setSugestoes([]);
@@ -68,6 +72,7 @@ export default function EnderecoAutocomplete({
         onFocus={() => { focado.current = true; if (sugestoes.length) setAberto(true); }}
         onBlur={() => { focado.current = false; setTimeout(() => setAberto(false), 150); }}
         onChange={(e) => onChange(e.target.value)}
+        aria-busy={procurando}
         onKeyDown={(e) => {
           if (!aberto || !sugestoes.length) return;
           if (e.key === 'ArrowDown') { e.preventDefault(); setAtivo((a) => Math.min(a + 1, sugestoes.length - 1)); }
@@ -76,6 +81,10 @@ export default function EnderecoAutocomplete({
           else if (e.key === 'Escape') setAberto(false);
         }}
       />
+      {/* sugestoes podem levar alguns segundos: mostra que esta procurando */}
+      {procurando && (
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" aria-hidden />
+      )}
       {aberto && sugestoes.length > 0 && (
         <ul id={listaId} role="listbox" className="absolute z-30 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-72 overflow-auto">
           {sugestoes.map((s, i) => (

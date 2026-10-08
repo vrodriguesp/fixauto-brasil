@@ -39,10 +39,11 @@ export function useAnaliseDano(solicitacaoId: string | undefined) {
       if (data.analise) {
         setAnalise(data.analise as AnaliseDano);
       } else {
-        setError(data.error || 'Erro ao analisar');
+        // codigo estavel; a tela mostra o texto traduzido
+        setError(data.codigo || 'ERRO');
       }
     } catch (err) {
-      setError((err as Error).message);
+      setError('ERRO');
     }
     setAnalyzing(false);
   };

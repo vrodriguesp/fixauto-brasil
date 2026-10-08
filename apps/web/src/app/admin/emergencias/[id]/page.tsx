@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { formatDateTime } from '@/lib/utils';
 import CorrigirStatus from '@/components/admin/CorrigirStatus';
 import MidiaPrivada from '@/components/midia/MidiaPrivada';
+import { cleanDescricao } from '@/lib/utils';
 
 const STATUS_EMERGENCIA: Record<string, string> = {
   aberta: 'Aberta',
@@ -49,7 +50,7 @@ export default function AdminEmergenciaDetalhePage() {
           <p className="text-slate-400 text-xs uppercase tracking-wide mb-2">Motorista envolvido</p>
           <p className="text-white font-medium">{emergencia.nome}</p>
           <p className="text-slate-400 text-sm">{emergencia.email} · {emergencia.telefone}</p>
-          {emergencia.descricao && <p className="text-slate-300 text-sm mt-2">{emergencia.descricao}</p>}
+          {cleanDescricao(emergencia.descricao) && <p className="text-slate-300 text-sm mt-2">{cleanDescricao(emergencia.descricao)}</p>}
           {emergencia.solicitacao_id && (
             <Link href={`/admin/solicitacoes/${emergencia.solicitacao_id}`} className="text-blue-400 hover:underline text-xs mt-2 inline-block">
               Ver solicitação de serviço gerada →

@@ -905,7 +905,8 @@
     "noReviewsText": "У этого автосервиса пока нет отзывов.",
     "clientFallback": "Клиент",
     "registroEmpresa": "Регистрационный код",
-    "sobreTitulo": "Об автосервисе"
+    "sobreTitulo": "Об автосервисе",
+    "seguradorasConvencionadas": "Страховые-партнёры"
   },
   "audioMessage": {
     "hideTranscription": "Скрыть расшифровку",

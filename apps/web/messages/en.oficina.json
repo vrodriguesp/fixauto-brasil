@@ -137,7 +137,10 @@
     "entregueCount": "Delivered ({count})",
     "naoCompareceuCount": "No-shows ({count})",
     "nenhumEventoNesteDia": "No events on this day",
-    "nenhumEventoAgendado": "No events scheduled"
+    "nenhumEventoAgendado": "No events scheduled",
+    "checkinAntecipadoTexto": "This car is booked for {data}. Check it in now? The arrival date becomes today and you can continue with all the steps.",
+    "checkinAntecipadoConfirmar": "Yes, check in now",
+    "cancelarAntecipado": "Cancel"
   },
   "oficinaAprender": {
     "carregando": "Loading...",
@@ -534,7 +537,13 @@
     "ativar": "Activate",
     "editar": "Edit",
     "gerando": "Generating...",
-    "gerarNovaSenha": "Generate new password"
+    "gerarNovaSenha": "Generate new password",
+    "darAcessoPortal": "Give portal access",
+    "darAcessoPortalDica": "With their own login, the mechanic sees the cars assigned to them and records the steps. Without access, the workshop assigns and records on their behalf.",
+    "semAcessoPortal": "No portal access",
+    "darAcesso": "Give access",
+    "erroNomeObrigatorio": "Enter the name.",
+    "avisoDesativadoHistorico": "{nome} has worked on jobs: deactivated instead of removed, to keep the history."
   },
   "oficinaMensagemDetalhe": {
     "notifNovaMensagemTitulo": "New message from the shop",
@@ -688,7 +697,11 @@
     "salvarAlteracoes": "Save Changes",
     "descricaoLabel": "About the shop",
     "descricaoPlaceholder": "E.g. Family-run shop since 2005, specialising in bodywork and paint. Courtesy car, quote within 24 h.",
-    "descricaoAjuda": "Shown on your public profile. Tell customers what makes your shop different."
+    "descricaoAjuda": "Shown on your public profile. Tell customers what makes your shop different.",
+    "seguradorasTitulo": "Partner insurers",
+    "seguradorasTexto": "Tick the insurers your workshop works with. Customers insured with one of them see a badge on your quote.",
+    "seguradoraOutra": "Other insurer",
+    "seguradoraAdicionar": "Add"
   },
   "oficinaSolicitacoes": {
     "titulo": "Requests",
@@ -783,6 +796,18 @@
     "registrarEtapa": "Log Stage",
     "placeholderObservacaoOpcional": "Note (optional)",
     "salvar": "Save",
-    "cancelar": "Cancel"
+    "cancelar": "Cancel",
+    "checkinAntecipadoTexto": "This car is booked for {data}. Check it in now? The arrival date becomes today and you can continue with all the steps.",
+    "checkinAntecipadoConfirmar": "Yes, check in now",
+    "erroAcao": "Could not save. Please try again.",
+    "historicoAcoes": "History",
+    "feitoPor": "Done by",
+    "feitoPorOficina": "The workshop",
+    "feitoPorNome": "On behalf of {nome}",
+    "hist_checkin": "Check-in",
+    "hist_checkin_antecipado": "Checked in before the booked date",
+    "hist_atribuido": "Mechanic in charge",
+    "hist_etapa": "Step recorded",
+    "hist_entregue": "Delivered"
   }
 }

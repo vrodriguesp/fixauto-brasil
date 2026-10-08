@@ -537,7 +537,10 @@
     "severidadeLeve": "Kerge",
     "severidadeModerado": "Mõõdukas",
     "severidadeGrave": "Tõsine",
-    "severidadeSevero": "Kriitiline"
+    "severidadeSevero": "Kriitiline",
+    "erroIaOcupada": "Automaatne analüüs on praegu hõivatud. Proovige minuti pärast uuesti.",
+    "erroSemFotos": "Sellel päringul pole veel fotosid, mida analüüsida.",
+    "erroGenerico": "Praegu ei õnnestunud analüüsida. Proovige uuesti."
   },
   "cookieBanner": {
     "texto": "Kasutame küpsiseid, et mõista, kuidas sa saiti kasutad, ja parandada sinu kasutuskogemust. Nõustudes lähtud meie",
@@ -612,5 +615,18 @@
     "principio4": "Sinu andmeid töödeldakse isikuandmete kaitse üldmääruse (GDPR) järgi ja neid ei müüda kunagi.",
     "contatoTitulo": "Kontakt",
     "contatoTexto": "Küsimused, tagasiside või koostöö: support@bipfix.com. Isikuandmed: privacy@bipfix.com."
+  },
+  "enderecoEstruturado": {
+    "rua": "Tänav",
+    "ruaPlaceholder": "Nt Tartu mnt",
+    "numero": "Maja nr",
+    "cep": "Sihtnumber",
+    "cidade": "Linn",
+    "estado": "Maakond",
+    "conferir": "Kontrolli kaardil",
+    "conferindo": "Kontrollin…",
+    "encontrado": "Aadress leitud kaardilt",
+    "semNumero": "Tänav leitud, kuid seda majanumbrit kaardil pole: kasutame tänava asukohta.",
+    "naoEncontrado": "Seda aadressi ei leitud. Kontrollige tänavat, numbrit ja linna."
   }
 }

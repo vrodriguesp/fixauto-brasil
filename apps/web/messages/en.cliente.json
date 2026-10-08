@@ -233,7 +233,8 @@
     "acceptAndSchedule": "Accept and Schedule",
     "escolhaHorarioDica": "Tap the day and time you will bring the car to the shop.",
     "escolhaHorarioAntes": "Choose a time above",
-    "horariosVencidos": "The offered times have passed. Ask the workshop for new dates by message."
+    "horariosVencidos": "The offered times have passed. Ask the workshop for new dates by message.",
+    "convencionadaComSeguradora": "Works with {seguradora}"
   },
   "clienteMensagens": {
     "workshopFallback": "Repair shop",

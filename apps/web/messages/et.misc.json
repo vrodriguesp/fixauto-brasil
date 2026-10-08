@@ -905,7 +905,8 @@
     "noReviewsText": "Sellel töökojal pole veel hinnanguid.",
     "clientFallback": "Klient",
     "registroEmpresa": "Registrikood",
-    "sobreTitulo": "Töökojast"
+    "sobreTitulo": "Töökojast",
+    "seguradorasConvencionadas": "Lepingulised kindlustusseltsid"
   },
   "audioMessage": {
     "hideTranscription": "Peida transkriptsioon",

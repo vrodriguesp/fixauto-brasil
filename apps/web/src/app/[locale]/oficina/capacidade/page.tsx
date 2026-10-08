@@ -8,6 +8,7 @@ import { calcularCargaAtual, calcularCargaPorFuncionario } from '@/lib/capacidad
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import type { Funcionario } from '@fixauto/shared';
 import { Link } from '@/i18n/navigation';
+import { nomeFuncionario } from '@/lib/funcionario';
 
 export default function CapacidadePage() {
   const t = useTranslations('oficinaCapacidade');
@@ -166,7 +167,7 @@ export default function CapacidadePage() {
               return (
                 <div key={f.id}>
                   <div className="flex items-center justify-between text-sm mb-1">
-                    <span className="text-gray-700">{f.profile?.nome || t('mecanicoFallback')}</span>
+                    <span className="text-gray-700">{nomeFuncionario(f as any) || t('mecanicoFallback')}</span>
                     <span className={sobrecarga ? 'text-red-600 font-semibold' : 'text-gray-600'}>
                       {atual}{limite != null ? ` / ${limite}` : ''} {sobrecarga && t('noLimite')}
                       {limite == null && <span className="text-gray-400"> {t('semLimiteDefinido')}</span>}

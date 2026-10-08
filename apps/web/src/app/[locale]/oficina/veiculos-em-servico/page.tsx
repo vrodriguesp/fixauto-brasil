@@ -9,7 +9,8 @@ import { STATUS_MANUTENCAO } from '@fixauto/shared';
 import type { StatusManutencao, Funcionario } from '@fixauto/shared';
 import NotasInternas from '@/components/veiculo/NotasInternas';
 import { Link } from '@/i18n/navigation';
-import { INTL_LOCALE } from '@/lib/utils';
+import { INTL_LOCALE, cleanDescricao } from '@/lib/utils';
+import { nomeFuncionario } from '@/lib/funcionario';
 
 type FilterTab = 'todos' | 'aguardando' | 'em_servico' | 'prontos';
 
@@ -24,7 +25,14 @@ export default function VeiculosEmServico() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [etapaForm, setEtapaForm] = useState<{ eventoId: string; status: StatusManutencao; observacao: string } | null>(null);
   const [assignForm, setAssignForm] = useState<string | null>(null);
-  const [funcionarios, setFuncionarios] = useState<(Funcionario & { profile?: { nome: string; email: string } })[]>([]);
+  const [funcionarios, setFuncionarios] = useState<(Funcionario & { nome?: string | null; profile?: { nome: string; email: string } })[]>([]);
+  // check-in de carro agendado para outra data: pede confirmacao antes
+  const [antecipar, setAntecipar] = useState<{ eventoId: string; data: string } | null>(null);
+  const [erroAcao, setErroAcao] = useState<string | null>(null);
+  // historico (atribuicoes, check-in antecipado) do servico aberto
+  const [historico, setHistorico] = useState<Record<string, any[]>>({});
+  // dono registrando etapa em nome de um mecanico ('' = a propria oficina)
+  const [emNomeDe, setEmNomeDe] = useState('');
 
   const isMecanico = funcionario?.cargo === 'mecanico';
 
@@ -102,16 +110,24 @@ export default function VeiculosEmServico() {
     }
   }, [myEventos, activeTab, categorized]);
 
-  const handleCheckin = async (eventoId: string) => {
+  // tudo pelo servidor (/api/servico): avisa o cliente e guarda o historico
+  const acaoServico = async (corpo: Record<string, unknown>) => {
+    const res = await fetch('/api/servico', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) });
+    return { res, dados: await res.json().catch(() => ({})) };
+  };
+
+  const handleCheckin = async (eventoId: string, confirmado = false) => {
     setActionLoading(eventoId);
-    await update(eventoId, { status: 'em_andamento' });
-    // Create initial etapa
-    await supabase.from('manutencao_etapas').insert({
-      agenda_id: eventoId,
-      funcionario_id: funcionario?.id || null,
-      status: 'recebido',
-      observacao: t('notaVeiculoRecebido'),
-    });
+    setErroAcao(null);
+    const { res, dados } = await acaoServico({ acao: 'checkin', eventoId, antecipar: confirmado });
+    if (res.status === 409 && dados.codigo === 'CHECKIN_FUTURO') {
+      setAntecipar({ eventoId, data: dados.dataAgendada });
+    } else if (!res.ok) {
+      setErroAcao(eventoId);
+    } else {
+      setAntecipar(null);
+      setActiveTab('em_servico');
+    }
     await refresh();
     setActionLoading(null);
   };
@@ -137,22 +153,31 @@ export default function VeiculosEmServico() {
   const handleAddEtapa = async () => {
     if (!etapaForm) return;
     setActionLoading(etapaForm.eventoId);
-    await supabase.from('manutencao_etapas').insert({
-      agenda_id: etapaForm.eventoId,
-      funcionario_id: funcionario?.id || null,
-      status: etapaForm.status,
-      observacao: etapaForm.observacao || null,
+    setErroAcao(null);
+    const { res } = await acaoServico({
+      acao: 'etapa', eventoId: etapaForm.eventoId, status: etapaForm.status, observacao: etapaForm.observacao,
+      ...(emNomeDe ? { funcionarioId: emNomeDe } : {}),
     });
-    setEtapaForm(null);
+    if (res.ok) setEtapaForm(null);
+    else setErroAcao(etapaForm.eventoId);
     await refresh();
     setActionLoading(null);
   };
 
   const handleAssign = async (eventoId: string, funcId: string) => {
-    await supabase.from('agenda').update({ funcionario_id: funcId || null }).eq('id', eventoId);
+    await acaoServico({ acao: 'atribuir', eventoId, ...(funcId ? { funcionarioId: funcId } : {}) });
     setAssignForm(null);
     await refresh();
+    carregarHistorico(eventoId);
   };
+
+  const carregarHistorico = async (agendaId: string) => {
+    const { data } = await supabase.from('agenda_historico')
+      .select('id, acao, detalhe, created_at, funcionario:funcionarios(nome, profile:profiles(nome)), por:profiles!agenda_historico_por_profile_id_fkey(nome)')
+      .eq('agenda_id', agendaId).order('created_at', { ascending: false });
+    setHistorico((h) => ({ ...h, [agendaId]: data || [] }));
+  };
+  useEffect(() => { if (expandedId) carregarHistorico(expandedId); }, [expandedId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const calcDaysRemaining = (dataFim: string) => {
     const end = new Date(dataFim);
@@ -370,7 +395,7 @@ export default function VeiculosEmServico() {
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         {veiculo ? (
                           <p className="font-semibold text-gray-900">
-                            {veiculo.fipe_marca} {veiculo.fipe_modelo}
+                            {veiculo.fipe_marca ? `${veiculo.fipe_marca} ${veiculo.fipe_modelo}` : evento.titulo}
                             {veiculo.placa && (
                               <span className="ml-2 text-xs font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-700">
                                 {veiculo.placa}
@@ -409,7 +434,7 @@ export default function VeiculosEmServico() {
                         {/* Assigned mechanic */}
                         {evento.funcionario && (
                           <span className="text-xs text-gray-400">
-                            {t('respLabel')}: {evento.funcionario.profile?.nome || 'N/A'}
+                            {t('respLabel')}: {nomeFuncionario(evento.funcionario) || 'N/A'}
                           </span>
                         )}
                       </div>
@@ -417,7 +442,7 @@ export default function VeiculosEmServico() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      {evento.status === 'agendado' && new Date(evento.data_inicio) <= new Date() && (
+                      {evento.status === 'agendado' && (
                         <button
                           onClick={(e) => { e.stopPropagation(); handleCheckin(evento.id); }}
                           disabled={actionLoading === evento.id}
@@ -432,6 +457,7 @@ export default function VeiculosEmServico() {
                             onClick={(e) => {
                               e.stopPropagation();
                               setEtapaForm({ eventoId: evento.id, status: 'em_execucao', observacao: '' });
+                              setEmNomeDe(evento.funcionario_id || '');
                             }}
                             className="text-xs !py-1.5 !px-3 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 rounded-lg font-medium transition-colors"
                           >
@@ -451,15 +477,28 @@ export default function VeiculosEmServico() {
                       {evento.status === 'concluido' && (
                         <span className="text-xs text-green-600 font-medium">{t('entregueLabel')}</span>
                       )}
-                      {evento.status === 'agendado' && new Date(evento.data_inicio) > new Date() && (
-                        <span className="text-xs text-gray-400">{t('aguardandoData')}</span>
-                      )}
+
                       <svg className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </div>
                   </div>
                 </div>
+
+                {antecipar?.eventoId === evento.id && (
+                  <div className="px-4 py-3 bg-amber-50 border-t border-amber-200" role="alert">
+                    <p className="text-sm text-amber-900 mb-2">{t('checkinAntecipadoTexto', { data: formatDateTime(antecipar.data) })}</p>
+                    <div className="flex flex-wrap gap-2">
+                      <button onClick={() => handleCheckin(evento.id, true)} disabled={actionLoading === evento.id} className="btn-primary !py-2 !px-4 text-sm">
+                        {t('checkinAntecipadoConfirmar')}
+                      </button>
+                      <button onClick={() => setAntecipar(null)} className="btn-secondary !py-2 !px-4 text-sm">{t('cancelar')}</button>
+                    </div>
+                  </div>
+                )}
+                {erroAcao === evento.id && (
+                  <p className="px-4 py-2 text-sm text-red-700 bg-red-50 border-t border-red-200" role="alert">{t('erroAcao')}</p>
+                )}
 
                 {/* Expanded detail */}
                 {isExpanded && (
@@ -468,7 +507,7 @@ export default function VeiculosEmServico() {
                       {/* Service description */}
                       <div>
                         <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{t('servico')}</h4>
-                        <p className="text-sm text-gray-900">{sol?.descricao || evento.descricao || t('semDescricao')}</p>
+                        <p className="text-sm text-gray-900">{cleanDescricao(sol?.descricao) || cleanDescricao(evento.descricao) || t('semDescricao')}</p>
                       </div>
 
                       {/* Client contact */}
@@ -501,7 +540,7 @@ export default function VeiculosEmServico() {
                               <option value="">{t('nenhum')}</option>
                               {funcionarios.map((f) => (
                                 <option key={f.id} value={f.id}>
-                                  {f.profile?.nome || f.profile?.email} {f.especialidade ? `(${f.especialidade})` : ''}
+                                  {nomeFuncionario(f)} {f.especialidade ? `(${f.especialidade})` : ''}
                                 </option>
                               ))}
                             </select>
@@ -511,7 +550,7 @@ export default function VeiculosEmServico() {
                               className="text-sm text-primary-600 hover:text-primary-700 font-medium"
                             >
                               {evento.funcionario
-                                ? t('trocarMecanico', { nome: evento.funcionario.profile?.nome || '' })
+                                ? t('trocarMecanico', { nome: nomeFuncionario(evento.funcionario) })
                                 : t('atribuirMecanico')}
                             </button>
                           )}
@@ -547,8 +586,8 @@ export default function VeiculosEmServico() {
                                   {etapa.observacao && (
                                     <p className="text-xs text-gray-600 mt-1">{etapa.observacao}</p>
                                   )}
-                                  {etapa.funcionario?.profile?.nome && (
-                                    <p className="text-xs text-gray-400 mt-0.5">{t('porLabel', { nome: etapa.funcionario.profile.nome })}</p>
+                                  {nomeFuncionario(etapa.funcionario) && (
+                                    <p className="text-xs text-gray-400 mt-0.5">{t('porLabel', { nome: nomeFuncionario(etapa.funcionario) })}</p>
                                   )}
                                 </div>
                               </div>
@@ -557,6 +596,21 @@ export default function VeiculosEmServico() {
                         </div>
                       )}
                     </div>
+
+                    {(historico[evento.id] || []).length > 0 && (
+                      <div className="mt-4">
+                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{t('historicoAcoes')}</h4>
+                        <ul className="space-y-1 text-xs text-gray-600">
+                          {historico[evento.id].map((h: any) => (
+                            <li key={h.id}>
+                              {formatDateTime(h.created_at)} · {t(`hist_${h.acao}`)}
+                              {nomeFuncionario(h.funcionario) ? ` · ${nomeFuncionario(h.funcionario)}` : h.acao === 'atribuido' ? ` · ${t('nenhum')}` : ''}
+                              {h.por?.nome ? ` (${t('porLabel', { nome: h.por.nome })})` : ''}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
                     {/* Message button */}
                     {evento.solicitacao_id && (
@@ -601,6 +655,12 @@ export default function VeiculosEmServico() {
                           </option>
                         ))}
                       </select>
+                      {!isMecanico && funcionarios.length > 0 && (
+                        <select aria-label={t('feitoPor')} className="input-field !py-2 text-sm sm:max-w-[12rem]" value={emNomeDe} onChange={(e) => setEmNomeDe(e.target.value)}>
+                          <option value="">{t('feitoPorOficina')}</option>
+                          {funcionarios.map((f) => <option key={f.id} value={f.id}>{t('feitoPorNome', { nome: nomeFuncionario(f) })}</option>)}
+                        </select>
+                      )}
                       <input
                         type="text"
                         className="input-field !py-2 text-sm flex-1"

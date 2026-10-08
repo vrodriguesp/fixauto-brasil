@@ -233,7 +233,8 @@
     "acceptAndSchedule": "Accetta e programma",
     "escolhaHorarioDica": "Tocca il giorno e l'orario in cui porterai l'auto in officina.",
     "escolhaHorarioAntes": "Scegli un orario qui sopra",
-    "horariosVencidos": "Gli orari proposti sono già passati. Chiedi all'officina nuove date tramite messaggio."
+    "horariosVencidos": "Gli orari proposti sono già passati. Chiedi all'officina nuove date tramite messaggio.",
+    "convencionadaComSeguradora": "Convenzionata con {seguradora}"
   },
   "clienteMensagens": {
     "workshopFallback": "Officina",

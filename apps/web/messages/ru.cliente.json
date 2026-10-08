@@ -233,7 +233,8 @@
     "acceptAndSchedule": "Принять и записаться",
     "escolhaHorarioDica": "Нажмите на день и время, когда вы привезёте машину в автосервис.",
     "escolhaHorarioAntes": "Выберите время выше",
-    "horariosVencidos": "Предложенное время уже прошло. Попросите мастерскую в сообщении о новых датах."
+    "horariosVencidos": "Предложенное время уже прошло. Попросите мастерскую в сообщении о новых датах.",
+    "convencionadaComSeguradora": "Работает с {seguradora}"
   },
   "clienteMensagens": {
     "workshopFallback": "Автосервис",

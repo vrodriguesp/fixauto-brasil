@@ -137,7 +137,10 @@
     "entregueCount": "Consegnato ({count})",
     "naoCompareceuCount": "Assenti ({count})",
     "nenhumEventoNesteDia": "Nessun evento in questo giorno",
-    "nenhumEventoAgendado": "Nessun evento programmato"
+    "nenhumEventoAgendado": "Nessun evento programmato",
+    "checkinAntecipadoTexto": "Questa auto è prenotata per il {data}. Fare il check-in adesso? La data di ingresso diventa oggi e puoi proseguire con tutte le fasi.",
+    "checkinAntecipadoConfirmar": "Sì, fai il check-in adesso",
+    "cancelarAntecipado": "Annulla"
   },
   "oficinaAprender": {
     "carregando": "Caricamento...",
@@ -534,7 +537,13 @@
     "ativar": "Attiva",
     "editar": "Modifica",
     "gerando": "Generazione...",
-    "gerarNovaSenha": "Genera nuova password"
+    "gerarNovaSenha": "Genera nuova password",
+    "darAcessoPortal": "Dai accesso al portale",
+    "darAcessoPortalDica": "Con un accesso proprio, il meccanico vede le auto assegnate e registra le fasi. Senza accesso, l'officina assegna e registra a suo nome.",
+    "semAcessoPortal": "Senza accesso al portale",
+    "darAcesso": "Dai accesso",
+    "erroNomeObrigatorio": "Inserisci il nome.",
+    "avisoDesativadoHistorico": "{nome} ha già lavorato su dei servizi: è stato disattivato invece che rimosso, per mantenere lo storico."
   },
   "oficinaMensagemDetalhe": {
     "notifNovaMensagemTitulo": "Nuovo messaggio dall'officina",
@@ -688,7 +697,11 @@
     "salvarAlteracoes": "Salva Modifiche",
     "descricaoLabel": "Chi siamo",
     "descricaoPlaceholder": "Es.: officina di famiglia dal 2005, specializzata in carrozzeria e verniciatura. Auto sostitutiva, preventivo in 24 ore.",
-    "descricaoAjuda": "Compare nel tuo profilo pubblico. Racconta cosa distingue la tua officina."
+    "descricaoAjuda": "Compare nel tuo profilo pubblico. Racconta cosa distingue la tua officina.",
+    "seguradorasTitulo": "Assicurazioni convenzionate",
+    "seguradorasTexto": "Seleziona le compagnie con cui l'officina è convenzionata. Il cliente assicurato con una di queste vede il bollino sul tuo preventivo.",
+    "seguradoraOutra": "Altra compagnia",
+    "seguradoraAdicionar": "Aggiungi"
   },
   "oficinaSolicitacoes": {
     "titulo": "Richieste",
@@ -783,6 +796,18 @@
     "registrarEtapa": "Registra Fase",
     "placeholderObservacaoOpcional": "Nota (opzionale)",
     "salvar": "Salva",
-    "cancelar": "Annulla"
+    "cancelar": "Annulla",
+    "checkinAntecipadoTexto": "Questa auto è prenotata per il {data}. Fare il check-in adesso? La data di ingresso diventa oggi e puoi proseguire con tutte le fasi.",
+    "checkinAntecipadoConfirmar": "Sì, fai il check-in adesso",
+    "erroAcao": "Impossibile salvare. Riprova.",
+    "historicoAcoes": "Storico",
+    "feitoPor": "Fatto da",
+    "feitoPorOficina": "L'officina",
+    "feitoPorNome": "A nome di {nome}",
+    "hist_checkin": "Check-in",
+    "hist_checkin_antecipado": "Check-in prima della data prenotata",
+    "hist_atribuido": "Meccanico responsabile",
+    "hist_etapa": "Fase registrata",
+    "hist_entregue": "Consegnato"
   }
 }
