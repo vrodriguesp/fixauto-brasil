@@ -402,7 +402,8 @@
       "aceita": "Orçamento Aceito",
       "em_andamento": "Em Andamento",
       "concluida": "Concluída",
-      "cancelada": "Cancelada"
+      "cancelada": "Cancelada",
+      "no_show": "Não compareceu"
     },
     "statusOrcamento": {
       "enviado": "Enviado",
@@ -606,7 +607,8 @@
     "FUNCIONARIO_JA_CADASTRADO": "Este funcionário já está cadastrado na sua oficina.",
     "SENHA_CURTA": "A senha precisa ter pelo menos 8 caracteres.",
     "TERMOS_OBRIGATORIOS": "Para continuar, aceite os Termos de Uso e a Política de Privacidade.",
-    "DECLARACAO_OBRIGATORIA": "Para cadastrar uma empresa, confirme que você é o responsável por ela."
+    "DECLARACAO_OBRIGATORIA": "Para cadastrar uma empresa, confirme que você é o responsável por ela.",
+    "CONTA_EXISTENTE": "Este e-mail já tem uma conta BipFix. Entre na sua conta para registrar o acidente."
   },
   "sobre": {
     "metaTitle": "Sobre o BipFix",

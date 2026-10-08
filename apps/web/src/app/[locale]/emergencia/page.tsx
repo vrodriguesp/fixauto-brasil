@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import { useRouter, rota } from '@/i18n/navigation';
+import { useRouter, rota, Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { salvarTokenEmergencia } from '@/lib/emergencia-token';
 import { compressImage } from '@/lib/image-compress';
@@ -13,6 +13,8 @@ import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 export default function EmergenciaPage() {
   const t = useTranslations('emergencia');
   const tErros = useTranslations('erros');
+  const tEntrar = useTranslations('excluirConta');
+  const [contaExistente, setContaExistente] = useState(false);
   const locale = useLocale();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -191,6 +193,7 @@ export default function EmergenciaPage() {
       const r = await res.json().catch(() => ({}));
       if (!res.ok || !r.id) {
         setError(textoErroApi(tErros, res.status, r));
+        setContaExistente(r?.codigo === 'CONTA_EXISTENTE');
         setSubmitting(false);
         return;
       }
@@ -290,6 +293,10 @@ export default function EmergenciaPage() {
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
             <p className="text-sm text-red-800">{error}</p>
+            {contaExistente && (
+              // e-mail de conta existente: entrar e voltar para este formulario
+              <Link href={`/login?voltar=${encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname : '/')}`} className="btn-primary inline-block mt-3">{tEntrar('entrarBotao')}</Link>
+            )}
           </div>
         )}
 

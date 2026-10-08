@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { localParaIso } from '@/lib/turnos';
 import { exemploPlaca, EXEMPLO_EMAIL, exemploValor } from '@/lib/exemplos';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
@@ -60,8 +61,8 @@ export default function ManualCheckinPage() {
     const { error: agendaError } = await addEvento({
       titulo: `${tipoLabel} - ${veiculoMarca} ${veiculoModelo}`,
       descricao: `${t('descricaoLabelCliente')}: ${clienteNome} | ${t('descricaoLabelPlaca')}: ${veiculoPlaca || t('descricaoNaoInformado')} | ${t('descricaoLabelTelefone')}: ${clienteTelefone || t('descricaoNaoInformado')}${descricao ? ' | ' + descricao : ''}${valorEstimado ? ` | ${t('descricaoLabelValor')}: ${formatCurrency(parseFlexibleNumber(valorEstimado), currencyForCountry(oficina?.pais), locale)}` : ''}`,
-      data_inicio: `${dataCheckin}T${turnoCheckin === 'manha' ? '08:00:00' : '13:00:00'}Z`,
-      data_fim: `${dataEntrega}T18:00:00Z`,
+      data_inicio: localParaIso(dataCheckin, turnoCheckin === 'manha' ? '08:00' : '13:00'),
+      data_fim: localParaIso(dataEntrega, '18:00'),
       tipo: 'externo',
       cor,
     });

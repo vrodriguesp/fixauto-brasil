@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { localParaIso, dataLocalDe, horaLocalDe } from '@/lib/turnos';
 import { exemploPlaca } from '@/lib/exemplos';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAgenda } from '@/hooks/use-agenda';
@@ -56,6 +57,8 @@ export default function AgendaPage() {
   const [antecipar, setAntecipar] = useState<{ ev: any; funcId?: string; data: string } | null>(null);
   // entregar o carro encerra o servico: pede confirmacao
   const [confirmarEntrega, setConfirmarEntrega] = useState<any | null>(null);
+  // entrega recusada pelo servidor (ex.: carro sem check-in): mostra o aviso
+  const [erroEntrega, setErroEntrega] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<any>(null);
@@ -127,10 +130,10 @@ export default function AgendaPage() {
   // - Check-in feito: data_inicio = date AND status IN (em_andamento, concluido)
   // - Entregue: data_fim = date AND status = concluido
   const getGroups = (dateStr: string) => {
-    const checkinPendente = allEventos.filter(e => e.data_inicio.slice(0, 10) === dateStr && e.status === 'agendado' && !(e as any).no_show);
-    const naoCompareceu = allEventos.filter(e => e.data_inicio.slice(0, 10) === dateStr && (e as any).no_show);
-    const checkinFeito = allEventos.filter(e => e.data_inicio.slice(0, 10) === dateStr && (e.status === 'em_andamento' || e.status === 'concluido'));
-    const entregue = allEventos.filter(e => e.data_fim.slice(0, 10) === dateStr && e.status === 'concluido');
+    const checkinPendente = allEventos.filter(e => dataLocalDe(e.data_inicio) === dateStr && e.status === 'agendado' && !(e as any).no_show);
+    const naoCompareceu = allEventos.filter(e => dataLocalDe(e.data_inicio) === dateStr && (e as any).no_show);
+    const checkinFeito = allEventos.filter(e => dataLocalDe(e.data_inicio) === dateStr && (e.status === 'em_andamento' || e.status === 'concluido'));
+    const entregue = allEventos.filter(e => dataLocalDe(e.data_fim) === dateStr && e.status === 'concluido');
     return { checkinPendente, naoCompareceu, checkinFeito, entregue };
   };
 
@@ -146,8 +149,8 @@ export default function AgendaPage() {
     const result = await addEvento({
       titulo,
       descricao: descricao || undefined,
-      data_inicio: `${formData.data_inicio}T${formData.hora_inicio}:00Z`,
-      data_fim: `${formData.data_fim}T${formData.hora_fim}:00Z`,
+      data_inicio: localParaIso(formData.data_inicio, formData.hora_inicio),
+      data_fim: localParaIso(formData.data_fim, formData.hora_fim),
       tipo: 'externo',
       cor: formData.cor,
     });
@@ -180,10 +183,11 @@ export default function AgendaPage() {
 
   const handleCheckOut = async (ev: any) => {
     setUpdatingId(ev.id);
-    await fetch('/api/confirmar-entrega', {
+    const res = await fetch('/api/confirmar-entrega', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventoId: ev.id, solicitacaoId: ev.solicitacao_id }),
-    });
+      body: JSON.stringify({ eventoId: ev.id }),
+    }).catch(() => null);
+    if (!res?.ok) setErroEntrega(ev.id);
     // a etapa "entregue" e gravada pelo servidor (lib/entrega.ts)
     await refresh();
     refreshSolicitacoes();
@@ -218,10 +222,10 @@ export default function AgendaPage() {
     setEditData({
       titulo: ev.titulo || '',
       descricao: ev.descricao || '',
-      data_inicio: ev.data_inicio.slice(0, 10),
-      hora_inicio: ev.data_inicio.slice(11, 16) || '08:00',
-      data_fim: ev.data_fim.slice(0, 10),
-      hora_fim: ev.data_fim.slice(11, 16) || '18:00',
+      data_inicio: dataLocalDe(ev.data_inicio),
+      hora_inicio: horaLocalDe(ev.data_inicio) || '08:00',
+      data_fim: dataLocalDe(ev.data_fim),
+      hora_fim: horaLocalDe(ev.data_fim) || '18:00',
       funcionario_id: ev.funcionario_id || '',
       cor: ev.cor || '#3B82F6',
     });
@@ -233,8 +237,8 @@ export default function AgendaPage() {
     await updateEvento(evId, {
       titulo: editData.titulo,
       descricao: editData.descricao || null,
-      data_inicio: `${editData.data_inicio}T${editData.hora_inicio}:00Z`,
-      data_fim: `${editData.data_fim}T${editData.hora_fim}:00Z`,
+      data_inicio: localParaIso(editData.data_inicio, editData.hora_inicio),
+      data_fim: localParaIso(editData.data_fim, editData.hora_fim),
       funcionario_id: editData.funcionario_id || null,
       cor: editData.cor,
     });
@@ -675,7 +679,7 @@ export default function AgendaPage() {
               .sort((a, b) => new Date(a.data_inicio).getTime() - new Date(b.data_inicio).getTime());
             if (upcoming.length === 0) return <div className="card text-center py-12"><p className="text-gray-500">{t('nenhumEventoAgendado')}</p></div>;
             const groups: Record<string, typeof upcoming> = {};
-            upcoming.forEach((ev) => { const d = ev.data_inicio.slice(0, 10); if (!groups[d]) groups[d] = []; groups[d].push(ev); });
+            upcoming.forEach((ev) => { const d = dataLocalDe(ev.data_inicio); if (!groups[d]) groups[d] = []; groups[d].push(ev); });
             return Object.entries(groups).map(([date, evts]) => {
               const d = new Date(date + 'T12:00:00');
               return (
@@ -690,6 +694,12 @@ export default function AgendaPage() {
               );
             });
           })()}
+        </div>
+      )}
+      {erroEntrega && (
+        <div role="alert" className="fixed inset-x-3 bottom-4 z-50 sm:left-auto sm:right-6 sm:max-w-md bg-red-50 border border-red-300 shadow-lg rounded-xl p-4 text-sm text-red-800 flex items-start gap-3">
+          <span className="flex-1">{t('erroEntrega')}</span>
+          <button type="button" onClick={() => setErroEntrega(null)} aria-label="OK" className="text-red-700 font-bold">×</button>
         </div>
       )}
       {confirmarEntrega && (

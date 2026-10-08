@@ -143,7 +143,8 @@
     "cancelarAntecipado": "Cancelar",
     "btnEtapa": "Etapas",
     "confirmarEntregaTexto": "Entregar o carro ao cliente? O serviço será encerrado e o cliente avisado. Confira se o conserto está concluído.",
-    "confirmarEntregaSim": "Sim, entregar"
+    "confirmarEntregaSim": "Sim, entregar",
+    "erroEntrega": "Não foi possível entregar: o carro precisa estar em serviço (check-in feito)."
   },
   "oficinaAprender": {
     "carregando": "Carregando...",

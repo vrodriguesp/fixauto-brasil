@@ -70,6 +70,12 @@ export async function POST(req: NextRequest) {
     } else {
       if (!email) throw new ErroValidacao('email obrigatório');
       if (!nome) throw new ErroValidacao('nome obrigatório');
+      // E-mail de uma conta que ja existe: so com login. Antes, qualquer um
+      // registrava um acidente DENTRO da conta de outra pessoa e recebia o
+      // token de acesso (auditoria Fable 08/10, C1).
+      const { data: jaExiste } = await supabaseAdmin.from('profiles').select('id')
+        .ilike('email', email.replace(/[%_\\]/g, '\\$&')).maybeSingle();
+      if (jaExiste) return NextResponse.json({ error: 'Entre na sua conta', codigo: 'CONTA_EXISTENTE' }, { status: 409 });
       const conta = await garantirContaCliente({ email, nome, telefone, idioma });
       clienteId = conta.id;
       contaCriada = conta.criada;

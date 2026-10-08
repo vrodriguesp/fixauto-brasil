@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
 
-    const { agendaId, solicitacaoId } = await req.json();
+    const { agendaId } = await req.json();
 
     if (!agendaId) {
       return NextResponse.json({ error: 'agendaId é obrigatório' }, { status: 400 });
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     // 1. Get agenda info
     const { data: agenda } = await supabaseAdmin
       .from('agenda')
-      .select('oficina_id, data_inicio, oficina:oficinas(profile_id)')
+      .select('oficina_id, solicitacao_id, status, data_inicio, oficina:oficinas(profile_id)')
       .eq('id', agendaId)
       .single();
 
@@ -31,13 +31,16 @@ export async function POST(req: NextRequest) {
     if (!agenda || (agenda as any).oficina?.profile_id !== callerId) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
-
-    // 2. Mark agenda as no_show
-    await supabaseAdmin.from('agenda').update({
+    // O pedido vem do PROPRIO agendamento, nunca do corpo (antes uma oficina
+    // reabria o orcamento de outra - auditoria Fable 08/10, A-02); e so vale
+    // para agendamento que ainda esperava o carro (trava atomica).
+    const solicitacaoId: string | null = (agenda as any).solicitacao_id || null;
+    const { data: trava } = await supabaseAdmin.from('agenda').update({
       no_show: true,
       no_show_registrado_em: new Date().toISOString(),
       status: 'cancelado',
-    }).eq('id', agendaId);
+    }).eq('id', agendaId).eq('status', 'agendado').select('id');
+    if (!trava?.length) return NextResponse.json({ error: 'Agendamento não está aguardando o carro', codigo: 'NAO_AGENDADO' }, { status: 409 });
 
     // 3. Get client info
     let clienteId: string | null = null;
@@ -60,9 +63,10 @@ export async function POST(req: NextRequest) {
       }
 
       // 4. Set solicitacao to no_show status
-      await supabaseAdmin.from('solicitacoes')
+      const { error: eSt } = await supabaseAdmin.from('solicitacoes')
         .update({ status: 'no_show' })
         .eq('id', solicitacaoId);
+      if (eSt) console.error('[registrar-no-show] status', eSt.message);
 
       // 5. Reset the orcamento to 'enviado' so client can accept again with new dates
       await supabaseAdmin.from('orcamentos')

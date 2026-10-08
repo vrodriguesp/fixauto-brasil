@@ -21,8 +21,7 @@ export async function POST(req: NextRequest) {
   for (const ev of (abertos || []) as any[]) {
     const ultima = [...(ev.etapas || [])].sort((a: any, b: any) => b.created_at.localeCompare(a.created_at))[0];
     if (!ultima || ultima.status !== 'concluido' || ultima.created_at > limite) continue;
-    await entregarServico({ eventoId: ev.id, solicitacaoId: ev.solicitacao_id, oficinaDoEvento: ev.oficina_id, oficinaNome: ev.oficina?.nome_fantasia || '', callerId: null, automatica: true });
-    entregues.push(ev.id);
+    if (await entregarServico({ eventoId: ev.id, solicitacaoId: ev.solicitacao_id, oficinaDoEvento: ev.oficina_id, oficinaNome: ev.oficina?.nome_fantasia || '', callerId: null, automatica: true })) entregues.push(ev.id);
   }
   return NextResponse.json({ ok: true, entregues: entregues.length });
 }

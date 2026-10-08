@@ -232,7 +232,8 @@
       "aceita": "Preventivo Accettato",
       "em_andamento": "In Corso",
       "concluida": "Completata",
-      "cancelada": "Annullata"
+      "cancelada": "Annullata",
+      "no_show": "Non si è presentato"
     },
     "statusManutencao": {
       "recebido": "Ricevuto",
@@ -326,7 +327,8 @@
     "FUNCIONARIO_JA_CADASTRADO": "Questo dipendente è già registrato nella tua officina.",
     "SENHA_CURTA": "La password deve avere almeno 8 caratteri.",
     "TERMOS_OBRIGATORIOS": "Per continuare, accetta i Termini di utilizzo e l'Informativa sulla privacy.",
-    "DECLARACAO_OBRIGATORIA": "Per registrare un'impresa, conferma di esserne il responsabile."
+    "DECLARACAO_OBRIGATORIA": "Per registrare un'impresa, conferma di esserne il responsabile.",
+    "CONTA_EXISTENTE": "Questa email ha già un account BipFix. Accedi per segnalare l'incidente."
   },
   "notificacoes": {
     "titulo": "Notifiche",

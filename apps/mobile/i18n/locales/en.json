@@ -232,7 +232,8 @@
       "aceita": "Quote Accepted",
       "em_andamento": "In Progress",
       "concluida": "Completed",
-      "cancelada": "Cancelled"
+      "cancelada": "Cancelled",
+      "no_show": "Did not show up"
     },
     "statusManutencao": {
       "recebido": "Received",
@@ -326,7 +327,8 @@
     "FUNCIONARIO_JA_CADASTRADO": "This employee is already registered at your shop.",
     "SENHA_CURTA": "Password must be at least 8 characters.",
     "TERMOS_OBRIGATORIOS": "To continue, please accept the Terms of Use and the Privacy Policy.",
-    "DECLARACAO_OBRIGATORIA": "To register a business, please confirm that you are the person responsible for it."
+    "DECLARACAO_OBRIGATORIA": "To register a business, please confirm that you are the person responsible for it.",
+    "CONTA_EXISTENTE": "This email already has a BipFix account. Sign in to report the accident."
   },
   "notificacoes": {
     "titulo": "Notifications",

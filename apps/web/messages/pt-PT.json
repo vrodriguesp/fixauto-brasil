@@ -402,7 +402,8 @@
       "aceita": "Orçamento Aceite",
       "em_andamento": "Em Curso",
       "concluida": "Concluído",
-      "cancelada": "Cancelado"
+      "cancelada": "Cancelado",
+      "no_show": "Não compareceu"
     },
     "statusOrcamento": {
       "enviado": "Enviado",
@@ -606,7 +607,8 @@
     "FUNCIONARIO_JA_CADASTRADO": "Este funcionário já está registado na sua oficina.",
     "SENHA_CURTA": "A palavra-passe tem de ter pelo menos 8 caracteres.",
     "TERMOS_OBRIGATORIOS": "Para continuar, aceite os Termos de Utilização e a Política de Privacidade.",
-    "DECLARACAO_OBRIGATORIA": "Para registar uma empresa, confirme que é o responsável por ela."
+    "DECLARACAO_OBRIGATORIA": "Para registar uma empresa, confirme que é o responsável por ela.",
+    "CONTA_EXISTENTE": "Este e-mail já tem uma conta BipFix. Entre na sua conta para registar o acidente."
   },
   "sobre": {
     "metaTitle": "Sobre a BipFix",

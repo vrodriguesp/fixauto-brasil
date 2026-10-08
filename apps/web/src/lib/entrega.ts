@@ -15,17 +15,18 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 export async function entregarServico(p: { eventoId: string; solicitacaoId: string | null; oficinaDoEvento: string; oficinaNome: string; callerId: string | null; automatica?: boolean }) {
   const { eventoId, solicitacaoId, oficinaDoEvento, oficinaNome, callerId } = p;
   void oficinaDoEvento;
+  // Trava atomica: so entrega carro que esta EM SERVICO, e uma vez so (antes:
+  // entregava evento sem check-in e repetia aviso/e-mail/comissao a cada
+  // clique - auditoria Fable 08/10, A-05/M-04). Devolve false se nao entregou.
+  const { data: trava } = await supabaseAdmin.from('agenda')
+    .update({ status: 'concluido', data_fim: new Date().toISOString() })
+    .eq('id', eventoId).eq('status', 'em_andamento').select('id');
+  if (!trava?.length) return false;
   // etapa final no historico do conserto (a tela nao grava mais por conta propria)
   await supabaseAdmin.from('manutencao_etapas').insert({ agenda_id: eventoId, status: 'entregue', observacao: null });
   await supabaseAdmin.from('agenda_historico').insert({ agenda_id: eventoId, acao: 'entregue', por_profile_id: callerId, detalhe: p.automatica ? { automatica: true } : {} });
 
-    // 1. Update agenda event to concluido + set data_fim to actual delivery date
-    if (eventoId) {
-      await supabaseAdmin.from('agenda').update({
-        status: 'concluido',
-        data_fim: new Date().toISOString(),
-      }).eq('id', eventoId);
-    }
+    // 1. agenda ja fechada pela trava acima (status concluido + data_fim)
 
     // 2. Update solicitacao to concluida
     if (solicitacaoId) {
@@ -132,4 +133,5 @@ export async function entregarServico(p: { eventoId: string; solicitacaoId: stri
       }
     }
 
+  return true;
 }

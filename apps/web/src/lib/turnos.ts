@@ -27,3 +27,17 @@ export function primeiroTurnoLivre(agora = new Date()): { data: string; turno: T
   amanha.setDate(amanha.getDate() + 1);
   return { data: hojeLocal(amanha), turno: 'manha' };
 }
+
+// Data/hora digitadas pela oficina estao no fuso dela (o do navegador):
+// gravar em UTC de verdade e ler de volta no mesmo fuso. Antes gravava
+// "08:00Z" e a agenda mostrava 11:00 em Tallinn (auditoria Fable 08/10, M-03).
+export function localParaIso(data: string, hora: string): string {
+  return new Date(`${data}T${hora}:00`).toISOString();
+}
+export function dataLocalDe(iso: string): string {
+  return hojeLocal(new Date(iso));
+}
+export function horaLocalDe(iso: string): string {
+  const d = new Date(iso);
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}

@@ -143,7 +143,8 @@
     "cancelarAntecipado": "Отмена",
     "btnEtapa": "Этапы",
     "confirmarEntregaTexto": "Выдать машину клиенту? Заказ будет закрыт, клиент получит уведомление. Убедитесь, что ремонт завершён.",
-    "confirmarEntregaSim": "Да, выдать"
+    "confirmarEntregaSim": "Да, выдать",
+    "erroEntrega": "Не удалось выдать: автомобиль должен быть в работе (после check-in)."
   },
   "oficinaAprender": {
     "carregando": "Загрузка...",

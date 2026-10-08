@@ -97,7 +97,8 @@ export async function POST(req: NextRequest) {
     if (ev.status !== 'em_andamento') return NextResponse.json({ error: 'Faça o check-in antes', codigo: 'SEM_CHECKIN' }, { status: 409 });
     // entrega: o mesmo fechamento da confirmacao (garantia, avaliacao, comissao)
     if (status === 'entregue') {
-      await entregarServico({ eventoId: ev.id, solicitacaoId: ev.solicitacao_id, oficinaDoEvento: ev.oficina_id, oficinaNome: (ev as any).oficina?.nome_fantasia || '', callerId: userId });
+      const entregou = await entregarServico({ eventoId: ev.id, solicitacaoId: ev.solicitacao_id, oficinaDoEvento: ev.oficina_id, oficinaNome: (ev as any).oficina?.nome_fantasia || '', callerId: userId });
+      if (!entregou) return NextResponse.json({ error: 'O carro não está em serviço', codigo: 'NAO_EM_SERVICO' }, { status: 409 });
       return NextResponse.json({ ok: true });
     }
     await supabaseAdmin.from('manutencao_etapas').insert({

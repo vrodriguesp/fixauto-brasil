@@ -147,13 +147,16 @@ export default function VeiculosEmServico() {
 
   const handleCheckout = async (evento: any) => {
     setActionLoading(evento.id);
-    await fetch('/api/confirmar-entrega', {
+    setErroAcao(null);
+    // tudo pelo servidor (lib/entrega.ts); se ele recusar, a tela mostra o erro
+    // em vez de marcar a agenda por conta propria (A-07)
+    const res = await fetch('/api/confirmar-entrega', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventoId: evento.id, solicitacaoId: evento.solicitacao_id }),
-    });
-    // a etapa "entregue" e gravada pelo servidor (lib/entrega.ts)
-    await update(evento.id, { status: 'concluido' });
+      body: JSON.stringify({ eventoId: evento.id }),
+    }).catch(() => null);
+    if (!res?.ok) setErroAcao(evento.id);
+    await refresh();
     setActionLoading(null);
   };
 

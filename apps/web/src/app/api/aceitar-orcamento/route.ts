@@ -5,6 +5,7 @@ import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { sendOrcamentoAceitoPagamentoEmail, sendOrcamentoAceitoOutroEmail } from '@/lib/notifications';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { horaLocalEmUtc } from '@/lib/fuso';
 
 // Use service_role key to bypass RLS - the agenda insert needs
 // to be done by the server because the client user doesn't have
@@ -28,21 +29,49 @@ export async function POST(req: NextRequest) {
     // os concorrentes e agendava o servico em nome de outra pessoa.
     const { data: orcamentoParaChecar } = await supabaseAdmin
       .from('orcamentos')
-      .select('solicitacao:solicitacoes(cliente_id)')
+      .select('status, solicitacao_id, solicitacao:solicitacoes(cliente_id, status), oficina:oficinas(pais), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(id, data_checkin, turno)')
       .eq('id', orcamentoId)
       .single();
     if (!orcamentoParaChecar || (orcamentoParaChecar as any).solicitacao?.cliente_id !== callerId) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
+    // Conferencias (auditoria Fable 08/10, M-02/A1): orcamento ainda em aberto,
+    // pedido ainda aceitando orcamento, horario deste orcamento e nao vencido,
+    // nenhum outro ja aceito e nenhum carro ja na oficina por este pedido.
+    const chk = orcamentoParaChecar as any;
+    if (!['enviado', 'visualizado'].includes(chk.status)) {
+      return NextResponse.json({ error: 'Orçamento não está disponível', codigo: 'ORCAMENTO_INDISPONIVEL' }, { status: 409 });
+    }
+    if (!['aberta', 'em_orcamento', 'no_show'].includes(chk.solicitacao?.status)) {
+      return NextResponse.json({ error: 'Pedido não aceita mais orçamentos', codigo: 'ORCAMENTO_INDISPONIVEL' }, { status: 409 });
+    }
+    const slotEscolhido = (chk.disponibilidade || []).find((s: { id: string }) => s.id === slotId);
+    if (!slotEscolhido) return NextResponse.json({ error: 'Horário inválido', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
+    const fimTurno = horaLocalEmUtc(slotEscolhido.data_checkin, slotEscolhido.turno === 'manha' ? '12:00' : '17:00', chk.oficina?.pais);
+    if (new Date(fimTurno).getTime() < Date.now()) {
+      return NextResponse.json({ error: 'Horário vencido', codigo: 'HORARIO_VENCIDO' }, { status: 409 });
+    }
+    const [{ data: outroAceito }, { data: agendaAtiva }] = await Promise.all([
+      supabaseAdmin.from('orcamentos').select('id').eq('solicitacao_id', chk.solicitacao_id).eq('status', 'aceito').neq('id', orcamentoId).limit(1),
+      supabaseAdmin.from('agenda').select('id').eq('solicitacao_id', chk.solicitacao_id).in('status', ['em_andamento', 'concluido']).limit(1),
+    ]);
+    if (outroAceito?.length || agendaAtiva?.length) {
+      return NextResponse.json({ error: 'Já existe um orçamento aceito', codigo: 'ORCAMENTO_INDISPONIVEL' }, { status: 409 });
+    }
 
-    // 1. Update orcamento status to aceito
-    const { error: updateError } = await supabaseAdmin
+    // 1. Aceite com trava atomica (dois cliques/abas nao aceitam duas vezes)
+    const { data: aceitos, error: updateError } = await supabaseAdmin
       .from('orcamentos')
       .update({ status: 'aceito', disponibilidade_escolhida_id: slotId })
-      .eq('id', orcamentoId);
+      .eq('id', orcamentoId)
+      .in('status', ['enviado', 'visualizado'])
+      .select('id');
 
     if (updateError) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
+    }
+    if (!aceitos?.length) {
+      return NextResponse.json({ error: 'Orçamento já aceito', codigo: 'ORCAMENTO_INDISPONIVEL' }, { status: 409 });
     }
 
     // 2. Get quote details
@@ -68,7 +97,7 @@ export async function POST(req: NextRequest) {
       .update({ status: 'recusado' })
       .eq('solicitacao_id', orc.solicitacao_id)
       .neq('id', orcamentoId)
-      .eq('status', 'enviado');
+      .in('status', ['enviado', 'visualizado']);
 
     // 5. Find the chosen slot and create agenda entry
     //    Delete any existing agenda for this solicitacao to avoid duplicates (e.g. re-quote)
@@ -86,9 +115,10 @@ export async function POST(req: NextRequest) {
         solicitacao_id: orc.solicitacao_id,
         titulo: notifReparoAgendadoTitulo((orc.oficina as any)?.profile?.idioma),
         descricao: `Orçamento #${orcamentoId.slice(0, 8)}`,
-        data_inicio: `${slot.data_checkin}T${slot.turno === 'manha' ? '08:00:00' : '13:00:00'}Z`,
-        data_fim: `${slot.data_previsao_entrega}T18:00:00Z`,
-        data_fim_prevista: `${slot.data_previsao_entrega}T18:00:00Z`,
+        // hora local da oficina (pais), gravada em UTC
+        data_inicio: horaLocalEmUtc(slot.data_checkin, slot.turno === 'manha' ? '08:00' : '13:00', (orc.oficina as any)?.pais),
+        data_fim: horaLocalEmUtc(slot.data_previsao_entrega || slot.data_checkin, '18:00', (orc.oficina as any)?.pais),
+        data_fim_prevista: horaLocalEmUtc(slot.data_previsao_entrega || slot.data_checkin, '18:00', (orc.oficina as any)?.pais),
         tipo: 'plataforma',
         status: 'agendado',
         cor: '#3B82F6',

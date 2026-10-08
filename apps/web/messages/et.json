@@ -402,7 +402,8 @@
       "aceita": "Hinnapakkumine kinnitatud",
       "em_andamento": "Töös",
       "concluida": "Lõpetatud",
-      "cancelada": "Tühistatud"
+      "cancelada": "Tühistatud",
+      "no_show": "Ei tulnud kohale"
     },
     "statusOrcamento": {
       "enviado": "Saadetud",
@@ -606,7 +607,8 @@
     "FUNCIONARIO_JA_CADASTRADO": "See töötaja on sinu töökojas juba registreeritud.",
     "SENHA_CURTA": "Parool peab olema vähemalt 8 tähemärki.",
     "TERMOS_OBRIGATORIOS": "Jätkamiseks nõustu kasutustingimuste ja privaatsuspoliitikaga.",
-    "DECLARACAO_OBRIGATORIA": "Ettevõtte registreerimiseks kinnita, et oled selle eest vastutav isik."
+    "DECLARACAO_OBRIGATORIA": "Ettevõtte registreerimiseks kinnita, et oled selle eest vastutav isik.",
+    "CONTA_EXISTENTE": "Selle e-postiga on juba BipFixi konto. Logi sisse, et õnnetusest teatada."
   },
   "sobre": {
     "metaTitle": "BipFixist",
