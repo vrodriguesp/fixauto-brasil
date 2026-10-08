@@ -503,7 +503,9 @@
     "garantia_730": "2 years",
     "garantiaDias": "{dias} days",
     "garantiaAjuda": "Starts when the car is handed back. Until the warranty ends, the customer can keep messaging you.",
-    "comissaoPagaNoFim": "You pay this commission ({valor}) to BipFix at the end of the job. The customer pays only the quote amount ({total})."
+    "comissaoPagaNoFim": "You pay this commission ({valor}) to BipFix at the end of the job. The customer pays only the quote amount ({total}).",
+    "garantiaOutra": "Other (type the days)",
+    "garantiaDiasCampo": "Warranty days"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Password must be at least 8 characters",
@@ -826,6 +828,8 @@
     "hist_etapa": "Step recorded",
     "hist_entregue": "Delivered",
     "confirmarEntregaTexto": "Hand the car back to the customer? The job will be closed and the customer notified. Check the repair is finished.",
-    "confirmarEntregaSim": "Yes, hand it back"
+    "confirmarEntregaSim": "Yes, hand it back",
+    "confirmarConcluidoTexto": "Marking it as completed tells the customer right away to come and pick up the car. If you do not mark it delivered, after 5 days it counts as delivered (the warranty starts). Confirm?",
+    "confirmarConcluidoSim": "Yes, tell the customer"
   }
 }

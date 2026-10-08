@@ -9,6 +9,7 @@ import SolicitacaoCard from '../../components/SolicitacaoCard';
 import { Ionicons } from '@expo/vector-icons';
 import { useAvisos } from '../../lib/avisos';
 import GarantiasAtivas from '../../components/GarantiasAtivas';
+import AvaliacaoPendente from '../../components/AvaliacaoPendente';
 
 export default function DashboardScreen() {
   const { t } = useTranslation();
@@ -66,6 +67,7 @@ export default function DashboardScreen() {
         </Pressable>
       </View>
 
+      <AvaliacaoPendente recarregar={avisoChegou} />
       <GarantiasAtivas recarregar={avisoChegou} />
 
       {naoLidos.length > 0 && (

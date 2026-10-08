@@ -234,7 +234,9 @@
     "escolhaHorarioDica": "Puuduta päeva ja kellaaega, millal tood auto töökotta.",
     "escolhaHorarioAntes": "Vali ülal aeg",
     "horariosVencidos": "Pakutud ajad on möödas. Küsige töökojalt sõnumiga uusi aegu.",
-    "convencionadaComSeguradora": "Leping: {seguradora}"
+    "convencionadaComSeguradora": "Leping: {seguradora}",
+    "escolhido": "Valitud pakkumine",
+    "verOficina": "Vaata töökoda (hinnangud, aadress)"
   },
   "clienteMensagens": {
     "workshopFallback": "Töökoda",
@@ -270,7 +272,8 @@
     "escolherOficinaTitulo": "Millise töökojaga?",
     "escolherOficinaTexto": "Igal töökojal on teiega oma vestlus.",
     "semConversaAinda": "Ükski töökoda pole veel kirjutanud. Kui töökoda saadab hinnapakkumise või sõnumi, ilmub vestlus siia.",
-    "pagadorSubtitulo": "Remondi eest tasumine (õnnetus)"
+    "pagadorSubtitulo": "Remondi eest tasumine (õnnetus)",
+    "verOficina": "Vaata töökoda"
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Vastu võetud",
@@ -341,5 +344,13 @@
     "erro": "Salvestamine ebaõnnestus. Proovige uuesti.",
     "cancelar": "Tühista",
     "salvar": "Salvesta"
+  },
+  "avaliacaoPendente": {
+    "titulo": "Hinda: {oficina}",
+    "texto": "Töö on tehtud: jäta oma hinnang. See on vajalik enne uut päringut.",
+    "bloqueio": "Enne uut päringut hinda viimast tööd (võtab paar sekundit). Kui sul oli just õnnetus, kasuta õnnetuse nuppu.",
+    "avaliarAgora": "Hinda kohe",
+    "bloqueioTitulo": "Sinu hinnang on puudu",
+    "acidente": "Mul oli just õnnetus"
   }
 }

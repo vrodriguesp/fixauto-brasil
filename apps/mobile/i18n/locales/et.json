@@ -146,7 +146,13 @@
     "escolhaData": "Vali, millal auto tuua:",
     "turno_manha": "hommik",
     "turno_tarde": "pärastlõuna",
-    "horariosVencidos": "Pakutud ajad on möödas. Küsige töökojalt sõnumiga uusi aegu."
+    "horariosVencidos": "Pakutud ajad on möödas. Küsige töökojalt sõnumiga uusi aegu.",
+    "itens": "Mis on hinnas",
+    "entregaPrevista": "eeldatav valmimine: {data}",
+    "verOficina": "Vaata töökoda (hinnangud, aadress)",
+    "escolhido": "Valitud pakkumine",
+    "semAvaliacoes": "Uus BipFixis",
+    "avaliacoes": "{nota} ★ ({n} hinnangut)"
   },
   "acompanhamento": {
     "titulo": "Remondi jälgimine",
@@ -165,7 +171,11 @@
     "comentarioPlaceholder": "Jäta kommentaar (valikuline)",
     "enviar": "Saada hinnang",
     "obrigado": "Täname tagasiside eest!",
-    "jaAvaliado": "Sa oled seda teenust juba hinnanud"
+    "jaAvaliado": "Sa oled seda teenust juba hinnanud",
+    "pendenteTitulo": "Hinda: {oficina}",
+    "pendenteTexto": "Töö on tehtud: jäta oma hinnang. See on vajalik enne uut päringut.",
+    "bloqueio": "Enne uut päringut hinda viimast tööd (võtab paar sekundit). Kui sul oli just õnnetus, kasuta punast nuppu.",
+    "avaliarAgora": "Hinda kohe"
   },
   "mensagens": {
     "titulo": "Sõnumid",
@@ -327,6 +337,7 @@
     "falarComOficina": "Kirjuta töökojale",
     "noOrcamento": "Garantii: {dias} päeva alates üleandmisest",
     "sem": "Garantiita",
-    "conversaEncerrada": "Vestlus on suletud: töö on lõpetatud ja garantii on lõppenud (või seda töökoda ei valitud)."
+    "conversaEncerrada": "Vestlus on suletud: töö on lõpetatud ja garantii on lõppenud (või seda töökoda ei valitud).",
+    "desteServico": "Selle töö garantii"
   }
 }

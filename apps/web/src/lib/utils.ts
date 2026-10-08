@@ -74,3 +74,6 @@ export function cleanDescricao(desc: string | null | undefined): string {
   if (!desc) return '';
   return desc.replace(/\[TIPO:\w+\]\s*/g, '').replace(/\[RESP:\w+\]\s*/g, '').replace(/\[COMISSAO:[^\]]+\]\s*/g, '').trim();
 }
+
+// "aguardando_pecas" -> "aguardandoPecasDesc" (chave da descricao da etapa nas mensagens)
+export const chaveDesc = (status: string) => status.replace(/_([a-z])/g, (_, l: string) => l.toUpperCase()) + 'Desc';

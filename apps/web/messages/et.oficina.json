@@ -503,7 +503,9 @@
     "garantia_730": "2 aastat",
     "garantiaDias": "{dias} päeva",
     "garantiaAjuda": "Algab auto üleandmisest. Garantii lõpuni saab klient teile sõnumeid saata.",
-    "comissaoPagaNoFim": "Selle komisjonitasu ({valor}) maksate BipFixile töö lõpus. Klient maksab ainult pakkumise summa ({total})."
+    "comissaoPagaNoFim": "Selle komisjonitasu ({valor}) maksate BipFixile töö lõpus. Klient maksab ainult pakkumise summa ({total}).",
+    "garantiaOutra": "Muu (sisesta päevad)",
+    "garantiaDiasCampo": "Garantii päevad"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Parool peab olema vähemalt 8 tähemärki",
@@ -826,6 +828,8 @@
     "hist_etapa": "Etapp lisatud",
     "hist_entregue": "Üle antud",
     "confirmarEntregaTexto": "Kas anda auto kliendile üle? Töö suletakse ja klienti teavitatakse. Kontrollige, et remont on lõpetatud.",
-    "confirmarEntregaSim": "Jah, anna üle"
+    "confirmarEntregaSim": "Jah, anna üle",
+    "confirmarConcluidoTexto": "Lõpetatuks märkimine teavitab klienti kohe, et ta võib auto järele tulla. Kui te üleandmist ei märgi, loetakse auto 5 päeva pärast üleantuks (garantii algab). Kinnitada?",
+    "confirmarConcluidoSim": "Jah, teavita klienti"
   }
 }

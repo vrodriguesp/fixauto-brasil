@@ -184,9 +184,7 @@ export default function AgendaPage() {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ eventoId: ev.id, solicitacaoId: ev.solicitacao_id }),
     });
-    await supabase.from('manutencao_etapas').insert({
-      agenda_id: ev.id, status: 'entregue', observacao: t('notaVeiculoEntregue'),
-    });
+    // a etapa "entregue" e gravada pelo servidor (lib/entrega.ts)
     await refresh();
     refreshSolicitacoes();
     setUpdatingId(null);

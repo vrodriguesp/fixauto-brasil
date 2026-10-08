@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
-import { Link } from '@/i18n/navigation';
+import { Link, rota } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -394,6 +394,11 @@ export default function ClienteMensagensPage() {
                 : ''}
           </p>
         </div>
+        {oficinaId && (
+          <Link href={rota('/oficinas/[id]', { id: oficinaId })} className="ml-auto text-xs font-medium text-primary-700 hover:underline whitespace-nowrap">
+            {t('verOficina')} ›
+          </Link>
+        )}
       </div>
 
       {/* Messages area */}

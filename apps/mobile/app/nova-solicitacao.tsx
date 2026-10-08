@@ -14,6 +14,7 @@ import { mensagemErro } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
 import { obterPosicao } from '../lib/posicao';
 import { arquivoDaFoto } from '../lib/anexo';
+import { useAvaliacaoPendente } from '../components/AvaliacaoPendente';
 
 const COORDS_DEFAULT = { lat: -23.5505, lon: -46.6333 };
 
@@ -27,6 +28,8 @@ export default function NovaSolicitacaoScreen() {
   const tituloTela = t('novaSolicitacao.titulo');
   const opcoesTela = useMemo(() => ({ headerShown: true, title: tituloTela, presentation: 'modal' as const }), [tituloTela]);
   const { user } = useAuth();
+  // servico entregue sem avaliacao: avaliar antes de pedir de novo (como no Uber)
+  const avaliacaoPendente = useAvaliacaoPendente();
   const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
   const [veiculoId, setVeiculoId] = useState('');
   const [tipo, setTipo] = useState('');
@@ -160,6 +163,23 @@ export default function NovaSolicitacaoScreen() {
         <Text className="text-gray-600 text-center mb-8">{t('novaSolicitacao.sucessoTexto')}</Text>
         <Pressable onPress={() => router.replace('/(tabs)')} className="bg-primary-600 rounded-lg px-6 py-3">
           <Text className="text-white font-semibold">{t('tabs.inicio')}</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  if (avaliacaoPendente) {
+    return (
+      <View className="flex-1 bg-white items-center justify-center px-6">
+        <Stack.Screen options={opcoesTela} />
+        <Text className="text-4xl mb-3">⭐</Text>
+        <Text className="text-xl font-bold text-gray-900 mb-2 text-center">{t('avaliacao.pendenteTitulo', { oficina: avaliacaoPendente.oficina })}</Text>
+        <Text className="text-gray-600 text-center mb-8">{t('avaliacao.bloqueio')}</Text>
+        <Pressable onPress={() => router.replace(`/solicitacao/${avaliacaoPendente.solicitacaoId}`)} accessibilityRole="button" className="bg-primary-600 rounded-lg px-6 py-3 mb-3 w-full items-center">
+          <Text className="text-white font-semibold">{t('avaliacao.avaliarAgora')}</Text>
+        </Pressable>
+        <Pressable onPress={() => router.replace('/emergencia')} accessibilityRole="button" className="bg-red-600 rounded-lg px-6 py-3 w-full items-center">
+          <Text className="text-white font-semibold">{t('dashboard.emergenciaBotao')}</Text>
         </Pressable>
       </View>
     );

@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useState, useMemo } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput } from 'react-native';
+import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useFocusEffect, router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,6 +13,7 @@ import { turnoDisponivel, type Turno } from '../../lib/turnos';
 import { limparDescricao, ehAcidente } from '../../lib/texto';
 import EditarPedido from '../../components/EditarPedido';
 import { useAvisos } from '../../lib/avisos';
+import { abrirOficina } from '../../lib/oficina-link';
 
 export default function SolicitacaoDetailScreen() {
   const { t, i18n } = useTranslation();
@@ -33,11 +34,13 @@ export default function SolicitacaoDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [processando, setProcessando] = useState<string | null>(null);
   const [slotSelecionado, setSlotSelecionado] = useState<Record<string, string>>({});
+  const [entrega, setEntrega] = useState<{ oficinaId: string; dataFim: string } | null>(null);
+  const [puxando, setPuxando] = useState(false);
 
   const carregar = useCallback(async () => {
     const { data } = await supabase
       .from('solicitacoes')
-      .select('*, veiculo:veiculos(*), orcamentos(*, oficina:oficinas(id, nome_fantasia, pais, profile_id), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))')
+      .select('*, veiculo:veiculos(*), orcamentos(*, oficina:oficinas(id, nome_fantasia, pais, profile_id, cidade, avaliacao_media, total_avaliacoes), itens:orcamento_itens(id, descricao, quantidade, valor_total), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))')
       .eq('id', id)
       .single();
     setSolicitacao(data as Solicitacao);
@@ -49,8 +52,10 @@ export default function SolicitacaoDetailScreen() {
 
     const { data: agendaRows } = await supabase
       .from('agenda')
-      .select('id')
+      .select('id, oficina_id, status, data_fim')
       .eq('solicitacao_id', id);
+    const entregue = (agendaRows || []).find((a: any) => a.status === 'concluido' && a.data_fim);
+    setEntrega(entregue ? { oficinaId: entregue.oficina_id, dataFim: entregue.data_fim } : null);
     const agendaIds = (agendaRows || []).map((a) => a.id);
     if (agendaIds.length > 0) {
       const { data: etapasData } = await supabase
@@ -138,9 +143,18 @@ export default function SolicitacaoDetailScreen() {
   }
 
   const veiculo = solicitacao.veiculo;
+  const aceito = (solicitacao.orcamentos || []).find((o) => o.status === 'aceito') as any;
+  // contagem da garantia: conta da entrega (dias informados no orcamento)
+  const fimGarantia = aceito?.garantia_dias > 0 && entrega && entrega.oficinaId === aceito.oficina_id
+    ? new Date(new Date(entrega.dataFim).getTime() + aceito.garantia_dias * 86400000) : null;
+  const diasGarantia = fimGarantia ? Math.ceil((fimGarantia.getTime() - Date.now()) / 86400000) : 0;
+  // escolhido primeiro, recusados por ultimo
+  const ordem: Record<string, number> = { aceito: 0, enviado: 1, visualizado: 1, expirado: 2, recusado: 3 };
+  const orcamentos = [...(solicitacao.orcamentos || [])].sort((a, b) => (ordem[a.status] ?? 1) - (ordem[b.status] ?? 1));
+  const recarregar = async () => { setPuxando(true); await carregar(); setPuxando(false); };
 
   return (
-    <ScrollView keyboardDismissMode="on-drag" className="flex-1 bg-gray-50">
+    <ScrollView keyboardDismissMode="on-drag" className="flex-1 bg-gray-50" refreshControl={<RefreshControl refreshing={puxando} onRefresh={recarregar} />}>
       <Stack.Screen options={opcoesTela} />
       <View className="p-4">
         <Text className="text-xl font-bold text-gray-900">
@@ -153,6 +167,14 @@ export default function SolicitacaoDetailScreen() {
           <EditarPedido key={`${solicitacao.id}-${veiculo?.fipe_marca || ''}`} solicitacaoId={solicitacao.id} descricao={solicitacao.descricao} veiculo={(veiculo as any) || null} aoSalvar={carregar} />
         )}
 
+        {fimGarantia && diasGarantia > 0 && (
+          <View className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 mb-4">
+            <Text className="text-gray-600 text-sm">{t('garantia.desteServico')} · {aceito?.oficina?.nome_fantasia}</Text>
+            <Text className="text-emerald-800 text-xl font-bold">{t('garantia.diasRestantes', { dias: diasGarantia })}</Text>
+            <Text className="text-gray-500 text-xs">{t('garantia.ate', { data: formatDate(fimGarantia.toISOString(), locale) })}</Text>
+          </View>
+        )}
+
         <Pressable onPress={() => router.push(`/conversa/${solicitacao.id}`)} className="bg-primary-50 rounded-lg py-3 items-center mb-6">
           <Text className="text-primary-700 font-medium">{t('mensagens.titulo')}</Text>
         </Pressable>
@@ -163,13 +185,44 @@ export default function SolicitacaoDetailScreen() {
           <Text className="text-gray-500">{t('dashboard.nenhumaSolicitacao')}</Text>
         )}
 
-        {(solicitacao.orcamentos || []).map((orc) => (
-          <View key={orc.id} className="bg-white rounded-xl p-4 mb-3 border border-gray-200">
-            <Text className="font-semibold text-gray-900 mb-1">{t('orcamentos.recebidoDe', { oficina: orc.oficina?.nome_fantasia || '-' })}</Text>
-            <Text className="text-2xl font-bold text-gray-900 mb-2">{formatCurrency(orc.valor_total, currencyForCountry((orc.oficina as any)?.pais), locale)}</Text>
-            <Text className="text-xs text-gray-500 mb-1">{t(`orcamentos.status${orc.status.charAt(0).toUpperCase()}${orc.status.slice(1)}`)}</Text>
+        {orcamentos.map((orc) => {
+          const of = orc.oficina as any;
+          const moeda = currencyForCountry(of?.pais);
+          const itens = ((orc as any).itens || []) as { id: string; descricao: string; quantidade: number; valor_total: number }[];
+          const escolhido = orc.status === 'aceito';
+          return (
+          <View key={orc.id} className={`rounded-xl p-4 mb-3 ${escolhido ? 'bg-emerald-50 border-2 border-emerald-500' : 'bg-white border border-gray-200'}`}
+            style={orc.status === 'recusado' || orc.status === 'expirado' ? { opacity: 0.6 } : undefined}>
+            {escolhido && (
+              <View className="self-start flex-row items-center gap-1 bg-emerald-600 rounded-full px-3 py-1 mb-2">
+                <Ionicons name="checkmark-circle" size={14} color="#fff" />
+                <Text className="text-white text-xs font-semibold">{t('orcamentos.escolhido')}</Text>
+              </View>
+            )}
+            <Text className="font-semibold text-gray-900">{t('orcamentos.recebidoDe', { oficina: of?.nome_fantasia || '-' })}</Text>
+            <Text className="text-xs text-gray-500 mb-1">
+              {[of?.total_avaliacoes ? t('orcamentos.avaliacoes', { nota: Number(of.avaliacao_media || 0).toFixed(1), n: of.total_avaliacoes }) : t('orcamentos.semAvaliacoes'), of?.cidade].filter(Boolean).join(' · ')}
+            </Text>
+            {of?.id ? (
+              <Pressable onPress={() => abrirOficina(of.id, locale)} accessibilityRole="link" hitSlop={6} className="self-start mb-2">
+                <Text className="text-primary-700 text-sm font-medium">{t('orcamentos.verOficina')} ›</Text>
+              </Pressable>
+            ) : null}
+            <Text className="text-2xl font-bold text-gray-900">{formatCurrency(orc.valor_total, moeda, locale)}</Text>
+            <Text className="text-xs text-gray-500 mb-2">{t(`orcamentos.status${orc.status.charAt(0).toUpperCase()}${orc.status.slice(1)}`)}</Text>
+            {itens.length > 0 && (
+              <View className="border-t border-gray-100 pt-2 mb-2">
+                <Text className="text-xs font-semibold text-gray-700 mb-1">{t('orcamentos.itens')}</Text>
+                {itens.map((it) => (
+                  <View key={it.id} className="flex-row justify-between gap-3 py-0.5">
+                    <Text className="text-sm text-gray-700 flex-1">{it.quantidade > 1 ? `${it.quantidade}× ` : ''}{it.descricao}</Text>
+                    <Text className="text-sm text-gray-900">{formatCurrency(it.valor_total, moeda, locale)}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
             {(orc as any).garantia_dias != null && (
-              <Text className="text-xs text-gray-600 mb-3">🛡️ {(orc as any).garantia_dias > 0 ? t('garantia.noOrcamento', { dias: (orc as any).garantia_dias }) : t('garantia.sem')}</Text>
+              <Text className="text-sm text-gray-700 mb-3">🛡️ {(orc as any).garantia_dias > 0 ? t('garantia.noOrcamento', { dias: (orc as any).garantia_dias }) : t('garantia.sem')}</Text>
             )}
 
             {orc.status === 'enviado' || orc.status === 'visualizado' ? (
@@ -187,7 +240,8 @@ export default function SolicitacaoDetailScreen() {
                     onPress={() => setSlotSelecionado((prev) => ({ ...prev, [orc.id]: slot.id }))}
                     className={`border rounded-lg px-3 py-2 mb-2 ${slotSelecionado[orc.id] === slot.id ? 'border-primary-600 bg-primary-50' : 'border-gray-200'}`}
                   >
-                    <Text className="text-sm text-gray-700">{formatDate(slot.data_checkin, locale)} - {t(`orcamentos.turno_${slot.turno}`, slot.turno)} ({slot.turno === 'manha' ? '08:00-12:00' : '13:00-17:00'})</Text>
+                    <Text className="text-sm font-medium text-gray-800">{formatDate(slot.data_checkin, locale)} · {t(`orcamentos.turno_${slot.turno}`, slot.turno)} ({slot.turno === 'manha' ? '08:00-12:00' : '13:00-17:00'})</Text>
+                    {(slot as any).data_previsao_entrega ? <Text className="text-xs text-gray-500">{t('orcamentos.entregaPrevista', { data: formatDate((slot as any).data_previsao_entrega, locale) })}</Text> : null}
                   </Pressable>
                 ))}
                 <View className="flex-row gap-2 mt-2">
@@ -211,7 +265,8 @@ export default function SolicitacaoDetailScreen() {
               </>
             ) : null}
           </View>
-        ))}
+          );
+        })}
 
         {etapas.length > 0 && (
           <>

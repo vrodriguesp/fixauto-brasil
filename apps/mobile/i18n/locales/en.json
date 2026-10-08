@@ -146,7 +146,13 @@
     "escolhaData": "Choose when to bring the car:",
     "turno_manha": "morning",
     "turno_tarde": "afternoon",
-    "horariosVencidos": "The offered times have passed. Ask the workshop for new dates by message."
+    "horariosVencidos": "The offered times have passed. Ask the workshop for new dates by message.",
+    "itens": "What's included",
+    "entregaPrevista": "expected ready: {data}",
+    "verOficina": "See the garage (reviews, address)",
+    "escolhido": "Chosen quote",
+    "semAvaliacoes": "New on BipFix",
+    "avaliacoes": "{nota} ★ ({n} reviews)"
   },
   "acompanhamento": {
     "titulo": "Repair tracking",
@@ -165,7 +171,11 @@
     "comentarioPlaceholder": "Leave a comment (optional)",
     "enviar": "Submit rating",
     "obrigado": "Thanks for your feedback!",
-    "jaAvaliado": "You've already rated this service"
+    "jaAvaliado": "You've already rated this service",
+    "pendenteTitulo": "Rate {oficina}",
+    "pendenteTexto": "The job is done: leave your review. It is needed before a new request.",
+    "bloqueio": "Before a new request, rate your last job (it takes a few seconds). If you just had an accident, use the red button.",
+    "avaliarAgora": "Rate now"
   },
   "mensagens": {
     "titulo": "Messages",
@@ -327,6 +337,7 @@
     "falarComOficina": "Message the workshop",
     "noOrcamento": "Warranty: {dias} days from hand-over",
     "sem": "No warranty",
-    "conversaEncerrada": "Conversation closed: the job is finished and the warranty has ended (or this workshop was not chosen)."
+    "conversaEncerrada": "Conversation closed: the job is finished and the warranty has ended (or this workshop was not chosen).",
+    "desteServico": "Warranty for this job"
   }
 }

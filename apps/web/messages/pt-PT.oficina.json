@@ -503,7 +503,9 @@
     "garantia_730": "2 anos",
     "garantiaDias": "{dias} dias",
     "garantiaAjuda": "Conta a partir da entrega do carro. Até ao fim da garantia, o cliente continua a falar consigo.",
-    "comissaoPagaNoFim": "Paga esta comissão ({valor}) à BipFix no fim do serviço. O cliente paga só o valor do orçamento ({total})."
+    "comissaoPagaNoFim": "Paga esta comissão ({valor}) à BipFix no fim do serviço. O cliente paga só o valor do orçamento ({total}).",
+    "garantiaOutra": "Outra (escrever os dias)",
+    "garantiaDiasCampo": "Dias de garantia"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "A palavra-passe deve ter pelo menos 8 caracteres",
@@ -826,6 +828,8 @@
     "hist_etapa": "Etapa registada",
     "hist_entregue": "Entregue",
     "confirmarEntregaTexto": "Entregar o carro ao cliente? O serviço será encerrado e o cliente avisado. Confirme que a reparação está concluída.",
-    "confirmarEntregaSim": "Sim, entregar"
+    "confirmarEntregaSim": "Sim, entregar",
+    "confirmarConcluidoTexto": "Marcar como concluído avisa já o cliente para vir levantar o carro. Se não marcar a entrega, ao fim de 5 dias o carro conta como entregue (começa a garantia). Confirmar?",
+    "confirmarConcluidoSim": "Sim, avisar o cliente"
   }
 }

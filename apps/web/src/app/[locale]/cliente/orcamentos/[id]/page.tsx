@@ -30,6 +30,10 @@ function formatSlotDate(dateStr: string, locale: string): string {
   return d.toLocaleDateString(locale, { weekday: 'short', day: '2-digit', month: '2-digit' });
 }
 
+// escolhido primeiro, recusados/vencidos por ultimo
+const ORDEM_ORC: Record<string, number> = { aceito: 0, expirado: 2, recusado: 3 };
+const ordemOrc = (status: string) => ORDEM_ORC[status] ?? 1;
+
 export default function OrcamentoDetalhePage() {
   const t = useTranslations('clienteOrcamentoDetalhe');
   const te = useTranslations('editarPedido');
@@ -327,7 +331,7 @@ export default function OrcamentoDetalhePage() {
         };
 
         return (
-          <div className="mb-6">
+          <div className="mb-6 scroll-mt-24" id="avaliar">
             {/* Completed banner */}
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4 flex items-center gap-3">
               <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -433,13 +437,19 @@ export default function OrcamentoDetalhePage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {solicitacao.orcamentos.map((orc) => (
+          {/* escolhido primeiro, recusados por ultimo */}
+          {[...solicitacao.orcamentos].sort((a, b) => ordemOrc(a.status) - ordemOrc(b.status)).map((orc) => (
             <div
               key={orc.id}
               className={`card border-2 transition-all ${
+                orc.status === 'aceito' ? 'border-emerald-500 bg-emerald-50/40' :
+                orc.status === 'recusado' || orc.status === 'expirado' ? 'border-transparent opacity-60' :
                 schedulingOrcId === orc.id ? 'border-green-500 ring-1 ring-green-200' : 'border-transparent'
               }`}
             >
+              {orc.status === 'aceito' && (
+                <span className="inline-flex items-center gap-1 px-3 py-1 mb-3 rounded-full text-xs font-semibold bg-emerald-600 text-white">✓ {t('escolhido')}</span>
+              )}
               {/* Workshop header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -461,6 +471,11 @@ export default function OrcamentoDetalhePage() {
                     )}
                     {(orc as any).garantia_dias != null && (
                       <p className="text-xs text-gray-600 mt-1">🛡️ {(orc as any).garantia_dias > 0 ? tg('noOrcamento', { dias: (orc as any).garantia_dias }) : tg('sem')}</p>
+                    )}
+                    {orc.oficina?.id && (
+                      <Link href={rota('/oficinas/[id]', { id: orc.oficina.id })} className="block text-xs font-medium text-primary-700 hover:underline py-1">
+                        {t('verOficina')} ›
+                      </Link>
                     )}
                     {orc.oficina?.id && (
                       <Link href={`/cliente/mensagens/${solicitacao.id}?oficina=${orc.oficina.id}`}

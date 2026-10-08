@@ -234,7 +234,9 @@
     "escolhaHorarioDica": "Tocca il giorno e l'orario in cui porterai l'auto in officina.",
     "escolhaHorarioAntes": "Scegli un orario qui sopra",
     "horariosVencidos": "Gli orari proposti sono già passati. Chiedi all'officina nuove date tramite messaggio.",
-    "convencionadaComSeguradora": "Convenzionata con {seguradora}"
+    "convencionadaComSeguradora": "Convenzionata con {seguradora}",
+    "escolhido": "Preventivo scelto",
+    "verOficina": "Vedi l'officina (recensioni, indirizzo)"
   },
   "clienteMensagens": {
     "workshopFallback": "Officina",
@@ -270,7 +272,8 @@
     "escolherOficinaTitulo": "Con quale officina?",
     "escolherOficinaTexto": "Ogni officina ha la sua conversazione con te.",
     "semConversaAinda": "Nessuna officina ha ancora scritto. Quando un'officina invia un preventivo o un messaggio, la conversazione apparirà qui.",
-    "pagadorSubtitulo": "Pagamento della riparazione (incidente)"
+    "pagadorSubtitulo": "Pagamento della riparazione (incidente)",
+    "verOficina": "Vedi l'officina"
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Ricevuto",
@@ -341,5 +344,13 @@
     "erro": "Impossibile salvare. Riprova.",
     "cancelar": "Annulla",
     "salvar": "Salva"
+  },
+  "avaliacaoPendente": {
+    "titulo": "Valuta {oficina}",
+    "texto": "Il servizio è finito: lascia la tua valutazione. Serve per fare una nuova richiesta.",
+    "bloqueio": "Prima di una nuova richiesta, valuta l'ultimo servizio (bastano pochi secondi). Se hai appena avuto un incidente, usa il pulsante dell'incidente.",
+    "avaliarAgora": "Valuta ora",
+    "bloqueioTitulo": "Manca la tua valutazione",
+    "acidente": "Ho appena avuto un incidente"
   }
 }

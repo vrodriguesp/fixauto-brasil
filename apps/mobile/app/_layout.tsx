@@ -15,7 +15,7 @@ export default function RootLayout() {
       <AuthProvider>
         <AvisosProvider>
         <StatusBar style="dark" />
-        <Stack screenOptions={{ headerShown: false }}>
+        <Stack screenOptions={{ headerShown: false, headerBackButtonDisplayMode: 'minimal' }}>
           <Stack.Screen name="(auth)" />
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="emergencia" options={{ presentation: 'modal', headerShown: false }} />

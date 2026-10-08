@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
 
@@ -36,7 +36,9 @@ export default function GarantiasAtivas({ recarregar }: { recarregar?: number })
     setLista(out.sort((a, b) => a.fim.getTime() - b.fim.getTime()));
   }, [user]);
 
+  // recarrega ao voltar para a tela (a entrega pode ter acontecido com a home aberta)
   useEffect(() => { carregar(); }, [carregar, recarregar]);
+  useFocusEffect(useCallback(() => { carregar(); }, [carregar]));
 
   if (!lista.length) return null;
   return (

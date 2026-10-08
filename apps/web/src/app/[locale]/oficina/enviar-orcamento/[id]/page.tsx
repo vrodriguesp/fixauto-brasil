@@ -49,6 +49,9 @@ export default function EnviarOrcamentoPage() {
   const [submitted, setSubmitted] = useState(false);
   // garantia do servico (dias, a partir da entrega); '' = nao informada
   const [garantiaDias, setGarantiaDias] = useState<string>('');
+  // prazo fora das opcoes prontas: a oficina digita os dias
+  const [garantiaOutra, setGarantiaOutra] = useState(false);
+  const garantiaPronta = garantiaDias === '' || [0, 30, 90, 180, 365, 730].includes(Number(garantiaDias));
   // orcamento feito em outro sistema: foto/PDF lido pela IA e (opcional) anexado
   const [docArquivo, setDocArquivo] = useState<File | null>(null);
   const [lendoDoc, setLendoDoc] = useState<'' | 'lendo' | 'ok' | 'erro' | 'ocupada'>('');
@@ -532,12 +535,21 @@ export default function EnviarOrcamentoPage() {
             </div>
             <div>
               <label htmlFor="orc-garantia" className="block text-sm font-medium text-gray-700 mb-1">{t('garantia')}</label>
-              <select id="orc-garantia" className="input-field" value={garantiaDias} onChange={(e) => setGarantiaDias(e.target.value)}>
+              <select id="orc-garantia" className="input-field" value={garantiaOutra || !garantiaPronta ? 'outra' : garantiaDias}
+                onChange={(e) => {
+                  if (e.target.value === 'outra') { setGarantiaOutra(true); if (garantiaPronta) setGarantiaDias(''); }
+                  else { setGarantiaOutra(false); setGarantiaDias(e.target.value); }
+                }}>
                 <option value="">{t('garantiaNaoInformada')}</option>
                 <option value="0">{t('garantiaSem')}</option>
                 {[30, 90, 180, 365, 730].map((d) => <option key={d} value={d}>{t(`garantia_${d}`)}</option>)}
-                {garantiaDias && ![0, 30, 90, 180, 365, 730].includes(Number(garantiaDias)) && <option value={garantiaDias}>{t('garantiaDias', { dias: garantiaDias })}</option>}
+                <option value="outra">{t('garantiaOutra')}</option>
               </select>
+              {(garantiaOutra || !garantiaPronta) && (
+                <input id="orc-garantia-dias" type="number" inputMode="numeric" min={1} max={3650} step={1} className="input-field mt-2"
+                  aria-label={t('garantiaDiasCampo')} placeholder={t('garantiaDiasCampo')} value={garantiaDias}
+                  onChange={(e) => setGarantiaDias(e.target.value.replace(/\D/g, '').slice(0, 4))} />
+              )}
               <p className="text-xs text-gray-500 mt-1">{t('garantiaAjuda')}</p>
             </div>
           </div>

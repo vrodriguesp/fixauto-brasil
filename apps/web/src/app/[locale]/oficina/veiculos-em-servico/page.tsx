@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useAgenda } from '@/hooks/use-agenda';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import { chaveDesc } from '@/lib/utils';
 import { STATUS_MANUTENCAO } from '@fixauto/shared';
 import type { StatusManutencao, Funcionario } from '@fixauto/shared';
 import NotasInternas from '@/components/veiculo/NotasInternas';
@@ -30,6 +31,8 @@ export default function VeiculosEmServico() {
   const [antecipar, setAntecipar] = useState<{ eventoId: string; data: string } | null>(null);
   const [erroAcao, setErroAcao] = useState<string | null>(null);
   const [confirmarEntrega, setConfirmarEntrega] = useState<any | null>(null);
+  // "concluido" avisa o cliente para buscar o carro e "entregue" fecha o servico: confirmar antes
+  const [confirmarEtapa, setConfirmarEtapa] = useState(false);
   // historico (atribuicoes, check-in antecipado) do servico aberto
   const [historico, setHistorico] = useState<Record<string, any[]>>({});
   // dono registrando etapa em nome de um mecanico ('' = a propria oficina)
@@ -152,19 +155,15 @@ export default function VeiculosEmServico() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ eventoId: evento.id, solicitacaoId: evento.solicitacao_id }),
     });
-    // Create entregue etapa
-    await supabase.from('manutencao_etapas').insert({
-      agenda_id: evento.id,
-      funcionario_id: funcionario?.id || null,
-      status: 'entregue',
-      observacao: t('notaVeiculoEntregue'),
-    });
+    // a etapa "entregue" e gravada pelo servidor (lib/entrega.ts)
     await update(evento.id, { status: 'concluido' });
     setActionLoading(null);
   };
 
-  const handleAddEtapa = async () => {
+  const handleAddEtapa = async (confirmado = false) => {
     if (!etapaForm) return;
+    if (!confirmado && (etapaForm.status === 'concluido' || etapaForm.status === 'entregue')) { setConfirmarEtapa(true); return; }
+    setConfirmarEtapa(false);
     setActionLoading(etapaForm.eventoId);
     setErroAcao(null);
     const { res } = await acaoServico({
@@ -671,11 +670,11 @@ export default function VeiculosEmServico() {
                       <select
                         className="input-field !py-2 text-sm flex-1"
                         value={etapaForm.status}
-                        onChange={(e) => setEtapaForm({ ...etapaForm, status: e.target.value as StatusManutencao })}
+                        onChange={(e) => { setConfirmarEtapa(false); setEtapaForm({ ...etapaForm, status: e.target.value as StatusManutencao }); }}
                       >
                         {Object.entries(STATUS_MANUTENCAO).map(([key, val]) => (
                           <option key={key} value={key}>
-                            {val.icon} {tc(`statusManutencao.${key}`)} - {tc(`statusManutencao.${key}Desc`)}
+                            {val.icon} {tc(`statusManutencao.${key}`)} - {tc(`statusManutencao.${chaveDesc(key)}`)}
                           </option>
                         ))}
                       </select>
@@ -694,20 +693,31 @@ export default function VeiculosEmServico() {
                       />
                       <div className="flex gap-2">
                         <button
-                          onClick={handleAddEtapa}
+                          onClick={() => handleAddEtapa()}
                           disabled={actionLoading === evento.id}
                           className="btn-primary !py-2 !px-4 text-sm disabled:opacity-50"
                         >
                           {actionLoading === evento.id ? '...' : t('salvar')}
                         </button>
                         <button
-                          onClick={() => setEtapaForm(null)}
+                          onClick={() => { setConfirmarEtapa(false); setEtapaForm(null); }}
                           className="btn-secondary !py-2 !px-4 text-sm"
                         >
                           {t('cancelar')}
                         </button>
                       </div>
                     </div>
+                    {confirmarEtapa && (
+                      <div role="alertdialog" className="mt-3 p-3 rounded-lg border border-orange-300 bg-orange-50">
+                        <p className="text-sm text-gray-900 mb-3">{etapaForm.status === 'entregue' ? t('confirmarEntregaTexto') : t('confirmarConcluidoTexto')}</p>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <button onClick={() => handleAddEtapa(true)} disabled={actionLoading === evento.id} className="py-2 px-4 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg disabled:opacity-50">
+                            {etapaForm.status === 'entregue' ? t('confirmarEntregaSim') : t('confirmarConcluidoSim')}
+                          </button>
+                          <button onClick={() => setConfirmarEtapa(false)} className="btn-secondary !py-2 !px-4 text-sm">{t('cancelar')}</button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

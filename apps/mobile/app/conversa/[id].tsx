@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { View, Text, TextInput, Pressable, FlatList, KeyboardAvoidingView, Platform, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, FlatList, KeyboardAvoidingView, Platform, ActivityIndicator, Alert, RefreshControl } from 'react-native';
+import { abrirOficina } from '../../lib/oficina-link';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,7 +28,7 @@ interface Mensagem {
 
 // Conversa com a oficina: texto e audio (gravado aqui ou recebido do site).
 export default function ConversaScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   // Opcoes do cabecalho criadas uma vez: objeto novo a cada desenho fazia o
   // cabecalho e a tela se redesenharem sem fim no iPhone ("Maximum update depth").
   const { id, oficina: oficinaParam, pagador } = useLocalSearchParams<{ id: string; oficina?: string; pagador?: string }>();
@@ -37,7 +38,18 @@ export default function ConversaScreen() {
   const [oficinaNome, setOficinaNome] = useState('');
   const [opcoes, setOpcoes] = useState<{ id: string; nome: string }[] | null>(null);
   const tituloTela = oficinaNome || t('mensagens.titulo');
-  const opcoesTela = useMemo(() => ({ headerShown: true, title: tituloTela }), [tituloTela]);
+  const [versao, setVersao] = useState(0);
+  const [puxando, setPuxando] = useState(false);
+  // titulo = oficina; o icone abre a pagina publica dela (avaliacoes, endereco)
+  const oficinaDoTitulo = useRef<string | null>(null);
+  const opcoesTela = useMemo(() => ({
+    headerShown: true, title: tituloTela,
+    headerRight: () => (oficinaDoTitulo.current ? (
+      <Pressable onPress={() => oficinaDoTitulo.current && abrirOficina(oficinaDoTitulo.current, i18n.language)} accessibilityRole="link" accessibilityLabel={t('orcamentos.verOficina')} hitSlop={10}>
+        <Ionicons name="storefront-outline" size={22} color="#1d4ed8" />
+      </Pressable>
+    ) : null),
+  }), [tituloTela]); // eslint-disable-line react-hooks/exhaustive-deps
   const { user } = useAuth();
   const { atualizar: atualizarAvisos } = useAvisos();
   // pagador=1: sou o outro motorista do acidente e pago o reparo - conversa
@@ -74,6 +86,7 @@ export default function ConversaScreen() {
 
   useEffect(() => {
     if (!oficinaId) return;
+    oficinaDoTitulo.current = oficinaId;
     supabase.from('oficinas').select('nome_fantasia').eq('id', oficinaId).maybeSingle()
       .then(({ data }) => setOficinaNome((data as any)?.nome_fantasia || ''));
   }, [oficinaId]);
@@ -86,6 +99,7 @@ export default function ConversaScreen() {
         .filter('pagador_id', pagadorId ? 'eq' : 'is', pagadorId ?? null).order('created_at', { ascending: true });
       setMensagens((data as Mensagem[]) || []);
       setLoading(false);
+      setPuxando(false);
     }
     fetchMensagens();
 
@@ -100,7 +114,7 @@ export default function ConversaScreen() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [id, oficinaId, pagadorId]);
+  }, [id, oficinaId, pagadorId, versao]);
 
   useEffect(() => {
     if (!user || !oficinaId || mensagens.length === 0) return;
@@ -216,6 +230,7 @@ export default function ConversaScreen() {
         data={mensagens}
         keyExtractor={(item) => item.id}
         onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
+        refreshControl={<RefreshControl refreshing={puxando} onRefresh={() => { setPuxando(true); setVersao((v) => v + 1); }} />}
         contentContainerStyle={{ padding: 16 }}
         renderItem={({ item }) => {
           const minha = item.remetente_id === user?.id;

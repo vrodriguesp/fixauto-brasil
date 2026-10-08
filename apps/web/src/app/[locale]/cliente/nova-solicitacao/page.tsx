@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { exemploPlaca } from '@/lib/exemplos';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
+import AvaliacaoPendente, { useAvaliacaoPendente } from '@/components/cliente/AvaliacaoPendente';
 import { useVeiculos } from '@/hooks/use-veiculos';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
@@ -23,6 +24,8 @@ export default function NovaSolicitacaoPage() {
   const { veiculos, add: addVeiculo } = useVeiculos();
   const { create: createSolicitacao, addPhotos } = useSolicitacoes();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // servico entregue sem avaliacao: avaliar antes de pedir de novo (como no Uber)
+  const avaliacaoPendente = useAvaliacaoPendente();
   const [step, setStep] = useState(1);
   const totalSteps = 5;
 
@@ -273,6 +276,14 @@ export default function NovaSolicitacaoPage() {
           {t('successText')}
         </p>
         <p className="text-sm text-gray-500">{t('redirecting')}</p>
+      </div>
+    );
+  }
+
+  if (avaliacaoPendente) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <AvaliacaoPendente bloqueio pendente={avaliacaoPendente} />
       </div>
     );
   }

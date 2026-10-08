@@ -60,7 +60,8 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
 
       {/* Workshop Header */}
       <div className="card mb-6">
-        <div className="flex items-start gap-4">
+        {/* no celular o logo fica em cima: nome, selos e estrelas usam a largura toda */}
+        <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
           <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
             <span className="text-primary-700 font-bold text-2xl">
               {oficina.nome_fantasia?.charAt(0)}
@@ -68,7 +69,7 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-2xl font-bold text-gray-900">{oficina.nome_fantasia}</h1>
+              <h1 className="text-2xl font-bold text-gray-900 break-words min-w-0">{oficina.nome_fantasia}</h1>
               {calculatedMedia >= 4 && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-400 text-yellow-900">
                   🏆 {t('qualityBadge')}
@@ -105,7 +106,7 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex items-center gap-x-2 gap-y-1 mt-1 flex-wrap">
               <StarRating rating={calculatedMedia} size="md" />
               <span className="text-sm text-gray-600 font-medium">
                 {calculatedMedia.toFixed(1)}

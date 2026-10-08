@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionUserId } from '@/lib/api-auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { notifCarroChegou, notifEtapa } from '@/lib/notif-servico';
+import { notifCarroChegou, notifEtapa, notifProntoRetirar } from '@/lib/notif-servico';
+import { entregarServico } from '@/lib/entrega';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
 
   const { data: ev } = await supabaseAdmin
     .from('agenda')
-    .select('id, oficina_id, solicitacao_id, status, data_inicio, data_fim, funcionario_id, titulo, oficina:oficinas(profile_id, nome_fantasia)')
+    .select('id, oficina_id, solicitacao_id, status, data_inicio, data_fim, funcionario_id, titulo, oficina:oficinas(profile_id, nome_fantasia, endereco, cidade)')
     .eq('id', eventoId)
     .maybeSingle();
   if (!ev) return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
@@ -94,11 +95,19 @@ export async function POST(req: NextRequest) {
   if (acao === 'etapa') {
     if (!ETAPAS.includes(status)) return NextResponse.json({ error: 'Etapa inválida', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
     if (ev.status !== 'em_andamento') return NextResponse.json({ error: 'Faça o check-in antes', codigo: 'SEM_CHECKIN' }, { status: 409 });
+    // entrega: o mesmo fechamento da confirmacao (garantia, avaliacao, comissao)
+    if (status === 'entregue') {
+      await entregarServico({ eventoId: ev.id, solicitacaoId: ev.solicitacao_id, oficinaDoEvento: ev.oficina_id, oficinaNome: (ev as any).oficina?.nome_fantasia || '', callerId: userId });
+      return NextResponse.json({ ok: true });
+    }
     await supabaseAdmin.from('manutencao_etapas').insert({
       agenda_id: ev.id, funcionario_id: funcId, status, observacao: typeof observacao === 'string' ? observacao.slice(0, 500) || null : null,
     });
     await historico('etapa', { status });
-    await avisarCliente((idioma, carro) => notifEtapa(idioma, { carro, status }));
+    const of = (ev as any).oficina;
+    await avisarCliente((idioma, carro) => (status === 'concluido'
+      ? notifProntoRetirar(idioma, { carro, oficina: of?.nome_fantasia || '', endereco: [of?.endereco, of?.cidade].filter(Boolean).join(', ') })
+      : notifEtapa(idioma, { carro, status })));
     return NextResponse.json({ ok: true });
   }
 

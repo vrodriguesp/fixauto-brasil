@@ -234,7 +234,9 @@
     "escolhaHorarioDica": "Tap the day and time you will bring the car to the shop.",
     "escolhaHorarioAntes": "Choose a time above",
     "horariosVencidos": "The offered times have passed. Ask the workshop for new dates by message.",
-    "convencionadaComSeguradora": "Works with {seguradora}"
+    "convencionadaComSeguradora": "Works with {seguradora}",
+    "escolhido": "Chosen quote",
+    "verOficina": "See the garage (reviews, address)"
   },
   "clienteMensagens": {
     "workshopFallback": "Repair shop",
@@ -270,7 +272,8 @@
     "escolherOficinaTitulo": "Which workshop?",
     "escolherOficinaTexto": "Each workshop has its own conversation with you.",
     "semConversaAinda": "No workshop has written yet. When a workshop sends a quote or a message, the conversation will appear here.",
-    "pagadorSubtitulo": "Repair payment (accident)"
+    "pagadorSubtitulo": "Repair payment (accident)",
+    "verOficina": "See the garage"
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Received",
@@ -341,5 +344,13 @@
     "erro": "Could not save. Please try again.",
     "cancelar": "Cancel",
     "salvar": "Save"
+  },
+  "avaliacaoPendente": {
+    "titulo": "Rate {oficina}",
+    "texto": "The job is done: leave your review. It is needed before a new request.",
+    "bloqueio": "Before a new request, rate your last job (it takes a few seconds). If you just had an accident, use the accident button.",
+    "avaliarAgora": "Rate now",
+    "bloqueioTitulo": "Your review is missing",
+    "acidente": "I just had an accident"
   }
 }

@@ -6,6 +6,7 @@ import { Link } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
+import { chaveDesc } from '@/lib/utils';
 import { STATUS_MANUTENCAO } from '@fixauto/shared';
 import type { StatusManutencao, ManutencaoEtapa } from '@fixauto/shared';
 
@@ -249,7 +250,7 @@ export default function AcompanhamentoPage() {
             <span className="text-3xl">{latestInfo.icon}</span>
             <div>
               <p className="text-lg font-bold">{tc(`statusManutencao.${latestStatus!}`)}</p>
-              <p className="text-sm opacity-80">{tc(`statusManutencao.${latestStatus!}Desc`)}</p>
+              <p className="text-sm opacity-80">{tc(`statusManutencao.${chaveDesc(latestStatus!)}`)}</p>
             </div>
           </div>
         </div>

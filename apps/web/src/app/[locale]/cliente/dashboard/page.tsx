@@ -12,6 +12,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import { formatCurrency, timeAgo, cleanDescricao } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import GarantiasAtivas from '@/components/cliente/GarantiasAtivas';
+import AvaliacaoPendente from '@/components/cliente/AvaliacaoPendente';
 
 function formatDateShort(dateStr: string, locale: string): string {
   const d = new Date(dateStr);
@@ -167,6 +168,7 @@ export default function ClienteDashboard() {
       </div>
 
       {/* Accidents where user is the other involved */}
+      <AvaliacaoPendente />
       <GarantiasAtivas />
       <AccidenteEnvolvido />
 

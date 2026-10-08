@@ -160,10 +160,19 @@ export default function ClienteMensagensListPage() {
           ...solMensagens.map((m: any) => m.oficina_id),
           ...(orcamentos || []).filter((o: any) => o.solicitacao_id === sol.id).map((o: any) => o.oficina_id),
         ]));
-        // servico terminado: as conversas com as oficinas nao escolhidas somem
+        // so as conversas que ainda valem (mesma regra do banco, conversa_aberta):
+        // escolhida outra oficina ou orcamento recusado -> some; servico
+        // terminado -> so a oficina escolhida, enquanto a garantia vale
+        const orcsSol = (orcamentos || []).filter((o: any) => o.solicitacao_id === sol.id);
+        const escolhida = orcsSol.find((o: any) => o.status === 'aceito')?.oficina_id;
+        oficinasDoPedido = oficinasDoPedido.filter((o) => (escolhida ? o === escolhida : !orcsSol.some((x: any) => x.oficina_id === o && x.status === 'recusado')));
         if (['concluida', 'cancelada'].includes(sol.status)) {
-          const escolhida = (orcamentos || []).find((o: any) => o.solicitacao_id === sol.id && o.status === 'aceito')?.oficina_id;
-          oficinasDoPedido = oficinasDoPedido.filter((o) => o === escolhida);
+          const abertas: string[] = [];
+          for (const o of oficinasDoPedido) {
+            const { data: aberta } = await supabase.rpc('conversa_aberta', { p_sol: sol.id, p_of: o });
+            if (aberta) abertas.push(o);
+          }
+          oficinasDoPedido = abertas;
         }
         const conversasOficina: ConversaOficina[] = oficinasDoPedido.map((oficinaId) => {
           const daOficina = solMensagens.filter((m: any) => m.oficina_id === oficinaId);

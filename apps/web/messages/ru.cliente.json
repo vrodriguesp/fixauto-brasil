@@ -234,7 +234,9 @@
     "escolhaHorarioDica": "Нажмите на день и время, когда вы привезёте машину в автосервис.",
     "escolhaHorarioAntes": "Выберите время выше",
     "horariosVencidos": "Предложенное время уже прошло. Попросите мастерскую в сообщении о новых датах.",
-    "convencionadaComSeguradora": "Работает с {seguradora}"
+    "convencionadaComSeguradora": "Работает с {seguradora}",
+    "escolhido": "Выбранное предложение",
+    "verOficina": "Посмотреть сервис (отзывы, адрес)"
   },
   "clienteMensagens": {
     "workshopFallback": "Автосервис",
@@ -270,7 +272,8 @@
     "escolherOficinaTitulo": "С какой мастерской?",
     "escolherOficinaTexto": "С каждой мастерской у вас отдельная переписка.",
     "semConversaAinda": "Пока ни одна мастерская не написала. Когда мастерская пришлёт смету или сообщение, переписка появится здесь.",
-    "pagadorSubtitulo": "Оплата ремонта (ДТП)"
+    "pagadorSubtitulo": "Оплата ремонта (ДТП)",
+    "verOficina": "О сервисе"
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Принят",
@@ -341,5 +344,13 @@
     "erro": "Не удалось сохранить. Попробуйте ещё раз.",
     "cancelar": "Отмена",
     "salvar": "Сохранить"
+  },
+  "avaliacaoPendente": {
+    "titulo": "Оцените {oficina}",
+    "texto": "Работа завершена: оставьте отзыв. Он нужен, чтобы создать новую заявку.",
+    "bloqueio": "Перед новой заявкой оцените последнюю работу (это займёт несколько секунд). Если вы только что попали в ДТП, нажмите кнопку ДТП.",
+    "avaliarAgora": "Оценить",
+    "bloqueioTitulo": "Не хватает вашего отзыва",
+    "acidente": "Я только что попал в ДТП"
   }
 }

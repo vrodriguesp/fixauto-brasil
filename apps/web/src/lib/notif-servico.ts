@@ -34,6 +34,22 @@ export function notifCarroChegou(idioma: string | null | undefined, v: { oficina
   return { titulo: tx.chegouTitulo, mensagem: preencher(tx.chegou, v) };
 }
 
+// etapa "concluido": o carro esta pronto, o cliente pode buscar. Se a
+// oficina nao marcar a entrega, depois de 5 dias conta como entregue.
+const PRONTO: Record<Idioma, { titulo: string; mensagem: string }> = {
+  pt: { titulo: 'Seu carro está pronto', mensagem: '{carro} está pronto: pode buscá-lo em {oficina}{endereco}.' },
+  'pt-PT': { titulo: 'O seu carro está pronto', mensagem: '{carro} está pronto: pode levantá-lo em {oficina}{endereco}.' },
+  en: { titulo: 'Your car is ready', mensagem: '{carro} is ready: you can pick it up at {oficina}{endereco}.' },
+  et: { titulo: 'Teie auto on valmis', mensagem: '{carro} on valmis: saate selle kätte töökojast {oficina}{endereco}.' },
+  it: { titulo: 'La tua auto è pronta', mensagem: "{carro} è pronta: puoi ritirarla da {oficina}{endereco}." },
+  ru: { titulo: 'Ваша машина готова', mensagem: '{carro} готова: её можно забрать в {oficina}{endereco}.' },
+};
+
+export function notifProntoRetirar(idioma: string | null | undefined, v: { carro: string; oficina: string; endereco?: string }) {
+  const tx = PRONTO[idiomaDe(idioma)];
+  return { titulo: tx.titulo, mensagem: preencher(tx.mensagem, { carro: v.carro, oficina: v.oficina, endereco: v.endereco ? ` (${v.endereco})` : '' }) };
+}
+
 export function notifEtapa(idioma: string | null | undefined, v: { carro: string; status: string }) {
   const l = idiomaDe(idioma);
   return { titulo: TEXTOS[l].etapaTitulo, mensagem: preencher(TEXTOS[l].etapa, { carro: v.carro, etapa: ETAPAS[l][v.status] || v.status }) };

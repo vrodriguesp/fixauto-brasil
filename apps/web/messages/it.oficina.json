@@ -503,7 +503,9 @@
     "garantia_730": "2 anni",
     "garantiaDias": "{dias} giorni",
     "garantiaAjuda": "Decorre dalla consegna dell'auto. Fino alla fine della garanzia il cliente può continuare a scriverti.",
-    "comissaoPagaNoFim": "Questa commissione ({valor}) la paghi a BipFix alla fine del servizio. Il cliente paga solo l'importo del preventivo ({total})."
+    "comissaoPagaNoFim": "Questa commissione ({valor}) la paghi a BipFix alla fine del servizio. Il cliente paga solo l'importo del preventivo ({total}).",
+    "garantiaOutra": "Altro (scrivi i giorni)",
+    "garantiaDiasCampo": "Giorni di garanzia"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "La password deve avere almeno 8 caratteri",
@@ -826,6 +828,8 @@
     "hist_etapa": "Fase registrata",
     "hist_entregue": "Consegnato",
     "confirmarEntregaTexto": "Consegnare l'auto al cliente? Il servizio verrà chiuso e il cliente avvisato. Verifica che la riparazione sia finita.",
-    "confirmarEntregaSim": "Sì, consegna"
+    "confirmarEntregaSim": "Sì, consegna",
+    "confirmarConcluidoTexto": "Segnare come concluso avvisa subito il cliente di venire a ritirare l'auto. Se non segni la consegna, dopo 5 giorni l'auto risulta consegnata (parte la garanzia). Confermi?",
+    "confirmarConcluidoSim": "Sì, avvisa il cliente"
   }
 }

@@ -234,7 +234,9 @@
     "escolhaHorarioDica": "Toque no dia e hora em que vai levar o carro à oficina.",
     "escolhaHorarioAntes": "Escolha um horário acima",
     "horariosVencidos": "Os horários oferecidos já passaram. Peça novas datas à oficina por mensagem.",
-    "convencionadaComSeguradora": "Convencionada com {seguradora}"
+    "convencionadaComSeguradora": "Convencionada com {seguradora}",
+    "escolhido": "Orçamento escolhido",
+    "verOficina": "Ver a oficina (avaliações, morada)"
   },
   "clienteMensagens": {
     "workshopFallback": "Oficina",
@@ -270,7 +272,8 @@
     "escolherOficinaTitulo": "Com que oficina?",
     "escolherOficinaTexto": "Cada oficina tem a sua conversa consigo.",
     "semConversaAinda": "Nenhuma oficina escreveu ainda. Quando uma oficina enviar orçamento ou mensagem, a conversa aparece aqui.",
-    "pagadorSubtitulo": "Pagamento da reparação (acidente)"
+    "pagadorSubtitulo": "Pagamento da reparação (acidente)",
+    "verOficina": "Ver a oficina"
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Recebido",
@@ -341,5 +344,13 @@
     "erro": "Não foi possível guardar. Tente novamente.",
     "cancelar": "Cancelar",
     "salvar": "Guardar"
+  },
+  "avaliacaoPendente": {
+    "titulo": "Avalie {oficina}",
+    "texto": "O serviço terminou: deixe a sua avaliação. É necessária para fazer um novo pedido.",
+    "bloqueio": "Antes de um novo pedido, avalie o último serviço (leva poucos segundos). Se acabou de ter um acidente, use o botão de acidente.",
+    "avaliarAgora": "Avaliar agora",
+    "bloqueioTitulo": "Falta a sua avaliação",
+    "acidente": "Acabei de ter um acidente"
   }
 }
