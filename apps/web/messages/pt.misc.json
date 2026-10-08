@@ -382,7 +382,7 @@
     ],
     "s5Outro": "No app, os avisos aparecem no alto da tela, com números nas abas. Acompanhe também pela página do pedido. Quando o serviço termina, as conversas com as outras oficinas fecham. A da oficina escolhida fica aberta até o fim da garantia, e a contagem aparece na sua tela inicial.",
     "s6Title": "6. Como avaliar o serviço",
-    "s6Intro": "Após a conclusão do serviço, você pode avaliar a oficina para ajudar outros motoristas:",
+    "s6Intro": "Quando o carro é entregue, avalie a oficina: isso ajuda outros motoristas. A avaliação é obrigatória para fazer um novo pedido (como no Uber); o botão \"Acabei de bater\" nunca é bloqueado.",
     "s6Steps": [
       {
         "title": "Nota de 1 a 5 estrelas",
@@ -556,7 +556,7 @@
         "desc": "Envie fotos das etapas para que o cliente acompanhe visualmente."
       }
     ],
-    "s6Note": "Oficinas que atualizam o status com frequência recebem avaliações mais altas e fidelizam mais clientes.",
+    "s6Note": "Ao marcar \"Concluído\" (com dupla confirmação) o cliente é avisado para vir buscar o carro. Marque \"Entregue\" quando ele retirar: começa a garantia e o cliente avalia. Se não marcar, depois de 5 dias o carro conta como entregue. Oficinas que atualizam o status com frequência recebem avaliações mais altas.",
     "s7Title": "7. Avaliações e reputação",
     "s7Intro": "Sua reputação na plataforma é construída pelas avaliações dos clientes:",
     "s7Items": [

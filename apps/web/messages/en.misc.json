@@ -641,7 +641,7 @@
     ],
     "s5Outro": "In the app, notices appear at the top of the screen, with numbers on the tabs. You can also follow everything on the request page. When the job is finished, conversations with the other workshops close. The chosen workshop’s stays open until the warranty ends, and the countdown appears on your home screen.",
     "s6Title": "6. How to rate the service",
-    "s6Intro": "Once the service is finished, you can rate the repair shop to help other drivers:",
+    "s6Intro": "When the car is handed back, rate the repair shop: it helps other drivers. The review is required before a new request (like Uber); the accident button is never blocked.",
     "s6Steps": [
       {
         "title": "Rate 1 to 5 stars",
@@ -815,7 +815,7 @@
         "desc": "Send photos of each stage so the customer can follow along visually."
       }
     ],
-    "s6Note": "Repair shops that update the status frequently get higher ratings and build more customer loyalty.",
+    "s6Note": "Marking \"Completed\" (double confirmation) tells the customer to come and pick up the car. Mark \"Delivered\" when they collect it: the warranty starts and the customer leaves a review. If you do not, after 5 days the car counts as delivered. Shops that update the status often get higher ratings.",
     "s7Title": "7. Reviews and reputation",
     "s7Intro": "Your reputation on the platform is built through customer reviews:",
     "s7Items": [

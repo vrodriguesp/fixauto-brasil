@@ -641,7 +641,7 @@
     ],
     "s5Outro": "Nell'app gli avvisi compaiono in alto sullo schermo, con i numeri sulle schede. Puoi seguire tutto anche dalla pagina della richiesta. Quando il servizio è finito, le conversazioni con le altre officine si chiudono. Quella con l'officina scelta resta aperta fino alla fine della garanzia, e il conto alla rovescia appare nella tua schermata iniziale.",
     "s6Title": "6. Come valutare il servizio",
-    "s6Intro": "Dopo il completamento del servizio, puoi valutare l'officina per aiutare altri automobilisti:",
+    "s6Intro": "Quando l'auto ti viene consegnata, valuta l'officina: aiuta gli altri automobilisti. La valutazione è obbligatoria per fare una nuova richiesta (come su Uber); il pulsante dell'incidente non viene mai bloccato.",
     "s6Steps": [
       {
         "title": "Voto da 1 a 5 stelle",
@@ -815,7 +815,7 @@
         "desc": "Invia le foto delle fasi affinché il cliente possa seguirle visivamente."
       }
     ],
-    "s6Note": "Le officine che aggiornano lo stato frequentemente ricevono valutazioni più alte e fidelizzano più clienti.",
+    "s6Note": "Segnando \"Concluso\" (con doppia conferma) il cliente viene avvisato di venire a ritirare l'auto. Segna \"Consegnato\" quando la ritira: parte la garanzia e il cliente lascia la valutazione. Se non lo fai, dopo 5 giorni l'auto risulta consegnata. Le officine che aggiornano spesso lo stato ricevono valutazioni più alte.",
     "s7Title": "7. Recensioni e reputazione",
     "s7Intro": "La tua reputazione sulla piattaforma si costruisce grazie alle recensioni dei clienti:",
     "s7Items": [

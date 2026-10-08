@@ -641,7 +641,7 @@
     ],
     "s5Outro": "Rakenduses ilmuvad teated ekraani ülaossa ja vahekaartidel on numbrid. Kõike saab jälgida ka päringu lehel. Kui töö on lõpetatud, suletakse vestlused teiste töökodadega. Valitud töökoja vestlus jääb avatuks garantii lõpuni ja loendur on teie avalehel.",
     "s6Title": "6. Kuidas teenust hinnata",
-    "s6Intro": "Pärast teenuse lõppu saad töökoda hinnata, et aidata teisi juhte:",
+    "s6Intro": "Kui auto on üle antud, hinda töökoda: see aitab teisi juhte. Hinnang on uue päringu tegemiseks kohustuslik (nagu Uberis); õnnetuse nuppu ei blokeerita kunagi.",
     "s6Steps": [
       {
         "title": "Hinne 1 kuni 5 tärni",
@@ -815,7 +815,7 @@
         "desc": "Saada etappide fotod, et klient saaks visuaalselt jälgida."
       }
     ],
-    "s6Note": "Töökojad, kes uuendavad staatust sageli, saavad kõrgemaid hinnanguid ja hoiavad kliente paremini.",
+    "s6Note": "\"Lõpetatud\" märkimine (topeltkinnitusega) teavitab klienti, et auto on valmis. Märgi \"Üle antud\", kui klient auto ära viib: garantii algab ja klient annab hinnangu. Kui sa seda ei tee, loetakse auto 5 päeva pärast üleantuks. Töökojad, kes uuendavad staatust sageli, saavad kõrgemaid hinnanguid.",
     "s7Title": "7. Hinnangud ja maine",
     "s7Intro": "Sinu maine platvormil kujuneb klientide hinnangute põhjal:",
     "s7Items": [

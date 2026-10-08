@@ -49,3 +49,14 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
 - Agenda: botão "Etapas" após o check-in; entregar o carro pede confirmação; resumo do mês traduzido.
 - Perfil da oficina: cabeçalho no celular, aviso antes da aprovação; página pública não guarda mais o 404.
 - Teste novo: `site-garantia.mjs`.
+
+## Lote da noite (08/10)
+- **Concluído ≠ Entregue:** "Concluído" (dupla confirmação na tela da oficina) avisa o cliente para buscar o carro, com o endereço. "Entregue" fecha o serviço (garantia, avaliação, comissão — `lib/entrega.ts`, usado pela confirmação, pela etapa e pelo agendador).
+- **Entrega automática:** 5 dias em "concluído" sem entrega → entregue. `POST /api/tarefas/entregas-automaticas` (chave `TAREFAS_CHAVE` em `.env.production.local` do servidor), chamado de hora em hora pelo crontab do servidor (`/root/entregas-automaticas.sh`, log em `/var/log/entregas-automaticas.log`).
+- **Avaliação obrigatória (como no Uber):** serviço entregue sem avaliação → aviso fixo no início (site e app) e pedido novo bloqueado (tela + banco, migração 044 `tem_avaliacao_pendente`). O "acabei de bater" não é bloqueado.
+- **Conversas:** orçamento recusado ou outra oficina escolhida → a conversa com essa oficina fecha e some da lista (migração 044, `conversa_aberta`); a escolhida fica até o fim da garantia.
+- **Orçamento para o cliente:** itens, garantia do vendedor, nota e link da página pública da oficina; o escolhido em destaque (verde) e os recusados apagados. Link da oficina também na conversa.
+- Garantia digitada à mão ("Outra") além das opções prontas.
+- **App:** contagem da garantia também dentro do pedido e recarregada ao voltar à tela (antes só carregava uma vez); botão voltar sem "(tabs)"; puxar para atualizar no pedido e na conversa; horários com a entrega prevista em duas linhas.
+- Etapas sem chave crua (`aguardando_pecas` → `aguardandoPecasDesc`); página pública com estrelas dentro da tela no celular.
+- Teste novo: `site-conclusao.mjs` (produção, 390 px) — tudo OK.
