@@ -38,7 +38,17 @@ const conta = async (tipo, idioma) => {
   return { id: data.user.id, email, senha };
 };
 const sessao = async (c) => { const a = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } }); const { data } = await a.auth.signInWithPassword({ email: c.email, password: c.senha }); return { a, token: data.session?.access_token }; };
-const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAF0lEQVR4nGP8z8DAwMDAxMDAwMDAAAANHQEDasKb6QAAAABJRU5ErkJggg==', 'base64');
+import zlib from 'node:zlib';
+// PNG 320x240 de verdade (a IA recusa imagens minusculas como "ilegiveis")
+function png(w = 320, h = 240) {
+  const crc = (b) => { let c = ~0; for (const x of b) { c ^= x; for (let k = 0; k < 8; k++) c = (c >>> 1) ^ (0xedb88320 & -(c & 1)); } return ~c >>> 0; };
+  const bloco = (tipo, dados) => { const t = Buffer.from(tipo); const l = Buffer.alloc(4); l.writeUInt32BE(dados.length); const c = Buffer.alloc(4); c.writeUInt32BE(crc(Buffer.concat([t, dados]))); return Buffer.concat([l, t, dados, c]); };
+  const ihdr = Buffer.alloc(13); ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4); ihdr[8] = 8; ihdr[9] = 2;
+  const linhas = Buffer.alloc((w * 3 + 1) * h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const i = y * (w * 3 + 1) + 1 + x * 3; linhas[i] = 120 + (x % 60); linhas[i + 1] = 120; linhas[i + 2] = 130 + (y % 40); }
+  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), bloco('IHDR', ihdr), bloco('IDAT', zlib.deflateSync(linhas)), bloco('IEND', Buffer.alloc(0))]);
+}
+const PNG = png();
 
 try {
   const cli = await conta('cliente', 'pt'); const ofi = await conta('oficina', 'it');
@@ -69,7 +79,8 @@ try {
   const { token: tOf } = await sessao(ofi);
   const rIa = await fetch(`${SITE}/api/analisar-dano`, { method: 'POST', headers: { Authorization: `Bearer ${tOf}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ solicitacao_id: s.id }) });
   const dIa = await rIa.json().catch(() => ({}));
-  ok('7 IA analisa (ou responde com codigo claro se ocupada)', (rIa.ok && dIa.analise) || dIa.codigo === 'IA_OCUPADA', `${rIa.status} ${JSON.stringify(dIa).slice(0, 160)}`);
+  ok('7 IA analisa a foto (ou codigo claro se o Google estiver ocupado)', (rIa.ok && !!dIa.analise) || dIa.codigo === 'IA_OCUPADA', `${rIa.status} ${JSON.stringify(dIa).slice(0, 160)}`);
+  ok('7 IA de fato analisou', rIa.ok && !!dIa.analise, `${rIa.status} ${dIa.codigo || ''}`);
 
   // ---- 9) seguradoras + 8) endereco no perfil
   await pO.goto(`${SITE}/it/oficina/perfil`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3000);

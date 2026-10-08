@@ -540,7 +540,8 @@
     "severidadeSevero": "Critical",
     "erroIaOcupada": "The automatic analysis is busy right now. Try again in a minute.",
     "erroSemFotos": "This request has no photos to analyse yet.",
-    "erroGenerico": "Could not analyse right now. Please try again."
+    "erroGenerico": "Could not analyse right now. Please try again.",
+    "erroFotoInvalida": "The photos of this request could not be read. Ask the customer for a new photo."
   },
   "cookieBanner": {
     "texto": "We use cookies to understand how you use the site and to improve your experience. By accepting, you agree to our",

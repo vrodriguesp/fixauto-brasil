@@ -130,7 +130,12 @@ Seja BREVE. Escreva os textos (resumo, checklist_inspecao, pecas_afetadas, pergu
 
     if (!geminiRes || !geminiRes.ok) {
       const errData = geminiRes ? await geminiRes.json().catch(() => ({})) : {};
-      console.error('[analisar-dano] Gemini', geminiRes?.status, (errData as any).error?.message);
+      const msgErro = String((errData as any).error?.message || '');
+      console.error('[analisar-dano] Gemini', geminiRes?.status, msgErro);
+      // foto que a IA nao consegue ler (corrompida/formato) x servico ocupado
+      if (geminiRes?.status === 400 && /image/i.test(msgErro)) {
+        return NextResponse.json({ error: 'Foto ilegivel', codigo: 'FOTO_INVALIDA' }, { status: 422 });
+      }
       return NextResponse.json({ error: 'IA ocupada', codigo: 'IA_OCUPADA' }, { status: 503 });
     }
 

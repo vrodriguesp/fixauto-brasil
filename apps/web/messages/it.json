@@ -540,7 +540,8 @@
     "severidadeSevero": "Critico",
     "erroIaOcupada": "L'analisi automatica è occupata in questo momento. Riprova tra un minuto.",
     "erroSemFotos": "Questa richiesta non ha ancora foto da analizzare.",
-    "erroGenerico": "Impossibile analizzare adesso. Riprova."
+    "erroGenerico": "Impossibile analizzare adesso. Riprova.",
+    "erroFotoInvalida": "Non è stato possibile leggere le foto di questa richiesta. Chiedi al cliente una nuova foto."
   },
   "cookieBanner": {
     "texto": "Utilizziamo i cookie per capire come usi il sito e migliorare la tua esperienza. Accettando, accetti la nostra",

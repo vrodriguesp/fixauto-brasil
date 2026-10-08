@@ -540,7 +540,8 @@
     "severidadeSevero": "Severo",
     "erroIaOcupada": "A análise automática está ocupada agora. Tente de novo em 1 minuto.",
     "erroSemFotos": "Este pedido ainda não tem fotos para analisar.",
-    "erroGenerico": "Não foi possível analisar agora. Tente de novo."
+    "erroGenerico": "Não foi possível analisar agora. Tente de novo.",
+    "erroFotoInvalida": "Não foi possível ler as fotos deste pedido. Peça ao cliente uma foto nova."
   },
   "cookieBanner": {
     "texto": "Usamos cookies para entender como você usa o site e melhorar sua experiência. Ao aceitar, você concorda com nossa",
