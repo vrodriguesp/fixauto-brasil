@@ -150,12 +150,12 @@ export default function ManualCheckinPage() {
               <input id="c7917-1" type="text" className="input-field" placeholder={t('placeholderNomeCompleto')} value={clienteNome} onChange={(e) => setClienteNome(e.target.value)} required />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="c7917-2" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
+              <div className="min-w-0">
+                <label htmlFor="c7917-2" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('telefone')}</label>
                 <input id="c7917-2" type="tel" className="input-field" placeholder={t('placeholderTelefone')} value={clienteTelefone} onChange={(e) => setClienteTelefone(e.target.value)} />
               </div>
-              <div>
-                <label htmlFor="c7917-3" className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
+              <div className="min-w-0">
+                <label htmlFor="c7917-3" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('email')}</label>
                 <input id="c7917-3" type="email" className="input-field" placeholder={EXEMPLO_EMAIL} value={clienteEmail} onChange={(e) => setClienteEmail(e.target.value)} />
               </div>
             </div>
@@ -167,26 +167,26 @@ export default function ManualCheckinPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('dadosVeiculo')}</h2>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="c7917-4" className="block text-sm font-medium text-gray-700 mb-1">{t('marcaObrigatorio')}</label>
+              <div className="min-w-0">
+                <label htmlFor="c7917-4" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('marcaObrigatorio')}</label>
                 <input id="c7917-4" type="text" className="input-field" placeholder={t('placeholderMarca')} value={veiculoMarca} onChange={(e) => setVeiculoMarca(e.target.value)} required />
               </div>
-              <div>
-                <label htmlFor="c7917-5" className="block text-sm font-medium text-gray-700 mb-1">{t('modeloObrigatorio')}</label>
+              <div className="min-w-0">
+                <label htmlFor="c7917-5" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('modeloObrigatorio')}</label>
                 <input id="c7917-5" type="text" className="input-field" placeholder={t('placeholderModelo')} value={veiculoModelo} onChange={(e) => setVeiculoModelo(e.target.value)} required />
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label htmlFor="c7917-6" className="block text-sm font-medium text-gray-700 mb-1">{t('ano')}</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div className="min-w-0">
+                <label htmlFor="c7917-6" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('ano')}</label>
                 <input id="c7917-6" type="text" className="input-field" placeholder="2023" value={veiculoAno} onChange={(e) => setVeiculoAno(e.target.value)} />
               </div>
-              <div>
-                <label htmlFor="c7917-7" className="block text-sm font-medium text-gray-700 mb-1">{t('placa')}</label>
+              <div className="min-w-0">
+                <label htmlFor="c7917-7" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('placa')}</label>
                 <input id="c7917-7" type="text" className="input-field" placeholder={exemploPlaca(locale)} value={veiculoPlaca} onChange={(e) => setVeiculoPlaca(e.target.value)} />
               </div>
-              <div>
-                <label htmlFor="c7917-8" className="block text-sm font-medium text-gray-700 mb-1">{t('cor')}</label>
+              <div className="min-w-0">
+                <label htmlFor="c7917-8" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('cor')}</label>
                 <input id="c7917-8" type="text" className="input-field" placeholder={t('placeholderCor')} value={veiculoCor} onChange={(e) => setVeiculoCor(e.target.value)} />
               </div>
             </div>
