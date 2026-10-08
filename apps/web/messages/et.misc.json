@@ -598,7 +598,7 @@
         "desc": "Näitab, et töökoda on valmis hinnapakkumise summa üle läbi rääkima."
       }
     ],
-    "s3Outro": "Kasuta filtreid, et sorteerida hinna, tähtaja või hinnangu järgi. Kliki igal hinnapakkumisel, et näha kirjete ja teenuste täielikku jaotust.",
+    "s3Outro": "Kasutage filtreid, et sortida hinna, aja või hinnangu järgi. Igal töökojal on teiega oma vestlus (puudutage pakkumisel \"Sõnum töökojale\"). Märk \"Leping teie kindlustusega\" ilmub, kui töökoda teeb koostööd teie kindlustusega.",
     "s4Title": "4. Kuidas teenus broneerida",
     "s4Intro": "Pärast hinnapakkumiste võrdlemist vali see, mis sobib sulle kõige paremini:",
     "s4Steps": [
@@ -620,7 +620,7 @@
     "s5Items": [
       {
         "label": "Check-in",
-        "desc": "Kui sõiduk jõuab töökotta, registreerib meeskond selle saabumise."
+        "desc": "Kui sõiduk jõuab töökotta, registreerib meeskond saabumise ja te saate teate."
       },
       {
         "label": "Töös",
@@ -639,7 +639,7 @@
         "desc": "Töökoda registreerib sõiduki lahkumise ja teenus märgitakse lõpetatuks."
       }
     ],
-    "s5Outro": "Jälgimislehele pääsed igal ajal oma töölaual asuva menüü \"Minu teenused\" kaudu.",
+    "s5Outro": "Rakenduses ilmuvad teated ekraani ülaossa ja vahekaartidel on numbrid. Kõike saab jälgida ka päringu lehel.",
     "s6Title": "6. Kuidas teenust hinnata",
     "s6Intro": "Pärast teenuse lõppu saad töökoda hinnata, et aidata teisi juhte:",
     "s6Steps": [
@@ -666,18 +666,18 @@
       },
       {
         "title": "Registreeri juhtum",
-        "desc": "Tee kahjustusest kohe fotod. Saad registreerida ka teise osalenud sõiduki, sealhulgas selle numbrimärgi ja fotod."
+        "desc": "Pildistage kahjustust kohe. Soovi korral märkige oma auto (üks puudutus, kui see on salvestatud). Auto andmed saab lisada hiljem päringu lehel."
       },
       {
         "title": "Automaatne asukoht",
-        "desc": "Süsteem kasutab sinu GPS-i, et leida avarii toimumiskohale kõige lähemal asuvad töökojad."
+        "desc": "Süsteem kasutab GPS-i lähedal asuvate töökodade leidmiseks ja täidab aadressi koos tänavaga. Nõuanded järgivad õnnetuse toimumise riiki."
       },
       {
         "title": "Kiired hinnapakkumised",
         "desc": "Lähedal asuvad töökojad saavad sinu päringu eelisjärjekorras ja saadavad hinnapakkumised mõne minutiga."
       }
     ],
-    "s7Warning": "Kui õnnetuses on kannatanuid, helista kõigepealt hädaabinumbril 112. Sinu turvalisus on kõige tähtsam."
+    "s7Warning": "Kui keegi sai viga, helistage kõigepealt 112. Teie ohutus on esikohal."
   },
   "docsClienteLayout": {
     "metaTitle": "Juhi juhend",
@@ -696,7 +696,7 @@
       },
       {
         "title": "Töökoja andmed",
-        "desc": "Sisesta registrikood, ametlik nimi, kaubanduslik nimi, telefon ja töökoja täielik aadress."
+        "desc": "Sisestage registrikood, ärinimi, telefon ja aadress eraldi väljadele (tänav, maja nr, sihtnumber ja linn). Sait kontrollib aadressi kaardil, et lähedal asuvad kliendid teid leiaksid."
       },
       {
         "title": "Erialad",
@@ -708,7 +708,7 @@
       },
       {
         "title": "Täielik profiil",
-        "desc": "Lisa töökoja fotod, kirjeldus, lahtiolekuajad ja aktsepteeritavad maksevõimalused. Täielik profiil meelitab rohkem kliente."
+        "desc": "Lisage fotod, kirjeldus, lahtiolekuajad ja lepingulised kindlustusseltsid. Nende klient näeb teie pakkumisel märki."
       }
     ],
     "s2Title": "2. Kuidas päringuid vastu võtta",
@@ -734,7 +734,7 @@
     "s3Steps": [
       {
         "title": "Vaata päring üle",
-        "desc": "Vaata üle kliendi fotod ja kirjeldus. Kui vajad rohkem infot, saad saata sõnumi."
+        "desc": "Vaadake fotosid ja kirjeldust. Kliendiga saab vestelda enne pakkumist: igal töökojal on oma vestlus, mida teised ei näe."
       },
       {
         "title": "Lisa hinnapakkumisse kirjed",
@@ -746,7 +746,7 @@
       },
       {
         "title": "Ajakava saadavus",
-        "desc": "Vali vabad ajad, millal klient saab sõiduki toomise broneerida."
+        "desc": "Pakkuge kliendile aegu auto toomiseks: täna (ainult veel lõppemata ajavahemikud) või järgmistel päevadel."
       },
       {
         "title": "Saada hinnapakkumine",
@@ -759,7 +759,7 @@
     "s4Items": [
       {
         "label": "Check-in",
-        "desc": "Registreeri sõiduki saabumine töökotta. Klienti teavitatakse automaatselt."
+        "desc": "Registreerige sõiduki saabumine. Kui auto saabub enne broneeritud aega, küsib sait kinnitust ja saabumiseks saab täna. Kliendi päring muutub \"töös\" ja klienti teavitatakse."
       },
       {
         "label": "Sisemised tööd",
@@ -767,7 +767,7 @@
       },
       {
         "label": "Määramine",
-        "desc": "Määra iga sõiduk konkreetsele meeskonna mehaanikule."
+        "desc": "Soovi korral määrake iga sõiduk mehaanikule. Kui mehaanikuid pole lisatud, teeb töökoda kõik ise. Iga muudatus jääb ajalukku."
       },
       {
         "label": "Check-out",
@@ -780,19 +780,19 @@
     "s5Steps": [
       {
         "title": "Registreeri töötajad",
-        "desc": "Lisa mehaanikud ja teised töötajad, sisestades nende nime, e-posti ja ametikoha (mehaanik, teenindaja, juht)."
+        "desc": "Lisage mehaanikud ainult nimega või andke portaali juurdepääs (e-post ja ajutine parool) neile, kes lisavad etappe telefonist. Juurdepääsu saab anda ka hiljem."
       },
       {
         "title": "Esimene sisselogimine",
-        "desc": "Töötaja saab e-kirja ajutiste kasutajaandmetega ja peab esimesel sisselogimisel määrama uue parooli."
+        "desc": "Juurdepääsuga töötaja logib sisse ajutise parooliga ja määrab esimesel sisselogimisel uue."
       },
       {
         "title": "Määra sõidukid",
-        "desc": "Määra teenindatavad sõidukid konkreetsetele mehaanikutele. Iga mehaanik näeb ainult endale määratud sõidukeid."
+        "desc": "Määrake sõidukid mehaanikutele. Juurdepääsuga mehaanik näeb ainult oma sõidukeid. Töökoja omanik saab lisada etappe iga mehaaniku nimel."
       },
       {
         "title": "Ametikohapõhised õigused",
-        "desc": "Mehaanikutel on piiratud juurdepääs (ainult määratud sõidukid). Juhtidel ja administraatoritel on täielik juurdepääs töölauale."
+        "desc": "Mehaanikud näevad neile määratud sõidukeid; omanikul on täielik juurdepääs. Töid teinud inimest ei kustutata, vaid deaktiveeritakse: ajalugu jääb terviklikuks."
       }
     ],
     "s6Title": "6. Remondi jälgimine",
@@ -808,7 +808,7 @@
       },
       {
         "label": "Automaatsed teavitused",
-        "desc": "Iga staatuse muutus loob kliendile teavituse."
+        "desc": "Saabumine ja iga etapp saadavad kliendile teate saidil ja rakenduses."
       },
       {
         "label": "Edenemise fotod",

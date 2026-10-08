@@ -339,7 +339,7 @@
         "desc": "Indica que a oficina está disposta a negociar o valor do orçamento."
       }
     ],
-    "s3Outro": "Use os filtros para ordenar por preço, prazo ou avaliação. Clique em cada orçamento para ver o detalhamento completo dos itens e serviços.",
+    "s3Outro": "Use os filtros para ordenar por preço, prazo ou avaliação. Cada oficina tem a sua conversa com você (toque em \"Mensagem para oficina\" no orçamento). O selo \"Conveniada com a sua seguradora\" aparece quando a oficina trabalha com o seu seguro.",
     "s4Title": "4. Como agendar o serviço",
     "s4Intro": "Após comparar os orçamentos, escolha o que melhor atende suas necessidades:",
     "s4Steps": [
@@ -361,7 +361,7 @@
     "s5Items": [
       {
         "label": "Check-in",
-        "desc": "Quando o veículo chega na oficina, a equipe registra a entrada."
+        "desc": "Quando o veículo chega na oficina, a equipe registra a entrada e você recebe um aviso."
       },
       {
         "label": "Em andamento",
@@ -380,7 +380,7 @@
         "desc": "A oficina registra a saída e o serviço é marcado como finalizado."
       }
     ],
-    "s5Outro": "Acesse a página de acompanhamento a qualquer momento pelo menu \"Meus Serviços\" no seu painel.",
+    "s5Outro": "No app, os avisos aparecem no alto da tela, com números nas abas. Acompanhe também pela página do pedido.",
     "s6Title": "6. Como avaliar o serviço",
     "s6Intro": "Após a conclusão do serviço, você pode avaliar a oficina para ajudar outros motoristas:",
     "s6Steps": [
@@ -407,11 +407,11 @@
       },
       {
         "title": "Registre o incidente",
-        "desc": "Tire fotos do dano na hora. Você também pode registrar o outro veículo envolvido, incluindo placa e fotos."
+        "desc": "Tire fotos do dano na hora. Se quiser, informe o seu carro (um toque se já estiver cadastrado). Dá para completar os dados do carro depois, na página do pedido."
       },
       {
         "title": "Localização automática",
-        "desc": "O sistema usa seu GPS para encontrar oficinas mais próximas ao local do acidente."
+        "desc": "O sistema usa o GPS para achar oficinas próximas e preenche o endereço com a rua. As dicas do que fazer seguem o país do acidente."
       },
       {
         "title": "Orçamentos rápidos",
@@ -437,7 +437,7 @@
       },
       {
         "title": "Dados da oficina",
-        "desc": "Informe o CNPJ, razão social, nome fantasia, telefone e endereço completo da oficina."
+        "desc": "Informe o CNPJ, o nome fantasia, o telefone e o endereço em campos separados (rua, número, CEP e cidade). O site confere o endereço no mapa para os clientes próximos encontrarem você."
       },
       {
         "title": "Especialidades",
@@ -449,7 +449,7 @@
       },
       {
         "title": "Perfil completo",
-        "desc": "Adicione fotos da oficina, descrição, horário de funcionamento e formas de pagamento aceitas. Um perfil completo atrai mais clientes."
+        "desc": "Adicione fotos, descrição, horário de funcionamento e as seguradoras conveniadas. O cliente com uma dessas seguradoras vê o selo no seu orçamento."
       }
     ],
     "s2Title": "2. Como receber solicitações",
@@ -475,7 +475,7 @@
     "s3Steps": [
       {
         "title": "Avalie a solicitação",
-        "desc": "Analise as fotos e descrição do cliente. Se precisar de mais informações, você pode enviar uma mensagem."
+        "desc": "Analise as fotos e a descrição. Você pode conversar com o cliente antes de orçar: cada oficina tem a sua própria conversa, que as outras não veem."
       },
       {
         "title": "Adicione itens ao orçamento",
@@ -487,7 +487,7 @@
       },
       {
         "title": "Disponibilidade de agenda",
-        "desc": "Selecione os horários disponíveis para o cliente agendar a entrada do veículo."
+        "desc": "Ofereça horários para o cliente trazer o carro: hoje (só os períodos que ainda não terminaram) ou nos dias seguintes."
       },
       {
         "title": "Envie o orçamento",
@@ -500,7 +500,7 @@
     "s4Items": [
       {
         "label": "Check-in",
-        "desc": "Registre a chegada do veículo na oficina. O cliente é notificado automaticamente."
+        "desc": "Registre a chegada do veículo. Se o carro chegar antes da data agendada, o site pede confirmação e a entrada passa a ser hoje. O pedido do cliente passa a \"em andamento\" e ele é avisado."
       },
       {
         "label": "Eventos internos",
@@ -508,7 +508,7 @@
       },
       {
         "label": "Atribuição",
-        "desc": "Atribua cada veículo a um mecânico específico da sua equipe."
+        "desc": "Atribua cada veículo a um mecânico, se quiser. Sem mecânicos cadastrados, a oficina faz tudo sozinha. Cada troca fica no histórico."
       },
       {
         "label": "Check-out",
@@ -521,19 +521,19 @@
     "s5Steps": [
       {
         "title": "Cadastrar funcionários",
-        "desc": "Adicione mecânicos e outros colaboradores informando nome, e-mail e cargo (mecânico, atendente, gerente)."
+        "desc": "Cadastre mecânicos só com o nome, ou dê acesso ao portal (e-mail e senha temporária) a quem vai registrar as etapas pelo celular. O acesso pode ser dado depois."
       },
       {
         "title": "Primeiro acesso",
-        "desc": "O funcionário recebe um e-mail com credenciais temporárias e deve definir uma nova senha no primeiro login."
+        "desc": "Quem recebe acesso entra com a senha temporária e define uma nova no primeiro login."
       },
       {
         "title": "Atribuir veículos",
-        "desc": "Atribua veículos em serviço a mecânicos específicos. Cada mecânico vê apenas os veículos atribuídos a ele."
+        "desc": "Atribua veículos a mecânicos. O mecânico com acesso vê só os veículos dele. O responsável pela oficina pode registrar etapas em nome de qualquer mecânico."
       },
       {
         "title": "Permissões por cargo",
-        "desc": "Mecânicos têm acesso limitado (veículos atribuídos). Gerentes e administradores têm acesso completo ao painel."
+        "desc": "Mecânicos veem os veículos atribuídos; o responsável tem acesso completo. Quem já trabalhou em serviços não é apagado, é desativado: o histórico fica completo."
       }
     ],
     "s6Title": "6. Acompanhamento da manutenção",
@@ -549,7 +549,7 @@
       },
       {
         "label": "Notificações automáticas",
-        "desc": "Cada mudança de status gera uma notificação para o cliente."
+        "desc": "O check-in e cada etapa geram um aviso para o cliente, no site e no app."
       },
       {
         "label": "Fotos do progresso",

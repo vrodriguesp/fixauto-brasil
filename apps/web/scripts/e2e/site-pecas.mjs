@@ -49,11 +49,12 @@ try {
   await botao(pL, EN('cadastro.proximo')).click();
   await campo(pL, EN('cadastro.labelNomeFantasia')).fill(`TEST PARTS ${tag}`);
   await campo(pL, EN('cadastro.labelCnpj')).fill('87654321');
-  const end = campo(pL, EN('cadastro.labelEndereco'));
-  await end.click(); await end.pressSequentially('Peterburi tee 2', { delay: 40 });
-  const sug = pL.getByRole('option').filter({ hasText: /Tallinn/ }).first();
-  await sug.waitFor({ timeout: 10000 }).catch(() => {});
-  if (await sug.isVisible().catch(() => false)) await sug.click();
+  // endereco em campos (rua, numero, cidade), conferido no mapa
+  await pL.locator('#cadastro-end-rua').fill('Peterburi tee');
+  await pL.locator('#cadastro-end-rua').press('Escape');
+  await pL.locator('#cadastro-end-numero').fill('2');
+  await pL.locator('#cadastro-end-cidade').fill('Tallinn');
+  await pL.locator('#cadastro-end-cidade').blur(); await pL.waitForTimeout(4000);
   await pL.getByText(EN('cadastro.declaracaoResponsavel')).click();
   await botao(pL, EN('cadastro.criarContaLoja')).click();
   await pL.getByText(EN('cadastro.verifiqueTitulo')).waitFor({ timeout: 20000 }).catch(() => {});

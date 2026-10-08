@@ -598,7 +598,7 @@
         "desc": "Indica che l'officina è disposta a negoziare l'importo del preventivo."
       }
     ],
-    "s3Outro": "Usa i filtri per ordinare per prezzo, tempi o valutazione. Clicca su ogni preventivo per vedere il dettaglio completo di voci e servizi.",
+    "s3Outro": "Usa i filtri per ordinare per prezzo, tempi o valutazione. Ogni officina ha la sua conversazione con te (tocca \"Messaggio all'officina\" sul preventivo). Il bollino \"Convenzionata con la tua assicurazione\" appare quando l'officina lavora con la tua compagnia.",
     "s4Title": "4. Come prenotare il servizio",
     "s4Intro": "Dopo aver confrontato i preventivi, scegli quello più adatto alle tue esigenze:",
     "s4Steps": [
@@ -620,7 +620,7 @@
     "s5Items": [
       {
         "label": "Check-in",
-        "desc": "Quando il veicolo arriva in officina, il team ne registra l'arrivo."
+        "desc": "Quando il veicolo arriva in officina, il team registra l'ingresso e ricevi un avviso."
       },
       {
         "label": "In corso",
@@ -639,7 +639,7 @@
         "desc": "L'officina registra l'uscita e il servizio viene contrassegnato come concluso."
       }
     ],
-    "s5Outro": "Accedi alla pagina di monitoraggio in qualsiasi momento dal menu \"I miei servizi\" nella tua area personale.",
+    "s5Outro": "Nell'app gli avvisi compaiono in alto sullo schermo, con i numeri sulle schede. Puoi seguire tutto anche dalla pagina della richiesta.",
     "s6Title": "6. Come valutare il servizio",
     "s6Intro": "Dopo il completamento del servizio, puoi valutare l'officina per aiutare altri automobilisti:",
     "s6Steps": [
@@ -666,18 +666,18 @@
       },
       {
         "title": "Registra l'incidente",
-        "desc": "Scatta subito le foto del danno. Puoi anche registrare l'altro veicolo coinvolto, inclusi targa e foto."
+        "desc": "Scatta subito le foto del danno. Se vuoi, indica la tua auto (un tocco se è già salvata). Puoi completare i dati dell'auto dopo, nella pagina della richiesta."
       },
       {
         "title": "Posizione automatica",
-        "desc": "Il sistema usa il tuo GPS per trovare le officine più vicine al luogo dell'incidente."
+        "desc": "Il sistema usa il GPS per trovare le officine vicine e compila l'indirizzo con la via. I consigli su cosa fare seguono il paese dell'incidente."
       },
       {
         "title": "Preventivi rapidi",
         "desc": "Le officine vicine ricevono la tua richiesta in via prioritaria e inviano i preventivi in pochi minuti."
       }
     ],
-    "s7Warning": "In caso di incidente con feriti, chiama prima il numero di emergenza 112. La tua sicurezza viene prima di tutto."
+    "s7Warning": "Se ci sono feriti, chiama prima il 112. La tua sicurezza viene prima di tutto."
   },
   "docsClienteLayout": {
     "metaTitle": "Guida per l'Automobilista",
@@ -696,7 +696,7 @@
       },
       {
         "title": "Dati dell'officina",
-        "desc": "Inserisci partita IVA, ragione sociale, nome commerciale, telefono e indirizzo completo dell'officina."
+        "desc": "Inserisci partita IVA, nome commerciale, telefono e indirizzo in campi separati (via, civico, CAP e città). Il sito verifica l'indirizzo sulla mappa così i clienti vicini ti trovano."
       },
       {
         "title": "Specializzazioni",
@@ -708,7 +708,7 @@
       },
       {
         "title": "Profilo completo",
-        "desc": "Aggiungi foto dell'officina, una descrizione, gli orari di apertura e i metodi di pagamento accettati. Un profilo completo attira più clienti."
+        "desc": "Aggiungi foto, descrizione, orari di apertura e le assicurazioni convenzionate. Il cliente assicurato con una di queste vede il bollino sul tuo preventivo."
       }
     ],
     "s2Title": "2. Come ricevere le richieste",
@@ -734,7 +734,7 @@
     "s3Steps": [
       {
         "title": "Valuta la richiesta",
-        "desc": "Analizza le foto e la descrizione del cliente. Se hai bisogno di maggiori informazioni, puoi inviare un messaggio."
+        "desc": "Guarda le foto e la descrizione. Puoi scrivere al cliente prima del preventivo: ogni officina ha la propria conversazione, che le altre non vedono."
       },
       {
         "title": "Aggiungi le voci al preventivo",
@@ -746,7 +746,7 @@
       },
       {
         "title": "Disponibilità in agenda",
-        "desc": "Seleziona gli orari disponibili affinché il cliente possa prenotare la consegna del veicolo."
+        "desc": "Proponi gli orari per portare l'auto: oggi (solo le fasce non ancora finite) o nei giorni successivi."
       },
       {
         "title": "Invia il preventivo",
@@ -759,7 +759,7 @@
     "s4Items": [
       {
         "label": "Check-in",
-        "desc": "Registra l'arrivo del veicolo in officina. Il cliente viene notificato automaticamente."
+        "desc": "Registra l'arrivo del veicolo. Se l'auto arriva prima della data prenotata, il sito chiede conferma e l'ingresso diventa oggi. La richiesta del cliente passa a \"in corso\" e il cliente viene avvisato."
       },
       {
         "label": "Lavori interni",
@@ -767,7 +767,7 @@
       },
       {
         "label": "Assegnazione",
-        "desc": "Assegna ogni veicolo a un meccanico specifico del tuo team."
+        "desc": "Assegna ogni veicolo a un meccanico, se vuoi. Senza meccanici registrati, l'officina fa tutto da sola. Ogni cambio resta nello storico."
       },
       {
         "label": "Check-out",
@@ -780,19 +780,19 @@
     "s5Steps": [
       {
         "title": "Registra i dipendenti",
-        "desc": "Aggiungi meccanici e altri collaboratori inserendo nome, e-mail e ruolo (meccanico, addetto, responsabile)."
+        "desc": "Registra i meccanici solo con il nome, oppure dai accesso al portale (e-mail e password temporanea) a chi registrerà le fasi dal telefono. L’accesso si può dare anche dopo."
       },
       {
         "title": "Primo accesso",
-        "desc": "Il dipendente riceve un'e-mail con credenziali temporanee e deve impostare una nuova password al primo accesso."
+        "desc": "Chi riceve l’accesso entra con la password temporanea e ne imposta una nuova al primo accesso."
       },
       {
         "title": "Assegna i veicoli",
-        "desc": "Assegna i veicoli in lavorazione a meccanici specifici. Ogni meccanico vede solo i veicoli a lui assegnati."
+        "desc": "Assegna i veicoli ai meccanici. Il meccanico con accesso vede solo i suoi veicoli. Il titolare dell'officina può registrare le fasi a nome di qualsiasi meccanico."
       },
       {
         "title": "Permessi per ruolo",
-        "desc": "I meccanici hanno accesso limitato (solo ai veicoli assegnati). Responsabili e amministratori hanno accesso completo al pannello."
+        "desc": "I meccanici vedono i veicoli assegnati; il titolare ha accesso completo. Chi ha già lavorato sui servizi non viene cancellato ma disattivato: lo storico resta completo."
       }
     ],
     "s6Title": "6. Monitoraggio della manutenzione",
@@ -808,7 +808,7 @@
       },
       {
         "label": "Notifiche automatiche",
-        "desc": "Ogni cambio di stato genera una notifica per il cliente."
+        "desc": "Il check-in e ogni fase inviano un avviso al cliente, sul sito e nell'app."
       },
       {
         "label": "Foto di avanzamento",

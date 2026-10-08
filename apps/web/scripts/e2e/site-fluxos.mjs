@@ -64,8 +64,13 @@ try {
   await botao(pO, ET('cadastro.proximo')).click();
   await campo(pO, ET('cadastro.labelNomeFantasia')).fill(`TESTE FLUXO ${tag}`);
   await campo(pO, ET('cadastro.labelCnpj')).fill('12345678');
-  ok('oficina: sugestao de endereco ao digitar', await escolherSugestao(pO, ET('cadastro.labelEndereco'), 'Pärnu mnt 10', /Tallinn/));
-  ok('oficina: cidade preenchida pela sugestao', (await campo(pO, ET('cadastro.labelCidade')).inputValue()) === 'Tallinn');
+  // endereco em campos (rua, numero, cidade), conferido no mapa
+  await pO.locator('#cadastro-end-rua').fill('Pärnu mnt');
+  await pO.locator('#cadastro-end-rua').press('Escape');
+  await pO.locator('#cadastro-end-numero').fill('10');
+  await pO.locator('#cadastro-end-cidade').fill('Tallinn');
+  await pO.locator('#cadastro-end-cidade').blur(); await pO.waitForTimeout(4000);
+  ok('oficina: endereco com numero conferido no mapa', /Aadress leitud kaardilt|majanumbrit kaardil pole/.test(await pO.locator('p[role=status]').first().innerText().catch(() => '')));
   await pO.getByText(ET('constants.tiposServico.mecanica'), { exact: true }).first().click();
   await pO.getByText(ET('cadastro.declaracaoResponsavel')).click();
   await botao(pO, ET('cadastro.criarContaOficina')).click();

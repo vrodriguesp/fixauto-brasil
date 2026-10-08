@@ -598,7 +598,7 @@
         "desc": "Indicates the repair shop is open to negotiating the quote amount."
       }
     ],
-    "s3Outro": "Use the filters to sort by price, timeline or rating. Click on each quote to see the full breakdown of items and services.",
+    "s3Outro": "Use the filters to sort by price, time or rating. Each workshop has its own conversation with you (tap \"Message the workshop\" on the quote). The \"Works with your insurer\" badge appears when the workshop works with your insurance.",
     "s4Title": "4. How to schedule the service",
     "s4Intro": "After comparing quotes, choose the one that best fits your needs:",
     "s4Steps": [
@@ -620,7 +620,7 @@
     "s5Items": [
       {
         "label": "Check-in",
-        "desc": "When the vehicle arrives at the shop, the team logs its arrival."
+        "desc": "When the vehicle reaches the workshop, the team records the arrival and you get a notice."
       },
       {
         "label": "In progress",
@@ -639,7 +639,7 @@
         "desc": "The repair shop logs the vehicle's departure and marks the service as finished."
       }
     ],
-    "s5Outro": "Access the tracking page any time from the \"My Services\" menu in your dashboard.",
+    "s5Outro": "In the app, notices appear at the top of the screen, with numbers on the tabs. You can also follow everything on the request page.",
     "s6Title": "6. How to rate the service",
     "s6Intro": "Once the service is finished, you can rate the repair shop to help other drivers:",
     "s6Steps": [
@@ -666,18 +666,18 @@
       },
       {
         "title": "Log the incident",
-        "desc": "Take photos of the damage right away. You can also register the other vehicle involved, including its license plate and photos."
+        "desc": "Take photos of the damage on the spot. If you like, tell us your car (one tap if it is already saved). You can complete the car details later on the request page."
       },
       {
         "title": "Automatic location",
-        "desc": "The system uses your GPS to find the nearest repair shops to the accident location."
+        "desc": "The system uses GPS to find nearby workshops and fills in the address with the street. The tips on what to do follow the country of the accident."
       },
       {
         "title": "Fast quotes",
         "desc": "Nearby repair shops receive your request as a priority and send quotes within minutes."
       }
     ],
-    "s7Warning": "If anyone is injured, call emergency services (112) first. Your safety comes first."
+    "s7Warning": "If anyone is injured, call 112 (in Europe) or the local emergency number first. Your safety comes first."
   },
   "docsClienteLayout": {
     "metaTitle": "Driver Guide",
@@ -696,7 +696,7 @@
       },
       {
         "title": "Repair shop details",
-        "desc": "Enter your business tax ID, legal name, trade name, phone number and full address."
+        "desc": "Enter your company number, trading name, phone and address in separate fields (street, number, postcode and city). The site checks the address on the map so nearby customers can find you."
       },
       {
         "title": "Specialties",
@@ -708,7 +708,7 @@
       },
       {
         "title": "Complete profile",
-        "desc": "Add photos of the shop, a description, business hours and accepted payment methods. A complete profile attracts more customers."
+        "desc": "Add photos, a description, opening hours and your partner insurers. Customers insured with one of them see a badge on your quote."
       }
     ],
     "s2Title": "2. How to receive requests",
@@ -734,7 +734,7 @@
     "s3Steps": [
       {
         "title": "Review the request",
-        "desc": "Look at the customer's photos and description. If you need more information, you can send a message."
+        "desc": "Look at the photos and description. You can chat with the customer before quoting: each workshop has its own conversation, which the others cannot see."
       },
       {
         "title": "Add items to the quote",
@@ -746,7 +746,7 @@
       },
       {
         "title": "Schedule availability",
-        "desc": "Select the available time slots for the customer to schedule the vehicle drop-off."
+        "desc": "Offer times for the customer to bring the car: today (only periods that have not ended yet) or the following days."
       },
       {
         "title": "Send the quote",
@@ -759,7 +759,7 @@
     "s4Items": [
       {
         "label": "Check-in",
-        "desc": "Log the vehicle's arrival at the shop. The customer is notified automatically."
+        "desc": "Record the vehicle arrival. If the car arrives before the booked date, the site asks you to confirm and the arrival becomes today. The customer’s request switches to \"in progress\" and they are notified."
       },
       {
         "label": "Internal jobs",
@@ -767,7 +767,7 @@
       },
       {
         "label": "Assignment",
-        "desc": "Assign each vehicle to a specific mechanic on your team."
+        "desc": "Assign each vehicle to a mechanic if you want. With no mechanics registered, the workshop does everything itself. Every change is kept in the history."
       },
       {
         "label": "Check-out",
@@ -780,19 +780,19 @@
     "s5Steps": [
       {
         "title": "Add staff",
-        "desc": "Add mechanics and other staff by entering their name, email and role (mechanic, front desk, manager)."
+        "desc": "Register mechanics with just their name, or give portal access (email and temporary password) to those who will record steps on their phone. Access can be given later."
       },
       {
         "title": "First login",
-        "desc": "The staff member receives an email with temporary credentials and must set a new password on their first login."
+        "desc": "People with access sign in with the temporary password and set a new one on first login."
       },
       {
         "title": "Assign vehicles",
-        "desc": "Assign vehicles being serviced to specific mechanics. Each mechanic only sees the vehicles assigned to them."
+        "desc": "Assign vehicles to mechanics. A mechanic with access only sees their own vehicles. The workshop owner can record steps on behalf of any mechanic."
       },
       {
         "title": "Role-based permissions",
-        "desc": "Mechanics have limited access (assigned vehicles only). Managers and admins have full access to the dashboard."
+        "desc": "Mechanics see their assigned vehicles; the owner has full access. Anyone who has worked on jobs is not deleted but deactivated, so the history stays complete."
       }
     ],
     "s6Title": "6. Repair tracking",
@@ -808,7 +808,7 @@
       },
       {
         "label": "Automatic notifications",
-        "desc": "Every status change generates a notification for the customer."
+        "desc": "Check-in and every step send a notice to the customer, on the site and in the app."
       },
       {
         "label": "Progress photos",
