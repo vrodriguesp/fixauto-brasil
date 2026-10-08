@@ -639,7 +639,7 @@
         "desc": "The repair shop logs the vehicle's departure and marks the service as finished."
       }
     ],
-    "s5Outro": "In the app, notices appear at the top of the screen, with numbers on the tabs. You can also follow everything on the request page.",
+    "s5Outro": "In the app, notices appear at the top of the screen, with numbers on the tabs. You can also follow everything on the request page. When the job is finished, conversations with the other workshops close. The chosen workshop’s stays open until the warranty ends, and the countdown appears on your home screen.",
     "s6Title": "6. How to rate the service",
     "s6Intro": "Once the service is finished, you can rate the repair shop to help other drivers:",
     "s6Steps": [
@@ -738,11 +738,11 @@
       },
       {
         "title": "Add items to the quote",
-        "desc": "List each service and part separately with a description, quantity and unit price. The more detailed it is, the more confidence the customer will have."
+        "desc": "List each service and part with quantity and price. If the quote is already in another system, upload the photo or PDF: the AI fills in the items and you check them."
       },
       {
         "title": "Estimated timeline",
-        "desc": "State how many business days the service will take."
+        "desc": "Enter the time in days and the service warranty. The warranty starts at hand-over and, until it ends, the customer can keep messaging you."
       },
       {
         "title": "Schedule availability",

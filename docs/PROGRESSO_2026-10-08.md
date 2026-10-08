@@ -40,3 +40,12 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
 2. `GEOAPIFY_KEY` para sugestões de endereço rápidas (conta gratuita em geoapify.com).
 3. Push no celular: precisa do app como versão própria (EAS Build; no iPhone, conta Apple Developer).
 4. Testar no iPhone: GPS real e gravação de áudio (no emulador Android funcionaram).
+
+## Lote da tarde (08/10)
+- **Garantia** no orçamento (conta da entrega); contagem regressiva no início do cliente (site e app). Conversa com a oficina escolhida aberta até o fim da garantia (mínimo 7 dias); com as outras fecha ao terminar o serviço (migração 043, `conversa_aberta`).
+- **Orçamento feito em outro sistema:** foto/PDF lido pela IA (`/api/ler-orcamento`) preenche itens, prazo e garantia; a oficina confere; o documento pode ir anexado. **Comissão:** não muda — é calculada sobre o total enviado na plataforma, no momento da entrega.
+- **App:** tela de notificações com sino (todas as interações, a mais recente em destaque); telas recarregam quando chega aviso; texto não "pula" ao digitar no iPhone (altura de linha); teclado fecha ao rolar.
+- Aviso de mensagem feito pelo servidor (antes podia falhar sem aparecer).
+- Agenda: botão "Etapas" após o check-in; entregar o carro pede confirmação; resumo do mês traduzido.
+- Perfil da oficina: cabeçalho no celular, aviso antes da aprovação; página pública não guarda mais o 404.
+- Teste novo: `site-garantia.mjs`.

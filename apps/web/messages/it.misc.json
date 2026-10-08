@@ -639,7 +639,7 @@
         "desc": "L'officina registra l'uscita e il servizio viene contrassegnato come concluso."
       }
     ],
-    "s5Outro": "Nell'app gli avvisi compaiono in alto sullo schermo, con i numeri sulle schede. Puoi seguire tutto anche dalla pagina della richiesta.",
+    "s5Outro": "Nell'app gli avvisi compaiono in alto sullo schermo, con i numeri sulle schede. Puoi seguire tutto anche dalla pagina della richiesta. Quando il servizio è finito, le conversazioni con le altre officine si chiudono. Quella con l'officina scelta resta aperta fino alla fine della garanzia, e il conto alla rovescia appare nella tua schermata iniziale.",
     "s6Title": "6. Come valutare il servizio",
     "s6Intro": "Dopo il completamento del servizio, puoi valutare l'officina per aiutare altri automobilisti:",
     "s6Steps": [
@@ -738,11 +738,11 @@
       },
       {
         "title": "Aggiungi le voci al preventivo",
-        "desc": "Elenca separatamente ogni servizio e ricambio con descrizione, quantità e prezzo unitario. Più è dettagliato, maggiore sarà la fiducia del cliente."
+        "desc": "Elenca ogni lavorazione e ricambio con quantità e prezzo. Se il preventivo è già pronto in un altro sistema, carica la foto o il PDF: l'IA compila le voci e tu controlli."
       },
       {
         "title": "Tempi stimati",
-        "desc": "Indica in quanti giorni lavorativi verrà completato il servizio."
+        "desc": "Indica i tempi in giorni e la garanzia del servizio. La garanzia decorre dalla consegna e, fino alla scadenza, il cliente può continuare a scriverti."
       },
       {
         "title": "Disponibilità in agenda",

@@ -639,7 +639,7 @@
         "desc": "Töökoda registreerib sõiduki lahkumise ja teenus märgitakse lõpetatuks."
       }
     ],
-    "s5Outro": "Rakenduses ilmuvad teated ekraani ülaossa ja vahekaartidel on numbrid. Kõike saab jälgida ka päringu lehel.",
+    "s5Outro": "Rakenduses ilmuvad teated ekraani ülaossa ja vahekaartidel on numbrid. Kõike saab jälgida ka päringu lehel. Kui töö on lõpetatud, suletakse vestlused teiste töökodadega. Valitud töökoja vestlus jääb avatuks garantii lõpuni ja loendur on teie avalehel.",
     "s6Title": "6. Kuidas teenust hinnata",
     "s6Intro": "Pärast teenuse lõppu saad töökoda hinnata, et aidata teisi juhte:",
     "s6Steps": [
@@ -738,11 +738,11 @@
       },
       {
         "title": "Lisa hinnapakkumisse kirjed",
-        "desc": "Loetle iga teenus ja varuosa eraldi koos kirjelduse, koguse ja ühikuhinnaga. Mida üksikasjalikum, seda suurem on kliendi usaldus."
+        "desc": "Lisage iga töö ja varuosa koguse ja hinnaga. Kui pakkumine on teises süsteemis valmis, laadige üles foto või PDF: tehisintellekt täidab read ja teie kontrollite."
       },
       {
         "title": "Hinnanguline tähtaeg",
-        "desc": "Märgi, mitme tööpäevaga teenus valmib."
+        "desc": "Märkige tähtaeg päevades ja teenuse garantii. Garantii algab üleandmisest ja selle lõpuni saab klient teile kirjutada."
       },
       {
         "title": "Ajakava saadavus",

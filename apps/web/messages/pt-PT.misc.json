@@ -639,7 +639,7 @@
         "desc": "A oficina regista a saída do veículo e marca o serviço como terminado."
       }
     ],
-    "s5Outro": "Na app, os avisos aparecem no topo do ecrã, com números nos separadores. Acompanhe também pela página do pedido.",
+    "s5Outro": "Na app, os avisos aparecem no topo do ecrã, com números nos separadores. Acompanhe também pela página do pedido. Quando o serviço termina, as conversas com as outras oficinas fecham. A da oficina escolhida fica aberta até ao fim da garantia, e a contagem aparece no seu ecrã inicial.",
     "s6Title": "6. Como avaliar o serviço",
     "s6Intro": "Quando o serviço termina, pode avaliar a oficina para ajudar outros condutores:",
     "s6Steps": [
@@ -738,11 +738,11 @@
       },
       {
         "title": "Adicione itens ao orçamento",
-        "desc": "Liste cada serviço e peça separadamente, com descrição, quantidade e preço unitário. Quanto mais detalhado for, mais confiança terá o cliente."
+        "desc": "Liste cada serviço e peça com quantidade e valor. Se o orçamento já está pronto noutro sistema, envie a fotografia ou o PDF: a IA preenche os itens e confere."
       },
       {
         "title": "Prazo estimado",
-        "desc": "Indique quantos dias úteis o serviço vai demorar."
+        "desc": "Indique o prazo em dias e a garantia do serviço. A garantia conta a partir da entrega e, até ao fim, o cliente continua a falar consigo."
       },
       {
         "title": "Disponibilidade na agenda",
