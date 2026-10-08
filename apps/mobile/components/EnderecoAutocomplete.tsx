@@ -66,7 +66,7 @@ export default function EnderecoAutocomplete({
         onFocus={() => { focado.current = true; aoFocar?.(); }}
         onBlur={() => { focado.current = false; }}
         autoCorrect={false}
-        className="border border-gray-300 rounded-lg px-4 py-3 text-base"
+        className="border border-gray-300 rounded-lg px-4 py-3 text-[16px]"
       />
       {sugestoes.length > 0 && (
         <View className="border border-gray-200 rounded-lg mt-1 bg-white overflow-hidden">

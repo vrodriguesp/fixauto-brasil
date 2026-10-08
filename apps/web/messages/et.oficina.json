@@ -140,7 +140,10 @@
     "nenhumEventoAgendado": "Ühtegi sündmust pole planeeritud",
     "checkinAntecipadoTexto": "See auto on broneeritud ajale {data}. Kas registreerida saabumine kohe? Saabumise kuupäevaks saab täna ja saate jätkata kõigi etappidega.",
     "checkinAntecipadoConfirmar": "Jah, registreeri kohe",
-    "cancelarAntecipado": "Tühista"
+    "cancelarAntecipado": "Tühista",
+    "btnEtapa": "Etapid",
+    "confirmarEntregaTexto": "Kas anda auto kliendile üle? Töö suletakse ja klienti teavitatakse. Kontrollige, et remont on lõpetatud.",
+    "confirmarEntregaSim": "Jah, anna üle"
   },
   "oficinaAprender": {
     "carregando": "Laadin...",
@@ -488,7 +491,25 @@
     "cancelar": "Tühista",
     "atualizarOrcamento": "Uuenda hinnapakkumist",
     "semComissaoOrcamento": "BipFix ei võta selle pakkumise pealt komisjonitasu. Summa, mille saadad, on summa, mida klient näeb.",
-    "horarioPassado": "Üks aegadest on juba möödas. Valige täna veel lõppemata ajavahemik või hilisem päev."
+    "horarioPassado": "Üks aegadest on juba möödas. Valige täna veel lõppemata ajavahemik või hilisem päev.",
+    "importarTitulo": "Kas pakkumine on juba teises süsteemis valmis?",
+    "importarTexto": "Laadige üles foto või PDF: tehisintellekt täidab read, tähtaja ja garantii. Kontrollige ja parandage enne saatmist. Kehtib siin saadetud kogusumma.",
+    "importarBotao": "Laadi foto või PDF",
+    "importarLendo": "Loen dokumenti…",
+    "importarConfira": "Read täideti dokumendi põhjal. Kontrollige kogused ja hinnad enne saatmist.",
+    "importarErro": "Dokumenti ei õnnestunud lugeda. Proovige teravamat fotot või PDF-i.",
+    "importarOcupada": "Automaatne lugemine on praegu hõivatud. Proovige minuti pärast uuesti.",
+    "importarAnexar": "Lisa see dokument pakkumisele (klient saab selle avada)",
+    "garantia": "Teenuse garantii",
+    "garantiaNaoInformada": "Määramata",
+    "garantiaSem": "Garantiita",
+    "garantia_30": "30 päeva",
+    "garantia_90": "3 kuud",
+    "garantia_180": "6 kuud",
+    "garantia_365": "1 aasta",
+    "garantia_730": "2 aastat",
+    "garantiaDias": "{dias} päeva",
+    "garantiaAjuda": "Algab auto üleandmisest. Garantii lõpuni saab klient teile sõnumeid saata."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Parool peab olema vähemalt 8 tähemärki",
@@ -701,7 +722,8 @@
     "seguradorasTitulo": "Lepingulised kindlustusseltsid",
     "seguradorasTexto": "Märkige kindlustusseltsid, kellega töökojal on leping. Nende klient näeb teie pakkumisel märki.",
     "seguradoraOutra": "Muu kindlustusselts",
-    "seguradoraAdicionar": "Lisa"
+    "seguradoraAdicionar": "Lisa",
+    "paginaPublicaAposAprovacao": "Teie avalik leht ilmub pärast töökoja kinnitamist."
   },
   "oficinaSolicitacoes": {
     "titulo": "Päringud",
@@ -808,6 +830,8 @@
     "hist_checkin_antecipado": "Saabus enne broneeritud aega",
     "hist_atribuido": "Vastutav mehaanik",
     "hist_etapa": "Etapp lisatud",
-    "hist_entregue": "Üle antud"
+    "hist_entregue": "Üle antud",
+    "confirmarEntregaTexto": "Kas anda auto kliendile üle? Töö suletakse ja klienti teavitatakse. Kontrollige, et remont on lõpetatud.",
+    "confirmarEntregaSim": "Jah, anna üle"
   }
 }

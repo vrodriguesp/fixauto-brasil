@@ -33,7 +33,7 @@ export default function VeiculosScreen() {
           <Text className="text-white font-medium">{t('veiculos.adicionar')}</Text>
         </Pressable>
       </View>
-      <FlatList
+      <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
         data={veiculos}
         keyExtractor={(item) => item.id}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={carregar} />}

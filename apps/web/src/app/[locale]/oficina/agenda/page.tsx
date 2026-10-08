@@ -54,6 +54,8 @@ export default function AgendaPage() {
   const [assigningId, setAssigningId] = useState<string | null>(null);
   // check-in de carro agendado para outro dia: confirma antes
   const [antecipar, setAntecipar] = useState<{ ev: any; funcId?: string; data: string } | null>(null);
+  // entregar o carro encerra o servico: pede confirmacao
+  const [confirmarEntrega, setConfirmarEntrega] = useState<any | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<any>(null);
@@ -322,8 +324,15 @@ export default function AgendaPage() {
                   </div>
                 )
               )}
+              {type === 'feito' && ev.status === 'em_andamento' && (
+                // etapas do conserto (diagnostico, pecas, execucao...) na tela de veiculos em servico
+                <Link href={`/oficina/veiculos-em-servico?ev=${ev.id}&etapa=1`} onClick={(e) => e.stopPropagation()}
+                  className="px-3 py-1.5 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 text-xs font-medium rounded-lg">
+                  {t('btnEtapa')}
+                </Link>
+              )}
               {type === 'feito' && ev.status === 'em_andamento' && !isMecanico && (
-                <button onClick={(e) => { e.stopPropagation(); handleCheckOut(ev); }} disabled={isUpdating}
+                <button onClick={(e) => { e.stopPropagation(); setConfirmarEntrega(ev); }} disabled={isUpdating}
                   className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white text-xs font-medium rounded-lg">
                   {isUpdating ? '...' : t('btnEntrega')}
                 </button>
@@ -683,6 +692,15 @@ export default function AgendaPage() {
               );
             });
           })()}
+        </div>
+      )}
+      {confirmarEntrega && (
+        <div className="fixed inset-x-3 bottom-4 z-50 sm:left-auto sm:right-6 sm:max-w-md bg-white border border-orange-300 shadow-lg rounded-xl p-4" role="alertdialog">
+          <p className="text-sm text-gray-900 mb-3">{t('confirmarEntregaTexto')}</p>
+          <div className="flex gap-2">
+            <button onClick={() => { const ev = confirmarEntrega; setConfirmarEntrega(null); handleCheckOut(ev); }} className="flex-1 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg">{t('confirmarEntregaSim')}</button>
+            <button onClick={() => setConfirmarEntrega(null)} className="btn-secondary !py-2 text-sm">{t('cancelarAntecipado')}</button>
+          </div>
         </div>
       )}
       {antecipar && (

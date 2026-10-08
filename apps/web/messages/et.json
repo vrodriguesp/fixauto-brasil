@@ -629,5 +629,15 @@
     "encontrado": "Aadress leitud kaardilt",
     "semNumero": "Tänav leitud, kuid seda majanumbrit kaardil pole: kasutame tänava asukohta.",
     "naoEncontrado": "Seda aadressi ei leitud. Kontrollige tänavat, numbrit ja linna."
+  },
+  "garantia": {
+    "titulo": "Kehtivad garantiid",
+    "diasRestantes": "{dias} päeva jäänud",
+    "ate": "kuni {data}",
+    "falarComOficina": "Kirjuta töökojale",
+    "noOrcamento": "Garantii: {dias} päeva alates üleandmisest",
+    "sem": "Garantiita",
+    "documento": "Ava pakkumise dokument",
+    "conversaEncerrada": "Vestlus on suletud: töö on lõpetatud ja garantii on lõppenud (või seda töökoda ei valitud)."
   }
 }

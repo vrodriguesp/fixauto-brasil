@@ -54,7 +54,7 @@ export default function LoginScreen() {
   return (
     <SafeAreaView className="flex-1 bg-sky-50" edges={['top']}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1">
-        <ScrollView contentContainerClassName="flex-grow px-5 pb-10" keyboardShouldPersistTaps="handled">
+        <ScrollView keyboardDismissMode="on-drag" contentContainerClassName="flex-grow px-5 pb-10" keyboardShouldPersistTaps="handled">
           {/* Topo: idioma */}
           <View className="flex-row justify-end pt-2">
             <Pressable
@@ -132,7 +132,7 @@ export default function LoginScreen() {
                 autoComplete="email"
                 keyboardType="email-address"
                 textContentType="emailAddress"
-                className="flex-1 px-2 py-3 text-base"
+                className="flex-1 px-2 py-3 text-[16px]"
               />
             </View>
 
@@ -145,7 +145,7 @@ export default function LoginScreen() {
                 secureTextEntry={!verSenha}
                 autoComplete="password"
                 textContentType="password"
-                className="flex-1 px-2 py-3 text-base"
+                className="flex-1 px-2 py-3 text-[16px]"
               />
               <Pressable onPress={() => setVerSenha(!verSenha)} hitSlop={10} accessibilityRole="button" accessibilityLabel={t(verSenha ? 'auth.ocultarSenha' : 'auth.mostrarSenha')}>
                 <Ionicons name={verSenha ? 'eye-off-outline' : 'eye-outline'} size={20} color="#6b7280" />

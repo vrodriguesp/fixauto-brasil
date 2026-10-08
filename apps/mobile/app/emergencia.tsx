@@ -225,7 +225,7 @@ export default function EmergenciaScreen() {
   }
 
   return (
-    <ScrollView ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
+    <ScrollView keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       <Stack.Screen options={opcoesTela} />
       <Text className="text-gray-600 mb-6">{t('emergencia.subtitulo')}</Text>
 
@@ -254,7 +254,7 @@ export default function EmergenciaScreen() {
         placeholder={t('emergencia.descricaoPlaceholder')}
         multiline
         numberOfLines={4}
-        className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-base"
+        className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-[16px]"
         style={{ textAlignVertical: 'top' }}
       />
 
@@ -286,7 +286,7 @@ export default function EmergenciaScreen() {
           )}
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.placa')}</Text>
           <TextInput accessibilityLabel={t('veiculos.placa')} value={placa} onChangeText={setPlaca} autoCapitalize="characters" maxLength={15}
-            className="border border-gray-300 rounded-lg px-4 py-3 text-base" />
+            className="border border-gray-300 rounded-lg px-4 py-3 text-[16px]" />
         </View>
       )}
       <View className="mb-6" />
@@ -308,14 +308,14 @@ export default function EmergenciaScreen() {
       {usaSeguro(pagamento) && (
         <View className="bg-gray-50 rounded-lg p-3 mb-2">
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('seguro.labelSeguradora')}</Text>
-          <TextInput accessibilityLabel={t('seguro.labelSeguradora')} value={seguradora} onChangeText={setSeguradora} maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-base" />
+          <TextInput accessibilityLabel={t('seguro.labelSeguradora')} value={seguradora} onChangeText={setSeguradora} maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-[16px]" />
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('seguro.labelSinistro')}</Text>
-          <TextInput accessibilityLabel={t('seguro.labelSinistro')} value={sinistro} onChangeText={setSinistro} maxLength={60} autoCapitalize="characters" className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base" />
+          <TextInput accessibilityLabel={t('seguro.labelSinistro')} value={sinistro} onChangeText={setSinistro} maxLength={60} autoCapitalize="characters" className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-[16px]" />
           <Text className="text-xs text-gray-500 mt-1 mb-3">{t('seguro.ajudaSinistro')}</Text>
           {pagamento === 'seguro_proprio' && (
             <>
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('seguro.labelFranquia')}</Text>
-              <TextInput accessibilityLabel={t('seguro.labelFranquia')} value={franquia} onChangeText={(v) => setFranquia(v.replace(/[^\d.,]/g, ''))} keyboardType="decimal-pad" maxLength={12} className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base" />
+              <TextInput accessibilityLabel={t('seguro.labelFranquia')} value={franquia} onChangeText={(v) => setFranquia(v.replace(/[^\d.,]/g, ''))} keyboardType="decimal-pad" maxLength={12} className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-[16px]" />
               <Text className="text-xs text-gray-500 mt-1">{t('seguro.ajudaFranquia')}</Text>
             </>
           )}
@@ -370,11 +370,11 @@ export default function EmergenciaScreen() {
           <Text className="text-sm font-semibold text-gray-900 mb-1">{t('emergencia.contatoTitulo')}</Text>
           <Text className="text-xs text-gray-500 mb-3">{t('emergencia.contatoTexto')}</Text>
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.nome')}</Text>
-          <TextInput accessibilityLabel={t('auth.nome')} value={nome} onChangeText={setNome} autoComplete="name" textContentType="name" maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-base" />
+          <TextInput accessibilityLabel={t('auth.nome')} value={nome} onChangeText={setNome} autoComplete="name" textContentType="name" maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-[16px]" />
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</Text>
-          <TextInput accessibilityLabel={t('auth.email')} value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" textContentType="emailAddress" maxLength={254} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-base" />
+          <TextInput accessibilityLabel={t('auth.email')} value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" textContentType="emailAddress" maxLength={254} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-[16px]" />
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.telefone')}</Text>
-          <TextInput accessibilityLabel={t('auth.telefone')} value={telefone} onChangeText={setTelefone} keyboardType="phone-pad" autoComplete="tel" textContentType="telephoneNumber" maxLength={30} className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-base" />
+          <TextInput accessibilityLabel={t('auth.telefone')} value={telefone} onChangeText={setTelefone} keyboardType="phone-pad" autoComplete="tel" textContentType="telephoneNumber" maxLength={30} className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-[16px]" />
         </View>
       )}
 

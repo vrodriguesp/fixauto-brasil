@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { View, Text, FlatList, Pressable, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect, router } from 'expo-router';
@@ -8,6 +8,7 @@ import { supabase } from '../../lib/supabase';
 import SolicitacaoCard from '../../components/SolicitacaoCard';
 import { Ionicons } from '@expo/vector-icons';
 import { useAvisos } from '../../lib/avisos';
+import GarantiasAtivas from '../../components/GarantiasAtivas';
 
 export default function DashboardScreen() {
   const { t } = useTranslation();
@@ -28,6 +29,10 @@ export default function DashboardScreen() {
     setLoading(false);
   }, [user]);
 
+  // aviso novo (orcamento, etapa do conserto, mensagem): recarrega na hora
+  const { chegou: avisoChegou } = useAvisos();
+  useEffect(() => { if (avisoChegou) carregar(); }, [avisoChegou]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useFocusEffect(
     useCallback(() => {
       carregar();
@@ -37,7 +42,18 @@ export default function DashboardScreen() {
 
   return (
     <View className="flex-1 bg-gray-50 px-4 pt-14">
-      <Text className="text-2xl font-bold text-gray-900 mb-1">{t('dashboard.saudacao', { nome: user?.nome?.split(' ')[0] || '' })}</Text>
+      <View className="flex-row items-center justify-between mb-1">
+        <Text className="text-2xl font-bold text-gray-900 flex-1">{t('dashboard.saudacao', { nome: user?.nome?.split(' ')[0] || '' })}</Text>
+        {/* sino: todas as interacoes, a mais recente no alto */}
+        <Pressable onPress={() => router.push('/notificacoes')} accessibilityRole="button" accessibilityLabel={t('notificacoes.titulo')} hitSlop={10} className="p-2">
+          <Ionicons name="notifications-outline" size={26} color="#111827" />
+          {naoLidos.length > 0 && (
+            <View className="absolute right-0 top-0 bg-red-500 rounded-full min-w-[18px] h-[18px] px-1 items-center justify-center">
+              <Text className="text-white text-[10px] font-bold">{naoLidos.length > 9 ? '9+' : naoLidos.length}</Text>
+            </View>
+          )}
+        </Pressable>
+      </View>
 
       <View className="flex-row gap-3 my-4">
         <Pressable onPress={() => router.push('/emergencia')} accessibilityRole="button" className="flex-1 bg-red-600 rounded-2xl px-3 py-4 items-center justify-center gap-2 active:opacity-90">
@@ -49,6 +65,8 @@ export default function DashboardScreen() {
           <Text className="text-white font-semibold text-center">{t('dashboard.novaSolicitacaoBotao')}</Text>
         </Pressable>
       </View>
+
+      <GarantiasAtivas recarregar={avisoChegou} />
 
       {naoLidos.length > 0 && (
         <View className="mb-4">
@@ -67,7 +85,7 @@ export default function DashboardScreen() {
 
       <Text className="text-base font-semibold text-gray-900 mb-2">{t('dashboard.solicitacoesAtivas')}</Text>
 
-      <FlatList
+      <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
         data={solicitacoes}
         keyExtractor={(item) => item.id}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={carregar} />}

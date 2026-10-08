@@ -56,9 +56,9 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
             onChangeText={setBusca}
             placeholder={label}
             autoFocus
-            className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base"
+            className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]"
           />
-          <FlatList
+          <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
             data={filtrados}
             keyExtractor={(item) => item.code}
             renderItem={({ item }) => (

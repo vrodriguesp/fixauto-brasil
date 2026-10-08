@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { View, Text, FlatList, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from 'expo-router';
@@ -6,6 +6,7 @@ import type { Solicitacao } from '@fixauto/shared';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
 import SolicitacaoCard from '../../components/SolicitacaoCard';
+import { useAvisos } from '../../lib/avisos';
 
 export default function SolicitacoesScreen() {
   const { t } = useTranslation();
@@ -24,6 +25,10 @@ export default function SolicitacoesScreen() {
     setLoading(false);
   }, [user]);
 
+  // aviso novo (orcamento, etapa do conserto, mensagem): recarrega na hora
+  const { chegou: avisoChegou } = useAvisos();
+  useEffect(() => { if (avisoChegou) carregar(); }, [avisoChegou]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useFocusEffect(
     useCallback(() => {
       carregar();
@@ -33,7 +38,7 @@ export default function SolicitacoesScreen() {
   return (
     <View className="flex-1 bg-gray-50 px-4 pt-14">
       <Text className="text-2xl font-bold text-gray-900 mb-4">{t('tabs.solicitacoes')}</Text>
-      <FlatList
+      <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
         data={solicitacoes}
         keyExtractor={(item) => item.id}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={carregar} />}

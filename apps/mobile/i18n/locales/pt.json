@@ -309,5 +309,24 @@
     "SENHA_CURTA": "A senha precisa ter pelo menos 8 caracteres.",
     "TERMOS_OBRIGATORIOS": "Para continuar, aceite os Termos de Uso e a Política de Privacidade.",
     "DECLARACAO_OBRIGATORIA": "Para cadastrar uma empresa, confirme que você é o responsável por ela."
+  },
+  "notificacoes": {
+    "titulo": "Notificações",
+    "marcarTodas": "Marcar todas como lidas",
+    "nenhuma": "Nenhuma notificação ainda.",
+    "nova": "Nova",
+    "maisRecente": "Mais recente",
+    "agora": "agora",
+    "haMinutos": "há {n} min",
+    "ontem": "ontem"
+  },
+  "garantia": {
+    "titulo": "Garantias ativas",
+    "diasRestantes": "faltam {dias} dias",
+    "ate": "até {data}",
+    "falarComOficina": "Falar com a oficina",
+    "noOrcamento": "Garantia: {dias} dias a partir da entrega",
+    "sem": "Sem garantia",
+    "conversaEncerrada": "Conversa encerrada: o serviço terminou e a garantia acabou (ou não foi escolhida esta oficina)."
   }
 }

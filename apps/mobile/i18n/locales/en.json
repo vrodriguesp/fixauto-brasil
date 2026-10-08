@@ -309,5 +309,24 @@
     "SENHA_CURTA": "Password must be at least 8 characters.",
     "TERMOS_OBRIGATORIOS": "To continue, please accept the Terms of Use and the Privacy Policy.",
     "DECLARACAO_OBRIGATORIA": "To register a business, please confirm that you are the person responsible for it."
+  },
+  "notificacoes": {
+    "titulo": "Notifications",
+    "marcarTodas": "Mark all as read",
+    "nenhuma": "No notifications yet.",
+    "nova": "New",
+    "maisRecente": "Latest",
+    "agora": "now",
+    "haMinutos": "{n} min ago",
+    "ontem": "yesterday"
+  },
+  "garantia": {
+    "titulo": "Active warranties",
+    "diasRestantes": "{dias} days left",
+    "ate": "until {data}",
+    "falarComOficina": "Message the workshop",
+    "noOrcamento": "Warranty: {dias} days from hand-over",
+    "sem": "No warranty",
+    "conversaEncerrada": "Conversation closed: the job is finished and the warranty has ended (or this workshop was not chosen)."
   }
 }

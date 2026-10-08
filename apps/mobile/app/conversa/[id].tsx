@@ -116,6 +116,11 @@ export default function ConversaScreen() {
   const gravador = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const estadoGravacao = useAudioRecorderState(gravador);
   const [gravando, setGravando] = useState(false);
+  const [fechada, setFechada] = useState(false);
+  useEffect(() => {
+    if (!id || !oficinaId) return;
+    supabase.rpc('conversa_aberta', { p_sol: id, p_of: oficinaId }).then(({ data }) => setFechada(data === false));
+  }, [id, oficinaId]);
 
   const comecarGravacao = async () => {
     const perm = await requestRecordingPermissionsAsync();
@@ -206,7 +211,7 @@ export default function ConversaScreen() {
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-gray-50" keyboardVerticalOffset={90}>
       <Stack.Screen options={opcoesTela} />
-      <FlatList
+      <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
         ref={listRef}
         data={mensagens}
         keyExtractor={(item) => item.id}
@@ -225,7 +230,9 @@ export default function ConversaScreen() {
           );
         }}
       />
-      {gravando ? (
+      {fechada ? (
+        <Text className="px-4 py-4 bg-gray-100 border-t border-gray-200 text-gray-600 text-sm">{t('garantia.conversaEncerrada')}</Text>
+      ) : gravando ? (
         <View className="flex-row items-center gap-3 px-4 py-3 bg-white border-t border-gray-200">
           <View className="w-3 h-3 rounded-full bg-red-500" />
           <Text className="flex-1 text-gray-800">

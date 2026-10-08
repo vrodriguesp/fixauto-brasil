@@ -38,6 +38,9 @@ export async function POST(req: NextRequest) {
     const solicitacaoId: string | null = (evento as any).solicitacao_id || null;
     const oficinaDoEvento: string = (evento as any).oficina_id;
 
+    // historico do servico: quem entregou e quando
+    await supabaseAdmin.from('agenda_historico').insert({ agenda_id: eventoId, acao: 'entregue', por_profile_id: callerId });
+
     // 1. Update agenda event to concluido + set data_fim to actual delivery date
     if (eventoId) {
       await supabaseAdmin.from('agenda').update({

@@ -629,5 +629,15 @@
     "encontrado": "Morada encontrada no mapa",
     "semNumero": "Rua encontrada, mas este número não está no mapa: usamos a posição da rua.",
     "naoEncontrado": "Não encontrámos esta morada. Confira rua, número e localidade."
+  },
+  "garantia": {
+    "titulo": "Garantias ativas",
+    "diasRestantes": "faltam {dias} dias",
+    "ate": "até {data}",
+    "falarComOficina": "Falar com a oficina",
+    "noOrcamento": "Garantia: {dias} dias a partir da entrega",
+    "sem": "Sem garantia",
+    "documento": "Ver o documento do orçamento",
+    "conversaEncerrada": "Conversa encerrada: o serviço terminou e a garantia acabou (ou não foi escolhida esta oficina)."
   }
 }

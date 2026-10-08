@@ -140,7 +140,10 @@
     "nenhumEventoAgendado": "Nessun evento programmato",
     "checkinAntecipadoTexto": "Questa auto è prenotata per il {data}. Fare il check-in adesso? La data di ingresso diventa oggi e puoi proseguire con tutte le fasi.",
     "checkinAntecipadoConfirmar": "Sì, fai il check-in adesso",
-    "cancelarAntecipado": "Annulla"
+    "cancelarAntecipado": "Annulla",
+    "btnEtapa": "Fasi",
+    "confirmarEntregaTexto": "Consegnare l'auto al cliente? Il servizio verrà chiuso e il cliente avvisato. Verifica che la riparazione sia finita.",
+    "confirmarEntregaSim": "Sì, consegna"
   },
   "oficinaAprender": {
     "carregando": "Caricamento...",
@@ -488,7 +491,25 @@
     "cancelar": "Annulla",
     "atualizarOrcamento": "Aggiorna Preventivo",
     "semComissaoOrcamento": "BipFix non applica commissioni su questo preventivo. L'importo che invii è quello che vede il cliente.",
-    "horarioPassado": "Uno degli orari è già passato. Scegli oggi una fascia non ancora finita, oppure un giorno successivo."
+    "horarioPassado": "Uno degli orari è già passato. Scegli oggi una fascia non ancora finita, oppure un giorno successivo.",
+    "importarTitulo": "Hai già il preventivo in un altro sistema?",
+    "importarTexto": "Carica la foto o il PDF: l'IA compila le voci, i tempi e la garanzia. Tu controlli e correggi prima di inviare. Vale il totale inviato qui.",
+    "importarBotao": "Carica foto o PDF",
+    "importarLendo": "Lettura del documento…",
+    "importarConfira": "Voci compilate dal documento. Controlla quantità e prezzi prima di inviare.",
+    "importarErro": "Impossibile leggere questo documento. Prova una foto più nitida o il PDF.",
+    "importarOcupada": "La lettura automatica è occupata in questo momento. Riprova tra un minuto.",
+    "importarAnexar": "Allega questo documento al preventivo (il cliente può aprirlo)",
+    "garantia": "Garanzia del servizio",
+    "garantiaNaoInformada": "Non indicata",
+    "garantiaSem": "Senza garanzia",
+    "garantia_30": "30 giorni",
+    "garantia_90": "3 mesi",
+    "garantia_180": "6 mesi",
+    "garantia_365": "1 anno",
+    "garantia_730": "2 anni",
+    "garantiaDias": "{dias} giorni",
+    "garantiaAjuda": "Decorre dalla consegna dell'auto. Fino alla fine della garanzia il cliente può continuare a scriverti."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "La password deve avere almeno 8 caratteri",
@@ -701,7 +722,8 @@
     "seguradorasTitulo": "Assicurazioni convenzionate",
     "seguradorasTexto": "Seleziona le compagnie con cui l'officina è convenzionata. Il cliente assicurato con una di queste vede il bollino sul tuo preventivo.",
     "seguradoraOutra": "Altra compagnia",
-    "seguradoraAdicionar": "Aggiungi"
+    "seguradoraAdicionar": "Aggiungi",
+    "paginaPublicaAposAprovacao": "La tua pagina pubblica appare dopo l'approvazione dell'officina."
   },
   "oficinaSolicitacoes": {
     "titulo": "Richieste",
@@ -808,6 +830,8 @@
     "hist_checkin_antecipado": "Check-in prima della data prenotata",
     "hist_atribuido": "Meccanico responsabile",
     "hist_etapa": "Fase registrata",
-    "hist_entregue": "Consegnato"
+    "hist_entregue": "Consegnato",
+    "confirmarEntregaTexto": "Consegnare l'auto al cliente? Il servizio verrà chiuso e il cliente avvisato. Verifica che la riparazione sia finita.",
+    "confirmarEntregaSim": "Sì, consegna"
   }
 }

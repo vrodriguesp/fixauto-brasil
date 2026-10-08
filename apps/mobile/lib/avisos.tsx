@@ -17,12 +17,14 @@ export interface Aviso {
 }
 
 interface Ctx {
+  /** muda a cada aviso que chega: as telas abertas recarregam (estado do conserto, orcamentos...) */
+  chegou: number;
   naoLidos: Aviso[];
   mensagensNaoLidas: number;
   abrir: (a: Aviso) => void;
   atualizar: () => void;
 }
-const AvisosCtx = createContext<Ctx>({ naoLidos: [], mensagensNaoLidas: 0, abrir: () => {}, atualizar: () => {} });
+const AvisosCtx = createContext<Ctx>({ chegou: 0, naoLidos: [], mensagensNaoLidas: 0, abrir: () => {}, atualizar: () => {} });
 export const useAvisos = () => useContext(AvisosCtx);
 
 // Para onde vai cada aviso ao ser tocado
@@ -48,6 +50,7 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
   const [naoLidos, setNaoLidos] = useState<Aviso[]>([]);
   const [mensagensNaoLidas, setMensagensNaoLidas] = useState(0);
   const [banner, setBanner] = useState<Aviso | null>(null);
+  const [chegou, setChegou] = useState(0);
   const opacidade = useRef(new Animated.Value(0)).current;
   const tmr = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -94,13 +97,14 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notificacoes', filter: `profile_id=eq.${user.id}` }, (payload) => {
         mostrar(payload.new as Aviso);
         atualizar();
+        setChegou((n) => n + 1);
       })
       .subscribe();
     return () => { supabase.removeChannel(canal); };
   }, [user, atualizar, mostrar]);
 
   return (
-    <AvisosCtx.Provider value={{ naoLidos, mensagensNaoLidas, abrir, atualizar }}>
+    <AvisosCtx.Provider value={{ chegou, naoLidos, mensagensNaoLidas, abrir, atualizar }}>
       {children}
       {banner && (
         <Animated.View style={{ position: 'absolute', left: 12, right: 12, top: insets.top + 8, opacity: opacidade, zIndex: 1000 }}>

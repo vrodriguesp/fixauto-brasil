@@ -29,12 +29,25 @@ export default function VeiculosEmServico() {
   // check-in de carro agendado para outra data: pede confirmacao antes
   const [antecipar, setAntecipar] = useState<{ eventoId: string; data: string } | null>(null);
   const [erroAcao, setErroAcao] = useState<string | null>(null);
+  const [confirmarEntrega, setConfirmarEntrega] = useState<any | null>(null);
   // historico (atribuicoes, check-in antecipado) do servico aberto
   const [historico, setHistorico] = useState<Record<string, any[]>>({});
   // dono registrando etapa em nome de um mecanico ('' = a propria oficina)
   const [emNomeDe, setEmNomeDe] = useState('');
 
   const isMecanico = funcionario?.cargo === 'mecanico';
+
+  const [veioDaAgenda, setVeioDaAgenda] = useState(false);
+  useEffect(() => {
+    if (veioDaAgenda || loading) return;
+    const p = new URLSearchParams(window.location.search);
+    const ev = p.get('ev');
+    if (!ev) return;
+    setVeioDaAgenda(true);
+    setActiveTab('todos');
+    setExpandedId(ev);
+    if (p.get('etapa') === '1') setEtapaForm({ eventoId: ev, status: 'em_execucao', observacao: '' });
+  }, [loading, veioDaAgenda]);
 
   // Fetch funcionarios list for assignment (admin only)
   useEffect(() => {
@@ -465,7 +478,7 @@ export default function VeiculosEmServico() {
                           </button>
                           {!isMecanico && (
                             <button
-                              onClick={(e) => { e.stopPropagation(); handleCheckout(evento); }}
+                              onClick={(e) => { e.stopPropagation(); setConfirmarEntrega(evento); }}
                               disabled={actionLoading === evento.id}
                               className="btn-primary text-xs !py-1.5 !px-3 bg-green-600 hover:bg-green-700 disabled:opacity-50"
                             >
@@ -485,6 +498,17 @@ export default function VeiculosEmServico() {
                   </div>
                 </div>
 
+                {confirmarEntrega?.id === evento.id && (
+                  <div className="px-4 py-3 bg-orange-50 border-t border-orange-200" role="alert">
+                    <p className="text-sm text-gray-900 mb-2">{t('confirmarEntregaTexto')}</p>
+                    <div className="flex flex-wrap gap-2">
+                      <button onClick={() => { setConfirmarEntrega(null); handleCheckout(evento); }} className="py-2 px-4 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg">
+                        {t('confirmarEntregaSim')}
+                      </button>
+                      <button onClick={() => setConfirmarEntrega(null)} className="btn-secondary !py-2 !px-4 text-sm">{t('cancelar')}</button>
+                    </div>
+                  </div>
+                )}
                 {antecipar?.eventoId === evento.id && (
                   <div className="px-4 py-3 bg-amber-50 border-t border-amber-200" role="alert">
                     <p className="text-sm text-amber-900 mb-2">{t('checkinAntecipadoTexto', { data: formatDateTime(antecipar.data) })}</p>

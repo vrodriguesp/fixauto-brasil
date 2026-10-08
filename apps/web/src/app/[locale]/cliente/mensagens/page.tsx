@@ -80,7 +80,7 @@ export default function ClienteMensagensListPage() {
       // 3. Get oficinas linked via orcamentos
       const { data: orcamentos } = await supabase
         .from('orcamentos')
-        .select('solicitacao_id, oficina_id, oficina:oficinas!orcamentos_oficina_id_fkey(nome_fantasia)')
+        .select('solicitacao_id, oficina_id, status, oficina:oficinas!orcamentos_oficina_id_fkey(nome_fantasia)')
         .in('solicitacao_id', idsBusca);
 
       // nome das oficinas que so conversaram (ainda sem orcamento)
@@ -156,10 +156,15 @@ export default function ClienteMensagensListPage() {
         const solMensagens = mensagens?.filter((m: any) => m.solicitacao_id === sol.id) || [];
 
         // uma conversa por oficina: as que orcaram e as que ja escreveram
-        const oficinasDoPedido = Array.from(new Set([
+        let oficinasDoPedido = Array.from(new Set([
           ...solMensagens.map((m: any) => m.oficina_id),
           ...(orcamentos || []).filter((o: any) => o.solicitacao_id === sol.id).map((o: any) => o.oficina_id),
         ]));
+        // servico terminado: as conversas com as oficinas nao escolhidas somem
+        if (['concluida', 'cancelada'].includes(sol.status)) {
+          const escolhida = (orcamentos || []).find((o: any) => o.solicitacao_id === sol.id && o.status === 'aceito')?.oficina_id;
+          oficinasDoPedido = oficinasDoPedido.filter((o) => o === escolhida);
+        }
         const conversasOficina: ConversaOficina[] = oficinasDoPedido.map((oficinaId) => {
           const daOficina = solMensagens.filter((m: any) => m.oficina_id === oficinaId);
           const lastMsg = daOficina[0];

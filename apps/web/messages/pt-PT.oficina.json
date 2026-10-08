@@ -140,7 +140,10 @@
     "nenhumEventoAgendado": "Não há eventos marcados",
     "checkinAntecipadoTexto": "Este carro está agendado para {data}. Fazer o check-in agora? A data de entrada passa a ser hoje e pode seguir com todas as etapas.",
     "checkinAntecipadoConfirmar": "Sim, fazer o check-in agora",
-    "cancelarAntecipado": "Cancelar"
+    "cancelarAntecipado": "Cancelar",
+    "btnEtapa": "Etapas",
+    "confirmarEntregaTexto": "Entregar o carro ao cliente? O serviço será encerrado e o cliente avisado. Confirme que a reparação está concluída.",
+    "confirmarEntregaSim": "Sim, entregar"
   },
   "oficinaAprender": {
     "carregando": "A carregar...",
@@ -488,7 +491,25 @@
     "cancelar": "Cancelar",
     "atualizarOrcamento": "Atualizar Orçamento",
     "semComissaoOrcamento": "A BipFix não cobra comissão sobre este orçamento. O valor que enviar é o valor que o cliente vê.",
-    "horarioPassado": "Há um horário que já passou. Escolha hoje num período que ainda não terminou, ou um dia seguinte."
+    "horarioPassado": "Há um horário que já passou. Escolha hoje num período que ainda não terminou, ou um dia seguinte.",
+    "importarTitulo": "Já tem o orçamento pronto noutro sistema?",
+    "importarTexto": "Envie a fotografia ou o PDF: a IA preenche os itens, o prazo e a garantia. Confere e corrige antes de enviar. O valor que conta é o total enviado aqui.",
+    "importarBotao": "Enviar fotografia ou PDF",
+    "importarLendo": "A ler o documento…",
+    "importarConfira": "Itens preenchidos a partir do documento. Confira quantidades e valores antes de enviar.",
+    "importarErro": "Não foi possível ler este documento. Tente uma fotografia mais nítida ou o PDF.",
+    "importarOcupada": "A leitura automática está ocupada neste momento. Tente novamente dentro de 1 minuto.",
+    "importarAnexar": "Anexar este documento ao orçamento (o cliente pode abri-lo)",
+    "garantia": "Garantia do serviço",
+    "garantiaNaoInformada": "Não indicada",
+    "garantiaSem": "Sem garantia",
+    "garantia_30": "30 dias",
+    "garantia_90": "3 meses",
+    "garantia_180": "6 meses",
+    "garantia_365": "1 ano",
+    "garantia_730": "2 anos",
+    "garantiaDias": "{dias} dias",
+    "garantiaAjuda": "Conta a partir da entrega do carro. Até ao fim da garantia, o cliente continua a falar consigo."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "A palavra-passe deve ter pelo menos 8 caracteres",
@@ -701,7 +722,8 @@
     "seguradorasTitulo": "Seguradoras convencionadas",
     "seguradorasTexto": "Marque as seguradoras com que a oficina tem acordo. O cliente com uma delas vê o selo no seu orçamento.",
     "seguradoraOutra": "Outra seguradora",
-    "seguradoraAdicionar": "Adicionar"
+    "seguradoraAdicionar": "Adicionar",
+    "paginaPublicaAposAprovacao": "A sua página pública aparece depois de a oficina ser aprovada."
   },
   "oficinaSolicitacoes": {
     "titulo": "Pedidos",
@@ -808,6 +830,8 @@
     "hist_checkin_antecipado": "Check-in antes da data agendada",
     "hist_atribuido": "Mecânico responsável",
     "hist_etapa": "Etapa registada",
-    "hist_entregue": "Entregue"
+    "hist_entregue": "Entregue",
+    "confirmarEntregaTexto": "Entregar o carro ao cliente? O serviço será encerrado e o cliente avisado. Confirme que a reparação está concluída.",
+    "confirmarEntregaSim": "Sim, entregar"
   }
 }

@@ -14,6 +14,8 @@ interface CreateOrcamentoInput {
   tempo_execucao_horas: number;
   observacoes: string;
   validade: string;
+  garantia_dias?: number | null;
+  anexo_url?: string | null;
   itens: Omit<OrcamentoItem, 'id' | 'orcamento_id'>[];
   slots: { data_checkin: string; turno: string; data_previsao_entrega: string }[];
 }
@@ -35,6 +37,8 @@ export function useOrcamentos() {
         tempo_execucao_horas: input.tempo_execucao_horas,
         observacoes: input.observacoes || null,
         validade: input.validade,
+        garantia_dias: input.garantia_dias ?? null,
+        anexo_url: input.anexo_url ?? null,
       })
       .select()
       .single();
@@ -125,6 +129,8 @@ export function useOrcamentos() {
       validade: string;
       valor_original: number;
       revisao_numero: number;
+      garantia_dias?: number | null;
+      anexo_url?: string | null;
       itens: Omit<OrcamentoItem, 'id' | 'orcamento_id'>[];
       slots: { data_checkin: string; turno: string; data_previsao_entrega: string }[];
     }
@@ -141,6 +147,8 @@ export function useOrcamentos() {
         validade: input.validade,
         valor_original: input.valor_original,
         revisao_numero: input.revisao_numero,
+        garantia_dias: input.garantia_dias ?? null,
+        ...(input.anexo_url !== undefined ? { anexo_url: input.anexo_url } : {}),
         revisado_em: new Date().toISOString(),
         status: 'enviado',
         disponibilidade_escolhida_id: null,

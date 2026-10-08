@@ -6,6 +6,10 @@ import { carregarPerfilOficina } from './perfil-dados';
 import { OG_LOCALE, type Locale } from '@/i18n/routing';
 import { capitalizarCidade, hreflangAlternates, imagemCompartilhamento } from '@/lib/seo-utils';
 
+// Dados da oficina mudam (aprovacao, fotos): sem isto a pagina ficava guardada
+// como 404 mesmo depois de a oficina ser aprovada.
+export const revalidate = 60;
+
 type Params = { params: Promise<{ locale: string; id: string }> };
 
 // Metadata unica por oficina (nome + cidade no title): cada perfil e uma URL

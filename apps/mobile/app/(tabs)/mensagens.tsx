@@ -1,9 +1,10 @@
-import { useCallback, useState } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { View, Text, FlatList, Pressable, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect, router } from 'expo-router';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
+import { useAvisos } from '../../lib/avisos';
 
 interface ConversaItem {
   solicitacaoId: string;
@@ -30,7 +31,7 @@ export default function MensagensScreen() {
     if (!user) return;
     const { data: solicitacoes } = await supabase
       .from('solicitacoes')
-      .select('id, veiculo:veiculos(fipe_marca, fipe_modelo)')
+      .select('id, status, veiculo:veiculos(fipe_marca, fipe_modelo)')
       .eq('cliente_id', user.id)
       .order('created_at', { ascending: false });
 
@@ -47,7 +48,7 @@ export default function MensagensScreen() {
 
     const { data: orcamentos } = await supabase
       .from('orcamentos')
-      .select('solicitacao_id, oficina_id, oficina:oficinas(nome_fantasia)')
+      .select('solicitacao_id, oficina_id, status, oficina:oficinas(nome_fantasia)')
       .in('solicitacao_id', solIds);
 
     // nome das oficinas (as que so escreveram ainda nao tem orcamento)
@@ -63,7 +64,12 @@ export default function MensagensScreen() {
     for (const sol of minhas) {
       const solMsgs = (mensagens || []).filter((m: any) => m.solicitacao_id === sol.id);
       // cada oficina tem a sua conversa com o cliente
-      const oficinas = Array.from(new Set(solMsgs.map((m: any) => m.oficina_id as string)));
+      let oficinas = Array.from(new Set(solMsgs.map((m: any) => m.oficina_id as string)));
+      // servico terminado: so a conversa com a oficina escolhida continua
+      if (['concluida', 'cancelada'].includes(sol.status)) {
+        const escolhida = (orcamentos || []).find((o: any) => o.solicitacao_id === sol.id && o.status === 'aceito')?.oficina_id;
+        oficinas = oficinas.filter((o) => o === escolhida);
+      }
       for (const oficinaId of oficinas) {
         const daOficina = solMsgs.filter((m: any) => m.oficina_id === oficinaId);
         const last = daOficina[0];
@@ -110,6 +116,10 @@ export default function MensagensScreen() {
     setLoading(false);
   }, [user, t]);
 
+  // aviso novo (orcamento, etapa do conserto, mensagem): recarrega na hora
+  const { chegou: avisoChegou } = useAvisos();
+  useEffect(() => { if (avisoChegou) carregar(); }, [avisoChegou]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useFocusEffect(
     useCallback(() => {
       carregar();
@@ -119,7 +129,7 @@ export default function MensagensScreen() {
   return (
     <View className="flex-1 bg-gray-50 px-4 pt-14">
       <Text className="text-2xl font-bold text-gray-900 mb-4">{t('mensagens.titulo')}</Text>
-      <FlatList
+      <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
         data={conversas}
         keyExtractor={(item) => `${item.solicitacaoId}-${item.oficinaId}-${item.pagador ? 'p' : 'c'}`}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={carregar} />}

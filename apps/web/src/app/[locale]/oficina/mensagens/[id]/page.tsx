@@ -11,7 +11,6 @@ import AudioRecorder from '@/components/ui/AudioRecorder';
 import AudioMessage from '@/components/ui/AudioMessage';
 import { useAudioRecorder } from '@/hooks/use-audio-recorder';
 import { Link } from '@/i18n/navigation';
-import { notifNovaMensagem } from '@/lib/notif-i18n';
 
 interface Mensagem {
   id: string;
@@ -64,6 +63,13 @@ export default function OficinaMensagensPage() {
   const [solCarregada, setSolCarregada] = useState(false);
   const [erroEnvio, setErroEnvio] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const tGar = useTranslations('garantia');
+  const [conversaFechada, setConversaFechada] = useState(false);
+  useEffect(() => {
+    const ofId = oficina?.id;
+    if (!ofId) return;
+    supabase.rpc('conversa_aberta', { p_sol: id, p_of: ofId }).then(({ data }) => setConversaFechada(data === false));
+  }, [id, oficina?.id]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
   const [uploadingAudio, setUploadingAudio] = useState(false);
@@ -227,13 +233,13 @@ export default function OficinaMensagensPage() {
     setNewMessage('');
     setSending(true);
 
-    const { error } = await supabase.from('mensagens').insert({
+    const { data: novaMsg, error } = await supabase.from('mensagens').insert({
       solicitacao_id: id,
       oficina_id: oficina.id,
       pagador_id: pagadorId,
       remetente_id: user.id,
       texto,
-    });
+    }).select('id').single();
 
     if (error) {
       // nao some o texto: devolve ao campo e avisa
@@ -257,20 +263,8 @@ export default function OficinaMensagensPage() {
         remetente: { nome: user.nome, tipo: user.tipo },
       }]);
 
-      // Notify the client (idioma do CLIENTE, nao de quem esta navegando -
-      // a oficina pode estar em /et enquanto o cliente prefere /pt)
-      const { data: sol } = await supabase.from('solicitacoes').select('cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(idioma)').eq('id', id).single();
-      if (sol) {
-        try {
-          await supabase.from('notificacoes').insert({
-            profile_id: pagadorId || sol.cliente_id,
-            tipo: 'nova_mensagem',
-            titulo: notifNovaMensagem((sol.cliente as any)?.idioma).titulo,
-            mensagem: texto.slice(0, 100),
-            dados: { solicitacao_id: id, oficina_id: oficina.id, ...(pagadorId ? { pagador_id: pagadorId } : {}) },
-          });
-        } catch { /* non-blocking */ }
-      }
+      // aviso a quem recebe, pelo servidor (idioma dele; antes falhava sem aparecer)
+      if (novaMsg?.id) fetch('/api/avisar-mensagem', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mensagemId: novaMsg.id }) }).catch(() => {});
     }
 
     setSending(false);
@@ -293,7 +287,7 @@ export default function OficinaMensagensPage() {
       const audioUrl = await uploadAudio(blob, id, oficina.id, pagadorId);
       if (!audioUrl) return;
 
-      const { error } = await supabase.from('mensagens').insert({
+      const { data: novaMsg, error } = await supabase.from('mensagens').insert({
         solicitacao_id: id,
         oficina_id: oficina.id,
         pagador_id: pagadorId,
@@ -302,7 +296,7 @@ export default function OficinaMensagensPage() {
         tipo: 'audio',
         audio_url: audioUrl,
         audio_duracao_segundos: audioDuration,
-      });
+      }).select('id').single();
 
       if (!error) {
         setMessages((prev) => [
@@ -321,24 +315,8 @@ export default function OficinaMensagensPage() {
           },
         ]);
 
-        // Notify the client (idioma do cliente, nao de quem esta navegando)
-        const { data: sol } = await supabase
-          .from('solicitacoes')
-          .select('cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(idioma)')
-          .eq('id', id)
-          .single();
-        if (sol) {
-          try {
-            const nAudio = notifNovaMensagem((sol.cliente as any)?.idioma);
-            await supabase.from('notificacoes').insert({
-              profile_id: pagadorId || sol.cliente_id,
-              tipo: 'nova_mensagem',
-              titulo: nAudio.tituloAudio,
-              mensagem: nAudio.mensagemAudio,
-              dados: { solicitacao_id: id, oficina_id: oficina.id, ...(pagadorId ? { pagador_id: pagadorId } : {}) },
-            });
-          } catch { /* non-blocking */ }
-        }
+        // aviso a quem recebe, pelo servidor (idioma dele; antes falhava sem aparecer)
+        if (novaMsg?.id) fetch('/api/avisar-mensagem', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mensagemId: novaMsg.id }) }).catch(() => {});
       }
     } finally {
       setUploadingAudio(false);
@@ -513,6 +491,9 @@ export default function OficinaMensagensPage() {
       )}
 
       {/* Input area */}
+      {conversaFechada ? (
+        <p className="bg-gray-100 border-t px-4 py-3 text-sm text-gray-600 flex-shrink-0" role="status">{tGar('conversaEncerrada')}</p>
+      ) : (
       <div className="bg-white border-t px-4 py-3 flex-shrink-0">
         {erroEnvio && <p className="text-xs text-red-700 mb-2" role="alert">{t('erroEnviar')}</p>}
         {showAudioRecorder ? (
@@ -557,6 +538,7 @@ export default function OficinaMensagensPage() {
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }

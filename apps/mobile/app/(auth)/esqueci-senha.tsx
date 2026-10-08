@@ -47,7 +47,7 @@ export default function EsqueciSenhaScreen() {
             onChangeText={setEmail}
             autoCapitalize="none"
             keyboardType="email-address"
-            className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-base"
+            className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-[16px]"
           />
           <Pressable
             onPress={handleEnviar}

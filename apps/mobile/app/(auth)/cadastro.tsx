@@ -56,7 +56,7 @@ export default function CadastroScreen() {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-white">
-      <ScrollView contentContainerClassName="flex-grow justify-center px-6 py-12">
+      <ScrollView keyboardDismissMode="on-drag" contentContainerClassName="flex-grow justify-center px-6 py-12">
         <Text className="text-xl font-semibold text-gray-900 mb-6">{t('auth.cadastroTitulo')}</Text>
 
         {erro && (
@@ -66,7 +66,7 @@ export default function CadastroScreen() {
         )}
 
         <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.nome')}</Text>
-        <TextInput accessibilityLabel={t('auth.nome')} value={nome} onChangeText={setNome} className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
+        <TextInput accessibilityLabel={t('auth.nome')} value={nome} onChangeText={setNome} className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]" />
 
         <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</Text>
         <TextInput accessibilityLabel={t('auth.email')}
@@ -74,7 +74,7 @@ export default function CadastroScreen() {
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
-          className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base"
+          className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]"
         />
 
         <Text className="text-sm font-medium text-gray-700 mb-1">
@@ -84,18 +84,18 @@ export default function CadastroScreen() {
           value={telefone}
           onChangeText={setTelefone}
           keyboardType="phone-pad"
-          className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base"
+          className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]"
         />
 
         <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.senha')}</Text>
-        <TextInput accessibilityLabel={t('auth.senha')} value={senha} onChangeText={setSenha} secureTextEntry className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
+        <TextInput accessibilityLabel={t('auth.senha')} value={senha} onChangeText={setSenha} secureTextEntry className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]" />
 
         <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.confirmarSenha')}</Text>
         <TextInput accessibilityLabel={t('auth.confirmarSenha')}
           value={confirmarSenha}
           onChangeText={setConfirmarSenha}
           secureTextEntry
-          className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base"
+          className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]"
         />
 
         <Pressable

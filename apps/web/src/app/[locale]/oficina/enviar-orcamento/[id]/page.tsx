@@ -47,6 +47,12 @@ export default function EnviarOrcamentoPage() {
   const [observacoes, setObservacoes] = useState('');
   const [validade, setValidade] = useState((() => { const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0]; })());
   const [submitted, setSubmitted] = useState(false);
+  // garantia do servico (dias, a partir da entrega); '' = nao informada
+  const [garantiaDias, setGarantiaDias] = useState<string>('');
+  // orcamento feito em outro sistema: foto/PDF lido pela IA e (opcional) anexado
+  const [docArquivo, setDocArquivo] = useState<File | null>(null);
+  const [anexarDoc, setAnexarDoc] = useState(true);
+  const [lendoDoc, setLendoDoc] = useState<'' | 'lendo' | 'ok' | 'erro' | 'ocupada'>('');
   const [prefilled, setPrefilled] = useState(false);
   const [analise, setAnalise] = useState<AnaliseDano | null>(null);
 
@@ -102,6 +108,7 @@ export default function EnviarOrcamentoPage() {
         setObservacoes(obsRaw);
       }
       setValidade(existingQuote.validade || (() => { const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0]; })());
+      setGarantiaDias((existingQuote as any).garantia_dias != null ? String((existingQuote as any).garantia_dias) : '');
       if (existingQuote.disponibilidade && existingQuote.disponibilidade.length > 0) {
         setSlots(
           existingQuote.disponibilidade.map((s: any) => ({
@@ -196,6 +203,16 @@ export default function EnviarOrcamentoPage() {
 
     let result: { data?: any; error?: any };
 
+    // documento do orcamento (se a oficina escolheu anexar)
+    let anexoUrl: string | null | undefined = undefined;
+    if (docArquivo && anexarDoc && oficina) {
+      const ext = docArquivo.type === 'application/pdf' ? 'pdf' : (docArquivo.type.split('/')[1] || 'jpg');
+      const caminho = `orcamentos/${params.id}/${oficina.id}/${crypto.randomUUID()}.${ext}`;
+      const { error: eUp } = await supabase.storage.from('damage-photos').upload(caminho, docArquivo, { contentType: docArquivo.type });
+      if (!eUp) anexoUrl = supabase.storage.from('damage-photos').getPublicUrl(caminho).data.publicUrl;
+    }
+    const garantia = garantiaDias === '' ? null : Number(garantiaDias);
+
     if (isRevision && existingQuote) {
       // Update existing quote (revision)
       result = await updateOrcamento(existingQuote.id, {
@@ -207,6 +224,8 @@ export default function EnviarOrcamentoPage() {
         validade,
         valor_original: existingQuote.valor_original || existingQuote.valor_total,
         revisao_numero: (existingQuote.revisao_numero || 0) + 1,
+        garantia_dias: garantia,
+        ...(anexoUrl !== undefined ? { anexo_url: anexoUrl } : {}),
         itens: itensPayload,
         slots: slotsPayload,
       });
@@ -219,6 +238,8 @@ export default function EnviarOrcamentoPage() {
         tempo_execucao_horas: tempoExecucaoHoras,
         observacoes: obsComComissao,
         validade,
+        garantia_dias: garantia,
+        anexo_url: anexoUrl ?? null,
         itens: itensPayload,
         slots: slotsPayload,
       });
@@ -332,6 +353,43 @@ export default function EnviarOrcamentoPage() {
       )}
 
       <form onSubmit={handleSubmit}>
+        {/* Orcamento feito em outro sistema: a IA preenche, a oficina confere */}
+        <div className="card mb-6 border-2 border-dashed border-primary-200">
+          <h2 className="text-base font-semibold text-gray-900 mb-1">{t('importarTitulo')}</h2>
+          <p className="text-sm text-gray-600 mb-3">{t('importarTexto')}</p>
+          <label className="btn-secondary !py-2 text-sm inline-flex items-center gap-2 cursor-pointer">
+            <input type="file" accept="image/*,application/pdf" className="sr-only" aria-label={t('importarBotao')}
+              onChange={async (e) => {
+                const arq = e.target.files?.[0];
+                if (!arq) return;
+                setDocArquivo(arq);
+                setLendoDoc('lendo');
+                const fd = new FormData();
+                fd.append('arquivo', arq);
+                fd.append('idioma', locale);
+                const r = await fetch('/api/ler-orcamento', { method: 'POST', body: fd }).catch(() => null);
+                const d = r ? await r.json().catch(() => ({})) : {};
+                if (!r || !r.ok) { setLendoDoc(d.codigo === 'IA_OCUPADA' ? 'ocupada' : 'erro'); return; }
+                setItens(d.itens.map((i: any) => ({ descricao: i.descricao, tipo: i.tipo, quantidade: i.quantidade, valor_unitario: i.valor_unitario })));
+                if (d.prazo_dias) setPrazoDias(d.prazo_dias);
+                if (d.garantia_dias) setGarantiaDias(String(d.garantia_dias));
+                if (d.observacoes) setObservacoes((o) => (o ? `${o}\n${d.observacoes}` : d.observacoes));
+                setLendoDoc('ok');
+              }} />
+            📄 {lendoDoc === 'lendo' ? t('importarLendo') : t('importarBotao')}
+          </label>
+          {docArquivo && <p className="text-xs text-gray-500 mt-2 break-all">{docArquivo.name}</p>}
+          {lendoDoc === 'ok' && <p className="text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-lg p-2 mt-2" role="status">{t('importarConfira')}</p>}
+          {lendoDoc === 'erro' && <p className="text-sm text-red-700 mt-2" role="alert">{t('importarErro')}</p>}
+          {lendoDoc === 'ocupada' && <p className="text-sm text-red-700 mt-2" role="alert">{t('importarOcupada')}</p>}
+          {docArquivo && (
+            <label className="flex items-center gap-2 mt-3 text-sm text-gray-700">
+              <input type="checkbox" checked={anexarDoc} onChange={(e) => setAnexarDoc(e.target.checked)} />
+              {t('importarAnexar')}
+            </label>
+          )}
+        </div>
+
         <div className="card mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('itensOrcamento')}</h2>
 
@@ -536,6 +594,16 @@ export default function EnviarOrcamentoPage() {
                 value={validade}
                 onChange={(e) => setValidade(e.target.value)}
               />
+            </div>
+            <div>
+              <label htmlFor="orc-garantia" className="block text-sm font-medium text-gray-700 mb-1">{t('garantia')}</label>
+              <select id="orc-garantia" className="input-field" value={garantiaDias} onChange={(e) => setGarantiaDias(e.target.value)}>
+                <option value="">{t('garantiaNaoInformada')}</option>
+                <option value="0">{t('garantiaSem')}</option>
+                {[30, 90, 180, 365, 730].map((d) => <option key={d} value={d}>{t(`garantia_${d}`)}</option>)}
+                {garantiaDias && ![0, 30, 90, 180, 365, 730].includes(Number(garantiaDias)) && <option value={garantiaDias}>{t('garantiaDias', { dias: garantiaDias })}</option>}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">{t('garantiaAjuda')}</p>
             </div>
           </div>
         </div>

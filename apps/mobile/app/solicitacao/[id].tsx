@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo } from 'react';
+import { useEffect, useCallback, useState, useMemo } from 'react';
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useFocusEffect, router, Stack } from 'expo-router';
@@ -73,6 +73,10 @@ export default function SolicitacaoDetailScreen() {
     setLoading(false);
   }, [id]);
 
+  // aviso novo (orcamento, etapa do conserto, mensagem): recarrega na hora
+  const { chegou: avisoChegou } = useAvisos();
+  useEffect(() => { if (avisoChegou) carregar(); }, [avisoChegou]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useFocusEffect(
     useCallback(() => {
       carregar();
@@ -136,7 +140,7 @@ export default function SolicitacaoDetailScreen() {
   const veiculo = solicitacao.veiculo;
 
   return (
-    <ScrollView className="flex-1 bg-gray-50">
+    <ScrollView keyboardDismissMode="on-drag" className="flex-1 bg-gray-50">
       <Stack.Screen options={opcoesTela} />
       <View className="p-4">
         <Text className="text-xl font-bold text-gray-900">
@@ -163,7 +167,10 @@ export default function SolicitacaoDetailScreen() {
           <View key={orc.id} className="bg-white rounded-xl p-4 mb-3 border border-gray-200">
             <Text className="font-semibold text-gray-900 mb-1">{t('orcamentos.recebidoDe', { oficina: orc.oficina?.nome_fantasia || '-' })}</Text>
             <Text className="text-2xl font-bold text-gray-900 mb-2">{formatCurrency(orc.valor_total, currencyForCountry((orc.oficina as any)?.pais), locale)}</Text>
-            <Text className="text-xs text-gray-500 mb-3">{t(`orcamentos.status${orc.status.charAt(0).toUpperCase()}${orc.status.slice(1)}`)}</Text>
+            <Text className="text-xs text-gray-500 mb-1">{t(`orcamentos.status${orc.status.charAt(0).toUpperCase()}${orc.status.slice(1)}`)}</Text>
+            {(orc as any).garantia_dias != null && (
+              <Text className="text-xs text-gray-600 mb-3">🛡️ {(orc as any).garantia_dias > 0 ? t('garantia.noOrcamento', { dias: (orc as any).garantia_dias }) : t('garantia.sem')}</Text>
+            )}
 
             {orc.status === 'enviado' || orc.status === 'visualizado' ? (
               <>

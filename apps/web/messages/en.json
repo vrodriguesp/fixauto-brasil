@@ -629,5 +629,15 @@
     "encontrado": "Address found on the map",
     "semNumero": "Street found, but this number is not on the map: we use the street position.",
     "naoEncontrado": "We could not find this address. Check street, number and city."
+  },
+  "garantia": {
+    "titulo": "Active warranties",
+    "diasRestantes": "{dias} days left",
+    "ate": "until {data}",
+    "falarComOficina": "Message the workshop",
+    "noOrcamento": "Warranty: {dias} days from hand-over",
+    "sem": "No warranty",
+    "documento": "Open the quote document",
+    "conversaEncerrada": "Conversation closed: the job is finished and the warranty has ended (or this workshop was not chosen)."
   }
 }

@@ -309,5 +309,24 @@
     "SENHA_CURTA": "Parool peab olema vähemalt 8 tähemärki.",
     "TERMOS_OBRIGATORIOS": "Jätkamiseks nõustu kasutustingimuste ja privaatsuspoliitikaga.",
     "DECLARACAO_OBRIGATORIA": "Ettevõtte registreerimiseks kinnita, et oled selle eest vastutav isik."
+  },
+  "notificacoes": {
+    "titulo": "Teated",
+    "marcarTodas": "Märgi kõik loetuks",
+    "nenhuma": "Teateid veel pole.",
+    "nova": "Uus",
+    "maisRecente": "Viimane",
+    "agora": "praegu",
+    "haMinutos": "{n} min tagasi",
+    "ontem": "eile"
+  },
+  "garantia": {
+    "titulo": "Kehtivad garantiid",
+    "diasRestantes": "{dias} päeva jäänud",
+    "ate": "kuni {data}",
+    "falarComOficina": "Kirjuta töökojale",
+    "noOrcamento": "Garantii: {dias} päeva alates üleandmisest",
+    "sem": "Garantiita",
+    "conversaEncerrada": "Vestlus on suletud: töö on lõpetatud ja garantii on lõppenud (või seda töökoda ei valitud)."
   }
 }

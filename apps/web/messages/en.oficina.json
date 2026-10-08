@@ -140,7 +140,10 @@
     "nenhumEventoAgendado": "No events scheduled",
     "checkinAntecipadoTexto": "This car is booked for {data}. Check it in now? The arrival date becomes today and you can continue with all the steps.",
     "checkinAntecipadoConfirmar": "Yes, check in now",
-    "cancelarAntecipado": "Cancel"
+    "cancelarAntecipado": "Cancel",
+    "btnEtapa": "Steps",
+    "confirmarEntregaTexto": "Hand the car back to the customer? The job will be closed and the customer notified. Check the repair is finished.",
+    "confirmarEntregaSim": "Yes, hand it back"
   },
   "oficinaAprender": {
     "carregando": "Loading...",
@@ -488,7 +491,25 @@
     "cancelar": "Cancel",
     "atualizarOrcamento": "Update Quote",
     "semComissaoOrcamento": "BipFix charges no commission on this quote. The amount you send is the amount the customer sees.",
-    "horarioPassado": "One of the times has already passed. Pick a period today that has not ended yet, or a later day."
+    "horarioPassado": "One of the times has already passed. Pick a period today that has not ended yet, or a later day.",
+    "importarTitulo": "Already have the quote in another system?",
+    "importarTexto": "Upload the photo or PDF: the AI fills in the items, time and warranty. You check and correct before sending. The total sent here is what counts.",
+    "importarBotao": "Upload photo or PDF",
+    "importarLendo": "Reading the document…",
+    "importarConfira": "Items filled in from the document. Check quantities and prices before sending.",
+    "importarErro": "This document could not be read. Try a sharper photo or the PDF.",
+    "importarOcupada": "Automatic reading is busy right now. Try again in a minute.",
+    "importarAnexar": "Attach this document to the quote (the customer can open it)",
+    "garantia": "Service warranty",
+    "garantiaNaoInformada": "Not specified",
+    "garantiaSem": "No warranty",
+    "garantia_30": "30 days",
+    "garantia_90": "3 months",
+    "garantia_180": "6 months",
+    "garantia_365": "1 year",
+    "garantia_730": "2 years",
+    "garantiaDias": "{dias} days",
+    "garantiaAjuda": "Starts when the car is handed back. Until the warranty ends, the customer can keep messaging you."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Password must be at least 8 characters",
@@ -701,7 +722,8 @@
     "seguradorasTitulo": "Partner insurers",
     "seguradorasTexto": "Tick the insurers your workshop works with. Customers insured with one of them see a badge on your quote.",
     "seguradoraOutra": "Other insurer",
-    "seguradoraAdicionar": "Add"
+    "seguradoraAdicionar": "Add",
+    "paginaPublicaAposAprovacao": "Your public page appears once your workshop is approved."
   },
   "oficinaSolicitacoes": {
     "titulo": "Requests",
@@ -808,6 +830,8 @@
     "hist_checkin_antecipado": "Checked in before the booked date",
     "hist_atribuido": "Mechanic in charge",
     "hist_etapa": "Step recorded",
-    "hist_entregue": "Delivered"
+    "hist_entregue": "Delivered",
+    "confirmarEntregaTexto": "Hand the car back to the customer? The job will be closed and the customer notified. Check the repair is finished.",
+    "confirmarEntregaSim": "Yes, hand it back"
   }
 }

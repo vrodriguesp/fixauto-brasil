@@ -33,6 +33,7 @@ function formatSlotDate(dateStr: string, locale: string): string {
 export default function OrcamentoDetalhePage() {
   const t = useTranslations('clienteOrcamentoDetalhe');
   const te = useTranslations('editarPedido');
+  const tg = useTranslations('garantia');
   const tc = useTranslations('constants');
   const tErr = useTranslations('erros');
   const locale = useLocale();
@@ -457,6 +458,14 @@ export default function OrcamentoDetalhePage() {
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-emerald-100 text-emerald-800 mt-1">
                         🛡️ {t('convencionadaComSeguradora', { seguradora: (solicitacao as any).seguradora })}
                       </span>
+                    )}
+                    {(orc as any).garantia_dias != null && (
+                      <p className="text-xs text-gray-600 mt-1">🛡️ {(orc as any).garantia_dias > 0 ? tg('noOrcamento', { dias: (orc as any).garantia_dias }) : tg('sem')}</p>
+                    )}
+                    {(orc as any).anexo_url && (
+                      <MidiaPrivada url={(orc as any).anexo_url}>{(u) => (
+                        <a href={u} target="_blank" rel="noopener noreferrer" className="block text-xs font-medium text-primary-700 hover:underline mt-1">📄 {tg('documento')}</a>
+                      )}</MidiaPrivada>
                     )}
                     {orc.oficina?.id && (
                       <Link href={`/cliente/mensagens/${solicitacao.id}?oficina=${orc.oficina.id}`}

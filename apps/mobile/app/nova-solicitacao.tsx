@@ -166,7 +166,7 @@ export default function NovaSolicitacaoScreen() {
   }
 
   return (
-    <ScrollView ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
+    <ScrollView keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
       <Stack.Screen options={opcoesTela} />
 
       <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoVeiculo')}</Text>
@@ -204,7 +204,7 @@ export default function NovaSolicitacaoScreen() {
         onChangeText={setDescricao}
         multiline
         numberOfLines={3}
-        className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-base"
+        className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-[16px]"
         style={{ textAlignVertical: 'top' }}
       />
 

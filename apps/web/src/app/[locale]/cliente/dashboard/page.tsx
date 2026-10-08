@@ -11,6 +11,7 @@ import { useVeiculos } from '@/hooks/use-veiculos';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { formatCurrency, timeAgo, cleanDescricao } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
+import GarantiasAtivas from '@/components/cliente/GarantiasAtivas';
 
 function formatDateShort(dateStr: string, locale: string): string {
   const d = new Date(dateStr);
@@ -166,6 +167,7 @@ export default function ClienteDashboard() {
       </div>
 
       {/* Accidents where user is the other involved */}
+      <GarantiasAtivas />
       <AccidenteEnvolvido />
 
       {/* Scheduled / Accepted - show appointment details */}

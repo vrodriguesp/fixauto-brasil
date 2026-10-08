@@ -72,26 +72,26 @@ export default function EditarPedido({ solicitacaoId, descricao, veiculo, aoSalv
             <>
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.modelo')}</Text>
               <TextInput accessibilityLabel={t('veiculos.modelo')} value={modelo?.name || ''} onChangeText={(v) => setModelo({ code: '', name: v })}
-                className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
+                className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]" />
             </>
           ) : null}
           <View className="flex-row gap-2">
             <View className="flex-1">
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.ano')}</Text>
               <TextInput accessibilityLabel={t('veiculos.ano')} value={ano} onChangeText={setAno} keyboardType="number-pad" maxLength={4}
-                className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
+                className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]" />
             </View>
             <View className="flex-1">
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.placa')}</Text>
               <TextInput accessibilityLabel={t('veiculos.placa')} value={placa} onChangeText={setPlaca} autoCapitalize="characters" maxLength={15}
-                className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" />
+                className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]" />
             </View>
           </View>
         </>
       )}
       <Text className="text-sm font-medium text-gray-700 mb-1">{t('acompanhamento.descricaoPedido')}</Text>
       <TextInput accessibilityLabel={t('acompanhamento.descricaoPedido')} value={texto} onChangeText={setTexto} multiline numberOfLines={4} maxLength={2000}
-        className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base" style={{ textAlignVertical: 'top', minHeight: 90 }} />
+        className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]" style={{ textAlignVertical: 'top', minHeight: 90 }} />
       <View className="flex-row gap-2">
         <Pressable onPress={() => setAberto(false)} className="flex-1 border border-gray-300 rounded-lg py-3 items-center">
           <Text className="text-gray-700 font-medium">{t('common.cancelar')}</Text>
