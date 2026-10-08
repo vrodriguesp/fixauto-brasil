@@ -563,7 +563,7 @@ export default function AgendaPage() {
         <div className="flex flex-wrap gap-2 mb-4">
           <span className="text-xs text-gray-500 py-1">{t('checkinsEsteMes')}:</span>
           {Object.entries(monthlyStats).map(([tipo, n]) => (
-            <span key={tipo} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full font-medium">{tipo}: {n}</span>
+            <span key={tipo} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full font-medium">{tc.has(`tiposServico.${tipo}`) ? tc(`tiposServico.${tipo}`) : tipo}: {n}</span>
           ))}
         </div>
       )}
