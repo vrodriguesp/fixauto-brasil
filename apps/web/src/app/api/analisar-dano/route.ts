@@ -110,7 +110,7 @@ Seja BREVE. Escreva os textos (resumo, checklist_inspecao, pecas_afetadas, pergu
             responseMimeType: 'application/json',
           },
         });
-    const MODELOS = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.5-flash-lite'];
+    const MODELOS = ['gemini-2.5-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite'];
     let geminiRes: Response | null = null;
     let modeloUsado = MODELOS[0];
     for (const modelo of MODELOS) {
