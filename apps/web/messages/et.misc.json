@@ -973,7 +973,8 @@
         "texto": "Saa hinnapäringuid oma piirkonna autojuhtidelt.",
         "botao": "Hakka partneriks"
       }
-    }
+    },
+    "leiaTambem": "Loe ka"
   },
   "tutorialHub": {
     "concluidos": "{feitos}/{total} tehtud",

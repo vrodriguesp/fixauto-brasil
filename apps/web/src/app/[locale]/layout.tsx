@@ -4,6 +4,7 @@ import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
 import SiteFooter from '@/components/layout/SiteFooter';
+import { contarOficinasPublicas } from '@/lib/oficinas-publicas';
 import SugestaoIdioma from '@/components/layout/SugestaoIdioma';
 import Analytics from '@/components/Analytics';
 import StructuredData from '@/components/seo/StructuredData';
@@ -78,6 +79,7 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   const messages = await getMessages();
+  const temOficinas = (await contarOficinasPublicas().catch(() => 0)) > 0;
   const t = await getTranslations({ locale, namespace: 'meta' });
 
   const organizationSchema = {
@@ -121,7 +123,7 @@ export default async function LocaleLayout({
       </a>
       <Navbar />
       <main id="conteudo" className="min-h-[calc(100vh-4rem)]">{children}</main>
-      <SiteFooter />
+      <SiteFooter temOficinas={temOficinas} />
     </NextIntlClientProvider>
   );
 }

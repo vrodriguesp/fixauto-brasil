@@ -28,29 +28,6 @@ function splitLocalePrefix(pathname: string): { prefix: string; path: string; lo
   return { prefix: '', path: pathname, locale: 'pt' };
 }
 
-// Home internacional ("/", x-default): nao e versao de idioma, so encaminha.
-// 1) idioma escolhido pela pessoa (cookie gravado pelo seletor/rodape/aviso);
-// 2) idioma do navegador (Accept-Language); 3) ingles. Sem olhar user-agent:
-// robos seguem a mesma regra (o Googlebot nao manda Accept-Language, entao
-// cai no ingles, a versao x-default) - ninguem recebe tratamento diferente.
-function idiomaParaHome(req: NextRequest): Locale {
-  const escolhido = req.cookies.get(COOKIE_IDIOMA)?.value;
-  if (escolhido && (routing.locales as readonly string[]).includes(escolhido)) return escolhido as Locale;
-
-  const accept = req.headers.get('accept-language') || '';
-  for (const parte of accept.split(',')) {
-    const [tag, ...params] = parte.trim().toLowerCase().split(';');
-    if (!tag || params.some((p) => p.trim() === 'q=0')) continue;
-    if (tag === 'pt-pt') return 'pt-PT';
-    if (tag.startsWith('pt')) return 'pt';
-    if (tag.startsWith('et')) return 'et';
-    if (tag.startsWith('it')) return 'it';
-    if (tag.startsWith('ru')) return 'ru';
-    if (tag.startsWith('en')) return 'en';
-  }
-  return X_DEFAULT_LOCALE;
-}
-
 const PREFIXOS_IDIOMA = Object.values(LOCALE_PREFIX);
 
 // Primeiro trecho dos enderecos publicos da versao do Brasil antes de 30/09/2026
@@ -64,11 +41,12 @@ export async function middleware(req: NextRequest) {
 
   // Home internacional: 307 (temporario - depende de quem pede), nao cacheavel.
   if (pathname === '/') {
-    const alvo = idiomaParaHome(req);
-    const r = NextResponse.redirect(new URL(`${LOCALE_PREFIX[alvo]}${req.nextUrl.search}`, req.url), 307);
-    r.headers.set('Vary', 'Accept-Language, Cookie');
-    r.headers.set('Cache-Control', 'private, no-store');
-    return r;
+    // 301 fixo para a home da Estonia (mercado principal). Antes era 307 por
+    // Accept-Language: com redirecionamento temporario Google e Yandex
+    // guardavam "/" com o snippet antigo do Brasil, e um redirecionamento
+    // que muda conforme o visitante parece "sneaky redirect" para o Bing.
+    // Quem fala outra lingua ve a sugestao de idioma na pagina (SugestaoIdioma).
+    return NextResponse.redirect(new URL(`${LOCALE_PREFIX.et}${req.nextUrl.search}`, req.url), 301);
   }
 
   // Painel admin nao tem idioma: /pt-br/admin/... (ou qualquer idioma) -> /admin/...

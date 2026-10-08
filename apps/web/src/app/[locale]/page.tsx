@@ -3,6 +3,8 @@ import { getTranslations } from 'next-intl/server';
 import { hreflangAlternates } from '@/lib/seo-utils';
 import { OG_LOCALE, type Locale } from '@/i18n/routing';
 import HomeClient from './HomeClient';
+import { guiasDoIdioma, caminhoDoGuia } from '@/lib/guias';
+import { hrefNoIdioma } from '@/i18n/routing';
 
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -33,6 +35,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-export default function HomePage() {
-  return <HomeClient />;
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const guias = guiasDoIdioma(locale).slice(0, 6).map(({ guia, versao }) => ({
+    titulo: versao.titulo, resumo: versao.descricao, href: hrefNoIdioma(locale, caminhoDoGuia(guia, locale)),
+  }));
+  return <HomeClient guias={guias} />;
 }

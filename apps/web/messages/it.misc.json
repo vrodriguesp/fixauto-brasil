@@ -973,7 +973,8 @@
         "texto": "Ricevi richieste di preventivo dagli automobilisti della tua zona.",
         "botao": "Diventa partner"
       }
-    }
+    },
+    "leiaTambem": "Leggi anche"
   },
   "tutorialHub": {
     "concluidos": "{feitos}/{total} completati",

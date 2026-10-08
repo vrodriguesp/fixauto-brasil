@@ -373,7 +373,10 @@
     "footerDireitos": "2026 BipFix. Kõik õigused kaitstud.",
     "footerTermos": "Kasutustingimused",
     "footerPrivacidade": "Privaatsus",
-    "footerSobre": "BipFixist"
+    "footerSobre": "BipFixist",
+    "guiasTitulo": "Juhendid autojuhtidele",
+    "guiasTexto": "Praktilised vastused enne, kui viid auto töökotta.",
+    "guiasVerTodos": "Vaata kõiki juhendeid"
   },
   "constants": {
     "tiposServico": {

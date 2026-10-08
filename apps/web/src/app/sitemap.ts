@@ -7,7 +7,9 @@ import { alternatesDoGuia, caminhoDoGuia, todosOsGuias } from '@/lib/guias';
 
 // Sem isso, o sitemap fica congelado com os dados de quando a build rodou -
 // oficinas novas so apareceriam apos o proximo deploy manual.
-export const revalidate = 3600;
+// 10 min: oficina apagada/desativada sai rapido (com 1 h, cadastros de teste
+// ficavam no sitemap respondendo 404 - auditoria SEO de 08/10).
+export const revalidate = 600;
 
 function localizedEntries(
   path: string,
@@ -58,11 +60,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // "created_at") - selecionar/ordenar por "updated_at" fazia essa query
   // falhar silenciosamente (o erro era descartado no destructuring) e o
   // sitemap nunca listava nenhuma oficina, mesmo com oficinas ativas no banco.
-  const { data: oficinas } = await supabase
+  const { data: todasAtivas } = await supabase
     .from('oficinas')
-    .select('id, cidade, created_at')
+    .select('id, cidade, created_at, nome_fantasia, endereco, especialidades')
     .eq('ativa', true)
     .order('created_at', { ascending: false });
+  // So perfis completos e com mais de 24 h: cadastro de teste ou pela metade
+  // nunca vai ao Google (e some antes de virar 404 no sitemap).
+  const umDiaAtras = Date.now() - 24 * 3600 * 1000;
+  const oficinas = (todasAtivas || []).filter((o: any) =>
+    o.nome_fantasia && o.endereco && o.cidade && (o.especialidades || []).length > 0 && new Date(o.created_at).getTime() < umDiaAtras);
 
   const oficinasPages: MetadataRoute.Sitemap = (oficinas || []).flatMap((oficina) =>
     localizedEntries(`/oficinas/${oficina.id}`, {

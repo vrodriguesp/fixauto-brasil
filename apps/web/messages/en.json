@@ -373,7 +373,10 @@
     "footerDireitos": "2026 BipFix. All rights reserved.",
     "footerTermos": "Terms of Use",
     "footerPrivacidade": "Privacy",
-    "footerSobre": "About BipFix"
+    "footerSobre": "About BipFix",
+    "guiasTitulo": "Guides for drivers",
+    "guiasTexto": "Practical answers before you take your car to a garage.",
+    "guiasVerTodos": "See all guides"
   },
   "constants": {
     "tiposServico": {

@@ -973,7 +973,8 @@
         "texto": "Receba pedidos de orçamento de condutores da sua zona.",
         "botao": "Tornar-se parceiro"
       }
-    }
+    },
+    "leiaTambem": "Leia também"
   },
   "tutorialHub": {
     "concluidos": "{feitos}/{total} concluídos",

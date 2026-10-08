@@ -373,7 +373,10 @@
     "footerDireitos": "2026 BipFix. Todos os direitos reservados.",
     "footerTermos": "Termos de Utilização",
     "footerPrivacidade": "Privacidade",
-    "footerSobre": "Sobre a BipFix"
+    "footerSobre": "Sobre a BipFix",
+    "guiasTitulo": "Guias para condutores",
+    "guiasTexto": "Respostas práticas antes de levar o carro à oficina.",
+    "guiasVerTodos": "Ver todos os guias"
   },
   "constants": {
     "tiposServico": {

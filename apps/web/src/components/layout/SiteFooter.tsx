@@ -22,7 +22,7 @@ const AREAS_PRIVADAS = ['/cliente', '/oficina', '/loja', '/definir-senha'];
 // principal caminho de links internos para buscadores e IAs: toda pagina
 // publica aponta para as paginas-chave e para as versoes nos outros idiomas
 // (links <a hreflang> reais, nao botoes).
-export default function SiteFooter() {
+export default function SiteFooter({ temOficinas = false }: { temOficinas?: boolean }) {
   const t = useTranslations('home');
   const locale = useLocale() as Locale;
   const pathname = usePathname();
@@ -48,7 +48,7 @@ export default function SiteFooter() {
             <ul className="space-y-2 text-sm">
               <li><Link href={rota('/cadastro', undefined, { tipo: 'cliente' })} className="inline-block py-1.5 hover:text-white">{t('footerCriarConta')}</Link></li>
               <li><Link href="/emergencia" className="inline-block py-1.5 hover:text-white">{t('footerAcabeiDeBater')}</Link></li>
-              <li><Link href="/oficinas" className="inline-block py-1.5 hover:text-white">{t('footerVerOficinas')}</Link></li>
+              {temOficinas && <li><Link href="/oficinas" className="inline-block py-1.5 hover:text-white">{t('footerVerOficinas')}</Link></li>}
               <li><Link href="/docs/cliente" className="inline-block py-1.5 hover:text-white">{t('footerComoFunciona')}</Link></li>
               <li><Link href="/guias" className="inline-block py-1.5 hover:text-white">{t('footerGuias')}</Link></li>
               <li><Link href="/sobre" className="inline-block py-1.5 hover:text-white">{t('footerSobre')}</Link></li>

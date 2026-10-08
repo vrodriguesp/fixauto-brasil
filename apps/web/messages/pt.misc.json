@@ -714,7 +714,8 @@
         "texto": "Receba pedidos de orçamento de motoristas da sua região.",
         "botao": "Quero ser parceiro"
       }
-    }
+    },
+    "leiaTambem": "Leia também"
   },
   "tutorialHub": {
     "concluidos": "{feitos}/{total} concluídos",

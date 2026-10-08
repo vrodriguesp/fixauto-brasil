@@ -6,8 +6,11 @@ import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import StructuredData from '@/components/seo/StructuredData';
 import { generateFAQSchema } from '@/lib/seo-utils';
+import NextLink from 'next/link';
 
-export default function HomeClient() {
+export interface GuiaResumo { titulo: string; resumo: string; href: string }
+
+export default function HomeClient({ guias = [] }: { guias?: GuiaResumo[] }) {
   const { isLoggedIn, user, funcionario, authUser, loading } = useAuth();
   const router = useRouter();
   const t = useTranslations('home');
@@ -244,6 +247,27 @@ export default function HomeClient() {
           </Link>
         </div>
       </section>
+
+      {/* Guias: a home linka cada guia (antes so o rodape tinha "Juhendid") */}
+      {guias.length > 0 && (
+        <section className="py-20 bg-gray-50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">{t('guiasTitulo')}</h2>
+            <p className="text-gray-600 text-center mb-10 max-w-2xl mx-auto">{t('guiasTexto')}</p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {guias.map((g) => (
+                <NextLink key={g.href} href={g.href} className="card block hover:shadow-md transition-shadow">
+                  <h3 className="font-semibold text-gray-900 mb-2 break-words">{g.titulo}</h3>
+                  <p className="text-sm text-gray-600">{g.resumo}</p>
+                </NextLink>
+              ))}
+            </div>
+            <div className="text-center mt-8">
+              <Link href="/guias" className="text-primary-600 font-medium hover:underline">{t('guiasVerTodos')} ›</Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* FAQ Section */}
       <section className="py-20 bg-white">

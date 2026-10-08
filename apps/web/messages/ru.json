@@ -373,7 +373,10 @@
     "footerDireitos": "2026 BipFix. Все права защищены.",
     "footerTermos": "Условия использования",
     "footerPrivacidade": "Конфиденциальность",
-    "footerSobre": "О BipFix"
+    "footerSobre": "О BipFix",
+    "guiasTitulo": "Полезные статьи для водителей",
+    "guiasTexto": "Практические ответы до того, как вы отвезёте машину в сервис.",
+    "guiasVerTodos": "Все статьи"
   },
   "constants": {
     "tiposServico": {

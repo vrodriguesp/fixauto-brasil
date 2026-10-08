@@ -5,7 +5,7 @@ import { Link, redirect, rota } from '@/i18n/navigation';
 import StructuredData from '@/components/seo/StructuredData';
 import { OG_LOCALE, HREFLANG, hrefNoIdioma, type Locale } from '@/i18n/routing';
 import { localizedUrl, imagemCompartilhamento } from '@/lib/seo-utils';
-import { alternatesDoGuia, caminhoDoGuia, guiaPorSlug } from '@/lib/guias';
+import { alternatesDoGuia, caminhoDoGuia, guiaPorSlug, guiasDoIdioma } from '@/lib/guias';
 import { formatDate } from '@/lib/utils';
 
 // Pais pelo nome (e sameAs no Wikidata), nao pelo codigo ISO - schema.org
@@ -166,6 +166,21 @@ export default async function GuiaPage({ params }: Params) {
         <p className="text-gray-700 mt-1">{t(`cta.${cta}.texto`)}</p>
         <Link href={ctaHref} className="btn-primary inline-block mt-4">{t(`cta.${cta}.botao`)}</Link>
       </aside>
+
+      {/* outros guias do mesmo idioma (antes os guias nao se linkavam) */}
+      {(() => {
+        const outros = guiasDoIdioma(locale).filter((g) => g.guia.slug !== guia.slug).slice(0, 4);
+        return outros.length ? (
+          <nav aria-label={t('leiaTambem')} className="mt-10">
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">{t('leiaTambem')}</h2>
+            <ul className="space-y-2">
+              {outros.map((o) => (
+                <li key={o.guia.slug}><a href={hrefNoIdioma(locale, caminhoDoGuia(o.guia, locale))} className="text-primary-600 hover:underline">{o.versao.titulo}</a></li>
+              ))}
+            </ul>
+          </nav>
+        ) : null;
+      })()}
 
       {v.fontes?.length ? (
         <section className="mt-10 border-t pt-6">

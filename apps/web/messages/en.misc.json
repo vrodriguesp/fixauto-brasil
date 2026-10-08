@@ -973,7 +973,8 @@
         "texto": "Get quote requests from drivers in your area.",
         "botao": "Become a partner"
       }
-    }
+    },
+    "leiaTambem": "Read also"
   },
   "tutorialHub": {
     "concluidos": "{feitos}/{total} completed",

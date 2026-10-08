@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
+import { contarOficinasPublicas } from '@/lib/oficinas-publicas';
 import StructuredData from '@/components/seo/StructuredData';
 import { OG_LOCALE, isBrasil, type Locale } from '@/i18n/routing';
 import { generateFAQSchema, hreflangAlternates, localizedUrl, imagemCompartilhamento } from '@/lib/seo-utils';
@@ -35,6 +36,7 @@ type Faq = { pergunta: string; resposta: string };
 export default async function ParaOficinasPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'paraOficinas' });
+  const temOficinas = (await contarOficinasPublicas().catch(() => 0)) > 0;
 
   const funcCategorias = t.raw('funcCategorias') as FuncCategoria[];
   const dores = t.raw('dores') as DorSolucao[];
@@ -76,12 +78,14 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
               >
                 {t('ctaFundador')}
               </Link>
-              <Link
-                href="/oficinas"
-                className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white/10 transition-colors text-center"
+              {temOficinas && (
+                <Link
+                  href="/oficinas"
+                  className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white/10 transition-colors text-center"
               >
-                {t('ctaVerOficinas')}
-              </Link>
+                  {t('ctaVerOficinas')}
+                  </Link>
+              )}
             </div>
             <p className="mt-4 text-sm text-white">{t('heroFootnote')}</p>
           </div>
