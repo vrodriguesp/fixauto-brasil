@@ -408,7 +408,7 @@ export default function VeiculosEmServico() {
                         {getStatusBadge(evento.status)}
                       </div>
 
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500">
                         {cliente && <span>{cliente.nome}</span>}
                         <span>{t('checkinLabel')}: {formatDate(evento.data_inicio)}</span>
                         <span>{t('entregaLabel')}: {formatDate(evento.data_fim)}</span>
