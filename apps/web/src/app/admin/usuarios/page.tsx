@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import type { Profile } from '@fixauto/shared';
+import TrocarEmail from '@/components/admin/TrocarEmail';
 
 interface OficinaVinculo {
   nome: string;
@@ -205,7 +206,7 @@ export default function AdminUsuariosPage() {
                           <span className="text-white font-medium">{profile.nome}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-slate-300 text-sm">{profile.email}</td>
+                      <td className="px-6 py-4 text-slate-300 text-sm"><TrocarEmail profileId={profile.id} emailAtual={profile.email} aoTrocar={() => fetchProfiles()} /></td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${tipoBadge(profile.tipo)}`}>
                           {profile.tipo}

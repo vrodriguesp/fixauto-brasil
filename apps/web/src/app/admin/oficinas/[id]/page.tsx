@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { currencyForCountry } from '@/lib/currency';
 import { formatDate } from '@/lib/utils';
 import type { Oficina, Solicitacao, Orcamento } from '@fixauto/shared';
+import TrocarEmail from '@/components/admin/TrocarEmail';
 
 interface ComissaoResumo {
   individual: { taxa: number | null; ate: string | null; motivo: string | null; vigente: boolean } | null;
@@ -167,6 +168,13 @@ export default function AdminOficinaDetailPage() {
       <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
         <h2 className="text-lg font-semibold text-white mb-4">Informações</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          {(oficina as any).profile?.id && (
+            <div className="md:col-span-2">
+              <span className="text-slate-400">Email de acesso (login):</span>
+              <TrocarEmail profileId={(oficina as any).profile.id} emailAtual={(oficina as any).profile.email || ''}
+                aoTrocar={(email) => setOficina({ ...oficina, profile: { ...(oficina as any).profile, email } } as Oficina)} />
+            </div>
+          )}
           <div>
             <span className="text-slate-400">Endereço:</span>
             <p className="text-white">{oficina.endereco}</p>
