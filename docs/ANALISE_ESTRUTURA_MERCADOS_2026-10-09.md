@@ -2,7 +2,7 @@
 
 Pergunta do dono: com pastas por idioma (`/et`, `/ru`, `/en`, `/it`, `/pt-br`, `/pt-pt`), o Google indexa pior do que um domínio do país? A IKEA faz `ikea.it` → `ikea.com/it/it/`, em italiano e com o mercado italiano. Não seria mais correto assim? A página `bipfix.com` atual é fraca; a da Norwegian é melhor.
 
-**Status: análise. Nada foi mudado na estrutura. Precisa da decisão do dono.**
+**Status: DECIDIDO em 09/10 — opção B, implementada e publicada (ver docs/PROGRESSO_2026-10-08.md).**
 
 ## 1. O que temos hoje
 - As pastas são por **idioma**, não por país. O hreflang também é só de idioma: `et`, `ru`, `en`, `it` (mais `pt-BR` e `pt-PT`).

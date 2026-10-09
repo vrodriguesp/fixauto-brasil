@@ -141,3 +141,40 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
 - Registro da OÜ; contas Apple Developer e Google Play; `npx eas login` + `eas init`; APPLE_TEAM_ID e ANDROID_SHA256 para os links do app (L4); capturas de tela e textos das lojas; contas de teste para os revisores (Apple/Google).
 - Pedidos de indexação no Google/Bing listados no item 4.
 - Testar no iPhone (inclui envio de foto — L7).
+
+## 09/10 — Site por mercado (país + idioma), modelo IKEA/Norwegian — FEITO
+- **Decisão do dono:** opção B de `docs/ANALISE_ESTRUTURA_MERCADOS_2026-10-09.md`.
+- **Endereços:**
+
+  | Versão | Endereço | hreflang |
+  |---|---|---|
+  | Estônia, estoniano | `/ee/et` | `et-EE` e `et` |
+  | Estônia, russo | `/ee/ru` | `ru-EE` |
+  | Estônia, inglês | `/ee/en` | `en-EE` |
+  | Itália | `/it/it` | `it-IT` e `it` |
+  | Portugal | `/pt/pt` | `pt-PT` |
+  | Brasil | `/br/pt` | `pt-BR` |
+
+  - Códigos: EE = país (ISO 3166, domínio .ee); et = idioma estoniano (ISO 639).
+  - Sem `ru`/`en` genéricos: diriam que a página de Tallinn serve para a Rússia ou para o mundo todo.
+- **301 de todos os endereços antigos** (um salto só):
+  - `/et/...` → `/ee/et/...`, e assim para `/ru`, `/en`, `/pt-br` e `/pt-pt`;
+  - `/it/...` → `/it/it/...`;
+  - Brasil sem prefixo → `/br/pt/...`;
+  - `/ee`, `/it`, `/pt`, `/br` → idioma principal do país.
+- **Raiz `/` no estilo Norwegian:** logo, "Tere! · Привет! · Ciao! · Olá!", cartões por país com bandeira; a Estônia com três botões (Eesti keel / Русский / English). Continua 200, x-default, sem redirecionar.
+- **Seletor do topo e rodapé:** agrupados por país.
+- **Sugestão de idioma:** só dentro do mesmo país (na Estônia: et/ru/en). Trocar de país é escolha da pessoa.
+- **App:**
+  - links dos termos/privacidade nos novos endereços;
+  - confirmação de e-mail aceita `/ee/et/confirmar-email` (rota `app/[idioma]/[versao]`);
+  - AASA com `/*/*/confirmar-email*`.
+- **Verificado em produção:** todas as versões 200, 301 corretos, sitemap com os novos endereços, robots, imagem de compartilhamento 200. Testes `site-estonia`, `site-revisao`, `site-conclusao`, `site-admin-email` e `seguranca-rls` OK; `site-seguro-pais` com o resultado esperado.
+- **IndexNow:** 88 endereços novos + 87 antigos, HTTP 200.
+- **Falta (dono, nos painéis):**
+  - Google Search Console → Inspeção de URL → "Solicitar indexação" de `https://bipfix.com/`, `/ee/et`, `/ee/ru`, `/ee/en`, `/it/it`, `/pt/pt`, `/br/pt`;
+  - reenviar `sitemap.xml` no Google e no Bing;
+  - Bing → URL Inspection das mesmas;
+  - Yandex → Переобход de `/ee/et` e `/ee/ru`.
+- **Opcional (dono):** comprar `bipfix.ee`, `bipfix.it` e `bipfix.pt`. Eu configuro o 301 para `/ee/et`, `/it/it` e `/pt/pt`, como `ikea.it`.
+- **Marca:** `bipfix.com.br` é de outra empresa; consultar o INPI antes de investir no Brasil.
