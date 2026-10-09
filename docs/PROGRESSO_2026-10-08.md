@@ -208,3 +208,26 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
   - **Tamanho:** ~1.390 palavras (motorista) e ~1.270 (oficina) por idioma.
   - **Traduções:** Fable, com os nomes reais dos botões de cada idioma e adaptações por país (112, registrikood/partita IVA/NIF, sem DDD/FIPE fora do Brasil). Verificado com `checar-traducoes.mjs`, a mesma estrutura nos 6 idiomas, cada página com o próprio texto em produção e celular de 390 px sem rolagem lateral.
   - **IndexNow:** 15 URLs (as 12 dos guias + os 3 guias de inspeção).
+
+## 09/10 noite — Testes por mercado, bugs achados e Quadro da agenda
+- **Teste novo `site-mercados.mjs`** (produção, celular 390 px, pela tela).
+  - **Quem participa:** 4 países, 6 oficinas, 2 lojas de peças e 6 clientes em it/ru/en/pt-PT/pt. Inclui um italiano morando em Tallinn conversando com uma oficina estoniana e uma russa.
+  - **Fluxo:** pedido com GPS do país → avisos só às oficinas do lugar, no idioma de cada dono → orçamento pela tela → moeda certa (€ / R$) → conversa nos dois sentidos → aceite com horário → check-in e etapas → revisão de preço aprovada → concluído → entregue → avaliação.
+  - **Peças:** só a loja do mesmo país vê a cotação.
+  - **Avisos:** todos no idioma de quem lê.
+  - **Resultado:** 215 verificações ✓ e a Itália refeita OK depois de corrigir o filtro do próprio teste.
+- **Regressão completa depois da mudança de endereços:** as 14 suítes do site OK. O `e2e-seguro` só bateu no limite de 3 acidentes por hora por IP (proteção). Mais a varredura dos 6 idiomas.
+- **Bugs reais achados e corrigidos:**
+  1. **Acidente avisava oficinas de qualquer país:** sem oficina num raio de 50 km, avisava 20 oficinas quaisquer; além disso, "pedido novo" ia para TODAS as oficinas de funilaria ativas. Agora só as oficinas perto do acidente. O admin recebe e-mail quando ninguém perto foi avisado (antes só quando não havia nenhuma oficina ativa no mundo). Vale também para o pedido comum.
+  2. **Histórico da agenda** aceitava só 5 ações e recusava em silêncio "retirado_revisao_recusada" (cliente recusou a revisão e retirou o carro). Migração 054.
+- **Quadro da agenda (pedido do dono):**
+  - **Visão:** nova visão "Quadro" ao lado de Mês/Dia/Lista. A oficina escolhe, e a escolha fica salva no aparelho.
+  - **Layout:** linhas por **mecânico** ou por **elevador/box**; dias nas colunas; cada carro é uma barra da entrada até a entrega prevista. Cores por situação: agendado, na oficina, aguardando peças, pronto para retirar, prazo estourado, check-in atrasado, falta, entregue, serviço interno. Alertas no topo e disponibilidade por dia.
+  - **Elevadores e boxes (migração 053):** um carro no elevador ocupa o elevador e o mecânico ao mesmo tempo. Elevador com dois carros nos mesmos dias = conflito marcado. Mecânico acima do limite (`capacidade_maxima`) é avisado. Linha "Livres (de N)" por dia.
+  - **Trocar mecânico/elevador:** arrastando (computador) ou tocando no carro (celular), via `/api/servico` (`atribuir` / `elevador`), com histórico. A data nunca muda por arrasto: mudar a data de carro de cliente é reagendamento com ele.
+  - **Permissões:** o dono troca tudo; o mecânico com acesso escolhe o elevador só dos carros dele.
+  - **Tempo real (migração 052):** a agenda e os elevadores entraram no tempo real. As quatro visões usam os mesmos agendamentos, e uma mudança em um aparelho aparece nos outros sem recarregar. O cartão do Dia mostra o elevador.
+  - **Telas removidas:** "Distribuição de trabalho" e "Capacidade" saíram do site. Os endereços antigos levam ao Quadro; os indicadores (capacidade por tipo de serviço, tempo médio por etapa) ficam abaixo do Quadro.
+  - **Textos:** tutorial "Aprender" e Guia da Oficina atualizados nos 6 idiomas.
+  - **Teste novo `site-quadro.mjs`:** 35 verificações ✓, cobrindo celular e computador, arrastar, conflito, tempo real entre dois aparelhos, mecânico com acesso, endereços antigos e os 6 idiomas.
+- **App:** hoje é só para motoristas; contas de oficina não entram nele, e as oficinas usam o site, que funciona no celular. Uma área de oficina no app seria um projeto à parte. O Quadro já funciona no navegador do celular.
