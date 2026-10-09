@@ -246,17 +246,33 @@ const TWILIO_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM || 'whatsapp:+14155238886';
 
-async function sendWhatsApp(to: string, message: string): Promise<{ success: boolean; error?: string }> {
+// Telefone em E.164 (padrao internacional). "+372 5..." / "00372..." ja traz o
+// pais; numero nacional recebe o codigo do pais do servico. Antes todo numero
+// virava +55 (Brasil) e o aviso de um cliente da Estonia ia para o numero
+// errado (auditoria Fable 08/10, M-11).
+const DDI: Record<string, string> = { BR: '55', EE: '372', PT: '351', IT: '39', LV: '371', LT: '370', FI: '358' };
+export function telefoneE164(bruto: string, pais?: string | null): string | null {
+  const t = (bruto || '').trim();
+  if (t.startsWith('+')) return t.replace(/\D/g, '') || null;
+  const d = t.replace(/\D/g, '');
+  if (!d) return null;
+  if (d.startsWith('00')) return d.slice(2);
+  const ddi = pais ? DDI[pais.toUpperCase()] : undefined;
+  if (ddi) return d.startsWith(ddi) && d.length > ddi.length + 7 ? d : ddi + d.replace(/^0+/, '');
+  // pais desconhecido: so o formato brasileiro (DDD + numero) e inequivoco
+  if (d.length === 10 || d.length === 11) return '55' + d;
+  if ((d.length === 12 || d.length === 13) && d.startsWith('55')) return d;
+  return null;
+}
+
+async function sendWhatsApp(to: string, message: string, pais?: string | null): Promise<{ success: boolean; error?: string }> {
   if (!TWILIO_SID || !TWILIO_TOKEN) {
     console.warn('[Notifications] Twilio not configured - TWILIO_ACCOUNT_SID/TWILIO_AUTH_TOKEN missing');
     return { success: false, error: 'WhatsApp service not configured' };
   }
 
-  // Format Brazilian phone number
-  let phone = to.replace(/\D/g, '');
-  if (phone.length === 11) phone = '55' + phone;
-  if (phone.length === 10) phone = '55' + phone;
-  if (!phone.startsWith('55')) phone = '55' + phone;
+  const phone = telefoneE164(to, pais);
+  if (!phone) return { success: false, error: 'Telefone sem país' };
 
   try {
     const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/Messages.json`;
@@ -287,6 +303,8 @@ async function sendWhatsApp(to: string, message: string): Promise<{ success: boo
 
 export async function sendAccidentWhatsApp(params: {
   toPhone: string;
+  /** pais do servico (oficina/acidente): DDI de numero nacional */
+  pais?: string | null;
   toName: string;
   fromName: string;
   placa: string;
@@ -296,11 +314,13 @@ export async function sendAccidentWhatsApp(params: {
   const acidenteUrl = `${urlNoIdioma(params.locale, `/emergencia/acidente/${params.emergenciaId}`)}`;
   const tmpl = WHATSAPP_I18N.accidentWhatsApp[resolveEmailLocale(params.locale)];
   const message = fmt(tmpl, { toName: params.toName, fromName: params.fromName, placa: params.placa, url: acidenteUrl });
-  return sendWhatsApp(params.toPhone, message);
+  return sendWhatsApp(params.toPhone, message, params.pais);
 }
 
 export async function sendQuoteWhatsApp(params: {
   toPhone: string;
+  /** pais do servico (oficina/acidente): DDI de numero nacional */
+  pais?: string | null;
   toName: string;
   oficinaNome: string;
   valorTotal: string;
@@ -310,11 +330,13 @@ export async function sendQuoteWhatsApp(params: {
   const url = `${siteNoIdioma(params.locale)}/cliente/orcamentos/${params.solicitacaoId}`;
   const tmpl = WHATSAPP_I18N.quoteWhatsApp[resolveEmailLocale(params.locale)];
   const message = fmt(tmpl, { toName: params.toName, oficinaNome: params.oficinaNome, valorTotal: params.valorTotal, url });
-  return sendWhatsApp(params.toPhone, message);
+  return sendWhatsApp(params.toPhone, message, params.pais);
 }
 
 export async function sendServicoConcluidoWhatsApp(params: {
   toPhone: string;
+  /** pais do servico (oficina/acidente): DDI de numero nacional */
+  pais?: string | null;
   toName: string;
   oficinaNome: string;
   veiculoNome: string;
@@ -324,7 +346,7 @@ export async function sendServicoConcluidoWhatsApp(params: {
   const url = `${siteNoIdioma(params.locale)}/cliente/acompanhamento/${params.solicitacaoId}`;
   const tmpl = WHATSAPP_I18N.servicoConcluidoWhatsApp[resolveEmailLocale(params.locale)];
   const message = fmt(tmpl, { toName: params.toName, veiculoNome: params.veiculoNome, oficinaNome: params.oficinaNome, url });
-  return sendWhatsApp(params.toPhone, message);
+  return sendWhatsApp(params.toPhone, message, params.pais);
 }
 
 // Notifica o time interno da BipFix (sempre em portugues - e o idioma

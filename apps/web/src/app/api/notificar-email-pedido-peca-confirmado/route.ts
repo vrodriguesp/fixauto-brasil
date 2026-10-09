@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { dentroDoLimite } from '@/lib/rate-limit';
 import { getSessionUserId } from '@/lib/api-auth';
 import { sendPedidoPecaConfirmadoEmail } from '@/lib/notifications';
 import { currencyForCountry } from '@fixauto/shared';
@@ -25,6 +26,9 @@ export async function POST(req: NextRequest) {
     }
 
     const { respostaId } = await req.json();
+    if (!dentroDoLimite(`pedido-peca:${respostaId}`, 2, 60 * 60 * 1000) || !dentroDoLimite(`pedido-peca-u:${callerId}`, 40, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Muitas requisições', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
+    }
     if (!respostaId) {
       return NextResponse.json({ error: 'respostaId obrigatório' }, { status: 400 });
     }

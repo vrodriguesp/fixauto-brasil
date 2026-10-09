@@ -64,13 +64,20 @@ export async function POST(req: NextRequest) {
     // 1. Check if user exists with this email
     const { data: existingProfile } = await supabaseAdmin
       .from('profiles')
-      .select('id, nome, email')
+      .select('id, nome, email, tipo')
       .eq('email', email)
       .single();
 
     let profileId: string;
 
     if (existingProfile) {
+      // So liga conta de equipe (tipo oficina, sem oficina propria). E-mail de
+      // cliente/loja nao vira funcionario: ao remover depois, a conta dele seria
+      // apagada junto (auditoria Fable 08/10, M-08).
+      const { data: temOficina } = await supabaseAdmin.from('oficinas').select('id').eq('profile_id', existingProfile.id).maybeSingle();
+      if ((existingProfile as any).tipo !== 'oficina' || temOficina) {
+        return NextResponse.json({ error: 'Este e-mail já é de outra conta', codigo: 'EMAIL_DE_OUTRA_CONTA' }, { status: 409 });
+      }
       profileId = existingProfile.id;
     } else {
       // 2. Create auth user with the provided password
@@ -311,10 +318,19 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // 4. If they don't own an oficina, delete auth user entirely
-    //    (CASCADE will delete profile and related data)
+    // 4. So apaga a conta de login se ela existe SO por causa deste vinculo:
+    //    conta de equipe, sem oficina propria, sem outro vinculo de equipe,
+    //    sem pedidos/carros. Senao so desliga o vinculo (M-08).
     if (!ownsOficina && func.profile_id) {
-      await supabaseAdmin.auth.admin.deleteUser(func.profile_id);
+      const [{ data: perfil }, { count: outrosVinculos }, { count: pedidos }, { count: carros }] = await Promise.all([
+        supabaseAdmin.from('profiles').select('tipo').eq('id', func.profile_id).maybeSingle(),
+        supabaseAdmin.from('funcionarios').select('id', { count: 'exact', head: true }).eq('profile_id', func.profile_id),
+        supabaseAdmin.from('solicitacoes').select('id', { count: 'exact', head: true }).eq('cliente_id', func.profile_id),
+        supabaseAdmin.from('veiculos').select('id', { count: 'exact', head: true }).eq('profile_id', func.profile_id),
+      ]);
+      if ((perfil as any)?.tipo === 'oficina' && !outrosVinculos && !pedidos && !carros) {
+        await supabaseAdmin.auth.admin.deleteUser(func.profile_id);
+      }
     }
 
     return NextResponse.json({ success: true });

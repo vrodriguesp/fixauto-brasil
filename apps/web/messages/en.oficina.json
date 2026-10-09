@@ -207,11 +207,11 @@
           "Click a request in the list to see the details (damage photos, vehicle, description).",
           "Click \"Send Quote\".",
           "Add at least one item (description, type, price, quantity).",
-          "See how much the BipFix commission will be: you pay it at the end of the job; the customer pays only the quote amount.",
+          "Check the total: the customer pays only the quote amount, and BipFix currently charges the garage no commission.",
           "Set the timeline, available check-in dates, and click \"Send Quote\"."
         ],
         "desafio": "Send a real quote for an open request in your area.",
-        "dica": "The faster you respond, the lower your commission rate gets — see the \"Commission\" module."
+        "dica": "The faster you respond, the more likely the customer is to pick your quote."
       },
       "checkin": {
         "titulo": "Schedule, check-in and delivery",
@@ -240,7 +240,7 @@
         "resumo": "Using BipFix is currently free for repair shops. In the future there may be a fee — a percentage of each completed job or a fixed amount per job — always announced 30 calendar days in advance. The Commission screen shows the condition that applies to your shop.",
         "passosGuiados": [
           "Open Commission in the menu.",
-          "See your current rate and what's reducing (or not) each criterion.",
+          "Check the condition that applies to your garage today: free to use, no commission.",
           "If the fee is performance-based, responding fast, avoiding quote revisions and asking customers for reviews keep your rate lower."
         ],
         "desafio": "Open the Commission screen and check which condition applies to your shop today.",
@@ -388,7 +388,7 @@
     "bonusFidelidade10": "Loyalty (≥ 10 services/90d)",
     "bonusFidelidadeVolume": "Loyalty (volume/90d)",
     "titulo": "BipFix Commission",
-    "subtitulo": "Your commission rate and how to lower it",
+    "subtitulo": "How platform charges work for your garage",
     "suaTaxaAtual": "Your current rate",
     "pendente": "Pending",
     "pago": "Paid",
@@ -506,7 +506,17 @@
     "garantiaAjuda": "Starts when the car is handed back. Until the warranty ends, the customer can keep messaging you.",
     "comissaoPagaNoFim": "You pay this commission ({valor}) to BipFix at the end of the job. The customer pays only the quote amount ({total}).",
     "garantiaOutra": "Other (type the days)",
-    "garantiaDiasCampo": "Warranty days"
+    "garantiaDiasCampo": "Warranty days",
+    "proporRevisaoTitulo": "Propose a quote revision",
+    "proporRevisaoTexto": "The quote has already been accepted. Adjust the items and explain why: the customer approves, declines (the original amount stands) or collects the car. The amount only changes if they approve. Revisions are recorded on your profile.",
+    "motivoRevisao": "Reason for the revision (required)",
+    "motivoRevisaoPlaceholder": "E.g. when dismantling we found the bumper bracket broken",
+    "motivoRevisaoObrigatorio": "Please explain the reason for the revision.",
+    "enviarRevisao": "Send proposal to customer",
+    "revisaoEnviadaTitulo": "Revision proposal sent",
+    "revisaoEnviadaTexto": "The customer has been notified. Until they answer, the accepted quote stands.",
+    "revisaoAguardandoCliente": "Your revision proposal ({valor}) is waiting for the customer’s answer.",
+    "abrirConversa": "Open chat"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Password must be at least 8 characters",
@@ -769,7 +779,8 @@
       "aceito": "Accepted",
       "recusado": "Declined",
       "expirado": "Expired"
-    }
+    },
+    "proporRevisao": "Propose a revision"
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Vehicle received at the shop",

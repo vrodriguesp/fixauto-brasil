@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { dentroDoLimite } from '@/lib/rate-limit';
 import {
   sendQuoteNotificationEmail,
   sendQuoteWhatsApp,
@@ -18,6 +19,10 @@ export async function POST(req: NextRequest) {
     }
 
     const { orcamentoId } = await req.json();
+    // reenvio limitado (auditoria M-12): por orcamento e por oficina
+    if (!dentroDoLimite(`notificar-orc:${orcamentoId}`, 3, 60 * 60 * 1000) || !dentroDoLimite(`notificar-orc-u:${callerId}`, 40, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Muitas requisições', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
+    }
 
     if (!orcamentoId) {
       return NextResponse.json({ error: 'Missing orcamentoId' }, { status: 400 });
@@ -78,6 +83,7 @@ export async function POST(req: NextRequest) {
     if (cliente?.telefone) {
       results.whatsapp = await sendQuoteWhatsApp({
         toPhone: cliente.telefone,
+        pais: (orcamento.oficina as any)?.pais,
         toName: cliente.nome,
         oficinaNome,
         valorTotal,

@@ -511,7 +511,8 @@
     "quoteMsgPhonePart": " Tel: {telefone}",
     "semAcessoTitulo": "Accedi per vedere questo incidente",
     "semAcessoTexto": "Per sicurezza, i dati dell'incidente sono visibili solo a chi è coinvolto. Accedi con l'account collegato a questo incidente (l'e-mail che ha ricevuto l'avviso).",
-    "semAcessoEntrar": "Accedi"
+    "semAcessoEntrar": "Accedi",
+    "aguardandoRegistro": "Chi ha segnalato l'incidente completerà i dati dei coinvolti."
   },
   "docsHome": {
     "metaTitle": "Centro Assistenza",
@@ -837,30 +838,28 @@
       }
     ],
     "s7Outro": "Puoi rispondere pubblicamente alle recensioni, dimostrando professionalità e attenzione al cliente.",
-    "s8Title": "8. Commissione BipFix",
-    "s8Intro": "BipFix applica una commissione sui servizi effettuati tramite la piattaforma. Ecco come funziona:",
+    "s8Title": "8. Costi della piattaforma",
+    "s8Intro": "Attualmente l'uso di BipFix è gratuito per officine e automobilisti. Ecco cosa significa:",
     "s8Items": [
       {
-        "label": "Come viene calcolata",
-        "desc": "La commissione è calcolata sul valore totale del preventivo accettato dal cliente."
+        "label": "Nessuna commissione",
+        "desc": "Nessuna commissione viene applicata sui lavori conclusi tramite la piattaforma: l'importo che invii nel preventivo è l'importo che il cliente paga."
       },
       {
-        "label": "Trasparenza",
-        "desc": "La percentuale della commissione viene mostrata prima dell'invio del preventivo, senza sorprese."
+        "label": "Nessun canone mensile",
+        "desc": "Registrazione, agenda, preventivi, team e recensioni non hanno canone mensile."
       },
       {
-        "label": "Fatturazione",
-        "desc": "L'addebito avviene mensilmente, con un rendiconto dettagliato di tutti i servizi."
+        "label": "Preavviso",
+        "desc": "Se cambieremo il modo in cui la piattaforma fa pagare automobilisti o officine, ti informeremo con almeno 30 giorni di calendario di anticipo."
       }
     ],
-    "s8ReduceTitle": "Come ridurre la tua commissione:",
+    "s8ReduceTitle": "Dove tenerlo sotto controllo:",
     "s8ReduceList": [
-      "Mantieni una valutazione media superiore a 4,5 stelle.",
-      "Rispondi rapidamente alle richieste (in meno di 1 ora).",
-      "Completa i servizi entro i tempi stimati.",
-      "Mantieni il tuo profilo completo e aggiornato."
+      "Apri Commissione dal menu: la schermata mostra la condizione valida oggi per la tua officina.",
+      "Qualsiasi cambiamento futuro sarà comunicato via email e dentro la piattaforma prima di entrare in vigore."
     ],
-    "s8Note": "Le officine con prestazioni eccellenti possono ottenere fino al 30% di riduzione sulla commissione."
+    "s8Note": "L'automobilista non paga mai nulla: BipFix non aggiunge nulla all'importo del preventivo."
   },
   "docsOficinaLayout": {
     "metaTitle": "Guida per l'Officina",

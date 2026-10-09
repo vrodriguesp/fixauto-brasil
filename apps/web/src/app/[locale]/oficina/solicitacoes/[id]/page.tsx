@@ -56,8 +56,9 @@ export default function SolicitacaoDetalhePage() {
 
   // Determine button label and availability
   const getActionButton = () => {
+    // aceito: proposta de revisao que o cliente aprova ou nao (migracao 049)
     if (isAccepted || isEmAndamento) {
-      return { label: t('refazerOrcamento'), href: `/oficina/enviar-orcamento/${sol.id}` };
+      return { label: t('proporRevisao'), href: `/oficina/enviar-orcamento/${sol.id}` };
     }
     if (myQuote) {
       return { label: t('modificarOrcamento'), href: `/oficina/enviar-orcamento/${sol.id}` };
@@ -135,7 +136,7 @@ export default function SolicitacaoDetalhePage() {
               {myQuote.observacoes && <p className="text-sm text-gray-600 mt-3 whitespace-pre-line">{cleanDescricao(myQuote.observacoes)}</p>}
               {sol.status !== 'concluida' && sol.status !== 'cancelada' && (
                 <Link href={`/oficina/enviar-orcamento/${sol.id}`} className="btn-secondary mt-4 w-full sm:w-auto inline-flex justify-center">
-                  {t('modificarOrcamento')}
+                  {isAccepted || isEmAndamento ? t('proporRevisao') : t('modificarOrcamento')}
                 </Link>
               )}
             </div>

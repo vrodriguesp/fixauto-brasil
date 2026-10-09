@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import RevisaoPendente from '@/components/cliente/RevisaoPendente';
+import { textoErroApi } from '@/lib/erro-api';
 import { useParams } from 'next/navigation';
 import { useRouter, Link, rota } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
@@ -46,7 +48,10 @@ export default function OrcamentoDetalhePage() {
   const locale = useLocale();
   const params = useParams();
   const router = useRouter();
-  const { solicitacoes, updateStatus, refresh } = useSolicitacoes();
+  const { solicitacoes, loading: carregandoPedidos, updateStatus, refresh } = useSolicitacoes();
+  // aceite: trava de duplo clique e erro visivel (auditoria M14)
+  const [confirmando, setConfirmando] = useState(false);
+  const [erroAceite, setErroAceite] = useState('');
   const { accept, refuse } = useOrcamentos();
   const { avaliacoes, create: createAvaliacao, update: updateAvaliacao } = useAvaliacoes();
   const [cancelling, setCancelling] = useState(false);
@@ -112,6 +117,10 @@ export default function OrcamentoDetalhePage() {
   };
 
   if (!solicitacao) {
+    // enquanto carrega, spinner (antes "pedido nao encontrado" piscava - M4)
+    if (carregandoPedidos) {
+      return <div className="max-w-4xl mx-auto px-4 py-20 flex justify-center"><div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin" /></div>;
+    }
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
         <p className="text-gray-500">{t('requestNotFound')}</p>
@@ -125,9 +134,16 @@ export default function OrcamentoDetalhePage() {
   };
 
   const handleConfirmAppointment = async () => {
-    if (!selectedSlot || !schedulingOrcId) return;
+    if (!selectedSlot || !schedulingOrcId || confirmando) return;
     const orc = solicitacao.orcamentos?.find((o) => o.id === schedulingOrcId);
+    setConfirmando(true);
+    setErroAceite('');
     const { error } = await accept(schedulingOrcId, selectedSlot.id);
+    setConfirmando(false);
+    if (error) {
+      setErroAceite(textoErroApi(tErr, (error as any).status || 500, { codigo: (error as any).codigo }));
+      return;
+    }
     if (!error) {
       setAcceptedOficinaNome(orc?.oficina?.nome_fantasia || '');
       setAcceptedSlot(selectedSlot);
@@ -282,6 +298,9 @@ export default function OrcamentoDetalhePage() {
           </div>
         )}
       </div>
+
+      {/* revisao proposta pela oficina depois do aceite: o cliente decide */}
+      <RevisaoPendente solicitacaoId={solicitacao.id} aoDecidir={() => refresh()} />
 
       {/* Completed service banner + review */}
       {solicitacao.status === 'concluida' && (() => {
@@ -657,6 +676,7 @@ export default function OrcamentoDetalhePage() {
                     ))}
                   </div>
 
+                  {erroAceite && <p role="alert" className="mt-4 text-sm text-red-700 bg-red-50 rounded-lg p-3">{erroAceite}</p>}
                   <div className="flex gap-3 mt-4">
                     <button
                       onClick={() => { setSchedulingOrcId(null); setSelectedSlot(null); }}
@@ -666,8 +686,9 @@ export default function OrcamentoDetalhePage() {
                     </button>
                     <button
                       onClick={handleConfirmAppointment}
-                      disabled={!selectedSlot}
-                      className="btn-success flex-1"
+                      disabled={!selectedSlot || confirmando}
+                      aria-busy={confirmando}
+                      className="btn-success flex-1 disabled:opacity-60"
                     >
                       {selectedSlot ? t('confirmAppointment') : t('escolhaHorarioAntes')}
                     </button>

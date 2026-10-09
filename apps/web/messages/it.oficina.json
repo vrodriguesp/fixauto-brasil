@@ -207,11 +207,11 @@
           "Clicca su una richiesta dell'elenco per vederne i dettagli (foto del danno, veicolo, descrizione).",
           "Clicca su \"Invia Preventivo\".",
           "Aggiungi almeno una voce (descrizione, tipo, valore, quantità).",
-          "Vedi a quanto ammonta la commissione BipFix: la paghi alla fine del servizio; il cliente paga solo l'importo del preventivo.",
+          "Controlla il totale: il cliente paga solo l'importo del preventivo e oggi BipFix non applica commissioni all'officina.",
           "Imposta i tempi, le date disponibili per il check-in, e clicca su \"Invia Preventivo\"."
         ],
         "desafio": "Invia un preventivo reale per una richiesta aperta nella tua zona.",
-        "dica": "Più velocemente rispondi, più bassa diventa la tua commissione — vedi il modulo \"Commissione\"."
+        "dica": "Più velocemente rispondi, più è probabile che il cliente scelga il tuo preventivo."
       },
       "checkin": {
         "titulo": "Agenda, check-in e consegna",
@@ -240,7 +240,7 @@
         "resumo": "Attualmente l'uso di BipFix è gratuito per le officine. In futuro potrà esserci un costo — una percentuale su ogni lavoro completato o un importo fisso per lavoro — sempre comunicato con 30 giorni di calendario di anticipo. La schermata Commissione mostra la condizione valida per la tua officina.",
         "passosGuiados": [
           "Apri Commissione nel menu.",
-          "Guarda la tua aliquota attuale e cosa sta riducendo (o meno) ogni criterio.",
+          "Verifica la condizione valida oggi per la tua officina: uso gratuito, nessuna commissione.",
           "Se il costo dipende dalle prestazioni, rispondere in fretta, evitare revisioni dei preventivi e chiedere recensioni ai clienti mantengono la tua aliquota più bassa."
         ],
         "desafio": "Apri la schermata Commissione e verifica quale condizione vale oggi per la tua officina.",
@@ -388,7 +388,7 @@
     "bonusFidelidade10": "Fedeltà (≥ 10 servizi/90gg)",
     "bonusFidelidadeVolume": "Fedeltà (volume/90gg)",
     "titulo": "Commissione BipFix",
-    "subtitulo": "La tua aliquota di commissione e come ridurla",
+    "subtitulo": "Come funziona il costo della piattaforma per la tua officina",
     "suaTaxaAtual": "La tua aliquota attuale",
     "pendente": "In sospeso",
     "pago": "Pagato",
@@ -506,7 +506,17 @@
     "garantiaAjuda": "Decorre dalla consegna dell'auto. Fino alla fine della garanzia il cliente può continuare a scriverti.",
     "comissaoPagaNoFim": "Questa commissione ({valor}) la paghi a BipFix alla fine del servizio. Il cliente paga solo l'importo del preventivo ({total}).",
     "garantiaOutra": "Altro (scrivi i giorni)",
-    "garantiaDiasCampo": "Giorni di garanzia"
+    "garantiaDiasCampo": "Giorni di garanzia",
+    "proporRevisaoTitulo": "Proponi una revisione del preventivo",
+    "proporRevisaoTexto": "Il preventivo è già stato accettato. Modifica le voci e spiega il motivo: il cliente approva, rifiuta (resta l'importo originale) o ritira l'auto. L'importo cambia solo se approva. Le revisioni restano registrate nel tuo profilo.",
+    "motivoRevisao": "Motivo della revisione (obbligatorio)",
+    "motivoRevisaoPlaceholder": "Es.: smontando abbiamo trovato il supporto del paraurti rotto",
+    "motivoRevisaoObrigatorio": "Spiega il motivo della revisione.",
+    "enviarRevisao": "Invia la proposta al cliente",
+    "revisaoEnviadaTitulo": "Proposta di revisione inviata",
+    "revisaoEnviadaTexto": "Il cliente è stato avvisato. Finché non risponde, vale il preventivo accettato.",
+    "revisaoAguardandoCliente": "La tua proposta di revisione ({valor}) è in attesa della risposta del cliente.",
+    "abrirConversa": "Apri la chat"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "La password deve avere almeno 8 caratteri",
@@ -769,7 +779,8 @@
       "aceito": "Accettato",
       "recusado": "Rifiutato",
       "expirado": "Scaduto"
-    }
+    },
+    "proporRevisao": "Proponi revisione"
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Veicolo ricevuto in officina",

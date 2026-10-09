@@ -99,7 +99,7 @@ export default function AcidenteRegistroPage() {
   // Orcamentos
   const [orcamentos, setOrcamentos] = useState<Orcamento[]>([]);
   const [loadingOrc, setLoadingOrc] = useState(false);
-  const [emergData, setEmergData] = useState<{ solicitacao_id: string | null; profile_id: string | null; descricao: string | null; latitude?: number | null; longitude?: number | null } | null>(null);
+  const [emergData, setEmergData] = useState<{ solicitacao_id: string | null; profile_id: string | null; descricao: string | null; nome?: string | null; latitude?: number | null; longitude?: number | null } | null>(null);
   // pais do acidente (pela localizacao): regras e seguradoras do local, nao do idioma
   const [paisAcidente, setPaisAcidente] = useState<string | null>(null);
   useEffect(() => {
@@ -115,12 +115,6 @@ export default function AcidenteRegistroPage() {
 
   // Determine if current user is the victim (only victims can accept quotes and send to responsible)
   // eu_causei: registrant is responsible, so registrant is NOT victim
-  // outro_causou: registrant is victim
-  const isVitima = emergData?.descricao?.match(/\[TIPO:(\w+)\]/)
-    ? (emergData.descricao.match(/\[TIPO:(\w+)\]/)?.[1] === 'outro_causou'
-        ? isProprietario   // registrant is victim
-        : papel === 'outro')  // eu_causei: the other driver is the victim
-    : isProprietario; // fallback for legacy data
 
   // Dados do acidente pela API (acesso verificado no servidor: codigo
   // secreto deste navegador ou participante logado)
@@ -353,7 +347,7 @@ export default function AcidenteRegistroPage() {
       )}
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 mb-6">
+      <div className="flex border-b border-gray-200 mb-6 overflow-x-auto [&>button]:whitespace-nowrap [&>button]:flex-shrink-0">
         <button
           onClick={() => setStep('registro')}
           className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
@@ -381,7 +375,10 @@ export default function AcidenteRegistroPage() {
       </div>
 
       {/* Registration tab */}
-      {step === 'registro' && !registered && (
+      {step === 'registro' && !registered && !isProprietario && papel && (
+        <div className="card"><p className="text-sm text-gray-600">{t('aguardandoRegistro')}</p></div>
+      )}
+      {step === 'registro' && !registered && isProprietario && (
         <div className="card">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('formTitle')}</h2>
 
@@ -495,7 +492,7 @@ export default function AcidenteRegistroPage() {
             <div className="bg-gray-50 rounded-lg p-3 space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">{t('nameFieldLabel')}</span>
-                <span className="text-gray-900 font-medium">{user?.nome || t('youFallback')}</span>
+                <span className="text-gray-900 font-medium">{emergData?.nome || (isProprietario ? user?.nome : '') || t('youFallback')}</span>
               </div>
               {veiculoProprietario && (
                 <>
@@ -659,7 +656,8 @@ export default function AcidenteRegistroPage() {
             <>
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <p className="text-sm text-yellow-800">
-                  {tipoAcidente === 'eu_causei' || tipoAcidente === 'outro_causou'
+                  {/* os orcamentos sao do carro de quem registrou: so ele aceita (A4) */}
+                  {tipoAcidente === 'outro_causou'
                     ? t('victimDecidesNote')
                     : t('shareWithOtherNote')}
                 </p>
@@ -697,9 +695,9 @@ export default function AcidenteRegistroPage() {
                     )}
 
                     <div className="flex gap-2">
-                      {tipoAcidente !== 'sem_outro' && (
-                        (tipoAcidente === 'eu_causei' || tipoAcidente === 'outro_causou')
-                          ? isVitima && (
+                      {tipoAcidente !== 'sem_outro' && isProprietario && (
+                        tipoAcidente === 'outro_causou'
+                          ? (
                             <button
                               onClick={() => {
                                 setStep('chat');
@@ -722,7 +720,7 @@ export default function AcidenteRegistroPage() {
                             </button>
                           )
                       )}
-                      {isVitima && !isAceito && (
+                      {isProprietario && !isAceito && (
                         <Link
                           href={`/cliente/orcamentos/${emergData?.solicitacao_id}`}
                           className="btn-primary flex-1 !py-2 text-sm text-center"

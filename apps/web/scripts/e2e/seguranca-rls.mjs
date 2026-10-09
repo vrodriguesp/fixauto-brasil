@@ -95,6 +95,34 @@ try {
   const { data: oo2 } = await sb.from('oficinas').select('avaliacao_media, total_avaliacoes, descricao').eq('id', o.id).single();
   ok('M-06 oficina NAO escreve a propria nota', Number(oo2.total_avaliacoes || 0) !== 999, JSON.stringify(oo2));
   ok('legitimo: oficina edita a descricao', oo2.descricao === 'nova descricao');
+
+  // M-09: cliente sem relacao com a oficina nao le e-mail/telefone do dono
+  const { data: pDono } = await outro.a.from('profiles').select('email, telefone').eq('id', of.id).maybeSingle();
+  ok('M-09 cliente sem relacao NAO ve contato do dono da oficina', !pDono, JSON.stringify(pDono));
+  const { data: pDono2 } = await cli.a.from('profiles').select('email').eq('id', of.id).maybeSingle();
+  ok('M-09 legitimo: cliente com orcamento ve o dono da oficina', !!pDono2);
+
+  // M-10: oficina nao aprovada nao ve pedido aberto nem orca
+  const of2 = await conta('oficina');
+  const { data: o2 } = await sb.from('oficinas').insert({ profile_id: of2.id, nome_fantasia: `SEG2 ${tag}`, endereco: 'Narva mnt 7', cidade: 'Tallinn', estado: 'Harju', cep: '10117', pais: 'EE', latitude: 59.43, longitude: 24.75, ativa: false, raio_atendimento_km: 30, especialidades: ['mecanica'] }).select('id').single();
+  ofs.push(o2.id);
+  const { data: s3 } = await cli.a.from('solicitacoes').insert({ cliente_id: cli.id, veiculo_id: v.id, tipo: 'mecanica', descricao: 'aberto', urgencia: 'media', latitude: 59.43, longitude: 24.75, endereco: 'Tallinn' }).select('id').single();
+  sols.push(s3.id);
+  const { data: vis } = await of2.a.from('solicitacoes').select('id').eq('id', s3.id);
+  ok('M-10 oficina nao aprovada NAO ve pedido aberto', !(vis || []).length);
+  const { error: eOrc2 } = await of2.a.from('orcamentos').insert({ solicitacao_id: s3.id, oficina_id: o2.id, valor_total: 10, prazo_dias: 1, tempo_execucao_horas: 1, validade: dia(5) });
+  ok('M-10 oficina nao aprovada NAO orca', !!eOrc2, eOrc2?.message);
+  const { data: vis2 } = await of.a.from('solicitacoes').select('id').eq('id', s3.id);
+  ok('M-10 legitimo: oficina aprovada ve o pedido aberto', (vis2 || []).length === 1);
+
+  // M-05: avisos em massa pelo navegador sao barrados
+  let barrado = false;
+  for (let i = 0; i < 45 && !barrado; i++) {
+    const { error } = await cli.a.from('notificacoes').insert({ profile_id: of.id, tipo: 'teste', titulo: 'x', mensagem: 'x', dados: { solicitacao_id: s.id } });
+    if (error) barrado = true;
+  }
+  ok('M-05 avisos em massa barrados (limite por hora)', barrado);
+  await sb.from('notificacoes').delete().eq('tipo', 'teste');
 } catch (e) { falhas++; console.log('FALHA parou:', String(e.stack).slice(0, 600)); }
 finally {
   for (const sid of sols) {

@@ -21,12 +21,12 @@
     "modulos": {
       "como-funciona": {
         "titulo": "How the parts store works",
-        "resumo": "Repair shops post part requests (\"quotes\"). You respond with a price and delivery time. The shop picks the best offer and confirms the order. Delivery and payment are arranged directly with the shop — BipFix doesn't process that. Only when you mark the order as delivered does BipFix charge a small commission.",
+        "resumo": "Repair shops post part requests (\"quotes\"). You respond with a price and delivery time. The shop picks the best offer and confirms the order. Delivery and payment are arranged directly with the shop — BipFix does not process them. Using BipFix is currently free for stores: no commission is charged.",
         "passosGuiados": [
           "Open Dashboard in the menu and read the \"How it works\" card.",
           "Notice the 3 numbers: open quotes to respond to, confirmed orders, and active parts in your catalogue."
         ],
-        "desafio": "Understand the full flow before you start: quote → response → confirmed order → delivery → commission.",
+        "desafio": "Understand the full flow before you start: quote → response → confirmed order → delivery.",
         "linkRotulo": "View my dashboard →"
       },
       "perfil": {
@@ -61,7 +61,7 @@
           "Click \"Send response\"."
         ],
         "desafio": "Respond to at least one shop quote with a real price and delivery time.",
-        "dica": "Responding fast (under 2 hours) lowers your commission rate later on."
+        "dica": "Responding fast (under 2 hours) improves your chances of being picked by the shop."
       },
       "pedidos": {
         "titulo": "Orders and delivery",
@@ -78,7 +78,7 @@
         "resumo": "Using BipFix is currently free for stores. If a fee on parts sales is introduced in the future, you will be notified 30 calendar days in advance — and it will only apply to orders marked as delivered, never before.",
         "passosGuiados": [
           "Open Commission in the menu.",
-          "See your current rate, what's pending, and what's already been paid."
+          "Check the condition that applies to your store today: free to use, no commission."
         ],
         "desafio": "Check which condition applies to your store today.",
         "linkRotulo": "View my commission →"
@@ -115,7 +115,7 @@
   "lojaComissao": {
     "loading": "Loading...",
     "pageTitle": "BipFix Commission",
-    "pageSubtitle": "Fee charged on delivered part orders, and how to lower it"
+    "pageSubtitle": "Using BipFix is currently free for parts suppliers. If we change how the platform charges drivers, garages or suppliers, we will inform you at least 30 calendar days in advance."
   },
   "lojaConversaDetalhe": {
     "loadingConversa": "Loading chat...",

@@ -21,12 +21,12 @@
     "modulos": {
       "como-funciona": {
         "titulo": "Come funziona il negozio di ricambi",
-        "resumo": "Le officine pubblicano richieste di ricambi (\"preventivi\"). Tu rispondi con prezzo e tempi di consegna. L'officina sceglie la risposta migliore e conferma l'ordine. Consegna e pagamento vengono concordati direttamente con l'officina — BipFix non li gestisce. Solo quando segni l'ordine come consegnato, BipFix applica una piccola commissione.",
+        "resumo": "Le officine pubblicano richieste di ricambi (\"preventivi\"). Tu rispondi con prezzo e tempi di consegna. L'officina sceglie la risposta migliore e conferma l'ordine. Consegna e pagamento si concordano direttamente con l'officina — BipFix non li gestisce. Attualmente l'uso di BipFix è gratuito per i negozi: nessuna commissione viene applicata.",
         "passosGuiados": [
           "Apri Dashboard dal menu e leggi la scheda \"Come funziona\".",
           "Osserva i 3 numeri: preventivi aperti da rispondere, ordini confermati e ricambi attivi nel tuo catalogo."
         ],
-        "desafio": "Comprendi l'intero flusso prima di iniziare: preventivo → risposta → ordine confermato → consegna → commissione.",
+        "desafio": "Comprendi l'intero flusso prima di iniziare: preventivo → risposta → ordine confermato → consegna.",
         "linkRotulo": "Vai alla mia dashboard →"
       },
       "perfil": {
@@ -61,7 +61,7 @@
           "Clicca su \"Invia risposta\"."
         ],
         "desafio": "Rispondi ad almeno un preventivo di un'officina con prezzo e tempi di consegna reali.",
-        "dica": "Rispondere in fretta (meno di 2 ore) riduce in seguito la tua commissione."
+        "dica": "Rispondere in fretta (meno di 2 ore) aumenta le probabilità che l'officina scelga te."
       },
       "pedidos": {
         "titulo": "Ordini e consegna",
@@ -78,7 +78,7 @@
         "resumo": "Attualmente l'uso di BipFix è gratuito per i rivenditori. Se in futuro verrà introdotto un costo sulle vendite di ricambi, sarai avvisato con 30 giorni di calendario di anticipo — e si applicherà solo agli ordini segnati come consegnati, mai prima.",
         "passosGuiados": [
           "Apri Commissione dal menu.",
-          "Guarda la tua aliquota attuale, cosa è in sospeso e cosa è già stato pagato."
+          "Verifica la condizione valida oggi per il tuo negozio: uso gratuito, nessuna commissione."
         ],
         "desafio": "Verifica quale condizione vale oggi per il tuo negozio.",
         "linkRotulo": "Vai alla mia commissione →"
@@ -115,7 +115,7 @@
   "lojaComissao": {
     "loading": "Caricamento...",
     "pageTitle": "Commissione BipFix",
-    "pageSubtitle": "Commissione applicata sugli ordini di ricambi consegnati, e come ridurla"
+    "pageSubtitle": "Attualmente l'uso di BipFix è gratuito per i fornitori di ricambi. Se cambieremo il modo in cui la piattaforma fa pagare automobilisti, officine o fornitori, ti informeremo con almeno 30 giorni di calendario di anticipo."
   },
   "lojaConversaDetalhe": {
     "loadingConversa": "Caricamento chat...",

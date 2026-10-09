@@ -207,11 +207,11 @@
           "Vajuta nimekirjas päringule, et näha üksikasju (kahjustuse fotod, sõiduk, kirjeldus).",
           "Vajuta \"Saada hinnapakkumine\".",
           "Lisa vähemalt üks kirje (kirjeldus, tüüp, hind, kogus).",
-          "Vaata BipFixi komisjonitasu suurust: maksad selle töö lõpus; klient maksab ainult pakkumise summa.",
+          "Kontrolli kogusummat: klient maksab ainult pakkumise summa ja BipFix töökojalt praegu komisjonitasu ei võta.",
           "Määra tähtaeg, saadaolevad check-ini kuupäevad ja vajuta \"Saada hinnapakkumine\"."
         ],
         "desafio": "Saada päris hinnapakkumine mõnele sinu piirkonna avatud päringule.",
-        "dica": "Mida kiiremini vastad, seda madalam on sinu komisjonitasu — vaata moodulit \"Komisjonitasu\"."
+        "dica": "Mida kiiremini vastad, seda tõenäolisemalt valib klient sinu pakkumise."
       },
       "checkin": {
         "titulo": "Ajakava, check-in ja üleandmine",
@@ -240,7 +240,7 @@
         "resumo": "Praegu on BipFixi kasutamine töökodadele tasuta. Tulevikus võidakse kehtestada tasu — protsent igalt lõpetatud töölt või fikseeritud summa töö kohta —, millest teatatakse alati vähemalt 30 kalendripäeva ette. Komisjonitasu vaade näitab, milline tingimus sinu töökojale kehtib.",
         "passosGuiados": [
           "Ava menüüst Komisjonitasu.",
-          "Vaata oma praegust määra ja seda, mis iga kriteeriumit vähendab (või mitte).",
+          "Vaata, milline tingimus sinu töökojale täna kehtib: tasuta kasutamine, ilma komisjonitasuta.",
           "Kui tasu sõltub tulemuslikkusest, hoiavad kiire vastamine, vähesed hinnapakkumiste muudatused ja klientidelt hinnangute küsimine sinu määra madalamal."
         ],
         "desafio": "Ava komisjonitasu vaade ja vaata, milline tingimus sinu töökojale täna kehtib.",
@@ -388,7 +388,7 @@
     "bonusFidelidade10": "Lojaalsus (≥ 10 teenust/90p)",
     "bonusFidelidadeVolume": "Lojaalsus (maht/90p)",
     "titulo": "BipFixi komisjonitasu",
-    "subtitulo": "Sinu komisjonitasu määr ja kuidas seda vähendada",
+    "subtitulo": "Kuidas platvormi tasu sinu töökoja puhul toimib",
     "suaTaxaAtual": "Sinu praegune määr",
     "pendente": "Ootel",
     "pago": "Makstud",
@@ -506,7 +506,17 @@
     "garantiaAjuda": "Algab auto üleandmisest. Garantii lõpuni saab klient sulle sõnumeid saata.",
     "comissaoPagaNoFim": "Selle komisjonitasu ({valor}) maksad BipFixile töö lõpus. Klient maksab ainult pakkumise summa ({total}).",
     "garantiaOutra": "Muu (sisesta päevad)",
-    "garantiaDiasCampo": "Garantii päevad"
+    "garantiaDiasCampo": "Garantii päevad",
+    "proporRevisaoTitulo": "Paku hinnapakkumise muudatust",
+    "proporRevisaoTexto": "Hinnapakkumine on juba kinnitatud. Muuda ridu ja selgita põhjust: klient kinnitab, keeldub (kehtib algne summa) või viib auto ära. Summa muutub ainult kliendi kinnitusel. Muudatused salvestatakse sinu profiilile.",
+    "motivoRevisao": "Muudatuse põhjus (kohustuslik)",
+    "motivoRevisaoPlaceholder": "Nt lahtivõtmisel selgus, et põrkeraua kinnitus on katki",
+    "motivoRevisaoObrigatorio": "Selgita muudatuse põhjust.",
+    "enviarRevisao": "Saada ettepanek kliendile",
+    "revisaoEnviadaTitulo": "Muudatuse ettepanek saadetud",
+    "revisaoEnviadaTexto": "Klient sai teate. Kuni ta vastab, kehtib kinnitatud hinnapakkumine.",
+    "revisaoAguardandoCliente": "Sinu muudatuse ettepanek ({valor}) ootab kliendi vastust.",
+    "abrirConversa": "Ava vestlus"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Parool peab olema vähemalt 8 tähemärki",
@@ -769,7 +779,8 @@
       "aceito": "Kinnitatud",
       "recusado": "Tagasi lükatud",
       "expirado": "Aegunud"
-    }
+    },
+    "proporRevisao": "Paku muudatust"
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Sõiduk vastu võetud töökojas",

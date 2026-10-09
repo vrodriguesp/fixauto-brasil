@@ -61,3 +61,13 @@ export async function podeVerSolicitacao(userId: string, solicitacaoId: string):
   if (await oficinaEnvolvida(oficinas, solicitacaoId)) return true;
   return ehAdmin(userId);
 }
+
+/** Pessoa ligada a oficina: dona, funcionario ativo ou cliente com orcamento/agenda dela (M-13). */
+export async function temRelacaoComOficina(userId: string, oficinaId: string): Promise<boolean> {
+  const [{ data: dono }, { data: func }, { data: pedidos }] = await Promise.all([
+    supabaseAdmin.from('oficinas').select('id').eq('id', oficinaId).eq('profile_id', userId).maybeSingle(),
+    supabaseAdmin.from('funcionarios').select('id').eq('oficina_id', oficinaId).eq('profile_id', userId).eq('ativo', true).maybeSingle(),
+    supabaseAdmin.from('orcamentos').select('id, solicitacao:solicitacoes!inner(cliente_id)').eq('oficina_id', oficinaId).eq('solicitacao.cliente_id', userId).limit(1),
+  ]);
+  return !!dono || !!func || !!(pedidos || []).length;
+}

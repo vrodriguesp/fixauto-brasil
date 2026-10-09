@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
   // equipe (ou nenhum); o mecanico logado e sempre ele mesmo
   let funcId: string | null = euFunc && !ehDono ? euFunc.id : null;
   if (ehDono && funcionarioId) {
-    const { data: f } = await supabaseAdmin.from('funcionarios').select('id').eq('id', funcionarioId).eq('oficina_id', ev.oficina_id).maybeSingle();
+    const { data: f } = await supabaseAdmin.from('funcionarios').select('id').eq('id', funcionarioId).eq('oficina_id', ev.oficina_id).eq('ativo', true).maybeSingle();
     if (!f) return NextResponse.json({ error: 'Mecânico inválido' }, { status: 400 });
     funcId = f.id;
   }
@@ -100,6 +100,12 @@ export async function POST(req: NextRequest) {
       const entregou = await entregarServico({ eventoId: ev.id, solicitacaoId: ev.solicitacao_id, oficinaDoEvento: ev.oficina_id, oficinaNome: (ev as any).oficina?.nome_fantasia || '', callerId: userId });
       if (!entregou) return NextResponse.json({ error: 'O carro não está em serviço', codigo: 'NAO_EM_SERVICO' }, { status: 409 });
       return NextResponse.json({ ok: true });
+    }
+    // mesma etapa repetida em seguida (duplo clique): nao grava nem avisa de novo (M-16)
+    const { data: ultima } = await supabaseAdmin.from('manutencao_etapas').select('status, created_at')
+      .eq('agenda_id', ev.id).order('created_at', { ascending: false }).limit(1).maybeSingle();
+    if (ultima && ultima.status === status && Date.now() - new Date(ultima.created_at).getTime() < 10 * 60 * 1000) {
+      return NextResponse.json({ ok: true, repetida: true });
     }
     await supabaseAdmin.from('manutencao_etapas').insert({
       agenda_id: ev.id, funcionario_id: funcId, status, observacao: typeof observacao === 'string' ? observacao.slice(0, 500) || null : null,

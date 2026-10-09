@@ -124,7 +124,7 @@
       {
         "titulo": "Hinnapakkumised ja teenindus",
         "itens": [
-          "Struktureeritud pakkumised; komisjonitasu maksab töökoda — klient ei maksa midagi juurde",
+          "Struktureeritud pakkumised; klient maksab ainult pakkumise summa — midagi juurde ei lisandu",
           "Remondi jälgimine etappide kaupa, kliendile nähtav",
           "Automaatne teavitus, kui sõiduk on valmis",
           "Otsevestlus kliendiga iga päringu juures"
@@ -153,9 +153,9 @@
       {
         "titulo": "Rahandus",
         "itens": [
-          "Komisjonitasu, mida saab seadistada tulemuste ja lojaalsuse järgi",
-          "Komisjonitasu väljavõte ja kanded",
-          "Täielik läbipaistvus selle üle, mida ja millal arvestatakse"
+          "Töökodadele praegu tasuta: ilma komisjonitasu ja kuutasuta",
+          "Kui muudame seda, kuidas platvorm autojuhtidelt või töökodadelt tasu võtab, teatame sulle sellest vähemalt 30 kalendripäeva ette.",
+          "Täielik läbipaistvus selles, mida ja millal küsitakse"
         ]
       },
       {
@@ -330,7 +330,7 @@
       },
       {
         "pergunta": "Kui palju BipFixi kasutamine maksab?",
-        "resposta": "Juhtidele on platvorm täiesti tasuta. Saad saata päringuid, saada hinnapakkumisi ja võrrelda valikuid ilma kuludeta. Oleme asutajapartnerite valikufaasis ning praegu ei võta me partnertöökodadelt ja -müüjatelt komisjonitasu ega kuutasu — vaata täpsemalt meie kasutustingimustest."
+        "resposta": "Autojuhtidele on platvorm täiesti tasuta: saad saata päringuid, saada hinnapakkumisi ja võrrelda valikuid ilma kuludeta. Ka töökodadele ja varuosade tarnijatele on BipFixi kasutamine praegu tasuta — ilma komisjonitasu ja kuutasuta. Kui muudame seda, kuidas platvorm autojuhtidelt või töökodadelt tasu võtab, teatame sulle sellest vähemalt 30 kalendripäeva ette."
       },
       {
         "pergunta": "Kuidas töökodasid hinnatakse?",
@@ -376,7 +376,8 @@
     "footerSobre": "BipFixist",
     "guiasTitulo": "Juhendid autojuhtidele",
     "guiasTexto": "Praktilised vastused enne, kui viid auto töökotta.",
-    "guiasVerTodos": "Vaata kõiki juhendeid"
+    "guiasVerTodos": "Vaata kõiki juhendeid",
+    "avvisoEstonia": "Elad Eestis? BipFix töötab ka Tallinnas, eesti keeles: päringud lähevad auto lähedal asuvatele töökodadele."
   },
   "constants": {
     "tiposServico": {
@@ -519,7 +520,7 @@
     "suaTaxaAtual": "Sinu praegune määr",
     "comissaoPendente": "Ootel komisjonitasu",
     "comissaoPaga": "Makstud komisjonitasu",
-    "infoTaxa": "Määr algab {base}%-lt ja langeb kuni {min}%-ni, kui vastad hinnapäringutele kiiresti{media} ja hoiad tarnitud tellimuste mahtu. Seda võetakse alles siis, kui tellimus on märgitud tarnituks.",
+    "infoTaxa": "Praegu on BipFixi kasutamine varuosade tarnijatele tasuta: tarnitud tellimustelt komisjonitasu ei võeta. Kui muudame seda, kuidas platvorm autojuhtidelt, töökodadelt või tarnijatelt tasu võtab, teatame sulle sellest vähemalt 30 kalendripäeva ette. Võrdlusvahemik {base}% kuni {min}%{media} kehtiks ainult siis, kui tulemuspõhine tasu kunagi kasutusele võetaks.",
     "mediaTempoResposta": " (sinu keskmine täna: {horas}h)",
     "extratoTitulo": "Varuosade komisjonitasu väljavõte",
     "nenhumaComissao": "Ühtegi komisjonitasu pole veel registreeritud",
@@ -608,7 +609,23 @@
     "SENHA_CURTA": "Parool peab olema vähemalt 8 tähemärki.",
     "TERMOS_OBRIGATORIOS": "Jätkamiseks nõustu kasutustingimuste ja privaatsuspoliitikaga.",
     "DECLARACAO_OBRIGATORIA": "Ettevõtte registreerimiseks kinnita, et oled selle eest vastutav isik.",
-    "CONTA_EXISTENTE": "Selle e-postiga on juba BipFixi konto. Logi sisse, et õnnetusest teatada."
+    "CONTA_EXISTENTE": "Selle e-postiga on juba BipFixi konto. Logi sisse, et õnnetusest teatada.",
+    "ORCAMENTO_INDISPONIVEL": "See hinnapakkumine pole enam saadaval.",
+    "HORARIO_VENCIDO": "See aeg on möödas. Vali mõni teine.",
+    "NAO_EM_SERVICO": "Auto ei ole töös (check-in puudub).",
+    "NAO_AGENDADO": "See broneering ei oota enam autot.",
+    "REVISAO_PENDENTE": "Üks muudatus ootab juba kliendi vastust.",
+    "REVISAO_DECIDIDA": "Sellele muudatusele on juba vastatud.",
+    "REVISAO_SEM_MUDANCA": "Summa on sama mis kinnitatud hinnapakkumisel.",
+    "EMAIL_DE_OUTRA_CONTA": "See e-post kuulub juba teisele kontole (klient või pood). Kasuta töötajale teist e-posti.",
+    "CHECKIN_JA_FEITO": "Selle auto check-in on juba tehtud.",
+    "CHECKIN_FUTURO": "Check-in on broneeritud teiseks päevaks. Kinnita, et seda varasemaks tuua.",
+    "SEM_CHECKIN": "Tee enne etappide lisamist check-in.",
+    "TIPO_ARQUIVO": "Failitüüpi ei toetata. Saada foto (JPG, PNG) või PDF.",
+    "ARQUIVO_GRANDE": "Fail on liiga suur. Saada väiksem fail.",
+    "SEM_ITENS": "Dokumendist ei leitud ridu. Täida need käsitsi.",
+    "FOTO_INVALIDA": "Pilti ei õnnestunud lugeda. Proovi teist fotot.",
+    "IA_OCUPADA": "Automaatne analüüs on praegu hõivatud. Proovi mõne minuti pärast uuesti või täida käsitsi."
   },
   "sobre": {
     "metaTitle": "BipFixist",

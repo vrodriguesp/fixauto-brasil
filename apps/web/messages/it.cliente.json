@@ -353,5 +353,20 @@
     "avaliarAgora": "Valuta ora",
     "bloqueioTitulo": "Manca la tua recensione",
     "acidente": "Ho avuto un incidente"
+  },
+  "revisaoOrcamento": {
+    "titulo": "{oficina} ha proposto una revisione del preventivo",
+    "novoPrazo": "Nuovi tempi: {dias} giorni",
+    "motivo": "Motivo",
+    "explicacao": "Nulla cambia senza la tua decisione. Se rifiuti, l'officina prosegue con il preventivo originale. Puoi anche rifiutare e ritirare l'auto.",
+    "aprovar": "Approva il nuovo importo",
+    "recusar": "Rifiuta (mantieni l'originale)",
+    "retirar": "Rifiuta e ritira l'auto",
+    "retirarConfirma": "Il servizio sarà chiuso e l'officina avvisata. Concorda il ritiro nella chat. Il lavoro già fatto può essere addebitato come concordato con l'officina. Confermi?",
+    "retirarSim": "Sì, ritiro l'auto",
+    "voltar": "Indietro",
+    "feito_aprovar": "Revisione approvata. L'officina è stata avvisata.",
+    "feito_recusar": "Revisione rifiutata. Resta valido il preventivo originale.",
+    "feito_retirar": "Servizio chiuso. Concorda il ritiro dell'auto nella chat."
   }
 }

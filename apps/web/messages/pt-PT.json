@@ -124,7 +124,7 @@
       {
         "titulo": "Orçamentos e serviço",
         "itens": [
-          "Orçamentos estruturados; a comissão é paga pela oficina — o cliente não paga nada a mais",
+          "Orçamentos estruturados; o cliente paga só o valor do orçamento — sem custos extra",
           "Acompanhamento da reparação etapa a etapa, visível para o cliente",
           "Notificação automática quando a viatura está pronta",
           "Chat direto com o cliente em cada pedido"
@@ -153,8 +153,8 @@
       {
         "titulo": "Finanças",
         "itens": [
-          "Comissão configurável por desempenho e fidelidade",
-          "Extrato completo de comissões e lançamentos",
+          "Utilização gratuita para oficinas hoje: sem comissão e sem mensalidade",
+          "Se alterarmos a forma como a plataforma cobra condutores ou oficinas, avisaremos com pelo menos 30 dias de calendário de antecedência.",
           "Transparência total sobre o que é cobrado e quando"
         ]
       },
@@ -330,7 +330,7 @@
       },
       {
         "pergunta": "Quanto custa a BipFix?",
-        "resposta": "Para os condutores, a plataforma é totalmente gratuita. Pode enviar pedidos, receber orçamentos e comparar opções sem qualquer custo. Estamos na fase de seleção de parceiros fundadores e, hoje, não cobramos comissão nem mensalidade às oficinas e fornecedores parceiros — veja os detalhes nos nossos Termos de Utilização."
+        "resposta": "Para os condutores, a plataforma é totalmente gratuita: envia pedidos, recebe orçamentos e compara opções sem qualquer custo. Para oficinas e fornecedores de peças, a utilização da BipFix é hoje igualmente gratuita — sem comissão e sem mensalidade. Se alterarmos a forma como a plataforma cobra condutores ou oficinas, avisaremos com pelo menos 30 dias de calendário de antecedência."
       },
       {
         "pergunta": "Como são avaliadas as oficinas?",
@@ -376,7 +376,8 @@
     "footerSobre": "Sobre a BipFix",
     "guiasTitulo": "Guias para condutores",
     "guiasTexto": "Respostas práticas antes de levar o carro à oficina.",
-    "guiasVerTodos": "Ver todos os guias"
+    "guiasVerTodos": "Ver todos os guias",
+    "avvisoEstonia": "Vive na Estónia? A BipFix também funciona em Tallinn, em português: os pedidos vão para as oficinas perto do carro."
   },
   "constants": {
     "tiposServico": {
@@ -519,7 +520,7 @@
     "suaTaxaAtual": "A sua taxa atual",
     "comissaoPendente": "Comissão pendente",
     "comissaoPaga": "Comissão paga",
-    "infoTaxa": "A taxa começa em {base}% e desce até um mínimo de {min}% ao responder rapidamente às cotações{media} e ao manter um volume constante de encomendas entregues. Só é cobrada quando uma encomenda é marcada como entregue.",
+    "infoTaxa": "Hoje a utilização da BipFix é gratuita para fornecedores de peças: não é cobrada qualquer comissão sobre encomendas entregues. Se alterarmos a forma como a plataforma cobra condutores, oficinas ou fornecedores, avisaremos com pelo menos 30 dias de calendário de antecedência. O intervalo de referência de {base}% a {min}%{media} só se aplicaria se uma cobrança por desempenho fosse ativada.",
     "mediaTempoResposta": " (a sua média hoje: {horas}h)",
     "extratoTitulo": "Extrato de comissões de peças",
     "nenhumaComissao": "Ainda não há comissões registadas",
@@ -608,7 +609,23 @@
     "SENHA_CURTA": "A palavra-passe tem de ter pelo menos 8 caracteres.",
     "TERMOS_OBRIGATORIOS": "Para continuar, aceite os Termos de Utilização e a Política de Privacidade.",
     "DECLARACAO_OBRIGATORIA": "Para registar uma empresa, confirme que é o responsável por ela.",
-    "CONTA_EXISTENTE": "Este e-mail já tem uma conta BipFix. Entre na sua conta para registar o acidente."
+    "CONTA_EXISTENTE": "Este e-mail já tem uma conta BipFix. Entre na sua conta para registar o acidente.",
+    "ORCAMENTO_INDISPONIVEL": "Este orçamento já não está disponível.",
+    "HORARIO_VENCIDO": "Esse horário já passou. Escolha outro.",
+    "NAO_EM_SERVICO": "O carro não está em serviço (falta o check-in).",
+    "NAO_AGENDADO": "Este agendamento já não está à espera do carro.",
+    "REVISAO_PENDENTE": "Já existe uma revisão a aguardar a resposta do cliente.",
+    "REVISAO_DECIDIDA": "Esta revisão já foi respondida.",
+    "REVISAO_SEM_MUDANCA": "O valor é igual ao do orçamento aceite.",
+    "EMAIL_DE_OUTRA_CONTA": "Este e-mail já pertence a outra conta (cliente ou loja). Use outro e-mail para o funcionário.",
+    "CHECKIN_JA_FEITO": "O check-in deste carro já foi feito.",
+    "CHECKIN_FUTURO": "O check-in está marcado para outro dia. Confirme para antecipar.",
+    "SEM_CHECKIN": "Faça o check-in antes de registar etapas.",
+    "TIPO_ARQUIVO": "Tipo de ficheiro não aceite. Envie foto (JPG, PNG) ou PDF.",
+    "ARQUIVO_GRANDE": "Ficheiro demasiado grande. Envie um ficheiro mais pequeno.",
+    "SEM_ITENS": "Não encontrámos itens no documento. Preencha manualmente.",
+    "FOTO_INVALIDA": "Não foi possível ler a imagem. Tente outra fotografia.",
+    "IA_OCUPADA": "A análise automática está ocupada neste momento. Tente novamente dentro de alguns minutos ou preencha manualmente."
   },
   "sobre": {
     "metaTitle": "Sobre a BipFix",

@@ -511,7 +511,8 @@
     "quoteMsgPhonePart": " Tel: {telefone}",
     "semAcessoTitulo": "Logi sisse, et avariid näha",
     "semAcessoTexto": "Turvalisuse huvides näevad avarii andmeid ainult selles osalejad. Logi sisse kontoga, mis on selle avariiga seotud (e-post, kuhu teade saadeti).",
-    "semAcessoEntrar": "Logi sisse"
+    "semAcessoEntrar": "Logi sisse",
+    "aguardandoRegistro": "Õnnetusest teataja lisab osaliste andmed hiljem."
   },
   "docsHome": {
     "metaTitle": "Abikeskus",
@@ -837,30 +838,28 @@
       }
     ],
     "s7Outro": "Saad hinnangutele avalikult vastata, näidates professionaalsust ja tähelepanu kliendile.",
-    "s8Title": "8. BipFixi komisjonitasu",
-    "s8Intro": "BipFix võtab platvormi kaudu osutatud teenustelt komisjonitasu. Vaata, kuidas see toimib:",
+    "s8Title": "8. Platvormi kulud",
+    "s8Intro": "Praegu on BipFixi kasutamine töökodadele ja autojuhtidele tasuta. Mida see tähendab:",
     "s8Items": [
       {
-        "label": "Kuidas seda arvestatakse",
-        "desc": "Komisjonitasu arvutatakse kliendi poolt aktsepteeritud hinnapakkumise kogusummalt."
+        "label": "Komisjonitasu ei ole",
+        "desc": "Platvormi kaudu kokku lepitud töödelt komisjonitasu ei võeta: summa, mille pakkumises saadad, on summa, mille klient maksab."
       },
       {
-        "label": "Läbipaistvus",
-        "desc": "Komisjonitasu protsent kuvatakse enne hinnapakkumise saatmist, ilma üllatusteta."
+        "label": "Kuutasu ei ole",
+        "desc": "Registreerimisel, ajakaval, hinnapakkumistel, meeskonnal ja hinnangutel kuutasu ei ole."
       },
       {
-        "label": "Arveldamine",
-        "desc": "Tasu arvestatakse igakuiselt koos kõigi teenuste üksikasjaliku aruandega."
+        "label": "Etteteatamine",
+        "desc": "Kui muudame seda, kuidas platvorm autojuhtidelt või töökodadelt tasu võtab, teatame sulle sellest vähemalt 30 kalendripäeva ette."
       }
     ],
-    "s8ReduceTitle": "Kuidas oma komisjonitasu vähendada:",
+    "s8ReduceTitle": "Kust jälgida:",
     "s8ReduceList": [
-      "Hoia keskmine hinnang üle 4,5 tärni.",
-      "Vasta päringutele kiiresti (alla 1 tunni).",
-      "Lõpeta teenused hinnangulise tähtaja jooksul.",
-      "Hoia oma profiil täielik ja ajakohane."
+      "Ava menüüst Komisjonitasu: vaade näitab, milline tingimus sinu töökojale täna kehtib.",
+      "Igast tulevasest muudatusest teatame e-kirjaga ja platvormi sees enne selle jõustumist."
     ],
-    "s8Note": "Suurepärase tulemuslikkusega töökojad võivad saada komisjonitasu kuni 30% väiksemaks."
+    "s8Note": "Autojuhilt tasu kunagi ei võeta: BipFix ei lisa pakkumise summale midagi."
   },
   "docsOficinaLayout": {
     "metaTitle": "Töökoja juhend",

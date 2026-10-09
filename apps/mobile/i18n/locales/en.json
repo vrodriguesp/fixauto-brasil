@@ -335,7 +335,23 @@
     "SENHA_CURTA": "Password must be at least 8 characters.",
     "TERMOS_OBRIGATORIOS": "To continue, please accept the Terms of Use and the Privacy Policy.",
     "DECLARACAO_OBRIGATORIA": "To register a business, please confirm that you are the person responsible for it.",
-    "CONTA_EXISTENTE": "This email already has a BipFix account. Sign in to report the accident."
+    "CONTA_EXISTENTE": "This email already has a BipFix account. Sign in to report the accident.",
+    "ORCAMENTO_INDISPONIVEL": "This quote is no longer available.",
+    "HORARIO_VENCIDO": "That time slot has passed. Please choose another.",
+    "NAO_EM_SERVICO": "The car is not in service (no check-in yet).",
+    "NAO_AGENDADO": "This booking is no longer waiting for the car.",
+    "REVISAO_PENDENTE": "A revision is already waiting for the customer’s answer.",
+    "REVISAO_DECIDIDA": "This revision has already been answered.",
+    "REVISAO_SEM_MUDANCA": "The amount is the same as the accepted quote.",
+    "EMAIL_DE_OUTRA_CONTA": "This email already belongs to another account (customer or store). Use a different email for the employee.",
+    "CHECKIN_JA_FEITO": "This car has already been checked in.",
+    "CHECKIN_FUTURO": "Check-in is booked for another day. Confirm to bring it forward.",
+    "SEM_CHECKIN": "Check the car in before recording stages.",
+    "TIPO_ARQUIVO": "File type not accepted. Send a photo (JPG, PNG) or a PDF.",
+    "ARQUIVO_GRANDE": "File too large. Please send a smaller file.",
+    "SEM_ITENS": "We couldn't find any items in the document. Please fill them in by hand.",
+    "FOTO_INVALIDA": "The image couldn't be read. Try another photo.",
+    "IA_OCUPADA": "Automatic analysis is busy right now. Try again in a few minutes or fill it in by hand."
   },
   "notificacoes": {
     "titulo": "Notifications",
@@ -356,5 +372,20 @@
     "sem": "No warranty",
     "conversaEncerrada": "Conversation closed: the job is finished and the warranty has ended (or this repair shop was not chosen).",
     "desteServico": "Warranty for this job"
+  },
+  "revisao": {
+    "titulo": "{oficina} proposed a quote revision",
+    "novoPrazo": "New time frame: {dias} days",
+    "motivo": "Reason",
+    "explicacao": "Nothing changes without your decision. If you decline, the garage carries on with the original quote. You can also decline and collect your car.",
+    "aprovar": "Approve new amount",
+    "recusar": "Decline (keep the original)",
+    "retirar": "Decline and collect my car",
+    "retirarConfirma": "The job will be closed and the garage notified. Arrange the collection in the chat. Work already done may be charged as agreed with the garage. Confirm?",
+    "retirarSim": "Yes, collect my car",
+    "voltar": "Back",
+    "feito_aprovar": "Revision approved. The garage has been notified.",
+    "feito_recusar": "Revision declined. The original quote stands.",
+    "feito_retirar": "Job closed. Arrange the collection of your car in the chat."
   }
 }

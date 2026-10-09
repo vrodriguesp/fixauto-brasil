@@ -335,7 +335,23 @@
     "SENHA_CURTA": "Parool peab olema vähemalt 8 tähemärki.",
     "TERMOS_OBRIGATORIOS": "Jätkamiseks nõustu kasutustingimuste ja privaatsuspoliitikaga.",
     "DECLARACAO_OBRIGATORIA": "Ettevõtte registreerimiseks kinnita, et oled selle eest vastutav isik.",
-    "CONTA_EXISTENTE": "Selle e-postiga on juba BipFixi konto. Logi sisse, et õnnetusest teatada."
+    "CONTA_EXISTENTE": "Selle e-postiga on juba BipFixi konto. Logi sisse, et õnnetusest teatada.",
+    "ORCAMENTO_INDISPONIVEL": "See hinnapakkumine pole enam saadaval.",
+    "HORARIO_VENCIDO": "See aeg on möödas. Vali mõni teine.",
+    "NAO_EM_SERVICO": "Auto ei ole töös (check-in puudub).",
+    "NAO_AGENDADO": "See broneering ei oota enam autot.",
+    "REVISAO_PENDENTE": "Üks muudatus ootab juba kliendi vastust.",
+    "REVISAO_DECIDIDA": "Sellele muudatusele on juba vastatud.",
+    "REVISAO_SEM_MUDANCA": "Summa on sama mis kinnitatud hinnapakkumisel.",
+    "EMAIL_DE_OUTRA_CONTA": "See e-post kuulub juba teisele kontole (klient või pood). Kasuta töötajale teist e-posti.",
+    "CHECKIN_JA_FEITO": "Selle auto check-in on juba tehtud.",
+    "CHECKIN_FUTURO": "Check-in on broneeritud teiseks päevaks. Kinnita, et seda varasemaks tuua.",
+    "SEM_CHECKIN": "Tee enne etappide lisamist check-in.",
+    "TIPO_ARQUIVO": "Failitüüpi ei toetata. Saada foto (JPG, PNG) või PDF.",
+    "ARQUIVO_GRANDE": "Fail on liiga suur. Saada väiksem fail.",
+    "SEM_ITENS": "Dokumendist ei leitud ridu. Täida need käsitsi.",
+    "FOTO_INVALIDA": "Pilti ei õnnestunud lugeda. Proovi teist fotot.",
+    "IA_OCUPADA": "Automaatne analüüs on praegu hõivatud. Proovi mõne minuti pärast uuesti või täida käsitsi."
   },
   "notificacoes": {
     "titulo": "Teated",
@@ -356,5 +372,20 @@
     "sem": "Garantiita",
     "conversaEncerrada": "Vestlus on suletud: töö on lõpetatud ja garantii on lõppenud (või seda töökoda ei valitud).",
     "desteServico": "Selle töö garantii"
+  },
+  "revisao": {
+    "titulo": "{oficina} pakkus hinnapakkumise muudatust",
+    "novoPrazo": "Uus tähtaeg: {dias} päeva",
+    "motivo": "Põhjus",
+    "explicacao": "Midagi ei muutu ilma sinu otsuseta. Kui keeldud, jätkab töökoda algse hinnapakkumisega. Võid ka keelduda ja auto ära viia.",
+    "aprovar": "Kinnita uus summa",
+    "recusar": "Keeldu (jää algse juurde)",
+    "retirar": "Keeldu ja vii auto ära",
+    "retirarConfirma": "Töö lõpetatakse ja töökoda saab teate. Lepi auto äraviimine vestluses kokku. Juba tehtud töö eest võidakse tasu küsida vastavalt kokkuleppele. Kinnitad?",
+    "retirarSim": "Jah, viin auto ära",
+    "voltar": "Tagasi",
+    "feito_aprovar": "Muudatus kinnitatud. Töökoda sai teate.",
+    "feito_recusar": "Muudatusest keelduti. Kehtib algne hinnapakkumine.",
+    "feito_retirar": "Töö on lõpetatud. Lepi auto äraviimine vestluses kokku."
   }
 }

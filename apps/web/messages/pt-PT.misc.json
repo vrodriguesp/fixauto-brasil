@@ -511,7 +511,8 @@
     "quoteMsgPhonePart": " Telefone: {telefone}",
     "semAcessoTitulo": "Inicie sessão para ver este acidente",
     "semAcessoTexto": "Por segurança, os dados do acidente só aparecem a quem participa nele. Inicie sessão com a conta associada a este acidente (a do e-mail que recebeu o aviso).",
-    "semAcessoEntrar": "Iniciar sessão"
+    "semAcessoEntrar": "Iniciar sessão",
+    "aguardandoRegistro": "Quem registou o acidente ainda vai completar os dados dos envolvidos."
   },
   "docsHome": {
     "metaTitle": "Centro de Ajuda",
@@ -837,30 +838,28 @@
       }
     ],
     "s7Outro": "Pode responder publicamente às avaliações, demonstrando profissionalismo e atenção aos seus clientes.",
-    "s8Title": "8. Comissão BipFix",
-    "s8Intro": "A BipFix cobra uma comissão sobre os serviços realizados através da plataforma. Eis como funciona:",
+    "s8Title": "8. Custos da plataforma",
+    "s8Intro": "Hoje a utilização da BipFix é gratuita para oficinas e condutores. Eis o que isso significa:",
     "s8Items": [
       {
-        "label": "Como é cobrada",
-        "desc": "A comissão é calculada sobre o valor total do orçamento aceite pelo cliente."
+        "label": "Sem comissão",
+        "desc": "Não é cobrada qualquer comissão sobre os serviços fechados através da plataforma: o valor que envia no orçamento é o valor que o cliente paga."
       },
       {
-        "label": "Transparência",
-        "desc": "A percentagem da comissão é apresentada antes de o orçamento ser enviado, sem surpresas."
+        "label": "Sem mensalidade",
+        "desc": "Registo, agenda, orçamentos, equipa e avaliações não têm mensalidade."
       },
       {
-        "label": "Faturação",
-        "desc": "A cobrança é feita mensalmente, com um relatório detalhado de todos os serviços."
+        "label": "Aviso prévio",
+        "desc": "Se alterarmos a forma como a plataforma cobra condutores ou oficinas, avisaremos com pelo menos 30 dias de calendário de antecedência."
       }
     ],
-    "s8ReduceTitle": "Como reduzir a sua comissão:",
+    "s8ReduceTitle": "Onde acompanhar:",
     "s8ReduceList": [
-      "Mantenha uma classificação média acima de 4,5 estrelas.",
-      "Responda rapidamente aos pedidos (em menos de 1 hora).",
-      "Conclua os serviços dentro do prazo estimado.",
-      "Mantenha o seu perfil completo e atualizado."
+      "Abra Comissão no menu: o ecrã mostra a condição que se aplica hoje à sua oficina.",
+      "Qualquer alteração futura será comunicada por email e dentro da plataforma antes de entrar em vigor."
     ],
-    "s8Note": "Oficinas com desempenho excelente podem obter uma redução de até 30% na sua taxa de comissão."
+    "s8Note": "Nunca há cobrança ao condutor: a BipFix não acrescenta nada ao valor do orçamento."
   },
   "docsOficinaLayout": {
     "metaTitle": "Guia da Oficina",

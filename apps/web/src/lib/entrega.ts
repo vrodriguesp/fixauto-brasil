@@ -14,7 +14,6 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
  */
 export async function entregarServico(p: { eventoId: string; solicitacaoId: string | null; oficinaDoEvento: string; oficinaNome: string; callerId: string | null; automatica?: boolean }) {
   const { eventoId, solicitacaoId, oficinaDoEvento, oficinaNome, callerId } = p;
-  void oficinaDoEvento;
   // Trava atomica: so entrega carro que esta EM SERVICO, e uma vez so (antes:
   // entregava evento sem check-in e repetia aviso/e-mail/comissao a cada
   // clique - auditoria Fable 08/10, A-05/M-04). Devolve false se nao entregou.
@@ -22,6 +21,8 @@ export async function entregarServico(p: { eventoId: string; solicitacaoId: stri
     .update({ status: 'concluido', data_fim: new Date().toISOString() })
     .eq('id', eventoId).eq('status', 'em_andamento').select('id');
   if (!trava?.length) return false;
+  // proposta de revisao ainda sem resposta perde o efeito: vale o valor aprovado
+  if (solicitacaoId) await supabaseAdmin.from('orcamento_revisoes').update({ status: 'cancelada' }).eq('solicitacao_id', solicitacaoId).eq('status', 'pendente');
   // etapa final no historico do conserto (a tela nao grava mais por conta propria)
   await supabaseAdmin.from('manutencao_etapas').insert({ agenda_id: eventoId, status: 'entregue', observacao: null });
   await supabaseAdmin.from('agenda_historico').insert({ agenda_id: eventoId, acao: 'entregue', por_profile_id: callerId, detalhe: p.automatica ? { automatica: true } : {} });
@@ -68,8 +69,11 @@ export async function entregarServico(p: { eventoId: string; solicitacaoId: stri
           }).catch(() => {});
         }
         if (cliente?.telefone) {
+          // DDI pelo pais da oficina (numero nacional do cliente)
+          const { data: ofPais } = await supabaseAdmin.from('oficinas').select('pais').eq('id', oficinaDoEvento).maybeSingle();
           sendServicoConcluidoWhatsApp({
             toPhone: cliente.telefone,
+            pais: (ofPais as any)?.pais,
             toName: cliente.nome || 'Cliente',
             oficinaNome,
             veiculoNome,

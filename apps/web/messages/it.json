@@ -42,9 +42,9 @@
   },
   "sejaParceiro": {
     "metaTitle": "Diventa un Partner Fondatore",
-    "metaDescription": "BipFix è in fase di selezione di officine e negozi di ricambi partner fondatori. Posti limitati, nessuna commissione in questa fase. Registra il tuo interesse.",
+    "metaDescription": "BipFix è in fase di selezione di officine e negozi di ricambi partner fondatori in Italia. Posti limitati per città, nessuna commissione in questa fase. Registra il tuo interesse.",
     "ogTitle": "Diventa un Partner Fondatore",
-    "ogDescription": "BipFix è in fase di selezione di officine e negozi di ricambi partner fondatori. Posti limitati, nessuna commissione in questa fase.",
+    "ogDescription": "BipFix è in fase di selezione di officine e negozi di ricambi partner fondatori in Italia. Posti limitati per città, nessuna commissione in questa fase.",
     "heroTag": "FASE DI SELEZIONE DEI PARTNER FONDATORI",
     "heroTitulo": "Stiamo costruendo qualcosa di nuovo nel settore delle riparazioni auto — e vogliamo te tra i primi",
     "heroTexto": "BipFix è ancora un progetto ambizioso nella sua fase iniziale, senza migliaia di utenti — ed è proprio per questo che chi entra ora aiuta a plasmare la piattaforma e si assicura condizioni che non si ripeteranno in futuro.",
@@ -54,7 +54,7 @@
     "beneficio2Titulo": "Voce in capitolo sul prodotto",
     "beneficio2Texto": "Come uno dei primi, il tuo feedback diretto contribuisce a decidere quali funzionalità arriveranno sulla piattaforma.",
     "beneficio3Titulo": "Posti limitati per regione",
-    "beneficio3Texto": "Nella fase pilota selezioniamo un numero ridotto di partner per città, per garantire attenzione reale a ciascuno.",
+    "beneficio3Texto": "Nella fase pilota selezioniamo un numero ridotto di partner per città — a Milano, Roma, Napoli, Torino e nelle altre città in cui apriamo — per garantire attenzione reale a ciascuno.",
     "formTitulo": "Registra il tuo interesse",
     "formSubtitulo": "Richiede meno di un minuto. Nessun impegno.",
     "souOficina": "Sono un'officina",
@@ -64,11 +64,11 @@
     "placeholderNegocioOficina": "Es: Autofficina Rossi",
     "placeholderNegocioLoja": "Es: Ricambi Milano",
     "campoCidade": "Città",
-    "placeholderCidade": "Es: Tallinn",
+    "placeholderCidade": "Es: Milano",
     "campoRegiao": "Provincia/Regione",
-    "placeholderRegiao": "Es: Contea di Harju",
+    "placeholderRegiao": "Es: Lombardia",
     "campoWhatsapp": "WhatsApp / Telefono",
-    "placeholderWhatsapp": "Es: +372 5555 5555",
+    "placeholderWhatsapp": "Es: +39 333 123 4567",
     "campoEmail": "Email (facoltativo)",
     "campoObservacao": "Vuoi aggiungere altro? (facoltativo)",
     "placeholderObservacao": "Es: numero di dipendenti, specializzazioni...",
@@ -83,14 +83,14 @@
     "voltarInicio": "Torna alla home",
     "depoisTitulo": "Cosa succede dopo la candidatura",
     "depois1": "Rispondiamo entro 1 giorno lavorativo, via e-mail o WhatsApp.",
-    "depois2": "Configuriamo con te il profilo dell'officina (circa 30 minuti) e verifichiamo la registrazione dell'impresa.",
+    "depois2": "Configuriamo con te il profilo dell'officina (circa 30 minuti) e verifichiamo la registrazione dell'impresa (partita IVA e iscrizione alla Camera di Commercio).",
     "depois3": "Inizi a ricevere richieste da automobilisti vicini alla tua officina.",
     "quemSomosTitulo": "Chi c'è dietro BipFix",
-    "quemSomosTexto": "BipFix è una giovane impresa con sede a Tallinn, in fase di registrazione come società a responsabilità limitata estone (OÜ). Rispondiamo personalmente a ogni candidatura: support@bipfix.com."
+    "quemSomosTexto": "BipFix è una giovane impresa europea nata a Tallinn, in Estonia, in fase di registrazione come società a responsabilità limitata estone (OÜ), che con la versione italiana si rivolge ora anche alle officine e agli automobilisti in Italia. Rispondiamo personalmente a ogni candidatura: support@bipfix.com."
   },
   "paraOficinas": {
     "metaTitle": "Sistema di Gestione per Officine Meccaniche e Più Clienti",
-    "metaDescription": "Software per officine: agenda, preventivi e team in un unico posto, più richieste di preventivo dagli automobilisti della zona. Senza canone mensile.",
+    "metaDescription": "Software per officine in Italia: agenda, preventivi e team in un unico posto, più richieste di preventivo dagli automobilisti della tua città. Senza canone mensile.",
     "metaKeywords": [
       "sistema di gestione per officina meccanica",
       "software per officina meccanica",
@@ -103,9 +103,9 @@
       "software per agenda officina"
     ],
     "ogTitle": "Sistema di Gestione per Officine Meccaniche e Più Clienti",
-    "ogDescription": "Organizza la tua officina e fatti trovare dagli automobilisti della tua zona che hanno bisogno di riparazioni. Registrazione gratuita.",
+    "ogDescription": "Organizza la tua officina e fatti trovare dagli automobilisti della tua città, in tutta Italia, che hanno bisogno di riparazioni. Registrazione gratuita.",
     "heroTitulo": "Gestione organizzata e più clienti per la tua officina meccanica",
-    "heroTexto": "BipFix è il sistema di gestione che organizza agenda, preventivi e team della tua officina — e allo stesso tempo ti mette in vetrina agli automobilisti della tua zona che cercano una riparazione proprio adesso.",
+    "heroTexto": "BipFix è il sistema di gestione che organizza agenda, preventivi e team della tua officina — e allo stesso tempo ti mette in vetrina agli automobilisti della tua città, da Milano a Napoli, che cercano una riparazione proprio adesso.",
     "ctaFundador": "Voglio diventare partner fondatore",
     "ctaVerOficinas": "Vedi le officine sulla piattaforma",
     "heroFootnote": "Nessun canone mensile. Nessuna commissione per i partner fondatori.",
@@ -124,7 +124,7 @@
       {
         "titulo": "Preventivi e assistenza",
         "itens": [
-          "Preventivi strutturati; la commissione è a carico dell'officina — il cliente non paga nulla in più",
+          "Preventivi strutturati; il cliente paga solo l'importo del preventivo — nessun costo in più",
           "Avanzamento della riparazione per fasi, visibile al cliente",
           "Notifica automatica quando il veicolo è pronto",
           "Chat diretta con il cliente per ogni richiesta"
@@ -153,8 +153,8 @@
       {
         "titulo": "Finanze",
         "itens": [
-          "Commissione configurabile in base a performance e fedeltà",
-          "Estratto conto e movimenti della commissione",
+          "Uso gratuito per le officine oggi: nessuna commissione e nessun canone mensile",
+          "Se cambieremo il modo in cui la piattaforma fa pagare automobilisti o officine, ti informeremo con almeno 30 giorni di calendario di anticipo.",
           "Trasparenza totale su cosa viene addebitato e quando"
         ]
       },
@@ -225,7 +225,7 @@
       },
       {
         "pergunta": "Come aiuta BipFix la mia officina a trovare più clienti?",
-        "resposta": "Gli automobilisti della tua zona che hanno bisogno di riparazioni inviano le foto del danno e ricevono preventivi dalle officine vicine, inclusa la tua. Il tuo profilo pubblico compare anche su Google per chi cerca officine nella tua città, con le tue recensioni, specializzazioni e posizione."
+        "resposta": "Gli automobilisti della tua zona che hanno bisogno di riparazioni inviano le foto del danno e ricevono preventivi dalle officine vicine, inclusa la tua. Il tuo profilo pubblico compare anche su Google per chi cerca officine nella tua città — Milano, Roma, Napoli, Torino o qualsiasi altra — con le tue recensioni, specializzazioni e posizione."
       },
       {
         "pergunta": "Il sistema sostituisce un foglio di calcolo o un'agenda cartacea?",
@@ -267,17 +267,18 @@
     "codigoFipe": "Codice"
   },
   "home": {
-    "metaTitle": "Riparazione auto a Tallinn: confronta i preventivi | BipFix",
-    "metaDescription": "Invia le foto del danno, ricevi preventivi dalle officine di Tallinn e prenota la riparazione in pochi minuti. Per chi vive in Estonia.",
+    "metaTitle": "Riparazione auto in Italia: confronta i preventivi delle officine | BipFix",
+    "metaDescription": "Invia le foto del danno, ricevi preventivi dalle officine vicine a te — a Milano, Roma, Napoli, Torino e nel resto d'Italia — e prenota la riparazione in pochi minuti. Gratis per gli automobilisti.",
     "metaKeywords": [
       "officina meccanica vicino a me",
       "preventivo riparazione auto online",
       "trovare un'officina affidabile",
       "app per riparazione auto",
-      "preventivo carrozzeria"
+      "preventivo carrozzeria",
+      "confronto preventivi officina Italia"
     ],
     "ogTitle": "BipFix - L'officina giusta per la tua auto",
-    "ogDescription": "Confronta preventivi di officine verificate vicino a te in pochi minuti.",
+    "ogDescription": "Confronta preventivi di officine verificate vicino a te, in tutta Italia, in pochi minuti.",
     "carregando": "Caricamento...",
     "heroTitulo": "Riparazione auto,",
     "heroTituloDestaque": "senza sorprese.",
@@ -287,7 +288,7 @@
     "emergenciaTitulo": "Ho appena avuto un incidente!",
     "emergenciaTexto": "Scatta subito una foto e ricevi preventivi dalle officine vicine in pochi minuti. Puoi registrare anche l'altro veicolo coinvolto.",
     "comoFuncionaTitulo": "Come funziona",
-    "comoFuncionaSubtitulo": "In pochi passaggi ricevi preventivi dalle migliori officine della tua zona",
+    "comoFuncionaSubtitulo": "In pochi passaggi ricevi preventivi dalle officine della tua città, da Milano a Napoli",
     "step1Titulo": "Descrivi il problema",
     "step1Texto": "Invia le foto del danno e una descrizione di cosa è successo al tuo veicolo",
     "step2Titulo": "Le officine ricevono la richiesta",
@@ -314,9 +315,9 @@
     "porQueBadge": "UN PROGETTO AMBIZIOSO, AGLI INIZI DEL PERCORSO",
     "porQueTitulo": "Perché stiamo costruendo BipFix",
     "porQueTexto1": "Oggi, scegliere dove riparare l'auto dipende di solito solo da un passaparola o da quale officina è più vicina — senza poter confrontare prezzo, tempi o storico di chi farà il lavoro. Crediamo che gli automobilisti meritino trasparenza, e che le buone officine meritino di essere trovate per il lavoro che offrono.",
-    "porQueTexto2": "Siamo, letteralmente, agli inizi: stiamo selezionando le prime officine e i primi fornitori di ricambi partner per lanciarci con la massima attenzione in una città alla volta, invece di crescere in fretta senza controllo di qualità.",
+    "porQueTexto2": "Siamo, letteralmente, agli inizi: stiamo selezionando le prime officine e i primi fornitori di ricambi partner per lanciarci con la massima attenzione una città alla volta — in Italia a partire dalle grandi città come Milano, Roma, Napoli e Torino — invece di crescere in fretta senza controllo di qualità.",
     "parceiroTitulo": "C'è ancora tempo per entrare come partner fondatore",
-    "parceiroTexto": "Stiamo registrando ora le prime officine partner a Tallinn. Se sei un automobilista, puoi già inviare la tua richiesta: la inoltriamo alle officine man mano che entrano e ti teniamo aggiornato. Se hai un'officina o un negozio di ricambi, stiamo selezionando pochi partner fondatori — senza commissioni in questa fase.",
+    "parceiroTexto": "Stiamo registrando ora le prime officine partner in Italia. Se sei un automobilista, puoi già inviare la tua richiesta: la inoltriamo alle officine della tua zona man mano che entrano e ti teniamo aggiornato. Se hai un'officina o un negozio di ricambi, stiamo selezionando pochi partner fondatori per città — senza commissioni in questa fase.",
     "faqTitulo": "Domande Frequenti",
     "faqSubtitulo": "Rispondiamo alle tue domande sulla piattaforma BipFix",
     "faqItems": [
@@ -326,11 +327,11 @@
       },
       {
         "pergunta": "È sicuro usare la piattaforma?",
-        "resposta": "Sì. Prima di attivare un'officina verifichiamo la registrazione dell'impresa. Dopo ogni lavoro completato, può lasciare una recensione solo il cliente che l'ha commissionato: così vedi la reputazione reale prima di decidere. I tuoi dati personali sono protetti e non vengono mai condivisi senza il tuo consenso."
+        "resposta": "Sì. Prima di attivare un'officina verifichiamo la registrazione dell'impresa (partita IVA e iscrizione alla Camera di Commercio). Dopo ogni lavoro completato, può lasciare una recensione solo il cliente che l'ha commissionato: così vedi la reputazione reale prima di decidere. I tuoi dati personali sono protetti secondo il GDPR e non vengono mai condivisi senza il tuo consenso."
       },
       {
         "pergunta": "Quanto costa usare BipFix?",
-        "resposta": "Per gli automobilisti, la piattaforma è completamente gratuita. Puoi inviare richieste, ricevere preventivi e confrontare le opzioni senza alcun costo. Siamo nella fase di selezione dei partner fondatori, e oggi non applichiamo commissioni né canoni mensili a officine e fornitori partner — trovi i dettagli nei nostri Termini di Utilizzo."
+        "resposta": "Per gli automobilisti la piattaforma è completamente gratuita: invii richieste, ricevi preventivi e confronti le opzioni senza alcun costo. Anche per officine e fornitori di ricambi l'uso di BipFix è oggi gratuito — nessuna commissione e nessun canone mensile. Se cambieremo il modo in cui la piattaforma fa pagare automobilisti o officine, ti informeremo con almeno 30 giorni di calendario di anticipo."
       },
       {
         "pergunta": "Come vengono valutate le officine?",
@@ -338,7 +339,7 @@
       },
       {
         "pergunta": "Posso usare BipFix in caso di emergenza?",
-        "resposta": "Sì! Abbiamo un pulsante di emergenza \"Ho appena avuto un incidente\" che ti permette di registrare rapidamente l'accaduto, scattare foto sul posto e ricevere preventivi dalle officine vicine in pochi minuti. Puoi registrare anche l'altro veicolo coinvolto."
+        "resposta": "Sì! Abbiamo un pulsante di emergenza \"Ho appena avuto un incidente\" che ti permette di registrare rapidamente l'accaduto, scattare foto sul posto e ricevere preventivi dalle officine vicine in pochi minuti. Puoi registrare anche l'altro veicolo coinvolto e compilare con calma la constatazione amichevole (CAI). Se ci sono feriti, chiama prima il 112 (o il 118)."
       },
       {
         "pergunta": "Che tipo di servizi offrono le officine?",
@@ -350,7 +351,7 @@
       },
       {
         "pergunta": "E se la riparazione la paga l'assicurazione?",
-        "resposta": "Puoi comunque usare BipFix: ricevi qui i preventivi e mostrali all'assicurazione. In Estonia, con la kasko o con l'assicurazione obbligatoria dell'altro conducente (liikluskindlustus), verifica con l'assicuratore prima della riparazione se accetta l'officina scelta."
+        "resposta": "Puoi comunque usare BipFix: ricevi qui i preventivi e mostrali all'assicurazione. In Italia, se il danno è coperto dalla RC auto dell'altro conducente (o dal risarcimento diretto con la tua compagnia) oppure dalla tua polizza kasko/furto-incendio-collisione, verifica con l'assicuratore prima della riparazione se accetta l'officina scelta: di norma hai diritto di scegliere l'officina di fiducia, ma la compagnia può chiedere una perizia. Compila la constatazione amichevole (CAI) sul posto, se possibile. In caso di dubbi sulla compagnia, puoi rivolgerti all'IVASS."
       },
       {
         "pergunta": "Il prezzo del preventivo è quello finale?",
@@ -376,7 +377,8 @@
     "footerSobre": "Chi è BipFix",
     "guiasTitulo": "Guide per automobilisti",
     "guiasTexto": "Risposte pratiche prima di portare l'auto in officina.",
-    "guiasVerTodos": "Vedi tutte le guide"
+    "guiasVerTodos": "Vedi tutte le guide",
+    "avvisoEstonia": "Vivi in Estonia? BipFix funziona anche a Tallinn, in italiano: le richieste vanno alle officine vicine all'auto."
   },
   "constants": {
     "tiposServico": {
@@ -519,7 +521,7 @@
     "suaTaxaAtual": "La tua aliquota attuale",
     "comissaoPendente": "Commissione in sospeso",
     "comissaoPaga": "Commissione pagata",
-    "infoTaxa": "L'aliquota parte da {base}% e scende fino al {min}% rispondendo rapidamente ai preventivi{media} e mantenendo un buon volume di ordini consegnati. Viene addebitata solo quando un ordine viene segnato come consegnato.",
+    "infoTaxa": "Attualmente l'uso di BipFix è gratuito per i fornitori di ricambi: nessuna commissione viene applicata sugli ordini consegnati. Se cambieremo il modo in cui la piattaforma fa pagare automobilisti, officine o fornitori, ti informeremo con almeno 30 giorni di calendario di anticipo. La fascia di riferimento dal {base}% al {min}%{media} varrebbe solo se venisse attivata una tariffa legata alle prestazioni.",
     "mediaTempoResposta": " (la tua media oggi: {horas}h)",
     "extratoTitulo": "Estratto conto commissioni ricambi",
     "nenhumaComissao": "Nessuna commissione ancora registrata",
@@ -608,17 +610,33 @@
     "SENHA_CURTA": "La password deve avere almeno 8 caratteri.",
     "TERMOS_OBRIGATORIOS": "Per continuare, accetta i Termini di utilizzo e l'Informativa sulla privacy.",
     "DECLARACAO_OBRIGATORIA": "Per registrare un'impresa, conferma di esserne il responsabile.",
-    "CONTA_EXISTENTE": "Questa email ha già un account BipFix. Accedi per segnalare l'incidente."
+    "CONTA_EXISTENTE": "Questa email ha già un account BipFix. Accedi per segnalare l'incidente.",
+    "ORCAMENTO_INDISPONIVEL": "Questo preventivo non è più disponibile.",
+    "HORARIO_VENCIDO": "Quell'orario è già passato. Scegline un altro.",
+    "NAO_EM_SERVICO": "L'auto non è in lavorazione (manca il check-in).",
+    "NAO_AGENDADO": "Questa prenotazione non è più in attesa dell'auto.",
+    "REVISAO_PENDENTE": "Una revisione è già in attesa della risposta del cliente.",
+    "REVISAO_DECIDIDA": "Questa revisione ha già una risposta.",
+    "REVISAO_SEM_MUDANCA": "L'importo è uguale a quello del preventivo accettato.",
+    "EMAIL_DE_OUTRA_CONTA": "Questa email appartiene già a un altro account (cliente o negozio). Usa un'altra email per il dipendente.",
+    "CHECKIN_JA_FEITO": "Il check-in di quest'auto è già stato fatto.",
+    "CHECKIN_FUTURO": "Il check-in è previsto per un altro giorno. Conferma per anticiparlo.",
+    "SEM_CHECKIN": "Fai il check-in prima di registrare le fasi.",
+    "TIPO_ARQUIVO": "Tipo di file non accettato. Invia una foto (JPG, PNG) o un PDF.",
+    "ARQUIVO_GRANDE": "File troppo grande. Invia un file più piccolo.",
+    "SEM_ITENS": "Non abbiamo trovato voci nel documento. Compilale a mano.",
+    "FOTO_INVALIDA": "Impossibile leggere l'immagine. Prova un'altra foto.",
+    "IA_OCUPADA": "L'analisi automatica è occupata. Riprova tra qualche minuto o compila a mano."
   },
   "sobre": {
     "metaTitle": "Chi è BipFix",
-    "metaDescription": "Chi siamo, in che fase siamo e come funziona BipFix: preventivi di officina trasparenti, recensioni verificate e nessuna posizione a pagamento.",
+    "metaDescription": "Chi siamo, in che fase siamo e come funziona BipFix in Italia: preventivi di officina trasparenti, recensioni verificate e nessuna posizione a pagamento.",
     "titulo": "Chi è BipFix",
-    "intro": "BipFix mette in contatto gli automobilisti che hanno bisogno di una riparazione con officine indipendenti: descrivi il problema con le foto, ricevi preventivi dettagliati, li confronti e segui la riparazione. BipFix è solo la piattaforma: non ripara auto e non vende ricambi.",
+    "intro": "BipFix mette in contatto gli automobilisti che hanno bisogno di una riparazione con officine indipendenti in Italia: descrivi il problema con le foto, ricevi preventivi dettagliati, li confronti e segui la riparazione. BipFix è solo la piattaforma: non ripara auto e non vende ricambi.",
     "estagioTitulo": "In che fase siamo",
-    "estagioTexto": "Siamo all'inizio. La città pilota è Tallinn, in Estonia, e le prime officine partner si stanno registrando ora, nella fase dei partner fondatori. Non abbiamo ancora una grande rete di officine — e preferiamo dirlo chiaramente.",
+    "estagioTexto": "Siamo all'inizio. BipFix è nato a Tallinn, in Estonia, dove si stanno registrando le prime officine partner; con la versione italiana apriamo ora il mercato italiano, a partire dalle grandi città come Milano, Roma, Napoli e Torino. Non abbiamo ancora una grande rete di officine in Italia — e preferiamo dirlo chiaramente.",
     "empresaTitulo": "L'impresa",
-    "empresaTexto": "BipFix è in fase di registrazione come società a responsabilità limitata estone (osaühing). Fino al completamento della registrazione, la piattaforma è gestita dal fondatore come persona fisica. I dati completi dell'impresa saranno pubblicati qui non appena la registrazione sarà completata.",
+    "empresaTexto": "BipFix è in fase di registrazione come società a responsabilità limitata estone (osaühing), con sede a Tallinn. Fino al completamento della registrazione, la piattaforma è gestita dal fondatore come persona fisica. I dati completi dell'impresa saranno pubblicati qui non appena la registrazione sarà completata; per l'Italia non abbiamo ancora una sede locale.",
     "principiosTitulo": "Come lavoriamo",
     "principio1": "Nessuna officina può pagare per comparire per prima.",
     "principio2": "Recensisce solo chi ha commissionato e completato il lavoro.",

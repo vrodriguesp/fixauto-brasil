@@ -1,7 +1,7 @@
 {
   "slug": "compare-car-repair-quotes",
   "publicado": "2026-09-29",
-  "atualizado": "2026-09-30",
+  "atualizado": "2026-10-09",
   "versoes": {
     "en": {
       "slug": "compare-car-repair-quotes",
@@ -275,7 +275,7 @@
       "slug": "confrontare-preventivi-riparazione-auto",
       "titulo": "Come confrontare i preventivi di riparazione auto: ricambi, manodopera, garanzia e segnali d'allarme",
       "tituloSeo": "Come confrontare i preventivi di riparazione auto",
-      "descricao": "Come leggere e confrontare i preventivi dell'officina: ricambi e manodopera, originali o aftermarket, ore di lavoro, IVA, garanzia e segnali d'allarme.",
+      "descricao": "Come leggere e confrontare i preventivi dell'officina in Italia: ricambi e manodopera, originali o aftermarket, ore di lavoro, IVA al 22%, garanzia legale e segnali d'allarme.",
       "resumo": "Un buon preventivo di riparazione auto elenca ricambi e manodopera su righe separate, indica il tipo di ricambi, riporta le ore di lavoro e la tariffa oraria, precisa se l'IVA è inclusa e dice fino a quando è valido e quale garanzia copre il lavoro. Per confrontare i preventivi in modo corretto, verifica che descrivano la stessa riparazione con lo stesso tipo di ricambi: il totale più basso non è un affare se manca un pezzo o se le ore indicate sono meno di quelle che il lavoro richiede davvero.",
       "secoes": [
         {
@@ -326,7 +326,7 @@
         {
           "titulo": "IVA, validità e condizioni di pagamento",
           "paragrafos": [
-            "I preventivi rivolti ai privati dovrebbero riportare i prezzi <strong>IVA inclusa</strong>, ma alcune officine per abitudine indicano prezzi netti. Controlla sempre quale dei due stai guardando prima di confrontare i totali: la differenza può essere un quinto del prezzo o più, a seconda dell'aliquota del tuo paese.",
+            "I preventivi rivolti ai privati dovrebbero riportare i prezzi <strong>IVA inclusa</strong>, ma alcune officine per abitudine indicano prezzi netti. Controlla sempre quale dei due stai guardando prima di confrontare i totali: in Italia l'aliquota IVA ordinaria è del 22%, quindi la differenza tra netto e lordo è quasi un quarto del prezzo.",
             "Il preventivo dovrebbe indicare fino a quando è valido, perché i prezzi dei ricambi cambiano. Dovrebbe anche dire cosa succede se il meccanico trova altri problemi ad auto aperta: la buona pratica è che ogni lavoro non previsto nel preventivo richieda la tua approvazione prima di essere eseguito. Chiedi le condizioni di pagamento, eventuali acconti per ricambi su ordinazione e se l'officina conserva i pezzi sostituiti per mostrarteli."
           ]
         },
@@ -334,7 +334,7 @@
           "titulo": "Garanzia sul lavoro e sui ricambi",
           "paragrafos": [
             "Una riparazione ha due garanzie: quella del produttore sul ricambio e quella dell'officina sulla manodopera. Chiedile entrambe per iscritto, con la durata (in mesi o chilometri) e cosa coprono. Un'officina che sta dietro al proprio lavoro lo dichiara senza esitazioni.",
-            "In molti paesi la normativa a tutela dei consumatori prevede una garanzia legale su servizi e beni indipendentemente da ciò che scrive l'officina, quindi una 'garanzia' molto breve stampata sul preventivo non limita necessariamente i tuoi diritti. Verifica le regole che si applicano dove vivi."
+            "In Italia il Codice del Consumo (d.lgs. 206/2005) prevede la garanzia legale di conformità di due anni sui beni venduti ai consumatori, ricambi compresi, e per i lavori eseguiti valgono le norme del Codice civile sull'appalto: una 'garanzia' molto breve stampata sul preventivo non limita quindi i tuoi diritti di legge. Chiedi comunque la garanzia scritta dell'officina, anche quando la riparazione è pagata dall'assicurazione RC auto o dalla tua polizza kasko (furto-incendio-collisione)."
           ]
         },
         {
@@ -371,7 +371,7 @@
           "titulo": "Perché conviene chiedere più preventivi",
           "paragrafos": [
             "Le officine differiscono per tariffa oraria, fornitori di ricambi e modo di diagnosticare lo stesso sintomo. Con un solo preventivo non puoi sapere se la diagnosi è giusta o il prezzo ragionevole; con tre emergono gli schemi: lo stesso pezzo in ogni elenco, oppure un'officina che propone un lavoro molto più grande delle altre. Quella differenza merita una conversazione, non solo uno sconto.",
-            "Confrontare ti permette anche di scegliere in base a più del prezzo: distanza, disponibilità, specializzazione nella tua marca e chiarezza con cui l'officina si spiega. Su BipFix descrivi il problema una volta sola, aggiungi le foto e ricevi preventivi dalle officine vicine: un modo semplice per ottenere preventivi scritti e confrontabili. Se hai avuto un incidente, registralo su <a href=\"/emergencia\">/emergencia</a>; per tutto il resto, inizia da <a href=\"/cadastro\">/cadastro</a>."
+            "Confrontare ti permette anche di scegliere in base a più del prezzo: distanza, disponibilità, specializzazione nella tua marca e chiarezza con cui l'officina si spiega. Su BipFix descrivi il problema una volta sola, aggiungi le foto e ricevi preventivi dalle officine vicine — a Milano, Roma, Napoli, Torino o nella tua città: un modo semplice per ottenere preventivi scritti e confrontabili. Se hai avuto un incidente, registralo su <a href=\"/emergencia\">/emergencia</a>; per tutto il resto, inizia da <a href=\"/cadastro\">/cadastro</a>."
           ]
         }
       ],
@@ -390,7 +390,7 @@
         },
         {
           "pergunta": "L'officina può farmi pagare più del preventivo?",
-          "resposta": "La buona pratica – e in molti paesi la legge – è che i lavori non previsti nel preventivo richiedano la tua approvazione prima di essere eseguiti. Concorda in anticipo che l'officina ti chiami se trova qualcosa in più e conserva il preventivo scritto."
+          "resposta": "La buona pratica – e in Italia anche il Codice civile, che nell'appalto non consente variazioni all'opera senza l'autorizzazione del committente – è che i lavori non previsti nel preventivo richiedano la tua approvazione prima di essere eseguiti. Concorda in anticipo che l'officina ti chiami se trova qualcosa in più e conserva il preventivo scritto."
         },
         {
           "pergunta": "Quanti preventivi dovrei chiedere?",
@@ -401,6 +401,10 @@
         {
           "nome": "La tua Europa – Garanzie e restituzioni per i consumatori (UE)",
           "url": "https://europa.eu/youreurope/citizens/consumers/shopping/guarantees-returns/index_it.htm"
+        },
+        {
+          "nome": "Normattiva – Codice del Consumo (d.lgs. 6 settembre 2005, n. 206), garanzia legale di conformità",
+          "url": "https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:2005-09-06;206"
         }
       ],
       "cta": "pedido"

@@ -124,7 +124,7 @@
       {
         "titulo": "Quotes and service",
         "itens": [
-          "Structured quotes; the commission is paid by the repair shop — the customer pays nothing extra",
+          "Structured quotes; the customer pays only the quote amount — nothing on top",
           "Step-by-step repair tracking, visible to the customer",
           "Automatic notification when the vehicle is ready",
           "Direct chat with the customer per request"
@@ -153,9 +153,9 @@
       {
         "titulo": "Finance",
         "itens": [
-          "Commission configurable by performance and loyalty",
-          "Full commission statement and entries",
-          "Total transparency on what's charged and when"
+          "Free for garages today: no commission and no monthly fee",
+          "If we change how the platform charges drivers or garages, we will inform you at least 30 calendar days in advance.",
+          "Full transparency about what is charged and when"
         ]
       },
       {
@@ -330,7 +330,7 @@
       },
       {
         "pergunta": "How much does BipFix cost?",
-        "resposta": "For drivers, the platform is completely free. You can send requests, receive quotes and compare options at no cost. We're in the founding-partner selection phase, and today we charge no commission or monthly fee to partner shops and suppliers — see the details in our Terms of Use."
+        "resposta": "For drivers, the platform is completely free: you send requests, receive quotes and compare options at no cost. For garages and parts suppliers, using BipFix is currently free as well — no commission and no monthly fee. If we change how the platform charges drivers or garages, we will inform you at least 30 calendar days in advance."
       },
       {
         "pergunta": "How are repair shops rated?",
@@ -376,7 +376,8 @@
     "footerSobre": "About BipFix",
     "guiasTitulo": "Guides for drivers",
     "guiasTexto": "Practical answers before you take your car to a repair shop.",
-    "guiasVerTodos": "See all guides"
+    "guiasVerTodos": "See all guides",
+    "avvisoEstonia": "Living in Estonia? BipFix also works in Tallinn, in English: requests go to the garages near your car."
   },
   "constants": {
     "tiposServico": {
@@ -519,7 +520,7 @@
     "suaTaxaAtual": "Your current rate",
     "comissaoPendente": "Pending commission",
     "comissaoPaga": "Paid commission",
-    "infoTaxa": "The rate starts at {base}% and drops to as low as {min}% by responding to quotes quickly{media} and keeping up a steady volume of delivered orders. It's only charged once an order is marked as delivered.",
+    "infoTaxa": "Using BipFix is currently free for parts suppliers: no commission is charged on delivered orders. If we change how the platform charges drivers, garages or suppliers, we will inform you at least 30 calendar days in advance. The reference range of {base}% to {min}%{media} would only apply if performance-based charging were ever switched on.",
     "mediaTempoResposta": " (your average today: {horas}h)",
     "extratoTitulo": "Parts commission statement",
     "nenhumaComissao": "No commission recorded yet",
@@ -608,7 +609,23 @@
     "SENHA_CURTA": "Password must be at least 8 characters.",
     "TERMOS_OBRIGATORIOS": "To continue, please accept the Terms of Use and the Privacy Policy.",
     "DECLARACAO_OBRIGATORIA": "To register a business, please confirm that you are the person responsible for it.",
-    "CONTA_EXISTENTE": "This email already has a BipFix account. Sign in to report the accident."
+    "CONTA_EXISTENTE": "This email already has a BipFix account. Sign in to report the accident.",
+    "ORCAMENTO_INDISPONIVEL": "This quote is no longer available.",
+    "HORARIO_VENCIDO": "That time slot has passed. Please choose another.",
+    "NAO_EM_SERVICO": "The car is not in service (no check-in yet).",
+    "NAO_AGENDADO": "This booking is no longer waiting for the car.",
+    "REVISAO_PENDENTE": "A revision is already waiting for the customer’s answer.",
+    "REVISAO_DECIDIDA": "This revision has already been answered.",
+    "REVISAO_SEM_MUDANCA": "The amount is the same as the accepted quote.",
+    "EMAIL_DE_OUTRA_CONTA": "This email already belongs to another account (customer or store). Use a different email for the employee.",
+    "CHECKIN_JA_FEITO": "This car has already been checked in.",
+    "CHECKIN_FUTURO": "Check-in is booked for another day. Confirm to bring it forward.",
+    "SEM_CHECKIN": "Check the car in before recording stages.",
+    "TIPO_ARQUIVO": "File type not accepted. Send a photo (JPG, PNG) or a PDF.",
+    "ARQUIVO_GRANDE": "File too large. Please send a smaller file.",
+    "SEM_ITENS": "We couldn't find any items in the document. Please fill them in by hand.",
+    "FOTO_INVALIDA": "The image couldn't be read. Try another photo.",
+    "IA_OCUPADA": "Automatic analysis is busy right now. Try again in a few minutes or fill it in by hand."
   },
   "sobre": {
     "metaTitle": "About BipFix",

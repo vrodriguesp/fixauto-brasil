@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { dentroDoLimite } from '@/lib/rate-limit';
 import { getSessionUserId } from '@/lib/api-auth';
 import { sendCotacaoPecaRespondidaEmail } from '@/lib/notifications';
 import { currencyForCountry } from '@/lib/currency';
@@ -20,6 +21,9 @@ export async function POST(req: NextRequest) {
     }
 
     const { cotacaoId } = await req.json();
+    if (!dentroDoLimite(`cotacao-resp:${cotacaoId}`, 5, 60 * 60 * 1000) || !dentroDoLimite(`cotacao-resp-u:${callerId}`, 60, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Muitas requisições', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
+    }
     if (!cotacaoId) {
       return NextResponse.json({ error: 'cotacaoId obrigatório' }, { status: 400 });
     }

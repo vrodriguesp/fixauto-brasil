@@ -21,12 +21,12 @@
     "modulos": {
       "como-funciona": {
         "titulo": "Como funciona a loja de peças",
-        "resumo": "Oficinas publicam pedidos de peça (\"cotações\"). Você responde com preço e prazo. A oficina escolhe a melhor resposta e confirma o pedido. A entrega e o pagamento são combinados diretamente com a oficina — o BipFix não processa isso. Só quando você marca o pedido como entregue é que o BipFix cobra uma pequena comissão.",
+        "resumo": "Oficinas publicam pedidos de peça (\"cotações\"). Você responde com preço e prazo. A oficina escolhe a melhor resposta e confirma o pedido. A entrega e o pagamento são combinados diretamente com a oficina — o BipFix não processa isso. Hoje o uso do BipFix é gratuito para as lojas: nenhuma comissão é cobrada.",
         "passosGuiados": [
           "Abra Dashboard no menu e leia o card \"Como funciona\".",
           "Repare nos 3 números: cotações abertas pra responder, pedidos confirmados e peças ativas no seu catálogo."
         ],
-        "desafio": "Entenda o fluxo completo antes de começar: cotação → resposta → pedido confirmado → entrega → comissão.",
+        "desafio": "Entenda o fluxo completo antes de começar: cotação → resposta → pedido confirmado → entrega.",
         "linkRotulo": "Ver meu dashboard →"
       },
       "perfil": {
@@ -61,7 +61,7 @@
           "Clique em \"Enviar resposta\"."
         ],
         "desafio": "Responda pelo menos uma cotação de oficina com preço e prazo reais.",
-        "dica": "Responder rápido (menos de 2h) reduz sua taxa de comissão mais tarde."
+        "dica": "Responder rápido (menos de 2h) aumenta sua chance de ser escolhido pela oficina."
       },
       "pedidos": {
         "titulo": "Pedidos e entrega",
@@ -78,7 +78,7 @@
         "resumo": "Hoje o uso do BipFix é gratuito para as lojas. Se no futuro houver cobrança sobre as vendas de peças, você será avisado com 30 dias corridos de antecedência — e ela só incidirá sobre pedidos marcados como entregues, nunca antes disso.",
         "passosGuiados": [
           "Abra Comissão no menu.",
-          "Veja sua taxa atual, o que está pendente e o que já foi pago."
+          "Veja a condição que vale hoje para a sua loja: uso gratuito, sem comissão."
         ],
         "desafio": "Veja qual condição vale hoje para a sua loja.",
         "linkRotulo": "Ver minha comissão →"
@@ -115,7 +115,7 @@
   "lojaComissao": {
     "loading": "Carregando...",
     "pageTitle": "Comissão BipFix",
-    "pageSubtitle": "Taxa cobrada sobre pedidos de peças entregues, e como reduzi-la"
+    "pageSubtitle": "Hoje o uso do BipFix é gratuito para fornecedores de peças. Se mudarmos a forma como a plataforma cobra motoristas, oficinas ou fornecedores, avisaremos com pelo menos 30 dias corridos de antecedência."
   },
   "lojaConversaDetalhe": {
     "loadingConversa": "Carregando conversa...",

@@ -335,7 +335,23 @@
     "SENHA_CURTA": "A senha precisa ter pelo menos 8 caracteres.",
     "TERMOS_OBRIGATORIOS": "Para continuar, aceite os Termos de Uso e a Política de Privacidade.",
     "DECLARACAO_OBRIGATORIA": "Para cadastrar uma empresa, confirme que você é o responsável por ela.",
-    "CONTA_EXISTENTE": "Este e-mail já tem uma conta BipFix. Entre na sua conta para registrar o acidente."
+    "CONTA_EXISTENTE": "Este e-mail já tem uma conta BipFix. Entre na sua conta para registrar o acidente.",
+    "ORCAMENTO_INDISPONIVEL": "Este orçamento não está mais disponível.",
+    "HORARIO_VENCIDO": "Esse horário já passou. Escolha outro.",
+    "NAO_EM_SERVICO": "O carro não está em serviço (falta o check-in).",
+    "NAO_AGENDADO": "Este agendamento não está mais aguardando o carro.",
+    "REVISAO_PENDENTE": "Já existe uma revisão aguardando a resposta do cliente.",
+    "REVISAO_DECIDIDA": "Esta revisão já foi respondida.",
+    "REVISAO_SEM_MUDANCA": "O valor é igual ao do orçamento aceito.",
+    "EMAIL_DE_OUTRA_CONTA": "Este e-mail já é de outra conta (cliente ou loja). Use outro e-mail para o funcionário.",
+    "CHECKIN_JA_FEITO": "O check-in deste carro já foi feito.",
+    "CHECKIN_FUTURO": "O check-in está marcado para outro dia. Confirme para antecipar.",
+    "SEM_CHECKIN": "Faça o check-in antes de registrar etapas.",
+    "TIPO_ARQUIVO": "Tipo de arquivo não aceito. Envie foto (JPG, PNG) ou PDF.",
+    "ARQUIVO_GRANDE": "Arquivo grande demais. Envie um arquivo menor.",
+    "SEM_ITENS": "Não encontramos itens no documento. Preencha à mão.",
+    "FOTO_INVALIDA": "Não foi possível ler a imagem. Tente outra foto.",
+    "IA_OCUPADA": "A análise automática está ocupada agora. Tente de novo em alguns minutos ou preencha à mão."
   },
   "notificacoes": {
     "titulo": "Notificações",
@@ -356,5 +372,20 @@
     "sem": "Sem garantia",
     "conversaEncerrada": "Conversa encerrada: o serviço terminou e a garantia acabou (ou não foi escolhida esta oficina).",
     "desteServico": "Garantia deste serviço"
+  },
+  "revisao": {
+    "titulo": "{oficina} propôs uma revisão do orçamento",
+    "novoPrazo": "Novo prazo: {dias} dias",
+    "motivo": "Motivo",
+    "explicacao": "Nada muda sem a sua decisão. Se recusar, a oficina segue com o orçamento original. Se preferir, recuse e retire o carro.",
+    "aprovar": "Aprovar novo valor",
+    "recusar": "Recusar (manter o original)",
+    "retirar": "Recusar e retirar o carro",
+    "retirarConfirma": "O serviço será encerrado e a oficina avisada. Combine a retirada pela conversa. Pode haver cobrança do que já foi feito, conforme o combinado com a oficina. Confirmar?",
+    "retirarSim": "Sim, retirar o carro",
+    "voltar": "Voltar",
+    "feito_aprovar": "Revisão aprovada. A oficina foi avisada.",
+    "feito_recusar": "Revisão recusada. Vale o orçamento original.",
+    "feito_retirar": "Serviço encerrado. Combine a retirada do carro pela conversa."
   }
 }

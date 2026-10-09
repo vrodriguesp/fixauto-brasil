@@ -511,7 +511,8 @@
     "quoteMsgPhonePart": " Phone: {telefone}",
     "semAcessoTitulo": "Sign in to see this accident",
     "semAcessoTexto": "For security, accident details are only shown to the people involved. Sign in with the account linked to this accident (the email that received the notice).",
-    "semAcessoEntrar": "Sign in"
+    "semAcessoEntrar": "Sign in",
+    "aguardandoRegistro": "The person who reported the accident will complete the details of those involved."
   },
   "docsHome": {
     "metaTitle": "Help Centre",
@@ -837,30 +838,28 @@
       }
     ],
     "s7Outro": "You can reply publicly to reviews, showing professionalism and attention to your customers.",
-    "s8Title": "8. BipFix commission",
-    "s8Intro": "BipFix charges a commission on services carried out through the platform. Here's how it works:",
+    "s8Title": "8. Platform costs",
+    "s8Intro": "Using BipFix is currently free for garages and drivers. Here is what that means:",
     "s8Items": [
       {
-        "label": "How it's charged",
-        "desc": "The commission is calculated on the total value of the quote accepted by the customer."
+        "label": "No commission",
+        "desc": "No commission is charged on jobs closed through the platform: the amount you send in the quote is the amount the customer pays."
       },
       {
-        "label": "Transparency",
-        "desc": "The commission percentage is shown before the quote is sent, with no surprises."
+        "label": "No monthly fee",
+        "desc": "Registration, schedule, quotes, team and reviews carry no monthly fee."
       },
       {
-        "label": "Billing",
-        "desc": "Charges are made monthly, with a detailed report of all services."
+        "label": "Advance notice",
+        "desc": "If we change how the platform charges drivers or garages, we will inform you at least 30 calendar days in advance."
       }
     ],
-    "s8ReduceTitle": "How to reduce your commission:",
+    "s8ReduceTitle": "Where to keep track:",
     "s8ReduceList": [
-      "Keep an average rating above 4.5 stars.",
-      "Respond to requests quickly (in under 1 hour).",
-      "Complete services within the estimated timeline.",
-      "Keep your profile complete and up to date."
+      "Open Commission in the menu: the screen shows the condition that applies to your garage today.",
+      "Any future change will be announced by email and inside the platform before it takes effect."
     ],
-    "s8Note": "Repair shops with excellent performance can get up to a 30% reduction in their commission rate."
+    "s8Note": "Drivers are never charged: BipFix adds nothing to the quote amount."
   },
   "docsOficinaLayout": {
     "metaTitle": "Repair Shop Guide",

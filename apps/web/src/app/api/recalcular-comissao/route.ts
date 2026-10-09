@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { recalcularComissaoConfig } from '@/lib/comissao';
 import { getSessionUserId } from '@/lib/api-auth';
 import { dentroDoLimite } from '@/lib/rate-limit';
+import { temRelacaoComOficina } from '@/lib/acesso-servico';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
 
@@ -23,6 +24,7 @@ export async function POST(req: NextRequest) {
     if (!dentroDoLimite(`recalcular:${userId}`, 60, 60 * 60 * 1000)) {
       return NextResponse.json({ error: 'Muitas requisições' }, { status: 429 });
     }
+    if (!(await temRelacaoComOficina(userId, oficinaId))) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     const info = await recalcularComissaoConfig(supabaseAdmin, oficinaId);
     return NextResponse.json(info);
   } catch (err) {

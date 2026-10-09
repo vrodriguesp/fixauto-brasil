@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { linkDaNotificacao } from '@/lib/link-notificacao';
 import { Link, rota } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
@@ -32,7 +33,8 @@ export default function ClienteDashboard() {
   const topNotificacoes = notificacoes.slice(0, 3);
 
   // Separate solicitations by state
-  const abertas = solicitacoes.filter((s) => ['aberta', 'em_orcamento'].includes(s.status));
+  // no_show: a oficina registrou a falta e reabriu o orcamento - o cliente escolhe outro horario (M5)
+  const abertas = solicitacoes.filter((s) => ['aberta', 'em_orcamento', 'no_show'].includes(s.status as string));
   const agendadas = solicitacoes.filter((s) => ['aceita', 'em_andamento'].includes(s.status));
   const concluidas = solicitacoes.filter((s) => s.status === 'concluida');
 
@@ -74,20 +76,7 @@ export default function ClienteDashboard() {
           </div>
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
             {topNotificacoes.map((n) => {
-              const solId = (n.dados as Record<string, string> | null)?.solicitacao_id;
-              const emergId = (n.dados as Record<string, string> | null)?.emergencia_id;
-              const ofId = (n.dados as Record<string, string> | null)?.oficina_id;
-              const pagaReparo = !!(n.dados as Record<string, string> | null)?.pagador_id;
-              const getNotificationHref = () => {
-                if (n.tipo === 'acidente' && emergId) return `/cliente/mensagens`;
-                // responsavel pelo pagamento nao ve o pedido do outro, so a conversa dele com a oficina
-                if (pagaReparo && solId && ofId) return `/cliente/mensagens/${solId}?oficina=${ofId}&pagador=1`;
-                if (n.tipo === 'nova_mensagem') return solId ? `/cliente/mensagens/${solId}${ofId ? `?oficina=${ofId}` : ''}` : '/cliente/mensagens';
-                if (n.tipo === 'servico_concluido' && solId) return `/cliente/orcamentos/${solId}`;
-                if (solId) return `/cliente/orcamentos/${solId}`;
-                return '/cliente/mensagens';
-              };
-              const href = getNotificationHref();
+              const href = linkDaNotificacao(n, 'cliente') || '/cliente/mensagens';
               const isServicoConcluido = n.tipo === 'servico_concluido';
 
               return (

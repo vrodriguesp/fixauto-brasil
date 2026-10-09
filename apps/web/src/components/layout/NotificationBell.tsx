@@ -5,21 +5,8 @@ import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { useNotificacoes } from '@/hooks/use-notificacoes';
 import { useAuth } from '@/lib/auth-context';
+import { linkDaNotificacao } from '@/lib/link-notificacao';
 import type { Notificacao } from '@fixauto/shared';
-
-/** Pra onde levar ao clicar numa notificacao, dependendo do tipo e do papel de quem esta vendo. */
-function linkDaNotificacao(n: Notificacao, tipoUsuario?: string): string | null {
-  const d = (n.dados || {}) as Record<string, any>;
-  const base = tipoUsuario === 'oficina' ? '/oficina' : tipoUsuario === 'loja_pecas' ? '/loja' : '/cliente';
-
-  if (n.tipo === 'nota_interna_veiculo') return '/oficina/veiculos-em-servico';
-  if (d.solicitacao_id && tipoUsuario === 'oficina') return `/oficina/solicitacoes/${d.solicitacao_id}`;
-  if (d.solicitacao_id) return `${base}/orcamentos/${d.solicitacao_id}`;
-  if (d.cotacao_id && tipoUsuario === 'loja_pecas') return '/loja/cotacoes';
-  if (d.cotacao_id) return '/oficina/pecas';
-  if (d.emergencia_id) return `/emergencia/acidente/${d.emergencia_id}`;
-  return null;
-}
 
 function timeAgo(iso: string, t: (key: string, values?: Record<string, string | number | Date>) => string): string {
   const diffMs = Date.now() - new Date(iso).getTime();

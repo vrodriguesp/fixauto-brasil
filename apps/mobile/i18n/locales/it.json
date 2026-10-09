@@ -335,7 +335,23 @@
     "SENHA_CURTA": "La password deve avere almeno 8 caratteri.",
     "TERMOS_OBRIGATORIOS": "Per continuare, accetta i Termini di utilizzo e l'Informativa sulla privacy.",
     "DECLARACAO_OBRIGATORIA": "Per registrare un'impresa, conferma di esserne il responsabile.",
-    "CONTA_EXISTENTE": "Questa email ha già un account BipFix. Accedi per segnalare l'incidente."
+    "CONTA_EXISTENTE": "Questa email ha già un account BipFix. Accedi per segnalare l'incidente.",
+    "ORCAMENTO_INDISPONIVEL": "Questo preventivo non è più disponibile.",
+    "HORARIO_VENCIDO": "Quell'orario è già passato. Scegline un altro.",
+    "NAO_EM_SERVICO": "L'auto non è in lavorazione (manca il check-in).",
+    "NAO_AGENDADO": "Questa prenotazione non è più in attesa dell'auto.",
+    "REVISAO_PENDENTE": "Una revisione è già in attesa della risposta del cliente.",
+    "REVISAO_DECIDIDA": "Questa revisione ha già una risposta.",
+    "REVISAO_SEM_MUDANCA": "L'importo è uguale a quello del preventivo accettato.",
+    "EMAIL_DE_OUTRA_CONTA": "Questa email appartiene già a un altro account (cliente o negozio). Usa un'altra email per il dipendente.",
+    "CHECKIN_JA_FEITO": "Il check-in di quest'auto è già stato fatto.",
+    "CHECKIN_FUTURO": "Il check-in è previsto per un altro giorno. Conferma per anticiparlo.",
+    "SEM_CHECKIN": "Fai il check-in prima di registrare le fasi.",
+    "TIPO_ARQUIVO": "Tipo di file non accettato. Invia una foto (JPG, PNG) o un PDF.",
+    "ARQUIVO_GRANDE": "File troppo grande. Invia un file più piccolo.",
+    "SEM_ITENS": "Non abbiamo trovato voci nel documento. Compilale a mano.",
+    "FOTO_INVALIDA": "Impossibile leggere l'immagine. Prova un'altra foto.",
+    "IA_OCUPADA": "L'analisi automatica è occupata. Riprova tra qualche minuto o compila a mano."
   },
   "notificacoes": {
     "titulo": "Notifiche",
@@ -356,5 +372,20 @@
     "sem": "Senza garanzia",
     "conversaEncerrada": "Conversazione chiusa: il servizio è finito e la garanzia è scaduta (oppure non è stata scelta questa officina).",
     "desteServico": "Garanzia di questo servizio"
+  },
+  "revisao": {
+    "titulo": "{oficina} ha proposto una revisione del preventivo",
+    "novoPrazo": "Nuovi tempi: {dias} giorni",
+    "motivo": "Motivo",
+    "explicacao": "Nulla cambia senza la tua decisione. Se rifiuti, l'officina prosegue con il preventivo originale. Puoi anche rifiutare e ritirare l'auto.",
+    "aprovar": "Approva il nuovo importo",
+    "recusar": "Rifiuta (mantieni l'originale)",
+    "retirar": "Rifiuta e ritira l'auto",
+    "retirarConfirma": "Il servizio sarà chiuso e l'officina avvisata. Concorda il ritiro nella chat. Il lavoro già fatto può essere addebitato come concordato con l'officina. Confermi?",
+    "retirarSim": "Sì, ritiro l'auto",
+    "voltar": "Indietro",
+    "feito_aprovar": "Revisione approvata. L'officina è stata avvisata.",
+    "feito_recusar": "Revisione rifiutata. Resta valido il preventivo originale.",
+    "feito_retirar": "Servizio chiuso. Concorda il ritiro dell'auto nella chat."
   }
 }

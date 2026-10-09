@@ -109,12 +109,12 @@ export function useOrcamentos() {
 
       const data = await res.json();
       if (!res.ok) {
-        return { error: { message: data.error || 'Erro ao aceitar orçamento' } };
+        return { error: { message: data.error || '', codigo: data.codigo as string | undefined, status: res.status } };
       }
 
       return { error: null };
     } catch (err) {
-      return { error: { message: (err as Error).message } };
+      return { error: { message: (err as Error).message, codigo: undefined as string | undefined, status: 0 } };
     }
   };
 

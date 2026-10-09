@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { Link, useRouter, rota } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { paisDoAparelho } from '@/lib/seguro-reparo';
 import { useAuth } from '@/lib/auth-context';
 import StructuredData from '@/components/seo/StructuredData';
 import { generateFAQSchema } from '@/lib/seo-utils';
@@ -14,6 +15,11 @@ export default function HomeClient({ guias = [] }: { guias?: GuiaResumo[] }) {
   const { isLoggedIn, user, funcionario, authUser, loading } = useAuth();
   const router = useRouter();
   const t = useTranslations('home');
+  const locale = useLocale();
+  // site italiano fala com a Italia; quem le em italiano morando na Estonia
+  // ve que o servico tambem funciona la (idioma != pais)
+  const [naEstonia, setNaEstonia] = useState(false);
+  useEffect(() => { setNaEstonia(locale === 'it' && paisDoAparelho() === 'EE'); }, [locale]);
 
   // Auto-redirect logged-in users to their dashboard - exceto admin, que
   // precisa conseguir ver a home publica normalmente mesmo logado (pra
@@ -55,6 +61,9 @@ export default function HomeClient({ guias = [] }: { guias?: GuiaResumo[] }) {
     <div>
       <StructuredData data={faqSchema} />
 
+      {naEstonia && (
+        <p role="note" className="bg-amber-50 border-b border-amber-200 text-amber-900 text-sm text-center px-4 py-2">{t('avvisoEstonia')}</p>
+      )}
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 text-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">

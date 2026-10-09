@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import SeguroDoPedido from '@/components/oficina/SeguroDoPedido';
 import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
-import { useRouter } from '@/i18n/navigation';
+import { useRouter, Link } from '@/i18n/navigation';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
 import { useAuth } from '@/lib/auth-context';
@@ -12,6 +12,7 @@ import type { TipoItemOrcamento, AnaliseDano } from '@fixauto/shared';
 import { formatCurrency, cleanDescricao, rotuloTipoPedido } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { supabase } from '@/lib/supabase';
+import { textoErroApi } from '@/lib/erro-api';
 import { hojeLocal, turnoDisponivel, primeiroTurnoLivre, type Turno } from '@/lib/turnos';
 
 interface ItemForm {
@@ -24,6 +25,7 @@ interface ItemForm {
 export default function EnviarOrcamentoPage() {
   const t = useTranslations('oficinaEnviarOrcamento');
   const tc = useTranslations('constants');
+  const tErros = useTranslations('erros');
   const locale = useLocale();
   const params = useParams();
   const router = useRouter();
@@ -38,6 +40,17 @@ export default function EnviarOrcamentoPage() {
     (o) => o.oficina_id === oficina?.id
   );
   const isRevision = !!existingQuote;
+  // orcamento ja aceito: vira PROPOSTA de revisao que o cliente aprova ou nao
+  // (migracao 049, /api/orcamento-revisao) - nunca altera o aceito direto
+  const modoRevisaoAceito = existingQuote?.status === 'aceito';
+  const [motivoRevisao, setMotivoRevisao] = useState('');
+  const [revisaoPendente, setRevisaoPendente] = useState<{ valor_novo: number; created_at: string } | null>(null);
+  const [erroRevisao, setErroRevisao] = useState('');
+  useEffect(() => {
+    if (!modoRevisaoAceito || !existingQuote?.id) return;
+    supabase.from('orcamento_revisoes').select('valor_novo, created_at').eq('orcamento_id', existingQuote.id).eq('status', 'pendente').maybeSingle()
+      .then(({ data }) => setRevisaoPendente((data as any) || null));
+  }, [modoRevisaoAceito, existingQuote?.id]);
 
   const [itens, setItens] = useState<ItemForm[]>([
     { descricao: '', tipo: 'mao_de_obra', valor_unitario: 0, quantidade: 1 },
@@ -172,6 +185,21 @@ export default function EnviarOrcamentoPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (modoRevisaoAceito && existingQuote) {
+      setErroRevisao('');
+      if (motivoRevisao.trim().length < 5) { setErroRevisao(t('motivoRevisaoObrigatorio')); return; }
+      const res = await fetch('/api/orcamento-revisao', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orcamentoId: existingQuote.id, motivo: motivoRevisao, prazoDias,
+          itens: itens.map((i) => ({ descricao: i.descricao, tipo: i.tipo, quantidade: i.quantidade, valor_unitario: i.valor_unitario })),
+        }),
+      }).catch(() => null);
+      const d = res ? await res.json().catch(() => ({})) : {};
+      if (!res?.ok) { setErroRevisao(textoErroApi(tErros, res?.status || 500, d)); return; }
+      setSubmitted(true);
+      return;
+    }
     if (slots.some((s) => s.data && !turnoDisponivel(s.data, s.turno))) {
       setErroHorario(true);
       return;
@@ -260,6 +288,16 @@ export default function EnviarOrcamentoPage() {
     );
   }
 
+  // proposta de revisao ja enviada: espera a resposta do cliente
+  if (modoRevisaoAceito && revisaoPendente && !submitted) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-20 text-center">
+        <p className="text-gray-700 mb-6">{t('revisaoAguardandoCliente', { valor: formatCurrency(Number(revisaoPendente.valor_novo), moeda, locale) })}</p>
+        <Link href={`/oficina/mensagens/${solicitacao.id}`} className="btn-primary inline-block">{t('abrirConversa')}</Link>
+      </div>
+    );
+  }
+
   if (submitted) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-20 text-center">
@@ -269,10 +307,12 @@ export default function EnviarOrcamentoPage() {
           </svg>
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          {isRevision ? t('orcamentoRevisado') : t('orcamentoEnviado')}
+          {modoRevisaoAceito ? t('revisaoEnviadaTitulo') : isRevision ? t('orcamentoRevisado') : t('orcamentoEnviado')}
         </h1>
         <p className="text-gray-600">
-          {isRevision
+          {modoRevisaoAceito
+            ? t('revisaoEnviadaTexto')
+            : isRevision
             ? t('clienteNotificadoRevisao')
             : t('clienteNotificadoAceite')}
         </p>
@@ -290,9 +330,18 @@ export default function EnviarOrcamentoPage() {
       </button>
 
       <h1 className="text-2xl font-bold text-gray-900 mb-2">
-        {isRevision ? t('revisarOrcamento') : t('enviarOrcamento')}
+        {modoRevisaoAceito ? t('proporRevisaoTitulo') : isRevision ? t('revisarOrcamento') : t('enviarOrcamento')}
       </h1>
-      {isRevision && (
+      {modoRevisaoAceito && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+          <p className="text-sm text-amber-900 mb-3">{t('proporRevisaoTexto')}</p>
+          <label htmlFor="motivo-revisao" className="block text-sm font-medium text-gray-800 mb-1">{t('motivoRevisao')}</label>
+          <textarea id="motivo-revisao" className="input-field" rows={3} maxLength={1000} value={motivoRevisao}
+            placeholder={t('motivoRevisaoPlaceholder')} onChange={(e) => setMotivoRevisao(e.target.value)} />
+          {erroRevisao && <p role="alert" className="text-sm text-red-700 mt-2">{erroRevisao}</p>}
+        </div>
+      )}
+      {isRevision && !modoRevisaoAceito && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-2">
           <p className="text-sm text-amber-800">
             {t('jaEnviouOrcamento', { numero: ((existingQuote?.revisao_numero) || 0) + 1 })}
@@ -555,8 +604,8 @@ export default function EnviarOrcamentoPage() {
           </div>
         </div>
 
-        {/* Disponibilidade */}
-        {solicitacao.status === 'em_andamento' ? (
+        {/* Disponibilidade (na proposta de revisao a data ja esta marcada) */}
+        {modoRevisaoAceito ? null : solicitacao.status === 'em_andamento' ? (
           <div className="card mb-6">
             <div className="bg-blue-50 rounded-lg p-4 flex items-center gap-3">
               <span className="text-2xl">🔧</span>
@@ -655,7 +704,7 @@ export default function EnviarOrcamentoPage() {
             {t('cancelar')}
           </button>
           <button type="submit" className="btn-success" disabled={total === 0}>
-            {isRevision ? t('atualizarOrcamento') : t('enviarOrcamento')} - {formatCurrency(total, moeda, locale)}
+            {modoRevisaoAceito ? t('enviarRevisao') : isRevision ? t('atualizarOrcamento') : t('enviarOrcamento')} - {formatCurrency(total, moeda, locale)}
           </button>
         </div>
       </form>

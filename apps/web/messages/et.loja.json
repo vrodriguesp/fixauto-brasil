@@ -21,12 +21,12 @@
     "modulos": {
       "como-funciona": {
         "titulo": "Kuidas varuosade pood töötab",
-        "resumo": "Töökojad avaldavad varuosade päringuid (\"hinnapäringud\"). Sina vastad hinna ja tarneajaga. Töökoda valib parima pakkumise ja kinnitab tellimuse. Tarne ja makse lepitakse kokku otse töökojaga — BipFix seda ei vahenda. Alles siis, kui märgid tellimuse tarnituks, võtab BipFix väikese komisjonitasu.",
+        "resumo": "Töökojad avaldavad varuosade päringuid (\"hinnapäringud\"). Sina vastad hinna ja tarneajaga. Töökoda valib parima pakkumise ja kinnitab tellimuse. Tarne ja makse lepitakse kokku otse töökojaga — BipFix neid ei töötle. Praegu on BipFixi kasutamine poodidele tasuta: komisjonitasu ei võeta.",
         "passosGuiados": [
           "Ava menüüst Töölaud ja loe läbi \"Kuidas see töötab\" kaart.",
           "Pane tähele kolme numbrit: avatud hinnapäringud, kinnitatud tellimused ja aktiivsed varuosad sinu kataloogis."
         ],
-        "desafio": "Mõista kogu protsessi enne alustamist: hinnapäring → vastus → kinnitatud tellimus → tarne → komisjonitasu.",
+        "desafio": "Mõista kogu protsessi enne alustamist: hinnapäring → vastus → kinnitatud tellimus → tarne.",
         "linkRotulo": "Vaata oma töölauda →"
       },
       "perfil": {
@@ -61,7 +61,7 @@
           "Vajuta \"Saada vastus\"."
         ],
         "desafio": "Vasta vähemalt ühele töökoja hinnapäringule reaalse hinna ja tarneajaga.",
-        "dica": "Kiire vastamine (alla 2 tunni) langetab hiljem sinu komisjonitasu määra."
+        "dica": "Kiire vastamine (alla 2 tunni) suurendab võimalust, et töökoda valib just sinu."
       },
       "pedidos": {
         "titulo": "Tellimused ja tarne",
@@ -78,7 +78,7 @@
         "resumo": "Praegu on BipFixi kasutamine poodidele tasuta. Kui tulevikus kehtestatakse varuosade müügilt tasu, teatame sellest vähemalt 30 kalendripäeva ette — ja see kehtib ainult tellimustele, mis on märgitud kohaletoimetatuks, mitte kunagi varem.",
         "passosGuiados": [
           "Ava menüüst Komisjonitasu.",
-          "Vaata oma praegust määra, mis on ootel ja mis on juba makstud."
+          "Vaata, milline tingimus sinu poele täna kehtib: tasuta kasutamine, ilma komisjonitasuta."
         ],
         "desafio": "Vaata, milline tingimus sinu poele täna kehtib.",
         "linkRotulo": "Vaata oma komisjonitasu →"
@@ -115,7 +115,7 @@
   "lojaComissao": {
     "loading": "Laadin...",
     "pageTitle": "BipFixi komisjonitasu",
-    "pageSubtitle": "Tasu, mida võetakse tarnitud varuosade tellimustelt, ja kuidas seda vähendada"
+    "pageSubtitle": "Praegu on BipFixi kasutamine varuosade tarnijatele tasuta. Kui muudame seda, kuidas platvorm autojuhtidelt, töökodadelt või tarnijatelt tasu võtab, teatame sulle sellest vähemalt 30 kalendripäeva ette."
   },
   "lojaConversaDetalhe": {
     "loadingConversa": "Laen vestlust...",

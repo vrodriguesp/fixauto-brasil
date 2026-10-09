@@ -207,11 +207,11 @@
           "Clique num pedido da lista para ver os detalhes (fotografias do dano, veículo, descrição).",
           "Clique em \"Enviar Orçamento\".",
           "Adicione pelo menos um item (descrição, tipo, preço, quantidade).",
-          "Veja quanto será a comissão da BipFix: paga-a no fim do serviço; o cliente paga só o valor do orçamento.",
+          "Confira o total: o cliente paga só o valor do orçamento e, hoje, a BipFix não cobra comissão à oficina.",
           "Defina o prazo, as datas disponíveis para check-in e clique em \"Enviar Orçamento\"."
         ],
         "desafio": "Envie um orçamento real para um pedido aberto na sua zona.",
-        "dica": "Quanto mais depressa responder, mais baixa fica a sua taxa de comissão — veja o módulo \"Comissão\"."
+        "dica": "Quanto mais depressa responder, maior a probabilidade de o cliente escolher o seu orçamento."
       },
       "checkin": {
         "titulo": "Agenda, check-in e entrega",
@@ -240,7 +240,7 @@
         "resumo": "Atualmente, a utilização da BipFix é gratuita para as oficinas. No futuro poderá haver uma cobrança — uma percentagem sobre cada serviço concluído ou um valor fixo por serviço —, sempre com um aviso de 30 dias de calendário. O ecrã de Comissão mostra a condição que se aplica à sua oficina.",
         "passosGuiados": [
           "Abra Comissão no menu.",
-          "Veja a sua taxa atual e o que cada critério está (ou não) a reduzir.",
+          "Veja a condição que se aplica hoje à sua oficina: utilização gratuita, sem comissão.",
           "Se a cobrança for por desempenho, responder depressa, evitar revisões de orçamento e pedir avaliações aos clientes tornam a sua taxa mais baixa."
         ],
         "desafio": "Abra o ecrã de Comissão e veja que condição se aplica hoje à sua oficina.",
@@ -388,7 +388,7 @@
     "bonusFidelidade10": "Fidelidade (≥ 10 serviços/90d)",
     "bonusFidelidadeVolume": "Fidelidade (volume/90d)",
     "titulo": "Comissão BipFix",
-    "subtitulo": "A sua taxa de comissão e como a baixar",
+    "subtitulo": "Como funciona a cobrança da plataforma para a sua oficina",
     "suaTaxaAtual": "A sua taxa atual",
     "pendente": "Pendente",
     "pago": "Paga",
@@ -506,7 +506,17 @@
     "garantiaAjuda": "Conta a partir da entrega do carro. Até ao fim da garantia, o cliente continua a falar consigo.",
     "comissaoPagaNoFim": "Paga esta comissão ({valor}) à BipFix no fim do serviço. O cliente paga só o valor do orçamento ({total}).",
     "garantiaOutra": "Outra (escrever os dias)",
-    "garantiaDiasCampo": "Dias de garantia"
+    "garantiaDiasCampo": "Dias de garantia",
+    "proporRevisaoTitulo": "Propor revisão do orçamento",
+    "proporRevisaoTexto": "O orçamento já foi aceite. Ajuste os itens e explique o motivo: o cliente aprova, recusa (mantém-se o valor original) ou levanta o carro. O valor só muda se ele aprovar. As revisões ficam registadas no seu perfil.",
+    "motivoRevisao": "Motivo da revisão (obrigatório)",
+    "motivoRevisaoPlaceholder": "Ex.: ao desmontar encontrámos o suporte do para-choques partido",
+    "motivoRevisaoObrigatorio": "Explique o motivo da revisão.",
+    "enviarRevisao": "Enviar proposta ao cliente",
+    "revisaoEnviadaTitulo": "Proposta de revisão enviada",
+    "revisaoEnviadaTexto": "O cliente foi avisado. Até responder, mantém-se o orçamento aceite.",
+    "revisaoAguardandoCliente": "A sua proposta de revisão ({valor}) aguarda a resposta do cliente.",
+    "abrirConversa": "Abrir conversa"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "A palavra-passe deve ter pelo menos 8 caracteres",
@@ -769,7 +779,8 @@
       "aceito": "Aceite",
       "recusado": "Recusado",
       "expirado": "Expirado"
-    }
+    },
+    "proporRevisao": "Propor revisão"
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Viatura recebida na oficina",
