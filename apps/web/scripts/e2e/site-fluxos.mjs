@@ -178,7 +178,7 @@ try {
     await pD.goto(`${SITE}/ee/et/oficina/enviar-orcamento/${solId}`, { waitUntil: 'networkidle' });
     await pD.waitForTimeout(2000);
     await pD.locator('input[placeholder="' + ET('oficinaEnviarOrcamento.placeholderDescricaoItem') + '"]').first().fill('Piduriklotsid + töö');
-    const valor = pD.locator('input[type=number]').locator('visible=true');
+    const valor = pD.getByLabel(ET('oficinaEnviarOrcamento.placeholderValor'), { exact: true }).locator('visible=true');
     await valor.first().fill('150');
     await pD.screenshot({ path: 'fluxo-oficina-orcamento.png', fullPage: true });
     await pD.locator('button[type=submit]').locator('visible=true').last().click();

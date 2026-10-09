@@ -6,7 +6,8 @@ import type { PlataformaMetricas } from '@fixauto/shared';
 function formatMoedaMap(porMoeda: Record<string, number> | undefined): string {
   const entries = Object.entries(porMoeda || {});
   if (entries.length === 0) {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(0);
+    // sem valor em nenhuma moeda: traco (antes "R$ 0,00" ao lado de valores em euro - teste 09/10, ponto 15)
+    return '—';
   }
   return entries
     .map(([moeda, valor]) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: moeda }).format(valor))

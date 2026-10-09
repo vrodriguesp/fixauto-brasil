@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const RAIZ = process.env.APP_WEB || path.join(path.dirname(fileURLToPath(import.meta.url)), 'app-web');
+const RAIZ = path.resolve(process.env.APP_WEB || path.join(path.dirname(fileURLToPath(import.meta.url)), 'app-web'));
 const SITE = process.env.SITE || 'https://bipfix.com';
 const TIPOS = { '.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css', '.png': 'image/png', '.json': 'application/json', '.ttf': 'font/ttf', '.ico': 'image/x-icon', '.svg': 'image/svg+xml' };
 

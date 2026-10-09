@@ -136,7 +136,7 @@ async function orcar(pO, dono, solId, valor, item) {
   const t = tr(dono.idioma);
   await pO.goto(`${SITE}${PREFIXO[dono.idioma]}/oficina/enviar-orcamento/${solId}`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(2500);
   await pO.locator(`input[placeholder="${t('oficinaEnviarOrcamento.placeholderDescricaoItem')}"]`).first().fill(item);
-  await pO.locator('input[type=number]').locator('visible=true').first().fill(String(valor));
+  await pO.getByLabel(t('oficinaEnviarOrcamento.placeholderValor'), { exact: true }).locator('visible=true').first().fill(String(valor));
   ok(`orcamento (${dono.idioma}): formulario cabe no celular`, await semTransbordo(pO));
   await pO.locator('button[type=submit]').locator('visible=true').last().click(); await pO.waitForTimeout(4500);
   const { data } = await sb.from('orcamentos').select('id, valor_total').eq('solicitacao_id', solId).eq('oficina_id', dono.oficinaId);
