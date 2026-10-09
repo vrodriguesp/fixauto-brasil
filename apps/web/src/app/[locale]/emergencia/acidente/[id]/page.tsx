@@ -67,9 +67,9 @@ export default function AcidenteRegistroPage() {
 
   const buscarOutroPlaca = async (p: string) => {
     const clean = p.replace(/[^a-zA-Z0-9]/g, '');
-    // A consulta de placa usa uma base so do Brasil: fora da versao
-    // brasileira ela sempre falharia (placas da Estonia tem outro formato)
-    if (clean.length < 7 || locale !== 'pt') return;
+    // A consulta de placa usa uma base so do Brasil: decide pelo FORMATO da
+    // placa brasileira (AAA9999 / AAA9A99), nao pelo idioma da tela
+    if (!/^[A-Za-z]{3}\d[A-Za-z0-9]\d{2}$/.test(clean)) return;
     setBuscandoOutroPlaca(true);
     try {
       const res = await fetch('/api/consultar-placa', {
@@ -99,7 +99,14 @@ export default function AcidenteRegistroPage() {
   // Orcamentos
   const [orcamentos, setOrcamentos] = useState<Orcamento[]>([]);
   const [loadingOrc, setLoadingOrc] = useState(false);
-  const [emergData, setEmergData] = useState<{ solicitacao_id: string | null; profile_id: string | null; descricao: string | null } | null>(null);
+  const [emergData, setEmergData] = useState<{ solicitacao_id: string | null; profile_id: string | null; descricao: string | null; latitude?: number | null; longitude?: number | null } | null>(null);
+  // pais do acidente (pela localizacao): regras e seguradoras do local, nao do idioma
+  const [paisAcidente, setPaisAcidente] = useState<string | null>(null);
+  useEffect(() => {
+    if (emergData?.latitude == null || emergData?.longitude == null) return;
+    fetch(`/api/geocode?lat=${emergData.latitude}&lon=${emergData.longitude}`).then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d?.paisCodigo) setPaisAcidente(d.paisCodigo); }).catch(() => {});
+  }, [emergData?.latitude, emergData?.longitude]);
   const [veiculoProprietario, setVeiculoProprietario] = useState<{ fipe_marca: string; fipe_modelo: string; fipe_ano: string; placa: string; cor: string } | null>(null);
   // quem paga o reparo (null = ainda carregando / sem acesso a esse dado)
   const [seguro, setSeguro] = useState<ValorSeguro | null>(null);
@@ -332,6 +339,7 @@ export default function AcidenteRegistroPage() {
         <SeguroReparoEditor
           inicial={seguro}
           tipoAcidente={(tipoAcidente as 'eu_causei' | 'outro_causou' | 'sem_outro') || 'outro_causou'}
+          pais={paisAcidente}
           podeEditar={papel === 'proprietario'}
           salvar={async (v) => {
             const res = await fetch(`/api/emergencia/${emergenciaId}/seguro`, {

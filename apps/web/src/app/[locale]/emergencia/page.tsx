@@ -61,7 +61,8 @@ export default function EmergenciaPage() {
     const clean = p.replace(/[^a-zA-Z0-9]/g, '');
     // A consulta de placa usa uma base so do Brasil: fora da versao
     // brasileira ela sempre falharia (placas da Estonia tem outro formato)
-    if (clean.length < 7 || locale !== 'pt') return;
+    // base so do Brasil: decide pelo FORMATO da placa brasileira, nao pelo idioma
+    if (!/^[A-Za-z]{3}\d[A-Za-z0-9]\d{2}$/.test(clean)) return;
     setBuscandoPlaca(true);
     setPlacaNaoEncontrada(false);
     setVeiculoInfo(null);

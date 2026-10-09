@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { paisDoAparelho } from '@/lib/seguro-reparo';
 import { useLocale, useTranslations } from 'next-intl';
 import { TIPOS_VEICULO } from '@fixauto/shared';
 
@@ -36,7 +37,11 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
   // fora do "pt", marca/modelo vem do catalogo aberto VehiclesDB (CC-BY 4.0,
   // https://github.com/vehiclesdb/vehiclesdb), sem preco (esse catalogo nao
   // tem valor de mercado nem cascata por ano como a FIPE - o ano fica livre).
-  const isBR = locale === 'pt';
+  // Catalogo do PAIS do carro, nao do idioma: um brasileiro na Estonia usando
+  // o site em portugues tem carro estoniano (sem FIPE). Pais = onde o aparelho
+  // esta (fuso horario); so sem esse sinal vale o idioma.
+  const [isBR, setIsBR] = useState(locale === 'pt');
+  useEffect(() => { const p = paisDoAparelho(); if (p) setIsBR(p === 'BR'); }, []);
   const [marcas, setMarcas] = useState<FipeOption[]>([]);
   const [modelos, setModelos] = useState<FipeOption[]>([]);
   const [anos, setAnos] = useState<FipeOption[]>([]);

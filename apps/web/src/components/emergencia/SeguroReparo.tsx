@@ -143,10 +143,11 @@ export function ProximosPassosSeguro({ pagamento, tipoAcidente, pais }: { pagame
 
 /** Pagina do acidente: mostra e deixa o dono atualizar os dados do seguro. */
 export function SeguroReparoEditor({
-  inicial, tipoAcidente, podeEditar, salvar,
+  inicial, tipoAcidente, podeEditar, salvar, pais,
 }: {
   inicial: ValorSeguro;
   tipoAcidente: TipoAcidente;
+  pais?: string | null;
   podeEditar: boolean;
   salvar: (v: ValorSeguro) => Promise<boolean>;
 }) {
@@ -169,7 +170,7 @@ export function SeguroReparoEditor({
       </div>
       {editando ? (
         <div className="space-y-3">
-          <SeguroReparoCampos valor={valor} onChange={setValor} tipoAcidente={tipoAcidente} />
+          <SeguroReparoCampos valor={valor} onChange={setValor} tipoAcidente={tipoAcidente} pais={pais} />
           <div className="flex gap-2">
             <button
               type="button"

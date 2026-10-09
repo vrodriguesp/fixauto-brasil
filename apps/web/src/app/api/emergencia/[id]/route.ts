@@ -56,7 +56,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
   return NextResponse.json({
     papel: acesso.papel,
-    emergencia: { id: e.id, solicitacao_id: e.solicitacao_id, profile_id: e.profile_id, descricao: e.descricao, nome: e.nome },
+    // coordenadas: a pagina descobre o PAIS do acidente (regras e seguro do local, nao do idioma)
+    emergencia: { id: e.id, solicitacao_id: e.solicitacao_id, profile_id: e.profile_id, descricao: e.descricao, nome: e.nome, latitude: e.latitude, longitude: e.longitude },
     outro: outro ?? null,
     mensagens: mensagens || [],
     veiculo,
