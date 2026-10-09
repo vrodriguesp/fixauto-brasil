@@ -14,7 +14,8 @@
     "nao": "No",
     "opcional": "facoltativo",
     "selecione": "Seleziona",
-    "nenhumResultado": "Nessun risultato"
+    "nenhumResultado": "Nessun risultato",
+    "fechar": "Chiudi"
   },
   "tabs": {
     "inicio": "Home",
@@ -106,7 +107,9 @@
     "seuCarroDica": "Aiuta l'officina a fare il preventivo. Viene salvata tra i tuoi veicoli.",
     "outroCarro": "Altra auto",
     "localEncontrada": "Posizione trovata. Controlla l'indirizzo qui sotto.",
-    "tentarDeNovo": "Riprova"
+    "tentarDeNovo": "Riprova",
+    "cameraNegadaTitulo": "Fotocamera bloccata",
+    "cameraNegadaTexto": "Per fotografare il danno, consenti la fotocamera nelle impostazioni del dispositivo. Puoi anche scegliere foto dalla galleria."
   },
   "novaSolicitacao": {
     "titulo": "Nuova richiesta",

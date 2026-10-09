@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../lib/auth-context';
 import { supabase } from '../lib/supabase';
 import { API_BASE_URL } from '../lib/api';
+import { fetchComPrazo } from '../lib/rede';
 import i18n from '../i18n';
 import { ErroApi, ErroUsuario, mensagemErro } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
@@ -94,7 +95,14 @@ export default function EmergenciaScreen() {
 
   const handleFoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') return;
+    if (status !== 'granted') {
+      // negada: explica e oferece os Ajustes (o iOS nao pergunta de novo - auditoria E7)
+      Alert.alert(t('emergencia.cameraNegadaTitulo'), t('emergencia.cameraNegadaTexto'), [
+        { text: t('common.cancelar'), style: 'cancel' },
+        { text: t('emergencia.abrirAjustes'), onPress: () => Linking.openSettings() },
+      ]);
+      return;
+    }
     const result = await ImagePicker.launchCameraAsync({ quality: 0.7 });
     if (!result.canceled) setFotos((prev) => [...prev, ...result.assets]);
   };
@@ -157,7 +165,7 @@ export default function EmergenciaScreen() {
     try {
       let localCoords = coords;
       if (!localCoords && endereco) {
-        const res = await fetch(`${API_BASE_URL}/api/geocode?q=${encodeURIComponent(endereco)}`);
+        const res = await fetchComPrazo(`${API_BASE_URL}/api/geocode?q=${encodeURIComponent(endereco)}`);
         const data = await res.json();
         if (data.latitude && data.longitude) localCoords = { lat: data.latitude, lon: data.longitude };
       }

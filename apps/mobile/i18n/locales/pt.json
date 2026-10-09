@@ -14,7 +14,8 @@
     "nao": "Não",
     "opcional": "opcional",
     "selecione": "Selecione",
-    "nenhumResultado": "Nenhum resultado"
+    "nenhumResultado": "Nenhum resultado",
+    "fechar": "Fechar"
   },
   "tabs": {
     "inicio": "Início",
@@ -106,7 +107,9 @@
     "seuCarroDica": "Ajuda a oficina a fazer o orçamento. Fica salvo nos seus veículos.",
     "outroCarro": "Outro carro",
     "localEncontrada": "Localização encontrada. Confira o endereço abaixo.",
-    "tentarDeNovo": "Tentar de novo"
+    "tentarDeNovo": "Tentar de novo",
+    "cameraNegadaTitulo": "Câmera bloqueada",
+    "cameraNegadaTexto": "Para fotografar o dano, permita a câmera nos Ajustes do aparelho. Você também pode escolher fotos da galeria."
   },
   "novaSolicitacao": {
     "titulo": "Nova solicitação",

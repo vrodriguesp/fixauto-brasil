@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, FlatList, Pressable, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect, router } from 'expo-router';
@@ -22,6 +23,8 @@ interface ConversaItem {
 // (emergencia_mensagens) fica pra uma proxima leva - ver
 // docs/ESPECIFICACAO_APP_MOBILE_CLIENTE.md.
 export default function MensagensScreen() {
+  // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { user } = useAuth();
   const [conversas, setConversas] = useState<ConversaItem[]>([]);
@@ -132,7 +135,7 @@ export default function MensagensScreen() {
   );
 
   return (
-    <View className="flex-1 bg-gray-50 px-4 pt-14">
+    <View className="flex-1 bg-gray-50 px-4" style={{ paddingTop: insets.top + 8 }}>
       <Text className="text-2xl font-bold text-gray-900 mb-4">{t('mensagens.titulo')}</Text>
       <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
         data={conversas}

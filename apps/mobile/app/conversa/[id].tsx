@@ -8,6 +8,7 @@ import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
 import { apiFetch } from '../../lib/api';
 import { File } from 'expo-file-system';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAudioRecorder, useAudioRecorderState, RecordingPresets, requestRecordingPermissionsAsync, setAudioModeAsync } from 'expo-audio';
 import AudioMensagem from '../../components/AudioMensagem';
 import { useAvisos } from '../../lib/avisos';
@@ -49,7 +50,7 @@ export default function ConversaScreen() {
         <Ionicons name="storefront-outline" size={22} color="#1d4ed8" />
       </Pressable>
     ) : null),
-  }), [tituloTela]); // eslint-disable-line react-hooks/exhaustive-deps
+  }), [tituloTela, oficinaId]); // eslint-disable-line react-hooks/exhaustive-deps
   const { user } = useAuth();
   const { atualizar: atualizarAvisos } = useAvisos();
   // pagador=1: sou o outro motorista do acidente e pago o reparo - conversa
@@ -105,7 +106,13 @@ export default function ConversaScreen() {
 
     const channel = supabase
       .channel(`msgs-mobile-${id}-${oficinaId}`)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensagens', filter: `solicitacao_id=eq.${id}` }, (payload) => {
+      // INSERT e UPDATE (transcricao do audio chega depois - auditoria E13)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mensagens', filter: `solicitacao_id=eq.${id}` }, (payload) => {
+        if (payload.eventType === 'UPDATE') {
+          setMensagens((prev) => prev.map((m) => (m.id === (payload.new as any).id ? { ...m, ...(payload.new as Mensagem) } : m)));
+          return;
+        }
+        if (payload.eventType !== 'INSERT') return;
         if ((payload.new as any).oficina_id !== oficinaId || ((payload.new as any).pagador_id || null) !== pagadorId) return;
         setMensagens((prev) => (prev.some((m) => m.id === payload.new.id) ? prev : [...prev, payload.new as Mensagem]));
       })
@@ -127,6 +134,9 @@ export default function ConversaScreen() {
   }, [mensagens, user, id, oficinaId, pagadorId]);
 
   // audio: toca o microfone para gravar; depois enviar ou descartar
+  const insets = useSafeAreaInsets();
+  // barra de digitacao acima do indicador de inicio do iPhone (auditoria E4)
+  const fundoBarra = { paddingBottom: Math.max(insets.bottom, 12) };
   const gravador = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const estadoGravacao = useAudioRecorderState(gravador);
   const [gravando, setGravando] = useState(false);
@@ -135,6 +145,12 @@ export default function ConversaScreen() {
     if (!id || !oficinaId) return;
     supabase.rpc('conversa_aberta', { p_sol: id, p_of: oficinaId }).then(({ data }) => setFechada(data === false));
   }, [id, oficinaId]);
+
+  useEffect(() => () => {
+    // saiu da conversa gravando: para e volta o audio ao normal (auditoria E5)
+    if (gravador.isRecording) gravador.stop().catch(() => {});
+    setAudioModeAsync({ allowsRecording: false, playsInSilentMode: true }).catch(() => {});
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const comecarGravacao = async () => {
     const perm = await requestRecordingPermissionsAsync();
@@ -223,7 +239,7 @@ export default function ConversaScreen() {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-gray-50" keyboardVerticalOffset={90}>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-gray-50" keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top + 44 : 0}>
       <Stack.Screen options={opcoesTela} />
       <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
         ref={listRef}
@@ -248,7 +264,7 @@ export default function ConversaScreen() {
       {fechada ? (
         <Text className="px-4 py-4 bg-gray-100 border-t border-gray-200 text-gray-600 text-sm">{t('garantia.conversaEncerrada')}</Text>
       ) : gravando ? (
-        <View className="flex-row items-center gap-3 px-4 py-3 bg-white border-t border-gray-200">
+        <View className="flex-row items-center gap-3 px-4 pt-3 bg-white border-t border-gray-200" style={fundoBarra}>
           <View className="w-3 h-3 rounded-full bg-red-500" />
           <Text className="flex-1 text-gray-800">
             {t('mensagens.gravando')} {Math.floor((estadoGravacao.durationMillis || 0) / 60000)}:{String(Math.floor(((estadoGravacao.durationMillis || 0) / 1000) % 60)).padStart(2, '0')}
@@ -261,7 +277,7 @@ export default function ConversaScreen() {
           </Pressable>
         </View>
       ) : (
-        <View className="flex-row items-center gap-2 px-4 py-3 bg-white border-t border-gray-200">
+        <View className="flex-row items-center gap-2 px-4 pt-3 bg-white border-t border-gray-200" style={fundoBarra}>
           <TextInput accessibilityLabel={t('mensagens.digiteMensagem')}
             value={texto}
             onChangeText={setTexto}

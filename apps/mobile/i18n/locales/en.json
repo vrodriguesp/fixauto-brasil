@@ -14,7 +14,8 @@
     "nao": "No",
     "opcional": "optional",
     "selecione": "Select",
-    "nenhumResultado": "No results"
+    "nenhumResultado": "No results",
+    "fechar": "Close"
   },
   "tabs": {
     "inicio": "Home",
@@ -106,7 +107,9 @@
     "seuCarroDica": "Helps the repair shop prepare the quote. It is saved in your vehicles.",
     "outroCarro": "Another car",
     "localEncontrada": "Location found. Check the address below.",
-    "tentarDeNovo": "Try again"
+    "tentarDeNovo": "Try again",
+    "cameraNegadaTitulo": "Camera blocked",
+    "cameraNegadaTexto": "To photograph the damage, allow the camera in your device settings. You can also pick photos from your gallery."
   },
   "novaSolicitacao": {
     "titulo": "New request",

@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, FlatList, Pressable, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect, router } from 'expo-router';
@@ -12,6 +13,8 @@ import GarantiasAtivas from '../../components/GarantiasAtivas';
 import AvaliacaoPendente from '../../components/AvaliacaoPendente';
 
 export default function DashboardScreen() {
+  // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { user } = useAuth();
   const { naoLidos, abrir, atualizar } = useAvisos();
@@ -42,7 +45,7 @@ export default function DashboardScreen() {
   );
 
   return (
-    <View className="flex-1 bg-gray-50 px-4 pt-14">
+    <View className="flex-1 bg-gray-50 px-4" style={{ paddingTop: insets.top + 8 }}>
       <View className="flex-row items-center justify-between mb-1">
         <Text className="text-2xl font-bold text-gray-900 flex-1">{t('dashboard.saudacao', { nome: user?.nome?.split(' ')[0] || '' })}</Text>
         {/* sino: todas as interacoes, a mais recente no alto */}

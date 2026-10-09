@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppState } from 'react-native';
 import type { Profile } from '@fixauto/shared';
 import type { User } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from './supabase';
@@ -114,16 +115,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((evento, session) => {
       setAuthUser(session?.user ?? null);
-      if (session?.user) {
+      // perfil so quando muda quem esta logado (nao a cada renovacao de token,
+      // ~1x/h, que refazia todas as consultas e o canal de avisos - auditoria E10)
+      if (session?.user && ['SIGNED_IN', 'INITIAL_SESSION', 'USER_UPDATED'].includes(evento)) {
         fetchProfile(session.user.id).catch(() => {});
       } else {
         setUser(null);
       }
     });
 
-    return () => subscription.unsubscribe();
+    // recomendacao do Supabase para React Native: renovar o token so com o app
+    // em primeiro plano (sem isso o realtime seguia com token vencido - E11)
+    const app = AppState.addEventListener('change', (estado) => {
+      if (estado === 'active') supabase.auth.startAutoRefresh();
+      else supabase.auth.stopAutoRefresh();
+    });
+    return () => { subscription.unsubscribe(); app.remove(); };
   }, [fetchProfile]);
 
   // Conta criada no servidor (mesma rota do site): o GoTrue nao aceita mais

@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { View, Text, Pressable, Alert } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
 import { useAuth } from '../../lib/auth-context';
@@ -7,6 +9,8 @@ import { API_BASE_URL } from '../../lib/api';
 import { IDIOMAS, escolherIdioma } from '../../lib/idiomas';
 
 export default function PerfilScreen() {
+  // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
+  const insets = useSafeAreaInsets();
   const { t, i18n } = useTranslation();
   const { user, signOut, refreshProfile } = useAuth();
 
@@ -26,7 +30,10 @@ export default function PerfilScreen() {
 
   // excluir a conta (exigido pela Apple e pelo Google): confirma duas vezes e
   // usa a mesma rota do site (/api/conta/excluir)
+  // trava de toque duplo: o segundo pedido chegava com a conta ja excluida (E18)
+  const [excluindo, setExcluindo] = useState(false);
   const handleExcluir = () => {
+    if (excluindo) return;
     Alert.alert(t('perfil.excluirConta'), `${t('perfil.excluirContaTexto')}
 
 ${t('perfil.excluirContaDetalhes')}
@@ -35,6 +42,8 @@ ${t('perfil.excluirContaConfirmar')}`, [
       { text: t('common.cancelar'), style: 'cancel' },
       {
         text: t('perfil.excluirContaSim'), style: 'destructive', onPress: async () => {
+          if (excluindo) return;
+          setExcluindo(true);
           try {
             const { data: { session } } = await supabase.auth.getSession();
             const res = await fetch(`${API_BASE_URL}/api/conta/excluir`, {
@@ -50,6 +59,8 @@ ${t('perfil.excluirContaConfirmar')}`, [
             router.replace('/(auth)/login');
           } catch {
             Alert.alert(t('perfil.excluirConta'), t('perfil.excluirContaErro'));
+          } finally {
+            setExcluindo(false);
           }
         },
       },
@@ -57,7 +68,7 @@ ${t('perfil.excluirContaConfirmar')}`, [
   };
 
   return (
-    <View className="flex-1 bg-gray-50 px-4 pt-14">
+    <View className="flex-1 bg-gray-50 px-4" style={{ paddingTop: insets.top + 8 }}>
       <Text className="text-2xl font-bold text-gray-900 mb-6">{t('perfil.titulo')}</Text>
 
       <View className="bg-white rounded-xl p-4 mb-6 border border-gray-200">
@@ -82,7 +93,7 @@ ${t('perfil.excluirContaConfirmar')}`, [
         <Text className="text-red-600 font-semibold">{t('perfil.sair')}</Text>
       </Pressable>
 
-      <Pressable onPress={handleExcluir} accessibilityRole="button" className="py-4 items-center mt-4">
+      <Pressable onPress={handleExcluir} disabled={excluindo} accessibilityRole="button" accessibilityState={{ disabled: excluindo }} className="py-4 items-center mt-4" style={{ opacity: excluindo ? 0.5 : 1 }}>
         <Text className="text-gray-500 underline">{t('perfil.excluirConta')}</Text>
       </Pressable>
     </View>

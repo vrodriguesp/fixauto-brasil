@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, FlatList, Pressable, Modal, TextInput } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../lib/api';
@@ -18,6 +19,8 @@ interface Props {
 // Picker generico marca/modelo, reaproveitando o mesmo endpoint publico
 // /api/vehicle-catalog que o site ja usa (VehiclesDB, mundo todo).
 export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl }: Props) {
+  // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<CatalogItem[]>([]);
@@ -49,7 +52,7 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
       </Pressable>
 
       <Modal visible={open} animationType="slide" onRequestClose={() => setOpen(false)}>
-        <View className="flex-1 bg-white pt-16 px-4">
+        <View className="flex-1 bg-white px-4" style={{ paddingTop: insets.top + 12 }}>
           <TextInput
             accessibilityLabel={label}
             value={busca}

@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, FlatList, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from 'expo-router';
@@ -9,6 +10,8 @@ import SolicitacaoCard from '../../components/SolicitacaoCard';
 import { useAvisos } from '../../lib/avisos';
 
 export default function SolicitacoesScreen() {
+  // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { user } = useAuth();
   const [solicitacoes, setSolicitacoes] = useState<Solicitacao[]>([]);
@@ -36,7 +39,7 @@ export default function SolicitacoesScreen() {
   );
 
   return (
-    <View className="flex-1 bg-gray-50 px-4 pt-14">
+    <View className="flex-1 bg-gray-50 px-4" style={{ paddingTop: insets.top + 8 }}>
       <Text className="text-2xl font-bold text-gray-900 mb-4">{t('tabs.solicitacoes')}</Text>
       <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
         data={solicitacoes}

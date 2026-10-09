@@ -14,7 +14,8 @@
     "nao": "Ei",
     "opcional": "valikuline",
     "selecione": "Vali",
-    "nenhumResultado": "Tulemusi pole"
+    "nenhumResultado": "Tulemusi pole",
+    "fechar": "Sulge"
   },
   "tabs": {
     "inicio": "Avaleht",
@@ -106,7 +107,9 @@
     "seuCarroDica": "Aitab töökojal pakkumist teha. Salvestatakse sinu sõidukite hulka.",
     "outroCarro": "Muu auto",
     "localEncontrada": "Asukoht leitud. Kontrolli allolevat aadressi.",
-    "tentarDeNovo": "Proovi uuesti"
+    "tentarDeNovo": "Proovi uuesti",
+    "cameraNegadaTitulo": "Kaamera on blokeeritud",
+    "cameraNegadaTexto": "Kahjustuse pildistamiseks luba kaamera seadme seadetes. Võid valida ka pilte galeriist."
   },
   "novaSolicitacao": {
     "titulo": "Uus päring",

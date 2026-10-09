@@ -119,7 +119,7 @@ export default function NovaSolicitacaoScreen() {
           const ext = foto.uri.split('.').pop() || 'jpg';
           const fileName = `solicitacoes/${sol.id}/${Date.now()}.${ext}`;
           const blob = await arquivoDaFoto(foto.uri);
-          const { data: uploadData, error: uploadError } = await supabase.storage.from('damage-photos').upload(fileName, blob, { contentType: `image/${ext}` });
+          const { data: uploadData, error: uploadError } = await supabase.storage.from('damage-photos').upload(fileName, blob, { contentType: foto.mimeType || (ext === 'png' ? 'image/png' : ext === 'heic' ? 'image/heic' : 'image/jpeg') });
           if (uploadError) continue;
           if (uploadData?.path) {
             const { data: urlData } = supabase.storage.from('damage-photos').getPublicUrl(uploadData.path);

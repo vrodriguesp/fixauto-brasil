@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, FlatList, Pressable, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect, router } from 'expo-router';
@@ -7,6 +8,8 @@ import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
 
 export default function VeiculosScreen() {
+  // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { user } = useAuth();
   const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
@@ -26,7 +29,7 @@ export default function VeiculosScreen() {
   );
 
   return (
-    <View className="flex-1 bg-gray-50 px-4 pt-14">
+    <View className="flex-1 bg-gray-50 px-4" style={{ paddingTop: insets.top + 8 }}>
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-2xl font-bold text-gray-900">{t('veiculos.titulo')}</Text>
         <Pressable onPress={() => router.push('/veiculo/novo')} className="bg-primary-600 rounded-full px-4 py-2">

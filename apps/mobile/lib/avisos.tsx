@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import i18n from '../i18n';
 import { View, Text, Pressable, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -70,7 +71,7 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
       supabase.from('mensagens').select('id', { count: 'exact', head: true }).eq('pagador_id', user.id).eq('lida', false).neq('remetente_id', user.id),
     ]);
     setMensagensNaoLidas((c1 || 0) + (c2 || 0));
-  }, [user]);
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const mostrar = useCallback((a: Aviso) => {
     setBanner(a);
@@ -106,7 +107,7 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
       })
       .subscribe();
     return () => { supabase.removeChannel(canal); };
-  }, [user, atualizar, mostrar]);
+  }, [user?.id, atualizar, mostrar]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <AvisosCtx.Provider value={{ chegou, naoLidos, mensagensNaoLidas, abrir, atualizar }}>
@@ -124,7 +125,7 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
                 {banner.mensagem ? <Text style={{ color: '#e5e7eb', fontSize: 13 }} numberOfLines={2}>{banner.mensagem}</Text> : null}
               </View>
             </Pressable>
-            <Pressable onPress={fechar} accessibilityRole="button" accessibilityLabel="OK" hitSlop={10} style={{ paddingHorizontal: 14, paddingVertical: 12 }}>
+            <Pressable onPress={fechar} accessibilityRole="button" accessibilityLabel={i18n.t('common.fechar')} hitSlop={10} style={{ paddingHorizontal: 14, paddingVertical: 12 }}>
               <Ionicons name="close" size={20} color="#9ca3af" />
             </Pressable>
           </View>
