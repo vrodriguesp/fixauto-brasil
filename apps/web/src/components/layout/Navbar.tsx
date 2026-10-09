@@ -40,14 +40,17 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <LinkPainel href={isLoggedIn ? dashboardPath : '/'} className="flex items-center gap-1">
+      <div className={`${isLoggedIn ? 'max-w-screen-2xl' : 'max-w-7xl'} mx-auto px-4 sm:px-6 lg:px-8`}>
+        {/* Menu do computador so a partir de 1280 px: abaixo disso os links nao cabem
+            numa linha e ficavam uns por cima dos outros ("Workshop" sobre "Dashboard",
+            nome sobre "Sair" - medido em 6 idiomas, 09/10); ali vale o menu de celular */}
+        <div className="flex justify-between h-16 gap-3">
+          <div className="flex items-center min-w-0">
+            <LinkPainel href={isLoggedIn ? dashboardPath : '/'} className="flex items-center gap-1 shrink-0">
               <img src="/logo-80.webp" alt="BipFix" width={188} height={40} className="h-7 sm:h-10 w-auto" />
               {(isOficina || isAdmin) && (
                 // No celular nao ha espaco ao lado do logo (sobrepunha o seletor de idioma)
-                <div className="hidden sm:flex flex-col ml-1 mr-4 xl:mr-6">
+                <div className="hidden sm:flex flex-col ml-1 whitespace-nowrap">
                   {isOficina && (
                     <span className="text-[10px] font-semibold text-sky-700 uppercase tracking-wider leading-none">{t('oficina')}</span>
                   )}
@@ -59,7 +62,7 @@ export default function Navbar() {
             </LinkPainel>
 
             {isLoggedIn && (
-              <div className="hidden md:flex items-center ml-8 gap-1">
+              <div className="hidden xl:flex items-center ml-5 gap-0.5">
                 {isAdmin ? (
                   <>
                     <NavLink href="/admin/dashboard">{t('dashboard')}</NavLink>
@@ -91,7 +94,6 @@ export default function Navbar() {
                           { href: '/oficina/aprender', label: `🎓 ${t('aprender')}` },
                         ]}
                       />
-                      <NavLink href="/oficina/perfil">{t('perfil')}</NavLink>
                     </>
                   )
                 ) : isLoja ? (
@@ -102,7 +104,6 @@ export default function Navbar() {
                     <NavLink href="/loja/pedidos">{t('pedidos')}</NavLink>
                     <NavLink href="/loja/comissao">{t('comissao')}</NavLink>
                     <NavLink href="/loja/aprender">🎓 {t('aprender')}</NavLink>
-                    <NavLink href="/loja/perfil">{t('perfil')}</NavLink>
                   </>
                 ) : (
                   <>
@@ -112,20 +113,21 @@ export default function Navbar() {
                     <NavLink href="/cliente/orcamentos">{t('orcamentos')}</NavLink>
                     <NavLink href="/cliente/mensagens">{t('mensagens')}</NavLink>
                     <NavLink href="/cliente/historico">{t('historico')}</NavLink>
-                    <NavLink href="/cliente/perfil">{t('perfil')}</NavLink>
                   </>
                 )}
               </div>
             )}
           </div>
 
-          <div className="flex items-center gap-4">
-            <LanguageSwitcher />
+          <div className="flex items-center gap-3 shrink-0">
+            <LanguageSwitcher compacto={isLoggedIn} />
             {isLoggedIn ? (
               <>
                 <NotificationBell />
                 <LinkPainel
                   href={isAdmin ? '/admin/dashboard' : isOficina ? '/oficina/perfil' : isLoja ? '/loja/perfil' : '/cliente/perfil'}
+                  title={`${t('perfil')} · ${user!.nome}`}
+                  aria-label={`${t('perfil')} · ${user!.nome}`}
                   className="hidden sm:flex items-center gap-2 hover:opacity-80 transition-opacity"
                 >
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isAdmin ? 'bg-slate-200' : isOficina ? 'bg-sky-100' : isLoja ? 'bg-orange-100' : 'bg-primary-100'}`}>
@@ -134,7 +136,7 @@ export default function Navbar() {
                     </span>
                   </div>
                   {/* nome e papel em uma linha cada, sem quebrar por cima de outros botoes (teste 09/10, ponto 3) */}
-                  <div className="text-sm min-w-0 max-w-[10rem] xl:max-w-[14rem]">
+                  <div className="hidden 2xl:block text-sm min-w-0 max-w-[12rem]">
                     <p className="font-medium text-gray-900 truncate whitespace-nowrap" title={user!.nome}>{user!.nome}</p>
                     <p className="text-gray-500 text-xs truncate whitespace-nowrap">
                       {isAdmin ? t('administrador') : isOficina ? oficina?.nome_fantasia : isLoja ? loja?.nome_fantasia : t('cliente')}
@@ -143,7 +145,7 @@ export default function Navbar() {
                 </LinkPainel>
                 <button
                   onClick={handleSignOut}
-                  className="text-sm text-gray-500 hover:text-gray-700"
+                  className="hidden sm:block text-sm text-gray-500 hover:text-gray-700 whitespace-nowrap"
                 >
                   {t('sair')}
                 </button>
@@ -167,7 +169,7 @@ export default function Navbar() {
                 aria-label="Menu"
                 aria-expanded={menuOpen}
                 aria-controls="menu-mobile"
-                className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+                className="xl:hidden p-2 rounded-lg hover:bg-gray-100"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {menuOpen ? (
@@ -183,7 +185,7 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {menuOpen && isLoggedIn && (
-          <div id="menu-mobile" className="md:hidden pb-4 border-t border-gray-100 pt-2">
+          <div id="menu-mobile" className="xl:hidden pb-4 border-t border-gray-100 pt-2">
             {isAdmin ? (
               <>
                 <MobileNavLink href="/admin/dashboard" onClick={() => setMenuOpen(false)}>{t('dashboard')}</MobileNavLink>
@@ -235,6 +237,11 @@ export default function Navbar() {
                 <MobileNavLink href="/cliente/perfil" onClick={() => setMenuOpen(false)}>{t('perfil')}</MobileNavLink>
               </>
             )}
+            {/* no celular o "Sair" fica aqui: na barra nao cabia ao lado do logo ("Terminar sessão") */}
+            <button type="button" onClick={() => { setMenuOpen(false); handleSignOut(); }}
+              className="sm:hidden block w-full text-left px-3 py-2 mt-1 rounded-lg text-base font-medium text-gray-600 hover:bg-gray-50 border-t border-gray-100">
+              {t('sair')}
+            </button>
           </div>
         )}
       </div>

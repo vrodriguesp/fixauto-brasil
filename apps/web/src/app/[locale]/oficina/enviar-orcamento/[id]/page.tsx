@@ -184,7 +184,8 @@ export default function EnviarOrcamentoPage() {
     const fd = new FormData();
     fd.append('arquivo', arq);
     fd.append('idioma', locale);
-    const r = await fetch('/api/ler-orcamento', { method: 'POST', body: fd }).catch(() => null);
+    // nunca fica "lendo" para sempre: o servidor responde em ate ~50 s
+    const r = await fetch('/api/ler-orcamento', { method: 'POST', body: fd, signal: AbortSignal.timeout(70_000) }).catch(() => null);
     const d = r ? await r.json().catch(() => ({})) : {};
     if (!r || !r.ok) { setLendoDoc(d.codigo === 'IA_OCUPADA' ? 'ocupada' : d.codigo === 'ARQUIVO_GRANDE' ? 'grande' : 'erro'); return; }
     setItens(d.itens.map((i: any) => ({ descricao: i.descricao, tipo: i.tipo, quantidade: i.quantidade, valor_unitario: i.valor_unitario })));

@@ -192,6 +192,11 @@ export default function SolicitacaoDetailScreen() {
             <Text className="text-gray-600 text-sm">{t('garantia.desteServico')} · {aceito?.oficina?.nome_fantasia}</Text>
             <Text className="text-emerald-800 text-xl font-bold">{t('garantia.diasRestantes', { dias: diasGarantia })}</Text>
             <Text className="text-gray-500 text-xs">{t('garantia.ate', { data: formatDate(fimGarantia.toISOString(), locale) })}</Text>
+            <Pressable accessibilityRole="button"
+              onPress={() => router.push({ pathname: '/conversa/[id]', params: { id: solicitacao.id, oficina: aceito.oficina_id } })}
+              className="self-start bg-white border border-emerald-300 rounded-lg px-3 py-2 mt-2">
+              <Text className="text-emerald-800 font-medium">💬 {t('garantia.falarComOficina')}</Text>
+            </Pressable>
           </View>
         )}
 

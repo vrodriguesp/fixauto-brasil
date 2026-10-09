@@ -376,7 +376,8 @@
     "noOrcamento": "Garanzia: {dias} giorni dalla consegna",
     "sem": "Senza garanzia",
     "conversaEncerrada": "Conversazione chiusa: il servizio è finito e la garanzia è scaduta (oppure non è stata scelta questa officina).",
-    "desteServico": "Garanzia di questo servizio"
+    "desteServico": "Garanzia di questo servizio",
+    "verServico": "Vedi servizio e storico"
   },
   "revisao": {
     "titulo": "{oficina} ha proposto una revisione del preventivo",

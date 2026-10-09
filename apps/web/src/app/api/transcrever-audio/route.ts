@@ -4,11 +4,12 @@ import { dentroDoLimite } from '@/lib/rate-limit';
 import { participaDaConversa } from '@/lib/acesso-servico';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { baixarMidia } from '@/lib/midia-servidor';
+import { chamarGemini } from '@/lib/gemini';
 
 // Mesmo esquema do leitor de orcamento: com o modelo ocupado (429/503) tenta
 // de novo e passa para o seguinte, em vez de falhar na primeira.
 // 3.5-flash primeiro: no teste com audio real em estoniano acertou ("Tere, see on test"), o 2.5 nao
-const MODELOS = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-3.5-flash-lite'];
+const MODELOS = [{ modelo: 'gemini-3.5-flash' }, { modelo: 'gemini-2.5-flash', semRaciocinio: true }, { modelo: 'gemini-3.5-flash-lite' }];
 const IDIOMA_NOME: Record<string, string> = { pt: 'Brazilian Portuguese', 'pt-PT': 'European Portuguese', en: 'English', et: 'Estonian', it: 'Italian', ru: 'Russian' };
 
 // O iPhone grava .mp4/.m4a e o armazenamento as vezes devolve video/mp4 ou
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
     // "Tere, see on test" em estoniano virava "Teray, say on test")
     const idioma = (msg as any).remetente?.idioma as string | undefined;
     const dica = idioma && IDIOMA_NOME[idioma] ? ` The speaker uses the app in ${IDIOMA_NOME[idioma]}, so the audio is most likely in ${IDIOMA_NOME[idioma]} (but keep whatever language is actually spoken).` : '';
-    const corpo = JSON.stringify({
+    const corpo = {
       contents: [{
         parts: [
           { inline_data: { mime_type: mimeType, data: base64Audio } },
@@ -89,22 +90,11 @@ export async function POST(request: NextRequest) {
         ],
       }],
       // sem "pensamento": ele consumia o limite de saida e a resposta vinha vazia
-      generationConfig: { maxOutputTokens: 2000, temperature: 0, thinkingConfig: { thinkingBudget: 0 } },
-    });
+      generationConfig: { maxOutputTokens: 2000, temperature: 0 },
+    };
 
-    let geminiRes: Response | null = null;
-    for (const modelo of MODELOS) {
-      for (let tentativa = 0; tentativa < 2; tentativa++) {
-        // Chave no cabecalho, nao na URL (URLs aparecem em logs de proxy)
-        geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-          body: modelo.startsWith('gemini-2.5') ? corpo : corpo.replace(',"thinkingConfig":{"thinkingBudget":0}', ''),
-        }).catch(() => null);
-        if (geminiRes?.ok || (geminiRes && ![429, 500, 503].includes(geminiRes.status))) break;
-        await new Promise((r) => setTimeout(r, 1500));
-      }
-      if (geminiRes?.ok) break;
-    }
+    // audio de 1 min leva poucos segundos; o prazo evita a tela esperando sem fim
+    const geminiRes = await chamarGemini(MODELOS, corpo, { rotulo: 'transcrever-audio' });
 
     if (!geminiRes?.ok) {
       const err = geminiRes ? await geminiRes.json().catch(() => ({})) : {};

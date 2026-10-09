@@ -376,7 +376,8 @@
     "noOrcamento": "Garantia: {dias} dias a partir da entrega",
     "sem": "Sem garantia",
     "conversaEncerrada": "Conversa encerrada: o serviço terminou e a garantia acabou (ou não foi escolhida esta oficina).",
-    "desteServico": "Garantia deste serviço"
+    "desteServico": "Garantia deste serviço",
+    "verServico": "Ver serviço e histórico"
   },
   "revisao": {
     "titulo": "{oficina} propôs uma revisão do orçamento",

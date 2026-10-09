@@ -6,6 +6,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 import { baixarMidia } from '@/lib/midia-servidor';
 import { idiomaDoSite } from '@/lib/site-url';
 import { currencyForCountry } from '@/lib/currency';
+import { chamarGemini } from '@/lib/gemini';
 
 
 export async function POST(req: NextRequest) {
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
 
     // Gemini as vezes responde "alta demanda" (503/429): tenta de novo e,
     // se continuar, usa outro modelo - antes a oficina via o erro em ingles.
-    const corpoGemini = JSON.stringify({
+    const corpoGemini = {
           contents: [{
             parts: [
               ...imageParts,
@@ -109,24 +110,12 @@ Seja BREVE. Escreva os textos (resumo, checklist_inspecao, pecas_afetadas, pergu
             maxOutputTokens: 8192,
             responseMimeType: 'application/json',
           },
-        });
-    const MODELOS = ['gemini-2.5-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite'];
-    let geminiRes: Response | null = null;
-    let modeloUsado = MODELOS[0];
-    for (const modelo of MODELOS) {
-      for (let tentativa = 0; tentativa < 2; tentativa++) {
-        geminiRes = await fetch(
-          // Chave no cabecalho, nao na URL (URLs aparecem em logs de proxy)
-          `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`,
-          { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey }, body: corpoGemini },
-        ).catch(() => null);
-        modeloUsado = modelo;
-        if (geminiRes && geminiRes.ok) break;
-        if (geminiRes && ![429, 500, 503].includes(geminiRes.status)) break;
-        await new Promise((r) => setTimeout(r, 1500));
-      }
-      if (geminiRes && geminiRes.ok) break;
-    }
+        };
+    // 3.5-flash por ultimo: levou 82 s numa leitura de 2 paginas (09/10)
+    const geminiRes = await chamarGemini(
+      [{ modelo: 'gemini-2.5-flash' }, { modelo: 'gemini-3.5-flash-lite' }, { modelo: 'gemini-3.5-flash' }],
+      corpoGemini, { rotulo: 'analisar-dano' },
+    );
 
     if (!geminiRes || !geminiRes.ok) {
       const errData = geminiRes ? await geminiRes.json().catch(() => ({})) : {};
@@ -211,7 +200,7 @@ Seja BREVE. Escreva os textos (resumo, checklist_inspecao, pecas_afetadas, pergu
         estimativa_custo: parsed.estimativa_custo || null,
         confianca: parsed.confianca || null,
         fotos_analisadas: fotos.map((f) => f.id),
-        modelo_usado: modeloUsado,
+        modelo_usado: geminiData.modelVersion || 'gemini',
         raw_response: parsed,
       })
       .select()

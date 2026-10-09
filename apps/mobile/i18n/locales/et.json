@@ -376,7 +376,8 @@
     "noOrcamento": "Garantii: {dias} päeva alates üleandmisest",
     "sem": "Garantiita",
     "conversaEncerrada": "Vestlus on suletud: töö on lõpetatud ja garantii on lõppenud (või seda töökoda ei valitud).",
-    "desteServico": "Selle töö garantii"
+    "desteServico": "Selle töö garantii",
+    "verServico": "Vaata teenust ja ajalugu"
   },
   "revisao": {
     "titulo": "{oficina} pakkus hinnapakkumise muudatust",

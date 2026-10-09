@@ -44,14 +44,23 @@ export default function GarantiasAtivas({ recarregar }: { recarregar?: number })
   return (
     <View className="mb-4">
       <Text className="text-base font-semibold text-gray-900 mb-2">{t('garantia.titulo')}</Text>
+      {/* toque no cartao: o pedido da garantia com todo o historico (orcamento,
+          etapas, fotos); o botao abre direto a conversa com a oficina */}
       {lista.map((g) => (
         <Pressable key={g.solicitacaoId} accessibilityRole="button"
-          onPress={() => router.push({ pathname: '/conversa/[id]', params: { id: g.solicitacaoId, oficina: g.oficinaId } })}
+          onPress={() => router.push(`/solicitacao/${g.solicitacaoId}`)}
           className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 mb-2">
           <Text className="text-gray-600 text-sm">{[g.carro, g.oficina].filter(Boolean).join(' · ')}</Text>
           <Text className="text-emerald-800 text-xl font-bold">{t('garantia.diasRestantes', { dias: g.dias })}</Text>
           <Text className="text-gray-500 text-xs">{t('garantia.ate', { data: g.fim.toLocaleDateString(i18n.language) })}</Text>
-          <Text className="text-primary-700 font-medium mt-1">{t('garantia.falarComOficina')}</Text>
+          <View className="flex-row flex-wrap items-center justify-between gap-2 mt-2">
+            <Text className="text-primary-700 font-medium">{t('garantia.verServico')} ›</Text>
+            <Pressable accessibilityRole="button" hitSlop={6}
+              onPress={() => router.push({ pathname: '/conversa/[id]', params: { id: g.solicitacaoId, oficina: g.oficinaId } })}
+              className="bg-white border border-emerald-300 rounded-lg px-3 py-2">
+              <Text className="text-emerald-800 font-medium">💬 {t('garantia.falarComOficina')}</Text>
+            </Pressable>
+          </View>
         </Pressable>
       ))}
     </View>

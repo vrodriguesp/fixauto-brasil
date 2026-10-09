@@ -24,7 +24,8 @@ function Codigo({ c }: { c: string }) {
 // (so escondidas visualmente quando o menu esta fechado): buscadores e IAs
 // nao clicam em botoes, entao antes nao conseguiam descobrir as outras
 // versoes de idioma navegando pelo site.
-export default function LanguageSwitcher() {
+// compacto: logado, o menu do painel precisa do espaco - fica so o codigo (EN, IT...)
+export default function LanguageSwitcher({ compacto = false }: { compacto?: boolean }) {
   const locale = useLocale() as Locale;
   const pathname = usePathname();
   const params = useParams() as Record<string, string>;
@@ -65,7 +66,7 @@ export default function LanguageSwitcher() {
       >
         <Codigo c={CODIGO[locale]} />
         {/* rotulo inteiro so em tela larga; no meio fica so o codigo (nao empurra o menu) */}
-        <span className="hidden sm:inline lg:hidden xl:inline whitespace-nowrap">{atual}</span>
+        <span className={compacto ? 'hidden' : 'hidden sm:inline lg:hidden xl:inline whitespace-nowrap'}>{atual}</span>
         <svg className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>

@@ -376,7 +376,8 @@
     "noOrcamento": "Warranty: {dias} days from hand-over",
     "sem": "No warranty",
     "conversaEncerrada": "Conversation closed: the job is finished and the warranty has ended (or this repair shop was not chosen).",
-    "desteServico": "Warranty for this job"
+    "desteServico": "Warranty for this job",
+    "verServico": "See service and history"
   },
   "revisao": {
     "titulo": "{oficina} proposed a quote revision",
