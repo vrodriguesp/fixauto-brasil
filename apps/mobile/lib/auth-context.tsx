@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Profile } from '@fixauto/shared';
 import type { User } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from './supabase';
@@ -32,7 +33,10 @@ const AuthContext = createContext<AuthContextType>({
 // cliente/oficina/loja/admin no mesmo auth-context. Sem essa restricao,
 // alguem com conta de oficina/loja poderia logar no app e nao ter nenhuma
 // tela feita pra esse tipo de conta.
-const ERRO_TIPO_NAO_SUPORTADO = 'Este app é exclusivo para clientes. Acesse sua conta de oficina ou loja pelo site.';
+// codigos estaveis: a tela de login traduz (auth.tipoNaoSuportado, auth.contaDesativada)
+const ERRO_TIPO_NAO_SUPORTADO = 'tipo_nao_suportado';
+// ultimo perfil valido: abre o app sem rede (no local do acidente) sem cair no login
+const CHAVE_PERFIL = 'bipfix_perfil_cache';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [authUser, setAuthUser] = useState<User | null>(null);
@@ -57,13 +61,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // && ...)` seguintes serem pulados e o login ser aceito como valido
     // mesmo sem nunca ter confirmado tipo/ativo.
     if (error || !profile) {
+      // sem rede: usa o ultimo perfil valido desta mesma conta (ja conferido antes)
+      const guardado = await AsyncStorage.getItem(CHAVE_PERFIL).catch(() => null);
+      const cache = guardado ? JSON.parse(guardado) as Profile : null;
+      if (cache && cache.id === userId && !/JSON|0 rows|PGRST116/i.test(error?.message || '')) {
+        setUser(cache);
+        return { profile: cache, error: null };
+      }
       setUser(null);
-      return { profile: null, error: error?.message || 'Perfil não encontrado' };
+      return { profile: null, error: 'perfil_nao_encontrado' };
     }
     if (profile.ativo === false) {
       await supabase.auth.signOut({ scope: 'local' });
+      AsyncStorage.removeItem(CHAVE_PERFIL).catch(() => {});
       setUser(null);
-      return { profile: null, error: 'Esta conta foi desativada. Entre em contato com o suporte.' };
+      return { profile: null, error: 'conta_desativada' };
     }
     if (profile.tipo !== 'cliente') {
       await supabase.auth.signOut({ scope: 'local' });
@@ -72,6 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     setUser(profile as Profile);
+    AsyncStorage.setItem(CHAVE_PERFIL, JSON.stringify(profile)).catch(() => {});
     // Idioma: a escolha feita no app (tela de entrada ou Perfil) vale sobre a
     // da conta, e a conta passa a seguir essa escolha (e-mails no mesmo
     // idioma). Sem escolha salva, o app segue o idioma da conta.
@@ -91,10 +104,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // so termina de carregar depois do perfil: antes a tela de login piscava
+    // a cada abertura (user ainda nulo) - auditoria E2
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
         setAuthUser(session.user);
-        fetchProfile(session.user.id);
+        await fetchProfile(session.user.id).catch(() => {});
       }
       setLoading(false);
     });
@@ -144,6 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut({ scope: 'local' });
+    AsyncStorage.removeItem(CHAVE_PERFIL).catch(() => {});
     setUser(null);
     setAuthUser(null);
   };

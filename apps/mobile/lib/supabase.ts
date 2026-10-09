@@ -50,6 +50,10 @@ class LargeSecureStore {
   }
 }
 
+// Build sem as chaves (ex.: EAS sem env) abriria o app com login quebrado em
+// silencio - avisa alto no console para o erro aparecer no teste da loja.
+if (!supabaseUrl || !supabaseAnonKey) console.error('[supabase] EXPO_PUBLIC_SUPABASE_URL/ANON_KEY ausentes neste build');
+
 export const supabase = createClient(
   supabaseUrl || 'https://placeholder.supabase.co',
   supabaseAnonKey || 'placeholder-key',

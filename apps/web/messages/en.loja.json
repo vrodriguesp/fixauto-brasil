@@ -4,7 +4,7 @@
     "subtitle": "Track quotes and orders from repair shops",
     "statCotacoesAbertas": "Open quotes to respond to",
     "statPedidosConfirmados": "Confirmed orders",
-    "statPecasAtivas": "Active parts in catalog",
+    "statPecasAtivas": "Active parts in catalogue",
     "comoFuncionaTitulo": "How it works",
     "comoFuncionaItens": [
       "Repair shops post quotes requesting parts they need",
@@ -24,7 +24,7 @@
         "resumo": "Repair shops post part requests (\"quotes\"). You respond with a price and delivery time. The shop picks the best offer and confirms the order. Delivery and payment are arranged directly with the shop — BipFix doesn't process that. Only when you mark the order as delivered does BipFix charge a small commission.",
         "passosGuiados": [
           "Open Dashboard in the menu and read the \"How it works\" card.",
-          "Notice the 3 numbers: open quotes to respond to, confirmed orders, and active parts in your catalog."
+          "Notice the 3 numbers: open quotes to respond to, confirmed orders, and active parts in your catalogue."
         ],
         "desafio": "Understand the full flow before you start: quote → response → confirmed order → delivery → commission.",
         "linkRotulo": "View my dashboard →"
@@ -40,15 +40,15 @@
         "desafio": "Make sure your store's registration is complete and accurate (no \"To be defined\" left in the address)."
       },
       "catalogo": {
-        "titulo": "Parts catalog",
+        "titulo": "Parts catalogue",
         "resumo": "Register the parts you have in stock: name, make/model/year compatibility, price, and quantity. It works as your internal stock tracker inside BipFix.",
         "passosGuiados": [
-          "Open Catalog in the menu.",
+          "Open Catalogue in the menu.",
           "Click \"+ New Part\".",
           "Fill in the name and price (required) — make, model, year, and description are optional.",
           "Click \"Add\"."
         ],
-        "desafio": "Register at least one part in your catalog."
+        "desafio": "Register at least one part in your catalogue."
       },
       "cotacoes": {
         "titulo": "Respond to shop quotes",
@@ -86,7 +86,7 @@
     }
   },
   "lojaCatalogo": {
-    "pageTitle": "Parts Catalog",
+    "pageTitle": "Parts Catalogue",
     "pageSubtitle": "List parts you have in stock - shops can view and buy directly",
     "addButton": "+ New Part",
     "formTitle": "Add Part",
@@ -110,7 +110,7 @@
     "estoqueInfo": "{preco} · {quantidade} in stock",
     "desativarButton": "Deactivate",
     "ativarButton": "Activate",
-    "confirmRemove": "Remove \"{nome}\" from the catalog?"
+    "confirmRemove": "Remove \"{nome}\" from the catalogue?"
   },
   "lojaComissao": {
     "loading": "Loading...",
@@ -168,8 +168,8 @@
     "dadosLojaTitulo": "Store details",
     "labelNomeFantasia": "Trade name",
     "labelCnpj": "Tax ID",
-    "labelCep": "Postal code (CEP)",
-    "cepPlaceholder": "00000-000",
+    "labelCep": "Postal code",
+    "cepPlaceholder": "10111",
     "buscandoCep": "Looking up address...",
     "cepErro": "Postal code not found - check the number or fill it in manually",
     "labelEndereco": "Address",

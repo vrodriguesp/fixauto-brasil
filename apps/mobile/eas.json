@@ -7,16 +7,30 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "env": { "EXPO_PUBLIC_API_BASE_URL": "https://bipfix.com" }
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://bipfix.com",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://supabase.bipfix.com",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzg4Njk2ODA4LCJleHAiOjE5NDYzNzY4MDh9.VRorXbFakpCWf8Q5ODEtvOVj25XXjqkR4OYkqE6wpuY"
+      }
     },
     "preview": {
       "distribution": "internal",
-      "android": { "buildType": "apk" },
-      "env": { "EXPO_PUBLIC_API_BASE_URL": "https://bipfix.com" }
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://bipfix.com",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://supabase.bipfix.com",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzg4Njk2ODA4LCJleHAiOjE5NDYzNzY4MDh9.VRorXbFakpCWf8Q5ODEtvOVj25XXjqkR4OYkqE6wpuY"
+      }
     },
     "production": {
       "autoIncrement": true,
-      "env": { "EXPO_PUBLIC_API_BASE_URL": "https://bipfix.com" }
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://bipfix.com",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://supabase.bipfix.com",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzg4Njk2ODA4LCJleHAiOjE5NDYzNzY4MDh9.VRorXbFakpCWf8Q5ODEtvOVj25XXjqkR4OYkqE6wpuY"
+      }
     }
   },
   "submit": {

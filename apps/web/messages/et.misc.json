@@ -398,7 +398,7 @@
     "cameraLabel": "Kaamera",
     "galleryLabel": "Galerii",
     "photoAlt": "Foto {number}",
-    "plateLabel": "Sinu sõiduki registreerimismärk",
+    "plateLabel": "Sinu sõiduki numbrimärk",
     "platePlaceholder": "123 ABC",
     "vehicleYearColor": "Aasta: {ano} | Värv: {cor}",
     "plateNotFoundText": "Registreerimismärki ei leitud. Sisesta mark ja mudel:",
@@ -428,7 +428,7 @@
     "addressPlaceholder": "Tänav, linnaosa või maamärk",
     "useCurrentLocationBtn": "Kasuta minu praegust asukohta",
     "summaryTitle": "Kokkuvõte",
-    "summaryPhotos": "{count} foto(t) avariist",
+    "summaryPhotos": "{count, plural, one {# foto} other {# fotot}} avariist",
     "sendBtn": "Saada töökodadele!",
     "sendingBtn": "Saadan...",
     "locationAutoDetected": "Asukoht tuvastati automaatselt",
@@ -450,7 +450,7 @@
     "phonePlaceholder": "+372 5555 5555",
     "emailLabel": "E-post",
     "emailPlaceholder": "email@email.com",
-    "plateLabel": "Sõiduki registreerimismärk *",
+    "plateLabel": "Sõiduki numbrimärk *",
     "platePlaceholder": "123 ABC",
     "vehicleLabel": "Sõiduk (mark/mudel)",
     "vehiclePlaceholder": "Nt: Fiat Argo",
@@ -464,7 +464,7 @@
     "nameFieldLabel": "Nimi:",
     "vehicleFieldLabel": "Sõiduk:",
     "yearFieldLabel": "Aasta:",
-    "plateFieldLabel": "Registreerimismärk:",
+    "plateFieldLabel": "Numbrimärk:",
     "colorFieldLabel": "Värv:",
     "phoneFieldLabel": "Telefon:",
     "notInformed": "Ei ole märgitud",
@@ -485,10 +485,10 @@
     "legacyResponsavel": "Võtab vastutuse",
     "legacyVitima": "Kannatanu",
     "legacyDividida": "Jagatud vastutus - 50%",
-    "legacyIndividual": "Igaüks maksab enda oma",
+    "legacyIndividual": "Igaüks maksab oma remondi ise",
     "chatOtherFallback": "Teine juht",
     "chatVehicleFallback": "Sõiduk",
-    "chatNoPlateFallback": "Registreerimismärk puudub",
+    "chatNoPlateFallback": "Numbrimärk puudub",
     "chatEmptyState": "Sõnumeid veel ei ole. Saada esimene!",
     "chatSenderProprietario": "Juht",
     "chatSenderOutroFallback": "Teine osaline",
@@ -498,7 +498,7 @@
     "noQuotesText": "Lähedal asuvad töökojad hindavad kahjustusi. Saad hinnapakkumised e-postiga niipea, kui need on valmis.",
     "victimDecidesNote": "Kannatanu otsustab, millise hinnapakkumise vastu võtta. Pärast nõustumist jagatakse töökoja andmed vastutava poolega.",
     "shareWithOtherNote": "Jaga neid hinnapakkumisi teise juhiga, et leppida kokku, millist töökoda remondiks kasutada.",
-    "quoteAcceptedBadge": "Vastu võetud",
+    "quoteAcceptedBadge": "Kinnitatud",
     "deadlineLabel": "Tähtaeg: {dias} päeva",
     "workshopDataTitle": "Töökoja andmed",
     "workshopFallback": "Töökoda",
@@ -542,7 +542,7 @@
     "s1Steps": [
       {
         "title": "Ava registreerimisleht",
-        "desc": "Kliki avalehel nupul 'Vajan remonti' või mine otse aadressile /cadastro."
+        "desc": "Vajuta avalehel nupul 'Vajan remonti' või mine otse aadressile /cadastro."
       },
       {
         "title": "Täida oma andmed",
@@ -550,7 +550,7 @@
       },
       {
         "title": "Kinnita oma e-post",
-        "desc": "Saad kinnituskirja e-postile. Kliki lingil, et oma konto aktiveerida."
+        "desc": "Saad kinnituskirja e-postile. Vajuta lingil, et oma konto aktiveerida."
       },
       {
         "title": "Lisa oma sõiduk",
@@ -566,7 +566,7 @@
       },
       {
         "title": "Teenuse liik",
-        "desc": "Vali teenuse kategooria: kerekere, värvimine, mehaanika, elektroonika, klaasid ja muu."
+        "desc": "Vali teenuse kategooria: keretööd, värvimine, mehaanika, elektritööd, klaasid ja muu."
       },
       {
         "title": "Fotod ja kirjeldus",
@@ -598,13 +598,13 @@
         "desc": "Näitab, et töökoda on valmis hinnapakkumise summa üle läbi rääkima."
       }
     ],
-    "s3Outro": "Kasutage filtreid, et sortida hinna, aja või hinnangu järgi. Igal töökojal on teiega oma vestlus (puudutage pakkumisel \"Sõnum töökojale\"). Märk \"Leping teie kindlustusega\" ilmub, kui töökoda teeb koostööd teie kindlustusega.",
+    "s3Outro": "Kasuta filtreid, et sortida hinna, aja või hinnangu järgi. Igal töökojal on sinuga oma vestlus (puuduta pakkumisel \"Sõnum töökojale\"). Märk \"Leping sinu kindlustusega\" ilmub, kui töökoda teeb koostööd sinu kindlustusega.",
     "s4Title": "4. Kuidas teenus broneerida",
     "s4Intro": "Pärast hinnapakkumiste võrdlemist vali see, mis sobib sulle kõige paremini:",
     "s4Steps": [
       {
         "title": "Nõustu hinnapakkumisega",
-        "desc": "Kliki valitud hinnapakkumisel nupul 'Nõustu hinnapakkumisega'. Töökoda saab sellest kohe teada."
+        "desc": "Vajuta valitud hinnapakkumisel nupul 'Nõustu hinnapakkumisega'. Töökoda saab sellest kohe teada."
       },
       {
         "title": "Vali kuupäev",
@@ -620,7 +620,7 @@
     "s5Items": [
       {
         "label": "Check-in",
-        "desc": "Kui sõiduk jõuab töökotta, registreerib meeskond saabumise ja te saate teate."
+        "desc": "Kui sõiduk jõuab töökotta, teeb meeskond check-ini ja sa saad teate."
       },
       {
         "label": "Töös",
@@ -631,7 +631,7 @@
         "desc": "Näed edenemist: lahtivõtmine, remont, värvimine, kokkupanek, kvaliteedikontroll."
       },
       {
-        "label": "Valmis järele tulemiseks",
+        "label": "Valmis kättesaamiseks",
         "desc": "Kui teenus on valmis, saad teavituse sõidukile järele tulla."
       },
       {
@@ -639,7 +639,7 @@
         "desc": "Töökoda registreerib sõiduki lahkumise ja teenus märgitakse lõpetatuks."
       }
     ],
-    "s5Outro": "Rakenduses ilmuvad teated ekraani ülaossa ja vahekaartidel on numbrid. Kõike saab jälgida ka päringu lehel. Kui töö on lõpetatud, suletakse vestlused teiste töökodadega. Valitud töökoja vestlus jääb avatuks garantii lõpuni ja loendur on teie avalehel.",
+    "s5Outro": "Rakenduses ilmuvad teated ekraani ülaossa ja vahekaartidel on numbrid. Kõike saab jälgida ka päringu lehel. Kui töö on lõpetatud, suletakse vestlused teiste töökodadega. Valitud töökoja vestlus jääb avatuks garantii lõpuni ja loendur on sinu avalehel.",
     "s6Title": "6. Kuidas teenust hinnata",
     "s6Intro": "Kui auto on üle antud, hinda töökoda: see aitab teisi juhte. Hinnang on uue päringu tegemiseks kohustuslik (nagu Uberis); õnnetuse nuppu ei blokeerita kunagi.",
     "s6Steps": [
@@ -666,7 +666,7 @@
       },
       {
         "title": "Registreeri juhtum",
-        "desc": "Pildistage kahjustust kohe. Soovi korral märkige oma auto (üks puudutus, kui see on salvestatud). Auto andmed saab lisada hiljem päringu lehel."
+        "desc": "Pildista kahjustust kohe. Soovi korral märgi oma auto (üks puudutus, kui see on salvestatud). Auto andmed saab lisada hiljem päringu lehel."
       },
       {
         "title": "Automaatne asukoht",
@@ -677,7 +677,7 @@
         "desc": "Lähedal asuvad töökojad saavad sinu päringu eelisjärjekorras ja saadavad hinnapakkumised mõne minutiga."
       }
     ],
-    "s7Warning": "Kui keegi sai viga, helistage kõigepealt 112. Teie ohutus on esikohal."
+    "s7Warning": "Kui keegi sai viga, helista kõigepealt 112. Sinu ohutus on esikohal."
   },
   "docsClienteLayout": {
     "metaTitle": "Juhi juhend",
@@ -696,11 +696,11 @@
       },
       {
         "title": "Töökoja andmed",
-        "desc": "Sisestage registrikood, ärinimi, telefon ja aadress eraldi väljadele (tänav, maja nr, sihtnumber ja linn). Sait kontrollib aadressi kaardil, et lähedal asuvad kliendid teid leiaksid."
+        "desc": "Sisesta registrikood, ärinimi, telefon ja aadress eraldi väljadele (tänav, maja nr, sihtnumber ja linn). Sait kontrollib aadressi kaardil, et lähedal asuvad kliendid sind leiaksid."
       },
       {
         "title": "Erialad",
-        "desc": "Vali teenuste liigid, mida sinu töökoda pakub: kerekere, värvimine, mehaanika, elektroonika, klaasid jne."
+        "desc": "Vali teenuste liigid, mida sinu töökoda pakub: keretööd, värvimine, mehaanika, elektritööd, klaasid jne."
       },
       {
         "title": "Teeninduspiirkond",
@@ -708,7 +708,7 @@
       },
       {
         "title": "Täielik profiil",
-        "desc": "Lisage fotod, kirjeldus, lahtiolekuajad ja lepingulised kindlustusseltsid. Nende klient näeb teie pakkumisel märki."
+        "desc": "Lisa fotod, kirjeldus, lahtiolekuajad ja lepingulised kindlustusseltsid. Nende klient näeb sinu pakkumisel märki."
       }
     ],
     "s2Title": "2. Kuidas päringuid vastu võtta",
@@ -734,19 +734,19 @@
     "s3Steps": [
       {
         "title": "Vaata päring üle",
-        "desc": "Vaadake fotosid ja kirjeldust. Kliendiga saab vestelda enne pakkumist: igal töökojal on oma vestlus, mida teised ei näe."
+        "desc": "Vaata fotosid ja kirjeldust. Kliendiga saab vestelda enne pakkumist: igal töökojal on oma vestlus, mida teised ei näe."
       },
       {
         "title": "Lisa hinnapakkumisse kirjed",
-        "desc": "Lisage iga töö ja varuosa koguse ja hinnaga. Kui pakkumine on teises süsteemis valmis, laadige üles foto või PDF: tehisintellekt täidab read ja teie kontrollite."
+        "desc": "Lisa iga töö ja varuosa koguse ja hinnaga. Kui pakkumine on teises süsteemis valmis, laadi üles foto või PDF: tehisintellekt täidab read ja sina kontrollid."
       },
       {
         "title": "Hinnanguline tähtaeg",
-        "desc": "Märkige tähtaeg päevades ja teenuse garantii. Garantii algab üleandmisest ja selle lõpuni saab klient teile kirjutada."
+        "desc": "Märgi tähtaeg päevades ja teenuse garantii. Garantii algab üleandmisest ja selle lõpuni saab klient sulle kirjutada."
       },
       {
         "title": "Ajakava saadavus",
-        "desc": "Pakkuge kliendile aegu auto toomiseks: täna (ainult veel lõppemata ajavahemikud) või järgmistel päevadel."
+        "desc": "Paku kliendile aegu auto toomiseks: täna (ainult veel lõppemata ajavahemikud) või järgmistel päevadel."
       },
       {
         "title": "Saada hinnapakkumine",
@@ -759,7 +759,7 @@
     "s4Items": [
       {
         "label": "Check-in",
-        "desc": "Registreerige sõiduki saabumine. Kui auto saabub enne broneeritud aega, küsib sait kinnitust ja saabumiseks saab täna. Kliendi päring muutub \"töös\" ja klienti teavitatakse."
+        "desc": "Tee sõiduki check-in. Kui auto saabub enne broneeritud aega, küsib sait kinnitust ja saabumiseks saab täna. Kliendi päring muutub \"töös\" ja klienti teavitatakse."
       },
       {
         "label": "Sisemised tööd",
@@ -767,11 +767,11 @@
       },
       {
         "label": "Määramine",
-        "desc": "Soovi korral määrake iga sõiduk mehaanikule. Kui mehaanikuid pole lisatud, teeb töökoda kõik ise. Iga muudatus jääb ajalukku."
+        "desc": "Soovi korral määra iga sõiduk mehaanikule. Kui mehaanikuid pole lisatud, teeb töökoda kõik ise. Iga muudatus jääb ajalukku."
       },
       {
         "label": "Check-out",
-        "desc": "Kui teenus on valmis ja sõiduk ära toodud, registreeri väljumine."
+        "desc": "Kui teenus on valmis ja sõiduk ära viidud, märgi üleandmine."
       }
     ],
     "s4Outro": "Kalendrivaade näitab kõiki broneeritud, pooleliolevaid ja lõpetatud teenuseid ühes kohas.",
@@ -780,7 +780,7 @@
     "s5Steps": [
       {
         "title": "Registreeri töötajad",
-        "desc": "Lisage mehaanikud ainult nimega või andke portaali juurdepääs (e-post ja ajutine parool) neile, kes lisavad etappe telefonist. Juurdepääsu saab anda ka hiljem."
+        "desc": "Lisa mehaanikud ainult nimega või anna portaali juurdepääs (e-post ja ajutine parool) neile, kes lisavad etappe telefonist. Juurdepääsu saab anda ka hiljem."
       },
       {
         "title": "Esimene sisselogimine",
@@ -788,7 +788,7 @@
       },
       {
         "title": "Määra sõidukid",
-        "desc": "Määrake sõidukid mehaanikutele. Juurdepääsuga mehaanik näeb ainult oma sõidukeid. Töökoja omanik saab lisada etappe iga mehaaniku nimel."
+        "desc": "Määra sõidukid mehaanikutele. Juurdepääsuga mehaanik näeb ainult oma sõidukeid. Töökoja omanik saab lisada etappe iga mehaaniku nimel."
       },
       {
         "title": "Ametikohapõhised õigused",
@@ -808,7 +808,7 @@
       },
       {
         "label": "Automaatsed teavitused",
-        "desc": "Saabumine ja iga etapp saadavad kliendile teate saidil ja rakenduses."
+        "desc": "Check-in ja iga etapp saadavad kliendile teate saidil ja rakenduses."
       },
       {
         "label": "Edenemise fotod",
@@ -927,7 +927,7 @@
     "metaDescriptionCidade": "Päris klientide hinnatud autoremondi-, kere- ja värvitöökojad – {cidade}. Küsi hinnapakkumisi veebis ja võrdle BipFixis.",
     "heroTitle": "BipFixi partnertöökojad",
     "heroTitleCidade": "Autoremonditöökojad: {cidade}",
-    "heroText": "Päris klientide hinnatud töökojad. Vaata teenuseid ja arvustusi ning küsi hinnapakkumisi mitmelt töökojalt korraga.",
+    "heroText": "Päris klientide hinnatud töökojad. Vaata teenuseid ja hinnanguid ning küsi hinnapakkumisi mitmelt töökojalt korraga.",
     "filterCity": "Linn",
     "filterAllCities": "Kõik linnad",
     "filterService": "Teenus",
@@ -935,7 +935,7 @@
     "filterSubmit": "Filtreeri",
     "filterClear": "Tühjenda filtrid",
     "resultsCount": "{count, plural, one {Leitud # töökoda} other {Leitud # töökoda}}",
-    "reviewsCount": "{count, plural, one {(# arvustus)} other {(# arvustust)}}",
+    "reviewsCount": "{count, plural, one {(# hinnang)} other {(# hinnangut)}}",
     "newOnPlatform": "Uus BipFixis",
     "moreServices": "+{count}",
     "viewProfile": "Vaata profiili",
@@ -959,9 +959,9 @@
     "fontesTitulo": "Ametlikud allikad",
     "cta": {
       "pedido": {
-        "titulo": "Vajad remondipakkumist?",
+        "titulo": "Vajad remondi hinnapakkumist?",
         "texto": "Kirjelda muret ja saa pakkumised kontrollitud töökodadelt sinu lähedal.",
-        "botao": "Küsi pakkumist"
+        "botao": "Küsi hinnapakkumist"
       },
       "emergencia": {
         "titulo": "Juhtus liiklusõnnetus?",
@@ -1018,7 +1018,7 @@
     "passo_emergencia_br": "Kui keegi sai viga, helista 192 (SAMU) või 193 (päästeamet). Kui kokkulepet ei ole või teine juht lahkus, helista 190.",
     "passo_emergencia_ee": "Kui keegi sai viga, kui süüdlases ei jõuta kokkuleppele või kui teine juht lahkus, helista 112.",
     "passo_registro_br": "Kirjuta üles teise juhi numbrimärk, nimi, telefon ja kindlustusandja. Vajadusel esita politseile teade (paljudes osariikides internetis).",
-    "passo_registro_ee": "Vormistage koos teise juhiga liiklusõnnetuse teade digitaalselt aadressil avarii.lkk.ee (või paberil) ja märkige, kes oli süüdi.",
+    "passo_registro_ee": "Vormista koos teise juhiga liiklusõnnetuse teade digitaalselt aadressil avarii.lkk.ee (või paberil) ja märgi, kes oli süüdi.",
     "passo_seguro": "Teavita kindlustusandjat esimesel võimalusel ja pane kahjuasja number kirja. Seejärel lisa see avarii lehele, et töökoda seda näeks.",
     "passo_oficina_seguro": "Töökoda saadab hinnapakkumise kindlustusandjale, kes kinnitab selle enne remondi algust.",
     "passo_proprio": "Võrdle saabuvaid hinnapakkumisi ja vali töökoda.",
@@ -1042,18 +1042,18 @@
     "oficinaOpcao_seguro_terceiro": "Teise juhi kindlustus",
     "oficinaOpcao_seguro_proprio": "Kliendi kaskokindlustus",
     "oficinaOpcao_nao_sei": "Klient ei tea veel",
-    "passo_emergencia_it": "Kui keegi sai viga, helistage 112. Kui kokkuleppele ei jõuta või teine juht lahkus, kutsuge politsei numbril 112.",
-    "passo_registro_it": "Täitke koos teise juhiga CAI vorm (Constatazione Amichevole di Incidente) paberil või digitaalselt ja allkirjastage mõlemad. Saatke see oma kindlustusele 3 päeva jooksul.",
-    "dica_seguro_terceiro_it": "Maksab teise juhi kohustuslik kindlustus (RC Auto). Otsehüvitise (CARD) korral avate kahjujuhtumi oma kindlustuses, mis arveldab teisega.",
-    "dica_seguro_proprio_it": "Kasko katab teie auto ka siis, kui süü oli teie. Tavaliselt maksate ainult poliisis märgitud omavastutuse.",
-    "passo_emergencia_pt": "Kui keegi sai viga, helistage 112. Kui kokkuleppele ei jõuta või teine juht lahkus, kutsuge politsei numbril 112.",
-    "passo_registro_pt": "Täitke koos teise juhiga Declaração Amigável (õnnetuse kokkuleppevorm) ja allkirjastage mõlemad. Kumbki saadab oma eksemplari oma kindlustusele 8 päeva jooksul.",
-    "dica_seguro_terceiro_pt": "Maksab teise juhi kohustuslik kindlustus. Kui mõlemad autod on kindlustatud Portugalis, saab teie enda kindlustus kahjujuhtumi lahendada (IDS-süsteem).",
-    "dica_seguro_proprio_pt": "Oma kahjude kindlustus katab teie auto ka siis, kui süü oli teie. Tavaliselt maksate ainult poliisis märgitud omavastutuse.",
-    "passo_emergencia_geral": "Kui keegi sai viga, helistage kohalikul hädaabinumbril (Euroopas 112).",
-    "passo_registro_geral": "Pange kirja teise juhi numbrimärk, nimi, telefon ja kindlustus ning tehke fotod. Euroopas saate täita Euroopa õnnetusteate, mille mõlemad juhid allkirjastavad, ja saata selle kindlustusele esimesel võimalusel.",
-    "dica_seguro_terceiro_geral": "Remondi eest maksab teise juhi vastutuskindlustus. Teavitage ka oma kindlustust: see aitab kahjujuhtumiga.",
-    "dica_seguro_proprio_geral": "Kui teie poliis katab oma auto kahjud, maksab see remondi; tavaliselt maksate poliisis märgitud omavastutuse."
+    "passo_emergencia_it": "Kui keegi sai viga, helista 112. Kui kokkuleppele ei jõuta või teine juht lahkus, kutsu politsei numbril 112.",
+    "passo_registro_it": "Täida koos teise juhiga CAI vorm (Constatazione Amichevole di Incidente) paberil või digitaalselt ja allkirjastage mõlemad. Saada see oma kindlustusele 3 päeva jooksul.",
+    "dica_seguro_terceiro_it": "Maksab teise juhi kohustuslik kindlustus (RC Auto). Otsehüvitise (CARD) korral avad kahjujuhtumi oma kindlustuses, mis arveldab teisega.",
+    "dica_seguro_proprio_it": "Kasko katab sinu auto ka siis, kui süü oli sinu. Tavaliselt maksad ainult poliisis märgitud omavastutuse.",
+    "passo_emergencia_pt": "Kui keegi sai viga, helista 112. Kui kokkuleppele ei jõuta või teine juht lahkus, kutsu politsei numbril 112.",
+    "passo_registro_pt": "Täida koos teise juhiga Declaração Amigável (õnnetuse kokkuleppevorm) ja allkirjastage mõlemad. Kumbki saadab oma eksemplari oma kindlustusele 8 päeva jooksul.",
+    "dica_seguro_terceiro_pt": "Maksab teise juhi kohustuslik kindlustus. Kui mõlemad autod on kindlustatud Portugalis, saab sinu enda kindlustus kahjujuhtumi lahendada (IDS-süsteem).",
+    "dica_seguro_proprio_pt": "Oma kahjude kindlustus katab sinu auto ka siis, kui süü oli sinu. Tavaliselt maksad ainult poliisis märgitud omavastutuse.",
+    "passo_emergencia_geral": "Kui keegi sai viga, helista kohalikul hädaabinumbril (Euroopas 112).",
+    "passo_registro_geral": "Pane kirja teise juhi numbrimärk, nimi, telefon ja kindlustus ning tee fotod. Euroopas saad täita Euroopa õnnetusteate, mille mõlemad juhid allkirjastavad, ja saata selle kindlustusele esimesel võimalusel.",
+    "dica_seguro_terceiro_geral": "Remondi eest maksab teise juhi vastutuskindlustus. Teavita ka oma kindlustust: see aitab kahjujuhtumiga.",
+    "dica_seguro_proprio_geral": "Kui sinu poliis katab oma auto kahjud, maksab see remondi; tavaliselt maksad poliisis märgitud omavastutuse."
   },
   "chatCotacaoPeca": {
     "nenhuma": "Sõnumeid veel pole.",

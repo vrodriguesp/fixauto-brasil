@@ -44,6 +44,7 @@ export default function SolicitacaoDetailScreen() {
       .eq('id', id)
       .single();
     setSolicitacao(data as Solicitacao);
+    if (!data) { setLoading(false); return; }
     // avisos deste pedido (orcamento novo, carro chegou, etapas) ficam lidos
     if (user) {
       supabase.from('notificacoes').update({ lida: true }).eq('profile_id', user.id).neq('tipo', 'nova_mensagem').eq('dados->>solicitacao_id', id)
@@ -135,9 +136,18 @@ export default function SolicitacaoDetailScreen() {
   };
 
   if (loading || !solicitacao) {
+    // pedido apagado/cancelado ou sem acesso: aviso + voltar (antes girava para sempre)
     return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator color="#2563eb" />
+      <View className="flex-1 items-center justify-center bg-white px-6">
+        <Stack.Screen options={opcoesTela} />
+        {loading ? <ActivityIndicator color="#2563eb" /> : (
+          <>
+            <Text className="text-gray-600 text-center mb-4">{t('acompanhamento.naoEncontrado')}</Text>
+            <Pressable onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))} accessibilityRole="button" className="bg-primary-600 rounded-lg px-6 py-3">
+              <Text className="text-white font-semibold">{t('common.voltar')}</Text>
+            </Pressable>
+          </>
+        )}
       </View>
     );
   }

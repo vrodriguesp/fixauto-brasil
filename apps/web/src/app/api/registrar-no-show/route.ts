@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
 
     // 7. Notify client
     if (clienteId) {
-      const veiculoFallback: Record<string, string> = { pt: 'seu veículo', en: 'your vehicle', et: 'sinu sõiduk', it: 'il tuo veicolo' };
+      const veiculoFallback: Record<string, string> = { pt: 'seu veículo', 'pt-PT': 'o seu veículo', en: 'your vehicle', et: 'sinu sõiduk', it: 'il tuo veicolo', ru: 'ваш автомобиль' };
       const n = notifFaltaRegistrada(clienteIdioma, veiculoNome || veiculoFallback[resolveEmailLocale(clienteIdioma)]);
       await supabaseAdmin.from('notificacoes').insert({
         profile_id: clienteId,

@@ -25,7 +25,7 @@
     "perfil": "Profiil",
     "aprender": "Õpi",
     "mais": "Rohkem",
-    "cotacoes": "Hinnapakkumised",
+    "cotacoes": "Hinnapäringud",
     "catalogo": "Kataloog",
     "pedidos": "Tellimused",
     "veiculos": "Sõidukid",
@@ -36,7 +36,7 @@
     "entrar": "Logi sisse",
     "cadastrar": "Registreeru",
     "sair": "Logi välja",
-    "checkinManual": "Käsitsi registreerimine",
+    "checkinManual": "Käsitsi check-in",
     "administrador": "Administraator",
     "cliente": "Klient"
   },
@@ -237,7 +237,7 @@
       },
       {
         "pergunta": "Kas saan platvormi kaudu varuosi tarnijatelt osta?",
-        "resposta": "Jah. Sa saad avada varuosade hinnapäringuid partnerpoodidele ja teistele piirkonna töökodadele, võrrelda hindu ja tarneaegu ning läbirääkida otse vestluses enne tellimuse kinnitamist."
+        "resposta": "Jah. Sa saad avada varuosade hinnapäringuid partnerpoodidele ja teistele piirkonna töökodadele, võrrelda hindu ja tarneaegu ning läbi rääkida otse vestluses enne tellimuse kinnitamist."
       }
     ],
     "ctaFinalTitulo": "Valmis oma töökoda korraldama ja rohkem kliente saama?"
@@ -271,10 +271,10 @@
     "metaDescription": "Tee oma auto kahjustusest pildid, saa hinnapakkumised kontrollitud töökodadelt sinu lähedal ja broneeri remont mõne minutiga. BipFix käivitub esmalt Tallinnas.",
     "metaKeywords": [
       "autotöökoda minu lähedal",
-      "auto remondi hinnapakkumine",
+      "autoremondi hinnapakkumine",
       "usaldusväärne autotöökoda Tallinnas",
       "kerekoja hinnapakkumine",
-      "auto remont Tallinn"
+      "autoremont Tallinn"
     ],
     "ogTitle": "BipFix - Leia õige töökoda oma autole",
     "ogDescription": "Võrdle kontrollitud autotöökodade hinnapakkumisi sinu lähedal mõne minutiga.",
@@ -298,7 +298,7 @@
     "step4Texto": "Nõustu parima hinnapakkumisega ja jälgi oma sõiduki remonti",
     "oficinasBadge": "ASUTAJAPARTNERITE VALIK AVATUD",
     "oficinasTitulo": "Autotöökodadele ja varuosade müüjatele",
-    "oficinasTexto": "Korralda oma teenused ühele platvormile ja saa nähtavust uute klientide seas oma piirkonnas — ilma komisjonitasuta selles algfaasis.",
+    "oficinasTexto": "Koonda oma teenused ühele platvormile ja saa nähtavust uute klientide seas oma piirkonnas — ilma komisjonitasuta selles algfaasis.",
     "feature1": "Saa automaatselt päringuid lähedal asuvatelt klientidelt",
     "feature2": "Saada struktureeritud ja professionaalseid hinnapakkumisi",
     "feature3": "Halda oma ajakava nii platvormi kui väliste tööde jaoks",
@@ -342,7 +342,7 @@
       },
       {
         "pergunta": "Milliseid teenuseid töökojad pakuvad?",
-        "resposta": "Platvormil olevad töökojad pakuvad mitmesuguseid teenuseid nagu kerekahjustuste parandus, värvimine, üldmehaanika, autoelektroonika, klaasivahetus, rataste joondamine, tasakaalustamine, kliimaseadmed ja palju muud. Iga töökoda toob oma erialad profiilil välja."
+        "resposta": "Platvormil olevad töökojad pakuvad mitmesuguseid teenuseid nagu kerekahjustuste parandus, värvimine, üldmehaanika, autoelektrika, klaasivahetus, rataste joondamine, tasakaalustamine, kliimaseadmed ja palju muud. Iga töökoda toob oma erialad profiilil välja."
       },
       {
         "pergunta": "Kas mõni töökoda maksab, et olla eespool?",
@@ -384,7 +384,7 @@
       "funilaria": "Kere- ja värvitööd",
       "revisao": "Hooldus",
       "mecanica": "Mehaanika",
-      "eletrica": "Elektroonika",
+      "eletrica": "Elektritööd",
       "pneu": "Rehvid",
       "outro": "Muu"
     },
@@ -421,7 +421,7 @@
       "aguardandoPecasDesc": "Ootab vajalikke varuosi",
       "em_execucao": "Töös",
       "emExecucaoDesc": "Teenus on pooleli",
-      "pausa_cliente": "Peatatud - klienti ootel",
+      "pausa_cliente": "Peatatud - ootab klienti",
       "pausaClienteDesc": "Ootab kliendi tagasisidet",
       "pausa_pecas": "Peatatud - varuosad puuduvad",
       "pausaPecasDesc": "Peatatud varuosade puudumise tõttu",
@@ -429,8 +429,8 @@
       "pausaGeralDesc": "Teenus ajutiselt peatatud",
       "teste_final": "Lõpptestimine",
       "testeFinalDesc": "Kvaliteedikontrolli tegemine",
-      "concluido": "Lõpetatud",
-      "concluidoDesc": "Teenus valmis",
+      "concluido": "Valmis",
+      "concluidoDesc": "Sõiduk on valmis kättesaamiseks",
       "entregue": "Üle antud",
       "entregueDesc": "Sõiduk on kliendile üle antud"
     },
@@ -464,7 +464,7 @@
       "motor_barulho_estranho": "Mootor - kummaline müra",
       "motor_perda_potencia": "Mootor - võimsuse kadu",
       "motor_superaquecimento": "Mootor - ülekuumenemine",
-      "cambio_dificuldade_engatar": "Käigukast - raskustega käigu sisselülitamine",
+      "cambio_dificuldade_engatar": "Käigukast - käik läheb raskelt sisse",
       "cambio_barulho_troca_marcha": "Käigukast - müra käigu vahetamisel",
       "embreagem_patinando": "Sidur - libisemine",
       "embreagem_dura": "Sidur - jäik",
@@ -474,15 +474,15 @@
       "suspensao_carro_puxando": "Vedrustus - auto tõmbab kõrvale",
       "escapamento_barulho": "Summuti - müra",
       "escapamento_vazamento": "Summuti - leke",
-      "direcao_dura_folga": "Roolimine - jäik või mängus",
+      "direcao_dura_folga": "Rool - raske või lõtkuga",
       "vazamento_oleo": "Õlileke",
       "vazamento_agua": "Veeleke",
       "outro_problema_mecanico": "Muu mehaaniline probleem"
     },
     "servicosEletrica": {
-      "bateria_nao_liga": "Aku - ei käivitu",
+      "bateria_nao_liga": "Aku - auto ei käivitu",
       "bateria_descarregando_rapido": "Aku - tühjeneb kiiresti",
-      "alternador_luz_painel": "Generaator - armatuurlaua tuli",
+      "alternador_luz_painel": "Generaator - hoiatustuli armatuurlaual",
       "motor_arranque": "Starter",
       "farois_lanternas": "Esituled / tagatuled",
       "vidro_eletrico": "Elektriaken",
@@ -497,14 +497,14 @@
     "servicosPneu": {
       "troca_pneus": "Rehvide vahetus",
       "rodizio_pneus": "Rehvide rotatsioon",
-      "conserto_furo": "Punktsiooni parandus",
+      "conserto_furo": "Rehviaugu parandus",
       "alinhamento": "Joondamine",
       "balanceamento": "Tasakaalustamine",
       "calibragem": "Rehvirõhu kontroll",
       "troca_roda_calota": "Ratta / rattakapi vahetus"
     },
     "tiposItem": {
-      "mao_de_obra": "Töötasu",
+      "mao_de_obra": "Töö",
       "peca": "Varuosa",
       "material": "Materjal",
       "outro": "Muu"
@@ -512,7 +512,7 @@
     "tiposOcorrencia": {
       "eu_causei": "🚨 Õnnetus (põhjustas klient)",
       "outro_causou": "🚨 Õnnetus (põhjustas teine sõiduk)",
-      "sem_outro": "🚨 Teejuhtum (teist sõidukit polnud)"
+      "sem_outro": "🚨 Juhtum teel (teist sõidukit polnud)"
     }
   },
   "comissaoPecasCard": {
@@ -532,7 +532,7 @@
     "statusPago": "Makstud"
   },
   "damageAnalysis": {
-    "tituloInicial": "AI kahjustuse analüüs",
+    "tituloInicial": "Kahjustuse AI-analüüs",
     "descricaoInicial": "Kasuta tehisintellekti, et analüüsida kahjustuse fotosid.",
     "analisando": "Fotode analüüsimine...",
     "tentarNovamente": "Proovi uuesti",
@@ -547,14 +547,14 @@
     "severidadeModerado": "Mõõdukas",
     "severidadeGrave": "Tõsine",
     "severidadeSevero": "Kriitiline",
-    "erroIaOcupada": "Automaatne analüüs on praegu hõivatud. Proovige minuti pärast uuesti.",
+    "erroIaOcupada": "Automaatne analüüs on praegu hõivatud. Proovi minuti pärast uuesti.",
     "erroSemFotos": "Sellel päringul pole veel fotosid, mida analüüsida.",
-    "erroGenerico": "Praegu ei õnnestunud analüüsida. Proovige uuesti.",
-    "erroFotoInvalida": "Selle päringu fotosid ei õnnestunud lugeda. Paluge kliendilt uus foto."
+    "erroGenerico": "Praegu ei õnnestunud analüüsida. Proovi uuesti.",
+    "erroFotoInvalida": "Selle päringu fotosid ei õnnestunud lugeda. Palu kliendilt uus foto."
   },
   "cookieBanner": {
-    "texto": "Kasutame küpsiseid, et mõista, kuidas sa saiti kasutad, ja parandada sinu kasutuskogemust. Nõustudes lähtud meie",
-    "linkPrivacidade": "privaatsuspoliitikast",
+    "texto": "Kasutame küpsiseid, et mõista, kuidas sa saiti kasutad, ja parandada sinu kasutuskogemust. Nõustudes kinnitad, et oled tutvunud meie",
+    "linkPrivacidade": "privaatsuspoliitikaga",
     "rejeitar": "Keeldu",
     "aceitar": "Nõustun"
   },
@@ -591,7 +591,7 @@
     "texto": "Aadress võib olla vale või leht on eemaldatud.",
     "inicio": "Mine avalehele",
     "guias": "Vaata juhendeid autojuhtidele",
-    "emergencia": "Juhtus liiklusõnnetus"
+    "emergencia": "Sain just avarii"
   },
   "erros": {
     "CAMPO_OBRIGATORIO": "Täida kõik kohustuslikud väljad.",
@@ -638,7 +638,7 @@
     "conferindo": "Kontrollin…",
     "encontrado": "Aadress leitud kaardilt",
     "semNumero": "Tänav leitud, kuid seda majanumbrit kaardil pole: kasutame tänava asukohta.",
-    "naoEncontrado": "Seda aadressi ei leitud. Kontrollige tänavat, numbrit ja linna."
+    "naoEncontrado": "Seda aadressi ei leitud. Kontrolli tänavat, numbrit ja linna."
   },
   "garantia": {
     "titulo": "Kehtivad garantiid",
@@ -647,7 +647,7 @@
     "falarComOficina": "Kirjuta töökojale",
     "noOrcamento": "Garantii: {dias} päeva alates üleandmisest",
     "sem": "Garantiita",
-    "documento": "Ava pakkumise dokument",
+    "documento": "Ava hinnapakkumise dokument",
     "conversaEncerrada": "Vestlus on suletud: töö on lõpetatud ja garantii on lõppenud (või seda töökoda ei valitud)."
   },
   "excluirConta": {

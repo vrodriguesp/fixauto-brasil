@@ -14,7 +14,7 @@
     "scheduledTitle": "Appuntamenti",
     "checkin": "Check-in:",
     "deliveryForecast": "Consegna prevista:",
-    "deadline": "Scadenza:",
+    "deadline": "Tempi:",
     "daysCount": "{days, plural, one {# giorno} other {# giorni}}",
     "phone": "Tel: {phone}",
     "track": "Segui",
@@ -77,7 +77,7 @@
     "refusedQuotesTitle": "Preventivi rifiutati",
     "refusedBadge": "Rifiutato",
     "workshopFallback": "Officina",
-    "deadlineDays": "Scadenza: {days, plural, one {# giorno} other {# giorni}}",
+    "deadlineDays": "Tempi: {days, plural, one {# giorno} other {# giorni}}",
     "rate": "Valuta",
     "cancelledTitle": "Annullate"
   },
@@ -142,7 +142,8 @@
     "photosLabel": "Foto:",
     "photosCount": "{count, plural, one {# foto} other {# foto}}",
     "servicesLabel": "Servizi:",
-    "sendRequest": "Invia richiesta"
+    "sendRequest": "Invia richiesta",
+    "erroLocalizacao": "Non abbiamo trovato l'indirizzo. Scegli un suggerimento o consenti la posizione."
   },
   "clienteOrcamentos": {
     "title": "Preventivi",
@@ -150,7 +151,7 @@
     "noQuotesYet": "Nessun preventivo ricevuto ancora",
     "createRequest": "Crea richiesta",
     "quotesReceivedCount": "{count, plural, one {# preventivo ricevuto} other {# preventivi ricevuti}}",
-    "deadlineDays": "Scadenza: {days, plural, one {# giorno} other {# giorni}}",
+    "deadlineDays": "Tempi: {days, plural, one {# giorno} other {# giorni}}",
     "itemsCount": "{count, plural, one {# voce} other {# voci}}"
   },
   "clienteOrcamentoDetalhe": {
@@ -166,7 +167,7 @@
     "checkin": "Check-in:",
     "deliveryForecast": "Consegna prevista:",
     "bringVehicleNote": "Porta il tuo veicolo all'orario concordato. L'officina ti contatterà in caso di variazioni.",
-    "backToDashboard": "Torna alla tua area",
+    "backToDashboard": "Torna alla dashboard",
     "back": "Indietro",
     "messageToWorkshop": "Scrivi all'officina",
     "confirmCancelRequest": "Sei sicuro di voler annullare questa richiesta? Le officine non potranno più inviare preventivi.",
@@ -200,7 +201,7 @@
     "percentHigher": "{percent}% più alto",
     "noAdjustment": "Nessuna variazione",
     "revisionNumber": "Revisione #{n}",
-    "deadlineDays": "Scadenza: {days, plural, one {# giorno} other {# giorni}}",
+    "deadlineDays": "Tempi: {days, plural, one {# giorno} other {# giorni}}",
     "execTimeLabel": "Tempo di esecuzione",
     "nextCheckinLabel": "Prossimo check-in",
     "noSlotAvailable": "Nessuna disponibilità",
@@ -283,7 +284,7 @@
     "progressConcluido": "Completato",
     "progressEntregue": "Consegnato",
     "noAppointmentFound": "Nessun appuntamento trovato per questa richiesta.",
-    "backToDashboard": "Torna alla tua area",
+    "backToDashboard": "Torna alla dashboard",
     "pageTitle": "Stato della riparazione",
     "progressTitle": "Avanzamento",
     "checkin": "Check-in",
@@ -305,7 +306,7 @@
     "loading": "Caricamento...",
     "rescheduleConfirmedTitle": "Riprogrammazione confermata!",
     "newTimeRegistered": "Il tuo nuovo orario è stato registrato con successo.",
-    "backToPanel": "Torna alla tua area",
+    "backToPanel": "Torna alla dashboard",
     "back": "Indietro",
     "pageTitle": "Riprogramma l'appuntamento",
     "pageSubtitle": "Scegli una nuova data per il tuo appuntamento.",
@@ -347,10 +348,10 @@
   },
   "avaliacaoPendente": {
     "titulo": "Valuta {oficina}",
-    "texto": "Il servizio è finito: lascia la tua valutazione. Serve per fare una nuova richiesta.",
+    "texto": "Il servizio è finito: lascia la tua recensione. Serve per fare una nuova richiesta.",
     "bloqueio": "Prima di una nuova richiesta, valuta l'ultimo servizio (bastano pochi secondi). Se hai appena avuto un incidente, usa il pulsante dell'incidente.",
     "avaliarAgora": "Valuta ora",
-    "bloqueioTitulo": "Manca la tua valutazione",
-    "acidente": "Ho appena avuto un incidente"
+    "bloqueioTitulo": "Manca la tua recensione",
+    "acidente": "Ho avuto un incidente"
   }
 }

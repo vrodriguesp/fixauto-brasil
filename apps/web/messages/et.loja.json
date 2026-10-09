@@ -35,7 +35,7 @@
         "passosGuiados": [
           "Ava menüüst Profiil.",
           "Kontrolli/muuda oma ärinime, maksukohustuslase numbrit, aadressi, linna ja osariiki.",
-          "Klõpsa \"Salvesta\"."
+          "Vajuta \"Salvesta\"."
         ],
         "desafio": "Täida oma poe andmed täielikult ja korrektselt (mitte jäta aadressiks \"Määramata\")."
       },
@@ -44,9 +44,9 @@
         "resumo": "Lisa varuosad, mis on sul laos: nimi, ühilduvus marki/mudeli/aastaga, hind ja kogus. See toimib sinu sisemise laoarvestusena BipFixi sees.",
         "passosGuiados": [
           "Ava menüüst Kataloog.",
-          "Klõpsa \"+ Uus varuosa\".",
+          "Vajuta \"+ Uus varuosa\".",
           "Täida nimi ja hind (kohustuslikud) — mark, mudel, aasta ja kirjeldus on valikulised.",
-          "Klõpsa \"Lisa\"."
+          "Vajuta \"Lisa\"."
         ],
         "desafio": "Lisa oma kataloogi vähemalt üks varuosa."
       },
@@ -56,9 +56,9 @@
         "passosGuiados": [
           "Ava menüüst Hinnapäringud.",
           "Leia avatud hinnapäring varuosale, mis sul on.",
-          "Klõpsa \"Vasta hinnapäringule\".",
+          "Vajuta \"Vasta hinnapäringule\".",
           "Täida hind, tarneaeg päevades ja soovi korral märkus.",
-          "Klõpsa \"Saada vastus\"."
+          "Vajuta \"Saada vastus\"."
         ],
         "desafio": "Vasta vähemalt ühele töökoja hinnapäringule reaalse hinna ja tarneajaga.",
         "dica": "Kiire vastamine (alla 2 tunni) langetab hiljem sinu komisjonitasu määra."
@@ -69,7 +69,7 @@
         "passosGuiados": [
           "Ava menüüst Tellimused.",
           "Lepi töökojaga kokku tarne/makse osas (kasuta vajadusel linki \"Vestlus\").",
-          "Kui oled tegelikult tarninud, klõpsa \"Märgi tarnituks\"."
+          "Kui oled tegelikult tarninud, vajuta \"Märgi tarnituks\"."
         ],
         "desafio": "Märgi üks kinnitatud tellimus tarnituks."
       },
@@ -138,7 +138,7 @@
     "veiculoInfo": "Sõiduk: {marca} {modelo} {ano}",
     "quantidadeInfo": "Kogus: {quantidade}",
     "tirarDuvida": "Küsi üle",
-    "respostaEnviada": "Sina vastasid: {preco} - tarneaeg {prazo} päev(a)",
+    "respostaEnviada": "Sina vastasid: {preco} - tarneaeg {prazo, plural, one {# päev} other {# päeva}}",
     "conversarLink": "Vestlus",
     "labelPreco": "Hind (€)",
     "labelPrazo": "Tarneaeg (päevades)",

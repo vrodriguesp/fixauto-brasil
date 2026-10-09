@@ -455,7 +455,7 @@
     "vehicleLabel": "Veicolo (marca/modello)",
     "vehiclePlaceholder": "Es: Fiat Argo",
     "photosLabel": "Foto dell'altro veicolo",
-    "observationsLabel": "Osservazioni",
+    "observationsLabel": "Note",
     "observationsPlaceholder": "Dettagli sull'incidente, eventuale accordo preso sul posto...",
     "notifyInfo": "L'altro conducente riceverà una notifica via e-mail per seguire l'incidente e i preventivi.",
     "registerBtn": "Registra l'altro veicolo",
@@ -598,7 +598,7 @@
         "desc": "Indica che l'officina è disposta a negoziare l'importo del preventivo."
       }
     ],
-    "s3Outro": "Usa i filtri per ordinare per prezzo, tempi o valutazione. Ogni officina ha la sua conversazione con te (tocca \"Messaggio all'officina\" sul preventivo). Il bollino \"Convenzionata con la tua assicurazione\" appare quando l'officina lavora con la tua compagnia.",
+    "s3Outro": "Usa i filtri per ordinare per prezzo, tempi o valutazione. Ogni officina ha la sua conversazione con te (tocca \"Scrivi all'officina\" sul preventivo). Il bollino \"Convenzionata con la tua assicurazione\" appare quando l'officina lavora con la tua compagnia.",
     "s4Title": "4. Come prenotare il servizio",
     "s4Intro": "Dopo aver confrontato i preventivi, scegli quello più adatto alle tue esigenze:",
     "s4Steps": [

@@ -418,7 +418,7 @@
     "nameLabel": "Nome",
     "namePlaceholder": "O seu nome",
     "emailLabel": "E-mail",
-    "emailPlaceholder": "voce@email.com",
+    "emailPlaceholder": "nome@email.com",
     "phoneLabel": "Telefone / WhatsApp",
     "phonePlaceholder": "+372 5555 5555",
     "backBtn": "Voltar",
@@ -472,7 +472,7 @@
     "notifiedBadge": "Notificado",
     "sendMessageBtn": "Enviar mensagem",
     "viewQuotesBtn": "Ver orçamentos",
-    "youFallback": "Você",
+    "youFallback": "Eu",
     "registranteLabelEuCausei": "Responsável",
     "registranteLabelOutroCausou": "Vítima",
     "registranteLabelDefault": "Condutor 1",
@@ -598,7 +598,7 @@
         "desc": "Indica que a oficina está aberta a negociar o valor do orçamento."
       }
     ],
-    "s3Outro": "Use os filtros para ordenar por preço, prazo ou avaliação. Cada oficina tem a sua conversa consigo (toque em \"Mensagem para a oficina\" no orçamento). O selo \"Convencionada com a sua seguradora\" aparece quando a oficina trabalha com o seu seguro.",
+    "s3Outro": "Use os filtros para ordenar por preço, prazo ou avaliação. Cada oficina tem a sua conversa consigo (toque em \"Enviar mensagem à oficina\" no orçamento). O selo \"Convencionada com a sua seguradora\" aparece quando a oficina trabalha com o seu seguro.",
     "s4Title": "4. Como marcar o serviço",
     "s4Intro": "Depois de comparar os orçamentos, escolha o que melhor se adequa às suas necessidades:",
     "s4Steps": [

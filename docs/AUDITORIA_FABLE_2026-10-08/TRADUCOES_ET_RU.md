@@ -200,3 +200,57 @@ Proposto: "Готов к выдаче" / "Автомобиль готов, мо�
 - Brasil (CPF/FIPE/R$/LGPD/CNPJ/SAMU): 0 fora das chaves `*_br` (deliberadamente sobre o Brasil) e da menção "a versão brasileira tem termos próprios" nos textos legais. Rússia (ОСАГО/ГИБДД/рубли/Россия): 0.
 - Textos legais et/ru (termos/privacidade, 166 chaves): jurisdição UE/Estónia, GDPR, osaühing, KMKR; et em *sina* (40 ocorrências, 0 *teie*); ru em *вы*. Boa qualidade.
 - Comprimento de rótulos: nada quebra; os maiores são labels de formulário "(valikuline)/(необязательно)" com 33–39 caracteres (coberto em ET-15) e o botão do app em RU-17.
+
+
+---
+
+## Correções aplicadas (09/10)
+
+Aplicado em `apps/web/messages/{et,ru}*.json`, `apps/mobile/i18n/locales/{et,ru}.json`, `apps/mobile/i18n/permissoes/ru.json`, `apps/web/src/lib/{email-i18n,notif-i18n,notif-servico}.ts`, `apps/mobile/lib/notif-i18n.ts` e `apps/web/src/app/api/registrar-no-show/route.ts`. Só valores de texto foram alterados (nenhuma chave renomeada/removida, placeholders mantidos); nos `.ts` foram acrescentadas entradas `ru` e `pt-PT`. Verificações: `checar-traducoes.mjs` (web e mobile) e `tsc --noEmit` (web e mobile) passam.
+
+### Estoniano — 195 valores alterados (site 168, app 27) + 7 linhas em `.ts`
+
+| ID | Estado | Observação |
+|---|---|---|
+| ET-01 | aplicado | Todas as strings listadas passaram para *sina* (site, app e `notif-servico.ts`). |
+| ET-02 | aplicado | "Enne pakkumise tegemist näeb klient ainult sinu nime ja fotot…" |
+| ET-03 | aplicado | "…sõiduk ära viidud, märgi üleandmine." (alinhado ao termo de ET-07 em vez de "check-out"). |
+| ET-04 | aplicado | "Vahekaardil" nas 4 chaves. |
+| ET-05 | aplicado | "keretööd … elektritööd" nas 2 chaves. |
+| ET-06 | aplicado | concluido = "Valmis", concluidoDesc = "Sõiduk on valmis kättesaamiseks"; `progressConcluido` e app = "Valmis". `confirmarConcluidoTexto` passou a "Valmiks märkimine…". (O app não tem `concluidoDesc`.) |
+| ET-07 | aplicado | "Üle antud" (estado) / "Üleandmine" (ação) em todo o painel da oficina, incl. `checkinTableTitle`, subtítulos da agenda, tutoriais e `oficinaDistribuicao.mostraVeiculos`; `notif-i18n.ts` et `orcamentoRecusado` também ("üleandmine"). |
+| ET-08 | aplicado | "Rehviaugu parandus". |
+| ET-09 | aplicado | "Töö" nas 2 chaves. |
+| ET-10 | aplicado | "🚨 Juhtum teel (teist sõidukit polnud)". |
+| ET-11 | aplicado | "…Nõustudes kinnitad, et oled tutvunud meie" + "privaatsuspoliitikaga". |
+| ET-12 | aplicado | "Peatatud - ootab klienti" (hífen simples como nas outras etapas). |
+| ET-13 | aplicado | `nav.cotacoes` = "Hinnapäringud". |
+| ET-14 | aplicado | "Elektritööd" (site, app, `apps/mobile/lib/notif-i18n.ts`); FAQ "autoelektrika"; placeholder de especialidade "keretööd, elektritööd". |
+| ET-15 | aplicado | "Numbrimärk" em todas as chaves listadas (site, misc, app). |
+| ET-16 | aplicado | `{count, plural, one {# foto} other {# fotot}}`. |
+| ET-17 | aplicado | Plurais ICU em `fotosCount`, `diasUteis`, `veiculosCount`, `prazoDias` (×2), `vocesRespondeu`, `avaliacoesCount` (×2), `emergencia.summaryPhotos`, `lojaCotacoes.respostaEnviada` (os chamadores passam números). |
+| ET-18 | aplicado | "Käsitsi check-in", "Kas teha check-in kohe?", "Jah, tee check-in kohe", `hist_checkin` = "Check-in", `oficinaCheckin.titulo` = "Sõiduki check-in", docs "Check-in ja iga etapp…", "Tee sõiduki check-in.", "teeb meeskond check-ini". |
+| ET-19 | aplicado | "Kinnitatud" em todo lado (cliente, oficina, misc, app). |
+| ET-20 | aplicado | "hinnang/hinnangut" e "hinnanguid". |
+| ET-21 … ET-28 | aplicado | Todos. |
+| ET-29 | parcial | "Sain just avarii" em `naoEncontrado.emergencia` e no app (`emergencia.titulo`, `dashboard.emergenciaBotao`). `guias.cta.emergencia.titulo` ("Juhtus liiklusõnnetus?") ficou: é um título em forma de pergunta, "Sain just avarii?" não funciona como pergunta. |
+| ET-30 … ET-40 | aplicado | Todos (ET-32: "Broneeringut ei leitud.", "Broneering", "Ajavahemik: {shift}"; ET-39: "Vajuta" em docsCliente e nos 6 passos de `lojaAprender`). |
+
+### Russo — 63 valores alterados (site 46, app 16, permissões 1) + dicionários `ru` nos `.ts`
+
+| ID | Estado | Observação |
+|---|---|---|
+| RU-01 | aplicado | `EmailLocale`/`resolveEmailLocale` agora aceitam `ru` e `pt-PT`; 15 dicionários em `email-i18n.ts` (12 e-mails + 3 WhatsApp) e 31 em `notif-i18n.ts` ganharam blocos `ru` e `pt-PT`; `apps/mobile/lib/notif-i18n.ts` (`NotifLocale`, título "Новая заявка!", tipos de serviço) e `registrar-no-show` (`veiculoFallback`) idem. Textos reutilizam a terminologia dos JSON (заявка, смета, автосервис, госномер, приёмка, выдан). |
+| RU-02 | aplicado | "Напр.: Въехал в стоящую впереди машину на светофоре..." |
+| RU-03 | aplicado | "автосервис" em todas as chaves listadas (site, app, permissões, `notif-servico.ts`). Mantidos, como o relatório admite: `nav.oficina`, `oficinaVeiculosEmServico.oficina` e os «Мастерская» dos tutoriais (nome do item de menu). |
+| RU-04 | aplicado | "Автосервис {oficina} принял вашу машину {carro}…" / "Автомобиль {carro} готов: его можно забрать…". |
+| RU-05 | aplicado | "Выбранная смета" (site e app). |
+| RU-06 | aplicado | "В этой заявке…", "фото этой заявки", "Изменить заявку" (site e app). |
+| RU-07 | aplicado | "День (13:00–18:00)", "День (13:00–17:00)", "День (13–17)", app "день". |
+| RU-08 | aplicado | "Выдан", "Приёмка", «Выдан» (e «Готов к выдаче» no mesmo texto, por RU-10). |
+| RU-09 | aplicado | "Запросы запчастей". |
+| RU-10 | aplicado | "Готов к выдаче" / "Автомобиль готов, можно забирать" (site, cliente, app). |
+| RU-11 … RU-20 | aplicado | Todos (RU-17: "Я попал в ДТП" só no app; RU-18: "Новый в BipFix" site e app; RU-20: "Остановлено: нет запчастей"). |
+
+### Fora do escopo desta leva
+Strings fixas em componentes (HC-01 a HC-04 do relatório pt/en/it) não foram tocadas — ver lista no fim de `TRADUCOES_PT_EN_IT.md`.

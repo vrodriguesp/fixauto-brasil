@@ -34,6 +34,9 @@ function formatSlotDate(dateStr: string, locale: string): string {
 const ORDEM_ORC: Record<string, number> = { aceito: 0, expirado: 2, recusado: 3 };
 const ordemOrc = (status: string) => ORDEM_ORC[status] ?? 1;
 
+// horario que o cliente escolheu no aceite (antes mostrava sempre o primeiro oferecido)
+const slotEscolhido = (orc: any) => orc.disponibilidade.find((d: any) => d.id === orc.disponibilidade_escolhida_id) ?? orc.disponibilidade[0];
+
 export default function OrcamentoDetalhePage() {
   const t = useTranslations('clienteOrcamentoDetalhe');
   const te = useTranslations('editarPedido');
@@ -706,12 +709,12 @@ export default function OrcamentoDetalhePage() {
                         <div className="flex justify-between">
                           <span className="text-green-700">{t('checkin')}</span>
                           <span className="font-medium text-green-900">
-                            {formatSlotDate(orc.disponibilidade[0].data_checkin, locale)} - {orc.disponibilidade[0].turno === 'manha' ? '08:00-12:00' : '13:00-17:00'}
+                            {formatSlotDate(slotEscolhido(orc).data_checkin, locale)} - {slotEscolhido(orc).turno === 'manha' ? '08:00-12:00' : '13:00-17:00'}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-green-700">{t('deliveryForecast')}</span>
-                          <span className="font-medium text-green-900">{formatSlotDate(orc.disponibilidade[0].data_previsao_entrega, locale)}</span>
+                          <span className="font-medium text-green-900">{formatSlotDate(slotEscolhido(orc).data_previsao_entrega, locale)}</span>
                         </div>
                       </div>
                     )}

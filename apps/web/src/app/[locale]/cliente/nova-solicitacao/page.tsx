@@ -81,7 +81,7 @@ export default function NovaSolicitacaoPage() {
   // Fallback quando o navegador nega geolocalizacao: geocodifica o endereco
   // digitado via Nominatim (gratuito, mundial) em vez de deixar a
   // coordenada (e o pais) presos no default de Sao Paulo/Brasil.
-  const resolveLocation = async (): Promise<{ lat: number; lon: number; pais: string }> => {
+  const resolveLocation = async (): Promise<{ lat: number; lon: number; pais: string } | null> => {
     if (geoResolved || !endereco) return { ...coords, pais };
     try {
       const res = await fetch(`/api/geocode?q=${encodeURIComponent(endereco)}`, { signal: AbortSignal.timeout(10000) });
@@ -92,9 +92,10 @@ export default function NovaSolicitacaoPage() {
         }
       }
     } catch {
-      // mantem o default (SP/BR) se a geocodificacao tambem falhar
+      // sem resposta: cai no aviso abaixo
     }
-    return { ...coords, pais };
+    // sem posicao nem endereco reconhecido: nao grava Sao Paulo (auditoria E1)
+    return null;
   };
 
   const selectedVeiculo = veiculos.find((v) => v.id === veiculoId);
@@ -171,8 +172,16 @@ export default function NovaSolicitacaoPage() {
     }
   };
 
+  // trava de duplo envio (dois toques criavam dois pedidos - auditoria A5)
+  const enviandoRef = useRef(false);
+  const [enviando, setEnviando] = useState(false);
   const handleSubmit = async () => {
-    if (!veiculoId || !endereco) return;
+    if (!veiculoId || !endereco || enviandoRef.current) return;
+    enviandoRef.current = true;
+    setEnviando(true);
+    try { await enviarPedido(); } finally { enviandoRef.current = false; setEnviando(false); }
+  };
+  const enviarPedido = async () => {
     setSubmitError('');
     const fullDescricao = servicosSelecionados.length > 0
       ? `${t('servicesPrefix')} ${servicosSelecionados.map(getServicoLabel).join(', ')}${descricao ? '. ' + descricao : ''}`
@@ -180,6 +189,10 @@ export default function NovaSolicitacaoPage() {
 
     try {
       const finalLocation = await resolveLocation();
+      if (!finalLocation) {
+        setSubmitError(t('erroLocalizacao'));
+        return;
+      }
       const { data, error } = await createSolicitacao({
         veiculo_id: veiculoId,
         tipo,
@@ -232,27 +245,7 @@ export default function NovaSolicitacaoPage() {
         }
       }
 
-      // Notify nearby oficinas about new solicitation
-      const tipoLabel = tc(`tiposServico.${tipo}`);
-      const { data: oficinas } = await supabase
-        .from('oficinas')
-        .select('profile_id, especialidades, profile:profiles(idioma)')
-        .eq('ativa', true);
-      if (oficinas) {
-        for (const ofi of oficinas) {
-          const matchesTipo = !ofi.especialidades || ofi.especialidades.length === 0 || ofi.especialidades.includes(tipo);
-          if (matchesTipo) {
-            await supabase.from('notificacoes').insert({
-              profile_id: ofi.profile_id,
-              tipo: 'nova_solicitacao',
-              titulo: notifNovaSolicitacaoTitulo((ofi as any).profile?.idioma),
-              mensagem: `${tipoLabel} - ${selectedVeiculo?.fipe_marca} ${selectedVeiculo?.fipe_modelo} - ${endereco}`,
-              dados: { solicitacao_id: data.id },
-            });
-          }
-        }
-      }
-
+      // aviso as oficinas do raio: no servidor (/api/pedido-criado)
       // Sem oficinas ativas ainda: o servidor avisa o admin (atendimento manual)
       fetch('/api/pedido-criado', {
         method: 'POST',
@@ -679,7 +672,7 @@ export default function NovaSolicitacaoPage() {
 
             <div className="flex justify-between mt-6">
               <button onClick={() => setStep(4)} className="btn-secondary">{t('back')}</button>
-              <button onClick={handleSubmit} disabled={!endereco} className="btn-success">
+              <button onClick={handleSubmit} disabled={!endereco || enviando} aria-busy={enviando} className="btn-success disabled:opacity-60">
                 {t('sendRequest')}
               </button>
             </div>

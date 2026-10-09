@@ -80,7 +80,9 @@ export function formatDate(date: string, locale: string = 'pt'): string {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
-  }).format(new Date(date));
+    // coluna DATE ("2026-10-15") vira meio-dia local: como meia-noite UTC,
+    // no Brasil (UTC-3) aparecia o dia anterior (auditoria E3)
+  }).format(new Date(/^\d{4}-\d{2}-\d{2}$/.test(date) ? `${date}T12:00:00` : date));
 }
 
 export function formatDateTime(date: string, locale: string = 'pt'): string {

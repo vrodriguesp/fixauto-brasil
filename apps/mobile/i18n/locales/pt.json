@@ -67,7 +67,9 @@
     "ocultarSenha": "Ocultar senha",
     "confirmando": "Confirmando seu e-mail…",
     "linkInvalidoTitulo": "Este link não é mais válido",
-    "linkInvalidoTexto": "O link vale por 1 hora e só pode ser usado uma vez. Tente entrar: vamos oferecer um novo link."
+    "linkInvalidoTexto": "O link vale por 1 hora e só pode ser usado uma vez. Tente entrar: vamos oferecer um novo link.",
+    "tipoNaoSuportado": "Este app é para motoristas. Oficinas e lojas entram pelo site bipfix.com.",
+    "contaDesativada": "Esta conta foi desativada. Fale com o suporte do BipFix."
   },
   "emergencia": {
     "titulo": "Acabei de bater",
@@ -163,7 +165,8 @@
     "completarCarro": "Complete os dados do carro",
     "completarCarroDica": "Marca, modelo e placa ajudam a oficina a fazer o orçamento. Toque para completar.",
     "editarPedido": "Editar pedido",
-    "descricaoPedido": "Descrição"
+    "descricaoPedido": "Descrição",
+    "naoEncontrado": "Este pedido não existe mais ou não está disponível."
   },
   "avaliacao": {
     "titulo": "Avalie o serviço",

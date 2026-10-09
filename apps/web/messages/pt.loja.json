@@ -75,7 +75,7 @@
       },
       "comissao": {
         "titulo": "Comissão da plataforma",
-        "resumo": "Hoje o uso da BipFix é gratuito para as lojas. Se no futuro houver cobrança sobre as vendas de peças, você será avisado com 30 dias corridos de antecedência — e ela só incidirá sobre pedidos marcados como entregues, nunca antes disso.",
+        "resumo": "Hoje o uso do BipFix é gratuito para as lojas. Se no futuro houver cobrança sobre as vendas de peças, você será avisado com 30 dias corridos de antecedência — e ela só incidirá sobre pedidos marcados como entregues, nunca antes disso.",
         "passosGuiados": [
           "Abra Comissão no menu.",
           "Veja sua taxa atual, o que está pendente e o que já foi pago."

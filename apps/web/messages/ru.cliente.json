@@ -142,7 +142,8 @@
     "photosLabel": "Фото:",
     "photosCount": "{count, plural, one {# фото} few {# фото} many {# фото} other {# фото}}",
     "servicesLabel": "Услуги:",
-    "sendRequest": "Отправить заявку"
+    "sendRequest": "Отправить заявку",
+    "erroLocalizacao": "Мы не нашли этот адрес. Выберите подсказку или разрешите доступ к местоположению."
   },
   "clienteOrcamentos": {
     "title": "Сметы",
@@ -233,9 +234,9 @@
     "acceptAndSchedule": "Принять и записаться",
     "escolhaHorarioDica": "Нажмите на день и время, когда вы привезёте машину в автосервис.",
     "escolhaHorarioAntes": "Выберите время выше",
-    "horariosVencidos": "Предложенное время уже прошло. Попросите мастерскую в сообщении о новых датах.",
+    "horariosVencidos": "Предложенное время уже прошло. Попросите автосервис в сообщении о новых датах.",
     "convencionadaComSeguradora": "Работает с {seguradora}",
-    "escolhido": "Выбранное предложение",
+    "escolhido": "Выбранная смета",
     "verOficina": "Посмотреть сервис (отзывы, адрес)"
   },
   "clienteMensagens": {
@@ -269,9 +270,9 @@
     "recordAudio": "Записать аудио",
     "erroEnviar": "Не удалось отправить. Сообщение осталось в поле; попробуйте ещё раз.",
     "voltarConversas": "Переписки",
-    "escolherOficinaTitulo": "С какой мастерской?",
-    "escolherOficinaTexto": "С каждой мастерской у вас отдельная переписка.",
-    "semConversaAinda": "Пока ни одна мастерская не написала. Когда мастерская пришлёт смету или сообщение, переписка появится здесь.",
+    "escolherOficinaTitulo": "С каким автосервисом?",
+    "escolherOficinaTexto": "С каждым автосервисом у вас отдельная переписка.",
+    "semConversaAinda": "Пока ни один автосервис не написал. Когда автосервис пришлёт смету или сообщение, переписка появится здесь.",
     "pagadorSubtitulo": "Оплата ремонта (ДТП)",
     "verOficina": "О сервисе"
   },
@@ -280,7 +281,7 @@
     "progressDiagnostico": "Диагностика",
     "progressEmExecucao": "В работе",
     "progressTesteFinal": "Финальная проверка",
-    "progressConcluido": "Завершено",
+    "progressConcluido": "Готов к выдаче",
     "progressEntregue": "Выдан",
     "noAppointmentFound": "По этой заявке запись не найдена.",
     "backToDashboard": "В личный кабинет",
@@ -316,7 +317,7 @@
     "noDatesAvailable": "Сейчас нет доступных дат. Пожалуйста, свяжитесь с автосервисом, чтобы договориться о новом времени.",
     "shiftLabel": "Время: {shift}",
     "morningShift": "Утро (8:00–12:00)",
-    "afternoonShift": "После обеда (13:00–18:00)",
+    "afternoonShift": "День (13:00–18:00)",
     "deliveryForecastInline": "Ожид. выдача: {date}",
     "rescheduling": "Переносим...",
     "confirmReschedule": "Подтвердить перенос"
@@ -334,8 +335,8 @@
   "editarPedido": {
     "acidente": "ДТП",
     "completarCarro": "Укажите данные машины",
-    "completarCarroDica": "Марка, модель и номер помогут мастерской составить смету. Нажмите, чтобы указать.",
-    "editar": "Изменить запрос",
+    "completarCarroDica": "Марка, модель и номер помогут автосервису составить смету. Нажмите, чтобы указать.",
+    "editar": "Изменить заявку",
     "marca": "Марка",
     "modelo": "Модель",
     "ano": "Год",

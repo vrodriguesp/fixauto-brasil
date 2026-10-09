@@ -3,12 +3,12 @@
 // enviado de forma assincrona/server-side, entao nao da pra usar
 // next-intl (React) aqui; interpolacao simples com {chave}.
 
-export type EmailLocale = 'pt' | 'en' | 'et' | 'it';
+export type EmailLocale = 'pt' | 'pt-PT' | 'en' | 'et' | 'it' | 'ru';
 
 export function resolveEmailLocale(locale: string | null | undefined): EmailLocale {
-  if (locale === 'en' || locale === 'et' || locale === 'it') return locale;
-  // Sem idioma (contas antigas) ou portugues (pt, pt-PT) -> pt; qualquer outro
-  // idioma sem textos de e-mail proprios (ex: ru) -> ingles, nao portugues.
+  if (locale === 'pt-PT' || locale === 'en' || locale === 'et' || locale === 'it' || locale === 'ru') return locale;
+  // Sem idioma (contas antigas) ou outra variante de portugues -> pt (Brasil);
+  // qualquer outro idioma sem textos proprios -> ingles, nao portugues.
   if (!locale || locale.startsWith('pt')) return 'pt';
   return 'en';
 }
@@ -114,6 +114,42 @@ const accidentNotification: Record<EmailLocale, Dict> = {
     accountCreatedNote: 'Abbiamo creato un account per te. Imposta la tua password per accedere e seguire tutto.',
     automatedFooter: "Questa email è stata inviata automaticamente dalla piattaforma BipFix. Se non riconosci questo incidente, ignora questa email.",
   },
+  'pt-PT': {
+    subject: 'Registo de acidente - Veículo {placa}',
+    headerTag: 'Registo de Acidente',
+    greeting: 'Olá <strong>{name}</strong>,',
+    intro: '<strong>{fromName}</strong> registou um acidente que envolve o seu veículo (matrícula <strong>{placa}</strong>) na plataforma BipFix.',
+    canList: 'Através da plataforma, pode:',
+    li1: 'Completar o registo do seu veículo',
+    li2: 'Trocar mensagens com o outro condutor',
+    li3: 'Receber orçamentos de oficinas próximas para a reparação',
+    li4: 'Enviar um orçamento para a reparação do seu veículo',
+    li5: 'Chegar a acordo sobre a reparação',
+    nextStepsLabel: 'Próximos passos:',
+    nextStepsText: 'Aceda à plataforma, complete os dados do seu veículo e peça orçamentos a oficinas para reparar os danos.',
+    ctaRegistered: 'Ver detalhes do acidente',
+    ctaUnregistered: 'Definir palavra-passe e aceder',
+    accountCreatedNote: 'Criámos uma conta para si. Defina a sua palavra-passe para aceder e acompanhar tudo.',
+    automatedFooter: 'Este e-mail foi enviado automaticamente pela plataforma BipFix. Se não reconhece este acidente, ignore este e-mail.',
+  },
+  ru: {
+    subject: 'Регистрация ДТП - автомобиль {placa}',
+    headerTag: 'Регистрация ДТП',
+    greeting: 'Здравствуйте, <strong>{name}</strong>!',
+    intro: '<strong>{fromName}</strong> зарегистрировал(а) на платформе BipFix ДТП с участием вашего автомобиля (госномер <strong>{placa}</strong>).',
+    canList: 'На платформе вы можете:',
+    li1: 'Дополнить данные своего автомобиля',
+    li2: 'Обмениваться сообщениями с другим водителем',
+    li3: 'Получать сметы на ремонт от ближайших автосервисов',
+    li4: 'Отправить смету на ремонт своего автомобиля',
+    li5: 'Договориться об условиях ремонта',
+    nextStepsLabel: 'Следующие шаги:',
+    nextStepsText: 'Войдите на платформу, дополните данные автомобиля и запросите у автосервисов сметы на ремонт повреждений.',
+    ctaRegistered: 'Посмотреть детали ДТП',
+    ctaUnregistered: 'Задать пароль и войти',
+    accountCreatedNote: 'Мы создали для вас аккаунт. Задайте пароль, чтобы войти и следить за всем.',
+    automatedFooter: 'Это письмо отправлено автоматически платформой BipFix. Если вы не знаете об этом ДТП, просто проигнорируйте письмо.',
+  },
 };
 
 const funcionarioNovaSenha: Record<EmailLocale, Dict> = {
@@ -153,6 +189,24 @@ const funcionarioNovaSenha: Record<EmailLocale, Dict> = {
     cta: 'Accedi al mio account',
     footer: 'Il team BipFix',
   },
+  'pt-PT': {
+    subject: '{oficinaNome} redefiniu a sua palavra-passe - BipFix',
+    greeting: 'Olá <strong>{name}</strong>,',
+    intro: '<strong>{oficinaNome}</strong> gerou uma nova palavra-passe temporária para a sua conta.',
+    tempPasswordLabel: 'A sua palavra-passe temporária:',
+    nextLoginNote: 'No próximo início de sessão, ser-lhe-á pedido que escolha uma nova palavra-passe.',
+    cta: 'Aceder à minha conta',
+    footer: 'Equipa BipFix',
+  },
+  ru: {
+    subject: '{oficinaNome} сбросил ваш пароль - BipFix',
+    greeting: 'Здравствуйте, <strong>{name}</strong>!',
+    intro: '<strong>{oficinaNome}</strong> создал новый временный пароль для вашего аккаунта.',
+    tempPasswordLabel: 'Ваш временный пароль:',
+    nextLoginNote: 'При следующем входе вам будет предложено выбрать новый пароль.',
+    cta: 'Войти в мой аккаунт',
+    footer: 'Команда BipFix',
+  },
 };
 
 const quoteNotification: Record<EmailLocale, Dict> = {
@@ -188,6 +242,22 @@ const quoteNotification: Record<EmailLocale, Dict> = {
     prazo: 'Tempi: {prazoDias} giorni',
     cta: 'Vedi preventivo completo',
   },
+  'pt-PT': {
+    subject: 'Novo orçamento recebido - {oficinaNome}',
+    headerTag: 'Novo Orçamento',
+    greeting: 'Olá <strong>{name}</strong>,',
+    intro: 'A oficina <strong>{oficinaNome}</strong> enviou um orçamento para o seu pedido:',
+    prazo: 'Prazo: {prazoDias} dias',
+    cta: 'Ver orçamento completo',
+  },
+  ru: {
+    subject: 'Новая смета - {oficinaNome}',
+    headerTag: 'Новая смета',
+    greeting: 'Здравствуйте, <strong>{name}</strong>!',
+    intro: 'Автосервис <strong>{oficinaNome}</strong> отправил смету по вашей заявке:',
+    prazo: 'Срок: {prazoDias} дн.',
+    cta: 'Посмотреть смету полностью',
+  },
 };
 
 const servicoConcluido: Record<EmailLocale, Dict> = {
@@ -218,6 +288,20 @@ const servicoConcluido: Record<EmailLocale, Dict> = {
     greeting: 'Ciao <strong>{name}</strong>,',
     intro: 'Il tuo veicolo <strong>{veiculoNome}</strong> è stato completato presso <strong>{oficinaNome}</strong> ed è pronto per il ritiro.',
     cta: 'Vedi i dettagli e valuta',
+  },
+  'pt-PT': {
+    subject: 'O seu veículo está pronto! - {oficinaNome}',
+    headerTag: 'Serviço concluído',
+    greeting: 'Olá <strong>{name}</strong>,',
+    intro: 'O seu veículo <strong>{veiculoNome}</strong> já está concluído na oficina <strong>{oficinaNome}</strong> e pronto para ser levantado.',
+    cta: 'Ver detalhes e avaliar',
+  },
+  ru: {
+    subject: 'Ваш автомобиль готов! - {oficinaNome}',
+    headerTag: 'Работы завершены',
+    greeting: 'Здравствуйте, <strong>{name}</strong>!',
+    intro: 'Ваш автомобиль <strong>{veiculoNome}</strong> готов в автосервисе <strong>{oficinaNome}</strong>, его можно забирать.',
+    cta: 'Посмотреть детали и оставить отзыв',
   },
 };
 
@@ -254,6 +338,22 @@ const cotacaoPecaDisponivel: Record<EmailLocale, Dict> = {
     callToAction: "Se lo hai in magazzino, rispondi con prezzo e tempi per aggiudicarti la vendita.",
     cta: 'Vedi richiesta e rispondi',
   },
+  'pt-PT': {
+    subject: 'Oficina próxima precisa de: {pecaDescricao}',
+    headerTag: 'Nova cotação de peça perto de si',
+    greeting: 'Olá <strong>{name}</strong>,',
+    intro: 'A oficina <strong>{oficinaCompradoraNome}</strong>, perto de si, precisa de:',
+    callToAction: 'Se tiver em stock, responda com preço e prazo para ganhar a venda.',
+    cta: 'Ver cotação e responder',
+  },
+  ru: {
+    subject: 'Автосервису рядом нужно: {pecaDescricao}',
+    headerTag: 'Новый запрос запчасти рядом с вами',
+    greeting: 'Здравствуйте, <strong>{name}</strong>!',
+    intro: 'Автосервису <strong>{oficinaCompradoraNome}</strong> рядом с вами нужно:',
+    callToAction: 'Если есть в наличии, ответьте с ценой и сроком поставки, чтобы получить заказ.',
+    cta: 'Посмотреть запрос и ответить',
+  },
 };
 
 const cotacaoPecaRespondida: Record<EmailLocale, Dict> = {
@@ -288,6 +388,22 @@ const cotacaoPecaRespondida: Record<EmailLocale, Dict> = {
     intro: '<strong>{fornecedorNome}</strong> ha risposto alla tua richiesta di preventivo per "{pecaDescricao}":',
     prazo: 'Tempi di consegna: {prazoDias} giorno/i',
     cta: 'Vedi risposta completa',
+  },
+  'pt-PT': {
+    subject: 'Nova resposta à cotação: {pecaDescricao}',
+    headerTag: 'Resposta à cotação de peça',
+    greeting: 'Olá <strong>{name}</strong>,',
+    intro: '<strong>{fornecedorNome}</strong> respondeu à sua cotação de "{pecaDescricao}":',
+    prazo: 'Prazo: {prazoDias} dia(s)',
+    cta: 'Ver resposta completa',
+  },
+  ru: {
+    subject: 'Новый ответ на запрос: {pecaDescricao}',
+    headerTag: 'Ответ на запрос запчасти',
+    greeting: 'Здравствуйте, <strong>{name}</strong>!',
+    intro: '<strong>{fornecedorNome}</strong> ответил на ваш запрос «{pecaDescricao}»:',
+    prazo: 'Срок поставки: {prazoDias} дн.',
+    cta: 'Посмотреть ответ полностью',
   },
 };
 
@@ -324,6 +440,22 @@ const pedidoPecaConfirmado: Record<EmailLocale, Dict> = {
     deliveryNote: "Concorda la consegna direttamente con l'officina e segnalo come consegnato nella tua dashboard una volta completato.",
     cta: "Vedi l'ordine",
   },
+  'pt-PT': {
+    subject: 'Encomenda de peça confirmada: {pecaDescricao}',
+    headerTag: 'Encomenda confirmada!',
+    greeting: 'Olá <strong>{name}</strong>,',
+    intro: '<strong>{oficinaCompradoraNome}</strong> confirmou a encomenda de "{pecaDescricao}":',
+    deliveryNote: 'Combine a entrega diretamente com a oficina e marque como entregue no seu painel quando concluir.',
+    cta: 'Ver encomenda',
+  },
+  ru: {
+    subject: 'Заказ запчасти подтверждён: {pecaDescricao}',
+    headerTag: 'Заказ подтверждён!',
+    greeting: 'Здравствуйте, <strong>{name}</strong>!',
+    intro: '<strong>{oficinaCompradoraNome}</strong> подтвердил заказ «{pecaDescricao}»:',
+    deliveryNote: 'Договоритесь о доставке напрямую с автосервисом и отметьте заказ как доставленный в своей панели, когда всё будет сделано.',
+    cta: 'Посмотреть заказ',
+  },
 };
 
 const pedidoPecaEntregue: Record<EmailLocale, Dict> = {
@@ -354,6 +486,20 @@ const pedidoPecaEntregue: Record<EmailLocale, Dict> = {
     greeting: 'Ciao <strong>{name}</strong>,',
     intro: '<strong>{fornecedorNome}</strong> ha segnato come consegnato l\'ordine per "{pecaDescricao}".',
     cta: 'Vedi dettagli',
+  },
+  'pt-PT': {
+    subject: 'Peça entregue: {pecaDescricao}',
+    headerTag: 'Encomenda entregue',
+    greeting: 'Olá <strong>{name}</strong>,',
+    intro: '<strong>{fornecedorNome}</strong> marcou como entregue a encomenda de "{pecaDescricao}".',
+    cta: 'Ver detalhes',
+  },
+  ru: {
+    subject: 'Запчасть доставлена: {pecaDescricao}',
+    headerTag: 'Заказ доставлен',
+    greeting: 'Здравствуйте, <strong>{name}</strong>!',
+    intro: '<strong>{fornecedorNome}</strong> отметил заказ «{pecaDescricao}» как доставленный.',
+    cta: 'Посмотреть детали',
   },
 };
 
@@ -418,6 +564,36 @@ const contaCriadaEmergencia: Record<EmailLocale, Dict> = {
     cta: 'Accedi al mio account',
     footer: 'Il team BipFix',
   },
+  'pt-PT': {
+    subject: 'BipFix - A sua conta foi criada',
+    headerTag: 'A sua emergência foi registada',
+    greeting: 'Olá <strong>{name}</strong>,',
+    intro: 'A sua emergência foi registada e as oficinas próximas já estão a ser notificadas.',
+    accountNote: 'Criámos uma conta para que possa acompanhar os orçamentos.',
+    accessDataLabel: 'Os seus dados de acesso:',
+    emailLabel: 'E-mail:',
+    tempPasswordLabel: 'Palavra-passe temporária:',
+    nextLoginNote: 'No primeiro início de sessão, ser-lhe-á pedido que altere a palavra-passe.',
+    setPasswordNote: 'Para entrar, defina a sua palavra-passe com o botão abaixo. O link é válido durante 24 horas; depois, use "Esqueci-me da palavra-passe" no ecrã de início de sessão.',
+    setPasswordCta: 'Definir a minha palavra-passe',
+    cta: 'Aceder à minha conta',
+    footer: 'Equipa BipFix',
+  },
+  ru: {
+    subject: 'BipFix - Ваш аккаунт создан',
+    headerTag: 'Ваше происшествие зарегистрировано',
+    greeting: 'Здравствуйте, <strong>{name}</strong>!',
+    intro: 'Ваше происшествие зарегистрировано, ближайшие автосервисы уже получают уведомление.',
+    accountNote: 'Мы создали для вас аккаунт, чтобы вы могли следить за сметами.',
+    accessDataLabel: 'Ваши данные для входа:',
+    emailLabel: 'Эл. почта:',
+    tempPasswordLabel: 'Временный пароль:',
+    nextLoginNote: 'При первом входе вам будет предложено сменить пароль.',
+    setPasswordNote: 'Чтобы войти, задайте пароль с помощью кнопки ниже. Ссылка действует 24 часа; после этого используйте «Забыли пароль?» на странице входа.',
+    setPasswordCta: 'Задать пароль',
+    cta: 'Войти в мой аккаунт',
+    footer: 'Команда BipFix',
+  },
 };
 
 const orcamentoAceitoPagamento: Record<EmailLocale, Dict> = {
@@ -481,6 +657,36 @@ const orcamentoAceitoPagamento: Record<EmailLocale, Dict> = {
     cta: "Chatta con l'officina",
     footer: 'Il team BipFix',
   },
+  'pt-PT': {
+    subject: 'Orçamento aceite - Pagamento na oficina {oficinaNome}',
+    headerTag: 'Orçamento Aceite - Pagamento',
+    greeting: 'Olá <strong>{name}</strong>,',
+    intro: 'O orçamento para a reparação do acidente foi aceite. Como responsável, tem de acertar o pagamento diretamente com a oficina.',
+    prazo: 'Prazo: {dias} dias',
+    dadosOficinaLabel: 'Dados da oficina:',
+    oficinaLabel: 'Oficina: {oficinaNome}',
+    enderecoLabel: 'Morada: {endereco}',
+    telefoneLabel: 'Telefone: {telefone}',
+    emailLabel: 'E-mail: {email}',
+    ctaText: 'Aceda à plataforma para falar com a oficina sobre o pagamento:',
+    cta: 'Falar com a oficina',
+    footer: 'Equipa BipFix',
+  },
+  ru: {
+    subject: 'Смета принята - оплата в автосервисе {oficinaNome}',
+    headerTag: 'Смета принята - оплата',
+    greeting: 'Здравствуйте, <strong>{name}</strong>!',
+    intro: 'Смета на ремонт после ДТП принята. Как ответственная сторона, вы должны договориться об оплате напрямую с автосервисом.',
+    prazo: 'Срок: {dias} дн.',
+    dadosOficinaLabel: 'Данные автосервиса:',
+    oficinaLabel: 'Автосервис: {oficinaNome}',
+    enderecoLabel: 'Адрес: {endereco}',
+    telefoneLabel: 'Телефон: {telefone}',
+    emailLabel: 'Эл. почта: {email}',
+    ctaText: 'Откройте платформу, чтобы обсудить оплату с автосервисом:',
+    cta: 'Написать автосервису',
+    footer: 'Команда BipFix',
+  },
 };
 
 const orcamentoAceitoOutro: Record<EmailLocale, Dict> = {
@@ -532,6 +738,30 @@ const orcamentoAceitoOutro: Record<EmailLocale, Dict> = {
     cta: 'Vedi dettagli',
     footer: 'Il team BipFix',
   },
+  'pt-PT': {
+    subject: 'Orçamento aceite - {oficinaNome}',
+    headerTag: 'Orçamento Aceite',
+    greeting: 'Olá <strong>{name}</strong>,',
+    introComPlaca: 'O orçamento para a reparação do veículo com a matrícula <strong>{placa}</strong> foi aceite:',
+    introSemPlaca: 'O orçamento para a reparação do veículo foi aceite:',
+    oficinaLabel: 'Oficina: {oficinaNome}',
+    prazo: 'Prazo: {dias} dias',
+    ctaText: 'Aceda à plataforma para acompanhar a reparação e trocar mensagens.',
+    cta: 'Ver detalhes',
+    footer: 'Equipa BipFix',
+  },
+  ru: {
+    subject: 'Смета принята - {oficinaNome}',
+    headerTag: 'Смета принята',
+    greeting: 'Здравствуйте, <strong>{name}</strong>!',
+    introComPlaca: 'Смета на ремонт автомобиля с госномером <strong>{placa}</strong> принята:',
+    introSemPlaca: 'Смета на ремонт автомобиля принята:',
+    oficinaLabel: 'Автосервис: {oficinaNome}',
+    prazo: 'Срок: {dias} дн.',
+    ctaText: 'Откройте платформу, чтобы следить за ходом ремонта и обмениваться сообщениями.',
+    cta: 'Посмотреть детали',
+    footer: 'Команда BipFix',
+  },
 };
 
 const recuperarSenha: Record<EmailLocale, Dict> = {
@@ -575,6 +805,26 @@ const recuperarSenha: Record<EmailLocale, Dict> = {
     ignore: 'Se non sei stato tu a chiederlo, ignora questa email: la tua password attuale resta valida e non è cambiato nulla.',
     footer: 'Il team BipFix',
   },
+  'pt-PT': {
+    subject: 'Reponha a sua palavra-passe - BipFix',
+    headerTag: 'Recuperação de palavra-passe',
+    greeting: 'Olá <strong>{name}</strong>,',
+    intro: 'Recebemos um pedido para repor a palavra-passe da sua conta BipFix. Clique no botão abaixo para escolher uma nova palavra-passe.',
+    cta: 'Escolher nova palavra-passe',
+    expiry: 'O link é válido durante 1 hora e só pode ser usado uma vez.',
+    ignore: 'Se não fez este pedido, ignore este e-mail: a sua palavra-passe atual continua válida e nada foi alterado.',
+    footer: 'Equipa BipFix',
+  },
+  ru: {
+    subject: 'Сброс пароля - BipFix',
+    headerTag: 'Восстановление пароля',
+    greeting: 'Здравствуйте, <strong>{name}</strong>!',
+    intro: 'Мы получили запрос на сброс пароля вашего аккаунта BipFix. Нажмите кнопку ниже, чтобы выбрать новый пароль.',
+    cta: 'Выбрать новый пароль',
+    expiry: 'Ссылка действует 1 час и может быть использована только один раз.',
+    ignore: 'Если это были не вы, просто проигнорируйте письмо: ваш текущий пароль остаётся в силе и ничего не изменилось.',
+    footer: 'Команда BipFix',
+  },
 };
 
 export const EMAIL_I18N = {
@@ -598,6 +848,8 @@ const accidentWhatsApp: Record<EmailLocale, string> = {
   en: 'Hi {toName}! {fromName} reported an accident involving your vehicle (plate {placa}) on BipFix. Check the details and quotes: {url}',
   et: 'Tere {toName}! {fromName} registreeris BipFixis avarii, milles osales sinu sõiduk (nr {placa}). Vaata detaile ja hinnapakkumisi: {url}',
   it: 'Ciao {toName}! {fromName} ha segnalato su BipFix un incidente che coinvolge il tuo veicolo (targa {placa}). Vedi dettagli e preventivi: {url}',
+  'pt-PT': 'Olá {toName}! {fromName} registou um acidente que envolve o seu veículo (matrícula {placa}) na BipFix. Aceda para ver detalhes e orçamentos: {url}',
+  ru: 'Здравствуйте, {toName}! {fromName} зарегистрировал(а) в BipFix ДТП с участием вашего автомобиля (госномер {placa}). Посмотрите детали и сметы: {url}',
 };
 
 const quoteWhatsApp: Record<EmailLocale, string> = {
@@ -605,6 +857,8 @@ const quoteWhatsApp: Record<EmailLocale, string> = {
   en: 'Hi {toName}! Repair shop {oficinaNome} sent a quote of {valorTotal} for your vehicle. See the details: {url}',
   et: 'Tere {toName}! Töökoda {oficinaNome} saatis sinu sõidukile hinnapakkumise summas {valorTotal}. Vaata detaile: {url}',
   it: 'Ciao {toName}! L\'officina {oficinaNome} ha inviato un preventivo di {valorTotal} per il tuo veicolo. Vedi i dettagli: {url}',
+  'pt-PT': 'Olá {toName}! A oficina {oficinaNome} enviou um orçamento de {valorTotal} para o seu veículo. Veja os detalhes: {url}',
+  ru: 'Здравствуйте, {toName}! Автосервис {oficinaNome} отправил смету на {valorTotal} для вашего автомобиля. Подробности: {url}',
 };
 
 const servicoConcluidoWhatsApp: Record<EmailLocale, string> = {
@@ -612,6 +866,8 @@ const servicoConcluidoWhatsApp: Record<EmailLocale, string> = {
   en: 'Hi {toName}! Your vehicle {veiculoNome} is ready at {oficinaNome} and can be picked up. Details: {url}',
   et: 'Tere {toName}! Sinu sõiduk {veiculoNome} on töökojas {oficinaNome} valmis ja selle saab kätte. Detailid: {url}',
   it: 'Ciao {toName}! Il tuo veicolo {veiculoNome} è pronto presso {oficinaNome} e può essere ritirato. Dettagli: {url}',
+  'pt-PT': 'Olá {toName}! O seu veículo {veiculoNome} já está pronto na oficina {oficinaNome} e pode ser levantado. Detalhes: {url}',
+  ru: 'Здравствуйте, {toName}! Ваш автомобиль {veiculoNome} готов в автосервисе {oficinaNome}, его можно забирать. Подробности: {url}',
 };
 
 export const WHATSAPP_I18N = {

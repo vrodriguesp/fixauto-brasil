@@ -26,7 +26,7 @@
     "aprender": "Learn",
     "mais": "More",
     "cotacoes": "Quotes",
-    "catalogo": "Catalog",
+    "catalogo": "Catalogue",
     "pedidos": "Orders",
     "veiculos": "Vehicles",
     "novaSolicitacao": "New Request",
@@ -124,7 +124,7 @@
       {
         "titulo": "Quotes and service",
         "itens": [
-          "Structured quotes; the commission is paid by the workshop — the customer pays nothing extra",
+          "Structured quotes; the commission is paid by the repair shop — the customer pays nothing extra",
           "Step-by-step repair tracking, visible to the customer",
           "Automatic notification when the vehicle is ready",
           "Direct chat with the customer per request"
@@ -306,7 +306,7 @@
     "ctaFundador": "I want to be a founding partner",
     "saibaMais": "Learn more",
     "mock1Titulo": "New request",
-    "mock1Texto": "Collision - VW Golf 2021 - 3km from you",
+    "mock1Texto": "Collision - VW Golf 2021 - 3 km from you",
     "mock2Titulo": "Quote accepted!",
     "mock2Texto": "Bodywork - Toyota Corolla 2023",
     "mock3Titulo": "New review: 5 stars",
@@ -368,14 +368,14 @@
     "footerSistemaGestao": "Management system and customers",
     "footerSejaParceiro": "Become a founding partner",
     "footerGuiaOficina": "Shop Guide",
-    "footerCentralAjuda": "Help Center",
+    "footerCentralAjuda": "Help Centre",
     "footerContato": "Contact",
     "footerDireitos": "2026 BipFix. All rights reserved.",
     "footerTermos": "Terms of Use",
     "footerPrivacidade": "Privacy",
     "footerSobre": "About BipFix",
     "guiasTitulo": "Guides for drivers",
-    "guiasTexto": "Practical answers before you take your car to a garage.",
+    "guiasTexto": "Practical answers before you take your car to a repair shop.",
     "guiasVerTodos": "See all guides"
   },
   "constants": {
@@ -385,7 +385,7 @@
       "revisao": "Maintenance",
       "mecanica": "Mechanical",
       "eletrica": "Electrical",
-      "pneu": "Tires",
+      "pneu": "Tyres",
       "outro": "Other"
     },
     "urgencias": {
@@ -403,7 +403,7 @@
       "em_andamento": "In Progress",
       "concluida": "Completed",
       "cancelada": "Cancelled",
-      "no_show": "Did not show up"
+      "no_show": "No-show"
     },
     "statusOrcamento": {
       "enviado": "Sent",
@@ -495,16 +495,16 @@
       "outro_problema_eletrico": "Other electrical problem"
     },
     "servicosPneu": {
-      "troca_pneus": "Tire change",
-      "rodizio_pneus": "Tire rotation",
+      "troca_pneus": "Tyre change",
+      "rodizio_pneus": "Tyre rotation",
       "conserto_furo": "Puncture repair",
       "alinhamento": "Alignment",
       "balanceamento": "Balancing",
-      "calibragem": "Tire pressure check",
+      "calibragem": "Tyre pressure check",
       "troca_roda_calota": "Wheel/hubcap change"
     },
     "tiposItem": {
-      "mao_de_obra": "Labor",
+      "mao_de_obra": "Labour",
       "peca": "Part",
       "material": "Material",
       "outro": "Other"
@@ -644,11 +644,11 @@
     "titulo": "Active warranties",
     "diasRestantes": "{dias} days left",
     "ate": "until {data}",
-    "falarComOficina": "Message the workshop",
+    "falarComOficina": "Message the repair shop",
     "noOrcamento": "Warranty: {dias} days from hand-over",
     "sem": "No warranty",
     "documento": "Open the quote document",
-    "conversaEncerrada": "Conversation closed: the job is finished and the warranty has ended (or this workshop was not chosen)."
+    "conversaEncerrada": "Conversation closed: the job is finished and the warranty has ended (or this repair shop was not chosen)."
   },
   "excluirConta": {
     "titulo": "Delete your BipFix account",

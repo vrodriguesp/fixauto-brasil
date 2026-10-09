@@ -342,7 +342,7 @@
       },
       {
         "pergunta": "Que tipos de serviços oferecem as oficinas?",
-        "resposta": "As oficinas na plataforma oferecem uma vasta gama de serviços, como bate-chapa, pintura, mecânica geral, eletricidade automóvel, substituição de vidros, alinhamento de direção, calibragem de rodas, ar condicionado e muito mais. Cada oficina indica as suas especialidades no perfil."
+        "resposta": "As oficinas na plataforma oferecem uma vasta gama de serviços, como bate-chapa, pintura, mecânica geral, eletricidade automóvel, substituição de vidros, alinhamento de direção, equilibragem de rodas, ar condicionado e muito mais. Cada oficina indica as suas especialidades no perfil."
       },
       {
         "pergunta": "Alguma oficina paga para aparecer primeiro?",
@@ -451,7 +451,7 @@
       "verificacao_freios": "Verificação dos travões",
       "troca_pastilhas_freio": "Substituição das pastilhas de travão",
       "troca_discos_freio": "Substituição dos discos de travão",
-      "alinhamento_balanceamento": "Alinhamento de direção e calibragem de rodas",
+      "alinhamento_balanceamento": "Alinhamento de direção e equilibragem de rodas",
       "troca_correia_dentada": "Substituição da correia de distribuição",
       "troca_velas": "Substituição das velas",
       "revisao_suspensao": "Verificação da suspensão",
@@ -465,7 +465,7 @@
       "motor_perda_potencia": "Motor - perda de potência",
       "motor_superaquecimento": "Motor - sobreaquecimento",
       "cambio_dificuldade_engatar": "Caixa de velocidades - dificuldade em engatar",
-      "cambio_barulho_troca_marcha": "Caixa de velocidades - ruído ao mudar de mudança",
+      "cambio_barulho_troca_marcha": "Caixa de velocidades - ruído ao mudar de velocidade",
       "embreagem_patinando": "Embraiagem - a patinar",
       "embreagem_dura": "Embraiagem - dura",
       "freio_barulho_frear": "Travões - ruído ao travar",
@@ -499,7 +499,7 @@
       "rodizio_pneus": "Rotação de pneus",
       "conserto_furo": "Reparação de furo",
       "alinhamento": "Alinhamento de direção",
-      "balanceamento": "Calibragem de rodas",
+      "balanceamento": "Equilibragem de rodas",
       "calibragem": "Verificação da pressão dos pneus",
       "troca_roda_calota": "Substituição de roda/tampão"
     },
@@ -580,9 +580,9 @@
     "entrando": "A iniciar sessão...",
     "naoTemConta": "Ainda não tem conta?",
     "cadastreSe": "Criar conta",
-    "erroNaoConfirmado": "Ainda não confirmou o seu e-mail. Abra a ligação que enviámos no registo para ativar a conta.",
-    "reenviarConfirmacao": "Enviar novamente a ligação de confirmação",
-    "confirmacaoReenviada": "Feito: se a conta estiver a aguardar confirmação, enviámos uma nova ligação.",
+    "erroNaoConfirmado": "Ainda não confirmou o seu e-mail. Abra o link que enviámos no registo para ativar a conta.",
+    "reenviarConfirmacao": "Enviar novamente o link de confirmação",
+    "confirmacaoReenviada": "Feito: se a conta estiver a aguardar confirmação, enviámos um novo link.",
     "erroCredenciais": "E-mail ou palavra-passe incorretos.",
     "erroMuitasTentativas": "Demasiadas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente."
   },
@@ -662,7 +662,7 @@
     "confirmar": "Tem a certeza? Isto não pode ser anulado.",
     "sim": "Sim, eliminar",
     "cancelar": "Cancelar",
-    "feito": "Conta eliminada. Obrigado por ter usado o BipFix.",
+    "feito": "Conta eliminada. Obrigado por ter usado a BipFix.",
     "entrar": "Para eliminar, entre primeiro na conta que pretende apagar.",
     "entrarBotao": "Entrar",
     "erro": "Não foi possível eliminar agora. Tente novamente dentro de alguns minutos.",

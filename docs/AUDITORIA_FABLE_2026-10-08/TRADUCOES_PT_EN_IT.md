@@ -123,3 +123,92 @@ Verificados e OK: `apps/web/src/app/layout.tsx:29` (título pt é sobrescrito po
 ## Nota sobre edições concorrentes
 
 Durante a auditoria, outro processo acrescentou chaves aos arquivos de idioma (`constants.statusSolicitacao.no_show`, `erros.CONTA_EXISTENTE`, site e app) e alterou `lib/entrega.ts` e rotas de API. Não há conflito com os achados acima (todas as strings apontadas continuam presentes). Uma observação sobre o texto novo: **en `constants.statusSolicitacao.no_show` = "Did not show up"** enquanto `constants.noShow.no_show` / `oficinaAgenda.naoCompareceu` já usam "No-show" — padronizar em "No-show" (Baixo). As demais línguas novas estão coerentes ("Não compareceu", "Non si è presentato").
+
+
+---
+
+## Correções aplicadas (09/10)
+
+Aplicado em `apps/web/messages/{pt,pt-PT,en,it}*.json`, `apps/mobile/i18n/locales/{pt-PT,en,it}.json` e nos mapas de idioma `apps/web/src/lib/{email-i18n,notif-i18n}.ts`, `apps/mobile/lib/notif-i18n.ts`, `apps/web/src/app/api/registrar-no-show/route.ts`. Só valores de texto foram alterados (nenhuma chave renomeada/removida, placeholders e ICU mantidos). Verificações: `node apps/web/scripts/checar-traducoes.mjs`, `node apps/mobile/scripts/checar-traducoes.mjs`, `npx tsc --noEmit -p apps/web`, `npx tsc --noEmit -p apps/mobile` — todos passam.
+
+Decisão transversal para o **en**: grafia **britânica** em todo o site e app (mercado UE), ao contrário da sugestão original de "americanizar" — 44 valores convertidos por script (organise/recognise/itemise/prioritise, colour, neighbourhood, centre, catalogue, labour, tyre, "number plate", "postal code"); "analyse/recognise/authorised/specialising/finalising" ficaram como estavam. Termo único para oficina: **repair shop** (ver EN-05).
+
+### pt (Brasil) — 13 valores
+
+| ID | Estado | Observação |
+|---|---|---|
+| PT-01 | aplicado | "o BipFix" nas 6 ocorrências encontradas com artigo feminino (`pt.loja.json` 1, `pt.oficina.json` 5). |
+| PT-02 | sem ação | Conforme o relatório. |
+| PT-03 | aplicado | "Voltar ao painel" (×2). |
+| PT-04 | aplicado | "áudio" nas 4 chaves. |
+| PT-05 | aplicado | "Organize quem vai cuidar de cada veículo antes mesmo dele chegar. Escolha o responsável no seletor de cada card." |
+
+### pt-PT — 35 valores (site 25, app 10) + bloco `pt-PT` em todos os dicionários `.ts`
+
+| ID | Estado | Observação |
+|---|---|---|
+| PTPT-01 | aplicado | "Equilibragem de rodas" (3 chaves). |
+| PTPT-02 | aplicado | "…ruído ao mudar de velocidade". |
+| PTPT-03 | aplicado | "link" em todas as chaves do site (`login.*`, `cadastro.*`, `confirmarEmail.*`) e do app (`auth.*`, `emergencia.contatoTexto/sucessoSemConta`). |
+| PTPT-04 | aplicado | "Tallinn". |
+| PTPT-05 | aplicado | "Alterar a marcação". |
+| PTPT-06 | aplicado | "Prateado" (cliente ×2 e `oficinaCheckin.placeholderCor`). |
+| PTPT-07 | aplicado | "10111". |
+| PTPT-08 | aplicado | "{dia} de {mes} de {ano}". |
+| PTPT-09 | aplicado | "a BipFix": `excluirConta.feito` (site), `perfil.excluirContaFeita` e `orcamentos.semAvaliacoes` ("Nova na BipFix") no app. As restantes "masculinas" do grep são "Comissão BipFix"/"aplicação BipFix" (sem artigo na marca) — mantidas. |
+| PTPT-10 | aplicado | "nome@email.com" e "Eu". |
+| PTPT-11 | aplicado | `EmailLocale`/`resolveEmailLocale` aceitam `pt-PT` (e `ru`); 15 dicionários em `email-i18n.ts` e 31 em `notif-i18n.ts` com bloco `pt-PT` (matrícula, aceite, registou, reparação marcada, falta registada, encomenda, palavra-passe, sem "você"); `apps/mobile/lib/notif-i18n.ts` com `pt-PT` ("Novo pedido!", tipos de serviço) e `registrar-no-show` com `'pt-PT': 'o seu veículo'`. |
+
+### en — 96 valores (44 pela passagem UK + 52 pontuais; site 87, app 9)
+
+| ID | Estado | Observação |
+|---|---|---|
+| EN-01 | aplicado | "Tallinn". |
+| EN-02 | aplicado | "Postal code" / "10111". |
+| EN-03 | aplicado | "Postal code" nas 3 chaves de `cadastro`. |
+| EN-04 | aplicado (sentido inverso) | Padronizado em **UK** (ver nota acima), em vez de US. |
+| EN-05 | aplicado (parcial) | "repair shop" em `garantia.*`, `paraOficinas.funcCategorias.1.itens.0`, `home.guiasTexto`, cliente (`horariosVencidos`, `verOficina` ×2, `escolherOficinaTitulo/Texto`, `semConversaAinda`, `completarCarroDica`), oficina (`darAcessoPortalDica`, `seguradorasTexto`, `paginaPublicaAposAprovacao`, `feitoPorOficina`), docs (`s3Outro`, `s5Items.0`, `s5Outro`, `s7Steps.2`, `docsOficina.s3Steps.0`, `s4Items.2`, `s5Steps.2`), `cadastro.*` (7 chaves) e app (9 chaves). Mantidos: `nav.oficina`/"Open Workshop in the menu" (nome do item de menu, mesma exceção do ru) e as `metaKeywords`/`home.metaTitle` com "garage" (termos de pesquisa SEO). |
+| EN-06 | aplicado | "3 km from you". |
+| EN-07 | aplicado | "Scheduled". |
+| EN-08 | aplicado | "Bodywork" (×2). |
+| EN-09 | aplicado | "Stage logged", "logs the stages", "log stages" (×2). |
+| EN-10 | aplicado | "{raio} km" (×2). |
+| EN-11 | aplicado | "Mon–Fri: 08:00–18:00", "Sat: 08:00–12:00". |
+| Nota concorrente | aplicado | `constants.statusSolicitacao.no_show` = "No-show". |
+
+### it — 69 valores (site 63, app 6) + 1 linha em `notif-i18n.ts`
+
+| ID | Estado | Observação |
+|---|---|---|
+| IT-01 | aplicado | "partner fondatore/i" nas 17 ocorrências de `it.json`. |
+| IT-02 | aplicado | "Tempi:" / "Tempi: {days, plural, …}" (×3). |
+| IT-03 | aplicado | "Provincia" (`selecioneUf`, `lojaPerfil.labelEstado`, tutoriais da loja). |
+| IT-04 | aplicado | "Informativa sulla privacy" (`cadastro.*` e `cookieBanner.linkPrivacidade`). |
+| IT-05 | aplicado | "Nome commerciale" (loja: rótulo e tutorial). |
+| IT-06 | aplicado | "Finanze". |
+| IT-07 | aplicado | "CAP" / "10111". |
+| IT-08 | aplicado | "a 3 km da te". |
+| IT-09 | aplicado | "Torna alla dashboard" (×3). |
+| IT-10 | aplicado | "Tallinn", "Es: Contea di Harju", "Es: +372 5555 5555". |
+| IT-11 | aplicado | "In lavorazione" (3 chaves). |
+| IT-12 | aplicado | "aliquota" em `oficinaComissao.*` (7 chaves), tutoriais da oficina (2) e da loja (1); `comissaoPecasCard` já usava. |
+| IT-13 | aplicado | "Impianto elettrico". |
+| IT-14 | aplicado | "Resp." / "Chat". |
+| IT-15 | aplicado | "Note". |
+| IT-16 | aplicado | "recensione" em `avaliacaoPendente.texto/bloqueioTitulo` (site) e `avaliacao.enviar/obrigado/pendenteTexto/jaAvaliado` (app). "valutazione dell'officina" em `docsCliente.s3Intro` mantido (é a nota). |
+| IT-17 | aplicado | "Un'officina vicino a te…" |
+| IT-18 | aplicado (parcial) | "Ho avuto un incidente" no app e em `naoEncontrado.emergencia`, `avaliacaoPendente.acidente`. `auth.reenviarLink` mantido (aceitável, conforme o relatório). |
+
+### Todas as línguas
+
+| ID | Estado | Observação |
+|---|---|---|
+| ALL-01 | **não aplicado** | O guia da oficina (`docsOficina.s8*`) descreve a política de comissão (cobrança mensal, redução de 30 %) — é conteúdo de negócio, não tradução; reescrever nas 6 línguas exige decisão do dono sobre o que o guia deve prometer. Fica pendente. |
+| ALL-02 | aplicado | `docsCliente.s3Outro` cita o rótulo real em pt-PT ("Enviar mensagem à oficina"), en ("Message the repair shop"), it ("Scrivi all'officina") e ru ("Написать автосервису"). |
+| ALL-03 | aplicado | `fornecedorSemNome` por idioma em `notif-i18n.ts` (O fornecedor / The supplier / Tarnija / Il fornitore / Поставщик). |
+
+### Strings fixas em código — não tocadas (fora do escopo desta leva)
+- HC-01 · `apps/mobile/lib/auth-context.tsx:35` e `:66` — mensagens de erro em pt ("Este app é exclusivo para clientes…", "Esta conta foi desativada…").
+- HC-02 · `apps/web/src/components/pecas/ChatCotacaoPeca.tsx:153` (`alt="Foto enviada"`) e `:183` (`title="Enviar foto"`).
+- HC-03 · `apps/web/src/components/layout/Navbar.tsx:66-69` e `:191-194` — links do admin em pt (aceitável por design).
+- HC-04 · `apps/web/src/hooks/use-orcamentos.ts:112` + `api/aceitar-orcamento/route.ts:56` — `error` cru em pt em vez de `codigo`.

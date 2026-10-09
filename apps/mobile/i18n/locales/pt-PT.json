@@ -49,12 +49,12 @@
     "privacidade": "Política de Privacidade",
     "senhaCurta": "A palavra-passe tem de ter pelo menos 8 caracteres.",
     "verifiqueTitulo": "Verifique o seu e-mail",
-    "verifiqueTexto": "Enviámos uma ligação de confirmação para {email}. Abra o e-mail e toque na ligação para ativar a sua conta.",
+    "verifiqueTexto": "Enviámos um link de confirmação para {email}. Abra o e-mail e toque no link para ativar a sua conta.",
     "verifiqueDepois": "Depois de confirmar, volte à aplicação e inicie sessão com o seu e-mail e palavra-passe. Se não encontrar o e-mail, veja também a pasta de spam.",
     "irLogin": "Ir para o início de sessão",
-    "naoConfirmado": "Ainda não confirmou o seu e-mail. Abra a ligação que enviámos no registo para ativar a conta.",
-    "reenviarLink": "Enviar novamente a ligação de confirmação",
-    "linkReenviado": "Feito: se a conta estiver a aguardar confirmação, enviámos uma nova ligação.",
+    "naoConfirmado": "Ainda não confirmou o seu e-mail. Abra o link que enviámos no registo para ativar a conta.",
+    "reenviarLink": "Enviar novamente o link de confirmação",
+    "linkReenviado": "Feito: se a conta estiver a aguardar confirmação, enviámos um novo link.",
     "muitasTentativas": "Demasiadas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.",
     "dadosInvalidos": "Verifique os dados introduzidos.",
     "slogan": "Orçamentos de oficinas perto de si, em minutos.",
@@ -66,8 +66,10 @@
     "mostrarSenha": "Mostrar palavra-passe",
     "ocultarSenha": "Ocultar palavra-passe",
     "confirmando": "A confirmar o seu e-mail…",
-    "linkInvalidoTitulo": "Esta ligação já não é válida",
-    "linkInvalidoTexto": "A ligação é válida durante 1 hora e só pode ser usada uma vez. Tente iniciar sessão: iremos oferecer uma nova ligação."
+    "linkInvalidoTitulo": "Este link já não é válido",
+    "linkInvalidoTexto": "O link é válido durante 1 hora e só pode ser usado uma vez. Tente iniciar sessão: iremos oferecer um novo link.",
+    "tipoNaoSuportado": "Esta app é para condutores. Oficinas e lojas entram pelo site bipfix.com.",
+    "contaDesativada": "Esta conta foi desativada. Contacte o apoio do BipFix."
   },
   "emergencia": {
     "titulo": "Acabei de bater",
@@ -93,8 +95,8 @@
     "optionSemOutroDesc": "Ex.: bati num poste, num muro, etc.",
     "fotoDica": "Dica: fotografe os 4 cantos do carro, o dano de perto e a matrícula do outro veículo.",
     "contatoTitulo": "Os seus dados de contacto",
-    "contatoTexto": "Enviamos-lhe os orçamentos e uma ligação por e-mail para criar a sua palavra-passe.",
-    "sucessoSemConta": "As oficinas próximas já foram avisadas. Enviámos para {email} uma ligação para criar a sua palavra-passe e acompanhar os orçamentos.",
+    "contatoTexto": "Enviamos-lhe os orçamentos e um link por e-mail para criar a sua palavra-passe.",
+    "sucessoSemConta": "As oficinas próximas já foram avisadas. Enviámos para {email} um link para criar a sua palavra-passe e acompanhar os orçamentos.",
     "voltarInicio": "Voltar ao início",
     "galeria": "Galeria",
     "localNegadaTitulo": "Localização desativada",
@@ -151,7 +153,7 @@
     "entregaPrevista": "entrega prevista: {data}",
     "verOficina": "Ver a oficina (avaliações, morada)",
     "escolhido": "Orçamento escolhido",
-    "semAvaliacoes": "Nova no BipFix",
+    "semAvaliacoes": "Nova na BipFix",
     "avaliacoes": "{nota} ★ ({n} avaliações)"
   },
   "acompanhamento": {
@@ -163,7 +165,8 @@
     "completarCarro": "Complete os dados do carro",
     "completarCarroDica": "Marca, modelo e matrícula ajudam a oficina a fazer o orçamento. Toque para completar.",
     "editarPedido": "Editar pedido",
-    "descricaoPedido": "Descrição"
+    "descricaoPedido": "Descrição",
+    "naoEncontrado": "Este pedido já não existe ou não está disponível."
   },
   "avaliacao": {
     "titulo": "Avalie o serviço",
@@ -259,7 +262,7 @@
     "excluirContaConfirmar": "Tem a certeza? Isto não pode ser anulado.",
     "excluirContaSim": "Sim, eliminar",
     "excluirContaEmServico": "Tem um carro na oficina neste momento. Elimine a conta depois da entrega.",
-    "excluirContaFeita": "Conta eliminada. Obrigado por ter usado o BipFix.",
+    "excluirContaFeita": "Conta eliminada. Obrigado por ter usado a BipFix.",
     "excluirContaErro": "Não foi possível eliminar agora. Tente novamente dentro de alguns minutos.",
     "excluirContaDetalhes": "O histórico de serviços já feitos fica anónimo (sem os seus dados), porque também pertence à oficina (garantia e contabilidade)."
   },

@@ -40,8 +40,8 @@
     "addButton": "+ Add Vehicle",
     "editTitle": "Edit Vehicle",
     "newTitle": "New Vehicle",
-    "plateLabel": "License plate (optional)",
-    "colorLabel": "Color (optional)",
+    "plateLabel": "Number plate (optional)",
+    "colorLabel": "Colour (optional)",
     "placeholderColor": "Silver",
     "nicknameLabel": "Name to recognise this vehicle (optional) – e.g. \"Work car\"",
     "placeholderNickname": "My car",
@@ -51,7 +51,7 @@
     "add": "Add",
     "noVehicles": "No vehicles registered yet",
     "yearLabel": "Year: {year}",
-    "colorInline": "| Color: {color}",
+    "colorInline": "| Colour: {color}",
     "plateInline": "| Plate: {plate}"
   },
   "clienteHistorico": {
@@ -104,8 +104,8 @@
     "pageTitle": "New Request",
     "pageSubtitle": "Describe your vehicle's problem to receive quotes",
     "step1Title": "Select your vehicle",
-    "plateLabel": "License plate (optional)",
-    "colorLabel": "Color (optional)",
+    "plateLabel": "Number plate (optional)",
+    "colorLabel": "Colour (optional)",
     "placeholderColor": "Silver",
     "nicknameLabel": "Name to recognise this vehicle (optional) – e.g. \"Work car\"",
     "placeholderNickname": "My car",
@@ -133,7 +133,7 @@
     "urgencyLabel": "Urgency",
     "step5Title": "Location and confirmation",
     "addressLabel": "Address / Area",
-    "placeholderAddress": "Neighborhood, city",
+    "placeholderAddress": "Neighbourhood, city",
     "addressHelp": "Repair shops near this address will be notified",
     "summaryTitle": "Request summary",
     "vehicleLabel": "Vehicle:",
@@ -142,7 +142,8 @@
     "photosLabel": "Photos:",
     "photosCount": "{count, plural, one {# photo} other {# photos}}",
     "servicesLabel": "Services:",
-    "sendRequest": "Send Request"
+    "sendRequest": "Send Request",
+    "erroLocalizacao": "We couldn't find that address. Pick one of the suggestions or allow location."
   },
   "clienteOrcamentos": {
     "title": "Quotes",
@@ -233,10 +234,10 @@
     "acceptAndSchedule": "Accept and Schedule",
     "escolhaHorarioDica": "Tap the day and time you will bring the car to the shop.",
     "escolhaHorarioAntes": "Choose a time above",
-    "horariosVencidos": "The offered times have passed. Ask the workshop for new dates by message.",
+    "horariosVencidos": "The offered times have passed. Ask the repair shop for new dates by message.",
     "convencionadaComSeguradora": "Works with {seguradora}",
     "escolhido": "Chosen quote",
-    "verOficina": "See the garage (reviews, address)"
+    "verOficina": "See the repair shop (reviews, address)"
   },
   "clienteMensagens": {
     "workshopFallback": "Repair shop",
@@ -269,11 +270,11 @@
     "recordAudio": "Record audio",
     "erroEnviar": "Could not send. Your message is still in the box; please try again.",
     "voltarConversas": "Conversations",
-    "escolherOficinaTitulo": "Which workshop?",
-    "escolherOficinaTexto": "Each workshop has its own conversation with you.",
-    "semConversaAinda": "No workshop has written yet. When a workshop sends a quote or a message, the conversation will appear here.",
+    "escolherOficinaTitulo": "Which repair shop?",
+    "escolherOficinaTexto": "Each repair shop has its own conversation with you.",
+    "semConversaAinda": "No repair shop has written yet. When a repair shop sends a quote or a message, the conversation will appear here.",
     "pagadorSubtitulo": "Repair payment (accident)",
-    "verOficina": "See the garage"
+    "verOficina": "See the repair shop"
   },
   "clienteAcompanhamento": {
     "progressRecebido": "Received",
@@ -334,7 +335,7 @@
   "editarPedido": {
     "acidente": "Accident",
     "completarCarro": "Add your car details",
-    "completarCarroDica": "Make, model and plate help the workshop prepare the quote. Tap to add.",
+    "completarCarroDica": "Make, model and plate help the repair shop prepare the quote. Tap to add.",
     "editar": "Edit request",
     "marca": "Make",
     "modelo": "Model",

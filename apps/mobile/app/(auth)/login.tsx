@@ -37,6 +37,10 @@ export default function LoginScreen() {
         setErro(t('auth.credenciaisInvalidas'));
       } else if (error.startsWith('over_')) {
         setErro(t('auth.muitasTentativas'));
+      } else if (error === 'tipo_nao_suportado') {
+        setErro(t('auth.tipoNaoSuportado'));
+      } else if (error === 'conta_desativada') {
+        setErro(t('auth.contaDesativada'));
       } else {
         setErro(t('common.erroGenerico'));
       }

@@ -31,10 +31,10 @@
       },
       "perfil": {
         "titulo": "Profilo del negozio",
-        "resumo": "Completa i dati del tuo negozio — indirizzo, città, stato e CAP corretti sono importanti, anche se oggi non filtrano ancora i preventivi che vedi (tutti i preventivi aperti sulla piattaforma ti vengono mostrati, senza filtro di distanza o paese per ora).",
+        "resumo": "Completa i dati del tuo negozio — indirizzo, città, provincia e CAP corretti sono importanti, anche se oggi non filtrano ancora i preventivi che vedi (tutti i preventivi aperti sulla piattaforma ti vengono mostrati, senza filtro di distanza o paese per ora).",
         "passosGuiados": [
           "Apri Profilo dal menu.",
-          "Controlla/modifica ragione sociale, partita IVA, indirizzo, città e stato.",
+          "Controlla/modifica nome commerciale, partita IVA, indirizzo, città e provincia.",
           "Clicca su \"Salva\"."
         ],
         "desafio": "Completa la registrazione del tuo negozio in modo corretto (niente \"Da definire\" nell'indirizzo)."
@@ -78,7 +78,7 @@
         "resumo": "Attualmente l'uso di BipFix è gratuito per i rivenditori. Se in futuro verrà introdotto un costo sulle vendite di ricambi, sarai avvisato con 30 giorni di calendario di anticipo — e si applicherà solo agli ordini segnati come consegnati, mai prima.",
         "passosGuiados": [
           "Apri Commissione dal menu.",
-          "Guarda la tua percentuale attuale, cosa è in sospeso e cosa è già stato pagato."
+          "Guarda la tua aliquota attuale, cosa è in sospeso e cosa è già stato pagato."
         ],
         "desafio": "Verifica quale condizione vale oggi per il tuo negozio.",
         "linkRotulo": "Vai alla mia commissione →"
@@ -166,16 +166,16 @@
     "labelEmail": "Email",
     "labelTelefone": "Telefono",
     "dadosLojaTitulo": "Dati del negozio",
-    "labelNomeFantasia": "Ragione sociale",
+    "labelNomeFantasia": "Nome commerciale",
     "labelCnpj": "Partita IVA",
-    "labelCep": "CAP (CEP)",
-    "cepPlaceholder": "00000-000",
+    "labelCep": "CAP",
+    "cepPlaceholder": "10111",
     "buscandoCep": "Ricerca indirizzo...",
     "cepErro": "CAP non trovato - controlla il numero o inserisci l'indirizzo manualmente",
     "labelEndereco": "Indirizzo",
     "enderecoPlaceholder": "Via, numero",
     "labelCidade": "Città",
-    "labelEstado": "Stato",
+    "labelEstado": "Provincia",
     "labelRaio": "Raggio di servizio (km)",
     "salvarButton": "Salva",
     "salvandoButton": "Salvataggio...",

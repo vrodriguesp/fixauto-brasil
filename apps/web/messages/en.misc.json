@@ -398,10 +398,10 @@
     "cameraLabel": "Camera",
     "galleryLabel": "Gallery",
     "photoAlt": "Photo {number}",
-    "plateLabel": "Your vehicle's license plate",
+    "plateLabel": "Your vehicle's number plate",
     "platePlaceholder": "123 ABC",
-    "vehicleYearColor": "Year: {ano} | Color: {cor}",
-    "plateNotFoundText": "License plate not found. Enter make and model:",
+    "vehicleYearColor": "Year: {ano} | Colour: {cor}",
+    "plateNotFoundText": "Number plate not found. Enter make and model:",
     "plateNotFoundPlaceholder": "E.g.: Fiat Argo",
     "descriptionLabel": "Describe what happened (optional)",
     "descriptionPlaceholder": "E.g.: I hit the car in front of me at a red light...",
@@ -425,7 +425,7 @@
     "step3Title": "Location",
     "step3Subtitle": "Where are you?",
     "addressLabel": "Address / Area",
-    "addressPlaceholder": "Street, neighborhood or landmark",
+    "addressPlaceholder": "Street, neighbourhood or landmark",
     "useCurrentLocationBtn": "Use my current location",
     "summaryTitle": "Summary",
     "summaryPhotos": "{count} photo(s) of the accident",
@@ -450,7 +450,7 @@
     "phonePlaceholder": "+372 5555 5555",
     "emailLabel": "Email",
     "emailPlaceholder": "email@email.com",
-    "plateLabel": "Vehicle license plate *",
+    "plateLabel": "Vehicle number plate *",
     "platePlaceholder": "123 ABC",
     "vehicleLabel": "Vehicle (make/model)",
     "vehiclePlaceholder": "E.g.: Fiat Argo",
@@ -465,7 +465,7 @@
     "vehicleFieldLabel": "Vehicle:",
     "yearFieldLabel": "Year:",
     "plateFieldLabel": "Plate:",
-    "colorFieldLabel": "Color:",
+    "colorFieldLabel": "Colour:",
     "phoneFieldLabel": "Phone:",
     "notInformed": "Not provided",
     "requestRegisteredNote": "Request registered",
@@ -514,9 +514,9 @@
     "semAcessoEntrar": "Sign in"
   },
   "docsHome": {
-    "metaTitle": "Help Center",
+    "metaTitle": "Help Centre",
     "metaDescription": "Get answers about how to use the BipFix platform. Complete guides for drivers and repair shops.",
-    "heroTitle": "BipFix Help Center",
+    "heroTitle": "BipFix Help Centre",
     "heroSubtitle": "Everything you need to know to use the platform, whether you're a driver or a repair shop.",
     "clienteCardTitle": "Driver Guide",
     "clienteCardText": "Learn how to create requests, compare quotes, schedule services and track your vehicle's repair in real time.",
@@ -529,12 +529,12 @@
   },
   "docsLayout": {
     "backToSite": "Back to site",
-    "helpCenterLink": "Help Center",
+    "helpCenterLink": "Help Centre",
     "footerContactText": "Still have questions? Contact us by email at <mailLink>support@bipfix.com</mailLink>.",
     "footerCopyright": "2026 BipFix. All rights reserved."
   },
   "docsCliente": {
-    "pageBackLink": "Back to Help Center",
+    "pageBackLink": "Back to Help Centre",
     "pageTitle": "Driver Guide",
     "pageSubtitle": "Everything you need to know to find the best repair shop, compare quotes and track your vehicle's repair.",
     "s1Title": "1. How to sign up",
@@ -554,7 +554,7 @@
       },
       {
         "title": "Add your vehicle",
-        "desc": "Add the make, model, year and license plate of your vehicle. You can add more than one."
+        "desc": "Add the make, model, year and number plate of your vehicle. You can add more than one."
       }
     ],
     "s2Title": "2. How to create a request",
@@ -582,7 +582,7 @@
       }
     ],
     "s3Title": "3. How to compare quotes",
-    "s3Intro": "When repair shops send quotes, you can easily compare them. Each quote shows the total price, estimated timeline, itemized details and the shop's rating.",
+    "s3Intro": "When repair shops send quotes, you can easily compare them. Each quote shows the total price, estimated timeline, itemised details and the shop's rating.",
     "s3BadgesLabel": "Featured badges:",
     "s3Badges": [
       {
@@ -598,7 +598,7 @@
         "desc": "Indicates the repair shop is open to negotiating the quote amount."
       }
     ],
-    "s3Outro": "Use the filters to sort by price, time or rating. Each workshop has its own conversation with you (tap \"Message the workshop\" on the quote). The \"Works with your insurer\" badge appears when the workshop works with your insurance.",
+    "s3Outro": "Use the filters to sort by price, time or rating. Each repair shop has its own conversation with you (tap \"Message the repair shop\" on the quote). The \"Works with your insurer\" badge appears when the repair shop works with your insurance.",
     "s4Title": "4. How to schedule the service",
     "s4Intro": "After comparing quotes, choose the one that best fits your needs:",
     "s4Steps": [
@@ -620,7 +620,7 @@
     "s5Items": [
       {
         "label": "Check-in",
-        "desc": "When the vehicle reaches the workshop, the team records the arrival and you get a notice."
+        "desc": "When the vehicle reaches the repair shop, the team records the arrival and you get a notice."
       },
       {
         "label": "In progress",
@@ -639,7 +639,7 @@
         "desc": "The repair shop logs the vehicle's departure and marks the service as finished."
       }
     ],
-    "s5Outro": "In the app, notices appear at the top of the screen, with numbers on the tabs. You can also follow everything on the request page. When the job is finished, conversations with the other workshops close. The chosen workshop’s stays open until the warranty ends, and the countdown appears on your home screen.",
+    "s5Outro": "In the app, notices appear at the top of the screen, with numbers on the tabs. You can also follow everything on the request page. When the job is finished, conversations with the other repair shops close. The chosen repair shop’s stays open until the warranty ends, and the countdown appears on your home screen.",
     "s6Title": "6. How to rate the service",
     "s6Intro": "When the car is handed back, rate the repair shop: it helps other drivers. The review is required before a new request (like Uber); the accident button is never blocked.",
     "s6Steps": [
@@ -670,7 +670,7 @@
       },
       {
         "title": "Automatic location",
-        "desc": "The system uses GPS to find nearby workshops and fills in the address with the street. The tips on what to do follow the country of the accident."
+        "desc": "The system uses GPS to find nearby repair shops and fills in the address with the street. The tips on what to do follow the country of the accident."
       },
       {
         "title": "Fast quotes",
@@ -684,7 +684,7 @@
     "metaDescription": "Learn how to use BipFix to request repairs, compare quotes from repair shops and track your vehicle's repair in real time."
   },
   "docsOficina": {
-    "pageBackLink": "Back to Help Center",
+    "pageBackLink": "Back to Help Centre",
     "pageTitle": "Repair Shop Guide",
     "pageSubtitle": "Learn how to use all of BipFix's tools to attract customers, manage services and grow your business.",
     "s1Title": "1. How to register your repair shop",
@@ -734,7 +734,7 @@
     "s3Steps": [
       {
         "title": "Review the request",
-        "desc": "Look at the photos and description. You can chat with the customer before quoting: each workshop has its own conversation, which the others cannot see."
+        "desc": "Look at the photos and description. You can chat with the customer before quoting: each repair shop has its own conversation, which the others cannot see."
       },
       {
         "title": "Add items to the quote",
@@ -767,7 +767,7 @@
       },
       {
         "label": "Assignment",
-        "desc": "Assign each vehicle to a mechanic if you want. With no mechanics registered, the workshop does everything itself. Every change is kept in the history."
+        "desc": "Assign each vehicle to a mechanic if you want. With no mechanics registered, the repair shop does everything itself. Every change is kept in the history."
       },
       {
         "label": "Check-out",
@@ -780,7 +780,7 @@
     "s5Steps": [
       {
         "title": "Add staff",
-        "desc": "Register mechanics with just their name, or give portal access (email and temporary password) to those who will record steps on their phone. Access can be given later."
+        "desc": "Register mechanics with just their name, or give portal access (email and temporary password) to those who will log stages on their phone. Access can be given later."
       },
       {
         "title": "First login",
@@ -788,7 +788,7 @@
       },
       {
         "title": "Assign vehicles",
-        "desc": "Assign vehicles to mechanics. A mechanic with access only sees their own vehicles. The workshop owner can record steps on behalf of any mechanic."
+        "desc": "Assign vehicles to mechanics. A mechanic with access only sees their own vehicles. The repair shop owner can log stages on behalf of any mechanic."
       },
       {
         "title": "Role-based permissions",
@@ -896,8 +896,8 @@
     "phoneLabel": "Phone",
     "phoneNotInformed": "Not provided",
     "hoursLabel": "Business hours",
-    "hoursWeekdays": "Mon to Fri: 8:00 AM - 6:00 PM",
-    "hoursSaturday": "Sat: 8:00 AM - 12:00 PM",
+    "hoursWeekdays": "Mon–Fri: 08:00–18:00",
+    "hoursSaturday": "Sat: 08:00–12:00",
     "hoursSunday": "Sun: Closed",
     "hoursClosed": "Closed",
     "hoursNotInformed": "Opening hours not provided",

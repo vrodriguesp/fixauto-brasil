@@ -41,16 +41,16 @@
     "cliente": "Cliente"
   },
   "sejaParceiro": {
-    "metaTitle": "Diventa un Socio Fondatore",
-    "metaDescription": "BipFix è in fase di selezione di officine e negozi di ricambi soci fondatori. Posti limitati, nessuna commissione in questa fase. Registra il tuo interesse.",
-    "ogTitle": "Diventa un Socio Fondatore",
-    "ogDescription": "BipFix è in fase di selezione di officine e negozi di ricambi soci fondatori. Posti limitati, nessuna commissione in questa fase.",
-    "heroTag": "FASE DI SELEZIONE DEI SOCI FONDATORI",
+    "metaTitle": "Diventa un Partner Fondatore",
+    "metaDescription": "BipFix è in fase di selezione di officine e negozi di ricambi partner fondatori. Posti limitati, nessuna commissione in questa fase. Registra il tuo interesse.",
+    "ogTitle": "Diventa un Partner Fondatore",
+    "ogDescription": "BipFix è in fase di selezione di officine e negozi di ricambi partner fondatori. Posti limitati, nessuna commissione in questa fase.",
+    "heroTag": "FASE DI SELEZIONE DEI PARTNER FONDATORI",
     "heroTitulo": "Stiamo costruendo qualcosa di nuovo nel settore delle riparazioni auto — e vogliamo te tra i primi",
     "heroTexto": "BipFix è ancora un progetto ambizioso nella sua fase iniziale, senza migliaia di utenti — ed è proprio per questo che chi entra ora aiuta a plasmare la piattaforma e si assicura condizioni che non si ripeteranno in futuro.",
-    "beneficiosTitulo": "Cosa significa essere un socio fondatore",
+    "beneficiosTitulo": "Cosa significa essere un partner fondatore",
     "beneficio1Titulo": "Nessuna commissione in questa fase",
-    "beneficio1Texto": "I soci fondatori usano l'intero sistema di gestione e acquisizione clienti senza pagare commissioni, con un preavviso di 30 giorni prima di qualsiasi cambiamento futuro.",
+    "beneficio1Texto": "I partner fondatori usano l'intero sistema di gestione e acquisizione clienti senza pagare commissioni, con un preavviso di 30 giorni prima di qualsiasi cambiamento futuro.",
     "beneficio2Titulo": "Voce in capitolo sul prodotto",
     "beneficio2Texto": "Come uno dei primi, il tuo feedback diretto contribuisce a decidere quali funzionalità arriveranno sulla piattaforma.",
     "beneficio3Titulo": "Posti limitati per regione",
@@ -64,16 +64,16 @@
     "placeholderNegocioOficina": "Es: Autofficina Rossi",
     "placeholderNegocioLoja": "Es: Ricambi Milano",
     "campoCidade": "Città",
-    "placeholderCidade": "Es: Milano",
+    "placeholderCidade": "Es: Tallinn",
     "campoRegiao": "Provincia/Regione",
-    "placeholderRegiao": "Es: Lombardia",
+    "placeholderRegiao": "Es: Contea di Harju",
     "campoWhatsapp": "WhatsApp / Telefono",
-    "placeholderWhatsapp": "Es: +39 333 123 4567",
+    "placeholderWhatsapp": "Es: +372 5555 5555",
     "campoEmail": "Email (facoltativo)",
     "campoObservacao": "Vuoi aggiungere altro? (facoltativo)",
     "placeholderObservacao": "Es: numero di dipendenti, specializzazioni...",
     "enviando": "Invio in corso...",
-    "enviar": "Voglio diventare socio fondatore",
+    "enviar": "Voglio diventare partner fondatore",
     "concordaTermos": "Inviando accetti i nostri",
     "termosDeUso": "Termini di Utilizzo",
     "erroObrigatorio": "Compila tutti i campi obbligatori",
@@ -106,9 +106,9 @@
     "ogDescription": "Organizza la tua officina e fatti trovare dagli automobilisti della tua zona che hanno bisogno di riparazioni. Registrazione gratuita.",
     "heroTitulo": "Gestione organizzata e più clienti per la tua officina meccanica",
     "heroTexto": "BipFix è il sistema di gestione che organizza agenda, preventivi e team della tua officina — e allo stesso tempo ti mette in vetrina agli automobilisti della tua zona che cercano una riparazione proprio adesso.",
-    "ctaFundador": "Voglio diventare socio fondatore",
+    "ctaFundador": "Voglio diventare partner fondatore",
     "ctaVerOficinas": "Vedi le officine sulla piattaforma",
-    "heroFootnote": "Nessun canone mensile. Nessuna commissione per i soci fondatori.",
+    "heroFootnote": "Nessun canone mensile. Nessuna commissione per i partner fondatori.",
     "funcTitulo": "Tutto quello che la tua officina ha con BipFix",
     "funcSubtitulo": "Un riepilogo rapido di ogni funzionalità — senza giri di parole",
     "funcCategorias": [
@@ -151,7 +151,7 @@
         ]
       },
       {
-        "titulo": "Finanza",
+        "titulo": "Finanze",
         "itens": [
           "Commissione configurabile in base a performance e fedeltà",
           "Estratto conto e movimenti della commissione",
@@ -215,13 +215,13 @@
       }
     ],
     "transparenciaTitulo": "Trasparenza sui costi",
-    "transparenciaTexto": "Oggi la registrazione e l'uso del sistema di gestione sono gratuiti, e non applichiamo commissioni ai soci fondatori. Se questo cambiasse in futuro, sarai avvisato con almeno 30 giorni di anticipo prima che qualsiasi addebito entri in vigore, secondo i nostri",
+    "transparenciaTexto": "Oggi la registrazione e l'uso del sistema di gestione sono gratuiti, e non applichiamo commissioni ai partner fondatori. Se questo cambiasse in futuro, sarai avvisato con almeno 30 giorni di anticipo prima che qualsiasi addebito entri in vigore, secondo i nostri",
     "transparenciaTermosLink": "Termini di Utilizzo",
     "faqTitulo": "Domande frequenti delle officine",
     "faq": [
       {
         "pergunta": "Quanto costa il sistema di gestione BipFix per la mia officina?",
-        "resposta": "La registrazione e l'uso degli strumenti di gestione (agenda, preventivi, team, recensioni) non hanno canone mensile. Oggi non applichiamo commissioni ai soci fondatori. Se questo dovesse cambiare in futuro, avviseremo con almeno 30 giorni di anticipo prima di qualsiasi addebito, secondo i nostri Termini di Utilizzo."
+        "resposta": "La registrazione e l'uso degli strumenti di gestione (agenda, preventivi, team, recensioni) non hanno canone mensile. Oggi non applichiamo commissioni ai partner fondatori. Se questo dovesse cambiare in futuro, avviseremo con almeno 30 giorni di anticipo prima di qualsiasi addebito, secondo i nostri Termini di Utilizzo."
       },
       {
         "pergunta": "Come aiuta BipFix la mia officina a trovare più clienti?",
@@ -296,17 +296,17 @@
     "step3Texto": "Ricevi preventivi dettagliati con prezzi, tempi e recensioni",
     "step4Titulo": "Scegli e ripara",
     "step4Texto": "Accetta il preventivo migliore e segui la riparazione del tuo veicolo",
-    "oficinasBadge": "SELEZIONE SOCI FONDATORI APERTA",
+    "oficinasBadge": "SELEZIONE PARTNER FONDATORI APERTA",
     "oficinasTitulo": "Per officine meccaniche e fornitori di ricambi",
     "oficinasTexto": "Organizza i tuoi servizi su un'unica piattaforma e guadagna visibilità per nuovi clienti nella tua zona — senza commissioni in questa fase iniziale.",
     "feature1": "Ricevi automaticamente richieste da clienti vicini",
     "feature2": "Invia preventivi strutturati e professionali",
     "feature3": "Gestisci la tua agenda con lavori sia della piattaforma che esterni",
     "feature4": "Costruisci la tua reputazione con le recensioni dei clienti",
-    "ctaFundador": "Voglio diventare socio fondatore",
+    "ctaFundador": "Voglio diventare partner fondatore",
     "saibaMais": "Scopri di più",
     "mock1Titulo": "Nuova richiesta",
-    "mock1Texto": "Incidente - VW Golf 2021 - a 3km da te",
+    "mock1Texto": "Incidente - VW Golf 2021 - a 3 km da te",
     "mock2Titulo": "Preventivo accettato!",
     "mock2Texto": "Carrozzeria - Toyota Corolla 2023",
     "mock3Titulo": "Nuova recensione: 5 stelle",
@@ -315,7 +315,7 @@
     "porQueTitulo": "Perché stiamo costruendo BipFix",
     "porQueTexto1": "Oggi, scegliere dove riparare l'auto dipende di solito solo da un passaparola o da quale officina è più vicina — senza poter confrontare prezzo, tempi o storico di chi farà il lavoro. Crediamo che gli automobilisti meritino trasparenza, e che le buone officine meritino di essere trovate per il lavoro che offrono.",
     "porQueTexto2": "Siamo, letteralmente, agli inizi: stiamo selezionando le prime officine e i primi fornitori di ricambi partner per lanciarci con la massima attenzione in una città alla volta, invece di crescere in fretta senza controllo di qualità.",
-    "parceiroTitulo": "C'è ancora tempo per entrare come socio fondatore",
+    "parceiroTitulo": "C'è ancora tempo per entrare come partner fondatore",
     "parceiroTexto": "Stiamo registrando ora le prime officine partner a Tallinn. Se sei un automobilista, puoi già inviare la tua richiesta: la inoltriamo alle officine man mano che entrano e ti teniamo aggiornato. Se hai un'officina o un negozio di ricambi, stiamo selezionando pochi partner fondatori — senza commissioni in questa fase.",
     "faqTitulo": "Domande Frequenti",
     "faqSubtitulo": "Rispondiamo alle tue domande sulla piattaforma BipFix",
@@ -330,7 +330,7 @@
       },
       {
         "pergunta": "Quanto costa usare BipFix?",
-        "resposta": "Per gli automobilisti, la piattaforma è completamente gratuita. Puoi inviare richieste, ricevere preventivi e confrontare le opzioni senza alcun costo. Siamo nella fase di selezione dei soci fondatori, e oggi non applichiamo commissioni né canoni mensili a officine e fornitori partner — trovi i dettagli nei nostri Termini di Utilizzo."
+        "resposta": "Per gli automobilisti, la piattaforma è completamente gratuita. Puoi inviare richieste, ricevere preventivi e confrontare le opzioni senza alcun costo. Siamo nella fase di selezione dei partner fondatori, e oggi non applichiamo commissioni né canoni mensili a officine e fornitori partner — trovi i dettagli nei nostri Termini di Utilizzo."
       },
       {
         "pergunta": "Come vengono valutate le officine?",
@@ -366,7 +366,7 @@
     "footerGuias": "Guide per automobilisti",
     "footerOficinas": "Per le Officine",
     "footerSistemaGestao": "Sistema di gestione e clienti",
-    "footerSejaParceiro": "Diventa socio fondatore",
+    "footerSejaParceiro": "Diventa partner fondatore",
     "footerGuiaOficina": "Guida per l'Officina",
     "footerCentralAjuda": "Centro Assistenza",
     "footerContato": "Contatti",
@@ -554,7 +554,7 @@
   },
   "cookieBanner": {
     "texto": "Utilizziamo i cookie per capire come usi il sito e migliorare la tua esperienza. Accettando, accetti la nostra",
-    "linkPrivacidade": "Informativa sulla Privacy",
+    "linkPrivacidade": "Informativa sulla privacy",
     "rejeitar": "Rifiuta",
     "aceitar": "Accetta"
   },
@@ -591,7 +591,7 @@
     "texto": "L’indirizzo potrebbe essere sbagliato o la pagina è stata rimossa.",
     "inicio": "Vai alla pagina iniziale",
     "guias": "Guarda le guide per automobilisti",
-    "emergencia": "Ho appena avuto un incidente"
+    "emergencia": "Ho avuto un incidente"
   },
   "erros": {
     "CAMPO_OBRIGATORIO": "Compila tutti i campi obbligatori.",

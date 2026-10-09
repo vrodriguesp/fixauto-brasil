@@ -169,7 +169,7 @@
     "labelNomeFantasia": "Nome comercial",
     "labelCnpj": "NIF/NIPC",
     "labelCep": "Código postal",
-    "cepPlaceholder": "0000-000",
+    "cepPlaceholder": "10111",
     "buscandoCep": "A procurar morada...",
     "cepErro": "Código postal não encontrado - verifique o número ou preencha manualmente",
     "labelEndereco": "Morada",

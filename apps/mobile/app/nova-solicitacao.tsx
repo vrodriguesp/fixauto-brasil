@@ -8,16 +8,14 @@ import { TIPOS_SERVICO, URGENCIAS } from '@fixauto/shared';
 import type { Veiculo } from '@fixauto/shared';
 import { useAuth } from '../lib/auth-context';
 import { supabase } from '../lib/supabase';
-import { API_BASE_URL } from '../lib/api';
+import { API_BASE_URL, apiFetch } from '../lib/api';
 import { fetchComPrazo } from '../lib/rede';
-import { notifNovaSolicitacaoTitulo, tipoServicoLabel } from '../lib/notif-i18n';
-import { mensagemErro } from '../lib/erro';
+import { mensagemErro, ErroUsuario } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
 import { obterPosicao } from '../lib/posicao';
 import { arquivoDaFoto } from '../lib/anexo';
 import { useAvaliacaoPendente } from '../components/AvaliacaoPendente';
 
-const COORDS_DEFAULT = { lat: -23.5505, lon: -46.6333 };
 
 export default function NovaSolicitacaoScreen() {
   const { t } = useTranslation();
@@ -75,8 +73,8 @@ export default function NovaSolicitacaoScreen() {
   }, []);
 
   const handleFoto = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') return;
+    // o seletor de fotos do sistema nao precisa de permissao (iOS 14+, Android
+    // 13+); pedir antes bloqueava a galeria no Android antigo (auditoria L2)
     const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.7, allowsMultipleSelection: true });
     if (!result.canceled) setFotos((prev) => [...prev, ...result.assets]);
   };
@@ -91,7 +89,9 @@ export default function NovaSolicitacaoScreen() {
         const data = res ? await res.json().catch(() => ({})) : {};
         if (data.latitude && data.longitude) finalCoords = { lat: data.latitude, lon: data.longitude };
       }
-      finalCoords = finalCoords || COORDS_DEFAULT;
+      // sem coordenadas nao cria o pedido (antes ia com Sao Paulo e as oficinas
+      // erradas eram avisadas - auditoria E1); igual ao fluxo do acidente
+      if (!finalCoords) throw new ErroUsuario(t('emergencia.erroLocalizacao'));
 
       const { data: sol, error } = await supabase
         .from('solicitacoes')
@@ -131,26 +131,9 @@ export default function NovaSolicitacaoScreen() {
         }
       }
 
-      const { data: oficinas } = await supabase.from('oficinas').select('profile_id, especialidades, profile:profiles(idioma)').eq('ativa', true);
-      const veiculo = veiculos.find((v) => v.id === veiculoId);
-      if (oficinas) {
-        for (const ofi of oficinas as any[]) {
-          const matches = !ofi.especialidades || ofi.especialidades.length === 0 || ofi.especialidades.includes(tipo);
-          if (matches) {
-            // Idioma da OFICINA destinataria, nao do cliente criando a
-            // solicitacao - t() do proprio app so reflete o idioma de quem
-            // esta com o app aberto agora.
-            const tipoLabel = tipoServicoLabel(ofi.profile?.idioma, tipo);
-            await supabase.from('notificacoes').insert({
-              profile_id: ofi.profile_id,
-              tipo: 'nova_solicitacao',
-              titulo: notifNovaSolicitacaoTitulo(ofi.profile?.idioma),
-              mensagem: `${tipoLabel} - ${veiculo?.fipe_marca} ${veiculo?.fipe_modelo} - ${endereco}`,
-              dados: { solicitacao_id: sol.id },
-            });
-          }
-        }
-      }
+      // aviso as oficinas do raio e ao admin: no servidor (antes o celular
+      // avisava uma a uma todas as oficinas ativas - auditoria E9)
+      apiFetch('/api/pedido-criado', { method: 'POST', body: JSON.stringify({ solicitacaoId: sol.id }) }).catch(() => {});
 
       setEnviado(true);
     } catch (e) {

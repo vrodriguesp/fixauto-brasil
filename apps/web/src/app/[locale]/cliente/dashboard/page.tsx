@@ -15,7 +15,8 @@ import GarantiasAtivas from '@/components/cliente/GarantiasAtivas';
 import AvaliacaoPendente from '@/components/cliente/AvaliacaoPendente';
 
 function formatDateShort(dateStr: string, locale: string): string {
-  const d = new Date(dateStr);
+  // coluna DATE ("2026-10-15"): meio-dia local, senao no Brasil (UTC-3) saia o dia anterior (auditoria M1)
+  const d = new Date(/^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? `${dateStr}T12:00:00` : dateStr);
   return d.toLocaleDateString(locale, { weekday: 'short', day: '2-digit', month: '2-digit' });
 }
 

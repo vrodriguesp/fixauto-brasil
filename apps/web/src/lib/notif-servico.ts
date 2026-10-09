@@ -21,9 +21,9 @@ const TEXTOS: Record<Idioma, { chegouTitulo: string; chegou: string; etapaTitulo
   pt: { chegouTitulo: 'Seu carro chegou à oficina', chegou: '{oficina} registrou a entrada do seu {carro}. Acompanhe o conserto por aqui.', etapaTitulo: 'Atualização do conserto', etapa: '{carro}: {etapa}' },
   'pt-PT': { chegouTitulo: 'O seu carro chegou à oficina', chegou: '{oficina} registou a entrada do seu {carro}. Acompanhe a reparação por aqui.', etapaTitulo: 'Atualização da reparação', etapa: '{carro}: {etapa}' },
   en: { chegouTitulo: 'Your car is at the workshop', chegou: '{oficina} checked in your {carro}. Follow the repair here.', etapaTitulo: 'Repair update', etapa: '{carro}: {etapa}' },
-  et: { chegouTitulo: 'Teie auto on töökojas', chegou: '{oficina} registreeris teie auto {carro} saabumise. Jälgige remonti siin.', etapaTitulo: 'Remondi uuendus', etapa: '{carro}: {etapa}' },
+  et: { chegouTitulo: 'Sinu auto on töökojas', chegou: '{oficina} registreeris sinu auto {carro} saabumise. Jälgi remonti siin.', etapaTitulo: 'Remondi uuendus', etapa: '{carro}: {etapa}' },
   it: { chegouTitulo: "La tua auto è in officina", chegou: "{oficina} ha registrato l'arrivo della tua {carro}. Segui la riparazione da qui.", etapaTitulo: 'Aggiornamento riparazione', etapa: '{carro}: {etapa}' },
-  ru: { chegouTitulo: 'Ваша машина в мастерской', chegou: '{oficina} приняла вашу машину {carro}. Следите за ремонтом здесь.', etapaTitulo: 'Новости по ремонту', etapa: '{carro}: {etapa}' },
+  ru: { chegouTitulo: 'Ваша машина в автосервисе', chegou: 'Автосервис {oficina} принял вашу машину {carro}. Следите за ремонтом здесь.', etapaTitulo: 'Новости по ремонту', etapa: '{carro}: {etapa}' },
 };
 
 const idiomaDe = (l?: string | null): Idioma => (l && l in TEXTOS ? (l as Idioma) : l?.startsWith('pt') ? 'pt' : 'en');
@@ -40,9 +40,9 @@ const PRONTO: Record<Idioma, { titulo: string; mensagem: string }> = {
   pt: { titulo: 'Seu carro está pronto', mensagem: '{carro} está pronto: pode buscá-lo em {oficina}{endereco}.' },
   'pt-PT': { titulo: 'O seu carro está pronto', mensagem: '{carro} está pronto: pode levantá-lo em {oficina}{endereco}.' },
   en: { titulo: 'Your car is ready', mensagem: '{carro} is ready: you can pick it up at {oficina}{endereco}.' },
-  et: { titulo: 'Teie auto on valmis', mensagem: '{carro} on valmis: saate selle kätte töökojast {oficina}{endereco}.' },
+  et: { titulo: 'Sinu auto on valmis', mensagem: '{carro} on valmis: saad selle kätte töökojast {oficina}{endereco}.' },
   it: { titulo: 'La tua auto è pronta', mensagem: "{carro} è pronta: puoi ritirarla da {oficina}{endereco}." },
-  ru: { titulo: 'Ваша машина готова', mensagem: '{carro} готова: её можно забрать в {oficina}{endereco}.' },
+  ru: { titulo: 'Ваша машина готова', mensagem: 'Автомобиль {carro} готов: его можно забрать в {oficina}{endereco}.' },
 };
 
 export function notifProntoRetirar(idioma: string | null | undefined, v: { carro: string; oficina: string; endereco?: string }) {

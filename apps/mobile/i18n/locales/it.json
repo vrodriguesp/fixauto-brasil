@@ -67,10 +67,12 @@
     "ocultarSenha": "Nascondi password",
     "confirmando": "Stiamo confermando la tua email…",
     "linkInvalidoTitulo": "Questo link non è più valido",
-    "linkInvalidoTexto": "Il link è valido per 1 ora e può essere usato una sola volta. Prova ad accedere: ti proporremo un nuovo link."
+    "linkInvalidoTexto": "Il link è valido per 1 ora e può essere usato una sola volta. Prova ad accedere: ti proporremo un nuovo link.",
+    "tipoNaoSuportado": "Questa app è per gli automobilisti. Officine e negozi accedono dal sito bipfix.com.",
+    "contaDesativada": "Questo account è stato disattivato. Contatta l'assistenza BipFix."
   },
   "emergencia": {
-    "titulo": "Ho appena avuto un incidente",
+    "titulo": "Ho avuto un incidente",
     "subtitulo": "Segnala subito l'incidente e ricevi preventivi da officine vicine in pochi minuti.",
     "botaoIniciar": "Segnala subito l'incidente",
     "fotoTitulo": "Foto del veicolo",
@@ -128,7 +130,7 @@
     "solicitacoesAtivas": "Richieste attive",
     "nenhumaSolicitacao": "Non hai ancora nessuna richiesta.",
     "novaSolicitacaoBotao": "Nuova richiesta",
-    "emergenciaBotao": "Ho appena avuto un incidente",
+    "emergenciaBotao": "Ho avuto un incidente",
     "avisos": "Avvisi"
   },
   "orcamentos": {
@@ -163,17 +165,18 @@
     "completarCarro": "Completa i dati dell'auto",
     "completarCarroDica": "Marca, modello e targa aiutano l'officina a fare il preventivo. Tocca per completare.",
     "editarPedido": "Modifica richiesta",
-    "descricaoPedido": "Descrizione"
+    "descricaoPedido": "Descrizione",
+    "naoEncontrado": "Questa richiesta non esiste più o non è disponibile."
   },
   "avaliacao": {
     "titulo": "Valuta il servizio",
     "subtitulo": "Com'è stata la tua esperienza con questa officina?",
     "comentarioPlaceholder": "Lascia un commento (facoltativo)",
-    "enviar": "Invia valutazione",
-    "obrigado": "Grazie per la tua valutazione!",
-    "jaAvaliado": "Hai già valutato questo servizio",
+    "enviar": "Invia recensione",
+    "obrigado": "Grazie per la tua recensione!",
+    "jaAvaliado": "Hai già recensito questo servizio",
     "pendenteTitulo": "Valuta {oficina}",
-    "pendenteTexto": "Il servizio è finito: lascia la tua valutazione. Serve per fare una nuova richiesta.",
+    "pendenteTexto": "Il servizio è finito: lascia la tua recensione. Serve per fare una nuova richiesta.",
     "bloqueio": "Prima di una nuova richiesta, valuta l'ultimo servizio (bastano pochi secondi). Se hai appena avuto un incidente, usa il pulsante rosso.",
     "avaliarAgora": "Valuta ora"
   },

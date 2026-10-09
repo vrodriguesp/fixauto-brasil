@@ -42,7 +42,7 @@
     "newTitle": "Novo Veículo",
     "plateLabel": "Matrícula (opcional)",
     "colorLabel": "Cor (opcional)",
-    "placeholderColor": "Cinzento",
+    "placeholderColor": "Prateado",
     "nicknameLabel": "Nome para identificar o veículo (opcional) – ex.: \"Carro do trabalho\"",
     "placeholderNickname": "O meu carro",
     "fipeValueLabel": "Valor estimado:",
@@ -106,7 +106,7 @@
     "step1Title": "Selecione o seu veículo",
     "plateLabel": "Matrícula (opcional)",
     "colorLabel": "Cor (opcional)",
-    "placeholderColor": "Cinzento",
+    "placeholderColor": "Prateado",
     "nicknameLabel": "Nome para identificar o veículo (opcional) – ex.: \"Carro do trabalho\"",
     "placeholderNickname": "O meu carro",
     "cancel": "Cancelar",
@@ -142,7 +142,8 @@
     "photosLabel": "Fotografias:",
     "photosCount": "{count, plural, one {# fotografia} other {# fotografias}}",
     "servicesLabel": "Serviços:",
-    "sendRequest": "Enviar Pedido"
+    "sendRequest": "Enviar Pedido",
+    "erroLocalizacao": "Não encontrámos esse endereço. Escolha uma das sugestões ou permita a localização."
   },
   "clienteOrcamentos": {
     "title": "Orçamentos",
@@ -307,7 +308,7 @@
     "newTimeRegistered": "O seu novo horário foi registado com sucesso.",
     "backToPanel": "Voltar ao painel",
     "back": "Voltar",
-    "pageTitle": "Remarcar marcação",
+    "pageTitle": "Alterar a marcação",
     "pageSubtitle": "Escolha uma nova data para a sua marcação.",
     "currentAppointmentTitle": "Marcação atual",
     "originalDate": "Data original: {date}",
