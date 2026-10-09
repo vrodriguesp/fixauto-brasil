@@ -537,333 +537,437 @@
   "docsCliente": {
     "pageBackLink": "Torna al Centro Assistenza",
     "pageTitle": "Guida per l'Automobilista",
-    "pageSubtitle": "Tutto quello che devi sapere per trovare l'officina migliore, confrontare i preventivi e seguire la riparazione del tuo veicolo.",
-    "s1Title": "1. Come registrarti",
-    "s1Intro": "Creare il tuo account BipFix è veloce e gratuito. Segui questi passaggi:",
-    "s1Steps": [
+    "pageSubtitle": "Tutto quello che devi sapere per chiedere preventivi a più officine, scegliere la migliore, seguire la riparazione e risolvere qualsiasi imprevisto, dalla registrazione alla fine della garanzia.",
+    "secoes": [
       {
-        "title": "Vai alla pagina di registrazione",
-        "desc": "Clicca su 'Ho bisogno di una riparazione' nella home page oppure vai direttamente su /cadastro."
+        "titulo": "1. Creare il tuo account",
+        "intro": "L'account è gratuito e richiede pochi minuti. Ti serve solo per chiedere preventivi e seguire le riparazioni.",
+        "passos": [
+          {
+            "title": "Inizia dalla registrazione",
+            "desc": "Tocca \"Ho bisogno di una riparazione\" nella home page o \"Registrati\" in alto nel sito e scegli l'account automobilista."
+          },
+          {
+            "title": "Inserisci i tuoi dati",
+            "desc": "Nome, e-mail, numero di telefono e una password."
+          },
+          {
+            "title": "Conferma l'e-mail",
+            "desc": "Apri il link che ti inviamo via e-mail. Se non arriva entro qualche minuto, controlla la cartella spam o usa \"Invia di nuovo il link di conferma\"."
+          },
+          {
+            "title": "Registra la tua auto",
+            "desc": "In Veicoli, inserisci marca, modello, anno e targa. Puoi registrare più auto e vedere lo storico degli interventi di ciascuna."
+          }
+        ]
       },
       {
-        "title": "Inserisci i tuoi dati",
-        "desc": "Inserisci nome completo, e-mail, numero di telefono e crea una password sicura."
+        "titulo": "2. Chiedere preventivi",
+        "intro": "La richiesta descrive il problema dell'auto e arriva alle officine vicine che fanno quel tipo di intervento. Chiedere preventivi non ti costa nulla.",
+        "passos": [
+          {
+            "title": "Scegli l'auto",
+            "desc": "Seleziona una delle tue auto registrate o registrane una nuova al momento."
+          },
+          {
+            "title": "Tipo di intervento",
+            "desc": "Meccanica, carrozzeria, verniciatura, elettrica, tagliando, vetri e altro. Il tipo determina quali officine ricevono la richiesta."
+          },
+          {
+            "title": "Foto e descrizione",
+            "desc": "Fotografa il danno o la spia sul cruscotto e racconta cosa succede: rumori, quando è iniziato, se l'auto cammina ancora. Più dettagli dai, più preciso sarà il preventivo."
+          },
+          {
+            "title": "Posizione",
+            "desc": "Usa il GPS o digita l'indirizzo dove si trova l'auto. La richiesta arriva alle officine il cui raggio di servizio include quel punto."
+          },
+          {
+            "title": "Controlla e invia",
+            "desc": "Verifica e invia. Le officine vengono avvisate subito e iniziano a preparare i preventivi."
+          }
+        ],
+        "texto": "Finché non accetti un preventivo, puoi modificare la richiesta (foto, descrizione) o annullarla. Se hai ancora una recensione in sospeso di un intervento precedente, ti viene chiesta prima della nuova richiesta."
       },
       {
-        "title": "Conferma la tua e-mail",
-        "desc": "Riceverai un'e-mail di conferma. Clicca sul link per attivare il tuo account."
+        "titulo": "3. Confrontare i preventivi",
+        "intro": "Ogni preventivo arriva separatamente, da un'officina diversa, e mostra: importo totale, voci (ricambi e manodopera), tempi, garanzia, validità, gli orari in cui l'officina può ricevere l'auto e il voto dato dagli altri automobilisti.",
+        "selos": [
+          {
+            "name": "Qualità",
+            "desc": "Officina con una media di 4 stelle o più nelle recensioni degli automobilisti."
+          },
+          {
+            "name": "Convenzionata con la tua assicurazione",
+            "desc": "Appare quando la riparazione è a carico dell'assicurazione e l'officina lavora con la tua compagnia."
+          },
+          {
+            "name": "Adeguamento del prezzo",
+            "desc": "Trasparenza: se l'officina ha già revisionato un preventivo accettato, vedi di quanto è cambiato l'importo rispetto all'originale (per esempio, \"12% più alto\")."
+          }
+        ],
+        "texto": "Hai dubbi? Tocca \"Scrivi all'officina\": ogni officina ha la propria conversazione con te, e le altre non la vedono. I preventivi che non ti interessano possono essere rifiutati."
       },
       {
-        "title": "Registra il tuo veicolo",
-        "desc": "Aggiungi marca, modello, anno e targa del tuo veicolo. Puoi registrarne più di uno."
+        "titulo": "4. Accettare e prenotare",
+        "intro": "Quando accetti un preventivo, scegli nella stessa schermata l'orario di consegna dell'auto tra quelli offerti dall'officina (oggi o nei prossimi giorni).",
+        "passos": [
+          {
+            "title": "Scegli l'orario",
+            "desc": "Tocca il giorno e la fascia oraria che preferisci. Gli orari già passati non compaiono."
+          },
+          {
+            "title": "Accetta",
+            "desc": "L'officina viene avvisata subito. Gli altri preventivi di quella richiesta vengono chiusi."
+          },
+          {
+            "title": "Porta l'auto",
+            "desc": "L'indirizzo dell'officina e l'orario restano nella pagina della richiesta. Se devi cambiare, usa \"Riprogramma l'appuntamento\"."
+          }
+        ],
+        "texto": "Se non ti presenti, l'officina può registrare l'assenza: l'orario viene liberato e la richiesta torna a te per scegliere di nuovo."
+      },
+      {
+        "titulo": "5. Seguire la riparazione",
+        "intro": "Quando l'auto arriva, l'officina fa il check-in e tu inizi a vedere ogni fase nella pagina della richiesta, con un avviso sul sito:",
+        "itens": [
+          {
+            "label": "Ricevuto e diagnosi",
+            "desc": "L'auto è entrata in officina e viene valutata."
+          },
+          {
+            "label": "In attesa di ricambi / In lavorazione",
+            "desc": "Mostra se la riparazione è ferma in attesa di ricambi o in corso. Compaiono anche le pause."
+          },
+          {
+            "label": "Collaudo finale",
+            "desc": "L'intervento è finito e viene controllato."
+          },
+          {
+            "label": "Pronta per il ritiro",
+            "desc": "Ricevi l'avviso per venire a prendere l'auto."
+          },
+          {
+            "label": "Consegnato",
+            "desc": "L'officina lo segna quando ritiri l'auto. Se non lo fa, dopo 5 giorni l'auto risulta consegnata."
+          }
+        ],
+        "texto": "Gli avvisi si trovano nella campanella (in alto nello schermo) e nella pagina delle notifiche."
+      },
+      {
+        "titulo": "6. Se l'officina chiede di cambiare il prezzo",
+        "intro": "A volte, aprendo l'auto, l'officina trova qualcosa che prima non si poteva vedere. Anche così, non può semplicemente farti pagare di più: deve inviare una revisione del preventivo, con il motivo, le nuove voci e il nuovo importo. Nulla cambia senza la tua decisione.",
+        "itens": [
+          {
+            "label": "Approva",
+            "desc": "Entra in vigore il nuovo importo. L'importo originale resta registrato e compare accanto al preventivo."
+          },
+          {
+            "label": "Rifiuta e ritira l'auto",
+            "desc": "L'intervento viene chiuso e concordi il ritiro nella conversazione. Potrebbe esserti addebitato quanto già fatto, secondo gli accordi con l'officina."
+          }
+        ],
+        "nota": "BipFix tiene traccia delle revisioni di prezzo di ogni officina. Le officine che chiedono aumenti frequenti o molto alti vengono analizzate dal nostro team."
+      },
+      {
+        "titulo": "7. Recensire l'intervento",
+        "intro": "Dopo la consegna, recensisci l'officina. La recensione aiuta gli altri automobilisti e ti viene chiesta prima della tua prossima richiesta; il pulsante \"Ho appena avuto un incidente\" non viene mai bloccato.",
+        "passos": [
+          {
+            "title": "Voto da 1 a 5 stelle",
+            "desc": "Per la qualità generale dell'intervento."
+          },
+          {
+            "title": "Commento",
+            "desc": "Racconta com'è andata: tempi, prezzo, cortesia, risultato."
+          },
+          {
+            "title": "Pubblicazione",
+            "desc": "La recensione compare nel profilo pubblico dell'officina ed entra nella media dei voti. Puoi modificarla in seguito."
+          }
+        ]
+      },
+      {
+        "titulo": "8. Garanzia e conversazione dopo la consegna",
+        "intro": "La garanzia indicata nel preventivo inizia a decorrere dalla consegna dell'auto.",
+        "itens": [
+          {
+            "label": "Conteggio nella schermata iniziale",
+            "desc": "Vedi quanti giorni di garanzia restano per ogni intervento."
+          },
+          {
+            "label": "Conversazione aperta",
+            "desc": "La conversazione con l'officina scelta resta aperta fino alla fine della garanzia. Le conversazioni con le altre officine vengono chiuse quando l'intervento termina."
+          },
+          {
+            "label": "Cronologia",
+            "desc": "In Cronologia trovi tutti gli interventi, con preventivo, fasi e recensione."
+          }
+        ]
+      },
+      {
+        "titulo": "9. Incidente: pulsante \"Ho appena avuto un incidente\"",
+        "intro": "Per quando hai appena avuto un incidente con l'auto. Funziona anche senza account e mostra cosa fare in base al Paese in cui è avvenuto l'incidente, nella tua lingua.",
+        "passos": [
+          {
+            "title": "Tocca il pulsante rosso",
+            "desc": "Si trova nella home page e nel tuo pannello."
+          },
+          {
+            "title": "Foto e luogo",
+            "desc": "Fotografa subito i danni. Il GPS trova l'indirizzo e le officine vicine che fanno carrozzeria."
+          },
+          {
+            "title": "Chi paga la riparazione",
+            "desc": "L'assicurazione dell'altro conducente, la tua Kasko o tu stesso. Puoi indicarlo anche dopo. Se la tua assicurazione è di un altro Paese, ti mostriamo come funziona la Carta Verde."
+          },
+          {
+            "title": "Preventivi",
+            "desc": "Le officine vicine ricevono la richiesta con priorità. I dati dell'auto possono essere completati dopo nella pagina della richiesta."
+          }
+        ],
+        "aviso": "Se ci sono feriti, chiama prima il 112. La tua sicurezza viene prima di tutto."
+      },
+      {
+        "titulo": "10. Costi, account e privacy",
+        "itens": [
+          {
+            "label": "Gratuito per l'automobilista",
+            "desc": "Chiedere e confrontare preventivi non costa nulla, e BipFix non aggiunge nulla all'importo del preventivo. Paghi solo l'intervento, direttamente all'officina."
+          },
+          {
+            "label": "I tuoi dati",
+            "desc": "I tuoi dati di contatto sono visibili solo alle officine coinvolte nelle tue richieste, mai al pubblico. Trovi i dettagli nell'Informativa sulla privacy."
+          },
+          {
+            "label": "Eliminare l'account",
+            "desc": "In Profilo (o nella pagina \"Elimina account\"). Senza interventi effettuati, viene cancellato tutto. Con interventi, i tuoi dati personali vengono anonimizzati e resta solo la registrazione dell'intervento, senza il tuo nome."
+          }
+        ]
       }
-    ],
-    "s2Title": "2. Come creare una richiesta",
-    "s2Intro": "La richiesta è la domanda di preventivo che invii alle officine. Il processo prevede 5 semplici passaggi:",
-    "s2Steps": [
-      {
-        "title": "Seleziona il veicolo",
-        "desc": "Scegli quale dei tuoi veicoli registrati necessita di riparazione."
-      },
-      {
-        "title": "Tipo di servizio",
-        "desc": "Seleziona la categoria del servizio: carrozzeria, verniciatura, meccanica, elettrauto, vetri e altro."
-      },
-      {
-        "title": "Foto e descrizione",
-        "desc": "Scatta le foto del danno o del problema e aggiungi una descrizione dettagliata. Più informazioni fornisci, migliore sarà il preventivo."
-      },
-      {
-        "title": "Posizione",
-        "desc": "Conferma la tua posizione in modo che le officine vicine ricevano la tua richiesta. Puoi usare il GPS o inserire l'indirizzo manualmente."
-      },
-      {
-        "title": "Revisione e invio",
-        "desc": "Controlla tutte le informazioni e invia. Le officine vicine verranno avvisate e inizieranno a preparare i preventivi."
-      }
-    ],
-    "s3Title": "3. Come confrontare i preventivi",
-    "s3Intro": "Quando le officine inviano i preventivi, puoi confrontarli facilmente. Ogni preventivo mostra il prezzo totale, i tempi stimati, le voci dettagliate e la valutazione dell'officina.",
-    "s3BadgesLabel": "Badge in evidenza:",
-    "s3Badges": [
-      {
-        "name": "Badge Qualità",
-        "desc": "Officine con una valutazione media superiore a 4,5 stelle e più di 10 servizi completati."
-      },
-      {
-        "name": "Risposta Rapida",
-        "desc": "Officine che hanno risposto alla tua richiesta in meno di 1 ora."
-      },
-      {
-        "name": "Prezzo Negoziabile",
-        "desc": "Indica che l'officina è disposta a negoziare l'importo del preventivo."
-      }
-    ],
-    "s3Outro": "Usa i filtri per ordinare per prezzo, tempi o valutazione. Ogni officina ha la sua conversazione con te (tocca \"Scrivi all'officina\" sul preventivo). Il bollino \"Convenzionata con la tua assicurazione\" appare quando l'officina lavora con la tua compagnia.",
-    "s4Title": "4. Come prenotare il servizio",
-    "s4Intro": "Dopo aver confrontato i preventivi, scegli quello più adatto alle tue esigenze:",
-    "s4Steps": [
-      {
-        "title": "Accetta il preventivo",
-        "desc": "Clicca su 'Accetta preventivo' su quello scelto. L'officina verrà avvisata immediatamente."
-      },
-      {
-        "title": "Scegli la data",
-        "desc": "L'officina mette a disposizione degli orari in agenda. Seleziona il giorno e l'ora più adatti a te."
-      },
-      {
-        "title": "Conferma",
-        "desc": "Dopo la conferma, riceverai i dettagli dell'appuntamento via e-mail e sulla piattaforma, incluso l'indirizzo dell'officina."
-      }
-    ],
-    "s5Title": "5. Monitoraggio in tempo reale",
-    "s5Intro": "Dopo aver portato il veicolo in officina, puoi seguire ogni fase della riparazione tramite la piattaforma:",
-    "s5Items": [
-      {
-        "label": "Check-in",
-        "desc": "Quando il veicolo arriva in officina, il team registra l'ingresso e ricevi un avviso."
-      },
-      {
-        "label": "In corso",
-        "desc": "L'officina aggiorna lo stato man mano che avanza nelle fasi del servizio."
-      },
-      {
-        "label": "Fasi dettagliate",
-        "desc": "Vedi l'avanzamento: smontaggio, riparazione, verniciatura, rimontaggio, controllo qualità."
-      },
-      {
-        "label": "Pronto per il ritiro",
-        "desc": "Quando il servizio è completato, ricevi una notifica per ritirare il veicolo."
-      },
-      {
-        "label": "Check-out",
-        "desc": "L'officina registra l'uscita e il servizio viene contrassegnato come concluso."
-      }
-    ],
-    "s5Outro": "Nell'app gli avvisi compaiono in alto sullo schermo, con i numeri sulle schede. Puoi seguire tutto anche dalla pagina della richiesta. Quando il servizio è finito, le conversazioni con le altre officine si chiudono. Quella con l'officina scelta resta aperta fino alla fine della garanzia, e il conto alla rovescia appare nella tua schermata iniziale.",
-    "s6Title": "6. Come valutare il servizio",
-    "s6Intro": "Quando l'auto ti viene consegnata, valuta l'officina: aiuta gli altri automobilisti. La valutazione è obbligatoria per fare una nuova richiesta (come su Uber); il pulsante dell'incidente non viene mai bloccato.",
-    "s6Steps": [
-      {
-        "title": "Voto da 1 a 5 stelle",
-        "desc": "Valuta la qualità complessiva del servizio ricevuto."
-      },
-      {
-        "title": "Commento",
-        "desc": "Scrivi un commento che descriva la tua esperienza. Sii onesto e dettagliato."
-      },
-      {
-        "title": "Pubblicazione",
-        "desc": "La tua recensione apparirà sul profilo pubblico dell'officina, aiutando altri automobilisti a decidere."
-      }
-    ],
-    "s6Note": "La tua recensione è molto importante. Aiuta a mantenere alta la qualità della piattaforma e valorizza le officine migliori.",
-    "s7Title": "7. Emergenza — Ho appena avuto un incidente",
-    "s7Intro": "BipFix ha un percorso dedicato per le situazioni di emergenza:",
-    "s7Steps": [
-      {
-        "title": "Tocca il pulsante di emergenza",
-        "desc": "Nella home page o nella tua area personale, tocca il pulsante rosso 'Ho appena avuto un incidente'."
-      },
-      {
-        "title": "Registra l'incidente",
-        "desc": "Scatta subito le foto del danno. Se vuoi, indica la tua auto (un tocco se è già salvata). Puoi completare i dati dell'auto dopo, nella pagina della richiesta."
-      },
-      {
-        "title": "Posizione automatica",
-        "desc": "Il sistema usa il GPS per trovare le officine vicine e compila l'indirizzo con la via. I consigli su cosa fare seguono il paese dell'incidente."
-      },
-      {
-        "title": "Preventivi rapidi",
-        "desc": "Le officine vicine ricevono la tua richiesta in via prioritaria e inviano i preventivi in pochi minuti."
-      }
-    ],
-    "s7Warning": "Se ci sono feriti, chiama prima il 112. La tua sicurezza viene prima di tutto."
+    ]
   },
   "docsClienteLayout": {
-    "metaTitle": "Guida per l'Automobilista",
-    "metaDescription": "Scopri come usare BipFix per richiedere riparazioni, confrontare i preventivi delle officine e seguire la riparazione del tuo veicolo in tempo reale."
+    "metaTitle": "Guida per l'Automobilista: preventivi e riparazione",
+    "metaDescription": "Come usare BipFix: chiedere preventivi a più officine, confrontarli, prenotare, seguire la riparazione, approvare le revisioni e usare il pulsante incidente."
   },
   "docsOficina": {
     "pageBackLink": "Torna al Centro Assistenza",
     "pageTitle": "Guida per l'Officina",
-    "pageSubtitle": "Scopri come usare tutti gli strumenti di BipFix per attrarre clienti, gestire i servizi e far crescere la tua officina.",
-    "s1Title": "1. Come registrare la tua officina",
-    "s1Intro": "Registrare la tua officina su BipFix è semplice e richiede pochi minuti:",
-    "s1Steps": [
+    "pageSubtitle": "Come ricevere richieste da clienti vicini a te, inviare preventivi, organizzare agenda e team e tenere informato il cliente dal check-in alla consegna.",
+    "secoes": [
       {
-        "title": "Crea il tuo account",
-        "desc": "Vai su /cadastro e seleziona 'Sono un'officina'. Inserisci i dati del referente: nome, e-mail e password."
+        "titulo": "1. Registrare l'officina",
+        "intro": "La registrazione richiede pochi minuti. Dopo, il team di BipFix verifica i dati e approva l'officina; solo le officine approvate ricevono richieste.",
+        "passos": [
+          {
+            "title": "Crea l'account",
+            "desc": "Tocca \"Registrati\" e scegli l'account officina. Inserisci nome, e-mail e password del responsabile."
+          },
+          {
+            "title": "Dati dell'officina",
+            "desc": "Partita IVA, nome commerciale, numero di telefono e indirizzo in campi separati (via, numero civico, CAP, città). L'indirizzo viene verificato sulla mappa perché i clienti vicini possano trovarti."
+          },
+          {
+            "title": "Specializzazioni",
+            "desc": "Indica cosa fa l'officina: meccanica, carrozzeria, verniciatura, elettrica, tagliando, vetri ecc. Ricevi solo richieste di queste specializzazioni."
+          },
+          {
+            "title": "Raggio di servizio",
+            "desc": "La distanza massima (in km) delle richieste che vuoi ricevere. Puoi cambiarla quando vuoi."
+          },
+          {
+            "title": "Profilo completo",
+            "desc": "Foto, descrizione, orari di apertura e assicurazioni convenzionate. Il cliente con una di queste assicurazioni vede il badge nel tuo preventivo."
+          }
+        ]
       },
       {
-        "title": "Dati dell'officina",
-        "desc": "Inserisci partita IVA, nome commerciale, telefono e indirizzo in campi separati (via, civico, CAP e città). Il sito verifica l'indirizzo sulla mappa così i clienti vicini ti trovano."
+        "titulo": "2. Ricevere richieste",
+        "intro": "Ogni richiesta ti arriva quando soddisfa tre condizioni:",
+        "itens": [
+          {
+            "label": "Vicinanza",
+            "desc": "L'auto si trova nel tuo raggio di servizio."
+          },
+          {
+            "label": "Specializzazione",
+            "desc": "Il tipo di intervento richiesto rientra nelle tue specializzazioni."
+          },
+          {
+            "label": "Officina attiva",
+            "desc": "L'officina è stata approvata ed è attiva."
+          }
+        ],
+        "texto": "L'avviso compare nella campanella del pannello e in Richieste. Ogni richiesta include foto, descrizione, auto e posizione approssimativa. Gli incidenti registrati con il pulsante \"Ho appena avuto un incidente\" arrivano con priorità.",
+        "nota": "Tieni aggiornati specializzazioni e raggio per ricevere solo richieste che hanno senso per te."
       },
       {
-        "title": "Specializzazioni",
-        "desc": "Seleziona i tipi di servizio offerti dalla tua officina: carrozzeria, verniciatura, meccanica, elettrauto, vetri, ecc."
+        "titulo": "3. Inviare preventivi",
+        "passos": [
+          {
+            "title": "Capisci la richiesta",
+            "desc": "Guarda foto e descrizione. Se serve, parla prima con il cliente: ogni officina ha la propria conversazione, che le altre non vedono."
+          },
+          {
+            "title": "Voci",
+            "desc": "Elenca ricambi e manodopera con quantità e importo. Se il preventivo è già pronto in un altro sistema, invia la foto o il PDF: l'IA compila le voci e tu le controlli."
+          },
+          {
+            "title": "Tempi e garanzia",
+            "desc": "Indica i tempi in giorni e la garanzia. La garanzia decorre dalla consegna e, fino alla sua scadenza, il cliente continua a parlare con te."
+          },
+          {
+            "title": "Orari di consegna",
+            "desc": "Offri orari in cui il cliente può portare l'auto: oggi (solo le fasce non ancora terminate) o nei prossimi giorni. Il cliente ne sceglie uno quando accetta."
+          },
+          {
+            "title": "Invia",
+            "desc": "Il cliente viene avvisato e confronta con gli altri preventivi."
+          }
+        ],
+        "nota": "Voci separate (ricambi e manodopera), garanzia chiara e orari disponibili aiutano il cliente a decidere."
       },
       {
-        "title": "Raggio di copertura",
-        "desc": "Imposta la distanza (in km) entro cui la tua officina accetta richieste. Potrai modificarla in seguito."
+        "titulo": "4. Revisionare un preventivo già accettato",
+        "intro": "Se, aprendo l'auto, trovi qualcosa che cambia il prezzo o i tempi, usa \"Proponi revisione\" nella pagina della richiesta. L'importo accettato cambia solo con l'approvazione del cliente.",
+        "itens": [
+          {
+            "label": "Cosa inviare",
+            "desc": "Motivo (obbligatorio), le nuove voci e il nuovo importo. Una sola revisione in sospeso alla volta."
+          },
+          {
+            "label": "Il cliente approva",
+            "desc": "Vale il nuovo importo. L'importo originale resta registrato e il cliente vede la differenza in percentuale."
+          },
+          {
+            "label": "Il cliente rifiuta",
+            "desc": "L'intervento viene chiuso e il cliente ritira l'auto. Concorda nella conversazione quanto già fatto."
+          }
+        ],
+        "nota": "Revisioni frequenti o con aumenti elevati vengono monitorate dal team di BipFix. Un preventivo fatto bene fin dall'inizio evita le revisioni."
       },
       {
-        "title": "Profilo completo",
-        "desc": "Aggiungi foto, descrizione, orari di apertura e le assicurazioni convenzionate. Il cliente assicurato con una di queste vede il bollino sul tuo preventivo."
+        "titulo": "5. Agenda, check-in e assenze",
+        "intro": "L'Agenda riunisce le auto prenotate, in lavorazione e completate:",
+        "itens": [
+          {
+            "label": "Check-in",
+            "desc": "Registra l'arrivo dell'auto. Se arriva prima del giorno fissato, il sito chiede conferma e la consegna diventa oggi. Il cliente viene avvisato."
+          },
+          {
+            "label": "Assente (no-show)",
+            "desc": "Se il cliente non si presenta, registra l'assenza: l'orario viene liberato e la richiesta torna al cliente."
+          },
+          {
+            "label": "Lavori interni",
+            "desc": "Crea eventi per i lavori che non sono arrivati tramite BipFix e tieni tutto nella stessa agenda."
+          },
+          {
+            "label": "Distribuzione Lavori",
+            "desc": "Scegli quale meccanico si occupa di ogni auto, anche prima che arrivi. Ogni cambio resta nella cronologia."
+          },
+          {
+            "label": "Capacità",
+            "desc": "Vedi il carico di lavoro attuale e il tempo medio di ogni fase della riparazione."
+          }
+        ]
+      },
+      {
+        "titulo": "6. Team e meccanici",
+        "passos": [
+          {
+            "title": "Registra",
+            "desc": "Registra i meccanici solo con il nome, oppure dai l'accesso (e-mail e password temporanea) a chi registrerà le fasi dal cellulare. L'accesso può essere dato anche dopo."
+          },
+          {
+            "title": "Primo accesso",
+            "desc": "Chi riceve l'accesso entra con la password temporanea e ne crea una nuova."
+          },
+          {
+            "title": "Chi vede cosa",
+            "desc": "Il meccanico con accesso vede solo le sue auto. Il responsabile vede tutto e può registrare le fasi a nome di qualsiasi meccanico."
+          },
+          {
+            "title": "Cronologia preservata",
+            "desc": "Chi ha già lavorato a degli interventi non viene cancellato, ma disattivato."
+          }
+        ],
+        "texto": "In Impara ci sono tutorial passo passo (modalità guidata o autonoma), e i meccanici hanno la loro formazione dedicata."
+      },
+      {
+        "titulo": "7. Fasi della riparazione e consegna",
+        "intro": "In Officina, registra ogni fase. Il cliente viene avvisato a ogni cambiamento:",
+        "itens": [
+          {
+            "label": "Ricevuto e diagnosi",
+            "desc": "Inizio dell'intervento."
+          },
+          {
+            "label": "In attesa di ricambi / In lavorazione",
+            "desc": "Mostra al cliente se l'auto è ferma in attesa di ricambi o in riparazione. Ci sono anche le pause (cliente, ricambi, generale)."
+          },
+          {
+            "label": "Collaudo finale",
+            "desc": "Controllo prima della consegna."
+          },
+          {
+            "label": "Completato",
+            "desc": "Con doppia conferma. Il cliente viene avvisato di venire a ritirare l'auto."
+          },
+          {
+            "label": "Consegnato",
+            "desc": "Segnalo quando il cliente ritira l'auto: inizia la garanzia e il cliente viene invitato a lasciare una recensione. Se non lo segni, dopo 5 giorni l'auto risulta consegnata."
+          }
+        ],
+        "texto": "Le fasi ripetute nel giro di pochi minuti vengono ignorate, così il cliente non riceve avvisi doppi."
+      },
+      {
+        "titulo": "8. Ricambi",
+        "intro": "In Ricambi, chiedi quotazioni ai negozi di ricambi partner e alle officine vicine, confronta e conferma l'ordine.",
+        "texto": "Pagamento e consegna dei ricambi si concordano direttamente con chi vende."
+      },
+      {
+        "titulo": "9. Recensioni e reputazione",
+        "itens": [
+          {
+            "label": "Voto da 1 a 5",
+            "desc": "Ogni cliente lascia una recensione dopo la consegna. La media viene calcolata automaticamente e compare nel tuo profilo pubblico e nei tuoi preventivi."
+          },
+          {
+            "label": "Badge Qualità",
+            "desc": "Le officine con una media di 4 stelle o più mostrano il badge nei preventivi."
+          },
+          {
+            "label": "Commenti",
+            "desc": "Li trovi tutti in Recensioni."
+          }
+        ],
+        "texto": "Aggiornare le fasi puntualmente, rispettare i tempi ed evitare revisioni di prezzo sono ciò che pesa di più nelle recensioni."
+      },
+      {
+        "titulo": "10. Costi della piattaforma",
+        "intro": "Oggi BipFix è gratuito per officine e automobilisti:",
+        "itens": [
+          {
+            "label": "Senza commissione",
+            "desc": "Nessuna commissione sugli interventi conclusi tramite la piattaforma: l'importo del preventivo è quello che il cliente paga, direttamente a te."
+          },
+          {
+            "label": "Senza canone mensile",
+            "desc": "Registrazione, agenda, preventivi, team e recensioni non hanno alcun canone mensile."
+          },
+          {
+            "label": "Preavviso",
+            "desc": "Se cambieremo il modo in cui la piattaforma addebita costi ad automobilisti o officine, lo comunicheremo con almeno 30 giorni di calendario di preavviso, via e-mail e all'interno della piattaforma."
+          }
+        ],
+        "texto": "In Commissione, nel menu, vedi la condizione attualmente in vigore per la tua officina."
       }
-    ],
-    "s2Title": "2. Come ricevere le richieste",
-    "s2Intro": "BipFix invia automaticamente le richieste alle officine che soddisfano i criteri del cliente:",
-    "s2Items": [
-      {
-        "label": "Vicinanza",
-        "desc": "Il cliente si trova all'interno del raggio di copertura che hai impostato."
-      },
-      {
-        "label": "Specializzazione",
-        "desc": "Il tipo di servizio richiesto corrisponde alle specializzazioni della tua officina."
-      },
-      {
-        "label": "Disponibilità",
-        "desc": "La tua officina è attiva sulla piattaforma e ha l'agenda aperta."
-      }
-    ],
-    "s2Body": "Ricevi notifiche nella tua area personale e via e-mail. Ogni richiesta include: foto del danno, descrizione del problema, tipo di veicolo e posizione del cliente.",
-    "s2Tip": "Suggerimento: mantieni il profilo aggiornato e le specializzazioni corrette per ricevere le richieste più pertinenti.",
-    "s3Title": "3. Come inviare i preventivi",
-    "s3Intro": "Per inviare un preventivo competitivo e dettagliato:",
-    "s3Steps": [
-      {
-        "title": "Valuta la richiesta",
-        "desc": "Guarda le foto e la descrizione. Puoi scrivere al cliente prima del preventivo: ogni officina ha la propria conversazione, che le altre non vedono."
-      },
-      {
-        "title": "Aggiungi le voci al preventivo",
-        "desc": "Elenca ogni lavorazione e ricambio con quantità e prezzo. Se il preventivo è già pronto in un altro sistema, carica la foto o il PDF: l'IA compila le voci e tu controlli."
-      },
-      {
-        "title": "Tempi stimati",
-        "desc": "Indica i tempi in giorni e la garanzia del servizio. La garanzia decorre dalla consegna e, fino alla scadenza, il cliente può continuare a scriverti."
-      },
-      {
-        "title": "Disponibilità in agenda",
-        "desc": "Proponi gli orari per portare l'auto: oggi (solo le fasce non ancora finite) o nei giorni successivi."
-      },
-      {
-        "title": "Invia il preventivo",
-        "desc": "Controlla e invia. Il cliente riceverà una notifica e potrà confrontarlo con altri preventivi."
-      }
-    ],
-    "s3Tip": "I preventivi dettagliati e con prezzi equi hanno fino a 3 volte più probabilità di essere accettati.",
-    "s4Title": "4. Gestire l'agenda",
-    "s4Intro": "Il pannello dell'agenda ti permette di organizzare tutti i servizi della tua officina:",
-    "s4Items": [
-      {
-        "label": "Check-in",
-        "desc": "Registra l'arrivo del veicolo. Se l'auto arriva prima della data prenotata, il sito chiede conferma e l'ingresso diventa oggi. La richiesta del cliente passa a \"in corso\" e il cliente viene avvisato."
-      },
-      {
-        "label": "Lavori interni",
-        "desc": "Crea servizi interni (non arrivati tramite BipFix) per mantenere l'agenda organizzata."
-      },
-      {
-        "label": "Assegnazione",
-        "desc": "Assegna ogni veicolo a un meccanico, se vuoi. Senza meccanici registrati, l'officina fa tutto da sola. Ogni cambio resta nello storico."
-      },
-      {
-        "label": "Check-out",
-        "desc": "Quando il servizio è completato e il veicolo ritirato, registra l'uscita."
-      }
-    ],
-    "s4Outro": "La vista calendario mostra in un unico posto tutti i servizi programmati, in corso e completati.",
-    "s5Title": "5. Team e meccanici",
-    "s5Intro": "Gestisci i membri del tuo team direttamente dalla piattaforma:",
-    "s5Steps": [
-      {
-        "title": "Registra i dipendenti",
-        "desc": "Registra i meccanici solo con il nome, oppure dai accesso al portale (e-mail e password temporanea) a chi registrerà le fasi dal telefono. L’accesso si può dare anche dopo."
-      },
-      {
-        "title": "Primo accesso",
-        "desc": "Chi riceve l’accesso entra con la password temporanea e ne imposta una nuova al primo accesso."
-      },
-      {
-        "title": "Assegna i veicoli",
-        "desc": "Assegna i veicoli ai meccanici. Il meccanico con accesso vede solo i suoi veicoli. Il titolare dell'officina può registrare le fasi a nome di qualsiasi meccanico."
-      },
-      {
-        "title": "Permessi per ruolo",
-        "desc": "I meccanici vedono i veicoli assegnati; il titolare ha accesso completo. Chi ha già lavorato sui servizi non viene cancellato ma disattivato: lo storico resta completo."
-      }
-    ],
-    "s6Title": "6. Monitoraggio della manutenzione",
-    "s6Intro": "Tieni il cliente informato sull'andamento della riparazione:",
-    "s6Items": [
-      {
-        "label": "Aggiornamento dello stato",
-        "desc": "Cambia lo stato del servizio: ricevuto, in corso, in attesa di ricambio, completato."
-      },
-      {
-        "label": "Fasi dettagliate",
-        "desc": "Registra ogni fase: smontaggio, riparazione strutturale, preparazione, verniciatura, rimontaggio, controllo qualità."
-      },
-      {
-        "label": "Notifiche automatiche",
-        "desc": "Il check-in e ogni fase inviano un avviso al cliente, sul sito e nell'app."
-      },
-      {
-        "label": "Foto di avanzamento",
-        "desc": "Invia le foto delle fasi affinché il cliente possa seguirle visivamente."
-      }
-    ],
-    "s6Note": "Segnando \"Concluso\" (con doppia conferma) il cliente viene avvisato di venire a ritirare l'auto. Segna \"Consegnato\" quando la ritira: parte la garanzia e il cliente lascia la valutazione. Se non lo fai, dopo 5 giorni l'auto risulta consegnata. Le officine che aggiornano spesso lo stato ricevono valutazioni più alte.",
-    "s7Title": "7. Recensioni e reputazione",
-    "s7Intro": "La tua reputazione sulla piattaforma si costruisce grazie alle recensioni dei clienti:",
-    "s7Items": [
-      {
-        "label": "Voto da 1 a 5 stelle",
-        "desc": "La media appare sul tuo profilo pubblico e nei risultati di ricerca."
-      },
-      {
-        "label": "Commenti",
-        "desc": "I clienti possono lasciare commenti dettagliati sulla loro esperienza."
-      },
-      {
-        "label": "Badge Qualità",
-        "desc": "Le officine con una media superiore a 4,5 e più di 10 servizi ricevono il badge verde di qualità."
-      },
-      {
-        "label": "Risposta Rapida",
-        "desc": "Rispondere ai preventivi in meno di 1 ora garantisce il badge blu."
-      }
-    ],
-    "s7Outro": "Puoi rispondere pubblicamente alle recensioni, dimostrando professionalità e attenzione al cliente.",
-    "s8Title": "8. Costi della piattaforma",
-    "s8Intro": "Attualmente l'uso di BipFix è gratuito per officine e automobilisti. Ecco cosa significa:",
-    "s8Items": [
-      {
-        "label": "Nessuna commissione",
-        "desc": "Nessuna commissione viene applicata sui lavori conclusi tramite la piattaforma: l'importo che invii nel preventivo è l'importo che il cliente paga."
-      },
-      {
-        "label": "Nessun canone mensile",
-        "desc": "Registrazione, agenda, preventivi, team e recensioni non hanno canone mensile."
-      },
-      {
-        "label": "Preavviso",
-        "desc": "Se cambieremo il modo in cui la piattaforma fa pagare automobilisti o officine, ti informeremo con almeno 30 giorni di calendario di anticipo."
-      }
-    ],
-    "s8ReduceTitle": "Dove tenerlo sotto controllo:",
-    "s8ReduceList": [
-      "Apri Commissione dal menu: la schermata mostra la condizione valida oggi per la tua officina.",
-      "Qualsiasi cambiamento futuro sarà comunicato via email e dentro la piattaforma prima di entrare in vigore."
-    ],
-    "s8Note": "L'automobilista non paga mai nulla: BipFix non aggiunge nulla all'importo del preventivo."
+    ]
   },
   "docsOficinaLayout": {
-    "metaTitle": "Guida per l'Officina",
-    "metaDescription": "Scopri come registrare la tua officina, ricevere richieste, inviare preventivi e gestire il tuo team e la tua agenda su BipFix."
+    "metaTitle": "Guida per l'Officina: ricevere richieste e gestire i lavori",
+    "metaDescription": "Come usare BipFix in officina: registrazione, richieste di clienti vicini, preventivi (anche da foto o PDF), agenda, team, fasi, revisioni e costi."
   },
   "oficinaPerfilPublico": {
     "metaTitleTemplate": "{nome} - Officina Meccanica a {cidade}, {estado}",

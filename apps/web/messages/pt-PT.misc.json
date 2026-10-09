@@ -537,333 +537,437 @@
   "docsCliente": {
     "pageBackLink": "Voltar ao Centro de Ajuda",
     "pageTitle": "Guia do Condutor",
-    "pageSubtitle": "Tudo o que precisa de saber para encontrar a melhor oficina, comparar orçamentos e acompanhar a reparação do seu veículo.",
-    "s1Title": "1. Como criar conta",
-    "s1Intro": "Criar a sua conta BipFix é rápido e gratuito. Basta seguir estes passos:",
-    "s1Steps": [
+    "pageSubtitle": "Tudo o que precisa de saber para pedir orçamentos a várias oficinas, escolher a melhor, acompanhar a reparação e resolver qualquer imprevisto, do registo até ao fim da garantia.",
+    "secoes": [
       {
-        "title": "Aceda à página de registo",
-        "desc": "Clique em 'Preciso de uma reparação' na página inicial, ou vá diretamente a /cadastro."
+        "titulo": "1. Criar a sua conta",
+        "intro": "A conta é gratuita e demora poucos minutos. Só precisa dela para pedir orçamentos e acompanhar os serviços.",
+        "passos": [
+          {
+            "title": "Comece pelo registo",
+            "desc": "Toque em \"Preciso de uma reparação\" na página inicial ou em \"Criar conta\" no topo do site e escolha a conta de condutor."
+          },
+          {
+            "title": "Preencha os seus dados",
+            "desc": "Nome, e-mail, número de telemóvel e uma palavra-passe."
+          },
+          {
+            "title": "Confirme o e-mail",
+            "desc": "Abra a ligação que enviámos para o seu e-mail. Se não chegar em alguns minutos, veja a pasta de spam ou use \"Enviar novamente o link de confirmação\"."
+          },
+          {
+            "title": "Registe o seu carro",
+            "desc": "Em Veículos, indique marca, modelo, ano e matrícula. Pode registar vários carros e ver o histórico de serviços de cada um."
+          }
+        ]
       },
       {
-        "title": "Preencha os seus dados",
-        "desc": "Introduza o seu nome completo, e-mail, número de telemóvel e crie uma palavra-passe segura."
+        "titulo": "2. Pedir orçamentos",
+        "intro": "O pedido descreve o problema do carro e vai para as oficinas próximas que fazem esse tipo de serviço. Não paga nada para pedir orçamentos.",
+        "passos": [
+          {
+            "title": "Escolha o carro",
+            "desc": "Selecione um dos seus carros registados ou registe um novo na hora."
+          },
+          {
+            "title": "Tipo de serviço",
+            "desc": "Mecânica, chapa, pintura, eletricidade, revisão, vidros e outros. O tipo define quais as oficinas que recebem o pedido."
+          },
+          {
+            "title": "Fotografias e descrição",
+            "desc": "Tire fotografias do dano ou da luz no painel e conte o que acontece: ruídos, quando começou, se o carro ainda anda. Quantos mais detalhes, mais preciso o orçamento."
+          },
+          {
+            "title": "Localização",
+            "desc": "Use o GPS ou escreva a morada onde o carro está. O pedido vai para as oficinas cujo raio de atendimento inclui esse local."
+          },
+          {
+            "title": "Rever e enviar",
+            "desc": "Confira e envie. As oficinas são avisadas na hora e começam a preparar os orçamentos."
+          }
+        ],
+        "texto": "Enquanto não aceitar um orçamento, pode editar o pedido (fotografias, descrição) ou cancelá-lo. Se ainda houver uma avaliação pendente de um serviço anterior, ela é pedida antes do novo pedido."
       },
       {
-        "title": "Confirme o seu e-mail",
-        "desc": "Receberá um e-mail de confirmação. Clique no link para ativar a sua conta."
+        "titulo": "3. Comparar os orçamentos",
+        "intro": "Cada orçamento chega em separado, de uma oficina diferente, e mostra: valor total, itens (peças e mão de obra), prazo, garantia, validade, os horários em que a oficina pode receber o carro e a nota dada por outros condutores.",
+        "selos": [
+          {
+            "name": "Qualidade",
+            "desc": "Oficina com nota média de 4 estrelas ou mais nas avaliações dos condutores."
+          },
+          {
+            "name": "Convencionada com a sua seguradora",
+            "desc": "Aparece quando a reparação é pelo seguro e a oficina trabalha com a sua seguradora."
+          },
+          {
+            "name": "Ajuste de preço",
+            "desc": "Transparência: se a oficina já reviu um orçamento aceite, vê quanto o valor mudou em relação ao original (por exemplo, \"12% mais caro\")."
+          }
+        ],
+        "texto": "Tem dúvidas? Toque em \"Enviar mensagem à oficina\": cada oficina tem a sua própria conversa consigo, e as outras não a veem. Os orçamentos que não interessam podem ser recusados."
       },
       {
-        "title": "Adicione o seu veículo",
-        "desc": "Adicione a marca, o modelo, o ano e a matrícula do seu veículo. Pode adicionar mais do que um."
+        "titulo": "4. Aceitar e marcar",
+        "intro": "Ao aceitar um orçamento, escolhe no mesmo ecrã a hora de entrada do carro entre as que a oficina ofereceu (hoje ou nos próximos dias).",
+        "passos": [
+          {
+            "title": "Escolha a hora",
+            "desc": "Toque no dia e no período pretendido. As horas que já passaram não aparecem."
+          },
+          {
+            "title": "Aceite",
+            "desc": "A oficina é avisada na hora. Os outros orçamentos desse pedido ficam encerrados."
+          },
+          {
+            "title": "Leve o carro",
+            "desc": "A morada da oficina e a hora ficam na página do pedido. Se precisar de mudar, use \"Alterar a marcação\"."
+          }
+        ],
+        "texto": "Se não comparecer, a oficina pode registar a falta: a hora é libertada e o pedido volta para si, para escolher de novo."
+      },
+      {
+        "titulo": "5. Acompanhar a reparação",
+        "intro": "Quando o carro chega, a oficina faz o check-in e passa a ver cada etapa na página do pedido, com aviso no site:",
+        "itens": [
+          {
+            "label": "Recebido e diagnóstico",
+            "desc": "O carro entrou na oficina e está a ser avaliado."
+          },
+          {
+            "label": "À espera de peças / Em execução",
+            "desc": "Mostra se a reparação está parada à espera de peças ou em curso. As pausas também aparecem."
+          },
+          {
+            "label": "Teste final",
+            "desc": "O serviço terminou e está a ser conferido."
+          },
+          {
+            "label": "Pronto para levantar",
+            "desc": "Recebe o aviso para ir buscar o carro."
+          },
+          {
+            "label": "Entregue",
+            "desc": "A oficina marca quando levanta o carro. Se não marcar, ao fim de 5 dias o carro conta como entregue."
+          }
+        ],
+        "texto": "Os avisos ficam no sino (no topo do ecrã) e na página de notificações."
+      },
+      {
+        "titulo": "6. Se a oficina pedir para mudar o preço",
+        "intro": "Às vezes, ao abrir o carro, a oficina encontra algo que não se via antes. Mesmo assim, não pode simplesmente cobrar mais: tem de enviar uma revisão do orçamento, com o motivo, os novos itens e o novo valor. Nada muda sem a sua decisão.",
+        "itens": [
+          {
+            "label": "Aprovar",
+            "desc": "Passa a valer o novo valor. O valor original fica registado e aparece junto do orçamento."
+          },
+          {
+            "label": "Recusar e levantar o carro",
+            "desc": "O serviço é encerrado e combina o levantamento pela conversa. Pode haver cobrança do que já foi feito, conforme o combinado com a oficina."
+          }
+        ],
+        "nota": "O BipFix acompanha as revisões de preço de cada oficina. As oficinas que pedem aumentos com frequência ou muito altos são analisadas pela nossa equipa."
+      },
+      {
+        "titulo": "7. Avaliar o serviço",
+        "intro": "Depois da entrega, avalie a oficina. A avaliação ajuda outros condutores e é pedida antes do seu próximo pedido; o botão \"Acabei de bater\" nunca fica bloqueado.",
+        "passos": [
+          {
+            "title": "Nota de 1 a 5 estrelas",
+            "desc": "Para a qualidade geral do serviço."
+          },
+          {
+            "title": "Comentário",
+            "desc": "Conte como foi: prazo, preço, atendimento, resultado."
+          },
+          {
+            "title": "Publicação",
+            "desc": "A avaliação aparece no perfil público da oficina e entra na nota média. Pode editá-la depois."
+          }
+        ]
+      },
+      {
+        "titulo": "8. Garantia e conversa depois da entrega",
+        "intro": "A garantia indicada no orçamento começa a contar na entrega do carro.",
+        "itens": [
+          {
+            "label": "Contagem no ecrã inicial",
+            "desc": "Vê quantos dias de garantia ainda restam em cada serviço."
+          },
+          {
+            "label": "Conversa aberta",
+            "desc": "A conversa com a oficina escolhida continua aberta até ao fim da garantia. As conversas com as outras oficinas são encerradas quando o serviço termina."
+          },
+          {
+            "label": "Histórico",
+            "desc": "Em Histórico ficam todos os serviços, com orçamento, etapas e avaliação."
+          }
+        ]
+      },
+      {
+        "titulo": "9. Acidente: botão \"Acabei de bater\"",
+        "intro": "Para quando acabou de bater com o carro. Funciona mesmo sem conta e mostra o que fazer conforme o país onde aconteceu o acidente, no seu idioma.",
+        "passos": [
+          {
+            "title": "Toque no botão vermelho",
+            "desc": "Fica na página inicial e no seu painel."
+          },
+          {
+            "title": "Fotografias e local",
+            "desc": "Fotografe os danos na hora. O GPS encontra a morada e as oficinas próximas que fazem chapa."
+          },
+          {
+            "title": "Quem paga a reparação",
+            "desc": "O seguro do outro condutor, o seu seguro de danos próprios ou o próprio. Pode indicar depois. Se o seu seguro for de outro país, mostramos como funciona a Carta Verde."
+          },
+          {
+            "title": "Orçamentos",
+            "desc": "As oficinas próximas recebem o pedido com prioridade. Os dados do carro podem ser completados depois na página do pedido."
+          }
+        ],
+        "aviso": "Se houver feridos, ligue primeiro para o 112. A sua segurança vem em primeiro lugar."
+      },
+      {
+        "titulo": "10. Custos, conta e privacidade",
+        "itens": [
+          {
+            "label": "Gratuito para o condutor",
+            "desc": "Pedir e comparar orçamentos não custa nada, e o BipFix não acrescenta nada ao valor do orçamento. Paga só o serviço, diretamente à oficina."
+          },
+          {
+            "label": "Os seus dados",
+            "desc": "Os seus dados de contacto só ficam visíveis para as oficinas envolvidas nos seus pedidos, nunca para o público. Veja os detalhes na Política de Privacidade."
+          },
+          {
+            "label": "Eliminar a conta",
+            "desc": "Em Perfil (ou na página \"Eliminar conta\"). Sem serviços feitos, tudo é apagado. Com serviços, os seus dados pessoais são anonimizados e só o registo do serviço fica, sem o seu nome."
+          }
+        ]
       }
-    ],
-    "s2Title": "2. Como criar um pedido",
-    "s2Intro": "Um pedido é a solicitação de orçamento que envia às oficinas. O processo tem 5 passos simples:",
-    "s2Steps": [
-      {
-        "title": "Selecione o seu veículo",
-        "desc": "Escolha qual dos seus veículos registados precisa de reparação."
-      },
-      {
-        "title": "Tipo de serviço",
-        "desc": "Selecione a categoria de serviço: bate-chapa, pintura, mecânica, eletricidade, vidros e mais."
-      },
-      {
-        "title": "Fotografias e descrição",
-        "desc": "Tire fotografias do dano ou do problema e adicione uma descrição detalhada. Quanto mais informação der, melhor será o orçamento."
-      },
-      {
-        "title": "Localização",
-        "desc": "Confirme a sua localização para que as oficinas próximas recebam o seu pedido. Pode usar o GPS ou escrever a sua morada."
-      },
-      {
-        "title": "Rever e enviar",
-        "desc": "Reveja toda a informação e envie. As oficinas próximas serão notificadas e começarão a preparar orçamentos."
-      }
-    ],
-    "s3Title": "3. Como comparar orçamentos",
-    "s3Intro": "Quando as oficinas enviam orçamentos, pode compará-los facilmente. Cada orçamento mostra o preço total, o prazo estimado, os detalhes discriminados e a classificação da oficina.",
-    "s3BadgesLabel": "Selos em destaque:",
-    "s3Badges": [
-      {
-        "name": "Selo de Qualidade",
-        "desc": "Oficinas com uma classificação média acima de 4,5 estrelas e mais de 10 serviços concluídos."
-      },
-      {
-        "name": "Resposta Rápida",
-        "desc": "Oficinas que responderam ao seu pedido em menos de 1 hora."
-      },
-      {
-        "name": "Ajuste de Preço",
-        "desc": "Indica que a oficina está aberta a negociar o valor do orçamento."
-      }
-    ],
-    "s3Outro": "Use os filtros para ordenar por preço, prazo ou avaliação. Cada oficina tem a sua conversa consigo (toque em \"Enviar mensagem à oficina\" no orçamento). O selo \"Convencionada com a sua seguradora\" aparece quando a oficina trabalha com o seu seguro.",
-    "s4Title": "4. Como marcar o serviço",
-    "s4Intro": "Depois de comparar os orçamentos, escolha o que melhor se adequa às suas necessidades:",
-    "s4Steps": [
-      {
-        "title": "Aceite o orçamento",
-        "desc": "Clique em 'Aceitar orçamento' no que escolheu. A oficina será notificada de imediato."
-      },
-      {
-        "title": "Escolha uma data",
-        "desc": "A oficina disponibiliza horários na sua agenda. Escolha o dia e a hora que lhe derem mais jeito."
-      },
-      {
-        "title": "Confirmação",
-        "desc": "Depois de confirmada, receberá os detalhes da marcação por e-mail e na plataforma, incluindo a morada da oficina."
-      }
-    ],
-    "s5Title": "5. Acompanhamento em tempo real",
-    "s5Intro": "Depois de deixar o seu veículo na oficina, pode acompanhar cada etapa da reparação através da plataforma:",
-    "s5Items": [
-      {
-        "label": "Check-in",
-        "desc": "Quando o veículo chega à oficina, a equipa regista a entrada e recebe um aviso."
-      },
-      {
-        "label": "Em curso",
-        "desc": "A oficina atualiza o estado à medida que avança em cada etapa do serviço."
-      },
-      {
-        "label": "Etapas detalhadas",
-        "desc": "Pode ver o progresso: desmontagem, reparação, pintura, montagem, controlo de qualidade."
-      },
-      {
-        "label": "Pronto para levantamento",
-        "desc": "Quando o serviço está concluído, recebe uma notificação para levantar o seu veículo."
-      },
-      {
-        "label": "Check-out",
-        "desc": "A oficina regista a saída do veículo e marca o serviço como terminado."
-      }
-    ],
-    "s5Outro": "Na app, os avisos aparecem no topo do ecrã, com números nos separadores. Acompanhe também pela página do pedido. Quando o serviço termina, as conversas com as outras oficinas fecham. A da oficina escolhida fica aberta até ao fim da garantia, e a contagem aparece no seu ecrã inicial.",
-    "s6Title": "6. Como avaliar o serviço",
-    "s6Intro": "Quando o carro é entregue, avalie a oficina: isso ajuda outros condutores. A avaliação é obrigatória para fazer um novo pedido (como na Uber); o botão de acidente nunca é bloqueado.",
-    "s6Steps": [
-      {
-        "title": "Classifique de 1 a 5 estrelas",
-        "desc": "Classifique a qualidade geral do serviço prestado."
-      },
-      {
-        "title": "Adicione um comentário",
-        "desc": "Escreva um comentário a descrever a sua experiência. Seja honesto e específico."
-      },
-      {
-        "title": "Publicação",
-        "desc": "A sua avaliação aparecerá no perfil público da oficina, ajudando outros condutores a decidir."
-      }
-    ],
-    "s6Note": "A sua avaliação é mesmo importante. Ajuda a manter a qualidade da plataforma elevada e reconhece as melhores oficinas.",
-    "s7Title": "7. Emergência — Acabei de Bater",
-    "s7Intro": "A BipFix tem um fluxo especial para situações de emergência:",
-    "s7Steps": [
-      {
-        "title": "Toque no botão de emergência",
-        "desc": "Na página inicial ou no seu painel, toque no botão vermelho 'Acabei de Bater'."
-      },
-      {
-        "title": "Registe o incidente",
-        "desc": "Tire fotografias do dano no momento. Se quiser, indique o seu carro (um toque se já estiver registado). Pode completar os dados do carro depois, na página do pedido."
-      },
-      {
-        "title": "Localização automática",
-        "desc": "O sistema usa o GPS para encontrar oficinas próximas e preenche a morada com a rua. As dicas do que fazer seguem o país do acidente."
-      },
-      {
-        "title": "Orçamentos rápidos",
-        "desc": "As oficinas próximas recebem o seu pedido com prioridade e enviam orçamentos em minutos."
-      }
-    ],
-    "s7Warning": "Em caso de acidente com feridos, ligue primeiro para o 112. A sua segurança vem em primeiro lugar."
+    ]
   },
   "docsClienteLayout": {
-    "metaTitle": "Guia do Condutor",
-    "metaDescription": "Aprenda a usar a BipFix para pedir reparações, comparar orçamentos de oficinas e acompanhar a reparação do seu veículo em tempo real."
+    "metaTitle": "Guia do Condutor: pedir orçamentos e acompanhar a reparação",
+    "metaDescription": "Como usar o BipFix: pedir orçamentos a várias oficinas, comparar, marcar, acompanhar a reparação, aprovar revisões de preço e usar o botão de acidente."
   },
   "docsOficina": {
     "pageBackLink": "Voltar ao Centro de Ajuda",
     "pageTitle": "Guia da Oficina",
-    "pageSubtitle": "Aprenda a usar todas as ferramentas da BipFix para atrair clientes, gerir serviços e fazer crescer o seu negócio.",
-    "s1Title": "1. Como registar a sua oficina",
-    "s1Intro": "Registar a sua oficina na BipFix é simples e demora apenas alguns minutos:",
-    "s1Steps": [
+    "pageSubtitle": "Como receber pedidos de clientes perto de si, enviar orçamentos, organizar agenda e equipa e manter o cliente informado do check-in à entrega.",
+    "secoes": [
       {
-        "title": "Crie a sua conta",
-        "desc": "Vá a /cadastro e selecione 'Sou uma oficina'. Preencha os dados do responsável: nome, e-mail e palavra-passe."
+        "titulo": "1. Registar a oficina",
+        "intro": "O registo demora poucos minutos. Depois dele, a equipa do BipFix confere os dados e aprova a oficina; só as oficinas aprovadas recebem pedidos.",
+        "passos": [
+          {
+            "title": "Crie a conta",
+            "desc": "Toque em \"Criar conta\" e escolha a conta de oficina. Indique nome, e-mail e palavra-passe do responsável."
+          },
+          {
+            "title": "Dados da oficina",
+            "desc": "NIF/NIPC, nome comercial, telefone e morada em campos separados (rua, número, código postal, localidade). A morada é conferida no mapa para os clientes próximos o encontrarem."
+          },
+          {
+            "title": "Especialidades",
+            "desc": "Assinale o que a oficina faz: mecânica, chapa, pintura, eletricidade, revisão, vidros, etc. Só recebe pedidos dessas especialidades."
+          },
+          {
+            "title": "Raio de atendimento",
+            "desc": "A distância máxima (em km) dos pedidos que quer receber. Pode mudar quando quiser."
+          },
+          {
+            "title": "Perfil completo",
+            "desc": "Fotografias, descrição, horário de funcionamento e seguradoras convencionadas. O cliente com uma dessas seguradoras vê o selo no seu orçamento."
+          }
+        ]
       },
       {
-        "title": "Dados da oficina",
-        "desc": "Indique o NIF, o nome comercial, o telefone e a morada em campos separados (rua, número, código postal e localidade). O site confere a morada no mapa para os clientes próximos o encontrarem."
+        "titulo": "2. Receber pedidos",
+        "intro": "Cada pedido chega até si quando cumpre três condições:",
+        "itens": [
+          {
+            "label": "Proximidade",
+            "desc": "O carro está dentro do seu raio de atendimento."
+          },
+          {
+            "label": "Especialidade",
+            "desc": "O tipo de serviço pedido está entre as suas especialidades."
+          },
+          {
+            "label": "Oficina ativa",
+            "desc": "A oficina foi aprovada e está ativa."
+          }
+        ],
+        "texto": "O aviso aparece no sino do painel e em Pedidos. Cada pedido traz fotografias, descrição, carro e local aproximado. Os acidentes registados pelo botão \"Acabei de bater\" chegam com prioridade.",
+        "nota": "Mantenha as especialidades e o raio corretos para receber só pedidos que fazem sentido para si."
       },
       {
-        "title": "Especialidades",
-        "desc": "Selecione os tipos de serviço que a sua oficina oferece: bate-chapa, pintura, mecânica, eletricidade, vidros e mais."
+        "titulo": "3. Enviar orçamentos",
+        "passos": [
+          {
+            "title": "Perceba o pedido",
+            "desc": "Veja fotografias e descrição. Se precisar, fale com o cliente antes: cada oficina tem a sua própria conversa, que as outras não veem."
+          },
+          {
+            "title": "Itens",
+            "desc": "Liste peças e mão de obra com quantidade e valor. Se o orçamento já está pronto noutro sistema, envie a fotografia ou o PDF: a IA preenche os itens e confere depois."
+          },
+          {
+            "title": "Prazo e garantia",
+            "desc": "Indique o prazo em dias e a garantia. A garantia conta a partir da entrega e, até ao fim dela, o cliente continua a falar consigo."
+          },
+          {
+            "title": "Horários de entrada",
+            "desc": "Ofereça horários para o cliente trazer o carro: hoje (só os períodos que ainda não terminaram) ou nos próximos dias. O cliente escolhe um ao aceitar."
+          },
+          {
+            "title": "Enviar",
+            "desc": "O cliente é avisado e compara com os outros orçamentos."
+          }
+        ],
+        "nota": "Itens separados (peças e mão de obra), garantia clara e horários disponíveis ajudam o cliente a decidir."
       },
       {
-        "title": "Raio de atuação",
-        "desc": "Defina a distância (em km) dentro da qual a sua oficina aceita pedidos. Pode ajustá-la mais tarde."
+        "titulo": "4. Rever um orçamento já aceite",
+        "intro": "Se, ao abrir o carro, encontrar algo que muda o preço ou o prazo, use \"Propor revisão\" na página do pedido. O valor aceite só muda com a aprovação do cliente.",
+        "itens": [
+          {
+            "label": "O que enviar",
+            "desc": "Motivo (obrigatório), os novos itens e o novo valor. Uma revisão pendente de cada vez."
+          },
+          {
+            "label": "O cliente aprova",
+            "desc": "Vale o novo valor. O valor original fica registado e o cliente vê a diferença em percentagem."
+          },
+          {
+            "label": "O cliente recusa",
+            "desc": "O serviço é encerrado e o cliente levanta o carro. Combine pela conversa o que já foi feito."
+          }
+        ],
+        "nota": "As revisões frequentes ou com aumento elevado são acompanhadas pela equipa do BipFix. Um orçamento bem feito desde o início evita revisões."
       },
       {
-        "title": "Perfil completo",
-        "desc": "Adicione fotografias, descrição, horário de funcionamento e as seguradoras convencionadas. O cliente com uma dessas seguradoras vê o selo no seu orçamento."
+        "titulo": "5. Agenda, check-in e faltas",
+        "intro": "A Agenda reúne os carros marcados, em serviço e concluídos:",
+        "itens": [
+          {
+            "label": "Check-in",
+            "desc": "Registe a chegada do carro. Se chegar antes do dia marcado, o site pede confirmação e a entrada passa a ser hoje. O cliente é avisado."
+          },
+          {
+            "label": "Falta (no-show)",
+            "desc": "Se o cliente não aparecer, registe a falta: a hora é libertada e o pedido volta para o cliente."
+          },
+          {
+            "label": "Serviços internos",
+            "desc": "Crie eventos para serviços que não vieram pelo BipFix e mantenha tudo na mesma agenda."
+          },
+          {
+            "label": "Distribuição de Trabalho",
+            "desc": "Escolha qual o mecânico que trata de cada carro, mesmo antes de ele chegar. Cada troca fica no histórico."
+          },
+          {
+            "label": "Capacidade",
+            "desc": "Veja a carga de trabalho atual e o tempo médio de cada etapa da reparação."
+          }
+        ]
+      },
+      {
+        "titulo": "6. Equipa e mecânicos",
+        "passos": [
+          {
+            "title": "Registar",
+            "desc": "Registe mecânicos só com o nome, ou dê acesso (e-mail e palavra-passe temporária) a quem vai registar as etapas pelo telemóvel. O acesso pode ser dado depois."
+          },
+          {
+            "title": "Primeiro acesso",
+            "desc": "Quem recebe acesso entra com a palavra-passe temporária e cria uma nova."
+          },
+          {
+            "title": "Quem vê o quê",
+            "desc": "O mecânico com acesso vê só os carros dele. O responsável vê tudo e pode registar etapas em nome de qualquer mecânico."
+          },
+          {
+            "title": "Histórico preservado",
+            "desc": "Quem já trabalhou em serviços não é apagado, é desativado."
+          }
+        ],
+        "texto": "Em Aprender há tutoriais passo a passo (modo guiado ou autónomo), e os mecânicos têm a formação própria deles."
+      },
+      {
+        "titulo": "7. Etapas da reparação e entrega",
+        "intro": "Em Oficina, registe cada etapa. O cliente é avisado a cada mudança:",
+        "itens": [
+          {
+            "label": "Recebido e diagnóstico",
+            "desc": "Início do serviço."
+          },
+          {
+            "label": "À espera de peças / Em execução",
+            "desc": "Mostra ao cliente se o carro está parado à espera de peças ou em reparação. Há também pausas (cliente, peças, geral)."
+          },
+          {
+            "label": "Teste final",
+            "desc": "Conferência antes de libertar."
+          },
+          {
+            "label": "Concluído",
+            "desc": "Com dupla confirmação. O cliente é avisado para vir buscar o carro."
+          },
+          {
+            "label": "Entregue",
+            "desc": "Marque quando o cliente levantar o carro: começa a garantia e o cliente é convidado a avaliar. Se não marcar, ao fim de 5 dias o carro conta como entregue."
+          }
+        ],
+        "texto": "As etapas repetidas em poucos minutos são ignoradas, para o cliente não receber avisos duplicados."
+      },
+      {
+        "titulo": "8. Peças",
+        "intro": "Em Peças, peça cotações a lojas de peças parceiras e a oficinas vizinhas, compare e confirme a encomenda.",
+        "texto": "O pagamento e a entrega das peças são combinados diretamente com quem vende."
+      },
+      {
+        "titulo": "9. Avaliações e reputação",
+        "itens": [
+          {
+            "label": "Nota de 1 a 5",
+            "desc": "Cada cliente avalia depois da entrega. A média é calculada automaticamente e aparece no seu perfil público e nos seus orçamentos."
+          },
+          {
+            "label": "Selo Qualidade",
+            "desc": "As oficinas com média de 4 estrelas ou mais mostram o selo nos orçamentos."
+          },
+          {
+            "label": "Comentários",
+            "desc": "Veja todos em Avaliações."
+          }
+        ],
+        "texto": "Atualizar as etapas em dia, cumprir prazos e evitar revisões de preço são o que mais pesa nas avaliações."
+      },
+      {
+        "titulo": "10. Custos da plataforma",
+        "intro": "Hoje o BipFix é gratuito para oficinas e condutores:",
+        "itens": [
+          {
+            "label": "Sem comissão",
+            "desc": "Nenhuma comissão sobre os serviços fechados pela plataforma: o valor do orçamento é o que o cliente paga, diretamente a si."
+          },
+          {
+            "label": "Sem mensalidade",
+            "desc": "Registo, agenda, orçamentos, equipa e avaliações não têm mensalidade."
+          },
+          {
+            "label": "Aviso prévio",
+            "desc": "Se mudarmos a forma como a plataforma cobra condutores ou oficinas, avisaremos com pelo menos 30 dias de calendário de antecedência, por e-mail e dentro da plataforma."
+          }
+        ],
+        "texto": "Em Comissão, no menu, vê a condição que vale hoje para a sua oficina."
       }
-    ],
-    "s2Title": "2. Como receber pedidos",
-    "s2Intro": "A BipFix envia automaticamente os pedidos às oficinas que correspondem aos critérios do cliente:",
-    "s2Items": [
-      {
-        "label": "Proximidade",
-        "desc": "O cliente está dentro do raio de atuação que definiu."
-      },
-      {
-        "label": "Especialidade",
-        "desc": "O tipo de serviço pedido corresponde às especialidades da sua oficina."
-      },
-      {
-        "label": "Disponibilidade",
-        "desc": "A sua oficina está ativa na plataforma com agenda aberta."
-      }
-    ],
-    "s2Body": "Receberá notificações no seu painel e por e-mail. Cada pedido inclui: fotografias do dano, uma descrição do problema, o tipo de veículo e a localização do cliente.",
-    "s2Tip": "Dica: mantenha o seu perfil atualizado e as especialidades corretas para receber os pedidos mais relevantes.",
-    "s3Title": "3. Como enviar orçamentos",
-    "s3Intro": "Para enviar um orçamento competitivo e detalhado:",
-    "s3Steps": [
-      {
-        "title": "Analise o pedido",
-        "desc": "Analise as fotografias e a descrição. Pode falar com o cliente antes de orçamentar: cada oficina tem a sua própria conversa, que as outras não veem."
-      },
-      {
-        "title": "Adicione itens ao orçamento",
-        "desc": "Liste cada serviço e peça com quantidade e valor. Se o orçamento já está pronto noutro sistema, envie a fotografia ou o PDF: a IA preenche os itens e confere."
-      },
-      {
-        "title": "Prazo estimado",
-        "desc": "Indique o prazo em dias e a garantia do serviço. A garantia conta a partir da entrega e, até ao fim, o cliente continua a falar consigo."
-      },
-      {
-        "title": "Disponibilidade na agenda",
-        "desc": "Ofereça horários para o cliente trazer o carro: hoje (só os períodos que ainda não terminaram) ou nos dias seguintes."
-      },
-      {
-        "title": "Envie o orçamento",
-        "desc": "Reveja e envie. O cliente será notificado e poderá compará-lo com outros orçamentos."
-      }
-    ],
-    "s3Tip": "Orçamentos detalhados com preços justos têm até 3x mais probabilidade de serem aceites.",
-    "s4Title": "4. Gerir a sua agenda",
-    "s4Intro": "O painel de agenda permite-lhe organizar todos os serviços da sua oficina:",
-    "s4Items": [
-      {
-        "label": "Check-in",
-        "desc": "Registe a chegada do veículo. Se o carro chegar antes da data marcada, o site pede confirmação e a entrada passa a ser hoje. O pedido do cliente passa a \"em curso\" e ele é avisado."
-      },
-      {
-        "label": "Trabalhos internos",
-        "desc": "Crie trabalhos internos (que não vieram pela BipFix) para manter a sua agenda organizada."
-      },
-      {
-        "label": "Atribuição",
-        "desc": "Atribua cada veículo a um mecânico, se quiser. Sem mecânicos registados, a oficina faz tudo sozinha. Cada troca fica no histórico."
-      },
-      {
-        "label": "Check-out",
-        "desc": "Quando o serviço termina e o veículo é levantado, registe a sua saída."
-      }
-    ],
-    "s4Outro": "A vista de calendário mostra todos os serviços marcados, em curso e concluídos num só lugar.",
-    "s5Title": "5. Equipa e mecânicos",
-    "s5Intro": "Gira os membros da sua equipa diretamente através da plataforma:",
-    "s5Steps": [
-      {
-        "title": "Adicione colaboradores",
-        "desc": "Registe mecânicos só com o nome, ou dê acesso ao portal (e-mail e palavra-passe temporária) a quem vai registar as etapas no telemóvel. O acesso pode ser dado depois."
-      },
-      {
-        "title": "Primeiro início de sessão",
-        "desc": "Quem recebe acesso entra com a palavra-passe temporária e define uma nova no primeiro início de sessão."
-      },
-      {
-        "title": "Atribua veículos",
-        "desc": "Atribua veículos a mecânicos. O mecânico com acesso vê só os seus veículos. O responsável pela oficina pode registar etapas em nome de qualquer mecânico."
-      },
-      {
-        "title": "Permissões por função",
-        "desc": "Os mecânicos veem os veículos atribuídos; o responsável tem acesso completo. Quem já trabalhou em serviços não é apagado, é desativado: o histórico fica completo."
-      }
-    ],
-    "s6Title": "6. Acompanhamento da reparação",
-    "s6Intro": "Mantenha o cliente informado sobre o progresso da reparação:",
-    "s6Items": [
-      {
-        "label": "Atualizações de estado",
-        "desc": "Altere o estado do serviço: recebido, em curso, à espera de peças, concluído."
-      },
-      {
-        "label": "Etapas detalhadas",
-        "desc": "Registe cada etapa: desmontagem, reparação estrutural, preparação, pintura, montagem, controlo de qualidade."
-      },
-      {
-        "label": "Notificações automáticas",
-        "desc": "O check-in e cada etapa geram um aviso para o cliente, no site e na app."
-      },
-      {
-        "label": "Fotografias do progresso",
-        "desc": "Envie fotografias de cada etapa para que o cliente possa acompanhar visualmente."
-      }
-    ],
-    "s6Note": "Ao marcar \"Concluído\" (com dupla confirmação) o cliente é avisado para vir levantar o carro. Marque \"Entregue\" quando ele o levantar: começa a garantia e o cliente avalia. Se não marcar, ao fim de 5 dias o carro conta como entregue. As oficinas que atualizam o estado com frequência obtêm classificações mais altas.",
-    "s7Title": "7. Avaliações e reputação",
-    "s7Intro": "A sua reputação na plataforma constrói-se através das avaliações dos clientes:",
-    "s7Items": [
-      {
-        "label": "Classificação de 1 a 5 estrelas",
-        "desc": "A média aparece no seu perfil público e nos resultados de pesquisa."
-      },
-      {
-        "label": "Comentários",
-        "desc": "Os clientes podem deixar comentários detalhados sobre a sua experiência."
-      },
-      {
-        "label": "Selo de Qualidade",
-        "desc": "Oficinas com média acima de 4,5 e mais de 10 serviços recebem o selo verde de qualidade."
-      },
-      {
-        "label": "Resposta Rápida",
-        "desc": "Responder a pedidos de orçamento em menos de 1 hora dá direito ao selo azul."
-      }
-    ],
-    "s7Outro": "Pode responder publicamente às avaliações, demonstrando profissionalismo e atenção aos seus clientes.",
-    "s8Title": "8. Custos da plataforma",
-    "s8Intro": "Hoje a utilização da BipFix é gratuita para oficinas e condutores. Eis o que isso significa:",
-    "s8Items": [
-      {
-        "label": "Sem comissão",
-        "desc": "Não é cobrada qualquer comissão sobre os serviços fechados através da plataforma: o valor que envia no orçamento é o valor que o cliente paga."
-      },
-      {
-        "label": "Sem mensalidade",
-        "desc": "Registo, agenda, orçamentos, equipa e avaliações não têm mensalidade."
-      },
-      {
-        "label": "Aviso prévio",
-        "desc": "Se alterarmos a forma como a plataforma cobra condutores ou oficinas, avisaremos com pelo menos 30 dias de calendário de antecedência."
-      }
-    ],
-    "s8ReduceTitle": "Onde acompanhar:",
-    "s8ReduceList": [
-      "Abra Comissão no menu: o ecrã mostra a condição que se aplica hoje à sua oficina.",
-      "Qualquer alteração futura será comunicada por email e dentro da plataforma antes de entrar em vigor."
-    ],
-    "s8Note": "Nunca há cobrança ao condutor: a BipFix não acrescenta nada ao valor do orçamento."
+    ]
   },
   "docsOficinaLayout": {
-    "metaTitle": "Guia da Oficina",
-    "metaDescription": "Aprenda a registar a sua oficina, receber pedidos, enviar orçamentos e gerir a sua equipa e agenda na BipFix."
+    "metaTitle": "Guia da Oficina: receber pedidos e gerir serviços",
+    "metaDescription": "Como usar o BipFix na oficina: registo, pedidos de clientes próximos, orçamentos (inclusive por fotografia ou PDF), agenda, equipa, etapas, revisões e custos."
   },
   "oficinaPerfilPublico": {
     "metaTitleTemplate": "{nome} - Oficina Automóvel em {cidade}, {estado}",

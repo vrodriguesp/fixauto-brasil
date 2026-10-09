@@ -537,333 +537,437 @@
   "docsCliente": {
     "pageBackLink": "Back to Help Centre",
     "pageTitle": "Driver Guide",
-    "pageSubtitle": "Everything you need to know to find the best repair shop, compare quotes and track your vehicle's repair.",
-    "s1Title": "1. How to sign up",
-    "s1Intro": "Creating your BipFix account is quick and free. Just follow these steps:",
-    "s1Steps": [
+    "pageSubtitle": "Everything you need to know to request quotes from several repair shops, pick the best one, follow the repair and sort out any surprise, from sign-up to the end of the warranty.",
+    "secoes": [
       {
-        "title": "Go to the sign-up page",
-        "desc": "Click 'I need a repair' on the homepage, or go directly to /cadastro."
+        "titulo": "1. Create your account",
+        "intro": "The account is free and takes a few minutes. You only need it to request quotes and follow your repairs.",
+        "passos": [
+          {
+            "title": "Start with sign-up",
+            "desc": "Tap \"I need a repair\" on the home page or \"Sign up\" at the top of the site and choose the driver account."
+          },
+          {
+            "title": "Fill in your details",
+            "desc": "Name, e-mail, phone number and a password."
+          },
+          {
+            "title": "Confirm your e-mail",
+            "desc": "Open the link we send to your e-mail. If it does not arrive within a few minutes, check your spam folder or use \"Send the confirmation link again\"."
+          },
+          {
+            "title": "Add your car",
+            "desc": "Under Vehicles, enter make, model, year and registration plate. You can add several cars and see the service history of each one."
+          }
+        ]
       },
       {
-        "title": "Fill in your details",
-        "desc": "Enter your full name, email, phone number and create a secure password."
+        "titulo": "2. Request quotes",
+        "intro": "The request describes your car's problem and goes to nearby repair shops that do that kind of work. Requesting quotes costs you nothing.",
+        "passos": [
+          {
+            "title": "Choose the car",
+            "desc": "Select one of your saved cars or add a new one on the spot."
+          },
+          {
+            "title": "Type of service",
+            "desc": "Mechanics, bodywork, paint, electrics, servicing, glass and more. The type decides which shops receive the request."
+          },
+          {
+            "title": "Photos and description",
+            "desc": "Take photos of the damage or the warning light and describe what happens: noises, when it started, whether the car still drives. The more detail, the more accurate the quote."
+          },
+          {
+            "title": "Location",
+            "desc": "Use GPS or type the address where the car is. The request goes to the shops whose service radius covers that spot."
+          },
+          {
+            "title": "Review and send",
+            "desc": "Check everything and send. The shops are notified immediately and start preparing their quotes."
+          }
+        ],
+        "texto": "Until you accept a quote, you can edit the request (photos, description) or cancel it. If a review of a previous service is still pending, you are asked for it before the new request."
       },
       {
-        "title": "Confirm your email",
-        "desc": "You'll receive a confirmation email. Click the link to activate your account."
+        "titulo": "3. Compare the quotes",
+        "intro": "Each quote arrives separately, from a different shop, and shows: total price, items (parts and labour), lead time, warranty, validity, the time slots when the shop can take the car and the rating given by other drivers.",
+        "selos": [
+          {
+            "name": "Quality",
+            "desc": "Shop with an average rating of 4 stars or more from drivers' reviews."
+          },
+          {
+            "name": "Works with your insurer",
+            "desc": "Shown when the repair goes through insurance and the shop works with your insurer."
+          },
+          {
+            "name": "Price adjustment",
+            "desc": "Transparency: if the shop has already revised an accepted quote, you see how much the price changed compared with the original (for example, \"12% higher\")."
+          }
+        ],
+        "texto": "Have questions? Tap \"Message the repair shop\": each shop has its own conversation with you, and the others cannot see it. Quotes you are not interested in can be declined."
       },
       {
-        "title": "Add your vehicle",
-        "desc": "Add the make, model, year and number plate of your vehicle. You can add more than one."
+        "titulo": "4. Accept and book",
+        "intro": "When you accept a quote, you pick the drop-off time on the same screen from the slots the shop offered (today or in the next few days).",
+        "passos": [
+          {
+            "title": "Choose the slot",
+            "desc": "Tap the day and the period you want. Slots that have already passed are not shown."
+          },
+          {
+            "title": "Accept",
+            "desc": "The shop is notified immediately. The other quotes for that request are closed."
+          },
+          {
+            "title": "Drop off the car",
+            "desc": "The shop's address and the time stay on the request page. If you need to change it, use \"Reschedule appointment\"."
+          }
+        ],
+        "texto": "If you do not show up, the shop can record the no-show: the slot is released and the request goes back to you to pick again."
+      },
+      {
+        "titulo": "5. Follow the repair",
+        "intro": "When the car arrives, the shop checks it in and you start seeing each step on the request page, with a notification on the site:",
+        "itens": [
+          {
+            "label": "Received and diagnosis",
+            "desc": "The car is in the shop and being assessed."
+          },
+          {
+            "label": "Awaiting parts / In progress",
+            "desc": "Shows whether the repair is on hold waiting for parts or under way. Pauses are shown too."
+          },
+          {
+            "label": "Final testing",
+            "desc": "The work is done and being checked."
+          },
+          {
+            "label": "Ready for collection",
+            "desc": "You get a notification to pick up the car."
+          },
+          {
+            "label": "Delivered",
+            "desc": "The shop marks it when you collect the car. If it does not, the car counts as delivered after 5 days."
+          }
+        ],
+        "texto": "Notifications are in the bell (at the top of the screen) and on the notifications page."
+      },
+      {
+        "titulo": "6. If the shop asks to change the price",
+        "intro": "Sometimes, once the car is opened up, the shop finds something that could not be seen before. Even so, it cannot simply charge more: it has to send a quote revision, with the reason, the new items and the new price. Nothing changes without your decision.",
+        "itens": [
+          {
+            "label": "Approve",
+            "desc": "The new price applies. The original price stays on record and is shown next to the quote."
+          },
+          {
+            "label": "Decline and collect my car",
+            "desc": "The service is closed and you arrange the pick-up in the conversation. You may be charged for work already done, as agreed with the shop."
+          }
+        ],
+        "nota": "BipFix keeps track of each shop's price revisions. Shops that ask for increases often or that ask for very large ones are reviewed by our team."
+      },
+      {
+        "titulo": "7. Review the service",
+        "intro": "After delivery, review the shop. Your review helps other drivers and is requested before your next request; the \"I've just crashed\" button is never blocked.",
+        "passos": [
+          {
+            "title": "Rating from 1 to 5 stars",
+            "desc": "For the overall quality of the service."
+          },
+          {
+            "title": "Comment",
+            "desc": "Say how it went: timing, price, service, result."
+          },
+          {
+            "title": "Publication",
+            "desc": "The review appears on the shop's public profile and counts towards its average rating. You can edit it later."
+          }
+        ]
+      },
+      {
+        "titulo": "8. Warranty and conversation after delivery",
+        "intro": "The warranty stated in the quote starts counting when the car is delivered.",
+        "itens": [
+          {
+            "label": "Countdown on the home screen",
+            "desc": "You see how many days of warranty are left on each service."
+          },
+          {
+            "label": "Open conversation",
+            "desc": "The conversation with the chosen shop stays open until the warranty ends. Conversations with the other shops are closed when the service is over."
+          },
+          {
+            "label": "History",
+            "desc": "Under History you find every service, with quote, steps and review."
+          }
+        ]
+      },
+      {
+        "titulo": "9. Accident: the \"I've just crashed\" button",
+        "intro": "For when you have just crashed your car. It works even without an account and shows what to do according to the country where the accident happened, in your language.",
+        "passos": [
+          {
+            "title": "Tap the red button",
+            "desc": "It is on the home page and on your dashboard."
+          },
+          {
+            "title": "Photos and location",
+            "desc": "Photograph the damage right away. GPS finds the address and the nearby shops that do bodywork."
+          },
+          {
+            "title": "Who pays for the repair",
+            "desc": "The other driver's insurance, your own comprehensive (kasko) insurance or you. You can fill this in later. If your insurance is from another country, we show you how the Green Card works."
+          },
+          {
+            "title": "Quotes",
+            "desc": "Nearby shops receive the request with priority. The car details can be completed later on the request page."
+          }
+        ],
+        "aviso": "If anyone is injured, call 112 first. Your safety comes first."
+      },
+      {
+        "titulo": "10. Costs, account and privacy",
+        "itens": [
+          {
+            "label": "Free for drivers",
+            "desc": "Requesting and comparing quotes costs nothing, and BipFix adds nothing to the quoted price. You only pay for the service, directly to the shop."
+          },
+          {
+            "label": "Your data",
+            "desc": "Your contact details are only visible to the shops involved in your requests, never to the public. See the details in the Privacy Policy."
+          },
+          {
+            "label": "Delete the account",
+            "desc": "Under Profile (or on the \"Delete account\" page). With no completed services, everything is erased. With services, your personal data is anonymised and only the service record remains, without your name."
+          }
+        ]
       }
-    ],
-    "s2Title": "2. How to create a request",
-    "s2Intro": "A request is the quote request you send to repair shops. The process has 5 simple steps:",
-    "s2Steps": [
-      {
-        "title": "Select your vehicle",
-        "desc": "Choose which of your registered vehicles needs a repair."
-      },
-      {
-        "title": "Type of service",
-        "desc": "Select the service category: bodywork, paint, mechanical, electrical, glass and more."
-      },
-      {
-        "title": "Photos and description",
-        "desc": "Take photos of the damage or issue and add a detailed description. The more information you give, the better the quote will be."
-      },
-      {
-        "title": "Location",
-        "desc": "Confirm your location so nearby repair shops receive your request. You can use GPS or type in your address."
-      },
-      {
-        "title": "Review and send",
-        "desc": "Review all the information and send it. Nearby repair shops will be notified and start preparing quotes."
-      }
-    ],
-    "s3Title": "3. How to compare quotes",
-    "s3Intro": "When repair shops send quotes, you can easily compare them. Each quote shows the total price, estimated timeline, itemised details and the shop's rating.",
-    "s3BadgesLabel": "Featured badges:",
-    "s3Badges": [
-      {
-        "name": "Quality Badge",
-        "desc": "Repair shops with an average rating above 4.5 stars and more than 10 completed services."
-      },
-      {
-        "name": "Fast Response",
-        "desc": "Repair shops that responded to your request in under 1 hour."
-      },
-      {
-        "name": "Price Adjustment",
-        "desc": "Indicates the repair shop is open to negotiating the quote amount."
-      }
-    ],
-    "s3Outro": "Use the filters to sort by price, time or rating. Each repair shop has its own conversation with you (tap \"Message the repair shop\" on the quote). The \"Works with your insurer\" badge appears when the repair shop works with your insurance.",
-    "s4Title": "4. How to schedule the service",
-    "s4Intro": "After comparing quotes, choose the one that best fits your needs:",
-    "s4Steps": [
-      {
-        "title": "Accept the quote",
-        "desc": "Click 'Accept quote' on the one you've chosen. The repair shop will be notified right away."
-      },
-      {
-        "title": "Choose a date",
-        "desc": "The repair shop makes time slots available on its schedule. Pick the day and time that works best for you."
-      },
-      {
-        "title": "Confirmation",
-        "desc": "Once confirmed, you'll receive the appointment details by email and on the platform, including the shop's address."
-      }
-    ],
-    "s5Title": "5. Real-time tracking",
-    "s5Intro": "After dropping off your vehicle at the repair shop, you can follow every stage of the repair through the platform:",
-    "s5Items": [
-      {
-        "label": "Check-in",
-        "desc": "When the vehicle reaches the repair shop, the team records the arrival and you get a notice."
-      },
-      {
-        "label": "In progress",
-        "desc": "The repair shop updates the status as it moves through each stage of the service."
-      },
-      {
-        "label": "Detailed stages",
-        "desc": "You can see the progress: disassembly, repair, painting, reassembly, quality check."
-      },
-      {
-        "label": "Ready for pickup",
-        "desc": "Once the service is complete, you get a notification to pick up your vehicle."
-      },
-      {
-        "label": "Check-out",
-        "desc": "The repair shop logs the vehicle's departure and marks the service as finished."
-      }
-    ],
-    "s5Outro": "In the app, notices appear at the top of the screen, with numbers on the tabs. You can also follow everything on the request page. When the job is finished, conversations with the other repair shops close. The chosen repair shop’s stays open until the warranty ends, and the countdown appears on your home screen.",
-    "s6Title": "6. How to rate the service",
-    "s6Intro": "When the car is handed back, rate the repair shop: it helps other drivers. The review is required before a new request (like Uber); the accident button is never blocked.",
-    "s6Steps": [
-      {
-        "title": "Rate 1 to 5 stars",
-        "desc": "Rate the overall quality of the service provided."
-      },
-      {
-        "title": "Add a comment",
-        "desc": "Write a comment describing your experience. Be honest and specific."
-      },
-      {
-        "title": "Publication",
-        "desc": "Your review will appear on the repair shop's public profile, helping other drivers decide."
-      }
-    ],
-    "s6Note": "Your review really matters. It helps keep the platform's quality high and recognizes the best repair shops.",
-    "s7Title": "7. Emergency — I Just Crashed",
-    "s7Intro": "BipFix has a special flow for emergency situations:",
-    "s7Steps": [
-      {
-        "title": "Tap the emergency button",
-        "desc": "On the homepage or in your dashboard, tap the red 'I Just Crashed' button."
-      },
-      {
-        "title": "Log the incident",
-        "desc": "Take photos of the damage on the spot. If you like, tell us your car (one tap if it is already saved). You can complete the car details later on the request page."
-      },
-      {
-        "title": "Automatic location",
-        "desc": "The system uses GPS to find nearby repair shops and fills in the address with the street. The tips on what to do follow the country of the accident."
-      },
-      {
-        "title": "Fast quotes",
-        "desc": "Nearby repair shops receive your request as a priority and send quotes within minutes."
-      }
-    ],
-    "s7Warning": "If anyone is injured, call 112 (in Europe) or the local emergency number first. Your safety comes first."
+    ]
   },
   "docsClienteLayout": {
-    "metaTitle": "Driver Guide",
-    "metaDescription": "Learn how to use BipFix to request repairs, compare quotes from repair shops and track your vehicle's repair in real time."
+    "metaTitle": "Driver Guide: get repair quotes and track the repair",
+    "metaDescription": "How to use BipFix: request quotes from several repair shops, compare them, book a slot, follow the repair, approve price revisions and use the accident button."
   },
   "docsOficina": {
     "pageBackLink": "Back to Help Centre",
     "pageTitle": "Repair Shop Guide",
-    "pageSubtitle": "Learn how to use all of BipFix's tools to attract customers, manage services and grow your business.",
-    "s1Title": "1. How to register your repair shop",
-    "s1Intro": "Registering your repair shop on BipFix is simple and takes just a few minutes:",
-    "s1Steps": [
+    "pageSubtitle": "How to receive requests from customers near you, send quotes, organise your schedule and team and keep the customer informed from check-in to delivery.",
+    "secoes": [
       {
-        "title": "Create your account",
-        "desc": "Go to /cadastro and select 'I'm a repair shop'. Fill in the details of the person in charge: name, email and password."
+        "titulo": "1. Register the repair shop",
+        "intro": "Registration takes a few minutes. After that, the BipFix team checks the details and approves the shop; only approved shops receive requests.",
+        "passos": [
+          {
+            "title": "Create the account",
+            "desc": "Tap \"Sign up\" and choose the repair shop account. Enter the name, e-mail and password of the person in charge."
+          },
+          {
+            "title": "Shop details",
+            "desc": "Company registration number, trading name, phone number and address in separate fields (street, number, postal code, city). The address is checked on the map so that nearby customers can find you."
+          },
+          {
+            "title": "Specialities",
+            "desc": "Tick what the shop does: mechanics, bodywork, paint, electrics, servicing, glass and so on. You only receive requests for those specialities."
+          },
+          {
+            "title": "Service radius",
+            "desc": "The maximum distance (in km) of the requests you want to receive. You can change it whenever you like."
+          },
+          {
+            "title": "Complete profile",
+            "desc": "Photos, description, opening hours and partner insurers. A customer with one of those insurers sees the badge on your quote."
+          }
+        ]
       },
       {
-        "title": "Repair shop details",
-        "desc": "Enter your company number, trading name, phone and address in separate fields (street, number, postcode and city). The site checks the address on the map so nearby customers can find you."
+        "titulo": "2. Receive requests",
+        "intro": "Each request reaches you when it meets three conditions:",
+        "itens": [
+          {
+            "label": "Proximity",
+            "desc": "The car is within your service radius."
+          },
+          {
+            "label": "Speciality",
+            "desc": "The type of service requested is among your specialities."
+          },
+          {
+            "label": "Active shop",
+            "desc": "The shop has been approved and is active."
+          }
+        ],
+        "texto": "The notification appears in the dashboard bell and under Requests. Each request includes photos, description, car and approximate location. Accidents logged through the \"I've just crashed\" button arrive with priority.",
+        "nota": "Keep your specialities and radius accurate so you only receive requests that make sense for you."
       },
       {
-        "title": "Specialties",
-        "desc": "Select the types of service your shop offers: bodywork, paint, mechanical, electrical, glass, and more."
+        "titulo": "3. Send quotes",
+        "passos": [
+          {
+            "title": "Understand the request",
+            "desc": "Look at the photos and description. If needed, talk to the customer first: each shop has its own conversation, which the others cannot see."
+          },
+          {
+            "title": "Items",
+            "desc": "List parts and labour with quantity and price. If the quote is already done in another system, send a photo or the PDF: the AI fills in the items and you check them."
+          },
+          {
+            "title": "Lead time and warranty",
+            "desc": "State the lead time in days and the warranty. The warranty counts from delivery and, until it ends, the customer keeps talking to you."
+          },
+          {
+            "title": "Drop-off slots",
+            "desc": "Offer time slots for the customer to bring the car: today (only the periods that have not ended yet) or in the next few days. The customer picks one when accepting."
+          },
+          {
+            "title": "Send",
+            "desc": "The customer is notified and compares it with the other quotes."
+          }
+        ],
+        "nota": "Separate items (parts and labour), a clear warranty and available slots help the customer decide."
       },
       {
-        "title": "Service radius",
-        "desc": "Set the distance (in km) within which your shop accepts requests. You can adjust it later."
+        "titulo": "4. Revise an accepted quote",
+        "intro": "If, once the car is opened up, you find something that changes the price or the lead time, use \"Propose a revision\" on the request page. The accepted price only changes with the customer's approval.",
+        "itens": [
+          {
+            "label": "What to send",
+            "desc": "Reason (required), the new items and the new price. One pending revision at a time."
+          },
+          {
+            "label": "Customer approves",
+            "desc": "The new price applies. The original price stays on record and the customer sees the difference as a percentage."
+          },
+          {
+            "label": "Customer declines",
+            "desc": "The service is closed and the customer collects the car. Agree in the conversation on what has already been done."
+          }
+        ],
+        "nota": "Frequent revisions or large increases are monitored by the BipFix team. A quote done well from the start avoids revisions."
       },
       {
-        "title": "Complete profile",
-        "desc": "Add photos, a description, opening hours and your partner insurers. Customers insured with one of them see a badge on your quote."
+        "titulo": "5. Schedule, check-in and no-shows",
+        "intro": "The Schedule brings together booked cars, cars in service and completed ones:",
+        "itens": [
+          {
+            "label": "Check-in",
+            "desc": "Record the car's arrival. If it arrives before the booked day, the site asks for confirmation and the drop-off becomes today. The customer is notified."
+          },
+          {
+            "label": "No-show",
+            "desc": "If the customer does not turn up, record the no-show: the slot is released and the request goes back to the customer."
+          },
+          {
+            "label": "Internal jobs",
+            "desc": "Create events for jobs that did not come through BipFix and keep everything in the same schedule."
+          },
+          {
+            "label": "Work Distribution",
+            "desc": "Choose which mechanic looks after each car, even before it arrives. Every change is kept in the history."
+          },
+          {
+            "label": "Capacity",
+            "desc": "See the current workload and the average time of each repair step."
+          }
+        ]
+      },
+      {
+        "titulo": "6. Team and mechanics",
+        "passos": [
+          {
+            "title": "Register",
+            "desc": "Register mechanics with just a name, or give access (e-mail and temporary password) to those who will log the steps from their phone. Access can be given later."
+          },
+          {
+            "title": "First login",
+            "desc": "Whoever gets access logs in with the temporary password and creates a new one."
+          },
+          {
+            "title": "Who sees what",
+            "desc": "A mechanic with access only sees their own cars. The person in charge sees everything and can log steps on behalf of any mechanic."
+          },
+          {
+            "title": "History preserved",
+            "desc": "Anyone who has already worked on jobs is not deleted, only deactivated."
+          }
+        ],
+        "texto": "Under Learn there are step-by-step tutorials (guided or self-paced mode), and mechanics have their own training."
+      },
+      {
+        "titulo": "7. Repair steps and delivery",
+        "intro": "Under Workshop, log each step. The customer is notified at every change:",
+        "itens": [
+          {
+            "label": "Received and diagnosis",
+            "desc": "Start of the job."
+          },
+          {
+            "label": "Awaiting parts / In progress",
+            "desc": "Shows the customer whether the car is on hold waiting for parts or being repaired. There are also pauses (customer, parts, general)."
+          },
+          {
+            "label": "Final testing",
+            "desc": "Check before release."
+          },
+          {
+            "label": "Completed",
+            "desc": "With double confirmation. The customer is notified to come and collect the car."
+          },
+          {
+            "label": "Delivered",
+            "desc": "Mark it when the customer collects the car: the warranty starts and the customer is invited to leave a review. If you do not mark it, the car counts as delivered after 5 days."
+          }
+        ],
+        "texto": "Steps repeated within a few minutes are ignored, so the customer does not get duplicate notifications."
+      },
+      {
+        "titulo": "8. Parts",
+        "intro": "Under Parts, request quotes from partner parts shops and neighbouring repair shops, compare and confirm the order.",
+        "texto": "Payment and delivery of the parts are arranged directly with the seller."
+      },
+      {
+        "titulo": "9. Reviews and reputation",
+        "itens": [
+          {
+            "label": "Rating from 1 to 5",
+            "desc": "Each customer leaves a review after delivery. The average is calculated automatically and appears on your public profile and on your quotes."
+          },
+          {
+            "label": "Quality badge",
+            "desc": "Shops with an average of 4 stars or more show the badge on their quotes."
+          },
+          {
+            "label": "Comments",
+            "desc": "See them all under Reviews."
+          }
+        ],
+        "texto": "Keeping the steps up to date, meeting deadlines and avoiding price revisions are what weigh most in the reviews."
+      },
+      {
+        "titulo": "10. Platform costs",
+        "intro": "Today BipFix is free for repair shops and drivers:",
+        "itens": [
+          {
+            "label": "No commission",
+            "desc": "No commission on jobs closed through the platform: the quoted price is what the customer pays, directly to you."
+          },
+          {
+            "label": "No monthly fee",
+            "desc": "Registration, schedule, quotes, team and reviews have no monthly fee."
+          },
+          {
+            "label": "Advance notice",
+            "desc": "If we change the way the platform charges drivers or repair shops, we will give at least 30 calendar days' notice, by e-mail and inside the platform."
+          }
+        ],
+        "texto": "Under Commission, in the menu, you see the terms that currently apply to your shop."
       }
-    ],
-    "s2Title": "2. How to receive requests",
-    "s2Intro": "BipFix automatically sends requests to repair shops that match the customer's criteria:",
-    "s2Items": [
-      {
-        "label": "Proximity",
-        "desc": "The customer is within the service radius you set."
-      },
-      {
-        "label": "Specialty",
-        "desc": "The requested service type matches your shop's specialties."
-      },
-      {
-        "label": "Availability",
-        "desc": "Your shop is active on the platform with an open schedule."
-      }
-    ],
-    "s2Body": "You'll receive notifications on your dashboard and by email. Each request includes: photos of the damage, a description of the issue, vehicle type and the customer's location.",
-    "s2Tip": "Tip: keep your profile up to date and your specialties accurate to receive the most relevant requests.",
-    "s3Title": "3. How to send quotes",
-    "s3Intro": "To send a competitive, detailed quote:",
-    "s3Steps": [
-      {
-        "title": "Review the request",
-        "desc": "Look at the photos and description. You can chat with the customer before quoting: each repair shop has its own conversation, which the others cannot see."
-      },
-      {
-        "title": "Add items to the quote",
-        "desc": "List each service and part with quantity and price. If the quote is already in another system, upload the photo or PDF: the AI fills in the items and you check them."
-      },
-      {
-        "title": "Estimated timeline",
-        "desc": "Enter the time in days and the service warranty. The warranty starts at hand-over and, until it ends, the customer can keep messaging you."
-      },
-      {
-        "title": "Schedule availability",
-        "desc": "Offer times for the customer to bring the car: today (only periods that have not ended yet) or the following days."
-      },
-      {
-        "title": "Send the quote",
-        "desc": "Review and send. The customer will be notified and can compare it with other quotes."
-      }
-    ],
-    "s3Tip": "Detailed quotes with fair prices are up to 3x more likely to be accepted.",
-    "s4Title": "4. Manage your schedule",
-    "s4Intro": "The schedule dashboard lets you organize all of your shop's services:",
-    "s4Items": [
-      {
-        "label": "Check-in",
-        "desc": "Record the vehicle arrival. If the car arrives before the booked date, the site asks you to confirm and the arrival becomes today. The customer’s request switches to \"in progress\" and they are notified."
-      },
-      {
-        "label": "Internal jobs",
-        "desc": "Create internal jobs (ones that didn't come through BipFix) to keep your schedule organized."
-      },
-      {
-        "label": "Assignment",
-        "desc": "Assign each vehicle to a mechanic if you want. With no mechanics registered, the repair shop does everything itself. Every change is kept in the history."
-      },
-      {
-        "label": "Check-out",
-        "desc": "When the service is finished and the vehicle picked up, log its departure."
-      }
-    ],
-    "s4Outro": "The calendar view shows all scheduled, in-progress and completed services in one place.",
-    "s5Title": "5. Team and mechanics",
-    "s5Intro": "Manage your team members directly through the platform:",
-    "s5Steps": [
-      {
-        "title": "Add staff",
-        "desc": "Register mechanics with just their name, or give portal access (email and temporary password) to those who will log stages on their phone. Access can be given later."
-      },
-      {
-        "title": "First login",
-        "desc": "People with access sign in with the temporary password and set a new one on first login."
-      },
-      {
-        "title": "Assign vehicles",
-        "desc": "Assign vehicles to mechanics. A mechanic with access only sees their own vehicles. The repair shop owner can log stages on behalf of any mechanic."
-      },
-      {
-        "title": "Role-based permissions",
-        "desc": "Mechanics see their assigned vehicles; the owner has full access. Anyone who has worked on jobs is not deleted but deactivated, so the history stays complete."
-      }
-    ],
-    "s6Title": "6. Repair tracking",
-    "s6Intro": "Keep the customer informed about the repair's progress:",
-    "s6Items": [
-      {
-        "label": "Status updates",
-        "desc": "Change the service status: received, in progress, awaiting parts, completed."
-      },
-      {
-        "label": "Detailed stages",
-        "desc": "Log each stage: disassembly, structural repair, prep, painting, reassembly, quality check."
-      },
-      {
-        "label": "Automatic notifications",
-        "desc": "Check-in and every step send a notice to the customer, on the site and in the app."
-      },
-      {
-        "label": "Progress photos",
-        "desc": "Send photos of each stage so the customer can follow along visually."
-      }
-    ],
-    "s6Note": "Marking \"Completed\" (double confirmation) tells the customer to come and pick up the car. Mark \"Delivered\" when they collect it: the warranty starts and the customer leaves a review. If you do not, after 5 days the car counts as delivered. Shops that update the status often get higher ratings.",
-    "s7Title": "7. Reviews and reputation",
-    "s7Intro": "Your reputation on the platform is built through customer reviews:",
-    "s7Items": [
-      {
-        "label": "1 to 5 star rating",
-        "desc": "The average appears on your public profile and in search results."
-      },
-      {
-        "label": "Comments",
-        "desc": "Customers can leave detailed comments about their experience."
-      },
-      {
-        "label": "Quality Badge",
-        "desc": "Repair shops with an average above 4.5 and more than 10 services receive the green quality badge."
-      },
-      {
-        "label": "Fast Response",
-        "desc": "Responding to quote requests in under 1 hour earns the blue badge."
-      }
-    ],
-    "s7Outro": "You can reply publicly to reviews, showing professionalism and attention to your customers.",
-    "s8Title": "8. Platform costs",
-    "s8Intro": "Using BipFix is currently free for garages and drivers. Here is what that means:",
-    "s8Items": [
-      {
-        "label": "No commission",
-        "desc": "No commission is charged on jobs closed through the platform: the amount you send in the quote is the amount the customer pays."
-      },
-      {
-        "label": "No monthly fee",
-        "desc": "Registration, schedule, quotes, team and reviews carry no monthly fee."
-      },
-      {
-        "label": "Advance notice",
-        "desc": "If we change how the platform charges drivers or garages, we will inform you at least 30 calendar days in advance."
-      }
-    ],
-    "s8ReduceTitle": "Where to keep track:",
-    "s8ReduceList": [
-      "Open Commission in the menu: the screen shows the condition that applies to your garage today.",
-      "Any future change will be announced by email and inside the platform before it takes effect."
-    ],
-    "s8Note": "Drivers are never charged: BipFix adds nothing to the quote amount."
+    ]
   },
   "docsOficinaLayout": {
-    "metaTitle": "Repair Shop Guide",
-    "metaDescription": "Learn how to register your shop, receive requests, send quotes and manage your team and schedule on BipFix."
+    "metaTitle": "Repair Shop Guide: receive requests and manage jobs",
+    "metaDescription": "How to use BipFix in your repair shop: registration, requests from nearby customers, quotes (also from a photo or PDF), schedule, team, repair steps and costs."
   },
   "oficinaPerfilPublico": {
     "metaTitleTemplate": "{nome} - Auto Repair Shop in {cidade}, {estado}",

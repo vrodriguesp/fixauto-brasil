@@ -537,333 +537,437 @@
   "docsCliente": {
     "pageBackLink": "Tagasi abikeskusesse",
     "pageTitle": "Juhi juhend",
-    "pageSubtitle": "Kõik, mida on vaja teada, et leida parim töökoda, võrrelda hinnapakkumisi ja jälgida oma sõiduki remonti.",
-    "s1Title": "1. Kuidas registreeruda",
-    "s1Intro": "BipFixi konto loomine on kiire ja tasuta. Järgi neid samme:",
-    "s1Steps": [
+    "pageSubtitle": "Kõik, mida pead teadma, et küsida hinnapakkumisi mitmelt töökojalt, valida parim, jälgida remonti ja lahendada iga ootamatus, alates registreerumisest kuni garantii lõpuni.",
+    "secoes": [
       {
-        "title": "Ava registreerimisleht",
-        "desc": "Vajuta avalehel nupul 'Vajan remonti' või mine otse aadressile /cadastro."
+        "titulo": "1. Loo oma konto",
+        "intro": "Konto on tasuta ja selle loomine võtab mõne minuti. Seda on vaja ainult hinnapakkumiste küsimiseks ja remondi jälgimiseks.",
+        "passos": [
+          {
+            "title": "Alusta registreerumisest",
+            "desc": "Vajuta avalehel \"Vajan remonti\" või lehe ülaosas \"Registreeru\" ja vali juhi konto."
+          },
+          {
+            "title": "Sisesta oma andmed",
+            "desc": "Nimi, e-post, telefoninumber ja parool."
+          },
+          {
+            "title": "Kinnita e-post",
+            "desc": "Ava link, mille sinu e-postile saadame. Kui see mõne minuti jooksul ei saabu, vaata rämpsposti või kasuta nuppu \"Saada kinnituslink uuesti\"."
+          },
+          {
+            "title": "Lisa oma auto",
+            "desc": "Sisesta lehel Sõidukid mark, mudel, aasta ja registreerimisnumber. Võid lisada mitu autot ja näha igaühe hooldusajalugu."
+          }
+        ]
       },
       {
-        "title": "Täida oma andmed",
-        "desc": "Sisesta oma täisnimi, e-post, telefoninumber ja loo turvaline parool."
+        "titulo": "2. Küsi hinnapakkumisi",
+        "intro": "Päring kirjeldab auto probleemi ja läheb lähedal asuvatele töökodadele, kes seda tüüpi tööd teevad. Hinnapakkumiste küsimise eest ei maksa sa midagi.",
+        "passos": [
+          {
+            "title": "Vali auto",
+            "desc": "Vali üks oma salvestatud autodest või lisa kohe uus."
+          },
+          {
+            "title": "Teenuse tüüp",
+            "desc": "Mehaanika, keretööd, värvimine, elektrika, hooldus, klaasid ja muu. Tüüp määrab, millised töökojad päringu saavad."
+          },
+          {
+            "title": "Fotod ja kirjeldus",
+            "desc": "Tee fotod kahjustusest või armatuurlaua märgutulest ja kirjelda, mis toimub: mürad, millal algas, kas auto veel sõidab. Mida rohkem detaile, seda täpsem hinnapakkumine."
+          },
+          {
+            "title": "Asukoht",
+            "desc": "Kasuta GPS-i või sisesta aadress, kus auto asub. Päring läheb töökodadele, kelle teeninduspiirkond seda kohta katab."
+          },
+          {
+            "title": "Vaata üle ja saada",
+            "desc": "Kontrolli ja saada. Töökojad saavad kohe teate ja hakkavad hinnapakkumisi koostama."
+          }
+        ],
+        "texto": "Kuni sa pole hinnapakkumist vastu võtnud, saad päringut muuta (fotod, kirjeldus) või selle tühistada. Kui mõne eelmise teenuse hinnang on veel andmata, küsitakse seda enne uut päringut."
       },
       {
-        "title": "Kinnita oma e-post",
-        "desc": "Saad kinnituskirja e-postile. Vajuta lingil, et oma konto aktiveerida."
+        "titulo": "3. Võrdle hinnapakkumisi",
+        "intro": "Iga hinnapakkumine saabub eraldi, eri töökojalt, ja näitab: kogusummat, kirjeid (varuosad ja töö), tähtaega, garantiid, kehtivust, aegu, millal töökoda saab auto vastu võtta, ja teiste juhtide antud hinnangut.",
+        "selos": [
+          {
+            "name": "Kvaliteet",
+            "desc": "Töökoda, mille keskmine hinnang juhtide hinnangute põhjal on 4 tärni või rohkem."
+          },
+          {
+            "name": "Leping: sinu kindlustusandja",
+            "desc": "Kuvatakse, kui remont käib kindlustuse kaudu ja töökoda teeb sinu kindlustusandjaga koostööd."
+          },
+          {
+            "name": "Hinna muudatus",
+            "desc": "Läbipaistvus: kui töökoda on juba vastuvõetud hinnapakkumist muutnud, näed, kui palju summa võrreldes algsega muutus (näiteks \"12% kõrgem\")."
+          }
+        ],
+        "texto": "Küsimusi? Vajuta \"Kirjuta töökojale\": igal töökojal on sinuga oma vestlus, mida teised ei näe. Hinnapakkumistest, mis ei huvita, võid keelduda."
       },
       {
-        "title": "Lisa oma sõiduk",
-        "desc": "Lisa oma sõiduki mark, mudel, aasta ja registreerimismärk. Saad lisada rohkem kui ühe sõiduki."
+        "titulo": "4. Võta vastu ja broneeri aeg",
+        "intro": "Hinnapakkumist vastu võttes valid samal ekraanil auto toomise aja nende seast, mida töökoda pakkus (täna või lähipäevil).",
+        "passos": [
+          {
+            "title": "Vali aeg",
+            "desc": "Vajuta soovitud päevale ja ajavahemikule. Juba möödunud aegu ei kuvata."
+          },
+          {
+            "title": "Võta vastu",
+            "desc": "Töökoda saab kohe teate. Selle päringu teised hinnapakkumised suletakse."
+          },
+          {
+            "title": "Vii auto kohale",
+            "desc": "Töökoja aadress ja aeg jäävad päringu lehele. Kui pead aega muutma, kasuta nuppu \"Muuda vastuvõtuaega\"."
+          }
+        ],
+        "texto": "Kui sa kohale ei tule, võib töökoda puudumise registreerida: aeg vabastatakse ja päring tuleb sulle tagasi, et saaksid uue aja valida."
+      },
+      {
+        "titulo": "5. Jälgi remonti",
+        "intro": "Kui auto saabub, teeb töökoda check-ini ja sa näed iga etappi päringu lehel, koos teatega saidil:",
+        "itens": [
+          {
+            "label": "Vastu võetud ja diagnostika",
+            "desc": "Auto on töökojas ja seda hinnatakse."
+          },
+          {
+            "label": "Ootab varuosi / Töös",
+            "desc": "Näitab, kas remont seisab varuosade ootel või on käimas. Ka pausid on näha."
+          },
+          {
+            "label": "Lõpptestimine",
+            "desc": "Töö on tehtud ja seda kontrollitakse."
+          },
+          {
+            "label": "Valmis kättesaamiseks",
+            "desc": "Saad teate, et autole järele tulla."
+          },
+          {
+            "label": "Üle antud",
+            "desc": "Töökoda märgib selle, kui auto kätte saad. Kui ta seda ei tee, loetakse auto 5 päeva pärast üleantuks."
+          }
+        ],
+        "texto": "Teated on kellukese all (ekraani ülaosas) ja teadete lehel."
+      },
+      {
+        "titulo": "6. Kui töökoda soovib hinda muuta",
+        "intro": "Mõnikord leiab töökoda autot lahti võttes midagi, mida varem polnud näha. Sellegipoolest ei saa ta lihtsalt rohkem küsida: ta peab saatma hinnapakkumise muudatuse koos põhjuse, uute kirjete ja uue summaga. Ilma sinu otsuseta ei muutu midagi.",
+        "itens": [
+          {
+            "label": "Kinnita",
+            "desc": "Kehtima hakkab uus summa. Algne summa jääb kirja ja kuvatakse hinnapakkumise juures."
+          },
+          {
+            "label": "Keeldu ja vii auto ära",
+            "desc": "Teenus lõpetatakse ja sa lepid auto äraviimise vestluses kokku. Juba tehtud töö eest võidakse küsida tasu, nagu töökojaga kokku lepitud."
+          }
+        ],
+        "nota": "BipFix jälgib iga töökoja hinnamuudatusi. Töökojad, kes küsivad hinnatõusu sageli või väga suures ulatuses, vaatab meie meeskond üle."
+      },
+      {
+        "titulo": "7. Hinda teenust",
+        "intro": "Pärast üleandmist anna töökojale hinnang. Hinnang aitab teisi juhte ja seda küsitakse enne sinu järgmist päringut; nupp \"Sain just avarii\" ei ole kunagi blokeeritud.",
+        "passos": [
+          {
+            "title": "Hinnang 1 kuni 5 tärni",
+            "desc": "Teenuse üldise kvaliteedi eest."
+          },
+          {
+            "title": "Kommentaar",
+            "desc": "Räägi, kuidas läks: tähtaeg, hind, teenindus, tulemus."
+          },
+          {
+            "title": "Avaldamine",
+            "desc": "Hinnang kuvatakse töökoja avalikul profiilil ja läheb keskmise hinnangu arvesse. Saad seda hiljem muuta."
+          }
+        ]
+      },
+      {
+        "titulo": "8. Garantii ja vestlus pärast üleandmist",
+        "intro": "Hinnapakkumises märgitud garantii hakkab kehtima auto üleandmisest.",
+        "itens": [
+          {
+            "label": "Loendur avaekraanil",
+            "desc": "Näed, mitu garantiipäeva igal teenusel veel alles on."
+          },
+          {
+            "label": "Avatud vestlus",
+            "desc": "Vestlus valitud töökojaga jääb avatuks kuni garantii lõpuni. Vestlused teiste töökodadega suletakse, kui teenus lõpeb."
+          },
+          {
+            "label": "Ajalugu",
+            "desc": "Lehel Ajalugu on kõik teenused koos hinnapakkumise, etappide ja hinnanguga."
+          }
+        ]
+      },
+      {
+        "titulo": "9. Avarii: nupp \"Sain just avarii\"",
+        "intro": "Selleks puhuks, kui oled just avariisse sattunud. Töötab ka ilma kontota ja näitab, mida teha vastavalt riigile, kus avarii juhtus, sinu keeles.",
+        "passos": [
+          {
+            "title": "Vajuta punast nuppu",
+            "desc": "See on avalehel ja sinu töölaual."
+          },
+          {
+            "title": "Fotod ja asukoht",
+            "desc": "Pildista kahjustused kohe. GPS leiab aadressi ja lähedal asuvad keretöid tegevad töökojad."
+          },
+          {
+            "title": "Kes remondi eest maksab",
+            "desc": "Teise juhi kindlustus, sinu kasko või sina ise. Selle saab täita ka hiljem. Kui sinu kindlustus on teisest riigist, näitame, kuidas roheline kaart toimib."
+          },
+          {
+            "title": "Hinnapakkumised",
+            "desc": "Lähedal asuvad töökojad saavad päringu eelisjärjekorras. Auto andmed saab hiljem päringu lehel täiendada."
+          }
+        ],
+        "aviso": "Kui keegi sai viga, helista kõigepealt 112. Sinu turvalisus on kõige tähtsam."
+      },
+      {
+        "titulo": "10. Kulud, konto ja privaatsus",
+        "itens": [
+          {
+            "label": "Juhile tasuta",
+            "desc": "Hinnapakkumiste küsimine ja võrdlemine ei maksa midagi ning BipFix ei lisa hinnapakkumise summale midagi. Maksad ainult teenuse eest, otse töökojale."
+          },
+          {
+            "label": "Sinu andmed",
+            "desc": "Sinu kontaktandmeid näevad ainult sinu päringutega seotud töökojad, mitte kunagi avalikkus. Täpsemalt loe privaatsuspoliitikast."
+          },
+          {
+            "label": "Konto kustutamine",
+            "desc": "Lehel Profiil (või lehel \"Kustuta konto\"). Kui teenuseid pole tehtud, kustutatakse kõik. Kui teenuseid on, muudetakse sinu isikuandmed anonüümseks ja alles jääb ainult teenuse kirje, ilma sinu nimeta."
+          }
+        ]
       }
-    ],
-    "s2Title": "2. Kuidas luua päring",
-    "s2Intro": "Päring on hinnapakkumise soov, mille saadad töökodadele. Protsess koosneb 5 lihtsast sammust:",
-    "s2Steps": [
-      {
-        "title": "Vali sõiduk",
-        "desc": "Vali, milline oma registreeritud sõidukitest vajab remonti."
-      },
-      {
-        "title": "Teenuse liik",
-        "desc": "Vali teenuse kategooria: keretööd, värvimine, mehaanika, elektritööd, klaasid ja muu."
-      },
-      {
-        "title": "Fotod ja kirjeldus",
-        "desc": "Tee fotod kahjustusest või probleemist ja lisa üksikasjalik kirjeldus. Mida rohkem infot annad, seda parem tuleb hinnapakkumine."
-      },
-      {
-        "title": "Asukoht",
-        "desc": "Kinnita oma asukoht, et lähedal asuvad töökojad saaksid sinu päringu. Saad kasutada GPS-i või sisestada aadressi käsitsi."
-      },
-      {
-        "title": "Ülevaatus ja saatmine",
-        "desc": "Vaata kogu info üle ja saada päring. Lähedal asuvaid töökodasid teavitatakse ja nad hakkavad hinnapakkumisi koostama."
-      }
-    ],
-    "s3Title": "3. Kuidas võrrelda hinnapakkumisi",
-    "s3Intro": "Kui töökojad saadavad hinnapakkumisi, saad neid hõlpsalt võrrelda. Iga hinnapakkumine näitab kogusummat, tähtaega, üksikasjalikke kirjeid ja töökoja hinnangut.",
-    "s3BadgesLabel": "Esiletõstetud märgised:",
-    "s3Badges": [
-      {
-        "name": "Kvaliteedimärgis",
-        "desc": "Töökojad, mille keskmine hinnang on üle 4,5 tärni ja kellel on üle 10 lõpetatud teenuse."
-      },
-      {
-        "name": "Kiire vastus",
-        "desc": "Töökojad, kes vastasid sinu päringule alla 1 tunni jooksul."
-      },
-      {
-        "name": "Hinnakohandus",
-        "desc": "Näitab, et töökoda on valmis hinnapakkumise summa üle läbi rääkima."
-      }
-    ],
-    "s3Outro": "Kasuta filtreid, et sortida hinna, aja või hinnangu järgi. Igal töökojal on sinuga oma vestlus (puuduta pakkumisel \"Sõnum töökojale\"). Märk \"Leping sinu kindlustusega\" ilmub, kui töökoda teeb koostööd sinu kindlustusega.",
-    "s4Title": "4. Kuidas teenus broneerida",
-    "s4Intro": "Pärast hinnapakkumiste võrdlemist vali see, mis sobib sulle kõige paremini:",
-    "s4Steps": [
-      {
-        "title": "Nõustu hinnapakkumisega",
-        "desc": "Vajuta valitud hinnapakkumisel nupul 'Nõustu hinnapakkumisega'. Töökoda saab sellest kohe teada."
-      },
-      {
-        "title": "Vali kuupäev",
-        "desc": "Töökoda avab ajakavas vabad ajad. Vali päev ja kellaaeg, mis sulle kõige paremini sobib."
-      },
-      {
-        "title": "Kinnitus",
-        "desc": "Pärast kinnitamist saad broneeringu üksikasjad e-posti ja platvormi kaudu, sealhulgas töökoja aadressi."
-      }
-    ],
-    "s5Title": "5. Jälgimine reaalajas",
-    "s5Intro": "Pärast sõiduki töökotta viimist saad platvormi kaudu jälgida remondi iga etappi:",
-    "s5Items": [
-      {
-        "label": "Check-in",
-        "desc": "Kui sõiduk jõuab töökotta, teeb meeskond check-ini ja sa saad teate."
-      },
-      {
-        "label": "Töös",
-        "desc": "Töökoda uuendab staatust, kui teenus liigub eri etappide vahel edasi."
-      },
-      {
-        "label": "Üksikasjalikud etapid",
-        "desc": "Näed edenemist: lahtivõtmine, remont, värvimine, kokkupanek, kvaliteedikontroll."
-      },
-      {
-        "label": "Valmis kättesaamiseks",
-        "desc": "Kui teenus on valmis, saad teavituse sõidukile järele tulla."
-      },
-      {
-        "label": "Check-out",
-        "desc": "Töökoda registreerib sõiduki lahkumise ja teenus märgitakse lõpetatuks."
-      }
-    ],
-    "s5Outro": "Rakenduses ilmuvad teated ekraani ülaossa ja vahekaartidel on numbrid. Kõike saab jälgida ka päringu lehel. Kui töö on lõpetatud, suletakse vestlused teiste töökodadega. Valitud töökoja vestlus jääb avatuks garantii lõpuni ja loendur on sinu avalehel.",
-    "s6Title": "6. Kuidas teenust hinnata",
-    "s6Intro": "Kui auto on üle antud, hinda töökoda: see aitab teisi juhte. Hinnang on uue päringu tegemiseks kohustuslik (nagu Uberis); õnnetuse nuppu ei blokeerita kunagi.",
-    "s6Steps": [
-      {
-        "title": "Hinne 1 kuni 5 tärni",
-        "desc": "Hinda osutatud teenuse üldist kvaliteeti."
-      },
-      {
-        "title": "Kommentaar",
-        "desc": "Kirjuta kommentaar, mis kirjeldab sinu kogemust. Ole aus ja täpne."
-      },
-      {
-        "title": "Avaldamine",
-        "desc": "Sinu hinnang ilmub töökoja avalikule profiilile ja aitab teistel juhtidel otsustada."
-      }
-    ],
-    "s6Note": "Sinu hinnang on väga oluline. See aitab hoida platvormi kvaliteeti kõrgel ja tunnustab parimaid töökodasid.",
-    "s7Title": "7. Hädaolukord — Sain just avarii",
-    "s7Intro": "BipFixil on hädaolukordade jaoks eraldi voog:",
-    "s7Steps": [
-      {
-        "title": "Vajuta hädaabi nuppu",
-        "desc": "Vajuta avalehel või oma töölaual punast nuppu 'Sain just avarii'."
-      },
-      {
-        "title": "Registreeri juhtum",
-        "desc": "Pildista kahjustust kohe. Soovi korral märgi oma auto (üks puudutus, kui see on salvestatud). Auto andmed saab lisada hiljem päringu lehel."
-      },
-      {
-        "title": "Automaatne asukoht",
-        "desc": "Süsteem kasutab GPS-i lähedal asuvate töökodade leidmiseks ja täidab aadressi koos tänavaga. Nõuanded järgivad õnnetuse toimumise riiki."
-      },
-      {
-        "title": "Kiired hinnapakkumised",
-        "desc": "Lähedal asuvad töökojad saavad sinu päringu eelisjärjekorras ja saadavad hinnapakkumised mõne minutiga."
-      }
-    ],
-    "s7Warning": "Kui keegi sai viga, helista kõigepealt 112. Sinu ohutus on esikohal."
+    ]
   },
   "docsClienteLayout": {
-    "metaTitle": "Juhi juhend",
-    "metaDescription": "Õpi kasutama BipFixit remondi tellimiseks, töökodade hinnapakkumiste võrdlemiseks ja oma sõiduki remondi jälgimiseks reaalajas."
+    "metaTitle": "Juhi juhend: küsi hinnapakkumisi ja jälgi remonti",
+    "metaDescription": "Kuidas BipFixi kasutada: küsi hinnapakkumisi mitmelt töökojalt, võrdle, broneeri aeg, jälgi remonti, kinnita hinnamuudatusi ja kasuta avariinuppu."
   },
   "docsOficina": {
     "pageBackLink": "Tagasi abikeskusesse",
     "pageTitle": "Töökoja juhend",
-    "pageSubtitle": "Õpi kasutama kõiki BipFixi tööriistu, et meelitada kliente, hallata teenuseid ja kasvatada oma töökoda.",
-    "s1Title": "1. Kuidas oma töökoda registreerida",
-    "s1Intro": "Oma töökoja registreerimine BipFixis on lihtne ja võtab vaid mõne minuti:",
-    "s1Steps": [
+    "pageSubtitle": "Kuidas saada päringuid sinu lähedal asuvatelt klientidelt, saata hinnapakkumisi, korraldada ajakava ja meeskonda ning hoida klienti kursis check-inist üleandmiseni.",
+    "secoes": [
       {
-        "title": "Loo oma konto",
-        "desc": "Mine aadressile /cadastro ja vali 'Olen töökoda'. Täida vastutava isiku andmed: nimi, e-post ja parool."
+        "titulo": "1. Registreeri töökoda",
+        "intro": "Registreerumine võtab mõne minuti. Seejärel kontrollib BipFixi meeskond andmed üle ja kinnitab töökoja; päringuid saavad ainult kinnitatud töökojad.",
+        "passos": [
+          {
+            "title": "Loo konto",
+            "desc": "Vajuta \"Registreeru\" ja vali töökoja konto. Sisesta vastutava isiku nimi, e-post ja parool."
+          },
+          {
+            "title": "Töökoja andmed",
+            "desc": "Registrikood, ärinimi, telefoninumber ja aadress eraldi väljadel (tänav, maja number, postiindeks, linn). Aadress kontrollitakse kaardil, et lähedal asuvad kliendid sind leiaksid."
+          },
+          {
+            "title": "Erialad",
+            "desc": "Märgi, mida töökoda teeb: mehaanika, keretööd, värvimine, elektrika, hooldus, klaasid jne. Saad ainult nende erialade päringuid."
+          },
+          {
+            "title": "Teeninduspiirkond",
+            "desc": "Maksimaalne kaugus (km), mille ulatuses päringuid soovid saada. Seda saab igal ajal muuta."
+          },
+          {
+            "title": "Täielik profiil",
+            "desc": "Fotod, kirjeldus, lahtiolekuajad ja lepingulised kindlustusandjad. Klient, kellel on üks neist kindlustusandjatest, näeb sinu hinnapakkumise juures märgist."
+          }
+        ]
       },
       {
-        "title": "Töökoja andmed",
-        "desc": "Sisesta registrikood, ärinimi, telefon ja aadress eraldi väljadele (tänav, maja nr, sihtnumber ja linn). Sait kontrollib aadressi kaardil, et lähedal asuvad kliendid sind leiaksid."
+        "titulo": "2. Päringute vastuvõtt",
+        "intro": "Iga päring jõuab sinuni, kui see vastab kolmele tingimusele:",
+        "itens": [
+          {
+            "label": "Lähedus",
+            "desc": "Auto asub sinu teeninduspiirkonnas."
+          },
+          {
+            "label": "Eriala",
+            "desc": "Küsitud teenuse tüüp kuulub sinu erialade hulka."
+          },
+          {
+            "label": "Aktiivne töökoda",
+            "desc": "Töökoda on kinnitatud ja aktiivne."
+          }
+        ],
+        "texto": "Teade ilmub töölaua kellukese alla ja lehele Päringud. Iga päring sisaldab fotosid, kirjeldust, autot ja ligikaudset asukohta. Nupu \"Sain just avarii\" kaudu registreeritud avariid saabuvad eelisjärjekorras.",
+        "nota": "Hoia erialad ja teeninduspiirkond täpsena, et saada ainult päringuid, mis sulle sobivad."
       },
       {
-        "title": "Erialad",
-        "desc": "Vali teenuste liigid, mida sinu töökoda pakub: keretööd, värvimine, mehaanika, elektritööd, klaasid jne."
+        "titulo": "3. Saada hinnapakkumisi",
+        "passos": [
+          {
+            "title": "Mõista päringut",
+            "desc": "Vaata fotosid ja kirjeldust. Vajadusel räägi enne kliendiga: igal töökojal on oma vestlus, mida teised ei näe."
+          },
+          {
+            "title": "Kirjed",
+            "desc": "Loetle varuosad ja töö koos koguse ja hinnaga. Kui hinnapakkumine on juba teises süsteemis valmis, saada foto või PDF: tehisintellekt täidab kirjed ja sina kontrollid üle."
+          },
+          {
+            "title": "Tähtaeg ja garantii",
+            "desc": "Märgi tähtaeg päevades ja garantii. Garantii hakkab kehtima üleandmisest ja kuni selle lõpuni jääb klient sinuga vestlema."
+          },
+          {
+            "title": "Auto toomise ajad",
+            "desc": "Paku kliendile aegu auto toomiseks: täna (ainult ajavahemikud, mis pole veel lõppenud) või lähipäevil. Klient valib ühe vastuvõtmisel."
+          },
+          {
+            "title": "Saada",
+            "desc": "Klient saab teate ja võrdleb teiste hinnapakkumistega."
+          }
+        ],
+        "nota": "Eraldi kirjed (varuosad ja töö), selge garantii ja vabad ajad aitavad kliendil otsustada."
       },
       {
-        "title": "Teeninduspiirkond",
-        "desc": "Määra vahemaa (km-des), mille ulatuses sinu töökoda päringuid vastu võtab. Saad seda hiljem muuta."
+        "titulo": "4. Muuda juba vastuvõetud hinnapakkumist",
+        "intro": "Kui leiad autot lahti võttes midagi, mis muudab hinda või tähtaega, kasuta päringu lehel nuppu \"Paku muudatust\". Vastuvõetud summa muutub ainult kliendi kinnitusel.",
+        "itens": [
+          {
+            "label": "Mida saata",
+            "desc": "Põhjus (kohustuslik), uued kirjed ja uus summa. Korraga üks ootel muudatus."
+          },
+          {
+            "label": "Klient kinnitab",
+            "desc": "Kehtib uus summa. Algne summa jääb kirja ja klient näeb erinevust protsentides."
+          },
+          {
+            "label": "Klient keeldub",
+            "desc": "Teenus lõpetatakse ja klient viib auto ära. Lepi vestluses kokku, mis on juba tehtud."
+          }
+        ],
+        "nota": "Sagedasi või suure hinnatõusuga muudatusi jälgib BipFixi meeskond. Algusest peale hästi koostatud hinnapakkumine väldib muudatusi."
       },
       {
-        "title": "Täielik profiil",
-        "desc": "Lisa fotod, kirjeldus, lahtiolekuajad ja lepingulised kindlustusseltsid. Nende klient näeb sinu pakkumisel märki."
+        "titulo": "5. Ajakava, check-in ja puudumised",
+        "intro": "Ajakava koondab broneeritud, töös olevad ja valmis autod:",
+        "itens": [
+          {
+            "label": "Check-in",
+            "desc": "Registreeri auto saabumine. Kui see saabub enne broneeritud päeva, küsib sait kinnitust ja toomise ajaks saab tänane päev. Klient saab teate."
+          },
+          {
+            "label": "Puudumine",
+            "desc": "Kui klient ei tule, registreeri puudumine: aeg vabastatakse ja päring läheb kliendile tagasi."
+          },
+          {
+            "label": "Sisemised tööd",
+            "desc": "Loo sündmused tööde jaoks, mis ei tulnud BipFixi kaudu, ja hoia kõik samas ajakavas."
+          },
+          {
+            "label": "Töö jaotus",
+            "desc": "Vali, milline mehaanik iga autoga tegeleb, juba enne auto saabumist. Iga vahetus jääb ajalukku."
+          },
+          {
+            "label": "Läbilaskevõime",
+            "desc": "Vaata praegust töökoormust ja iga remondietapi keskmist kestust."
+          }
+        ]
+      },
+      {
+        "titulo": "6. Meeskond ja mehaanikud",
+        "passos": [
+          {
+            "title": "Registreeri",
+            "desc": "Registreeri mehaanikud ainult nimega või anna ligipääs (e-post ja ajutine parool) neile, kes hakkavad etappe telefonist märkima. Ligipääsu saab anda ka hiljem."
+          },
+          {
+            "title": "Esimene sisselogimine",
+            "desc": "Ligipääsu saanu logib sisse ajutise parooliga ja loob uue."
+          },
+          {
+            "title": "Kes mida näeb",
+            "desc": "Ligipääsuga mehaanik näeb ainult oma autosid. Vastutav isik näeb kõike ja saab märkida etappe iga mehaaniku nimel."
+          },
+          {
+            "title": "Ajalugu säilib",
+            "desc": "Seda, kes on juba töödel osalenud, ei kustutata, vaid deaktiveeritakse."
+          }
+        ],
+        "texto": "Lehel Õpi on sammhaaval õpetused (juhendatud või iseseisev režiim) ja mehaanikutel on oma koolitus."
+      },
+      {
+        "titulo": "7. Remondietapid ja üleandmine",
+        "intro": "Märgi lehel Töökoda iga etapp. Klient saab igast muutusest teate:",
+        "itens": [
+          {
+            "label": "Vastu võetud ja diagnostika",
+            "desc": "Töö algus."
+          },
+          {
+            "label": "Ootab varuosi / Töös",
+            "desc": "Näitab kliendile, kas auto seisab varuosade ootel või on remondis. On ka pausid (klient, varuosad, üldine)."
+          },
+          {
+            "label": "Lõpptestimine",
+            "desc": "Kontroll enne väljastamist."
+          },
+          {
+            "label": "Valmis",
+            "desc": "Topeltkinnitusega. Klient saab teate, et autole järele tulla."
+          },
+          {
+            "label": "Üle antud",
+            "desc": "Märgi, kui klient auto kätte saab: algab garantii ja klienti kutsutakse hinnangut andma. Kui sa seda ei märgi, loetakse auto 5 päeva pärast üleantuks."
+          }
+        ],
+        "texto": "Mõne minuti jooksul korduvaid etappe ignoreeritakse, et klient ei saaks topeltteateid."
+      },
+      {
+        "titulo": "8. Varuosad",
+        "intro": "Küsi lehel Varuosad hinnapakkumisi partneritest varuosapoodidelt ja naabertöökodadelt, võrdle ja kinnita tellimus.",
+        "texto": "Varuosade eest tasumine ja tarne lepitakse kokku otse müüjaga."
+      },
+      {
+        "titulo": "9. Hinnangud ja maine",
+        "itens": [
+          {
+            "label": "Hinnang 1 kuni 5",
+            "desc": "Iga klient annab pärast üleandmist hinnangu. Keskmine arvutatakse automaatselt ja kuvatakse sinu avalikul profiilil ja hinnapakkumistel."
+          },
+          {
+            "label": "Märgis Kvaliteet",
+            "desc": "Töökojad, mille keskmine on 4 tärni või rohkem, näitavad hinnapakkumistel märgist."
+          },
+          {
+            "label": "Kommentaarid",
+            "desc": "Vaata kõiki lehel Hinnangud."
+          }
+        ],
+        "texto": "Etappide õigeaegne uuendamine, tähtaegadest kinnipidamine ja hinnamuudatuste vältimine mõjutavad hinnanguid kõige rohkem."
+      },
+      {
+        "titulo": "10. Platvormi kulud",
+        "intro": "Praegu on BipFix töökodadele ja juhtidele tasuta:",
+        "itens": [
+          {
+            "label": "Komisjonitasuta",
+            "desc": "Platvormi kaudu sõlmitud töödelt ei võeta komisjonitasu: hinnapakkumise summa on see, mille klient maksab, otse sulle."
+          },
+          {
+            "label": "Kuutasuta",
+            "desc": "Registreerumisel, ajakaval, hinnapakkumistel, meeskonnal ja hinnangutel pole kuutasu."
+          },
+          {
+            "label": "Etteteatamine",
+            "desc": "Kui muudame seda, kuidas platvorm juhtidelt või töökodadelt tasu võtab, teatame sellest vähemalt 30 kalendripäeva ette, e-posti teel ja platvormis."
+          }
+        ],
+        "texto": "Menüü lehel Komisjonitasu näed tingimust, mis sinu töökojale praegu kehtib."
       }
-    ],
-    "s2Title": "2. Kuidas päringuid vastu võtta",
-    "s2Intro": "BipFix saadab päringuid automaatselt töökodadele, mis vastavad kliendi kriteeriumitele:",
-    "s2Items": [
-      {
-        "label": "Lähedus",
-        "desc": "Klient asub sinu määratud teeninduspiirkonnas."
-      },
-      {
-        "label": "Eriala",
-        "desc": "Soovitud teenuse liik vastab sinu töökoja erialadele."
-      },
-      {
-        "label": "Saadavus",
-        "desc": "Sinu töökoda on platvormil aktiivne ja ajakava on avatud."
-      }
-    ],
-    "s2Body": "Saad teavitusi töölaual ja e-postiga. Iga päring sisaldab: kahjustuse fotosid, probleemi kirjeldust, sõiduki liiki ja kliendi asukohta.",
-    "s2Tip": "Nõuanne: hoia oma profiil ajakohane ja erialad õiged, et saada kõige asjakohasemaid päringuid.",
-    "s3Title": "3. Kuidas hinnapakkumisi saata",
-    "s3Intro": "Konkurentsivõimelise ja üksikasjaliku hinnapakkumise saatmiseks:",
-    "s3Steps": [
-      {
-        "title": "Vaata päring üle",
-        "desc": "Vaata fotosid ja kirjeldust. Kliendiga saab vestelda enne pakkumist: igal töökojal on oma vestlus, mida teised ei näe."
-      },
-      {
-        "title": "Lisa hinnapakkumisse kirjed",
-        "desc": "Lisa iga töö ja varuosa koguse ja hinnaga. Kui pakkumine on teises süsteemis valmis, laadi üles foto või PDF: tehisintellekt täidab read ja sina kontrollid."
-      },
-      {
-        "title": "Hinnanguline tähtaeg",
-        "desc": "Märgi tähtaeg päevades ja teenuse garantii. Garantii algab üleandmisest ja selle lõpuni saab klient sulle kirjutada."
-      },
-      {
-        "title": "Ajakava saadavus",
-        "desc": "Paku kliendile aegu auto toomiseks: täna (ainult veel lõppemata ajavahemikud) või järgmistel päevadel."
-      },
-      {
-        "title": "Saada hinnapakkumine",
-        "desc": "Vaata üle ja saada. Klienti teavitatakse ning ta saab seda teiste hinnapakkumistega võrrelda."
-      }
-    ],
-    "s3Tip": "Üksikasjalikel ja õiglase hinnaga hinnapakkumistel on kuni 3 korda suurem tõenäosus, et need aktsepteeritakse.",
-    "s4Title": "4. Ajakava haldamine",
-    "s4Intro": "Ajakava vaade võimaldab korraldada kõiki sinu töökoja teenuseid:",
-    "s4Items": [
-      {
-        "label": "Check-in",
-        "desc": "Tee sõiduki check-in. Kui auto saabub enne broneeritud aega, küsib sait kinnitust ja saabumiseks saab täna. Kliendi päring muutub \"töös\" ja klienti teavitatakse."
-      },
-      {
-        "label": "Sisemised tööd",
-        "desc": "Loo sisemisi teenuseid (mis ei tulnud BipFixi kaudu), et hoida ajakava korras."
-      },
-      {
-        "label": "Määramine",
-        "desc": "Soovi korral määra iga sõiduk mehaanikule. Kui mehaanikuid pole lisatud, teeb töökoda kõik ise. Iga muudatus jääb ajalukku."
-      },
-      {
-        "label": "Check-out",
-        "desc": "Kui teenus on valmis ja sõiduk ära viidud, märgi üleandmine."
-      }
-    ],
-    "s4Outro": "Kalendrivaade näitab kõiki broneeritud, pooleliolevaid ja lõpetatud teenuseid ühes kohas.",
-    "s5Title": "5. Meeskond ja mehaanikud",
-    "s5Intro": "Halda oma meeskonna liikmeid otse platvormi kaudu:",
-    "s5Steps": [
-      {
-        "title": "Registreeri töötajad",
-        "desc": "Lisa mehaanikud ainult nimega või anna portaali juurdepääs (e-post ja ajutine parool) neile, kes lisavad etappe telefonist. Juurdepääsu saab anda ka hiljem."
-      },
-      {
-        "title": "Esimene sisselogimine",
-        "desc": "Juurdepääsuga töötaja logib sisse ajutise parooliga ja määrab esimesel sisselogimisel uue."
-      },
-      {
-        "title": "Määra sõidukid",
-        "desc": "Määra sõidukid mehaanikutele. Juurdepääsuga mehaanik näeb ainult oma sõidukeid. Töökoja omanik saab lisada etappe iga mehaaniku nimel."
-      },
-      {
-        "title": "Ametikohapõhised õigused",
-        "desc": "Mehaanikud näevad neile määratud sõidukeid; omanikul on täielik juurdepääs. Töid teinud inimest ei kustutata, vaid deaktiveeritakse: ajalugu jääb terviklikuks."
-      }
-    ],
-    "s6Title": "6. Remondi jälgimine",
-    "s6Intro": "Hoia klienti kursis remondi edenemisega:",
-    "s6Items": [
-      {
-        "label": "Staatuse uuendamine",
-        "desc": "Muuda teenuse staatust: vastu võetud, töös, ootab varuosa, valmis."
-      },
-      {
-        "label": "Üksikasjalikud etapid",
-        "desc": "Registreeri iga etapp: lahtivõtmine, konstruktsiooniremont, ettevalmistus, värvimine, kokkupanek, kvaliteedikontroll."
-      },
-      {
-        "label": "Automaatsed teavitused",
-        "desc": "Check-in ja iga etapp saadavad kliendile teate saidil ja rakenduses."
-      },
-      {
-        "label": "Edenemise fotod",
-        "desc": "Saada etappide fotod, et klient saaks visuaalselt jälgida."
-      }
-    ],
-    "s6Note": "\"Lõpetatud\" märkimine (topeltkinnitusega) teavitab klienti, et auto on valmis. Märgi \"Üle antud\", kui klient auto ära viib: garantii algab ja klient annab hinnangu. Kui sa seda ei tee, loetakse auto 5 päeva pärast üleantuks. Töökojad, kes uuendavad staatust sageli, saavad kõrgemaid hinnanguid.",
-    "s7Title": "7. Hinnangud ja maine",
-    "s7Intro": "Sinu maine platvormil kujuneb klientide hinnangute põhjal:",
-    "s7Items": [
-      {
-        "label": "Hinne 1 kuni 5 tärni",
-        "desc": "Keskmine hinne kuvatakse sinu avalikul profiilil ja otsingutulemustes."
-      },
-      {
-        "label": "Kommentaarid",
-        "desc": "Kliendid saavad jätta üksikasjalikke kommentaare oma kogemuse kohta."
-      },
-      {
-        "label": "Kvaliteedimärgis",
-        "desc": "Töökojad, mille keskmine on üle 4,5 ja kellel on üle 10 teenuse, saavad rohelise kvaliteedimärgise."
-      },
-      {
-        "label": "Kiire vastus",
-        "desc": "Hinnapakkumistele vastamine alla 1 tunni jooksul tagab sinise märgise."
-      }
-    ],
-    "s7Outro": "Saad hinnangutele avalikult vastata, näidates professionaalsust ja tähelepanu kliendile.",
-    "s8Title": "8. Platvormi kulud",
-    "s8Intro": "Praegu on BipFixi kasutamine töökodadele ja autojuhtidele tasuta. Mida see tähendab:",
-    "s8Items": [
-      {
-        "label": "Komisjonitasu ei ole",
-        "desc": "Platvormi kaudu kokku lepitud töödelt komisjonitasu ei võeta: summa, mille pakkumises saadad, on summa, mille klient maksab."
-      },
-      {
-        "label": "Kuutasu ei ole",
-        "desc": "Registreerimisel, ajakaval, hinnapakkumistel, meeskonnal ja hinnangutel kuutasu ei ole."
-      },
-      {
-        "label": "Etteteatamine",
-        "desc": "Kui muudame seda, kuidas platvorm autojuhtidelt või töökodadelt tasu võtab, teatame sulle sellest vähemalt 30 kalendripäeva ette."
-      }
-    ],
-    "s8ReduceTitle": "Kust jälgida:",
-    "s8ReduceList": [
-      "Ava menüüst Komisjonitasu: vaade näitab, milline tingimus sinu töökojale täna kehtib.",
-      "Igast tulevasest muudatusest teatame e-kirjaga ja platvormi sees enne selle jõustumist."
-    ],
-    "s8Note": "Autojuhilt tasu kunagi ei võeta: BipFix ei lisa pakkumise summale midagi."
+    ]
   },
   "docsOficinaLayout": {
-    "metaTitle": "Töökoja juhend",
-    "metaDescription": "Õpi registreerima oma töökoda, vastu võtma päringuid, saatma hinnapakkumisi ning haldama meeskonda ja ajakava BipFixis."
+    "metaTitle": "Töökoja juhend: päringute vastuvõtt ja tööde haldus",
+    "metaDescription": "Kuidas BipFixi töökojas kasutada: registreerumine, lähedal asuvate klientide päringud, hinnapakkumised (ka foto või PDF-i järgi), ajakava, meeskond ja kulud."
   },
   "oficinaPerfilPublico": {
     "metaTitleTemplate": "{nome} - Autoremonditöökoda linnas {cidade}, {estado}",
