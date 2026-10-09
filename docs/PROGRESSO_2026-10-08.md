@@ -106,3 +106,38 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
 - Página do acidente usa o país da localização; consulta de placa pelo formato brasileiro; catálogo FIPE só com aparelho no Brasil.
 - Teste: `site-seguro-pais.mjs` (italiano em Tallinn, sem GPS) — OK em produção.
 - **Decisão pendente do dono:** termos/privacidade hoje seguem o idioma (pt = LGPD do Brasil; demais = GDPR). Um brasileiro morando na Estônia lendo em pt vê a versão brasileira.
+
+## 09/10 — Decisões do dono (lista 1–9) e o que foi feito
+1. **Termos/privacidade seguem o país** (não o idioma): `?regiao=br|eu` (noindex) + aviso `components/legal/AvisoJurisdicao.tsx` ("Você está no Brasil/na UE? veja a versão…"), baseado no país do aparelho.
+2. **/it = mercado italiano (teste):** textos de marketing reescritos para a Itália; guia `compare-car-repair-quotes` adaptado; em /it, aparelho na Estônia vê o aviso `home.avvisoEstonia` (pode continuar em italiano e usar o serviço na Estônia — idioma ≠ país).
+3. **Comissão:** nada de valores; texto único nos 6 idiomas: "por enquanto gratuito; se mudarmos a forma de cobrança, avisamos com 30 dias corridos de antecedência".
+4. **SEO / re-rastreamento** — ver `docs/AUDITORIA_FABLE_2026-10-08/SEO_COMPARATIVO.md` (comparação com sites do mesmo caso de uso). Feito: H1 com "Tallinn" em ru/en, parágrafo de apresentação na raiz, título próprio do 404, IndexNow (88 URLs, HTTP 200), Yandex "Переобход" de 12 URLs (na fila), Google Inspeção de URL de `/` → "Indexação solicitada". **Falta no painel (dono, 5 min):** Google → Inspeção de URL + "Solicitar indexação" para `/et`, `/ru`, `/en` e os guias da lista "Dia 1" do SEO_COMPARATIVO; Bing → URL Inspection → Request indexing de `/et` e `/en` (estavam "Blocked"); reenviar `sitemap.xml` nos dois.
+   Para depois (lacunas G2/G5/G6/G8): páginas por tipo de serviço, seção de serviços na home, BreadcrumbList em mais páginas, preço no título do guia de preços; `sameAs` da Organization quando houver perfis sociais (dono).
+5. **Contas das lojas:** em espera (dono). VM de iOS: não é possível legalmente — a licença do macOS só permite rodar em hardware Apple; alternativas: testar no iPhone com Expo Go (túnel) ou build na nuvem do EAS.
+6. Testes nos aparelhos: dono.
+7. **Site (auditoria) — tudo corrigido e publicado** (parte 3, commit 200a00a): termos por país, revisão de orçamento, exclusão de conta compartilhada (admin anonimiza em vez de apagar, auditado), tipo do acidente em coluna, carro com histórico não se apaga, loja de peças internacional, textos fixos traduzidos, avisos/aceite/no_show/notificações do cliente, IP real (x-real-ip) e limites por IP, busca do admin sem caracteres que mudam o filtro, agenda (cor, nome do mecânico, tipo traduzido), 404 e H1.
+8. **App (boas práticas, commit 58ba87f):** conversa com área segura e teclado no lugar certo; gravação encerrada ao sair da tela; transcrição chega em tempo real; câmera negada → alerta com botão "Ajustes"; sessão renovada só com o app em primeiro plano (`AppState` + start/stopAutoRefresh, recomendação Supabase) e perfil recarregado só quando o login muda; topo das abas pela área segura; tipo da foto pelo `mimeType`; excluir conta sem toque duplo; `@expo/ui` removido; `fetchComPrazo` (Hermes não tem `AbortSignal.timeout`).
+9. SEO feito por mim (acima).
+
+## 09/10 — Revisão de orçamento já aceito (monitoramento mantido)
+- **Problema:** oficina dá orçamento baixo, cliente aceita, depois a oficina cobra mais. O monitoramento (revisao_numero, valor_original, selo público de ajuste de preço, bônus de comissão para poucas revisões) **foi mantido**.
+- **Fluxo limpo (migração 049, tabela `orcamento_revisoes`):** a oficina propõe a revisão (itens novos + motivo obrigatório 5–1000 caracteres; só com orçamento aceito e carro agendado/em serviço; uma pendente por vez) → o cliente decide:
+  - **aprovar:** novo valor vale, `valor_original` guardado, `revisao_numero` +1;
+  - **recusar:** vale o orçamento original;
+  - **recusar e retirar o carro:** agenda cancelada com histórico "retirado_revisao_recusada", pedido cancelado.
+  Rotas: `POST /api/orcamento-revisao` (oficina) e `POST /api/orcamento-revisao/decidir` (cliente, com trava atômica). Notificações nos 6 idiomas (`lib/notif-revisao.ts`). Entrega cancela revisões pendentes.
+- Telas: oficina — botão "Propor revisão" e modo revisão em enviar-orçamento; cliente — `RevisaoPendente` no site e no app.
+- **Admin:** `RevisoesSuspeitas` em Oficinas → desempenho ruim (90 dias): alerta quando um carro foi retirado ou 2+ propostas com aumento médio > 20%.
+- Teste: `site-revisao.mjs` — OK em produção.
+
+## 09/10 — Migrações aplicadas em produção (047–051)
+- 047: notificações com autor + limite 40/h; dono de oficina visível só para quem tem relação; pedidos abertos só para oficina ativa; orçamento só de oficina ativa.
+- 048: média das avaliações calculada no banco (trigger).
+- 049: revisão de orçamento (acima).
+- 050: `tipo_acidente` em coluna (emergências e solicitações), com preenchimento dos antigos.
+- 051: carro com pedidos não pode ser apagado pelo usuário (apagaria o histórico).
+
+## Pendências do dono (atualizado 09/10)
+- Registro da OÜ; contas Apple Developer e Google Play; `npx eas login` + `eas init`; APPLE_TEAM_ID e ANDROID_SHA256 para os links do app (L4); capturas de tela e textos das lojas; contas de teste para os revisores (Apple/Google).
+- Pedidos de indexação no Google/Bing listados no item 4.
+- Testar no iPhone (inclui envio de foto — L7).
