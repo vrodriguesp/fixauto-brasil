@@ -30,15 +30,27 @@ export const usaSeguro = (p: string | null | undefined) => p === 'seguro_terceir
 
 /** Regiao das dicas: versao do Brasil (pt) ou Europa/Estonia (demais idiomas). */
 // Regras do pos-acidente (numero de emergencia, formulario amigavel, seguro)
-// sao do PAIS onde a batida aconteceu, nao do idioma: um italiano na Estonia
-// segue as regras da Estonia. Pais vem da localizacao do acidente; sem ela,
-// do idioma (pt-BR -> Brasil, pt-PT -> Portugal...). Pais sem regras
-// proprias aqui recebe conselho generico (112 na Europa, declaracao europeia).
+// sao do PAIS onde a batida aconteceu, NUNCA do idioma (W3C: localizacao e
+// idioma sao coisas diferentes; um italiano na Estonia segue as regras da
+// Estonia). Pais: localizacao do acidente; sem ela, onde o aparelho esta
+// (fuso horario); senao conselho generico (112 na Europa).
 export type RegiaoSeguro = 'br' | 'ee' | 'it' | 'pt' | 'geral';
 const POR_PAIS: Record<string, RegiaoSeguro> = { BR: 'br', EE: 'ee', IT: 'it', PT: 'pt' };
-const POR_IDIOMA: Record<string, RegiaoSeguro> = { pt: 'br', 'pt-PT': 'pt', et: 'ee', it: 'it' };
-export const regiaoSeguro = (locale: string, pais?: string | null): RegiaoSeguro =>
-  pais ? POR_PAIS[pais.toUpperCase()] || 'geral' : POR_IDIOMA[locale] || 'geral';
+const FUSO_PAIS: Record<string, string> = {
+  'Europe/Tallinn': 'EE', 'Europe/Rome': 'IT', 'Europe/Lisbon': 'PT', 'Atlantic/Madeira': 'PT', 'Atlantic/Azores': 'PT',
+  'Europe/Riga': 'LV', 'Europe/Vilnius': 'LT', 'Europe/Helsinki': 'FI',
+};
+const FUSOS_BR = ['Sao_Paulo', 'Bahia', 'Fortaleza', 'Recife', 'Maceio', 'Belem', 'Manaus', 'Cuiaba', 'Campo_Grande', 'Porto_Velho', 'Rio_Branco', 'Boa_Vista', 'Santarem', 'Araguaina', 'Noronha'];
+/** Pais provavel do aparelho pelo fuso horario (no navegador); null no servidor. */
+export function paisDoAparelho(): string | null {
+  if (typeof window === 'undefined') return null;
+  const fuso = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+  if (FUSO_PAIS[fuso]) return FUSO_PAIS[fuso];
+  return FUSOS_BR.some((c) => fuso === `America/${c}`) ? 'BR' : null;
+}
+
+export const regiaoSeguro = (pais?: string | null): RegiaoSeguro =>
+  (pais && POR_PAIS[pais.toUpperCase()]) || 'geral';
 
 // Sugestoes para o campo "seguradora" (texto livre; lista so ajuda a digitar)
 // (it/pt: listas completas em lib/seguradoras.ts)

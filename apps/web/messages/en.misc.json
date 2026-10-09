@@ -1053,7 +1053,11 @@
     "passo_emergencia_geral": "If anyone is hurt, call the local emergency number (112 in Europe).",
     "passo_registro_geral": "Write down the other driver's plate, name, phone and insurer, and take photos. In Europe you can fill in the European Accident Statement, signed by both drivers, and send it to your insurer as soon as possible.",
     "dica_seguro_terceiro_geral": "The other driver's liability insurance pays for your repair. Tell your own insurer too: they can help with the claim.",
-    "dica_seguro_proprio_geral": "If your policy covers damage to your own car, it pays for the repair; you usually pay the excess set in the policy."
+    "dica_seguro_proprio_geral": "If your policy covers damage to your own car, it pays for the repair; you usually pay the excess set in the policy.",
+    "seguroOutroPais": "Is your insurance from another country?",
+    "paisDoSeguro": "Country of your insurance",
+    "outroPaisLista": "Another country",
+    "cartaVerde": "Foreign insurance (Green Card): your insurer handles the claim through its representative in {pais}. Ask your insurer or see the national bureau list:"
   },
   "chatCotacaoPeca": {
     "nenhuma": "No messages yet.",

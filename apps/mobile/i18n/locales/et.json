@@ -314,7 +314,11 @@
     "passo_emergencia_geral": "Kui keegi sai viga, helista kohalikul hädaabinumbril (Euroopas 112).",
     "passo_registro_geral": "Pane kirja teise juhi numbrimärk, nimi, telefon ja kindlustus ning tee fotod. Euroopas saad täita Euroopa õnnetusteate, mille mõlemad juhid allkirjastavad, ja saata selle kindlustusele esimesel võimalusel.",
     "dica_seguro_terceiro_geral": "Remondi eest maksab teise juhi vastutuskindlustus. Teavita ka oma kindlustust: see aitab kahjujuhtumiga.",
-    "dica_seguro_proprio_geral": "Kui sinu poliis katab oma auto kahjud, maksab see remondi; tavaliselt maksad poliisis märgitud omavastutuse."
+    "dica_seguro_proprio_geral": "Kui sinu poliis katab oma auto kahjud, maksab see remondi; tavaliselt maksad poliisis märgitud omavastutuse.",
+    "seguroOutroPais": "Kas sinu kindlustus on teisest riigist?",
+    "paisDoSeguro": "Kindlustuse riik",
+    "outroPaisLista": "Muu riik",
+    "cartaVerde": "Välismaa kindlustus (roheline kaart): sinu kindlustusandja menetleb kahju oma esindaja kaudu riigis {pais}. Küsi kindlustusandjalt või vaata riikliku büroo nimekirja:"
   },
   "erros": {
     "CAMPO_OBRIGATORIO": "Täida kõik kohustuslikud väljad.",

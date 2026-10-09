@@ -1,8 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { SEGURADORAS, regiaoSeguro, usaSeguro, type PagamentoReparo } from '@/lib/seguro-reparo';
+import { regiaoSeguro, usaSeguro, paisDoAparelho, type PagamentoReparo } from '@/lib/seguro-reparo';
+import { seguradorasDoPais } from '@/lib/seguradoras';
+
+// Paises com lista de seguradoras (a escolha "outro" deixa o campo livre)
+const PAISES_SEGURO = ['EE', 'LV', 'LT', 'FI', 'IT', 'PT', 'BR'];
+
+/** Pais do acidente: localizacao; sem ela, onde o aparelho esta. Nunca o idioma. */
+function usePaisAcidente(pais?: string | null) {
+  const [doAparelho, setDoAparelho] = useState<string | null>(null);
+  useEffect(() => { setDoAparelho(paisDoAparelho()); }, []);
+  return (pais || doAparelho || null)?.toUpperCase() || null;
+}
 
 export interface ValorSeguro {
   pagamento_reparo: PagamentoReparo | '';
@@ -26,7 +37,14 @@ function opcoesPara(tipo: TipoAcidente): PagamentoReparo[] {
 /** Pergunta "quem vai pagar o conserto?" com os campos do seguro e uma dica. */
 export function SeguroReparoCampos({ valor, onChange, tipoAcidente, pais }: { valor: ValorSeguro; onChange: (v: ValorSeguro) => void; tipoAcidente: TipoAcidente; pais?: string | null }) {
   const t = useTranslations('seguroReparo');
-  const regiao = regiaoSeguro(useLocale(), pais);
+  const locale = useLocale();
+  const paisAcidente = usePaisAcidente(pais);
+  const regiao = regiaoSeguro(paisAcidente);
+  // pais do SEGURO e outra escolha (carta verde): por padrao o do acidente
+  const [paisSeguro, setPaisSeguro] = useState<string | null>(null);
+  const [outroPais, setOutroPais] = useState(false);
+  const paisDoSeguro = paisSeguro || paisAcidente;
+  const nomePais = (c: string) => { try { return new Intl.DisplayNames([locale], { type: 'region' }).of(c) || c; } catch { return c; } };
   const set = (p: Partial<ValorSeguro>) => onChange({ ...valor, ...p });
   const p = valor.pagamento_reparo;
 
@@ -49,8 +67,26 @@ export function SeguroReparoCampos({ valor, onChange, tipoAcidente, pais }: { va
             <label htmlFor="seguradora" className="block text-sm font-medium text-gray-700 mb-1">{t('labelSeguradora')}</label>
             <input id="seguradora" className="input-field" list="lista-seguradoras" maxLength={100} value={valor.seguradora} onChange={(e) => set({ seguradora: e.target.value })} />
             <datalist id="lista-seguradoras">
-              {SEGURADORAS[regiao].map((s) => <option key={s} value={s} />)}
+              {seguradorasDoPais(paisDoSeguro).map((s) => <option key={s} value={s} />)}
             </datalist>
+            {outroPais ? (
+              <div className="mt-2">
+                <label htmlFor="pais-seguro" className="block text-xs font-medium text-gray-700 mb-1">{t('paisDoSeguro')}</label>
+                <select id="pais-seguro" className="input-field !py-2 text-sm" value={paisSeguro || ''} onChange={(e) => setPaisSeguro(e.target.value || null)}>
+                  <option value="">{paisAcidente ? nomePais(paisAcidente) : '—'}</option>
+                  {PAISES_SEGURO.filter((c) => c !== paisAcidente).map((c) => <option key={c} value={c}>{nomePais(c)}</option>)}
+                  <option value="XX">{t('outroPaisLista')}</option>
+                </select>
+              </div>
+            ) : (
+              <button type="button" onClick={() => setOutroPais(true)} className="mt-1 text-xs text-primary-700 underline">{t('seguroOutroPais')}</button>
+            )}
+            {paisSeguro && paisAcidente && paisSeguro !== paisAcidente && (
+              // carta verde: o seguro estrangeiro atende pelo representante no pais do acidente
+              <p className="mt-2 text-xs text-blue-900 bg-blue-50 border border-blue-100 rounded-lg p-2">
+                {t('cartaVerde', { pais: nomePais(paisAcidente) })}{paisAcidente === 'EE' ? <> <a href="https://www.lkf.ee/en/representatives" target="_blank" rel="noopener noreferrer" className="underline">lkf.ee</a></> : null}
+              </p>
+            )}
           </div>
           <div>
             <label htmlFor="sinistro" className="block text-sm font-medium text-gray-700 mb-1">{t('labelSinistro')}</label>
@@ -79,7 +115,7 @@ export function SeguroReparoCampos({ valor, onChange, tipoAcidente, pais }: { va
 /** Lista "o que fazer agora" da tela de sucesso, conforme o caso. */
 export function ProximosPassosSeguro({ pagamento, tipoAcidente, pais }: { pagamento: PagamentoReparo | ''; tipoAcidente: TipoAcidente; pais?: string | null }) {
   const t = useTranslations('seguroReparo');
-  const regiao = regiaoSeguro(useLocale(), pais);
+  const regiao = regiaoSeguro(usePaisAcidente(pais));
   const passos: string[] = [t(`passo_emergencia_${regiao}`)];
   if (tipoAcidente !== 'sem_outro') passos.push(t(`passo_registro_${regiao}`));
   if (usaSeguro(pagamento)) {

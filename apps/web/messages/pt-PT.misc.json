@@ -1053,7 +1053,11 @@
     "passo_emergencia_geral": "Se alguém ficou ferido, ligue para o número de emergência local (112 na Europa).",
     "passo_registro_geral": "Anote a matrícula, o nome, o telefone e a seguradora do outro condutor e tire fotografias. Na Europa podem preencher a Declaração Europeia de Acidente, assinada pelos dois, e enviá-la à seguradora o mais depressa possível.",
     "dica_seguro_terceiro_geral": "Quem paga a reparação é o seguro de responsabilidade civil do outro condutor. Avise também a sua seguradora: ela ajuda com o sinistro.",
-    "dica_seguro_proprio_geral": "Se a sua apólice cobre danos no seu carro, ela paga a reparação; normalmente paga a franquia prevista."
+    "dica_seguro_proprio_geral": "Se a sua apólice cobre danos no seu carro, ela paga a reparação; normalmente paga a franquia prevista.",
+    "seguroOutroPais": "O seu seguro é de outro país?",
+    "paisDoSeguro": "País do seguro",
+    "outroPaisLista": "Outro país",
+    "cartaVerde": "Seguro estrangeiro (Carta Verde): a sua seguradora atende através do representante dela em {pais}. Peça o contacto à seguradora ou veja a lista do gabinete nacional:"
   },
   "chatCotacaoPeca": {
     "nenhuma": "Ainda não há mensagens.",

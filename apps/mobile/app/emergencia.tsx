@@ -12,7 +12,7 @@ import i18n from '../i18n';
 import { ErroApi, ErroUsuario, mensagemErro } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
 import { obterPosicao, enderecoDaPosicao } from '../lib/posicao';
-import { regiaoSeguro } from '../lib/regiao';
+import { regiaoSeguro, paisDoAcidente, PAISES_SEGURO, nomeDoPais } from '../lib/regiao';
 import VehicleCatalogPicker from '../components/VehicleCatalogPicker';
 import { arquivoDaFoto } from '../lib/anexo';
 
@@ -75,7 +75,12 @@ export default function EmergenciaScreen() {
   const [seguradora, setSeguradora] = useState('');
   const [sinistro, setSinistro] = useState('');
   const [franquia, setFranquia] = useState('');
-  const regiao = regiaoSeguro(i18n.language, paisAcidente);
+  const regiao = regiaoSeguro(paisAcidente);
+  // pais do SEGURO e outra escolha (carta verde); por padrao o do acidente
+  const [paisSeguro, setPaisSeguro] = useState<string | null>(null);
+  const [outroPais, setOutroPais] = useState(false);
+  const paisAcid = paisDoAcidente(paisAcidente);
+  const nomePais = (c: string) => nomeDoPais(c, i18n.language);
 
   useEffect(() => {
     if (!user) return;
@@ -308,7 +313,33 @@ export default function EmergenciaScreen() {
       {usaSeguro(pagamento) && (
         <View className="bg-gray-50 rounded-lg p-3 mb-2">
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('seguro.labelSeguradora')}</Text>
-          <TextInput accessibilityLabel={t('seguro.labelSeguradora')} value={seguradora} onChangeText={setSeguradora} maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-[16px]" />
+          <TextInput accessibilityLabel={t('seguro.labelSeguradora')} value={seguradora} onChangeText={setSeguradora} maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-2 text-[16px]" />
+          {outroPais ? (
+            <View className="mb-3">
+              <Text className="text-xs font-medium text-gray-700 mb-1">{t('seguro.paisDoSeguro')}</Text>
+              <View className="flex-row flex-wrap gap-2">
+                {PAISES_SEGURO.map((c) => (
+                  <Pressable key={c} onPress={() => setPaisSeguro(c)} accessibilityRole="button" className={`px-3 py-1.5 rounded-full border ${(paisSeguro || paisAcid) === c ? 'bg-primary-600 border-primary-600' : 'border-gray-300 bg-white'}`}>
+                    <Text className={(paisSeguro || paisAcid) === c ? 'text-white text-sm' : 'text-gray-700 text-sm'}>{nomePais(c)}</Text>
+                  </Pressable>
+                ))}
+                <Pressable onPress={() => setPaisSeguro('XX')} accessibilityRole="button" className={`px-3 py-1.5 rounded-full border ${paisSeguro === 'XX' ? 'bg-primary-600 border-primary-600' : 'border-gray-300 bg-white'}`}>
+                  <Text className={paisSeguro === 'XX' ? 'text-white text-sm' : 'text-gray-700 text-sm'}>{t('seguro.outroPaisLista')}</Text>
+                </Pressable>
+              </View>
+              {paisSeguro && paisAcid && paisSeguro !== paisAcid && (
+                // carta verde: o seguro estrangeiro atende pelo representante no pais do acidente
+                <Text className="text-xs text-blue-900 bg-blue-50 rounded-lg p-2 mt-2">
+                  {t('seguro.cartaVerde', { pais: nomePais(paisAcid) })}
+                  {paisAcid === 'EE' ? <Text className="underline" onPress={() => Linking.openURL('https://www.lkf.ee/en/representatives')}> lkf.ee</Text> : null}
+                </Text>
+              )}
+            </View>
+          ) : (
+            <Pressable onPress={() => setOutroPais(true)} accessibilityRole="button" hitSlop={6} className="mb-3 self-start">
+              <Text className="text-xs text-primary-700 underline">{t('seguro.seguroOutroPais')}</Text>
+            </Pressable>
+          )}
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('seguro.labelSinistro')}</Text>
           <TextInput accessibilityLabel={t('seguro.labelSinistro')} value={sinistro} onChangeText={setSinistro} maxLength={60} autoCapitalize="characters" className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-[16px]" />
           <Text className="text-xs text-gray-500 mt-1 mb-3">{t('seguro.ajudaSinistro')}</Text>
