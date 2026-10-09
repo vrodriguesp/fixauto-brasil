@@ -169,7 +169,9 @@
     "completarCarroDica": "Marca, modelo e matrícula ajudam a oficina a fazer o orçamento. Toque para completar.",
     "editarPedido": "Editar pedido",
     "descricaoPedido": "Descrição",
-    "naoEncontrado": "Este pedido já não existe ou não está disponível."
+    "naoEncontrado": "Este pedido já não existe ou não está disponível.",
+    "fotosTitulo": "Fotografias ({count})",
+    "fotoDoPedido": "Fotografia do pedido"
   },
   "avaliacao": {
     "titulo": "Avalie o serviço",

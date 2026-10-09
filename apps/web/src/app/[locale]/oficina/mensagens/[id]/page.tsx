@@ -494,7 +494,7 @@ export default function OficinaMensagensPage() {
       {conversaFechada ? (
         <p className="bg-gray-100 border-t px-4 py-3 text-sm text-gray-600 flex-shrink-0" role="status">{tGar('conversaEncerrada')}</p>
       ) : (
-      <div className="bg-white border-t px-4 py-3 flex-shrink-0">
+      <div className="bg-white border-t px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex-shrink-0">
         {erroEnvio && <p className="text-xs text-red-700 mb-2" role="alert">{t('erroEnviar')}</p>}
         {showAudioRecorder ? (
           <AudioRecorder onRecorded={handleAudioRecorded} />

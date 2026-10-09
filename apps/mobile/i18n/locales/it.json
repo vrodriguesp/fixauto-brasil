@@ -169,7 +169,9 @@
     "completarCarroDica": "Marca, modello e targa aiutano l'officina a fare il preventivo. Tocca per completare.",
     "editarPedido": "Modifica richiesta",
     "descricaoPedido": "Descrizione",
-    "naoEncontrado": "Questa richiesta non esiste più o non è disponibile."
+    "naoEncontrado": "Questa richiesta non esiste più o non è disponibile.",
+    "fotosTitulo": "Foto ({count})",
+    "fotoDoPedido": "Foto della richiesta"
   },
   "avaliacao": {
     "titulo": "Valuta il servizio",

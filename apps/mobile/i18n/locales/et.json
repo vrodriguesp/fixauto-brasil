@@ -169,7 +169,9 @@
     "completarCarroDica": "Mark, mudel ja numbrimärk aitavad töökojal pakkumist teha. Puuduta lisamiseks.",
     "editarPedido": "Muuda päringut",
     "descricaoPedido": "Kirjeldus",
-    "naoEncontrado": "Seda päringut enam ei ole või see pole saadaval."
+    "naoEncontrado": "Seda päringut enam ei ole või see pole saadaval.",
+    "fotosTitulo": "Fotod ({count})",
+    "fotoDoPedido": "Päringu foto"
   },
   "avaliacao": {
     "titulo": "Hinda teenust",

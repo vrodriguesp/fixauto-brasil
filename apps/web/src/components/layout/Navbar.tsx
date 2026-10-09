@@ -47,7 +47,7 @@ export default function Navbar() {
               <img src="/logo-80.webp" alt="BipFix" width={188} height={40} className="h-7 sm:h-10 w-auto" />
               {(isOficina || isAdmin) && (
                 // No celular nao ha espaco ao lado do logo (sobrepunha o seletor de idioma)
-                <div className="hidden sm:flex flex-col ml-1">
+                <div className="hidden sm:flex flex-col ml-1 mr-4 xl:mr-6">
                   {isOficina && (
                     <span className="text-[10px] font-semibold text-sky-700 uppercase tracking-wider leading-none">{t('oficina')}</span>
                   )}
@@ -133,9 +133,10 @@ export default function Navbar() {
                       {user!.nome.charAt(0)}
                     </span>
                   </div>
-                  <div className="text-sm">
-                    <p className="font-medium text-gray-900">{user!.nome}</p>
-                    <p className="text-gray-500 text-xs">
+                  {/* nome e papel em uma linha cada, sem quebrar por cima de outros botoes (teste 09/10, ponto 3) */}
+                  <div className="text-sm min-w-0 max-w-[10rem] xl:max-w-[14rem]">
+                    <p className="font-medium text-gray-900 truncate whitespace-nowrap" title={user!.nome}>{user!.nome}</p>
+                    <p className="text-gray-500 text-xs truncate whitespace-nowrap">
                       {isAdmin ? t('administrador') : isOficina ? oficina?.nome_fantasia : isLoja ? loja?.nome_fantasia : t('cliente')}
                     </p>
                   </div>

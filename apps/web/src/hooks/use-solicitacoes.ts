@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import type { Solicitacao } from '@fixauto/shared';
+import { tipoCompativel, distanciaKm } from '@fixauto/shared';
 
 export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) {
   const { user, oficina } = useAuth();
@@ -70,8 +71,7 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
 
     // For workshops, filter by distance/especialidades BUT always show accepted ones
     if (user.tipo === 'oficina' && oficina && filter?.nearby) {
-      const radiusLat = oficina.raio_atendimento_km / 111;
-      const radiusLon = oficina.raio_atendimento_km / (111 * Math.cos(oficina.latitude * Math.PI / 180));
+      // mesma regra do banco (migracao 056): especialidade compativel + raio
       results = results.filter((s) => {
         // Always show solicitations where this oficina has an accepted quote
         const hasAcceptedQuote = s.orcamentos?.some(
@@ -80,12 +80,9 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
         if (hasAcceptedQuote) return true;
 
         // For new solicitations, filter by distance and especialidades
-        const withinRadius =
-          Math.abs(s.latitude - oficina.latitude) <= radiusLat &&
-          Math.abs(s.longitude - oficina.longitude) <= radiusLon;
-        const matchesEspecialidade =
-          !oficina.especialidades || oficina.especialidades.length === 0 ||
-          oficina.especialidades.includes(s.tipo);
+        const withinRadius = s.latitude != null && oficina.latitude != null &&
+          distanciaKm(s.latitude, s.longitude, oficina.latitude, oficina.longitude) <= (oficina.raio_atendimento_km || 30);
+        const matchesEspecialidade = tipoCompativel(oficina.especialidades, s.tipo);
         return withinRadius && matchesEspecialidade;
       });
     }

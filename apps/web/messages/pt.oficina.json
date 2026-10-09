@@ -530,7 +530,6 @@
     "horarioPassado": "Há um horário que já passou. Escolha hoje num período que ainda não terminou, ou um dia seguinte.",
     "importarTitulo": "Já tem o orçamento pronto em outro sistema?",
     "importarTexto": "Envie a foto ou o PDF: a IA reescreve o orçamento nos campos abaixo. Confira e corrija antes de enviar. O documento não é enviado ao cliente.",
-    "importarBotao": "Enviar foto ou PDF",
     "importarLendo": "Lendo o documento…",
     "importarConfira": "Itens preenchidos pelo documento. Confira quantidades e valores antes de enviar.",
     "importarErro": "Não foi possível ler este documento. Tente uma foto mais nítida ou o PDF.",
@@ -557,7 +556,10 @@
     "revisaoEnviadaTitulo": "Proposta de revisão enviada",
     "revisaoEnviadaTexto": "O cliente foi avisado. Até ele responder, vale o orçamento aceito.",
     "revisaoAguardandoCliente": "Sua proposta de revisão ({valor}) está aguardando a resposta do cliente.",
-    "abrirConversa": "Abrir conversa"
+    "abrirConversa": "Abrir conversa",
+    "importarFoto": "Tirar foto",
+    "importarArquivo": "Escolher arquivo ou PDF",
+    "importarGrande": "O arquivo é grande demais (máx. 10 MB). Tente uma foto ou um PDF menor."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "A senha deve ter pelo menos 8 caracteres",

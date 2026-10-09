@@ -11,7 +11,11 @@ const SKIP_BELOW_BYTES = 300 * 1024; // already small enough, not worth re-encod
  * with that. Falls back to the original file on any failure or if it isn't
  * an image / is already small.
  */
-export async function compressImage(file: File): Promise<File> {
+// opcoes: documentos (orcamento fotografado) usam lado maior e mais qualidade
+// para a IA ler letras pequenas
+export async function compressImage(file: File, opcoes?: { maxLado?: number; qualidade?: number }): Promise<File> {
+  const MAX = opcoes?.maxLado ?? MAX_DIMENSION;
+  const QUAL = opcoes?.qualidade ?? JPEG_QUALITY;
   if (!file.type.startsWith('image/') || file.type === 'image/svg+xml') {
     return file;
   }
@@ -21,7 +25,7 @@ export async function compressImage(file: File): Promise<File> {
 
   try {
     const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
+    const scale = Math.min(1, MAX / Math.max(bitmap.width, bitmap.height));
     const width = Math.round(bitmap.width * scale);
     const height = Math.round(bitmap.height * scale);
 
@@ -34,7 +38,7 @@ export async function compressImage(file: File): Promise<File> {
     bitmap.close?.();
 
     const blob: Blob | null = await new Promise((resolve) =>
-      canvas.toBlob(resolve, 'image/jpeg', JPEG_QUALITY)
+      canvas.toBlob(resolve, 'image/jpeg', QUAL)
     );
     if (!blob || blob.size >= file.size) return file;
 
@@ -46,5 +50,5 @@ export async function compressImage(file: File): Promise<File> {
 }
 
 export async function compressImages(files: File[]): Promise<File[]> {
-  return Promise.all(files.map(compressImage));
+  return Promise.all(files.map((f) => compressImage(f)));
 }

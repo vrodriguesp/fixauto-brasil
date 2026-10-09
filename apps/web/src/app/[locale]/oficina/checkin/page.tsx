@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import CampoNumero from '@/components/forms/CampoNumero';
 import { localParaIso } from '@/lib/turnos';
 import { exemploPlaca, EXEMPLO_EMAIL, exemploValor } from '@/lib/exemplos';
 import { useTranslations, useLocale } from 'next-intl';
@@ -246,7 +247,7 @@ export default function ManualCheckinPage() {
             </div>
             <div>
               <label htmlFor="c7917-13" className="block text-sm font-medium text-gray-700 mb-1">{t('prazoDias')}</label>
-              <input id="c7917-13" type="number" className="input-field" min={1} value={prazoDias} onChange={(e) => setPrazoDias(parseInt(e.target.value) || 1)} />
+              <CampoNumero id="c7917-13" className="input-field" min={1} value={prazoDias} onChange={setPrazoDias} />
             </div>
             <div>
               <label htmlFor="c7917-14" className="block text-sm font-medium text-gray-700 mb-1">{t('previsaoEntrega')}</label>

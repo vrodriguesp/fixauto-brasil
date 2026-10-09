@@ -133,7 +133,7 @@ export default function EmergenciaPage() {
     const picked = Array.from(files);
     if (fileInputRef.current) fileInputRef.current.value = '';
     if (cameraInputRef.current) cameraInputRef.current.value = '';
-    const compressed = await Promise.all(picked.map(compressImage));
+    const compressed = await Promise.all(picked.map((f) => compressImage(f)));
     const newFotos = compressed.map((file) => ({
       file,
       preview: URL.createObjectURL(file),

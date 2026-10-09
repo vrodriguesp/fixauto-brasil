@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState, useMemo } from 'react';
+import { FotosPedido, SeguroPedido } from '../../components/FotosESeguroPedido';
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useFocusEffect, router, Stack } from 'expo-router';
@@ -176,6 +177,14 @@ export default function SolicitacaoDetailScreen() {
 
         {['aberta', 'em_orcamento'].includes(solicitacao.status) && (
           <EditarPedido key={`${solicitacao.id}-${veiculo?.fipe_marca || ''}`} solicitacaoId={solicitacao.id} descricao={solicitacao.descricao} veiculo={(veiculo as any) || null} aoSalvar={carregar} />
+        )}
+
+        {/* fotos enviadas e, no acidente, quem paga o reparo (teste 09/10, ponto 2) */}
+        <FotosPedido solicitacaoId={solicitacao.id} />
+        {(solicitacao as any).emergencia_id && !['cancelada', 'concluida'].includes(solicitacao.status) && (
+          <SeguroPedido key={`${(solicitacao as any).pagamento_reparo}-${(solicitacao as any).sinistro_numero}`} emergenciaId={(solicitacao as any).emergencia_id}
+            atual={{ pagamento_reparo: (solicitacao as any).pagamento_reparo ?? null, seguradora: (solicitacao as any).seguradora ?? null, sinistro_numero: (solicitacao as any).sinistro_numero ?? null, franquia: (solicitacao as any).franquia ?? null }}
+            aoSalvar={carregar} />
         )}
 
         {fimGarantia && diasGarantia > 0 && (

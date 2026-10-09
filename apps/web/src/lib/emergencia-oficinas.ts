@@ -1,4 +1,5 @@
 import { supabaseAdmin } from './supabase-admin';
+import { tipoCompativel, distanciaKm } from '@fixauto/shared';
 import { oficinaTemCapacidade } from './capacidade';
 import { notifEmergenciaAcidenteProximo } from './notif-i18n';
 
@@ -12,7 +13,7 @@ export type OficinaAvisada = { profile_id: string; idioma: string | null };
  * teste por mercados de 09/10). O admin e avisado por e-mail nesse caso.
  * Idempotente: se o acidente ja tem oficinas avisadas, nao avisa de novo.
  */
-export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: number | null, longitude: number | null): Promise<OficinaAvisada[]> {
+export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: number | null, longitude: number | null, tipo = 'colisao'): Promise<OficinaAvisada[]> {
   if (latitude == null || longitude == null) return [];
   const { count } = await supabaseAdmin
     .from('emergencia_oficinas_notificadas')
@@ -23,7 +24,7 @@ export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: n
   const RAIO_KM = 50;
   const dLat = RAIO_KM / 111;
   const dLon = RAIO_KM / (111 * Math.cos((latitude * Math.PI) / 180));
-  const campos = 'id, profile_id, especialidades, capacidade_servicos, profile:profiles!oficinas_profile_id_fkey(idioma)';
+  const campos = 'id, profile_id, especialidades, capacidade_servicos, latitude, longitude, profile:profiles!oficinas_profile_id_fkey(idioma)';
 
   const { data: proximas } = await supabaseAdmin
     .from('oficinas')
@@ -34,11 +35,12 @@ export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: n
     .gte('longitude', longitude - dLon)
     .lte('longitude', longitude + dLon);
 
-  const colisao = (proximas || []).filter(
-    (o: any) => !o.especialidades?.length || o.especialidades.some((e: string) => ['colisao', 'funilaria', 'pintura', 'geral'].includes(e))
-  );
+  // acidente = carroceria: so oficinas de colisao/funilaria/pintura (ou sem
+  // especialidade marcada), dentro do raio de 50 km do acidente
+  const colisao = (proximas || []).filter((o: any) => tipoCompativel(o.especialidades, tipo)
+    && o.latitude != null && distanciaKm(latitude, longitude, o.latitude, o.longitude) <= RAIO_KM);
   const comCapacidade = [];
-  for (const o of colisao) if (await oficinaTemCapacidade(supabaseAdmin, o, 'colisao')) comCapacidade.push(o);
+  for (const o of colisao) if (await oficinaTemCapacidade(supabaseAdmin, o, tipo)) comCapacidade.push(o);
   const destinos = comCapacidade.length > 0 ? comCapacidade : colisao;
 
   for (const o of destinos as any[]) {

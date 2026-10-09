@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import i18n from '../i18n';
-import { View, Text, Pressable, Animated } from 'react-native';
+import { View, Text, Pressable, Animated, AppState } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -95,19 +95,47 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
     if (para) router.push(para as any);
   }, []);
 
+  // Tempo real. Com o app em segundo plano o iOS corta a conexao: o que chega
+  // nesse intervalo nao vira aviso e os numeros das abas ficavam velhos ate
+  // fechar e reabrir o app (teste do dono 09/10, pontos 5 e 11). Ao voltar ao
+  // app: reconecta, recarrega os numeros e mostra o aviso mais recente que
+  // chegou enquanto estava fora. Mensagens novas (nem toda mensagem gera
+  // notificacao) tambem atualizam a bolinha da aba.
+  const [conexao, setConexao] = useState(0);
+  const saiuEm = useRef<string | null>(null);
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', async (estado) => {
+      if (estado !== 'active') { if (!saiuEm.current) saiuEm.current = new Date().toISOString(); return; }
+      const desde = saiuEm.current; saiuEm.current = null;
+      setConexao((n) => n + 1);
+      atualizar();
+      if (!user || !desde) return;
+      const { data } = await supabase.from('notificacoes').select('*').eq('profile_id', user.id).eq('lida', false)
+        .gt('created_at', desde).order('created_at', { ascending: false }).limit(1);
+      if (data?.[0]) { mostrar(data[0] as Aviso); setChegou((n) => n + 1); }
+    });
+    return () => sub.remove();
+  }, [user?.id, atualizar, mostrar]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     atualizar();
     if (!user) return;
     const canal = supabase
-      .channel(`avisos-${user.id}`)
+      .channel(`avisos-${user.id}-${conexao}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notificacoes', filter: `profile_id=eq.${user.id}` }, (payload) => {
         mostrar(payload.new as Aviso);
         atualizar();
         setChegou((n) => n + 1);
       })
+      // mensagens das minhas conversas (o banco so entrega as que eu posso ler)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mensagens' }, (payload) => {
+        const m = payload.new as { remetente_id?: string } | undefined;
+        if (payload.eventType === 'INSERT' && m?.remetente_id && m.remetente_id !== user.id) setChegou((n) => n + 1);
+        atualizar();
+      })
       .subscribe();
     return () => { supabase.removeChannel(canal); };
-  }, [user?.id, atualizar, mostrar]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user?.id, conexao, atualizar, mostrar]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <AvisosCtx.Provider value={{ chegou, naoLidos, mensagensNaoLidas, abrir, atualizar }}>

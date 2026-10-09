@@ -530,7 +530,6 @@
     "horarioPassado": "Uno degli orari è già passato. Scegli oggi una fascia non ancora finita, oppure un giorno successivo.",
     "importarTitulo": "Hai già il preventivo in un altro sistema?",
     "importarTexto": "Carica la foto o il PDF: l'IA riscrive il preventivo nei campi qui sotto. Controlla e correggi prima di inviare. Il documento non viene inviato al cliente.",
-    "importarBotao": "Carica foto o PDF",
     "importarLendo": "Lettura del documento…",
     "importarConfira": "Voci compilate dal documento. Controlla quantità e prezzi prima di inviare.",
     "importarErro": "Impossibile leggere questo documento. Prova una foto più nitida o il PDF.",
@@ -557,7 +556,10 @@
     "revisaoEnviadaTitulo": "Proposta di revisione inviata",
     "revisaoEnviadaTexto": "Il cliente è stato avvisato. Finché non risponde, vale il preventivo accettato.",
     "revisaoAguardandoCliente": "La tua proposta di revisione ({valor}) è in attesa della risposta del cliente.",
-    "abrirConversa": "Apri la chat"
+    "abrirConversa": "Apri la chat",
+    "importarFoto": "Scatta una foto",
+    "importarArquivo": "Scegli un file o PDF",
+    "importarGrande": "Il file è troppo grande (max 10 MB). Prova una foto o un PDF più piccolo."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "La password deve avere almeno 8 caratteri",

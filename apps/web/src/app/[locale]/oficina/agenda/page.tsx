@@ -507,17 +507,18 @@ export default function AgendaPage() {
           <h1 className="text-2xl font-bold text-gray-900">{isMecanico ? t('minhaAgenda') : t('agenda')}</h1>
           <p className="text-gray-600 mt-1">{isMecanico ? t('subtituloMecanico') : t('subtituloGeral')}</p>
         </div>
-        <div className="flex items-center gap-2 mt-4 sm:mt-0">
-          <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+        {/* celular: 4 visoes em grade de largura total (antes a ultima saia da tela - teste 09/10, ponto 10) */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
+          <div className="grid grid-cols-4 sm:flex rounded-lg border border-gray-200 overflow-hidden w-full sm:w-auto">
             {(['quadro', 'month', 'day', 'list'] as const).map((m) => (
               <button key={m} onClick={() => setViewMode(m)} aria-pressed={viewMode === m}
-                className={`px-3 py-2 text-sm ${viewMode === m ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'}`}>
+                className={`px-2 sm:px-3 py-2 text-sm text-center whitespace-nowrap ${viewMode === m ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'}`}>
                 {m === 'quadro' ? t('viewQuadro') : m === 'month' ? t('viewMes') : m === 'day' ? t('viewDia') : t('viewLista')}
               </button>
             ))}
           </div>
           {!isMecanico && (
-            <button onClick={() => setShowForm(true)} className="btn-primary !py-2">{t('btnNovoEvento')}</button>
+            <button onClick={() => setShowForm(true)} className="btn-primary !py-2 w-full sm:w-auto">{t('btnNovoEvento')}</button>
           )}
         </div>
       </div>

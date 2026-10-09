@@ -530,7 +530,6 @@
     "horarioPassado": "One of the times has already passed. Pick a period today that has not ended yet, or a later day.",
     "importarTitulo": "Already have the quote in another system?",
     "importarTexto": "Upload the photo or PDF: the AI rewrites the quote into the fields below. Check and correct before sending. The document is not sent to the customer.",
-    "importarBotao": "Upload photo or PDF",
     "importarLendo": "Reading the document…",
     "importarConfira": "Items filled in from the document. Check quantities and prices before sending.",
     "importarErro": "This document could not be read. Try a sharper photo or the PDF.",
@@ -557,7 +556,10 @@
     "revisaoEnviadaTitulo": "Revision proposal sent",
     "revisaoEnviadaTexto": "The customer has been notified. Until they answer, the accepted quote stands.",
     "revisaoAguardandoCliente": "Your revision proposal ({valor}) is waiting for the customer’s answer.",
-    "abrirConversa": "Open chat"
+    "abrirConversa": "Open chat",
+    "importarFoto": "Take a photo",
+    "importarArquivo": "Choose a file or PDF",
+    "importarGrande": "The file is too large (max 10 MB). Try a smaller photo or PDF."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Password must be at least 8 characters",

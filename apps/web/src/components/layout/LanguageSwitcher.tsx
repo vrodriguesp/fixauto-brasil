@@ -64,7 +64,8 @@ export default function LanguageSwitcher() {
         className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
       >
         <Codigo c={CODIGO[locale]} />
-        <span className="hidden sm:inline">{atual}</span>
+        {/* rotulo inteiro so em tela larga; no meio fica so o codigo (nao empurra o menu) */}
+        <span className="hidden sm:inline lg:hidden xl:inline whitespace-nowrap">{atual}</span>
         <svg className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>

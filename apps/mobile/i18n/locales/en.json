@@ -169,7 +169,9 @@
     "completarCarroDica": "Make, model and plate help the repair shop prepare the quote. Tap to add.",
     "editarPedido": "Edit request",
     "descricaoPedido": "Description",
-    "naoEncontrado": "This request no longer exists or is not available."
+    "naoEncontrado": "This request no longer exists or is not available.",
+    "fotosTitulo": "Photos ({count})",
+    "fotoDoPedido": "Request photo"
   },
   "avaliacao": {
     "titulo": "Rate the service",

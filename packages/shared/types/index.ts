@@ -9,6 +9,8 @@ export type TipoServico =
   | 'mecanica'
   | 'eletrica'
   | 'pneu'
+  | 'pintura'
+  | 'manutencao'
   | 'outro';
 
 export type Urgencia = 'baixa' | 'media' | 'alta';

@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { compressImage } from '@/lib/image-compress';
+import CampoNumero from '@/components/forms/CampoNumero';
 import SeguroDoPedido from '@/components/oficina/SeguroDoPedido';
 import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
@@ -67,7 +69,7 @@ export default function EnviarOrcamentoPage() {
   const garantiaPronta = garantiaDias === '' || [0, 30, 90, 180, 365, 730].includes(Number(garantiaDias));
   // orcamento feito em outro sistema: foto/PDF lido pela IA e (opcional) anexado
   const [docArquivo, setDocArquivo] = useState<File | null>(null);
-  const [lendoDoc, setLendoDoc] = useState<'' | 'lendo' | 'ok' | 'erro' | 'ocupada'>('');
+  const [lendoDoc, setLendoDoc] = useState<'' | 'lendo' | 'ok' | 'erro' | 'ocupada' | 'grande'>('');
   const [prefilled, setPrefilled] = useState(false);
   const [analise, setAnalise] = useState<AnaliseDano | null>(null);
 
@@ -170,6 +172,27 @@ export default function EnviarOrcamentoPage() {
       return { ...item, [field]: value };
     });
     setItens(newItens);
+  };
+
+  const refCamera = useRef<HTMLInputElement>(null);
+  const refArquivo = useRef<HTMLInputElement>(null);
+  const lerDocumento = async (original: File) => {
+    setDocArquivo(original);
+    setLendoDoc('lendo');
+    const arq = original.type.startsWith('image/') ? await compressImage(original, { maxLado: 2400, qualidade: 0.85 }) : original;
+    if (arq.size > 10 * 1024 * 1024) { setLendoDoc('grande'); return; }
+    const fd = new FormData();
+    fd.append('arquivo', arq);
+    fd.append('idioma', locale);
+    const r = await fetch('/api/ler-orcamento', { method: 'POST', body: fd }).catch(() => null);
+    const d = r ? await r.json().catch(() => ({})) : {};
+    if (!r || !r.ok) { setLendoDoc(d.codigo === 'IA_OCUPADA' ? 'ocupada' : d.codigo === 'ARQUIVO_GRANDE' ? 'grande' : 'erro'); return; }
+    setItens(d.itens.map((i: any) => ({ descricao: i.descricao, tipo: i.tipo, quantidade: i.quantidade, valor_unitario: i.valor_unitario })));
+    if (d.prazo_dias) setPrazoDias(d.prazo_dias);
+    if (d.garantia_dias) setGarantiaDias(String(d.garantia_dias));
+    if (d.observacoes) setObservacoes((o) => (o ? `${o}
+${d.observacoes}` : d.observacoes));
+    setLendoDoc('ok');
   };
 
   const total = itens.reduce((acc, item) => acc + item.valor_unitario * item.quantidade, 0);
@@ -397,31 +420,27 @@ export default function EnviarOrcamentoPage() {
         <div className="card mb-6 border-2 border-dashed border-primary-200">
           <h2 className="text-base font-semibold text-gray-900 mb-1">{t('importarTitulo')}</h2>
           <p className="text-sm text-gray-600 mb-3">{t('importarTexto')}</p>
-          <label className="btn-secondary !py-2 text-sm inline-flex items-center gap-2 cursor-pointer">
-            <input type="file" accept="image/*,application/pdf" className="sr-only" aria-label={t('importarBotao')}
-              onChange={async (e) => {
-                const arq = e.target.files?.[0];
-                if (!arq) return;
-                setDocArquivo(arq);
-                setLendoDoc('lendo');
-                const fd = new FormData();
-                fd.append('arquivo', arq);
-                fd.append('idioma', locale);
-                const r = await fetch('/api/ler-orcamento', { method: 'POST', body: fd }).catch(() => null);
-                const d = r ? await r.json().catch(() => ({})) : {};
-                if (!r || !r.ok) { setLendoDoc(d.codigo === 'IA_OCUPADA' ? 'ocupada' : 'erro'); return; }
-                setItens(d.itens.map((i: any) => ({ descricao: i.descricao, tipo: i.tipo, quantidade: i.quantidade, valor_unitario: i.valor_unitario })));
-                if (d.prazo_dias) setPrazoDias(d.prazo_dias);
-                if (d.garantia_dias) setGarantiaDias(String(d.garantia_dias));
-                if (d.observacoes) setObservacoes((o) => (o ? `${o}\n${d.observacoes}` : d.observacoes));
-                setLendoDoc('ok');
-              }} />
-            📄 {lendoDoc === 'lendo' ? t('importarLendo') : t('importarBotao')}
-          </label>
+          {/* Dois botoes explicitos: no iPhone, o campo de arquivo escondido dentro
+              de um rotulo as vezes nao devolvia a foto da camera e nada acontecia
+              (teste do dono 09/10, ponto 7). Foto grande e reduzida antes de enviar. */}
+          <input ref={refCamera} type="file" accept="image/*" capture="environment" className="hidden"
+            onChange={(e) => { const a = e.target.files?.[0]; e.target.value = ''; if (a) lerDocumento(a); }} />
+          <input ref={refArquivo} type="file" accept="image/*,application/pdf" className="hidden"
+            onChange={(e) => { const a = e.target.files?.[0]; e.target.value = ''; if (a) lerDocumento(a); }} />
+          <div className="flex flex-wrap gap-2">
+            <button type="button" disabled={lendoDoc === 'lendo'} onClick={() => refCamera.current?.click()} className="btn-secondary !py-2 text-sm inline-flex items-center gap-2 disabled:opacity-50">
+              📷 {t('importarFoto')}
+            </button>
+            <button type="button" disabled={lendoDoc === 'lendo'} onClick={() => refArquivo.current?.click()} className="btn-secondary !py-2 text-sm inline-flex items-center gap-2 disabled:opacity-50">
+              📄 {t('importarArquivo')}
+            </button>
+          </div>
+          {lendoDoc === 'lendo' && <p className="text-sm text-primary-700 mt-2" role="status">⏳ {t('importarLendo')}</p>}
           {docArquivo && <p className="text-xs text-gray-500 mt-2 break-all">{docArquivo.name}</p>}
           {lendoDoc === 'ok' && <p className="text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-lg p-2 mt-2" role="status">{t('importarConfira')}</p>}
           {lendoDoc === 'erro' && <p className="text-sm text-red-700 mt-2" role="alert">{t('importarErro')}</p>}
           {lendoDoc === 'ocupada' && <p className="text-sm text-red-700 mt-2" role="alert">{t('importarOcupada')}</p>}
+          {lendoDoc === 'grande' && <p className="text-sm text-red-700 mt-2" role="alert">{t('importarGrande')}</p>}
         </div>
 
         <div className="card mb-6">
@@ -466,22 +485,24 @@ export default function EnviarOrcamentoPage() {
                   </div>
                   <div className="flex gap-3">
                     <div className="flex-1">
-                      <input
-                        type="number"
+                      <CampoNumero
                         className="input-field"
                         placeholder={t('placeholderValor')}
-                        value={item.valor_unitario || ''}
-                        onChange={(e) => updateItem(index, 'valor_unitario', parseFloat(e.target.value) || 0)}
+                        aria-label={t('placeholderValor')}
+                        decimal
+                        vazioQuandoZero
+                        value={item.valor_unitario}
+                        onChange={(n) => updateItem(index, 'valor_unitario', n)}
                       />
                     </div>
                     <div className="w-20">
-                      <input
-                        type="number"
+                      <CampoNumero
                         className="input-field"
                         placeholder={t('placeholderQtd')}
+                        aria-label={t('placeholderQtd')}
                         min={1}
                         value={item.quantidade}
-                        onChange={(e) => updateItem(index, 'quantidade', parseInt(e.target.value) || 1)}
+                        onChange={(n) => updateItem(index, 'quantidade', n)}
                       />
                     </div>
                   </div>
@@ -548,24 +569,22 @@ export default function EnviarOrcamentoPage() {
               <label htmlFor="cacb1-101" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('prazoTotalDias')}
               </label>
-              <input id="cacb1-101"
-                type="number"
+              <CampoNumero id="cacb1-101"
                 className="input-field"
                 min={1}
                 value={prazoDias}
-                onChange={(e) => setPrazoDias(parseInt(e.target.value) || 1)}
+                onChange={setPrazoDias}
               />
             </div>
             <div>
               <label htmlFor="cacb1-102" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('tempoExecucaoHoras')}
               </label>
-              <input id="cacb1-102"
-                type="number"
+              <CampoNumero id="cacb1-102"
                 className="input-field"
                 min={1}
                 value={tempoExecucaoHoras}
-                onChange={(e) => setTempoExecucaoHoras(parseInt(e.target.value) || 1)}
+                onChange={setTempoExecucaoHoras}
               />
               <p className="text-xs text-gray-500 mt-1">
                 {t('diasUteis', { count: Math.ceil(tempoExecucaoHoras / 8) })}

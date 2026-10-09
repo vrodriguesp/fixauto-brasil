@@ -146,9 +146,16 @@ export default function ConversaScreen() {
     supabase.rpc('conversa_aberta', { p_sol: id, p_of: oficinaId }).then(({ data }) => setFechada(data === false));
   }, [id, oficinaId]);
 
+  // saiu da conversa gravando: para e volta o audio ao normal (auditoria E5).
+  // Usa o estado DESTA tela (ref), nunca o gravador: na saida a biblioteca ja
+  // liberou o objeto nativo, e ler gravador.isRecording dava erro SEMPRE que se
+  // voltava da conversa (teste do dono 09/10, ponto 6).
+  const gravandoRef = useRef(false);
+  useEffect(() => { gravandoRef.current = gravando; }, [gravando]);
   useEffect(() => () => {
-    // saiu da conversa gravando: para e volta o audio ao normal (auditoria E5)
-    if (gravador.isRecording) gravador.stop().catch(() => {});
+    if (gravandoRef.current) {
+      try { gravador.stop().catch(() => {}); } catch { /* gravador ja liberado */ }
+    }
     setAudioModeAsync({ allowsRecording: false, playsInSilentMode: true }).catch(() => {});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

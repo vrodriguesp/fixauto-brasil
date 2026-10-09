@@ -1,4 +1,5 @@
 import { supabaseAdmin } from './supabase-admin';
+import { tipoCompativel } from '@fixauto/shared';
 import { notifNovaSolicitacaoTitulo } from './notif-i18n';
 import pt from '../../messages/pt.json';
 import ptPT from '../../messages/pt-PT.json';
@@ -33,7 +34,7 @@ export async function avisarOficinasDoPedido(solicitacaoId: string): Promise<num
     .select('profile_id, especialidades, latitude, longitude, raio_atendimento_km, profile:profiles!oficinas_profile_id_fkey(idioma)')
     .eq('ativa', true);
   const alvo = (oficinas || []).filter((o: any) =>
-    (!o.especialidades?.length || o.especialidades.includes(sol.tipo)) &&
+    tipoCompativel(o.especialidades, sol.tipo) &&
     o.latitude != null && o.longitude != null &&
     distanciaKm({ lat: sol.latitude, lon: sol.longitude }, { lat: o.latitude, lon: o.longitude }) <= (o.raio_atendimento_km || 30));
   const carro = [(sol.veiculo as any)?.fipe_marca, (sol.veiculo as any)?.fipe_modelo].filter(Boolean).join(' ');
