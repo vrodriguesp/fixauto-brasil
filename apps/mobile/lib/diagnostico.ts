@@ -23,7 +23,7 @@ let instalado = false;
 export function instalarCapturaDeErros() {
   if (instalado) return;
   instalado = true;
-  const g = global as unknown as { ErrorUtils?: { getGlobalHandler: () => (e: Error, fatal?: boolean) => void; setGlobalHandler: (h: (e: Error, fatal?: boolean) => void) => void } };
+  const g = globalThis as unknown as { ErrorUtils?: { getGlobalHandler: () => (e: Error, fatal?: boolean) => void; setGlobalHandler: (h: (e: Error, fatal?: boolean) => void) => void } };
   const eu = g.ErrorUtils;
   if (!eu) return;
   const anterior = eu.getGlobalHandler();
