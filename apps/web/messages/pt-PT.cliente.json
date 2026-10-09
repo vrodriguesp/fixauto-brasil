@@ -360,15 +360,13 @@
     "titulo": "{oficina} propôs uma revisão do orçamento",
     "novoPrazo": "Novo prazo: {dias} dias",
     "motivo": "Motivo",
-    "explicacao": "Nada muda sem a sua decisão. Se recusar, a oficina avança com o orçamento original. Se preferir, recuse e levante o carro.",
+    "explicacao": "Nada muda sem a sua decisão. Se aprovar, passa a valer o novo valor. Se recusar, o serviço é encerrado e levanta o carro.",
     "aprovar": "Aprovar novo valor",
-    "recusar": "Recusar (manter o original)",
-    "retirar": "Recusar e levantar o carro",
+    "recusar": "Recusar e levantar o carro",
     "retirarConfirma": "O serviço será encerrado e a oficina avisada. Combine o levantamento pela conversa. Pode haver cobrança do que já foi feito, conforme o combinado com a oficina. Confirmar?",
     "retirarSim": "Sim, levantar o carro",
     "voltar": "Voltar",
     "feito_aprovar": "Revisão aprovada. A oficina foi avisada.",
-    "feito_recusar": "Revisão recusada. Mantém-se o orçamento original.",
-    "feito_retirar": "Serviço encerrado. Combine o levantamento do carro pela conversa."
+    "feito_recusar": "Serviço encerrado. Combine o levantamento do carro pela conversa."
   }
 }

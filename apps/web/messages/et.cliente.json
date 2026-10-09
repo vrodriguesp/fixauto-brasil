@@ -360,15 +360,13 @@
     "titulo": "{oficina} pakkus hinnapakkumise muudatust",
     "novoPrazo": "Uus tähtaeg: {dias} päeva",
     "motivo": "Põhjus",
-    "explicacao": "Midagi ei muutu ilma sinu otsuseta. Kui keeldud, jätkab töökoda algse hinnapakkumisega. Võid ka keelduda ja auto ära viia.",
+    "explicacao": "Ilma sinu otsuseta ei muutu midagi. Kui kinnitad, kehtib uus hind. Kui keeldud, töö lõpetatakse ja viid auto ära.",
     "aprovar": "Kinnita uus summa",
-    "recusar": "Keeldu (jää algse juurde)",
-    "retirar": "Keeldu ja vii auto ära",
+    "recusar": "Keeldu ja vii auto ära",
     "retirarConfirma": "Töö lõpetatakse ja töökoda saab teate. Lepi auto äraviimine vestluses kokku. Juba tehtud töö eest võidakse tasu küsida vastavalt kokkuleppele. Kinnitad?",
     "retirarSim": "Jah, viin auto ära",
     "voltar": "Tagasi",
     "feito_aprovar": "Muudatus kinnitatud. Töökoda sai teate.",
-    "feito_recusar": "Muudatusest keelduti. Kehtib algne hinnapakkumine.",
-    "feito_retirar": "Töö on lõpetatud. Lepi auto äraviimine vestluses kokku."
+    "feito_recusar": "Töö on lõpetatud. Lepi auto äraviimine vestluses kokku."
   }
 }

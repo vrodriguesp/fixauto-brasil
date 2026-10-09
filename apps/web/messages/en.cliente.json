@@ -360,15 +360,13 @@
     "titulo": "{oficina} proposed a quote revision",
     "novoPrazo": "New time frame: {dias} days",
     "motivo": "Reason",
-    "explicacao": "Nothing changes without your decision. If you decline, the garage carries on with the original quote. You can also decline and collect your car.",
+    "explicacao": "Nothing changes without your decision. If you approve, the new amount applies. If you decline, the job is closed and you collect your car.",
     "aprovar": "Approve new amount",
-    "recusar": "Decline (keep the original)",
-    "retirar": "Decline and collect my car",
+    "recusar": "Decline and collect my car",
     "retirarConfirma": "The job will be closed and the garage notified. Arrange the collection in the chat. Work already done may be charged as agreed with the garage. Confirm?",
     "retirarSim": "Yes, collect my car",
     "voltar": "Back",
     "feito_aprovar": "Revision approved. The garage has been notified.",
-    "feito_recusar": "Revision declined. The original quote stands.",
-    "feito_retirar": "Job closed. Arrange the collection of your car in the chat."
+    "feito_recusar": "Job closed. Arrange the collection of your car in the chat."
   }
 }

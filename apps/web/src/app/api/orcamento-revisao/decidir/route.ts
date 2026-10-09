@@ -8,19 +8,22 @@ import { notifRevisaoDecidida } from '@/lib/notif-revisao';
 
 export const dynamic = 'force-dynamic';
 
-type Decisao = 'aprovar' | 'recusar' | 'retirar';
-const STATUS: Record<Decisao, 'aprovada' | 'recusada' | 'retirada'> = { aprovar: 'aprovada', recusar: 'recusada', retirar: 'retirada' };
+type Decisao = 'aprovar' | 'recusar';
+// 'retirar' = nome antigo de 'recusar' (telas anteriores a 09/10)
+const STATUS: Record<Decisao | 'retirar', 'aprovada' | 'retirada'> = { aprovar: 'aprovada', recusar: 'retirada', retirar: 'retirada' };
 
-// O CLIENTE decide a revisao proposta pela oficina (migracao 049):
+// O CLIENTE decide a revisao proposta pela oficina (migracao 049). So duas
+// opcoes (decisao do dono, 09/10): se a oficina diz que o servico custa mais,
+// "manter o preco original" nao e uma opcao real.
 //  aprovar -> o orcamento aceito passa a ter os novos itens/valor
 //             (valor_original guarda o primeiro preco; revisao_numero +1)
-//  recusar -> nada muda: a oficina segue com o orcamento original
-//  retirar -> recusa e encerra o servico: agenda cancelada, pedido cancelado,
-//             sem comissao; o cliente combina a retirada pela conversa
+//  recusar -> encerra o servico: agenda cancelada, pedido cancelado, sem
+//             comissao; o cliente combina a retirada pela conversa
+//             (status 'retirada', contado no monitoramento do admin)
 export async function POST(req: NextRequest) {
   const userId = await getSessionUserId(req);
   if (!userId) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
-  const { revisaoId, decisao } = (await req.json().catch(() => ({}))) as { revisaoId?: string; decisao?: Decisao };
+  const { revisaoId, decisao } = (await req.json().catch(() => ({}))) as { revisaoId?: string; decisao?: Decisao | 'retirar' };
   if (!ehUuid(revisaoId) || !decisao || !STATUS[decisao]) return NextResponse.json({ error: 'Dados inválidos', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
 
   const { data: rev } = await supabaseAdmin.from('orcamento_revisoes')
@@ -47,7 +50,7 @@ export async function POST(req: NextRequest) {
     await supabaseAdmin.from('orcamento_itens').delete().eq('orcamento_id', rev.orcamento_id);
     const itens = Array.isArray(rev.itens) ? rev.itens : [];
     if (itens.length) await supabaseAdmin.from('orcamento_itens').insert(itens.map((i: any) => ({ ...i, orcamento_id: rev.orcamento_id })));
-  } else if (decisao === 'retirar') {
+  } else {
     const { data: ags } = await supabaseAdmin.from('agenda').select('id')
       .eq('solicitacao_id', rev.solicitacao_id).eq('oficina_id', rev.oficina_id).in('status', ['agendado', 'em_andamento']);
     for (const a of ags || []) {

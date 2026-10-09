@@ -123,8 +123,8 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
 - **Problema:** oficina dá orçamento baixo, cliente aceita, depois a oficina cobra mais. O monitoramento (revisao_numero, valor_original, selo público de ajuste de preço, bônus de comissão para poucas revisões) **foi mantido**.
 - **Fluxo limpo (migração 049, tabela `orcamento_revisoes`):** a oficina propõe a revisão (itens novos + motivo obrigatório 5–1000 caracteres; só com orçamento aceito e carro agendado/em serviço; uma pendente por vez) → o cliente decide:
   - **aprovar:** novo valor vale, `valor_original` guardado, `revisao_numero` +1;
-  - **recusar:** vale o orçamento original;
-  - **recusar e retirar o carro:** agenda cancelada com histórico "retirado_revisao_recusada", pedido cancelado.
+  - **recusar** (com confirmação): o serviço é encerrado e o cliente retira o carro — agenda cancelada com histórico "retirado_revisao_recusada", pedido cancelado, sem comissão (status "retirada").
+  - **Mudança 09/10 (dono):** saiu a opção "recusar e manter o original" — se a oficina diz que custa mais, manter o preço antigo não é uma opção real. A API ainda aceita o nome antigo 'retirar'. No admin, "Recusadas (carro retirado)" e qualquer recusa gera alerta.
   Rotas: `POST /api/orcamento-revisao` (oficina) e `POST /api/orcamento-revisao/decidir` (cliente, com trava atômica). Notificações nos 6 idiomas (`lib/notif-revisao.ts`). Entrega cancela revisões pendentes.
 - Telas: oficina — botão "Propor revisão" e modo revisão em enviar-orçamento; cliente — `RevisaoPendente` no site e no app.
 - **Admin:** `RevisoesSuspeitas` em Oficinas → desempenho ruim (90 dias): alerta quando um carro foi retirado ou 2+ propostas com aumento médio > 20%.

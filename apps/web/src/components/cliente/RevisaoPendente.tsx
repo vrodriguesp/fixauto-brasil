@@ -18,8 +18,8 @@ interface Revisao {
 }
 
 // Proposta de revisao de um orcamento JA ACEITO (migracao 049). Nada muda sem
-// a decisao do cliente: aprovar | recusar (segue o preco original) | recusar e
-// retirar o carro (encerra o servico). Mesmo padrao de mercado (ClickMechanic:
+// a decisao do cliente: aprovar | recusar (encerra o servico e o cliente
+// retira o carro; com confirmacao). Mesmo padrao de mercado (ClickMechanic:
 // trabalho adicional so com aprovacao do cliente).
 export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicitacaoId: string; aoDecidir?: () => void }) {
   const t = useTranslations('revisaoOrcamento');
@@ -45,7 +45,7 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
   const subiu = Number(rev.valor_novo) > Number(rev.valor_anterior);
   const pct = Number(rev.valor_anterior) > 0 ? Math.round(((Number(rev.valor_novo) - Number(rev.valor_anterior)) / Number(rev.valor_anterior)) * 100) : 0;
 
-  const decidir = async (decisao: 'aprovar' | 'recusar' | 'retirar') => {
+  const decidir = async (decisao: 'aprovar' | 'recusar') => {
     setEnviando(true); setErro('');
     const res = await fetch('/api/orcamento-revisao/decidir', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ revisaoId: rev.id, decisao }),
@@ -83,15 +83,14 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
         <div role="alertdialog" className="mt-4 rounded-lg border border-red-300 bg-white p-3">
           <p className="text-sm text-gray-900 mb-3">{t('retirarConfirma')}</p>
           <div className="flex flex-col sm:flex-row gap-2">
-            <button type="button" disabled={enviando} onClick={() => decidir('retirar')} className="px-4 py-2 rounded-lg bg-red-600 text-white font-medium disabled:opacity-50">{t('retirarSim')}</button>
+            <button type="button" disabled={enviando} onClick={() => decidir('recusar')} className="px-4 py-2 rounded-lg bg-red-600 text-white font-medium disabled:opacity-50">{t('retirarSim')}</button>
             <button type="button" onClick={() => setConfirmarRetirada(false)} className="btn-secondary">{t('voltar')}</button>
           </div>
         </div>
       ) : (
         <div className="mt-4 flex flex-col sm:flex-row gap-2">
           <button type="button" disabled={enviando} onClick={() => decidir('aprovar')} className="btn-success disabled:opacity-50">{t('aprovar')}</button>
-          <button type="button" disabled={enviando} onClick={() => decidir('recusar')} className="btn-secondary disabled:opacity-50">{t('recusar')}</button>
-          <button type="button" disabled={enviando} onClick={() => setConfirmarRetirada(true)} className="px-4 py-2 rounded-lg border border-red-300 text-red-700 font-medium hover:bg-red-50">{t('retirar')}</button>
+          <button type="button" disabled={enviando} onClick={() => setConfirmarRetirada(true)} className="px-4 py-2 rounded-lg border border-red-300 text-red-700 font-medium hover:bg-red-50">{t('recusar')}</button>
         </div>
       )}
     </section>

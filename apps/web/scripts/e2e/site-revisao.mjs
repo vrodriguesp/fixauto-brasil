@@ -1,10 +1,11 @@
 // Revisao de orcamento ACEITO (migracao 049) - producao.
 //  1 oficina propoe (motivo obrigatorio; nao muda o aceito; 1 pendente por vez)
 //  2 cliente aprova -> valor novo, valor_original guardado, revisao_numero +1
-//  3 nova proposta -> cliente recusa -> vale o valor anterior
-//  4 nova proposta -> cliente recusa e retira -> agenda/pedido cancelados
+//  3 nova proposta -> cliente recusa PELA TELA (confirma) -> servico encerrado:
+//    agenda/pedido cancelados, sem comissao (so 2 opcoes: aprovar | recusar)
+//  4 nome antigo 'retirar' (telas antigas) ainda funciona como recusar
 //  5 seguranca: cliente nao propoe; oficina nao decide; outro cliente nao decide; decidir 2x
-//  6 tela do cliente (390 px) mostra a proposta com os 3 botoes
+//  6 tela do cliente (390 px) mostra a proposta com os 2 botoes
 //   node site-revisao.mjs <.env.local>
 import fs from 'node:fs';
 import path from 'node:path';
@@ -76,7 +77,7 @@ try {
   await p.fill('input[type=email]', cli.email); await p.fill('input[type=password]', cli.senha); await p.click('button[type=submit]'); await p.waitForTimeout(4000);
   await p.goto(`${SITE}/it/cliente/orcamentos/${c1.solId}`, { waitUntil: 'networkidle' }); await p.waitForTimeout(3000);
   const corpo = await p.innerText('body');
-  ok('6 tela mostra a proposta e os 3 botoes', /ha proposto una revisione/.test(corpo) && /Approva il nuovo importo/.test(corpo) && /mantieni l'originale/.test(corpo) && /ritira l'auto/i.test(corpo), corpo.replace(/\s+/g, ' ').slice(0, 200));
+  ok('6 tela mostra a proposta e so 2 botoes', /ha proposto una revisione/.test(corpo) && /Approva il nuovo importo/.test(corpo) && /ritira l'auto/i.test(corpo) && !/mantieni l'originale/i.test(corpo), corpo.replace(/\s+/g, ' ').slice(0, 200));
   ok('6 mostra +50%', /\+50%/.test(corpo));
   ok('6 sem rolagem lateral', await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
   await p.screenshot({ path: 'revisao-cliente.png', fullPage: true });
@@ -96,14 +97,22 @@ try {
   const { data: nOf } = await sb.from('notificacoes').select('titulo').eq('profile_id', of.id).eq('tipo', 'revisao_orcamento_decidida');
   ok('2 oficina avisada da aprovacao', (nOf || []).length >= 1);
 
-  // 3 recusar: segue o valor anterior
+  // 3 recusar pela tela: encerra o servico
   r = await api(of.token, '/api/orcamento-revisao', { orcamentoId: c1.orcId, motivo: 'Altro pezzo da sostituire', itens: itens(600) });
   const d2 = await r.json();
-  r = await api(cli.token, '/api/orcamento-revisao/decidir', { revisaoId: d2.revisaoId, decisao: 'recusar' });
-  ({ data: orc } = await sb.from('orcamentos').select('valor_total, revisao_numero').eq('id', c1.orcId).single());
-  ok('3 recusada: segue o valor aprovado antes (450)', r.ok && Number(orc.valor_total) === 450 && orc.revisao_numero === 1, JSON.stringify(orc));
+  ok('3 segunda proposta depois da aprovacao', r.ok && d2.revisaoId);
+  await p.goto(`${SITE}/it/cliente/orcamentos/${c1.solId}`, { waitUntil: 'networkidle' }); await p.waitForTimeout(3000);
+  await p.getByRole('button', { name: /ritira l'auto/i }).first().click();
+  await p.getByRole('alertdialog').getByRole('button').first().click(); await p.waitForTimeout(3000);
+  ok('3 tela confirma o encerramento', /chiuso|ritiro/i.test(await p.innerText('body')));
+  const { data: ag1 } = await sb.from('agenda').select('status').eq('solicitacao_id', c1.solId);
+  const { data: s1 } = await sb.from('solicitacoes').select('status').eq('id', c1.solId).single();
+  const { data: rv2 } = await sb.from('orcamento_revisoes').select('status').eq('id', d2.revisaoId).single();
+  ok('3 recusar: agenda e pedido cancelados, revisao "retirada"', (ag1 || []).every((a) => a.status === 'cancelado') && s1.status === 'cancelada' && rv2.status === 'retirada', `${JSON.stringify(ag1)} ${s1.status} ${rv2.status}`);
+  ({ data: orc } = await sb.from('orcamentos').select('valor_total').eq('id', c1.orcId).single());
+  ok('3 valor nao muda com a recusa (450)', Number(orc.valor_total) === 450);
 
-  // 4 recusar e retirar
+  // 4 nome antigo 'retirar'
   const c2 = await cenario(cli, of, o.id);
   r = await api(of.token, '/api/orcamento-revisao', { orcamentoId: c2.orcId, motivo: 'Danno nascosto alla sospensione', itens: itens(900) });
   const d3 = await r.json();
@@ -111,9 +120,9 @@ try {
   const { data: ag } = await sb.from('agenda').select('status').eq('solicitacao_id', c2.solId);
   const { data: s2 } = await sb.from('solicitacoes').select('status').eq('id', c2.solId).single();
   const { data: com } = await sb.from('comissao_lancamento').select('id').eq('orcamento_id', c2.orcId);
-  ok('4 retirar: agenda e pedido cancelados, sem comissao', r.ok && (ag || []).every((a) => a.status === 'cancelado') && s2.status === 'cancelada' && !(com || []).length, `${JSON.stringify(ag)} ${s2.status}`);
+  ok('4 retirar (nome antigo): agenda e pedido cancelados, sem comissao', r.ok && (ag || []).every((a) => a.status === 'cancelado') && s2.status === 'cancelada' && !(com || []).length, `${JSON.stringify(ag)} ${s2.status}`);
   const { data: hist } = await sb.from('orcamento_revisoes').select('status').eq('oficina_id', o.id);
-  ok('monitoramento: historico das propostas por oficina', (hist || []).map((h) => h.status).sort().join(',') === 'aprovada,recusada,retirada', JSON.stringify(hist));
+  ok('monitoramento: historico das propostas por oficina', (hist || []).map((h) => h.status).sort().join(',') === 'aprovada,retirada,retirada', JSON.stringify(hist));
   // RLS: cliente le as proprias revisoes; outro cliente nao
   const { data: ver1 } = await cli.a.from('orcamento_revisoes').select('id').eq('solicitacao_id', c1.solId);
   const { data: ver2 } = await outroCli.a.from('orcamento_revisoes').select('id').eq('solicitacao_id', c1.solId);

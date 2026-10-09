@@ -13,7 +13,7 @@ interface Revisao {
 }
 
 // Proposta de revisao de orcamento ja aceito (mesma regra do site): aprovar |
-// recusar (segue o original) | recusar e retirar o carro (confirmacao dupla).
+// recusar (encerra o servico e o cliente retira o carro; confirmacao dupla).
 export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }: { solicitacaoId: string; recarregar?: number; aoDecidir?: () => void }) {
   const { t, i18n } = useTranslation();
   const [rev, setRev] = useState<Revisao | null>(null);
@@ -32,7 +32,7 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
   const fmt = (v: number) => formatCurrency(Number(v), moeda, i18n.language);
   const pct = Number(rev.valor_anterior) > 0 ? Math.round(((Number(rev.valor_novo) - Number(rev.valor_anterior)) / Number(rev.valor_anterior)) * 100) : 0;
 
-  const decidir = async (decisao: 'aprovar' | 'recusar' | 'retirar') => {
+  const decidir = async (decisao: 'aprovar' | 'recusar') => {
     setEnviando(true);
     try {
       await apiFetch('/api/orcamento-revisao/decidir', { method: 'POST', body: JSON.stringify({ revisaoId: rev.id, decisao }) });
@@ -45,9 +45,9 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
       setEnviando(false);
     }
   };
-  const confirmarRetirada = () => Alert.alert(t('revisao.retirar'), t('revisao.retirarConfirma'), [
+  const confirmarRetirada = () => Alert.alert(t('revisao.recusar'), t('revisao.retirarConfirma'), [
     { text: t('revisao.voltar'), style: 'cancel' },
-    { text: t('revisao.retirarSim'), style: 'destructive', onPress: () => decidir('retirar') },
+    { text: t('revisao.retirarSim'), style: 'destructive', onPress: () => decidir('recusar') },
   ]);
 
   return (
@@ -72,11 +72,8 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
           <Pressable onPress={() => decidir('aprovar')} accessibilityRole="button" className="bg-green-600 rounded-lg py-3 items-center">
             <Text className="text-white font-semibold">{t('revisao.aprovar')}</Text>
           </Pressable>
-          <Pressable onPress={() => decidir('recusar')} accessibilityRole="button" className="border border-gray-300 bg-white rounded-lg py-3 items-center">
-            <Text className="text-gray-800 font-medium">{t('revisao.recusar')}</Text>
-          </Pressable>
           <Pressable onPress={confirmarRetirada} accessibilityRole="button" className="border border-red-300 bg-white rounded-lg py-3 items-center">
-            <Text className="text-red-700 font-medium">{t('revisao.retirar')}</Text>
+            <Text className="text-red-700 font-medium">{t('revisao.recusar')}</Text>
           </Pressable>
         </View>
       )}
