@@ -84,8 +84,6 @@ export default function Navbar() {
                       <MoreNavDropdown
                         moreLabel={t('mais')}
                         items={[
-                          { href: '/oficina/distribuicao', label: t('distribuicaoTrabalho') },
-                          { href: '/oficina/capacidade', label: t('capacidade') },
                           { href: '/oficina/pecas', label: t('pecas') },
                           { href: '/oficina/equipe', label: t('equipe') },
                           { href: '/oficina/comissao', label: t('comissao') },
@@ -206,8 +204,6 @@ export default function Navbar() {
                   <MobileNavLink href="/oficina/solicitacoes" onClick={() => setMenuOpen(false)}>{t('solicitacoes')}</MobileNavLink>
                   <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>{t('oficina')}</MobileNavLink>
                   <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>{t('agenda')}</MobileNavLink>
-                  <MobileNavLink href="/oficina/distribuicao" onClick={() => setMenuOpen(false)}>{t('distribuicaoTrabalho')}</MobileNavLink>
-                  <MobileNavLink href="/oficina/capacidade" onClick={() => setMenuOpen(false)}>{t('capacidade')}</MobileNavLink>
                   <MobileNavLink href="/oficina/pecas" onClick={() => setMenuOpen(false)}>{t('pecas')}</MobileNavLink>
                   <MobileNavLink href="/oficina/equipe" onClick={() => setMenuOpen(false)}>{t('equipe')}</MobileNavLink>
                   <MobileNavLink href="/oficina/checkin" onClick={() => setMenuOpen(false)}>{t('checkinManual')}</MobileNavLink>

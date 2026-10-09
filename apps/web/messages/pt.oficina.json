@@ -144,7 +144,70 @@
     "btnEtapa": "Etapas",
     "confirmarEntregaTexto": "Entregar o carro ao cliente? O serviço será encerrado e o cliente avisado. Confira se o conserto está concluído.",
     "confirmarEntregaSim": "Sim, entregar",
-    "erroEntrega": "Não foi possível entregar: o carro precisa estar em serviço (check-in feito)."
+    "erroEntrega": "Não foi possível entregar: o carro precisa estar em serviço (check-in feito).",
+    "viewQuadro": "Quadro",
+    "mecanicoSemNome": "Mecânico",
+    "quadroSemMecanico": "Sem mecânico",
+    "quadroSemElevador": "Fora do elevador",
+    "quadroMecanico": "Mecânico",
+    "quadroElevador": "Elevador / box",
+    "quadroOcupacao": "Carros na oficina",
+    "quadroElevadoresLivres": "Livres (de {total})",
+    "quadroHoje": "Hoje",
+    "quadroSemanaAnterior": "Semana anterior",
+    "quadroProximaSemana": "Próxima semana",
+    "quadroVerPor": "Ver por:",
+    "quadroPorMecanico": "Mecânico",
+    "quadroPorElevador": "Elevador",
+    "quadroGerenciarElevadores": "Elevadores e boxes",
+    "quadroDicaMecanico": "Arraste um carro para outra linha para trocar o mecânico. Toque num carro para ver os detalhes.",
+    "quadroDicaToque": "Toque num carro para ver os detalhes.",
+    "quadroDicaElevador": "Um elevador recebe um carro por vez. Arraste um carro para outro elevador ou toque nele para escolher.",
+    "quadroSemElevadoresDono": "Cadastre os elevadores e boxes da oficina em \"Elevadores e boxes\" para ver quem está em cada um e quantos estão livres.",
+    "quadroSemElevadores": "A oficina ainda não cadastrou elevadores ou boxes.",
+    "quadroCarga": "{atual} na oficina",
+    "quadroEstado": {
+      "agendado": "Agendado",
+      "checkinAtrasado": "Check-in atrasado",
+      "naOficina": "Na oficina",
+      "aguardandoPecas": "Aguardando peças",
+      "pronto": "Pronto para retirar",
+      "atrasado": "Prazo estourado",
+      "falta": "Não compareceu",
+      "entregue": "Entregue",
+      "interno": "Serviço interno"
+    },
+    "quadroTipoBox": {
+      "elevador": "Elevador",
+      "box": "Box",
+      "vaga": "Vaga"
+    },
+    "quadroConflito": "Dois carros no mesmo elevador",
+    "quadroConflitoDetalhe": "Outro carro está no mesmo elevador nestes dias. Troque um deles de elevador.",
+    "quadroAlertaProntos": "Prontos esperando retirada",
+    "quadroAlertaCheckinHoje": "Check-ins de hoje pendentes",
+    "quadroAlertaCheckinAtrasado": "Check-ins atrasados",
+    "quadroAlertaPrazo": "Prazos estourados",
+    "quadroAlertaElevadorDuplo": "Elevadores com dois carros",
+    "quadroAlertaMecanicoLimite": "Mecânicos acima do limite",
+    "quadroErroSalvar": "Não foi possível salvar. Tente de novo.",
+    "quadroFechar": "Fechar",
+    "quadroEntrada": "Entrada: {data}",
+    "quadroPrevisao": "Entrega prevista: {data}",
+    "quadroTrocarMecanico": "Mecânico responsável",
+    "quadroTrocarElevador": "Elevador / box",
+    "quadroSalvando": "Salvando…",
+    "quadroAbrirDia": "Abrir no dia (check-in, etapas, entrega)",
+    "quadroElevadoresExplica": "Cadastre cada elevador, box ou vaga. Um carro no elevador ocupa o elevador e o mecânico ao mesmo tempo; remover um elevador tira os carros dele, sem apagar o histórico.",
+    "quadroRemoverElevador": "Remover",
+    "quadroNenhumElevador": "Nenhum elevador cadastrado.",
+    "quadroNomeElevador": "Nome",
+    "quadroNomeElevadorExemplo": "Ex.: Elevador 1",
+    "quadroTipoElevador": "Tipo",
+    "quadroAdicionarElevador": "Adicionar",
+    "quadroVazio": "Nenhum carro neste período.",
+    "quadroIndicadores": "Capacidade e tempo médio por etapa",
+    "quadroLimiteMecanicoDica": "O limite de carros de cada mecânico é definido em"
   },
   "oficinaAprender": {
     "carregando": "Carregando...",
@@ -258,14 +321,14 @@
         "desafio": "Cadastre um funcionário mecânico e defina uma capacidade máxima de veículos simultâneos pra ele."
       },
       "distribuicao": {
-        "titulo": "Distribuição de trabalho (opcional)",
-        "resumo": "Um quadro visual pra organizar qual mecânico vai cuidar de cada veículo — inclusive antes dele chegar na oficina. Ajuda a planejar a semana e evitar sobrecarregar um mecânico enquanto outro está livre.",
+        "titulo": "Quadro da oficina (opcional)",
+        "resumo": "Na Agenda, a visão Quadro mostra cada mecânico (ou cada elevador) numa linha e os carros como barras ao longo dos dias. Ajuda a planejar a semana, ver quem está livre e não pôr dois carros no mesmo elevador.",
         "passosGuiados": [
-          "Abra Mais → Distribuição de Trabalho no menu.",
-          "Veja os veículos agendados e em serviço organizados em colunas por mecânico (e uma coluna \"Não atribuído\").",
-          "Escolha o responsável de cada veículo no seletor do card."
+          "Abra Agenda no menu e toque em \"Quadro\".",
+          "Escolha \"Ver por: Mecânico\" ou \"Elevador\". Em \"Elevadores e boxes\" você cadastra os elevadores da oficina.",
+          "Arraste um carro para outra linha (no computador) ou toque nele e escolha o mecânico e o elevador (no celular)."
         ],
-        "desafio": "Atribua um responsável a pelo menos um veículo agendado, antes mesmo dele chegar."
+        "desafio": "Atribua um mecânico a pelo menos um carro agendado, antes mesmo de ele chegar."
       },
       "pecas": {
         "titulo": "Peças: comprar de lojas ou vender excedente",
@@ -416,28 +479,6 @@
     "taxaFixaTexto": "Nesta fase, a taxa da plataforma é a mesma para todas as oficinas: {taxa}.",
     "porServico": "{valor} por serviço",
     "valorPorServicoTexto": "Hoje a taxa da plataforma é um valor fixo de {valor} por serviço concluído, igual para todas as oficinas."
-  },
-  "oficinaDistribuicao": {
-    "hoje": "Hoje, {hora}",
-    "amanha": "Amanhã, {hora}",
-    "naoAtribuido": "Não atribuído",
-    "emServico": "Em serviço",
-    "agendado": "Agendado",
-    "titulo": "Distribuição de Trabalho",
-    "subtitulo": "Organize quem vai cuidar de cada veículo antes mesmo dele chegar. Escolha o responsável no seletor de cada card.",
-    "nenhumFuncionario": "Nenhum funcionário cadastrado ainda.",
-    "telaParaDistribuir": "Essa tela é pra distribuir trabalho entre a equipe — se você trabalha sozinho, não precisa dela. Cadastre mecânicos em",
-    "equipe": "Equipe",
-    "quandoTiver": "quando tiver.",
-    "veiculosCount": "{count} veículo(s)",
-    "tudoDistribuido": "Tudo distribuído 🎉",
-    "emServicoAgora": "{atual}{limite} em serviço agora",
-    "noTotal": "{count} no total",
-    "noLimite": "(no limite)",
-    "nadaAtribuido": "Nada atribuído",
-    "mostraVeiculos": "Mostra veículos agendados (mesmo antes de chegar) e em serviço. Veículos entregues saem do quadro. Veja a carga completa em",
-    "capacidade": "Capacidade",
-    "semNome": "Sem nome"
   },
   "oficinaEnviarOrcamento": {
     "solicitacaoNaoEncontrada": "Solicitação não encontrada",
@@ -843,6 +884,8 @@
     "confirmarEntregaTexto": "Entregar o carro ao cliente? O serviço será encerrado e o cliente avisado. Confira se o conserto está concluído.",
     "confirmarEntregaSim": "Sim, entregar",
     "confirmarConcluidoTexto": "Marcar como concluído avisa o cliente agora para vir buscar o carro. Se você não marcar a entrega, depois de 5 dias o carro conta como entregue (começa a garantia). Confirmar?",
-    "confirmarConcluidoSim": "Sim, avisar o cliente"
+    "confirmarConcluidoSim": "Sim, avisar o cliente",
+    "hist_elevador": "Elevador / box",
+    "hist_retirado_revisao_recusada": "Revisão recusada: carro retirado"
   }
 }

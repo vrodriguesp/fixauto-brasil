@@ -13,6 +13,14 @@ import { cleanDescricao, INTL_LOCALE, rotuloTipoPedido } from '@/lib/utils';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import { Link } from '@/i18n/navigation';
 import { nomeFuncionario } from '@/lib/funcionario';
+import QuadroOficina, { type Box } from '@/components/oficina/QuadroOficina';
+import CapacidadeResumo from '@/components/oficina/CapacidadeResumo';
+
+// Visoes da agenda: Mes, Dia, Lista e Quadro (mecanicos/elevadores x dias).
+// Todas usam os mesmos agendamentos (useAgenda, com tempo real): mudar numa
+// muda nas outras. A visao escolhida fica salva neste aparelho.
+type Vista = 'quadro' | 'month' | 'day' | 'list';
+const CHAVE_VISTA = 'bipfix_agenda_vista';
 
 function getDaysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate(); }
 function getFirstDayOfMonth(y: number, m: number) { return new Date(y, m, 1).getDay(); }
@@ -48,11 +56,21 @@ export default function AgendaPage() {
 
   const { eventos, add: addEvento, update: updateEvento, remove: removeEvento, refresh } = useAgenda();
   const { refresh: refreshSolicitacoes } = useSolicitacoes();
-  const { oficina, funcionario } = useAuth();
+  const { oficina, funcionario, user } = useAuth();
   const isMecanico = funcionario?.cargo === 'mecanico';
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showForm, setShowForm] = useState(false);
-  const [viewMode, setViewMode] = useState<'month' | 'day' | 'list'>('month');
+  const [viewMode, setViewModeState] = useState<Vista>('month');
+  const setViewMode = (v: Vista) => { setViewModeState(v); try { localStorage.setItem(CHAVE_VISTA, v); } catch {} };
+  // visao salva (ou ?vista=quadro, usado pelos enderecos antigos de Distribuicao/Capacidade)
+  useEffect(() => {
+    const daUrl = new URLSearchParams(window.location.search).get('vista');
+    let salva: string | null = null; try { salva = localStorage.getItem(CHAVE_VISTA); } catch {}
+    const v = (daUrl || salva) as Vista | null;
+    if (v && ['quadro', 'month', 'day', 'list'].includes(v)) setViewModeState(v);
+  }, []);
+  const [boxes, setBoxes] = useState<Box[]>([]);
+  const [indicadores, setIndicadores] = useState(0);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [assigningId, setAssigningId] = useState<string | null>(null);
   // check-in de carro agendado para outro dia: confirma antes
@@ -90,6 +108,24 @@ export default function AgendaPage() {
       .eq('oficina_id', oficina.id).eq('ativo', true)
       .then(({ data }) => { if (data) setFuncionarios(data); });
   }, [oficina]);
+
+  // elevadores/boxes (migracao 053), em tempo real
+  const carregarBoxes = async () => {
+    if (!oficina) return;
+    const { data } = await supabase.from('oficina_boxes').select('id, nome, tipo, ativo, ordem').eq('oficina_id', oficina.id);
+    setBoxes((data as Box[]) || []);
+  };
+  useEffect(() => {
+    if (!oficina) return;
+    carregarBoxes();
+    const canal = supabase.channel(`boxes-${oficina.id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'oficina_boxes', filter: `oficina_id=eq.${oficina.id}` }, () => carregarBoxes())
+      .subscribe();
+    return () => { supabase.removeChannel(canal); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [oficina]);
+  const nomeBox = (id?: string | null) => boxes.find((b) => b.id === id)?.nome || '';
+  const ehDono = !!oficina && oficina.profile_id === user?.id;
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -295,6 +331,7 @@ export default function AgendaPage() {
               </div>
               {v && <p className="text-xs text-gray-600 mt-0.5">{v.fipe_marca} {v.fipe_modelo}{placa ? ` - ${placa}` : ''}</p>}
               {c && <p className="text-xs text-gray-500">{c.nome}</p>}
+              {(ev as any).box_id && nomeBox((ev as any).box_id) && <p className="text-xs text-gray-600">🛗 {nomeBox((ev as any).box_id)}</p>}
               {note && <p className={`text-xs mt-1 font-medium ${note.tipo === 'antes' ? 'text-green-600' : note.tipo === 'depois' ? 'text-red-600' : 'text-gray-500'}`}>{note.texto}</p>}
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-2">
@@ -472,10 +509,10 @@ export default function AgendaPage() {
         </div>
         <div className="flex items-center gap-2 mt-4 sm:mt-0">
           <div className="flex rounded-lg border border-gray-200 overflow-hidden">
-            {(['month', 'day', 'list'] as const).map((m) => (
-              <button key={m} onClick={() => setViewMode(m)}
+            {(['quadro', 'month', 'day', 'list'] as const).map((m) => (
+              <button key={m} onClick={() => setViewMode(m)} aria-pressed={viewMode === m}
                 className={`px-3 py-2 text-sm ${viewMode === m ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'}`}>
-                {m === 'month' ? t('viewMes') : m === 'day' ? t('viewDia') : t('viewLista')}
+                {m === 'quadro' ? t('viewQuadro') : m === 'month' ? t('viewMes') : m === 'day' ? t('viewDia') : t('viewLista')}
               </button>
             ))}
           </div>
@@ -572,7 +609,30 @@ export default function AgendaPage() {
         </div>
       )}
 
-      {viewMode === 'month' ? (
+      {viewMode === 'quadro' && oficina ? (
+        <div className="space-y-4">
+          <QuadroOficina
+            eventos={allEventos}
+            funcionarios={funcionarios}
+            boxes={boxes}
+            oficinaId={oficina.id}
+            ehDono={ehDono}
+            meuFuncionarioId={funcionario?.id ?? null}
+            onAlterado={() => { refresh(); carregarBoxes(); setIndicadores((n) => n + 1); }}
+            onAbrirDia={(ymd, ev) => {
+              setCurrentDate(new Date(`${ymd}T12:00:00`));
+              setExpandedId(`${ev.id}-${ev.status === 'agendado' ? 'pendente' : 'feito'}`);
+              setViewMode('day');
+            }}
+          />
+          {!isMecanico && (
+            <details className="group">
+              <summary className="cursor-pointer select-none text-sm font-medium text-primary-700 py-2">{t('quadroIndicadores')}</summary>
+              <div className="mt-2"><CapacidadeResumo atualizar={indicadores} /></div>
+            </details>
+          )}
+        </div>
+      ) : viewMode === 'month' ? (
         <div className="card">
           <div className="flex items-center justify-between mb-6">
             <button onClick={() => setCurrentDate(new Date(year, month - 1, 1))} className="p-2 hover:bg-gray-100 rounded-lg">

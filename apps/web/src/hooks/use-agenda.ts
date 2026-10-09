@@ -29,6 +29,21 @@ export function useAgenda() {
 
   useEffect(() => { fetch(); }, [fetch]);
 
+  // Tempo real (migracao 052): o calendario e o Quadro usam estes mesmos
+  // dados; mudanca feita em outra tela/aparelho (check-in, etapa, mecanico,
+  // data) recarrega aqui. Varias mudancas seguidas viram uma recarga so.
+  useEffect(() => {
+    if (!oficina) return;
+    let espera: ReturnType<typeof setTimeout> | null = null;
+    const recarregar = () => { if (espera) clearTimeout(espera); espera = setTimeout(() => { fetch(); }, 400); };
+    const canal = supabase
+      .channel(`agenda-${oficina.id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'agenda', filter: `oficina_id=eq.${oficina.id}` }, recarregar)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'manutencao_etapas' }, recarregar)
+      .subscribe();
+    return () => { if (espera) clearTimeout(espera); supabase.removeChannel(canal); };
+  }, [oficina, fetch]);
+
   const add = async (evento: {
     titulo: string;
     descricao?: string;

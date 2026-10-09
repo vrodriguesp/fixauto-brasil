@@ -144,7 +144,70 @@
     "btnEtapa": "Etapid",
     "confirmarEntregaTexto": "Kas anda auto kliendile üle? Töö suletakse ja klienti teavitatakse. Kontrolli, et remont on lõpetatud.",
     "confirmarEntregaSim": "Jah, anna üle",
-    "erroEntrega": "Üleandmine ei õnnestunud: auto peab olema töös (check-in tehtud)."
+    "erroEntrega": "Üleandmine ei õnnestunud: auto peab olema töös (check-in tehtud).",
+    "viewQuadro": "Tahvel",
+    "mecanicoSemNome": "Mehaanik",
+    "quadroSemMecanico": "Mehaanikuta",
+    "quadroSemElevador": "Tõstukilt väljas",
+    "quadroMecanico": "Mehaanik",
+    "quadroElevador": "Tõstuk / boks",
+    "quadroOcupacao": "Autosid töökojas",
+    "quadroElevadoresLivres": "Vabu ({total}-st)",
+    "quadroHoje": "Täna",
+    "quadroSemanaAnterior": "Eelmine nädal",
+    "quadroProximaSemana": "Järgmine nädal",
+    "quadroVerPor": "Vaata:",
+    "quadroPorMecanico": "Mehaanik",
+    "quadroPorElevador": "Tõstuk",
+    "quadroGerenciarElevadores": "Tõstukid ja boksid",
+    "quadroDicaMecanico": "Lohista auto teisele reale, et mehaanikut vahetada. Puuduta autot, et näha üksikasju.",
+    "quadroDicaToque": "Puuduta autot, et näha üksikasju.",
+    "quadroDicaElevador": "Tõstukile mahub korraga üks auto. Lohista auto teisele tõstukile või puuduta seda ja vali.",
+    "quadroSemElevadoresDono": "Lisa töökoja tõstukid ja boksid jaotises \"Tõstukid ja boksid\", et näha, kes millisel on ja mitu on vaba.",
+    "quadroSemElevadores": "Töökoda pole veel tõstukeid ega bokse lisanud.",
+    "quadroCarga": "{atual} töökojas",
+    "quadroEstado": {
+      "agendado": "Broneeritud",
+      "checkinAtrasado": "Vastuvõtt hilineb",
+      "naOficina": "Töökojas",
+      "aguardandoPecas": "Ootab varuosi",
+      "pronto": "Valmis äraviimiseks",
+      "atrasado": "Tähtaeg ületatud",
+      "falta": "Ei tulnud",
+      "entregue": "Üle antud",
+      "interno": "Sisetöö"
+    },
+    "quadroTipoBox": {
+      "elevador": "Tõstuk",
+      "box": "Boks",
+      "vaga": "Koht"
+    },
+    "quadroConflito": "Kaks autot samal tõstukil",
+    "quadroConflitoDetalhe": "Samadel päevadel on samal tõstukil teine auto. Vii üks neist teisele tõstukile.",
+    "quadroAlertaProntos": "Valmis, ootavad äraviimist",
+    "quadroAlertaCheckinHoje": "Tänased vastuvõtud tegemata",
+    "quadroAlertaCheckinAtrasado": "Hilinenud vastuvõtud",
+    "quadroAlertaPrazo": "Tähtaeg ületatud",
+    "quadroAlertaElevadorDuplo": "Kahe autoga tõstukid",
+    "quadroAlertaMecanicoLimite": "Üle piiri mehaanikud",
+    "quadroErroSalvar": "Salvestamine ebaõnnestus. Proovi uuesti.",
+    "quadroFechar": "Sulge",
+    "quadroEntrada": "Vastuvõtt: {data}",
+    "quadroPrevisao": "Eeldatav üleandmine: {data}",
+    "quadroTrocarMecanico": "Vastutav mehaanik",
+    "quadroTrocarElevador": "Tõstuk / boks",
+    "quadroSalvando": "Salvestan…",
+    "quadroAbrirDia": "Ava päeva vaates (vastuvõtt, etapid, üleandmine)",
+    "quadroElevadoresExplica": "Lisa iga tõstuk, boks või koht. Tõstukil olev auto hõivab korraga nii tõstuki kui mehaaniku; tõstuki eemaldamine võtab autod sealt maha, ajalugu jääb alles.",
+    "quadroRemoverElevador": "Eemalda",
+    "quadroNenhumElevador": "Tõstukeid pole lisatud.",
+    "quadroNomeElevador": "Nimi",
+    "quadroNomeElevadorExemplo": "Nt Tõstuk 1",
+    "quadroTipoElevador": "Tüüp",
+    "quadroAdicionarElevador": "Lisa",
+    "quadroVazio": "Sel perioodil autosid pole.",
+    "quadroIndicadores": "Võimsus ja etappide keskmine aeg",
+    "quadroLimiteMecanicoDica": "Iga mehaaniku autode piir määratakse jaotises"
   },
   "oficinaAprender": {
     "carregando": "Laadin...",
@@ -258,14 +321,14 @@
         "desafio": "Registreeri mehaanikust töötaja ja määra talle samaaegsete sõidukite maksimaalne arv."
       },
       "distribuicao": {
-        "titulo": "Töö jaotamine (valikuline)",
-        "resumo": "Visuaalne tahvel, mille abil korraldada, milline mehaanik hoolitseb iga sõiduki eest — isegi enne, kui sõiduk töökotta jõuab. Aitab nädalat planeerida ja vältida, et üks mehaanik on ülekoormatud, samal ajal kui teine on vaba.",
+        "titulo": "Töökoja tahvel (valikuline)",
+        "resumo": "Ajakava vaade Tahvel näitab iga mehaanikut (või iga tõstukit) eraldi real ja autosid ribadena üle päevade. See aitab nädalat planeerida, näha, kes on vaba, ja vältida kahte autot samal tõstukil.",
         "passosGuiados": [
-          "Ava menüüst Rohkem → Töö jaotamine.",
-          "Vaata planeeritud ja teeninduses olevaid sõidukeid, mis on veergudesse jaotatud mehaaniku järgi (ja veerg \"Määramata\").",
-          "Vali iga sõiduki vastutav isik kaardi valikumenüüst."
+          "Ava menüüst Ajakava ja puuduta \"Tahvel\".",
+          "Vali \"Vaata: Mehaanik\" või \"Tõstuk\". Jaotises \"Tõstukid ja boksid\" lisad töökoja tõstukid.",
+          "Lohista auto teisele reale (arvutis) või puuduta seda ja vali mehaanik ja tõstuk (telefonis)."
         ],
-        "desafio": "Määra vastutav isik vähemalt ühele planeeritud sõidukile, juba enne selle saabumist."
+        "desafio": "Määra vähemalt ühele broneeritud autole mehaanik juba enne, kui see saabub."
       },
       "pecas": {
         "titulo": "Varuosad: osta poodidest või müü ülejääki",
@@ -416,28 +479,6 @@
     "taxaFixaTexto": "Selles faasis on platvormi tasu kõigile töökodadele sama: {taxa}.",
     "porServico": "{valor} töö kohta",
     "valorPorServicoTexto": "Praegu on platvormi tasu fikseeritud summa {valor} iga lõpetatud töö kohta, kõigile töökodadele ühesugune."
-  },
-  "oficinaDistribuicao": {
-    "hoje": "Täna, {hora}",
-    "amanha": "Homme, {hora}",
-    "naoAtribuido": "Määramata",
-    "emServico": "Teeninduses",
-    "agendado": "Planeeritud",
-    "titulo": "Töö jaotamine",
-    "subtitulo": "Korralda, kes hoolitseb iga sõiduki eest, juba enne selle saabumist. Vali iga kaardi valikumenüüst vastutav isik.",
-    "nenhumFuncionario": "Ühtegi töötajat pole veel registreeritud.",
-    "telaParaDistribuir": "See vaade on mõeldud töö jaotamiseks meeskonna vahel — kui töötad üksi, ei ole seda vaja. Registreeri mehaanikuid",
-    "equipe": "Meeskonnas",
-    "quandoTiver": "kui neid on.",
-    "veiculosCount": "{count, plural, one {# sõiduk} other {# sõidukit}}",
-    "tudoDistribuido": "Kõik jaotatud 🎉",
-    "emServicoAgora": "{atual}{limite} praegu teeninduses",
-    "noTotal": "{count} kokku",
-    "noLimite": "(piiril)",
-    "nadaAtribuido": "Midagi pole määratud",
-    "mostraVeiculos": "Näitab planeeritud sõidukeid (isegi enne saabumist) ja teeninduses olevaid sõidukeid. Üle antud sõidukid kaovad tahvlilt. Vaata kogu koormust",
-    "capacidade": "Läbilaskevõimes",
-    "semNome": "Nimeta"
   },
   "oficinaEnviarOrcamento": {
     "solicitacaoNaoEncontrada": "Päringut ei leitud",
@@ -843,6 +884,8 @@
     "confirmarEntregaTexto": "Kas anda auto kliendile üle? Töö suletakse ja klienti teavitatakse. Kontrolli, et remont on lõpetatud.",
     "confirmarEntregaSim": "Jah, anna üle",
     "confirmarConcluidoTexto": "Valmiks märkimine teavitab klienti kohe, et ta võib auto järele tulla. Kui sa üleandmist ei märgi, loetakse auto 5 päeva pärast üleantuks (garantii algab). Kinnitada?",
-    "confirmarConcluidoSim": "Jah, teavita klienti"
+    "confirmarConcluidoSim": "Jah, teavita klienti",
+    "hist_elevador": "Tõstuk / boks",
+    "hist_retirado_revisao_recusada": "Muudatusest keelduti: auto viidi ära"
   }
 }

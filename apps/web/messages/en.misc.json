@@ -863,12 +863,12 @@
             "desc": "Create events for jobs that did not come through BipFix and keep everything in the same schedule."
           },
           {
-            "label": "Work Distribution",
-            "desc": "Choose which mechanic looks after each car, even before it arrives. Every change is kept in the history."
+            "label": "Board",
+            "desc": "In the Schedule, the Board view shows each mechanic (or each lift) on a row and the cars as bars across the days, with delays highlighted. Drag a car to another row, or tap it, to change the mechanic or the lift. The change is logged and shows up in every Schedule view."
           },
           {
-            "label": "Capacity",
-            "desc": "See the current workload and the average time of each repair step."
+            "label": "Lifts and bays",
+            "desc": "Add your workshop's lifts and bays. A car on a lift takes up the lift and the mechanic at the same time; the Board shows how many lifts are free each day and warns you if two cars end up on the same one. Below the Board you find the capacity per service type and the average time of each step."
           }
         ]
       },

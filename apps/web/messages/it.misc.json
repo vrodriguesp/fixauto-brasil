@@ -863,12 +863,12 @@
             "desc": "Crea eventi per i lavori che non sono arrivati tramite BipFix e tieni tutto nella stessa agenda."
           },
           {
-            "label": "Distribuzione Lavori",
-            "desc": "Scegli quale meccanico si occupa di ogni auto, anche prima che arrivi. Ogni cambio resta nella cronologia."
+            "label": "Tabellone",
+            "desc": "Nell'Agenda, la vista Tabellone mostra ogni meccanico (o ogni ponte) su una riga e le auto come barre lungo i giorni, con i ritardi evidenziati. Trascina un'auto su un'altra riga, oppure toccala, per cambiare meccanico o ponte. Il cambio resta nello storico e compare in tutte le viste dell'Agenda."
           },
           {
-            "label": "Capacità",
-            "desc": "Vedi il carico di lavoro attuale e il tempo medio di ogni fase della riparazione."
+            "label": "Ponti e box",
+            "desc": "Aggiungi i ponti e i box dell'officina. Un'auto sul ponte occupa contemporaneamente il ponte e il meccanico; il Tabellone mostra quanti ponti sono liberi ogni giorno e avvisa se due auto finiscono sullo stesso. Sotto il Tabellone trovi la capacità per tipo di servizio e il tempo medio di ogni fase."
           }
         ]
       },

@@ -863,12 +863,12 @@
             "desc": "Crie eventos para serviços que não vieram pelo BipFix e mantenha tudo na mesma agenda."
           },
           {
-            "label": "Distribuição de Trabalho",
-            "desc": "Escolha qual o mecânico que trata de cada carro, mesmo antes de ele chegar. Cada troca fica no histórico."
+            "label": "Quadro",
+            "desc": "Na Agenda, a vista Quadro mostra cada mecânico (ou cada elevador) numa linha e os carros como barras ao longo dos dias, com os atrasos destacados. Arraste um carro para outra linha, ou toque nele, para mudar o mecânico ou o elevador. A alteração fica no histórico e aparece em todas as vistas da Agenda."
           },
           {
-            "label": "Capacidade",
-            "desc": "Veja a carga de trabalho atual e o tempo médio de cada etapa da reparação."
+            "label": "Elevadores e boxes",
+            "desc": "Registe os elevadores e boxes da oficina. Um carro no elevador ocupa o elevador e o mecânico ao mesmo tempo; o Quadro mostra quantos elevadores estão livres em cada dia e avisa se dois carros ficarem no mesmo. Abaixo do Quadro ficam a capacidade por tipo de serviço e o tempo médio de cada etapa."
           }
         ]
       },

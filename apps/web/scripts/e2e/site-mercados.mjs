@@ -295,7 +295,7 @@ try {
     if (!solId) { await ctxC.close(); continue; }
     await new Promise((r) => setTimeout(r, 3000));
     // avisos de pedido novo: so as oficinas do lugar
-    const { data: nots } = await sb.from('notificacoes').select('profile_id, titulo').eq('tipo', 'nova_solicitacao').in('profile_id', [...c.ofs, ...c.fora].map((k) => P[k].id)).gte('created_at', new Date(Date.now() - 120000).toISOString());
+    const { data: nots } = await sb.from('notificacoes').select('profile_id, titulo').eq('tipo', 'nova_solicitacao').in('profile_id', [...c.ofs, ...c.fora].map((k) => P[k].id)).eq('dados->>solicitacao_id', solId);
     for (const k of c.ofs) ok(`${mk} aviso de pedido novo chegou a ${P[k].nomeOficina} (${P[k].idioma})`, (nots || []).some((n) => n.profile_id === P[k].id));
     for (const k of c.fora) ok(`${mk} oficina de outro lugar (${P[k].nomeOficina}) NAO recebe o aviso`, !(nots || []).some((n) => n.profile_id === P[k].id));
 

@@ -144,7 +144,70 @@
     "btnEtapa": "Steps",
     "confirmarEntregaTexto": "Hand the car back to the customer? The job will be closed and the customer notified. Check the repair is finished.",
     "confirmarEntregaSim": "Yes, hand it back",
-    "erroEntrega": "Could not hand over: the car must be in service (checked in)."
+    "erroEntrega": "Could not hand over: the car must be in service (checked in).",
+    "viewQuadro": "Board",
+    "mecanicoSemNome": "Mechanic",
+    "quadroSemMecanico": "No mechanic",
+    "quadroSemElevador": "Not on a lift",
+    "quadroMecanico": "Mechanic",
+    "quadroElevador": "Lift / bay",
+    "quadroOcupacao": "Cars in the workshop",
+    "quadroElevadoresLivres": "Free (of {total})",
+    "quadroHoje": "Today",
+    "quadroSemanaAnterior": "Previous week",
+    "quadroProximaSemana": "Next week",
+    "quadroVerPor": "View by:",
+    "quadroPorMecanico": "Mechanic",
+    "quadroPorElevador": "Lift",
+    "quadroGerenciarElevadores": "Lifts and bays",
+    "quadroDicaMecanico": "Drag a car to another row to change the mechanic. Tap a car to see the details.",
+    "quadroDicaToque": "Tap a car to see the details.",
+    "quadroDicaElevador": "A lift takes one car at a time. Drag a car to another lift or tap it to choose.",
+    "quadroSemElevadoresDono": "Add your workshop's lifts and bays under \"Lifts and bays\" to see who is on each one and how many are free.",
+    "quadroSemElevadores": "The workshop has not added any lifts or bays yet.",
+    "quadroCarga": "{atual} in the workshop",
+    "quadroEstado": {
+      "agendado": "Booked",
+      "checkinAtrasado": "Check-in overdue",
+      "naOficina": "In the workshop",
+      "aguardandoPecas": "Waiting for parts",
+      "pronto": "Ready for collection",
+      "atrasado": "Past due date",
+      "falta": "No-show",
+      "entregue": "Delivered",
+      "interno": "Internal job"
+    },
+    "quadroTipoBox": {
+      "elevador": "Lift",
+      "box": "Bay",
+      "vaga": "Space"
+    },
+    "quadroConflito": "Two cars on the same lift",
+    "quadroConflitoDetalhe": "Another car is on the same lift on these days. Move one of them to another lift.",
+    "quadroAlertaProntos": "Ready, waiting for collection",
+    "quadroAlertaCheckinHoje": "Today's check-ins pending",
+    "quadroAlertaCheckinAtrasado": "Overdue check-ins",
+    "quadroAlertaPrazo": "Past due date",
+    "quadroAlertaElevadorDuplo": "Lifts with two cars",
+    "quadroAlertaMecanicoLimite": "Mechanics over their limit",
+    "quadroErroSalvar": "Could not save. Please try again.",
+    "quadroFechar": "Close",
+    "quadroEntrada": "Check-in: {data}",
+    "quadroPrevisao": "Expected delivery: {data}",
+    "quadroTrocarMecanico": "Responsible mechanic",
+    "quadroTrocarElevador": "Lift / bay",
+    "quadroSalvando": "Saving…",
+    "quadroAbrirDia": "Open in the day view (check-in, steps, delivery)",
+    "quadroElevadoresExplica": "Add each lift, bay or space. A car on a lift takes up the lift and the mechanic at the same time; removing a lift takes its cars off it without deleting the history.",
+    "quadroRemoverElevador": "Remove",
+    "quadroNenhumElevador": "No lifts added yet.",
+    "quadroNomeElevador": "Name",
+    "quadroNomeElevadorExemplo": "E.g. Lift 1",
+    "quadroTipoElevador": "Type",
+    "quadroAdicionarElevador": "Add",
+    "quadroVazio": "No cars in this period.",
+    "quadroIndicadores": "Capacity and average time per step",
+    "quadroLimiteMecanicoDica": "Each mechanic's car limit is set under"
   },
   "oficinaAprender": {
     "carregando": "Loading...",
@@ -258,14 +321,14 @@
         "desafio": "Register a mechanic and set a maximum number of simultaneous vehicles for them."
       },
       "distribuicao": {
-        "titulo": "Work distribution (optional)",
-        "resumo": "A visual board for organizing which mechanic will handle each vehicle — even before it arrives at the shop. It helps you plan the week and avoid overloading one mechanic while another is free.",
+        "titulo": "Workshop board (optional)",
+        "resumo": "In the Schedule, the Board view shows each mechanic (or each lift) on a row and the cars as bars across the days. It helps you plan the week, see who is free and avoid putting two cars on the same lift.",
         "passosGuiados": [
-          "Open More → Work Distribution in the menu.",
-          "See scheduled and in-service vehicles organized into columns by mechanic (plus an \"Unassigned\" column).",
-          "Choose who's responsible for each vehicle from the card's selector."
+          "Open Schedule in the menu and tap \"Board\".",
+          "Choose \"View by: Mechanic\" or \"Lift\". Under \"Lifts and bays\" you add your workshop's lifts.",
+          "Drag a car to another row (on a computer) or tap it and choose the mechanic and the lift (on a phone)."
         ],
-        "desafio": "Assign someone responsible to at least one scheduled vehicle, even before it arrives."
+        "desafio": "Assign a mechanic to at least one booked car, even before it arrives."
       },
       "pecas": {
         "titulo": "Parts: buy from stores or sell surplus",
@@ -416,28 +479,6 @@
     "taxaFixaTexto": "In this phase the platform fee is the same for every shop: {taxa}.",
     "porServico": "{valor} per job",
     "valorPorServicoTexto": "The platform fee is currently a fixed {valor} per completed job, the same for every shop."
-  },
-  "oficinaDistribuicao": {
-    "hoje": "Today, {hora}",
-    "amanha": "Tomorrow, {hora}",
-    "naoAtribuido": "Unassigned",
-    "emServico": "In service",
-    "agendado": "Scheduled",
-    "titulo": "Work Distribution",
-    "subtitulo": "Organize who will handle each vehicle even before it arrives. Choose the person responsible from each card's selector.",
-    "nenhumFuncionario": "No employees registered yet.",
-    "telaParaDistribuir": "This screen is for distributing work across your team — if you work alone, you don't need it. Register mechanics in",
-    "equipe": "Team",
-    "quandoTiver": "whenever you have some.",
-    "veiculosCount": "{count} vehicle(s)",
-    "tudoDistribuido": "Everything's assigned 🎉",
-    "emServicoAgora": "{atual}{limite} in service now",
-    "noTotal": "{count} total",
-    "noLimite": "(at limit)",
-    "nadaAtribuido": "Nothing assigned",
-    "mostraVeiculos": "Shows scheduled vehicles (even before arrival) and vehicles in service. Delivered vehicles leave the board. See the full workload in",
-    "capacidade": "Capacity",
-    "semNome": "No name"
   },
   "oficinaEnviarOrcamento": {
     "solicitacaoNaoEncontrada": "Request not found",
@@ -843,6 +884,8 @@
     "confirmarEntregaTexto": "Hand the car back to the customer? The job will be closed and the customer notified. Check the repair is finished.",
     "confirmarEntregaSim": "Yes, hand it back",
     "confirmarConcluidoTexto": "Marking it as completed tells the customer right away to come and pick up the car. If you do not mark it delivered, after 5 days it counts as delivered (the warranty starts). Confirm?",
-    "confirmarConcluidoSim": "Yes, tell the customer"
+    "confirmarConcluidoSim": "Yes, tell the customer",
+    "hist_elevador": "Lift / bay",
+    "hist_retirado_revisao_recusada": "Revision declined: car collected"
   }
 }

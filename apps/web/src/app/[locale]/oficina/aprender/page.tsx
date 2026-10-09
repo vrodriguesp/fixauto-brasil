@@ -155,7 +155,7 @@ export default function OficinaAprenderPage() {
       opcional: true,
       passosGuiados: t.raw('geral.distribuicao.passosGuiados') as string[],
       desafio: t('geral.distribuicao.desafio'),
-      linkReal: '/oficina/distribuicao',
+      linkReal: '/oficina/agenda?vista=quadro',
       verificar: async () => {
         const { count } = await supabase.from('agenda').select('*', { count: 'exact', head: true }).eq('oficina_id', oficina.id).not('funcionario_id', 'is', null);
         return (count || 0) > 0;

@@ -863,12 +863,12 @@
             "desc": "Loo sündmused tööde jaoks, mis ei tulnud BipFixi kaudu, ja hoia kõik samas ajakavas."
           },
           {
-            "label": "Töö jaotus",
-            "desc": "Vali, milline mehaanik iga autoga tegeleb, juba enne auto saabumist. Iga vahetus jääb ajalukku."
+            "label": "Tahvel",
+            "desc": "Ajakava vaade Tahvel näitab iga mehaanikut (või iga tõstukit) eraldi real ja autosid ribadena üle päevade, hilinemised on esile tõstetud. Lohista auto teisele reale või puuduta seda, et mehaanikut või tõstukit vahetada. Muudatus jääb ajalukku ja on näha kõigis ajakava vaadetes."
           },
           {
-            "label": "Läbilaskevõime",
-            "desc": "Vaata praegust töökoormust ja iga remondietapi keskmist kestust."
+            "label": "Tõstukid ja boksid",
+            "desc": "Lisa töökoja tõstukid ja boksid. Tõstukil olev auto hõivab korraga nii tõstuki kui mehaaniku; tahvel näitab, mitu tõstukit on igal päeval vaba, ja hoiatab, kui kaks autot on samal tõstukil. Tahvli all on teenuse liigi järgi võimsus ja iga etapi keskmine aeg."
           }
         ]
       },

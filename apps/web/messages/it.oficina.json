@@ -144,7 +144,70 @@
     "btnEtapa": "Fasi",
     "confirmarEntregaTexto": "Consegnare l'auto al cliente? Il servizio verrà chiuso e il cliente avvisato. Verifica che la riparazione sia finita.",
     "confirmarEntregaSim": "Sì, consegna",
-    "erroEntrega": "Impossibile consegnare: l'auto deve essere in lavorazione (check-in fatto)."
+    "erroEntrega": "Impossibile consegnare: l'auto deve essere in lavorazione (check-in fatto).",
+    "viewQuadro": "Tabellone",
+    "mecanicoSemNome": "Meccanico",
+    "quadroSemMecanico": "Senza meccanico",
+    "quadroSemElevador": "Fuori dal ponte",
+    "quadroMecanico": "Meccanico",
+    "quadroElevador": "Ponte / box",
+    "quadroOcupacao": "Auto in officina",
+    "quadroElevadoresLivres": "Liberi (su {total})",
+    "quadroHoje": "Oggi",
+    "quadroSemanaAnterior": "Settimana precedente",
+    "quadroProximaSemana": "Settimana successiva",
+    "quadroVerPor": "Vedi per:",
+    "quadroPorMecanico": "Meccanico",
+    "quadroPorElevador": "Ponte",
+    "quadroGerenciarElevadores": "Ponti e box",
+    "quadroDicaMecanico": "Trascina un'auto su un'altra riga per cambiare meccanico. Tocca un'auto per vedere i dettagli.",
+    "quadroDicaToque": "Tocca un'auto per vedere i dettagli.",
+    "quadroDicaElevador": "Un ponte sollevatore ospita un'auto alla volta. Trascina un'auto su un altro ponte o toccala per sceglierlo.",
+    "quadroSemElevadoresDono": "Aggiungi i ponti e i box dell'officina in \"Ponti e box\" per vedere chi c'è su ognuno e quanti sono liberi.",
+    "quadroSemElevadores": "L'officina non ha ancora aggiunto ponti o box.",
+    "quadroCarga": "{atual} in officina",
+    "quadroEstado": {
+      "agendado": "Prenotato",
+      "checkinAtrasado": "Accettazione in ritardo",
+      "naOficina": "In officina",
+      "aguardandoPecas": "In attesa di ricambi",
+      "pronto": "Pronta per il ritiro",
+      "atrasado": "Scadenza superata",
+      "falta": "Non presentato",
+      "entregue": "Consegnata",
+      "interno": "Lavoro interno"
+    },
+    "quadroTipoBox": {
+      "elevador": "Ponte",
+      "box": "Box",
+      "vaga": "Posto"
+    },
+    "quadroConflito": "Due auto sullo stesso ponte",
+    "quadroConflitoDetalhe": "Un'altra auto è sullo stesso ponte in questi giorni. Sposta una delle due su un altro ponte.",
+    "quadroAlertaProntos": "Pronte, in attesa del ritiro",
+    "quadroAlertaCheckinHoje": "Accettazioni di oggi da fare",
+    "quadroAlertaCheckinAtrasado": "Accettazioni in ritardo",
+    "quadroAlertaPrazo": "Scadenze superate",
+    "quadroAlertaElevadorDuplo": "Ponti con due auto",
+    "quadroAlertaMecanicoLimite": "Meccanici oltre il limite",
+    "quadroErroSalvar": "Impossibile salvare. Riprova.",
+    "quadroFechar": "Chiudi",
+    "quadroEntrada": "Accettazione: {data}",
+    "quadroPrevisao": "Consegna prevista: {data}",
+    "quadroTrocarMecanico": "Meccanico responsabile",
+    "quadroTrocarElevador": "Ponte / box",
+    "quadroSalvando": "Salvataggio…",
+    "quadroAbrirDia": "Apri nella vista giorno (accettazione, fasi, consegna)",
+    "quadroElevadoresExplica": "Aggiungi ogni ponte, box o posto. Un'auto sul ponte occupa contemporaneamente il ponte e il meccanico; rimuovere un ponte toglie le auto da lì, senza cancellare lo storico.",
+    "quadroRemoverElevador": "Rimuovi",
+    "quadroNenhumElevador": "Nessun ponte aggiunto.",
+    "quadroNomeElevador": "Nome",
+    "quadroNomeElevadorExemplo": "Es. Ponte 1",
+    "quadroTipoElevador": "Tipo",
+    "quadroAdicionarElevador": "Aggiungi",
+    "quadroVazio": "Nessuna auto in questo periodo.",
+    "quadroIndicadores": "Capacità e tempo medio per fase",
+    "quadroLimiteMecanicoDica": "Il limite di auto di ogni meccanico si imposta in"
   },
   "oficinaAprender": {
     "carregando": "Caricamento...",
@@ -258,14 +321,14 @@
         "desafio": "Registra un dipendente meccanico e imposta una capacità massima di veicoli simultanei per lui."
       },
       "distribuicao": {
-        "titulo": "Distribuzione del lavoro (opzionale)",
-        "resumo": "Una bacheca visiva per organizzare quale meccanico si occuperà di ogni veicolo — anche prima che arrivi in officina. Aiuta a pianificare la settimana ed evitare di sovraccaricare un meccanico mentre un altro è libero.",
+        "titulo": "Tabellone dell'officina (facoltativo)",
+        "resumo": "Nell'Agenda, la vista Tabellone mostra ogni meccanico (o ogni ponte) su una riga e le auto come barre lungo i giorni. Aiuta a pianificare la settimana, vedere chi è libero ed evitare due auto sullo stesso ponte.",
         "passosGuiados": [
-          "Apri Altro → Distribuzione del Lavoro nel menu.",
-          "Guarda i veicoli programmati e in lavorazione organizzati in colonne per meccanico (più una colonna \"Non assegnato\").",
-          "Scegli il responsabile di ogni veicolo dal selettore della scheda."
+          "Apri Agenda nel menu e tocca \"Tabellone\".",
+          "Scegli \"Vedi per: Meccanico\" o \"Ponte\". In \"Ponti e box\" aggiungi i ponti dell'officina.",
+          "Trascina un'auto su un'altra riga (dal computer) oppure toccala e scegli meccanico e ponte (dal telefono)."
         ],
-        "desafio": "Assegna un responsabile ad almeno un veicolo programmato, prima ancora che arrivi."
+        "desafio": "Assegna un meccanico ad almeno un'auto prenotata, ancora prima che arrivi."
       },
       "pecas": {
         "titulo": "Ricambi: acquista dai fornitori o vendi le eccedenze",
@@ -416,28 +479,6 @@
     "taxaFixaTexto": "In questa fase la commissione della piattaforma è uguale per tutte le officine: {taxa}.",
     "porServico": "{valor} per lavoro",
     "valorPorServicoTexto": "Attualmente la commissione della piattaforma è un importo fisso di {valor} per ogni lavoro completato, uguale per tutte le officine."
-  },
-  "oficinaDistribuicao": {
-    "hoje": "Oggi, {hora}",
-    "amanha": "Domani, {hora}",
-    "naoAtribuido": "Non assegnato",
-    "emServico": "In lavorazione",
-    "agendado": "Programmato",
-    "titulo": "Distribuzione del Lavoro",
-    "subtitulo": "Organizza chi si occuperà di ogni veicolo ancora prima che arrivi. Scegli il responsabile dal selettore di ogni scheda.",
-    "nenhumFuncionario": "Nessun dipendente ancora registrato.",
-    "telaParaDistribuir": "Questa schermata serve a distribuire il lavoro nel team — se lavori da solo, non ti serve. Registra i meccanici in",
-    "equipe": "Team",
-    "quandoTiver": "quando ne avrai.",
-    "veiculosCount": "{count} veicolo(i)",
-    "tudoDistribuido": "Tutto assegnato 🎉",
-    "emServicoAgora": "{atual}{limite} in lavorazione ora",
-    "noTotal": "{count} in totale",
-    "noLimite": "(al limite)",
-    "nadaAtribuido": "Niente assegnato",
-    "mostraVeiculos": "Mostra i veicoli programmati (anche prima dell'arrivo) e in lavorazione. I veicoli consegnati escono dalla bacheca. Vedi il carico completo in",
-    "capacidade": "Capacità",
-    "semNome": "Senza nome"
   },
   "oficinaEnviarOrcamento": {
     "solicitacaoNaoEncontrada": "Richiesta non trovata",
@@ -843,6 +884,8 @@
     "confirmarEntregaTexto": "Consegnare l'auto al cliente? Il servizio verrà chiuso e il cliente avvisato. Verifica che la riparazione sia finita.",
     "confirmarEntregaSim": "Sì, consegna",
     "confirmarConcluidoTexto": "Segnare come concluso avvisa subito il cliente di venire a ritirare l'auto. Se non segni la consegna, dopo 5 giorni l'auto risulta consegnata (parte la garanzia). Confermi?",
-    "confirmarConcluidoSim": "Sì, avvisa il cliente"
+    "confirmarConcluidoSim": "Sì, avvisa il cliente",
+    "hist_elevador": "Ponte / box",
+    "hist_retirado_revisao_recusada": "Revisione rifiutata: auto ritirata"
   }
 }

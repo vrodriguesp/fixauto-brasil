@@ -21,14 +21,14 @@ export async function POST(req: NextRequest) {
   const userId = await getSessionUserId(req);
   if (!userId) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
   const corpo = await req.json().catch(() => ({}));
-  const { acao, eventoId, status, observacao, funcionarioId, antecipar } = corpo as Record<string, any>;
-  if (!['checkin', 'etapa', 'atribuir'].includes(acao) || typeof eventoId !== 'string') {
+  const { acao, eventoId, status, observacao, funcionarioId, antecipar, boxId } = corpo as Record<string, any>;
+  if (!['checkin', 'etapa', 'atribuir', 'elevador'].includes(acao) || typeof eventoId !== 'string') {
     return NextResponse.json({ error: 'Dados inválidos', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
   }
 
   const { data: ev } = await supabaseAdmin
     .from('agenda')
-    .select('id, oficina_id, solicitacao_id, status, data_inicio, data_fim, funcionario_id, titulo, oficina:oficinas(profile_id, nome_fantasia, endereco, cidade)')
+    .select('id, oficina_id, solicitacao_id, status, data_inicio, data_fim, funcionario_id, box_id, titulo, oficina:oficinas(profile_id, nome_fantasia, endereco, cidade)')
     .eq('id', eventoId)
     .maybeSingle();
   if (!ev) return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
@@ -115,6 +115,21 @@ export async function POST(req: NextRequest) {
     await avisarCliente((idioma, carro) => (status === 'concluido'
       ? notifProntoRetirar(idioma, { carro, oficina: of?.nome_fantasia || '', endereco: [of?.endereco, of?.cidade].filter(Boolean).join(', ') })
       : notifEtapa(idioma, { carro, status })));
+    return NextResponse.json({ ok: true });
+  }
+
+  // elevador/box do carro (migracao 053): o dono escolhe para qualquer carro;
+  // o mecanico, so para os carros dele. Sem boxId = tira do elevador.
+  if (acao === 'elevador') {
+    if (!ehDono && !(euFunc && ev.funcionario_id === euFunc.id)) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    let novo: string | null = null;
+    if (boxId) {
+      const { data: b } = await supabaseAdmin.from('oficina_boxes').select('id').eq('id', boxId).eq('oficina_id', ev.oficina_id).eq('ativo', true).maybeSingle();
+      if (!b) return NextResponse.json({ error: 'Elevador inválido', codigo: 'ELEVADOR_INVALIDO' }, { status: 400 });
+      novo = b.id;
+    }
+    await supabaseAdmin.from('agenda').update({ box_id: novo }).eq('id', ev.id);
+    await historico('elevador', { anterior: (ev as any).box_id ?? null, novo });
     return NextResponse.json({ ok: true });
   }
 
