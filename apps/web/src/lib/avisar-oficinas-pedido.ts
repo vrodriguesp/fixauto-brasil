@@ -25,7 +25,7 @@ function distanciaKm(a: { lat: number; lon: number }, b: { lat: number; lon: num
 export async function avisarOficinasDoPedido(solicitacaoId: string): Promise<number> {
   const { count } = await supabaseAdmin.from('notificacoes').select('id', { count: 'exact', head: true })
     .eq('tipo', 'nova_solicitacao').eq('dados->>solicitacao_id', solicitacaoId);
-  if (count && count > 0) return 0; // ja avisado (idempotente)
+  if (count && count > 0) return -1; // ja avisado (idempotente; -1 = nao avisar o admin de novo)
   const { data: sol } = await supabaseAdmin.from('solicitacoes')
     .select('tipo, endereco, latitude, longitude, veiculo:veiculos(fipe_marca, fipe_modelo)').eq('id', solicitacaoId).maybeSingle();
   if (!sol || sol.latitude == null || sol.longitude == null) return 0;

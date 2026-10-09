@@ -2,24 +2,30 @@ import { supabaseAdmin } from './supabase-admin';
 import { oficinaTemCapacidade } from './capacidade';
 import { notifEmergenciaAcidenteProximo } from './notif-i18n';
 
+export type OficinaAvisada = { profile_id: string; idioma: string | null };
+
 /**
- * Avisa oficinas de colisao num raio de 50 km (ou as ativas, se nao houver
- * nenhuma perto). Idempotente: se o acidente ja tem oficinas avisadas, nao
- * avisa de novo. So roda no servidor, chamado pela criacao do acidente.
+ * Avisa oficinas de colisao num raio de 50 km do acidente. Devolve quem foi
+ * avisado (a rota manda a esses o aviso de pedido novo). Sem coordenadas ou
+ * sem oficina perto: ninguem - antes avisava 20 oficinas ativas QUALQUER
+ * (de outro pais: acidente em Tallinn chegava a oficina de Milao; achado no
+ * teste por mercados de 09/10). O admin e avisado por e-mail nesse caso.
+ * Idempotente: se o acidente ja tem oficinas avisadas, nao avisa de novo.
  */
-export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: number, longitude: number): Promise<number> {
+export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: number | null, longitude: number | null): Promise<OficinaAvisada[]> {
+  if (latitude == null || longitude == null) return [];
   const { count } = await supabaseAdmin
     .from('emergencia_oficinas_notificadas')
     .select('id', { count: 'exact', head: true })
     .eq('emergencia_id', emergenciaId);
-  if (count && count > 0) return 0;
+  if (count && count > 0) return [];
 
   const RAIO_KM = 50;
   const dLat = RAIO_KM / 111;
   const dLon = RAIO_KM / (111 * Math.cos((latitude * Math.PI) / 180));
   const campos = 'id, profile_id, especialidades, capacidade_servicos, profile:profiles!oficinas_profile_id_fkey(idioma)';
 
-  let { data: oficinas } = await supabaseAdmin
+  const { data: proximas } = await supabaseAdmin
     .from('oficinas')
     .select(campos)
     .eq('ativa', true)
@@ -28,12 +34,7 @@ export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: n
     .gte('longitude', longitude - dLon)
     .lte('longitude', longitude + dLon);
 
-  if (!oficinas || oficinas.length === 0) {
-    const { data: todas } = await supabaseAdmin.from('oficinas').select(campos).eq('ativa', true).limit(20);
-    oficinas = todas || [];
-  }
-
-  const colisao = oficinas.filter(
+  const colisao = (proximas || []).filter(
     (o: any) => !o.especialidades?.length || o.especialidades.some((e: string) => ['colisao', 'funilaria', 'pintura', 'geral'].includes(e))
   );
   const comCapacidade = [];
@@ -53,5 +54,5 @@ export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: n
       });
     }
   }
-  return destinos.length;
+  return (destinos as any[]).filter((o) => o.profile_id).map((o) => ({ profile_id: o.profile_id, idioma: o.profile?.idioma ?? null }));
 }

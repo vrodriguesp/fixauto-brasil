@@ -20,9 +20,11 @@ export async function POST(req: NextRequest) {
   const { data: sol } = await supabaseAdmin.from('solicitacoes').select('cliente_id, tipo, descricao, endereco').eq('id', solicitacaoId).maybeSingle();
   if (!sol || sol.cliente_id !== userId) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
   const avisadas = await avisarOficinasDoPedido(solicitacaoId).catch((e) => { console.error('[pedido-criado] oficinas', e); return 0; });
-  void avisadas;
-  await avisarAdminSeSemOficinas('pedido', solicitacaoId, `${sol.tipo} - ${sol.descricao || ''} - ${sol.endereco || ''}`).catch((e) =>
-    console.error('[pedido-criado]', e)
-  );
+  // admin so quando nenhuma oficina perto recebeu (primeira vez; -1 = ja tratado)
+  if (avisadas >= 0) {
+    await avisarAdminSeSemOficinas('pedido', solicitacaoId, `${sol.tipo} - ${sol.descricao || ''} - ${sol.endereco || ''}`, avisadas).catch((e) =>
+      console.error('[pedido-criado]', e)
+    );
+  }
   return NextResponse.json({ ok: true });
 }

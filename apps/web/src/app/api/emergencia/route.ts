@@ -174,17 +174,14 @@ export async function POST(req: NextRequest) {
     }
 
     const avisadas = await avisarOficinasDoAcidente(emergencia.id, latitude, longitude);
-    await avisarAdminSeSemOficinas('acidente', emergencia.id, `${descricao} - ${endereco || ''}`).catch((e) => console.error('[emergencia] concierge', e));
+    await avisarAdminSeSemOficinas('acidente', emergencia.id, `${descricao} - ${endereco || ''}`, avisadas.length).catch((e) => console.error('[emergencia] concierge', e));
 
-    // Oficinas de colisao ativas recebem tambem o aviso de nova solicitacao
+    // As mesmas oficinas (de colisao, perto do acidente) recebem tambem o
+    // aviso de pedido novo. Antes ia para TODAS as oficinas de funilaria
+    // ativas, de qualquer pais (teste por mercados de 09/10).
     if (solicitacaoId) {
-      const { data: oficinas } = await supabaseAdmin
-        .from('oficinas')
-        .select('profile_id, especialidades, profile:profiles!oficinas_profile_id_fkey(idioma)')
-        .eq('ativa', true);
-      for (const o of (oficinas || []) as any[]) {
-        if (o.especialidades?.length > 0 && !o.especialidades.some((e: string) => ['colisao', 'funilaria'].includes(e))) continue;
-        const n = notifNovaSolicitacaoColisao(o.profile?.idioma);
+      for (const o of avisadas) {
+        const n = notifNovaSolicitacaoColisao(o.idioma);
         await supabaseAdmin.from('notificacoes').insert({
           profile_id: o.profile_id,
           tipo: 'nova_solicitacao',
@@ -195,7 +192,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ id: emergencia.id, token, solicitacaoId, contaCriada, oficinasNotificadas: avisadas });
+    return NextResponse.json({ id: emergencia.id, token, solicitacaoId, contaCriada, oficinasNotificadas: avisadas.length });
   } catch (e) {
     if (e instanceof ErroValidacao) return NextResponse.json({ error: e.message, codigo: e.codigo }, { status: 400 });
     console.error('[api/emergencia]', e);
