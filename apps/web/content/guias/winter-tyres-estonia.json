@@ -2,104 +2,155 @@
   "slug": "winter-tyres-estonia",
   "pais": "EE",
   "publicado": "2026-09-29",
-  "atualizado": "2026-09-30",
+  "atualizado": "2026-10-09",
   "versoes": {
     "et": {
       "slug": "talverehvid-eestis",
-      "titulo": "Talverehvid Eestis: millal on talverehvid kohustuslikud ja naastrehvid lubatud?",
-      "tituloSeo": "Talverehvid ja naastrehvid Eestis: tähtajad ja nõuded",
-      "descricao": "Talverehvid on Eestis kohustuslikud 1. detsembrist 1. märtsini, naastrehvid lubatud 15. oktoobrist 31. märtsini. Mustri sügavus, 3PMSF-märgis ja nõuanded.",
-      "resumo": "Eestis on talverehvid kohustuslikud <strong>1. detsembrist kuni 1. märtsini</strong> ja naastrehve tohib kasutada <strong>15. oktoobrist kuni 31. märtsini</strong>; talviste tee- ja ilmastikuolude korral erandina 1. oktoobrist 30. aprillini. Talverehvi mustri jääksügavus peab olema vähemalt 3 mm ja naastudeta talverehvil peab olema kolme mäetipu ja lumehelbe (3PMSF) märgis. Rehvivahetust tasub planeerida juba enne esimesi miinuskraade, sest suverehvi kummisegu kaotab haarduvuse juba 5–8 kraadi juures.",
+      "titulo": "Talverehvid ja naastrehvid Eestis 2026/27: millal kohustuslikud, millal lubatud ja mis maksab rehvivahetus Tallinnas",
+      "tituloSeo": "Talverehvid kohustuslikud 2026/27: tähtajad, naastrehvid, trahv, hind",
+      "descricao": "Talverehvid kohustuslikud 1.12.2026–1.3.2027, naastrehvid 15.10.2026–31.3.2027. 3 mm muster, 3PMSF, trahv kuni 160 €, kasko ja rehvivahetuse hinnad Tallinnas.",
+      "resumo": "Hooajal 2026/27 on talverehvid Eestis kohustuslikud <strong>1. detsembrist 2026 kuni 1. märtsini 2027</strong> ja naastrehve tohib kasutada <strong>15. oktoobrist 2026 kuni 31. märtsini 2027</strong>; talviste tee- ja ilmastikuolude korral erandina 1. oktoobrist kuni 30. aprillini. Talverehvi mustri jääksügavus peab kohustuslikul perioodil olema vähemalt 3 mm ja naastudeta talverehvil peab olema kolme mäetipu ja lumehelbe (3PMSF) märgis. Vale rehvidega sõitmise eest on trahv üldjuhul kuni 160 €, kuid suurem risk on kaskohüvitise vähendamine pärast õnnetust. Nelja rehvi täisvahetus maksab Tallinnas seisuga oktoober 2026 enamasti 55–100 € olenevalt velje suurusest. Reeglid ei ole võrreldes eelmise talvega muutunud.",
       "secoes": [
         {
-          "titulo": "Millal on talverehvid Eestis kohustuslikud?",
+          "titulo": "Talverehvide ja naastrehvide kuupäevad 2026/27 ühes tabelis",
           "paragrafos": [
-            "Talverehvide kasutamine on Eestis kohustuslik <strong>1. detsembrist kuni 1. märtsini</strong>. Sel perioodil peavad sõiduautol (M1), kaubikul (N1), O2-kategooria haagisel ning kerega L6e- ja L7e-sõidukil olema all talverehvid – kas naastrehvid või naastudeta lamellrehvid. Nõue tuleneb majandus- ja kommunikatsiooniministri 13. juuni 2011. a määrusest nr 42 „Mootorsõiduki ja selle haagise tehnonõuded ning nõuded varustusele” (lisa 1, kood 501). Määruse lisa 1 uus sõnastus jõustus 1. jaanuaril 2026 ja talverehvide tähtajad jäid selles samaks.",
-            "Kohustuslik periood on miinimum, mitte soovitus rehvivahetuse ajastamiseks. Transpordiamet rõhutab igal sügisel, et rehvid tasub vahetada ilma ja sõiduvajaduse, mitte kalendri järgi: kui liigeldakse palju varahommikul, öösel või väiksematel teedel, ei tasu vahetusega venitada. Sama kehtib kevadel – ka pärast 1. märtsi püsib öökülmade tõttu libeduse oht ja Transpordiamet on soovitanud rehvivahetusega mitte kiirustada."
+            "Kõik tähtajad tulenevad majandus- ja kommunikatsiooniministri 13. juuni 2011. a määrusest nr 42 „Mootorsõiduki ja selle haagise tehnonõuded ning nõuded varustusele” (lisa 1, koodid 501, 503 ja 507). Määruse lisa 1 uus sõnastus jõustus 1. jaanuaril 2026 ja rehvinõudeid see ei muutnud – hooajal 2026/27 kehtivad samad reeglid, mis 2022/23. aasta talvest saadik. Transpordiamet avaldab igal sügisel meeldetuletuse, kuid ühtegi kuupäeva ei pea eraldi „välja kuulutama”."
+          ],
+          "itens": [
+            "<strong>Neljapäev, 1. oktoober 2026</strong> – naastrehvid on lubatud, kui talvised tee- ja ilmastikuolud juba esinevad (erand koodi 507 alusel).",
+            "<strong>Neljapäev, 15. oktoober 2026</strong> – naastrehvid on lubatud olenemata ilmast.",
+            "<strong>Teisipäev, 1. detsember 2026</strong> – algab talverehvide kohustus: selleks päevaks peavad talverehvid (naast- või 3PMSF-lamellrehvid) all olema.",
+            "<strong>Esmaspäev, 1. märts 2027</strong> – talverehvide kohustusliku perioodi viimane päev; alates 2. märtsist tohib sõita suverehvidega, kui teeolud seda lubavad.",
+            "<strong>Kolmapäev, 31. märts 2027</strong> – naastrehvide tavalise hooaja viimane päev.",
+            "<strong>Reede, 30. aprill 2027</strong> – naastrehvide viimane lubatud päev, kui talvised olud püsivad.",
+            "<strong>1. mai – 30. september</strong> – naastrehvid on alati keelatud; lamellrehvidega (naastudeta talverehvidega) tohib sõita aastaringselt."
           ]
         },
         {
-          "titulo": "Millal on naastrehvid lubatud?",
+          "titulo": "Millal on talverehvid Eestis kohustuslikud ja kellele?",
           "paragrafos": [
-            "Naastrehve tohib Eestis kasutada <strong>15. oktoobrist kuni 31. märtsini</strong>. Määruse lisa 1 koodi 507 järgi võib talviste tee- ja ilmastikuolude esinemise korral naastrehve kasutada <strong>1. oktoobrist kuni 30. aprillini</strong> – erand rakendub olude, mitte eraldi otsuse alusel. Kevadised talveolud on Eestis tavalised, seega tasub enne aprillikuist rehvivahetust jälgida ilmaprognoosi ja Transpordiameti teateid – amet avaldab igal hooajal meeldetuletusi ja täpsustusi oma veebilehel transpordiamet.ee.",
-            "Väljaspool lubatud perioodi naastrehvidega sõitmine on rikkumine, sest naastud kulutavad kuiva teekatet. Kui kevadel on teed juba kuivad ja soojad, on mõistlik naastrehvid vahetada niipea, kui öökülmad on lõppenud, isegi kui erandiperiood formaalselt veel kestab."
+            "Talverehvide kasutamine on kohustuslik <strong>1. detsembrist kuni 1. märtsini</strong>. Sel perioodil peavad sõiduautol (M1), kuni 3,5-tonnisel kaubikul (N1), O2-kategooria haagisel (täismass 750 kg kuni 3,5 t) ning kerega L6e- ja L7e-sõidukil olema all talverehvid – kas naastrehvid või naastudeta lamellrehvid. Kohustus järgib kalendrit, mitte ilma: ka kuival teel ja päikesepaistel peavad detsembrist märtsini talverehvid all olema.",
+            "Kohustuslik periood on seaduslik miinimum, mitte soovitus rehvivahetuse ajastamiseks. Transpordiamet rõhutab igal sügisel, et rehvid tasub vahetada ilma ja sõiduvajaduse järgi: suverehvi kummisegu kaotab elastsuse ja haarduvuse juba 5–8 kraadi juures. Rehvitööstuse rusikareegel on vahetada siis, kui õhutemperatuur püsib alla +7 °C – see on soovitus, mitte seadus. Kui liigeldakse palju varahommikul, öösel või väiksematel teedel, ei tasu vahetusega venitada. Sama kehtib kevadel – ka pärast 1. märtsi püsib öökülmade tõttu libeduse oht ja Transpordiamet on soovitanud suverehvidele üleminekuga mitte kiirustada.",
+            "Kerghaagisele (O1, kuni 750 kg) talverehvi kohustust ei ole, kuid kui sellel on naastrehvid, peavad need olema kõigil ratastel. Mootorrattale (L3e) talverehvi kohustust pole; liinibussidel (M2, M3) kehtib 1. oktoobrist 1. maini 3 mm mustrisügavuse nõue."
           ]
         },
         {
-          "titulo": "Milline talverehv on Eestis lubatud: 3PMSF-märgis, M+S ja lamellrehvid",
+          "titulo": "Millal on naastrehvid lubatud 2026/27?",
           "paragrafos": [
-            "Alates 1. detsembrist 2022 tohib sõiduautodel, väikekaubikutel, O2-kategooria haagistel ning kerega L6e- ja L7e-kategooria sõidukitel kasutada ainult selliseid naastudeta talverehve, millel on <strong>kolme mäetipu ja lumehelbe tähis</strong> (3PMSF ehk Alpine-sümbol). Ainult M+S-märgisega naastudeta rehv ei vasta enam talverehvi nõudele; naastrehvilt 3PMSF-märgist ei nõuta. Muudatus tuleneb 25. oktoobril 2019 jõustunud määrusest ja selle üleminekuaeg lõppes 2022. aasta detsembris.",
-            "Erand kehtib UNECE eeskirjale nr 54 vastavatele maastikurehvidele, mis on tähistatud professionaalse maastikurehvi sümboliga „POR” – neil 3PMSF-märgist ei nõuta. Transpordiamet soovitab lamellrehvi valides eelistada rehve, millel on lisaks 3PMSF-märgisele ka jäähaarduvuse piktogramm: sellised rehvid on mõeldud põhjamaisesse kliimasse ja läbinud haarduvuskatsed jääl.",
-            "Naastrehvi ja lamellrehvi valik sõltub sõidustiilist ja teedest. Naastrehv annab parima haarduvuse jääl ja lumisel maanteel, lamellrehv on vaiksem ja sobib hästi linnas, kus teed on enamasti puhtaks lükatud ja soolatatud. Mõlemad on Eestis lubatud, kuid lamellrehvil peab olema 3PMSF-märgis."
+            "Naastrehve tohib Eestis kasutada <strong>15. oktoobrist kuni 31. märtsini</strong>. Määruse lisa 1 koodi 507 järgi võib talviste tee- ja ilmastikuolude esinemise korral naastrehve kasutada <strong>1. oktoobrist kuni 30. aprillini</strong>. Erandit ei kuuluta keegi eraldi välja – ei Transpordiamet ega politsei lülita seda „sisse”. See kehtib siis, kui talvised olud päriselt esinevad; seda hindab juht ise ja kontrolli korral politsei. Kevadised talveolud on Eestis tavalised, seega tasub enne aprillikuist rehvivahetust jälgida ilmaprognoosi.",
+            "Naastrehvide kohta kehtib lisareegel: kui M1-, N1-, O1-, O2- või L-kategooria sõidukil kasutatakse naastrehve, peavad need olema <strong>kõigil ratastel</strong> – ühel teljel naastrehvid ja teisel lamellrehvid ei ole lubatud. Kui O2-haagist vedaval autol on naastrehvid, peavad naastrehvid olema ka haagisel; kui vedukil on lamellrehvid, peavad haagisel olema naastudeta talverehvid. Ainus erand on varuratas, mida rehvivigastuse tõttu ollakse sunnitud kasutama – see võib olla naastudeta.",
+            "Väljaspool lubatud perioodi naastrehvidega sõitmine on rikkumine, sest naastud kulutavad kuiva teekatet ja tekitavad tänavatolmu. Kui kevadel on teed juba kuivad ja soojad, on mõistlik naastrehvid vahetada niipea, kui öökülmad on lõppenud, isegi kui erandiperiood formaalselt veel kestab."
+          ]
+        },
+        {
+          "titulo": "Milline talverehv on lubatud: 3PMSF-märgis, M+S ja lamellrehvid",
+          "paragrafos": [
+            "Alates 1. detsembrist 2022 tohib sõiduautodel, väikekaubikutel, O2-kategooria haagistel ning kerega L6e- ja L7e-sõidukitel kasutada ainult selliseid naastudeta talverehve, mis vastavad ÜRO eeskirjale nr 117 ja kannavad <strong>kolme mäetipu ja lumehelbe tähist</strong> (3PMSF ehk Alpine-sümbol). Ainult M+S-märgisega lamellrehv ei vasta enam talverehvi nõudele; naastrehvilt 3PMSF-märgist ei nõuta – sellel piisab M+S-tähisest. Talv 2026/27 on juba viies, mil see nõue kehtib.",
+            "Erand kehtib UNECE eeskirjale nr 54 vastavatele maastikurehvidele, mis on tähistatud professionaalse maastikurehvi sümboliga „POR” – neil 3PMSF-märgist ei nõuta. Transpordiamet soovitab lamellrehvi valides eelistada rehve, millel on lisaks 3PMSF-märgisele ka jäähaarduvuse piktogramm: sellised rehvid on mõeldud põhjamaisesse kliimasse ja läbinud haarduvuskatsed jääl. Seadus sõnu „põhjamaine” ega „Skandinaavia” ei kasuta – õiguslik nõue on ainult 3PMSF.",
+            "Nõude eesmärk oli kõrvaldada liiklusest Kesk-Euroopa tüüpi M+S-lamellrehvid, mida leidus sageli Saksamaalt ja mujalt toodud kasutatud autodel. Kui ostsid auto välismaalt, vaata rehvide küljed enne detsembrit üle. Naastrehvi ja lamellrehvi valik sõltub sõidustiilist: naastrehv annab parima haarduvuse jääl ja hooldamata maanteel, lamellrehv on vaiksem ja sobib hästi Tallinna linnaliiklusse, kus tänavaid lükatakse ja soolatakse."
           ]
         },
         {
           "titulo": "Kui sügav peab talverehvi muster olema?",
           "paragrafos": [
-            "Talverehvi mustri jääksügavus peab talverehvide kohustuslikul perioodil (1. detsember – 1. märts) olema <strong>vähemalt 3 mm</strong> (määruse lisa 1 kood 503). Muul ajal ja suverehvidel on miinimum 1,6 mm. Need on seaduslikud piirid, mitte soovitused: 3 mm juures on talverehvi haarduvus lumel ja lörtsis juba tuntavalt halvem kui uuel rehvil. Transpordiamet on märkinud, et suverehvi puhul võib vahetusele mõelda juba 2 mm juures, sest muidu ei pruugi rehv hooaega vastu pidada.",
-            "Mustri sügavust saab mõõta odava mustrisügavuse mõõdikuga või lasta seda kontrollida rehvivahetuse ajal – korralik rehvitöökoda ütleb, kui palju mustrit igal rehvil alles on, ja soovitab, kas rehvid peavad veel hooaja vastu. Kontrolli ka rehvi vanust: DOT-koodi neli viimast numbrit näitavad tootmisnädalat ja -aastat."
+            "Talverehvi mustri jääksügavus peab talverehvide kohustuslikul perioodil (1. detsember – 1. märts) olema <strong>vähemalt 3 mm</strong> (määruse lisa 1 kood 503). Muul ajal – näiteks naastrehvidega oktoobris või märtsis – ja suverehvidel on sõiduautode ja kaubikute seaduslik miinimum 1,6 mm. Need on seaduslikud piirid, mitte soovitused: 3 mm juures on talverehvi haarduvus lumel ja lörtsis juba tuntavalt halvem kui uuel rehvil, ja rehvitöökojad soovitavad talverehvid välja vahetada umbes 4 mm juures.",
+            "Mõõda kõik neli rehvi, mitte ainult ühte – kulumine on harva ühtlane ja miinimum kehtib iga rehvi kohta. Mustri sügavust saab mõõta odava mõõdikuga või lasta seda kontrollida rehvivahetuse ajal: korralik töökoda ütleb, kui palju mustrit igal rehvil alles on. Kontrolli ka rehvi vanust: DOT-koodi neli viimast numbrit näitavad tootmisnädalat ja -aastat, ning üle kuue aasta vanused talverehvid tasub kriitilise pilguga üle vaadata, isegi kui muster on ilus."
           ]
         },
         {
-          "titulo": "Kas nõuded kehtivad ka haagistele, kaubikutele ja mootorratastele?",
+          "titulo": "Trahv vale rehvidega sõitmise eest 2026",
           "paragrafos": [
-            "Määruse nr 42 lisa 1 (kood 501) järgi on talverehvid 1. detsembrist 1. märtsini kohustuslikud <strong>M1-, N1- ja O2-kategooria sõidukitel ning kerega L6e- ja L7e-kategooria sõidukitel</strong> – ehk sõiduautodel, kuni 3,5-tonnistel kaubikutel, üle 750 kg täismassiga haagistel ja kerega mopeedautodel. Samadele kategooriatele kehtib ka 3PMSF-nõue ja 3 mm mustrisügavuse nõue. Kerghaagisele (O1, kuni 750 kg) talverehvi kohustust ei ole, kuid haagise mustri sügavus peab vastama vedukile kehtivale nõudele. Mootorrattale (L3e) talverehvi kohustust pole; liinibussidel (M2, M3) kehtib 1. oktoobrist 1. maini 3 mm mustrisügavuse nõue.",
-            "Naastrehvide kohta kehtib lisareegel (kood 507): kui M1-, N1-, O1-, O2- või L-kategooria sõidukil kasutatakse naastrehve, peavad need olema <strong>kõigil ratastel</strong>. Kui O2-haagist vedaval autol on naastrehvid, peavad naastrehvid olema ka haagisel; kui vedukil on naastamata talverehvid, peavad need olema ka haagisel. Erand on varuratas, mida rehvivigastuse tõttu ollakse sunnitud kasutama – see võib olla naastamata. Praktikas tasub ka kergele haagisele panna talvel piisava mustriga talverehvid, sest libedal teel hakkab suverehvidega haagis pidurdamisel ja kurvis kergesti kõrvale libisema."
+            "Eraldi „rehvitrahvi” seaduses ei ole. Nõuetele mittevastavate rehvidega sõiduk ei vasta tehnonõuetele ja seda karistatakse üldjuhul liiklusseaduse § 242 lõike 1 alusel: rahatrahv on <strong>kuni 20 trahviühikut ehk kuni 160 €</strong> (alates 1. jaanuarist 2025 on üks trahviühik 8 €). Lühimenetluses on selle rikkumise mõjutustrahv 40 €. Kui vale rehvidega tekitati liiklusoht (§ 242 lõige 2), võib karistuseks olla kuni 100 trahviühikut ehk kuni 800 € või juhtimisõiguse äravõtmine kuni kuueks kuuks. Kuni 800 € trahv on võimalik ka siis, kui sõidad autoga, millega rikke tõttu ei tohi omal jõul sõita – näiteks kui rehvi koord on nähtav.",
+            "Politsei pöörab rehvidele kõrgendatud tähelepanu just detsembri alguses ja kevadel pärast 30. aprilli. Ilmselge ohu korral võib politsei keelata sõidukiga edasisõidu, mis tähendab kohapeal puksiiri tellimise kulu. Suurem risk on siiski liiklusõnnetus: suverehvidega on pidurdusteekond libedal teel kordades pikem ja pärast avarii tuleb selgitada, miks sõiduk nõuetele ei vastanud."
           ]
         },
         {
-          "titulo": "Millal broneerida rehvivahetus?",
+          "titulo": "Liikluskindlustus ja kasko: mida vale rehvid muudavad",
           "paragrafos": [
-            "Rehvitöökodade suurim tipp on Tallinnas ja mujal Eestis oktoobri keskpaigast novembri lõpuni ning kevadel märtsi lõpust aprilli lõpuni. Kes ootab esimese lumeni, satub järjekorda. Mõistlik on aeg kinni panna juba septembri lõpus või oktoobri alguses, et saada sobiv aeg 15. oktoobri kandis, ja kevadel jälgida ilmaprognoosi: kui öötemperatuurid püsivad plusspoolel, on aeg suverehvide jaoks.",
-            "Transpordiameti soovitus on selge: suverehvi kummisegu kaotab elastsuse ja haarduvuse juba 5–8 kraadi juures, seega ei tasu oodata miinuskraade. Kui sõidad pikki vahemaid, erinevat liiki teedel või varahommikul, vaheta rehvid varem; kui liigud peamiselt päeval linnas, on rohkem paindlikkust, kuid libeduse tekkides on ka linnas suverehvidega pidurdusteekond pikem.",
-            "BipFixis saad küsida rehvivahetuse ja rehvihotelli hinnapakkumisi Tallinna töökodadelt korraga – kirjelda auto, rehvimõõt ja soovitud aeg ning võrdle pakkumisi enne broneerimist. Töökodade nimekirja leiad lehelt <a href=\"/oficinas\">/oficinas</a>."
+            "<strong>Liikluskindlustus hüvitab kannatanu kahju alati</strong> – ka siis, kui süüdlasel olid all suverehvid. Sobimatud rehvid ei ole liikluskindlustuse seaduses nende aluste hulgas, mille puhul kindlustusandja võib väljamakstud hüvitise juhilt tagasi nõuda (tagasinõude alused on näiteks tahtlus, joobes juhtimine, sündmuskohalt lahkumine või kiiruse ületamine 41 km/h ja rohkem). Sinu enda auto remonti liikluskindlustus aga ei kata, kui sina olid süüdi.",
+            "<strong>Kaskos on rehvidel suurem tähtsus.</strong> Finantsinspektsiooni tarbijaveeb minuraha.ee toob otse välja, et kaskohüvitist ei pruugita maksta, kui autol olid avarii põhjustamise ajal all suverehvid, kuid seaduse järgi kehtis juba talverehvide kohustus; samuti on kaskotingimustes tavaliselt välistus kulunud rehvidest tekkinud kahjule. Võlaõigusseaduse järgi saab kindlustusandja sellisele rikkumisele tugineda ainult siis, kui rikkumine oli süüline ja mõjutas kahju tekkimist või suurust – seega plekimõlkimine parklas seisva autoga ei jää tõenäoliselt suverehvide pärast hüvitamata, kuid libedal teel teelt väljasõit võib jääda. Loe lähemalt juhendist <a href=\"/guias/kasko-ja-liikluskindlustus-remont-parast-avariid\">kasko ja liikluskindlustus: kuidas remont pärast avariid toimub</a>."
           ]
         },
         {
-          "titulo": "Mida rehvivahetuse ajal kontrollida?",
+          "titulo": "Soome või muu välisriigi numbrimärgiga auto Eestis",
+          "paragrafos": [
+            "Välisriigi numbrimärgiga auto peab Eestis sõites vastama Eesti rehvinõuetele. Soome, Läti või Saksa autoga Tallinnas liigeldes kehtivad seega Eesti kohustuslik talverehviperiood 1. detsembrist 1. märtsini (sel ajal ka mustri miinimum 3 mm), 3PMSF-nõue lamellrehvidele ja naastrehvide kuupäevad. Politsei kontrollib rehve ka välisriigi numbriga autodel ja trahvib samadel alustel.",
+            "Soome reeglid erinevad Eesti omadest – seal ei ole kindlat kalendrikohustust nagu Eestis, vaid talverehvide kasutamine sõltub talvekuudel ilmast ja teeoludest. Pehmel detsembril võib Soome auto Soomes seaduslikult suverehvidega sõita, aga Helsingist laevaga Tallinna tulles peavad detsembrist märtsini talverehvid all olema ilmast olenemata. Enne Soome sõitu kontrolli sealseid nõudeid Traficomi lehelt ja Eestisse tulles arvesta Eesti kalendriga.",
+            "Sama kehtib Eestisse toodud kasutatud autodele: Kesk-Euroopast tulnud autol on sageli all ainult M+S-märgisega lamellrehvid, mis Eestis 1. detsembrist talverehvina ei kehti. Kontrolli rehvide külgi enne, kui auto Eestis registreerid ja talve vastu lähed."
+          ]
+        },
+        {
+          "titulo": "Rehvivahetuse hind Tallinnas 2026: mis maksab ja millest hind sõltub",
+          "paragrafos": [
+            "Alljärgnevad vahemikud põhinevad Tallinna rehvitöökodade avalikel hinnakirjadel <strong>seisuga oktoober 2026</strong> (ABCabi Nõmmel, Rehvitakso ja Bosch Car Service Kadaka teel, Kummid24 ja Kummispets Mustamäel, Fix Wheels Kristiines, Laagri Autoteenindus, AutoTallinn Peetris). Hinnad sisaldavad käibemaksu. Hind sõltub ennekõike velje suurusest, sõiduki tüübist (sõiduauto, maastur, kaubik), runflat-rehvidest ja sellest, kas rehvid on juba velgedel. Enamik töökodasid pakub püsikliendile 10% soodustust ja mitu töökoda annab online-broneeringuga soodsama hinna."
+          ],
           "itens": [
-            "Mustri jääksügavus igal rehvil eraldi – talverehvil vähemalt 3 mm, kuid ohutuks talveks pigem 4 mm või rohkem.",
-            "3PMSF-märgis lamellrehvi küljel; ainult M+S ei ole piisav.",
+            "<strong>Nelja rehvi täisvahetus</strong> (rehvid tõstetakse velgedelt ümber, tasakaalustus hinnas), sõiduauto 13–16\": 55–65 €; 17–18\": 65–80 €; 19–20\": 75–95 €; 21–22\": 89–105 €.",
+            "<strong>Rehvid velgedel</strong> (ratta vahetus koos tasakaalustusega), sõiduauto: 45–65 €; ilma tasakaalustuseta 30–50 €.",
+            "<strong>Maastur, kaubik ja väikebuss</strong>: tavaliselt 5–15 € kallim kui sõiduauto sama velje suurusega; runflat-rehvi montaažile lisandub mõnes töökojas 7 €.",
+            "<strong>Ühe rehvi täisvahetus</strong>: 18–30 € olenevalt velje suurusest; ühe ratta tasakaalustamine 7–12 €.",
+            "<strong>Rehvihotell</strong> (nelja rehvi hooajaline hoiustamine): 39–60 € hooaeg; velgedel rehvide hoiustamine ja pesu-tasakaalustusega paketid 49–75 €.",
+            "<strong>Rehviparandus</strong>: 10–25 € rasvanööri või paigaga, 25–45 € seenparandusega seestpoolt; rehvi utiliseerimine 3–6 € tükk.",
+            "<strong>Mobiilne rehvivahetus</strong> Tallinnas: väljakutse alates 45 €; auto järeletulek ja tagasitoomine Tallinna piires 25 €.",
+            "<strong>Rehvirõhuandur (TPMS)</strong> koos programmeerimisega: umbes 50–55 € tükk."
+          ]
+        },
+        {
+          "titulo": "Millal broneerida rehvivahetus Tallinnas?",
+          "paragrafos": [
+            "Rehvitöökodade suurim tipp on Tallinnas oktoobri keskpaigast novembri lõpuni ning kevadel märtsi lõpust aprilli lõpuni. Kes ootab esimese lumeni, satub järjekorda ja maksab tihti ka tipuaja hinda. Mõistlik on aeg kinni panna juba septembri lõpus või oktoobri alguses, et saada sobiv aeg 15. oktoobri kandis, ja kevadel jälgida ilmaprognoosi: kui öötemperatuurid püsivad plusspoolel, on aeg suverehvide jaoks. Rehvitöökojad ise märgivad, et oktoobris ja novembris täituvad ajad kiiresti.",
+            "Kui sõidad pikki vahemaid, erinevat liiki teedel või varahommikul, vaheta rehvid varem; kui liigud peamiselt päeval linnas, on rohkem paindlikkust, kuid libeduse tekkides on ka linnas suverehvidega pidurdusteekond pikem. Rehvivahetus on ühtlasi hea aeg lasta kontrollida pidurite seisukorda ja sildade reguleeringut – vale kokkujooks kulutab rehve ebaühtlaselt. Mida need tööd Tallinnas maksavad, vaata juhendist <a href=\"/guias/autoremondi-hinnad-tallinnas\">autoremondi hinnad Tallinnas 2026</a>.",
+            "BipFixis saad kirjeldada auto, rehvimõõdu ja soovitud aja ning saada rehvivahetuse ja rehvihotelli hinnapakkumised mitmelt Tallinna töökojalt korraga – autojuhile on see tasuta ja pakkumisi saad enne broneerimist rahulikult võrrelda."
+          ]
+        },
+        {
+          "titulo": "Kontrollnimekiri enne rehvivahetust ja selle ajal",
+          "itens": [
+            "Mustri jääksügavus igal rehvil eraldi – talverehvil seaduslik miinimum 3 mm, ohutuks talveks pigem 4 mm või rohkem.",
+            "3PMSF-märgis lamellrehvi küljel; ainult M+S ei ole piisav. Eriti tasub seda kontrollida välismaalt toodud autol.",
             "Rehvi vanus DOT-koodi järgi ja praod rehvi küljel – vana kõva kumm ei haardu ka piisava mustriga.",
             "Naastude arv ja seisukord naastrehvil: kui suur osa naastudest on kadunud, kaotab rehv jääl eelise.",
+            "Ebaühtlane kulumine – kui rehv on ühest servast rohkem kulunud, on põhjus tavaliselt rataste suunangus või veermikus.",
             "Rehvirõhk – külmaga rõhk langeb, kontrolli pärast vahetust ja edaspidi umbes kord kuus.",
             "Velje poltide pingutusmoment pärast vahetust; paljud töökojad soovitavad mõne päeva pärast üle kontrollida.",
-            "Rehvide tasakaalustus, kui roolis on vibratsioon.",
-            "Suverehvide hoiustamine: jahedas, pimedas ja kuivas kohas, veljel rehvid lapiti või riputatult, ilma veljeta püsti."
-          ]
-        },
-        {
-          "titulo": "Mis juhtub, kui sõidad talvel suverehvidega või vale rehviga?",
-          "paragrafos": [
-            "Nõuetele mittevastavate rehvidega sõiduk ei vasta tehnonõuetele ning politsei võib liiklusjärelevalve käigus juhti karistada. Trahvi suurus sõltub konkreetsest rikkumisest ja kehtivast liiklusseadusest – täpsed määrad leiab Riigi Teatajast. Suurem risk on siiski liiklusõnnetus: suverehvidega on pidurdusteekond libedal teel kordades pikem ja õnnetuse korral tuleb selgitada, miks sõiduk ei vastanud nõuetele.",
-            "Kui õnnetus siiski juhtub, saad BipFixi lehel <a href=\"/emergencia\">/emergencia</a> registreerida juhtumi ja küsida remondipakkumisi töökodadelt."
+            "Rehvide tasakaalustus, kui roolis on vibratsioon; küsi, kas tasakaalustus on täisvahetuse hinnas (enamasti on).",
+            "Hinnapakkumises: velje suurus, sõiduki tüüp, kas rehvid on velgedel, kas lisandub kulumaterjal (kleepraskused, ventiilid) ja mis maksab rehvihotell.",
+            "Suverehvide hoiustamine kodus: jahedas, pimedas ja kuivas kohas, veljel rehvid lapiti või riputatult, ilma veljeta püsti."
           ]
         }
       ],
       "faq": [
         {
-          "pergunta": "Millal panna talverehvid alla 2026. aasta sügisel?",
-          "resposta": "Naastrehvid on lubatud alates 15. oktoobrist ja talverehvid on kohustuslikud alates 1. detsembrist. Transpordiamet soovitab rehvid vahetada enne esimesi miinuskraade, sest suverehv kaotab haarduvuse juba 5–8 kraadi juures."
+          "pergunta": "Millal on talverehvid kohustuslikud 2026. aasta talvel?",
+          "resposta": "Talverehvid on kohustuslikud teisipäevast, 1. detsembrist 2026 kuni esmaspäevani, 1. märtsini 2027. Nõue kehtib sõiduautodele, kuni 3,5-tonnistele kaubikutele, O2-haagistele (750 kg – 3,5 t) ja kerega L6e/L7e sõidukitele ning sõltub kalendrist, mitte ilmast."
         },
         {
-          "pergunta": "Millal võib suverehvid alla panna?",
-          "resposta": "Talverehvide kohustus lõpeb 1. märtsil. Naastrehvid tuleb tavaolukorras maha võtta 31. märtsiks; talviste tee- ja ilmastikuolude korral tohib neid kasutada kuni 30. aprillini. Kui öökülmad kestavad, ei tasu kiirustada."
+          "pergunta": "Millal tohib naastrehve kasutada 2026/27?",
+          "resposta": "Naastrehvid on lubatud 15. oktoobrist 2026 kuni 31. märtsini 2027. Kui talvised tee- ja ilmastikuolud juba esinevad, tohib neid kasutada alates 1. oktoobrist ja kevadel kuni 30. aprillini 2027. Mai algusest septembri lõpuni on naastrehvid alati keelatud."
+        },
+        {
+          "pergunta": "Kui suur on trahv suverehvidega talvel sõitmise eest?",
+          "resposta": "Eraldi rehvitrahvi seaduses ei ole. Üldjuhul on trahv liiklusseaduse § 242 alusel kuni 20 trahviühikut ehk kuni 160 € (1 trahviühik = 8 €); lühimenetluses on mõjutustrahv 40 €. Liiklusohu tekitamisel võib karistuseks olla kuni 800 € trahvi või juhtimisõiguse äravõtmine kuni 6 kuuks."
+        },
+        {
+          "pergunta": "Kas kasko maksab, kui õnnetuse ajal olid all suverehvid?",
+          "resposta": "Mitte tingimata. Finantsinspektsiooni tarbijaveebi järgi ei pruugita kaskohüvitist maksta, kui avarii põhjustamise ajal olid all suverehvid, kuid seaduse järgi kehtis talverehvide kohustus. Kindlustusandja tohib hüvitist vähendada või sellest keelduda siis, kui rikkumine mõjutas kahju tekkimist. Liikluskindlustus hüvitab kannatanu kahju igal juhul."
+        },
+        {
+          "pergunta": "Kas Soome numbriga autol peavad Eestis talverehvid all olema?",
+          "resposta": "Jah. Välisriigi numbrimärgiga auto peab Eestis sõites vastama Eesti rehvinõuetele: 1. detsembrist 1. märtsini talverehvid (vähemalt 3 mm mustrit, lamellrehvil 3PMSF-märgis) ja naastrehvid ainult lubatud perioodil. Soome enda reeglid on ilmapõhised ja Eestis ei kehti."
+        },
+        {
+          "pergunta": "Kui palju maksab rehvivahetus Tallinnas 2026. aasta sügisel?",
+          "resposta": "Tallinna rehvitöökodade hinnakirjade järgi seisuga oktoober 2026 maksab sõiduauto nelja rehvi täisvahetus koos tasakaalustusega 55–65 € (13–16\") kuni 89–105 € (21–22\"); velgedel rehvide ümbertõstmine 45–65 €; rehvihotell 39–60 € hooaeg. Maasturil ja kaubikul on hind 5–15 € kallim."
         },
         {
           "pergunta": "Kas M+S-märgisega rehv on Eestis talverehv?",
-          "resposta": "Ei. Alates 1. detsembrist 2022 peab sõiduautode, väikekaubikute, O2-haagiste ja kerega L6e/L7e sõidukite naastudeta talverehvil olema kolme mäetipu ja lumehelbe (3PMSF) märgis. Ainult M+S tähis ei ole piisav."
-        },
-        {
-          "pergunta": "Kui sügav peab talverehvi muster olema?",
-          "resposta": "Talverehvi mustri jääksügavus peab olema vähemalt 3 mm, suverehvil vähemalt 1,6 mm. Ohutuse huvides tasub talverehv välja vahetada juba enne 3 mm piiri jõudmist."
-        },
-        {
-          "pergunta": "Kas naastrehvidega tohib sõita aprillis?",
-          "resposta": "Tavaperiood lõpeb 31. märtsil, kuid talviste tee- ja ilmastikuolude esinemisel võib naastrehve erandina kasutada kuni 30. aprillini. Jälgi Transpordiameti teateid ja ilmaprognoosi."
+          "resposta": "Naastrehvil piisab M+S-tähisest. Naastudeta talverehvil (lamellrehvil) peab alates 1. detsembrist 2022 olema lisaks kolme mäetipu ja lumehelbe (3PMSF) märgis ja vastavus ÜRO eeskirjale nr 117 – ainult M+S-tähisest ei piisa."
         },
         {
           "pergunta": "Kas talverehvid on kohustuslikud ka haagisel?",
-          "resposta": "O2-kategooria haagisel (täismass üle 750 kg) jah – 1. detsembrist 1. märtsini nagu autol, ja naastude puhul peab haagis olema samamoodi rehvitatud kui veduk. Kerghaagisel (O1) talverehvi kohustust ei ole, kuid mustri sügavus peab vastama vedukile kehtivale nõudele."
+          "resposta": "O2-kategooria haagisel (täismass 750 kg – 3,5 t) jah, 1. detsembrist 1. märtsini nagu autol, ja rehvitüüp peab olema sama mis vedukil: naastrehvidega auto taga naastrehvid, lamellrehvidega auto taga naastudeta talverehvid. Kerghaagisel (O1) talverehvi kohustust ei ole, kuid naastrehvide korral peavad need olema kõigil ratastel."
         }
       ],
       "fontes": [
@@ -116,8 +167,48 @@
           "url": "https://www.transpordiamet.ee/uudised/rakendub-talverehvide-nouete-muudatus"
         },
         {
-          "nome": "Riigi Teataja – Mootorsõiduki ja selle haagise tehnonõuded ning nõuded varustusele (määrus nr 42)",
+          "nome": "Riigi Teataja – Mootorsõiduki ja selle haagise tehnonõuded ning nõuded varustusele (määrus nr 42, lisa 1)",
           "url": "https://www.riigiteataja.ee/akt/116062011008?leiaKehtiv"
+        },
+        {
+          "nome": "Riigi Teataja – Liiklusseadus (§ 242)",
+          "url": "https://www.riigiteataja.ee/akt/107042026003"
+        },
+        {
+          "nome": "Minuraha.ee (Finantsinspektsiooni tarbijaveeb) – Kaskokindlustus: välistused, sh suverehvid talverehvide kohustuse ajal",
+          "url": "https://www.minuraha.ee/et/kindlustus/kaskokindlustus"
+        },
+        {
+          "nome": "ABCabi – Talverehvid ja naastrehvid 2026/27: kuupäevad, trahv (§ 242), kindlustus, Soome auto",
+          "url": "https://abcabi.ee/talverehvid-eestis/"
+        },
+        {
+          "nome": "Rehvitakso – Rehvivahetuse hinnad 2026 Tallinnas (hinnakiri)",
+          "url": "https://www.rehvitakso.ee/Rehvivahetuse-hinnad"
+        },
+        {
+          "nome": "Kummid24 / Gold Selection OÜ – Rehvivahetus Tallinnas, hinnakiri kehtib alates 01.06.2026",
+          "url": "https://kummid24.ee/rehvivahetus-tallinnas/"
+        },
+        {
+          "nome": "Kummispets – Rehvitööde hinnakiri alates 01.10.2025",
+          "url": "https://kummispets.ee/hinnakiri/"
+        },
+        {
+          "nome": "Fix Wheels – Rehvivahetus Tallinnas, hinnad",
+          "url": "https://www.fixwheels.ee/rehvivahetus-tallinnas/"
+        },
+        {
+          "nome": "Automaailm / Bosch Car Service Tallinn – hinnakiri (rehvitööd, hoiustamine)",
+          "url": "https://automaailm.ee/hinnakiri/"
+        },
+        {
+          "nome": "AutoTallinn – hinnakiri (rehvitööd, rehvihotell)",
+          "url": "https://autotallinn.ee/hinnakiri/"
+        },
+        {
+          "nome": "ABCabi – Hinnakiri (rehvitööd, rehvihotell, mobiilne rehvivahetus)",
+          "url": "https://abcabi.ee/hinnakiri/"
         }
       ],
       "cta": "pedido"
@@ -246,100 +337,151 @@
     },
     "ru": {
       "slug": "zimnie-shiny-v-estonii",
-      "titulo": "Зимняя резина в Эстонии: сроки, шипованные шины и глубина протектора",
-      "tituloSeo": "Зимняя резина в Эстонии: сроки, шипованные шины, протектор",
-      "descricao": "Зимняя резина в Эстонии обязательна с 1 декабря по 1 марта, шипы разрешены с 15 октября по 31 марта. Глубина протектора, маркировка 3PMSF и когда менять шины.",
-      "resumo": "В Эстонии зимняя резина обязательна с <strong>1 декабря по 1 марта</strong>, а шипованные шины разрешены с <strong>15 октября по 31 марта</strong> — при зимних дорожных и погодных условиях с 1 октября по 30 апреля. Остаточная глубина протектора зимней шины должна быть не менее 3 мм, а нешипованная зимняя шина должна иметь маркировку «три горных пика и снежинка» (3PMSF). Записывайтесь на шиномонтаж до первых заморозков: Transpordiamet (Департамент транспорта) предупреждает, что резиновая смесь летних шин теряет сцепление уже при 5–8 °C.",
+      "titulo": "Зимняя резина в Эстонии 2026/27: с какого числа обязательна, когда разрешены шипы и сколько стоит шиномонтаж в Таллинне",
+      "tituloSeo": "Зимняя резина в Эстонии 2026/27: с какого числа, шипы, протектор, штраф",
+      "descricao": "Зимние шины обязательны с 1.12.2026 по 1.3.2027, шипы с 15.10.2026 по 31.3.2027. Протектор 3 мм, 3PMSF, штраф до 160 €, каско, цены на шиномонтаж в Таллинне.",
+      "resumo": "В сезоне 2026/27 зимняя резина в Эстонии обязательна с <strong>1 декабря 2026 по 1 марта 2027 года</strong>, а шипованные шины разрешены с <strong>15 октября 2026 по 31 марта 2027 года</strong>; при зимних дорожных и погодных условиях — в порядке исключения с 1 октября по 30 апреля. В обязательный период остаточная глубина протектора зимней шины должна быть не менее 3 мм, а нешипованная зимняя шина должна иметь маркировку «три горных пика и снежинка» (3PMSF). Штраф за езду на неподходящих шинах — как правило, до 160 €, но главный риск — уменьшение выплаты по каско после аварии. Полная замена четырёх шин стоит в Таллинне по состоянию на октябрь 2026 года в основном 55–100 € в зависимости от размера дисков. По сравнению с прошлой зимой правила не изменились.",
       "secoes": [
         {
-          "titulo": "Когда зимняя резина обязательна в Эстонии?",
+          "titulo": "Все даты сезона 2026/27 в одной таблице",
           "paragrafos": [
-            "Зимние шины в Эстонии обязательны с <strong>1 декабря по 1 марта</strong>. В этот период на легковых автомобилях (категория M1), фургонах (N1), прицепах категории O2 и на транспортных средствах категорий L6e и L7e с кузовом должны стоять зимние шины — шипованные или нешипованные (фрикционные). Требование установлено постановлением министра экономики и коммуникаций № 42 от 13 июня 2011 года о технических требованиях к механическим транспортным средствам и их прицепам (приложение 1, код 501), опубликованным в Riigi Teataja — официальном вестнике Эстонии. Новая редакция приложения 1 вступила в силу 1 января 2026 года и сроки использования зимней резины не изменила.",
-            "Обязательный период — это установленный законом минимум, а не совет, когда именно переобуваться. Каждую осень Transpordiamet (Департамент транспорта) напоминает водителям, что менять шины нужно по погоде и по характеру своих поездок, а не по календарю: если вы ездите рано утром, ночью или по второстепенным дорогам, ждать не стоит. То же касается весны: ночные заморозки продолжаются и после 1 марта, и Департамент советовал не спешить с переходом на летнюю резину."
+            "Все сроки установлены постановлением министра экономики и коммуникаций № 42 от 13 июня 2011 года «Технические требования к механическим транспортным средствам и их прицепам и требования к оборудованию» (приложение 1, коды 501, 503 и 507). Новая редакция приложения 1 вступила в силу 1 января 2026 года и требования к шинам не затронула — в сезоне 2026/27 действуют те же правила, что и с зимы 2022/23. Transpordiamet (Департамент транспорта) каждую осень публикует напоминание, но ни одну из дат отдельно «объявлять» не нужно."
+          ],
+          "itens": [
+            "<strong>Четверг, 1 октября 2026</strong> — шипованные шины разрешены, если зимние дорожные и погодные условия уже наступили (исключение по коду 507).",
+            "<strong>Четверг, 15 октября 2026</strong> — шипованные шины разрешены независимо от погоды.",
+            "<strong>Вторник, 1 декабря 2026</strong> — начинается обязательный период: к этому дню на машине должны стоять зимние шины (шипованные или ламельные с маркировкой 3PMSF).",
+            "<strong>Понедельник, 1 марта 2027</strong> — последний день обязательного периода; со 2 марта можно ездить на летних шинах, если позволяют дорожные условия.",
+            "<strong>Среда, 31 марта 2027</strong> — последний день обычного сезона для шипов.",
+            "<strong>Пятница, 30 апреля 2027</strong> — последний разрешённый день для шипов, если зимние условия сохраняются.",
+            "<strong>1 мая — 30 сентября</strong> — шипованные шины всегда запрещены; на ламельных (нешипованных зимних) шинах можно ездить круглый год."
           ]
         },
         {
-          "titulo": "Шипованная резина в Эстонии: с какого и до какого числа разрешена?",
+          "titulo": "Когда и для кого зимняя резина обязательна",
           "paragrafos": [
-            "Шипованные шины в Эстонии разрешены с <strong>15 октября по 31 марта</strong>. Согласно коду 507 приложения 1, при наличии зимних дорожных и погодных условий шипы можно использовать с <strong>1 октября по 30 апреля</strong> — исключение зависит от фактических условий, а не от отдельного решения. Возврат зимы в марте и апреле в Эстонии не редкость, поэтому перед апрельской заменой шин смотрите прогноз и сообщения на transpordiamet.ee: Департамент каждый сезон публикует напоминания и разъяснения.",
-            "Езда на шипах вне разрешённого периода — нарушение, потому что шипы разрушают сухое дорожное покрытие. Когда весной дороги уже сухие и тёплые, разумно снять шипованные шины сразу после окончания ночных заморозков, даже если формально период исключения ещё продолжается."
+            "Зимние шины обязательны <strong>с 1 декабря по 1 марта</strong>. В этот период на легковых автомобилях (M1), фургонах до 3,5 т (N1), прицепах категории O2 (полная масса от 750 кг до 3,5 т) и на транспортных средствах L6e/L7e с кузовом должны стоять зимние шины — шипованные или нешипованные ламельные. Обязанность привязана к календарю, а не к погоде: даже на сухой дороге и при солнце с декабря по март на машине должна быть зимняя резина.",
+            "Обязательный период — установленный законом минимум, а не совет, когда переобуваться. Transpordiamet каждую осень напоминает, что шины нужно менять по погоде и по характеру поездок: резиновая смесь летних шин теряет эластичность и сцепление уже при 5–8 °C. Правило шинной отрасли — переобуваться, когда температура воздуха держится ниже +7 °C; это рекомендация, а не закон. Если вы много ездите рано утром, ночью или по второстепенным дорогам, тянуть с заменой не стоит. То же касается весны: после 1 марта ночные заморозки продолжаются, и Департамент транспорта советовал не спешить с переходом на летнюю резину.",
+            "Для лёгкого прицепа (O1, до 750 кг) зимние шины не обязательны, но если на нём стоят шипованные шины, они должны быть на всех колёсах. Для мотоциклов (L3e) обязанности нет; у автобусов регулярных маршрутов (M2, M3) протектор должен быть не менее 3 мм с 1 октября по 1 мая."
           ]
         },
         {
-          "titulo": "Какие зимние шины разрешены: маркировка 3PMSF, M+S и «липучка»",
+          "titulo": "Шипованная резина: с какого и до какого числа разрешена в 2026/27",
           "paragrafos": [
-            "С 1 декабря 2022 года на легковых автомобилях, лёгких фургонах, прицепах категории O2 и транспортных средствах категорий L6e/L7e с кузовом можно использовать только те нешипованные зимние шины, которые имеют символ <strong>«три горных пика и снежинка»</strong> (3PMSF, его также называют альпийским символом). Нешипованная шина только с маркировкой M+S зимней больше не считается; для шипованных шин маркировка 3PMSF не требуется. Изменение введено постановлением, вступившим в силу 25 октября 2019 года, а переходный период закончился в декабре 2022 года.",
-            "Исключение сделано для внедорожных шин, соответствующих Правилам ЕЭК ООН № 54 и обозначенных символом профессиональной внедорожной шины «POR», — им маркировка 3PMSF не нужна. При выборе фрикционных шин («липучки») Департамент транспорта рекомендует те, на которых кроме 3PMSF есть пиктограмма сцепления на льду: такие шины созданы для северного климата и прошли испытания на сцепление со льдом.",
-            "Шипы или «липучка» — вопрос того, где и как вы ездите. Шипы дают лучшее сцепление на льду и заснеженной трассе; фрикционные шины тише и хорошо работают в городе, где дороги обычно расчищены и посыпаны солью. В Эстонии разрешены оба варианта, но фрикционные шины обязательно должны иметь маркировку 3PMSF."
+            "Шипованные шины разрешены в Эстонии <strong>с 15 октября по 31 марта</strong>. По коду 507 приложения 1 при наличии зимних дорожных и погодных условий их можно использовать <strong>с 1 октября по 30 апреля</strong>. Это исключение никто отдельно не объявляет — ни Transpordiamet, ни полиция его не «включают». Оно действует тогда, когда зимние условия фактически есть; оценивает это сам водитель, а при проверке — полиция. Возврат зимы в марте и апреле в Эстонии обычное дело, поэтому перед апрельской заменой шин смотрите прогноз.",
+            "Для шипов есть дополнительное правило: если транспортное средство категории M1, N1, O1, O2 или L использует шипованные шины, они должны стоять <strong>на всех колёсах</strong> — шипы на одной оси и «липучка» на другой не допускаются. Если автомобиль с прицепом O2 едет на шипах, прицеп тоже должен быть на шипах; если на автомобиле ламельные шины, на прицепе должны быть нешипованные зимние. Единственное исключение — запасное колесо, которое пришлось поставить из-за повреждения шины: оно может быть без шипов.",
+            "Езда на шипах вне разрешённого периода — нарушение: шипы разрушают сухое покрытие и создают уличную пыль. Когда весной дороги уже сухие и тёплые, разумно снять шипованные шины сразу после окончания ночных заморозков, даже если формально период исключения ещё продолжается."
           ]
         },
         {
-          "titulo": "Минимальная глубина протектора зимней резины в Эстонии",
+          "titulo": "Какие зимние шины разрешены: 3PMSF, M+S и «липучка»",
           "paragrafos": [
-            "В период обязательного использования зимних шин (1 декабря — 1 марта) остаточная глубина протектора зимней шины должна быть <strong>не менее 3 мм</strong> (приложение 1, код 503). Вне этого периода и для летних шин минимум — 1,6 мм. Это законные пределы, а не рекомендации: при 3 мм сцепление зимней шины на снегу и в слякоти уже заметно хуже, чем у новой. Департамент транспорта отмечал, что о замене летней шины стоит задуматься уже при 2 мм, потому что до конца сезона её может не хватить.",
-            "Глубину протектора можно измерить недорогим глубиномером или попросить проверить её в шиномонтаже при сезонной замене — хорошая мастерская скажет, сколько протектора осталось на каждой шине и хватит ли комплекта ещё на одну зиму. Проверьте и возраст шин: последние четыре цифры DOT-кода показывают неделю и год выпуска."
+            "С 1 декабря 2022 года на легковых автомобилях, лёгких фургонах, прицепах O2 и транспортных средствах L6e/L7e с кузовом можно использовать только те нешипованные зимние шины, которые соответствуют Правилам ООН № 117 и имеют символ <strong>«три горных пика и снежинка»</strong> (3PMSF, его также называют альпийским символом). Ламельная шина только с маркировкой M+S зимней больше не считается; для шипованных шин 3PMSF не требуется — им достаточно маркировки M+S. Зима 2026/27 — уже пятая, когда действует это требование.",
+            "Исключение сделано для внедорожных шин по Правилам ООН № 54 с обозначением профессиональной внедорожной шины «POR» — им маркировка 3PMSF не нужна. При выборе «липучки» Transpordiamet рекомендует шины, на которых кроме 3PMSF есть пиктограмма сцепления на льду: такие шины созданы для северного климата и прошли испытания на льду. Слов «скандинавская» или «нордическая» в законе нет — юридическое требование только 3PMSF.",
+            "Цель требования — убрать с дорог центральноевропейские ламельные шины только с M+S, которые часто стояли на подержанных машинах, привезённых из Германии и других стран. Если вы купили автомобиль за границей, проверьте боковины шин до декабря. Шипы или «липучка» — вопрос того, где вы ездите: шипы лучше держат на льду и неубранной трассе, ламельная шина тише и хорошо подходит для Таллинна, где улицы чистят и посыпают солью."
           ]
         },
         {
-          "titulo": "Распространяются ли правила на прицепы, фургоны и мотоциклы?",
+          "titulo": "Какая минимальная глубина протектора",
           "paragrafos": [
-            "Согласно приложению 1 к постановлению № 42 (код 501), зимние шины обязательны с 1 декабря по 1 марта на <strong>транспортных средствах категорий M1, N1 и O2, а также L6e/L7e с кузовом</strong> — то есть на легковых автомобилях, фургонах до 3,5 т, прицепах с полной массой более 750 кг и микроавтомобилях с кузовом. На эти же категории распространяются требование 3PMSF и правило о 3 мм протектора. Для лёгких прицепов (O1, до 750 кг) зимняя резина не обязательна, но глубина протектора прицепа должна соответствовать требованию, которое действует для буксирующего автомобиля. Для мотоциклов (L3e) обязанности ставить зимние шины нет; у автобусов регулярных маршрутов (M2, M3) протектор должен быть не менее 3 мм с 1 октября по 1 мая.",
-            "Для шипованных шин есть дополнительное правило (код 507): если транспортное средство категории M1, N1, O1, O2 или L использует шипованные шины, они должны стоять <strong>на всех колёсах</strong>. Если автомобиль с прицепом O2 едет на шипах, прицеп тоже должен быть на шипованных шинах; если у автомобиля нешипованные зимние шины, на прицепе должны быть нешипованные зимние. Единственное исключение — запасное колесо, которое пришлось поставить после повреждения шины: оно может быть без шипов. На практике даже лёгкий прицеп разумно обуть в зимние шины с достаточным протектором: на скользкой дороге прицеп на летней резине легко уходит в занос при торможении и в повороте."
+            "В период обязательного использования зимних шин (1 декабря — 1 марта) остаточная глубина протектора зимней шины должна быть <strong>не менее 3 мм</strong> (приложение 1, код 503). В остальное время — например, на шипах в октябре или в марте — и для летних шин законный минимум для легковых автомобилей и фургонов составляет 1,6 мм. Это пределы закона, а не рекомендации: при 3 мм сцепление зимней шины на снегу и в слякоти уже заметно хуже, чем у новой, и шиномонтажи советуют менять зимние шины примерно при 4 мм.",
+            "Измеряйте все четыре шины, а не одну: износ редко бывает равномерным, а минимум действует для каждой шины. Глубину можно измерить недорогим глубиномером или попросить проверить при сезонной замене — хорошая мастерская скажет, сколько протектора осталось на каждой шине. Проверьте и возраст: последние четыре цифры DOT-кода показывают неделю и год выпуска, а зимние шины старше шести лет стоит оценивать критически, даже если протектор выглядит хорошо."
+          ]
+        },
+        {
+          "titulo": "Штраф за неправильные шины в 2026 году",
+          "paragrafos": [
+            "Отдельного «штрафа за шины» в законе нет. Автомобиль на шинах, не отвечающих требованиям, не соответствует техническим требованиям, и наказание, как правило, назначается по части 1 § 242 Закона о дорожном движении (liiklusseadus): штраф <strong>до 20 штрафных единиц, то есть до 160 €</strong> (с 1 января 2025 года одна штрафная единица равна 8 €). В ускоренном производстве за это нарушение назначается штраф 40 €. Если неправильные шины создали опасность для движения (часть 2 § 242), наказание может составить до 100 штрафных единиц, то есть до 800 €, или лишение права управления на срок до шести месяцев. Штраф до 800 € возможен и за езду на автомобиле, которым из-за неисправности нельзя двигаться своим ходом — например, если виден корд шины.",
+            "Полиция обращает особое внимание на шины в начале декабря и весной после 30 апреля. При очевидной опасности полиция может запретить дальнейшее движение, а это расходы на эвакуатор на месте. Но главный риск — авария: на скользкой дороге тормозной путь на летних шинах в разы длиннее, а после ДТП придётся объяснять, почему автомобиль не соответствовал требованиям."
+          ]
+        },
+        {
+          "titulo": "Liikluskindlustus и каско: что меняют неправильные шины",
+          "paragrafos": [
+            "<strong>Обязательное дорожное страхование (liikluskindlustus) возмещает ущерб потерпевшему всегда</strong> — даже если у виновника стояли летние шины. Неподходящие шины не входят в перечень оснований Закона о дорожном страховании, по которым страховщик может взыскать выплаченное с водителя (регресс возможен, например, при умысле, вождении в нетрезвом виде, оставлении места ДТП или превышении скорости на 41 км/ч и более). Ремонт вашего собственного автомобиля liikluskindlustus не покрывает, если виноваты вы.",
+            "<strong>Для каско шины значат гораздо больше.</strong> Потребительский сайт Финансовой инспекции minuraha.ee прямо указывает: страховое возмещение по каско скорее всего не будет выплачено, если во время аварии, виновником которой вы стали, на автомобиле была летняя резина, тогда как по закону вы должны были использовать зимнюю; кроме того, в условиях каско обычно есть исключение для ущерба из-за изношенных шин. По Обязательственно-правовому закону страховщик может ссылаться на такое нарушение только если оно было виновным и повлияло на возникновение или размер ущерба — поэтому царапина на припаркованной машине вряд ли останется без возмещения из-за летних шин, а вылет с дороги на гололёде — может. Подробнее в руководстве <a href=\"/guias/remont-posle-dtp-po-kasko-i-strahovke\">ремонт после ДТП по каско и liikluskindlustus</a>."
+          ]
+        },
+        {
+          "titulo": "Автомобиль с финскими или другими иностранными номерами в Эстонии",
+          "paragrafos": [
+            "Автомобиль с иностранными номерами при движении по Эстонии должен соответствовать эстонским требованиям к шинам. Для финской, латвийской или немецкой машины в Таллинне действуют эстонский обязательный период зимней резины с 1 декабря по 1 марта (в это время минимум протектора 3 мм), требование 3PMSF для ламельных шин и даты для шипов. Полиция проверяет шины и на автомобилях с иностранными номерами и штрафует на тех же основаниях.",
+            "В Финляндии правила другие: там нет жёсткой календарной обязанности, как в Эстонии, — использование зимних шин в зимние месяцы зависит от погоды и состояния дорог. В мягком декабре финский автомобиль в Финляндии может законно ездить на летних шинах, но, приехав на пароме из Хельсинки в Таллинн, с декабря по март он должен быть на зимней резине независимо от погоды. Перед поездкой в Финляндию проверьте тамошние требования на сайте Traficom, а в Эстонии ориентируйтесь на эстонский календарь.",
+            "То же относится к подержанным автомобилям, привезённым в Эстонию: на машине из Центральной Европы часто стоят ламельные шины только с маркировкой M+S, которые в Эстонии с 1 декабря зимними не считаются. Проверьте боковины шин до регистрации автомобиля в Эстонии и до первых морозов."
+          ]
+        },
+        {
+          "titulo": "Сколько стоит шиномонтаж в Таллинне в 2026 году и от чего зависит цена",
+          "paragrafos": [
+            "Приведённые диапазоны основаны на открытых прайс-листах таллиннских шиномонтажей <strong>по состоянию на октябрь 2026 года</strong> (ABCabi в Нымме, Rehvitakso и Bosch Car Service на Кадака теэ, Kummid24 и Kummispets в Мустамяэ, Fix Wheels в Кристийне, Laagri Autoteenindus, AutoTallinn в Пеэтри). Цены включают НДС. Цена зависит прежде всего от размера дисков, типа автомобиля (легковой, внедорожник, фургон), шин runflat и того, стоят ли шины уже на дисках. Большинство мастерских дают постоянным клиентам скидку 10 %, а несколько — более низкую цену при онлайн-записи."
+          ],
+          "itens": [
+            "<strong>Полная замена четырёх шин</strong> (шины переставляются на дисках, балансировка включена), легковой автомобиль 13–16\": 55–65 €; 17–18\": 65–80 €; 19–20\": 75–95 €; 21–22\": 89–105 €.",
+            "<strong>Шины на дисках</strong> (перестановка колёс с балансировкой), легковой автомобиль: 45–65 €; без балансировки 30–50 €.",
+            "<strong>Внедорожник, фургон и микроавтобус</strong>: обычно на 5–15 € дороже легкового с тем же размером дисков; за монтаж шин runflat некоторые мастерские берут дополнительно 7 €.",
+            "<strong>Полная замена одной шины</strong>: 18–30 € в зависимости от размера; балансировка одного колеса 7–12 €.",
+            "<strong>Сезонное хранение шин</strong> (rehvihotell, четыре шины): 39–60 € за сезон; хранение на дисках и пакеты с мойкой и балансировкой 49–75 €.",
+            "<strong>Ремонт шины</strong>: 10–25 € жгутом или заплаткой, 25–45 € грибком изнутри; утилизация шины 3–6 € за штуку.",
+            "<strong>Выездной шиномонтаж</strong> в Таллинне: вызов от 45 €; доставка автомобиля в мастерскую и обратно в пределах Таллинна 25 €.",
+            "<strong>Датчик давления (TPMS)</strong> с программированием: около 50–55 € за штуку."
           ]
         },
         {
           "titulo": "Когда записываться на шиномонтаж в Таллинне",
           "paragrafos": [
-            "Шиномонтажи в Таллинне и по всей Эстонии больше всего загружены с середины октября до конца ноября и снова с конца марта до конца апреля. Кто ждёт первого снега, тот стоит в очереди. Записывайтесь в конце сентября — начале октября, чтобы получить время около 15 октября, а весной следите за прогнозом: как только ночная температура держится выше нуля, пора ставить летнюю резину.",
-            "Рекомендация Департамента транспорта однозначна: резиновая смесь летних шин теряет эластичность и сцепление уже при 5–8 °C, поэтому не ждите минусовой температуры. Если вы ездите на большие расстояния, по разным дорогам или рано утром — переобувайтесь раньше; если в основном по городу днём, запас по времени больше, но при гололёде тормозной путь на летних шинах в городе тоже становится длиннее.",
-            "На BipFix можно запросить предложения на шиномонтаж и сезонное хранение шин сразу у нескольких автосервисов Таллинна: опишите автомобиль, размер шин и желаемую дату и сравните предложения до записи. Список автосервисов — на странице <a href=\"/oficinas\">/oficinas</a>."
+            "Пик загрузки шиномонтажей в Таллинне — с середины октября до конца ноября и весной с конца марта до конца апреля. Кто ждёт первого снега, тот стоит в очереди и нередко платит по ценам пикового сезона. Разумно записаться в конце сентября — начале октября, чтобы получить время около 15 октября, а весной следить за прогнозом: когда ночная температура держится выше нуля, пора ставить летнюю резину. Сами мастерские отмечают, что в октябре и ноябре время разбирают быстро.",
+            "Если вы ездите на большие расстояния, по разным дорогам или рано утром — переобувайтесь раньше; если в основном по городу днём, запас по времени больше, но при гололёде тормозной путь на летних шинах в городе тоже длиннее. Замена шин — удобный момент проверить тормоза и регулировку развала-схождения: неправильное схождение изнашивает шины неравномерно. Сколько такие работы стоят в Таллинне, смотрите в руководстве <a href=\"/guias/ceny-na-remont-avto-v-talline\">цены на ремонт авто в Таллинне 2026</a>.",
+            "На BipFix можно описать автомобиль, размер шин и желаемую дату и получить предложения на шиномонтаж и сезонное хранение сразу от нескольких таллиннских мастерских — для водителя это бесплатно, а предложения можно спокойно сравнить до записи."
           ]
         },
         {
-          "titulo": "Что проверить при замене шин",
+          "titulo": "Чек-лист перед заменой шин и во время неё",
           "itens": [
-            "Глубину протектора на каждой шине отдельно: для зимней не менее 3 мм, а для безопасной зимы лучше 4 мм и больше.",
-            "Символ 3PMSF на боковине фрикционной шины; одной маркировки M+S недостаточно.",
+            "Глубина протектора на каждой шине отдельно: для зимней законный минимум 3 мм, для безопасной зимы лучше 4 мм и больше.",
+            "Символ 3PMSF на боковине ламельной шины; одной маркировки M+S недостаточно. Особенно стоит проверить на автомобиле, привезённом из-за границы.",
             "Возраст шины по DOT-коду и трещины на боковине: старая затвердевшая резина не держит дорогу даже с хорошим протектором.",
-            "Количество и состояние шипов на шипованной шине: когда многих шипов уже нет, шина теряет преимущество на льду.",
-            "Давление в шинах: на холоде оно падает, поэтому проверьте его после замены и затем примерно раз в месяц.",
+            "Количество и состояние шипов: когда многих шипов нет, шина теряет преимущество на льду.",
+            "Неравномерный износ: если шина сильнее стёрта с одного края, причина обычно в схождении колёс или подвеске.",
+            "Давление в шинах: на холоде оно падает, проверьте после замены и затем примерно раз в месяц.",
             "Момент затяжки колёсных болтов после установки; многие мастерские советуют проверить его через несколько дней.",
-            "Балансировку колёс, если руль вибрирует.",
-            "Хранение летних шин: в прохладном, тёмном и сухом месте; на дисках — стопкой или в подвешенном виде, без дисков — стоя."
-          ]
-        },
-        {
-          "titulo": "Что будет, если ездить зимой на летней резине?",
-          "paragrafos": [
-            "Автомобиль с шинами, не соответствующими требованиям, не отвечает техническим требованиям, и полиция при проверке на дороге может наказать водителя. Размер штрафа зависит от конкретного нарушения и действующего Закона о дорожном движении (liiklusseadus) — точные ставки приведены в Riigi Teataja. Но главный риск — авария: на скользкой дороге тормозной путь на летних шинах в разы длиннее, а после ДТП придётся объяснять, почему автомобиль не соответствовал требованиям.",
-            "Если авария всё же произошла, зарегистрируйте её на BipFix на странице <a href=\"/emergencia\">/emergencia</a> и запросите предложения на ремонт у автосервисов."
+            "Балансировка, если руль вибрирует; уточните, входит ли балансировка в цену полной замены (обычно да).",
+            "В предложении мастерской: размер дисков, тип автомобиля, стоят ли шины на дисках, добавляются ли расходники (грузики, вентили) и сколько стоит хранение.",
+            "Хранение летних шин дома: в прохладном, тёмном и сухом месте; на дисках — стопкой или в подвешенном виде, без дисков — стоя."
           ]
         }
       ],
       "faq": [
         {
-          "pergunta": "Когда ставить зимнюю резину в Эстонии осенью 2026 года?",
-          "resposta": "Шипованные шины разрешены с 15 октября, а зимняя резина обязательна с 1 декабря. Департамент транспорта рекомендует переобуваться до первых заморозков, потому что летние шины теряют сцепление уже при 5–8 °C."
+          "pergunta": "С какого числа зимняя резина обязательна в Эстонии в 2026 году?",
+          "resposta": "Зимние шины обязательны со вторника, 1 декабря 2026 года, по понедельник, 1 марта 2027 года. Требование действует для легковых автомобилей, фургонов до 3,5 т, прицепов O2 (750 кг — 3,5 т) и транспортных средств L6e/L7e с кузовом и зависит от календаря, а не от погоды."
         },
         {
-          "pergunta": "Когда можно переобуться на летнюю резину?",
-          "resposta": "Обязанность ездить на зимних шинах заканчивается 1 марта. Шипованные шины в обычном порядке нужно снять до 31 марта; при зимних дорожных и погодных условиях их можно использовать до 30 апреля. Если ночные заморозки продолжаются, не спешите."
+          "pergunta": "Когда можно ездить на шипованной резине в сезоне 2026/27?",
+          "resposta": "Шипованные шины разрешены с 15 октября 2026 по 31 марта 2027 года. Если зимние дорожные и погодные условия уже есть, их можно использовать с 1 октября, а весной — до 30 апреля 2027 года. С начала мая до конца сентября шипы всегда запрещены."
+        },
+        {
+          "pergunta": "Какой штраф за летнюю резину зимой в Эстонии?",
+          "resposta": "Отдельного штрафа за шины в законе нет. Как правило, по § 242 Закона о дорожном движении штраф составляет до 20 штрафных единиц, то есть до 160 € (1 единица = 8 €); в ускоренном производстве назначают 40 €. Если создана опасность для движения, наказание может быть до 800 € или лишение прав на срок до 6 месяцев."
+        },
+        {
+          "pergunta": "Заплатит ли каско, если во время аварии стояла летняя резина?",
+          "resposta": "Не обязательно. По информации потребительского сайта Финансовой инспекции, возмещение по каско может быть не выплачено, если в момент аварии по вашей вине на машине была летняя резина, а по закону уже действовала обязанность ездить на зимней. Страховщик вправе уменьшить выплату или отказать, если нарушение повлияло на ущерб. Liikluskindlustus возмещает ущерб потерпевшему в любом случае."
+        },
+        {
+          "pergunta": "Нужна ли зимняя резина на машине с финскими номерами в Эстонии?",
+          "resposta": "Да. Автомобиль с иностранными номерами при движении по Эстонии должен соответствовать эстонским требованиям: с 1 декабря по 1 марта зимние шины (протектор не менее 3 мм, на ламельных — маркировка 3PMSF), шипы — только в разрешённый период. Финские правила, зависящие от погоды, в Эстонии не действуют."
+        },
+        {
+          "pergunta": "Сколько стоит шиномонтаж в Таллинне осенью 2026 года?",
+          "resposta": "По прайс-листам таллиннских мастерских на октябрь 2026 года полная замена четырёх шин легкового автомобиля с балансировкой стоит от 55–65 € (13–16\") до 89–105 € (21–22\"); перестановка колёс на дисках — 45–65 €; сезонное хранение — 39–60 €. Для внедорожников и фургонов цена на 5–15 € выше."
         },
         {
           "pergunta": "Считается ли шина с маркировкой M+S зимней в Эстонии?",
-          "resposta": "Нет. С 1 декабря 2022 года нешипованные зимние шины на легковых автомобилях, лёгких фургонах, прицепах O2 и транспортных средствах L6e/L7e с кузовом должны иметь символ «три горных пика и снежинка» (3PMSF). Одной маркировки M+S недостаточно."
-        },
-        {
-          "pergunta": "Какая минимальная глубина протектора у зимней резины в Эстонии?",
-          "resposta": "Не менее 3 мм для зимних шин и не менее 1,6 мм для летних. Ради безопасности меняйте зимние шины, не дожидаясь предела в 3 мм."
-        },
-        {
-          "pergunta": "Можно ли ездить на шипованной резине в апреле?",
-          "resposta": "Обычный период заканчивается 31 марта, но при зимних дорожных и погодных условиях шипованные шины в порядке исключения можно использовать до 30 апреля. Следите за сообщениями Департамента транспорта и прогнозом погоды."
+          "resposta": "Для шипованной шины маркировки M+S достаточно. Нешипованная зимняя шина («липучка») с 1 декабря 2022 года должна дополнительно иметь символ «три горных пика и снежинка» (3PMSF) и соответствовать Правилам ООН № 117 — одной маркировки M+S недостаточно."
         },
         {
           "pergunta": "Нужна ли зимняя резина на прицепе?",
-          "resposta": "На прицепе категории O2 (полная масса более 750 кг) — да, с 1 декабря по 1 марта, как и на автомобиле, причём при шипах прицеп должен быть обут так же, как буксирующий автомобиль. Для лёгкого прицепа (O1) зимняя резина не обязательна, но глубина протектора должна соответствовать требованию для буксирующего автомобиля."
+          "resposta": "На прицепе категории O2 (полная масса 750 кг — 3,5 т) — да, с 1 декабря по 1 марта, как и на автомобиле, причём тип шин должен совпадать с тягачом: за машиной на шипах — шипы, за машиной на «липучке» — нешипованные зимние. Для лёгкого прицепа (O1) зимняя резина не обязательна, но при шипах они должны стоять на всех колёсах."
         }
       ],
       "fontes": [
@@ -352,10 +494,6 @@
           "url": "https://www.transpordiamet.ee/ru/novosti/menyayutsya-trebovaniya-k-zimnim-shinam"
         },
         {
-          "nome": "Estonian Transport Administration – Winter tyres are allowed from 15th October",
-          "url": "https://www.transpordiamet.ee/en/news/winter-tyres-are-allowed-15th-october"
-        },
-        {
           "nome": "Transpordiamet – Homsest on lubatud kasutada naastrehve (14.10.2024)",
           "url": "https://www.transpordiamet.ee/uudised/homsest-lubatud-kasutada-naastrehve"
         },
@@ -364,12 +502,48 @@
           "url": "https://www.transpordiamet.ee/uudised/talverehvide-vahetamisega-voib-veel-oodata"
         },
         {
-          "nome": "Transpordiamet – Rakendub talverehvide nõuete muudatus (27.10.2022)",
-          "url": "https://www.transpordiamet.ee/uudised/rakendub-talverehvide-nouete-muudatus"
+          "nome": "Riigi Teataja – Постановление № 42 о технических требованиях к механическим транспортным средствам и прицепам (приложение 1, на эстонском)",
+          "url": "https://www.riigiteataja.ee/akt/116062011008?leiaKehtiv"
         },
         {
-          "nome": "Riigi Teataja – Постановление № 42 о технических требованиях к механическим транспортным средствам и прицепам (на эстонском)",
-          "url": "https://www.riigiteataja.ee/akt/116062011008?leiaKehtiv"
+          "nome": "Riigi Teataja – Liiklusseadus / Закон о дорожном движении (§ 242)",
+          "url": "https://www.riigiteataja.ee/akt/107042026003"
+        },
+        {
+          "nome": "Minuraha.ee (потребительский сайт Финансовой инспекции) – Страхование каско: исключения, в т.ч. летняя резина в обязательный период",
+          "url": "https://www.minuraha.ee/ru/strakhovanie/dorozhnoe-strakhovanie/strakhovanie-kasko"
+        },
+        {
+          "nome": "ABCabi – Talverehvid ja naastrehvid 2026/27: даты, штраф (§ 242), страхование, финские номера",
+          "url": "https://abcabi.ee/talverehvid-eestis/"
+        },
+        {
+          "nome": "Rehvitakso – Rehvivahetuse hinnad 2026 Tallinnas (прайс-лист)",
+          "url": "https://www.rehvitakso.ee/Rehvivahetuse-hinnad"
+        },
+        {
+          "nome": "Kummid24 / Gold Selection OÜ – Rehvivahetus Tallinnas, прайс-лист действует с 01.06.2026",
+          "url": "https://kummid24.ee/rehvivahetus-tallinnas/"
+        },
+        {
+          "nome": "Kummispets – Rehvitööde hinnakiri (с 01.10.2025)",
+          "url": "https://kummispets.ee/hinnakiri/"
+        },
+        {
+          "nome": "Fix Wheels – Rehvivahetus Tallinnas, цены",
+          "url": "https://www.fixwheels.ee/rehvivahetus-tallinnas/"
+        },
+        {
+          "nome": "Automaailm / Bosch Car Service Tallinn – прайс-лист (шиномонтаж, хранение)",
+          "url": "https://automaailm.ee/hinnakiri/"
+        },
+        {
+          "nome": "AutoTallinn – прайс-лист (шиномонтаж, хранение)",
+          "url": "https://autotallinn.ee/hinnakiri/"
+        },
+        {
+          "nome": "ABCabi – Hinnakiri (шиномонтаж, хранение, выездной шиномонтаж)",
+          "url": "https://abcabi.ee/hinnakiri/"
         }
       ],
       "cta": "pedido"
