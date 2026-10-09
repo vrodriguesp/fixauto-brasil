@@ -55,7 +55,7 @@ try {
   const ctxO = await celular(); const pO = await ctxO.newPage();
   // como no iPhone: cliente e oficina no mesmo Safari, sai de um e entra no outro
   await entrar(pO, cli.email, cli.senha, 'it');
-  await pO.goto(`${SITE}/it/cliente/dashboard`, { waitUntil: 'networkidle' });
+  await pO.goto(`${SITE}/it/it/cliente/dashboard`, { waitUntil: 'networkidle' });
   await pO.getByRole('button', { name: /^Esci$/ }).first().click(); await pO.waitForTimeout(3000);
   ok('1 saiu da conta cliente', !(await pO.context().cookies()).some((c) => /auth-token/.test(c.name) && c.value), (await pO.context().cookies()).map((c) => c.name).join(','));
   await entrar(pO, ofi.email, ofi.senha, 'it');
@@ -74,7 +74,7 @@ try {
   await sino.click();
 
   // ---- 4) lista de pedidos antes de orcar
-  await pO.goto(`${SITE}/it/oficina/solicitacoes`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3000);
+  await pO.goto(`${SITE}/it/it/oficina/solicitacoes`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3000);
   const card = pO.locator('a.card', { hasText: 'Fiat Panda' }).first();
   ok('4 pedido aparece com o selo do seguro', (await card.innerText()).includes('🛡️'));
   ok('4 lista sem nada saindo pela lateral', await semSobraLateral(pO));
@@ -85,7 +85,7 @@ try {
   const ctxQ = await celular(); const pQ = await ctxQ.newPage();
   await entrar(pQ, ofi.email, ofi.senha, 'it');
   await pQ.clock.setFixedTime(new Date().setHours(15, 0, 0, 0));
-  await pQ.goto(`${SITE}/it/oficina/enviar-orcamento/${s.id}`, { waitUntil: 'load' }); await pQ.locator('input[type=date][aria-label]').first().waitFor(); await pQ.waitForTimeout(1500);
+  await pQ.goto(`${SITE}/it/it/oficina/enviar-orcamento/${s.id}`, { waitUntil: 'load' }); await pQ.locator('input[type=date][aria-label]').first().waitFor(); await pQ.waitForTimeout(1500);
   const hoje = iso(new Date());
   const dataSlot = await pQ.locator('input[type=date][aria-label]').first().inputValue();
   const turnoSlot = await pQ.locator('select[aria-label*="/"]').first().inputValue();
@@ -127,9 +127,9 @@ try {
   await entrar(pC, cli.email, cli.senha, 'it');
   const ctxC2 = await celular(); const pC2 = await ctxC2.newPage();
   await entrar(pC2, cli.email, cli.senha, 'it');
-  await pC2.goto(`${SITE}/it/cliente/dashboard`, { waitUntil: 'networkidle' });
+  await pC2.goto(`${SITE}/it/it/cliente/dashboard`, { waitUntil: 'networkidle' });
   await pC2.getByRole('button', { name: /^Esci$/ }).first().click(); await pC2.waitForTimeout(3000);
-  await pC.goto(`${SITE}/it/cliente/orcamentos/${s.id}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
+  await pC.goto(`${SITE}/it/it/cliente/orcamentos/${s.id}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
   await pC.getByRole('button', { name: /Accetta e programma/ }).last().click(); await pC.waitForTimeout(1000);
   const horarios = pC.locator('button').filter({ hasText: /\d{2}:\d{2} - \d{2}:\d{2}/ });
   ok('7 so o horario ainda valido aparece (o de ontem some)', (await horarios.count()) === 1);
@@ -142,7 +142,7 @@ try {
   const ctxE = await celular({ geolocation: { latitude: 45.4642, longitude: 9.19 }, permissions: ['geolocation'] });
   const pE = await ctxE.newPage();
   await entrar(pE, cli.email, cli.senha, 'en');
-  await pE.goto(`${SITE}/en/emergencia`, { waitUntil: 'networkidle' }); await pE.waitForTimeout(2500);
+  await pE.goto(`${SITE}/ee/en/emergencia`, { waitUntil: 'networkidle' }); await pE.waitForTimeout(2500);
   await pE.locator('input[type=file]').first().setInputFiles({ name: 'dano.png', mimeType: 'image/png', buffer: PNG });
   await pE.waitForTimeout(1500);
   await pE.getByRole('button', { name: 'Next' }).click(); await pE.waitForTimeout(3500);
@@ -155,7 +155,7 @@ try {
   if (solAc) { sols.push(solAc.id); ems.push(solAc.emergencia_id); }
   ok('9 cliente com 1 carro e nada escolhido: o pedido usa esse carro', solAc?.veiculo_id === v.id, JSON.stringify(solAc));
   if (solAc) {
-    await pC.goto(`${SITE}/it/cliente/orcamentos/${solAc.id}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
+    await pC.goto(`${SITE}/it/it/cliente/orcamentos/${solAc.id}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
     const tela9 = await pC.innerText('body');
     ok('9 pagina do pedido sem "[TIPO:"', !tela9.includes('[TIPO:'));
     await pC.getByRole('button', { name: /Modifica richiesta/ }).click(); await pC.waitForTimeout(600);

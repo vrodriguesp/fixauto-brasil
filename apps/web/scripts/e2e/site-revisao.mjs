@@ -73,9 +73,9 @@ try {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, locale: 'it-IT' });
   await ctx.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} });
   const p = await ctx.newPage();
-  await p.goto(`${SITE}/it/login`, { waitUntil: 'networkidle' });
+  await p.goto(`${SITE}/it/it/login`, { waitUntil: 'networkidle' });
   await p.fill('input[type=email]', cli.email); await p.fill('input[type=password]', cli.senha); await p.click('button[type=submit]'); await p.waitForTimeout(4000);
-  await p.goto(`${SITE}/it/cliente/orcamentos/${c1.solId}`, { waitUntil: 'networkidle' }); await p.waitForTimeout(3000);
+  await p.goto(`${SITE}/it/it/cliente/orcamentos/${c1.solId}`, { waitUntil: 'networkidle' }); await p.waitForTimeout(3000);
   const corpo = await p.innerText('body');
   ok('6 tela mostra a proposta e so 2 botoes', /ha proposto una revisione/.test(corpo) && /Approva il nuovo importo/.test(corpo) && /ritira l'auto/i.test(corpo) && !/mantieni l'originale/i.test(corpo), corpo.replace(/\s+/g, ' ').slice(0, 200));
   ok('6 mostra +50%', /\+50%/.test(corpo));
@@ -101,7 +101,7 @@ try {
   r = await api(of.token, '/api/orcamento-revisao', { orcamentoId: c1.orcId, motivo: 'Altro pezzo da sostituire', itens: itens(600) });
   const d2 = await r.json();
   ok('3 segunda proposta depois da aprovacao', r.ok && d2.revisaoId);
-  await p.goto(`${SITE}/it/cliente/orcamentos/${c1.solId}`, { waitUntil: 'networkidle' }); await p.waitForTimeout(3000);
+  await p.goto(`${SITE}/it/it/cliente/orcamentos/${c1.solId}`, { waitUntil: 'networkidle' }); await p.waitForTimeout(3000);
   await p.getByRole('button', { name: /ritira l'auto/i }).first().click();
   await p.getByRole('alertdialog').getByRole('button').first().click(); await p.waitForTimeout(3000);
   ok('3 tela confirma o encerramento', /chiuso|ritiro/i.test(await p.innerText('body')));

@@ -70,7 +70,7 @@ try {
   await entrar(pO, ofi.email, ofi.senha, 'it');
 
   // ---- 6) foto antes do aceite
-  await pO.goto(`${SITE}/it/oficina/solicitacoes/${s.id}`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3500);
+  await pO.goto(`${SITE}/it/it/oficina/solicitacoes/${s.id}`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3500);
   const fotoOk = await pO.locator('img[alt]').evaluateAll((imgs) => imgs.some((i) => i.src.includes('damage-photos') && i.complete && i.naturalWidth > 0));
   ok('6 foto do acidente aparece para a oficina antes do aceite', fotoOk);
   ok('4 pagina do pedido sem "[TIPO:"', !(await pO.innerText('body')).includes('[TIPO:'));
@@ -83,7 +83,7 @@ try {
   ok('7 IA de fato analisou', rIa.ok && !!dIa.analise, `${rIa.status} ${dIa.codigo || ''}`);
 
   // ---- 9) seguradoras + 8) endereco no perfil
-  await pO.goto(`${SITE}/it/oficina/perfil`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3000);
+  await pO.goto(`${SITE}/it/it/oficina/perfil`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3000);
   await pO.getByRole('button', { name: /^Generali$/ }).click();
   await pO.fill('#oficina-end-rua', 'Via Torino'); await pO.waitForTimeout(400);
   await pO.locator('#oficina-end-rua').press('Escape');
@@ -105,14 +105,14 @@ try {
   const { data: slot } = await sb.from('orcamento_disponibilidade').insert({ orcamento_id: o.id, data_checkin: d2, turno: 'manha', data_previsao_entrega: d5 }).select('id').single();
   const ctxC = await celular(); const pC = await ctxC.newPage();
   await entrar(pC, cli.email, cli.senha, 'pt-br');
-  await pC.goto(`${SITE}/pt-br/cliente/orcamentos/${s.id}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
+  await pC.goto(`${SITE}/br/pt/cliente/orcamentos/${s.id}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
   ok('9 cliente ve "Conveniada com Generali Italia" no orcamento', /Conveniada com Generali Italia/.test(await pC.innerText('body')));
   const { token: tCli } = await sessao(cli);
   const rAc = await fetch(`${SITE}/api/aceitar-orcamento`, { method: 'POST', headers: { Authorization: `Bearer ${tCli}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ orcamentoId: o.id, slotId: slot.id }) });
   ok('aceite do orcamento', rAc.ok, rAc.status);
 
   // ---- 1) mecanico sem acesso ao portal
-  await pO.goto(`${SITE}/it/oficina/equipe`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(2500);
+  await pO.goto(`${SITE}/it/it/oficina/equipe`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(2500);
   await pO.locator('button.btn-primary').first().click(); await pO.waitForTimeout(800);
   await pO.fill('#cdcf5-1', 'Marco Rossi');
   await pO.getByRole('button', { name: /^Registra$/ }).click(); await pO.waitForTimeout(3000);
@@ -121,7 +121,7 @@ try {
   ok('1 lista mostra "Senza accesso al portale"', /Senza accesso al portale/.test(await pO.innerText('body')));
 
   // ---- 2) check-in de carro agendado para daqui a 2 dias
-  await pO.goto(`${SITE}/it/oficina/veiculos-em-servico`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3000);
+  await pO.goto(`${SITE}/it/it/oficina/veiculos-em-servico`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3000);
   await pO.getByRole('button', { name: /^Tutti$/ }).click(); await pO.waitForTimeout(800);
   await pO.getByRole('button', { name: /^Check-in$/ }).first().click(); await pO.waitForTimeout(2500);
   const aviso = await pO.locator('[role=alert]').first().innerText().catch(() => '');
@@ -157,7 +157,7 @@ try {
   await pO.screenshot({ path: 'srv-em-servico.png', fullPage: true });
 
   // cliente ve "em andamento" e as etapas
-  await pC.goto(`${SITE}/pt-br/cliente/acompanhamento/${s.id}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
+  await pC.goto(`${SITE}/br/pt/cliente/acompanhamento/${s.id}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
   const telaCli = await pC.innerText('body');
   ok('2 cliente ve o check-in e a etapa no acompanhamento', /Recebido/.test(telaCli) && /diagnóstico/i.test(telaCli), telaCli.replace(/\s+/g, ' ').slice(0, 200));
 
@@ -170,7 +170,7 @@ try {
   // ---- 10) tempo das paginas da oficina
   for (const pag of ['dashboard', 'solicitacoes', 'veiculos-em-servico', 'agenda', 'capacidade', 'distribuicao', 'equipe', 'perfil']) {
     const t0 = Date.now();
-    await pO.goto(`${SITE}/it/oficina/${pag}`, { waitUntil: 'domcontentloaded' });
+    await pO.goto(`${SITE}/it/it/oficina/${pag}`, { waitUntil: 'domcontentloaded' });
     await pO.waitForFunction(() => !document.querySelector('.animate-pulse') && document.querySelector('h1'), null, { timeout: 30000 }).catch(() => {});
     const ms = Date.now() - t0;
     ok(`10 ${pag} abre em ${ms} ms`, ms < 6000);

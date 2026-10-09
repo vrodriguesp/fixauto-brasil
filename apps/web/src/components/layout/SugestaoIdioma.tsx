@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { usePathname } from '@/i18n/navigation';
-import { HREFLANG, caminhoNoIdioma, type Locale } from '@/i18n/routing';
+import { HREFLANG, caminhoNoIdioma, mercadoDe, type Locale } from '@/i18n/routing';
 import { lembrarIdioma } from '@/lib/idioma-escolhido';
 import { useParams } from 'next/navigation';
 
@@ -11,6 +11,8 @@ import { useParams } from 'next/navigation';
 // Google recomenda nao redirecionar automaticamente por idioma: o
 // redirecionamento escondia versoes inteiras de robos e de quem compartilha
 // um link. Aqui a pessoa decide; se fechar, a sugestao nao volta.
+// So idiomas do MESMO pais (na Estonia: et/ru/en): trocar de pais e escolha da
+// pessoa (seletor), nao do idioma do navegador.
 
 const CHAVE_FECHADA = 'bipfix_sugestao_idioma_fechada';
 
@@ -48,7 +50,7 @@ export default function SugestaoIdioma() {
       if (localStorage.getItem(CHAVE_FECHADA) === '1') return;
     } catch {}
     const l = idiomaDoNavegador();
-    if (l && l !== locale) setSugerido(l);
+    if (l && l !== locale && mercadoDe(l) === mercadoDe(locale)) setSugerido(l);
   }, [locale]);
 
   if (!sugerido) return null;

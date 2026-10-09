@@ -47,7 +47,7 @@ try {
 
   // 1) cliente aceita pelo site
   const ctxC = await celular(); const pC = await entrar(ctxC, cli.email, cli.senha, 'it');
-  await pC.goto(`${SITE}/it/cliente/orcamentos/${solId}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
+  await pC.goto(`${SITE}/it/it/cliente/orcamentos/${solId}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
   await pC.getByRole('button', { name: /Accetta e programma/ }).last().click(); await pC.waitForTimeout(1000);
   await pC.locator('button').filter({ hasText: /\d{2}:\d{2} - \d{2}:\d{2}/ }).first().click();
   await pC.getByRole('button', { name: /Conferma appuntamento/ }).last().click(); await pC.waitForTimeout(6000);
@@ -58,7 +58,7 @@ try {
 
   // 2) quem paga: lista, abre e escreve
   const ctxP = await celular(); const pP = await entrar(ctxP, pag.email, pag.senha, 'pt-br');
-  await pP.goto(`${SITE}/pt-br/cliente/mensagens`, { waitUntil: 'networkidle' }); await pP.waitForTimeout(3500);
+  await pP.goto(`${SITE}/br/pt/cliente/mensagens`, { waitUntil: 'networkidle' }); await pP.waitForTimeout(3500);
   ok('quem paga ve a oficina na lista de mensagens', (await pP.innerText('body')).includes(`PAG SHOP ${tag}`));
   await pP.locator('a', { hasText: `PAG SHOP ${tag}` }).first().click(); await pP.waitForTimeout(3500);
   const telaP = await pP.innerText('body');
@@ -71,7 +71,7 @@ try {
 
   // 3) oficina: abas Cliente / Quem paga
   const ctxO = await celular(); const pO = await entrar(ctxO, ofi.email, ofi.senha, 'et');
-  await pO.goto(`${SITE}/et/oficina/mensagens/${solId}`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3500);
+  await pO.goto(`${SITE}/ee/et/oficina/mensagens/${solId}`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3500);
   ok('oficina ve as abas Cliente e Quem paga', !!(await pO.getByRole('tab', { name: /Remondi eest maksja/ }).count()));
   ok('aba Cliente nao mostra a conversa de quem paga', !(await pO.innerText('body')).includes('transferencia'));
   await pO.getByRole('tab', { name: /Remondi eest maksja/ }).click(); await pO.waitForTimeout(3000);
@@ -96,7 +96,7 @@ try {
   ok('estranho nao abre conversa de pagamento', !!eInt);
   const { data: vInt } = await aInt.from('mensagens').select('id').eq('solicitacao_id', solId);
   ok('estranho nao le nada', (vInt || []).length === 0);
-  await pC.goto(`${SITE}/it/cliente/mensagens/${solId}?oficina=${ofId}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
+  await pC.goto(`${SITE}/it/it/cliente/mensagens/${solId}?oficina=${ofId}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
   ok('tela do cliente nao mostra a conversa de quem paga', !(await pC.innerText('body')).includes('transferencia'));
 } catch (e) { falhas++; console.log('FALHA parou:', String(e.stack).slice(0, 600)); }
 finally {

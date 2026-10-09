@@ -59,7 +59,7 @@ try {
   const { a: aA, token: tA } = await sessao(ofA);
   const ctxA = await celular(); const pA = await ctxA.newPage();
   await entrar(pA, ofA.email, ofA.senha, 'it');
-  await pA.goto(`${SITE}/it/oficina/enviar-orcamento/${s.id}`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
+  await pA.goto(`${SITE}/it/it/oficina/enviar-orcamento/${s.id}`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
   await pA.selectOption('#orc-garantia', 'outra');
   ok('1 "Altro" abre o campo dos dias', await pA.locator('#orc-garantia-dias').isVisible());
   await pA.fill('#orc-garantia-dias', '45');
@@ -86,7 +86,7 @@ try {
   // 3 tela do cliente: itens, link da oficina, escolhido em destaque
   const ctxC = await celular(); const pC = await ctxC.newPage();
   await entrar(pC, cli.email, cli.senha, 'it');
-  await pC.goto(`${SITE}/it/cliente/orcamentos/${s.id}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
+  await pC.goto(`${SITE}/it/it/cliente/orcamentos/${s.id}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
   const tela = await pC.innerText('body');
   ok('3 orcamento escolhido em destaque', /Preventivo scelto/.test(tela));
   ok('3 itens do orcamento visiveis', /Dischi freno anteriori/.test(tela) && /Manodopera/.test(tela));
@@ -94,16 +94,16 @@ try {
   ok('3 link para a pagina da oficina', (await pC.getByRole('link', { name: /Vedi l'officina/ }).count()) > 0);
   ok('3 sem rolagem lateral', await semRolagemLateral(pC));
   await pC.screenshot({ path: 'concl-orcamento.png', fullPage: true });
-  await pC.goto(`${SITE}/it/cliente/mensagens`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3500);
+  await pC.goto(`${SITE}/it/it/cliente/mensagens`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3500);
   const lista = await pC.innerText('body');
   ok('2 lista de mensagens: so a oficina escolhida', lista.includes(`Concl A ${tag}`) && !lista.includes(`Concl B ${tag}`));
-  await pC.goto(`${SITE}/it/cliente/mensagens/${s.id}?oficina=${idA}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(2500);
+  await pC.goto(`${SITE}/it/it/cliente/mensagens/${s.id}?oficina=${idA}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(2500);
   ok('3 conversa tem o link da oficina', (await pC.getByRole('link', { name: /Vedi l'officina/ }).count()) > 0);
 
   // 4 + 5 concluso com dupla confirmacao
   const { data: ag } = await sb.from('agenda').select('id').eq('solicitacao_id', s.id).single();
   await api(tA, '/api/servico', { acao: 'checkin', eventoId: ag.id, antecipar: true });
-  await pA.goto(`${SITE}/it/oficina/veiculos-em-servico?ev=${ag.id}&etapa=1`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3500);
+  await pA.goto(`${SITE}/it/it/oficina/veiculos-em-servico?ev=${ag.id}&etapa=1`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3500);
   const sel = pA.locator('select').filter({ has: pA.locator('option[value=concluido]') }).first();
   const opcoes = await sel.locator('option').allInnerTexts();
   ok('5 etapas sem chave crua', opcoes.length >= 8 && !opcoes.some((o) => /constants\.|Desc\b/.test(o)), opcoes.join(' | '));
@@ -137,13 +137,13 @@ try {
   ok('7 avaliacao pendente', pend === true);
   const { error: eNovo } = await aC.from('solicitacoes').insert({ cliente_id: cli.id, veiculo_id: v.id, tipo: 'mecanica', descricao: 'altro', urgencia: 'media', latitude: 45.46, longitude: 9.19, endereco: 'Milano' });
   ok('7 banco recusa pedido novo sem avaliar', !!eNovo);
-  await pC.goto(`${SITE}/it/cliente/dashboard`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3500);
+  await pC.goto(`${SITE}/it/it/cliente/dashboard`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3500);
   const dash = await pC.innerText('body');
   ok('7 inicio: aviso para avaliar', new RegExp(`Valuta Autofficina Concl A ${tag}`).test(dash), dash.replace(/\s+/g, ' ').slice(0, 300));
   ok('7 inicio: contagem da garantia (45 dias)', /Garanzie attive/.test(dash) && /mancano 4[45] giorni/.test(dash));
   ok('7 inicio sem rolagem lateral', await semRolagemLateral(pC));
   await pC.screenshot({ path: 'concl-dashboard.png', fullPage: true });
-  await pC.goto(`${SITE}/it/cliente/nova-solicitacao`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3500);
+  await pC.goto(`${SITE}/it/it/cliente/nova-solicitacao`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3500);
   const nova = await pC.innerText('body');
   ok('7 pedido novo bloqueado com link para avaliar e para o acidente', /Manca la tua recensione/.test(nova) && (await pC.getByRole('link', { name: /Ho avuto un incidente/ }).count()) > 0);
   await pC.getByRole('link', { name: /Valuta ora/ }).click(); await pC.waitForTimeout(3500);
@@ -155,7 +155,7 @@ try {
 
   // 8 pagina publica
   const pP = await (await celular()).newPage();
-  await pP.goto(`${SITE}/it/oficinas/${idA}`, { waitUntil: 'networkidle' }); await pP.waitForTimeout(1500);
+  await pP.goto(`${SITE}/it/it/oficinas/${idA}`, { waitUntil: 'networkidle' }); await pP.waitForTimeout(1500);
   const cont = pP.getByText(/recension/i).first();
   const dentro = await cont.evaluate((e) => { const r = e.getBoundingClientRect(); return r.right <= window.innerWidth + 1; }).catch(() => false);
   ok('8 pagina publica: numero de avaliacoes dentro da tela', dentro);

@@ -37,7 +37,7 @@ try {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   await ctx.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} });
   const p = await ctx.newPage();
-  await p.goto(`${SITE}/pt-br/login`, { waitUntil: 'networkidle' });
+  await p.goto(`${SITE}/br/pt/login`, { waitUntil: 'networkidle' });
   await p.fill('input[type=email]', adm.email); await p.fill('input[type=password]', adm.senha); await p.click('button[type=submit]'); await p.waitForTimeout(4000);
   await p.goto(`${SITE}/admin/oficinas/${o.id}`, { waitUntil: 'networkidle' }); await p.waitForTimeout(3000);
   ok('pagina da oficina mostra o email de acesso', (await p.innerText('body')).includes(of.email));

@@ -1,22 +1,23 @@
 import { API_BASE_URL } from './api';
 
-// Termos e Politica de Privacidade no site, no idioma do app (os nomes das
-// paginas sao traduzidos - ver PATHNAMES em apps/web/src/i18n/routing.ts).
+// Termos e Politica de Privacidade no site, na versao (pais/idioma) do idioma
+// do app. Os nomes das paginas sao traduzidos e o prefixo e /{pais}/{idioma} -
+// ver LOCALE_PREFIX e PATHNAMES em apps/web/src/i18n/routing.ts.
 const TERMOS: Record<string, string> = {
-  pt: '/pt-br/termos',
-  'pt-PT': '/pt-pt/termos',
-  en: '/en/terms',
-  et: '/et/tingimused',
-  it: '/it/termini',
-  ru: '/ru/usloviya',
+  pt: '/br/pt/termos',
+  'pt-PT': '/pt/pt/termos',
+  en: '/ee/en/terms',
+  et: '/ee/et/tingimused',
+  it: '/it/it/termini',
+  ru: '/ee/ru/usloviya',
 };
 const PRIVACIDADE: Record<string, string> = {
-  pt: '/pt-br/privacidade',
-  'pt-PT': '/pt-pt/privacidade',
-  en: '/en/privacy',
-  et: '/et/privaatsus',
-  it: '/it/privacy',
-  ru: '/ru/konfidentsialnost',
+  pt: '/br/pt/privacidade',
+  'pt-PT': '/pt/pt/privacidade',
+  en: '/ee/en/privacy',
+  et: '/ee/et/privaatsus',
+  it: '/it/it/privacy',
+  ru: '/ee/ru/konfidentsialnost',
 };
 
 export const urlTermos = (idioma: string) => `${API_BASE_URL}${TERMOS[idioma] || TERMOS.en}`;

@@ -41,7 +41,7 @@ try {
   // loja
   const ctxL = await celular(); const pL = await ctxL.newPage();
   const emailL = `delivered+loja${tag}@resend.dev`; const senhaL = `Lj-${tag}-Senha9`;
-  await pL.goto(`${SITE}/en/sign-up?tipo=loja_pecas`, { waitUntil: 'networkidle' });
+  await pL.goto(`${SITE}/ee/en/sign-up?tipo=loja_pecas`, { waitUntil: 'networkidle' });
   await campo(pL, EN('cadastro.labelNomeCompleto')).fill('TEST PARTS STORE');
   await campo(pL, EN('cadastro.labelEmail')).fill(emailL);
   await campo(pL, EN('cadastro.labelSenha')).fill(senhaL);
@@ -65,9 +65,9 @@ try {
   lojaId = lj.id;
   ok('loja: nasce inativa, pais EE', lj.ativa === false && lj.pais === 'EE', JSON.stringify(lj));
   const { data: link } = await sb.auth.admin.generateLink({ type: 'magiclink', email: emailL });
-  await pL.goto(`${SITE}/en/confirmar-email?token_hash=${encodeURIComponent(link.properties.hashed_token)}`, { waitUntil: 'networkidle' });
+  await pL.goto(`${SITE}/ee/en/confirmar-email?token_hash=${encodeURIComponent(link.properties.hashed_token)}`, { waitUntil: 'networkidle' });
   await pL.waitForTimeout(4000);
-  ok('loja: confirmou e caiu no painel', pL.url().includes('/en/loja/dashboard'), pL.url());
+  ok('loja: confirmou e caiu no painel', pL.url().includes('/ee/en/loja/dashboard'), pL.url());
   ok('loja: aviso "under review"', (await pL.innerText('body')).includes(EN('lojaDashboard.cadastroEmAnalise').slice(0, 30)));
 
   // admin ativa em /admin/pecas
@@ -88,7 +88,7 @@ try {
   await ctxA.close();
 
   // catalogo
-  await pL.goto(`${SITE}/en/loja/catalogo`, { waitUntil: 'networkidle' });
+  await pL.goto(`${SITE}/ee/en/loja/catalogo`, { waitUntil: 'networkidle' });
   await botao(pL, EN('lojaCatalogo.addButton')).click();
   await campo(pL, EN('lojaCatalogo.labelNome')).fill('Brake pads front');
   await campo(pL, EN('lojaCatalogo.labelMarca')).fill('Toyota');
@@ -107,7 +107,7 @@ try {
   oficinaId = of.id;
   const ctxO = await celular();
   const pO = await entrar(ctxO, emailO, senhaO, 'ru');
-  await pO.goto(`${SITE}/ru/oficina/pecas`, { waitUntil: 'networkidle' });
+  await pO.goto(`${SITE}/ee/ru/oficina/pecas`, { waitUntil: 'networkidle' });
   await botao(pO, RU('oficinaPecas.novaCotacao')).click();
   await campo(pO, RU('oficinaPecas.oQueVocePrecisa')).fill('Тормозные колодки передние');
   await campo(pO, RU('oficinaPecas.marca')).fill('Toyota');
@@ -119,7 +119,7 @@ try {
   cotId = cots?.[0]?.id;
 
   // loja responde
-  await pL.goto(`${SITE}/en/loja/cotacoes`, { waitUntil: 'networkidle' });
+  await pL.goto(`${SITE}/ee/en/loja/cotacoes`, { waitUntil: 'networkidle' });
   await pL.waitForTimeout(2000);
   ok('loja: ve o pedido da oficina', (await pL.innerText('body')).includes('Тормозные колодки'));
   await botao(pL, EN('lojaCotacoes.responderCotacaoButton')).click();
@@ -131,7 +131,7 @@ try {
   ok('loja: respondeu a cotacao', (resp || []).length === 1);
 
   // oficina fecha o pedido
-  await pO.goto(`${SITE}/ru/oficina/pecas`, { waitUntil: 'networkidle' });
+  await pO.goto(`${SITE}/ee/ru/oficina/pecas`, { waitUntil: 'networkidle' });
   await pO.waitForTimeout(2500);
   const tO = await pO.innerText('body');
   ok('oficina: ve a resposta com preco em euro', /44/.test(tO) && /€/.test(tO));

@@ -1,4 +1,4 @@
-import { routing, HREFLANG, X_DEFAULT_LOCALE, localePrefix, hrefNoIdioma } from '@/i18n/routing';
+import { routing, hreflangsDe, X_DEFAULT_LOCALE, localePrefix, hrefNoIdioma } from '@/i18n/routing';
 
 interface OficinaSchema {
   id: string;
@@ -187,13 +187,13 @@ export function generateReviewSchema(
  * `path` e relativo ao locale, sem prefixo (ex: '/seja-parceiro', '/oficinas/123').
  */
 export function hreflangAlternates(locale: string, path: string) {
-  // Chaves com regiao (pt-BR / pt-PT) - sem isso o Google nao distingue
-  // Brasil de Portugal. x-default aponta para o ingles (mercado europeu).
+  // Chaves idioma-PAIS (et-EE, ru-EE, pt-BR, pt-PT...) + catch-all et/it
+  // (routing.ts). x-default: raiz na home, /ee/en nas demais.
   // home: x-default = raiz "https://bipfix.com/" (pagina de escolha de idioma);
   // demais paginas: a versao em ingles
   const languages: Record<string, string> = { 'x-default': path === '' || path === '/' ? 'https://bipfix.com/' : localizedUrl(X_DEFAULT_LOCALE, path) };
   for (const l of routing.locales) {
-    languages[HREFLANG[l]] = localizedUrl(l, path);
+    for (const codigo of hreflangsDe(l)) languages[codigo] = localizedUrl(l, path);
   }
 
   return {
@@ -202,7 +202,7 @@ export function hreflangAlternates(locale: string, path: string) {
   };
 }
 
-/** URL absoluta de `path` no idioma `locale` (ex: localizedUrl('pt-PT', '/termos') -> https://bipfix.com/pt-pt/termos). */
+/** URL absoluta de `path` no idioma `locale` (ex: localizedUrl('pt-PT', '/termos') -> https://bipfix.com/pt/pt/termos). */
 export function localizedUrl(locale: string, path: string): string {
   return `${BASE_URL}${hrefNoIdioma(locale, path)}`;
 }

@@ -57,7 +57,7 @@ try {
   // ---- 1) primeira mensagem da oficina B (antes de orcar) -> aviso ao cliente
   const ctxB = await celular(); const pB = await ctxB.newPage();
   await entrar(pB, ofB.email, ofB.senha, 'it');
-  await pB.goto(`${SITE}/it/oficina/mensagens/${s.id}`, { waitUntil: 'networkidle' }); await pB.waitForTimeout(2500);
+  await pB.goto(`${SITE}/it/it/oficina/mensagens/${s.id}`, { waitUntil: 'networkidle' }); await pB.waitForTimeout(2500);
   await pB.locator('input[type=text]').last().fill('Buongiorno, il paraurti è solo graffiato?');
   await pB.locator('input[type=text]').last().press('Enter'); await pB.waitForTimeout(4000);
   const { data: n1 } = await sb.from('notificacoes').select('titulo, dados').eq('profile_id', cli.id).eq('tipo', 'nova_mensagem');
@@ -73,20 +73,20 @@ try {
 
   // ---- 6) perfil: B nao aprovada ve aviso; A aprovada tem botoes na tela e pagina publica
   await sb.from('oficinas').update({ ativa: false }).eq('id', idB);
-  await pB.goto(`${SITE}/it/oficina/perfil`, { waitUntil: 'networkidle' }); await pB.waitForTimeout(2500);
+  await pB.goto(`${SITE}/it/it/oficina/perfil`, { waitUntil: 'networkidle' }); await pB.waitForTimeout(2500);
   ok('6 oficina nao aprovada ve o aviso da pagina publica', /dopo l'approvazione/.test(await pB.innerText('body')));
   const ctxA = await celular(); const pA = await ctxA.newPage();
   await entrar(pA, ofA.email, ofA.senha, 'it');
-  await pA.goto(`${SITE}/it/oficina/perfil`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(2500);
+  await pA.goto(`${SITE}/it/it/oficina/perfil`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(2500);
   const botoes = pA.locator('a[target=_blank], button').filter({ hasText: /pagina pubblica|Condividi/i });
   let todosDentro = (await botoes.count()) >= 2;
   for (let i = 0; i < (await botoes.count()); i++) todosDentro = todosDentro && await dentroDaTela(botoes.nth(i));
   ok('6 botoes "pagina pubblica" e "Condividi" dentro da tela', todosDentro);
-  const rPub = await fetch(`${SITE}/it/oficinas/${idA}`);
+  const rPub = await fetch(`${SITE}/it/it/oficinas/${idA}`);
   ok('6 pagina publica abre (sem 404)', rPub.status === 200, rPub.status);
 
   // ---- 3) orcamento com garantia (180) pela tela, aceite, check-in e entrega com confirmacao
-  await pA.goto(`${SITE}/it/oficina/enviar-orcamento/${s.id}`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
+  await pA.goto(`${SITE}/it/it/oficina/enviar-orcamento/${s.id}`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
   // o mesmo PDF pela tela: a IA preenche os itens
   await pA.locator('input[type=file][accept*="pdf"]').setInputFiles({ name: 'preventivo.pdf', mimeType: 'application/pdf', buffer: pdfOrcamento() });
   await pA.getByText(/Voci compilate dal documento/).waitFor({ timeout: 60000 }).catch(() => {});
@@ -104,12 +104,12 @@ try {
   await fetch(`${SITE}/api/servico`, { method: 'POST', headers: { Authorization: `Bearer ${tA}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ acao: 'checkin', eventoId: ag.id, antecipar: true }) });
 
   // ---- 5) agenda: "Fasi" apos o check-in
-  await pA.goto(`${SITE}/it/oficina/agenda`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
+  await pA.goto(`${SITE}/it/it/oficina/agenda`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
   await pA.getByRole('button', { name: /^Giorno$/ }).click(); await pA.waitForTimeout(1500);
   ok('5 resumo do mes com o servico traduzido (nao "funilaria")', !/funilaria:/.test(await pA.innerText('body')));
   ok('5 agenda mostra o botao das fasi apos o check-in', (await pA.getByRole('link', { name: /^Fasi$/ }).count()) > 0);
 
-  await pA.goto(`${SITE}/it/oficina/veiculos-em-servico`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
+  await pA.goto(`${SITE}/it/it/oficina/veiculos-em-servico`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
   await pA.getByRole('button', { name: /Consegna/ }).first().click(); await pA.waitForTimeout(1200);
   const conf = await pA.locator('[role=alert]').first().innerText().catch(() => '');
   ok('3 entrega pede confirmacao', /Consegnare l'auto al cliente/.test(conf), conf);
@@ -121,13 +121,13 @@ try {
 
   const ctxC = await celular(); const pC = await ctxC.newPage();
   await entrar(pC, cli.email, cli.senha, 'it');
-  await pC.goto(`${SITE}/it/cliente/dashboard`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
+  await pC.goto(`${SITE}/it/it/cliente/dashboard`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
   const dash = await pC.innerText('body');
   ok('3 inicio do cliente: contagem da garantia', /Garanzie attive/.test(dash) && /mancano 1(79|80) giorni/.test(dash), dash.replace(/\s+/g, ' ').slice(0, 200));
   await pC.screenshot({ path: 'gar-dashboard.png', fullPage: true });
 
   // ---- 4) conversas depois do servico
-  await pC.goto(`${SITE}/it/cliente/mensagens`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
+  await pC.goto(`${SITE}/it/it/cliente/mensagens`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
   const lista = await pC.innerText('body');
   ok('4 lista: some a oficina nao escolhida, fica a escolhida', lista.includes(`GAR A ${tag}`) && !lista.includes(`GAR B ${tag}`));
   const { a: aC } = await sessao(cli);
@@ -136,7 +136,7 @@ try {
   ok('4 conversa com a escolhida aberta (garantia), com a outra fechada', abertaA === true && abertaB === false, `${abertaA} ${abertaB}`);
   const { error: eB } = await aC.from('mensagens').insert({ solicitacao_id: s.id, oficina_id: idB, remetente_id: cli.id, texto: 'ciao' });
   ok('4 nao se escreve mais para a oficina nao escolhida', !!eB);
-  await pB.goto(`${SITE}/it/oficina/mensagens/${s.id}`, { waitUntil: 'networkidle' }); await pB.waitForTimeout(3000);
+  await pB.goto(`${SITE}/it/it/oficina/mensagens/${s.id}`, { waitUntil: 'networkidle' }); await pB.waitForTimeout(3000);
   ok('4 oficina nao escolhida ve "Conversazione chiusa"', /Conversazione chiusa/.test(await pB.innerText('body')));
 } catch (e) { falhas++; console.log('FALHA parou:', String(e.stack).slice(0, 700)); }
 finally {

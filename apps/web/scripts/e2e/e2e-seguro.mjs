@@ -54,16 +54,16 @@ try {
   // a oficina ve no pedido e na lista
   const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
   const page = await (await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true })).newPage();
-  await page.goto(`${SITE}/et/login`, { waitUntil: 'networkidle' });
+  await page.goto(`${SITE}/ee/et/login`, { waitUntil: 'networkidle' });
   await page.fill('input[type=email]', emailO); await page.fill('input[type=password]', senhaO); await page.click('button[type=submit]');
   await page.waitForTimeout(4000);
-  await page.goto(`${SITE}/et/oficina/enviar-orcamento/${solId}`, { waitUntil: 'networkidle' });
+  await page.goto(`${SITE}/ee/et/oficina/enviar-orcamento/${solId}`, { waitUntil: 'networkidle' });
   await page.waitForTimeout(2500);
   const txt = await page.innerText('body');
   ok('oficina ve "Kes maksab remondi eest" com If e KA-12345', txt.includes('Kes maksab remondi eest') && txt.includes('KA-12345') && txt.includes('Kliendi kaskokindlustus') && /200[,.]50/.test(txt));
   ok('tipo traduzido (sem "colisao" cru)', !/\bcolisao\b/.test(txt));
   await page.screenshot({ path: 'e2e-oficina-seguro.png' });
-  await page.goto(`${SITE}/et/oficina/solicitacoes`, { waitUntil: 'networkidle' });
+  await page.goto(`${SITE}/ee/et/oficina/solicitacoes`, { waitUntil: 'networkidle' });
   await page.waitForTimeout(2500);
   const lista = await page.innerText('body');
   ok('lista mostra selo Kindlustus', lista.includes('Kindlustus'));

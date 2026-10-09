@@ -58,7 +58,7 @@ try {
   const { data: link } = await admin.auth.admin.generateLink({ type: 'magiclink', email });
   const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
   const page = await (await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true })).newPage();
-  await page.goto(`${SITE}/et/confirmar-email?token_hash=${encodeURIComponent(link.properties.hashed_token)}`);
+  await page.goto(`${SITE}/ee/et/confirmar-email?token_hash=${encodeURIComponent(link.properties.hashed_token)}`);
   await page.waitForURL(/\/oficina\/dashboard/, { timeout: 20000 }).catch(() => {});
   ok('link abre o painel da oficina', /\/et\/oficina\/dashboard/.test(page.url()), page.url());
   await page.waitForTimeout(2500);

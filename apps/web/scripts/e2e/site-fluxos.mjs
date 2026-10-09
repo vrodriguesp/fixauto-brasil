@@ -55,7 +55,7 @@ try {
   // ---------- 1) oficina (et)
   const ctxO = await celular(); const pO = await ctxO.newPage();
   const emailO = `delivered+ofi${tag}@resend.dev`; const senhaO = `Of-${tag}-Senha9`;
-  await pO.goto(`${SITE}/et/registreeru?tipo=oficina`, { waitUntil: 'networkidle' });
+  await pO.goto(`${SITE}/ee/et/registreeru?tipo=oficina`, { waitUntil: 'networkidle' });
   await campo(pO, ET('cadastro.labelNomeCompleto')).fill('TESTE FLUXO OFICINA');
   await campo(pO, ET('cadastro.labelEmail')).fill(emailO);
   await campo(pO, ET('cadastro.labelTelefone')).fill('+37255552222');
@@ -83,11 +83,11 @@ try {
   ok('oficina: nasce inativa, na posicao escolhida', of.ativa === false && Math.abs(of.latitude - 59.43) < 0.05 && of.cidade === 'Tallinn');
   const pD = await confirmar(ctxO, emailO, 'et');
   const tD = await pD.innerText('body');
-  ok('oficina: confirmou e caiu no painel', pD.url().includes('/et/oficina/dashboard'), pD.url());
+  ok('oficina: confirmou e caiu no painel', pD.url().includes('/ee/et/oficina/dashboard'), pD.url());
   ok('oficina: aviso "em analise"', tD.includes(ET('oficinaDashboard.cadastroEmAnalise').slice(0, 30)));
   ok('oficina: medidor de perfil', tD.includes(ET('oficinaDashboard.perfilTitulo', { pct: '' }).split('{')[0].trim().slice(0, 12)));
   await pD.screenshot({ path: 'fluxo-oficina-painel.png', fullPage: true });
-  await pD.goto(`${SITE}/et/oficina/perfil`, { waitUntil: 'networkidle' });
+  await pD.goto(`${SITE}/ee/et/oficina/perfil`, { waitUntil: 'networkidle' });
   await pD.waitForTimeout(2000);
   ok('oficina: perfil cabe na tela do celular', (await pD.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)) <= 1);
   await campo(pD, ET('oficinaPerfil.descricaoLabel')).fill('Pereettevõte aastast 2005. Kere- ja värvitööd, asendusauto ja hinnapakkumine 24 tunni jooksul. Test.');
@@ -102,7 +102,7 @@ try {
   contas.push(ua.user.id);
   await sb.from('profiles').insert({ id: ua.user.id, tipo: 'admin', nome: 'TESTE ADMIN', email: emailA, idioma: 'it' });
   const ctxA = await celular(); const pA = await ctxA.newPage();
-  await pA.goto(`${SITE}/it/login`, { waitUntil: 'networkidle' });
+  await pA.goto(`${SITE}/it/it/login`, { waitUntil: 'networkidle' });
   await pA.fill('input[type=email]', emailA); await pA.fill('input[type=password]', senhaA);
   await pA.click('button[type=submit]'); await pA.waitForTimeout(4000);
   await pA.goto(`${SITE}/admin/oficinas`, { waitUntil: 'networkidle' });
@@ -118,7 +118,7 @@ try {
   // ---------- 3) cliente (it)
   const ctxC = await celular(); const pC = await ctxC.newPage();
   const emailC = `delivered+cli${tag}@resend.dev`; const senhaC = `Cl-${tag}-Senha9`;
-  await pC.goto(`${SITE}/it/registrati?tipo=cliente`, { waitUntil: 'networkidle' });
+  await pC.goto(`${SITE}/it/it/registrati?tipo=cliente`, { waitUntil: 'networkidle' });
   await campo(pC, IT('cadastro.labelNomeCompleto')).fill('TESTE FLUXO CLIENTE');
   await campo(pC, IT('cadastro.labelEmail')).fill(emailC);
   await campo(pC, IT('cadastro.labelSenha')).fill(senhaC);
@@ -129,9 +129,9 @@ try {
   const { data: pc } = await sb.from('profiles').select('id').eq('email', emailC).single();
   contas.push(pc.id);
   const pC2 = await confirmar(ctxC, emailC, 'it');
-  ok('cliente: confirmou e caiu no painel', pC2.url().includes('/it/cliente/dashboard'), pC2.url());
+  ok('cliente: confirmou e caiu no painel', pC2.url().includes('/it/it/cliente/dashboard'), pC2.url());
 
-  await pC2.goto(`${SITE}/it/cliente/nova-solicitacao`, { waitUntil: 'networkidle' });
+  await pC2.goto(`${SITE}/it/it/cliente/nova-solicitacao`, { waitUntil: 'networkidle' });
   await pC2.waitForTimeout(1500);
   await botao(pC2, IT('clienteNovaSolicitacao.registerVehicle')).click();
   const marca = campo(pC2, IT('veiculoForm.labelMarca'));
@@ -172,10 +172,10 @@ try {
 
   // ---------- 4) oficina manda orcamento pela tela
   if (solId) {
-    await pD.goto(`${SITE}/et/oficina/solicitacoes`, { waitUntil: 'networkidle' });
+    await pD.goto(`${SITE}/ee/et/oficina/solicitacoes`, { waitUntil: 'networkidle' });
     await pD.waitForTimeout(2000);
     ok('oficina: ve o pedido na lista', (await pD.innerText('body')).includes('Test: rumore'));
-    await pD.goto(`${SITE}/et/oficina/enviar-orcamento/${solId}`, { waitUntil: 'networkidle' });
+    await pD.goto(`${SITE}/ee/et/oficina/enviar-orcamento/${solId}`, { waitUntil: 'networkidle' });
     await pD.waitForTimeout(2000);
     await pD.locator('input[placeholder="' + ET('oficinaEnviarOrcamento.placeholderDescricaoItem') + '"]').first().fill('Piduriklotsid + töö');
     const valor = pD.locator('input[type=number]').locator('visible=true');
@@ -188,7 +188,7 @@ try {
 
     // ---------- 5) cliente aceita
     if (orcs?.length) {
-      await pC2.goto(`${SITE}/it/cliente/orcamentos/${solId}`, { waitUntil: 'networkidle' });
+      await pC2.goto(`${SITE}/it/it/cliente/orcamentos/${solId}`, { waitUntil: 'networkidle' });
       await pC2.waitForTimeout(2500);
       await pC2.screenshot({ path: 'fluxo-cliente-orcamento.png', fullPage: true });
       const tO = await pC2.innerText('body');

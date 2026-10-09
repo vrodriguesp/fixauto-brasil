@@ -39,7 +39,7 @@ try {
 
   // oficina A, ainda sem orcamento, tira uma duvida
   const ctxO = await celular(); const pO = await entrar(ctxO, ofi.email, ofi.senha, 'et');
-  await pO.goto(`${SITE}/et/oficina/mensagens/${solId}`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(2500);
+  await pO.goto(`${SITE}/ee/et/oficina/mensagens/${solId}`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(2500);
   const t0 = await pO.innerText('body');
   ok('nome do cliente nao fica em "carregando"', !/Laadimine|Carregando|Loading/i.test(t0.split('\n').slice(0, 12).join(' ')));
   const box = pO.locator('input[type=text]').last();
@@ -51,7 +51,7 @@ try {
 
   // oficina B: conversa propria, nao ve a da A
   const ctxO2 = await celular(); const pO2 = await entrar(ctxO2, ofi2.email, ofi2.senha, 'pt-br');
-  await pO2.goto(`${SITE}/pt-br/oficina/mensagens/${solId}`, { waitUntil: 'networkidle' }); await pO2.waitForTimeout(2500);
+  await pO2.goto(`${SITE}/br/pt/oficina/mensagens/${solId}`, { waitUntil: 'networkidle' }); await pO2.waitForTimeout(2500);
   ok('oficina B nao ve a conversa da A (tela)', !(await pO2.innerText('body')).includes('kriuksuvad'));
   await pO2.locator('input[type=text]').last().fill('Ola, posso ver o carro amanha.');
   await pO2.locator('input[type=text]').last().press('Enter'); await pO2.waitForTimeout(3000);
@@ -65,10 +65,10 @@ try {
 
   // cliente: duas conversas separadas
   const ctxC = await celular(); const pC = await entrar(ctxC, cli.email, cli.senha, 'it');
-  await pC.goto(`${SITE}/it/cliente/mensagens`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
+  await pC.goto(`${SITE}/it/it/cliente/mensagens`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
   const lista = await pC.innerText('body');
   ok('cliente ve as duas oficinas na lista', lista.includes(`MSG SHOP ${tag}`) && lista.includes(`OUTRA SHOP ${tag}`));
-  await pC.goto(`${SITE}/it/cliente/mensagens/${solId}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
+  await pC.goto(`${SITE}/it/it/cliente/mensagens/${solId}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
   ok('sem oficina no link: cliente escolhe com quem falar', /Con quale officina/.test(await pC.innerText('body')));
   await pC.getByRole('button', { name: `MSG SHOP ${tag}` }).click(); await pC.waitForTimeout(2500);
   const conversaA = await pC.innerText('body');
@@ -102,7 +102,7 @@ try {
     const nv = b64 ? 'base64-' + Buffer.from(JSON.stringify(j)).toString('base64') : JSON.stringify(j);
     await ctxC.addCookies([{ ...ck, value: nv }]);
   }
-  await pC.goto(`${SITE}/it/cliente/orcamentos/${solId}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
+  await pC.goto(`${SITE}/it/it/cliente/orcamentos/${solId}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
   const nome = await pC.innerText('body');
   if (/Accetta e programma/.test(nome)) {
     await pC.getByRole('button', { name: /Accetta e programma/ }).last().click(); await pC.waitForTimeout(1000);

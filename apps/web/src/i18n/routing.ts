@@ -1,29 +1,29 @@
 import { defineRouting } from 'next-intl/routing';
 import GUIAS_INDICE from '@/lib/guias-indice.json';
 
-// Idiomas do site:
-// - pt    = portugues do BRASIL (/pt-br). Regras brasileiras: LGPD, CDC,
-//           tabela FIPE, CPF/CNPJ. Ate 30/09/2026 ficava sem prefixo; os
-//           enderecos antigos recebem 301 para /pt-br (middleware.ts).
-// - pt-PT = portugues de PORTUGAL (/pt-pt). Pais da UE: textos legais do GDPR
-//           e regras europeias, igual a en/et/it.
-// - en    = ingles (fallback universal e x-default para o Google)
-// - et    = estoniano (piloto em Tallinn)
-// - it    = italiano
-// - ru    = russo, para a comunidade russofona da ESTONIA (~1/3 de Tallinn):
-//           conteudo europeu/estoniano (GDPR, euro), nao da Russia.
+// Versoes do site = MERCADO (pais) + idioma, como IKEA (ikea.com/ee/et/) e
+// Norwegian (decisao do dono 09/10/2026, docs/ANALISE_ESTRUTURA_MERCADOS_2026-10-09.md).
+// Codigo do pais ISO 3166 (EE = Estonia, tambem o dominio .ee); codigo do
+// idioma ISO 639 (et = estoniano). O nome interno do idioma (pasta
+// app/[locale], mensagens, profiles.idioma) nao muda; so o endereco publico:
+// - et    -> /ee/et  estoniano, Estonia (piloto em Tallinn)
+// - ru    -> /ee/ru  russo para a comunidade russofona da ESTONIA (~1/3 de
+//                    Tallinn): GDPR, euro - nao a Russia (hreflang ru-EE)
+// - en    -> /ee/en  ingles, Estonia
+// - it    -> /it/it  Italia (mercado de teste)
+// - pt-PT -> /pt/pt  Portugal
+// - pt    -> /br/pt  Brasil (LGPD, CDC, FIPE, CPF/CNPJ)
+// Enderecos antigos (/et, /ru, /en, /it, /pt-br, /pt-pt e os do Brasil sem
+// prefixo) recebem 301 para os novos (middleware.ts).
 // Estrutura recomendada pelo Google (docs "Managing multi-regional and
 // multilingual sites" e "Tell Google about localized versions"):
-// - TODO idioma tem o proprio endereco com prefixo (subdiretorio) e
-//   hreflang com a regiao (pt-BR / pt-PT); paginas de idioma nunca
-//   redirecionam para outro idioma.
-// - A raiz "/" NAO e versao de idioma: e a home internacional (o caso de uso
-//   do x-default, blog do Google 2013 e 2023, tambem suportado pelo Yandex).
-//   Ela manda a pessoa para a home do idioma dela (escolha salva > idioma do
-//   navegador > ingles). Robos chegam sem Accept-Language -> ingles.
-// - x-default de cada pagina = versao em ingles (padrao universal).
-// Em paginas de idioma, components/layout/SugestaoIdioma.tsx so SUGERE a
-// versao no idioma do navegador (sem redirecionar).
+// - subpastas no .com com hreflang idioma-PAIS (et-EE, ru-EE...); paginas
+//   nunca redirecionam para outra versao.
+// - A raiz "/" NAO e versao: e a escolha de pais/idioma (x-default), 200,
+//   sem redirecionar (padrao IKEA "Welcome to IKEA Global" e Norwegian).
+// - x-default das paginas internas = /ee/en.
+// Em cada pagina, components/layout/SugestaoIdioma.tsx so SUGERE outro
+// idioma do MESMO pais (sem redirecionar).
 // Nomes das paginas PUBLICAS no idioma do publico (Google, "URL structure
 // best practices": "Use words in your audience's language in the URL (and,
 // if applicable, transliterated words)"). Estoniano sem diacriticos, russo
@@ -108,7 +108,7 @@ export const routing = defineRouting({
   defaultLocale: 'en',
   localePrefix: {
     mode: 'always',
-    prefixes: { pt: '/pt-br', 'pt-PT': '/pt-pt' },
+    prefixes: { pt: '/br/pt', 'pt-PT': '/pt/pt', en: '/ee/en', et: '/ee/et', it: '/it/it', ru: '/ee/ru' },
   },
   localeDetection: false,
   // O idioma vem so da URL (e da escolha salva em bipfix_idioma); o cookie
@@ -119,25 +119,58 @@ export const routing = defineRouting({
 
 export type Locale = (typeof routing.locales)[number];
 
-// Prefixo publico da URL de cada idioma (todos tem prefixo).
+// Prefixo publico da URL de cada versao: /{pais}/{idioma}.
 export const LOCALE_PREFIX: Record<Locale, string> = {
-  pt: '/pt-br',
-  'pt-PT': '/pt-pt',
-  en: '/en',
-  et: '/et',
-  it: '/it',
-  ru: '/ru',
+  pt: '/br/pt',
+  'pt-PT': '/pt/pt',
+  en: '/ee/en',
+  et: '/ee/et',
+  it: '/it/it',
+  ru: '/ee/ru',
 };
 
-// Codigo BCP 47 com regiao: <html lang>, hreflang, formatacao de datas.
+// Codigo BCP 47 idioma-PAIS: <html lang>, hreflang, Content-Language.
 export const HREFLANG: Record<Locale, string> = {
   pt: 'pt-BR',
   'pt-PT': 'pt-PT',
-  en: 'en',
-  et: 'et',
-  it: 'it',
-  ru: 'ru',
+  en: 'en-EE',
+  et: 'et-EE',
+  it: 'it-IT',
+  ru: 'ru-EE',
 };
+
+// hreflang so de idioma ("catch-all", Google: "provide a catchall URL for
+// users of that language") apenas onde o idioma tem UM mercado: estoniano e
+// italiano (como Wolt: et + et-EE). Russo e ingles NAO: "ru"/"en" diriam que
+// a pagina de Tallinn serve para a Russia ou para o mundo todo.
+export const HREFLANG_EXTRA: Partial<Record<Locale, string>> = { et: 'et', it: 'it' };
+
+// Todos os codigos hreflang de uma versao
+export function hreflangsDe(locale: Locale): string[] {
+  return HREFLANG_EXTRA[locale] ? [HREFLANG[locale], HREFLANG_EXTRA[locale]!] : [HREFLANG[locale]];
+}
+
+// Mercados (paises), na ordem da pagina inicial e do seletor
+export const MERCADOS: { pais: 'EE' | 'IT' | 'PT' | 'BR'; nome: string; locales: Locale[] }[] = [
+  { pais: 'EE', nome: 'Eesti', locales: ['et', 'ru', 'en'] },
+  { pais: 'IT', nome: 'Italia', locales: ['it'] },
+  { pais: 'PT', nome: 'Portugal', locales: ['pt-PT'] },
+  { pais: 'BR', nome: 'Brasil', locales: ['pt'] },
+];
+
+// Nome do idioma escrito nele mesmo
+export const NOME_IDIOMA_NATIVO: Record<Locale, string> = {
+  et: 'Eesti keel', ru: 'Русский', en: 'English', it: 'Italiano', 'pt-PT': 'Português', pt: 'Português',
+};
+
+export function mercadoDe(locale: string) {
+  return MERCADOS.find((m) => (m.locales as string[]).includes(locale)) ?? MERCADOS[0];
+}
+
+// "Eesti · Русский", "Italia · Italiano"
+export function rotuloVersao(locale: Locale): string {
+  return `${mercadoDe(locale).nome} · ${NOME_IDIOMA_NATIVO[locale]}`;
+}
 
 // og:locale (formato com underscore)
 export const OG_LOCALE: Record<Locale, string> = {
@@ -146,12 +179,11 @@ export const OG_LOCALE: Record<Locale, string> = {
   en: 'en_GB',
   et: 'et_EE',
   it: 'it_IT',
-  ru: 'ru_RU',
+  ru: 'ru_EE',
 };
 
-// Versao mostrada pelo Google a quem nao bate com nenhum idioma (hreflang
-// x-default). O mercado atual e a Europa, entao ingles - nao o Brasil.
-// x-default das paginas internas (a home usa a raiz "/", pagina de escolha de idioma)
+// x-default das paginas internas (a home usa a raiz "/", escolha de pais/idioma):
+// ingles da Estonia, o mercado principal.
 export const X_DEFAULT_LOCALE: Locale = 'en';
 
 export function localePrefix(locale: string): string {
@@ -164,7 +196,7 @@ export function isBrasil(locale: string): boolean {
 }
 
 // Endereco publico de `pathname` (sem prefixo de idioma, ex: '/termos') no
-// idioma `locale`: '/termos' -> '/pt-br/termos', '/pt-pt/termos', '/en/termos'.
+// idioma `locale`: '/termos' -> '/br/pt/termos', '/pt/pt/termos', '/ee/en/terms'.
 // Usado nos links de troca de idioma: aponta direto para a URL final.
 export function caminhoNoIdioma(locale: string, pathname: string, params?: Record<string, string | string[] | undefined>): string {
   // Guia: cada idioma tem o proprio slug (e nem todo guia existe em todo
@@ -208,8 +240,8 @@ export function caminhoLocal(locale: string, interno: string, params?: Record<st
 }
 
 // Endereco publico completo (sem dominio) de um caminho interno no idioma:
-// hrefNoIdioma('et', '/oficinas/abc') -> '/et/tookojad/abc';
-// hrefNoIdioma('en', '') ou '/' -> '/en' (home sem barra final).
+// hrefNoIdioma('et', '/oficinas/abc') -> '/ee/et/tookojad/abc';
+// hrefNoIdioma('en', '') ou '/' -> '/ee/en' (home sem barra final).
 export function hrefNoIdioma(locale: string, interno: string): string {
   if (!interno || interno === '/') return localePrefix(locale) || '/';
   return `${localePrefix(locale)}${caminhoLocal(locale, interno)}`;

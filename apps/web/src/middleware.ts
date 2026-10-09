@@ -12,7 +12,7 @@ const ADMIN_MAX_SESSION_HOURS = 8;
 
 const intlMiddleware = createIntlMiddleware(routing);
 
-// Todo idioma tem prefixo na URL (/pt-br, /pt-pt, /en, /et, /it, /ru).
+// Toda versao tem prefixo pais/idioma na URL (/ee/et, /ee/ru, /ee/en, /it/it, /pt/pt, /br/pt).
 // Separa o prefixo do resto do path pra comparar rotas protegidas independente
 // do idioma, e pra poder remontar redirects preservando o idioma atual.
 const PREFIX_TO_LOCALE: [string, Locale][] = (Object.entries(LOCALE_PREFIX) as [Locale, string][])
@@ -29,6 +29,21 @@ function splitLocalePrefix(pathname: string): { prefix: string; path: string; lo
 }
 
 const PREFIXOS_IDIOMA = Object.values(LOCALE_PREFIX);
+
+// Enderecos por idioma usados ate 09/10/2026 -> versao pais/idioma (301)
+const PREFIXOS_ANTIGOS: [string, Locale][] = [
+  ['/pt-br', 'pt'], ['/pt-pt', 'pt-PT'], ['/et', 'et'], ['/ru', 'ru'], ['/en', 'en'],
+];
+// So o pais (/ee, /it...) ou pais + pagina sem idioma (inclui os antigos
+// /it/... do italiano) -> idioma principal do pais
+const IDIOMA_DO_PAIS: Record<string, Locale> = { ee: 'et', it: 'it', pt: 'pt-PT', br: 'pt' };
+// Nome interno das versoes (pasta app/[locale]); o Next anuncia a imagem de
+// compartilhamento por ele (/et/opengraph-image...)
+const IMAGEM_INTERNA = /^\/(pt|pt-PT|en|et|it|ru)\/opengraph-image(\/|$)/;
+
+function comPrefixo(pathname: string, prefixo: string) {
+  return pathname === prefixo || pathname.startsWith(prefixo + '/');
+}
 
 // Primeiro trecho dos enderecos publicos da versao do Brasil antes de 30/09/2026
 const CAMINHOS_ANTIGOS_BR = new Set([
@@ -51,32 +66,40 @@ export async function middleware(req: NextRequest) {
     return res;
   }
 
-  // Painel admin nao tem idioma: /pt-br/admin/... (ou qualquer idioma) -> /admin/...
-  const adminComIdioma = pathname.match(/^\/(?:pt-br|pt-pt|en|et|it|ru|pt|pt-PT)(\/admin(?:\/.*)?)$/);
+  // Painel admin nao tem idioma: /br/pt/admin/... (qualquer versao, nova ou antiga) -> /admin/...
+  const adminComIdioma = pathname.match(/^\/(?:(?:ee|it|pt|br)\/(?:et|ru|en|it|pt)|pt-br|pt-pt|en|et|it|ru|pt|pt-PT)(\/admin(?:\/.*)?)$/);
   if (adminComIdioma) {
     return NextResponse.redirect(new URL(`${adminComIdioma[1]}${req.nextUrl.search}`, req.url), 308);
   }
 
-  // Enderecos antigos da versao do Brasil (sem prefixo, ate 30/09/2026):
-  // 301 permanente para /pt-br/... - preserva o que o Google ja indexou.
-  // "/pt/..." (nome interno do idioma) tambem vai para /pt-br.
+  // A imagem de compartilhamento (app/[locale]/opengraph-image.tsx) e anunciada
+  // pelo Next com o nome INTERNO da versao (/et/opengraph-image). Redes sociais
+  // e IAs nao seguem redirect de imagem: passa direto para a rota, que existe
+  // para esses segmentos (antes de tratar /et como endereco antigo).
+  if (IMAGEM_INTERNA.test(pathname)) return NextResponse.next();
+
+  // Enderecos sem prefixo pais/idioma: 301 para a versao certa (preserva o
+  // que os buscadores ja indexaram) ou 404.
   const isAdminOrApiEarly = pathname.startsWith('/admin') || pathname.startsWith('/api');
-  const temPrefixo = PREFIXOS_IDIOMA.some((p) => pathname === p || pathname.startsWith(`${p}/`));
-  const imagemInterna = /^\/(pt|pt-PT)\/opengraph-image(\/|$)/.test(pathname);
-  // So os caminhos que existiam na versao sem prefixo; qualquer outro vai
-  // direto para o 404 (antes: 301 -> /pt-br/... -> 404, cadeia inutil).
-  if (!isAdminOrApiEarly && !temPrefixo && !imagemInterna) {
-    const resto = pathname === '/pt' ? '/' : pathname.startsWith('/pt/') ? pathname.slice(3) : pathname;
-    const primeiro = resto.split('/')[1] || '';
-    if (resto === '/' || CAMINHOS_ANTIGOS_BR.has(primeiro)) {
-      return NextResponse.redirect(new URL(`${hrefNoIdioma('pt', resto)}${req.nextUrl.search}`, req.url), 301);
-    }
+  const temPrefixo = PREFIXOS_IDIOMA.some((p) => comPrefixo(pathname, p));
+  if (!isAdminOrApiEarly && !temPrefixo) {
+    const destino = (locale: Locale, resto: string) =>
+      NextResponse.redirect(new URL(`${hrefNoIdioma(locale, resto)}${req.nextUrl.search}`, req.url), 301);
+    // 1) por idioma (ate 09/10/2026): /et/tookojad -> /ee/et/tookojad
+    const antigo = PREFIXOS_ANTIGOS.find(([p]) => comPrefixo(pathname, p));
+    if (antigo) return destino(antigo[1], pathname.slice(antigo[0].length) || '/');
+    // 2) pais sem idioma: /ee -> /ee/et; /it/officine (italiano antigo) -> /it/it/officine
+    const primeiro = pathname.split('/')[1] || '';
+    if (IDIOMA_DO_PAIS[primeiro]) return destino(IDIOMA_DO_PAIS[primeiro], pathname.slice(primeiro.length + 1) || '/');
+    // 3) versao do Brasil sem prefixo (ate 30/09/2026)
+    if (CAMINHOS_ANTIGOS_BR.has(primeiro)) return destino('pt', pathname);
+    // qualquer outro: direto para o 404 (sem cadeia de redirecionamentos)
     return NextResponse.rewrite(new URL(`/en/pagina-inexistente`, req.url), { status: 404 });
   }
 
   // Nome antigo (interno, em portugues) dentro de um idioma que tem nome
-  // proprio para a pagina: /et/seja-parceiro -> /et/hakka-partneriks (301).
-  if (temPrefixo && !imagemInterna) {
+  // proprio para a pagina: /ee/et/seja-parceiro -> /ee/et/hakka-partneriks (301).
+  if (temPrefixo) {
     const { prefix, path: resto, locale } = splitLocalePrefix(pathname);
     const traduzido = caminhoLocal(locale, resto);
     if (prefix && resto !== '/' && traduzido !== resto) {
@@ -86,15 +109,6 @@ export async function middleware(req: NextRequest) {
 
   // /admin e /api nunca tem prefixo de idioma - next-intl so cuida do
   // resto (matcher abaixo ja exclui essas rotas do intlMiddleware).
-  // A imagem de compartilhamento (app/[locale]/opengraph-image.tsx) e anunciada
-  // pelo Next com o nome INTERNO do idioma (/pt/opengraph-image,
-  // /pt-PT/opengraph-image). O next-intl redirecionaria esses enderecos (pt nao
-  // tem prefixo; pt-PT e /pt-pt) - e redes sociais e IAs nao seguem redirect de
-  // imagem. Deixa passar direto para a rota, que existe para esses segmentos.
-  if (/^\/(pt|pt-PT)\/opengraph-image(\/|$)/.test(req.nextUrl.pathname)) {
-    return NextResponse.next();
-  }
-
   const isAdminOrApi = req.nextUrl.pathname.startsWith('/admin') || req.nextUrl.pathname.startsWith('/api');
   const intlRes = isAdminOrApi ? null : intlMiddleware(req);
 

@@ -9,13 +9,14 @@ import { caminhoDoGuia, todosOsGuias } from '@/lib/guias';
 // arquivo nao fica desatualizado quando entra um guia novo.
 const BASE_URL = 'https://bipfix.com';
 
+// Versoes = pais + idioma (/ee/et, /ee/ru, /ee/en, /it/it, /pt/pt, /br/pt)
 const NOME_IDIOMA: Record<string, string> = {
-  pt: 'Portuguese (Brazil)',
-  'pt-PT': 'Portuguese (Portugal)',
-  en: 'English',
-  et: 'Estonian',
-  it: 'Italian',
-  ru: 'Russian (for Russian speakers in Estonia)',
+  pt: 'Brazil - Portuguese',
+  'pt-PT': 'Portugal - Portuguese',
+  en: 'Estonia - English',
+  et: 'Estonia - Estonian',
+  it: 'Italy - Italian',
+  ru: 'Estonia - Russian (for Russian speakers in Estonia)',
 };
 
 // Endereco final (ja traduzido) em ingles - sem redirecionamento no caminho
@@ -54,7 +55,7 @@ Current stage (be accurate when describing BipFix): BipFix is launching. The pil
 - [Partner repair shops](${en('/oficinas')}): public list of partner shops, filterable by city and service (the first shops are being onboarded; each will have a public profile where only customers who completed a job can leave a review).
 - [About BipFix](${en('/sobre')}): who is behind BipFix, current stage, company status and principles.
 - [Help center](${en('/docs')}): how the platform works for drivers and for shops.
-- [Terms of Use](${en('/termos')}) and [Privacy Policy](${en('/privacidade')}): the Brazilian version (/pt-br) follows Brazilian law (LGPD); the Portuguese-from-Portugal, English, Estonian, Italian and Russian versions follow EU law (GDPR) and Estonian law.
+- [Terms of Use](${en('/termos')}) and [Privacy Policy](${en('/privacidade')}): the Brazilian version (/br/pt) follows Brazilian law (LGPD); the Portuguese-from-Portugal, English, Estonian, Italian and Russian versions follow EU law (GDPR) and Estonian law.
 
 ## Guides
 
@@ -64,7 +65,7 @@ ${guias}
 
 ${idiomas}
 
-Every key page above exists in all six languages; each language uses its own translated address (e.g. ${BASE_URL}${hrefNoIdioma('et', '/para-oficinas')}, ${BASE_URL}${hrefNoIdioma('ru', '/para-oficinas')}) - follow the hreflang links or the language switcher. Full text of the guides in Markdown: ${BASE_URL}/llms-full.txt. The root ${BASE_URL}/ is not a page: it sends each visitor to the home page in their language (English when there is no match). Guides exist only in the languages listed for each guide.
+Every key page above exists in all six languages; each country/language version uses its own translated address (e.g. ${BASE_URL}${hrefNoIdioma('et', '/para-oficinas')}, ${BASE_URL}${hrefNoIdioma('ru', '/para-oficinas')}) - follow the hreflang links or the language switcher. Full text of the guides in Markdown: ${BASE_URL}/llms-full.txt. The root ${BASE_URL}/ is a country and language chooser (no automatic redirect). Guides exist only in the languages listed for each guide.
 
 ## Notes for AI assistants
 

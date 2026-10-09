@@ -13,14 +13,14 @@ export function idiomaDoSite(idioma?: string | null): Locale {
 }
 
 // Endereco do site no idioma de quem recebe, para links de e-mail e
-// WhatsApp: https://bipfix.com/et, https://bipfix.com/pt-br...
+// WhatsApp: https://bipfix.com/ee/et, https://bipfix.com/br/pt...
 export function siteNoIdioma(idioma?: string | null): string {
   return `${SITE_URL}${localePrefix(idiomaDoSite(idioma))}`;
 }
 
 // URL completa de um caminho interno no idioma de quem recebe, com o nome
 // traduzido da pagina: urlNoIdioma('et', '/emergencia/acidente/x')
-// -> https://bipfix.com/et/avarii/teade/x
+// -> https://bipfix.com/ee/et/avarii/teade/x
 export function urlNoIdioma(idioma: string | null | undefined, interno: string): string {
   return `${SITE_URL}${hrefNoIdioma(idiomaDoSite(idioma), interno)}`;
 }

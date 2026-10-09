@@ -6,8 +6,9 @@ import { NextRequest, NextResponse } from 'next/server';
 // APPLE_TEAM_ID (conta Apple Developer) e ANDROID_SHA256 (chave de
 // assinatura do app na Play Store). Sem eles responde 404 e o link abre o site.
 const APP_ID = 'com.bipfix.cliente';
-// Caminhos que o app sabe tratar: confirmacao de e-mail em qualquer idioma
-const CAMINHOS = ['/*/confirmar-email*'];
+// Caminhos que o app sabe tratar: confirmacao de e-mail em qualquer versao
+// (/ee/et/confirmar-email) e no formato antigo de um nivel (/et/confirmar-email)
+const CAMINHOS = ['/*/*/confirmar-email*', '/*/confirmar-email*'];
 
 export async function GET(req: NextRequest) {
   const qual = req.nextUrl.searchParams.get('f');

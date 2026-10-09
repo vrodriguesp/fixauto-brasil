@@ -29,7 +29,7 @@ function localizedEntries(
 // new Date() (a hora do pedido) em todas: o Google passa a ignorar lastmod que
 // muda a cada leitura. ATUALIZE a data da pagina quando mudar o texto dela.
 const MUDOU = {
-  paginas: new Date('2026-09-29'), // home, emergencia, para-oficinas, seja-parceiro, docs (SEO/i18n de 29/09)
+  paginas: new Date('2026-10-09'), // home, emergencia, para-oficinas, seja-parceiro, docs (enderecos por pais em 09/10)
   legal: new Date('2026-09-28'), // termos e privacidade
 };
 
@@ -43,8 +43,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     // raiz: pagina de escolha de idioma (x-default)
     { url: 'https://bipfix.com/', lastModified: new Date('2026-10-09'), changeFrequency: 'monthly', priority: 0.5, alternates: { languages: hreflangAlternates(routing.defaultLocale, '').languages } },
-    // '' e nao '/': a home de cada idioma e https://bipfix.com/it (sem barra),
-    // como declara o canonical; /it/ redireciona.
+    // '' e nao '/': a home de cada versao e https://bipfix.com/it/it (sem barra),
+    // como declara o canonical.
     ...localizedEntries('', { changeFrequency: 'weekly', priority: 1, lastModified: MUDOU.paginas }),
     ...localizedEntries('/emergencia', { changeFrequency: 'monthly', priority: 0.8, lastModified: MUDOU.paginas }),
     ...localizedEntries('/para-oficinas', { changeFrequency: 'monthly', priority: 0.9, lastModified: MUDOU.paginas }),

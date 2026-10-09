@@ -23,7 +23,7 @@ try {
   const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, locale: 'en-US' });
   const page = await ctx.newPage();
-  await page.goto(`${SITE}/et/login`, { waitUntil: 'networkidle' });
+  await page.goto(`${SITE}/ee/et/login`, { waitUntil: 'networkidle' });
   await page.fill('input[type=email]', email);
   await page.fill('input[type=password]', senha);
   await page.click('button[type=submit]');

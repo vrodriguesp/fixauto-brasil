@@ -71,7 +71,7 @@ try {
   const page = await ctx.newPage();
   const erros = [];
   page.on('console', (m) => { if (m.type() === 'error') erros.push(m.text()); });
-  await page.goto(`${BASE}/et/avarii/teade/${id}`, { waitUntil: 'networkidle' });
+  await page.goto(`${BASE}/ee/et/avarii/teade/${id}`, { waitUntil: 'networkidle' });
   const semTxt = await page.evaluate(() => document.body.innerText);
   confere('pagina sem codigo pede login', /Logi sisse/.test(semTxt));
   await page.evaluate(([i, t]) => localStorage.setItem(`bipfix_emergencia_${i}`, t), [id, d.token]);

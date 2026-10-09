@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth-context';
 
-// Link de confirmacao do e-mail (https://bipfix.com/<idioma>/confirmar-email?
+// Link de confirmacao do e-mail (https://bipfix.com/<pais>/<idioma>/confirmar-email?
 // token_hash=...) aberto DENTRO do app quando ele esta instalado (Universal
 // Links / App Links, ver app.json e /.well-known no site). Confirma e ja entra.
 export default function ConfirmarEmailApp() {

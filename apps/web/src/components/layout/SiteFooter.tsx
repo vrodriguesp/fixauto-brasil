@@ -2,18 +2,11 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname, rota } from '@/i18n/navigation';
-import { routing, HREFLANG, caminhoNoIdioma, type Locale } from '@/i18n/routing';
+import { HREFLANG, MERCADOS, caminhoNoIdioma, rotuloVersao, type Locale } from '@/i18n/routing';
 import { lembrarIdioma } from '@/lib/idioma-escolhido';
 import { useParams } from 'next/navigation';
 
-const NOME_IDIOMA: Record<Locale, string> = {
-  pt: 'Português (Brasil)',
-  'pt-PT': 'Português (Portugal)',
-  en: 'English',
-  et: 'Eesti',
-  it: 'Italiano',
-  ru: 'Русский',
-};
+// Versoes = pais + idioma ("Eesti · Русский", "Italia · Italiano")
 
 // Paineis logados: o rodape publico so atrapalha ali.
 const AREAS_PRIVADAS = ['/cliente', '/oficina', '/loja', '/definir-senha'];
@@ -73,7 +66,7 @@ export default function SiteFooter({ temOficinas = false }: { temOficinas?: bool
 
         <nav aria-label="Language" className="border-t border-gray-800 mt-8 pt-6">
           <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
-            {routing.locales.map((l) => (
+            {MERCADOS.flatMap((m) => m.locales).map((l) => (
               <li key={l}>
                 <a
                   href={caminhoNoIdioma(l, pathname, params)}
@@ -83,7 +76,7 @@ export default function SiteFooter({ temOficinas = false }: { temOficinas?: bool
                   aria-current={l === locale ? 'true' : undefined}
                   className={l === locale ? 'text-white' : 'hover:text-white'}
                 >
-                  {NOME_IDIOMA[l]}
+                  {rotuloVersao(l)}
                 </a>
               </li>
             ))}

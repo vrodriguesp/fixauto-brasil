@@ -22,7 +22,7 @@ const tag = crypto.randomBytes(3).toString('hex');
 const contas = []; const sols = []; const ofs = []; const arquivos = [];
 const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
 const celular = async () => { const c = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2, locale: 'et-EE' }); await c.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} }); return c; };
-const entrar = async (p, email, senha) => { await p.goto(`${SITE}/et/login`, { waitUntil: 'networkidle' }); await p.fill('input[type=email]', email); await p.fill('input[type=password]', senha); await p.click('button[type=submit]'); await p.waitForTimeout(4000); };
+const entrar = async (p, email, senha) => { await p.goto(`${SITE}/ee/et/login`, { waitUntil: 'networkidle' }); await p.fill('input[type=email]', email); await p.fill('input[type=password]', senha); await p.click('button[type=submit]'); await p.waitForTimeout(4000); };
 const conta = async (tipo) => {
   const email = `est-${tipo}${contas.length}-${tag}@example.test`; const senha = `Est${tag}Senha9`;
   const { data } = await sb.auth.admin.createUser({ email, password: senha, email_confirm: true });
@@ -46,7 +46,7 @@ try {
   sols.push(s.id);
   const ctxO = await celular(); const pO = await ctxO.newPage();
   await entrar(pO, of.email, of.senha);
-  await pO.goto(`${SITE}/et/oficina/solicitacoes`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3500);
+  await pO.goto(`${SITE}/ee/et/oficina/solicitacoes`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3500);
   const lista = await pO.innerText('body');
   // "Kokkupõrge" continua no filtro de tipos; no cartao do pedido vem a ocorrencia
   const cartao = await pO.locator('.badge').allInnerTexts();
@@ -70,7 +70,7 @@ try {
 
   // orcamento, aceite e check-in
   const { a: aO, token: tO } = await sessao(of);
-  await pO.goto(`${SITE}/et/oficina/enviar-orcamento/${s.id}`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3000);
+  await pO.goto(`${SITE}/ee/et/oficina/enviar-orcamento/${s.id}`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3000);
   const datas = pO.locator('input[type=date]');
   let todas = (await datas.count()) > 0;
   for (let i = 0; i < (await datas.count()); i++) todas = todas && await dentro(datas.nth(i));
@@ -85,7 +85,7 @@ try {
   await api(tO, '/api/servico', { acao: 'checkin', eventoId: ag.id, antecipar: true });
 
   // 3 em servico -> concluso -> entregue
-  const caixas = async () => { await pO.goto(`${SITE}/et/oficina/veiculos-em-servico`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3500); };
+  const caixas = async () => { await pO.goto(`${SITE}/ee/et/oficina/veiculos-em-servico`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3500); };
   await caixas();
   const nums = async () => pO.locator('button.card p.text-2xl').allInnerTexts();
   ok('3 sem rolagem lateral', await semRolagemLateral(pO));
@@ -106,7 +106,7 @@ try {
   ok('3 caixa existe', (await caixa.count()) === 1);
 
   // 4 check-in avulso
-  await pO.goto(`${SITE}/et/oficina/checkin`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3000);
+  await pO.goto(`${SITE}/ee/et/oficina/checkin`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3000);
   const dc = pO.locator('input[type=date]');
   let dentroC = (await dc.count()) > 0;
   for (let i = 0; i < (await dc.count()); i++) dentroC = dentroC && await dentro(dc.nth(i));
@@ -119,7 +119,7 @@ try {
   await entrar(pC, cli.email, cli.senha);
   let formVisto = false;
   pC.on('framenavigated', () => {});
-  await pC.goto(`${SITE}/et/cliente/nova-solicitacao`, { waitUntil: 'domcontentloaded' });
+  await pC.goto(`${SITE}/ee/et/cliente/nova-solicitacao`, { waitUntil: 'domcontentloaded' });
   for (let i = 0; i < 20; i++) { if ((await pC.locator('h1').allInnerTexts()).some((h) => /taotlus|päring/i.test(h) && !/hinnang/i.test(h))) formVisto = true; if ((await pC.getByText(/Sinu hinnang on puudu/).count()) > 0) break; await pC.waitForTimeout(300); }
   ok('5 pedido novo bloqueado (aviso de avaliacao)', (await pC.getByText(/Sinu hinnang on puudu/).count()) > 0);
   ok('5 formulario nao apareceu antes do aviso', !formVisto);

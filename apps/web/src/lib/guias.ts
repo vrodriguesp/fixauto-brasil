@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { routing, X_DEFAULT_LOCALE, HREFLANG, type Locale } from '@/i18n/routing';
+import { routing, X_DEFAULT_LOCALE, hreflangsDe, type Locale } from '@/i18n/routing';
 import { localizedUrl } from '@/lib/seo-utils';
 
 // Guias praticos (conteudo para busca organica e para IAs). Cada guia e um
@@ -81,7 +81,7 @@ export function guiaPorSlug(slug: string, locale: string): { guia: Guia; exato: 
 export function alternatesDoGuia(guia: Guia, locale: string) {
   const idiomas = routing.locales.filter((l) => guia.versoes[l]);
   const languages: Record<string, string> = {};
-  for (const l of idiomas) languages[HREFLANG[l]] = localizedUrl(l, caminhoDoGuia(guia, l));
+  for (const l of idiomas) for (const codigo of hreflangsDe(l)) languages[codigo] = localizedUrl(l, caminhoDoGuia(guia, l));
   const padrao = guia.versoes[X_DEFAULT_LOCALE] ? X_DEFAULT_LOCALE : idiomas[0];
   if (padrao) languages['x-default'] = localizedUrl(padrao, caminhoDoGuia(guia, padrao));
   return { canonical: localizedUrl(locale, caminhoDoGuia(guia, locale)), languages };
