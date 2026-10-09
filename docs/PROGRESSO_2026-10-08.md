@@ -98,3 +98,11 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
 - **Sites grandes (verificado com curl em 09/10):** IKEA `ikea.com/` = 200 "Welcome to IKEA Global" (escolha de país/idioma), x-default = `/`; Wise `wise.com/` = 200, x-default = `/`; Airbnb, Apple, Wikipedia = 200 sem redirecionar; Bolt = 307 por localização (o que o Google desaconselha).
 - **Adotado (padrão IKEA):** `https://bipfix.com/` = página leve de escolha de idioma (Eesti, Русский, English primeiro; depois Brasil, Portugal, Italia), 200, sem redirecionamento; `<html lang="en">`, `Content-Language: et, ru, en`; x-default das homes = `/`, das páginas internas = versão `en`; `/` no sitemap; quem já escolheu idioma (cookie) vê essa opção destacada no topo, sem redirecionar. Título padrão do layout raiz trocado (era o antigo do Brasil, o que o Google mostrava).
 - **Falta (dono, nos painéis):** pedir re-rastreamento de `https://bipfix.com/` no Google (Inspeção de URL), Yandex ("Переобход страниц") e Bing (URL Inspection → Request indexing).
+
+## 09/10 — Idioma ≠ país (acidente e seguro)
+- **Regra (W3C "Be wary about using IP addresses or other location services to guess the language"; Airbnb "Languages & currency" separado do lugar):** idioma = preferência da pessoa; país = onde está o carro. Nunca deduzir um do outro.
+- **Acidente:** regras e passos (número de emergência, formulário amigável, seguro) pelo país do acidente (GPS/endereço; sem isso, onde o aparelho está — fuso no site, região no app), escritos no idioma da pessoa. Cada idioma tem as versões br/ee/it/pt/geral.
+- **Seguro:** país do seguro escolhido à parte ("Seguro de outro país?"); sugestões de seguradoras desse país; se diferente do país do acidente, aviso de **Carta Verde** (a seguradora atende pelo representante no país do acidente; na Estônia lista da LKF). Site e app.
+- Página do acidente usa o país da localização; consulta de placa pelo formato brasileiro; catálogo FIPE só com aparelho no Brasil.
+- Teste: `site-seguro-pais.mjs` (italiano em Tallinn, sem GPS) — OK em produção.
+- **Decisão pendente do dono:** termos/privacidade hoje seguem o idioma (pt = LGPD do Brasil; demais = GDPR). Um brasileiro morando na Estônia lendo em pt vê a versão brasileira.
