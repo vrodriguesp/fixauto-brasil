@@ -1,4 +1,4 @@
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 
 // Guias da Central de Ajuda (Guia do Motorista / Guia da Oficina).
@@ -22,8 +22,8 @@ type Secao = {
 
 const COR_SELO = ['text-green-700', 'text-blue-700', 'text-orange-700'];
 
-export default function GuiaAjuda({ namespace }: { namespace: 'docsCliente' | 'docsOficina' }) {
-  const t = useTranslations(namespace);
+export default async function GuiaAjuda({ namespace, locale }: { namespace: 'docsCliente' | 'docsOficina'; locale: string }) {
+  const t = await getTranslations({ locale, namespace });
   const secoes = t.raw('secoes') as Secao[];
 
   return (
