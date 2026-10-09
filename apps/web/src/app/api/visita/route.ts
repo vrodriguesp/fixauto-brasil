@@ -10,12 +10,14 @@ import { escapeHtml } from '@/lib/email-i18n';
 // ESPERA_MS sem novidade. Estado so em memoria: o site roda num unico
 // processo (PM2); um restart perde no maximo as visitas ainda pendentes.
 //
-// Env: VISITAS_EMAIL_PARA (destino; sem ela nada e enviado, so logado),
-// VISITAS_ESPERA_MS (opcional, padrao 3 min).
+// Env: VISITAS_AVISO_EMAIL (destino; VAZIA = desligado, a rota responde e
+// nao faz nada - desligado a pedido do dono em 09/10/2026), VISITAS_ESPERA_MS
+// (opcional, padrao 3 min). Os avisos de negocio (empresa nova, pedido sem
+// oficina) continuam em VISITAS_EMAIL_PARA.
 
 export const runtime = 'nodejs';
 
-const DESTINO = process.env.VISITAS_EMAIL_PARA;
+const DESTINO = process.env.VISITAS_AVISO_EMAIL;
 const ESPERA_MS = Number(process.env.VISITAS_ESPERA_MS) || 3 * 60 * 1000;
 const MAX_EMAILS_HORA = 40;
 const MAX_PENDENTES = 500;
@@ -235,6 +237,8 @@ async function enviar(sid: string) {
 }
 
 export async function POST(req: NextRequest) {
+  // e-mail de visitas desligado: nada a fazer (nem guardar em memoria)
+  if (!DESTINO && process.env.NODE_ENV === 'production') return new NextResponse(null, { status: 204 });
   try {
     const ua = req.headers.get('user-agent') || '';
     if (!ua || ROBO.test(ua)) return new NextResponse(null, { status: 204 });

@@ -6,6 +6,10 @@ import { StatusBar } from 'expo-status-bar';
 import { AuthProvider } from '../lib/auth-context';
 import { restaurarIdioma } from '../lib/idiomas';
 import { AvisosProvider } from '../lib/avisos';
+import { instalarCapturaDeErros } from '../lib/diagnostico';
+
+// erros de JavaScript do aparelho chegam ao monitoramento do admin
+instalarCapturaDeErros();
 
 restaurarIdioma();
 

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { router, useFocusEffect } from 'expo-router';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
+import { enviarDiagnostico } from '../lib/diagnostico';
 
 export interface Pendente { solicitacaoId: string; oficina: string }
 
@@ -15,15 +16,35 @@ export function useAvaliacaoPendente(recarregar?: number) {
   const [pendente, setPendente] = useState<Pendente | null | undefined>(undefined);
   const carregar = useCallback(async () => {
     if (!user) return;
-    const { data, error } = await supabase.from('solicitacoes')
-      .select('id, created_at, orcamentos(status, oficina:oficinas(nome_fantasia)), avaliacoes(id)')
-      .eq('cliente_id', user.id).eq('status', 'concluida').order('created_at', { ascending: false });
-    if (error) { setPendente(null); return; }
-    const s = ((data || []) as any[]).find((x) => !(x.avaliacoes || []).length && (x.orcamentos || []).some((o: any) => o.status === 'aceito'));
-    setPendente(s ? { solicitacaoId: s.id, oficina: s.orcamentos.find((o: any) => o.status === 'aceito')?.oficina?.nome_fantasia || '' } : null);
+    const inicio = Date.now();
+    try {
+      const { data, error } = await supabase.from('solicitacoes')
+        .select('id, created_at, orcamentos(status, oficina:oficinas(nome_fantasia)), avaliacoes(id)')
+        .eq('cliente_id', user.id).eq('status', 'concluida').order('created_at', { ascending: false });
+      if (error) { enviarDiagnostico('avaliacao-pendente', error.message, { code: error.code }); setPendente(null); return; }
+      const s = ((data || []) as any[]).find((x) => !(x.avaliacoes || []).length && (x.orcamentos || []).some((o: any) => o.status === 'aceito'));
+      setPendente(s ? { solicitacaoId: s.id, oficina: s.orcamentos.find((o: any) => o.status === 'aceito')?.oficina?.nome_fantasia || '' } : null);
+      if (Date.now() - inicio > 5000) enviarDiagnostico('avaliacao-pendente', 'consulta lenta', { ms: Date.now() - inicio });
+    } catch (e) {
+      // antes: uma excecao aqui deixava o novo pedido carregando para sempre
+      enviarDiagnostico('avaliacao-pendente', e instanceof Error ? e.message : String(e));
+      setPendente(null);
+    }
   }, [user]);
   useEffect(() => { carregar(); }, [carregar, recarregar]);
   useFocusEffect(useCallback(() => { carregar(); }, [carregar]));
+  // nunca prende a tela: sem resposta em 6 s segue sem o aviso (o banco
+  // continua recusando pedido novo com avaliacao pendente) e registra o motivo
+  useEffect(() => {
+    if (pendente !== undefined) return;
+    const tmr = setTimeout(() => {
+      setPendente((p) => {
+        if (p === undefined) enviarDiagnostico('avaliacao-pendente', 'sem resposta em 6 s', { temUsuario: !!user });
+        return p === undefined ? null : p;
+      });
+    }, 6000);
+    return () => clearTimeout(tmr);
+  }, [pendente, user]);
   return pendente;
 }
 
