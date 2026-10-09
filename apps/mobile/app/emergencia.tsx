@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { router, Stack } from 'expo-router';
+import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
@@ -44,10 +44,6 @@ export default function EmergenciaScreen() {
   // campo de endereco: ao focar, a tela rola para ele ficar no alto e as sugestoes aparecerem acima do teclado
   const rolagem = useRef<ScrollView>(null);
   const posEndereco = useRef(0);
-  // Opcoes do cabecalho criadas uma vez: objeto novo a cada desenho fazia o
-  // cabecalho e a tela se redesenharem sem fim no iPhone ("Maximum update depth").
-  const tituloTela = t('emergencia.titulo');
-  const opcoesTela = useMemo(() => ({ headerShown: true, title: tituloTela, presentation: 'modal' as const }), [tituloTela]);
   const { user } = useAuth();
   const [fotos, setFotos] = useState<ImagePicker.ImagePickerAsset[]>([]);
   const [descricao, setDescricao] = useState('');
@@ -239,7 +235,6 @@ export default function EmergenciaScreen() {
 
   return (
     <ScrollView keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
-      <Stack.Screen options={opcoesTela} />
       <Text className="text-gray-600 mb-6">{t('emergencia.subtitulo')}</Text>
 
       <Text className="text-sm font-medium text-gray-700 mb-1">{t('emergencia.fotoTitulo')}</Text>
