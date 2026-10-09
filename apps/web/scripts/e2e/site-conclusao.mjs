@@ -145,7 +145,7 @@ try {
   await pC.screenshot({ path: 'concl-dashboard.png', fullPage: true });
   await pC.goto(`${SITE}/it/cliente/nova-solicitacao`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3500);
   const nova = await pC.innerText('body');
-  ok('7 pedido novo bloqueado com link para avaliar e para o acidente', /Manca la tua valutazione/.test(nova) && (await pC.getByRole('link', { name: /Ho appena avuto un incidente/ }).count()) > 0);
+  ok('7 pedido novo bloqueado com link para avaliar e para o acidente', /Manca la tua recensione/.test(nova) && (await pC.getByRole('link', { name: /Ho avuto un incidente/ }).count()) > 0);
   await pC.getByRole('link', { name: /Valuta ora/ }).click(); await pC.waitForTimeout(3500);
   ok('7 "Valuta ora" leva a avaliacao', /Valuta|valutazione/i.test(await pC.locator('#avaliar').innerText().catch(() => '')));
   await aC.from('avaliacoes').insert({ solicitacao_id: s.id, oficina_id: idA, cliente_id: cli.id, nota: 5, comentario: 'Ottimo' });

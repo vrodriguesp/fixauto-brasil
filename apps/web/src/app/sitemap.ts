@@ -41,6 +41,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Paginas estaticas, uma entrada por idioma (com hreflang cruzado)
   const staticPages: MetadataRoute.Sitemap = [
+    // raiz: pagina de escolha de idioma (x-default)
+    { url: 'https://bipfix.com/', lastModified: new Date('2026-10-09'), changeFrequency: 'monthly', priority: 0.5, alternates: { languages: hreflangAlternates(routing.defaultLocale, '').languages } },
     // '' e nao '/': a home de cada idioma e https://bipfix.com/it (sem barra),
     // como declara o canonical; /it/ redireciona.
     ...localizedEntries('', { changeFrequency: 'weekly', priority: 1, lastModified: MUDOU.paginas }),

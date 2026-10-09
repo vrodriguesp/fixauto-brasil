@@ -41,12 +41,14 @@ export async function middleware(req: NextRequest) {
 
   // Home internacional: 307 (temporario - depende de quem pede), nao cacheavel.
   if (pathname === '/') {
-    // 301 fixo para a home da Estonia (mercado principal). Antes era 307 por
-    // Accept-Language: com redirecionamento temporario Google e Yandex
-    // guardavam "/" com o snippet antigo do Brasil, e um redirecionamento
-    // que muda conforme o visitante parece "sneaky redirect" para o Bing.
-    // Quem fala outra lingua ve a sugestao de idioma na pagina (SugestaoIdioma).
-    return NextResponse.redirect(new URL(`${LOCALE_PREFIX.et}${req.nextUrl.search}`, req.url), 301);
+    // "/" e a pagina de escolha de idioma (app/page.tsx, x-default), sem
+    // redirecionar ninguem: recomendacao do Google para x-default e o
+    // padrao de IKEA/Wise (pesquisa de 09/10, docs/PROGRESSO_2026-10-08.md).
+    const h = new Headers(req.headers);
+    h.set('x-locale-html', 'en');
+    const res = NextResponse.next({ request: { headers: h } });
+    res.headers.set('Content-Language', 'et, ru, en');
+    return res;
   }
 
   // Painel admin nao tem idioma: /pt-br/admin/... (ou qualquer idioma) -> /admin/...

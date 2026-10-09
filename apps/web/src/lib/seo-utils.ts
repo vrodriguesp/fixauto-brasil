@@ -189,7 +189,9 @@ export function generateReviewSchema(
 export function hreflangAlternates(locale: string, path: string) {
   // Chaves com regiao (pt-BR / pt-PT) - sem isso o Google nao distingue
   // Brasil de Portugal. x-default aponta para o ingles (mercado europeu).
-  const languages: Record<string, string> = { 'x-default': localizedUrl(X_DEFAULT_LOCALE, path) };
+  // home: x-default = raiz "https://bipfix.com/" (pagina de escolha de idioma);
+  // demais paginas: a versao em ingles
+  const languages: Record<string, string> = { 'x-default': path === '' || path === '/' ? 'https://bipfix.com/' : localizedUrl(X_DEFAULT_LOCALE, path) };
   for (const l of routing.locales) {
     languages[HREFLANG[l]] = localizedUrl(l, path);
   }

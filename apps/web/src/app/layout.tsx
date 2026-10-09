@@ -26,10 +26,11 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   title: {
-    default: 'BipFix - Conectando você à melhor oficina mecânica',
+    // titulo neutro (o antigo, do Brasil, era o que o Google mostrava para "bipfix")
+    default: 'BipFix — car repair quotes',
     template: '%s | BipFix',
   },
-  description: 'Plataforma que conecta motoristas a oficinas mecânicas no Brasil. Envie fotos do dano, receba orçamentos e escolha a melhor opção. Simples, rápido e transparente.',
+  description: 'BipFix: compare car repair quotes from garages near you.',
   // Codigo de verificacao do Google Search Console (metodo "tag HTML" -
   // Search Console > Adicionar propriedade > URL prefix > HTML tag,
   // copiar so o valor do atributo content). Sem a env var, a tag nem

@@ -50,7 +50,7 @@ try {
   const lista = await pO.innerText('body');
   // "Kokkupõrge" continua no filtro de tipos; no cartao do pedido vem a ocorrencia
   const cartao = await pO.locator('.badge').allInnerTexts();
-  ok('2 oficina ve "Teejuhtum (teist sõidukit polnud)" e nao "Kokkupõrge" no pedido', cartao.some((b) => /Teejuhtum/.test(b)) && !cartao.some((b) => /Kokkupõrge/.test(b)), cartao.join(' | '));
+  ok('2 oficina ve "Juhtum teel (teist sõidukit polnud)" e nao "Kokkupõrge" no pedido', cartao.some((b) => /Juhtum teel/.test(b)) && !cartao.some((b) => /Kokkupõrge/.test(b)), cartao.join(' | '));
 
   // 1 transcricao: copia um audio real em estoniano para a conversa do teste
   const origem = process.argv[3];
@@ -75,7 +75,7 @@ try {
   let todas = (await datas.count()) > 0;
   for (let i = 0; i < (await datas.count()); i++) todas = todas && await dentro(datas.nth(i));
   ok('4 orcamento: campos de data dentro da tela', todas);
-  ok('2 orcamento: titulo com a ocorrencia', /Teejuhtum/.test(await pO.innerText('body')));
+  ok('2 orcamento: titulo com a ocorrencia', /Juhtum teel/.test(await pO.innerText('body')));
   const { data: orc } = await aO.from('orcamentos').insert({ solicitacao_id: s.id, oficina_id: o.id, valor_total: 120, prazo_dias: 1, tempo_execucao_horas: 2, observacoes: '[COMISSAO:absorver:0]', validade: dia(10), garantia_dias: 30 }).select('id').single();
   await aO.from('orcamento_itens').insert({ orcamento_id: orc.id, descricao: 'Rehvi vahetus', tipo: 'mao_de_obra', quantidade: 1, valor_unitario: 120, valor_total: 120 });
   const { data: sl } = await aO.from('orcamento_disponibilidade').insert({ orcamento_id: orc.id, data_checkin: dia(1), turno: 'manha', data_previsao_entrega: dia(2) }).select('id').single();

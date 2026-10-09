@@ -151,8 +151,8 @@ export const OG_LOCALE: Record<Locale, string> = {
 
 // Versao mostrada pelo Google a quem nao bate com nenhum idioma (hreflang
 // x-default). O mercado atual e a Europa, entao ingles - nao o Brasil.
-// x-default = destino da raiz "/" (301 para /et): o mercado principal e Tallinn
-export const X_DEFAULT_LOCALE: Locale = 'et';
+// x-default das paginas internas (a home usa a raiz "/", pagina de escolha de idioma)
+export const X_DEFAULT_LOCALE: Locale = 'en';
 
 export function localePrefix(locale: string): string {
   return LOCALE_PREFIX[locale as Locale] ?? `/${locale}`;
