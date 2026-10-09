@@ -178,3 +178,33 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
   - Yandex → Переобход de `/ee/et` e `/ee/ru`.
 - **Opcional (dono):** comprar `bipfix.ee`, `bipfix.it` e `bipfix.pt`. Eu configuro o 301 para `/ee/et`, `/it/it` e `/pt/pt`, como `ikea.it`.
 - **Marca:** `bipfix.com.br` é de outra empresa; consultar o INPI antes de investir no Brasil.
+
+## 09/10 tarde — Domínios de país, Search Console e guias de ajuda
+- **Domínios:**
+  - `bipfix.ee` (Zone.ee) e `bipfix.it` (IONOS): A `@` e `www` → `204.168.139.154`. Na IONOS o "Default Site" foi desativado, junto com o AAAA dela; MX/SPF/DKIM ficaram.
+  - nginx `/etc/nginx/sites-available/dominios-pais`: 301 num salto só para `bipfix.com/ee/et` e `bipfix.com/it/it` (mantém `?utm_...`).
+  - HTTPS Let's Encrypt nos dois; `certbot renew --dry-run` OK nos dois.
+  - `bipfix.pt` (Portugal): ainda em ativação no registro. Quando ativar, fazer o mesmo (o bloco nginx já existe).
+- **E-mail do Search Console (noindex / redirect / duplicate):** analisado com os exemplos do próprio relatório.
+  - Noindex: cadastro e listas de oficinas vazias (de propósito).
+  - Redirect: endereços antigos.
+  - Duplicate: endereços antigos e as páginas de ajuda.
+  - "Discovered – not indexed" (26): endereços antigos ainda não visitados.
+  - Corrigido: guias da inspeção técnica (et/en/ru) linkavam a lista vazia de oficinas.
+- **Pedidos de indexação no Google (feitos 09/10):** `/`, `/ee/et`, `/ee/ru`, `/ee/en`, `/it/it`, `/pt/pt`, `/br/pt` ("Indexing requested"). O reenvio do sitemap no painel não registrou; o Google relê sozinho (última leitura 08/10).
+- **Guias de ajuda (Guia do Motorista `/docs/cliente`, Guia da Oficina `/docs/oficina`; rodapé "Como funciona" / "Guia da oficina" / "Central de ajuda"):**
+  - **Causa da indexação ruim:** o acordeão em React só montava a seção aberta. O Google via 1 de 7 seções (~200 palavras), e as versões pareciam duplicadas.
+  - **Agora:** `components/docs/GuiaAjuda.tsx` com `<details>` nativo; todo o texto vai no HTML, com índice no topo e `<h2>` por seção.
+  - **Correções:** as páginas passam o idioma explicitamente (`setRequestLocale` + `getTranslations({ locale })`). Sem isso, a página estática saía em inglês nas 6 versões.
+  - **Conteúdo** conferido no código e corrigido. Saíram:
+    - selo 4,5★/10 serviços (o real é média ≥ 4);
+    - selo "Resposta Rápida" (não existe);
+    - filtros de ordenação;
+    - resposta pública a avaliações;
+    - fotos de progresso;
+    - e-mail de novos pedidos;
+    - "Ajuste de preço = disposta a negociar" (é a % de revisão depois do aceite).
+  - **Conteúdo novo:** revisão de preço (aprovar/recusar), garantia e conversa, falta (no-show), reagendar, seguro no acidente/Carta Verde, peças, distribuição de trabalho, capacidade, aprovação da oficina, conta/privacidade/exclusão, custos.
+  - **Tamanho:** ~1.390 palavras (motorista) e ~1.270 (oficina) por idioma.
+  - **Traduções:** Fable, com os nomes reais dos botões de cada idioma e adaptações por país (112, registrikood/partita IVA/NIF, sem DDD/FIPE fora do Brasil). Verificado com `checar-traducoes.mjs`, a mesma estrutura nos 6 idiomas, cada página com o próprio texto em produção e celular de 390 px sem rolagem lateral.
+  - **IndexNow:** 15 URLs (as 12 dos guias + os 3 guias de inspeção).
