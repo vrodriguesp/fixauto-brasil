@@ -64,9 +64,10 @@ export async function POST(req: NextRequest) {
     let contaCriada = false;
     if (clienteId) {
       const { data: p } = await supabaseAdmin.from('profiles').select('nome, email, telefone').eq('id', clienteId).single();
-      nome = nome || p?.nome || null;
-      email = email || p?.email || null;
-      telefone = telefone || p?.telefone || null;
+      // com sessao vale o perfil (o corpo so completa o que faltar - auditoria B10)
+      nome = p?.nome || nome || null;
+      email = p?.email || email || null;
+      telefone = p?.telefone || telefone || null;
     } else {
       if (!email) throw new ErroValidacao('email obrigatório');
       if (!nome) throw new ErroValidacao('nome obrigatório');
@@ -97,6 +98,7 @@ export async function POST(req: NextRequest) {
         latitude,
         longitude,
         prioridade: 'urgente',
+        tipo_acidente: tipoAcidente,
         acesso_token_hash: hashToken(token),
       })
       .select('id')
@@ -159,7 +161,7 @@ export async function POST(req: NextRequest) {
       const { data: sol } = await supabaseAdmin
         .from('solicitacoes')
         .insert({
-          cliente_id: clienteId, veiculo_id: veiculoId, tipo: 'colisao', descricao, urgencia: 'alta', latitude, longitude, endereco, emergencia_id: emergencia.id,
+          cliente_id: clienteId, veiculo_id: veiculoId, tipo: 'colisao', descricao, tipo_acidente: tipoAcidente, urgencia: 'alta', latitude, longitude, endereco, emergencia_id: emergencia.id,
           ...seguro, seguro_atualizado_em: seguro.pagamento_reparo ? new Date().toISOString() : null,
         })
         .select('id')

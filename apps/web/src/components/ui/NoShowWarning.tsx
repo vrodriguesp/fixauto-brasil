@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 
 interface NoShowWarningProps {
@@ -8,6 +9,7 @@ interface NoShowWarningProps {
 }
 
 export default function NoShowWarning({ clienteId }: NoShowWarningProps) {
+  const t = useTranslations('oficinaSolicitacaoDetalhe');
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function NoShowWarning({ clienteId }: NoShowWarningProps) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
         </svg>
         <p className="text-sm font-medium text-yellow-800">
-          Este cliente tem {count} falta{count > 1 ? 's' : ''} registrada{count > 1 ? 's' : ''}
+          {t('avisoFaltas', { count })}
         </p>
       </div>
     </div>

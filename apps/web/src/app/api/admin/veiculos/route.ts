@@ -15,7 +15,8 @@ export async function GET(req: NextRequest) {
   if (!auth.ok) return auth.response;
 
   const { searchParams } = new URL(req.url);
-  const q = searchParams.get('q');
+  // sem os caracteres que mudam o filtro .or() do PostgREST (auditoria B-02)
+  const q = (searchParams.get('q') || '').replace(/[,()*%\\]/g, ' ').trim() || null;
   const clienteId = searchParams.get('cliente_id');
   const marca = searchParams.get('marca');
 

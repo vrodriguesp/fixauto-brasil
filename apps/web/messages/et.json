@@ -684,5 +684,13 @@
     "entrarBotao": "Logi sisse",
     "erro": "Praegu ei õnnestunud kustutada. Proovi mõne minuti pärast uuesti.",
     "link": "Kustuta konto"
+  },
+  "avisoJurisdicao": {
+    "versaoBrasil": "Versioon: Brasiilia (LGPD ja tarbijakaitse seadustik)",
+    "versaoEuropa": "Versioon: Euroopa Liit (GDPR)",
+    "verEuropa": "Vaata ELi versiooni",
+    "verBrasil": "Vaata Brasiilia versiooni",
+    "avisoEuropa": "Oled Euroopas? Sinu suhtes kehtivad Euroopa tingimused (GDPR).",
+    "avisoBrasil": "Oled Brasiilias? Sinu suhtes kehtivad Brasiilia tingimused (LGPD)."
   }
 }

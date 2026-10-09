@@ -55,7 +55,9 @@ function CadastroPage() {
   // geolocalizacao - sem isso, toda oficina/loja cadastrada gravava a
   // mesma coordenada fixa, quebrando o "oficinas proximas" pra qualquer
   // parceiro fora de Sao Paulo (inclusive o piloto na Estonia).
-  const [coords, setCoords] = useState({ lat: -23.5505, lon: -46.6333 });
+  // sem padrao fixo (antes Sao Paulo): sem posicao nem endereco reconhecido, o
+  // cadastro pede o endereco certo (auditoria M11)
+  const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
   // Pais em codigo ISO 3166-1 alpha-2 - decide a MOEDA mostrada nos precos
   // dessa oficina/loja daqui pra frente (ver lib/currency.ts). Nunca deduzir
   // moeda pelo idioma da interface - so pelo pais real do negocio.
@@ -117,10 +119,10 @@ function CadastroPage() {
   // Fallback quando o navegador nega geolocalizacao: geocodifica o endereco
   // que a oficina/loja digitou via Nominatim (gratuito, mundial) em vez de
   // deixar a coordenada (e o pais) presos no default de Sao Paulo/Brasil.
-  const resolveLocation = async (): Promise<{ lat: number; lon: number; pais: string }> => {
-    if (geoResolved) return { ...coords, pais };
+  const resolveLocation = async (): Promise<{ lat: number; lon: number; pais: string } | null> => {
+    if (geoResolved && coords) return { ...coords, pais };
     const query = [endereco, cidade, estado].filter(Boolean).join(', ');
-    if (!query) return { ...coords, pais };
+    if (!query) return coords ? { ...coords, pais } : null;
     try {
       const res = await fetch(`/api/geocode?q=${encodeURIComponent(query)}`);
       if (res.ok) {
@@ -130,9 +132,9 @@ function CadastroPage() {
         }
       }
     } catch {
-      // mantem o default (SP/BR) se a geocodificacao tambem falhar
+      // sem resposta: cai no aviso de endereco
     }
-    return { ...coords, pais };
+    return coords ? { ...coords, pais } : null;
   };
 
   const toggleEspecialidade = (value: string) => {
@@ -191,6 +193,7 @@ function CadastroPage() {
     // Conta, perfil e oficina/loja sao criados no servidor; o login so
     // funciona depois que a pessoa confirma o e-mail pelo link enviado.
     const local = parceiro ? await resolveLocation() : null;
+    if (parceiro && !local) { setError(t('erroEnderecoNaoEncontrado')); return; }
     const res = await fetch('/api/cadastro', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -1062,6 +1062,8 @@
     "nenhuma": "No messages yet.",
     "dica": "Ask about the part or delivery time, or send a photo.",
     "enviandoFoto": "Sending photo...",
-    "placeholder": "Type your message..."
+    "placeholder": "Type your message...",
+    "fotoEnviada": "Photo sent",
+    "enviarFoto": "Send photo"
   }
 }

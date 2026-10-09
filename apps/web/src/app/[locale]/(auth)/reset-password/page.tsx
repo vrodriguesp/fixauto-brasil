@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { TERMOS_VERSAO } from '@/lib/termos';
 import { Link, useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
@@ -48,7 +49,9 @@ export default function ResetPasswordPage() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) setSessionReady(true);
     });
-    return () => subscription.unsubscribe();
+    // sem token e sem sessao: link invalido (antes "verificando..." para sempre)
+    const prazo = setTimeout(() => setLinkInvalido((v) => v || true), 4000);
+    return () => { subscription.unsubscribe(); clearTimeout(prazo); };
   }, []);
 
   useEffect(() => {
@@ -87,13 +90,15 @@ export default function ResetPasswordPage() {
       if (user) {
         await supabase
           .from('profiles')
-          .update({ termos_aceitos_em: new Date().toISOString(), termos_versao: '2026-09-08' })
+          .update({ termos_aceitos_em: new Date().toISOString(), termos_versao: TERMOS_VERSAO })
           .eq('id', user.id);
       }
     }
 
     setSuccess(true);
-    setTimeout(() => router.push('/login'), 3000);
+    // ja entrou com a senha nova: vai para o painel (antes ia ao login e o
+    // middleware devolvia para a home)
+    setTimeout(() => router.push('/'), 3000);
   };
 
   if (success) {

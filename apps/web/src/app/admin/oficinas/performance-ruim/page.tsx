@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import RevisoesSuspeitas from '@/components/admin/RevisoesSuspeitas';
 import type { Oficina, Avaliacao } from '@fixauto/shared';
 
 const MIN_AVALIACOES = 3;
@@ -65,6 +66,7 @@ export default function AdminPerformanceRuimPage() {
 
   return (
     <div>
+      <div className="mb-8"><RevisoesSuspeitas /></div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white mb-1">Oficinas com Performance Ruim</h1>
         <p className="text-slate-400 text-sm">

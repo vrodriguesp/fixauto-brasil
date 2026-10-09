@@ -52,7 +52,9 @@
     "noVehicles": "Nenhum veículo cadastrado",
     "yearLabel": "Ano: {year}",
     "colorInline": "| Cor: {color}",
-    "plateInline": "| Placa: {plate}"
+    "plateInline": "| Placa: {plate}",
+    "confirmarExcluir": "Excluir este veículo?",
+    "erroExcluirComHistorico": "Este veículo tem pedidos e histórico de serviços (garantia), por isso não pode ser excluído."
   },
   "clienteHistorico": {
     "selectRatingError": "Selecione uma nota de 1 a 5 estrelas",

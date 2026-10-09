@@ -22,11 +22,17 @@ export default function StarRating({
   };
 
   return (
-    <div className="flex items-center gap-0.5">
+    // acessivel: grupo de opcoes quando da para escolher; imagem "4/5" quando so mostra (B5)
+    <div className="flex items-center gap-0.5" role={interactive ? 'radiogroup' : 'img'} aria-label={interactive ? undefined : `${rating}/${maxRating}`}>
       {Array.from({ length: maxRating }, (_, i) => (
         <button
           key={i}
           type="button"
+          role={interactive ? 'radio' : undefined}
+          aria-checked={interactive ? i + 1 === Math.round(rating) : undefined}
+          aria-label={interactive ? `${i + 1}/${maxRating}` : undefined}
+          aria-hidden={interactive ? undefined : true}
+          tabIndex={interactive ? 0 : -1}
           disabled={!interactive}
           onClick={() => interactive && onChange?.(i + 1)}
           className={interactive ? 'cursor-pointer hover:scale-110 transition-transform' : 'cursor-default'}

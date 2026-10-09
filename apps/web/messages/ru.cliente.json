@@ -52,7 +52,9 @@
     "noVehicles": "Автомобили ещё не добавлены",
     "yearLabel": "Год: {year}",
     "colorInline": "| Цвет: {color}",
-    "plateInline": "| Номер: {plate}"
+    "plateInline": "| Номер: {plate}",
+    "confirmarExcluir": "Удалить этот автомобиль?",
+    "erroExcluirComHistorico": "У этого автомобиля есть заявки и история работ (гарантия), поэтому его нельзя удалить."
   },
   "clienteHistorico": {
     "selectRatingError": "Пожалуйста, выберите оценку от 1 до 5 звёзд",

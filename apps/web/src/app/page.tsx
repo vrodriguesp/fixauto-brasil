@@ -44,6 +44,11 @@ export default async function EscolherIdioma() {
           Bip<span className="text-primary-600">Fix</span>
         </h1>
         <p className="text-center text-gray-600 mt-2 mb-8">Vali keel · Выберите язык · Choose your language</p>
+        <div className="text-sm text-gray-600 space-y-2 mb-8">
+          <p lang="et">BipFix aitab Tallinna autojuhtidel küsida mitmelt töökojalt hinnapakkumisi, neid võrrelda ja broneerida remondi ühes kohas. Autojuhile tasuta.</p>
+          <p lang="ru">BipFix помогает водителям в Таллинне получить сметы от нескольких автосервисов, сравнить их и записаться на ремонт в одном месте. Для водителей бесплатно.</p>
+          <p lang="en">BipFix helps drivers in Tallinn get quotes from several garages, compare them and book the repair in one place. Free for drivers.</p>
+        </div>
         <ul className="space-y-3">
           {lista.map((o) => (
             <li key={o.locale}>

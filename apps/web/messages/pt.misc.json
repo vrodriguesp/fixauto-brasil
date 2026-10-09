@@ -803,6 +803,8 @@
     "nenhuma": "Nenhuma mensagem ainda.",
     "dica": "Tire dúvidas sobre a peça, o prazo ou envie uma foto.",
     "enviandoFoto": "Enviando foto...",
-    "placeholder": "Digite sua mensagem..."
+    "placeholder": "Digite sua mensagem...",
+    "fotoEnviada": "Foto enviada",
+    "enviarFoto": "Enviar foto"
   }
 }

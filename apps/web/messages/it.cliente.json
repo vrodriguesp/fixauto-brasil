@@ -52,7 +52,9 @@
     "noVehicles": "Nessun veicolo registrato",
     "yearLabel": "Anno: {year}",
     "colorInline": "| Colore: {color}",
-    "plateInline": "| Targa: {plate}"
+    "plateInline": "| Targa: {plate}",
+    "confirmarExcluir": "Eliminare questo veicolo?",
+    "erroExcluirComHistorico": "Questo veicolo ha richieste e uno storico di interventi (garanzia), quindi non può essere eliminato."
   },
   "clienteHistorico": {
     "selectRatingError": "Seleziona una valutazione da 1 a 5 stelle",

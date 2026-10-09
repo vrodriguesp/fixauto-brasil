@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { dentroDoLimite, ipDe } from '@/lib/rate-limit';
 import { EMAIL_I18N, resolveEmailLocale, fmt, escapeHtml } from '@/lib/email-i18n';
 import { localePrefix, routing } from '@/i18n/routing';
 import { supabaseAdmin } from '@/lib/supabase-admin';
@@ -31,6 +32,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email obrigatório' }, { status: 400 });
     }
 
+    // por IP: quem alterna e-mails nao manda recuperacao sem fim (auditoria B-01)
+    if (!dentroDoLimite(`esqueci-senha:${ipDe(req)}`, 10, 60 * 60 * 1000)) return NextResponse.json({ success: true });
     const agora = Date.now();
     if (agora - (ultimoPedido.get(email) || 0) < INTERVALO_MS) {
       return NextResponse.json({ success: true });

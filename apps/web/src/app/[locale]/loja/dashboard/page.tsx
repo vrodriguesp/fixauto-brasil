@@ -23,7 +23,7 @@ export default function LojaDashboardPage() {
           .from('cotacoes_pecas')
           .select('*, oficina:oficinas!inner(pais)', { count: 'exact', head: true })
           .eq('status', 'aberta')
-          .eq('oficina.pais', loja!.pais || 'BR'),
+          .eq('oficina.pais', loja!.pais || '--'),
         supabase.from('pedidos_pecas').select('*', { count: 'exact', head: true }).eq('loja_id', loja!.id).eq('status', 'confirmado'),
         supabase.from('pecas_catalogo').select('*', { count: 'exact', head: true }).eq('loja_id', loja!.id).eq('ativo', true),
       ]);

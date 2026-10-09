@@ -472,16 +472,16 @@ export default function OrcamentoDetalhePage() {
               {orc.status === 'aceito' && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 mb-3 rounded-full text-xs font-semibold bg-emerald-600 text-white">✓ {t('escolhido')}</span>
               )}
-              {/* Workshop header */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
+              {/* Workshop header (cabe em 390 px com nome longo - auditoria B6) */}
+              <div className="flex items-start justify-between gap-3 mb-4">
+                <div className="flex items-center gap-3 min-w-0">
                   <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
                     <span className="text-primary-700 font-bold">
                       {orc.oficina?.nome_fantasia?.charAt(0)}
                     </span>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-gray-900 break-words">
                       <Link href={rota('/oficinas/[id]', { id: orc.oficina?.id })} className="hover:text-primary-600 hover:underline">
                         {orc.oficina?.nome_fantasia}
                       </Link>
@@ -541,8 +541,8 @@ export default function OrcamentoDetalhePage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-gray-900">{formatCurrency(orc.valor_total, currencyForCountry(orc.oficina?.pais), locale)}</p>
+                <div className="text-right flex-shrink-0">
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900 whitespace-nowrap">{formatCurrency(orc.valor_total, currencyForCountry(orc.oficina?.pais), locale)}</p>
                   <p className="text-sm text-gray-500">{t('deadlineDays', { days: orc.prazo_dias })}</p>
                   {orc.valor_original && orc.valor_original !== orc.valor_total && (
                     <p className="text-xs text-gray-400 line-through">{formatCurrency(orc.valor_original, currencyForCountry(orc.oficina?.pais), locale)}</p>

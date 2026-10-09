@@ -100,6 +100,8 @@ const TIME_AGO_WORDS: Record<string, { agora: string; min: string; h: string; d:
   en: { agora: 'just now', min: 'min ago', h: 'h ago', d: 'd ago' },
   et: { agora: 'just nüüd', min: 'min tagasi', h: 't tagasi', d: 'p tagasi' },
   it: { agora: 'adesso', min: 'min fa', h: 'h fa', d: 'g fa' },
+  'pt-PT': { agora: 'agora', min: 'min atrás', h: 'h atrás', d: 'd atrás' },
+  ru: { agora: 'только что', min: 'мин назад', h: 'ч назад', d: 'дн. назад' },
 };
 
 export function timeAgo(date: string, locale: string = 'pt'): string {
@@ -109,12 +111,12 @@ export function timeAgo(date: string, locale: string = 'pt'): string {
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
-  const words = TIME_AGO_WORDS[locale] || TIME_AGO_WORDS.pt;
+  const words = TIME_AGO_WORDS[locale] || TIME_AGO_WORDS.en;
 
   if (diffMins < 1) return words.agora;
-  if (diffMins < 60) return `${diffMins}${words.min}`;
-  if (diffHours < 24) return `${diffHours}${words.h}`;
-  if (diffDays < 7) return `${diffDays}${words.d}`;
+  if (diffMins < 60) return `${diffMins} ${words.min}`;
+  if (diffHours < 24) return `${diffHours} ${words.h}`;
+  if (diffDays < 7) return `${diffDays} ${words.d}`;
   return formatDate(date, locale);
 }
 

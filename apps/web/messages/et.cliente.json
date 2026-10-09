@@ -52,7 +52,9 @@
     "noVehicles": "Ühtegi sõidukit pole veel registreeritud",
     "yearLabel": "Aasta: {year}",
     "colorInline": "| Värv: {color}",
-    "plateInline": "| Number: {plate}"
+    "plateInline": "| Number: {plate}",
+    "confirmarExcluir": "Kas kustutada see sõiduk?",
+    "erroExcluirComHistorico": "Sellel sõidukil on päringud ja hooldusajalugu (garantii), seega seda ei saa kustutada."
   },
   "clienteHistorico": {
     "selectRatingError": "Palun vali hinnang 1 kuni 5 tärni vahel",

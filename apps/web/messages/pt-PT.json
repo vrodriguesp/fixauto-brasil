@@ -684,5 +684,13 @@
     "entrarBotao": "Entrar",
     "erro": "Não foi possível eliminar agora. Tente novamente dentro de alguns minutos.",
     "link": "Eliminar conta"
+  },
+  "avisoJurisdicao": {
+    "versaoBrasil": "Versão: Brasil (LGPD e Código de Defesa do Consumidor)",
+    "versaoEuropa": "Versão: União Europeia (RGPD)",
+    "verEuropa": "Ver versão europeia",
+    "verBrasil": "Ver versão brasileira",
+    "avisoEuropa": "Está na Europa? Para si valem os termos europeus (RGPD).",
+    "avisoBrasil": "Está no Brasil? Para si valem os termos brasileiros (LGPD e CDC)."
   }
 }

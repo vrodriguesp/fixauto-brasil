@@ -52,7 +52,9 @@
     "noVehicles": "Ainda não há veículos registados",
     "yearLabel": "Ano: {year}",
     "colorInline": "| Cor: {color}",
-    "plateInline": "| Matrícula: {plate}"
+    "plateInline": "| Matrícula: {plate}",
+    "confirmarExcluir": "Eliminar este veículo?",
+    "erroExcluirComHistorico": "Este veículo tem pedidos e histórico de serviços (garantia), por isso não pode ser eliminado."
   },
   "clienteHistorico": {
     "selectRatingError": "Selecione uma classificação de 1 a 5 estrelas",

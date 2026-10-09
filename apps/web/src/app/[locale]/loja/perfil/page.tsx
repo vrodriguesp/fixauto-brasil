@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { buscarEnderecoPorCep, formatCep, cepEstaCompleto } from '@/lib/cep';
+// endereco com pais e mapa (antes so CEP brasileiro via ViaCEP - auditoria M-14)
+import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEndereco } from '@/components/forms/EnderecoEstruturado';
 
 export default function PerfilLojaPage() {
   const t = useTranslations('lojaPerfil');
@@ -12,44 +13,24 @@ export default function PerfilLojaPage() {
 
   const [nomeFantasia, setNomeFantasia] = useState('');
   const [cnpj, setCnpj] = useState('');
-  const [endereco, setEndereco] = useState('');
-  const [cidade, setCidade] = useState('');
-  const [estado, setEstado] = useState('');
-  const [cep, setCep] = useState('');
+  const [end, setEnd] = useState<ValorEndereco>({ rua: '', numero: '', cidade: '', estado: '', cep: '', latitude: null, longitude: null, pais: '' });
   const [raio, setRaio] = useState(30);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [buscandoCep, setBuscandoCep] = useState(false);
-  const [cepErro, setCepErro] = useState('');
-
-  const handleCepChange = async (raw: string) => {
-    const formatted = formatCep(raw);
-    setCep(formatted);
-    setCepErro('');
-    if (!cepEstaCompleto(formatted)) return;
-    setBuscandoCep(true);
-    const resultado = await buscarEnderecoPorCep(formatted);
-    setBuscandoCep(false);
-    if (!resultado) {
-      setCepErro(t('cepErro'));
-      return;
-    }
-    setEndereco(resultado.logradouro || endereco);
-    setCidade(resultado.localidade);
-    setEstado(resultado.uf);
-  };
 
   useEffect(() => {
     if (loja) {
       setNomeFantasia(loja.nome_fantasia || '');
       setCnpj(loja.cnpj || '');
-      setEndereco(loja.endereco || '');
-      setCidade(loja.cidade || '');
-      setEstado(loja.estado || '');
-      setCep(loja.cep || '');
+      const partes = separarEndereco(loja.endereco || '');
+      const l = loja as any;
+      setEnd({
+        rua: partes.rua, numero: partes.numero, cidade: loja.cidade || '', estado: loja.estado || '', cep: loja.cep || '',
+        latitude: l.latitude != null ? Number(l.latitude) : null, longitude: l.longitude != null ? Number(l.longitude) : null, pais: l.pais || '',
+      });
       setRaio(loja.raio_atendimento_km || 30);
     }
   }, [loja]);
@@ -68,10 +49,12 @@ export default function PerfilLojaPage() {
     await supabase.from('lojas_pecas').update({
       nome_fantasia: nomeFantasia,
       cnpj: cnpj || null,
-      endereco,
-      cidade,
-      estado,
-      cep,
+      endereco: juntarEndereco(end.rua, end.numero),
+      cidade: end.cidade,
+      estado: end.estado,
+      cep: end.cep,
+      ...(end.latitude != null && end.longitude != null ? { latitude: end.latitude, longitude: end.longitude } : {}),
+      ...(end.pais ? { pais: end.pais } : {}),
       raio_atendimento_km: raio,
     }).eq('id', loja.id);
 
@@ -124,26 +107,8 @@ export default function PerfilLojaPage() {
           <label htmlFor="c9a81-5" className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
           <input id="c9a81-5" type="text" className="input-field" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
         </div>
-        <div>
-          <label htmlFor="c9a81-6" className="block text-sm font-medium text-gray-700 mb-1">{t('labelCep')}</label>
-          <input id="c9a81-6" type="text" inputMode="numeric" maxLength={9} className="input-field !w-40" placeholder={t('cepPlaceholder')} value={cep} onChange={(e) => handleCepChange(e.target.value)} />
-          {buscandoCep && <p className="text-xs text-gray-400 mt-1">{t('buscandoCep')}</p>}
-          {cepErro && <p className="text-xs text-red-500 mt-1">{cepErro}</p>}
-        </div>
-        <div>
-          <label htmlFor="c9a81-7" className="block text-sm font-medium text-gray-700 mb-1">{t('labelEndereco')}</label>
-          <input id="c9a81-7" type="text" className="input-field" placeholder={t('enderecoPlaceholder')} value={endereco} onChange={(e) => setEndereco(e.target.value)} />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="c9a81-8" className="block text-sm font-medium text-gray-700 mb-1">{t('labelCidade')}</label>
-            <input id="c9a81-8" type="text" className="input-field" value={cidade} onChange={(e) => setCidade(e.target.value)} />
-          </div>
-          <div>
-            <label htmlFor="c9a81-9" className="block text-sm font-medium text-gray-700 mb-1">{t('labelEstado')}</label>
-            <input id="c9a81-9" type="text" className="input-field" value={estado} onChange={(e) => setEstado(e.target.value)} />
-          </div>
-        </div>
+        <EnderecoEstruturado idBase="loja-end" valor={end} onChange={setEnd}
+          perto={end.latitude != null && end.longitude != null ? { lat: end.latitude, lon: end.longitude } : null} />
         <div>
           <label htmlFor="c9a81-10" className="block text-sm font-medium text-gray-700 mb-1">{t('labelRaio')}</label>
           <input id="c9a81-10" type="number" className="input-field" value={raio} onChange={(e) => setRaio(Number(e.target.value))} />

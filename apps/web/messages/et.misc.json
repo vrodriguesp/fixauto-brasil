@@ -1062,6 +1062,8 @@
     "nenhuma": "Sõnumeid veel pole.",
     "dica": "Küsi varuosa või tarneaja kohta või saada foto.",
     "enviandoFoto": "Foto saatmine...",
-    "placeholder": "Kirjuta oma sõnum..."
+    "placeholder": "Kirjuta oma sõnum...",
+    "fotoEnviada": "Saadetud foto",
+    "enviarFoto": "Saada foto"
   }
 }

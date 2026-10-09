@@ -780,7 +780,8 @@
       "recusado": "Recusado",
       "expirado": "Expirado"
     },
-    "proporRevisao": "Propor revisão"
+    "proporRevisao": "Propor revisão",
+    "avisoFaltas": "{count, plural, one {Este cliente tem # falta registada} other {Este cliente tem # faltas registadas}}"
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Viatura recebida na oficina",

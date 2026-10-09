@@ -10,7 +10,7 @@ import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import StarRating from '@/components/ui/StarRating';
 import TutorialBanner from '@/components/tutorial/TutorialBanner';
-import { timeAgo, calcDistance, getUrgenciaColor, formatCurrency, cleanDescricao, INTL_LOCALE } from '@/lib/utils';
+import { timeAgo, calcDistance, getUrgenciaColor, formatCurrency, cleanDescricao, INTL_LOCALE, rotuloTipoPedido } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { Link } from '@/i18n/navigation';
 import PerfilCompleto from '@/components/oficina/PerfilCompleto';
@@ -138,7 +138,7 @@ export default function OficinaDashboard() {
             </svg>
           </div>
           <div>
-            <p className="text-2xl font-bold text-gray-900">{eventos.length}</p>
+            <p className="text-2xl font-bold text-gray-900">{eventos.filter((e: any) => e.status === 'agendado' || e.status === 'em_andamento').length}</p>
             <p className="text-sm text-gray-500">{t('statNaAgenda')}</p>
           </div>
         </Link>
@@ -297,7 +297,7 @@ export default function OficinaDashboard() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900 capitalize">{sol.tipo}</h3>
+                        <h3 className="font-semibold text-gray-900">{rotuloTipoPedido(tc, sol.tipo, sol.descricao)}</h3>
                         <StatusBadge status={sol.status} />
                         <span className={`badge ${getUrgenciaColor(sol.urgencia)}`}>
                           {tc.has(`urgencias.${sol.urgencia}`) ? tc(`urgencias.${sol.urgencia}`) : sol.urgencia}

@@ -36,6 +36,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, funcionario: novo });
     }
 
+    if (cargo && !['mecanico', 'admin'].includes(cargo)) {
+      return NextResponse.json({ error: 'Cargo inválido', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
+    }
     if (!email || !senha || !cargo || !oficina_id) {
       return NextResponse.json({ error: 'Campos obrigatórios: email, senha, cargo, oficina_id' }, { status: 400 });
     }
@@ -175,6 +178,9 @@ export async function PATCH(req: NextRequest) {
     // So campos conhecidos (antes qualquer coluna do corpo ia para o update)
     for (const k of Object.keys(funcUpdates)) {
       if (!['ativo', 'cargo', 'especialidade', 'capacidade_maxima', 'primeiro_login'].includes(k)) delete funcUpdates[k];
+    }
+    if (funcUpdates.cargo !== undefined && !['mecanico', 'admin'].includes(funcUpdates.cargo)) {
+      return NextResponse.json({ error: 'Cargo inválido', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
     }
 
     // Dar acesso ao portal a um mecanico cadastrado sem login

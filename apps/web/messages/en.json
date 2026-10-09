@@ -279,7 +279,7 @@
     "ogTitle": "BipFix - Find the right repair shop for your car",
     "ogDescription": "Compare quotes from verified repair shops near you in minutes.",
     "carregando": "Loading...",
-    "heroTitulo": "Car repairs,",
+    "heroTitulo": "Car repairs in Tallinn,",
     "heroTituloDestaque": "no surprises.",
     "heroTexto": "Full transparency from quote to delivery. Compare detailed quotes from verified repair shops and track every stage of the repair in real time. Simple, secure, and no hidden costs.",
     "ctaCliente": "I need a repair",
@@ -684,5 +684,13 @@
     "entrarBotao": "Sign in",
     "erro": "Could not delete right now. Please try again in a few minutes.",
     "link": "Delete account"
+  },
+  "avisoJurisdicao": {
+    "versaoBrasil": "Version: Brazil (LGPD and Consumer Protection Code)",
+    "versaoEuropa": "Version: European Union (GDPR)",
+    "verEuropa": "See the EU version",
+    "verBrasil": "See the Brazil version",
+    "avisoEuropa": "Are you in Europe? The European terms (GDPR) apply to you.",
+    "avisoBrasil": "Are you in Brazil? The Brazilian terms (LGPD and Consumer Code) apply to you."
   }
 }

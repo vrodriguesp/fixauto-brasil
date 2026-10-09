@@ -780,7 +780,8 @@
       "recusado": "Tagasi lükatud",
       "expirado": "Aegunud"
     },
-    "proporRevisao": "Paku muudatust"
+    "proporRevisao": "Paku muudatust",
+    "avisoFaltas": "{count, plural, one {Sellel kliendil on # registreeritud mitteilmumine} other {Sellel kliendil on # registreeritud mitteilmumist}}"
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Sõiduk vastu võetud töökojas",

@@ -165,7 +165,8 @@ export async function middleware(req: NextRequest) {
   // de segmento (path === prefixo OU prefixo seguido de "/").
   const isUnderPath = (prefix: string) => path === prefix || path.startsWith(`${prefix}/`);
   const isProtected = isUnderPath('/cliente') || isUnderPath('/oficina') || isUnderPath('/admin') || isUnderPath('/loja');
-  const isAuthPage = path === '/login' || path === '/cadastro' || path === '/escolher-tipo';
+  // nomes publicos por idioma (/sign-up, /registreeru...) tambem contam (auditoria B1)
+  const isAuthPage = ['/login', '/cadastro', '/escolher-tipo'].some((p) => path === p || path === caminhoLocal(pathLocale as Locale, p));
 
   // /admin nao tem idioma: o login dele e o da versao em portugues
   const withLocale = (target: string) => new URL(`${localePrefix || LOCALE_PREFIX.pt}${target}`, req.url);

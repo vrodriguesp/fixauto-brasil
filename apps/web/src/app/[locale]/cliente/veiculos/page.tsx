@@ -76,12 +76,18 @@ function VeiculosPage() {
     setShowForm(true);
   };
 
+  // confirma antes; carro com pedidos nao se apaga (guarda historico e garantia)
+  const [erroExcluir, setErroExcluir] = useState('');
   const handleDelete = async (id: string) => {
-    await remove(id);
+    if (!confirm(t('confirmarExcluir'))) return;
+    setErroExcluir('');
+    const { error } = await remove(id);
+    if (error) setErroExcluir(t('erroExcluirComHistorico'));
   };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {erroExcluir && <p role="alert" className="mb-4 text-sm text-red-700 bg-red-50 rounded-lg p-3">{erroExcluir}</p>}
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>

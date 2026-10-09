@@ -780,7 +780,8 @@
       "recusado": "Declined",
       "expirado": "Expired"
     },
-    "proporRevisao": "Propose a revision"
+    "proporRevisao": "Propose a revision",
+    "avisoFaltas": "{count, plural, one {This customer has # recorded no-show} other {This customer has # recorded no-shows}}"
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Vehicle received at the shop",

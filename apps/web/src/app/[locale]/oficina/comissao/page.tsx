@@ -107,7 +107,7 @@ export default function ComissaoPage() {
     } else if (config.media_tempo_resposta_horas > 0 && config.media_tempo_resposta_horas < 4) {
       items.push({ label: t('bonusRespostaBoa'), bonus: C.BONUS_RESPOSTA_4H, value: `${config.media_tempo_resposta_horas.toFixed(1)}h`, color: 'green' });
     } else {
-      items.push({ label: t('bonusTempoResposta'), bonus: 0, value: config.media_tempo_resposta_horas > 0 ? `${config.media_tempo_resposta_horas.toFixed(1)}h` : 'N/A', color: 'gray' });
+      items.push({ label: t('bonusTempoResposta'), bonus: 0, value: config.media_tempo_resposta_horas > 0 ? `${config.media_tempo_resposta_horas.toFixed(1)}h` : '—', color: 'gray' });
     }
 
     if (config.media_revisoes_orcamento < 1.0) {
@@ -123,7 +123,7 @@ export default function ComissaoPage() {
     } else if (config.media_avaliacao_clientes >= 4.0) {
       items.push({ label: t('bonusBoaAvaliacao'), bonus: C.BONUS_AVALIACAO_4_0, value: config.media_avaliacao_clientes.toFixed(1), color: 'green' });
     } else {
-      items.push({ label: t('bonusAvaliacaoClientes'), bonus: 0, value: config.media_avaliacao_clientes > 0 ? config.media_avaliacao_clientes.toFixed(1) : 'N/A', color: 'gray' });
+      items.push({ label: t('bonusAvaliacaoClientes'), bonus: 0, value: config.media_avaliacao_clientes > 0 ? config.media_avaliacao_clientes.toFixed(1) : '—', color: 'gray' });
     }
 
     if (config.total_servicos_concluidos >= 25) {

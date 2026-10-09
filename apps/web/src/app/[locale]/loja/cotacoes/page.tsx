@@ -36,7 +36,7 @@ export default function LojaCotacoesPage() {
         // (e vice-versa), o que nao faz sentido logisticamente.
         .select('*, oficina:oficinas!inner(nome_fantasia, cidade, estado, pais)')
         .eq('status', 'aberta')
-        .eq('oficina.pais', loja.pais || 'BR')
+        .eq('oficina.pais', loja.pais || '--') // sem pais no perfil: nada (antes assumia Brasil)
         .order('created_at', { ascending: false }),
       supabase
         .from('cotacoes_pecas_respostas')

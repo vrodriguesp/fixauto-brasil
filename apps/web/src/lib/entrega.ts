@@ -43,7 +43,7 @@ export async function entregarServico(p: { eventoId: string; solicitacaoId: stri
       if (sol?.cliente_id) {
         const veiculoNome = sol.veiculo
           ? `${(sol.veiculo as any).fipe_marca} ${(sol.veiculo as any).fipe_modelo}`
-          : 'seu veículo';
+          : ({ pt: 'seu veículo', 'pt-PT': 'o seu veículo', en: 'your vehicle', et: 'sinu sõiduk', it: 'il tuo veicolo', ru: 'ваш автомобиль' } as Record<string, string>)[(sol.cliente as any)?.idioma || 'en'] || 'your vehicle';
         const cliente = sol.cliente as any;
 
         // 4. Create notification
@@ -61,7 +61,7 @@ export async function entregarServico(p: { eventoId: string; solicitacaoId: stri
         if (cliente?.email) {
           sendServicoConcluidoEmail({
             toEmail: cliente.email,
-            toName: cliente.nome || 'Cliente',
+            toName: cliente.nome || '',
             oficinaNome,
             veiculoNome,
             solicitacaoId,
@@ -74,7 +74,7 @@ export async function entregarServico(p: { eventoId: string; solicitacaoId: stri
           sendServicoConcluidoWhatsApp({
             toPhone: cliente.telefone,
             pais: (ofPais as any)?.pais,
-            toName: cliente.nome || 'Cliente',
+            toName: cliente.nome || '',
             oficinaNome,
             veiculoNome,
             solicitacaoId,

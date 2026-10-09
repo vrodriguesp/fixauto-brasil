@@ -446,7 +446,7 @@ export default function VeiculosEmServico() {
                         {/* Assigned mechanic */}
                         {evento.funcionario && (
                           <span className="text-xs text-gray-400">
-                            {t('respLabel')}: {nomeFuncionario(evento.funcionario) || 'N/A'}
+                            {t('respLabel')}: {nomeFuncionario(evento.funcionario) || '—'}
                           </span>
                         )}
                       </div>

@@ -2,15 +2,19 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { hreflangAlternates } from '@/lib/seo-utils';
 import DocumentoLegalSecoes from '@/components/legal/DocumentoLegalSecoes';
+import AvisoJurisdicao from '@/components/legal/AvisoJurisdicao';
+import { hrefNoIdioma } from '@/i18n/routing';
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ regiao?: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  // ?regiao=br|eu: versao de outra jurisdicao - fora do indice (a canonica e a normal)
+  const outraRegiao = !!(await searchParams).regiao;
   const t = await getTranslations({ locale, namespace: 'privacidade' });
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
     alternates: hreflangAlternates(locale, '/privacidade'),
-    robots: { index: true, follow: true },
+    robots: outraRegiao ? { index: false, follow: true } : { index: true, follow: true },
   };
 }
 
@@ -18,9 +22,18 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 // o Brasil (LGPD - PrivacidadeLgpd, abaixo) e as versoes en/et/it atendem a
 // Europa (GDPR - DocumentoLegalSecoes). O namespace de mensagens e o mesmo
 // ("privacidade"), mas o conteudo de en/et/it e uma lista de secoes.
-export default async function PrivacidadePage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function PrivacidadePage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ regiao?: string }> }) {
   const { locale } = await params;
-  return locale === 'pt' ? <PrivacidadeLgpd locale={locale} /> : <DocumentoLegalSecoes locale={locale} namespace="privacidade" />;
+  const { regiao } = await searchParams;
+  // vale o PAIS de quem usa (Brasil x Europa), nao o idioma: o padrao segue o
+  // mercado do idioma e a outra versao fica a um clique (?regiao=)
+  const versao: 'br' | 'eu' = regiao === 'br' ? 'br' : regiao === 'eu' ? 'eu' : locale === 'pt' ? 'br' : 'eu';
+  return (
+    <>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8"><AvisoJurisdicao versao={versao} caminho={hrefNoIdioma(locale, '/privacidade')} /></div>
+      {versao === 'br' ? <PrivacidadeLgpd locale="pt" /> : <DocumentoLegalSecoes locale={locale === 'pt' ? 'pt-PT' : locale} namespace="privacidade" />}
+    </>
+  );
 }
 
 async function PrivacidadeLgpd({ locale }: { locale: string }) {

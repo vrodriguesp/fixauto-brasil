@@ -780,7 +780,8 @@
       "recusado": "Отклонена",
       "expirado": "Истекла"
     },
-    "proporRevisao": "Предложить изменение"
+    "proporRevisao": "Предложить изменение",
+    "avisoFaltas": "{count, plural, one {У клиента # зафиксированная неявка} few {У клиента # зафиксированные неявки} many {У клиента # зафиксированных неявок} other {У клиента # зафиксированной неявки}}"
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Автомобиль принят в автосервисе",

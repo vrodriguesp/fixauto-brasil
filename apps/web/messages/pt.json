@@ -684,5 +684,13 @@
     "entrarBotao": "Entrar",
     "erro": "Não foi possível excluir agora. Tente de novo em alguns minutos.",
     "link": "Excluir conta"
+  },
+  "avisoJurisdicao": {
+    "versaoBrasil": "Versão: Brasil (LGPD e Código de Defesa do Consumidor)",
+    "versaoEuropa": "Versão: União Europeia (GDPR)",
+    "verEuropa": "Ver versão europeia",
+    "verBrasil": "Ver versão brasileira",
+    "avisoEuropa": "Você está na Europa? Para você valem os termos europeus (GDPR).",
+    "avisoBrasil": "Você está no Brasil? Para você valem os termos brasileiros (LGPD e CDC)."
   }
 }

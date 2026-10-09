@@ -62,7 +62,8 @@
     "verifiqueAnalise": "Dopo la conferma verifichiamo la registrazione dell'impresa e attiviamo il tuo profilo per i clienti. Ti avvisiamo via email.",
     "reenviarLink": "Non ho ricevuto l'email: inviala di nuovo",
     "linkReenviado": "Se un account è in attesa di conferma, abbiamo inviato un nuovo link.",
-    "declaracaoResponsavel": "Dichiaro di essere il responsabile di questa impresa (titolare, amministratore o persona con poteri di rappresentanza) e di essere consapevole che l'uso di BipFix, oggi gratuito, potrà diventare a pagamento in futuro, con un preavviso di 30 giorni di calendario."
+    "declaracaoResponsavel": "Dichiaro di essere il responsabile di questa impresa (titolare, amministratore o persona con poteri di rappresentanza) e di essere consapevole che l'uso di BipFix, oggi gratuito, potrà diventare a pagamento in futuro, con un preavviso di 30 giorni di calendario.",
+    "erroEnderecoNaoEncontrado": "Non abbiamo trovato l'indirizzo. Scegli uno dei suggerimenti o consenti la posizione."
   },
   "definirSenha": {
     "erroSenhaCurta": "La password deve contenere almeno 8 caratteri",

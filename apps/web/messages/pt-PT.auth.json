@@ -62,7 +62,8 @@
     "verifiqueAnalise": "Depois da confirmação, verificamos o registo da empresa e ativamos o seu perfil para os clientes. Avisamos por e-mail.",
     "reenviarLink": "Não recebi o e-mail: enviar novamente",
     "linkReenviado": "Se existir uma conta a aguardar confirmação, enviámos um novo link.",
-    "declaracaoResponsavel": "Declaro que sou o responsável por esta empresa (sócio, gerente ou pessoa com poderes para a representar) e que tenho conhecimento de que a utilização da BipFix, hoje gratuita, poderá ser cobrada no futuro, com um aviso prévio de 30 dias de calendário."
+    "declaracaoResponsavel": "Declaro que sou o responsável por esta empresa (sócio, gerente ou pessoa com poderes para a representar) e que tenho conhecimento de que a utilização da BipFix, hoje gratuita, poderá ser cobrada no futuro, com um aviso prévio de 30 dias de calendário.",
+    "erroEnderecoNaoEncontrado": "Não encontrámos a morada. Escolha uma das sugestões ou permita a localização."
   },
   "definirSenha": {
     "erroSenhaCurta": "A palavra-passe deve ter pelo menos 8 caracteres",

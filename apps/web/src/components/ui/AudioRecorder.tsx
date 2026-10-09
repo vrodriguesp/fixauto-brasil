@@ -18,6 +18,7 @@ export default function AudioRecorder({ onRecorded }: AudioRecorderProps) {
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const inicioRef = useRef(0);
 
   const cleanup = useCallback(() => {
     if (timerRef.current) {
@@ -58,12 +59,14 @@ export default function AudioRecorder({ onRecorded }: AudioRecorderProps) {
 
       mediaRecorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: mediaRecorder.mimeType });
-        const finalDuration = duration;
+        // duracao pelo relogio real (o estado dentro deste callback era sempre 0 - M6)
+        const finalDuration = Math.max(1, Math.round((Date.now() - inicioRef.current) / 1000));
         onRecorded(blob, finalDuration);
         setDuration(0);
         cleanup();
       };
 
+      inicioRef.current = Date.now();
       mediaRecorder.start(250);
       setIsRecording(true);
       setDuration(0);

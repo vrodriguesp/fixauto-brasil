@@ -150,7 +150,7 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
                     {msg.imagem_url ? (
                       <MidiaPrivada url={msg.imagem_url}>{(u) => (
 <a href={u} target="_blank" rel="noopener noreferrer">
-                        <img src={u} alt="Foto enviada" className="rounded-lg max-w-full max-h-64 object-cover" />
+                        <img src={u} alt={tChat('fotoEnviada')} className="rounded-lg max-w-full max-h-64 object-cover" />
                       </a>
 )}</MidiaPrivada>
                     ) : (
@@ -180,7 +180,7 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
             <button
               onClick={() => fileInputRef.current?.click()}
               className="w-10 h-10 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-              title="Enviar foto"
+              title={tChat('enviarFoto')}
               type="button"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

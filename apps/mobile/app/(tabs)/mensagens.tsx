@@ -72,12 +72,8 @@ export default function MensagensScreen() {
       const escolhida = orcsSol.find((o: any) => o.status === 'aceito')?.oficina_id;
       oficinas = oficinas.filter((o) => (escolhida ? o === escolhida : !orcsSol.some((x: any) => x.oficina_id === o && x.status === 'recusado')));
       if (['concluida', 'cancelada'].includes(sol.status)) {
-        const abertas: string[] = [];
-        for (const o of oficinas) {
-          const { data: aberta } = await supabase.rpc('conversa_aberta', { p_sol: sol.id, p_of: o });
-          if (aberta) abertas.push(o);
-        }
-        oficinas = abertas;
+        const respostas = await Promise.all(oficinas.map((o) => supabase.rpc('conversa_aberta', { p_sol: sol.id, p_of: o })));
+        oficinas = oficinas.filter((_, i) => !!respostas[i].data);
       }
       for (const oficinaId of oficinas) {
         const daOficina = solMsgs.filter((m: any) => m.oficina_id === oficinaId);

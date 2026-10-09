@@ -3,24 +3,37 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { hreflangAlternates } from '@/lib/seo-utils';
 import DocumentoLegalSecoes from '@/components/legal/DocumentoLegalSecoes';
+import AvisoJurisdicao from '@/components/legal/AvisoJurisdicao';
+import { hrefNoIdioma } from '@/i18n/routing';
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ regiao?: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  // ?regiao=br|eu: versao de outra jurisdicao - fora do indice (a canonica e a normal)
+  const outraRegiao = !!(await searchParams).regiao;
   const t = await getTranslations({ locale, namespace: 'termos' });
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
     alternates: hreflangAlternates(locale, '/termos'),
-    robots: { index: true, follow: true },
+    robots: outraRegiao ? { index: false, follow: true } : { index: true, follow: true },
   };
 }
 
 // Dois textos, um por jurisdicao: o site em portugues atende o Brasil (lei
 // brasileira, CDC - TermosBrasil, abaixo) e as versoes en/et/it atendem a
 // Europa (direito da UE e da Estonia - DocumentoLegalSecoes).
-export default async function TermosPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function TermosPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ regiao?: string }> }) {
   const { locale } = await params;
-  return locale === 'pt' ? <TermosBrasil locale={locale} /> : <DocumentoLegalSecoes locale={locale} namespace="termos" />;
+  const { regiao } = await searchParams;
+  // vale o PAIS de quem usa (Brasil x Europa), nao o idioma: o padrao segue o
+  // mercado do idioma e a outra versao fica a um clique (?regiao=)
+  const versao: 'br' | 'eu' = regiao === 'br' ? 'br' : regiao === 'eu' ? 'eu' : locale === 'pt' ? 'br' : 'eu';
+  return (
+    <>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8"><AvisoJurisdicao versao={versao} caminho={hrefNoIdioma(locale, '/termos')} /></div>
+      {versao === 'br' ? <TermosBrasil locale="pt" /> : <DocumentoLegalSecoes locale={locale === 'pt' ? 'pt-PT' : locale} namespace="termos" />}
+    </>
+  );
 }
 
 async function TermosBrasil({ locale }: { locale: string }) {

@@ -52,7 +52,9 @@
     "noVehicles": "No vehicles registered yet",
     "yearLabel": "Year: {year}",
     "colorInline": "| Colour: {color}",
-    "plateInline": "| Plate: {plate}"
+    "plateInline": "| Plate: {plate}",
+    "confirmarExcluir": "Delete this vehicle?",
+    "erroExcluirComHistorico": "This vehicle has requests and service history (warranty), so it cannot be deleted."
   },
   "clienteHistorico": {
     "selectRatingError": "Please select a rating from 1 to 5 stars",

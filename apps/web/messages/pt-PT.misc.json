@@ -1062,6 +1062,8 @@
     "nenhuma": "Ainda não há mensagens.",
     "dica": "Esclareça dúvidas sobre a peça, o prazo ou envie uma foto.",
     "enviandoFoto": "A enviar a foto...",
-    "placeholder": "Escreva a sua mensagem..."
+    "placeholder": "Escreva a sua mensagem...",
+    "fotoEnviada": "Fotografia enviada",
+    "enviarFoto": "Enviar fotografia"
   }
 }

@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
         oficina_id: orc.oficina_id,
         solicitacao_id: orc.solicitacao_id,
         titulo: notifReparoAgendadoTitulo((orc.oficina as any)?.profile?.idioma),
-        descricao: `Orçamento #${orcamentoId.slice(0, 8)}`,
+        descricao: `${({ pt: 'Orçamento', 'pt-PT': 'Orçamento', en: 'Quote', et: 'Hinnapakkumine', it: 'Preventivo', ru: 'Смета' } as Record<string, string>)[(orc.oficina as any)?.profile?.idioma || 'en'] || 'Quote'} #${orcamentoId.slice(0, 8)}`,
         // hora local da oficina (pais), gravada em UTC
         data_inicio: horaLocalEmUtc(slot.data_checkin, slot.turno === 'manha' ? '08:00' : '13:00', (orc.oficina as any)?.pais),
         data_fim: horaLocalEmUtc(slot.data_previsao_entrega || slot.data_checkin, '18:00', (orc.oficina as any)?.pais),
@@ -185,12 +185,12 @@ export async function POST(req: NextRequest) {
           // Parse accident type from emergencia descricao
           const { data: emergDescData } = await supabaseAdmin
             .from('emergencias')
-            .select('descricao, profile_id')
+            .select('descricao, profile_id, tipo_acidente')
             .eq('id', emergencia.id)
             .single();
 
-          const tipoMatch = emergDescData?.descricao?.match(/\[TIPO:(\w+)\]/);
-          const tipoAcidente = tipoMatch ? tipoMatch[1] : null;
+          // coluna propria (B-11); o marcador no texto vale para registros antigos
+          const tipoAcidente = (emergDescData as any)?.tipo_acidente || emergDescData?.descricao?.match(/\[TIPO:(\w+)\]/)?.[1] || null;
 
           // Insert message in emergencia chat - idioma da oficina (decisao
           // do usuario: mensagens de chat compartilhadas assumem o idioma

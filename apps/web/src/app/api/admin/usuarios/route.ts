@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { excluirOuAnonimizarConta } from '@/lib/excluir-conta';
+import { registrarAuditoria } from '@/lib/admin-auditoria';
 
 
 export const dynamic = 'force-dynamic';
@@ -43,8 +45,8 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-// DELETE: permanently remove a user (auth user + profile, cascades to
-// everything linked to them - oficina, veiculos, solicitacoes, etc).
+// DELETE: remove a conta - sem historico apaga; com historico anonimiza
+// (lib/excluir-conta.ts, a mesma regra do "excluir minha conta").
 export async function DELETE(req: NextRequest) {
   const auth = await requireAdmin();
   if (!auth.ok) return auth.response;
@@ -55,12 +57,16 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 });
     }
 
-    const { error } = await supabaseAdmin.auth.admin.deleteUser(id);
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    // mesma regra da exclusao pelo proprio usuario: com historico anonimiza
+    // (antes apagava em cascata comissoes e pedidos - auditoria B-03)
+    const { data: alvo } = await supabaseAdmin.from('profiles').select('tipo').eq('id', id).maybeSingle();
+    if (alvo?.tipo === 'admin') return NextResponse.json({ error: 'Conta de administrador' }, { status: 403 });
+    const r = await excluirOuAnonimizarConta(id);
+    if (r.erro === 'CARRO_EM_SERVICO') return NextResponse.json({ error: 'Há um carro em serviço desta conta. Conclua a entrega antes.', codigo: 'CARRO_EM_SERVICO' }, { status: 409 });
+    if (r.erro) return NextResponse.json({ error: r.erro }, { status: 500 });
+    await registrarAuditoria(supabaseAdmin, { adminId: auth.userId, entidade: 'profile', entidadeId: id, acao: r.modo === 'apagada' ? 'apagar_conta' : 'anonimizar_conta' });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, modo: r.modo });
   } catch (err) {
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }

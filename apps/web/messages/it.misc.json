@@ -1062,6 +1062,8 @@
     "nenhuma": "Ancora nessun messaggio.",
     "dica": "Chiedi informazioni sul ricambio o sui tempi, oppure invia una foto.",
     "enviandoFoto": "Invio della foto...",
-    "placeholder": "Scrivi il tuo messaggio..."
+    "placeholder": "Scrivi il tuo messaggio...",
+    "fotoEnviada": "Foto inviata",
+    "enviarFoto": "Invia foto"
   }
 }

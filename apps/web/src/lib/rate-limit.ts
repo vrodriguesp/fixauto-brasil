@@ -6,7 +6,9 @@ const janelas = new Map<string, number[]>();
 
 export function ipDe(req: NextRequest | Request): string {
   const h = req.headers;
-  return h.get('x-real-ip') || h.get('x-forwarded-for')?.split(',')[0].trim() || 'desconhecido';
+  // nginx sempre define X-Real-IP; sem ele, o ULTIMO item do X-Forwarded-For
+  // (o primeiro pode ser inventado pelo visitante - auditoria B-14)
+  return h.get('x-real-ip')?.trim() || h.get('x-forwarded-for')?.split(',').pop()?.trim() || 'desconhecido';
 }
 
 /** true = pode seguir; false = passou do limite (responder 429). */

@@ -167,12 +167,9 @@ export default function ClienteMensagensListPage() {
         const escolhida = orcsSol.find((o: any) => o.status === 'aceito')?.oficina_id;
         oficinasDoPedido = oficinasDoPedido.filter((o) => (escolhida ? o === escolhida : !orcsSol.some((x: any) => x.oficina_id === o && x.status === 'recusado')));
         if (['concluida', 'cancelada'].includes(sol.status)) {
-          const abertas: string[] = [];
-          for (const o of oficinasDoPedido) {
-            const { data: aberta } = await supabase.rpc('conversa_aberta', { p_sol: sol.id, p_of: o });
-            if (aberta) abertas.push(o);
-          }
-          oficinasDoPedido = abertas;
+          // em paralelo (antes uma de cada vez - auditoria B7)
+          const respostas = await Promise.all(oficinasDoPedido.map((o) => supabase.rpc('conversa_aberta', { p_sol: sol.id, p_of: o })));
+          oficinasDoPedido = oficinasDoPedido.filter((_, i) => !!respostas[i].data);
         }
         const conversasOficina: ConversaOficina[] = oficinasDoPedido.map((oficinaId) => {
           const daOficina = solMensagens.filter((m: any) => m.oficina_id === oficinaId);

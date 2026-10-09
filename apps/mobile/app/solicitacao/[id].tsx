@@ -12,6 +12,7 @@ import { mensagemErro } from '../../lib/erro';
 import { turnoDisponivel, type Turno } from '../../lib/turnos';
 import { limparDescricao, ehAcidente } from '../../lib/texto';
 import EditarPedido from '../../components/EditarPedido';
+import RevisaoPendente from '../../components/RevisaoPendente';
 import { useAvisos } from '../../lib/avisos';
 import { abrirOficina } from '../../lib/oficina-link';
 
@@ -184,6 +185,9 @@ export default function SolicitacaoDetailScreen() {
             <Text className="text-gray-500 text-xs">{t('garantia.ate', { data: formatDate(fimGarantia.toISOString(), locale) })}</Text>
           </View>
         )}
+
+        {/* revisao proposta pela oficina depois do aceite: o cliente decide */}
+        <RevisaoPendente solicitacaoId={solicitacao.id} recarregar={avisoChegou} aoDecidir={carregar} />
 
         <Pressable onPress={() => router.push(`/conversa/${solicitacao.id}`)} className="bg-primary-50 rounded-lg py-3 items-center mb-6">
           <Text className="text-primary-700 font-medium">{t('mensagens.titulo')}</Text>

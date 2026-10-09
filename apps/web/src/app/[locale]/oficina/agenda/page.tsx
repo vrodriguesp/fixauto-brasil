@@ -9,7 +9,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
 import { CORES_AGENDA, TIPOS_SERVICO } from '@fixauto/shared';
-import { cleanDescricao, INTL_LOCALE } from '@/lib/utils';
+import { cleanDescricao, INTL_LOCALE, rotuloTipoPedido } from '@/lib/utils';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import { Link } from '@/i18n/navigation';
 import { nomeFuncionario } from '@/lib/funcionario';
@@ -32,16 +32,18 @@ export default function AgendaPage() {
     return ev.titulo || t('evento');
   };
 
-  const deliveryNote = (ev: any): string | null => {
+  // aviso de prazo da entrega; a cor vem do tipo (antes vinha de procurar
+  // "antes"/"depois" no texto em portugues - auditoria B-07)
+  const deliveryNote = (ev: any): { texto: string; tipo: 'antes' | 'depois' | 'noPrazo' } | null => {
     if (ev.status !== 'concluido') return null;
     const prevista = ev.data_fim_prevista || null;
     if (!prevista) return null;
     const real = new Date(ev.data_fim);
     const plan = new Date(prevista);
     const diff = Math.round((real.getTime() - plan.getTime()) / (1000 * 60 * 60 * 24));
-    if (diff === 0) return t('noPrazo');
-    if (diff < 0) return t('diasAntesDoPrevisto', { dias: Math.abs(diff) });
-    return t('diasDepoisDoPrevisto', { dias: diff });
+    if (diff === 0) return { texto: t('noPrazo'), tipo: 'noPrazo' };
+    if (diff < 0) return { texto: t('diasAntesDoPrevisto', { dias: Math.abs(diff) }), tipo: 'antes' };
+    return { texto: t('diasDepoisDoPrevisto', { dias: diff }), tipo: 'depois' };
   };
 
   const { eventos, add: addEvento, update: updateEvento, remove: removeEvento, refresh } = useAgenda();
@@ -283,7 +285,7 @@ export default function AgendaPage() {
               <div className="flex items-center gap-2 flex-wrap">
                 <p className="font-semibold text-gray-900 text-sm">{title}</p>
                 <span className="text-[10px] font-mono text-gray-400">#{evId}</span>
-                {sol?.tipo && <span className="text-xs bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded">{sol.tipo}</span>}
+                {sol?.tipo && <span className="text-xs bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded">{rotuloTipoPedido(tc, sol.tipo, sol.descricao)}</span>}
                 {ev.no_show && <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-medium">{t('falta')}</span>}
                 {type === 'feito' && (
                   <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${
@@ -293,7 +295,7 @@ export default function AgendaPage() {
               </div>
               {v && <p className="text-xs text-gray-600 mt-0.5">{v.fipe_marca} {v.fipe_modelo}{placa ? ` - ${placa}` : ''}</p>}
               {c && <p className="text-xs text-gray-500">{c.nome}</p>}
-              {note && <p className={`text-xs mt-1 font-medium ${note.includes('antes') ? 'text-green-600' : note.includes('depois') ? 'text-red-600' : 'text-gray-500'}`}>{note}</p>}
+              {note && <p className={`text-xs mt-1 font-medium ${note.tipo === 'antes' ? 'text-green-600' : note.tipo === 'depois' ? 'text-red-600' : 'text-gray-500'}`}>{note.texto}</p>}
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-2">
               {type === 'pendente' && (
@@ -427,10 +429,10 @@ export default function AgendaPage() {
                   <p className="text-xs text-gray-700">{t('prevEntregaLabel')}: {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB')} {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
                   {ev.status === 'concluido' && <p className="text-xs text-gray-700">{t('entregueLabel')}: {new Date(ev.data_fim).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB')}</p>}
                 </div>
-                {ev.funcionario?.profile?.nome && (
+                {ev.funcionario && nomeFuncionario(ev.funcionario) && (
                   <div>
                     <p className="text-xs font-semibold text-gray-500 uppercase">{t('mecanico')}</p>
-                    <p className="text-sm text-gray-900">{ev.funcionario.profile.nome}</p>
+                    <p className="text-sm text-gray-900">{nomeFuncionario(ev.funcionario)}</p>
                   </div>
                 )}
                 {sol?.descricao && (
@@ -519,7 +521,7 @@ export default function AgendaPage() {
               <select id="c06c6-11" className="input-field" value={formData.funcionario_id} onChange={(e) => setFormData({ ...formData, funcionario_id: e.target.value })}>
                 <option value="">{t('nenhum')}</option>
                 {funcionarios.map((f) => (
-                  <option key={f.id} value={f.id}>{f.profile?.nome}{f.especialidade ? ` (${f.especialidade})` : ''}</option>
+                  <option key={f.id} value={f.id}>{nomeFuncionario(f)}{f.especialidade ? ` (${f.especialidade})` : ''}</option>
                 ))}
               </select>
             </div>

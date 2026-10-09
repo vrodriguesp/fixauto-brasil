@@ -685,5 +685,13 @@
     "entrarBotao": "Accedi",
     "erro": "Non è stato possibile eliminare ora. Riprova tra qualche minuto.",
     "link": "Elimina account"
+  },
+  "avisoJurisdicao": {
+    "versaoBrasil": "Versione: Brasile (LGPD e Codice di difesa del consumatore)",
+    "versaoEuropa": "Versione: Unione europea (GDPR)",
+    "verEuropa": "Vedi la versione UE",
+    "verBrasil": "Vedi la versione per il Brasile",
+    "avisoEuropa": "Sei in Europa? Per te valgono i termini europei (GDPR).",
+    "avisoBrasil": "Sei in Brasile? Per te valgono i termini brasiliani (LGPD)."
   }
 }
