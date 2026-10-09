@@ -137,10 +137,12 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
 - 050: `tipo_acidente` em coluna (emergências e solicitações), com preenchimento dos antigos.
 - 051: carro com pedidos não pode ser apagado pelo usuário (apagaria o histórico).
 
-## Pendências do dono (atualizado 09/10)
+## Pendências do dono (atualizado 09/10 noite)
 - Registro da OÜ; contas Apple Developer e Google Play; `npx eas login` + `eas init`; APPLE_TEAM_ID e ANDROID_SHA256 para os links do app (L4); capturas de tela e textos das lojas; contas de teste para os revisores (Apple/Google).
-- Pedidos de indexação no Google/Bing listados no item 4.
-- Testar no iPhone (inclui envio de foto — L7).
+- Pedidos de indexação no Google/Bing listados no item 4; bipfix.pt quando ativar (DNS, HTTPS, indexação).
+- No iPhone: confirmar o novo pedido (ponto 12) e o orçamento por PDF (ponto 16) — ver `TESTE_IPHONE_2026-10-09.md`.
+- Decidir: desligar também os e-mails de negócio (cadastro de empresa, pedido sem oficina perto)?
+- Simulação de pedido de peças: adiada pelo dono (sem dados de teste por agora).
 
 ## 09/10 — Site por mercado (país + idioma), modelo IKEA/Norwegian — FEITO
 - **Decisão do dono:** opção B de `docs/ANALISE_ESTRUTURA_MERCADOS_2026-10-09.md`.
@@ -231,3 +233,41 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
   - **Textos:** tutorial "Aprender" e Guia da Oficina atualizados nos 6 idiomas.
   - **Teste novo `site-quadro.mjs`:** 35 verificações ✓, cobrindo celular e computador, arrastar, conflito, tempo real entre dois aparelhos, mecânico com acesso, endereços antigos e os 6 idiomas.
 - **App:** hoje é só para motoristas; contas de oficina não entram nele, e as oficinas usam o site, que funciona no celular. Uma área de oficina no app seria um projeto à parte. O Quadro já funciona no navegador do celular.
+
+## 09/10 noite 2 — Correções do teste no iPhone, menu, dados zerados e projeto do Quadro
+- **Novo pedido no app carregando sem fim (ponto 12):**
+  - **Prova:** o servidor recebia do iPhone até ~1000 consultas de localização por minuto, ou seja, a tela era recriada sem parar.
+  - **Causa:** `react-native-screens` recria a tela quando o cabeçalho de um modal é ligado/desligado de dentro dela (aviso da própria biblioteca).
+  - **Correção:** cabeçalho do "novo pedido" e do "acabei de bater" fixo no `_layout.tsx`; `<Stack.Screen>` saiu das telas (commit b6c1e9b).
+- **Orçamento por PDF/foto (ponto 16):**
+  - **Medido no servidor:** 2.5-flash sem raciocínio 4 s, 3.5-flash-lite 2,6 s, 3.5-flash 82 s.
+  - **Novo `apps/web/src/lib/gemini.ts`:** fila de modelos com prazo por tentativa (30 s) e total (50 s, abaixo do corte de 60 s do nginx). Usado em `ler-orcamento`, `analisar-dano` (modelo usado vem de `modelVersion`) e `transcrever-audio` (mantém 3.5-flash primeiro pela qualidade no estoniano).
+  - **Tela:** a página desiste em 70 s com erro claro.
+  - **Quantidade fracionada:** vira uma linha com o valor total (ponto 17).
+  - **Produção:** o orçamento real do dono (PDF de 2 páginas e foto) foi lido em 6,6 s e 5,5 s, total €1797,01.
+- **App — garantia (ponto 18):**
+  - **Cartão:** abre o pedido (histórico completo).
+  - **Botão "Falar com a oficina":** no cartão e no bloco da garantia do pedido; chave nova `garantia.verServico` nos 6 idiomas.
+  - **Teste:** `app-garantia.mjs` 7/7.
+- **Menu do site (ponto 19):**
+  - **Teste novo `site-menu-sobreposto.mjs`:** mede caixa a caixa o cabeçalho de oficina, cliente e loja nos 6 idiomas, de 360 a 1920 px. Antes 56 combinações com texto sobreposto; depois 0.
+  - **Mudanças em `Navbar.tsx` e `LanguageSwitcher.tsx`:**
+    - links só a partir de 1280 px (abaixo, ☰);
+    - logo e papel sem encolher;
+    - idioma compacto quando logado;
+    - "Perfil" pelo avatar (com rótulo acessível);
+    - nome ao lado do avatar só em tela muito larga;
+    - "Sair" dentro do ☰ no celular;
+    - painel logado mais largo (`max-w-screen-2xl`).
+- **Deploy:** commit c5a828c em produção (build OK).
+- **Dados zerados (pedido do dono):**
+  - **Apagado:** todas as contas não-admin (oficina Moretto do dono, oficinas de demonstração Kereremont/Mootorikeskus, cliente de demonstração), fotos de acidente e registros de erro do app.
+  - **Ficaram:** o admin e `plataforma_config`. Conferido tabela por tabela.
+- **Em andamento — Quadro profissional (pontos 21–22):**
+  - **Pedido do dono:**
+    - barra no tempo real do check-in ao check-out;
+    - visão do dia hora a hora para reservar o elevador;
+    - modo de monitoramento opcional;
+    - explicar/renomear "Elevador / Box / Vaga (Lugar)";
+    - limite de carros por serviço e geral.
+  - **Projeto:** pesquisa e proposta pedidas ao Fable em `docs/PROJETO_QUADRO_OFICINA_2026-10-09.md`; depois implementação em fases e testes em 6 idiomas.
