@@ -298,3 +298,17 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
 - **Próximas fases (no projeto):**
   - Fase 2: relatório semanal/CSV, TV de parede, proteção de sobreposição no banco.
   - Fase 3: tempo por mecânico e capacidade em horas.
+
+## 10/10 — Parte educativa revisada e atualizada (6 idiomas)
+- **Tutorial Aprender da oficina:**
+  - módulo do Quadro reescrito (postos, visão Hora, reservas) e desafio conferido pelas reservas de posto;
+  - capacidade e monitoramento no Perfil; Perfil pelo avatar no computador;
+  - orçamento por foto/PDF; "Colocar em" no check-in e "O carro já está aqui" no check-in manual;
+  - visão Hora no tutorial do mecânico.
+- **Guia da Oficina:** acidente só para oficinas de carroceria e limite de carros; check-in com posto; Quadro com tempo real e previsto; itens novos "Postos e visão Hora", "Monitoramento" e "Capacidade"; sem "vidros" (especialidade que não existe).
+- **Guia do Motorista:** sem "vidros"; a contagem da garantia abre o pedido e a conversa.
+- **Tutorial da loja:** a loja vê as cotações das oficinas do mesmo país (o texto dizia que via todas, sem filtro).
+- **Bug achado:** no computador (1280 px ou mais) não havia link para o Check-in manual, que o tutorial mandava abrir em "Mais". Foi acrescentado ao "Mais".
+- **Rótulos:** os nomes de botões citados conferem com os da tela em cada idioma (ex.: em italiano o Quadro se chama "Tabellone").
+- **Artigos públicos (/guias, 7 artigos):** continuam corretos; as 57 fontes externas respondem 200 (conferido do servidor).
+- **Teste novo `site-educacao.mjs`:** 54/54 em produção.
