@@ -6,7 +6,8 @@ import { useAuth } from '@/lib/auth-context';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
 import { Link, useRouter } from '@/i18n/navigation';
-import { calcDistance, cleanDescricao, rotuloTipoPedido, INTL_LOCALE } from '@/lib/utils';
+import { calcDistance, cleanDescricao, rotuloTipoPedido, INTL_LOCALE, formatCurrency } from '@/lib/utils';
+import { currencyForCountry } from '@/lib/currency';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import TutorialBanner from '@/components/tutorial/TutorialBanner';
 import PerfilCompleto from '@/components/oficina/PerfilCompleto';
@@ -20,6 +21,16 @@ import ProcurarPedido from '@/components/oficina/ProcurarPedido';
 type Aba = 'responder' | 'respondidos' | 'encerrados';
 const ABAS: Aba[] = ['responder', 'respondidos', 'encerrados'];
 const MIN = 60e3, H = 60 * MIN;
+
+// ordenar e filtrar por aba (pedido do dono 10/10: "ordenar por data de criacao, de resposta e outros")
+type Ordem = 'prioridade' | 'antigo' | 'recente' | 'perto' | 'situacao' | 'resposta' | 'respostaAntiga' | 'valorMaior' | 'valorMenor' | 'chegada';
+const ORDENS: Record<Aba, Ordem[]> = {
+  responder: ['prioridade', 'antigo', 'recente', 'perto'],
+  respondidos: ['situacao', 'resposta', 'respostaAntiga', 'recente', 'antigo', 'valorMaior', 'valorMenor', 'chegada'],
+  encerrados: ['resposta', 'respostaAntiga', 'recente', 'antigo', 'valorMaior', 'valorMenor'],
+};
+const ESTADOS: Record<Aba, string[]> = { responder: [], respondidos: ['aceito', 'visto', 'enviado'], encerrados: ['entregue', 'recusado', 'expirado', 'perdido'] };
+const CHAVE_ORDEM = 'bipfix_pedidos_ordem';
 
 const ehAcidente = (s: any) => !!s.emergencia_id || /\[TIPO:/.test(s.descricao || '');
 const iconeTipo = (tipo: string) => TIPOS_SERVICO.find((x) => x.value === tipo)?.icon || '🔧';
@@ -38,6 +49,11 @@ export default function PedidosOficinaPage() {
   const [agora, setAgora] = useState(() => Date.now());
   const [aba, setAbaState] = useState<Aba>('responder');
   const [carregou, setCarregou] = useState(false);
+  const [ordens, setOrdens] = useState<Record<Aba, Ordem>>({ responder: 'prioridade', respondidos: 'situacao', encerrados: 'resposta' });
+  const [filtros, setFiltros] = useState<Record<Aba, string>>({ responder: 'todos', respondidos: 'todos', encerrados: 'todos' });
+  // a ordem escolhida fica guardada no aparelho
+  useEffect(() => { try { const o = JSON.parse(localStorage.getItem(CHAVE_ORDEM) || 'null'); if (o) setOrdens((x) => ({ ...x, ...Object.fromEntries(Object.entries(o).filter(([a, v]) => ORDENS[a as Aba]?.includes(v as Ordem))) })); } catch { /* */ } }, []);
+  const mudarOrdem = (o: Ordem) => { const n = { ...ordens, [aba]: o }; setOrdens(n); try { localStorage.setItem(CHAVE_ORDEM, JSON.stringify(n)); } catch { /* */ } };
 
   useEffect(() => { const i = setInterval(() => setAgora(Date.now()), MIN); return () => clearInterval(i); }, []);
   // aba no endereco (?aba=respondidos): voltar ao pedido cai na mesma aba
@@ -111,7 +127,30 @@ export default function PedidosOficinaPage() {
   const carroDe = (s: any) => { const v = s.veiculo; return v ? [v.fipe_marca, v.fipe_modelo, v.fipe_ano].filter(Boolean).join(' ') : ''; };
   const distancia = (s: any) => (oficina?.latitude != null && s.latitude != null ? calcDistance(s.latitude, s.longitude, oficina.latitude, oficina.longitude) : null);
 
-  const lista = grupos[aba];
+  // ordem e filtro escolhidos (a ordem padrao de cada aba e a de antes)
+  const lista = useMemo(() => {
+    const ts = (x?: string | null) => (x ? Date.parse(x) : 0);
+    const chegada = (it: any) => { const sl = it.meu?.disponibilidade?.find((d: any) => d.id === it.meu.disponibilidade_escolhida_id); return sl ? sl.data_checkin : '9999'; };
+    const dist = (it: any) => distancia(it.s) ?? 9e9;
+    const filtrada = grupos[aba].filter((it: any) => filtros[aba] === 'todos' || it.estado === filtros[aba]);
+    const o = ordens[aba];
+    if (o === 'prioridade' || o === 'situacao') return filtrada; // ja vem nessa ordem
+    const cmp: Record<string, (a: any, b: any) => number> = {
+      antigo: (a, b) => ts(a.s.created_at) - ts(b.s.created_at),
+      recente: (a, b) => ts(b.s.created_at) - ts(a.s.created_at),
+      perto: (a, b) => dist(a) - dist(b),
+      resposta: (a, b) => ts(b.meu?.created_at) - ts(a.meu?.created_at),
+      respostaAntiga: (a, b) => ts(a.meu?.created_at) - ts(b.meu?.created_at),
+      valorMaior: (a, b) => (b.meu?.valor_total || 0) - (a.meu?.valor_total || 0),
+      valorMenor: (a, b) => (a.meu?.valor_total || 0) - (b.meu?.valor_total || 0),
+      chegada: (a, b) => chegada(a).localeCompare(chegada(b)) || ts(b.meu?.created_at) - ts(a.meu?.created_at),
+    };
+    return [...filtrada].sort(cmp[o]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grupos, aba, ordens, filtros]);
+  const contaEstado = (e: string) => grupos[aba].filter((it: any) => it.estado === e).length;
+  const fmtData = useMemo(() => new Intl.DateTimeFormat(intl, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }), [intl]);
+  const moeda = currencyForCountry((oficina as any)?.pais ?? null);
   const algumVermelho = grupos.responder.some(({ s }) => { const ms = agora - Date.parse(s.created_at); return ms > 4 * H && ms <= 48 * H; });
 
   return (
@@ -139,6 +178,29 @@ export default function PedidosOficinaPage() {
           </button>
         ))}
       </div>
+
+      {carregou && grupos[aba].length > 1 && (
+        <div className="mb-4 space-y-2" data-testid="pedidos-ordem">
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <span className="shrink-0">{t('ordenar')}</span>
+            <select value={ordens[aba]} onChange={(e) => mudarOrdem(e.target.value as Ordem)} className="input-field !py-2 !w-auto min-w-0 flex-1 sm:flex-none" data-testid="ordem-select">
+              {ORDENS[aba].map((o) => <option key={o} value={o}>{t(`ordem_${o}`)}</option>)}
+            </select>
+          </label>
+          {ESTADOS[aba].filter((e) => contaEstado(e) > 0).length > 1 && (
+            <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0" role="group" aria-label={t('filtrar')}>
+              <div className="flex w-max gap-2 sm:w-auto sm:flex-wrap">
+                {['todos', ...ESTADOS[aba].filter((e) => contaEstado(e) > 0)].map((e) => (
+                  <button key={e} type="button" onClick={() => setFiltros({ ...filtros, [aba]: e })} aria-pressed={filtros[aba] === e} data-testid={`estado-${e}`}
+                    className={`min-h-[36px] whitespace-nowrap rounded-full border px-3 text-sm font-medium ${filtros[aba] === e ? 'border-primary-600 bg-primary-600 text-white' : 'border-gray-300 bg-white text-gray-700'}`}>
+                    {e === 'todos' ? `${t('estado_todos')} (${grupos[aba].length})` : `${t(`estado_${e}`)} (${contaEstado(e)})`}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {!carregou ? (
         <div className="space-y-3">{[0, 1, 2].map((i) => <div key={i} className="h-32 animate-pulse rounded-xl bg-gray-100" />)}</div>
@@ -177,6 +239,11 @@ export default function PedidosOficinaPage() {
                   <p className="mt-1 text-sm text-gray-500">
                     {[fotos ? t('fotos', { n: fotos }) : t('semFotos'), dist != null ? `${dist.toFixed(1)} km` : null, s.pagamento_reparo && s.pagamento_reparo !== 'proprio' ? `🛡 ${t('seguro')}` : null, novo ? `● ${t('novo')}` : null].filter(Boolean).join(' · ')}
                   </p>
+                  {meu && (
+                    <p className="mt-1 text-xs text-gray-500" data-testid="pedido-datas">
+                      {[t('pedidoEm', { data: fmtData.format(new Date(s.created_at)) }), t('orcamentoEm', { data: fmtData.format(new Date(meu.created_at)) }), meu.valor_total != null ? formatCurrency(meu.valor_total, moeda, locale) : null].filter(Boolean).join(' · ')}
+                    </p>
+                  )}
                   {estado && (
                     <p className={`mt-2 text-sm font-medium ${estado === 'aceito' ? 'text-emerald-700' : estado === 'perdido' || estado === 'recusado' ? 'text-gray-600' : estado === 'expirado' ? 'text-amber-800' : 'text-gray-700'}`}>
                       {estado === 'aceito' ? `✔ ${t('clienteAceitou')}${slot ? ` — ${t('chegaEm', { dia: fmtDia.format(new Date(`${slot.data_checkin}T12:00:00Z`)), periodo: t(slot.turno === 'tarde' ? 'tarde' : 'manha') })}` : ''}`

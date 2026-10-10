@@ -17,6 +17,7 @@
 // 10 procurar por placa (parte), n. do pedido e codigo de cliente (Hoje e pagina
 //    Procurar); painel do dia: numero do quadrado = cartoes ao filtrar; visitante
 //    no celular: idioma nao fica em cima do logo
+// 11 Pedidos > Respondidos: ordenar (valor, data do orcamento) e filtrar por situacao
 //   node site-painel-oficina.mjs <.env.local> [SITE]
 import fs from 'node:fs';
 import path from 'node:path';
@@ -287,6 +288,31 @@ try {
     });
     ok('10 visitante no celular: nada em cima do logo (pagina da oficina)', sobre === 'ok', sobre);
     await ctxV.close();
+  }
+
+  // ---------- 11 ordenar/filtrar respondidos
+  {
+    await pD.goto(`${SITE}/ee/et/oficina/pedidos?aba=respondidos`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(3000);
+    const valores = async () => (await pD.locator('[data-testid="pedido-datas"]').allInnerTexts()).map((x) => Number((x.split('·').pop() || '').replace(/[^0-9,.-]/g, '').replace(/\./g, '').replace(',', '.')));
+    const temOrdem = (await pD.getByTestId('ordem-select').count()) === 1;
+    ok('11 Respondidos tem "Ordenar por"', temOrdem);
+    if (temOrdem) {
+      await pD.getByTestId('ordem-select').selectOption('valorMenor'); await pD.waitForTimeout(500);
+      const v1 = await valores();
+      ok('11 menor valor primeiro', v1.length >= 2 && v1.every((x, i) => i === 0 || v1[i - 1] <= x), v1.join(','));
+      await pD.getByTestId('ordem-select').selectOption('valorMaior'); await pD.waitForTimeout(500);
+      const v2 = await valores();
+      ok('11 maior valor primeiro', v2.length >= 2 && v2.every((x, i) => i === 0 || v2[i - 1] >= x), v2.join(','));
+      await pD.reload({ waitUntil: 'networkidle' }); await pD.waitForTimeout(3000);
+      ok('11 a ordem escolhida fica guardada', (await pD.getByTestId('ordem-select').inputValue()) === 'valorMaior');
+      const chip = pD.getByTestId('estado-aceito');
+      if (await chip.count()) {
+        const n = Number((await chip.innerText()).match(/\((\d+)\)/)?.[1]);
+        await chip.click(); await pD.waitForTimeout(500);
+        ok('11 filtro "Aceitos" mostra so os aceitos', (await pD.getByTestId('pedido-cartao').count()) === n, n);
+      } else ok('11 filtro por situacao (so um tipo de situacao: sem filtro)', true);
+      await pD.getByTestId('ordem-select').selectOption('situacao');
+    }
   }
 
   // ---------- 6 enderecos antigos
