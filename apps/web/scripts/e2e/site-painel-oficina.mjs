@@ -271,7 +271,7 @@ try {
     let bate = true; const det = [];
     for (const id of ['atrasados', 'prontos', 'chegam', 'naOficina']) {
       const q = pD.getByTestId(`filtro-${id}`); if (!(await q.count()) || await q.isDisabled()) continue;
-      const n = Number((await q.innerText()).trim().split(/s/)[0]);
+      const n = Number((await q.innerText()).trim().match(/^[0-9]+/)?.[0]);
       await q.click(); await pD.waitForTimeout(500);
       const cards = await pD.locator('[data-testid="hoje-cartao"]').count();
       det.push(`${id}:${n}/${cards}`); if (n !== cards) bate = false;
