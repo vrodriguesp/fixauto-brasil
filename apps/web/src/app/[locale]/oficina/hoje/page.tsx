@@ -271,7 +271,7 @@ export default function HojePage() {
       </div>
 
       {/* procurar pela placa, nome, n. do pedido ou codigo de cliente (dono 10/10) */}
-      <ProcurarPedido compacto />
+      <ProcurarPedido compacto onAbrirCarro={(id) => { setFiltroState('tudo'); setDiaState(null); setAberto(id); setEvPedido(id); try { const u = new URL(window.location.href); u.search = `?ev=${id}`; window.history.replaceState(window.history.state, '', u.toString()); } catch { /* */ } }} />
 
       {/* resumo do dia (dono 10/10): so as situacoes que tem carro, em pilulas
           pequenas (antes 6-8 quadrados grandes, "cheio de botoes"); tocar filtra

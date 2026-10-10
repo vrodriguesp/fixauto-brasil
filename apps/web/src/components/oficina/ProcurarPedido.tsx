@@ -20,7 +20,9 @@ export type Achado = {
   agenda_id: string | null; agenda_status: string | null; data_inicio: string | null; titulo: string | null;
 };
 
-export default function ProcurarPedido({ compacto = false, inicial = '' }: { compacto?: boolean; inicial?: string }) {
+// onAbrirCarro: na propria pagina Hoje, abrir o carro direto (o link para a mesma
+// pagina nao recarregava e o clique parecia nao fazer nada - dono 10/10)
+export default function ProcurarPedido({ compacto = false, inicial = '', onAbrirCarro }: { compacto?: boolean; inicial?: string; onAbrirCarro?: (agendaId: string) => void }) {
   const t = useTranslations('oficinaProcurar');
   const tc = useTranslations('constants');
   const locale = useLocale();
@@ -85,7 +87,9 @@ export default function ProcurarPedido({ compacto = false, inicial = '' }: { com
                       {[a.cliente_nome, a.cliente_codigo ? tc('codigoCliente', { n: a.cliente_codigo }) : null, a.tipo ? rotuloTipoPedido(tc, a.tipo, null) : null, situacao(a)].filter(Boolean).join(' · ')}
                     </p>
                     <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm font-medium">
-                      {a.agenda_id && <Link href={`/oficina/hoje?ev=${a.agenda_id}`} className="text-primary-700 hover:underline">{t('abrirHoje')} ›</Link>}
+                      {a.agenda_id && (onAbrirCarro
+                        ? <button type="button" onClick={() => { setQ(''); onAbrirCarro(a.agenda_id!); }} className="text-primary-700 hover:underline">{t('abrirHoje')} ›</button>
+                        : <Link href={`/oficina/hoje?ev=${a.agenda_id}`} className="text-primary-700 hover:underline">{t('abrirHoje')} ›</Link>)}
                       {a.solicitacao_id && <Link href={`/oficina/pedidos/${a.solicitacao_id}`} className="text-primary-700 hover:underline">📄 {t('verPedido')}</Link>}
                     </div>
                   </li>
