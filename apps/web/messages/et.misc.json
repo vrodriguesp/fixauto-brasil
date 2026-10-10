@@ -571,7 +571,7 @@
           },
           {
             "title": "Teenuse tüüp",
-            "desc": "Mehaanika, keretööd, värvimine, elektrika, hooldus, klaasid ja muu. Tüüp määrab, millised töökojad päringu saavad."
+            "desc": "Mehaanika, kereremont, värvimine, elekter, hooldus, rehvid ja muu. Liik määrab, millised töökojad päringu saavad."
           },
           {
             "title": "Fotod ja kirjeldus",
@@ -692,7 +692,7 @@
         "itens": [
           {
             "label": "Loendur avaekraanil",
-            "desc": "Näed, mitu garantiipäeva igal teenusel veel alles on."
+            "desc": "Näed, mitu garantiipäeva on igal tööl jäänud. Puuduta loendurit, et avada päring koos kogu ajalooga ja kirjutada töökojale."
           },
           {
             "label": "Avatud vestlus",
@@ -769,7 +769,7 @@
           },
           {
             "title": "Erialad",
-            "desc": "Märgi, mida töökoda teeb: mehaanika, keretööd, värvimine, elektrika, hooldus, klaasid jne. Saad ainult nende erialade päringuid."
+            "desc": "Märgi, mida töökoda teeb: mehaanika, kereremont, värvimine, elekter, hooldus, rehvid jne. Saad ainult nende erialade päringuid."
           },
           {
             "title": "Teeninduspiirkond",
@@ -798,7 +798,7 @@
             "desc": "Töökoda on kinnitatud ja aktiivne."
           }
         ],
-        "texto": "Teade ilmub töölaua kellukese alla ja lehele Päringud. Iga päring sisaldab fotosid, kirjeldust, autot ja ligikaudset asukohta. Nupu \"Sain just avarii\" kaudu registreeritud avariid saabuvad eelisjärjekorras.",
+        "texto": "Teade ilmub töölaua kellasse ja jaotisesse Päringud. Igas päringus on fotod, kirjeldus, auto ja ligikaudne asukoht. Nupuga \"Sain just avarii\" registreeritud õnnetused jõuavad prioriteediga ainult kereremondi töökodadesse (kokkupõrge, kereremont või värvimine). Kui määrad profiilis autode piiri ja töökoda on täis, lähevad kiireloomulised päringud esmalt teistele töökodadele.",
         "nota": "Hoia erialad ja teeninduspiirkond täpsena, et saada ainult päringuid, mis sulle sobivad."
       },
       {
@@ -852,7 +852,7 @@
         "itens": [
           {
             "label": "Check-in",
-            "desc": "Registreeri auto saabumine. Kui see saabub enne broneeritud päeva, küsib sait kinnitust ja toomise ajaks saab tänane päev. Klient saab teate."
+            "desc": "Registreeri auto saabumine. Kui auto tuleb enne kokkulepitud päeva, küsib veeb kinnitust ja saabumiseks saab täna. Kui töökojal on kohad, vali \"Pane kohale\" alt tõstuk või koht. Klienti teavitatakse."
           },
           {
             "label": "Puudumine",
@@ -860,15 +860,23 @@
           },
           {
             "label": "Sisemised tööd",
-            "desc": "Loo sündmused tööde jaoks, mis ei tulnud BipFixi kaudu, ja hoia kõik samas ajakavas."
+            "desc": "Loo sündmused töödele, mis ei tulnud BipFixi kaudu, ja hoia kõik ühes ajakavas. Käsitsi check-in’il teeb \"Auto on juba siin\" vastuvõtu kohe."
           },
           {
             "label": "Tahvel",
-            "desc": "Ajakava vaade Tahvel näitab iga mehaanikut (või iga tõstukit) eraldi real ja autosid ribadena üle päevade, hilinemised on esile tõstetud. Lohista auto teisele reale või puuduta seda, et mehaanikut või tõstukit vahetada. Muudatus jääb ajalukku ja on näha kõigis ajakava vaadetes."
+            "desc": "Näitab iga mehaanikut või iga kohta real ja autosid ribadena üle päevade, joonistatuna ajale, mil nad tegelikult töökojas olid (vastuvõtust üleandmiseni). Planeeritu on katkendjoonega, kui see erineb, ja lubatud üleandmise järgne osa on punane. Lohista autot või puuduta seda, et muuta mehaanikut või kohta."
           },
           {
-            "label": "Tõstukid ja boksid",
-            "desc": "Lisa töökoja tõstukid ja boksid. Tõstukil olev auto hõivab korraga nii tõstuki kui mehaaniku; tahvel näitab, mitu tõstukit on igal päeval vaba, ja hoiatab, kui kaks autot on samal tõstukil. Tahvli all on teenuse liigi järgi võimsus ja iga etapi keskmine aeg."
+            "label": "Kohad ja vaade Tund",
+            "desc": "Lisa töökoja kohad: tõstuk (tõstab auto, üks korraga), töökoht (töö ilma tõstukita, üks korraga) ja ootekoht (autod ootavad varuosi, klienti või kättesaamist; mahub mitu). Vaade Tund näitab päeva tunni kaupa: kes on igal kohal, millal see vabaneb ja broneeringud. Broneeri aeg vabale alale puudutades; veeb ei luba kaht autot korraga samale tõstukile."
+          },
+          {
+            "label": "Jälgimine (valikuline)",
+            "desc": "Lülita profiilis sisse, et näha iga auto aega töökojas, tõstukil, varuosade või kliendi ootel, ja saada hoiatus, kui auto seisab põhjuseta või tõstukil on ootav auto. Kasutab klikke, mida juba teed; midagi lisaks täita pole vaja."
+          },
+          {
+            "label": "Mahutavus",
+            "desc": "Märgi profiilis, mitu autot mahub töökotta korraga ja soovi korral teenuse liigi kaupa. Tahvel hoiatab, kui töökoda läheb üle piiri."
           }
         ]
       },

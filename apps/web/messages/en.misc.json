@@ -571,7 +571,7 @@
           },
           {
             "title": "Type of service",
-            "desc": "Mechanics, bodywork, paint, electrics, servicing, glass and more. The type decides which shops receive the request."
+            "desc": "Mechanics, bodywork, paint, electrics, servicing, tyres and more. The type decides which workshops receive the request."
           },
           {
             "title": "Photos and description",
@@ -692,7 +692,7 @@
         "itens": [
           {
             "label": "Countdown on the home screen",
-            "desc": "You see how many days of warranty are left on each service."
+            "desc": "You see how many warranty days are left for each job. Tap the countdown to open the request with its full history and message the workshop."
           },
           {
             "label": "Open conversation",
@@ -769,7 +769,7 @@
           },
           {
             "title": "Specialities",
-            "desc": "Tick what the shop does: mechanics, bodywork, paint, electrics, servicing, glass and so on. You only receive requests for those specialities."
+            "desc": "Tick what your workshop does: mechanics, bodywork, paint, electrics, servicing, tyres, etc. You only receive requests for these specialties."
           },
           {
             "title": "Service radius",
@@ -798,7 +798,7 @@
             "desc": "The shop has been approved and is active."
           }
         ],
-        "texto": "The notification appears in the dashboard bell and under Requests. Each request includes photos, description, car and approximate location. Accidents logged through the \"I've just crashed\" button arrive with priority.",
+        "texto": "The alert shows up on the dashboard bell and in Requests. Each request includes photos, description, car and approximate location. Accidents reported with the \"I just crashed\" button arrive with priority, only to bodywork shops (collision, bodywork or paint). If you set a car limit in your Profile and the workshop is full, urgent requests go to other workshops first.",
         "nota": "Keep your specialities and radius accurate so you only receive requests that make sense for you."
       },
       {
@@ -852,7 +852,7 @@
         "itens": [
           {
             "label": "Check-in",
-            "desc": "Record the car's arrival. If it arrives before the booked day, the site asks for confirmation and the drop-off becomes today. The customer is notified."
+            "desc": "Record the car's arrival. If it arrives before the booked day, the site asks you to confirm and the entry becomes today. If your workshop has bays, choose the lift or bay in \"Put on\". The customer is notified."
           },
           {
             "label": "No-show",
@@ -860,15 +860,23 @@
           },
           {
             "label": "Internal jobs",
-            "desc": "Create events for jobs that did not come through BipFix and keep everything in the same schedule."
+            "desc": "Create events for jobs that didn't come through BipFix and keep everything in one schedule. In Manual check-in, \"The car is already here\" checks it in right away."
           },
           {
             "label": "Board",
-            "desc": "In the Schedule, the Board view shows each mechanic (or each lift) on a row and the cars as bars across the days, with delays highlighted. Drag a car to another row, or tap it, to change the mechanic or the lift. The change is logged and shows up in every Schedule view."
+            "desc": "Shows each mechanic or each bay on a row and cars as bars across the days, drawn over the time they actually spent in the workshop (check-in to delivery). The plan appears dashed when it differs, and the part after the promised delivery turns red. Drag a car, or tap it, to change the mechanic or the bay."
           },
           {
-            "label": "Lifts and bays",
-            "desc": "Add your workshop's lifts and bays. A car on a lift takes up the lift and the mechanic at the same time; the Board shows how many lifts are free each day and warns you if two cars end up on the same one. Below the Board you find the capacity per service type and the average time of each step."
+            "label": "Bays and the Hour view",
+            "desc": "Add your workshop bays: lift (raises the car, one at a time), floor bay (work without a lift, one at a time) and waiting space (cars parked waiting for parts, the customer or pick-up; holds several). The Hour view shows the day hour by hour: who is on each bay, when it becomes free and the bookings. Book a time by tapping the free space; the site refuses two cars on the same lift at the same time."
+          },
+          {
+            "label": "Monitoring (optional)",
+            "desc": "Turn it on in your Profile to see, for each car, the time in the workshop, on a lift, waiting for parts or for the customer, and get alerts for a car sitting idle with no reason or a lift taken by a car that is waiting. It uses the clicks you already make; nothing extra to fill in."
+          },
+          {
+            "label": "Capacity",
+            "desc": "In your Profile, enter how many cars fit in the workshop at the same time and, if you like, per type of service. The Board warns you when the workshop goes over the limit."
           }
         ]
       },

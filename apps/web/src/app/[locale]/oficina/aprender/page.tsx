@@ -157,7 +157,8 @@ export default function OficinaAprenderPage() {
       desafio: t('geral.distribuicao.desafio'),
       linkReal: '/oficina/agenda?vista=quadro',
       verificar: async () => {
-        const { count } = await supabase.from('agenda').select('*', { count: 'exact', head: true }).eq('oficina_id', oficina.id).not('funcionario_id', 'is', null);
+        // desafio: um elevador/posto reservado ou usado por um carro (migracao 057)
+        const { count } = await supabase.from('posto_ocupacoes').select('*', { count: 'exact', head: true }).eq('oficina_id', oficina.id);
         return (count || 0) > 0;
       },
     },

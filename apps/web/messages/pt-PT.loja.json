@@ -31,9 +31,9 @@
       },
       "perfil": {
         "titulo": "Perfil da loja",
-        "resumo": "Complete os dados da sua loja — a morada, a cidade, a região e o código postal corretos são importantes, mesmo que hoje não filtrem as cotações que vê (neste momento, todas as cotações abertas na plataforma aparecem para si, ainda sem filtro de distância ou de país).",
+        "resumo": "Complete os dados da sua loja — país, morada, cidade e código postal corretos são importantes: vê os pedidos de cotação abertos das oficinas do mesmo país da sua loja (ainda sem filtro de distância).",
         "passosGuiados": [
-          "Abra Perfil no menu.",
+          "Abra o Perfil: no computador, clique no seu nome ou na sua inicial, no canto superior direito; no telemóvel, menu ☰ → Perfil.",
           "Verifique/edite o nome comercial, o NIF/NIPC, a morada, a cidade e a região.",
           "Clique em \"Guardar\"."
         ],

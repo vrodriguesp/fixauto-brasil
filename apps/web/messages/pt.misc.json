@@ -312,7 +312,7 @@
           },
           {
             "title": "Tipo de serviço",
-            "desc": "Mecânica, funilaria, pintura, elétrica, revisão, vidros e outros. O tipo define quais oficinas recebem o pedido."
+            "desc": "Mecânica, funilaria, pintura, elétrica, revisão, pneus e outros. O tipo define quais oficinas recebem o pedido."
           },
           {
             "title": "Fotos e descrição",
@@ -433,7 +433,7 @@
         "itens": [
           {
             "label": "Contagem na tela inicial",
-            "desc": "Você vê quantos dias de garantia ainda restam em cada serviço."
+            "desc": "Você vê quantos dias de garantia ainda restam em cada serviço. Toque na contagem para abrir o pedido com todo o histórico e falar com a oficina."
           },
           {
             "label": "Conversa aberta",
@@ -510,7 +510,7 @@
           },
           {
             "title": "Especialidades",
-            "desc": "Marque o que a oficina faz: mecânica, funilaria, pintura, elétrica, revisão, vidros etc. Você só recebe pedidos dessas especialidades."
+            "desc": "Marque o que a oficina faz: mecânica, funilaria, pintura, elétrica, revisão, pneus etc. Você só recebe pedidos dessas especialidades."
           },
           {
             "title": "Raio de atendimento",
@@ -539,7 +539,7 @@
             "desc": "A oficina foi aprovada e está ativa."
           }
         ],
-        "texto": "O aviso aparece no sino do painel e em Solicitações. Cada pedido traz fotos, descrição, carro e local aproximado. Acidentes registrados pelo botão \"Acabei de bater\" chegam com prioridade.",
+        "texto": "O aviso aparece no sino do painel e em Solicitações. Cada pedido traz fotos, descrição, carro e local aproximado. Acidentes registrados pelo botão \"Acabei de bater\" chegam com prioridade, só às oficinas de carroceria (colisão, funilaria ou pintura). Se você definir no Perfil um limite de carros e a oficina estiver cheia, os pedidos urgentes vão primeiro para outras oficinas.",
         "nota": "Mantenha as especialidades e o raio corretos para receber só pedidos que fazem sentido para você."
       },
       {
@@ -593,7 +593,7 @@
         "itens": [
           {
             "label": "Check-in",
-            "desc": "Registre a chegada do carro. Se ele chegar antes do dia marcado, o site pede confirmação e a entrada passa a ser hoje. O cliente é avisado."
+            "desc": "Registre a chegada do carro. Se ele chegar antes do dia marcado, o site pede confirmação e a entrada passa a ser hoje. Se a oficina tiver postos, escolha em \"Colocar em\" o elevador ou posto. O cliente é avisado."
           },
           {
             "label": "Falta (no-show)",
@@ -601,15 +601,23 @@
           },
           {
             "label": "Serviços internos",
-            "desc": "Crie eventos para serviços que não vieram pelo BipFix e mantenha tudo na mesma agenda."
+            "desc": "Crie eventos para serviços que não vieram pelo BipFix e mantenha tudo na mesma agenda. No Check-in manual, \"O carro já está aqui\" já faz o check-in na hora."
           },
           {
             "label": "Quadro",
-            "desc": "Na Agenda, a visão Quadro mostra cada mecânico (ou cada elevador) numa linha e os carros como barras ao longo dos dias, com os atrasos destacados. Arraste um carro para outra linha, ou toque nele, para trocar o mecânico ou o elevador. A troca fica no histórico e aparece em todas as visões da Agenda."
+            "desc": "Mostra cada mecânico ou cada posto numa linha e os carros como barras ao longo dos dias, pintados no tempo em que realmente estiveram na oficina (do check-in à entrega). O combinado aparece tracejado quando é diferente, e a parte depois da entrega prevista fica vermelha. Arraste um carro, ou toque nele, para trocar o mecânico ou o posto."
           },
           {
-            "label": "Elevadores e boxes",
-            "desc": "Cadastre os elevadores e boxes da oficina. Um carro no elevador ocupa o elevador e o mecânico ao mesmo tempo; o Quadro mostra quantos elevadores estão livres em cada dia e avisa se dois carros ficarem no mesmo. Abaixo do Quadro ficam a capacidade por tipo de serviço e o tempo médio de cada etapa."
+            "label": "Postos e visão Hora",
+            "desc": "Cadastre os postos da oficina: elevador (levanta o carro, um por vez), posto no chão (trabalho sem elevador, um por vez) e vaga de espera (carros parados esperando peça, cliente ou retirada; cabem vários). A visão Hora mostra o dia hora a hora: quem está em cada posto, quando fica livre e as reservas. Reserve um horário tocando no espaço livre; o site recusa dois carros no mesmo elevador ao mesmo tempo."
+          },
+          {
+            "label": "Monitoramento (opcional)",
+            "desc": "Ligue no Perfil para ver em cada carro o tempo na oficina, no elevador, esperando peças ou o cliente, e receber alerta de carro parado sem motivo ou de elevador ocupado por carro que está esperando. Usa os cliques que você já faz; nada a mais para preencher."
+          },
+          {
+            "label": "Capacidade",
+            "desc": "No Perfil, informe quantos carros cabem ao mesmo tempo na oficina e, se quiser, por tipo de serviço. O Quadro avisa quando a oficina passa do limite."
           }
         ]
       },

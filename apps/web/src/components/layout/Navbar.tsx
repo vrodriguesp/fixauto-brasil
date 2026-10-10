@@ -89,6 +89,7 @@ export default function Navbar() {
                         items={[
                           { href: '/oficina/pecas', label: t('pecas') },
                           { href: '/oficina/equipe', label: t('equipe') },
+                          { href: '/oficina/checkin', label: t('checkinManual') },
                           { href: '/oficina/comissao', label: t('comissao') },
                           { href: '/oficina/avaliacoes', label: t('avaliacoes') },
                           { href: '/oficina/aprender', label: `🎓 ${t('aprender')}` },

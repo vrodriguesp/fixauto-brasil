@@ -571,7 +571,7 @@
           },
           {
             "title": "Tipo di intervento",
-            "desc": "Meccanica, carrozzeria, verniciatura, elettrica, tagliando, vetri e altro. Il tipo determina quali officine ricevono la richiesta."
+            "desc": "Meccanica, carrozzeria, verniciatura, impianto elettrico, tagliando, gomme e altro. Il tipo decide quali officine ricevono la richiesta."
           },
           {
             "title": "Foto e descrizione",
@@ -692,7 +692,7 @@
         "itens": [
           {
             "label": "Conteggio nella schermata iniziale",
-            "desc": "Vedi quanti giorni di garanzia restano per ogni intervento."
+            "desc": "Vedi quanti giorni di garanzia restano per ogni lavoro. Tocca il conteggio per aprire la richiesta con tutto lo storico e scrivere all'officina."
           },
           {
             "label": "Conversazione aperta",
@@ -769,7 +769,7 @@
           },
           {
             "title": "Specializzazioni",
-            "desc": "Indica cosa fa l'officina: meccanica, carrozzeria, verniciatura, elettrica, tagliando, vetri ecc. Ricevi solo richieste di queste specializzazioni."
+            "desc": "Seleziona cosa fa l'officina: meccanica, carrozzeria, verniciatura, impianto elettrico, tagliando, gomme ecc. Ricevi solo richieste di queste specialità."
           },
           {
             "title": "Raggio di servizio",
@@ -798,7 +798,7 @@
             "desc": "L'officina è stata approvata ed è attiva."
           }
         ],
-        "texto": "L'avviso compare nella campanella del pannello e in Richieste. Ogni richiesta include foto, descrizione, auto e posizione approssimativa. Gli incidenti registrati con il pulsante \"Ho appena avuto un incidente\" arrivano con priorità.",
+        "texto": "L'avviso compare sulla campanella del pannello e in Richieste. Ogni richiesta include foto, descrizione, auto e posizione approssimativa. Gli incidenti registrati con il pulsante \"Ho appena avuto un incidente\" arrivano con priorità, solo alle carrozzerie (urto, carrozzeria o verniciatura). Se imposti nel Profilo un limite di auto e l'officina è piena, le richieste urgenti vanno prima ad altre officine.",
         "nota": "Tieni aggiornati specializzazioni e raggio per ricevere solo richieste che hanno senso per te."
       },
       {
@@ -852,7 +852,7 @@
         "itens": [
           {
             "label": "Check-in",
-            "desc": "Registra l'arrivo dell'auto. Se arriva prima del giorno fissato, il sito chiede conferma e la consegna diventa oggi. Il cliente viene avvisato."
+            "desc": "Registra l'arrivo dell'auto. Se arriva prima del giorno previsto, il sito chiede conferma e l'ingresso diventa oggi. Se l'officina ha postazioni, scegli in \"Metti su\" il ponte o la postazione. Il cliente viene avvisato."
           },
           {
             "label": "Assente (no-show)",
@@ -860,15 +860,23 @@
           },
           {
             "label": "Lavori interni",
-            "desc": "Crea eventi per i lavori che non sono arrivati tramite BipFix e tieni tutto nella stessa agenda."
+            "desc": "Crea eventi per i lavori che non arrivano da BipFix e tieni tutto nella stessa agenda. Nel Check-in Manuale, \"L'auto è già qui\" fa subito il check-in."
           },
           {
             "label": "Tabellone",
-            "desc": "Nell'Agenda, la vista Tabellone mostra ogni meccanico (o ogni ponte) su una riga e le auto come barre lungo i giorni, con i ritardi evidenziati. Trascina un'auto su un'altra riga, oppure toccala, per cambiare meccanico o ponte. Il cambio resta nello storico e compare in tutte le viste dell'Agenda."
+            "desc": "Mostra ogni meccanico o ogni postazione su una riga e le auto come barre lungo i giorni, disegnate nel tempo in cui sono state davvero in officina (dal check-in alla consegna). Il previsto appare tratteggiato quando è diverso, e la parte oltre la consegna prevista diventa rossa. Trascina un'auto, o toccala, per cambiare meccanico o postazione."
           },
           {
-            "label": "Ponti e box",
-            "desc": "Aggiungi i ponti e i box dell'officina. Un'auto sul ponte occupa contemporaneamente il ponte e il meccanico; il Tabellone mostra quanti ponti sono liberi ogni giorno e avvisa se due auto finiscono sullo stesso. Sotto il Tabellone trovi la capacità per tipo di servizio e il tempo medio di ogni fase."
+            "label": "Postazioni e vista Ora",
+            "desc": "Registra le postazioni dell'officina: ponte (solleva l'auto, una alla volta), postazione a terra (lavoro senza ponte, una alla volta) e posto di sosta (auto ferme in attesa di ricambi, del cliente o del ritiro; ce ne stanno più). La vista Ora mostra la giornata ora per ora: chi è su ogni postazione, quando si libera e le prenotazioni. Prenota un orario toccando lo spazio libero; il sito rifiuta due auto sullo stesso ponte allo stesso tempo."
+          },
+          {
+            "label": "Monitoraggio (facoltativo)",
+            "desc": "Attivalo nel Profilo per vedere per ogni auto il tempo in officina, sul ponte, in attesa di ricambi o del cliente, e ricevere avvisi per un'auto ferma senza motivo o un ponte occupato da un'auto in attesa. Usa i clic che fai già; niente da compilare in più."
+          },
+          {
+            "label": "Capacità",
+            "desc": "Nel Profilo, indica quante auto possono stare contemporaneamente in officina e, se vuoi, per tipo di servizio. Il Tabellone avvisa quando l'officina supera il limite."
           }
         ]
       },

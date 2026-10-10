@@ -313,10 +313,11 @@
       },
       "minhaAgenda": {
         "titulo": "My Schedule",
-        "resumo": "A calendar view of only the vehicles assigned to you: when each one is due to arrive, which have already checked in, and which have already been delivered.",
+        "resumo": "A view of only the vehicles assigned to you: when each one is due, which have checked in and which have been delivered. On the Board, the Hour view shows when each lift is free.",
         "passosGuiados": [
           "Open Schedule in the menu.",
-          "Use the Month, Day or List views to see what's coming up for you.",
+          "Use the Board, Month, Day or List views to see what is planned for you.",
+          "On the Board, tap \"Hour\": see when each lift is free and tap a free time to book it for your car.",
           "You can also check in directly from here, same as in \"Workshop\"."
         ],
         "desafio": "Check your schedule and identify when your next check-in is due.",
@@ -328,10 +329,11 @@
         "titulo": "Profile and specialties",
         "resumo": "This is your master record: it defines what type of service you handle, your service radius, and what customers see on your public page. Without specialties selected, you won't receive any requests.",
         "passosGuiados": [
-          "Open Profile in the menu.",
+          "Open your Profile: on a computer, click your name or initial in the top right corner; on a phone, menu ☰ → Profile.",
           "Under \"Specialties\", select at least one type of service your shop does (e.g. Mechanical, Bodywork).",
           "Fill in address, city, state and service radius.",
-          "(Optional) Add a logo and photos of your shop.",
+          "(Optional) Under \"Capacity\", enter how many cars fit in the workshop at the same time and, if you like, per type of service. Empty = no limit.",
+          "(Optional) Add a logo and photos, and turn on \"Car monitoring\" to see on the Board how long each car stays in the workshop.",
           "Click \"Save Changes\" at the bottom of the page."
         ],
         "desafio": "Set up your profile so you start receiving real customer requests: at least one specialty selected and an address filled in."
@@ -343,9 +345,9 @@
           "Open Requests in the menu.",
           "Click a request in the list to see the details (damage photos, vehicle, description).",
           "Click \"Send Quote\".",
-          "Add at least one item (description, type, price, quantity).",
+          "Add the items (description, type, price, quantity). Already have the quote in another system? Tap \"Take a photo\" or \"Choose a file or PDF\": the AI fills in the items and you just check them.",
           "Check the total: the customer pays only the quote amount, and BipFix currently charges the garage no commission.",
-          "Set the timeline, available check-in dates, and click \"Send Quote\"."
+          "Set the lead time, warranty and the available check-in times, then click \"Send Quote\"."
         ],
         "desafio": "Send a real quote for an open request in your area.",
         "dica": "The faster you respond, the more likely the customer is to pick your quote."
@@ -355,12 +357,12 @@
         "resumo": "Once the customer accepts the quote, the vehicle enters your schedule. You check it in when it arrives, log the repair stages, and confirm delivery at the end.",
         "passosGuiados": [
           "Open Workshop in the menu (list of vehicles in service).",
-          "In the \"Waiting\" tab, click \"Check-in\" on the vehicle that arrived.",
+          "In the \"Waiting\" tab, click \"Check-in\" on the car that arrived. If your workshop has bays set up, choose the lift or bay in \"Put on\".",
           "Click \"+ Stage\" to log progress (e.g. Diagnosis, In progress).",
           "When you're done, click \"Delivery\" to close out the service."
         ],
         "desafio": "Check in a vehicle (from the platform or manually, via Manual Check-in) and log at least one maintenance stage.",
-        "dica": "Don't have an accepted quote yet? Use \"Manual Check-in\" in the More menu to register a customer who came straight to the shop, without going through the site."
+        "dica": "A car arrived without going through the site? Use More → Manual Check-in and leave \"The car is already here\" ticked: it goes straight to \"in the workshop\"."
       },
       "notasInternas": {
         "titulo": "Internal notes with the team",
@@ -376,7 +378,7 @@
         "titulo": "How commission works",
         "resumo": "Using BipFix is currently free for repair shops. In the future there may be a fee — a percentage of each completed job or a fixed amount per job — always announced 30 calendar days in advance. The Commission screen shows the condition that applies to your shop.",
         "passosGuiados": [
-          "Open Commission in the menu.",
+          "Open More → Commission in the menu.",
           "Check the condition that applies to your garage today: free to use, no commission.",
           "If the fee is performance-based, responding fast, avoiding quote revisions and asking customers for reviews keep your rate lower."
         ],
@@ -395,14 +397,15 @@
         "desafio": "Register a mechanic and set a maximum number of simultaneous vehicles for them."
       },
       "distribuicao": {
-        "titulo": "Workshop board (optional)",
-        "resumo": "In the Schedule, the Board view shows each mechanic (or each lift) on a row and the cars as bars across the days. It helps you plan the week, see who is free and avoid putting two cars on the same lift.",
+        "titulo": "Workshop board and lifts (optional)",
+        "resumo": "In the Schedule, the Board shows each mechanic or each bay (lift, floor bay, waiting space) on its own row, with cars drawn over the time they actually spent in the workshop; the plan appears dashed when it differs. The Hour view shows the day hour by hour — who is on each lift and the bookings — so the team can share the lifts.",
         "passosGuiados": [
           "Open Schedule in the menu and tap \"Board\".",
-          "Choose \"View by: Mechanic\" or \"Lift\". Under \"Lifts and bays\" you add your workshop's lifts.",
-          "Drag a car to another row (on a computer) or tap it and choose the mechanic and the lift (on a phone)."
+          "In \"Workshop bays\", add your lifts, floor bays and waiting spaces (each type is explained on screen).",
+          "Choose \"View by: Mechanic\", \"Bay\" or \"Hour\". Drag a car to another row (computer) or tap it and choose (phone).",
+          "In the Hour view, tap a free time on a lift to book it for a car; drag the booking to change the time. When the car goes up on the lift, use \"Put the car on this bay now\"."
         ],
-        "desafio": "Assign a mechanic to at least one booked car, even before it arrives."
+        "desafio": "Add at least one lift and book a time on it for a car in the Hour view."
       },
       "pecas": {
         "titulo": "Parts: buy from stores or sell surplus",

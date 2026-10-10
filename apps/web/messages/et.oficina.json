@@ -313,10 +313,11 @@
       },
       "minhaAgenda": {
         "titulo": "Minu ajakava",
-        "resumo": "Kalendrivaade ainult sulle määratud sõidukitest: millal iga sõiduk on oodatud saabuma, millised on juba check-ini teinud ja millised on juba üle antud.",
+        "resumo": "Vaade ainult sulle määratud autodest: millal iga auto peaks saabuma, millised on vastu võetud ja millised üle antud. Tahvlil näitab vaade Tund, millal iga tõstuk on vaba.",
         "passosGuiados": [
           "Ava menüüst Ajakava.",
-          "Kasuta Kuu, Päeva või Nimekirja vaadet, et näha, mis sind ees ootab.",
+          "Kasuta vaateid Tahvel, Kuu, Päev või Nimekiri, et näha, mis sulle on planeeritud.",
+          "Tahvlil puuduta \"Tund\": näed, millal iga tõstuk on vaba, ja puuduta vaba aega, et see oma autole broneerida.",
           "Ka siit saad teha check-ini otse, samamoodi nagu \"Töökoja\" all."
         ],
         "desafio": "Vaata oma ajakava ja tuvasta, millal on sinu järgmine planeeritud check-in.",
@@ -328,10 +329,11 @@
         "titulo": "Profiil ja eriala",
         "resumo": "See on sinu põhiandmestik: määrab, millist tüüpi teenust pakud, sinu teeninduspiirkonna raadiuse ja mida kliendid sinu avalikul lehel näevad. Kui erialasid pole valitud, ei saa sa ühtegi päringut.",
         "passosGuiados": [
-          "Ava menüüst Profiil.",
+          "Ava Profiil: arvutis klõpsa paremas ülanurgas oma nimel või initsiaalil; telefonis menüü ☰ → Profiil.",
           "\"Erialade\" all märgi vähemalt üks teenusetüüp, mida sinu töökoda pakub (nt Mehaanika, Kerekojatööd).",
           "Täida aadress, linn, maakond ja teeninduspiirkonna raadius.",
-          "(Valikuline) Lisa logo ja töökoja fotod.",
+          "(Valikuline) Jaotises \"Mahutavus\" märgi, mitu autot mahub töökotta korraga ja soovi korral teenuse liigi kaupa. Tühi = piiranguta.",
+          "(Valikuline) Lisa logo ja fotod ning lülita sisse \"Auto jälgimine\", et näha tahvlil, kui kaua iga auto töökojas on.",
           "Vajuta lehe lõpus \"Salvesta muudatused\"."
         ],
         "desafio": "Seadista oma profiil nii, et hakkad saama päris kliendipäringuid: vähemalt üks eriala valitud ja aadress täidetud."
@@ -343,9 +345,9 @@
           "Ava menüüst Päringud.",
           "Vajuta nimekirjas päringule, et näha üksikasju (kahjustuse fotod, sõiduk, kirjeldus).",
           "Vajuta \"Saada hinnapakkumine\".",
-          "Lisa vähemalt üks kirje (kirjeldus, tüüp, hind, kogus).",
+          "Lisa read (kirjeldus, liik, hind, kogus). Hinnapakkumine on juba teises süsteemis valmis? Puuduta \"Tee foto\" või \"Vali fail või PDF\": tehisintellekt täidab read ja sina ainult kontrollid.",
           "Kontrolli kogusummat: klient maksab ainult pakkumise summa ja BipFix töökojalt praegu komisjonitasu ei võta.",
-          "Määra tähtaeg, saadaolevad check-ini kuupäevad ja vajuta \"Saada hinnapakkumine\"."
+          "Määra tähtaeg, garantii ja vastuvõtu vabad ajad ning klõpsa \"Saada hinnapakkumine\"."
         ],
         "desafio": "Saada päris hinnapakkumine mõnele sinu piirkonna avatud päringule.",
         "dica": "Mida kiiremini vastad, seda tõenäolisemalt valib klient sinu pakkumise."
@@ -355,12 +357,12 @@
         "resumo": "Kui klient nõustub hinnapakkumisega, lisatakse sõiduk sinu ajakavva. Tee check-in, kui sõiduk saabub, registreeri remondietapid ja kinnita lõpus üleandmine.",
         "passosGuiados": [
           "Ava menüüst Töökoda (teeninduses olevate sõidukite nimekiri).",
-          "Vahekaardil \"Ootel\" vajuta saabunud sõiduki juures \"Check-in\".",
+          "Vahekaardil \"Ootel\" klõpsa saabunud autol \"Check-in\". Kui töökojal on kohad lisatud, vali \"Pane kohale\" alt tõstuk või koht, kuhu auto läheb.",
           "Vajuta \"+ Etapp\", et registreerida edenemine (nt diagnostika, teostus).",
           "Kui oled valmis, vajuta \"Üleandmine\", et teenus lõpetada."
         ],
         "desafio": "Tee check-in ühele sõidukile (kas platvormilt või käsitsi, Käsitsi check-in alt) ja registreeri vähemalt üks hooldusetapp.",
-        "dica": "Kas veel pole ühtegi vastu võetud hinnapakkumist? Kasuta menüü Rohkem alt \"Käsitsi check-in\", et registreerida klient, kes tuli otse töökotta, ilma platvormi kaudu tulemata."
+        "dica": "Auto tuli ilma veebi kaudu? Kasuta Rohkem → Käsitsi check-in ja jäta märgituks \"Auto on juba siin\": see läheb kohe olekusse \"töökojas\"."
       },
       "notasInternas": {
         "titulo": "Sisemärkmed meeskonnaga",
@@ -376,7 +378,7 @@
         "titulo": "Kuidas komisjonitasu töötab",
         "resumo": "Praegu on BipFixi kasutamine töökodadele tasuta. Tulevikus võidakse kehtestada tasu — protsent igalt lõpetatud töölt või fikseeritud summa töö kohta —, millest teatatakse alati vähemalt 30 kalendripäeva ette. Komisjonitasu vaade näitab, milline tingimus sinu töökojale kehtib.",
         "passosGuiados": [
-          "Ava menüüst Komisjonitasu.",
+          "Ava menüüs Rohkem → Komisjonitasu.",
           "Vaata, milline tingimus sinu töökojale täna kehtib: tasuta kasutamine, ilma komisjonitasuta.",
           "Kui tasu sõltub tulemuslikkusest, hoiavad kiire vastamine, vähesed hinnapakkumiste muudatused ja klientidelt hinnangute küsimine sinu määra madalamal."
         ],
@@ -395,14 +397,15 @@
         "desafio": "Registreeri mehaanikust töötaja ja määra talle samaaegsete sõidukite maksimaalne arv."
       },
       "distribuicao": {
-        "titulo": "Töökoja tahvel (valikuline)",
-        "resumo": "Ajakava vaade Tahvel näitab iga mehaanikut (või iga tõstukit) eraldi real ja autosid ribadena üle päevade. See aitab nädalat planeerida, näha, kes on vaba, ja vältida kahte autot samal tõstukil.",
+        "titulo": "Töökoja tahvel ja tõstukid (valikuline)",
+        "resumo": "Ajakavas näitab tahvel iga mehaanikut või iga kohta (tõstuk, töökoht, ootekoht) eraldi real ning autod on joonistatud ajale, mil nad tegelikult töökojas olid; planeeritu on katkendjoonega, kui see erineb. Vaade Tund näitab päeva tunni kaupa — kes on igal tõstukil ja millised on broneeringud —, et tõstukite kasutust kokku leppida.",
         "passosGuiados": [
-          "Ava menüüst Ajakava ja puuduta \"Tahvel\".",
-          "Vali \"Vaata: Mehaanik\" või \"Tõstuk\". Jaotises \"Tõstukid ja boksid\" lisad töökoja tõstukid.",
-          "Lohista auto teisele reale (arvutis) või puuduta seda ja vali mehaanik ja tõstuk (telefonis)."
+          "Ava menüüs Ajakava ja puuduta \"Tahvel\".",
+          "Jaotises \"Töökoja kohad\" lisa oma tõstukid, töökohad ja ootekohad (iga liik on ekraanil selgitatud).",
+          "Vali \"Vaata: Mehaanik\", \"Koht\" või \"Tund\". Lohista auto teisele reale (arvutis) või puuduta seda ja vali (telefonis).",
+          "Vaates Tund puuduta tõstuki vaba aega, et see autole broneerida; lohista broneeringut, et aega muuta. Kui auto tõstetakse tõstukile, kasuta \"Pane auto kohe sellele kohale\"."
         ],
-        "desafio": "Määra vähemalt ühele broneeritud autole mehaanik juba enne, kui see saabub."
+        "desafio": "Lisa vähemalt üks tõstuk ja broneeri vaates Tund sellele aeg mõnele autole."
       },
       "pecas": {
         "titulo": "Varuosad: osta poodidest või müü ülejääki",

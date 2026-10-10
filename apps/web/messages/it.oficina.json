@@ -313,10 +313,11 @@
       },
       "minhaAgenda": {
         "titulo": "La mia agenda",
-        "resumo": "Una vista calendario solo dei veicoli a te assegnati: quando ciascuno è previsto in arrivo, quali hanno già fatto il check-in e quali sono già stati consegnati.",
+        "resumo": "Una vista solo dei veicoli assegnati a te: quando è previsto l'arrivo di ognuno, quali hanno fatto il check-in e quali sono stati consegnati. Nel Tabellone, la vista Ora mostra quando ogni ponte è libero.",
         "passosGuiados": [
           "Apri Agenda nel menu.",
-          "Usa le viste Mese, Giorno o Elenco per vedere cosa ti aspetta.",
+          "Usa le viste Tabellone, Mese, Giorno o Elenco per vedere cosa è previsto per te.",
+          "Nel Tabellone, tocca \"Ora\": vedi quando ogni ponte è libero e tocca un orario libero per prenotarlo per la tua auto.",
           "Puoi anche fare il check-in direttamente da qui, come in \"Officina\"."
         ],
         "desafio": "Controlla la tua agenda e individua quando è previsto il tuo prossimo check-in.",
@@ -328,10 +329,11 @@
         "titulo": "Profilo e specializzazioni",
         "resumo": "È il tuo profilo principale: definisce che tipo di servizio offri, il tuo raggio d'azione e cosa vedono i clienti sulla tua pagina pubblica. Senza specializzazioni selezionate, non riceverai nessuna richiesta.",
         "passosGuiados": [
-          "Apri Profilo nel menu.",
+          "Apri il Profilo: sul computer, clicca sul tuo nome o sulla tua iniziale in alto a destra; sul telefono, menu ☰ → Profilo.",
           "In \"Specializzazioni\", seleziona almeno un tipo di servizio che la tua officina offre (es: Meccanica, Carrozzeria).",
           "Compila indirizzo, città, provincia e raggio d'azione.",
-          "(Opzionale) Aggiungi un logo e delle foto dell'officina.",
+          "(Facoltativo) In \"Capacità\", indica quante auto possono stare contemporaneamente in officina e, se vuoi, per tipo di servizio. Vuoto = nessun limite.",
+          "(Facoltativo) Aggiungi logo e foto, e attiva il \"Monitoraggio dell'auto\" per vedere sul Tabellone quanto tempo ogni auto resta in officina.",
           "Clicca su \"Salva modifiche\" in fondo alla pagina."
         ],
         "desafio": "Configura il tuo profilo in modo da iniziare a ricevere richieste reali: almeno una specializzazione selezionata e l'indirizzo compilato."
@@ -343,9 +345,9 @@
           "Apri Richieste nel menu.",
           "Clicca su una richiesta dell'elenco per vederne i dettagli (foto del danno, veicolo, descrizione).",
           "Clicca su \"Invia Preventivo\".",
-          "Aggiungi almeno una voce (descrizione, tipo, valore, quantità).",
+          "Aggiungi le voci (descrizione, tipo, prezzo, quantità). Hai già il preventivo pronto in un altro sistema? Tocca \"Scatta una foto\" o \"Scegli un file o PDF\": l'IA compila le voci e tu devi solo controllarle.",
           "Controlla il totale: il cliente paga solo l'importo del preventivo e oggi BipFix non applica commissioni all'officina.",
-          "Imposta i tempi, le date disponibili per il check-in, e clicca su \"Invia Preventivo\"."
+          "Imposta tempi, garanzia e gli orari disponibili per il check-in, poi clicca \"Invia Preventivo\"."
         ],
         "desafio": "Invia un preventivo reale per una richiesta aperta nella tua zona.",
         "dica": "Più velocemente rispondi, più è probabile che il cliente scelga il tuo preventivo."
@@ -355,12 +357,12 @@
         "resumo": "Dopo che il cliente accetta il preventivo, il veicolo entra nella tua agenda. Fai il check-in quando arriva, registri le fasi della riparazione e confermi la consegna alla fine.",
         "passosGuiados": [
           "Apri Officina nel menu (elenco dei veicoli in lavorazione).",
-          "Nella scheda \"In attesa\", clicca su \"Check-in\" per il veicolo arrivato.",
+          "Nella scheda \"In attesa\", clicca \"Check-in\" sul veicolo arrivato. Se l'officina ha registrato le postazioni, scegli in \"Metti su\" il ponte o la postazione dove andrà l'auto.",
           "Clicca su \"+ Fase\" per registrare l'avanzamento (es: In diagnosi, In lavorazione).",
           "Quando hai finito, clicca su \"Consegna\" per chiudere il servizio."
         ],
         "desafio": "Fai il check-in di un veicolo (dalla piattaforma o manualmente, tramite Check-in Manuale) e registra almeno una fase di manutenzione.",
-        "dica": "Non hai ancora nessun preventivo accettato? Usa \"Check-in Manuale\" nel menu Altro per registrare un cliente arrivato direttamente in officina, senza passare dal sito."
+        "dica": "È arrivata un'auto senza passare dal sito? Usa Altro → Check-in Manuale e lascia selezionato \"L'auto è già qui\": entra subito come \"in officina\"."
       },
       "notasInternas": {
         "titulo": "Note interne con il team",
@@ -376,7 +378,7 @@
         "titulo": "Come funziona la commissione",
         "resumo": "Attualmente l'uso di BipFix è gratuito per le officine. In futuro potrà esserci un costo — una percentuale su ogni lavoro completato o un importo fisso per lavoro — sempre comunicato con 30 giorni di calendario di anticipo. La schermata Commissione mostra la condizione valida per la tua officina.",
         "passosGuiados": [
-          "Apri Commissione nel menu.",
+          "Apri Altro → Commissione nel menu.",
           "Verifica la condizione valida oggi per la tua officina: uso gratuito, nessuna commissione.",
           "Se il costo dipende dalle prestazioni, rispondere in fretta, evitare revisioni dei preventivi e chiedere recensioni ai clienti mantengono la tua aliquota più bassa."
         ],
@@ -395,14 +397,15 @@
         "desafio": "Registra un dipendente meccanico e imposta una capacità massima di veicoli simultanei per lui."
       },
       "distribuicao": {
-        "titulo": "Tabellone dell'officina (facoltativo)",
-        "resumo": "Nell'Agenda, la vista Tabellone mostra ogni meccanico (o ogni ponte) su una riga e le auto come barre lungo i giorni. Aiuta a pianificare la settimana, vedere chi è libero ed evitare due auto sullo stesso ponte.",
+        "titulo": "Tabellone dell'officina e ponti (facoltativo)",
+        "resumo": "In Agenda, il Tabellone mostra ogni meccanico o ogni postazione (ponte, postazione a terra, posto di sosta) su una riga, con le auto disegnate nel tempo in cui sono state davvero in officina; il previsto appare tratteggiato quando è diverso. La vista Ora mostra la giornata ora per ora — chi è su ogni ponte e le prenotazioni — per organizzare l'uso dei ponti.",
         "passosGuiados": [
           "Apri Agenda nel menu e tocca \"Tabellone\".",
-          "Scegli \"Vedi per: Meccanico\" o \"Ponte\". In \"Ponti e box\" aggiungi i ponti dell'officina.",
-          "Trascina un'auto su un'altra riga (dal computer) oppure toccala e scegli meccanico e ponte (dal telefono)."
+          "In \"Postazioni dell'officina\", registra ponti, postazioni a terra e posti di sosta (ogni tipo è spiegato sullo schermo).",
+          "Scegli \"Vedi per: Meccanico\", \"Postazione\" o \"Ora\". Trascina un'auto su un'altra riga (computer) o toccala e scegli (telefono).",
+          "Nella vista Ora, tocca un orario libero di un ponte per prenotarlo per un'auto; trascina la prenotazione per cambiare orario. Quando l'auto sale sul ponte, usa \"Metti ora l'auto su questa postazione\"."
         ],
-        "desafio": "Assegna un meccanico ad almeno un'auto prenotata, ancora prima che arrivi."
+        "desafio": "Registra almeno un ponte e prenotane un orario per un'auto nella vista Ora."
       },
       "pecas": {
         "titulo": "Ricambi: acquista dai fornitori o vendi le eccedenze",
@@ -511,7 +514,7 @@
     "registrando": "Registrazione...",
     "registrarCheckin": "Registra Check-in",
     "carroJaAqui": "L'auto è già qui (fai il check-in adesso)",
-    "carroJaAquiAjuda": "Registra subito l'arrivo effettivo e l'auto appare \"in officina\" sul Quadro."
+    "carroJaAquiAjuda": "Registra subito l'arrivo effettivo e l'auto appare \"in officina\" sul Tabellone."
   },
   "oficinaComissao": {
     "bonusRespostaRapida": "Risposta veloce (< 2h)",
@@ -854,7 +857,7 @@
     "capacidadeTotalRotulo": "Auto contemporaneamente in officina",
     "capacidadeTotalAjuda": "Conta ponti, postazioni e posti di sosta. Vuoto = nessun limite. Oltre questo numero, le richieste urgenti vanno prima ad altre officine.",
     "monitoramentoTitulo": "Monitoraggio dell'auto",
-    "monitoramentoExplica": "Mostra sul Quadro da quanto tempo ogni auto è in officina, sul ponte, in attesa di ricambi o del cliente, e avvisa quando un'auto resta ferma senza motivo. Usa i clic che fate già (check-in, fasi, consegna); niente da compilare in più."
+    "monitoramentoExplica": "Mostra sul Tabellone da quanto tempo ogni auto è in officina, sul ponte, in attesa di ricambi o del cliente, e avvisa quando un'auto resta ferma senza motivo. Usa i clic che fate già (check-in, fasi, consegna); niente da compilare in più."
   },
   "oficinaSolicitacoes": {
     "titulo": "Richieste",

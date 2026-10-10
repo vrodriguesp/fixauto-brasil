@@ -31,9 +31,9 @@
       },
       "perfil": {
         "titulo": "Poe profiil",
-        "resumo": "Täida oma poe andmed korrektselt — õige aadress, linn, osariik ja sihtnumber on olulised, isegi kui need praegu hinnapäringuid ei filtreeri (kõik platvormi avatud hinnapäringud kuvatakse sulle praegu ilma kaugus- või riigifiltrita).",
+        "resumo": "Täida oma poe andmed — õige riik, aadress, linn ja postiindeks on olulised: näed avatud hinnapäringuid sinu poega samas riigis asuvatelt töökodadelt (kauguse filtrit veel pole).",
         "passosGuiados": [
-          "Ava menüüst Profiil.",
+          "Ava Profiil: arvutis klõpsa paremas ülanurgas oma nimel või initsiaalil; telefonis menüü ☰ → Profiil.",
           "Kontrolli/muuda oma ärinime, maksukohustuslase numbrit, aadressi, linna ja osariiki.",
           "Vajuta \"Salvesta\"."
         ],

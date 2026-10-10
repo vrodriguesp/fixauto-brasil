@@ -313,10 +313,11 @@
       },
       "minhaAgenda": {
         "titulo": "Minha Agenda",
-        "resumo": "Uma visão de calendário só dos veículos atribuídos a você: quando cada um está previsto pra chegar, quais já fizeram check-in e quais já foram entregues.",
+        "resumo": "Uma visão só dos veículos atribuídos a você: quando cada um está previsto para chegar, quais já fizeram check-in e quais já foram entregues. No Quadro, a visão Hora mostra quando cada elevador está livre.",
         "passosGuiados": [
           "Abra Agenda no menu.",
-          "Use as visões Mês, Dia ou Lista pra ver o que está previsto pra você.",
+          "Use as visões Quadro, Mês, Dia ou Lista para ver o que está previsto para você.",
+          "No Quadro, toque em \"Hora\": veja quando cada elevador está livre e toque num horário livre para reservá-lo para o seu carro.",
           "Você também pode fazer o check-in direto por aqui, igual em \"Oficina\"."
         ],
         "desafio": "Confira sua agenda e identifique quando é o próximo check-in previsto pra você.",
@@ -328,10 +329,11 @@
         "titulo": "Perfil e especialidades",
         "resumo": "É o seu cadastro mestre: define que tipo de serviço você atende, seu raio de atendimento e o que os clientes veem na sua página pública. Sem especialidades marcadas, você não recebe nenhuma solicitação.",
         "passosGuiados": [
-          "Abra Perfil no menu.",
+          "Abra o Perfil: no computador, clique no seu nome ou na sua inicial, no canto de cima à direita; no celular, menu ☰ → Perfil.",
           "Em \"Especialidades\", marque pelo menos um tipo de serviço que sua oficina faz (ex: Mecânica, Funilaria).",
           "Preencha endereço, cidade, estado e raio de atendimento.",
-          "(Opcional) Adicione uma logo e fotos da oficina.",
+          "(Opcional) Em \"Capacidade\", informe quantos carros cabem ao mesmo tempo na oficina e, se quiser, por tipo de serviço. Vazio = sem limite.",
+          "(Opcional) Adicione logo e fotos, e ligue o \"Monitoramento do carro\" para ver no Quadro quanto tempo cada carro passa na oficina.",
           "Clique em \"Salvar Alterações\" no fim da página."
         ],
         "desafio": "Configure seu perfil de forma que você comece a receber solicitações de clientes de verdade: pelo menos uma especialidade marcada e endereço preenchido."
@@ -343,9 +345,9 @@
           "Abra Solicitações no menu.",
           "Clique em uma solicitação da lista para ver os detalhes (fotos do dano, veículo, descrição).",
           "Clique em \"Enviar Orçamento\".",
-          "Adicione ao menos um item (descrição, tipo, valor, quantidade).",
+          "Adicione os itens (descrição, tipo, valor, quantidade). Já tem o orçamento pronto em outro sistema? Toque em \"Tirar foto\" ou \"Escolher arquivo ou PDF\": a IA preenche os itens e você só confere.",
           "Confira o total: o cliente paga só o valor do orçamento, e hoje o BipFix não cobra comissão da oficina.",
-          "Defina prazo, datas disponíveis para check-in, e clique em \"Enviar Orçamento\"."
+          "Defina prazo, garantia e os horários disponíveis para o check-in, e clique em \"Enviar Orçamento\"."
         ],
         "desafio": "Envie um orçamento de verdade para alguma solicitação aberta na sua região.",
         "dica": "Quanto mais rápido você responde, maior a chance de o cliente escolher o seu orçamento."
@@ -355,12 +357,12 @@
         "resumo": "Depois que o cliente aceita o orçamento, o veículo entra na sua agenda. Você faz o check-in quando ele chega, registra as etapas do reparo, e confirma a entrega no final.",
         "passosGuiados": [
           "Abra Oficina no menu (lista de veículos em serviço).",
-          "Na aba \"Aguardando\", clique em \"Check-in\" no veículo que chegou.",
+          "Na aba \"Aguardando\", clique em \"Check-in\" no veículo que chegou. Se a oficina tiver postos cadastrados, escolha em \"Colocar em\" o elevador ou posto onde o carro vai ficar.",
           "Clique em \"+ Etapa\" pra registrar o progresso (ex: Em diagnóstico, Em execução).",
           "Quando terminar, clique em \"Entrega\" pra fechar o serviço."
         ],
         "desafio": "Faça o check-in de um veículo (da plataforma ou manual, em Check-in Manual) e registre pelo menos uma etapa de manutenção.",
-        "dica": "Não tem nenhum orçamento aceito ainda? Use \"Check-in Manual\" no menu Mais pra registrar um cliente que chegou direto na oficina, sem passar pelo site."
+        "dica": "Chegou um carro sem passar pelo site? Use Mais → Check-in manual e deixe marcado \"O carro já está aqui\": ele entra direto como \"na oficina\"."
       },
       "notasInternas": {
         "titulo": "Notas internas com a equipe",
@@ -376,7 +378,7 @@
         "titulo": "Como funciona a comissão",
         "resumo": "Hoje o uso do BipFix é gratuito para as oficinas. No futuro poderá haver uma cobrança — um percentual sobre cada serviço concluído ou um valor fixo por serviço —, sempre com aviso de 30 dias corridos antes. A tela de Comissão mostra a condição que vale para a sua oficina.",
         "passosGuiados": [
-          "Abra Comissão no menu.",
+          "Abra Mais → Comissão no menu.",
           "Veja a condição que vale hoje para a sua oficina: uso gratuito, sem comissão.",
           "Se a cobrança for por desempenho, responder rápido, evitar revisões de orçamento e pedir avaliações aos clientes deixam a sua taxa mais baixa."
         ],
@@ -395,14 +397,15 @@
         "desafio": "Cadastre um funcionário mecânico e defina uma capacidade máxima de veículos simultâneos pra ele."
       },
       "distribuicao": {
-        "titulo": "Quadro da oficina (opcional)",
-        "resumo": "Na Agenda, a visão Quadro mostra cada mecânico (ou cada elevador) numa linha e os carros como barras ao longo dos dias. Ajuda a planejar a semana, ver quem está livre e não pôr dois carros no mesmo elevador.",
+        "titulo": "Quadro da oficina e elevadores (opcional)",
+        "resumo": "Na Agenda, o Quadro mostra cada mecânico ou cada posto (elevador, posto no chão, vaga de espera) numa linha, com os carros pintados no tempo em que realmente estiveram na oficina; o previsto aparece tracejado quando é diferente. A visão Hora mostra o dia hora a hora — quem está em cada elevador e as reservas — para combinar o uso dos elevadores.",
         "passosGuiados": [
           "Abra Agenda no menu e toque em \"Quadro\".",
-          "Escolha \"Ver por: Mecânico\" ou \"Elevador\". Em \"Elevadores e boxes\" você cadastra os elevadores da oficina.",
-          "Arraste um carro para outra linha (no computador) ou toque nele e escolha o mecânico e o elevador (no celular)."
+          "Em \"Postos da oficina\", cadastre seus elevadores, postos no chão e vagas de espera (cada tipo tem a explicação na tela).",
+          "Escolha \"Ver por: Mecânico\", \"Posto\" ou \"Hora\". Arraste um carro para outra linha (computador) ou toque nele e escolha (celular).",
+          "Na visão Hora, toque num horário livre de um elevador para reservá-lo para um carro; arraste a reserva para mudar a hora. Quando o carro subir no elevador, use \"Colocar o carro no posto agora\"."
         ],
-        "desafio": "Atribua um mecânico a pelo menos um carro agendado, antes mesmo de ele chegar."
+        "desafio": "Cadastre pelo menos um elevador e reserve um horário dele para um carro na visão Hora."
       },
       "pecas": {
         "titulo": "Peças: comprar de lojas ou vender excedente",

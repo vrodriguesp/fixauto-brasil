@@ -31,9 +31,9 @@
       },
       "perfil": {
         "titulo": "Store profile",
-        "resumo": "Complete your store's details — correct address, city, state, and postal code matter, even though they don't filter the quotes you see today (every open quote on the platform currently shows up for you, with no distance or country filter yet).",
+        "resumo": "Complete your store details — the right country, address, city and postcode matter: you see open quote requests from workshops in your store's country (no distance filter yet).",
         "passosGuiados": [
-          "Open Profile in the menu.",
+          "Open your Profile: on a computer, click your name or initial in the top right corner; on a phone, menu ☰ → Profile.",
           "Check/edit your trade name, tax ID, address, city, and state.",
           "Click \"Save\"."
         ],

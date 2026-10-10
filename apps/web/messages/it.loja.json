@@ -31,9 +31,9 @@
       },
       "perfil": {
         "titulo": "Profilo del negozio",
-        "resumo": "Completa i dati del tuo negozio — indirizzo, città, provincia e CAP corretti sono importanti, anche se oggi non filtrano ancora i preventivi che vedi (tutti i preventivi aperti sulla piattaforma ti vengono mostrati, senza filtro di distanza o paese per ora).",
+        "resumo": "Completa i dati del tuo negozio — paese, indirizzo, città e CAP corretti sono importanti: vedi le richieste di preventivo aperte delle officine dello stesso paese del tuo negozio (ancora senza filtro di distanza).",
         "passosGuiados": [
-          "Apri Profilo dal menu.",
+          "Apri il Profilo: sul computer, clicca sul tuo nome o sulla tua iniziale in alto a destra; sul telefono, menu ☰ → Profilo.",
           "Controlla/modifica nome commerciale, partita IVA, indirizzo, città e provincia.",
           "Clicca su \"Salva\"."
         ],
