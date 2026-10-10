@@ -3,7 +3,7 @@
 //  2 orcamento em PDF lido pela IA (itens, garantia)
 //  3 orcamento com garantia; entrega pede confirmacao; contagem da garantia no inicio do cliente
 //  4 terminado o servico: conversa com a outra oficina some e fecha; com a escolhida continua aberta
-//  5 agenda: botao "Fasi" apos o check-in
+//  5 agenda e Hoje (painel 10/10): resumo traduzido; carro na oficina com "Aggiorna fase"
 //  6 perfil: oficina nao aprovada ve o aviso; aprovada: botoes dentro da tela e pagina publica sem 404
 //   node site-garantia.mjs <.env.local>
 import fs from 'node:fs';
@@ -104,14 +104,16 @@ try {
   await fetch(`${SITE}/api/servico`, { method: 'POST', headers: { Authorization: `Bearer ${tA}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ acao: 'checkin', eventoId: ag.id, antecipar: true }) });
 
   // ---- 5) agenda: "Fasi" apos o check-in
-  await pA.goto(`${SITE}/it/it/oficina/agenda`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
-  await pA.getByRole('button', { name: /^Giorno$/ }).click(); await pA.waitForTimeout(1500);
+  await pA.goto(`${SITE}/it/it/oficina/agenda?vista=month`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
   ok('5 resumo do mes com o servico traduzido (nao "funilaria")', !/funilaria:/.test(await pA.innerText('body')));
-  ok('5 agenda mostra o botao das fasi apos o check-in', (await pA.getByRole('link', { name: /^Fasi$/ }).count()) > 0);
+  await pA.goto(`${SITE}/it/it/oficina/hoje`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
+  ok('5 Hoje mostra o carro na oficina com "Aggiorna fase"', (await pA.getByTestId('btn-etapa').count()) > 0);
 
-  await pA.goto(`${SITE}/it/it/oficina/veiculos-em-servico`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
-  await pA.getByRole('button', { name: /Consegna/ }).first().click(); await pA.waitForTimeout(1200);
-  const conf = await pA.locator('[role=alert]').first().innerText().catch(() => '');
+  // pronto para entregar (etapa "concluido") e entrega pela pagina Hoje
+  await fetch(`${SITE}/api/servico`, { method: 'POST', headers: { Authorization: `Bearer ${tA}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ acao: 'etapa', eventoId: ag.id, status: 'concluido' }) });
+  await pA.reload({ waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
+  await pA.getByTestId('btn-entregar').first().click(); await pA.waitForTimeout(1200);
+  const conf = await pA.getByRole('dialog').innerText().catch(() => '');
   ok('3 entrega pede confirmacao', /Consegnare l'auto al cliente/.test(conf), conf);
   const { data: agAntes } = await sb.from('agenda').select('status').eq('id', ag.id).single();
   ok('3 sem confirmar, nada muda', agAntes.status === 'em_andamento');

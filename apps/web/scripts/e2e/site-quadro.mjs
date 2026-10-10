@@ -7,7 +7,7 @@
 //    Elevador 2 (computador)
 //  5 arrastar carro A para o mecanico 1 (computador) -> historico
 //  6 as visoes se comunicam: outro aparelho aberto ve a troca sem recarregar
-//    (tempo real), e o Dia mostra o elevador no cartao
+//    (tempo real), e "abrir no dia" leva a Hoje (painel 10/10) com o carro
 //  7 mecanico com acesso: escolhe o elevador do carro dele; nao troca mecanico
 //  8 enderecos antigos (Distribuicao, Capacidade) levam ao Quadro
 //  9 Quadro nos 6 idiomas: sem chave crua, pagina sem rolagem lateral
@@ -136,7 +136,7 @@ try {
   await barra(pM, placaA).click(); await pM.waitForTimeout(500);
   await pM.getByRole('button', { name: PT('oficinaAgenda.quadroAbrirDia') }).click(); await pM.waitForTimeout(1500);
   txt = await pM.innerText('body');
-  ok('6 "abrir no dia" leva ao Dia com o elevador no cartao', txt.includes('🛗 Elevador 1'), txt.slice(0, 300));
+  ok('6 "abrir no dia" leva a Hoje com o carro', pM.url().includes('/oficina/hoje') && txt.includes(placaA), pM.url());
 
   // ---------- 7 mecanico com acesso
   const ctxMec = await ctxNovo(false); const pMec = await entrar(ctxMec, mecU);

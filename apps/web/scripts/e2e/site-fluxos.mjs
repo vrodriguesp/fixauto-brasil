@@ -83,7 +83,7 @@ try {
   ok('oficina: nasce inativa, na posicao escolhida', of.ativa === false && Math.abs(of.latitude - 59.43) < 0.05 && of.cidade === 'Tallinn');
   const pD = await confirmar(ctxO, emailO, 'et');
   const tD = await pD.innerText('body');
-  ok('oficina: confirmou e caiu no painel', pD.url().includes('/ee/et/oficina/dashboard'), pD.url());
+  ok('oficina: confirmou e caiu no painel (Pedidos)', pD.url().includes('/ee/et/oficina/pedidos'), pD.url());
   ok('oficina: aviso "em analise"', tD.includes(ET('oficinaDashboard.cadastroEmAnalise').slice(0, 30)));
   ok('oficina: medidor de perfil', tD.includes(ET('oficinaDashboard.perfilTitulo', { pct: '' }).split('{')[0].trim().slice(0, 12)));
   await pD.screenshot({ path: 'fluxo-oficina-painel.png', fullPage: true });
