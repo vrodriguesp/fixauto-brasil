@@ -27,6 +27,8 @@ export default function BarraCarregando() {
       try { destino = new URL(a.href, window.location.href); } catch { return; }
       if (destino.origin !== window.location.origin || destino.href === window.location.href) return;
       const antes = window.location.href;
+      // usado se a pagina nova nao carregar por ser de uma versao anterior do site (lib/erro-pagina)
+      (window as any).__bipfixDestino = { href: destino.href, em: Date.now() };
       parar();
       setAtivo(true);
       // some quando o endereco muda (ou no maximo em 10 s)

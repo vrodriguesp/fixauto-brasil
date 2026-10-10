@@ -39,6 +39,10 @@ export function recarregarUmaVez(): boolean {
     if (Date.now() - ultima < 30000) return false;
     sessionStorage.setItem(chave, String(Date.now()));
   } catch { /* sem sessionStorage: recarrega mesmo assim */ }
-  window.location.reload();
+  // se a pessoa acabou de clicar num link, vai direto para onde ela queria ir
+  // (antes recarregava a pagina antiga e o clique parecia perdido - dono 10/10)
+  const destino = (window as any).__bipfixDestino as { href: string; em: number } | undefined;
+  if (destino && Date.now() - destino.em < 15000 && destino.href !== window.location.href) window.location.assign(destino.href);
+  else window.location.reload();
   return true;
 }
