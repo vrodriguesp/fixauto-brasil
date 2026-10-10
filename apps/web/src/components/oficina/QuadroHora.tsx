@@ -259,7 +259,7 @@ export default function QuadroHora({ pais, horario, hoje, agora, boxes, barras, 
                   {itens.map(({ o, faixa, ini, fim }) => {
                     const left = Math.max(0, x(ini)); const width = Math.max(18, x(fim) - left);
                     const naoUsada = !o.real && Date.parse(o.fim!) < agora;
-                    const conflito = (p.capacidade || 1) === 1 && itens.some((y) => y.o.id !== o.id && y.o.agenda_id !== o.agenda_id && y.ini < fim && y.fim > ini);
+                    const conflito = (p.capacidade || 1) === 1 && itens.some((y) => y.o.id !== o.id && y.o.agenda_id !== o.agenda_id && Math.min(y.fim, fim) - Math.max(y.ini, ini) > 60e3);
                     const cls = o.real
                       ? `${o.minha ? COR[o.estado] : 'bg-gray-500 text-white'} ${!o.fim ? 'border-r-4 border-white/70' : ''}`
                       : naoUsada ? 'bg-orange-50 text-orange-800 border-2 border-dashed border-orange-400' : 'bg-white text-blue-800 border-2 border-dashed border-blue-500';

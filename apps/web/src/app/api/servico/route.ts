@@ -155,7 +155,7 @@ export async function POST(req: NextRequest) {
     if (c.length) return NextResponse.json({ error: 'Posto ocupado', codigo: 'CONFLITO_POSTO', ocupadoPor: c }, { status: 409 });
     const { data: aberta } = await supabaseAdmin.from('posto_ocupacoes').select('id, box_id, inicio').eq('agenda_id', ev.id).eq('real', true).is('fim', null).maybeSingle();
     if (aberta?.box_id === b.id) return NextResponse.json({ ok: true });
-    if (aberta) await supabaseAdmin.from('posto_ocupacoes').update({ fim: new Date(Math.max(agora.getTime(), new Date(aberta.inicio).getTime() + 60e3)).toISOString() }).eq('id', aberta.id);
+    if (aberta) await supabaseAdmin.from('posto_ocupacoes').update({ fim: new Date(Math.max(agora.getTime(), new Date(aberta.inicio).getTime() + 1000)).toISOString() }).eq('id', aberta.id);
     // reserva deste carro neste posto (comecando em ate 2 h) vira a ocupacao real
     const { data: reserva } = await supabaseAdmin.from('posto_ocupacoes').select('id').eq('agenda_id', ev.id).eq('box_id', b.id).eq('real', false)
       .lte('inicio', new Date(agora.getTime() + 2 * 3600e3).toISOString()).gt('fim', agora.toISOString()).order('inicio').limit(1).maybeSingle();
@@ -170,7 +170,7 @@ export async function POST(req: NextRequest) {
   if (acaoPosto === 'posto_sair') {
     const { data: aberta } = await supabaseAdmin.from('posto_ocupacoes').select('id, box_id, inicio').eq('agenda_id', ev.id).eq('real', true).is('fim', null).maybeSingle();
     if (aberta) {
-      await supabaseAdmin.from('posto_ocupacoes').update({ fim: new Date(Math.max(Date.now(), new Date(aberta.inicio).getTime() + 60e3)).toISOString() }).eq('id', aberta.id);
+      await supabaseAdmin.from('posto_ocupacoes').update({ fim: new Date(Math.max(Date.now(), new Date(aberta.inicio).getTime() + 1000)).toISOString() }).eq('id', aberta.id);
       await historico('elevador', { anterior: aberta.box_id, novo: null });
     }
     return NextResponse.json({ ok: true });

@@ -64,8 +64,8 @@ try {
   const { data: mec } = await sb.from('funcionarios').insert({ oficina_id: ofId, profile_id: mecU.id, nome: 'Mart Mehaanik', cargo: 'mecanico', ativo: true, acesso_portal: true, primeiro_login: false, capacidade_maxima: 3 }).select('id').single();
   const cli = await conta('cliente', 'Klient Hora');
   const { data: bx } = await sb.from('oficina_boxes').insert([
-    { oficina_id: ofId, nome: 'Tõstuk 1', tipo: 'elevador', ordem: 0 },
-    { oficina_id: ofId, nome: 'Tõstuk 2', tipo: 'elevador', ordem: 1 },
+    { oficina_id: ofId, nome: 'Tõstuk 1', tipo: 'elevador', ordem: 0, capacidade: 1 },
+    { oficina_id: ofId, nome: 'Tõstuk 2', tipo: 'elevador', ordem: 1, capacidade: 1 },
     { oficina_id: ofId, nome: 'Ootekoht', tipo: 'vaga', ordem: 2, capacidade: 20 },
   ]).select('id, nome');
   const T1 = bx.find((b) => b.nome === 'Tõstuk 1').id, T2 = bx.find((b) => b.nome === 'Tõstuk 2').id, OO = bx.find((b) => b.nome === 'Ootekoht').id;
