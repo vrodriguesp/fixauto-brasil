@@ -281,7 +281,8 @@
     "horaCancelarReserva": "Cancel booking",
     "horaVerCarro": "See the car",
     "checkinColocarEm": "Put on",
-    "checkinPostoOcupado": "That bay is taken right now. Choose another one or leave it without a bay."
+    "checkinPostoOcupado": "That bay is taken right now. Choose another one or leave it without a bay.",
+    "horaVagaOcupacao": "{n} of {total} spaces taken"
   },
   "oficinaAprender": {
     "carregando": "Loading...",

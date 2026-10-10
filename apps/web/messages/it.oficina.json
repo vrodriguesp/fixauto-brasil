@@ -281,7 +281,8 @@
     "horaCancelarReserva": "Annulla prenotazione",
     "horaVerCarro": "Vedi l'auto",
     "checkinColocarEm": "Metti su",
-    "checkinPostoOcupado": "Questa postazione è occupata ora. Scegline un'altra o lasciala senza postazione."
+    "checkinPostoOcupado": "Questa postazione è occupata ora. Scegline un'altra o lasciala senza postazione.",
+    "horaVagaOcupacao": "{n} di {total} posti occupati"
   },
   "oficinaAprender": {
     "carregando": "Caricamento...",

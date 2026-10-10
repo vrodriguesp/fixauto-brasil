@@ -281,7 +281,8 @@
     "horaCancelarReserva": "Cancelar reserva",
     "horaVerCarro": "Ver o carro",
     "checkinColocarEm": "Colocar em",
-    "checkinPostoOcupado": "Esse posto está ocupado agora. Escolha outro ou deixe sem posto."
+    "checkinPostoOcupado": "Esse posto está ocupado agora. Escolha outro ou deixe sem posto.",
+    "horaVagaOcupacao": "{n} de {total} lugares ocupados"
   },
   "oficinaAprender": {
     "carregando": "Carregando...",

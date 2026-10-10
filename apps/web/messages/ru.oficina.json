@@ -281,7 +281,8 @@
     "horaCancelarReserva": "Отменить бронь",
     "horaVerCarro": "Открыть автомобиль",
     "checkinColocarEm": "Поставить на",
-    "checkinPostoOcupado": "Это место сейчас занято. Выберите другое или оставьте без места."
+    "checkinPostoOcupado": "Это место сейчас занято. Выберите другое или оставьте без места.",
+    "horaVagaOcupacao": "занято {n} из {total} мест"
   },
   "oficinaAprender": {
     "carregando": "Загрузка...",

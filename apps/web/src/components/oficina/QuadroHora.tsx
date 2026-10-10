@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { INTL_LOCALE } from '@/lib/utils';
 import { instanteNaOficina, minutoNaOficina } from '@/lib/fuso';
@@ -46,6 +46,7 @@ export default function QuadroHora({ pais, horario, hoje, agora, boxes, barras, 
   const [erro, setErro] = useState('');
   const [arrastando, setArrastando] = useState<null | { tipo: 'reserva'; ocup: OcupacaoVista; pega: number } | { tipo: 'carro'; ev: any }>(null);
   const [alvo, setAlvo] = useState<string | null>(null);
+  const rolagem = useRef<HTMLDivElement>(null);
 
   useEffect(() => { const ajustar = () => setPx(window.innerWidth < 640 ? 64 : 96); ajustar(); window.addEventListener('resize', ajustar); return () => window.removeEventListener('resize', ajustar); }, []);
 
@@ -65,9 +66,11 @@ export default function QuadroHora({ pais, horario, hoje, agora, boxes, barras, 
     let b = h?.aberto && minDe(h.fim) > a ? minDe(h.fim) : 18 * 60;
     a = Math.max(0, Math.floor(a / 60) * 60 - 60); b = Math.min(24 * 60, Math.ceil(b / 60) * 60 + 60);
     for (const o of doDia) {
-      const ini = Math.max(Date.parse(o.inicio), inicioDia); const fim = Math.min(o.fim ? Date.parse(o.fim) : agora, fimDia);
-      a = Math.min(a, Math.floor(((ini - inicioDia) / 60e3) / 60) * 60);
-      b = Math.max(b, Math.ceil(((fim - inicioDia) / 60e3) / 60) * 60);
+      // so horarios que caem dentro do dia (carro no elevador desde ontem nao
+      // puxa a grade para 00:00 - achado com a oficina demo, 10/10)
+      const ini = Date.parse(o.inicio); const fim = o.fim ? Date.parse(o.fim) : agora;
+      if (ini >= inicioDia && ini < fimDia) a = Math.min(a, Math.floor(((ini - inicioDia) / 60e3) / 60) * 60);
+      if (fim > inicioDia && fim <= fimDia) b = Math.max(b, Math.ceil(((fim - inicioDia) / 60e3) / 60) * 60);
     }
     if (dia === hoje) { const m = (agora - inicioDia) / 60e3; a = Math.min(a, Math.floor(m / 60) * 60); b = Math.max(b, Math.min(24 * 60, Math.ceil(m / 60) * 60 + 60)); }
     return [Math.max(0, a), Math.min(Math.round((fimDia - inicioDia) / 60e3), b)];
@@ -103,6 +106,7 @@ export default function QuadroHora({ pais, horario, hoje, agora, boxes, barras, 
     if (dia !== hoje) return null;
     const ocup = ocupacoes.filter((o) => o.box_id === p.id);
     const dentro = ocup.filter((o) => o.real && !o.fim);
+    if ((p.capacidade || 1) > 1) return { txt: t('horaVagaOcupacao', { n: dentro.length, total: p.capacidade || 1 }), cor: dentro.length >= (p.capacidade || 1) ? 'text-red-700' : 'text-green-700' };
     if (dentro.length && (p.capacidade || 1) <= dentro.length) return { txt: t('horaOcupadoDesde', { carro: dentro[0].rotulo, hora: horaTxt(Date.parse(dentro[0].inicio)) }), cor: 'text-red-700' };
     const prox = ocup.filter((o) => !o.real && Date.parse(o.inicio) > agora).sort((a, b) => Date.parse(a.inicio) - Date.parse(b.inicio))[0];
     const agoraRes = ocup.find((o) => !o.real && Date.parse(o.inicio) <= agora && Date.parse(o.fim || '') > agora);
@@ -170,6 +174,14 @@ export default function QuadroHora({ pais, horario, hoje, agora, boxes, barras, 
     tratar(await enviar({ acao: 'posto_mover', ocupacaoId: a.ocup.id, boxId, inicio: new Date(ini).toISOString(), fim: new Date(ini + dur).toISOString() }));
   };
 
+  // ao abrir (ou mudar de dia) a grade rola ate a hora atual / inicio do expediente
+  useEffect(() => {
+    const el = rolagem.current; if (!el) return;
+    const alvoX = dia === hoje ? x(agora) - 2 * px : 0;
+    el.scrollLeft = Math.max(0, alvoX);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dia, janIni, px]);
+
   const fmtDiaLongo = new Intl.DateTimeFormat(INTL_LOCALE[locale] || locale, { weekday: 'long', day: '2-digit', month: '2-digit', timeZone: 'UTC' });
   const ALT = 30;
 
@@ -218,7 +230,7 @@ export default function QuadroHora({ pais, horario, hoje, agora, boxes, barras, 
       {postos.length === 0 && <p className="mx-4 mt-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-900">{ehDono ? t('quadroSemElevadoresDono') : t('quadroSemElevadores')}</p>}
       {erro && !folha && <p role="alert" className="mx-4 mt-2 rounded-lg bg-red-50 p-3 text-sm text-red-800">{erro}</p>}
 
-      <div className="overflow-x-auto mt-2">
+      <div className="overflow-x-auto mt-2" ref={rolagem}>
         <div style={{ width: largura + 150 }} className="text-sm">
           {/* horas */}
           <div className="flex border-y border-gray-200 bg-gray-50">

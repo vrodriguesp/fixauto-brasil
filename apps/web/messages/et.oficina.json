@@ -281,7 +281,8 @@
     "horaCancelarReserva": "Tühista broneering",
     "horaVerCarro": "Vaata autot",
     "checkinColocarEm": "Pane kohale",
-    "checkinPostoOcupado": "See koht on praegu hõivatud. Vali teine või jäta kohata."
+    "checkinPostoOcupado": "See koht on praegu hõivatud. Vali teine või jäta kohata.",
+    "horaVagaOcupacao": "{n} / {total} kohta hõivatud"
   },
   "oficinaAprender": {
     "carregando": "Laadin...",
