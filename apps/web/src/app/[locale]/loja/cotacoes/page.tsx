@@ -35,7 +35,9 @@ export default function LojaCotacoesPage() {
         // sem isso uma loja na Estonia veria pedidos de oficinas no Brasil
         // (e vice-versa), o que nao faz sentido logisticamente.
         .select('*, oficina:oficinas!inner(nome_fantasia, cidade, estado, pais)')
-        .eq('status', 'aberta')
+        // recebe ofertas ate a oficina escolher uma (fechada): antes so 'aberta', e a
+        // 1a resposta (que muda para 'respondida') escondia o pedido das outras lojas
+        .in('status', ['aberta', 'respondida'])
         .eq('oficina.pais', loja.pais || '--') // sem pais no perfil: nada (antes assumia Brasil)
         .order('created_at', { ascending: false }),
       supabase

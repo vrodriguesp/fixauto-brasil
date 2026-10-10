@@ -204,7 +204,9 @@ export default function OficinaPecasPage() {
       supabase
         .from('cotacoes_pecas')
         .select('*, oficina:oficinas!cotacoes_pecas_oficina_id_fkey(nome_fantasia, cidade, estado, latitude, longitude)')
-        .eq('status', 'aberta')
+        // recebe ofertas ate a oficina escolher uma (fechada): antes so 'aberta', e a
+        // 1a resposta (que muda para 'respondida') escondia o pedido das outras lojas
+        .in('status', ['aberta', 'respondida'])
         .neq('oficina_id', oficina.id)
         .order('created_at', { ascending: false }),
       supabase

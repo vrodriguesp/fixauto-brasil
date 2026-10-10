@@ -22,7 +22,9 @@ export default function LojaDashboardPage() {
         supabase
           .from('cotacoes_pecas')
           .select('*, oficina:oficinas!inner(pais)', { count: 'exact', head: true })
-          .eq('status', 'aberta')
+          // recebe ofertas ate a oficina escolher uma (fechada): antes so 'aberta', e a
+          // 1a resposta (que muda para 'respondida') escondia o pedido das outras lojas
+          .in('status', ['aberta', 'respondida'])
           .eq('oficina.pais', loja!.pais || '--'),
         supabase.from('pedidos_pecas').select('*', { count: 'exact', head: true }).eq('loja_id', loja!.id).eq('status', 'confirmado'),
         supabase.from('pecas_catalogo').select('*', { count: 'exact', head: true }).eq('loja_id', loja!.id).eq('ativo', true),
