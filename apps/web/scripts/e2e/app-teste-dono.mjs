@@ -1,6 +1,7 @@
 // Reteste no APP (versao web do mesmo codigo, tela de iPhone) dos pontos do
 // teste do dono no iPhone em 09/10 (docs/TESTE_IPHONE_2026-10-09.md):
-//  14 conta em estoniano, aparelho em portugues: em que idioma o app abre
+//  14 idioma pela regra da Apple (10/10): o app segue o aparelho (aqui um iPhone em
+//     estoniano, dono em Tallinn); a conta segue o app. Cenario italiano x estoniano: app-idioma.mjs
 //  12 "novo pedido" com um servico concluido sem avaliacao: mostra o aviso
 //     para avaliar (nao fica carregando)
 //   2 pedido do acidente: a foto aparece; seguro e numero do sinistro editaveis
@@ -59,19 +60,19 @@ try {
   await sb.from('orcamentos').insert({ solicitacao_id: s2.id, oficina_id: ofId, valor_total: 100, prazo_dias: 1, status: 'aceito', validade: '2030-01-01' });
 
   // ---------- 14 idioma
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, locale: 'pt-BR' });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, locale: 'et-EE' });
   const page = await ctx.newPage();
   page.on('pageerror', (e) => erros.push(String(e.message)));
   page.on('console', (m) => { if (m.type() === 'error') erros.push(m.text()); });
   await page.goto(APP, { waitUntil: 'networkidle' }); await page.waitForTimeout(2000);
-  ok('14 antes de entrar: app no idioma do aparelho (pt)', (await page.innerText('body')).includes(PT('auth.entrar')));
-  await page.getByLabel(PT('auth.email'), { exact: true }).locator('visible=true').first().fill(email);
-  await page.getByLabel(PT('auth.senha'), { exact: true }).locator('visible=true').first().fill(senha);
-  await page.getByText(PT('auth.entrar'), { exact: true }).locator('visible=true').last().click();
+  ok('14 antes de entrar: app no idioma do aparelho (et)', (await page.innerText('body')).includes(ET('auth.entrar')));
+  await page.getByLabel(ET('auth.email'), { exact: true }).locator('visible=true').first().fill(email);
+  await page.getByLabel(ET('auth.senha'), { exact: true }).locator('visible=true').first().fill(senha);
+  await page.getByText(ET('auth.entrar'), { exact: true }).locator('visible=true').last().click();
   await page.waitForTimeout(5000);
   const tInicio = await page.innerText('body');
   const emEt = tInicio.includes(ET('tabs.inicio')) || tInicio.includes(ET('tabs.mensagens'));
-  console.log(`info 14: depois de entrar o app esta em ${emEt ? 'ESTONIANO (idioma da conta)' : 'outro idioma'}`);
+  ok('14 depois de entrar: continua no idioma do aparelho (et)', emEt, tInicio.slice(0, 160));
 
   // ---------- 12 novo pedido
   erros.length = 0;
