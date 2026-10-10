@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
+import BarraCarregando from '@/components/layout/BarraCarregando';
 import SiteFooter from '@/components/layout/SiteFooter';
 import { contarOficinasPublicas } from '@/lib/oficinas-publicas';
 import SugestaoIdioma from '@/components/layout/SugestaoIdioma';
@@ -121,6 +122,7 @@ export default async function LocaleLayout({
       <a href="#conteudo" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-white focus:text-primary-700 focus:px-4 focus:py-2 focus:rounded-lg focus:shadow">
         {t('pularConteudo')}
       </a>
+      <BarraCarregando />
       <Navbar />
       <main id="conteudo" className="min-h-[calc(100vh-4rem)]">{children}</main>
       <SiteFooter temOficinas={temOficinas} />
