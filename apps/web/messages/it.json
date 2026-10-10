@@ -520,7 +520,10 @@
       "eu_causei": "🚨 Incidente (causato dal cliente)",
       "outro_causou": "🚨 Incidente (causato da un altro veicolo)",
       "sem_outro": "🚨 Imprevisto su strada (senza altri veicoli)"
-    }
+    },
+    "numeroPedido": "Richiesta n. {n}",
+    "codigoCliente": "Codice cliente {n}",
+    "codigoClienteDica": "Mostra questo codice in officina per trovare subito la tua richiesta."
   },
   "comissaoPecasCard": {
     "suaTaxaAtual": "La tua aliquota attuale",

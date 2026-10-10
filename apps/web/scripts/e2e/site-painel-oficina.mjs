@@ -14,6 +14,9 @@
 //    abre Hoje filtrado; Desempenho: um grafico so e no maximo ~7 datas no eixo
 //  9 retorno do dono (10/10, 3a rodada): "N feito" de hoje no mes -> Hoje mostra os
 //    carros (dono e mecanico); grafico de 12 meses aparece; "Ver no Quadro" destaca
+// 10 procurar por placa (parte), n. do pedido e codigo de cliente (Hoje e pagina
+//    Procurar); painel do dia: numero do quadrado = cartoes ao filtrar; visitante
+//    no celular: idioma nao fica em cima do logo
 //   node site-painel-oficina.mjs <.env.local> [SITE]
 import fs from 'node:fs';
 import path from 'node:path';
@@ -246,6 +249,45 @@ try {
   await pD.goto(`${SITE}/ee/et/oficina/agenda?vista=quadro&ev=${aNaOf}`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(4000);
   const dest = pD.locator('[data-destaque="1"]');
   ok('9 "Ver no Quadro" destaca o carro no quadro', (await dest.count()) >= 1 && (await dest.first().innerText()).includes(`M${P(7)}`) && await dest.first().isVisible());
+
+  // ---------- 10 procurar + painel do dia + menu do visitante
+  {
+    const { data: x } = await sb.from('agenda').select('solicitacao:solicitacoes(numero, veiculo:veiculos(placa), cliente:profiles!solicitacoes_cliente_id_fkey(codigo))').eq('id', aNaOf).single();
+    const num = x?.solicitacao?.numero, placa = x?.solicitacao?.veiculo?.placa || '', cod = x?.solicitacao?.cliente?.codigo;
+    ok('10 pedido tem numero e cliente tem codigo', !!num && !!cod, JSON.stringify(x));
+    await pD.goto(`${SITE}/ee/et/oficina/hoje`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(2500);
+    const procura = async (q) => { await pD.getByTestId('procurar-campo').first().fill(q); await pD.waitForTimeout(1800); return pD.getByTestId('procurar-resultados').first().innerText().catch(() => ''); };
+    const parte = placa.replace(/[^A-Za-z0-9]/g, '').slice(-4).toLowerCase();
+    ok('10 Hoje: procurar por parte da placa (minusculas) acha o carro', (await procura(parte)).includes(placa), parte);
+    ok('10 Hoje: procurar pelo n. do pedido', (await procura(String(num))).includes(placa));
+    ok('10 Hoje: procurar pelo codigo de cliente', (await procura(String(cod))).includes(placa));
+    await pD.getByTestId('procurar-campo').first().press('Enter'); await pD.waitForTimeout(2500);
+    ok('10 Enter abre a pagina Procurar com o resultado', pD.url().includes('/oficina/procurar?q=') && (await pD.getByTestId('procurar-achado').count()) >= 1, pD.url());
+    await pD.getByRole('link', { name: ET('oficinaProcurar.abrirHoje') }).first().click(); await pD.waitForTimeout(3000);
+    ok('10 "Abrir em Hoje" leva ao carro', (await pD.locator(`#carro-${aNaOf}`).count()) === 1);
+    ok('10 numero do pedido no cartao de Hoje', (await pD.locator(`#carro-${aNaOf}`).innerText()).includes(String(num)));
+    await pD.goto(`${SITE}/ee/et/oficina/hoje`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(2500);
+    ok('10 painel do dia aparece com o atalho de pedidos', (await pD.getByTestId('painel-dia').count()) === 1 && (await pD.getByTestId('painel-pedidos').count()) === 1);
+    let bate = true; const det = [];
+    for (const id of ['atrasados', 'prontos', 'chegam', 'naOficina']) {
+      const q = pD.getByTestId(`filtro-${id}`); if (!(await q.count()) || await q.isDisabled()) continue;
+      const n = Number((await q.innerText()).trim().split(/s/)[0]);
+      await q.click(); await pD.waitForTimeout(500);
+      const cards = await pD.locator('[data-testid="hoje-cartao"]').count();
+      det.push(`${id}:${n}/${cards}`); if (n !== cards) bate = false;
+      await pD.getByTestId('filtro-tudo').click(); await pD.waitForTimeout(400);
+    }
+    ok('10 numero de cada quadrado = cartoes mostrados ao tocar', bate && det.length > 0, det.join(' '));
+    const ctxV = await ctxNovo(false); const pV = await ctxV.newPage();
+    await pV.goto(`${SITE}/ee/et/oficinas/${ofId}`, { waitUntil: 'networkidle' }); await pV.waitForTimeout(1500);
+    const sobre = await pV.evaluate(() => {
+      const logo = document.querySelector('nav img[alt="BipFix"]')?.getBoundingClientRect(); if (!logo) return 'sem logo';
+      const outros = [...document.querySelectorAll('nav a, nav button')].filter((e) => !e.contains(document.querySelector('nav img[alt="BipFix"]'))).map((e) => e.getBoundingClientRect()).filter((r) => r.width > 0);
+      return outros.some((r) => Math.min(r.right, logo.right) - Math.max(r.left, logo.left) > 1 && Math.min(r.bottom, logo.bottom) - Math.max(r.top, logo.top) > 1) ? 'sobreposto' : 'ok';
+    });
+    ok('10 visitante no celular: nada em cima do logo (pagina da oficina)', sobre === 'ok', sobre);
+    await ctxV.close();
+  }
 
   // ---------- 6 enderecos antigos
   for (const [l, pre] of Object.entries(PREFIXO)) {

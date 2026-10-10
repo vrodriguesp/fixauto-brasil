@@ -74,6 +74,12 @@ ${t('perfil.excluirContaConfirmar')}`, [
       <View className="bg-white rounded-xl p-4 mb-6 border border-gray-200">
         <Text className="font-semibold text-gray-900">{user?.nome}</Text>
         <Text className="text-gray-500 text-sm">{user?.email}</Text>
+        {(user as any)?.codigo ? (
+          <>
+            <Text className="mt-1 font-medium text-gray-800" selectable>{t('constants.codigoCliente', { n: (user as any).codigo })}</Text>
+            <Text className="text-xs text-gray-500">{t('constants.codigoClienteDica')}</Text>
+          </>
+        ) : null}
       </View>
 
       <Text className="text-sm font-medium text-gray-700 mb-2">{t('perfil.idioma')}</Text>

@@ -145,7 +145,7 @@ export default function Navbar() {
             )}
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <LanguageSwitcher compacto={isLoggedIn} />
             {isLoggedIn ? (
               <>
@@ -181,7 +181,9 @@ export default function Navbar() {
                 <LinkPainel href="/login" className="btn-secondary text-sm !py-2 !px-3 sm:!px-4 whitespace-nowrap">
                   {t('entrar')}
                 </LinkPainel>
-                <LinkPainel href="/cadastro" className="btn-primary text-sm !py-2 !px-3 sm:!px-4 whitespace-nowrap">
+                {/* celular: so "Entrar" (a tela de entrar leva ao cadastro). Com os dois botoes
+                    o seletor de idioma ficava em cima do logo - pagina da oficina aberta pelo app, 10/10 */}
+                <LinkPainel href="/cadastro" className="btn-primary text-sm !py-2 !px-3 sm:!px-4 whitespace-nowrap !hidden sm:!inline-flex">
                   {t('cadastrar')}
                 </LinkPainel>
               </div>

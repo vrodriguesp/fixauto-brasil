@@ -1107,7 +1107,10 @@
     "bloco_chegaram": "Chegaram neste dia",
     "bloco_chegamDia": "Chegam neste dia",
     "bloco_saemDia": "Saem neste dia",
-    "bloco_entreguesDia": "Entregues neste dia"
+    "bloco_entreguesDia": "Entregues neste dia",
+    "painelDia": "Resumo do dia",
+    "pedidosEsperando": "Pedidos esperando resposta",
+    "verTudo": "Ver tudo"
   },
   "oficinaDesempenho": {
     "titulo": "Desempenho",
@@ -1157,5 +1160,19 @@
     "f_prazo": "Prazo",
     "f_etapas": "Etapas",
     "f_naoVieram": "Não vieram"
+  },
+  "oficinaProcurar": {
+    "titulo": "Procurar",
+    "rotulo": "Procurar carro ou pedido",
+    "placeholder": "Placa, nome, nº do pedido ou código de cliente",
+    "dica": "Ex.: a placa (mesmo só uma parte), o nome do cliente, o número do pedido ou o código de cliente que aparece no app dele.",
+    "procurando": "Procurando…",
+    "nada": "Nada encontrado. Confira a placa ou tente o nome ou o número.",
+    "abrirHoje": "Abrir em Hoje",
+    "verPedido": "Ver o pedido",
+    "verTodos": "Ver todos os {n} resultados",
+    "agenda_agendado": "Marcado para {dia}",
+    "agenda_em_andamento": "Na oficina",
+    "agenda_concluido": "Entregue"
   }
 }

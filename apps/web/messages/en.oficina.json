@@ -1107,7 +1107,10 @@
     "bloco_chegaram": "Arrived on this day",
     "bloco_chegamDia": "Arriving on this day",
     "bloco_saemDia": "Leaving on this day",
-    "bloco_entreguesDia": "Handed over on this day"
+    "bloco_entreguesDia": "Handed over on this day",
+    "painelDia": "Day summary",
+    "pedidosEsperando": "Requests waiting for a reply",
+    "verTudo": "Show all"
   },
   "oficinaDesempenho": {
     "titulo": "Results",
@@ -1157,5 +1160,19 @@
     "f_prazo": "On time",
     "f_etapas": "Stages",
     "f_naoVieram": "Didn't come"
+  },
+  "oficinaProcurar": {
+    "titulo": "Search",
+    "rotulo": "Search car or request",
+    "placeholder": "Plate, name, request no. or customer code",
+    "dica": "E.g. the plate (even part of it), the customer's name, the request number or the customer code shown in their app.",
+    "procurando": "Searching…",
+    "nada": "Nothing found. Check the plate or try the name or number.",
+    "abrirHoje": "Open in Today",
+    "verPedido": "See the request",
+    "verTodos": "See all {n} results",
+    "agenda_agendado": "Booked for {dia}",
+    "agenda_em_andamento": "In the workshop",
+    "agenda_concluido": "Handed over"
   }
 }

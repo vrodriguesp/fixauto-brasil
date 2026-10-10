@@ -519,7 +519,10 @@
       "eu_causei": "🚨 Accident (caused by the customer)",
       "outro_causou": "🚨 Accident (caused by another vehicle)",
       "sem_outro": "🚨 Roadside incident (no other vehicle)"
-    }
+    },
+    "numeroPedido": "Request no. {n}",
+    "codigoCliente": "Customer code {n}",
+    "codigoClienteDica": "Show this code at the workshop so they can find your request quickly."
   },
   "comissaoPecasCard": {
     "suaTaxaAtual": "Your current rate",

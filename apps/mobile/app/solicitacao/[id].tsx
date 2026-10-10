@@ -173,7 +173,7 @@ export default function SolicitacaoDetailScreen() {
           {veiculo?.fipe_marca ? `${veiculo.fipe_marca} ${veiculo.fipe_modelo}` : ehAcidente(solicitacao.descricao) ? t('acompanhamento.acidente') : ''}
         </Text>
         {limparDescricao(solicitacao.descricao) ? <Text className="text-gray-600 mb-1">{limparDescricao(solicitacao.descricao)}</Text> : null}
-        <Text className="text-sm text-gray-500 mb-4">{t(`constants.statusSolicitacao.${solicitacao.status}`, solicitacao.status)}</Text>
+        <Text className="text-sm text-gray-500 mb-4">{(solicitacao as any).numero ? `${t('constants.numeroPedido', { n: (solicitacao as any).numero })} · ` : ''}{t(`constants.statusSolicitacao.${solicitacao.status}`, solicitacao.status)}</Text>
 
         {['aberta', 'em_orcamento'].includes(solicitacao.status) && (
           <EditarPedido key={`${solicitacao.id}-${veiculo?.fipe_marca || ''}`} solicitacaoId={solicitacao.id} descricao={solicitacao.descricao} veiculo={(veiculo as any) || null} aoSalvar={carregar} />

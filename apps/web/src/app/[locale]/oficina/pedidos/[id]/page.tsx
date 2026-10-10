@@ -29,7 +29,7 @@ export default function SolicitacaoDetalhePage() {
       supabase
         .from('solicitacoes')
         .select(
-          '*, veiculo:veiculos(*), fotos:solicitacao_fotos(*), cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo), orcamentos(*, itens:orcamento_itens(*), oficina:oficinas(*, profile:profiles(*)), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))'
+          '*, veiculo:veiculos(*), fotos:solicitacao_fotos(*), cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo), orcamentos(*, itens:orcamento_itens(*), oficina:oficinas(*, profile:profiles(*)), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))'
         )
         .eq('id', params.id)
         .single()
@@ -89,6 +89,7 @@ export default function SolicitacaoDetalhePage() {
           <h1 className="text-2xl font-bold text-gray-900 break-words">
             {v?.fipe_marca ? `${v.fipe_marca} ${v.fipe_modelo}` : t('veiculoFallback')}
           </h1>
+          {sol.numero && <p className="mt-1 text-sm text-gray-500" data-testid="numero-pedido">{tc('numeroPedido', { n: sol.numero })}{sol.cliente?.codigo ? ` · ${tc('codigoCliente', { n: sol.cliente.codigo })}` : ''}</p>}
           <div className="flex flex-wrap items-center gap-2 mt-2">
             <StatusBadge status={sol.status} />
             <span className={`badge ${getUrgenciaColor(sol.urgencia)}`}>

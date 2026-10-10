@@ -10,6 +10,7 @@ import { calcDistance, cleanDescricao, rotuloTipoPedido, INTL_LOCALE } from '@/l
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import TutorialBanner from '@/components/tutorial/TutorialBanner';
 import PerfilCompleto from '@/components/oficina/PerfilCompleto';
+import ProcurarPedido from '@/components/oficina/ProcurarPedido';
 
 // Caixa de pedidos: pagina inicial da oficina (auditoria do painel 10/10,
 // docs/AUDITORIA_PAINEL_OFICINA_2026-10-10.md, secao C). Foco do produto:
@@ -126,6 +127,7 @@ export default function PedidosOficinaPage() {
         <Link href="/oficina/checkin" className="btn-secondary !py-2 text-sm whitespace-nowrap">{t('carroSemPedido')}</Link>
       </div>
       <p className="text-gray-600 mb-5">{t('incentivo')}</p>
+      <ProcurarPedido compacto />
 
       <div className="grid grid-cols-3 gap-1 rounded-xl bg-gray-100 p-1 mb-5" role="tablist" aria-label={t('titulo')}>
         {ABAS.map((a) => (
@@ -163,6 +165,7 @@ export default function PedidosOficinaPage() {
                     <p className={`min-w-0 text-base ${novo ? 'font-bold' : 'font-medium'} text-gray-900`}>
                       {acidente && <span className="mr-1.5 inline-block rounded bg-red-600 px-1.5 py-0.5 text-xs font-bold uppercase text-white">🚨 {t('acidente')}</span>}
                       <span aria-hidden="true">{iconeTipo(s.tipo)} </span>{rotuloTipoPedido(tc, s.tipo, s.descricao)}{carroDe(s) ? ` · ${carroDe(s)}` : ''}
+                      {s.numero && <span className="ml-1.5 text-sm font-normal text-gray-500">{tc('numeroPedido', { n: s.numero })}</span>}
                     </p>
                     {c && (
                       <span className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-sm font-semibold ${c.cls}`} title={c.dica} aria-label={c.dica} data-testid="contador">

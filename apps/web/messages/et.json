@@ -519,7 +519,10 @@
       "eu_causei": "🚨 Õnnetus (põhjustas klient)",
       "outro_causou": "🚨 Õnnetus (põhjustas teine sõiduk)",
       "sem_outro": "🚨 Juhtum teel (teist sõidukit polnud)"
-    }
+    },
+    "numeroPedido": "Päring nr {n}",
+    "codigoCliente": "Kliendikood {n}",
+    "codigoClienteDica": "Näita seda koodi töökojas, et nad leiaksid su päringu kiiresti."
   },
   "comissaoPecasCard": {
     "suaTaxaAtual": "Sinu praegune määr",

@@ -1107,7 +1107,10 @@
     "bloco_chegaram": "Приехали в этот день",
     "bloco_chegamDia": "Приезжают в этот день",
     "bloco_saemDia": "Уезжают в этот день",
-    "bloco_entreguesDia": "Выданы в этот день"
+    "bloco_entreguesDia": "Выданы в этот день",
+    "painelDia": "Сводка дня",
+    "pedidosEsperando": "Заявки ждут ответа",
+    "verTudo": "Показать всё"
   },
   "oficinaDesempenho": {
     "titulo": "Результаты",
@@ -1157,5 +1160,19 @@
     "f_prazo": "В срок",
     "f_etapas": "Этапы",
     "f_naoVieram": "Не приехали"
+  },
+  "oficinaProcurar": {
+    "titulo": "Поиск",
+    "rotulo": "Найти автомобиль или заявку",
+    "placeholder": "Номер авто, имя, № заявки или код клиента",
+    "dica": "Например: номер авто (можно часть), имя клиента, номер заявки или код клиента из его приложения.",
+    "procurando": "Ищем…",
+    "nada": "Ничего не найдено. Проверьте номер или попробуйте имя или номер заявки.",
+    "abrirHoje": "Открыть в «Сегодня»",
+    "verPedido": "Открыть заявку",
+    "verTodos": "Все результаты: {n}",
+    "agenda_agendado": "Запись на {dia}",
+    "agenda_em_andamento": "В сервисе",
+    "agenda_concluido": "Выдан"
   }
 }

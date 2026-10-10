@@ -519,7 +519,10 @@
       "eu_causei": "🚨 Acidente (causado pelo cliente)",
       "outro_causou": "🚨 Acidente (causado por outro veículo)",
       "sem_outro": "🚨 Ocorrência na estrada (sem outro veículo)"
-    }
+    },
+    "numeroPedido": "Pedido n.º {n}",
+    "codigoCliente": "Código de cliente {n}",
+    "codigoClienteDica": "Mostre este código na oficina para encontrarem o seu pedido rapidamente."
   },
   "comissaoPecasCard": {
     "suaTaxaAtual": "A sua taxa atual",

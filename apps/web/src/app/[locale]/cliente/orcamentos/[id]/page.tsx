@@ -211,6 +211,7 @@ export default function OrcamentoDetalhePage() {
               ? `${solicitacao.veiculo.fipe_marca} ${solicitacao.veiculo.fipe_modelo}`
               : /\[TIPO:\w+\]/.test(solicitacao.descricao || '') ? te('acidente') : ''}
           </h1>
+          {(solicitacao as any).numero && <p className="text-sm text-gray-500" data-testid="numero-pedido">{tc('numeroPedido', { n: (solicitacao as any).numero })}</p>}
           <div className="flex flex-wrap items-center gap-2 mt-1">
             <StatusBadge status={solicitacao.status} />
             <span className={`badge ${getUrgenciaColor(solicitacao.urgencia)}`}>

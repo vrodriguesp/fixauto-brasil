@@ -254,7 +254,10 @@
       "teste_final": "Финальная проверка",
       "concluido": "Готов к выдаче",
       "entregue": "Выдан"
-    }
+    },
+    "numeroPedido": "Заявка № {n}",
+    "codigoCliente": "Код клиента {n}",
+    "codigoClienteDica": "Покажите этот код в сервисе, чтобы вашу заявку быстро нашли."
   },
   "perfil": {
     "titulo": "Профиль",

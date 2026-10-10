@@ -254,7 +254,10 @@
       "teste_final": "Lõpptestimine",
       "concluido": "Valmis",
       "entregue": "Üle antud"
-    }
+    },
+    "numeroPedido": "Päring nr {n}",
+    "codigoCliente": "Kliendikood {n}",
+    "codigoClienteDica": "Näita seda koodi töökojas, et nad leiaksid su päringu kiiresti."
   },
   "perfil": {
     "titulo": "Profiil",

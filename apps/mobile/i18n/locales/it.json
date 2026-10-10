@@ -254,7 +254,10 @@
       "teste_final": "Collaudo finale",
       "concluido": "Completato",
       "entregue": "Consegnato"
-    }
+    },
+    "numeroPedido": "Richiesta n. {n}",
+    "codigoCliente": "Codice cliente {n}",
+    "codigoClienteDica": "Mostra questo codice in officina per trovare subito la tua richiesta."
   },
   "perfil": {
     "titulo": "Profilo",

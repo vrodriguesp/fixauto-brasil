@@ -1107,7 +1107,10 @@
     "bloco_chegaram": "Saabusid sel päeval",
     "bloco_chegamDia": "Saabuvad sel päeval",
     "bloco_saemDia": "Lahkuvad sel päeval",
-    "bloco_entreguesDia": "Üle antud sel päeval"
+    "bloco_entreguesDia": "Üle antud sel päeval",
+    "painelDia": "Päeva kokkuvõte",
+    "pedidosEsperando": "Vastust ootavad päringud",
+    "verTudo": "Näita kõiki"
   },
   "oficinaDesempenho": {
     "titulo": "Tulemused",
@@ -1157,5 +1160,19 @@
     "f_prazo": "Õigel ajal",
     "f_etapas": "Etapid",
     "f_naoVieram": "Ei tulnud"
+  },
+  "oficinaProcurar": {
+    "titulo": "Otsi",
+    "rotulo": "Otsi autot või päringut",
+    "placeholder": "Numbrimärk, nimi, päringu nr või kliendikood",
+    "dica": "Nt numbrimärk (ka osa sellest), kliendi nimi, päringu number või kliendikood, mis on tema äpis.",
+    "procurando": "Otsin…",
+    "nada": "Midagi ei leitud. Kontrolli numbrimärki või proovi nime või numbrit.",
+    "abrirHoje": "Ava Täna vaates",
+    "verPedido": "Vaata päringut",
+    "verTodos": "Vaata kõiki {n} tulemust",
+    "agenda_agendado": "Broneeritud {dia}",
+    "agenda_em_andamento": "Töökojas",
+    "agenda_concluido": "Üle antud"
   }
 }

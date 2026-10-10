@@ -454,6 +454,7 @@ export default function QuadroOficina({ eventos, todosEventos, funcionarios, box
                 <div className="min-w-0">
                   <h3 id="quadro-det-titulo" className="font-semibold text-gray-900 break-words">{b.rotulo}</h3>
                   {c?.nome && <p className="text-sm text-gray-600">{c.nome}</p>}
+                  {ev.solicitacao?.numero && <p className="text-xs text-gray-500">{tc('numeroPedido', { n: ev.solicitacao.numero })}{c?.codigo ? ` · ${tc('codigoCliente', { n: c.codigo })}` : ''}</p>}
                   {ev.solicitacao?.tipo && tc.has(`tiposServico.${ev.solicitacao.tipo}`) && <p className="text-xs text-gray-500">{tc(`tiposServico.${ev.solicitacao.tipo}`)}</p>}
                 </div>
                 <button type="button" onClick={() => setAberto(null)} aria-label={t('quadroFechar')} className="min-w-[44px] min-h-[44px] -m-2 text-xl text-gray-500">✕</button>

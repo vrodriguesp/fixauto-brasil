@@ -1107,7 +1107,10 @@
     "bloco_chegaram": "Arrivate in questo giorno",
     "bloco_chegamDia": "Arrivano in questo giorno",
     "bloco_saemDia": "Escono in questo giorno",
-    "bloco_entreguesDia": "Consegnate in questo giorno"
+    "bloco_entreguesDia": "Consegnate in questo giorno",
+    "painelDia": "Riepilogo del giorno",
+    "pedidosEsperando": "Richieste in attesa di risposta",
+    "verTudo": "Mostra tutto"
   },
   "oficinaDesempenho": {
     "titulo": "Risultati",
@@ -1157,5 +1160,19 @@
     "f_prazo": "Puntualità",
     "f_etapas": "Fasi",
     "f_naoVieram": "Non venuti"
+  },
+  "oficinaProcurar": {
+    "titulo": "Cerca",
+    "rotulo": "Cerca auto o richiesta",
+    "placeholder": "Targa, nome, n. richiesta o codice cliente",
+    "dica": "Es.: la targa (anche solo una parte), il nome del cliente, il numero della richiesta o il codice cliente che vede nella sua app.",
+    "procurando": "Ricerca…",
+    "nada": "Nessun risultato. Controlla la targa o prova con il nome o il numero.",
+    "abrirHoje": "Apri in Oggi",
+    "verPedido": "Vedi la richiesta",
+    "verTodos": "Vedi tutti i {n} risultati",
+    "agenda_agendado": "Prenotata per il {dia}",
+    "agenda_em_andamento": "In officina",
+    "agenda_concluido": "Consegnata"
   }
 }

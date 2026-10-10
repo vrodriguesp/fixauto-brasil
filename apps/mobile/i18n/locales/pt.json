@@ -254,7 +254,10 @@
       "teste_final": "Teste final",
       "concluido": "Concluído",
       "entregue": "Entregue"
-    }
+    },
+    "numeroPedido": "Pedido nº {n}",
+    "codigoCliente": "Código de cliente {n}",
+    "codigoClienteDica": "Mostre este código na oficina para acharem o seu pedido rapidinho."
   },
   "perfil": {
     "titulo": "Perfil",

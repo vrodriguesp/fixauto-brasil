@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase';
 
 export default function PerfilClientePage() {
   const t = useTranslations('clientePerfil');
+  const tc = useTranslations('constants');
   const tErr = useTranslations('erros');
   const tx = useTranslations('excluirConta');
   const { user, loading, refreshProfile } = useAuth();
@@ -83,6 +84,7 @@ export default function PerfilClientePage() {
           <div>
             <h2 className="text-xl font-semibold text-gray-900">{nome}</h2>
             <p className="text-gray-500">{t('roleLabel')}</p>
+            {(user as any)?.codigo && <><p className="mt-1 text-sm font-medium text-gray-800" data-testid="codigo-cliente">{tc('codigoCliente', { n: (user as any).codigo })}</p><p className="text-xs text-gray-500">{tc('codigoClienteDica')}</p></>}
           </div>
         </div>
 

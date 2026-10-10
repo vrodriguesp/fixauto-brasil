@@ -254,7 +254,10 @@
       "teste_final": "Final testing",
       "concluido": "Completed",
       "entregue": "Delivered"
-    }
+    },
+    "numeroPedido": "Request no. {n}",
+    "codigoCliente": "Customer code {n}",
+    "codigoClienteDica": "Show this code at the workshop so they can find your request quickly."
   },
   "perfil": {
     "titulo": "Profile",

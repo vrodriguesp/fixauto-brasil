@@ -11,6 +11,7 @@ import { INTL_LOCALE, cleanDescricao, rotuloTipoPedido } from '@/lib/utils';
 import { diaNaOficina, fusoDoPais } from '@/lib/fuso';
 import { nomeFuncionario } from '@/lib/funcionario';
 import NotasInternas from '@/components/veiculo/NotasInternas';
+import ProcurarPedido from '@/components/oficina/ProcurarPedido';
 import { duracao, etapasOrdenadas, montarBarra, somaDias, temposDoCarro, type Box } from '@/components/oficina/quadro-util';
 
 // "Hoje": operacao da oficina numa tela (auditoria do painel 10/10, secao D).
@@ -71,6 +72,11 @@ export default function HojePage() {
     try { const u = new URL(window.location.href); if (d === hoje) u.searchParams.delete('dia'); else u.searchParams.set('dia', d); window.history.replaceState(window.history.state, '', u.toString()); } catch { /* */ }
   };
 
+  const [pedidosEsperando, setPedidosEsperando] = useState<number | null>(null);
+  useEffect(() => {
+    if (!oficina || ehMecanico) return;
+    supabase.rpc('pedidos_para_responder').then(({ data }) => setPedidosEsperando((data as any)?.total ?? null));
+  }, [oficina, ehMecanico]);
   const [funcionarios, setFuncionarios] = useState<any[]>([]);
   const [boxes, setBoxes] = useState<Box[]>([]);
   useEffect(() => {
@@ -218,6 +224,18 @@ export default function HojePage() {
   // titulo do bloco: em outro dia "neste dia" (antes dizia "hoje" num dia que nao era hoje)
   const tituloBloco = (id: Bloco) => (!ehHoje && ['chegam', 'saem', 'entregues'].includes(id) ? t(`bloco_${id}Dia`) : t(`bloco_${id}`));
 
+  // quadros do painel do dia: em hoje as situacoes do dia a dia aparecem sempre
+  // (com 0 apagado, para a oficina saber que nao ha nada); em outro dia so as daquele dia
+  const COR_QUADRO: Record<string, string> = Object.fromEntries(BLOCOS.map((bl) => [bl.id, bl.cor]));
+  const SEMPRE: Bloco[] = ehHoje ? ['atrasados', 'prontos', 'chegam', 'naOficina', 'saem', 'proximos'] : ['chegam', 'chegaram', 'saem', 'entregues'];
+  const quadros: { id: Filtro; n: number; txt: string; cor: string }[] = [
+    ...(ehHoje ? [{ id: 'agora' as Filtro, n: paraAgora, txt: t('resumoAgora'), cor: 'border-l-primary-600' }] : []),
+    ...BLOCOS.filter((bl) => SEMPRE.includes(bl.id) || blocos[bl.id].length > 0).map((bl) => ({
+      // "Na oficina" conta tambem os que saem hoje (o filtro mostra os dois blocos)
+      id: bl.id as Filtro, n: blocos[bl.id].length + (bl.id === 'naOficina' && ehHoje ? blocos.saem.length : 0), txt: tituloBloco(bl.id), cor: COR_QUADRO[bl.id],
+    })),
+  ];
+
   const botaoPrincipal = (bloco: Bloco, item: any) => {
     const { ev } = item;
     const cls = 'btn-primary flex min-h-[48px] w-full items-center justify-center sm:w-auto sm:px-6';
@@ -246,29 +264,33 @@ export default function HojePage() {
         {ehDono && <Link href="/oficina/checkin" className="btn-secondary !py-2 text-sm">{t('carroSemPedido')}</Link>}
       </div>
 
-      {ehHoje && (
-        <div className="grid grid-cols-3 gap-2 mb-6">
-          {([{ n: paraAgora, txt: t('resumoAgora'), alvo: 'agora' }, { n: blocos.naOficina.length + blocos.saem.length, txt: t('resumoNaOficina'), alvo: 'naOficina' }, { n: blocos.proximos.length, txt: t('resumoProximos'), alvo: 'proximos' }] as { n: number; txt: string; alvo: Filtro }[]).map((r) => (
-            <button key={r.txt} type="button" onClick={() => setFiltro(filtro === r.alvo ? 'tudo' : r.alvo)} aria-pressed={filtro === r.alvo} data-testid={`resumo-${r.alvo}`}
-              className={`rounded-xl border p-3 text-center ${filtro === r.alvo ? 'border-primary-600 bg-primary-50 ring-2 ring-primary-200' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
-              <span className="block text-3xl font-bold text-gray-900">{r.n}</span>
-              <span className="block text-sm leading-tight text-gray-600">{r.txt}</span>
-            </button>
-          ))}
-        </div>
-      )}
+      {/* procurar pela placa, nome, n. do pedido ou codigo de cliente (dono 10/10) */}
+      <ProcurarPedido compacto />
 
-      {BLOCOS.some((bl) => blocos[bl.id].length > 0) && (
-        <div className="-mx-4 mb-5 overflow-x-auto px-4 sm:mx-0 sm:px-0" role="group" aria-label={t('filtrar')}>
-          <div className="flex w-max gap-2 sm:w-auto sm:flex-wrap">
-            {(['tudo', ...BLOCOS.filter((bl) => blocos[bl.id].length > 0).map((bl) => bl.id)] as Filtro[]).map((fl) => (
-              <button key={fl} type="button" onClick={() => setFiltro(fl)} aria-pressed={filtro === fl} data-testid={`filtro-${fl}`}
-                className={`min-h-[40px] whitespace-nowrap rounded-full border px-3 text-sm font-medium ${filtro === fl ? 'border-primary-600 bg-primary-600 text-white' : 'border-gray-300 bg-white text-gray-700'}`}>
-                {fl === 'tudo' ? t('filtroTudo') : `${tituloBloco(fl as Bloco)} (${blocos[fl as Bloco].length})`}
-              </button>
-            ))}
-          </div>
-        </div>
+      {/* painel do dia (dono 10/10): um quadrado por situacao, com o numero;
+          tocar filtra a pagina. Substitui os 3 resumos + a fila de filtros. */}
+      <div className="mb-6 grid grid-cols-2 gap-2 sm:grid-cols-4" role="group" aria-label={t('painelDia')} data-testid="painel-dia">
+        {quadros.map((q) => {
+          const ativo = filtro === q.id;
+          const vazio = q.n === 0;
+          return (
+            <button key={q.id} type="button" disabled={vazio && !ativo} onClick={() => setFiltro(ativo ? 'tudo' : q.id)} aria-pressed={ativo}
+              data-testid={q.id === 'agora' ? 'resumo-agora' : `filtro-${q.id}`}
+              className={`rounded-xl border p-3 text-left transition ${q.id === 'agora' ? 'col-span-2' : ''} ${ativo ? 'border-primary-600 bg-primary-50 ring-2 ring-primary-200' : vazio ? 'border-gray-100 bg-gray-50 text-gray-400' : `border-gray-200 bg-white hover:bg-gray-50 border-l-4 ${q.cor}`}`}>
+              <span className={`block text-3xl font-bold ${vazio && !ativo ? 'text-gray-300' : q.id === 'atrasados' ? 'text-red-700' : 'text-gray-900'}`}>{q.n}</span>
+              <span className="block text-sm leading-tight">{q.txt}</span>
+            </button>
+          );
+        })}
+        {ehDono && ehHoje && pedidosEsperando != null && (
+          <Link href="/oficina/pedidos" className={`rounded-xl border p-3 text-left hover:bg-gray-50 ${pedidosEsperando ? 'border-gray-200 bg-white border-l-4 border-l-sky-500' : 'border-gray-100 bg-gray-50 text-gray-400'}`} data-testid="painel-pedidos">
+            <span className={`block text-3xl font-bold ${pedidosEsperando ? 'text-gray-900' : 'text-gray-300'}`}>{pedidosEsperando}</span>
+            <span className="block text-sm leading-tight">{t('pedidosEsperando')} ›</span>
+          </Link>
+        )}
+      </div>
+      {filtro !== 'tudo' && (
+        <p className="-mt-3 mb-5 text-sm"><button type="button" onClick={() => setFiltro('tudo')} className="font-medium text-primary-700 hover:underline" data-testid="filtro-tudo">✕ {t('verTudo')}</button></p>
       )}
 
       {BLOCOS.every((bl) => blocos[bl.id].length === 0) && (
@@ -301,7 +323,7 @@ export default function HojePage() {
                 <li key={ev.id} id={`carro-${ev.id}`} className={`card !p-4 border-l-4 ${bl.cor} ${aberto === ev.id ? 'ring-2 ring-primary-300' : ''}`} data-testid="hoje-cartao">
                   <button type="button" onClick={() => setAberto(exp ? null : ev.id)} aria-expanded={exp} className="block w-full text-left">
                     <div className="flex items-start justify-between gap-3">
-                      <p className="font-semibold text-gray-900 text-base">{carroDe(ev)}{placaDe(ev) && <span className="ml-1.5 rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">{placaDe(ev)}</span>}</p>
+                      <p className="font-semibold text-gray-900 text-base">{carroDe(ev)}{placaDe(ev) && <span className="ml-1.5 rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">{placaDe(ev)}</span>}{ev.solicitacao?.numero && <span className="ml-1.5 text-sm font-normal text-gray-500">{tc('numeroPedido', { n: ev.solicitacao.numero })}</span>}</p>
                       {bl.id === 'atrasados' && <span className="shrink-0 rounded-full bg-red-100 px-2.5 py-1 text-sm font-semibold text-red-800">⚠ {item.motivo === 'naoChegou' ? t('naoChegouDesde', { dia: fmtDiaCurto.format(new Date(ev.data_inicio)) }) : t('prazoEra', { dia: fmtDiaCurto.format(new Date(ev.data_fim_prevista || ev.data_fim)) })}</span>}
                     </div>
                     <p className="mt-0.5 text-sm text-gray-600">{[ev.solicitacao?.cliente?.nome, servicoDe(ev), mec ? t('mecanicoNome', { nome: mec }) : null].filter(Boolean).join(' · ')}</p>
