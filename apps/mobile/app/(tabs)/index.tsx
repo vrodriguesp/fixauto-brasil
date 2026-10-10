@@ -67,10 +67,7 @@ export default function DashboardScreen() {
         </Pressable>
       </View>
 
-      {/* cartao de acao acima dos dois botoes (auditoria 10/10, B3) */}
-      {destaque && <View className="mt-3"><CartaoSituacao solicitacao={destaque.s} situacao={destaque.sit} comBotao /></View>}
-
-      <View className={`flex-row gap-3 mb-4 ${destaque ? '' : 'mt-4'}`}>
+      <View className="flex-row gap-3 my-4">
         <Pressable onPress={() => router.push('/emergencia')} accessibilityRole="button" className="flex-1 bg-red-600 rounded-2xl px-3 py-4 items-center justify-center gap-2 active:opacity-90">
           <Ionicons name="car-sport" size={26} color="#fff" />
           <Text className="text-white font-semibold text-center">{t('dashboard.emergenciaBotao')}</Text>
@@ -80,6 +77,9 @@ export default function DashboardScreen() {
           <Text className="text-white font-semibold text-center">{t('dashboard.novaSolicitacaoBotao')}</Text>
         </Pressable>
       </View>
+
+      {/* pedido mais urgente logo abaixo dos botoes, em destaque (dono 10/10) */}
+      {destaque && <CartaoSituacao solicitacao={destaque.s} situacao={destaque.sit} comBotao />}
 
       <AvaliacaoPendente recarregar={avisoChegou} />
       <GarantiasAtivas recarregar={avisoChegou} />

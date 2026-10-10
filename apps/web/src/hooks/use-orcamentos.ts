@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import { cleanDescricao, formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
-import { notifNovoOrcamento, notifOrcamentoRevisado, chatOrcamentoRevisado } from '@/lib/notif-i18n';
+import { notifOrcamentoRevisado, chatOrcamentoRevisado } from '@/lib/notif-i18n';
 import type { OrcamentoItem } from '@fixauto/shared';
 
 interface CreateOrcamentoInput {
@@ -66,25 +66,9 @@ export function useOrcamentos() {
       .eq('id', input.solicitacao_id)
       .eq('status', 'aberta');
 
-    // Create notification for the client
-    const { data: sol } = await supabase
-      .from('solicitacoes')
-      .select('cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(idioma)')
-      .eq('id', input.solicitacao_id)
-      .single();
-
-    if (sol) {
-      const clienteIdioma = (sol.cliente as any)?.idioma;
-      const valorFormatado = formatCurrency(input.valor_total, currencyForCountry(oficina.pais), clienteIdioma);
-      const n = notifNovoOrcamento(clienteIdioma, oficina.nome_fantasia, valorFormatado);
-      await supabase.from('notificacoes').insert({
-        profile_id: sol.cliente_id,
-        tipo: 'novo_orcamento',
-        titulo: n.titulo,
-        mensagem: n.mensagem,
-        dados: { solicitacao_id: input.solicitacao_id, orcamento_id: orc.id },
-      });
-    }
+    // O aviso no sino do cliente e criado pelo servidor em /api/notificar-orcamento
+    // (antes era aqui, no navegador da oficina: se a pagina fechasse logo depois
+    // de salvar, o cliente ficava sem o aviso - teste do dono 10/10).
 
     // Tempo de resposta conta pra taxa de comissao - recalcula em background
     fetch('/api/recalcular-comissao', {

@@ -241,6 +241,10 @@ try {
   const listaD = await pD.locator('[data-testid="bloco-chegaram"] [data-testid="hoje-cartao"]').count();
   ok('9 dono: "N feito" de hoje abre Hoje com os N carros que chegaram', qtD != null && qtD === listaD && pD.url().includes('filtro=chegaram'), `chip ${qtD} x lista ${listaD} ${pD.url()}`);
   {
+    const cartaoPronto = pD.locator('[data-testid="bloco-chegaram"] [data-testid="hoje-cartao"]').filter({ hasText: `M${P(6)}` });
+    ok('9 carro pronto em "Chegaram" tem "Entregar" (nao "Etapa")', (await cartaoPronto.getByTestId('btn-entregar').count()) === 1 && (await cartaoPronto.getByTestId('btn-etapa').count()) === 0, await cartaoPronto.innerText().catch(() => ''));
+  }
+  {
     const ctxM9 = await ctxNovo(false); const pM9 = await entrar(ctxM9, mecU); await pM9.waitForTimeout(1500);
     const qtM = await chipFeito(pM9);
     const listaM = await pM9.locator('[data-testid="bloco-chegaram"] [data-testid="hoje-cartao"]').count();
@@ -268,7 +272,16 @@ try {
     ok('10 "Abrir em Hoje" leva ao carro', (await pD.locator(`#carro-${aNaOf}`).count()) === 1);
     ok('10 numero do pedido no cartao de Hoje', (await pD.locator(`#carro-${aNaOf}`).innerText()).includes(String(num)));
     await pD.goto(`${SITE}/ee/et/oficina/hoje`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(2500);
-    ok('10 painel do dia aparece com o atalho de pedidos', (await pD.getByTestId('painel-dia').count()) === 1 && (await pD.getByTestId('painel-pedidos').count()) === 1);
+    const { data: esperando } = await createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } }).auth.signInWithPassword({ email: dono.email, password: dono.senha }).then(async ({ data }) => createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { global: { headers: { Authorization: `Bearer ${data.session.access_token}` } }, auth: { persistSession: false } }).rpc('pedidos_para_responder'));
+    ok('10 resumo do dia aparece; atalho de pedidos so quando ha pedido esperando', (await pD.getByTestId('painel-dia').count()) === 1 && (await pD.getByTestId('painel-pedidos').count()) === (esperando?.total ? 1 : 0), JSON.stringify(esperando));
+    ok('10 resumo sem situacao vazia (nenhuma pilula com 0)', !(await pD.getByTestId('painel-dia').locator('button').allInnerTexts()).some((x) => /^0\b/.test(x.trim())));
+    {
+      const pil = pD.getByTestId('painel-dia').locator('button').first();
+      await pD.evaluate(() => window.scrollTo(0, 0)); await pil.click(); await pD.waitForTimeout(1200);
+      const topo = await pD.evaluate(() => document.getElementById('lista-hoje')?.getBoundingClientRect().top ?? 9999);
+      ok('10 tocar num filtro desce ate a lista', topo < 200, topo);
+      await pD.getByTestId('filtro-tudo').click(); await pD.waitForTimeout(400);
+    }
     let bate = true; const det = [];
     for (const id of ['atrasados', 'prontos', 'chegam', 'naOficina']) {
       const q = pD.getByTestId(`filtro-${id}`); if (!(await q.count()) || await q.isDisabled()) continue;

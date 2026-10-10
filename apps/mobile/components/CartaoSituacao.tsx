@@ -27,7 +27,8 @@ export default function CartaoSituacao({ solicitacao, situacao, comBotao = false
   const { titulo, agora } = textoSituacao(t, s, i18n.language);
   const carro = solicitacao.veiculo?.fipe_marca ? `${solicitacao.veiculo.fipe_marca} ${solicitacao.veiculo.fipe_modelo || ''}`.trim() : null;
   return (
-    <View className={`rounded-2xl border px-4 py-3 mb-4 ${s.fundo}`} testID={`situacao-${s.chave}`}>
+    <View className={`rounded-2xl px-4 py-3 mb-4 ${comBotao ? 'border-2 shadow-md' : 'border'} ${s.fundo}`} testID={`situacao-${s.chave}`}
+      style={comBotao ? { elevation: 3 } : undefined}>
       <View className="flex-row items-center gap-2">
         <Ionicons name={s.icone} size={22} color={COR_ICONE[s.chave]} />
         <Text className={`flex-1 text-base font-bold ${s.texto}`}>{titulo}</Text>

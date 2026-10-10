@@ -66,6 +66,19 @@ export async function POST(req: NextRequest) {
 
     const results: { email?: { success: boolean }; whatsapp?: { success: boolean } } = {};
 
+    // aviso no sino/app do cliente (um so por orcamento: reenvio ou revisao nao duplicam)
+    const solId = (orcamento.solicitacao as any).id;
+    const clienteId = (orcamento.solicitacao as any).cliente_id;
+    const { data: jaAvisado } = await supabaseAdmin.from('notificacoes').select('id')
+      .eq('profile_id', clienteId).eq('tipo', 'novo_orcamento').eq('dados->>orcamento_id', orcamentoId).limit(1);
+    if (!jaAvisado?.length) {
+      const n = notifNovoOrcamento(cliente?.idioma, oficinaNome, valorTotal);
+      await supabaseAdmin.from('notificacoes').insert({
+        profile_id: clienteId, tipo: 'novo_orcamento', titulo: n.titulo, mensagem: n.mensagem,
+        dados: { solicitacao_id: solId, orcamento_id: orcamentoId },
+      });
+    }
+
     // Send email
     if (cliente?.email) {
       results.email = await sendQuoteNotificationEmail({

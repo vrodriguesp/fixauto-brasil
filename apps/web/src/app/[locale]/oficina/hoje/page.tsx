@@ -227,14 +227,19 @@ export default function HojePage() {
   // quadros do painel do dia: em hoje as situacoes do dia a dia aparecem sempre
   // (com 0 apagado, para a oficina saber que nao ha nada); em outro dia so as daquele dia
   const COR_QUADRO: Record<string, string> = Object.fromEntries(BLOCOS.map((bl) => [bl.id, bl.cor]));
-  const SEMPRE: Bloco[] = ehHoje ? ['atrasados', 'prontos', 'chegam', 'naOficina', 'saem', 'proximos'] : ['chegam', 'chegaram', 'saem', 'entregues'];
   const quadros: { id: Filtro; n: number; txt: string; cor: string }[] = [
-    ...(ehHoje ? [{ id: 'agora' as Filtro, n: paraAgora, txt: t('resumoAgora'), cor: 'border-l-primary-600' }] : []),
-    ...BLOCOS.filter((bl) => SEMPRE.includes(bl.id) || blocos[bl.id].length > 0).map((bl) => ({
+    ...(ehHoje && paraAgora > 0 ? [{ id: 'agora' as Filtro, n: paraAgora, txt: t('resumoAgora'), cor: 'border-l-primary-600' }] : []),
+    // "Saem hoje" ja esta dentro de "Na oficina"; "Chegaram" so aparece fora de hoje
+    ...BLOCOS.filter((bl) => blocos[bl.id].length > 0 && !(ehHoje && (bl.id === 'saem' || bl.id === 'chegaram'))).map((bl) => ({
       // "Na oficina" conta tambem os que saem hoje (o filtro mostra os dois blocos)
       id: bl.id as Filtro, n: blocos[bl.id].length + (bl.id === 'naOficina' && ehHoje ? blocos.saem.length : 0), txt: tituloBloco(bl.id), cor: COR_QUADRO[bl.id],
     })),
   ];
+
+  const escolherFiltro = (fl: Filtro) => {
+    setFiltro(fl);
+    if (fl !== 'tudo') setTimeout(() => document.getElementById('lista-hoje')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  };
 
   const botaoPrincipal = (bloco: Bloco, item: any) => {
     const { ev } = item;
@@ -243,7 +248,8 @@ export default function HojePage() {
       if (bloco === 'proximos') return <Link href={ev.solicitacao_id ? `/oficina/pedidos/${ev.solicitacao_id}` : '/oficina/agenda'} className="btn-secondary flex min-h-[44px] w-full items-center justify-center sm:w-auto sm:px-5">{t('verPedido')}</Link>;
       return <button type="button" onClick={() => abrirChegou(ev)} className={cls} data-testid="btn-chegou">📥 {t('chegou')}</button>;
     }
-    if (bloco === 'prontos') return ehMecanico ? null : <button type="button" onClick={() => setFolha({ tipo: 'entregar', ev, func: '', box: '', obs: '' })} className={cls} data-testid="btn-entregar">✔ {t('entregar')}</button>;
+    const prontoAgora = ev.status === 'em_andamento' && ultimaEtapa(ev) === 'concluido';
+    if (bloco === 'prontos' || (prontoAgora && bloco !== 'atrasados')) return ehMecanico ? null : <button type="button" onClick={() => setFolha({ tipo: 'entregar', ev, func: '', box: '', obs: '' })} className={cls} data-testid="btn-entregar">✔ {t('entregar')}</button>;
     if (bloco === 'atrasados' && item.motivo === 'passouPrazo' && telefoneDe(ev)) return <a href={`tel:${telefoneDe(ev)}`} className={cls}>📞 {t('ligar')} <span className="font-normal">{telefoneDe(ev)}</span></a>;
     if (bloco === 'entregues' || ev.status === 'concluido') return null;
     return <button type="button" onClick={() => setFolha({ tipo: 'etapa', ev, func: '', box: '', obs: '' })} className={cls} data-testid="btn-etapa">🔧 {t('etapa')}</button>;
@@ -267,28 +273,29 @@ export default function HojePage() {
       {/* procurar pela placa, nome, n. do pedido ou codigo de cliente (dono 10/10) */}
       <ProcurarPedido compacto />
 
-      {/* painel do dia (dono 10/10): um quadrado por situacao, com o numero;
-          tocar filtra a pagina. Substitui os 3 resumos + a fila de filtros. */}
-      <div className="mb-6 grid grid-cols-2 gap-2 sm:grid-cols-4" role="group" aria-label={t('painelDia')} data-testid="painel-dia">
-        {quadros.map((q) => {
-          const ativo = filtro === q.id;
-          const vazio = q.n === 0;
-          return (
-            <button key={q.id} type="button" disabled={vazio && !ativo} onClick={() => setFiltro(ativo ? 'tudo' : q.id)} aria-pressed={ativo}
-              data-testid={q.id === 'agora' ? 'resumo-agora' : `filtro-${q.id}`}
-              className={`rounded-xl border p-3 text-left transition ${q.id === 'agora' ? 'col-span-2' : ''} ${ativo ? 'border-primary-600 bg-primary-50 ring-2 ring-primary-200' : vazio ? 'border-gray-100 bg-gray-50 text-gray-400' : `border-gray-200 bg-white hover:bg-gray-50 border-l-4 ${q.cor}`}`}>
-              <span className={`block text-3xl font-bold ${vazio && !ativo ? 'text-gray-300' : q.id === 'atrasados' ? 'text-red-700' : 'text-gray-900'}`}>{q.n}</span>
-              <span className="block text-sm leading-tight">{q.txt}</span>
-            </button>
-          );
-        })}
-        {ehDono && ehHoje && pedidosEsperando != null && (
-          <Link href="/oficina/pedidos" className={`rounded-xl border p-3 text-left hover:bg-gray-50 ${pedidosEsperando ? 'border-gray-200 bg-white border-l-4 border-l-sky-500' : 'border-gray-100 bg-gray-50 text-gray-400'}`} data-testid="painel-pedidos">
-            <span className={`block text-3xl font-bold ${pedidosEsperando ? 'text-gray-900' : 'text-gray-300'}`}>{pedidosEsperando}</span>
-            <span className="block text-sm leading-tight">{t('pedidosEsperando')} ›</span>
-          </Link>
-        )}
-      </div>
+      {/* resumo do dia (dono 10/10): so as situacoes que tem carro, em pilulas
+          pequenas (antes 6-8 quadrados grandes, "cheio de botoes"); tocar filtra
+          e a pagina desce ate a lista */}
+      {(quadros.length > 0 || (ehDono && ehHoje && !!pedidosEsperando)) && (
+        <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label={t('painelDia')} data-testid="painel-dia">
+          {quadros.map((q) => {
+            const ativo = filtro === q.id;
+            return (
+              <button key={q.id} type="button" onClick={() => escolherFiltro(ativo ? 'tudo' : q.id)} aria-pressed={ativo}
+                data-testid={q.id === 'agora' ? 'resumo-agora' : `filtro-${q.id}`}
+                className={`inline-flex min-h-[40px] items-center gap-2 rounded-full border px-3 text-sm transition ${ativo ? 'border-primary-600 bg-primary-600 text-white' : q.id === 'agora' ? 'border-primary-300 bg-primary-50 text-primary-900 font-semibold' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'}`}>
+                <span className={`text-base font-bold ${!ativo && q.id === 'atrasados' ? 'text-red-700' : ''}`}>{q.n}</span>
+                <span>{q.txt}</span>
+              </button>
+            );
+          })}
+          {ehDono && ehHoje && !!pedidosEsperando && (
+            <Link href="/oficina/pedidos" className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-sky-300 bg-sky-50 px-3 text-sm text-sky-900" data-testid="painel-pedidos">
+              <span className="text-base font-bold">{pedidosEsperando}</span><span>{t('pedidosEsperando')} ›</span>
+            </Link>
+          )}
+        </div>
+      )}
       {filtro !== 'tudo' && (
         <p className="-mt-3 mb-5 text-sm"><button type="button" onClick={() => setFiltro('tudo')} className="font-medium text-primary-700 hover:underline" data-testid="filtro-tudo">✕ {t('verTudo')}</button></p>
       )}
@@ -301,6 +308,7 @@ export default function HojePage() {
         </div>
       )}
 
+      <div id="lista-hoje" className="scroll-mt-24" />
       {BLOCOS.filter((bl) => blocos[bl.id].length > 0 && visivel(bl.id)).map((bl) => (
         <section key={bl.id} id={`bloco-${bl.id}`} className="mb-6 scroll-mt-24" data-testid={`bloco-${bl.id}`}>
           <h2 className="mb-2 text-lg font-semibold text-gray-900"><span aria-hidden="true">{bl.icone} </span>{tituloBloco(bl.id)} <span className="text-gray-500 font-normal">({blocos[bl.id].length})</span></h2>

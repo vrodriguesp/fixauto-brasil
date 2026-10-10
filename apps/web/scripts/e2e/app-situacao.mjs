@@ -56,7 +56,7 @@ try {
   const card = p.getByTestId('situacao-comparar').locator('visible=true').first();
   ok('1 Inicio: cartao de acao "3 orcamentos para comparar"', (await card.count()) === 1 && (await card.innerText()).includes(IT('situacao.titulo_comparar', { n: 3 })), (await p.innerText('body')).slice(0, 400));
   const yCard = (await card.boundingBox())?.y ?? 9e9; const yBotao = (await visivel(IT('dashboard.novaSolicitacaoBotao')).boundingBox())?.y ?? 0;
-  ok('1 cartao de acao acima dos dois botoes', yCard < yBotao, `${yCard} x ${yBotao}`);
+  ok('1 cartao de acao logo abaixo dos dois botoes', yCard > yBotao, `${yCard} x ${yBotao}`);
   // 2 lista com os outros
   const corpo = await p.innerText('body');
   ok('2 lista "outros pedidos" com o carro na oficina e o que espera orcamentos', corpo.includes(IT('situacao.outros')) && corpo.includes(IT('situacao.titulo_naOficina')) && corpo.includes(IT('situacao.titulo_aguardando')), corpo.slice(0, 600));
