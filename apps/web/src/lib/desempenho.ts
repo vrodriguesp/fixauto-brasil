@@ -80,6 +80,8 @@ export async function carregarDesempenho(opts: { oficinaId: string; donoProfileI
     respondidos[i]++;
     if (o.solicitacao?.created_at) { const min = (Date.parse(o.created_at) - Date.parse(o.solicitacao.created_at)) / 60e3; if (min >= 0) { tempos.push(min); respPorFaixa[i].push(min); } }
   }
+  // todo pedido orcado foi recebido (pedidos antigos nao tinham o aviso gravado)
+  for (let i = 0; i < faixas.length; i++) recebidos[i] = Math.max(recebidos[i], respondidos[i]);
   // ganho = orcamento aceito; a data do aceite e a criacao do agendamento da plataforma
   let receitaEntregue = 0, entregues = 0, noPrazo = 0;
   const duracoes: Record<string, number[]> = {};

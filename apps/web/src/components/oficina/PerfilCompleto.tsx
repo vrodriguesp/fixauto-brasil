@@ -8,7 +8,8 @@ import { supabase } from '@/lib/supabase';
 
 // "Seu perfil esta X% completo": o que falta para o perfil publico convencer
 // (o cliente compara logo, descricao, fotos, horario). Some aos 100%.
-export default function PerfilCompleto() {
+// compacto: uma linha so (caixa de Pedidos - o foco e a lista, auditoria do painel 10/10, C5)
+export default function PerfilCompleto({ compacto = false }: { compacto?: boolean }) {
   const t = useTranslations('oficinaDashboard');
   const { user, oficina } = useAuth();
   const [fotos, setFotos] = useState<number | null>(null);
@@ -34,6 +35,15 @@ export default function PerfilCompleto() {
   const feitos = itens.filter(([, ok]) => ok).length;
   const pct = Math.round((feitos / itens.length) * 100);
   if (pct === 100) return null;
+  if (compacto) {
+    return (
+      <Link href="/oficina/perfil" className="mb-4 flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm hover:bg-gray-50">
+        <span className="h-2 w-16 shrink-0 overflow-hidden rounded-full bg-gray-100" aria-hidden="true"><span className={`block h-full ${pct >= 75 ? 'bg-green-500' : pct >= 40 ? 'bg-amber-400' : 'bg-red-400'}`} style={{ width: `${pct}%` }} /></span>
+        <span className="min-w-0 flex-1 text-gray-800">{t('perfilTitulo', { pct })}</span>
+        <span className="whitespace-nowrap font-medium text-primary-700">{t('perfilBotao')} ›</span>
+      </Link>
+    );
+  }
 
   return (
     <div className="card mb-6">

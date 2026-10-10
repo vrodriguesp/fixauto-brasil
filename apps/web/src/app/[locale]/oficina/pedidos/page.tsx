@@ -116,7 +116,7 @@ export default function PedidosOficinaPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 pb-8">
       <TutorialBanner href="/oficina/aprender" storageKey="bipfix_tutorial_banner_oficina" />
-      <PerfilCompleto />
+      <PerfilCompleto compacto />
       {(oficina as { ativa?: boolean } | null)?.ativa === false && (
         <p role="status" className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{t('cadastroEmAnalise')}</p>
       )}
