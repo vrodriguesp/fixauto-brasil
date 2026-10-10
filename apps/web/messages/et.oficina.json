@@ -1147,7 +1147,7 @@
     "min": "{n} min",
     "horasMin": "{h} h {m} min",
     "horas": "{h} h",
-    "dias": "{d} päeva",
+    "dias": "{d, plural, one {# päev} other {# päeva}}",
     "q_pedidos": "Mitu päringut said, millele vastasid ja mitu võitsid?",
     "nPedidos": "{recebidos} saadud · {respondidos} vastatud · {ganhos} võidetud",
     "recebidosLegenda": "Saadud",

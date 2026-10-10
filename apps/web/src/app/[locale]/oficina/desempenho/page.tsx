@@ -48,6 +48,8 @@ export default function DesempenhoPage() {
   const corResposta = (min: number | null) => (min == null ? 'bg-gray-100 text-gray-700' : min < 60 ? 'bg-emerald-100 text-emerald-800' : min <= 240 ? 'bg-amber-100 text-amber-900' : 'bg-red-100 text-red-800');
   const rotulos = useMemo(() => d?.faixas.map((f) => f.rotulo) || [], [d]);
   const dinheiro = (v: number) => formatCurrency(v, moeda, locale);
+  // etiqueta do grafico: dinheiro curto e sem centavos (21 mil €), para caber em cima da barra
+  const dinheiroCurto = (v: number) => { try { return new Intl.NumberFormat(intl, { style: 'currency', currency: moeda, notation: 'compact', maximumFractionDigits: v >= 1000 ? 1 : 0 }).format(v); } catch { return dinheiro(v); } };
 
   const Bloco = ({ titulo, numero, sub, frase, children, testid }: { titulo: string; numero?: React.ReactNode; sub?: React.ReactNode; frase: string; children?: React.ReactNode; testid?: string }) => (
     <section className="card" data-testid={testid}>
@@ -106,7 +108,7 @@ export default function DesempenhoPage() {
           </Bloco>}
 
           {ve('receita') && <Bloco testid="bloco-receita" titulo={t('q_receita')} numero={dinheiro(d.receitaTotal)} sub={t('receitaSub', { entregue: dinheiro(d.receitaEntregue) })} frase={t('fraseReceita')}>
-            {temSerie && d.receitaTotal > 0 && <Barras titulo={t('q_receita')} rotulos={rotulos} series={[{ nome: t('q_receita'), cor: COR.ganhos, valores: d.receita.map((v) => Math.round(v)) }]} formatar={(n) => dinheiro(n)} />}
+            {temSerie && d.receitaTotal > 0 && <Barras titulo={t('q_receita')} rotulos={rotulos} series={[{ nome: t('q_receita'), cor: COR.ganhos, valores: d.receita.map((v) => Math.round(v)) }]} formatar={(n) => dinheiro(n)} etiqueta={dinheiroCurto} />}
           </Bloco>}
 
           {ve('nota') && <Bloco testid="bloco-nota" titulo={t('q_nota')} numero={d.nota != null ? `${d.nota.toFixed(1)} ★` : '—'} sub={t('notaSub', { n: d.totalAvaliacoes })} frase={t('fraseNota')}>

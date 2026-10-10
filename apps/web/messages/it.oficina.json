@@ -1147,7 +1147,7 @@
     "min": "{n} min",
     "horasMin": "{h} h {m} min",
     "horas": "{h} h",
-    "dias": "{d} giorni",
+    "dias": "{d, plural, one {# giorno} other {# giorni}}",
     "q_pedidos": "Quante richieste hai ricevuto, risposto e vinto?",
     "nPedidos": "{recebidos} ricevute · {respondidos} risposte · {ganhos} vinte",
     "recebidosLegenda": "Ricevute",

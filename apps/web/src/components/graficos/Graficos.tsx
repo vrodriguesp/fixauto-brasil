@@ -18,14 +18,15 @@ function Tabela({ titulo, rotulos, series }: { titulo: string; rotulos: string[]
 }
 
 /** Barras agrupadas por periodo (ex.: recebidos / respondidos / ganhos por semana). */
-export function Barras({ titulo, rotulos, series, formatar = (n: number) => String(n) }: { titulo: string; rotulos: string[]; series: Serie[]; formatar?: (n: number) => string }) {
+export function Barras({ titulo, rotulos, series, formatar = (n: number) => String(n), etiqueta }: { titulo: string; rotulos: string[]; series: Serie[]; formatar?: (n: number) => string; etiqueta?: (n: number) => string }) {
+  const rot = etiqueta || formatar; // numero escrito em cima da barra (pode ser curto: 21 mil €)
   const max = Math.max(1, ...series.flatMap((s) => s.valores));
   // topo maior: espaco para o numero em cima da barra mais alta (dono 10/10: "etiquetas dos numeros")
   const L = 320;
   const grupo = L / Math.max(1, rotulos.length);
   const barra = Math.min(22, (grupo - 6) / Math.max(1, series.length));
   // espaco em cima para o numero da barra mais alta: deitado ~12; em pe, o comprimento do maior numero
-  const maxTxt = Math.max(1, ...series.flatMap((s) => s.valores.filter((v) => v > 0).map((v) => formatar(v).length)));
+  const maxTxt = Math.max(1, ...series.flatMap((s) => s.valores.filter((v) => v > 0).map((v) => rot(v).length)));
   const emPe = maxTxt * 5 > barra + 2;
   const topo = emPe ? Math.ceil(8 + maxTxt * 4.4) : 16;
   const base = topo + 108, A = base + 22;
@@ -45,7 +46,7 @@ export function Barras({ titulo, rotulos, series, formatar = (n: number) => Stri
                   <g key={s.nome}>
                     <rect x={x0 + j * barra} y={base - h} width={barra - 2} height={h} fill={s.cor} rx={2}><title>{`${r} · ${s.nome}: ${formatar(v)}`}</title></rect>
                     {v > 0 && (() => {
-                      const txt = formatar(v); const cx = x0 + j * barra + (barra - 2) / 2;
+                      const txt = rot(v); const cx = x0 + j * barra + (barra - 2) / 2;
                       // cabe deitado? (~5 unidades por caractere em fonte 9); senao, em pe
                       return txt.length * 5 <= barra + 2
                         ? <text x={cx} y={base - h - 3} textAnchor="middle" fontSize="9" fill="#374151" data-rotulo-valor="1">{txt}</text>
