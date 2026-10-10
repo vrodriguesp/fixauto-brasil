@@ -321,3 +321,20 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
   - português de Portugal reconhecido pela etiqueta do idioma (pt-PT), não pela região do aparelho.
 - **Seletor no iPhone (app instalado):** sem seletor próprio; Perfil e entrada mostram o idioma atual e "Mudar nos Ajustes". Expo Go, Android e web mantêm o seletor do app (no Expo Go os Ajustes seriam do Expo Go).
 - **Vale a partir do próximo build:** o item "Idioma" nos Ajustes só aparece no app instalado (TestFlight/App Store), não no Expo Go.
+
+## 10/10 — Oficina demo e peças (teste do dono)
+- **Oficina demo cheia de dados** (Tallinna Autokeskus): equipe, postos, 16 clientes, 22 pedidos em todas as fases, histórico com avaliações, conversas e avisos. Também foram criadas duas lojas demo e uma oficina vizinha que pede peças. Os scripts e os acessos ficam fora do repositório (scratchpad); `apagar-oficina-demo.mjs` remove tudo.
+- **Visão Hora corrigida:**
+  - a grade não recua para 00:00 por um carro que veio do dia anterior;
+  - a tela abre rolada até a hora atual;
+  - a vaga de espera mostra lugares ocupados ("2 de 8").
+- **Peças:**
+  - **Mais de uma oferta:** depois da primeira resposta, o pedido sumia para as outras lojas e a oficina só recebia uma oferta. Agora continua aberto a ofertas até a oficina escolher.
+  - **Editar e cancelar** o próprio pedido; cancelar pede confirmação.
+  - **Comissão de peças:** mostra a taxa que vale (plataforma isenta = 0%). Antes a tela mostrava 3%; a cobrança já estava certa.
+  - **Tempo real** nos pedidos, ofertas e pedidos confirmados (migração 059). Antes era preciso recarregar a página.
+  - **Aba "Vender" no endereço:** voltar da conversa não cai mais em "Comprar".
+- **Testes:**
+  - `site-pecas.mjs` 11/11: o teste clicava no último botão da página e não no cartão do pedido;
+  - novo `site-pecas-ux.mjs` 10/10.
+- **Em andamento:** duas auditorias de usabilidade feitas pelo Fable, uma do painel da oficina e outra do site inteiro (motorista, loja e páginas públicas), com o impacto na parte educativa.
