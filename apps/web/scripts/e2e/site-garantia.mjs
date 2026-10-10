@@ -96,7 +96,7 @@ try {
   const { data: o } = await sb.from('orcamentos').select('id, garantia_dias').eq('solicitacao_id', s.id).eq('oficina_id', idA).maybeSingle();
   ok('3 orcamento salvo com garantia de 180 dias', o?.garantia_dias === 180, JSON.stringify(o));
   const { data: n2 } = await sb.from('notificacoes').select('tipo').eq('profile_id', cli.id).eq('tipo', 'novo_orcamento');
-  ok('3 cliente avisado do orcamento novo', (n2 || []).length >= 1);
+  ok('3 cliente avisado do orcamento novo (um aviso so, criado pelo servidor)', (n2 || []).length === 1, JSON.stringify(n2));
   const { data: slot } = await sb.from('orcamento_disponibilidade').select('id').eq('orcamento_id', o.id).limit(1).single();
   const { token: tC } = await sessao(cli);
   await fetch(`${SITE}/api/aceitar-orcamento`, { method: 'POST', headers: { Authorization: `Bearer ${tC}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ orcamentoId: o.id, slotId: slot.id }) });

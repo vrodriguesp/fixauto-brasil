@@ -278,8 +278,8 @@ try {
     {
       const pil = pD.getByTestId('painel-dia').locator('button').first();
       await pD.evaluate(() => window.scrollTo(0, 0)); await pil.click(); await pD.waitForTimeout(1200);
-      const topo = await pD.evaluate(() => document.getElementById('lista-hoje')?.getBoundingClientRect().top ?? 9999);
-      ok('10 tocar num filtro desce ate a lista', topo < 200, topo);
+      const [topo, noFim] = await pD.evaluate(() => [document.getElementById('lista-hoje')?.getBoundingClientRect().top ?? 9999, window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2]);
+      ok('10 tocar num filtro desce ate a lista (ou ate o fim, se a pagina e curta)', topo < 200 || noFim, `${topo} ${noFim}`);
       await pD.getByTestId('filtro-tudo').click(); await pD.waitForTimeout(400);
     }
     let bate = true; const det = [];
