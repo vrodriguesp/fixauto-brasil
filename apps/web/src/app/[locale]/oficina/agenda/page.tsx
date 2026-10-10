@@ -643,7 +643,7 @@ export default function AgendaPage() {
             ehDono={ehDono}
             meuFuncionarioId={funcionario?.id ?? null}
             onAlterado={() => { refresh(); carregarBoxes(); setIndicadores((n) => n + 1); }}
-            onAbrirDia={(ymd, ev) => router.push(`/oficina/hoje?dia=${ymd}&ev=${ev.id}`)}
+            onAbrirDia={(_ymd, ev) => router.push(`/oficina/hoje?ev=${ev.id}`)}
           />
           {!isMecanico && (
             <details className="group">
@@ -678,9 +678,10 @@ export default function AgendaPage() {
                   className={`min-h-[80px] sm:min-h-[100px] p-1 sm:p-2 rounded-lg text-left transition-colors ${isToday ? 'bg-blue-50' : 'bg-white hover:bg-gray-50'} border border-gray-100`}>
                   <span className={`text-sm font-medium ${isToday ? 'text-primary-600' : 'text-gray-900'}`}>{day}</span>
                   <div className="mt-1 space-y-0.5">
-                    {g.checkinPendente.length > 0 && <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-green-100 text-green-800 font-medium">{g.checkinPendente.length} {t('pendente')}</div>}
-                    {g.checkinFeito.length > 0 && <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-blue-100 text-blue-800 font-medium">{g.checkinFeito.length} {t('feito')}</div>}
-                    {g.entregue.length > 0 && <div className="text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-gray-200 text-gray-700 font-medium">{g.entregue.length} {t('statusEntregue')}</div>}
+                    {/* cada tipo abre Hoje naquele dia ja filtrado (pedido do dono 10/10) */}
+                    {g.checkinPendente.length > 0 && <span role="link" tabIndex={0} onClick={(e) => { e.stopPropagation(); router.push(`/oficina/hoje?dia=${ds}&filtro=chegam`); }} onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); router.push(`/oficina/hoje?dia=${ds}&filtro=chegam`); } }} className="block text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-green-100 text-green-800 font-medium hover:ring-2 hover:ring-green-300">{g.checkinPendente.length} {t('pendente')}</span>}
+                    {g.checkinFeito.length > 0 && <span role="link" tabIndex={0} onClick={(e) => { e.stopPropagation(); router.push(`/oficina/hoje?dia=${ds}&filtro=chegaram`); }} onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); router.push(`/oficina/hoje?dia=${ds}&filtro=chegaram`); } }} className="block text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-blue-100 text-blue-800 font-medium hover:ring-2 hover:ring-blue-300">{g.checkinFeito.length} {t('feito')}</span>}
+                    {g.entregue.length > 0 && <span role="link" tabIndex={0} onClick={(e) => { e.stopPropagation(); router.push(`/oficina/hoje?dia=${ds}&filtro=entregues`); }} onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); router.push(`/oficina/hoje?dia=${ds}&filtro=entregues`); } }} className="block text-[10px] sm:text-xs truncate rounded px-1 py-0.5 bg-gray-200 text-gray-700 font-medium hover:ring-2 hover:ring-gray-300">{g.entregue.length} {t('statusEntregue')}</span>}
                   </div>
                 </button>
               );

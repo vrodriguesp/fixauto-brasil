@@ -42,7 +42,8 @@
     "desempenho": "Desempenho",
     "minhaOficina": "Minha oficina",
     "menuPrincipal": "Menu principal",
-    "pedidosEsperando": "{n} pedidos esperando resposta"
+    "pedidosEsperando": "{n} pedidos esperando resposta",
+    "minhaOficinaCurto": "Oficina"
   },
   "sejaParceiro": {
     "metaTitle": "Seja um Parceiro Fundador no Brasil",

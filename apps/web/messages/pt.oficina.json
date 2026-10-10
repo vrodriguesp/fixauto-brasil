@@ -283,7 +283,15 @@
     "checkinColocarEm": "Colocar em",
     "checkinPostoOcupado": "Esse posto está ocupado agora. Escolha outro ou deixe sem posto.",
     "horaVagaOcupacao": "{n} de {total} lugares ocupados",
-    "carroSemPedido": "+ Carro sem pedido"
+    "carroSemPedido": "+ Carro sem pedido",
+    "quadroCorrigirTitulo": "Colocou no lugar errado?",
+    "quadroCorrigirTexto": "Nos primeiros 30 minutos dá para corrigir sem registrar uma troca.",
+    "quadroDesfazerPosto": "Desfazer (não foi para nenhum lugar)",
+    "quadroVerPedido": "Ver o pedido",
+    "quadroApagarCarro": "Apagar este carro (criado por engano)",
+    "quadroApagarConfirma": "Apagar este carro da agenda? O histórico dele também é apagado.",
+    "quadroApagarSim": "Sim, apagar",
+    "quadroApagarNao": "Não"
   },
   "oficinaAprender": {
     "carregando": "Carregando...",
@@ -1092,7 +1100,13 @@
     "etapa_pausa_geral": "Parado",
     "etapa_teste_final": "Testando",
     "etapa_concluido": "Pronto para entregar",
-    "etapa_entregue": "Entregue"
+    "etapa_entregue": "Entregue",
+    "filtrar": "Filtrar",
+    "filtroTudo": "Tudo",
+    "bloco_chegaram": "Chegaram neste dia",
+    "bloco_chegamDia": "Chegam neste dia",
+    "bloco_saemDia": "Saem neste dia",
+    "bloco_entreguesDia": "Entregues neste dia"
   },
   "oficinaDesempenho": {
     "titulo": "Desempenho",
@@ -1132,6 +1146,15 @@
     "q_etapas": "Quanto tempo o carro fica em cada etapa?",
     "fraseEtapas": "Onde o carro mais espera é onde dá para ganhar tempo.",
     "q_naoVieram": "Clientes que não vieram",
-    "fraseNaoVieram": "Mande novas datas em Hoje: muitos clientes remarcam."
+    "fraseNaoVieram": "Mande novas datas em Hoje: muitos clientes remarcam.",
+    "filtrar": "Ver",
+    "f_tudo": "Tudo",
+    "f_pedidos": "Pedidos",
+    "f_resposta": "Tempo de resposta",
+    "f_receita": "Valor",
+    "f_nota": "Nota",
+    "f_prazo": "Prazo",
+    "f_etapas": "Etapas",
+    "f_naoVieram": "Não vieram"
   }
 }

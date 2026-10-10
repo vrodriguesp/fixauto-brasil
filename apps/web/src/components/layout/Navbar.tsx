@@ -108,6 +108,8 @@ export default function Navbar() {
                       <NavLink href="/oficina/hoje">{t('hoje')}</NavLink>
                       <NavLink href="/oficina/agenda">{t('agenda')}</NavLink>
                       <NavLink href="/oficina/desempenho">{t('desempenho')}</NavLink>
+                      {/* fixo ao lado dos outros: e onde a oficina edita tudo (pedido do dono 10/10) */}
+                      <NavLink href="/oficina/perfil">{t('minhaOficina')}</NavLink>
                       <MoreNavDropdown
                         moreLabel={t('mais')}
                         items={[
@@ -116,7 +118,6 @@ export default function Navbar() {
                           { href: '/oficina/avaliacoes', label: t('avaliacoes') },
                           { href: '/oficina/comissao', label: t('comissao') },
                           { href: '/oficina/aprender', label: t('aprender') },
-                          { href: '/oficina/perfil', label: t('minhaOficina') },
                         ]}
                       />
                     </>
@@ -232,7 +233,6 @@ export default function Navbar() {
                   <MobileNavLink href="/oficina/avaliacoes" onClick={() => setMenuOpen(false)}>{t('avaliacoes')}</MobileNavLink>
                   <MobileNavLink href="/oficina/comissao" onClick={() => setMenuOpen(false)}>{t('comissao')}</MobileNavLink>
                   <MobileNavLink href="/oficina/aprender" onClick={() => setMenuOpen(false)}>{t('aprender')}</MobileNavLink>
-                  <MobileNavLink href="/oficina/perfil" onClick={() => setMenuOpen(false)}>{t('minhaOficina')}</MobileNavLink>
                 </>
               )
             ) : isLoja ? (
@@ -269,9 +269,9 @@ export default function Navbar() {
       // Barra de baixo no celular (auditoria do painel 10/10, B1): o principal
       // cabe no polegar; "Mais" abre o resto. Abaixo de 1280 px, como o menu.
       <nav aria-label={t('menuPrincipal')} className="xl:hidden fixed bottom-0 inset-x-0 z-50 border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)]">
-        <div className="grid grid-cols-4">
+        <div className={`grid ${menuOficina ? 'grid-cols-5' : 'grid-cols-4'}`}>
           {(menuOficina
-            ? [{ href: '/oficina/pedidos', txt: t('pedidosOficina'), icone: 'caixa', extra: contadorPedidos }, { href: '/oficina/hoje', txt: t('hoje'), icone: 'hoje' }, { href: '/oficina/agenda', txt: t('agenda'), icone: 'agenda' }]
+            ? [{ href: '/oficina/pedidos', txt: t('pedidosOficina'), icone: 'caixa', extra: contadorPedidos }, { href: '/oficina/hoje', txt: t('hoje'), icone: 'hoje' }, { href: '/oficina/agenda', txt: t('agenda'), icone: 'agenda' }, { href: '/oficina/perfil', txt: t('minhaOficinaCurto'), icone: 'oficina' }]
             : [{ href: '/oficina/hoje', txt: t('hoje'), icone: 'hoje' }, { href: '/oficina/agenda', txt: t('agenda'), icone: 'agenda' }, { href: '/oficina/aprender', txt: t('aprender'), icone: 'aprender' }]
           ).map((it: any) => <ItemBarra key={it.href} {...it} onClick={() => setMenuOpen(false)} />)}
           <button type="button" onClick={() => { setMenuOpen((v) => !v); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-expanded={menuOpen} aria-controls="menu-mobile"
@@ -292,6 +292,7 @@ function Icone({ nome }: { nome: string }) {
     agenda: 'M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z',
     aprender: 'M12 14l9-5-9-5-9 5 9 5zm0 0v6m-6-9v5c0 1.5 3 3 6 3s6-1.5 6-3v-5',
     mais: 'M4 6h16M4 12h16M4 18h16',
+    oficina: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6',
   };
   return <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d={d[nome]} /></svg>;
 }

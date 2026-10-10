@@ -27,6 +27,9 @@ export default function DesempenhoPage() {
   const moeda = currencyForCountry(pais);
   const [periodo, setPeriodo] = useState<Periodo>('4s');
   const [d, setD] = useState<Desempenho | null>(null);
+  // ver um grafico so (pedido do dono 10/10)
+  const [so, setSo] = useState<string>('tudo');
+  const ve = (id: string) => so === 'tudo' || so === id;
 
   useEffect(() => {
     if (!oficina || !user || funcionario?.cargo === 'mecanico') return;
@@ -84,40 +87,48 @@ export default function DesempenhoPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          <Bloco testid="bloco-pedidos" titulo={t('q_pedidos')} numero={t('nPedidos', { recebidos: d.totais.recebidos, respondidos: d.totais.respondidos, ganhos: d.totais.ganhos })} sub={diff(d.totais.recebidos, d.totais.recebidosAntes) ? `${t('recebidosLegenda')}: ${diff(d.totais.recebidos, d.totais.recebidosAntes)}` : undefined}
+          <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0" role="group" aria-label={t('filtrar')}>
+            <div className="flex w-max gap-2 sm:w-auto sm:flex-wrap">
+              {['tudo', 'pedidos', 'resposta', 'receita', 'nota', 'prazo', ...(d.porEtapa.length ? ['etapas'] : []), ...(d.naoVieram ? ['naoVieram'] : [])].map((id) => (
+                <button key={id} type="button" onClick={() => setSo(id)} aria-pressed={so === id} data-testid={`filtro-${id}`}
+                  className={`min-h-[40px] whitespace-nowrap rounded-full border px-3 text-sm font-medium ${so === id ? 'border-primary-600 bg-primary-600 text-white' : 'border-gray-300 bg-white text-gray-700'}`}>{t(`f_${id}`)}</button>
+              ))}
+            </div>
+          </div>
+          {ve('pedidos') && <Bloco testid="bloco-pedidos" titulo={t('q_pedidos')} numero={t('nPedidos', { recebidos: d.totais.recebidos, respondidos: d.totais.respondidos, ganhos: d.totais.ganhos })} sub={diff(d.totais.recebidos, d.totais.recebidosAntes) ? `${t('recebidosLegenda')}: ${diff(d.totais.recebidos, d.totais.recebidosAntes)}` : undefined}
             frase={taxa != null && ganhoDe10 != null ? t('frasePedidos', { respondeu: taxa, ganhou: ganhoDe10 }) : t('frasePedidosSemRecebidos')}>
             {!poucos && <Barras titulo={t('q_pedidos')} rotulos={rotulos} series={[{ nome: t('recebidosLegenda'), cor: COR.recebidos, valores: d.recebidos }, { nome: t('respondidosLegenda'), cor: COR.respondidos, valores: d.respondidos }, { nome: t('ganhosLegenda'), cor: COR.ganhos, valores: d.ganhos }]} />}
-          </Bloco>
+          </Bloco>}
 
-          <Bloco testid="bloco-resposta" titulo={t('q_resposta')} numero={<span className={`inline-block rounded-lg px-2 ${corResposta(d.respostaMedianaMin)}`}>{duracao(d.respostaMedianaMin)}</span>} sub={t('respostaSub')} frase={t('fraseResposta')}>
+          {ve('resposta') && <Bloco testid="bloco-resposta" titulo={t('q_resposta')} numero={<span className={`inline-block rounded-lg px-2 ${corResposta(d.respostaMedianaMin)}`}>{duracao(d.respostaMedianaMin)}</span>} sub={t('respostaSub')} frase={t('fraseResposta')}>
             {!poucos && <Linha titulo={t('q_resposta')} rotulos={rotulos} valores={d.respostaPorFaixa.map((v) => (v == null ? null : Math.round(v)))} formatar={(n) => duracao(n)} />}
-          </Bloco>
+          </Bloco>}
 
-          <Bloco testid="bloco-receita" titulo={t('q_receita')} numero={dinheiro(d.receitaTotal)} sub={t('receitaSub', { entregue: dinheiro(d.receitaEntregue) })} frase={t('fraseReceita')}>
+          {ve('receita') && <Bloco testid="bloco-receita" titulo={t('q_receita')} numero={dinheiro(d.receitaTotal)} sub={t('receitaSub', { entregue: dinheiro(d.receitaEntregue) })} frase={t('fraseReceita')}>
             {!poucos && d.receitaTotal > 0 && <Barras titulo={t('q_receita')} rotulos={rotulos} series={[{ nome: t('q_receita'), cor: COR.ganhos, valores: d.receita.map((v) => Math.round(v)) }]} formatar={(n) => dinheiro(n)} />}
-          </Bloco>
+          </Bloco>}
 
-          <Bloco testid="bloco-nota" titulo={t('q_nota')} numero={d.nota != null ? `${d.nota.toFixed(1)} ★` : '—'} sub={t('notaSub', { n: d.totalAvaliacoes })} frase={t('fraseNota')}>
+          {ve('nota') && <Bloco testid="bloco-nota" titulo={t('q_nota')} numero={d.nota != null ? `${d.nota.toFixed(1)} ★` : '—'} sub={t('notaSub', { n: d.totalAvaliacoes })} frase={t('fraseNota')}>
             {d.ultimasAvaliacoes.length > 0 && (
               <ul className="space-y-2">
                 {d.ultimasAvaliacoes.map((a, i) => <li key={i} className="text-sm"><span className="text-amber-500" aria-label={`${a.nota}/5`}>{'★'.repeat(a.nota)}{'☆'.repeat(5 - a.nota)}</span> <span className="text-gray-700">{a.comentario}</span></li>)}
               </ul>
             )}
-          </Bloco>
+          </Bloco>}
 
-          <Bloco testid="bloco-prazo" titulo={t('q_prazo')} numero={d.entregues ? t('nDeN', { a: d.noPrazo, b: d.entregues }) : '—'} frase={t('frasePrazo')}>
+          {ve('prazo') && <Bloco testid="bloco-prazo" titulo={t('q_prazo')} numero={d.entregues ? t('nDeN', { a: d.noPrazo, b: d.entregues }) : '—'} frase={t('frasePrazo')}>
             {d.entregues > 0 && (
               <div className="h-4 rounded-full bg-red-100" aria-hidden="true"><div className="h-4 rounded-full bg-emerald-500" style={{ width: `${(100 * d.noPrazo) / d.entregues}%` }} /></div>
             )}
-          </Bloco>
+          </Bloco>}
 
-          {d.porEtapa.length > 0 && (
+          {ve('etapas') && d.porEtapa.length > 0 && (
             <Bloco testid="bloco-etapas" titulo={t('q_etapas')} frase={t('fraseEtapas')}>
               <BarrasHorizontais titulo={t('q_etapas')} itens={d.porEtapa.map((e) => ({ rotulo: te(`etapa_${e.status}`), valor: Math.round(e.horas * 10) / 10 }))} formatar={(h) => duracao(h * 60)} />
             </Bloco>
           )}
 
-          {d.naoVieram > 0 && (
+          {ve('naoVieram') && d.naoVieram > 0 && (
             <Bloco testid="bloco-naovieram" titulo={t('q_naoVieram')} numero={d.naoVieram} frase={t('fraseNaoVieram')} />
           )}
         </div>

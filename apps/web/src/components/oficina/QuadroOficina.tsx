@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '@/lib/supabase';
+import { Link } from '@/i18n/navigation';
 import { diaNaOficina, fusoDoPais, minutoNaOficina } from '@/lib/fuso';
 import { INTL_LOCALE } from '@/lib/utils';
 import { nomeFuncionario } from '@/lib/funcionario';
@@ -62,6 +63,7 @@ export default function QuadroOficina({ eventos, todosEventos, funcionarios, box
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState('');
   const [gerenciar, setGerenciar] = useState(false);
+  const [apagando, setApagando] = useState<string | null>(null);
   const [novoBox, setNovoBox] = useState({ nome: '', tipo: 'elevador' as Box['tipo'], capacidade: 20 });
 
   const mudarPor = (p: Por) => { setPor(p); try { localStorage.setItem(CHAVE_POR, p); } catch {} };
@@ -462,6 +464,21 @@ export default function QuadroOficina({ eventos, todosEventos, funcionarios, box
                   {aberta && <span className="block mt-1 text-xs text-gray-500">{t('quadroNoPostoDesde', { hora: fmtDataHora.format(new Date(aberta.inicio)) })}</span>}
                 </label>
               )}
+              {/* engano ao colocar (ate 30 min): corrige o lugar sem registrar troca, ou desfaz */}
+              {pode && aberta && agora - Date.parse(aberta.inicio) <= 30 * 60e3 && (
+                <div className="rounded-lg bg-amber-50 p-3 text-sm" data-testid="corrigir-posto">
+                  <p className="font-medium text-amber-900">{t('quadroCorrigirTitulo')}</p>
+                  <p className="mb-2 text-amber-800">{t('quadroCorrigirTexto')}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {boxesAtivos.filter((bx) => bx.id !== aberta.box_id).map((bx) => (
+                      <button key={bx.id} type="button" disabled={salvando} onClick={async () => { const r = await enviar({ acao: 'posto_corrigir', eventoId: ev.id, boxId: bx.id }); if (!r.ok) setErro(erroDe(r)); else setAberto(null); }}
+                        className="min-h-[40px] rounded-lg border border-amber-300 bg-white px-3">{bx.nome}</button>
+                    ))}
+                    <button type="button" disabled={salvando} onClick={async () => { const r = await enviar({ acao: 'posto_corrigir', eventoId: ev.id }); if (!r.ok) setErro(erroDe(r)); else setAberto(null); }}
+                      className="min-h-[40px] rounded-lg border border-red-200 bg-white px-3 text-red-700">{t('quadroDesfazerPosto')}</button>
+                  </div>
+                </div>
+              )}
               {reservas.length > 0 && (
                 <div>
                   <p className="text-sm font-medium text-gray-700 mb-1">{t('quadroReservasDoCarro')}</p>
@@ -504,6 +521,19 @@ export default function QuadroOficina({ eventos, todosEventos, funcionarios, box
 
               {salvando && <p className="text-sm text-gray-500">{t('quadroSalvando')}</p>}
               {erro && <p role="alert" className="text-sm text-red-700">{erro}</p>}
+              {ev.solicitacao_id && <Link href={`/oficina/pedidos/${ev.solicitacao_id}`} className="btn-secondary flex w-full items-center justify-center" data-testid="quadro-ver-pedido">📄 {t('quadroVerPedido')}</Link>}
+              {/* carro sem pedido criado por engano: apagar (com confirmacao) */}
+              {ehDono && ev.tipo === 'externo' && ev.status !== 'concluido' && (
+                apagando === ev.id ? (
+                  <div className="rounded-lg bg-red-50 p-3 text-sm text-red-800">
+                    <p className="mb-2">{t('quadroApagarConfirma')}</p>
+                    <div className="flex gap-2">
+                      <button type="button" disabled={salvando} onClick={async () => { setSalvando(true); const { error } = await supabase.from('agenda').delete().eq('id', ev.id); setSalvando(false); if (error) setErro(t('quadroErroSalvar')); else { setAberto(null); setApagando(null); onAlterado(); } }} className="rounded-lg bg-red-600 px-3 py-2 font-medium text-white">{t('quadroApagarSim')}</button>
+                      <button type="button" onClick={() => setApagando(null)} className="rounded-lg border border-gray-300 px-3 py-2">{t('quadroApagarNao')}</button>
+                    </div>
+                  </div>
+                ) : <button type="button" onClick={() => setApagando(ev.id)} className="w-full text-sm text-red-700 hover:underline">{t('quadroApagarCarro')}</button>
+              )}
               <button type="button" className="btn-primary w-full" onClick={() => { setAberto(null); onAbrirDia(diaNaOficina(ev.status === 'agendado' ? ev.data_inicio : (ev.checkin_em || ev.data_inicio), pais), ev); }}>
                 {t('quadroAbrirDia')}
               </button>

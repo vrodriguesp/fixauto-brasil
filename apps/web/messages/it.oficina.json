@@ -283,7 +283,15 @@
     "checkinColocarEm": "Metti su",
     "checkinPostoOcupado": "Questa postazione è occupata ora. Scegline un'altra o lasciala senza postazione.",
     "horaVagaOcupacao": "{n} di {total} posti occupati",
-    "carroSemPedido": "+ Auto senza richiesta"
+    "carroSemPedido": "+ Auto senza richiesta",
+    "quadroCorrigirTitulo": "L'hai messa nel posto sbagliato?",
+    "quadroCorrigirTexto": "Nei primi 30 minuti puoi correggere senza registrare uno spostamento.",
+    "quadroDesfazerPosto": "Annulla (non è andata da nessuna parte)",
+    "quadroVerPedido": "Vedi la richiesta",
+    "quadroApagarCarro": "Elimina quest'auto (creata per errore)",
+    "quadroApagarConfirma": "Eliminare quest'auto dall'agenda? Anche il suo storico viene eliminato.",
+    "quadroApagarSim": "Sì, elimina",
+    "quadroApagarNao": "No"
   },
   "oficinaAprender": {
     "carregando": "Caricamento...",
@@ -1092,7 +1100,13 @@
     "etapa_pausa_geral": "In pausa",
     "etapa_teste_final": "In prova",
     "etapa_concluido": "Pronta da consegnare",
-    "etapa_entregue": "Consegnata"
+    "etapa_entregue": "Consegnata",
+    "filtrar": "Filtra",
+    "filtroTudo": "Tutto",
+    "bloco_chegaram": "Arrivate in questo giorno",
+    "bloco_chegamDia": "Arrivano in questo giorno",
+    "bloco_saemDia": "Escono in questo giorno",
+    "bloco_entreguesDia": "Consegnate in questo giorno"
   },
   "oficinaDesempenho": {
     "titulo": "Risultati",
@@ -1132,6 +1146,15 @@
     "q_etapas": "Quanto resta l'auto in ogni fase?",
     "fraseEtapas": "Dove l'auto aspetta di più è dove puoi guadagnare tempo.",
     "q_naoVieram": "Clienti che non sono venuti",
-    "fraseNaoVieram": "Invia nuove date da Oggi: molti clienti riprenotano."
+    "fraseNaoVieram": "Invia nuove date da Oggi: molti clienti riprenotano.",
+    "filtrar": "Mostra",
+    "f_tudo": "Tutto",
+    "f_pedidos": "Richieste",
+    "f_resposta": "Tempo di risposta",
+    "f_receita": "Valore",
+    "f_nota": "Voto",
+    "f_prazo": "Puntualità",
+    "f_etapas": "Fasi",
+    "f_naoVieram": "Non venuti"
   }
 }

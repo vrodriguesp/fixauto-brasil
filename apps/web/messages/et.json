@@ -42,7 +42,8 @@
     "desempenho": "Tulemused",
     "minhaOficina": "Minu töökoda",
     "menuPrincipal": "Peamenüü",
-    "pedidosEsperando": "{n} päringut ootab vastust"
+    "pedidosEsperando": "{n} päringut ootab vastust",
+    "minhaOficinaCurto": "Töökoda"
   },
   "sejaParceiro": {
     "metaTitle": "Saa asutajapartneriks",

@@ -2,6 +2,9 @@
 // painel 10/10, secao E3): sem biblioteca, funcionam no servidor, cada um com
 // rotulo de texto (nunca so cor) e uma tabela escondida para leitor de tela.
 
+// periodo longo (13 semanas, 12 meses): no maximo ~6 datas no eixo, para nao se sobreporem
+const mostraRotulo = (i: number, n: number) => { const passo = Math.ceil(n / 6); return i % passo === 0 || i === n - 1; };
+
 export type Serie = { nome: string; cor: string; valores: number[] };
 
 function Tabela({ titulo, rotulos, series }: { titulo: string; rotulos: string[]; series: Serie[] }) {
@@ -35,11 +38,11 @@ export function Barras({ titulo, rotulos, series, formatar = (n: number) => Stri
                 return (
                   <g key={s.nome}>
                     <rect x={x0 + j * barra} y={base - h} width={barra - 2} height={h} fill={s.cor} rx={2}><title>{`${r} · ${s.nome}: ${formatar(v)}`}</title></rect>
-                    {v > 0 && series.length <= 2 && <text x={x0 + j * barra + (barra - 2) / 2} y={base - h - 3} textAnchor="middle" fontSize="9" fill="#374151">{formatar(v)}</text>}
+                    {v > 0 && series.length <= 2 && rotulos.length <= 6 && <text x={x0 + j * barra + (barra - 2) / 2} y={base - h - 3} textAnchor="middle" fontSize="9" fill="#374151">{formatar(v)}</text>}
                   </g>
                 );
               })}
-              <text x={i * grupo + grupo / 2} y={A - 6} textAnchor="middle" fontSize="9" fill="#6b7280">{r}</text>
+              {mostraRotulo(i, rotulos.length) && <text x={i * grupo + grupo / 2} y={A - 6} textAnchor="middle" fontSize="9" fill="#6b7280">{r}</text>}
             </g>
           );
         })}
@@ -68,7 +71,7 @@ export function Linha({ titulo, rotulos, valores, cor = '#0284c7', formatar = (n
         <line x1={0} x2={L} y1={base} y2={base} stroke="#9ca3af" />
         <path d={caminho} fill="none" stroke={cor} strokeWidth={2.5} />
         {pts.map((p, i) => p && <circle key={i} cx={p.x} cy={p.y} r={4} fill={cor}><title>{`${rotulos[i]}: ${formatar(p.v)}`}</title></circle>)}
-        {rotulos.map((r, i) => <text key={r} x={i * passo + passo / 2} y={A - 6} textAnchor="middle" fontSize="9" fill="#6b7280">{r}</text>)}
+        {rotulos.map((r, i) => mostraRotulo(i, rotulos.length) && <text key={r} x={i * passo + passo / 2} y={A - 6} textAnchor="middle" fontSize="9" fill="#6b7280">{r}</text>)}
       </svg>
       <Tabela titulo={titulo} rotulos={rotulos} series={[{ nome: titulo, cor, valores: valores.map((v) => v ?? 0) }]} />
     </figure>

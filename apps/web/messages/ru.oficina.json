@@ -283,7 +283,15 @@
     "checkinColocarEm": "Поставить на",
     "checkinPostoOcupado": "Это место сейчас занято. Выберите другое или оставьте без места.",
     "horaVagaOcupacao": "занято {n} из {total} мест",
-    "carroSemPedido": "+ Авто без заявки"
+    "carroSemPedido": "+ Авто без заявки",
+    "quadroCorrigirTitulo": "Поставили не туда?",
+    "quadroCorrigirTexto": "В первые 30 минут можно исправить без записи о перемещении.",
+    "quadroDesfazerPosto": "Отменить (никуда не ставили)",
+    "quadroVerPedido": "Открыть заявку",
+    "quadroApagarCarro": "Удалить этот автомобиль (создан по ошибке)",
+    "quadroApagarConfirma": "Удалить автомобиль из расписания? Его история тоже будет удалена.",
+    "quadroApagarSim": "Да, удалить",
+    "quadroApagarNao": "Нет"
   },
   "oficinaAprender": {
     "carregando": "Загрузка...",
@@ -1092,7 +1100,13 @@
     "etapa_pausa_geral": "На паузе",
     "etapa_teste_final": "Проверяем",
     "etapa_concluido": "Готов к выдаче",
-    "etapa_entregue": "Выдан"
+    "etapa_entregue": "Выдан",
+    "filtrar": "Фильтр",
+    "filtroTudo": "Все",
+    "bloco_chegaram": "Приехали в этот день",
+    "bloco_chegamDia": "Приезжают в этот день",
+    "bloco_saemDia": "Уезжают в этот день",
+    "bloco_entreguesDia": "Выданы в этот день"
   },
   "oficinaDesempenho": {
     "titulo": "Результаты",
@@ -1132,6 +1146,15 @@
     "q_etapas": "Сколько времени автомобиль на каждом этапе?",
     "fraseEtapas": "Где автомобиль ждёт дольше всего, там можно сэкономить время.",
     "q_naoVieram": "Клиенты, которые не приехали",
-    "fraseNaoVieram": "Предложите новые даты в разделе «Сегодня»: многие клиенты переносят запись."
+    "fraseNaoVieram": "Предложите новые даты в разделе «Сегодня»: многие клиенты переносят запись.",
+    "filtrar": "Показать",
+    "f_tudo": "Все",
+    "f_pedidos": "Заявки",
+    "f_resposta": "Время ответа",
+    "f_receita": "Сумма",
+    "f_nota": "Оценка",
+    "f_prazo": "В срок",
+    "f_etapas": "Этапы",
+    "f_naoVieram": "Не приехали"
   }
 }

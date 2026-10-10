@@ -42,7 +42,8 @@
     "desempenho": "Risultati",
     "minhaOficina": "La mia officina",
     "menuPrincipal": "Menu principale",
-    "pedidosEsperando": "{n} richieste in attesa di risposta"
+    "pedidosEsperando": "{n} richieste in attesa di risposta",
+    "minhaOficinaCurto": "Officina"
   },
   "sejaParceiro": {
     "metaTitle": "Diventa un Partner Fondatore",

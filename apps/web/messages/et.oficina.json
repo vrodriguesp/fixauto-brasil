@@ -283,7 +283,15 @@
     "checkinColocarEm": "Pane kohale",
     "checkinPostoOcupado": "See koht on praegu hõivatud. Vali teine või jäta kohata.",
     "horaVagaOcupacao": "{n} / {total} kohta hõivatud",
-    "carroSemPedido": "+ Ilma päringuta auto"
+    "carroSemPedido": "+ Ilma päringuta auto",
+    "quadroCorrigirTitulo": "Panid vale kohale?",
+    "quadroCorrigirTexto": "Esimese 30 minuti jooksul saad parandada ilma vahetust salvestamata.",
+    "quadroDesfazerPosto": "Võta tagasi (ei läinud kuhugi)",
+    "quadroVerPedido": "Vaata päringut",
+    "quadroApagarCarro": "Kustuta see auto (loodi kogemata)",
+    "quadroApagarConfirma": "Kustutada see auto ajakavast? Ka selle ajalugu kustutatakse.",
+    "quadroApagarSim": "Jah, kustuta",
+    "quadroApagarNao": "Ei"
   },
   "oficinaAprender": {
     "carregando": "Laadin...",
@@ -1092,7 +1100,13 @@
     "etapa_pausa_geral": "Peatatud",
     "etapa_teste_final": "Testin",
     "etapa_concluido": "Valmis üleandmiseks",
-    "etapa_entregue": "Üle antud"
+    "etapa_entregue": "Üle antud",
+    "filtrar": "Filtreeri",
+    "filtroTudo": "Kõik",
+    "bloco_chegaram": "Saabusid sel päeval",
+    "bloco_chegamDia": "Saabuvad sel päeval",
+    "bloco_saemDia": "Lahkuvad sel päeval",
+    "bloco_entreguesDia": "Üle antud sel päeval"
   },
   "oficinaDesempenho": {
     "titulo": "Tulemused",
@@ -1132,6 +1146,15 @@
     "q_etapas": "Kui kaua on auto igas etapis?",
     "fraseEtapas": "Kus auto kõige kauem ootab, seal saab aega võita.",
     "q_naoVieram": "Kliendid, kes ei tulnud",
-    "fraseNaoVieram": "Saada vaatest Täna uued ajad: paljud kliendid broneerivad uuesti."
+    "fraseNaoVieram": "Saada vaatest Täna uued ajad: paljud kliendid broneerivad uuesti.",
+    "filtrar": "Näita",
+    "f_tudo": "Kõik",
+    "f_pedidos": "Päringud",
+    "f_resposta": "Vastamisaeg",
+    "f_receita": "Summa",
+    "f_nota": "Hinne",
+    "f_prazo": "Õigel ajal",
+    "f_etapas": "Etapid",
+    "f_naoVieram": "Ei tulnud"
   }
 }

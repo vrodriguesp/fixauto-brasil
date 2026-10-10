@@ -42,7 +42,8 @@
     "desempenho": "Результаты",
     "minhaOficina": "Моя мастерская",
     "menuPrincipal": "Главное меню",
-    "pedidosEsperando": "{n} заявок ждут ответа"
+    "pedidosEsperando": "{n} заявок ждут ответа",
+    "minhaOficinaCurto": "Сервис"
   },
   "sejaParceiro": {
     "metaTitle": "Станьте партнёром-основателем",

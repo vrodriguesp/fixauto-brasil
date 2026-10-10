@@ -283,7 +283,15 @@
     "checkinColocarEm": "Put on",
     "checkinPostoOcupado": "That bay is taken right now. Choose another one or leave it without a bay.",
     "horaVagaOcupacao": "{n} of {total} spaces taken",
-    "carroSemPedido": "+ Walk-in car"
+    "carroSemPedido": "+ Walk-in car",
+    "quadroCorrigirTitulo": "Put it in the wrong place?",
+    "quadroCorrigirTexto": "In the first 30 minutes you can fix it without recording a move.",
+    "quadroDesfazerPosto": "Undo (it didn't go anywhere)",
+    "quadroVerPedido": "See the request",
+    "quadroApagarCarro": "Delete this car (created by mistake)",
+    "quadroApagarConfirma": "Delete this car from the schedule? Its history is deleted too.",
+    "quadroApagarSim": "Yes, delete",
+    "quadroApagarNao": "No"
   },
   "oficinaAprender": {
     "carregando": "Loading...",
@@ -1092,7 +1100,13 @@
     "etapa_pausa_geral": "Paused",
     "etapa_teste_final": "Testing",
     "etapa_concluido": "Ready to hand over",
-    "etapa_entregue": "Handed over"
+    "etapa_entregue": "Handed over",
+    "filtrar": "Filter",
+    "filtroTudo": "All",
+    "bloco_chegaram": "Arrived on this day",
+    "bloco_chegamDia": "Arriving on this day",
+    "bloco_saemDia": "Leaving on this day",
+    "bloco_entreguesDia": "Handed over on this day"
   },
   "oficinaDesempenho": {
     "titulo": "Results",
@@ -1132,6 +1146,15 @@
     "q_etapas": "How long does a car stay in each stage?",
     "fraseEtapas": "Where the car waits longest is where you can save time.",
     "q_naoVieram": "Customers who didn't come",
-    "fraseNaoVieram": "Send new dates from Today: many customers rebook."
+    "fraseNaoVieram": "Send new dates from Today: many customers rebook.",
+    "filtrar": "Show",
+    "f_tudo": "All",
+    "f_pedidos": "Requests",
+    "f_resposta": "Reply time",
+    "f_receita": "Value",
+    "f_nota": "Rating",
+    "f_prazo": "On time",
+    "f_etapas": "Stages",
+    "f_naoVieram": "Didn't come"
   }
 }

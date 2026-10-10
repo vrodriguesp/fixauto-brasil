@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { INTL_LOCALE } from '@/lib/utils';
 import { instanteNaOficina, minutoNaOficina } from '@/lib/fuso';
 import { COR, somaDias, type Barra, type Box, type Ocupacao } from './quadro-util';
@@ -345,6 +346,7 @@ export default function QuadroHora({ pais, horario, hoje, agora, boxes, barras, 
                     <button type="button" disabled={salvando} onClick={() => acaoFolha({ acao: 'posto_entrar', eventoId: folha.evId, boxId: folha.boxId })} className="btn-secondary w-full">{t('horaColocarAgora')}</button>
                   )}
                   <button type="button" disabled={salvando} onClick={() => acaoFolha({ acao: 'posto_cancelar', ocupacaoId: folha.ocup!.id })} className="w-full rounded-lg border border-red-200 py-2 text-sm font-medium text-red-700 hover:bg-red-50">{t('horaCancelarReserva')}</button>
+                  {carro?.ev.solicitacao_id && <Link href={`/oficina/pedidos/${carro.ev.solicitacao_id}`} className="btn-secondary flex w-full items-center justify-center">📄 {t('quadroVerPedido')}</Link>}
                   {carro && <button type="button" onClick={() => { setFolha(null); onAbrirCarro(carro.ev); }} className="text-sm text-primary-700 hover:underline">{t('horaVerCarro')}</button>}
                 </div>
               )}

@@ -42,7 +42,8 @@
     "desempenho": "Results",
     "minhaOficina": "My workshop",
     "menuPrincipal": "Main menu",
-    "pedidosEsperando": "{n} requests waiting for a reply"
+    "pedidosEsperando": "{n} requests waiting for a reply",
+    "minhaOficinaCurto": "Workshop"
   },
   "sejaParceiro": {
     "metaTitle": "Become a Founding Partner",

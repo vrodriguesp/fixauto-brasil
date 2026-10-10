@@ -18,7 +18,10 @@ import { duracao, etapasOrdenadas, montarBarra, somaDias, temposDoCarro, type Bo
 // antigo dashboard: blocos por urgencia e UM botao por cartao. O Quadro da
 // Agenda continua sendo a ferramenta de planejamento. Tudo no fuso da oficina.
 
-type Bloco = 'atrasados' | 'prontos' | 'chegam' | 'naOficina' | 'saem' | 'proximos' | 'entregues' | 'naoVieram';
+type Bloco = 'atrasados' | 'prontos' | 'chegam' | 'chegaram' | 'naOficina' | 'saem' | 'proximos' | 'entregues' | 'naoVieram';
+// filtro: tudo, "para fazer agora" (atrasados + prontos + chegam) ou um bloco
+type Filtro = 'tudo' | 'agora' | Bloco;
+const AGORA: Bloco[] = ['atrasados', 'prontos', 'chegam'];
 // etapas em palavras simples (6 botoes grandes no lugar do select de 10 opcoes)
 const ETAPAS_RAPIDAS = [
   { status: 'diagnostico', icone: '🔍' },
@@ -48,14 +51,22 @@ export default function HojePage() {
   const hoje = diaNaOficina(new Date(agora), pais);
   const [dia, setDiaState] = useState<string | null>(null);
   const [aberto, setAberto] = useState<string | null>(null);
+  const [filtro, setFiltroState] = useState<Filtro>('tudo');
+  const [evPedido, setEvPedido] = useState<string | null>(null);
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
     const d = p.get('dia'); if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) setDiaState(d);
-    const ev = p.get('ev'); if (ev) setAberto(ev);
+    const ev = p.get('ev'); if (ev) { setAberto(ev); if (!d) setEvPedido(ev); }
+    const fl = p.get('filtro') as Filtro | null; if (fl) setFiltroState(fl);
   }, []);
+  const setFiltro = (fl: Filtro) => {
+    setFiltroState(fl);
+    try { const u = new URL(window.location.href); if (fl === 'tudo') u.searchParams.delete('filtro'); else u.searchParams.set('filtro', fl); window.history.replaceState(window.history.state, '', u.toString()); } catch { /* */ }
+  };
   const diaVisto = dia || hoje;
   const ehHoje = diaVisto === hoje;
   const setDia = (d: string) => {
+    setFiltroState('tudo');
     setDiaState(d === hoje ? null : d);
     try { const u = new URL(window.location.href); if (d === hoje) u.searchParams.delete('dia'); else u.searchParams.set('dia', d); window.history.replaceState(window.history.state, '', u.toString()); } catch { /* */ }
   };
@@ -86,7 +97,7 @@ export default function HojePage() {
   const dDe = (iso?: string | null) => (iso ? diaNaOficina(iso, pais) : '');
   const ultimaEtapa = (ev: any) => etapasOrdenadas(ev).slice(-1)[0]?.status as string | undefined;
   const blocos = useMemo(() => {
-    const b: Record<Bloco, any[]> = { atrasados: [], prontos: [], chegam: [], naOficina: [], saem: [], proximos: [], entregues: [], naoVieram: [] };
+    const b: Record<Bloco, any[]> = { atrasados: [], prontos: [], chegam: [], chegaram: [], naOficina: [], saem: [], proximos: [], entregues: [], naoVieram: [] };
     for (const ev of carros) {
       const prevFim = ev.data_fim_prevista || ev.data_fim;
       const pronto = ev.status === 'em_andamento' && ultimaEtapa(ev) === 'concluido';
@@ -95,7 +106,10 @@ export default function HojePage() {
         if (ev.status === 'em_andamento' && !pronto && prevFim && Date.parse(prevFim) < agora) { b.atrasados.push({ ev, motivo: 'passouPrazo' }); continue; }
         if (pronto) { b.prontos.push({ ev }); continue; }
         if (ev.status === 'em_andamento') { (dDe(prevFim) === hoje ? b.saem : b.naOficina).push({ ev }); continue; }
-      } else if (ev.status === 'em_andamento' && dDe(prevFim) === diaVisto) { b.saem.push({ ev }); continue; }
+      } else {
+        if (ev.status === 'em_andamento' && dDe(prevFim) === diaVisto) { b.saem.push({ ev }); continue; }
+        if (ev.status !== 'agendado' && ev.checkin_em && dDe(ev.checkin_em) === diaVisto) { b.chegaram.push({ ev }); continue; }
+      }
       if (ev.status === 'agendado' && !ev.no_show && dDe(ev.data_inicio) === diaVisto) { b.chegam.push({ ev }); continue; }
       if (ev.status === 'agendado' && !ev.no_show && dDe(ev.data_inicio) > diaVisto && dDe(ev.data_inicio) <= somaDias(diaVisto, 7)) { b.proximos.push({ ev }); continue; }
       if (ev.status === 'concluido' && dDe(ev.entregue_em || ev.data_fim) === diaVisto) b.entregues.push({ ev });
@@ -113,6 +127,17 @@ export default function HojePage() {
     return b;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [carros, solicitacoes, hoje, diaVisto, ehHoje, agora, ehDono, oficina]);
+
+  useEffect(() => {
+    if (!evPedido || !carros.length) return;
+    const ev = carros.find((e: any) => e.id === evPedido);
+    if (!ev) return;
+    setEvPedido(null);
+    const d = ev.status === 'em_andamento' ? hoje : ev.status === 'concluido' ? dDe(ev.entregue_em || ev.data_fim) : dDe(ev.data_inicio);
+    if (d !== hoje) setDiaState(d);
+    setTimeout(() => document.getElementById(`carro-${ev.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 400);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [evPedido, carros, hoje]);
 
   // ---------- acoes (mesmas rotas do servidor de antes) ----------
   const [ocupado, setOcupado] = useState<string | null>(null);
@@ -175,6 +200,7 @@ export default function HojePage() {
     { id: 'atrasados', icone: '⚠', cor: 'border-l-red-500' },
     { id: 'prontos', icone: '✔', cor: 'border-l-emerald-500' },
     { id: 'chegam', icone: '📥', cor: 'border-l-blue-500' },
+    { id: 'chegaram', icone: '✔', cor: 'border-l-blue-300' },
     { id: 'naOficina', icone: '🔧', cor: 'border-l-amber-400' },
     { id: 'saem', icone: '📤', cor: 'border-l-slate-500' },
     { id: 'proximos', icone: '📅', cor: 'border-l-violet-500' },
@@ -182,6 +208,9 @@ export default function HojePage() {
     { id: 'naoVieram', icone: '🚫', cor: 'border-l-orange-400' },
   ];
   const paraAgora = blocos.atrasados.length + blocos.prontos.length + blocos.chegam.length;
+  const visivel = (id: Bloco) => filtro === 'tudo' || filtro === id || (filtro === 'agora' && AGORA.includes(id)) || (filtro === 'naOficina' && id === 'saem');
+  // titulo do bloco: em outro dia "neste dia" (antes dizia "hoje" num dia que nao era hoje)
+  const tituloBloco = (id: Bloco) => (!ehHoje && ['chegam', 'saem', 'entregues'].includes(id) ? t(`bloco_${id}Dia`) : t(`bloco_${id}`));
 
   const botaoPrincipal = (bloco: Bloco, item: any) => {
     const { ev } = item;
@@ -192,7 +221,7 @@ export default function HojePage() {
     }
     if (bloco === 'prontos') return ehMecanico ? null : <button type="button" onClick={() => setFolha({ tipo: 'entregar', ev, func: '', box: '', obs: '' })} className={cls} data-testid="btn-entregar">✔ {t('entregar')}</button>;
     if (bloco === 'atrasados' && item.motivo === 'passouPrazo' && telefoneDe(ev)) return <a href={`tel:${telefoneDe(ev)}`} className={cls}>📞 {t('ligar')}</a>;
-    if (bloco === 'entregues') return null;
+    if (bloco === 'entregues' || ev.status === 'concluido') return null;
     return <button type="button" onClick={() => setFolha({ tipo: 'etapa', ev, func: '', box: '', obs: '' })} className={cls} data-testid="btn-etapa">🔧 {t('etapa')}</button>;
   };
 
@@ -213,12 +242,26 @@ export default function HojePage() {
 
       {ehHoje && (
         <div className="grid grid-cols-3 gap-2 mb-6">
-          {[{ n: paraAgora, txt: t('resumoAgora'), alvo: 'atrasados' }, { n: blocos.naOficina.length + blocos.saem.length, txt: t('resumoNaOficina'), alvo: 'naOficina' }, { n: blocos.proximos.length, txt: t('resumoProximos'), alvo: 'proximos' }].map((r) => (
-            <a key={r.txt} href={`#bloco-${r.alvo}`} className="rounded-xl border border-gray-200 bg-white p-3 text-center hover:bg-gray-50">
+          {([{ n: paraAgora, txt: t('resumoAgora'), alvo: 'agora' }, { n: blocos.naOficina.length + blocos.saem.length, txt: t('resumoNaOficina'), alvo: 'naOficina' }, { n: blocos.proximos.length, txt: t('resumoProximos'), alvo: 'proximos' }] as { n: number; txt: string; alvo: Filtro }[]).map((r) => (
+            <button key={r.txt} type="button" onClick={() => setFiltro(filtro === r.alvo ? 'tudo' : r.alvo)} aria-pressed={filtro === r.alvo} data-testid={`resumo-${r.alvo}`}
+              className={`rounded-xl border p-3 text-center ${filtro === r.alvo ? 'border-primary-600 bg-primary-50 ring-2 ring-primary-200' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
               <span className="block text-3xl font-bold text-gray-900">{r.n}</span>
               <span className="block text-sm leading-tight text-gray-600">{r.txt}</span>
-            </a>
+            </button>
           ))}
+        </div>
+      )}
+
+      {BLOCOS.some((bl) => blocos[bl.id].length > 0) && (
+        <div className="-mx-4 mb-5 overflow-x-auto px-4 sm:mx-0 sm:px-0" role="group" aria-label={t('filtrar')}>
+          <div className="flex w-max gap-2 sm:w-auto sm:flex-wrap">
+            {(['tudo', ...BLOCOS.filter((bl) => blocos[bl.id].length > 0).map((bl) => bl.id)] as Filtro[]).map((fl) => (
+              <button key={fl} type="button" onClick={() => setFiltro(fl)} aria-pressed={filtro === fl} data-testid={`filtro-${fl}`}
+                className={`min-h-[40px] whitespace-nowrap rounded-full border px-3 text-sm font-medium ${filtro === fl ? 'border-primary-600 bg-primary-600 text-white' : 'border-gray-300 bg-white text-gray-700'}`}>
+                {fl === 'tudo' ? t('filtroTudo') : `${tituloBloco(fl as Bloco)} (${blocos[fl as Bloco].length})`}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -230,9 +273,9 @@ export default function HojePage() {
         </div>
       )}
 
-      {BLOCOS.filter((bl) => blocos[bl.id].length > 0).map((bl) => (
+      {BLOCOS.filter((bl) => blocos[bl.id].length > 0 && visivel(bl.id)).map((bl) => (
         <section key={bl.id} id={`bloco-${bl.id}`} className="mb-6 scroll-mt-24" data-testid={`bloco-${bl.id}`}>
-          <h2 className="mb-2 text-lg font-semibold text-gray-900"><span aria-hidden="true">{bl.icone} </span>{t(`bloco_${bl.id}`)} <span className="text-gray-500 font-normal">({blocos[bl.id].length})</span></h2>
+          <h2 className="mb-2 text-lg font-semibold text-gray-900"><span aria-hidden="true">{bl.icone} </span>{tituloBloco(bl.id)} <span className="text-gray-500 font-normal">({blocos[bl.id].length})</span></h2>
           <ul className="space-y-3">
             {bl.id === 'naoVieram' ? blocos.naoVieram.map(({ sol }) => (
               <li key={sol.id} className={`card !p-4 border-l-4 ${bl.cor}`}>
@@ -249,7 +292,7 @@ export default function HojePage() {
               const mec = ev.funcionario ? nomeFuncionario(ev.funcionario) : null;
               const desdeEtapa = etapasOrdenadas(ev).slice(-1)[0]?.created_at;
               return (
-                <li key={ev.id} className={`card !p-4 border-l-4 ${bl.cor}`} data-testid="hoje-cartao">
+                <li key={ev.id} id={`carro-${ev.id}`} className={`card !p-4 border-l-4 ${bl.cor} ${aberto === ev.id ? 'ring-2 ring-primary-300' : ''}`} data-testid="hoje-cartao">
                   <button type="button" onClick={() => setAberto(exp ? null : ev.id)} aria-expanded={exp} className="block w-full text-left">
                     <div className="flex items-start justify-between gap-3">
                       <p className="font-semibold text-gray-900 text-base">{carroDe(ev)}{placaDe(ev) && <span className="ml-1.5 rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">{placaDe(ev)}</span>}</p>
@@ -265,6 +308,7 @@ export default function HojePage() {
                   <div className="mt-3 flex flex-wrap items-center gap-3">
                     {botaoPrincipal(bl.id, item)}
                     {ev.solicitacao_id && <Link href={`/oficina/mensagens/${ev.solicitacao_id}`} className="text-sm font-medium text-primary-700 hover:underline">💬 {t('mensagem')}</Link>}
+                    {ev.solicitacao_id && bl.id !== 'proximos' && <Link href={`/oficina/pedidos/${ev.solicitacao_id}`} className="text-sm font-medium text-primary-700 hover:underline">📄 {t('verPedido')}</Link>}
                     {bl.id === 'atrasados' && item.motivo === 'naoChegou' && ehDono && ev.tipo === 'plataforma' && <button type="button" onClick={() => setFolha({ tipo: 'naoVeio', ev, func: '', box: '', obs: '' })} className="text-sm text-gray-600 underline">{t('naoVeio')}</button>}
                   </div>
                   {erro?.id === ev.id && !folha && <p role="alert" className="mt-2 text-sm text-red-700">{erro?.txt}</p>}

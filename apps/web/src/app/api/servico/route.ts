@@ -8,7 +8,7 @@ import { diaNaOficina } from '@/lib/fuso';
 
 export const dynamic = 'force-dynamic';
 
-const ACOES = ['checkin', 'etapa', 'atribuir', 'elevador', 'posto_entrar', 'posto_sair', 'posto_reservar', 'posto_mover', 'posto_cancelar'];
+const ACOES = ['checkin', 'etapa', 'atribuir', 'elevador', 'posto_entrar', 'posto_sair', 'posto_reservar', 'posto_mover', 'posto_cancelar', 'posto_corrigir'];
 const ETAPAS = ['recebido', 'diagnostico', 'aguardando_pecas', 'em_execucao', 'pausa_cliente', 'pausa_pecas', 'pausa_geral', 'teste_final', 'concluido', 'entregue'];
 
 // Andamento do servico na oficina (check-in, etapas, mecanico). Antes cada
@@ -200,6 +200,26 @@ export async function POST(req: NextRequest) {
       : await supabaseAdmin.from('posto_ocupacoes').insert({ oficina_id: ev.oficina_id, box_id: b.id, agenda_id: ev.id, inicio: ini.toISOString(), fim: fi.toISOString(), real: false, observacao: obs, funcionario_id: ev.funcionario_id, por_profile_id: userId });
     if (error) return NextResponse.json({ error: 'Não foi possível salvar', codigo: 'ERRO' }, { status: 500 });
     await historico('posto_reserva', { box: b.id, inicio: ini.toISOString(), fim: fi.toISOString(), ...(ocup ? { movida: ocup.id } : {}) });
+    return NextResponse.json({ ok: true });
+  }
+
+  // "coloquei no lugar errado" (pedido do dono 10/10): ate 30 min depois de
+  // colocar, corrige o posto da ocupacao aberta (ou desfaz) sem registrar uma
+  // troca falsa no historico do carro. Depois disso vale "tirar" / "colocar".
+  if (acaoPosto === 'posto_corrigir') {
+    const { data: aberta } = await supabaseAdmin.from('posto_ocupacoes').select('id, box_id, inicio').eq('agenda_id', ev.id).eq('real', true).is('fim', null).maybeSingle();
+    if (!aberta || Date.now() - new Date(aberta.inicio).getTime() > 30 * 60e3) return NextResponse.json({ error: 'Nada para corrigir', codigo: 'SEM_CORRECAO' }, { status: 409 });
+    if (!boxId) {
+      await supabaseAdmin.from('posto_ocupacoes').delete().eq('id', aberta.id);
+      await historico('elevador', { anterior: aberta.box_id, novo: null, corrigido: true });
+      return NextResponse.json({ ok: true });
+    }
+    const b = await postoAtivo(boxId, ev.oficina_id);
+    if (!b) return NextResponse.json({ error: 'Posto inválido', codigo: 'ELEVADOR_INVALIDO' }, { status: 400 });
+    const c = await conflitosNoPosto(b, new Date(aberta.inicio), null, ev.id, aberta.id);
+    if (c.length) return NextResponse.json({ error: 'Posto ocupado', codigo: 'CONFLITO_POSTO', ocupadoPor: c }, { status: 409 });
+    await supabaseAdmin.from('posto_ocupacoes').update({ box_id: b.id }).eq('id', aberta.id);
+    await historico('elevador', { anterior: aberta.box_id, novo: b.id, corrigido: true });
     return NextResponse.json({ ok: true });
   }
 

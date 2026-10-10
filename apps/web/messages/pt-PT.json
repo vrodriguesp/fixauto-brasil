@@ -42,7 +42,8 @@
     "desempenho": "Desempenho",
     "minhaOficina": "A minha oficina",
     "menuPrincipal": "Menu principal",
-    "pedidosEsperando": "{n} pedidos à espera de resposta"
+    "pedidosEsperando": "{n} pedidos à espera de resposta",
+    "minhaOficinaCurto": "Oficina"
   },
   "sejaParceiro": {
     "metaTitle": "Seja Parceiro Fundador em Portugal",
