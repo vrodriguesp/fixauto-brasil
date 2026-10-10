@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 import { notifCarroChegou, notifEtapa, notifProntoRetirar } from '@/lib/notif-servico';
 import { entregarServico } from '@/lib/entrega';
 import { conflitosNoPosto, postoAtivo } from '@/lib/postos';
+import { diaNaOficina } from '@/lib/fuso';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
 
   const { data: ev } = await supabaseAdmin
     .from('agenda')
-    .select('id, oficina_id, solicitacao_id, status, data_inicio, data_fim, funcionario_id, box_id, titulo, oficina:oficinas(profile_id, nome_fantasia, endereco, cidade)')
+    .select('id, oficina_id, solicitacao_id, status, data_inicio, data_fim, funcionario_id, box_id, titulo, oficina:oficinas(profile_id, nome_fantasia, endereco, cidade, pais)')
     .eq('id', eventoId)
     .maybeSingle();
   if (!ev) return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
@@ -78,7 +79,10 @@ export async function POST(req: NextRequest) {
 
   if (acao === 'checkin') {
     if (ev.status !== 'agendado') return NextResponse.json({ error: 'Check-in já feito', codigo: 'CHECKIN_JA_FEITO' }, { status: 409 });
-    const futuro = new Date(ev.data_inicio).getTime() > Date.now();
+    // "outro dia" no fuso da oficina: carro marcado para HOJE (mesmo que mais tarde)
+    // nao pede confirmacao de chegada antecipada (teste do painel 10/10)
+    const paisOf = (ev as any).oficina?.pais ?? null;
+    const futuro = diaNaOficina(ev.data_inicio, paisOf) > diaNaOficina(new Date(), paisOf);
     if (futuro && !antecipar) {
       return NextResponse.json({ error: 'Agendado para outra data', codigo: 'CHECKIN_FUTURO', dataAgendada: ev.data_inicio }, { status: 409 });
     }

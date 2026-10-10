@@ -108,8 +108,11 @@ try {
   await pD.goto(`${SITE}/ee/et/oficina/pedidos/${sVelho}`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(2000);
   const { data: v2 } = await sb.from('pedido_vistos').select('solicitacao_id').eq('oficina_id', ofId).eq('solicitacao_id', sVelho);
   ok('2 abrir o pedido grava "visto"', (v2 || []).length === 1);
-  const contMenu = await pD.locator('nav').first().innerText();
-  ok('2 contador do menu Pedidos (3 esperando)', /3/.test(contMenu), contMenu.slice(0, 120));
+  // contador do menu = cartoes da aba Para responder (pode haver pedidos de outros testes/demo no raio)
+  await pD.goto(`${SITE}/ee/et/oficina/pedidos`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(2500);
+  const nCartoes = await pD.getByTestId('pedido-cartao').count();
+  const contMenu = (await pD.locator('nav').first().innerText()).match(new RegExp(ET('nav.pedidosOficina') + '\\s*(\\d+)'))?.[1];
+  ok('2 contador do menu Pedidos = pedidos esperando resposta', Number(contMenu) === nCartoes, `menu ${contMenu} x cartoes ${nCartoes}`);
 
   // ---------- 3 Hoje
   await pD.goto(`${SITE}/ee/et/oficina/hoje`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(3000);
