@@ -271,3 +271,30 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
     - explicar/renomear "Elevador / Box / Vaga (Lugar)";
     - limite de carros por serviço e geral.
   - **Projeto:** pesquisa e proposta pedidas ao Fable em `docs/PROJETO_QUADRO_OFICINA_2026-10-09.md`; depois implementação em fases e testes em 6 idiomas.
+
+## 10/10 — Quadro profissional, fase 1 (FEITO, em produção)
+- **Projeto:** pesquisa e proposta do Fable em `docs/PROJETO_QUADRO_OFICINA_2026-10-09.md` (Garage Hive, Mitchell1, Tekmetric, AutoVitals, One AM, AutoFutur, mapas de hotel); conferido no código antes de implementar.
+- **Banco (migrações 057 e 058):**
+  - `agenda.checkin_em`, `entregue_em` e `data_inicio_prevista`, gravados por gatilho em qualquer caminho: check-in, entrega, cancelamento pelo admin, falta, revisão recusada;
+  - a tela não consegue alterar esses carimbos;
+  - nova `posto_ocupacoes` (intervalos reais e reservas), gravada só pelo servidor; `agenda.box_id` virou cache do posto atual (app e telas antigas continuam funcionando);
+  - `oficinas.capacidade_total` e `monitoramento_ativo`; `oficina_boxes.capacidade` (vaga de espera com vários carros);
+  - 058: fim mínimo de 1 segundo (com 1 minuto aparecia um falso conflito no Quadro).
+- **Servidor (`/api/servico`, `lib/postos.ts`):**
+  - ações `posto_entrar`, `posto_sair`, `posto_reservar`, `posto_mover` e `posto_cancelar`;
+  - sobreposição recusada (`CONFLITO_POSTO`); passado não se edita;
+  - check-in com `boxId`; `elevador` continua como atalho.
+- **Tela:**
+  - **Barras:** tempo real sólido e previsto tracejado (só quando difere); parte vermelha depois da entrega prevista; linha de agora com a hora; tudo no fuso da oficina.
+  - **Visão Hora:** postos hora a hora, status ("Livre até 14:00"), reservar clicando no horário, arrastar no computador, folha no celular, linha "Na oficina, sem posto".
+  - **Estados e nomes:** novos estados "Esperando o cliente" e "Pausado"; serviço de balcão vira contorno. Nomes: Postos da oficina = Elevador / Posto no chão / Vaga de espera, com explicação.
+  - **Perfil:** limite geral de carros (vale no roteamento de urgências e no alerta do Quadro); campo por serviço que deixa apagar; Monitoramento (tempos do carro, carro parado sem motivo, elevador preso por carro esperando).
+  - **Check-in:** "Colocar em" no check-in; no check-in manual, "O carro já está aqui" faz o check-in de verdade.
+  - **Textos:** 6 idiomas.
+- **Testes em produção:**
+  - **Novo `site-quadro-hora.mjs`:** 64/64 — real × previsto, postos por hora, gatilhos, permissões e RLS, visão Hora no computador e no celular, tempo real, capacidade, monitoramento, check-in manual, 6 idiomas.
+  - **`site-quadro.mjs`:** atualizado para a regra nova, 37/37.
+  - **Regressão:** `site-garantia` 19/19 e `site-atendimento` 16/16.
+- **Próximas fases (no projeto):**
+  - Fase 2: relatório semanal/CSV, TV de parede, proteção de sobreposição no banco.
+  - Fase 3: tempo por mecânico e capacidade em horas.

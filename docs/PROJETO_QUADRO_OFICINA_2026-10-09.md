@@ -1,6 +1,6 @@
 # Projeto: Quadro da oficina (planner de postos + monitoramento do carro)
 
-Data: 2026-10-09 · Escopo: web (`apps/web`), painel da oficina · Status: proposta para implementação
+Data: 2026-10-09 · Escopo: web (`apps/web`), painel da oficina · Status: fase 1 implementada e em produção (10/10, migrações 057–058; ver PROGRESSO_2026-10-08.md)
 
 Este documento responde aos cinco pedidos do dono e os transforma num plano fechado:
 

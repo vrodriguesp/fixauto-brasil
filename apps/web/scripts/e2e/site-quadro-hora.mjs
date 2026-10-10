@@ -178,6 +178,7 @@ try {
   txt = await pD.innerText('body');
   ok('5 linhas dos postos com o tipo explicado', txt.includes('Tõstuk 1') && txt.includes('Ootekoht') && txt.includes(ET('oficinaAgenda.quadroTipoBox.vaga')));
   ok('5 status do Tõstuk 1: ocupado pelo R4', (await pD.getByTestId('status-Tõstuk 1').innerText()).startsWith(ET('oficinaAgenda.horaOcupadoDesde', { carro: '', hora: '' }).split('·')[0].trim()), await pD.getByTestId('status-Tõstuk 1').innerText());
+  ok('5 sem falso conflito (carro que saiu e o seguinte no mesmo elevador)', (await pD.locator('button.ring-red-600').count()) === 0);
   ok('5 linha de agora (vermelha)', (await pD.locator('div.bg-red-500.w-0\\.5').count()) > 0);
   ok('5 carro na oficina sem posto aparece (R6)', txt.includes(ET('oficinaAgenda.horaSemPosto')) && (await pD.locator(`button[title*="${P(6)}"]`).count()) > 0);
   const ctxD2 = await ctxNovo(true); const pD2 = await entrar(ctxD2, dono);
