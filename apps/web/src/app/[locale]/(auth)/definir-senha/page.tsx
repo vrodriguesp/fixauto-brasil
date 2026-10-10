@@ -62,9 +62,9 @@ export default function DefinirSenhaPage() {
     // Redirect based on user type
     const tipo = user?.tipo;
     if (tipo === 'oficina' && funcionario) {
-      router.replace('/oficina/veiculos-em-servico');
+      router.replace('/oficina/hoje');
     } else if (tipo === 'oficina') {
-      router.replace('/oficina/dashboard');
+      router.replace('/oficina/pedidos');
     } else {
       router.replace('/cliente/dashboard');
     }

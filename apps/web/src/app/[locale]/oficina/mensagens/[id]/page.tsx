@@ -352,7 +352,7 @@ export default function OficinaMensagensPage() {
       <div className="bg-white border-b px-4 py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
           <Link
-            href={`/oficina/solicitacoes/${id}`}
+            href={`/oficina/pedidos/${id}`}
             className="text-gray-500 hover:text-gray-700"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -377,7 +377,7 @@ export default function OficinaMensagensPage() {
           </div>
         </div>
         <Link
-          href={`/oficina/enviar-orcamento/${id}`}
+          href={`/oficina/orcamento/${id}`}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

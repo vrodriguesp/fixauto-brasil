@@ -36,7 +36,13 @@
     "sair": "Log out",
     "checkinManual": "Manual Check-in",
     "administrador": "Admin",
-    "cliente": "Customer"
+    "cliente": "Customer",
+    "pedidosOficina": "Requests",
+    "hoje": "Today",
+    "desempenho": "Results",
+    "minhaOficina": "My workshop",
+    "menuPrincipal": "Main menu",
+    "pedidosEsperando": "{n} requests waiting for a reply"
   },
   "sejaParceiro": {
     "metaTitle": "Become a Founding Partner",

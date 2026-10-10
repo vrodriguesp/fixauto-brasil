@@ -33,7 +33,7 @@ export default function HomeClient({ guias = [] }: { guias?: GuiaResumo[] }) {
       }
       const isMecanico = funcionario?.cargo === 'mecanico';
       const dashPath = user.tipo === 'oficina'
-        ? (isMecanico ? '/oficina/veiculos-em-servico' : '/oficina/dashboard')
+        ? (isMecanico ? '/oficina/hoje' : '/oficina/pedidos')
         : user.tipo === 'loja_pecas'
           ? '/loja/dashboard'
           : '/cliente/dashboard';

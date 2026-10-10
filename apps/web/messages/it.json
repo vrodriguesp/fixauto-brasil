@@ -36,7 +36,13 @@
     "sair": "Esci",
     "checkinManual": "Check-in Manuale",
     "administrador": "Amministratore",
-    "cliente": "Cliente"
+    "cliente": "Cliente",
+    "pedidosOficina": "Richieste",
+    "hoje": "Oggi",
+    "desempenho": "Risultati",
+    "minhaOficina": "La mia officina",
+    "menuPrincipal": "Menu principale",
+    "pedidosEsperando": "{n} richieste in attesa di risposta"
   },
   "sejaParceiro": {
     "metaTitle": "Diventa un Partner Fondatore",

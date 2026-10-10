@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import NotificationBell from './NotificationBell';
 import LanguageSwitcher from './LanguageSwitcher';
 import NextLink from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 // /admin nao tem idioma: link comum. O Link do next-intl poria /pt-br na
 // frente (/pt-br/admin/oficinas -> 404) - achado no teste do admin, 30/09.
@@ -33,12 +34,35 @@ export default function Navbar() {
   const dashboardPath = isAdmin
     ? '/admin/dashboard'
     : isOficina
-      ? (isMecanico ? '/oficina/veiculos-em-servico' : '/oficina/dashboard')
+      ? (isMecanico ? '/oficina/hoje' : '/oficina/pedidos')
       : isLoja
         ? '/loja/dashboard'
         : '/cliente/dashboard';
 
+  // painel da oficina (auditoria 10/10): Pedidos mostra quantos esperam
+  // resposta; vermelho se algum espera ha mais de 4 h
+  const [paraResponder, setParaResponder] = useState<{ total: number; atrasados: number } | null>(null);
+  useEffect(() => {
+    if (!isOficina || isMecanico || !oficina) return;
+    let vivo = true;
+    const ler = () => supabase.rpc('pedidos_para_responder').then(({ data }) => { if (vivo && data) setParaResponder(data as any); });
+    ler();
+    const i = setInterval(ler, 60e3);
+    return () => { vivo = false; clearInterval(i); };
+  }, [isOficina, isMecanico, oficina]);
+  const contadorPedidos = paraResponder && paraResponder.total > 0 ? (
+    <span className={`ml-1 inline-block min-w-[1.25rem] rounded-full px-1.5 text-center text-xs font-semibold leading-5 ${paraResponder.atrasados > 0 ? 'bg-red-600 text-white' : 'bg-primary-100 text-primary-800'}`} aria-label={t('pedidosEsperando', { n: paraResponder.total })}>{paraResponder.total}</span>
+  ) : null;
+  const menuOficina = isOficina && !isMecanico;
+  // a barra de baixo (celular) nao pode cobrir o fim da pagina nem o rodape
+  useEffect(() => {
+    const temBarra = isLoggedIn && isOficina;
+    document.body.classList.toggle('com-barra-inferior', !!temBarra);
+    return () => document.body.classList.remove('com-barra-inferior');
+  }, [isLoggedIn, isOficina]);
+
   return (
+    <>
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className={`${isLoggedIn ? 'max-w-screen-2xl' : 'max-w-7xl'} mx-auto px-4 sm:px-6 lg:px-8`}>
         {/* Menu do computador so a partir de 1280 px: abaixo disso os links nao cabem
@@ -74,25 +98,25 @@ export default function Navbar() {
                 ) : isOficina ? (
                   isMecanico ? (
                     <>
-                      <NavLink href="/oficina/veiculos-em-servico">{t('oficina')}</NavLink>
+                      <NavLink href="/oficina/hoje">{t('hoje')}</NavLink>
                       <NavLink href="/oficina/agenda">{t('agenda')}</NavLink>
-                      <NavLink href="/oficina/aprender">🎓 {t('aprender')}</NavLink>
+                      <NavLink href="/oficina/aprender">{t('aprender')}</NavLink>
                     </>
                   ) : (
                     <>
-                      <NavLink href="/oficina/dashboard">{t('dashboard')}</NavLink>
-                      <NavLink href="/oficina/solicitacoes">{t('solicitacoes')}</NavLink>
-                      <NavLink href="/oficina/veiculos-em-servico">{t('oficina')}</NavLink>
+                      <NavLink href="/oficina/pedidos">{t('pedidosOficina')}{contadorPedidos}</NavLink>
+                      <NavLink href="/oficina/hoje">{t('hoje')}</NavLink>
                       <NavLink href="/oficina/agenda">{t('agenda')}</NavLink>
+                      <NavLink href="/oficina/desempenho">{t('desempenho')}</NavLink>
                       <MoreNavDropdown
                         moreLabel={t('mais')}
                         items={[
                           { href: '/oficina/pecas', label: t('pecas') },
                           { href: '/oficina/equipe', label: t('equipe') },
-                          { href: '/oficina/checkin', label: t('checkinManual') },
-                          { href: '/oficina/comissao', label: t('comissao') },
                           { href: '/oficina/avaliacoes', label: t('avaliacoes') },
-                          { href: '/oficina/aprender', label: `🎓 ${t('aprender')}` },
+                          { href: '/oficina/comissao', label: t('comissao') },
+                          { href: '/oficina/aprender', label: t('aprender') },
+                          { href: '/oficina/perfil', label: t('minhaOficina') },
                         ]}
                       />
                     </>
@@ -170,7 +194,7 @@ export default function Navbar() {
                 aria-label="Menu"
                 aria-expanded={menuOpen}
                 aria-controls="menu-mobile"
-                className="xl:hidden p-2 rounded-lg hover:bg-gray-100"
+                className={`${isOficina ? 'hidden' : 'xl:hidden'} p-2 rounded-lg hover:bg-gray-100`}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {menuOpen ? (
@@ -198,23 +222,17 @@ export default function Navbar() {
             ) : isOficina ? (
               isMecanico ? (
                 <>
-                  <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>{t('oficina')}</MobileNavLink>
-                  <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>{t('agenda')}</MobileNavLink>
-                  <MobileNavLink href="/oficina/aprender" onClick={() => setMenuOpen(false)}>🎓 {t('aprender')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/aprender" onClick={() => setMenuOpen(false)}>{t('aprender')}</MobileNavLink>
                 </>
               ) : (
                 <>
-                  <MobileNavLink href="/oficina/dashboard" onClick={() => setMenuOpen(false)}>{t('dashboard')}</MobileNavLink>
-                  <MobileNavLink href="/oficina/solicitacoes" onClick={() => setMenuOpen(false)}>{t('solicitacoes')}</MobileNavLink>
-                  <MobileNavLink href="/oficina/veiculos-em-servico" onClick={() => setMenuOpen(false)}>{t('oficina')}</MobileNavLink>
-                  <MobileNavLink href="/oficina/agenda" onClick={() => setMenuOpen(false)}>{t('agenda')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/desempenho" onClick={() => setMenuOpen(false)}>{t('desempenho')}</MobileNavLink>
                   <MobileNavLink href="/oficina/pecas" onClick={() => setMenuOpen(false)}>{t('pecas')}</MobileNavLink>
                   <MobileNavLink href="/oficina/equipe" onClick={() => setMenuOpen(false)}>{t('equipe')}</MobileNavLink>
-                  <MobileNavLink href="/oficina/checkin" onClick={() => setMenuOpen(false)}>{t('checkinManual')}</MobileNavLink>
-                  <MobileNavLink href="/oficina/comissao" onClick={() => setMenuOpen(false)}>{t('comissao')}</MobileNavLink>
                   <MobileNavLink href="/oficina/avaliacoes" onClick={() => setMenuOpen(false)}>{t('avaliacoes')}</MobileNavLink>
-                  <MobileNavLink href="/oficina/aprender" onClick={() => setMenuOpen(false)}>🎓 {t('aprender')}</MobileNavLink>
-                  <MobileNavLink href="/oficina/perfil" onClick={() => setMenuOpen(false)}>{t('perfil')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/comissao" onClick={() => setMenuOpen(false)}>{t('comissao')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/aprender" onClick={() => setMenuOpen(false)}>{t('aprender')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/perfil" onClick={() => setMenuOpen(false)}>{t('minhaOficina')}</MobileNavLink>
                 </>
               )
             ) : isLoja ? (
@@ -247,6 +265,45 @@ export default function Navbar() {
         )}
       </div>
     </nav>
+    {isLoggedIn && isOficina && (
+      // Barra de baixo no celular (auditoria do painel 10/10, B1): o principal
+      // cabe no polegar; "Mais" abre o resto. Abaixo de 1280 px, como o menu.
+      <nav aria-label={t('menuPrincipal')} className="xl:hidden fixed bottom-0 inset-x-0 z-50 border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)]">
+        <div className="grid grid-cols-4">
+          {(menuOficina
+            ? [{ href: '/oficina/pedidos', txt: t('pedidosOficina'), icone: 'caixa', extra: contadorPedidos }, { href: '/oficina/hoje', txt: t('hoje'), icone: 'hoje' }, { href: '/oficina/agenda', txt: t('agenda'), icone: 'agenda' }]
+            : [{ href: '/oficina/hoje', txt: t('hoje'), icone: 'hoje' }, { href: '/oficina/agenda', txt: t('agenda'), icone: 'agenda' }, { href: '/oficina/aprender', txt: t('aprender'), icone: 'aprender' }]
+          ).map((it: any) => <ItemBarra key={it.href} {...it} onClick={() => setMenuOpen(false)} />)}
+          <button type="button" onClick={() => { setMenuOpen((v) => !v); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-expanded={menuOpen} aria-controls="menu-mobile"
+            className={`flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-xs font-medium ${menuOpen ? 'text-primary-700' : 'text-gray-600'}`}>
+            <Icone nome="mais" />{t('mais')}
+          </button>
+        </div>
+      </nav>
+    )}
+    </>
+  );
+}
+
+function Icone({ nome }: { nome: string }) {
+  const d: Record<string, string> = {
+    caixa: 'M3 13h4l2 3h6l2-3h4M5 5h14l2 8v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6l2-8z',
+    hoje: 'M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1zm4 10l2 2 4-4',
+    agenda: 'M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z',
+    aprender: 'M12 14l9-5-9-5-9 5 9 5zm0 0v6m-6-9v5c0 1.5 3 3 6 3s6-1.5 6-3v-5',
+    mais: 'M4 6h16M4 12h16M4 18h16',
+  };
+  return <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d={d[nome]} /></svg>;
+}
+
+function ItemBarra({ href, txt, icone, extra, onClick }: { href: string; txt: string; icone: string; extra?: React.ReactNode; onClick: () => void }) {
+  const pathname = usePathname();
+  const ativo = pathname === href || pathname?.startsWith(href + '/');
+  return (
+    <Link href={href as any} onClick={onClick} aria-current={ativo ? 'page' : undefined}
+      className={`relative flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-xs font-medium ${ativo ? 'text-primary-700' : 'text-gray-600'}`}>
+      <span className="relative"><Icone nome={icone} />{extra && <span className="absolute -right-3 -top-1">{extra}</span>}</span>{txt}
+    </Link>
   );
 }
 

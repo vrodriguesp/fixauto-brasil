@@ -85,3 +85,9 @@
     font-size: 16px !important;
   }
 }
+
+/* Barra de navegacao de baixo (painel da oficina no celular, Navbar): a
+   pagina e o rodape terminam acima dela. Mesmo limite do menu (1280 px). */
+@media (max-width: 1279.98px) {
+  body.com-barra-inferior { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
+}

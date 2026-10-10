@@ -6,10 +6,10 @@ import type { Notificacao } from '@fixauto/shared';
 // auditoria Fable 08/10, M9).
 export function linkDaNotificacao(n: Pick<Notificacao, 'tipo' | 'dados'>, tipoUsuario?: string | null): string | null {
   const d = (n.dados || {}) as Record<string, string | undefined>;
-  if (n.tipo === 'nota_interna_veiculo') return '/oficina/veiculos-em-servico';
+  if (n.tipo === 'nota_interna_veiculo') return d.agenda_id ? `/oficina/hoje?ev=${d.agenda_id}` : '/oficina/hoje';
   if (tipoUsuario === 'oficina') {
     if (n.tipo === 'nova_mensagem' && d.solicitacao_id) return `/oficina/mensagens/${d.solicitacao_id}`;
-    if (d.solicitacao_id) return `/oficina/solicitacoes/${d.solicitacao_id}`;
+    if (d.solicitacao_id) return `/oficina/pedidos/${d.solicitacao_id}`;
     if (d.cotacao_id) return '/oficina/pecas';
     if (d.emergencia_id) return `/emergencia/acidente/${d.emergencia_id}`;
     return null;

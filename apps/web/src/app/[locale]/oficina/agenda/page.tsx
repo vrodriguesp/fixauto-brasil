@@ -11,7 +11,8 @@ import { supabase } from '@/lib/supabase';
 import { CORES_AGENDA, TIPOS_SERVICO } from '@fixauto/shared';
 import { cleanDescricao, INTL_LOCALE, rotuloTipoPedido } from '@/lib/utils';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
+import { diaNaOficina } from '@/lib/fuso';
 import { nomeFuncionario } from '@/lib/funcionario';
 import QuadroOficina, { type Box } from '@/components/oficina/QuadroOficina';
 import CapacidadeResumo from '@/components/oficina/CapacidadeResumo';
@@ -60,6 +61,7 @@ export default function AgendaPage() {
   const isMecanico = funcionario?.cargo === 'mecanico';
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showForm, setShowForm] = useState(false);
+  const router = useRouter();
   const [viewMode, setViewModeState] = useState<Vista>('month');
   const setViewMode = (v: Vista) => { setViewModeState(v); try { localStorage.setItem(CHAVE_VISTA, v); } catch {} };
   // visao salva (ou ?vista=quadro, usado pelos enderecos antigos de Distribuicao/Capacidade)
@@ -67,7 +69,9 @@ export default function AgendaPage() {
     const daUrl = new URLSearchParams(window.location.search).get('vista');
     let salva: string | null = null; try { salva = localStorage.getItem(CHAVE_VISTA); } catch {}
     const v = (daUrl || salva) as Vista | null;
-    if (v && ['quadro', 'month', 'day', 'list'].includes(v)) setViewModeState(v);
+    if (v === 'day') { if (daUrl === 'day') router.replace('/oficina/hoje'); else setViewModeState('month'); return; }
+    if (v && ['quadro', 'month', 'list'].includes(v)) setViewModeState(v);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [boxes, setBoxes] = useState<Box[]>([]);
   const [indicadores, setIndicadores] = useState(0);
@@ -171,10 +175,10 @@ export default function AgendaPage() {
   // - Check-in feito: data_inicio = date AND status IN (em_andamento, concluido)
   // - Entregue: data_fim = date AND status = concluido
   const getGroups = (dateStr: string) => {
-    const checkinPendente = allEventos.filter(e => dataLocalDe(e.data_inicio) === dateStr && e.status === 'agendado' && !(e as any).no_show);
-    const naoCompareceu = allEventos.filter(e => dataLocalDe(e.data_inicio) === dateStr && (e as any).no_show);
-    const checkinFeito = allEventos.filter(e => dataLocalDe(e.data_inicio) === dateStr && (e.status === 'em_andamento' || e.status === 'concluido'));
-    const entregue = allEventos.filter(e => dataLocalDe(e.data_fim) === dateStr && e.status === 'concluido');
+    const checkinPendente = allEventos.filter(e => dataLocalDe(e.data_inicio, (oficina as any)?.pais ?? null) === dateStr && e.status === 'agendado' && !(e as any).no_show);
+    const naoCompareceu = allEventos.filter(e => dataLocalDe(e.data_inicio, (oficina as any)?.pais ?? null) === dateStr && (e as any).no_show);
+    const checkinFeito = allEventos.filter(e => dataLocalDe(e.data_inicio, (oficina as any)?.pais ?? null) === dateStr && (e.status === 'em_andamento' || e.status === 'concluido'));
+    const entregue = allEventos.filter(e => dataLocalDe(e.data_fim, (oficina as any)?.pais ?? null) === dateStr && e.status === 'concluido');
     return { checkinPendente, naoCompareceu, checkinFeito, entregue };
   };
 
@@ -190,8 +194,8 @@ export default function AgendaPage() {
     const result = await addEvento({
       titulo,
       descricao: descricao || undefined,
-      data_inicio: localParaIso(formData.data_inicio, formData.hora_inicio),
-      data_fim: localParaIso(formData.data_fim, formData.hora_fim),
+      data_inicio: localParaIso(formData.data_inicio, formData.hora_inicio, (oficina as any)?.pais ?? null),
+      data_fim: localParaIso(formData.data_fim, formData.hora_fim, (oficina as any)?.pais ?? null),
       tipo: 'externo',
       cor: formData.cor,
     });
@@ -264,10 +268,10 @@ export default function AgendaPage() {
     setEditData({
       titulo: ev.titulo || '',
       descricao: ev.descricao || '',
-      data_inicio: dataLocalDe(ev.data_inicio),
-      hora_inicio: horaLocalDe(ev.data_inicio) || '08:00',
-      data_fim: dataLocalDe(ev.data_fim),
-      hora_fim: horaLocalDe(ev.data_fim) || '18:00',
+      data_inicio: dataLocalDe(ev.data_inicio, (oficina as any)?.pais ?? null),
+      hora_inicio: horaLocalDe(ev.data_inicio, (oficina as any)?.pais ?? null) || '08:00',
+      data_fim: dataLocalDe(ev.data_fim, (oficina as any)?.pais ?? null),
+      hora_fim: horaLocalDe(ev.data_fim, (oficina as any)?.pais ?? null) || '18:00',
       funcionario_id: ev.funcionario_id || '',
       cor: ev.cor || '#3B82F6',
     });
@@ -279,8 +283,8 @@ export default function AgendaPage() {
     await updateEvento(evId, {
       titulo: editData.titulo,
       descricao: editData.descricao || null,
-      data_inicio: localParaIso(editData.data_inicio, editData.hora_inicio),
-      data_fim: localParaIso(editData.data_fim, editData.hora_fim),
+      data_inicio: localParaIso(editData.data_inicio, editData.hora_inicio, (oficina as any)?.pais ?? null),
+      data_fim: localParaIso(editData.data_fim, editData.hora_fim, (oficina as any)?.pais ?? null),
       funcionario_id: editData.funcionario_id || null,
       cor: editData.cor,
     });
@@ -385,7 +389,7 @@ export default function AgendaPage() {
               )}
               {type === 'feito' && ev.status === 'em_andamento' && (
                 // etapas do conserto (diagnostico, pecas, execucao...) na tela de veiculos em servico
-                <Link href={`/oficina/veiculos-em-servico?ev=${ev.id}&etapa=1`} onClick={(e) => e.stopPropagation()}
+                <Link href={`/oficina/hoje?ev=${ev.id}`} onClick={(e) => e.stopPropagation()}
                   className="px-3 py-1.5 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 text-xs font-medium rounded-lg">
                   {t('btnEtapa')}
                 </Link>
@@ -500,7 +504,7 @@ export default function AgendaPage() {
                   {ev.solicitacao_id && (
                     <>
                       <Link href={`/oficina/mensagens/${ev.solicitacao_id}`} className="text-xs text-primary-600 hover:text-primary-700 font-medium">{t('mensagem')}</Link>
-                      <Link href={`/oficina/solicitacoes/${ev.solicitacao_id}`} className="text-xs text-gray-600 hover:text-gray-700 font-medium">{t('verSolicitacao')}</Link>
+                      <Link href={`/oficina/pedidos/${ev.solicitacao_id}`} className="text-xs text-gray-600 hover:text-gray-700 font-medium">{t('verSolicitacao')}</Link>
                     </>
                   )}
                   {ev.tipo === 'externo' && !isMecanico && (
@@ -527,16 +531,16 @@ export default function AgendaPage() {
         </div>
         {/* celular: 4 visoes em grade de largura total (antes a ultima saia da tela - teste 09/10, ponto 10) */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
-          <div className="grid grid-cols-4 sm:flex rounded-lg border border-gray-200 overflow-hidden w-full sm:w-auto">
-            {(['quadro', 'month', 'day', 'list'] as const).map((m) => (
+          <div className="grid grid-cols-3 sm:flex rounded-lg border border-gray-200 overflow-hidden w-full sm:w-auto">
+            {(['quadro', 'month', 'list'] as const).map((m) => (
               <button key={m} onClick={() => setViewMode(m)} aria-pressed={viewMode === m}
                 className={`px-2 sm:px-3 py-2 text-sm text-center whitespace-nowrap ${viewMode === m ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'}`}>
-                {m === 'quadro' ? t('viewQuadro') : m === 'month' ? t('viewMes') : m === 'day' ? t('viewDia') : t('viewLista')}
+                {m === 'quadro' ? t('viewQuadro') : m === 'month' ? t('viewMes') : t('viewLista')}
               </button>
             ))}
           </div>
           {!isMecanico && (
-            <button onClick={() => setShowForm(true)} className="btn-primary !py-2 w-full sm:w-auto">{t('btnNovoEvento')}</button>
+            <Link href="/oficina/checkin" className="btn-primary !py-2 w-full sm:w-auto text-center">{t('carroSemPedido')}</Link>
           )}
         </div>
       </div>
@@ -639,11 +643,7 @@ export default function AgendaPage() {
             ehDono={ehDono}
             meuFuncionarioId={funcionario?.id ?? null}
             onAlterado={() => { refresh(); carregarBoxes(); setIndicadores((n) => n + 1); }}
-            onAbrirDia={(ymd, ev) => {
-              setCurrentDate(new Date(`${ymd}T12:00:00`));
-              setExpandedId(`${ev.id}-${ev.status === 'agendado' ? 'pendente' : 'feito'}`);
-              setViewMode('day');
-            }}
+            onAbrirDia={(ymd, ev) => router.push(`/oficina/hoje?dia=${ymd}&ev=${ev.id}`)}
           />
           {!isMecanico && (
             <details className="group">
@@ -672,10 +672,9 @@ export default function AgendaPage() {
               const day = i + 1;
               const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
               const g = getGroups(ds);
-              const today = new Date();
-              const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+              const isToday = ds === diaNaOficina(new Date(), (oficina as any)?.pais ?? null);
               return (
-                <button key={day} onClick={() => { setCurrentDate(new Date(year, month, day)); setViewMode('day'); }}
+                <button key={day} onClick={() => router.push(`/oficina/hoje?dia=${ds}`)}
                   className={`min-h-[80px] sm:min-h-[100px] p-1 sm:p-2 rounded-lg text-left transition-colors ${isToday ? 'bg-blue-50' : 'bg-white hover:bg-gray-50'} border border-gray-100`}>
                   <span className={`text-sm font-medium ${isToday ? 'text-primary-600' : 'text-gray-900'}`}>{day}</span>
                   <div className="mt-1 space-y-0.5">
@@ -688,72 +687,6 @@ export default function AgendaPage() {
             })}
           </div>
         </div>
-      ) : viewMode === 'day' ? (
-        <div className="card">
-          <div className="flex items-center justify-between mb-6">
-            <button onClick={() => setCurrentDate(new Date(year, month, currentDate.getDate() - 1))} className="p-2 hover:bg-gray-100 rounded-lg">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            </button>
-            <h2 className="text-xl font-semibold text-gray-900">{t('dataDia', { dia: currentDate.getDate(), mes: MESES[month], ano: year })} - {DIAS_SEMANA[currentDate.getDay()]}</h2>
-            <button onClick={() => setCurrentDate(new Date(year, month, currentDate.getDate() + 1))} className="p-2 hover:bg-gray-100 rounded-lg">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-            </button>
-          </div>
-          {(() => {
-            const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
-            const g = getGroups(ds);
-            const hasAnything = g.checkinPendente.length + g.naoCompareceu.length + g.checkinFeito.length + g.entregue.length > 0;
-            return (
-              <>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                  <div className="p-3 bg-green-50 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-green-700">{g.checkinPendente.length}</p>
-                    <p className="text-xs text-green-600">{t('pendente')}</p>
-                  </div>
-                  <div className="p-3 bg-blue-50 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-blue-700">{g.checkinFeito.length}</p>
-                    <p className="text-xs text-blue-600">{t('checkinFeito')}</p>
-                  </div>
-                  <div className="p-3 bg-gray-100 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-gray-700">{g.entregue.length}</p>
-                    <p className="text-xs text-gray-600">{t('statusEntregue')}</p>
-                  </div>
-                  {g.naoCompareceu.length > 0 && (
-                    <div className="p-3 bg-red-50 rounded-lg text-center">
-                      <p className="text-2xl font-bold text-red-700">{g.naoCompareceu.length}</p>
-                      <p className="text-xs text-red-600">{t('naoCompareceu')}</p>
-                    </div>
-                  )}
-                </div>
-                {g.checkinPendente.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="font-semibold text-green-800 text-sm uppercase tracking-wide mb-3">{t('checkinPendenteCount', { count: g.checkinPendente.length })}</h4>
-                    <div className="space-y-2">{g.checkinPendente.map((ev) => renderCard(ev, 'pendente'))}</div>
-                  </div>
-                )}
-                {g.checkinFeito.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="font-semibold text-blue-800 text-sm uppercase tracking-wide mb-3">{t('checkinFeitoCount', { count: g.checkinFeito.length })}</h4>
-                    <div className="space-y-2">{g.checkinFeito.map((ev) => renderCard(ev, 'feito'))}</div>
-                  </div>
-                )}
-                {g.entregue.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-3">{t('entregueCount', { count: g.entregue.length })}</h4>
-                    <div className="space-y-2">{g.entregue.map((ev) => renderCard(ev, 'entregue'))}</div>
-                  </div>
-                )}
-                {g.naoCompareceu.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="font-semibold text-red-700 text-sm uppercase tracking-wide mb-3">{t('naoCompareceuCount', { count: g.naoCompareceu.length })}</h4>
-                    <div className="space-y-2">{g.naoCompareceu.map((ev) => renderCard(ev, 'entregue'))}</div>
-                  </div>
-                )}
-                {!hasAnything && <p className="text-center text-gray-500 py-8">{t('nenhumEventoNesteDia')}</p>}
-              </>
-            );
-          })()}
-        </div>
       ) : (
         <div className="space-y-4">
           {(() => {
@@ -761,7 +694,7 @@ export default function AgendaPage() {
               .sort((a, b) => new Date(a.data_inicio).getTime() - new Date(b.data_inicio).getTime());
             if (upcoming.length === 0) return <div className="card text-center py-12"><p className="text-gray-500">{t('nenhumEventoAgendado')}</p></div>;
             const groups: Record<string, typeof upcoming> = {};
-            upcoming.forEach((ev) => { const d = dataLocalDe(ev.data_inicio); if (!groups[d]) groups[d] = []; groups[d].push(ev); });
+            upcoming.forEach((ev) => { const d = dataLocalDe(ev.data_inicio, (oficina as any)?.pais ?? null); if (!groups[d]) groups[d] = []; groups[d].push(ev); });
             return Object.entries(groups).map(([date, evts]) => {
               const d = new Date(date + 'T12:00:00');
               return (

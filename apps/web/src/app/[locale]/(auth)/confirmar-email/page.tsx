@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase';
 // Link do e-mail de confirmacao (/api/cadastro): ?token_hash=... de uso
 // unico, 1 h. verifyOtp confirma o e-mail e ja devolve a sessao - a pessoa
 // cai no painel dela. Link vencido/usado: pede o e-mail e manda outro.
-const PAINEL: Record<string, string> = { cliente: '/cliente/dashboard', oficina: '/oficina/dashboard', loja_pecas: '/loja/dashboard' };
+const PAINEL: Record<string, string> = { cliente: '/cliente/dashboard', oficina: '/oficina/pedidos', loja_pecas: '/loja/dashboard' };
 
 export default function ConfirmarEmailPage() {
   const t = useTranslations('confirmarEmail');

@@ -67,8 +67,8 @@ export default function ManualCheckinPage() {
     const { data: criado, error: agendaError } = await addEvento({
       titulo: `${tipoLabel} - ${veiculoMarca} ${veiculoModelo}`,
       descricao: `${t('descricaoLabelCliente')}: ${clienteNome} | ${t('descricaoLabelPlaca')}: ${veiculoPlaca || t('descricaoNaoInformado')} | ${t('descricaoLabelTelefone')}: ${clienteTelefone || t('descricaoNaoInformado')}${descricao ? ' | ' + descricao : ''}${valorEstimado ? ` | ${t('descricaoLabelValor')}: ${formatCurrency(parseFlexibleNumber(valorEstimado), currencyForCountry(oficina?.pais), locale)}` : ''}`,
-      data_inicio: fazerCheckin ? new Date().toISOString() : localParaIso(dataCheckin, turnoCheckin === 'manha' ? '08:00' : '13:00'),
-      data_fim: localParaIso(dataEntrega, '18:00'),
+      data_inicio: fazerCheckin ? new Date().toISOString() : localParaIso(dataCheckin, turnoCheckin === 'manha' ? '08:00' : '13:00', (oficina as any)?.pais ?? null),
+      data_fim: localParaIso(dataEntrega, '18:00', (oficina as any)?.pais ?? null),
       tipo: 'externo',
       cor,
     });

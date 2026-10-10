@@ -36,7 +36,13 @@
     "sair": "Выйти",
     "checkinManual": "Ручная приёмка",
     "administrador": "Администратор",
-    "cliente": "Клиент"
+    "cliente": "Клиент",
+    "pedidosOficina": "Заявки",
+    "hoje": "Сегодня",
+    "desempenho": "Результаты",
+    "minhaOficina": "Моя мастерская",
+    "menuPrincipal": "Главное меню",
+    "pedidosEsperando": "{n} заявок ждут ответа"
   },
   "sejaParceiro": {
     "metaTitle": "Станьте партнёром-основателем",

@@ -634,10 +634,10 @@ export default function OrcamentoDetalhePage() {
                   <p className="text-sm text-gray-600 mb-3">{t('escolhaHorarioDica')}</p>
                   <div className="space-y-2">
                     {/* horario que ja passou nao se escolhe (a oficina pode ter oferecido hoje de manha) */}
-                    {orc.disponibilidade.every((slot) => !turnoDisponivel(slot.data_checkin, slot.turno as Turno)) && (
+                    {orc.disponibilidade.every((slot) => !turnoDisponivel(slot.data_checkin, slot.turno as Turno, undefined, (orc as any).oficina?.pais ?? null)) && (
                       <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3">{t('horariosVencidos')}</p>
                     )}
-                    {orc.disponibilidade.filter((slot) => turnoDisponivel(slot.data_checkin, slot.turno as Turno)).map((slot) => (
+                    {orc.disponibilidade.filter((slot) => turnoDisponivel(slot.data_checkin, slot.turno as Turno, undefined, (orc as any).oficina?.pais ?? null)).map((slot) => (
                       <button
                         key={slot.id}
                         type="button"

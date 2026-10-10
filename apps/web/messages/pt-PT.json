@@ -36,7 +36,13 @@
     "sair": "Terminar sessão",
     "checkinManual": "Check-in Manual",
     "administrador": "Administrador",
-    "cliente": "Cliente"
+    "cliente": "Cliente",
+    "pedidosOficina": "Pedidos",
+    "hoje": "Hoje",
+    "desempenho": "Desempenho",
+    "minhaOficina": "A minha oficina",
+    "menuPrincipal": "Menu principal",
+    "pedidosEsperando": "{n} pedidos à espera de resposta"
   },
   "sejaParceiro": {
     "metaTitle": "Seja Parceiro Fundador em Portugal",

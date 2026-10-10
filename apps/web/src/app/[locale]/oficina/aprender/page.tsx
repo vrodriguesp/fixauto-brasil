@@ -27,7 +27,7 @@ export default function OficinaAprenderPage() {
         resumo: t('mecanico.meusVeiculos.resumo'),
         passosGuiados: t.raw('mecanico.meusVeiculos.passosGuiados') as string[],
         desafio: t('mecanico.meusVeiculos.desafio'),
-        linkReal: '/oficina/veiculos-em-servico',
+        linkReal: '/oficina/hoje',
         dica: t('mecanico.meusVeiculos.dica'),
         verificar: async () => {
           if (!funcionario) return false;
@@ -42,7 +42,7 @@ export default function OficinaAprenderPage() {
         resumo: t('mecanico.notasInternas.resumo'),
         passosGuiados: t.raw('mecanico.notasInternas.passosGuiados') as string[],
         desafio: t('mecanico.notasInternas.desafio'),
-        linkReal: '/oficina/veiculos-em-servico',
+        linkReal: '/oficina/hoje',
         verificar: async () => {
           if (!funcionario) return false;
           const { count } = await supabase.from('veiculo_notas_internas').select('*', { count: 'exact', head: true }).eq('remetente_id', funcionario.profile_id);
@@ -89,7 +89,7 @@ export default function OficinaAprenderPage() {
       resumo: t('geral.solicitacoes.resumo'),
       passosGuiados: t.raw('geral.solicitacoes.passosGuiados') as string[],
       desafio: t('geral.solicitacoes.desafio'),
-      linkReal: '/oficina/solicitacoes',
+      linkReal: '/oficina/pedidos',
       dica: t('geral.solicitacoes.dica'),
       verificar: async () => {
         const { count } = await supabase.from('orcamentos').select('*', { count: 'exact', head: true }).eq('oficina_id', oficina.id);
@@ -103,7 +103,7 @@ export default function OficinaAprenderPage() {
       resumo: t('geral.checkin.resumo'),
       passosGuiados: t.raw('geral.checkin.passosGuiados') as string[],
       desafio: t('geral.checkin.desafio'),
-      linkReal: '/oficina/veiculos-em-servico',
+      linkReal: '/oficina/hoje',
       dica: t('geral.checkin.dica'),
       verificar: async () => {
         const { count } = await supabase.from('agenda').select('*', { count: 'exact', head: true }).eq('oficina_id', oficina.id).in('status', ['em_andamento', 'concluido']);
@@ -117,7 +117,7 @@ export default function OficinaAprenderPage() {
       resumo: t('geral.notasInternas.resumo'),
       passosGuiados: t.raw('geral.notasInternas.passosGuiados') as string[],
       desafio: t('geral.notasInternas.desafio'),
-      linkReal: '/oficina/veiculos-em-servico',
+      linkReal: '/oficina/hoje',
       verificar: async () => {
         const { count } = await supabase.from('veiculo_notas_internas').select('*', { count: 'exact', head: true }).eq('oficina_id', oficina.id);
         return (count || 0) > 0;

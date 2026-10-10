@@ -36,7 +36,13 @@
     "sair": "Sair",
     "checkinManual": "Check-in Manual",
     "administrador": "Administrador",
-    "cliente": "Cliente"
+    "cliente": "Cliente",
+    "pedidosOficina": "Pedidos",
+    "hoje": "Hoje",
+    "desempenho": "Desempenho",
+    "minhaOficina": "Minha oficina",
+    "menuPrincipal": "Menu principal",
+    "pedidosEsperando": "{n} pedidos esperando resposta"
   },
   "sejaParceiro": {
     "metaTitle": "Seja um Parceiro Fundador no Brasil",

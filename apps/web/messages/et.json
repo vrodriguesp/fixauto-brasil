@@ -36,7 +36,13 @@
     "sair": "Logi välja",
     "checkinManual": "Käsitsi check-in",
     "administrador": "Administraator",
-    "cliente": "Klient"
+    "cliente": "Klient",
+    "pedidosOficina": "Päringud",
+    "hoje": "Täna",
+    "desempenho": "Tulemused",
+    "minhaOficina": "Minu töökoda",
+    "menuPrincipal": "Peamenüü",
+    "pedidosEsperando": "{n} päringut ootab vastust"
   },
   "sejaParceiro": {
     "metaTitle": "Saa asutajapartneriks",
