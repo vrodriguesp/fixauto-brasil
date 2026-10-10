@@ -27,12 +27,12 @@ ALTER TABLE profiles ALTER COLUMN codigo SET NOT NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS profiles_codigo_key ON profiles(codigo);
 -- o numero e o codigo sao do sistema: ninguem muda (o UPDATE da tabela e
 -- liberado no nivel da tabela, entao um REVOKE por coluna nao bastaria)
-CREATE OR REPLACE FUNCTION manter_numero_pedido() RETURNS trigger LANGUAGE plpgsql AS $
-BEGIN NEW.numero := OLD.numero; RETURN NEW; END $;
+CREATE OR REPLACE FUNCTION manter_numero_pedido() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN NEW.numero := OLD.numero; RETURN NEW; END $$;
 DROP TRIGGER IF EXISTS trg_manter_numero_pedido ON solicitacoes;
 CREATE TRIGGER trg_manter_numero_pedido BEFORE UPDATE OF numero ON solicitacoes FOR EACH ROW EXECUTE FUNCTION manter_numero_pedido();
-CREATE OR REPLACE FUNCTION manter_codigo_cliente() RETURNS trigger LANGUAGE plpgsql AS $
-BEGIN NEW.codigo := OLD.codigo; RETURN NEW; END $;
+CREATE OR REPLACE FUNCTION manter_codigo_cliente() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN NEW.codigo := OLD.codigo; RETURN NEW; END $$;
 DROP TRIGGER IF EXISTS trg_manter_codigo_cliente ON profiles;
 CREATE TRIGGER trg_manter_codigo_cliente BEFORE UPDATE OF codigo ON profiles FOR EACH ROW EXECUTE FUNCTION manter_codigo_cliente();
 
