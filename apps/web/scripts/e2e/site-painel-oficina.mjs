@@ -9,6 +9,9 @@
 //  5 fuso: o mesmo carro no mesmo dia com o navegador em Sao Paulo e em Tallinn
 //  6 enderecos antigos levam as paginas novas (6 mercados)
 //  7 6 idiomas x celular/computador: sem chave crua, sem rolagem lateral, barra de baixo no celular
+//  8 retorno do dono (10/10): filtros de Hoje e resumo clicavel; Quadro -> Hoje no dia
+//    certo do carro; corrigir posto colocado errado; "Ver o pedido"; tipo do mes
+//    abre Hoje filtrado; Desempenho: um grafico so e no maximo ~7 datas no eixo
 //   node site-painel-oficina.mjs <.env.local> [SITE]
 import fs from 'node:fs';
 import path from 'node:path';
@@ -175,6 +178,48 @@ try {
     ok(`5 navegador em ${tz}: carro das 08:30 de Tallinn no dia certo`, (await p.innerText('body')).includes(`M${P(9)}`));
     await c.close();
   }
+
+  // ---------- 8 retorno do dono
+  await pD.goto(`${SITE}/ee/et/oficina/hoje`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(3000);
+  await pD.getByTestId('resumo-agora').click(); await pD.waitForTimeout(600);
+  const blocosVisiveis = await pD.locator('section[data-testid^="bloco-"]').evaluateAll((els) => els.map((e) => e.getAttribute('data-testid')));
+  ok('8 "Para fazer agora" mostra so atrasados/prontos/chegam', blocosVisiveis.length > 0 && blocosVisiveis.every((b) => ['bloco-atrasados', 'bloco-prontos', 'bloco-chegam'].includes(b)), blocosVisiveis.join(','));
+  await pD.getByTestId('filtro-naOficina').click(); await pD.waitForTimeout(600);
+  const so = await pD.locator('section[data-testid^="bloco-"]').evaluateAll((els) => els.map((e) => e.getAttribute('data-testid')));
+  ok('8 filtro por bloco (Na oficina)', so.length >= 1 && so.every((b) => ['bloco-naOficina', 'bloco-saem'].includes(b)), so.join(','));
+  // Quadro -> Hoje no dia do carro (carro na oficina = hoje, aberto e destacado)
+  await pD.goto(`${SITE}/ee/et/oficina/hoje?ev=${aNaOf}`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(3500);
+  ok('8 aberto pelo Quadro: carro na oficina abre em HOJE', (await pD.locator(`#carro-${aNaOf}`).count()) === 1 && !(await pD.innerText('body')).includes(ET('oficinaHoje.voltarHoje')));
+  // corrigir posto: coloca no elevador A, corrige para B (sem troca no historico)
+  const { data: bxs } = await sb.from('oficina_boxes').insert([{ oficina_id: ofId, nome: 'Tõstuk A', tipo: 'elevador', ordem: 0, capacidade: 1 }, { oficina_id: ofId, nome: 'Ootekoht B', tipo: 'vaga', ordem: 1, capacidade: 5 }]).select('id, nome');
+  const tok = (await createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } }).auth.signInWithPassword({ email: dono.email, password: dono.senha })).data.session.access_token;
+  await fetch(`${SITE}/api/servico`, { method: 'POST', headers: { Authorization: `Bearer ${tok}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ acao: 'posto_entrar', eventoId: aNaOf, boxId: bxs[0].id }) });
+  await pD.goto(`${SITE}/ee/et/oficina/agenda?vista=quadro`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(3000);
+  await pD.getByRole('button', { name: ET('oficinaAgenda.quadroPorMecanico'), exact: true }).click(); await pD.waitForTimeout(600);
+  await pD.locator(`button[title*="M${P(7)}"]`).first().click(); await pD.waitForTimeout(800);
+  ok('8 "Ver o pedido" no carro do Quadro', (await pD.getByTestId('quadro-ver-pedido').count()) === 1);
+  await pD.getByTestId('corrigir-posto').getByRole('button', { name: 'Ootekoht B' }).click(); await pD.waitForTimeout(3000);
+  const { data: occ } = await sb.from('posto_ocupacoes').select('box_id, fim').eq('agenda_id', aNaOf);
+  const { data: hist } = await sb.from('agenda_historico').select('detalhe').eq('agenda_id', aNaOf).eq('acao', 'elevador').order('created_at', { ascending: false }).limit(1);
+  ok('8 corrigir posto: a mesma ocupacao muda de lugar (sem troca falsa)', (occ || []).length === 1 && occ[0].box_id === bxs[1].id && !occ[0].fim && hist?.[0]?.detalhe?.corrigido === true, JSON.stringify(occ));
+  // tipo no mes -> Hoje filtrado
+  await pD.goto(`${SITE}/ee/et/oficina/agenda?vista=month`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(3000);
+  const chip = pD.locator('span[role=link]').filter({ hasText: ET('oficinaAgenda.pendente') }).first();
+  if (await chip.count()) {
+    await chip.click(); await pD.waitForTimeout(3000);
+    ok('8 tipo do mes abre Hoje naquele dia com o filtro', /\/oficina\/hoje\?dia=\d{4}-\d{2}-\d{2}&filtro=chegam/.test(pD.url()), pD.url());
+  } else ok('8 tipo do mes abre Hoje (sem pendentes no mes para clicar)', true);
+  // Desempenho: um grafico so; eixo de 12 meses sem datas amontoadas
+  await pD.goto(`${SITE}/ee/et/oficina/desempenho`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(4000);
+  await pD.getByTestId('filtro-nota').click(); await pD.waitForTimeout(500);
+  const blocosDes = await pD.locator('section[data-testid^="bloco-"]').evaluateAll((els) => els.map((e) => e.getAttribute('data-testid')));
+  ok('8 Desempenho: filtro mostra um grafico so', JSON.stringify(blocosDes) === JSON.stringify(['bloco-nota']), blocosDes.join(','));
+  await pD.getByTestId('filtro-tudo').click();
+  await pD.getByRole('button', { name: ET('oficinaDesempenho.periodo_12m') }).click(); await pD.waitForTimeout(4000);
+  const datasEixo = await pD.getByTestId('bloco-pedidos').locator('svg text[text-anchor="middle"][font-size="9"][fill="#6b7280"]').count();
+  ok('8 Desempenho 12 meses: no maximo 7 datas no eixo (grafico some com poucos dados)', datasEixo <= 7, String(datasEixo));
+  await sb.from('posto_ocupacoes').delete().eq('agenda_id', aNaOf);
+  await sb.from('oficina_boxes').delete().eq('oficina_id', ofId);
 
   // ---------- 6 enderecos antigos
   for (const [l, pre] of Object.entries(PREFIXO)) {
