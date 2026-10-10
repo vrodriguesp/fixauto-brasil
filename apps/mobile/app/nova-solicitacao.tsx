@@ -177,22 +177,7 @@ export default function NovaSolicitacaoScreen() {
   return (
     <ScrollView keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
 
-      <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoVeiculo')}</Text>
-      <View className="flex-row flex-wrap gap-2 mb-2">
-        {veiculos.map((v) => (
-          <Pressable
-            key={v.id}
-            onPress={() => setVeiculoId(v.id)}
-            className={`px-4 py-2 rounded-full border ${veiculoId === v.id ? 'bg-primary-600 border-primary-600' : 'border-gray-300'}`}
-          >
-            <Text className={veiculoId === v.id ? 'text-white' : 'text-gray-700'}>{v.fipe_marca ? `${v.fipe_marca} ${v.fipe_modelo}` : v.placa || t('veiculos.semDados')}</Text>
-          </Pressable>
-        ))}
-      </View>
-      <Pressable onPress={() => router.push('/veiculo/novo')} className="mb-6">
-        <Text className="text-primary-600 font-medium">{t('novaSolicitacao.adicionarVeiculo')}</Text>
-      </Pressable>
-
+      {/* o problema primeiro, depois o carro (auditoria 10/10, B3) */}
       <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoServico')}</Text>
       <View className="flex-row flex-wrap gap-2 mb-6">
         {TIPOS_SERVICO.map((s) => (
@@ -215,6 +200,22 @@ export default function NovaSolicitacaoScreen() {
         className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-[16px]"
         style={{ textAlignVertical: 'top' }}
       />
+
+      <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoVeiculo')}</Text>
+      <View className="flex-row flex-wrap gap-2 mb-2">
+        {veiculos.map((v) => (
+          <Pressable
+            key={v.id}
+            onPress={() => setVeiculoId(v.id)}
+            className={`px-4 py-2 rounded-full border ${veiculoId === v.id ? 'bg-primary-600 border-primary-600' : 'border-gray-300'}`}
+          >
+            <Text className={veiculoId === v.id ? 'text-white' : 'text-gray-700'}>{v.fipe_marca ? `${v.fipe_marca} ${v.fipe_modelo}` : v.placa || t('veiculos.semDados')}</Text>
+          </Pressable>
+        ))}
+      </View>
+      <Pressable onPress={() => router.push('/veiculo/novo')} className="mb-6">
+        <Text className="text-primary-600 font-medium">{t('novaSolicitacao.adicionarVeiculo')}</Text>
+      </Pressable>
 
       <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoFotos')}</Text>
       <View className="flex-row flex-wrap gap-2 mb-2">

@@ -19,7 +19,7 @@
   },
   "tabs": {
     "inicio": "Início",
-    "solicitacoes": "Solicitações",
+    "solicitacoes": "Pedidos",
     "mensagens": "Mensagens",
     "veiculos": "Veículos",
     "perfil": "Perfil"
@@ -130,8 +130,8 @@
   },
   "dashboard": {
     "saudacao": "Olá, {nome}",
-    "solicitacoesAtivas": "Solicitações ativas",
-    "nenhumaSolicitacao": "Você ainda não tem nenhuma solicitação.",
+    "solicitacoesAtivas": "Pedidos ativos",
+    "nenhumaSolicitacao": "Você ainda não tem nenhum pedido.",
     "novaSolicitacaoBotao": "Nova solicitação",
     "emergenciaBotao": "Acabei de bater",
     "avisos": "Avisos"
@@ -140,7 +140,7 @@
     "titulo": "Orçamentos",
     "recebidoDe": "Enviado por {oficina}",
     "valor": "Valor total",
-    "aceitar": "Aceitar orçamento",
+    "aceitar": "Escolher esta oficina",
     "recusar": "Recusar",
     "verDetalhes": "Ver detalhes",
     "statusEnviado": "Enviado",
@@ -157,7 +157,19 @@
     "verOficina": "Ver a oficina (avaliações, endereço)",
     "escolhido": "Orçamento escolhido",
     "semAvaliacoes": "Nova no BipFix",
-    "avaliacoes": "{nota} ★ ({n} avaliações)"
+    "avaliacoes": "{nota} ★ ({n} avaliações)",
+    "naoMeInteressa": "Não me interessa",
+    "nenhumAinda": "Ainda sem orçamentos.",
+    "resumo": "{n} orçamentos · de {min} a {max}",
+    "ordenar": "Ordenar",
+    "ord_preco": "Menor preço",
+    "ord_nota": "Melhor avaliada",
+    "ord_cedo": "Mais cedo",
+    "marca_preco": "Mais barato",
+    "marca_nota": "Melhor avaliada",
+    "marca_cedo": "Mais cedo",
+    "prazoDias": "Pronto em {n} dias",
+    "outros": "Outros orçamentos ({n})"
   },
   "acompanhamento": {
     "titulo": "Acompanhamento",
@@ -396,5 +408,37 @@
     "voltar": "Voltar",
     "feito_aprovar": "Revisão aprovada. A oficina foi avisada.",
     "feito_recusar": "Serviço encerrado. Combine a retirada do carro pela conversa."
+  },
+  "situacao": {
+    "titulo_aguardando": "Esperando orçamentos",
+    "agora_aguardando": "As oficinas perto de você estão vendo seu pedido. Costumam responder em algumas horas e avisamos aqui.",
+    "titulo_comparar": "Orçamentos para comparar: {n}",
+    "agora_comparar": "Compare preço, nota e dia, e escolha a oficina.",
+    "titulo_agendado": "Agendado",
+    "agora_agendado": "Leve o carro à oficina no dia {dia}.",
+    "agora_agendadoSemDia": "Leve o carro à oficina no dia combinado.",
+    "titulo_naOficina": "Carro na oficina",
+    "agora_naOficina": "Agora: {etapa}. Avisamos quando ficar pronto.",
+    "agora_naOficinaSemEtapa": "A oficina recebeu o carro. Avisamos quando ficar pronto.",
+    "titulo_pronto": "Pronto para retirar",
+    "agora_pronto": "Pode buscar o carro na oficina.",
+    "titulo_entregue": "Entregue",
+    "agora_entregue": "Serviço concluído.",
+    "titulo_avaliar": "Conte como foi",
+    "agora_avaliar": "Dê uma nota à oficina: ajuda outros motoristas.",
+    "titulo_cancelado": "Cancelado",
+    "agora_cancelado": "Este pedido foi cancelado.",
+    "titulo_naoFoi": "Você não foi no dia marcado",
+    "agora_naoFoi": "Fale com a oficina para marcar outro dia.",
+    "botao_aguardando": "Ver pedido",
+    "botao_comparar": "Comparar",
+    "botao_agendado": "Ver detalhes",
+    "botao_naOficina": "Ver andamento",
+    "botao_pronto": "Ver detalhes",
+    "botao_entregue": "Ver pedido",
+    "botao_avaliar": "Avaliar",
+    "botao_cancelado": "Ver pedido",
+    "botao_naoFoi": "Ver pedido",
+    "outros": "Outros pedidos em andamento"
   }
 }

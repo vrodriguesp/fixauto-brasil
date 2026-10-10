@@ -16,6 +16,11 @@ import EditarPedido from '../../components/EditarPedido';
 import RevisaoPendente from '../../components/RevisaoPendente';
 import { useAvisos } from '../../lib/avisos';
 import { abrirOficina } from '../../lib/oficina-link';
+import CartaoSituacao from '../../components/CartaoSituacao';
+import { situacaoDoPedido } from '../../lib/situacao';
+
+type Ordem = 'preco' | 'nota' | 'cedo';
+const ATIVO = ['enviado', 'visualizado'];
 
 export default function SolicitacaoDetailScreen() {
   const { t, i18n } = useTranslation();
@@ -38,6 +43,10 @@ export default function SolicitacaoDetailScreen() {
   const [slotSelecionado, setSlotSelecionado] = useState<Record<string, string>>({});
   const [entrega, setEntrega] = useState<{ oficinaId: string; dataFim: string } | null>(null);
   const [puxando, setPuxando] = useState(false);
+  const [agenda, setAgenda] = useState<{ status: string; data_inicio: string | null }[]>([]);
+  // comparar orcamentos (auditoria 10/10, C2): ordem escolhida e os "outros" recolhidos
+  const [ordemOrc, setOrdemOrc] = useState<Ordem>('preco');
+  const [verOutros, setVerOutros] = useState(false);
 
   const carregar = useCallback(async () => {
     const { data } = await supabase
@@ -55,8 +64,9 @@ export default function SolicitacaoDetailScreen() {
 
     const { data: agendaRows } = await supabase
       .from('agenda')
-      .select('id, oficina_id, status, data_fim')
+      .select('id, oficina_id, status, data_inicio, data_fim')
       .eq('solicitacao_id', id);
+    setAgenda((agendaRows || []) as any);
     const entregue = (agendaRows || []).find((a: any) => a.status === 'concluido' && a.data_fim);
     setEntrega(entregue ? { oficinaId: entregue.oficina_id, dataFim: entregue.data_fim } : null);
     const agendaIds = (agendaRows || []).map((a) => a.id);
@@ -160,9 +170,28 @@ export default function SolicitacaoDetailScreen() {
   const fimGarantia = aceito?.garantia_dias > 0 && entrega && entrega.oficinaId === aceito.oficina_id
     ? new Date(new Date(entrega.dataFim).getTime() + aceito.garantia_dias * 86400000) : null;
   const diasGarantia = fimGarantia ? Math.ceil((fimGarantia.getTime() - Date.now()) / 86400000) : 0;
-  // escolhido primeiro, recusados por ultimo
-  const ordem: Record<string, number> = { aceito: 0, enviado: 1, visualizado: 1, expirado: 2, recusado: 3 };
-  const orcamentos = [...(solicitacao.orcamentos || [])].sort((a, b) => (ordem[a.status] ?? 1) - (ordem[b.status] ?? 1));
+  // escolhido primeiro; os ativos na ordem escolhida (menor preco, melhor
+  // avaliada, dia mais cedo); recusados/vencidos recolhidos em "Outros"
+  const primeiroDia = (o: any) => ((o.disponibilidade || []) as DisponibilidadeSlot[]).filter((d) => turnoDisponivel(d.data_checkin, d.turno as Turno)).map((d) => d.data_checkin).sort()[0] || '9999';
+  const nota = (o: any) => (o.oficina?.total_avaliacoes ? Number(o.oficina.avaliacao_media || 0) : -1);
+  const todos = (solicitacao.orcamentos || []) as any[];
+  const ativos = todos.filter((o) => ATIVO.includes(o.status)).sort((a, b) =>
+    ordemOrc === 'preco' ? a.valor_total - b.valor_total : ordemOrc === 'nota' ? nota(b) - nota(a) || a.valor_total - b.valor_total : primeiroDia(a).localeCompare(primeiroDia(b)) || a.valor_total - b.valor_total);
+  const escolhidoOrc = todos.filter((o) => o.status === 'aceito');
+  const outrosOrc = todos.filter((o) => !ATIVO.includes(o.status) && o.status !== 'aceito');
+  const orcamentos = [...escolhidoOrc, ...ativos, ...(verOutros ? outrosOrc : [])];
+  // marcadores (so com 2 ou mais para comparar): um por cartao, na ordem preco > nota > cedo
+  const marca: Record<string, string> = {};
+  if (ativos.length >= 2) {
+    const porPreco = [...ativos].sort((a, b) => a.valor_total - b.valor_total)[0];
+    const porNota = [...ativos].filter((o) => nota(o) >= 0).sort((a, b) => nota(b) - nota(a))[0];
+    const porDia = [...ativos].filter((o) => primeiroDia(o) !== '9999').sort((a, b) => primeiroDia(a).localeCompare(primeiroDia(b)))[0];
+    if (porPreco) marca[porPreco.id] = 'preco';
+    if (porNota && !marca[porNota.id]) marca[porNota.id] = 'nota';
+    if (porDia && !marca[porDia.id]) marca[porDia.id] = 'cedo';
+  }
+  const moedaPedido = currencyForCountry((ativos[0]?.oficina as any)?.pais);
+  const situacao = situacaoDoPedido(solicitacao, { agenda, etapas: etapas as any, avaliado: solicitacao.status === 'concluida' ? !!avaliacao : undefined });
   const recarregar = async () => { setPuxando(true); await carregar(); setPuxando(false); };
 
   return (
@@ -173,7 +202,9 @@ export default function SolicitacaoDetailScreen() {
           {veiculo?.fipe_marca ? `${veiculo.fipe_marca} ${veiculo.fipe_modelo}` : ehAcidente(solicitacao.descricao) ? t('acompanhamento.acidente') : ''}
         </Text>
         {limparDescricao(solicitacao.descricao) ? <Text className="text-gray-600 mb-1">{limparDescricao(solicitacao.descricao)}</Text> : null}
-        <Text className="text-sm text-gray-500 mb-4">{(solicitacao as any).numero ? `${t('constants.numeroPedido', { n: (solicitacao as any).numero })} · ` : ''}{t(`constants.statusSolicitacao.${solicitacao.status}`, solicitacao.status)}</Text>
+        {(solicitacao as any).numero ? <Text className="text-sm text-gray-500 mb-2" selectable>{t('constants.numeroPedido', { n: (solicitacao as any).numero })}</Text> : null}
+        {/* situacao + o que acontece agora (auditoria 10/10, C2) */}
+        <CartaoSituacao solicitacao={solicitacao} situacao={situacao} />
 
         {['aberta', 'em_orcamento'].includes(solicitacao.status) && (
           <EditarPedido key={`${solicitacao.id}-${veiculo?.fipe_marca || ''}`} solicitacaoId={solicitacao.id} descricao={solicitacao.descricao} veiculo={(veiculo as any) || null} aoSalvar={carregar} />
@@ -207,10 +238,25 @@ export default function SolicitacaoDetailScreen() {
           <Text className="text-primary-700 font-medium">{t('mensagens.titulo')}</Text>
         </Pressable>
 
-        <Text className="text-base font-semibold text-gray-900 mb-3">{t('orcamentos.titulo')}</Text>
+        <Text className="text-base font-semibold text-gray-900 mb-1">{t('orcamentos.titulo')}</Text>
 
-        {(solicitacao.orcamentos || []).length === 0 && (
-          <Text className="text-gray-500">{t('dashboard.nenhumaSolicitacao')}</Text>
+        {todos.length === 0 && (
+          <Text className="text-gray-500 mb-3">{t('orcamentos.nenhumAinda')}</Text>
+        )}
+        {ativos.length >= 2 && (
+          <>
+            <Text className="text-sm text-gray-600 mb-2" testID="orc-resumo">
+              {t('orcamentos.resumo', { n: ativos.length, min: formatCurrency(Math.min(...ativos.map((o) => o.valor_total)), moedaPedido, locale), max: formatCurrency(Math.max(...ativos.map((o) => o.valor_total)), moedaPedido, locale) })}
+            </Text>
+            <View className="flex-row flex-wrap gap-2 mb-3" accessibilityRole="radiogroup" accessibilityLabel={t('orcamentos.ordenar')}>
+              {(['preco', 'nota', 'cedo'] as Ordem[]).map((o) => (
+                <Pressable key={o} onPress={() => setOrdemOrc(o)} accessibilityRole="radio" accessibilityState={{ selected: ordemOrc === o }}
+                  className={`px-3 py-1.5 rounded-full border ${ordemOrc === o ? 'bg-primary-600 border-primary-600' : 'bg-white border-gray-300'}`}>
+                  <Text className={ordemOrc === o ? 'text-white text-sm font-medium' : 'text-gray-700 text-sm'}>{t(`orcamentos.ord_${o}`)}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </>
         )}
 
         {orcamentos.map((orc) => {
@@ -221,6 +267,11 @@ export default function SolicitacaoDetailScreen() {
           return (
           <View key={orc.id} className={`rounded-xl p-4 mb-3 ${escolhido ? 'bg-emerald-50 border-2 border-emerald-500' : 'bg-white border border-gray-200'}`}
             style={orc.status === 'recusado' || orc.status === 'expirado' ? { opacity: 0.6 } : undefined}>
+            {marca[orc.id] && (
+              <View className="self-start bg-amber-100 rounded-full px-3 py-1 mb-2" testID={`marca-${marca[orc.id]}`}>
+                <Text className="text-amber-900 text-xs font-semibold">★ {t(`orcamentos.marca_${marca[orc.id]}`)}</Text>
+              </View>
+            )}
             {escolhido && (
               <View className="self-start flex-row items-center gap-1 bg-emerald-600 rounded-full px-3 py-1 mb-2">
                 <Ionicons name="checkmark-circle" size={14} color="#fff" />
@@ -237,7 +288,7 @@ export default function SolicitacaoDetailScreen() {
               </Pressable>
             ) : null}
             <Text className="text-2xl font-bold text-gray-900">{formatCurrency(orc.valor_total, moeda, locale)}</Text>
-            <Text className="text-xs text-gray-500 mb-2">{t(`orcamentos.status${orc.status.charAt(0).toUpperCase()}${orc.status.slice(1)}`)}</Text>
+            <Text className="text-xs text-gray-500 mb-2">{[(orc as any).prazo_dias ? t('orcamentos.prazoDias', { n: (orc as any).prazo_dias }) : null, t(`orcamentos.status${orc.status.charAt(0).toUpperCase()}${orc.status.slice(1)}`)].filter(Boolean).join(' · ')}</Text>
             {itens.length > 0 && (
               <View className="border-t border-gray-100 pt-2 mb-2">
                 <Text className="text-xs font-semibold text-gray-700 mb-1">{t('orcamentos.itens')}</Text>
@@ -272,29 +323,30 @@ export default function SolicitacaoDetailScreen() {
                     {(slot as any).data_previsao_entrega ? <Text className="text-xs text-gray-500">{t('orcamentos.entregaPrevista', { data: formatDate((slot as any).data_previsao_entrega, locale) })}</Text> : null}
                   </Pressable>
                 ))}
-                <View className="flex-row gap-2 mt-2">
-                  <Pressable
-                    onPress={() => handleRecusar(orc)}
-                    disabled={processando === orc.id}
-                    className="flex-1 border border-gray-300 rounded-lg py-3 items-center"
-                  >
-                    <Text className="text-gray-700 font-medium">{t('orcamentos.recusar')}</Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => handleAceitar(orc)}
-                    disabled={processando === orc.id || !slotSelecionado[orc.id]}
-                    accessibilityState={{ disabled: processando === orc.id || !slotSelecionado[orc.id] }}
-                    className="flex-1 bg-primary-600 rounded-lg py-3 items-center"
-                    style={{ opacity: processando === orc.id || !slotSelecionado[orc.id] ? 0.45 : 1 }}
-                  >
-                    {processando === orc.id ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-medium">{t('orcamentos.aceitar')}</Text>}
-                  </Pressable>
-                </View>
+                <Pressable
+                  onPress={() => handleAceitar(orc)}
+                  disabled={processando === orc.id || !slotSelecionado[orc.id]}
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: processando === orc.id || !slotSelecionado[orc.id] }}
+                  className="bg-primary-600 rounded-lg py-3 items-center mt-2"
+                  style={{ opacity: processando === orc.id || !slotSelecionado[orc.id] ? 0.45 : 1 }}
+                >
+                  {processando === orc.id ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold">{t('orcamentos.aceitar')}</Text>}
+                </Pressable>
+                {/* recusar deixou de ser um botao do mesmo tamanho (auditoria 10/10, A5) */}
+                <Pressable onPress={() => handleRecusar(orc)} disabled={processando === orc.id} accessibilityRole="button" hitSlop={8} className="self-center mt-3">
+                  <Text className="text-gray-500 text-sm underline">{t('orcamentos.naoMeInteressa')}</Text>
+                </Pressable>
               </>
             ) : null}
           </View>
           );
         })}
+        {outrosOrc.length > 0 && (
+          <Pressable onPress={() => setVerOutros((v) => !v)} accessibilityRole="button" className="self-start mb-4">
+            <Text className="text-primary-700 text-sm font-medium">{verOutros ? '▾' : '▸'} {t('orcamentos.outros', { n: outrosOrc.length })}</Text>
+          </Pressable>
+        )}
 
         {etapas.length > 0 && (
           <>

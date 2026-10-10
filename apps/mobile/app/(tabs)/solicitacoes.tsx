@@ -21,7 +21,7 @@ export default function SolicitacoesScreen() {
     if (!user) return;
     const { data } = await supabase
       .from('solicitacoes')
-      .select('*, veiculo:veiculos(*), orcamentos(*)')
+      .select('*, veiculo:veiculos(*), orcamentos(*), agenda(status, data_inicio, etapas:manutencao_etapas(status, created_at))')
       .eq('cliente_id', user.id)
       .order('created_at', { ascending: false });
     setSolicitacoes((data as Solicitacao[]) || []);

@@ -11,6 +11,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAvisos } from '../../lib/avisos';
 import GarantiasAtivas from '../../components/GarantiasAtivas';
 import AvaliacaoPendente from '../../components/AvaliacaoPendente';
+import CartaoSituacao from '../../components/CartaoSituacao';
+import { situacaoDoPedido } from '../../lib/situacao';
 
 export default function DashboardScreen() {
   // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
@@ -25,7 +27,7 @@ export default function DashboardScreen() {
     if (!user) return;
     const { data } = await supabase
       .from('solicitacoes')
-      .select('*, veiculo:veiculos(*), orcamentos(*)')
+      .select('*, veiculo:veiculos(*), orcamentos(*), agenda(status, data_inicio, etapas:manutencao_etapas(status, created_at))')
       .eq('cliente_id', user.id)
       .in('status', ['aberta', 'em_orcamento', 'aceita', 'em_andamento'])
       .order('created_at', { ascending: false });
@@ -44,6 +46,12 @@ export default function DashboardScreen() {
     }, [carregar, atualizar])
   );
 
+  // cartao de acao (auditoria 10/10, C1): o pedido mais urgente em destaque;
+  // a lista embaixo fica com os outros
+  const comSituacao = solicitacoes.map((s) => ({ s, sit: situacaoDoPedido(s) })).sort((a, b) => b.sit.prioridade - a.sit.prioridade);
+  const destaque = comSituacao[0];
+  const outros = comSituacao.slice(1).map((x) => x.s);
+
   return (
     <View className="flex-1 bg-gray-50 px-4" style={{ paddingTop: insets.top + 8 }}>
       <View className="flex-row items-center justify-between mb-1">
@@ -59,7 +67,10 @@ export default function DashboardScreen() {
         </Pressable>
       </View>
 
-      <View className="flex-row gap-3 my-4">
+      {/* cartao de acao acima dos dois botoes (auditoria 10/10, B3) */}
+      {destaque && <View className="mt-3"><CartaoSituacao solicitacao={destaque.s} situacao={destaque.sit} comBotao /></View>}
+
+      <View className={`flex-row gap-3 mb-4 ${destaque ? '' : 'mt-4'}`}>
         <Pressable onPress={() => router.push('/emergencia')} accessibilityRole="button" className="flex-1 bg-red-600 rounded-2xl px-3 py-4 items-center justify-center gap-2 active:opacity-90">
           <Ionicons name="car-sport" size={26} color="#fff" />
           <Text className="text-white font-semibold text-center">{t('dashboard.emergenciaBotao')}</Text>
@@ -88,15 +99,15 @@ export default function DashboardScreen() {
         </View>
       )}
 
-      <Text className="text-base font-semibold text-gray-900 mb-2">{t('dashboard.solicitacoesAtivas')}</Text>
+      {(outros.length > 0 || (!loading && !destaque)) && <Text className="text-base font-semibold text-gray-900 mb-2">{destaque ? t('situacao.outros') : t('dashboard.solicitacoesAtivas')}</Text>}
 
       <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
-        data={solicitacoes}
+        data={outros}
         keyExtractor={(item) => item.id}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={carregar} />}
         contentContainerStyle={{ paddingBottom: 24 }}
         renderItem={({ item }) => <SolicitacaoCard solicitacao={item} />}
-        ListEmptyComponent={!loading ? <Text className="text-gray-500 text-center mt-8">{t('dashboard.nenhumaSolicitacao')}</Text> : null}
+        ListEmptyComponent={!loading && !destaque ? <Text className="text-gray-500 text-center mt-8">{t('dashboard.nenhumaSolicitacao')}</Text> : null}
       />
     </View>
   );
