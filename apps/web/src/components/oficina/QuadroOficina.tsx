@@ -60,6 +60,7 @@ export default function QuadroOficina({ eventos, todosEventos, funcionarios, box
   const [por, setPor] = useState<Por>(() => { try { const v = localStorage.getItem(CHAVE_POR) as Por; return ['mecanico', 'elevador', 'hora'].includes(v) ? v : 'mecanico'; } catch { return 'mecanico'; } });
   const [mostrarPrevisto, setMostrarPrevisto] = useState(() => { try { return localStorage.getItem(CHAVE_PREVISTO) !== '0'; } catch { return true; } });
   const [aberto, setAberto] = useState<any | null>(null);
+  const [reservarPara, setReservarPara] = useState<{ evId: string; n: number } | null>(null);
   const [arrastando, setArrastando] = useState<string | null>(null);
   const [alvo, setAlvo] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
@@ -326,7 +327,7 @@ export default function QuadroOficina({ eventos, todosEventos, funcionarios, box
       {por === 'hora' ? (
         <QuadroHora pais={pais} horario={oficina.horario_funcionamento} hoje={hoje} agora={agora} boxes={boxesAtivos} barras={barras}
           ocupacoes={ocupacoesVistas} podeMexer={podePosto} ehDono={ehDono} enviar={enviar}
-          onAbrirCarro={(ev) => { setErro(''); setAberto(ev); }} onGerenciar={() => setGerenciar(true)} />
+          onAbrirCarro={(ev) => { setErro(''); setAberto(ev); }} onGerenciar={() => setGerenciar(true)} reservarPara={reservarPara} />
       ) : (
         <>
           {(ehDono || meuFuncionarioId) && <p className="px-4 pt-2 text-xs text-gray-500">{por === 'mecanico' ? (ehDono ? t('quadroDicaMecanico') : t('quadroDicaToque')) : t('quadroDicaElevador')}</p>}
@@ -516,7 +517,7 @@ export default function QuadroOficina({ eventos, todosEventos, funcionarios, box
                 </div>
               )}
               {pode && ['agendado', 'em_andamento'].includes(ev.status) && boxesAtivos.length > 0 && (
-                <button type="button" onClick={() => { setAberto(null); mudarPor('hora'); }} className="text-sm text-primary-700 hover:underline">{t('quadroReservarPosto')} ›</button>
+                <button type="button" data-testid="quadro-reservar-hora" onClick={() => { setAberto(null); mudarPor('hora'); setReservarPara((r) => ({ evId: ev.id, n: (r?.n || 0) + 1 })); }} className="text-sm text-primary-700 hover:underline">{t('quadroReservarPosto')} ›</button>
               )}
 
               {monitorando && b.realIni && (

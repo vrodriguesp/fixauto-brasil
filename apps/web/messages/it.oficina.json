@@ -265,6 +265,7 @@
     "horaProximoDia": "Giorno successivo",
     "horaDica": "Tocca un orario libero di una postazione per prenotare. Trascina una prenotazione per cambiare ora o postazione. Ciò che è già successo non si modifica.",
     "horaDicaPassado": "Giorno passato: mostra quando ogni auto è stata su ogni postazione (sola lettura).",
+    "horaSemCarros": "Nessuna auto da prenotare in questo giorno (solo auto in officina o prenotate per questo giorno).",
     "horaErroConflito": "La postazione è già occupata in quell'orario: {quem}.",
     "horaErroHorario": "Orario non valido: la prenotazione deve finire nel futuro e durare al massimo 12 h.",
     "horaReservar": "Prenota",

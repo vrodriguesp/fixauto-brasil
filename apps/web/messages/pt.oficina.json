@@ -265,6 +265,7 @@
     "horaProximoDia": "Próximo dia",
     "horaDica": "Toque num horário livre de um posto para reservar. Arraste uma reserva para mudar a hora ou o posto. O que já aconteceu não se altera.",
     "horaDicaPassado": "Dia passado: mostra quando cada carro esteve em cada posto (não se altera).",
+    "horaSemCarros": "Nenhum carro para reservar neste dia (só carros na oficina ou marcados para este dia).",
     "horaErroConflito": "O posto já está ocupado nesse horário: {quem}.",
     "horaErroHorario": "Horário inválido: a reserva tem de terminar no futuro e durar até 12 h.",
     "horaReservar": "Reservar",

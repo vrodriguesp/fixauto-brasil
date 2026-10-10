@@ -265,6 +265,7 @@
     "horaProximoDia": "Järgmine päev",
     "horaDica": "Broneerimiseks puuduta koha vaba aega. Lohista broneeringut, et muuta aega või kohta. Juba toimunut muuta ei saa.",
     "horaDicaPassado": "Möödunud päev: näitab, millal iga auto mis kohal oli (ainult vaatamiseks).",
+    "horaSemCarros": "Sel päeval pole autot, mida broneerida (ainult töökojas olevad või sellele päevale broneeritud autod).",
     "horaErroConflito": "Koht on sel ajal juba hõivatud: {quem}.",
     "horaErroHorario": "Vale aeg: broneering peab lõppema tulevikus ja kestma kuni 12 h.",
     "horaReservar": "Broneeri",

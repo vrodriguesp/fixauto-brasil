@@ -196,6 +196,12 @@ try {
   ok('5 reserva feita pela tela gravada (Tõstuk 1)', res6.length === 1, JSON.stringify(await ocup(R6)));
   await pD2.waitForTimeout(2500);
   ok('5 outro aparelho ve a reserva sem recarregar (tempo real)', (await pD2.locator(`button[title*="${P(6)}"]`).filter({ hasText: '◷' }).count()) > 0);
+  // "Reservar um posto por hora" no detalhe do carro abre a reserva ja com o carro (antes nao fazia nada - dono 10/10)
+  await pD.locator(`button[title*="${P(6)}"]`).filter({ hasNotText: '◷' }).first().click(); await pD.waitForTimeout(700);
+  await pD.getByTestId('quadro-reservar-hora').click(); await pD.waitForTimeout(1200);
+  const dlg = pD.getByRole('dialog');
+  ok('5 "Reservar um posto por hora" abre a reserva com o carro escolhido', (await dlg.count()) === 1 && (await dlg.innerText()).includes(ET('oficinaAgenda.horaReservar')) && (await dlg.locator('select').first().inputValue()) === R6, await dlg.innerText().catch(() => ''));
+  await dlg.getByRole('button', { name: ET('oficinaAgenda.quadroFechar') }).click(); await pD.waitForTimeout(400);
   await pD.screenshot({ path: 'quadro-hora-computador.png', fullPage: true });
   await ctxD2.close();
 

@@ -265,6 +265,7 @@
     "horaProximoDia": "Next day",
     "horaDica": "Tap a free time on a bay to book it. Drag a booking to change its time or bay. What already happened can't be changed.",
     "horaDicaPassado": "Past day: shows when each car was on each bay (read-only).",
+    "horaSemCarros": "No car to book on this day (only cars in the workshop or booked for this day).",
     "horaErroConflito": "The bay is already taken at that time: {quem}.",
     "horaErroHorario": "Invalid time: the booking must end in the future and last up to 12 h.",
     "horaReservar": "Book",

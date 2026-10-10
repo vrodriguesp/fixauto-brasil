@@ -29,6 +29,8 @@ interface Props {
   onAbrirCarro: (ev: any) => void;
   enviar: (corpo: Record<string, unknown>) => Promise<Resposta>;
   onGerenciar: () => void;
+  /** "Reservar um posto por hora" no detalhe do carro: abre a reserva ja com este carro (n muda a cada clique) */
+  reservarPara?: { evId: string; n: number } | null;
 }
 
 const DIA_SEMANA = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
@@ -37,7 +39,7 @@ const ORDEM_TIPO: Record<Box['tipo'], number> = { elevador: 0, box: 1, vaga: 2 }
 const hhmm = (min: number) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(Math.round(min % 60)).padStart(2, '0')}`;
 const minDe = (txt: string) => { const [h, m] = (txt || '').split(':').map(Number); return Number.isFinite(h) ? h * 60 + (m || 0) : NaN; };
 
-export default function QuadroHora({ pais, horario, hoje, agora, boxes, barras, ocupacoes, podeMexer, ehDono, onAbrirCarro, enviar, onGerenciar }: Props) {
+export default function QuadroHora({ pais, horario, hoje, agora, boxes, barras, ocupacoes, podeMexer, ehDono, onAbrirCarro, enviar, onGerenciar, reservarPara }: Props) {
   const t = useTranslations('oficinaAgenda');
   const locale = useLocale();
   const [dia, setDia] = useState(hoje);
@@ -123,15 +125,35 @@ export default function QuadroHora({ pais, horario, hoje, agora, boxes, barras, 
     return trabalho.filter((p) => !doDia.some((o) => o.box_id === p.id && Date.parse(o.inicio) < b && (o.fim ? Date.parse(o.fim) : agora) > a)).length;
   };
 
-  const carrosParaReservar = useMemo(() => barras.filter((b) => podeMexer(b.ev) && (b.ev.status === 'em_andamento' || (b.ev.status === 'agendado' && b.prevIni <= dia && b.prevFim >= dia))), [barras, podeMexer, dia]);
+  const carrosParaReservar = useMemo(() => barras.filter((b) => podeMexer(b.ev) && (b.ev.id === reservarPara?.evId || b.ev.status === 'em_andamento' || (b.ev.status === 'agendado' && b.prevIni <= dia && b.prevFim >= dia))), [barras, podeMexer, dia, reservarPara]);
 
   const abrirNova = (boxId: string, ms: number) => {
-    if (passado || !carrosParaReservar.length) return;
+    // antes o clique nao fazia nada nesses casos (teste do dono 10/10): agora explica
+    if (passado) { setErro(t('horaDicaPassado')); return; }
+    if (!carrosParaReservar.length) { setErro(t('horaSemCarros')); return; }
     let ini = Math.round(ms / (15 * 60e3)) * 15 * 60e3;
     if (ini < agora) ini = Math.ceil(agora / (15 * 60e3)) * 15 * 60e3;
     setErro('');
     setFolha({ modo: 'nova', evId: carrosParaReservar[0].ev.id, boxId, inicio: horaTxt(ini), dur: 60, obs: '' });
   };
+  // vindo do detalhe do carro: dia do carro (hoje, ou o dia marcado se for depois),
+  // primeiro elevador/posto livre na proxima hora cheia de 15 min, este carro escolhido
+  useEffect(() => {
+    if (!reservarPara) return;
+    const b = barras.find((x) => x.ev.id === reservarPara.evId);
+    if (!b || !postos.length) return;
+    const d = b.ev.status === 'agendado' && b.prevIni > hoje ? b.prevIni : hoje;
+    setDia(d);
+    const h = horario?.[DIA_SEMANA[new Date(`${d}T12:00:00Z`).getUTCDay()]];
+    const abre = instanteNaOficina(d, h?.aberto && minDe(h.inicio) >= 0 ? minDe(h.inicio) : 8 * 60, pais).getTime();
+    const ini = Math.max(abre, Math.ceil(agora / (15 * 60e3)) * 15 * 60e3);
+    const livre = (p: Box) => !ocupacoes.some((o) => o.box_id === p.id && Date.parse(o.inicio) < ini + 3600e3 && (o.fim ? Date.parse(o.fim) : agora + 15 * 60e3) > ini);
+    const posto = postos.find((p) => p.tipo !== 'vaga' && livre(p)) || postos.find((p) => p.tipo !== 'vaga') || postos[0];
+    setErro('');
+    setFolha({ modo: 'nova', evId: b.ev.id, boxId: posto.id, inicio: horaTxt(ini), dur: 60, obs: '' });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reservarPara?.n]);
+
   const abrirEditar = (o: OcupacaoVista) => {
     setErro('');
     const ini = Date.parse(o.inicio), fim = Date.parse(o.fim || o.inicio);
