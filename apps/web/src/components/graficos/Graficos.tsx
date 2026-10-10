@@ -20,9 +20,15 @@ function Tabela({ titulo, rotulos, series }: { titulo: string; rotulos: string[]
 /** Barras agrupadas por periodo (ex.: recebidos / respondidos / ganhos por semana). */
 export function Barras({ titulo, rotulos, series, formatar = (n: number) => String(n) }: { titulo: string; rotulos: string[]; series: Serie[]; formatar?: (n: number) => string }) {
   const max = Math.max(1, ...series.flatMap((s) => s.valores));
-  const L = 320, A = 150, base = 128, topo = 16;
+  // topo maior: espaco para o numero em cima da barra mais alta (dono 10/10: "etiquetas dos numeros")
+  const L = 320;
   const grupo = L / Math.max(1, rotulos.length);
   const barra = Math.min(22, (grupo - 6) / Math.max(1, series.length));
+  // espaco em cima para o numero da barra mais alta: deitado ~12; em pe, o comprimento do maior numero
+  const maxTxt = Math.max(1, ...series.flatMap((s) => s.valores.filter((v) => v > 0).map((v) => formatar(v).length)));
+  const emPe = maxTxt * 5 > barra + 2;
+  const topo = emPe ? Math.ceil(8 + maxTxt * 4.4) : 16;
+  const base = topo + 108, A = base + 22;
   return (
     <figure>
       <svg viewBox={`0 0 ${L} ${A}`} className="w-full h-auto" role="img" aria-label={titulo}>
@@ -38,7 +44,13 @@ export function Barras({ titulo, rotulos, series, formatar = (n: number) => Stri
                 return (
                   <g key={s.nome}>
                     <rect x={x0 + j * barra} y={base - h} width={barra - 2} height={h} fill={s.cor} rx={2}><title>{`${r} · ${s.nome}: ${formatar(v)}`}</title></rect>
-                    {v > 0 && series.length <= 2 && rotulos.length <= 6 && <text x={x0 + j * barra + (barra - 2) / 2} y={base - h - 3} textAnchor="middle" fontSize="9" fill="#374151">{formatar(v)}</text>}
+                    {v > 0 && (() => {
+                      const txt = formatar(v); const cx = x0 + j * barra + (barra - 2) / 2;
+                      // cabe deitado? (~5 unidades por caractere em fonte 9); senao, em pe
+                      return txt.length * 5 <= barra + 2
+                        ? <text x={cx} y={base - h - 3} textAnchor="middle" fontSize="9" fill="#374151" data-rotulo-valor="1">{txt}</text>
+                        : <text x={cx} y={base - h - 3} transform={`rotate(-90 ${cx} ${base - h - 3})`} textAnchor="start" dominantBaseline="central" fontSize={barra < 7 ? 6 : 7.5} fill="#374151" data-rotulo-valor="1">{txt}</text>;
+                    })()}
                   </g>
                 );
               })}
@@ -61,8 +73,11 @@ export function Barras({ titulo, rotulos, series, formatar = (n: number) => Stri
 export function Linha({ titulo, rotulos, valores, cor = '#0284c7', formatar = (n: number) => String(n) }: { titulo: string; rotulos: string[]; valores: (number | null)[]; cor?: string; formatar?: (n: number) => string }) {
   const nums = valores.filter((v): v is number => v != null);
   const max = Math.max(1, ...nums);
-  const L = 320, A = 140, base = 116, topo = 16;
+  const L = 320;
   const passo = L / Math.max(1, rotulos.length);
+  const maxTxt = Math.max(1, ...valores.filter((v): v is number => v != null).map((v) => formatar(v).length));
+  const topo = maxTxt * 4.6 > passo ? Math.ceil(12 + maxTxt * 4.2) : 20;
+  const base = topo + 96, A = base + 24;
   const pts = valores.map((v, i) => (v == null ? null : { x: i * passo + passo / 2, y: base - ((base - topo) * v) / max, v }));
   const caminho = pts.filter(Boolean).map((p, i) => `${i ? 'L' : 'M'}${p!.x},${p!.y}`).join(' ');
   return (
@@ -71,6 +86,14 @@ export function Linha({ titulo, rotulos, valores, cor = '#0284c7', formatar = (n
         <line x1={0} x2={L} y1={base} y2={base} stroke="#9ca3af" />
         <path d={caminho} fill="none" stroke={cor} strokeWidth={2.5} />
         {pts.map((p, i) => p && <circle key={i} cx={p.x} cy={p.y} r={4} fill={cor}><title>{`${rotulos[i]}: ${formatar(p.v)}`}</title></circle>)}
+        {pts.map((p, i) => {
+          if (!p) return null;
+          const txt = formatar(p.v);
+          // pontos proximos: numero em pe, para nao encostar no vizinho
+          return txt.length * 4.6 <= passo
+            ? <text key={`v${i}`} x={p.x} y={p.y - 8} textAnchor="middle" fontSize="8.5" fill="#374151" data-rotulo-valor="1">{txt}</text>
+            : <text key={`v${i}`} x={p.x} y={p.y - 8} transform={`rotate(-90 ${p.x} ${p.y - 8})`} textAnchor="start" dominantBaseline="central" fontSize="7.5" fill="#374151" data-rotulo-valor="1">{txt}</text>;
+        })}
         {rotulos.map((r, i) => mostraRotulo(i, rotulos.length) && <text key={r} x={i * passo + passo / 2} y={A - 6} textAnchor="middle" fontSize="9" fill="#6b7280">{r}</text>)}
       </svg>
       <Tabela titulo={titulo} rotulos={rotulos} series={[{ nome: titulo, cor, valores: valores.map((v) => v ?? 0) }]} />
