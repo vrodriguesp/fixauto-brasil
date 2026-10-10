@@ -19,7 +19,8 @@ export function useAgenda() {
         *,
         solicitacao:solicitacoes(*, veiculo:veiculos(*), cliente:profiles!solicitacoes_cliente_id_fkey(*)),
         funcionario:funcionarios(*, profile:profiles(nome, email)),
-        etapas:manutencao_etapas(*, funcionario:funcionarios(*, profile:profiles(nome)))
+        etapas:manutencao_etapas(*, funcionario:funcionarios(*, profile:profiles(nome))),
+        ocupacoes:posto_ocupacoes(*)
       `)
       .eq('oficina_id', oficina.id)
       .order('data_inicio', { ascending: true });
@@ -40,6 +41,8 @@ export function useAgenda() {
       .channel(`agenda-${oficina.id}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'agenda', filter: `oficina_id=eq.${oficina.id}` }, recarregar)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'manutencao_etapas' }, recarregar)
+      // elevadores/postos por hora (migracao 057): reserva feita em outro aparelho
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'posto_ocupacoes', filter: `oficina_id=eq.${oficina.id}` }, recarregar)
       .subscribe();
     return () => { if (espera) clearTimeout(espera); supabase.removeChannel(canal); };
   }, [oficina, fetch]);

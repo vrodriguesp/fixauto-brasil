@@ -40,6 +40,11 @@ export default function ManualCheckinPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  // carro de balcao que ja esta na porta: registra E faz o check-in de verdade
+  // (antes so criava um "agendado" e o Quadro mostrava "check-in pendente")
+  const [jaAqui, setJaAqui] = useState(true);
+  const hojeLocal = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; })();
+  const fazerCheckin = jaAqui && dataCheckin === hojeLocal;
 
   const dataEntrega = (() => {
     const d = new Date(dataCheckin + 'T12:00:00');
@@ -59,10 +64,10 @@ export default function ManualCheckinPage() {
     const tipoLabel = tc(`tiposServico.${tipoServico}`);
 
     // Create agenda event
-    const { error: agendaError } = await addEvento({
+    const { data: criado, error: agendaError } = await addEvento({
       titulo: `${tipoLabel} - ${veiculoMarca} ${veiculoModelo}`,
       descricao: `${t('descricaoLabelCliente')}: ${clienteNome} | ${t('descricaoLabelPlaca')}: ${veiculoPlaca || t('descricaoNaoInformado')} | ${t('descricaoLabelTelefone')}: ${clienteTelefone || t('descricaoNaoInformado')}${descricao ? ' | ' + descricao : ''}${valorEstimado ? ` | ${t('descricaoLabelValor')}: ${formatCurrency(parseFlexibleNumber(valorEstimado), currencyForCountry(oficina?.pais), locale)}` : ''}`,
-      data_inicio: localParaIso(dataCheckin, turnoCheckin === 'manha' ? '08:00' : '13:00'),
+      data_inicio: fazerCheckin ? new Date().toISOString() : localParaIso(dataCheckin, turnoCheckin === 'manha' ? '08:00' : '13:00'),
       data_fim: localParaIso(dataEntrega, '18:00'),
       tipo: 'externo',
       cor,
@@ -72,6 +77,10 @@ export default function ManualCheckinPage() {
       setError(typeof agendaError === 'string' ? agendaError : (agendaError as any).message || t('erroAoRegistrar'));
       setSaving(false);
       return;
+    }
+
+    if (fazerCheckin && (criado as any)?.id) {
+      await fetch('/api/servico', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ acao: 'checkin', eventoId: (criado as any).id, antecipar: true }) }).catch(() => null);
     }
 
     // Check if client exists by email
@@ -238,7 +247,13 @@ export default function ManualCheckinPage() {
               <label htmlFor="c7917-11" className="block text-sm font-medium text-gray-700 mb-1">{t('dataCheckin')}</label>
               <input id="c7917-11" type="date" className="input-field" value={dataCheckin} onChange={(e) => setDataCheckin(e.target.value)} />
             </div>
-            <div>
+            {dataCheckin === hojeLocal && (
+              <label className="sm:col-span-2 flex items-start gap-2 rounded-lg bg-green-50 p-3 text-sm text-green-900">
+                <input type="checkbox" className="mt-0.5 h-4 w-4" checked={jaAqui} onChange={(e) => setJaAqui(e.target.checked)} />
+                <span><span className="font-medium">{t('carroJaAqui')}</span><span className="block text-xs text-green-800">{t('carroJaAquiAjuda')}</span></span>
+              </label>
+            )}
+            <div className={fazerCheckin ? 'hidden' : ''}>
               <label htmlFor="c7917-12" className="block text-sm font-medium text-gray-700 mb-1">{t('turno')}</label>
               <select id="c7917-12" className="input-field" value={turnoCheckin} onChange={(e) => setTurnoCheckin(e.target.value)}>
                 <option value="manha">{t('manha')}</option>

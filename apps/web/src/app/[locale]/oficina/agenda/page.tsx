@@ -73,8 +73,11 @@ export default function AgendaPage() {
   const [indicadores, setIndicadores] = useState(0);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [assigningId, setAssigningId] = useState<string | null>(null);
+  // check-in: mecanico e posto ("Colocar em") escolhidos antes de confirmar
+  const [checkinEscolha, setCheckinEscolha] = useState<{ funcId: string; boxId: string }>({ funcId: '', boxId: '' });
+  const [erroCheckin, setErroCheckin] = useState<string | null>(null);
   // check-in de carro agendado para outro dia: confirma antes
-  const [antecipar, setAntecipar] = useState<{ ev: any; funcId?: string; data: string } | null>(null);
+  const [antecipar, setAntecipar] = useState<{ ev: any; funcId?: string; boxId?: string; data: string } | null>(null);
   // entregar o carro encerra o servico: pede confirmacao
   const [confirmarEntrega, setConfirmarEntrega] = useState<any | null>(null);
   // entrega recusada pelo servidor (ex.: carro sem check-in): mostra o aviso
@@ -112,7 +115,7 @@ export default function AgendaPage() {
   // elevadores/boxes (migracao 053), em tempo real
   const carregarBoxes = async () => {
     if (!oficina) return;
-    const { data } = await supabase.from('oficina_boxes').select('id, nome, tipo, ativo, ordem').eq('oficina_id', oficina.id);
+    const { data } = await supabase.from('oficina_boxes').select('id, nome, tipo, ativo, ordem, capacidade').eq('oficina_id', oficina.id);
     setBoxes((data as Box[]) || []);
   };
   useEffect(() => {
@@ -205,15 +208,16 @@ export default function AgendaPage() {
 
   // pelo servidor (/api/servico): pedido do cliente vai para "em andamento",
   // o cliente e avisado e fica no historico; sem mecanico tambem funciona
-  const handleCheckIn = async (ev: any, funcId?: string, confirmado = false) => {
-    setUpdatingId(ev.id);
+  const handleCheckIn = async (ev: any, funcId?: string, confirmado = false, boxId?: string) => {
+    setUpdatingId(ev.id); setErroCheckin(null);
     const res = await fetch('/api/servico', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ acao: 'checkin', eventoId: ev.id, antecipar: confirmado, ...(funcId ? { funcionarioId: funcId } : {}) }),
+      body: JSON.stringify({ acao: 'checkin', eventoId: ev.id, antecipar: confirmado, ...(funcId ? { funcionarioId: funcId } : {}), ...(boxId ? { boxId } : {}) }),
     });
     const dados = await res.json().catch(() => ({}));
-    if (res.status === 409 && dados.codigo === 'CHECKIN_FUTURO') setAntecipar({ ev, funcId, data: dados.dataAgendada });
+    if (res.status === 409 && dados.codigo === 'CHECKIN_FUTURO') setAntecipar({ ev, funcId, boxId, data: dados.dataAgendada });
     else setAntecipar(null);
+    if (res.status === 409 && dados.codigo === 'CONFLITO_POSTO') setErroCheckin(ev.id);
     await refresh();
     setUpdatingId(null);
     setAssigningId(null);
@@ -342,13 +346,27 @@ export default function AgendaPage() {
                     {isUpdating ? '...' : t('btnCheckin')}
                   </button>
                 ) : assigningId === ev.id ? (
-                  <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                    <select className="input-field !py-1 !px-2 text-xs !w-auto" defaultValue=""
-                      onChange={(e) => handleCheckIn(ev, e.target.value || undefined)}>
-                      <option value="">{t('semMecanico')}</option>
-                      {funcionarios.map((f) => <option key={f.id} value={f.id}>{nomeFuncionario(f)}</option>)}
-                    </select>
-                    <button onClick={(e) => { e.stopPropagation(); setAssigningId(null); }} className="text-xs text-gray-400">x</button>
+                  <div className="flex flex-wrap items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                    {funcionarios.length > 0 && (
+                      <select className="input-field !py-1 !px-2 text-xs !w-auto" aria-label={t('quadroMecanico')} value={checkinEscolha.funcId}
+                        onChange={(e) => setCheckinEscolha({ ...checkinEscolha, funcId: e.target.value })}>
+                        <option value="">{t('semMecanico')}</option>
+                        {funcionarios.map((f) => <option key={f.id} value={f.id}>{nomeFuncionario(f)}</option>)}
+                      </select>
+                    )}
+                    {boxes.some((b) => b.ativo) && (
+                      <select className="input-field !py-1 !px-2 text-xs !w-auto" aria-label={t('checkinColocarEm')} value={checkinEscolha.boxId}
+                        onChange={(e) => setCheckinEscolha({ ...checkinEscolha, boxId: e.target.value })}>
+                        <option value="">{t('checkinColocarEm')}: —</option>
+                        {boxes.filter((b) => b.ativo).map((b) => <option key={b.id} value={b.id}>{b.nome}</option>)}
+                      </select>
+                    )}
+                    <button onClick={(e) => { e.stopPropagation(); handleCheckIn(ev, checkinEscolha.funcId || undefined, false, checkinEscolha.boxId || undefined); }} disabled={isUpdating}
+                      className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-xs font-medium rounded-lg">
+                      {isUpdating ? '...' : t('btnCheckin')}
+                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); setAssigningId(null); }} aria-label={t('cancelar')} className="text-xs text-gray-400 px-1">x</button>
+                    {erroCheckin === ev.id && <p role="alert" className="basis-full text-right text-xs text-red-700">{t('checkinPostoOcupado')}</p>}
                   </div>
                 ) : (
                   <div className="flex items-center gap-1">
@@ -358,7 +376,7 @@ export default function AgendaPage() {
                         {noShowingId === ev.id ? '...' : t('btnMarcarFalta')}
                       </button>
                     )}
-                    <button onClick={(e) => { e.stopPropagation(); if (funcionarios.length) setAssigningId(ev.id); else handleCheckIn(ev); }} disabled={isUpdating}
+                    <button onClick={(e) => { e.stopPropagation(); if (funcionarios.length || boxes.some((b) => b.ativo)) { setCheckinEscolha({ funcId: '', boxId: (ev as any).box_id || '' }); setErroCheckin(null); setAssigningId(ev.id); } else handleCheckIn(ev); }} disabled={isUpdating}
                       className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white text-xs font-medium rounded-lg">
                       {isUpdating ? '...' : t('btnCheckin')}
                     </button>
@@ -614,9 +632,10 @@ export default function AgendaPage() {
         <div className="space-y-4">
           <QuadroOficina
             eventos={allEventos}
+            todosEventos={eventos}
             funcionarios={funcionarios}
             boxes={boxes}
-            oficinaId={oficina.id}
+            oficina={oficina as any}
             ehDono={ehDono}
             meuFuncionarioId={funcionario?.id ?? null}
             onAlterado={() => { refresh(); carregarBoxes(); setIndicadores((n) => n + 1); }}
@@ -778,7 +797,7 @@ export default function AgendaPage() {
         <div className="fixed inset-x-3 bottom-4 z-50 sm:left-auto sm:right-6 sm:max-w-md bg-white border border-amber-300 shadow-lg rounded-xl p-4" role="alertdialog">
           <p className="text-sm text-amber-900 mb-3">{t('checkinAntecipadoTexto', { data: new Date(antecipar.data).toLocaleString(INTL_LOCALE[locale] || 'en-GB', { dateStyle: 'short', timeStyle: 'short' }) })}</p>
           <div className="flex gap-2">
-            <button onClick={() => handleCheckIn(antecipar.ev, antecipar.funcId, true)} className="btn-primary !py-2 text-sm flex-1">{t('checkinAntecipadoConfirmar')}</button>
+            <button onClick={() => handleCheckIn(antecipar.ev, antecipar.funcId, true, antecipar.boxId)} className="btn-primary !py-2 text-sm flex-1">{t('checkinAntecipadoConfirmar')}</button>
             <button onClick={() => setAntecipar(null)} className="btn-secondary !py-2 text-sm">{t('cancelarAntecipado')}</button>
           </div>
         </div>

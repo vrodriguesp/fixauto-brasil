@@ -24,7 +24,7 @@ export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: n
   const RAIO_KM = 50;
   const dLat = RAIO_KM / 111;
   const dLon = RAIO_KM / (111 * Math.cos((latitude * Math.PI) / 180));
-  const campos = 'id, profile_id, especialidades, capacidade_servicos, latitude, longitude, profile:profiles!oficinas_profile_id_fkey(idioma)';
+  const campos = 'id, profile_id, especialidades, capacidade_servicos, capacidade_total, latitude, longitude, profile:profiles!oficinas_profile_id_fkey(idioma)';
 
   const { data: proximas } = await supabaseAdmin
     .from('oficinas')

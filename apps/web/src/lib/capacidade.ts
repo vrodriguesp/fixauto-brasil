@@ -51,17 +51,28 @@ export async function calcularCargaPorFuncionario(
   return carga;
 }
 
+/** Carros que a oficina tem agora (na oficina ou agendados ate hoje), de todos os tipos. */
+export async function cargaTotalAtual(supabase: SupabaseClient, oficinaId: string): Promise<number> {
+  const fimDeHoje = new Date(); fimDeHoje.setUTCHours(23, 59, 59, 999);
+  const { count } = await supabase.from('agenda').select('id', { count: 'exact', head: true })
+    .eq('oficina_id', oficinaId)
+    .or(`status.eq.em_andamento,and(status.eq.agendado,data_inicio.lte.${fimDeHoje.toISOString()})`);
+  return count || 0;
+}
+
 /**
- * True se a oficina ainda tem capacidade declarada livre pro tipo de
- * servico. Oficinas que nunca configuraram capacidade_servicos pro tipo
- * (0 ou ausente) sao tratadas como "sem limite definido" - nao bloqueia
- * quem nunca mexeu nessa configuracao.
+ * True se a oficina ainda tem capacidade livre: o limite do tipo de servico
+ * (capacidade_servicos) E o limite geral da oficina (capacidade_total,
+ * migracao 057). Limite vazio/0 = sem limite - nao bloqueia quem nunca
+ * mexeu nessa configuracao.
  */
 export async function oficinaTemCapacidade(
   supabase: SupabaseClient,
-  oficina: { id: string; capacidade_servicos?: Record<string, number> | null },
+  oficina: { id: string; capacidade_servicos?: Record<string, number> | null; capacidade_total?: number | null },
   tipoServico: string
 ): Promise<boolean> {
+  const total = oficina.capacidade_total;
+  if (total && total > 0 && (await cargaTotalAtual(supabase, oficina.id)) >= total) return false;
   const limite = oficina.capacidade_servicos?.[tipoServico];
   if (!limite || limite <= 0) return true;
 

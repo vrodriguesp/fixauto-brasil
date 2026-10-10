@@ -2,15 +2,16 @@
 //  1 a oficina escolhe a visao Quadro; fica salva ao voltar
 //  2 linhas por mecanico (com carga/limite) e "sem mecanico"; barras dos carros
 //  3 elevadores: cadastra 2 pela tela; carro A no Elevador 1 (toque, celular)
-//  4 carro B tambem no Elevador 1 -> conflito avisado; arrastar B para o
-//    Elevador 2 (computador) -> conflito some
+//  4 carro B (chega amanha) planejado no Elevador 1 -> SEM falso conflito
+//    (conflito agora e por hora, ver site-quadro-hora.mjs); arrastar B para o
+//    Elevador 2 (computador)
 //  5 arrastar carro A para o mecanico 1 (computador) -> historico
 //  6 as visoes se comunicam: outro aparelho aberto ve a troca sem recarregar
 //    (tempo real), e o Dia mostra o elevador no cartao
 //  7 mecanico com acesso: escolhe o elevador do carro dele; nao troca mecanico
 //  8 enderecos antigos (Distribuicao, Capacidade) levam ao Quadro
 //  9 Quadro nos 6 idiomas: sem chave crua, pagina sem rolagem lateral
-//   node site-quadro.mjs <.env.local>
+//   node site-quadro.mjs <.env.local> [SITE]
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -20,7 +21,7 @@ const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
-const SITE = 'https://bipfix.com';
+const SITE = process.argv[3] || 'https://bipfix.com';
 const sb = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 const MSG = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/messages';
 const msgs = (l) => Object.assign({}, ...['', '.cliente', '.oficina', '.loja', '.auth', '.misc'].map((a) => JSON.parse(fs.readFileSync(`${MSG}/${l}${a}.json`, 'utf8'))));
@@ -59,7 +60,7 @@ try {
     const { data: v } = await sb.from('veiculos').insert({ profile_id: cli.id, fipe_tipo: 'cars', fipe_marca: 'Fiat', fipe_modelo: modelo, fipe_ano: '2020', placa }).select('id').single();
     const { data: s } = await sb.from('solicitacoes').insert({ cliente_id: cli.id, veiculo_id: v.id, tipo: 'mecanica', descricao: 'quadro', urgencia: 'media', latitude: -23.56, longitude: -46.65, endereco: 'SP', status: status === 'em_andamento' ? 'em_andamento' : 'aceita' }).select('id').single();
     sols.push(s.id);
-    const { data: a, error } = await sb.from('agenda').insert({ oficina_id: ofId, solicitacao_id: s.id, titulo: `Mecânica - ${placa}`, data_inicio: dia(ini), data_fim: dia(fim), data_fim_prevista: dia(fim), tipo: 'plataforma', status, cor: '#3B82F6', funcionario_id: func || null }).select('id').single();
+    const { data: a, error } = await sb.from('agenda').insert({ oficina_id: ofId, solicitacao_id: s.id, titulo: `Mecânica - ${placa}`, data_inicio: dia(ini), data_fim: dia(fim), data_fim_prevista: dia(fim), tipo: 'plataforma', status, cor: '#3B82F6', funcionario_id: func || null, ...(status === 'em_andamento' ? { checkin_em: dia(ini) } : {}) }).select('id').single();
     if (error) throw new Error('agenda: ' + error.message);
     ags.push(a.id); return a.id;
   };
@@ -94,28 +95,30 @@ try {
   ok('3 linhas dos elevadores e disponibilidade', txt.includes('Elevador 1') && txt.includes('Elevador 2') && txt.includes(PT('oficinaAgenda.quadroElevadoresLivres', { total: 2 })));
   // carro A no Elevador 1 (toque + escolher)
   await barra(pM, placaA).click(); await pM.waitForTimeout(600);
-  await pM.getByLabel(PT('oficinaAgenda.quadroTrocarElevador')).selectOption({ label: 'Elevador 1' }); await pM.waitForTimeout(2500);
+  await pM.getByLabel(PT('oficinaAgenda.quadroPostoAtual')).selectOption({ label: `Elevador 1 — ${PT('oficinaAgenda.quadroTipoBox.elevador')}` }); await pM.waitForTimeout(2500);
   await pM.getByRole('button', { name: PT('oficinaAgenda.quadroFechar') }).last().click();
   const e1 = bxs.find((b) => b.nome === 'Elevador 1').id, e2 = bxs.find((b) => b.nome === 'Elevador 2').id;
   let { data: a1 } = await sb.from('agenda').select('box_id').eq('id', agA).single();
   ok('3 carro A no Elevador 1 (celular, toque)', a1.box_id === e1);
   const { data: hist } = await sb.from('agenda_historico').select('acao').eq('agenda_id', agA);
   ok('3 troca de elevador no historico', (hist || []).some((h) => h.acao === 'elevador'), JSON.stringify(hist));
+  const { data: oc1 } = await sb.from('posto_ocupacoes').select('box_id, real, fim').eq('agenda_id', agA);
+  ok('3 carro em servico no elevador = ocupacao real aberta (057)', (oc1 || []).length === 1 && oc1[0].real && !oc1[0].fim && oc1[0].box_id === e1, JSON.stringify(oc1));
 
   // ---------- 4 conflito e arrastar (computador)
   const ctxD = await ctxNovo(true); const pD = await entrar(ctxD, dono);
   await abrirQuadro(pD);
   await pD.getByRole('button', { name: PT('oficinaAgenda.quadroPorElevador'), exact: true }).click(); await pD.waitForTimeout(800);
   await barra(pD, placaB).click(); await pD.waitForTimeout(500);
-  await pD.getByLabel(PT('oficinaAgenda.quadroTrocarElevador')).selectOption({ label: 'Elevador 1' }); await pD.waitForTimeout(2500);
+  await pD.getByLabel(PT('oficinaAgenda.quadroPostoPlanejado')).selectOption({ label: `Elevador 1 — ${PT('oficinaAgenda.quadroTipoBox.elevador')}` }); await pD.waitForTimeout(2500);
   await pD.getByRole('button', { name: PT('oficinaAgenda.quadroFechar') }).last().click(); await pD.waitForTimeout(1500);
-  txt = await pD.innerText('body');
-  ok('4 dois carros no Elevador 1: conflito avisado', txt.includes(PT('oficinaAgenda.quadroAlertaElevadorDuplo')), txt.slice(0, 300));
+  const { data: bPlan } = await sb.from('agenda').select('box_id').eq('id', agB).single();
+  ok('4 carro agendado com posto planejado (Elevador 1)', bPlan.box_id === e1, bPlan.box_id);
+  ok('4 sem falso conflito: A hoje e B amanha no mesmo elevador', !(await pD.locator('button.ring-red-600').count()));
   const linhaE2 = pD.locator('div.flex.border-b', { has: pD.locator('p', { hasText: /^Elevador 2$/ }) }).locator('div.relative').first();
   await barra(pD, placaB).dragTo(linhaE2); await pD.waitForTimeout(3000);
   const { data: b2 } = await sb.from('agenda').select('box_id').eq('id', agB).single();
   ok('4 arrastou B para o Elevador 2 (computador)', b2.box_id === e2, b2.box_id);
-  ok('4 conflito sumiu', !(await pD.innerText('body')).includes(PT('oficinaAgenda.quadroAlertaElevadorDuplo')));
   await pD.screenshot({ path: 'quadro-elevador-computador.png', fullPage: true });
 
   // ---------- 5 arrastar para mecanico
@@ -142,7 +145,7 @@ try {
   ok('7 mecanico ve so o carro dele', (await barra(pMec, placaB).count()) === 1 && (await barra(pMec, placaA).count()) === 0);
   await barra(pMec, placaB).click(); await pMec.waitForTimeout(500);
   ok('7 mecanico nao troca o mecanico', await pMec.getByLabel(PT('oficinaAgenda.quadroTrocarMecanico')).isDisabled());
-  await pMec.getByLabel(PT('oficinaAgenda.quadroTrocarElevador')).selectOption({ label: PT('oficinaAgenda.quadroSemElevador') }); await pMec.waitForTimeout(2500);
+  await pMec.getByLabel(PT('oficinaAgenda.quadroPostoPlanejado')).selectOption({ label: PT('oficinaAgenda.quadroSemElevador') }); await pMec.waitForTimeout(2500);
   const { data: b3 } = await sb.from('agenda').select('box_id').eq('id', agB).single();
   ok('7 mecanico tira o carro dele do elevador', b3.box_id === null);
   const tokMec = (await createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } }).auth.signInWithPassword({ email: mecU.email, password: mecU.senha })).data.session.access_token;
@@ -171,7 +174,7 @@ try {
 } catch (e) { falhas++; console.log('FALHA parou:', String(e.stack).slice(0, 800)); }
 finally {
   await browser.close();
-  for (const a of ags) { await sb.from('agenda_historico').delete().eq('agenda_id', a); await sb.from('manutencao_etapas').delete().eq('agenda_id', a); }
+  for (const a of ags) { await sb.from('agenda_historico').delete().eq('agenda_id', a); await sb.from('manutencao_etapas').delete().eq('agenda_id', a); await sb.from('posto_ocupacoes').delete().eq('agenda_id', a); }
   await sb.from('agenda').delete().eq('oficina_id', ofId);
   for (const s of sols) await sb.from('solicitacoes').delete().eq('id', s);
   if (ofId) { await sb.from('oficina_boxes').delete().eq('oficina_id', ofId); await sb.from('funcionarios').delete().eq('oficina_id', ofId); await sb.from('comissao_config').delete().eq('oficina_id', ofId); await sb.from('oficinas').delete().eq('id', ofId); }

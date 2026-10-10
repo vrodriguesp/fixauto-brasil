@@ -10,6 +10,7 @@ import { TIPOS_SERVICO } from '@fixauto/shared';
 import { Link, rota } from '@/i18n/navigation';
 import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEndereco } from '@/components/forms/EnderecoEstruturado';
 import { seguradorasDoPais } from '@/lib/seguradoras';
+import CampoNumero from '@/components/forms/CampoNumero';
 
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
@@ -54,6 +55,9 @@ export default function PerfilOficinaPage() {
 
   // Capacity per service type
   const [capacidade, setCapacidade] = useState<Record<string, number>>({});
+  // limite geral de carros ao mesmo tempo (0 = sem limite) e modo Monitoramento (migracao 057)
+  const [capacidadeTotal, setCapacidadeTotal] = useState(0);
+  const [monitoramento, setMonitoramento] = useState(false);
 
   const DIAS = [
     { key: 'seg', label: t('segunda') }, { key: 'ter', label: t('terca') },
@@ -80,6 +84,8 @@ export default function PerfilOficinaPage() {
       if ((oficina as any).horario_funcionamento) {
         setHorario((oficina as any).horario_funcionamento);
       }
+      setCapacidadeTotal((oficina as any).capacidade_total || 0);
+      setMonitoramento(!!(oficina as any).monitoramento_ativo);
       if ((oficina as any).capacidade_servicos) {
         setCapacidade((oficina as any).capacidade_servicos);
       }
@@ -195,6 +201,8 @@ export default function PerfilOficinaPage() {
           seguradoras_convencionadas: convencionadas,
           horario_funcionamento: horario,
           capacidade_servicos: capacidade,
+          capacidade_total: capacidadeTotal > 0 ? Math.min(500, capacidadeTotal) : null,
+          monitoramento_ativo: monitoramento,
           // posicao conferida no mapa (distancia ate os clientes)
           ...(end.latitude != null && end.longitude != null ? { latitude: end.latitude, longitude: end.longitude } : {}),
           ...(end.pais ? { pais: end.pais } : {}),
@@ -407,10 +415,21 @@ export default function PerfilOficinaPage() {
         )}
       </div>
 
-      {/* Capacity per service type */}
-      {especialidades.length > 0 && (
-        <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('capacidadePorServico')}</h2>
+      {/* Capacidade: limite geral da oficina e por tipo de servico (vazio = sem limite) */}
+      <div className="card mb-6" id="capacidade">
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('capacidadeTitulo')}</h2>
+        <label className="block mb-4">
+          <span className="block text-sm font-medium text-gray-700">{t('capacidadeTotalRotulo')}</span>
+          <span className="block text-xs text-gray-500 mb-2">{t('capacidadeTotalAjuda')}</span>
+          <span className="flex items-center gap-2">
+            <CampoNumero value={capacidadeTotal} onChange={setCapacidadeTotal} min={0} vazioQuandoZero placeholder={t('semLimite')}
+              className="input-field !w-28 !py-1.5 text-sm text-center" aria-label={t('capacidadeTotalRotulo')} />
+            <span className="text-xs text-gray-400">{t('carros')}</span>
+          </span>
+        </label>
+        {especialidades.length > 0 && (
+          <>
+          <h3 className="text-sm font-semibold text-gray-900 mb-1">{t('capacidadePorServico')}</h3>
           <p className="text-sm text-gray-500 mb-4">
             {t('defineNumeroMaximoCarros')}
           </p>
@@ -421,26 +440,33 @@ export default function PerfilOficinaPage() {
                   <span className="text-lg">{svc.icon}</span>
                   <span className="text-sm font-medium text-gray-700">{tc(`tiposServico.${svc.value}`)}</span>
                 </div>
-                <input
-                  type="number"
+                <CampoNumero
                   min={0}
+                  vazioQuandoZero
                   placeholder={t('semLimite')}
+                  aria-label={tc(`tiposServico.${svc.value}`)}
                   className="input-field !w-28 !py-1.5 text-sm text-center"
-                  value={capacidade[svc.value] ?? ''}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setCapacidade((prev) => ({
-                      ...prev,
-                      [svc.value]: val === '' ? 0 : Number(val),
-                    }));
-                  }}
+                  value={capacidade[svc.value] || 0}
+                  onChange={(n) => setCapacidade((prev) => ({ ...prev, [svc.value]: n }))}
                 />
                 <span className="text-xs text-gray-400">{t('carros')}</span>
               </div>
             ))}
           </div>
-        </div>
-      )}
+          </>
+        )}
+      </div>
+
+      {/* Monitoramento do carro no Quadro (liga/desliga) */}
+      <div className="card mb-6">
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" className="mt-1 h-5 w-5" checked={monitoramento} onChange={(e) => setMonitoramento(e.target.checked)} />
+          <span>
+            <span className="block text-lg font-semibold text-gray-900">{t('monitoramentoTitulo')}</span>
+            <span className="block text-sm text-gray-600">{t('monitoramentoExplica')}</span>
+          </span>
+        </label>
+      </div>
 
       {/* Personal info */}
       <div className="card mb-6">

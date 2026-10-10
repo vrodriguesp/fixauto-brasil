@@ -3,9 +3,11 @@ import { getSessionUserId } from '@/lib/api-auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { notifCarroChegou, notifEtapa, notifProntoRetirar } from '@/lib/notif-servico';
 import { entregarServico } from '@/lib/entrega';
+import { conflitosNoPosto, postoAtivo } from '@/lib/postos';
 
 export const dynamic = 'force-dynamic';
 
+const ACOES = ['checkin', 'etapa', 'atribuir', 'elevador', 'posto_entrar', 'posto_sair', 'posto_reservar', 'posto_mover', 'posto_cancelar'];
 const ETAPAS = ['recebido', 'diagnostico', 'aguardando_pecas', 'em_execucao', 'pausa_cliente', 'pausa_pecas', 'pausa_geral', 'teste_final', 'concluido', 'entregue'];
 
 // Andamento do servico na oficina (check-in, etapas, mecanico). Antes cada
@@ -21,10 +23,18 @@ export async function POST(req: NextRequest) {
   const userId = await getSessionUserId(req);
   if (!userId) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
   const corpo = await req.json().catch(() => ({}));
-  const { acao, eventoId, status, observacao, funcionarioId, antecipar, boxId } = corpo as Record<string, any>;
-  if (!['checkin', 'etapa', 'atribuir', 'elevador'].includes(acao) || typeof eventoId !== 'string') {
-    return NextResponse.json({ error: 'Dados inválidos', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
+  const { acao, status, observacao, funcionarioId, antecipar, boxId, ocupacaoId, inicio, fim } = corpo as Record<string, any>;
+  let { eventoId } = corpo as Record<string, any>;
+  if (!ACOES.includes(acao)) return NextResponse.json({ error: 'Dados inválidos', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
+  // mover/cancelar reserva: o carro vem da propria ocupacao
+  let ocup: any = null;
+  if (['posto_mover', 'posto_cancelar'].includes(acao)) {
+    if (typeof ocupacaoId !== 'string') return NextResponse.json({ error: 'Dados inválidos', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
+    const { data } = await supabaseAdmin.from('posto_ocupacoes').select('*').eq('id', ocupacaoId).maybeSingle();
+    if (!data) return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
+    ocup = data; eventoId = data.agenda_id;
   }
+  if (typeof eventoId !== 'string') return NextResponse.json({ error: 'Dados inválidos', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
 
   const { data: ev } = await supabaseAdmin
     .from('agenda')
@@ -79,6 +89,14 @@ export async function POST(req: NextRequest) {
       mudancas.data_inicio = agora.toISOString();
     }
     if (funcId) mudancas.funcionario_id = funcId;
+    // "Colocar em": check-in e posto num clique (o gatilho da 057 abre a ocupacao)
+    if (boxId) {
+      const b = await postoAtivo(boxId, ev.oficina_id);
+      if (!b) return NextResponse.json({ error: 'Posto inválido', codigo: 'ELEVADOR_INVALIDO' }, { status: 400 });
+      const c = await conflitosNoPosto(b, agora, null, ev.id);
+      if (c.length) return NextResponse.json({ error: 'Posto ocupado', codigo: 'CONFLITO_POSTO', ocupadoPor: c }, { status: 409 });
+      mudancas.box_id = b.id;
+    }
     await supabaseAdmin.from('agenda').update(mudancas).eq('id', ev.id);
     await supabaseAdmin.from('manutencao_etapas').insert({
       agenda_id: ev.id, funcionario_id: funcId, status: 'recebido', observacao: typeof observacao === 'string' ? observacao.slice(0, 500) || null : null,
@@ -118,10 +136,78 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  // elevador/box do carro (migracao 053): o dono escolhe para qualquer carro;
-  // o mecanico, so para os carros dele. Sem boxId = tira do elevador.
+  // Postos (elevador, posto no chao, vaga de espera) por intervalo de horas
+  // (migracao 057): o dono mexe em qualquer carro; o mecanico, nos carros dele.
+  const podePosto = ehDono || !!(euFunc && ev.funcionario_id === euFunc.id);
+  if (acao.startsWith('posto_') || acao === 'elevador') {
+    if (!podePosto) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    if (['concluido', 'cancelado'].includes(ev.status)) return NextResponse.json({ error: 'Serviço encerrado', codigo: 'NAO_EM_SERVICO' }, { status: 409 });
+  }
+  // carro ja na oficina: "elevador" (Quadro de 14 dias) = colocar/tirar agora
+  const acaoPosto = acao === 'elevador' && ev.status === 'em_andamento' ? (boxId ? 'posto_entrar' : 'posto_sair') : acao;
+
+  if (acaoPosto === 'posto_entrar') {
+    if (ev.status !== 'em_andamento') return NextResponse.json({ error: 'Faça o check-in antes', codigo: 'SEM_CHECKIN' }, { status: 409 });
+    const b = await postoAtivo(boxId, ev.oficina_id);
+    if (!b) return NextResponse.json({ error: 'Posto inválido', codigo: 'ELEVADOR_INVALIDO' }, { status: 400 });
+    const agora = new Date();
+    const c = await conflitosNoPosto(b, agora, null, ev.id);
+    if (c.length) return NextResponse.json({ error: 'Posto ocupado', codigo: 'CONFLITO_POSTO', ocupadoPor: c }, { status: 409 });
+    const { data: aberta } = await supabaseAdmin.from('posto_ocupacoes').select('id, box_id, inicio').eq('agenda_id', ev.id).eq('real', true).is('fim', null).maybeSingle();
+    if (aberta?.box_id === b.id) return NextResponse.json({ ok: true });
+    if (aberta) await supabaseAdmin.from('posto_ocupacoes').update({ fim: new Date(Math.max(agora.getTime(), new Date(aberta.inicio).getTime() + 60e3)).toISOString() }).eq('id', aberta.id);
+    // reserva deste carro neste posto (comecando em ate 2 h) vira a ocupacao real
+    const { data: reserva } = await supabaseAdmin.from('posto_ocupacoes').select('id').eq('agenda_id', ev.id).eq('box_id', b.id).eq('real', false)
+      .lte('inicio', new Date(agora.getTime() + 2 * 3600e3).toISOString()).gt('fim', agora.toISOString()).order('inicio').limit(1).maybeSingle();
+    const { error } = reserva
+      ? await supabaseAdmin.from('posto_ocupacoes').update({ real: true, inicio: agora.toISOString(), fim: null }).eq('id', reserva.id)
+      : await supabaseAdmin.from('posto_ocupacoes').insert({ oficina_id: ev.oficina_id, box_id: b.id, agenda_id: ev.id, inicio: agora.toISOString(), real: true, funcionario_id: ev.funcionario_id, por_profile_id: userId });
+    if (error) return NextResponse.json({ error: 'Não foi possível salvar', codigo: 'ERRO' }, { status: 500 });
+    await historico('elevador', { anterior: aberta?.box_id ?? null, novo: b.id });
+    return NextResponse.json({ ok: true });
+  }
+
+  if (acaoPosto === 'posto_sair') {
+    const { data: aberta } = await supabaseAdmin.from('posto_ocupacoes').select('id, box_id, inicio').eq('agenda_id', ev.id).eq('real', true).is('fim', null).maybeSingle();
+    if (aberta) {
+      await supabaseAdmin.from('posto_ocupacoes').update({ fim: new Date(Math.max(Date.now(), new Date(aberta.inicio).getTime() + 60e3)).toISOString() }).eq('id', aberta.id);
+      await historico('elevador', { anterior: aberta.box_id, novo: null });
+    }
+    return NextResponse.json({ ok: true });
+  }
+
+  // reserva de um intervalo: termina no futuro, comeca em ate 15 dias, ate 12 h;
+  // o passado nao se edita (e o registro do que aconteceu)
+  if (acaoPosto === 'posto_reservar' || acaoPosto === 'posto_mover') {
+    if (ocup?.real) return NextResponse.json({ error: 'Ocupação real não se move', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
+    const b = await postoAtivo(acaoPosto === 'posto_mover' ? (boxId || ocup.box_id) : boxId, ev.oficina_id);
+    if (!b) return NextResponse.json({ error: 'Posto inválido', codigo: 'ELEVADOR_INVALIDO' }, { status: 400 });
+    const ini = new Date(inicio ?? ocup?.inicio); const fi = new Date(fim ?? ocup?.fim);
+    const agoraMs = Date.now();
+    if (!Number.isFinite(ini.getTime()) || !Number.isFinite(fi.getTime()) || fi <= ini || fi.getTime() - ini.getTime() > 12 * 3600e3
+        || fi.getTime() <= agoraMs || ini.getTime() > agoraMs + 15 * 86400e3) {
+      return NextResponse.json({ error: 'Horário inválido', codigo: 'HORARIO_INVALIDO' }, { status: 400 });
+    }
+    const c = await conflitosNoPosto(b, ini, fi, ev.id, ocup?.id);
+    if (c.length) return NextResponse.json({ error: 'Posto ocupado', codigo: 'CONFLITO_POSTO', ocupadoPor: c }, { status: 409 });
+    const obs = typeof observacao === 'string' ? observacao.slice(0, 200) || null : null;
+    const { error } = ocup
+      ? await supabaseAdmin.from('posto_ocupacoes').update({ box_id: b.id, inicio: ini.toISOString(), fim: fi.toISOString(), ...(observacao !== undefined ? { observacao: obs } : {}) }).eq('id', ocup.id)
+      : await supabaseAdmin.from('posto_ocupacoes').insert({ oficina_id: ev.oficina_id, box_id: b.id, agenda_id: ev.id, inicio: ini.toISOString(), fim: fi.toISOString(), real: false, observacao: obs, funcionario_id: ev.funcionario_id, por_profile_id: userId });
+    if (error) return NextResponse.json({ error: 'Não foi possível salvar', codigo: 'ERRO' }, { status: 500 });
+    await historico('posto_reserva', { box: b.id, inicio: ini.toISOString(), fim: fi.toISOString(), ...(ocup ? { movida: ocup.id } : {}) });
+    return NextResponse.json({ ok: true });
+  }
+
+  if (acaoPosto === 'posto_cancelar') {
+    if (ocup.real) return NextResponse.json({ error: 'Ocupação real não se cancela', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
+    await supabaseAdmin.from('posto_ocupacoes').delete().eq('id', ocup.id);
+    await historico('posto_reserva', { cancelada: ocup.id, box: ocup.box_id });
+    return NextResponse.json({ ok: true });
+  }
+
+  // carro ainda agendado: posto PLANEJADO (vira ocupacao real no check-in)
   if (acao === 'elevador') {
-    if (!ehDono && !(euFunc && ev.funcionario_id === euFunc.id)) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     let novo: string | null = null;
     if (boxId) {
       const { data: b } = await supabaseAdmin.from('oficina_boxes').select('id').eq('id', boxId).eq('oficina_id', ev.oficina_id).eq('ativo', true).maybeSingle();
