@@ -17,7 +17,8 @@ export type SupportedLocale = (typeof SUPPORTED)[number];
 function detectDeviceLocale(): SupportedLocale {
   const l = Localization.getLocales()[0];
   const idioma = l?.languageCode || '';
-  if (idioma === 'pt') return l?.regionCode === 'PT' ? 'pt-PT' : 'pt';
+  // idioma escolhido so para o app nos Ajustes vem na etiqueta (pt-PT), nao na regiao do aparelho
+  if (idioma === 'pt') return /^pt-PT/i.test(l?.languageTag || '') || l?.regionCode === 'PT' ? 'pt-PT' : 'pt';
   return (SUPPORTED as readonly string[]).includes(idioma) ? (idioma as SupportedLocale) : 'en';
 }
 

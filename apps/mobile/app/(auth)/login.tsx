@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../lib/auth-context';
 import { API_BASE_URL } from '../../lib/api';
-import { IDIOMAS, escolherIdioma } from '../../lib/idiomas';
+import { IDIOMAS, escolherIdioma, idiomaPeloSistema, abrirAjustesDeIdioma } from '../../lib/idiomas';
 
 // Tela de entrada: marca, atalho de acidente SEM conta (quem acabou de bater
 // nao deve parar num cadastro), login e idioma.
@@ -62,7 +62,7 @@ export default function LoginScreen() {
           {/* Topo: idioma */}
           <View className="flex-row justify-end pt-2">
             <Pressable
-              onPress={() => setMenuIdioma(true)}
+              onPress={() => (idiomaPeloSistema ? abrirAjustesDeIdioma() : setMenuIdioma(true))}
               accessibilityRole="button"
               accessibilityLabel={t('auth.idioma')}
               className="flex-row items-center gap-1 bg-white border border-gray-200 rounded-full px-3 py-2"

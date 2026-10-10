@@ -269,7 +269,9 @@
     "excluirContaEmServico": "C'è un'auto in officina in questo momento. Elimina l'account dopo la consegna.",
     "excluirContaFeita": "Account eliminato. Grazie per aver usato BipFix.",
     "excluirContaErro": "Non è stato possibile eliminare ora. Riprova tra qualche minuto.",
-    "excluirContaDetalhes": "Lo storico dei servizi già svolti resta anonimo (senza i tuoi dati), perché appartiene anche all'officina (garanzia e contabilità)."
+    "excluirContaDetalhes": "Lo storico dei servizi già svolti resta anonimo (senza i tuoi dati), perché appartiene anche all'officina (garanzia e contabilità).",
+    "idiomaAjustes": "Cambia in Impostazioni",
+    "idiomaAjustesDica": "BipFix usa la lingua dell'iPhone. Per usarne un'altra solo per BipFix: Impostazioni → BipFix → Lingua."
   },
   "seguro": {
     "titulo": "Chi pagherà la riparazione?",

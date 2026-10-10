@@ -269,7 +269,9 @@
     "excluirContaEmServico": "Töökojas on praegu auto. Kustuta konto pärast auto üleandmist.",
     "excluirContaFeita": "Konto on kustutatud. Aitäh, et kasutasid BipFixi.",
     "excluirContaErro": "Praegu ei õnnestunud kustutada. Proovi mõne minuti pärast uuesti.",
-    "excluirContaDetalhes": "Tehtud tööde ajalugu jääb alles anonüümselt (ilma sinu andmeteta), sest see kuulub ka töökojale (garantii ja raamatupidamine)."
+    "excluirContaDetalhes": "Tehtud tööde ajalugu jääb alles anonüümselt (ilma sinu andmeteta), sest see kuulub ka töökojale (garantii ja raamatupidamine).",
+    "idiomaAjustes": "Muuda seadetes",
+    "idiomaAjustesDica": "BipFix kasutab iPhone'i keelt. Teise keele valimiseks ainult BipFixile: Seaded → BipFix → Keel."
   },
   "seguro": {
     "titulo": "Kes maksab remondi eest?",

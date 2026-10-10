@@ -86,15 +86,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setUser(profile as Profile);
     AsyncStorage.setItem(CHAVE_PERFIL, JSON.stringify(profile)).catch(() => {});
-    // Idioma: a escolha feita no app (tela de entrada ou Perfil) vale sobre a
-    // da conta, e a conta passa a seguir essa escolha (e-mails no mesmo
-    // idioma). Sem escolha salva, o app segue o idioma da conta.
+    // Idioma (regra da Apple, decisao do dono 10/10): vale o idioma do
+    // aparelho - no iPhone, inclusive o escolhido so para o BipFix nos Ajustes -
+    // ou a escolha feita no app (Android/Expo Go). A conta SEGUE o app (e-mails
+    // no mesmo idioma); antes o app obedecia a conta e abria em estoniano para
+    // quem tinha criado a conta na versao /ee/et do site.
     const escolhido = await idiomaEscolhido();
     if (escolhido && escolhido !== profile.idioma) {
       supabase.from('profiles').update({ idioma: escolhido }).eq('id', userId).then(() => {});
       if (i18n.language !== escolhido) i18n.changeLanguage(escolhido);
-    } else if (!escolhido && profile.idioma && i18n.language !== profile.idioma) {
-      i18n.changeLanguage(profile.idioma);
+    } else if (!escolhido && profile.idioma !== i18n.language) {
+      supabase.from('profiles').update({ idioma: i18n.language }).eq('id', userId).then(() => {});
     }
     return { profile: profile as Profile, error: null };
   }, []);

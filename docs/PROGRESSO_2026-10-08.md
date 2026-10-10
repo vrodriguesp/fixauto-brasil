@@ -312,3 +312,12 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
 - **Rótulos:** os nomes de botões citados conferem com os da tela em cada idioma (ex.: em italiano o Quadro se chama "Tabellone").
 - **Artigos públicos (/guias, 7 artigos):** continuam corretos; as 57 fontes externas respondem 200 (conferido do servidor).
 - **Teste novo `site-educacao.mjs`:** 54/54 em produção.
+
+## 10/10 — Idioma do app: regra da Apple (decisão do dono)
+- **Antes:** escolha no app > idioma da conta > aparelho. A conta criada em /ee/et fazia o app abrir em estoniano num iPhone em italiano.
+- **Agora:**
+  - vale o idioma do aparelho, inclusive o idioma só do app em Ajustes → BipFix → Idioma (  →  pt-BR, pt-PT, en, et, it, ru);
+  - a conta segue o app (e-mails no mesmo idioma);
+  - português de Portugal reconhecido pela etiqueta do idioma (pt-PT), não pela região do aparelho.
+- **Seletor no iPhone (app instalado):** sem seletor próprio; Perfil e entrada mostram o idioma atual e "Mudar nos Ajustes". Expo Go, Android e web mantêm o seletor do app (no Expo Go os Ajustes seriam do Expo Go).
+- **Vale a partir do próximo build:** o item "Idioma" nos Ajustes só aparece no app instalado (TestFlight/App Store), não no Expo Go.

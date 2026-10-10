@@ -269,7 +269,9 @@
     "excluirContaEmServico": "A car is at the shop right now. Delete the account after it is handed back.",
     "excluirContaFeita": "Account deleted. Thank you for using BipFix.",
     "excluirContaErro": "Could not delete right now. Please try again in a few minutes.",
-    "excluirContaDetalhes": "The history of completed jobs is kept anonymously (without your data), because it also belongs to the shop (warranty and accounting)."
+    "excluirContaDetalhes": "The history of completed jobs is kept anonymously (without your data), because it also belongs to the shop (warranty and accounting).",
+    "idiomaAjustes": "Change in Settings",
+    "idiomaAjustesDica": "BipFix uses your iPhone language. To use a different one just for BipFix: Settings → BipFix → Language."
   },
   "seguro": {
     "titulo": "Who will pay for the repair?",

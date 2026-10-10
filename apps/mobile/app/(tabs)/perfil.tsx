@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
 import { API_BASE_URL } from '../../lib/api';
-import { IDIOMAS, escolherIdioma } from '../../lib/idiomas';
+import { IDIOMAS, escolherIdioma, idiomaPeloSistema, abrirAjustesDeIdioma } from '../../lib/idiomas';
 
 export default function PerfilScreen() {
   // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
@@ -77,6 +77,16 @@ ${t('perfil.excluirContaConfirmar')}`, [
       </View>
 
       <Text className="text-sm font-medium text-gray-700 mb-2">{t('perfil.idioma')}</Text>
+      {idiomaPeloSistema ? (
+        // iPhone: o idioma do app e escolhido nos Ajustes (recomendacao da Apple)
+        <View className="mb-8">
+          <Text className="text-gray-900 mb-1">{IDIOMAS.find((i) => i.code === i18n.language)?.label}</Text>
+          <Text className="text-gray-500 text-sm mb-3">{t('perfil.idiomaAjustesDica')}</Text>
+          <Pressable onPress={abrirAjustesDeIdioma} accessibilityRole="button" className="self-start border border-gray-300 rounded-lg px-4 py-2">
+            <Text className="text-primary-700 font-medium">{t('perfil.idiomaAjustes')}</Text>
+          </Pressable>
+        </View>
+      ) : (
       <View className="flex-row flex-wrap gap-2 mb-8">
         {IDIOMAS.map((idi) => (
           <Pressable
@@ -88,6 +98,7 @@ ${t('perfil.excluirContaConfirmar')}`, [
           </Pressable>
         ))}
       </View>
+      )}
 
       <Pressable onPress={handleSair} className="border border-red-300 rounded-lg py-4 items-center">
         <Text className="text-red-600 font-semibold">{t('perfil.sair')}</Text>
