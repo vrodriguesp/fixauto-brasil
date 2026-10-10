@@ -772,7 +772,13 @@
     "detalhesLabel": "Details (optional)",
     "detalhesPlaceholder": "E.g. driver's side, part number, whether it must be original…",
     "fotosLabel": "Photos of the part (optional)",
-    "fotosAjuda": "Up to 4 photos. Helps the store get the right part."
+    "fotosAjuda": "Up to 4 photos. Helps the store get the right part.",
+    "editarPedido": "Edit",
+    "cancelarPedido": "Cancel request",
+    "confirmarCancelarPedido": "Cancel this request? Stores will no longer see it.",
+    "simCancelar": "Yes, cancel",
+    "naoManter": "No, keep it",
+    "salvarPedido": "Save changes"
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Loading conversation...",

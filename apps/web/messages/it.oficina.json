@@ -772,7 +772,13 @@
     "detalhesLabel": "Dettagli (facoltativo)",
     "detalhesPlaceholder": "Es.: lato guidatore, codice del ricambio, se deve essere originale…",
     "fotosLabel": "Foto del ricambio (facoltativo)",
-    "fotosAjuda": "Fino a 4 foto. Aiuta il rivenditore a trovare il ricambio giusto."
+    "fotosAjuda": "Fino a 4 foto. Aiuta il rivenditore a trovare il ricambio giusto.",
+    "editarPedido": "Modifica",
+    "cancelarPedido": "Annulla richiesta",
+    "confirmarCancelarPedido": "Annullare questa richiesta? I negozi non la vedranno più.",
+    "simCancelar": "Sì, annulla",
+    "naoManter": "No, mantieni",
+    "salvarPedido": "Salva modifiche"
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Caricamento conversazione...",

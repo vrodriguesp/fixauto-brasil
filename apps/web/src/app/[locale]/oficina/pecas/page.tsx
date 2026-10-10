@@ -30,7 +30,19 @@ export default function OficinaPecasPage() {
   const t = useTranslations('oficinaPecas');
   const locale = useLocale();
   const { oficina, refreshProfile } = useAuth();
-  const [tab, setTab] = useState<'comprar' | 'vender'>('comprar');
+  // aba no endereco (?aba=vender): ao voltar da conversa com uma oficina a
+  // pagina reabre na mesma aba (antes voltava sempre para "Comprar")
+  const [tab, setTabState] = useState<'comprar' | 'vender'>('comprar');
+  useEffect(() => { if (new URLSearchParams(window.location.search).get('aba') === 'vender') setTabState('vender'); }, []);
+  const setTab = (aba: 'comprar' | 'vender') => {
+    setTabState(aba);
+    try { const u = new URL(window.location.href); if (aba === 'vender') u.searchParams.set('aba', 'vender'); else u.searchParams.delete('aba'); window.history.replaceState(window.history.state, '', u.toString()); } catch { /* sem URL: so a aba */ }
+  };
+  // editar / cancelar um pedido de peca ainda aberto
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ peca_descricao: '', quantidade: '1', observacao: '' });
+  const [cancelandoId, setCancelandoId] = useState<string | null>(null);
+  const [salvandoEdicao, setSalvandoEdicao] = useState(false);
 
   // === Comprar ===
   const [cotacoes, setCotacoes] = useState<CotacaoComRespostas[]>([]);
@@ -236,6 +248,47 @@ export default function OficinaPecasPage() {
     }
   }, [tab, vendePecas, oficina]);
 
+  // tempo real (migracao 059): pedido de oficina vizinha, oferta de loja e
+  // pedido confirmado aparecem sem recarregar a pagina
+  useEffect(() => {
+    if (!oficina) return;
+    let espera: ReturnType<typeof setTimeout> | null = null;
+    const recarregar = () => {
+      if (espera) clearTimeout(espera);
+      espera = setTimeout(() => {
+        fetchCotacoes();
+        if (tab === 'vender' && vendePecas) { fetchCotacoesVizinhas(); fetchPedidosFornecedora(); }
+      }, 500);
+    };
+    const canal = supabase.channel(`pecas-${oficina.id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'cotacoes_pecas' }, recarregar)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'cotacoes_pecas_respostas' }, recarregar)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos_pecas' }, recarregar)
+      .subscribe();
+    return () => { if (espera) clearTimeout(espera); supabase.removeChannel(canal); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [oficina, tab, vendePecas]);
+
+  const salvarEdicao = async (id: string) => {
+    if (!editForm.peca_descricao.trim()) return;
+    setSalvandoEdicao(true);
+    await supabase.from('cotacoes_pecas').update({
+      peca_descricao: editForm.peca_descricao.trim(),
+      quantidade: Math.max(1, parseInt(editForm.quantidade) || 1),
+      observacao: editForm.observacao.trim() || null,
+    }).eq('id', id).in('status', ['aberta', 'respondida']);
+    setSalvandoEdicao(false);
+    setEditandoId(null);
+    await fetchCotacoes();
+  };
+  const cancelarPedido = async (id: string) => {
+    setSalvandoEdicao(true);
+    await supabase.from('cotacoes_pecas').update({ status: 'cancelada' }).eq('id', id).in('status', ['aberta', 'respondida']);
+    setSalvandoEdicao(false);
+    setCancelandoId(null);
+    await fetchCotacoes();
+  };
+
   const handleToggleVendePecas = async () => {
     if (!oficina) return;
     setSavingVende(true);
@@ -380,6 +433,43 @@ export default function OficinaPecasPage() {
                       <p className="text-xs text-gray-400 mt-1">{timeAgo(c.created_at, locale)}</p>
                     </div>
                   </div>
+
+                  {(c as any).observacao && editandoId !== c.id && <p className="text-sm text-gray-600 mb-3">{(c as any).observacao}</p>}
+                  {['aberta', 'respondida'].includes(c.status) && editandoId !== c.id && (
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                      <button type="button" onClick={() => { setCancelandoId(null); setEditandoId(c.id); setEditForm({ peca_descricao: c.peca_descricao || '', quantidade: String(c.quantidade || 1), observacao: (c as any).observacao || '' }); }}
+                        className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">✏️ {t('editarPedido')}</button>
+                      {cancelandoId === c.id ? (
+                        <span className="inline-flex flex-wrap items-center gap-2 text-sm">
+                          <span className="text-red-700">{t('confirmarCancelarPedido')}</span>
+                          <button type="button" disabled={salvandoEdicao} onClick={() => cancelarPedido(c.id)} className="px-3 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50">{t('simCancelar')}</button>
+                          <button type="button" onClick={() => setCancelandoId(null)} className="px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700">{t('naoManter')}</button>
+                        </span>
+                      ) : (
+                        <button type="button" onClick={() => setCancelandoId(c.id)} className="px-3 py-1.5 text-sm rounded-lg border border-red-200 text-red-700 hover:bg-red-50">✕ {t('cancelarPedido')}</button>
+                      )}
+                    </div>
+                  )}
+                  {editandoId === c.id && (
+                    <div className="mb-3 space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
+                      <label className="block">
+                        <span className="block text-sm font-medium text-gray-700 mb-1">{t('oQueVocePrecisa')}</span>
+                        <input className="input-field" value={editForm.peca_descricao} onChange={(e) => setEditForm({ ...editForm, peca_descricao: e.target.value })} />
+                      </label>
+                      <label className="block">
+                        <span className="block text-sm font-medium text-gray-700 mb-1">{t('quantidade')}</span>
+                        <input className="input-field !w-28" inputMode="numeric" value={editForm.quantidade} onChange={(e) => setEditForm({ ...editForm, quantidade: e.target.value.replace(/\D/g, '') })} />
+                      </label>
+                      <label className="block">
+                        <span className="block text-sm font-medium text-gray-700 mb-1">{t('detalhesLabel')}</span>
+                        <textarea className="input-field" rows={2} value={editForm.observacao} onChange={(e) => setEditForm({ ...editForm, observacao: e.target.value })} />
+                      </label>
+                      <div className="flex justify-end gap-2">
+                        <button type="button" onClick={() => setEditandoId(null)} className="btn-secondary">{t('cancelar')}</button>
+                        <button type="button" disabled={salvandoEdicao || !editForm.peca_descricao.trim()} onClick={() => salvarEdicao(c.id)} className="btn-primary disabled:opacity-50">{t('salvarPedido')}</button>
+                      </div>
+                    </div>
+                  )}
 
                   {c.respostas && c.respostas.length > 0 && (
                     <div className="border-t pt-3 space-y-2">

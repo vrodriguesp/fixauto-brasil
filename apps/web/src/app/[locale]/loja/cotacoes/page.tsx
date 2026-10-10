@@ -57,6 +57,19 @@ export default function LojaCotacoesPage() {
 
   useEffect(() => { fetchCotacoes(); }, [loja]);
 
+  // tempo real (migracao 059): pedido novo de oficina aparece sem recarregar
+  useEffect(() => {
+    if (!loja) return;
+    let espera: ReturnType<typeof setTimeout> | null = null;
+    const recarregar = () => { if (espera) clearTimeout(espera); espera = setTimeout(() => { fetchCotacoes(); }, 500); };
+    const canal = supabase.channel(`loja-cotacoes-${loja.id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'cotacoes_pecas' }, recarregar)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'cotacoes_pecas_respostas' }, recarregar)
+      .subscribe();
+    return () => { if (espera) clearTimeout(espera); supabase.removeChannel(canal); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loja]);
+
   const handleResponder = async (cotacaoId: string) => {
     if (!loja || !respostaForm.preco) return;
     setSaving(true);

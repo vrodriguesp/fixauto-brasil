@@ -122,10 +122,12 @@ try {
   await pL.goto(`${SITE}/ee/en/loja/cotacoes`, { waitUntil: 'networkidle' });
   await pL.waitForTimeout(2000);
   ok('loja: ve o pedido da oficina', (await pL.innerText('body')).includes('Тормозные колодки'));
-  await botao(pL, EN('lojaCotacoes.responderCotacaoButton')).click();
-  await campo(pL, EN('lojaCotacoes.labelPreco')).fill('44');
-  await campo(pL, EN('lojaCotacoes.labelPrazo')).fill('2');
-  await botao(pL, EN('lojaCotacoes.enviarRespostaButton')).click();
+  // o botao do cartao DESTE pedido (com outros pedidos do pais na lista, o ultimo botao era de outro)
+  const cartao = pL.locator('div.card').filter({ hasText: 'Тормозные колодки' });
+  await cartao.getByRole('button', { name: EN('lojaCotacoes.responderCotacaoButton') }).click();
+  await campo(cartao, EN('lojaCotacoes.labelPreco')).fill('44');
+  await campo(cartao, EN('lojaCotacoes.labelPrazo')).fill('2');
+  await cartao.getByRole('button', { name: EN('lojaCotacoes.enviarRespostaButton') }).click();
   await pL.waitForTimeout(3000);
   const { data: resp } = await sb.from('cotacoes_pecas_respostas').select('id').eq('cotacao_id', cotId);
   ok('loja: respondeu a cotacao', (resp || []).length === 1);

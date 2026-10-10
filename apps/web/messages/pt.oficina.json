@@ -772,7 +772,13 @@
     "detalhesLabel": "Detalhes (opcional)",
     "detalhesPlaceholder": "Ex.: lado do motorista, código da peça, se precisa ser original…",
     "fotosLabel": "Fotos da peça (opcional)",
-    "fotosAjuda": "Até 4 fotos. Ajuda a loja a acertar a peça."
+    "fotosAjuda": "Até 4 fotos. Ajuda a loja a acertar a peça.",
+    "editarPedido": "Editar",
+    "cancelarPedido": "Cancelar pedido",
+    "confirmarCancelarPedido": "Cancelar este pedido? As lojas deixam de vê-lo.",
+    "simCancelar": "Sim, cancelar",
+    "naoManter": "Não, manter",
+    "salvarPedido": "Salvar alterações"
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Carregando conversa...",

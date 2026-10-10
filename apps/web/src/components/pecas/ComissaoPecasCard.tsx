@@ -38,6 +38,8 @@ export default function ComissaoPecasCard({ fornecedorTipo, fornecedorId, pais }
   const [config, setConfig] = useState<ConfigInfo | null>(null);
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
   const [loading, setLoading] = useState(true);
+  // taxa que vale agora (mesma regra da cobranca: plataforma isenta = 0%)
+  const [taxaAtual, setTaxaAtual] = useState<number | null>(null);
 
   useEffect(() => {
     if (!fornecedorId) return;
@@ -45,7 +47,9 @@ export default function ComissaoPecasCard({ fornecedorTipo, fornecedorId, pais }
     Promise.all([
       supabase.from('comissao_pecas_config').select('*').eq('fornecedor_tipo', fornecedorTipo).eq('fornecedor_id', fornecedorId).maybeSingle(),
       supabase.from('comissao_pecas_lancamento').select('*').eq('fornecedor_tipo', fornecedorTipo).eq('fornecedor_id', fornecedorId).order('created_at', { ascending: false }),
-    ]).then(([{ data: cfg }, { data: lancs }]) => {
+      fetch(`/api/comissao-pecas-atual?fornecedorTipo=${fornecedorTipo}&fornecedorId=${fornecedorId}`).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+    ]).then(([{ data: cfg }, { data: lancs }, atual]) => {
+      setTaxaAtual(typeof atual?.taxa === 'number' ? atual.taxa : null);
       setConfig(cfg as ConfigInfo | null);
       setLancamentos((lancs as Lancamento[]) || []);
       setLoading(false);
@@ -56,7 +60,7 @@ export default function ComissaoPecasCard({ fornecedorTipo, fornecedorId, pais }
     return <div className="animate-pulse h-40 bg-gray-200 rounded-xl" />;
   }
 
-  const taxa = config
+  const taxa = taxaAtual != null ? taxaAtual : config
     ? (config.usa_override && config.taxa_fixa_override != null ? config.taxa_fixa_override : config.taxa_calculada) ?? COMISSAO_PECAS_CONFIG.TAXA_BASE
     : COMISSAO_PECAS_CONFIG.TAXA_BASE;
   const totalPendente = lancamentos.filter((l) => l.status === 'pendente').reduce((s, l) => s + l.valor_comissao, 0);

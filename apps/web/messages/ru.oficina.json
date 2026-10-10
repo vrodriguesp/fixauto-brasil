@@ -772,7 +772,13 @@
     "detalhesLabel": "Подробности (необязательно)",
     "detalhesPlaceholder": "Напр.: сторона водителя, номер детали, нужна ли оригинальная…",
     "fotosLabel": "Фото детали (необязательно)",
-    "fotosAjuda": "До 4 фото. Помогает магазину подобрать нужную деталь."
+    "fotosAjuda": "До 4 фото. Помогает магазину подобрать нужную деталь.",
+    "editarPedido": "Изменить",
+    "cancelarPedido": "Отменить запрос",
+    "confirmarCancelarPedido": "Отменить этот запрос? Магазины больше не будут его видеть.",
+    "simCancelar": "Да, отменить",
+    "naoManter": "Нет, оставить",
+    "salvarPedido": "Сохранить изменения"
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Загружаем переписку...",

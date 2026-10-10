@@ -772,7 +772,13 @@
     "detalhesLabel": "Üksikasjad (valikuline)",
     "detalhesPlaceholder": "Nt juhi pool, varuosa kood, kas peab olema originaal…",
     "fotosLabel": "Varuosa fotod (valikuline)",
-    "fotosAjuda": "Kuni 4 fotot. Aitab poel õige varuosa leida."
+    "fotosAjuda": "Kuni 4 fotot. Aitab poel õige varuosa leida.",
+    "editarPedido": "Muuda",
+    "cancelarPedido": "Tühista päring",
+    "confirmarCancelarPedido": "Tühistada see päring? Poed ei näe seda enam.",
+    "simCancelar": "Jah, tühista",
+    "naoManter": "Ei, jäta alles",
+    "salvarPedido": "Salvesta muudatused"
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Vestluse laadimine...",
