@@ -44,9 +44,11 @@ export interface QuadroProps {
   meuFuncionarioId?: string | null;
   onAbrirDia: (ymd: string, ev: any) => void;
   onAlterado: () => void;
+  /** carro vindo de "Ver no Quadro" (?ev=): destacado, com a janela e a rolagem nele */
+  destaque?: string | null;
 }
 
-export default function QuadroOficina({ eventos, todosEventos, funcionarios, boxes, oficina, ehDono, meuFuncionarioId, onAbrirDia, onAlterado }: QuadroProps) {
+export default function QuadroOficina({ eventos, todosEventos, funcionarios, boxes, oficina, ehDono, meuFuncionarioId, onAbrirDia, onAlterado, destaque }: QuadroProps) {
   const t = useTranslations('oficinaAgenda');
   const tc = useTranslations('constants');
   const locale = useLocale();
@@ -82,6 +84,26 @@ export default function QuadroOficina({ eventos, todosEventos, funcionarios, box
   const fmtHora = useMemo(() => new Intl.DateTimeFormat(intl, { hour: '2-digit', minute: '2-digit', timeZone: fuso }), [intl, fuso]);
 
   const barras = useMemo(() => eventos.map((ev) => montarBarra(ev, hoje, pais, t('evento'))), [eventos, hoje, pais, t]);
+  // "Ver no Quadro" (teste do dono 10/10): abre na visao em que o carro aparece
+  // (no posto, se tem posto; senao por mecanico), janela comecando 2 dias antes
+  // dele e rola ate a barra, que fica com um contorno piscando por alguns segundos
+  const [destacado, setDestacado] = useState<string | null>(null);
+  const [destaqueFeito, setDestaqueFeito] = useState(false);
+  useEffect(() => {
+    if (!destaque || destaqueFeito) return;
+    const b = barras.find((x) => x.ev.id === destaque);
+    if (!b) return;
+    setDestaqueFeito(true);
+    const temPosto = (b.ev.ocupacoes || []).length > 0 || !!b.ev.box_id;
+    if (por === 'hora' || (por === 'elevador' && !temPosto)) setPor(temPosto && boxes.some((x) => x.ativo) ? 'elevador' : 'mecanico');
+    const ocup: Ocupacao[] = b.ev.ocupacoes || [];
+    const ini = ocup.length ? diaNaOficina(ocup[ocup.length - 1].inicio, pais) : b.ini;
+    setInicio(somaDias(ini < b.ini ? ini : b.ini, -2));
+    setDestacado(destaque);
+    setTimeout(() => document.querySelector(`[data-destaque="1"]`)?.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' }), 400);
+    setTimeout(() => setDestacado(null), 8000);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [destaque, barras]);
   const podeMover = (ev: any) => (por === 'mecanico' ? ehDono : ehDono || (!!meuFuncionarioId && ev.funcionario_id === meuFuncionarioId));
   const podePosto = (ev: any) => ehDono || (!!meuFuncionarioId && ev.funcionario_id === meuFuncionarioId);
   const abertaDe = (ev: any): Ocupacao | undefined => (ev.ocupacoes || []).find((o: Ocupacao) => o.real && !o.fim);
@@ -375,12 +397,13 @@ export default function QuadroOficina({ eventos, todosEventos, funcionarios, box
                                 style={{ left: posX(it.ghost[0]) * LARG_DIA + 2, width: (posX(it.ghost[1]) - posX(it.ghost[0]) + 1) * LARG_DIA - 4, top: it.faixa * ALT_LINHA + ALT_LINHA - 1 }} />
                             )}
                             <button type="button"
+                              data-destaque={destacado === b.ev.id ? '1' : undefined}
                               draggable={podeMover(b.ev) && it.tipo !== 'reserva' && it.tipo !== 'real'}
                               onDragStart={(e) => { setArrastando(b.ev.id); e.dataTransfer.effectAllowed = 'move'; }}
                               onDragEnd={() => { setArrastando(null); setAlvo(null); }}
                               onClick={() => { setErro(''); setAberto(b.ev); }}
                               title={titulo}
-                              className={`absolute overflow-hidden rounded-md px-2 text-left text-xs font-medium truncate shadow-sm hover:ring-2 hover:ring-primary-300 ${estilo} ${b.interno ? 'outline outline-2 outline-dashed outline-gray-800/60 -outline-offset-2' : ''} ${arrastando === b.ev.id ? 'opacity-50' : ''}`}
+                              className={`absolute overflow-hidden rounded-md px-2 text-left text-xs font-medium truncate shadow-sm hover:ring-2 hover:ring-primary-300 ${estilo} ${b.interno ? 'outline outline-2 outline-dashed outline-gray-800/60 -outline-offset-2' : ''} ${arrastando === b.ev.id ? 'opacity-50' : ''} ${destacado === b.ev.id ? 'z-30 ring-4 ring-amber-400 ring-offset-1 animate-pulse' : ''}`}
                               style={{ left, width, top: it.faixa * ALT_LINHA + 4, height: ALT_LINHA - 9 }}>
                               {atrasoX != null && <span className="absolute inset-y-0 right-0 bg-red-600" style={{ left: Math.max(0, atrasoX) }} aria-hidden="true" />}
                               <span className="relative">

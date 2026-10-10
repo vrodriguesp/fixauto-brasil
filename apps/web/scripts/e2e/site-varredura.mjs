@@ -18,7 +18,8 @@ const MSG = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/m
 const NAMESPACES = Object.keys(JSON.parse(fs.readFileSync(`${MSG}/pt.json`, 'utf8')))
   .concat(...['cliente', 'oficina', 'loja', 'auth', 'misc'].map((a) => Object.keys(JSON.parse(fs.readFileSync(`${MSG}/pt.${a}.json`, 'utf8')))));
 const CRUA = new RegExp(`\\b(${NAMESPACES.join('|')})\\.[a-zA-Z_][\\w.]*`, 'g');
-const PREFIXOS = { pt: 'pt-br', 'pt-PT': 'pt-pt', en: 'en', et: 'et', it: 'it', ru: 'ru' };
+// enderecos por pais/idioma desde 09/10/2026
+const PREFIXOS = { pt: 'br/pt', 'pt-PT': 'pt/pt', en: 'ee/en', et: 'ee/et', it: 'it/it', ru: 'ee/ru' };
 const AREAS = {
   cliente: ['/cliente/dashboard', '/cliente/nova-solicitacao', '/cliente/orcamentos', '/cliente/historico', '/cliente/mensagens', '/cliente/perfil', '/cliente/veiculos'],
   oficina: ['/oficina/dashboard', '/oficina/solicitacoes', '/oficina/agenda', '/oficina/checkin', '/oficina/veiculos-em-servico', '/oficina/pecas', '/oficina/equipe', '/oficina/capacidade', '/oficina/distribuicao', '/oficina/avaliacoes', '/oficina/comissao', '/oficina/perfil', '/oficina/aprender'],
@@ -95,7 +96,7 @@ try {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
   const page = await entrar(ctx, a, 'it');
   for (const p of ADMIN) await examinar(page, `admin ${p}`, `${SITE}${p}`, links, '/admin');
-  for (const pre of ['pt-br', 'it']) {
+  for (const pre of ['br/pt', 'it/it', 'pt-br']) {
     const r = await page.goto(`${SITE}/${pre}/admin/oficinas`, { waitUntil: 'networkidle' });
     if (new URL(page.url()).pathname !== '/admin/oficinas') problemas.push(`admin /${pre}/admin/oficinas foi para ${page.url()} (${r.status()})`);
   }
@@ -110,7 +111,8 @@ try {
   await ctx.close();
   // todos os links internos vistos
   const ctx2 = await browser.newContext();
-  for (const l of links) {
+  // /api/* (ex.: exportar do admin) exige login: fora da checagem anonima
+  for (const l of [...links].filter((x) => !x.startsWith('/api/'))) {
     const r = await ctx2.request.get(`${SITE}${l}`, { maxRedirects: 5 }).catch(() => null);
     if (!r || r.status() >= 400) problemas.push(`link ${l}: ${r ? r.status() : 'falhou'}`);
   }

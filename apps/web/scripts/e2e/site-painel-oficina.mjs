@@ -12,6 +12,8 @@
 //  8 retorno do dono (10/10): filtros de Hoje e resumo clicavel; Quadro -> Hoje no dia
 //    certo do carro; corrigir posto colocado errado; "Ver o pedido"; tipo do mes
 //    abre Hoje filtrado; Desempenho: um grafico so e no maximo ~7 datas no eixo
+//  9 retorno do dono (10/10, 3a rodada): "N feito" de hoje no mes -> Hoje mostra os
+//    carros (dono e mecanico); grafico de 12 meses aparece; "Ver no Quadro" destaca
 //   node site-painel-oficina.mjs <.env.local> [SITE]
 import fs from 'node:fs';
 import path from 'node:path';
@@ -217,9 +219,33 @@ try {
   await pD.getByTestId('filtro-tudo').click();
   await pD.getByRole('button', { name: ET('oficinaDesempenho.periodo_12m') }).click(); await pD.waitForTimeout(4000);
   const datasEixo = await pD.getByTestId('bloco-pedidos').locator('svg text[text-anchor="middle"][font-size="9"][fill="#6b7280"]').count();
-  ok('8 Desempenho 12 meses: no maximo 7 datas no eixo (grafico some com poucos dados)', datasEixo <= 7, String(datasEixo));
+  ok('9 Desempenho 12 meses: grafico aparece, no maximo 7 datas no eixo', datasEixo > 0 && datasEixo <= 7, String(datasEixo));
   await sb.from('posto_ocupacoes').delete().eq('agenda_id', aNaOf);
   await sb.from('oficina_boxes').delete().eq('oficina_id', ofId);
+
+  // ---------- 9 "feito" do mes -> Hoje; Ver no Quadro destaca
+  const chipFeito = async (pg) => {
+    await pg.goto(`${SITE}/ee/et/oficina/agenda?vista=month`, { waitUntil: 'networkidle' }); await pg.waitForTimeout(3500);
+    const c = pg.locator('span[role=link]').filter({ hasText: ET('oficinaAgenda.feito') });
+    const n = await c.count(); if (!n) return null;
+    // o de hoje e o ultimo com carros feitos (os dias seguintes nao tem check-in)
+    const ch = c.nth(n - 1); const qt = Number((await ch.innerText()).trim().split(' ')[0]);
+    await ch.click(); await pg.waitForTimeout(3500);
+    return qt;
+  };
+  const qtD = await chipFeito(pD);
+  const listaD = await pD.locator('[data-testid="bloco-chegaram"] [data-testid="hoje-cartao"]').count();
+  ok('9 dono: "N feito" de hoje abre Hoje com os N carros que chegaram', qtD != null && qtD === listaD && pD.url().includes('filtro=chegaram'), `chip ${qtD} x lista ${listaD} ${pD.url()}`);
+  {
+    const ctxM9 = await ctxNovo(false); const pM9 = await entrar(ctxM9, mecU); await pM9.waitForTimeout(1500);
+    const qtM = await chipFeito(pM9);
+    const listaM = await pM9.locator('[data-testid="bloco-chegaram"] [data-testid="hoje-cartao"]').count();
+    ok('9 mecanico: "N feito" de hoje abre Hoje com os N carros dele', qtM != null && qtM === listaM && (await pM9.locator('[data-testid="bloco-chegaram"]').innerText()).includes(`M${P(7)}`), `chip ${qtM} x lista ${listaM}`);
+    await ctxM9.close();
+  }
+  await pD.goto(`${SITE}/ee/et/oficina/agenda?vista=quadro&ev=${aNaOf}`, { waitUntil: 'networkidle' }); await pD.waitForTimeout(4000);
+  const dest = pD.locator('[data-destaque="1"]');
+  ok('9 "Ver no Quadro" destaca o carro no quadro', (await dest.count()) >= 1 && (await dest.first().innerText()).includes(`M${P(7)}`) && await dest.first().isVisible());
 
   // ---------- 6 enderecos antigos
   for (const [l, pre] of Object.entries(PREFIXO)) {

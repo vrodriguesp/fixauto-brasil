@@ -74,6 +74,9 @@ export default function AgendaPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [boxes, setBoxes] = useState<Box[]>([]);
+  // "Ver no Quadro" vindo do Hoje: ?vista=quadro&ev=<id> destaca o carro
+  const [destaque, setDestaque] = useState<string | null>(null);
+  useEffect(() => { setDestaque(new URLSearchParams(window.location.search).get('ev')); }, []);
   const [indicadores, setIndicadores] = useState(0);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [assigningId, setAssigningId] = useState<string | null>(null);
@@ -177,7 +180,8 @@ export default function AgendaPage() {
   const getGroups = (dateStr: string) => {
     const checkinPendente = allEventos.filter(e => dataLocalDe(e.data_inicio, (oficina as any)?.pais ?? null) === dateStr && e.status === 'agendado' && !(e as any).no_show);
     const naoCompareceu = allEventos.filter(e => dataLocalDe(e.data_inicio, (oficina as any)?.pais ?? null) === dateStr && (e as any).no_show);
-    const checkinFeito = allEventos.filter(e => dataLocalDe(e.data_inicio, (oficina as any)?.pais ?? null) === dateStr && (e.status === 'em_andamento' || e.status === 'concluido'));
+    // mesma regra do Hoje: o dia em que o carro CHEGOU de verdade (check-in)
+    const checkinFeito = allEventos.filter(e => dataLocalDe((e as any).checkin_em || e.data_inicio, (oficina as any)?.pais ?? null) === dateStr && (e.status === 'em_andamento' || e.status === 'concluido'));
     const entregue = allEventos.filter(e => dataLocalDe(e.data_fim, (oficina as any)?.pais ?? null) === dateStr && e.status === 'concluido');
     return { checkinPendente, naoCompareceu, checkinFeito, entregue };
   };
@@ -644,6 +648,7 @@ export default function AgendaPage() {
             meuFuncionarioId={funcionario?.id ?? null}
             onAlterado={() => { refresh(); carregarBoxes(); setIndicadores((n) => n + 1); }}
             onAbrirDia={(_ymd, ev) => router.push(`/oficina/hoje?ev=${ev.id}`)}
+            destaque={destaque}
           />
           {!isMecanico && (
             <details className="group">

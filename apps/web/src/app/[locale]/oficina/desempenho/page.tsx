@@ -64,7 +64,8 @@ export default function DesempenhoPage() {
   const taxa = d && d.totais.recebidos ? Math.round((10 * d.totais.respondidos) / d.totais.recebidos) : null;
   const ganhoDe10 = d && d.totais.recebidos ? Math.round((10 * d.totais.ganhos) / d.totais.recebidos) : null;
   const diff = (agora: number, antes: number) => (antes === 0 && agora === 0 ? '' : agora >= antes ? t('maisQueAntes', { n: agora - antes }) : t('menosQueAntes', { n: antes - agora }));
-  const poucos = d ? d.faixas.length - d.respondidos.filter((x) => x === 0).length < 3 : true;
+  // grafico sempre que houver algum dado no periodo (antes sumia com menos de 3 periodos - teste do dono 10/10)
+  const temSerie = !!d && (d.recebidos.some((x) => x > 0) || d.respondidos.some((x) => x > 0));
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">
@@ -97,15 +98,15 @@ export default function DesempenhoPage() {
           </div>
           {ve('pedidos') && <Bloco testid="bloco-pedidos" titulo={t('q_pedidos')} numero={t('nPedidos', { recebidos: d.totais.recebidos, respondidos: d.totais.respondidos, ganhos: d.totais.ganhos })} sub={diff(d.totais.recebidos, d.totais.recebidosAntes) ? `${t('recebidosLegenda')}: ${diff(d.totais.recebidos, d.totais.recebidosAntes)}` : undefined}
             frase={taxa != null && ganhoDe10 != null ? t('frasePedidos', { respondeu: taxa, ganhou: ganhoDe10 }) : t('frasePedidosSemRecebidos')}>
-            {!poucos && <Barras titulo={t('q_pedidos')} rotulos={rotulos} series={[{ nome: t('recebidosLegenda'), cor: COR.recebidos, valores: d.recebidos }, { nome: t('respondidosLegenda'), cor: COR.respondidos, valores: d.respondidos }, { nome: t('ganhosLegenda'), cor: COR.ganhos, valores: d.ganhos }]} />}
+            {temSerie && <Barras titulo={t('q_pedidos')} rotulos={rotulos} series={[{ nome: t('recebidosLegenda'), cor: COR.recebidos, valores: d.recebidos }, { nome: t('respondidosLegenda'), cor: COR.respondidos, valores: d.respondidos }, { nome: t('ganhosLegenda'), cor: COR.ganhos, valores: d.ganhos }]} />}
           </Bloco>}
 
           {ve('resposta') && <Bloco testid="bloco-resposta" titulo={t('q_resposta')} numero={<span className={`inline-block rounded-lg px-2 ${corResposta(d.respostaMedianaMin)}`}>{duracao(d.respostaMedianaMin)}</span>} sub={t('respostaSub')} frase={t('fraseResposta')}>
-            {!poucos && <Linha titulo={t('q_resposta')} rotulos={rotulos} valores={d.respostaPorFaixa.map((v) => (v == null ? null : Math.round(v)))} formatar={(n) => duracao(n)} />}
+            {temSerie && <Linha titulo={t('q_resposta')} rotulos={rotulos} valores={d.respostaPorFaixa.map((v) => (v == null ? null : Math.round(v)))} formatar={(n) => duracao(n)} />}
           </Bloco>}
 
           {ve('receita') && <Bloco testid="bloco-receita" titulo={t('q_receita')} numero={dinheiro(d.receitaTotal)} sub={t('receitaSub', { entregue: dinheiro(d.receitaEntregue) })} frase={t('fraseReceita')}>
-            {!poucos && d.receitaTotal > 0 && <Barras titulo={t('q_receita')} rotulos={rotulos} series={[{ nome: t('q_receita'), cor: COR.ganhos, valores: d.receita.map((v) => Math.round(v)) }]} formatar={(n) => dinheiro(n)} />}
+            {temSerie && d.receitaTotal > 0 && <Barras titulo={t('q_receita')} rotulos={rotulos} series={[{ nome: t('q_receita'), cor: COR.ganhos, valores: d.receita.map((v) => Math.round(v)) }]} formatar={(n) => dinheiro(n)} />}
           </Bloco>}
 
           {ve('nota') && <Bloco testid="bloco-nota" titulo={t('q_nota')} numero={d.nota != null ? `${d.nota.toFixed(1)} ★` : '—'} sub={t('notaSub', { n: d.totalAvaliacoes })} frase={t('fraseNota')}>

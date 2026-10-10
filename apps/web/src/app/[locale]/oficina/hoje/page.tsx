@@ -108,12 +108,13 @@ export default function HojePage() {
         if (ev.status === 'em_andamento') { (dDe(prevFim) === hoje ? b.saem : b.naOficina).push({ ev }); continue; }
       } else {
         if (ev.status === 'em_andamento' && dDe(prevFim) === diaVisto) { b.saem.push({ ev }); continue; }
-        if (ev.status !== 'agendado' && ev.checkin_em && dDe(ev.checkin_em) === diaVisto) { b.chegaram.push({ ev }); continue; }
       }
       if (ev.status === 'agendado' && !ev.no_show && dDe(ev.data_inicio) === diaVisto) { b.chegam.push({ ev }); continue; }
       if (ev.status === 'agendado' && !ev.no_show && dDe(ev.data_inicio) > diaVisto && dDe(ev.data_inicio) <= somaDias(diaVisto, 7)) { b.proximos.push({ ev }); continue; }
       if (ev.status === 'concluido' && dDe(ev.entregue_em || ev.data_fim) === diaVisto) b.entregues.push({ ev });
     }
+    // chegaram neste dia (check-in de verdade): lista propria para o filtro do calendario mensal
+    for (const ev of carros) if ((ev.status === 'em_andamento' || ev.status === 'concluido') && dDe(ev.checkin_em || ev.data_inicio) === diaVisto) b.chegaram.push({ ev });
     b.proximos.sort((x, y) => Date.parse(x.ev.data_inicio) - Date.parse(y.ev.data_inicio));
     b.chegam.sort((x, y) => Date.parse(x.ev.data_inicio) - Date.parse(y.ev.data_inicio));
     if (ehDono && ehHoje) {
@@ -148,16 +149,17 @@ export default function HojePage() {
     return { ok: !!res?.ok, status: res?.status || 0, dados: res ? await res.json().catch(() => ({})) : {} };
   };
   const fechar = () => { setFolha(null); setErro(null); };
-  const confirmarChegou = async (antecipar = false) => {
-    if (!folha) return;
-    setOcupado(folha.ev.id); setErro(null);
-    const r = await servico({ acao: 'checkin', eventoId: folha.ev.id, antecipar, ...(folha.func ? { funcionarioId: folha.func } : {}), ...(folha.box ? { boxId: folha.box } : {}) });
+  // check-in; a folha so aparece se houver o que perguntar (ou se o carro chegou antes do dia)
+  const fazerChegou = async (base: NonNullable<typeof folha>, antecipar = false) => {
+    setOcupado(base.ev.id); setErro(null);
+    const r = await servico({ acao: 'checkin', eventoId: base.ev.id, antecipar, ...(base.func ? { funcionarioId: base.func } : {}), ...(base.box ? { boxId: base.box } : {}) });
     setOcupado(null);
-    if (r.status === 409 && r.dados.codigo === 'CHECKIN_FUTURO') { setFolha({ ...folha, antecipar: r.dados.dataAgendada }); return; }
-    if (r.status === 409 && r.dados.codigo === 'CONFLITO_POSTO') { setErro({ id: folha.ev.id, txt: t('postoOcupado') }); return; }
-    if (!r.ok) { setErro({ id: folha.ev.id, txt: t('erroSalvar') }); return; }
+    if (r.status === 409 && r.dados.codigo === 'CHECKIN_FUTURO') { setFolha({ ...base, antecipar: r.dados.dataAgendada }); return; }
+    if (r.status === 409 && r.dados.codigo === 'CONFLITO_POSTO') { setFolha(base); setErro({ id: base.ev.id, txt: t('postoOcupado') }); return; }
+    if (!r.ok) { setErro({ id: base.ev.id, txt: t('erroSalvar') }); return; }
     fechar(); refresh();
   };
+  const confirmarChegou = async (antecipar = false) => { if (folha) await fazerChegou(folha, antecipar); };
   const gravarEtapa = async (status: string) => {
     if (!folha) return;
     if (status === 'concluido' && !folha.confirmar) { setFolha({ ...folha, status, confirmar: true }); return; }
@@ -182,8 +184,11 @@ export default function HojePage() {
     setOcupado(null); fechar(); refresh();
   };
   const abrirChegou = (ev: any) => {
-    if (!funcionarios.length && !boxes.length) { setFolha({ tipo: 'chegou', ev, func: '', box: '', obs: '' }); return; }
-    setFolha({ tipo: 'chegou', ev, func: ev.funcionario_id || (ehMecanico ? funcionario?.id || '' : ''), box: ev.box_id || '', obs: '' });
+    const temPergunta = (funcionarios.length > 0 && !ehMecanico) || boxes.length > 0;
+    const func = ev.funcionario_id || (ehMecanico ? funcionario?.id || '' : funcionarios.length === 1 ? funcionarios[0].id : '');
+    // sem mecanico nem posto cadastrado: nada a perguntar, o check-in e direto
+    if (!temPergunta) { fazerChegou({ tipo: 'chegou', ev, func, box: '', obs: '' }); return; }
+    setFolha({ tipo: 'chegou', ev, func, box: ev.box_id || '', obs: '' });
   };
 
   // ---------- apresentacao ----------
@@ -208,7 +213,8 @@ export default function HojePage() {
     { id: 'naoVieram', icone: '🚫', cor: 'border-l-orange-400' },
   ];
   const paraAgora = blocos.atrasados.length + blocos.prontos.length + blocos.chegam.length;
-  const visivel = (id: Bloco) => filtro === 'tudo' || filtro === id || (filtro === 'agora' && AGORA.includes(id)) || (filtro === 'naOficina' && id === 'saem');
+  // "Chegaram" repete carros de outros blocos: so aparece quando filtrado
+  const visivel = (id: Bloco) => (filtro === 'tudo' && id !== 'chegaram') || filtro === id || (filtro === 'agora' && AGORA.includes(id)) || (filtro === 'naOficina' && id === 'saem');
   // titulo do bloco: em outro dia "neste dia" (antes dizia "hoje" num dia que nao era hoje)
   const tituloBloco = (id: Bloco) => (!ehHoje && ['chegam', 'saem', 'entregues'].includes(id) ? t(`bloco_${id}Dia`) : t(`bloco_${id}`));
 
@@ -220,7 +226,7 @@ export default function HojePage() {
       return <button type="button" onClick={() => abrirChegou(ev)} className={cls} data-testid="btn-chegou">📥 {t('chegou')}</button>;
     }
     if (bloco === 'prontos') return ehMecanico ? null : <button type="button" onClick={() => setFolha({ tipo: 'entregar', ev, func: '', box: '', obs: '' })} className={cls} data-testid="btn-entregar">✔ {t('entregar')}</button>;
-    if (bloco === 'atrasados' && item.motivo === 'passouPrazo' && telefoneDe(ev)) return <a href={`tel:${telefoneDe(ev)}`} className={cls}>📞 {t('ligar')}</a>;
+    if (bloco === 'atrasados' && item.motivo === 'passouPrazo' && telefoneDe(ev)) return <a href={`tel:${telefoneDe(ev)}`} className={cls}>📞 {t('ligar')} <span className="font-normal">{telefoneDe(ev)}</span></a>;
     if (bloco === 'entregues' || ev.status === 'concluido') return null;
     return <button type="button" onClick={() => setFolha({ tipo: 'etapa', ev, func: '', box: '', obs: '' })} className={cls} data-testid="btn-etapa">🔧 {t('etapa')}</button>;
   };
@@ -330,7 +336,7 @@ export default function HojePage() {
                         </details>
                       )}
                       {oficina && <NotasInternas agendaId={ev.id} oficinaId={oficina.id} funcionarioResponsavelProfileId={ev.funcionario?.profile_id} veiculoLabel={carroDe(ev)} />}
-                      <Link href={`/oficina/agenda?vista=quadro`} className="inline-block text-primary-700 hover:underline">{t('verNoQuadro')} ›</Link>
+                      <Link href={`/oficina/agenda?vista=quadro&ev=${ev.id}`} className="inline-block text-primary-700 hover:underline" data-testid="ver-no-quadro">{t('verNoQuadro')} ›</Link>
                     </div>
                   )}
                 </li>
