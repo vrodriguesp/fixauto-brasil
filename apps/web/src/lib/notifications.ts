@@ -360,6 +360,7 @@ export async function sendLeadParceiroEmail(params: {
   whatsapp: string;
   email?: string | null;
   observacao?: string | null;
+  pais?: string | null;
 }) {
   if (!resend) {
     console.warn('[Notifications] Resend not configured - RESEND_API_KEY missing');
@@ -368,12 +369,13 @@ export async function sendLeadParceiroEmail(params: {
 
   const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'support@bipfix.com';
   const tipoLabel = params.tipo === 'oficina' ? 'Oficina' : 'Loja de peças';
+  const paisLabel = ({ EE: 'Estônia', IT: 'Itália', PT: 'Portugal', BR: 'Brasil' } as Record<string, string>)[params.pais || ''] || 'país não informado';
 
   try {
     await sendOrThrow({
       from: FROM_EMAIL,
       to: adminEmail,
-      subject: `Novo interessado (${tipoLabel}): ${params.nomeNegocio}`,
+      subject: `Novo interessado (${tipoLabel}, ${paisLabel}): ${params.nomeNegocio}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
@@ -381,6 +383,7 @@ export async function sendLeadParceiroEmail(params: {
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <table style="width: 100%; font-size: 14px; color: #111827;">
+              <tr><td style="padding: 4px 0; color: #6b7280;">País</td><td style="padding: 4px 0;"><strong>${paisLabel}</strong></td></tr>
               <tr><td style="padding: 4px 0; color: #6b7280;">Tipo</td><td style="padding: 4px 0;"><strong>${tipoLabel}</strong></td></tr>
               <tr><td style="padding: 4px 0; color: #6b7280;">Negócio</td><td style="padding: 4px 0;"><strong>${escapeHtml(params.nomeNegocio)}</strong></td></tr>
               <tr><td style="padding: 4px 0; color: #6b7280;">Responsável</td><td style="padding: 4px 0;">${escapeHtml(params.nomeResponsavel)}</td></tr>

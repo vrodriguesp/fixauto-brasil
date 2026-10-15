@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { Link } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { mercadoDe } from '@/i18n/routing';
 import { textoErroApi } from '@/lib/erro-api';
 
 export default function SejaParceiroPage() {
   const t = useTranslations('sejaParceiro');
+  const locale = useLocale();
   const tErros = useTranslations('erros');
   const [tipo, setTipo] = useState<'oficina' | 'loja_pecas'>('oficina');
   const [nomeResponsavel, setNomeResponsavel] = useState('');
@@ -31,7 +33,7 @@ export default function SejaParceiroPage() {
     const res = await fetch('/api/leads-parceiros', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tipo, nomeResponsavel, nomeNegocio, cidade, estado, whatsapp, email, observacao }),
+      body: JSON.stringify({ tipo, nomeResponsavel, nomeNegocio, cidade, estado, whatsapp, email, observacao, pais: mercadoDe(locale).pais }),
     });
     setEnviando(false);
     if (res.ok) {

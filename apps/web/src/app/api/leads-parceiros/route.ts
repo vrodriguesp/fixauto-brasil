@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
     }
     const body = await req.json();
     const { tipo, nomeResponsavel, nomeNegocio, cidade, estado, whatsapp, email, observacao } = body;
+    const pais = ['EE', 'IT', 'PT', 'BR'].includes(body.pais) ? body.pais : null;
     const longo = (v: unknown, max: number) => typeof v === 'string' && v.length > max;
     if (longo(nomeResponsavel, 100) || longo(nomeNegocio, 150) || longo(cidade, 100) || longo(estado, 60) || longo(whatsapp, 30) || longo(email, 254) || longo(observacao, 2000)) {
       return NextResponse.json({ error: 'Campo muito longo' }, { status: 400 });
@@ -36,6 +37,7 @@ export async function POST(req: NextRequest) {
       whatsapp: whatsapp.trim(),
       email: email?.trim() || null,
       observacao: observacao?.trim() || null,
+      pais,
     });
 
     if (error) {
@@ -51,6 +53,7 @@ export async function POST(req: NextRequest) {
       whatsapp: whatsapp.trim(),
       email: email?.trim() || null,
       observacao: observacao?.trim() || null,
+      pais,
     }).catch(() => {});
 
     return NextResponse.json({ success: true });

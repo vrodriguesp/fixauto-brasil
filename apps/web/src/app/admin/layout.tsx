@@ -12,6 +12,7 @@ const sidebarLinks = [
   { href: '/admin/emergencias', label: 'Emergências', icon: AlertIcon },
   { href: '/admin/usuarios', label: 'Usuários', icon: UsersIcon },
   { href: '/admin/oficinas', label: 'Oficinas', icon: BuildingIcon },
+  { href: '/admin/leads-parceiros', label: 'Interessados', icon: UsersIcon },
   { href: '/admin/comissoes', label: 'Comissões', icon: CurrencyIcon },
   { href: '/admin/oficinas/performance-ruim', label: 'Performance Ruim', icon: AlertIcon },
   { href: '/admin/pecas', label: 'Peças', icon: PackageIcon },

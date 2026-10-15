@@ -58,11 +58,14 @@ export default function LoginPage() {
       return;
     }
 
-    // ?voltar=/et/kustuta-konto : volta para a pagina que pediu o login (so caminho do proprio site)
+    // ?voltar=/admin/leads-parceiros : volta para a pagina que pediu o login
+    // (so endereco do proprio site; aceita ?filtro=... depois do caminho)
     const voltar = new URLSearchParams(window.location.search).get('voltar');
-    if (voltar && /^\/[a-zA-Z0-9\-/]*$/.test(voltar) && !voltar.startsWith('//')) {
-      window.location.assign(voltar);
-      return;
+    if (voltar && voltar.startsWith('/') && !voltar.startsWith('//')) {
+      try {
+        const destino = new URL(voltar, window.location.origin);
+        if (destino.origin === window.location.origin) { window.location.assign(destino.pathname + destino.search); return; }
+      } catch { /* endereco invalido: segue para o inicio */ }
     }
     router.refresh();
     router.push('/');

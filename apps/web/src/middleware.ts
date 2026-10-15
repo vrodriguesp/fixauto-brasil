@@ -185,8 +185,10 @@ export async function middleware(req: NextRequest) {
   // /admin nao tem idioma: o login dele e o da versao em portugues
   const withLocale = (target: string) => new URL(`${localePrefix || LOCALE_PREFIX.pt}${target}`, req.url);
 
+  // depois de entrar, volta para a pagina pedida (link de e-mail, ex.: Interessados no admin - dono 15/10)
+  const voltar = `voltar=${encodeURIComponent(req.nextUrl.pathname + req.nextUrl.search)}`;
   if (isProtected && !usuario) {
-    return NextResponse.redirect(withLocale('/login'));
+    return NextResponse.redirect(withLocale(`/login?${voltar}`));
   }
 
   if (isProtected && usuario) {
@@ -216,7 +218,7 @@ export async function middleware(req: NextRequest) {
       const hoursSinceSignIn = (Date.now() - lastSignIn) / (1000 * 60 * 60);
       if (!lastSignIn || hoursSinceSignIn > ADMIN_MAX_SESSION_HOURS) {
         await supabase.auth.signOut({ scope: 'local' });
-        return NextResponse.redirect(withLocale('/login?sessao_expirada=1'));
+        return NextResponse.redirect(withLocale(`/login?sessao_expirada=1&${voltar}`));
       }
     }
 
