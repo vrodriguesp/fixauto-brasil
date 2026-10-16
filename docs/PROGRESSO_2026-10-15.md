@@ -56,3 +56,8 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - **Alternativa usada — IndexNow** (não depende do painel): as 88 URLs do sitemap enviadas por `npm run indexnow` (api.indexnow.org, HTTP 200) e direto ao `yandex.com/indexnow` (HTTP 202 `success: true`); arquivo da chave no site responde 200.
 - **Robô do Yandex nos registros:** pico de 189 visitas em 09/10 (dia da mudança de endereços), depois quase parou (8–9 por dia em 15–16/10), o que bate com a pane. Os IPs reais são do Yandex (87.250.x, 213.180.x, 95.108.x); parte das visitas de "YandexBot" eram meus testes com curl.
 - **Falta:** quando o Yandex reativar "Reindex", reenviar `/` e `/ee/ru/stati/ceny-na-remont-avto-v-talline` (deram "Error" em 09/10) e conferir os títulos duplicados (devem sumir, eram endereços antigos).
+
+## 16/10 — Marca BipFix (verificação, nada alterado)
+- **INPI:** a busca do INPI (busca.inpi.gov.br) não responde de fora do Brasil (nem do computador nem do servidor). Consultado o **WIPO Global Brand Database**, que inclui os dados do INPI e de 89 registros (UE/EUIPO e outros): **nenhuma marca "BipFix" registrada ou pedida** em lugar nenhum (16/10/2026).
+- **Domínios:** `bipfix.com` registrado em 12/04/2026 (nosso); `bipfix.com.br` registrado em 22/07/2026 por uma pessoa física (não empresa), ativo, vence em 22/07/2027.
+- **Nome da empresa (ideia do dono: "Pyrus Tech" dona da marca BipFix):** domínios pyrustech.com, pyrus.tech, pyrustech.ee e pyrustech.eu sem registro; pyrus.com ocupado. Registro de empresas da Estônia não conferido (a busca não respondeu). Decisão do dono pendente.
