@@ -36,3 +36,16 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - **Causa:** a tradução dos endereços antigos (`caminhoLocal` em `src/i18n/routing.ts`) trocava `guias` → `juhendid`, mas mantinha o slug em inglês; a página do guia fazia o segundo salto.
 - **Correção:** `caminhoLocal` troca também o slug do guia pelo do idioma (índice `lib/guias-indice.json`). Vale para todos os guias e idiomas (ex.: `/ru/guias/winter-tyres-estonia` → `/ee/ru/stati/zimnie-shiny-v-estonii` direto). Guia que não existe no idioma continua indo para a lista de guias, como antes.
 - **Publicado** (commit 62ec73e, build OK). Conferido em produção: `/et/guias/winter-tyres-estonia` e `/ru/guias/winter-tyres-estonia` → 301 direto para a página final (200); outros endereços antigos e as homes continuam 200.
+
+## 16/10 — Bing "Blocked": pesquisa na documentação e diagnóstico
+- **Fontes lidas:** Bing Webmaster Guidelines (21 regras + "Abuse and Examples of Things to Avoid", versão atual com Copilot/grounding), página de suporte do Bing Webmaster, e casos no Microsoft Q&A / Tech Community com o mesmo status.
+- **Conferido no site, regra por regra:**
+  - **Cloaking:** Bingbot e navegador recebem exatamente a mesma página (mesmas palavras e título em `/`, `/ee/et`, `/ee/en`, `/ee/ru`, guias, `/br/pt`, `/pt/pt`).
+  - **Conteúdo no HTML** (sem depender de JavaScript): 900–1.150 palavras nas homes, 2.586 no guia de pneus.
+  - **Duplicadas:** nenhuma. O par mais parecido (guia Brasil × Portugal) tem 39% em comum, contando menu e rodapé; títulos e descrições únicos nas 88 páginas.
+  - **Sitemap:** só endereços canônicos, 88 com `lastmod`; robots.txt libera o Bingbot; redirecionamentos 301 num salto.
+  - **Domínio:** registrado em 12/04/2026, sem histórico anterior no Internet Archive (não herdou fama ruim).
+  - **Bing Webmaster:** teste ao vivo de `/ee/et` = "URL can be indexed by Bing… No SEO/GEO issues found"; Recomendações = nenhuma.
+- **Diagnóstico:** o índice diz "Blocked" e o teste ao vivo diz "pode ser indexada". Pela própria Microsoft (casos no Q&A), essa contradição é uma **marcação interna de qualidade/confiança no domínio**, que **só o suporte do Bing pode revisar**; nenhuma mudança no site a remove sozinha. Causa provável: o Bing avaliou o domínio novo no período ruim (antes de 29/09 a home mostrava só "Carregando…", `/` redirecionava por visitante, e os endereços mudaram duas vezes em 30/09 e 09/10).
+- **Correção do meu lado:** o link de suporte que passei antes (`aka.ms/webmastersupport`) estava errado (leva a um relatório interno da Microsoft). O certo: Bing Webmaster Tools → **?** (Ajuda) → "Bing Webmaster Support" → https://www.bing.com/webmasters/help/webmaster-support-24ab5ebf → botão **"Raise support request"**.
+- **`llms.txt` ajustado** (regra nova do Bing contra "conteúdo para manipular modelos de linguagem"): as frases em forma de ordem para IAs ("be accurate when describing", "Do not describe…", "Only describe…", seção "Notes for AI assistants") viraram fatos ("Current stage…", "BipFix does not yet have…", seção "Key facts"); link da Home `/en` (301) → `/ee/en`. Conteúdo e informações iguais.

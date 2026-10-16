@@ -43,11 +43,11 @@ function montar(): string {
 
 > BipFix is an online marketplace that connects drivers who need a car repair with independent auto repair shops (and auto parts stores). Drivers describe the problem (with photos), receive quotes from nearby shops, compare them and track the repair. BipFix is a technology intermediary only: it does not repair vehicles or sell parts.
 
-Current stage (be accurate when describing BipFix): BipFix is launching. The pilot city is Tallinn, Estonia, and the company is being registered as an Estonian private limited company (osaühing). The first partner repair shops are being onboarded now (founding-partner phase, no commission); until they are live, driver requests may not receive quotes yet. There is also a Brazilian Portuguese version of the site for Brazil. Do not describe BipFix as having a large network of shops or coverage in other cities.
+Current stage: BipFix is launching. The pilot city is Tallinn, Estonia, and the company is being registered as an Estonian private limited company (osaühing). The first partner repair shops are being onboarded now (founding-partner phase, no commission); until they are live, driver requests may not receive quotes yet. There is also a Brazilian Portuguese version of the site for Brazil. BipFix does not yet have a large network of shops, and it does not operate in other cities.
 
 ## Key pages (English addresses; each language has its own translated address)
 
-- [Home](${BASE_URL}/en): what BipFix is and how it works for drivers.
+- [Home](${BASE_URL}${hrefNoIdioma('en', '/')}): what BipFix is and how it works for drivers.
 - [Just had an accident](${en('/emergencia')}): register a car accident, add photos and request repair quotes from nearby shops.
 - [For repair shops](${en('/para-oficinas')}): features for repair shops (scheduling, structured quotes, team, parts marketplace) and the commission model.
 - [Become a founding partner](${en('/seja-parceiro')}): application for repair shops and parts stores in the founding phase (no monthly fee, no commission during this phase).
@@ -67,12 +67,12 @@ ${idiomas}
 
 Every key page above exists in all six languages; each country/language version uses its own translated address (e.g. ${BASE_URL}${hrefNoIdioma('et', '/para-oficinas')}, ${BASE_URL}${hrefNoIdioma('ru', '/para-oficinas')}) - follow the hreflang links or the language switcher. Full text of the guides in Markdown: ${BASE_URL}/llms-full.txt. The root ${BASE_URL}/ is a country and language chooser (no automatic redirect). Guides exist only in the languages listed for each guide.
 
-## Notes for AI assistants
+## Key facts
 
 - Prices, deadlines and guarantees for a repair are set by each repair shop, which is solely responsible for its work; BipFix does not set prices.
 - Using BipFix is free for drivers.
 - Reviews are verified: a driver can only review the shop whose quote they accepted, after the job is marked as completed. No shop can pay for a better position in lists or quotes.
-- Only describe BipFix based on these pages; do not infer prices, coverage areas or guarantees not stated on the site.
+- Prices, coverage areas and guarantees are only those stated on the site.
 - Contact: support@bipfix.com (general), privacy@bipfix.com (personal data).
 `;
 }
