@@ -338,3 +338,30 @@ Correções dos testes do dono no iPhone (site e app). Tudo publicado em `bipfix
   - `site-pecas.mjs` 11/11: o teste clicava no último botão da página e não no cartão do pedido;
   - novo `site-pecas-ux.mjs` 10/10.
 - **Em andamento:** duas auditorias de usabilidade feitas pelo Fable, uma do painel da oficina e outra do site inteiro (motorista, loja e páginas públicas), com o impacto na parte educativa.
+
+## 10/10 tarde e noite — Painel da oficina reorganizado (auditoria do Fable + 3 rodadas de retorno do dono)
+- **Auditorias de usabilidade (Fable):** `docs/AUDITORIA_PAINEL_OFICINA_2026-10-10.md` e `docs/AUDITORIA_USABILIDADE_SITE_2026-10-10.md`.
+- **Painel novo (migração 060):**
+  - abre em **Pedidos**: abas, ordem por urgência e espera, contador verde/âmbar/vermelho, um toque até o orçamento, tempo real;
+  - página **Hoje**: junta veículos em serviço, agenda do dia e painel; blocos por urgência, um botão por cartão, etapas em 6 botões;
+  - **Desempenho** com gráficos SVG;
+  - menu Pedidos / Hoje / Agenda / Desempenho / Mais, com barra embaixo no celular; "Minha oficina" fixo no menu e na barra;
+  - fuso da oficina em toda a agenda; endereços antigos redirecionam.
+- **Retorno do dono (3 rodadas):**
+  - Hoje: filtros em todos os blocos, resumo clicável em pílulas (só situações com carro; o filtro desce até a lista), títulos "neste dia" fora de hoje, aberto do Quadro no dia certo do carro; carro pronto em qualquer bloco mostra "Entregar";
+  - Quadro: corrigir posto colocado errado (até 30 min), apagar carro sem pedido criado por engano, "Ver o pedido" no carro e na reserva, "Ver no Quadro" destaca o carro; "Reservar um posto por hora" abre a reserva já com o carro, no dia dele e no primeiro elevador livre; clique na grade vazia ou em dia passado explica em vez de não fazer nada;
+  - mês: o tipo abre Hoje filtrado; "N feito" abre Hoje com os carros que chegaram (dono e mecânico); gráfico de 12 meses voltou;
+  - check-in sem pergunta inútil ("Decidir depois"); carro marcado para hoje (fuso da oficina) não pede confirmação de chegada antecipada; número no botão Ligar;
+  - perfil incompleto em uma linha na caixa de Pedidos; Desempenho conta como recebido todo pedido orçado.
+- **Pedidos:** ordenar por data do pedido, data do orçamento, valor, chegada ou distância; filtrar por situação em cada aba; datas e valor no cartão dos respondidos/encerrados.
+- **Procurar (migração 061, corrigida no mesmo dia):** por placa, nome, número do pedido ou código de cliente (em Hoje, Pedidos e página Procurar); "Abrir em Hoje" abre o carro na hora. Número do pedido e código de cliente aparecem no site e no app. Painel do dia em Hoje: um quadrado por situação (toca e filtra) + pedidos esperando.
+- **Aviso de orçamento novo** no sino criado pelo servidor (antes pelo navegador da oficina); sem duplicar em reenvio/revisão.
+- **Gráficos do Desempenho:** número em cima de cada barra e ponto (deitado se cabe, em pé se a barra é fina); dinheiro curto ("21 mil EUR"); "1 dia" no singular nos 6 idiomas.
+- **Cliques que pareciam não funcionar:** barrinha de carregamento no topo ao clicar num link interno; página aberta durante uma publicação recarrega direto no destino (erro de código antigo).
+- **Celular:** o idioma não fica mais em cima do logo para visitante.
+- **App do motorista (auditoria B3/C1/C2):** cartão de ação no Início com o pedido mais urgente (logo abaixo dos botões); situação + "o que acontece agora" no pedido e no selo da lista (mesmas cores); orçamentos com resumo, ordenação (preço/nota/dia) e marcadores; "Escolher esta oficina" e "Não me interessa" como link; recusados recolhidos; pedido novo começa pelo problema; pt: "Solicitações" → "Pedidos".
+- **Testes:** `site-painel-oficina` (com o retorno do dono), `site-quadro-hora` e `site-quadro` atualizados, `app-situacao` novo.
+- **Publicado** em produção (último commit do dia: 5c0ff0b).
+- **Dados zerados de novo (pedido do dono, noite de 10/10),** antes dos primeiros e-mails às 3 oficinas de Tallinn: oficina demo Tallinna Autokeskus, clientes/mecânicos/lojas demo, cliente de teste do dono, PDFs de orçamento (`damage-photos/orcamentos/`) e `app_errors`. Ficou só o admin. O script de limpeza agora esvazia também `damage-photos/orcamentos`.
+
+**Continua em `PROGRESSO_2026-10-15.md`.**
