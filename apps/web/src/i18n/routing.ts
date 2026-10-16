@@ -232,6 +232,14 @@ export function caminhoLocal(locale: string, interno: string, params?: Record<st
       return s === partes[i];
     });
     if (!bate) continue;
+    // Guia com o slug de outro idioma (/et/guias/winter-tyres-estonia, endereco
+    // antigo) -> slug deste idioma, para o 301 ir direto ao final (sem 2o salto)
+    if (modelo === '/guias/[slug]' && valores.slug) {
+      const slugs = Object.values(GUIAS_INDICE as Record<string, Record<string, string>>).find((m) =>
+        Object.values(m).includes(valores.slug)
+      );
+      if (slugs?.[locale]) valores.slug = slugs[locale];
+    }
     const alvo = typeof nomes === 'string' ? nomes : (nomes as Record<string, string>)[locale] ?? modelo;
     const final = alvo.replace(/\[(.+?)\]/g, (_, k) => encodeURIComponent(valores[k] ?? ''));
     return query ? `${final}?${query}` : final;
