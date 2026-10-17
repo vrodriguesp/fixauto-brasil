@@ -66,3 +66,7 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - O dono iniciou o **Site Scan** do Bing Webmaster ("BipFixWebsite : https://bipfix.com/"), status "Queued" em 17/10. Eu não tinha rodado essa auditoria antes (falha minha na verificação de 16/10). Quando terminar: ler erros e avisos, corrigir o que for do site e citar o resultado no pedido de suporte ao Bing.
 - Scan atual: tipo "Website" (começa em https://bipfix.com/ e segue links), limite 1.000 páginas, avisos no e-mail do dono. O Bing só permite um scan por vez. **Decisão do dono (17/10):** deixar este terminar e **depois rodar um segundo scan com o tipo "Sitemap"** (`https://bipfix.com/sitemap.xml`).
 - **Yandex (17/10):** "Reindex pages" continua só leitura (pane dos data centers). Nada a fazer até voltar; as 88 URLs já foram por IndexNow em 16/10.
+
+## 17/10 — Cartão de e-Residency da Estônia (dono)
+- O dono recebeu o cartão de e-Residency. Próximo passo dele: abrir a OÜ no e-Business Register (taxa oficial 265 €; endereço legal + pessoa de contato por prestador licenciado, 200–400 €/ano, segundo e-resident.gov.ee). Nome da empresa ainda em decisão (ideia: "Pyrus Tech").
+- **Depois de registrada, eu atualizo:** nome, código de registro (registrikood) e endereço nos termos de uso e na política de privacidade (6 idiomas), rodapé, página "Sobre", dados da empresa (Organization) que os buscadores leem, `llms.txt` (hoje diz "being registered") e o texto dos e-mails.
