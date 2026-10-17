@@ -70,3 +70,16 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 ## 17/10 — Cartão de e-Residency da Estônia (dono)
 - O dono recebeu o cartão de e-Residency. Próximo passo dele: abrir a OÜ no e-Business Register (taxa oficial 265 €; endereço legal + pessoa de contato por prestador licenciado, 200–400 €/ano, segundo e-resident.gov.ee). Nome da empresa ainda em decisão (ideia: "Pyrus Tech").
 - **Depois de registrada, eu atualizo:** nome, código de registro (registrikood) e endereço nos termos de uso e na política de privacidade (6 idiomas), rodapé, página "Sobre", dados da empresa (Organization) que os buscadores leem, `llms.txt` (hoje diz "being registered") e o texto dos e-mails.
+
+## 17/10 — Títulos e descrições dos guias (aviso do Bing Site Scan)
+- **Aviso do Bing:** 7 páginas com título acima de 70 caracteres (guias et/ru). O título final é `tituloSeo` + " | BipFix" (9 caracteres); o validador do projeto (`scripts/validar-guias.mjs`) já exigia `tituloSeo` ≤ 60 e estava acusando 13 erros (7 títulos + 6 descrições) que passaram sem ninguém rodar.
+- **Títulos novos** (palavra buscada primeiro; só `tituloSeo`, o título na página não mudou):
+  - et preços: "Autoremondi hinnad Tallinnas 2026: töötund ja õlivahetus"
+  - ru preços: "Цены на ремонт авто в Таллинне 2026: час, масло, тормоза"
+  - et escolher oficina: "Kuidas valida autotöökoda Tallinnas: 12 kontrollpunkti"
+  - et seguro: "Kasko ja liikluskindlustus: remont pärast avariid"
+  - ru seguro: "Ремонт после ДТП по каско и ОСАГО в Эстонии: пошагово"
+  - et pneus: "Talverehvid kohustuslikud 2026/27: tähtajad, naastrehvid"
+  - ru pneus: "Зимняя резина в Эстонии 2026/27: с какого числа, шипы, штраф"
+- **Descrições ≤ 160** (6, cortes mínimos): et preços, it comparar orçamentos, et e ru escolher oficina, ru seguro (corrigido também "подменный авто" → "подменное авто"), en pneus.
+- `validar-guias.mjs --sem-rede`: "tudo certo" (antes 13 erros). **Regra daqui pra frente:** rodar o validador antes de publicar guias.

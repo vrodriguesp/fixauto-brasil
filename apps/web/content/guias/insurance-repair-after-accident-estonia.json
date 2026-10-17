@@ -7,7 +7,7 @@
     "et": {
       "slug": "kasko-ja-liikluskindlustus-remont-parast-avariid",
       "titulo": "Kasko ja liikluskindlustus: kuidas remont toimub pärast avariid",
-      "tituloSeo": "Kasko ja liikluskindlustus: kuidas remont toimub pärast avariid",
+      "tituloSeo": "Kasko ja liikluskindlustus: remont pärast avariid",
       "descricao": "Auto remont pärast avariid Eestis: liikluskindlustus (töökoja valib kannatanu, 30 päeva, garantiikiri), kasko (partnertöökoda, omavastutus, asendusauto), LKF.",
       "resumo": "Pärast avariid sõltub remondi käik sellest, kelle kindlustusest kahju kaetakse. Kui süüdi oli teine juht, hüvitab sinu auto remondi tema <strong>liikluskindlustus</strong>: sul on õigus esitada nõue ka oma kindlustusandjale, valida ise remondiettevõte ja kindlustusandja peab otsuse tegema hiljemalt 30. päeval. Kui süüdi olid sina või süüdlast pole, katab oma auto remondi ainult vabatahtlik <strong>kaskokindlustus</strong> – siis määrab või kinnitab remondikoha reeglina kindlustusandja, arvelt läheb maha omavastutus ja hüvitist võidakse vähendada, kui rikkusid tingimusi (näiteks suverehvid talvel). Allpool on mõlemad teed samm-sammult, Eesti Liikluskindlustuse Fondi (LKF) ja Finantsinspektsiooni selgituste põhjal.",
       "secoes": [
@@ -196,8 +196,8 @@
     "ru": {
       "slug": "remont-posle-dtp-po-kasko-i-strahovke",
       "titulo": "Ремонт после ДТП по каско и ОСАГО (liikluskindlustus) в Эстонии: пошагово",
-      "tituloSeo": "Ремонт после ДТП по каско и ОСАГО (liikluskindlustus) в Эстонии: пошагово",
-      "descricao": "Ремонт после ДТП в Эстонии: liikluskindlustus (сервис выбирает потерпевший, 30 дней, гарантийное письмо), каско (партнёрский сервис, франшиза, подменный авто), LKF.",
+      "tituloSeo": "Ремонт после ДТП по каско и ОСАГО в Эстонии: пошагово",
+      "descricao": "Ремонт после ДТП в Эстонии: liikluskindlustus (сервис выбирает потерпевший, 30 дней, гарантийное письмо), каско (партнёрский сервис, франшиза, подменное авто).",
       "resumo": "После аварии ход ремонта зависит от того, чья страховка покрывает ущерб. Если виноват другой водитель, ремонт вашего автомобиля оплачивает его <strong>liikluskindlustus</strong> — обязательное страхование ответственности, аналог ОСАГО: вы вправе подать требование и своему страховщику, сами выбрать ремонтное предприятие, а решение страховщик обязан принять не позднее 30-го дня. Если виноваты вы или виновник не установлен, ремонт вашей машины покрывает только добровольное <strong>каско</strong> — тогда место ремонта, как правило, определяет или утверждает страховщик, из выплаты вычитается собственная ответственность (франшиза), а возмещение могут уменьшить, если вы нарушили условия (например, летние шины зимой). Ниже оба пути по шагам на основе разъяснений Эстонского фонда дорожного страхования (LKF) и Финансовой инспекции.",
       "secoes": [
         {
