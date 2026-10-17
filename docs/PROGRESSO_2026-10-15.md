@@ -65,3 +65,4 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 ## 17/10 — Bing Site Scan
 - O dono iniciou o **Site Scan** do Bing Webmaster ("BipFixWebsite : https://bipfix.com/"), status "Queued" em 17/10. Eu não tinha rodado essa auditoria antes (falha minha na verificação de 16/10). Quando terminar: ler erros e avisos, corrigir o que for do site e citar o resultado no pedido de suporte ao Bing.
 - Scan atual: tipo "Website" (começa em https://bipfix.com/ e segue links), limite 1.000 páginas, avisos no e-mail do dono. O Bing só permite um scan por vez. **Decisão do dono (17/10):** deixar este terminar e **depois rodar um segundo scan com o tipo "Sitemap"** (`https://bipfix.com/sitemap.xml`).
+- **Yandex (17/10):** "Reindex pages" continua só leitura (pane dos data centers). Nada a fazer até voltar; as 88 URLs já foram por IndexNow em 16/10.
