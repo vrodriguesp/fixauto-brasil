@@ -83,3 +83,6 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
   - ru pneus: "Зимняя резина в Эстонии 2026/27: с какого числа, шипы, штраф"
 - **Descrições ≤ 160** (6, cortes mínimos): et preços, it comparar orçamentos, et e ru escolher oficina, ru seguro (corrigido também "подменный авто" → "подменное авто"), en pneus.
 - `validar-guias.mjs --sem-rede`: "tudo certo" (antes 13 erros). **Regra daqui pra frente:** rodar o validador antes de publicar guias.
+- **Publicado** (commit 1c7c613, build OK): os 7 títulos conferidos no ar (58–69 caracteres), H1 das páginas inalterado; IndexNow 88 URLs (HTTP 200). As 29 "fontes inacessíveis" do validador eram falha de rede do computador do dono — do servidor todas respondem 200.
+- **Resultado do 1º Site Scan do Bing** (tipo Website, 118 páginas): **0 erros**, 8 avisos, todos "Title too long": os 7 guias acima + a home italiana `/it/it` (74 caracteres — minha medição anterior pegou o título vazio por falha de rede e não conferi os zeros; agora repito a busca quando volta vazia).
+- `/it/it`: `home.metaTitle` (messages/it.json) → "Riparazione auto in Italia: preventivi delle officine | BipFix" (62). Nenhum outro título fixo dos 6 idiomas passa de 60+marca.
