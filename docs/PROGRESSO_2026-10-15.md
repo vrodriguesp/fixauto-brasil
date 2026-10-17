@@ -61,3 +61,6 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - **INPI:** a busca do INPI (busca.inpi.gov.br) não responde de fora do Brasil (nem do computador nem do servidor). Consultado o **WIPO Global Brand Database**, que inclui os dados do INPI e de 89 registros (UE/EUIPO e outros): **nenhuma marca "BipFix" registrada ou pedida** em lugar nenhum (16/10/2026).
 - **Domínios:** `bipfix.com` registrado em 12/04/2026 (nosso); `bipfix.com.br` registrado em 22/07/2026 por uma pessoa física (não empresa), ativo, vence em 22/07/2027.
 - **Nome da empresa (ideia do dono: "Pyrus Tech" dona da marca BipFix):** domínios pyrustech.com, pyrus.tech, pyrustech.ee e pyrustech.eu sem registro; pyrus.com ocupado. Registro de empresas da Estônia não conferido (a busca não respondeu). Decisão do dono pendente.
+
+## 17/10 — Bing Site Scan
+- O dono iniciou o **Site Scan** do Bing Webmaster ("BipFixWebsite : https://bipfix.com/"), status "Queued" em 17/10. Eu não tinha rodado essa auditoria antes (falha minha na verificação de 16/10). Quando terminar: ler erros e avisos, corrigir o que for do site e citar o resultado no pedido de suporte ao Bing.
