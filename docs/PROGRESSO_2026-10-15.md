@@ -94,3 +94,4 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - O domínio ainda não existe no DNS público ("Non-existent domain").
 - A conta do IONOS (my.ionos.it) só tem o `bipfix.it` (contrato 300437012, "Pack Dominio"); o `bipfix.pt` não aparece nela — igual a 09/10. Falta descobrir onde o .pt foi comprado (outra conta/registrador, ou pedido não concluído).
 - Servidor já pronto: bloco nginx `dominios-pais` com `bipfix.pt`/`www` → 301 `https://bipfix.com/pt/pt`; falta só o certificado (certbot), depois que o DNS responder.
+- **WHOIS oficial (whois.dns.pt, 18/10):** `bipfix.pt - No Match` → o domínio **não está registrado** por ninguém; a compra nunca foi concluída. Próximo passo (dono): procurar o e-mail do pedido no IONOS Itália ou comprar de novo; depois eu aponto o DNS e emito o certificado.
