@@ -89,3 +89,8 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - **Publicado** (commit 9d768c8, build OK): título de `/it/it` conferido no ar; homes 200; IndexNow 88 URLs (HTTP 200).
 - **2º Site Scan do Bing iniciado (17/10):** "BipFix Sitemap", tipo Sitemap (`https://bipfix.com/sitemap.xml`), limite 200 páginas — status "Queued". Ler o resultado quando terminar.
 - **Yandex (17/10, de novo):** "Reindex pages" ainda só leitura.
+
+## 18/10 — bipfix.pt (verificação, nada alterado)
+- O domínio ainda não existe no DNS público ("Non-existent domain").
+- A conta do IONOS (my.ionos.it) só tem o `bipfix.it` (contrato 300437012, "Pack Dominio"); o `bipfix.pt` não aparece nela — igual a 09/10. Falta descobrir onde o .pt foi comprado (outra conta/registrador, ou pedido não concluído).
+- Servidor já pronto: bloco nginx `dominios-pais` com `bipfix.pt`/`www` → 301 `https://bipfix.com/pt/pt`; falta só o certificado (certbot), depois que o DNS responder.
