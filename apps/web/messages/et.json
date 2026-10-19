@@ -94,8 +94,8 @@
     "quemSomosTexto": "BipFix on noor Tallinnas asuv ettevõte, mida registreeritakse Eesti osaühinguna (OÜ). Vastame igale avaldusele isiklikult: support@bipfix.com."
   },
   "paraOficinas": {
-    "metaTitle": "Autotöökoja Haldustarkvara ja Rohkem Kliente",
-    "metaDescription": "Haldustarkvara autotöökojale: ajakava, hinnapakkumised ja meeskond ühes kohas ning uued kliendid Tallinnast. Asutajapartneritele ilma kuutasuta.",
+    "metaTitle": "Autoteeninduse tarkvara ja uued kliendid",
+    "metaDescription": "Autoteeninduse tarkvara: ajakava, hinnapakkumised ja meeskond ühes kohas ning uued kliendid Tallinnast. Asutajapartneritele ilma kuutasuta.",
     "metaKeywords": [
       "autotöökoja haldustarkvara",
       "töökoja juhtimissüsteem",
@@ -107,7 +107,7 @@
       "töökoja broneerimissüsteem",
       "autoremonditöökoja tarkvara"
     ],
-    "ogTitle": "Autotöökoja Haldustarkvara ja Rohkem Kliente",
+    "ogTitle": "Autoteeninduse tarkvara ja uued kliendid",
     "ogDescription": "Korralda oma töökoda ja jõua piirkonna juhtideni, kes vajavad remonti. Tasuta registreerimine.",
     "heroTitulo": "Korras haldus ja rohkem kliente sinu autotöökojale",
     "heroTexto": "BipFix on haldussüsteem, mis korraldab sinu töökoja ajakava, hinnapakkumised ja meeskonna — ning samal ajal toob sind nähtavale piirkonna juhtidele, kes vajavad remonti just praegu.",
@@ -322,7 +322,7 @@
     "porQueTexto2": "Oleme sõna otseses mõttes alles alguses: valime esimesed partnertöökojad ja varuosade müüjad, et käivituda täie tähelepanuga üks linn korraga, mitte kasvada kiiresti ilma kvaliteedikontrollita.",
     "parceiroTitulo": "Veel jõuab liituda asutajapartnerina",
     "parceiroTexto": "Liidame praegu esimesi partnertöökodasid Tallinnas. Kui oled autojuht, saad oma päringu juba saata: edastame selle töökodadele kohe, kui nad liituvad, ja anname sulle teada. Kui sul on autotöökoda või varuosade äri, valime välja väikese arvu asutajapartnereid — selles faasis ilma komisjonitasuta.",
-    "faqTitulo": "Korduma Kippuvad Küsimused",
+    "faqTitulo": "Korduma kippuvad küsimused",
     "faqSubtitulo": "Leia vastused oma küsimustele BipFixi platvormi kohta",
     "faqItems": [
       {
