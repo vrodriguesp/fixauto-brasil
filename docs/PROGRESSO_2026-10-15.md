@@ -136,3 +136,12 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - **Publicado** (commit 02fcfd8, build OK, rodado no servidor com nohup): conferido no ar — et "Autoteeninduse tarkvara ja uued kliendid | BipFix", it "Gestionale per officine meccaniche e più clienti | BipFix", pt e pt-PT com maiúscula só no início, "Korduma kippuvad küsimused" na home et. IndexNow 88 URLs (HTTP 200, rodado do servidor — a rede do computador do dono não resolvia o DNS).
 - **Bing "Discovered but not crawled – URL cannot appear on Bing":** o Bing conhece a página mas decidiu não ler (domínio novo, sem links, marcação de confiança). Texto do pedido de suporte entregue ao dono (atualizado com o Site Scan 0 erros); envio é do dono.
 - **E-mail do Search Console de 07/10 ("Duplicate without user-selected canonical" / "Google chose different canonical"):** conferido em 19/10 — são só 6 endereços antigos, lidos pela última vez entre 28/09 e 03/10 (antes da mudança): `/pt-pt/termos`, `/en/terms`, `/et/privaatsus`, `/it/aiuto/automobilisti`, `/en/docs/cliente`, `/en/docs/oficina`. Todos fazem hoje 301 num salto para o endereço novo, que responde 200 com canonical próprio. Resolvido; o relatório limpa quando o Google reler os antigos.
+
+## 19/10 — Yandex Webmaster: pendências (nada alterado)
+- Painel ainda com a pane dos data centers (dados de 07/10, ferramentas em modo leitura).
+- **4 recomendações (todas de 30/09):**
+  1. "Favicon file not found" → **já resolvido**: `/favicon.ico` responde 200 (image/x-icon, 579 B) também para o YandexBot, e as páginas declaram `<link rel="icon">`. O aviso é antigo.
+  2. "No Sitemap files are currently used" → o `sitemap.xml` **já foi enviado em 29/09** e está "na fila de processamento" (1–2 semanas, travado pela pane). Nada a fazer.
+  3. "Specify a region for your site" → região não definida. Sugerido ao dono: **Tallinn** (o conteúdo em russo é todo da Estônia); o Yandex pede uma página do site que comprove a região. Decisão do dono.
+  4. "Add your site to Yandex Business" → **não se aplica**: é para negócio com local físico (como o Perfil da Empresa do Google); a BipFix é só online.
+- Títulos/descrições duplicados (100/98): continuam sendo dados antigos de 29–30/09; as 88 páginas atuais não têm duplicados.
