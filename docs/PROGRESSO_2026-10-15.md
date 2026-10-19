@@ -143,5 +143,6 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
   1. "Favicon file not found" → **já resolvido**: `/favicon.ico` responde 200 (image/x-icon, 579 B) também para o YandexBot, e as páginas declaram `<link rel="icon">`. O aviso é antigo.
   2. "No Sitemap files are currently used" → o `sitemap.xml` **já foi enviado em 29/09** e está "na fila de processamento" (1–2 semanas, travado pela pane). Nada a fazer.
   3. "Specify a region for your site" → região não definida. Sugerido ao dono: **Tallinn** (o conteúdo em russo é todo da Estônia); o Yandex pede uma página do site que comprove a região. Decisão do dono.
+     **Decisão do dono (19/10):** fazer quando o Yandex voltar (Tallinn, comprovando com `/ee/ru/o-nas`). Junto: reenviar Reindex de `/` e `/ee/ru/stati/ceny-na-remont-avto-v-talline`.
   4. "Add your site to Yandex Business" → **não se aplica**: é para negócio com local físico (como o Perfil da Empresa do Google); a BipFix é só online.
 - Títulos/descrições duplicados (100/98): continuam sendo dados antigos de 29–30/09; as 88 páginas atuais não têm duplicados.
