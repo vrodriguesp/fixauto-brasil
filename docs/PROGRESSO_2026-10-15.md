@@ -146,3 +146,7 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
      **Decisão do dono (19/10):** fazer quando o Yandex voltar (Tallinn, comprovando com `/ee/ru/o-nas`). Junto: reenviar Reindex de `/` e `/ee/ru/stati/ceny-na-remont-avto-v-talline`.
   4. "Add your site to Yandex Business" → **não se aplica**: é para negócio com local físico (como o Perfil da Empresa do Google); a BipFix é só online.
 - Títulos/descrições duplicados (100/98): continuam sendo dados antigos de 29–30/09; as 88 páginas atuais não têm duplicados.
+
+## 20/10 — RPyrus OÜ registrada
+- **RPyrus OÜ**, registrikood **17628754**, status R (registrada), sede Tartu mnt 67/1-13b, 10115 Tallinn (Harju maakond, Kesklinna linnaosa). Ficha: https://ariregister.rik.ee/est/company/17628754/RPyrus-OÜ
+- Próximos passos: conta bancária (dono tem reunião com a Revolut em 21/10; alternativa Wise Business), transferir os 100 € de capital, D-U-N-S, contador; atualizar rpyrus.com e os dados da empresa no bipfix.com (termos, privacidade, rodapé, Organization, llms.txt) — aguardando OK do dono.
