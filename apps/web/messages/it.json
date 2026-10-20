@@ -91,7 +91,7 @@
     "depois2": "Configuriamo con te il profilo dell'officina (circa 30 minuti) e verifichiamo la registrazione dell'impresa (partita IVA e iscrizione alla Camera di Commercio).",
     "depois3": "Inizi a ricevere richieste da automobilisti vicini alla tua officina.",
     "quemSomosTitulo": "Chi c'è dietro BipFix",
-    "quemSomosTexto": "BipFix è una giovane impresa europea nata a Tallinn, in Estonia, in fase di registrazione come società a responsabilità limitata estone (OÜ), che con la versione italiana si rivolge ora anche alle officine e agli automobilisti in Italia. Rispondiamo personalmente a ogni candidatura: support@bipfix.com."
+    "quemSomosTexto": "BipFix è gestita da RPyrus OÜ, una giovane impresa europea con sede a Tallinn, in Estonia (numero di registro 17628754), che con la versione italiana si rivolge ora anche alle officine e agli automobilisti in Italia. Rispondiamo personalmente a ogni candidatura: support@bipfix.com."
   },
   "paraOficinas": {
     "metaTitle": "Gestionale per officine meccaniche e più clienti",
@@ -376,7 +376,7 @@
     "footerGuiaOficina": "Guida per l'Officina",
     "footerCentralAjuda": "Centro Assistenza",
     "footerContato": "Contatti",
-    "footerDireitos": "2026 BipFix. Tutti i diritti riservati.",
+    "footerDireitos": "2026 BipFix · RPyrus OÜ (n. registro 17628754). Tutti i diritti riservati.",
     "footerTermos": "Termini di Utilizzo",
     "footerPrivacidade": "Privacy",
     "footerSobre": "Chi è BipFix",
@@ -644,7 +644,7 @@
     "estagioTitulo": "In che fase siamo",
     "estagioTexto": "Siamo all'inizio. BipFix è nato a Tallinn, in Estonia, dove si stanno registrando le prime officine partner; con la versione italiana apriamo ora il mercato italiano, a partire dalle grandi città come Milano, Roma, Napoli e Torino. Non abbiamo ancora una grande rete di officine in Italia — e preferiamo dirlo chiaramente.",
     "empresaTitulo": "L'impresa",
-    "empresaTexto": "BipFix è in fase di registrazione come società a responsabilità limitata estone (osaühing), con sede a Tallinn. Fino al completamento della registrazione, la piattaforma è gestita dal fondatore come persona fisica. I dati completi dell'impresa saranno pubblicati qui non appena la registrazione sarà completata; per l'Italia non abbiamo ancora una sede locale.",
+    "empresaTexto": "BipFix è gestita da RPyrus OÜ, società a responsabilità limitata estone (osaühing). Numero di registro: 17628754. Sede legale: Tartu mnt 67/1-13b, 10115 Tallinn, Estonia. Per l'Italia non abbiamo ancora una sede locale.",
     "principiosTitulo": "Come lavoriamo",
     "principio1": "Nessuna officina può pagare per comparire per prima.",
     "principio2": "Recensisce solo chi ha commissionato e completato il lavoro.",

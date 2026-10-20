@@ -91,7 +91,7 @@
     "depois2": "Seame koos sinuga üles töökoja profiili (umbes 30 minutit) ja kontrollime ettevõtte registreeringut.",
     "depois3": "Hakkad saama päringuid oma töökoja lähedal olevatelt autojuhtidelt.",
     "quemSomosTitulo": "Kes on BipFixi taga",
-    "quemSomosTexto": "BipFix on noor Tallinnas asuv ettevõte, mida registreeritakse Eesti osaühinguna (OÜ). Vastame igale avaldusele isiklikult: support@bipfix.com."
+    "quemSomosTexto": "BipFixi haldab RPyrus OÜ, noor Tallinnas asuv Eesti ettevõte (registrikood 17628754). Vastame igale avaldusele isiklikult: support@bipfix.com."
   },
   "paraOficinas": {
     "metaTitle": "Autoteeninduse tarkvara ja uued kliendid",
@@ -375,7 +375,7 @@
     "footerGuiaOficina": "Töökoja juhend",
     "footerCentralAjuda": "Abikeskus",
     "footerContato": "Kontakt",
-    "footerDireitos": "2026 BipFix. Kõik õigused kaitstud.",
+    "footerDireitos": "2026 BipFix · RPyrus OÜ (registrikood 17628754). Kõik õigused kaitstud.",
     "footerTermos": "Kasutustingimused",
     "footerPrivacidade": "Privaatsus",
     "footerSobre": "BipFixist",
@@ -643,7 +643,7 @@
     "estagioTitulo": "Kus me praegu oleme",
     "estagioTexto": "Oleme alles alguses. Meie pilootlinn on Tallinn ja esimesi partnertöökodasid liidetakse praegu, asutajapartnerite faasis. Meil ei ole veel suurt töökodade võrgustikku — ja ütleme selle pigem otse välja.",
     "empresaTitulo": "Ettevõte",
-    "empresaTexto": "BipFixi registreeritakse Eesti osaühinguna. Kuni registreerimise lõpuni haldab platvormi asutaja füüsilise isikuna. Ettevõtte täielikud andmed avaldame siin kohe, kui registreerimine on lõpetatud.",
+    "empresaTexto": "BipFixi haldab RPyrus OÜ, Eestis registreeritud osaühing. Registrikood: 17628754. Registrijärgne aadress: Tartu mnt 67/1-13b, 10115 Tallinn.",
     "principiosTitulo": "Kuidas me töötame",
     "principio1": "Ükski töökoda ei saa maksta, et olla eespool.",
     "principio2": "Hinnangu saab anda ainult see, kes töö tellis ja lõpetas.",

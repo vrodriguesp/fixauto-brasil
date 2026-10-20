@@ -43,7 +43,7 @@ function montar(): string {
 
 > BipFix is an online marketplace that connects drivers who need a car repair with independent auto repair shops (and auto parts stores). Drivers describe the problem (with photos), receive quotes from nearby shops, compare them and track the repair. BipFix is a technology intermediary only: it does not repair vehicles or sell parts.
 
-Current stage: BipFix is launching. The pilot city is Tallinn, Estonia, and the company is being registered as an Estonian private limited company (osaühing). The first partner repair shops are being onboarded now (founding-partner phase, no commission); until they are live, driver requests may not receive quotes yet. There is also a Brazilian Portuguese version of the site for Brazil. BipFix does not yet have a large network of shops, and it does not operate in other cities.
+Current stage: BipFix is launching. The pilot city is Tallinn, Estonia. BipFix is operated by RPyrus OÜ, an Estonian private limited company (registry code 17628754, Tartu mnt 67/1-13b, 10115 Tallinn; https://rpyrus.com). The first partner repair shops are being onboarded now (founding-partner phase, no commission); until they are live, driver requests may not receive quotes yet. There is also a Brazilian Portuguese version of the site for Brazil. BipFix does not yet have a large network of shops, and it does not operate in other cities.
 
 ## Key pages (English addresses; each language has its own translated address)
 

@@ -91,7 +91,7 @@
     "depois2": "We set up your shop profile with you (about 30 minutes) and check your company registration.",
     "depois3": "You start receiving requests from drivers near your shop.",
     "quemSomosTitulo": "Who's behind BipFix",
-    "quemSomosTexto": "BipFix is a young company based in Tallinn, being registered as an Estonian private limited company (OÜ). We answer every application personally: support@bipfix.com."
+    "quemSomosTexto": "BipFix is operated by RPyrus OÜ, a young Estonian company based in Tallinn (registry code 17628754). We answer every application personally: support@bipfix.com."
   },
   "paraOficinas": {
     "metaTitle": "Repair Shop Software & More Customers",
@@ -375,7 +375,7 @@
     "footerGuiaOficina": "Shop Guide",
     "footerCentralAjuda": "Help Centre",
     "footerContato": "Contact",
-    "footerDireitos": "2026 BipFix. All rights reserved.",
+    "footerDireitos": "2026 BipFix · RPyrus OÜ (registry code 17628754). All rights reserved.",
     "footerTermos": "Terms of Use",
     "footerPrivacidade": "Privacy",
     "footerSobre": "About BipFix",
@@ -643,7 +643,7 @@
     "estagioTitulo": "Where we are",
     "estagioTexto": "We're just getting started. Our pilot city is Tallinn, Estonia, and the first partner repair shops are being onboarded now, in the founding-partner phase. We don't have a large network of shops yet — and we'd rather say so clearly.",
     "empresaTitulo": "The company",
-    "empresaTexto": "BipFix is being registered as an Estonian private limited company (osaühing). Until the registration is complete, the platform is operated by its founder as a private individual. Full company details will be published here as soon as the registration is complete.",
+    "empresaTexto": "BipFix is operated by RPyrus OÜ, a private limited company (osaühing) registered in Estonia. Registry code: 17628754. Registered address: Tartu mnt 67/1-13b, 10115 Tallinn, Estonia.",
     "principiosTitulo": "How we work",
     "principio1": "No repair shop can pay to appear first.",
     "principio2": "Only customers who hired a shop and completed the job can review it.",

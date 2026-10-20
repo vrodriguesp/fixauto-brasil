@@ -8,12 +8,12 @@
     "metaDescription": "Termini di utilizzo della piattaforma BipFix per automobilisti, officine e rivenditori di ricambi nell'Unione europea.",
     "pageTitle": "Termini di utilizzo",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
-    "updatedDate": "30 settembre 2026",
+    "updatedDate": "20 ottobre 2026",
     "secoes": [
       {
         "titulo": "1. Chi siamo e quando si applicano questi Termini",
         "paragrafos": [
-          "BipFix (\"noi\") gestisce il sito bipfix.com e l'app mobile BipFix (insieme, la \"Piattaforma\"). BipFix è attualmente in fase di registrazione come società a responsabilità limitata (osaühing) in Estonia. Fino al completamento della registrazione, la Piattaforma è gestita dal suo fondatore in qualità di persona fisica. Una volta registrata la società, in questa sezione indicheremo la sua denominazione legale, il numero di registro e la sede legale. Puoi contattarci all'indirizzo <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>.",
+          "Il sito bipfix.com e l'app mobile BipFix (insieme, la \"Piattaforma\") sono gestiti da RPyrus OÜ (\"BipFix\", \"noi\"), società a responsabilità limitata registrata in Estonia (numero di registro 17628754, sede legale Tartu mnt 67/1-13b, 10115 Tallinn, Estonia). Puoi contattarci all'indirizzo <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>.",
           "Questi Termini si applicano alle versioni in inglese, estone, italiano, portoghese europeo e russo della Piattaforma e a tutti coloro che la utilizzano dallo Spazio economico europeo. La versione in portoghese brasiliano della Piattaforma è destinata agli utenti in Brasile ed è disciplinata da termini separati basati sulla legge brasiliana. Creando un account o usando la Piattaforma accetti questi Termini. Il modo in cui trattiamo i dati personali è spiegato nella nostra <a href=\"/privacidade\">Informativa sulla privacy</a>."
         ]
       },
@@ -144,7 +144,7 @@
       {
         "titulo": "17. Modifiche a questi Termini",
         "paragrafos": [
-          "Possiamo modificare questi Termini, ad esempio quando sarà completata la registrazione della società, quando introduciamo nuove funzioni o quando cambia la legge. Informeremo gli utenti registrati delle modifiche rilevanti via email o sulla Piattaforma prima della loro entrata in vigore: con almeno 30 giorni di anticipo per le modifiche che riguardano i Partner (o più, se necessario per adeguarsi) e con un anticipo ragionevole per i Clienti. Se non sei d'accordo con le modifiche, puoi chiudere il tuo account prima della loro entrata in vigore."
+          "Possiamo modificare questi Termini, ad esempio quando introduciamo nuove funzioni o quando cambia la legge. Informeremo gli utenti registrati delle modifiche rilevanti via email o sulla Piattaforma prima della loro entrata in vigore: con almeno 30 giorni di anticipo per le modifiche che riguardano i Partner (o più, se necessario per adeguarsi) e con un anticipo ragionevole per i Clienti. Se non sei d'accordo con le modifiche, puoi chiudere il tuo account prima della loro entrata in vigore."
         ]
       },
       {
@@ -167,13 +167,13 @@
     "metaDescription": "Come BipFix tratta i dati personali di automobilisti, officine e rivenditori di ricambi nell'Unione europea, in conformità al GDPR.",
     "pageTitle": "Informativa sulla privacy",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
-    "updatedDate": "28 settembre 2026",
+    "updatedDate": "20 ottobre 2026",
     "secoes": [
       {
         "titulo": "1. Chi è responsabile dei tuoi dati",
         "paragrafos": [
-          "Il titolare del trattamento dei tuoi dati personali ai sensi del Regolamento generale sulla protezione dei dati (UE) 2016/679 (\"GDPR\") è BipFix (\"noi\").",
-          "BipFix è attualmente in fase di registrazione come società a responsabilità limitata (osaühing) in Estonia. Fino al completamento della registrazione, BipFix è gestita dal suo fondatore in qualità di persona fisica, che è il titolare del trattamento. Una volta registrata la società, in questa sezione indicheremo la sua denominazione legale, il numero di registro e la sede legale.",
+          "Il titolare del trattamento dei tuoi dati personali ai sensi del Regolamento generale sulla protezione dei dati (UE) 2016/679 (\"GDPR\") è RPyrus OÜ (\"BipFix\", \"noi\"), la società che gestisce BipFix.",
+          "RPyrus OÜ è una società a responsabilità limitata iscritta nel registro delle imprese estone, numero di registro 17628754, sede legale Tartu mnt 67/1-13b, 10115 Tallinn, Estonia.",
           "Per qualsiasi domanda o richiesta relativa ai tuoi dati personali, scrivi a <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>. Non abbiamo nominato un Responsabile della protezione dei dati (DPO) perché non siamo tenuti a farlo; le richieste inviate a questo indirizzo sono gestite direttamente dalle persone responsabili della protezione dei dati in BipFix."
         ]
       },
@@ -358,7 +358,7 @@
       {
         "titulo": "12. Modifiche a questa informativa",
         "paragrafos": [
-          "Potremmo aggiornare questa informativa, ad esempio quando sarà completata la registrazione della società o quando inizieremo a usare un nuovo fornitore. Informeremo gli utenti registrati delle modifiche rilevanti via email o con un avviso sulla piattaforma prima della loro entrata in vigore."
+          "Potremmo aggiornare questa informativa, ad esempio quando inizieremo a usare un nuovo fornitore. Informeremo gli utenti registrati delle modifiche rilevanti via email o con un avviso sulla piattaforma prima della loro entrata in vigore."
         ]
       },
       {

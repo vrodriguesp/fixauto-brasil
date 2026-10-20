@@ -150,3 +150,14 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 ## 20/10 — RPyrus OÜ registrada
 - **RPyrus OÜ**, registrikood **17628754**, status R (registrada), sede Tartu mnt 67/1-13b, 10115 Tallinn (Harju maakond, Kesklinna linnaosa). Ficha: https://ariregister.rik.ee/est/company/17628754/RPyrus-OÜ
 - Próximos passos: conta bancária (dono tem reunião com a Revolut em 21/10; alternativa Wise Business), transferir os 100 € de capital, D-U-N-S, contador; atualizar rpyrus.com e os dados da empresa no bipfix.com (termos, privacidade, rodapé, Organization, llms.txt) — aguardando OK do dono.
+
+## 20/10 — Dados da RPyrus OÜ nos sites (com OK do dono)
+- **bipfix.com, 6 idiomas** (script que só troca o texto atual exato, 52 trocas, 1x cada):
+  - **Termos (UE: en, et, ru, it, pt-PT):** seção 1 agora diz que a plataforma é operada pela **RPyrus OÜ** (registrikood 17628754, sede Tartu mnt 67/1-13b, 10115 Tallinn); saiu "em registro / operada pelo fundador como pessoa física". Seção de alterações sem o exemplo "quando o registro for concluído".
+  - **Privacidade (UE):** controlador = RPyrus OÜ, com registro e sede; mesma limpeza na seção de alterações.
+  - **Brasil (LGPD):** os termos e a privacidade **não identificavam o operador/controlador** (a LGPD exige a identidade do controlador) — acrescentado em `termos.body1a` e `privacidade.body1` (sem `<strong>` na privacidade, que usa texto puro).
+  - Data "última atualização" de termos e privacidade: **20/10/2026** nos 6 idiomas.
+  - "Seja parceiro" (quem somos), "Sobre" (empresa) e **rodapé** ("2026 BipFix · RPyrus OÜ (registrikood 17628754)…") nos 6 idiomas.
+  - `llms.txt`: "operated by RPyrus OÜ … https://rpyrus.com"; dados para buscadores (Organization): `parentOrganization` RPyrus OÜ com registrikood e endereço.
+  - `checar-traducoes.mjs` ok; `tsc` ok.
+- **rpyrus.com:** "registration in progress" → "Registry code 17628754"; CEP 10115 no contato e no rodapé; `identifier` e `postalCode` nos dados para buscadores.

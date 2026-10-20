@@ -91,7 +91,7 @@
     "depois2": "Montamos o perfil da sua oficina junto com você (cerca de 30 minutos) e conferimos o cadastro da empresa.",
     "depois3": "Você começa a receber pedidos de motoristas perto da sua oficina.",
     "quemSomosTitulo": "Quem está por trás do BipFix",
-    "quemSomosTexto": "O BipFix é uma empresa nova, com base em Tallinn, em processo de registro como sociedade limitada na Estônia (OÜ). Respondemos pessoalmente cada inscrição: support@bipfix.com."
+    "quemSomosTexto": "O BipFix é operado pela RPyrus OÜ, uma empresa nova com base em Tallinn, na Estônia (código de registro 17628754). Respondemos pessoalmente cada inscrição: support@bipfix.com."
   },
   "paraOficinas": {
     "metaTitle": "Sistema de gestão para oficina mecânica e mais clientes",
@@ -375,7 +375,7 @@
     "footerGuiaOficina": "Guia da Oficina",
     "footerCentralAjuda": "Central de Ajuda",
     "footerContato": "Contato",
-    "footerDireitos": "2026 BipFix. Todos os direitos reservados.",
+    "footerDireitos": "2026 BipFix · RPyrus OÜ (registro 17628754). Todos os direitos reservados.",
     "footerTermos": "Termos de Uso",
     "footerPrivacidade": "Privacidade",
     "footerSobre": "Sobre o BipFix",
@@ -643,7 +643,7 @@
     "estagioTitulo": "Em que fase estamos",
     "estagioTexto": "Estamos começando. A cidade piloto é Tallinn, na Estônia, e as primeiras oficinas parceiras estão sendo cadastradas agora, na fase de parceiros fundadores. Não temos, ainda, uma grande rede de oficinas — e preferimos dizer isso com clareza.",
     "empresaTitulo": "A empresa",
-    "empresaTexto": "O BipFix está em processo de registro como sociedade limitada estoniana (osaühing). Até a conclusão do registro, a plataforma é operada pelo fundador como pessoa física. Os dados completos da empresa serão publicados aqui assim que o registro for concluído.",
+    "empresaTexto": "O BipFix é operado pela RPyrus OÜ, sociedade de responsabilidade limitada (osaühing) registrada na Estônia. Código de registro: 17628754. Sede: Tartu mnt 67/1-13b, 10115 Tallinn, Estônia.",
     "principiosTitulo": "Como trabalhamos",
     "principio1": "Nenhuma oficina paga para aparecer primeiro.",
     "principio2": "Só avalia quem contratou e concluiu o serviço.",

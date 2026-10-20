@@ -8,12 +8,12 @@
     "metaDescription": "Terms of Use of the BipFix platform for drivers, repair shops and parts stores in the European Union.",
     "pageTitle": "Terms of Use",
     "lastUpdatedLabel": "Last updated:",
-    "updatedDate": "September 30, 2026",
+    "updatedDate": "October 20, 2026",
     "secoes": [
       {
         "titulo": "1. Who we are and when these Terms apply",
         "paragrafos": [
-          "BipFix (\"we\", \"us\") operates the bipfix.com website and the BipFix mobile app (together, the \"Platform\"). BipFix is currently being registered as a private limited company (osaühing) in Estonia. Until the registration is completed, the Platform is operated by its founder as a natural person. Once the company is registered, this section will state its legal name, registry code and registered address. You can contact us at <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>.",
+          "The bipfix.com website and the BipFix mobile app (together, the \"Platform\") are operated by RPyrus OÜ (\"BipFix\", \"we\", \"us\"), a private limited company registered in Estonia (registry code 17628754, registered address Tartu mnt 67/1-13b, 10115 Tallinn, Estonia). You can contact us at <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>.",
           "These Terms apply to the English, Estonian, Italian, European Portuguese and Russian versions of the Platform and to everyone who uses it from the European Economic Area. The Brazilian Portuguese version of the Platform is intended for users in Brazil and is governed by separate terms based on Brazilian law. By creating an account or using the Platform you accept these Terms. How we process personal data is explained in our <a href=\"/privacidade\">Privacy Policy</a>."
         ]
       },
@@ -144,7 +144,7 @@
       {
         "titulo": "17. Changes to these Terms",
         "paragrafos": [
-          "We may change these Terms, for example when the company registration is completed, when we introduce new features or when the law changes. We will inform registered users of significant changes by email or on the Platform before they take effect: at least 30 days in advance for changes that affect Partners (or longer if needed to adapt), and within a reasonable period for Customers. If you do not agree with the changes, you can close your account before they take effect."
+          "We may change these Terms, for example when we introduce new features or when the law changes. We will inform registered users of significant changes by email or on the Platform before they take effect: at least 30 days in advance for changes that affect Partners (or longer if needed to adapt), and within a reasonable period for Customers. If you do not agree with the changes, you can close your account before they take effect."
         ]
       },
       {
@@ -167,13 +167,13 @@
     "metaDescription": "How BipFix processes the personal data of drivers, repair shops and parts stores in the European Union, in accordance with the GDPR.",
     "pageTitle": "Privacy Policy",
     "lastUpdatedLabel": "Last updated:",
-    "updatedDate": "September 28, 2026",
+    "updatedDate": "October 20, 2026",
     "secoes": [
       {
         "titulo": "1. Who is responsible for your data",
         "paragrafos": [
-          "The controller of your personal data under the General Data Protection Regulation (EU) 2016/679 (\"GDPR\") is BipFix (\"we\", \"us\").",
-          "BipFix is currently being registered as a private limited company (osaühing) in Estonia. Until the registration is completed, BipFix is operated by its founder as a natural person, who is the controller. Once the company is registered, this section will state its legal name, registry code and registered address.",
+          "The controller of your personal data under the General Data Protection Regulation (EU) 2016/679 (\"GDPR\") is RPyrus OÜ (\"BipFix\", \"we\", \"us\"), the company that operates BipFix.",
+          "RPyrus OÜ is a private limited company entered in the Estonian Commercial Register, registry code 17628754, registered address Tartu mnt 67/1-13b, 10115 Tallinn, Estonia.",
           "For any question or request about your personal data, write to <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>. We have not appointed a Data Protection Officer because we are not required to; requests sent to this address are handled directly by the people responsible for data protection at BipFix."
         ]
       },
@@ -358,7 +358,7 @@
       {
         "titulo": "12. Changes to this policy",
         "paragrafos": [
-          "We may update this policy, for example when the company registration is completed or when we start using a new service provider. We will inform registered users of significant changes by email or with a notice on the platform before they take effect."
+          "We may update this policy, for example when we start using a new service provider. We will inform registered users of significant changes by email or with a notice on the platform before they take effect."
         ]
       },
       {

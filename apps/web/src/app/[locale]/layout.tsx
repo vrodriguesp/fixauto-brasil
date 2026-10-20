@@ -100,8 +100,21 @@ export default async function LocaleLayout({
       areaServed: ['EE', 'BR'],
       availableLanguage: ['Estonian', 'English', 'Russian', 'Portuguese', 'Italian'],
     },
-    // sameAs (perfis oficiais em redes) e address (sede da OU) entram
-    // quando existirem - pendencia do usuario.
+    // Empresa que opera a BipFix (registrada em 20/10/2026). sameAs (perfis
+    // oficiais em redes) entra quando existirem - pendencia do usuario.
+    parentOrganization: {
+      '@type': 'Organization',
+      name: 'RPyrus OÜ',
+      url: 'https://rpyrus.com',
+      identifier: { '@type': 'PropertyValue', propertyID: 'Estonian Business Register code', value: '17628754' },
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Tartu mnt 67/1-13b',
+        postalCode: '10115',
+        addressLocality: 'Tallinn',
+        addressCountry: 'EE',
+      },
+    },
   };
 
   const websiteSchema = {

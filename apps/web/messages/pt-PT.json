@@ -91,7 +91,7 @@
     "depois2": "Criamos o perfil da sua oficina consigo (cerca de 30 minutos) e confirmamos o registo da empresa.",
     "depois3": "Começa a receber pedidos de condutores perto da sua oficina.",
     "quemSomosTitulo": "Quem está por trás da BipFix",
-    "quemSomosTexto": "A BipFix é uma empresa nova, sediada em Tallinn, em processo de registo como sociedade por quotas estónia (OÜ). Respondemos pessoalmente a cada candidatura: support@bipfix.com."
+    "quemSomosTexto": "A BipFix é operada pela RPyrus OÜ, uma empresa nova sediada em Tallinn, na Estónia (código de registo 17628754). Respondemos pessoalmente a cada candidatura: support@bipfix.com."
   },
   "paraOficinas": {
     "metaTitle": "Software para oficinas e mais clientes",
@@ -375,7 +375,7 @@
     "footerGuiaOficina": "Guia da Oficina",
     "footerCentralAjuda": "Centro de Ajuda",
     "footerContato": "Contacto",
-    "footerDireitos": "2026 BipFix. Todos os direitos reservados.",
+    "footerDireitos": "2026 BipFix · RPyrus OÜ (registo 17628754). Todos os direitos reservados.",
     "footerTermos": "Termos de Utilização",
     "footerPrivacidade": "Privacidade",
     "footerSobre": "Sobre a BipFix",
@@ -643,7 +643,7 @@
     "estagioTitulo": "Em que fase estamos",
     "estagioTexto": "Estamos a começar. A cidade piloto é Tallinn, na Estónia, e as primeiras oficinas parceiras estão a ser registadas agora, na fase de parceiros fundadores. Ainda não temos uma grande rede de oficinas — e preferimos dizê-lo com clareza.",
     "empresaTitulo": "A empresa",
-    "empresaTexto": "A BipFix está em processo de registo como sociedade por quotas estónia (osaühing). Até ao fim do registo, a plataforma é operada pelo fundador como pessoa singular. Os dados completos da empresa serão publicados aqui assim que o registo estiver concluído.",
+    "empresaTexto": "A BipFix é operada pela RPyrus OÜ, sociedade por quotas (osaühing) registada na Estónia. Código de registo: 17628754. Sede: Tartu mnt 67/1-13b, 10115 Tallinn, Estónia.",
     "principiosTitulo": "Como trabalhamos",
     "principio1": "Nenhuma oficina paga para aparecer primeiro.",
     "principio2": "Só avalia quem contratou e concluiu o serviço.",

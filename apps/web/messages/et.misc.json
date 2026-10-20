@@ -8,12 +8,12 @@
     "metaDescription": "BipFixi platvormi kasutustingimused autojuhtidele, autotöökodadele ja varuosade müüjatele Euroopa Liidus.",
     "pageTitle": "Kasutustingimused",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "30. september 2026",
+    "updatedDate": "20. oktoober 2026",
     "secoes": [
       {
         "titulo": "1. Kes me oleme ja millal need tingimused kehtivad",
         "paragrafos": [
-          "BipFix („meie“) haldab veebilehte bipfix.com ja BipFixi mobiilirakendust (koos „platvorm“). BipFix on praegu Eestis osaühinguna registreerimisel. Kuni registreerimise lõpuni haldab platvormi selle asutaja füüsilise isikuna. Pärast äriühingu registreerimist lisame siia selle ärinime, registrikoodi ja registrijärgse aadressi. Meiega saab ühendust aadressil <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>.",
+          "Veebilehte bipfix.com ja BipFixi mobiilirakendust (koos „platvorm“) haldab RPyrus OÜ („BipFix“, „meie“), Eestis registreeritud osaühing (registrikood 17628754, registrijärgne aadress Tartu mnt 67/1-13b, 10115 Tallinn). Meiega saab ühendust aadressil <a href=\"mailto:support@bipfix.com\">support@bipfix.com</a>.",
           "Need tingimused kehtivad platvormi inglis-, eesti-, itaalia-, Euroopa portugali- ja venekeelse versiooni ning kõigi selle kasutajate kohta Euroopa Majanduspiirkonnas. Platvormi Brasiilia portugalikeelne versioon on mõeldud Brasiilia kasutajatele ja sellele kehtivad eraldi, Brasiilia õigusel põhinevad tingimused. Konto loomisega või platvormi kasutamisega nõustud nende tingimustega. Seda, kuidas me isikuandmeid töötleme, selgitab meie <a href=\"/privacidade\">privaatsuspoliitika</a>."
         ]
       },
@@ -144,7 +144,7 @@
       {
         "titulo": "17. Tingimuste muutmine",
         "paragrafos": [
-          "Võime neid tingimusi muuta, näiteks pärast äriühingu registreerimist, uute funktsioonide lisamisel või seaduse muutumisel. Olulistest muudatustest teavitame registreeritud kasutajaid e-posti teel või platvormil enne nende jõustumist: partnereid puudutavatest muudatustest vähemalt 30 päeva ette (või kauem, kui kohandumiseks on vaja) ja kliente mõistliku aja jooksul. Kui sa muudatustega ei nõustu, võid oma konto enne nende jõustumist sulgeda."
+          "Võime neid tingimusi muuta, näiteks uute funktsioonide lisamisel või seaduse muutumisel. Olulistest muudatustest teavitame registreeritud kasutajaid e-posti teel või platvormil enne nende jõustumist: partnereid puudutavatest muudatustest vähemalt 30 päeva ette (või kauem, kui kohandumiseks on vaja) ja kliente mõistliku aja jooksul. Kui sa muudatustega ei nõustu, võid oma konto enne nende jõustumist sulgeda."
         ]
       },
       {
@@ -167,13 +167,13 @@
     "metaDescription": "Kuidas BipFix töötleb Euroopa Liidus autojuhtide, autotöökodade ja varuosade müüjate isikuandmeid kooskõlas isikuandmete kaitse üldmäärusega (GDPR).",
     "pageTitle": "Privaatsuspoliitika",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "28. september 2026",
+    "updatedDate": "20. oktoober 2026",
     "secoes": [
       {
         "titulo": "1. Kes vastutab sinu andmete eest",
         "paragrafos": [
-          "Sinu isikuandmete vastutav töötleja isikuandmete kaitse üldmääruse (EL) 2016/679 („GDPR“) tähenduses on BipFix („meie“).",
-          "BipFix on praegu Eestis osaühinguna registreerimisel. Kuni registreerimise lõpuni tegutseb BipFix oma asutaja kui füüsilise isiku kaudu, kes on vastutav töötleja. Pärast äriühingu registreerimist lisame siia selle ärinime, registrikoodi ja registrijärgse aadressi.",
+          "Sinu isikuandmete vastutav töötleja isikuandmete kaitse üldmääruse (EL) 2016/679 („GDPR“) tähenduses on RPyrus OÜ („BipFix“, „meie“), BipFixi haldav ettevõte.",
+          "RPyrus OÜ on Eesti äriregistrisse kantud osaühing, registrikood 17628754, registrijärgne aadress Tartu mnt 67/1-13b, 10115 Tallinn.",
           "Kõigi sinu isikuandmetega seotud küsimuste ja taotluste korral kirjuta aadressil <a href=\"mailto:privacy@bipfix.com\">privacy@bipfix.com</a>. Me ei ole määranud andmekaitseametnikku, sest see ei ole meile kohustuslik; sellele aadressile saadetud taotlusi käsitlevad otse BipFixi andmekaitse eest vastutavad inimesed."
         ]
       },
@@ -358,7 +358,7 @@
       {
         "titulo": "12. Poliitika muudatused",
         "paragrafos": [
-          "Võime seda poliitikat uuendada, näiteks pärast äriühingu registreerimist või uue teenuseosutaja kasutuselevõttu. Olulistest muudatustest teavitame registreeritud kasutajaid e-posti teel või platvormil enne nende jõustumist."
+          "Võime seda poliitikat uuendada, näiteks uue teenuseosutaja kasutuselevõttu. Olulistest muudatustest teavitame registreeritud kasutajaid e-posti teel või platvormil enne nende jõustumist."
         ]
       },
       {
