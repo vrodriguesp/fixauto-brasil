@@ -174,3 +174,10 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - **BIMI (logo do remetente na caixa de entrada), 20/10:** o formulário do Zoho exige (1) DMARC `p=quarantine` ou `p=reject` a 100%, (2) logo em SVG Tiny PS por HTTPS e (3) **URL do certificado VMC (obrigatório)**. VMC: ~1.000–1.500 US$/ano (DigiCert/Entrust) e **exige marca registrada** do logo; a alternativa CMC dispensa a marca, mas pede o logo em uso há ≥ 1 ano. Sem o certificado, Gmail/Apple não mostram o logo e o Zoho não salva → **BIMI adiado** (decisão de custo/marca do dono). Não foi colocado nada no Namecheap para o BIMI.
 - **DMARC já existe** (criado pelo dono/Zoho): `v=DMARC1; p=none; rua=mailto:info@rpyrus.com; ruf=mailto:info@rpyrus.com; sp=none; adkim=r; aspf=r`. Recomendação: manter `p=none` 1–2 semanas, conferir nos relatórios que os e-mails legítimos passam, depois subir para `p=quarantine` (requisito do BIMI e igual ao bipfix.com).
 - Caixa `info@rpyrus.com` criada no Zoho Mail pelo dono.
+
+## 20/10 — bipfix.com: preparação para mudar o e-mail do Private Email para o Zoho (passo 1, com OK do dono)
+- Verificação de dono do `bipfix.com` no Zoho já existia (TXT `zoho-verification=zb79133156.zmverify.zoho.com`, posto pelo dono).
+- **SPF combinado** (sugestão do próprio Zoho, para os dois funcionarem na transição; continua 1 SPF só): `v=spf1 include:one.zoho.com include:spf.privateemail.com ~all`.
+- **DKIM do Zoho** `zmail._domainkey` adicionado (234 caracteres, conferido por SHA-256 com a página do Zoho e depois no DNS). DKIM `privateemail` e `resend` mantidos.
+- **Recebimento NÃO mudou:** MX continuam `mx1/mx2.privateemail.com`; MX `send` (Amazon SES/Resend) intacto; DMARC `p=quarantine` intacto.
+- Próximos passos: (2) criar no Zoho os endereços do bipfix.com (aliases da caixa ou caixa nova) e migrar os e-mails antigos; (3) trocar os MX para mx/mx2/mx3.zoho.com (10/20/50); (4) dias depois, tirar `spf.privateemail.com` do SPF e o DKIM `privateemail`, e cancelar o Private Email (renova 08/10/2027).
