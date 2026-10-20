@@ -188,3 +188,8 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - A migração continua lendo direto da caixa antiga do Private Email (IMAP), então não é afetada pela troca.
 - Falta: dono testar envio para `contato@` e `support@bipfix.com` (devem cair em `info@rpyrus.com` no Zoho); em 1–2 dias rodar a migração de novo (e-mails que ainda caíram no Private Email por cache de DNS); passo 4 (tirar `include:spf.privateemail.com` do SPF e o DKIM `privateemail`, cancelar o Private Email).
 - **MTA-STS (pergunta do dono):** opcional (criptografia obrigatória na entrega, não afeta spam). Fica para depois do passo 4: registro A `mta-sts` → servidor, TXT `_mta-sts` `v=STSv1; id=...`, arquivo `https://mta-sts.bipfix.com/.well-known/mta-sts.txt` (nginx + certbot) com `mode: testing` e `mx: mx.zoho.com / mx2.zoho.com / mx3.zoho.com`; opcional TXT `_smtp._tls` (TLS-RPT). Depois de 1–2 semanas sem problemas, `mode: enforce`.
+
+## 20/10 — Assinatura de e-mail BipFix + RPyrus
+- Nova assinatura em `Documentos/Assinatura_Email_BipFix_RPyrus.html` (local, fora do repositório): a mesma da BipFix (logo, nome, cargo, e-mail, site) + linha final com o logo R·Pyrus e "BipFix is a product of RPyrus OÜ · Registrikood 17628754 · Tartu mnt 67/1-13b, 10115 Tallinn".
+- Logo da RPyrus em PNG para e-mail (os programas de e-mail não mostram SVG): `rpyrus-site/assets/rpyrus-logo-email.png` (350×96, mostrado a 66×18), gerado do SVG com sharp; enviado para `/var/www/rpyrus/assets/` (https://rpyrus.com/assets/rpyrus-logo-email.png → 200) e commitado no repositório local `rpyrus-site` (23dde78). Logo da BipFix: `https://bipfix.com/logo.png`.
+- Instalação: Zoho Mail → Settings → Signature (feita pelo dono).
