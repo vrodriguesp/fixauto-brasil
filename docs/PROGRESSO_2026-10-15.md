@@ -161,3 +161,4 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
   - `llms.txt`: "operated by RPyrus OÜ … https://rpyrus.com"; dados para buscadores (Organization): `parentOrganization` RPyrus OÜ com registrikood e endereço.
   - `checar-traducoes.mjs` ok; `tsc` ok.
 - **rpyrus.com:** "registration in progress" → "Registry code 17628754"; CEP 10115 no contato e no rodapé; `identifier` e `postalCode` nos dados para buscadores.
+- **Publicado** (commit 34596df, build OK; rpyrus.com enviado por scp). Conferido no ar: termos/privacidade/sobre em en, et, ru, it, pt-PT e pt (Brasil, com negrito só nos termos; nenhum `<strong>` cru na privacidade), rodapé com o registrikood, `parentOrganization` nos dados para buscadores, `llms.txt`; páginas 200. IndexNow 88 URLs (do servidor). **E-mail da RPyrus a criar pelo dono:** `info@rpyrus.com` (é o que o site mostra).
