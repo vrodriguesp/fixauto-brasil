@@ -162,3 +162,11 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
   - `checar-traducoes.mjs` ok; `tsc` ok.
 - **rpyrus.com:** "registration in progress" → "Registry code 17628754"; CEP 10115 no contato e no rodapé; `identifier` e `postalCode` nos dados para buscadores.
 - **Publicado** (commit 34596df, build OK; rpyrus.com enviado por scp). Conferido no ar: termos/privacidade/sobre em en, et, ru, it, pt-PT e pt (Brasil, com negrito só nos termos; nenhum `<strong>` cru na privacidade), rodapé com o registrikood, `parentOrganization` nos dados para buscadores, `llms.txt`; páginas 200. IndexNow 88 URLs (do servidor). **E-mail da RPyrus a criar pelo dono:** `info@rpyrus.com` (é o que o site mostra).
+
+## 20/10 — E-mail do rpyrus.com no Zoho: DNS no Namecheap (com OK do dono)
+- Zoho (conta no centro de dados .com, organização "bipfix" no Zoho Directory) pediu 4 TXT para o rpyrus.com. Feito no Namecheap:
+  - TXT `@` `zoho-verification=zb48753305.zmverify.zoho.com`;
+  - TXT `20102247177._domainkey` (DKIM e-mails comuns) e TXT `zc943509978._domainkey` (DKIM marketing) — conferidos pela impressão digital (SHA-256) contra a página do Zoho e depois no DNS público;
+  - TXT `@` SPF `v=spf1 include:one.zoho.com -all` (o `one.zoho.com` inclui `spf.zoho.com`, `zeptomail.net` e `zcsend.net`).
+- **Mail Settings:** "Email Forwarding" → **Custom MX** (o modo antigo criava um SPF próprio `include:spf.efwd.registrar-servers.com`, e um domínio só pode ter um SPF; não havia nenhuma caixa ativa no rpyrus.com). MX: `mx.zoho.com` 10, `mx2.zoho.com` 20, `mx3.zoho.com` 50 (valores genéricos da documentação do Zoho Mail para o centro .com).
+- Falta: propagação (checagem automática rodando), clicar "Validate Records" no Zoho, criar a caixa `info@rpyrus.com` no Zoho Mail e, depois, um DMARC (`_dmarc`).
