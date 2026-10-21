@@ -223,3 +223,6 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Conferido no e-Äriregister (logado pelo dono): sem avisos, sem pedidos em preparação; registro público mostra "Osakapital on 100 €", osamaks 100 EUR, sem nota de capital não pago. Falta confirmar no `kandeavaldus` da fundação o que foi marcado no passo 13 ("Contribution into the share capital").
 - **Domínio `rpyrus.ee` reservado com a fundação até 27.10.2026 23:59** (código de autorização no portal). Precisa ser registrado num registrador .ee até essa data ou a reserva cai — decisão do dono.
 - Portal oferece e-Financials (contabilidade) grátis por 1 ano.
+- `kandeavaldus` da fundação lido (com OK do dono): "Juhatus kinnitab, et sissemaksed on osaühingule tasutud" → capital declarado como pago; a transferência de 21/10 comprova; **nada a registrar no Äriregister**.
+- e-Financials: pedida a apresentação (para admin@bipfix.com) e preenchido o formulário do contrato (endereço legal, e-mail); **dono aceitou e assinou** o contrato (1º ano grátis, prazo fixo de 12 meses, termina sozinho).
+- Para a contabilidade: taxa estatal de 265 € (fundação) e fatura Dalanta 153,76 € foram pagas pelo dono antes da conta existir → lançar como dívida da empresa com o sócio (reembolsável sem imposto).
