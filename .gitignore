@@ -7,3 +7,7 @@ supabase/.temp/
 .vercel
 .env*.local
 .claude/settings.local.json
+
+# Documentos privados (dados pessoais, contatos de oficinas, documentos da empresa) - nunca publicar
+Documentos/
+Docs Rpyrus/

@@ -213,3 +213,7 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 ## 21/10 — Teste de correio: 10 flyers (frente ET, verso RU)
 - Flyer A gerado em RU pela primeira vez ("Пустой подъёмник не приносит денег.") a partir do script original (`marketing.js` da sessão de 29/09, adaptado): QR direto para `/ee/et/hakka-partneriks` e `/ee/ru/stat-partnerom` com `utm_source=flyer_a_post&utm_medium=post&utm_campaign=tallinn_post_2026_10` (para medir o correio separado), linha "BipFix · RPyrus OÜ, registrikood 17628754". Sem estouro de texto.
 - Arquivos (Documentos/Marketing_Tallinn, locais): `flyer_A_correio_ET.png/.pdf`, `flyer_A_correio_RU.png/.pdf`, **`flyer_A_correio_frente-ET_verso-RU.pdf`** (2 páginas A5, 420×596 pt, para a gráfica), `Lista_10_Oficinas_Correio_2026-10-21.xlsx` (10 oficinas de prioridade Alta diferentes das 10 do e-mail, sem endereço com nº de apartamento) e `Etiquetas_Correio_10_Oficinas.txt` (remetente RPyrus OÜ + 10 destinatários).
+
+## 21/10 — Pastas privadas fora do git
+- `.gitignore`: acrescentados `Documentos/` e `Docs Rpyrus/` (o ärakiri do registro tem o isikukood do dono; Documentos tem listas de oficinas e rascunhos). Nenhum arquivo dessas pastas estava no repositório (conferido com `git ls-files`), só não estavam protegidas.
+- Comprovante de endereço da empresa para o Revolut: ärakiri do Äriregister (20/10) + fatura paga da Dalanta (endereço legal 1 ano).
