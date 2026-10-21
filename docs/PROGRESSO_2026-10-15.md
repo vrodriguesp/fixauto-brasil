@@ -226,3 +226,12 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - `kandeavaldus` da fundação lido (com OK do dono): "Juhatus kinnitab, et sissemaksed on osaühingule tasutud" → capital declarado como pago; a transferência de 21/10 comprova; **nada a registrar no Äriregister**.
 - e-Financials: pedida a apresentação (para admin@bipfix.com) e preenchido o formulário do contrato (endereço legal, e-mail); **dono aceitou e assinou** o contrato (1º ano grátis, prazo fixo de 12 meses, termina sozinho).
 - Para a contabilidade: taxa estatal de 265 € (fundação) e fatura Dalanta 153,76 € foram pagas pelo dono antes da conta existir → lançar como dívida da empresa com o sócio (reembolsável sem imposto).
+
+## PARA AMANHÃ (22/10) — combinado com o dono
+1. **e-Financials, primeiros lançamentos** (junto com o dono, ele confirma cada um):
+   - cadastrar a conta Revolut Business (IBAN do comprovante em Downloads/transaction-statement.pdf);
+   - capital social 100 € (21/10, comprovante Revolut);
+   - despesas de fundação pagas pelo dono: taxa estatal 265 € (19/10) e fatura Dalanta nº 7954 153,76 € (20/10) → contrapartida "võlg osanikule" (418,76 € reembolsável sem imposto).
+2. **`rpyrus.ee`**: reserva vence 27/10 23:59 — decidir e registrar num registrador .ee com o código de autorização do portal.
+3. Ver respostas/cadastros das 10 oficinas do e-mail (pedido 100093) e ativar quem entrar; seguir com a cliente do pedido 100093 se necessário.
+4. Pendentes do e-mail: rodar de novo a migração Zoho (1–2 dias após 20/10); depois tirar `include:spf.privateemail.com` e o DKIM `privateemail`; cancelar Private Email.
