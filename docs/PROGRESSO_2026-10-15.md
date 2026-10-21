@@ -235,3 +235,5 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 2. **`rpyrus.ee`**: reserva vence 27/10 23:59 — decidir e registrar num registrador .ee com o código de autorização do portal.
 3. Ver respostas/cadastros das 10 oficinas do e-mail (pedido 100093) e ativar quem entrar; seguir com a cliente do pedido 100093 se necessário.
 4. Pendentes do e-mail: rodar de novo a migração Zoho (1–2 dias após 20/10); depois tirar `include:spf.privateemail.com` e o DKIM `privateemail`; cancelar Private Email.
+- Correção: carta comum doméstica Omniva = **1,80 €** desde 01/02/2026 (omniva.ee, comunicado de tarifas), não ~1,5 €.
+- Imprimir e enviar sem ir ao correio: **Pingen** (envia para "outros países" incl. Estônia via DHL; sem mensalidade/mínimo; ~US$1,43 envio + 0,22–0,44 envelope + 0,06/folha + 0,22/página colorida ≈ US$2,4 por carta A4 colorida frente e verso). Omniva tinha um serviço de carta pelo e-service (imprime, envelopa, selo), mas a página antiga dá 404 — confirmar com a Omniva. Para isso o flyer precisaria de versão **A4**.
