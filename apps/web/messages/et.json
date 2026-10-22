@@ -94,8 +94,8 @@
     "quemSomosTexto": "BipFixi haldab RPyrus OÜ, noor Tallinnas asuv Eesti ettevõte (registrikood 17628754). Vastame igale avaldusele isiklikult: support@bipfix.com."
   },
   "paraOficinas": {
-    "metaTitle": "Autoteeninduse tarkvara ja uued kliendid",
-    "metaDescription": "Autoteeninduse tarkvara: ajakava, hinnapakkumised ja meeskond ühes kohas ning uued kliendid Tallinnast. Asutajapartneritele ilma kuutasuta.",
+    "metaTitle": "Tasuta töökoja tarkvara ja uued kliendid",
+    "metaDescription": "Tasuta autoremondi tarkvara: ajakava, hinnapakkumiste koostamine ja meeskond ühes kohas ning uued kliendid Tallinnast. Asutajapartneritele ilma kuutasuta.",
     "metaKeywords": [
       "autotöökoja haldustarkvara",
       "töökoja juhtimissüsteem",
@@ -105,7 +105,12 @@
       "autotöökoja turundus",
       "kere- ja värvitöökoja süsteem",
       "töökoja broneerimissüsteem",
-      "autoremonditöökoja tarkvara"
+      "autoremonditöökoja tarkvara",
+      "töökoja tarkvara",
+      "autoremondi tarkvara",
+      "tasuta töökoja tarkvara",
+      "hinnapakkumise koostamise programm",
+      "uute klientide leidmine autoteenindusele"
     ],
     "ogTitle": "Autoteeninduse tarkvara ja uued kliendid",
     "ogDescription": "Korralda oma töökoda ja jõua piirkonna juhtideni, kes vajavad remonti. Tasuta registreerimine.",
@@ -229,11 +234,11 @@
         "resposta": "Registreerimine ja haldustööriistade (ajakava, hinnapakkumised, meeskond, hinnangud) kasutamine ei maksa kuutasu. Praegu ei võta me asutajapartneritelt komisjonitasu. Kui see tulevikus muutub, teavitame vähemalt 30 päeva enne mistahes tasu, vastavalt meie kasutustingimustele."
       },
       {
-        "pergunta": "Kuidas aitab BipFix mu töökojal rohkem kliente saada?",
+        "pergunta": "Kuidas saada autoteenindusele rohkem kliente?",
         "resposta": "Sinu piirkonna juhid, kes vajavad remonti, saadavad kahjustuse fotod ja saavad hinnapakkumised lähedalasuvatelt töökodadelt, sealhulgas sinult. Sinu avalik profiil ilmub ka Google'is neile, kes otsivad töökoda sinu linnas, koos sinu hinnangute, erialade ja asukohaga."
       },
       {
-        "pergunta": "Kas süsteem asendab tabelit või paberkalendrit?",
+        "pergunta": "Kas süsteem asendab Exceli tabelit või paberkalendrit?",
         "resposta": "Jah. Sa korraldad oma ajakava sõiduki ja töötaja kaupa, jaotad tööd mehaanikute vahel, kontrollid teenindusvõimekust ja saad automaatseid teavitusi — kõik ühes kohas, ilma paberi või lahtiste tabeliteta."
       },
       {
