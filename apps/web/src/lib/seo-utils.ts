@@ -1,4 +1,5 @@
 import { routing, hreflangsDe, X_DEFAULT_LOCALE, localePrefix, hrefNoIdioma } from '@/i18n/routing';
+import { indexavel } from '@/lib/mercados';
 
 interface OficinaSchema {
   id: string;
@@ -192,7 +193,9 @@ export function hreflangAlternates(locale: string, path: string) {
   // home: x-default = raiz "https://bipfix.com/" (pagina de escolha de idioma);
   // demais paginas: a versao em ingles
   const languages: Record<string, string> = { 'x-default': path === '' || path === '/' ? 'https://bipfix.com/' : localizedUrl(X_DEFAULT_LOCALE, path) };
+  // so versoes que vao aos buscadores (mercados so de recrutamento: ver lib/mercados.ts)
   for (const l of routing.locales) {
+    if (!indexavel(l, path)) continue;
     for (const codigo of hreflangsDe(l)) languages[codigo] = localizedUrl(l, path);
   }
 

@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { indexavel } from '@/lib/mercados';
 import { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
 import { hreflangAlternates, localizedUrl, slugCidade } from '@/lib/seo-utils';
@@ -16,7 +17,7 @@ function localizedEntries(
   opts: { changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number; lastModified: Date }
 ): MetadataRoute.Sitemap {
   const { languages } = hreflangAlternates(routing.defaultLocale, path);
-  return routing.locales.map((locale) => ({
+  return routing.locales.filter((locale) => indexavel(locale, path)).map((locale) => ({
     url: localizedUrl(locale, path),
     lastModified: opts.lastModified,
     changeFrequency: opts.changeFrequency,
@@ -104,7 +105,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const guiasPages: MetadataRoute.Sitemap = guias.flatMap((guia) => {
     const { languages } = alternatesDoGuia(guia, routing.defaultLocale);
     return routing.locales
-      .filter((l) => guia.versoes[l])
+      .filter((l) => guia.versoes[l] && indexavel(l, '/guias'))
       .map((l) => ({
         url: localizedUrl(l, caminhoDoGuia(guia, l)),
         lastModified: new Date(guia.atualizado),
@@ -113,7 +114,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         alternates: { languages },
       }));
   });
-  const idiomasComGuia = routing.locales.filter((l) => guias.some((g) => g.versoes[l]));
+  const idiomasComGuia = routing.locales.filter((l) => indexavel(l, '/guias') && guias.some((g) => g.versoes[l]));
   const guiasIndex: MetadataRoute.Sitemap = idiomasComGuia.map((l) => ({
     url: localizedUrl(l, '/guias'),
     lastModified: new Date(guias.filter((g) => g.versoes[l]).map((g) => g.atualizado).sort().pop()!),

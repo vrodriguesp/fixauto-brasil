@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { indexavel } from '@/lib/mercados';
 import path from 'node:path';
 import { routing, X_DEFAULT_LOCALE, hreflangsDe, type Locale } from '@/i18n/routing';
 import { localizedUrl } from '@/lib/seo-utils';
@@ -79,7 +80,7 @@ export function guiaPorSlug(slug: string, locale: string): { guia: Guia; exato: 
 // hreflang so entre os idiomas que o guia tem, cada um com o proprio slug;
 // x-default = ingles se existir.
 export function alternatesDoGuia(guia: Guia, locale: string) {
-  const idiomas = routing.locales.filter((l) => guia.versoes[l]);
+  const idiomas = routing.locales.filter((l) => guia.versoes[l] && indexavel(l, '/guias'));
   const languages: Record<string, string> = {};
   for (const l of idiomas) for (const codigo of hreflangsDe(l)) languages[codigo] = localizedUrl(l, caminhoDoGuia(guia, l));
   const padrao = guia.versoes[X_DEFAULT_LOCALE] ? X_DEFAULT_LOCALE : idiomas[0];

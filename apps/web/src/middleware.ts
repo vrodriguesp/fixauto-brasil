@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
 import { routing, LOCALE_PREFIX, HREFLANG, X_DEFAULT_LOCALE, caminhoLocal, hrefNoIdioma, type Locale } from '@/i18n/routing';
 import { COOKIE_IDIOMA } from '@/lib/idioma-escolhido';
+import { indexavelPublico } from '@/lib/mercados';
 
 // O refresh token do Supabase renova a sessao silenciosamente pra sempre -
 // sem isso, um admin que loga uma vez fica autenticado por dias/semanas,
@@ -231,6 +232,9 @@ export async function middleware(req: NextRequest) {
   if (isAuthPage && usuario) {
     return NextResponse.redirect(withLocale('/'));
   }
+
+  // Italia, Portugal e Brasil: so as paginas para oficinas vao aos buscadores (lib/mercados.ts)
+  if (!isAdminOrApi && localePrefix && !indexavelPublico(pathLocale, path)) res.headers.set('X-Robots-Tag', 'noindex, follow');
 
   return res;
 }
