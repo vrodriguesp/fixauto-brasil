@@ -144,7 +144,8 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
         <div className="card mb-6">
           <h2 className="font-semibold text-gray-900 mb-3">{t('servicesOfferedTitle')}</h2>
           <div className="flex flex-wrap gap-2">
-            {oficina.especialidades.map((esp) => (
+            {/* so tipos com nome traduzido (ex.: "manutencao"/"pintura" nao tem e apareciam como chave crua) */}
+            {oficina.especialidades.filter((esp) => tc.has(`tiposServico.${esp}`)).map((esp) => (
               <span key={esp} className="badge">
                 <span className="mr-1">{getServiceIcon(esp)}</span>
                 {tc(`tiposServico.${esp}`)}
