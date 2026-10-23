@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Link } from '@/i18n/navigation';
+import { Link, rota } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import { contarOficinasPublicas } from '@/lib/oficinas-publicas';
 import StructuredData from '@/components/seo/StructuredData';
@@ -72,7 +72,7 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
             <p className="mt-6 text-lg sm:text-xl text-white leading-relaxed">{t('heroTexto')}</p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Link
-                href="/seja-parceiro"
+                href={rota('/cadastro', undefined, { tipo: 'oficina' })}
                 className="bg-white text-primary-700 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors text-center"
               >
                 {t('ctaFundador')}
@@ -163,7 +163,7 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-bold mb-4">{t('ctaFinalTitulo')}</h2>
           <Link
-            href="/seja-parceiro"
+            href={rota('/cadastro', undefined, { tipo: 'oficina' })}
             className="inline-block mt-4 bg-white text-primary-700 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors"
           >
             {t('ctaFundador')}
