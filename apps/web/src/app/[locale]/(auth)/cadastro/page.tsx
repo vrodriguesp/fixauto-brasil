@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { textoErroApi } from '@/lib/erro-api';
+import { LOCALE_PREFIX, type Locale } from '@/i18n/routing';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEndereco } from '@/components/forms/EnderecoEstruturado';
 
@@ -61,7 +62,10 @@ function CadastroPage() {
   // Pais em codigo ISO 3166-1 alpha-2 - decide a MOEDA mostrada nos precos
   // dessa oficina/loja daqui pra frente (ver lib/currency.ts). Nunca deduzir
   // moeda pelo idioma da interface - so pelo pais real do negocio.
-  const [pais, setPais] = useState('BR');
+  // Ponto de partida = pais da versao do site (/ee/et -> EE, /it/it -> IT...); a localizacao
+  // do navegador e o endereco achado no mapa corrigem depois. Antes era sempre 'BR': na Estonia,
+  // quem negava a localizacao nunca tinha o endereco confirmado (o mapa procurava no Brasil).
+  const [pais, setPais] = useState(() => (LOCALE_PREFIX[locale as Locale]?.split('/')[1] || 'br').toUpperCase());
   const [geoResolved, setGeoResolved] = useState(false);
 
   // Rascunho do formulario: quem abre os Termos (nova aba) e volta nao perde o
