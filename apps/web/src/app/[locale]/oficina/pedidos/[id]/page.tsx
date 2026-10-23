@@ -24,6 +24,8 @@ export default function SolicitacaoDetalhePage() {
   const solicitacao = solicitacoes.find((s) => s.id === params.id);
 
   const [directSol, setDirectSol] = useState<any>(null);
+  // so mostra "nao encontrado" depois que a busca direta respondeu (antes aparecia por um instante ao abrir)
+  const [buscaFeita, setBuscaFeita] = useState(false);
   useEffect(() => {
     if (!solicitacao && params.id) {
       supabase
@@ -35,6 +37,7 @@ export default function SolicitacaoDetalhePage() {
         .single()
         .then(({ data }) => {
           if (data) setDirectSol(data);
+          setBuscaFeita(true);
         });
     }
   }, [solicitacao, params.id]);
@@ -46,6 +49,14 @@ export default function SolicitacaoDetalhePage() {
     if (!oficina?.id || !params.id) return;
     supabase.from('pedido_vistos').upsert({ solicitacao_id: params.id as string, oficina_id: oficina.id }, { onConflict: 'solicitacao_id,oficina_id', ignoreDuplicates: true }).then(() => {});
   }, [oficina?.id, params.id]);
+
+  if (!sol && !buscaFeita) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-20 flex justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+      </div>
+    );
+  }
 
   if (!sol) {
     return (

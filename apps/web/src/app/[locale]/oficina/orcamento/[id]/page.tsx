@@ -28,6 +28,9 @@ export default function EnviarOrcamentoPage() {
   const t = useTranslations('oficinaEnviarOrcamento');
   const tc = useTranslations('constants');
   const tErros = useTranslations('erros');
+  const tDano = useTranslations('damageAnalysis');
+  // rotulo traduzido da gravidade da IA (antes aparecia a palavra interna, ex. "grave")
+  const SEVERIDADE: Record<string, string> = { leve: 'severidadeLeve', moderado: 'severidadeModerado', grave: 'severidadeGrave', severo: 'severidadeSevero' };
   const locale = useLocale();
   const params = useParams();
   const router = useRouter();
@@ -398,7 +401,7 @@ ${d.observacoes}` : d.observacoes));
               analise.severidade === 'moderado' ? 'bg-yellow-100 text-yellow-700' :
               analise.severidade === 'grave' ? 'bg-orange-100 text-orange-700' :
               'bg-red-100 text-red-700'
-            }`}>{analise.severidade}</span>
+            }`}>{SEVERIDADE[analise.severidade] ? tDano(SEVERIDADE[analise.severidade]) : analise.severidade}</span>
           </div>
           <p className="text-sm text-indigo-800 mb-2">{analise.resumo}</p>
           {analise.pecas_afetadas && analise.pecas_afetadas.length > 0 && (
