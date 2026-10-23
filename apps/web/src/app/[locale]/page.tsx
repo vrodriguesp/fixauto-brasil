@@ -17,7 +17,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     // o titulo da home ja inclui a marca, "BipFix - X | BipFix" duplicaria.
     title: { absolute: t('metaTitle') },
     description: t('metaDescription'),
-    keywords: t.raw('metaKeywords') as string[],
     alternates,
     openGraph: {
       type: 'website',
