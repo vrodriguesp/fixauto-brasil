@@ -94,7 +94,7 @@
     "quemSomosTexto": "BipFix è gestita da RPyrus OÜ, una giovane impresa europea con sede a Tallinn, in Estonia (numero di registro 17628754), che con la versione italiana si rivolge ora anche alle officine e agli automobilisti in Italia. Rispondiamo personalmente a ogni candidatura: support@bipfix.com."
   },
   "paraOficinas": {
-    "metaTitle": "Gestionale per officine meccaniche e più clienti",
+    "metaTitle": "Nuovi clienti per la tua officina – gratis",
     "metaDescription": "Software per officine in Italia: agenda, preventivi e team in un unico posto, più richieste di preventivo dagli automobilisti della tua città. Senza canone mensile.",
     "metaKeywords": [
       "sistema di gestione per officina meccanica",
@@ -109,12 +109,12 @@
     ],
     "ogTitle": "Gestionale per officine meccaniche e più clienti",
     "ogDescription": "Organizza la tua officina e fatti trovare dagli automobilisti della tua città, in tutta Italia, che hanno bisogno di riparazioni. Registrazione gratuita.",
-    "heroTitulo": "Gestione organizzata e più clienti per la tua officina meccanica",
-    "heroTexto": "BipFix è il sistema di gestione che organizza agenda, preventivi e team della tua officina — e allo stesso tempo ti mette in vetrina agli automobilisti della tua città, da Milano a Napoli, che cercano una riparazione proprio adesso.",
+    "heroTitulo": "Nuovi clienti per la tua officina — le richieste di preventivo arrivano direttamente a te",
+    "heroTexto": "Gli automobilisti inviano la richiesta con foto, tu mandi il preventivo e il cliente sceglie. Profilo pubblico e recensioni reali ti rendono visibile. In più, agenda e gestione del team semplici.",
     "ctaFundador": "Voglio diventare partner fondatore",
     "ctaVerOficinas": "Vedi le officine sulla piattaforma",
     "heroFootnote": "Nessun canone mensile. Nessuna commissione per i partner fondatori.",
-    "funcTitulo": "Tutto quello che la tua officina ha con BipFix",
+    "funcTitulo": "In più: tutto per gestire l’officina",
     "funcSubtitulo": "Un riepilogo rapido di ogni funzionalità — senza giri di parole",
     "funcCategorias": [
       {
@@ -200,7 +200,7 @@
         "solucao": "Preventivi ricambi da fornitori partner e altre officine della zona, con chat diretta"
       }
     ],
-    "comoTitulo": "Come la tua officina guadagna visibilità",
+    "comoTitulo": "Come ottieni nuovi clienti",
     "steps": [
       {
         "title": "Registrati",
@@ -225,12 +225,12 @@
     "faqTitulo": "Domande frequenti delle officine",
     "faq": [
       {
-        "pergunta": "Quanto costa il sistema di gestione BipFix per la mia officina?",
-        "resposta": "La registrazione e l'uso degli strumenti di gestione (agenda, preventivi, team, recensioni) non hanno canone mensile. Oggi non applichiamo commissioni ai partner fondatori. Se questo dovesse cambiare in futuro, avviseremo con almeno 30 giorni di anticipo prima di qualsiasi addebito, secondo i nostri Termini di Utilizzo."
-      },
-      {
         "pergunta": "Come aiuta BipFix la mia officina a trovare più clienti?",
         "resposta": "Gli automobilisti della tua zona che hanno bisogno di riparazioni inviano le foto del danno e ricevono preventivi dalle officine vicine, inclusa la tua. Il tuo profilo pubblico compare anche su Google per chi cerca officine nella tua città — Milano, Roma, Napoli, Torino o qualsiasi altra — con le tue recensioni, specializzazioni e posizione."
+      },
+      {
+        "pergunta": "Quanto costa il sistema di gestione BipFix per la mia officina?",
+        "resposta": "La registrazione e l'uso degli strumenti di gestione (agenda, preventivi, team, recensioni) non hanno canone mensile. Oggi non applichiamo commissioni ai partner fondatori. Se questo dovesse cambiare in futuro, avviseremo con almeno 30 giorni di anticipo prima di qualsiasi addebito, secondo i nostri Termini di Utilizzo."
       },
       {
         "pergunta": "Il sistema sostituisce un foglio di calcolo o un'agenda cartacea?",

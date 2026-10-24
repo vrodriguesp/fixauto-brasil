@@ -94,8 +94,8 @@
     "quemSomosTexto": "BipFixi haldab RPyrus OÜ, noor Tallinnas asuv Eesti ettevõte (registrikood 17628754). Vastame igale avaldusele isiklikult: support@bipfix.com."
   },
   "paraOficinas": {
-    "metaTitle": "Tasuta töökoja tarkvara ja uued kliendid",
-    "metaDescription": "Tasuta autoremondi tarkvara: ajakava, hinnapakkumiste koostamine ja meeskond ühes kohas ning uued kliendid Tallinnast. Asutajapartneritele ilma kuutasuta.",
+    "metaTitle": "Uued kliendid autotöökojale Tallinnas – tasuta",
+    "metaDescription": "Hinnapäringud Tallinna autojuhtidelt otse sinu töökotta, avalik profiil ja päris arvustused. Lisaks tasuta töökoja tarkvara: ajakava ja meeskond.",
     "metaKeywords": [
       "autotöökoja haldustarkvara",
       "töökoja juhtimissüsteem",
@@ -114,12 +114,12 @@
     ],
     "ogTitle": "Autoteeninduse tarkvara ja uued kliendid",
     "ogDescription": "Korralda oma töökoda ja jõua piirkonna juhtideni, kes vajavad remonti. Tasuta registreerimine.",
-    "heroTitulo": "Korras haldus ja rohkem kliente sinu autotöökojale",
-    "heroTexto": "BipFix on haldussüsteem, mis korraldab sinu töökoja ajakava, hinnapakkumised ja meeskonna — ning samal ajal toob sind nähtavale piirkonna juhtidele, kes vajavad remonti just praegu.",
+    "heroTitulo": "Uued kliendid sinu töökojale – hinnapäringud jõuavad otse sinuni",
+    "heroTexto": "Autojuhid saadavad remondipäringu koos fotodega, sina saadad hinnapakkumise ja klient valib. Avalik profiil ja päris arvustused toovad sind nähtavale. Lisaks lihtne ajakava ja meeskonna haldus.",
     "ctaFundador": "Tahan olla asutajapartner",
     "ctaVerOficinas": "Vaata töökodasid platvormil",
     "heroFootnote": "Ilma kuutasuta. Asutajapartneritele komisjonitasu ei ole.",
-    "funcTitulo": "Kõik, mida sinu töökoda BipFixis saab",
+    "funcTitulo": "Lisaks: kõik töökoja haldamiseks",
     "funcSubtitulo": "Kiire ülevaade igast funktsioonist — ilma jututa",
     "funcCategorias": [
       {
@@ -205,7 +205,7 @@
         "solucao": "Varuosade hinnapäringud partnerpoodidelt ja teistelt piirkonna töökodadelt, koos otsevestlusega"
       }
     ],
-    "comoTitulo": "Kuidas sinu töökoda nähtavust saab",
+    "comoTitulo": "Kuidas sa uusi kliente saad",
     "steps": [
       {
         "title": "Registreeru",
@@ -230,12 +230,12 @@
     "faqTitulo": "Töökodade korduma kippuvad küsimused",
     "faq": [
       {
-        "pergunta": "Kui palju maksab BipFixi haldussüsteem minu töökojale?",
-        "resposta": "Registreerimine ja haldustööriistade (ajakava, hinnapakkumised, meeskond, hinnangud) kasutamine ei maksa kuutasu. Praegu ei võta me asutajapartneritelt komisjonitasu. Kui see tulevikus muutub, teavitame vähemalt 30 päeva enne mistahes tasu, vastavalt meie kasutustingimustele."
-      },
-      {
         "pergunta": "Kuidas saada autoteenindusele rohkem kliente?",
         "resposta": "Sinu piirkonna juhid, kes vajavad remonti, saadavad kahjustuse fotod ja saavad hinnapakkumised lähedalasuvatelt töökodadelt, sealhulgas sinult. Sinu avalik profiil ilmub ka Google'is neile, kes otsivad töökoda sinu linnas, koos sinu hinnangute, erialade ja asukohaga."
+      },
+      {
+        "pergunta": "Kui palju maksab BipFixi haldussüsteem minu töökojale?",
+        "resposta": "Registreerimine ja haldustööriistade (ajakava, hinnapakkumised, meeskond, hinnangud) kasutamine ei maksa kuutasu. Praegu ei võta me asutajapartneritelt komisjonitasu. Kui see tulevikus muutub, teavitame vähemalt 30 päeva enne mistahes tasu, vastavalt meie kasutustingimustele."
       },
       {
         "pergunta": "Kas süsteem asendab Exceli tabelit või paberkalendrit?",

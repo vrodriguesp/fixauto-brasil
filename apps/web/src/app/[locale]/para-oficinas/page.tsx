@@ -131,32 +131,7 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
         </div>
       </section>
 
-      {/* Resumo sintetico de todas as funcionalidades */}
-      <section className="py-20 bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">{t('funcTitulo')}</h2>
-          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">{t('funcSubtitulo')}</p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {funcCategorias.map((cat, i) => (
-              <FuncCategoriaCard key={i} titulo={cat.titulo} itens={cat.itens} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Dores -> Solucao */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">{t('doresTitulo')}</h2>
-          <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">{t('doresSubtitulo')}</p>
-          <div className="grid md:grid-cols-3 gap-8">
-            {dores.map((d, i) => (
-              <DorSolucaoCard key={i} dor={d.dor} solucao={d.solucao} />
-            ))}
-          </div>
-        </div>
-      </section>
-
+      {/* Ordem (24/10, pedido do dono): primeiro como a oficina ganha clientes e visibilidade, depois a gestao */}
       {/* Como funciona para conseguir clientes */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -189,6 +164,32 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
           </div>
         </section>
       )}
+
+      {/* Resumo sintetico de todas as funcionalidades */}
+      <section className="py-20 bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">{t('funcTitulo')}</h2>
+          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">{t('funcSubtitulo')}</p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {funcCategorias.map((cat, i) => (
+              <FuncCategoriaCard key={i} titulo={cat.titulo} itens={cat.itens} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Dores -> Solucao */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">{t('doresTitulo')}</h2>
+          <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">{t('doresSubtitulo')}</p>
+          <div className="grid md:grid-cols-3 gap-8">
+            {dores.map((d, i) => (
+              <DorSolucaoCard key={i} dor={d.dor} solucao={d.solucao} />
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Comissao / transparencia */}
       <section className="py-20 bg-white">

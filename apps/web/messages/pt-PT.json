@@ -94,7 +94,7 @@
     "quemSomosTexto": "A BipFix é operada pela RPyrus OÜ, uma empresa nova sediada em Tallinn, na Estónia (código de registo 17628754). Respondemos pessoalmente a cada candidatura: support@bipfix.com."
   },
   "paraOficinas": {
-    "metaTitle": "Software para oficinas e mais clientes",
+    "metaTitle": "Novos clientes para a sua oficina – grátis",
     "metaDescription": "Software de gestão para oficinas: agenda, orçamentos e equipa num só lugar, mais pedidos de orçamento de condutores da zona. Sem mensalidade.",
     "metaKeywords": [
       "software de gestão para oficina automóvel",
@@ -109,12 +109,12 @@
     ],
     "ogTitle": "Software de Gestão para Oficinas Automóveis — Ganhe Mais Clientes",
     "ogDescription": "Organize a sua oficina e apareça aos condutores da sua zona que precisam de reparações. Registo gratuito.",
-    "heroTitulo": "Gestão organizada e mais clientes para a sua oficina automóvel",
-    "heroTexto": "A BipFix é o sistema de gestão que organiza a agenda, os orçamentos e a equipa da sua oficina — enquanto o coloca à frente dos condutores da sua zona que precisam de reparações agora mesmo.",
+    "heroTitulo": "Novos clientes para a sua oficina — os pedidos de orçamento chegam diretamente a si",
+    "heroTexto": "Os condutores enviam o pedido com fotos, a oficina envia o orçamento e o cliente escolhe. Perfil público e avaliações reais tornam-no visível. E ainda agenda e gestão da equipa simples.",
     "ctaFundador": "Quero ser parceiro fundador",
     "ctaVerOficinas": "Ver oficinas na plataforma",
     "heroFootnote": "Sem mensalidade. Sem comissão para parceiros fundadores.",
-    "funcTitulo": "Tudo o que a sua oficina recebe com a BipFix",
+    "funcTitulo": "E ainda: tudo para gerir a oficina",
     "funcSubtitulo": "Um resumo rápido de todas as funcionalidades — sem rodeios",
     "funcCategorias": [
       {
@@ -200,7 +200,7 @@
         "solucao": "Cotações de peças de fornecedores parceiros e de outras oficinas da sua zona, com chat direto"
       }
     ],
-    "comoTitulo": "Como a sua oficina ganha visibilidade",
+    "comoTitulo": "Como consegue novos clientes",
     "steps": [
       {
         "title": "Registe-se",
@@ -225,12 +225,12 @@
     "faqTitulo": "Perguntas frequentes das oficinas",
     "faq": [
       {
-        "pergunta": "Quanto custa o sistema de gestão BipFix à minha oficina?",
-        "resposta": "Registar-se e usar as ferramentas de gestão (agenda, orçamentos, equipa, avaliações) não tem mensalidade. Hoje, não cobramos qualquer comissão aos parceiros fundadores. Se isso mudar no futuro, avisaremos com pelo menos 30 dias de antecedência antes de qualquer cobrança, conforme os nossos Termos de Utilização."
-      },
-      {
         "pergunta": "Como é que a BipFix ajuda a minha oficina a conseguir mais clientes?",
         "resposta": "Os condutores da sua zona que precisam de reparações enviam fotografias do dano e recebem orçamentos de oficinas próximas, incluindo a sua. O seu perfil público também aparece no Google para quem procura oficinas na sua cidade, com as suas avaliações, especialidades e localização."
+      },
+      {
+        "pergunta": "Quanto custa o sistema de gestão BipFix à minha oficina?",
+        "resposta": "Registar-se e usar as ferramentas de gestão (agenda, orçamentos, equipa, avaliações) não tem mensalidade. Hoje, não cobramos qualquer comissão aos parceiros fundadores. Se isso mudar no futuro, avisaremos com pelo menos 30 dias de antecedência antes de qualquer cobrança, conforme os nossos Termos de Utilização."
       },
       {
         "pergunta": "O sistema substitui uma folha de cálculo ou um caderno de marcações?",
