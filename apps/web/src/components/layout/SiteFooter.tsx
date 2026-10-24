@@ -69,6 +69,9 @@ export default function SiteFooter({ temOficinas = false }: { temOficinas?: bool
               <a href="https://www.facebook.com/people/BipFix/61595614083933/" target="_blank" rel="noopener noreferrer me" aria-label="Facebook" className="p-2 hover:text-white">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12Z" /></svg>
               </a>
+              <a href="https://www.instagram.com/bipfix.official/" target="_blank" rel="noopener noreferrer me" aria-label="Instagram" className="p-2 hover:text-white">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" /><circle cx="12" cy="12" r="4.2" /><circle cx="17.6" cy="6.4" r="1" fill="currentColor" stroke="none" /></svg>
+              </a>
             </div>
           </div>
         </div>

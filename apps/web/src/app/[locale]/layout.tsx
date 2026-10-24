@@ -101,7 +101,7 @@ export default async function LocaleLayout({
       availableLanguage: ['Estonian', 'English', 'Russian', 'Portuguese', 'Italian'],
     },
     // perfis oficiais (os mesmos do rodape, components/layout/SiteFooter.tsx)
-    sameAs: ['https://www.youtube.com/@BipFix', 'https://www.facebook.com/people/BipFix/61595614083933/'],
+    sameAs: ['https://www.youtube.com/@BipFix', 'https://www.facebook.com/people/BipFix/61595614083933/', 'https://www.instagram.com/bipfix.official/'],
     // Empresa que opera a BipFix (registrada em 20/10/2026)
     parentOrganization: {
       '@type': 'Organization',
