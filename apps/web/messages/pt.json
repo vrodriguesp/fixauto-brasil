@@ -245,7 +245,17 @@
         "resposta": "Sim. Você pode abrir cotações de peças para lojas parceiras e outras oficinas da região, comparar preços e prazos, e negociar diretamente pelo chat antes de confirmar o pedido."
       }
     ],
-    "ctaFinalTitulo": "Pronto para organizar sua oficina e ganhar mais clientes?"
+    "ctaFinalTitulo": "Pronto para organizar sua oficina e ganhar mais clientes?",
+    "videosTitulo": "Veja como é fácil",
+    "videosSub": "Dois vídeos curtos: como cadastrar a oficina no BipFix e como enviar um orçamento ao cliente.",
+    "videoResponderTitulo": "Como responder a um pedido de orçamento",
+    "videoResponderTexto": "Chega um pedido, a IA estima o dano pela foto, você envia o orçamento e conversa com o cliente — em menos de dois minutos.",
+    "videoCadastroTitulo": "Como cadastrar a oficina",
+    "videoCadastroTexto": "Nome, empresa, endereço e serviços — o cadastro leva uns dois minutos.",
+    "videoPlay": "Assistir ao vídeo",
+    "videoYoutube": "Ver no YouTube",
+    "videosIdioma": "Vídeos em estoniano.",
+    "videosCanal": "Todos os vídeos no YouTube"
   },
   "veiculoForm": {
     "labelTipo": "Tipo de veículo",

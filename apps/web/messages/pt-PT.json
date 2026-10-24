@@ -245,7 +245,17 @@
         "resposta": "Sim. Pode abrir pedidos de cotação de peças a fornecedores parceiros e a outras oficinas da sua zona, comparar preços e prazos de entrega, e negociar diretamente por chat antes de confirmar a encomenda."
       }
     ],
-    "ctaFinalTitulo": "Pronto para organizar a sua oficina e ganhar mais clientes?"
+    "ctaFinalTitulo": "Pronto para organizar a sua oficina e ganhar mais clientes?",
+    "videosTitulo": "Veja como é fácil",
+    "videosSub": "Dois vídeos curtos: como registar a oficina na BipFix e como enviar um orçamento ao cliente.",
+    "videoResponderTitulo": "Como responder a um pedido",
+    "videoResponderTexto": "Chega um pedido, a IA estima o dano pela foto, envia o orçamento e fala com o cliente — em menos de dois minutos.",
+    "videoCadastroTitulo": "Como registar a oficina",
+    "videoCadastroTexto": "Nome, empresa, morada e serviços — o registo demora cerca de dois minutos.",
+    "videoPlay": "Ver o vídeo",
+    "videoYoutube": "Ver no YouTube",
+    "videosIdioma": "Vídeos em estónio.",
+    "videosCanal": "Todos os vídeos no YouTube"
   },
   "veiculoForm": {
     "labelTipo": "Tipo de veículo",

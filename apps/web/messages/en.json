@@ -248,7 +248,17 @@
         "resposta": "Yes. You can open parts quote requests to partner suppliers and other shops in your area, compare prices and lead times, and negotiate directly over chat before confirming the order."
       }
     ],
-    "ctaFinalTitulo": "Ready to organize your shop and win more customers?"
+    "ctaFinalTitulo": "Ready to organize your shop and win more customers?",
+    "videosTitulo": "See how easy it is",
+    "videosSub": "Two short videos: how to register your shop on BipFix and how to send a customer a quote.",
+    "videoResponderTitulo": "How to answer a customer request",
+    "videoResponderTexto": "A new request arrives, AI estimates the damage from the photo, you send the quote and chat with the customer — in under two minutes.",
+    "videoCadastroTitulo": "How to register your shop",
+    "videoCadastroTexto": "Name, company, address and services — registration takes about two minutes.",
+    "videoPlay": "Play video",
+    "videoYoutube": "Watch on YouTube",
+    "videosIdioma": "Videos in Estonian.",
+    "videosCanal": "All videos on YouTube"
   },
   "veiculoForm": {
     "labelTipo": "Vehicle type",

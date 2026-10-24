@@ -250,7 +250,17 @@
         "resposta": "Jah. Sa saad avada varuosade hinnapäringuid partnerpoodidele ja teistele piirkonna töökodadele, võrrelda hindu ja tarneaegu ning läbi rääkida otse vestluses enne tellimuse kinnitamist."
       }
     ],
-    "ctaFinalTitulo": "Valmis oma töökoda korraldama ja rohkem kliente saama?"
+    "ctaFinalTitulo": "Valmis oma töökoda korraldama ja rohkem kliente saama?",
+    "videosTitulo": "Vaata, kui lihtne see on",
+    "videosSub": "Kaks lühikest videot: kuidas töökoda BipFixis registreeritakse ja kuidas kliendi päringule hinnapakkumine saadetakse.",
+    "videoResponderTitulo": "Kuidas vastata kliendi päringule",
+    "videoResponderTexto": "Uus päring, AI hindab kahju fotolt, saadad hinnapakkumise ja suhtled kliendiga – vähem kui kahe minutiga.",
+    "videoCadastroTitulo": "Kuidas registreerida töökoda",
+    "videoCadastroTexto": "Nimi, ettevõte, aadress ja teenused – registreerimine võtab umbes kaks minutit.",
+    "videoPlay": "Esita video",
+    "videoYoutube": "Vaata YouTube’is",
+    "videosIdioma": "",
+    "videosCanal": "Kõik videod YouTube’is"
   },
   "veiculoForm": {
     "labelTipo": "Sõiduki tüüp",

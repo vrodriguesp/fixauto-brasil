@@ -245,7 +245,17 @@
         "resposta": "Sì. Puoi aprire richieste di preventivo per ricambi a negozi partner e altre officine della zona, confrontare prezzi e tempi di consegna, e negoziare direttamente in chat prima di confermare l'ordine."
       }
     ],
-    "ctaFinalTitulo": "Pronto a organizzare la tua officina e trovare più clienti?"
+    "ctaFinalTitulo": "Pronto a organizzare la tua officina e trovare più clienti?",
+    "videosTitulo": "Guarda quanto è facile",
+    "videosSub": "Due brevi video: come registrare l’officina su BipFix e come inviare un preventivo al cliente.",
+    "videoResponderTitulo": "Come rispondere a una richiesta",
+    "videoResponderTexto": "Arriva una richiesta, l’IA stima il danno dalla foto, invii il preventivo e scrivi al cliente — in meno di due minuti.",
+    "videoCadastroTitulo": "Come registrare l’officina",
+    "videoCadastroTexto": "Nome, azienda, indirizzo e servizi — la registrazione richiede circa due minuti.",
+    "videoPlay": "Guarda il video",
+    "videoYoutube": "Guarda su YouTube",
+    "videosIdioma": "Video in estone.",
+    "videosCanal": "Tutti i video su YouTube"
   },
   "veiculoForm": {
     "labelTipo": "Tipo di veicolo",

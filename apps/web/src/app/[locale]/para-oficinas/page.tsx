@@ -3,6 +3,7 @@ import { Link, rota } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import { contarOficinasPublicas } from '@/lib/oficinas-publicas';
 import StructuredData from '@/components/seo/StructuredData';
+import VideoYouTube from '@/components/videos/VideoYouTube';
 import { OG_LOCALE, isBrasil, type Locale } from '@/i18n/routing';
 import { generateFAQSchema, hreflangAlternates, localizedUrl, imagemCompartilhamento } from '@/lib/seo-utils';
 
@@ -26,6 +27,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     },
   };
 }
+
+// Videos educativos do canal youtube.com/@BipFix (em estoniano: so nas versoes da Estonia).
+// Miniaturas servidas pelo proprio site (public/videos) - nada do YouTube carrega antes do play.
+const VIDEOS = [
+  { id: 'RhCdt85F14g', chave: 'Responder', miniatura: '/videos/vasta-paringule.webp', duracao: 'PT1M32S' },
+  { id: 'pee8GvB249g', chave: 'Cadastro', miniatura: '/videos/registreerimine.webp', duracao: 'PT1M17S' },
+] as const;
+const LOCALES_COM_VIDEOS = ['et', 'ru', 'en'];
 
 type FuncCategoria = { titulo: string; itens: string[] };
 type DorSolucao = { dor: string; solucao: string };
@@ -59,9 +68,26 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
     },
   };
 
+  const mostrarVideos = LOCALES_COM_VIDEOS.includes(locale);
+  // VideoObject (dados de video do Google: miniatura, data, duracao, endereco do player)
+  const videoSchemas = mostrarVideos ? VIDEOS.map((v) => ({
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: t(`video${v.chave}Titulo`),
+    description: t(`video${v.chave}Texto`),
+    thumbnailUrl: `https://bipfix.com${v.miniatura}`,
+    uploadDate: '2026-10-23T12:00:00+03:00',
+    duration: v.duracao,
+    embedUrl: `https://www.youtube-nocookie.com/embed/${v.id}`,
+    url: `https://www.youtube.com/watch?v=${v.id}`,
+    inLanguage: 'et',
+    publisher: { '@id': 'https://bipfix.com/#organization' },
+  })) : [];
+
   return (
     <div>
       <StructuredData data={faqSchema} />
+      {videoSchemas.map((v, i) => <StructuredData key={i} data={v} />)}
       <StructuredData data={softwareSchema} />
 
       {/* Hero */}
@@ -128,6 +154,27 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
           </div>
         </div>
       </section>
+
+      {/* Videos: como e facil (canal youtube.com/@BipFix) */}
+      {mostrarVideos && (
+        <section id="videod" className="py-20 bg-primary-50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center text-gray-900">{t('videosTitulo')}</h2>
+            <p className="mt-3 text-center text-gray-600 max-w-2xl mx-auto">{t('videosSub')}{t('videosIdioma') ? ` ${t('videosIdioma')}` : ''}</p>
+            <div className="mt-10 grid md:grid-cols-2 gap-8">
+              {VIDEOS.map((v) => (
+                <article key={v.id}>
+                  <VideoYouTube id={v.id} titulo={t(`video${v.chave}Titulo`)} miniatura={v.miniatura} rotuloPlay={t('videoPlay')} />
+                  <h3 className="mt-4 text-lg font-semibold text-gray-900">{t(`video${v.chave}Titulo`)}</h3>
+                  <p className="mt-1 text-gray-600 text-sm leading-relaxed">{t(`video${v.chave}Texto`)}</p>
+                  <a href={`https://www.youtube.com/watch?v=${v.id}`} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm font-medium text-primary-600 hover:underline">{t('videoYoutube')} ↗</a>
+                </article>
+              ))}
+            </div>
+            <p className="mt-8 text-center"><a href="https://www.youtube.com/@BipFix" target="_blank" rel="noopener noreferrer me" className="text-sm font-medium text-gray-500 hover:text-primary-600">{t('videosCanal')} ↗</a></p>
+          </div>
+        </section>
+      )}
 
       {/* Comissao / transparencia */}
       <section className="py-20 bg-white">
