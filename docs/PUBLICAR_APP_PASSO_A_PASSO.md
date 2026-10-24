@@ -45,14 +45,14 @@ A Apple exige o número D-U-N-S para contas de **organização**; o Google Play 
 ## Passo 4 — Expo / EAS (no computador)
 ```
 cd apps/mobile
-npx eas login        # cria/entra na conta Expo (grátis)
-npx eas init         # liga o projeto e grava o projectId no app.json
+npx eas-cli@latest login   # entra na conta Expo (o pacote se chama eas-cli)
+npx eas-cli@latest init    # liga o projeto e grava o projectId no app.json
 ```
 Me avise quando terminar: eu confiro o `app.json` e salvo no git. (Plano grátis da Expo: builds na nuvem com fila mais lenta e limite mensal; confira no site da Expo.)
 
 ## Passo 5 — Primeira versão de teste (antes das lojas)
 ```
-npx eas build --platform android --profile preview
+npx eas-cli@latest build --platform android --profile preview
 ```
 Gera um **APK** para instalar direto num Android. Testamos juntos: cadastro, login, veículo, pedido com **foto da câmera e da galeria**, acidente com 2 fotos, mensagem de voz, troca de idioma. (Para iPhone, o teste é pelo TestFlight, no passo 8.)
 
@@ -70,9 +70,9 @@ Gera um **APK** para instalar direto num Android. Testamos juntos: cadastro, log
 
 ## Passo 8 — Builds de produção e envio
 ```
-npx eas build --platform all --profile production
-npx eas submit --platform ios --profile production      # vai para o TestFlight
-npx eas submit --platform android --profile production  # vai para o teste interno (rascunho)
+npx eas-cli@latest build --platform all --profile production
+npx eas-cli@latest submit --platform ios --profile production      # vai para o TestFlight
+npx eas-cli@latest submit --platform android --profile production  # vai para o teste interno (rascunho)
 ```
 - iPhone: instale pelo **TestFlight** e repita o teste do passo 5.
 - Android: teste interno no Play Console.
