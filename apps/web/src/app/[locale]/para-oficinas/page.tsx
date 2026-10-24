@@ -125,7 +125,7 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
           </div>
           {mostrarVideos && (
             <div className="mt-8 lg:mt-0">
-              <VideoYouTube id={VIDEOS[0].id} titulo={t('videoResponderTitulo')} miniatura={VIDEOS[0].miniatura} rotuloPlay={t('videoPlay')} prioridade />
+              <VideoYouTube id={VIDEOS[0].id} titulo={t('videoResponderTitulo')} miniatura={VIDEOS[0].miniatura} rotuloPlay={t('videoPlay')} />
             </div>
           )}
         </div>
