@@ -311,3 +311,6 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - **Música nova por código** (`gravacao/musica2.mjs`): caos em lá menor com pulsos, tique-taque e telefone; whoosh na virada; parte alegre em dó maior com melodia. Jingle "Bip… Fix!" entra exatamente na virada.
 - Textos + tradução + YouTube: `historia/Textos_e_traducoes_historia.md`. Números das telinhas são ilustrativos. Script: `gravacao/historia.mjs` (modos h, v, c1–c5).
 - **Capas dos Shorts (23/10):** `historia/capas/capa_short.png` e `capa_klipp1…5.png` (1080×1920, ENNE em cima / BIPFIXIGA embaixo + frase). O YouTube não aceita miniatura enviada pelo computador para Shorts → versões `*_capa.mp4` com a capa nos primeiros 0,5 s (silêncio), para escolher esse quadro no app. Playlists sugeridas no chat.
+
+## 24/10 — Publicação do app: passo a passo recuperado
+- `docs/PUBLICAR_APP_PASSO_A_PASSO.md`: estado (L1, L2, L3, L5, L6 da auditoria de 09/10 já resolvidos no código) e os 10 passos (D-U-N-S → Apple Developer organização → Google Play organização → `eas login`/`eas init` → APK de teste → criar app nas lojas/ascAppId/chave de serviço → links do app (APPLE_TEAM_ID/ANDROID_SHA256) → builds e envio → ficha da loja → revisão). Pendentes: L4 (arquivos .well-known ainda vazios no servidor), L7 (foto do acidente num celular real), conta de teste para o revisor.
