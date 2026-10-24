@@ -61,6 +61,15 @@ export default function SiteFooter({ temOficinas = false }: { temOficinas?: bool
             <ul className="space-y-2 text-sm">
               <li><a href="mailto:support@bipfix.com" className="inline-block py-1.5 hover:text-white">support@bipfix.com</a></li>
             </ul>
+            {/* perfis oficiais (os mesmos do sameAs da Organization em [locale]/layout.tsx) */}
+            <div className="flex gap-3 mt-3">
+              <a href="https://www.youtube.com/@BipFix" target="_blank" rel="noopener noreferrer me" aria-label="YouTube" className="p-2 -ml-2 hover:text-white">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z" /></svg>
+              </a>
+              <a href="https://www.facebook.com/people/BipFix/61595614083933/" target="_blank" rel="noopener noreferrer me" aria-label="Facebook" className="p-2 hover:text-white">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12Z" /></svg>
+              </a>
+            </div>
           </div>
         </div>
 

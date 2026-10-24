@@ -314,3 +314,4 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 
 ## 24/10 — Publicação do app: passo a passo recuperado
 - `docs/PUBLICAR_APP_PASSO_A_PASSO.md`: estado (L1, L2, L3, L5, L6 da auditoria de 09/10 já resolvidos no código) e os 10 passos (D-U-N-S → Apple Developer organização → Google Play organização → `eas login`/`eas init` → APK de teste → criar app nas lojas/ascAppId/chave de serviço → links do app (APPLE_TEAM_ID/ANDROID_SHA256) → builds e envio → ficha da loja → revisão). Pendentes: L4 (arquivos .well-known ainda vazios no servidor), L7 (foto do acidente num celular real), conta de teste para o revisor.
+- **24/10 — Redes no site (OK do dono para deploy):** ícones YouTube (`youtube.com/@BipFix`, confirmado pelo oEmbed do vídeo publicado) e Facebook (`facebook.com/people/BipFix/61595614083933/`) no rodapé (`SiteFooter.tsx`, `rel="me"`, nova aba) nas 6 versões; `sameAs` com os dois perfis na Organization (`[locale]/layout.tsx`).

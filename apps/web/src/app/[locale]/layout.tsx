@@ -100,8 +100,9 @@ export default async function LocaleLayout({
       areaServed: ['EE', 'BR'],
       availableLanguage: ['Estonian', 'English', 'Russian', 'Portuguese', 'Italian'],
     },
-    // Empresa que opera a BipFix (registrada em 20/10/2026). sameAs (perfis
-    // oficiais em redes) entra quando existirem - pendencia do usuario.
+    // perfis oficiais (os mesmos do rodape, components/layout/SiteFooter.tsx)
+    sameAs: ['https://www.youtube.com/@BipFix', 'https://www.facebook.com/people/BipFix/61595614083933/'],
+    // Empresa que opera a BipFix (registrada em 20/10/2026)
     parentOrganization: {
       '@type': 'Organization',
       name: 'RPyrus OÜ',
