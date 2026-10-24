@@ -260,7 +260,13 @@
     "videoPlay": "Esita video",
     "videoYoutube": "Vaata YouTube’is",
     "videosIdioma": "",
-    "videosCanal": "Kõik videod YouTube’is"
+    "videosCanal": "Kõik videod YouTube’is",
+    "heroSelos": [
+      "0 €",
+      "Kaarti pole vaja",
+      "Kuutasu pole*"
+    ],
+    "heroAsterisco": "* Kui tingimused muutuvad, teatame sellest vähemalt 30 kalendripäeva ette. Võid igal ajal lõpetada – ilma tasude ja trahvideta."
   },
   "veiculoForm": {
     "labelTipo": "Sõiduki tüüp",
@@ -580,7 +586,9 @@
     "texto": "Kasutame küpsiseid, et mõista, kuidas sa saiti kasutad, ja parandada sinu kasutuskogemust. Nõustudes kinnitad, et oled tutvunud meie",
     "linkPrivacidade": "privaatsuspoliitikaga",
     "rejeitar": "Keeldu",
-    "aceitar": "Nõustun"
+    "aceitar": "Nõustun",
+    "textoCurto": "Kasutame küpsiseid saidi parandamiseks.",
+    "linkCurto": "Privaatsus"
   },
   "login": {
     "erroDesativado": "See konto on deaktiveeritud. Võta ühendust klienditoega.",

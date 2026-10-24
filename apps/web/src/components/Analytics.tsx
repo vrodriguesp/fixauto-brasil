@@ -120,8 +120,9 @@ export default function Analytics() {
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
           <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-4 flex items-center gap-3 sm:gap-4">
             <p className="text-xs sm:text-sm text-gray-700 flex-1 leading-snug">
-              {t('texto')}{' '}
-              <Link href="/privacidade" className="text-primary-700 underline">{t('linkPrivacidade')}</Link>.
+              {/* celular: uma linha curta (o texto longo cobria metade da tela) */}
+              <span className="sm:hidden">{t('textoCurto')}{' '}<Link href="/privacidade" className="text-primary-700 underline">{t('linkCurto')}</Link></span>
+              <span className="hidden sm:inline">{t('texto')}{' '}<Link href="/privacidade" className="text-primary-700 underline">{t('linkPrivacidade')}</Link>.</span>
             </p>
             <div className="flex gap-2 sm:gap-3 flex-shrink-0">
               <button onClick={() => responder('rejected')} className="btn-secondary !py-2 !px-3 sm:!px-4 text-sm min-h-[40px]">

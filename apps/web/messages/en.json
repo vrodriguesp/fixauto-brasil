@@ -258,7 +258,13 @@
     "videoPlay": "Play video",
     "videoYoutube": "Watch on YouTube",
     "videosIdioma": "Videos in Estonian.",
-    "videosCanal": "All videos on YouTube"
+    "videosCanal": "All videos on YouTube",
+    "heroSelos": [
+      "€0",
+      "No card needed",
+      "No monthly fee*"
+    ],
+    "heroAsterisco": "* If the terms change, we will notify you at least 30 calendar days in advance. You can leave anytime — no fees, no penalties."
   },
   "veiculoForm": {
     "labelTipo": "Vehicle type",
@@ -578,7 +584,9 @@
     "texto": "We use cookies to understand how you use the site and to improve your experience. By accepting, you agree to our",
     "linkPrivacidade": "Privacy Policy",
     "rejeitar": "Reject",
-    "aceitar": "Accept"
+    "aceitar": "Accept",
+    "textoCurto": "We use cookies to improve the site.",
+    "linkCurto": "Privacy"
   },
   "login": {
     "erroDesativado": "This account has been deactivated. Please contact support.",

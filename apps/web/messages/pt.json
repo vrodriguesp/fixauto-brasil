@@ -255,7 +255,13 @@
     "videoPlay": "Assistir ao vídeo",
     "videoYoutube": "Ver no YouTube",
     "videosIdioma": "Vídeos em estoniano.",
-    "videosCanal": "Todos os vídeos no YouTube"
+    "videosCanal": "Todos os vídeos no YouTube",
+    "heroSelos": [
+      "R$ 0",
+      "Sem cartão",
+      "Sem mensalidade*"
+    ],
+    "heroAsterisco": "* Se as condições mudarem, avisamos com pelo menos 30 dias corridos de antecedência. Você pode sair quando quiser, sem custos nem multas."
   },
   "veiculoForm": {
     "labelTipo": "Tipo de veículo",
@@ -575,7 +581,9 @@
     "texto": "Usamos cookies para entender como você usa o site e melhorar sua experiência. Ao aceitar, você concorda com nossa",
     "linkPrivacidade": "Política de Privacidade",
     "rejeitar": "Rejeitar",
-    "aceitar": "Aceitar"
+    "aceitar": "Aceitar",
+    "textoCurto": "Usamos cookies para melhorar o site.",
+    "linkCurto": "Privacidade"
   },
   "login": {
     "erroDesativado": "Esta conta foi desativada. Entre em contato com o suporte.",

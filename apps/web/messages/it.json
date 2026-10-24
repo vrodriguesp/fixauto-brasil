@@ -255,7 +255,13 @@
     "videoPlay": "Guarda il video",
     "videoYoutube": "Guarda su YouTube",
     "videosIdioma": "Video in estone.",
-    "videosCanal": "Tutti i video su YouTube"
+    "videosCanal": "Tutti i video su YouTube",
+    "heroSelos": [
+      "0 €",
+      "Nessuna carta",
+      "Nessun canone*"
+    ],
+    "heroAsterisco": "* Se le condizioni cambiano, ti avvisiamo con almeno 30 giorni di calendario di anticipo. Puoi uscire quando vuoi, senza costi né penali."
   },
   "veiculoForm": {
     "labelTipo": "Tipo di veicolo",
@@ -576,7 +582,9 @@
     "texto": "Utilizziamo i cookie per capire come usi il sito e migliorare la tua esperienza. Accettando, accetti la nostra",
     "linkPrivacidade": "Informativa sulla privacy",
     "rejeitar": "Rifiuta",
-    "aceitar": "Accetta"
+    "aceitar": "Accetta",
+    "textoCurto": "Usiamo i cookie per migliorare il sito.",
+    "linkCurto": "Privacy"
   },
   "login": {
     "erroDesativado": "Questo account è stato disattivato. Contatta l'assistenza.",

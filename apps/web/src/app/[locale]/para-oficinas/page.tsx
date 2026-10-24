@@ -90,13 +90,21 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
       {videoSchemas.map((v, i) => <StructuredData key={i} data={v} />)}
       <StructuredData data={softwareSchema} />
 
-      {/* Hero */}
+      {/* Hero: no celular o titulo, os selos (0 €, sem cartao, sem mensalidade*) e o botao
+          cabem na primeira tela (Clarity 24/10: 80 % nao rolavam e o aviso de cookies cobria o botao). */}
       <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl sm:text-5xl font-bold leading-tight">{t('heroTitulo')}</h1>
-            <p className="mt-6 text-lg sm:text-xl text-white leading-relaxed">{t('heroTexto')}</p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 lg:py-24 lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
+          <div>
+            <h1 className="text-3xl sm:text-5xl font-bold leading-tight">{t('heroTitulo')}</h1>
+            <ul className="mt-5 flex flex-wrap gap-2">
+              {(t.raw('heroSelos') as string[]).map((selo) => (
+                <li key={selo} className="inline-flex items-center gap-1.5 rounded-full bg-white/15 ring-1 ring-white/25 px-3 py-1.5 text-sm sm:text-base font-semibold">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#86efac" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                  {selo}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link
                 href={rota('/cadastro', undefined, { tipo: 'oficina' })}
                 className="bg-white text-primary-700 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors text-center"
@@ -107,13 +115,19 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
                 <Link
                   href="/oficinas"
                   className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white/10 transition-colors text-center"
-              >
+                >
                   {t('ctaVerOficinas')}
-                  </Link>
+                </Link>
               )}
             </div>
-            <p className="mt-4 text-sm text-white">{t('heroFootnote')}</p>
+            <p className="mt-3 text-xs sm:text-sm text-white/85 leading-relaxed">{t('heroAsterisco')}</p>
+            <p className="mt-6 text-base sm:text-xl text-white leading-relaxed">{t('heroTexto')}</p>
           </div>
+          {mostrarVideos && (
+            <div className="mt-8 lg:mt-0">
+              <VideoYouTube id={VIDEOS[0].id} titulo={t('videoResponderTitulo')} miniatura={VIDEOS[0].miniatura} rotuloPlay={t('videoPlay')} prioridade />
+            </div>
+          )}
         </div>
       </section>
 

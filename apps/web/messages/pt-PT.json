@@ -255,7 +255,13 @@
     "videoPlay": "Ver o vídeo",
     "videoYoutube": "Ver no YouTube",
     "videosIdioma": "Vídeos em estónio.",
-    "videosCanal": "Todos os vídeos no YouTube"
+    "videosCanal": "Todos os vídeos no YouTube",
+    "heroSelos": [
+      "0 €",
+      "Sem cartão",
+      "Sem mensalidade*"
+    ],
+    "heroAsterisco": "* Se as condições mudarem, avisamos com pelo menos 30 dias de calendário de antecedência. Pode sair quando quiser, sem custos nem penalizações."
   },
   "veiculoForm": {
     "labelTipo": "Tipo de veículo",
@@ -575,7 +581,9 @@
     "texto": "Utilizamos cookies para perceber como usa o site e para melhorar a sua experiência. Ao aceitar, concorda com a nossa",
     "linkPrivacidade": "Política de Privacidade",
     "rejeitar": "Rejeitar",
-    "aceitar": "Aceitar"
+    "aceitar": "Aceitar",
+    "textoCurto": "Utilizamos cookies para melhorar o site.",
+    "linkCurto": "Privacidade"
   },
   "login": {
     "erroDesativado": "Esta conta foi desativada. Contacte o suporte.",
