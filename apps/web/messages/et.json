@@ -46,20 +46,20 @@
     "minhaOficinaCurto": "Töökoda"
   },
   "sejaParceiro": {
-    "metaTitle": "Saa asutajapartneriks",
-    "metaDescription": "BipFix on töökodade ja varuosade poodide asutajapartnerite valikufaasis. Piiratud kohtade arv, selles faasis komisjonitasu ei ole. Registreeri oma huvi.",
-    "ogTitle": "Saa asutajapartneriks",
-    "ogDescription": "BipFix on töökodade ja varuosade poodide asutajapartnerite valikufaasis. Piiratud kohtade arv, selles faasis komisjonitasu ei ole.",
-    "heroTag": "ASUTAJAPARTNERITE VALIKUFAAS",
+    "metaTitle": "Saa BipFixi partneriks",
+    "metaDescription": "Töökodadele ja varuosade poodidele: liitumine on tasuta, komisjonitasu ei ole ja muudatustest teatame 30 päeva ette. Jäta oma kontakt ja võtame ühendust.",
+    "ogTitle": "Saa BipFixi partneriks",
+    "ogDescription": "Töökodadele ja varuosade poodidele: liitumine on tasuta, komisjonitasu ei ole ja muudatustest teatame 30 päeva ette.",
+    "heroTag": "TÖÖKODADELE JA VARUOSADE POODIDELE",
     "heroTitulo": "Ehitame midagi uut autoremondi turul — ja tahame, et sina oleksid nende esimeste seas",
-    "heroTexto": "BipFix on alles algusjärgus olev ambitsioonikas projekt, millel pole veel tuhandeid kasutajaid — ja just seepärast aitab liitumine praegu kujundada platvormi ja tagab tingimused, mida hiljem enam ei pakuta.",
-    "beneficiosTitulo": "Mida tähendab olla asutajapartner",
-    "beneficio1Titulo": "Selles faasis komisjonitasu ei ole",
-    "beneficio1Texto": "Asutajapartnerid kasutavad kogu haldus- ja kliendihankesüsteemi ilma komisjonitasuta ning saavad 30-päevase etteteatamise enne mistahes tulevast muudatust.",
+    "heroTexto": "BipFix on alles algusjärgus olev ambitsioonikas projekt, millel pole veel tuhandeid kasutajaid. Varakult liitudes on konkurentsi vähem ja sinu tagasiside kujundab platvormi.",
+    "beneficiosTitulo": "Mida partnerina saad",
+    "beneficio1Titulo": "Tasuta, ilma komisjonitasuta",
+    "beneficio1Texto": "Kogu haldus- ja kliendihankesüsteem ilma liitumistasu ja komisjonitasuta. Tingimused on kõigile samad ja muudatustest teatame vähemalt 30 päeva ette.",
     "beneficio2Titulo": "Sinu hääl loeb toote arendamisel",
     "beneficio2Texto": "Ühe esimese partnerina kujundab sinu otsene tagasiside, millised funktsioonid platvormile järgmisena lisatakse.",
-    "beneficio3Titulo": "Piiratud arv kohti piirkonna kohta",
-    "beneficio3Texto": "Pilootfaasis valime iga linna kohta välja väikese arvu partnereid, et igaühele pöörata tõelist tähelepanu.",
+    "beneficio3Titulo": "Vähem konkurentsi alguses",
+    "beneficio3Texto": "Platvormil on praegu vähe töökodasid, nii et varakult liitunud partnerid saavad päringuid väiksema konkurentsiga.",
     "formTitulo": "Registreeri oma huvi",
     "formSubtitulo": "Võtab alla minuti. Ilma kohustusteta.",
     "souOficina": "Olen autotöökoda",
@@ -78,13 +78,13 @@
     "campoObservacao": "Soovid veel midagi lisada? (valikuline)",
     "placeholderObservacao": "Nt: töötajate arv, spetsialiseerumine...",
     "enviando": "Saadan...",
-    "enviar": "Tahan olla asutajapartner",
+    "enviar": "Võtke minuga ühendust",
     "concordaTermos": "Saates nõustud meie",
     "termosDeUso": "kasutustingimustega",
     "erroObrigatorio": "Palun täida kõik kohustuslikud väljad",
     "erroGenerico": "Saatmine ebaõnnestus. Palun proovi mõne hetke pärast uuesti.",
     "sucessoTitulo": "Võtsime su huviavalduse vastu!",
-    "sucessoTexto": "Meie meeskond vaatab üle sinu piirkonna ja võtab kahe tööpäeva jooksul WhatsAppi teel ühendust, et selgitada pilootfaasi järgmisi samme.",
+    "sucessoTexto": "Võtame sinuga ühendust 1 tööpäeva jooksul WhatsAppi või e-posti teel ja selgitame järgmisi samme.",
     "voltarInicio": "Tagasi avalehele",
     "depoisTitulo": "Mis juhtub pärast avalduse saatmist",
     "depois1": "Vastame 1 tööpäeva jooksul e-posti või WhatsAppi teel.",
@@ -116,9 +116,7 @@
     "ogDescription": "Korralda oma töökoda ja jõua piirkonna juhtideni, kes vajavad remonti. Tasuta registreerimine.",
     "heroTitulo": "Uued kliendid sinu töökojale – hinnapäringud jõuavad otse sinuni",
     "heroTexto": "Autojuhid saadavad remondipäringu koos fotodega, sina saadad hinnapakkumise ja klient valib. Avalik profiil ja päris arvustused toovad sind nähtavale. Lisaks lihtne ajakava ja meeskonna haldus.",
-    "ctaFundador": "Tahan olla asutajapartner",
     "ctaVerOficinas": "Vaata töökodasid platvormil",
-    "heroFootnote": "Ilma kuutasuta. Asutajapartneritele komisjonitasu ei ole.",
     "funcTitulo": "Lisaks: kõik töökoja haldamiseks",
     "funcSubtitulo": "Kiire ülevaade igast funktsioonist — ilma jututa",
     "funcCategorias": [
@@ -225,7 +223,7 @@
       }
     ],
     "transparenciaTitulo": "Läbipaistvus kulude osas",
-    "transparenciaTexto": "Praegu on registreerimine ja haldussüsteemi kasutamine tasuta ning me ei võta asutajapartneritelt komisjonitasu. Kui see tulevikus muutub, teavitame sind vähemalt 30 päeva enne mistahes tasu kehtima hakkamist, vastavalt meie",
+    "transparenciaTexto": "Registreerimine ja BipFixi kasutamine on praegu tasuta: liitumistasu ei ole, komisjonitasu ei ole ja kaarti pole vaja. Tingimused on kõigile töökodadele samad. Kui need kunagi muutuvad, teatame sulle vähemalt 30 kalendripäeva ette ja sina otsustad, kas jääd – vastavalt meie",
     "transparenciaTermosLink": "kasutustingimustele",
     "faqTitulo": "Töökodade korduma kippuvad küsimused",
     "faq": [
@@ -235,7 +233,7 @@
       },
       {
         "pergunta": "Kui palju maksab BipFixi haldussüsteem minu töökojale?",
-        "resposta": "Registreerimine ja haldustööriistade (ajakava, hinnapakkumised, meeskond, hinnangud) kasutamine ei maksa kuutasu. Praegu ei võta me asutajapartneritelt komisjonitasu. Kui see tulevikus muutub, teavitame vähemalt 30 päeva enne mistahes tasu, vastavalt meie kasutustingimustele."
+        "resposta": "Registreerimine ja kõigi tööriistade (päringud, hinnapakkumised, ajakava, meeskond, hinnangud) kasutamine on praegu tasuta: liitumistasu ega komisjonitasu ei ole ja kaarti pole vaja. Kui see kunagi muutub, teatame vähemalt 30 kalendripäeva ette, vastavalt meie kasutustingimustele. Võid igal ajal lõpetada."
       },
       {
         "pergunta": "Kas süsteem asendab Exceli tabelit või paberkalendrit?",
@@ -261,12 +259,21 @@
     "videoYoutube": "Vaata YouTube’is",
     "videosIdioma": "",
     "videosCanal": "Kõik videod YouTube’is",
-    "heroSelos": [
-      "0 €",
+    "heroEyebrow": "Tallinn · autotöökodadele",
+    "heroUrgencia": "Liitu varakult – vähem konkurentsi, rohkem päringuid",
+    "heroVantagens": [
+      "0 € liitumistasu",
+      "0 % komisjoni",
       "Kaarti pole vaja",
-      "Kuutasu pole*"
+      "Lõpeta igal ajal",
+      "Muudatustest teatame 30 päeva ette"
     ],
-    "heroAsterisco": "* Kui tingimused muutuvad, teatame sellest vähemalt 30 kalendripäeva ette. Võid igal ajal lõpetada – ilma tasude ja trahvideta."
+    "ctaCadastro": "Registreeri oma töökoda tasuta",
+    "ctaCadastroSub": "2 minutit · ilma lepinguta",
+    "heroSemLetras": "Ilma peenikese kirjata.",
+    "heroTermosLink": "Kõik tingimused",
+    "heroDuvidas": "Küsimusi? Kirjuta meile",
+    "heroEmpresa": "RPyrus OÜ · registrikood 17628754 · Tartu mnt 67/1-13b, Tallinn"
   },
   "veiculoForm": {
     "labelTipo": "Sõiduki tüüp",
@@ -322,14 +329,13 @@
     "step3Texto": "Saad detailsed hinnapakkumised koos hindade, tähtaegade ja hinnangutega",
     "step4Titulo": "Vali ja lase remontida",
     "step4Texto": "Nõustu parima hinnapakkumisega ja jälgi oma sõiduki remonti",
-    "oficinasBadge": "ASUTAJAPARTNERITE VALIK AVATUD",
+    "oficinasBadge": "TÖÖKODADELE: LIITUMINE ON TASUTA",
     "oficinasTitulo": "Autotöökodadele ja varuosade müüjatele",
     "oficinasTexto": "Koonda oma teenused ühele platvormile ja saa nähtavust uute klientide seas oma piirkonnas — ilma komisjonitasuta selles algfaasis.",
     "feature1": "Saa automaatselt päringuid lähedal asuvatelt klientidelt",
     "feature2": "Saada struktureeritud ja professionaalseid hinnapakkumisi",
     "feature3": "Halda oma ajakava nii platvormi kui väliste tööde jaoks",
     "feature4": "Kasvata oma mainet klientide hinnangute kaudu",
-    "ctaFundador": "Tahan olla asutajapartner",
     "saibaMais": "Loe lähemalt",
     "mock1Titulo": "Uus päring",
     "mock1Texto": "Kokkupõrge - VW Golf 2021 - 3 km sinust",
@@ -341,8 +347,8 @@
     "porQueTitulo": "Miks me BipFixi ehitame",
     "porQueTexto1": "Täna sõltub auto remondikoha valik tavaliselt ainult soovitusest või sellest, milline töökoda on lähim — ilma võimaluseta võrrelda hinda, tähtaega või tehtud tööde tausta. Usume, et juhid väärivad läbipaistvust ja head töökojad väärivad, et nende tehtud töö leitakse üles.",
     "porQueTexto2": "Oleme sõna otseses mõttes alles alguses: valime esimesed partnertöökojad ja varuosade müüjad, et käivituda täie tähelepanuga üks linn korraga, mitte kasvada kiiresti ilma kvaliteedikontrollita.",
-    "parceiroTitulo": "Veel jõuab liituda asutajapartnerina",
-    "parceiroTexto": "Liidame praegu esimesi partnertöökodasid Tallinnas. Kui oled autojuht, saad oma päringu juba saata: edastame selle töökodadele kohe, kui nad liituvad, ja anname sulle teada. Kui sul on autotöökoda või varuosade äri, valime välja väikese arvu asutajapartnereid — selles faasis ilma komisjonitasuta.",
+    "parceiroTitulo": "Sul on autotöökoda? Liitu tasuta",
+    "parceiroTexto": "Liidame praegu esimesi töökodasid Tallinnas. Kui oled autojuht, saad oma päringu juba saata: edastame selle töökodadele kohe, kui nad liituvad, ja anname sulle teada. Kui sul on autotöökoda, on liitumine tasuta – ilma komisjonitasu ja kaardita.",
     "faqTitulo": "Korduma kippuvad küsimused",
     "faqSubtitulo": "Leia vastused oma küsimustele BipFixi platvormi kohta",
     "faqItems": [
@@ -392,7 +398,7 @@
     "footerGuias": "Juhendid autojuhtidele",
     "footerOficinas": "Töökodadele",
     "footerSistemaGestao": "Haldussüsteem ja kliendid",
-    "footerSejaParceiro": "Saa asutajapartneriks",
+    "footerSejaParceiro": "Saa partneriks",
     "footerGuiaOficina": "Töökoja juhend",
     "footerCentralAjuda": "Abikeskus",
     "footerContato": "Kontakt",
@@ -403,7 +409,8 @@
     "guiasTitulo": "Juhendid autojuhtidele",
     "guiasTexto": "Praktilised vastused enne, kui viid auto töökotta.",
     "guiasVerTodos": "Vaata kõiki juhendeid",
-    "avvisoEstonia": "Elad Eestis? BipFix töötab ka Tallinnas, eesti keeles: päringud lähevad auto lähedal asuvatele töökodadele."
+    "avvisoEstonia": "Elad Eestis? BipFix töötab ka Tallinnas, eesti keeles: päringud lähevad auto lähedal asuvatele töökodadele.",
+    "ctaCadastroOficina": "Registreeri oma töökoda tasuta"
   },
   "constants": {
     "tiposServico": {
@@ -664,7 +671,7 @@
     "titulo": "BipFixist",
     "intro": "BipFix ühendab remonti vajavad autojuhid sõltumatute töökodadega: kirjeldad probleemi fotodega, saad üksikasjalikud hinnapakkumised, võrdled neid ja jälgid remonti. BipFix on ainult platvorm — me ei remondi autosid ega müü varuosi.",
     "estagioTitulo": "Kus me praegu oleme",
-    "estagioTexto": "Oleme alles alguses. Meie pilootlinn on Tallinn ja esimesi partnertöökodasid liidetakse praegu, asutajapartnerite faasis. Meil ei ole veel suurt töökodade võrgustikku — ja ütleme selle pigem otse välja.",
+    "estagioTexto": "Oleme alles alguses. Meie pilootlinn on Tallinn ja esimesi töökodasid liidetakse praegu. Meil ei ole veel suurt töökodade võrgustikku — ja ütleme selle pigem otse välja.",
     "empresaTitulo": "Ettevõte",
     "empresaTexto": "BipFixi haldab RPyrus OÜ, Eestis registreeritud osaühing. Registrikood: 17628754. Registrijärgne aadress: Tartu mnt 67/1-13b, 10115 Tallinn.",
     "principiosTitulo": "Kuidas me töötame",
@@ -723,5 +730,20 @@
     "verBrasil": "Vaata Brasiilia versiooni",
     "avisoEuropa": "Oled Euroopas? Sinu suhtes kehtivad Euroopa tingimused (GDPR).",
     "avisoBrasil": "Oled Brasiilias? Sinu suhtes kehtivad Brasiilia tingimused (LGPD)."
+  },
+  "contatoDuvidas": {
+    "titulo": "Kas sul on veel küsimusi?",
+    "texto": "Kirjuta meile oma küsimus. Vastame 1 tööpäeva jooksul eesti, vene või inglise keeles.",
+    "nome": "Nimi",
+    "contato": "E-post või telefon",
+    "pergunta": "Sinu küsimus",
+    "enviar": "Saada küsimus",
+    "enviando": "Saadan…",
+    "sucesso": "Aitäh! Vastame 1 tööpäeva jooksul.",
+    "erro": "Saatmine ebaõnnestus. Proovi uuesti või kirjuta support@bipfix.com",
+    "erroCampos": "Täida kõik väljad.",
+    "redes": "või kirjuta meile sotsiaalmeedias",
+    "privacidade": "Kasutame sinu andmeid ainult vastamiseks.",
+    "privacidadeLink": "Privaatsus"
   }
 }

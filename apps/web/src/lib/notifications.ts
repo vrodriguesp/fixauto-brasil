@@ -379,7 +379,7 @@ export async function sendLeadParceiroEmail(params: {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
-            <h1 style="margin: 0; font-size: 22px;">Novo interessado em ser parceiro fundador</h1>
+            <h1 style="margin: 0; font-size: 22px;">Novo interessado em ser parceiro</h1>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <table style="width: 100%; font-size: 14px; color: #111827;">
@@ -400,6 +400,57 @@ export async function sendLeadParceiroEmail(params: {
     return { success: true };
   } catch (error) {
     console.error('[Notifications] Erro ao enviar e-mail de lead parceiro:', error);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+// Pergunta do formulario "Ainda tem duvidas?" (pagina para oficinas)
+export async function sendPerguntaSiteEmail(params: {
+  nome: string;
+  contato: string;
+  pergunta: string;
+  traducao?: string | null;
+  locale: string;
+  pagina?: string;
+}) {
+  if (!resend) {
+    console.warn('[Notifications] Resend not configured - RESEND_API_KEY missing');
+    return { success: false, error: 'Email service not configured' };
+  }
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'support@bipfix.com';
+  const idioma = ({ et: 'estoniano', ru: 'russo', en: 'inglês', it: 'italiano', 'pt-PT': 'português (PT)', pt: 'português (BR)' } as Record<string, string>)[params.locale] || params.locale;
+  const linha = (rotulo: string, valor: string) => `<tr><td style="padding: 4px 0; color: #6b7280; vertical-align: top; width: 110px;">${rotulo}</td><td style="padding: 4px 0;">${valor}</td></tr>`;
+  try {
+    await sendOrThrow({
+      from: FROM_EMAIL,
+      to: adminEmail,
+      // responder o e-mail vai direto para a pessoa, quando ela deixou um e-mail
+      ...(/\S+@\S+\.\S+/.test(params.contato) ? { replyTo: params.contato } : {}),
+      subject: `Pergunta pelo site (${idioma}): ${params.nome}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 22px;">Nova pergunta pelo site</h1>
+            <p style="margin: 6px 0 0; font-size: 14px;">Prometemos responder em 1 dia útil.</p>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <table style="width: 100%; font-size: 14px; color: #111827;">
+              ${linha('Nome', `<strong>${escapeHtml(params.nome)}</strong>`)}
+              ${linha('Contato', escapeHtml(params.contato))}
+              ${linha('Idioma', idioma)}
+              ${params.pagina ? linha('Página', escapeHtml(params.pagina)) : ''}
+            </table>
+            ${params.traducao ? `<h2 style="font-size: 15px; margin: 20px 0 6px;">Tradução</h2><p style="margin: 0; white-space: pre-wrap; background: #eff6ff; padding: 12px; border-radius: 8px;">${escapeHtml(params.traducao)}</p>` : ''}
+            <h2 style="font-size: 15px; margin: 20px 0 6px;">Mensagem original</h2>
+            <p style="margin: 0; white-space: pre-wrap; background: #f9fafb; padding: 12px; border-radius: 8px;">${escapeHtml(params.pergunta)}</p>
+            <p style="margin-top: 20px;"><a href="${SITE_URL}/admin/leads-parceiros" style="color: #2563eb;">Ver todos os contatos →</a></p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('[Notifications] Erro ao enviar e-mail de pergunta do site:', error);
     return { success: false, error: 'Failed to send email' };
   }
 }

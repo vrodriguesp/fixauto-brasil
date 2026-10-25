@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { contarOficinasPublicas } from '@/lib/oficinas-publicas';
 import StructuredData from '@/components/seo/StructuredData';
 import VideoYouTube from '@/components/videos/VideoYouTube';
+import ContatoDuvidas from '@/components/contato/ContatoDuvidas';
 import { OG_LOCALE, isBrasil, type Locale } from '@/i18n/routing';
 import { generateFAQSchema, hreflangAlternates, localizedUrl, imagemCompartilhamento } from '@/lib/seo-utils';
 
@@ -90,26 +91,32 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
       {videoSchemas.map((v, i) => <StructuredData key={i} data={v} />)}
       <StructuredData data={softwareSchema} />
 
-      {/* Hero: no celular o titulo, os selos (0 €, sem cartao, sem mensalidade*) e o botao
-          cabem na primeira tela (Clarity 24/10: 80 % nao rolavam e o aviso de cookies cobria o botao). */}
+      {/* Hero (topo v3 aprovado em 25/10): mesma regra para todas as oficinas, as 5 vantagens
+          numa caixa (os 30 dias de aviso viraram vantagem, sem asterisco) e o botao na primeira
+          tela do celular (Clarity 24/10: 80 % nao rolavam). */}
       <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 lg:py-24 lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-16 lg:py-24 lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
           <div>
-            <h1 className="text-3xl sm:text-5xl font-bold leading-tight">{t('heroTitulo')}</h1>
-            <ul className="mt-5 flex flex-wrap gap-2">
-              {(t.raw('heroSelos') as string[]).map((selo) => (
-                <li key={selo} className="inline-flex items-center gap-1.5 rounded-full bg-white/15 ring-1 ring-white/25 px-3 py-1.5 text-sm sm:text-base font-semibold">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#86efac" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
-                  {selo}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <p className="text-[11px] sm:text-sm font-semibold uppercase tracking-wider text-primary-100">{t('heroEyebrow')}</p>
+            <h1 className="mt-1.5 text-[1.5rem] leading-tight sm:text-5xl font-bold">{t('heroTitulo')}</h1>
+            <div className="mt-3 sm:mt-5 rounded-xl bg-white/10 ring-1 ring-white/25 px-3 py-2.5 sm:p-4">
+              <p className="text-xs sm:text-sm font-semibold text-primary-100">{t('heroUrgencia')}</p>
+              <ul className="mt-1.5 sm:mt-2 grid grid-cols-2 gap-x-3 gap-y-1 sm:gap-y-1.5">
+                {(t.raw('heroVantagens') as string[]).map((v, i, lista) => (
+                  <li key={v} className={`flex items-start gap-1.5 text-[13px] leading-snug sm:text-base font-semibold ${i === lista.length - 1 && lista.length % 2 === 1 ? 'col-span-2' : ''}`}>
+                    <svg className="mt-0.5 flex-shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#86efac" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                    {v}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="mt-3 sm:mt-5 flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link
                 href={rota('/cadastro', undefined, { tipo: 'oficina' })}
-                className="bg-white text-primary-700 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors text-center"
+                className="bg-white text-primary-700 px-6 py-2.5 sm:py-3 rounded-lg font-semibold text-base sm:text-lg hover:bg-primary-50 transition-colors text-center"
               >
-                {t('ctaFundador')}
+                {t('ctaCadastro')}
+                <span className="block text-xs font-medium text-primary-600">{t('ctaCadastroSub')}</span>
               </Link>
               {temOficinas && (
                 <Link
@@ -120,8 +127,12 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
                 </Link>
               )}
             </div>
-            <p className="mt-3 text-xs sm:text-sm text-white/85 leading-relaxed">{t('heroAsterisco')}</p>
-            <p className="mt-6 text-base sm:text-xl text-white leading-relaxed">{t('heroTexto')}</p>
+            <p className="mt-3 flex flex-wrap justify-center sm:justify-start gap-x-4 gap-y-1 text-sm text-white/90">
+              <span><strong>{t('heroSemLetras')}</strong>{' '}<Link href="/termos" className="underline hover:text-white">{t('heroTermosLink')}</Link></span>
+              <a href="#duvidas" className="whitespace-nowrap underline hover:text-white">{t('heroDuvidas')} ↓</a>
+            </p>
+            <p className="mt-4 text-xs text-white/75">{t('heroEmpresa')}</p>
+            <p className="mt-5 text-base sm:text-xl text-white leading-relaxed">{t('heroTexto')}</p>
           </div>
           {mostrarVideos && (
             <div className="mt-8 lg:mt-0">
@@ -220,6 +231,9 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
         </div>
       </section>
 
+      {/* Ainda tem duvidas? (logo depois do FAQ; o link do topo aponta para ca) */}
+      <ContatoDuvidas />
+
       {/* CTA final */}
       <section className="py-16 bg-primary-700 text-white text-center">
         <div className="max-w-3xl mx-auto px-4">
@@ -228,7 +242,8 @@ export default async function ParaOficinasPage({ params }: { params: Promise<{ l
             href={rota('/cadastro', undefined, { tipo: 'oficina' })}
             className="inline-block mt-4 bg-white text-primary-700 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors"
           >
-            {t('ctaFundador')}
+            {t('ctaCadastro')}
+            <span className="block text-xs font-medium text-primary-600">{t('ctaCadastroSub')}</span>
           </Link>
         </div>
       </section>

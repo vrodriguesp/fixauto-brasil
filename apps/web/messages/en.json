@@ -46,20 +46,20 @@
     "minhaOficinaCurto": "Workshop"
   },
   "sejaParceiro": {
-    "metaTitle": "Become a Founding Partner",
-    "metaDescription": "BipFix is in its founding-partner selection phase for repair shops and parts stores. Limited spots, no commission during this phase. Register your interest.",
-    "ogTitle": "Become a Founding Partner",
-    "ogDescription": "BipFix is in its founding-partner selection phase for repair shops and parts stores. Limited spots, no commission during this phase.",
-    "heroTag": "FOUNDING PARTNER SELECTION PHASE",
+    "metaTitle": "Become a BipFix partner",
+    "metaDescription": "For repair shops and parts stores: free to join, no commission, and 30 days' notice of any change. Leave your contact and we'll get in touch.",
+    "ogTitle": "Become a BipFix partner",
+    "ogDescription": "For repair shops and parts stores: free to join, no commission, and 30 days' notice of any change.",
+    "heroTag": "FOR REPAIR SHOPS AND PARTS STORES",
     "heroTitulo": "We're building something new in vehicle repair — and we want you among the first",
-    "heroTexto": "BipFix is still an ambitious project in its early days, without thousands of users yet — which is exactly why joining now means helping shape the platform and locking in terms that won't come around again.",
-    "beneficiosTitulo": "What it means to be a founding partner",
-    "beneficio1Titulo": "No commission during this phase",
-    "beneficio1Texto": "Founding partners use the full management and lead-generation system with no commission, with 30 days' notice before any future change.",
+    "heroTexto": "BipFix is still an ambitious project in its early days, without thousands of users yet. Joining early means less competition, and your feedback shapes the platform.",
+    "beneficiosTitulo": "What you get as a partner",
+    "beneficio1Titulo": "Free, no commission",
+    "beneficio1Texto": "The full management and lead-generation system with no joining fee and no commission. The terms are the same for everyone, with at least 30 days' notice before any change.",
     "beneficio2Titulo": "A real say in the product",
     "beneficio2Texto": "As one of the first partners, your direct feedback shapes which features come next.",
-    "beneficio3Titulo": "Limited spots per region",
-    "beneficio3Texto": "We're selecting a small number of partners per city for the pilot phase, so each one gets real attention.",
+    "beneficio3Titulo": "Less competition early on",
+    "beneficio3Texto": "There are few shops on the platform today, so partners who join early receive requests with less competition.",
     "formTitulo": "Register your interest",
     "formSubtitulo": "Takes under a minute. No commitment.",
     "souOficina": "I'm a repair shop",
@@ -78,13 +78,13 @@
     "campoObservacao": "Anything else? (optional)",
     "placeholderObservacao": "e.g. team size, specialties...",
     "enviando": "Sending...",
-    "enviar": "I want to be a founding partner",
+    "enviar": "Contact me",
     "concordaTermos": "By submitting, you agree to our",
     "termosDeUso": "Terms of Use",
     "erroObrigatorio": "Please fill in all required fields",
     "erroGenerico": "Couldn't send it. Please try again in a moment.",
     "sucessoTitulo": "We've received your interest!",
-    "sucessoTexto": "Our team will review your region and reach out on WhatsApp within 2 business days to explain the next steps of the pilot phase.",
+    "sucessoTexto": "We'll get in touch within 1 business day by WhatsApp or email to explain the next steps.",
     "voltarInicio": "Back to home",
     "depoisTitulo": "What happens after you apply",
     "depois1": "We reply within 1 business day, by email or WhatsApp.",
@@ -114,9 +114,7 @@
     "ogDescription": "Organize your shop and get in front of drivers in your area who need repairs. Free registration.",
     "heroTitulo": "New customers for your garage — quote requests come straight to you",
     "heroTexto": "Drivers send a repair request with photos, you send a quote and the customer chooses. A public profile and real reviews make you visible. Plus simple scheduling and team management.",
-    "ctaFundador": "I want to be a founding partner",
     "ctaVerOficinas": "See shops on the platform",
-    "heroFootnote": "No monthly fee. No commission for founding partners.",
     "funcTitulo": "Plus: everything to run your shop",
     "funcSubtitulo": "A quick rundown of every feature — no fluff",
     "funcCategorias": [
@@ -223,7 +221,7 @@
       }
     ],
     "transparenciaTitulo": "Transparency about costs",
-    "transparenciaTexto": "Today, registering and using the management system is free, and we don't charge founding partners any commission. If that changes in the future, you'll be notified at least 30 days before any charge takes effect, in line with our",
+    "transparenciaTexto": "Registering and using BipFix is free today: no joining fee, no commission and no card needed. The terms are the same for every shop. If they ever change, we'll tell you at least 30 calendar days in advance and you decide whether to stay — in line with our",
     "transparenciaTermosLink": "Terms of Use",
     "faqTitulo": "Frequently asked questions from shops",
     "faq": [
@@ -233,7 +231,7 @@
       },
       {
         "pergunta": "How much does the BipFix management system cost my shop?",
-        "resposta": "Registering and using the management tools (schedule, quotes, staff, reviews) has no monthly fee. Today, we don't charge founding partners any commission. If that changes in the future, we'll give at least 30 days' notice before any charge, per our Terms of Use."
+        "resposta": "Registering and using every tool (requests, quotes, schedule, team, reviews) is free today: no joining fee, no commission and no card needed. If that ever changes, we'll give at least 30 calendar days' notice, per our Terms of Use. You can leave anytime."
       },
       {
         "pergunta": "Does it replace an Excel spreadsheet or a booking notebook?",
@@ -259,12 +257,21 @@
     "videoYoutube": "Watch on YouTube",
     "videosIdioma": "Videos in Estonian.",
     "videosCanal": "All videos on YouTube",
-    "heroSelos": [
-      "€0",
+    "heroEyebrow": "Tallinn · for car repair shops",
+    "heroUrgencia": "Join early – less competition, more requests",
+    "heroVantagens": [
+      "€0 to join",
+      "0% commission",
       "No card needed",
-      "No monthly fee*"
+      "Leave anytime",
+      "30 days' notice of any change"
     ],
-    "heroAsterisco": "* If the terms change, we will notify you at least 30 calendar days in advance. You can leave anytime — no fees, no penalties."
+    "ctaCadastro": "Register your garage for free",
+    "ctaCadastroSub": "2 minutes · no contract",
+    "heroSemLetras": "No small print.",
+    "heroTermosLink": "All terms",
+    "heroDuvidas": "Questions? Write to us",
+    "heroEmpresa": "RPyrus OÜ · registry code 17628754 · Tartu mnt 67/1-13b, Tallinn"
   },
   "veiculoForm": {
     "labelTipo": "Vehicle type",
@@ -320,14 +327,13 @@
     "step3Texto": "Get detailed quotes with prices, timelines and reviews",
     "step4Titulo": "Choose and repair",
     "step4Texto": "Accept the best quote and track your vehicle's repair",
-    "oficinasBadge": "FOUNDING PARTNER SELECTION OPEN",
+    "oficinasBadge": "FOR REPAIR SHOPS: JOINING IS FREE",
     "oficinasTitulo": "For auto repair shops and parts suppliers",
     "oficinasTexto": "Organize your operations on a single platform and gain visibility for new customers in your area — with no commission during this initial phase.",
     "feature1": "Automatically receive requests from nearby customers",
     "feature2": "Send structured, professional quotes",
     "feature3": "Manage your schedule with both platform and external jobs",
     "feature4": "Build your reputation with customer reviews",
-    "ctaFundador": "I want to be a founding partner",
     "saibaMais": "Learn more",
     "mock1Titulo": "New request",
     "mock1Texto": "Collision - VW Golf 2021 - 3 km from you",
@@ -339,8 +345,8 @@
     "porQueTitulo": "Why we're building BipFix",
     "porQueTexto1": "Today, choosing where to get your car fixed usually comes down to a referral or whichever shop is closest — with no way to compare price, timeline or track record. We believe drivers deserve transparency, and that good repair shops deserve to be found for the work they deliver.",
     "porQueTexto2": "We're, literally, just getting started: selecting the first partner shops and parts suppliers to launch with full attention in one city at a time, instead of growing fast with no quality control.",
-    "parceiroTitulo": "There's still time to join as a founding partner",
-    "parceiroTexto": "We're onboarding the first partner repair shops in Tallinn now. If you're a driver, you can already send your request: we pass it on to shops as they join and keep you posted. If you run a repair shop or parts business, we're selecting a small number of founding partners — with no commission in this phase.",
+    "parceiroTitulo": "Run a repair shop? Join for free",
+    "parceiroTexto": "We're onboarding the first repair shops in Tallinn now. If you're a driver, you can already send your request: we pass it on to shops as they join and keep you posted. If you run a repair shop, joining is free — no commission, no card.",
     "faqTitulo": "Frequently Asked Questions",
     "faqSubtitulo": "Get your questions about the BipFix platform answered",
     "faqItems": [
@@ -390,7 +396,7 @@
     "footerGuias": "Driver guides",
     "footerOficinas": "For Repair Shops",
     "footerSistemaGestao": "Management system and customers",
-    "footerSejaParceiro": "Become a founding partner",
+    "footerSejaParceiro": "Become a partner",
     "footerGuiaOficina": "Shop Guide",
     "footerCentralAjuda": "Help Centre",
     "footerContato": "Contact",
@@ -401,7 +407,8 @@
     "guiasTitulo": "Guides for drivers",
     "guiasTexto": "Practical answers before you take your car to a repair shop.",
     "guiasVerTodos": "See all guides",
-    "avvisoEstonia": "Living in Estonia? BipFix also works in Tallinn, in English: requests go to the garages near your car."
+    "avvisoEstonia": "Living in Estonia? BipFix also works in Tallinn, in English: requests go to the garages near your car.",
+    "ctaCadastroOficina": "Register your garage for free"
   },
   "constants": {
     "tiposServico": {
@@ -662,7 +669,7 @@
     "titulo": "About BipFix",
     "intro": "BipFix connects drivers who need a car repair with independent repair shops: you describe the problem with photos, receive detailed quotes, compare them and follow the repair. BipFix is only the platform — it does not repair cars or sell parts.",
     "estagioTitulo": "Where we are",
-    "estagioTexto": "We're just getting started. Our pilot city is Tallinn, Estonia, and the first partner repair shops are being onboarded now, in the founding-partner phase. We don't have a large network of shops yet — and we'd rather say so clearly.",
+    "estagioTexto": "We're just getting started. Our pilot city is Tallinn, Estonia, and the first repair shops are being onboarded now. We don't have a large network of shops yet — and we'd rather say so clearly.",
     "empresaTitulo": "The company",
     "empresaTexto": "BipFix is operated by RPyrus OÜ, a private limited company (osaühing) registered in Estonia. Registry code: 17628754. Registered address: Tartu mnt 67/1-13b, 10115 Tallinn, Estonia.",
     "principiosTitulo": "How we work",
@@ -721,5 +728,20 @@
     "verBrasil": "See the Brazil version",
     "avisoEuropa": "Are you in Europe? The European terms (GDPR) apply to you.",
     "avisoBrasil": "Are you in Brazil? The Brazilian terms (LGPD and Consumer Code) apply to you."
+  },
+  "contatoDuvidas": {
+    "titulo": "Still have questions?",
+    "texto": "Send us your question. We reply within 1 working day in Estonian, Russian or English.",
+    "nome": "Name",
+    "contato": "Email or phone",
+    "pergunta": "Your question",
+    "enviar": "Send question",
+    "enviando": "Sending…",
+    "sucesso": "Thanks! We'll reply within 1 working day.",
+    "erro": "Couldn't send it. Try again or email support@bipfix.com",
+    "erroCampos": "Please fill in all fields.",
+    "redes": "or message us on social media",
+    "privacidade": "We only use your details to reply.",
+    "privacidadeLink": "Privacy"
   }
 }

@@ -46,20 +46,20 @@
     "minhaOficinaCurto": "Oficina"
   },
   "sejaParceiro": {
-    "metaTitle": "Seja um Parceiro Fundador no Brasil",
-    "metaDescription": "O BipFix está em fase de seleção de oficinas e lojas de peças parceiras fundadoras. Vagas limitadas, sem comissão nesta fase. Cadastre seu interesse.",
-    "ogTitle": "Seja um Parceiro Fundador",
-    "ogDescription": "O BipFix está em fase de seleção de oficinas e lojas de peças parceiras fundadoras. Vagas limitadas, sem comissão nesta fase.",
-    "heroTag": "FASE DE SELEÇÃO DE PARCEIROS FUNDADORES",
+    "metaTitle": "Seja parceiro da BipFix",
+    "metaDescription": "Para oficinas e lojas de peças: cadastro grátis, sem comissão e mudanças avisadas com 30 dias. Deixe seu contato e falamos com você.",
+    "ogTitle": "Seja parceiro da BipFix",
+    "ogDescription": "Para oficinas e lojas de peças: cadastro grátis, sem comissão e mudanças avisadas com 30 dias.",
+    "heroTag": "PARA OFICINAS E LOJAS DE PEÇAS",
     "heroTitulo": "Estamos construindo algo novo no mercado de reparo automotivo — e queremos você entre os primeiros",
-    "heroTexto": "O BipFix ainda é um projeto ambicioso em fase inicial, sem milhares de usuários — e é justamente por isso que quem entrar agora ajuda a moldar a plataforma e garante condições que não vão se repetir depois.",
-    "beneficiosTitulo": "O que significa ser parceiro fundador",
-    "beneficio1Titulo": "Sem comissão nesta fase",
-    "beneficio1Texto": "Parceiros fundadores usam o sistema completo de gestão e captação sem pagar comissão, com aviso de 30 dias antes de qualquer mudança futura.",
+    "heroTexto": "A BipFix ainda é um projeto ambicioso no começo, sem milhares de usuários. Entrar cedo significa menos concorrência, e o seu feedback ajuda a construir a plataforma.",
+    "beneficiosTitulo": "O que você ganha como parceiro",
+    "beneficio1Titulo": "Grátis, sem comissão",
+    "beneficio1Texto": "Todo o sistema de gestão e captação de clientes sem taxa de adesão e sem comissão. As condições são iguais para todos, com pelo menos 30 dias de aviso antes de qualquer mudança.",
     "beneficio2Titulo": "Voz ativa no produto",
     "beneficio2Texto": "Como um dos primeiros, seu feedback direto molda quais funcionalidades entram na plataforma a seguir.",
-    "beneficio3Titulo": "Vagas limitadas por região",
-    "beneficio3Texto": "Estamos selecionando um número reduzido de parceiros por cidade na fase piloto, para dar atenção real a cada um.",
+    "beneficio3Titulo": "Menos concorrência no começo",
+    "beneficio3Texto": "Hoje há poucas oficinas na plataforma, então quem entra cedo recebe pedidos com menos concorrência.",
     "formTitulo": "Cadastre seu interesse",
     "formSubtitulo": "Leva menos de 1 minuto. Sem compromisso.",
     "souOficina": "Sou oficina",
@@ -78,13 +78,13 @@
     "campoObservacao": "Quer nos contar algo? (opcional)",
     "placeholderObservacao": "Ex: quantos funcionários, especialidades...",
     "enviando": "Enviando...",
-    "enviar": "Quero ser parceiro fundador",
+    "enviar": "Quero que entrem em contato",
     "concordaTermos": "Ao enviar, você concorda com nossos",
     "termosDeUso": "Termos de Uso",
     "erroObrigatorio": "Preencha todos os campos obrigatórios",
     "erroGenerico": "Não foi possível enviar. Tente novamente em instantes.",
     "sucessoTitulo": "Recebemos seu interesse!",
-    "sucessoTexto": "Nossa equipe vai analisar sua região e entrar em contato pelo WhatsApp em até 48 horas úteis para explicar os próximos passos da fase piloto.",
+    "sucessoTexto": "Entraremos em contato em até 1 dia útil por WhatsApp ou e-mail para explicar os próximos passos.",
     "voltarInicio": "Voltar para o início",
     "depoisTitulo": "O que acontece depois da inscrição",
     "depois1": "Respondemos em até 1 dia útil, por e-mail ou WhatsApp.",
@@ -111,9 +111,7 @@
     "ogDescription": "Organize sua oficina e apareça para motoristas da sua região precisando de reparo. Cadastro gratuito.",
     "heroTitulo": "Novos clientes para a sua oficina — os pedidos de orçamento chegam direto para você",
     "heroTexto": "Motoristas mandam o pedido com fotos, você manda o orçamento e o cliente escolhe. Perfil público e avaliações reais deixam você visível. E ainda agenda e gestão da equipe simples.",
-    "ctaFundador": "Quero ser parceiro fundador",
     "ctaVerOficinas": "Ver oficinas na plataforma",
-    "heroFootnote": "Sem mensalidade. Sem comissão para os parceiros iniciais.",
     "funcTitulo": "E mais: tudo para organizar a oficina",
     "funcSubtitulo": "Um resumo rápido de cada funcionalidade — sem enrolação",
     "funcCategorias": [
@@ -220,7 +218,7 @@
       }
     ],
     "transparenciaTitulo": "Transparência sobre custos",
-    "transparenciaTexto": "Hoje o cadastro e o uso do sistema de gestão são gratuitos, e não cobramos comissão dos parceiros iniciais. Se isso mudar no futuro, você será avisado com no mínimo 30 dias de antecedência antes de qualquer cobrança começar a valer, conforme nossos",
+    "transparenciaTexto": "Hoje o cadastro e o uso da BipFix são grátis: sem taxa de adesão, sem comissão e sem cartão. As condições são iguais para todas as oficinas. Se um dia mudarem, avisamos com pelo menos 30 dias corridos de antecedência e você decide se fica, conforme nossos",
     "transparenciaTermosLink": "Termos de Uso",
     "faqTitulo": "Perguntas frequentes de oficinas",
     "faq": [
@@ -230,7 +228,7 @@
       },
       {
         "pergunta": "Quanto custa o sistema de gestão do BipFix para minha oficina?",
-        "resposta": "O cadastro e o uso das ferramentas de gestão (agenda, orçamentos, equipe, avaliações) não têm mensalidade. Hoje não cobramos comissão dos parceiros iniciais. Caso isso mude no futuro, avisamos com pelo menos 30 dias de antecedência antes de qualquer cobrança, conforme nossos Termos de Uso."
+        "resposta": "O cadastro e o uso de todas as ferramentas (pedidos, orçamentos, agenda, equipe, avaliações) são grátis hoje: sem taxa de adesão, sem comissão e sem cartão. Se isso mudar um dia, avisamos com pelo menos 30 dias corridos de antecedência, conforme nossos Termos de Uso. Você pode sair quando quiser."
       },
       {
         "pergunta": "O sistema substitui uma planilha ou caderno de agendamento?",
@@ -256,12 +254,21 @@
     "videoYoutube": "Ver no YouTube",
     "videosIdioma": "Vídeos em estoniano.",
     "videosCanal": "Todos os vídeos no YouTube",
-    "heroSelos": [
-      "R$ 0",
+    "heroEyebrow": "Para oficinas mecânicas",
+    "heroUrgencia": "Entre cedo: menos concorrência, mais pedidos",
+    "heroVantagens": [
+      "R$ 0 de adesão",
+      "0% de comissão",
       "Sem cartão",
-      "Sem mensalidade*"
+      "Saia quando quiser",
+      "Mudanças avisadas com 30 dias"
     ],
-    "heroAsterisco": "* Se as condições mudarem, avisamos com pelo menos 30 dias corridos de antecedência. Você pode sair quando quiser, sem custos nem multas."
+    "ctaCadastro": "Cadastre sua oficina grátis",
+    "ctaCadastroSub": "2 minutos · sem contrato",
+    "heroSemLetras": "Sem letras miúdas.",
+    "heroTermosLink": "Todas as condições",
+    "heroDuvidas": "Dúvidas? Fale com a gente",
+    "heroEmpresa": "RPyrus OÜ · registro 17628754 · Tartu mnt 67/1-13b, Tallinn"
   },
   "veiculoForm": {
     "labelTipo": "Tipo de veículo",
@@ -317,14 +324,13 @@
     "step3Texto": "Receba orçamentos detalhados com preços, prazos e avaliações",
     "step4Titulo": "Escolha e repare",
     "step4Texto": "Aceite o melhor orçamento e acompanhe o reparo do seu veículo",
-    "oficinasBadge": "SELEÇÃO DE PARCEIROS FUNDADORES ABERTA",
+    "oficinasBadge": "PARA OFICINAS: CADASTRO GRÁTIS",
     "oficinasTitulo": "Para oficinas mecânicas e lojas de peças",
     "oficinasTexto": "Organize seus serviços em uma única plataforma e ganhe visibilidade para novos clientes na sua região — sem pagar comissão nesta fase inicial.",
     "feature1": "Receba solicitações de clientes próximos automaticamente",
     "feature2": "Envie orçamentos estruturados e profissionais",
     "feature3": "Gerencie sua agenda com serviços internos e externos",
     "feature4": "Construa sua reputação com avaliações de clientes",
-    "ctaFundador": "Quero ser parceiro fundador",
     "saibaMais": "Saiba mais",
     "mock1Titulo": "Nova solicitação",
     "mock1Texto": "Colisão - VW Gol 2021 - 3km de você",
@@ -336,8 +342,8 @@
     "porQueTitulo": "Por que estamos construindo o BipFix",
     "porQueTexto1": "Hoje, escolher onde consertar o carro costuma depender só de indicação ou de qual oficina está mais perto — sem comparar preço, prazo ou histórico de quem vai fazer o serviço. Acreditamos que motoristas merecem transparência, e que boas oficinas merecem ser encontradas pelo trabalho que entregam.",
     "porQueTexto2": "Estamos, literalmente, no começo: selecionando as primeiras oficinas e lojas de peças parceiras para lançar com atenção total em uma cidade por vez, em vez de crescer rápido sem controle de qualidade.",
-    "parceiroTitulo": "Ainda dá tempo de entrar como parceiro fundador",
-    "parceiroTexto": "Estamos cadastrando as primeiras oficinas parceiras agora. Se você é motorista, já pode enviar seu pedido: nós o repassamos às oficinas assim que elas entram e avisamos você. Se você tem uma oficina ou loja de peças, estamos selecionando poucos parceiros fundadores — sem comissão nesta fase.",
+    "parceiroTitulo": "Tem uma oficina? Entre grátis",
+    "parceiroTexto": "Estamos recebendo as primeiras oficinas. Se você é motorista, já pode enviar seu pedido: repassamos às oficinas assim que entrarem e avisamos você. Se você tem uma oficina, o cadastro é grátis — sem comissão e sem cartão.",
     "faqTitulo": "Perguntas frequentes",
     "faqSubtitulo": "Tire suas dúvidas sobre a plataforma BipFix",
     "faqItems": [
@@ -387,7 +393,7 @@
     "footerGuias": "Guias para motoristas",
     "footerOficinas": "Para Oficinas",
     "footerSistemaGestao": "Sistema de gestão e clientes",
-    "footerSejaParceiro": "Seja parceiro fundador",
+    "footerSejaParceiro": "Seja parceiro",
     "footerGuiaOficina": "Guia da Oficina",
     "footerCentralAjuda": "Central de Ajuda",
     "footerContato": "Contato",
@@ -398,7 +404,8 @@
     "guiasTitulo": "Guias para motoristas",
     "guiasTexto": "Respostas práticas antes de levar o carro à oficina.",
     "guiasVerTodos": "Ver todos os guias",
-    "avvisoEstonia": "Mora na Estônia? O BipFix também funciona em Tallinn, em português: os pedidos vão para as oficinas perto do carro."
+    "avvisoEstonia": "Mora na Estônia? O BipFix também funciona em Tallinn, em português: os pedidos vão para as oficinas perto do carro.",
+    "ctaCadastroOficina": "Cadastre sua oficina grátis"
   },
   "constants": {
     "tiposServico": {
@@ -659,7 +666,7 @@
     "titulo": "Sobre o BipFix",
     "intro": "O BipFix conecta motoristas que precisam de um conserto a oficinas independentes: você descreve o problema com fotos, recebe orçamentos detalhados, compara e acompanha o reparo. O BipFix é só a plataforma — não faz reparos nem vende peças.",
     "estagioTitulo": "Em que fase estamos",
-    "estagioTexto": "Estamos começando. A cidade piloto é Tallinn, na Estônia, e as primeiras oficinas parceiras estão sendo cadastradas agora, na fase de parceiros fundadores. Não temos, ainda, uma grande rede de oficinas — e preferimos dizer isso com clareza.",
+    "estagioTexto": "Estamos começando. A cidade piloto é Tallinn, na Estônia, e as primeiras oficinas estão sendo cadastradas agora. Não temos, ainda, uma grande rede de oficinas — e preferimos dizer isso com clareza.",
     "empresaTitulo": "A empresa",
     "empresaTexto": "O BipFix é operado pela RPyrus OÜ, sociedade de responsabilidade limitada (osaühing) registrada na Estônia. Código de registro: 17628754. Sede: Tartu mnt 67/1-13b, 10115 Tallinn, Estônia.",
     "principiosTitulo": "Como trabalhamos",
@@ -718,5 +725,20 @@
     "verBrasil": "Ver versão brasileira",
     "avisoEuropa": "Você está na Europa? Para você valem os termos europeus (GDPR).",
     "avisoBrasil": "Você está no Brasil? Para você valem os termos brasileiros (LGPD e CDC)."
+  },
+  "contatoDuvidas": {
+    "titulo": "Ainda tem dúvidas?",
+    "texto": "Mande sua pergunta. Respondemos em até 1 dia útil, em português ou inglês.",
+    "nome": "Nome",
+    "contato": "E-mail ou telefone",
+    "pergunta": "Sua pergunta",
+    "enviar": "Enviar pergunta",
+    "enviando": "Enviando…",
+    "sucesso": "Obrigado! Respondemos em até 1 dia útil.",
+    "erro": "Não foi possível enviar. Tente de novo ou escreva para support@bipfix.com",
+    "erroCampos": "Preencha todos os campos.",
+    "redes": "ou fale com a gente nas redes sociais",
+    "privacidade": "Usamos seus dados só para responder.",
+    "privacidadeLink": "Privacidade"
   }
 }

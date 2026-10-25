@@ -4,6 +4,10 @@
     "en": "car-accident-estonia-what-to-do",
     "ru": "dtp-v-estonii-chto-delat"
   },
+  "car-repair-prices-tallinn": {
+    "et": "autoremondi-hinnad-tallinnas",
+    "ru": "ceny-na-remont-avto-v-talline"
+  },
   "compare-car-repair-quotes": {
     "en": "compare-car-repair-quotes",
     "et": "autoremondi-hinnapakkumiste-vordlemine",
@@ -11,6 +15,14 @@
     "pt-PT": "comparar-orcamentos-de-oficina",
     "pt": "comparar-orcamentos-de-oficina",
     "ru": "sravnenie-smet-na-remont-avto"
+  },
+  "how-to-choose-car-repair-shop-tallinn": {
+    "et": "kuidas-valida-autotookoda-tallinnas",
+    "ru": "kak-vybrat-avtoservis-v-talline"
+  },
+  "insurance-repair-after-accident-estonia": {
+    "et": "kasko-ja-liikluskindlustus-remont-parast-avariid",
+    "ru": "remont-posle-dtp-po-kasko-i-strahovke"
   },
   "roadworthiness-inspection-estonia": {
     "et": "tehnoulevaatus-eestis",

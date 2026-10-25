@@ -185,8 +185,8 @@ export default function HomeClient({ guias = [] }: { guias?: GuiaResumo[] }) {
                 <Feature text={t('feature4')} />
               </ul>
               <div className="flex flex-wrap gap-4 mt-8">
-                <Link href="/seja-parceiro" className="btn-primary inline-block">
-                  {t('ctaFundador')}
+                <Link href={rota('/cadastro', undefined, { tipo: 'oficina' })} className="btn-primary inline-block">
+                  {t('ctaCadastroOficina')}
                 </Link>
                 <Link href="/para-oficinas" className="inline-block text-primary-600 font-medium hover:underline self-center">
                   {t('saibaMais')} →
@@ -251,8 +251,8 @@ export default function HomeClient({ guias = [] }: { guias?: GuiaResumo[] }) {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('parceiroTitulo')}</h2>
           <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">{t('parceiroTexto')}</p>
-          <Link href="/seja-parceiro" className="btn-primary inline-block">
-            {t('ctaFundador')}
+          <Link href={rota('/cadastro', undefined, { tipo: 'oficina' })} className="btn-primary inline-block">
+            {t('ctaCadastroOficina')}
           </Link>
         </div>
       </section>
