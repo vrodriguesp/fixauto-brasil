@@ -68,10 +68,10 @@ export default function Navbar() {
         {/* Menu do computador so a partir de 1280 px: abaixo disso os links nao cabem
             numa linha e ficavam uns por cima dos outros ("Workshop" sobre "Dashboard",
             nome sobre "Sair" - medido em 6 idiomas, 09/10); ali vale o menu de celular */}
-        <div className="flex justify-between h-16 gap-3">
+        <div className="flex justify-between h-16 gap-1.5 min-[360px]:gap-3">
           <div className="flex items-center min-w-0">
             <LinkPainel href={isLoggedIn ? dashboardPath : '/'} className="flex items-center gap-1 shrink-0">
-              <img src="/logo-80.webp" alt="BipFix" width={188} height={40} className="h-7 sm:h-10 w-auto" />
+              <img src="/logo-80.webp" alt="BipFix" width={188} height={40} className="h-[22px] min-[360px]:h-7 sm:h-10 w-auto" />
               {(isOficina || isAdmin) && (
                 // No celular nao ha espaco ao lado do logo (sobrepunha o seletor de idioma)
                 <div className="hidden sm:flex flex-col ml-1 whitespace-nowrap">
@@ -145,7 +145,7 @@ export default function Navbar() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1 min-[360px]:gap-2 sm:gap-3 shrink-0">
             <LanguageSwitcher compacto={isLoggedIn} />
             {isLoggedIn ? (
               <>
@@ -178,7 +178,7 @@ export default function Navbar() {
               </>
             ) : (
               <div className="flex items-center gap-2">
-                <LinkPainel href="/login" className="btn-secondary text-sm !py-2 !px-3 sm:!px-4 whitespace-nowrap">
+                <LinkPainel href="/login" className="btn-secondary text-sm !py-2 !px-2.5 min-[360px]:!px-3 sm:!px-4 whitespace-nowrap">
                   {t('entrar')}
                 </LinkPainel>
                 {/* celular: so "Entrar" (a tela de entrar leva ao cadastro). Com os dois botoes

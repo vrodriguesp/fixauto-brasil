@@ -62,7 +62,7 @@ export default function LanguageSwitcher({ compacto = false }: { compacto?: bool
         aria-expanded={open}
         aria-haspopup="true"
         aria-label={atual}
-        className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+        className="flex items-center gap-1 sm:gap-1.5 px-1.5 min-[360px]:px-2.5 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
       >
         <Codigo c={CODIGO[locale]} />
         {/* rotulo inteiro so em tela larga; no meio fica so o codigo (nao empurra o menu) */}
