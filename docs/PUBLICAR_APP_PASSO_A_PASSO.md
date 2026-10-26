@@ -11,8 +11,8 @@ Situação em 24/10/2026. App: `apps/mobile` (Expo SDK 57), nome **BipFix**, ide
 |---|---|
 | D-U-N-S da RPyrus OÜ | dono |
 | Conta Apple Developer (organização) | dono |
-| Conta Google Play Console (organização) | dono |
-| `eas login` + `eas init` (projectId) | dono + Claude |
+| ~~Conta Google Play Console (organização)~~ feito 26/10 (app BipFix criado, `com.bipfix.cliente`) | dono |
+| ~~`eas login` + `eas init` (projectId)~~ feito 26/10 (`@rpyrus/bipfix-cliente`) | dono + Claude |
 | Criar o app no App Store Connect → `ascAppId` no `eas.json` | dono + Claude |
 | Chave de serviço do Google Play (`google-play-service-account.json`) | dono |
 | Links do app (L4): `APPLE_TEAM_ID` e `ANDROID_SHA256` no servidor | Claude (com deploy OK) |

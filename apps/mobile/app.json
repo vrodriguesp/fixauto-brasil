@@ -121,6 +121,12 @@
       "et": "./i18n/permissoes/et.json",
       "it": "./i18n/permissoes/it.json",
       "ru": "./i18n/permissoes/ru.json"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d028e87b-04e3-42f1-8339-62a62959c8ec"
+      }
+    },
+    "owner": "rpyrus"
   }
 }
