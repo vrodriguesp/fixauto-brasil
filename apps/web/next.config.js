@@ -11,14 +11,17 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 // cookies youtube-nocookie.com, carregado so quando a pessoa clica em play). 'unsafe-inline' em script-src e
 // necessario para os scripts inline do Next e do consentimento; o ganho da
 // CSP aqui e restringir DE ONDE vem conteudo e proibir embutir o site.
-const SUPABASE = 'https://supabase.bipfix.com';
+// endereco do banco vem da configuracao (producao: https://supabase.bipfix.com;
+// ambiente de teste local: http://localhost:54321)
+const SUPABASE = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://supabase.bipfix.com';
+const SUPABASE_WS = SUPABASE.replace(/^http/, 'ws');
 const CSP = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'production' ? '' : " 'unsafe-eval'"} https://www.googletagmanager.com https://*.clarity.ms`,
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' data: blob: ${SUPABASE} https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://c.bing.com`,
   "font-src 'self' data:",
-  `connect-src 'self' ${SUPABASE} wss://supabase.bipfix.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.clarity.ms https://viacep.com.br`,
+  `connect-src 'self' ${SUPABASE} ${SUPABASE_WS} https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.clarity.ms https://viacep.com.br`,
   `media-src 'self' blob: ${SUPABASE}`,
   'frame-src https://www.google.com https://maps.google.com https://www.youtube-nocookie.com',
   "frame-ancestors 'self'",
