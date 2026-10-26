@@ -249,7 +249,7 @@ export default function EmergenciaScreen() {
       <View className="flex-row gap-2 mb-6">
         <Pressable onPress={handleFoto} className="flex-1 border border-gray-300 rounded-lg py-3 items-center flex-row justify-center gap-2">
           <Ionicons name="camera-outline" size={18} color="#374151" />
-          <Text className="text-gray-700">{t('emergencia.fotoTitulo')}</Text>
+          <Text className="text-gray-700">{t('novaSolicitacao.camera')}</Text>
         </Pressable>
         <Pressable onPress={handleGaleria} className="flex-1 border border-gray-300 rounded-lg py-3 items-center flex-row justify-center gap-2">
           <Ionicons name="images-outline" size={18} color="#374151" />
