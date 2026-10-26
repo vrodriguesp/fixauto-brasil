@@ -317,7 +317,7 @@
     "heroTexto": "Täielik läbipaistvus hinnapakkumisest kuni üleandmiseni. Võrdle kontrollitud töökodade detailseid hinnapakkumisi ja jälgi remondi iga etappi reaalajas. Lihtne, turvaline ja ilma varjatud kuludeta.",
     "ctaCliente": "Vajan remonti",
     "ctaOficina": "Olen autotöökoda või varuosade müüja",
-    "emergenciaTitulo": "Sain just avarii!",
+    "emergenciaTitulo": "Tegin just avarii!",
     "emergenciaTexto": "Tee kohe foto ja saa lähedal asuvatelt töökodadelt hinnapakkumised mõne minutiga. Saad registreerida ka teise osalenud sõiduki.",
     "comoFuncionaTitulo": "Kuidas see toimib",
     "comoFuncionaSubtitulo": "Mõne sammuga saad hinnapakkumised oma piirkonna parimatelt töökodadelt",
@@ -370,7 +370,7 @@
       },
       {
         "pergunta": "Kas saan BipFixi kasutada õnnetuse korral?",
-        "resposta": "Jah! Meil on hädaolukorra nupp \"Sain just avarii\", millega saad juhtunu kiiresti registreerida, teha kohapeal fotod ja saada lähedal asuvatelt töökodadelt hinnapakkumised mõne minutiga. Saad registreerida ka teise osalenud sõiduki."
+        "resposta": "Jah! Meil on hädaolukorra nupp \"Tegin just avarii\", millega saad juhtunu kiiresti registreerida, teha kohapeal fotod ja saada lähedal asuvatelt töökodadelt hinnapakkumised mõne minutiga. Saad registreerida ka teise osalenud sõiduki."
       },
       {
         "pergunta": "Milliseid teenuseid töökojad pakuvad?",
@@ -392,7 +392,7 @@
     "footerTagline": "Ühendame juhid parimate autotöökodadega.",
     "footerMotoristas": "Juhtidele",
     "footerCriarConta": "Loo konto",
-    "footerAcabeiDeBater": "Sain just avarii",
+    "footerAcabeiDeBater": "Tegin just avarii",
     "footerVerOficinas": "Partnertöökojad",
     "footerComoFunciona": "Kuidas see toimib",
     "footerGuias": "Juhendid autojuhtidele",
@@ -630,7 +630,7 @@
     "texto": "Aadress võib olla vale või leht on eemaldatud.",
     "inicio": "Mine avalehele",
     "guias": "Vaata juhendeid autojuhtidele",
-    "emergencia": "Sain just avarii"
+    "emergencia": "Tegin just avarii"
   },
   "erros": {
     "CAMPO_OBRIGATORIO": "Täida kõik kohustuslikud väljad.",

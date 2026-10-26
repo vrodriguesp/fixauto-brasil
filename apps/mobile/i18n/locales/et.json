@@ -73,7 +73,7 @@
     "contaDesativada": "See konto on deaktiveeritud. Võta ühendust BipFixi toega."
   },
   "emergencia": {
-    "titulo": "Sain just avarii",
+    "titulo": "Tegin just avarii",
     "subtitulo": "Teata õnnetusest kohe ja saa lähedal asuvatelt töökodadelt hinnapakkumised mõne minutiga.",
     "botaoIniciar": "Teata õnnetusest kohe",
     "fotoTitulo": "Sõiduki fotod",
@@ -135,7 +135,7 @@
     "solicitacoesAtivas": "Aktiivsed päringud",
     "nenhumaSolicitacao": "Sul pole veel ühtegi päringut.",
     "novaSolicitacaoBotao": "Uus päring",
-    "emergenciaBotao": "Sain just avarii",
+    "emergenciaBotao": "Tegin just avarii",
     "avisos": "Teated"
   },
   "orcamentos": {
