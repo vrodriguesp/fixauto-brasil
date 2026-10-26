@@ -15,5 +15,8 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 config.resolver.disableHierarchicalLookup = true;
+// O app nao usa nada de apps/web; sem isto, o .next do site (next dev) e os
+// prints dos testes faziam o Metro recarregar o app sem parar (teste 26/10).
+config.resolver.blockList = [/[\\/]apps[\\/]web[\\/].*/];
 
 module.exports = withNativeWind(config, { input: './global.css' });
