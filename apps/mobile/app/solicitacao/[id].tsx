@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { FotosPedido, SeguroPedido } from '../../components/FotosESeguroPedido';
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput, RefreshControl } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useFocusEffect, router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,6 +25,7 @@ const ATIVO = ['enviado', 'visualizado'];
 
 export default function SolicitacaoDetailScreen() {
   const { t, i18n } = useTranslation();
+  const insets = useSafeAreaInsets(); // barra do sistema no Android ponta a ponta
   // Opcoes do cabecalho criadas uma vez: objeto novo a cada desenho fazia o
   // cabecalho e a tela se redesenharem sem fim no iPhone ("Maximum update depth").
   const tituloTela = t('acompanhamento.titulo');
@@ -195,7 +197,7 @@ export default function SolicitacaoDetailScreen() {
   const recarregar = async () => { setPuxando(true); await carregar(); setPuxando(false); };
 
   return (
-    <ScrollView keyboardDismissMode="on-drag" className="flex-1 bg-gray-50" refreshControl={<RefreshControl refreshing={puxando} onRefresh={recarregar} />}>
+    <ScrollView keyboardDismissMode="on-drag" className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: insets.bottom }} refreshControl={<RefreshControl refreshing={puxando} onRefresh={recarregar} />}>
       <Stack.Screen options={opcoesTela} />
       <View className="p-4">
         <Text className="text-xl font-bold text-gray-900">

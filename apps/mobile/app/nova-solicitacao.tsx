@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router, useFocusEffect } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
+import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TIPOS_SERVICO, URGENCIAS } from '@fixauto/shared';
 import type { Veiculo } from '@fixauto/shared';
 import { useAuth } from '../lib/auth-context';
@@ -22,6 +24,8 @@ export default function NovaSolicitacaoScreen() {
   // campo de endereco: ao focar, a tela rola para ele ficar no alto e as sugestoes aparecerem acima do teclado
   const rolagem = useRef<ScrollView>(null);
   const posEndereco = useRef(0);
+  // Android ponta a ponta: a barra do sistema cobria o botao Enviar (teste do dono 26/10)
+  const insets = useSafeAreaInsets();
   const { user } = useAuth();
   // servico entregue sem avaliacao: avaliar antes de pedir de novo (como no Uber)
   const [versaoAval, setVersaoAval] = useState(0);
@@ -67,6 +71,20 @@ export default function NovaSolicitacaoScreen() {
       }
     })();
   }, []);
+
+  // camera (so a galeria nao bastava - teste do dono 26/10); mesma regra da emergencia
+  const handleCamera = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(t('emergencia.cameraNegadaTitulo'), t('emergencia.cameraNegadaTexto'), [
+        { text: t('common.cancelar'), style: 'cancel' },
+        { text: t('emergencia.abrirAjustes'), onPress: () => Linking.openSettings() },
+      ]);
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({ quality: 0.7 });
+    if (!result.canceled) setFotos((prev) => [...prev, ...result.assets]);
+  };
 
   const handleFoto = async () => {
     // o seletor de fotos do sistema nao precisa de permissao (iOS 14+, Android
@@ -175,7 +193,7 @@ export default function NovaSolicitacaoScreen() {
   }
 
   return (
-    <ScrollView keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
+    <ScrollView keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets contentContainerStyle={{ paddingBottom: insets.bottom }}>
 
       {/* o problema primeiro, depois o carro (auditoria 10/10, B3) */}
       <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoServico')}</Text>
@@ -223,9 +241,16 @@ export default function NovaSolicitacaoScreen() {
           <Image key={i} source={{ uri: f.uri }} className="w-20 h-20 rounded-lg" />
         ))}
       </View>
-      <Pressable onPress={handleFoto} className="border border-gray-300 rounded-lg py-3 items-center mb-6">
-        <Text className="text-gray-700">{t('novaSolicitacao.passoFotos')}</Text>
-      </Pressable>
+      <View className="flex-row gap-2 mb-6">
+        <Pressable onPress={handleCamera} accessibilityRole="button" className="flex-1 border border-gray-300 rounded-lg py-3 items-center flex-row justify-center gap-2">
+          <Ionicons name="camera-outline" size={18} color="#374151" />
+          <Text className="text-gray-700">{t('novaSolicitacao.camera')}</Text>
+        </Pressable>
+        <Pressable onPress={handleFoto} accessibilityRole="button" className="flex-1 border border-gray-300 rounded-lg py-3 items-center flex-row justify-center gap-2">
+          <Ionicons name="images-outline" size={18} color="#374151" />
+          <Text className="text-gray-700">{t('novaSolicitacao.galeria')}</Text>
+        </Pressable>
+      </View>
 
       <Text className="text-sm font-medium text-gray-700 mb-1">
         {t('novaSolicitacao.passoLocal')} {buscandoLocal && <ActivityIndicator size="small" color="#2563eb" />}

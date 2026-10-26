@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, Alert } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { router, Stack } from 'expo-router';
 import { useAuth } from '../../lib/auth-context';
@@ -8,6 +9,7 @@ import VehicleCatalogPicker from '../../components/VehicleCatalogPicker';
 
 export default function NovoVeiculoScreen() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets(); // barra do sistema no Android ponta a ponta
   // Opcoes do cabecalho criadas uma vez: objeto novo a cada desenho fazia o
   // cabecalho e a tela se redesenharem sem fim no iPhone ("Maximum update depth").
   const tituloTela = t('veiculos.adicionar');
@@ -44,7 +46,7 @@ export default function NovoVeiculoScreen() {
   };
 
   return (
-    <ScrollView keyboardDismissMode="on-drag" className="flex-1 bg-white px-4 pt-4">
+    <ScrollView keyboardDismissMode="on-drag" className="flex-1 bg-white px-4 pt-4" contentContainerStyle={{ paddingBottom: insets.bottom }}>
       <Stack.Screen options={opcoesTela} />
 
       <VehicleCatalogPicker label={t('veiculos.marca')} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" />

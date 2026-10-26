@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert, Linking } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -41,6 +42,7 @@ function Opcao({ ativo, onPress, titulo, desc }: { ativo: boolean; onPress: () =
 
 export default function EmergenciaScreen() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets(); // barra do sistema no Android ponta a ponta
   // campo de endereco: ao focar, a tela rola para ele ficar no alto e as sugestoes aparecerem acima do teclado
   const rolagem = useRef<ScrollView>(null);
   const posEndereco = useRef(0);
@@ -234,7 +236,7 @@ export default function EmergenciaScreen() {
   }
 
   return (
-    <ScrollView keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
+    <ScrollView keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets contentContainerStyle={{ paddingBottom: insets.bottom }}>
       <Text className="text-gray-600 mb-6">{t('emergencia.subtitulo')}</Text>
 
       <Text className="text-sm font-medium text-gray-700 mb-1">{t('emergencia.fotoTitulo')}</Text>

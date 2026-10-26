@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as WebBrowser from 'expo-web-browser';
 import { useTranslation } from 'react-i18next';
 import { Link, router } from 'expo-router';
@@ -8,6 +9,7 @@ import { urlTermos, urlPrivacidade } from '../../lib/links-legais';
 
 export default function CadastroScreen() {
   const { t, i18n } = useTranslation();
+  const insets = useSafeAreaInsets(); // barra do sistema no Android ponta a ponta
   const { signUp } = useAuth();
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -56,7 +58,7 @@ export default function CadastroScreen() {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-white">
-      <ScrollView keyboardDismissMode="on-drag" contentContainerClassName="flex-grow justify-center px-6 py-12">
+      <ScrollView keyboardDismissMode="on-drag" contentContainerClassName="flex-grow justify-center px-6 py-12" contentContainerStyle={{ paddingBottom: 48 + insets.bottom }}>
         <Text className="text-xl font-semibold text-gray-900 mb-6">{t('auth.cadastroTitulo')}</Text>
 
         {erro && (
