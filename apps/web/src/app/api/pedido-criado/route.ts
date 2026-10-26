@@ -17,12 +17,12 @@ export async function POST(req: NextRequest) {
   if (!dentroDoLimite(`pedido-criado:${userId}`, 20, 60 * 60 * 1000)) return NextResponse.json({ ok: true });
   const { solicitacaoId } = await req.json().catch(() => ({}));
   if (!ehUuid(solicitacaoId)) return NextResponse.json({ error: 'Pedido inválido' }, { status: 400 });
-  const { data: sol } = await supabaseAdmin.from('solicitacoes').select('cliente_id, tipo, descricao, endereco').eq('id', solicitacaoId).maybeSingle();
+  const { data: sol } = await supabaseAdmin.from('solicitacoes').select('cliente_id, tipo, descricao, endereco, cliente:profiles!solicitacoes_cliente_id_fkey(conta_teste)').eq('id', solicitacaoId).maybeSingle();
   if (!sol || sol.cliente_id !== userId) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
   const avisadas = await avisarOficinasDoPedido(solicitacaoId).catch((e) => { console.error('[pedido-criado] oficinas', e); return 0; });
   // admin so quando nenhuma oficina perto recebeu (primeira vez; -1 = ja tratado)
   if (avisadas >= 0) {
-    await avisarAdminSeSemOficinas('pedido', solicitacaoId, `${sol.tipo} - ${sol.descricao || ''} - ${sol.endereco || ''}`, avisadas).catch((e) =>
+    await avisarAdminSeSemOficinas('pedido', solicitacaoId, `${sol.tipo} - ${sol.descricao || ''} - ${sol.endereco || ''}`, avisadas, !!(sol.cliente as any)?.conta_teste).catch((e) =>
       console.error('[pedido-criado]', e)
     );
   }

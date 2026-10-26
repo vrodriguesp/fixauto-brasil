@@ -8,7 +8,7 @@ import { escapeHtml } from './email-i18n';
 // `avisadas`: quantas oficinas foram avisadas deste pedido/acidente. Quando
 // informado, o admin e chamado se NINGUEM perto foi avisado (ex.: primeiro
 // acidente numa cidade nova) - antes so quando nao havia oficina ativa no mundo.
-export async function avisarAdminSeSemOficinas(tipo: 'pedido' | 'acidente', id: string, resumo: string, avisadas?: number) {
+export async function avisarAdminSeSemOficinas(tipo: 'pedido' | 'acidente', id: string, resumo: string, avisadas?: number, contaTeste = false) {
   const destino = process.env.VISITAS_EMAIL_PARA;
   if (!destino) return;
   if (avisadas != null) {
@@ -20,7 +20,7 @@ export async function avisarAdminSeSemOficinas(tipo: 'pedido' | 'acidente', id: 
   const caminho = tipo === 'pedido' ? `/admin/solicitacoes/${id}` : `/admin/emergencias/${id}`;
   await enviarEmail({
     para: destino,
-    assunto: `[BipFix] Novo ${tipo === 'pedido' ? 'pedido' : 'acidente'} sem oficina ativa`,
+    assunto: `[BipFix]${contaTeste ? ' [CONTA DE TESTE]' : ''} Novo ${tipo === 'pedido' ? 'pedido' : 'acidente'} sem oficina ativa`,
     html: `<p>Chegou um novo ${tipo} e nenhuma oficina ativa perto dele foi avisada.</p>
 <p>${escapeHtml(resumo.slice(0, 300))}</p>
 <p><a href="https://bipfix.com${caminho}">Abrir no painel</a> e encaminhar manualmente.</p>`,

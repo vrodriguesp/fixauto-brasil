@@ -13,7 +13,7 @@ export type OficinaAvisada = { profile_id: string; idioma: string | null };
  * teste por mercados de 09/10). O admin e avisado por e-mail nesse caso.
  * Idempotente: se o acidente ja tem oficinas avisadas, nao avisa de novo.
  */
-export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: number | null, longitude: number | null, tipo = 'colisao'): Promise<OficinaAvisada[]> {
+export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: number | null, longitude: number | null, tipo = 'colisao', clienteTeste = false): Promise<OficinaAvisada[]> {
   if (latitude == null || longitude == null) return [];
   const { count } = await supabaseAdmin
     .from('emergencia_oficinas_notificadas')
@@ -24,7 +24,7 @@ export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: n
   const RAIO_KM = 50;
   const dLat = RAIO_KM / 111;
   const dLon = RAIO_KM / (111 * Math.cos((latitude * Math.PI) / 180));
-  const campos = 'id, profile_id, especialidades, capacidade_servicos, capacidade_total, latitude, longitude, profile:profiles!oficinas_profile_id_fkey(idioma)';
+  const campos = 'id, profile_id, especialidades, capacidade_servicos, capacidade_total, latitude, longitude, profile:profiles!oficinas_profile_id_fkey(idioma, conta_teste)';
 
   const { data: proximas } = await supabaseAdmin
     .from('oficinas')
@@ -37,7 +37,8 @@ export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: n
 
   // acidente = carroceria: so oficinas de colisao/funilaria/pintura (ou sem
   // especialidade marcada), dentro do raio de 50 km do acidente
-  const colisao = (proximas || []).filter((o: any) => tipoCompativel(o.especialidades, tipo)
+  // conta de teste so chega a oficina de teste, e vice-versa (migracao 063)
+  const colisao = (proximas || []).filter((o: any) => !!o.profile?.conta_teste === clienteTeste && tipoCompativel(o.especialidades, tipo)
     && o.latitude != null && distanciaKm(latitude, longitude, o.latitude, o.longitude) <= RAIO_KM);
   const comCapacidade = [];
   for (const o of colisao) if (await oficinaTemCapacidade(supabaseAdmin, o, tipo)) comCapacidade.push(o);

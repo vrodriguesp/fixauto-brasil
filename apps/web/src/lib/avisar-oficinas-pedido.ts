@@ -28,12 +28,15 @@ export async function avisarOficinasDoPedido(solicitacaoId: string): Promise<num
     .eq('tipo', 'nova_solicitacao').eq('dados->>solicitacao_id', solicitacaoId);
   if (count && count > 0) return -1; // ja avisado (idempotente; -1 = nao avisar o admin de novo)
   const { data: sol } = await supabaseAdmin.from('solicitacoes')
-    .select('tipo, endereco, latitude, longitude, veiculo:veiculos(fipe_marca, fipe_modelo)').eq('id', solicitacaoId).maybeSingle();
+    .select('tipo, endereco, latitude, longitude, veiculo:veiculos(fipe_marca, fipe_modelo), cliente:profiles!solicitacoes_cliente_id_fkey(conta_teste)').eq('id', solicitacaoId).maybeSingle();
   if (!sol || sol.latitude == null || sol.longitude == null) return 0;
   const { data: oficinas } = await supabaseAdmin.from('oficinas')
-    .select('profile_id, especialidades, latitude, longitude, raio_atendimento_km, profile:profiles!oficinas_profile_id_fkey(idioma)')
+    .select('profile_id, especialidades, latitude, longitude, raio_atendimento_km, profile:profiles!oficinas_profile_id_fkey(idioma, conta_teste)')
     .eq('ativa', true);
+  // conta de teste (revisor das lojas) so avisa oficina de teste, e vice-versa (migracao 063)
+  const clienteTeste = !!(sol.cliente as any)?.conta_teste;
   const alvo = (oficinas || []).filter((o: any) =>
+    !!o.profile?.conta_teste === clienteTeste &&
     tipoCompativel(o.especialidades, sol.tipo) &&
     o.latitude != null && o.longitude != null &&
     distanciaKm({ lat: sol.latitude, lon: sol.longitude }, { lat: o.latitude, lon: o.longitude }) <= (o.raio_atendimento_km || 30));

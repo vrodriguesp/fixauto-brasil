@@ -173,8 +173,13 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const avisadas = await avisarOficinasDoAcidente(emergencia.id, latitude, longitude);
-    await avisarAdminSeSemOficinas('acidente', emergencia.id, `${descricao} - ${endereco || ''}`, avisadas.length).catch((e) => console.error('[emergencia] concierge', e));
+    // conta de teste (revisor das lojas): so oficinas de teste (migracao 063)
+    const { data: perfilCliente } = clienteId
+      ? await supabaseAdmin.from('profiles').select('conta_teste').eq('id', clienteId).maybeSingle()
+      : { data: null };
+    const contaTeste = !!perfilCliente?.conta_teste;
+    const avisadas = await avisarOficinasDoAcidente(emergencia.id, latitude, longitude, 'colisao', contaTeste);
+    await avisarAdminSeSemOficinas('acidente', emergencia.id, `${descricao} - ${endereco || ''}`, avisadas.length, contaTeste).catch((e) => console.error('[emergencia] concierge', e));
 
     // As mesmas oficinas (de colisao, perto do acidente) recebem tambem o
     // aviso de pedido novo. Antes ia para TODAS as oficinas de funilaria
