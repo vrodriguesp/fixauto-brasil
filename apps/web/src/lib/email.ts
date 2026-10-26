@@ -9,6 +9,15 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 
 export async function enviarEmail(p: { para: string; assunto: string; html: string }): Promise<boolean> {
   if (!resend) {
+    // ambiente de teste local (Documentos/_teste_local): grava o e-mail num
+    // arquivo em vez de enviar, para os testes abrirem os links
+    if (process.env.EMAIL_PASTA_TESTE) {
+      const fs = await import('node:fs/promises');
+      const nome = `${Date.now()}_${p.para.replace(/[^a-z0-9@._-]/gi, '_')}.html`;
+      await fs.mkdir(process.env.EMAIL_PASTA_TESTE, { recursive: true });
+      await fs.writeFile(`${process.env.EMAIL_PASTA_TESTE}/${nome}`, `<!-- para: ${p.para} | assunto: ${p.assunto} -->\n${p.html}`);
+      return true;
+    }
     console.warn('[email] RESEND_API_KEY ausente - e-mail nao enviado');
     return false;
   }
