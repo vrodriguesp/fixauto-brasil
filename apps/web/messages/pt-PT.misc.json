@@ -264,7 +264,7 @@
         "titulo": "3.9 Análise estatística e gravação de sessões (apenas com o seu consentimento)",
         "subsecao": true,
         "itens": [
-          "Se aceitar os cookies de análise no aviso de cookies, utilizamos o Google Analytics para produzir estatísticas agregadas e o Microsoft Clarity para perceber como as páginas são usadas (por exemplo, cliques, deslocamento e gravações de sessão anonimizadas).",
+          "Se aceitar os cookies de análise no aviso de cookies, utilizamos o Google Analytics para produzir estatísticas agregadas e o Microsoft Clarity para perceber como as páginas são usadas (por exemplo, cliques, deslocamento e gravações de sessão anonimizadas). Com o mesmo consentimento, a etiqueta de conversões do Google Ads regista se uma visita vinda de um anúncio nosso no Google terminou num registo, para medirmos os nossos anúncios; não é usada para personalizar publicidade.",
           "<strong>Fundamento jurídico:</strong> o seu consentimento (art. 6.º, n.º 1, alínea a)), que pode retirar a qualquer momento sem afetar a licitude do tratamento anterior à retirada. Antes de dar o consentimento, estas ferramentas funcionam num modo restrito, sem cookies de análise."
         ]
       },
@@ -284,7 +284,7 @@
           "<strong>Outros utilizadores:</strong> o Cliente e o Parceiro envolvidos no mesmo pedido ou encomenda veem os dados um do outro necessários à realização do serviço (nome, contactos, dados e fotografias do veículo, morada quando relevante). Os perfis dos Parceiros e as avaliações são públicos.",
           "<strong>Alojamento:</strong> os nossos servidores e a base de dados estão localizados nos Países Baixos (União Europeia).",
           "<strong>Resend</strong> (Estados Unidos): envio de e-mails.",
-          "<strong>Google</strong> (Estados Unidos): inteligência artificial Gemini para análise de danos e transcrição de voz; Google Analytics (apenas com consentimento); Google Maps, apresentado nas páginas de perfil dos Parceiros.",
+          "<strong>Google</strong> (Estados Unidos): inteligência artificial Gemini para análise de danos e transcrição de voz; Google Analytics e medição de conversões do Google Ads (apenas com consentimento); Google Maps, apresentado nas páginas de perfil dos Parceiros.",
           "<strong>Microsoft</strong> (Estados Unidos): Microsoft Clarity (apenas com consentimento).",
           "<strong>OpenStreetMap Foundation</strong> (Reino Unido): conversão de moradas em coordenadas de mapa (serviço Nominatim).",
           "<strong>Autoridades públicas</strong>, quando estamos legalmente obrigados a divulgar dados."
@@ -339,7 +339,7 @@
       {
         "titulo": "9. Cookies e tecnologias semelhantes",
         "paragrafos": [
-          "Utilizamos tecnologias que guardam informação no seu navegador e que são estritamente necessárias ao funcionamento do site: manter a sua sessão iniciada, lembrar o seu idioma e lembrar a sua escolha relativa aos cookies. Estas não requerem consentimento. Os cookies de análise (Google Analytics e Microsoft Clarity) e os resumos de visita descritos na secção 3.7 só são utilizados se clicar em \"Aceitar\" no aviso de cookies; se rejeitar ou ignorar o aviso, não são utilizados.",
+          "Utilizamos tecnologias que guardam informação no seu navegador e que são estritamente necessárias ao funcionamento do site: manter a sua sessão iniciada, lembrar o seu idioma e lembrar a sua escolha relativa aos cookies. Estas não requerem consentimento. Os cookies de análise e de medição de anúncios (Google Analytics, medição de conversões do Google Ads e Microsoft Clarity) e os resumos de visita descritos na secção 3.7 só são utilizados se clicar em \"Aceitar\" no aviso de cookies; se rejeitar ou ignorar o aviso, não são utilizados.",
           "Para alterar a sua escolha relativa aos cookies, apague os dados guardados pelo bipfix.com nas definições do seu navegador; o aviso de cookies voltará a aparecer na sua próxima visita."
         ]
       },

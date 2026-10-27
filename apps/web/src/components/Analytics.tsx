@@ -8,6 +8,10 @@ import { Link, usePathname } from '@/i18n/navigation';
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const CLARITY_PROJECT_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
 const CONSENT_KEY = 'bipfix_cookie_consent';
+// Google Ads (conta 590-930-3617), conversao "Cadastro oficina (BipFix)".
+// Identificadores publicos (aparecem no HTML de qualquer forma).
+const GOOGLE_ADS_ID = 'AW-18533679702';
+const CONVERSAO_CADASTRO = `${GOOGLE_ADS_ID}/C_ZmCI2j8asdENaExoVF`;
 
 type Consent = 'accepted' | 'rejected' | null;
 
@@ -18,12 +22,21 @@ declare global {
   }
 }
 
+// Cadastro de oficina/loja aceito pelo servidor. Sem consentimento o gtag
+// manda so o sinal anonimo (sem cookie), que o Google usa para estimar.
+export function registrarConversaoCadastro() {
+  window.gtag?.('event', 'conversion', { send_to: CONVERSAO_CADASTRO });
+  window.gtag?.('event', 'sign_up', { method: 'email' });
+}
+
 function aplicarConsentimento(valor: 'accepted' | 'rejected') {
   const storage = valor === 'accepted' ? 'granted' : 'denied';
   window.gtag?.('consent', 'update', {
     analytics_storage: storage,
-    ad_storage: 'denied',
-    ad_user_data: 'denied',
+    // aceitar libera tambem a medicao de conversoes do Google Ads (se o
+    // clique no anuncio terminou em cadastro), nunca a personalizacao
+    ad_storage: storage,
+    ad_user_data: storage,
     ad_personalization: 'denied',
   });
   // Clarity ConsentV2 - obrigatorio pra EEA/UK/Suica desde 31/10/2025 (inclui
@@ -96,6 +109,7 @@ export default function Analytics() {
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', '${GA_MEASUREMENT_ID}');
+              gtag('config', '${GOOGLE_ADS_ID}', { allow_ad_personalization_signals: false });
             `}
           </Script>
         </>

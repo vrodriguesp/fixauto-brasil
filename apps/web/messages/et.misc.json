@@ -264,7 +264,7 @@
         "titulo": "3.9 Analüütika ja seansisalvestus (ainult sinu nõusolekul)",
         "subsecao": true,
         "itens": [
-          "Kui nõustud küpsiste ribal analüütikaküpsistega, kasutame Google Analyticsit koondstatistika koostamiseks ja Microsoft Clarityt, et mõista, kuidas lehti kasutatakse (näiteks klikid, kerimine ja anonümiseeritud seansisalvestused).",
+          "Kui nõustud küpsiste ribal analüütikaküpsistega, kasutame Google Analyticsit koondstatistika koostamiseks ja Microsoft Clarityt, et mõista, kuidas lehti kasutatakse (näiteks klikid, kerimine ja anonümiseeritud seansisalvestused). Sama nõusoleku korral salvestab Google Adsi konversioonimärgend, kas meie Google’i reklaamilt tulnud külastus lõppes registreerumisega, et saaksime oma reklaame mõõta; reklaamide isikupärastamiseks seda ei kasutata.",
           "<strong>Õiguslik alus:</strong> sinu nõusolek (art 6 lg 1 p a), mille võid igal ajal tagasi võtta, ilma et see mõjutaks enne tagasivõtmist toimunud töötlemise seaduslikkust. Enne nõusoleku andmist töötavad need tööriistad piiratud režiimis, ilma analüütikaküpsisteta."
         ]
       },
@@ -284,7 +284,7 @@
           "<strong>Teised kasutajad:</strong> sama päringu või tellimusega seotud klient ja partner näevad teineteise andmeid, mida on vaja teenuse osutamiseks (nimi, kontaktandmed, sõiduki andmed ja fotod, vajaduse korral aadress). Partnerite profiilid ja arvustused on avalikud.",
           "<strong>Majutus:</strong> meie serverid ja andmebaas asuvad Madalmaades (Euroopa Liit).",
           "<strong>Resend</strong> (Ameerika Ühendriigid): e-kirjade saatmine.",
-          "<strong>Google</strong> (Ameerika Ühendriigid): tehisintellekt Gemini kahjustuste analüüsiks ja kõne transkribeerimiseks; Google Analytics (ainult nõusolekul); Google Maps, mida näidatakse partnerite profiilidel.",
+          "<strong>Google</strong> (Ameerika Ühendriigid): tehisintellekt Gemini kahjustuste analüüsiks ja kõne transkribeerimiseks; Google Analytics ja Google Adsi konversioonide mõõtmine (ainult nõusolekul); Google Maps, mida näidatakse partnerite profiilidel.",
           "<strong>Microsoft</strong> (Ameerika Ühendriigid): Microsoft Clarity (ainult nõusolekul).",
           "<strong>OpenStreetMap Foundation</strong> (Ühendkuningriik): aadresside teisendamine kaardikoordinaatideks (teenus Nominatim).",
           "<strong>Ametiasutused</strong>, kui meil on seadusest tulenev kohustus andmeid avaldada."
@@ -339,7 +339,7 @@
       {
         "titulo": "9. Küpsised ja sarnased tehnoloogiad",
         "paragrafos": [
-          "Kasutame brauserisse teavet salvestavaid tehnoloogiaid, mis on veebilehe toimimiseks hädavajalikud: sisselogituna püsimine, keele meelespidamine ja sinu küpsisevaliku meelespidamine. Need ei vaja nõusolekut. Analüütikaküpsiseid (Google Analytics ja Microsoft Clarity) ning punktis 3.7 kirjeldatud külastuste kokkuvõtteid kasutatakse ainult siis, kui klõpsad küpsiste ribal „Nõustun“; kui keeldud või riba eirad, neid ei kasutata.",
+          "Kasutame brauserisse teavet salvestavaid tehnoloogiaid, mis on veebilehe toimimiseks hädavajalikud: sisselogituna püsimine, keele meelespidamine ja sinu küpsisevaliku meelespidamine. Need ei vaja nõusolekut. Analüütika- ja reklaamimõõtmise küpsiseid (Google Analytics, Google Adsi konversioonide mõõtmine ja Microsoft Clarity) ning punktis 3.7 kirjeldatud külastuste kokkuvõtteid kasutatakse ainult siis, kui klõpsad küpsiste ribal „Nõustun“; kui keeldud või riba eirad, neid ei kasutata.",
           "Küpsisevaliku muutmiseks kustuta brauseri seadetes bipfix.com salvestatud andmed; küpsiste riba ilmub järgmisel külastusel uuesti."
         ]
       },

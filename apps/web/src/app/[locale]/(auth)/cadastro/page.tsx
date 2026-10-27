@@ -8,6 +8,7 @@ import { textoErroApi } from '@/lib/erro-api';
 import { LOCALE_PREFIX, type Locale } from '@/i18n/routing';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEndereco } from '@/components/forms/EnderecoEstruturado';
+import { registrarConversaoCadastro } from '@/components/Analytics';
 
 export default function CadastroPageWrapper() {
   const t = useTranslations('cadastro');
@@ -222,6 +223,8 @@ function CadastroPage() {
       return;
     }
     try { sessionStorage.removeItem(RASCUNHO); } catch { /* ignora */ }
+    // conversao da campanha de Pesquisa do Google Ads (so oficinas)
+    if (tipo === 'oficina') registrarConversaoCadastro();
     setEnviado(true);
   };
 

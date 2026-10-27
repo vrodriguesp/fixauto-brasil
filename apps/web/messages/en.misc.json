@@ -264,7 +264,7 @@
         "titulo": "3.9 Analytics and session recording (only with your consent)",
         "subsecao": true,
         "itens": [
-          "If you accept analytics cookies in the cookie banner, we use Google Analytics to produce aggregated statistics and Microsoft Clarity to understand how pages are used (for example clicks, scrolling and anonymised session recordings).",
+          "If you accept analytics cookies in the cookie banner, we use Google Analytics to produce aggregated statistics and Microsoft Clarity to understand how pages are used (for example clicks, scrolling and anonymised session recordings). With the same consent, the Google Ads conversion tag records whether a visit that came from one of our Google ads ended in a sign-up, so we can measure our ads; it is not used to personalise ads.",
           "<strong>Legal basis:</strong> your consent (Art. 6(1)(a)), which you can withdraw at any time without affecting the lawfulness of processing before withdrawal. Before you give consent, these tools run in a restricted mode without analytics cookies."
         ]
       },
@@ -284,7 +284,7 @@
           "<strong>Other users:</strong> the Customer and the Partner involved in the same request or order see each other's details needed to carry out the service (name, contact details, vehicle details and photos, address where relevant). Partner profiles and reviews are public.",
           "<strong>Hosting:</strong> our servers and database are located in the Netherlands (European Union).",
           "<strong>Resend</strong> (United States): sending of emails.",
-          "<strong>Google</strong> (United States): Gemini artificial intelligence for damage analysis and voice transcription; Google Analytics (only with consent); Google Maps, shown on Partner profile pages.",
+          "<strong>Google</strong> (United States): Gemini artificial intelligence for damage analysis and voice transcription; Google Analytics and Google Ads conversion measurement (only with consent); Google Maps, shown on Partner profile pages.",
           "<strong>Microsoft</strong> (United States): Microsoft Clarity (only with consent).",
           "<strong>OpenStreetMap Foundation</strong> (United Kingdom): converting addresses into map coordinates (Nominatim service).",
           "<strong>Public authorities</strong>, when we are legally required to disclose data."
@@ -339,7 +339,7 @@
       {
         "titulo": "9. Cookies and similar technologies",
         "paragrafos": [
-          "We use technologies that store information in your browser that are strictly necessary for the website to work: keeping you logged in, remembering your language and remembering your cookie choice. These do not require consent. Analytics cookies (Google Analytics and Microsoft Clarity) and the visit summaries described in section 3.7 are only used if you click \"Accept\" in the cookie banner; if you reject or ignore the banner, they are not used.",
+          "We use technologies that store information in your browser that are strictly necessary for the website to work: keeping you logged in, remembering your language and remembering your cookie choice. These do not require consent. Analytics and ad measurement cookies (Google Analytics, Google Ads conversion measurement and Microsoft Clarity) and the visit summaries described in section 3.7 are only used if you click \"Accept\" in the cookie banner; if you reject or ignore the banner, they are not used.",
           "To change your cookie choice, delete the data stored by bipfix.com in your browser settings; the cookie banner will appear again on your next visit."
         ]
       },

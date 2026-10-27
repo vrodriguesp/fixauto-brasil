@@ -15,15 +15,18 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 // ambiente de teste local: http://localhost:54321)
 const SUPABASE = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://supabase.bipfix.com';
 const SUPABASE_WS = SUPABASE.replace(/^http/, 'ws');
+// Google Ads: medicao de conversoes (lista do guia de CSP do Google Tag:
+// developers.google.com/tag-platform/security/guides/csp)
+const GOOGLE_ADS = 'https://www.googleadservices.com https://*.doubleclick.net https://www.google.com https://www.google.ee';
 const CSP = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'production' ? '' : " 'unsafe-eval'"} https://www.googletagmanager.com https://*.clarity.ms`,
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'production' ? '' : " 'unsafe-eval'"} https://www.googletagmanager.com ${GOOGLE_ADS} https://*.clarity.ms`,
   "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' data: blob: ${SUPABASE} https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://c.bing.com`,
+  `img-src 'self' data: blob: ${SUPABASE} https://*.google-analytics.com https://*.googletagmanager.com ${GOOGLE_ADS} https://*.clarity.ms https://c.bing.com`,
   "font-src 'self' data:",
-  `connect-src 'self' ${SUPABASE} ${SUPABASE_WS} https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.clarity.ms https://viacep.com.br`,
+  `connect-src 'self' ${SUPABASE} ${SUPABASE_WS} https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com ${GOOGLE_ADS} https://pagead2.googlesyndication.com https://*.clarity.ms https://viacep.com.br`,
   `media-src 'self' blob: ${SUPABASE}`,
-  'frame-src https://www.google.com https://maps.google.com https://www.youtube-nocookie.com',
+  'frame-src https://www.google.com https://maps.google.com https://www.youtube-nocookie.com https://td.doubleclick.net https://www.googletagmanager.com',
   "frame-ancestors 'self'",
   "object-src 'none'",
   "base-uri 'self'",
