@@ -1,3 +1,7 @@
+// OBSOLETO (27/10): reteste de 09/10, anterior a reorganizacao do painel da oficina de
+// 10/10 (menus, barra de baixo, paginas). Os seletores antigos falham passo a passo.
+// O que ele cobria hoje esta em site-painel-oficina.mjs, site-mercados.mjs e
+// site-mensagens.mjs. Mantido so como referencia; os passos 1 (sair) ja foram adaptados.
 // Reteste no SITE (producao, tela de iPhone 390 px) de cada ponto do teste do
 // dono em 03/10/2026:
 //  1 menu da oficina nao volta para "entrar" ao trocar de conta no mesmo navegador
@@ -38,6 +42,12 @@ const conta = async (tipo, idioma) => {
   return { id: data.user.id, email, senha };
 };
 const sessao = async (c) => { const a = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } }); const { data } = await a.auth.signInWithPassword({ email: c.email, password: c.senha }); return { a, token: data.session?.access_token }; };
+// no celular o "Esci" fica dentro do menu (desde 10/10): abre o menu e toca no visivel
+const sair = async (p) => {
+  const menu = p.locator('button[aria-controls="menu-mobile"]').first();
+  if (await menu.isVisible().catch(() => false)) { await menu.click(); await p.waitForTimeout(600); }
+  await p.getByRole('button', { name: /^Esci$/ }).locator('visible=true').first().click(); await p.waitForTimeout(3000);
+};
 const semSobraLateral = (p) => p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
 const dentroDaTela = (loc) => loc.evaluate((e) => { const r = e.getBoundingClientRect(); return r.left >= -1 && r.right <= window.innerWidth + 1; });
 const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -56,14 +66,14 @@ try {
   // como no iPhone: cliente e oficina no mesmo Safari, sai de um e entra no outro
   await entrar(pO, cli.email, cli.senha, 'it');
   await pO.goto(`${SITE}/it/it/cliente/dashboard`, { waitUntil: 'networkidle' });
-  await pO.getByRole('button', { name: /^Esci$/ }).first().click(); await pO.waitForTimeout(3000);
+  await sair(pO);
   ok('1 saiu da conta cliente', !(await pO.context().cookies()).some((c) => /auth-token/.test(c.name) && c.value), (await pO.context().cookies()).map((c) => c.name).join(','));
   await entrar(pO, ofi.email, ofi.senha, 'it');
   for (let i = 0; i < 2; i++) {
-    await pO.getByRole('button', { name: 'Menu' }).click(); await pO.waitForTimeout(600);
-    await pO.locator('nav a', { hasText: /^Richieste$/ }).last().click(); await pO.waitForTimeout(3500);
+    // desde 10/10 "Richieste" e link direto na barra de baixo do celular (sem abrir menu)
+    await pO.locator('nav a[href$="/oficina/pedidos"]').locator('visible=true').last().click(); await pO.waitForTimeout(3500);
   }
-  ok('1 menu "Richieste" abre a lista (nao a tela de entrar), 2 vezes seguidas', pO.url().includes('/oficina/solicitacoes') && !pO.url().includes('/login'), pO.url());
+  ok('1 menu "Richieste" abre a lista (nao a tela de entrar), 2 vezes seguidas', ['/oficina/pedidos', '/oficina/solicitacoes'].some((c) => pO.url().includes(c)) && !pO.url().includes('/login'), pO.url());
 
   // ---- 3) sininho
   const sino = pO.getByRole('button', { name: /notific/i }).first();
@@ -128,7 +138,7 @@ try {
   const ctxC2 = await celular(); const pC2 = await ctxC2.newPage();
   await entrar(pC2, cli.email, cli.senha, 'it');
   await pC2.goto(`${SITE}/it/it/cliente/dashboard`, { waitUntil: 'networkidle' });
-  await pC2.getByRole('button', { name: /^Esci$/ }).first().click(); await pC2.waitForTimeout(3000);
+  await sair(pC2);
   await pC.goto(`${SITE}/it/it/cliente/orcamentos/${s.id}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(3000);
   await pC.getByRole('button', { name: /Accetta e programma/ }).last().click(); await pC.waitForTimeout(1000);
   const horarios = pC.locator('button').filter({ hasText: /\d{2}:\d{2} - \d{2}:\d{2}/ });

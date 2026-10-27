@@ -13,7 +13,7 @@ Criam contas de teste e **apagam tudo no fim**. Precisam do `.env.local` do site
 | `e2e-cadastro.mjs`, `e2e-acidente.mjs`, `e2e-seguro.mjs`, `teste-idioma-painel.mjs` | Cadastro com confirmacao, acidente, "quem paga o reparo", idioma dos paineis |
 | `site-mensagens.mjs` | Conversa separada por oficina (duas oficinas, uma nao ve a outra), tempo real, login vencido |
 | `site-pagador.mjs` | Acidente: o outro motorista que paga tem conversa particular com a oficina |
-| `site-correcoes.mjs` | Troca de conta no mesmo navegador, sair em outro aparelho, sininho, lista/pedido no celular, horarios de hoje, dicas do acidente pelo pais, carro do acidente |
+| `site-correcoes.mjs` | **OBSOLETO desde a reorganizacao de 10/10** (ver o cabecalho) - Troca de conta no mesmo navegador, sair em outro aparelho, sininho, lista/pedido no celular, horarios de hoje, dicas do acidente pelo pais, carro do acidente |
 | `site-servico.mjs` | Check-in antecipado (aviso ao cliente), etapa em nome do mecanico, mecanico sem acesso, historico, foto do acidente antes do aceite, IA, endereco com numero, seguradoras, tempo das paginas |
 | `nativo-correcoes.mjs` | APP no emulador Android (Expo Go): pedido sem "[TIPO", completar carro, audio (ouvir e gravar), horario vencido, localizacao com rua, dicas da Italia |
 | `app-e2e.mjs` | O APP (mesmo codigo, versao web, tela de iPhone): telas de entrada nos 6 idiomas, acidente sem conta, cadastro/confirmacao/login, veiculo, pedido, orcamento com data, mensagem, idioma, sair |
@@ -23,3 +23,6 @@ depois `APP_WEB=<pasta> node servir-app-web.mjs` e `node app-e2e.mjs <.env.local
 
 Uso: `node site-fluxos.mjs apps/web/.env.local`
 Traducoes (rapido, sem navegador): `node apps/web/scripts/checar-traducoes.mjs` e `node apps/mobile/scripts/checar-traducoes.mjs`.
+
+## Ambiente de teste local (27/10)
+Os scripts podem rodar contra o ambiente isolado em `Documentos/_teste_local` (LEIA-ME de la): na copia de teste, `SITE` aponta para `http://localhost:3100` e cada script para se o banco nao for o local. `site-conclusao.mjs` nao usa mais `ssh` no servidor de producao: chama `SITE/api/tarefas/entregas-automaticas` com `TAREFAS_CHAVE` do `.env` do site testado.

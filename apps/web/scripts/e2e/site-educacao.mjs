@@ -72,10 +72,11 @@ try {
     ok(`2 Aprender ${l}: modulo do Quadro novo`, contem(t2, titulo), titulo);
     ok(`2 Aprender ${l}: passo da visao Hora`, contem(t2, m.oficinaAprender.geral.distribuicao.passosGuiados[3]), t2.slice(0, 200));
     ok(`2 Aprender ${l}: sem chave crua`, !cru(t2));
-    // 4 menu Mais (computador)
-    await pO.getByRole('button', { name: m.nav.mais }).first().click(); await pO.waitForTimeout(400);
-    ok(`4 menu Mais ${l}: tem ${m.nav.checkinManual}`, (await pO.getByRole('link', { name: m.nav.checkinManual }).count()) > 0);
-    await pO.keyboard.press('Escape');
+    // 4 check-in manual: desde a reorganizacao de 10/10 e o botao "+ carro sem pedido"
+    // em Pedidos (e em Hoje/Agenda), nao mais um item do menu Mais
+    await pO.goto(`${SITE}${pre}/oficina/pedidos`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(1500);
+    const semPedido = m.oficinaPedidos.carroSemPedido;
+    ok(`4 check-in manual ${l}: "${semPedido}" em Pedidos`, (await pO.getByRole('link', { name: semPedido }).count()) > 0);
   }
 
   // ---------- 3 Aprender da loja

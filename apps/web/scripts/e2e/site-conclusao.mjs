@@ -11,7 +11,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { execSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 const req = createRequire('C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/package.json');
 const { createClient } = req('@supabase/supabase-js');
@@ -103,17 +102,10 @@ try {
   // 4 + 5 concluso com dupla confirmacao
   const { data: ag } = await sb.from('agenda').select('id').eq('solicitacao_id', s.id).single();
   await api(tA, '/api/servico', { acao: 'checkin', eventoId: ag.id, antecipar: true });
-  await pA.goto(`${SITE}/it/it/oficina/veiculos-em-servico?ev=${ag.id}&etapa=1`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3500);
-  const sel = pA.locator('select').filter({ has: pA.locator('option[value=concluido]') }).first();
-  const opcoes = await sel.locator('option').allInnerTexts();
-  ok('5 etapas sem chave crua', opcoes.length >= 8 && !opcoes.some((o) => /constants\.|Desc\b/.test(o)), opcoes.join(' | '));
-  await sel.selectOption('concluido');
-  await pA.getByRole('button', { name: /^Salva$/ }).click(); await pA.waitForTimeout(1200);
-  const caixa = await pA.locator('[role=alertdialog]').innerText().catch(() => '');
-  ok('4 concluso pede confirmacao', /avvisa subito il cliente/.test(caixa) && /5 giorni/.test(caixa), caixa);
-  const { data: et0 } = await sb.from('manutencao_etapas').select('status').eq('agenda_id', ag.id);
-  ok('4 sem confirmar nada e gravado', !(et0 || []).some((e) => e.status === 'concluido'));
-  await pA.getByRole('button', { name: /Sì, avvisa il cliente/ }).click(); await pA.waitForTimeout(5000);
+  // 4/5 desde 10/10 a tela antiga (select de etapas) virou os 6 botoes de 'Hoje'; a dupla
+  // confirmacao do Concluido pela tela e conferida em site-painel-oficina.mjs. Aqui: pela API.
+  await api(tA, '/api/servico', { acao: 'etapa', eventoId: ag.id, status: 'concluido' });
+  await pA.waitForTimeout(2000);
   const { data: et1 } = await sb.from('manutencao_etapas').select('id, status').eq('agenda_id', ag.id);
   ok('4 confirmado: etapa concluso gravada', (et1 || []).some((e) => e.status === 'concluido'));
   const { data: nP } = await sb.from('notificacoes').select('titulo, mensagem').eq('profile_id', cli.id).eq('titulo', 'La tua auto è pronta');
@@ -124,7 +116,9 @@ try {
   // tudo como se fosse 6 dias atras (o check-in tambem grava "Ricevuto")
   await sb.from('manutencao_etapas').update({ created_at: new Date(Date.now() - 7 * 86400000).toISOString() }).eq('agenda_id', ag.id).neq('id', etC.id);
   await sb.from('manutencao_etapas').update({ created_at: new Date(Date.now() - 6 * 86400000).toISOString() }).eq('id', etC.id);
-  const saida = execSync('ssh root@204.168.139.154 /root/entregas-automaticas.sh', { encoding: 'utf8' });
+  // chama a rota do agendador no SITE testado (antes: ssh no servidor de producao, mesmo em teste local)
+  if (!env.TAREFAS_CHAVE) throw new Error('TAREFAS_CHAVE ausente no .env do site testado');
+  const saida = await (await fetch(`${SITE}/api/tarefas/entregas-automaticas`, { method: 'POST', headers: { 'x-tarefa-chave': env.TAREFAS_CHAVE } })).text();
   ok('6 agendador roda', /"ok":true/.test(saida), saida);
   const { data: agF } = await sb.from('agenda').select('status, data_fim').eq('id', ag.id).single();
   const { data: sF } = await sb.from('solicitacoes').select('status').eq('id', s.id).single();

@@ -46,10 +46,11 @@ try {
   sols.push(s.id);
   const ctxO = await celular(); const pO = await ctxO.newPage();
   await entrar(pO, of.email, of.senha);
-  await pO.goto(`${SITE}/ee/et/oficina/solicitacoes`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3500);
+  await pO.goto(`${SITE}/ee/et/oficina/pedidos`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3500);
   const lista = await pO.innerText('body');
   // "Kokkupõrge" continua no filtro de tipos; no cartao do pedido vem a ocorrencia
-  const cartao = await pO.locator('.badge').allInnerTexts();
+  // desde 10/10 a lista e 'Pedidos' (cartoes sem .badge): confere o texto do cartao do pedido
+  const cartao = (await pO.innerText('body')).split(/\n/).filter((l) => /Juhtum teel|Kokkupõrge|Rehv purunes/.test(l));
   ok('2 oficina ve "Juhtum teel (teist sõidukit polnud)" e nao "Kokkupõrge" no pedido', cartao.some((b) => /Juhtum teel/.test(b)) && !cartao.some((b) => /Kokkupõrge/.test(b)), cartao.join(' | '));
 
   // 1 transcricao: copia um audio real em estoniano para a conversa do teste
@@ -84,26 +85,10 @@ try {
   const { data: ag } = await sb.from('agenda').select('id').eq('solicitacao_id', s.id).single();
   await api(tO, '/api/servico', { acao: 'checkin', eventoId: ag.id, antecipar: true });
 
-  // 3 em servico -> concluso -> entregue
-  const caixas = async () => { await pO.goto(`${SITE}/ee/et/oficina/veiculos-em-servico`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3500); };
-  await caixas();
-  const nums = async () => pO.locator('button.card p.text-2xl').allInnerTexts();
-  ok('3 sem rolagem lateral', await semRolagemLateral(pO));
-  const rot = pO.getByText('Valmis kättesaamiseks', { exact: true });
-  const caixa = pO.locator('button.card').filter({ has: rot });
-  const cabe = await rot.evaluate((e) => { const b = e.closest('button').getBoundingClientRect(); const r = e.getBoundingClientRect(); return r.right <= b.right + 0.5 && r.left >= b.left - 0.5; }).catch(() => false);
-  ok('3 "Valmis kättesaamiseks" dentro da caixa', cabe);
-  await pO.screenshot({ path: 'est-caixas.png' });
-  let n = await nums();
-  ok('3 depois do check-in: 1 em servico, 0 pronto', n[1] === '1' && n[2] === '0', n.join(','));
+  // 3 (obsoleto desde 10/10): a pagina 'veiculos em servico' virou 'Hoje'; em servico ->
+  //   concluido -> entregue agora e conferido em site-painel-oficina.mjs (passos 3).
   await api(tO, '/api/servico', { acao: 'etapa', eventoId: ag.id, status: 'concluido' });
-  await caixas(); n = await nums();
-  ok('3 concluso: 0 em servico, 1 pronto para retirar', n[1] === '0' && n[2] === '1', n.join(','));
   await api(tO, '/api/confirmar-entrega', { eventoId: ag.id });
-  await caixas(); n = await nums();
-  const corpo = await pO.innerText('body');
-  ok('3 entregue: some da tela (0 e 0, nada na lista)', n[1] === '0' && n[2] === '0' && !corpo.includes('Octavia'), n.join(',') + ' ' + corpo.includes('Octavia'));
-  ok('3 caixa existe', (await caixa.count()) === 1);
 
   // 4 check-in avulso
   await pO.goto(`${SITE}/ee/et/oficina/checkin`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(3000);

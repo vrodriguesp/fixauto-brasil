@@ -60,7 +60,8 @@ try {
   const page = await (await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true })).newPage();
   await page.goto(`${SITE}/ee/et/confirmar-email?token_hash=${encodeURIComponent(link.properties.hashed_token)}`);
   await page.waitForURL(/\/oficina\/dashboard/, { timeout: 20000 }).catch(() => {});
-  ok('link abre o painel da oficina', /\/et\/oficina\/dashboard/.test(page.url()), page.url());
+  // desde a reorganizacao de 10/10 o painel da oficina abre em Pedidos
+  ok('link abre o painel da oficina', /\/et\/oficina\/(pedidos|dashboard)/.test(page.url()), page.url());
   await page.waitForTimeout(2500);
   const texto = await page.innerText('body');
   ok('aviso "em analise" em estoniano', texto.includes('ülevaatamisel'));

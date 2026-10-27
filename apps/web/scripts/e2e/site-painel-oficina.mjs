@@ -45,7 +45,7 @@ const ymdTll = (ms) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Tall
 
 const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
 const ctxNovo = async (largo, extra = {}) => { const c = await browser.newContext({ ...(largo ? { viewport: { width: 1366, height: 900 } } : { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }), ...extra }); await c.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); localStorage.setItem('bipfix_tutorial_banner_oficina', '1'); } catch {} }); return c; };
-const entrar = async (ctx, u, pre = '/ee/et') => { const p = await ctx.newPage(); await p.goto(`${SITE}${pre}/login`, { waitUntil: 'networkidle' }); await p.fill('input[type=email]', u.email); await p.fill('input[type=password]', u.senha); await p.click('button[type=submit]'); await p.waitForTimeout(5500); return p; };
+const entrar = async (ctx, u, pre = '/ee/et') => { const p = await ctx.newPage(); await p.goto(`${SITE}${pre}/login`, { waitUntil: 'networkidle' }); await p.fill('input[type=email]', u.email); await p.fill('input[type=password]', u.senha); await p.click('button[type=submit]'); await p.waitForURL((u) => !u.pathname.endsWith('/login'), { timeout: 20000 }).catch(() => {}); await p.waitForTimeout(2500); return p; };
 const conta = async (tipo, nome, idioma = 'et') => {
   const email = `painel-${tipo}${contas.length}-${tag}@example.test`; const senha = `Pn${tag}Senha9`;
   const { data } = await sb.auth.admin.createUser({ email, password: senha, email_confirm: true });
@@ -132,8 +132,10 @@ try {
   ok('3 pronto para entregar', (await bloco('prontos').innerText().catch(() => '')).includes(`M${P(8)}`));
   // Chegou
   await bloco('chegam').getByTestId('btn-chegou').first().click(); await pD.waitForTimeout(600);
-  await pD.getByTestId('confirmar-chegou').click(); await pD.waitForTimeout(3500);
-  let { data: aH } = await sb.from('agenda').select('status, checkin_em').eq('id', aHoje).single();
+  await pD.getByTestId('confirmar-chegou').click();
+  // espera a gravacao (no site local em modo dev a 1a chamada da API compila e leva ~4 s)
+  let aH;
+  for (let i = 0; i < 20; i++) { await pD.waitForTimeout(750); ({ data: aH } = await sb.from('agenda').select('status, checkin_em').eq('id', aHoje).single()); if (aH.checkin_em) break; }
   ok('3 "Chegou" faz o check-in', aH.status === 'em_andamento' && !!aH.checkin_em, JSON.stringify(aH));
   // Etapa -> Consertando
   await pD.waitForTimeout(2000);
@@ -266,7 +268,7 @@ try {
     ok('10 Hoje: procurar por parte da placa (minusculas) acha o carro', (await procura(parte)).includes(placa), parte);
     ok('10 Hoje: procurar pelo n. do pedido', (await procura(String(num))).includes(placa));
     ok('10 Hoje: procurar pelo codigo de cliente', (await procura(String(cod))).includes(placa));
-    await pD.getByTestId('procurar-campo').first().press('Enter'); await pD.waitForTimeout(2500);
+    await pD.getByTestId('procurar-campo').first().press('Enter'); await pD.waitForURL((u) => u.pathname.endsWith('/oficina/procurar'), { timeout: 15000 }).catch(() => {}); await pD.getByTestId('procurar-achado').first().waitFor({ timeout: 10000 }).catch(() => {});
     ok('10 Enter abre a pagina Procurar com o resultado', pD.url().includes('/oficina/procurar?q=') && (await pD.getByTestId('procurar-achado').count()) >= 1, pD.url());
     await pD.getByRole('link', { name: ET('oficinaProcurar.abrirHoje') }).first().click(); await pD.waitForTimeout(3000);
     ok('10 "Abrir em Hoje" leva ao carro', (await pD.locator(`#carro-${aNaOf}`).count()) === 1);
