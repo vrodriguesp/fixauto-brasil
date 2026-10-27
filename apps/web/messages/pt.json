@@ -700,7 +700,8 @@
     "noOrcamento": "Garantia: {dias} dias a partir da entrega",
     "sem": "Sem garantia",
     "documento": "Ver o documento do orçamento",
-    "conversaEncerrada": "Conversa encerrada: o serviço terminou e a garantia acabou (ou não foi escolhida esta oficina)."
+    "conversaEncerrada": "Conversa encerrada: o serviço terminou e a garantia acabou (ou não foi escolhida esta oficina).",
+    "soClienteReabre": "Serviço entregue: durante a garantia, só o cliente pode reabrir a conversa. Você poderá responder quando ele escrever."
   },
   "excluirConta": {
     "titulo": "Excluir a sua conta BipFix",

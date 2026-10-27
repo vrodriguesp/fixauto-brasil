@@ -21,6 +21,8 @@ interface Conversa {
 // Todas as conversas da oficina num lugar (feedback do dono 27/10): antes so
 // dava para chegar a uma conversa pelo pedido. Uma linha por pedido (e por
 // responsavel pelo pagamento, nos acidentes), a mais recente em cima.
+// Regra do dono (27/10): pedidos ativos; servicos entregues so aparecem se a
+// garantia esta valendo E o cliente reabriu a conversa (a oficina so responde).
 export default function OficinaConversasPage() {
   const t = useTranslations('oficinaConversas');
   const locale = useLocale();
@@ -44,9 +46,10 @@ export default function OficinaConversasPage() {
         if (!m.lida && m.remetente_id !== user.id) c.novas++;
       }
       const ids = Array.from(new Set(Array.from(porConversa.values()).map((c) => c.solicitacaoId)));
+      const fora = new Set<string>();
       if (ids.length) {
         const { data: sols } = await supabase.from('solicitacoes')
-          .select('id, numero, cliente:profiles!solicitacoes_cliente_id_fkey(nome), veiculo:veiculos!solicitacoes_veiculo_id_fkey(fipe_marca, fipe_modelo, placa)')
+          .select('id, numero, status, cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(nome), veiculo:veiculos!solicitacoes_veiculo_id_fkey(fipe_marca, fipe_modelo, placa)')
           .in('id', ids);
         for (const c of Array.from(porConversa.values())) {
           const s: any = (sols || []).find((x: any) => x.id === c.solicitacaoId);
@@ -55,8 +58,25 @@ export default function OficinaConversasPage() {
           c.cliente = s?.cliente?.nome || '';
           c.numero = s?.numero ?? null;
         }
+        const entregues = (sols || []).filter((s: any) => s.status === 'concluida').map((s: any) => s.id);
+        (sols || []).filter((s: any) => ['cancelada', 'no_show'].includes(s.status)).forEach((s: any) => fora.add(s.id));
+        if (entregues.length) {
+          const [{ data: orcs }, { data: ags }] = await Promise.all([
+            supabase.from('orcamentos').select('solicitacao_id, garantia_dias').eq('oficina_id', oficina.id).eq('status', 'aceito').in('solicitacao_id', entregues),
+            supabase.from('agenda').select('solicitacao_id, data_fim, data_inicio').eq('oficina_id', oficina.id).eq('status', 'concluido').in('solicitacao_id', entregues),
+          ]);
+          for (const sid of entregues) {
+            const o: any = (orcs || []).find((x: any) => x.solicitacao_id === sid);
+            const a: any = (ags || []).find((x: any) => x.solicitacao_id === sid);
+            const entregueEm = a?.data_fim || a?.data_inicio;
+            const naGarantia = !!o?.garantia_dias && !!entregueEm && Date.now() <= new Date(entregueEm).getTime() + o.garantia_dias * 86400000;
+            const cliente = (sols || []).find((x: any) => x.id === sid)?.cliente_id;
+            const reabriu = !!entregueEm && ((msgs || []) as any[]).some((m) => m.solicitacao_id === sid && m.remetente_id !== user.id && (m.remetente_id === cliente || m.pagador_id) && m.created_at > entregueEm);
+            if (!naGarantia || !reabriu) fora.add(sid);
+          }
+        }
       }
-      setConversas(Array.from(porConversa.values()));
+      setConversas(Array.from(porConversa.values()).filter((c) => !fora.has(c.solicitacaoId)));
     })();
   }, [oficina?.id, user?.id]);
 

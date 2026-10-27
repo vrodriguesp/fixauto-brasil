@@ -69,7 +69,16 @@ export default function OficinaMensagensPage() {
     const ofId = oficina?.id;
     if (!ofId) return;
     supabase.rpc('conversa_aberta', { p_sol: id, p_of: ofId }).then(({ data }) => setConversaFechada(data === false));
+    // servico entregue: na garantia so o cliente reabre a conversa; a oficina
+    // responde depois que ele escrever (regra do dono, 27/10)
+    (async () => {
+      const { data: s } = await supabase.from('solicitacoes').select('status, cliente_id').eq('id', id).maybeSingle();
+      if (s?.status !== 'concluida') return;
+      const { data: ag } = await supabase.from('agenda').select('data_fim, data_inicio').eq('solicitacao_id', id).eq('oficina_id', ofId).eq('status', 'concluido').limit(1).maybeSingle();
+      setEntrega({ em: (ag as any)?.data_fim || (ag as any)?.data_inicio || '1970-01-01', cliente: (s as any).cliente_id });
+    })();
   }, [id, oficina?.id]);
+  const [entrega, setEntrega] = useState<{ em: string; cliente: string } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
   const [uploadingAudio, setUploadingAudio] = useState(false);
@@ -493,6 +502,8 @@ export default function OficinaMensagensPage() {
       {/* Input area */}
       {conversaFechada ? (
         <p className="bg-gray-100 border-t px-4 py-3 text-sm text-gray-600 flex-shrink-0" role="status">{tGar('conversaEncerrada')}</p>
+      ) : entrega && !messages.some((m) => (m.remetente_id === entrega.cliente || (!!pagadorId && m.remetente_id === pagadorId)) && m.created_at > entrega.em) ? (
+        <p className="bg-gray-100 border-t px-4 py-3 text-sm text-gray-600 flex-shrink-0" role="status">{tGar('soClienteReabre')}</p>
       ) : (
       <div className="bg-white border-t px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex-shrink-0">
         {erroEnvio && <p className="text-xs text-red-700 mb-2" role="alert">{t('erroEnviar')}</p>}

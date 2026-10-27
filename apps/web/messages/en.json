@@ -703,7 +703,8 @@
     "noOrcamento": "Warranty: {dias} days from hand-over",
     "sem": "No warranty",
     "documento": "Open the quote document",
-    "conversaEncerrada": "Conversation closed: the job is finished and the warranty has ended (or this repair shop was not chosen)."
+    "conversaEncerrada": "Conversation closed: the job is finished and the warranty has ended (or this repair shop was not chosen).",
+    "soClienteReabre": "Service delivered: during the warranty only the customer can reopen the conversation. You can reply once they write."
   },
   "excluirConta": {
     "titulo": "Delete your BipFix account",

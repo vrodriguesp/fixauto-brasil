@@ -705,7 +705,8 @@
     "noOrcamento": "Garantii: {dias} päeva alates üleandmisest",
     "sem": "Garantiita",
     "documento": "Ava hinnapakkumise dokument",
-    "conversaEncerrada": "Vestlus on suletud: töö on lõpetatud ja garantii on lõppenud (või seda töökoda ei valitud)."
+    "conversaEncerrada": "Vestlus on suletud: töö on lõpetatud ja garantii on lõppenud (või seda töökoda ei valitud).",
+    "soClienteReabre": "Töö on üle antud: garantii ajal saab vestluse uuesti avada ainult klient. Saad vastata, kui ta kirjutab."
   },
   "excluirConta": {
     "titulo": "BipFixi konto kustutamine",
