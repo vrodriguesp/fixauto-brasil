@@ -43,7 +43,9 @@
     "minhaOficina": "My workshop",
     "menuPrincipal": "Main menu",
     "pedidosEsperando": "{n} requests waiting for a reply",
-    "minhaOficinaCurto": "Workshop"
+    "minhaOficinaCurto": "Workshop",
+    "conversasOficina": "Messages",
+    "garantiasOficina": "Warranties"
   },
   "sejaParceiro": {
     "metaTitle": "Become a BipFix partner",

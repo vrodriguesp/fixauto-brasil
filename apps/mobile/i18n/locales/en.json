@@ -409,7 +409,12 @@
     "retirarSim": "Yes, collect my car",
     "voltar": "Back",
     "feito_aprovar": "Revision approved. The garage has been notified.",
-    "feito_recusar": "Job closed. Arrange the collection of your car in the chat."
+    "feito_recusar": "Job closed. Arrange the collection of your car in the chat.",
+    "recusarSemCarro": "Decline new price",
+    "recusarSemCarroConfirma": "The service will be cancelled and the workshop notified. Confirm?",
+    "recusarSemCarroSim": "Yes, decline",
+    "explicacaoSemCarro": "Nothing changes without your decision. If you approve, the new price applies. If you decline, the service is cancelled.",
+    "feito_recusarSemCarro": "Revision declined. The service was cancelled and the workshop notified."
   },
   "situacao": {
     "titulo_aguardando": "Waiting for quotes",
@@ -441,6 +446,9 @@
     "botao_avaliar": "Rate",
     "botao_cancelado": "See request",
     "botao_naoFoi": "See request",
-    "outros": "Other requests in progress"
+    "outros": "Other requests in progress",
+    "titulo_aprovarRevisao": "New price to approve",
+    "agora_aprovarRevisao": "The workshop changed the quote. Approve or decline the new price.",
+    "botao_aprovarRevisao": "Review and decide"
   }
 }

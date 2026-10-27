@@ -1,3 +1,4 @@
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { FotosPedido, SeguroPedido } from '../../components/FotosESeguroPedido';
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput, RefreshControl } from 'react-native';
@@ -53,7 +54,7 @@ export default function SolicitacaoDetailScreen() {
   const carregar = useCallback(async () => {
     const { data } = await supabase
       .from('solicitacoes')
-      .select('*, veiculo:veiculos(*), orcamentos(*, oficina:oficinas(id, nome_fantasia, pais, profile_id, cidade, avaliacao_media, total_avaliacoes), itens:orcamento_itens(id, descricao, quantidade, valor_total), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))')
+      .select('*, veiculo:veiculos(*), orcamentos(*, oficina:oficinas(id, nome_fantasia, pais, profile_id, cidade, avaliacao_media, total_avaliacoes), itens:orcamento_itens(id, descricao, quantidade, valor_total), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*)), orcamento_revisoes(status)')
       .eq('id', id)
       .single();
     setSolicitacao(data as Solicitacao);
@@ -197,7 +198,7 @@ export default function SolicitacaoDetailScreen() {
   const recarregar = async () => { setPuxando(true); await carregar(); setPuxando(false); };
 
   return (
-    <ScrollView keyboardDismissMode="on-drag" className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: insets.bottom }} refreshControl={<RefreshControl refreshing={puxando} onRefresh={recarregar} />}>
+    <KeyboardAwareScrollView bottomOffset={24} keyboardDismissMode="on-drag" className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: insets.bottom }} refreshControl={<RefreshControl refreshing={puxando} onRefresh={recarregar} />}>
       <Stack.Screen options={opcoesTela} />
       <View className="p-4">
         <Text className="text-xl font-bold text-gray-900">
@@ -412,6 +413,6 @@ export default function SolicitacaoDetailScreen() {
           </View>
         )}
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }

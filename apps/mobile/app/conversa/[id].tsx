@@ -1,5 +1,6 @@
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { View, Text, TextInput, Pressable, FlatList, KeyboardAvoidingView, Platform, ActivityIndicator, Alert, RefreshControl } from 'react-native';
+import { View, Text, TextInput, Pressable, FlatList, Platform, ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import { abrirOficina } from '../../lib/oficina-link';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, Stack } from 'expo-router';
@@ -246,7 +247,7 @@ export default function ConversaScreen() {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-gray-50" keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top + 44 : 0}>
+    <KeyboardAvoidingView behavior="padding" className="flex-1 bg-gray-50" keyboardVerticalOffset={insets.top + (Platform.OS === 'ios' ? 44 : 56)}>
       <Stack.Screen options={opcoesTela} />
       <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
         ref={listRef}

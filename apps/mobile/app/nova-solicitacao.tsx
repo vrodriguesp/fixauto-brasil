@@ -1,3 +1,4 @@
+import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +23,7 @@ import { useAvaliacaoPendente } from '../components/AvaliacaoPendente';
 export default function NovaSolicitacaoScreen() {
   const { t } = useTranslation();
   // campo de endereco: ao focar, a tela rola para ele ficar no alto e as sugestoes aparecerem acima do teclado
-  const rolagem = useRef<ScrollView>(null);
+  const rolagem = useRef<KeyboardAwareScrollViewRef>(null);
   const posEndereco = useRef(0);
   // Android ponta a ponta: a barra do sistema cobria o botao Enviar (teste do dono 26/10)
   const insets = useSafeAreaInsets();
@@ -193,7 +194,7 @@ export default function NovaSolicitacaoScreen() {
   }
 
   return (
-    <ScrollView keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets contentContainerStyle={{ paddingBottom: insets.bottom }}>
+    <KeyboardAwareScrollView bottomOffset={24} keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom }}>
 
       {/* o problema primeiro, depois o carro (auditoria 10/10, B3) */}
       <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoServico')}</Text>
@@ -286,6 +287,6 @@ export default function NovaSolicitacaoScreen() {
       >
         {enviando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold text-base">{t('novaSolicitacao.enviarSolicitacao')}</Text>}
       </Pressable>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }

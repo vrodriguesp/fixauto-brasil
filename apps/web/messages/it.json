@@ -43,7 +43,9 @@
     "minhaOficina": "La mia officina",
     "menuPrincipal": "Menu principale",
     "pedidosEsperando": "{n} richieste in attesa di risposta",
-    "minhaOficinaCurto": "Officina"
+    "minhaOficinaCurto": "Officina",
+    "conversasOficina": "Messaggi",
+    "garantiasOficina": "Garanzie"
   },
   "sejaParceiro": {
     "metaTitle": "Diventa partner di BipFix",

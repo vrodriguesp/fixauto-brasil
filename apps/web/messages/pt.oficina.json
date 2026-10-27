@@ -1196,5 +1196,33 @@
     "agenda_agendado": "Marcado para {dia}",
     "agenda_em_andamento": "Na oficina",
     "agenda_concluido": "Entregue"
+  },
+  "oficinaConversas": {
+    "titulo": "Mensagens",
+    "subtitulo": "Todas as conversas com os motoristas, a mais recente primeiro.",
+    "carregando": "Carregando…",
+    "vazio": "Nenhuma conversa ainda. Quando um motorista escrever, a conversa aparece aqui.",
+    "semCarro": "Pedido sem carro",
+    "pedido": "Pedido nº {n}",
+    "pagador": "responsável pelo pagamento",
+    "voce": "Você",
+    "audio": "🎤 Mensagem de voz",
+    "novas": "{n} mensagens novas"
+  },
+  "oficinaGarantias": {
+    "titulo": "Garantias",
+    "subtitulo": "Serviços entregues com garantia, contada a partir da entrega.",
+    "carregando": "Carregando…",
+    "vazio": "Nenhum serviço entregue com garantia ainda. A garantia é informada no orçamento.",
+    "pedido": "Pedido nº {n}",
+    "entregue": "entregue em {data}",
+    "diasRestantes": "{dias} dias restantes",
+    "ate": "até {data}",
+    "encerrada": "Encerrada em {data}",
+    "ativas": "Em garantia ({n})",
+    "nenhumaAtiva": "Nenhuma garantia em vigor.",
+    "vencidas": "Encerradas nos últimos 90 dias",
+    "verPedido": "Ver pedido",
+    "conversa": "Conversa"
   }
 }

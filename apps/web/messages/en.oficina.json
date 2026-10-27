@@ -1196,5 +1196,33 @@
     "agenda_agendado": "Booked for {dia}",
     "agenda_em_andamento": "In the workshop",
     "agenda_concluido": "Handed over"
+  },
+  "oficinaConversas": {
+    "titulo": "Messages",
+    "subtitulo": "All conversations with drivers, most recent first.",
+    "carregando": "Loading…",
+    "vazio": "No conversations yet. When a driver writes to you, the conversation appears here.",
+    "semCarro": "Request without a car",
+    "pedido": "Request #{n}",
+    "pagador": "party paying",
+    "voce": "You",
+    "audio": "🎤 Voice message",
+    "novas": "{n} new messages"
+  },
+  "oficinaGarantias": {
+    "titulo": "Warranties",
+    "subtitulo": "Delivered services with a warranty, counted from delivery.",
+    "carregando": "Loading…",
+    "vazio": "No delivered services with a warranty yet. The warranty is set in the quote.",
+    "pedido": "Request #{n}",
+    "entregue": "delivered on {data}",
+    "diasRestantes": "{dias} days left",
+    "ate": "until {data}",
+    "encerrada": "Ended on {data}",
+    "ativas": "Under warranty ({n})",
+    "nenhumaAtiva": "No active warranties.",
+    "vencidas": "Ended in the last 90 days",
+    "verPedido": "View request",
+    "conversa": "Conversation"
   }
 }

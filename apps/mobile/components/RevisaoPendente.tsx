@@ -12,18 +12,26 @@ interface Revisao {
   oficina: { nome_fantasia: string; pais: string | null } | null;
 }
 
+// O carro ja esta na oficina? (check-in feito, servico andando/feito ou o
+// horario marcado ja passou). So entao recusar significa retirar o carro.
+const carroNaOficina = (ags: { status: string; checkin_em: string | null; data_inicio: string | null }[]) =>
+  ags.some((a) => !!a.checkin_em || a.status === 'em_andamento' || a.status === 'concluido' || (!!a.data_inicio && new Date(a.data_inicio).getTime() <= Date.now()));
+
 // Proposta de revisao de orcamento ja aceito (mesma regra do site): aprovar |
 // recusar (encerra o servico e o cliente retira o carro; confirmacao dupla).
 export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }: { solicitacaoId: string; recarregar?: number; aoDecidir?: () => void }) {
   const { t, i18n } = useTranslation();
   const [rev, setRev] = useState<Revisao | null>(null);
   const [enviando, setEnviando] = useState(false);
+  const [naOficina, setNaOficina] = useState(false);
 
   const carregar = useCallback(async () => {
     const { data } = await supabase.from('orcamento_revisoes')
       .select('id, valor_anterior, valor_novo, prazo_dias_novo, motivo, itens, oficina:oficinas(nome_fantasia, pais)')
       .eq('solicitacao_id', solicitacaoId).eq('status', 'pendente').maybeSingle();
     setRev((data as any) || null);
+    const { data: ags } = await supabase.from('agenda').select('status, checkin_em, data_inicio').eq('solicitacao_id', solicitacaoId).neq('status', 'cancelado');
+    setNaOficina(carroNaOficina((ags as any) || []));
   }, [solicitacaoId]);
   useEffect(() => { carregar(); }, [carregar, recarregar]);
 
@@ -36,7 +44,7 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
     setEnviando(true);
     try {
       await apiFetch('/api/orcamento-revisao/decidir', { method: 'POST', body: JSON.stringify({ revisaoId: rev.id, decisao }) });
-      Alert.alert(t(`revisao.feito_${decisao}`));
+      Alert.alert(t(decisao === 'recusar' && !naOficina ? 'revisao.feito_recusarSemCarro' : `revisao.feito_${decisao}`));
       setRev(null);
       aoDecidir?.();
     } catch (e) {
@@ -45,10 +53,14 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
       setEnviando(false);
     }
   };
-  const confirmarRetirada = () => Alert.alert(t('revisao.recusar'), t('revisao.retirarConfirma'), [
-    { text: t('revisao.voltar'), style: 'cancel' },
-    { text: t('revisao.retirarSim'), style: 'destructive', onPress: () => decidir('recusar') },
-  ]);
+  const confirmarRetirada = () => Alert.alert(
+    t(naOficina ? 'revisao.recusar' : 'revisao.recusarSemCarro'),
+    t(naOficina ? 'revisao.retirarConfirma' : 'revisao.recusarSemCarroConfirma'),
+    [
+      { text: t('revisao.voltar'), style: 'cancel' },
+      { text: t(naOficina ? 'revisao.retirarSim' : 'revisao.recusarSemCarroSim'), style: 'destructive', onPress: () => decidir('recusar') },
+    ],
+  );
 
   return (
     <View className="bg-amber-50 border-2 border-amber-400 rounded-xl p-4 mb-4">
@@ -66,14 +78,14 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
           <Text className="text-sm text-gray-900">{fmt(it.valor_total)}</Text>
         </View>
       ))}
-      <Text className="mt-2 text-xs text-gray-600">{t('revisao.explicacao')}</Text>
+      <Text className="mt-2 text-xs text-gray-600">{t(naOficina ? 'revisao.explicacao' : 'revisao.explicacaoSemCarro')}</Text>
       {enviando ? <ActivityIndicator className="mt-3" color="#2563eb" /> : (
         <View className="mt-3 gap-2">
           <Pressable onPress={() => decidir('aprovar')} accessibilityRole="button" className="bg-green-600 rounded-lg py-3 items-center">
             <Text className="text-white font-semibold">{t('revisao.aprovar')}</Text>
           </Pressable>
           <Pressable onPress={confirmarRetirada} accessibilityRole="button" className="border border-red-300 bg-white rounded-lg py-3 items-center">
-            <Text className="text-red-700 font-medium">{t('revisao.recusar')}</Text>
+            <Text className="text-red-700 font-medium">{t(naOficina ? 'revisao.recusar' : 'revisao.recusarSemCarro')}</Text>
           </Pressable>
         </View>
       )}

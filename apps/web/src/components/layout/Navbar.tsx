@@ -113,6 +113,8 @@ export default function Navbar() {
                       <MoreNavDropdown
                         moreLabel={t('mais')}
                         items={[
+                          { href: '/oficina/mensagens', label: t('conversasOficina') },
+                          { href: '/oficina/garantias', label: t('garantiasOficina') },
                           { href: '/oficina/pecas', label: t('pecas') },
                           { href: '/oficina/equipe', label: t('equipe') },
                           { href: '/oficina/avaliacoes', label: t('avaliacoes') },

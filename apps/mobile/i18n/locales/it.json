@@ -409,7 +409,12 @@
     "retirarSim": "Sì, ritiro l'auto",
     "voltar": "Indietro",
     "feito_aprovar": "Revisione approvata. L'officina è stata avvisata.",
-    "feito_recusar": "Servizio chiuso. Concorda il ritiro dell'auto nella chat."
+    "feito_recusar": "Servizio chiuso. Concorda il ritiro dell'auto nella chat.",
+    "recusarSemCarro": "Rifiuta il nuovo prezzo",
+    "recusarSemCarroConfirma": "Il servizio sarà annullato e l'officina avvisata. Confermi?",
+    "recusarSemCarroSim": "Sì, rifiuta",
+    "explicacaoSemCarro": "Nulla cambia senza la tua decisione. Se approvi, vale il nuovo prezzo. Se rifiuti, il servizio viene annullato.",
+    "feito_recusarSemCarro": "Revisione rifiutata. Il servizio è stato annullato e l'officina avvisata."
   },
   "situacao": {
     "titulo_aguardando": "In attesa di preventivi",
@@ -441,6 +446,9 @@
     "botao_avaliar": "Valuta",
     "botao_cancelado": "Vedi richiesta",
     "botao_naoFoi": "Vedi richiesta",
-    "outros": "Altre richieste in corso"
+    "outros": "Altre richieste in corso",
+    "titulo_aprovarRevisao": "Nuovo prezzo da approvare",
+    "agora_aprovarRevisao": "L'officina ha cambiato il preventivo. Approva o rifiuta il nuovo prezzo.",
+    "botao_aprovarRevisao": "Vedi e decidi"
   }
 }

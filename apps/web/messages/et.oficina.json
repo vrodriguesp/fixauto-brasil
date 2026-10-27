@@ -1196,5 +1196,33 @@
     "agenda_agendado": "Broneeritud {dia}",
     "agenda_em_andamento": "Töökojas",
     "agenda_concluido": "Üle antud"
+  },
+  "oficinaConversas": {
+    "titulo": "Sõnumid",
+    "subtitulo": "Kõik vestlused autojuhtidega, uusimad eespool.",
+    "carregando": "Laadimine…",
+    "vazio": "Vestlusi veel pole. Kui autojuht sulle kirjutab, ilmub vestlus siia.",
+    "semCarro": "Päring ilma autota",
+    "pedido": "Päring nr {n}",
+    "pagador": "maksja",
+    "voce": "Sina",
+    "audio": "🎤 Häälsõnum",
+    "novas": "{n} uut sõnumit"
+  },
+  "oficinaGarantias": {
+    "titulo": "Garantiid",
+    "subtitulo": "Üle antud tööd garantiiga; garantii algab üleandmisest.",
+    "carregando": "Laadimine…",
+    "vazio": "Garantiiga üle antud töid veel pole. Garantii märgitakse hinnapakkumisse.",
+    "pedido": "Päring nr {n}",
+    "entregue": "üle antud {data}",
+    "diasRestantes": "jäänud {dias} päeva",
+    "ate": "kuni {data}",
+    "encerrada": "Lõppes {data}",
+    "ativas": "Garantii kehtib ({n})",
+    "nenhumaAtiva": "Kehtivaid garantiisid pole.",
+    "vencidas": "Lõppenud viimase 90 päeva jooksul",
+    "verPedido": "Vaata päringut",
+    "conversa": "Vestlus"
   }
 }

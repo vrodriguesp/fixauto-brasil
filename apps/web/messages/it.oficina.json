@@ -1196,5 +1196,33 @@
     "agenda_agendado": "Prenotata per il {dia}",
     "agenda_em_andamento": "In officina",
     "agenda_concluido": "Consegnata"
+  },
+  "oficinaConversas": {
+    "titulo": "Messaggi",
+    "subtitulo": "Tutte le conversazioni con gli automobilisti, le più recenti in alto.",
+    "carregando": "Caricamento…",
+    "vazio": "Ancora nessuna conversazione. Quando un automobilista ti scrive, la conversazione appare qui.",
+    "semCarro": "Richiesta senza auto",
+    "pedido": "Richiesta n. {n}",
+    "pagador": "chi paga",
+    "voce": "Tu",
+    "audio": "🎤 Messaggio vocale",
+    "novas": "{n} nuovi messaggi"
+  },
+  "oficinaGarantias": {
+    "titulo": "Garanzie",
+    "subtitulo": "Lavori consegnati con garanzia, contata dalla consegna.",
+    "carregando": "Caricamento…",
+    "vazio": "Ancora nessun lavoro consegnato con garanzia. La garanzia si indica nel preventivo.",
+    "pedido": "Richiesta n. {n}",
+    "entregue": "consegnato il {data}",
+    "diasRestantes": "{dias} giorni rimanenti",
+    "ate": "fino al {data}",
+    "encerrada": "Terminata il {data}",
+    "ativas": "In garanzia ({n})",
+    "nenhumaAtiva": "Nessuna garanzia in corso.",
+    "vencidas": "Terminate negli ultimi 90 giorni",
+    "verPedido": "Vedi richiesta",
+    "conversa": "Conversazione"
   }
 }

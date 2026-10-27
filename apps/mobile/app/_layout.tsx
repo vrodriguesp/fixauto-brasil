@@ -3,6 +3,7 @@ import '../i18n';
 import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider } from '../lib/auth-context';
 import { restaurarIdioma } from '../lib/idiomas';
@@ -18,6 +19,9 @@ export default function RootLayout() {
   const { t } = useTranslation();
   return (
     <SafeAreaProvider>
+      {/* teclado: no Android edge-to-edge (SDK 54+) a janela nao encolhe mais
+          sozinha; o keyboard-controller move os campos (guia de teclado da Expo) */}
+      <KeyboardProvider>
       <AuthProvider>
         <AvisosProvider>
         <StatusBar style="dark" />
@@ -32,6 +36,7 @@ export default function RootLayout() {
         </Stack>
         </AvisosProvider>
       </AuthProvider>
+      </KeyboardProvider>
     </SafeAreaProvider>
   );
 }

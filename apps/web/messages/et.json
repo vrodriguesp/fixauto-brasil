@@ -43,7 +43,9 @@
     "minhaOficina": "Minu töökoda",
     "menuPrincipal": "Peamenüü",
     "pedidosEsperando": "{n} päringut ootab vastust",
-    "minhaOficinaCurto": "Töökoda"
+    "minhaOficinaCurto": "Töökoda",
+    "conversasOficina": "Sõnumid",
+    "garantiasOficina": "Garantiid"
   },
   "sejaParceiro": {
     "metaTitle": "Saa BipFixi partneriks",

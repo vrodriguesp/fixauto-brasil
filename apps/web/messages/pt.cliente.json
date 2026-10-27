@@ -367,6 +367,11 @@
     "retirarSim": "Sim, retirar o carro",
     "voltar": "Voltar",
     "feito_aprovar": "Revisão aprovada. A oficina foi avisada.",
-    "feito_recusar": "Serviço encerrado. Combine a retirada do carro pela conversa."
+    "feito_recusar": "Serviço encerrado. Combine a retirada do carro pela conversa.",
+    "recusarSemCarro": "Recusar novo valor",
+    "recusarSemCarroConfirma": "O serviço será cancelado e a oficina avisada. Confirmar?",
+    "recusarSemCarroSim": "Sim, recusar",
+    "explicacaoSemCarro": "Nada muda sem a sua decisão. Se aprovar, vale o novo valor. Se recusar, o serviço é cancelado.",
+    "feito_recusarSemCarro": "Revisão recusada. O serviço foi cancelado e a oficina avisada."
   }
 }

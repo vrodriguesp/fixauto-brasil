@@ -1,5 +1,6 @@
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Image, Modal } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator, Platform, ScrollView, Image, Modal } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Link, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -57,8 +58,7 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-sky-50" edges={['top']}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1">
-        <ScrollView keyboardDismissMode="on-drag" contentContainerClassName="flex-grow px-5 pb-10" keyboardShouldPersistTaps="handled">
+      <KeyboardAwareScrollView bottomOffset={24} className="flex-1" keyboardDismissMode="on-drag" contentContainerClassName="flex-grow px-5 pb-10" keyboardShouldPersistTaps="handled">
           {/* Topo: idioma */}
           <View className="flex-row justify-end pt-2">
             <Pressable
@@ -187,8 +187,7 @@ export default function LoginScreen() {
               </View>
             ))}
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
 
       {/* Escolha de idioma */}
       <Modal visible={menuIdioma} transparent animationType="fade" onRequestClose={() => setMenuIdioma(false)}>

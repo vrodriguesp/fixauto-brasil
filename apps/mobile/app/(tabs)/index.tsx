@@ -27,7 +27,7 @@ export default function DashboardScreen() {
     if (!user) return;
     const { data } = await supabase
       .from('solicitacoes')
-      .select('*, veiculo:veiculos(*), orcamentos(*), agenda(status, data_inicio, etapas:manutencao_etapas(status, created_at))')
+      .select('*, veiculo:veiculos(*), orcamentos(*), agenda(status, data_inicio, etapas:manutencao_etapas(status, created_at)), orcamento_revisoes(status)')
       .eq('cliente_id', user.id)
       .in('status', ['aberta', 'em_orcamento', 'aceita', 'em_andamento'])
       .order('created_at', { ascending: false });

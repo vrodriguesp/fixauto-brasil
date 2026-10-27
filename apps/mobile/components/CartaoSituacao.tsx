@@ -9,7 +9,7 @@ import { situacaoDoPedido, type Situacao } from '../lib/situacao';
 // C1/C2). No Inicio mostra o pedido mais urgente com um botao; no pedido e o
 // cabecalho (sem botao, a tela ja e o pedido).
 const COR_ICONE: Record<Situacao['chave'], string> = {
-  aguardando: '#0369a1', comparar: '#b45309', agendado: '#4338ca', naOficina: '#c2410c', pronto: '#047857',
+  aprovarRevisao: '#b45309', aguardando: '#0369a1', comparar: '#b45309', agendado: '#4338ca', naOficina: '#c2410c', pronto: '#047857',
   entregue: '#374151', avaliar: '#a16207', cancelado: '#6b7280', naoFoi: '#b91c1c',
 };
 
@@ -27,8 +27,7 @@ export default function CartaoSituacao({ solicitacao, situacao, comBotao = false
   const { titulo, agora } = textoSituacao(t, s, i18n.language);
   const carro = solicitacao.veiculo?.fipe_marca ? `${solicitacao.veiculo.fipe_marca} ${solicitacao.veiculo.fipe_modelo || ''}`.trim() : null;
   return (
-    <View className={`rounded-2xl px-4 py-3 mb-4 ${comBotao ? 'border-2 shadow-md' : 'border'} ${s.fundo}`} testID={`situacao-${s.chave}`}
-      style={comBotao ? { elevation: 3 } : undefined}>
+    <View className={`rounded-2xl px-4 py-3 mb-4 ${comBotao ? 'border-2' : 'border'} ${s.fundo}`} testID={`situacao-${s.chave}`}>
       <View className="flex-row items-center gap-2">
         <Ionicons name={s.icone} size={22} color={COR_ICONE[s.chave]} />
         <Text className={`flex-1 text-base font-bold ${s.texto}`}>{titulo}</Text>

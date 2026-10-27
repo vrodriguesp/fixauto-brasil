@@ -1,3 +1,4 @@
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useState, useMemo } from 'react';
 import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -46,7 +47,7 @@ export default function NovoVeiculoScreen() {
   };
 
   return (
-    <ScrollView keyboardDismissMode="on-drag" className="flex-1 bg-white px-4 pt-4" contentContainerStyle={{ paddingBottom: insets.bottom }}>
+    <KeyboardAwareScrollView bottomOffset={24} keyboardDismissMode="on-drag" className="flex-1 bg-white px-4 pt-4" contentContainerStyle={{ paddingBottom: insets.bottom }}>
       <Stack.Screen options={opcoesTela} />
 
       <VehicleCatalogPicker label={t('veiculos.marca')} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" />
@@ -71,6 +72,6 @@ export default function NovoVeiculoScreen() {
       <Pressable onPress={handleSalvar} disabled={!marca || !modelo || salvando} className="bg-primary-600 rounded-lg py-4 items-center mb-8 disabled:opacity-50">
         {salvando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold text-base">{t('common.salvar')}</Text>}
       </Pressable>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }

@@ -17,6 +17,11 @@ interface Revisao {
   oficina: { nome_fantasia: string; pais: string | null } | null;
 }
 
+// O carro ja esta na oficina? (check-in feito, servico andando/feito ou o
+// horario marcado ja passou). So entao recusar significa retirar o carro.
+const carroNaOficina = (ags: { status: string; checkin_em: string | null; data_inicio: string | null }[]) =>
+  ags.some((a) => !!a.checkin_em || a.status === 'em_andamento' || a.status === 'concluido' || (!!a.data_inicio && new Date(a.data_inicio).getTime() <= Date.now()));
+
 // Proposta de revisao de um orcamento JA ACEITO (migracao 049). Nada muda sem
 // a decisao do cliente: aprovar | recusar (encerra o servico e o cliente
 // retira o carro; com confirmacao). Mesmo padrao de mercado (ClickMechanic:
@@ -30,12 +35,15 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState('');
   const [feito, setFeito] = useState<string | null>(null);
+  const [naOficina, setNaOficina] = useState(false);
 
   useEffect(() => {
     supabase.from('orcamento_revisoes')
       .select('id, valor_anterior, valor_novo, prazo_dias_novo, motivo, itens, oficina:oficinas(nome_fantasia, pais)')
       .eq('solicitacao_id', solicitacaoId).eq('status', 'pendente').maybeSingle()
       .then(({ data }) => setRev((data as any) || null));
+    supabase.from('agenda').select('status, checkin_em, data_inicio').eq('solicitacao_id', solicitacaoId).neq('status', 'cancelado')
+      .then(({ data }) => setNaOficina(carroNaOficina((data as any) || [])));
   }, [solicitacaoId]);
 
   if (feito) return <p role="status" className="card mb-6 bg-green-50 text-green-800">{feito}</p>;
@@ -53,7 +61,7 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
     const d = res ? await res.json().catch(() => ({})) : {};
     setEnviando(false);
     if (!res?.ok) { setErro(textoErroApi(tErr, res?.status || 500, d)); return; }
-    setFeito(t(`feito_${decisao}`));
+    setFeito(t(decisao === 'recusar' && !naOficina ? 'feito_recusarSemCarro' : `feito_${decisao}`));
     aoDecidir?.();
   };
 
@@ -77,20 +85,20 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
           ))}
         </ul>
       )}
-      <p className="mt-3 text-xs text-gray-600">{t('explicacao')}</p>
+      <p className="mt-3 text-xs text-gray-600">{t(naOficina ? 'explicacao' : 'explicacaoSemCarro')}</p>
       {erro && <p role="alert" className="mt-3 text-sm text-red-700">{erro}</p>}
       {confirmarRetirada ? (
         <div role="alertdialog" className="mt-4 rounded-lg border border-red-300 bg-white p-3">
-          <p className="text-sm text-gray-900 mb-3">{t('retirarConfirma')}</p>
+          <p className="text-sm text-gray-900 mb-3">{t(naOficina ? 'retirarConfirma' : 'recusarSemCarroConfirma')}</p>
           <div className="flex flex-col sm:flex-row gap-2">
-            <button type="button" disabled={enviando} onClick={() => decidir('recusar')} className="px-4 py-2 rounded-lg bg-red-600 text-white font-medium disabled:opacity-50">{t('retirarSim')}</button>
+            <button type="button" disabled={enviando} onClick={() => decidir('recusar')} className="px-4 py-2 rounded-lg bg-red-600 text-white font-medium disabled:opacity-50">{t(naOficina ? 'retirarSim' : 'recusarSemCarroSim')}</button>
             <button type="button" onClick={() => setConfirmarRetirada(false)} className="btn-secondary">{t('voltar')}</button>
           </div>
         </div>
       ) : (
         <div className="mt-4 flex flex-col sm:flex-row gap-2">
           <button type="button" disabled={enviando} onClick={() => decidir('aprovar')} className="btn-success disabled:opacity-50">{t('aprovar')}</button>
-          <button type="button" disabled={enviando} onClick={() => setConfirmarRetirada(true)} className="px-4 py-2 rounded-lg border border-red-300 text-red-700 font-medium hover:bg-red-50">{t('recusar')}</button>
+          <button type="button" disabled={enviando} onClick={() => setConfirmarRetirada(true)} className="px-4 py-2 rounded-lg border border-red-300 text-red-700 font-medium hover:bg-red-50">{t(naOficina ? 'recusar' : 'recusarSemCarro')}</button>
         </div>
       )}
     </section>

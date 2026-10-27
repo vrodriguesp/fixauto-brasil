@@ -1,5 +1,6 @@
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as WebBrowser from 'expo-web-browser';
 import { useTranslation } from 'react-i18next';
@@ -57,8 +58,7 @@ export default function CadastroScreen() {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-white">
-      <ScrollView keyboardDismissMode="on-drag" contentContainerClassName="flex-grow justify-center px-6 py-12" contentContainerStyle={{ paddingBottom: 48 + insets.bottom }}>
+    <KeyboardAwareScrollView bottomOffset={24} className="flex-1 bg-white" keyboardDismissMode="on-drag" contentContainerClassName="flex-grow justify-center px-6 py-12" contentContainerStyle={{ paddingBottom: 48 + insets.bottom }}>
         <Text className="text-xl font-semibold text-gray-900 mb-6">{t('auth.cadastroTitulo')}</Text>
 
         {erro && (
@@ -131,7 +131,6 @@ export default function CadastroScreen() {
             {t('auth.entrar')}
           </Link>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
   );
 }

@@ -409,7 +409,12 @@
     "retirarSim": "Jah, viin auto ära",
     "voltar": "Tagasi",
     "feito_aprovar": "Muudatus kinnitatud. Töökoda sai teate.",
-    "feito_recusar": "Töö on lõpetatud. Lepi auto äraviimine vestluses kokku."
+    "feito_recusar": "Töö on lõpetatud. Lepi auto äraviimine vestluses kokku.",
+    "recusarSemCarro": "Keeldu uuest hinnast",
+    "recusarSemCarroConfirma": "Teenus tühistatakse ja töökoda saab teate. Kinnitad?",
+    "recusarSemCarroSim": "Jah, keeldu",
+    "explicacaoSemCarro": "Ilma sinu otsuseta ei muutu midagi. Kui kinnitad, kehtib uus hind. Kui keeldud, teenus tühistatakse.",
+    "feito_recusarSemCarro": "Muudatusest keelduti. Teenus tühistati ja töökoda sai teate."
   },
   "situacao": {
     "titulo_aguardando": "Ootab pakkumisi",
@@ -441,6 +446,9 @@
     "botao_avaliar": "Hinda",
     "botao_cancelado": "Vaata päringut",
     "botao_naoFoi": "Vaata päringut",
-    "outros": "Teised pooleli olevad päringud"
+    "outros": "Teised pooleli olevad päringud",
+    "titulo_aprovarRevisao": "Uus hind vajab kinnitust",
+    "agora_aprovarRevisao": "Töökoda muutis hinnapakkumist. Kinnita uus hind või keeldu.",
+    "botao_aprovarRevisao": "Vaata ja otsusta"
   }
 }
