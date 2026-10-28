@@ -96,8 +96,8 @@
     "quemSomosTexto": "BipFixi haldab RPyrus OÜ, noor Tallinnas asuv Eesti ettevõte (registrikood 17628754). Vastame igale avaldusele isiklikult: support@bipfix.com."
   },
   "paraOficinas": {
-    "metaTitle": "Uued kliendid autotöökojale Tallinnas – tasuta",
-    "metaDescription": "Hinnapäringud Tallinna autojuhtidelt otse sinu töökotta, avalik profiil ja päris arvustused. Lisaks tasuta töökoja tarkvara: ajakava ja meeskond.",
+    "metaTitle": "Uued kliendid töökojale + tasuta töökoja tarkvara",
+    "metaDescription": "Hinnapäringud Tallinna juhtidelt otse sinu töökotta – 0 € liitumistasu, 0 % komisjoni. Lisaks tasuta autotöökoja tarkvara: ajakava ja pakkumised.",
     "metaKeywords": [
       "autotöökoja haldustarkvara",
       "töökoja juhtimissüsteem",
@@ -117,10 +117,10 @@
     "ogTitle": "Autoteeninduse tarkvara ja uued kliendid",
     "ogDescription": "Korralda oma töökoda ja jõua piirkonna juhtideni, kes vajavad remonti. Tasuta registreerimine.",
     "heroTitulo": "Uued kliendid sinu töökojale – hinnapäringud jõuavad otse sinuni",
-    "heroTexto": "Autojuhid saadavad remondipäringu koos fotodega, sina saadad hinnapakkumise ja klient valib. Avalik profiil ja päris arvustused toovad sind nähtavale. Lisaks lihtne ajakava ja meeskonna haldus.",
+    "heroTexto": "Autojuhid saadavad remondipäringu koos fotodega, sina saadad hinnapakkumise ja klient valib. Avalik profiil ja päris arvustused toovad sind nähtavale. Lisaks tasuta töökoja tarkvara: ajakava, hinnapakkumised ja meeskond ühes kohas.",
     "ctaVerOficinas": "Vaata töökodasid platvormil",
-    "funcTitulo": "Lisaks: kõik töökoja haldamiseks",
-    "funcSubtitulo": "Kiire ülevaade igast funktsioonist — ilma jututa",
+    "funcTitulo": "Lisaks: tasuta autotöökoja tarkvara",
+    "funcSubtitulo": "Ajakava, hinnapakkumised, kliendivestlus, meeskond ja varuosad ühes kohas – ka tarkvara eest 0 €. Kiire ülevaade igast funktsioonist, ilma jututa.",
     "funcCategorias": [
       {
         "titulo": "Kliendid ja nähtavus",
@@ -236,6 +236,10 @@
       {
         "pergunta": "Kui palju maksab BipFixi haldussüsteem minu töökojale?",
         "resposta": "Registreerimine ja kõigi tööriistade (päringud, hinnapakkumised, ajakava, meeskond, hinnangud) kasutamine on praegu tasuta: liitumistasu ega komisjonitasu ei ole ja kaarti pole vaja. Kui see kunagi muutub, teatame vähemalt 30 kalendripäeva ette, vastavalt meie kasutustingimustele. Võid igal ajal lõpetada."
+      },
+      {
+        "pergunta": "Kas BipFix on tasuta autoteeninduse programm ja kas see asendab minu praeguse tarkvara?",
+        "resposta": "Jah, tarkvara on töökodadele tasuta – 0 € ja 0 % komisjoni. Ajakava, hinnapakkumised, kliendivestlus, meeskond ja varuosade päringud on ühes kohas. Oma raamatupidamis- või arveldusprogrammi võid edasi kasutada; BipFix ei nõua sellest loobumist."
       },
       {
         "pergunta": "Kas süsteem asendab Exceli tabelit või paberkalendrit?",
