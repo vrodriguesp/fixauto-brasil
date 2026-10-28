@@ -77,7 +77,8 @@ try {
   await p.fill('input[type=email]', cli.email); await p.fill('input[type=password]', cli.senha); await p.click('button[type=submit]'); await p.waitForTimeout(4000);
   await p.goto(`${SITE}/it/it/cliente/orcamentos/${c1.solId}`, { waitUntil: 'networkidle' }); await p.waitForTimeout(3000);
   const corpo = await p.innerText('body');
-  ok('6 tela mostra a proposta e so 2 botoes', /ha proposto una revisione/.test(corpo) && /Approva il nuovo importo/.test(corpo) && /ritira l'auto/i.test(corpo) && !/mantieni l'originale/i.test(corpo), corpo.replace(/\s+/g, ' ').slice(0, 200));
+  // carro ainda nao chegou (check-in amanha): recusar = so recusar (feedback 27/10)
+  ok('6 tela mostra a proposta e so 2 botoes', /ha proposto una revisione/.test(corpo) && /Approva il nuovo importo/.test(corpo) && /Rifiuta il nuovo prezzo/.test(corpo) && !/ritira l'auto/i.test(corpo) && !/mantieni l'originale/i.test(corpo), corpo.replace(/\s+/g, ' ').slice(0, 200));
   ok('6 mostra +50%', /\+50%/.test(corpo));
   ok('6 sem rolagem lateral', await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
   await p.screenshot({ path: 'revisao-cliente.png', fullPage: true });
@@ -102,9 +103,9 @@ try {
   const d2 = await r.json();
   ok('3 segunda proposta depois da aprovacao', r.ok && d2.revisaoId);
   await p.goto(`${SITE}/it/it/cliente/orcamentos/${c1.solId}`, { waitUntil: 'networkidle' }); await p.waitForTimeout(3000);
-  await p.getByRole('button', { name: /ritira l'auto/i }).first().click();
+  await p.getByRole('button', { name: /Rifiuta il nuovo prezzo/ }).first().click();
   await p.getByRole('alertdialog').getByRole('button').first().click(); await p.waitForTimeout(3000);
-  ok('3 tela confirma o encerramento', /chiuso|ritiro/i.test(await p.innerText('body')));
+  ok('3 tela confirma o encerramento', /annullato/i.test(await p.innerText('body')));
   const { data: ag1 } = await sb.from('agenda').select('status').eq('solicitacao_id', c1.solId);
   const { data: s1 } = await sb.from('solicitacoes').select('status').eq('id', c1.solId).single();
   const { data: rv2 } = await sb.from('orcamento_revisoes').select('status').eq('id', d2.revisaoId).single();
