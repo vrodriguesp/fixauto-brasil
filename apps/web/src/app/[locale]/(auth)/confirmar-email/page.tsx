@@ -34,6 +34,14 @@ export default function ConfirmarEmailPage() {
     }
     supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'email' }).then(async ({ data, error }) => {
       if (error || !data.user) {
+        // link ja usado: quem ainda esta logado vai direto para o painel;
+        // quem nao esta ve primeiro "ja confirmou? entre" (caso 29/10)
+        const { data: s } = await supabase.auth.getSession();
+        if (s.session?.user && !doApp) {
+          const { data: perfil } = await supabase.from('profiles').select('tipo').eq('id', s.session.user.id).maybeSingle();
+          router.replace(PAINEL[perfil?.tipo || ''] || '/');
+          return;
+        }
         setEstado('invalido');
         return;
       }
@@ -74,7 +82,10 @@ export default function ConfirmarEmailPage() {
           <p className="text-gray-600" role="status">{estado === 'ok' ? t('sucesso') : t('verificando')}</p>
         ) : (
           <div className="card text-left">
-            <p className="font-semibold text-gray-900">{t('invalidoTitulo')}</p>
+            <p className="font-semibold text-gray-900">{t('jaConfirmadoTitulo')}</p>
+            <p className="text-sm text-gray-600 mt-1 mb-3">{t('jaConfirmadoTexto')}</p>
+            <Link href="/login" className="btn-primary block w-full text-center mb-6">{t('irLogin')}</Link>
+            <p className="font-semibold text-gray-900 border-t border-gray-100 pt-4">{t('invalidoTitulo')}</p>
             <p className="text-sm text-gray-600 mt-1 mb-4">{t('invalidoTexto')}</p>
             {reenviado ? (
               <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg p-3" role="status">{t('reenviado')}</p>
@@ -82,12 +93,9 @@ export default function ConfirmarEmailPage() {
               <form onSubmit={reenviar} className="space-y-3">
                 <label className="block text-sm font-medium text-gray-700" htmlFor="email-confirmar">{t('labelEmail')}</label>
                 <input id="email-confirmar" type="email" required autoComplete="email" className="input-field" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <button type="submit" className="btn-primary w-full" disabled={enviando}>{t('reenviar')}</button>
+                <button type="submit" className="btn-secondary w-full" disabled={enviando}>{t('reenviar')}</button>
               </form>
             )}
-            <p className="text-center text-sm mt-4">
-              <Link href="/login" className="text-primary-600 font-medium hover:underline">{t('irLogin')}</Link>
-            </p>
           </div>
         )}
       </div>

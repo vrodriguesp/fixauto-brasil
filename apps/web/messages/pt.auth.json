@@ -106,13 +106,15 @@
     "titulo": "Confirmação de e-mail",
     "verificando": "Confirmando seu e-mail…",
     "sucesso": "E-mail confirmado! Abrindo sua conta…",
-    "invalidoTitulo": "Este link não é mais válido",
-    "invalidoTexto": "O link de confirmação vale por 1 hora e só pode ser usado uma vez. Digite seu e-mail para receber um novo.",
+    "invalidoTitulo": "O link venceu antes de confirmar?",
+    "invalidoTexto": "O link vale 1 hora. Digite seu e-mail que enviamos outro.",
     "labelEmail": "E-mail",
     "reenviar": "Enviar novo link",
     "reenviado": "Se houver uma conta aguardando confirmação, enviamos um novo link. Confira seu e-mail.",
     "irLogin": "Ir para o login",
     "voltarAoApp": "E-mail confirmado! Volte ao app BipFix e entre com seu e-mail e senha.",
-    "abrirApp": "Abrir o app BipFix"
+    "abrirApp": "Abrir o app BipFix",
+    "jaConfirmadoTitulo": "Já confirmou o e-mail?",
+    "jaConfirmadoTexto": "O link de confirmação funciona uma vez só. Se você já clicou nele antes, sua conta está pronta: é só entrar com seu e-mail e senha."
   }
 }

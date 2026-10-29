@@ -106,13 +106,15 @@
     "titulo": "Email confirmation",
     "verificando": "Confirming your email…",
     "sucesso": "Email confirmed! Opening your account…",
-    "invalidoTitulo": "This link is no longer valid",
-    "invalidoTexto": "The confirmation link is valid for 1 hour and can be used only once. Enter your email to get a new one.",
+    "invalidoTitulo": "Did the link expire before you confirmed?",
+    "invalidoTexto": "The link is valid for 1 hour. Enter your e-mail and we will send a new one.",
     "labelEmail": "Email",
     "reenviar": "Send a new link",
     "reenviado": "If an account is waiting for confirmation, we have sent a new link. Check your email.",
     "irLogin": "Go to sign in",
     "voltarAoApp": "Email confirmed! Go back to the BipFix app and sign in with your email and password.",
-    "abrirApp": "Open the BipFix app"
+    "abrirApp": "Open the BipFix app",
+    "jaConfirmadoTitulo": "Already confirmed your e-mail?",
+    "jaConfirmadoTexto": "The confirmation link works only once. If you already clicked it before, your account is ready – just log in with your e-mail and password."
   }
 }

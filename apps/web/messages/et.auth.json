@@ -106,13 +106,15 @@
     "titulo": "E-posti kinnitamine",
     "verificando": "Kinnitame sinu e-posti aadressi…",
     "sucesso": "E-posti aadress on kinnitatud! Avame sinu konto…",
-    "invalidoTitulo": "See link ei kehti enam",
-    "invalidoTexto": "Kinnituslink kehtib 1 tund ja seda saab kasutada ainult üks kord. Sisesta oma e-posti aadress, et saada uus link.",
+    "invalidoTitulo": "Link aegus enne kinnitamist?",
+    "invalidoTexto": "Link kehtib 1 tund. Sisesta oma e-post ja saadame uue.",
     "labelEmail": "E-post",
     "reenviar": "Saada uus link",
     "reenviado": "Kui mõni konto ootab kinnitamist, saatsime uue lingi. Kontrolli oma e-posti.",
     "irLogin": "Mine sisselogimise lehele",
     "voltarAoApp": "E-post on kinnitatud! Mine tagasi BipFixi rakendusse ja logi sisse oma e-posti ja parooliga.",
-    "abrirApp": "Ava BipFixi rakendus"
+    "abrirApp": "Ava BipFixi rakendus",
+    "jaConfirmadoTitulo": "Kas kinnitasid e-posti juba?",
+    "jaConfirmadoTexto": "Kinnituslinki saab kasutada ainult üks kord. Kui vajutasid seda juba varem, on sinu konto valmis – logi lihtsalt sisse oma e-posti ja parooliga."
   }
 }
