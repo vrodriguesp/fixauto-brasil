@@ -488,3 +488,4 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
   4. Oficina: depois de o carro ser entregue ainda parece possível mudar o orçamento.
   5. Oficina: algumas notificações aparecem em inglês mesmo com outra língua.
   - Acidentes de teste: com a conta do dono (já teste) e com uma conta nova — vigia rodando para marcar a conta nova como teste assim que aparecer.
+- **31/10 ~16:40 Tallinn — Acidente de teste com conta nova (pedido 100128):** a conta nova vitor.pereira@bipfix.com ("Test-Vitor Pereira") nasceu no envio do acidente sem a marca de teste, então a oficina "Test" (teste) não foi avisada (regra correta: pedido de conta real não vai a oficina de teste). Marcada `conta_teste = true` a pedido do dono (só este e-mail, não todo @bipfix.com); a oficina "Test" passa a ver o 100128 (visibilidade conferida na hora, migração 064). Sugestão para depois: e-mails internos nascerem como teste.
