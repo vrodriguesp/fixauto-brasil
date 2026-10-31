@@ -15,7 +15,8 @@ import { API_BASE_URL, apiFetch } from '../lib/api';
 import { fetchComPrazo } from '../lib/rede';
 import { mensagemErro, ErroUsuario } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
-import { obterPosicao } from '../lib/posicao';
+import OpcaoCartao from '../components/OpcaoCartao';
+import { obterPosicao, useLocalizacaoAoVoltar } from '../lib/posicao';
 import { arquivoDaFoto } from '../lib/anexo';
 import { useAvaliacaoPendente } from '../components/AvaliacaoPendente';
 
@@ -51,27 +52,31 @@ export default function NovaSolicitacaoScreen() {
     }, [user])
   );
 
+  const buscarLocal = async () => {
+    setBuscandoLocal(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') return;
+      const pos = await obterPosicao();
+      setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+      const res = await fetchComPrazo(`${API_BASE_URL}/api/geocode?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+      const data = await res.json();
+      // nao apaga um endereco que a pessoa ja digitou
+      if (data.cidade) setEndereco((atual) => atual || [data.cidade, data.estado, data.pais].filter(Boolean).join(', '));
+      if (data.paisCodigo) setPais(data.paisCodigo);
+    } catch {
+      // Localização indisponível (GPS desligado, indoors, timeout) - o
+      // campo de endereço continua editável manualmente, sem bloquear o
+      // fluxo nem precisar de Alert (falha silenciosa e recuperável).
+    } finally {
+      setBuscandoLocal(false);
+    }
+  };
   useEffect(() => {
-    (async () => {
-      setBuscandoLocal(true);
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') return;
-        const pos = await obterPosicao();
-        setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-        const res = await fetchComPrazo(`${API_BASE_URL}/api/geocode?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
-        const data = await res.json();
-        if (data.cidade) setEndereco([data.cidade, data.estado, data.pais].filter(Boolean).join(', '));
-        if (data.paisCodigo) setPais(data.paisCodigo);
-      } catch {
-        // Localização indisponível (GPS desligado, indoors, timeout) - o
-        // campo de endereço continua editável manualmente, sem bloquear o
-        // fluxo nem precisar de Alert (falha silenciosa e recuperável).
-      } finally {
-        setBuscandoLocal(false);
-      }
-    })();
-  }, []);
+    buscarLocal();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // permitiu a localizacao nos Ajustes e voltou: busca sozinha (teste do dono 31/10)
+  useLocalizacaoAoVoltar(!coords && !buscandoLocal, () => { buscarLocal(); });
 
   // camera (so a galeria nao bastava - teste do dono 26/10); mesma regra da emergencia
   const handleCamera = async () => {
@@ -221,18 +226,21 @@ export default function NovaSolicitacaoScreen() {
       />
 
       <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoVeiculo')}</Text>
-      <View className="flex-row flex-wrap gap-2 mb-2">
+      {/* cartoes de largura total com radio (antes pilulas pequenas; teste do dono 31/10) */}
+      <View accessibilityRole="radiogroup" className="mb-1">
         {veiculos.map((v) => (
-          <Pressable
+          <OpcaoCartao
             key={v.id}
+            selecionado={veiculoId === v.id}
             onPress={() => setVeiculoId(v.id)}
-            className={`px-4 py-2 rounded-full border ${veiculoId === v.id ? 'bg-primary-600 border-primary-600' : 'border-gray-300'}`}
-          >
-            <Text className={veiculoId === v.id ? 'text-white' : 'text-gray-700'}>{v.fipe_marca ? `${v.fipe_marca} ${v.fipe_modelo}` : v.placa || t('veiculos.semDados')}</Text>
-          </Pressable>
+            icone="car-outline"
+            titulo={v.fipe_marca ? `${v.fipe_marca} ${v.fipe_modelo}` : v.placa || t('veiculos.semDados')}
+            subtitulo={v.fipe_marca ? [v.fipe_ano, v.placa].filter(Boolean).join(' · ') : null}
+          />
         ))}
       </View>
-      <Pressable onPress={() => router.push('/veiculo/novo')} className="mb-6">
+      <Pressable onPress={() => router.push('/veiculo/novo')} accessibilityRole="button" hitSlop={8} className="mb-6 min-h-[44px] flex-row items-center gap-1">
+        <Ionicons name="add-circle-outline" size={20} color="#0284c7" />
         <Text className="text-primary-600 font-medium">{t('novaSolicitacao.adicionarVeiculo')}</Text>
       </Pressable>
 

@@ -216,7 +216,8 @@
     "pausar": "Pause",
     "audioIndisponivel": "Audio unavailable",
     "microfoneTitulo": "Microphone off",
-    "microfoneTexto": "To send audio, allow microphone access in Settings."
+    "microfoneTexto": "To send audio, allow microphone access in Settings.",
+    "verOficinaCurto": "Shop"
   },
   "veiculos": {
     "titulo": "My vehicles",

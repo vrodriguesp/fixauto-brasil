@@ -47,8 +47,13 @@ export default function ConversaScreen() {
   const opcoesTela = useMemo(() => ({
     headerShown: true, title: tituloTela,
     headerRight: () => (oficinaDoTitulo.current ? (
-      <Pressable onPress={() => oficinaDoTitulo.current && abrirOficina(oficinaDoTitulo.current, i18n.language)} accessibilityRole="link" accessibilityLabel={t('orcamentos.verOficina')} hitSlop={10}>
-        <Ionicons name="storefront-outline" size={22} color="#1d4ed8" />
+      // botao com cara de botao e area de toque >= 44x44 (antes so o icone; dificil de tocar - teste do dono 31/10)
+      <Pressable onPress={() => oficinaDoTitulo.current && abrirOficina(oficinaDoTitulo.current, i18n.language)} accessibilityRole="link" accessibilityLabel={t('orcamentos.verOficina')}
+        hitSlop={{ top: 8, bottom: 8, left: 12, right: 8 }}
+        style={({ pressed }) => ({ minHeight: 44, minWidth: 44, opacity: pressed ? 0.7 : 1 })}
+        className="flex-row items-center gap-1.5 px-3 rounded-full bg-blue-50 border border-blue-200">
+        <Ionicons name="storefront-outline" size={20} color="#1d4ed8" />
+        <Text className="text-sm font-semibold text-blue-700" numberOfLines={1}>{t('mensagens.verOficinaCurto')}</Text>
       </Pressable>
     ) : null),
   }), [tituloTela, oficinaId]); // eslint-disable-line react-hooks/exhaustive-deps

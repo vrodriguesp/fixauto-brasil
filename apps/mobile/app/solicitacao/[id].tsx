@@ -19,6 +19,7 @@ import RevisaoPendente from '../../components/RevisaoPendente';
 import { useAvisos } from '../../lib/avisos';
 import { abrirOficina } from '../../lib/oficina-link';
 import CartaoSituacao from '../../components/CartaoSituacao';
+import OpcaoCartao from '../../components/OpcaoCartao';
 import { situacaoDoPedido } from '../../lib/situacao';
 
 type Ordem = 'preco' | 'nota' | 'cedo';
@@ -316,16 +317,19 @@ export default function SolicitacaoDetailScreen() {
                 {(orc.disponibilidade || []).length > 0 && (orc.disponibilidade || []).every((slot: DisponibilidadeSlot) => !turnoDisponivel(slot.data_checkin, slot.turno as Turno)) && (
                   <Text className="text-sm text-amber-800 bg-amber-50 rounded-lg p-3 mb-2">{t('orcamentos.horariosVencidos')}</Text>
                 )}
+                {/* horario sugerido pela oficina: cartao inteiro tocavel com radio (teste do dono 31/10) */}
+                <View accessibilityRole="radiogroup">
                 {(orc.disponibilidade || []).filter((slot: DisponibilidadeSlot) => turnoDisponivel(slot.data_checkin, slot.turno as Turno)).map((slot: DisponibilidadeSlot) => (
-                  <Pressable
+                  <OpcaoCartao
                     key={slot.id}
+                    selecionado={slotSelecionado[orc.id] === slot.id}
                     onPress={() => setSlotSelecionado((prev) => ({ ...prev, [orc.id]: slot.id }))}
-                    className={`border rounded-lg px-3 py-2 mb-2 ${slotSelecionado[orc.id] === slot.id ? 'border-primary-600 bg-primary-50' : 'border-gray-200'}`}
-                  >
-                    <Text className="text-sm font-medium text-gray-800">{formatDate(slot.data_checkin, locale)} · {t(`orcamentos.turno_${slot.turno}`, slot.turno)} ({slot.turno === 'manha' ? '08:00-12:00' : '13:00-17:00'})</Text>
-                    {(slot as any).data_previsao_entrega ? <Text className="text-xs text-gray-500">{t('orcamentos.entregaPrevista', { data: formatDate((slot as any).data_previsao_entrega, locale) })}</Text> : null}
-                  </Pressable>
+                    icone="calendar-outline"
+                    titulo={`${formatDate(slot.data_checkin, locale)} · ${t(`orcamentos.turno_${slot.turno}`, slot.turno)} (${slot.turno === 'manha' ? '08:00-12:00' : '13:00-17:00'})`}
+                    subtitulo={(slot as any).data_previsao_entrega ? t('orcamentos.entregaPrevista', { data: formatDate((slot as any).data_previsao_entrega, locale) }) : null}
+                  />
                 ))}
+                </View>
                 <Pressable
                   onPress={() => handleAceitar(orc)}
                   disabled={processando === orc.id || !slotSelecionado[orc.id]}

@@ -216,7 +216,8 @@
     "pausar": "Paus",
     "audioIndisponivel": "Heli pole saadaval",
     "microfoneTitulo": "Mikrofon on välja lülitatud",
-    "microfoneTexto": "Helisõnumi saatmiseks luba seadetes juurdepääs mikrofonile."
+    "microfoneTexto": "Helisõnumi saatmiseks luba seadetes juurdepääs mikrofonile.",
+    "verOficinaCurto": "Töökoda"
   },
   "veiculos": {
     "titulo": "Minu sõidukid",

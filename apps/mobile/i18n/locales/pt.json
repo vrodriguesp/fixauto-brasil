@@ -216,7 +216,8 @@
     "pausar": "Pausar",
     "audioIndisponivel": "Áudio indisponível",
     "microfoneTitulo": "Microfone desativado",
-    "microfoneTexto": "Para enviar áudio, permita o acesso ao microfone nos Ajustes."
+    "microfoneTexto": "Para enviar áudio, permita o acesso ao microfone nos Ajustes.",
+    "verOficinaCurto": "Oficina"
   },
   "veiculos": {
     "titulo": "Meus veículos",

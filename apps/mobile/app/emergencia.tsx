@@ -14,7 +14,7 @@ import { fetchComPrazo } from '../lib/rede';
 import i18n from '../i18n';
 import { ErroApi, ErroUsuario, mensagemErro } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
-import { obterPosicao, enderecoDaPosicao } from '../lib/posicao';
+import { obterPosicao, enderecoDaPosicao, useLocalizacaoAoVoltar } from '../lib/posicao';
 import { regiaoSeguro, paisDoAcidente, PAISES_SEGURO, nomeDoPais } from '../lib/regiao';
 import VehicleCatalogPicker from '../components/VehicleCatalogPicker';
 import { arquivoDaFoto } from '../lib/anexo';
@@ -156,6 +156,8 @@ export default function EmergenciaScreen() {
   useEffect(() => {
     handleUsarLocalizacao(true).catch(() => {});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // permitiu nos Ajustes e voltou: busca a posicao sem precisar tocar no botao
+  useLocalizacaoAoVoltar(!coords && !buscandoLocal, () => { handleUsarLocalizacao(true).catch(() => {}); });
 
   // Tudo no servidor numa chamada so (/api/emergencia): acidente, fotos,
   // solicitacao e aviso as oficinas. O dono vem do login (Authorization).
