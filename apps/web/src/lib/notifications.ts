@@ -10,7 +10,10 @@ import { SITE_URL, siteNoIdioma, urlNoIdioma, idiomaDoSite } from './site-url';
 
 // Sem moeda informada: reais so para a versao do Brasil; euro no resto
 const moedaPadrao = (idioma?: string | null) => (idiomaDoSite(idioma) === 'pt' ? 'BRL' : 'EUR');
-import { FROM_EMAIL } from '@/lib/email';
+import { FROM_EMAIL, enviarEmail } from '@/lib/email';
+
+// teste local sem Resend: os e-mails viram arquivos (lib/email.ts, EMAIL_PASTA_TESTE)
+const podeEnviar = !!resend || !!process.env.EMAIL_PASTA_TESTE;
 
 // O SDK do Resend (v6) NAO lanca excecao quando o envio falha (dominio nao
 // verificado, destinatario invalido, limite de envio...) - so devolve
@@ -18,6 +21,11 @@ import { FROM_EMAIL } from '@/lib/email';
 // e nada ia pro log, mesmo sem o e-mail ter saido. Lancando aqui, o catch
 // que cada funcao ja tem passa a registrar a falha e retornar success: false.
 async function sendOrThrow(payload: Parameters<Resend['emails']['send']>[0]) {
+  if (!resend) {
+    const p = payload as { to: string | string[]; subject: string; html?: string };
+    if (!(await enviarEmail({ para: String(Array.isArray(p.to) ? p.to[0] : p.to), assunto: p.subject, html: p.html || '' }))) throw new Error('e-mail de teste nao gravado');
+    return;
+  }
   const { error } = await resend!.emails.send(payload);
   if (error) throw new Error(`Resend recusou o e-mail: ${error.name} - ${error.message}`);
 }
@@ -35,7 +43,7 @@ export async function sendAccidentNotificationEmail(params: {
   isRegistered: boolean;
   locale?: string;
 }) {
-  if (!resend) {
+  if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured - RESEND_API_KEY missing');
     return { success: false, error: 'Email service not configured' };
   }
@@ -98,7 +106,7 @@ export async function sendFuncionarioNovaSenhaEmail(params: {
   novaSenha: string;
   locale?: string;
 }) {
-  if (!resend) {
+  if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
@@ -148,7 +156,7 @@ export async function sendQuoteNotificationEmail(params: {
   solicitacaoId: string;
   locale?: string;
 }) {
-  if (!resend) {
+  if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
@@ -199,7 +207,7 @@ export async function sendServicoConcluidoEmail(params: {
   solicitacaoId: string;
   locale?: string;
 }) {
-  if (!resend) {
+  if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
@@ -362,7 +370,7 @@ export async function sendLeadParceiroEmail(params: {
   observacao?: string | null;
   pais?: string | null;
 }) {
-  if (!resend) {
+  if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured - RESEND_API_KEY missing');
     return { success: false, error: 'Email service not configured' };
   }
@@ -413,7 +421,7 @@ export async function sendPerguntaSiteEmail(params: {
   locale: string;
   pagina?: string;
 }) {
-  if (!resend) {
+  if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured - RESEND_API_KEY missing');
     return { success: false, error: 'Email service not configured' };
   }
@@ -466,7 +474,7 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
   oficinaCompradoraNome: string;
   locale?: string;
 }) {
-  if (!resend) {
+  if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
@@ -516,7 +524,7 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
   moeda?: string;
   locale?: string;
 }) {
-  if (!resend) {
+  if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
@@ -568,7 +576,7 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
   moeda?: string;
   locale?: string;
 }) {
-  if (!resend) {
+  if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
@@ -616,7 +624,7 @@ export async function sendPedidoPecaEntregueEmail(params: {
   pecaDescricao: string;
   locale?: string;
 }) {
-  if (!resend) {
+  if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
@@ -664,7 +672,7 @@ export async function sendOrcamentoAceitoPagamentoEmail(params: {
   solicitacaoId: string;
   locale?: string;
 }) {
-  if (!resend) {
+  if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
@@ -726,7 +734,7 @@ export async function sendOrcamentoAceitoOutroEmail(params: {
   emergenciaId: string;
   locale?: string;
 }) {
-  if (!resend) {
+  if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
