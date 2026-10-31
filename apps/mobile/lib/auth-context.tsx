@@ -7,6 +7,7 @@ import { supabase, isSupabaseConfigured } from './supabase';
 import i18n from '../i18n';
 import { API_BASE_URL } from './api';
 import { idiomaEscolhido } from './idiomas';
+import { removerPush } from './push';
 
 interface AuthContextType {
   user: Profile | null;
@@ -169,6 +170,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    // este aparelho para de receber o push desta conta (antes de perder o login)
+    await removerPush();
     await supabase.auth.signOut({ scope: 'local' });
     AsyncStorage.removeItem(CHAVE_PERFIL).catch(() => {});
     setUser(null);
