@@ -50,10 +50,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       {/* Barra superior só no mobile - logo + botão de menu */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-slate-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-xs">BF</span>
-          </div>
-          <p className="text-white font-bold text-sm">BipFix Admin</p>
+          <img src="/logo-dark-80.webp" alt="BipFix" width={103} height={24} className="h-6 w-auto" />
+          <p className="text-white font-bold text-sm">Admin</p>
         </div>
         <button
           onClick={() => setMenuAberto(true)}
@@ -82,12 +80,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       >
         <div className="p-6 border-b border-slate-700 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-slate-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">BF</span>
-            </div>
             <div>
-              <p className="text-white font-bold text-lg leading-tight">BipFix</p>
-              <p className="text-slate-400 text-xs">Admin</p>
+              <img src="/logo-dark-80.webp" alt="BipFix" width={137} height={32} className="h-8 w-auto" />
+              <p className="text-slate-400 text-xs mt-1">Admin</p>
             </div>
           </div>
           <button

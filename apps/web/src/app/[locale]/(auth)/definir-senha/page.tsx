@@ -74,9 +74,7 @@ export default function DefinirSenhaPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-lg">BF</span>
-          </div>
+          <img src="/logo-80.webp" alt="BipFix" width={188} height={40} className="h-10 w-auto mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900">{t('titulo')}</h1>
           <p className="text-gray-600 mt-2">
             {t('subtitulo')}
