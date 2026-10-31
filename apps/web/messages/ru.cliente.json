@@ -319,7 +319,7 @@
     "noDatesAvailable": "Сейчас нет доступных дат. Пожалуйста, свяжитесь с автосервисом, чтобы договориться о новом времени.",
     "shiftLabel": "Время: {shift}",
     "morningShift": "Утро (8:00–12:00)",
-    "afternoonShift": "День (13:00–18:00)",
+    "afternoonShift": "День (13:00–17:00)",
     "deliveryForecastInline": "Ожид. выдача: {date}",
     "rescheduling": "Переносим...",
     "confirmReschedule": "Подтвердить перенос"

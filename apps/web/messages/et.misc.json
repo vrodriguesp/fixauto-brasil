@@ -388,7 +388,7 @@
     "goToDashboardBtn": "Mine töölauale",
     "createAccountText": "Loo konto, et jälgida hinnapakkumisi ja valida töökoda.",
     "createAccountBtn": "Loo oma konto",
-    "headerTitle": "Tegin just avarii!",
+    "headerTitle": "Sattusin just avariisse!",
     "headerSubtitle": "Tee fotod ja saa kiirelt hinnapakkumised",
     "loggedInAs": "Sisse logitud kui <strong>{nome}</strong>",
     "step1Title": "Fotod avariist",
@@ -670,7 +670,7 @@
       },
       {
         "titulo": "7. Hinda teenust",
-        "intro": "Pärast üleandmist anna töökojale hinnang. Hinnang aitab teisi juhte ja seda küsitakse enne sinu järgmist päringut; nupp \"Tegin just avarii\" ei ole kunagi blokeeritud.",
+        "intro": "Pärast üleandmist anna töökojale hinnang. Hinnang aitab teisi juhte ja seda küsitakse enne sinu järgmist päringut; nupp \"Sattusin just avariisse\" ei ole kunagi blokeeritud.",
         "passos": [
           {
             "title": "Hinnang 1 kuni 5 tärni",
@@ -705,7 +705,7 @@
         ]
       },
       {
-        "titulo": "9. Avarii: nupp \"Tegin just avarii\"",
+        "titulo": "9. Avarii: nupp \"Sattusin just avariisse\"",
         "intro": "Selleks puhuks, kui oled just avariisse sattunud. Töötab ka ilma kontota ja näitab, mida teha vastavalt riigile, kus avarii juhtus, sinu keeles.",
         "passos": [
           {
@@ -798,7 +798,7 @@
             "desc": "Töökoda on kinnitatud ja aktiivne."
           }
         ],
-        "texto": "Teade ilmub töölaua kellasse ja jaotisesse Päringud. Igas päringus on fotod, kirjeldus, auto ja ligikaudne asukoht. Nupuga \"Tegin just avarii\" registreeritud õnnetused jõuavad prioriteediga ainult kereremondi töökodadesse (kokkupõrge, kereremont või värvimine). Kui määrad profiilis autode piiri ja töökoda on täis, lähevad kiireloomulised päringud esmalt teistele töökodadele.",
+        "texto": "Teade ilmub töölaua kellasse ja jaotisesse Päringud. Igas päringus on fotod, kirjeldus, auto ja ligikaudne asukoht. Nupuga \"Sattusin just avariisse\" registreeritud õnnetused jõuavad prioriteediga ainult kereremondi töökodadesse (kokkupõrge, kereremont või värvimine). Kui määrad profiilis autode piiri ja töökoda on täis, lähevad kiireloomulised päringud esmalt teistele töökodadele.",
         "nota": "Hoia erialad ja teeninduspiirkond täpsena, et saada ainult päringuid, mis sulle sobivad."
       },
       {

@@ -319,7 +319,7 @@
     "noDatesAvailable": "Hetkel pole vabu aegu saadaval. Uue aja kokkuleppimiseks võta ühendust töökojaga.",
     "shiftLabel": "Ajavahemik: {shift}",
     "morningShift": "Hommik (8–12)",
-    "afternoonShift": "Pärastlõuna (13–18)",
+    "afternoonShift": "Pärastlõuna (13–17)",
     "deliveryForecastInline": "Eeldatav valmimine: {date}",
     "rescheduling": "Muudan aega...",
     "confirmReschedule": "Kinnita uus aeg"
@@ -354,7 +354,7 @@
     "bloqueio": "Enne uut päringut hinda viimast tööd (võtab paar sekundit). Kui sul oli just õnnetus, kasuta avariinuppu.",
     "avaliarAgora": "Hinda kohe",
     "bloqueioTitulo": "Sinu hinnang on puudu",
-    "acidente": "Mul oli just õnnetus"
+    "acidente": "Sattusin just avariisse"
   },
   "revisaoOrcamento": {
     "titulo": "{oficina} pakkus hinnapakkumise muudatust",
