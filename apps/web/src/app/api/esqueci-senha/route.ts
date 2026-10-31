@@ -5,9 +5,8 @@ import { localePrefix, routing } from '@/i18n/routing';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
 
-const RESEND_KEY = process.env.RESEND_API_KEY;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com';
-import { FROM_EMAIL } from '@/lib/email';
+import { enviarEmail } from '@/lib/email';
 
 // Um pedido por e-mail a cada 2 min - sem isso, qualquer um encheria a
 // caixa de entrada de outra pessoa de e-mails de recuperacao. Em memoria:
@@ -73,19 +72,11 @@ export async function POST(req: NextRequest) {
     const prefixo = localePrefix(idiomaSite);
     const url = `${SITE_URL}${prefixo}/reset-password?token_hash=${encodeURIComponent(tokenHash)}&type=recovery`;
 
-    if (!RESEND_KEY) {
-      console.warn('[esqueci-senha] RESEND_API_KEY ausente - e-mail nao enviado');
-      return NextResponse.json({ success: true });
-    }
-
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: FROM_EMAIL,
-        to: email,
-        subject: s.subject,
-        html: `
+    // envio pelo ponto unico (lib/email.ts): no teste local vira arquivo
+    const enviado = await enviarEmail({
+      para: email,
+      assunto: s.subject,
+      html: `
           <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
             <div style="background:#0c4a6e;color:white;padding:24px;border-radius:12px 12px 0 0;">
               <h1 style="margin:0;font-size:24px;">BipFix</h1>
@@ -102,11 +93,10 @@ export async function POST(req: NextRequest) {
               <p style="font-size:12px;color:#9ca3af;">${s.ignore}<br>${s.footer}</p>
             </div>
           </div>
-        `,
-      }),
+      `,
     });
-    if (!res.ok) {
-      console.error('[esqueci-senha] Email error:', await res.text());
+    if (!enviado) {
+      console.error('[esqueci-senha] e-mail nao enviado');
       return NextResponse.json({ error: 'Falha ao enviar e-mail' }, { status: 502 });
     }
 

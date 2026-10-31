@@ -176,7 +176,21 @@
     "locationCurrentDetected": "Localização atual detectada",
     "errorGenericSubmit": "Erro ao registrar emergência",
     "erroLocalizacao": "Não conseguimos localizar o endereço. Ative a localização ou escreva a rua e a cidade.",
-    "fotoDica": "Dica: fotografe os 4 cantos do carro, o dano de perto e a placa do outro veículo."
+    "fotoDica": "Dica: fotografe os 4 cantos do carro, o dano de perto e a placa do outro veículo.",
+    "camposObrigatorios": "campo obrigatório",
+    "opcional": "opcional",
+    "loginTitulo": "Este e-mail já tem uma conta BipFix",
+    "loginTexto": "Entre para confirmar o registro do acidente. O que você preencheu continua aqui.",
+    "loginSenha": "Senha",
+    "loginEnviar": "Entrar e enviar o registro",
+    "loginErro": "E-mail ou senha incorretos.",
+    "loginNaoConfirmado": "Esta conta ainda não confirmou o e-mail. Abra o link que enviamos e tente de novo.",
+    "loginEsqueci": "Esqueceu a senha?",
+    "resetEnviado": "Enviamos um link para criar uma senha nova. Depois de criá-la você volta para esta página e o registro do acidente estará aqui para enviar.",
+    "rascunhoGuardado": "O que você preencheu, inclusive as fotos, fica guardado neste navegador por 24 horas.",
+    "rascunhoFotosNaoGuardadas": "Os dados ficam guardados neste navegador por 24 horas, mas as fotos não: se sair desta página, será preciso adicioná-las de novo.",
+    "rascunhoRestaurado": "Recuperamos o registro que você tinha preenchido. Confira e envie.",
+    "rascunhoSemFotos": "Recuperamos os dados que você tinha preenchido, mas não as fotos: adicione-as de novo e envie."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Registro do Acidente",
