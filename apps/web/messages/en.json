@@ -663,7 +663,8 @@
     "ARQUIVO_GRANDE": "File too large. Please send a smaller file.",
     "SEM_ITENS": "We couldn't find any items in the document. Please fill them in by hand.",
     "FOTO_INVALIDA": "The image couldn't be read. Try another photo.",
-    "IA_OCUPADA": "Automatic analysis is busy right now. Try again in a few minutes or fill it in by hand."
+    "IA_OCUPADA": "Automatic analysis is busy right now. Try again in a few minutes or fill it in by hand.",
+    "SERVICO_ENCERRADO": "The car has already been delivered (or the request was cancelled): the quote can no longer be changed."
   },
   "sobre": {
     "metaTitle": "About BipFix",

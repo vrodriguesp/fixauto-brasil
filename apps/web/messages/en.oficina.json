@@ -649,7 +649,10 @@
     "abrirConversa": "Open chat",
     "importarFoto": "Take a photo",
     "importarArquivo": "Choose a file or PDF",
-    "importarGrande": "The file is too large (max 10 MB). Try a smaller photo or PDF."
+    "importarGrande": "The file is too large (max 10 MB). Try a smaller photo or PDF.",
+    "orcamentoFechadoEntregue": "The car has already been delivered to the customer. The quote is closed and can no longer be changed.",
+    "orcamentoFechadoCancelado": "This request was cancelled. The quote can no longer be changed.",
+    "verPedido": "View request"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Password must be at least 8 characters",
@@ -925,7 +928,8 @@
       "expirado": "Expired"
     },
     "proporRevisao": "Propose a revision",
-    "avisoFaltas": "{count, plural, one {This customer has # recorded no-show} other {This customer has # recorded no-shows}}"
+    "avisoFaltas": "{count, plural, one {This customer has # recorded no-show} other {This customer has # recorded no-shows}}",
+    "orcamentoFechadoEntregue": "Car delivered: the quote is closed and can no longer be changed."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Vehicle received at the shop",

@@ -649,7 +649,10 @@
     "abrirConversa": "Abrir conversa",
     "importarFoto": "Tirar fotografia",
     "importarArquivo": "Escolher ficheiro ou PDF",
-    "importarGrande": "O ficheiro é demasiado grande (máx. 10 MB). Experimente uma fotografia ou um PDF mais pequeno."
+    "importarGrande": "O ficheiro é demasiado grande (máx. 10 MB). Experimente uma fotografia ou um PDF mais pequeno.",
+    "orcamentoFechadoEntregue": "O carro já foi entregue ao cliente. O orçamento está fechado e já não pode ser alterado.",
+    "orcamentoFechadoCancelado": "Este pedido foi cancelado. O orçamento já não pode ser alterado.",
+    "verPedido": "Ver pedido"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "A palavra-passe deve ter pelo menos 8 caracteres",
@@ -925,7 +928,8 @@
       "expirado": "Expirado"
     },
     "proporRevisao": "Propor revisão",
-    "avisoFaltas": "{count, plural, one {Este cliente tem # falta registada} other {Este cliente tem # faltas registadas}}"
+    "avisoFaltas": "{count, plural, one {Este cliente tem # falta registada} other {Este cliente tem # faltas registadas}}",
+    "orcamentoFechadoEntregue": "Carro entregue: o orçamento está fechado e já não pode ser alterado."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Viatura recebida na oficina",

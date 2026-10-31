@@ -649,7 +649,10 @@
     "abrirConversa": "Apri la chat",
     "importarFoto": "Scatta una foto",
     "importarArquivo": "Scegli un file o PDF",
-    "importarGrande": "Il file è troppo grande (max 10 MB). Prova una foto o un PDF più piccolo."
+    "importarGrande": "Il file è troppo grande (max 10 MB). Prova una foto o un PDF più piccolo.",
+    "orcamentoFechadoEntregue": "L'auto è già stata consegnata al cliente. Il preventivo è chiuso e non può più essere modificato.",
+    "orcamentoFechadoCancelado": "Questa richiesta è stata annullata. Il preventivo non può più essere modificato.",
+    "verPedido": "Vedi richiesta"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "La password deve avere almeno 8 caratteri",
@@ -925,7 +928,8 @@
       "expirado": "Scaduto"
     },
     "proporRevisao": "Proponi revisione",
-    "avisoFaltas": "{count, plural, one {Questo cliente ha # assenza registrata} other {Questo cliente ha # assenze registrate}}"
+    "avisoFaltas": "{count, plural, one {Questo cliente ha # assenza registrata} other {Questo cliente ha # assenze registrate}}",
+    "orcamentoFechadoEntregue": "Auto consegnata: il preventivo è chiuso e non può più essere modificato."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Veicolo ricevuto in officina",

@@ -74,12 +74,15 @@ export default function OficinaMensagensPage() {
     // responde depois que ele escrever (regra do dono, 27/10)
     (async () => {
       const { data: s } = await supabase.from('solicitacoes').select('status, cliente_id').eq('id', id).maybeSingle();
+      // entregue/cancelado: sem botao de refazer o orcamento (teste do dono 31/10)
+      setEncerrado(s?.status === 'concluida' || s?.status === 'cancelada');
       if (s?.status !== 'concluida') return;
       const { data: ag } = await supabase.from('agenda').select('data_fim, data_inicio').eq('solicitacao_id', id).eq('oficina_id', ofId).eq('status', 'concluido').limit(1).maybeSingle();
       setEntrega({ em: (ag as any)?.data_fim || (ag as any)?.data_inicio || '1970-01-01', cliente: (s as any).cliente_id });
     })();
   }, [id, oficina?.id]);
   const [entrega, setEntrega] = useState<{ em: string; cliente: string } | null>(null);
+  const [encerrado, setEncerrado] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
   const [uploadingAudio, setUploadingAudio] = useState(false);
@@ -388,8 +391,10 @@ export default function OficinaMensagensPage() {
             </p>
           </div>
         </div>
+        {!encerrado && (
         <Link
           href={`/oficina/orcamento/${id}`}
+          data-testid="refazer-orcamento"
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -397,6 +402,7 @@ export default function OficinaMensagensPage() {
           </svg>
           {hasOrcamento ? t('refazerOrcamento') : t('fazerOrcamento')}
         </Link>
+        )}
       </div>
 
       {pagadores.length > 0 && (
