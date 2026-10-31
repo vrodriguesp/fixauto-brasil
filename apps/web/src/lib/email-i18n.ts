@@ -7,9 +7,10 @@ export type EmailLocale = 'pt' | 'pt-PT' | 'en' | 'et' | 'it' | 'ru';
 
 export function resolveEmailLocale(locale: string | null | undefined): EmailLocale {
   if (locale === 'pt-PT' || locale === 'en' || locale === 'et' || locale === 'it' || locale === 'ru') return locale;
-  // Sem idioma (contas antigas) ou outra variante de portugues -> pt (Brasil);
-  // qualquer outro idioma sem textos proprios -> ingles, nao portugues.
-  if (!locale || locale.startsWith('pt')) return 'pt';
+  // Outra variante de portugues -> pt (Brasil). Sem idioma ou idioma sem
+  // textos proprios -> ingles (regra unica: idioma de quem recebe, senao en;
+  // antes, sem idioma saia em portugues - feedback do dono 31/10).
+  if (locale?.startsWith('pt')) return 'pt';
   return 'en';
 }
 
