@@ -91,3 +91,17 @@
 @media (max-width: 1279.98px) {
   body.com-barra-inferior { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
 }
+
+/* Conversa (mensagens): cabe na parte visivel da tela, com a caixa de digitar
+   sempre a vista. No iPhone a caixa ficava atras da barra de baixo da oficina
+   e era preciso rolar (teste do dono, 31/10). dvh = altura visivel no Safari. */
+.altura-conversa { height: calc(100vh - 4rem); height: calc(100dvh - 4rem); }
+main:has(.altura-conversa) { min-height: 0; }
+@media (max-width: 1279.98px) {
+  body.com-barra-inferior .altura-conversa {
+    height: calc(100vh - 4rem - 56px - env(safe-area-inset-bottom));
+    height: calc(100dvh - 4rem - 56px - env(safe-area-inset-bottom));
+  }
+  /* a barra de baixo ja tem a margem do iPhone */
+  body.com-barra-inferior .conversa-composer { padding-bottom: 0.75rem; }
+}

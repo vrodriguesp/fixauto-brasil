@@ -63,6 +63,7 @@ export default function ClienteMensagensPage() {
   const pagadorId = modoPagador ? (user?.id ?? null) : null;
   const [opcoesOficina, setOpcoesOficina] = useState<{ id: string; nome: string }[] | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const listaRef = useRef<HTMLDivElement>(null);
   const tGar = useTranslations('garantia');
   const [conversaFechada, setConversaFechada] = useState(false);
   useEffect(() => {
@@ -76,7 +77,9 @@ export default function ClienteMensagensPage() {
   const { uploadAudio } = useAudioRecorder();
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // rola so a lista: scrollIntoView rolava a pagina toda no iPhone (31/10)
+    const lista = listaRef.current;
+    if (lista) lista.scrollTo({ top: lista.scrollHeight, behavior: 'smooth' });
   };
 
   // Cada oficina tem a sua conversa com o cliente: ?oficina=<id> diz qual.
@@ -366,7 +369,7 @@ export default function ClienteMensagensPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] h-[calc(100dvh-4rem)] max-w-4xl mx-auto">
+    <div className="altura-conversa flex flex-col max-w-4xl mx-auto">
       {/* Header */}
       <div className="bg-white border-b px-4 py-3 flex items-center gap-3 flex-shrink-0">
         <Link
@@ -402,7 +405,7 @@ export default function ClienteMensagensPage() {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 bg-gray-50">
+      <div ref={listaRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 bg-gray-50">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
@@ -475,7 +478,7 @@ export default function ClienteMensagensPage() {
       {conversaFechada ? (
         <p className="bg-gray-100 border-t px-4 py-3 text-sm text-gray-600 flex-shrink-0" role="status">{tGar('conversaEncerrada')}</p>
       ) : (
-      <div className="bg-white border-t px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex-shrink-0">
+      <div className="conversa-composer bg-white border-t px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex-shrink-0">
         {erroEnvio && <p className="text-xs text-red-700 mb-2" role="alert">{t('erroEnviar')}</p>}
         {showAudioRecorder ? (
           <AudioRecorder onRecorded={handleAudioRecorded} />

@@ -63,6 +63,7 @@ export default function OficinaMensagensPage() {
   const [solCarregada, setSolCarregada] = useState(false);
   const [erroEnvio, setErroEnvio] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const listaRef = useRef<HTMLDivElement>(null);
   const tGar = useTranslations('garantia');
   const [conversaFechada, setConversaFechada] = useState(false);
   useEffect(() => {
@@ -87,7 +88,9 @@ export default function OficinaMensagensPage() {
   const [showPerguntas, setShowPerguntas] = useState(true);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // rola so a lista: scrollIntoView rolava a pagina toda no iPhone (31/10)
+    const lista = listaRef.current;
+    if (lista) lista.scrollTo({ top: lista.scrollHeight, behavior: 'smooth' });
   };
 
   // Fetch solicitacao info
@@ -356,7 +359,7 @@ export default function OficinaMensagensPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] h-[calc(100dvh-4rem)] max-w-4xl mx-auto">
+    <div className="altura-conversa flex flex-col max-w-4xl mx-auto">
       {/* Header */}
       <div className="bg-white border-b px-4 py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
@@ -412,7 +415,7 @@ export default function OficinaMensagensPage() {
       )}
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 bg-gray-50">
+      <div ref={listaRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 bg-gray-50">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
@@ -505,7 +508,7 @@ export default function OficinaMensagensPage() {
       ) : entrega && !messages.some((m) => (m.remetente_id === entrega.cliente || (!!pagadorId && m.remetente_id === pagadorId)) && m.created_at > entrega.em) ? (
         <p className="bg-gray-100 border-t px-4 py-3 text-sm text-gray-600 flex-shrink-0" role="status">{tGar('soClienteReabre')}</p>
       ) : (
-      <div className="bg-white border-t px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex-shrink-0">
+      <div className="conversa-composer bg-white border-t px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex-shrink-0">
         {erroEnvio && <p className="text-xs text-red-700 mb-2" role="alert">{t('erroEnviar')}</p>}
         {showAudioRecorder ? (
           <AudioRecorder onRecorded={handleAudioRecorded} />
