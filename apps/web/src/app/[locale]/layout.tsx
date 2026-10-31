@@ -5,7 +5,6 @@ import { notFound } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
 import BarraCarregando from '@/components/layout/BarraCarregando';
 import SiteFooter from '@/components/layout/SiteFooter';
-import SincronizarIdioma from '@/components/i18n/SincronizarIdioma';
 import { contarOficinasPublicas } from '@/lib/oficinas-publicas';
 import SugestaoIdioma from '@/components/layout/SugestaoIdioma';
 import Analytics from '@/components/Analytics';
@@ -134,7 +133,6 @@ export default async function LocaleLayout({
       <StructuredData data={websiteSchema} />
       <Analytics />
       <SugestaoIdioma />
-      <SincronizarIdioma />
       {/* WCAG 2.4.1: pular direto para o conteudo (teclado/leitor de tela) */}
       <a href="#conteudo" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-white focus:text-primary-700 focus:px-4 focus:py-2 focus:rounded-lg focus:shadow">
         {t('pularConteudo')}
