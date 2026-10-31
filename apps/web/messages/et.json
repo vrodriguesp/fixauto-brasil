@@ -97,7 +97,7 @@
   },
   "paraOficinas": {
     "metaTitle": "Uued kliendid töökojale + tasuta töökoja tarkvara",
-    "metaDescription": "Hinnapäringud Tallinna juhtidelt otse sinu töökotta – 0 € liitumistasu, 0 % komisjoni. Lisaks tasuta autotöökoja tarkvara: ajakava ja pakkumised.",
+    "metaDescription": "Hinnapäringud Tallinna juhtidelt otse sinu töökotta – 0 € liitumistasu, 0 % komisjonitasu. Lisaks tasuta autotöökoja tarkvara: ajakava ja pakkumised.",
     "metaKeywords": [
       "autotöökoja haldustarkvara",
       "töökoja juhtimissüsteem",
@@ -120,7 +120,7 @@
     "heroTexto": "Autojuhid saadavad remondipäringu koos fotodega, sina saadad hinnapakkumise ja klient valib. Avalik profiil ja päris arvustused toovad sind nähtavale. Lisaks tasuta töökoja tarkvara: ajakava, hinnapakkumised ja meeskond ühes kohas.",
     "ctaVerOficinas": "Vaata töökodasid platvormil",
     "funcTitulo": "Lisaks: tasuta autotöökoja tarkvara",
-    "funcSubtitulo": "Ajakava, hinnapakkumised, kliendivestlus, meeskond ja varuosad ühes kohas – ka tarkvara eest 0 €. Kiire ülevaade igast funktsioonist, ilma jututa.",
+    "funcSubtitulo": "Ajakava, hinnapakkumised, kliendivestlus, meeskond ja varuosad ühes kohas – ka tarkvara eest 0 €. Kiire ülevaade igast funktsioonist, ilma pikema jututa.",
     "funcCategorias": [
       {
         "titulo": "Kliendid ja nähtavus",
@@ -156,7 +156,7 @@
         "itens": [
           "Hinnapäringud piirkonna partnerpoodidelt",
           "Hinnapäringud ka naabertöökodadelt",
-          "Ülejäänud laoseisu müük teistele töökodadele",
+          "Üleliigse laovaru müük teistele töökodadele",
           "Vestlus tarnijaga enne tellimuse kinnitamist"
         ]
       },
@@ -165,7 +165,7 @@
         "itens": [
           "Töökodadele praegu tasuta: ilma komisjonitasu ja kuutasuta",
           "Kui muudame seda, kuidas platvorm autojuhtidelt või töökodadelt tasu võtab, teatame sulle sellest vähemalt 30 kalendripäeva ette.",
-          "Täielik läbipaistvus selles, mida ja millal küsitakse"
+          "Täielik läbipaistvus selles, mille eest ja millal tasu võetakse"
         ]
       },
       {
@@ -178,7 +178,7 @@
       }
     ],
     "doresTitulo": "Igapäevased probleemid, mida BipFix lahendab",
-    "doresSubtitulo": "Loodud töökoja juhtimise päris argipäeva jaoks, mitte ainult suurtele kettidele",
+    "doresSubtitulo": "Loodud töökoja tegeliku argipäeva jaoks, mitte ainult suurtele kettidele",
     "dores": [
       {
         "dor": "Ajakava paberil või tabelis, raske näha, kes mida teeb",
@@ -209,7 +209,7 @@
     "steps": [
       {
         "title": "Registreeru",
-        "description": "Täielik profiil aadressi, eriala ja fotodega, valmis mõne minutiga"
+        "description": "Täielik profiil aadressi, erialade ja fotodega – valmis mõne minutiga"
       },
       {
         "title": "Ilmu otsingusse",
@@ -239,7 +239,7 @@
       },
       {
         "pergunta": "Kas BipFix on tasuta autoteeninduse programm ja kas see asendab minu praeguse tarkvara?",
-        "resposta": "Jah, tarkvara on töökodadele tasuta – 0 € ja 0 % komisjoni. Ajakava, hinnapakkumised, kliendivestlus, meeskond ja varuosade päringud on ühes kohas. Oma raamatupidamis- või arveldusprogrammi võid edasi kasutada; BipFix ei nõua sellest loobumist."
+        "resposta": "Jah, tarkvara on töökodadele tasuta – 0 € ja 0 % komisjonitasu. Ajakava, hinnapakkumised, kliendivestlus, meeskond ja varuosade päringud on ühes kohas. Oma raamatupidamis- või arveldusprogrammi võid edasi kasutada; BipFix ei nõua sellest loobumist."
       },
       {
         "pergunta": "Kas süsteem asendab Exceli tabelit või paberkalendrit?",
@@ -269,7 +269,7 @@
     "heroUrgencia": "Liitu varakult – vähem konkurentsi, rohkem päringuid",
     "heroVantagens": [
       "0 € liitumistasu",
-      "0 % komisjoni",
+      "0 % komisjonitasu",
       "Kaarti pole vaja",
       "Lõpeta igal ajal",
       "Muudatustest teatame 30 päeva ette"
@@ -307,7 +307,7 @@
   },
   "home": {
     "metaTitle": "Autoremont Tallinnas: võrdle hinnapakkumisi | BipFix",
-    "metaDescription": "Tee oma auto kahjustusest pildid, saa hinnapakkumised kontrollitud töökodadelt sinu lähedal ja broneeri remont mõne minutiga. BipFix käivitub esmalt Tallinnas.",
+    "metaDescription": "Pildista oma auto kahjustust, saa hinnapakkumised kontrollitud töökodadelt sinu lähedal ja broneeri remont mõne minutiga. BipFix käivitub esmalt Tallinnas.",
     "metaKeywords": [
       "autotöökoda minu lähedal",
       "autoremondi hinnapakkumine",
@@ -337,21 +337,21 @@
     "step4Texto": "Nõustu parima hinnapakkumisega ja jälgi oma sõiduki remonti",
     "oficinasBadge": "TÖÖKODADELE: LIITUMINE ON TASUTA",
     "oficinasTitulo": "Autotöökodadele ja varuosade müüjatele",
-    "oficinasTexto": "Koonda oma teenused ühele platvormile ja saa nähtavust uute klientide seas oma piirkonnas — ilma komisjonitasuta selles algfaasis.",
+    "oficinasTexto": "Koonda oma teenused ühele platvormile ja ole nähtav oma piirkonna uutele klientidele — selles algfaasis ilma komisjonitasuta.",
     "feature1": "Saa automaatselt päringuid lähedal asuvatelt klientidelt",
     "feature2": "Saada struktureeritud ja professionaalseid hinnapakkumisi",
-    "feature3": "Halda oma ajakava nii platvormi kui väliste tööde jaoks",
+    "feature3": "Halda ühes ajakavas nii platvormi kaudu tulnud kui ka muid töid",
     "feature4": "Kasvata oma mainet klientide hinnangute kaudu",
     "saibaMais": "Loe lähemalt",
     "mock1Titulo": "Uus päring",
-    "mock1Texto": "Kokkupõrge - VW Golf 2021 - 3 km sinust",
+    "mock1Texto": "Kokkupõrge - VW Golf 2021 - 3 km kaugusel",
     "mock2Titulo": "Hinnapakkumine kinnitatud!",
     "mock2Texto": "Kerekahjustus - Toyota Corolla 2023",
     "mock3Titulo": "Uus hinnang: 5 tärni",
     "mock3Texto": "\"Suurepärane töö, soovitan soojalt!\"",
     "porQueBadge": "AMBITSIOONIKAS PROJEKT, ALLES TEEKONNA ALGUSES",
     "porQueTitulo": "Miks me BipFixi ehitame",
-    "porQueTexto1": "Täna sõltub auto remondikoha valik tavaliselt ainult soovitusest või sellest, milline töökoda on lähim — ilma võimaluseta võrrelda hinda, tähtaega või tehtud tööde tausta. Usume, et juhid väärivad läbipaistvust ja head töökojad väärivad, et nende tehtud töö leitakse üles.",
+    "porQueTexto1": "Täna sõltub auto remondikoha valik tavaliselt ainult soovitusest või sellest, milline töökoda on lähim — ilma võimaluseta võrrelda hinda, tähtaega või tehtud tööde tausta. Usume, et juhid väärivad läbipaistvust ja head töökojad väärivad, et neid leitaks üles nende tehtud töö põhjal.",
     "porQueTexto2": "Oleme sõna otseses mõttes alles alguses: valime esimesed partnertöökojad ja varuosade müüjad, et käivituda täie tähelepanuga üks linn korraga, mitte kasvada kiiresti ilma kvaliteedikontrollita.",
     "parceiroTitulo": "Sul on autotöökoda? Liitu tasuta",
     "parceiroTexto": "Liidame praegu esimesi töökodasid Tallinnas. Kui oled autojuht, saad oma päringu juba saata: edastame selle töökodadele kohe, kui nad liituvad, ja anname sulle teada. Kui sul on autotöökoda, on liitumine tasuta – ilma komisjonitasu ja kaardita.",
@@ -380,7 +380,7 @@
       },
       {
         "pergunta": "Milliseid teenuseid töökojad pakuvad?",
-        "resposta": "Platvormil olevad töökojad pakuvad mitmesuguseid teenuseid nagu kerekahjustuste parandus, värvimine, üldmehaanika, autoelektrika, klaasivahetus, rataste joondamine, tasakaalustamine, kliimaseadmed ja palju muud. Iga töökoda toob oma erialad profiilil välja."
+        "resposta": "Platvormil olevad töökojad pakuvad mitmesuguseid teenuseid nagu kerekahjustuste parandus, värvimine, üldmehaanika, autoelektrika, klaasivahetus, sillareguleerimine, rataste tasakaalustamine, kliimaseadmed ja palju muud. Iga töökoda toob oma erialad profiilil välja."
       },
       {
         "pergunta": "Kas mõni töökoda maksab, et olla eespool?",
@@ -443,7 +443,7 @@
       "em_andamento": "Töös",
       "concluida": "Lõpetatud",
       "cancelada": "Tühistatud",
-      "no_show": "Ei tulnud kohale"
+      "no_show": "Ei ilmunud kohale"
     },
     "statusOrcamento": {
       "enviado": "Saadetud",
@@ -491,14 +491,14 @@
       "verificacao_freios": "Pidurite kontroll",
       "troca_pastilhas_freio": "Piduriklotside vahetus",
       "troca_discos_freio": "Piduriketaste vahetus",
-      "alinhamento_balanceamento": "Rataste joondamine ja tasakaalustamine",
+      "alinhamento_balanceamento": "Sillareguleerimine ja rataste tasakaalustamine",
       "troca_correia_dentada": "Hammasrihma vahetus",
       "troca_velas": "Süüteküünalde vahetus",
-      "revisao_suspensao": "Vedrustuse ülevaatus",
+      "revisao_suspensao": "Vedrustuse kontroll",
       "troca_amortecedores": "Amortisaatorite vahetus",
       "troca_fluido_freio": "Pidurivedeliku vahetus",
       "troca_fluido_arrefecimento": "Jahutusvedeliku vahetus",
-      "revisao_completa_km": "Täisülevaatus (läbisõidu järgi)"
+      "revisao_completa_km": "Täishooldus (läbisõidu järgi)"
     },
     "servicosMecanica": {
       "motor_barulho_estranho": "Mootor - kummaline müra",
@@ -506,14 +506,14 @@
       "motor_superaquecimento": "Mootor - ülekuumenemine",
       "cambio_dificuldade_engatar": "Käigukast - käik läheb raskelt sisse",
       "cambio_barulho_troca_marcha": "Käigukast - müra käigu vahetamisel",
-      "embreagem_patinando": "Sidur - libisemine",
-      "embreagem_dura": "Sidur - jäik",
+      "embreagem_patinando": "Sidur - libiseb",
+      "embreagem_dura": "Sidur - raske",
       "freio_barulho_frear": "Pidurid - müra pidurdamisel",
       "freio_pedal_mole": "Pidurid - pehme pedaal",
       "suspensao_barulho": "Vedrustus - müra",
       "suspensao_carro_puxando": "Vedrustus - auto tõmbab kõrvale",
-      "escapamento_barulho": "Summuti - müra",
-      "escapamento_vazamento": "Summuti - leke",
+      "escapamento_barulho": "Väljalaskesüsteem - müra",
+      "escapamento_vazamento": "Väljalaskesüsteem - leke",
       "direcao_dura_folga": "Rool - raske või lõtkuga",
       "vazamento_oleo": "Õlileke",
       "vazamento_agua": "Veeleke",
@@ -526,10 +526,10 @@
       "motor_arranque": "Starter",
       "farois_lanternas": "Esituled / tagatuled",
       "vidro_eletrico": "Elektriaken",
-      "trava_eletrica": "Elektriline lukustus",
+      "trava_eletrica": "Kesklukustus",
       "ar_condicionado": "Kliimaseade",
       "painel_luzes_alerta": "Armatuurlaud - hoiatustuled",
-      "central_multimidia": "Multimeediakeskus",
+      "central_multimidia": "Multimeediasüsteem",
       "sensores_estacionamento_re": "Andurid (parkimine, tagurdamine)",
       "chicote_eletrico": "Elektrijuhtmestik",
       "outro_problema_eletrico": "Muu elektriprobleem"
@@ -538,10 +538,10 @@
       "troca_pneus": "Rehvide vahetus",
       "rodizio_pneus": "Rehvide rotatsioon",
       "conserto_furo": "Rehviaugu parandus",
-      "alinhamento": "Joondamine",
+      "alinhamento": "Sillareguleerimine",
       "balanceamento": "Tasakaalustamine",
       "calibragem": "Rehvirõhu kontroll",
-      "troca_roda_calota": "Ratta / rattakapi vahetus"
+      "troca_roda_calota": "Ratta / ilukilbi vahetus"
     },
     "tiposItem": {
       "mao_de_obra": "Töö",
@@ -582,10 +582,10 @@
     "analisarComIA": "Analüüsi AI-ga",
     "titulo": "AI analüüs",
     "estimativaCusto": "Kulude hinnang",
-    "pecasAfetadas": "Mõjutatud osad",
+    "pecasAfetadas": "Kahjustatud osad",
     "ocultarChecklist": "Peida kontrollnimekiri",
     "checklistInspecao": "Ülevaatuse kontrollnimekiri ({count} punkti)",
-    "confianca": "Kindlus: {percent}%",
+    "confianca": "Kindlusaste: {percent}%",
     "severidadeLeve": "Kerge",
     "severidadeModerado": "Mõõdukas",
     "severidadeGrave": "Tõsine",
@@ -605,7 +605,7 @@
   },
   "login": {
     "erroDesativado": "See konto on deaktiveeritud. Võta ühendust klienditoega.",
-    "erroSessaoExpirada": "Sinu seanss aegus turvalisuse tõttu. Palun logi uuesti sisse.",
+    "erroSessaoExpirada": "Sinu seanss aegus turvakaalutlustel. Palun logi uuesti sisse.",
     "erroPreenchaCampos": "Sisesta e-post ja parool",
     "erroPreenchaEmail": "Sisesta oma e-post",
     "erroEnviar": "Saatmine ebaõnnestus. Palun proovi uuesti.",
@@ -663,7 +663,7 @@
     "REVISAO_SEM_MUDANCA": "Summa on sama mis kinnitatud hinnapakkumisel.",
     "EMAIL_DE_OUTRA_CONTA": "See e-post kuulub juba teisele kontole (klient või pood). Kasuta töötajale teist e-posti.",
     "CHECKIN_JA_FEITO": "Selle auto check-in on juba tehtud.",
-    "CHECKIN_FUTURO": "Check-in on broneeritud teiseks päevaks. Kinnita, et seda varasemaks tuua.",
+    "CHECKIN_FUTURO": "Check-in on broneeritud teiseks päevaks. Kinnita, kui soovid selle juba täna teha.",
     "SEM_CHECKIN": "Tee enne etappide lisamist check-in.",
     "TIPO_ARQUIVO": "Failitüüpi ei toetata. Saada foto (JPG, PNG) või PDF.",
     "ARQUIVO_GRANDE": "Fail on liiga suur. Saada väiksem fail.",
@@ -673,7 +673,7 @@
   },
   "sobre": {
     "metaTitle": "BipFixist",
-    "metaDescription": "Kes me oleme, millises faasis oleme ja kuidas BipFix töötab: läbipaistvad remondipakkumised, kontrollitud hinnangud ja mitte ühtegi tasulist kohta.",
+    "metaDescription": "Kes me oleme, millises faasis oleme ja kuidas BipFix töötab: läbipaistvad remondipakkumised, kontrollitud hinnangud ja ühtegi tasulist positsiooni ei ole.",
     "titulo": "BipFixist",
     "intro": "BipFix ühendab remonti vajavad autojuhid sõltumatute töökodadega: kirjeldad probleemi fotodega, saad üksikasjalikud hinnapakkumised, võrdled neid ja jälgid remonti. BipFix on ainult platvorm — me ei remondi autosid ega müü varuosi.",
     "estagioTitulo": "Kus me praegu oleme",
@@ -682,7 +682,7 @@
     "empresaTexto": "BipFixi haldab RPyrus OÜ, Eestis registreeritud osaühing. Registrikood: 17628754. Registrijärgne aadress: Tartu mnt 67/1-13b, 10115 Tallinn.",
     "principiosTitulo": "Kuidas me töötame",
     "principio1": "Ükski töökoda ei saa maksta, et olla eespool.",
-    "principio2": "Hinnangu saab anda ainult see, kes töö tellis ja lõpetas.",
+    "principio2": "Hinnangu saab anda ainult see, kes töö tellis ja kelle töö on lõpule viidud.",
     "principio3": "Hinnad määravad töökojad; autojuhtidele on BipFix tasuta.",
     "principio4": "Sinu andmeid töödeldakse isikuandmete kaitse üldmääruse (GDPR) järgi ja neid ei müüda kunagi.",
     "contatoTitulo": "Kontakt",
@@ -707,7 +707,7 @@
     "ate": "kuni {data}",
     "falarComOficina": "Kirjuta töökojale",
     "noOrcamento": "Garantii: {dias} päeva alates üleandmisest",
-    "sem": "Garantiita",
+    "sem": "Garantii puudub",
     "documento": "Ava hinnapakkumise dokument",
     "conversaEncerrada": "Vestlus on suletud: töö on lõpetatud ja garantii on lõppenud (või seda töökoda ei valitud).",
     "soClienteReabre": "Töö on üle antud: garantii ajal saab vestluse uuesti avada ainult klient. Saad vastata, kui ta kirjutab."
