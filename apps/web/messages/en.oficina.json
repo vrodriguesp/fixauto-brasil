@@ -301,13 +301,13 @@
     "subtituloGeral": "One step at a time. Choose Guided mode for detailed instructions, or Self-paced if you'd rather explore on your own.",
     "mecanico": {
       "meusVeiculos": {
-        "titulo": "My Vehicles: check-in and stages",
+        "titulo": "Today: arrival and stages of your cars",
         "resumo": "Here you only see the vehicles assigned to you. Check the car in when it arrives, and log each repair stage (diagnosis, work in progress, etc.) so the shop and the customer can track progress.",
         "passosGuiados": [
-          "Open Workshop in the menu (your vehicle list, called \"My Vehicles\").",
-          "In the \"Waiting\" tab, click \"Check-in\" on the vehicle that arrived.",
-          "Click \"+ Stage\" to log progress (e.g. Diagnosis, In progress, Final test).",
-          "Click the vehicle row to see the full timeline and message the customer if needed."
+          "Open Today in the menu: only the cars assigned to you are shown.",
+          "Under \"Arriving today\", tap \"Arrived\" on the car that arrived, then \"Confirm arrival\".",
+          "Tap \"Update stage\" to log progress (e.g. Checking the problem, Repairing).",
+          "Tap the car's row to see its stages; to talk to the customer, tap \"Message\"."
         ],
         "desafio": "Check in a vehicle assigned to you and log at least one maintenance stage.",
         "dica": "Final delivery (closing the service) is done by the shop owner or an administrator, not by you."
@@ -316,7 +316,7 @@
         "titulo": "Internal notes (talk to the owner without the customer seeing)",
         "resumo": "Inside each vehicle there's an \"Internal notes\" box just for the team — owner and mechanic. Use it for things like \"missing a part, already ordered\" or to ask a question, without the customer seeing it. It's different from the \"Message\" button, which talks directly to the customer.",
         "passosGuiados": [
-          "Open Workshop in the menu and click a vehicle to expand the details.",
+          "Open Today in the menu and tap a car's row to see the details.",
           "Scroll to the yellow \"Internal notes (not visible to the customer)\" box.",
           "Write your note and click Send — the owner gets a notification right away, in the menu bell."
         ],
@@ -367,19 +367,19 @@
         "titulo": "Schedule, check-in and delivery",
         "resumo": "Once the customer accepts the quote, the vehicle enters your schedule. You check it in when it arrives, log the repair stages, and confirm delivery at the end.",
         "passosGuiados": [
-          "Open Workshop in the menu (list of vehicles in service).",
-          "In the \"Waiting\" tab, click \"Check-in\" on the car that arrived. If your workshop has bays set up, choose the lift or bay in \"Put on\".",
-          "Click \"+ Stage\" to log progress (e.g. Diagnosis, In progress).",
-          "When you're done, click \"Delivery\" to close out the service."
+          "Open Today in the menu: it lists the cars arriving, in the workshop or leaving today.",
+          "Under \"Arriving today\", tap \"Arrived\" on the car that arrived. Choose who will do it and, if you have bays set up, where the car goes; then tap \"Confirm arrival\".",
+          "Tap \"Update stage\" to log progress (e.g. Checking the problem, Repairing).",
+          "When the job is done, tap \"Hand over\" to close it."
         ],
-        "desafio": "Check in a vehicle (from the platform or manually, via Manual Check-in) and log at least one maintenance stage.",
-        "dica": "A car arrived without going through the site? Use More → Manual Check-in and leave \"The car is already here\" ticked: it goes straight to \"in the workshop\"."
+        "desafio": "Log the arrival of a car (from a request or with \"+ Walk-in car\") and at least one stage.",
+        "dica": "A car arrived without coming through the site? In Today, tap \"+ Walk-in car\" and keep \"The car is already here\" ticked: it goes straight to \"in the workshop\"."
       },
       "notasInternas": {
         "titulo": "Internal notes with the team",
         "resumo": "Inside each vehicle there's an \"Internal notes\" box just for you and your mechanics — coordination, alerts, questions about the service, without any of it showing up for the customer (unlike the \"Message\" button, which talks to the customer). When someone writes, you get a notification right away in the menu bell.",
         "passosGuiados": [
-          "Open Workshop in the menu and click a vehicle to expand the details.",
+          "Open Today in the menu and tap a car's row to see the details.",
           "Scroll to the yellow \"Internal notes (not visible to the customer)\" box.",
           "Write something and click Send."
         ],

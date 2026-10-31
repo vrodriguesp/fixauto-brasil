@@ -904,7 +904,7 @@
       },
       {
         "titulo": "7. Etapas da reparação e entrega",
-        "intro": "Em Oficina, registe cada etapa. O cliente é avisado a cada mudança:",
+        "intro": "No ecrã Hoje, registe cada fase. O cliente é avisado a cada mudança:",
         "itens": [
           {
             "label": "Recebido e diagnóstico",

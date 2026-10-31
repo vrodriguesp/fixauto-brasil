@@ -301,13 +301,13 @@
     "subtituloGeral": "Um passo de cada vez. Escolha o modo Guiado se quiser instruções detalhadas, ou Autônomo se já quiser tentar sozinho.",
     "mecanico": {
       "meusVeiculos": {
-        "titulo": "Meus Veículos: check-in e etapas",
+        "titulo": "Hoje: chegada e etapas dos seus carros",
         "resumo": "Aqui você vê só os veículos atribuídos a você. Faz o check-in quando o carro chega, e registra cada etapa do reparo (diagnóstico, execução, etc.) pra oficina e o cliente acompanharem o progresso.",
         "passosGuiados": [
-          "Abra Oficina no menu (sua lista de veículos, chamada \"Meus Veículos\").",
-          "Na aba \"Aguardando\", clique em \"Check-in\" no veículo que chegou.",
-          "Clique em \"+ Etapa\" pra registrar o progresso (ex: Em diagnóstico, Em execução, Teste final).",
-          "Clique na linha do veículo pra ver a linha do tempo completa e conversar com o cliente se precisar."
+          "Abra Hoje no menu: aparecem só os carros atribuídos a você.",
+          "Em \"Chegam hoje\", toque em \"Chegou\" no carro que chegou e depois em \"Confirmar chegada\".",
+          "Toque em \"Atualizar etapa\" pra registrar o progresso (ex: Vendo o problema, Consertando).",
+          "Toque na linha do carro pra ver as etapas; pra falar com o cliente, toque em \"Mensagem\"."
         ],
         "desafio": "Faça o check-in de um veículo atribuído a você e registre pelo menos uma etapa de manutenção.",
         "dica": "A entrega final (fechar o serviço) é feita pelo dono da oficina ou por um administrativo, não por você."
@@ -316,7 +316,7 @@
         "titulo": "Notas internas (falar com o dono sem o cliente ver)",
         "resumo": "Dentro de cada veículo, tem uma caixa \"Notas internas\" só pra equipe — dono e mecânico. Use pra avisar coisas tipo \"faltou peça, já pedi\" ou tirar uma dúvida, sem que isso apareça pro cliente. É diferente do botão \"Mensagem\", que fala direto com o cliente.",
         "passosGuiados": [
-          "Abra Oficina no menu e clique num veículo pra expandir os detalhes.",
+          "Abra Hoje no menu e toque na linha de um carro pra ver os detalhes.",
           "Role até a caixa amarela \"Notas internas (não vai pro cliente)\".",
           "Escreva sua nota e clique em Enviar — o dono recebe uma notificação na hora, no sino do menu."
         ],
@@ -367,19 +367,19 @@
         "titulo": "Agenda, check-in e entrega",
         "resumo": "Depois que o cliente aceita o orçamento, o veículo entra na sua agenda. Você faz o check-in quando ele chega, registra as etapas do reparo, e confirma a entrega no final.",
         "passosGuiados": [
-          "Abra Oficina no menu (lista de veículos em serviço).",
-          "Na aba \"Aguardando\", clique em \"Check-in\" no veículo que chegou. Se a oficina tiver postos cadastrados, escolha em \"Colocar em\" o elevador ou posto onde o carro vai ficar.",
-          "Clique em \"+ Etapa\" pra registrar o progresso (ex: Em diagnóstico, Em execução).",
-          "Quando terminar, clique em \"Entrega\" pra fechar o serviço."
+          "Abra Hoje no menu: ali estão os carros que chegam, estão na oficina ou saem hoje.",
+          "Em \"Chegam hoje\", toque em \"Chegou\" no carro que chegou. Escolha quem vai fazer e, se a oficina tiver lugares cadastrados, onde o carro vai ficar; depois toque em \"Confirmar chegada\".",
+          "Toque em \"Atualizar etapa\" pra registrar o progresso (ex: Vendo o problema, Consertando).",
+          "Quando terminar, toque em \"Entregar\" pra fechar o serviço."
         ],
-        "desafio": "Faça o check-in de um veículo (da plataforma ou manual, em Check-in Manual) e registre pelo menos uma etapa de manutenção.",
-        "dica": "Chegou um carro sem passar pelo site? Use Mais → Check-in manual e deixe marcado \"O carro já está aqui\": ele entra direto como \"na oficina\"."
+        "desafio": "Registre a chegada de um carro (de um pedido ou com \"+ Carro sem pedido\") e pelo menos uma etapa.",
+        "dica": "Chegou um carro sem passar pelo site? Em Hoje, toque em \"+ Carro sem pedido\" e deixe marcado \"O carro já está aqui\": ele entra direto como \"na oficina\"."
       },
       "notasInternas": {
         "titulo": "Notas internas com a equipe",
         "resumo": "Dentro de cada veículo, tem uma caixa \"Notas internas\" só pra você e seus mecânicos — combinados, avisos, dúvidas sobre o serviço, sem que nada disso apareça pro cliente (diferente do botão \"Mensagem\", que fala com o cliente). Quando alguém escreve, você recebe uma notificação na hora no sino do menu.",
         "passosGuiados": [
-          "Abra Oficina no menu e clique num veículo pra expandir os detalhes.",
+          "Abra Hoje no menu e toque na linha de um carro pra ver os detalhes.",
           "Role até a caixa amarela \"Notas internas (não vai pro cliente)\".",
           "Escreva algo e clique em Enviar."
         ],

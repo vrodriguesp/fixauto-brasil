@@ -645,7 +645,7 @@
       },
       {
         "titulo": "7. Etapas do reparo e entrega",
-        "intro": "No menu Oficina, registre cada etapa. O cliente é avisado a cada mudança:",
+        "intro": "Na tela Hoje, registre cada etapa. O cliente é avisado a cada mudança:",
         "itens": [
           {
             "label": "Recebido e diagnóstico",

@@ -904,7 +904,7 @@
       },
       {
         "titulo": "7. Remondietapid ja üleandmine",
-        "intro": "Märgi lehel Töökoda iga etapp. Klient saab igast muutusest teate:",
+        "intro": "Märgi lehel „Täna“ iga etapp. Klient saab igast muutusest teate:",
         "itens": [
           {
             "label": "Vastu võetud ja diagnostika",

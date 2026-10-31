@@ -301,13 +301,13 @@
     "subtituloGeral": "Samm-sammult. Vali Juhendatud režiim, kui soovid täpseid juhiseid, või Iseseisev, kui tahad juba ise proovida.",
     "mecanico": {
       "meusVeiculos": {
-        "titulo": "Minu sõidukid: check-in ja etapid",
+        "titulo": "Täna: sinu autode saabumine ja etapid",
         "resumo": "Siit näed ainult sulle määratud sõidukeid. Tee check-in, kui auto saabub, ja registreeri iga remondietapp (diagnostika, teostus jne), et töökoda ja klient saaksid edenemist jälgida.",
         "passosGuiados": [
-          "Ava menüüst Töökoda (sinu sõidukite nimekiri, nimega \"Minu sõidukid\").",
-          "Vahekaardil \"Ootel\" vajuta saabunud sõiduki juures \"Check-in\".",
-          "Vajuta \"+ Etapp\", et registreerida edenemine (nt diagnostika, teostus, lõputest).",
-          "Vajuta sõiduki reale, et näha täielikku ajajoont ja vestelda kliendiga, kui vaja."
+          "Ava menüüs „Täna“: näed ainult sulle määratud autosid.",
+          "Vajuta jaotises „Saabuvad täna“ saabunud auto juures „Saabus“ ja seejärel „Kinnita saabumine“.",
+          "Vajuta „Uuenda etappi“, et edenemine kirja panna (nt Uurin probleemi, Remondin).",
+          "Vajuta auto real, et etappe näha; kliendiga suhtlemiseks vajuta „Sõnum“."
         ],
         "desafio": "Tee check-in sulle määratud sõidukile ja registreeri vähemalt üks hooldusetapp.",
         "dica": "Lõpliku üleandmise (teenuse lõpetamise) teeb töökoja omanik või administraator, mitte sina."
@@ -316,7 +316,7 @@
         "titulo": "Sisemärkmed (räägi omanikuga, ilma et klient näeks)",
         "resumo": "Iga sõiduki juures on \"Sisemärkmed\" kast ainult meeskonnale — omanikule ja mehaanikule. Kasuta seda näiteks \"varuosa puudu, juba tellitud\" teadete jaoks või küsimuste esitamiseks, ilma et klient seda näeks. See on erinev nupust \"Sõnum\", mis läheb otse kliendile.",
         "passosGuiados": [
-          "Ava menüüst Töökoda ja vajuta sõidukile, et avada üksikasjad.",
+          "Ava menüüs „Täna“ ja vajuta auto real, et üksikasju näha.",
           "Keri kollase \"Sisemärkmed (kliendile ei näidata)\" kastini.",
           "Kirjuta oma märkus ja vajuta Saada — omanik saab kohe teavituse menüü kellaikoonil."
         ],
@@ -367,19 +367,19 @@
         "titulo": "Ajakava, check-in ja üleandmine",
         "resumo": "Kui klient nõustub hinnapakkumisega, lisatakse sõiduk sinu ajakavva. Tee check-in, kui sõiduk saabub, registreeri remondietapid ja kinnita lõpus üleandmine.",
         "passosGuiados": [
-          "Ava menüüst Töökoda (teeninduses olevate sõidukite nimekiri).",
-          "Vahekaardil \"Ootel\" klõpsa saabunud autol \"Check-in\". Kui töökojal on kohad lisatud, vali \"Pane kohale\" alt tõstuk või koht, kuhu auto läheb.",
-          "Vajuta \"+ Etapp\", et registreerida edenemine (nt diagnostika, teostus).",
-          "Kui oled valmis, vajuta \"Üleandmine\", et teenus lõpetada."
+          "Ava menüüs „Täna“: seal on autod, mis täna saabuvad, on töökojas või lahkuvad.",
+          "Vajuta jaotises „Saabuvad täna“ saabunud auto juures „Saabus“. Vali, kes tööd teeb, ja kui töökojal on kohad seadistatud, kuhu auto läheb; seejärel vajuta „Kinnita saabumine“.",
+          "Vajuta „Uuenda etappi“, et edenemine kirja panna (nt Uurin probleemi, Remondin).",
+          "Kui töö on valmis, vajuta „Anna üle“, et teenus lõpetada."
         ],
-        "desafio": "Tee check-in ühele sõidukile (kas platvormilt või käsitsi, Käsitsi check-in alt) ja registreeri vähemalt üks hooldusetapp.",
-        "dica": "Auto tuli BipFixi kaudu tellimata? Kasuta Rohkem → Käsitsi check-in ja jäta märgituks \"Auto on juba siin\": see läheb kohe olekusse \"töökojas\"."
+        "desafio": "Märgi ühe auto saabumine (päringust või nupuga „+ Ilma päringuta auto“) ja vähemalt üks etapp.",
+        "dica": "Auto tuli ilma veebipäringuta? Vajuta lehel „Täna“ nuppu „+ Ilma päringuta auto“ ja jäta märgituks „Auto on juba siin“: auto läheb kohe olekusse „töökojas“."
       },
       "notasInternas": {
         "titulo": "Sisemärkmed meeskonnaga",
         "resumo": "Iga sõiduki juures on \"Sisemärkmed\" kast ainult sulle ja su mehaanikutele — kokkulepped, teated, küsimused teenuse kohta, ilma et midagi neist kliendile paistaks (erinevalt nupust \"Sõnum\", mis läheb kliendile). Kui keegi kirjutab, saad kohe teavituse menüü kellaikoonil.",
         "passosGuiados": [
-          "Ava menüüst Töökoda ja vajuta sõidukile, et avada üksikasjad.",
+          "Ava menüüs „Täna“ ja vajuta auto real, et üksikasju näha.",
           "Keri kollase \"Sisemärkmed (kliendile ei näidata)\" kastini.",
           "Kirjuta midagi ja vajuta Saada."
         ],

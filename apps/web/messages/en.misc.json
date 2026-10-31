@@ -904,7 +904,7 @@
       },
       {
         "titulo": "7. Repair steps and delivery",
-        "intro": "Under Workshop, log each step. The customer is notified at every change:",
+        "intro": "On the Today screen, log each stage. The customer is notified at every change:",
         "itens": [
           {
             "label": "Received and diagnosis",

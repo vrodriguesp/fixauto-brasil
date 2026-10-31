@@ -301,13 +301,13 @@
     "subtituloGeral": "Un passo alla volta. Scegli la modalità Guidata se vuoi istruzioni dettagliate, oppure Autonoma se vuoi già provare da solo.",
     "mecanico": {
       "meusVeiculos": {
-        "titulo": "I miei veicoli: check-in e fasi",
+        "titulo": "Oggi: arrivo e fasi delle tue auto",
         "resumo": "Qui vedi solo i veicoli a te assegnati. Fai il check-in quando l'auto arriva e registra ogni fase della riparazione (diagnosi, esecuzione, ecc.) così l'officina e il cliente possono seguire l'avanzamento.",
         "passosGuiados": [
-          "Apri Officina nel menu (il tuo elenco veicoli, chiamato \"I miei veicoli\").",
-          "Nella scheda \"In attesa\", clicca su \"Check-in\" per il veicolo arrivato.",
-          "Clicca su \"+ Fase\" per registrare l'avanzamento (es: In diagnosi, In lavorazione, Collaudo finale).",
-          "Clicca sulla riga del veicolo per vedere la cronologia completa e chattare con il cliente se necessario."
+          "Apri Oggi nel menu: vedi solo le auto assegnate a te.",
+          "In \"Arrivano oggi\", tocca \"È arrivata\" sull'auto arrivata e poi \"Conferma arrivo\".",
+          "Tocca \"Aggiorna fase\" per registrare l'avanzamento (es. Verifica del problema, In riparazione).",
+          "Tocca la riga dell'auto per vedere le fasi; per parlare con il cliente, tocca \"Messaggio\"."
         ],
         "desafio": "Fai il check-in di un veicolo a te assegnato e registra almeno una fase di manutenzione.",
         "dica": "La consegna finale (chiusura del servizio) viene effettuata dal titolare dell'officina o da un amministratore, non da te."
@@ -316,7 +316,7 @@
         "titulo": "Note interne (parla con il titolare senza che il cliente veda)",
         "resumo": "Dentro ogni veicolo c'è una casella \"Note interne\" solo per il team — titolare e meccanico. Usala per avvisare di cose come \"manca un pezzo, già ordinato\" o per fare una domanda, senza che il cliente la veda. È diverso dal pulsante \"Messaggio\", che parla direttamente con il cliente.",
         "passosGuiados": [
-          "Apri Officina nel menu e clicca su un veicolo per espandere i dettagli.",
+          "Apri Oggi nel menu e tocca la riga di un'auto per vedere i dettagli.",
           "Scorri fino alla casella gialla \"Note interne (non visibili al cliente)\".",
           "Scrivi la tua nota e clicca su Invia — il titolare riceve subito una notifica, sulla campanella del menu."
         ],
@@ -367,19 +367,19 @@
         "titulo": "Agenda, check-in e consegna",
         "resumo": "Dopo che il cliente accetta il preventivo, il veicolo entra nella tua agenda. Fai il check-in quando arriva, registri le fasi della riparazione e confermi la consegna alla fine.",
         "passosGuiados": [
-          "Apri Officina nel menu (elenco dei veicoli in lavorazione).",
-          "Nella scheda \"In attesa\", clicca \"Check-in\" sul veicolo arrivato. Se l'officina ha registrato le postazioni, scegli in \"Metti su\" il ponte o la postazione dove andrà l'auto.",
-          "Clicca su \"+ Fase\" per registrare l'avanzamento (es: In diagnosi, In lavorazione).",
-          "Quando hai finito, clicca su \"Consegna\" per chiudere il servizio."
+          "Apri Oggi nel menu: trovi le auto che arrivano, sono in officina o escono oggi.",
+          "In \"Arrivano oggi\", tocca \"È arrivata\" sull'auto arrivata. Scegli chi la fa e, se hai dei posti configurati, dove va l'auto; poi tocca \"Conferma arrivo\".",
+          "Tocca \"Aggiorna fase\" per registrare l'avanzamento (es. Verifica del problema, In riparazione).",
+          "A lavoro finito, tocca \"Consegna\" per chiudere il servizio."
         ],
-        "desafio": "Fai il check-in di un veicolo (dalla piattaforma o manualmente, tramite Check-in Manuale) e registra almeno una fase di manutenzione.",
-        "dica": "È arrivata un'auto senza passare dal sito? Usa Altro → Check-in Manuale e lascia selezionato \"L'auto è già qui\": entra subito come \"in officina\"."
+        "desafio": "Registra l'arrivo di un'auto (da una richiesta o con \"+ Auto senza richiesta\") e almeno una fase.",
+        "dica": "È arrivata un'auto senza passare dal sito? In Oggi, tocca \"+ Auto senza richiesta\" e lascia spuntato \"L'auto è già qui\": entra subito come \"in officina\"."
       },
       "notasInternas": {
         "titulo": "Note interne con il team",
         "resumo": "Dentro ogni veicolo c'è una casella \"Note interne\" solo per te e i tuoi meccanici — accordi, avvisi, domande sul servizio, senza che nulla appaia al cliente (diverso dal pulsante \"Messaggio\", che parla con il cliente). Quando qualcuno scrive, ricevi subito una notifica sulla campanella del menu.",
         "passosGuiados": [
-          "Apri Officina nel menu e clicca su un veicolo per espandere i dettagli.",
+          "Apri Oggi nel menu e tocca la riga di un'auto per vedere i dettagli.",
           "Scorri fino alla casella gialla \"Note interne (non visibili al cliente)\".",
           "Scrivi qualcosa e clicca su Invia."
         ],

@@ -301,13 +301,13 @@
     "subtituloGeral": "Um passo de cada vez. Escolha o modo Guiado para instruções detalhadas, ou Autónomo se preferir explorar por si.",
     "mecanico": {
       "meusVeiculos": {
-        "titulo": "As Minhas Viaturas: check-in e etapas",
+        "titulo": "Hoje: chegada e fases dos seus carros",
         "resumo": "Aqui só vê as viaturas atribuídas a si. Faça o check-in do carro quando ele chegar e registe cada etapa da reparação (diagnóstico, trabalho em curso, etc.) para que a oficina e o cliente possam acompanhar o progresso.",
         "passosGuiados": [
-          "Abra Oficina no menu (a sua lista de viaturas, chamada \"As Minhas Viaturas\").",
-          "No separador \"À espera\", clique em \"Check-in\" na viatura que chegou.",
-          "Clique em \"+ Etapa\" para registar o progresso (ex.: Diagnóstico, Em execução, Teste final).",
-          "Clique na linha da viatura para ver a cronologia completa e enviar mensagem ao cliente se necessário."
+          "Abra Hoje no menu: aparecem só os carros atribuídos a si.",
+          "Em \"Chegam hoje\", toque em \"Chegou\" no carro que chegou e depois em \"Confirmar chegada\".",
+          "Toque em \"Atualizar etapa\" para registar o progresso (ex.: A ver o problema, A reparar).",
+          "Toque na linha do carro para ver as fases; para falar com o cliente, toque em \"Mensagem\"."
         ],
         "desafio": "Faça o check-in de uma viatura atribuída a si e registe pelo menos uma etapa de manutenção.",
         "dica": "A entrega final (fecho do serviço) é feita pelo proprietário da oficina ou por um administrador, não por si."
@@ -316,7 +316,7 @@
         "titulo": "Notas internas (falar com o proprietário sem o cliente ver)",
         "resumo": "Dentro de cada viatura há uma caixa de \"Notas internas\" só para a equipa — proprietário e mecânico. Use-a para coisas como \"falta uma peça, já encomendada\" ou para fazer uma pergunta, sem que o cliente veja. É diferente do botão \"Mensagem\", que fala diretamente com o cliente.",
         "passosGuiados": [
-          "Abra Oficina no menu e clique numa viatura para expandir os detalhes.",
+          "Abra Hoje no menu e toque na linha de um carro para ver os detalhes.",
           "Desça até à caixa amarela \"Notas internas (não visíveis para o cliente)\".",
           "Escreva a sua nota e clique em Enviar — o proprietário recebe logo uma notificação, no sino do menu."
         ],
@@ -367,19 +367,19 @@
         "titulo": "Agenda, check-in e entrega",
         "resumo": "Assim que o cliente aceita o orçamento, a viatura entra na sua agenda. Faz o check-in quando ela chega, regista as etapas da reparação e confirma a entrega no fim.",
         "passosGuiados": [
-          "Abra Oficina no menu (lista de viaturas em serviço).",
-          "No separador \"À espera\", clique em \"Check-in\" no veículo que chegou. Se a oficina tiver postos registados, escolha em \"Colocar em\" o elevador ou posto onde o carro vai ficar.",
-          "Clique em \"+ Etapa\" para registar o progresso (ex.: Diagnóstico, Em execução).",
-          "Quando terminar, clique em \"Entrega\" para fechar o serviço."
+          "Abra Hoje no menu: aí estão os carros que chegam, estão na oficina ou saem hoje.",
+          "Em \"Chegam hoje\", toque em \"Chegou\" no carro que chegou. Escolha quem o vai fazer e, se a oficina tiver lugares registados, onde fica o carro; depois toque em \"Confirmar chegada\".",
+          "Toque em \"Atualizar etapa\" para registar o progresso (ex.: A ver o problema, A reparar).",
+          "Quando terminar, toque em \"Entregar\" para fechar o serviço."
         ],
-        "desafio": "Faça o check-in de uma viatura (da plataforma ou manualmente, através do Check-in Manual) e registe pelo menos uma etapa de manutenção.",
-        "dica": "Chegou um carro sem passar pelo site? Use Mais → Check-in manual e deixe marcado \"O carro já está cá\": entra logo como \"na oficina\"."
+        "desafio": "Registe a chegada de um carro (de um pedido ou com \"+ Carro sem pedido\") e pelo menos uma fase.",
+        "dica": "Chegou um carro que não passou pelo site? Em Hoje, toque em \"+ Carro sem pedido\" e deixe marcado \"O carro já está cá\": entra logo como \"na oficina\"."
       },
       "notasInternas": {
         "titulo": "Notas internas com a equipa",
         "resumo": "Dentro de cada viatura há uma caixa de \"Notas internas\" só para si e para os seus mecânicos — coordenação, alertas, dúvidas sobre o serviço, sem nada disso aparecer ao cliente (ao contrário do botão \"Mensagem\", que fala com o cliente). Quando alguém escreve, recebe logo uma notificação no sino do menu.",
         "passosGuiados": [
-          "Abra Oficina no menu e clique numa viatura para expandir os detalhes.",
+          "Abra Hoje no menu e toque na linha de um carro para ver os detalhes.",
           "Desça até à caixa amarela \"Notas internas (não visíveis para o cliente)\".",
           "Escreva algo e clique em Enviar."
         ],

@@ -904,7 +904,7 @@
       },
       {
         "titulo": "7. Fasi della riparazione e consegna",
-        "intro": "In Officina, registra ogni fase. Il cliente viene avvisato a ogni cambiamento:",
+        "intro": "Nella schermata Oggi, registra ogni fase. Il cliente viene avvisato a ogni cambiamento:",
         "itens": [
           {
             "label": "Ricevuto e diagnosi",
