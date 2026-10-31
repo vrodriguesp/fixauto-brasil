@@ -46,3 +46,6 @@ google-play-service-account.json
 *.p8
 *.p12
 *.mobileprovision
+
+# Firebase (push): vai ao EAS como variavel de arquivo GOOGLE_SERVICES_JSON, nunca ao git
+google-services.json
