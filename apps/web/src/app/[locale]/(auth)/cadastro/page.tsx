@@ -78,7 +78,9 @@ function CadastroPage() {
       const r = JSON.parse(sessionStorage.getItem(RASCUNHO) || 'null');
       if (r && (!tipoParam || r.userType === tipoParam)) {
         if (r.userType) setUserType(r.userType);
-        if (r.step) setStep(r.step);
+        // a senha nao vem no rascunho: volta ao passo 2 para digita-la de novo
+        // (no passo 3 ela nao aparece e o envio dava "preencha os campos", 31/10)
+        if (r.step) setStep(Math.min(r.step, 2));
         setNome(r.nome || ''); setEmail(r.email || ''); setTelefone(r.telefone || '');
         setAceitouTermos(!!r.aceitouTermos); setDeclaracao(!!r.declaracao);
         setNomeFantasia(r.nomeFantasia || ''); setCnpj(r.cnpj || ''); setEndereco(r.endereco || '');
@@ -179,6 +181,8 @@ function CadastroPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nome || !email || !password) {
+      // esses campos ficam no passo 2: mostra-os em vez de um erro sem campo vazio a vista
+      setStep(2);
       setError(t('errorCamposObrigatorios'));
       return;
     }

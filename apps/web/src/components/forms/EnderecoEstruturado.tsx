@@ -50,7 +50,8 @@ export default function EnderecoEstruturado({ valor, onChange, perto, idBase = '
         latitude: d.latitude, longitude: d.longitude,
         cidade: atual.current.cidade || d.cidade || '',
         estado: atual.current.estado || d.estado || '',
-        cep: atual.current.cep || d.cep || '',
+        // predio achado: o CEP dele vale mais que o generico da rua vindo da sugestao
+        cep: (d.numeroEncontrado && v.numero.trim() && d.cep) || atual.current.cep || d.cep || '',
         pais: d.paisCodigo || atual.current.pais,
       });
       setEstado(d.numeroEncontrado ? 'ok' : 'semNumero');

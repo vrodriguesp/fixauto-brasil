@@ -90,8 +90,8 @@ export default function HomeClient({ guias = [] }: { guias?: GuiaResumo[] }) {
           </div>
         </div>
 
-        {/* Emergency button */}
-        <div className="absolute bottom-0 left-0 right-0 translate-y-1/2">
+        {/* Emergency button: no celular fica abaixo dos botoes (texto longo em russo cobria o 2o botao, 31/10) */}
+        <div className="relative pb-10 md:pb-0 md:absolute md:bottom-0 md:left-0 md:right-0 md:translate-y-1/2">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Link
               href="/emergencia"
@@ -117,7 +117,7 @@ export default function HomeClient({ guias = [] }: { guias?: GuiaResumo[] }) {
       </section>
 
       {/* How it works */}
-      <section className="pt-28 pb-20 bg-white">
+      <section className="pt-16 md:pt-28 pb-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">{t('comoFuncionaTitulo')}</h2>
           <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">{t('comoFuncionaSubtitulo')}</p>
