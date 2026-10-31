@@ -319,7 +319,7 @@
     "noDatesAvailable": "Não há datas disponíveis neste momento. Contacte a oficina para combinar um novo horário.",
     "shiftLabel": "Horário: {shift}",
     "morningShift": "Manhã (8h - 12h)",
-    "afternoonShift": "Tarde (13h - 18h)",
+    "afternoonShift": "Tarde (13h - 17h)",
     "deliveryForecastInline": "Entrega prevista: {date}",
     "rescheduling": "A remarcar...",
     "confirmReschedule": "Confirmar remarcação"

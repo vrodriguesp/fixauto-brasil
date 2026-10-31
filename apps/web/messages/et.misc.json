@@ -21,7 +21,7 @@
         "titulo": "2. Mida BipFix teeb",
         "paragrafos": [
           "BipFix on internetipõhine vahendusplatvorm. See ühendab remonti vajavaid autojuhte ja sõidukiomanikke („kliendid“) autotöökodade („töökojad“) ja varuosade müüjatega („poed“), koos „partnerid“. Platvormi kaudu kirjeldavad kliendid oma muret ja saavad hinnapakkumisi ning partnerid saavad saata hinnapakkumisi, suhelda klientidega, jälgida tööd ning osta ja müüa üksteisele varuosi.",
-          "<strong>BipFix ei tee remonti ega müü varuosi ega ole kliendi ja partneri vahelise lepingu pool.</strong> Kui nõustud hinnapakkumisega, sõlmitakse remondi- või varuosalepingu otse sinu ja partneri vahel ning partner vastutab töö, hinna, tähtaegade ja garantii eest.",
+          "<strong>BipFix ei tee remonti ega müü varuosi ega ole kliendi ja partneri vahelise lepingu pool.</strong> Kui nõustud hinnapakkumisega, sõlmitakse remondi- või varuosaleping otse sinu ja partneri vahel ning partner vastutab töö, hinna, tähtaegade ja garantii eest.",
           "Kõik partnerid registreeruvad BipFixis ettevõtetena ja kinnitavad, et tegutsevad kauplejana. See tähendab, et tarbijana kohaldatakse sinu lepingule partneriga ELi tarbijakaitse reegleid (vt punkt 11)."
         ]
       },
@@ -54,7 +54,7 @@
           "Peamised parameetrid, mis määravad, mida partnerid ja kliendid näevad, on järgmised:"
         ],
         "itens": [
-          "<strong>Päringute jagamine partneritele:</strong> kliendi päringut näidatakse töökodadele, mille teeninduspiirkond (iga töökoja määratud raadius, vaikimisi 30 km) hõlmab päringu aadressi ja mis pakuvad soovitud teenust. Kiireloomulised päringud (näiteks pärast avariid) saadetakse kere- ja avariiremondiga tegelevatele töökodadele, eelistades neid, kellel on nende deklareeritud võimsuse järgi selleks tööks veel vaba aega.",
+          "<strong>Päringute jagamine partneritele:</strong> kliendi päringut näidatakse töökodadele, mille teeninduspiirkond (iga töökoja määratud raadius, vaikimisi 30 km) hõlmab päringu aadressi ja mis pakuvad soovitud teenust. Kiireloomulised päringud (näiteks pärast avariid) saadetakse kere- ja avariiremondiga tegelevatele töökodadele, eelistades neid, kellel on nende deklareeritud mahutavuse järgi selleks tööks veel vaba aega.",
           "<strong>Klientidele näidatavad hinnapakkumised:</strong> iga pakkumise juures on hind, tähtaeg ja töökoja hinnang, et klient saaks neid võrrelda. Ükski partner ei saa maksta selle eest, et tema pakkumist näidataks paremal kohal.",
           "<strong>Töökodade avalik nimekiri:</strong> partnertöökodade avalik nimekiri on järjestatud keskmise hinnangu, seejärel arvustuste arvu ja seejärel platvormil oldud aja järgi. Ükski partner ei saa maksta selle eest, et olla nimekirjas kõrgemal."
         ],
@@ -222,7 +222,7 @@
         "subsecao": true,
         "itens": [
           "<strong>Andmed:</strong> kahjustuse fotod ja häälsõnumid, mille otsustad nende funktsioonide kaudu saata.",
-          "<strong>Eesmärk:</strong> kahjustuse esialgse kirjelduse ja häälsõnumite tekstiks kirjutamise koostamine, et aidata partneritel hinnapakkumist ette valmistada. Tulemus on ainult abivahend: hinna ja diagnoosi otsustab alati partner ning sinu kohta ei tehta automaatselt ühtegi õiguslike või sarnaselt oluliste tagajärgedega otsust (art 22).",
+          "<strong>Eesmärk:</strong> kahjustuse esialgse kirjelduse koostamine ja häälsõnumite tekstiks teisendamine, et aidata partneritel hinnapakkumist ette valmistada. Tulemus on ainult abivahend: hinna ja diagnoosi otsustab alati partner ning sinu kohta ei tehta automaatselt ühtegi õiguslike või sarnaselt oluliste tagajärgedega otsust (art 22).",
           "<strong>Õiguslik alus:</strong> lepingu täitmine (art 6 lg 1 p b). Töötlemist teeb meie nimel Google (Gemini) (vt punkt 4)."
         ]
       },
@@ -358,7 +358,7 @@
       {
         "titulo": "12. Poliitika muudatused",
         "paragrafos": [
-          "Võime seda poliitikat uuendada, näiteks uue teenuseosutaja kasutuselevõttu. Olulistest muudatustest teavitame registreeritud kasutajaid e-posti teel või platvormil enne nende jõustumist."
+          "Võime seda poliitikat uuendada, näiteks uue teenuseosutaja kasutuselevõtul. Olulistest muudatustest teavitame registreeritud kasutajaid e-posti teel või platvormil enne nende jõustumist."
         ]
       },
       {
@@ -380,15 +380,15 @@
     ],
     "ogTitle": "Autoavarii? Teata sellest kohe",
     "ogDescription": "Tee kahjustusest pildid ja saa lähedal asuvatelt töökodadelt hinnapakkumised minutitega.",
-    "successTitle": "Hädaolukord registreeritud!",
+    "successTitle": "Avarii registreeritud!",
     "successText": "Lähedal asuvaid töökodasid teavitati ja nad saadavad peagi hinnapakkumised.",
     "nextStepTitle": "Järgmine samm",
     "nextStepText": "Registreeri õnnetusse kaasatud teine sõiduk, et vahetada infot.",
-    "registerOtherVehicleBtn": "Registreeri kaasatud teine sõiduk",
+    "registerOtherVehicleBtn": "Registreeri teine osalenud sõiduk",
     "goToDashboardBtn": "Mine töölauale",
     "createAccountText": "Loo konto, et jälgida hinnapakkumisi ja valida töökoda.",
     "createAccountBtn": "Loo oma konto",
-    "headerTitle": "Tegin just avarii!",
+    "headerTitle": "Sattusin just avariisse!",
     "headerSubtitle": "Tee fotod ja saa kiirelt hinnapakkumised",
     "loggedInAs": "Sisse logitud kui <strong>{nome}</strong>",
     "step1Title": "Fotod avariist",
@@ -401,16 +401,16 @@
     "plateLabel": "Sinu sõiduki numbrimärk",
     "platePlaceholder": "123 ABC",
     "vehicleYearColor": "Aasta: {ano} | Värv: {cor}",
-    "plateNotFoundText": "Registreerimismärki ei leitud. Sisesta mark ja mudel:",
-    "plateNotFoundPlaceholder": "Nt: Fiat Argo",
+    "plateNotFoundText": "Numbrimärki ei leitud. Sisesta mark ja mudel:",
+    "plateNotFoundPlaceholder": "Nt: Volkswagen Golf",
     "descriptionLabel": "Kirjelda, mis juhtus (valikuline)",
-    "descriptionPlaceholder": "Nt: Sõitsin foori juures eesoleva auto taha...",
+    "descriptionPlaceholder": "Nt: Sõitsin foori juures eesolevale autole tagant otsa...",
     "whatHappenedLabel": "Mis juhtus?",
     "optionEuCauseiLabel": "Mina põhjustasin avarii",
     "optionEuCauseiDesc": "Sina vastutad teise sõiduki remondi eest",
     "optionOutroCausouLabel": "Teine juht põhjustas avarii",
     "optionOutroCausouDesc": "Sina oled kannatanu ja saad remondiks hinnapakkumised",
-    "optionSemOutroLabel": "Keegi teine ei olnud kaasatud",
+    "optionSemOutroLabel": "Teisi osalisi polnud",
     "optionSemOutroDesc": "Nt: sõitsid vastu posti, müüri jne.",
     "nextBtn": "Edasi",
     "step2Title": "Sinu andmed",
@@ -433,7 +433,7 @@
     "sendingBtn": "Saadan...",
     "locationAutoDetected": "Asukoht tuvastati automaatselt",
     "locationCurrentDetected": "Praegune asukoht tuvastatud",
-    "errorGenericSubmit": "Viga hädaolukorra registreerimisel",
+    "errorGenericSubmit": "Avarii registreerimine ebaõnnestus",
     "erroLocalizacao": "Aadressi ei õnnestunud leida. Luba asukoht või kirjuta tänav ja linn.",
     "fotoDica": "Vihje: pildista auto 4 nurka, kahjustust lähedalt ja teise sõiduki numbrimärki."
   },
@@ -453,7 +453,7 @@
     "plateLabel": "Sõiduki numbrimärk *",
     "platePlaceholder": "123 ABC",
     "vehicleLabel": "Sõiduk (mark/mudel)",
-    "vehiclePlaceholder": "Nt: Fiat Argo",
+    "vehiclePlaceholder": "Nt: Volkswagen Golf",
     "photosLabel": "Teise sõiduki fotod",
     "observationsLabel": "Märkused",
     "observationsPlaceholder": "Üksikasjad avarii kohta, kohapeal tehtud kokkulepe...",
@@ -481,7 +481,7 @@
     "outroLabelDefault": "2. juht",
     "badgeEuCausei": "Sina põhjustasid avarii",
     "badgeOutroCausou": "Teine juht põhjustas avarii",
-    "badgeSemOutro": "Keegi teine ei olnud kaasatud",
+    "badgeSemOutro": "Teisi osalisi polnud",
     "legacyResponsavel": "Võtab vastutuse",
     "legacyVitima": "Kannatanu",
     "legacyDividida": "Jagatud vastutus - 50%",
@@ -516,10 +516,10 @@
   },
   "docsHome": {
     "metaTitle": "Abikeskus",
-    "metaDescription": "Leia vastused küsimustele BipFixi platvormi kasutamise kohta. Täielikud juhendid juhtidele ja töökodadele.",
+    "metaDescription": "Leia vastused küsimustele BipFixi platvormi kasutamise kohta. Täielikud juhendid autojuhtidele ja töökodadele.",
     "heroTitle": "BipFixi abikeskus",
-    "heroSubtitle": "Kõik, mida on vaja teada platvormi kasutamiseks — olgu sa juht või töökoda.",
-    "clienteCardTitle": "Juhi juhend",
+    "heroSubtitle": "Kõik, mida on vaja teada platvormi kasutamiseks — olgu sa autojuht või töökoda.",
+    "clienteCardTitle": "Autojuhi juhend",
     "clienteCardText": "Õpi, kuidas luua päringuid, võrrelda hinnapakkumisi, broneerida teenuseid ja jälgida oma sõiduki remonti reaalajas.",
     "oficinaCardTitle": "Töökoja juhend",
     "oficinaCardText": "Uuri, kuidas registreerida oma töökoda, vastu võtta päringuid, saata hinnapakkumisi, hallata ajakava ja kasvatada oma mainet.",
@@ -536,7 +536,7 @@
   },
   "docsCliente": {
     "pageBackLink": "Tagasi abikeskusesse",
-    "pageTitle": "Juhi juhend",
+    "pageTitle": "Autojuhi juhend",
     "pageSubtitle": "Kõik, mida pead teadma, et küsida hinnapakkumisi mitmelt töökojalt, valida parim, jälgida remonti ja lahendada iga ootamatus, alates registreerumisest kuni garantii lõpuni.",
     "secoes": [
       {
@@ -557,7 +557,7 @@
           },
           {
             "title": "Lisa oma auto",
-            "desc": "Sisesta lehel Sõidukid mark, mudel, aasta ja registreerimisnumber. Võid lisada mitu autot ja näha igaühe hooldusajalugu."
+            "desc": "Sisesta lehel Sõidukid mark, mudel, aasta ja numbrimärk. Võid lisada mitu autot ja näha igaühe hooldusajalugu."
           }
         ]
       },
@@ -670,7 +670,7 @@
       },
       {
         "titulo": "7. Hinda teenust",
-        "intro": "Pärast üleandmist anna töökojale hinnang. Hinnang aitab teisi juhte ja seda küsitakse enne sinu järgmist päringut; nupp \"Tegin just avarii\" ei ole kunagi blokeeritud.",
+        "intro": "Pärast üleandmist anna töökojale hinnang. Hinnang aitab teisi juhte ja seda küsitakse enne sinu järgmist päringut; nupp \"Sattusin just avariisse\" ei ole kunagi blokeeritud.",
         "passos": [
           {
             "title": "Hinnang 1 kuni 5 tärni",
@@ -705,7 +705,7 @@
         ]
       },
       {
-        "titulo": "9. Avarii: nupp \"Tegin just avarii\"",
+        "titulo": "9. Avarii: nupp \"Sattusin just avariisse\"",
         "intro": "Selleks puhuks, kui oled just avariisse sattunud. Töötab ka ilma kontota ja näitab, mida teha vastavalt riigile, kus avarii juhtus, sinu keeles.",
         "passos": [
           {
@@ -747,7 +747,7 @@
     ]
   },
   "docsClienteLayout": {
-    "metaTitle": "Juhi juhend: küsi hinnapakkumisi ja jälgi remonti",
+    "metaTitle": "Autojuhi juhend: küsi hinnapakkumisi ja jälgi remonti",
     "metaDescription": "Kuidas BipFixi kasutada: küsi hinnapakkumisi mitmelt töökojalt, võrdle, broneeri aeg, jälgi remonti, kinnita hinnamuudatusi ja kasuta avariinuppu."
   },
   "docsOficina": {
@@ -765,7 +765,7 @@
           },
           {
             "title": "Töökoja andmed",
-            "desc": "Registrikood, ärinimi, telefoninumber ja aadress eraldi väljadel (tänav, maja number, postiindeks, linn). Aadress kontrollitakse kaardil, et lähedal asuvad kliendid sind leiaksid."
+            "desc": "Registrikood, ärinimi, telefoninumber ja aadress eraldi väljadel (tänav, maja number, sihtnumber, linn). Aadress kontrollitakse kaardil, et lähedal asuvad kliendid sind leiaksid."
           },
           {
             "title": "Erialad",
@@ -798,7 +798,7 @@
             "desc": "Töökoda on kinnitatud ja aktiivne."
           }
         ],
-        "texto": "Teade ilmub töölaua kellasse ja jaotisesse Päringud. Igas päringus on fotod, kirjeldus, auto ja ligikaudne asukoht. Nupuga \"Tegin just avarii\" registreeritud õnnetused jõuavad prioriteediga ainult kereremondi töökodadesse (kokkupõrge, kereremont või värvimine). Kui määrad profiilis autode piiri ja töökoda on täis, lähevad kiireloomulised päringud esmalt teistele töökodadele.",
+        "texto": "Teade ilmub töölaua kellasse ja jaotisesse Päringud. Igas päringus on fotod, kirjeldus, auto ja ligikaudne asukoht. Nupuga \"Sattusin just avariisse\" registreeritud õnnetused jõuavad prioriteediga ainult kereremondi töökodadesse (kokkupõrge, kereremont või värvimine). Kui määrad profiilis autode piiri ja töökoda on täis, lähevad kiireloomulised päringud esmalt teistele töökodadele.",
         "nota": "Hoia erialad ja teeninduspiirkond täpsena, et saada ainult päringuid, mis sulle sobivad."
       },
       {
@@ -852,7 +852,7 @@
         "itens": [
           {
             "label": "Check-in",
-            "desc": "Registreeri auto saabumine. Kui auto tuleb enne kokkulepitud päeva, küsib veeb kinnitust ja saabumiseks saab täna. Kui töökojal on kohad, vali \"Pane kohale\" alt tõstuk või koht. Klienti teavitatakse."
+            "desc": "Registreeri auto saabumine. Kui auto tuleb enne kokkulepitud päeva, küsib veeb kinnitust ja saabumiskuupäevaks saab tänane. Kui töökojal on kohad, vali \"Pane kohale\" alt tõstuk või koht. Klienti teavitatakse."
           },
           {
             "label": "Puudumine",
@@ -989,9 +989,9 @@
     "fastResponseBadge": "Kiire vastus",
     "volumeBadge": "{tier}+ lõpetatud teenust",
     "partnerSinceBadge": "Partner alates {data}",
-    "priceAdjustmentDown": "Keskmine kohandus: {pct}% 📉",
-    "priceAdjustmentUp": "Keskmine kohandus: +{pct}% 📈",
-    "noPriceAdjustment": "Hinnakohandusi ei ole",
+    "priceAdjustmentDown": "Keskmine hinnamuudatus: {pct}% 📉",
+    "priceAdjustmentUp": "Keskmine hinnamuudatus: +{pct}% 📈",
+    "noPriceAdjustment": "Hinnamuudatusi ei ole",
     "reviewCountSingular": "({count} hinnang)",
     "reviewCountPlural": "({count} hinnangut)",
     "avgResponseTime": "Keskmine vastamisaeg: {tempo}",
@@ -1000,7 +1000,7 @@
     "servicesOfferedTitle": "Pakutavad teenused",
     "photosTitle": "Fotod",
     "addressTitle": "Aadress",
-    "cepLabel": "Postiindeks",
+    "cepLabel": "Sihtnumber",
     "mapIframeTitle": "Töökoja asukoht",
     "openInMapsLink": "Ava Google Mapsis",
     "contactHoursTitle": "Kontakt ja lahtiolekuajad",
@@ -1028,11 +1028,11 @@
   },
   "audioRecorder": {
     "microphonePermission": "Palun luba mikrofoni kasutamine",
-    "stopRecording": "Peata salvestamine",
-    "recordAudio": "Salvesta heli"
+    "stopRecording": "Lõpeta lindistamine",
+    "recordAudio": "Lindista häälsõnum"
   },
   "oficinasLista": {
-    "metaTitle": "Partnerautoremonditöökojad",
+    "metaTitle": "BipFixi partnertöökojad",
     "metaTitleCidade": "Autoremonditöökojad: {cidade}",
     "metaDescription": "Leia päris klientide hinnatud autoremondi-, kere- ja värvitöökojad. Võrdle, küsi hinnapakkumisi veebis ja broneeri BipFixis.",
     "metaDescriptionCidade": "Päris klientide hinnatud autoremondi-, kere- ja värvitöökojad – {cidade}. Küsi hinnapakkumisi veebis ja võrdle BipFixis.",
@@ -1114,7 +1114,7 @@
     "opcao_nao_sei": "Ma ei tea veel",
     "labelPagamento": "Makse",
     "labelSeguradora": "Kindlustusandja",
-    "labelSinistro": "Kahjuasja number",
+    "labelSinistro": "Kahjujuhtumi number",
     "ajudaSinistro": "Kui sul seda veel pole, saad selle hiljem lisada.",
     "labelFranquia": "Omavastutus",
     "ajudaFranquia": "Summa, mille maksad poliisi järgi (valikuline).",
@@ -1130,7 +1130,7 @@
     "passo_emergencia_ee": "Kui keegi sai viga, kui süüdlases ei jõuta kokkuleppele või kui teine juht lahkus, helista 112.",
     "passo_registro_br": "Kirjuta üles teise juhi numbrimärk, nimi, telefon ja kindlustusandja. Vajadusel esita politseile teade (paljudes osariikides internetis).",
     "passo_registro_ee": "Vormista koos teise juhiga liiklusõnnetuse teade digitaalselt aadressil avarii.lkk.ee (või paberil) ja märgi, kes oli süüdi.",
-    "passo_seguro": "Teavita kindlustusandjat esimesel võimalusel ja pane kahjuasja number kirja. Seejärel lisa see avarii lehele, et töökoda seda näeks.",
+    "passo_seguro": "Teavita kindlustusandjat esimesel võimalusel ja pane kahjujuhtumi number kirja. Seejärel lisa see avarii lehele, et töökoda seda näeks.",
     "passo_oficina_seguro": "Töökoda saadab hinnapakkumise kindlustusandjale, kes kinnitab selle enne remondi algust.",
     "passo_proprio": "Võrdle saabuvaid hinnapakkumisi ja vali töökoda.",
     "passo_nao_sei": "Kui sul on kindlustus, vaata poliisist, mida see katab ja kui suur on omavastutus. Saad selle hiljem avarii lehel lisada.",
@@ -1142,7 +1142,7 @@
     "salvo": "Salvestatud.",
     "erroSalvar": "Salvestamine ebaõnnestus. Proovi uuesti.",
     "naoInformado": "Veel lisamata.",
-    "lembreteSinistro": "Kahjuasja number puudub: kui kindlustusandja selle saadab, lisa see siia, et töökoda seda näeks.",
+    "lembreteSinistro": "Kahjujuhtumi number puudub: kui kindlustusandja selle saadab, lisa see siia, et töökoda seda näeks.",
     "oficinaTitulo": "Kes maksab remondi eest",
     "oficinaDica_seguro": "Saada see hinnapakkumine ka kindlustusandjale ja oota kinnitust enne töö alustamist. Pildista autot enne lahtivõtmist ja selle ajal: varjatud kahjud lähevad lisakalkulatsiooni.",
     "oficinaDica_proprio": "Klient maksab otse töökojale.",

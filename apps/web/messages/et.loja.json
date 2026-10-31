@@ -12,7 +12,7 @@
       "Töökoda valib parima pakkumise ja kinnitab tellimuse",
       "Lepi tarne ja makse osas kokku otse töökojaga"
     ],
-    "cadastroEmAnalise": "Sinu registreerimine on ülevaatamisel: kontrollime ettevõtte registreeringut enne, kui sinu profiil klientidele nähtavaks muutub. Seni saad juba töölaual oma andmed täita."
+    "cadastroEmAnalise": "Sinu registreerimine on ülevaatamisel: kontrollime ettevõtte registreeringut enne, kui sinu profiil töökodadele nähtavaks muutub. Seni saad juba töölaual oma andmed täita."
   },
   "lojaAprender": {
     "loading": "Laadin...",
@@ -31,10 +31,10 @@
       },
       "perfil": {
         "titulo": "Poe profiil",
-        "resumo": "Täida oma poe andmed — õige riik, aadress, linn ja postiindeks on olulised: näed avatud hinnapäringuid sinu poega samas riigis asuvatelt töökodadelt (kauguse filtrit veel pole).",
+        "resumo": "Täida oma poe andmed — õige riik, aadress, linn ja sihtnumber on olulised: näed avatud hinnapäringuid sinu poega samas riigis asuvatelt töökodadelt (kauguse filtrit veel pole).",
         "passosGuiados": [
           "Ava Profiil: arvutis klõpsa paremas ülanurgas oma nimel või initsiaalil; telefonis menüü ☰ → Profiil.",
-          "Kontrolli/muuda oma ärinime, maksukohustuslase numbrit, aadressi, linna ja osariiki.",
+          "Kontrolli/muuda oma ärinime, registrikoodi, aadressi, linna ja maakonda.",
           "Vajuta \"Salvesta\"."
         ],
         "desafio": "Täida oma poe andmed täielikult ja korrektselt (mitte jäta aadressiks \"Määramata\")."
@@ -95,9 +95,9 @@
     "labelDescricao": "Kirjeldus (valikuline)",
     "placeholderDescricao": "Üksikasjad, seisukord jne",
     "labelMarca": "Ühilduv mark",
-    "placeholderMarca": "Nt: Fiat",
+    "placeholderMarca": "Nt: Volkswagen",
     "labelModelo": "Ühilduv mudel",
-    "placeholderModelo": "Nt: Argo",
+    "placeholderModelo": "Nt: Golf",
     "labelAno": "Ühilduv aasta",
     "placeholderAno": "Nt: 2020",
     "labelPreco": "Hind (€) *",
@@ -128,8 +128,8 @@
     "invalidConversa": "Vigane vestlus.",
     "voltar": "Tagasi",
     "oficinaFallback": "Töökoda",
-    "subtituloComPeca": "{peca} · küsi enne vastamist üle",
-    "subtituloSemPeca": "Küsi enne vastamist üle"
+    "subtituloComPeca": "{peca} · küsi enne vastamist täpsustust",
+    "subtituloSemPeca": "Küsi enne vastamist täpsustust"
   },
   "lojaCotacoes": {
     "pageTitle": "Töökodade hinnapäringud",
@@ -137,7 +137,7 @@
     "emptyState": "Praegu pole ühtegi avatud hinnapäringut",
     "veiculoInfo": "Sõiduk: {marca} {modelo} {ano}",
     "quantidadeInfo": "Kogus: {quantidade}",
-    "tirarDuvida": "Küsi üle",
+    "tirarDuvida": "Küsi täpsustust",
     "respostaEnviada": "Sina vastasid: {preco} - tarneaeg {prazo, plural, one {# päev} other {# päeva}}",
     "conversarLink": "Vestlus",
     "labelPreco": "Hind (€)",
@@ -167,15 +167,15 @@
     "labelTelefone": "Telefon",
     "dadosLojaTitulo": "Poe andmed",
     "labelNomeFantasia": "Ärinimi",
-    "labelCnpj": "Maksukohustuslase number",
-    "labelCep": "Sihtnumber (CEP)",
-    "cepPlaceholder": "00000-000",
+    "labelCnpj": "Registrikood",
+    "labelCep": "Sihtnumber",
+    "cepPlaceholder": "Nt: 10111",
     "buscandoCep": "Otsin aadressi...",
     "cepErro": "Sihtnumbrit ei leitud - kontrolli numbrit või täida aadress käsitsi",
     "labelEndereco": "Aadress",
     "enderecoPlaceholder": "Tänav, majanumber",
     "labelCidade": "Linn",
-    "labelEstado": "Osariik",
+    "labelEstado": "Maakond",
     "labelRaio": "Teeninduspiirkonna raadius (km)",
     "salvarButton": "Salvesta",
     "salvandoButton": "Salvestan...",
