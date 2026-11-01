@@ -123,16 +123,7 @@ export default function OficinaAprenderPage() {
         return (count || 0) > 0;
       },
     },
-    {
-      id: 'comissao',
-      emoji: '💰',
-      titulo: t('geral.comissao.titulo'),
-      resumo: t('geral.comissao.resumo'),
-      passosGuiados: t.raw('geral.comissao.passosGuiados') as string[],
-      desafio: t('geral.comissao.desafio'),
-      linkReal: '/oficina/comissao',
-      linkRotulo: t('geral.comissao.linkRotulo'),
-    },
+    // modulo "comissao" fora do menu e do Aprender: sem cobranca hoje, a pagina so assustava (dono 01/11)
     {
       id: 'equipe',
       emoji: '👥',
