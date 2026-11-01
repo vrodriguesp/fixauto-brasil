@@ -9,6 +9,7 @@ import { LOCALE_PREFIX, type Locale } from '@/i18n/routing';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEndereco } from '@/components/forms/EnderecoEstruturado';
 import { registrarConversaoCadastro } from '@/components/Analytics';
+import { useAuth } from '@/lib/auth-context';
 
 export default function CadastroPageWrapper() {
   const t = useTranslations('cadastro');
@@ -25,7 +26,10 @@ function CadastroPage() {
   const te = useTranslations('erros');
   const locale = useLocale();
   const searchParams = useSearchParams();
-  const tipoParam = searchParams.get('tipo') as 'cliente' | 'oficina' | 'loja_pecas' | null;
+  // link sem portugues para os e-mails (dono 01/11): /ee/et/registreeru?tookoda, /ee/ru/registratsiya?avtoservis ...
+  const PALAVRA_OFICINA = ['tookoda', 'avtoservis', 'workshop', 'officina', 'oficina'];
+  const tipoParam = (searchParams.get('tipo') || (PALAVRA_OFICINA.some((p) => searchParams.has(p)) ? 'oficina' : null)) as 'cliente' | 'oficina' | 'loja_pecas' | null;
+  const { user: logado, signOut } = useAuth();
 
   const [userType, setUserType] = useState<'cliente' | 'oficina' | 'loja_pecas' | null>(tipoParam);
   const [step, setStep] = useState(tipoParam ? 2 : 1);
@@ -281,6 +285,14 @@ function CadastroPage() {
           <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
           <p className="text-gray-600 mt-2">{t('subtitulo')}</p>
         </div>
+
+        {logado && !enviado && (
+          // ja conectado (ex.: dono testando o link do e-mail): avisa em vez de sumir para a pagina inicial
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-sm text-amber-900">
+            <p>{t('jaConectado', { email: logado.email })}</p>
+            <button type="button" onClick={() => signOut()} className="mt-2 font-semibold underline">{t('sairParaCadastrar')}</button>
+          </div>
+        )}
 
         <div className="card">
           {error && (
