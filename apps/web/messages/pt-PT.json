@@ -233,6 +233,10 @@
         "resposta": "O registo e a utilização de todas as ferramentas (pedidos, orçamentos, agenda, equipa, avaliações) são hoje gratuitos: sem taxa de adesão, sem comissão e sem cartão. Se isso mudar um dia, avisamos com pelo menos 30 dias de calendário de antecedência, de acordo com os Termos de Utilização. Pode sair quando quiser."
       },
       {
+        "pergunta": "A BipFix recebe o pagamento do cliente?",
+        "resposta": "Não. A BipFix não recebe o dinheiro do cliente nem faz a intermediação de pagamentos. O cliente paga a reparação diretamente à sua oficina, como sempre – em numerário, cartão ou MB Way – e a fatura é emitida por si, em nome da oficina. O dinheiro vai do cliente para si, não passa por nós."
+      },
+      {
         "pergunta": "O sistema substitui uma folha de cálculo ou um caderno de marcações?",
         "resposta": "Sim. Organiza a agenda por viatura e por colaborador, distribui o trabalho pelos mecânicos, controla a capacidade de atendimento e recebe notificações automáticas — tudo num só lugar, sem papel nem folhas de cálculo soltas."
       },
@@ -261,6 +265,7 @@
     "heroVantagens": [
       "0 € de adesão",
       "0 % de comissão",
+      "O cliente paga-lhe diretamente",
       "Sem cartão",
       "Saia quando quiser",
       "Alterações avisadas com 30 dias"

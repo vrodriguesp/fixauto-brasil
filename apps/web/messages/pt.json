@@ -233,6 +233,10 @@
         "resposta": "O cadastro e o uso de todas as ferramentas (pedidos, orçamentos, agenda, equipe, avaliações) são grátis hoje: sem taxa de adesão, sem comissão e sem cartão. Se isso mudar um dia, avisamos com pelo menos 30 dias corridos de antecedência, conforme nossos Termos de Uso. Você pode sair quando quiser."
       },
       {
+        "pergunta": "A BipFix recebe o pagamento do cliente?",
+        "resposta": "Não. A BipFix não recebe o dinheiro do cliente nem intermedeia pagamentos. O cliente paga o conserto direto à sua oficina, como sempre – em dinheiro, cartão ou Pix – e a nota é emitida por você, em nome da oficina. O dinheiro vai do cliente para você, não passa por nós."
+      },
+      {
         "pergunta": "O sistema substitui uma planilha ou caderno de agendamento?",
         "resposta": "Sim. Você organiza sua agenda por veículo e funcionário, distribui o trabalho entre mecânicos, controla a capacidade de atendimento e recebe notificações automáticas — tudo em um só lugar, sem depender de papel ou planilhas soltas."
       },
@@ -261,6 +265,7 @@
     "heroVantagens": [
       "R$ 0 de adesão",
       "0% de comissão",
+      "O cliente paga direto a você",
       "Sem cartão",
       "Saia quando quiser",
       "Mudanças avisadas com 30 dias"

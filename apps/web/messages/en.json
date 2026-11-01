@@ -236,6 +236,10 @@
         "resposta": "Registering and using every tool (requests, quotes, schedule, team, reviews) is free today: no joining fee, no commission and no card needed. If that ever changes, we'll give at least 30 calendar days' notice, per our Terms of Use. You can leave anytime."
       },
       {
+        "pergunta": "Does BipFix collect the customer’s payment?",
+        "resposta": "No. BipFix does not take the customer’s money or handle payments. The customer pays your shop directly for the repair, as usual – cash, card or invoice – and you issue the invoice in your own name. The money goes from the customer to you, not through us."
+      },
+      {
         "pergunta": "Does it replace an Excel spreadsheet or a booking notebook?",
         "resposta": "Yes. You organize your schedule by vehicle and by staff member, distribute work among mechanics, control your service capacity and get automatic notifications — all in one place, with no paper or loose spreadsheets."
       },
@@ -264,6 +268,7 @@
     "heroVantagens": [
       "€0 to join",
       "0% commission",
+      "Customer pays you directly",
       "No card needed",
       "Leave anytime",
       "30 days' notice of any change"

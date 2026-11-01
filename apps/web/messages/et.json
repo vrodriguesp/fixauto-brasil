@@ -238,6 +238,10 @@
         "resposta": "Registreerimine ja kõigi tööriistade (päringud, hinnapakkumised, ajakava, meeskond, hinnangud) kasutamine on praegu tasuta: liitumistasu ega komisjonitasu ei ole ja kaarti pole vaja. Kui see kunagi muutub, teatame vähemalt 30 kalendripäeva ette, vastavalt meie kasutustingimustele. Võid igal ajal lõpetada."
       },
       {
+        "pergunta": "Kas BipFix võtab kliendi raha vastu?",
+        "resposta": "Ei. BipFix ei võta kliendi raha vastu ega vahenda makseid. Klient maksab remondi eest otse sinu töökojale, nagu tavaliselt – sularahas, kaardiga või arvega – ja arve väljastad sina oma nimel. Raha liigub kliendilt sulle, mitte meie kaudu."
+      },
+      {
         "pergunta": "Kas BipFix on tasuta autoteeninduse programm ja kas see asendab minu praeguse tarkvara?",
         "resposta": "Jah, tarkvara on töökodadele tasuta – 0 € ja 0 % komisjonitasu. Ajakava, hinnapakkumised, kliendivestlus, meeskond ja varuosade päringud on ühes kohas. Oma raamatupidamis- või arveldusprogrammi võid edasi kasutada; BipFix ei nõua sellest loobumist."
       },
@@ -270,6 +274,7 @@
     "heroVantagens": [
       "0 € liitumistasu",
       "0 % komisjonitasu",
+      "Klient maksab otse sulle",
       "Kaarti pole vaja",
       "Lõpeta igal ajal",
       "Muudatustest teatame 30 päeva ette"

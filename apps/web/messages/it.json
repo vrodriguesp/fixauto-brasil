@@ -233,6 +233,10 @@
         "resposta": "Registrarsi e usare tutti gli strumenti (richieste, preventivi, agenda, team, recensioni) oggi è gratis: nessuna quota di adesione, nessuna commissione e nessuna carta richiesta. Se un giorno cambierà, ti avviseremo con almeno 30 giorni di calendario di anticipo, come previsto dai Termini di Utilizzo. Puoi uscire quando vuoi."
       },
       {
+        "pergunta": "BipFix incassa il pagamento del cliente?",
+        "resposta": "No. BipFix non incassa i soldi del cliente e non gestisce pagamenti. Il cliente paga la riparazione direttamente alla tua officina, come sempre – in contanti, con carta o con bonifico – e la fattura la emetti tu, a nome dell’officina. I soldi vanno dal cliente a te, non passano da noi."
+      },
+      {
         "pergunta": "Il sistema sostituisce un foglio di calcolo o un'agenda cartacea?",
         "resposta": "Sì. Organizzi l'agenda per veicolo e per dipendente, distribuisci il lavoro tra i meccanici, controlli la capacità di assistenza e ricevi notifiche automatiche — tutto in un unico posto, senza carta o fogli sparsi."
       },
@@ -261,6 +265,7 @@
     "heroVantagens": [
       "0 € di adesione",
       "0% di commissione",
+      "Il cliente paga direttamente a te",
       "Nessuna carta richiesta",
       "Esci quando vuoi",
       "Ogni modifica con 30 giorni di preavviso"
