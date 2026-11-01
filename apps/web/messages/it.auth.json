@@ -63,7 +63,9 @@
     "reenviarLink": "Non ho ricevuto l'email: inviala di nuovo",
     "linkReenviado": "Se un account è in attesa di conferma, abbiamo inviato un nuovo link.",
     "declaracaoResponsavel": "Dichiaro di essere il responsabile di questa impresa (titolare, amministratore o persona con poteri di rappresentanza) e di essere consapevole che l'uso di BipFix, oggi gratuito, potrà diventare a pagamento in futuro, con un preavviso di 30 giorni di calendario.",
-    "erroEnderecoNaoEncontrado": "Non abbiamo trovato l'indirizzo. Scegli uno dei suggerimenti o consenti la posizione."
+    "erroEnderecoNaoEncontrado": "Non abbiamo trovato l'indirizzo. Scegli uno dei suggerimenti o consenti la posizione.",
+    "jaConectado": "Hai già effettuato l'accesso come {email}. Per creare un altro account, esci prima.",
+    "sairParaCadastrar": "Esci e continua la registrazione"
   },
   "definirSenha": {
     "erroSenhaCurta": "La password deve contenere almeno 8 caratteri",

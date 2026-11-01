@@ -229,7 +229,9 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  if (isAuthPage && usuario) {
+  // cadastro com login ativo: a pagina mostra "voce ja esta conectado" + Sair. Antes ia
+  // calado para a pagina inicial e o link do e-mail para oficinas parecia quebrado (dono 01/11)
+  if (isAuthPage && usuario && !(path === '/cadastro' || path === caminhoLocal(pathLocale as Locale, '/cadastro'))) {
     return NextResponse.redirect(withLocale('/'));
   }
 
