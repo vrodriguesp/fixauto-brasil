@@ -58,7 +58,7 @@
     "linkReenviado": "Pronto: se a conta estiver aguardando confirmação, enviamos um novo link.",
     "muitasTentativas": "Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente de novo.",
     "dadosInvalidos": "Confira os dados informados.",
-    "slogan": "Orçamentos de oficinas perto de você, em minutos.",
+    "slogan": "Orçamentos de oficinas perto de você.",
     "emergenciaTexto": "Registre o acidente agora, sem precisar de conta",
     "selo1": "Oficinas com registro da empresa conferido",
     "selo2": "Grátis para motoristas",
@@ -74,7 +74,7 @@
   },
   "emergencia": {
     "titulo": "Acabei de bater",
-    "subtitulo": "Registre o acidente agora e receba orçamentos de oficinas próximas em minutos.",
+    "subtitulo": "Registre o acidente agora e peça orçamentos a oficinas próximas.",
     "botaoIniciar": "Registrar acidente agora",
     "fotoTitulo": "Fotos do veículo",
     "fotoTexto": "Tire ou envie fotos do dano.",
@@ -171,6 +171,7 @@
     "marca_nota": "Melhor avaliada",
     "marca_cedo": "Mais cedo",
     "prazoDias": "Pronto em {n} dias",
+    "prazoDias_um": "Pronto em 1 dia",
     "outros": "Outros orçamentos ({n})"
   },
   "acompanhamento": {
@@ -391,9 +392,11 @@
   "garantia": {
     "titulo": "Garantias ativas",
     "diasRestantes": "faltam {dias} dias",
+    "diasRestantes_um": "falta 1 dia",
     "ate": "até {data}",
     "falarComOficina": "Falar com a oficina",
     "noOrcamento": "Garantia: {dias} dias a partir da entrega",
+    "noOrcamento_um": "Garantia: 1 dia a partir da entrega",
     "sem": "Sem garantia",
     "conversaEncerrada": "Conversa encerrada: o serviço terminou e a garantia acabou (ou não foi escolhida esta oficina).",
     "desteServico": "Garantia deste serviço",
@@ -402,6 +405,7 @@
   "revisao": {
     "titulo": "{oficina} propôs uma revisão do orçamento",
     "novoPrazo": "Novo prazo: {dias} dias",
+    "novoPrazo_um": "Novo prazo: 1 dia",
     "motivo": "Motivo",
     "explicacao": "Nada muda sem a sua decisão. Se aprovar, vale o novo valor. Se recusar, o serviço é encerrado e você retira o carro.",
     "aprovar": "Aprovar novo valor",
@@ -451,5 +455,10 @@
     "titulo_aprovarRevisao": "Novo valor para aprovar",
     "agora_aprovarRevisao": "A oficina mudou o orçamento. Aprove ou recuse o novo valor.",
     "botao_aprovarRevisao": "Ver e decidir"
+  },
+  "erroTela": {
+    "titulo": "Algo deu errado",
+    "texto": "Não foi possível mostrar esta tela. Já fomos avisados.",
+    "tentar": "Tentar de novo"
   }
 }

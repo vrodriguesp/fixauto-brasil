@@ -5,6 +5,7 @@ import { formatCurrency, currencyForCountry } from '@fixauto/shared';
 import { supabase } from '../lib/supabase';
 import { apiFetch } from '../lib/api';
 import { mensagemErro } from '../lib/erro';
+import { tDias } from '../i18n';
 
 interface Revisao {
   id: string; valor_anterior: number; valor_novo: number; prazo_dias_novo: number | null; motivo: string;
@@ -70,7 +71,7 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
         <Text className="font-bold text-lg">{fmt(rev.valor_novo)}</Text>
         {pct !== 0 ? <Text className={pct > 0 ? 'text-red-700 font-semibold' : 'text-green-700 font-semibold'}>{`  (${pct > 0 ? '+' : ''}${pct}%)`}</Text> : null}
       </Text>
-      {rev.prazo_dias_novo ? <Text className="text-sm text-gray-700">{t('revisao.novoPrazo', { dias: rev.prazo_dias_novo })}</Text> : null}
+      {rev.prazo_dias_novo ? <Text className="text-sm text-gray-700">{tDias(t, 'revisao.novoPrazo', rev.prazo_dias_novo)}</Text> : null}
       <Text className="mt-2 text-sm text-gray-800"><Text className="font-medium">{t('revisao.motivo')}: </Text>{rev.motivo}</Text>
       {(rev.itens || []).map((it, i) => (
         <View key={i} className="flex-row justify-between gap-3 py-0.5">

@@ -45,3 +45,9 @@ i18n.use(initReactI18next).init({
 });
 
 export default i18n;
+
+// quantidade de dias: com 1 usa a chave "<chave>_um" (singular: "1 day", "1 päev", "1 giorno"...),
+// senao a chave normal com a variavel ({n} ou {dias})
+export function tDias(t: (k: string, v?: Record<string, unknown>) => string, chave: string, n: number, variavel: 'n' | 'dias' = 'dias') {
+  return n === 1 ? t(`${chave}_um`) : t(chave, { [variavel]: n });
+}

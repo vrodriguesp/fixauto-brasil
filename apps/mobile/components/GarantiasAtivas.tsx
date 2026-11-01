@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { router, useFocusEffect } from 'expo-router';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth-context';
+import { tDias } from '../i18n';
 
 interface Garantia { solicitacaoId: string; oficinaId: string; oficina: string; carro: string; fim: Date; dias: number }
 
@@ -51,7 +52,7 @@ export default function GarantiasAtivas({ recarregar }: { recarregar?: number })
           onPress={() => router.push(`/solicitacao/${g.solicitacaoId}`)}
           className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 mb-2">
           <Text className="text-gray-600 text-sm">{[g.carro, g.oficina].filter(Boolean).join(' · ')}</Text>
-          <Text className="text-emerald-800 text-xl font-bold">{t('garantia.diasRestantes', { dias: g.dias })}</Text>
+          <Text className="text-emerald-800 text-xl font-bold">{tDias(t, 'garantia.diasRestantes', g.dias)}</Text>
           <Text className="text-gray-500 text-xs">{t('garantia.ate', { data: g.fim.toLocaleDateString(i18n.language) })}</Text>
           <View className="flex-row flex-wrap items-center justify-between gap-2 mt-2">
             <Text className="text-primary-700 font-medium">{t('garantia.verServico')} ›</Text>

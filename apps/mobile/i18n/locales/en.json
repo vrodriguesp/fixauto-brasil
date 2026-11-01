@@ -58,7 +58,7 @@
     "linkReenviado": "Done: if the account is waiting for confirmation, we have sent a new link.",
     "muitasTentativas": "Too many attempts in a short time. Please wait a few minutes and try again.",
     "dadosInvalidos": "Please check the details you entered.",
-    "slogan": "Quotes from repair shops near you, in minutes.",
+    "slogan": "Quotes from repair shops near you.",
     "emergenciaTexto": "Report the accident now, no account needed",
     "selo1": "Shops with a verified company registration",
     "selo2": "Free for drivers",
@@ -74,7 +74,7 @@
   },
   "emergencia": {
     "titulo": "I've just crashed",
-    "subtitulo": "Report the accident now and get quotes from nearby repair shops in minutes.",
+    "subtitulo": "Report the accident now and request quotes from nearby repair shops.",
     "botaoIniciar": "Report the accident now",
     "fotoTitulo": "Vehicle photos",
     "fotoTexto": "Take or upload photos of the damage.",
@@ -171,6 +171,7 @@
     "marca_nota": "Best rated",
     "marca_cedo": "Earliest",
     "prazoDias": "Ready in {n} days",
+    "prazoDias_um": "Ready in 1 day",
     "outros": "Other quotes ({n})"
   },
   "acompanhamento": {
@@ -391,9 +392,11 @@
   "garantia": {
     "titulo": "Active warranties",
     "diasRestantes": "{dias} days left",
+    "diasRestantes_um": "1 day left",
     "ate": "until {data}",
     "falarComOficina": "Message the repair shop",
     "noOrcamento": "Warranty: {dias} days from hand-over",
+    "noOrcamento_um": "Warranty: 1 day from hand-over",
     "sem": "No warranty",
     "conversaEncerrada": "Conversation closed: the job is finished and the warranty has ended (or this repair shop was not chosen).",
     "desteServico": "Warranty for this job",
@@ -402,6 +405,7 @@
   "revisao": {
     "titulo": "{oficina} proposed a quote revision",
     "novoPrazo": "New time frame: {dias} days",
+    "novoPrazo_um": "New time frame: 1 day",
     "motivo": "Reason",
     "explicacao": "Nothing changes without your decision. If you approve, the new amount applies. If you decline, the job is closed and you collect your car.",
     "aprovar": "Approve new amount",
@@ -451,5 +455,10 @@
     "titulo_aprovarRevisao": "New price to approve",
     "agora_aprovarRevisao": "The workshop changed the quote. Approve or decline the new price.",
     "botao_aprovarRevisao": "Review and decide"
+  },
+  "erroTela": {
+    "titulo": "Something went wrong",
+    "texto": "This screen could not be shown. We have been notified.",
+    "tentar": "Try again"
   }
 }

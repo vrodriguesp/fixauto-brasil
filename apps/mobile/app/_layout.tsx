@@ -1,6 +1,8 @@
 import '../global.css';
 import '../i18n';
-import { Stack } from 'expo-router';
+import { Stack, type ErrorBoundaryProps } from 'expo-router';
+import { View, Text, Pressable } from 'react-native';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
@@ -9,12 +11,27 @@ import { AuthProvider, useAuth } from '../lib/auth-context';
 import { usePush } from '../lib/push';
 import { restaurarIdioma } from '../lib/idiomas';
 import { AvisosProvider } from '../lib/avisos';
-import { instalarCapturaDeErros } from '../lib/diagnostico';
+import { instalarCapturaDeErros, enviarDiagnostico } from '../lib/diagnostico';
 
 // erros de JavaScript do aparelho chegam ao monitoramento do admin
 instalarCapturaDeErros();
 
 restaurarIdioma();
+
+// tela que quebra ao desenhar: em vez de tela branca, aviso com "tentar de novo"; o erro vai ao monitoramento
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+  const { t } = useTranslation();
+  useEffect(() => { enviarDiagnostico('tela-quebrou', error?.message || String(error), { stack: error?.stack?.slice(0, 2000) }); }, [error]);
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: '#f9fafb' }}>
+      <Text style={{ fontSize: 18, fontWeight: '700', color: '#111827', textAlign: 'center' }}>{t('erroTela.titulo')}</Text>
+      <Text style={{ fontSize: 15, color: '#4b5563', textAlign: 'center', marginTop: 8 }}>{t('erroTela.texto')}</Text>
+      <Pressable onPress={retry} accessibilityRole="button" style={{ marginTop: 20, backgroundColor: '#2563eb', borderRadius: 10, paddingVertical: 12, paddingHorizontal: 24 }}>
+        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>{t('erroTela.tentar')}</Text>
+      </Pressable>
+    </View>
+  );
+}
 
 // push com o app fechado: registra o aparelho da conta e abre a tela do aviso tocado
 function PushDaConta() {

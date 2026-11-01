@@ -58,7 +58,7 @@
     "linkReenviado": "Fatto: se l'account è in attesa di conferma, abbiamo inviato un nuovo link.",
     "muitasTentativas": "Troppi tentativi in poco tempo. Attendi qualche minuto e riprova.",
     "dadosInvalidos": "Controlla i dati inseriti.",
-    "slogan": "Preventivi dalle officine vicino a te, in pochi minuti.",
+    "slogan": "Preventivi dalle officine vicino a te.",
     "emergenciaTexto": "Segnala l'incidente ora, senza bisogno di un account",
     "selo1": "Officine con registrazione dell'impresa verificata",
     "selo2": "Gratis per gli automobilisti",
@@ -74,7 +74,7 @@
   },
   "emergencia": {
     "titulo": "Ho avuto un incidente",
-    "subtitulo": "Segnala subito l'incidente e ricevi preventivi da officine vicine in pochi minuti.",
+    "subtitulo": "Segnala subito l'incidente e richiedi preventivi alle officine vicine.",
     "botaoIniciar": "Segnala subito l'incidente",
     "fotoTitulo": "Foto del veicolo",
     "fotoTexto": "Scatta o carica foto del danno.",
@@ -171,6 +171,7 @@
     "marca_nota": "Più votata",
     "marca_cedo": "Prima data",
     "prazoDias": "Pronta in {n} giorni",
+    "prazoDias_um": "Pronta in 1 giorno",
     "outros": "Altri preventivi ({n})"
   },
   "acompanhamento": {
@@ -391,9 +392,11 @@
   "garantia": {
     "titulo": "Garanzie attive",
     "diasRestantes": "mancano {dias} giorni",
+    "diasRestantes_um": "manca 1 giorno",
     "ate": "fino al {data}",
     "falarComOficina": "Scrivi all'officina",
     "noOrcamento": "Garanzia: {dias} giorni dalla consegna",
+    "noOrcamento_um": "Garanzia: 1 giorno dalla consegna",
     "sem": "Senza garanzia",
     "conversaEncerrada": "Conversazione chiusa: il servizio è finito e la garanzia è scaduta (oppure non è stata scelta questa officina).",
     "desteServico": "Garanzia di questo servizio",
@@ -402,6 +405,7 @@
   "revisao": {
     "titulo": "{oficina} ha proposto una revisione del preventivo",
     "novoPrazo": "Nuovi tempi: {dias} giorni",
+    "novoPrazo_um": "Nuovi tempi: 1 giorno",
     "motivo": "Motivo",
     "explicacao": "Nulla cambia senza la tua decisione. Se approvi, vale il nuovo importo. Se rifiuti, il servizio viene chiuso e ritiri l'auto.",
     "aprovar": "Approva il nuovo importo",
@@ -451,5 +455,10 @@
     "titulo_aprovarRevisao": "Nuovo prezzo da approvare",
     "agora_aprovarRevisao": "L'officina ha cambiato il preventivo. Approva o rifiuta il nuovo prezzo.",
     "botao_aprovarRevisao": "Vedi e decidi"
+  },
+  "erroTela": {
+    "titulo": "Qualcosa è andato storto",
+    "texto": "Non è stato possibile mostrare questa schermata. Abbiamo ricevuto la segnalazione.",
+    "tentar": "Riprova"
   }
 }

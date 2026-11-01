@@ -58,7 +58,7 @@
     "linkReenviado": "Valmis: kui konto ootab kinnitamist, saatsime uue lingi.",
     "muitasTentativas": "Liiga palju katseid lühikese aja jooksul. Oota mõni minut ja proovi uuesti.",
     "dadosInvalidos": "Kontrolli sisestatud andmeid.",
-    "slogan": "Hinnapakkumised lähedal asuvatelt töökodadelt minutitega.",
+    "slogan": "Hinnapakkumised lähedal asuvatelt töökodadelt.",
     "emergenciaTexto": "Registreeri avarii kohe, kontot pole vaja",
     "selo1": "Kontrollitud äriregistri andmetega töökojad",
     "selo2": "Autojuhtidele tasuta",
@@ -74,7 +74,7 @@
   },
   "emergencia": {
     "titulo": "Tegin just avarii",
-    "subtitulo": "Teata õnnetusest kohe ja saa lähedal asuvatelt töökodadelt hinnapakkumised mõne minutiga.",
+    "subtitulo": "Teata õnnetusest kohe ja küsi lähedal asuvatelt töökodadelt hinnapakkumisi.",
     "botaoIniciar": "Teata õnnetusest kohe",
     "fotoTitulo": "Sõiduki fotod",
     "fotoTexto": "Tee või lae üles fotod kahjustusest.",
@@ -171,6 +171,7 @@
     "marca_nota": "Parim hinnang",
     "marca_cedo": "Kõige varem",
     "prazoDias": "Valmis {n} päevaga",
+    "prazoDias_um": "Valmis 1 päevaga",
     "outros": "Muud pakkumised ({n})"
   },
   "acompanhamento": {
@@ -391,9 +392,11 @@
   "garantia": {
     "titulo": "Kehtivad garantiid",
     "diasRestantes": "{dias} päeva jäänud",
+    "diasRestantes_um": "1 päev jäänud",
     "ate": "kuni {data}",
     "falarComOficina": "Kirjuta töökojale",
     "noOrcamento": "Garantii: {dias} päeva alates üleandmisest",
+    "noOrcamento_um": "Garantii: 1 päev alates üleandmisest",
     "sem": "Garantiita",
     "conversaEncerrada": "Vestlus on suletud: töö on lõpetatud ja garantii on lõppenud (või seda töökoda ei valitud).",
     "desteServico": "Selle töö garantii",
@@ -402,6 +405,7 @@
   "revisao": {
     "titulo": "{oficina} pakkus hinnapakkumise muudatust",
     "novoPrazo": "Uus tähtaeg: {dias} päeva",
+    "novoPrazo_um": "Uus tähtaeg: 1 päev",
     "motivo": "Põhjus",
     "explicacao": "Ilma sinu otsuseta ei muutu midagi. Kui kinnitad, kehtib uus hind. Kui keeldud, töö lõpetatakse ja viid auto ära.",
     "aprovar": "Kinnita uus summa",
@@ -451,5 +455,10 @@
     "titulo_aprovarRevisao": "Uus hind vajab kinnitust",
     "agora_aprovarRevisao": "Töökoda muutis hinnapakkumist. Kinnita uus hind või keeldu.",
     "botao_aprovarRevisao": "Vaata ja otsusta"
+  },
+  "erroTela": {
+    "titulo": "Midagi läks valesti",
+    "texto": "Seda vaadet ei õnnestunud kuvada. Saime sellest teate.",
+    "tentar": "Proovi uuesti"
   }
 }

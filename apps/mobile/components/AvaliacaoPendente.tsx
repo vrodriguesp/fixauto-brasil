@@ -21,7 +21,7 @@ export function useAvaliacaoPendente(recarregar?: number) {
       const { data, error } = await supabase.from('solicitacoes')
         .select('id, created_at, orcamentos(status, oficina:oficinas(nome_fantasia)), avaliacoes(id)')
         .eq('cliente_id', user.id).eq('status', 'concluida').order('created_at', { ascending: false });
-      if (error) { enviarDiagnostico('avaliacao-pendente', error.message, { code: error.code }); setPendente(null); return; }
+      if (error) { enviarDiagnostico('avaliacao-pendente', error.message || 'erro sem mensagem', { code: error.code, details: error.details, hint: error.hint }); setPendente(null); return; }
       const s = ((data || []) as any[]).find((x) => !(x.avaliacoes || []).length && (x.orcamentos || []).some((o: any) => o.status === 'aceito'));
       setPendente(s ? { solicitacaoId: s.id, oficina: s.orcamentos.find((o: any) => o.status === 'aceito')?.oficina?.nome_fantasia || '' } : null);
       if (Date.now() - inicio > 5000) enviarDiagnostico('avaliacao-pendente', 'consulta lenta', { ms: Date.now() - inicio });
