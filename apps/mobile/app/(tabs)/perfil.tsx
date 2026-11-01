@@ -3,6 +3,8 @@ import { View, Text, Pressable, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
+import Constants from 'expo-constants';
+import * as Updates from 'expo-updates';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
 import { API_BASE_URL } from '../../lib/api';
@@ -113,6 +115,11 @@ ${t('perfil.excluirContaConfirmar')}`, [
       <Pressable onPress={handleExcluir} disabled={excluindo} accessibilityRole="button" accessibilityState={{ disabled: excluindo }} className="py-4 items-center mt-4" style={{ opacity: excluindo ? 0.5 : 1 }}>
         <Text className="text-gray-500 underline">{t('perfil.excluirConta')}</Text>
       </Pressable>
+
+      {/* versao + atualizacao instalada (expo-updates): ajuda no suporte e confirma que a atualizacao chegou */}
+      <Text className="text-center text-xs text-gray-400 mt-2">
+        BipFix {Constants.expoConfig?.version ?? ''}{!Updates.isEmbeddedLaunch && Updates.updateId ? ` · ${Updates.updateId.slice(0, 8)}` : ''}
+      </Text>
     </View>
   );
 }

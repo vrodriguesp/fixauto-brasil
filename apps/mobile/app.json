@@ -4,6 +4,12 @@
     "slug": "bipfix-cliente",
     "scheme": "bipfix",
     "version": "1.0.0",
+    "runtimeVersion": { "policy": "appVersion" },
+    "updates": {
+      "url": "https://u.expo.dev/d028e87b-04e3-42f1-8339-62a62959c8ec",
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
