@@ -661,7 +661,8 @@
     "ARQUIVO_GRANDE": "File troppo grande. Invia un file più piccolo.",
     "SEM_ITENS": "Non abbiamo trovato voci nel documento. Compilale a mano.",
     "FOTO_INVALIDA": "Impossibile leggere l'immagine. Prova un'altra foto.",
-    "IA_OCUPADA": "L'analisi automatica è occupata. Riprova tra qualche minuto o compila a mano."
+    "IA_OCUPADA": "L'analisi automatica è occupata. Riprova tra qualche minuto o compila a mano.",
+    "SERVICO_ENCERRADO": "L'auto è già stata consegnata (o la richiesta è stata annullata): il preventivo non può più essere modificato."
   },
   "sobre": {
     "metaTitle": "Chi è BipFix",

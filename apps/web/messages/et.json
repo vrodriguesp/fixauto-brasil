@@ -669,7 +669,8 @@
     "ARQUIVO_GRANDE": "Fail on liiga suur. Saada väiksem fail.",
     "SEM_ITENS": "Dokumendist ei leitud ridu. Täida need käsitsi.",
     "FOTO_INVALIDA": "Pilti ei õnnestunud lugeda. Proovi teist fotot.",
-    "IA_OCUPADA": "Automaatne analüüs on praegu hõivatud. Proovi mõne minuti pärast uuesti või täida käsitsi."
+    "IA_OCUPADA": "Automaatne analüüs on praegu hõivatud. Proovi mõne minuti pärast uuesti või täida käsitsi.",
+    "SERVICO_ENCERRADO": "Auto on juba üle antud (või päring tühistati): hinnapakkumist ei saa enam muuta."
   },
   "sobre": {
     "metaTitle": "BipFixist",

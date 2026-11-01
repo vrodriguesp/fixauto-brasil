@@ -2,24 +2,33 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import { useRouter, rota, Link } from '@/i18n/navigation';
+import { useRouter, rota } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { salvarTokenEmergencia } from '@/lib/emergencia-token';
 import { compressImage } from '@/lib/image-compress';
 import { textoErroApi } from '@/lib/erro-api';
 import { SeguroReparoCampos, ProximosPassosSeguro, SEGURO_VAZIO, type ValorSeguro } from '@/components/emergencia/SeguroReparo';
 import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
+import { salvarRascunhoEmergencia, lerRascunhoEmergencia, apagarRascunhoEmergencia } from '@/lib/rascunho-emergencia';
 
 export default function EmergenciaPage() {
   const t = useTranslations('emergencia');
   const tErros = useTranslations('erros');
-  const tEntrar = useTranslations('excluirConta');
   const [contaExistente, setContaExistente] = useState(false);
   const locale = useLocale();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
-  const { user, isLoggedIn } = useAuth();
+  const { user, isLoggedIn, signIn } = useAuth();
+  // e-mail que ja tem conta: entrar aqui mesmo (ou pedir nova senha) sem perder o formulario
+  const [senhaLogin, setSenhaLogin] = useState('');
+  const [entrando, setEntrando] = useState(false);
+  const [erroLogin, setErroLogin] = useState('');
+  const [resetEnviado, setResetEnviado] = useState(false);
+  const [enviarAposLogin, setEnviarAposLogin] = useState(false);
+  const [rascunho, setRascunho] = useState<'' | 'restaurado' | 'semFotos'>('');
+  const [fotosNaoGuardadas, setFotosNaoGuardadas] = useState(false);
+  const loginRef = useRef<HTMLDivElement>(null);
 
   const [step, setStep] = useState(1);
   const [fotos, setFotos] = useState<{ file: File; preview: string }[]>([]);
@@ -91,6 +100,26 @@ export default function EmergenciaPage() {
       setTelefone(user.telefone || '');
     }
   }, [isLoggedIn, user]);
+
+  // volta do login/nova senha: restaura o que a pessoa ja tinha preenchido
+  useEffect(() => {
+    lerRascunhoEmergencia().then((r) => {
+      if (!r) return;
+      const d = r.dados;
+      setNome(d.nome || ''); setEmail(d.email || ''); setTelefone(d.telefone || '');
+      setDescricao(d.descricao || ''); setPlaca(d.placa || ''); setTipoAcidente(d.tipoAcidente || 'outro_causou');
+      if (d.localizacao) setLocalizacao(d.localizacao);
+      if (d.coords) { setCoords(d.coords); setGeoResolved(!!d.geoResolved); }
+      setVeiculoInfo(d.veiculoInfo || null);
+      if (d.seguro && typeof d.seguro === 'object') setSeguro({ ...SEGURO_VAZIO, ...(d.seguro as ValorSeguro) });
+      const fotosOk = !!r.fotos && r.fotos.length >= (d.qtdFotos || 0);
+      if (r.fotos?.length) setFotos(r.fotos.map((file) => ({ file, preview: URL.createObjectURL(file) })));
+      setRascunho(fotosOk ? 'restaurado' : 'semFotos');
+      // com as fotos de volta vai direto ao envio; sem elas, ao passo das fotos
+      setStep(fotosOk ? 3 : 1);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Auto-detect location
   useEffect(() => {
@@ -194,11 +223,19 @@ export default function EmergenciaPage() {
       const r = await res.json().catch(() => ({}));
       if (!res.ok || !r.id) {
         setError(textoErroApi(tErros, res.status, r));
-        setContaExistente(r?.codigo === 'CONTA_EXISTENTE');
+        const existe = r?.codigo === 'CONTA_EXISTENTE';
+        setContaExistente(existe);
+        if (existe) {
+          const ok = await salvarRascunhoEmergencia({ nome, email, telefone, descricao, placa, tipoAcidente, localizacao, coords: loc, geoResolved: true, veiculoInfo, seguro }, fotos.map((f) => f.file));
+          setFotosNaoGuardadas(!ok);
+          setTimeout(() => loginRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+        }
         setSubmitting(false);
         return;
       }
       salvarTokenEmergencia(r.id, r.token);
+      apagarRascunhoEmergencia();
+      setContaExistente(false);
       setEmergenciaId(r.id);
 
       setSubmitting(false);
@@ -208,6 +245,38 @@ export default function EmergenciaPage() {
       setError(tErros('GENERICO'));
       setSubmitting(false);
     }
+  };
+
+  // login aqui mesmo; o envio segue sozinho quando a sessao estiver pronta
+  const entrarEEnviar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!senhaLogin || entrando) return;
+    setEntrando(true);
+    setErroLogin('');
+    const { error: erroAuth } = await signIn(email, senhaLogin);
+    setEntrando(false);
+    if (erroAuth) {
+      setErroLogin(erroAuth === 'email_not_confirmed' ? t('loginNaoConfirmado') : erroAuth === 'over_request_rate_limit' ? tErros('MUITAS_TENTATIVAS') : t('loginErro'));
+      return;
+    }
+    setSenhaLogin('');
+    setEnviarAposLogin(true);
+  };
+  useEffect(() => {
+    if (!enviarAposLogin || !isLoggedIn) return;
+    setEnviarAposLogin(false);
+    setError('');
+    handleSubmit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enviarAposLogin, isLoggedIn]);
+
+  const esqueciSenha = async () => {
+    setErroLogin('');
+    // o rascunho ja foi guardado no aviso de conta existente; guarda de novo (pode ter mudado)
+    const ok = await salvarRascunhoEmergencia({ nome, email, telefone, descricao, placa, tipoAcidente, localizacao, coords, geoResolved, veiculoInfo, seguro }, fotos.map((f) => f.file));
+    setFotosNaoGuardadas(!ok);
+    await fetch('/api/esqueci-senha', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, locale }) }).catch(() => {});
+    setResetEnviado(true);
   };
 
   if (submitted) {
@@ -291,20 +360,52 @@ export default function EmergenciaPage() {
           ))}
         </div>
 
-        {error && (
+        {rascunho && !contaExistente && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6" role="status" data-testid="rascunho-restaurado">
+            <p className="text-sm text-blue-900">{rascunho === 'restaurado' ? t('rascunhoRestaurado') : t('rascunhoSemFotos')}</p>
+          </div>
+        )}
+
+        {error && !(contaExistente && !isLoggedIn) && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
             <p className="text-sm text-red-800">{error}</p>
-            {contaExistente && (
-              // e-mail de conta existente: entrar e voltar para este formulario
-              <Link href={`/login?voltar=${encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname : '/')}`} className="btn-primary inline-block mt-3">{tEntrar('entrarBotao')}</Link>
+          </div>
+        )}
+
+        {contaExistente && !isLoggedIn && (
+          // e-mail de conta existente: entrar aqui mesmo; nada do que foi preenchido se perde.
+          // Para quem nao e o dono do e-mail so aparece "este e-mail ja tem conta".
+          <div ref={loginRef} className="card border-2 border-amber-300 mb-6" data-testid="login-emergencia">
+            <h2 className="font-semibold text-gray-900 mb-1">{t('loginTitulo')}</h2>
+            <p className="text-sm text-gray-700 mb-4">{t('loginTexto')}</p>
+            <form onSubmit={entrarEEnviar} className="space-y-3">
+              <div>
+                <label htmlFor="emerg-login-email" className="block text-sm font-medium text-gray-700 mb-1">{t('emailLabel')}</label>
+                <input id="emerg-login-email" type="email" className="input-field bg-gray-50" value={email} readOnly autoComplete="username" />
+              </div>
+              <div>
+                <label htmlFor="emerg-login-senha" className="block text-sm font-medium text-gray-700 mb-1">{t('loginSenha')}</label>
+                <input id="emerg-login-senha" type="password" className="input-field" value={senhaLogin} onChange={(e) => setSenhaLogin(e.target.value)} autoComplete="current-password" />
+              </div>
+              {erroLogin && <p className="text-sm text-red-700" role="alert">{erroLogin}</p>}
+              <button type="submit" disabled={!senhaLogin || entrando || submitting} className="bg-red-600 text-white w-full px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50">
+                {entrando || submitting ? t('sendingBtn') : t('loginEnviar')}
+              </button>
+            </form>
+            {resetEnviado ? (
+              <p className="text-sm text-green-800 bg-green-50 border border-green-200 rounded-lg p-3 mt-4" role="status" data-testid="reset-enviado">{t('resetEnviado')}</p>
+            ) : (
+              <button type="button" onClick={esqueciSenha} className="mt-4 min-h-[44px] text-sm font-medium text-primary-700 hover:underline">{t('loginEsqueci')}</button>
             )}
+            <p className="text-xs text-gray-500 mt-2">{fotosNaoGuardadas ? t('rascunhoFotosNaoGuardadas') : t('rascunhoGuardado')}</p>
           </div>
         )}
 
         <div className="card">
+          <p className="text-xs text-gray-500 mb-3"><span className="text-red-600" aria-hidden="true">*</span> {t('camposObrigatorios')}</p>
           {step === 1 && (
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('step1Title')}</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('step1Title')} <span className="text-red-600" aria-hidden="true">*</span></h2>
               <p className="text-sm text-gray-500 mb-1">
                 {t('step1Subtitle')}
               </p>
@@ -472,21 +573,22 @@ export default function EmergenciaPage() {
               <p className="text-sm text-gray-500 mb-4">{t('step2Subtitle')}</p>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="cc5ef-3" className="block text-sm font-medium text-gray-700 mb-1">{t('nameLabel')}</label>
-                  <input id="cc5ef-3" type="text" className="input-field" placeholder={t('namePlaceholder')} value={nome} onChange={(e) => setNome(e.target.value)} />
+                  <label htmlFor="cc5ef-3" className="block text-sm font-medium text-gray-700 mb-1">{t('nameLabel')} <span className="text-red-600" aria-hidden="true">*</span></label>
+                  <input id="cc5ef-3" type="text" required aria-required="true" autoComplete="name" className="input-field" placeholder={t('namePlaceholder')} value={nome} onChange={(e) => setNome(e.target.value)} />
                 </div>
                 <div>
-                  <label htmlFor="cc5ef-4" className="block text-sm font-medium text-gray-700 mb-1">{t('emailLabel')}</label>
-                  <input id="cc5ef-4" type="email" className="input-field" placeholder={t('emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <label htmlFor="cc5ef-4" className="block text-sm font-medium text-gray-700 mb-1">{t('emailLabel')} <span className="text-red-600" aria-hidden="true">*</span></label>
+                  <input id="cc5ef-4" type="email" required aria-required="true" autoComplete="email" className="input-field" placeholder={t('emailPlaceholder')} value={email} onChange={(e) => { setEmail(e.target.value); setContaExistente(false); setResetEnviado(false); }} />
                 </div>
                 <div>
-                  <label htmlFor="cc5ef-5" className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')}</label>
-                  <input id="cc5ef-5" type="tel" className="input-field" placeholder={t('phonePlaceholder')} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+                  {/* telefone opcional (pedido do dono 31/10) */}
+                  <label htmlFor="cc5ef-5" className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')} <span className="font-normal text-gray-500">({t('opcional')})</span></label>
+                  <input id="cc5ef-5" type="tel" autoComplete="tel" className="input-field" placeholder={t('phonePlaceholder')} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
                 </div>
               </div>
               <div className="flex justify-between mt-6">
                 <button onClick={() => setStep(1)} className="btn-secondary">{t('backBtn')}</button>
-                <button onClick={() => setStep(3)} disabled={!nome || !email || !telefone}
+                <button onClick={() => setStep(3)} disabled={!nome.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())}
                   className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50">
                   {t('nextBtn')}
                 </button>
@@ -500,7 +602,7 @@ export default function EmergenciaPage() {
               <p className="text-sm text-gray-500 mb-4">{t('step3Subtitle')}</p>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="cc5ef-6" className="block text-sm font-medium text-gray-700 mb-1">{t('addressLabel')}</label>
+                  <label htmlFor="cc5ef-6" className="block text-sm font-medium text-gray-700 mb-1">{t('addressLabel')} <span className="text-red-600" aria-hidden="true">*</span></label>
                   <EnderecoAutocomplete id="cc5ef-6"
                     value={localizacao}
                     onChange={setLocalizacao}
@@ -532,7 +634,7 @@ export default function EmergenciaPage() {
               <div className="bg-gray-50 rounded-lg p-4 mt-6 space-y-2">
                 <h3 className="font-medium text-gray-900 text-sm">{t('summaryTitle')}</h3>
                 <p className="text-xs text-gray-600">{t('summaryPhotos', { count: fotos.length })}</p>
-                <p className="text-xs text-gray-600">{nome} - {telefone}</p>
+                <p className="text-xs text-gray-600">{[nome, telefone].filter(Boolean).join(' - ')}</p>
                 {descricao && <p className="text-xs text-gray-600">{descricao}</p>}
               </div>
 

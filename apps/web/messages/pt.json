@@ -660,7 +660,8 @@
     "ARQUIVO_GRANDE": "Arquivo grande demais. Envie um arquivo menor.",
     "SEM_ITENS": "Não encontramos itens no documento. Preencha à mão.",
     "FOTO_INVALIDA": "Não foi possível ler a imagem. Tente outra foto.",
-    "IA_OCUPADA": "A análise automática está ocupada agora. Tente de novo em alguns minutos ou preencha à mão."
+    "IA_OCUPADA": "A análise automática está ocupada agora. Tente de novo em alguns minutos ou preencha à mão.",
+    "SERVICO_ENCERRADO": "O carro já foi entregue (ou o pedido foi cancelado): o orçamento não pode mais ser alterado."
   },
   "sobre": {
     "metaTitle": "Sobre o BipFix",

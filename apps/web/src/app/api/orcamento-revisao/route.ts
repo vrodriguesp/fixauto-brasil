@@ -43,6 +43,9 @@ export async function POST(req: NextRequest) {
   const { data: func } = ehDono ? { data: null } : await supabaseAdmin.from('funcionarios').select('id').eq('oficina_id', orc.oficina_id).eq('profile_id', userId).eq('ativo', true).maybeSingle();
   if (!ehDono && !func) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
 
+  // carro entregue ou pedido cancelado: orcamento fechado (teste do dono 31/10)
+  const statusSol = (orc as any).solicitacao?.status;
+  if (statusSol === 'concluida' || statusSol === 'cancelada') return NextResponse.json({ error: 'Serviço encerrado', codigo: 'SERVICO_ENCERRADO' }, { status: 409 });
   // so orcamento aceito com o carro agendado ou na oficina
   if (orc.status !== 'aceito') return NextResponse.json({ error: 'Orçamento não está aceito', codigo: 'ORCAMENTO_INDISPONIVEL' }, { status: 409 });
   const { data: agenda } = await supabaseAdmin.from('agenda').select('id').eq('solicitacao_id', orc.solicitacao_id).eq('oficina_id', orc.oficina_id).in('status', ['agendado', 'em_andamento']).limit(1);

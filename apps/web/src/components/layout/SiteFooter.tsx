@@ -29,10 +29,8 @@ export default function SiteFooter({ temOficinas = false }: { temOficinas?: bool
         <div className="grid md:grid-cols-4 gap-8">
           <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <span className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">BF</span>
-              <span className="text-xl font-bold text-white">
-                Bip<span className="text-primary-400">Fix</span>
-              </span>
+              {/* marca real (antes um quadrado "BF"; feedback do dono 31/10) */}
+              <img src="/logo-dark-80.webp" alt="BipFix" width={172} height={40} loading="lazy" className="h-10 w-auto" />
             </Link>
             <p className="text-sm">{t('footerTagline')}</p>
           </div>

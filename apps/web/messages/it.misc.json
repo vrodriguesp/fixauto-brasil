@@ -435,7 +435,21 @@
     "locationCurrentDetected": "Posizione attuale rilevata",
     "errorGenericSubmit": "Errore durante la registrazione dell'emergenza",
     "erroLocalizacao": "Non riusciamo a trovare l'indirizzo. Attiva la posizione o scrivi via e città.",
-    "fotoDica": "Consiglio: fotografa i 4 angoli dell'auto, il danno da vicino e la targa dell'altro veicolo."
+    "fotoDica": "Consiglio: fotografa i 4 angoli dell'auto, il danno da vicino e la targa dell'altro veicolo.",
+    "camposObrigatorios": "campo obbligatorio",
+    "opcional": "facoltativo",
+    "loginTitulo": "Questa email ha già un account BipFix",
+    "loginTexto": "Accedi per confermare la segnalazione dell'incidente. Quello che hai compilato resta qui.",
+    "loginSenha": "Password",
+    "loginEnviar": "Accedi e invia la segnalazione",
+    "loginErro": "Email o password errati.",
+    "loginNaoConfirmado": "Questo account non ha ancora confermato l'email. Apri il link che ti abbiamo inviato e riprova.",
+    "loginEsqueci": "Password dimenticata?",
+    "resetEnviado": "Ti abbiamo inviato un link per creare una nuova password. Dopo averla creata tornerai su questa pagina e la segnalazione sarà qui, pronta da inviare.",
+    "rascunhoGuardado": "Quello che hai compilato, foto comprese, resta salvato in questo browser per 24 ore.",
+    "rascunhoFotosNaoGuardadas": "I dati restano salvati in questo browser per 24 ore, ma le foto no: se lasci questa pagina dovrai aggiungerle di nuovo.",
+    "rascunhoRestaurado": "Abbiamo recuperato la segnalazione che avevi compilato. Controlla e invia.",
+    "rascunhoSemFotos": "Abbiamo recuperato i dati che avevi compilato, ma non le foto: aggiungile di nuovo e invia."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Registrazione dell'incidente",

@@ -216,7 +216,8 @@
     "pausar": "Pausa",
     "audioIndisponivel": "Audio non disponibile",
     "microfoneTitulo": "Microfono disattivato",
-    "microfoneTexto": "Per inviare un audio, consenti l'accesso al microfono nelle Impostazioni."
+    "microfoneTexto": "Per inviare un audio, consenti l'accesso al microfono nelle Impostazioni.",
+    "verOficinaCurto": "Officina"
   },
   "veiculos": {
     "titulo": "I miei veicoli",

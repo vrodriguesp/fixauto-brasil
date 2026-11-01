@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from './supabase';
 import { useAuth } from './auth-context';
+import { destinoDoAviso } from './destino-aviso';
 
 export interface Aviso {
   id: string;
@@ -28,18 +29,6 @@ interface Ctx {
 const AvisosCtx = createContext<Ctx>({ chegou: 0, naoLidos: [], mensagensNaoLidas: 0, abrir: () => {}, atualizar: () => {} });
 export const useAvisos = () => useContext(AvisosCtx);
 
-// Para onde vai cada aviso ao ser tocado
-function destino(a: Aviso): string | null {
-  const d = a.dados || {};
-  if (a.tipo === 'nova_mensagem' && d.solicitacao_id) {
-    const p = new URLSearchParams();
-    if (d.oficina_id) p.set('oficina', d.oficina_id);
-    if (d.pagador_id) p.set('pagador', '1');
-    return `/conversa/${d.solicitacao_id}${p.toString() ? `?${p}` : ''}`;
-  }
-  if (d.solicitacao_id) return `/solicitacao/${d.solicitacao_id}`;
-  return null;
-}
 
 // Avisos dentro do app (orcamento novo, mensagem, carro chegou na oficina,
 // etapa do conserto...): aparecem no alto da tela na hora em que chegam,
@@ -91,7 +80,7 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
     setBanner(null);
     setNaoLidos((l) => l.filter((x) => x.id !== a.id));
     supabase.from('notificacoes').update({ lida: true }).eq('id', a.id).then(() => {});
-    const para = destino(a);
+    const para = destinoDoAviso(a);
     if (para) router.push(para as any);
   }, []);
 

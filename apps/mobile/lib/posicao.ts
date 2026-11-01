@@ -1,6 +1,39 @@
+import { useCallback, useEffect, useRef } from 'react';
+import { AppState, type AppStateStatus } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import * as Location from 'expo-location';
 import { API_BASE_URL } from './api';
 import { fetchComPrazo } from './rede';
+
+// Permissao dada depois de negar (nos Ajustes do sistema): ao voltar para o
+// app (AppState 'active') ou para a tela, confere de novo e, se agora esta
+// permitida, busca a posicao sozinha (teste do dono 31/10). `falta` = ainda
+// sem posicao; `buscar` = a funcao da tela que pega a posicao.
+export function useLocalizacaoAoVoltar(falta: boolean, buscar: () => void) {
+  const faltaRef = useRef(falta);
+  const buscarRef = useRef(buscar);
+  faltaRef.current = falta;
+  buscarRef.current = buscar;
+  const conferir = useCallback(async () => {
+    if (!faltaRef.current) return;
+    const perm = await Location.getForegroundPermissionsAsync().catch(() => null);
+    if (perm?.status === 'granted' && faltaRef.current) buscarRef.current();
+  }, []);
+  useEffect(() => {
+    let antes: AppStateStatus = AppState.currentState;
+    const sub = AppState.addEventListener('change', (agora) => {
+      if (/inactive|background/.test(antes) && agora === 'active') conferir();
+      antes = agora;
+    });
+    return () => sub.remove();
+  }, [conferir]);
+  // volta para a tela vinda de outra tela do app; no 1o foco a propria tela ja pede
+  const primeiroFoco = useRef(true);
+  useFocusEffect(useCallback(() => {
+    if (primeiroFoco.current) { primeiroFoco.current = false; return; }
+    conferir();
+  }, [conferir]));
+}
 
 // a primeira que der certo (Promise.any nao existe em todo motor de JS do celular)
 const primeira = <T,>(ps: Promise<T>[]) => new Promise<T>((ok, falha) => {

@@ -157,6 +157,9 @@ export default function SolicitacaoDetalhePage() {
                   {isAccepted || isEmAndamento ? t('proporRevisao') : t('modificarOrcamento')}
                 </Link>
               )}
+              {sol.status === 'concluida' && isAccepted && (
+                <p className="text-sm text-gray-600 mt-4" role="status" data-testid="orcamento-fechado">{t('orcamentoFechadoEntregue')}</p>
+              )}
             </div>
           )}
 

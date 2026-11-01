@@ -5,6 +5,7 @@ import { TERMOS_VERSAO } from '@/lib/termos';
 import { Link, useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
+import { temRascunhoEmergencia } from '@/lib/rascunho-emergencia';
 
 export default function ResetPasswordPage() {
   const t = useTranslations('resetPassword');
@@ -98,7 +99,8 @@ export default function ResetPasswordPage() {
     setSuccess(true);
     // ja entrou com a senha nova: vai para o painel (antes ia ao login e o
     // middleware devolvia para a home)
-    setTimeout(() => router.push('/'), 3000);
+    // registro de acidente guardado antes de pedir a senha nova: volta para ele
+    setTimeout(() => router.push(temRascunhoEmergencia() ? '/emergencia' : '/'), 3000);
   };
 
   if (success) {

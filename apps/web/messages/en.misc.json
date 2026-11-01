@@ -435,7 +435,21 @@
     "locationCurrentDetected": "Current location detected",
     "errorGenericSubmit": "Error logging the emergency",
     "erroLocalizacao": "We couldn't find that address. Turn on location or type the street and city.",
-    "fotoDica": "Tip: photograph the car's 4 corners, the damage up close and the other vehicle's plate."
+    "fotoDica": "Tip: photograph the car's 4 corners, the damage up close and the other vehicle's plate.",
+    "camposObrigatorios": "required field",
+    "opcional": "optional",
+    "loginTitulo": "This email already has a BipFix account",
+    "loginTexto": "Sign in to confirm the accident report. What you filled in stays here.",
+    "loginSenha": "Password",
+    "loginEnviar": "Sign in and send the report",
+    "loginErro": "Wrong email or password.",
+    "loginNaoConfirmado": "This account has not confirmed its email yet. Open the link we sent and try again.",
+    "loginEsqueci": "Forgot your password?",
+    "resetEnviado": "We sent you a link to create a new password. After you create it you come back to this page and your accident report will be here, ready to send.",
+    "rascunhoGuardado": "What you filled in, including the photos, is kept in this browser for 24 hours.",
+    "rascunhoFotosNaoGuardadas": "Your details are kept in this browser for 24 hours, but the photos are not: if you leave this page you will need to add them again.",
+    "rascunhoRestaurado": "We restored the report you had filled in. Check it and send it.",
+    "rascunhoSemFotos": "We restored the details you had filled in, but not the photos: add them again and send."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Accident Report",

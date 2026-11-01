@@ -14,7 +14,7 @@ import { fetchComPrazo } from '../lib/rede';
 import i18n from '../i18n';
 import { ErroApi, ErroUsuario, mensagemErro } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
-import { obterPosicao, enderecoDaPosicao } from '../lib/posicao';
+import { obterPosicao, enderecoDaPosicao, useLocalizacaoAoVoltar } from '../lib/posicao';
 import { regiaoSeguro, paisDoAcidente, PAISES_SEGURO, nomeDoPais } from '../lib/regiao';
 import VehicleCatalogPicker from '../components/VehicleCatalogPicker';
 import { arquivoDaFoto } from '../lib/anexo';
@@ -69,7 +69,7 @@ export default function EmergenciaScreen() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
-  const faltaContato = !user && (!nome.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || !telefone.trim());
+  const faltaContato = !user && (!nome.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()));  // telefone opcional (pedido do dono 31/10)
   // quem paga o reparo (opcional) - a oficina ve no pedido
   const [pagamento, setPagamento] = useState<Pagamento | ''>('');
   const [seguradora, setSeguradora] = useState('');
@@ -156,6 +156,8 @@ export default function EmergenciaScreen() {
   useEffect(() => {
     handleUsarLocalizacao(true).catch(() => {});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // permitiu nos Ajustes e voltou: busca a posicao sem precisar tocar no botao
+  useLocalizacaoAoVoltar(!coords && !buscandoLocal, () => { handleUsarLocalizacao(true).catch(() => {}); });
 
   // Tudo no servidor numa chamada so (/api/emergencia): acidente, fotos,
   // solicitacao e aviso as oficinas. O dono vem do login (Authorization).
@@ -410,7 +412,7 @@ export default function EmergenciaScreen() {
           <TextInput accessibilityLabel={t('auth.nome')} value={nome} onChangeText={setNome} autoComplete="name" textContentType="name" maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-[16px]" />
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</Text>
           <TextInput accessibilityLabel={t('auth.email')} value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" textContentType="emailAddress" maxLength={254} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-[16px]" />
-          <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.telefone')}</Text>
+          <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.telefone')} ({t('common.opcional')})</Text>
           <TextInput accessibilityLabel={t('auth.telefone')} value={telefone} onChangeText={setTelefone} keyboardType="phone-pad" autoComplete="tel" textContentType="telephoneNumber" maxLength={30} className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-[16px]" />
         </View>
       )}

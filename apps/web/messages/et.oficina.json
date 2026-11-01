@@ -649,7 +649,10 @@
     "abrirConversa": "Ava vestlus",
     "importarFoto": "Tee foto",
     "importarArquivo": "Vali fail või PDF",
-    "importarGrande": "Fail on liiga suur (kuni 10 MB). Proovi väiksemat fotot või PDF-i."
+    "importarGrande": "Fail on liiga suur (kuni 10 MB). Proovi väiksemat fotot või PDF-i.",
+    "orcamentoFechadoEntregue": "Auto on kliendile juba üle antud. Hinnapakkumine on suletud ja seda ei saa enam muuta.",
+    "orcamentoFechadoCancelado": "See päring tühistati. Hinnapakkumist ei saa enam muuta.",
+    "verPedido": "Vaata päringut"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Parool peab olema vähemalt 8 tähemärki",
@@ -925,7 +928,8 @@
       "expirado": "Aegunud"
     },
     "proporRevisao": "Paku muudatust",
-    "avisoFaltas": "{count, plural, one {Sellel kliendil on # registreeritud mitteilmumine} other {Sellel kliendil on # registreeritud mitteilmumist}}"
+    "avisoFaltas": "{count, plural, one {Sellel kliendil on # registreeritud mitteilmumine} other {Sellel kliendil on # registreeritud mitteilmumist}}",
+    "orcamentoFechadoEntregue": "Auto üle antud: hinnapakkumine on suletud ja seda ei saa enam muuta."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Sõiduk vastu võetud töökojas",

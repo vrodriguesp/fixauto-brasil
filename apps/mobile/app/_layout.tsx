@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { StatusBar } from 'expo-status-bar';
-import { AuthProvider } from '../lib/auth-context';
+import { AuthProvider, useAuth } from '../lib/auth-context';
+import { usePush } from '../lib/push';
 import { restaurarIdioma } from '../lib/idiomas';
 import { AvisosProvider } from '../lib/avisos';
 import { instalarCapturaDeErros } from '../lib/diagnostico';
@@ -14,6 +15,13 @@ import { instalarCapturaDeErros } from '../lib/diagnostico';
 instalarCapturaDeErros();
 
 restaurarIdioma();
+
+// push com o app fechado: registra o aparelho da conta e abre a tela do aviso tocado
+function PushDaConta() {
+  const { user } = useAuth();
+  usePush(user?.id);
+  return null;
+}
 
 export default function RootLayout() {
   const { t } = useTranslation();
@@ -24,6 +32,7 @@ export default function RootLayout() {
       <KeyboardProvider>
       <AuthProvider>
         <AvisosProvider>
+        <PushDaConta />
         <StatusBar style="dark" />
         <Stack screenOptions={{ headerShown: false, headerBackButtonDisplayMode: 'minimal' }}>
           <Stack.Screen name="(auth)" />

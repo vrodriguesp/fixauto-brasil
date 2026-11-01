@@ -435,7 +435,21 @@
     "locationCurrentDetected": "Praegune asukoht tuvastatud",
     "errorGenericSubmit": "Avarii registreerimine ebaõnnestus",
     "erroLocalizacao": "Aadressi ei õnnestunud leida. Luba asukoht või kirjuta tänav ja linn.",
-    "fotoDica": "Vihje: pildista auto 4 nurka, kahjustust lähedalt ja teise sõiduki numbrimärki."
+    "fotoDica": "Vihje: pildista auto 4 nurka, kahjustust lähedalt ja teise sõiduki numbrimärki.",
+    "camposObrigatorios": "kohustuslik väli",
+    "opcional": "valikuline",
+    "loginTitulo": "Selle e-postiga on juba BipFixi konto",
+    "loginTexto": "Logi sisse, et õnnetusteade kinnitada. Sisestatud andmed jäävad alles.",
+    "loginSenha": "Parool",
+    "loginEnviar": "Logi sisse ja saada teade",
+    "loginErro": "Vale e-post või parool.",
+    "loginNaoConfirmado": "Selle konto e-post pole veel kinnitatud. Ava saadetud link ja proovi uuesti.",
+    "loginEsqueci": "Unustasid parooli?",
+    "resetEnviado": "Saatsime lingi uue parooli loomiseks. Pärast seda jõuad tagasi sellele lehele ja õnnetusteade on siin saatmiseks valmis.",
+    "rascunhoGuardado": "Sisestatud andmed koos fotodega jäävad sellesse brauserisse 24 tunniks alles.",
+    "rascunhoFotosNaoGuardadas": "Andmed jäävad sellesse brauserisse 24 tunniks, fotod aga mitte: kui lahkud lehelt, tuleb need uuesti lisada.",
+    "rascunhoRestaurado": "Taastasime sinu poolt täidetud teate. Kontrolli ja saada.",
+    "rascunhoSemFotos": "Taastasime sisestatud andmed, aga mitte fotosid: lisa need uuesti ja saada."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Avarii registreerimine",
