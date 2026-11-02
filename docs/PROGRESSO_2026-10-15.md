@@ -564,3 +564,9 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Textos A/B (ET/RU) e mensagens prontas do Messenger em Documentos/Marketing_Tallinn/Recrutamento_a_distancia/teste_form_vs_messenger.md (local); revisao de linguagem pelo Fable.
 - Play Console: app em revisao desde 01/11 (producao 1.0.0 (3), Estonia), sem problemas reportados.
 - Zadarma: conta criada pelo dono, saldo 15,40 EUR, verificacao de identidade pendente (documento a enviar pelo dono).
+
+### 02/11 ~23h (Tallinn) — video RU publicado; Otsime pausada; anuncio B (Messenger) em rascunho
+- YouTube: publicado "Как зарегистрировать автосервис в BipFix (2 мин, бесплатно)" https://youtu.be/2ZIv_p7AGlo (oficina-cadastro_ru.mp4, publico, idioma russo). Textos do Messenger RU passam a usar este video.
+- Meta (dono autorizou montar no Ads Manager): campanha "Otsime tookodasid – A/B 3 pildid (nov)" PAUSADA.
+- Rascunho criado (nao publicado): campanha "BipFix – B Messenger – tookojad ET/RU (nov)", objetivo Interacoes, conjunto "B – ET+RU – Messenger – Tallinn tookojad" (publico salvo Workshop: Tallinn/Harju 25+, so residentes), 2 EUR/dia (minimo da Meta), fim 16/11; anuncio "B – RU – v4 – Messenger" com imagem v4 RU, texto revisto, modelo de conversa RU (saudacao, 5 botoes, follow-up).
+- Minimo da Meta por conjunto = 2 EUR/dia, por isso ET e RU ficam no mesmo conjunto (2 anuncios) em vez de conjuntos separados.
