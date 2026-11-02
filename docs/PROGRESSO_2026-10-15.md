@@ -557,3 +557,10 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - 18:38-20:28: 21 visitas de anuncios (Shorts RU 7, ET 4; Otsime RU 6, ET 4), 4 ficaram 20 s+ (Otsime RU 169 s e 103 s), 0 cadastros, 0 erros.
 - Anuncios 1-2/11: Google 7.586 impr., 145 cliques, 7,29 EUR; Meta Otsime 51 LPV a 0,07, video A 1.301 ThruPlay a 0,01. Mes ~24 de ~200 EUR.
 - Textos do post (ET/RU, FB e IG) em Documentos/Marketing_Tallinn/Campanha_Procuramos_Oficinas/post_organico_v4.md (local, gitignored). O dono publica.
+
+### 02/11 ~22h (Tallinn) — YouTube Shorts pausado; teste formulario vs Messenger
+- Decisao do dono no chat: pausar YouTube (pior qualidade) e testar 2 anuncios Meta: A formulario instantaneo com botao "Registreeru" (inspirado no "Iscriviti" do anuncio do ChatGPT) e B clique-para-Messenger; fica o mais eficiente.
+- Google Ads: campanha "BipFix - YouTube Shorts Kaotatud tood" PAUSADA (status "In pausa" conferido). Gasto ate aqui: 7,29 EUR, 145 cliques.
+- Textos A/B (ET/RU) e mensagens prontas do Messenger em Documentos/Marketing_Tallinn/Recrutamento_a_distancia/teste_form_vs_messenger.md (local); revisao de linguagem pelo Fable.
+- Play Console: app em revisao desde 01/11 (producao 1.0.0 (3), Estonia), sem problemas reportados.
+- Zadarma: conta criada pelo dono, saldo 15,40 EUR, aguardando verificacao de identidade (documento enviado por ele).
