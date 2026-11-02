@@ -551,3 +551,9 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Anuncios: Google 1-2/11 6.978 impr., 139 cliques, 7,00 EUR (CPC 0,05); Meta Otsime 43 LPV a 0,08, video A 1.233 ThruPlay a 0,01. Mes: ~22,5 de ~200 EUR.
 - Sugestao (decisao do dono): se o Shorts ET seguir sem visitas que ficam, manter so o Shorts RU e passar o resto para o Otsime.
 - Janela de 20 min aberta (job */5 ate 17:57 PC).
+
+### 02/11 20:28 (Tallinn) — relatorio no chat + post organico v4
+- Pedido no chat: relatorio + post Facebook/Instagram para a imagem v4 (procuramos_v4_et/ru).
+- 18:38-20:28: 21 visitas de anuncios (Shorts RU 7, ET 4; Otsime RU 6, ET 4), 4 ficaram 20 s+ (Otsime RU 169 s e 103 s), 0 cadastros, 0 erros.
+- Anuncios 1-2/11: Google 7.586 impr., 145 cliques, 7,29 EUR; Meta Otsime 51 LPV a 0,07, video A 1.301 ThruPlay a 0,01. Mes ~24 de ~200 EUR.
+- Textos do post (ET/RU, FB e IG) em Documentos/Marketing_Tallinn/Campanha_Procuramos_Oficinas/post_organico_v4.md (local, gitignored). O dono publica.
