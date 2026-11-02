@@ -563,4 +563,4 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Google Ads: campanha "BipFix - YouTube Shorts Kaotatud tood" PAUSADA (status "In pausa" conferido). Gasto ate aqui: 7,29 EUR, 145 cliques.
 - Textos A/B (ET/RU) e mensagens prontas do Messenger em Documentos/Marketing_Tallinn/Recrutamento_a_distancia/teste_form_vs_messenger.md (local); revisao de linguagem pelo Fable.
 - Play Console: app em revisao desde 01/11 (producao 1.0.0 (3), Estonia), sem problemas reportados.
-- Zadarma: conta criada pelo dono, saldo 15,40 EUR, aguardando verificacao de identidade (documento enviado por ele).
+- Zadarma: conta criada pelo dono, saldo 15,40 EUR, verificacao de identidade pendente (documento a enviar pelo dono).
