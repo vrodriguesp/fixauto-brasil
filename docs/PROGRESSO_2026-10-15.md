@@ -689,3 +689,9 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Antes: o texto ia ao DeepL e so depois se via que era a mesma lingua (o cache evitava repetir, mas a 1a vez gastava).
 - Testes: scripts/testes/lingua-provavel.mjs (27 casos, inclusive "nunca deixar sem traducao": ucraniano, misto ET+RU, italiano curto) ok; site-traducao com caso novo 6 (pedido em russo para oficina russa: sem 🌐 e nada guardado) ok; site-suporte, mensagens, fluxos, prazo, oficina-nova, loja-sem-comissao ok. site-pecas-ux falhava logo apos recompilar (clique em "Kusi" esperava so 2,5 s): teste agora espera a navegacao -> ok.
 - Pesquisa pedida: politica DeepL (Free guarda e treina; Pro apaga e nao treina; DPA so Pro) e Google Cloud Translation (500 mil caracteres/mes gratis via credito de US$10, depois US$20/milhao; nao guarda nem treina; DPA incluso; precisa conta Google Cloud com cartao). Decisao do dono.
+
+### 03/11 noite - teste DeepL x Google (estoniano <-> russo), pedido do dono
+- 20 frases de oficina (10 ET->RU de motorista, 10 RU->ET de oficina), mesmas nos dois. DeepL pela nossa chave (~2 mil caracteres); Google pela pagina translate.google.com (a API Basic pode usar outro modelo).
+- Juiz cego (Fable, sem saber qual e qual, A/B embaralhado por frase): DeepL 90/100 (ET->RU 44, RU->ET 46), Google 76/100 (38 e 38). Erros graves: DeepL 2, Google 4.
+- Os dois erram "stange" (gíria para para-choque -> "стойка") e "auto vastu võtta" (receber o carro -> "забрать", buscar). Google ainda trocou "проточить диски" (retificar) por trocar discos e "принять" por "vamos buscar".
+- Arquivos (frases, saidas, folha cega, chave) em Documentos/Comparacao_tradutores_2026-11-03/.
