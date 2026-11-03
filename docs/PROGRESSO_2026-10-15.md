@@ -643,3 +643,8 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Telas: pedidos/detalhe/formulario de orcamento da oficina, Hoje, Agenda; orcamento (itens, observacoes) e revisao do cliente; chats cliente-oficina e de pecas (so a mensagem da outra pessoa). Audio continua com a transcricao do Gemini. App do celular ainda nao traduz.
 - Testes locais: site-traducao 13/13; painel-oficina, mensagens, fluxos ok (nos dois ultimos a traducao fica desligada, eles conferem outra coisa).
 - Merge cea6aa4 e push feitos. Migracao 068, chave na VM e deploy NAO feitos: bloqueados pela trava de seguranca; aguarda "pode deployar" do dono.
+
+### 03/11 ~16:35 Tallinn - deploy de tudo (OK do dono no chat) e teste em producao
+- "voce tem meu ok para tudo (deployar)": migracao 068 (traducoes) aplicada; DEEPL_API_KEY no .env.production.local da VM (backup do arquivo antes); deploy 3dd2ffb (traducao automatica + comissao escondida da loja).
+- Teste em producao (sem criar conta nem entrar com senha): 15 paginas publicas 200; rotas protegidas 307 para o login; /api/traduzir e /api/analisar-dano 401 sem login; navegador (celular e PC): 6 paginas sem erro de JS, pagina publica da oficina com endereco + complemento; codigo publicado tem o campo complemento e a chamada de traducao; chave DeepL valida no servidor (uso 2.866/1.000.000, dos testes locais); sem erro novo no log.
+- Interacao 08:40-16:36: 12 visitas de anuncios (tipico 6 s; 1 chegou ao cadastro); 2 cadastros de oficina (a primeira oficina real e uma oficina de teste do dono, sem marca de conta de teste); PRIMEIRO ORCAMENTO REAL: a oficina nova orcou o pedido "outro" assim que passou a ve-lo (usou o leitor de orcamento por foto/arquivo), 5 itens; prazo informado 30 dias. 0 mensagens; 0 erros 5xx.
