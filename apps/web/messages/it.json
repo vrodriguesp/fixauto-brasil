@@ -752,5 +752,11 @@
     "redes": "oppure scrivici sui social",
     "privacidade": "Usiamo i tuoi dati solo per risponderti.",
     "privacidadeLink": "Privacy"
+  },
+  "traducao": {
+    "traduzidoDe": "Tradotto automaticamente da: {lingua}",
+    "original": "Testo originale",
+    "verOriginal": "vedi originale",
+    "verTraducao": "vedi traduzione"
   }
 }

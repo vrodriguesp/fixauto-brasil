@@ -1,5 +1,6 @@
 'use client';
 
+import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useState } from 'react';
 import RevisaoPendente from '@/components/cliente/RevisaoPendente';
 import { textoErroApi } from '@/lib/erro-api';
@@ -603,7 +604,7 @@ export default function OrcamentoDetalhePage() {
                     <tbody className="divide-y divide-gray-200">
                       {orc.itens.map((item) => (
                         <tr key={item.id}>
-                          <td className="py-2 text-gray-900">{item.descricao}</td>
+                          <td className="py-2 text-gray-900"><TextoTraduzido compacto texto={item.descricao} /></td>
                           <td className="py-2 text-gray-500">{tc.has(`tiposItem.${item.tipo}`) ? tc(`tiposItem.${item.tipo}`) : item.tipo}</td>
                           <td className="py-2 text-right text-gray-900">{formatCurrency(item.valor_total, currencyForCountry(orc.oficina?.pais), locale)}</td>
                         </tr>
@@ -621,9 +622,10 @@ export default function OrcamentoDetalhePage() {
               )}
 
               {cleanDescricao(orc.observacoes) && (
-                <p className="text-sm text-gray-600 mb-4">
-                  <strong>{t('observationsLabel')}</strong> {cleanDescricao(orc.observacoes)}
-                </p>
+                <div className="text-sm text-gray-600 mb-4">
+                  <strong>{t('observationsLabel')}</strong>
+                  <TextoTraduzido texto={cleanDescricao(orc.observacoes)} />
+                </div>
               )}
 
               {/* Scheduling section - shown when user clicks "Agendar" */}

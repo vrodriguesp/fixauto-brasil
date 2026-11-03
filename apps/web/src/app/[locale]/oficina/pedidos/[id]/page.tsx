@@ -1,5 +1,6 @@
 'use client';
 
+import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
@@ -165,7 +166,7 @@ export default function SolicitacaoDetalhePage() {
 
           <div className="card">
             <h2 className="font-semibold text-gray-900 mb-2">{t('descricaoDoProblema')}</h2>
-            <p className="text-gray-600">{cleanDescricao(sol.descricao)}</p>
+            <TextoTraduzido texto={cleanDescricao(sol.descricao)} className="text-gray-600" />
           </div>
 
           {sol.fotos && sol.fotos.length > 0 && (

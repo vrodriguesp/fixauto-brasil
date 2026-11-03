@@ -1,5 +1,6 @@
 'use client';
 
+import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useState, useEffect, useMemo } from 'react';
 import { localParaIso, dataLocalDe, horaLocalDe } from '@/lib/turnos';
 import { exemploPlaca } from '@/lib/exemplos';
@@ -501,7 +502,7 @@ export default function AgendaPage() {
                 {sol?.descricao && (
                   <div>
                     <p className="text-xs font-semibold text-gray-500 uppercase">{t('descricao')}</p>
-                    <p className="text-xs text-gray-700">{cleanDescricao(sol.descricao)}</p>
+                    <p className="text-xs text-gray-700"><TextoTraduzido compacto texto={cleanDescricao(sol.descricao)} /></p>
                   </div>
                 )}
                 <div className="pt-2 flex gap-2">

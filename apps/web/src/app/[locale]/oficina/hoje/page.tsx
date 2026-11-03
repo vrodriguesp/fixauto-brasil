@@ -1,5 +1,6 @@
 'use client';
 
+import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useAgenda } from '@/hooks/use-agenda';
@@ -350,7 +351,7 @@ export default function HojePage() {
                   {erro?.id === ev.id && !folha && <p role="alert" className="mt-2 text-sm text-red-700">{erro?.txt}</p>}
                   {exp && (
                     <div className="mt-4 space-y-3 border-t border-gray-100 pt-3 text-sm">
-                      {ev.solicitacao?.descricao && <p className="text-gray-700">{cleanDescricao(ev.solicitacao.descricao)}</p>}
+                      {ev.solicitacao?.descricao && <p className="text-gray-700"><TextoTraduzido compacto texto={cleanDescricao(ev.solicitacao.descricao)} /></p>}
                       {b.realIni && <p className="text-gray-600">{t('naOficinaHa', { tempo: duracao(tm.naOficinaMin) })}</p>}
                       {etapasOrdenadas(ev).length > 0 && (
                         <ol className="space-y-1">

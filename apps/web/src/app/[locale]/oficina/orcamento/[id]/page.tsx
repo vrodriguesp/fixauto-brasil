@@ -1,5 +1,6 @@
 'use client';
 
+import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useState, useEffect, useRef } from 'react';
 import { compressImage } from '@/lib/image-compress';
 import CampoNumero from '@/components/forms/CampoNumero';
@@ -392,7 +393,7 @@ ${d.observacoes}` : d.observacoes));
 
       {/* Request summary */}
       <div className="bg-gray-50 rounded-lg p-4 mb-6">
-        <p className="text-sm text-gray-600">{cleanDescricao(solicitacao.descricao)}</p>
+        <TextoTraduzido texto={cleanDescricao(solicitacao.descricao)} className="text-sm text-gray-600" />
         <p className="text-xs text-gray-500 mt-2">
           {t('clienteLabel')}: {solicitacao.cliente?.nome} | {solicitacao.endereco}
         </p>

@@ -1,5 +1,6 @@
 'use client';
 
+import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
@@ -235,7 +236,7 @@ export default function PedidosOficinaPage() {
                       </span>
                     )}
                   </div>
-                  <p className="mt-1 text-sm text-gray-600 line-clamp-2">{cleanDescricao(s.descricao)}</p>
+                  <p className="mt-1 text-sm text-gray-600 line-clamp-2"><TextoTraduzido compacto texto={cleanDescricao(s.descricao)} /></p>
                   <p className="mt-1 text-sm text-gray-500">
                     {[fotos ? t('fotos', { n: fotos }) : t('semFotos'), dist != null ? `${dist.toFixed(1)} km` : null, s.pagamento_reparo && s.pagamento_reparo !== 'proprio' ? `🛡 ${t('seguro')}` : null, novo ? `● ${t('novo')}` : null].filter(Boolean).join(' · ')}
                   </p>

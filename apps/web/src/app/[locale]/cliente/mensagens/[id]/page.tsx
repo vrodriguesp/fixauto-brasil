@@ -1,5 +1,6 @@
 'use client';
 
+import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { Link, rota } from '@/i18n/navigation';
@@ -455,7 +456,7 @@ export default function ClienteMensagensPage() {
                           mensagemId={msg.id}
                         />
                       ) : (
-                        <p className="text-sm whitespace-pre-wrap break-words">{msg.texto}</p>
+                        <TextoTraduzido texto={msg.texto} ativo={!isOwn} className="text-sm whitespace-pre-wrap break-words" />
                       )}
                       <p
                         className={`text-[10px] mt-1 ${
