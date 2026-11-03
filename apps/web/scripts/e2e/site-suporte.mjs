@@ -1,5 +1,6 @@
 // Chat de suporte com o admin (dono 03/11):
-//  1 visitante (russo, celular): botao no canto, janela em tela cheia, pede
+//  1 visitante (russo, celular): botao no canto so depois de rolar (na primeira
+//    tela cobria o botao principal), janela em tela cheia, pede
 //    nome + e-mail + consentimento, mensagem vai; admin offline -> resposta
 //    automatica em russo e e-mail ao admin
 //  2 admin: ve a conversa traduzida para o portugues (com o original), responde
@@ -61,6 +62,8 @@ try {
   const ctxV = await ctxNovo('celular'); const pV = await ctxV.newPage();
   await pV.goto(`${SITE}/ee/ru`, { waitUntil: 'networkidle' }); await pV.waitForTimeout(1500);
   const botao = pV.getByTestId('chat-suporte-botao');
+  ok('1 celular, primeira tela: botao escondido (nao cobre o botao principal)', !(await botao.isVisible()));
+  await pV.evaluate(() => window.scrollTo(0, 700)); await pV.waitForTimeout(500);
   ok('1 botao do chat no canto', await botao.isVisible(), '');
   ok('1 rotulo do botao em russo', (await botao.getAttribute('aria-label')) === RU('suporte.abrir'));
   await botao.click(); await pV.waitForTimeout(500);
@@ -161,6 +164,7 @@ try {
     const ctx = await ctxNovo(tela); const p = await ctx.newPage();
     for (const [l, pre] of Object.entries(PREFIXO)) {
       await p.goto(`${SITE}${pre}`, { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
+      await p.evaluate(() => window.scrollTo(0, 700)); await p.waitForTimeout(400);
       const bt = p.getByTestId('chat-suporte-botao');
       ok(`6 ${tela} ${l}: botao traduzido e sem rolagem lateral`, (await bt.getAttribute('aria-label')) === tr(l)('suporte.abrir') && await semRolagem(p));
     }

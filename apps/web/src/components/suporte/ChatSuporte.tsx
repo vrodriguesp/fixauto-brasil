@@ -33,6 +33,9 @@ export default function ChatSuporte() {
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState('');
   const [originais, setOriginais] = useState<Record<string, boolean>>({});
+  // celular, visitante: o botao so aparece depois de rolar um pouco - na primeira
+  // tela ele cobria a ponta do botao principal ("Sou oficina") da pagina inicial
+  const [rolou, setRolou] = useState(false);
   const fimRef = useRef<HTMLDivElement>(null);
 
   // nas conversas (oficina <-> cliente, acidente) o botao cobriria a caixa de digitar
@@ -59,6 +62,13 @@ export default function ChatSuporte() {
     const id = setInterval(() => { if (document.visibilityState === 'visible') carregar(aberto); }, aberto ? 4000 : 45000);
     return () => clearInterval(id);
   }, [aberto, escondido, carregar]);
+
+  useEffect(() => {
+    const ver = () => setRolou(window.scrollY > 300 || window.innerWidth >= 640);
+    ver();
+    window.addEventListener('scroll', ver, { passive: true }); window.addEventListener('resize', ver);
+    return () => { window.removeEventListener('scroll', ver); window.removeEventListener('resize', ver); };
+  }, []);
 
   // link do e-mail de resposta: ?suporte=1 abre o chat
   useEffect(() => { if (busca?.get('suporte') === '1') setAberto(true); }, [busca]);
@@ -104,7 +114,7 @@ export default function ChatSuporte() {
 
   return (
     <>
-      {!aberto && (
+      {!aberto && (!visitante || rolou || naoLidas > 0 || temConversa) && (
         <button type="button" onClick={() => setAberto(true)} aria-label={t('abrir')} data-testid="chat-suporte-botao"
           className="chat-suporte-botao fixed right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-white shadow-lg hover:bg-primary-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300">
           <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
