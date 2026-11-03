@@ -624,3 +624,10 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
   - Teste local `site-oficina-nova.mjs`: 14/14 ok.
   - Regressao local: site-fluxos ok; site-painel-oficina ok.
 - E-mail 14:01 ao dono com o resultado e o plano (a migracao 067 em producao, b deploy, c corrigir numero/complemento da oficina sem mexer na posicao, d conferir no ar). Aguarda "sim". Janela de 20 min encerrada as 14:00 (job 1ccc491c apagado).
+
+### 03/11 tarde - deploy da comissao escondida, "outro" para todas e complemento (OK do dono no chat)
+- Dono no chat: "pode deployar o site e o youtube".
+- Video RU "Как отправить смету клиенту" publicado (Publico): https://youtu.be/1dVXlDiT14c
+- Branch refeito sem dados da oficina (ea21ad6), merge abe4242, push. Migracao 067 aplicada em producao (transacao; so acrescenta). Deploy na VM (pull, build, pm2 restart).
+- Endereco da primeira oficina corrigido a pedido do dono: numero e complemento separados; posicao no mapa mantida.
+- Conferido no ar: a oficina passa a ver os 2 pedidos abertos (o "outro" a 4,5 km e o eletrico); pagina publica mostra endereco + complemento; /oficina/comissao redireciona; paginas 200.
