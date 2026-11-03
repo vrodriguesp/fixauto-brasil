@@ -34,6 +34,19 @@ const casos = [
   ['Ok', 'et', false], // sem sinal: vai ao tradutor (cache depois)
   ['СРОЧНО', 'et', false],
   ['BMW X5 2015', 'ru', true],
+  // auditoria Fable 03/11: linguas vizinhas nao passam por lingua do site
+  ['Hyvää päivää', 'et', false],
+  ['Tänään ei käy, mutta huomenna on ok', 'et', false],
+  ['Auto ei käynnisty ja ovi on rikki', 'et', false],
+  ['Kiitos, nähdään huomenna', 'et', false],
+  ['Jarrut vinkuvat ja öljy vuotaa', 'et', false],
+  ['Schöne Grüße', 'et', false],
+  ['Ja, gerne', 'et', false],
+  ['Благодаря, ще дойда утре', 'ru', false],
+  ['Добре, дякую', 'ru', false],
+  ['URGENT', 'et', false],
+  ['Спасибо!', 'ru', true],
+  ['Auto ei käivitu, palun aidake', 'et', true],
 ];
 
 let falhas = 0;
@@ -53,6 +66,9 @@ const origens = [
   ['Ok', null],
   ['123 ABC', null],
   ['Tagumised pidurid. Задние тормоза скрипят сильно, очень.', null],
+  ['Auto ei käynnisty ja ovi on rikki', null], // finlandes: nunca com origem ET fixa
+  ['Благодаря, ще дойда утре', null],
+  ['Tere!', null], // curto demais para fixar a origem
 ];
 for (const [texto, esperado] of origens) {
   const r = linguaDoTexto(texto);

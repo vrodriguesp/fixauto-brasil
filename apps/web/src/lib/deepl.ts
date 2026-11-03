@@ -39,7 +39,8 @@ export async function traduzirTextos(textos: string[], lingua: string, guardar =
   const porHash = new Map((guardadas || []).map((g) => [g.hash, g]));
   const faltam: number[] = [];
   limpos.forEach((t, i) => {
-    if (pular.has(i)) return;
+    // ja na lingua de quem le: sem traducao, mas com a origem (o chat de suporte nao confunde com "DeepL falhou")
+    if (pular.has(i)) { if (t) resultado[i] = { texto: null, origem: alvo.split('-')[0] }; return; }
     const g = porHash.get(hashes[i]);
     if (g) resultado[i] = { texto: g.traducao, origem: g.origem };
     else faltam.push(i);
@@ -59,7 +60,8 @@ export async function traduzirTextos(textos: string[], lingua: string, guardar =
     grupos.set(g, [...(grupos.get(g) || []), i]);
   }
   try {
-    const linhas = (await Promise.all(Array.from(grupos).map(async ([origem, idx]) => {
+    // allSettled: se uma chamada cair (tempo, rede), a outra continua valendo e vai para o cache
+    const linhas = (await Promise.allSettled(Array.from(grupos).map(async ([origem, idx]) => {
       const r = await fetch(`${host}/v2/translate`, {
         method: 'POST',
         headers: { Authorization: `DeepL-Auth-Key ${chave}`, 'Content-Type': 'application/json' },
@@ -78,7 +80,7 @@ export async function traduzirTextos(textos: string[], lingua: string, guardar =
         const mesma = !!detectada && alvo.split('-')[0] === detectada.split('-')[0];
         return { hash: hashes[i], alvo, origem: detectada, traducao: mesma ? null : (tr?.text ?? null) };
       });
-    }))).flat();
+    }))).flatMap((r) => (r.status === 'fulfilled' ? r.value : (console.error('[deepl]', r.reason), [])));
     if (guardar && linhas.length) await supabaseAdmin.from('traducoes').upsert(linhas, { onConflict: 'hash' });
     const porNovo = new Map(linhas.map((l) => [l.hash, l]));
     for (const i of faltam) { const l = porNovo.get(hashes[i]); if (l) resultado[i] = { texto: l.traducao, origem: l.origem }; }

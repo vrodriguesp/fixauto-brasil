@@ -72,7 +72,9 @@ export default function SuporteAdmin() {
   const [verOriginal, setVerOriginal] = useState<Record<string, boolean>>({});
   // a caixa "traduzir esta resposta" volta a marcada em cada conversa aberta;
   // a conversa anterior nao pisca enquanto a nova carrega
-  useEffect(() => { setTraduzirResposta(true); setMsgs(null); setVerOriginal({}); setAvisos([]); }, [aberta]);
+  // (o rascunho tambem: nao manda para B o que foi escrito para A)
+  const abertaRef = useRef<string | null>(null);
+  useEffect(() => { abertaRef.current = aberta; setTraduzirResposta(true); setMsgs(null); setVerOriginal({}); setAvisos([]); setTexto(''); }, [aberta]);
   const fimRef = useRef<HTMLDivElement>(null);
   const campoRef = useRef<HTMLTextAreaElement>(null);
 
@@ -84,7 +86,10 @@ export default function SuporteAdmin() {
   }, []);
   const carregarConversa = useCallback(async (id: string) => {
     const r = await fetch(`/api/admin/suporte/${id}`).catch(() => null);
-    if (r?.ok) setMsgs((await r.json()).mensagens || []);
+    if (!r?.ok) return;
+    const d = await r.json();
+    // resposta atrasada da conversa anterior: ignora
+    if (id === abertaRef.current) setMsgs(d.mensagens || []);
   }, []);
 
   useEffect(() => { carregarLista(); const i = setInterval(carregarLista, 10000); return () => clearInterval(i); }, [carregarLista]);
@@ -99,7 +104,7 @@ export default function SuporteAdmin() {
   useEffect(() => {
     const c = campoRef.current; if (!c) return;
     c.style.height = 'auto'; c.style.height = `${c.scrollHeight}px`;
-  }, [texto]);
+  }, [texto, aberta]);
 
   async function mudarTraducao(novo: boolean) {
     if (novo === traducao) return;
@@ -330,7 +335,7 @@ export default function SuporteAdmin() {
                 className="max-h-40 min-h-[44px] w-full flex-1 resize-none rounded-xl border border-slate-600 bg-slate-900 px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/40" />
               <button type="button" onClick={responder} disabled={enviando || !texto.trim()} aria-label="Enviar"
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white hover:bg-primary-500 disabled:opacity-40">
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>
               </button>
             </div>
             <p className="mt-1 hidden text-[11px] text-slate-500 sm:block">Enter envia · Shift+Enter nova linha</p>

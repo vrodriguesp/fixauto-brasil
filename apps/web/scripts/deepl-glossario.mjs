@@ -26,7 +26,9 @@ if (!arqChave) { console.log('uso: node scripts/deepl-glossario.mjs <arquivo com
 const chave = fs.readFileSync(arqChave, 'utf8').trim();
 const API = chave.endsWith(':fx') ? 'https://api-free.deepl.com' : 'https://api.deepl.com';
 const H = { Authorization: `DeepL-Auth-Key ${chave}`, 'Content-Type': 'application/json' };
-const tsv = (l) => l.map(([a, b]) => `${a}\t${b}`).join('\n');
+// o glossario do DeepL diferencia maiusculas: entra tambem a forma do comeco da frase
+const maiuscula = (x) => x.charAt(0).toUpperCase() + x.slice(1);
+const tsv = (l) => l.flatMap(([a, b]) => [[a, b], ...(maiuscula(a) !== a ? [[maiuscula(a), maiuscula(b)]] : [])]).map(([a, b]) => `${a}\t${b}`).join('\n');
 const dicionarios = [
   { source_lang: 'et', target_lang: 'ru', entries: tsv(ET_RU), entries_format: 'tsv' },
   { source_lang: 'ru', target_lang: 'et', entries: tsv(RU_ET), entries_format: 'tsv' },
