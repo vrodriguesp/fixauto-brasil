@@ -578,3 +578,9 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - 02/11 23:49 Tallinn (22:49 PC): enviado a vitor@outlook.ie o e-mail "BipFix - respostas prontas do Messenger (ET/RU) - backup" (resposta automatica + 6 respostas ET + 6 RU), confirmado em Enviados. Obs.: os horarios "03/11 ~00:30/01h" das entradas acima eram estimados; tudo aconteceu na noite de 02/11 (hora de Tallinn ate ~23:50).
 - Respostas salvas: no Business Suite desktop nao ha a opcao (Impostazioni della posta so tem Messaggistica e Ricevi piu messaggi; Meta AI cita possivel limitacao UE). Pela Meta AI, criar no app movel (Posta > icone > Risposte salvate) ou dentro da primeira conversa. FAQ/palavra-chave tambem indisponiveis no desktop.
 - Anuncio B RU ficou com "Modifiche non pubblicate" apos abrir/fechar o editor de modelo (nada salvo; modelo continua "BipFix RU – tookojad – nov"); nao publicar essas alteracoes.
+
+### 03/11 08:24 (Tallinn) — Relatorio das campanhas enviado por e-mail
+- Pedido do Vitor no chat. Enviado a vitor@outlook.ie ("Relatorio das campanhas - 03/11"), confirmado em Enviados.
+- Novembro (1-3/11): Meta 20,33 EUR (A Registreeru 0,98 · B Messenger 0,11 · video A 15,24 · Otsime 4,00 pausada); Google 7,79 EUR (Shorts, 167 cliques, CPC 0,05, pausado). Total 28,12 de ~200 EUR.
+- Site 02/11 18:38 -> 03/11 08:25: 74 visitas de anuncios, 12 ficaram 20 s+, 0 cadastros, 0 perguntas. A Registreeru ja entrega (19 visitas no site).
+- Nenhuma alteracao nas campanhas.
