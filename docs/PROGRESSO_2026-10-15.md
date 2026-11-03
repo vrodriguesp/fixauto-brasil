@@ -704,3 +704,8 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Auditoria Fable 3 (sem bloqueio) corrigida antes do deploy: finlandes/alemao nao passam por estoniano nem bulgaro/ucraniano por russo; texto na mesma lingua nao aparece como "SEM traducao" no suporte; allSettled; rascunho/resposta atrasada no admin; glossario com maiusculas.
 - Testes locais (chave Pro real): lingua-provavel (40+ casos), site-suporte (com admin no celular), traducao, mensagens, fluxos, prazo, oficina-nova, loja-sem-comissao, pecas-ux - todos ok.
 - Deploy 3fda3ba: so scanners no site nos 30 min antes. Paginas 200, politica nova no ar, DeepL e glossario 200 da VM. Crontab: /root/limpar-suporte.sh 03:23 diario (rodado 1x: 0 apagadas).
+
+### 03/11 ~23:30 Tallinn - teto DeepL, imagens e textos dos posts, e-mail de boas-vindas (pedido do dono)
+- DeepL: limite de 500.000 caracteres/mes na chave ativa (~3x o uso de hoje); voz (speech-to-text) zerada. Estourou = site mostra o original ate virar o mes.
+- 4 imagens 1080x1080 (oficinas/motoristas, ET/RU) em Documentos/ (local): celular com a tela "Pedidos" (pedidos ficticios criados e apagados no ambiente local) e 3 passos para motoristas. Textos dos posts revisados pelo Fable: 0 % com aviso de 30 dias, termos do site, post de motoristas limitado a mecanica/eletrica/pneus/revisao.
+- Segunda oficina real cadastrada hoje (21:47): rascunho de boas-vindas em Documentos/ (local) - ve 2 dos 3 pedidos abertos; o de eletrica so aparece se marcar a especialidade (ou pedir que nos ativamos). Conferido: oficina recebe aviso de pedido novo so no site (sininho), nao por e-mail.
