@@ -167,7 +167,7 @@
     "metaDescription": "Come BipFix tratta i dati personali di automobilisti, officine e rivenditori di ricambi nell'Unione europea, in conformità al GDPR.",
     "pageTitle": "Informativa sulla privacy",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
-    "updatedDate": "20 ottobre 2026",
+    "updatedDate": "3 novembre 2026",
     "secoes": [
       {
         "titulo": "1. Chi è responsabile dei tuoi dati",
@@ -276,6 +276,15 @@
         ]
       },
       {
+        "titulo": "3.11 Chat di assistenza e traduzione automatica",
+        "subsecao": true,
+        "itens": [
+          "<strong>Dati:</strong> nella chat di assistenza, i tuoi messaggi, la lingua del sito e, se non hai un account, il nome e l'e-mail che inserisci per iniziare la chat. Per chi ha un account, la chat è collegata all'account.",
+          "<strong>Finalità:</strong> rispondere alle tue domande. I messaggi della chat, le descrizioni delle richieste, le voci dei preventivi e i messaggi tra Clienti e Partner possono essere tradotti automaticamente, perché ognuno li legga nella propria lingua; il testo originale è sempre conservato e può essere visualizzato.",
+          "<strong>Base giuridica:</strong> misure precontrattuali su tua richiesta ed esecuzione di un contratto (art. 6, par. 1, lett. b); per i visitatori senza account, anche il nostro legittimo interesse a rispondere alle domande su BipFix (art. 6, par. 1, lett. f). La traduzione è effettuata per nostro conto da DeepL (vedi sezione 4)."
+        ]
+      },
+      {
         "titulo": "4. Chi riceve i tuoi dati",
         "paragrafos": [
           "Condividiamo i dati personali solo nella misura necessaria:"
@@ -287,6 +296,7 @@
           "<strong>Google</strong> (Stati Uniti): intelligenza artificiale Gemini per l'analisi dei danni e la trascrizione vocale; Google Analytics e misurazione delle conversioni di Google Ads (solo con consenso); Google Maps, mostrato nelle pagine profilo dei Partner.",
           "<strong>Microsoft</strong> (Stati Uniti): Microsoft Clarity (solo con consenso).",
           "<strong>OpenStreetMap Foundation</strong> (Regno Unito): conversione degli indirizzi in coordinate geografiche (servizio Nominatim).",
+          "<strong>DeepL SE</strong> (Germania, Unione europea): traduzione automatica di messaggi della chat, descrizioni delle richieste e preventivi. Viene inviato solo il testo da tradurre, senza il tuo nome né la tua e-mail.",
           "<strong>Autorità pubbliche</strong>, quando siamo obbligati per legge a comunicare i dati."
         ],
         "depois": [
@@ -308,7 +318,8 @@
           "<strong>Log del server:</strong> fino a 14 giorni.",
           "<strong>Riepiloghi delle visite:</strong> cancellati dalla casella email del team al più tardi dopo 12 mesi.",
           "<strong>Statistiche (solo con consenso):</strong> secondo le impostazioni di conservazione di Google Analytics e Microsoft Clarity, al massimo 14 mesi.",
-          "<strong>Contatti per collaborazioni (sezione 3.8):</strong> finché non ci chiedi di smettere di contattarti, e al massimo 24 mesi dopo il nostro ultimo contatto."
+          "<strong>Contatti per collaborazioni (sezione 3.8):</strong> finché non ci chiedi di smettere di contattarti, e al massimo 24 mesi dopo il nostro ultimo contatto.",
+          "<strong>Chat di assistenza avviata senza account:</strong> cancellata automaticamente 6 mesi dopo l'ultimo messaggio."
         ]
       },
       {

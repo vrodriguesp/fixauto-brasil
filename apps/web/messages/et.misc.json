@@ -167,7 +167,7 @@
     "metaDescription": "Kuidas BipFix töötleb Euroopa Liidus autojuhtide, autotöökodade ja varuosade müüjate isikuandmeid kooskõlas isikuandmete kaitse üldmäärusega (GDPR).",
     "pageTitle": "Privaatsuspoliitika",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "20. oktoober 2026",
+    "updatedDate": "3. november 2026",
     "secoes": [
       {
         "titulo": "1. Kes vastutab sinu andmete eest",
@@ -276,6 +276,15 @@
         ]
       },
       {
+        "titulo": "3.11 Tugivestlus ja automaatne tõlge",
+        "subsecao": true,
+        "itens": [
+          "<strong>Andmed:</strong> tugivestluses sinu sõnumid, veebilehe keel ning, kui sul ei ole kontot, nimi ja e-post, mille vestluse alustamiseks sisestad. Kontoga kasutajal on vestlus seotud kontoga.",
+          "<strong>Eesmärk:</strong> sinu küsimustele vastamine. Vestluse sõnumeid, päringute kirjeldusi, hinnapakkumise ridu ning kliendi ja partneri vahelisi sõnumeid võidakse automaatselt tõlkida, et igaüks loeks neid oma keeles; algtekst säilib alati ja selle saab kuvada.",
+          "<strong>Õiguslik alus:</strong> sinu soovil lepingu sõlmimisele eelnevad toimingud ja lepingu täitmine (art 6 lg 1 p b); kontota külastajate puhul ka meie õigustatud huvi vastata küsimustele BipFixi kohta (art 6 lg 1 p f). Tõlget teeb meie nimel DeepL (vt punkt 4)."
+        ]
+      },
+      {
         "titulo": "4. Kes sinu andmeid saavad",
         "paragrafos": [
           "Jagame isikuandmeid ainult vajalikus ulatuses:"
@@ -287,6 +296,7 @@
           "<strong>Google</strong> (Ameerika Ühendriigid): tehisintellekt Gemini kahjustuste analüüsiks ja kõne transkribeerimiseks; Google Analytics ja Google Adsi konversioonide mõõtmine (ainult nõusolekul); Google Maps, mida näidatakse partnerite profiilidel.",
           "<strong>Microsoft</strong> (Ameerika Ühendriigid): Microsoft Clarity (ainult nõusolekul).",
           "<strong>OpenStreetMap Foundation</strong> (Ühendkuningriik): aadresside teisendamine kaardikoordinaatideks (teenus Nominatim).",
+          "<strong>DeepL SE</strong> (Saksamaa, Euroopa Liit): vestluse sõnumite, päringute kirjelduste ja hinnapakkumiste automaatne tõlge. Saadetakse ainult tõlgitav tekst, ilma sinu nime ja e-postita.",
           "<strong>Ametiasutused</strong>, kui meil on seadusest tulenev kohustus andmeid avaldada."
         ],
         "depois": [
@@ -308,7 +318,8 @@
           "<strong>Serverilogid:</strong> kuni 14 päeva.",
           "<strong>Külastuste kokkuvõtted:</strong> kustutatakse meeskonna postkastist hiljemalt 12 kuu möödudes.",
           "<strong>Analüütika (ainult nõusolekul):</strong> vastavalt Google Analyticsi ja Microsoft Clarity säilitamisseadetele, kõige rohkem 14 kuud.",
-          "<strong>Koostöökontaktid (punkt 3.8):</strong> kuni palud meil ühenduse võtmise lõpetada, kuid mitte kauem kui 24 kuud pärast meie viimast kontakti."
+          "<strong>Koostöökontaktid (punkt 3.8):</strong> kuni palud meil ühenduse võtmise lõpetada, kuid mitte kauem kui 24 kuud pärast meie viimast kontakti.",
+          "<strong>Kontota alustatud tugivestlus:</strong> kustutatakse automaatselt 6 kuud pärast viimast sõnumit."
         ]
       },
       {

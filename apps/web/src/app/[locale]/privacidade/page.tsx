@@ -66,6 +66,7 @@ async function PrivacidadeLgpd({ locale }: { locale: string }) {
             <li>{t.rich('list2_5', { strong })}</li>
             <li>{t.rich('list2_6', { strong })}</li>
             <li>{t.rich('list2_7', { strong })}</li>
+            <li>{t.rich('list2_8', { strong })}</li>
           </ul>
         </section>
 
@@ -85,6 +86,8 @@ async function PrivacidadeLgpd({ locale }: { locale: string }) {
           <ul>
             <li>{t('list4_1')}</li>
             <li>{t('list4_2')}</li>
+            {/* DeepL (traducao automatica, 03/11) antes das autoridades, que fecham a lista */}
+            <li>{t('list4_4')}</li>
             <li>{t('list4_3')}</li>
           </ul>
           <p>{t('body4')}</p>
