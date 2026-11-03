@@ -44,16 +44,19 @@ export async function POST(req: NextRequest) {
       .select('id, foto_url')
       .eq('solicitacao_id', solicitacao_id);
 
-    if (!fotos || fotos.length === 0) {
-      return NextResponse.json({ error: 'Nenhuma foto encontrada', codigo: 'SEM_FOTOS' }, { status: 404 });
-    }
-
     // Fetch solicitacao for context
     const { data: sol } = await supabaseAdmin
       .from('solicitacoes')
       .select('tipo, descricao, pais, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, fipe_valor)')
       .eq('id', solicitacao_id)
       .single();
+
+    // Sem foto a IA analisa so pela descricao do cliente (dono, 03/11); sem
+    // foto e sem descricao nao ha o que analisar.
+    const temDescricao = !!sol?.descricao?.trim();
+    if ((!fotos || fotos.length === 0) && !temDescricao) {
+      return NextResponse.json({ error: 'Nenhuma foto encontrada', codigo: 'SEM_FOTOS' }, { status: 404 });
+    }
 
     const veiculo = sol?.veiculo as any;
     const contexto = `Veículo: ${veiculo?.fipe_marca || ''} ${veiculo?.fipe_modelo || ''} ${veiculo?.fipe_ano || ''}. Tipo de serviço: ${sol?.tipo || 'não informado'}. Descrição do cliente: ${sol?.descricao || 'não informada'}.${veiculo?.fipe_valor ? ` Valor FIPE: ${veiculo.fipe_valor}.` : ''}`;
@@ -71,7 +74,7 @@ export async function POST(req: NextRequest) {
 
     // Build image parts for Gemini
     const imageParts: any[] = [];
-    for (const foto of fotos.slice(0, 4)) {
+    for (const foto of (fotos || []).slice(0, 4)) {
       try {
         // Espaco privado: baixa pelo servidor (o endereco publico nao abre mais)
         const midia = await baixarMidia(foto.foto_url);
@@ -82,9 +85,13 @@ export async function POST(req: NextRequest) {
       } catch { /* skip */ }
     }
 
-    if (imageParts.length === 0) {
+    if (imageParts.length === 0 && !temDescricao) {
       return NextResponse.json({ error: 'Não foi possível carregar as fotos' }, { status: 500 });
     }
+    const soTexto = imageParts.length === 0;
+    const instrucao = soTexto
+      ? 'Nao ha fotos: analise so pela descricao do cliente, como hipoteses provaveis, e use confianca baixa (no maximo 0.5).'
+      : 'Analise as fotos.';
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -99,7 +106,7 @@ export async function POST(req: NextRequest) {
               ...imageParts,
               {
                 text: `Especialista em reparos automotivos (${mercado}). ${contexto}
-Analise as fotos e responda JSON CURTO E DIRETO:
+${instrucao} Responda JSON CURTO E DIRETO:
 {"resumo":"max 2 frases","severidade":"leve|moderado|grave|severo","checklist_inspecao":["max 5 itens"],"pecas_afetadas":["max 5 pecas"],"estimativa_custo":{"min":0,"max":0},"confianca":0.8,"perguntas_sugeridas":["max 3 perguntas para a oficina fazer ao cliente para entender melhor o dano"]}
 Seja BREVE. Escreva os textos (resumo, checklist_inspecao, pecas_afetadas, perguntas_sugeridas) em ${nomeIdioma}. O campo severidade deve ser EXATAMENTE um destes valores, sem traduzir: leve, moderado, grave, severo. Precos em ${moeda} do mercado de ${mercado}.`,
               },
@@ -199,7 +206,7 @@ Seja BREVE. Escreva os textos (resumo, checklist_inspecao, pecas_afetadas, pergu
         pecas_afetadas: parsed.pecas_afetadas || [],
         estimativa_custo: parsed.estimativa_custo || null,
         confianca: parsed.confianca || null,
-        fotos_analisadas: fotos.map((f) => f.id),
+        fotos_analisadas: (fotos || []).map((f) => f.id),
         modelo_usado: geminiData.modelVersion || 'gemini',
         raw_response: parsed,
       })

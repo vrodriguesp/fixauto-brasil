@@ -1,5 +1,6 @@
 import { cache } from 'react';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { tempoRespostaMs } from '@/lib/tempo-resposta';
 
 // Dados do perfil publico de uma oficina, carregados NO SERVIDOR: o HTML ja
 // sai com nome, endereco, servicos, avaliacoes e dados estruturados (antes a
@@ -102,14 +103,15 @@ export const carregarPerfilOficina = cache(async (id: string): Promise<PerfilOfi
   if (!bruta || bruta.ativa === false) return null;
   const { ativa: _ativa, ...oficina } = bruta;
 
-  // Tempo medio de resposta (do pedido do cliente ate o orcamento)
+  // Tempo medio de resposta (do pedido do cliente, ou do cadastro da oficina
+  // se ela entrou depois, ate o orcamento)
   const orcamentos = (orcamentosRes.data || []) as any[];
   let totalMs = 0;
   let validos = 0;
   for (const orc of orcamentos) {
     const pedidoEm = orc.solicitacao?.created_at;
     if (pedidoEm && orc.created_at) {
-      const diff = new Date(orc.created_at).getTime() - new Date(pedidoEm).getTime();
+      const diff = tempoRespostaMs(orc.created_at, pedidoEm, oficina.created_at);
       if (diff >= 0) {
         totalMs += diff;
         validos++;
