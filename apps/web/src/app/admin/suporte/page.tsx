@@ -46,8 +46,11 @@ export default function SuporteAdmin() {
   useEffect(() => { fimRef.current?.scrollIntoView({ block: 'end' }); }, [msgs.length, aberta]);
 
   async function mudarTraducao() {
-    const r = await fetch('/api/admin/suporte', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ traducao: !traducao }) });
-    if (r.ok) setTraducao((await r.json()).traducao);
+    // muda na hora; volta se o servidor recusar
+    const novo = !traducao;
+    setTraducao(novo);
+    const r = await fetch('/api/admin/suporte', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ traducao: novo }) }).catch(() => null);
+    if (!r?.ok) { setTraducao(!novo); setAviso('Não foi possível mudar a tradução.'); }
   }
 
   async function responder() {
