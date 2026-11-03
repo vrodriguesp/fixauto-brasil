@@ -656,3 +656,12 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Testes locais: site-prazo (6 linguas x celular/tablet/PC, sem rolagem lateral, rotulos dentro da coluna, aviso) ok; site-fluxos ok (teste ajustado para oferecer amanha: depois das 17 h de Tallinn o turno de hoje acabou); site-servico 3 falhas antigas (sem chave Gemini local).
 - Deploy bloqueado pela trava de seguranca; aguarda "pode deployar".
 - E-mail RU para a oficina (corrigir o prazo, convite para orcar o pedido eletrico, usar "Сообщение" para perguntar ao motorista) em Documentos/ para o dono enviar pelo support.
+
+### 03/11 noite - chat de suporte com o admin (pedido do dono no chat), auditado pelo Fable
+- Botao de chat no canto do site (todas as paginas, 6 linguas). Visitante: nome + e-mail + consentimento (cita a traducao DeepL); oficina/loja/cliente logados: direto. Admin: /admin/suporte (lista, resposta, interruptor "Traducao automatica"); qualquer pagina do admin aberta = online (sinal a cada 60 s).
+- Regras: resposta automatica so com o admin offline (no maximo 1 a cada 6 h por conversa); e-mail ao admin com o admin offline (1 a cada 15 min por conversa, so marca se saiu); resposta do admin por e-mail para quem nao esta com o chat aberto (reply-to support@; visitante ve o motivo do e-mail). Traducao: mensagem da pessoa -> portugues; resposta do admin -> lingua da pessoa; limite 10 mil caracteres/dia por conversa; traducao do chat nao vai para o cache compartilhado.
+- Seguranca: tabelas com RLS e sem acesso publico (migracao 069); visitante acessa com id + chave secreta (so o sha256 no banco), enviada em cabecalho (nao fica no log do nginx); limites por IP e por conversa; conta bloqueada nao conversa; pagina atual nao guardada para visitante.
+- Celular: botao acima da barra de baixo da oficina; some nas conversas com cliente/oficina; para visitante aparece depois de rolar (na 1a tela cobria o botao "Sou oficina"). Janela: tela cheia no celular, Esc fecha, foco correto.
+- Formulario de contato por e-mail da pagina de oficinas mantido (pedido do dono). App do celular nao muda.
+- Auditoria Fable: 2 obrigatorias + 8 recomendadas corrigidas (1507a46); reconferencia: "OK to deploy". Pendentes (decisao do dono): citar o DeepL na politica de privacidade; apagar conversas de visitantes antigas (prazo de guarda).
+- Testes locais: site-suporte 45/45; site-traducao, site-mensagens, site-painel-oficina, site-prazo ok.

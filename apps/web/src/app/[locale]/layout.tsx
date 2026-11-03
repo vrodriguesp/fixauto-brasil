@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
@@ -5,6 +6,7 @@ import { notFound } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
 import BarraCarregando from '@/components/layout/BarraCarregando';
 import SiteFooter from '@/components/layout/SiteFooter';
+import ChatSuporte from '@/components/suporte/ChatSuporte';
 import { contarOficinasPublicas } from '@/lib/oficinas-publicas';
 import SugestaoIdioma from '@/components/layout/SugestaoIdioma';
 import Analytics from '@/components/Analytics';
@@ -60,6 +62,8 @@ const NAMESPACES_PUBLICOS = [
   'audioRecorder', 'audioMessage', 'veiculoForm', 'docsLayout', 'docsCliente', 'docsOficina',
   'sejaParceiro', 'login', 'cadastro', 'confirmarEmail', 'definirSenha', 'escolherTipo', 'resetPassword', 'erros', 'seguroReparo', 'enderecoEstruturado', 'excluirConta', 'avisoJurisdicao',
   'contatoDuvidas',
+  // chat de suporte (botao em todas as paginas) e o 'ver original' das mensagens traduzidas
+  'suporte', 'traducao',
 ];
 
 function mensagensPublicas(messages: Record<string, unknown>) {
@@ -141,6 +145,8 @@ export default async function LocaleLayout({
       <Navbar />
       <main id="conteudo" className="min-h-[calc(100vh-4rem)]">{children}</main>
       <SiteFooter temOficinas={temOficinas} />
+      {/* chat de suporte com o admin (dono 03/11); Suspense: le ?suporte=1 do endereco */}
+      <Suspense fallback={null}><ChatSuporte /></Suspense>
     </NextIntlClientProvider>
   );
 }

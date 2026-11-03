@@ -12,6 +12,7 @@ const sidebarLinks = [
   { href: '/admin/emergencias', label: 'Emergências', icon: AlertIcon },
   { href: '/admin/usuarios', label: 'Usuários', icon: UsersIcon },
   { href: '/admin/oficinas', label: 'Oficinas', icon: BuildingIcon },
+  { href: '/admin/suporte', label: 'Suporte (chat)', icon: ChatIcon },
   { href: '/admin/leads-parceiros', label: 'Interessados', icon: UsersIcon },
   { href: '/admin/comissoes', label: 'Comissões', icon: CurrencyIcon },
   { href: '/admin/oficinas/performance-ruim', label: 'Performance Ruim', icon: AlertIcon },
@@ -25,6 +26,19 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const [menuAberto, setMenuAberto] = useState(false);
+  const [suporteNaoLidas, setSuporteNaoLidas] = useState(0);
+
+  // Chat de suporte: com o admin aberto voce conta como online (sem mensagem
+  // automatica) e o menu mostra quantas mensagens esperam resposta
+  const ehAdmin = user?.tipo === 'admin';
+  useEffect(() => {
+    if (!ehAdmin) return;
+    const sinal = () => { if (document.visibilityState === 'visible') fetch('/api/admin/suporte', { method: 'POST' }).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d) setSuporteNaoLidas(d.naoLidas || 0); }).catch(() => {}); };
+    sinal();
+    const i = setInterval(sinal, 60000);
+    document.addEventListener('visibilitychange', sinal);
+    return () => { clearInterval(i); document.removeEventListener('visibilitychange', sinal); };
+  }, [ehAdmin]);
 
   // Fecha o menu mobile sempre que a rota muda (clicou num link)
   useEffect(() => { setMenuAberto(false); }, [pathname]);
@@ -111,6 +125,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               >
                 <link.icon className="w-5 h-5" />
                 {link.label}
+                {link.href === '/admin/suporte' && suporteNaoLidas > 0 && (
+                  <span className="ml-auto rounded-full bg-red-600 px-2 text-xs font-bold text-white">{suporteNaoLidas}</span>
+                )}
               </Link>
             );
           })}
@@ -161,6 +178,14 @@ function CarIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 17h14M5 17a2 2 0 11-4 0 2 2 0 014 0zm14 0a2 2 0 11-4 0 2 2 0 014 0zM5 17V9l1.5-4.5A2 2 0 018.4 3h7.2a2 2 0 011.9 1.5L19 9v8" />
+    </svg>
+  );
+}
+
+function ChatIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
     </svg>
   );
 }
