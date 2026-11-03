@@ -14,7 +14,7 @@
     "scheduledTitle": "Записи",
     "checkin": "Приёмка:",
     "deliveryForecast": "Ожидаемая выдача:",
-    "deadline": "Срок:",
+    "deadline": "Срок ремонта:",
     "daysCount": "{days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
     "phone": "Телефон: {phone}",
     "track": "Отслеживать",
@@ -79,7 +79,7 @@
     "refusedQuotesTitle": "Отклонённые сметы",
     "refusedBadge": "Отклонена",
     "workshopFallback": "Автосервис",
-    "deadlineDays": "Срок: {days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
+    "deadlineDays": "Срок ремонта: {days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
     "rate": "Оценить",
     "cancelledTitle": "Отменённые"
   },
@@ -153,7 +153,7 @@
     "noQuotesYet": "Смет пока не получено",
     "createRequest": "Создать заявку",
     "quotesReceivedCount": "{count, plural, one {Получена # смета} few {Получено # сметы} many {Получено # смет} other {Получено # сметы}}",
-    "deadlineDays": "Срок: {days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
+    "deadlineDays": "Срок ремонта: {days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
     "itemsCount": "{count, plural, one {# позиция} few {# позиции} many {# позиций} other {# позиции}}"
   },
   "clienteOrcamentoDetalhe": {
@@ -203,7 +203,7 @@
     "percentHigher": "на {percent}% выше",
     "noAdjustment": "Без изменений",
     "revisionNumber": "Редакция №{n}",
-    "deadlineDays": "Срок: {days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
+    "deadlineDays": "Срок ремонта: {days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
     "execTimeLabel": "Срок выполнения",
     "nextCheckinLabel": "Ближайшая приёмка",
     "noSlotAvailable": "Нет свободных дат",

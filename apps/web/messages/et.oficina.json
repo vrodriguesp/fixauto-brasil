@@ -599,7 +599,7 @@
     "comissaoBipfix": "BipFixi komisjonitasu",
     "comissaoDaPlataforma": "Platvormi komisjonitasu:",
     "prazoExecucao": "Tähtaeg ja teostus",
-    "prazoTotalDias": "Kogutähtaeg (päevades)",
+    "prazoTotalDias": "Remondi kestus (päevades)",
     "tempoExecucaoHoras": "Teostusaeg (tundides)",
     "diasUteis": "~{count, plural, one {# tööpäev} other {# tööpäeva}}",
     "validadeOrcamento": "Hinnapakkumise kehtivus",
@@ -652,7 +652,9 @@
     "importarGrande": "Fail on liiga suur (kuni 10 MB). Proovi väiksemat fotot või PDF-i.",
     "orcamentoFechadoEntregue": "Auto on kliendile juba üle antud. Hinnapakkumine on suletud ja seda ei saa enam muuta.",
     "orcamentoFechadoCancelado": "See päring tühistati. Hinnapakkumist ei saa enam muuta.",
-    "verPedido": "Vaata päringut"
+    "verPedido": "Vaata päringut",
+    "prazoTotalDiasAjuda": "Mitu päeva auto on töökojas – vastuvõtust üleandmiseni. Hinnapakkumise kehtivus on eraldi väli.",
+    "prazoLongoAviso": "{dias} päeva töökojas {horas} töötunni jaoks – kas see on õige? Kui see on pakkumise kehtivus, kasuta välja „Hinnapakkumise kehtivus“."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Parool peab olema vähemalt 8 tähemärki",
@@ -919,7 +921,7 @@
     "verOrcamento": "Vaata pakkumist",
     "modificarOrcamento": "Muuda pakkumist",
     "seuOrcamento": "Sinu hinnapakkumine",
-    "prazoDias": "Tähtaeg: {dias, plural, one {# päev} other {# päeva}}",
+    "prazoDias": "Remondi kestus: {dias, plural, one {# päev} other {# päeva}}",
     "statusOrcamento": {
       "enviado": "Saadetud",
       "visualizado": "Klient on näinud",

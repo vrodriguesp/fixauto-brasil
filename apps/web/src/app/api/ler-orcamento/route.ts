@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       { inline_data: { mime_type: tipo, data: dados } },
       { text: `Este documento e um orcamento de oficina mecanica/funilaria. Extraia os dados e responda SO JSON:
 {"itens":[{"descricao":"texto do item","tipo":"mao_de_obra|peca|material|outro","quantidade":1,"valor_unitario":0}],"prazo_dias":null,"garantia_dias":null,"observacoes":"","total":0}
-Regras: valores numericos sem simbolo de moeda (ponto decimal); quantidade padrao 1; se o documento so tiver o total de uma linha, use valor_unitario = total da linha / quantidade; garantia em dias (6 meses = 180); prazo em dias; se nao houver, null. Mantenha as descricoes no idioma do documento. Observacoes: condicoes relevantes (validade, forma de pagamento) em ${idioma}, curto.` },
+Regras: valores numericos sem simbolo de moeda (ponto decimal); quantidade padrao 1; se o documento so tiver o total de uma linha, use valor_unitario = total da linha / quantidade; garantia em dias (6 meses = 180); prazo_dias = so a duracao do conserto (quantos dias o carro fica na oficina) - NAO use a validade da proposta, prazo de pagamento nem prazo de entrega de peca (ex.: "pakkumine kehtib 30 paeva" e validade: prazo_dias null); se nao houver, null. Mantenha as descricoes no idioma do documento. Observacoes: condicoes relevantes (validade, forma de pagamento) em ${idioma}, curto.` },
     ] }],
     generationConfig: { temperature: 0.1, maxOutputTokens: 8192, responseMimeType: 'application/json' },
   };

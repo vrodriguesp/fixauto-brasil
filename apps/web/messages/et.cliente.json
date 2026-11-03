@@ -14,7 +14,7 @@
     "scheduledTitle": "Broneeringud",
     "checkin": "Check-in:",
     "deliveryForecast": "Eeldatav valmimisaeg:",
-    "deadline": "Tähtaeg:",
+    "deadline": "Remondi kestus:",
     "daysCount": "{days, plural, one {# päev} other {# päeva}}",
     "phone": "Tel: {phone}",
     "track": "Jälgi",
@@ -79,7 +79,7 @@
     "refusedQuotesTitle": "Tagasi lükatud hinnapakkumised",
     "refusedBadge": "Tagasi lükatud",
     "workshopFallback": "Töökoda",
-    "deadlineDays": "Tähtaeg: {days, plural, one {# päev} other {# päeva}}",
+    "deadlineDays": "Remondi kestus: {days, plural, one {# päev} other {# päeva}}",
     "rate": "Hinda",
     "cancelledTitle": "Tühistatud"
   },
@@ -153,7 +153,7 @@
     "noQuotesYet": "Ühtegi hinnapakkumist pole veel saabunud",
     "createRequest": "Loo päring",
     "quotesReceivedCount": "{count, plural, one {# hinnapakkumine saabunud} other {# hinnapakkumist saabunud}}",
-    "deadlineDays": "Tähtaeg: {days, plural, one {# päev} other {# päeva}}",
+    "deadlineDays": "Remondi kestus: {days, plural, one {# päev} other {# päeva}}",
     "itemsCount": "{count, plural, one {# kirje} other {# kirjet}}"
   },
   "clienteOrcamentoDetalhe": {
@@ -203,7 +203,7 @@
     "percentHigher": "{percent}% kõrgem",
     "noAdjustment": "Muutust pole",
     "revisionNumber": "Muudatus #{n}",
-    "deadlineDays": "Tähtaeg: {days, plural, one {# päev} other {# päeva}}",
+    "deadlineDays": "Remondi kestus: {days, plural, one {# päev} other {# päeva}}",
     "execTimeLabel": "Teostusaeg",
     "nextCheckinLabel": "Järgmine check-in",
     "noSlotAvailable": "Vabu aegu pole",

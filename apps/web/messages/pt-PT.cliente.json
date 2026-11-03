@@ -14,7 +14,7 @@
     "scheduledTitle": "Marcações",
     "checkin": "Check-in:",
     "deliveryForecast": "Entrega prevista:",
-    "deadline": "Prazo:",
+    "deadline": "Prazo da reparação:",
     "daysCount": "{days, plural, one {# dia} other {# dias}}",
     "phone": "Telefone: {phone}",
     "track": "Acompanhar",
@@ -79,7 +79,7 @@
     "refusedQuotesTitle": "Orçamentos recusados",
     "refusedBadge": "Recusado",
     "workshopFallback": "Oficina",
-    "deadlineDays": "Prazo: {days, plural, one {# dia} other {# dias}}",
+    "deadlineDays": "Prazo da reparação: {days, plural, one {# dia} other {# dias}}",
     "rate": "Avaliar",
     "cancelledTitle": "Cancelados"
   },
@@ -153,7 +153,7 @@
     "noQuotesYet": "Ainda não recebeu orçamentos",
     "createRequest": "Criar pedido",
     "quotesReceivedCount": "{count, plural, one {# orçamento recebido} other {# orçamentos recebidos}}",
-    "deadlineDays": "Prazo: {days, plural, one {# dia} other {# dias}}",
+    "deadlineDays": "Prazo da reparação: {days, plural, one {# dia} other {# dias}}",
     "itemsCount": "{count, plural, one {# item} other {# itens}}"
   },
   "clienteOrcamentoDetalhe": {
@@ -203,7 +203,7 @@
     "percentHigher": "{percent}% mais caro",
     "noAdjustment": "Sem alteração",
     "revisionNumber": "Revisão n.º {n}",
-    "deadlineDays": "Prazo: {days, plural, one {# dia} other {# dias}}",
+    "deadlineDays": "Prazo da reparação: {days, plural, one {# dia} other {# dias}}",
     "execTimeLabel": "Tempo de execução",
     "nextCheckinLabel": "Próximo check-in",
     "noSlotAvailable": "Sem vagas",

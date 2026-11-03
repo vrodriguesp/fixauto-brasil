@@ -513,7 +513,7 @@
     "victimDecidesNote": "La parte lesa decide quale preventivo accettare. Dopo l'accettazione, i dati dell'officina saranno condivisi con il responsabile.",
     "shareWithOtherNote": "Condividi questi preventivi con l'altro conducente per accordarvi su quale officina utilizzare per la riparazione.",
     "quoteAcceptedBadge": "Accettato",
-    "deadlineLabel": "Tempi: {dias} giorni",
+    "deadlineLabel": "Durata della riparazione: {dias} giorni",
     "workshopDataTitle": "Dati dell'officina",
     "workshopFallback": "Officina",
     "sendToResponsibleBtn": "Invia al responsabile",

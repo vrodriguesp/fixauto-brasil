@@ -599,7 +599,7 @@
     "comissaoBipfix": "Comissão BipFix",
     "comissaoDaPlataforma": "Comissão da plataforma:",
     "prazoExecucao": "Prazo e Execução",
-    "prazoTotalDias": "Prazo total (dias)",
+    "prazoTotalDias": "Prazo da reparação (dias)",
     "tempoExecucaoHoras": "Tempo de execução (horas)",
     "diasUteis": "~{count} dia(s) útil(eis)",
     "validadeOrcamento": "Validade do orçamento",
@@ -652,7 +652,9 @@
     "importarGrande": "O ficheiro é demasiado grande (máx. 10 MB). Experimente uma fotografia ou um PDF mais pequeno.",
     "orcamentoFechadoEntregue": "O carro já foi entregue ao cliente. O orçamento está fechado e já não pode ser alterado.",
     "orcamentoFechadoCancelado": "Este pedido foi cancelado. O orçamento já não pode ser alterado.",
-    "verPedido": "Ver pedido"
+    "verPedido": "Ver pedido",
+    "prazoTotalDiasAjuda": "Quantos dias o carro fica na oficina, da entrega ao levantamento. A validade do orçamento é outro campo.",
+    "prazoLongoAviso": "{dias} dias na oficina para {horas} h de trabalho — está certo? Se é a validade do orçamento, use o campo \"Validade do orçamento\"."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "A palavra-passe deve ter pelo menos 8 caracteres",
@@ -919,7 +921,7 @@
     "verOrcamento": "Ver orçamento",
     "modificarOrcamento": "Alterar orçamento",
     "seuOrcamento": "O seu orçamento",
-    "prazoDias": "Prazo: {dias} dia(s)",
+    "prazoDias": "Prazo da reparação: {dias} dia(s)",
     "statusOrcamento": {
       "enviado": "Enviado",
       "visualizado": "Visto pelo cliente",
