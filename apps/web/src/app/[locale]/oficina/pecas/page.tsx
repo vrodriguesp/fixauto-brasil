@@ -7,7 +7,6 @@ import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { formatCurrency, formatDate, timeAgo, distanciaKm } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
-import ComissaoPecasCard from '@/components/pecas/ComissaoPecasCard';
 import type { CotacaoPeca, CotacaoPecaResposta } from '@fixauto/shared';
 import { Link } from '@/i18n/navigation';
 import { notifPedidoConfirmado } from '@/lib/notif-i18n';
@@ -565,12 +564,8 @@ export default function OficinaPecasPage() {
             </div>
           )}
 
-          <details className="mb-6">
-            <summary className="cursor-pointer text-sm font-medium text-primary-600 hover:underline">{t('verMinhaComissao')}</summary>
-            <div className="mt-4">
-              <ComissaoPecasCard fornecedorTipo="oficina" fornecedorId={oficina.id} pais={oficina.pais} />
-            </div>
-          </details>
+          {/* "Minha comissao como fornecedora" escondido da oficina (dono 03/11):
+              sem cobranca hoje, so assustava quem esta entrando */}
             </>
           )}
 

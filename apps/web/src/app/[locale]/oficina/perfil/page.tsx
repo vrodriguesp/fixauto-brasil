@@ -24,7 +24,7 @@ export default function PerfilOficinaPage() {
   const [descricao, setDescricao] = useState('');
   const [cnpj, setCnpj] = useState('');
   // endereco em campos separados (rua, numero, CEP, cidade), conferido no mapa
-  const [end, setEnd] = useState<ValorEndereco>({ rua: '', numero: '', cidade: '', estado: '', cep: '', latitude: null, longitude: null, pais: '' });
+  const [end, setEnd] = useState<ValorEndereco>({ rua: '', numero: '', cidade: '', estado: '', cep: '', latitude: null, longitude: null, pais: '', complemento: '' });
   const [raio, setRaio] = useState(30);
   const [especialidades, setEspecialidades] = useState<string[]>([]);
   // seguradoras convencionadas (lista do pais + outras digitadas)
@@ -75,6 +75,7 @@ export default function PerfilOficinaPage() {
         rua: partes.rua, numero: partes.numero, cidade: oficina.cidade || '', estado: oficina.estado || '', cep: oficina.cep || '',
         latitude: oficina.latitude != null ? Number(oficina.latitude) : null, longitude: oficina.longitude != null ? Number(oficina.longitude) : null,
         pais: (oficina as { pais?: string | null }).pais || '',
+        complemento: (oficina as { complemento?: string | null }).complemento || '',
       });
       setDescricao((oficina as { descricao?: string | null }).descricao || '');
       setRaio(oficina.raio_atendimento_km || 30);
@@ -193,6 +194,7 @@ export default function PerfilOficinaPage() {
           cnpj: cnpj || null,
           endereco: juntarEndereco(end.rua, end.numero),
           numero: end.numero.trim() || null,
+          complemento: end.complemento?.trim() || null,
           cidade: end.cidade,
           estado: end.estado,
           cep: end.cep,

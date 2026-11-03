@@ -22,6 +22,7 @@ export interface OficinaPublica {
   descricao: string | null;
   cnpj: string | null; // codigo de registro da empresa (Estonia: registrikood)
   endereco: string;
+  complemento?: string | null;
   cidade: string;
   estado: string;
   cep: string;
@@ -73,7 +74,7 @@ export const carregarPerfilOficina = cache(async (id: string): Promise<PerfilOfi
   const [oficinaRes, avaliacoesRes, fotosRes, orcamentosRes, servicosRes] = await Promise.all([
     supabase
       .from('oficinas')
-      .select('id, nome_fantasia, descricao, cnpj, endereco, cidade, estado, cep, pais, latitude, longitude, especialidades, seguradoras_convencionadas, created_at, logo_url, horario_funcionamento, ativa, profile:profiles(telefone)')
+      .select('id, nome_fantasia, descricao, cnpj, endereco, complemento, cidade, estado, cep, pais, latitude, longitude, especialidades, seguradoras_convencionadas, created_at, logo_url, horario_funcionamento, ativa, profile:profiles(telefone)')
       .eq('id', id)
       .maybeSingle(),
     supabase

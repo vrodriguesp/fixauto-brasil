@@ -689,6 +689,8 @@
     "rua": "Rua / avenida",
     "ruaPlaceholder": "Ex.: Rua Augusta",
     "numero": "Número",
+    "complemento": "Complemento (opcional)",
+    "complementoPlaceholder": "Ex.: armazém 2, nome do centro, piso",
     "cep": "Código postal",
     "cidade": "Localidade",
     "estado": "Distrito",

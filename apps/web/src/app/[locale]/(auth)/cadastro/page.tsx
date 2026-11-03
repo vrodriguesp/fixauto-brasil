@@ -52,6 +52,7 @@ function CadastroPage() {
   const [cidade, setCidade] = useState('');
   const [estado, setEstado] = useState('');
   const [cep, setCep] = useState('');
+  const [complemento, setComplemento] = useState('');
   const [especialidades, setEspecialidades] = useState<string[]>([]);
   // posicao conferida do endereco digitado (rua + numero) e rua/numero separados
   const [posEnd, setPosEnd] = useState<{ lat: number; lon: number } | null>(null);
@@ -158,7 +159,7 @@ function CadastroPage() {
   // espelha nos campos de sempre (endereco/cidade/estado/cep, posicao e pais)
   const valorEndereco: ValorEndereco = {
     ...separarEndereco(endereco), cidade, estado, cep,
-    latitude: posEnd?.lat ?? null, longitude: posEnd?.lon ?? null, pais,
+    latitude: posEnd?.lat ?? null, longitude: posEnd?.lon ?? null, pais, complemento,
   };
   const renderEnderecoFields = () => (
     <EnderecoEstruturado idBase="cadastro-end"
@@ -166,6 +167,7 @@ function CadastroPage() {
       perto={geoResolved ? coords : null}
       onChange={(v) => {
         setRuaNumero({ rua: v.rua, numero: v.numero });
+        setComplemento(v.complemento || '');
         setEndereco(juntarEndereco(v.rua, v.numero));
         setCidade(v.cidade); setEstado(v.estado); setCep(v.cep);
         if (v.pais) setPais(v.pais);
@@ -217,6 +219,7 @@ function CadastroPage() {
           nome_fantasia: nomeFantasia || nome,
           cnpj,
           endereco, cidade, estado, cep,
+          complemento: complemento.trim() || undefined,
           pais: local.pais,
           latitude: local.lat,
           longitude: local.lon,

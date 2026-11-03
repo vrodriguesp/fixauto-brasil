@@ -14,6 +14,8 @@ export interface ValorEndereco {
   latitude: number | null;
   longitude: number | null;
   pais: string;
+  // predio, andar, nome do centro... (opcional; so aparece quando a tela passa o campo)
+  complemento?: string;
 }
 
 // Endereco da oficina em campos separados (rua, numero, CEP, cidade): as
@@ -66,6 +68,8 @@ export default function EnderecoEstruturado({ valor, onChange, perto, idBase = '
   }, [valor.latitude, valor.rua, estado]);
 
   const set = (campo: keyof ValorEndereco, v: string) => {
+    // o complemento nao entra na busca do mapa: nao desfaz a posicao conferida
+    if (campo === 'complemento') { onChange({ ...valor, complemento: v }); return; }
     if (estado && estado !== 'conferindo') setEstado('');
     onChange({ ...valor, [campo]: v, latitude: campo === 'pais' ? valor.latitude : null, longitude: campo === 'pais' ? valor.longitude : null });
   };
@@ -103,6 +107,13 @@ export default function EnderecoEstruturado({ valor, onChange, perto, idBase = '
             onChange={(e) => set('numero', e.target.value)} onBlur={conferir} />
         </div>
       </div>
+      {valor.complemento !== undefined && (
+        <div>
+          <label htmlFor={`${idBase}-complemento`} className="block text-sm font-medium text-gray-700 mb-1">{t('complemento')}</label>
+          <input id={`${idBase}-complemento`} type="text" maxLength={100} className="input-field" value={valor.complemento}
+            placeholder={t('complementoPlaceholder')} onChange={(e) => set('complemento', e.target.value)} />
+        </div>
+      )}
       <div className="grid grid-cols-[7rem_1fr] gap-3">
         <div>
           <label htmlFor={`${idBase}-cep`} className="block text-sm font-medium text-gray-700 mb-1">{t('cep')}</label>

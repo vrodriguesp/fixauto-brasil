@@ -186,6 +186,7 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
         <h2 className="font-semibold text-gray-900 mb-3">{t('addressTitle')}</h2>
         <div className="text-sm text-gray-600 space-y-1 mb-4">
           <p>{oficina.endereco}</p>
+          {oficina.complemento && <p>{oficina.complemento}</p>}
           <p>
             {oficina.cidade} - {oficina.estado}
             {oficina.cep && `, ${t('cepLabel')}: ${oficina.cep}`}

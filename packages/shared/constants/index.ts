@@ -21,11 +21,12 @@ export const TIPOS_SERVICO = [
 export const TIPOS_CARROCERIA = ['colisao', 'funilaria', 'pintura'] as const;
 
 // Regra UNICA "a oficina atende este tipo de pedido" - a mesma do banco
-// (tipo_compativel, migracao 056): sem especialidade marcada atende tudo;
-// carroceria e um grupo; os demais precisam bater.
+// (tipo_compativel, migracoes 056 e 067): sem especialidade marcada atende tudo;
+// pedido "outro" vai para toda oficina (dono 03/11 - antes quase nao chegava a
+// ninguem); carroceria e um grupo; os demais precisam bater.
 // (distancia: distanciaKm em format.ts - mesma formula do banco, distancia_km)
 export function tipoCompativel(especialidades: readonly string[] | null | undefined, tipo: string): boolean {
-  if (!especialidades || especialidades.length === 0) return true;
+  if (!especialidades || especialidades.length === 0 || tipo === 'outro') return true;
   if (especialidades.includes(tipo)) return true;
   const grupo = TIPOS_CARROCERIA as readonly string[];
   return grupo.includes(tipo) && especialidades.some((e) => grupo.includes(e));
