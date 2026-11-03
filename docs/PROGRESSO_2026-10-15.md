@@ -709,3 +709,9 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - DeepL: limite de 500.000 caracteres/mes na chave ativa (~3x o uso de hoje); voz (speech-to-text) zerada. Estourou = site mostra o original ate virar o mes.
 - 4 imagens 1080x1080 (oficinas/motoristas, ET/RU) em Documentos/ (local): celular com a tela "Pedidos" (pedidos ficticios criados e apagados no ambiente local) e 3 passos para motoristas. Textos dos posts revisados pelo Fable: 0 % com aviso de 30 dias, termos do site, post de motoristas limitado a mecanica/eletrica/pneus/revisao.
 - Segunda oficina real cadastrada hoje (21:47): rascunho de boas-vindas em Documentos/ (local) - ve 2 dos 3 pedidos abertos; o de eletrica so aparece se marcar a especialidade (ou pedir que nos ativamos). Conferido: oficina recebe aviso de pedido novo so no site (sininho), nao por e-mail.
+
+### 04/11 ~00:00 Tallinn - aviso de cookies tampava o botao do chat (achado do dono)
+- Por que os testes nao viram: (1) todos os testes comecam com os cookies ja respondidos; (2) no site de teste o aviso nem aparecia (sem NEXT_PUBLIC_GA_MEASUREMENT_ID). Agora o site de teste tem um id falso (G-TESTELOCAL0, os testes bloqueiam o Google) e site-suporte secao 7 roda com o aviso de verdade.
+- Correcao: Analytics.tsx mede o aviso (--altura-cookies) e o botao do chat fica logo acima enquanto nao ha resposta; depois de responder volta para baixo. O teste novo achou mais um problema: no celular da oficina o proprio aviso ficava ATRAS da barra de baixo (botoes Aceitar/Recusar escondidos) - agora fica acima da barra.
+- Teste novo confere: aviso aparece, botoes do aviso clicaveis (nada por cima), botao do chat acima do aviso - visitante celular/PC e oficina no celular. Outros (fluxos, mensagens, pecas-ux, prazo, menu-sobreposto) ok. Auditoria Fable: sem bloqueio; aplicado useLayoutEffect e 57px.
+- Commit 1a62d8d. Deploy aguardando ok do dono (bloqueado pelo classificador sem ok explicito).
