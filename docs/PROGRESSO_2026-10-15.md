@@ -671,3 +671,9 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Politica UE (en/et/it/ru/pt-PT): nova 3.11 "chat de suporte e traducao automatica", DeepL SE (Alemanha, UE) em "quem recebe", "chat sem conta: apagado 6 meses apos a ultima mensagem" nos prazos; data 03/11/2026. Politica Brasil (pt, LGPD): itens equivalentes.
 - /api/tarefas/limpar-suporte (chave TAREFAS_CHAVE): apaga conversas de visitante sem mensagem ha 183 dias (mensagens em cascata); conversa de conta segue a conta. Teste local: antiga apagada, recente e de conta mantidas, sem chave 403. Paginas de privacidade nas 6 linguas ok no celular.
 - Na VM: /root/limpar-suporte.sh no crontab, 1x por dia (03:23).
+
+### 03/11 noite - chat: traducao automatica OU manual (pedido do dono) + 2a auditoria Fable
+- Admin escolhe o modo no /admin/suporte: Automatica (tudo traduzido) ou Manual (recebida chega no original com "Traduzir para portugues"; cada resposta tem "Traduzir esta resposta para <lingua>"). Traducao entre pessoas/oficinas inalterada.
+- Fable (2a auditoria, sem bloqueio de codigo): corrigido botao Traduzir tambem no modo automatico, caixa volta marcada a cada conversa, gravacao conferida e sem traducao dupla; politica: "enviamos so o texto; o que a pessoa escreve dentro dele vai como esta"; cache de traducoes guardado no maximo 24 meses (limpeza diaria apaga; politica cita).
+- DeepL API Free (conferido na politica do DeepL): textos do plano gratis podem ser guardados e usados para treino; traduzir dados pessoais e contrato de tratamento de dados (art. 28) so no Pro. A traducao no ar desde a tarde usa o plano gratis -> decisao do dono (Pro ou desligar). Politica nova NAO publicada ate decidir.
+- Testes locais: site-suporte ok (com modo manual), limpeza (conversa 6 meses e traducao 24 meses) ok, privacidade 6 linguas ok.
