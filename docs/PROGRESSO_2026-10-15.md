@@ -666,3 +666,8 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Auditoria Fable: 2 obrigatorias + 8 recomendadas corrigidas (1507a46); reconferencia: "OK to deploy". Pendentes (decisao do dono): citar o DeepL na politica de privacidade; apagar conversas de visitantes antigas (prazo de guarda).
 - Testes locais: site-suporte 45/45; site-traducao, site-mensagens, site-painel-oficina, site-prazo ok.
 - Deploy ec4ed78 (OK do dono "auditar com o Fable antes de deployar"; Fable: OK to deploy). Migracao 069 aplicada em producao. Teste em producao sem criar conversa: paginas 200; API (sem chave 200 vazio, chave falsa 404, sem consentimento 400, admin 401); navegador celular/PC em RU e ET: botao traduzido, escondido na 1a tela do celular, janela com o consentimento (DeepL), sem rolagem lateral nem erro de JS. ADMIN_NOTIFICATION_EMAIL nao definido na VM: avisos vao para support@bipfix.com.
+
+### 03/11 noite - politica de privacidade (chat + DeepL) e prazo de guarda do chat (OK do dono: "1. sim 2. sim")
+- Politica UE (en/et/it/ru/pt-PT): nova 3.11 "chat de suporte e traducao automatica", DeepL SE (Alemanha, UE) em "quem recebe", "chat sem conta: apagado 6 meses apos a ultima mensagem" nos prazos; data 03/11/2026. Politica Brasil (pt, LGPD): itens equivalentes.
+- /api/tarefas/limpar-suporte (chave TAREFAS_CHAVE): apaga conversas de visitante sem mensagem ha 183 dias (mensagens em cascata); conversa de conta segue a conta. Teste local: antiga apagada, recente e de conta mantidas, sem chave 403. Paginas de privacidade nas 6 linguas ok no celular.
+- Na VM: /root/limpar-suporte.sh no crontab, 1x por dia (03:23).
