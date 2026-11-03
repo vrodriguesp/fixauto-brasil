@@ -695,3 +695,12 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Juiz cego (Fable, sem saber qual e qual, A/B embaralhado por frase): DeepL 90/100 (ET->RU 44, RU->ET 46), Google 76/100 (38 e 38). Erros graves: DeepL 2, Google 4.
 - Os dois erram "stange" (gíria para para-choque -> "стойка") e "auto vastu võtta" (receber o carro -> "забрать", buscar). Google ainda trocou "проточить диски" (retificar) por trocar discos e "принять" por "vamos buscar".
 - Arquivos (frases, saidas, folha cega, chave) em Documentos/Comparacao_tradutores_2026-11-03/.
+
+### 03/11 ~22:40 Tallinn - DeepL Pro + glossario + politica + novo visual do chat no admin (DEPLOY, autorizado pelo dono "se o site estiver sem acessos pode deployar")
+- Dono passou o DeepL para o plano pago (API Pro). A chave gratis foi desativada na troca (403) - a traducao no ar ficou sem funcionar ate o deploy. Chave nova (sem :fx, api.deepl.com) em ~/.bipfix-segredos e na VM; limite de caracteres na conta: "Unlimited" (sugerido ao dono por um teto de custo no painel do DeepL).
+- Glossario de oficina ET<->RU (scripts/deepl-glossario.mjs; id em DEEPL_GLOSSARIO_ID): stange=бампер, проточить=treida, техосмотр, развал-схождение, расходники, ремень ГРМ... + contexto do site em toda chamada (nao cobrado): "auto vastu võtta" agora vira "принять машину" (antes "забрать"). Glossario so quando a lingua de origem e certa (lib/lingua-provavel.ts, regra estrita).
+- Politica de privacidade (6 linguas): DeepL como operador com contrato de dados, apaga o texto apos traduzir e nao treina com ele (DeepL Pro, politica DeepL secoes 4 e 6.5).
+- /admin/suporte redesenhado com sugestao do Fable: escuro como o resto do admin, lista | conversa (celular: uma de cada vez), iniciais por tipo, codigo da lingua, "traduzido do russo · ver original" por mensagem, modo de traducao num botao recolhido, campo que cresce, avisos coloridos.
+- Auditoria Fable 3 (sem bloqueio) corrigida antes do deploy: finlandes/alemao nao passam por estoniano nem bulgaro/ucraniano por russo; texto na mesma lingua nao aparece como "SEM traducao" no suporte; allSettled; rascunho/resposta atrasada no admin; glossario com maiusculas.
+- Testes locais (chave Pro real): lingua-provavel (40+ casos), site-suporte (com admin no celular), traducao, mensagens, fluxos, prazo, oficina-nova, loja-sem-comissao, pecas-ux - todos ok.
+- Deploy 3fda3ba: so scanners no site nos 30 min antes. Paginas 200, politica nova no ar, DeepL e glossario 200 da VM. Crontab: /root/limpar-suporte.sh 03:23 diario (rodado 1x: 0 apagadas).
