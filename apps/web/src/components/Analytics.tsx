@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
@@ -77,16 +77,21 @@ export default function Analytics() {
   // Altura do aviso de cookies em --altura-cookies: o botao do chat de suporte
   // sobe acima dele enquanto a pessoa nao responde (dono 04/11: o aviso tampava o botao).
   const mostrandoAviso = mounted && consent === null && !pathname.startsWith('/emergencia');
-  useEffect(() => {
+  useLayoutEffect(() => { // antes da pintura: o botao do chat nao pisca atras do aviso
     const el = avisoRef.current;
     const raiz = document.documentElement;
     if (!mostrandoAviso || !el) return;
-    const medir = () => raiz.style.setProperty('--altura-cookies', `${el.offsetHeight}px`);
+    // do pe da tela ate o topo do aviso (no celular da oficina ele fica acima da barra de baixo)
+    const medir = () => raiz.style.setProperty('--altura-cookies', `${Math.max(0, window.innerHeight - el.getBoundingClientRect().top)}px`);
     medir();
     document.body.classList.add('com-aviso-cookies');
     const ro = new ResizeObserver(medir);
     ro.observe(el);
-    return () => { ro.disconnect(); document.body.classList.remove('com-aviso-cookies'); raiz.style.removeProperty('--altura-cookies'); };
+    window.addEventListener('resize', medir);
+    // a barra de baixo (classe no body) pode aparecer depois e empurrar o aviso para cima
+    const mo = new MutationObserver(() => requestAnimationFrame(medir));
+    mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => { ro.disconnect(); mo.disconnect(); window.removeEventListener('resize', medir); document.body.classList.remove('com-aviso-cookies'); raiz.style.removeProperty('--altura-cookies'); };
   }, [mostrandoAviso]);
 
   const responder = (valor: 'accepted' | 'rejected') => {
@@ -147,7 +152,7 @@ export default function Analytics() {
           EDPB 05/2020: recusar tao facil quanto aceitar) e ausente no fluxo
           de acidente, onde cobria o formulario e nao ha o que medir. */}
       {mostrandoAviso && (
-        <div ref={avisoRef} data-testid="aviso-cookies" className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div ref={avisoRef} data-testid="aviso-cookies" className="aviso-cookies fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
           <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-4 flex items-center gap-3 sm:gap-4">
             <p className="text-xs sm:text-sm text-gray-700 flex-1 leading-snug">
               {/* celular: uma linha curta (o texto longo cobria metade da tela) */}

@@ -101,6 +101,10 @@
 }
 /* aviso de cookies ainda sem resposta: o botao fica logo acima dele (a altura ja inclui a area segura do iPhone) */
 body.com-aviso-cookies .chat-suporte-botao { bottom: calc(var(--altura-cookies, 0px) + 1rem); }
+/* celular da oficina/loja: o aviso de cookies fica acima da barra de baixo (antes ficava atras dela, com os botoes escondidos) */
+@media (max-width: 1279.98px) {
+  body.com-barra-inferior .aviso-cookies { bottom: calc(57px + env(safe-area-inset-bottom)); padding-bottom: 0 !important; }
+}
 body.com-chat-suporte footer { padding-bottom: 5rem; }
 
 /* Conversa (mensagens): cabe na parte visivel da tela, com a caixa de digitar

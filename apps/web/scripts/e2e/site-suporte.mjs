@@ -225,6 +225,9 @@ try {
     const aviso = await p.getByTestId('aviso-cookies').boundingBox();
     const bt = await p.getByTestId('chat-suporte-botao').boundingBox();
     ok(`7 ${nome}: aviso de cookies aparece`, !!aviso);
+    // os botoes do aviso estao por cima de tudo (nao escondidos pela barra de baixo nem pelo chat)
+    const livre = await p.getByTestId('aviso-cookies').getByRole('button').evaluateAll((bs) => bs.every((x) => { const r = x.getBoundingClientRect(); const topo = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!topo && (topo === x || x.contains(topo)); }));
+    ok(`7 ${nome}: botoes do aviso visiveis e clicaveis`, livre);
     ok(`7 ${nome}: botao do chat acima do aviso (sem cobrir)`, !!aviso && !!bt && bt.y + bt.height <= aviso.y - 4, JSON.stringify({ bt, aviso }));
   };
   for (const tela of ['celular', 'pc']) {
