@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
@@ -60,6 +60,7 @@ export default function Analytics() {
   const pathname = usePathname();
   const [consent, setConsent] = useState<Consent>(null);
   const [mounted, setMounted] = useState(false);
+  const avisoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let stored: Consent = null;
@@ -72,6 +73,21 @@ export default function Analytics() {
     setMounted(true);
     if (stored) aplicarConsentimento(stored);
   }, []);
+
+  // Altura do aviso de cookies em --altura-cookies: o botao do chat de suporte
+  // sobe acima dele enquanto a pessoa nao responde (dono 04/11: o aviso tampava o botao).
+  const mostrandoAviso = mounted && consent === null && !pathname.startsWith('/emergencia');
+  useEffect(() => {
+    const el = avisoRef.current;
+    const raiz = document.documentElement;
+    if (!mostrandoAviso || !el) return;
+    const medir = () => raiz.style.setProperty('--altura-cookies', `${el.offsetHeight}px`);
+    medir();
+    document.body.classList.add('com-aviso-cookies');
+    const ro = new ResizeObserver(medir);
+    ro.observe(el);
+    return () => { ro.disconnect(); document.body.classList.remove('com-aviso-cookies'); raiz.style.removeProperty('--altura-cookies'); };
+  }, [mostrandoAviso]);
 
   const responder = (valor: 'accepted' | 'rejected') => {
     try {
@@ -130,8 +146,8 @@ export default function Analytics() {
       {/* Aviso compacto (Google: banner de cookies "de tamanho razoavel";
           EDPB 05/2020: recusar tao facil quanto aceitar) e ausente no fluxo
           de acidente, onde cobria o formulario e nao ha o que medir. */}
-      {mounted && consent === null && !pathname.startsWith('/emergencia') && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      {mostrandoAviso && (
+        <div ref={avisoRef} data-testid="aviso-cookies" className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
           <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-4 flex items-center gap-3 sm:gap-4">
             <p className="text-xs sm:text-sm text-gray-700 flex-1 leading-snug">
               {/* celular: uma linha curta (o texto longo cobria metade da tela) */}

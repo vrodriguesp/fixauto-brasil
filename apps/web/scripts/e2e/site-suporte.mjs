@@ -211,6 +211,39 @@ try {
     }
     await ctx.close();
   }
+
+  // ---------- 7 aviso de cookies sem resposta (dono 04/11: tampava o botao). Os outros testes ja
+  // comecam com cookies respondidos, por isso nao viam; aqui o aviso aparece de verdade
+  // (o site de teste precisa de NEXT_PUBLIC_GA_MEASUREMENT_ID para mostrar o aviso).
+  const semConsent = async (tela) => {
+    const c = await browser.newContext(TELAS[tela]);
+    await c.route(/googletagmanager|google-analytics|clarity.ms/, (r) => r.abort());
+    await c.addInitScript(() => { try { localStorage.setItem('bipfix_tutorial_banner_oficina', '1'); } catch {} });
+    return c;
+  };
+  const acimaDoAviso = async (p, nome) => {
+    const aviso = await p.getByTestId('aviso-cookies').boundingBox();
+    const bt = await p.getByTestId('chat-suporte-botao').boundingBox();
+    ok(`7 ${nome}: aviso de cookies aparece`, !!aviso);
+    ok(`7 ${nome}: botao do chat acima do aviso (sem cobrir)`, !!aviso && !!bt && bt.y + bt.height <= aviso.y - 4, JSON.stringify({ bt, aviso }));
+  };
+  for (const tela of ['celular', 'pc']) {
+    const ctx = await semConsent(tela); const p = await ctx.newPage();
+    await p.goto(`${SITE}/ee/ru`, { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
+    await p.evaluate(() => window.scrollTo(0, 700)); await p.waitForTimeout(600);
+    await acimaDoAviso(p, `visitante ${tela}`);
+    await p.getByTestId('aviso-cookies').getByRole('button', { name: RU('cookieBanner.rejeitar') }).click(); await p.waitForTimeout(600);
+    const bt = await p.getByTestId('chat-suporte-botao').boundingBox();
+    ok(`7 visitante ${tela}: depois de responder, o botao volta para baixo`, !!bt && bt.y + bt.height >= p.viewportSize().height - 40, JSON.stringify(bt));
+    await ctx.close();
+  }
+  {
+    const ctx = await semConsent('celular'); const p = await entrar(ctx, dono);
+    await p.goto(`${SITE}/ee/ru/oficina/pedidos`, { waitUntil: 'networkidle' }); await p.waitForTimeout(1500);
+    await acimaDoAviso(p, 'oficina celular (com a barra de baixo)');
+    await p.screenshot({ path: 'cookies-chat-oficina.png' });
+    await ctx.close();
+  }
 } catch (e) {
   falhas++; console.log('ERRO', e.message);
 } finally {
