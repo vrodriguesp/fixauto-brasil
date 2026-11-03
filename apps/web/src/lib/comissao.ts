@@ -1,5 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { COMISSAO_CONFIG } from '@fixauto/shared';
+import { tempoRespostaMs } from './tempo-resposta';
 
 const JANELA_DIAS = 90;
 
@@ -46,7 +47,7 @@ export async function recalcularComissaoConfig(
       .select('created_at, revisao_numero, solicitacao:solicitacoes(created_at)')
       .eq('oficina_id', oficinaId)
       .gte('created_at', desde),
-    supabaseAdmin.from('oficinas').select('avaliacao_media').eq('id', oficinaId).single(),
+    supabaseAdmin.from('oficinas').select('avaliacao_media, created_at').eq('id', oficinaId).single(),
     supabaseAdmin
       .from('comissao_lancamento')
       .select('*', { count: 'exact', head: true })
@@ -59,7 +60,7 @@ export async function recalcularComissaoConfig(
     .map((o: any) => {
       const solCriada = o.solicitacao?.created_at;
       if (!solCriada) return null;
-      return (new Date(o.created_at).getTime() - new Date(solCriada).getTime()) / 3600000;
+      return tempoRespostaMs(o.created_at, solCriada, oficina?.created_at) / 3600000;
     })
     .filter((h: number | null): h is number => h != null && h >= 0);
 

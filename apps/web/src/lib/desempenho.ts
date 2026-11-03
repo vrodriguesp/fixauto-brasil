@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { diaNaOficina } from '@/lib/fuso';
+import { tempoRespostaMs } from '@/lib/tempo-resposta';
 
 // Numeros da pagina Desempenho (auditoria do painel 10/10, secao E): tudo sai
 // das tabelas que ja existem, lido com a sessao da oficina (RLS) e agrupado no
@@ -52,12 +53,13 @@ export async function carregarDesempenho(opts: { oficinaId: string; donoProfileI
   const faixaDe = (ymd: string) => faixas.findIndex((f) => ymd >= f.inicio && ymd < f.fim);
   const zeros = () => faixas.map(() => 0);
 
-  const [notifs, orcs, ags, avs, revs] = await Promise.all([
+  const [notifs, orcs, ags, avs, revs, ofi] = await Promise.all([
     supabase.from('notificacoes').select('created_at, dados').eq('profile_id', donoProfileId).in('tipo', ['nova_solicitacao', 'emergencia']).gte('created_at', desdeIso),
     supabase.from('orcamentos').select('id, created_at, status, valor_total, solicitacao_id, solicitacao:solicitacoes(created_at, status)').eq('oficina_id', oficinaId).gte('created_at', desdeIso),
     supabase.from('agenda').select('id, created_at, tipo, status, solicitacao_id, data_fim, data_fim_prevista, entregue_em, etapas:manutencao_etapas(status, created_at)').eq('oficina_id', oficinaId).gte('created_at', desdeIso),
     supabase.from('avaliacoes').select('nota, comentario, created_at').eq('oficina_id', oficinaId).order('created_at', { ascending: false }),
     supabase.from('orcamento_revisoes').select('valor_anterior, valor_novo, decidido_em, status').eq('oficina_id', oficinaId).eq('status', 'aprovada').gte('decidido_em', desdeIso),
+    supabase.from('oficinas').select('created_at').eq('id', oficinaId).maybeSingle(),
   ]);
 
   const recebidos = zeros(), respondidos = zeros(), ganhos = zeros(), receita = zeros();
@@ -78,7 +80,7 @@ export async function carregarDesempenho(opts: { oficinaId: string; donoProfileI
     const i = faixaDe(dia(o.created_at));
     if (i < 0) continue;
     respondidos[i]++;
-    if (o.solicitacao?.created_at) { const min = (Date.parse(o.created_at) - Date.parse(o.solicitacao.created_at)) / 60e3; if (min >= 0) { tempos.push(min); respPorFaixa[i].push(min); } }
+    if (o.solicitacao?.created_at) { const min = tempoRespostaMs(o.created_at, o.solicitacao.created_at, ofi.data?.created_at) / 60e3; if (min >= 0) { tempos.push(min); respPorFaixa[i].push(min); } }
   }
   // todo pedido orcado foi recebido (pedidos antigos nao tinham o aviso gravado)
   for (let i = 0; i < faixas.length; i++) recebidos[i] = Math.max(recebidos[i], respondidos[i]);
