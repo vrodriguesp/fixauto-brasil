@@ -40,7 +40,7 @@ export async function PATCH(req: NextRequest) {
   if (!auth.ok) return auth.response;
   const corpo = await req.json().catch(() => ({}));
   if (typeof corpo.traducao !== 'boolean') return NextResponse.json({ error: 'traducao deve ser true/false' }, { status: 400 });
-  const { error } = await supabaseAdmin.from('plataforma_config').update({ suporte_traducao: corpo.traducao, updated_by: auth.userId, updated_at: new Date().toISOString() }).eq('id', 1);
+  const { error } = await supabaseAdmin.from('plataforma_config').upsert({ id: 1, suporte_traducao: corpo.traducao, updated_by: auth.userId, updated_at: new Date().toISOString() }, { onConflict: 'id' });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ traducao: corpo.traducao });
 }
@@ -49,7 +49,8 @@ export async function PATCH(req: NextRequest) {
 export async function POST() {
   const auth = await requireAdmin();
   if (!auth.ok) return auth.response;
-  await supabaseAdmin.from('plataforma_config').update({ admin_visto_em: new Date().toISOString() }).eq('id', 1);
+  // upsert: a linha unica pode faltar num banco novo
+  await supabaseAdmin.from('plataforma_config').upsert({ id: 1, admin_visto_em: new Date().toISOString() }, { onConflict: 'id' });
   const { data } = await supabaseAdmin.from('suporte_conversas').select('nao_lidas_admin').gt('nao_lidas_admin', 0);
   return NextResponse.json({ naoLidas: (data || []).reduce((s, c) => s + c.nao_lidas_admin, 0) });
 }

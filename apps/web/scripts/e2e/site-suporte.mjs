@@ -37,7 +37,7 @@ const contas = []; const conversas = []; let ofId;
 const EMAIL_VIS = `visitante-${tag}@example.test`;
 const cirilico = /[А-Яа-яЁё]{4,}/;
 const emailsDesde = (t0, para) => (PASTA && fs.existsSync(PASTA) ? fs.readdirSync(PASTA) : []).filter((f) => Number(f.split('_')[0]) >= t0 && (!para || f.includes(para.replace(/[^a-z0-9@._-]/gi, '_')))).map((f) => fs.readFileSync(path.join(PASTA, f), 'utf8'));
-const config = (c) => sb.from('plataforma_config').update(c).eq('id', 1);
+const config = (c) => sb.from('plataforma_config').upsert({ id: 1, ...c }, { onConflict: 'id' });
 
 const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
 const TELAS = { celular: { viewport: { width: 360, height: 780 }, isMobile: true, hasTouch: true }, pc: { viewport: { width: 1366, height: 900 } } };
