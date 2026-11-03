@@ -817,7 +817,7 @@ export async function sendSuporteAdminEmail(params: { nome: string; contato: str
 }
 
 /** Resposta do admin para quem nao esta com o chat aberto (no maximo 1 a cada 15 min por conversa). */
-export async function sendSuporteRespostaEmail(params: { toEmail: string; toName: string; texto: string; locale: string }) {
+export async function sendSuporteRespostaEmail(params: { toEmail: string; toName: string; texto: string; locale: string; visitante?: boolean }) {
   if (!podeEnviar) return { success: false, error: 'Email service not configured' };
   const s = SUPORTE_EMAIL_RESPOSTA[linguaTexto(params.locale)];
   const url = `${siteNoIdioma(params.locale)}?suporte=1`;
@@ -825,6 +825,8 @@ export async function sendSuporteRespostaEmail(params: { toEmail: string; toName
     await sendOrThrow({
       from: FROM_EMAIL,
       to: params.toEmail,
+      // responder o e-mail chega no suporte (a pessoa pode estar noutro aparelho, sem o chat)
+      replyTo: process.env.ADMIN_NOTIFICATION_EMAIL || 'support@bipfix.com',
       subject: s.assunto,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -836,6 +838,7 @@ export async function sendSuporteRespostaEmail(params: { toEmail: string; toName
             <p style="white-space: pre-wrap; background: #f3f4f6; padding: 14px; border-radius: 8px;">${escapeHtml(params.texto)}</p>
             <p style="margin-top: 20px;"><a href="${url}" style="display: inline-block; background: #1e40af; color: white; padding: 12px 22px; border-radius: 8px; text-decoration: none; font-weight: bold;">${s.abrir}</a></p>
             <p style="color: #6b7280; font-size: 13px;">${s.rodape}</p>
+            ${params.visitante ? `<p style="color: #9ca3af; font-size: 12px;">${s.porque}</p>` : ''}
           </div>
         </div>
       `,

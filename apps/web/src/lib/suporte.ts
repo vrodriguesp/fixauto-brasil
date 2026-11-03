@@ -28,15 +28,14 @@ export interface Conversa {
 }
 const CAMPOS = 'id, profile_id, visitante_nome, visitante_email, idioma, nao_lidas_usuario, nao_lidas_admin, usuario_visto_em, admin_avisado_em, usuario_avisado_em';
 
-/** conversa de quem chama: pela conta (logado) ou pela chave do visitante */
-export async function conversaDe(userId: string | null, conversaId?: string | null, token?: string | null): Promise<Conversa | null> {
-  if (userId) {
-    const { data } = await supabaseAdmin.from('suporte_conversas').select(CAMPOS).eq('profile_id', userId).maybeSingle();
-    return data as Conversa | null;
-  }
-  if (!conversaId || !token || !/^[0-9a-f-]{36}$/.test(conversaId)) return null;
-  const { data } = await supabaseAdmin.from('suporte_conversas').select(CAMPOS).eq('id', conversaId).eq('token_hash', hashToken(token)).maybeSingle();
-  return data as Conversa | null;
+/** conversa de quem chama: pela conta (logado) ou pela chave do visitante.
+ *  erro=true: falha do banco (nao confundir com "nao existe" - o visitante perderia a chave) */
+export async function conversaDe(userId: string | null, conversaId?: string | null, token?: string | null): Promise<{ conversa: Conversa | null; erro: boolean }> {
+  if (!userId && (!conversaId || !token || !/^[0-9a-f-]{36}$/.test(conversaId))) return { conversa: null, erro: false };
+  const q = supabaseAdmin.from('suporte_conversas').select(CAMPOS);
+  const { data, error } = userId ? await q.eq('profile_id', userId).maybeSingle() : await q.eq('id', conversaId!).eq('token_hash', hashToken(token!)).maybeSingle();
+  if (error) console.error('[suporte] conversa', error.message);
+  return { conversa: (data as Conversa | null) ?? null, erro: !!error };
 }
 
 export async function configSuporte(): Promise<{ traducao: boolean; adminOnline: boolean }> {
@@ -47,10 +46,21 @@ export async function configSuporte(): Promise<{ traducao: boolean; adminOnline:
   };
 }
 
+// limite de traducao por conversa e por dia (protege a cota do DeepL de quem
+// manda mensagens em massa); passou, a mensagem vai sem traducao. Na memoria:
+// zera quando o servidor reinicia - suficiente para o volume de hoje.
+const LIMITE_CHARS_DIA = 10_000;
+const gastoDia = new Map<string, number>();
+
 /** traduz um texto para `lingua` se a traducao estiver ligada; null = mostra o original */
-export async function traduzirSeLigado(texto: string, lingua: string, ligado: boolean) {
+export async function traduzirSeLigado(texto: string, lingua: string, ligado: boolean, conversaId: string) {
   if (!ligado) return { traducao: null, origem: null };
-  const [t] = await traduzirTextos([texto], lingua);
+  const chave = `${new Date().toISOString().slice(0, 10)}:${conversaId}`;
+  const gasto = (gastoDia.get(chave) || 0) + texto.length;
+  if (gasto > LIMITE_CHARS_DIA) return { traducao: null, origem: null };
+  gastoDia.set(chave, gasto);
+  if (gastoDia.size > 5000) gastoDia.clear();
+  const [t] = await traduzirTextos([texto], lingua, false);
   return { traducao: t.texto, origem: t.origem };
 }
 

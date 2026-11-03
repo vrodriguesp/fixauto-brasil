@@ -30,7 +30,9 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   if (!c) return NextResponse.json({ error: 'Conversa não encontrada' }, { status: 404 });
 
   const cfg = await configSuporte();
-  const { traducao, origem } = await traduzirSeLigado(texto, c.idioma, cfg.traducao);
+  const { traducao, origem } = await traduzirSeLigado(texto, c.idioma, cfg.traducao, c.id);
+  // traducao ligada, pessoa em outra lingua e nada voltou: avisa o admin (chave/cota do DeepL)
+  const semTraducao = cfg.traducao && !traducao && !origem && !c.idioma.startsWith('pt');
   const { error } = await supabaseAdmin.from('suporte_mensagens').insert({ conversa_id: c.id, autor: 'admin', texto, traducao, origem });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
@@ -41,10 +43,10 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const email = perfil?.email || c.visitante_email;
   let porEmail = false;
   if (email && !recente(c.usuario_visto_em, ATIVO_MS) && !recente(c.usuario_avisado_em, AVISO_MS)) {
-    const r = await sendSuporteRespostaEmail({ toEmail: email, toName: perfil?.nome || c.visitante_nome || '', texto: traducao || texto, locale: c.idioma });
+    const r = await sendSuporteRespostaEmail({ toEmail: email, toName: perfil?.nome || c.visitante_nome || '', texto: traducao || texto, locale: c.idioma, visitante: !perfil?.email });
     porEmail = r.success;
     if (porEmail) mudancas.usuario_avisado_em = agora;
   }
   await supabaseAdmin.from('suporte_conversas').update(mudancas).eq('id', c.id);
-  return NextResponse.json({ ok: true, traducao, porEmail });
+  return NextResponse.json({ ok: true, traducao, porEmail, semTraducao });
 }

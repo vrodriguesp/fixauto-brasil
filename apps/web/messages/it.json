@@ -768,7 +768,7 @@
     "intro": "Lascia nome ed e-mail per iniziare. Se lasci la pagina, la risposta arriverà via e-mail.",
     "nome": "Nome",
     "email": "E-mail",
-    "consentimento": "Accetto che BipFix conservi nome, e-mail e messaggi per rispondermi.",
+    "consentimento": "Accetto che BipFix conservi nome, e-mail e messaggi per rispondermi e che i messaggi possano essere tradotti automaticamente (DeepL).",
     "privacidade": "Informativa sulla privacy",
     "comecar": "Inizia la chat",
     "erroCampos": "Inserisci il nome e un'e-mail valida.",

@@ -61,7 +61,10 @@ export default function SuporteAdmin() {
     if (!r?.ok) { setAviso('Não foi possível enviar.'); return; }
     const d = await r.json();
     setTexto('');
-    if (d.porEmail) setAviso('A pessoa não está com o chat aberto: a resposta foi também por e-mail.');
+    const avisos = [];
+    if (d.semTraducao) avisos.push('Atenção: a mensagem foi SEM tradução (DeepL sem resposta ou limite do dia).');
+    if (d.porEmail) avisos.push('A pessoa não está com o chat aberto: a resposta foi também por e-mail.');
+    setAviso(avisos.join(' '));
     carregarConversa(aberta); carregarLista();
   }
 
@@ -104,7 +107,7 @@ export default function SuporteAdmin() {
               <button type="button" onClick={() => setAberta(null)} className="md:hidden rounded p-1 text-gray-500" aria-label="Voltar">←</button>
               <div className="min-w-0">
                 <p className="font-semibold text-gray-900 truncate">{conv.nome}</p>
-                <p className="text-xs text-gray-500 truncate">{conv.email} · {TIPO[conv.tipo] || conv.tipo} · {IDIOMA[conv.idioma] || conv.idioma}{conv.pagina ? ` · ${conv.pagina}` : ''}</p>
+                <p className="text-xs text-gray-500 truncate">{conv.email}{conv.tipo === 'visitante' ? ' (e-mail não verificado - não passe dados de conta)' : ''} · {TIPO[conv.tipo] || conv.tipo} · {IDIOMA[conv.idioma] || conv.idioma}{conv.pagina ? ` · ${conv.pagina}` : ''}</p>
               </div>
             </div>
             <div className="flex-1 space-y-3 overflow-y-auto bg-gray-50 p-4">

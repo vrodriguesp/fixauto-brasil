@@ -37,6 +37,8 @@ export default function ChatSuporte() {
   // tela ele cobria a ponta do botao principal ("Sou oficina") da pagina inicial
   const [rolou, setRolou] = useState(false);
   const fimRef = useRef<HTMLDivElement>(null);
+  const botaoRef = useRef<HTMLButtonElement>(null);
+  const voltarFoco = useRef(false);
 
   // nas conversas (oficina <-> cliente, acidente) o botao cobriria a caixa de digitar
   const escondido = loading || user?.tipo === 'admin' || /\/mensagens\/[^/]+/.test(pathname) || CONVERSA_ACIDENTE.test(pathname);
@@ -45,15 +47,16 @@ export default function ChatSuporte() {
   const carregar = useCallback(async (estaAberto: boolean) => {
     const k = visitante ? lerChave() : null;
     if (visitante && !k) { setTemConversa(false); return; }
-    const q = new URLSearchParams({ ...(k ? { c: k.c, t: k.t } : {}), ...(estaAberto ? { aberto: '1' } : {}) });
-    const r = await fetch(`/api/suporte?${q}`).catch(() => null);
+    // a chave vai nos cabecalhos, nunca no endereco (o endereco fica no log do servidor)
+    const r = await fetch(`/api/suporte${estaAberto ? '?aberto=1' : ''}`, { headers: k ? { 'x-suporte-conversa': k.c, 'x-suporte-chave': k.t } : {} }).catch(() => null);
+    // so esquece a chave quando a conversa nao existe mais (erro passageiro nao apaga)
+    if (r?.status === 404 && visitante) { try { localStorage.removeItem(CHAVE); } catch { /* ignora */ } setTemConversa(false); return; }
     if (!r?.ok) return;
     const d = await r.json();
     setOnline(!!d.adminOnline);
     setTemConversa(!!d.conversa);
     setMsgs(d.mensagens || []);
     setNaoLidas(d.naoLidas || 0);
-    if (visitante && k && !d.conversa) { try { localStorage.removeItem(CHAVE); } catch { /* ignora */ } }
   }, [visitante]);
 
   useEffect(() => {
@@ -73,6 +76,17 @@ export default function ChatSuporte() {
   // link do e-mail de resposta: ?suporte=1 abre o chat
   useEffect(() => { if (busca?.get('suporte') === '1') setAberto(true); }, [busca]);
   useEffect(() => { if (aberto) fimRef.current?.scrollIntoView({ block: 'end' }); }, [aberto, msgs.length]);
+  // aberto: foco no primeiro campo; no celular (tela cheia) a pagina de tras nao rola.
+  // fechado: o foco volta ao botao do chat
+  useEffect(() => {
+    if (aberto) {
+      voltarFoco.current = true;
+      setTimeout(() => (document.getElementById('suporte-nome') || document.getElementById('suporte-texto'))?.focus(), 50);
+      if (window.innerWidth < 640) document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = ''; };
+    }
+    if (voltarFoco.current) { voltarFoco.current = false; setTimeout(() => botaoRef.current?.focus(), 0); }
+  }, [aberto]);
   // espaco no fim da pagina para o botao nao cobrir o ultimo botao da pagina
   useEffect(() => {
     document.body.classList.toggle('com-chat-suporte', !escondido);
@@ -115,17 +129,18 @@ export default function ChatSuporte() {
   return (
     <>
       {!aberto && (!visitante || rolou || naoLidas > 0 || temConversa) && (
-        <button type="button" onClick={() => setAberto(true)} aria-label={t('abrir')} data-testid="chat-suporte-botao"
+        <button type="button" ref={botaoRef} onClick={() => setAberto(true)} aria-label={naoLidas > 0 ? `${t('abrir')} (${naoLidas})` : t('abrir')} data-testid="chat-suporte-botao"
           className="chat-suporte-botao fixed right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-white shadow-lg hover:bg-primary-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300">
           <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
           </svg>
-          {naoLidas > 0 && <span className="absolute -right-0.5 -top-0.5 min-w-[1.25rem] rounded-full bg-red-600 px-1 text-center text-xs font-bold leading-5" data-testid="chat-suporte-nao-lidas">{naoLidas}</span>}
+          {naoLidas > 0 && <span aria-hidden="true" className="absolute -right-0.5 -top-0.5 min-w-[1.25rem] rounded-full bg-red-600 px-1 text-center text-xs font-bold leading-5" data-testid="chat-suporte-nao-lidas">{naoLidas}</span>}
         </button>
       )}
 
       {aberto && (
-        <div role="dialog" aria-label={t('titulo')} data-testid="chat-suporte-janela"
+        <div role="dialog" aria-modal="true" aria-label={t('titulo')} data-testid="chat-suporte-janela"
+          onKeyDown={(e) => { if (e.key === 'Escape') setAberto(false); }}
           className="fixed inset-0 z-[60] flex flex-col bg-white sm:inset-auto sm:bottom-4 sm:right-4 sm:h-[560px] sm:max-h-[calc(100vh-2rem)] sm:w-[380px] sm:rounded-2xl sm:border sm:border-gray-200 sm:shadow-2xl">
           <div className="flex items-center justify-between gap-3 bg-primary-600 px-4 py-3 text-white sm:rounded-t-2xl">
             <div className="min-w-0">

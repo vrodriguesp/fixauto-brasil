@@ -12,8 +12,10 @@ export interface Traducao { texto: string | null; origem: string | null }
 
 const hashDe = (texto: string, alvo: string) => createHash('sha256').update(`${alvo}\n${texto}`).digest('hex');
 
-/** Traduz `textos` para a lingua do site `lingua` (pt, et, ru...). Mesma ordem na volta. */
-export async function traduzirTextos(textos: string[], lingua: string): Promise<Traducao[]> {
+/** Traduz `textos` para a lingua do site `lingua` (pt, et, ru...). Mesma ordem na volta.
+ *  guardar=false: nao le nem grava o cache (chat de suporte: texto pessoal, nao se repete
+ *  e a traducao ja fica na propria mensagem - apagar a conversa apaga tudo). */
+export async function traduzirTextos(textos: string[], lingua: string, guardar = true): Promise<Traducao[]> {
   const alvo = ALVO_DEEPL[lingua];
   const vazio: Traducao = { texto: null, origem: null };
   const resultado: Traducao[] = textos.map(() => vazio);
@@ -22,7 +24,7 @@ export async function traduzirTextos(textos: string[], lingua: string): Promise<
   const hashes = limpos.map((t) => hashDe(t, alvo));
 
   // 1) o que ja foi traduzido antes
-  const { data: guardadas } = await supabaseAdmin.from('traducoes').select('hash, origem, traducao').in('hash', Array.from(new Set(hashes)));
+  const { data: guardadas } = guardar ? await supabaseAdmin.from('traducoes').select('hash, origem, traducao').in('hash', Array.from(new Set(hashes))) : { data: [] };
   const porHash = new Map((guardadas || []).map((g) => [g.hash, g]));
   const faltam: number[] = [];
   limpos.forEach((t, i) => {
@@ -53,7 +55,7 @@ export async function traduzirTextos(textos: string[], lingua: string): Promise<
       const mesma = !!origem && alvo.split('-')[0] === origem.split('-')[0];
       return { hash: hashes[i], alvo, origem, traducao: mesma ? null : (tr?.text ?? null) };
     });
-    await supabaseAdmin.from('traducoes').upsert(linhas, { onConflict: 'hash' });
+    if (guardar) await supabaseAdmin.from('traducoes').upsert(linhas, { onConflict: 'hash' });
     const porNovo = new Map(linhas.map((l) => [l.hash, l]));
     for (const i of faltam) { const l = porNovo.get(hashes[i]); if (l) resultado[i] = { texto: l.traducao, origem: l.origem }; }
   } catch (e) {

@@ -770,7 +770,7 @@
     "intro": "Leave your name and e-mail to start. If you leave the page, the answer will arrive by e-mail.",
     "nome": "Name",
     "email": "E-mail",
-    "consentimento": "I agree that BipFix stores my name, e-mail and messages in order to reply.",
+    "consentimento": "I agree that BipFix stores my name, e-mail and messages in order to reply, and that messages may be translated automatically (DeepL).",
     "privacidade": "Privacy Policy",
     "comecar": "Start chat",
     "erroCampos": "Enter your name and a valid e-mail.",

@@ -67,6 +67,10 @@ try {
   ok('1 botao do chat no canto', await botao.isVisible(), '');
   ok('1 rotulo do botao em russo', (await botao.getAttribute('aria-label')) === RU('suporte.abrir'));
   await botao.click(); await pV.waitForTimeout(500);
+  ok('1 ao abrir, o foco vai para o campo Nome', await pV.evaluate(() => document.activeElement?.id === 'suporte-nome'));
+  await pV.keyboard.press('Escape'); await pV.waitForTimeout(300);
+  ok('1 Esc fecha e o foco volta ao botao', !(await janela(pV).isVisible().catch(() => false)) && await pV.evaluate(() => document.activeElement?.getAttribute('data-testid') === 'chat-suporte-botao'));
+  await botao.click(); await pV.waitForTimeout(500);
   const caixa = await janela(pV).boundingBox();
   ok('1 celular: janela em tela cheia', caixa && caixa.width >= 359 && caixa.height >= 770, JSON.stringify(caixa));
   ok('1 sem rolagem lateral com o chat aberto', await semRolagem(pV));
@@ -83,9 +87,10 @@ try {
   await pV.getByTestId('chat-suporte-enviar').click();
   const comAuto = await esperar(async () => { const t = await janela(pV).innerText(); return t.includes('Спасибо за сообщение') ? t : null; });
   ok('1 admin offline: resposta automatica em russo', !!comAuto, (await janela(pV).innerText()).slice(-200));
-  const { data: conv } = await sb.from('suporte_conversas').select('id, visitante_email, idioma, nao_lidas_admin').eq('visitante_email', EMAIL_VIS).single();
+  const { data: conv } = await sb.from('suporte_conversas').select('id, visitante_email, idioma, nao_lidas_admin, pagina').eq('visitante_email', EMAIL_VIS).single();
   if (conv) conversas.push(conv.id);
   ok('1 conversa gravada (ru, 1 nao lida)', conv?.idioma === 'ru' && conv?.nao_lidas_admin === 1, JSON.stringify(conv));
+  ok('1 de visitante nao guarda a pagina', conv?.pagina === null, conv?.pagina);
   const eAdmin = await esperar(async () => emailsDesde(t0).find((h) => h.includes('Chat de suporte')));
   ok('1 e-mail ao admin com a traducao', !!eAdmin && /foto/i.test(eAdmin) && eAdmin.includes(tag), (eAdmin || 'sem e-mail').slice(0, 200));
 

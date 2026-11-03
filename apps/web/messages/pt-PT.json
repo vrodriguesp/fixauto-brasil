@@ -767,7 +767,7 @@
     "intro": "Deixe o seu nome e e-mail para começar. Se sair da página, a resposta chega ao seu e-mail.",
     "nome": "Nome",
     "email": "E-mail",
-    "consentimento": "Concordo que o BipFix guarde o meu nome, e-mail e mensagens para responder.",
+    "consentimento": "Concordo que o BipFix guarde o meu nome, e-mail e mensagens para responder, e que as mensagens possam ser traduzidas automaticamente (DeepL).",
     "privacidade": "Política de Privacidade",
     "comecar": "Começar conversa",
     "erroCampos": "Preencha o nome e um e-mail válido.",
