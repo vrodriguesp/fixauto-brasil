@@ -11,6 +11,7 @@ import { SITE_URL, siteNoIdioma, urlNoIdioma, idiomaDoSite } from './site-url';
 // Sem moeda informada: reais so para a versao do Brasil; euro no resto
 const moedaPadrao = (idioma?: string | null) => (idiomaDoSite(idioma) === 'pt' ? 'BRL' : 'EUR');
 import { FROM_EMAIL, enviarEmail } from '@/lib/email';
+import { SUPORTE_EMAIL_RESPOSTA, linguaTexto } from './suporte-textos';
 
 // teste local sem Resend: os e-mails viram arquivos (lib/email.ts, EMAIL_PASTA_TESTE)
 const podeEnviar = !!resend || !!process.env.EMAIL_PASTA_TESTE;
@@ -769,6 +770,72 @@ export async function sendOrcamentoAceitoOutroEmail(params: {
             </p>
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
             <p style="font-size: 12px; color: #9ca3af;">${s.footer}</p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (err) {
+    console.error('[Notifications] Email error:', err);
+    return { success: false, error: (err as Error).message };
+  }
+}
+
+// ============================================================
+// CHAT DE SUPORTE (dono 03/11)
+// ============================================================
+
+/** Mensagem nova no chat de suporte com o admin offline (no maximo 1 a cada 15 min por conversa). */
+export async function sendSuporteAdminEmail(params: { nome: string; contato: string; texto: string; traducao?: string | null; locale: string; pagina?: string | null }) {
+  if (!podeEnviar) return { success: false, error: 'Email service not configured' };
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'support@bipfix.com';
+  const idioma = ({ et: 'estoniano', ru: 'russo', en: 'inglês', it: 'italiano', 'pt-PT': 'português (PT)', pt: 'português (BR)' } as Record<string, string>)[params.locale] || params.locale;
+  try {
+    await sendOrThrow({
+      from: FROM_EMAIL,
+      to: adminEmail,
+      subject: `Chat de suporte (${idioma}): ${params.nome}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #1e40af; color: white; padding: 20px 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 20px;">Nova mensagem no chat</h1>
+            <p style="margin: 6px 0 0; font-size: 14px;">${escapeHtml(params.nome)} · ${escapeHtml(params.contato)} · ${idioma}${params.pagina ? ` · ${escapeHtml(params.pagina)}` : ''}</p>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            ${params.traducao ? `<p style="margin: 0 0 12px; white-space: pre-wrap; background: #eff6ff; padding: 12px; border-radius: 8px;">${escapeHtml(params.traducao)}</p>` : ''}
+            <p style="margin: 0; white-space: pre-wrap; background: #f9fafb; padding: 12px; border-radius: 8px; color: #374151;">${escapeHtml(params.texto)}</p>
+            <p style="margin-top: 20px;"><a href="${SITE_URL}/admin/suporte" style="display: inline-block; background: #1e40af; color: white; padding: 12px 22px; border-radius: 8px; text-decoration: none; font-weight: bold;">Responder no admin</a></p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (err) {
+    console.error('[Notifications] Email error:', err);
+    return { success: false, error: (err as Error).message };
+  }
+}
+
+/** Resposta do admin para quem nao esta com o chat aberto (no maximo 1 a cada 15 min por conversa). */
+export async function sendSuporteRespostaEmail(params: { toEmail: string; toName: string; texto: string; locale: string }) {
+  if (!podeEnviar) return { success: false, error: 'Email service not configured' };
+  const s = SUPORTE_EMAIL_RESPOSTA[linguaTexto(params.locale)];
+  const url = `${siteNoIdioma(params.locale)}?suporte=1`;
+  try {
+    await sendOrThrow({
+      from: FROM_EMAIL,
+      to: params.toEmail,
+      subject: s.assunto,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #1e40af; color: white; padding: 20px 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 20px;">${s.titulo}</h1>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <p>${fmt(s.ola, { nome: escapeHtml(params.toName) })}</p>
+            <p style="white-space: pre-wrap; background: #f3f4f6; padding: 14px; border-radius: 8px;">${escapeHtml(params.texto)}</p>
+            <p style="margin-top: 20px;"><a href="${url}" style="display: inline-block; background: #1e40af; color: white; padding: 12px 22px; border-radius: 8px; text-decoration: none; font-weight: bold;">${s.abrir}</a></p>
+            <p style="color: #6b7280; font-size: 13px;">${s.rodape}</p>
           </div>
         </div>
       `,

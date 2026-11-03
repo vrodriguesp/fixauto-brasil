@@ -760,5 +760,25 @@
     "original": "Original text",
     "verOriginal": "see original",
     "verTraducao": "see translation"
+  },
+  "suporte": {
+    "abrir": "Open chat with BipFix",
+    "fechar": "Close chat",
+    "titulo": "Chat with BipFix",
+    "online": "Online now",
+    "offline": "We reply within 1 business day",
+    "intro": "Leave your name and e-mail to start. If you leave the page, the answer will arrive by e-mail.",
+    "nome": "Name",
+    "email": "E-mail",
+    "consentimento": "I agree that BipFix stores my name, e-mail and messages in order to reply.",
+    "privacidade": "Privacy Policy",
+    "comecar": "Start chat",
+    "erroCampos": "Enter your name and a valid e-mail.",
+    "erroConsentimento": "Tick the box to continue.",
+    "erro": "Could not send. Please try again.",
+    "vazio": "Write your question. We reply right here.",
+    "placeholder": "Write a message…",
+    "enviar": "Send",
+    "traduzida": "Automatically translated"
   }
 }

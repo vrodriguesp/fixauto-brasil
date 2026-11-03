@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
@@ -5,6 +6,7 @@ import { notFound } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
 import BarraCarregando from '@/components/layout/BarraCarregando';
 import SiteFooter from '@/components/layout/SiteFooter';
+import ChatSuporte from '@/components/suporte/ChatSuporte';
 import { contarOficinasPublicas } from '@/lib/oficinas-publicas';
 import SugestaoIdioma from '@/components/layout/SugestaoIdioma';
 import Analytics from '@/components/Analytics';
@@ -141,6 +143,8 @@ export default async function LocaleLayout({
       <Navbar />
       <main id="conteudo" className="min-h-[calc(100vh-4rem)]">{children}</main>
       <SiteFooter temOficinas={temOficinas} />
+      {/* chat de suporte com o admin (dono 03/11); Suspense: le ?suporte=1 do endereco */}
+      <Suspense fallback={null}><ChatSuporte /></Suspense>
     </NextIntlClientProvider>
   );
 }

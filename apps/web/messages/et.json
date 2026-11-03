@@ -766,5 +766,25 @@
     "original": "Algtekst",
     "verOriginal": "vaata originaali",
     "verTraducao": "vaata tõlget"
+  },
+  "suporte": {
+    "abrir": "Ava vestlus BipFixiga",
+    "fechar": "Sulge vestlus",
+    "titulo": "Kirjuta BipFixile",
+    "online": "Praegu võrgus",
+    "offline": "Vastame 1 tööpäeva jooksul",
+    "intro": "Alustamiseks jäta oma nimi ja e-post. Kui lahkud lehelt, tuleb vastus sinu e-postile.",
+    "nome": "Nimi",
+    "email": "E-post",
+    "consentimento": "Nõustun, et BipFix säilitab vastamiseks minu nime, e-posti ja sõnumid.",
+    "privacidade": "Privaatsuspoliitika",
+    "comecar": "Alusta vestlust",
+    "erroCampos": "Sisesta nimi ja korrektne e-post.",
+    "erroConsentimento": "Jätkamiseks märgi kast.",
+    "erro": "Saatmine ebaõnnestus. Proovi uuesti.",
+    "vazio": "Kirjuta oma küsimus. Vastame siinsamas.",
+    "placeholder": "Kirjuta sõnum…",
+    "enviar": "Saada",
+    "traduzida": "Automaatselt tõlgitud"
   }
 }

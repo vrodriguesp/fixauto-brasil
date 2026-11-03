@@ -92,6 +92,15 @@
   body.com-barra-inferior { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
 }
 
+/* Botao do chat de suporte (components/suporte/ChatSuporte.tsx): no canto de
+   baixo, acima da barra de baixo da oficina; o rodape ganha espaco para o
+   botao nao cobrir os ultimos links. */
+.chat-suporte-botao { bottom: calc(1rem + env(safe-area-inset-bottom)); }
+@media (max-width: 1279.98px) {
+  body.com-barra-inferior .chat-suporte-botao { bottom: calc(56px + 1rem + env(safe-area-inset-bottom)); }
+}
+body.com-chat-suporte footer { padding-bottom: 5rem; }
+
 /* Conversa (mensagens): cabe na parte visivel da tela, com a caixa de digitar
    sempre a vista. No iPhone a caixa ficava atras da barra de baixo da oficina
    e era preciso rolar (teste do dono, 31/10). dvh = altura visivel no Safari. */

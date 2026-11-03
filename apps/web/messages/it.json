@@ -758,5 +758,25 @@
     "original": "Testo originale",
     "verOriginal": "vedi originale",
     "verTraducao": "vedi traduzione"
+  },
+  "suporte": {
+    "abrir": "Apri la chat con BipFix",
+    "fechar": "Chiudi la chat",
+    "titulo": "Scrivi a BipFix",
+    "online": "Online ora",
+    "offline": "Rispondiamo entro 1 giorno lavorativo",
+    "intro": "Lascia nome ed e-mail per iniziare. Se lasci la pagina, la risposta arriverà via e-mail.",
+    "nome": "Nome",
+    "email": "E-mail",
+    "consentimento": "Accetto che BipFix conservi nome, e-mail e messaggi per rispondermi.",
+    "privacidade": "Informativa sulla privacy",
+    "comecar": "Inizia la chat",
+    "erroCampos": "Inserisci il nome e un'e-mail valida.",
+    "erroConsentimento": "Spunta la casella per continuare.",
+    "erro": "Invio non riuscito. Riprova.",
+    "vazio": "Scrivi la tua domanda. Rispondiamo qui.",
+    "placeholder": "Scrivi un messaggio…",
+    "enviar": "Invia",
+    "traduzida": "Tradotto automaticamente"
   }
 }
