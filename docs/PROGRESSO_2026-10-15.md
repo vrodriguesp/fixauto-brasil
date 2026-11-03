@@ -605,3 +605,10 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
   - `/api/analisar-dano`: sem foto, analisa pela descricao do cliente (confianca <= 0.5); sem foto e sem descricao continua SEM_FOTOS.
   - `lib/tempo-resposta.ts`: tempo conta de max(criacao do pedido, cadastro da oficina); aplicado em comissao, Desempenho e perfil publico. (Fornecedores de pecas, comissao-pecas.ts, nao mudou.)
 - Janela de 20 min aberta ate 10:00 (job a4877aa2).
+
+### 03/11 ~10:15-10:24 (hora do PC) - deploy, primeira oficina real e video RU (pedidos por e-mail)
+- E-mail 09:46: "Pode deployar! Faz test de regressao..." Regressao no ambiente local: site-fluxos ok; site-painel-oficina ok (1 falha intermitente, 2a rodada limpa); site-servico 3 falhas iguais as do master (sem chave Gemini local + clique com timeout); tempoRespostaMs conferido em 3 casos.
+- Merge `fix/oficina-nova-ia-sem-foto` -> master (49697a8), deploy na VM (pull, build, pm2 restart). Paginas 200, /api/analisar-dano 401 sem login, sem erro novo. Banco de producao so lido.
+- Primeira oficina real (detalhes so no e-mail ao dono): veio do Facebook, russo, celular; cadastro + perfil completos; tocou "Analisar com IA" num pedido sem foto -> SEM_FOTOS (caso agora coberto). Ve o pedido 100130; nao ve o 100093 (tipo "outro" fora das especialidades). Campo "numero" do endereco preenchido com texto. Relatorio ao dono 10:20.
+- E-mail 10:10: video RU "como enviar orcamento" enviado ao YouTube conforme YOUTUBE_textos.md (descricao revisada pelo Fable), salvo PRIVADO - publicar foi bloqueado pela trava de seguranca, falta o dono publicar/autorizar. Texto RU para a oficina enviado ao dono (ele envia). Resposta 10:24.
+- Decisoes pendentes do dono: tipo "outro" visivel a oficinas de mecanica?; campo numero do endereco so numerico?
