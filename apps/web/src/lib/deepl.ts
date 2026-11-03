@@ -1,9 +1,12 @@
 import { createHash } from 'node:crypto';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { jaNaLingua } from '@/lib/lingua-provavel';
 
 // Traducao automatica com DeepL (dono 03/11). Cada texto e traduzido uma vez so
 // por lingua de destino e fica em `traducoes` (migracao 068). Sem chave, com
 // erro ou ja na lingua de destino: texto null (quem chama mostra o original).
+// Texto que claramente ja esta na lingua de quem le nem vai ao DeepL nem ao
+// cache (lib/lingua-provavel.ts) - economiza chamadas (dono 03/11).
 
 // lingua do site -> lingua de destino do DeepL
 export const ALVO_DEEPL: Record<string, string> = { pt: 'PT-BR', 'pt-PT': 'PT-PT', en: 'EN-GB', et: 'ET', it: 'IT', ru: 'RU' };
@@ -24,11 +27,13 @@ export async function traduzirTextos(textos: string[], lingua: string, guardar =
   const hashes = limpos.map((t) => hashDe(t, alvo));
 
   // 1) o que ja foi traduzido antes
-  const { data: guardadas } = guardar ? await supabaseAdmin.from('traducoes').select('hash, origem, traducao').in('hash', Array.from(new Set(hashes))) : { data: [] };
+  const pular = new Set(limpos.map((t, i) => (!t || jaNaLingua(t, lingua) ? i : -1)));
+  const consultar = hashes.filter((_, i) => !pular.has(i));
+  const { data: guardadas } = guardar && consultar.length ? await supabaseAdmin.from('traducoes').select('hash, origem, traducao').in('hash', Array.from(new Set(consultar))) : { data: [] };
   const porHash = new Map((guardadas || []).map((g) => [g.hash, g]));
   const faltam: number[] = [];
   limpos.forEach((t, i) => {
-    if (!t) return;
+    if (pular.has(i)) return;
     const g = porHash.get(hashes[i]);
     if (g) resultado[i] = { texto: g.traducao, origem: g.origem };
     else faltam.push(i);

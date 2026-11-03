@@ -34,6 +34,7 @@ const ITEM = `Замена заднего тормозного суппорта 
 const OBS = `Запчасть будет готова через два дня, цена включает работу (${tag}).`;
 const CHAT_CLI = `Kas saate auto homme hommikul vastu võtta? (${tag})`;
 const CHAT_OF = `Да, приезжайте в девять утра (${tag}).`;
+const DESC_RU = `Скрипят задние тормоза, нужно поменять колодки и диски (${tag}).`;
 
 const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
 const ctxNovo = async () => { const c = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }); await c.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); localStorage.setItem('bipfix_tutorial_banner_oficina', '1'); } catch {} }); return c; };
@@ -82,6 +83,20 @@ try {
   // ---------- 4 cache
   const { data: cache } = await sb.from('traducoes').select('alvo, origem, traducao').eq('alvo', 'RU').ilike('traducao', `%${tag}%`);
   ok('4 traducao guardada uma vez (ET -> RU)', (cache || []).length === 1 && cache[0].origem === 'ET', JSON.stringify(cache));
+
+  // ---------- 6 mesma lingua: pedido em russo para oficina russa nem vai ao DeepL (lib/lingua-provavel.ts)
+  const { data: v2 } = await sb.from('veiculos').insert({ profile_id: cli.id, fipe_tipo: 'cars', fipe_marca: 'Skoda', fipe_modelo: `Octavia ${tag}`, fipe_ano: '2010', placa: `U${tag}`.toUpperCase() }).select('id').single();
+  const { data: sol2, error: eS2 } = await sb.from('solicitacoes').insert({ cliente_id: cli.id, veiculo_id: v2.id, tipo: 'mecanica', descricao: DESC_RU, urgencia: 'media', status: 'aberta', latitude: 59.44, longitude: 24.76, endereco: 'Kesklinn', pais: 'EE' }).select('id').single();
+  if (eS2) throw new Error(eS2.message);
+  sols.push(sol2.id);
+  await pO.goto(`${SITE}/ee/ru/oficina/pedidos`, { waitUntil: 'networkidle' });
+  await esperarTexto(pO, (t) => t.includes(`Octavia ${tag}`));
+  await pO.waitForTimeout(2000);
+  const cartaoRu = (await pO.getByTestId('pedido-cartao').allInnerTexts()).find((t) => t.includes(`Octavia ${tag}`)) || '';
+  ok('6 pedido ja em russo: aparece como foi escrito, sem 🌐', cartaoRu.includes(DESC_RU.slice(0, 30)) && !cartaoRu.includes('🌐'), cartaoRu.slice(0, 200));
+  const hashRu = crypto.createHash('sha256').update(`RU\n${DESC_RU}`).digest('hex');
+  const { count: nMesma } = await sb.from('traducoes').select('hash', { count: 'exact', head: true }).eq('hash', hashRu);
+  ok('6 mesma lingua nem foi ao DeepL (nada guardado)', !nMesma);
 
   // ---------- 2 cliente ET ve o orcamento em estoniano
   const { data: orc, error: eO } = await sb.from('orcamentos').insert({ solicitacao_id: sol.id, oficina_id: ofId, status: 'enviado', valor_total: 250, prazo_dias: 2, validade: '2030-01-01', observacoes: OBS }).select('id').single();
