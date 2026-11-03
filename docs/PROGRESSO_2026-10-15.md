@@ -591,3 +591,9 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Correcao: o filtro de robos do relatorio nao pegava a faixa de IP 57.141-144 da Meta. Corrigido em Documentos/_scripts/relatorio.mjs (local, nao versionado). Numeros reais 02/11 18:38 -> 03/11 08:40: 58 visitas de anuncios (nao 74), 6 no cadastro (nao 20), A Registreeru = 5 pessoas (nao 19).
 - Das 5 pessoas da A: 4 sairam em segundos; 1 (RU) ficou ~2 min olhando termos, ajuda e "parceiros", sem enviar.
 - Respondido na mesma conversa com a sugestao: manter o botao, trocar o destino para a pagina de oficinas. Aguardando "sim"; janela de 20 min aberta (job */5 ate 08:00).
+
+### 03/11 07:58 (PC) — Anuncio A: link trocado para a pagina de oficinas
+- "Sim, faca a troca" de vitor@outlook.ie (07:50, conferido).
+- Meta Ads Manager, campanha A Registreeru: ET -> https://bipfix.com/ee/et/tookodadele ; RU -> https://bipfix.com/ee/ru/dlya-avtoservisov. Botao, texto, imagem, orcamento e parametros UTM inalterados. Publicado anuncio por anuncio ("Inserzione aggiornata"); ficaram "In fase di elaborazione". Nenhuma outra alteracao pendente na conta foi publicada (Controlla e pubblica ficou vazio).
+- Respondido por e-mail (07:58) com a troca e o percurso da visitante RU das 23:44 (cadastro > aba motorista > termos > ajuda > "seja parceiro", ~2 min, sem envio).
+- Nova janela de 20 min ate 08:20.
