@@ -32,7 +32,9 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     if (m.traducao || m.origem) return NextResponse.json({ traducao: m.traducao, origem: m.origem });
     const t = await traduzirSeLigado(m.texto, IDIOMA_ADMIN, true, params.id);
     if (!t.traducao && !t.origem) return NextResponse.json({ error: 'Tradução indisponível', codigo: 'SEM_TRADUCAO' }, { status: 503 });
-    await supabaseAdmin.from('suporte_mensagens').update({ traducao: t.traducao, origem: t.origem }).eq('id', m.id);
+    // so grava se ninguem traduziu no meio tempo (dois cliques / duas abas)
+    const { error: eUp } = await supabaseAdmin.from('suporte_mensagens').update({ traducao: t.traducao, origem: t.origem }).eq('id', m.id).is('origem', null);
+    if (eUp) return NextResponse.json({ error: eUp.message }, { status: 500 });
     return NextResponse.json(t);
   }
 

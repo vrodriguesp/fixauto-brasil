@@ -26,6 +26,8 @@ export default function SuporteAdmin() {
   const [aviso, setAviso] = useState('');
   const [traduzirResposta, setTraduzirResposta] = useState(true);
   const [traduzindo, setTraduzindo] = useState<string | null>(null);
+  // a caixa "traduzir esta resposta" volta a marcada em cada conversa aberta
+  useEffect(() => { setTraduzirResposta(true); }, [aberta]);
   const fimRef = useRef<HTMLDivElement>(null);
 
   const carregarLista = useCallback(async () => {
@@ -142,7 +144,7 @@ export default function SuporteAdmin() {
                     <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${m.autor === 'admin' ? 'bg-primary-600 text-white' : m.autor === 'auto' ? 'border border-dashed border-gray-300 bg-white italic text-gray-500' : 'border border-gray-200 bg-white text-gray-900'}`}>
                       {m.autor === 'auto' && <p className="text-[11px] not-italic font-semibold">Resposta automática (você estava offline)</p>}
                       <p className="whitespace-pre-wrap break-words">{m.autor === 'usuario' && m.traducao ? m.traducao : m.texto}</p>
-                      {m.autor === 'usuario' && !m.traducao && !m.origem && !traducao && linguaOutra && (
+                      {m.autor === 'usuario' && !m.traducao && !m.origem && linguaOutra && (
                         <button type="button" onClick={() => traduzirRecebida(m.id)} disabled={traduzindo === m.id} data-testid="suporte-traduzir-msg"
                           className="mt-1 text-xs font-medium text-primary-600 underline disabled:opacity-50">{traduzindo === m.id ? 'Traduzindo…' : 'Traduzir para português'}</button>
                       )}
@@ -169,7 +171,7 @@ export default function SuporteAdmin() {
               <div className="flex items-end gap-2">
                 <textarea value={texto} onChange={(e) => setTexto(e.target.value)} rows={2} maxLength={2000} aria-label="Resposta" data-testid="suporte-resposta"
                   onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); responder(); } }}
-                  placeholder={traducao || (linguaOutra && traduzirResposta) ? 'Escreva em português ou inglês: vai traduzido' : 'Escreva a resposta'} className="input-field flex-1 resize-none" />
+                  placeholder={linguaOutra && (traducao || traduzirResposta) ? 'Escreva em português ou inglês: vai traduzido' : 'Escreva a resposta'} className="input-field flex-1 resize-none" />
                 <button type="button" onClick={responder} disabled={enviando || !texto.trim()} className="btn-primary disabled:opacity-50">Enviar</button>
               </div>
             </div>

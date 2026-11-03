@@ -296,7 +296,7 @@
           "<strong>Google</strong> (United States): Gemini artificial intelligence for damage analysis and voice transcription; Google Analytics and Google Ads conversion measurement (only with consent); Google Maps, shown on Partner profile pages.",
           "<strong>Microsoft</strong> (United States): Microsoft Clarity (only with consent).",
           "<strong>OpenStreetMap Foundation</strong> (United Kingdom): converting addresses into map coordinates (Nominatim service).",
-          "<strong>DeepL SE</strong> (Germany, European Union): automatic translation of chat messages, request descriptions and quotes. Only the text to be translated is sent, without your name or email.",
+          "<strong>DeepL SE</strong> (Germany, European Union): automatic translation of chat messages, request descriptions and quotes. We send only the text to be translated, not your account name or email; anything you write inside the text itself is sent as written.",
           "<strong>Public authorities</strong>, when we are legally required to disclose data."
         ],
         "depois": [
@@ -319,7 +319,8 @@
           "<strong>Visit summaries:</strong> deleted from the team mailbox after 12 months at the latest.",
           "<strong>Analytics (only with consent):</strong> according to the retention settings of Google Analytics and Microsoft Clarity, at most 14 months.",
           "<strong>Partnership contacts (section 3.8):</strong> until you ask us to stop contacting you, and at most 24 months after our last contact.",
-          "<strong>Support chat started without an account:</strong> deleted automatically 6 months after the last message."
+          "<strong>Support chat started without an account:</strong> deleted automatically 6 months after the last message.",
+          "<strong>Automatic translations</strong> of request descriptions, quotes and messages between Customers and Partners: kept to avoid translating the same text twice, and deleted automatically after 24 months at the latest."
         ]
       },
       {

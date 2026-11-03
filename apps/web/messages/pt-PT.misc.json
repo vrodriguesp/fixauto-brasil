@@ -296,7 +296,7 @@
           "<strong>Google</strong> (Estados Unidos): inteligência artificial Gemini para análise de danos e transcrição de voz; Google Analytics e medição de conversões do Google Ads (apenas com consentimento); Google Maps, apresentado nas páginas de perfil dos Parceiros.",
           "<strong>Microsoft</strong> (Estados Unidos): Microsoft Clarity (apenas com consentimento).",
           "<strong>OpenStreetMap Foundation</strong> (Reino Unido): conversão de moradas em coordenadas de mapa (serviço Nominatim).",
-          "<strong>DeepL SE</strong> (Alemanha, União Europeia): tradução automática de mensagens do chat, descrições de pedidos e orçamentos. É enviado apenas o texto a traduzir, sem o seu nome nem o seu e-mail.",
+          "<strong>DeepL SE</strong> (Alemanha, União Europeia): tradução automática de mensagens do chat, descrições de pedidos e orçamentos. Enviamos apenas o texto a traduzir, não o nome da sua conta nem o seu e-mail; o que escrever dentro do próprio texto é enviado tal como está.",
           "<strong>Autoridades públicas</strong>, quando estamos legalmente obrigados a divulgar dados."
         ],
         "depois": [
@@ -319,7 +319,8 @@
           "<strong>Resumos de visita:</strong> apagados da caixa de correio da equipa, o mais tardar, ao fim de 12 meses.",
           "<strong>Análise estatística (apenas com consentimento):</strong> de acordo com as definições de retenção do Google Analytics e do Microsoft Clarity, no máximo 14 meses.",
           "<strong>Contactos de parceria (secção 3.8):</strong> até nos pedir para deixarmos de o contactar e, no máximo, 24 meses após o nosso último contacto.",
-          "<strong>Chat de apoio iniciado sem conta:</strong> eliminado automaticamente 6 meses após a última mensagem."
+          "<strong>Chat de apoio iniciado sem conta:</strong> eliminado automaticamente 6 meses após a última mensagem.",
+          "<strong>Traduções automáticas</strong> de descrições de pedidos, orçamentos e mensagens entre Clientes e Parceiros: conservadas para não traduzir duas vezes o mesmo texto e eliminadas automaticamente, no máximo, após 24 meses."
         ]
       },
       {
