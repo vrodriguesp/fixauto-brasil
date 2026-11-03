@@ -584,3 +584,10 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Novembro (1-3/11): Meta 20,33 EUR (A Registreeru 0,98 · B Messenger 0,11 · video A 15,24 · Otsime 4,00 pausada); Google 7,79 EUR (Shorts, 167 cliques, CPC 0,05, pausado). Total 28,12 de ~200 EUR.
 - Site 02/11 18:38 -> 03/11 08:25: 74 visitas de anuncios, 12 ficaram 20 s+, 0 cadastros, 0 perguntas. A Registreeru ja entrega (19 visitas no site).
 - Nenhuma alteracao nas campanhas.
+
+### 03/11 07:39 (PC) — E-mail do Vitor: anuncio do ChatGPT e o que fizeram no cadastro
+- Pergunta (vitor@outlook.ie, 07:34): o anuncio do ChatGPT leva ao cadastro ou a uma pagina informativa? O que fizeram as pessoas que cairam no cadastro?
+- Biblioteca de Anuncios da Meta (IT): os anuncios "Prova gratis ChatGPT / Sign Up" levam para chatgpt.com/ (o produto), nao para um formulario.
+- Correcao: o filtro de robos do relatorio nao pegava a faixa de IP 57.141-144 da Meta. Corrigido em Documentos/_scripts/relatorio.mjs (local, nao versionado). Numeros reais 02/11 18:38 -> 03/11 08:40: 58 visitas de anuncios (nao 74), 6 no cadastro (nao 20), A Registreeru = 5 pessoas (nao 19).
+- Das 5 pessoas da A: 4 sairam em segundos; 1 (RU) ficou ~2 min olhando termos, ajuda e "parceiros", sem enviar.
+- Respondido na mesma conversa com a sugestao: manter o botao, trocar o destino para a pagina de oficinas. Aguardando "sim"; janela de 20 min aberta (job */5 ate 08:00).
