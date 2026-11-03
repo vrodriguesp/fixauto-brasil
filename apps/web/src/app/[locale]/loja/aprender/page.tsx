@@ -69,12 +69,7 @@ export default function LojaAprenderPage() {
         return (count || 0) > 0;
       },
     },
-    {
-      id: 'comissao',
-      emoji: '💰',
-      ...modulosTexto['comissao'],
-      linkReal: '/loja/comissao',
-    },
+    // modulo "comissao" fora do menu e do Aprender, como na oficina: sem cobranca hoje (dono 03/11)
   ];
 
   return (

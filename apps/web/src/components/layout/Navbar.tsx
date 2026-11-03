@@ -130,7 +130,6 @@ export default function Navbar() {
                     <NavLink href="/loja/cotacoes">{t('cotacoes')}</NavLink>
                     <NavLink href="/loja/catalogo">{t('catalogo')}</NavLink>
                     <NavLink href="/loja/pedidos">{t('pedidos')}</NavLink>
-                    <NavLink href="/loja/comissao">{t('comissao')}</NavLink>
                     <NavLink href="/loja/aprender">🎓 {t('aprender')}</NavLink>
                   </>
                 ) : (
@@ -247,7 +246,6 @@ export default function Navbar() {
                 <MobileNavLink href="/loja/cotacoes" onClick={() => setMenuOpen(false)}>{t('cotacoes')}</MobileNavLink>
                 <MobileNavLink href="/loja/catalogo" onClick={() => setMenuOpen(false)}>{t('catalogo')}</MobileNavLink>
                 <MobileNavLink href="/loja/pedidos" onClick={() => setMenuOpen(false)}>{t('pedidos')}</MobileNavLink>
-                <MobileNavLink href="/loja/comissao" onClick={() => setMenuOpen(false)}>{t('comissao')}</MobileNavLink>
                 <MobileNavLink href="/loja/aprender" onClick={() => setMenuOpen(false)}>🎓 {t('aprender')}</MobileNavLink>
                 <MobileNavLink href="/loja/perfil" onClick={() => setMenuOpen(false)}>{t('perfil')}</MobileNavLink>
               </>
