@@ -760,5 +760,11 @@
     "redes": "või kirjuta meile sotsiaalmeedias",
     "privacidade": "Kasutame sinu andmeid ainult vastamiseks.",
     "privacidadeLink": "Privaatsus"
+  },
+  "traducao": {
+    "traduzidoDe": "Automaatselt tõlgitud (algkeel: {lingua})",
+    "original": "Algtekst",
+    "verOriginal": "vaata originaali",
+    "verTraducao": "vaata tõlget"
   }
 }

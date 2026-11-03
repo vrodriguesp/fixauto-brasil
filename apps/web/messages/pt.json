@@ -751,5 +751,11 @@
     "redes": "ou fale com a gente nas redes sociais",
     "privacidade": "Usamos seus dados só para responder.",
     "privacidadeLink": "Privacidade"
+  },
+  "traducao": {
+    "traduzidoDe": "Traduzido do {lingua} automaticamente",
+    "original": "Texto original",
+    "verOriginal": "ver original",
+    "verTraducao": "ver tradução"
   }
 }

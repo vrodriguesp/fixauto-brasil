@@ -29,7 +29,8 @@ const browser = await chromium.launch({ executablePath: path.join(process.env.LO
 const celularBase = () => browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2, geolocation: { latitude: 59.437, longitude: 24.745 }, permissions: ['geolocation'] });
 // Fecha o aviso de cookies (fica fixo embaixo e cobre botoes no celular), como uma pessoa faria
 const semCookies = async (ctx) => { await ctx.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} }); };
-const celular = async () => { const c = await celularBase(); await semCookies(c); return c; };
+const celular = async () => { const c = await celularBase(); await semCookies(c); await c.route('**/api/traduzir', (r) => r.fulfill({ json: { traducoes: [] } })); // traducao automatica tem teste proprio (site-traducao); aqui o texto fica como foi escrito
+  return c; };
 const campo = (p, rot) => p.getByLabel(rot, { exact: false }).locator('visible=true').first();
 const botao = (p, txt) => p.getByRole('button', { name: txt, exact: false }).locator('visible=true').last();
 const confirmar = async (ctx, email, pre) => {

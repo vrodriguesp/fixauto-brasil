@@ -18,7 +18,8 @@ const ok = (n, c, x = '') => { if (!c) falhas++; console.log(`${c ? 'ok  ' : 'FA
 const tag = crypto.randomBytes(3).toString('hex');
 const contas = []; let solId, ofId, of2Id;
 const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
-const celular = async () => { const c = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }); await c.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} }); return c; };
+const celular = async () => { const c = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }); await c.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} }); await c.route('**/api/traduzir', (r) => r.fulfill({ json: { traducoes: [] } })); // traducao automatica tem teste proprio (site-traducao); aqui o texto fica como foi escrito
+  return c; };
 const entrar = async (ctx, email, senha, pre) => { const p = await ctx.newPage(); await p.goto(`${SITE}/${pre}/login`, { waitUntil: 'networkidle' }); await p.fill('input[type=email]', email); await p.fill('input[type=password]', senha); await p.click('button[type=submit]'); await p.waitForTimeout(4000); return p; };
 const conta = async (tipo, idioma) => {
   const email = `msg-${tipo}${contas.length}-${tag}@example.test`; const senha = `Msg${tag}Senha9`;

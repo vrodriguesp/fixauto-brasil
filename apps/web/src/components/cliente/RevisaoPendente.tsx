@@ -1,5 +1,6 @@
 'use client';
 
+import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
@@ -79,7 +80,7 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
         <ul className="mt-3 text-sm divide-y divide-amber-200 border-t border-amber-200">
           {rev.itens.map((it, i) => (
             <li key={i} className="flex justify-between gap-3 py-1.5">
-              <span className="min-w-0 break-words">{it.quantidade > 1 ? `${it.quantidade}× ` : ''}{it.descricao}</span>
+              <span className="min-w-0 break-words">{it.quantidade > 1 ? `${it.quantidade}× ` : ''}<TextoTraduzido compacto texto={it.descricao} /></span>
               <span className="whitespace-nowrap">{fmt(it.valor_total)}</span>
             </li>
           ))}

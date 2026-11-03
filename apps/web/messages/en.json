@@ -754,5 +754,11 @@
     "redes": "or message us on social media",
     "privacidade": "We only use your details to reply.",
     "privacidadeLink": "Privacy"
+  },
+  "traducao": {
+    "traduzidoDe": "Automatically translated from {lingua}",
+    "original": "Original text",
+    "verOriginal": "see original",
+    "verTraducao": "see translation"
   }
 }

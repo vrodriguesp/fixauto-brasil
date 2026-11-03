@@ -1,5 +1,6 @@
 'use client';
 
+import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useEffect, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
@@ -154,7 +155,7 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
                       </a>
 )}</MidiaPrivada>
                     ) : (
-                      <p className="text-sm whitespace-pre-wrap break-words">{msg.texto}</p>
+                      <TextoTraduzido texto={msg.texto} ativo={!isOwn} className="text-sm whitespace-pre-wrap break-words" />
                     )}
                     <p className={`text-[10px] mt-1 ${isOwn ? 'text-primary-200' : 'text-gray-400'} text-right`}>
                       {formatTime(msg.created_at)}
