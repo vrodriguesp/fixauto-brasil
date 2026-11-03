@@ -68,7 +68,7 @@ try {
         const aviso = await p.getByTestId('aviso-prazo-longo').innerText().catch(() => '');
         ok(`${tela} ${l}: aviso com 30 dias / 2 h`, aviso.includes('30') && aviso.includes('2'), aviso);
         ok(`${tela} ${l}: com o aviso, sem rolagem lateral`, await semRolagem(p));
-        if (SHOTS && l === 'ru') await p.locator('#cacb1-101').scrollIntoViewIfNeeded().then(() => p.screenshot({ path: `${SHOTS}/prazo-${tela}-ru.png` }));
+        if (SHOTS && l === 'ru') { await p.getByTestId('aviso-prazo-longo').evaluate((e) => e.scrollIntoView({ block: 'center' })); await p.waitForTimeout(300); await p.screenshot({ path: `${SHOTS}/prazo-${tela}-ru.png` }); }
         await p.fill('#cacb1-101', '2'); await p.locator('#cacb1-101').blur(); await p.waitForTimeout(400);
         ok(`${tela} ${l}: aviso some com 2 dias`, !(await p.getByTestId('aviso-prazo-longo').isVisible().catch(() => false)));
       }
