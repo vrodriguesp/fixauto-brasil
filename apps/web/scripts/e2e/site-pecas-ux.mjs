@@ -55,7 +55,9 @@ try {
   ok('2 pedido da oficina vizinha aparece sem recarregar', (await pB.innerText('body')).includes(desc));
 
   // 3 tirar duvida e voltar
-  await pB.locator('div.card').filter({ hasText: desc }).getByRole('link', { name: ET('oficinaPecas.tirarDuvida') }).click(); await pB.waitForTimeout(2500);
+  await pB.locator('div.card').filter({ hasText: desc }).getByRole('link', { name: ET('oficinaPecas.tirarDuvida') }).click();
+  // espera a navegacao (no site de teste a pagina pode estar compilando)
+  await pB.waitForURL((u) => u.pathname.includes('/oficina/pecas/conversa'), { timeout: 20000 }).catch(() => {}); await pB.waitForTimeout(1500);
   ok('3 abriu a conversa com a oficina', pB.url().includes('/oficina/pecas/conversa'), pB.url());
   await pB.goBack({ waitUntil: 'networkidle' }); await pB.waitForTimeout(2500);
   const tVolta = await pB.innerText('body');
