@@ -62,6 +62,8 @@ const NAMESPACES_PUBLICOS = [
   'audioRecorder', 'audioMessage', 'veiculoForm', 'docsLayout', 'docsCliente', 'docsOficina',
   'sejaParceiro', 'login', 'cadastro', 'confirmarEmail', 'definirSenha', 'escolherTipo', 'resetPassword', 'erros', 'seguroReparo', 'enderecoEstruturado', 'excluirConta', 'avisoJurisdicao',
   'contatoDuvidas',
+  // chat de suporte (botao em todas as paginas) e o 'ver original' das mensagens traduzidas
+  'suporte', 'traducao',
 ];
 
 function mensagensPublicas(messages: Record<string, unknown>) {
