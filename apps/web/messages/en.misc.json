@@ -167,7 +167,7 @@
     "metaDescription": "How BipFix processes the personal data of drivers, repair shops and parts stores in the European Union, in accordance with the GDPR.",
     "pageTitle": "Privacy Policy",
     "lastUpdatedLabel": "Last updated:",
-    "updatedDate": "October 20, 2026",
+    "updatedDate": "November 3, 2026",
     "secoes": [
       {
         "titulo": "1. Who is responsible for your data",
@@ -276,6 +276,15 @@
         ]
       },
       {
+        "titulo": "3.11 Support chat and automatic translation",
+        "subsecao": true,
+        "itens": [
+          "<strong>Data:</strong> in the support chat, your messages, the language of the website and, if you do not have an account, the name and email you enter to start the chat. For account holders, the chat is linked to the account.",
+          "<strong>Purpose:</strong> answering your questions. Chat messages, descriptions of requests, quote items and messages between Customers and Partners can be translated automatically, so that each person reads them in their own language; the original text is always kept and can be shown.",
+          "<strong>Legal basis:</strong> steps at your request before a contract and performance of a contract (Art. 6(1)(b)); for visitors without an account, also our legitimate interest in answering questions about BipFix (Art. 6(1)(f)). The translation is carried out by DeepL on our behalf (see section 4)."
+        ]
+      },
+      {
         "titulo": "4. Who receives your data",
         "paragrafos": [
           "We share personal data only as far as necessary:"
@@ -287,6 +296,7 @@
           "<strong>Google</strong> (United States): Gemini artificial intelligence for damage analysis and voice transcription; Google Analytics and Google Ads conversion measurement (only with consent); Google Maps, shown on Partner profile pages.",
           "<strong>Microsoft</strong> (United States): Microsoft Clarity (only with consent).",
           "<strong>OpenStreetMap Foundation</strong> (United Kingdom): converting addresses into map coordinates (Nominatim service).",
+          "<strong>DeepL SE</strong> (Germany, European Union): automatic translation of chat messages, request descriptions and quotes. Only the text to be translated is sent, without your name or email.",
           "<strong>Public authorities</strong>, when we are legally required to disclose data."
         ],
         "depois": [
@@ -308,7 +318,8 @@
           "<strong>Server logs:</strong> up to 14 days.",
           "<strong>Visit summaries:</strong> deleted from the team mailbox after 12 months at the latest.",
           "<strong>Analytics (only with consent):</strong> according to the retention settings of Google Analytics and Microsoft Clarity, at most 14 months.",
-          "<strong>Partnership contacts (section 3.8):</strong> until you ask us to stop contacting you, and at most 24 months after our last contact."
+          "<strong>Partnership contacts (section 3.8):</strong> until you ask us to stop contacting you, and at most 24 months after our last contact.",
+          "<strong>Support chat started without an account:</strong> deleted automatically 6 months after the last message."
         ]
       },
       {
