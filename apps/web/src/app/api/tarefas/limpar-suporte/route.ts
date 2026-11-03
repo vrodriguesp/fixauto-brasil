@@ -5,10 +5,13 @@ import { iguaisSeguro } from '@/lib/segredos';
 export const dynamic = 'force-dynamic';
 
 const DIAS = 183; // ~6 meses
+const DIAS_TRADUCOES = 730; // 24 meses
 
 // Prazo de guarda do chat de suporte (dono 03/11, politica de privacidade):
 // conversa de visitante sem conta, parada ha 6 meses, e apagada com as
 // mensagens (ON DELETE CASCADE). Conversa de quem tem conta segue a conta.
+// Tambem apaga o cache de traducoes automaticas (tabela traducoes) com mais
+// de 24 meses - prazo da politica de privacidade (auditoria Fable 03/11).
 // Chamada uma vez por dia pelo agendador do servidor (crontab), com a chave
 // TAREFAS_CHAVE - mesmo esquema de entregas-automaticas.
 export async function POST(req: NextRequest) {
@@ -18,5 +21,8 @@ export async function POST(req: NextRequest) {
   const { data, error } = await supabaseAdmin.from('suporte_conversas').delete()
     .is('profile_id', null).lt('ultima_mensagem_em', limite).select('id');
   if (error) { console.error('[limpar-suporte]', error.message); return NextResponse.json({ error: error.message }, { status: 500 }); }
-  return NextResponse.json({ ok: true, apagadas: (data || []).length });
+  const limiteTr = new Date(Date.now() - DIAS_TRADUCOES * 86400000).toISOString();
+  const { count, error: eTr } = await supabaseAdmin.from('traducoes').delete({ count: 'exact' }).lt('created_at', limiteTr);
+  if (eTr) { console.error('[limpar-suporte] traducoes', eTr.message); return NextResponse.json({ error: eTr.message }, { status: 500 }); }
+  return NextResponse.json({ ok: true, apagadas: (data || []).length, traducoesApagadas: count || 0 });
 }

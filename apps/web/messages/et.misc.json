@@ -296,7 +296,7 @@
           "<strong>Google</strong> (Ameerika Ühendriigid): tehisintellekt Gemini kahjustuste analüüsiks ja kõne transkribeerimiseks; Google Analytics ja Google Adsi konversioonide mõõtmine (ainult nõusolekul); Google Maps, mida näidatakse partnerite profiilidel.",
           "<strong>Microsoft</strong> (Ameerika Ühendriigid): Microsoft Clarity (ainult nõusolekul).",
           "<strong>OpenStreetMap Foundation</strong> (Ühendkuningriik): aadresside teisendamine kaardikoordinaatideks (teenus Nominatim).",
-          "<strong>DeepL SE</strong> (Saksamaa, Euroopa Liit): vestluse sõnumite, päringute kirjelduste ja hinnapakkumiste automaatne tõlge. Saadetakse ainult tõlgitav tekst, ilma sinu nime ja e-postita.",
+          "<strong>DeepL SE</strong> (Saksamaa, Euroopa Liit): vestluse sõnumite, päringute kirjelduste ja hinnapakkumiste automaatne tõlge. Saadame ainult tõlgitava teksti, mitte sinu konto nime ega e-posti; mida sa ise teksti sisse kirjutad, saadetakse nii, nagu see on kirjutatud.",
           "<strong>Ametiasutused</strong>, kui meil on seadusest tulenev kohustus andmeid avaldada."
         ],
         "depois": [
@@ -319,7 +319,8 @@
           "<strong>Külastuste kokkuvõtted:</strong> kustutatakse meeskonna postkastist hiljemalt 12 kuu möödudes.",
           "<strong>Analüütika (ainult nõusolekul):</strong> vastavalt Google Analyticsi ja Microsoft Clarity säilitamisseadetele, kõige rohkem 14 kuud.",
           "<strong>Koostöökontaktid (punkt 3.8):</strong> kuni palud meil ühenduse võtmise lõpetada, kuid mitte kauem kui 24 kuud pärast meie viimast kontakti.",
-          "<strong>Kontota alustatud tugivestlus:</strong> kustutatakse automaatselt 6 kuud pärast viimast sõnumit."
+          "<strong>Kontota alustatud tugivestlus:</strong> kustutatakse automaatselt 6 kuud pärast viimast sõnumit.",
+          "<strong>Automaatsed tõlked</strong> (päringute kirjeldused, hinnapakkumised ning kliendi ja partneri sõnumid): säilitatakse, et sama teksti mitte kaks korda tõlkida, ja kustutatakse automaatselt hiljemalt 24 kuu pärast."
         ]
       },
       {
