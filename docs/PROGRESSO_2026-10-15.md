@@ -597,3 +597,11 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Meta Ads Manager, campanha A Registreeru: ET -> https://bipfix.com/ee/et/tookodadele ; RU -> https://bipfix.com/ee/ru/dlya-avtoservisov. Botao, texto, imagem, orcamento e parametros UTM inalterados. Publicado anuncio por anuncio ("Inserzione aggiornata"); ficaram "In fase di elaborazione". Nenhuma outra alteracao pendente na conta foi publicada (Controlla e pubblica ficou vazio).
 - Respondido por e-mail (07:58) com a troca e o percurso da visitante RU das 23:44 (cadastro > aba motorista > termos > ajuda > "seja parceiro", ~2 min, sem envio).
 - Nova janela de 20 min ate 08:20.
+
+### 03/11 09:42 - primeira oficina cadastrada: IA sem foto e tempo de resposta (e-mail)
+- Pedido do dono (e-mail 09:31/09:37): IA tambem para pedido sem foto; tempo de resposta nao pode penalizar oficina que entra agora; a oficina nova ve os pedidos que ja existem?
+- Resposta: sim, sem corte por data - ve pedidos abertos/em orcamento dentro do raio (30 km padrao), com especialidade compativel e endereco com coordenadas (migracao 056). Nao foi possivel conferir a oficina no banco de producao (leitura bloqueada nesta sessao automatica).
+- Codigo no branch `fix/oficina-nova-ia-sem-foto` (commit 4cbabce), typecheck ok, NAO publicado (aguarda "sim"):
+  - `/api/analisar-dano`: sem foto, analisa pela descricao do cliente (confianca <= 0.5); sem foto e sem descricao continua SEM_FOTOS.
+  - `lib/tempo-resposta.ts`: tempo conta de max(criacao do pedido, cadastro da oficina); aplicado em comissao, Desempenho e perfil publico. (Fornecedores de pecas, comissao-pecas.ts, nao mudou.)
+- Janela de 20 min aberta ate 10:00 (job a4877aa2).
