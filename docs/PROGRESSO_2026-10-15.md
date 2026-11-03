@@ -631,3 +631,8 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Branch refeito sem dados da oficina (ea21ad6), merge abe4242, push. Migracao 067 aplicada em producao (transacao; so acrescenta). Deploy na VM (pull, build, pm2 restart).
 - Endereco da primeira oficina corrigido a pedido do dono: numero e complemento separados; posicao no mapa mantida.
 - Conferido no ar: a oficina passa a ver os 2 pedidos abertos (o "outro" a 4,5 km e o eletrico); pagina publica mostra endereco + complemento; /oficina/comissao redireciona; paginas 200.
+
+### 03/11 tarde - comissao escondida tambem da loja de pecas (pedido do dono no chat)
+- "pode tirar tbm nas pecas": menu da loja (computador e celular) sem "Comissao", modulo de comissao fora do Aprender da loja, /loja/comissao redireciona ao painel. Texto "comissao nao e cobrada" do "como funciona" mantido.
+- Teste local site-loja-sem-comissao.mjs 8/8 ok; site-pecas ok; site-pecas-ux ok (checagem antiga da comissao 0% trocada por "comissao nao aparece").
+- Merge e168183 e push feitos. Deploy NAO feito: bloqueado pela trava de seguranca, aguarda OK explicito do dono.
