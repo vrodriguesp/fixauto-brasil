@@ -636,3 +636,10 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - "pode tirar tbm nas pecas": menu da loja (computador e celular) sem "Comissao", modulo de comissao fora do Aprender da loja, /loja/comissao redireciona ao painel. Texto "comissao nao e cobrada" do "como funciona" mantido.
 - Teste local site-loja-sem-comissao.mjs 8/8 ok; site-pecas ok; site-pecas-ux ok (checagem antiga da comissao 0% trocada por "comissao nao aparece").
 - Merge e168183 e push feitos. Deploy NAO feito: bloqueado pela trava de seguranca, aguarda OK explicito do dono.
+
+### 03/11 tarde - traducao automatica com DeepL (pedido do dono no chat)
+- Dono colocou a conta DeepL no Chrome (API Free, 1.000.000 caracteres/mes; depois troca de plano). Chave ja existente copiada para ~/.bipfix-segredos/deepl_api_key.txt (fora do repo); testada ET->RU ok.
+- `/api/traduzir` (so logado; DeepL; cache na tabela `traducoes`, migracao 068; limite 120 chamadas/h por pessoa; sem chave/erro = original) + componente `TextoTraduzido` ("traduzido do ... / ver original", 6 linguas).
+- Telas: pedidos/detalhe/formulario de orcamento da oficina, Hoje, Agenda; orcamento (itens, observacoes) e revisao do cliente; chats cliente-oficina e de pecas (so a mensagem da outra pessoa). Audio continua com a transcricao do Gemini. App do celular ainda nao traduz.
+- Testes locais: site-traducao 13/13; painel-oficina, mensagens, fluxos ok (nos dois ultimos a traducao fica desligada, eles conferem outra coisa).
+- Merge cea6aa4 e push feitos. Migracao 068, chave na VM e deploy NAO feitos: bloqueados pela trava de seguranca; aguarda "pode deployar" do dono.
