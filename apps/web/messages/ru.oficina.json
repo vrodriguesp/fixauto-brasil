@@ -599,7 +599,7 @@
     "comissaoBipfix": "Комиссия BipFix",
     "comissaoDaPlataforma": "Комиссия платформы:",
     "prazoExecucao": "Сроки и выполнение",
-    "prazoTotalDias": "Общий срок (дней)",
+    "prazoTotalDias": "Срок ремонта (дней)",
     "tempoExecucaoHoras": "Время выполнения (часов)",
     "diasUteis": "~{count} раб. дн.",
     "validadeOrcamento": "Срок действия сметы",
@@ -652,7 +652,9 @@
     "importarGrande": "Файл слишком большой (макс. 10 МБ). Попробуйте фото или PDF поменьше.",
     "orcamentoFechadoEntregue": "Автомобиль уже выдан клиенту. Смета закрыта, изменить её больше нельзя.",
     "orcamentoFechadoCancelado": "Эта заявка отменена. Смету больше нельзя изменить.",
-    "verPedido": "Открыть заявку"
+    "verPedido": "Открыть заявку",
+    "prazoTotalDiasAjuda": "Сколько дней машина будет в сервисе — от приёма до выдачи. Срок действия сметы — отдельное поле.",
+    "prazoLongoAviso": "{dias} дн. в сервисе для {horas} ч работы — всё верно? Если это срок действия сметы, укажите его в поле «Срок действия сметы»."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Пароль должен содержать не менее 8 символов",
@@ -919,7 +921,7 @@
     "verOrcamento": "Смотреть смету",
     "modificarOrcamento": "Изменить смету",
     "seuOrcamento": "Ваша смета",
-    "prazoDias": "Срок: {dias} дн.",
+    "prazoDias": "Срок ремонта: {dias} дн.",
     "statusOrcamento": {
       "enviado": "Отправлена",
       "visualizado": "Клиент видел",

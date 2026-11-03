@@ -513,7 +513,7 @@
     "victimDecidesNote": "Пострадавший решает, какую смету принять. После принятия данные автосервиса будут переданы виновнику.",
     "shareWithOtherNote": "Поделитесь этими сметами с другим водителем, чтобы договориться, какой автосервис выбрать.",
     "quoteAcceptedBadge": "Принята",
-    "deadlineLabel": "Срок: {dias} дн.",
+    "deadlineLabel": "Срок ремонта: {dias} дн.",
     "workshopDataTitle": "Данные автосервиса",
     "workshopFallback": "Автосервис",
     "sendToResponsibleBtn": "Отправить виновнику",

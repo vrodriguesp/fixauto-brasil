@@ -254,7 +254,7 @@
     "victimDecidesNote": "A vítima decide qual orçamento aceitar. Após aceitar, as informações da oficina serão compartilhadas com o responsável.",
     "shareWithOtherNote": "Compartilhe esses orçamentos com o outro motorista para entrar em acordo sobre qual oficina usar para a reparação.",
     "quoteAcceptedBadge": "Aceito",
-    "deadlineLabel": "Prazo: {dias} dias",
+    "deadlineLabel": "Prazo do conserto: {dias} dias",
     "workshopDataTitle": "Dados da oficina",
     "workshopFallback": "Oficina",
     "sendToResponsibleBtn": "Enviar ao responsável",

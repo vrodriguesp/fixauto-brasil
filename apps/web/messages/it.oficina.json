@@ -599,7 +599,7 @@
     "comissaoBipfix": "Commissione BipFix",
     "comissaoDaPlataforma": "Commissione della piattaforma:",
     "prazoExecucao": "Tempi ed Esecuzione",
-    "prazoTotalDias": "Tempo totale (giorni)",
+    "prazoTotalDias": "Durata della riparazione (giorni)",
     "tempoExecucaoHoras": "Tempo di esecuzione (ore)",
     "diasUteis": "~{count} giorno/i lavorativo/i",
     "validadeOrcamento": "Validità del preventivo",
@@ -652,7 +652,9 @@
     "importarGrande": "Il file è troppo grande (max 10 MB). Prova una foto o un PDF più piccolo.",
     "orcamentoFechadoEntregue": "L'auto è già stata consegnata al cliente. Il preventivo è chiuso e non può più essere modificato.",
     "orcamentoFechadoCancelado": "Questa richiesta è stata annullata. Il preventivo non può più essere modificato.",
-    "verPedido": "Vedi richiesta"
+    "verPedido": "Vedi richiesta",
+    "prazoTotalDiasAjuda": "Quanti giorni l'auto resta in officina, dalla consegna al ritiro. La validità del preventivo è un altro campo.",
+    "prazoLongoAviso": "{dias} giorni in officina per {horas} h di lavoro: è corretto? Se è la validità del preventivo, usa il campo \"Validità del preventivo\"."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "La password deve avere almeno 8 caratteri",
@@ -919,7 +921,7 @@
     "verOrcamento": "Vedi preventivo",
     "modificarOrcamento": "Modifica preventivo",
     "seuOrcamento": "Il tuo preventivo",
-    "prazoDias": "Tempi: {dias} giorno/i",
+    "prazoDias": "Durata della riparazione: {dias} giorno/i",
     "statusOrcamento": {
       "enviado": "Inviato",
       "visualizado": "Visto dal cliente",

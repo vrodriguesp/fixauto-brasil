@@ -590,7 +590,9 @@ ${d.observacoes}` : d.observacoes));
                 min={1}
                 value={prazoDias}
                 onChange={setPrazoDias}
+                aria-describedby="cacb1-101-ajuda"
               />
+              <p id="cacb1-101-ajuda" className="text-xs text-gray-500 mt-1">{t('prazoTotalDiasAjuda')}</p>
             </div>
             <div>
               <label htmlFor="cacb1-102" className="block text-sm font-medium text-gray-700 mb-1">
@@ -637,6 +639,13 @@ ${d.observacoes}` : d.observacoes));
               <p className="text-xs text-gray-500 mt-1">{t('garantiaAjuda')}</p>
             </div>
           </div>
+          {/* muitos dias para pouco trabalho: quase sempre e a validade posta no prazo
+              (1o orcamento real, 03/11: 30 dias para 2 h - o cliente le "conserto: 30 dias") */}
+          {prazoDias >= 10 && tempoExecucaoHoras <= prazoDias * 2 && (
+            <p role="status" data-testid="aviso-prazo-longo" className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+              {t('prazoLongoAviso', { dias: prazoDias, horas: tempoExecucaoHoras })}
+            </p>
+          )}
         </div>
 
         {/* Disponibilidade (na proposta de revisao a data ja esta marcada) */}

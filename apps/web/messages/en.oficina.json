@@ -599,7 +599,7 @@
     "comissaoBipfix": "BipFix Commission",
     "comissaoDaPlataforma": "Platform commission:",
     "prazoExecucao": "Timeline and Execution",
-    "prazoTotalDias": "Total timeline (days)",
+    "prazoTotalDias": "Repair time (days)",
     "tempoExecucaoHoras": "Execution time (hours)",
     "diasUteis": "~{count} business day(s)",
     "validadeOrcamento": "Quote validity",
@@ -652,7 +652,9 @@
     "importarGrande": "The file is too large (max 10 MB). Try a smaller photo or PDF.",
     "orcamentoFechadoEntregue": "The car has already been delivered to the customer. The quote is closed and can no longer be changed.",
     "orcamentoFechadoCancelado": "This request was cancelled. The quote can no longer be changed.",
-    "verPedido": "View request"
+    "verPedido": "View request",
+    "prazoTotalDiasAjuda": "How many days the car stays at the workshop, from drop-off to pick-up. Quote validity is a separate field.",
+    "prazoLongoAviso": "{dias} days at the workshop for {horas} h of work — is that right? If this is how long the quote is valid, use \"Quote validity\"."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Password must be at least 8 characters",
@@ -919,7 +921,7 @@
     "verOrcamento": "View quote",
     "modificarOrcamento": "Edit quote",
     "seuOrcamento": "Your quote",
-    "prazoDias": "Time: {dias} day(s)",
+    "prazoDias": "Repair time: {dias} day(s)",
     "statusOrcamento": {
       "enviado": "Sent",
       "visualizado": "Seen by customer",

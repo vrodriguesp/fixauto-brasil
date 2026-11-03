@@ -14,7 +14,7 @@
     "scheduledTitle": "Appointments",
     "checkin": "Check-in:",
     "deliveryForecast": "Estimated delivery:",
-    "deadline": "Timeline:",
+    "deadline": "Repair time:",
     "daysCount": "{days, plural, one {# day} other {# days}}",
     "phone": "Phone: {phone}",
     "track": "Track",
@@ -79,7 +79,7 @@
     "refusedQuotesTitle": "Declined quotes",
     "refusedBadge": "Declined",
     "workshopFallback": "Repair shop",
-    "deadlineDays": "Timeline: {days, plural, one {# day} other {# days}}",
+    "deadlineDays": "Repair time: {days, plural, one {# day} other {# days}}",
     "rate": "Rate",
     "cancelledTitle": "Cancelled"
   },
@@ -153,7 +153,7 @@
     "noQuotesYet": "No quotes received yet",
     "createRequest": "Create request",
     "quotesReceivedCount": "{count, plural, one {# quote received} other {# quotes received}}",
-    "deadlineDays": "Timeline: {days, plural, one {# day} other {# days}}",
+    "deadlineDays": "Repair time: {days, plural, one {# day} other {# days}}",
     "itemsCount": "{count, plural, one {# item} other {# items}}"
   },
   "clienteOrcamentoDetalhe": {
@@ -203,7 +203,7 @@
     "percentHigher": "{percent}% higher",
     "noAdjustment": "No change",
     "revisionNumber": "Revision #{n}",
-    "deadlineDays": "Timeline: {days, plural, one {# day} other {# days}}",
+    "deadlineDays": "Repair time: {days, plural, one {# day} other {# days}}",
     "execTimeLabel": "Turnaround time",
     "nextCheckinLabel": "Next check-in",
     "noSlotAvailable": "No slots",

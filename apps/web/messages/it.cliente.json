@@ -14,7 +14,7 @@
     "scheduledTitle": "Appuntamenti",
     "checkin": "Check-in:",
     "deliveryForecast": "Consegna prevista:",
-    "deadline": "Tempi:",
+    "deadline": "Durata della riparazione:",
     "daysCount": "{days, plural, one {# giorno} other {# giorni}}",
     "phone": "Tel: {phone}",
     "track": "Segui",
@@ -79,7 +79,7 @@
     "refusedQuotesTitle": "Preventivi rifiutati",
     "refusedBadge": "Rifiutato",
     "workshopFallback": "Officina",
-    "deadlineDays": "Tempi: {days, plural, one {# giorno} other {# giorni}}",
+    "deadlineDays": "Durata della riparazione: {days, plural, one {# giorno} other {# giorni}}",
     "rate": "Valuta",
     "cancelledTitle": "Annullate"
   },
@@ -153,7 +153,7 @@
     "noQuotesYet": "Nessun preventivo ricevuto ancora",
     "createRequest": "Crea richiesta",
     "quotesReceivedCount": "{count, plural, one {# preventivo ricevuto} other {# preventivi ricevuti}}",
-    "deadlineDays": "Tempi: {days, plural, one {# giorno} other {# giorni}}",
+    "deadlineDays": "Durata della riparazione: {days, plural, one {# giorno} other {# giorni}}",
     "itemsCount": "{count, plural, one {# voce} other {# voci}}"
   },
   "clienteOrcamentoDetalhe": {
@@ -203,7 +203,7 @@
     "percentHigher": "{percent}% più alto",
     "noAdjustment": "Nessuna variazione",
     "revisionNumber": "Revisione #{n}",
-    "deadlineDays": "Tempi: {days, plural, one {# giorno} other {# giorni}}",
+    "deadlineDays": "Durata della riparazione: {days, plural, one {# giorno} other {# giorni}}",
     "execTimeLabel": "Tempo di esecuzione",
     "nextCheckinLabel": "Prossimo check-in",
     "noSlotAvailable": "Nessuna disponibilità",

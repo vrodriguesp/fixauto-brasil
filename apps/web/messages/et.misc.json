@@ -513,7 +513,7 @@
     "victimDecidesNote": "Kannatanu otsustab, millise hinnapakkumise vastu võtta. Pärast nõustumist jagatakse töökoja andmed vastutava poolega.",
     "shareWithOtherNote": "Jaga neid hinnapakkumisi teise juhiga, et leppida kokku, millist töökoda remondiks kasutada.",
     "quoteAcceptedBadge": "Kinnitatud",
-    "deadlineLabel": "Tähtaeg: {dias} päeva",
+    "deadlineLabel": "Remondi kestus: {dias} päeva",
     "workshopDataTitle": "Töökoja andmed",
     "workshopFallback": "Töökoda",
     "sendToResponsibleBtn": "Saada vastutavale poolele",

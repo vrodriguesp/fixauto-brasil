@@ -513,7 +513,7 @@
     "victimDecidesNote": "The victim decides which quote to accept. Once accepted, the repair shop's details will be shared with the responsible party.",
     "shareWithOtherNote": "Share these quotes with the other driver to agree on which repair shop to use.",
     "quoteAcceptedBadge": "Accepted",
-    "deadlineLabel": "Timeline: {dias} days",
+    "deadlineLabel": "Repair time: {dias} days",
     "workshopDataTitle": "Repair shop details",
     "workshopFallback": "Repair shop",
     "sendToResponsibleBtn": "Send to responsible party",

@@ -14,7 +14,7 @@
     "scheduledTitle": "Agendamentos",
     "checkin": "Check-in:",
     "deliveryForecast": "Previsão entrega:",
-    "deadline": "Prazo:",
+    "deadline": "Prazo do conserto:",
     "daysCount": "{days} dias",
     "phone": "Tel: {phone}",
     "track": "Acompanhar",
@@ -79,7 +79,7 @@
     "refusedQuotesTitle": "Orçamentos recusados",
     "refusedBadge": "Recusado",
     "workshopFallback": "Oficina",
-    "deadlineDays": "Prazo: {days} dias",
+    "deadlineDays": "Prazo do conserto: {days} dias",
     "rate": "Avaliar",
     "cancelledTitle": "Canceladas"
   },
@@ -153,7 +153,7 @@
     "noQuotesYet": "Nenhum orçamento recebido ainda",
     "createRequest": "Criar solicitação",
     "quotesReceivedCount": "{count} orçamento(s) recebido(s)",
-    "deadlineDays": "Prazo: {days} dias",
+    "deadlineDays": "Prazo do conserto: {days} dias",
     "itemsCount": "{count} itens"
   },
   "clienteOrcamentoDetalhe": {
@@ -203,7 +203,7 @@
     "percentHigher": "{percent}% maior",
     "noAdjustment": "Sem ajuste",
     "revisionNumber": "Revisão #{n}",
-    "deadlineDays": "Prazo: {days} dias",
+    "deadlineDays": "Prazo do conserto: {days} dias",
     "execTimeLabel": "Tempo execução",
     "nextCheckinLabel": "Próximo check-in",
     "noSlotAvailable": "Sem vaga",
