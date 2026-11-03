@@ -105,6 +105,7 @@ try {
   ok('2 a resposta automatica aparece marcada para o admin', tA.includes('Resposta automática'));
   // visitante fecha o chat e "sai" (nao conta como ativo) -> resposta tambem por e-mail
   await pV.getByRole('button', { name: RU('suporte.fechar') }).click();
+  await pV.waitForTimeout(5000); // a ultima consulta do chat aberto (marca 'ativo') termina antes
   await sb.from('suporte_conversas').update({ usuario_visto_em: new Date(Date.now() - 10 * 60e3).toISOString() }).eq('id', conv.id);
   const t1 = Date.now();
   await pA.getByTestId('suporte-resposta').fill(`You can upload a photo or PDF of your estimate on the quote page (${tag}).`);
