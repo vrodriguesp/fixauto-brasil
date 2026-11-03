@@ -698,6 +698,8 @@
     "rua": "Tänav",
     "ruaPlaceholder": "Nt Tartu mnt",
     "numero": "Maja nr",
+    "complemento": "Täpsustus (valikuline)",
+    "complementoPlaceholder": "Nt hoone, keskuse nimi, korrus",
     "cep": "Sihtnumber",
     "cidade": "Linn",
     "estado": "Maakond",

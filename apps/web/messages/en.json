@@ -692,6 +692,8 @@
     "rua": "Street",
     "ruaPlaceholder": "E.g. High Street",
     "numero": "Number",
+    "complemento": "Additional address info (optional)",
+    "complementoPlaceholder": "E.g. building, centre name, floor",
     "cep": "Postcode",
     "cidade": "City",
     "estado": "Region / state",

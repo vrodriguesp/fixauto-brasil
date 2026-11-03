@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { tipoCompativel } from '@fixauto/shared';
 import { requireAdmin } from '@/lib/admin-auth';
 import { notifClienteEsperandoOrcamento } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
@@ -46,8 +47,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
 
     const destinatarias = (oficinasProximas || []).filter((o) => {
       if (idsJaResponderam.has(o.id)) return false;
-      if (!o.especialidades || o.especialidades.length === 0) return true;
-      return o.especialidades.includes(solicitacao.tipo);
+      return tipoCompativel(o.especialidades, solicitacao.tipo);
     });
 
     let notificadas = 0;

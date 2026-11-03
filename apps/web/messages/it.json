@@ -690,6 +690,8 @@
     "rua": "Via / piazza",
     "ruaPlaceholder": "Es.: Via Torino",
     "numero": "Civico",
+    "complemento": "Informazioni aggiuntive (facoltativo)",
+    "complementoPlaceholder": "Es.: capannone 2, nome del centro, piano",
     "cep": "CAP",
     "cidade": "Città",
     "estado": "Provincia / regione",

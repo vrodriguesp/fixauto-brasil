@@ -698,6 +698,8 @@
     "rua": "Улица",
     "ruaPlaceholder": "Напр.: Tartu mnt",
     "numero": "Дом",
+    "complemento": "Дополнительно (необязательно)",
+    "complementoPlaceholder": "Напр.: корпус, название центра, этаж",
     "cep": "Почтовый индекс",
     "cidade": "Город",
     "estado": "Уезд",

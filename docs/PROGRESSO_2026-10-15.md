@@ -612,3 +612,15 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Primeira oficina real (detalhes so no e-mail ao dono): veio do Facebook, russo, celular; cadastro + perfil completos; tocou "Analisar com IA" num pedido sem foto -> SEM_FOTOS (caso agora coberto). Ve o pedido 100130; nao ve o 100093 (tipo "outro" fora das especialidades). Campo "numero" do endereco preenchido com texto. Relatorio ao dono 10:20.
 - E-mail 10:10: video RU "como enviar orcamento" enviado ao YouTube conforme YOUTUBE_textos.md (descricao revisada pelo Fable), salvo PRIVADO - publicar foi bloqueado pela trava de seguranca, falta o dono publicar/autorizar. Texto RU para a oficina enviado ao dono (ele envia). Resposta 10:24.
 - Decisoes pendentes do dono: tipo "outro" visivel a oficinas de mecanica?; campo numero do endereco so numerico?
+
+### 03/11 13:37-14:xx (hora do PC) - retorno do dono sobre a oficina nova (e-mail 12:01)
+- Pedidos (vitor@outlook.ie, 12:01, conferido): esconder a comissao (so pecas); "outro" para todas; campo complemento no endereco + corrigir o dela; publicar o video RU ("dou a permissao"); ele manda a mensagem a oficina; problema de idioma (pedido ET x oficina RU) - pesquisar e propor; a interacao dela acabou?
+- Resposta 13:41: a oficina voltou varias vezes (celular e computador), abriu o pedido e o orcamento, a pagina Aprender e o anuncio RU de novo; sem orcamento ainda. Proposta de idioma: traducao automatica do texto livre (pedido, orcamento, chat) para a lingua de quem le, guardada no banco e com "ver original" (Airbnb/Booking/Upwork); motor recomendado DeepL API, alternativa Google; Gemini free tier nao serve. Aguarda escolha do dono e conta criada por ele.
+- Video RU: publicar bloqueado de novo pela trava de seguranca (permissao por e-mail nao vale para publicar); continua PRIVADO.
+- Branch `fix/oficina-comissao-outro-complemento` (8facc4b), NAO publicado:
+  - `/oficina/comissao` redireciona para Pedidos; Pecas sem "minha comissao como fornecedora" (admin inalterado; frase verde "sem comissao" no orcamento mantida).
+  - migracao 067: `tipo_compativel` aceita "outro" para toda oficina; colunas `complemento` em oficinas e lojas_pecas. `tipoCompativel` (shared) igual; cobranca do admin passa a usar a mesma regra.
+  - EnderecoEstruturado: campo Complemento opcional (cadastro e perfil da oficina), nao entra no mapa; pagina publica mostra. 6 idiomas.
+  - Teste local `site-oficina-nova.mjs`: 14/14 ok.
+  - Regressao local: site-fluxos ok; site-painel-oficina ok.
+- E-mail 14:01 ao dono com o resultado e o plano (a migracao 067 em producao, b deploy, c corrigir numero/complemento da oficina sem mexer na posicao, d conferir no ar). Aguarda "sim". Janela de 20 min encerrada as 14:00 (job 1ccc491c apagado).

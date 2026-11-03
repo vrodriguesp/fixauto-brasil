@@ -115,6 +115,7 @@ function validarEmpresa(v: unknown, tipo: 'oficina' | 'loja_pecas') {
     cidade: texto(e.cidade, 'cidade', 100) || '',
     estado: texto(e.estado, 'estado', 60) || '',
     cep: texto(e.cep, 'cep', 20) || '',
+    complemento: texto(e.complemento, 'complemento', 100) || null,
     pais,
     latitude: e.latitude == null ? null : numero(e.latitude, 'latitude', -90, 90),
     longitude: e.longitude == null ? null : numero(e.longitude, 'longitude', -180, 180),

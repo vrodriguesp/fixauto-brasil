@@ -689,6 +689,8 @@
     "rua": "Rua / avenida",
     "ruaPlaceholder": "Ex.: Rua Augusta",
     "numero": "Número",
+    "complemento": "Complemento (opcional)",
+    "complementoPlaceholder": "Ex.: galpão 2, nome do centro, andar",
     "cep": "CEP",
     "cidade": "Cidade",
     "estado": "Estado",
