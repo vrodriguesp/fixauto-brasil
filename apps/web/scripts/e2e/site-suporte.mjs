@@ -7,7 +7,8 @@
 //    em ingles -> visitante recebe em russo com "показать оригинал"; visitante
 //    com o chat fechado recebe a resposta por e-mail
 //  3 admin online (painel aberto) -> nova mensagem SEM resposta automatica
-//  4 traducao desligada pelo admin -> resposta vai como foi escrita
+//  4 modo manual: recebida chega no original e o admin toca "Traduzir"; a
+//    resposta vai traduzida so com a caixa marcada
 //  5 oficina logada (celular): botao acima da barra de baixo, sem cobrir;
 //    some na conversa com cliente (/oficina/mensagens/...)
 //  6 6 linguas: botao com rotulo traduzido, sem rolagem lateral
@@ -131,16 +132,29 @@ try {
   const vis = await pV.locator('text=Сейчас в сети').count();
   ok('3 visitante ve "Сейчас в сети"', vis > 0);
 
-  // ---------- 4 traducao desligada
-  await pA.getByTestId('suporte-traducao').uncheck(); await pA.waitForTimeout(1000);
+  // ---------- 4 modo manual: recebida chega no original com "Traduzir"; resposta traduzida so se marcada
+  await pA.getByTestId('suporte-traducao-manual').check(); await pA.waitForTimeout(1000);
   const { data: cfg } = await sb.from('plataforma_config').select('suporte_traducao').eq('id', 1).single();
-  ok('4 admin desliga a traducao', cfg.suporte_traducao === false);
-  await pA.getByTestId('suporte-conversa').filter({ hasText: 'Ivan Test' }).first().click(); await pA.waitForTimeout(1500);
+  ok('4 admin escolhe o modo manual', cfg.suporte_traducao === false);
+  await pV.fill('#suporte-texto', `Ещё вопрос: можно ли добавить второй адрес? (${tag})`); await pV.getByTestId('chat-suporte-enviar').click(); await pV.waitForTimeout(3000);
+  const { data: rec } = await sb.from('suporte_mensagens').select('id, traducao').eq('conversa_id', conv.id).eq('autor', 'usuario').order('created_at', { ascending: false }).limit(1).single();
+  ok('4 manual: mensagem recebida sem traducao', rec.traducao === null, JSON.stringify(rec));
+  await pA.getByTestId('suporte-conversa').filter({ hasText: 'Ivan Test' }).first().click(); await pA.waitForTimeout(2000);
+  await pA.getByTestId('suporte-traduzir-msg').last().click();
+  const trad = await esperar(async () => (await sb.from('suporte_mensagens').select('traducao').eq('id', rec.id).single()).data?.traducao);
+  ok('4 manual: "Traduzir para português" traduz a recebida', !!trad && !/[А-Яа-я]{4,}/.test(trad), trad);
+  const tA4 = await esperar(async () => { const t = await pA.locator('main').innerText(); return t.includes('Original (RU)') && t.includes('второй адрес') ? t : null; });
+  ok('4 manual: admin ve a traducao com o original', !!tA4);
+  await pA.getByTestId('suporte-traduzir-resposta').uncheck();
   await pA.getByTestId('suporte-resposta').fill(`Plain English reply (${tag})`); await pA.getByRole('button', { name: 'Enviar' }).click(); await pA.waitForTimeout(2500);
-  const { data: ult } = await sb.from('suporte_mensagens').select('texto, traducao').eq('conversa_id', conv.id).eq('autor', 'admin').order('created_at', { ascending: false }).limit(1).single();
-  ok('4 resposta sem traducao', ult.traducao === null && ult.texto.startsWith('Plain English'), JSON.stringify(ult));
+  let { data: ult } = await sb.from('suporte_mensagens').select('texto, traducao').eq('conversa_id', conv.id).eq('autor', 'admin').order('created_at', { ascending: false }).limit(1).single();
+  ok('4 manual: resposta sem a caixa marcada vai sem traducao', ult.traducao === null && ult.texto.startsWith('Plain English'), JSON.stringify(ult));
   const tV2 = await esperar(async () => { const t = await janela(pV).innerText(); return t.includes('Plain English reply') ? t : null; });
   ok('4 visitante recebe como foi escrita', !!tV2);
+  await pA.getByTestId('suporte-traduzir-resposta').check();
+  await pA.getByTestId('suporte-resposta').fill(`Yes, you can add a second address in your profile (${tag})`); await pA.getByRole('button', { name: 'Enviar' }).click(); await pA.waitForTimeout(3000);
+  ({ data: ult } = await sb.from('suporte_mensagens').select('texto, traducao').eq('conversa_id', conv.id).eq('autor', 'admin').order('created_at', { ascending: false }).limit(1).single());
+  ok('4 manual: resposta com a caixa marcada vai traduzida para o russo', !!ult.traducao && /[А-Яа-я]{4,}/.test(ult.traducao), JSON.stringify(ult));
   await config({ suporte_traducao: true });
   await ctxA.close(); await ctxV.close();
 
