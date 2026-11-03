@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { jaNaLingua } from '@/lib/lingua-provavel';
+import { jaNaLingua, linguaDoTexto } from '@/lib/lingua-provavel';
 
 // Traducao automatica com DeepL (dono 03/11). Cada texto e traduzido uma vez so
 // por lingua de destino e fica em `traducoes` (migracao 068). Sem chave, com
@@ -10,6 +10,12 @@ import { jaNaLingua } from '@/lib/lingua-provavel';
 
 // lingua do site -> lingua de destino do DeepL
 export const ALVO_DEEPL: Record<string, string> = { pt: 'PT-BR', 'pt-PT': 'PT-PT', en: 'EN-GB', et: 'ET', it: 'IT', ru: 'RU' };
+
+// contexto do site para o DeepL (nao e cobrado): resolve ambiguidades como
+// "auto vastu võtta" = a oficina recebe o carro (teste cego 03/11)
+const CONTEXTO = 'Car repair marketplace in Tallinn, Estonia. Messages, repair requests and quotes between car owners and auto repair workshops. When an owner asks a workshop to "auto vastu võtta" (принять машину), the owner brings the car and the workshop receives it.';
+// pares com glossario de oficina no DeepL (scripts/deepl-glossario.mjs)
+const PARES_GLOSSARIO = new Set(['et>ru', 'ru>et']);
 
 export interface Traducao { texto: string | null; origem: string | null }
 
@@ -39,28 +45,41 @@ export async function traduzirTextos(textos: string[], lingua: string, guardar =
     else faltam.push(i);
   });
 
-  // 2) o resto vai ao DeepL numa chamada so
+  // 2) o resto vai ao DeepL: uma chamada por lingua de origem conhecida com glossario
+  //    (ET<->RU, scripts/deepl-glossario.mjs) e uma sem origem (o DeepL detecta)
   const chave = process.env.DEEPL_API_KEY;
   const novos = Array.from(new Map(faltam.map((i) => [hashes[i], i])).values());
   if (!chave || !novos.length) return resultado;
   const host = chave.endsWith(':fx') ? 'https://api-free.deepl.com' : 'https://api.deepl.com';
+  const glossario = process.env.DEEPL_GLOSSARIO_ID;
+  const grupos = new Map<string, number[]>();
+  for (const i of novos) {
+    const origem = glossario ? linguaDoTexto(limpos[i]) : null;
+    const g = origem && PARES_GLOSSARIO.has(`${origem}>${alvo.split('-')[0].toLowerCase()}`) ? origem : '';
+    grupos.set(g, [...(grupos.get(g) || []), i]);
+  }
   try {
-    const r = await fetch(`${host}/v2/translate`, {
-      method: 'POST',
-      headers: { Authorization: `DeepL-Auth-Key ${chave}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: novos.map((i) => limpos[i]), target_lang: alvo }),
-      signal: AbortSignal.timeout(10000),
-    });
-    if (!r.ok) { console.error('[deepl]', r.status, (await r.text()).slice(0, 200)); return resultado; }
-    const d = await r.json();
-    const linhas = novos.map((i, k) => {
-      const tr = d.translations?.[k];
-      const origem = String(tr?.detected_source_language || '').toUpperCase() || null;
-      // ja estava na lingua de quem le: guarda sem traducao
-      const mesma = !!origem && alvo.split('-')[0] === origem.split('-')[0];
-      return { hash: hashes[i], alvo, origem, traducao: mesma ? null : (tr?.text ?? null) };
-    });
-    if (guardar) await supabaseAdmin.from('traducoes').upsert(linhas, { onConflict: 'hash' });
+    const linhas = (await Promise.all(Array.from(grupos).map(async ([origem, idx]) => {
+      const r = await fetch(`${host}/v2/translate`, {
+        method: 'POST',
+        headers: { Authorization: `DeepL-Auth-Key ${chave}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: idx.map((i) => limpos[i]), target_lang: alvo, context: CONTEXTO,
+          ...(origem ? { source_lang: origem.toUpperCase(), glossary_id: glossario } : {}),
+        }),
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!r.ok) { console.error('[deepl]', r.status, (await r.text()).slice(0, 200)); return []; }
+      const d = await r.json();
+      return idx.map((i, k) => {
+        const tr = d.translations?.[k];
+        const detectada = String(tr?.detected_source_language || '').toUpperCase() || null;
+        // ja estava na lingua de quem le: guarda sem traducao
+        const mesma = !!detectada && alvo.split('-')[0] === detectada.split('-')[0];
+        return { hash: hashes[i], alvo, origem: detectada, traducao: mesma ? null : (tr?.text ?? null) };
+      });
+    }))).flat();
+    if (guardar && linhas.length) await supabaseAdmin.from('traducoes').upsert(linhas, { onConflict: 'hash' });
     const porNovo = new Map(linhas.map((l) => [l.hash, l]));
     for (const i of faltam) { const l = porNovo.get(hashes[i]); if (l) resultado[i] = { texto: l.traducao, origem: l.origem }; }
   } catch (e) {

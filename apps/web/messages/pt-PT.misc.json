@@ -296,7 +296,7 @@
           "<strong>Google</strong> (Estados Unidos): inteligência artificial Gemini para análise de danos e transcrição de voz; Google Analytics e medição de conversões do Google Ads (apenas com consentimento); Google Maps, apresentado nas páginas de perfil dos Parceiros.",
           "<strong>Microsoft</strong> (Estados Unidos): Microsoft Clarity (apenas com consentimento).",
           "<strong>OpenStreetMap Foundation</strong> (Reino Unido): conversão de moradas em coordenadas de mapa (serviço Nominatim).",
-          "<strong>DeepL SE</strong> (Alemanha, União Europeia): tradução automática de mensagens do chat, descrições de pedidos e orçamentos. Enviamos apenas o texto a traduzir, não o nome da sua conta nem o seu e-mail; o que escrever dentro do próprio texto é enviado tal como está.",
+          "<strong>DeepL SE</strong> (Alemanha, União Europeia): tradução automática de mensagens do chat, descrições de pedidos e orçamentos. Enviamos apenas o texto a traduzir, não o nome da sua conta nem o seu e-mail; o que escrever dentro do próprio texto é enviado tal como está. A DeepL atua como nossa subcontratante ao abrigo de um acordo de tratamento de dados, apaga o texto após entregar a tradução e não o utiliza para treinar os seus modelos.",
           "<strong>Autoridades públicas</strong>, quando estamos legalmente obrigados a divulgar dados."
         ],
         "depois": [

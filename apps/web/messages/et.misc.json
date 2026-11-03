@@ -296,7 +296,7 @@
           "<strong>Google</strong> (Ameerika Ühendriigid): tehisintellekt Gemini kahjustuste analüüsiks ja kõne transkribeerimiseks; Google Analytics ja Google Adsi konversioonide mõõtmine (ainult nõusolekul); Google Maps, mida näidatakse partnerite profiilidel.",
           "<strong>Microsoft</strong> (Ameerika Ühendriigid): Microsoft Clarity (ainult nõusolekul).",
           "<strong>OpenStreetMap Foundation</strong> (Ühendkuningriik): aadresside teisendamine kaardikoordinaatideks (teenus Nominatim).",
-          "<strong>DeepL SE</strong> (Saksamaa, Euroopa Liit): vestluse sõnumite, päringute kirjelduste ja hinnapakkumiste automaatne tõlge. Saadame ainult tõlgitava teksti, mitte sinu konto nime ega e-posti; mida sa ise teksti sisse kirjutad, saadetakse nii, nagu see on kirjutatud.",
+          "<strong>DeepL SE</strong> (Saksamaa, Euroopa Liit): vestluse sõnumite, päringute kirjelduste ja hinnapakkumiste automaatne tõlge. Saadame ainult tõlgitava teksti, mitte sinu konto nime ega e-posti; mida sa ise teksti sisse kirjutad, saadetakse nii, nagu see on kirjutatud. DeepL töötleb andmeid meie volitatud töötlejana andmetöötluslepingu alusel, kustutab teksti pärast tõlke edastamist ega kasuta seda oma mudelite treenimiseks.",
           "<strong>Ametiasutused</strong>, kui meil on seadusest tulenev kohustus andmeid avaldada."
         ],
         "depois": [

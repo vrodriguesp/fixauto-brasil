@@ -20,15 +20,15 @@ const UCRANIANO = /[іїєґІЇЄҐ]/; // cirilico mas nao russo: deixa o tradu
 const LETRA = new RegExp('\\p{L}', 'gu');
 const PALAVRA = new RegExp('\\p{L}+', 'gu');
 
-/** true = o texto ja esta (com seguranca) na lingua `lingua` do site (pt, pt-PT, en, et, it, ru),
- *  ou nao tem letras para traduzir (numero, placa, preco). */
-export function jaNaLingua(texto: string, lingua: string): boolean {
-  const t = (texto || '').trim();
+const semLetras = (t: string) => {
   const letras = (t.match(LETRA) || []).length;
-  if (letras < 2) return true;
-  if (letras <= 6 && /^[A-Z0-9\s\-.,:;/#€$%()]+$/.test(t)) return true; // placa, codigo de peca
+  return letras < 2 || (letras <= 6 && /^[A-Z0-9\s\-.,:;/#€$%()]+$/.test(t)); // numero, preco, placa, codigo de peca
+};
+
+/** o texto esta (com seguranca) na lingua base `alvo` (pt, en, et, it, ru)? */
+function ehLingua(t: string, alvo: string): boolean {
+  const letras = (t.match(LETRA) || []).length;
   const cir = (t.match(CIRILICO) || []).length / letras;
-  const alvo = lingua.split('-')[0];
   if (alvo === 'ru') return cir >= 0.85 && !UCRANIANO.test(t);
   if (!(alvo in PALAVRAS) || cir > 0.15) return false;
 
@@ -43,4 +43,18 @@ export function jaNaLingua(texto: string, lingua: string): boolean {
   const outros = Math.max(...(Object.keys(pontos) as Base[]).filter((b) => b !== alvo).map((b) => pontos[b]));
   if (palavras.length <= 3) return meu >= 1 && outros === 0; // "Tere!", "Aitäh", "Ok, homme"
   return meu >= 2 && meu >= 3 * outros && meu / palavras.length >= 0.15;
+}
+
+/** true = o texto ja esta (com seguranca) na lingua `lingua` do site (pt, pt-PT, en, et, it, ru),
+ *  ou nao tem letras para traduzir (numero, placa, preco). */
+export function jaNaLingua(texto: string, lingua: string): boolean {
+  const t = (texto || '').trim();
+  return semLetras(t) || ehLingua(t, lingua.split('-')[0]);
+}
+
+/** lingua base do texto quando ha certeza (para usar o glossario do DeepL, que exige a origem); senao null */
+export function linguaDoTexto(texto: string): string | null {
+  const t = (texto || '').trim();
+  if (semLetras(t)) return null;
+  return ['ru', 'et', 'pt', 'it', 'en'].find((l) => ehLingua(t, l)) || null;
 }

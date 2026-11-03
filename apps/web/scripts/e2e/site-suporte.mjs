@@ -101,7 +101,10 @@ try {
   await pA.goto(`${SITE}/admin/suporte`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(2000);
   await pA.getByTestId('suporte-conversa').filter({ hasText: 'Ivan Test' }).first().click(); await pA.waitForTimeout(2500);
   let tA = await pA.locator('main').innerText();
-  ok('2 admin le em portugues com o original', /foto/i.test(tA) && tA.includes('Original (RU)') && tA.includes('Как добавить'), tA.slice(0, 300));
+  ok('2 admin le em portugues ("traduzido do russo")', /foto/i.test(tA) && tA.includes('traduzido do russo') && !tA.includes('Как добавить'), tA.slice(0, 300));
+  await pA.getByTestId('suporte-ver-original').first().click(); await pA.waitForTimeout(300);
+  tA = await pA.locator('main').innerText();
+  ok('2 "ver original" mostra o russo', tA.includes('Как добавить') && tA.includes('ver tradução'), tA.slice(0, 300));
   ok('2 a resposta automatica aparece marcada para o admin', tA.includes('Resposta automática'));
   // visitante fecha o chat e "sai" (nao conta como ativo) -> resposta tambem por e-mail
   await pV.getByRole('button', { name: RU('suporte.fechar') }).click();
@@ -110,8 +113,11 @@ try {
   const t1 = Date.now();
   await pA.getByTestId('suporte-resposta').fill(`You can upload a photo or PDF of your estimate on the quote page (${tag}).`);
   await pA.getByRole('button', { name: 'Enviar' }).click();
-  tA = await esperar(async () => { const t = await pA.locator('main').innerText(); return t.includes('Enviado como:') ? t : null; });
-  ok('2 admin ve como a resposta foi (em russo)', !!tA && cirilico.test(tA.split('Enviado como:').pop() || ''), (tA || '').slice(-300));
+  tA = await esperar(async () => { const t = await pA.locator('main').innerText(); return t.includes('enviado em russo') ? t : null; });
+  await pA.getByTestId('suporte-ver-original').last().click(); await pA.waitForTimeout(300);
+  const { data: env } = await sb.from('suporte_mensagens').select('traducao').eq('conversa_id', conv.id).eq('autor', 'admin').order('created_at', { ascending: false }).limit(1).single();
+  tA = await pA.locator('main').innerText();
+  ok('2 admin ve como a resposta foi (em russo)', !!env?.traducao && cirilico.test(env.traducao) && tA.includes(env.traducao.slice(0, 25)) && tA.includes('ver o que você escreveu'), (tA || '').slice(-300));
   const eResp = await esperar(async () => emailsDesde(t1, EMAIL_VIS)[0]);
   ok('2 visitante com o chat fechado recebe a resposta por e-mail, em russo', !!eResp && eResp.includes('Ответ от BipFix') && cirilico.test(eResp) && eResp.includes('suporte=1'), (eResp || 'sem e-mail').slice(0, 200));
   // contador no botao fechado
@@ -134,7 +140,8 @@ try {
   ok('3 visitante ve "Сейчас в сети"', vis > 0);
 
   // ---------- 4 modo manual: recebida chega no original com "Traduzir"; resposta traduzida so se marcada
-  await pA.getByTestId('suporte-traducao-manual').check(); await pA.waitForTimeout(1000);
+  await pA.getByRole('button', { name: /^Tradução:/ }).click(); await pA.waitForTimeout(300);
+  await pA.getByTestId('suporte-traducao-manual').check({ force: true }); await pA.waitForTimeout(1000);
   const { data: cfg } = await sb.from('plataforma_config').select('suporte_traducao').eq('id', 1).single();
   ok('4 admin escolhe o modo manual', cfg.suporte_traducao === false);
   await pV.fill('#suporte-texto', `Ещё вопрос: можно ли добавить второй адрес? (${tag})`); await pV.getByTestId('chat-suporte-enviar').click(); await pV.waitForTimeout(3000);
@@ -144,7 +151,7 @@ try {
   await pA.getByTestId('suporte-traduzir-msg').last().click();
   const trad = await esperar(async () => (await sb.from('suporte_mensagens').select('traducao').eq('id', rec.id).single()).data?.traducao);
   ok('4 manual: "Traduzir para português" traduz a recebida', !!trad && !/[А-Яа-я]{4,}/.test(trad), trad);
-  const tA4 = await esperar(async () => { const t = await pA.locator('main').innerText(); return t.includes('Original (RU)') && t.includes('второй адрес') ? t : null; });
+  const tA4 = await esperar(async () => { const t = await pA.locator('main').innerText(); return trad && t.includes(trad.slice(0, 20)) && t.includes('traduzido do russo') ? t : null; });
   ok('4 manual: admin ve a traducao com o original', !!tA4);
   await pA.getByTestId('suporte-traduzir-resposta').uncheck();
   await pA.getByTestId('suporte-resposta').fill(`Plain English reply (${tag})`); await pA.getByRole('button', { name: 'Enviar' }).click(); await pA.waitForTimeout(2500);
@@ -157,6 +164,20 @@ try {
   ({ data: ult } = await sb.from('suporte_mensagens').select('texto, traducao').eq('conversa_id', conv.id).eq('autor', 'admin').order('created_at', { ascending: false }).limit(1).single());
   ok('4 manual: resposta com a caixa marcada vai traduzida para o russo', !!ult.traducao && /[А-Яа-я]{4,}/.test(ult.traducao), JSON.stringify(ult));
   await config({ suporte_traducao: true });
+  // admin no celular: lista -> conversa (com voltar) e campo de resposta visivel, sem rolagem lateral
+  const ctxAc = await ctxNovo('celular'); const pAc = await entrar(ctxAc, adm, '/br/pt');
+  await pAc.goto(`${SITE}/admin/suporte`, { waitUntil: 'networkidle' }); await pAc.waitForTimeout(2000);
+  await pAc.getByTestId('suporte-conversa').filter({ hasText: 'Ivan Test' }).first().click(); await pAc.waitForTimeout(2500);
+  const campo = await pAc.getByTestId('suporte-resposta').boundingBox();
+  const altura = pAc.viewportSize().height;
+  ok('4 admin celular: conversa aberta e campo de resposta na tela', !!campo && campo.y + campo.height <= altura && (await pAc.getByTestId('suporte-conversa').first().isHidden()), JSON.stringify(campo));
+  ok('4 admin celular: sem rolagem lateral', await pAc.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+  await pAc.getByRole('button', { name: 'Voltar' }).click(); await pAc.waitForTimeout(500);
+  ok('4 admin celular: voltar mostra a lista', await pAc.getByTestId('suporte-conversa').first().isVisible());
+  await pAc.screenshot({ path: 'admin-suporte-celular.png' });
+  await ctxAc.close();
+  await pA.getByTestId('suporte-conversa').filter({ hasText: 'Ivan Test' }).first().click(); await pA.waitForTimeout(2000);
+  await pA.screenshot({ path: 'admin-suporte-pc.png' });
   await ctxA.close(); await ctxV.close();
 
   // ---------- 5 oficina logada no celular
