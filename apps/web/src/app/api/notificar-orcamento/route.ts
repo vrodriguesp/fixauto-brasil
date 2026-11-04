@@ -3,8 +3,8 @@ import { dentroDoLimite } from '@/lib/rate-limit';
 import {
   sendQuoteNotificationEmail,
   sendQuoteWhatsApp,
-  sendQuoteSms,
 } from '@/lib/notifications';
+import { avisarOrcamentoPorSms, type ResultadoSms } from '@/lib/sms';
 import { getSessionUserId } from '@/lib/api-auth';
 import { currencyForCountry } from '@/lib/currency';
 import { formatCurrency } from '@/lib/utils';
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     // calculado com o idioma do cliente e reaproveitado pra todo mundo.
     const valorTotal = formatCurrency(orcamento.valor_total, moeda, cliente?.idioma);
 
-    const results: { email?: { success: boolean }; whatsapp?: { success: boolean }; sms?: { success: boolean } } = {};
+    const results: { email?: { success: boolean }; whatsapp?: { success: boolean }; sms?: ResultadoSms } = {};
 
     // aviso no sino/app do cliente (um so por orcamento: reenvio ou revisao nao duplicam)
     const solId = (orcamento.solicitacao as any).id;
@@ -93,15 +93,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // SMS (Estonia): so no primeiro aviso deste orcamento - reenvio/revisao nao repetem
-    if (cliente?.telefone && !jaAvisado?.length) {
-      results.sms = await sendQuoteSms({
-        toPhone: cliente.telefone,
-        pais: (orcamento.oficina as any)?.pais,
-        solicitacaoId: solId,
-        locale: cliente.idioma,
-      });
-    }
+    // SMS (Estonia): regras em lib/sms.ts - interruptor do admin, quem tem o app
+    // recebe push, pedido aberto, uma vez por orcamento (reenvio/revisao nao repetem)
+    results.sms = await avisarOrcamentoPorSms({ solicitacaoId: solId, orcamentoId, tipo: 'orcamento_auto' });
 
     // Send WhatsApp
     if (cliente?.telefone) {

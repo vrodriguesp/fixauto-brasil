@@ -280,7 +280,7 @@ export function telefoneE164(bruto: string, pais?: string | null): string | null
   return null;
 }
 
-async function twilioMensagem(params: Record<string, string>): Promise<{ success: boolean; error?: string }> {
+async function twilioMensagem(params: Record<string, string>): Promise<{ success: boolean; error?: string; sid?: string }> {
   const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/Messages.json`;
   const response = await fetch(url, {
     method: 'POST',
@@ -294,11 +294,13 @@ async function twilioMensagem(params: Record<string, string>): Promise<{ success
     const data = await response.json().catch(() => ({}));
     return { success: false, error: data.message || `Twilio ${response.status}` };
   }
-  return { success: true };
+  const data = await response.json().catch(() => ({}));
+  return { success: true, sid: data.sid };
 }
 
-// SMS de servico (so sobre o pedido do proprio cliente; nada de marketing - §103¹ ESS)
-async function sendSms(to: string, message: string, pais?: string | null): Promise<{ success: boolean; error?: string }> {
+// SMS de servico (so sobre o pedido do proprio cliente; nada de marketing - §103¹ ESS).
+// Quem decide se envia (interruptor, app, pedido aberto) e lib/sms.ts.
+async function sendSms(to: string, message: string, pais?: string | null): Promise<{ success: boolean; error?: string; sid?: string }> {
   if (!TWILIO_SID || !TWILIO_TOKEN) return { success: false, error: 'SMS service not configured' };
   const phone = telefoneE164(to, pais);
   if (!phone) return { success: false, error: 'Telefone sem país' };
