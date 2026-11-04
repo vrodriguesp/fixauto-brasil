@@ -7,7 +7,7 @@ import { timeAgo } from '@/lib/utils';
 // orcamento", enviar manualmente pelo numero do pedido e ver o registro.
 // Desligar quando o app estiver na loja: quem tem o app recebe o push.
 
-interface Envio { id: string; tipo: 'orcamento_auto' | 'manual'; status: 'enviado' | 'recusado' | 'pulado'; motivo: string | null; final: string | null; quando: string; numero: number | null; cliente: string | null }
+interface Envio { id: string; tipo: 'orcamento_auto' | 'manual'; status: 'enviando' | 'enviado' | 'recusado' | 'pulado'; motivo: string | null; final: string | null; quando: string; numero: number | null; cliente: string | null }
 interface Dados { ativo: boolean; configurado: boolean; saldo: { saldo: string; moeda: string } | null; envios: Envio[] }
 
 const MOTIVO: Record<string, string> = {
@@ -17,9 +17,11 @@ const MOTIVO: Record<string, string> = {
   tem_app: 'cliente tem o app (recebeu push)',
   pedido_nao_encontrado: 'pedido não encontrado',
   erro_interno: 'erro interno',
+  nao_configurado: 'chaves da Twilio não configuradas no servidor',
+  ja_enviado: 'já enviado para este orçamento',
 };
 const STATUS: Record<Envio['status'], string> = {
-  enviado: 'bg-green-100 text-green-800', recusado: 'bg-red-100 text-red-800', pulado: 'bg-gray-100 text-gray-700',
+  enviando: 'bg-amber-100 text-amber-800', enviado: 'bg-green-100 text-green-800', recusado: 'bg-red-100 text-red-800', pulado: 'bg-gray-100 text-gray-700',
 };
 
 export default function AdminSmsPage() {

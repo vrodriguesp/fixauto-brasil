@@ -53,7 +53,8 @@ confere('so Estonia: +39 bloqueado', soEstonia('+39 333 1234567'), false);
 confere('so Estonia: +55 bloqueado', soEstonia('+55 11 91234 5678'), false);
 
 // textos reais com o link real mais longo (uuid) - partes cobradas
-const url = (l: string) => `https://bipfix.com/ee/${l}/cliente/orcamentos/0d1f2a3b-1111-2222-3333-444455556666`;
+// producao usa https://www.bipfix.com (o link mais longo)
+const url = (l: string) => `https://www.bipfix.com/ee/${l}/cliente/orcamentos/0d1f2a3b-1111-2222-3333-444455556666`;
 const txt = (l: 'et' | 'ru' | 'en') => fmt(SMS_I18N.quoteSms[l], { url: url(l) });
 confere('ET cabe em 1 SMS', partesSms(txt('et')), 1);
 confere('EN cabe em 1 SMS', partesSms(txt('en')), 1);

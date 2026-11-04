@@ -1,6 +1,8 @@
-// Teste do SMS contra o banco LOCAL (Supabase do ambiente de teste), sem Twilio:
-// cada regra de avisarOrcamentoPorSms com consultas reais, o registro em
-// sms_envios e as consultas da pagina do admin. Desfaz tudo no fim.
+// Teste do SMS contra o banco LOCAL (Supabase do ambiente de teste) com a Twilio
+// SIMULADA (fetch interceptado - nenhum SMS sai): cada regra de
+// avisarOrcamentoPorSms com consultas reais, o registro em sms_envios, a trava
+// contra envio duplo, o numero escondido no erro e as consultas do admin.
+// Desfaz tudo no fim.
 //
 //   npx tsx scripts/teste-sms-banco.ts   (usa Documentos/_teste_local/site/apps/web/.env.local)
 import fs from 'node:fs';
@@ -8,11 +10,23 @@ import fs from 'node:fs';
 const ENV = '../../Documentos/_teste_local/site/apps/web/.env.local';
 for (const l of fs.readFileSync(ENV, 'utf8').split(/\r?\n/)) {
   const i = l.indexOf('='); if (i < 1 || l.startsWith('#')) continue;
-  const k = l.slice(0, i).trim(); if (k.startsWith('TWILIO')) continue; // nunca envia SMS de verdade
+  const k = l.slice(0, i).trim(); if (k.startsWith('TWILIO')) continue;
   process.env[k] = l.slice(i + 1).trim().replace(/^"|"$/g, '');
 }
-delete process.env.TWILIO_ACCOUNT_SID; delete process.env.TWILIO_AUTH_TOKEN;
 if (!/^http:\/\/(localhost|127\.0\.0\.1)/.test(process.env.NEXT_PUBLIC_SUPABASE_URL || '')) { console.error('banco nao e o local - parado'); process.exit(1); }
+
+// Twilio simulada: chaves falsas + fetch interceptado (as outras chamadas vao para o Supabase local)
+process.env.TWILIO_ACCOUNT_SID = 'ACteste'; process.env.TWILIO_AUTH_TOKEN = 'teste';
+let twilioModo: 'ok' | 'erro' | 'lento' = 'ok'; const enviados: { to: string; body: string }[] = [];
+const fetchReal = globalThis.fetch;
+globalThis.fetch = (async (url: any, o: any) => {
+  if (!String(url).startsWith('https://api.twilio.com')) return fetchReal(url, o);
+  const corpo = new URLSearchParams(o.body);
+  if (twilioModo === 'lento') await new Promise((r) => setTimeout(r, 300));
+  if (twilioModo === 'erro') return new Response(JSON.stringify({ code: 21211, message: `The 'To' number ${corpo.get('To')} is not a valid phone number.` }), { status: 400 });
+  enviados.push({ to: corpo.get('To')!, body: corpo.get('Body')! });
+  return new Response(JSON.stringify({ sid: 'SMteste' + enviados.length, status: 'queued' }), { status: 201 });
+}) as typeof fetch;
 
 let falhas = 0;
 const confere = (nome: string, obtido: unknown, esperado: unknown) => {
@@ -24,75 +38,122 @@ async function main() {
   const { supabaseAdmin: db } = await import('../src/lib/supabase-admin');
   const { avisarOrcamentoPorSms, smsAtivo } = await import('../src/lib/sms');
 
-  // pedido aberto com orcamento e cliente com telefone
-  const { data: sols } = await db.from('solicitacoes').select('id, numero, status, cliente_id, orcamentos(id)').in('status', ['aberta', 'em_orcamento']);
-  const alvo = (sols || []).find((s: any) => s.orcamentos?.length);
+  const { data: sols } = await db.from('solicitacoes').select('id, numero, status, cliente_id, orcamentos(id, status)').in('status', ['aberta', 'em_orcamento']);
+  const alvo = (sols || []).find((s: any) => s.orcamentos?.some((o: any) => ['enviado', 'visualizado'].includes(o.status)));
   const semOrc = (sols || []).find((s: any) => !s.orcamentos?.length);
   if (!alvo || !semOrc) { console.error('faltam pedidos de teste no banco local'); process.exit(1); }
-  const orcId = (alvo as any).orcamentos[0].id;
-  const { data: cli } = await db.from('profiles').select('telefone').eq('id', alvo.cliente_id).single();
-  const telAntes = cli?.telefone ?? null;
+  const orc = (alvo as any).orcamentos.find((o: any) => ['enviado', 'visualizado'].includes(o.status));
+  const orcId = orc.id; const orcStatusAntes = orc.status;
+  const { data: cli } = await db.from('profiles').select('telefone, idioma').eq('id', alvo.cliente_id).single();
+  const telAntes = cli?.telefone ?? null; const idiomaAntes = cli?.idioma ?? null;
   const cfgAntes = await smsAtivo();
   const inicio = new Date().toISOString();
   const TOKEN = 'ExponentPushToken[teste-sms-banco]';
+  const auto = () => avisarOrcamentoPorSms({ solicitacaoId: alvo.id, orcamentoId: orcId, tipo: 'orcamento_auto', pais: 'EE' });
+  const manual = () => avisarOrcamentoPorSms({ solicitacaoId: alvo.id, tipo: 'manual' });
+  const limparRegistro = () => db.from('sms_envios').delete().gte('created_at', inicio);
 
   try {
-    // telefone estoniano: decisao "envia" -> Twilio sem chave -> recusado e registrado
-    await db.from('profiles').update({ telefone: '+372 5123 4567' }).eq('id', alvo.cliente_id);
+    await db.from('profiles').update({ telefone: '5123 4567', idioma: 'et' }).eq('id', alvo.cliente_id);
     await db.from('plataforma_config').update({ sms_ativo: true }).eq('id', 1);
-    let r = await avisarOrcamentoPorSms({ solicitacaoId: alvo.id, orcamentoId: orcId, tipo: 'orcamento_auto' });
-    confere('auto, tudo ok, sem chave Twilio -> recusado', r, { status: 'recusado', motivo: 'SMS service not configured' });
-    const { data: linha } = await db.from('sms_envios').select('status, tipo, telefone_final, orcamento_id').eq('orcamento_id', orcId).gte('created_at', inicio).single();
-    confere('registro gravado com final do numero', linha, { status: 'recusado', tipo: 'orcamento_auto', telefone_final: '567', orcamento_id: orcId });
 
-    // telefone de outro pais: nunca sai
-    await db.from('profiles').update({ telefone: '+39 333 1234567' }).eq('id', alvo.cliente_id);
-    r = await avisarOrcamentoPorSms({ solicitacaoId: alvo.id, orcamentoId: orcId, tipo: 'orcamento_auto' });
-    confere('telefone italiano -> recusado (so Estonia)', r.status === 'recusado' && /Estónia|configured/.test(r.motivo || ''), true);
-    await db.from('profiles').update({ telefone: '+372 5123 4567' }).eq('id', alvo.cliente_id);
+    // envio normal: numero nacional vira +372, texto estoniano com o link do pedido
+    let r = await auto();
+    confere('auto, tudo ok -> enviado', r, { status: 'enviado' });
+    confere('para +37251234567', enviados.at(-1)?.to, '+37251234567');
+    confere('texto ET com link do pedido', enviados.at(-1)?.body, `BipFix: sinu päringule saabus uus hinnapakkumine. Vaata ja vali: ${(process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com').replace(/\/$/, '')}/ee/et/cliente/orcamentos/${alvo.id}`);
+    const { data: l1 } = await db.from('sms_envios').select('status, tipo, telefone_final, twilio_sid').eq('orcamento_id', orcId).gte('created_at', inicio).single();
+    confere('registro: enviado, final 567, sid', l1, { status: 'enviado', tipo: 'orcamento_auto', telefone_final: '567', twilio_sid: 'SMteste1' });
 
-    // ja enviado: simula um envio de verdade para este orcamento
-    const { data: fake } = await db.from('sms_envios').insert({ solicitacao_id: alvo.id, orcamento_id: orcId, profile_id: alvo.cliente_id, tipo: 'orcamento_auto', status: 'enviado' }).select('id').single();
-    r = await avisarOrcamentoPorSms({ solicitacaoId: alvo.id, orcamentoId: orcId, tipo: 'orcamento_auto' });
-    confere('mesmo orcamento de novo -> pulado ja_enviado', r, { status: 'pulado', motivo: 'ja_enviado' });
-    r = await avisarOrcamentoPorSms({ solicitacaoId: alvo.id, tipo: 'manual' });
-    confere('manual depois de enviado -> tenta de novo', r.status, 'recusado');
-    await db.from('sms_envios').delete().eq('id', fake!.id);
+    // mesmo orcamento de novo (reenvio/revisao)
+    r = await auto();
+    confere('mesmo orcamento de novo -> ja_enviado', r, { status: 'pulado', motivo: 'ja_enviado' });
+    confere('nenhum SMS a mais', enviados.length, 1);
+    await limparRegistro();
+
+    // dois avisos AO MESMO TEMPO do mesmo orcamento: so 1 SMS
+    twilioModo = 'lento'; const n0 = enviados.length;
+    const [a, b] = await Promise.all([auto(), auto()]);
+    confere('simultaneos: um envia, outro e barrado', [a.status, b.status].sort(), ['enviado', 'pulado']);
+    confere('simultaneos: 1 SMS so', enviados.length - n0, 1);
+    twilioModo = 'ok'; await limparRegistro();
+
+    // Twilio recusa: numero nao aparece no registro nem na resposta
+    twilioModo = 'erro';
+    r = await auto();
+    confere('erro Twilio -> recusado', r.status, 'recusado');
+    confere('motivo sem o numero', /\d{6,}/.test(r.motivo || ''), false);
+    const { data: l2 } = await db.from('sms_envios').select('status, motivo').eq('orcamento_id', orcId).gte('created_at', inicio).single();
+    confere('registro recusado sem numero', l2?.status === 'recusado' && !/\d{6,}/.test(l2?.motivo || ''), true);
+    twilioModo = 'ok';
+    r = await auto();
+    confere('depois de recusado, nova tentativa envia', r.status, 'enviado');
+    await limparRegistro();
+
+    // russo
+    await db.from('profiles').update({ idioma: 'ru' }).eq('id', alvo.cliente_id);
+    r = await auto();
+    confere('cliente RU -> texto russo, link /ee/ru', enviados.at(-1)?.body.startsWith('BipFix: новая смета') && enviados.at(-1)?.body.includes('/ee/ru/'), true);
+    await db.from('profiles').update({ idioma: 'et' }).eq('id', alvo.cliente_id); await limparRegistro();
+
+    // telefones fora da Estonia: nunca saem
+    const nE = enviados.length;
+    for (const t of ['+39 333 1234567', '+55 11 91234 5678']) {
+      await db.from('profiles').update({ telefone: t }).eq('id', alvo.cliente_id);
+      r = await auto(); confere(`telefone ${t.slice(0, 3)} -> recusado`, r.status, 'recusado'); await limparRegistro();
+    }
+    // numero nacional brasileiro com oficina do Brasil vira +55 (bloqueado)
+    await db.from('profiles').update({ telefone: '11987654321' }).eq('id', alvo.cliente_id);
+    r = await avisarOrcamentoPorSms({ solicitacaoId: alvo.id, orcamentoId: orcId, tipo: 'orcamento_auto', pais: 'BR' });
+    confere('nacional BR com oficina BR -> recusado', r.status, 'recusado');
+    confere('nenhum SMS para fora da Estonia', enviados.length, nE);
+    await db.from('profiles').update({ telefone: '5123 4567' }).eq('id', alvo.cliente_id); await limparRegistro();
 
     // interruptor desligado
     await db.from('plataforma_config').update({ sms_ativo: false }).eq('id', 1);
-    confere('smsAtivo() le o interruptor', await smsAtivo(), false);
-    r = await avisarOrcamentoPorSms({ solicitacaoId: alvo.id, orcamentoId: orcId, tipo: 'orcamento_auto' });
-    confere('auto com SMS desligado -> pulado', r, { status: 'pulado', motivo: 'sms_desligado' });
-    r = await avisarOrcamentoPorSms({ solicitacaoId: alvo.id, tipo: 'manual' });
-    confere('manual com SMS desligado -> tenta', r.status, 'recusado');
-    await db.from('plataforma_config').update({ sms_ativo: true }).eq('id', 1);
+    r = await auto(); confere('auto com SMS desligado -> pulado', r, { status: 'pulado', motivo: 'sms_desligado' });
+    r = await manual(); confere('manual com SMS desligado -> envia', r.status, 'enviado');
+    await db.from('plataforma_config').update({ sms_ativo: true }).eq('id', 1); await limparRegistro();
 
-    // cliente com o app (token visto agora)
+    // cliente com o app
     await db.from('push_tokens').insert({ profile_id: alvo.cliente_id, token: TOKEN, plataforma: 'android' });
-    r = await avisarOrcamentoPorSms({ solicitacaoId: alvo.id, orcamentoId: orcId, tipo: 'orcamento_auto' });
-    confere('cliente com app -> pulado tem_app', r, { status: 'pulado', motivo: 'tem_app' });
-    // app aberto ha mais de 60 dias -> volta a receber SMS
+    r = await auto(); confere('cliente com app -> pulado tem_app', r, { status: 'pulado', motivo: 'tem_app' });
+    r = await manual(); confere('manual com app -> envia', r.status, 'enviado');
     await db.from('push_tokens').update({ last_seen_at: new Date(Date.now() - 61 * 86400000).toISOString() }).eq('token', TOKEN);
-    r = await avisarOrcamentoPorSms({ solicitacaoId: alvo.id, orcamentoId: orcId, tipo: 'orcamento_auto' });
-    confere('app nao aberto ha 61 dias -> tenta SMS', r.status, 'recusado');
-    await db.from('push_tokens').delete().eq('token', TOKEN);
+    await limparRegistro();
+    r = await auto(); confere('app nao aberto ha 61 dias -> envia', r.status, 'enviado');
+    await db.from('push_tokens').delete().eq('token', TOKEN); await limparRegistro();
 
     // pedido cancelado
     await db.from('solicitacoes').update({ status: 'cancelada' }).eq('id', alvo.id);
-    r = await avisarOrcamentoPorSms({ solicitacaoId: alvo.id, orcamentoId: orcId, tipo: 'orcamento_auto' });
-    confere('pedido cancelado -> pulado', r, { status: 'pulado', motivo: 'pedido_fechado' });
-    r = await avisarOrcamentoPorSms({ solicitacaoId: alvo.id, tipo: 'manual' });
-    confere('manual em pedido cancelado -> pulado', r, { status: 'pulado', motivo: 'pedido_fechado' });
+    r = await auto(); confere('pedido cancelado -> pulado', r, { status: 'pulado', motivo: 'pedido_fechado' });
+    r = await manual(); confere('manual em pedido cancelado -> pulado', r, { status: 'pulado', motivo: 'pedido_fechado' });
     await db.from('solicitacoes').update({ status: alvo.status }).eq('id', alvo.id);
 
-    // pedido sem orcamento e pedido inexistente
+    // orcamento recusado nao conta como "orcamento novo"
+    const { count: validos } = await db.from('orcamentos').select('id', { count: 'exact', head: true }).eq('solicitacao_id', alvo.id).in('status', ['enviado', 'visualizado']);
+    if (validos === 1) {
+      await db.from('orcamentos').update({ status: 'recusado' }).eq('id', orcId);
+      r = await manual(); confere('so orcamento recusado -> sem_orcamento', r, { status: 'pulado', motivo: 'sem_orcamento' });
+      await db.from('orcamentos').update({ status: orcStatusAntes }).eq('id', orcId);
+    }
+
+    // pedido sem orcamento e inexistente
     r = await avisarOrcamentoPorSms({ solicitacaoId: semOrc.id, tipo: 'manual' });
-    confere('pedido sem orcamento -> pulado', r.motivo === 'sem_orcamento' || r.motivo === 'sem_telefone', true);
+    confere('pedido sem orcamento -> pulado', ['sem_orcamento', 'sem_telefone'].includes(r.motivo || ''), true);
     r = await avisarOrcamentoPorSms({ solicitacaoId: '00000000-0000-0000-0000-000000000000', tipo: 'manual' });
     confere('pedido inexistente -> pulado', r, { status: 'pulado', motivo: 'pedido_nao_encontrado' });
 
-    // consultas da pagina do admin (mesmo select da rota GET)
+    // sem chaves: nao tenta nem registra
+    delete process.env.TWILIO_ACCOUNT_SID;
+    const antes = (await db.from('sms_envios').select('id', { count: 'exact', head: true }).gte('created_at', inicio)).count;
+    r = await auto(); confere('sem chaves -> nao_configurado', r, { status: 'pulado', motivo: 'nao_configurado' });
+    const depois = (await db.from('sms_envios').select('id', { count: 'exact', head: true }).gte('created_at', inicio)).count;
+    confere('sem chaves -> nada no registro', depois, antes);
+    process.env.TWILIO_ACCOUNT_SID = 'ACteste';
+
+    // consultas da pagina do admin
+    await auto();
     const { data: lista, error } = await db.from('sms_envios')
       .select('id, tipo, status, motivo, telefone_final, created_at, solicitacao:solicitacoes(numero), profile:profiles!sms_envios_profile_id_fkey(nome)')
       .gte('created_at', inicio).order('created_at', { ascending: false }).limit(50);
@@ -101,16 +162,17 @@ async function main() {
     const { data: porNumero } = await db.from('solicitacoes').select('id').eq('numero', String(alvo.numero)).maybeSingle();
     confere('busca pelo numero digitado (texto)', porNumero?.id, alvo.id);
 
-    // RLS: cliente logado (anon key) nao le sms_envios
+    // RLS: anonimo nao le sms_envios
     const { createClient } = await import('@supabase/supabase-js');
     const anon = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
     const { data: vaz, error: eAnon } = await anon.from('sms_envios').select('id').limit(1);
     confere('anonimo nao le sms_envios', !!eAnon || (vaz || []).length === 0, true);
   } finally {
-    await db.from('sms_envios').delete().gte('created_at', inicio);
+    await limparRegistro();
     await db.from('push_tokens').delete().eq('token', TOKEN);
-    await db.from('profiles').update({ telefone: telAntes }).eq('id', alvo.cliente_id);
+    await db.from('profiles').update({ telefone: telAntes, idioma: idiomaAntes }).eq('id', alvo.cliente_id);
     await db.from('solicitacoes').update({ status: alvo.status }).eq('id', alvo.id);
+    await db.from('orcamentos').update({ status: orcStatusAntes }).eq('id', orcId);
     await db.from('plataforma_config').update({ sms_ativo: cfgAntes }).eq('id', 1);
     console.log('(banco local restaurado)');
   }

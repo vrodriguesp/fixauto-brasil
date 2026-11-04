@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS sms_envios (
   -- so o final do numero (o admin reconhece sem guardar o numero de novo)
   telefone_final text,
   tipo text NOT NULL CHECK (tipo IN ('orcamento_auto', 'manual')),
-  status text NOT NULL CHECK (status IN ('enviado', 'recusado', 'pulado')),
+  -- 'enviando' = reserva antes de chamar a Twilio (ver indice unico abaixo)
+  status text NOT NULL CHECK (status IN ('enviando', 'enviado', 'recusado', 'pulado')),
   motivo text,
   twilio_sid text,
   enviado_por uuid REFERENCES profiles(id) ON DELETE SET NULL,
@@ -21,6 +22,10 @@ CREATE TABLE IF NOT EXISTS sms_envios (
 );
 CREATE INDEX IF NOT EXISTS sms_envios_created_idx ON sms_envios (created_at DESC);
 CREATE INDEX IF NOT EXISTS sms_envios_orcamento_idx ON sms_envios (orcamento_id);
+-- no maximo 1 SMS automatico por orcamento, mesmo com dois avisos ao mesmo tempo
+-- (auditoria Fable 04/11): a reserva 'enviando' entra antes da Twilio
+CREATE UNIQUE INDEX IF NOT EXISTS sms_envios_auto_unico ON sms_envios (orcamento_id)
+  WHERE tipo = 'orcamento_auto' AND status IN ('enviando', 'enviado');
 
 -- so o servidor (service role) le e escreve
 ALTER TABLE sms_envios ENABLE ROW LEVEL SECURITY;

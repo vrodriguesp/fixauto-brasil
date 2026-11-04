@@ -289,6 +289,8 @@ async function twilioMensagem(params: Record<string, string>): Promise<{ success
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: new URLSearchParams(params),
+    // Twilio parada nao segura o aviso do orcamento (e-mail e o resto seguem)
+    signal: AbortSignal.timeout(10000),
   });
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
@@ -329,7 +331,7 @@ export async function sendQuoteSms(params: {
 
 async function sendWhatsApp(to: string, message: string, pais?: string | null): Promise<{ success: boolean; error?: string }> {
   if (!TWILIO_SID || !TWILIO_TOKEN || !TWILIO_WHATSAPP_FROM) {
-    console.warn('[Notifications] Twilio not configured - TWILIO_ACCOUNT_SID/TWILIO_AUTH_TOKEN missing');
+    console.info('[Notifications] WhatsApp desligado (sem TWILIO_WHATSAPP_FROM ou chaves)');
     return { success: false, error: 'WhatsApp service not configured' };
   }
 

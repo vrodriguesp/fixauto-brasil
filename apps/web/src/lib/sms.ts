@@ -17,10 +17,16 @@ export async function smsAtivo(): Promise<boolean> {
 
 export interface ResultadoSms { status: 'enviado' | 'recusado' | 'pulado'; motivo?: string }
 
+const semNumero = (t: string) => t.replace(/\+?\d[\d\s]{5,}\d/g, '…').slice(0, 200);
+
 /** decide, envia e registra em sms_envios. Nunca lanca erro (o aviso por e-mail segue). */
 export async function avisarOrcamentoPorSms(p: {
   solicitacaoId: string; orcamentoId?: string | null; tipo: TipoSms; adminId?: string | null;
+  /** pais da oficina: DDI de numero nacional (padrao EE, o unico mercado com SMS) */
+  pais?: string | null;
 }): Promise<ResultadoSms> {
+  // sem as chaves nao tenta nem registra (a pagina do admin ja avisa)
+  if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) return { status: 'pulado', motivo: 'nao_configurado' };
   try {
     const { data: sol } = await supabaseAdmin.from('solicitacoes')
       .select('id, status, cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(telefone, idioma)')
@@ -34,7 +40,8 @@ export async function avisarOrcamentoPorSms(p: {
       p.orcamentoId
         ? supabaseAdmin.from('sms_envios').select('id', { count: 'exact', head: true }).eq('orcamento_id', p.orcamentoId).eq('status', 'enviado')
         : Promise.resolve({ count: 0 }),
-      supabaseAdmin.from('orcamentos').select('id', { count: 'exact', head: true }).eq('solicitacao_id', sol.id),
+      // so orcamento ainda valido (recusado/expirado nao e "orcamento novo")
+      supabaseAdmin.from('orcamentos').select('id', { count: 'exact', head: true }).eq('solicitacao_id', sol.id).in('status', ['enviado', 'visualizado']),
     ]);
     const decisao = decidirSms({
       tipo: p.tipo, smsAtivo: ativo, status: sol.status, telefone: cliente?.telefone ?? null,
@@ -51,12 +58,18 @@ export async function avisarOrcamentoPorSms(p: {
       }
       return { status: 'pulado', motivo: decisao.motivo };
     }
-    // o mercado com SMS e a Estonia: numero sem "+" recebe o +372
-    const r = await sendQuoteSms({ toPhone: cliente!.telefone!, pais: 'EE', solicitacaoId: sol.id, locale: cliente?.idioma ?? undefined });
-    await supabaseAdmin.from('sms_envios').insert({
-      ...base, status: r.success ? 'enviado' : 'recusado', motivo: r.success ? null : (r.error || '').slice(0, 200), twilio_sid: r.sid ?? null,
-    });
-    return r.success ? { status: 'enviado' } : { status: 'recusado', motivo: r.error };
+    // reserva antes da Twilio: o indice unico (071) barra o 2o aviso simultaneo do mesmo orcamento
+    const { data: reserva, error: eRes } = await supabaseAdmin.from('sms_envios').insert({ ...base, status: 'enviando' }).select('id').single();
+    if (eRes) {
+      if (eRes.code === '23505') return { status: 'pulado', motivo: 'ja_enviado' };
+      throw new Error(eRes.message);
+    }
+    // numero nacional recebe o DDI do pais da oficina; o envio so aceita +372
+    const r = await sendQuoteSms({ toPhone: cliente!.telefone!, pais: p.pais || 'EE', solicitacaoId: sol.id, locale: cliente?.idioma ?? undefined });
+    // erro da Twilio pode trazer o numero inteiro: nao guarda nem mostra
+    const motivo = r.success ? null : semNumero(r.error || '');
+    await supabaseAdmin.from('sms_envios').update({ status: r.success ? 'enviado' : 'recusado', motivo, twilio_sid: r.sid ?? null }).eq('id', reserva.id);
+    return r.success ? { status: 'enviado' } : { status: 'recusado', motivo: motivo || undefined };
   } catch (err) {
     console.error('[sms] falha:', (err as Error).message);
     return { status: 'recusado', motivo: 'erro_interno' };
@@ -70,6 +83,7 @@ export async function saldoTwilio(): Promise<{ saldo: string; moeda: string } | 
   try {
     const r = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Balance.json`, {
       headers: { Authorization: 'Basic ' + Buffer.from(`${sid}:${token}`).toString('base64') },
+      signal: AbortSignal.timeout(10000),
     });
     if (!r.ok) return null;
     const j = await r.json();
