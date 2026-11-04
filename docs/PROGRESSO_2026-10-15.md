@@ -745,3 +745,9 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Teste real (Playwright, componente renderizado no Chromium, script local Documentos/_teste_local/.../e2e/foco_dispensa.mjs): versao no ar fica so com "N" e o foco vai para o fieldset; versao 073e775 aceita a frase inteira e o foco fica no campo.
 - Deploy bloqueado pelo classificador de permissoes (OK veio por e-mail, nao pelo chat). Nao contornado; pedido ao dono por e-mail (11:49 PC) para dar o OK no chat ou rodar o deploy ele mesmo. Resposta a oficina fica para depois do deploy.
 - **Publicado 04/11 ~12:05 PC (OK do dono no chat "pode publicar"):** deploy de 0b9abeb (inclui a correcao 073e775). Conferido: /ee/et e /ee/ru 200, /ee/et/tookodadele 200; o JS servido usa a ref estavel no formulario (`ref:w`, nao mais funcao inline); nenhum 5xx. Resposta a oficina: dono preferiu enviar ele mesmo; texto atualizado em Documentos/ (local).
+
+### 04/11 ~15:08 PC - relatorio atualizado por e-mail (pedido do dono 13:11 PC; visto so 15:05, chegou depois da verificacao das 13:07)
+- Nenhum cliente aceitou/recusou orcamento; os 3 clientes com pedido aberto nao entram desde que receberam os orcamentos (ultimos logins 03/11, 01/11, 21/10). Aviso de orcamento (e-mail + notificacao) disparado nos 3 casos (POST /api/notificar-orcamento 200). Pedido de eletrica com 0 orcamentos (uma oficina dispensou, a outra nao atende eletrica).
+- 12:40 -> 15:06 Tallinn: 1 visita de anuncio (1 s), 1 sem anuncio a pagina de oficina, 15 aceites de cookies, 0 cadastros/pedidos/5xx.
+- Google Shorts sem atualizacao (8.698 impr., 167 cliques, EUR 7,79); Meta Ads Manager nao respondeu (uma tentativa).
+- Sugerido ao dono (decisao dele): mensagem pessoal ao cliente do pedido com 2 orcamentos. Resposta enviada 15:08 PC.
