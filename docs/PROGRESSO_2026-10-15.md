@@ -719,3 +719,9 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 ### 04/11 ~09:30 Tallinn - cartao de emergencia da home mais alto no celular (pedido do dono; aguardando ok para deploy)
 - Dono: "desceu muito o botao de emergencia". Causa: correcao de 31/10 (9471a0c) colocou o cartao vermelho em fluxo abaixo dos botoes ate 768px, mas o topo azul manteve 80 px de espaco embaixo (py-20). Nao tem relacao com o ajuste dos cookies de 03/11.
 - Mudanca: topo da home no celular com pt-12 pb-6 (>=640px pt-20; >=768px igual a antes). Medido no site real com o estilo simulado (390x844): ET cartao de 738 para 650 px do topo, RU 813 -> 725; 24 px abaixo do 2o botao. Computador sem mudanca.
+
+### 04/11 ~09:40 Tallinn - relatorio no chat (pedido do dono)
+- 03/11 18:00 -> 04/11 09:06: 21 visitas de anuncios (7 ficaram >=20 s), 0 na pagina de cadastro vindas de anuncio; 2 contas novas (1 cliente que abriu o pedido 100133, 1 oficina); 15 visitas sem anuncio as paginas de oficina; 62 aceites de cookies; 0 erros 5xx.
+- Links do story: so 4 acessos, todos previa do WhatsApp (o dono mandando os links), nenhum clique real ainda.
+- Pedido 100133 recebeu o 1o orcamento as 08:57. Chat de suporte: so mensagens "Test" do dono.
+- Google: Shorts 8.699 impr., 167 cliques, EUR 7,79 (CPC ~EUR 0,05); Pesquisa terminou 03/11 com 0 impressoes. Meta: tabela do Ads Manager nao carregou (uma carga, nao insisti).
