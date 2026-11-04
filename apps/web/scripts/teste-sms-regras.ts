@@ -27,6 +27,8 @@ confere('auto: status nulo', motivo({ status: null as any }), 'pedido_fechado');
 confere('auto: sem telefone', motivo({ telefone: null as any }), 'sem_telefone');
 confere('auto: telefone so com espacos', motivo({ telefone: '  ' }), 'sem_telefone');
 confere('auto: sem orcamento', motivo({ temOrcamento: false }), 'sem_orcamento');
+confere('auto: orcamento anterior ao SMS', motivo({ orcamentoAnterior: true } as any), 'orcamento_anterior');
+confere('manual: orcamento anterior ao SMS envia', motivo({ tipo: 'manual', orcamentoAnterior: true } as any), 'envia');
 // cancelado vence o interruptor e o app (pedido fechado nunca recebe)
 confere('auto: cancelado + desligado', motivo({ status: 'cancelada', smsAtivo: false }), 'pedido_fechado');
 

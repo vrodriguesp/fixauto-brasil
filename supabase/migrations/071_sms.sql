@@ -4,6 +4,9 @@
 -- o envio manual pelo numero do pedido.
 
 ALTER TABLE plataforma_config ADD COLUMN IF NOT EXISTS sms_ativo boolean NOT NULL DEFAULT true;
+-- orcamento criado antes disto nunca gera SMS automatico (dono 04/11: quem ja
+-- estava cotado recebe so pelo envio manual) - a data e a da migracao
+ALTER TABLE plataforma_config ADD COLUMN IF NOT EXISTS sms_desde timestamptz NOT NULL DEFAULT now();
 
 CREATE TABLE IF NOT EXISTS sms_envios (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

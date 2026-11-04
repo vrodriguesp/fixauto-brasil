@@ -47,6 +47,8 @@ async function main() {
   const { data: cli } = await db.from('profiles').select('telefone, idioma').eq('id', alvo.cliente_id).single();
   const telAntes = cli?.telefone ?? null; const idiomaAntes = cli?.idioma ?? null;
   const cfgAntes = await smsAtivo();
+  const { data: desdeRow } = await db.from('plataforma_config').select('sms_desde').eq('id', 1).single();
+  const desdeAntes = desdeRow?.sms_desde;
   const inicio = new Date().toISOString();
   const TOKEN = 'ExponentPushToken[teste-sms-banco]';
   const auto = () => avisarOrcamentoPorSms({ solicitacaoId: alvo.id, orcamentoId: orcId, tipo: 'orcamento_auto', pais: 'EE' });
@@ -56,6 +58,18 @@ async function main() {
   try {
     await db.from('profiles').update({ telefone: '5123 4567', idioma: 'et' }).eq('id', alvo.cliente_id);
     await db.from('plataforma_config').update({ sms_ativo: true }).eq('id', 1);
+    // orcamentos de teste sao antigos: SMS 'desde' 2000 para os casos normais
+    await db.from('plataforma_config').update({ sms_desde: '2000-01-01T00:00:00Z' }).eq('id', 1);
+
+    // orcamento criado antes do inicio do SMS: automatico nao envia, manual sim
+    await db.from('plataforma_config').update({ sms_desde: new Date(Date.now() + 3600000).toISOString() }).eq('id', 1);
+    let r0 = await auto();
+    confere('orcamento anterior ao SMS -> automatico nao envia', r0, { status: 'pulado', motivo: 'orcamento_anterior' });
+    confere('orcamento anterior: nada no registro', (await db.from('sms_envios').select('id', { count: 'exact', head: true }).gte('created_at', inicio)).count, 0);
+    r0 = await manual();
+    confere('orcamento anterior: manual envia', r0.status, 'enviado');
+    await limparRegistro(); enviados.length = 0;
+    await db.from('plataforma_config').update({ sms_desde: '2000-01-01T00:00:00Z' }).eq('id', 1);
 
     // envio normal: numero nacional vira +372, texto estoniano com o link do pedido
     let r = await auto();
@@ -196,7 +210,7 @@ async function main() {
     await db.from('profiles').update({ telefone: telAntes, idioma: idiomaAntes }).eq('id', alvo.cliente_id);
     await db.from('solicitacoes').update({ status: alvo.status }).eq('id', alvo.id);
     await db.from('orcamentos').update({ status: orcStatusAntes }).eq('id', orcId);
-    await db.from('plataforma_config').update({ sms_ativo: cfgAntes }).eq('id', 1);
+    await db.from('plataforma_config').update({ sms_ativo: cfgAntes, sms_desde: desdeAntes }).eq('id', 1);
     console.log('(banco local restaurado)');
   }
   console.log(falhas ? `\n${falhas} FALHA(S)` : '\nTUDO OK');

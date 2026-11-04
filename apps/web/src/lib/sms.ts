@@ -9,10 +9,13 @@ export type { TipoSms } from '@/lib/sms-regras';
 // uma vez por orcamento e so para quem NAO tem o app (o app recebe push);
 // envio manual do admin ignora interruptor/app mas nunca pedido fechado.
 
+async function smsConfig(): Promise<{ ativo: boolean; desde: string | null }> {
+  const { data, error } = await supabaseAdmin.from('plataforma_config').select('sms_ativo, sms_desde').eq('id', 1).maybeSingle();
+  if (error) { console.error('[sms] config:', error.message); return { ativo: false, desde: null }; } // sem a migracao 071 nao envia
+  return { ativo: data?.sms_ativo ?? true, desde: data?.sms_desde ?? null };
+}
 export async function smsAtivo(): Promise<boolean> {
-  const { data, error } = await supabaseAdmin.from('plataforma_config').select('sms_ativo').eq('id', 1).maybeSingle();
-  if (error) { console.error('[sms] config:', error.message); return false; } // sem a coluna (migracao 071) nao envia
-  return data?.sms_ativo ?? true;
+  return (await smsConfig()).ativo;
 }
 
 export interface ResultadoSms { status: 'enviado' | 'recusado' | 'pulado'; motivo?: string }
@@ -34,18 +37,24 @@ export async function avisarOrcamentoPorSms(p: {
     if (!sol) return { status: 'pulado', motivo: 'pedido_nao_encontrado' };
     const cliente = (sol as any).cliente as { telefone: string | null; idioma: string | null } | null;
     const desde = new Date(Date.now() - SMS_APP_DIAS * 86400000).toISOString();
-    const [ativo, app, ja, orc] = await Promise.all([
-      smsAtivo(),
+    const [cfg, app, ja, orc, este] = await Promise.all([
+      smsConfig(),
       supabaseAdmin.from('push_tokens').select('id', { count: 'exact', head: true }).eq('profile_id', sol.cliente_id).gte('last_seen_at', desde),
       p.orcamentoId
         ? supabaseAdmin.from('sms_envios').select('id', { count: 'exact', head: true }).eq('orcamento_id', p.orcamentoId).eq('status', 'enviado')
         : Promise.resolve({ count: 0 }),
       // so orcamento ainda valido (recusado/expirado nao e "orcamento novo")
       supabaseAdmin.from('orcamentos').select('id', { count: 'exact', head: true }).eq('solicitacao_id', sol.id).in('status', ['enviado', 'visualizado']),
+      p.orcamentoId
+        ? supabaseAdmin.from('orcamentos').select('created_at').eq('id', p.orcamentoId).maybeSingle()
+        : Promise.resolve({ data: null }),
     ]);
+    const criado = (este.data as { created_at?: string } | null)?.created_at;
     const decisao = decidirSms({
-      tipo: p.tipo, smsAtivo: ativo, status: sol.status, telefone: cliente?.telefone ?? null,
+      tipo: p.tipo, smsAtivo: cfg.ativo, status: sol.status, telefone: cliente?.telefone ?? null,
       temApp: (app.count ?? 0) > 0, jaEnviado: (ja.count ?? 0) > 0, temOrcamento: (orc.count ?? 0) > 0,
+      // automatico sem data confiavel (sem config ou orcamento) nao envia
+      orcamentoAnterior: !cfg.desde || !criado || new Date(criado) < new Date(cfg.desde),
     });
     const base = {
       solicitacao_id: sol.id, orcamento_id: p.orcamentoId ?? null, profile_id: sol.cliente_id, tipo: p.tipo,
@@ -53,7 +62,7 @@ export async function avisarOrcamentoPorSms(p: {
     };
     if (!decisao.enviar) {
       // "ja enviado" e "desligado" nao vao para o registro (reenvio do orcamento repetiria a linha)
-      if (decisao.motivo !== 'ja_enviado' && decisao.motivo !== 'sms_desligado') {
+      if (!['ja_enviado', 'sms_desligado', 'orcamento_anterior'].includes(decisao.motivo)) {
         await supabaseAdmin.from('sms_envios').insert({ ...base, status: 'pulado', motivo: decisao.motivo });
       }
       return { status: 'pulado', motivo: decisao.motivo };
