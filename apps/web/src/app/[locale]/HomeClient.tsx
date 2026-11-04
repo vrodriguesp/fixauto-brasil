@@ -66,7 +66,8 @@ export default function HomeClient({ guias = [] }: { guias?: GuiaResumo[] }) {
       )}
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 text-white relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+        {/* no celular menos espaco em cima e embaixo: o cartao de emergencia (em fluxo ate 768px) fica logo abaixo dos botoes (dono 04/11) */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6 sm:pt-20 md:pb-20 lg:py-32">
           <div className="max-w-3xl">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
               {t('heroTitulo')}{' '}

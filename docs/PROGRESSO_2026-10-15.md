@@ -715,3 +715,7 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Correcao: Analytics.tsx mede o aviso (--altura-cookies) e o botao do chat fica logo acima enquanto nao ha resposta; depois de responder volta para baixo. O teste novo achou mais um problema: no celular da oficina o proprio aviso ficava ATRAS da barra de baixo (botoes Aceitar/Recusar escondidos) - agora fica acima da barra.
 - Teste novo confere: aviso aparece, botoes do aviso clicaveis (nada por cima), botao do chat acima do aviso - visitante celular/PC e oficina no celular. Outros (fluxos, mensagens, pecas-ux, prazo, menu-sobreposto) ok. Auditoria Fable: sem bloqueio; aplicado useLayoutEffect e 57px.
 - Commit 1a62d8d. Deploy aguardando ok do dono (bloqueado pelo classificador sem ok explicito).
+
+### 04/11 ~09:30 Tallinn - cartao de emergencia da home mais alto no celular (pedido do dono; aguardando ok para deploy)
+- Dono: "desceu muito o botao de emergencia". Causa: correcao de 31/10 (9471a0c) colocou o cartao vermelho em fluxo abaixo dos botoes ate 768px, mas o topo azul manteve 80 px de espaco embaixo (py-20). Nao tem relacao com o ajuste dos cookies de 03/11.
+- Mudanca: topo da home no celular com pt-12 pb-6 (>=640px pt-20; >=768px igual a antes). Medido no site real com o estilo simulado (390x844): ET cartao de 738 para 650 px do topo, RU 813 -> 725; 24 px abaixo do 2o botao. Computador sem mudanca.
