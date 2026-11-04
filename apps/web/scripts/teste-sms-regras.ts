@@ -52,13 +52,13 @@ confere('so Estonia: nacional', soEstonia('51234567'), true);
 confere('so Estonia: +39 bloqueado', soEstonia('+39 333 1234567'), false);
 confere('so Estonia: +55 bloqueado', soEstonia('+55 11 91234 5678'), false);
 
-// textos reais com o link real mais longo (uuid) - partes cobradas
-// producao usa https://www.bipfix.com (o link mais longo)
-const url = (l: string) => `https://www.bipfix.com/ee/${l}/cliente/orcamentos/0d1f2a3b-1111-2222-3333-444455556666`;
-const txt = (l: 'et' | 'ru' | 'en') => fmt(SMS_I18N.quoteSms[l], { url: url(l) });
+// textos reais com o link curto de producao (numero de 9 digitos = folga) - partes cobradas
+const url = () => 'https://bipfix.com/r/100133999';
+const txt = (l: 'et' | 'ru' | 'en') => fmt(SMS_I18N.quoteSms[l], { url: url() });
 confere('ET cabe em 1 SMS', partesSms(txt('et')), 1);
 confere('EN cabe em 1 SMS', partesSms(txt('en')), 1);
-confere('RU em 2 partes (cirilico)', partesSms(txt('ru')), 2);
+confere('RU cabe em 1 SMS (cirilico, 70)', partesSms(txt('ru')), 1);
+confere('link sem palavra em portugues', /cliente|orcamento/.test(txt('et')), false);
 confere('ET sem nome/valor (tela bloqueada)', /\{|€/.test(txt('et')), false);
 confere('texto com õ vira UCS-2 (70)', partesSms('õ'.repeat(70)), 1);
 confere('texto com õ 71 letras = 2 partes', partesSms('õ'.repeat(71)), 2);

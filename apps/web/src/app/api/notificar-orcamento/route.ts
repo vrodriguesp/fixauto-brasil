@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
 
     // SMS (Estonia): regras em lib/sms.ts - interruptor do admin, quem tem o app
     // recebe push, pedido aberto, uma vez por orcamento (reenvio/revisao nao repetem)
-    results.sms = await avisarOrcamentoPorSms({ solicitacaoId: solId, orcamentoId, tipo: 'orcamento_auto', pais: (orcamento.oficina as any)?.pais });
+    results.sms = await avisarOrcamentoPorSms({ solicitacaoId: solId, orcamentoId, tipo: 'orcamento_auto' });
 
     // Send WhatsApp
     if (cliente?.telefone) {

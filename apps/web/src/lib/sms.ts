@@ -22,14 +22,14 @@ const semNumero = (t: string) => t.replace(/\+?\d[\d\s]{5,}\d/g, '…').slice(0,
 /** decide, envia e registra em sms_envios. Nunca lanca erro (o aviso por e-mail segue). */
 export async function avisarOrcamentoPorSms(p: {
   solicitacaoId: string; orcamentoId?: string | null; tipo: TipoSms; adminId?: string | null;
-  /** pais da oficina: DDI de numero nacional (padrao EE, o unico mercado com SMS) */
+  /** reserva: pais quando o pedido nao tem (o pais do pedido do cliente vem primeiro) */
   pais?: string | null;
 }): Promise<ResultadoSms> {
   // sem as chaves nao tenta nem registra (a pagina do admin ja avisa)
   if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) return { status: 'pulado', motivo: 'nao_configurado' };
   try {
     const { data: sol } = await supabaseAdmin.from('solicitacoes')
-      .select('id, status, cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(telefone, idioma)')
+      .select('id, numero, status, pais, cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(telefone, idioma)')
       .eq('id', p.solicitacaoId).maybeSingle();
     if (!sol) return { status: 'pulado', motivo: 'pedido_nao_encontrado' };
     const cliente = (sol as any).cliente as { telefone: string | null; idioma: string | null } | null;
@@ -64,8 +64,9 @@ export async function avisarOrcamentoPorSms(p: {
       if (eRes.code === '23505') return { status: 'pulado', motivo: 'ja_enviado' };
       throw new Error(eRes.message);
     }
-    // numero nacional recebe o DDI do pais da oficina; o envio so aceita +372
-    const r = await sendQuoteSms({ toPhone: cliente!.telefone!, pais: p.pais || 'EE', solicitacaoId: sol.id, locale: cliente?.idioma ?? undefined });
+    // numero sem "+" recebe o DDI do pais do PEDIDO do cliente (o cadastro nao pergunta o pais
+    // do telefone); o envio so aceita +372
+    const r = await sendQuoteSms({ toPhone: cliente!.telefone!, pais: (sol as any).pais || p.pais || 'EE', numero: (sol as any).numero, locale: cliente?.idioma ?? undefined });
     // erro da Twilio pode trazer o numero inteiro: nao guarda nem mostra
     const motivo = r.success ? null : semNumero(r.error || '');
     await supabaseAdmin.from('sms_envios').update({ status: r.success ? 'enviado' : 'recusado', motivo, twilio_sid: r.sid ?? null }).eq('id', reserva.id);

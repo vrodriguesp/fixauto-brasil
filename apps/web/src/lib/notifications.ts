@@ -260,6 +260,7 @@ const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM;
 // nao consegue responder). Geo permissions da conta liberam so +372.
 const TWILIO_SMS_FROM = process.env.TWILIO_SMS_FROM || 'BipFix';
 const SMS_PAISES = ['372'];
+const SMS_LINK_BASE = (process.env.SMS_LINK_BASE || SITE_URL.replace('://www.', '://')).replace(/\/$/, '');
 
 // Telefone em E.164 (padrao internacional). "+372 5..." / "00372..." ja traz o
 // pais; numero nacional recebe o codigo do pais do servico. Antes todo numero
@@ -307,6 +308,8 @@ async function sendSms(to: string, message: string, pais?: string | null): Promi
   const phone = telefoneE164(to, pais);
   if (!phone) return { success: false, error: 'Telefone sem país' };
   if (!SMS_PAISES.some((p) => phone.startsWith(p))) return { success: false, error: 'SMS só para a Estónia' };
+  // numero estoniano tem 7-8 digitos depois do 372: barra numero estrangeiro digitado sem "+"
+  if (!/^372\d{7,8}$/.test(phone)) return { success: false, error: 'Número estoniano inválido' };
   try {
     const r = await twilioMensagem({ From: TWILIO_SMS_FROM, To: `+${phone}`, Body: message });
     if (!r.success) console.error('[Notifications] SMS recusado:', r.error);
@@ -321,10 +324,13 @@ export async function sendQuoteSms(params: {
   toPhone: string;
   /** pais do servico (oficina): DDI de numero nacional */
   pais?: string | null;
-  solicitacaoId: string;
+  /** numero do pedido: o link curto /r/<numero> (app/r/[numero]) leva a pagina no idioma do cliente */
+  numero: string | number;
   locale?: string;
 }) {
-  const url = `${siteNoIdioma(params.locale)}/cliente/orcamentos/${params.solicitacaoId}`;
+  // link curto e neutro (dono 04/11: nada de caminho em portugues no SMS) e sem
+  // "www" para caber em 1 SMS tambem em russo
+  const url = `${SMS_LINK_BASE}/r/${params.numero}`;
   const tmpl = SMS_I18N.quoteSms[resolveEmailLocale(params.locale)];
   return sendSms(params.toPhone, fmt(tmpl, { url }), params.pais);
 }

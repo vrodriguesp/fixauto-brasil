@@ -61,7 +61,8 @@ async function main() {
     let r = await auto();
     confere('auto, tudo ok -> enviado', r, { status: 'enviado' });
     confere('para +37251234567', enviados.at(-1)?.to, '+37251234567');
-    confere('texto ET com link do pedido', enviados.at(-1)?.body, `BipFix: sinu päringule saabus uus hinnapakkumine. Vaata ja vali: ${(process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com').replace(/\/$/, '')}/ee/et/cliente/orcamentos/${alvo.id}`);
+    const base = (process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com').replace('://www.', '://').replace(/\/$/, '');
+    confere('texto ET com link curto do pedido', enviados.at(-1)?.body, `BipFix: sinu päringule saabus uus hinnapakkumine. Vaata ja vali: ${base}/r/${alvo.numero}`);
     const { data: l1 } = await db.from('sms_envios').select('status, tipo, telefone_final, twilio_sid').eq('orcamento_id', orcId).gte('created_at', inicio).single();
     confere('registro: enviado, final 567, sid', l1, { status: 'enviado', tipo: 'orcamento_auto', telefone_final: '567', twilio_sid: 'SMteste1' });
 
@@ -93,7 +94,7 @@ async function main() {
     // russo
     await db.from('profiles').update({ idioma: 'ru' }).eq('id', alvo.cliente_id);
     r = await auto();
-    confere('cliente RU -> texto russo, link /ee/ru', enviados.at(-1)?.body.startsWith('BipFix: новая смета') && enviados.at(-1)?.body.includes('/ee/ru/'), true);
+    confere('cliente RU -> texto russo com link curto', enviados.at(-1)?.body.startsWith('BipFix: новая смета') && enviados.at(-1)?.body.endsWith(`/r/${alvo.numero}`), true);
     await db.from('profiles').update({ idioma: 'et' }).eq('id', alvo.cliente_id); await limparRegistro();
 
     // telefones fora da Estonia: nunca saem
@@ -104,9 +105,19 @@ async function main() {
     }
     // numero nacional brasileiro com oficina do Brasil vira +55 (bloqueado)
     await db.from('profiles').update({ telefone: '11987654321' }).eq('id', alvo.cliente_id);
-    r = await avisarOrcamentoPorSms({ solicitacaoId: alvo.id, orcamentoId: orcId, tipo: 'orcamento_auto', pais: 'BR' });
-    confere('nacional BR com oficina BR -> recusado', r.status, 'recusado');
-    confere('nenhum SMS para fora da Estonia', enviados.length, nE);
+    r = await auto();
+    confere('celular BR sem "+" num pedido da Estonia -> recusado (formato)', r, { status: 'recusado', motivo: 'Número estoniano inválido' });
+    await limparRegistro();
+    // pedido de outro pais (BR): numero nacional vira +55 -> bloqueado
+    const { data: pAntes } = await db.from('solicitacoes').select('pais').eq('id', alvo.id).single();
+    await db.from('solicitacoes').update({ pais: 'BR' }).eq('id', alvo.id);
+    r = await auto();
+    confere('pedido do Brasil -> DDI do pedido (+55) -> recusado', r, { status: 'recusado', motivo: 'SMS só para a Estónia' });
+    await db.from('solicitacoes').update({ pais: pAntes?.pais ?? 'EE' }).eq('id', alvo.id);
+    // numeros estonianos validos: 8 digitos (celular) e 7 digitos
+    await db.from('profiles').update({ telefone: '+372 512 3456' }).eq('id', alvo.cliente_id); await limparRegistro();
+    r = await auto(); confere('+372 com 7 digitos -> envia', r.status, 'enviado');
+    confere('nenhum SMS para fora da Estonia (so o +372 valido saiu)', enviados.length, nE + 1);
     await db.from('profiles').update({ telefone: '5123 4567' }).eq('id', alvo.cliente_id); await limparRegistro();
 
     // interruptor desligado
@@ -161,6 +172,18 @@ async function main() {
     confere('admin ve o numero do pedido', (lista || []).some((e: any) => String(e.solicitacao?.numero) === String(alvo.numero)), true);
     const { data: porNumero } = await db.from('solicitacoes').select('id').eq('numero', String(alvo.numero)).maybeSingle();
     confere('busca pelo numero digitado (texto)', porNumero?.id, alvo.id);
+
+    // link curto /r/<numero>: leva a pagina do pedido no idioma do cliente
+    const { GET: linkCurto } = await import('../src/app/r/[numero]/route');
+    const destino = async (n: string) => (await linkCurto({} as any, { params: { numero: n } })).headers.get('location');
+    const site = (process.env.NEXT_PUBLIC_SITE_URL || 'https://bipfix.com').replace(/\/$/, '');
+    await db.from('profiles').update({ idioma: 'et' }).eq('id', alvo.cliente_id);
+    confere('/r/<numero> cliente ET -> /ee/et/...orcamentos/<id>', await destino(String(alvo.numero)), `${site}/ee/et/cliente/orcamentos/${alvo.id}`);
+    await db.from('profiles').update({ idioma: 'ru' }).eq('id', alvo.cliente_id);
+    confere('/r/<numero> cliente RU -> /ee/ru/...', (await destino(String(alvo.numero)))?.startsWith(`${site}/ee/ru/`), true);
+    await db.from('profiles').update({ idioma: 'et' }).eq('id', alvo.cliente_id);
+    confere('/r/ numero inexistente -> pagina inicial', (await destino('999999999'))?.replace(/\/$/, ''), site);
+    confere('/r/ lixo -> pagina inicial', (await destino("abc'--"))?.replace(/\/$/, ''), site);
 
     // RLS: anonimo nao le sms_envios
     const { createClient } = await import('@supabase/supabase-js');

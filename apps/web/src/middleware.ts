@@ -243,7 +243,8 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    // tudo, exceto arquivos estaticos/internos do Next e a pasta /api
-    '/((?!api|_next|_vercel|.*\\..*).*)',
+    // tudo, exceto arquivos estaticos/internos do Next, a pasta /api e o link
+    // curto do SMS /r/<numero> (app/r/[numero]/route.ts)
+    '/((?!api|r/|_next|_vercel|.*\\..*).*)',
   ],
 };
