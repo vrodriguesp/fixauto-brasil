@@ -293,6 +293,7 @@
           "<strong>Altri utenti:</strong> il Cliente e il Partner coinvolti nella stessa richiesta o ordine vedono i dati dell'altro necessari per svolgere il servizio (nome, recapiti, dati e foto del veicolo, indirizzo se pertinente). I profili dei Partner e le recensioni sono pubblici.",
           "<strong>Hosting:</strong> i nostri server e il database si trovano nei Paesi Bassi (Unione europea).",
           "<strong>Resend</strong> (Stati Uniti): invio delle email.",
+          "<strong>Twilio</strong> (Stati Uniti): SMS sulla tua richiesta, per esempio quando arriva un preventivo. Inviamo solo il tuo numero di telefono e il testo del messaggio. Per non riceverli più, scrivi a support@bipfix.com.",
           "<strong>Google</strong> (Stati Uniti): intelligenza artificiale Gemini per l'analisi dei danni e la trascrizione vocale; Google Analytics e misurazione delle conversioni di Google Ads (solo con consenso); Google Maps, mostrato nelle pagine profilo dei Partner.",
           "<strong>Microsoft</strong> (Stati Uniti): Microsoft Clarity (solo con consenso).",
           "<strong>OpenStreetMap Foundation</strong> (Regno Unito): conversione degli indirizzi in coordinate geografiche (servizio Nominatim).",

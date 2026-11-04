@@ -862,6 +862,19 @@ const quoteWhatsApp: Record<EmailLocale, string> = {
   ru: 'Здравствуйте, {toName}! Автосервис {oficinaNome} отправил смету на {valorTotal} для вашего автомобиля. Подробности: {url}',
 };
 
+// SMS: sem nome, oficina nem valor (aparece na tela bloqueada) e curto; o ET
+// evita "õ/š/ž" para caber em 1 SMS (GSM-7). RU (cirilico) sai em 2 partes com o link.
+const quoteSms: Record<EmailLocale, string> = {
+  pt: 'BipFix: seu pedido recebeu um novo orçamento. Veja e escolha: {url}',
+  en: 'BipFix: your request has a new quote. View and choose: {url}',
+  et: 'BipFix: sinu päringule saabus uus hinnapakkumine. Vaata ja vali: {url}',
+  it: 'BipFix: la tua richiesta ha un nuovo preventivo. Guarda e scegli: {url}',
+  'pt-PT': 'BipFix: o seu pedido recebeu um novo orçamento. Veja e escolha: {url}',
+  ru: 'BipFix: новая смета по вашей заявке: {url}',
+};
+
+export const SMS_I18N = { quoteSms };
+
 const servicoConcluidoWhatsApp: Record<EmailLocale, string> = {
   pt: 'Olá {toName}! Seu veículo {veiculoNome} já está pronto na oficina {oficinaNome} e pode ser retirado. Detalhes: {url}',
   en: 'Hi {toName}! Your vehicle {veiculoNome} is ready at {oficinaNome} and can be picked up. Details: {url}',

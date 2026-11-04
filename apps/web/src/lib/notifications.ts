@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { EMAIL_I18N, WHATSAPP_I18N, resolveEmailLocale, fmt, escapeHtml, type EmailLocale } from './email-i18n';
+import { EMAIL_I18N, WHATSAPP_I18N, SMS_I18N, resolveEmailLocale, fmt, escapeHtml, type EmailLocale } from './email-i18n';
 import { formatCurrency } from '@fixauto/shared';
 
 const resend = process.env.RESEND_API_KEY
@@ -253,7 +253,14 @@ export async function sendServicoConcluidoEmail(params: {
 
 const TWILIO_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_TOKEN = process.env.TWILIO_AUTH_TOKEN;
-const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM || 'whatsapp:+14155238886';
+// WhatsApp so com remetente proprio configurado: a conta Twilio existe agora por
+// causa do SMS (04/11) e o sandbox de teste da Twilio nao entrega a clientes.
+const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM;
+// SMS: remetente alfanumerico (aceito na Estonia sem registro previo; o cliente
+// nao consegue responder). Geo permissions da conta liberam so +372.
+const TWILIO_SMS_FROM = process.env.TWILIO_SMS_FROM || 'BipFix';
+const SMS_PAISES = ['372'];
+const SMS_LINK_BASE = (process.env.SMS_LINK_BASE || SITE_URL.replace('://www.', '://')).replace(/\/$/, '');
 
 // Telefone em E.164 (padrao internacional). "+372 5..." / "00372..." ja traz o
 // pais; numero nacional recebe o codigo do pais do servico. Antes todo numero
@@ -274,9 +281,63 @@ export function telefoneE164(bruto: string, pais?: string | null): string | null
   return null;
 }
 
+async function twilioMensagem(params: Record<string, string>): Promise<{ success: boolean; error?: string; sid?: string }> {
+  const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/Messages.json`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Basic ' + Buffer.from(`${TWILIO_SID}:${TWILIO_TOKEN}`).toString('base64'),
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(params),
+    // Twilio parada nao segura o aviso do orcamento (e-mail e o resto seguem)
+    signal: AbortSignal.timeout(10000),
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    return { success: false, error: data.message || `Twilio ${response.status}` };
+  }
+  const data = await response.json().catch(() => ({}));
+  return { success: true, sid: data.sid };
+}
+
+// SMS de servico (so sobre o pedido do proprio cliente; nada de marketing - §103¹ ESS).
+// Quem decide se envia (interruptor, app, pedido aberto) e lib/sms.ts.
+async function sendSms(to: string, message: string, pais?: string | null): Promise<{ success: boolean; error?: string; sid?: string }> {
+  if (!TWILIO_SID || !TWILIO_TOKEN) return { success: false, error: 'SMS service not configured' };
+  const phone = telefoneE164(to, pais);
+  if (!phone) return { success: false, error: 'Telefone sem país' };
+  if (!SMS_PAISES.some((p) => phone.startsWith(p))) return { success: false, error: 'SMS só para a Estónia' };
+  // numero estoniano tem 7-8 digitos depois do 372: barra numero estrangeiro digitado sem "+"
+  if (!/^372\d{7,8}$/.test(phone)) return { success: false, error: 'Número estoniano inválido' };
+  try {
+    const r = await twilioMensagem({ From: TWILIO_SMS_FROM, To: `+${phone}`, Body: message });
+    if (!r.success) console.error('[Notifications] SMS recusado:', r.error);
+    return r;
+  } catch (err) {
+    console.error('[Notifications] SMS error:', err);
+    return { success: false, error: (err as Error).message };
+  }
+}
+
+export async function sendQuoteSms(params: {
+  toPhone: string;
+  /** pais do servico (oficina): DDI de numero nacional */
+  pais?: string | null;
+  /** numero do pedido: o link curto /r/<numero> (app/r/[numero]) leva a pagina no idioma do cliente */
+  numero: string | number;
+  locale?: string;
+}) {
+  // link curto e neutro (dono 04/11: nada de caminho em portugues no SMS) e sem
+  // "www" para caber em 1 SMS tambem em russo
+  const url = `${SMS_LINK_BASE}/r/${params.numero}`;
+  const tmpl = SMS_I18N.quoteSms[resolveEmailLocale(params.locale)];
+  return sendSms(params.toPhone, fmt(tmpl, { url }), params.pais);
+}
+
 async function sendWhatsApp(to: string, message: string, pais?: string | null): Promise<{ success: boolean; error?: string }> {
-  if (!TWILIO_SID || !TWILIO_TOKEN) {
-    console.warn('[Notifications] Twilio not configured - TWILIO_ACCOUNT_SID/TWILIO_AUTH_TOKEN missing');
+  if (!TWILIO_SID || !TWILIO_TOKEN || !TWILIO_WHATSAPP_FROM) {
+    console.info('[Notifications] WhatsApp desligado (sem TWILIO_WHATSAPP_FROM ou chaves)');
     return { success: false, error: 'WhatsApp service not configured' };
   }
 

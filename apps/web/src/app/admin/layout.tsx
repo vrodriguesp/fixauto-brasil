@@ -13,6 +13,7 @@ const sidebarLinks = [
   { href: '/admin/usuarios', label: 'Usuários', icon: UsersIcon },
   { href: '/admin/oficinas', label: 'Oficinas', icon: BuildingIcon },
   { href: '/admin/suporte', label: 'Suporte (chat)', icon: ChatIcon },
+  { href: '/admin/sms', label: 'SMS aos clientes', icon: ChatIcon },
   { href: '/admin/leads-parceiros', label: 'Interessados', icon: UsersIcon },
   { href: '/admin/comissoes', label: 'Comissões', icon: CurrencyIcon },
   { href: '/admin/oficinas/performance-ruim', label: 'Performance Ruim', icon: AlertIcon },
