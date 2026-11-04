@@ -1,6 +1,6 @@
 'use client';
 
-import TextoTraduzido, { useTraducoes } from '@/components/ui/TextoTraduzido';
+import TextoTraduzido, { useTraducoes, AvisoTraducao } from '@/components/ui/TextoTraduzido';
 import { useState, useEffect, useRef } from 'react';
 import { compressImage } from '@/lib/image-compress';
 import CampoNumero from '@/components/forms/CampoNumero';
@@ -76,7 +76,11 @@ export default function EnviarOrcamentoPage() {
   const [lendoDoc, setLendoDoc] = useState<'' | 'lendo' | 'ok' | 'erro' | 'ocupada' | 'grande'>('');
   const [prefilled, setPrefilled] = useState(false);
   const [analise, setAnalise] = useState<AnaliseDano | null>(null);
-  const pecasIA = useTraducoes(analise?.pecas_afetadas);
+  // analise guardada na lingua de quem pediu primeiro: traduz o bloco todo
+  const [iaOriginal, setIaOriginal] = useState(false);
+  const trIA = useTraducoes(analise ? [analise.resumo || '', ...(analise.pecas_afetadas || [])] : null, iaOriginal);
+  const resumoIA = trIA.textos[0];
+  const pecasIA = trIA.textos.slice(1);
 
   // Fetch AI analysis if exists
   useEffect(() => {
@@ -416,11 +420,11 @@ ${d.observacoes}` : d.observacoes));
               'bg-red-100 text-red-700'
             }`}>{SEVERIDADE[analise.severidade] ? tDano(SEVERIDADE[analise.severidade]) : analise.severidade}</span>
           </div>
-          <div className="mb-2"><TextoTraduzido texto={analise.resumo} className="text-sm text-indigo-800" /></div>
+          <p className="text-sm text-indigo-800 mb-2 break-words">{resumoIA}</p>
           {analise.pecas_afetadas && analise.pecas_afetadas.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-2">
               {pecasIA.map((p, i) => (
-                <span key={i} className="text-xs bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded">{p}</span>
+                <span key={i} className="text-xs bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded max-w-full break-words">{p}</span>
               ))}
             </div>
           )}
@@ -429,6 +433,7 @@ ${d.observacoes}` : d.observacoes));
               {t('estimativaIA')}: {formatCurrency(analise.estimativa_custo.min, moeda, locale)} - {formatCurrency(analise.estimativa_custo.max, moeda, locale)}
             </p>
           )}
+          <AvisoTraducao origem={trIA.origem} original={iaOriginal} alternar={() => setIaOriginal((o) => !o)} className="mt-2 !text-indigo-500" />
         </div>
       )}
 

@@ -55,22 +55,43 @@ export function useTraducao(texto: string | null | undefined, ativo = true) {
   return tr;
 }
 
-// Lista de textos curtos (pecas, checklist, perguntas da IA): devolve cada um na
+// Bloco de textos (analise da IA: resumo, pecas, checklist, perguntas): cada um na
 // lingua de quem le, ou o original enquanto a traducao nao chega / se falhar.
-export function useTraducoes(textos: string[] | null | undefined): string[] {
+// `original` = a pessoa pediu para ver o bloco todo no original (um aviso so
+// para o bloco, nao um por linha).
+export function useTraducoes(textos: string[] | null | undefined, original = false): { textos: string[]; origem: string | null } {
   const lingua = useLocale();
   const lista = textos || [];
   const chave = lista.join('\u0000');
-  const [tr, setTr] = useState<(string | null)[]>([]);
+  const [tr, setTr] = useState<Traducao[]>([]);
   useEffect(() => {
     setTr([]);
     let vivo = true;
     Promise.all(lista.map((t) => (t.trim().length < 2 ? Promise.resolve({ texto: null, origem: null }) : traduzir(t.trim(), lingua))))
-      .then((r) => { if (vivo) setTr(r.map((x) => x.texto)); });
+      .then((r) => { if (vivo) setTr(r); });
     return () => { vivo = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chave, lingua]);
-  return lista.map((t, i) => tr[i] || t);
+  const origem = tr.find((x) => x?.texto)?.origem || null;
+  return { textos: lista.map((t, i) => (!original && tr[i]?.texto) || t), origem };
+}
+
+// "Traduzido do russo automaticamente · ver original" para um bloco inteiro
+export function AvisoTraducao({ origem, original, alternar, className }: { origem: string | null; original: boolean; alternar: () => void; className?: string }) {
+  const t = useTranslations('traducao');
+  const lingua = useLocale();
+  if (!origem) return null;
+  let nome = origem;
+  try { nome = new Intl.DisplayNames([lingua], { type: 'language' }).of(origem.toLowerCase()) || origem; } catch { /* nome do codigo */ }
+  return (
+    <p className={`text-xs text-gray-500 ${className || ''}`}>
+      <span aria-hidden="true">🌐 </span>{original ? t('original') : t('traduzidoDe', { lingua: nome })}
+      {' · '}
+      <button type="button" className="underline hover:text-gray-700" onClick={alternar}>
+        {original ? t('verTraducao') : t('verOriginal')}
+      </button>
+    </p>
+  );
 }
 
 export default function TextoTraduzido({ texto, className, compacto, ativo = true }: {

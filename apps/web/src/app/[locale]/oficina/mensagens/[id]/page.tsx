@@ -91,7 +91,7 @@ export default function OficinaMensagensPage() {
   const [perguntasSugeridas, setPerguntasSugeridas] = useState<string[]>([]);
   // na lingua da oficina (a analise pode ter sido gerada em outra); o chat
   // traduz de novo para o cliente
-  const perguntasIA = useTraducoes(perguntasSugeridas);
+  const perguntasIA = useTraducoes(perguntasSugeridas).textos;
   const [showPerguntas, setShowPerguntas] = useState(true);
 
   const scrollToBottom = () => {

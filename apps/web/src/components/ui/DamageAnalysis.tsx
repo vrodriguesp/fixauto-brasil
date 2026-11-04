@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useAnaliseDano } from '@/hooks/use-analise-dano';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
-import TextoTraduzido, { useTraducoes } from '@/components/ui/TextoTraduzido';
+import { useTraducoes, AvisoTraducao } from '@/components/ui/TextoTraduzido';
 
 export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId: string; pais?: string | null }) {
   const locale = useLocale();
@@ -15,8 +15,13 @@ export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId:
   const [showChecklist, setShowChecklist] = useState(false);
   // analise guardada uma vez por pedido, na lingua de quem pediu primeiro:
   // cada leitor ve na sua (dono 04/11: oficina russa abriu, estoniana leu em russo)
-  const pecas = useTraducoes(analise?.pecas_afetadas);
-  const checklist = useTraducoes(analise?.checklist_inspecao);
+  // (um aviso de traducao so para o bloco todo; 'ver original' volta tudo junto)
+  const [original, setOriginal] = useState(false);
+  const nPecas = analise?.pecas_afetadas?.length || 0;
+  const tr = useTraducoes(analise ? [analise.resumo || '', ...(analise.pecas_afetadas || []), ...(analise.checklist_inspecao || [])] : null, original);
+  const resumo = tr.textos[0];
+  const pecas = tr.textos.slice(1, 1 + nPecas);
+  const checklist = tr.textos.slice(1 + nPecas);
 
   const SEVERITY_CONFIG: Record<string, { label: string; color: string }> = {
     leve: { label: t('severidadeLeve'), color: 'bg-green-100 text-green-800' },
@@ -66,7 +71,7 @@ export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId:
         </span>
       </div>
 
-      <div className="mb-3"><TextoTraduzido texto={analise.resumo} className="text-sm text-gray-700" /></div>
+      <p className="text-sm text-gray-700 mb-3 break-words">{resumo}</p>
 
       {analise.estimativa_custo && (
         <div className="bg-gray-50 rounded-lg p-3 mb-3">
@@ -82,7 +87,7 @@ export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId:
           <p className="text-xs font-semibold text-gray-500 uppercase mb-1">{t('pecasAfetadas')}</p>
           <div className="flex flex-wrap gap-1">
             {pecas.map((p, i) => (
-              <span key={i} className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{p}</span>
+              <span key={i} className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded max-w-full break-words">{p}</span>
             ))}
           </div>
         </div>
@@ -99,8 +104,8 @@ export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId:
           {showChecklist && (
             <div className="mt-2 space-y-1">
               {checklist.map((item, i) => (
-                <label key={i} className="flex items-center gap-2 text-xs text-gray-700">
-                  <input type="checkbox" className="w-3.5 h-3.5 text-primary-600 rounded" />
+                <label key={i} className="flex items-start gap-2 text-xs text-gray-700">
+                  <input type="checkbox" className="w-3.5 h-3.5 mt-0.5 shrink-0 text-primary-600 rounded" />
                   {item}
                 </label>
               ))}
@@ -108,6 +113,8 @@ export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId:
           )}
         </div>
       )}
+
+      <AvisoTraducao origem={tr.origem} original={original} alternar={() => setOriginal((o) => !o)} className="mt-3" />
 
       {analise.confianca != null && (
         <p className="text-[10px] text-gray-400 mt-2">
