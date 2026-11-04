@@ -734,3 +734,10 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Testes: banco local (dispensar/desfazer muda o contador 5->4->5; bloqueia outra oficina, pedido fora do alcance, motivo invalido, autor falso, anon; orcamento apaga a dispensa); tsc ok. Teste visual pendente (PC com 1,7 GB livres, site de teste nao religado). Auditoria Fable: ordem em Encerrados, dispensa depois de orcar, contador do menu, autor_id, margem, foco do formulario, textos RU/EN - tudo corrigido.
 - Resposta a oficina preparada em Documentos/ (local), o dono envia.
 - **Publicado 04/11 ~09:45 Tallinn (OK do dono "pode deployar"):** migracao 070 aplicada no banco de producao (tabela vazia, gatilho criado, esquema recarregado) e deploy de 7e17874 (inclui o cartao de emergencia mais alto). Conferido: /ee/et, /ee/ru, /tookodadele 200; cartao de emergencia no site real 650 px (ET) / 725 px (RU) do topo em 390x844; visitante sem login recebe "permission denied" na tabela nova; nenhum 5xx depois do deploy. Tela da oficina com o botao nao conferida em producao (sem login de oficina em producao).
+
+### 04/11 ~12:40 Tallinn - relatorio incremental por e-mail (pedido do dono por e-mail 10:54 PC)
+- 09:06 -> 12:40: 5 visitas de anuncios Meta (tipico 2 s, 0 >=20 s, 0 no cadastro); 8 visitas sem anuncio as paginas de oficina; 44 aceites de cookies; 0 cadastros, 0 pedidos novos, 0 erros 5xx.
+- Oficinas: 2 orcamentos novos (pedidos 100133 e 100093, por uma oficina que ainda nao tinha orcado); primeira dispensa real em producao (pedido 100130, motivo "faz so parte").
+- Bug relatado pela oficina no comentario da dispensa: o campo aceitava 1 letra e perdia o foco. Causa: ref inline `ref={(el) => el?.focus()}` no fieldset roda de novo a cada render e puxa o foco. Corrigido com `useCallback` (commit 073e775, tsc ok). **Nao publicado** - pedido OK do dono por e-mail.
+- Google Shorts igual ao da manha (8.699 impr., 167 cliques, EUR 7,79); Meta Ads Manager travou de novo (uma carga).
+- Resposta enviada 11:39 PC (Zoho -> vitor@outlook.ie, mesma conversa, conferida em Enviados).
