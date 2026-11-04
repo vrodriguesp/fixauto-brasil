@@ -442,7 +442,8 @@
       "em_andamento": "In Progress",
       "concluida": "Completed",
       "cancelada": "Cancelled",
-      "no_show": "No-show"
+      "no_show": "No-show",
+      "expirada": "Expired"
     },
     "statusOrcamento": {
       "enviado": "Sent",

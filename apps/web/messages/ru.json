@@ -448,7 +448,8 @@
       "em_andamento": "В работе",
       "concluida": "Завершена",
       "cancelada": "Отменена",
-      "no_show": "Неявка"
+      "no_show": "Неявка",
+      "expirada": "Истекла"
     },
     "statusOrcamento": {
       "enviado": "Отправлена",

@@ -373,5 +373,12 @@
     "recusarSemCarroSim": "Yes, decline",
     "explicacaoSemCarro": "Nothing changes without your decision. If you approve, the new price applies. If you decline, the service is cancelled.",
     "feito_recusarSemCarro": "Revision declined. The service was cancelled and the workshop notified."
+  },
+  "pedidoExpirado": {
+    "titulo": "This request has expired",
+    "texto": "{dias} days passed without choosing a quote, so the request was removed from the repair shops’ list. If you still need the repair, reopen it: the quotes you received come back and the period starts again.",
+    "reabrir": "Reopen request",
+    "reabrindo": "Reopening…",
+    "erro": "Could not reopen. Please try again."
   }
 }

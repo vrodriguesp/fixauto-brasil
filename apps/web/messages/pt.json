@@ -439,7 +439,8 @@
       "em_andamento": "Em Andamento",
       "concluida": "Concluída",
       "cancelada": "Cancelada",
-      "no_show": "Não compareceu"
+      "no_show": "Não compareceu",
+      "expirada": "Expirado"
     },
     "statusOrcamento": {
       "enviado": "Enviado",

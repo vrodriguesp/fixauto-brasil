@@ -448,7 +448,8 @@
       "em_andamento": "Töös",
       "concluida": "Lõpetatud",
       "cancelada": "Tühistatud",
-      "no_show": "Ei ilmunud kohale"
+      "no_show": "Ei ilmunud kohale",
+      "expirada": "Aegunud"
     },
     "statusOrcamento": {
       "enviado": "Saadetud",

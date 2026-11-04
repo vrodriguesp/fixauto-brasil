@@ -3,6 +3,8 @@
 import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useState } from 'react';
 import RevisaoPendente from '@/components/cliente/RevisaoPendente';
+import PedidoExpirado from '@/components/cliente/PedidoExpirado';
+import { VALIDADE_PEDIDO_DIAS } from '@/lib/pedido-validade';
 import { textoErroApi } from '@/lib/erro-api';
 import { useParams } from 'next/navigation';
 import { useRouter, Link, rota } from '@/i18n/navigation';
@@ -247,6 +249,10 @@ export default function OrcamentoDetalhePage() {
           )}
         </div>
       </div>
+
+      {(solicitacao.status as string) === 'expirada' && (
+        <PedidoExpirado solicitacaoId={solicitacao.id} dias={VALIDADE_PEDIDO_DIAS} aoReabrir={refresh} />
+      )}
 
       {['aberta', 'em_orcamento'].includes(solicitacao.status) && (
         <EditarPedido key={`${solicitacao.id}-${solicitacao.veiculo?.fipe_marca || ''}`} solicitacaoId={solicitacao.id}

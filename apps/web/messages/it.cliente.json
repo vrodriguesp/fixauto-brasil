@@ -373,5 +373,12 @@
     "recusarSemCarroSim": "Sì, rifiuta",
     "explicacaoSemCarro": "Nulla cambia senza la tua decisione. Se approvi, vale il nuovo prezzo. Se rifiuti, il servizio viene annullato.",
     "feito_recusarSemCarro": "Revisione rifiutata. Il servizio è stato annullato e l'officina avvisata."
+  },
+  "pedidoExpirado": {
+    "titulo": "Questa richiesta è scaduta",
+    "texto": "Sono passati {dias} giorni senza scegliere un preventivo, quindi la richiesta è stata tolta dall’elenco delle officine. Se ti serve ancora la riparazione, riaprila: i preventivi ricevuti tornano e il periodo ricomincia.",
+    "reabrir": "Riapri richiesta",
+    "reabrindo": "Riapertura…",
+    "erro": "Impossibile riaprire. Riprova."
   }
 }

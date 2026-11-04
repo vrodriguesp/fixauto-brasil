@@ -443,3 +443,33 @@ export function notifCorrecaoSuporte(locale: string | null | undefined, entidade
   const l = resolveEmailLocale(locale);
   return { titulo: correcaoSuporte[l].titulo, mensagem: fmt(correcaoSuporte[l].mensagem, { item: itemCorrecao[l][entidade] || entidade }) };
 }
+
+// Pedido expirado (migracao 072, lib/expirar-pedidos.ts): cliente pode reabrir;
+// a oficina que orcou so e avisada que fechou.
+const pedidoExpiradoCliente: Record<EmailLocale, { titulo: string; mensagem: string }> = {
+  pt: { titulo: 'Pedido nº {numero} expirou', mensagem: 'Passaram {dias} dias sem você escolher um orçamento. Se ainda precisar, abra o pedido e toque em "Reabrir pedido".' },
+  en: { titulo: 'Request no. {numero} expired', mensagem: '{dias} days passed without choosing a quote. If you still need it, open the request and tap "Reopen request".' },
+  et: { titulo: 'Päring nr {numero} aegus', mensagem: '{dias} päeva jooksul ei valitud ühtegi hinnapakkumist. Kui vajad seda veel, ava päring ja vajuta „Ava päring uuesti“.' },
+  it: { titulo: 'Richiesta n. {numero} scaduta', mensagem: 'Sono passati {dias} giorni senza scegliere un preventivo. Se ti serve ancora, apri la richiesta e tocca "Riapri richiesta".' },
+  'pt-PT': { titulo: 'Pedido n.º {numero} expirou', mensagem: 'Passaram {dias} dias sem escolher um orçamento. Se ainda precisar, abra o pedido e toque em "Reabrir pedido".' },
+  ru: { titulo: 'Заявка № {numero} истекла', mensagem: 'За {dias} дней не была выбрана ни одна смета. Если ремонт ещё нужен, откройте заявку и нажмите «Открыть заново».' },
+};
+
+export function notifPedidoExpiradoCliente(locale: string | null | undefined, numero: string, dias: number) {
+  const s = pedidoExpiradoCliente[resolveEmailLocale(locale)];
+  return { titulo: fmt(s.titulo, { numero }), mensagem: fmt(s.mensagem, { dias: String(dias) }) };
+}
+
+const pedidoExpiradoOficina: Record<EmailLocale, { titulo: string; mensagem: string }> = {
+  pt: { titulo: 'Pedido nº {numero} expirou', mensagem: 'O cliente não escolheu um orçamento e o pedido foi fechado automaticamente.' },
+  en: { titulo: 'Request no. {numero} expired', mensagem: 'The client did not choose a quote and the request was closed automatically.' },
+  et: { titulo: 'Päring nr {numero} aegus', mensagem: 'Klient ei valinud hinnapakkumist ja päring suleti automaatselt.' },
+  it: { titulo: 'Richiesta n. {numero} scaduta', mensagem: 'Il cliente non ha scelto un preventivo e la richiesta è stata chiusa automaticamente.' },
+  'pt-PT': { titulo: 'Pedido n.º {numero} expirou', mensagem: 'O cliente não escolheu um orçamento e o pedido foi fechado automaticamente.' },
+  ru: { titulo: 'Заявка № {numero} истекла', mensagem: 'Клиент не выбрал смету, и заявка закрыта автоматически.' },
+};
+
+export function notifPedidoExpiradoOficina(locale: string | null | undefined, numero: string) {
+  const s = pedidoExpiradoOficina[resolveEmailLocale(locale)];
+  return { titulo: fmt(s.titulo, { numero }), mensagem: s.mensagem };
+}

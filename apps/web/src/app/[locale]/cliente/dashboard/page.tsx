@@ -35,6 +35,8 @@ export default function ClienteDashboard() {
   // Separate solicitations by state
   // no_show: a oficina registrou a falta e reabriu o orcamento - o cliente escolhe outro horario (M5)
   const abertas = solicitacoes.filter((s) => ['aberta', 'em_orcamento', 'no_show'].includes(s.status as string));
+  // expirado (30 dias, migracao 072) aparece junto para o cliente ver e reabrir, mas nao conta como ativo
+  const listaAbertas = solicitacoes.filter((s) => ['aberta', 'em_orcamento', 'no_show', 'expirada'].includes(s.status as string));
   const agendadas = solicitacoes.filter((s) => ['aceita', 'em_andamento'].includes(s.status));
   const concluidas = solicitacoes.filter((s) => s.status === 'concluida');
 
@@ -251,7 +253,7 @@ export default function ClienteDashboard() {
         {/* Open requests - only abertas/em_orcamento */}
         <div className="lg:col-span-2 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">{t('openRequestsTitle')}</h2>
-          {abertas.length === 0 ? (
+          {listaAbertas.length === 0 ? (
             <div className="card text-center py-12">
               <p className="text-gray-500 mb-4">
                 {agendadas.length > 0
@@ -263,7 +265,7 @@ export default function ClienteDashboard() {
               </Link>
             </div>
           ) : (
-            abertas.map((sol) => (
+            listaAbertas.map((sol) => (
               <Link key={sol.id} href={`/cliente/orcamentos/${sol.id}`} className="card block hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">

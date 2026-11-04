@@ -373,5 +373,12 @@
     "recusarSemCarroSim": "Jah, keeldu",
     "explicacaoSemCarro": "Ilma sinu otsuseta ei muutu midagi. Kui kinnitad, kehtib uus hind. Kui keeldud, teenus tühistatakse.",
     "feito_recusarSemCarro": "Muudatusest keelduti. Teenus tühistati ja töökoda sai teate."
+  },
+  "pedidoExpirado": {
+    "titulo": "See päring on aegunud",
+    "texto": "{dias} päeva jooksul ei valitud ühtegi hinnapakkumist, seega eemaldati päring töökodade nimekirjast. Kui vajad remonti veel, ava päring uuesti: saadud hinnapakkumised tulevad tagasi ja tähtaeg algab uuesti.",
+    "reabrir": "Ava päring uuesti",
+    "reabrindo": "Avan uuesti…",
+    "erro": "Päringut ei õnnestunud uuesti avada. Proovi uuesti."
   }
 }

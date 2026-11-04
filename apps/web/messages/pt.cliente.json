@@ -373,5 +373,12 @@
     "recusarSemCarroSim": "Sim, recusar",
     "explicacaoSemCarro": "Nada muda sem a sua decisão. Se aprovar, vale o novo valor. Se recusar, o serviço é cancelado.",
     "feito_recusarSemCarro": "Revisão recusada. O serviço foi cancelado e a oficina avisada."
+  },
+  "pedidoExpirado": {
+    "titulo": "Este pedido expirou",
+    "texto": "Passaram {dias} dias sem você escolher um orçamento, então o pedido saiu da lista das oficinas. Se ainda precisar do reparo, reabra: os orçamentos que você recebeu voltam e o prazo recomeça.",
+    "reabrir": "Reabrir pedido",
+    "reabrindo": "Reabrindo…",
+    "erro": "Não foi possível reabrir. Tente de novo."
   }
 }

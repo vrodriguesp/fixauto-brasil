@@ -440,7 +440,8 @@
       "em_andamento": "In Corso",
       "concluida": "Completata",
       "cancelada": "Annullata",
-      "no_show": "Non si è presentato"
+      "no_show": "Non si è presentato",
+      "expirada": "Scaduta"
     },
     "statusOrcamento": {
       "enviado": "Inviato",
