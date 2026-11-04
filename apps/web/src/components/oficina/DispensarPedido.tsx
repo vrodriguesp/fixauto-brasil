@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 
@@ -27,6 +27,9 @@ export default function DispensarPedido({ solicitacaoId, oficinaId, dispensa, ao
   const [comentario, setComentario] = useState('');
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState(false);
+  // ref estavel: com ref inline o React chamava focus() a cada letra digitada e o
+  // comentario perdia o foco depois de 1 caractere (relato de oficina 04/11)
+  const focarForm = useCallback((el: HTMLFieldSetElement | null) => { el?.focus(); }, []);
 
   const salvar = async () => {
     if (!motivo) return;
@@ -73,7 +76,7 @@ export default function DispensarPedido({ solicitacaoId, oficinaId, dispensa, ao
   }
 
   return (
-    <fieldset ref={(el) => el?.focus()} tabIndex={-1} className="mt-3 rounded-xl border border-gray-200 bg-gray-50 p-4 outline-none" data-testid="dispensar-form">
+    <fieldset ref={focarForm} tabIndex={-1} className="mt-3 rounded-xl border border-gray-200 bg-gray-50 p-4 outline-none" data-testid="dispensar-form">
       <legend className="sr-only">{t('dispensarTitulo')}</legend>
       <p className="font-medium text-gray-900" aria-hidden="true">{t('dispensarTitulo')}</p>
       <p className="mt-1 text-sm text-gray-600">{t('dispensarAjuda')}</p>
