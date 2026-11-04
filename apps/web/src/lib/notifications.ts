@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { EMAIL_I18N, WHATSAPP_I18N, resolveEmailLocale, fmt, escapeHtml, type EmailLocale } from './email-i18n';
+import { EMAIL_I18N, WHATSAPP_I18N, SMS_I18N, resolveEmailLocale, fmt, escapeHtml, type EmailLocale } from './email-i18n';
 import { formatCurrency } from '@fixauto/shared';
 
 const resend = process.env.RESEND_API_KEY
@@ -253,7 +253,13 @@ export async function sendServicoConcluidoEmail(params: {
 
 const TWILIO_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_TOKEN = process.env.TWILIO_AUTH_TOKEN;
-const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM || 'whatsapp:+14155238886';
+// WhatsApp so com remetente proprio configurado: a conta Twilio existe agora por
+// causa do SMS (04/11) e o sandbox de teste da Twilio nao entrega a clientes.
+const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM;
+// SMS: remetente alfanumerico (aceito na Estonia sem registro previo; o cliente
+// nao consegue responder). Geo permissions da conta liberam so +372.
+const TWILIO_SMS_FROM = process.env.TWILIO_SMS_FROM || 'BipFix';
+const SMS_PAISES = ['372'];
 
 // Telefone em E.164 (padrao internacional). "+372 5..." / "00372..." ja traz o
 // pais; numero nacional recebe o codigo do pais do servico. Antes todo numero
@@ -274,8 +280,53 @@ export function telefoneE164(bruto: string, pais?: string | null): string | null
   return null;
 }
 
+async function twilioMensagem(params: Record<string, string>): Promise<{ success: boolean; error?: string }> {
+  const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/Messages.json`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Basic ' + Buffer.from(`${TWILIO_SID}:${TWILIO_TOKEN}`).toString('base64'),
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(params),
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    return { success: false, error: data.message || `Twilio ${response.status}` };
+  }
+  return { success: true };
+}
+
+// SMS de servico (so sobre o pedido do proprio cliente; nada de marketing - §103¹ ESS)
+async function sendSms(to: string, message: string, pais?: string | null): Promise<{ success: boolean; error?: string }> {
+  if (!TWILIO_SID || !TWILIO_TOKEN) return { success: false, error: 'SMS service not configured' };
+  const phone = telefoneE164(to, pais);
+  if (!phone) return { success: false, error: 'Telefone sem país' };
+  if (!SMS_PAISES.some((p) => phone.startsWith(p))) return { success: false, error: 'SMS só para a Estónia' };
+  try {
+    const r = await twilioMensagem({ From: TWILIO_SMS_FROM, To: `+${phone}`, Body: message });
+    if (!r.success) console.error('[Notifications] SMS recusado:', r.error);
+    return r;
+  } catch (err) {
+    console.error('[Notifications] SMS error:', err);
+    return { success: false, error: (err as Error).message };
+  }
+}
+
+export async function sendQuoteSms(params: {
+  toPhone: string;
+  /** pais do servico (oficina): DDI de numero nacional */
+  pais?: string | null;
+  solicitacaoId: string;
+  locale?: string;
+}) {
+  const url = `${siteNoIdioma(params.locale)}/cliente/orcamentos/${params.solicitacaoId}`;
+  const tmpl = SMS_I18N.quoteSms[resolveEmailLocale(params.locale)];
+  return sendSms(params.toPhone, fmt(tmpl, { url }), params.pais);
+}
+
 async function sendWhatsApp(to: string, message: string, pais?: string | null): Promise<{ success: boolean; error?: string }> {
-  if (!TWILIO_SID || !TWILIO_TOKEN) {
+  if (!TWILIO_SID || !TWILIO_TOKEN || !TWILIO_WHATSAPP_FROM) {
     console.warn('[Notifications] Twilio not configured - TWILIO_ACCOUNT_SID/TWILIO_AUTH_TOKEN missing');
     return { success: false, error: 'WhatsApp service not configured' };
   }

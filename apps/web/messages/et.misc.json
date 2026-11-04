@@ -293,6 +293,7 @@
           "<strong>Teised kasutajad:</strong> sama päringu või tellimusega seotud klient ja partner näevad teineteise andmeid, mida on vaja teenuse osutamiseks (nimi, kontaktandmed, sõiduki andmed ja fotod, vajaduse korral aadress). Partnerite profiilid ja arvustused on avalikud.",
           "<strong>Majutus:</strong> meie serverid ja andmebaas asuvad Madalmaades (Euroopa Liit).",
           "<strong>Resend</strong> (Ameerika Ühendriigid): e-kirjade saatmine.",
+          "<strong>Twilio</strong> (Ameerika Ühendriigid): tekstisõnumid (SMS) sinu enda päringu kohta, näiteks kui saabub hinnapakkumine. Saadame ainult sinu telefoninumbri ja sõnumi teksti. Kui sa ei soovi neid enam saada, kirjuta aadressile support@bipfix.com.",
           "<strong>Google</strong> (Ameerika Ühendriigid): tehisintellekt Gemini kahjustuste analüüsiks ja kõne transkribeerimiseks; Google Analytics ja Google Adsi konversioonide mõõtmine (ainult nõusolekul); Google Maps, mida näidatakse partnerite profiilidel.",
           "<strong>Microsoft</strong> (Ameerika Ühendriigid): Microsoft Clarity (ainult nõusolekul).",
           "<strong>OpenStreetMap Foundation</strong> (Ühendkuningriik): aadresside teisendamine kaardikoordinaatideks (teenus Nominatim).",
