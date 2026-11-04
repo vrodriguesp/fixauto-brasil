@@ -573,14 +573,14 @@
     "statusPago": "Pagato"
   },
   "damageAnalysis": {
-    "tituloInicial": "Analisi IA del Danno",
-    "descricaoInicial": "Usa l'intelligenza artificiale per analizzare le foto del danno.",
+    "tituloInicial": "Analisi IA della richiesta",
+    "descricaoInicial": "Usa l'intelligenza artificiale per analizzare le foto e la descrizione del cliente.",
     "analisando": "Analisi foto in corso...",
     "tentarNovamente": "Riprova",
     "analisarComIA": "Analizza con IA",
     "titulo": "Analisi IA",
     "estimativaCusto": "Stima dei costi",
-    "pecasAfetadas": "Parti interessate",
+    "pecasAfetadas": "Ricambi coinvolti",
     "ocultarChecklist": "Nascondi checklist",
     "checklistInspecao": "Checklist di ispezione ({count} voci)",
     "confianca": "Affidabilità: {percent}%",

@@ -7,6 +7,7 @@ import { baixarMidia } from '@/lib/midia-servidor';
 import { idiomaDoSite } from '@/lib/site-url';
 import { currencyForCountry } from '@/lib/currency';
 import { chamarGemini } from '@/lib/gemini';
+import { promptAnalise } from '@/lib/analise-prompt';
 
 
 export async function POST(req: NextRequest) {
@@ -89,9 +90,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Não foi possível carregar as fotos' }, { status: 500 });
     }
     const soTexto = imageParts.length === 0;
-    const instrucao = soTexto
-      ? 'Nao ha fotos: analise so pela descricao do cliente, como hipoteses provaveis, e use confianca baixa (no maximo 0.5).'
-      : 'Analise as fotos.';
+
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -105,10 +104,7 @@ export async function POST(req: NextRequest) {
             parts: [
               ...imageParts,
               {
-                text: `Especialista em reparos automotivos (${mercado}). ${contexto}
-${instrucao} Responda JSON CURTO E DIRETO:
-{"resumo":"max 2 frases","severidade":"leve|moderado|grave|severo","checklist_inspecao":["max 5 itens"],"pecas_afetadas":["max 5 pecas"],"estimativa_custo":{"min":0,"max":0},"confianca":0.8,"perguntas_sugeridas":["max 3 perguntas para a oficina fazer ao cliente para entender melhor o dano"]}
-Seja BREVE. Escreva os textos (resumo, checklist_inspecao, pecas_afetadas, perguntas_sugeridas) em ${nomeIdioma}. O campo severidade deve ser EXATAMENTE um destes valores, sem traduzir: leve, moderado, grave, severo. Precos em ${moeda} do mercado de ${mercado}.`,
+                text: promptAnalise({ tipo: sol?.tipo, contexto, soTexto, mercado, moeda, nomeIdioma }),
               },
             ],
           }],

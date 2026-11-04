@@ -581,14 +581,14 @@
     "statusPago": "Оплачено"
   },
   "damageAnalysis": {
-    "tituloInicial": "ИИ-анализ повреждений",
-    "descricaoInicial": "Используйте ИИ для анализа фотографий повреждений.",
+    "tituloInicial": "ИИ-анализ заявки",
+    "descricaoInicial": "Используйте ИИ для анализа фотографий и описания клиента.",
     "analisando": "Анализируем фотографии...",
     "tentarNovamente": "Попробовать ещё раз",
     "analisarComIA": "Анализировать с помощью ИИ",
     "titulo": "ИИ-анализ",
     "estimativaCusto": "Оценка стоимости",
-    "pecasAfetadas": "Повреждённые детали",
+    "pecasAfetadas": "Затрагиваемые детали",
     "ocultarChecklist": "Скрыть чек-лист",
     "checklistInspecao": "Чек-лист осмотра (пунктов: {count})",
     "confianca": "Уверенность: {percent}%",

@@ -575,14 +575,14 @@
     "statusPago": "Paid"
   },
   "damageAnalysis": {
-    "tituloInicial": "AI Damage Analysis",
-    "descricaoInicial": "Use AI to analyze the damage photos.",
+    "tituloInicial": "AI analysis of the request",
+    "descricaoInicial": "Use AI to analyse the photos and the customer's description.",
     "analisando": "Analyzing photos...",
     "tentarNovamente": "Try again",
     "analisarComIA": "Analyze with AI",
     "titulo": "AI Analysis",
     "estimativaCusto": "Cost estimate",
-    "pecasAfetadas": "Affected parts",
+    "pecasAfetadas": "Parts involved",
     "ocultarChecklist": "Hide checklist",
     "checklistInspecao": "Inspection checklist ({count} items)",
     "confianca": "Confidence: {percent}%",

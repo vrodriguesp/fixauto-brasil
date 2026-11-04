@@ -1,6 +1,6 @@
 'use client';
 
-import TextoTraduzido from '@/components/ui/TextoTraduzido';
+import TextoTraduzido, { useTraducoes } from '@/components/ui/TextoTraduzido';
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
@@ -89,6 +89,9 @@ export default function OficinaMensagensPage() {
   const [uploadingAudio, setUploadingAudio] = useState(false);
   const { uploadAudio } = useAudioRecorder();
   const [perguntasSugeridas, setPerguntasSugeridas] = useState<string[]>([]);
+  // na lingua da oficina (a analise pode ter sido gerada em outra); o chat
+  // traduz de novo para o cliente
+  const perguntasIA = useTraducoes(perguntasSugeridas);
   const [showPerguntas, setShowPerguntas] = useState(true);
 
   const scrollToBottom = () => {
@@ -499,7 +502,7 @@ export default function OficinaMensagensPage() {
             <button onClick={() => setShowPerguntas(false)} className="text-xs text-indigo-400 hover:text-indigo-600">x</button>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {perguntasSugeridas.map((p, i) => (
+            {perguntasIA.map((p, i) => (
               <button key={i} onClick={() => { setNewMessage(p); setShowPerguntas(false); inputRef.current?.focus(); }}
                 className="text-xs bg-white border border-indigo-200 text-indigo-800 px-2.5 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors text-left">
                 {p}

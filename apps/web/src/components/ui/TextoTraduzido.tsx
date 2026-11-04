@@ -55,6 +55,24 @@ export function useTraducao(texto: string | null | undefined, ativo = true) {
   return tr;
 }
 
+// Lista de textos curtos (pecas, checklist, perguntas da IA): devolve cada um na
+// lingua de quem le, ou o original enquanto a traducao nao chega / se falhar.
+export function useTraducoes(textos: string[] | null | undefined): string[] {
+  const lingua = useLocale();
+  const lista = textos || [];
+  const chave = lista.join('\u0000');
+  const [tr, setTr] = useState<(string | null)[]>([]);
+  useEffect(() => {
+    setTr([]);
+    let vivo = true;
+    Promise.all(lista.map((t) => (t.trim().length < 2 ? Promise.resolve({ texto: null, origem: null }) : traduzir(t.trim(), lingua))))
+      .then((r) => { if (vivo) setTr(r.map((x) => x.texto)); });
+    return () => { vivo = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chave, lingua]);
+  return lista.map((t, i) => tr[i] || t);
+}
+
 export default function TextoTraduzido({ texto, className, compacto, ativo = true }: {
   texto: string | null | undefined;
   className?: string;

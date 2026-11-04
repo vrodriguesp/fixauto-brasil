@@ -572,14 +572,14 @@
     "statusPago": "Pago"
   },
   "damageAnalysis": {
-    "tituloInicial": "Análise IA do Dano",
-    "descricaoInicial": "Use inteligência artificial para analisar as fotos do dano.",
+    "tituloInicial": "Análise IA do pedido",
+    "descricaoInicial": "Use inteligência artificial para analisar as fotos e a descrição do cliente.",
     "analisando": "Analisando fotos...",
     "tentarNovamente": "Tentar novamente",
     "analisarComIA": "Analisar com IA",
     "titulo": "Análise IA",
     "estimativaCusto": "Estimativa de custo",
-    "pecasAfetadas": "Peças afetadas",
+    "pecasAfetadas": "Peças envolvidas",
     "ocultarChecklist": "Ocultar checklist",
     "checklistInspecao": "Checklist de inspeção ({count} itens)",
     "confianca": "Confiança: {percent}%",

@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useAnaliseDano } from '@/hooks/use-analise-dano';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
+import TextoTraduzido, { useTraducoes } from '@/components/ui/TextoTraduzido';
 
 export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId: string; pais?: string | null }) {
   const locale = useLocale();
@@ -12,6 +13,10 @@ export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId:
   const moeda = currencyForCountry(pais);
   const { analise, loading, analyzing, error, analisar } = useAnaliseDano(solicitacaoId);
   const [showChecklist, setShowChecklist] = useState(false);
+  // analise guardada uma vez por pedido, na lingua de quem pediu primeiro:
+  // cada leitor ve na sua (dono 04/11: oficina russa abriu, estoniana leu em russo)
+  const pecas = useTraducoes(analise?.pecas_afetadas);
+  const checklist = useTraducoes(analise?.checklist_inspecao);
 
   const SEVERITY_CONFIG: Record<string, { label: string; color: string }> = {
     leve: { label: t('severidadeLeve'), color: 'bg-green-100 text-green-800' },
@@ -61,7 +66,7 @@ export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId:
         </span>
       </div>
 
-      <p className="text-sm text-gray-700 mb-3">{analise.resumo}</p>
+      <div className="mb-3"><TextoTraduzido texto={analise.resumo} className="text-sm text-gray-700" /></div>
 
       {analise.estimativa_custo && (
         <div className="bg-gray-50 rounded-lg p-3 mb-3">
@@ -76,7 +81,7 @@ export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId:
         <div className="mb-3">
           <p className="text-xs font-semibold text-gray-500 uppercase mb-1">{t('pecasAfetadas')}</p>
           <div className="flex flex-wrap gap-1">
-            {analise.pecas_afetadas.map((p, i) => (
+            {pecas.map((p, i) => (
               <span key={i} className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{p}</span>
             ))}
           </div>
@@ -93,7 +98,7 @@ export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId:
           </button>
           {showChecklist && (
             <div className="mt-2 space-y-1">
-              {analise.checklist_inspecao.map((item, i) => (
+              {checklist.map((item, i) => (
                 <label key={i} className="flex items-center gap-2 text-xs text-gray-700">
                   <input type="checkbox" className="w-3.5 h-3.5 text-primary-600 rounded" />
                   {item}

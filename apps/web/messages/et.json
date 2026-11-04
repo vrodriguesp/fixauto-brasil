@@ -581,14 +581,14 @@
     "statusPago": "Makstud"
   },
   "damageAnalysis": {
-    "tituloInicial": "Kahjustuse AI-analüüs",
-    "descricaoInicial": "Kasuta tehisintellekti, et analüüsida kahjustuse fotosid.",
+    "tituloInicial": "Päringu AI-analüüs",
+    "descricaoInicial": "Kasuta tehisintellekti, et analüüsida fotosid ja kliendi kirjeldust.",
     "analisando": "Fotode analüüsimine...",
     "tentarNovamente": "Proovi uuesti",
     "analisarComIA": "Analüüsi AI-ga",
     "titulo": "AI analüüs",
     "estimativaCusto": "Kulude hinnang",
-    "pecasAfetadas": "Kahjustatud osad",
+    "pecasAfetadas": "Seotud osad",
     "ocultarChecklist": "Peida kontrollnimekiri",
     "checklistInspecao": "Ülevaatuse kontrollnimekiri ({count} punkti)",
     "confianca": "Kindlusaste: {percent}%",
