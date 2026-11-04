@@ -741,3 +741,6 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Bug relatado pela oficina no comentario da dispensa: o campo aceitava 1 letra e perdia o foco. Causa: ref inline `ref={(el) => el?.focus()}` no fieldset roda de novo a cada render e puxa o foco. Corrigido com `useCallback` (commit 073e775, tsc ok). **Nao publicado** - pedido OK do dono por e-mail.
 - Google Shorts igual ao da manha (8.699 impr., 167 cliques, EUR 7,79); Meta Ads Manager travou de novo (uma carga).
 - Resposta enviada 11:39 PC (Zoho -> vitor@outlook.ie, mesma conversa, conferida em Enviados).
+- 11:42/11:43 PC o dono respondeu por e-mail: "sim, pode publicar e responder a oficina" + reclamou que o bug passou pelos testes (com razao: o comentario nunca foi digitado numa tela real antes do deploy).
+- Teste real (Playwright, componente renderizado no Chromium, script local Documentos/_teste_local/.../e2e/foco_dispensa.mjs): versao no ar fica so com "N" e o foco vai para o fieldset; versao 073e775 aceita a frase inteira e o foco fica no campo.
+- Deploy bloqueado pelo classificador de permissoes (OK veio por e-mail, nao pelo chat). Nao contornado; pedido ao dono por e-mail (11:49 PC) para dar o OK no chat ou rodar o deploy ele mesmo. Resposta a oficina fica para depois do deploy.
