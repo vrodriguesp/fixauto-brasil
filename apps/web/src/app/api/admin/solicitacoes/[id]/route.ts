@@ -42,6 +42,8 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       { data: analiseDano },
       { data: emergencia },
       { data: agendaRows },
+      { data: dispensas },
+      { count: totalVistos },
     ] = await Promise.all([
       supabaseAdmin.from('solicitacao_fotos').select('*').eq('solicitacao_id', params.id),
       supabaseAdmin
@@ -65,6 +67,13 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
         .from('agenda')
         .select('*, funcionario:funcionarios(id, profile_id, cargo, profile:profiles(nome))')
         .eq('solicitacao_id', params.id),
+      // "nao tenho interesse" das oficinas, com o motivo (migracao 070)
+      supabaseAdmin
+        .from('pedido_dispensas')
+        .select('motivo, comentario, created_at, oficina:oficinas(id, nome_fantasia, cidade)')
+        .eq('solicitacao_id', params.id)
+        .order('created_at', { ascending: true }),
+      supabaseAdmin.from('pedido_vistos').select('oficina_id', { count: 'exact', head: true }).eq('solicitacao_id', params.id),
     ]);
 
     let etapas: any[] = [];
@@ -98,6 +107,8 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       agenda: agendaRows || [],
       etapas,
       notasInternas,
+      dispensas: dispensas || [],
+      totalVistos: totalVistos || 0,
     });
   } catch (error) {
     console.error('[admin/solicitacoes/:id]', error);

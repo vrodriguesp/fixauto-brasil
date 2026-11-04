@@ -48,7 +48,9 @@ export default function Navbar() {
     const ler = () => supabase.rpc('pedidos_para_responder').then(({ data }) => { if (vivo && data) setParaResponder(data as any); });
     ler();
     const i = setInterval(ler, 60e3);
-    return () => { vivo = false; clearInterval(i); };
+    // "nao tenho interesse" muda o contador na hora (components/oficina/DispensarPedido.tsx)
+    window.addEventListener('bipfix:pedido-dispensa', ler);
+    return () => { vivo = false; clearInterval(i); window.removeEventListener('bipfix:pedido-dispensa', ler); };
   }, [isOficina, isMecanico, oficina]);
   const contadorPedidos = paraResponder && paraResponder.total > 0 ? (
     <span className={`ml-1 inline-block min-w-[1.25rem] rounded-full px-1.5 text-center text-xs font-semibold leading-5 ${paraResponder.atrasados > 0 ? 'bg-red-600 text-white' : 'bg-primary-100 text-primary-800'}`} aria-label={t('pedidosEsperando', { n: paraResponder.total })}>{paraResponder.total}</span>

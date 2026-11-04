@@ -68,6 +68,9 @@ function resumo(v: any): string {
     .join(' · ');
 }
 
+// motivos de "nao tenho interesse" (components/oficina/DispensarPedido.tsx)
+const MOTIVO_DISPENSA: Record<string, string> = { nao_faz: 'Não faz o serviço', faz_parte: 'Faz só parte', sem_agenda: 'Sem agenda', longe: 'Longe demais', outro: 'Outro motivo' };
+
 export default function AdminSolicitacaoDetalhePage() {
   const { id } = useParams<{ id: string }>();
   const [data, setData] = useState<any>(null);
@@ -183,7 +186,7 @@ export default function AdminSolicitacaoDetalhePage() {
   if (loading) return <div className="text-slate-400">Carregando...</div>;
   if (!data) return <div className="text-slate-400">Solicitação não encontrada.</div>;
 
-  const { solicitacao, fotos, orcamentos, mensagens, avaliacao, analiseDano, emergencia, agenda, etapas, notasInternas } = data;
+  const { solicitacao, fotos, orcamentos, mensagens, avaliacao, analiseDano, emergencia, agenda, etapas, notasInternas, dispensas = [], totalVistos = 0 } = data;
 
   return (
     <div className="max-w-5xl">
@@ -353,6 +356,29 @@ export default function AdminSolicitacaoDetalhePage() {
                     </button>
                   </div>
                 )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* oficinas que marcaram "nao tenho interesse" (migracao 070) */}
+      <div className="mb-8" data-testid="admin-dispensas">
+        <p className="text-slate-400 text-xs uppercase tracking-wide mb-3">
+          Sem interesse ({dispensas.length}) · {totalVistos} {totalVistos === 1 ? 'oficina abriu' : 'oficinas abriram'} o pedido
+        </p>
+        {dispensas.length === 0 ? (
+          <p className="text-slate-500 text-sm">Nenhuma oficina marcou &quot;não tenho interesse&quot;.</p>
+        ) : (
+          <div className="space-y-2">
+            {dispensas.map((d: any) => (
+              <div key={d.oficina?.id || d.created_at} className="bg-slate-800 border border-slate-700 rounded-xl p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-white font-medium">{d.oficina?.nome_fantasia || '—'}{d.oficina?.cidade && <span className="text-slate-400 font-normal"> · {d.oficina.cidade}</span>}</p>
+                  <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-300">{MOTIVO_DISPENSA[d.motivo] || d.motivo}</span>
+                </div>
+                {d.comentario && <p className="text-slate-300 text-sm mt-2 break-words">“{d.comentario}”</p>}
+                <p className="text-slate-500 text-xs mt-2">{formatDateTime(d.created_at)}</p>
               </div>
             ))}
           </div>

@@ -14,6 +14,7 @@ import { formatDate, formatCurrency, getUrgenciaColor, cleanDescricao } from '@/
 import { currencyForCountry } from '@/lib/currency';
 import { Link } from '@/i18n/navigation';
 import MidiaPrivada from '@/components/midia/MidiaPrivada';
+import DispensarPedido, { type Dispensa } from '@/components/oficina/DispensarPedido';
 
 export default function SolicitacaoDetalhePage() {
   const t = useTranslations('oficinaSolicitacaoDetalhe');
@@ -50,6 +51,16 @@ export default function SolicitacaoDetalhePage() {
     if (!oficina?.id || !params.id) return;
     supabase.from('pedido_vistos').upsert({ solicitacao_id: params.id as string, oficina_id: oficina.id }, { onConflict: 'solicitacao_id,oficina_id', ignoreDuplicates: true }).then(() => {});
   }, [oficina?.id, params.id]);
+
+  // "nao tenho interesse" (migracao 070)
+  const [dispensa, setDispensa] = useState<Dispensa | null>(null);
+  const carregarDispensa = () => {
+    if (!oficina?.id || !params.id) return;
+    supabase.from('pedido_dispensas').select('solicitacao_id, motivo, comentario, created_at').eq('solicitacao_id', params.id as string).eq('oficina_id', oficina.id).maybeSingle()
+      .then(({ data }) => setDispensa((data as Dispensa) || null));
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(carregarDispensa, [oficina?.id, params.id]);
 
   if (!sol && !buscaFeita) {
     return (
@@ -120,7 +131,7 @@ export default function SolicitacaoDetalhePage() {
             {t('mensagem')}
           </Link>
           {sol.status !== 'concluida' && sol.status !== 'cancelada' && (
-            <Link href={action.href} className={`${isAccepted || myQuote ? 'btn-secondary' : 'btn-primary'} text-center min-h-[44px] inline-flex items-center justify-center`}>
+            <Link href={action.href} className={`${isAccepted || myQuote || dispensa ? 'btn-secondary' : 'btn-primary'} text-center min-h-[44px] inline-flex items-center justify-center`}>
               {action.label}
             </Link>
           )}
@@ -131,6 +142,12 @@ export default function SolicitacaoDetalhePage() {
           )}
         </div>
       </div>
+
+      {!myQuote && oficina && ['aberta', 'em_orcamento'].includes(sol.status) && (
+        <div className="mb-6 -mt-2">
+          <DispensarPedido solicitacaoId={sol.id} oficinaId={oficina.id} dispensa={dispensa} aoMudar={carregarDispensa} />
+        </div>
+      )}
 
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">

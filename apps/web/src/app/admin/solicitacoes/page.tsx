@@ -27,6 +27,8 @@ interface Row {
   veiculo: { fipe_marca: string; fipe_modelo: string; placa: string | null } | null;
   totalOrcamentos: number;
   orcamentoAceito: boolean;
+  totalVistos: number;
+  totalDispensas: number;
 }
 
 export default function AdminSolicitacoesPage() {
@@ -158,6 +160,11 @@ function AdminSolicitacoesContent() {
                   <td className="px-6 py-4 text-slate-300 text-sm">
                     {r.totalOrcamentos}
                     {r.orcamentoAceito && <span className="ml-1 text-emerald-400 text-xs">(aceito)</span>}
+                    {/* quantas oficinas abriram e quantas marcaram "nao tenho interesse" (migracao 070) */}
+                    <p className="text-slate-500 text-xs whitespace-nowrap" data-testid="admin-vistos-dispensas">
+                      {r.totalVistos} {r.totalVistos === 1 ? 'viu' : 'viram'}
+                      {r.totalDispensas > 0 && <span className="text-amber-400"> · {r.totalDispensas} sem interesse</span>}
+                    </p>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_BADGE[r.status] || 'bg-slate-500/20 text-slate-300'}`}>

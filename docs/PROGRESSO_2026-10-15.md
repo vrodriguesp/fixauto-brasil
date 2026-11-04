@@ -725,3 +725,11 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Links do story: so 4 acessos, todos previa do WhatsApp (o dono mandando os links), nenhum clique real ainda.
 - Pedido 100133 recebeu o 1o orcamento as 08:57. Chat de suporte: so mensagens "Test" do dono.
 - Google: Shorts 8.699 impr., 167 cliques, EUR 7,79 (CPC ~EUR 0,05); Pesquisa terminou 03/11 com 0 impressoes. Meta: tabela do Ads Manager nao carregou (uma carga, nao insisti).
+
+### 04/11 ~10:30 Tallinn - "Nao tenho interesse" no pedido (pedido do dono, feedback de uma oficina; NAO publicado)
+- Oficina pediu um "skip": pedido com lampadas + polimento, ela so faz parte. Dono: implementar e mostrar ao admin quantas oficinas dispensaram.
+- Migracao 070 `pedido_dispensas` (motivo nao_faz/faz_parte/sem_agenda/longe/outro + comentario opcional; RLS = mesma regra de quem pode orcar; autor so o proprio usuario); `pedidos_para_responder()` sem os dispensados; gatilho apaga a dispensa quando a oficina orca depois.
+- Oficina: "Nao tenho interesse" no cartao (Para responder) e na pagina do pedido; vai para Encerrados com "Voltar a responder" enquanto aberto; contador do menu atualiza na hora; cliente nao e avisado. 6 linguas.
+- Admin: lista mostra "N viram · N sem interesse"; detalhe tem a secao "Sem interesse" com oficina, motivo, comentario e data.
+- Testes: banco local (dispensar/desfazer muda o contador 5->4->5; bloqueia outra oficina, pedido fora do alcance, motivo invalido, autor falso, anon; orcamento apaga a dispensa); tsc ok. Teste visual pendente (PC com 1,7 GB livres, site de teste nao religado). Auditoria Fable: ordem em Encerrados, dispensa depois de orcar, contador do menu, autor_id, margem, foco do formulario, textos RU/EN - tudo corrigido.
+- Resposta a oficina preparada em Documentos/ (local), o dono envia.

@@ -31,7 +31,9 @@ export async function GET(req: NextRequest) {
         `id, tipo, descricao, urgencia, status, endereco, created_at, emergencia_id,
          cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, email, telefone),
          veiculo:veiculos(id, fipe_marca, fipe_modelo, fipe_ano, placa),
-         orcamentos(id, status, valor_total, oficina_id)`
+         orcamentos(id, status, valor_total, oficina_id),
+         dispensas:pedido_dispensas(oficina_id),
+         vistos:pedido_vistos(oficina_id)`
       )
       .order('created_at', { ascending: false })
       .limit(300);
@@ -47,8 +49,11 @@ export async function GET(req: NextRequest) {
     const { data, error } = await query;
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-    const solicitacoes = (data || []).map((s: any) => ({
+    const solicitacoes = (data || []).map(({ dispensas, vistos, ...s }: any) => ({
       ...s,
+      // oficinas que abriram o pedido e que marcaram "nao tenho interesse" (migracao 070)
+      totalVistos: vistos?.length || 0,
+      totalDispensas: dispensas?.length || 0,
       totalOrcamentos: s.orcamentos?.length || 0,
       orcamentoAceito: (s.orcamentos || []).some((o: any) => o.status === 'aceito'),
     }));

@@ -13,6 +13,7 @@ import { TIPOS_SERVICO } from '@fixauto/shared';
 import TutorialBanner from '@/components/tutorial/TutorialBanner';
 import PerfilCompleto from '@/components/oficina/PerfilCompleto';
 import ProcurarPedido from '@/components/oficina/ProcurarPedido';
+import DispensarPedido, { type Dispensa } from '@/components/oficina/DispensarPedido';
 
 // Caixa de pedidos: pagina inicial da oficina (auditoria do painel 10/10,
 // docs/AUDITORIA_PAINEL_OFICINA_2026-10-10.md, secao C). Foco do produto:
@@ -30,7 +31,7 @@ const ORDENS: Record<Aba, Ordem[]> = {
   respondidos: ['situacao', 'resposta', 'respostaAntiga', 'recente', 'antigo', 'valorMaior', 'valorMenor', 'chegada'],
   encerrados: ['resposta', 'respostaAntiga', 'recente', 'antigo', 'valorMaior', 'valorMenor'],
 };
-const ESTADOS: Record<Aba, string[]> = { responder: [], respondidos: ['aceito', 'visto', 'enviado'], encerrados: ['entregue', 'recusado', 'expirado', 'perdido'] };
+const ESTADOS: Record<Aba, string[]> = { responder: [], respondidos: ['aceito', 'visto', 'enviado'], encerrados: ['entregue', 'recusado', 'expirado', 'perdido', 'dispensado'] };
 const CHAVE_ORDEM = 'bipfix_pedidos_ordem';
 
 const ehAcidente = (s: any) => !!s.emergencia_id || /\[TIPO:/.test(s.descricao || '');
@@ -47,6 +48,8 @@ export default function PedidosOficinaPage() {
   useEffect(() => { if (funcionario?.cargo === 'mecanico') router.replace('/oficina/hoje'); }, [funcionario, router]);
   const { solicitacoes, loading, refresh } = useSolicitacoes({ nearby: true });
   const [vistos, setVistos] = useState<Set<string>>(new Set());
+  // pedidos que a oficina marcou "nao tenho interesse" (migracao 070)
+  const [dispensas, setDispensas] = useState<Map<string, Dispensa>>(new Map());
   const [agora, setAgora] = useState(() => Date.now());
   const [aba, setAbaState] = useState<Aba>('responder');
   const [carregou, setCarregou] = useState(false);
@@ -70,13 +73,18 @@ export default function PedidosOficinaPage() {
     const { data } = await supabase.from('pedido_vistos').select('solicitacao_id').eq('oficina_id', oficina.id);
     setVistos(new Set((data || []).map((v: any) => v.solicitacao_id)));
   };
-  useEffect(() => { carregarVistos(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [oficina?.id]);
+  const carregarDispensas = async () => {
+    if (!oficina) return;
+    const { data } = await supabase.from('pedido_dispensas').select('solicitacao_id, motivo, comentario, created_at').eq('oficina_id', oficina.id);
+    setDispensas(new Map((data || []).map((d: any) => [d.solicitacao_id, d])));
+  };
+  useEffect(() => { carregarVistos(); carregarDispensas(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [oficina?.id]);
 
   // tempo real (migracao 060): pedido novo, orcamento enviado/aceito mudam a lista sem recarregar
   useEffect(() => {
     if (!oficina) return;
     let espera: ReturnType<typeof setTimeout> | null = null;
-    const recarregar = () => { if (espera) clearTimeout(espera); espera = setTimeout(() => { refresh(); carregarVistos(); }, 600); };
+    const recarregar = () => { if (espera) clearTimeout(espera); espera = setTimeout(() => { refresh(); carregarVistos(); carregarDispensas(); }, 600); };
     const canal = supabase.channel(`pedidos-oficina-${oficina.id}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'solicitacoes' }, recarregar)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orcamentos' }, recarregar)
@@ -92,7 +100,8 @@ export default function PedidosOficinaPage() {
     for (const s of solicitacoes as any[]) {
       const meu = (s.orcamentos || []).find((o: any) => o.oficina_id === oficina.id);
       const aberto = ['aberta', 'em_orcamento'].includes(s.status);
-      if (!meu) { if (aberto) g.responder.push({ s }); continue; }
+      const disp = dispensas.get(s.id);
+      if (!meu) { if (disp) g.encerrados.push({ s, disp, estado: 'dispensado' }); else if (aberto) g.responder.push({ s }); continue; }
       const vencido = meu.status === 'expirado' || (meu.validade && meu.validade < hojeYmd && ['enviado', 'visualizado'].includes(meu.status));
       if (meu.status === 'aceito' && s.status !== 'concluida') g.respondidos.push({ s, meu, estado: 'aceito' });
       else if (meu.status === 'aceito') g.encerrados.push({ s, meu, estado: 'entregue' });
@@ -105,9 +114,9 @@ export default function PedidosOficinaPage() {
     const peso = (s: any) => (agora - Date.parse(s.created_at) > 48 * H ? 3 : ehAcidente(s) ? 0 : s.urgencia === 'alta' ? 1 : 2);
     g.responder.sort((a, b) => peso(a.s) - peso(b.s) || Date.parse(a.s.created_at) - Date.parse(b.s.created_at));
     g.respondidos.sort((a, b) => (a.estado === 'aceito' ? 0 : 1) - (b.estado === 'aceito' ? 0 : 1) || Date.parse(b.meu.created_at) - Date.parse(a.meu.created_at));
-    g.encerrados.sort((a, b) => Date.parse(b.meu.created_at) - Date.parse(a.meu.created_at));
+    g.encerrados.sort((a, b) => Date.parse(b.meu?.created_at || b.disp?.created_at) - Date.parse(a.meu?.created_at || a.disp?.created_at));
     return g;
-  }, [solicitacoes, oficina, agora, hojeYmd]);
+  }, [solicitacoes, oficina, agora, hojeYmd, dispensas]);
 
   const duracao = (ms: number) => {
     const m = Math.max(0, Math.floor(ms / MIN));
@@ -133,6 +142,7 @@ export default function PedidosOficinaPage() {
     const ts = (x?: string | null) => (x ? Date.parse(x) : 0);
     const chegada = (it: any) => { const sl = it.meu?.disponibilidade?.find((d: any) => d.id === it.meu.disponibilidade_escolhida_id); return sl ? sl.data_checkin : '9999'; };
     const dist = (it: any) => distancia(it.s) ?? 9e9;
+    const quando = (it: any) => ts(it.meu?.created_at || it.disp?.created_at);
     const filtrada = grupos[aba].filter((it: any) => filtros[aba] === 'todos' || it.estado === filtros[aba]);
     const o = ordens[aba];
     if (o === 'prioridade' || o === 'situacao') return filtrada; // ja vem nessa ordem
@@ -140,8 +150,9 @@ export default function PedidosOficinaPage() {
       antigo: (a, b) => ts(a.s.created_at) - ts(b.s.created_at),
       recente: (a, b) => ts(b.s.created_at) - ts(a.s.created_at),
       perto: (a, b) => dist(a) - dist(b),
-      resposta: (a, b) => ts(b.meu?.created_at) - ts(a.meu?.created_at),
-      respostaAntiga: (a, b) => ts(a.meu?.created_at) - ts(b.meu?.created_at),
+      // dispensado nao tem orcamento: vale a data em que a oficina dispensou
+      resposta: (a, b) => quando(b) - quando(a),
+      respostaAntiga: (a, b) => quando(a) - quando(b),
       valorMaior: (a, b) => (b.meu?.valor_total || 0) - (a.meu?.valor_total || 0),
       valorMenor: (a, b) => (a.meu?.valor_total || 0) - (b.meu?.valor_total || 0),
       chegada: (a, b) => chegada(a).localeCompare(chegada(b)) || ts(b.meu?.created_at) - ts(a.meu?.created_at),
@@ -213,7 +224,7 @@ export default function PedidosOficinaPage() {
         </div>
       ) : (
         <ul className="space-y-3">
-          {lista.map(({ s, meu, estado }: any) => {
+          {lista.map(({ s, meu, estado, disp }: any) => {
             const acidente = ehAcidente(s);
             const novo = aba === 'responder' && !vistos.has(s.id);
             const c = aba === 'responder' ? contador(s) : null;
@@ -252,6 +263,7 @@ export default function PedidosOficinaPage() {
                         : estado === 'recusado' ? t('clienteRecusou')
                         : estado === 'expirado' ? t('orcamentoVenceu')
                         : estado === 'perdido' ? t('outraOficina')
+                        : estado === 'dispensado' ? t('voceDispensou', { motivo: t(`motivo_${disp.motivo}`) })
                         : `✔ ${t('respondidoEm', { tempo: duracao(Date.parse(meu.created_at) - Date.parse(s.created_at)) })} · ${estado === 'visto' ? t('clienteViu') : t('clienteNaoDecidiu')}`}
                     </p>
                   )}
@@ -260,6 +272,12 @@ export default function PedidosOficinaPage() {
                   <Link href={`/oficina/orcamento/${s.id}`} className="btn-primary mt-3 flex min-h-[48px] w-full items-center justify-center sm:w-auto sm:inline-flex sm:px-6" data-testid="fazer-orcamento">
                     {t('fazerOrcamento')} ›
                   </Link>
+                )}
+                {aba === 'responder' && oficina && (
+                  <DispensarPedido aoLado solicitacaoId={s.id} oficinaId={oficina.id} aoMudar={carregarDispensas} />
+                )}
+                {estado === 'dispensado' && oficina && ['aberta', 'em_orcamento'].includes(s.status) && (
+                  <DispensarPedido compacto solicitacaoId={s.id} oficinaId={oficina.id} dispensa={disp} aoMudar={carregarDispensas} />
                 )}
                 {aba === 'respondidos' && estado === 'aceito' && (
                   <Link href="/oficina/hoje" className="btn-secondary mt-3 inline-flex min-h-[44px] items-center">{t('verEmHoje')} ›</Link>
