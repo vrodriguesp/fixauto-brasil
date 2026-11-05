@@ -437,7 +437,7 @@
   },
   "situacao": {
     "titulo_expirado": "Päring on aegunud",
-    "agora_expirado": "Ühtegi pakkumist ei valitud õigel ajal. Ava päring uuesti: saadud pakkumised tulevad tagasi.",
+    "agora_expirado": "30 päeva jooksul ei valitud ühtegi pakkumist. Ava päring uuesti: saadud pakkumised tulevad tagasi ja tähtaeg algab uuesti.",
     "botao_expirado": "Vaata päringut",
     "titulo_aguardando": "Ootab pakkumisi",
     "agora_aguardando": "Lähedal olevad töökojad vaatavad su päringut. Tavaliselt vastavad nad mõne tunni jooksul ja anname siin teada.",

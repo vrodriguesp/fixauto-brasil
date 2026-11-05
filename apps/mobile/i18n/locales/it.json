@@ -437,7 +437,7 @@
   },
   "situacao": {
     "titulo_expirado": "Richiesta scaduta",
-    "agora_expirado": "Nessun preventivo scelto in tempo. Riapri la richiesta: i preventivi ricevuti tornano.",
+    "agora_expirado": "Nessun preventivo scelto in 30 giorni. Riapri la richiesta: i preventivi ricevuti tornano e il periodo ricomincia.",
     "botao_expirado": "Vedi richiesta",
     "titulo_aguardando": "In attesa di preventivi",
     "agora_aguardando": "Le officine vicino a te stanno guardando la tua richiesta. Di solito rispondono in poche ore e ti avvisiamo qui.",

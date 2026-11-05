@@ -437,7 +437,7 @@
   },
   "situacao": {
     "titulo_expirado": "Request expired",
-    "agora_expirado": "No quote was chosen in time. Reopen the request: the quotes you received come back.",
+    "agora_expirado": "No quote was chosen within 30 days. Reopen the request: the quotes you received come back and the period starts again.",
     "botao_expirado": "View request",
     "titulo_aguardando": "Waiting for quotes",
     "agora_aguardando": "Workshops near you are looking at your request. They usually reply within a few hours and we let you know here.",

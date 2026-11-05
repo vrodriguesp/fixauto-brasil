@@ -48,7 +48,8 @@ function ItensOrcamento({ itens, moeda, locale }: { itens: { id: string; descric
   );
 }
 
-// pedido expirado (072): aviso + reabrir (volta com os mesmos orcamentos)
+// pedido expirado (072): o cartao de situacao ja explica; aqui so o botao de
+// reabrir (volta com os mesmos orcamentos) - o aviso longo repetia o cartao
 function PedidoExpirado({ solicitacaoId, aoReabrir }: { solicitacaoId: string; aoReabrir: () => void }) {
   const { t } = useTranslation();
   const [reabrindo, setReabrindo] = useState(false);
@@ -61,9 +62,7 @@ function PedidoExpirado({ solicitacaoId, aoReabrir }: { solicitacaoId: string; a
     aoReabrir();
   };
   return (
-    <View className="bg-amber-50 border border-amber-300 rounded-xl p-4 mb-4" testID="pedido-expirado">
-      <Text className="text-base font-semibold text-amber-900 mb-1">{t('pedidoExpirado.titulo')}</Text>
-      <Text className="text-sm text-amber-900 mb-3">{t('pedidoExpirado.texto', { dias: VALIDADE_PEDIDO_DIAS })}</Text>
+    <View className="mb-4" testID="pedido-expirado" accessibilityHint={t('pedidoExpirado.texto', { dias: VALIDADE_PEDIDO_DIAS })}>
       {erro && <Text className="text-sm text-red-700 mb-2" accessibilityRole="alert">{t('pedidoExpirado.erro')}</Text>}
       <Pressable onPress={reabrir} disabled={reabrindo} accessibilityRole="button" testID="reabrir-pedido"
         className="bg-primary-600 rounded-lg py-3 items-center" style={{ opacity: reabrindo ? 0.6 : 1, minHeight: 44 }}>

@@ -437,7 +437,7 @@
   },
   "situacao": {
     "titulo_expirado": "Pedido expirado",
-    "agora_expirado": "Nenhum orçamento foi escolhido a tempo. Reabra o pedido: os orçamentos recebidos voltam.",
+    "agora_expirado": "Nenhum orçamento foi escolhido em 30 dias. Reabra o pedido: os orçamentos recebidos voltam e o prazo recomeça.",
     "botao_expirado": "Ver pedido",
     "titulo_aguardando": "À espera de orçamentos",
     "agora_aguardando": "As oficinas perto de si estão a ver o seu pedido. Costumam responder em algumas horas e avisamos aqui.",
