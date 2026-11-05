@@ -9,6 +9,7 @@ import StructuredData from '@/components/seo/StructuredData';
 import { capitalizarCidade, hreflangAlternates, slugCidade, imagemCompartilhamento } from '@/lib/seo-utils';
 import { OG_LOCALE, localePrefix as prefixoDoIdioma, type Locale } from '@/i18n/routing';
 import { countryNameForCode } from '@/lib/currency';
+import { perfisDeTeste } from '@/lib/oficinas-teste';
 
 // Sem isso o build pre-renderiza a pagina como estatica (o
 // generateStaticParams do layout [locale] pesa mais que o uso de
@@ -48,16 +49,21 @@ const buscarOficinasAtivas = cache(async (): Promise<OficinaResumo[]> => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const { data, error } = await supabase
-    .from('oficinas')
-    .select('id, nome_fantasia, cidade, estado, pais, especialidades, logo_url, avaliacao_media, total_avaliacoes, created_at')
-    .eq('ativa', true);
+  const [{ data, error }, teste] = await Promise.all([
+    supabase
+      .from('oficinas')
+      .select('id, profile_id, nome_fantasia, cidade, estado, pais, especialidades, logo_url, avaliacao_media, total_avaliacoes, created_at')
+      .eq('ativa', true),
+    perfisDeTeste(),
+  ]);
 
   // Falha de banco nao pode virar "zero oficinas": a pagina sairia com
   // noindex e o estado vazio, e o erro passaria despercebido.
   if (error) throw new Error(`Falha ao buscar oficinas: ${error.message}`);
 
-  return ((data || []) as OficinaResumo[]).sort(
+  return ((data || []) as (OficinaResumo & { profile_id: string })[])
+    .filter((o) => !teste.has(o.profile_id))
+    .sort(
     (a, b) =>
       Number(b.avaliacao_media || 0) - Number(a.avaliacao_media || 0) ||
       (b.total_avaliacoes || 0) - (a.total_avaliacoes || 0) ||

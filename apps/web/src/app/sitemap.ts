@@ -4,6 +4,7 @@ import { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
 import { hreflangAlternates, localizedUrl, slugCidade } from '@/lib/seo-utils';
 import { alternatesDoGuia, caminhoDoGuia, todosOsGuias } from '@/lib/guias';
+import { perfisDeTeste } from '@/lib/oficinas-teste';
 
 
 // Sem isso, o sitemap fica congelado com os dados de quando a build rodou -
@@ -65,13 +66,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // sitemap nunca listava nenhuma oficina, mesmo com oficinas ativas no banco.
   const { data: todasAtivas } = await supabase
     .from('oficinas')
-    .select('id, cidade, created_at, nome_fantasia, endereco, especialidades')
+    .select('id, profile_id, cidade, created_at, nome_fantasia, endereco, especialidades')
     .eq('ativa', true)
     .order('created_at', { ascending: false });
+  // conta de teste nunca vai ao Google; se nao der para saber quais sao, o
+  // sitemap sai desta vez sem os perfis de oficina (melhor que expor a de teste)
+  const teste = await perfisDeTeste().catch(() => null);
   // So perfis completos e com mais de 24 h: cadastro de teste ou pela metade
   // nunca vai ao Google (e some antes de virar 404 no sitemap).
   const umDiaAtras = Date.now() - 24 * 3600 * 1000;
-  const oficinas = (todasAtivas || []).filter((o: any) =>
+  const oficinas = !teste ? [] : (todasAtivas || []).filter((o: any) =>
+    !teste.has(o.profile_id) &&
     o.nome_fantasia && o.endereco && o.cidade && (o.especialidades || []).length > 0 && new Date(o.created_at).getTime() < umDiaAtras);
 
   const oficinasPages: MetadataRoute.Sitemap = (oficinas || []).flatMap((oficina) =>

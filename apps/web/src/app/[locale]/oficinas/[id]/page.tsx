@@ -30,6 +30,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     title,
     description,
     alternates,
+    ...(dados.teste ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
       images: imagemCompartilhamento(locale),
       type: 'website',

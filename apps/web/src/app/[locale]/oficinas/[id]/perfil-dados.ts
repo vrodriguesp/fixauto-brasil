@@ -53,6 +53,8 @@ export interface PerfilOficina {
   ajusteMedio: number | null; // % medio entre orcamento original e revisado
   hasRevisions: boolean;
   totalServicosConcluidos: number;
+  /** oficina de conta de teste: pagina com noindex */
+  teste: boolean;
 }
 
 function abreviarNome(nome: string): string {
@@ -74,7 +76,7 @@ export const carregarPerfilOficina = cache(async (id: string): Promise<PerfilOfi
   const [oficinaRes, avaliacoesRes, fotosRes, orcamentosRes, servicosRes] = await Promise.all([
     supabase
       .from('oficinas')
-      .select('id, nome_fantasia, descricao, cnpj, endereco, complemento, cidade, estado, cep, pais, latitude, longitude, especialidades, seguradoras_convencionadas, created_at, logo_url, horario_funcionamento, ativa, profile:profiles(telefone)')
+      .select('id, nome_fantasia, descricao, cnpj, endereco, complemento, cidade, estado, cep, pais, latitude, longitude, especialidades, seguradoras_convencionadas, created_at, logo_url, horario_funcionamento, ativa, profile:profiles(telefone, conta_teste)')
       .eq('id', id)
       .maybeSingle(),
     supabase
@@ -100,9 +102,12 @@ export const carregarPerfilOficina = cache(async (id: string): Promise<PerfilOfi
 
   // Oficina inexistente ou desativada: 404 de verdade (antes era 200 com
   // "Carregando..." - um "soft 404" para os buscadores).
-  const bruta = oficinaRes.data as (OficinaPublica & { ativa: boolean }) | null;
+  const bruta = oficinaRes.data as (Omit<OficinaPublica, 'profile'> & { ativa: boolean; profile: { telefone: string | null; conta_teste?: boolean } | null }) | null;
   if (!bruta || bruta.ativa === false) return null;
-  const { ativa: _ativa, ...oficina } = bruta;
+  // conta de teste (05/11): o perfil abre pelo link (testes logados), mas fora do Google
+  const teste = !!bruta.profile?.conta_teste;
+  const { ativa: _ativa, profile, ...resto } = bruta;
+  const oficina: OficinaPublica = { ...resto, profile: profile ? { telefone: profile.telefone } : null };
 
   // Tempo medio de resposta (do pedido do cliente, ou do cadastro da oficina
   // se ela entrou depois, ate o orcamento)
@@ -144,5 +149,6 @@ export const carregarPerfilOficina = cache(async (id: string): Promise<PerfilOfi
     ajusteMedio,
     hasRevisions: revisados.length > 0,
     totalServicosConcluidos: servicosRes.count || 0,
+    teste,
   };
 });
