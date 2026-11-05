@@ -7,8 +7,10 @@ import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 
 // Chat de suporte com o admin (dono 03/11): botao no canto de todas as paginas.
-// Logado (oficina, loja, cliente): conversa da conta. Visitante: nome + e-mail
-// para comecar; a chave da conversa fica neste navegador. Mensagens por
+// Logado (oficina, loja, cliente): conversa da conta. Visitante: pergunta + nome +
+// e-mail para comecar (05/11: so com nome/e-mail um visitante escreveu a pergunta
+// no campo do nome e saiu sem mandar nada); a pergunta vira a 1a mensagem. A chave
+// da conversa fica neste navegador. Mensagens por
 // consulta periodica (4 s com o chat aberto, 45 s fechado so para o contador).
 
 type Msg = { id: string; autor: 'usuario' | 'admin' | 'auto'; texto: string; original: string | null; created_at: string };
@@ -81,7 +83,7 @@ export default function ChatSuporte() {
   useEffect(() => {
     if (aberto) {
       voltarFoco.current = true;
-      setTimeout(() => (document.getElementById('suporte-nome') || document.getElementById('suporte-texto'))?.focus(), 50);
+      setTimeout(() => (document.getElementById('suporte-pergunta') || document.getElementById('suporte-texto'))?.focus(), 50);
       if (window.innerWidth < 640) document.body.style.overflow = 'hidden';
       return () => { document.body.style.overflow = ''; };
     }
@@ -98,16 +100,22 @@ export default function ChatSuporte() {
   async function comecar(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
+    const pergunta = String(f.get('pergunta') || '').trim();
     const nome = String(f.get('nome') || '').trim(); const email = String(f.get('email') || '').trim();
+    if (!pergunta) { setErro(t('erroPergunta')); return; }
     if (!nome || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setErro(t('erroCampos')); return; }
     if (!f.get('consentimento')) { setErro(t('erroConsentimento')); return; }
     setEnviando(true); setErro('');
     const r = await fetch('/api/suporte', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ acao: 'iniciar', nome, email, consentimento: true, idioma: locale, pagina: pathname, site: f.get('site') || '' }) }).catch(() => null);
-    setEnviando(false);
     const d = r?.ok ? await r.json() : null;
-    if (!d?.conversaId) { setErro(t('erro')); return; }
+    if (!d?.conversaId) { setEnviando(false); setErro(t('erro')); return; }
     try { localStorage.setItem(CHAVE, JSON.stringify({ c: d.conversaId, t: d.token })); } catch { /* ignora */ }
+    // a pergunta vai como 1a mensagem (avisa o admin e da a resposta automatica)
+    const r2 = await fetch('/api/suporte', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ acao: 'enviar', texto: pergunta, idioma: locale, pagina: pathname, c: d.conversaId, t: d.token }) }).catch(() => null);
+    setEnviando(false);
     setTemConversa(true);
+    // falhou so o envio: a conversa ja existe; a pergunta fica na caixa para mandar de novo
+    if (!r2?.ok) { setTexto(pergunta); setErro(t('erro')); }
     carregar(true);
   }
 
@@ -158,6 +166,10 @@ export default function ChatSuporte() {
           {precisaCadastro ? (
             <form onSubmit={comecar} className="flex-1 space-y-3 overflow-y-auto p-4" noValidate>
               <p className="text-sm text-gray-600">{t('intro')}</p>
+              <div>
+                <label htmlFor="suporte-pergunta" className="mb-1 block text-sm font-medium text-gray-700">{t('pergunta')}</label>
+                <textarea id="suporte-pergunta" name="pergunta" rows={3} maxLength={2000} className="input-field resize-none" />
+              </div>
               <div>
                 <label htmlFor="suporte-nome" className="mb-1 block text-sm font-medium text-gray-700">{t('nome')}</label>
                 <input id="suporte-nome" name="nome" autoComplete="name" maxLength={100} className="input-field" />
