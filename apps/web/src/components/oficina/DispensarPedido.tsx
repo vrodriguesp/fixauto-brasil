@@ -11,8 +11,8 @@ export const MOTIVOS_DISPENSA = ['nao_faz', 'faz_parte', 'sem_agenda', 'longe', 
 export type Dispensa = { solicitacao_id: string; motivo: string; comentario: string | null; created_at: string };
 
 // o menu "Pedidos" (Navbar) recarrega o contador quando a oficina dispensa ou desfaz
-// (e quando envia um orcamento: hooks/use-orcamentos.ts)
-export const EVENTO_DISPENSA = 'bipfix:pedido-dispensa';
+import { EVENTO_DISPENSA } from '@/lib/eventos';
+export { EVENTO_DISPENSA };
 
 export default function DispensarPedido({ solicitacaoId, oficinaId, dispensa, aoMudar, compacto, aoLado }: {
   solicitacaoId: string;

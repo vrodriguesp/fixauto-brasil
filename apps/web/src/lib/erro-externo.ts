@@ -11,6 +11,9 @@ const EXTERNO = /iabjs:\/\/|Java object is gone|sendDataToNative|webkit\.message
 export function ehErroExterno(mensagem?: string | null, stack?: string | null): boolean {
   const m = String(mensagem ?? '');
   const s = String(stack ?? '');
-  if (EXTERNO.test(m) || EXTERNO.test(s)) return true;
+  // so o comeco do stack (onde o erro nasceu): uma extensao que embrulha o fetch
+  // aparece no meio do stack de um erro NOSSO, e esse tem que continuar aparecendo
+  const inicio = s.split('\n').slice(0, 3).join('\n');
+  if (EXTERNO.test(m) || EXTERNO.test(inicio)) return true;
   return /^(Uncaught )?Script error\.?$/i.test(m.trim()) && !s.trim();
 }

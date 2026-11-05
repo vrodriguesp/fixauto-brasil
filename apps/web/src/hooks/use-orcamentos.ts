@@ -6,7 +6,7 @@ import { cleanDescricao, formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { notifOrcamentoRevisado, chatOrcamentoRevisado } from '@/lib/notif-i18n';
 import type { OrcamentoItem } from '@fixauto/shared';
-import { EVENTO_DISPENSA } from '@/components/oficina/DispensarPedido';
+import { EVENTO_DISPENSA } from '@/lib/eventos';
 
 interface CreateOrcamentoInput {
   solicitacao_id: string;

@@ -27,6 +27,8 @@ conf('extensao do Firefox', ehErroExterno('x is undefined', 'f@moz-extension://a
 conf('erro de render nosso', ehErroExterno("TypeError: Cannot read properties of undefined (reading 'map')",
   'TypeError: ...\n    at Lista (https://bipfix.com/_next/static/chunks/app/page-abc.js:1:200)'), false);
 conf('versao antiga (ChunkLoadError)', ehErroExterno('ChunkLoadError: Loading chunk 123 failed.', 'ChunkLoadError\n    at https://bipfix.com/_next/static/chunks/webpack.js:1:1'), false);
+conf('erro nosso com extensao no MEIO do stack (embrulha o fetch)', ehErroExterno('TypeError: Failed to fetch',
+  'TypeError: Failed to fetch\n    at salvar (https://bipfix.com/_next/static/chunks/app/page.js:1:2)\n    at enviar (https://bipfix.com/_next/static/chunks/app/page.js:1:9)\n    at window.fetch (chrome-extension://abc/inpage.js:10:1)'), false);
 conf('Script error. COM stack', ehErroExterno('Script error.', 'at algo (https://bipfix.com/x.js:1:1)'), false);
 conf('app android (relatorio do app)', ehErroExterno('[app android] avaliacao-pendente: ', '{}'), false);
 conf('mensagem vazia', ehErroExterno('', ''), false);
