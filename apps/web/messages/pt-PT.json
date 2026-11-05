@@ -574,7 +574,7 @@
   "damageAnalysis": {
     "tituloInicial": "Análise do pedido com IA",
     "descricaoInicial": "Use a IA para analisar as fotografias e a descrição do cliente.",
-    "analisando": "A analisar fotografias...",
+    "analisando": "A analisar…",
     "tentarNovamente": "Tentar novamente",
     "analisarComIA": "Analisar com IA",
     "titulo": "Análise por IA",

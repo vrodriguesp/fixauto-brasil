@@ -402,7 +402,8 @@ ${d.observacoes}` : d.observacoes));
       <div className="bg-gray-50 rounded-lg p-4 mb-6">
         <TextoTraduzido texto={cleanDescricao(solicitacao.descricao)} className="text-sm text-gray-600" />
         <p className="text-xs text-gray-500 mt-2">
-          {t('clienteLabel')}: {solicitacao.cliente?.nome} | {solicitacao.endereco}
+          {/* antes do aceite a oficina nao le o nome (privacidade): so o local, sem "Cliente: |" */}
+          {solicitacao.cliente?.nome ? `${t('clienteLabel')}: ${solicitacao.cliente.nome} | ${solicitacao.endereco || ''}` : solicitacao.endereco}
         </p>
       </div>
 
@@ -430,7 +431,7 @@ ${d.observacoes}` : d.observacoes));
               ))}
             </div>
           )}
-          {analise.estimativa_custo && (
+          {analise.estimativa_custo && Number(analise.estimativa_custo.max) > 0 && (
             <p className="text-xs text-indigo-600">
               {t('estimativaIA')}: {formatCurrency(analise.estimativa_custo.min, moeda, locale)} - {formatCurrency(analise.estimativa_custo.max, moeda, locale)}
             </p>

@@ -577,7 +577,7 @@
   "damageAnalysis": {
     "tituloInicial": "AI analysis of the request",
     "descricaoInicial": "Use AI to analyse the photos and the customer's description.",
-    "analisando": "Analyzing photos...",
+    "analisando": "Analyzing…",
     "tentarNovamente": "Try again",
     "analisarComIA": "Analyze with AI",
     "titulo": "AI Analysis",

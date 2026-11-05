@@ -73,7 +73,8 @@ export default function DamageAnalysis({ solicitacaoId, pais }: { solicitacaoId:
 
       <p className="text-sm text-gray-700 mb-3 break-words">{resumo}</p>
 
-      {analise.estimativa_custo && (
+      {/* IA sem estimativa (0 - 0 €, teste de 05/11): nao mostra a faixa */}
+      {analise.estimativa_custo && Number(analise.estimativa_custo.max) > 0 && (
         <div className="bg-gray-50 rounded-lg p-3 mb-3">
           <p className="text-xs text-gray-500">{t('estimativaCusto')}</p>
           <p className="text-sm font-semibold text-gray-900">

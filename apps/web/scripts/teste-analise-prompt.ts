@@ -34,6 +34,8 @@ async function main() {
     confere(`${lingua}: escrito na lingua pedida`, lingua === 'ru' ? /[а-я]/.test(a.resumo) : !/[а-я]/.test(a.resumo));
     confere(`${lingua}: resumo curto (<= 2 frases)`, (a.resumo.match(/[.!?](\s|$)/g) || []).length <= 2, a.resumo);
     confere(`${lingua}: ate 3 perguntas`, Array.isArray(a.perguntas_sugeridas) && a.perguntas_sugeridas.length <= 3);
+    // 05/11 em producao: troca de oleo voltou com 0 - 0 € (copiou o exemplo do JSON)
+    confere(`${lingua}: estimativa de custo nao zerada`, Number(a.estimativa_custo?.max) > 0 && Number(a.estimativa_custo?.min) > 0, JSON.stringify(a.estimativa_custo));
   }
   const b = await analisa('mecanica', 'Pidurite märgutuli põleb ja pidurdamisel kriuksub', 'estoniano');
   console.log('\n[defeito] ' + JSON.stringify(b, null, 1));

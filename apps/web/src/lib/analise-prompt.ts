@@ -13,6 +13,6 @@ export function promptAnalise(p: { tipo: string | null | undefined; contexto: st
     : 'resumo = o defeito/dano provavel e o que a oficina deve verificar primeiro.';
   return `Especialista em oficina mecanica (${p.mercado}). ${p.contexto}
 ${instrucao} ${foco} O texto e lido pela oficina. Nao repita a descricao do cliente, nao diga o que o pedido NAO e, nao invente servicos que o cliente nao pediu (coloque duvidas em perguntas_sugeridas). Responda JSON CURTO E DIRETO:
-{"resumo":"max 2 frases","severidade":"leve|moderado|grave|severo","checklist_inspecao":["max 5 itens"],"pecas_afetadas":["max 5 pecas"],"estimativa_custo":{"min":0,"max":0},"confianca":0.8,"perguntas_sugeridas":["max 3 perguntas curtas que a oficina envia ao cliente pelo chat"]}
-Seja BREVE. Escreva os textos (resumo, checklist_inspecao, pecas_afetadas, perguntas_sugeridas) em ${p.nomeIdioma}. O campo severidade deve ser EXATAMENTE um destes valores, sem traduzir: leve, moderado, grave, severo. Precos em ${p.moeda} do mercado de ${p.mercado}.`;
+{"resumo":"max 2 frases","severidade":"leve|moderado|grave|severo","checklist_inspecao":["max 5 itens"],"pecas_afetadas":["max 5 pecas"],"estimativa_custo":{"min":120,"max":180},"confianca":0.8,"perguntas_sugeridas":["max 3 perguntas curtas que a oficina envia ao cliente pelo chat"]}
+Seja BREVE. Escreva os textos (resumo, checklist_inspecao, pecas_afetadas, perguntas_sugeridas) em ${p.nomeIdioma}. O campo severidade deve ser EXATAMENTE um destes valores, sem traduzir: leve, moderado, grave, severo. estimativa_custo = faixa realista de pecas + mao de obra em ${p.moeda} do mercado de ${p.mercado} para este carro (os numeros do exemplo sao so formato; nunca 0).`;
 }

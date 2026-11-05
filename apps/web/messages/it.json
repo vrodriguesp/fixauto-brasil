@@ -575,7 +575,7 @@
   "damageAnalysis": {
     "tituloInicial": "Analisi IA della richiesta",
     "descricaoInicial": "Usa l'intelligenza artificiale per analizzare le foto e la descrizione del cliente.",
-    "analisando": "Analisi foto in corso...",
+    "analisando": "Analisi in corso…",
     "tentarNovamente": "Riprova",
     "analisarComIA": "Analizza con IA",
     "titulo": "Analisi IA",
