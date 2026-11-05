@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { supabase } from './supabase';
 import { useAuth } from './auth-context';
 import { destinoDoAviso } from './destino-aviso';
+import { TextoTraduzido } from './traducao';
 
 export interface Aviso {
   id: string;
@@ -139,7 +140,7 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
               <Ionicons name="notifications" size={20} color="#fff" />
               <View style={{ flex: 1 }}>
                 <Text style={{ color: '#fff', fontWeight: '600' }} numberOfLines={1}>{banner.titulo}</Text>
-                {banner.mensagem ? <Text style={{ color: '#e5e7eb', fontSize: 13 }} numberOfLines={2}>{banner.mensagem}</Text> : null}
+                {banner.mensagem ? <TextoTraduzido texto={banner.mensagem} ativo={banner.tipo === 'nova_mensagem'} style={{ color: '#e5e7eb', fontSize: 13 }} numberOfLines={2} /> : null}
               </View>
             </Pressable>
             <Pressable onPress={fechar} accessibilityRole="button" accessibilityLabel={i18n.t('common.fechar')} hitSlop={10} style={{ paddingHorizontal: 14, paddingVertical: 12 }}>

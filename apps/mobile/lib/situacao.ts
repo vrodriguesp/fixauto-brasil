@@ -6,7 +6,7 @@ import type { Ionicons } from '@expo/vector-icons';
 
 type Icone = keyof typeof Ionicons.glyphMap;
 export type Situacao = {
-  chave: 'aprovarRevisao' | 'aguardando' | 'comparar' | 'agendado' | 'naOficina' | 'pronto' | 'entregue' | 'avaliar' | 'cancelado' | 'naoFoi';
+  chave: 'aprovarRevisao' | 'aguardando' | 'comparar' | 'agendado' | 'naOficina' | 'pronto' | 'entregue' | 'avaliar' | 'cancelado' | 'naoFoi' | 'expirado';
   icone: Icone;
   fundo: string; // classe do cartao
   selo: string; // classe do selo (fundo + texto)
@@ -43,6 +43,9 @@ export function situacaoDoPedido(s: any, extra: { etapas?: { status: string; cre
       return extra.avaliado === false
         ? { chave: 'avaliar', icone: 'star-outline', fundo: 'bg-yellow-50 border-yellow-300', selo: 'bg-gray-100 text-gray-800', texto: 'text-yellow-900', prioridade: 70 }
         : { chave: 'entregue', icone: 'checkmark-done-outline', fundo: 'bg-gray-50 border-gray-200', selo: 'bg-gray-100 text-gray-800', texto: 'text-gray-800', prioridade: 0 };
+    // 30 dias sem escolher orcamento (migracao 072): reabre na tela do pedido
+    case 'expirada':
+      return { chave: 'expirado', icone: 'hourglass-outline', fundo: 'bg-amber-50 border-amber-200', selo: 'bg-amber-100 text-amber-900', texto: 'text-amber-900', prioridade: 30 };
     case 'no_show':
       return { chave: 'naoFoi', icone: 'alert-circle-outline', fundo: 'bg-red-50 border-red-200', selo: 'bg-red-100 text-red-900', texto: 'text-red-900', prioridade: 75 };
     default:

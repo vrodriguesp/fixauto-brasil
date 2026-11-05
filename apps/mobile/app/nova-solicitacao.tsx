@@ -271,6 +271,7 @@ export default function NovaSolicitacaoScreen() {
         onChange={setEndereco}
         perto={coords}
         rotulo={t('novaSolicitacao.passoLocal')}
+        placeholder={t('novaSolicitacao.enderecoPlaceholder')}
         onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); if (s.paisCodigo) setPais(s.paisCodigo); }}
       />
 

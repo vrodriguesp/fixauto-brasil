@@ -1,4 +1,17 @@
 {
+  "traducao": {
+    "traduzido": "Tradotto automaticamente",
+    "verOriginal": "vedi originale",
+    "verTraducao": "vedi traduzione",
+    "original": "Originale"
+  },
+  "pedidoExpirado": {
+    "titulo": "Questa richiesta è scaduta",
+    "texto": "Sono passati {dias} giorni senza scegliere un preventivo, quindi la richiesta è stata tolta dall’elenco delle officine. Se ti serve ancora la riparazione, riaprila: i preventivi ricevuti tornano e il periodo ricomincia.",
+    "reabrir": "Riapri richiesta",
+    "reabrindo": "Riapertura…",
+    "erro": "Impossibile riaprire. Riprova."
+  },
   "common": {
     "carregando": "Caricamento...",
     "salvar": "Salva",
@@ -112,6 +125,7 @@
     "cameraNegadaTexto": "Per fotografare il danno, consenti la fotocamera nelle impostazioni del dispositivo. Puoi anche scegliere foto dalla galleria."
   },
   "novaSolicitacao": {
+    "enderecoPlaceholder": "Quartiere, città",
     "titulo": "Nuova richiesta",
     "passoVeiculo": "Seleziona il veicolo",
     "adicionarVeiculo": "Aggiungi veicolo",
@@ -422,6 +436,9 @@
     "feito_recusarSemCarro": "Revisione rifiutata. Il servizio è stato annullato e l'officina avvisata."
   },
   "situacao": {
+    "titulo_expirado": "Richiesta scaduta",
+    "agora_expirado": "Nessun preventivo scelto in tempo. Riapri la richiesta: i preventivi ricevuti tornano.",
+    "botao_expirado": "Vedi richiesta",
     "titulo_aguardando": "In attesa di preventivi",
     "agora_aguardando": "Le officine vicino a te stanno guardando la tua richiesta. Di solito rispondono in poche ore e ti avvisiamo qui.",
     "titulo_comparar": "Preventivi da confrontare: {n}",

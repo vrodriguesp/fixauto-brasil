@@ -1,4 +1,17 @@
 {
+  "traducao": {
+    "traduzido": "Traduzido automaticamente",
+    "verOriginal": "ver original",
+    "verTraducao": "ver tradução",
+    "original": "Original"
+  },
+  "pedidoExpirado": {
+    "titulo": "Este pedido expirou",
+    "texto": "Passaram {dias} dias sem você escolher um orçamento, então o pedido saiu da lista das oficinas. Se ainda precisar do reparo, reabra: os orçamentos que você recebeu voltam e o prazo recomeça.",
+    "reabrir": "Reabrir pedido",
+    "reabrindo": "Reabrindo…",
+    "erro": "Não foi possível reabrir. Tente de novo."
+  },
   "common": {
     "carregando": "Carregando...",
     "salvar": "Salvar",
@@ -112,6 +125,7 @@
     "cameraNegadaTexto": "Para fotografar o dano, permita a câmera nos Ajustes do aparelho. Você também pode escolher fotos da galeria."
   },
   "novaSolicitacao": {
+    "enderecoPlaceholder": "Bairro, cidade",
     "titulo": "Nova solicitação",
     "passoVeiculo": "Selecione o veículo",
     "adicionarVeiculo": "Adicionar veículo",
@@ -422,6 +436,9 @@
     "feito_recusarSemCarro": "Revisão recusada. O serviço foi cancelado e a oficina avisada."
   },
   "situacao": {
+    "titulo_expirado": "Pedido expirado",
+    "agora_expirado": "Nenhum orçamento foi escolhido a tempo. Reabra o pedido: os orçamentos recebidos voltam.",
+    "botao_expirado": "Ver pedido",
     "titulo_aguardando": "Esperando orçamentos",
     "agora_aguardando": "As oficinas perto de você estão vendo seu pedido. Costumam responder em algumas horas e avisamos aqui.",
     "titulo_comparar": "Orçamentos para comparar: {n}",

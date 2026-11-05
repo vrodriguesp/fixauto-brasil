@@ -22,9 +22,56 @@ import { tDias } from '../../i18n';
 import CartaoSituacao from '../../components/CartaoSituacao';
 import OpcaoCartao from '../../components/OpcaoCartao';
 import { situacaoDoPedido } from '../../lib/situacao';
+import { useTraducoes, AvisoTraducao } from '../../lib/traducao';
 
 type Ordem = 'preco' | 'nota' | 'cedo';
 const ATIVO = ['enviado', 'visualizado'];
+// mesmo prazo do site (apps/web/src/lib/pedido-validade.ts, migracao 072)
+const VALIDADE_PEDIDO_DIAS = 30;
+
+// itens do orcamento escritos pela oficina, na lingua de quem le (teste 05/11)
+function ItensOrcamento({ itens, moeda, locale }: { itens: { id: string; descricao: string; quantidade: number; valor_total: number }[]; moeda: string; locale: string }) {
+  const { t } = useTranslation();
+  const [original, setOriginal] = useState(false);
+  const tr = useTraducoes(itens.map((it) => it.descricao), original);
+  return (
+    <View className="border-t border-gray-100 pt-2 mb-2">
+      <Text className="text-xs font-semibold text-gray-700 mb-1">{t('orcamentos.itens')}</Text>
+      {itens.map((it, i) => (
+        <View key={it.id} className="flex-row justify-between gap-3 py-0.5">
+          <Text className="text-sm text-gray-700 flex-1">{it.quantidade > 1 ? `${it.quantidade}× ` : ''}{tr.textos[i]}</Text>
+          <Text className="text-sm text-gray-900">{formatCurrency(it.valor_total, moeda as any, locale)}</Text>
+        </View>
+      ))}
+      <AvisoTraducao traduzido={tr.traduzido} original={original} alternar={() => setOriginal((o) => !o)} />
+    </View>
+  );
+}
+
+// pedido expirado (072): aviso + reabrir (volta com os mesmos orcamentos)
+function PedidoExpirado({ solicitacaoId, aoReabrir }: { solicitacaoId: string; aoReabrir: () => void }) {
+  const { t } = useTranslation();
+  const [reabrindo, setReabrindo] = useState(false);
+  const [erro, setErro] = useState(false);
+  const reabrir = async () => {
+    setReabrindo(true); setErro(false);
+    const { error } = await supabase.rpc('reabrir_pedido', { p_solicitacao: solicitacaoId });
+    setReabrindo(false);
+    if (error) { setErro(true); return; }
+    aoReabrir();
+  };
+  return (
+    <View className="bg-amber-50 border border-amber-300 rounded-xl p-4 mb-4" testID="pedido-expirado">
+      <Text className="text-base font-semibold text-amber-900 mb-1">{t('pedidoExpirado.titulo')}</Text>
+      <Text className="text-sm text-amber-900 mb-3">{t('pedidoExpirado.texto', { dias: VALIDADE_PEDIDO_DIAS })}</Text>
+      {erro && <Text className="text-sm text-red-700 mb-2" accessibilityRole="alert">{t('pedidoExpirado.erro')}</Text>}
+      <Pressable onPress={reabrir} disabled={reabrindo} accessibilityRole="button" testID="reabrir-pedido"
+        className="bg-primary-600 rounded-lg py-3 items-center" style={{ opacity: reabrindo ? 0.6 : 1, minHeight: 44 }}>
+        <Text className="text-white font-semibold">{reabrindo ? t('pedidoExpirado.reabrindo') : t('pedidoExpirado.reabrir')}</Text>
+      </Pressable>
+    </View>
+  );
+}
 
 export default function SolicitacaoDetailScreen() {
   const { t, i18n } = useTranslation();
@@ -210,6 +257,7 @@ export default function SolicitacaoDetailScreen() {
         {(solicitacao as any).numero ? <Text className="text-sm text-gray-500 mb-2" selectable>{t('constants.numeroPedido', { n: (solicitacao as any).numero })}</Text> : null}
         {/* situacao + o que acontece agora (auditoria 10/10, C2) */}
         <CartaoSituacao solicitacao={solicitacao} situacao={situacao} />
+        {(solicitacao.status as string) === 'expirada' && <PedidoExpirado solicitacaoId={solicitacao.id} aoReabrir={carregar} />}
 
         {['aberta', 'em_orcamento'].includes(solicitacao.status) && (
           <EditarPedido key={`${solicitacao.id}-${veiculo?.fipe_marca || ''}`} solicitacaoId={solicitacao.id} descricao={solicitacao.descricao} veiculo={(veiculo as any) || null} aoSalvar={carregar} />
@@ -294,22 +342,13 @@ export default function SolicitacaoDetailScreen() {
             ) : null}
             <Text className="text-2xl font-bold text-gray-900">{formatCurrency(orc.valor_total, moeda, locale)}</Text>
             <Text className="text-xs text-gray-500 mb-2">{[(orc as any).prazo_dias ? tDias(t, 'orcamentos.prazoDias', (orc as any).prazo_dias, 'n') : null, t(`orcamentos.status${orc.status.charAt(0).toUpperCase()}${orc.status.slice(1)}`)].filter(Boolean).join(' · ')}</Text>
-            {itens.length > 0 && (
-              <View className="border-t border-gray-100 pt-2 mb-2">
-                <Text className="text-xs font-semibold text-gray-700 mb-1">{t('orcamentos.itens')}</Text>
-                {itens.map((it) => (
-                  <View key={it.id} className="flex-row justify-between gap-3 py-0.5">
-                    <Text className="text-sm text-gray-700 flex-1">{it.quantidade > 1 ? `${it.quantidade}× ` : ''}{it.descricao}</Text>
-                    <Text className="text-sm text-gray-900">{formatCurrency(it.valor_total, moeda, locale)}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
+            {itens.length > 0 && <ItensOrcamento itens={itens} moeda={moeda} locale={locale} />}
             {(orc as any).garantia_dias != null && (
               <Text className="text-sm text-gray-700 mb-3">🛡️ {(orc as any).garantia_dias > 0 ? tDias(t, 'garantia.noOrcamento', (orc as any).garantia_dias) : t('garantia.sem')}</Text>
             )}
 
-            {orc.status === 'enviado' || orc.status === 'visualizado' ? (
+            {/* pedido expirado: aceitar/recusar so depois de reabrir (aviso no topo) */}
+            {(orc.status === 'enviado' || orc.status === 'visualizado') && (solicitacao.status as string) !== 'expirada' ? (
               <>
                 {(orc.disponibilidade || []).length > 0 && (
                   <Text className="text-sm font-medium text-gray-700 mb-2">{t('orcamentos.escolhaData')}</Text>

@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Linking, Platform } from 'react-native';
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import i18n from '../i18n';
+import { supabase } from './supabase';
 
 // Os 6 idiomas do app (mesmos do site), com o nome na propria lingua.
 export const IDIOMAS = [
@@ -33,6 +34,13 @@ export async function escolherIdioma(codigo: string) {
   if (idiomaPeloSistema) { abrirAjustesDeIdioma(); return; }
   await i18n.changeLanguage(codigo);
   try { await AsyncStorage.setItem(CHAVE, codigo); } catch { /* sem armazenamento: vale so nesta sessao */ }
+  // logado: vira tambem o idioma da conta (avisos e e-mails), como no seletor do site;
+  // antes so mudava no proximo login (teste 05/11: avisos em ingles com o app em estoniano)
+  try {
+    const { data } = await supabase.auth.getSession();
+    const id = data.session?.user?.id;
+    if (id) await supabase.from('profiles').update({ idioma: codigo }).eq('id', id);
+  } catch { /* sem rede: o login seguinte acerta */ }
 }
 
 /** Na abertura: a escolha salva no app vale sobre o idioma do aparelho (fora do iPhone). */

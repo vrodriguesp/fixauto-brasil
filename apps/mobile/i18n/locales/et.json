@@ -1,4 +1,17 @@
 {
+  "traducao": {
+    "traduzido": "Automaatselt tõlgitud",
+    "verOriginal": "vaata originaali",
+    "verTraducao": "vaata tõlget",
+    "original": "Originaal"
+  },
+  "pedidoExpirado": {
+    "titulo": "See päring on aegunud",
+    "texto": "{dias} päeva jooksul ei valitud ühtegi hinnapakkumist, seega eemaldati päring töökodade nimekirjast. Kui vajad remonti veel, ava päring uuesti: saadud hinnapakkumised tulevad tagasi ja tähtaeg algab uuesti.",
+    "reabrir": "Ava päring uuesti",
+    "reabrindo": "Avan uuesti…",
+    "erro": "Päringut ei õnnestunud uuesti avada. Proovi uuesti."
+  },
   "common": {
     "carregando": "Laadimine...",
     "salvar": "Salvesta",
@@ -112,6 +125,7 @@
     "cameraNegadaTexto": "Kahjustuse pildistamiseks luba kaamera seadme seadetes. Võid valida ka pilte galeriist."
   },
   "novaSolicitacao": {
+    "enderecoPlaceholder": "Linnaosa, linn",
     "titulo": "Uus päring",
     "passoVeiculo": "Vali sõiduk",
     "adicionarVeiculo": "Lisa sõiduk",
@@ -422,6 +436,9 @@
     "feito_recusarSemCarro": "Muudatusest keelduti. Teenus tühistati ja töökoda sai teate."
   },
   "situacao": {
+    "titulo_expirado": "Päring on aegunud",
+    "agora_expirado": "Ühtegi pakkumist ei valitud õigel ajal. Ava päring uuesti: saadud pakkumised tulevad tagasi.",
+    "botao_expirado": "Vaata päringut",
     "titulo_aguardando": "Ootab pakkumisi",
     "agora_aguardando": "Lähedal olevad töökojad vaatavad su päringut. Tavaliselt vastavad nad mõne tunni jooksul ja anname siin teada.",
     "titulo_comparar": "Võrdlemiseks pakkumisi: {n}",

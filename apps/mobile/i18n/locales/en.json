@@ -1,4 +1,17 @@
 {
+  "traducao": {
+    "traduzido": "Automatically translated",
+    "verOriginal": "see original",
+    "verTraducao": "see translation",
+    "original": "Original"
+  },
+  "pedidoExpirado": {
+    "titulo": "This request has expired",
+    "texto": "{dias} days passed without choosing a quote, so the request was removed from the repair shops’ list. If you still need the repair, reopen it: the quotes you received come back and the period starts again.",
+    "reabrir": "Reopen request",
+    "reabrindo": "Reopening…",
+    "erro": "Could not reopen. Please try again."
+  },
   "common": {
     "carregando": "Loading...",
     "salvar": "Save",
@@ -112,6 +125,7 @@
     "cameraNegadaTexto": "To photograph the damage, allow the camera in your device settings. You can also pick photos from your gallery."
   },
   "novaSolicitacao": {
+    "enderecoPlaceholder": "District, city",
     "titulo": "New request",
     "passoVeiculo": "Select your vehicle",
     "adicionarVeiculo": "Add vehicle",
@@ -422,6 +436,9 @@
     "feito_recusarSemCarro": "Revision declined. The service was cancelled and the workshop notified."
   },
   "situacao": {
+    "titulo_expirado": "Request expired",
+    "agora_expirado": "No quote was chosen in time. Reopen the request: the quotes you received come back.",
+    "botao_expirado": "View request",
     "titulo_aguardando": "Waiting for quotes",
     "agora_aguardando": "Workshops near you are looking at your request. They usually reply within a few hours and we let you know here.",
     "titulo_comparar": "Quotes to compare: {n}",

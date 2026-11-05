@@ -9,6 +9,7 @@ import { supabase } from '../../lib/supabase';
 import SolicitacaoCard from '../../components/SolicitacaoCard';
 import { Ionicons } from '@expo/vector-icons';
 import { useAvisos } from '../../lib/avisos';
+import { TextoTraduzido } from '../../lib/traducao';
 import GarantiasAtivas from '../../components/GarantiasAtivas';
 import AvaliacaoPendente from '../../components/AvaliacaoPendente';
 import CartaoSituacao from '../../components/CartaoSituacao';
@@ -29,7 +30,8 @@ export default function DashboardScreen() {
       .from('solicitacoes')
       .select('*, veiculo:veiculos(*), orcamentos(*), agenda(status, data_inicio, etapas:manutencao_etapas(status, created_at)), orcamento_revisoes(status)')
       .eq('cliente_id', user.id)
-      .in('status', ['aberta', 'em_orcamento', 'aceita', 'em_andamento'])
+      // expirada (072) continua no Inicio: o motorista reabre com um toque
+      .in('status', ['aberta', 'em_orcamento', 'aceita', 'em_andamento', 'expirada'])
       .order('created_at', { ascending: false });
     setSolicitacoes((data as Solicitacao[]) || []);
     setLoading(false);
@@ -92,7 +94,7 @@ export default function DashboardScreen() {
               <Ionicons name="notifications-outline" size={18} color="#92400e" />
               <View className="flex-1">
                 <Text className="text-amber-900 font-semibold" numberOfLines={1}>{a.titulo}</Text>
-                {a.mensagem ? <Text className="text-amber-800 text-sm" numberOfLines={2}>{a.mensagem}</Text> : null}
+                {a.mensagem ? <TextoTraduzido texto={a.mensagem} ativo={a.tipo === 'nova_mensagem'} className="text-amber-800 text-sm" numberOfLines={2} /> : null}
               </View>
             </Pressable>
           ))}

@@ -13,6 +13,19 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAudioRecorder, useAudioRecorderState, RecordingPresets, requestRecordingPermissionsAsync, setAudioModeAsync } from 'expo-audio';
 import AudioMensagem from '../../components/AudioMensagem';
 import { useAvisos } from '../../lib/avisos';
+import { useTraducoes, AvisoTraducao } from '../../lib/traducao';
+
+// mensagem da outra pessoa na lingua de quem le (a propria fica como escrita)
+function TextoMensagem({ texto, minha }: { texto: string; minha: boolean }) {
+  const [original, setOriginal] = useState(false);
+  const tr = useTraducoes([texto], original, !minha);
+  return (
+    <>
+      <Text className={minha ? 'text-white' : 'text-gray-900'}>{tr.textos[0]}</Text>
+      <AvisoTraducao traduzido={tr.traduzido} original={original} alternar={() => setOriginal((o) => !o)} />
+    </>
+  );
+}
 
 interface Mensagem {
   id: string;
@@ -268,7 +281,7 @@ export default function ConversaScreen() {
               {item.tipo === 'audio' && item.audio_url ? (
                 <AudioMensagem url={item.audio_url} duracao={item.audio_duracao_segundos} transcricao={item.transcricao} minha={minha} />
               ) : (
-                <Text className={minha ? 'text-white' : 'text-gray-900'}>{item.texto}</Text>
+                <TextoMensagem texto={item.texto} minha={minha} />
               )}
             </View>
           );
