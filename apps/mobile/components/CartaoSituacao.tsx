@@ -10,7 +10,7 @@ import { situacaoDoPedido, type Situacao } from '../lib/situacao';
 // cabecalho (sem botao, a tela ja e o pedido).
 const COR_ICONE: Record<Situacao['chave'], string> = {
   aprovarRevisao: '#b45309', aguardando: '#0369a1', comparar: '#b45309', agendado: '#4338ca', naOficina: '#c2410c', pronto: '#047857',
-  entregue: '#374151', avaliar: '#a16207', cancelado: '#6b7280', naoFoi: '#b91c1c',
+  entregue: '#374151', avaliar: '#a16207', cancelado: '#6b7280', naoFoi: '#b91c1c', expirado: '#b45309',
 };
 
 export function textoSituacao(t: (k: string, o?: any) => string, s: Situacao, locale: string) {
