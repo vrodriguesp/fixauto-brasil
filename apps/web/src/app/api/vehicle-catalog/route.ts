@@ -24,22 +24,29 @@ const KIND_MAP: Record<string, string[]> = {
   trucks: ['truck', 'van', 'bus'],
 };
 
+// Microcarros (quadriciclos de 4 rodas): o VehiclesDB marca como 'moped', mas o
+// dono procura em "Carro" (cliente com Microcar MC2 nao achou, 05/11). Aparecem
+// tambem em Carro, com os modelos; continuam em Moto como antes.
+const MICROCARROS = new Set(['microcar', 'ligier', 'chatenet', 'bellier', 'aixam']);
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const tipo = searchParams.get('tipo') || 'cars';
   const marca = searchParams.get('marca');
   const kinds = KIND_MAP[tipo] || KIND_MAP.cars;
+  const serve = (marcaSlug: string, kind: string) =>
+    kinds.includes(kind) || (kinds === KIND_MAP.cars && kind === 'moped' && MICROCARROS.has(marcaSlug));
 
   if (!marca) {
     const makes = data.makes
-      .filter((m) => m[2].some((k) => kinds.includes(k)))
+      .filter((m) => m[2].some((k) => serve(m[0], k)))
       .map((m) => ({ code: m[0], name: m[1] }))
       .sort((a, b) => a.name.localeCompare(b.name));
     return NextResponse.json(makes);
   }
 
   const models = data.models
-    .filter((m) => m[0] === marca && kinds.includes(m[3]))
+    .filter((m) => m[0] === marca && serve(m[0], m[3]))
     .map((m) => ({ code: m[1], name: m[2] }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
