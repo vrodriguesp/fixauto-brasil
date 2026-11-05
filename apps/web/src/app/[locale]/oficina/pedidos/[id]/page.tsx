@@ -130,7 +130,7 @@ export default function SolicitacaoDetalhePage() {
             </svg>
             {t('mensagem')}
           </Link>
-          {sol.status !== 'concluida' && sol.status !== 'cancelada' && (
+          {sol.status !== 'concluida' && sol.status !== 'cancelada' && (sol.status as string) !== 'expirada' && (
             <Link href={action.href} className={`${isAccepted || myQuote || dispensa ? 'btn-secondary' : 'btn-primary'} text-center min-h-[44px] inline-flex items-center justify-center`}>
               {action.label}
             </Link>
@@ -170,7 +170,7 @@ export default function SolicitacaoDetalhePage() {
                 </ul>
               )}
               {myQuote.observacoes && <p className="text-sm text-gray-600 mt-3 whitespace-pre-line">{cleanDescricao(myQuote.observacoes)}</p>}
-              {sol.status !== 'concluida' && sol.status !== 'cancelada' && (
+              {sol.status !== 'concluida' && sol.status !== 'cancelada' && (sol.status as string) !== 'expirada' && (
                 <Link href={`/oficina/orcamento/${sol.id}`} className="btn-secondary mt-4 w-full sm:w-auto inline-flex justify-center">
                   {isAccepted || isEmAndamento ? t('proporRevisao') : t('modificarOrcamento')}
                 </Link>

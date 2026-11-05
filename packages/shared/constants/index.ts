@@ -113,6 +113,7 @@ export const STATUS_SOLICITACAO = {
   em_andamento: { label: 'Em Andamento', color: 'purple' },
   concluida: { label: 'Concluída', color: 'gray' },
   cancelada: { label: 'Cancelada', color: 'red' },
+  expirada: { label: 'Expirada', color: 'gray' },
 } as const;
 
 export const STATUS_ORCAMENTO = {

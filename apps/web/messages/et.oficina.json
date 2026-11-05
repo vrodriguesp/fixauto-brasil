@@ -652,6 +652,7 @@
     "importarGrande": "Fail on liiga suur (kuni 10 MB). Proovi väiksemat fotot või PDF-i.",
     "orcamentoFechadoEntregue": "Auto on kliendile juba üle antud. Hinnapakkumine on suletud ja seda ei saa enam muuta.",
     "orcamentoFechadoCancelado": "See päring tühistati. Hinnapakkumist ei saa enam muuta.",
+    "orcamentoFechadoExpirado": "See päring aegus ilma valikuta. Hinnapakkumist ei saa praegu muuta; kui klient päringu uuesti avab, saate seda jälle muuta.",
     "verPedido": "Vaata päringut",
     "prazoTotalDiasAjuda": "Mitu päeva auto on töökojas – vastuvõtust üleandmiseni. Hinnapakkumise kehtivus on eraldi väli.",
     "prazoLongoAviso": "{dias} päeva töökojas {horas} töötunni jaoks – kas see on õige? Kui see on pakkumise kehtivus, kasuta välja „Hinnapakkumise kehtivus“."

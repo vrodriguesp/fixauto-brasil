@@ -776,6 +776,8 @@ export default function OrcamentoDetalhePage() {
                       </span>
                     )}
                   </p>
+                  {/* pedido expirado: aceitar/recusar so depois de reabrir (aviso no topo) */}
+                  {(solicitacao.status as string) !== 'expirada' && (
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleRefuse(orc.id)}
@@ -794,6 +796,7 @@ export default function OrcamentoDetalhePage() {
                       {t('acceptAndSchedule')}
                     </button>
                   </div>
+                  )}
                 </div>
               )}
             </div>

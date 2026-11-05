@@ -652,6 +652,7 @@
     "importarGrande": "Il file è troppo grande (max 10 MB). Prova una foto o un PDF più piccolo.",
     "orcamentoFechadoEntregue": "L'auto è già stata consegnata al cliente. Il preventivo è chiuso e non può più essere modificato.",
     "orcamentoFechadoCancelado": "Questa richiesta è stata annullata. Il preventivo non può più essere modificato.",
+    "orcamentoFechadoExpirado": "Questa richiesta è scaduta senza una scelta. Il preventivo non può essere modificato; se il cliente la riapre, potrai modificarlo di nuovo.",
     "verPedido": "Vedi richiesta",
     "prazoTotalDiasAjuda": "Quanti giorni l'auto resta in officina, dalla consegna al ritiro. La validità del preventivo è un altro campo.",
     "prazoLongoAviso": "{dias} giorni in officina per {horas} h di lavoro: è corretto? Se è la validità del preventivo, usa il campo \"Validità del preventivo\"."

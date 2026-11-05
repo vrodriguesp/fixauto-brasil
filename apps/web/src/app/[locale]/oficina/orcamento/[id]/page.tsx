@@ -323,10 +323,12 @@ ${d.observacoes}` : d.observacoes));
 
   // carro entregue (ou pedido cancelado): o orcamento fica fechado, sem revisao
   // (teste do dono 31/10; o servidor tambem recusa - SERVICO_ENCERRADO)
-  if ((solicitacao.status === 'concluida' || solicitacao.status === 'cancelada') && !submitted) {
+  // pedido expirado (072): fechado ate o cliente reabrir
+  const statusSol = solicitacao.status as string;
+  if ((statusSol === 'concluida' || statusSol === 'cancelada' || statusSol === 'expirada') && !submitted) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-20 text-center" data-testid="orcamento-encerrado">
-        <p className="text-gray-700 mb-6" role="status">{t(solicitacao.status === 'concluida' ? 'orcamentoFechadoEntregue' : 'orcamentoFechadoCancelado')}</p>
+        <p className="text-gray-700 mb-6" role="status">{t(statusSol === 'concluida' ? 'orcamentoFechadoEntregue' : statusSol === 'expirada' ? 'orcamentoFechadoExpirado' : 'orcamentoFechadoCancelado')}</p>
         <Link href={`/oficina/pedidos/${solicitacao.id}`} className="btn-primary inline-block">{t('verPedido')}</Link>
       </div>
     );

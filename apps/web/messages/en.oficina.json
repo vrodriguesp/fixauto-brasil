@@ -652,6 +652,7 @@
     "importarGrande": "The file is too large (max 10 MB). Try a smaller photo or PDF.",
     "orcamentoFechadoEntregue": "The car has already been delivered to the customer. The quote is closed and can no longer be changed.",
     "orcamentoFechadoCancelado": "This request was cancelled. The quote can no longer be changed.",
+    "orcamentoFechadoExpirado": "This request expired without a choice. The quote can no longer be changed; if the client reopens it, you can edit it again.",
     "verPedido": "View request",
     "prazoTotalDiasAjuda": "How many days the car stays at the workshop, from drop-off to pick-up. Quote validity is a separate field.",
     "prazoLongoAviso": "{dias} days at the workshop for {horas} h of work — is that right? If this is how long the quote is valid, use \"Quote validity\"."

@@ -78,12 +78,18 @@ async function main() {
     confere('2a execucao: nada novo para este pedido', (await db.from('notificacoes').select('id', { count: 'exact', head: true }).eq('tipo', 'pedido_expirado').gte('created_at', inicio).eq('dados->>solicitacao_id', comOrc.id)).count, (avisos || []).length);
     confere('2a execucao nao expira os outros', r2.expirados, 0);
 
+    // oficina nao muda o orcamento de pedido expirado (so depois de reaberto)
+    const orcVivo = (comOrc as any).orcamentos.find((o: any) => ['enviado', 'visualizado'].includes(o.status));
+    const { data: ofProf } = await db.from('oficinas').select('profile_id').eq('id', orcVivo.oficina_id).single();
+    const mudaOrc = `update orcamentos set observacoes = coalesce(observacoes, '') where id='${orcVivo.id}'`;
+    confere('oficina muda orcamento de pedido expirado -> recusado', comoUsuario(ofProf!.profile_id, mudaOrc), 'ERRO: SERVICO_ENCERRADO');
     // oficina nao ve mais o pedido na lista "para responder" (status fora de aberta/em_orcamento)
     // reabrir: outra pessoa nao consegue; o cliente consegue
     confere('reabrir por outra pessoa -> recusado', comoUsuario('00000000-0000-0000-0000-000000000001', `select reabrir_pedido('${comOrc.id}')`), 'ERRO: PEDIDO_NAO_REABRIVEL');
     confere('reabrir pelo cliente -> em_orcamento (tem orcamento)', comoUsuario(comOrc.cliente_id, `select reabrir_pedido('${comOrc.id}')`), 'em_orcamento');
     const depois = (await db.from('solicitacoes').select('status, reaberta_em, expirada_em').eq('id', comOrc.id).single()).data;
     confere('reaberto: status, reaberta_em e expirada_em limpo', [depois?.status, !!depois?.reaberta_em, depois?.expirada_em], ['em_orcamento', true, null]);
+    confere('depois de reaberto a oficina muda o orcamento de novo', comoUsuario(ofProf!.profile_id, mudaOrc), 'UPDATE 1');
     confere('reabrir de novo (ja aberto) -> recusado', comoUsuario(comOrc.cliente_id, `select reabrir_pedido('${comOrc.id}')`), 'ERRO: PEDIDO_NAO_REABRIVEL');
     const r3 = await expirarPedidos(agoraReal);
     confere('depois de reaberto o prazo recomeca (nao expira de novo)', (await st(comOrc.id))?.status, 'em_orcamento');

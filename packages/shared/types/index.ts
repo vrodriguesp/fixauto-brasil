@@ -22,7 +22,8 @@ export type StatusSolicitacao =
   | 'em_andamento'
   | 'concluida'
   | 'cancelada'
-  | 'no_show';
+  | 'no_show'
+  | 'expirada';
 
 export type StatusOrcamento =
   | 'enviado'

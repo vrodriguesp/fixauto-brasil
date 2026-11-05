@@ -61,7 +61,8 @@ export function useTraducao(texto: string | null | undefined, ativo = true) {
 // para o bloco, nao um por linha).
 export function useTraducoes(textos: string[] | null | undefined, original = false): { textos: string[]; origem: string | null } {
   const lingua = useLocale();
-  const lista = textos || [];
+  // itens vem do JSON da IA sem conferencia: null/numero viram texto
+  const lista = (textos || []).map((t) => String(t ?? ''));
   const chave = lista.join('\u0000');
   const [tr, setTr] = useState<Traducao[]>([]);
   useEffect(() => {

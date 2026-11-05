@@ -57,3 +57,25 @@ END;
 $$;
 REVOKE ALL ON FUNCTION reabrir_pedido(uuid) FROM anon, public;
 GRANT EXECUTE ON FUNCTION reabrir_pedido(uuid) TO authenticated;
+
+-- orcamento de pedido expirado fica fechado para a oficina (como em 065) ate o
+-- cliente reabrir. Compara como texto: o valor novo do enum nao pode ser usado
+-- na mesma transacao do ALTER TYPE (corpo SQL e conferido ao criar).
+CREATE OR REPLACE FUNCTION orcamento_encerrado(p_orc uuid) RETURNS boolean
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM orcamentos o JOIN solicitacoes s ON s.id = o.solicitacao_id
+    WHERE o.id = p_orc AND (o.status = 'aceito' OR s.status::text IN ('concluida', 'cancelada', 'expirada'))
+  )
+$$;
+
+CREATE OR REPLACE FUNCTION proteger_orcamento_encerrado() RETURNS trigger
+LANGUAGE plpgsql SET search_path = public AS $$
+BEGIN
+  IF NOT chamada_de_usuario() THEN RETURN NEW; END IF;
+  IF EXISTS (SELECT 1 FROM oficinas WHERE id = OLD.oficina_id AND profile_id = auth.uid())
+     AND EXISTS (SELECT 1 FROM solicitacoes WHERE id = OLD.solicitacao_id AND status::text IN ('concluida', 'cancelada', 'expirada')) THEN
+    RAISE EXCEPTION 'SERVICO_ENCERRADO' USING ERRCODE = '42501';
+  END IF;
+  RETURN NEW;
+END $$;

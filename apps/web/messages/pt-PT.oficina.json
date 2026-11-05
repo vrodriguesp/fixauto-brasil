@@ -652,6 +652,7 @@
     "importarGrande": "O ficheiro é demasiado grande (máx. 10 MB). Experimente uma fotografia ou um PDF mais pequeno.",
     "orcamentoFechadoEntregue": "O carro já foi entregue ao cliente. O orçamento está fechado e já não pode ser alterado.",
     "orcamentoFechadoCancelado": "Este pedido foi cancelado. O orçamento já não pode ser alterado.",
+    "orcamentoFechadoExpirado": "Este pedido expirou sem escolha. O orçamento não pode ser alterado; se o cliente o reabrir, poderá alterá-lo de novo.",
     "verPedido": "Ver pedido",
     "prazoTotalDiasAjuda": "Quantos dias o carro fica na oficina, da entrega ao levantamento. A validade do orçamento é outro campo.",
     "prazoLongoAviso": "{dias} dias na oficina para {horas} h de trabalho — está certo? Se é a validade do orçamento, use o campo \"Validade do orçamento\"."
