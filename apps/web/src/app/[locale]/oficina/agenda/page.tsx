@@ -25,7 +25,9 @@ type Vista = 'quadro' | 'month' | 'day' | 'list';
 const CHAVE_VISTA = 'bipfix_agenda_vista';
 
 function getDaysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate(); }
-function getFirstDayOfMonth(y: number, m: number) { return new Date(y, m, 1).getDay(); }
+// semana comeca na segunda (Estonia/Europa; antes o calendario abria no domingo, 05/11):
+// quantas casas vazias antes do dia 1 (segunda = 0 ... domingo = 6)
+function getFirstDayOfMonth(y: number, m: number) { return (new Date(y, m, 1).getDay() + 6) % 7; }
 
 export default function AgendaPage() {
   const t = useTranslations('oficinaAgenda');
@@ -670,7 +672,7 @@ export default function AgendaPage() {
             </button>
           </div>
           <div className="grid grid-cols-7 gap-1 mb-1">
-            {DIAS_SEMANA.map((d) => <div key={d} className="text-center text-sm font-medium text-gray-500 py-2">{d}</div>)}
+            {[...DIAS_SEMANA.slice(1), DIAS_SEMANA[0]].map((d) => <div key={d} className="text-center text-sm font-medium text-gray-500 py-2">{d}</div>)}
           </div>
           <div className="grid grid-cols-7 gap-1">
             {Array.from({ length: firstDay }, (_, i) => <div key={`e-${i}`} className="min-h-[80px] sm:min-h-[100px] bg-gray-50 rounded-lg" />)}

@@ -1,5 +1,7 @@
 'use client';
 
+import { ehErroExterno } from './erro-externo';
+
 // Compartilhado por ErrorReporter.tsx (erros JS globais/promises) e pelos
 // error boundaries do Next.js (error.tsx, global-error.tsx - erros que o
 // React capturou durante render/effect e por isso NUNCA chegam em
@@ -9,6 +11,7 @@
 // pro /admin/monitoramento.
 export function reportClientError(mensagem: string, stack?: string) {
   try {
+    if (ehErroExterno(mensagem, stack)) return;
     const url = typeof window !== 'undefined' ? window.location.href : undefined;
     const payload = JSON.stringify({ mensagem, stack, url });
     if (typeof navigator !== 'undefined' && navigator.sendBeacon) {

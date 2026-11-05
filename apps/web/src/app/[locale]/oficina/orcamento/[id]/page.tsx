@@ -25,6 +25,9 @@ interface ItemForm {
   quantidade: number;
 }
 
+const PRAZO_PADRAO_DIAS = 1;
+const TEMPO_PADRAO_HORAS = 2;
+
 export default function EnviarOrcamentoPage() {
   const t = useTranslations('oficinaEnviarOrcamento');
   const tc = useTranslations('constants');
@@ -61,8 +64,9 @@ export default function EnviarOrcamentoPage() {
   const [itens, setItens] = useState<ItemForm[]>([
     { descricao: '', tipo: 'mao_de_obra', valor_unitario: 0, quantidade: 1 },
   ]);
-  const [prazoDias, setPrazoDias] = useState(5);
-  const [tempoExecucaoHoras, setTempoExecucaoHoras] = useState(40);
+  // padrao de servico simples (antes 5 dias / 40 h: alto para troca de oleo, 05/11)
+  const [prazoDias, setPrazoDias] = useState(PRAZO_PADRAO_DIAS);
+  const [tempoExecucaoHoras, setTempoExecucaoHoras] = useState(TEMPO_PADRAO_HORAS);
   const [observacoes, setObservacoes] = useState('');
   const [validade, setValidade] = useState((() => { const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0]; })());
   const [submitted, setSubmitted] = useState(false);
@@ -122,8 +126,8 @@ export default function EnviarOrcamentoPage() {
           }))
         );
       }
-      setPrazoDias(existingQuote.prazo_dias || 5);
-      setTempoExecucaoHoras(existingQuote.tempo_execucao_horas || 40);
+      setPrazoDias(existingQuote.prazo_dias || PRAZO_PADRAO_DIAS);
+      setTempoExecucaoHoras(existingQuote.tempo_execucao_horas || TEMPO_PADRAO_HORAS);
 
       // Parse commission prefix from observacoes
       const obsRaw = existingQuote.observacoes || '';

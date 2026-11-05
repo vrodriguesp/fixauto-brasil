@@ -6,6 +6,7 @@ import { cleanDescricao, formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { notifOrcamentoRevisado, chatOrcamentoRevisado } from '@/lib/notif-i18n';
 import type { OrcamentoItem } from '@fixauto/shared';
+import { EVENTO_DISPENSA } from '@/components/oficina/DispensarPedido';
 
 interface CreateOrcamentoInput {
   solicitacao_id: string;
@@ -76,6 +77,10 @@ export function useOrcamentos() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ oficinaId: oficina.id }),
     }).catch(() => {});
+
+    // o pedido sai de "Para responder": o contador do menu "Pedidos" atualiza na
+    // hora (antes so no proximo ciclo de 60 s - teste em producao 05/11)
+    window.dispatchEvent(new Event(EVENTO_DISPENSA));
 
     return { data: orc, error: null };
   };

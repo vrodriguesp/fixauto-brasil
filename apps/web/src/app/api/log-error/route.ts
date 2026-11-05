@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { limitarPorIp } from '@/lib/rate-limit';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { ehErroExterno } from '@/lib/erro-externo';
 
 
 // Public endpoint (called from any page, including anonymous visitors) that
@@ -14,6 +15,7 @@ export async function POST(req: NextRequest) {
     const stack = body.stack ? String(body.stack).slice(0, 3000) : null;
     const url = body.url ? String(body.url).slice(0, 500) : null;
     const userAgent = req.headers.get('user-agent')?.slice(0, 300) || null;
+    if (ehErroExterno(mensagem, stack)) return NextResponse.json({ success: true });
 
     await supabaseAdmin.from('app_errors').insert({ mensagem, stack, url, user_agent: userAgent });
 

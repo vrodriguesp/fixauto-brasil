@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { execSync } from 'child_process';
 import { requireAdmin } from '@/lib/admin-auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { ehErroExterno } from '@/lib/erro-externo';
 
 
 export const dynamic = 'force-dynamic';
@@ -83,7 +84,7 @@ export async function GET() {
         .from('app_errors')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(30),
+        .limit(200),
       Promise.resolve(parseAccessLog()),
     ]);
 
@@ -91,7 +92,8 @@ export async function GET() {
 
     return NextResponse.json({
       acessos,
-      clientErrors: clientErrors || [],
+      // os gravados antes do filtro (05/11) tambem saem da lista
+      clientErrors: (clientErrors || []).filter((e: any) => !ehErroExterno(e.mensagem, e.stack)).slice(0, 30),
       serverErrors,
     });
   } catch (error) {
