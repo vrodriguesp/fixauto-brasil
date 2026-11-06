@@ -480,10 +480,11 @@ export default function OrcamentoDetalhePage() {
               {orc.status === 'aceito' && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 mb-3 rounded-full text-xs font-semibold bg-emerald-600 text-white">✓ {t('escolhido')}</span>
               )}
-              {/* Workshop header (cabe em 390 px com nome longo - auditoria B6) */}
-              <div className="flex items-start justify-between gap-3 mb-4">
+              {/* Workshop header (cabe em 390 px com nome longo - auditoria B6); no celular o preco
+                  fica embaixo do nome (o nome quebrava no meio da palavra - teste do dono 06/11) */}
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 shrink-0 bg-primary-100 rounded-full flex items-center justify-center">
                     <span className="text-primary-700 font-bold">
                       {orc.oficina?.nome_fantasia?.charAt(0)}
                     </span>
@@ -549,7 +550,7 @@ export default function OrcamentoDetalhePage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-right flex-shrink-0">
+                <div className="sm:text-right flex-shrink-0 flex items-baseline flex-wrap gap-x-3 sm:block pl-[60px] sm:pl-0">
                   <p className="text-xl sm:text-2xl font-bold text-gray-900 whitespace-nowrap">{formatCurrency(orc.valor_total, currencyForCountry(orc.oficina?.pais), locale)}</p>
                   <p className="text-sm text-gray-500">{t('deadlineDays', { days: orc.prazo_dias })}</p>
                   {orc.valor_original && orc.valor_original !== orc.valor_total && (
@@ -559,18 +560,18 @@ export default function OrcamentoDetalhePage() {
               </div>
 
               {/* Execution time + availability summary */}
-              <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="p-3 bg-blue-50 rounded-lg text-center">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 mb-4">
+                <div className="p-3 bg-blue-50 rounded-lg flex items-center justify-between gap-3 sm:block sm:text-center">
                   <p className="text-xs text-blue-600">{t('execTimeLabel')}</p>
                   <p className="text-sm font-bold text-blue-900">{formatExecTime(orc.tempo_execucao_horas, t)}</p>
                 </div>
-                <div className="p-3 bg-green-50 rounded-lg text-center">
+                <div className="p-3 bg-green-50 rounded-lg flex items-center justify-between gap-3 sm:block sm:text-center">
                   <p className="text-xs text-green-600">{t('nextCheckinLabel')}</p>
                   <p className="text-sm font-bold text-green-900">
                     {orc.disponibilidade.length > 0 ? formatSlotDate(orc.disponibilidade[0].data_checkin, locale) : t('noSlotAvailable')}
                   </p>
                 </div>
-                <div className="p-3 bg-purple-50 rounded-lg text-center">
+                <div className="p-3 bg-purple-50 rounded-lg flex items-center justify-between gap-3 sm:block sm:text-center">
                   <p className="text-xs text-purple-600">{t('availableDatesLabel')}</p>
                   <p className="text-sm font-bold text-purple-900">{t('optionsCount', { count: orc.disponibilidade.length })}</p>
                 </div>
@@ -767,7 +768,7 @@ export default function OrcamentoDetalhePage() {
 
                 </div>
               ) : (
-                <div className="flex items-center justify-between pt-4 border-t">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t">
                   <p className="text-xs text-gray-500">
                     {t('validUntil', { date: formatDate(orc.validade, locale) })}
                     {orc.revisao_numero > 0 && (
@@ -778,7 +779,7 @@ export default function OrcamentoDetalhePage() {
                   </p>
                   {/* pedido expirado: aceitar/recusar so depois de reabrir (aviso no topo) */}
                   {(solicitacao.status as string) !== 'expirada' && (
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 [&>button]:flex-1 sm:[&>button]:flex-none">
                     <button
                       onClick={() => handleRefuse(orc.id)}
                       disabled={refusing === orc.id}
@@ -788,7 +789,7 @@ export default function OrcamentoDetalhePage() {
                     </button>
                     <button
                       onClick={() => handleStartScheduling(orc.id)}
-                      className="btn-success !py-2 !px-4 text-sm flex items-center gap-2"
+                      className="btn-success !py-2 !px-4 text-sm flex items-center justify-center gap-2"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
