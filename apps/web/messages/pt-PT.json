@@ -857,6 +857,9 @@
     "ctaFinalTitulo": "Envie um pedido – demora cerca de 2 minutos."
   },
   "pedidoSemConta": {
+    "detalheTexto": "Escreva por palavras suas o que precisa ou procure o serviço na lista.",
+    "buscarServico": "Procurar serviço…",
+    "semResultadoBusca": "Não está na lista – escreva no campo acima.",
     "titulo": "Peça orçamento às oficinas",
     "subtitulo": "Grátis e sem registo prévio – cerca de 2 minutos.",
     "passoDe": "Passo {n} de {total}",

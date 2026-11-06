@@ -48,7 +48,7 @@ function sugestaoEmail(email: string): string | null {
   return perto ? `${m[1]}@${perto}` : null;
 }
 
-type Etapa = 'servico' | 'carro' | 'local' | 'contato' | 'codigo' | 'enviado';
+type Etapa = 'servico' | 'detalhe' | 'carro' | 'local' | 'contato' | 'codigo' | 'enviado';
 type Item = { code: string; name: string };
 const CAMPO = 'border border-gray-300 rounded-lg px-4 py-3 text-[16px]';
 
@@ -62,6 +62,7 @@ export default function PedidoScreen() {
   const [etapa, setEtapa] = useState<Etapa>('servico');
   const [tipo, setTipo] = useState('');
   const [servicos, setServicos] = useState<string[]>([]);
+  const [busca, setBusca] = useState('');
   const [descricao, setDescricao] = useState('');
   const [urgencia, setUrgencia] = useState('media');
   const [fotos, setFotos] = useState<ImagePicker.ImagePickerAsset[]>([]);
@@ -97,7 +98,7 @@ export default function PedidoScreen() {
   }, [carregandoLogin, user]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { contar('abriu'); }, []);
   useEffect(() => {
-    if (['carro', 'local', 'contato'].includes(etapa)) contar(etapa);
+    if (['detalhe', 'carro', 'local', 'contato'].includes(etapa)) contar(etapa);
     rolagem.current?.scrollTo({ y: 0, animated: false });
     if (etapa === 'local' && !coords) buscarLocal();
   }, [etapa]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -127,11 +128,14 @@ export default function PedidoScreen() {
   };
 
   const tipoConfig = TIPOS_SERVICO.find((x) => x.value === tipo);
-  const precisaDescricao = tipoConfig?.needsPhoto ?? true;
   const NS: Record<string, string> = { revisao: 'servicosRevisao', mecanica: 'servicosMecanica', eletrica: 'servicosEletrica', pneu: 'servicosPneu' };
   const lista = tipo === 'revisao' ? SERVICOS_REVISAO : tipo === 'mecanica' ? SERVICOS_MECANICA : tipo === 'eletrica' ? SERVICOS_ELETRICA : tipo === 'pneu' ? SERVICOS_PNEU : [];
   const rotuloServico = (v: string) => (NS[tipo] ? t(`constants.${NS[tipo]}.${v}`) : v);
-  const servicoOk = !!tipo && (!precisaDescricao || descricao.trim().length > 0);
+  // busca sem acento e sem maiusculas ('rehvi' acha 'Rehvide vahetus')
+  const semAcento = (v: string) => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const listaFiltrada = lista.filter((sv) => semAcento(rotuloServico(sv.value)).includes(semAcento(busca.trim())));
+  // escreveu o que precisa OU marcou algum servico da lista
+  const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
   const carroOk = !!(marca && modelo && /^\d{4}$/.test(ano.trim()));
   const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && senha.length >= 8 && termos;
   const sugestao = sugestaoEmail(email);
@@ -300,7 +304,7 @@ export default function PedidoScreen() {
     );
   }
 
-  const passos: Etapa[] = ['servico', 'carro', 'local', 'contato'];
+  const passos: Etapa[] = ['servico', 'detalhe', 'carro', 'local', 'contato'];
   const indice = passos.indexOf(etapa);
 
   return (
@@ -316,21 +320,44 @@ export default function PedidoScreen() {
         </View>
       )}
 
+      {/* 1) so o tipo: um toque e ja vai para a pagina seguinte (guiado, pedido do dono 06/11) */}
       {etapa === 'servico' && (
         <View>
           <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoServico')}</Text>
-          <View className="flex-row flex-wrap gap-2 mb-4">
+          <View className="flex-row flex-wrap justify-between">
             {TIPOS_SERVICO.map((s) => (
-              <Pressable key={s.value} onPress={() => { setTipo(s.value); setServicos([]); }} accessibilityRole="button" accessibilityState={{ selected: tipo === s.value }}
-                className={`px-4 py-2 rounded-full border ${tipo === s.value ? 'bg-primary-600 border-primary-600' : 'border-gray-300'}`}>
-                <Text className={tipo === s.value ? 'text-white' : 'text-gray-700'}>{s.icon} {t(`constants.tiposServico.${s.value}`)}</Text>
+              <Pressable key={s.value} accessibilityRole="button" accessibilityState={{ selected: tipo === s.value }}
+                onPress={() => { if (s.value !== tipo) { setServicos([]); setBusca(''); } setTipo(s.value); setEtapa('detalhe'); }}
+                className={`w-[48.5%] p-4 mb-3 rounded-lg border-2 ${tipo === s.value ? 'border-primary-600 bg-primary-50' : 'border-gray-200'}`}>
+                <Text className="text-2xl">{s.icon}</Text>
+                <Text className="font-medium text-gray-900 mt-2">{t(`constants.tiposServico.${s.value}`)}</Text>
               </Pressable>
             ))}
           </View>
+          <View className="flex-row justify-center gap-1 mt-4 mb-10">
+            <Text className="text-gray-600">{t('pedidoSemConta.jaTemConta')}</Text>
+            <Pressable onPress={() => router.replace('/(auth)/login')} accessibilityRole="link" hitSlop={8}>
+              <Text className="text-primary-600 font-semibold">{t('pedidoSemConta.entrar')}</Text>
+            </Pressable>
+          </View>
+        </View>
+      )}
+
+      {/* 2) o que precisa: escreve com as proprias palavras OU procura na lista do tipo */}
+      {etapa === 'detalhe' && (
+        <View>
+          <Text className="text-lg font-semibold text-gray-900 mb-1">{tipoConfig?.icon} {t(`constants.tiposServico.${tipo}`)}</Text>
+          <Text className="text-sm text-gray-500 mb-4">{lista.length > 0 ? t('pedidoSemConta.detalheTexto') : t('pedidoSemConta.placeholderDescribeIssue')}</Text>
+          <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.describeProblem')}</Text>
+          <TextInput accessibilityLabel={t('novaSolicitacao.passoSintomas')} value={descricao} onChangeText={setDescricao} multiline numberOfLines={4} maxLength={1800}
+            placeholder={t('pedidoSemConta.placeholderDescribeIssue')}
+            className={`${CAMPO} mb-5 min-h-[100px]`} style={{ textAlignVertical: 'top' }} />
           {lista.length > 0 && (
-            <View className="mb-2">
-              <Text className="text-sm font-medium text-gray-700 mb-2">{t('pedidoSemConta.step3ServiceTitle')}</Text>
-              {lista.map((sv) => {
+            <View className="mb-3">
+              <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.step3ServiceTitle')}</Text>
+              <TextInput accessibilityLabel={t('pedidoSemConta.buscarServico')} value={busca} onChangeText={setBusca} placeholder={t('pedidoSemConta.buscarServico')}
+                autoCorrect={false} className={`${CAMPO} mb-2`} />
+              {listaFiltrada.map((sv) => {
                 const marcado = servicos.includes(sv.value);
                 return (
                   <Pressable key={sv.value} onPress={() => setServicos((x) => (marcado ? x.filter((y) => y !== sv.value) : [...x, sv.value]))}
@@ -341,59 +368,46 @@ export default function PedidoScreen() {
                   </Pressable>
                 );
               })}
+              {listaFiltrada.length === 0 && <Text className="text-sm text-gray-500 py-2">{t('pedidoSemConta.semResultadoBusca')}</Text>}
             </View>
           )}
-          {!!tipo && (
-            <>
-              <Text className="text-sm font-medium text-gray-700 mt-2 mb-1">{precisaDescricao ? t('pedidoSemConta.describeProblem') : t('pedidoSemConta.additionalNotesOptional')}</Text>
-              <TextInput accessibilityLabel={t('novaSolicitacao.passoSintomas')} value={descricao} onChangeText={setDescricao} multiline numberOfLines={4} maxLength={1800}
-                placeholder={precisaDescricao ? t('pedidoSemConta.placeholderDescribeIssue') : t('pedidoSemConta.placeholderAdditionalInfo')}
-                className={`${CAMPO} mb-5 min-h-[100px]`} style={{ textAlignVertical: 'top' }} />
 
-              <Text className="text-sm font-medium text-gray-700 mb-2">{t('pedidoSemConta.fotosTitulo')}</Text>
-              <View className="flex-row flex-wrap gap-2 mb-2">
-                {fotos.map((f, i) => (
-                  <View key={f.uri + i}>
-                    <Image source={{ uri: f.uri }} className="w-20 h-20 rounded-lg" />
-                    <Pressable onPress={() => setFotos((x) => x.filter((_, j) => j !== i))} accessibilityRole="button" accessibilityLabel={t('pedidoSemConta.removerFoto')} hitSlop={8}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full items-center justify-center">
-                      <Ionicons name="close" size={14} color="#fff" />
-                    </Pressable>
-                  </View>
-                ))}
+          <Text className="text-sm font-medium text-gray-700 mb-2">{t('pedidoSemConta.fotosTitulo')}</Text>
+          <View className="flex-row flex-wrap gap-2 mb-2">
+            {fotos.map((f, i) => (
+              <View key={f.uri + i}>
+                <Image source={{ uri: f.uri }} className="w-20 h-20 rounded-lg" />
+                <Pressable onPress={() => setFotos((x) => x.filter((_, j) => j !== i))} accessibilityRole="button" accessibilityLabel={t('pedidoSemConta.removerFoto')} hitSlop={8}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full items-center justify-center">
+                  <Ionicons name="close" size={14} color="#fff" />
+                </Pressable>
               </View>
-              {fotos.length < 6 && (
-                <View className="flex-row gap-2 mb-5">
-                  <Pressable onPress={handleCamera} accessibilityRole="button" className="flex-1 border border-gray-300 rounded-lg py-3 items-center flex-row justify-center gap-2">
-                    <Ionicons name="camera-outline" size={18} color="#374151" />
-                    <Text className="text-gray-700">{t('novaSolicitacao.camera')}</Text>
-                  </Pressable>
-                  <Pressable onPress={handleGaleria} accessibilityRole="button" className="flex-1 border border-gray-300 rounded-lg py-3 items-center flex-row justify-center gap-2">
-                    <Ionicons name="images-outline" size={18} color="#374151" />
-                    <Text className="text-gray-700">{t('novaSolicitacao.galeria')}</Text>
-                  </Pressable>
-                </View>
-              )}
-
-              <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoUrgencia')}</Text>
-              <View className="gap-2">
-                {URGENCIAS.map((u) => (
-                  <Pressable key={u.value} onPress={() => setUrgencia(u.value)} accessibilityRole="radio" accessibilityState={{ selected: urgencia === u.value }}
-                    className={`border rounded-lg px-4 py-3 ${urgencia === u.value ? 'border-primary-600 bg-primary-50' : 'border-gray-200'}`}>
-                    <Text className="font-medium text-gray-900">{t(`constants.urgencias.${u.value}`)}</Text>
-                    <Text className="text-gray-500 text-sm">{t(`constants.urgencias.${u.value}Desc`)}</Text>
-                  </Pressable>
-                ))}
-              </View>
-            </>
-          )}
-          <Navegar ok={servicoOk} avancar={() => setEtapa('carro')} />
-          <View className="flex-row justify-center gap-1 mb-10">
-            <Text className="text-gray-600">{t('pedidoSemConta.jaTemConta')}</Text>
-            <Pressable onPress={() => router.replace('/(auth)/login')} accessibilityRole="link" hitSlop={8}>
-              <Text className="text-primary-600 font-semibold">{t('pedidoSemConta.entrar')}</Text>
-            </Pressable>
+            ))}
           </View>
+          {fotos.length < 6 && (
+            <View className="flex-row gap-2 mb-5">
+              <Pressable onPress={handleCamera} accessibilityRole="button" className="flex-1 border border-gray-300 rounded-lg py-3 items-center flex-row justify-center gap-2">
+                <Ionicons name="camera-outline" size={18} color="#374151" />
+                <Text className="text-gray-700">{t('novaSolicitacao.camera')}</Text>
+              </Pressable>
+              <Pressable onPress={handleGaleria} accessibilityRole="button" className="flex-1 border border-gray-300 rounded-lg py-3 items-center flex-row justify-center gap-2">
+                <Ionicons name="images-outline" size={18} color="#374151" />
+                <Text className="text-gray-700">{t('novaSolicitacao.galeria')}</Text>
+              </Pressable>
+            </View>
+          )}
+
+          <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoUrgencia')}</Text>
+          <View className="gap-2">
+            {URGENCIAS.map((u) => (
+              <Pressable key={u.value} onPress={() => setUrgencia(u.value)} accessibilityRole="radio" accessibilityState={{ selected: urgencia === u.value }}
+                className={`border rounded-lg px-4 py-3 ${urgencia === u.value ? 'border-primary-600 bg-primary-50' : 'border-gray-200'}`}>
+                <Text className="font-medium text-gray-900">{t(`constants.urgencias.${u.value}`)}</Text>
+                <Text className="text-gray-500 text-sm">{t(`constants.urgencias.${u.value}Desc`)}</Text>
+              </Pressable>
+            ))}
+          </View>
+          <Navegar voltar="servico" ok={servicoOk} avancar={() => setEtapa('carro')} />
         </View>
       )}
 

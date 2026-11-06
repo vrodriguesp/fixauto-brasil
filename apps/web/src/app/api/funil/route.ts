@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 // Passos do pedido (onde as pessoas desistem): so soma 1 no contador do dia.
 // Sem IP guardado, sem cookie, sem dado pessoal (migracao 073).
 const FUNIS = ['pedido_site', 'pedido_app'];
-const ETAPAS = ['abriu', 'servico', 'carro', 'local', 'contato'];
+const ETAPAS = ['abriu', 'servico', 'detalhe', 'carro', 'local', 'contato'];
 
 export async function POST(req: NextRequest) {
   if (!limitarPorIp(req, 'funil', 60, 60 * 60 * 1000)) return NextResponse.json({ ok: true });

@@ -858,6 +858,9 @@
     "ctaFinalTitulo": "Invia una richiesta: ci vogliono circa 2 minuti."
   },
   "pedidoSemConta": {
+    "detalheTexto": "Scrivi con parole tue cosa ti serve, oppure cerca il servizio nell’elenco.",
+    "buscarServico": "Cerca un servizio…",
+    "semResultadoBusca": "Non è nell’elenco: scrivilo nel campo qui sopra.",
     "titulo": "Chiedi un preventivo alle officine",
     "subtitulo": "Gratis e senza registrazione iniziale – circa 2 minuti.",
     "passoDe": "Passo {n} di {total}",

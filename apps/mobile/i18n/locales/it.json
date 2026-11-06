@@ -602,6 +602,9 @@
     "plateLabel": "Targa (opzionale)",
     "next": "Avanti",
     "back": "Indietro",
-    "erroLocalizacao": "Non abbiamo trovato l'indirizzo. Scegli un suggerimento o consenti la posizione."
+    "erroLocalizacao": "Non abbiamo trovato l'indirizzo. Scegli un suggerimento o consenti la posizione.",
+    "detalheTexto": "Scrivi con parole tue cosa ti serve, oppure cerca il servizio nell’elenco.",
+    "buscarServico": "Cerca un servizio…",
+    "semResultadoBusca": "Non è nell’elenco: scrivilo nel campo qui sopra."
   }
 }

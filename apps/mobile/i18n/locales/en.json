@@ -602,6 +602,9 @@
     "plateLabel": "Number plate (optional)",
     "next": "Next",
     "back": "Back",
-    "erroLocalizacao": "We couldn't find that address. Pick one of the suggestions or allow location."
+    "erroLocalizacao": "We couldn't find that address. Pick one of the suggestions or allow location.",
+    "detalheTexto": "Write what you need in your own words, or search the list of services.",
+    "buscarServico": "Search services…",
+    "semResultadoBusca": "Not in the list – just write it in the box above."
   }
 }

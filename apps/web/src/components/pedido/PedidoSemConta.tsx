@@ -39,7 +39,7 @@ function sugestaoEmail(email: string): string | null {
   return perto ? `${m[1]}@${perto}` : null;
 }
 
-type Etapa = 'servico' | 'carro' | 'local' | 'contato' | 'codigo' | 'enviado';
+type Etapa = 'servico' | 'detalhe' | 'carro' | 'local' | 'contato' | 'codigo' | 'enviado';
 
 export default function PedidoSemConta() {
   const t = useTranslations('pedidoSemConta');
@@ -54,6 +54,7 @@ export default function PedidoSemConta() {
   // servico
   const [tipo, setTipo] = useState('');
   const [servicos, setServicos] = useState<string[]>([]);
+  const [busca, setBusca] = useState('');
   const [descricao, setDescricao] = useState('');
   const [urgencia, setUrgencia] = useState('media');
   const [fotos, setFotos] = useState<{ file: File; preview: string }[]>([]);
@@ -94,7 +95,7 @@ export default function PedidoSemConta() {
   // passo novo comeca no alto (o anterior era mais comprido: a pessoa via so o rodape - teste do dono 06/11)
   const primeiraEtapa = useRef(true);
   useEffect(() => {
-    if (['carro', 'local', 'contato'].includes(etapa)) contar(etapa);
+    if (['detalhe', 'carro', 'local', 'contato'].includes(etapa)) contar(etapa);
     if (primeiraEtapa.current) { primeiraEtapa.current = false; return; }
     window.scrollTo({ top: 0 });
   }, [etapa]);
@@ -116,11 +117,14 @@ export default function PedidoSemConta() {
   }, []);
 
   const tipoConfig = TIPOS_SERVICO.find((x) => x.value === tipo);
-  const precisaDescricao = tipoConfig?.needsPhoto ?? true;
   const NS: Record<string, string> = { revisao: 'servicosRevisao', mecanica: 'servicosMecanica', eletrica: 'servicosEletrica', pneu: 'servicosPneu' };
   const lista = tipo === 'revisao' ? SERVICOS_REVISAO : tipo === 'mecanica' ? SERVICOS_MECANICA : tipo === 'eletrica' ? SERVICOS_ELETRICA : tipo === 'pneu' ? SERVICOS_PNEU : [];
   const rotuloServico = (v: string) => (NS[tipo] ? tc(`${NS[tipo]}.${v}`) : v);
-  const servicoOk = !!tipo && (!precisaDescricao || descricao.trim().length > 0);
+  // busca sem acento e sem maiusculas ('rehvi' acha 'Rehvide vahetus')
+  const semAcento = (v: string) => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const listaFiltrada = lista.filter((sv) => semAcento(rotuloServico(sv.value)).includes(semAcento(busca.trim())));
+  // escreveu o que precisa OU marcou algum servico da lista
+  const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
   const carroOk = !!(carro.marca && carro.modelo && carro.ano);
   const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && senha.length >= 8 && termos;
   const sugestao = sugestaoEmail(email);
@@ -218,7 +222,7 @@ export default function PedidoSemConta() {
     }
   };
 
-  const passos: Etapa[] = ['servico', 'carro', 'local', 'contato'];
+  const passos: Etapa[] = ['servico', 'detalhe', 'carro', 'local', 'contato'];
   const indice = passos.indexOf(etapa);
   const Navegar = ({ voltar, avancar, ok, rotulo }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string }) => (
     <div className="flex justify-between mt-6 gap-3">
@@ -259,65 +263,71 @@ export default function PedidoSemConta() {
       )}
 
       <div className="card">
+        {/* 1) so o tipo: um toque e ja vai para a pagina seguinte (guiado, pedido do dono 06/11) */}
         {etapa === 'servico' && (
           <div data-testid="passo-servico">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">{tn('step2Title')}</h2>
             <div className="grid grid-cols-2 gap-3">
               {TIPOS_SERVICO.map((s) => (
-                <button key={s.value} type="button" onClick={() => { setTipo(s.value); setServicos([]); }} aria-pressed={tipo === s.value}
+                <button key={s.value} type="button" aria-pressed={tipo === s.value}
+                  onClick={() => { if (s.value !== tipo) { setServicos([]); setBusca(''); } setTipo(s.value); setEtapa('detalhe'); }}
                   className={`p-4 rounded-lg border-2 text-left transition-all ${tipo === s.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
                   <span className="text-2xl">{s.icon}</span>
                   <p className="font-medium text-gray-900 mt-2">{tc(`tiposServico.${s.value}`)}</p>
                 </button>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* 2) o que precisa: escreve com as proprias palavras OU procura na lista do tipo */}
+        {etapa === 'detalhe' && (
+          <div data-testid="passo-detalhe">
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">{tipoConfig?.icon} {tc(`tiposServico.${tipo}`)}</h2>
+            <p className="text-sm text-gray-500 mb-4">{lista.length > 0 ? t('detalheTexto') : tn('placeholderDescribeIssue')}</p>
+            <label htmlFor="pedido-descricao" className="block text-sm font-medium text-gray-700 mb-1">{tn('describeProblem')}</label>
+            <textarea id="pedido-descricao" className="input-field min-h-[100px]" maxLength={1800} value={descricao} onChange={(e) => setDescricao(e.target.value)}
+              placeholder={tn('placeholderDescribeIssue')} />
             {lista.length > 0 && (
-              <div className="mt-6">
-                <p className="text-sm font-medium text-gray-700 mb-2">{tn('step3ServiceTitle')}</p>
-                <div className="space-y-2 max-h-[320px] overflow-y-auto">
-                  {lista.map((sv) => (
+              <div className="mt-5">
+                <label htmlFor="pedido-busca" className="block text-sm font-medium text-gray-700 mb-1">{tn('step3ServiceTitle')}</label>
+                <input id="pedido-busca" type="search" className="input-field" value={busca} onChange={(e) => setBusca(e.target.value)} placeholder={t('buscarServico')} />
+                <div className="space-y-2 max-h-[300px] overflow-y-auto mt-2" data-testid="lista-servicos">
+                  {listaFiltrada.map((sv) => (
                     <label key={sv.value} className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer ${servicos.includes(sv.value) ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}>
                       <input type="checkbox" checked={servicos.includes(sv.value)} onChange={() => setServicos((x) => x.includes(sv.value) ? x.filter((y) => y !== sv.value) : [...x, sv.value])} className="w-4 h-4" />
                       <span className="text-sm text-gray-900">{rotuloServico(sv.value)}</span>
                     </label>
                   ))}
+                  {listaFiltrada.length === 0 && <p className="text-sm text-gray-500 py-2">{t('semResultadoBusca')}</p>}
                 </div>
               </div>
             )}
-            {tipo && (
-              <>
-                <label htmlFor="pedido-descricao" className="block text-sm font-medium text-gray-700 mt-6 mb-1">
-                  {precisaDescricao ? tn('describeProblem') : tn('additionalNotesOptional')}
-                </label>
-                <textarea id="pedido-descricao" className="input-field min-h-[110px]" maxLength={1800} value={descricao} onChange={(e) => setDescricao(e.target.value)}
-                  placeholder={precisaDescricao ? tn('placeholderDescribeIssue') : tn('placeholderAdditionalInfo')} />
-                <p className="text-sm font-medium text-gray-700 mt-5 mb-2">{t('fotosTitulo')}</p>
-                <input ref={inputFoto} type="file" accept="image/*" multiple className="hidden"
-                  onChange={(e) => { const fs = Array.from(e.target.files || []).slice(0, 6 - fotos.length); setFotos((x) => [...x, ...fs.map((file) => ({ file, preview: URL.createObjectURL(file) }))]); e.target.value = ''; }} />
-                <div className="grid grid-cols-4 gap-2">
-                  {fotos.map((f, i) => (
-                    <div key={f.preview} className="relative aspect-square rounded-lg overflow-hidden">
-                      <img src={f.preview} alt={tn('photoAlt', { n: i + 1 })} className="w-full h-full object-cover" />
-                      <button type="button" aria-label={t('removerFoto')} onClick={() => setFotos((x) => x.filter((_, j) => j !== i))} className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full text-sm">×</button>
-                    </div>
-                  ))}
-                  {fotos.length < 6 && (
-                    <button type="button" onClick={() => inputFoto.current?.click()} className="aspect-square border-2 border-dashed border-gray-300 rounded-lg text-xs text-gray-500 hover:border-primary-400">+ {tn('addPhoto')}</button>
-                  )}
+            <p className="text-sm font-medium text-gray-700 mt-5 mb-2">{t('fotosTitulo')}</p>
+            <input ref={inputFoto} type="file" accept="image/*" multiple className="hidden"
+              onChange={(e) => { const fs = Array.from(e.target.files || []).slice(0, 6 - fotos.length); setFotos((x) => [...x, ...fs.map((file) => ({ file, preview: URL.createObjectURL(file) }))]); e.target.value = ''; }} />
+            <div className="grid grid-cols-4 gap-2">
+              {fotos.map((f, i) => (
+                <div key={f.preview} className="relative aspect-square rounded-lg overflow-hidden">
+                  <img src={f.preview} alt={tn('photoAlt', { n: i + 1 })} className="w-full h-full object-cover" />
+                  <button type="button" aria-label={t('removerFoto')} onClick={() => setFotos((x) => x.filter((_, j) => j !== i))} className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full text-sm">×</button>
                 </div>
-                <p className="text-sm font-medium text-gray-700 mt-5 mb-2">{tn('urgencyLabel')}</p>
-                <div className="grid sm:grid-cols-3 gap-2">
-                  {URGENCIAS.map((u) => (
-                    <button key={u.value} type="button" onClick={() => setUrgencia(u.value)} aria-pressed={urgencia === u.value}
-                      className={`p-3 rounded-lg border-2 text-left ${urgencia === u.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}>
-                      <p className="font-medium text-gray-900 text-sm">{tc(`urgencias.${u.value}`)}</p>
-                      <p className="text-xs text-gray-500">{tc(`urgencias.${u.value}Desc`)}</p>
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-            <Navegar ok={servicoOk} avancar={() => setEtapa('carro')} />
+              ))}
+              {fotos.length < 6 && (
+                <button type="button" onClick={() => inputFoto.current?.click()} className="aspect-square border-2 border-dashed border-gray-300 rounded-lg text-xs text-gray-500 hover:border-primary-400">+ {tn('addPhoto')}</button>
+              )}
+            </div>
+            <p className="text-sm font-medium text-gray-700 mt-5 mb-2">{tn('urgencyLabel')}</p>
+            <div className="grid sm:grid-cols-3 gap-2">
+              {URGENCIAS.map((u) => (
+                <button key={u.value} type="button" onClick={() => setUrgencia(u.value)} aria-pressed={urgencia === u.value}
+                  className={`p-3 rounded-lg border-2 text-left ${urgencia === u.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}>
+                  <p className="font-medium text-gray-900 text-sm">{tc(`urgencias.${u.value}`)}</p>
+                  <p className="text-xs text-gray-500">{tc(`urgencias.${u.value}Desc`)}</p>
+                </button>
+              ))}
+            </div>
+            <Navegar voltar="servico" ok={servicoOk} avancar={() => setEtapa('carro')} />
           </div>
         )}
 

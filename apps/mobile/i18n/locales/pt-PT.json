@@ -602,6 +602,9 @@
     "plateLabel": "Matrícula (opcional)",
     "next": "Seguinte",
     "back": "Voltar",
-    "erroLocalizacao": "Não encontrámos esse endereço. Escolha uma das sugestões ou permita a localização."
+    "erroLocalizacao": "Não encontrámos esse endereço. Escolha uma das sugestões ou permita a localização.",
+    "detalheTexto": "Escreva por palavras suas o que precisa ou procure o serviço na lista.",
+    "buscarServico": "Procurar serviço…",
+    "semResultadoBusca": "Não está na lista – escreva no campo acima."
   }
 }

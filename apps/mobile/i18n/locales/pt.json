@@ -602,6 +602,9 @@
     "plateLabel": "Placa (opcional)",
     "next": "Próximo",
     "back": "Voltar",
-    "erroLocalizacao": "Não encontramos esse endereço. Escolha uma das sugestões ou permita a localização."
+    "erroLocalizacao": "Não encontramos esse endereço. Escolha uma das sugestões ou permita a localização.",
+    "detalheTexto": "Escreva com suas palavras o que precisa ou procure o serviço na lista.",
+    "buscarServico": "Procurar serviço…",
+    "semResultadoBusca": "Não está na lista – escreva no campo acima."
   }
 }
