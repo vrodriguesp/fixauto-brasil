@@ -780,5 +780,75 @@
     "placeholder": "Escreva uma mensagem…",
     "enviar": "Enviar",
     "traduzida": "Traduzido automaticamente"
+  },
+  "paraMotoristas": {
+    "metaTitle": "Reparação automóvel: peça orçamento às oficinas | BipFix",
+    "metaDescription": "Descreva o problema, adicione uma foto e receba orçamentos das oficinas. Grátis e sem compromisso, conta e pedido em cerca de 2 minutos.",
+    "heroEyebrow": "Para condutores",
+    "heroTitulo": "O carro precisa de reparação? Peça o preço às oficinas.",
+    "heroTexto": "Descreva o problema e adicione uma fotografia. As oficinas enviam orçamentos – o condutor compara e escolhe.",
+    "vantagens": [
+      "Grátis e sem compromisso",
+      "Conta e pedido em ~2 min",
+      "Escreva no seu idioma",
+      "Paga diretamente à oficina"
+    ],
+    "cta": "Enviar pedido grátis",
+    "ctaSub": "Conta e pedido em cerca de 2 minutos",
+    "jaTenhoConta": "Já tenho conta – iniciar sessão",
+    "fotoAlt": "Condutor fotografa a luz de aviso acesa no painel",
+    "comoTitulo": "Como funciona",
+    "comoSub": "Três passos, sem telefonar.",
+    "passos": [
+      {
+        "titulo": "Descreva e adicione uma fotografia",
+        "texto": "Escolha o serviço, escreva em duas frases o que se passa e adicione uma fotografia – por exemplo, da luz no painel."
+      },
+      {
+        "titulo": "As oficinas enviam orçamentos",
+        "texto": "As oficinas veem o seu pedido e enviam preço, prazo e garantia."
+      },
+      {
+        "titulo": "Compare e escolha",
+        "texto": "Todos os orçamentos num só sítio – escolhe o que lhe convém. Se nenhum servir, não tem de escolher."
+      }
+    ],
+    "telasAviso": "Os ecrãs mostram dados de exemplo.",
+    "motivosTitulo": "Porquê a BipFix",
+    "motivos": [
+      {
+        "titulo": "Grátis para o condutor",
+        "texto": "Enviar o pedido e comparar orçamentos não custa nada. A reparação paga-se diretamente à oficina."
+      },
+      {
+        "titulo": "Oficinas verificadas",
+        "texto": "Verificamos o registo de cada oficina antes de poder enviar orçamentos."
+      },
+      {
+        "titulo": "No seu idioma",
+        "texto": "As respostas da oficina são traduzidas automaticamente para o seu idioma."
+      }
+    ],
+    "servicos": "Por agora apenas em Tallinn (Estónia).",
+    "faqTitulo": "Perguntas frequentes",
+    "faq": [
+      {
+        "pergunta": "É mesmo grátis?",
+        "resposta": "Sim. Para o condutor, enviar o pedido e comparar orçamentos é grátis. A reparação paga-se diretamente à oficina."
+      },
+      {
+        "pergunta": "Quanto tempo demora o registo?",
+        "resposta": "Cerca de 2 minutos: nome, e-mail e palavra-passe, depois descreve o problema e envia o pedido."
+      },
+      {
+        "pergunta": "Sou obrigado a aceitar um orçamento?",
+        "resposta": "Não. Se nenhum orçamento servir, não tem de escolher."
+      },
+      {
+        "pergunta": "Em que idioma posso escrever?",
+        "resposta": "No seu idioma: as respostas e mensagens da oficina são traduzidas automaticamente."
+      }
+    ],
+    "ctaFinalTitulo": "Envie um pedido – demora cerca de 2 minutos."
   }
 }

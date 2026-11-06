@@ -789,5 +789,75 @@
     "placeholder": "Kirjuta sõnum…",
     "enviar": "Saada",
     "traduzida": "Automaatselt tõlgitud"
+  },
+  "paraMotoristas": {
+    "metaTitle": "Autoremont Tallinnas: küsi hinda töökodadelt tasuta | BipFix",
+    "metaDescription": "Kirjelda probleemi, lisa foto ja saa hinnapakkumised Tallinna töökodadelt. Tasuta ja kohustusteta, konto ja päring umbes 2 minutiga.",
+    "heroEyebrow": "Autojuhtidele · Tallinn",
+    "heroTitulo": "Auto vajab remonti? Küsi hinda Tallinna töökodadelt.",
+    "heroTexto": "Kirjelda probleemi ja lisa foto. Töökojad saadavad sulle hinnapakkumised – sina võrdled ja valid.",
+    "vantagens": [
+      "Tasuta ja kohustusteta",
+      "Konto ja päring ~2 minutiga",
+      "Kirjuta eesti või vene keeles",
+      "Maksad otse töökojale"
+    ],
+    "cta": "Saada päring tasuta",
+    "ctaSub": "Konto ja päring umbes 2 minutiga",
+    "jaTenhoConta": "Mul on juba konto – logi sisse",
+    "fotoAlt": "Autojuht teeb armatuurlaua hoiatustulest pildi",
+    "comoTitulo": "Kuidas see töötab",
+    "comoSub": "Kolm sammu, ilma helistamata.",
+    "passos": [
+      {
+        "titulo": "Kirjelda ja lisa foto",
+        "texto": "Vali teenus, kirjuta paari lausega, mis toimub, ja lisa foto – näiteks armatuurlaua tulest."
+      },
+      {
+        "titulo": "Töökojad saadavad hinnapakkumised",
+        "texto": "Tallinna töökojad näevad sinu päringut ja saadavad hinna, valmimisaja ja garantii."
+      },
+      {
+        "titulo": "Võrdle ja vali",
+        "texto": "Näed pakkumisi ühes kohas ja valid sobiva. Kui ükski ei sobi, ei pea sa midagi valima."
+      }
+    ],
+    "telasAviso": "Ekraanipildid on näidisandmetega.",
+    "motivosTitulo": "Miks BipFix",
+    "motivos": [
+      {
+        "titulo": "Autojuhile tasuta",
+        "texto": "Päringu saatmine ja pakkumiste võrdlemine ei maksa midagi. Remondi eest maksad otse töökojale."
+      },
+      {
+        "titulo": "Kontrollitud töökojad",
+        "texto": "Kontrollime iga töökoja registreeringut äriregistris enne, kui ta saab pakkumisi saata."
+      },
+      {
+        "titulo": "Sinu keeles",
+        "texto": "Kirjuta eesti või vene keeles – töökoja vastused tõlgitakse automaatselt sinu keelde."
+      }
+    ],
+    "servicos": "Alustame Tallinnas: hooldus, mehaanika, elektritööd ja rehvid.",
+    "faqTitulo": "Korduma kippuvad küsimused",
+    "faq": [
+      {
+        "pergunta": "Kas see on tõesti tasuta?",
+        "resposta": "Jah. Autojuhile on päringu saatmine ja pakkumiste võrdlemine tasuta. Remondi eest maksad otse töökojale, BipFixi kaudu raha ei liigu."
+      },
+      {
+        "pergunta": "Kui kaua registreerumine võtab?",
+        "resposta": "Umbes 2 minutit: nimi, e-post ja parool, siis kirjeldad probleemi ja saadad päringu."
+      },
+      {
+        "pergunta": "Kas pean mõne pakkumise vastu võtma?",
+        "resposta": "Ei. Kui ükski pakkumine ei sobi, ei pea sa midagi valima."
+      },
+      {
+        "pergunta": "Mis keeles saan kirjutada?",
+        "resposta": "Eesti, vene või inglise keeles. Töökoja vastused ja sõnumid tõlgitakse automaatselt sinu keelde."
+      }
+    ],
+    "ctaFinalTitulo": "Saada päring – see võtab umbes 2 minutit."
   }
 }

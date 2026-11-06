@@ -781,5 +781,75 @@
     "placeholder": "Scrivi un messaggio…",
     "enviar": "Invia",
     "traduzida": "Tradotto automaticamente"
+  },
+  "paraMotoristas": {
+    "metaTitle": "Riparazione auto: chiedi un preventivo alle officine | BipFix",
+    "metaDescription": "Descrivi il problema, aggiungi una foto e ricevi preventivi dalle officine. Gratis e senza impegno, account e richiesta in circa 2 minuti.",
+    "heroEyebrow": "Per automobilisti",
+    "heroTitulo": "L’auto ha bisogno di una riparazione? Chiedi il prezzo alle officine.",
+    "heroTexto": "Descrivi il problema e aggiungi una foto. Le officine ti mandano i preventivi: tu confronti e scegli.",
+    "vantagens": [
+      "Gratis e senza impegno",
+      "Account e richiesta in ~2 min",
+      "Scrivi nella tua lingua",
+      "Paghi direttamente l’officina"
+    ],
+    "cta": "Invia una richiesta gratis",
+    "ctaSub": "Account e richiesta in circa 2 minuti",
+    "jaTenhoConta": "Ho già un account – accedi",
+    "fotoAlt": "Un automobilista fotografa una spia accesa sul cruscotto",
+    "comoTitulo": "Come funziona",
+    "comoSub": "Tre passi, senza telefonate.",
+    "passos": [
+      {
+        "titulo": "Descrivi e aggiungi una foto",
+        "texto": "Scegli il servizio, scrivi in due frasi cosa succede e aggiungi una foto, ad esempio della spia sul cruscotto."
+      },
+      {
+        "titulo": "Le officine mandano i preventivi",
+        "texto": "Le officine vedono la tua richiesta e mandano prezzo, tempi e garanzia."
+      },
+      {
+        "titulo": "Confronta e scegli",
+        "texto": "Tutti i preventivi in un posto solo: scegli quello giusto. Se nessuno va bene, non devi scegliere."
+      }
+    ],
+    "telasAviso": "Le schermate mostrano dati di esempio.",
+    "motivosTitulo": "Perché BipFix",
+    "motivos": [
+      {
+        "titulo": "Gratis per l’automobilista",
+        "texto": "Inviare la richiesta e confrontare i preventivi non costa nulla. La riparazione la paghi direttamente all’officina."
+      },
+      {
+        "titulo": "Officine verificate",
+        "texto": "Verifichiamo la registrazione di ogni officina prima che possa inviare preventivi."
+      },
+      {
+        "titulo": "Nella tua lingua",
+        "texto": "Le risposte dell’officina vengono tradotte automaticamente nella tua lingua."
+      }
+    ],
+    "servicos": "Per ora attivo solo a Tallinn (Estonia).",
+    "faqTitulo": "Domande frequenti",
+    "faq": [
+      {
+        "pergunta": "È davvero gratis?",
+        "resposta": "Sì. Per l’automobilista inviare la richiesta e confrontare i preventivi è gratis. La riparazione si paga direttamente all’officina."
+      },
+      {
+        "pergunta": "Quanto tempo serve per registrarsi?",
+        "resposta": "Circa 2 minuti: nome, e-mail e password, poi descrivi il problema e invii la richiesta."
+      },
+      {
+        "pergunta": "Devo accettare un preventivo?",
+        "resposta": "No. Se nessun preventivo va bene, non devi sceglierne nessuno."
+      },
+      {
+        "pergunta": "In che lingua posso scrivere?",
+        "resposta": "Nella tua lingua: le risposte e i messaggi dell’officina vengono tradotti automaticamente."
+      }
+    ],
+    "ctaFinalTitulo": "Invia una richiesta: ci vogliono circa 2 minuti."
   }
 }

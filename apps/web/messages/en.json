@@ -783,5 +783,75 @@
     "placeholder": "Write a message…",
     "enviar": "Send",
     "traduzida": "Automatically translated"
+  },
+  "paraMotoristas": {
+    "metaTitle": "Car repair in Tallinn: get free quotes from repair shops | BipFix",
+    "metaDescription": "Describe the problem, add a photo and get quotes from repair shops in Tallinn. Free, no obligation; account and request in about 2 minutes.",
+    "heroEyebrow": "For drivers · Tallinn",
+    "heroTitulo": "Car needs a repair? Ask Tallinn repair shops for a price.",
+    "heroTexto": "Describe the problem and add a photo. Repair shops send you quotes – you compare and choose.",
+    "vantagens": [
+      "Free, no obligation",
+      "Account and request in ~2 min",
+      "Write in Estonian, Russian or English",
+      "You pay the shop directly"
+    ],
+    "cta": "Send a free request",
+    "ctaSub": "Account and request in about 2 minutes",
+    "jaTenhoConta": "I already have an account – log in",
+    "fotoAlt": "A driver taking a photo of a warning light on the dashboard",
+    "comoTitulo": "How it works",
+    "comoSub": "Three steps, no phone calls.",
+    "passos": [
+      {
+        "titulo": "Describe it and add a photo",
+        "texto": "Pick the service, write a couple of sentences about the problem and add a photo – of a dashboard light, for example."
+      },
+      {
+        "titulo": "Repair shops send quotes",
+        "texto": "Repair shops in Tallinn see your request and send the price, completion time and warranty."
+      },
+      {
+        "titulo": "Compare and choose",
+        "texto": "All quotes in one place – you pick the one that suits you. If none does, you don’t have to choose."
+      }
+    ],
+    "telasAviso": "Screenshots show sample data.",
+    "motivosTitulo": "Why BipFix",
+    "motivos": [
+      {
+        "titulo": "Free for drivers",
+        "texto": "Sending a request and comparing quotes costs nothing. You pay the repair shop directly for the repair."
+      },
+      {
+        "titulo": "Checked repair shops",
+        "texto": "We check every shop’s registration in the Commercial Register before it can send quotes."
+      },
+      {
+        "titulo": "In your language",
+        "texto": "Write in Estonian, Russian or English – the shop’s replies are translated into your language automatically."
+      }
+    ],
+    "servicos": "Starting in Tallinn: maintenance, mechanics, electrics and tyres.",
+    "faqTitulo": "Frequently asked questions",
+    "faq": [
+      {
+        "pergunta": "Is it really free?",
+        "resposta": "Yes. For drivers, sending a request and comparing quotes is free. You pay the repair shop directly; no money goes through BipFix."
+      },
+      {
+        "pergunta": "How long does signing up take?",
+        "resposta": "About 2 minutes: name, e-mail and password, then you describe the problem and send the request."
+      },
+      {
+        "pergunta": "Do I have to accept a quote?",
+        "resposta": "No. If no quote suits you, you don’t have to choose any."
+      },
+      {
+        "pergunta": "Which language can I write in?",
+        "resposta": "Estonian, Russian or English. The repair shop’s replies and messages are translated into your language automatically."
+      }
+    ],
+    "ctaFinalTitulo": "Send a request – it takes about 2 minutes."
   }
 }
