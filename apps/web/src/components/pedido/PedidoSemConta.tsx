@@ -341,7 +341,7 @@ export default function PedidoSemConta() {
               onChange={(f) => setCarro({ tipo: f.tipo, marca: f.marca, modelo: f.modelo, ano: f.ano, codigo: f.codigo || '' })} />
             <label htmlFor="pedido-placa" className="block text-sm font-medium text-gray-700 mt-4 mb-1">{tn('plateLabel')}</label>
             <input id="pedido-placa" className="input-field" maxLength={15} placeholder={exemploPlaca(locale)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} />
-            <Navegar voltar="servico" ok={carroOk} avancar={() => setEtapa('local')} />
+            <Navegar voltar="detalhe" ok={carroOk} avancar={() => setEtapa('local')} />
           </div>
         )}
 

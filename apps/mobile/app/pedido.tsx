@@ -422,7 +422,7 @@ export default function PedidoScreen() {
           <TextInput accessibilityLabel={t('veiculos.ano')} value={ano} onChangeText={(v) => setAno(v.replace(/\D/g, '').slice(0, 4))} keyboardType="number-pad" maxLength={4} className={`${CAMPO} mb-4`} />
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.plateLabel')}</Text>
           <TextInput accessibilityLabel={t('pedidoSemConta.plateLabel')} value={placa} onChangeText={setPlaca} autoCapitalize="characters" maxLength={15} className={CAMPO} />
-          <Navegar voltar="servico" ok={carroOk} avancar={() => setEtapa('local')} />
+          <Navegar voltar="detalhe" ok={carroOk} avancar={() => setEtapa('local')} />
         </View>
       )}
 
