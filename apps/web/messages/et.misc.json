@@ -167,7 +167,7 @@
     "metaDescription": "Kuidas BipFix töötleb Euroopa Liidus autojuhtide, autotöökodade ja varuosade müüjate isikuandmeid kooskõlas isikuandmete kaitse üldmäärusega (GDPR).",
     "pageTitle": "Privaatsuspoliitika",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "3. november 2026",
+    "updatedDate": "6. november 2026",
     "secoes": [
       {
         "titulo": "1. Kes vastutab sinu andmete eest",
@@ -321,7 +321,8 @@
           "<strong>Analüütika (ainult nõusolekul):</strong> vastavalt Google Analyticsi ja Microsoft Clarity säilitamisseadetele, kõige rohkem 14 kuud.",
           "<strong>Koostöökontaktid (punkt 3.8):</strong> kuni palud meil ühenduse võtmise lõpetada, kuid mitte kauem kui 24 kuud pärast meie viimast kontakti.",
           "<strong>Kontota alustatud tugivestlus:</strong> kustutatakse automaatselt 6 kuud pärast viimast sõnumit.",
-          "<strong>Automaatsed tõlked</strong> (päringute kirjeldused, hinnapakkumised ning kliendi ja partneri sõnumid): säilitatakse, et sama teksti mitte kaks korda tõlkida, ja kustutatakse automaatselt hiljemalt 24 kuu pärast."
+          "<strong>Automaatsed tõlked</strong> (päringute kirjeldused, hinnapakkumised ning kliendi ja partneri sõnumid): säilitatakse, et sama teksti mitte kaks korda tõlkida, ja kustutatakse automaatselt hiljemalt 24 kuu pärast.",
+          "<strong>Ilma kontota saadetud päring, mida e-posti koodiga ei kinnitatud:</strong> see ei jõua ühegi töökojani ning kustutatakse koos fotode ja aktiveerimata kontoga 24 tunni jooksul."
         ]
       },
       {

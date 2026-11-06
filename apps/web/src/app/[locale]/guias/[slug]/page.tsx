@@ -115,7 +115,7 @@ export default async function GuiaPage({ params }: Params) {
   };
 
   const cta = v.cta || 'pedido';
-  const ctaHref = cta === 'emergencia' ? '/emergencia' : cta === 'parceiro' ? '/seja-parceiro' : rota('/cadastro', undefined, { tipo: 'cliente' });
+  const ctaHref = cta === 'emergencia' ? '/emergencia' : cta === 'parceiro' ? '/seja-parceiro' : rota('/pedido');
 
   return (
     <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">

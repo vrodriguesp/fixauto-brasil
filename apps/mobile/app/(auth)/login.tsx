@@ -96,6 +96,22 @@ export default function LoginScreen() {
             <Ionicons name="chevron-forward" size={22} color="#fff" />
           </Pressable>
 
+          {/* Pedido de orcamento sem cadastro (mesmo fluxo do site, app/pedido.tsx) */}
+          <Pressable
+            onPress={() => router.push('/pedido')}
+            accessibilityRole="button"
+            className="bg-primary-600 rounded-2xl p-4 flex-row items-center gap-4 mb-6 active:opacity-90"
+          >
+            <View className="w-12 h-12 rounded-full bg-white/20 items-center justify-center">
+              <Ionicons name="construct" size={24} color="#fff" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-white text-lg font-bold">{t('auth.pedirSemConta')}</Text>
+              <Text className="text-primary-50 text-sm">{t('auth.pedirSemContaTexto')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={22} color="#fff" />
+          </Pressable>
+
           {/* Login */}
           <View
             className="bg-white rounded-2xl p-5 mb-6"

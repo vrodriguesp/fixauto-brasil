@@ -41,6 +41,10 @@ export const PATHNAMES = {
     pt: '/para-motoristas', 'pt-PT': '/para-condutores', en: '/for-drivers',
     et: '/autojuhtidele', it: '/per-automobilisti', ru: '/dlya-voditeley',
   },
+  '/pedido': {
+    pt: '/pedido', 'pt-PT': '/pedido', en: '/request',
+    et: '/paring', it: '/richiesta', ru: '/zayavka',
+  },
   '/seja-parceiro': {
     pt: '/seja-parceiro', 'pt-PT': '/seja-parceiro', en: '/become-a-partner',
     et: '/hakka-partneriks', it: '/diventa-partner', ru: '/stat-partnerom',

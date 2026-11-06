@@ -10,7 +10,7 @@ import { generateFAQSchema, hreflangAlternates, imagemCompartilhamento } from '@
 // pagina generica para os motoristas dizendo que e um servico free e demora
 // 2 min para se registrar e enviar a solicitacao"). Mesma cara do anuncio:
 // foto do painel no topo e as telas do celular do video "Mis see maksab?"
-// (dados de exemplo, com o selo do video). Um botao so: cadastro de cliente.
+// (dados de exemplo, com o selo do video). Um botao so: pedido sem cadastro.
 // Italia/Portugal/Brasil: noindex automatico (lib/mercados.ts).
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -44,7 +44,7 @@ export default async function ParaMotoristasPage({ params }: { params: Promise<{
   const faq = t.raw('faq') as Faq[];
   // telas do video: russo para o russo, estoniano para os outros
   const telas = locale === 'ru' ? 'ru' : 'et';
-  const cadastro = rota('/cadastro', undefined, { tipo: 'cliente' });
+  const cadastro = rota('/pedido');
 
   const Botao = ({ grande }: { grande?: boolean }) => (
     <Link href={cadastro} data-testid="cta-motorista"

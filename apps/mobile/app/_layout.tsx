@@ -59,6 +59,7 @@ export default function RootLayout() {
               recomeca sem parar (novo pedido carregando sem fim, teste 09/10) */}
           <Stack.Screen name="emergencia" options={{ presentation: 'modal', headerShown: true, title: t('emergencia.titulo') }} />
           <Stack.Screen name="nova-solicitacao" options={{ presentation: 'modal', headerShown: true, title: t('novaSolicitacao.titulo') }} />
+          <Stack.Screen name="pedido" options={{ presentation: 'modal', headerShown: true, title: t('auth.pedirSemConta') }} />
         </Stack>
         </AvisosProvider>
       </AuthProvider>

@@ -76,7 +76,7 @@ export default function HomeClient({ guias = [] }: { guias?: GuiaResumo[] }) {
             <p className="mt-6 text-lg sm:text-xl text-white leading-relaxed">{t('heroTexto')}</p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Link
-                href={rota('/cadastro', undefined, { tipo: 'cliente' })}
+                href={rota('/pedido')}
                 className="bg-white text-primary-700 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors text-center"
               >
                 {t('ctaCliente')}

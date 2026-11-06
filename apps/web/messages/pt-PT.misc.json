@@ -167,7 +167,7 @@
     "metaDescription": "Como a BipFix trata os dados pessoais de condutores, oficinas e lojas de peças na União Europeia, em conformidade com o RGPD.",
     "pageTitle": "Política de Privacidade",
     "lastUpdatedLabel": "Última atualização:",
-    "updatedDate": "3 de novembro de 2026",
+    "updatedDate": "6 de novembro de 2026",
     "secoes": [
       {
         "titulo": "1. Quem é responsável pelos seus dados",
@@ -321,7 +321,8 @@
           "<strong>Análise estatística (apenas com consentimento):</strong> de acordo com as definições de retenção do Google Analytics e do Microsoft Clarity, no máximo 14 meses.",
           "<strong>Contactos de parceria (secção 3.8):</strong> até nos pedir para deixarmos de o contactar e, no máximo, 24 meses após o nosso último contacto.",
           "<strong>Chat de apoio iniciado sem conta:</strong> eliminado automaticamente 6 meses após a última mensagem.",
-          "<strong>Traduções automáticas</strong> de descrições de pedidos, orçamentos e mensagens entre Clientes e Parceiros: conservadas para não traduzir duas vezes o mesmo texto e eliminadas automaticamente, no máximo, após 24 meses."
+          "<strong>Traduções automáticas</strong> de descrições de pedidos, orçamentos e mensagens entre Clientes e Parceiros: conservadas para não traduzir duas vezes o mesmo texto e eliminadas automaticamente, no máximo, após 24 meses.",
+          "<strong>Pedido enviado sem registo e não confirmado com o código enviado por e-mail:</strong> não chega a nenhuma oficina e é apagado, juntamente com as fotografias e a conta não ativada, no prazo de 24 horas."
         ]
       },
       {
