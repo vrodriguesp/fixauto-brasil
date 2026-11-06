@@ -91,7 +91,13 @@ export default function PedidoSemConta() {
     if (!carregandoLogin && isLoggedIn && etapa === 'servico' && !pendente) router.replace('/cliente/nova-solicitacao');
   }, [carregandoLogin, isLoggedIn]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { contar('abriu'); }, []);
-  useEffect(() => { if (['carro', 'local', 'contato'].includes(etapa)) contar(etapa); }, [etapa]);
+  // passo novo comeca no alto (o anterior era mais comprido: a pessoa via so o rodape - teste do dono 06/11)
+  const primeiraEtapa = useRef(true);
+  useEffect(() => {
+    if (['carro', 'local', 'contato'].includes(etapa)) contar(etapa);
+    if (primeiraEtapa.current) { primeiraEtapa.current = false; return; }
+    window.scrollTo({ top: 0 });
+  }, [etapa]);
   useEffect(() => {
     if (esperaReenvio <= 0) return;
     const i = setTimeout(() => setEsperaReenvio((s) => s - 1), 1000);
@@ -315,8 +321,10 @@ export default function PedidoSemConta() {
           </div>
         )}
 
-        {etapa === 'carro' && (
-          <div data-testid="passo-carro">
+        {/* o passo do carro fica montado (so escondido): o seletor de marca/modelo guarda a
+            escolha dentro dele e, desmontado, voltava vazio ao ir e voltar (teste 06/11) */}
+        {(
+          <div data-testid="passo-carro" hidden={etapa !== 'carro'}>
             <h2 className="text-lg font-semibold text-gray-900 mb-1">{tn('step1Title')}</h2>
             <p className="text-sm text-gray-500 mb-4">{t('carroDica')}</p>
             <FipeAutocomplete value={{ tipo: carro.tipo, marca: carro.marca, modelo: carro.modelo, ano: carro.ano }}
