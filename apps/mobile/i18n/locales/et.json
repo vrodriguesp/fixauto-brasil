@@ -607,6 +607,8 @@
     "buscarServico": "Otsi teenust…",
     "semResultadoBusca": "Sellist teenust nimekirjas pole – kirjuta see ülal olevasse lahtrisse.",
     "step5Title": "Asukoht ja kinnitus",
-    "addressHelp": "Sellele aadressile lähimad töökojad saavad teate"
+    "addressHelp": "Sellele aadressile lähimad töökojad saavad teate",
+    "verTodos": "Näita kõiki ({n})",
+    "verMenos": "Näita vähem"
   }
 }

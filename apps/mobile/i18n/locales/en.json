@@ -607,6 +607,8 @@
     "buscarServico": "Search services…",
     "semResultadoBusca": "Not in the list – just write it in the box above.",
     "step5Title": "Location and confirmation",
-    "addressHelp": "Repair shops near this address will be notified"
+    "addressHelp": "Repair shops near this address will be notified",
+    "verTodos": "Show all ({n})",
+    "verMenos": "Show fewer"
   }
 }

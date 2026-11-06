@@ -63,6 +63,7 @@ export default function PedidoScreen() {
   const [tipo, setTipo] = useState('');
   const [servicos, setServicos] = useState<string[]>([]);
   const [busca, setBusca] = useState('');
+  const [listaAberta, setListaAberta] = useState(false);
   const [descricao, setDescricao] = useState('');
   const [urgencia, setUrgencia] = useState('media');
   const [fotos, setFotos] = useState<ImagePicker.ImagePickerAsset[]>([]);
@@ -134,6 +135,10 @@ export default function PedidoScreen() {
   // busca sem acento e sem maiusculas ('rehvi' acha 'Rehvide vahetus')
   const semAcento = (v: string) => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const listaFiltrada = lista.filter((sv) => semAcento(rotuloServico(sv.value)).includes(semAcento(busca.trim())));
+  // "ver mais": 6 primeiros (e os ja marcados); busca ou "ver todos" mostram tudo - igual ao site
+  const LISTA_CURTA = 6;
+  const listaCurta = !listaAberta && !busca.trim() && listaFiltrada.length > LISTA_CURTA;
+  const listaVisivel = listaCurta ? listaFiltrada.filter((sv, i) => i < LISTA_CURTA || servicos.includes(sv.value)) : listaFiltrada;
   // escreveu o que precisa OU marcou algum servico da lista
   const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
   const carroOk = !!(marca && modelo && /^\d{4}$/.test(ano.trim()));
@@ -173,7 +178,7 @@ export default function PedidoScreen() {
       const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch(`${API_BASE_URL}/api/pedido-sem-conta`, {
         method: 'POST',
-        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : undefined,
+        headers: { "x-bipfix-origem": "app", ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}) },
         body: form,
       }).catch(() => null);
       const d = res ? await res.json().catch(() => ({})) : {};
@@ -327,7 +332,7 @@ export default function PedidoScreen() {
           <View className="flex-row flex-wrap justify-between">
             {TIPOS_SERVICO.map((s) => (
               <Pressable key={s.value} accessibilityRole="button" accessibilityState={{ selected: tipo === s.value }}
-                onPress={() => { if (s.value !== tipo) { setServicos([]); setBusca(''); } setTipo(s.value); setEtapa('detalhe'); }}
+                onPress={() => { if (s.value !== tipo) { setServicos([]); setBusca(''); setListaAberta(false); } setTipo(s.value); setEtapa('detalhe'); }}
                 className={`w-[48.5%] p-4 mb-3 rounded-lg border-2 ${tipo === s.value ? 'border-primary-600 bg-primary-50' : 'border-gray-200'}`}>
                 <Text className="text-2xl">{s.icon}</Text>
                 <Text className="font-medium text-gray-900 mt-2">{t(`constants.tiposServico.${s.value}`)}</Text>
@@ -357,7 +362,7 @@ export default function PedidoScreen() {
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.step3ServiceTitle')}</Text>
               <TextInput accessibilityLabel={t('pedidoSemConta.buscarServico')} value={busca} onChangeText={setBusca} placeholder={t('pedidoSemConta.buscarServico')}
                 autoCorrect={false} className={`${CAMPO} mb-2`} />
-              {listaFiltrada.map((sv) => {
+              {listaVisivel.map((sv) => {
                 const marcado = servicos.includes(sv.value);
                 return (
                   <Pressable key={sv.value} onPress={() => setServicos((x) => (marcado ? x.filter((y) => y !== sv.value) : [...x, sv.value]))}
@@ -369,6 +374,11 @@ export default function PedidoScreen() {
                 );
               })}
               {listaFiltrada.length === 0 && <Text className="text-sm text-gray-500 py-2">{t('pedidoSemConta.semResultadoBusca')}</Text>}
+              {listaFiltrada.length > LISTA_CURTA && !busca.trim() && (
+                <Pressable onPress={() => setListaAberta((x) => !x)} accessibilityRole="button" className="min-h-[44px] items-center justify-center">
+                  <Text className="text-primary-600 font-medium underline">{listaCurta ? t('pedidoSemConta.verTodos', { n: listaFiltrada.length }) : t('pedidoSemConta.verMenos')}</Text>
+                </Pressable>
+              )}
             </View>
           )}
 

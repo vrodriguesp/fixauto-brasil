@@ -866,6 +866,8 @@
     "ctaFinalTitulo": "Saada päring – see võtab umbes 2 minutit."
   },
   "pedidoSemConta": {
+    "verTodos": "Näita kõiki ({n})",
+    "verMenos": "Näita vähem",
     "detalheTexto": "Kirjuta oma sõnadega, mida vajad, või otsi teenust nimekirjast.",
     "buscarServico": "Otsi teenust…",
     "semResultadoBusca": "Sellist teenust nimekirjas pole – kirjuta see ülal olevasse lahtrisse.",

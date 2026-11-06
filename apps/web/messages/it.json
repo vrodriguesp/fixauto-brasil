@@ -858,6 +858,8 @@
     "ctaFinalTitulo": "Invia una richiesta: ci vogliono circa 2 minuti."
   },
   "pedidoSemConta": {
+    "verTodos": "Mostra tutti ({n})",
+    "verMenos": "Mostra meno",
     "detalheTexto": "Scrivi con parole tue cosa ti serve, oppure cerca il servizio nell’elenco.",
     "buscarServico": "Cerca un servizio…",
     "semResultadoBusca": "Non è nell’elenco: scrivilo nel campo qui sopra.",

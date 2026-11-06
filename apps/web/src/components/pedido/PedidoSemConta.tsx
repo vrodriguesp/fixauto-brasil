@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter as useRouterNext } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link, useRouter } from '@/i18n/navigation';
+import { routing, hrefNoIdioma } from '@/i18n/routing';
 import { useAuth } from '@/lib/auth-context';
 import { exemploPlaca } from '@/lib/exemplos';
 import { textoErroApi } from '@/lib/erro-api';
@@ -41,6 +43,14 @@ function sugestaoEmail(email: string): string | null {
 
 type Etapa = 'servico' | 'detalhe' | 'carro' | 'local' | 'contato' | 'codigo' | 'enviado';
 
+// Trocar de idioma no meio do pedido (dono 06/11: "mudei para ingles e voltou a pagina").
+// O resto do formulario vai num rascunho da aba (sessionStorage); senha e fotos ficam
+// so na memoria da pagina (nunca gravadas) e sobrevivem porque a troca de idioma
+// nesta pagina e feita sem recarregar (ver o clique nos links de idioma abaixo).
+const RASCUNHO = 'bipfix_pedido_rascunho';
+const memoria: { senha: string; senhaLogin: string; fotos: { file: File; preview: string }[] } = { senha: '', senhaLogin: '', fotos: [] };
+const LISTA_CURTA = 6; // "ver mais": a lista inteira so quando a pessoa pede
+
 export default function PedidoSemConta() {
   const t = useTranslations('pedidoSemConta');
   const tn = useTranslations('clienteNovaSolicitacao');
@@ -48,6 +58,7 @@ export default function PedidoSemConta() {
   const te = useTranslations('erros');
   const locale = useLocale();
   const router = useRouter();
+  const routerNext = useRouterNext();
   const { isLoggedIn, loading: carregandoLogin, signIn } = useAuth();
 
   const [etapa, setEtapa] = useState<Etapa>('servico');
@@ -57,7 +68,8 @@ export default function PedidoSemConta() {
   const [busca, setBusca] = useState('');
   const [descricao, setDescricao] = useState('');
   const [urgencia, setUrgencia] = useState('media');
-  const [fotos, setFotos] = useState<{ file: File; preview: string }[]>([]);
+  const [fotos, setFotos] = useState<{ file: File; preview: string }[]>(() => memoria.fotos);
+  const [listaAberta, setListaAberta] = useState(false);
   const inputFoto = useRef<HTMLInputElement>(null);
   // carro
   const [carro, setCarro] = useState({ tipo: 'cars', marca: '', modelo: '', ano: '', codigo: '' });
@@ -69,7 +81,7 @@ export default function PedidoSemConta() {
   // contato
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [senha, setSenha] = useState(() => memoria.senha);
   const [verSenha, setVerSenha] = useState(false);
   const [telefone, setTelefone] = useState('');
   const [termos, setTermos] = useState(false);
@@ -78,7 +90,7 @@ export default function PedidoSemConta() {
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState('');
   const [contaExistente, setContaExistente] = useState(false);
-  const [senhaLogin, setSenhaLogin] = useState('');
+  const [senhaLogin, setSenhaLogin] = useState(() => memoria.senhaLogin);
   const [pendente, setPendente] = useState<{ id: string; email: string; contaNova: boolean } | null>(null);
   const [codigo, setCodigo] = useState('');
   const [aviso, setAviso] = useState('');
@@ -89,9 +101,58 @@ export default function PedidoSemConta() {
 
   // quem ja esta logado usa o pedido normal (mesmos passos, sem contato/codigo)
   useEffect(() => {
-    if (!carregandoLogin && isLoggedIn && etapa === 'servico' && !pendente) router.replace('/cliente/nova-solicitacao');
+    if (!carregandoLogin && isLoggedIn && etapa === 'servico' && !pendente) { limparRascunho(); router.replace('/cliente/nova-solicitacao'); }
   }, [carregandoLogin, isLoggedIn]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { contar('abriu'); }, []);
+  // rascunho: volta o que a pessoa ja tinha feito (troca de idioma ou recarregar)
+  const [rascunhoLido, setRascunhoLido] = useState(false);
+  useEffect(() => {
+    let tinha = false;
+    try {
+      const r = JSON.parse(sessionStorage.getItem(RASCUNHO) || 'null');
+      if (r && Date.now() - (r.em || 0) < 24 * 3600 * 1000) {
+        tinha = true;
+        setTipo(r.tipo || ''); setServicos(Array.isArray(r.servicos) ? r.servicos : []); setDescricao(r.descricao || ''); setUrgencia(r.urgencia || 'media');
+        if (r.carro) setCarro(r.carro);
+        setPlaca(r.placa || ''); setEndereco(r.endereco || ''); setCoords(r.coords || null); setPais(r.pais || null);
+        setNome(r.nome || ''); setEmail(r.email || ''); setTelefone(r.telefone || ''); setTermos(!!r.termos);
+        setContaExistente(!!r.contaExistente);
+        if (r.pendente) setPendente(r.pendente);
+        // codigo so com o pedido pendente guardado; senao volta ao contato
+        const e: Etapa = r.etapa === 'codigo' && !r.pendente ? 'contato' : r.etapa;
+        if (e && e !== 'enviado') setEtapa(e);
+      }
+    } catch { /* sem armazenamento: comeca do zero */ }
+    if (!tinha) contar('abriu');
+    setRascunhoLido(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!rascunhoLido) return;
+    memoria.senha = senha; memoria.senhaLogin = senhaLogin; memoria.fotos = fotos;
+    try {
+      sessionStorage.setItem(RASCUNHO, JSON.stringify({ em: Date.now(), etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, telefone, termos, contaExistente, pendente }));
+    } catch { /* ignora */ }
+  }, [rascunhoLido, etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, telefone, termos, contaExistente, pendente, senha, senhaLogin, fotos]);
+  const limparRascunho = () => {
+    memoria.senha = ''; memoria.senhaLogin = ''; memoria.fotos = [];
+    try { sessionStorage.removeItem(RASCUNHO); } catch { /* ignora */ }
+  };
+  // links de idioma (cabecalho/rodape) nesta pagina: troca sem recarregar, para
+  // senha e fotos (so na memoria) nao se perderem
+  useEffect(() => {
+    const aoClicar = (ev: MouseEvent) => {
+      if (ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+      const a = (ev.target as HTMLElement | null)?.closest?.('a[hreflang]') as HTMLAnchorElement | null;
+      if (!a) return;
+      const destino = a.getAttribute('href') || '';
+      const novo = routing.locales.find((l) => hrefNoIdioma(l, '/pedido') === destino);
+      if (!novo || novo === locale) return;
+      ev.preventDefault();
+      document.documentElement.lang = a.getAttribute('hreflang') || novo;
+      routerNext.replace(destino, { scroll: false });
+    };
+    document.addEventListener('click', aoClicar, true);
+    return () => document.removeEventListener('click', aoClicar, true);
+  }, [locale, routerNext]);
   // passo novo comeca no alto (o anterior era mais comprido: a pessoa via so o rodape - teste do dono 06/11)
   const primeiraEtapa = useRef(true);
   useEffect(() => {
@@ -123,6 +184,8 @@ export default function PedidoSemConta() {
   // busca sem acento e sem maiusculas ('rehvi' acha 'Rehvide vahetus')
   const semAcento = (v: string) => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const listaFiltrada = lista.filter((sv) => semAcento(rotuloServico(sv.value)).includes(semAcento(busca.trim())));
+  const listaCurta = !listaAberta && !busca.trim() && listaFiltrada.length > LISTA_CURTA;
+  const listaVisivel = listaCurta ? listaFiltrada.filter((sv, i) => i < LISTA_CURTA || servicos.includes(sv.value)) : listaFiltrada;
   // escreveu o que precisa OU marcou algum servico da lista
   const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
   const carroOk = !!(carro.marca && carro.modelo && carro.ano);
@@ -159,7 +222,7 @@ export default function PedidoSemConta() {
       const d = res ? await res.json().catch(() => ({})) : {};
       if (res?.status === 409 && d.codigo === 'CONTA_EXISTENTE') { setContaExistente(true); return; }
       if (!res || !res.ok) { setErro(textoErroApi(te, res?.status || 500, d)); return; }
-      if (d.solicitacaoId) { router.replace(`/cliente/orcamentos/${d.solicitacaoId}`); return; } // entrou com a senha
+      if (d.solicitacaoId) { limparRascunho(); router.replace(`/cliente/orcamentos/${d.solicitacaoId}`); return; } // entrou com a senha
       setPendente({ id: d.pendenteId, email: d.email, contaNova: !!d.contaNova });
       setEsperaReenvio(30); setCodigo(''); setAviso('');
       setEtapa('codigo');
@@ -195,8 +258,9 @@ export default function PedidoSemConta() {
       if (pendente.contaNova) {
         // conta nova: ja entra com a senha que acabou de criar e abre o pedido
         const { error } = await signIn(pendente.email, senha);
-        if (!error) { router.replace(`/cliente/orcamentos/${d.solicitacaoId}`); return; }
+        if (!error) { limparRascunho(); router.replace(`/cliente/orcamentos/${d.solicitacaoId}`); return; }
       }
+      limparRascunho();
       setResultado({ numero: d.numero ?? null, contaNova: pendente.contaNova });
       setEtapa('enviado');
     } finally {
@@ -270,7 +334,7 @@ export default function PedidoSemConta() {
             <div className="grid grid-cols-2 gap-3">
               {TIPOS_SERVICO.map((s) => (
                 <button key={s.value} type="button" aria-pressed={tipo === s.value}
-                  onClick={() => { if (s.value !== tipo) { setServicos([]); setBusca(''); } setTipo(s.value); setEtapa('detalhe'); }}
+                  onClick={() => { if (s.value !== tipo) { setServicos([]); setBusca(''); setListaAberta(false); } setTipo(s.value); setEtapa('detalhe'); }}
                   className={`p-4 rounded-lg border-2 text-left transition-all ${tipo === s.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
                   <span className="text-2xl">{s.icon}</span>
                   <p className="font-medium text-gray-900 mt-2">{tc(`tiposServico.${s.value}`)}</p>
@@ -293,13 +357,18 @@ export default function PedidoSemConta() {
                 <label htmlFor="pedido-busca" className="block text-sm font-medium text-gray-700 mb-1">{tn('step3ServiceTitle')}</label>
                 <input id="pedido-busca" type="search" className="input-field" value={busca} onChange={(e) => setBusca(e.target.value)} placeholder={t('buscarServico')} />
                 <div className="space-y-2 mt-2" data-testid="lista-servicos">
-                  {listaFiltrada.map((sv) => (
+                  {listaVisivel.map((sv) => (
                     <label key={sv.value} className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer ${servicos.includes(sv.value) ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}>
                       <input type="checkbox" checked={servicos.includes(sv.value)} onChange={() => setServicos((x) => x.includes(sv.value) ? x.filter((y) => y !== sv.value) : [...x, sv.value])} className="w-4 h-4" />
                       <span className="text-sm text-gray-900">{rotuloServico(sv.value)}</span>
                     </label>
                   ))}
                   {listaFiltrada.length === 0 && <p className="text-sm text-gray-500 py-2">{t('semResultadoBusca')}</p>}
+                  {listaFiltrada.length > LISTA_CURTA && !busca.trim() && (
+                    <button type="button" onClick={() => setListaAberta((x) => !x)} className="w-full min-h-[44px] text-sm font-medium text-primary-700 underline" data-testid="ver-mais">
+                      {listaCurta ? t('verTodos', { n: listaFiltrada.length }) : t('verMenos')}
+                    </button>
+                  )}
                 </div>
               </div>
             )}

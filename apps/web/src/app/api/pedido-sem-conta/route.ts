@@ -21,7 +21,12 @@ const HORA = 60 * 60 * 1000;
 // CONTA_EXISTENTE (a tela pede a senha) ou, com modo 'codigo', o codigo vai
 // para esse e-mail e o pedido entra na conta dele so depois do codigo.
 export async function POST(req: NextRequest) {
-  const userId = await getSessionUserId(req);
+  // O app so conta como logado com o proprio login (Authorization: Bearer). Um
+  // cookie do site no mesmo aparelho/navegador nao vale: no teste local (site e
+  // app em localhost) o pedido do app entrava na conta logada no site, ignorando
+  // o e-mail digitado, e o app mostrava "pedido nao existe" (dono 06/11).
+  const doApp = req.headers.get('x-bipfix-origem') === 'app';
+  const userId = doApp && !req.headers.get('authorization')?.startsWith('Bearer ') ? null : await getSessionUserId(req);
   if (!limitarPorIp(req, 'pedido-sem-conta', userId ? 15 : 6, HORA)) {
     return NextResponse.json({ error: 'Muitas tentativas', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
   }

@@ -127,6 +127,25 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
     fetchMarcas(value.tipo);
   }, [value.tipo, fetchMarcas]);
 
+  // Carro ja escolhido (rascunho de quem trocou de idioma ou recarregou a pagina):
+  // quando as listas chegam, marca/modelo/ano voltam selecionados pelo nome,
+  // sem chamar onChange (que apagaria o resto) - antes voltavam vazios (dono 06/11)
+  useEffect(() => {
+    if (selectedMarcaCode || !value.marca || !marcas.length) return;
+    const m = marcas.find((x) => x.name === value.marca);
+    if (m) { setSelectedMarcaCode(m.code); fetchModelos(value.tipo, m.code); }
+  }, [marcas]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (selectedModeloCode || !value.modelo || !modelos.length) return;
+    const m = modelos.find((x) => x.name === value.modelo);
+    if (m) { setSelectedModeloCode(m.code); if (isBR && selectedMarcaCode) fetchAnos(value.tipo, selectedMarcaCode, m.code); }
+  }, [modelos]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (selectedAnoCode || !value.ano || !anos.length) return;
+    const a = anos.find((x) => x.name === value.ano);
+    if (a) setSelectedAnoCode(a.code);
+  }, [anos]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleTipoChange = (tipo: string) => {
     onChange({ tipo, marca: '', modelo: '', ano: '' });
     setSelectedMarcaCode('');

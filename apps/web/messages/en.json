@@ -860,6 +860,8 @@
     "ctaFinalTitulo": "Send a request – it takes about 2 minutes."
   },
   "pedidoSemConta": {
+    "verTodos": "Show all ({n})",
+    "verMenos": "Show fewer",
     "detalheTexto": "Write what you need in your own words, or search the list of services.",
     "buscarServico": "Search services…",
     "semResultadoBusca": "Not in the list – just write it in the box above.",

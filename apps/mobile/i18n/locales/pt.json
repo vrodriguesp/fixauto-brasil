@@ -607,6 +607,8 @@
     "buscarServico": "Procurar serviço…",
     "semResultadoBusca": "Não está na lista – escreva no campo acima.",
     "step5Title": "Localização e confirmação",
-    "addressHelp": "Oficinas próximas a este endereço serão notificadas"
+    "addressHelp": "Oficinas próximas a este endereço serão notificadas",
+    "verTodos": "Ver todos ({n})",
+    "verMenos": "Ver menos"
   }
 }

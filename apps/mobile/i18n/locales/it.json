@@ -607,6 +607,8 @@
     "buscarServico": "Cerca un servizio…",
     "semResultadoBusca": "Non è nell’elenco: scrivilo nel campo qui sopra.",
     "step5Title": "Posizione e conferma",
-    "addressHelp": "Le officine vicine a questo indirizzo riceveranno una notifica"
+    "addressHelp": "Le officine vicine a questo indirizzo riceveranno una notifica",
+    "verTodos": "Mostra tutti ({n})",
+    "verMenos": "Mostra meno"
   }
 }

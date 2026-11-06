@@ -857,6 +857,8 @@
     "ctaFinalTitulo": "Envie um pedido – leva cerca de 2 minutos."
   },
   "pedidoSemConta": {
+    "verTodos": "Ver todos ({n})",
+    "verMenos": "Ver menos",
     "detalheTexto": "Escreva com suas palavras o que precisa ou procure o serviço na lista.",
     "buscarServico": "Procurar serviço…",
     "semResultadoBusca": "Não está na lista – escreva no campo acima.",
