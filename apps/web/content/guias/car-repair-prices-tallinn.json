@@ -2,7 +2,7 @@
   "slug": "car-repair-prices-tallinn",
   "pais": "EE",
   "publicado": "2026-10-09",
-  "atualizado": "2026-10-09",
+  "atualizado": "2026-11-06",
   "versoes": {
     "et": {
       "slug": "autoremondi-hinnad-tallinnas",
@@ -14,6 +14,7 @@
         {
           "titulo": "Kust need hinnad pärinevad ja kuidas neid lugeda",
           "paragrafos": [
+            "<strong>Oluline:</strong> BipFix ei määra ega kontrolli neid hindu ja ei ole nendega seotud. Need on hinnad, mille töökojad ise oma hinnakirjades avaldavad – ainult orientiiriks. Sinu auto tegeliku hinna ütleb töökoda oma hinnapakkumises.",
             "Kõik vahemikud selles juhendis on võetud Tallinna ja lähiümbruse töökodade avalikest hinnakirjadest <strong>seisuga oktoober 2026</strong>: Rehvitakso ja Bosch Car Service (Automaailm) Kadaka teel Mustamäel, Kummid24 Marja tänaval, ABCabi Nõmmel, Fix Wheels Kristiines, Laagri Autoteenindus ja AutoTallinn Peetris. Need on töökodade endi „alates”-hinnad või tunnihinnad koos 24% käibemaksuga; allikad on juhendi lõpus. Konkreetse töökoja ja auto puhul võib hind vahemikust välja jääda – juhend on orientiiriks, mitte hinnakiri.",
             "Autoremondi arve koosneb üldjuhul kolmest osast: <strong>töö</strong> (tunnihind × normaeg), <strong>varuosad ja materjalid</strong> (õli, filtrid, piduriklotsid, kulumaterjal) ning <strong>lisateenused</strong> (diagnostika, sillastend, utiliseerimine). Mitu Tallinna töökoda märgib hinnakirjas otse, et töötundide arvestamisel lähtutakse tootjatehase normaegadest – see tähendab, et sama töö peaks eri töökodades võtma umbes sama palju tunde ja erinevus tuleb peamiselt tunnihinnast ja varuosade valikust.",
             "Enne võrdlemist vaata alati, kas hind on toodud koos käibemaksuga või ilma. Tallinna töökodade veebihinnakirjad on enamasti käibemaksuga, kuid väljaspool linna ja ärikliendile mõeldud hinnakirjades kohtab „+ km” märget. 24% käibemaks muudab 50-eurose tunnihinna 62-euroseks."
@@ -81,7 +82,7 @@
             "Lepi kokku, et lisatöid ei tehta ilma sinu nõusolekuta – Tallinna töökojad kirjutavad seda tingimustesse ka ise, kuid kinnita see kirjalikult.",
             "Küsi garantiid tööle ja osadele ning kas vanad osad antakse tagasi.",
             "Küsi normaega: kui töö võtab tootja järgi 1,2 tundi, ei pea maksma kolme eest.",
-            "Võrdle vähemalt kahte-kolme pakkumist samade osadega. BipFixis saad ühe kirjeldusega pakkumised mitmelt Tallinna töökojalt – autojuhile tasuta – ja valid ise, kellega edasi minna.",
+            "Võrdle vähemalt kahte-kolme pakkumist samade osadega. BipFixis saad ühe kirjeldusega pakkumised mitmelt Tallinna töökojalt – autojuhile tasuta – ja valid ise, kellega edasi minna. Kuidas see töötab, vaata lehelt <a href=\"/para-motoristas\">autojuhtidele</a>.",
             "Kui töökoda leiab töö käigus uue vea, küsi uut hinda enne, kui lubad jätkata. Kuidas valida usaldusväärset töökoda, loe juhendist <a href=\"/guias/kuidas-valida-autotookoda-tallinnas\">kuidas valida autotöökoda Tallinnas</a>."
           ]
         }
@@ -163,13 +164,14 @@
     "ru": {
       "slug": "ceny-na-remont-avto-v-talline",
       "titulo": "Цены на ремонт авто в Таллинне 2026: стоимость нормо-часа, замена масла, тормоза, подвеска и диагностика",
-      "tituloSeo": "Цены на ремонт авто в Таллинне 2026: час, масло, тормоза",
+      "tituloSeo": "Сколько стоит ремонт авто в Таллинне: цены 2026",
       "descricao": "Цены на ремонт авто в Таллинне 2026: нормо-час 45–70 €, замена масла 30–90 € (работа), диагностика 25–35 €, тормоза, подвеска. Прайс-листы, октябрь 2026.",
       "resumo": "Нормо-час независимого автосервиса в Таллинне по состоянию на октябрь 2026 года стоит в основном <strong>45–70 € с НДС</strong>; у официальных дилеров ставка, как правило, выше. Работа по замене масла обходится в 30–90 € (масло и фильтр отдельно), считывание кодов ошибок — 25–35 €, проверка подвески — 25–30 €, развал-схождение — 59–79 €, заправка кондиционера — 45–80 €. Замена тормозных колодок или дисков занимает обычно один час на ось, то есть 45–70 € за работу плюс запчасти. Ниже объясняем, из чего складывается итоговая цена, что требовать в смете и как избежать сюрпризов в счёте.",
       "secoes": [
         {
           "titulo": "Откуда эти цены и как их читать",
           "paragrafos": [
+            "<strong>Важно:</strong> BipFix не устанавливает и не контролирует эти цены и не имеет к ним отношения. Это цены, которые сами автосервисы публикуют в своих прайс-листах, — только ориентир. Реальную цену для вашего автомобиля называет автосервис в своей смете.",
             "Все диапазоны в этом руководстве взяты из открытых прайс-листов автосервисов Таллинна и ближайших окрестностей <strong>по состоянию на октябрь 2026 года</strong>: Rehvitakso и Bosch Car Service (Automaailm) на Кадака теэ в Мустамяэ, Kummid24 на улице Марья, ABCabi в Нымме, Fix Wheels в Кристийне, Laagri Autoteenindus и AutoTallinn в Пеэтри. Это собственные цены «от» и почасовые ставки мастерских с НДС 24 %; источники — в конце руководства. Для конкретной мастерской и конкретного автомобиля цена может выйти за пределы диапазона: руководство — ориентир, а не прайс-лист.",
             "Счёт за ремонт обычно состоит из трёх частей: <strong>работа</strong> (ставка за час × нормативное время), <strong>запчасти и материалы</strong> (масло, фильтры, колодки, расходники) и <strong>дополнительные услуги</strong> (диагностика, стенд развал-схождения, утилизация). Несколько таллиннских сервисов прямо пишут в прайс-листе, что рабочее время считается по нормативам завода-изготовителя, — значит, одна и та же работа в разных мастерских должна занимать примерно одинаковое число часов, а разница идёт в основном от ставки и выбора запчастей.",
             "Перед сравнением всегда смотрите, указана цена с НДС или без. Веб-прайсы таллиннских сервисов в основном с НДС, но за городом и в прайсах для бизнес-клиентов встречается пометка «+ km» (плюс налог с оборота). НДС 24 % превращает ставку 50 € в 62 €."
@@ -237,7 +239,7 @@
             "Договоритесь, что дополнительные работы не выполняются без вашего согласия, — таллиннские сервисы сами пишут это в условиях, но подтвердите письменно.",
             "Спросите о гарантии на работу и запчасти и о том, возвращают ли старые детали.",
             "Спросите нормативное время: если работа по нормативу производителя занимает 1,2 часа, платить за три не нужно.",
-            "Сравните минимум два-три предложения с одинаковыми запчастями. На BipFix по одному описанию вы получаете предложения от нескольких таллиннских сервисов — для водителя бесплатно — и сами выбираете, с кем работать.",
+            "Сравните минимум два-три предложения с одинаковыми запчастями. На BipFix по одному описанию вы получаете предложения от нескольких таллиннских сервисов — для водителя бесплатно — и сами выбираете, с кем работать. Как это работает, смотрите на странице <a href=\"/para-motoristas\">для водителей</a>.",
             "Если в ходе работ мастерская находит новую неисправность, запросите новую цену, прежде чем разрешить продолжать. Как выбрать надёжный сервис, читайте в руководстве <a href=\"/guias/kak-vybrat-avtoservis-v-talline\">как выбрать автосервис в Таллинне</a>."
           ]
         }
