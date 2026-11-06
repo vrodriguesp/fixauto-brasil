@@ -130,15 +130,21 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
   // Carro ja escolhido (rascunho de quem trocou de idioma ou recarregou a pagina):
   // quando as listas chegam, marca/modelo/ano voltam selecionados pelo nome,
   // sem chamar onChange (que apagaria o resto) - antes voltavam vazios (dono 06/11)
+  // A lista pode mudar de catalogo (Portugal <-> Brasil usam catalogos diferentes, com
+  // outros codigos): o carro e procurado de novo pelo nome; modelo que nao existe com o
+  // mesmo nome no catalogo novo e apagado, para a pessoa escolher de novo.
   useEffect(() => {
-    if (selectedMarcaCode || !value.marca || !marcas.length) return;
-    const m = marcas.find((x) => x.name === value.marca);
+    if (!value.marca || !marcas.length || marcas.some((x) => x.code === selectedMarcaCode)) return;
+    const m = marcas.find((x) => x.name.toLowerCase() === value.marca.toLowerCase());
+    setSelectedModeloCode(''); setSelectedAnoCode(''); setModelos([]); setAnos([]);
     if (m) { setSelectedMarcaCode(m.code); fetchModelos(value.tipo, m.code); }
+    else { setSelectedMarcaCode(''); onChange({ ...value, marca: '', modelo: '', ano: '', codigo: undefined, valor: undefined }); }
   }, [marcas]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (selectedModeloCode || !value.modelo || !modelos.length) return;
-    const m = modelos.find((x) => x.name === value.modelo);
+    if (!value.modelo || !modelos.length || modelos.some((x) => x.code === selectedModeloCode)) return;
+    const m = modelos.find((x) => x.name.toLowerCase() === value.modelo.toLowerCase());
     if (m) { setSelectedModeloCode(m.code); if (isBR && selectedMarcaCode) fetchAnos(value.tipo, selectedMarcaCode, m.code); }
+    else onChange({ ...value, modelo: '', ano: '', codigo: undefined, valor: undefined });
   }, [modelos]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (selectedAnoCode || !value.ano || !anos.length) return;
