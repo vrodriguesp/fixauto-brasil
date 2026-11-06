@@ -302,7 +302,8 @@ export default function PedidoScreen() {
   const indice = passos.indexOf(etapa);
 
   return (
-    <KeyboardAwareScrollView bottomOffset={24} keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom }}>
+    <KeyboardAwareScrollView bottomOffset={24} keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white" style={{ backgroundColor: '#fff' }} keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: insets.bottom }}>
       <Text className="text-xl font-bold text-gray-900">{t('pedidoSemConta.titulo')}</Text>
       <Text className="text-gray-600 mt-1 mb-4">{t('pedidoSemConta.subtitulo')}</Text>
 
