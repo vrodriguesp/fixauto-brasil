@@ -1005,8 +1005,8 @@
     "metaDescription": "How to use BipFix in your repair shop: registration, requests from nearby customers, quotes (also from a photo or PDF), schedule, team, repair steps and costs."
   },
   "oficinaPerfilPublico": {
-    "metaTitleTemplate": "{nome} - Auto Repair Shop in {cidade}, {estado}",
-    "metaDescriptionTemplate": "Reviews, services offered and online quotes at {nome}, an auto repair shop in {cidade} - {estado}. Compare prices and book your repair through BipFix.",
+    "metaTitleTemplate": "{nome} – Auto Repair Shop in {cidade}",
+    "metaDescriptionTemplate": "{nome}, auto repair shop in {cidade}: services, reviews and online quotes. Compare prices and book your repair through BipFix.",
     "metaNotFoundTitle": "Repair shop not found",
     "loadingText": "Loading repair shop profile...",
     "notFoundText": "Repair shop not found.",

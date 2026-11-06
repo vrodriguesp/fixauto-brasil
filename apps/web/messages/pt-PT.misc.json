@@ -1005,8 +1005,8 @@
     "metaDescription": "Como usar o BipFix na oficina: registo, pedidos de clientes próximos, orçamentos (inclusive por fotografia ou PDF), agenda, equipa, etapas, revisões e custos."
   },
   "oficinaPerfilPublico": {
-    "metaTitleTemplate": "{nome} - Oficina Automóvel em {cidade}, {estado}",
-    "metaDescriptionTemplate": "Avaliações, serviços oferecidos e orçamentos online na {nome}, uma oficina automóvel em {cidade} - {estado}. Compare preços e marque a sua reparação através da BipFix.",
+    "metaTitleTemplate": "{nome} – Oficina automóvel em {cidade}",
+    "metaDescriptionTemplate": "{nome}, oficina automóvel em {cidade}: serviços, avaliações e orçamentos online. Compare preços e marque a reparação através da BipFix.",
     "metaNotFoundTitle": "Oficina não encontrada",
     "loadingText": "A carregar o perfil da oficina...",
     "notFoundText": "Oficina não encontrada.",

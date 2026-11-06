@@ -1005,8 +1005,8 @@
     "metaDescription": "Как пользоваться BipFix в автосервисе: регистрация, заявки от клиентов рядом, сметы (в том числе по фото или PDF), расписание, команда, этапы и стоимость."
   },
   "oficinaPerfilPublico": {
-    "metaTitleTemplate": "{nome} — автосервис, {cidade} ({estado})",
-    "metaDescriptionTemplate": "Отзывы, услуги и онлайн-сметы: {nome} — автосервис, {cidade} ({estado}). Сравните цены и запишитесь на ремонт через BipFix.",
+    "metaTitleTemplate": "{nome} — автосервис, {cidade}",
+    "metaDescriptionTemplate": "{nome} — автосервис, {cidade}: услуги, отзывы и онлайн-сметы. Сравните цены и запишитесь на ремонт через BipFix.",
     "metaNotFoundTitle": "Автосервис не найден",
     "loadingText": "Загружаем профиль автосервиса...",
     "notFoundText": "Автосервис не найден.",

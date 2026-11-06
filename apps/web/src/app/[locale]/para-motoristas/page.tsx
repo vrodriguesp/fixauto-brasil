@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: 'website',
       locale: OG_LOCALE[locale as Locale] || 'et_EE',
       siteName: 'BipFix',
-      title: t('metaTitle'),
+      title: `${t('metaTitle')} | BipFix`,
       description: t('metaDescription'),
       url: alternates.canonical,
     },

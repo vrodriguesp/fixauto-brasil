@@ -1005,8 +1005,8 @@
     "metaDescription": "Come usare BipFix in officina: registrazione, richieste di clienti vicini, preventivi (anche da foto o PDF), agenda, team, fasi, revisioni e costi."
   },
   "oficinaPerfilPublico": {
-    "metaTitleTemplate": "{nome} - Officina Meccanica a {cidade}, {estado}",
-    "metaDescriptionTemplate": "Recensioni, servizi offerti e preventivo online presso {nome}, officina meccanica a {cidade} - {estado}. Confronta i prezzi e prenota la tua riparazione con BipFix.",
+    "metaTitleTemplate": "{nome} – Officina meccanica a {cidade}",
+    "metaDescriptionTemplate": "{nome}, officina meccanica a {cidade}: servizi, recensioni e preventivi online. Confronta i prezzi e prenota la riparazione con BipFix.",
     "metaNotFoundTitle": "Officina non trovata",
     "loadingText": "Caricamento profilo dell'officina...",
     "notFoundText": "Officina non trovata.",

@@ -1005,8 +1005,8 @@
     "metaDescription": "Kuidas BipFixi töökojas kasutada: registreerumine, lähedal asuvate klientide päringud, hinnapakkumised (ka foto või PDF-i järgi), ajakava, meeskond ja kulud."
   },
   "oficinaPerfilPublico": {
-    "metaTitleTemplate": "{nome} - Autoremonditöökoda linnas {cidade}, {estado}",
-    "metaDescriptionTemplate": "Hinnangud, pakutavad teenused ja veebipõhine hinnapakkumine töökojas {nome}, autoremonditöökoda linnas {cidade} - {estado}. Võrdle hindu ja broneeri remont BipFixi kaudu.",
+    "metaTitleTemplate": "{nome} – autoremonditöökoda, {cidade}",
+    "metaDescriptionTemplate": "{nome}, autoremonditöökoda linnas {cidade}: teenused, hinnangud ja hinnapakkumine veebis. Võrdle hindu ja broneeri remont BipFixi kaudu.",
     "metaNotFoundTitle": "Töökoda ei leitud",
     "loadingText": "Laadin töökoja profiili...",
     "notFoundText": "Töökoda ei leitud.",
