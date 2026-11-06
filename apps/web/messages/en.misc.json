@@ -322,7 +322,7 @@
           "<strong>Partnership contacts (section 3.8):</strong> until you ask us to stop contacting you, and at most 24 months after our last contact.",
           "<strong>Support chat started without an account:</strong> deleted automatically 6 months after the last message.",
           "<strong>Automatic translations</strong> of request descriptions, quotes and messages between Customers and Partners: kept to avoid translating the same text twice, and deleted automatically after 24 months at the latest.",
-          "<strong>Request sent without an account and not confirmed with the e-mail code:</strong> it never reaches any repair shop and is deleted, together with its photos and the unactivated account, within 24 hours."
+          "<strong>Request sent without an account and not confirmed with the e-mail code:</strong> it never reaches any repair shop and is deleted, together with its photos and the unactivated account, within 24 hours. About 2 hours later we send one reminder with a link to confirm the request or cancel it right away."
         ]
       },
       {

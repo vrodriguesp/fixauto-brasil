@@ -12,7 +12,7 @@ import ru from '../../messages/ru.json';
 // cliente inseria um aviso por oficina ativa DO MUNDO INTEIRO, em serie;
 // auditoria Fable 08/10, A5/E9). So oficinas ativas, cujo raio de
 // atendimento alcanca o pedido e que fazem esse tipo de servico.
-const TIPOS: Record<string, Record<string, string>> = {
+export const TIPOS: Record<string, Record<string, string>> = {
   pt: (pt as any).constants.tiposServico, 'pt-PT': (ptPT as any).constants.tiposServico, en: (en as any).constants.tiposServico,
   et: (et as any).constants.tiposServico, it: (it as any).constants.tiposServico, ru: (ru as any).constants.tiposServico,
 };

@@ -322,7 +322,7 @@
           "<strong>Contactos de parceria (secção 3.8):</strong> até nos pedir para deixarmos de o contactar e, no máximo, 24 meses após o nosso último contacto.",
           "<strong>Chat de apoio iniciado sem conta:</strong> eliminado automaticamente 6 meses após a última mensagem.",
           "<strong>Traduções automáticas</strong> de descrições de pedidos, orçamentos e mensagens entre Clientes e Parceiros: conservadas para não traduzir duas vezes o mesmo texto e eliminadas automaticamente, no máximo, após 24 meses.",
-          "<strong>Pedido enviado sem registo e não confirmado com o código enviado por e-mail:</strong> não chega a nenhuma oficina e é apagado, juntamente com as fotografias e a conta não ativada, no prazo de 24 horas."
+          "<strong>Pedido enviado sem registo e não confirmado com o código enviado por e-mail:</strong> não chega a nenhuma oficina e é apagado, juntamente com as fotografias e a conta não ativada, no prazo de 24 horas. Cerca de 2 horas depois enviamos um único lembrete com uma ligação para confirmar o pedido ou cancelá-lo de imediato."
         ]
       },
       {

@@ -5,8 +5,8 @@ import { ErroValidacao, texto, numero, umDe, extensaoDe } from './validacao';
 import { iguaisSeguro } from './segredos';
 import { enviarEmail } from './email';
 import { escapeHtml } from './email-i18n';
-import { idiomaDoSite } from './site-url';
-import { avisarOficinasDoPedido } from './avisar-oficinas-pedido';
+import { idiomaDoSite, urlNoIdioma } from './site-url';
+import { avisarOficinasDoPedido, TIPOS as TIPOS_NOMES } from './avisar-oficinas-pedido';
 import { avisarAdminSeSemOficinas } from './concierge';
 
 // Pedido sem cadastro (dono 06/11; migracao 073). Regras que valem para o site
@@ -179,4 +179,114 @@ export async function apagarPendente(p: { id: string; user_id: string; conta_nov
 /** Contagem anonima dos passos (sem IP, sem cookie). */
 export async function contarEtapa(funil: string, etapa: string) {
   await supabaseAdmin.rpc('funil_incrementar', { p_funil: funil, p_etapa: etapa }).then(() => {}, () => {});
+}
+
+/**
+ * Pedido ja reservado (linha apagada de pedidos_pendentes por quem confirmou):
+ * ativa a conta nova ou confirma o e-mail da existente e publica o pedido para as
+ * oficinas. Usado pelo codigo (/confirmar) e pelo link do lembrete (/retomar).
+ * Erro inesperado sobe (quem chamou devolve o pendente para a pessoa tentar de novo).
+ */
+export async function ativarEPublicar(p: Record<string, any>): Promise<{ id: string; numero: number | null } | { erro: 'SEM_ACESSO' | 'AVALIACAO_PENDENTE' }> {
+  if (p.conta_nova) {
+    const { error: eConf } = await supabaseAdmin.auth.admin.updateUserById(p.user_id, { email_confirm: true });
+    if (eConf) throw new Error(eConf.message);
+    const { error } = await supabaseAdmin.from('profiles').insert({
+      id: p.user_id, tipo: 'cliente', nome: p.nome, email: p.email, telefone: p.telefone, idioma: p.idioma,
+      termos_aceitos_em: p.termos_aceitos_em, termos_versao: p.termos_versao,
+    });
+    if (error && !/duplicate|unique/i.test(error.message)) throw new Error(error.message);
+  } else {
+    // conta desativada ou que deixou de ser cliente entre o envio e a confirmacao
+    const { data: perfil } = await supabaseAdmin.from('profiles').select('tipo, ativo').eq('id', p.user_id).maybeSingle();
+    if (perfil?.tipo !== 'cliente' || perfil.ativo === false) {
+      await apagarPendente(p as any, true);
+      return { erro: 'SEM_ACESSO' };
+    }
+    // avaliacao pendente ja e conferida antes de mandar o codigo; se surgiu
+    // depois, o pedido volta para a pessoa avaliar e confirmar de novo
+    const { data: avaliar } = await supabaseAdmin.rpc('tem_avaliacao_pendente', { p_cliente: p.user_id });
+    if (avaliar === true) {
+      await supabaseAdmin.from('pedidos_pendentes').insert(p).then(() => {}, () => {});
+      return { erro: 'AVALIACAO_PENDENTE' };
+    }
+    // o codigo/link prova o e-mail: quem tinha cadastro sem confirmar passa a entrar
+    const { data: u } = await supabaseAdmin.auth.admin.getUserById(p.user_id);
+    if (u?.user && !u.user.email_confirmed_at) {
+      const { error: eConf } = await supabaseAdmin.auth.admin.updateUserById(p.user_id, { email_confirm: true });
+      if (eConf) throw new Error(eConf.message);
+    }
+    if (p.telefone) await supabaseAdmin.from('profiles').update({ telefone: p.telefone }).eq('id', p.user_id).is('telefone', null);
+  }
+  const r = await criarPedido(p.user_id, p.dados as DadosPedido, p.fotos || []);
+  await contarEtapa(`pedido_${p.origem}`, 'confirmado');
+  return r;
+}
+
+// ---------------------------------------------------------------------------
+// Lembrete (dono 06/11): quem nao digitou o codigo recebe UM e-mail ~2 h depois
+// com um link de uso unico para confirmar (sem o codigo: clicar prova o e-mail)
+// ou cancelar na hora. O pedido continua guardado ate as 24 h. O e-mail mostra so
+// o tipo de servico e o carro (se o e-mail foi digitado errado, um estranho nao
+// ve endereco, descricao nem telefone). Disparado pela tarefa de hora em hora.
+export const LEMBRETE_HORAS = 2;
+export const hashRetomar = (token: string) => createHash('sha256').update(`retomar:${token}`).digest('hex');
+
+const TXT_LEMBRETE: Record<string, { assunto: string; ola: string; texto: string; prazo: string; confirmar: string; cancelar: string; ignore: string }> = {
+  et: { assunto: 'Sinu päring pole veel töökodadeni jõudnud', ola: 'Tere, {n}!', texto: 'Alustasid BipFixis hinnapäringut, kuid koodi ei sisestatud, seega ei ole töökojad seda veel näinud:', prazo: 'Hoiame päringut kuni {h}. Seejärel kustutatakse see koos fotode ja aktiveerimata kontoga.', confirmar: 'Kinnita ja saada päring', cancelar: 'Tühista päring', ignore: 'Kui sa päringut ei alustanud, ignoreeri seda kirja – midagi ei saadeta ja andmed kustutatakse.' },
+  ru: { assunto: 'Ваша заявка ещё не дошла до автосервисов', ola: 'Здравствуйте, {n}!', texto: 'Вы начали заявку на расчёт цены в BipFix, но код не был введён, поэтому автосервисы её ещё не видели:', prazo: 'Мы храним заявку до {h}. После этого она удаляется вместе с фото и неактивированным аккаунтом.', confirmar: 'Подтвердить и отправить заявку', cancelar: 'Отменить заявку', ignore: 'Если вы не начинали заявку, проигнорируйте это письмо – ничего не будет отправлено, а данные будут удалены.' },
+  en: { assunto: 'Your request has not reached the repair shops yet', ola: 'Hello {n},', texto: 'You started a quote request on BipFix, but the code was not entered, so the repair shops have not seen it yet:', prazo: 'We keep the request until {h}. After that it is deleted together with the photos and the unactivated account.', confirmar: 'Confirm and send the request', cancelar: 'Cancel the request', ignore: 'If you did not start a request, ignore this e-mail – nothing is sent and the data is deleted.' },
+  it: { assunto: 'La tua richiesta non è ancora arrivata alle officine', ola: 'Ciao {n},', texto: 'Hai iniziato una richiesta di preventivo su BipFix, ma il codice non è stato inserito, quindi le officine non l’hanno ancora vista:', prazo: 'Conserviamo la richiesta fino alle {h}. Dopo viene cancellata insieme alle foto e all’account non attivato.', confirmar: 'Conferma e invia la richiesta', cancelar: 'Annulla la richiesta', ignore: 'Se non hai iniziato una richiesta, ignora questa e-mail: non viene inviato nulla e i dati vengono cancellati.' },
+  pt: { assunto: 'Seu pedido ainda não chegou às oficinas', ola: 'Olá, {n}!', texto: 'Você começou um pedido de orçamento na BipFix, mas o código não foi digitado, então as oficinas ainda não o viram:', prazo: 'Guardamos o pedido até {h}. Depois disso ele é apagado junto com as fotos e a conta não ativada.', confirmar: 'Confirmar e enviar o pedido', cancelar: 'Cancelar o pedido', ignore: 'Se você não começou um pedido, ignore este e-mail – nada é enviado e os dados são apagados.' },
+  'pt-PT': { assunto: 'O seu pedido ainda não chegou às oficinas', ola: 'Olá, {n}!', texto: 'Começou um pedido de orçamento na BipFix, mas o código não foi introduzido, por isso as oficinas ainda não o viram:', prazo: 'Guardamos o pedido até {h}. Depois disso é apagado juntamente com as fotografias e a conta não ativada.', confirmar: 'Confirmar e enviar o pedido', cancelar: 'Cancelar o pedido', ignore: 'Se não começou um pedido, ignore este e-mail – nada é enviado e os dados são apagados.' },
+};
+const FUSO: Record<string, string> = { et: 'Europe/Tallinn', ru: 'Europe/Tallinn', en: 'Europe/Tallinn', it: 'Europe/Rome', 'pt-PT': 'Europe/Lisbon', pt: 'America/Sao_Paulo' };
+const LOCALE_DATA: Record<string, string> = { et: 'et-EE', ru: 'ru-RU', en: 'en-GB', it: 'it-IT', 'pt-PT': 'pt-PT', pt: 'pt-BR' };
+
+/** Envia os lembretes devidos (pedidos com 2 h a 23 h, ainda sem lembrete). */
+export async function enviarLembretes(): Promise<number> {
+  const agora = Date.now();
+  const { data: devidos } = await supabaseAdmin.from('pedidos_pendentes')
+    .select('id, email, nome, idioma, dados, created_at')
+    .is('lembrete_enviado_em', null)
+    .lt('created_at', new Date(agora - LEMBRETE_HORAS * 3600 * 1000).toISOString())
+    .gt('created_at', new Date(agora - (PENDENTE_HORAS - 1) * 3600 * 1000).toISOString())
+    .limit(100);
+  let enviados = 0;
+  for (const p of devidos || []) {
+    const token = randomUUID().replace(/-/g, '') + randomUUID().replace(/-/g, '');
+    // marca antes de enviar (so um lembrete, mesmo com duas tarefas ao mesmo tempo)
+    const { data: marcado } = await supabaseAdmin.from('pedidos_pendentes')
+      .update({ lembrete_enviado_em: new Date().toISOString(), retomar_hash: hashRetomar(token) })
+      .eq('id', p.id).is('lembrete_enviado_em', null).select('id');
+    if (!marcado?.length) continue;
+    if (await enviarLembrete(p, token)) { enviados++; await contarEtapa('pedido_lembrete', 'enviado'); }
+  }
+  return enviados;
+}
+
+async function enviarLembrete(p: { id: string; email: string; nome: string; idioma: string | null; dados: any; created_at: string }, token: string): Promise<boolean> {
+  const idioma = idiomaDoSite(p.idioma);
+  const x = TXT_LEMBRETE[idioma] || TXT_LEMBRETE.en;
+  const d = p.dados || {};
+  const tipo = TIPOS_NOMES[idioma]?.[d.tipo] || d.tipo || '';
+  const carro = [d.veiculo?.marca, d.veiculo?.modelo, d.veiculo?.ano].filter(Boolean).join(' ');
+  const ate = new Date(new Date(p.created_at).getTime() + PENDENTE_HORAS * 3600 * 1000)
+    .toLocaleString(LOCALE_DATA[idioma] || 'en-GB', { timeZone: FUSO[idioma] || 'Europe/Tallinn', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+  const base = `${urlNoIdioma(idioma, '/pedido')}?retomar=${p.id}&t=${token}`;
+  const botao = (href: string, txt: string, cor: string, fundo: string) =>
+    `<a href="${href}" style="display:inline-block;padding:14px 22px;border-radius:8px;background:${fundo};color:${cor};text-decoration:none;font-weight:bold;margin:6px 6px 6px 0;">${txt}</a>`;
+  return enviarEmail({ para: p.email, assunto: x.assunto, html: `
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+      <div style="background:#0c4a6e;color:white;padding:24px;border-radius:12px 12px 0 0;"><h1 style="margin:0;font-size:24px;">BipFix</h1></div>
+      <div style="background:white;padding:24px;border:1px solid #e5e7eb;border-radius:0 0 12px 12px;">
+        <p>${x.ola.replace('{n}', escapeHtml(p.nome))}</p>
+        <p>${x.texto}</p>
+        <p style="background:#f3f4f6;border-radius:8px;padding:12px 16px;"><strong>${escapeHtml(tipo)}</strong>${carro ? `<br>${escapeHtml(carro)}` : ''}</p>
+        <p>${x.prazo.replace('{h}', escapeHtml(ate))}</p>
+        <p>${botao(base, x.confirmar, '#ffffff', '#16a34a')}${botao(`${base}&acao=cancelar`, x.cancelar, '#374151', '#e5e7eb')}</p>
+        <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+        <p style="font-size:12px;color:#9ca3af;">${x.ignore}</p>
+      </div>
+    </div>` });
 }

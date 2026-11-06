@@ -27,8 +27,14 @@ CREATE TABLE IF NOT EXISTS pedidos_pendentes (
   ultimo_envio_em timestamptz NOT NULL DEFAULT now(),
   termos_aceitos_em timestamptz NOT NULL,
   termos_versao text,
-  created_at timestamptz NOT NULL DEFAULT now()
+  created_at timestamptz NOT NULL DEFAULT now(),
+  -- lembrete unico ~2 h depois (dono 06/11): link de uso unico para confirmar ou
+  -- cancelar sem o codigo; so o hash do link fica aqui
+  lembrete_enviado_em timestamptz,
+  retomar_hash text
 );
+ALTER TABLE pedidos_pendentes ADD COLUMN IF NOT EXISTS lembrete_enviado_em timestamptz;
+ALTER TABLE pedidos_pendentes ADD COLUMN IF NOT EXISTS retomar_hash text;
 CREATE INDEX IF NOT EXISTS pedidos_pendentes_email_idx ON pedidos_pendentes (lower(email));
 CREATE INDEX IF NOT EXISTS pedidos_pendentes_created_idx ON pedidos_pendentes (created_at);
 -- so o servidor (service role) le e grava: sem nenhuma politica para os papeis publicos

@@ -3,7 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 import { limitarPorIp } from '@/lib/rate-limit';
 import { ehUuid } from '@/lib/validacao';
 import {
-  CODIGO_TENTATIVAS, PENDENTE_HORAS, codigoConfere, criarPedido, apagarPendente, contarEtapa, type DadosPedido,
+  CODIGO_TENTATIVAS, PENDENTE_HORAS, codigoConfere, apagarPendente, ativarEPublicar,
 } from '@/lib/pedido-sem-conta';
 
 export const dynamic = 'force-dynamic';
@@ -43,38 +43,12 @@ export async function POST(req: NextRequest) {
   if (!reservado?.length) return NextResponse.json({ error: 'Já confirmado', codigo: 'CODIGO_EXPIRADO' }, { status: 410 });
 
   try {
-    if (p.conta_nova) {
-      const { error: eConf } = await supabaseAdmin.auth.admin.updateUserById(p.user_id, { email_confirm: true });
-      if (eConf) throw new Error(eConf.message);
-      const { error } = await supabaseAdmin.from('profiles').insert({
-        id: p.user_id, tipo: 'cliente', nome: p.nome, email: p.email, telefone: p.telefone, idioma: p.idioma,
-        termos_aceitos_em: p.termos_aceitos_em, termos_versao: p.termos_versao,
-      });
-      if (error && !/duplicate|unique/i.test(error.message)) throw new Error(error.message);
-    } else {
-      // conta desativada ou que deixou de ser cliente entre o envio e o codigo
-      const { data: perfil } = await supabaseAdmin.from('profiles').select('tipo, ativo').eq('id', p.user_id).maybeSingle();
-      if (perfil?.tipo !== 'cliente' || perfil.ativo === false) {
-        await apagarPendente(p, true);
-        return NextResponse.json({ error: 'Sem acesso', codigo: 'SEM_ACESSO' }, { status: 403 });
-      }
-      // avaliacao pendente ja e conferida antes de mandar o codigo; se surgiu
-      // depois, o pedido volta para a pessoa avaliar e confirmar de novo
-      const { data: avaliar } = await supabaseAdmin.rpc('tem_avaliacao_pendente', { p_cliente: p.user_id });
-      if (avaliar === true) {
-        await supabaseAdmin.from('pedidos_pendentes').insert(p).then(() => {}, () => {});
-        return NextResponse.json({ error: 'Avaliação pendente', codigo: 'AVALIACAO_PENDENTE' }, { status: 409 });
-      }
-      // o codigo prova o e-mail: quem tinha cadastro sem confirmar passa a entrar
-      const { data: u } = await supabaseAdmin.auth.admin.getUserById(p.user_id);
-      if (u?.user && !u.user.email_confirmed_at) {
-        const { error: eConf } = await supabaseAdmin.auth.admin.updateUserById(p.user_id, { email_confirm: true });
-        if (eConf) throw new Error(eConf.message);
-      }
-      if (p.telefone) await supabaseAdmin.from('profiles').update({ telefone: p.telefone }).eq('id', p.user_id).is('telefone', null);
+    const r = await ativarEPublicar(p);
+    if ('erro' in r) {
+      return r.erro === 'SEM_ACESSO'
+        ? NextResponse.json({ error: 'Sem acesso', codigo: 'SEM_ACESSO' }, { status: 403 })
+        : NextResponse.json({ error: 'Avaliação pendente', codigo: 'AVALIACAO_PENDENTE' }, { status: 409 });
     }
-    const r = await criarPedido(p.user_id, p.dados as DadosPedido, p.fotos || []);
-    await contarEtapa(`pedido_${p.origem}`, 'confirmado');
     return NextResponse.json({ solicitacaoId: r.id, numero: r.numero, contaNova: p.conta_nova, email: p.email });
   } catch (e) {
     // devolve o pendente para a pessoa poder tentar de novo
