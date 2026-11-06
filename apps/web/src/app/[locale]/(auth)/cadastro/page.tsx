@@ -10,6 +10,7 @@ import { TIPOS_SERVICO } from '@fixauto/shared';
 import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEndereco } from '@/components/forms/EnderecoEstruturado';
 import { registrarConversaoCadastro } from '@/components/Analytics';
 import { useAuth } from '@/lib/auth-context';
+import CampoTelefone from '@/components/forms/CampoTelefone';
 
 export default function CadastroPageWrapper() {
   const t = useTranslations('cadastro');
@@ -382,7 +383,7 @@ function CadastroPage() {
               </div>
               <div>
                 <label htmlFor="c6791-7" className="block text-sm font-medium text-gray-700 mb-1">{t('labelTelefone')}</label>
-                <input id="c6791-7" type="tel" className="input-field" placeholder={t('placeholderTelefone')} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+                <CampoTelefone id="c6791-7" value={telefone} onChange={(v) => setTelefone(v)} />
               </div>
               <div>
                 <label htmlFor="c6791-8" className="block text-sm font-medium text-gray-700 mb-1">{t('labelSenha')}</label>

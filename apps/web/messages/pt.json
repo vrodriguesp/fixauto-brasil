@@ -415,6 +415,7 @@
     "ctaCadastroOficina": "Cadastre sua oficina grátis"
   },
   "constants": {
+    "prefixoTelefone": "Código do país",
     "tiposServico": {
       "colisao": "Colisão",
       "funilaria": "Funilaria e Pintura",

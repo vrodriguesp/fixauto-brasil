@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { mercadoDe } from '@/i18n/routing';
 import { textoErroApi } from '@/lib/erro-api';
+import CampoTelefone from '@/components/forms/CampoTelefone';
 
 export default function SejaParceiroPage() {
   const t = useTranslations('sejaParceiro');
@@ -160,7 +161,7 @@ export default function SejaParceiroPage() {
               </div>
               <div>
                 <label htmlFor="c931f-5" className="block text-sm font-medium text-gray-700 mb-1">{t('campoWhatsapp')} *</label>
-                <input id="c931f-5" type="tel" className="input-field" placeholder={t('placeholderWhatsapp')} value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} required />
+                <CampoTelefone id="c931f-5" value={whatsapp} onChange={setWhatsapp} required />
               </div>
               <div>
                 <label htmlFor="c931f-6" className="block text-sm font-medium text-gray-700 mb-1">{t('campoEmail')}</label>

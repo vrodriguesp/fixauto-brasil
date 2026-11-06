@@ -424,6 +424,7 @@
     "ctaCadastroOficina": "Зарегистрировать автосервис бесплатно"
   },
   "constants": {
+    "prefixoTelefone": "Код страны",
     "tiposServico": {
       "colisao": "ДТП",
       "funilaria": "Кузовной ремонт и покраска",

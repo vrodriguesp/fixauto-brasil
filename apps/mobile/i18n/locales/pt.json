@@ -349,7 +349,8 @@
       "balanceamento": "Balanceamento",
       "calibragem": "Calibragem",
       "troca_roda_calota": "Troca de roda / calota"
-    }
+    },
+    "prefixoTelefone": "Código do país"
   },
   "perfil": {
     "titulo": "Perfil",

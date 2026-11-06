@@ -10,6 +10,7 @@ import { exemploPlaca } from '@/lib/exemplos';
 import { textoErroApi } from '@/lib/erro-api';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
+import CampoTelefone from '@/components/forms/CampoTelefone';
 import {
   TIPOS_SERVICO, URGENCIAS,
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
@@ -453,7 +454,7 @@ export default function PedidoSemConta() {
                 </div>
                 <div>
                   <label htmlFor="pedido-telefone" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')} <span className="text-gray-400 font-normal">({t('opcional')})</span></label>
-                  <input id="pedido-telefone" type="tel" inputMode="tel" className="input-field" autoComplete="tel" maxLength={30} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+                  <CampoTelefone id="pedido-telefone" value={telefone} onChange={setTelefone} />
                   <p className="text-xs text-gray-500 mt-1">{t('telefoneDica')}</p>
                 </div>
                 {/* campo invisivel para robos (pessoas nao veem nem preenchem) */}

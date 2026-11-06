@@ -22,6 +22,7 @@ import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
 import VehicleCatalogPicker from '../components/VehicleCatalogPicker';
 import { obterPosicao } from '../lib/posicao';
 import { arquivoDaFoto } from '../lib/anexo';
+import CampoTelefone from '../components/CampoTelefone';
 
 // Pedido de orcamento SEM cadastro - o mesmo fluxo do site
 // (apps/web/src/components/pedido/PedidoSemConta.tsx; regras em
@@ -486,7 +487,7 @@ export default function PedidoScreen() {
               <Text className="text-xs text-gray-500 mt-1 mb-4">{t('pedidoSemConta.senhaDica')}</Text>
 
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.telefone')} <Text className="text-gray-400 font-normal">({t('pedidoSemConta.opcional')})</Text></Text>
-              <TextInput accessibilityLabel={t('pedidoSemConta.telefone')} value={telefone} onChangeText={setTelefone} autoComplete="tel" textContentType="telephoneNumber" keyboardType="phone-pad" maxLength={30} className={CAMPO} />
+              <CampoTelefone rotulo={t('pedidoSemConta.telefone')} value={telefone} onChange={setTelefone} />
               <Text className="text-xs text-gray-500 mt-1 mb-4">{t('pedidoSemConta.telefoneDica')}</Text>
 
               <Pressable onPress={() => setTermos((v) => !v)} accessibilityRole="checkbox" accessibilityState={{ checked: termos }} className="flex-row items-start gap-2">

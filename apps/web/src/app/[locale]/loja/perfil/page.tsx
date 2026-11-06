@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 // endereco com pais e mapa (antes so CEP brasileiro via ViaCEP - auditoria M-14)
 import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEndereco } from '@/components/forms/EnderecoEstruturado';
+import CampoTelefone from '@/components/forms/CampoTelefone';
 
 export default function PerfilLojaPage() {
   const t = useTranslations('lojaPerfil');
@@ -93,7 +94,7 @@ export default function PerfilLojaPage() {
         </div>
         <div>
           <label htmlFor="c9a81-3" className="block text-sm font-medium text-gray-700 mb-1">{t('labelTelefone')}</label>
-          <input id="c9a81-3" type="tel" className="input-field" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+          <CampoTelefone id="c9a81-3" value={telefone} onChange={(v) => setTelefone(v)} />
         </div>
       </div>
 

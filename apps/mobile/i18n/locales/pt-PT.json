@@ -349,7 +349,8 @@
       "balanceamento": "Equilibragem de rodas",
       "calibragem": "Verificação da pressão dos pneus",
       "troca_roda_calota": "Substituição de roda/tampão"
-    }
+    },
+    "prefixoTelefone": "Indicativo do país"
   },
   "perfil": {
     "titulo": "Perfil",

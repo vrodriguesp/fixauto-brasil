@@ -10,6 +10,7 @@ import { textoErroApi } from '@/lib/erro-api';
 import { SeguroReparoCampos, ProximosPassosSeguro, SEGURO_VAZIO, type ValorSeguro } from '@/components/emergencia/SeguroReparo';
 import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 import { salvarRascunhoEmergencia, lerRascunhoEmergencia, apagarRascunhoEmergencia } from '@/lib/rascunho-emergencia';
+import CampoTelefone from '@/components/forms/CampoTelefone';
 
 export default function EmergenciaPage() {
   const t = useTranslations('emergencia');
@@ -583,7 +584,7 @@ export default function EmergenciaPage() {
                 <div>
                   {/* telefone opcional (pedido do dono 31/10) */}
                   <label htmlFor="cc5ef-5" className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')} <span className="font-normal text-gray-500">({t('opcional')})</span></label>
-                  <input id="cc5ef-5" type="tel" autoComplete="tel" className="input-field" placeholder={t('phonePlaceholder')} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+                  <CampoTelefone id="cc5ef-5" value={telefone} onChange={(v) => setTelefone(v)} />
                 </div>
               </div>
               <div className="flex justify-between mt-6">

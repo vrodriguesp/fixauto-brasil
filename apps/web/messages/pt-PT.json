@@ -415,6 +415,7 @@
     "ctaCadastroOficina": "Registe a sua oficina grátis"
   },
   "constants": {
+    "prefixoTelefone": "Indicativo do país",
     "tiposServico": {
       "colisao": "Colisão",
       "funilaria": "Bate-chapa e Pintura",

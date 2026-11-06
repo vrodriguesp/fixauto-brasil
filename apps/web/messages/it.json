@@ -416,6 +416,7 @@
     "ctaCadastroOficina": "Registra la tua officina gratis"
   },
   "constants": {
+    "prefixoTelefone": "Prefisso internazionale",
     "tiposServico": {
       "colisao": "Collisione",
       "funilaria": "Carrozzeria e Verniciatura",

@@ -349,7 +349,8 @@
       "balanceamento": "Balancing",
       "calibragem": "Tyre pressure check",
       "troca_roda_calota": "Wheel/hubcap change"
-    }
+    },
+    "prefixoTelefone": "Country code"
   },
   "perfil": {
     "titulo": "Profile",

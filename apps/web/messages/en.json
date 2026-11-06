@@ -418,6 +418,7 @@
     "ctaCadastroOficina": "Register your garage for free"
   },
   "constants": {
+    "prefixoTelefone": "Country code",
     "tiposServico": {
       "colisao": "Collision",
       "funilaria": "Bodywork & Paint",

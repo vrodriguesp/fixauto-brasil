@@ -9,6 +9,7 @@ import { CARGOS_FUNCIONARIO } from '@fixauto/shared';
 import type { Funcionario } from '@fixauto/shared';
 import { textoErroApi } from '@/lib/erro-api';
 import { nomeFuncionario } from '@/lib/funcionario';
+import CampoTelefone from '@/components/forms/CampoTelefone';
 
 export default function EquipePage() {
   const t = useTranslations('oficinaEquipe');
@@ -244,7 +245,7 @@ export default function EquipePage() {
             </div>
             <div>
               <label htmlFor="cdcf5-tel" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
-              <input id="cdcf5-tel" type="tel" className="input-field" value={form.telefone} onChange={(e) => setForm({ ...form, telefone: e.target.value })} />
+              <CampoTelefone id="cdcf5-tel" value={form.telefone} onChange={(v) => setForm({ ...form, telefone: v })} />
             </div>
             <label className="sm:col-span-2 flex items-start gap-3 p-3 rounded-lg border border-gray-200 cursor-pointer">
               <input type="checkbox" className="mt-1" checked={comAcesso} onChange={(e) => setComAcesso(e.target.checked)} />

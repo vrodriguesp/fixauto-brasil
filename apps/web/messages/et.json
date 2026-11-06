@@ -424,6 +424,7 @@
     "ctaCadastroOficina": "Registreeri oma töökoda tasuta"
   },
   "constants": {
+    "prefixoTelefone": "Riigi kood",
     "tiposServico": {
       "colisao": "Kokkupõrge",
       "funilaria": "Kere- ja värvitööd",

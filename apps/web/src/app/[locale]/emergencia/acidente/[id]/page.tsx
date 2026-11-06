@@ -11,6 +11,7 @@ import { compressImage } from '@/lib/image-compress';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { textoErroApi } from '@/lib/erro-api';
+import CampoTelefone from '@/components/forms/CampoTelefone';
 
 interface Mensagem {
   id: string;
@@ -390,7 +391,7 @@ export default function AcidenteRegistroPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="cbacc-2" className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')}</label>
-                <input id="cbacc-2" type="tel" className="input-field" placeholder={t('phonePlaceholder')} value={outroTelefone} onChange={(e) => setOutroTelefone(e.target.value)} />
+                <CampoTelefone id="cbacc-2" value={outroTelefone} onChange={(v) => setOutroTelefone(v)} />
               </div>
               <div>
                 <label htmlFor="cbacc-3" className="block text-sm font-medium text-gray-700 mb-1">{t('emailLabel')}</label>

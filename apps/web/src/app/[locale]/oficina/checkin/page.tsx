@@ -13,6 +13,7 @@ import { useRouter } from '@/i18n/navigation';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { notifCheckinManual } from '@/lib/notif-i18n';
+import CampoTelefone from '@/components/forms/CampoTelefone';
 
 export default function ManualCheckinPage() {
   const t = useTranslations('oficinaCheckin');
@@ -163,7 +164,7 @@ export default function ManualCheckinPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="min-w-0">
                 <label htmlFor="c7917-2" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('telefone')}</label>
-                <input id="c7917-2" type="tel" className="input-field" placeholder={t('placeholderTelefone')} value={clienteTelefone} onChange={(e) => setClienteTelefone(e.target.value)} />
+                <CampoTelefone id="c7917-2" value={clienteTelefone} onChange={(v) => setClienteTelefone(v)} />
               </div>
               <div className="min-w-0">
                 <label htmlFor="c7917-3" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('email')}</label>

@@ -349,7 +349,8 @@
       "balanceamento": "Tasakaalustamine",
       "calibragem": "Rehvirõhu kontroll",
       "troca_roda_calota": "Ratta / ilukilbi vahetus"
-    }
+    },
+    "prefixoTelefone": "Riigi kood"
   },
   "perfil": {
     "titulo": "Profiil",

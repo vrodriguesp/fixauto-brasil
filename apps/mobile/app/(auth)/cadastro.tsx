@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, router } from 'expo-router';
 import { useAuth } from '../../lib/auth-context';
 import { urlTermos, urlPrivacidade } from '../../lib/links-legais';
+import CampoTelefone from '../../components/CampoTelefone';
 
 export default function CadastroScreen() {
   const { t, i18n } = useTranslation();
@@ -82,12 +83,9 @@ export default function CadastroScreen() {
         <Text className="text-sm font-medium text-gray-700 mb-1">
           {t('auth.telefone')} <Text className="text-gray-400">({t('common.opcional')})</Text>
         </Text>
-        <TextInput accessibilityLabel={t('auth.telefone')}
-          value={telefone}
-          onChangeText={setTelefone}
-          keyboardType="phone-pad"
-          className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]"
-        />
+        <View className="mb-4">
+          <CampoTelefone rotulo={t('auth.telefone')} value={telefone} onChange={setTelefone} />
+        </View>
 
         <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.senha')}</Text>
         <TextInput accessibilityLabel={t('auth.senha')} value={senha} onChangeText={setSenha} secureTextEntry className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]" />

@@ -349,7 +349,8 @@
       "balanceamento": "Bilanciatura",
       "calibragem": "Controllo pressione pneumatici",
       "troca_roda_calota": "Cambio ruota/coprimozzo"
-    }
+    },
+    "prefixoTelefone": "Prefisso internazionale"
   },
   "perfil": {
     "titulo": "Profilo",

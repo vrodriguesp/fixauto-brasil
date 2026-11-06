@@ -349,7 +349,8 @@
       "balanceamento": "Балансировка",
       "calibragem": "Проверка давления в шинах",
       "troca_roda_calota": "Замена колеса/колпака"
-    }
+    },
+    "prefixoTelefone": "Код страны"
   },
   "perfil": {
     "titulo": "Профиль",

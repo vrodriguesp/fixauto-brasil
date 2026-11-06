@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import CampoTelefone from '@/components/forms/CampoTelefone';
 
 export default function PerfilClientePage() {
   const t = useTranslations('clientePerfil');
@@ -99,7 +100,7 @@ export default function PerfilClientePage() {
           </div>
           <div>
             <label htmlFor="c31d9-3" className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')}</label>
-            <input id="c31d9-3" type="tel" className="input-field" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+            <CampoTelefone id="c31d9-3" value={telefone} onChange={(v) => setTelefone(v)} />
           </div>
         </div>
 

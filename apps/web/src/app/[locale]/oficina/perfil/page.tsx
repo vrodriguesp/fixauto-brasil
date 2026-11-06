@@ -11,6 +11,7 @@ import { Link, rota } from '@/i18n/navigation';
 import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEndereco } from '@/components/forms/EnderecoEstruturado';
 import { seguradorasDoPais } from '@/lib/seguradoras';
 import CampoNumero from '@/components/forms/CampoNumero';
+import CampoTelefone from '@/components/forms/CampoTelefone';
 
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
@@ -484,7 +485,7 @@ export default function PerfilOficinaPage() {
           </div>
           <div>
             <label htmlFor="c83a1-9" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
-            <input id="c83a1-9" type="tel" className="input-field" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+            <CampoTelefone id="c83a1-9" value={telefone} onChange={(v) => setTelefone(v)} />
           </div>
         </div>
       </div>
