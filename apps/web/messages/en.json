@@ -673,7 +673,7 @@
     "SERVICO_ENCERRADO": "The car has already been delivered (or the request was cancelled): the quote can no longer be changed.",
     "CODIGO_INVALIDO": "The code is not right. Check your e-mail and try again.",
     "CODIGO_EXPIRADO": "The code has expired or the request was already sent. Please fill in the request again.",
-    "CODIGO_TENTATIVAS": "Too many wrong attempts. Send a new code.",
+    "CODIGO_TENTATIVAS": "Too many wrong attempts. Tap “Send request” again and we will send a new code.",
     "EMAIL_EM_USO": "There is already an account with this e-mail. Go back and log in.",
     "AVALIACAO_PENDENTE": "Please rate your previous service before a new request."
   },

@@ -206,6 +206,8 @@ export default function PedidoScreen() {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: pendente.id, codigo }),
       }).catch(() => null);
       const d = res ? await res.json().catch(() => ({})) : {};
+      // 5 codigos errados: volta ao contato (dados mantidos) para enviar de novo, com codigo novo
+      if (d.codigo === 'CODIGO_TENTATIVAS') { setPendente(null); setEtapa('contato'); setErro(t('erros.CODIGO_TENTATIVAS')); return; }
       if (!res || !res.ok) { setErro(textoErro(res?.status || 500, d.codigo)); return; }
       if (pendente.contaNova) {
         // conta nova: ja entra com a senha que acabou de criar e abre o pedido

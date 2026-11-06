@@ -456,7 +456,7 @@
     "IA_OCUPADA": "Automaatne analüüs on praegu hõivatud. Proovi mõne minuti pärast uuesti või täida käsitsi.",
     "CODIGO_INVALIDO": "Kood ei ole õige. Kontrolli e-posti ja proovi uuesti.",
     "CODIGO_EXPIRADO": "Kood on aegunud või päring on juba saadetud. Täida päring uuesti.",
-    "CODIGO_TENTATIVAS": "Liiga palju valesid katseid. Saada uus kood.",
+    "CODIGO_TENTATIVAS": "Liiga palju valesid katseid. Vajuta uuesti „Saada päring“ – saadame uue koodi.",
     "EMAIL_EM_USO": "Selle e-postiga on juba konto. Mine tagasi ja logi sisse.",
     "AVALIACAO_PENDENTE": "Enne uut päringut hinda palun eelmist teenust."
   },

@@ -456,7 +456,7 @@
     "IA_OCUPADA": "A análise automática está ocupada agora. Tente de novo em alguns minutos ou preencha à mão.",
     "CODIGO_INVALIDO": "O código não está certo. Confira o e-mail e tente de novo.",
     "CODIGO_EXPIRADO": "O código expirou ou o pedido já foi enviado. Preencha o pedido de novo.",
-    "CODIGO_TENTATIVAS": "Muitas tentativas erradas. Envie um novo código.",
+    "CODIGO_TENTATIVAS": "Muitas tentativas erradas. Toque de novo em “Enviar pedido” e mandamos um novo código.",
     "EMAIL_EM_USO": "Já existe uma conta com este e-mail. Volte e entre na conta.",
     "AVALIACAO_PENDENTE": "Antes de um novo pedido, avalie o serviço anterior."
   },

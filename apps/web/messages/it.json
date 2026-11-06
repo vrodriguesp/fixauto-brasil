@@ -671,7 +671,7 @@
     "SERVICO_ENCERRADO": "L'auto è già stata consegnata (o la richiesta è stata annullata): il preventivo non può più essere modificato.",
     "CODIGO_INVALIDO": "Il codice non è corretto. Controlla l’e-mail e riprova.",
     "CODIGO_EXPIRADO": "Il codice è scaduto o la richiesta è già stata inviata. Compila di nuovo la richiesta.",
-    "CODIGO_TENTATIVAS": "Troppi tentativi sbagliati. Invia un nuovo codice.",
+    "CODIGO_TENTATIVAS": "Troppi tentativi sbagliati. Premi di nuovo “Invia richiesta”: ti mandiamo un nuovo codice.",
     "EMAIL_EM_USO": "Esiste già un account con questa e-mail. Torna indietro e accedi.",
     "AVALIACAO_PENDENTE": "Prima di una nuova richiesta valuta il servizio precedente."
   },

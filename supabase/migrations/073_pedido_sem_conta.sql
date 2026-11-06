@@ -34,6 +34,17 @@ CREATE INDEX IF NOT EXISTS pedidos_pendentes_created_idx ON pedidos_pendentes (c
 -- so o servidor (service role) le e grava: sem nenhuma politica para os papeis publicos
 ALTER TABLE pedidos_pendentes ENABLE ROW LEVEL SECURITY;
 
+-- Tentativa de codigo: conta ANTES de comparar, num passo so (pedidos em
+-- paralelo nao passam do limite de 5). Sem linha = pedido nao existe ou esgotou.
+CREATE OR REPLACE FUNCTION pendente_tentativa(p_id uuid, p_max int) RETURNS TABLE (codigo_hash text, tentativas int)
+LANGUAGE sql SECURITY DEFINER SET search_path TO 'public' AS $$
+  UPDATE pedidos_pendentes p SET tentativas = p.tentativas + 1
+  WHERE p.id = p_id AND p.tentativas < p_max
+  RETURNING p.codigo_hash, p.tentativas;
+$$;
+REVOKE ALL ON FUNCTION pendente_tentativa(uuid, int) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION pendente_tentativa(uuid, int) TO service_role;
+
 -- Contagem dos passos do pedido (onde as pessoas desistem): so numeros por dia,
 -- sem IP, sem cookie, sem identificar ninguem.
 CREATE TABLE IF NOT EXISTS funil_contagem (

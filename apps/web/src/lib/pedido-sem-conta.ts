@@ -91,9 +91,14 @@ export async function criarPedido(clienteId: string, d: DadosPedido, caminhosFot
   if (error || !sol) throw new Error(error?.message || 'solicitacao nao criada');
   for (const temporario of caminhosFotos) {
     // sai de pendentes/ (pasta que so guarda o que ainda nao foi confirmado)
-    let caminho = `solicitacoes/${sol.id}/${temporario.split('/').pop()}`;
+    // (fora de solicitacoes/ as oficinas nao conseguem abrir a foto: se nao mover, fica de fora)
+    const caminho = `solicitacoes/${sol.id}/${temporario.split('/').pop()}`;
     const { error: mvErr } = await supabaseAdmin.storage.from('damage-photos').move(temporario, caminho);
-    if (mvErr) { console.error('[pedido-sem-conta] mover foto', mvErr.message); caminho = temporario; }
+    if (mvErr) {
+      console.error('[pedido-sem-conta] mover foto', mvErr.message);
+      await supabaseAdmin.storage.from('damage-photos').remove([temporario]).then(() => {}, () => {});
+      continue;
+    }
     const url = supabaseAdmin.storage.from('damage-photos').getPublicUrl(caminho).data.publicUrl;
     await supabaseAdmin.from('solicitacao_fotos').insert({ solicitacao_id: sol.id, foto_url: url });
   }

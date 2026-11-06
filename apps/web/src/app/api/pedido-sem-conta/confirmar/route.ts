@@ -25,12 +25,16 @@ export async function POST(req: NextRequest) {
     await apagarPendente(p);
     return NextResponse.json({ error: 'Expirado', codigo: 'CODIGO_EXPIRADO' }, { status: 410 });
   }
-  if (p.tentativas >= CODIGO_TENTATIVAS) {
+  // a tentativa conta antes de comparar, num passo so no banco (envios em
+  // paralelo nao passam do limite); o novo codigo do reenvio NAO zera a conta -
+  // esgotou, a pessoa envia o pedido de novo (auditoria 06/11)
+  const { data: t } = await supabaseAdmin.rpc('pendente_tentativa', { p_id: id, p_max: CODIGO_TENTATIVAS });
+  const tentativa = (t as { codigo_hash: string; tentativas: number }[] | null)?.[0];
+  if (!tentativa) {
     return NextResponse.json({ error: 'Tentativas esgotadas', codigo: 'CODIGO_TENTATIVAS' }, { status: 429 });
   }
-  if (!codigoConfere(id, codigo, p.codigo_hash)) {
-    await supabaseAdmin.from('pedidos_pendentes').update({ tentativas: p.tentativas + 1 }).eq('id', id);
-    const restantes = CODIGO_TENTATIVAS - p.tentativas - 1;
+  if (!codigoConfere(id, codigo, tentativa.codigo_hash)) {
+    const restantes = CODIGO_TENTATIVAS - tentativa.tentativas;
     return NextResponse.json({ error: 'Código errado', codigo: restantes > 0 ? 'CODIGO_INVALIDO' : 'CODIGO_TENTATIVAS', restantes }, { status: 400 });
   }
 
@@ -40,22 +44,34 @@ export async function POST(req: NextRequest) {
 
   try {
     if (p.conta_nova) {
-      await supabaseAdmin.auth.admin.updateUserById(p.user_id, { email_confirm: true });
+      const { error: eConf } = await supabaseAdmin.auth.admin.updateUserById(p.user_id, { email_confirm: true });
+      if (eConf) throw new Error(eConf.message);
       const { error } = await supabaseAdmin.from('profiles').insert({
         id: p.user_id, tipo: 'cliente', nome: p.nome, email: p.email, telefone: p.telefone, idioma: p.idioma,
         termos_aceitos_em: p.termos_aceitos_em, termos_versao: p.termos_versao,
       });
       if (error && !/duplicate|unique/i.test(error.message)) throw new Error(error.message);
     } else {
-      // o codigo prova o e-mail: quem tinha cadastro sem confirmar passa a entrar
-      const { data: u } = await supabaseAdmin.auth.admin.getUserById(p.user_id);
-      if (u?.user && !u.user.email_confirmed_at) await supabaseAdmin.auth.admin.updateUserById(p.user_id, { email_confirm: true });
-      if (p.telefone) await supabaseAdmin.from('profiles').update({ telefone: p.telefone }).eq('id', p.user_id).is('telefone', null);
+      // conta desativada ou que deixou de ser cliente entre o envio e o codigo
+      const { data: perfil } = await supabaseAdmin.from('profiles').select('tipo, ativo').eq('id', p.user_id).maybeSingle();
+      if (perfil?.tipo !== 'cliente' || perfil.ativo === false) {
+        await apagarPendente(p, true);
+        return NextResponse.json({ error: 'Sem acesso', codigo: 'SEM_ACESSO' }, { status: 403 });
+      }
+      // avaliacao pendente ja e conferida antes de mandar o codigo; se surgiu
+      // depois, o pedido volta para a pessoa avaliar e confirmar de novo
       const { data: avaliar } = await supabaseAdmin.rpc('tem_avaliacao_pendente', { p_cliente: p.user_id });
       if (avaliar === true) {
-        if (p.fotos?.length) await supabaseAdmin.storage.from('damage-photos').remove(p.fotos);
+        await supabaseAdmin.from('pedidos_pendentes').insert(p).then(() => {}, () => {});
         return NextResponse.json({ error: 'Avaliação pendente', codigo: 'AVALIACAO_PENDENTE' }, { status: 409 });
       }
+      // o codigo prova o e-mail: quem tinha cadastro sem confirmar passa a entrar
+      const { data: u } = await supabaseAdmin.auth.admin.getUserById(p.user_id);
+      if (u?.user && !u.user.email_confirmed_at) {
+        const { error: eConf } = await supabaseAdmin.auth.admin.updateUserById(p.user_id, { email_confirm: true });
+        if (eConf) throw new Error(eConf.message);
+      }
+      if (p.telefone) await supabaseAdmin.from('profiles').update({ telefone: p.telefone }).eq('id', p.user_id).is('telefone', null);
     }
     const r = await criarPedido(p.user_id, p.dados as DadosPedido, p.fotos || []);
     await contarEtapa(`pedido_${p.origem}`, 'confirmado');

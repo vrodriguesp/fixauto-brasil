@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { limitarPorIp } from '@/lib/rate-limit';
+import { limitarPorIp, dentroDoLimite } from '@/lib/rate-limit';
 import { ehUuid, email as validarEmail, ErroValidacao } from '@/lib/validacao';
 import { CODIGO_ENVIOS, novoCodigo, hashCodigo, enviarCodigo } from '@/lib/pedido-sem-conta';
 
@@ -35,9 +35,13 @@ export async function POST(req: NextRequest) {
       email = novoEmail;
     }
 
+    // no maximo 5 e-mails de codigo por hora para o mesmo endereco (somando o envio do pedido)
+    if (!dentroDoLimite(`pedido-sem-conta:${email.toLowerCase()}`, 5, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Muitas tentativas', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
+    }
     const codigo = novoCodigo();
     await supabaseAdmin.from('pedidos_pendentes').update({
-      email, codigo_hash: hashCodigo(p.id, codigo), tentativas: 0, envios: p.envios + 1, ultimo_envio_em: new Date().toISOString(),
+      email, codigo_hash: hashCodigo(p.id, codigo), envios: p.envios + 1, ultimo_envio_em: new Date().toISOString(),
     }).eq('id', p.id);
     const enviado = await enviarCodigo(email, p.nome, codigo, p.idioma);
     if (!enviado) throw new Error('e-mail do codigo nao enviado');
