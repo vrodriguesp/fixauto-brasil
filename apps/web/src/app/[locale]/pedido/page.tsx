@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 import PedidoSemConta from '@/components/pedido/PedidoSemConta';
 
 // Pedido de orcamento sem cadastro (formulario; fora dos buscadores - quem
@@ -10,6 +11,18 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return { title: t('titulo'), description: t('subtitulo'), robots: { index: false, follow: true } };
 }
 
-export default function PedidoPage() {
-  return <PedidoSemConta />;
+// textos do formulario (o layout publico so entrega os NAMESPACES_PUBLICOS;
+// os do pedido vao apenas nesta pagina)
+const NAMESPACES = ['pedidoSemConta', 'clienteNovaSolicitacao', 'constants', 'erros', 'veiculoForm'];
+
+export default async function PedidoPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const todas = (await getMessages({ locale })) as Record<string, unknown>;
+  const messages = Object.fromEntries(NAMESPACES.filter((n) => n in todas).map((n) => [n, todas[n]]));
+  return (
+    <NextIntlClientProvider locale={locale} messages={messages as any}>
+      <PedidoSemConta />
+    </NextIntlClientProvider>
+  );
 }
