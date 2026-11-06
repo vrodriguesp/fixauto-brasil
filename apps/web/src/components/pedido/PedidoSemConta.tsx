@@ -292,7 +292,7 @@ export default function PedidoSemConta() {
               <div className="mt-5">
                 <label htmlFor="pedido-busca" className="block text-sm font-medium text-gray-700 mb-1">{tn('step3ServiceTitle')}</label>
                 <input id="pedido-busca" type="search" className="input-field" value={busca} onChange={(e) => setBusca(e.target.value)} placeholder={t('buscarServico')} />
-                <div className="space-y-2 max-h-[300px] overflow-y-auto mt-2" data-testid="lista-servicos">
+                <div className="space-y-2 mt-2" data-testid="lista-servicos">
                   {listaFiltrada.map((sv) => (
                     <label key={sv.value} className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer ${servicos.includes(sv.value) ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}>
                       <input type="checkbox" checked={servicos.includes(sv.value)} onChange={() => setServicos((x) => x.includes(sv.value) ? x.filter((y) => y !== sv.value) : [...x, sv.value])} className="w-4 h-4" />

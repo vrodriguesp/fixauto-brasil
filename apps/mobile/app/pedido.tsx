@@ -116,7 +116,7 @@ export default function PedidoScreen() {
       if (status !== 'granted') return;
       const pos = await obterPosicao();
       setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-      const res = await fetchComPrazo(`${API_BASE_URL}/api/geocode?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+      const res = await fetchComPrazo(`${API_BASE_URL}/api/geocode?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&idioma=${i18n.language}`);
       const data = await res.json();
       if (data.cidade) setEndereco((atual) => atual || [data.cidade, data.estado, data.pais].filter(Boolean).join(', '));
       if (data.paisCodigo) setPais(data.paisCodigo);
@@ -413,6 +413,7 @@ export default function PedidoScreen() {
 
       {etapa === 'carro' && (
         <View>
+          <Text className="text-lg font-semibold text-gray-900 mb-1">{t('novaSolicitacao.passoVeiculo')}</Text>
           <Text className="text-sm text-gray-500 mb-4">{t('pedidoSemConta.carroDica')}</Text>
           <VehicleCatalogPicker label={t('veiculos.marca')} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" />
           {marca && (
@@ -421,13 +422,14 @@ export default function PedidoScreen() {
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.ano')}</Text>
           <TextInput accessibilityLabel={t('veiculos.ano')} value={ano} onChangeText={(v) => setAno(v.replace(/\D/g, '').slice(0, 4))} keyboardType="number-pad" maxLength={4} className={`${CAMPO} mb-4`} />
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.plateLabel')}</Text>
-          <TextInput accessibilityLabel={t('pedidoSemConta.plateLabel')} value={placa} onChangeText={setPlaca} autoCapitalize="characters" maxLength={15} className={CAMPO} />
+          <TextInput accessibilityLabel={t('pedidoSemConta.plateLabel')} value={placa} onChangeText={(v) => setPlaca(v.toUpperCase())} autoCapitalize="characters" maxLength={15} className={CAMPO} />
           <Navegar voltar="detalhe" ok={carroOk} avancar={() => setEtapa('local')} />
         </View>
       )}
 
       {etapa === 'local' && (
         <View>
+          <Text className="text-lg font-semibold text-gray-900 mb-3">{t('pedidoSemConta.step5Title')}</Text>
           <Text className="text-sm font-medium text-gray-700 mb-1">
             {t('novaSolicitacao.passoLocal')} {buscandoLocal && <ActivityIndicator size="small" color="#2563eb" />}
           </Text>
@@ -441,6 +443,7 @@ export default function PedidoScreen() {
             placeholder={t('novaSolicitacao.enderecoPlaceholder')}
             onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); if (s.paisCodigo) setPais(s.paisCodigo); }}
           />
+          <Text className="text-xs text-gray-500 -mt-2">{t('pedidoSemConta.addressHelp')}</Text>
           <Erro />
           <Navegar voltar="carro" ok={endereco.trim().length > 2} avancar={() => { setErro(''); setEtapa('contato'); }} />
         </View>

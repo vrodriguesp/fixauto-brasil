@@ -605,6 +605,8 @@
     "erroLocalizacao": "Non abbiamo trovato l'indirizzo. Scegli un suggerimento o consenti la posizione.",
     "detalheTexto": "Scrivi con parole tue cosa ti serve, oppure cerca il servizio nell’elenco.",
     "buscarServico": "Cerca un servizio…",
-    "semResultadoBusca": "Non è nell’elenco: scrivilo nel campo qui sopra."
+    "semResultadoBusca": "Non è nell’elenco: scrivilo nel campo qui sopra.",
+    "step5Title": "Posizione e conferma",
+    "addressHelp": "Le officine vicine a questo indirizzo riceveranno una notifica"
   }
 }

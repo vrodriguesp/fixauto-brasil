@@ -49,9 +49,12 @@ function aguardarVez(): Promise<void> {
   return vez;
 }
 
-async function nominatim(url: string): Promise<Response> {
+// idioma dos nomes (cidade, condado, pais): o de quem usa, para o endereco preenchido
+// sozinho nao aparecer em ingles no app em estoniano/russo (teste do dono 06/11)
+const IDIOMAS_MAPA: Record<string, string> = { et: 'et', ru: 'ru', en: 'en', it: 'it', pt: 'pt', 'pt-PT': 'pt' };
+async function nominatim(url: string, idioma: string): Promise<Response> {
   await aguardarVez();
-  return fetch(url, { headers: { 'User-Agent': USER_AGENT, 'Accept-Language': 'en' }, signal: AbortSignal.timeout(8000) });
+  return fetch(url, { headers: { 'User-Agent': USER_AGENT, 'Accept-Language': idioma }, signal: AbortSignal.timeout(8000) });
 }
 
 function responder(chave: string, corpo: unknown, status = 200) {
@@ -75,7 +78,8 @@ export async function GET(req: NextRequest) {
   const cidadeQ = searchParams.get('cidade')?.trim().slice(0, 80) || '';
   const cepQ = searchParams.get('cep')?.trim().slice(0, 15) || '';
   const paisQ = (searchParams.get('pais') || '').trim().slice(0, 2).toLowerCase();
-  const chave = rua ? `e:${rua}|${numeroCasa}|${cidadeQ}|${cepQ}|${paisQ}`.toLowerCase() : lat && lon ? `r:${lat},${lon}` : `q:${(q || '').toLowerCase()}`;
+  const idioma = IDIOMAS_MAPA[searchParams.get('idioma') || ''] || 'en';
+  const chave = (idioma === 'en' ? '' : idioma + '|') + (rua ? `e:${rua}|${numeroCasa}|${cidadeQ}|${cepQ}|${paisQ}`.toLowerCase() : lat && lon ? `r:${lat},${lon}` : `q:${(q || '').toLowerCase()}`);
   const guardado = cache.get(chave);
   if (guardado && Date.now() - guardado.em < CACHE_MS) return NextResponse.json(guardado.corpo, { status: guardado.status });
   if (!limitarPorIp(req, 'geocode', 60, 60 * 60 * 1000)) {
@@ -89,7 +93,7 @@ export async function GET(req: NextRequest) {
         if (cidadeQ) p.set('city', cidadeQ);
         if (cepQ) p.set('postalcode', cepQ);
         if (paisQ) p.set('countrycodes', paisQ);
-        const r = await nominatim(`${NOMINATIM_SEARCH}?${p}`);
+        const r = await nominatim(`${NOMINATIM_SEARCH}?${p}`, idioma);
         if (!r.ok) return null;
         const lista = await r.json();
         return Array.isArray(lista) && lista.length ? lista[0] : null;
@@ -111,7 +115,7 @@ export async function GET(req: NextRequest) {
 
     if (lat && lon) {
       const url = `${NOMINATIM_REVERSE}?format=jsonv2&addressdetails=1&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
-      const res = await nominatim(url);
+      const res = await nominatim(url, idioma);
       if (!res.ok) return NextResponse.json({ error: 'Falha ao consultar geocodificacao reversa' }, { status: 502 });
       const hit = await res.json();
       if (!hit || hit.error) return responder(chave, { error: 'Localizacao nao encontrada' }, 404);
@@ -123,7 +127,7 @@ export async function GET(req: NextRequest) {
     }
 
     const url = `${NOMINATIM_SEARCH}?format=jsonv2&addressdetails=1&limit=1&q=${encodeURIComponent(q)}`;
-    const res = await nominatim(url);
+    const res = await nominatim(url, idioma);
     if (!res.ok) return NextResponse.json({ error: 'Falha ao consultar geocodificacao' }, { status: 502 });
 
     const results = await res.json();
