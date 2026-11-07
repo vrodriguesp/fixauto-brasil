@@ -158,6 +158,8 @@ export async function sendQuoteNotificationEmail(params: {
   valorTotal: string;
   prazoDias: number;
   solicitacaoId: string;
+  /** numero do pedido: link curto /r/<numero> (sem nome de pagina em portugues) */
+  numero?: string | number | null;
   locale?: string;
 }) {
   if (!podeEnviar) {
@@ -166,7 +168,9 @@ export async function sendQuoteNotificationEmail(params: {
   }
 
   const s = EMAIL_I18N.quoteNotification[resolveEmailLocale(params.locale)];
-  const orcamentosUrl = `${siteNoIdioma(params.locale)}/cliente/orcamentos/${params.solicitacaoId}`;
+  const orcamentosUrl = params.numero
+    ? `${SMS_LINK_BASE}/r/${params.numero}${params.locale ? `?l=${params.locale}` : ''}`
+    : `${siteNoIdioma(params.locale)}/cliente/orcamentos/${params.solicitacaoId}`;
 
   try {
     await sendOrThrow({

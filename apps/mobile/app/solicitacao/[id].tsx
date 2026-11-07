@@ -23,6 +23,7 @@ import CartaoSituacao from '../../components/CartaoSituacao';
 import OpcaoCartao from '../../components/OpcaoCartao';
 import { situacaoDoPedido } from '../../lib/situacao';
 import { useTraducoes, AvisoTraducao } from '../../lib/traducao';
+import { fusoDoPais } from '../../lib/fuso';
 
 type Ordem = 'preco' | 'nota' | 'cedo';
 const ATIVO = ['enviado', 'visualizado'];
@@ -351,7 +352,7 @@ export default function SolicitacaoDetailScreen() {
               if (!ag?.data_inicio) return null;
               return (
                 <View className="border-t border-emerald-200 pt-3 mb-3" testID="agendamento-atual">
-                  <Text className="text-sm text-emerald-900"><Text className="font-semibold">📅 {t('agendaMudanca.levarCarro')}: </Text>{new Date(ag.data_inicio).toLocaleString(locale === 'pt' ? 'pt-BR' : locale, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</Text>
+                  <Text className="text-sm text-emerald-900"><Text className="font-semibold">📅 {t('agendaMudanca.levarCarro')}: </Text>{new Date(ag.data_inicio).toLocaleString(locale === 'pt' ? 'pt-BR' : locale, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais((orc as any).oficina?.pais) })}</Text>
                   <Text className="text-xs text-emerald-900 mt-2">{t('agendaMudanca.notaRemarcar')}</Text>
                   <Pressable onPress={() => router.push({ pathname: '/conversa/[id]', params: { id: solicitacao.id, oficina: orc.oficina_id } })} accessibilityRole="button"
                     className="self-start mt-2 bg-white border border-primary-200 rounded-lg px-3 py-2" testID="conversar-oficina">

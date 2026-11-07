@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSessionUserId } from '@/lib/api-auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { ehUuid } from '@/lib/validacao';
-import { horaLocalEmUtc } from '@/lib/fuso';
+import { horaLocalEmUtc, moverFimPrevisto } from '@/lib/fuso';
 import { avisarClienteAgendamento } from '@/lib/email-agendamento';
 import { agendaDaOficina, motivoValido, MOTIVO_MIN, avisarNoChatENotificar, dataValida } from '@/lib/agenda-oficina';
 
@@ -26,9 +26,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const inicio = horaLocalEmUtc(b.data, b.hora, of?.pais);
   if (new Date(inicio).getTime() < Date.now()) return NextResponse.json({ error: 'Data no passado', codigo: 'HORARIO_VENCIDO' }, { status: 409 });
   if (new Date(inicio).getTime() === new Date(ag.data_inicio).getTime()) return NextResponse.json({ error: 'Mesma data', codigo: 'REVISAO_SEM_MUDANCA' }, { status: 400 });
-  // o carro fica o mesmo tempo na oficina: o fim anda junto com o inicio
-  const delta = new Date(inicio).getTime() - new Date(ag.data_inicio).getTime();
-  const mover = (iso: string | null) => (iso ? new Date(new Date(iso).getTime() + delta).toISOString() : null);
+  // o fim anda os mesmos dias e mantem a hora da entrega (moverFimPrevisto)
+  const mover = (iso: string | null) => (iso ? moverFimPrevisto(iso, ag.data_inicio, inicio, of?.pais) : null);
   const { data: feito } = await supabaseAdmin.from('agenda')
     .update({ data_inicio: inicio, data_fim: mover(ag.data_fim), ...(ag.data_fim_prevista ? { data_fim_prevista: mover(ag.data_fim_prevista) } : {}), no_show: false })
     .eq('id', ag.id).eq('status', 'agendado').select('id');

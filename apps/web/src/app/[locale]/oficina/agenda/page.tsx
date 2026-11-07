@@ -14,7 +14,7 @@ import { CORES_AGENDA, TIPOS_SERVICO } from '@fixauto/shared';
 import { cleanDescricao, INTL_LOCALE, rotuloTipoPedido } from '@/lib/utils';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import { Link, useRouter } from '@/i18n/navigation';
-import { diaNaOficina } from '@/lib/fuso';
+import { diaNaOficina, fusoDoPais } from '@/lib/fuso';
 import { nomeFuncionario } from '@/lib/funcionario';
 import QuadroOficina, { type Box } from '@/components/oficina/QuadroOficina';
 import CapacidadeResumo from '@/components/oficina/CapacidadeResumo';
@@ -497,8 +497,8 @@ export default function AgendaPage() {
                 )}
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase">{t('datas')}</p>
-                  <p className="text-xs text-gray-700">{t('checkinLabel')}: {new Date(ev.data_inicio).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB')} {new Date(ev.data_inicio).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
-                  <p className="text-xs text-gray-700">{t('prevEntregaLabel')}: {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB')} {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
+                  <p className="text-xs text-gray-700">{t('checkinLabel')}: {new Date(ev.data_inicio).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais((oficina as any)?.pais ?? null) })} {new Date(ev.data_inicio).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais((oficina as any)?.pais ?? null) })}</p>
+                  <p className="text-xs text-gray-700">{t('prevEntregaLabel')}: {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais((oficina as any)?.pais ?? null) })} {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais((oficina as any)?.pais ?? null) })}</p>
                   {ev.status === 'concluido' && <p className="text-xs text-gray-700">{t('entregueLabel')}: {new Date(ev.data_fim).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB')}</p>}
                 </div>
                 {ev.funcionario && nomeFuncionario(ev.funcionario) && (

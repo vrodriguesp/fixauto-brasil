@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase';
 import { apiFetch } from '../lib/api';
 import { mensagemErro } from '../lib/erro';
 import { tDias } from '../i18n';
+import { fusoDoPais } from '../lib/fuso';
 
 interface Revisao {
   id: string; valor_anterior: number; valor_novo: number; prazo_dias_novo: number | null; motivo: string;
@@ -74,7 +75,7 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
     return (
       <View className="bg-blue-50 border-2 border-blue-400 rounded-xl p-4 mb-4" testID="proposta-nova-data">
         <Text className="text-base font-semibold text-gray-900">📅 {t('agendaMudanca.dataTitulo', { oficina: rev.oficina?.nome_fantasia || '' })}</Text>
-        {dataAtual ? <Text className="mt-2 text-sm text-gray-600">{t('agendaMudanca.dataDe')}: <Text className="line-through">{new Date(dataAtual).toLocaleString(loc, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</Text></Text> : null}
+        {dataAtual ? <Text className="mt-2 text-sm text-gray-600">{t('agendaMudanca.dataDe')}: <Text className="line-through">{new Date(dataAtual).toLocaleString(loc, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais(rev.oficina?.pais) })}</Text></Text> : null}
         <Text className="mt-1 text-sm text-gray-900">{t('agendaMudanca.dataPara')}: <Text className="font-bold">{rev.nova_data_checkin ? `${dia(rev.nova_data_checkin)}, ${t(rev.novo_turno === 'tarde' ? 'agendaMudanca.tarde' : 'agendaMudanca.manha')}` : ''}</Text></Text>
         {rev.nova_previsao_entrega ? <Text className="text-sm text-gray-700">{t('agendaMudanca.previsaoNova', { data: dia(rev.nova_previsao_entrega) })}</Text> : null}
         <Text className="mt-2 text-sm text-gray-800"><Text className="font-medium">{t('agendaMudanca.motivoOficina')}: </Text>{rev.motivo}</Text>

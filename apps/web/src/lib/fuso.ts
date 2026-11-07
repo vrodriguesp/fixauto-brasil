@@ -53,3 +53,17 @@ export function instanteNaOficina(ymd: string, minutos: number, pais?: string | 
   const h = Math.floor(minutos / 60), m = minutos % 60;
   return new Date(horaLocalEmUtc(ymd, `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`, pais));
 }
+
+/**
+ * Fim previsto quando o check-in muda de data/hora: anda os mesmos DIAS no
+ * fuso da oficina e mantem a hora da entrega (08:00 -> 14:00 no mesmo dia nao
+ * pode jogar a entrega das 18:00 para a meia-noite). Se assim ficar antes do
+ * novo inicio, o carro fica o mesmo tempo de antes.
+ */
+export function moverFimPrevisto(fim: string, inicioAntigo: string, inicioNovo: string, pais?: string | null): string {
+  const dias = (Date.parse(diaNaOficina(inicioNovo, pais)) - Date.parse(diaNaOficina(inicioAntigo, pais))) / 86400000;
+  const diaFim = new Date(Date.parse(diaNaOficina(fim, pais)) + dias * 86400000).toISOString().slice(0, 10);
+  const novo = instanteNaOficina(diaFim, minutoNaOficina(fim, pais), pais);
+  if (novo.getTime() > new Date(inicioNovo).getTime()) return novo.toISOString();
+  return new Date(new Date(inicioNovo).getTime() + (new Date(fim).getTime() - new Date(inicioAntigo).getTime())).toISOString();
+}

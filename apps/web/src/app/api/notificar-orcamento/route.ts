@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
         oficina:oficinas(nome_fantasia, profile_id, pais, profile:profiles(idioma)),
         solicitacao:solicitacoes(
           id,
+          numero,
           cliente_id,
           cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, telefone, idioma)
         )
@@ -89,6 +90,7 @@ export async function POST(req: NextRequest) {
         valorTotal,
         prazoDias: orcamento.prazo_dias,
         solicitacaoId: (orcamento.solicitacao as any).id,
+        numero: (orcamento.solicitacao as any).numero,
         locale: cliente.idioma,
       });
     }
@@ -128,6 +130,7 @@ export async function POST(req: NextRequest) {
         valorTotal: formatCurrency(orcamento.valor_total, moeda, emergenciaProfile?.idioma),
         prazoDias: orcamento.prazo_dias,
         solicitacaoId: (orcamento.solicitacao as any).id,
+        numero: (orcamento.solicitacao as any).numero,
         locale: emergenciaProfile?.idioma,
       });
     }
@@ -174,6 +177,7 @@ export async function POST(req: NextRequest) {
             valorTotal: valorTotalOutro,
             prazoDias: orcamento.prazo_dias,
             solicitacaoId: (orcamento.solicitacao as any).id,
+            numero: (orcamento.solicitacao as any).numero,
             locale: outroProfile?.idioma,
           });
 

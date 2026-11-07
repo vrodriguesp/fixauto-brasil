@@ -5,7 +5,7 @@ import { ehUuid } from '@/lib/validacao';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { notifRevisaoDecidida } from '@/lib/notif-revisao';
-import { horaLocalEmUtc, fusoDoPais } from '@/lib/fuso';
+import { horaLocalEmUtc, fusoDoPais, moverFimPrevisto } from '@/lib/fuso';
 import { avisarClienteAgendamento } from '@/lib/email-agendamento';
 import { textosAgenda, preencher, dataHora } from '@/lib/notif-agenda';
 
@@ -104,12 +104,11 @@ async function decidirData(rev: any, aceitar: boolean, userId: string) {
       await supabaseAdmin.from('orcamento_revisoes').update({ status: 'cancelada' }).eq('id', rev.id);
       return NextResponse.json({ error: 'Carro já na oficina', codigo: 'NAO_AGENDADO' }, { status: 409 });
     }
-    // com previsao nova: fim do dia dela; sem: o carro fica o mesmo tempo de antes
-    const delta = new Date(inicio).getTime() - new Date(ag.data_inicio).getTime();
+    // com previsao nova: fim do dia dela; sem: anda os mesmos dias, mantendo a hora da entrega
     const fimAntigo = ag.data_fim_prevista || ag.data_fim;
     const fim = rev.nova_previsao_entrega
       ? horaLocalEmUtc(rev.nova_previsao_entrega, '18:00', of?.pais)
-      : fimAntigo ? new Date(new Date(fimAntigo).getTime() + delta).toISOString() : horaLocalEmUtc(rev.nova_data_checkin, rev.novo_turno === 'manha' ? '12:00' : '18:00', of?.pais);
+      : fimAntigo ? moverFimPrevisto(fimAntigo, ag.data_inicio, inicio, of?.pais) : horaLocalEmUtc(rev.nova_data_checkin, rev.novo_turno === 'manha' ? '12:00' : '18:00', of?.pais);
     await supabaseAdmin.from('agenda').update({ data_inicio: inicio, data_fim: fim, data_fim_prevista: fim, no_show: false }).eq('id', ag.id).eq('status', 'agendado');
     await supabaseAdmin.from('agenda_historico').insert({ agenda_id: ag.id, acao: 'data_proposta_aceita', por_profile_id: userId, detalhe: { de: ag.data_inicio, para: inicio, revisao_id: rev.id } });
     emailEnviado = await avisarClienteAgendamento(ag.id).catch(() => false);
