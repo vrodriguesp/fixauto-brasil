@@ -626,7 +626,7 @@
     "previsao": "Pronta prevista (facoltativo)",
     "motivo": "Motivo (il cliente lo vede)",
     "motivoPlaceholder": "Es.: il pezzo arriva solo giovedì",
-    "enviarProposta": "Invia la proposta al cliente",
+    "enviarProposta": "Invia la nuova data al cliente",
     "propostaEnviada": "Proposta inviata. Il cliente accetta la nuova data o mantiene quella attuale e ricevi una notifica.",
     "propostaPendente": "Nuova data proposta ({quando}). In attesa del cliente.",
     "motivoCurto": "Scrivi un motivo (almeno 5 caratteri).",

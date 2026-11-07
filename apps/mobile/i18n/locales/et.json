@@ -626,7 +626,7 @@
     "previsao": "Eeldatav valmimine (valikuline)",
     "motivo": "Põhjendus (klient näeb seda)",
     "motivoPlaceholder": "Nt varuosa saabub alles neljapäeval",
-    "enviarProposta": "Saada ettepanek kliendile",
+    "enviarProposta": "Saada uus aeg kliendile",
     "propostaEnviada": "Ettepanek saadetud. Klient nõustub uue ajaga või jätab praeguse ning sa saad teavituse.",
     "propostaPendente": "Uue aja ettepanek saadetud ({quando}). Ootame kliendi vastust.",
     "motivoCurto": "Kirjuta põhjendus (vähemalt 5 tähemärki).",

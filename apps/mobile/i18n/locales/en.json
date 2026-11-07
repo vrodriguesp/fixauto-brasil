@@ -626,7 +626,7 @@
     "previsao": "Expected ready date (optional)",
     "motivo": "Reason (the customer sees it)",
     "motivoPlaceholder": "E.g. the part only arrives on Thursday",
-    "enviarProposta": "Send proposal to the customer",
+    "enviarProposta": "Send the new date to the customer",
     "propostaEnviada": "Proposal sent. The customer accepts the new date or keeps the current one, and you get a notification.",
     "propostaPendente": "New date proposed ({quando}). Waiting for the customer.",
     "motivoCurto": "Write a reason (at least 5 characters).",
