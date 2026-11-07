@@ -6,7 +6,7 @@ import type { Ionicons } from '@expo/vector-icons';
 
 type Icone = keyof typeof Ionicons.glyphMap;
 export type Situacao = {
-  chave: 'aprovarRevisao' | 'aguardando' | 'comparar' | 'agendado' | 'naOficina' | 'pronto' | 'entregue' | 'avaliar' | 'cancelado' | 'naoFoi' | 'expirado';
+  chave: 'aprovarRevisao' | 'aprovarNovaData' | 'aguardando' | 'comparar' | 'agendado' | 'naOficina' | 'pronto' | 'entregue' | 'avaliar' | 'cancelado' | 'naoFoi' | 'expirado';
   icone: Icone;
   fundo: string; // classe do cartao
   selo: string; // classe do selo (fundo + texto)
@@ -25,8 +25,10 @@ export function situacaoDoPedido(s: any, extra: { etapas?: { status: string; cre
   const ultima = etapas[etapas.length - 1]?.status;
   const n = (s.orcamentos || []).filter((o: any) => ATIVOS.includes(o.status)).length;
   // a oficina mudou o valor depois do aceite: nada anda sem a decisao do motorista
-  if (['aceita', 'em_andamento'].includes(s.status) && (s.orcamento_revisoes || []).some((r: any) => r.status === 'pendente'))
-    return { chave: 'aprovarRevisao', icone: 'alert-circle-outline', fundo: 'bg-amber-50 border-amber-400', selo: 'bg-amber-200 text-amber-900', texto: 'text-amber-900', prioridade: 95 };
+  const pendente = (s.orcamento_revisoes || []).find((r: any) => r.status === 'pendente');
+  if (['aceita', 'em_andamento'].includes(s.status) && pendente)
+    // 076: proposta de nova data tem texto proprio (nao e mudanca de valor)
+    return { chave: pendente.tipo === 'data' ? 'aprovarNovaData' : 'aprovarRevisao', icone: 'alert-circle-outline', fundo: 'bg-amber-50 border-amber-400', selo: 'bg-amber-200 text-amber-900', texto: 'text-amber-900', prioridade: 95 };
   switch (s.status) {
     case 'aberta':
     case 'em_orcamento':

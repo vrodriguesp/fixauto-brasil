@@ -26,8 +26,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const ehCliente = (ag as any).solicitacao?.cliente_id === userId;
   let ehOficina = (ag as any).oficina?.profile_id === userId;
   if (!ehOficina && !ehCliente) {
-    const { data: f } = await supabaseAdmin.from('funcionarios').select('id').eq('oficina_id', ag.oficina_id).eq('profile_id', userId).limit(1);
-    ehOficina = !!f?.length;
+    const { data: f } = await supabaseAdmin.from('funcionarios').select('cargo').eq('oficina_id', ag.oficina_id).eq('profile_id', userId).eq('ativo', true).maybeSingle();
+    ehOficina = !!f && f.cargo !== 'mecanico';
   }
   if (!ehCliente && !ehOficina) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
   const enviado = await avisarClienteAgendamento(ag.id).catch((e) => { console.error('[agenda/avisar-cliente]', e); return false; });

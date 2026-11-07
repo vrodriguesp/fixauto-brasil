@@ -30,10 +30,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   // o orcamento desta oficina sai; proposta de revisao pendente cai junto
   await supabaseAdmin.from('orcamentos').update({ status: 'recusado' }).eq('solicitacao_id', ag.solicitacao_id).eq('oficina_id', ag.oficina_id).eq('status', 'aceito');
   await supabaseAdmin.from('orcamento_revisoes').update({ status: 'cancelada' }).eq('solicitacao_id', ag.solicitacao_id).eq('status', 'pendente');
-  // os das outras oficinas ainda validos voltam (tinham sido recusados no aceite)
+  // os das outras oficinas recusados AUTOMATICAMENTE no aceite e ainda validos voltam
+  // (o que o proprio cliente recusou continua recusado)
   const hoje = new Date().toISOString().slice(0, 10);
-  const { data: voltam } = await supabaseAdmin.from('orcamentos').update({ status: 'enviado' })
-    .eq('solicitacao_id', ag.solicitacao_id).neq('oficina_id', ag.oficina_id).eq('status', 'recusado').gte('validade', hoje).select('id');
+  const { data: voltam } = await supabaseAdmin.from('orcamentos').update({ status: 'enviado', recusado_no_aceite: false })
+    .eq('solicitacao_id', ag.solicitacao_id).neq('oficina_id', ag.oficina_id).eq('status', 'recusado').eq('recusado_no_aceite', true).gte('validade', hoje).select('id');
   // pedido aberto de novo (o prazo de 30 dias recomeca, migracao 072)
   await supabaseAdmin.from('solicitacoes').update({ status: voltam?.length ? 'em_orcamento' : 'aberta', reaberta_em: new Date().toISOString() }).eq('id', ag.solicitacao_id);
 

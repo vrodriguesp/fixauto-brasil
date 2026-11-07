@@ -92,10 +92,10 @@ export async function POST(req: NextRequest) {
       .update({ status: 'aceita' })
       .eq('id', orc.solicitacao_id);
 
-    // 4. Reject other quotes
+    // 4. Reject other quotes (marcados: so estes voltam se a oficina escolhida cancelar - 076)
     await supabaseAdmin
       .from('orcamentos')
-      .update({ status: 'recusado' })
+      .update({ status: 'recusado', recusado_no_aceite: true })
       .eq('solicitacao_id', orc.solicitacao_id)
       .neq('id', orcamentoId)
       .in('status', ['enviado', 'visualizado']);

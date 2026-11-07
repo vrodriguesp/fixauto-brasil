@@ -4,21 +4,40 @@
 -- (inclusive a que perdeu), quem conversou no chat e todas as oficinas avisadas de
 -- um acidente. O painel nao mostrava, mas com o proprio login a oficina lia pela API.
 -- Agora:
---   - perfil completo: oficina com agenda ou orcamento aceito no pedido; no acidente,
---     tambem as oficinas avisadas SE o cliente marcou "as oficinas podem me ligar"
---     (emergencias.oficinas_podem_ligar, desmarcado por padrao);
+--   - perfil completo: so a oficina com o orcamento aceito no pedido; no acidente,
+--     as oficinas avisadas recebem SO o telefone (telefone_acidente) SE o cliente
+--     marcou "as oficinas podem me ligar" (emergencias.oficinas_podem_ligar, desmarcado);
 --   - quem so orcou/conversou ve nome, codigo, foto e idioma por resumo_clientes();
 --   - os dados do acidente (emergencias: nome/e-mail/telefone; outro motorista)
 --     seguem a mesma regra para as oficinas.
 
 ALTER TABLE emergencias ADD COLUMN IF NOT EXISTS oficinas_podem_ligar boolean NOT NULL DEFAULT false;
 
--- a oficina (dono ou equipe) atende o pedido: agenda ou orcamento aceito dela
+-- a oficina (dono ou equipe) atende o pedido: o orcamento DELA foi aceito pelo
+-- cliente (so o servidor muda isso). Nao conta linha de agenda: a oficina pode
+-- criar agenda pela API (auditoria 07/11, H1), e agenda cancelada (falta, cancelamento)
+-- nao deve manter o acesso.
 CREATE OR REPLACE FUNCTION public.oficina_atende(p_sol uuid) RETURNS boolean
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
-  SELECT EXISTS (SELECT 1 FROM agenda WHERE solicitacao_id = p_sol AND oficina_id IN (SELECT minhas_oficinas()))
-      OR EXISTS (SELECT 1 FROM orcamentos WHERE solicitacao_id = p_sol AND status = 'aceito' AND oficina_id IN (SELECT minhas_oficinas()));
+  SELECT EXISTS (SELECT 1 FROM orcamentos WHERE solicitacao_id = p_sol AND status = 'aceito' AND oficina_id IN (SELECT minhas_oficinas()));
 $$;
+
+-- agenda de pedido so pelo servidor: pela API a oficina nao cria agenda ligada a
+-- pedido nem troca o pedido/oficina de uma agenda (auditoria 07/11, H1)
+CREATE OR REPLACE FUNCTION public.proteger_agenda_pedido() RETURNS trigger
+LANGUAGE plpgsql SET search_path = public AS $$
+BEGIN
+  IF NOT chamada_de_usuario() THEN RETURN NEW; END IF;
+  IF TG_OP = 'INSERT' THEN
+    IF NEW.solicitacao_id IS NOT NULL THEN RAISE EXCEPTION 'agenda de pedido so pelo servidor' USING ERRCODE = '42501'; END IF;
+  ELSE
+    NEW.solicitacao_id := OLD.solicitacao_id;
+    NEW.oficina_id := OLD.oficina_id;
+  END IF;
+  RETURN NEW;
+END $$;
+DROP TRIGGER IF EXISTS trg_proteger_agenda_pedido ON agenda;
+CREATE TRIGGER trg_proteger_agenda_pedido BEFORE INSERT OR UPDATE ON agenda FOR EACH ROW EXECUTE FUNCTION proteger_agenda_pedido();
 
 -- acidente: oficina avisada e o cliente deixou as oficinas ligarem
 CREATE OR REPLACE FUNCTION public.oficina_pode_ligar_acidente(p_em uuid) RETURNS boolean
@@ -30,12 +49,19 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   );
 $$;
 
--- contato do cliente liberado para a oficina neste pedido
+-- contato completo do cliente (perfil) liberado para a oficina neste pedido: so a
+-- escolhida. No acidente com "podem me ligar", as avisadas recebem SO o telefone,
+-- por telefone_acidente() (auditoria 07/11, M6: o perfil inteiro e os dados do
+-- acidente/outro motorista iam junto)
 CREATE OR REPLACE FUNCTION public.oficina_ve_contato(p_sol uuid) RETURNS boolean
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
-  SELECT oficina_atende(p_sol) OR EXISTS (
-    SELECT 1 FROM solicitacoes s WHERE s.id = p_sol AND s.emergencia_id IS NOT NULL AND oficina_pode_ligar_acidente(s.emergencia_id)
-  );
+  SELECT oficina_atende(p_sol);
+$$;
+
+CREATE OR REPLACE FUNCTION public.telefone_acidente(p_sol uuid) RETURNS text
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT p.telefone FROM solicitacoes s JOIN profiles p ON p.id = s.cliente_id
+  WHERE s.id = p_sol AND s.emergencia_id IS NOT NULL AND oficina_pode_ligar_acidente(s.emergencia_id);
 $$;
 
 -- mesma funcao da 047, trocando so as tres regras do lado da oficina
@@ -73,8 +99,8 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path TO 'public' AS $$
       OR EXISTS (SELECT 1 FROM mensagens m WHERE m.pagador_id = p AND m.oficina_id IN (SELECT minhas_oficinas()));
 $$;
 
--- acidente: o dono, o outro motorista, o admin; oficina so se escolhida ou com
--- permissao para ligar (antes: toda oficina avisada e toda oficina que orcou)
+-- acidente: o dono, o outro motorista, o admin; oficina so se escolhida (antes:
+-- toda oficina avisada e toda oficina que orcou)
 CREATE OR REPLACE FUNCTION public.pode_ver_emergencia(p_em uuid)
  RETURNS boolean
  LANGUAGE sql
@@ -92,7 +118,6 @@ AS $function$
           OR (o.email IS NOT NULL AND lower(o.email) = (SELECT lower(email) FROM profiles WHERE id = auth.uid()))
         )
       )
-      OR oficina_pode_ligar_acidente(e.id)
       OR (e.solicitacao_id IS NOT NULL AND oficina_atende(e.solicitacao_id))
     )
   );
@@ -112,5 +137,15 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   );
 $$;
 
-REVOKE ALL ON FUNCTION public.oficina_atende(uuid), public.oficina_pode_ligar_acidente(uuid), public.oficina_ve_contato(uuid), public.resumo_clientes(uuid[]) FROM anon, public;
-GRANT EXECUTE ON FUNCTION public.oficina_atende(uuid), public.oficina_pode_ligar_acidente(uuid), public.oficina_ve_contato(uuid), public.resumo_clientes(uuid[]) TO authenticated;
+-- avisos para o cliente que a oficina cria pelo navegador (ex.: orcamento revisado
+-- antes do aceite, hooks/use-orcamentos.ts): a regra era "pode ver o perfil", que
+-- agora so vale para a escolhida - continua valendo para quem esta no pedido
+-- (auditoria 07/11, H2)
+DROP POLICY IF EXISTS notificacoes_insert ON notificacoes;
+CREATE POLICY notificacoes_insert ON notificacoes FOR INSERT TO authenticated WITH CHECK (
+  pode_ver_perfil(profile_id)
+  OR EXISTS (SELECT 1 FROM solicitacoes s WHERE s.cliente_id = profile_id AND oficina_envolvida(s.id))
+);
+
+REVOKE ALL ON FUNCTION public.oficina_atende(uuid), public.oficina_pode_ligar_acidente(uuid), public.oficina_ve_contato(uuid), public.resumo_clientes(uuid[]), public.telefone_acidente(uuid) FROM anon, public;
+GRANT EXECUTE ON FUNCTION public.oficina_atende(uuid), public.oficina_pode_ligar_acidente(uuid), public.oficina_ve_contato(uuid), public.resumo_clientes(uuid[]), public.telefone_acidente(uuid) TO authenticated;

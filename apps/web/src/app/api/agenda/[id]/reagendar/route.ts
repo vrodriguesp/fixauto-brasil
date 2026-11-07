@@ -35,7 +35,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const fim = horaLocalEmUtc(slot.data_previsao_entrega || slot.data_checkin, slot.turno === 'manha' ? '12:00' : '18:00', pais);
 
   const { error } = await supabaseAdmin.from('agenda')
-    .update({ data_inicio: inicio, data_fim: fim, no_show: false, no_show_registrado_em: null })
+    .update({ data_inicio: inicio, data_fim: fim, data_fim_prevista: fim, no_show: false, no_show_registrado_em: null })
     .eq('id', ag.id).eq('status', 'agendado');
   if (error) return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
   await supabaseAdmin.from('orcamentos').update({ disponibilidade_escolhida_id: slotId }).eq('id', (orc as any).id);

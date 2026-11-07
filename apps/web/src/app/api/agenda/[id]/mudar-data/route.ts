@@ -4,7 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 import { ehUuid } from '@/lib/validacao';
 import { horaLocalEmUtc } from '@/lib/fuso';
 import { avisarClienteAgendamento } from '@/lib/email-agendamento';
-import { agendaDaOficina, motivoValido, MOTIVO_MIN, avisarNoChatENotificar } from '@/lib/agenda-oficina';
+import { agendaDaOficina, motivoValido, MOTIVO_MIN, avisarNoChatENotificar, dataValida } from '@/lib/agenda-oficina';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   if (!userId) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
   const b = await req.json().catch(() => ({}));
   const motivo = motivoValido(b?.motivo);
-  if (!ehUuid(params.id) || !/^\d{4}-\d{2}-\d{2}$/.test(b?.data || '') || !/^\d{2}:\d{2}$/.test(b?.hora || '') || motivo.length < MOTIVO_MIN) {
+  if (!ehUuid(params.id) || !dataValida(b?.data) || !/^([01]\d|2[0-3]):[0-5]\d$/.test(b?.hora || '') || motivo.length < MOTIVO_MIN) {
     return NextResponse.json({ error: 'Dados inválidos', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
   }
   const r = await agendaDaOficina(params.id, userId);
@@ -33,6 +33,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     .update({ data_inicio: inicio, data_fim: mover(ag.data_fim), ...(ag.data_fim_prevista ? { data_fim_prevista: mover(ag.data_fim_prevista) } : {}), no_show: false })
     .eq('id', ag.id).eq('status', 'agendado').select('id');
   if (!feito?.length) return NextResponse.json({ error: 'Carro já na oficina', codigo: 'NAO_AGENDADO' }, { status: 409 });
+  // data mudada a mao: proposta de data esperando o cliente nao vale mais
+  await supabaseAdmin.from('orcamento_revisoes').update({ status: 'cancelada' }).eq('solicitacao_id', ag.solicitacao_id).eq('tipo', 'data').eq('status', 'pendente');
   await supabaseAdmin.from('agenda_historico').insert({ agenda_id: ag.id, acao: 'data_mudada', por_profile_id: userId, detalhe: { de: ag.data_inicio, para: inicio, motivo } });
   await avisarNoChatENotificar({
     solicitacaoId: ag.solicitacao_id, oficinaId: ag.oficina_id, remetenteId: userId, idiomaOficina: of?.profile?.idioma, pais: of?.pais,

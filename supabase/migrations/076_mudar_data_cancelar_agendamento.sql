@@ -20,3 +20,8 @@ ALTER TABLE agenda_historico ADD CONSTRAINT agenda_historico_acao_check CHECK (a
   'checkin', 'checkin_antecipado', 'atribuido', 'etapa', 'entregue', 'retirado_revisao_recusada', 'elevador', 'posto_reserva', 'reagendado',
   'data_mudada', 'data_proposta_aceita', 'cancelado_oficina'
 ));
+
+-- orcamentos recusados AUTOMATICAMENTE quando o cliente aceitou outro (so esses voltam
+-- se a oficina escolhida cancelar; o que o proprio cliente recusou continua recusado -
+-- auditoria 07/11, M2)
+ALTER TABLE orcamentos ADD COLUMN IF NOT EXISTS recusado_no_aceite boolean NOT NULL DEFAULT false;

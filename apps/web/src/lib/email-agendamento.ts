@@ -106,7 +106,8 @@ export function montarIcs(e: {
     `DTSTART:${icsData(e.inicio)}`, `DTEND:${icsData(e.fim)}`,
     `SUMMARY:${icsTexto(e.titulo)}`, `LOCATION:${icsTexto(e.local)}`, `DESCRIPTION:${icsTexto(e.descricao)}`, `URL:${e.url}`,
     'ORGANIZER;CN=BipFix:mailto:noreply@bipfix.com',
-    `ATTENDEE;CN=${icsTexto(e.nomeCliente)};ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=FALSE:mailto:${e.emailCliente}`,
+    // parametro com aspas (RFC 5545): nome com ':' ';' ',' nao quebra a linha
+    `ATTENDEE;CN="${e.nomeCliente.replace(/["\r\n]/g, '')}";ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=FALSE:mailto:${e.emailCliente}`,
     ...(e.cancelar ? ['STATUS:CANCELLED'] : [
       'STATUS:CONFIRMED', 'TRANSP:OPAQUE',
       'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${icsTexto(e.lembrete1)}`, 'TRIGGER:-P1D', 'END:VALARM',
@@ -129,10 +130,15 @@ export function linkGoogleCalendar(e: { inicio: Date; fim: Date; titulo: string;
  */
 export async function avisarClienteAgendamento(agendaId: string, opcoes: { motivo?: string } = {}): Promise<boolean> {
   const { data: ag } = await supabaseAdmin.from('agenda')
-    .select('id, data_inicio, data_fim, data_fim_prevista, status, aviso_cliente_inicio, aviso_cliente_seq, solicitacao_id, oficina:oficinas(nome_fantasia, endereco, cidade, pais, latitude, longitude, profile:profiles!oficinas_profile_id_fkey(telefone))')
+    .select('id, tipo, oficina_id, data_inicio, data_fim, data_fim_prevista, status, aviso_cliente_inicio, aviso_cliente_seq, solicitacao_id, oficina:oficinas(nome_fantasia, endereco, cidade, pais, latitude, longitude, profile:profiles!oficinas_profile_id_fkey(telefone))')
     .eq('id', agendaId).maybeSingle();
   // so carro ainda por chegar (depois do check-in a data muda por outros motivos)
-  if (!ag || !ag.solicitacao_id || ag.status !== 'agendado') return false;
+  if (!ag || !ag.solicitacao_id || ag.status !== 'agendado' || ag.tipo !== 'plataforma') return false;
+  // so agenda da oficina com o orcamento aceito deste pedido (auditoria 07/11, H1)
+  const { data: orc } = await supabaseAdmin.from('orcamentos')
+    .select('valor_total, garantia_dias, itens:orcamento_itens(descricao, quantidade, valor_total)')
+    .eq('solicitacao_id', ag.solicitacao_id).eq('oficina_id', ag.oficina_id).eq('status', 'aceito').maybeSingle();
+  if (!orc) return false;
   if (ag.aviso_cliente_inicio && new Date(ag.aviso_cliente_inicio).getTime() === new Date(ag.data_inicio).getTime()) return false;
   const remarcado = !!ag.aviso_cliente_inicio;
   const seq = remarcado ? (ag.aviso_cliente_seq || 0) + 1 : 0;
@@ -147,10 +153,6 @@ export async function avisarClienteAgendamento(agendaId: string, opcoes: { motiv
     .eq('id', ag.solicitacao_id).maybeSingle();
   const cliente = (sol as any)?.cliente;
   if (!sol || !cliente?.email) return false;
-  const { data: orc } = await supabaseAdmin.from('orcamentos')
-    .select('valor_total, garantia_dias, itens:orcamento_itens(descricao, quantidade, valor_total)')
-    .eq('solicitacao_id', ag.solicitacao_id).eq('status', 'aceito').maybeSingle();
-
   const idioma = idiomaDoSite(cliente.idioma);
   const x = TXT[idioma] || TXT.en;
   const of = (ag as any).oficina || {};
@@ -194,7 +196,7 @@ export async function avisarClienteAgendamento(agendaId: string, opcoes: { motiv
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
       <div style="background:#1e40af;color:white;padding:24px;border-radius:12px 12px 0 0;"><h1 style="margin:0;font-size:24px;">BipFix</h1></div>
       <div style="background:white;padding:24px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;">
-        <p>${x.ola.replace('{n}', escapeHtml(cliente.nome || ''))}</p>
+        <p>${x.ola.replace('{n}', () => escapeHtml(cliente.nome || ''))}</p>
         <p>${escapeHtml(remarcado ? x.introAlt : x.introConf)}</p>
         ${opcoes.motivo ? `<p style="background:#fffbeb;border-left:4px solid #f59e0b;padding:10px 12px;"><strong>${escapeHtml(x.motivo)}:</strong> ${escapeHtml(opcoes.motivo)}</p>` : ''}
         <div style="background:#f3f4f6;padding:16px;border-radius:8px;margin:16px 0;">
@@ -260,7 +262,7 @@ export async function avisarClienteCancelamento(agendaId: string, motivo: string
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
       <div style="background:#1e40af;color:white;padding:24px;border-radius:12px 12px 0 0;"><h1 style="margin:0;font-size:24px;">BipFix</h1></div>
       <div style="background:white;padding:24px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;">
-        <p>${x.ola.replace('{n}', escapeHtml(cliente.nome || ''))}</p>
+        <p>${x.ola.replace('{n}', () => escapeHtml(cliente.nome || ''))}</p>
         <p style="font-size:16px;"><strong>${escapeHtml(x.introCanc.replace('{quando}', quando))}</strong></p>
         <p style="background:#fffbeb;border-left:4px solid #f59e0b;padding:10px 12px;"><strong>${escapeHtml(x.motivo)}:</strong> ${escapeHtml(motivo)}</p>
         ${reaberto ? `<p>${escapeHtml(x.reaberto)}</p>` : ''}

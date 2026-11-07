@@ -542,7 +542,10 @@
     "outros": "Teised pooleli olevad päringud",
     "titulo_aprovarRevisao": "Uus hind vajab kinnitust",
     "agora_aprovarRevisao": "Töökoda muutis hinnapakkumist. Kinnita uus hind või keeldu.",
-    "botao_aprovarRevisao": "Vaata ja otsusta"
+    "botao_aprovarRevisao": "Vaata ja otsusta",
+    "titulo_aprovarNovaData": "Uus aeg kinnitamiseks",
+    "agora_aprovarNovaData": "Töökoda pakub auto toomiseks teist aega. Nõustu või jäta praegune aeg.",
+    "botao_aprovarNovaData": "Vaata ja otsusta"
   },
   "erroTela": {
     "titulo": "Midagi läks valesti",

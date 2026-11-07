@@ -7,6 +7,9 @@ import { textosAgenda, preencher, dataHora } from './notif-agenda';
 
 export const MOTIVO_MIN = 5;
 export const MOTIVO_MAX = 500;
+/** AAAA-MM-DD que existe de verdade (2026-13-45 nao passa) */
+export const dataValida = (s: unknown): s is string =>
+  typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(Date.parse(`${s}T12:00:00Z`)) && new Date(`${s}T12:00:00Z`).toISOString().slice(0, 10) === s;
 export const motivoValido = (m: unknown) => (typeof m === 'string' ? m.trim().slice(0, MOTIVO_MAX) : '');
 
 /** Agendamento de pedido, ainda sem o carro, e quem chama e dono ou equipe (nao mecanico) da oficina. */
@@ -22,7 +25,10 @@ export async function agendaDaOficina(agendaId: string, userId: string) {
     pode = !!f && f.cargo !== 'mecanico';
   }
   if (!pode) return { erro: 403 as const };
-  if (!ag.solicitacao_id || ag.status !== 'agendado') return { erro: 409 as const };
+  if (!ag.solicitacao_id || ag.status !== 'agendado' || ag.tipo !== 'plataforma') return { erro: 409 as const };
+  // so a oficina com o orcamento ACEITO deste pedido (uma agenda criada a mao nao basta)
+  const { data: orc } = await supabaseAdmin.from('orcamentos').select('id').eq('solicitacao_id', ag.solicitacao_id).eq('oficina_id', ag.oficina_id).eq('status', 'aceito').maybeSingle();
+  if (!orc) return { erro: 409 as const };
   return { ag, of };
 }
 

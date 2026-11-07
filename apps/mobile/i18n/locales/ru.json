@@ -542,7 +542,10 @@
     "outros": "Другие заявки в работе",
     "titulo_aprovarRevisao": "Новая цена ждёт решения",
     "agora_aprovarRevisao": "Автосервис изменил смету. Одобрите или отклоните новую цену.",
-    "botao_aprovarRevisao": "Посмотреть и решить"
+    "botao_aprovarRevisao": "Посмотреть и решить",
+    "titulo_aprovarNovaData": "Новая дата на подтверждение",
+    "agora_aprovarNovaData": "Автосервис предлагает другую дату. Примите её или оставьте текущую.",
+    "botao_aprovarNovaData": "Посмотреть и решить"
   },
   "erroTela": {
     "titulo": "Что-то пошло не так",

@@ -542,7 +542,10 @@
     "outros": "Outros pedidos em andamento",
     "titulo_aprovarRevisao": "Novo valor para aprovar",
     "agora_aprovarRevisao": "A oficina mudou o orçamento. Aprove ou recuse o novo valor.",
-    "botao_aprovarRevisao": "Ver e decidir"
+    "botao_aprovarRevisao": "Ver e decidir",
+    "titulo_aprovarNovaData": "Nova data para aprovar",
+    "agora_aprovarNovaData": "A oficina propõe outra data para levar o carro. Aceite ou mantenha a data atual.",
+    "botao_aprovarNovaData": "Ver e decidir"
   },
   "erroTela": {
     "titulo": "Algo deu errado",

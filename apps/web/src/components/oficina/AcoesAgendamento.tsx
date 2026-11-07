@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { textoErroApi } from '@/lib/erro-api';
 import { dataLocalDe, horaLocalDe } from '@/lib/turnos';
+import { fusoDoPais } from '@/lib/fuso';
 
 // Agenda da oficina, carro de pedido que ainda nao chegou (dono 07/11):
 // "Mudar data" e "Cancelar agendamento", sempre com justificativa curta. O
@@ -55,7 +56,7 @@ export default function AcoesAgendamento({ agendaId, dataInicio, pais, aoMudar }
         <div className="grid grid-cols-2 gap-2">
           <div>
             <label htmlFor={`md-data-${agendaId}`} className="block text-xs font-medium text-gray-700 mb-1">{t('data')}</label>
-            <input id={`md-data-${agendaId}`} type="date" min={new Date().toISOString().slice(0, 10)} className="input-field !py-1.5 text-sm" value={data} onChange={(e) => setData(e.target.value)} />
+            <input id={`md-data-${agendaId}`} type="date" min={new Date().toLocaleDateString('sv-SE', { timeZone: fusoDoPais(pais) })} className="input-field !py-1.5 text-sm" value={data} onChange={(e) => setData(e.target.value)} />
           </div>
           <div>
             <label htmlFor={`md-hora-${agendaId}`} className="block text-xs font-medium text-gray-700 mb-1">{t('hora')}</label>

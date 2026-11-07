@@ -542,7 +542,10 @@
     "outros": "Other requests in progress",
     "titulo_aprovarRevisao": "New price to approve",
     "agora_aprovarRevisao": "The workshop changed the quote. Approve or decline the new price.",
-    "botao_aprovarRevisao": "Review and decide"
+    "botao_aprovarRevisao": "Review and decide",
+    "titulo_aprovarNovaData": "New date to approve",
+    "agora_aprovarNovaData": "The repair shop proposes another drop-off date. Accept it or keep the current date.",
+    "botao_aprovarNovaData": "Review and decide"
   },
   "erroTela": {
     "titulo": "Something went wrong",

@@ -5,6 +5,7 @@ import { dentroDoLimite } from '@/lib/rate-limit';
 import { ehUuid } from '@/lib/validacao';
 import { horaLocalEmUtc, fusoDoPais } from '@/lib/fuso';
 import { textosAgenda, preencher, dataHora } from '@/lib/notif-agenda';
+import { dataValida } from '@/lib/agenda-oficina';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,8 +20,8 @@ export async function POST(req: NextRequest) {
   const b = await req.json().catch(() => ({}));
   const motivo = typeof b?.motivo === 'string' ? b.motivo.trim().slice(0, 1000) : '';
   const data = String(b?.data || ''), turno = b?.turno, previsao = b?.previsao ? String(b.previsao) : null;
-  if (!ehUuid(b?.orcamentoId) || motivo.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(data) || !['manha', 'tarde'].includes(turno)
-      || (previsao && (!/^\d{4}-\d{2}-\d{2}$/.test(previsao) || previsao < data))) {
+  if (!ehUuid(b?.orcamentoId) || motivo.length < 5 || !dataValida(data) || !['manha', 'tarde'].includes(turno)
+      || (previsao && (!dataValida(previsao) || previsao < data))) {
     return NextResponse.json({ error: 'Dados inválidos', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
   }
   const { data: orc } = await supabaseAdmin.from('orcamentos')

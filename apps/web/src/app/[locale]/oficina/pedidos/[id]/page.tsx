@@ -48,6 +48,14 @@ export default function SolicitacaoDetalhePage() {
 
   const sol = solicitacao || directSol;
 
+  // acidente com "podem me ligar": a oficina avisada recebe SO o telefone (074, telefone_acidente)
+  const [telAcidente, setTelAcidente] = useState<string | null>(null);
+  useEffect(() => {
+    if (!sol?.id || !sol.emergencia_id || sol.cliente?.telefone) return;
+    supabase.rpc('telefone_acidente', { p_sol: sol.id }).then(({ data }) => setTelAcidente((data as string) || null));
+  }, [sol?.id, sol?.emergencia_id, sol?.cliente?.telefone]);
+  const telCliente: string | null = sol?.cliente?.telefone || telAcidente;
+
   // a oficina abriu o pedido (caixa Pedidos: o cartao deixa de aparecer como novo)
   useEffect(() => {
     if (!oficina?.id || !params.id) return;
@@ -271,14 +279,14 @@ export default function SolicitacaoDetalhePage() {
               {t('solicitadoEm', { data: formatDate(sol.created_at, locale) })}
             </p>
             {/* telefone so chega para a oficina escolhida ou, no acidente, se o cliente pediu ligacao (migracao 074) */}
-            {sol.cliente?.telefone && (
+            {telCliente && (
               <div className="mt-3 border-t border-gray-100 pt-3" data-testid="ligar-cliente">
                 {sol.emergencia_id && !(sol.orcamentos || []).some((o: any) => o.oficina_id === oficina?.id && o.status === 'aceito') && (
                   <p className="mb-2 text-xs text-gray-600">{t('clientePediuLigar')}</p>
                 )}
-                <a href={`tel:${sol.cliente.telefone.replace(/\s/g, '')}`} className="btn-primary flex min-h-[48px] w-full flex-col items-center justify-center text-center sm:w-auto sm:px-6">
+                <a href={`tel:${telCliente.replace(/\s/g, '')}`} className="btn-primary flex min-h-[48px] w-full flex-col items-center justify-center text-center sm:w-auto sm:px-6">
                   <span><span aria-hidden="true">📞 </span>{t('ligarCliente')}</span>
-                  <span className="whitespace-nowrap text-sm font-normal">{sol.cliente.telefone}</span>
+                  <span className="whitespace-nowrap text-sm font-normal">{telCliente}</span>
                 </a>
               </div>
             )}

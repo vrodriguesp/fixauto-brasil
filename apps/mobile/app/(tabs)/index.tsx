@@ -28,7 +28,7 @@ export default function DashboardScreen() {
     if (!user) return;
     const { data } = await supabase
       .from('solicitacoes')
-      .select('*, veiculo:veiculos(*), orcamentos(*), agenda(status, data_inicio, etapas:manutencao_etapas(status, created_at)), orcamento_revisoes(status)')
+      .select('*, veiculo:veiculos(*), orcamentos(*), agenda(status, data_inicio, etapas:manutencao_etapas(status, created_at)), orcamento_revisoes(status, tipo)')
       .eq('cliente_id', user.id)
       // expirada (072) continua no Inicio: o motorista reabre com um toque
       .in('status', ['aberta', 'em_orcamento', 'aceita', 'em_andamento', 'expirada'])

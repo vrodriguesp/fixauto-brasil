@@ -9,7 +9,7 @@ import { situacaoDoPedido, type Situacao } from '../lib/situacao';
 // C1/C2). No Inicio mostra o pedido mais urgente com um botao; no pedido e o
 // cabecalho (sem botao, a tela ja e o pedido).
 const COR_ICONE: Record<Situacao['chave'], string> = {
-  aprovarRevisao: '#b45309', aguardando: '#0369a1', comparar: '#b45309', agendado: '#4338ca', naOficina: '#c2410c', pronto: '#047857',
+  aprovarRevisao: '#b45309', aprovarNovaData: '#1d4ed8', aguardando: '#0369a1', comparar: '#b45309', agendado: '#4338ca', naOficina: '#c2410c', pronto: '#047857',
   entregue: '#374151', avaliar: '#a16207', cancelado: '#6b7280', naoFoi: '#b91c1c', expirado: '#b45309',
 };
 

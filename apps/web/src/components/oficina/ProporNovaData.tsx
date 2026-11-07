@@ -33,7 +33,8 @@ export default function ProporNovaData({ orcamentoId, solicitacaoId, oficinaId, 
   if (!atual) return null;
   if (feito) return <p role="status" className="card mb-6 bg-green-50 text-green-800" data-testid="nova-data-enviada">{t('propostaEnviada')}</p>;
 
-  const hoje = new Date().toISOString().slice(0, 10);
+  // "hoje" no fuso da oficina (de madrugada em Tallinn o UTC ainda e ontem)
+  const hoje = new Date().toLocaleDateString('sv-SE', { timeZone: fusoDoPais(pais) });
   const quando = new Date(atual).toLocaleString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais(pais), weekday: 'short', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
 
   const enviar = async () => {

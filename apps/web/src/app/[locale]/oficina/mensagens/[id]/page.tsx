@@ -463,9 +463,10 @@ export default function OficinaMensagensPage() {
                           : 'bg-white text-gray-900 rounded-bl-md shadow-sm'
                       }`}
                     >
-                      {!isOwn && msg.remetente?.nome && (
+                      {/* antes de a oficina ser escolhida o perfil do cliente nao vem (074): nome pelo resumo do pedido */}
+                      {!isOwn && (msg.remetente?.nome || (msg.remetente_id === (solicitacao as any)?.cliente_id && solicitacao?.cliente?.nome)) && (
                         <p className="text-xs font-medium text-primary-600 mb-0.5">
-                          {msg.remetente.nome}
+                          {msg.remetente?.nome || solicitacao?.cliente?.nome}
                         </p>
                       )}
                       {msg.tipo === 'audio' && msg.audio_url ? (

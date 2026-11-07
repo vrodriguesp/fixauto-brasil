@@ -83,6 +83,12 @@ export async function POST(req: NextRequest) {
 }
 
 async function decidirData(rev: any, aceitar: boolean, userId: string) {
+  // proposta para um horario que ja passou nao vale mais (auditoria 07/11, M4)
+  const inicioProposto = horaLocalEmUtc(rev.nova_data_checkin, rev.novo_turno === 'manha' ? '08:00' : '13:00', rev.oficina?.pais);
+  if (aceitar && new Date(inicioProposto).getTime() < Date.now()) {
+    await supabaseAdmin.from('orcamento_revisoes').update({ status: 'cancelada' }).eq('id', rev.id).eq('status', 'pendente');
+    return NextResponse.json({ error: 'Horário vencido', codigo: 'HORARIO_VENCIDO' }, { status: 409 });
+  }
   const { data: trava } = await supabaseAdmin.from('orcamento_revisoes')
     .update({ status: aceitar ? 'aprovada' : 'recusada', decidido_em: new Date().toISOString(), decidido_por: userId })
     .eq('id', rev.id).eq('status', 'pendente').select('id');
@@ -91,14 +97,19 @@ async function decidirData(rev: any, aceitar: boolean, userId: string) {
   const inicio = horaLocalEmUtc(rev.nova_data_checkin, rev.novo_turno === 'manha' ? '08:00' : '13:00', of?.pais);
   let emailEnviado = false;
   if (aceitar) {
-    const { data: ag } = await supabaseAdmin.from('agenda').select('id, data_inicio')
+    const { data: ag } = await supabaseAdmin.from('agenda').select('id, data_inicio, data_fim, data_fim_prevista')
       .eq('solicitacao_id', rev.solicitacao_id).eq('oficina_id', rev.oficina_id).eq('status', 'agendado').maybeSingle();
     if (!ag) {
       // o carro chegou entre a proposta e a resposta: nada a mudar
       await supabaseAdmin.from('orcamento_revisoes').update({ status: 'cancelada' }).eq('id', rev.id);
       return NextResponse.json({ error: 'Carro já na oficina', codigo: 'NAO_AGENDADO' }, { status: 409 });
     }
-    const fim = horaLocalEmUtc(rev.nova_previsao_entrega || rev.nova_data_checkin, rev.novo_turno === 'manha' ? '12:00' : '18:00', of?.pais);
+    // com previsao nova: fim do dia dela; sem: o carro fica o mesmo tempo de antes
+    const delta = new Date(inicio).getTime() - new Date(ag.data_inicio).getTime();
+    const fimAntigo = ag.data_fim_prevista || ag.data_fim;
+    const fim = rev.nova_previsao_entrega
+      ? horaLocalEmUtc(rev.nova_previsao_entrega, '18:00', of?.pais)
+      : fimAntigo ? new Date(new Date(fimAntigo).getTime() + delta).toISOString() : horaLocalEmUtc(rev.nova_data_checkin, rev.novo_turno === 'manha' ? '12:00' : '18:00', of?.pais);
     await supabaseAdmin.from('agenda').update({ data_inicio: inicio, data_fim: fim, data_fim_prevista: fim, no_show: false }).eq('id', ag.id).eq('status', 'agendado');
     await supabaseAdmin.from('agenda_historico').insert({ agenda_id: ag.id, acao: 'data_proposta_aceita', por_profile_id: userId, detalhe: { de: ag.data_inicio, para: inicio, revisao_id: rev.id } });
     emailEnviado = await avisarClienteAgendamento(ag.id).catch(() => false);

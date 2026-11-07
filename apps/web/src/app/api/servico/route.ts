@@ -107,6 +107,8 @@ export async function POST(req: NextRequest) {
     });
     await historico(futuro ? 'checkin_antecipado' : 'checkin', futuro ? { data_agendada: ev.data_inicio } : {});
     if (ev.solicitacao_id) {
+      // carro chegou: proposta de nova data pendente nao vale mais (076; senao trava a revisao de preco)
+      await supabaseAdmin.from('orcamento_revisoes').update({ status: 'cancelada' }).eq('solicitacao_id', ev.solicitacao_id).eq('tipo', 'data').eq('status', 'pendente');
       // o cliente passa a ver "em andamento" (antes ficava "aceita")
       await supabaseAdmin.from('solicitacoes').update({ status: 'em_andamento' }).eq('id', ev.solicitacao_id).in('status', ['aceita', 'em_orcamento', 'aberta']);
     }

@@ -542,7 +542,10 @@
     "outros": "Altre richieste in corso",
     "titulo_aprovarRevisao": "Nuovo prezzo da approvare",
     "agora_aprovarRevisao": "L'officina ha cambiato il preventivo. Approva o rifiuta il nuovo prezzo.",
-    "botao_aprovarRevisao": "Vedi e decidi"
+    "botao_aprovarRevisao": "Vedi e decidi",
+    "titulo_aprovarNovaData": "Nuova data da approvare",
+    "agora_aprovarNovaData": "L’officina propone un’altra data per portare l’auto. Accettala o mantieni quella attuale.",
+    "botao_aprovarNovaData": "Vedi e decidi"
   },
   "erroTela": {
     "titulo": "Qualcosa è andato storto",
