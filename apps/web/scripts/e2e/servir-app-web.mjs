@@ -6,7 +6,14 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const RAIZ = path.resolve(process.env.APP_WEB || path.join(path.dirname(fileURLToPath(import.meta.url)), 'app-web'));
-const SITE = process.env.SITE || 'https://bipfix.com';
+// SEMPRE o site LOCAL de teste (07/11: o padrao era producao e, numa copia sem a
+// alteracao local, testes do app mandaram consultas para o bipfix.com). Producao so
+// com PERMITIR_PRODUCAO=1 de proposito.
+const SITE = process.env.SITE || 'http://localhost:3100';
+if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(SITE) && process.env.PERMITIR_PRODUCAO !== '1') {
+  console.error(`servir-app-web: SITE=${SITE} nao e local - parado (use PERMITIR_PRODUCAO=1 se for de proposito)`);
+  process.exit(1);
+}
 const TIPOS = { '.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css', '.png': 'image/png', '.json': 'application/json', '.ttf': 'font/ttf', '.ico': 'image/x-icon', '.svg': 'image/svg+xml' };
 
 http.createServer(async (req, res) => {
