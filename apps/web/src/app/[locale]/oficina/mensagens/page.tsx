@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import { completarClientes } from '@/lib/resumo-clientes';
 import { INTL_LOCALE } from '@/lib/utils';
 
 interface Conversa {
@@ -48,9 +49,11 @@ export default function OficinaConversasPage() {
       const ids = Array.from(new Set(Array.from(porConversa.values()).map((c) => c.solicitacaoId)));
       const fora = new Set<string>();
       if (ids.length) {
-        const { data: sols } = await supabase.from('solicitacoes')
+        const { data: sols0 } = await supabase.from('solicitacoes')
           .select('id, numero, status, cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(nome), veiculo:veiculos!solicitacoes_veiculo_id_fkey(fipe_marca, fipe_modelo, placa)')
           .in('id', ids);
+        // nome do cliente antes de a oficina ser escolhida (migracao 074)
+        const sols = await completarClientes(supabase, (sols0 || []) as any[]);
         for (const c of Array.from(porConversa.values())) {
           const s: any = (sols || []).find((x: any) => x.id === c.solicitacaoId);
           c.carro = s?.veiculo?.fipe_marca ? `${s.veiculo.fipe_marca} ${s.veiculo.fipe_modelo || ''}`.trim() : '';

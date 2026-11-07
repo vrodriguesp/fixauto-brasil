@@ -167,7 +167,7 @@
     "metaDescription": "How BipFix processes the personal data of drivers, repair shops and parts stores in the European Union, in accordance with the GDPR.",
     "pageTitle": "Privacy Policy",
     "lastUpdatedLabel": "Last updated:",
-    "updatedDate": "November 6, 2026",
+    "updatedDate": "November 7, 2026",
     "secoes": [
       {
         "titulo": "1. Who is responsible for your data",
@@ -290,7 +290,7 @@
           "We share personal data only as far as necessary:"
         ],
         "itens": [
-          "<strong>Other users:</strong> the Customer and the Partner involved in the same request or order see each other's details needed to carry out the service (name, contact details, vehicle details and photos, address where relevant). Partner profiles and reviews are public.",
+          "<strong>Other users:</strong> to send a quote, the Partner sees the Customer's name and the details of the request (vehicle, photos, area). The Customer's phone number and email go only to the Partner the Customer chooses, when the quote is accepted; after an accident, also to the Repair Shops notified about it, if the Customer ticks \"I want repair shops to call me\". The Customer sees the details of the Partners that answer. Partner profiles and reviews are public.",
           "<strong>Hosting:</strong> our servers and database are located in the Netherlands (European Union).",
           "<strong>Resend</strong> (United States): sending of emails.",
           "<strong>Twilio</strong> (United States): text messages (SMS) about your own request, for example when a quote arrives. We send only your phone number and the message text. To stop receiving them, write to support@bipfix.com.",
@@ -463,7 +463,10 @@
     "rascunhoGuardado": "What you filled in, including the photos, is kept in this browser for 24 hours.",
     "rascunhoFotosNaoGuardadas": "Your details are kept in this browser for 24 hours, but the photos are not: if you leave this page you will need to add them again.",
     "rascunhoRestaurado": "We restored the report you had filled in. Check it and send it.",
-    "rascunhoSemFotos": "We restored the details you had filled in, but not the photos: add them again and send."
+    "rascunhoSemFotos": "We restored the details you had filled in, but not the photos: add them again and send.",
+    "podemLigar": "I want repair shops to call me",
+    "podemLigarTexto": "The repair shops notified about the accident will see your phone number and can call you to help. If you leave this unticked, they only see your contact details after you choose one.",
+    "podemLigarSemTelefone": "Add a phone number to receive calls."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Accident Report",

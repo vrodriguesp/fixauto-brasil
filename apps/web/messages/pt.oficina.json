@@ -932,7 +932,9 @@
     },
     "proporRevisao": "Propor revisão",
     "avisoFaltas": "{count, plural, one {Este cliente tem # falta registrada} other {Este cliente tem # faltas registradas}}",
-    "orcamentoFechadoEntregue": "Carro entregue: o orçamento está fechado e não pode mais ser alterado."
+    "orcamentoFechadoEntregue": "Carro entregue: o orçamento está fechado e não pode mais ser alterado.",
+    "ligarCliente": "Ligar para o cliente",
+    "clientePediuLigar": "O cliente pediu para as oficinas ligarem."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Veículo recebido na oficina",

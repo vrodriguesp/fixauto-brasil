@@ -167,7 +167,7 @@
     "metaDescription": "Kuidas BipFix töötleb Euroopa Liidus autojuhtide, autotöökodade ja varuosade müüjate isikuandmeid kooskõlas isikuandmete kaitse üldmäärusega (GDPR).",
     "pageTitle": "Privaatsuspoliitika",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "6. november 2026",
+    "updatedDate": "7. november 2026",
     "secoes": [
       {
         "titulo": "1. Kes vastutab sinu andmete eest",
@@ -290,7 +290,7 @@
           "Jagame isikuandmeid ainult vajalikus ulatuses:"
         ],
         "itens": [
-          "<strong>Teised kasutajad:</strong> sama päringu või tellimusega seotud klient ja partner näevad teineteise andmeid, mida on vaja teenuse osutamiseks (nimi, kontaktandmed, sõiduki andmed ja fotod, vajaduse korral aadress). Partnerite profiilid ja arvustused on avalikud.",
+          "<strong>Teised kasutajad:</strong> hinnapakkumise saatmiseks näeb partner kliendi nime ja päringu andmeid (sõiduk, fotod, piirkond). Kliendi telefoninumber ja e-post lähevad ainult partnerile, kelle klient valib, kui pakkumine on vastu võetud; pärast õnnetust ka sellest teavitatud töökodadele, kui klient märgib „Soovin, et töökojad mulle helistaksid“. Klient näeb vastanud partnerite andmeid. Partnerite profiilid ja arvustused on avalikud.",
           "<strong>Majutus:</strong> meie serverid ja andmebaas asuvad Madalmaades (Euroopa Liit).",
           "<strong>Resend</strong> (Ameerika Ühendriigid): e-kirjade saatmine.",
           "<strong>Twilio</strong> (Ameerika Ühendriigid): tekstisõnumid (SMS) sinu enda päringu kohta, näiteks kui saabub hinnapakkumine. Saadame ainult sinu telefoninumbri ja sõnumi teksti. Kui sa ei soovi neid enam saada, kirjuta aadressile support@bipfix.com.",
@@ -463,7 +463,10 @@
     "rascunhoGuardado": "Sisestatud andmed koos fotodega jäävad sellesse brauserisse 24 tunniks alles.",
     "rascunhoFotosNaoGuardadas": "Andmed jäävad sellesse brauserisse 24 tunniks, fotod aga mitte: kui lahkud lehelt, tuleb need uuesti lisada.",
     "rascunhoRestaurado": "Taastasime sinu poolt täidetud teate. Kontrolli ja saada.",
-    "rascunhoSemFotos": "Taastasime sisestatud andmed, aga mitte fotosid: lisa need uuesti ja saada."
+    "rascunhoSemFotos": "Taastasime sisestatud andmed, aga mitte fotosid: lisa need uuesti ja saada.",
+    "podemLigar": "Soovin, et töökojad mulle helistaksid",
+    "podemLigarTexto": "Õnnetusest teavitatud töökojad näevad sinu telefoninumbrit ja saavad abi pakkumiseks helistada. Kui sa seda ei märgi, näevad nad sinu kontakti alles pärast seda, kui oled ühe töökoja valinud.",
+    "podemLigarSemTelefone": "Kõnede saamiseks lisa telefoninumber."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Avarii registreerimine",

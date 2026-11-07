@@ -36,6 +36,8 @@ export default function EmergenciaPage() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
+  // migracao 074: so com esta escolha as oficinas avisadas veem o telefone (desmarcado por padrao)
+  const [podemLigar, setPodemLigar] = useState(false);
   const [localizacao, setLocalizacao] = useState('');
   const [descricao, setDescricao] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -211,6 +213,7 @@ export default function EmergenciaPage() {
         telefone,
         idioma: locale,
         tipoAcidente,
+        oficinasPodemLigar: podemLigar && !!telefone.trim(),
         descricao,
         endereco: localizacao,
         latitude: loc.lat,
@@ -631,6 +634,15 @@ export default function EmergenciaPage() {
               <div className="mt-6">
                 <SeguroReparoCampos valor={seguro} onChange={setSeguro} tipoAcidente={tipoAcidente} pais={paisAcidente} />
               </div>
+
+              <label className="mt-6 flex items-start gap-3 rounded-lg border border-gray-200 p-4 text-sm" data-testid="podem-ligar">
+                <input type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 rounded border-gray-300 text-red-600 focus:ring-red-500 disabled:opacity-50"
+                  checked={podemLigar && !!telefone.trim()} disabled={!telefone.trim()} onChange={(e) => setPodemLigar(e.target.checked)} />
+                <span className="min-w-0">
+                  <span className="block font-medium text-gray-900">{t('podemLigar')}</span>
+                  <span className="block text-gray-600">{telefone.trim() ? t('podemLigarTexto') : t('podemLigarSemTelefone')}</span>
+                </span>
+              </label>
 
               <div className="bg-gray-50 rounded-lg p-4 mt-6 space-y-2">
                 <h3 className="font-medium text-gray-900 text-sm">{t('summaryTitle')}</h3>

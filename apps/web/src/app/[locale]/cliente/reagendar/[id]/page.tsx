@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { useRouter, Link } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '@/lib/supabase';
+import { horaLocalEmUtc } from '@/lib/fuso';
 import { useAuth } from '@/lib/auth-context';
 
 interface SlotOption {
@@ -40,7 +41,7 @@ export default function ReagendarPage() {
       // Fetch agenda with solicitacao and veiculo
       const { data: agendaData } = await supabase
         .from('agenda')
-        .select('*, solicitacao:solicitacoes(*, veiculo:veiculos(*), orcamentos(*, disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*)))')
+        .select('*, oficina:oficinas(pais), solicitacao:solicitacoes(*, veiculo:veiculos(*), orcamentos(*, disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*)))')
         .eq('id', agendaId)
         .single();
 
@@ -94,8 +95,9 @@ export default function ReagendarPage() {
     const { error: updateError } = await supabase
       .from('agenda')
       .update({
-        data_inicio: `${slot.data_checkin}T${horaInicio}:00Z`,
-        data_fim: `${slot.data_previsao_entrega}T${horaFim}:00Z`,
+        // hora local da oficina gravada em UTC (antes "08:00Z" virava 10:00 em Tallinn)
+        data_inicio: horaLocalEmUtc(slot.data_checkin, horaInicio, agenda.oficina?.pais),
+        data_fim: horaLocalEmUtc(slot.data_previsao_entrega || slot.data_checkin, horaFim, agenda.oficina?.pais),
         no_show: false,
         no_show_registrado_em: null,
       })
@@ -113,6 +115,9 @@ export default function ReagendarPage() {
       .update({ reagendado: true, reagendado_em: new Date().toISOString() })
       .eq('agenda_id', agendaId)
       .eq('reagendado', false);
+
+    // e-mail ao cliente com o horario novo e o evento de calendario atualizado
+    fetch(`/api/agenda/${agendaId}/avisar-cliente`, { method: 'POST' }).catch(() => {});
 
     setSuccess(true);
     setSubmitting(false);

@@ -295,6 +295,8 @@ export default function AgendaPage() {
       funcionario_id: editData.funcionario_id || null,
       cor: editData.cor,
     });
+    // horario de carro de pedido mudou: o cliente recebe o e-mail com o calendario atualizado
+    if (allEventos.find((e) => e.id === evId)?.solicitacao_id) fetch(`/api/agenda/${evId}/avisar-cliente`, { method: 'POST' }).catch(() => {});
     setEditingId(null);
     setEditData(null);
     setUpdatingId(null);

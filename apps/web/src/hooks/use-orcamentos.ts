@@ -1,6 +1,7 @@
 'use client';
 
 import { supabase } from '@/lib/supabase';
+import { completarClientes } from '@/lib/resumo-clientes';
 import { useAuth } from '@/lib/auth-context';
 import { cleanDescricao, formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
@@ -169,11 +170,13 @@ export function useOrcamentos() {
       .eq('id', input.solicitacao_id);
 
     // Notify client
-    const { data: sol } = await supabase
+    const { data: sol0 } = await supabase
       .from('solicitacoes')
       .select('cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(idioma)')
       .eq('id', input.solicitacao_id)
       .single();
+    // idioma do cliente antes de a oficina ser escolhida (migracao 074)
+    const sol = sol0 ? (await completarClientes(supabase, [sol0 as any]))[0] : null;
 
     if (sol) {
       const clienteIdioma = (sol.cliente as any)?.idioma;

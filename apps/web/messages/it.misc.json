@@ -167,7 +167,7 @@
     "metaDescription": "Come BipFix tratta i dati personali di automobilisti, officine e rivenditori di ricambi nell'Unione europea, in conformità al GDPR.",
     "pageTitle": "Informativa sulla privacy",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
-    "updatedDate": "6 novembre 2026",
+    "updatedDate": "7 novembre 2026",
     "secoes": [
       {
         "titulo": "1. Chi è responsabile dei tuoi dati",
@@ -290,7 +290,7 @@
           "Condividiamo i dati personali solo nella misura necessaria:"
         ],
         "itens": [
-          "<strong>Altri utenti:</strong> il Cliente e il Partner coinvolti nella stessa richiesta o ordine vedono i dati dell'altro necessari per svolgere il servizio (nome, recapiti, dati e foto del veicolo, indirizzo se pertinente). I profili dei Partner e le recensioni sono pubblici.",
+          "<strong>Altri utenti:</strong> per inviare un preventivo, il Partner vede il nome del Cliente e i dati della richiesta (veicolo, foto, zona). Il telefono e l'email del Cliente vanno solo al Partner scelto dal Cliente, quando il preventivo viene accettato; dopo un incidente, anche alle Officine avvisate, se il Cliente seleziona \"Voglio che le officine mi chiamino\". Il Cliente vede i dati dei Partner che rispondono. I profili dei Partner e le recensioni sono pubblici.",
           "<strong>Hosting:</strong> i nostri server e il database si trovano nei Paesi Bassi (Unione europea).",
           "<strong>Resend</strong> (Stati Uniti): invio delle email.",
           "<strong>Twilio</strong> (Stati Uniti): SMS sulla tua richiesta, per esempio quando arriva un preventivo. Inviamo solo il tuo numero di telefono e il testo del messaggio. Per non riceverli più, scrivi a support@bipfix.com.",
@@ -463,7 +463,10 @@
     "rascunhoGuardado": "Quello che hai compilato, foto comprese, resta salvato in questo browser per 24 ore.",
     "rascunhoFotosNaoGuardadas": "I dati restano salvati in questo browser per 24 ore, ma le foto no: se lasci questa pagina dovrai aggiungerle di nuovo.",
     "rascunhoRestaurado": "Abbiamo recuperato la segnalazione che avevi compilato. Controlla e invia.",
-    "rascunhoSemFotos": "Abbiamo recuperato i dati che avevi compilato, ma non le foto: aggiungile di nuovo e invia."
+    "rascunhoSemFotos": "Abbiamo recuperato i dati che avevi compilato, ma non le foto: aggiungile di nuovo e invia.",
+    "podemLigar": "Voglio che le officine mi chiamino",
+    "podemLigarTexto": "Le officine avvisate dell’incidente vedranno il tuo numero di telefono e potranno chiamarti per aiutarti. Se non selezioni questa opzione, vedranno i tuoi contatti solo dopo che ne avrai scelta una.",
+    "podemLigarSemTelefone": "Inserisci un numero di telefono per ricevere chiamate."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Registrazione dell'incidente",

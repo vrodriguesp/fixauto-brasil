@@ -124,7 +124,10 @@
     "localEncontrada": "Posizione trovata. Controlla l'indirizzo qui sotto.",
     "tentarDeNovo": "Riprova",
     "cameraNegadaTitulo": "Fotocamera bloccata",
-    "cameraNegadaTexto": "Per fotografare il danno, consenti la fotocamera nelle impostazioni del dispositivo. Puoi anche scegliere foto dalla galleria."
+    "cameraNegadaTexto": "Per fotografare il danno, consenti la fotocamera nelle impostazioni del dispositivo. Puoi anche scegliere foto dalla galleria.",
+    "podemLigar": "Voglio che le officine mi chiamino",
+    "podemLigarTexto": "Le officine avvisate dell’incidente vedranno il tuo numero di telefono e potranno chiamarti per aiutarti. Se non selezioni questa opzione, vedranno i tuoi contatti solo dopo che ne avrai scelta una.",
+    "podemLigarSemTelefone": "Inserisci un numero di telefono per ricevere chiamate."
   },
   "novaSolicitacao": {
     "enderecoPlaceholder": "Quartiere, città",

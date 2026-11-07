@@ -3,7 +3,7 @@ import { tipoCompativel } from '@fixauto/shared';
 import { notifNovaSolicitacaoTitulo } from './notif-i18n';
 import { enviarEmail } from './email';
 import { escapeHtml } from './email-i18n';
-import { urlNoIdioma } from './site-url';
+import { SITE_URL } from './site-url';
 import { dentroDoLimite } from './rate-limit';
 import pt from '../../messages/pt.json';
 import ptPT from '../../messages/pt-PT.json';
@@ -32,7 +32,7 @@ export async function avisarOficinasDoPedido(solicitacaoId: string): Promise<num
     .eq('tipo', 'nova_solicitacao').eq('dados->>solicitacao_id', solicitacaoId);
   if (count && count > 0) return -1; // ja avisado (idempotente; -1 = nao avisar o admin de novo)
   const { data: sol } = await supabaseAdmin.from('solicitacoes')
-    .select('tipo, descricao, urgencia, endereco, latitude, longitude, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano), cliente:profiles!solicitacoes_cliente_id_fkey(conta_teste)').eq('id', solicitacaoId).maybeSingle();
+    .select('numero, tipo, descricao, urgencia, endereco, latitude, longitude, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano), cliente:profiles!solicitacoes_cliente_id_fkey(conta_teste)').eq('id', solicitacaoId).maybeSingle();
   if (!sol || sol.latitude == null || sol.longitude == null) return 0;
   const { data: oficinas } = await supabaseAdmin.from('oficinas')
     .select('profile_id, nome_fantasia, especialidades, latitude, longitude, raio_atendimento_km, profile:profiles!oficinas_profile_id_fkey(idioma, conta_teste, email, nome)')
@@ -89,7 +89,8 @@ async function emailNovoPedido(o: any, sol: any, solicitacaoId: string, carro: s
   const ano = (sol.veiculo as any)?.fipe_ano;
   // texto do cliente sem links (o e-mail sai de noreply@bipfix.com: nada de link de terceiros)
   const desc = String(sol.descricao || '').slice(0, 300).replace(/\b(?:https?:\/\/|www\.)\S+/gi, '[…]');
-  const link = urlNoIdioma(idioma, `/oficina/enviar-orcamento/${solicitacaoId}`);
+  // link curto neutro (sem nome de pagina em portugues): /r/<numero>?o=<idioma>
+  const link = `${SITE_URL.replace('://www.', '://')}/r/${sol.numero}?o=${encodeURIComponent(idioma)}`;
   await enviarEmail({ para, assunto: x.assunto.replace('{t}', [tipo, carro].filter(Boolean).join(' – ')), html: `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
       <div style="background:#1e40af;color:white;padding:24px;border-radius:12px 12px 0 0;"><h1 style="margin:0;font-size:24px;">BipFix</h1></div>

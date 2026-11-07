@@ -99,6 +99,8 @@ export async function POST(req: NextRequest) {
         longitude,
         prioridade: 'urgente',
         tipo_acidente: tipoAcidente,
+        // migracao 074: escolha do cliente (desmarcado por padrao); sem telefone nao ha o que ver
+        oficinas_podem_ligar: d.oficinasPodemLigar === true && !!telefone,
         acesso_token_hash: hashToken(token),
       })
       .select('id')

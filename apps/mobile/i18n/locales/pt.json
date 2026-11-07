@@ -124,7 +124,10 @@
     "localEncontrada": "Localização encontrada. Confira o endereço abaixo.",
     "tentarDeNovo": "Tentar de novo",
     "cameraNegadaTitulo": "Câmera bloqueada",
-    "cameraNegadaTexto": "Para fotografar o dano, permita a câmera nos Ajustes do aparelho. Você também pode escolher fotos da galeria."
+    "cameraNegadaTexto": "Para fotografar o dano, permita a câmera nos Ajustes do aparelho. Você também pode escolher fotos da galeria.",
+    "podemLigar": "Quero que as oficinas me liguem",
+    "podemLigarTexto": "As oficinas avisadas do acidente vão ver o seu telefone e podem ligar para ajudar. Sem marcar, elas só veem o seu contato depois que você escolher uma.",
+    "podemLigarSemTelefone": "Informe um telefone para poder receber ligações."
   },
   "novaSolicitacao": {
     "enderecoPlaceholder": "Bairro, cidade",

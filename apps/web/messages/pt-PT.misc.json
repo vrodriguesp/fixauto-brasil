@@ -167,7 +167,7 @@
     "metaDescription": "Como a BipFix trata os dados pessoais de condutores, oficinas e lojas de peças na União Europeia, em conformidade com o RGPD.",
     "pageTitle": "Política de Privacidade",
     "lastUpdatedLabel": "Última atualização:",
-    "updatedDate": "6 de novembro de 2026",
+    "updatedDate": "7 de novembro de 2026",
     "secoes": [
       {
         "titulo": "1. Quem é responsável pelos seus dados",
@@ -290,7 +290,7 @@
           "Só partilhamos dados pessoais na medida do necessário:"
         ],
         "itens": [
-          "<strong>Outros utilizadores:</strong> o Cliente e o Parceiro envolvidos no mesmo pedido ou encomenda veem os dados um do outro necessários à realização do serviço (nome, contactos, dados e fotografias do veículo, morada quando relevante). Os perfis dos Parceiros e as avaliações são públicos.",
+          "<strong>Outros utilizadores:</strong> para enviar um orçamento, o Parceiro vê o nome do Cliente e os dados do pedido (veículo, fotografias, zona). O telefone e o e-mail do Cliente vão apenas para o Parceiro que o Cliente escolher, quando o orçamento é aceite; após um acidente, também para as Oficinas avisadas, se o Cliente marcar \"Quero que as oficinas me liguem\". O Cliente vê os dados dos Parceiros que respondem. Os perfis dos Parceiros e as avaliações são públicos.",
           "<strong>Alojamento:</strong> os nossos servidores e a base de dados estão localizados nos Países Baixos (União Europeia).",
           "<strong>Resend</strong> (Estados Unidos): envio de e-mails.",
           "<strong>Twilio</strong> (Estados Unidos): mensagens SMS sobre o seu próprio pedido, por exemplo quando chega um orçamento. Enviamos apenas o seu número de telefone e o texto da mensagem. Para deixar de as receber, escreva para support@bipfix.com.",
@@ -463,7 +463,10 @@
     "rascunhoGuardado": "O que preencheu, incluindo as fotos, fica guardado neste navegador durante 24 horas.",
     "rascunhoFotosNaoGuardadas": "Os dados ficam guardados neste navegador durante 24 horas, mas as fotos não: se sair desta página, terá de as adicionar de novo.",
     "rascunhoRestaurado": "Recuperámos o registo que tinha preenchido. Confirme e envie.",
-    "rascunhoSemFotos": "Recuperámos os dados que tinha preenchido, mas não as fotos: adicione-as de novo e envie."
+    "rascunhoSemFotos": "Recuperámos os dados que tinha preenchido, mas não as fotos: adicione-as de novo e envie.",
+    "podemLigar": "Quero que as oficinas me liguem",
+    "podemLigarTexto": "As oficinas avisadas do acidente vão ver o seu telefone e podem ligar-lhe para ajudar. Se não marcar, só veem o seu contacto depois de escolher uma.",
+    "podemLigarSemTelefone": "Indique um telefone para poder receber chamadas."
   },
   "emergenciaAcidenteDetalhe": {
     "headerTitle": "Registo de Acidente",

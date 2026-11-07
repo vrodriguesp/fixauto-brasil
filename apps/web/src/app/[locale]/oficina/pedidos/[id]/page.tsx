@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import { completarClientes } from '@/lib/resumo-clientes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import NoShowWarning from '@/components/ui/NoShowWarning';
 import DamageAnalysis from '@/components/ui/DamageAnalysis';
@@ -33,12 +34,13 @@ export default function SolicitacaoDetalhePage() {
       supabase
         .from('solicitacoes')
         .select(
-          '*, veiculo:veiculos(*), fotos:solicitacao_fotos(*), cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo), orcamentos(*, itens:orcamento_itens(*), oficina:oficinas(*, profile:profiles(*)), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))'
+          '*, veiculo:veiculos(*), fotos:solicitacao_fotos(*), cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo, telefone), orcamentos(*, itens:orcamento_itens(*), oficina:oficinas(*, profile:profiles(*)), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))'
         )
         .eq('id', params.id)
         .single()
         .then(({ data }) => {
-          if (data) setDirectSol(data);
+          // nome do cliente antes de a oficina ser escolhida (migracao 074)
+          if (data) completarClientes(supabase, [data as any]).then(([d]) => setDirectSol(d));
           setBuscaFeita(true);
         });
     }
@@ -268,6 +270,17 @@ export default function SolicitacaoDetalhePage() {
             <p className="text-xs text-gray-500">
               {t('solicitadoEm', { data: formatDate(sol.created_at, locale) })}
             </p>
+            {/* telefone so chega para a oficina escolhida ou, no acidente, se o cliente pediu ligacao (migracao 074) */}
+            {sol.cliente?.telefone && (
+              <div className="mt-3 border-t border-gray-100 pt-3" data-testid="ligar-cliente">
+                {sol.emergencia_id && !(sol.orcamentos || []).some((o: any) => o.oficina_id === oficina?.id && o.status === 'aceito') && (
+                  <p className="mb-2 text-xs text-gray-600">{t('clientePediuLigar')}</p>
+                )}
+                <a href={`tel:${sol.cliente.telefone.replace(/\s/g, '')}`} className="btn-primary flex min-h-[44px] w-full items-center justify-center gap-2 sm:w-auto sm:px-5">
+                  <span aria-hidden="true">📞</span> {t('ligarCliente')} <span className="font-normal">{sol.cliente.telefone}</span>
+                </a>
+              </div>
+            )}
           </div>
 
           {(sol.cliente?.id || sol.cliente_id) && (

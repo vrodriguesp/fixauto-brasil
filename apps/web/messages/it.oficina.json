@@ -932,7 +932,9 @@
     },
     "proporRevisao": "Proponi revisione",
     "avisoFaltas": "{count, plural, one {Questo cliente ha # assenza registrata} other {Questo cliente ha # assenze registrate}}",
-    "orcamentoFechadoEntregue": "Auto consegnata: il preventivo è chiuso e non può più essere modificato."
+    "orcamentoFechadoEntregue": "Auto consegnata: il preventivo è chiuso e non può più essere modificato.",
+    "ligarCliente": "Chiama il cliente",
+    "clientePediuLigar": "Il cliente ha chiesto alle officine di chiamarlo."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Veicolo ricevuto in officina",

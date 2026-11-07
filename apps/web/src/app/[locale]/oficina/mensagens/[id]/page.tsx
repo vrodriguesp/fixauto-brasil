@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
 import { supabase } from '@/lib/supabase';
+import { completarClientes } from '@/lib/resumo-clientes';
 import { INTL_LOCALE } from '@/lib/utils';
 import AudioRecorder from '@/components/ui/AudioRecorder';
 import AudioMessage from '@/components/ui/AudioMessage';
@@ -105,12 +106,13 @@ export default function OficinaMensagensPage() {
     async function fetchSolicitacao() {
       const { data } = await supabase
         .from('solicitacoes')
-        .select('id, descricao, cliente:profiles!solicitacoes_cliente_id_fkey(nome), veiculo:veiculos!solicitacoes_veiculo_id_fkey(fipe_marca, fipe_modelo, fipe_ano, placa)')
+        .select('id, descricao, cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(nome), veiculo:veiculos!solicitacoes_veiculo_id_fkey(fipe_marca, fipe_modelo, fipe_ano, placa)')
         .eq('id', id)
         .single();
 
       if (data) {
-        setSolicitacao(data as unknown as SolicitacaoInfo);
+        // nome do cliente antes de a oficina ser escolhida (migracao 074)
+        setSolicitacao((await completarClientes(supabase, [data as any]))[0] as unknown as SolicitacaoInfo);
       }
       setSolCarregada(true);
     }

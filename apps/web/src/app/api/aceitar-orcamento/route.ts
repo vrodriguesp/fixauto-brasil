@@ -6,6 +6,7 @@ import { currencyForCountry } from '@/lib/currency';
 import { sendOrcamentoAceitoPagamentoEmail, sendOrcamentoAceitoOutroEmail } from '@/lib/notifications';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { horaLocalEmUtc } from '@/lib/fuso';
+import { avisarClienteAgendamento } from '@/lib/email-agendamento';
 
 // Use service_role key to bypass RLS - the agenda insert needs
 // to be done by the server because the client user doesn't have
@@ -110,7 +111,7 @@ export async function POST(req: NextRequest) {
         .eq('oficina_id', orc.oficina_id)
         .in('status', ['agendado']);
 
-      const { error: agendaError } = await supabaseAdmin.from('agenda').insert({
+      const { data: agendaNova, error: agendaError } = await supabaseAdmin.from('agenda').insert({
         oficina_id: orc.oficina_id,
         solicitacao_id: orc.solicitacao_id,
         titulo: notifReparoAgendadoTitulo((orc.oficina as any)?.profile?.idioma),
@@ -122,10 +123,13 @@ export async function POST(req: NextRequest) {
         tipo: 'plataforma',
         status: 'agendado',
         cor: '#3B82F6',
-      });
+      }).select('id').single();
 
       if (agendaError) {
         console.error('[aceitar-orcamento] Agenda insert error:', agendaError);
+      } else if (agendaNova) {
+        // e-mail ao cliente: detalhes do agendamento + Google/Apple Calendar (dono 07/11)
+        await avisarClienteAgendamento(agendaNova.id).catch((e) => console.error('[aceitar-orcamento] e-mail do agendamento', e));
       }
     }
 

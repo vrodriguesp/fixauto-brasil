@@ -124,7 +124,10 @@
     "localEncontrada": "Asukoht leitud. Kontrolli allolevat aadressi.",
     "tentarDeNovo": "Proovi uuesti",
     "cameraNegadaTitulo": "Kaamera on blokeeritud",
-    "cameraNegadaTexto": "Kahjustuse pildistamiseks luba kaamera seadme seadetes. Võid valida ka pilte galeriist."
+    "cameraNegadaTexto": "Kahjustuse pildistamiseks luba kaamera seadme seadetes. Võid valida ka pilte galeriist.",
+    "podemLigar": "Soovin, et töökojad mulle helistaksid",
+    "podemLigarTexto": "Õnnetusest teavitatud töökojad näevad sinu telefoninumbrit ja saavad abi pakkumiseks helistada. Kui sa seda ei märgi, näevad nad sinu kontakti alles pärast seda, kui oled ühe töökoja valinud.",
+    "podemLigarSemTelefone": "Kõnede saamiseks lisa telefoninumber."
   },
   "novaSolicitacao": {
     "enderecoPlaceholder": "Linnaosa, linn",

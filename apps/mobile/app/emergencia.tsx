@@ -70,6 +70,9 @@ export default function EmergenciaScreen() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
+  // migracao 074: so com esta escolha as oficinas avisadas veem o telefone (desmarcado por padrao)
+  const [podemLigar, setPodemLigar] = useState(false);
+  const temTelefone = !!(user ? user.telefone : telefone.trim());
   const faltaContato = !user && (!nome.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()));  // telefone opcional (pedido do dono 31/10)
   // quem paga o reparo (opcional) - a oficina ve no pedido
   const [pagamento, setPagamento] = useState<Pagamento | ''>('');
@@ -179,6 +182,7 @@ export default function EmergenciaScreen() {
       form.append('dados', JSON.stringify({
         idioma: i18n.language,
         tipoAcidente: tipo,
+        oficinasPodemLigar: podemLigar && temTelefone,
         ...(user ? {} : { nome: nome.trim(), email: email.trim(), telefone: telefone.trim() }),
         pagamento_reparo: pagamento || null,
         seguradora,
@@ -417,6 +421,15 @@ export default function EmergenciaScreen() {
           <CampoTelefone rotulo={t('auth.telefone')} value={telefone} onChange={setTelefone} />
         </View>
       )}
+
+      <Pressable onPress={() => temTelefone && setPodemLigar((v) => !v)} disabled={!temTelefone} accessibilityRole="checkbox" accessibilityState={{ checked: podemLigar && temTelefone, disabled: !temTelefone }}
+        className="flex-row items-start gap-3 border border-gray-200 rounded-lg p-3 mb-6" testID="podem-ligar">
+        <Ionicons name={podemLigar && temTelefone ? 'checkbox' : 'square-outline'} size={22} color={!temTelefone ? '#d1d5db' : podemLigar ? '#dc2626' : '#6b7280'} />
+        <View className="flex-1">
+          <Text className="text-sm font-medium text-gray-900">{t('emergencia.podemLigar')}</Text>
+          <Text className="text-xs text-gray-600 mt-0.5">{temTelefone ? t('emergencia.podemLigarTexto') : t('emergencia.podemLigarSemTelefone')}</Text>
+        </View>
+      </Pressable>
 
       <Pressable
         onPress={handleEnviar}

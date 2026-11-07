@@ -124,7 +124,10 @@
     "localEncontrada": "Location found. Check the address below.",
     "tentarDeNovo": "Try again",
     "cameraNegadaTitulo": "Camera blocked",
-    "cameraNegadaTexto": "To photograph the damage, allow the camera in your device settings. You can also pick photos from your gallery."
+    "cameraNegadaTexto": "To photograph the damage, allow the camera in your device settings. You can also pick photos from your gallery.",
+    "podemLigar": "I want repair shops to call me",
+    "podemLigarTexto": "The repair shops notified about the accident will see your phone number and can call you to help. If you leave this unticked, they only see your contact details after you choose one.",
+    "podemLigarSemTelefone": "Add a phone number to receive calls."
   },
   "novaSolicitacao": {
     "enderecoPlaceholder": "District, city",
