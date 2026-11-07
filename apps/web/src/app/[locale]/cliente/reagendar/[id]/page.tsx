@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation';
 import { useRouter, Link } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '@/lib/supabase';
-import { horaLocalEmUtc } from '@/lib/fuso';
 import { useAuth } from '@/lib/auth-context';
 
 interface SlotOption {
@@ -41,7 +40,7 @@ export default function ReagendarPage() {
       // Fetch agenda with solicitacao and veiculo
       const { data: agendaData } = await supabase
         .from('agenda')
-        .select('*, oficina:oficinas(pais), solicitacao:solicitacoes(*, veiculo:veiculos(*), orcamentos(*, disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*)))')
+        .select('*, solicitacao:solicitacoes(*, veiculo:veiculos(*), orcamentos(*, disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*)))')
         .eq('id', agendaId)
         .single();
 
@@ -88,36 +87,17 @@ export default function ReagendarPage() {
       return;
     }
 
-    const horaInicio = slot.turno === 'manha' ? '08:00' : '13:00';
-    const horaFim = slot.turno === 'manha' ? '12:00' : '18:00';
-
-    // Update agenda with new dates, reset no_show
-    const { error: updateError } = await supabase
-      .from('agenda')
-      .update({
-        // hora local da oficina gravada em UTC (antes "08:00Z" virava 10:00 em Tallinn)
-        data_inicio: horaLocalEmUtc(slot.data_checkin, horaInicio, agenda.oficina?.pais),
-        data_fim: horaLocalEmUtc(slot.data_previsao_entrega || slot.data_checkin, horaFim, agenda.oficina?.pais),
-        no_show: false,
-        no_show_registrado_em: null,
-      })
-      .eq('id', agendaId);
-
-    if (updateError) {
+    // no servidor (o cliente nao altera a agenda direto: antes nada era salvo e a
+    // tela dizia "sucesso"); la grava a hora local da oficina e manda o e-mail
+    // com o evento de calendario atualizado
+    const r = await fetch(`/api/agenda/${agendaId}/reagendar`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slotId: slot.id }),
+    }).catch(() => null);
+    if (!r?.ok) {
       setError(t('errorRescheduling'));
       setSubmitting(false);
       return;
     }
-
-    // Update no_show_historico to mark as reagendado
-    await supabase
-      .from('no_show_historico')
-      .update({ reagendado: true, reagendado_em: new Date().toISOString() })
-      .eq('agenda_id', agendaId)
-      .eq('reagendado', false);
-
-    // e-mail ao cliente com o horario novo e o evento de calendario atualizado
-    fetch(`/api/agenda/${agendaId}/avisar-cliente`, { method: 'POST' }).catch(() => {});
 
     setSuccess(true);
     setSubmitting(false);

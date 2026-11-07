@@ -422,7 +422,7 @@ export default function EmergenciaScreen() {
         </View>
       )}
 
-      <Pressable onPress={() => temTelefone && setPodemLigar((v) => !v)} disabled={!temTelefone} accessibilityRole="checkbox" accessibilityState={{ checked: podemLigar && temTelefone, disabled: !temTelefone }}
+      <Pressable onPress={() => temTelefone && setPodemLigar((v) => !v)} disabled={!temTelefone} accessibilityRole="checkbox" accessibilityState={{ checked: podemLigar && temTelefone, disabled: !temTelefone }} aria-checked={podemLigar && temTelefone} aria-disabled={!temTelefone}
         className="flex-row items-start gap-3 border border-gray-200 rounded-lg p-3 mb-6" testID="podem-ligar">
         <Ionicons name={podemLigar && temTelefone ? 'checkbox' : 'square-outline'} size={22} color={!temTelefone ? '#d1d5db' : podemLigar ? '#dc2626' : '#6b7280'} />
         <View className="flex-1">
