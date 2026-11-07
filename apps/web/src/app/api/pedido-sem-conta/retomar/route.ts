@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   if (!ehUuid(id) || !/^[a-f0-9]{64}$/.test(token) || !['ver', 'confirmar', 'cancelar'].includes(acao)) return invalido;
 
   const { data: p } = await supabaseAdmin.from('pedidos_pendentes').select('*').eq('id', id).maybeSingle();
-  if (!p || !p.retomar_hash || !iguaisSeguro(hashRetomar(token), p.retomar_hash)) return invalido;
+  if (!p || !p.retomar_hash || !iguaisSeguro(hashRetomar(token, p.email), p.retomar_hash)) return invalido;
   const expira = new Date(p.created_at).getTime() + PENDENTE_HORAS * 3600 * 1000;
   if (Date.now() > expira) {
     await apagarPendente(p);
@@ -59,9 +59,18 @@ export async function POST(req: NextRequest) {
         : NextResponse.json({ error: 'Avaliação pendente', codigo: 'AVALIACAO_PENDENTE' }, { status: 409 });
     }
     await contarEtapa('pedido_lembrete', 'confirmado');
-    // login de uso unico (o mesmo tipo de link do e-mail de confirmacao do cadastro)
-    const { data: link } = await supabaseAdmin.auth.admin.generateLink({ type: 'magiclink', email: p.email });
-    return NextResponse.json({ solicitacaoId: r.id, numero: r.numero, tokenHash: link?.properties?.hashed_token || null });
+    // login de uso unico so para a conta criada agora (como no fluxo do codigo):
+    // conta que ja existia entra com a senha (a pagina do pedido manda para o login).
+    // O e-mail vem da propria conta (user_id), nunca do pedido.
+    let tokenHash: string | null = null;
+    if (p.conta_nova) {
+      const { data: u } = await supabaseAdmin.auth.admin.getUserById(p.user_id);
+      if (u?.user?.email) {
+        const { data: link } = await supabaseAdmin.auth.admin.generateLink({ type: 'magiclink', email: u.user.email });
+        tokenHash = link?.properties?.hashed_token || null;
+      }
+    }
+    return NextResponse.json({ solicitacaoId: r.id, numero: r.numero, tokenHash });
   } catch (e) {
     await supabaseAdmin.from('pedidos_pendentes').insert(p).then(() => {}, () => {});
     console.error('[pedido-sem-conta/retomar]', e);

@@ -94,7 +94,7 @@ export default function PerfilLojaPage() {
         </div>
         <div>
           <label htmlFor="c9a81-3" className="block text-sm font-medium text-gray-700 mb-1">{t('labelTelefone')}</label>
-          <CampoTelefone id="c9a81-3" value={telefone} onChange={(v) => setTelefone(v)} />
+          <CampoTelefone id="c9a81-3" value={telefone} onChange={(v) => setTelefone(v)} pais={end.pais} />
         </div>
       </div>
 

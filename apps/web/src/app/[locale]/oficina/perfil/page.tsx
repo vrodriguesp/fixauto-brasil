@@ -485,7 +485,7 @@ export default function PerfilOficinaPage() {
           </div>
           <div>
             <label htmlFor="c83a1-9" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
-            <CampoTelefone id="c83a1-9" value={telefone} onChange={(v) => setTelefone(v)} />
+            <CampoTelefone id="c83a1-9" value={telefone} onChange={(v) => setTelefone(v)} pais={end.pais} />
           </div>
         </div>
       </div>

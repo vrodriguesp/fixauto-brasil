@@ -40,7 +40,11 @@ export const PREFIXOS_TELEFONE: PrefixoTelefone[] = [
 export const EXEMPLO_TELEFONE: Record<string, string> = { '372': '5123 4567', '39': '333 123 4567', '351': '912 345 678', '55': '(11) 91234-5678' };
 
 /** Prefixo inicial pelo idioma/mercado: /ee (et, ru, en) Estonia, it Italia, pt-PT Portugal, pt Brasil. */
-export function prefixoPadrao(idioma: string | null | undefined): string {
+export function prefixoPadrao(idioma: string | null | undefined, pais?: string | null): string {
+  // pais do cadastro (oficina/loja), quando se sabe, vale mais que o idioma: numero
+  // antigo sem "+" de uma oficina italiana usando o site em ingles continua +39
+  const doPais = pais ? PREFIXOS_TELEFONE.find((p) => p.pais === pais.toUpperCase()) : undefined;
+  if (doPais) return doPais.ddi;
   if (idioma === 'it') return '39';
   if (idioma === 'pt-PT') return '351';
   if (idioma === 'pt') return '55';
@@ -67,6 +71,9 @@ export function separarTelefone(valor: string | null | undefined, padrao: string
   return { ddi: padrao, numero: v };
 }
 
+// digitos minimos do numero nacional (sem o prefixo do pais) para tirar um prefixo repetido
+const MINIMO_NACIONAL: Record<string, number> = { '372': 7, '39': 9, '55': 10, '351': 9 };
+
 /**
  * Junta prefixo + numero para salvar ("+372 5123 4567"). Numero vazio = ''.
  * Quem digita o numero ja com "+" ou "00" (de outro pais) tem o proprio prefixo respeitado.
@@ -76,6 +83,16 @@ export function juntarTelefone(ddi: string, numero: string): string {
   if (!n.replace(/\D/g, '')) return '';
   if (n.startsWith('+')) return n;
   if (n.startsWith('00')) return '+' + n.slice(2).trim();
+  // prefixo digitado de novo sem o + ("372 5123 4567" com +372 escolhido) sai, se o que
+  // sobra ainda tem o tamanho de um numero nacional (no Brasil o DDD 55 existe e na
+  // Italia ha celulares 39x: por isso o minimo por pais)
+  const digitos = n.replace(/\D/g, '');
+  if (digitos.startsWith(ddi) && digitos.length - ddi.length >= (MINIMO_NACIONAL[ddi] ?? 8)) {
+    let restantes = ddi.length;
+    let i = 0;
+    while (restantes > 0 && i < n.length) { if (/\d/.test(n[i])) restantes--; i++; }
+    return `+${ddi} ${n.slice(i).trim()}`;
+  }
   // zero de discagem nacional sai (0 41 9... -> +55 41 9...), menos na Italia, onde o 0
   // do fixo faz parte do numero internacional (+39 06 ...)
   return `+${ddi} ${ddi === '39' ? n : n.replace(/^0+(?=\d)/, '')}`;

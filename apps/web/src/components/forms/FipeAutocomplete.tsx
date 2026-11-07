@@ -17,6 +17,9 @@ interface FipeValue {
 interface FipeAutocompleteProps {
   value: FipeValue;
   onChange: (value: FipeValue) => void;
+  /** apaga marca/modelo que nao existem no catalogo (so no pedido sem conta). Fora
+   * dele (editar um carro ja salvo) os nomes salvos ficam, so as listas ficam sem selecao */
+  limparForaDoCatalogo?: boolean;
 }
 
 interface FipeOption {
@@ -30,7 +33,7 @@ const TIPO_LABEL_KEY: Record<string, 'tipoCarro' | 'tipoMoto' | 'tipoCaminhao'> 
   trucks: 'tipoCaminhao',
 };
 
-export default function FipeAutocomplete({ value, onChange }: FipeAutocompleteProps) {
+export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo = false }: FipeAutocompleteProps) {
   const locale = useLocale();
   const t = useTranslations('veiculoForm');
   // A FIPE (tabela de precos de veiculos) so cobre o mercado brasileiro -
@@ -138,13 +141,13 @@ export default function FipeAutocomplete({ value, onChange }: FipeAutocompletePr
     const m = marcas.find((x) => x.name.toLowerCase() === value.marca.toLowerCase());
     setSelectedModeloCode(''); setSelectedAnoCode(''); setModelos([]); setAnos([]);
     if (m) { setSelectedMarcaCode(m.code); fetchModelos(value.tipo, m.code); }
-    else { setSelectedMarcaCode(''); onChange({ ...value, marca: '', modelo: '', ano: '', codigo: undefined, valor: undefined }); }
+    else { setSelectedMarcaCode(''); if (limparForaDoCatalogo) onChange({ ...value, marca: '', modelo: '', ano: '', codigo: undefined, valor: undefined }); }
   }, [marcas]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!value.modelo || !modelos.length || modelos.some((x) => x.code === selectedModeloCode)) return;
     const m = modelos.find((x) => x.name.toLowerCase() === value.modelo.toLowerCase());
     if (m) { setSelectedModeloCode(m.code); if (isBR && selectedMarcaCode) fetchAnos(value.tipo, selectedMarcaCode, m.code); }
-    else onChange({ ...value, modelo: '', ano: '', codigo: undefined, valor: undefined });
+    else if (limparForaDoCatalogo) onChange({ ...value, modelo: '', ano: '', codigo: undefined, valor: undefined });
   }, [modelos]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (selectedAnoCode || !value.ano || !anos.length) return;

@@ -4,6 +4,7 @@ import { notifNovaSolicitacaoTitulo } from './notif-i18n';
 import { enviarEmail } from './email';
 import { escapeHtml } from './email-i18n';
 import { urlNoIdioma } from './site-url';
+import { dentroDoLimite } from './rate-limit';
 import pt from '../../messages/pt.json';
 import ptPT from '../../messages/pt-PT.json';
 import en from '../../messages/en.json';
@@ -54,10 +55,21 @@ export async function avisarOficinasDoPedido(solicitacaoId: string): Promise<num
   });
   if (linhas.length) await supabaseAdmin.from('notificacoes').insert(linhas);
   // e-mail tambem (dono 07/11: "a oficina recebe e-mail quando chega um pedido novo");
-  // um erro de e-mail nao segura o aviso no painel
-  await Promise.all(alvo.map((o: any) => emailNovoPedido(o, sol, solicitacaoId, carro).catch((e) => console.error('[avisar-oficinas] e-mail', e))));
+  // um erro de e-mail nao segura o aviso no painel. Em segundo plano (a resposta ao
+  // cliente nao espera) e um de cada vez: o Resend aceita poucos envios por segundo
+  // e, todos juntos, a maioria voltava 429 sem e-mail (auditoria 07/11). No maximo
+  // EMAILS_POR_DIA por oficina, contra quem abre pedidos so para mandar e-mail.
+  const comEmail = alvo.filter((o: any) => o.profile?.email && dentroDoLimite(`email-pedido-oficina:${o.profile_id}`, EMAILS_POR_DIA, 24 * 3600 * 1000));
+  void (async () => {
+    for (const o of comEmail) {
+      await emailNovoPedido(o, sol, solicitacaoId, carro).catch((e) => console.error('[avisar-oficinas] e-mail', e));
+      await new Promise((ok) => setTimeout(ok, 600));
+    }
+  })();
   return linhas.length;
 }
+
+const EMAILS_POR_DIA = 15;
 
 const TXT_EMAIL: Record<string, { assunto: string; ola: string; texto: string; urg: Record<string, string>; botao: string; rodape: string }> = {
   et: { assunto: 'Uus päring: {t}', ola: 'Tere, {n}!', texto: 'Sinu piirkonnas on uus hinnapäring, mis sobib sinu töökoja teenustega:', urg: { baixa: 'Kiiret ei ole', media: 'Mõne nädala jooksul', alta: 'Kiire' }, botao: 'Vaata päringut ja saada pakkumine', rodape: 'Saad selle kirja, sest sinu töökoda on BipFixis ja teeb seda teenust selles piirkonnas.' },
@@ -75,7 +87,8 @@ async function emailNovoPedido(o: any, sol: any, solicitacaoId: string, carro: s
   const x = TXT_EMAIL[idioma];
   const tipo = TIPOS[idioma]?.[sol.tipo] || sol.tipo;
   const ano = (sol.veiculo as any)?.fipe_ano;
-  const desc = String(sol.descricao || '').slice(0, 300);
+  // texto do cliente sem links (o e-mail sai de noreply@bipfix.com: nada de link de terceiros)
+  const desc = String(sol.descricao || '').slice(0, 300).replace(/\b(?:https?:\/\/|www\.)\S+/gi, '[…]');
   const link = urlNoIdioma(idioma, `/oficina/enviar-orcamento/${solicitacaoId}`);
   await enviarEmail({ para, assunto: x.assunto.replace('{t}', [tipo, carro].filter(Boolean).join(' – ')), html: `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">

@@ -42,6 +42,9 @@ export async function POST(req: NextRequest) {
     const codigo = novoCodigo();
     await supabaseAdmin.from('pedidos_pendentes').update({
       email, codigo_hash: hashCodigo(p.id, codigo), envios: p.envios + 1, ultimo_envio_em: new Date().toISOString(),
+      // e-mail corrigido: o link do lembrete que foi para o endereco errado deixa de
+      // valer e o lembrete pode ir de novo, agora para o endereco certo
+      ...(email !== p.email ? { retomar_hash: null, lembrete_enviado_em: null } : {}),
     }).eq('id', p.id);
     const enviado = await enviarCodigo(email, p.nome, codigo, p.idioma);
     if (!enviado) throw new Error('e-mail do codigo nao enviado');

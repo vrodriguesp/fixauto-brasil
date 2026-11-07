@@ -230,7 +230,9 @@ export async function ativarEPublicar(p: Record<string, any>): Promise<{ id: str
 // o tipo de servico e o carro (se o e-mail foi digitado errado, um estranho nao
 // ve endereco, descricao nem telefone). Disparado pela tarefa de hora em hora.
 export const LEMBRETE_HORAS = 2;
-export const hashRetomar = (token: string) => createHash('sha256').update(`retomar:${token}`).digest('hex');
+// o token vale so para o e-mail para onde foi enviado: corrigir o e-mail depois
+// (reenviar) invalida o link que foi para o endereco errado
+export const hashRetomar = (token: string, email: string) => createHash('sha256').update(`retomar:${token}:${email.trim().toLowerCase()}`).digest('hex');
 
 const TXT_LEMBRETE: Record<string, { assunto: string; ola: string; texto: string; prazo: string; confirmar: string; cancelar: string; ignore: string }> = {
   et: { assunto: 'Sinu päring pole veel töökodadeni jõudnud', ola: 'Tere, {n}!', texto: 'Alustasid BipFixis hinnapäringut, kuid koodi ei sisestatud, seega ei ole töökojad seda veel näinud:', prazo: 'Hoiame päringut kuni {h}. Seejärel kustutatakse see koos fotode ja aktiveerimata kontoga.', confirmar: 'Kinnita ja saada päring', cancelar: 'Tühista päring', ignore: 'Kui sa päringut ei alustanud, ignoreeri seda kirja – midagi ei saadeta ja andmed kustutatakse.' },
@@ -257,7 +259,7 @@ export async function enviarLembretes(): Promise<number> {
     const token = randomUUID().replace(/-/g, '') + randomUUID().replace(/-/g, '');
     // marca antes de enviar (so um lembrete, mesmo com duas tarefas ao mesmo tempo)
     const { data: marcado } = await supabaseAdmin.from('pedidos_pendentes')
-      .update({ lembrete_enviado_em: new Date().toISOString(), retomar_hash: hashRetomar(token) })
+      .update({ lembrete_enviado_em: new Date().toISOString(), retomar_hash: hashRetomar(token, p.email) })
       .eq('id', p.id).is('lembrete_enviado_em', null).select('id');
     if (!marcado?.length) continue;
     if (await enviarLembrete(p, token)) { enviados++; await contarEtapa('pedido_lembrete', 'enviado'); }

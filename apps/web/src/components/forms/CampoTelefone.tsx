@@ -7,12 +7,14 @@ import { PREFIXOS_TELEFONE, EXEMPLO_TELEFONE, prefixoPadrao, separarTelefone, ju
 // Telefone com prefixo internacional (dono 06/11): bandeira + codigo ja no pais do
 // mercado do site, ao lado do numero. Devolve o numero completo ("+372 5123 4567").
 // O mesmo campo no app: apps/mobile/components/CampoTelefone.tsx.
-export default function CampoTelefone({ id, value, onChange, placeholder, required, autoComplete = 'tel' }: {
+export default function CampoTelefone({ id, value, onChange, placeholder, required, autoComplete = 'tel', pais }: {
   id: string; value: string; onChange: (v: string) => void; placeholder?: string; required?: boolean; autoComplete?: string;
+  /** pais do cadastro (oficina/loja): prefixo de numero antigo salvo sem "+" */
+  pais?: string | null;
 }) {
   const locale = useLocale();
   const tc = useTranslations('constants');
-  const padrao = prefixoPadrao(locale);
+  const padrao = prefixoPadrao(locale, pais);
   const [ddi, setDdi] = useState(() => separarTelefone(value, padrao).ddi);
   const [numero, setNumero] = useState(() => separarTelefone(value, padrao).numero);
   // valor que chega depois (perfil carregado do banco, rascunho): mostra separado
@@ -20,7 +22,7 @@ export default function CampoTelefone({ id, value, onChange, placeholder, requir
     if (juntarTelefone(ddi, numero) === (value || '')) return;
     const s = separarTelefone(value, padrao);
     setDdi(s.ddi); setNumero(s.numero);
-  }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [value, padrao]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const mudar = (novoDdi: string, novoNumero: string) => {
     // numero colado ja com "+..." de outro pais: o prefixo vai para o seletor

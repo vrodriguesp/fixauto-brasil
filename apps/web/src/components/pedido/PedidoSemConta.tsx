@@ -407,7 +407,7 @@ export default function PedidoSemConta() {
           <div data-testid="passo-carro" hidden={etapa !== 'carro'}>
             <h2 className="text-lg font-semibold text-gray-900 mb-1">{tn('step1Title')}</h2>
             <p className="text-sm text-gray-500 mb-4">{t('carroDica')}</p>
-            <FipeAutocomplete value={{ tipo: carro.tipo, marca: carro.marca, modelo: carro.modelo, ano: carro.ano }}
+            <FipeAutocomplete limparForaDoCatalogo value={{ tipo: carro.tipo, marca: carro.marca, modelo: carro.modelo, ano: carro.ano }}
               onChange={(f) => setCarro({ tipo: f.tipo, marca: f.marca, modelo: f.modelo, ano: f.ano, codigo: f.codigo || '' })} />
             <label htmlFor="pedido-placa" className="block text-sm font-medium text-gray-700 mt-4 mb-1">{tn('plateLabel')}</label>
             <input id="pedido-placa" className="input-field" maxLength={15} placeholder={exemploPlaca(locale)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} />
