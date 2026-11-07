@@ -276,8 +276,9 @@ export default function SolicitacaoDetalhePage() {
                 {sol.emergencia_id && !(sol.orcamentos || []).some((o: any) => o.oficina_id === oficina?.id && o.status === 'aceito') && (
                   <p className="mb-2 text-xs text-gray-600">{t('clientePediuLigar')}</p>
                 )}
-                <a href={`tel:${sol.cliente.telefone.replace(/\s/g, '')}`} className="btn-primary flex min-h-[44px] w-full items-center justify-center gap-2 sm:w-auto sm:px-5">
-                  <span aria-hidden="true">📞</span> {t('ligarCliente')} <span className="font-normal">{sol.cliente.telefone}</span>
+                <a href={`tel:${sol.cliente.telefone.replace(/\s/g, '')}`} className="btn-primary flex min-h-[48px] w-full flex-col items-center justify-center text-center sm:w-auto sm:px-6">
+                  <span><span aria-hidden="true">📞 </span>{t('ligarCliente')}</span>
+                  <span className="whitespace-nowrap text-sm font-normal">{sol.cliente.telefone}</span>
                 </a>
               </div>
             )}

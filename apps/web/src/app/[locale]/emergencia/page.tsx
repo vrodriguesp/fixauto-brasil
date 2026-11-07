@@ -636,7 +636,7 @@ export default function EmergenciaPage() {
               </div>
 
               <label className="mt-6 flex items-start gap-3 rounded-lg border border-gray-200 p-4 text-sm" data-testid="podem-ligar">
-                <input type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 rounded border-gray-300 text-red-600 focus:ring-red-500 disabled:opacity-50"
+                <input type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 rounded border-gray-300 text-red-600 accent-red-600 focus:ring-red-500 disabled:opacity-50"
                   checked={podemLigar && !!telefone.trim()} disabled={!telefone.trim()} onChange={(e) => setPodemLigar(e.target.checked)} />
                 <span className="min-w-0">
                   <span className="block font-medium text-gray-900">{t('podemLigar')}</span>
