@@ -9,7 +9,7 @@ import { dataLocalDe, horaLocalDe } from '@/lib/turnos';
 // "Mudar data" e "Cancelar agendamento", sempre com justificativa curta. O
 // servidor avisa o cliente (e-mail com o calendario, aviso e linha no chat).
 export default function AcoesAgendamento({ agendaId, dataInicio, pais, aoMudar }: {
-  agendaId: string; dataInicio: string; pais: string | null; aoMudar: () => void;
+  agendaId: string; dataInicio: string; pais: string | null; aoMudar: (aviso: string) => void;
 }) {
   const t = useTranslations('agendaMudanca');
   const tErr = useTranslations('erros');
@@ -32,9 +32,11 @@ export default function AcoesAgendamento({ agendaId, dataInicio, pais, aoMudar }
     const d = r ? await r.json().catch(() => ({})) : {};
     setEnviando(false);
     if (!r?.ok) { setErro(textoErroApi(tErr, r?.status || 500, d)); return; }
-    setFeito(t(modo === 'data' ? 'feitoData' : 'feitoCancelado'));
+    // a agenda recarrega (o cartao pode sumir/mudar de dia): a confirmacao vai para o topo da pagina
+    const aviso = t(modo === 'data' ? 'feitoData' : 'feitoCancelado');
+    setFeito(aviso);
     setModo(null); setMotivo('');
-    aoMudar();
+    aoMudar(aviso);
   };
 
   if (feito) return <p role="status" className="mt-2 rounded-lg bg-green-50 p-2 text-xs text-green-800" data-testid="acao-agenda-feita">{feito}</p>;

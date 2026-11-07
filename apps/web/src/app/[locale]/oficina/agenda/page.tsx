@@ -32,6 +32,7 @@ function getFirstDayOfMonth(y: number, m: number) { return (new Date(y, m, 1).ge
 
 export default function AgendaPage() {
   const t = useTranslations('oficinaAgenda');
+  const tMud = useTranslations('agendaMudanca');
   const tc = useTranslations('constants');
   const locale = useLocale();
   const MESES = [t('mes0'), t('mes1'), t('mes2'), t('mes3'), t('mes4'), t('mes5'), t('mes6'), t('mes7'), t('mes8'), t('mes9'), t('mes10'), t('mes11')];
@@ -94,6 +95,8 @@ export default function AgendaPage() {
   // entrega recusada pelo servidor (ex.: carro sem check-in): mostra o aviso
   const [erroEntrega, setErroEntrega] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  // confirmacao de "mudar data"/"cancelar" (076), fica no topo depois que a agenda recarrega
+  const [avisoAgenda, setAvisoAgenda] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<any>(null);
   const [funcionarios, setFuncionarios] = useState<any[]>([]);
@@ -526,7 +529,7 @@ export default function AgendaPage() {
                 </div>
                 {/* carro de pedido ainda por chegar: mudar data / cancelar, com justificativa (076) */}
                 {ev.tipo === 'plataforma' && ev.solicitacao_id && ev.status === 'agendado' && !isMecanico && (
-                  <AcoesAgendamento agendaId={ev.id} dataInicio={ev.data_inicio} pais={(oficina as any)?.pais ?? null} aoMudar={() => { refresh(); refreshSolicitacoes(); }} />
+                  <AcoesAgendamento agendaId={ev.id} dataInicio={ev.data_inicio} pais={(oficina as any)?.pais ?? null} aoMudar={(aviso) => { setAvisoAgenda(aviso); refresh(); refreshSolicitacoes(); }} />
                 )}
               </div>
             )}
@@ -538,6 +541,13 @@ export default function AgendaPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* confirmacao fixa na tela (acima da barra do celular): a lista pode ter mudado de lugar */}
+      {avisoAgenda && (
+        <div role="status" data-testid="aviso-agenda" className="fixed inset-x-4 bottom-24 z-40 mx-auto flex max-w-md items-start justify-between gap-3 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800 shadow-lg md:bottom-6">
+          <span>✓ {avisoAgenda}</span>
+          <button type="button" onClick={() => setAvisoAgenda('')} aria-label={tMud('fechar')} className="text-green-700">✕</button>
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{isMecanico ? t('minhaAgenda') : t('agenda')}</h1>

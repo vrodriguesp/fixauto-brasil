@@ -949,7 +949,7 @@
     "previsao": "Previsão de entrega (opcional)",
     "motivo": "Justificativa (o cliente vê)",
     "motivoPlaceholder": "Ex.: a peça só chega na quinta-feira",
-    "enviarProposta": "Enviar proposta ao cliente",
+    "enviarProposta": "Enviar nova data ao cliente",
     "propostaEnviada": "Proposta enviada. O cliente aceita a nova data ou mantém a atual, e você recebe um aviso.",
     "propostaPendente": "Proposta de nova data enviada ({quando}). Aguardando o cliente.",
     "motivoCurto": "Escreva uma justificativa (pelo menos 5 caracteres).",
@@ -974,6 +974,7 @@
     "feitoAceita": "Nova data confirmada. Você vai receber um e-mail com o calendário atualizado.",
     "feitoMantida": "Você manteve a data atual. A oficina foi avisada.",
     "notaRemarcar": "Para remarcar ou cancelar, escreva para a oficina no chat ou ligue para ela.",
-    "conversar": "Conversar com a oficina"
+    "conversar": "Conversar com a oficina",
+    "fechar": "Fechar"
   }
 }

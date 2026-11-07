@@ -1220,7 +1220,7 @@
     "previsao": "Pronta prevista (facoltativo)",
     "motivo": "Motivo (il cliente lo vede)",
     "motivoPlaceholder": "Es.: il pezzo arriva solo giovedì",
-    "enviarProposta": "Invia la proposta al cliente",
+    "enviarProposta": "Invia la nuova data al cliente",
     "propostaEnviada": "Proposta inviata. Il cliente accetta la nuova data o mantiene quella attuale e ricevi una notifica.",
     "propostaPendente": "Nuova data proposta ({quando}). In attesa del cliente.",
     "motivoCurto": "Scrivi un motivo (almeno 5 caratteri).",
@@ -1245,6 +1245,7 @@
     "feitoAceita": "Nuova data confermata. Riceverai un’e-mail con l’evento del calendario aggiornato.",
     "feitoMantida": "Hai mantenuto la data attuale. L’officina è stata avvisata.",
     "notaRemarcar": "Per spostare o annullare, scrivi all’officina nella chat o chiamala.",
-    "conversar": "Scrivi all’officina"
+    "conversar": "Scrivi all’officina",
+    "fechar": "Chiudi"
   }
 }

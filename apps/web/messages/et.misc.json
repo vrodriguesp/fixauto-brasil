@@ -1220,7 +1220,7 @@
     "previsao": "Eeldatav valmimine (valikuline)",
     "motivo": "Põhjendus (klient näeb seda)",
     "motivoPlaceholder": "Nt varuosa saabub alles neljapäeval",
-    "enviarProposta": "Saada ettepanek kliendile",
+    "enviarProposta": "Saada uus aeg kliendile",
     "propostaEnviada": "Ettepanek saadetud. Klient nõustub uue ajaga või jätab praeguse ning sa saad teavituse.",
     "propostaPendente": "Uue aja ettepanek saadetud ({quando}). Ootame kliendi vastust.",
     "motivoCurto": "Kirjuta põhjendus (vähemalt 5 tähemärki).",
@@ -1245,6 +1245,7 @@
     "feitoAceita": "Uus aeg kinnitatud. Saad e-kirja uuendatud kalendrisündmusega.",
     "feitoMantida": "Jätsid praeguse aja. Töökoda sai teavituse.",
     "notaRemarcar": "Aja muutmiseks või tühistamiseks kirjuta töökojale vestluses või helista.",
-    "conversar": "Kirjuta töökojale"
+    "conversar": "Kirjuta töökojale",
+    "fechar": "Sulge"
   }
 }
