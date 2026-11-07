@@ -345,6 +345,21 @@ export default function SolicitacaoDetailScreen() {
             {(orc as any).garantia_dias != null && (
               <Text className="text-sm text-gray-700 mb-3">🛡️ {(orc as any).garantia_dias > 0 ? tDias(t, 'garantia.noOrcamento', (orc as any).garantia_dias) : t('garantia.sem')}</Text>
             )}
+            {/* data atual da agenda (pode ter mudado depois do aceite) + como remarcar/cancelar (076) */}
+            {escolhido && (() => {
+              const ag = agenda.find((a: any) => a.status === 'agendado' && a.oficina_id === orc.oficina_id) as any;
+              if (!ag?.data_inicio) return null;
+              return (
+                <View className="border-t border-emerald-200 pt-3 mb-3" testID="agendamento-atual">
+                  <Text className="text-sm text-emerald-900"><Text className="font-semibold">📅 {t('agendaMudanca.levarCarro')}: </Text>{new Date(ag.data_inicio).toLocaleString(locale === 'pt' ? 'pt-BR' : locale, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</Text>
+                  <Text className="text-xs text-emerald-900 mt-2">{t('agendaMudanca.notaRemarcar')}</Text>
+                  <Pressable onPress={() => router.push({ pathname: '/conversa/[id]', params: { id: solicitacao.id, oficina: orc.oficina_id } })} accessibilityRole="button"
+                    className="self-start mt-2 bg-white border border-primary-200 rounded-lg px-3 py-2" testID="conversar-oficina">
+                    <Text className="text-primary-700 text-sm font-medium">💬 {t('agendaMudanca.conversar')}</Text>
+                  </Pressable>
+                </View>
+              );
+            })()}
 
             {/* pedido expirado: aceitar/recusar so depois de reabrir (aviso no topo) */}
             {(orc.status === 'enviado' || orc.status === 'visualizado') && (solicitacao.status as string) !== 'expirada' ? (

@@ -3,6 +3,7 @@
 import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useState } from 'react';
 import RevisaoPendente from '@/components/cliente/RevisaoPendente';
+import AgendamentoCliente from '@/components/cliente/AgendamentoCliente';
 import PedidoExpirado from '@/components/cliente/PedidoExpirado';
 import { VALIDADE_PEDIDO_DIAS } from '@/lib/pedido-validade';
 import { textoErroApi } from '@/lib/erro-api';
@@ -44,6 +45,7 @@ const slotEscolhido = (orc: any) => orc.disponibilidade.find((d: any) => d.id ==
 
 export default function OrcamentoDetalhePage() {
   const t = useTranslations('clienteOrcamentoDetalhe');
+  const tMud = useTranslations('agendaMudanca');
   const te = useTranslations('editarPedido');
   const tg = useTranslations('garantia');
   const tc = useTranslations('constants');
@@ -187,6 +189,7 @@ export default function OrcamentoDetalhePage() {
             <p className="text-xs text-yellow-800">
               {t('bringVehicleNote')}
             </p>
+            <p className="mt-2 text-xs text-yellow-800">{tMud('notaRemarcar')}</p>
           </div>
         </div>
 
@@ -735,20 +738,23 @@ export default function OrcamentoDetalhePage() {
                         )}
                       </div>
                     )}
-                    {orc.disponibilidade && orc.disponibilidade.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-green-200 space-y-1 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-green-700">{t('checkin')}</span>
-                          <span className="font-medium text-green-900">
-                            {formatSlotDate(slotEscolhido(orc).data_checkin, locale)} - {slotEscolhido(orc).turno === 'manha' ? '08:00-12:00' : '13:00-17:00'}
-                          </span>
+                    {/* data atual da agenda (pode ter mudado depois do aceite) + como remarcar/cancelar */}
+                    <AgendamentoCliente solicitacaoId={solicitacao.id} oficinaId={orc.oficina_id} pais={(orc as any).oficina?.pais} rotuloEntrega={t('checkin')} rotuloPrevisao={t('deliveryForecast')}>
+                      {orc.disponibilidade && orc.disponibilidade.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-green-200 space-y-1 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-green-700">{t('checkin')}</span>
+                            <span className="font-medium text-green-900">
+                              {formatSlotDate(slotEscolhido(orc).data_checkin, locale)} - {slotEscolhido(orc).turno === 'manha' ? '08:00-12:00' : '13:00-17:00'}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-green-700">{t('deliveryForecast')}</span>
+                            <span className="font-medium text-green-900">{formatSlotDate(slotEscolhido(orc).data_previsao_entrega, locale)}</span>
+                          </div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-green-700">{t('deliveryForecast')}</span>
-                          <span className="font-medium text-green-900">{formatSlotDate(slotEscolhido(orc).data_previsao_entrega, locale)}</span>
-                        </div>
-                      </div>
-                    )}
+                      )}
+                    </AgendamentoCliente>
                   </div>
                 </div>
               ) : orc.status === 'recusado' ? (

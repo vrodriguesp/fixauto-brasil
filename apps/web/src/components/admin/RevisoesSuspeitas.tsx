@@ -21,6 +21,7 @@ export default function RevisoesSuspeitas() {
       const desde = new Date(Date.now() - 90 * 86400000).toISOString();
       const { data } = await supabase.from('orcamento_revisoes')
         .select('oficina_id, valor_anterior, valor_novo, status, motivo, created_at, oficina:oficinas(nome_fantasia)')
+        .eq('tipo', 'valor') // proposta de nova data (076) nao e ajuste de preco
         .gte('created_at', desde).order('created_at', { ascending: false }).limit(2000);
       const por: Record<string, Linha & { somaPct: number }> = {};
       for (const r of (data || []) as any[]) {

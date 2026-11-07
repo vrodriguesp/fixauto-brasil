@@ -17,5 +17,10 @@ export async function GET(req: NextRequest, { params }: { params: { numero: stri
   const oficina = req.nextUrl.searchParams.get('o');
   if (oficina) return NextResponse.redirect(urlNoIdioma(oficina, `/oficina/enviar-orcamento/${sol.id}`), 302);
   const idioma = (sol as any).cliente?.idioma ?? 'et';
+  // ?c=1: botao "conversar com a oficina" do e-mail de agendamento -> chat com a oficina escolhida
+  if (req.nextUrl.searchParams.get('c')) {
+    const { data: orc } = await supabaseAdmin.from('orcamentos').select('oficina_id').eq('solicitacao_id', sol.id).eq('status', 'aceito').maybeSingle();
+    return NextResponse.redirect(urlNoIdioma(idioma, `/cliente/mensagens/${sol.id}${orc?.oficina_id ? `?oficina=${orc.oficina_id}` : ''}`), 302);
+  }
   return NextResponse.redirect(urlNoIdioma(idioma, `/cliente/orcamentos/${sol.id}`), 302);
 }

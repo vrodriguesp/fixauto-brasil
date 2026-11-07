@@ -3,6 +3,7 @@
 import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useState, useEffect, useMemo } from 'react';
 import { localParaIso, dataLocalDe, horaLocalDe } from '@/lib/turnos';
+import AcoesAgendamento from '@/components/oficina/AcoesAgendamento';
 import { exemploPlaca } from '@/lib/exemplos';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAgenda } from '@/hooks/use-agenda';
@@ -523,6 +524,10 @@ export default function AgendaPage() {
                     </>
                   )}
                 </div>
+                {/* carro de pedido ainda por chegar: mudar data / cancelar, com justificativa (076) */}
+                {ev.tipo === 'plataforma' && ev.solicitacao_id && ev.status === 'agendado' && !isMecanico && (
+                  <AcoesAgendamento agendaId={ev.id} dataInicio={ev.data_inicio} pais={(oficina as any)?.pais ?? null} aoMudar={() => { refresh(); refreshSolicitacoes(); }} />
+                )}
               </div>
             )}
           </div>

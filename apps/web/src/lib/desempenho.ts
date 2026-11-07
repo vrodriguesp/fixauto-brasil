@@ -58,7 +58,7 @@ export async function carregarDesempenho(opts: { oficinaId: string; donoProfileI
     supabase.from('orcamentos').select('id, created_at, status, valor_total, solicitacao_id, solicitacao:solicitacoes(created_at, status)').eq('oficina_id', oficinaId).gte('created_at', desdeIso),
     supabase.from('agenda').select('id, created_at, tipo, status, solicitacao_id, data_fim, data_fim_prevista, entregue_em, etapas:manutencao_etapas(status, created_at)').eq('oficina_id', oficinaId).gte('created_at', desdeIso),
     supabase.from('avaliacoes').select('nota, comentario, created_at').eq('oficina_id', oficinaId).order('created_at', { ascending: false }),
-    supabase.from('orcamento_revisoes').select('valor_anterior, valor_novo, decidido_em, status').eq('oficina_id', oficinaId).eq('status', 'aprovada').gte('decidido_em', desdeIso),
+    supabase.from('orcamento_revisoes').select('valor_anterior, valor_novo, decidido_em, status').eq('oficina_id', oficinaId).eq('tipo', 'valor').eq('status', 'aprovada').gte('decidido_em', desdeIso),
     supabase.from('oficinas').select('created_at').eq('id', oficinaId).maybeSingle(),
   ]);
 

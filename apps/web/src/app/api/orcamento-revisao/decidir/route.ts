@@ -5,6 +5,9 @@ import { ehUuid } from '@/lib/validacao';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { notifRevisaoDecidida } from '@/lib/notif-revisao';
+import { horaLocalEmUtc, fusoDoPais } from '@/lib/fuso';
+import { avisarClienteAgendamento } from '@/lib/email-agendamento';
+import { textosAgenda, preencher, dataHora } from '@/lib/notif-agenda';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,10 +30,13 @@ export async function POST(req: NextRequest) {
   if (!ehUuid(revisaoId) || !decisao || !STATUS[decisao]) return NextResponse.json({ error: 'Dados inválidos', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
 
   const { data: rev } = await supabaseAdmin.from('orcamento_revisoes')
-    .select('id, status, orcamento_id, solicitacao_id, oficina_id, valor_anterior, valor_novo, prazo_dias_novo, itens, solicitacao:solicitacoes(cliente_id, veiculo:veiculos(fipe_marca, fipe_modelo)), oficina:oficinas(profile_id, pais, profile:profiles!oficinas_profile_id_fkey(idioma))')
+    .select('id, tipo, nova_data_checkin, novo_turno, nova_previsao_entrega, status, orcamento_id, solicitacao_id, oficina_id, valor_anterior, valor_novo, prazo_dias_novo, itens, solicitacao:solicitacoes(cliente_id, veiculo:veiculos(fipe_marca, fipe_modelo)), oficina:oficinas(profile_id, pais, profile:profiles!oficinas_profile_id_fkey(idioma))')
     .eq('id', revisaoId).maybeSingle();
   if (!rev) return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
   if ((rev as any).solicitacao?.cliente_id !== userId) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+
+  // proposta de NOVA DATA (076): aceitar muda a agenda; recusar mantem a data atual e o servico
+  if ((rev as any).tipo === 'data') return decidirData(rev as any, decisao === 'aprovar', userId);
 
   // trava atomica: so decide uma vez
   const { data: trava } = await supabaseAdmin.from('orcamento_revisoes')
@@ -74,4 +80,38 @@ export async function POST(req: NextRequest) {
     });
   }
   return NextResponse.json({ ok: true, status: STATUS[decisao] });
+}
+
+async function decidirData(rev: any, aceitar: boolean, userId: string) {
+  const { data: trava } = await supabaseAdmin.from('orcamento_revisoes')
+    .update({ status: aceitar ? 'aprovada' : 'recusada', decidido_em: new Date().toISOString(), decidido_por: userId })
+    .eq('id', rev.id).eq('status', 'pendente').select('id');
+  if (!trava?.length) return NextResponse.json({ error: 'Revisão já decidida', codigo: 'REVISAO_DECIDIDA' }, { status: 409 });
+  const of = rev.oficina;
+  const inicio = horaLocalEmUtc(rev.nova_data_checkin, rev.novo_turno === 'manha' ? '08:00' : '13:00', of?.pais);
+  let emailEnviado = false;
+  if (aceitar) {
+    const { data: ag } = await supabaseAdmin.from('agenda').select('id, data_inicio')
+      .eq('solicitacao_id', rev.solicitacao_id).eq('oficina_id', rev.oficina_id).eq('status', 'agendado').maybeSingle();
+    if (!ag) {
+      // o carro chegou entre a proposta e a resposta: nada a mudar
+      await supabaseAdmin.from('orcamento_revisoes').update({ status: 'cancelada' }).eq('id', rev.id);
+      return NextResponse.json({ error: 'Carro já na oficina', codigo: 'NAO_AGENDADO' }, { status: 409 });
+    }
+    const fim = horaLocalEmUtc(rev.nova_previsao_entrega || rev.nova_data_checkin, rev.novo_turno === 'manha' ? '12:00' : '18:00', of?.pais);
+    await supabaseAdmin.from('agenda').update({ data_inicio: inicio, data_fim: fim, data_fim_prevista: fim, no_show: false }).eq('id', ag.id).eq('status', 'agendado');
+    await supabaseAdmin.from('agenda_historico').insert({ agenda_id: ag.id, acao: 'data_proposta_aceita', por_profile_id: userId, detalhe: { de: ag.data_inicio, para: inicio, revisao_id: rev.id } });
+    emailEnviado = await avisarClienteAgendamento(ag.id).catch(() => false);
+  }
+  const veic = rev.solicitacao?.veiculo;
+  const idioma = of?.profile?.idioma;
+  const tOf = textosAgenda(idioma);
+  if (of?.profile_id) {
+    await supabaseAdmin.from('notificacoes').insert({
+      profile_id: of.profile_id, tipo: 'revisao_orcamento_decidida', titulo: aceitar ? tOf.aceitaTitulo : tOf.recusadaTitulo,
+      mensagem: preencher(tOf.decididaMsg, { carro: [veic?.fipe_marca, veic?.fipe_modelo].filter(Boolean).join(' '), quando: dataHora(inicio, idioma, fusoDoPais(of?.pais)) }),
+      dados: { solicitacao_id: rev.solicitacao_id, orcamento_id: rev.orcamento_id, revisao_id: rev.id, decisao: aceitar ? 'aprovada' : 'recusada' },
+    });
+  }
+  return NextResponse.json({ ok: true, status: aceitar ? 'aprovada' : 'recusada', emailEnviado });
 }

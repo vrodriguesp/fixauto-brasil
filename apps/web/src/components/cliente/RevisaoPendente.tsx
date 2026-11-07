@@ -4,9 +4,10 @@ import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, INTL_LOCALE } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { textoErroApi } from '@/lib/erro-api';
+import { fusoDoPais } from '@/lib/fuso';
 
 interface Revisao {
   id: string;
@@ -16,6 +17,11 @@ interface Revisao {
   motivo: string;
   itens: { descricao: string; quantidade: number; valor_total: number }[];
   oficina: { nome_fantasia: string; pais: string | null } | null;
+  // 076: proposta de nova data de entrega (antes do check-in)
+  tipo?: 'valor' | 'data';
+  nova_data_checkin?: string | null;
+  novo_turno?: 'manha' | 'tarde' | null;
+  nova_previsao_entrega?: string | null;
 }
 
 // O carro ja esta na oficina? (check-in feito, servico andando/feito ou o
@@ -29,6 +35,7 @@ const carroNaOficina = (ags: { status: string; checkin_em: string | null; data_i
 // trabalho adicional so com aprovacao do cliente).
 export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicitacaoId: string; aoDecidir?: () => void }) {
   const t = useTranslations('revisaoOrcamento');
+  const tMud = useTranslations('agendaMudanca');
   const tErr = useTranslations('erros');
   const locale = useLocale();
   const [rev, setRev] = useState<Revisao | null>(null);
@@ -37,14 +44,15 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
   const [erro, setErro] = useState('');
   const [feito, setFeito] = useState<string | null>(null);
   const [naOficina, setNaOficina] = useState(false);
+  const [dataAtual, setDataAtual] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.from('orcamento_revisoes')
-      .select('id, valor_anterior, valor_novo, prazo_dias_novo, motivo, itens, oficina:oficinas(nome_fantasia, pais)')
+      .select('id, tipo, nova_data_checkin, novo_turno, nova_previsao_entrega, valor_anterior, valor_novo, prazo_dias_novo, motivo, itens, oficina:oficinas(nome_fantasia, pais)')
       .eq('solicitacao_id', solicitacaoId).eq('status', 'pendente').maybeSingle()
       .then(({ data }) => setRev((data as any) || null));
     supabase.from('agenda').select('status, checkin_em, data_inicio').eq('solicitacao_id', solicitacaoId).neq('status', 'cancelado')
-      .then(({ data }) => setNaOficina(carroNaOficina((data as any) || [])));
+      .then(({ data }) => { setNaOficina(carroNaOficina((data as any) || [])); setDataAtual(((data as any) || []).find((a: any) => a.status === 'agendado')?.data_inicio || null); });
   }, [solicitacaoId]);
 
   if (feito) return <p role="status" className="card mb-6 bg-green-50 text-green-800">{feito}</p>;
@@ -62,9 +70,33 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
     const d = res ? await res.json().catch(() => ({})) : {};
     setEnviando(false);
     if (!res?.ok) { setErro(textoErroApi(tErr, res?.status || 500, d)); return; }
-    setFeito(t(decisao === 'recusar' && !naOficina ? 'feito_recusarSemCarro' : `feito_${decisao}`));
+    setFeito(rev.tipo === 'data' ? tMud(decisao === 'aprovar' ? 'feitoAceita' : 'feitoMantida') : t(decisao === 'recusar' && !naOficina ? 'feito_recusarSemCarro' : `feito_${decisao}`));
     aoDecidir?.();
   };
+
+  if (rev.tipo === 'data') {
+    // nova data: aceitar muda o agendamento; manter nao cancela nada
+    const fuso = fusoDoPais(rev.oficina?.pais);
+    const loc = INTL_LOCALE[locale] || 'en-GB';
+    const nova = `${new Date(`${rev.nova_data_checkin}T12:00:00`).toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long' })}, ${tMud(rev.novo_turno === 'tarde' ? 'tarde' : 'manha')}`;
+    return (
+      <section className="card mb-6 border-2 border-blue-400 bg-blue-50" aria-labelledby="revisao-titulo" data-testid="proposta-nova-data">
+        <h2 id="revisao-titulo" className="text-lg font-semibold text-gray-900">📅 {tMud('dataTitulo', { oficina: rev.oficina?.nome_fantasia || '' })}</h2>
+        <dl className="mt-2 text-sm text-gray-800 space-y-1">
+          {dataAtual && <div><dt className="inline text-gray-600">{tMud('dataDe')}: </dt><dd className="inline line-through">{new Date(dataAtual).toLocaleString(loc, { timeZone: fuso, weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</dd></div>}
+          <div><dt className="inline text-gray-600">{tMud('dataPara')}: </dt><dd className="inline font-bold">{nova}</dd></div>
+          {rev.nova_previsao_entrega && <div><dd>{tMud('previsaoNova', { data: new Date(`${rev.nova_previsao_entrega}T12:00:00`).toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long' }) })}</dd></div>}
+        </dl>
+        <p className="mt-3 text-sm text-gray-800"><span className="font-medium">{tMud('motivoOficina')}:</span> <TextoTraduzido compacto texto={rev.motivo} /></p>
+        <p className="mt-3 text-xs text-gray-600">{tMud('dataExplicacao')}</p>
+        {erro && <p role="alert" className="mt-3 text-sm text-red-700">{erro}</p>}
+        <div className="mt-4 flex flex-col sm:flex-row gap-2">
+          <button type="button" disabled={enviando} onClick={() => decidir('aprovar')} className="btn-primary disabled:opacity-50">{tMud('aceitarData')}</button>
+          <button type="button" disabled={enviando} onClick={() => decidir('recusar')} className="btn-secondary disabled:opacity-50">{tMud('manterData')}</button>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="card mb-6 border-2 border-amber-400 bg-amber-50" aria-labelledby="revisao-titulo">

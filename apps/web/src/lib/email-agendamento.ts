@@ -19,6 +19,7 @@ type Txt = {
   assuntoConf: string; assuntoAlt: string; ola: string; introConf: string; introAlt: string;
   oficina: string; endereco: string; telefone: string; levar: string; pronto: string; carro: string; valor: string;
   itens: string; garantia: string; mapa: string; google: string; verPedido: string; anexo: string; evento: string; rodape: string;
+  remarcar: string; conversar: string; motivo: string; assuntoCanc: string; introCanc: string; reaberto: string; anexoCanc: string;
 };
 const TXT: Record<string, Txt> = {
   pt: {
@@ -28,6 +29,7 @@ const TXT: Record<string, Txt> = {
     itens: 'O que está incluído', garantia: 'Garantia: {n} dias', mapa: 'Ver no mapa', google: 'Adicionar ao Google Calendar', verPedido: 'Ver o pedido',
     anexo: 'O arquivo em anexo adiciona o agendamento ao calendário do iPhone, do Mac ou do Outlook, com lembretes no dia anterior e 1 hora antes.',
     evento: 'Levar o carro: {oficina}', rodape: 'Você recebe este e-mail porque aceitou um orçamento na BipFix.',
+    remarcar: "Para remarcar ou cancelar, escreva para a oficina no chat do pedido ou ligue para ela.", conversar: "Conversar com a oficina", motivo: "Motivo da oficina", assuntoCanc: "Agendamento cancelado – {oficina}", introCanc: "A oficina cancelou o agendamento de {quando}.", reaberto: "Seu pedido voltou a ficar aberto: você pode escolher outro orçamento ou esperar novas ofertas.", anexoCanc: "O arquivo em anexo tira o agendamento do seu calendário.",
   },
   'pt-PT': {
     assuntoConf: 'Marcação confirmada – {oficina}, {quando}', assuntoAlt: 'Horário alterado – {oficina}, {quando}', ola: 'Olá, {n}!',
@@ -36,6 +38,7 @@ const TXT: Record<string, Txt> = {
     itens: 'O que está incluído', garantia: 'Garantia: {n} dias', mapa: 'Ver no mapa', google: 'Adicionar ao Google Calendar', verPedido: 'Ver o pedido',
     anexo: 'O ficheiro em anexo adiciona a marcação ao calendário do iPhone, do Mac ou do Outlook, com lembretes no dia anterior e 1 hora antes.',
     evento: 'Entregar o carro: {oficina}', rodape: 'Recebe este e-mail porque aceitou um orçamento na BipFix.',
+    remarcar: "Para remarcar ou cancelar, escreva à oficina no chat do pedido ou ligue-lhe.", conversar: "Conversar com a oficina", motivo: "Motivo da oficina", assuntoCanc: "Marcação cancelada – {oficina}", introCanc: "A oficina cancelou a marcação de {quando}.", reaberto: "O seu pedido voltou a ficar aberto: pode escolher outro orçamento ou esperar por novas propostas.", anexoCanc: "O ficheiro em anexo retira a marcação do seu calendário.",
   },
   en: {
     assuntoConf: 'Booking confirmed – {oficina}, {quando}', assuntoAlt: 'Booking time changed – {oficina}, {quando}', ola: 'Hello {n},',
@@ -44,6 +47,7 @@ const TXT: Record<string, Txt> = {
     itens: 'What is included', garantia: 'Warranty: {n} days', mapa: 'Open in maps', google: 'Add to Google Calendar', verPedido: 'See the request',
     anexo: 'The attached file adds the booking to the calendar on your iPhone, Mac or Outlook, with reminders the day before and 1 hour before.',
     evento: 'Car drop-off: {oficina}', rodape: 'You receive this e-mail because you accepted a quote on BipFix.',
+    remarcar: "To reschedule or cancel, write to the repair shop in the request chat or call them.", conversar: "Message the repair shop", motivo: "Reason given by the repair shop", assuntoCanc: "Booking cancelled – {oficina}", introCanc: "The repair shop cancelled the booking for {quando}.", reaberto: "Your request is open again: you can choose another quote or wait for new offers.", anexoCanc: "The attached file removes the booking from your calendar.",
   },
   et: {
     assuntoConf: 'Broneering kinnitatud – {oficina}, {quando}', assuntoAlt: 'Broneeringu aeg muutus – {oficina}, {quando}', ola: 'Tere, {n}!',
@@ -52,6 +56,7 @@ const TXT: Record<string, Txt> = {
     itens: 'Mis on hinnas', garantia: 'Garantii: {n} päeva', mapa: 'Ava kaardil', google: 'Lisa Google\'i kalendrisse', verPedido: 'Vaata päringut',
     anexo: 'Manuses olev fail lisab broneeringu iPhone\'i, Maci või Outlooki kalendrisse koos meeldetuletustega päev enne ja 1 tund enne.',
     evento: 'Auto viimine: {oficina}', rodape: 'Saad selle kirja, sest võtsid BipFixis hinnapakkumise vastu.',
+    remarcar: "Aja muutmiseks või tühistamiseks kirjuta töökojale päringu vestluses või helista.", conversar: "Kirjuta töökojale", motivo: "Töökoja põhjendus", assuntoCanc: "Broneering tühistatud – {oficina}", introCanc: "Töökoda tühistas broneeringu ({quando}).", reaberto: "Sinu päring on jälle avatud: saad valida teise pakkumise või oodata uusi.", anexoCanc: "Manuses olev fail eemaldab broneeringu sinu kalendrist.",
   },
   ru: {
     assuntoConf: 'Запись подтверждена – {oficina}, {quando}', assuntoAlt: 'Время записи изменено – {oficina}, {quando}', ola: 'Здравствуйте, {n}!',
@@ -60,6 +65,7 @@ const TXT: Record<string, Txt> = {
     itens: 'Что входит', garantia: 'Гарантия: {n} дн.', mapa: 'Открыть на карте', google: 'Добавить в Google Календарь', verPedido: 'Открыть заявку',
     anexo: 'Прикреплённый файл добавит запись в календарь iPhone, Mac или Outlook с напоминаниями за день и за 1 час.',
     evento: 'Сдать машину: {oficina}', rodape: 'Вы получили это письмо, потому что приняли смету в BipFix.',
+    remarcar: "Чтобы перенести или отменить запись, напишите автосервису в чате заявки или позвоните.", conversar: "Написать автосервису", motivo: "Причина от автосервиса", assuntoCanc: "Запись отменена – {oficina}", introCanc: "Автосервис отменил запись на {quando}.", reaberto: "Ваша заявка снова открыта: вы можете выбрать другую смету или дождаться новых предложений.", anexoCanc: "Прикреплённый файл удалит запись из вашего календаря.",
   },
   it: {
     assuntoConf: 'Prenotazione confermata – {oficina}, {quando}', assuntoAlt: 'Orario della prenotazione modificato – {oficina}, {quando}', ola: 'Ciao {n},',
@@ -68,6 +74,7 @@ const TXT: Record<string, Txt> = {
     itens: 'Cosa è incluso', garantia: 'Garanzia: {n} giorni', mapa: 'Apri nella mappa', google: 'Aggiungi a Google Calendar', verPedido: 'Vedi la richiesta',
     anexo: 'Il file allegato aggiunge la prenotazione al calendario di iPhone, Mac o Outlook, con promemoria il giorno prima e 1 ora prima.',
     evento: 'Consegna dell’auto: {oficina}', rodape: 'Ricevi questa e-mail perché hai accettato un preventivo su BipFix.',
+    remarcar: "Per spostare o annullare, scrivi all’officina nella chat della richiesta o chiamala.", conversar: "Scrivi all’officina", motivo: "Motivo dell’officina", assuntoCanc: "Prenotazione annullata – {oficina}", introCanc: "L’officina ha annullato la prenotazione del {quando}.", reaberto: "La tua richiesta è di nuovo aperta: puoi scegliere un altro preventivo o attendere nuove offerte.", anexoCanc: "Il file allegato rimuove la prenotazione dal tuo calendario.",
   },
 };
 const LOCALE_DATA: Record<string, string> = { et: 'et-EE', ru: 'ru-RU', en: 'en-GB', it: 'it-IT', 'pt-PT': 'pt-PT', pt: 'pt-BR' };
@@ -89,20 +96,22 @@ function dobrar(linha: string): string {
 }
 
 export function montarIcs(e: {
-  uid: string; seq: number; inicio: Date; fim: Date; titulo: string; local: string; descricao: string; url: string;
+  cancelar?: boolean; uid: string; seq: number; inicio: Date; fim: Date; titulo: string; local: string; descricao: string; url: string;
   nomeCliente: string; emailCliente: string; lembrete1: string; lembrete2: string;
 }): string {
   const linhas = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//BipFix//Agendamento//EN', 'CALSCALE:GREGORIAN', 'METHOD:REQUEST',
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//BipFix//Agendamento//EN', 'CALSCALE:GREGORIAN', e.cancelar ? 'METHOD:CANCEL' : 'METHOD:REQUEST',
     'BEGIN:VEVENT',
     `UID:${e.uid}`, `SEQUENCE:${e.seq}`, `DTSTAMP:${icsData(new Date())}`,
     `DTSTART:${icsData(e.inicio)}`, `DTEND:${icsData(e.fim)}`,
     `SUMMARY:${icsTexto(e.titulo)}`, `LOCATION:${icsTexto(e.local)}`, `DESCRIPTION:${icsTexto(e.descricao)}`, `URL:${e.url}`,
     'ORGANIZER;CN=BipFix:mailto:noreply@bipfix.com',
     `ATTENDEE;CN=${icsTexto(e.nomeCliente)};ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=FALSE:mailto:${e.emailCliente}`,
-    'STATUS:CONFIRMED', 'TRANSP:OPAQUE',
-    'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${icsTexto(e.lembrete1)}`, 'TRIGGER:-P1D', 'END:VALARM',
-    'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${icsTexto(e.lembrete2)}`, 'TRIGGER:-PT1H', 'END:VALARM',
+    ...(e.cancelar ? ['STATUS:CANCELLED'] : [
+      'STATUS:CONFIRMED', 'TRANSP:OPAQUE',
+      'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${icsTexto(e.lembrete1)}`, 'TRIGGER:-P1D', 'END:VALARM',
+      'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${icsTexto(e.lembrete2)}`, 'TRIGGER:-PT1H', 'END:VALARM',
+    ]),
     'END:VEVENT', 'END:VCALENDAR',
   ];
   return linhas.map(dobrar).join('\r\n') + '\r\n';
@@ -118,7 +127,7 @@ export function linkGoogleCalendar(e: { inicio: Date; fim: Date; titulo: string;
  * avisado: o primeiro depois do aceite; outro ("horario alterado") se mudou.
  * Devolve true se mandou (false: nada a avisar, sem e-mail ou erro).
  */
-export async function avisarClienteAgendamento(agendaId: string): Promise<boolean> {
+export async function avisarClienteAgendamento(agendaId: string, opcoes: { motivo?: string } = {}): Promise<boolean> {
   const { data: ag } = await supabaseAdmin.from('agenda')
     .select('id, data_inicio, data_fim, data_fim_prevista, status, aviso_cliente_inicio, aviso_cliente_seq, solicitacao_id, oficina:oficinas(nome_fantasia, endereco, cidade, pais, latitude, longitude, profile:profiles!oficinas_profile_id_fkey(telefone))')
     .eq('id', agendaId).maybeSingle();
@@ -164,6 +173,7 @@ export async function avisarClienteAgendamento(agendaId: string): Promise<boolea
   const valor = orc?.valor_total != null ? formatCurrency(Number(orc.valor_total), moeda, idioma) : '';
   const itens = ((orc as any)?.itens || []) as { descricao: string; quantidade: number; valor_total: number }[];
   const link = `${SITE_URL.replace('://www.', '://')}/r/${(sol as any).numero}`;
+  const linkChat = `${link}?c=1`;
   const nomeOf = of.nome_fantasia || 'BipFix';
   const titulo = x.evento.replace('{oficina}', nomeOf);
   const descricao = [
@@ -186,6 +196,7 @@ export async function avisarClienteAgendamento(agendaId: string): Promise<boolea
       <div style="background:white;padding:24px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;">
         <p>${x.ola.replace('{n}', escapeHtml(cliente.nome || ''))}</p>
         <p>${escapeHtml(remarcado ? x.introAlt : x.introConf)}</p>
+        ${opcoes.motivo ? `<p style="background:#fffbeb;border-left:4px solid #f59e0b;padding:10px 12px;"><strong>${escapeHtml(x.motivo)}:</strong> ${escapeHtml(opcoes.motivo)}</p>` : ''}
         <div style="background:#f3f4f6;padding:16px;border-radius:8px;margin:16px 0;">
           <p style="margin:0 0 8px;font-size:18px;font-weight:bold;color:#111827;">${escapeHtml(x.levar)}: ${escapeHtml(quando)}</p>
           <table style="border-collapse:collapse;font-size:14px;">
@@ -201,9 +212,63 @@ export async function avisarClienteAgendamento(agendaId: string): Promise<boolea
         </div>
         <p>${botao(google, x.google, '#ffffff', '#1e40af')}${botao(link, x.verPedido, '#374151', '#e5e7eb')}</p>
         <p style="font-size:13px;color:#6b7280;">📅 ${escapeHtml(x.anexo)}</p>
+        <p style="font-size:14px;color:#374151;margin-top:16px;">${escapeHtml(x.remarcar)}</p>
+        <p>${botao(linkChat, x.conversar, '#1e40af', '#dbeafe')}</p>
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
         <p style="font-size:12px;color:#9ca3af;">${escapeHtml(x.rodape)}</p>
       </div>
     </div>`;
   return enviarEmail({ para: cliente.email, assunto, html, anexos: [{ nome: 'bipfix-agendamento.ics', conteudo: ics, tipo: 'text/calendar; charset=utf-8; method=REQUEST' }] });
+}
+
+/**
+ * A oficina cancelou o agendamento (com justificativa): e-mail ao cliente com o
+ * motivo e, se ele recebeu o evento antes, o .ics de cancelamento (mesmo UID)
+ * que tira o agendamento do calendario. Chamar DEPOIS de cancelar a agenda.
+ */
+export async function avisarClienteCancelamento(agendaId: string, motivo: string, reaberto: boolean): Promise<boolean> {
+  const { data: ag } = await supabaseAdmin.from('agenda')
+    .select('id, data_inicio, aviso_cliente_inicio, aviso_cliente_seq, solicitacao_id, oficina:oficinas(nome_fantasia, endereco, cidade, pais)')
+    .eq('id', agendaId).maybeSingle();
+  if (!ag?.solicitacao_id) return false;
+  const { data: sol } = await supabaseAdmin.from('solicitacoes')
+    .select('numero, cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, idioma)')
+    .eq('id', ag.solicitacao_id).maybeSingle();
+  const cliente = (sol as any)?.cliente;
+  if (!sol || !cliente?.email) return false;
+  const idioma = idiomaDoSite(cliente.idioma);
+  const x = TXT[idioma] || TXT.en;
+  const of = (ag as any).oficina || {};
+  const fuso = fusoDoPais(of.pais || 'EE');
+  const loc = LOCALE_DATA[idioma] || 'en-GB';
+  const inicio = new Date(ag.data_inicio);
+  const quando = inicio.toLocaleString(loc, { timeZone: fuso, weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+  const nomeOf = of.nome_fantasia || 'BipFix';
+  const link = `${SITE_URL.replace('://www.', '://')}/r/${(sol as any).numero}`;
+  const anexos = [];
+  if (ag.aviso_cliente_inicio) {
+    const seq = (ag.aviso_cliente_seq || 0) + 1;
+    await supabaseAdmin.from('agenda').update({ aviso_cliente_seq: seq }).eq('id', ag.id);
+    const titulo = x.evento.replace('{oficina}', nomeOf);
+    anexos.push({ nome: 'bipfix-agendamento.ics', tipo: 'text/calendar; charset=utf-8; method=CANCEL', conteudo: montarIcs({
+      cancelar: true, uid: `agenda-${ag.id}@bipfix.com`, seq, inicio, fim: new Date(inicio.getTime() + 3600e3), titulo,
+      local: [of.endereco, of.cidade].filter(Boolean).join(', '), descricao: motivo, url: link,
+      nomeCliente: cliente.nome || '', emailCliente: cliente.email, lembrete1: titulo, lembrete2: titulo,
+    }) });
+  }
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+      <div style="background:#1e40af;color:white;padding:24px;border-radius:12px 12px 0 0;"><h1 style="margin:0;font-size:24px;">BipFix</h1></div>
+      <div style="background:white;padding:24px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;">
+        <p>${x.ola.replace('{n}', escapeHtml(cliente.nome || ''))}</p>
+        <p style="font-size:16px;"><strong>${escapeHtml(x.introCanc.replace('{quando}', quando))}</strong></p>
+        <p style="background:#fffbeb;border-left:4px solid #f59e0b;padding:10px 12px;"><strong>${escapeHtml(x.motivo)}:</strong> ${escapeHtml(motivo)}</p>
+        ${reaberto ? `<p>${escapeHtml(x.reaberto)}</p>` : ''}
+        <p><a href="${link}" style="display:inline-block;padding:12px 20px;border-radius:8px;background:#1e40af;color:#ffffff;text-decoration:none;font-weight:bold;">${escapeHtml(x.verPedido)}</a></p>
+        ${anexos.length ? `<p style="font-size:13px;color:#6b7280;">📅 ${escapeHtml(x.anexoCanc)}</p>` : ''}
+        <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+        <p style="font-size:12px;color:#9ca3af;">${escapeHtml(x.rodape)}</p>
+      </div>
+    </div>`;
+  return enviarEmail({ para: cliente.email, assunto: x.assuntoCanc.replace('{oficina}', nomeOf), html, anexos });
 }

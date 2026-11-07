@@ -11,6 +11,7 @@ import { SITE_URL, siteNoIdioma, urlNoIdioma, idiomaDoSite } from './site-url';
 // Sem moeda informada: reais so para a versao do Brasil; euro no resto
 const moedaPadrao = (idioma?: string | null) => (idiomaDoSite(idioma) === 'pt' ? 'BRL' : 'EUR');
 import { FROM_EMAIL, enviarEmail } from '@/lib/email';
+import { aplicarIdentidade } from './email-marca';
 import { SUPORTE_EMAIL_RESPOSTA, linguaTexto } from './suporte-textos';
 
 // teste local sem Resend: os e-mails viram arquivos (lib/email.ts, EMAIL_PASTA_TESTE)
@@ -27,7 +28,9 @@ async function sendOrThrow(payload: Parameters<Resend['emails']['send']>[0]) {
     if (!(await enviarEmail({ para: String(Array.isArray(p.to) ? p.to[0] : p.to), assunto: p.subject, html: p.html || '' }))) throw new Error('e-mail de teste nao gravado');
     return;
   }
-  const { error } = await resend!.emails.send(payload);
+  // logo, cores e rodape da BipFix (lib/email-marca.ts); sem Resend, enviarEmail ja aplica
+  const p2 = payload as { html?: string };
+  const { error } = await resend!.emails.send({ ...payload, ...(p2.html ? { html: aplicarIdentidade(p2.html) } : {}) } as typeof payload);
   if (error) throw new Error(`Resend recusou o e-mail: ${error.name} - ${error.message}`);
 }
 

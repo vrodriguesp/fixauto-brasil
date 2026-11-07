@@ -12,9 +12,10 @@ import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useOrcamentos } from '@/hooks/use-orcamentos';
 import { useAuth } from '@/lib/auth-context';
 import type { TipoItemOrcamento, AnaliseDano } from '@fixauto/shared';
-import { formatCurrency, cleanDescricao, rotuloTipoPedido } from '@/lib/utils';
+import { formatCurrency, cleanDescricao, rotuloTipoPedido, INTL_LOCALE } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { supabase } from '@/lib/supabase';
+import ProporNovaData from '@/components/oficina/ProporNovaData';
 import { textoErroApi } from '@/lib/erro-api';
 import { hojeLocal, turnoDisponivel, primeiroTurnoLivre, type Turno } from '@/lib/turnos';
 
@@ -33,6 +34,7 @@ export default function EnviarOrcamentoPage() {
   const tc = useTranslations('constants');
   const tErros = useTranslations('erros');
   const tDano = useTranslations('damageAnalysis');
+  const tMud = useTranslations('agendaMudanca');
   // rotulo traduzido da gravidade da IA (antes aparecia a palavra interna, ex. "grave")
   const SEVERIDADE: Record<string, string> = { leve: 'severidadeLeve', moderado: 'severidadeModerado', grave: 'severidadeGrave', severo: 'severidadeSevero' };
   const locale = useLocale();
@@ -53,11 +55,11 @@ export default function EnviarOrcamentoPage() {
   // (migracao 049, /api/orcamento-revisao) - nunca altera o aceito direto
   const modoRevisaoAceito = existingQuote?.status === 'aceito';
   const [motivoRevisao, setMotivoRevisao] = useState('');
-  const [revisaoPendente, setRevisaoPendente] = useState<{ valor_novo: number; created_at: string } | null>(null);
+  const [revisaoPendente, setRevisaoPendente] = useState<{ valor_novo: number; created_at: string; tipo?: string; nova_data_checkin?: string | null; novo_turno?: string | null } | null>(null);
   const [erroRevisao, setErroRevisao] = useState('');
   useEffect(() => {
     if (!modoRevisaoAceito || !existingQuote?.id) return;
-    supabase.from('orcamento_revisoes').select('valor_novo, created_at').eq('orcamento_id', existingQuote.id).eq('status', 'pendente').maybeSingle()
+    supabase.from('orcamento_revisoes').select('valor_novo, created_at, tipo, nova_data_checkin, novo_turno').eq('orcamento_id', existingQuote.id).eq('status', 'pendente').maybeSingle()
       .then(({ data }) => setRevisaoPendente((data as any) || null));
   }, [modoRevisaoAceito, existingQuote?.id]);
 
@@ -342,7 +344,10 @@ ${d.observacoes}` : d.observacoes));
   if (modoRevisaoAceito && revisaoPendente && !submitted) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-        <p className="text-gray-700 mb-6">{t('revisaoAguardandoCliente', { valor: formatCurrency(Number(revisaoPendente.valor_novo), moeda, locale) })}</p>
+        <p className="text-gray-700 mb-6">{revisaoPendente.tipo === 'data'
+          // proposta de nova data (076) esperando o cliente
+          ? tMud('propostaPendente', { quando: `${new Date(`${revisaoPendente.nova_data_checkin}T12:00:00`).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { weekday: 'short', day: 'numeric', month: 'long' })}, ${tMud(revisaoPendente.novo_turno === 'tarde' ? 'tarde' : 'manha')}` })
+          : t('revisaoAguardandoCliente', { valor: formatCurrency(Number(revisaoPendente.valor_novo), moeda, locale) })}</p>
         <Link href={`/oficina/mensagens/${solicitacao.id}`} className="btn-primary inline-block">{t('abrirConversa')}</Link>
       </div>
     );
@@ -382,6 +387,10 @@ ${d.observacoes}` : d.observacoes));
       <h1 className="text-2xl font-bold text-gray-900 mb-2">
         {modoRevisaoAceito ? t('proporRevisaoTitulo') : isRevision ? t('revisarOrcamento') : t('enviarOrcamento')}
       </h1>
+      {/* antes do check-in: propor nova data de entrega (076), separado da revisao de preco */}
+      {modoRevisaoAceito && existingQuote && oficina && (
+        <ProporNovaData orcamentoId={existingQuote.id} solicitacaoId={solicitacao.id} oficinaId={oficina.id} pais={(oficina as any).pais} />
+      )}
       {modoRevisaoAceito && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
           <p className="text-sm text-amber-900 mb-3">{t('proporRevisaoTexto')}</p>
