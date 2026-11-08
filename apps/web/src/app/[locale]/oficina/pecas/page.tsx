@@ -473,8 +473,8 @@ export default function OficinaPecasPage() {
                   {c.respostas && c.respostas.length > 0 && (
                     <div className="border-t pt-3 space-y-2">
                       {c.respostas.map((r) => (
-                        <div key={r.id} className="flex items-center justify-between bg-gray-50 rounded-lg p-3 gap-3">
-                          <div>
+                        <div key={r.id} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between bg-gray-50 rounded-lg p-3 sm:gap-3">
+                          <div className="min-w-0">
                             <p className="text-sm font-medium text-gray-900">
                               {r.loja?.nome_fantasia || r.oficina_fornecedora?.nome_fantasia}
                               {r.fornecedor_tipo === 'oficina' && (
@@ -486,7 +486,7 @@ export default function OficinaPecasPage() {
                             </p>
                             {r.observacao && <p className="text-xs text-gray-500 mt-0.5">{r.observacao}</p>}
                           </div>
-                          <div className="flex items-center gap-2 flex-shrink-0">
+                          <div className="flex items-center justify-end gap-3 flex-shrink-0">
                             <Link href={`/oficina/pecas/conversa/${r.id}`} className="text-xs font-medium text-primary-600 hover:underline">
                               {t('conversar')}
                             </Link>
