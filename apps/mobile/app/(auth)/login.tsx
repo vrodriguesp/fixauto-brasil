@@ -148,7 +148,7 @@ export default function LoginScreen() {
             <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</Text>
             <View className="flex-row items-center border border-gray-300 rounded-xl px-3 mb-4 bg-white">
               <Ionicons name="mail-outline" size={18} color="#9ca3af" />
-              <TextInput accessibilityLabel={t('auth.email')}
+              <TextInput autoCorrect={false} accessibilityLabel={t('auth.email')}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
@@ -170,6 +170,8 @@ export default function LoginScreen() {
                 value={senha}
                 onChangeText={setSenha}
                 secureTextEntry={!verSenha}
+                autoCapitalize="none"
+                autoCorrect={false}
                 autoComplete="password"
                 textContentType="password"
                 returnKeyType="go"

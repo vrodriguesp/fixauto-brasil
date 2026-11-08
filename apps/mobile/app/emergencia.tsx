@@ -417,7 +417,7 @@ export default function EmergenciaScreen() {
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.nome')}</Text>
           <TextInput accessibilityLabel={t('auth.nome')} value={nome} onChangeText={setNome} autoComplete="name" textContentType="name" maxLength={100} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-[16px]" />
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</Text>
-          <TextInput accessibilityLabel={t('auth.email')} value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" textContentType="emailAddress" maxLength={254} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-[16px]" />
+          <TextInput autoCorrect={false} accessibilityLabel={t('auth.email')} value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" textContentType="emailAddress" maxLength={254} className="bg-white border border-gray-300 rounded-lg px-4 py-3 mb-3 text-[16px]" />
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.telefone')} ({t('common.opcional')})</Text>
           <CampoTelefone rotulo={t('auth.telefone')} value={telefone} onChange={setTelefone} />
         </View>

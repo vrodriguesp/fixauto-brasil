@@ -447,7 +447,7 @@ export default function PedidoSemConta() {
                 <div>
                   <label htmlFor="pedido-senha" className="block text-sm font-medium text-gray-700 mb-1">{t('senha')}</label>
                   <div className="relative">
-                    <input id="pedido-senha" type={verSenha ? 'text' : 'password'} className="input-field pr-20" autoComplete="new-password" minLength={8} maxLength={72} value={senha} onChange={(e) => setSenha(e.target.value)} />
+                    <input id="pedido-senha" type={verSenha ? 'text' : 'password'} className="input-field pr-20" autoComplete="new-password" autoCapitalize="none" autoCorrect="off" spellCheck={false} minLength={8} maxLength={72} value={senha} onChange={(e) => setSenha(e.target.value)} />
                     <button type="button" onClick={() => setVerSenha((v) => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-primary-700 px-2 py-1">{verSenha ? t('ocultar') : t('mostrar')}</button>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">{t('senhaDica')}</p>

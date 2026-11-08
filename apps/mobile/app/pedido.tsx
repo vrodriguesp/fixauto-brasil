@@ -481,7 +481,7 @@ export default function PedidoScreen() {
 
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.senha')}</Text>
               <View className={`${CAMPO} flex-row items-center py-0`}>
-                <TextInput accessibilityLabel={t('pedidoSemConta.senha')} value={senha} onChangeText={setSenha} secureTextEntry={!verSenha} autoComplete="new-password" textContentType="newPassword" autoCapitalize="none" maxLength={72} className="flex-1 py-3 text-[16px]" />
+                <TextInput accessibilityLabel={t('pedidoSemConta.senha')} value={senha} onChangeText={setSenha} secureTextEntry={!verSenha} autoComplete="new-password" textContentType="newPassword" autoCapitalize="none" autoCorrect={false} maxLength={72} className="flex-1 py-3 text-[16px]" />
                 <Pressable onPress={() => setVerSenha((v) => !v)} hitSlop={10} accessibilityRole="button" accessibilityLabel={t(verSenha ? 'auth.ocultarSenha' : 'auth.mostrarSenha')}>
                   <Ionicons name={verSenha ? 'eye-off-outline' : 'eye-outline'} size={22} color="#6b7280" />
                 </Pressable>
@@ -504,7 +504,7 @@ export default function PedidoScreen() {
               <Text className="font-semibold text-gray-900 mb-1">{t('pedidoSemConta.contaExistenteTitulo')}</Text>
               <Text className="text-sm text-gray-700 mb-3">{t('pedidoSemConta.contaExistenteTexto', { email: email.trim() })}</Text>
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.senha')}</Text>
-              <TextInput accessibilityLabel={t('pedidoSemConta.senha')} value={senhaLogin} onChangeText={setSenhaLogin} secureTextEntry autoComplete="current-password" textContentType="password" autoCapitalize="none" className={CAMPO} />
+              <TextInput autoCorrect={false} accessibilityLabel={t('pedidoSemConta.senha')} value={senhaLogin} onChangeText={setSenhaLogin} secureTextEntry autoComplete="current-password" textContentType="password" autoCapitalize="none" className={CAMPO} />
               <Erro />
               <Pressable onPress={entrarEEnviar} disabled={!senhaLogin || enviando} accessibilityRole="button" className="bg-primary-600 rounded-lg py-4 items-center mt-3 disabled:opacity-50">
                 {enviando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold">{t('pedidoSemConta.entrarEEnviar')}</Text>}
