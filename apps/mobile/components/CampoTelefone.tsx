@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, TextInput, Pressable, Modal, FlatList, Platform } from 'react-native';
+import { View, Text, TextInput, Pressable, Modal, FlatList, Platform, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -30,7 +30,7 @@ export default function CampoTelefone({ value, onChange, rotulo }: { value: stri
 
   return (
     <View className="flex-row gap-2">
-      <Pressable onPress={() => setAberto(true)} accessibilityRole="button" accessibilityLabel={`${t('constants.prefixoTelefone')}: +${ddi}`}
+      <Pressable onPress={() => { Keyboard.dismiss(); setAberto(true); }} accessibilityRole="button" accessibilityLabel={`${t('constants.prefixoTelefone')}: +${ddi}`}
         className="border border-gray-300 rounded-lg px-3 flex-row items-center gap-1">
         <Text className="text-[16px]">{atual?.bandeira} +{ddi}</Text>
         <Ionicons name="chevron-down" size={16} color="#6b7280" />

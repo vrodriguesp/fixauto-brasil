@@ -1,6 +1,6 @@
 import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, Image, Alert, Linking } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator, Image, Alert, Linking, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -209,6 +209,7 @@ export default function PedidoScreen() {
   };
 
   const confirmar = async () => {
+    Keyboard.dismiss();
     if (!pendente || codigo.length !== 6 || enviando) return;
     setEnviando(true); setErro('');
     try {
@@ -232,6 +233,7 @@ export default function PedidoScreen() {
   };
 
   const reenviar = async (comEmail?: string) => {
+    Keyboard.dismiss();
     if (!pendente || esperaReenvio > 0 || enviando) return;
     setEnviando(true); setErro(''); setAviso('');
     try {
@@ -278,11 +280,11 @@ export default function PedidoScreen() {
   const Navegar = ({ voltar, avancar, ok, rotulo }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string }) => (
     <View className="flex-row gap-3 mt-6 mb-10">
       {voltar && (
-        <Pressable onPress={() => { setErro(''); setEtapa(voltar); }} accessibilityRole="button" className="flex-1 border border-gray-300 rounded-lg py-4 items-center">
+        <Pressable onPress={() => { Keyboard.dismiss(); setErro(''); setEtapa(voltar); }} accessibilityRole="button" className="flex-1 border border-gray-300 rounded-lg py-4 items-center">
           <Text className="text-gray-700 font-semibold text-base">{t('pedidoSemConta.back')}</Text>
         </Pressable>
       )}
-      <Pressable onPress={avancar} disabled={!ok || enviando} accessibilityRole="button" accessibilityState={{ disabled: !ok || enviando, busy: enviando }}
+      <Pressable onPress={() => { Keyboard.dismiss(); avancar(); }} disabled={!ok || enviando} accessibilityRole="button" accessibilityState={{ disabled: !ok || enviando, busy: enviando }}
         className="flex-[2] bg-primary-600 rounded-lg py-4 items-center disabled:opacity-50">
         {enviando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold text-base">{rotulo || t('pedidoSemConta.next')}</Text>}
       </Pressable>

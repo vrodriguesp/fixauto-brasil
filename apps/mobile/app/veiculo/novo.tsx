@@ -1,6 +1,6 @@
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useState, useMemo } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator, ScrollView, Alert, Keyboard } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { router, Stack } from 'expo-router';
@@ -24,6 +24,7 @@ export default function NovoVeiculoScreen() {
   const [salvando, setSalvando] = useState(false);
 
   const handleSalvar = async () => {
+    Keyboard.dismiss();
     if (!user || !marca || !modelo) return;
     setSalvando(true);
     const { error } = await supabase.from('veiculos').insert({

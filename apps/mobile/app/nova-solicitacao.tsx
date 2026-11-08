@@ -1,6 +1,6 @@
 import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { useCallback, useEffect, useState, useRef } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert, Linking } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert, Linking, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router, useFocusEffect } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -100,6 +100,7 @@ export default function NovaSolicitacaoScreen() {
   };
 
   const handleEnviar = async () => {
+    Keyboard.dismiss();
     if (!user || !veiculoId || !tipo || !endereco) return;
     setEnviando(true);
     try {

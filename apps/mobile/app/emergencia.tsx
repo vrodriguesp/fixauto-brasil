@@ -1,6 +1,6 @@
 import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { useEffect, useState, useRef } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert, Linking } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert, Linking, Keyboard } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
@@ -166,6 +166,7 @@ export default function EmergenciaScreen() {
   // Tudo no servidor numa chamada so (/api/emergencia): acidente, fotos,
   // solicitacao e aviso as oficinas. O dono vem do login (Authorization).
   const handleEnviar = async () => {
+    Keyboard.dismiss();
     setEnviando(true);
     try {
       let localCoords = coords;

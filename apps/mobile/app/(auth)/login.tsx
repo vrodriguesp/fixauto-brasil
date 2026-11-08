@@ -1,6 +1,6 @@
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useRef, useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, Platform, ScrollView, Image, Modal } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator, Platform, ScrollView, Image, Modal, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Link, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,6 +27,7 @@ export default function LoginScreen() {
   const idiomaAtual = IDIOMAS.find((i) => i.code === i18n.language) || IDIOMAS[2];
 
   const handleEntrar = async () => {
+    Keyboard.dismiss();
     setErro(null);
     setNaoConfirmado(false);
     setLoading(true);

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { View, Text, FlatList, Pressable, Modal, TextInput, Platform } from 'react-native';
+import { View, Text, FlatList, Pressable, Modal, TextInput, Platform, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../lib/api';
 
@@ -66,7 +66,7 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
   return (
     <View className="mb-4">
       <Text className="text-sm font-medium text-gray-700 mb-1">{label}</Text>
-      <Pressable onPress={() => setOpen(true)} accessibilityRole="button" accessibilityLabel={label} className="border border-gray-300 rounded-lg px-4 py-3">
+      <Pressable onPress={() => { Keyboard.dismiss(); setOpen(true); }} accessibilityRole="button" accessibilityLabel={label} className="border border-gray-300 rounded-lg px-4 py-3">
         <Text className={value ? 'text-gray-900' : 'text-gray-400'}>{value?.name || t('common.selecione')}</Text>
       </Pressable>
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency, currencyForCountry } from '@fixauto/shared';
 import { supabase } from '../lib/supabase';
@@ -55,6 +55,7 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
   const pct = Number(rev.valor_anterior) > 0 ? Math.round(((Number(rev.valor_novo) - Number(rev.valor_anterior)) / Number(rev.valor_anterior)) * 100) : 0;
 
   const decidir = async (decisao: 'aprovar' | 'recusar') => {
+    Keyboard.dismiss();
     setEnviando(true);
     try {
       await apiFetch('/api/orcamento-revisao/decidir', { method: 'POST', body: JSON.stringify({ revisaoId: rev.id, decisao }) });

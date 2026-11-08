@@ -1,7 +1,7 @@
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { FotosPedido, SeguroPedido } from '../../components/FotosESeguroPedido';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput, RefreshControl, Keyboard } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useFocusEffect, router, Stack } from 'expo-router';
@@ -154,6 +154,7 @@ export default function SolicitacaoDetailScreen() {
   );
 
   const handleEnviarAvaliacao = async () => {
+    Keyboard.dismiss();
     if (!notaSelecionada || !user || !solicitacao) return;
     const orcamentoAceito = (solicitacao.orcamentos || []).find((o) => o.status === 'aceito');
     const oficinaId = orcamentoAceito?.oficina?.id;
@@ -179,6 +180,7 @@ export default function SolicitacaoDetailScreen() {
   };
 
   const handleAceitar = async (orcamento: Orcamento) => {
+    Keyboard.dismiss();
     const slotId = slotSelecionado[orcamento.id];
     if (!slotId) return;
     setProcessando(orcamento.id);
@@ -193,6 +195,7 @@ export default function SolicitacaoDetailScreen() {
   };
 
   const handleRecusar = async (orcamento: Orcamento) => {
+    Keyboard.dismiss();
     setProcessando(orcamento.id);
     await supabase.from('orcamentos').update({ status: 'recusado' }).eq('id', orcamento.id);
     await carregar();

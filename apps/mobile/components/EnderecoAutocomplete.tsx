@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, Pressable } from 'react-native';
+import { View, Text, TextInput, Pressable, Keyboard } from 'react-native';
 import * as Localization from 'expo-localization';
 import { API_BASE_URL } from '../lib/api';
 
@@ -73,7 +73,7 @@ export default function EnderecoAutocomplete({
           {sugestoes.map((s) => (
             <Pressable
               key={s.rotulo}
-              onPress={() => { escolhido.current = s.rotulo; onSelect(s); setSugestoes([]); }}
+              onPress={() => { Keyboard.dismiss(); escolhido.current = s.rotulo; onSelect(s); setSugestoes([]); }}
               className="px-4 py-3 border-b border-gray-100 active:bg-gray-50"
               accessibilityRole="button"
             >
