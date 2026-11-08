@@ -259,14 +259,16 @@ export default function AcompanhamentoPage() {
       {/* Progress bar */}
       <div className="card mb-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">{t('progressTitle')}</h2>
-        <div className="flex items-center justify-between relative">
+        {/* bolinhas alinhadas pelo topo (rotulo de 2 linhas nao sobe a bolinha) e a linha
+            vai do centro da 1a ao centro da ultima bolinha (antes passava da ultima - dono 08/11) */}
+        <div className="flex items-start justify-between relative">
           {/* Background line */}
-          <div className="absolute top-4 left-4 right-4 h-1 bg-gray-200 rounded" />
+          <div className="absolute top-[14px] h-1 bg-gray-200 rounded" style={{ left: `${50 / progressSteps.length}%`, right: `${50 / progressSteps.length}%` }} />
           {/* Active line */}
           {progressIndex >= 0 && (
             <div
-              className="absolute top-4 left-4 h-1 bg-primary-500 rounded transition-all duration-500"
-              style={{ width: `${Math.min((progressIndex / (progressSteps.length - 1)) * 100, 100)}%` }}
+              className="absolute top-[14px] h-1 bg-primary-500 rounded transition-all duration-500"
+              style={{ left: `${50 / progressSteps.length}%`, width: `${(Math.min(progressIndex, progressSteps.length - 1) / progressSteps.length) * 100}%` }}
             />
           )}
 
@@ -274,7 +276,7 @@ export default function AcompanhamentoPage() {
             const isActive = progressIndex >= i;
             const isCurrent = progressIndex === i;
             return (
-              <div key={step.status} className="relative flex flex-col items-center z-10" style={{ flex: 1 }}>
+              <div key={step.status} className="relative flex flex-col items-center z-10 min-w-0 px-0.5" style={{ flex: 1 }}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all ${
                   isCurrent
                     ? 'bg-primary-500 border-primary-500 text-white scale-110 shadow-lg'
@@ -290,7 +292,7 @@ export default function AcompanhamentoPage() {
                     <span className="text-xs font-bold">{i + 1}</span>
                   )}
                 </div>
-                <span className={`text-[10px] sm:text-xs mt-2 text-center leading-tight ${
+                <span className={`hidden sm:block w-full text-xs mt-2 text-center leading-tight ${
                   isCurrent ? 'font-bold text-primary-700' : isActive ? 'font-medium text-gray-700' : 'text-gray-400'
                 }`}>
                   {step.label}
@@ -299,6 +301,12 @@ export default function AcompanhamentoPage() {
             );
           })}
         </div>
+        {/* celular: nomes das 6 etapas nao cabem lado a lado em todas as linguas (ru, et) - so a etapa atual (dono 08/11) */}
+        {progressIndex >= 0 && (
+          <p className="sm:hidden mt-3 text-center text-sm font-semibold text-primary-700" data-testid="etapa-atual">
+            {progressSteps[Math.min(progressIndex, progressSteps.length - 1)].label} · {Math.min(progressIndex, progressSteps.length - 1) + 1}/{progressSteps.length}
+          </p>
+        )}
       </div>
 
       {/* Info card */}
@@ -371,7 +379,8 @@ export default function AcompanhamentoPage() {
                 </div>
               );
             })}
-            {/* Real-time indicator */}
+            {/* Real-time indicator: so enquanto o servico nao terminou */}
+            {latestStatus !== 'entregue' && (
             <div className="relative">
               <div className="absolute -left-6 top-1.5">
                 <span className="relative flex h-[18px] w-[18px]">
@@ -381,6 +390,7 @@ export default function AcompanhamentoPage() {
               </div>
               <p className="text-xs text-gray-400 italic pl-1 pt-1">{t('awaitingNextUpdate')}</p>
             </div>
+            )}
           </div>
         )}
       </div>

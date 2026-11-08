@@ -120,3 +120,8 @@ main:has(.altura-conversa) { min-height: 0; }
   /* a barra de baixo ja tem a margem do iPhone */
   body.com-barra-inferior .conversa-composer { padding-bottom: 0.75rem; }
 }
+/* celular digitando (teclado aberto): a barra de baixo e o botao do chat nao sobem por cima do teclado nem cobrem o campo (dono 08/11) */
+@media (max-width: 1279.98px) {
+  body.digitando .barra-inferior,
+  body.digitando .chat-suporte-botao { display: none; }
+}

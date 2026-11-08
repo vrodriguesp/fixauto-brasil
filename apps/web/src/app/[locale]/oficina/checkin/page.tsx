@@ -14,7 +14,7 @@ import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { notifCheckinManual } from '@/lib/notif-i18n';
 import CampoTelefone from '@/components/forms/CampoTelefone';
-import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
+import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 
 export default function ManualCheckinPage() {
@@ -164,7 +164,7 @@ export default function ManualCheckinPage() {
               <label htmlFor="c7917-1" className="block text-sm font-medium text-gray-700 mb-1">{t('nomeClienteObrigatorio')}</label>
               <input id="c7917-1" type="text" className="input-field" placeholder={t('placeholderNomeCompleto')} value={clienteNome} onChange={(e) => setClienteNome(e.target.value)} required />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="min-w-0">
                 <label htmlFor="c7917-2" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('telefone')}</label>
                 <CampoTelefone id="c7917-2" value={clienteTelefone} onChange={(v) => setClienteTelefone(v)} />

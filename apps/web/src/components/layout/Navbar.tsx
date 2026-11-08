@@ -95,6 +95,15 @@ export default function Navbar() {
     document.body.classList.toggle('com-barra-inferior', !!temBarra);
     return () => document.body.classList.remove('com-barra-inferior');
   }, [isLoggedIn, isOficina]);
+  // celular digitando: a barra de baixo e o botao do chat sairiam por cima do teclado
+  // (iPhone) e cobririam o campo - somem enquanto um campo de texto tem o foco (dono 08/11)
+  useEffect(() => {
+    const texto = (el: EventTarget | null) => el instanceof HTMLElement && (el.isContentEditable || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || (el.tagName === 'INPUT' && !['checkbox', 'radio', 'button', 'submit', 'file', 'range', 'color'].includes((el as HTMLInputElement).type)));
+    const entrou = (e: FocusEvent) => { if (texto(e.target)) document.body.classList.add('digitando'); };
+    const saiu = () => setTimeout(() => { if (!texto(document.activeElement)) document.body.classList.remove('digitando'); }, 0);
+    document.addEventListener('focusin', entrou); document.addEventListener('focusout', saiu);
+    return () => { document.removeEventListener('focusin', entrou); document.removeEventListener('focusout', saiu); document.body.classList.remove('digitando'); };
+  }, []);
 
   return (
     <>
@@ -307,7 +316,7 @@ export default function Navbar() {
     {isLoggedIn && isOficina && (
       // Barra de baixo no celular (auditoria do painel 10/10, B1): o principal
       // cabe no polegar; "Mais" abre o resto. Abaixo de 1280 px, como o menu.
-      <nav aria-label={t('menuPrincipal')} className="xl:hidden fixed bottom-0 inset-x-0 z-50 border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)]">
+      <nav aria-label={t('menuPrincipal')} className="barra-inferior xl:hidden fixed bottom-0 inset-x-0 z-50 border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)]">
         <div className={`grid ${menuOficina ? 'grid-cols-5' : 'grid-cols-4'}`}>
           {(menuOficina
             ? [{ href: '/oficina/pedidos', txt: t('pedidosOficina'), icone: 'caixa', extra: contadorPedidos }, { href: '/oficina/hoje', txt: t('hoje'), icone: 'hoje' }, { href: '/oficina/agenda', txt: t('agenda'), icone: 'agenda' }, { href: '/oficina/mensagens', txt: t('conversasOficina'), icone: 'mensagens', extra: contadorMsgs }]

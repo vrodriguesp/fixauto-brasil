@@ -582,7 +582,7 @@ export default function OrcamentoDetalhePage() {
 
               {/* Revision comparison */}
               {!!orc.valor_original && (orc.revisao_numero ?? 0) > 0 && (
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4 flex items-center gap-2 text-sm">
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
                   <span className="text-gray-600">{t('originalQuoteLabel')}</span>
                   <span className="line-through text-gray-400">{formatCurrency(orc.valor_original, currencyForCountry(orc.oficina?.pais), locale)}</span>
                   <span className="text-gray-600">{t('revisedToLabel')}</span>
