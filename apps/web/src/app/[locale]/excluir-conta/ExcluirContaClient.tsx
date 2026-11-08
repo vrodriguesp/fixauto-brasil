@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
+import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 
 // Botao de excluir (com confirmacao). Sem login: pede para entrar e volta aqui.
 export default function ExcluirContaClient() {
@@ -12,6 +13,7 @@ export default function ExcluirContaClient() {
   const { user, loading } = useAuth() as any;
   const [confirmar, setConfirmar] = useState(false);
   const [estado, setEstado] = useState<'livre' | 'enviando' | 'feito' | 'emServico' | 'erro'>('livre');
+  useTopoAoMudar(estado); // tela trocada inteira: abre no alto (dono 08/11)
 
   const excluir = async () => {
     setEstado('enviando');

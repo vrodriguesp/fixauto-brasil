@@ -13,6 +13,7 @@ import AudioRecorder from '@/components/ui/AudioRecorder';
 import AudioMessage from '@/components/ui/AudioMessage';
 import { useAudioRecorder } from '@/hooks/use-audio-recorder';
 import { Link } from '@/i18n/navigation';
+import { useVoltarAoFecharTeclado } from '@/hooks/use-voltar-ao-fechar-teclado';
 
 interface Mensagem {
   id: string;
@@ -95,6 +96,7 @@ export default function OficinaMensagensPage() {
   const perguntasIA = useTraducoes(perguntasSugeridas).textos;
   const [showPerguntas, setShowPerguntas] = useState(true);
 
+  useVoltarAoFecharTeclado();
   const scrollToBottom = () => {
     // rola so a lista: scrollIntoView rolava a pagina toda no iPhone (31/10)
     const lista = listaRef.current;

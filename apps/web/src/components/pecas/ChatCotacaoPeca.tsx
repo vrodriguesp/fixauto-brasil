@@ -177,7 +177,7 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImagem} />
+            <input ref={fileInputRef} type="file" accept="image/*" className="sr-only" tabIndex={-1} onChange={handleImagem} />
             <button
               onClick={() => fileInputRef.current?.click()}
               className="w-10 h-10 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full flex items-center justify-center transition-colors flex-shrink-0"

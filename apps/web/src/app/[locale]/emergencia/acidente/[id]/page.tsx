@@ -425,7 +425,7 @@ export default function AcidenteRegistroPage() {
 
             <div>
               <label htmlFor="cbacc-6" className="block text-sm font-medium text-gray-700 mb-1">{t('photosLabel')}</label>
-              <input id="cbacc-6" ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload} />
+              <input id="cbacc-6" ref={fileInputRef} type="file" accept="image/*" multiple className="sr-only" tabIndex={-1} onChange={handlePhotoUpload} />
               <div className="flex gap-3 flex-wrap">
                 {fotosOutro.map((foto, i) => (
                   <div key={i} className="w-20 h-20 rounded-lg overflow-hidden">

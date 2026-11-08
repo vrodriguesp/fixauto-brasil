@@ -38,7 +38,9 @@ export default function ChatSuporte() {
   // celular, visitante: o botao so aparece depois de rolar um pouco - na primeira
   // tela ele cobria a ponta do botao principal ("Sou oficina") da pagina inicial
   const [rolou, setRolou] = useState(false);
-  const fimRef = useRef<HTMLDivElement>(null);
+  const listaRef = useRef<HTMLDivElement>(null);
+  // celular: altura e topo da area visivel (acima do teclado do iPhone)
+  const [vv, setVv] = useState<{ h: number; top: number } | null>(null);
   const botaoRef = useRef<HTMLButtonElement>(null);
   const voltarFoco = useRef(false);
 
@@ -77,15 +79,28 @@ export default function ChatSuporte() {
 
   // link do e-mail de resposta: ?suporte=1 abre o chat
   useEffect(() => { if (busca?.get('suporte') === '1') setAberto(true); }, [busca]);
-  useEffect(() => { if (aberto) fimRef.current?.scrollIntoView({ block: 'end' }); }, [aberto, msgs.length]);
+  // rola so a lista de mensagens (scrollIntoView rolava a pagina toda e no iPhone
+  // empurrava o cabecalho com o X para fora da tela - dono 08/11)
+  useEffect(() => { const l = listaRef.current; if (aberto && l) l.scrollTop = l.scrollHeight; }, [aberto, msgs.length]);
   // aberto: foco no primeiro campo; no celular (tela cheia) a pagina de tras nao rola.
   // fechado: o foco volta ao botao do chat
   useEffect(() => {
     if (aberto) {
       voltarFoco.current = true;
       setTimeout(() => (document.getElementById('suporte-pergunta') || document.getElementById('suporte-texto'))?.focus(), 50);
-      if (window.innerWidth < 640) document.body.style.overflow = 'hidden';
-      return () => { document.body.style.overflow = ''; };
+      if (window.innerWidth >= 640) return;
+      // iPhone ignora overflow hidden no body: trava a pagina de tras fixando o body no lugar
+      const y = window.scrollY; const b = document.body.style;
+      const antes = { position: b.position, top: b.top, width: b.width, overflow: b.overflow };
+      b.position = 'fixed'; b.top = `-${y}px`; b.width = '100%'; b.overflow = 'hidden';
+      // a janela acompanha a area visivel: com o teclado aberto ela encolhe e o X continua a vista
+      const v = window.visualViewport;
+      const medir = () => { if (v) { setVv({ h: v.height, top: v.offsetTop }); window.scrollTo(0, 0); } };
+      medir(); v?.addEventListener('resize', medir); v?.addEventListener('scroll', medir);
+      return () => {
+        v?.removeEventListener('resize', medir); v?.removeEventListener('scroll', medir); setVv(null);
+        Object.assign(b, antes); window.scrollTo(0, y);
+      };
     }
     if (voltarFoco.current) { voltarFoco.current = false; setTimeout(() => botaoRef.current?.focus(), 0); }
   }, [aberto]);
@@ -148,6 +163,7 @@ export default function ChatSuporte() {
 
       {aberto && (
         <div role="dialog" aria-modal="true" aria-label={t('titulo')} data-testid="chat-suporte-janela"
+          style={vv ? { top: vv.top, height: vv.h, bottom: 'auto' } : undefined}
           onKeyDown={(e) => { if (e.key === 'Escape') setAberto(false); }}
           className="fixed inset-0 z-[60] flex flex-col bg-white sm:inset-auto sm:bottom-4 sm:right-4 sm:h-[560px] sm:max-h-[calc(100vh-2rem)] sm:w-[380px] sm:rounded-2xl sm:border sm:border-gray-200 sm:shadow-2xl">
           <div className="flex items-center justify-between gap-3 bg-primary-600 px-4 py-3 text-white sm:rounded-t-2xl">
@@ -189,7 +205,7 @@ export default function ChatSuporte() {
             </form>
           ) : (
             <>
-              <div className="flex-1 space-y-3 overflow-y-auto bg-gray-50 p-4" aria-live="polite">
+              <div ref={listaRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-gray-50 p-4" aria-live="polite">
                 {msgs.length === 0 && <p className="text-center text-sm text-gray-500">{t('vazio')}</p>}
                 {msgs.map((m) => {
                   const minha = m.autor === 'usuario';
@@ -210,7 +226,6 @@ export default function ChatSuporte() {
                     </div>
                   );
                 })}
-                <div ref={fimRef} />
               </div>
               <div className="border-t border-gray-200 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
                 {erro && <p className="mb-2 text-sm text-red-600" role="alert">{erro}</p>}

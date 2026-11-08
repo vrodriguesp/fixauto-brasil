@@ -5,7 +5,8 @@ import { useParams } from 'next/navigation';
 import { useRouter, Link } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/lib/auth-context';
+import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 
 interface SlotOption {
   id: string;
@@ -26,6 +27,7 @@ export default function ReagendarPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  useTopoAoMudar(success); // tela trocada inteira: abre no alto (dono 08/11)
 
   const [agenda, setAgenda] = useState<any>(null);
   const [disponibilidade, setDisponibilidade] = useState<SlotOption[]>([]);

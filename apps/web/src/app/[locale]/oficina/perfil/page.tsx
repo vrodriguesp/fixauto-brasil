@@ -320,7 +320,7 @@ export default function PerfilOficinaPage() {
             )}
           </div>
           <div>
-            <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+            <input ref={logoInputRef} type="file" accept="image/*" className="sr-only" tabIndex={-1} onChange={handleLogoUpload} />
             <button onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo} className="btn-secondary !py-2 !px-4 text-sm">
               {uploadingLogo ? t('enviando') : logoUrl ? t('trocarLogo') : t('adicionarLogo')}
             </button>
@@ -538,7 +538,7 @@ export default function PerfilOficinaPage() {
           {t('adicioneFotosEstrutura')}
         </p>
 
-        <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload} />
+        <input ref={fileInputRef} type="file" accept="image/*" multiple className="sr-only" tabIndex={-1} onChange={handlePhotoUpload} />
 
         <div className="flex items-center gap-3 mb-4">
           <select className="input-field !w-auto" value={fotoTipo} onChange={(e) => setFotoTipo(e.target.value)}>

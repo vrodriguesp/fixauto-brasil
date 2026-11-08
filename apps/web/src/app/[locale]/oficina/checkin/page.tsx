@@ -14,7 +14,8 @@ import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { notifCheckinManual } from '@/lib/notif-i18n';
 import CampoTelefone from '@/components/forms/CampoTelefone';
-import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
+import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
+import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 
 export default function ManualCheckinPage() {
   const t = useTranslations('oficinaCheckin');
@@ -42,6 +43,7 @@ export default function ManualCheckinPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  useTopoAoMudar(success); // tela trocada inteira: abre no alto (dono 08/11)
   // carro de balcao que ja esta na porta: registra E faz o check-in de verdade
   // (antes so criava um "agendado" e o Quadro mostrava "check-in pendente")
   const [jaAqui, setJaAqui] = useState(true);

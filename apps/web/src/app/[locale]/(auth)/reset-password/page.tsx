@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { temRascunhoEmergencia } from '@/lib/rascunho-emergencia';
 import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
+import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 
 export default function ResetPasswordPage() {
   const t = useTranslations('resetPassword');
@@ -17,6 +18,7 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  useTopoAoMudar(success); // tela trocada inteira: abre no alto (dono 08/11)
   const [sessionReady, setSessionReady] = useState(false);
   const [linkInvalido, setLinkInvalido] = useState(false);
   // Conta criada pelo fluxo de acidente (sem cadastro): ainda nao aceitou os
@@ -82,7 +84,10 @@ export default function ResetPasswordPage() {
     const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
 
-    if (error) {
+    // mesma senha de antes: o link ja provou que a conta e da pessoa e ela ja
+    // esta logada - segue como sucesso em vez de mostrar erro (dono 08/11)
+    const mesmaSenha = (error as { code?: string } | null)?.code === 'same_password';
+    if (error && !mesmaSenha) {
       console.error(error); setError(tErr((error as { code?: string }).code === 'weak_password' ? 'SENHA_CURTA' : 'GENERICO'));
       return;
     }

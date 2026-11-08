@@ -45,6 +45,7 @@ export default function EmergenciaPage() {
   const [localizacao, setLocalizacao] = useState('');
   const [descricao, setDescricao] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  useTopoAoMudar(submitted); // tela trocada inteira: abre no alto (dono 08/11)
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [emergenciaId, setEmergenciaId] = useState<string | null>(null);
@@ -420,9 +421,9 @@ export default function EmergenciaPage() {
               <p className="text-xs text-gray-500 mb-4">{t('fotoDica')}</p>
 
               {/* Camera input (capture) */}
-              <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoUpload} />
+              <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} onChange={handlePhotoUpload} />
               {/* Gallery input (no capture) */}
-              <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload} />
+              <input ref={fileInputRef} type="file" accept="image/*" multiple className="sr-only" tabIndex={-1} onChange={handlePhotoUpload} />
 
               {fotos.length === 0 ? (
                 <div className="space-y-3">

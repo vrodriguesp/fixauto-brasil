@@ -5,7 +5,8 @@ import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { mercadoDe } from '@/i18n/routing';
 import { textoErroApi } from '@/lib/erro-api';
-import CampoTelefone from '@/components/forms/CampoTelefone';
+import CampoTelefone from '@/components/forms/CampoTelefone';
+import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 
 export default function SejaParceiroPage() {
   const t = useTranslations('sejaParceiro');
@@ -21,6 +22,7 @@ export default function SejaParceiroPage() {
   const [observacao, setObservacao] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
+  useTopoAoMudar(enviado); // tela trocada inteira: abre no alto (dono 08/11)
   const [erro, setErro] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -5,7 +5,8 @@ import { Link, useRouter } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
+import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
+import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 
 export default function LoginPage() {
   const t = useTranslations('login');
@@ -15,6 +16,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [forgotMode, setForgotMode] = useState(false);
   const [resetSent, setResetSent] = useState(false);
+  useTopoAoMudar(resetSent); // tela trocada inteira: abre no alto (dono 08/11)
   const [naoConfirmado, setNaoConfirmado] = useState(false);
   const [confirmacaoReenviada, setConfirmacaoReenviada] = useState(false);
   const locale = useLocale();

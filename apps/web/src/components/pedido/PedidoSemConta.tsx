@@ -374,7 +374,7 @@ export default function PedidoSemConta() {
               </div>
             )}
             <p className="text-sm font-medium text-gray-700 mt-5 mb-2">{t('fotosTitulo')}</p>
-            <input ref={inputFoto} type="file" accept="image/*" multiple className="hidden"
+            <input ref={inputFoto} type="file" accept="image/*" multiple className="sr-only" tabIndex={-1}
               onChange={(e) => { const fs = Array.from(e.target.files || []).slice(0, 6 - fotos.length); setFotos((x) => [...x, ...fs.map((file) => ({ file, preview: URL.createObjectURL(file) }))]); e.target.value = ''; }} />
             <div className="grid grid-cols-4 gap-2">
               {fotos.map((f, i) => (

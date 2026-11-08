@@ -85,6 +85,7 @@ export default function EnviarOrcamentoPage() {
   const [observacoes, setObservacoes] = useState('');
   const [validade, setValidade] = useState((() => { const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0]; })());
   const [submitted, setSubmitted] = useState(false);
+  useTopoAoMudar(submitted); // tela trocada inteira: abre no alto (dono 08/11)
   // garantia do servico (dias, a partir da entrega); '' = nao informada
   const [garantiaDias, setGarantiaDias] = useState<string>('');
   // prazo fora das opcoes prontas: a oficina digita os dias
@@ -518,9 +519,9 @@ ${d.observacoes}` : d.observacoes));
           {/* Dois botoes explicitos: no iPhone, o campo de arquivo escondido dentro
               de um rotulo as vezes nao devolvia a foto da camera e nada acontecia
               (teste do dono 09/10, ponto 7). Foto grande e reduzida antes de enviar. */}
-          <input ref={refCamera} type="file" accept="image/*" capture="environment" className="hidden"
+          <input ref={refCamera} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1}
             onChange={(e) => { const a = e.target.files?.[0]; e.target.value = ''; if (a) lerDocumento(a); }} />
-          <input ref={refArquivo} type="file" accept="image/*,application/pdf" className="hidden"
+          <input ref={refArquivo} type="file" accept="image/*,application/pdf" className="sr-only" tabIndex={-1}
             onChange={(e) => { const a = e.target.files?.[0]; e.target.value = ''; if (a) lerDocumento(a); }} />
           <div className="flex flex-wrap gap-2">
             <button type="button" disabled={lendoDoc === 'lendo'} onClick={() => refCamera.current?.click()} className="btn-secondary !py-2 text-sm inline-flex items-center gap-2 disabled:opacity-50">

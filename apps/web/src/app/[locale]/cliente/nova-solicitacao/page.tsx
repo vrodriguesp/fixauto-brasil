@@ -44,6 +44,7 @@ export default function NovaSolicitacaoPage() {
   const [servicosSelecionados, setServicosSelecionados] = useState<string[]>([]);
   const [endereco, setEndereco] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  useTopoAoMudar(submitted); // tela trocada inteira: abre no alto (dono 08/11)
   const [submitError, setSubmitError] = useState('');
   // Mesmo padrao de emergencia/page.tsx: comeca com um default (SP) e so
   // sobrescreve se o navegador conceder geolocalizacao - sem isso, toda
@@ -451,7 +452,7 @@ export default function NovaSolicitacaoPage() {
                   type="file"
                   accept="image/*"
                   multiple
-                  className="hidden"
+                  className="sr-only" tabIndex={-1}
                   onChange={handlePhotoUpload}
                 />
 

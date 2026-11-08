@@ -48,6 +48,7 @@ function CadastroPage() {
   // possivel cobranca futura (aviso previo de 30 dias corridos)
   const [declaracao, setDeclaracao] = useState(false);
   const [enviado, setEnviado] = useState(false);
+  useTopoAoMudar(enviado); // tela trocada inteira: abre no alto (dono 08/11)
   const [reenviado, setReenviado] = useState(false);
   // Workshop fields
   const [nomeFantasia, setNomeFantasia] = useState('');
