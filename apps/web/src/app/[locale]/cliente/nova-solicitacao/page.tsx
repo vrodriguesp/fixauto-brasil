@@ -257,7 +257,7 @@ export default function NovaSolicitacaoPage() {
       }).catch(() => {});
 
       setSubmitted(true);
-      setTimeout(() => router.push('/cliente/dashboard'), 2000);
+      setTimeout(() => router.replace('/cliente/dashboard'), 2000); // replace: o voltar nao cai no formulario ja enviado
     } catch (err) {
       setSubmitError((err as Error).message || t('errorUnexpectedSubmit'));
     }

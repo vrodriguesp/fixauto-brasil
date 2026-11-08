@@ -239,7 +239,9 @@
     "horariosVencidos": "Pakutud ajad on möödas. Küsi töökojalt sõnumiga uusi aegu.",
     "convencionadaComSeguradora": "Lepinguline partner: {seguradora}",
     "escolhido": "Valitud hinnapakkumine",
-    "verOficina": "Vaata töökoda (hinnangud, aadress)"
+    "verOficina": "Vaata töökoda (hinnangud, aadress)",
+    "pedidoCanceladoTitulo": "Päring tühistatud",
+    "pedidoCanceladoTexto": "See päring on tühistatud. Hinnapakkumised jäävad siia ainult vaatamiseks."
   },
   "clienteMensagens": {
     "workshopFallback": "Töökoda",
@@ -299,7 +301,8 @@
     "byMechanic": "tegi {name}",
     "awaitingNextUpdate": "Ootab järgmist uuendust...",
     "sendMessage": "Saada sõnum",
-    "viewDetails": "Vaata üksikasju"
+    "viewDetails": "Vaata üksikasju",
+    "servicoCancelado": "See teenus on tühistatud."
   },
   "clienteReagendar": {
     "appointmentNotFound": "Broneeringut ei leitud.",

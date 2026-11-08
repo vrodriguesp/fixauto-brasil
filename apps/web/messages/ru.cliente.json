@@ -239,7 +239,9 @@
     "horariosVencidos": "Предложенное время уже прошло. Попросите автосервис в чате предложить новые даты.",
     "convencionadaComSeguradora": "Работает с {seguradora}",
     "escolhido": "Выбранная смета",
-    "verOficina": "Об автосервисе (отзывы, адрес)"
+    "verOficina": "Об автосервисе (отзывы, адрес)",
+    "pedidoCanceladoTitulo": "Заявка отменена",
+    "pedidoCanceladoTexto": "Эта заявка отменена. Сметы остаются здесь только для просмотра."
   },
   "clienteMensagens": {
     "workshopFallback": "Автосервис",
@@ -299,7 +301,8 @@
     "byMechanic": "механик: {name}",
     "awaitingNextUpdate": "Ждём следующего обновления...",
     "sendMessage": "Написать сообщение",
-    "viewDetails": "Подробнее"
+    "viewDetails": "Подробнее",
+    "servicoCancelado": "Эта услуга отменена."
   },
   "clienteReagendar": {
     "appointmentNotFound": "Запись не найдена.",

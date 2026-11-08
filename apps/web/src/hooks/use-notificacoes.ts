@@ -35,6 +35,12 @@ export function useNotificacoes() {
   }, [user]);
 
   useEffect(() => { fetch(); }, [fetch]);
+  // lidas em outra parte da tela (pagina de notificacoes x sininho): todas as copias do
+  // hook se atualizam - antes o ponto vermelho do sininho ficava aceso (dono 08/11)
+  useEffect(() => {
+    window.addEventListener('bipfix:notificacoes-lidas', fetch);
+    return () => window.removeEventListener('bipfix:notificacoes-lidas', fetch);
+  }, [fetch]);
 
   // Subscribe to realtime notifications
   useEffect(() => {
@@ -59,6 +65,7 @@ export function useNotificacoes() {
     await supabase.from('notificacoes').update({ lida: true }).eq('id', id);
     setNotificacoes((prev) => prev.map((n) => n.id === id ? { ...n, lida: true } : n));
     setUnreadCount((prev) => Math.max(0, prev - 1));
+    window.dispatchEvent(new Event('bipfix:notificacoes-lidas'));
   };
 
   const markAllRead = async () => {
@@ -66,6 +73,7 @@ export function useNotificacoes() {
     await supabase.from('notificacoes').update({ lida: true }).eq('profile_id', user.id).eq('lida', false);
     setNotificacoes((prev) => prev.map((n) => ({ ...n, lida: true })));
     setUnreadCount(0);
+    window.dispatchEvent(new Event('bipfix:notificacoes-lidas'));
   };
 
   return { notificacoes, unreadCount, loading, markAsRead, markAllRead, refresh: fetch };

@@ -239,7 +239,9 @@
     "horariosVencidos": "Os horários oferecidos já passaram. Peça novas datas à oficina por mensagem.",
     "convencionadaComSeguradora": "Convencionada com {seguradora}",
     "escolhido": "Orçamento escolhido",
-    "verOficina": "Ver a oficina (avaliações, morada)"
+    "verOficina": "Ver a oficina (avaliações, morada)",
+    "pedidoCanceladoTitulo": "Pedido cancelado",
+    "pedidoCanceladoTexto": "Este pedido foi cancelado. Os orçamentos ficam aqui só para consulta."
   },
   "clienteMensagens": {
     "workshopFallback": "Oficina",
@@ -299,7 +301,8 @@
     "byMechanic": "por {name}",
     "awaitingNextUpdate": "À espera da próxima atualização...",
     "sendMessage": "Enviar Mensagem",
-    "viewDetails": "Ver Detalhes"
+    "viewDetails": "Ver Detalhes",
+    "servicoCancelado": "Este serviço foi cancelado."
   },
   "clienteReagendar": {
     "appointmentNotFound": "Marcação não encontrada.",

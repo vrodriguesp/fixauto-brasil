@@ -257,6 +257,14 @@ export default function OrcamentoDetalhePage() {
         <PedidoExpirado solicitacaoId={solicitacao.id} dias={VALIDADE_PEDIDO_DIAS} aoReabrir={refresh} />
       )}
 
+      {/* pedido cancelado: aviso claro no alto (antes parecia ativo, com datas - dono 08/11) */}
+      {solicitacao.status === 'cancelada' && (
+        <div className="mb-6 rounded-lg border border-gray-300 bg-gray-50 p-4" role="status" data-testid="pedido-cancelado">
+          <p className="font-semibold text-gray-900">{t('pedidoCanceladoTitulo')}</p>
+          <p className="mt-1 text-sm text-gray-600">{t('pedidoCanceladoTexto')}</p>
+        </div>
+      )}
+
       {['aberta', 'em_orcamento'].includes(solicitacao.status) && (
         <EditarPedido key={`${solicitacao.id}-${solicitacao.veiculo?.fipe_marca || ''}`} solicitacaoId={solicitacao.id}
           descricao={solicitacao.descricao} veiculo={(solicitacao.veiculo as any) || null} aoSalvar={refresh} />
@@ -568,6 +576,8 @@ export default function OrcamentoDetalhePage() {
                   <p className="text-xs text-blue-600">{t('execTimeLabel')}</p>
                   <p className="text-sm font-bold text-blue-900">{formatExecTime(orc.tempo_execucao_horas, t)}</p>
                 </div>
+                {/* horarios oferecidos: so enquanto da para escolher (aceito/cancelado mostram o agendamento) */}
+                {orc.status === 'enviado' && ['aberta', 'em_orcamento'].includes(solicitacao.status) && (<>
                 <div className="p-3 bg-green-50 rounded-lg flex items-center justify-between gap-3 sm:block sm:text-center">
                   <p className="text-xs text-green-600">{t('nextCheckinLabel')}</p>
                   <p className="text-sm font-bold text-green-900">
@@ -578,6 +588,7 @@ export default function OrcamentoDetalhePage() {
                   <p className="text-xs text-purple-600">{t('availableDatesLabel')}</p>
                   <p className="text-sm font-bold text-purple-900">{t('optionsCount', { count: orc.disponibilidade.length })}</p>
                 </div>
+                </>)}
               </div>
 
               {/* Revision comparison */}

@@ -113,7 +113,7 @@ export default function AcompanhamentoPage() {
         .select(`
           id, oficina_id, data_inicio, data_fim, status,
           funcionario:funcionarios(profile:profiles(nome)),
-          solicitacao:solicitacoes(id, tipo, descricao, veiculo:veiculos(fipe_marca, fipe_modelo, placa))
+          solicitacao:solicitacoes(id, status, tipo, descricao, veiculo:veiculos(fipe_marca, fipe_modelo, placa))
         `)
         .eq('solicitacao_id', id)
         .order('created_at', { ascending: false })
@@ -340,6 +340,10 @@ export default function AcompanhamentoPage() {
         </h2>
         {etapas.length === 0 ? (
           <div className="text-center py-8">
+            {/* cancelado: diz isso, sem "aguardando" nem "tempo real" (dono 08/11) */}
+            {(agenda?.status as string) === 'cancelado' || (agenda as any)?.solicitacao?.status === 'cancelada' ? (
+              <p className="text-gray-700 text-sm font-medium" data-testid="servico-cancelado">{t('servicoCancelado')}</p>
+            ) : (<>
             <p className="text-gray-400 text-sm">{t('awaitingServiceStart')}</p>
             <div className="mt-2 flex justify-center">
               <div className="flex items-center gap-1.5 text-xs text-gray-400">
@@ -350,6 +354,7 @@ export default function AcompanhamentoPage() {
                 {t('realtimeUpdateActive')}
               </div>
             </div>
+            </>)}
           </div>
         ) : (
           <div className="relative pl-6 space-y-4">

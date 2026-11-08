@@ -46,7 +46,10 @@
     "mensagensNovas": "{n} lugemata sõnumit",
     "minhaOficinaCurto": "Töökoda",
     "conversasOficina": "Sõnumid",
-    "garantiasOficina": "Garantiid"
+    "garantiasOficina": "Garantiid",
+    "inicio": "Avaleht",
+    "pedidosCliente": "Päringud",
+    "avisos": "Teated"
   },
   "sejaParceiro": {
     "metaTitle": "Saa BipFixi partneriks",
@@ -450,7 +453,7 @@
       "em_andamento": "Töös",
       "concluida": "Lõpetatud",
       "cancelada": "Tühistatud",
-      "no_show": "Ei ilmunud kohale",
+      "no_show": "Ei ilmunud kohale",
       "expirada": "Aegunud"
     },
     "statusOrcamento": {

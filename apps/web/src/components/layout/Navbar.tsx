@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { useEffect, useRef, useState } from 'react';
 import NotificationBell from './NotificationBell';
+import { useNotificacoes } from '@/hooks/use-notificacoes';
 import LanguageSwitcher from './LanguageSwitcher';
 import NextLink from 'next/link';
 import { supabase } from '@/lib/supabase';
@@ -29,6 +30,9 @@ export default function Navbar() {
 
   const isOficina = user?.tipo === 'oficina';
   const isAdmin = user?.tipo === 'admin';
+  const isCliente = user?.tipo === 'cliente';
+  // cliente no celular: menu de baixo como o da oficina, com os avisos a vista (dono 08/11)
+  const { unreadCount: avisosNovos } = useNotificacoes();
   const isLoja = user?.tipo === 'loja_pecas';
   const isMecanico = funcionario?.cargo === 'mecanico';
   const dashboardPath = isAdmin
@@ -91,18 +95,37 @@ export default function Navbar() {
   const menuOficina = isOficina && !isMecanico;
   // a barra de baixo (celular) nao pode cobrir o fim da pagina nem o rodape
   useEffect(() => {
-    const temBarra = isLoggedIn && isOficina;
+    const temBarra = isLoggedIn && (isOficina || isCliente);
     document.body.classList.toggle('com-barra-inferior', !!temBarra);
     return () => document.body.classList.remove('com-barra-inferior');
-  }, [isLoggedIn, isOficina]);
+  }, [isLoggedIn, isOficina, isCliente]);
   // celular digitando: a barra de baixo e o botao do chat sairiam por cima do teclado
   // (iPhone) e cobririam o campo - somem enquanto um campo de texto tem o foco (dono 08/11)
   useEffect(() => {
     const texto = (el: EventTarget | null) => el instanceof HTMLElement && (el.isContentEditable || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || (el.tagName === 'INPUT' && !['checkbox', 'radio', 'button', 'submit', 'file', 'range', 'color'].includes((el as HTMLInputElement).type)));
     const entrou = (e: FocusEvent) => { if (texto(e.target)) document.body.classList.add('digitando'); };
     const saiu = () => setTimeout(() => { if (!texto(document.activeElement)) document.body.classList.remove('digitando'); }, 0);
+    // iPhone: o teclado pode fechar sem o campo perder o foco, e o Safari deixa o que e fixo
+    // (botao do chat, menu de baixo) na altura onde o teclado estava ate a pessoa rolar
+    // (dono 08/11). Quando a area visivel volta ao tamanho cheio: sai do modo digitando e
+    // forca o reposicionamento.
+    const vv = window.visualViewport;
+    let tecladoAberto = false;
+    const medir = () => {
+      if (!vv) return;
+      const aberto = vv.height < window.innerHeight - 120;
+      if (aberto) { tecladoAberto = true; return; }
+      if (!tecladoAberto) return;
+      tecladoAberto = false;
+      document.body.classList.remove('digitando');
+      requestAnimationFrame(() => {
+        for (const el of Array.from(document.querySelectorAll<HTMLElement>('.chat-suporte-botao, .barra-inferior'))) { el.style.transform = 'translateZ(0)'; void el.offsetHeight; el.style.transform = ''; }
+        window.scrollTo(window.scrollX, window.scrollY);
+      });
+    };
+    vv?.addEventListener('resize', medir);
     document.addEventListener('focusin', entrou); document.addEventListener('focusout', saiu);
-    return () => { document.removeEventListener('focusin', entrou); document.removeEventListener('focusout', saiu); document.body.classList.remove('digitando'); };
+    return () => { vv?.removeEventListener('resize', medir); document.removeEventListener('focusin', entrou); document.removeEventListener('focusout', saiu); document.body.classList.remove('digitando'); };
   }, []);
 
   return (
@@ -329,6 +352,22 @@ export default function Navbar() {
         </div>
       </nav>
     )}
+    {isLoggedIn && isCliente && (
+      <nav aria-label={t('menuPrincipal')} className="barra-inferior xl:hidden fixed bottom-0 inset-x-0 z-50 border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)]">
+        <div className="grid grid-cols-5">
+          {[
+            { href: '/cliente/dashboard', txt: t('inicio'), icone: 'casa' },
+            { href: '/cliente/orcamentos', txt: t('pedidosCliente'), icone: 'caixa' },
+            { href: '/cliente/mensagens', txt: t('mensagens'), icone: 'mensagens', extra: contadorMsgs },
+            { href: '/cliente/notificacoes', txt: t('avisos'), icone: 'sino', extra: avisosNovos > 0 ? <span className="inline-block min-w-[1.25rem] rounded-full bg-red-600 px-1.5 text-center text-xs font-semibold leading-5 text-white">{avisosNovos > 9 ? '9+' : avisosNovos}</span> : null },
+          ].map((it: any) => <ItemBarra key={it.href} {...it} onClick={() => setMenuOpen(false)} />)}
+          <button type="button" onClick={() => { setMenuOpen((v) => !v); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-expanded={menuOpen} aria-controls="menu-mobile"
+            className={`flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-xs font-medium ${menuOpen ? 'text-primary-700' : 'text-gray-600'}`}>
+            <Icone nome="mais" />{t('mais')}
+          </button>
+        </div>
+      </nav>
+    )}
     </>
   );
 }
@@ -340,6 +379,8 @@ function Icone({ nome }: { nome: string }) {
     agenda: 'M8 7V3m8 4V3M4 11h16M5 5h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z',
     aprender: 'M12 14l9-5-9-5-9 5 9 5zm0 0v6m-6-9v5c0 1.5 3 3 6 3s6-1.5 6-3v-5',
     mais: 'M4 6h16M4 12h16M4 18h16',
+    casa: 'M3 11l9-7 9 7M5 10v10h5v-6h4v6h5V10',
+    sino: 'M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 00-4-5.7V5a2 2 0 10-4 0v.3A6 6 0 006 11v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9',
     mensagens: 'M8 10h8M8 14h5M21 12c0 4.4-4 8-9 8a9.9 9.9 0 01-4-.8L3 20l1.3-3.9A7.6 7.6 0 013 12c0-4.4 4-8 9-8s9 3.6 9 8z',
     oficina: 'M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6',
   };

@@ -18,6 +18,11 @@ const CONTEXTO = 'Car repair marketplace in Tallinn, Estonia. Messages, repair r
 const PARES_GLOSSARIO = new Set(['et>ru', 'ru>et']);
 
 export interface Traducao { texto: string | null; origem: string | null }
+// linguas que fazem sentido nas conversas (6 do site + vizinhas da regiao)
+const LINGUAS_PLAUSIVEIS = new Set(['PT', 'ET', 'RU', 'EN', 'IT', 'FI', 'LV', 'LT', 'UK', 'DE', 'PL', 'ES', 'FR', 'SV']);
+// compara sem acentos, maiusculas, espacos e pontuacao
+const SO_LETRAS = new RegExp('[^\\p{L}\\p{N}]+', 'gu');
+const normalizar = (t: string) => t.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(SO_LETRAS, '');
 
 const hashDe = (texto: string, alvo: string) => createHash('sha256').update(`${alvo}\n${texto}`).digest('hex');
 
@@ -42,7 +47,8 @@ export async function traduzirTextos(textos: string[], lingua: string, guardar =
     // ja na lingua de quem le: sem traducao, mas com a origem (o chat de suporte nao confunde com "DeepL falhou")
     if (pular.has(i)) { if (t) resultado[i] = { texto: null, origem: alvo.split('-')[0] }; return; }
     const g = porHash.get(hashes[i]);
-    if (g) resultado[i] = { texto: g.traducao, origem: g.origem };
+    // a mesma regra para o que ja estava guardado (traducoes antigas de lingua improvavel/iguais)
+    if (g) { const ok = (!g.origem || LINGUAS_PLAUSIVEIS.has(String(g.origem).split('-')[0])) && !(g.traducao && normalizar(g.traducao) === normalizar(t)); resultado[i] = ok ? { texto: g.traducao, origem: g.origem } : { texto: null, origem: null }; }
     else faltam.push(i);
   });
 
@@ -78,7 +84,13 @@ export async function traduzirTextos(textos: string[], lingua: string, guardar =
         const detectada = String(tr?.detected_source_language || '').toUpperCase() || null;
         // ja estava na lingua de quem le: guarda sem traducao
         const mesma = !!detectada && alvo.split('-')[0] === detectada.split('-')[0];
-        return { hash: hashes[i], alvo, origem: detectada, traducao: mesma ? null : (tr?.text ?? null) };
+        // texto curto/sem sentido: o DeepL "adivinha" lingua improvavel ("Ola, test" -> noruegues,
+        // "Hhhhhh" -> lombardo) e a tela dizia "traduzido do noruegues" sem traduzir (dono 08/11).
+        // So vale traducao de lingua plausivel para os nossos mercados e que mude o texto.
+        const plausivel = !detectada || LINGUAS_PLAUSIVEIS.has(detectada.split('-')[0]);
+        const texto = tr?.text ?? null;
+        const igual = texto != null && normalizar(texto) === normalizar(limpos[i] ?? '');
+        return { hash: hashes[i], alvo, origem: plausivel ? detectada : null, traducao: mesma || !plausivel || igual ? null : texto };
       });
     }))).flatMap((r) => (r.status === 'fulfilled' ? r.value : (console.error('[deepl]', r.reason), [])));
     if (guardar && linhas.length) await supabaseAdmin.from('traducoes').upsert(linhas, { onConflict: 'hash' });

@@ -239,7 +239,9 @@
     "horariosVencidos": "Gli orari proposti sono già passati. Chiedi all'officina nuove date tramite messaggio.",
     "convencionadaComSeguradora": "Convenzionata con {seguradora}",
     "escolhido": "Preventivo scelto",
-    "verOficina": "Vedi l'officina (recensioni, indirizzo)"
+    "verOficina": "Vedi l'officina (recensioni, indirizzo)",
+    "pedidoCanceladoTitulo": "Richiesta annullata",
+    "pedidoCanceladoTexto": "Questa richiesta è stata annullata. I preventivi restano qui solo per consultazione."
   },
   "clienteMensagens": {
     "workshopFallback": "Officina",
@@ -299,7 +301,8 @@
     "byMechanic": "da {name}",
     "awaitingNextUpdate": "In attesa del prossimo aggiornamento...",
     "sendMessage": "Invia messaggio",
-    "viewDetails": "Vedi dettagli"
+    "viewDetails": "Vedi dettagli",
+    "servicoCancelado": "Questo servizio è stato annullato."
   },
   "clienteReagendar": {
     "appointmentNotFound": "Appuntamento non trovato.",

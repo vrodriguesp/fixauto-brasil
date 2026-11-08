@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import EnderecoAutocomplete from './EnderecoAutocomplete';
 import { buscarEnderecoPorCep, cepEstaCompleto, formatCep } from '@/lib/cep';
 
@@ -23,6 +23,13 @@ export interface ValorEndereco {
 // sugestoes muitas vezes nao traziam o numero. Ao sair dos campos, o endereco
 // e conferido no mapa (posicao exata com o numero, ou da rua se o numero nao
 // estiver no mapa).
+// sem a posicao da pessoa, as sugestoes vinham de qualquer lugar ("Tartu mnt" -> Poltsamaa
+// em vez de Tallinn - dono 08/11): usa o centro do mercado so para ordenar as sugestoes
+const CENTRO: Record<string, { lat: number; lon: number }> = {
+  et: { lat: 59.437, lon: 24.745 }, ru: { lat: 59.437, lon: 24.745 }, en: { lat: 59.437, lon: 24.745 },
+  it: { lat: 41.9028, lon: 12.4964 }, 'pt-PT': { lat: 38.7223, lon: -9.1393 }, pt: { lat: -23.5505, lon: -46.6333 },
+};
+
 export default function EnderecoEstruturado({ valor, onChange, perto, idBase = 'end' }: {
   valor: ValorEndereco;
   onChange: (v: ValorEndereco) => void;
@@ -30,6 +37,8 @@ export default function EnderecoEstruturado({ valor, onChange, perto, idBase = '
   idBase?: string;
 }) {
   const t = useTranslations('enderecoEstruturado');
+  const locale = useLocale();
+  const pertoUsado = perto || CENTRO[locale] || null;
   const [estado, setEstado] = useState<'' | 'conferindo' | 'ok' | 'semNumero' | 'naoEncontrado'>('');
   const ultimo = useRef('');
   const atual = useRef(valor);
@@ -37,7 +46,9 @@ export default function EnderecoEstruturado({ valor, onChange, perto, idBase = '
 
   const conferir = async () => {
     const v = atual.current;
-    if (!v.rua.trim() || (!v.cidade.trim() && !v.cep.trim())) return;
+    // rua + numero ja basta (antes exigia cidade ou CEP e quem nao escolhia sugestao
+    // nunca tinha o endereco conferido - dono 08/11)
+    if (!v.rua.trim() || (!v.cidade.trim() && !v.cep.trim() && !v.numero.trim())) return;
     const chave = [v.rua, v.numero, v.cidade, v.cep, v.pais].map((x) => x.trim().toLowerCase()).join('|');
     if (chave === ultimo.current) return;
     ultimo.current = chave;
@@ -83,12 +94,13 @@ export default function EnderecoEstruturado({ valor, onChange, perto, idBase = '
             value={valor.rua}
             onChange={(v) => set('rua', v)}
             placeholder={t('ruaPlaceholder')}
-            perto={perto}
+            perto={pertoUsado}
             onSelect={(s) => {
               const novo = {
                 ...valor,
                 rua: s.rua || s.endereco,
-                numero: s.numero || valor.numero,
+                // "Tartu mnt 50" digitado e a sugestao so da rua: o 50 vai para o numero
+                numero: s.numero || valor.numero || (valor.rua.match(/s(d+[a-zA-Z]?(?:[-/]d+)?)s*$/) || [])[1] || '',
                 cidade: s.cidade || valor.cidade,
                 estado: s.estado || valor.estado,
                 cep: s.cep || valor.cep,

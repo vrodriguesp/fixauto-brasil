@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CampoNumero from '@/components/forms/CampoNumero';
 import { localParaIso } from '@/lib/turnos';
 import { exemploPlaca, EXEMPLO_EMAIL, exemploValor } from '@/lib/exemplos';
@@ -31,6 +31,7 @@ export default function ManualCheckinPage() {
   const [veiculoMarca, setVeiculoMarca] = useState('');
   const [veiculoModelo, setVeiculoModelo] = useState('');
   const [veiculoAno, setVeiculoAno] = useState('');
+  const [faltando, setFaltando] = useState('');
   const [veiculoPlaca, setVeiculoPlaca] = useState('');
   const [veiculoCor, setVeiculoCor] = useState('');
   const [tipoServico, setTipoServico] = useState('');
@@ -56,10 +57,22 @@ export default function ManualCheckinPage() {
     return d.toISOString().split('T')[0];
   })();
 
+  // campo preenchido: tira o destaque vermelho
+  useEffect(() => {
+    const cheio: Record<string, string> = { 'c7917-1': clienteNome, 'c7917-4': veiculoMarca, 'c7917-5': veiculoModelo, 'walkin-tipo': tipoServico };
+    if (faltando && cheio[faltando]) setFaltando('');
+  }, [faltando, clienteNome, veiculoMarca, veiculoModelo, tipoServico]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!clienteNome || !veiculoMarca || !veiculoModelo || !tipoServico) {
       setError(t('erroCamposObrigatorios'));
+      // leva ao 1o campo que falta (antes so o aviso no alto, sem dizer qual - dono 08/11)
+      const falta = !clienteNome ? 'c7917-1' : !veiculoMarca ? 'c7917-4' : !veiculoModelo ? 'c7917-5' : 'walkin-tipo';
+      const el = document.getElementById(falta);
+      // depois do aviso aparecer no alto (ele empurra a tela), senao a rolagem se perde
+      setTimeout(() => { el?.scrollIntoView({ block: 'center' }); if (el instanceof HTMLInputElement) el.focus({ preventScroll: true }); }, 80);
+      setFaltando(falta);
       return;
     }
     setSaving(true);
@@ -162,7 +175,7 @@ export default function ManualCheckinPage() {
           <div className="space-y-4">
             <div>
               <label htmlFor="c7917-1" className="block text-sm font-medium text-gray-700 mb-1">{t('nomeClienteObrigatorio')}</label>
-              <input id="c7917-1" type="text" className="input-field" placeholder={t('placeholderNomeCompleto')} value={clienteNome} onChange={(e) => setClienteNome(e.target.value)} required />
+              <input id="c7917-1" type="text" aria-invalid={faltando === 'c7917-1' || undefined} className={`input-field ${faltando === 'c7917-1' ? '!border-red-400' : ''}`} placeholder={t('placeholderNomeCompleto')} value={clienteNome} onChange={(e) => setClienteNome(e.target.value)} required />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="min-w-0">
@@ -184,17 +197,17 @@ export default function ManualCheckinPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="min-w-0">
                 <label htmlFor="c7917-4" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('marcaObrigatorio')}</label>
-                <input id="c7917-4" type="text" className="input-field" placeholder={t('placeholderMarca')} value={veiculoMarca} onChange={(e) => setVeiculoMarca(e.target.value)} required />
+                <input id="c7917-4" type="text" aria-invalid={faltando === 'c7917-4' || undefined} className={`input-field ${faltando === 'c7917-4' ? '!border-red-400' : ''}`} placeholder={t('placeholderMarca')} value={veiculoMarca} onChange={(e) => setVeiculoMarca(e.target.value)} required />
               </div>
               <div className="min-w-0">
                 <label htmlFor="c7917-5" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('modeloObrigatorio')}</label>
-                <input id="c7917-5" type="text" className="input-field" placeholder={t('placeholderModelo')} value={veiculoModelo} onChange={(e) => setVeiculoModelo(e.target.value)} required />
+                <input id="c7917-5" type="text" aria-invalid={faltando === 'c7917-5' || undefined} className={`input-field ${faltando === 'c7917-5' ? '!border-red-400' : ''}`} placeholder={t('placeholderModelo')} value={veiculoModelo} onChange={(e) => setVeiculoModelo(e.target.value)} required />
               </div>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               <div className="min-w-0">
                 <label htmlFor="c7917-6" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('ano')}</label>
-                <input id="c7917-6" type="text" className="input-field" placeholder="2023" value={veiculoAno} onChange={(e) => setVeiculoAno(e.target.value)} />
+                <input id="c7917-6" type="text" inputMode="numeric" maxLength={4} className="input-field" placeholder="2023" value={veiculoAno} onChange={(e) => setVeiculoAno(e.target.value.replace(/\D/g, '').slice(0, 4))} />
               </div>
               <div className="min-w-0">
                 <label htmlFor="c7917-7" className="block text-sm font-medium text-gray-700 mb-1 break-words [hyphens:auto]">{t('placa')}</label>
@@ -214,7 +227,7 @@ export default function ManualCheckinPage() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">{t('tipoServicoObrigatorio')}</label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div id="walkin-tipo" className={`grid grid-cols-2 sm:grid-cols-4 gap-2 rounded-lg ${faltando === 'walkin-tipo' ? 'ring-2 ring-red-400 p-1' : ''}`}>
                 {TIPOS_SERVICO.map((tipo) => (
                   <button
                     key={tipo.value}

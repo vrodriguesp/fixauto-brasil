@@ -127,6 +127,15 @@ export default function EnviarOrcamentoPage() {
   // comeca no primeiro periodo ainda valido (antes: hoje de manha, mesmo a tarde)
   const [slots, setSlots] = useState<{ data: string; turno: 'manha' | 'tarde' }[]>(() => [primeiroTurnoLivre(undefined, (oficina as any)?.pais)]);
   const [erroHorario, setErroHorario] = useState(false);
+  // no 1o instante a oficina ainda nao carregou e o calculo usava o fuso padrao (Brasil: em
+  // Tallinn 13:50 virava "hoje de manha", ja passado - dono 08/11): refaz com o pais da
+  // oficina enquanto a pessoa nao mexeu no horario nem ha orcamento salvo
+  const mexeuHorario = useRef(false);
+  const paisOficina = (oficina as any)?.pais;
+  useEffect(() => {
+    if (!paisOficina || mexeuHorario.current || existingQuote) return;
+    setSlots([primeiroTurnoLivre(undefined, paisOficina)]);
+  }, [paisOficina, existingQuote]);
 
   // Pre-fill form with existing quote data for revisions
   useEffect(() => {
@@ -167,6 +176,7 @@ export default function EnviarOrcamentoPage() {
   }, [existingQuote, prefilled]);
 
   const addSlot = () => {
+    mexeuHorario.current = true;
     setSlots([...slots, { data: '', turno: 'manha' as const }]);
   };
 
@@ -175,6 +185,7 @@ export default function EnviarOrcamentoPage() {
   };
 
   const updateSlot = (index: number, field: 'data' | 'turno', value: string) => {
+    mexeuHorario.current = true;
     setErroHorario(false);
     setSlots(slots.map((s, i) => {
       if (i !== index) return s;

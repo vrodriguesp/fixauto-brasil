@@ -102,7 +102,8 @@ export default function PedidoSemConta() {
 
   // quem ja esta logado usa o pedido normal (mesmos passos, sem contato/codigo)
   useEffect(() => {
-    if (!carregandoLogin && isLoggedIn && etapa === 'servico' && !pendente) { limparRascunho(); router.replace('/cliente/nova-solicitacao'); }
+    // chegou pelo "voltar" depois de pedir (ja logado): vai ao inicio, nao abre outro pedido (dono 08/11)
+    if (!carregandoLogin && isLoggedIn && etapa === 'servico' && !pendente) { const voltou = Date.now() - ((window as any).__bipfixVoltou || 0) < 5000 || (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type === 'back_forward'; limparRascunho(); router.replace(voltou ? '/cliente/dashboard' : '/cliente/nova-solicitacao'); }
   }, [carregandoLogin, isLoggedIn]); // eslint-disable-line react-hooks/exhaustive-deps
   // rascunho: volta o que a pessoa ja tinha feito (troca de idioma ou recarregar)
   const [rascunhoLido, setRascunhoLido] = useState(false);

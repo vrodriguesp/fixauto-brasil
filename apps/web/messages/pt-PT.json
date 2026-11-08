@@ -46,7 +46,10 @@
     "mensagensNovas": "{n} mensagens por ler",
     "minhaOficinaCurto": "Oficina",
     "conversasOficina": "Mensagens",
-    "garantiasOficina": "Garantias"
+    "garantiasOficina": "Garantias",
+    "inicio": "Início",
+    "pedidosCliente": "Pedidos",
+    "avisos": "Avisos"
   },
   "sejaParceiro": {
     "metaTitle": "Torne-se parceiro da BipFix",
@@ -441,7 +444,7 @@
       "em_andamento": "Em Curso",
       "concluida": "Concluído",
       "cancelada": "Cancelado",
-      "no_show": "Não compareceu",
+      "no_show": "Não compareceu",
       "expirada": "Expirado"
     },
     "statusOrcamento": {

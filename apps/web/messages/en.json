@@ -46,7 +46,10 @@
     "mensagensNovas": "{n} unread messages",
     "minhaOficinaCurto": "Workshop",
     "conversasOficina": "Messages",
-    "garantiasOficina": "Warranties"
+    "garantiasOficina": "Warranties",
+    "inicio": "Home",
+    "pedidosCliente": "Requests",
+    "avisos": "Alerts"
   },
   "sejaParceiro": {
     "metaTitle": "Become a BipFix partner",
@@ -444,7 +447,7 @@
       "em_andamento": "In Progress",
       "concluida": "Completed",
       "cancelada": "Cancelled",
-      "no_show": "No-show",
+      "no_show": "No-show",
       "expirada": "Expired"
     },
     "statusOrcamento": {

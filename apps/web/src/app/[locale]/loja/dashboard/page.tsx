@@ -18,18 +18,23 @@ export default function LojaDashboardPage() {
   useEffect(() => {
     if (!loja) return;
     async function fetchData() {
-      const [{ count: cotacoes }, { count: pedidos }, { count: pecas }] = await Promise.all([
+      // "para responder" = abertas que esta loja ainda NAO respondeu (antes contava as ja
+      // respondidas e o numero nao baixava depois de responder - dono 08/11)
+      const [{ data: cotacoes }, { count: pedidos }, { count: pecas }, { data: minhas }] = await Promise.all([
         supabase
           .from('cotacoes_pecas')
-          .select('*, oficina:oficinas!inner(pais)', { count: 'exact', head: true })
+          .select('id, oficina:oficinas!inner(pais)')
           // recebe ofertas ate a oficina escolher uma (fechada): antes so 'aberta', e a
           // 1a resposta (que muda para 'respondida') escondia o pedido das outras lojas
           .in('status', ['aberta', 'respondida'])
-          .eq('oficina.pais', loja!.pais || '--'),
+          .eq('oficina.pais', loja!.pais || '--')
+          .limit(500),
         supabase.from('pedidos_pecas').select('*', { count: 'exact', head: true }).eq('loja_id', loja!.id).eq('status', 'confirmado'),
         supabase.from('pecas_catalogo').select('*', { count: 'exact', head: true }).eq('loja_id', loja!.id).eq('ativo', true),
+        supabase.from('cotacoes_pecas_respostas').select('cotacao_id').eq('loja_id', loja!.id).limit(1000),
       ]);
-      setCotacoesAbertas(cotacoes || 0);
+      const respondidas = new Set((minhas || []).map((r: any) => r.cotacao_id));
+      setCotacoesAbertas((cotacoes || []).filter((c: any) => !respondidas.has(c.id)).length);
       setPedidosRecentes(pedidos || 0);
       setTotalPecas(pecas || 0);
       setLoading(false);

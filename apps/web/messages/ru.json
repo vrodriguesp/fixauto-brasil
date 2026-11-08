@@ -46,7 +46,10 @@
     "mensagensNovas": "Непрочитанных сообщений: {n}",
     "minhaOficinaCurto": "Сервис",
     "conversasOficina": "Сообщения",
-    "garantiasOficina": "Гарантии"
+    "garantiasOficina": "Гарантии",
+    "inicio": "Главная",
+    "pedidosCliente": "Заявки",
+    "avisos": "Оповещения"
   },
   "sejaParceiro": {
     "metaTitle": "Станьте партнёром BipFix",
@@ -450,7 +453,7 @@
       "em_andamento": "В работе",
       "concluida": "Завершена",
       "cancelada": "Отменена",
-      "no_show": "Неявка",
+      "no_show": "Неявка",
       "expirada": "Истекла"
     },
     "statusOrcamento": {

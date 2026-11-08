@@ -46,7 +46,10 @@
     "mensagensNovas": "{n} messaggi non letti",
     "minhaOficinaCurto": "Officina",
     "conversasOficina": "Messaggi",
-    "garantiasOficina": "Garanzie"
+    "garantiasOficina": "Garanzie",
+    "inicio": "Home",
+    "pedidosCliente": "Richieste",
+    "avisos": "Avvisi"
   },
   "sejaParceiro": {
     "metaTitle": "Diventa partner di BipFix",
@@ -442,7 +445,7 @@
       "em_andamento": "In Corso",
       "concluida": "Completata",
       "cancelada": "Annullata",
-      "no_show": "Non si è presentato",
+      "no_show": "Non si è presentato",
       "expirada": "Scaduta"
     },
     "statusOrcamento": {

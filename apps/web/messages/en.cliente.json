@@ -239,7 +239,9 @@
     "horariosVencidos": "The offered times have passed. Ask the repair shop for new dates by message.",
     "convencionadaComSeguradora": "Works with {seguradora}",
     "escolhido": "Chosen quote",
-    "verOficina": "See the repair shop (reviews, address)"
+    "verOficina": "See the repair shop (reviews, address)",
+    "pedidoCanceladoTitulo": "Request cancelled",
+    "pedidoCanceladoTexto": "This request was cancelled. The quotes stay here for reference only."
   },
   "clienteMensagens": {
     "workshopFallback": "Repair shop",
@@ -299,7 +301,8 @@
     "byMechanic": "by {name}",
     "awaitingNextUpdate": "Waiting for the next update...",
     "sendMessage": "Send Message",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "servicoCancelado": "This service was cancelled."
   },
   "clienteReagendar": {
     "appointmentNotFound": "Appointment not found.",

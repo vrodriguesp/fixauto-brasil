@@ -11,7 +11,8 @@ export default function TopoAoNavegar() {
   const primeiro = useRef(true);
   const voltando = useRef(false);
   useEffect(() => {
-    const marcar = () => { voltando.current = true; };
+    // tambem avisa as paginas (ex.: o pedido sem conta) que a chegada foi pelo "voltar"
+    const marcar = () => { voltando.current = true; (window as any).__bipfixVoltou = Date.now(); };
     window.addEventListener('popstate', marcar);
     return () => window.removeEventListener('popstate', marcar);
   }, []);
