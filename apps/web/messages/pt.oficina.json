@@ -934,7 +934,18 @@
     "avisoFaltas": "{count, plural, one {Este cliente tem # falta registrada} other {Este cliente tem # faltas registradas}}",
     "orcamentoFechadoEntregue": "Carro entregue: o orçamento está fechado e não pode mais ser alterado.",
     "ligarCliente": "Ligar para o cliente",
-    "clientePediuLigar": "O cliente pediu para as oficinas ligarem."
+    "clientePediuLigar": "O cliente pediu para as oficinas ligarem.",
+    "resumoAgenda": {
+      "titulo": "Cliente aceitou o orçamento",
+      "aceitoEm": "Aceito em {quando}",
+      "chegada": "Chegada do carro",
+      "chegou": "Carro chegou",
+      "previsao": "Previsão de entrega",
+      "entregue": "Entregue",
+      "mudancaAceita": "Data alterada: o cliente aceitou a nova data em {quando}.",
+      "mudancaOficina": "Data alterada pela oficina em {quando}.",
+      "propostaPendente": "Nova data proposta ({quando}) esperando a resposta do cliente. Até lá vale a data acima."
+    }
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Veículo recebido na oficina",

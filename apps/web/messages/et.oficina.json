@@ -934,7 +934,18 @@
     "avisoFaltas": "{count, plural, one {Sellel kliendil on # registreeritud mitteilmumine} other {Sellel kliendil on # registreeritud mitteilmumist}}",
     "orcamentoFechadoEntregue": "Auto üle antud: hinnapakkumine on suletud ja seda ei saa enam muuta.",
     "ligarCliente": "Helista kliendile",
-    "clientePediuLigar": "Klient palus töökodadel helistada."
+    "clientePediuLigar": "Klient palus töökodadel helistada.",
+    "resumoAgenda": {
+      "titulo": "Klient kinnitas hinnapakkumise",
+      "aceitoEm": "Kinnitatud {quando}",
+      "chegada": "Auto saabub",
+      "chegou": "Auto saabus",
+      "previsao": "Eeldatav valmimine",
+      "entregue": "Üle antud",
+      "mudancaAceita": "Aeg muudetud: klient kinnitas uue aja {quando}.",
+      "mudancaOficina": "Aega muutis töökoda {quando}.",
+      "propostaPendente": "Pakutud uus aeg ({quando}) ootab kliendi vastust. Seni kehtib ülaltoodud aeg."
+    }
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Sõiduk vastu võetud töökojas",

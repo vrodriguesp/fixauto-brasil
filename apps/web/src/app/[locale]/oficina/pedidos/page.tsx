@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase';
 import { Link, useRouter } from '@/i18n/navigation';
 import { calcDistance, cleanDescricao, rotuloTipoPedido, INTL_LOCALE, formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
+import { fusoDoPais } from '@/lib/fuso';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import TutorialBanner from '@/components/tutorial/TutorialBanner';
 import PerfilCompleto from '@/components/oficina/PerfilCompleto';
@@ -78,7 +79,15 @@ export default function PedidosOficinaPage() {
     const { data } = await supabase.from('pedido_dispensas').select('solicitacao_id, motivo, comentario, created_at').eq('oficina_id', oficina.id);
     setDispensas(new Map((data || []).map((d: any) => [d.solicitacao_id, d])));
   };
-  useEffect(() => { carregarVistos(); carregarDispensas(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [oficina?.id]);
+  // chegada ATUAL do carro, da agenda: a data pode ter mudado depois do aceite (proposta
+  // aceita ou "Mudar data"); antes a lista mostrava o horario do aceite (dono 08/11)
+  const [agendas, setAgendas] = useState<Map<string, string>>(new Map());
+  const carregarAgendas = async () => {
+    if (!oficina) return;
+    const { data } = await supabase.from('agenda').select('solicitacao_id, data_inicio').eq('oficina_id', oficina.id).in('status', ['agendado', 'em_andamento']).not('solicitacao_id', 'is', null);
+    setAgendas(new Map((data || []).map((a: any) => [a.solicitacao_id, a.data_inicio])));
+  };
+  useEffect(() => { carregarVistos(); carregarDispensas(); carregarAgendas(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [oficina?.id]);
 
   // tempo real (migracao 060): pedido novo, orcamento enviado/aceito mudam a lista sem recarregar
   useEffect(() => {
@@ -134,13 +143,16 @@ export default function PedidosOficinaPage() {
     return { cls: 'bg-emerald-100 text-emerald-800', icone: '⏱', txt: duracao(ms), dica: t('chegouHa', { tempo: duracao(ms) }) };
   };
   const fmtDia = useMemo(() => new Intl.DateTimeFormat(intl, { weekday: 'short', day: '2-digit', month: '2-digit', timeZone: 'UTC' }), [intl]);
+  const fusoOf = fusoDoPais((oficina as any)?.pais ?? null);
+  const fmtDiaAg = useMemo(() => new Intl.DateTimeFormat(intl, { weekday: 'short', day: '2-digit', month: '2-digit', timeZone: fusoOf }), [intl, fusoOf]);
+  const fmtHoraAg = useMemo(() => new Intl.DateTimeFormat(intl, { hour: '2-digit', minute: '2-digit', timeZone: fusoOf }), [intl, fusoOf]);
   const carroDe = (s: any) => { const v = s.veiculo; return v ? [v.fipe_marca, v.fipe_modelo, v.fipe_ano].filter(Boolean).join(' ') : ''; };
   const distancia = (s: any) => (oficina?.latitude != null && s.latitude != null ? calcDistance(s.latitude, s.longitude, oficina.latitude, oficina.longitude) : null);
 
   // ordem e filtro escolhidos (a ordem padrao de cada aba e a de antes)
   const lista = useMemo(() => {
     const ts = (x?: string | null) => (x ? Date.parse(x) : 0);
-    const chegada = (it: any) => { const sl = it.meu?.disponibilidade?.find((d: any) => d.id === it.meu.disponibilidade_escolhida_id); return sl ? sl.data_checkin : '9999'; };
+    const chegada = (it: any) => { const ag = agendas.get(it.s.id); if (ag) return ag; const sl = it.meu?.disponibilidade?.find((d: any) => d.id === it.meu.disponibilidade_escolhida_id); return sl ? sl.data_checkin : '9999'; };
     const dist = (it: any) => distancia(it.s) ?? 9e9;
     const quando = (it: any) => ts(it.meu?.created_at || it.disp?.created_at);
     const filtrada = grupos[aba].filter((it: any) => filtros[aba] === 'todos' || it.estado === filtros[aba]);
@@ -159,7 +171,7 @@ export default function PedidosOficinaPage() {
     };
     return [...filtrada].sort(cmp[o]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grupos, aba, ordens, filtros]);
+  }, [grupos, aba, ordens, filtros, agendas]);
   const contaEstado = (e: string) => grupos[aba].filter((it: any) => it.estado === e).length;
   const fmtData = useMemo(() => new Intl.DateTimeFormat(intl, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }), [intl]);
   const moeda = currencyForCountry((oficina as any)?.pais ?? null);
@@ -258,7 +270,7 @@ export default function PedidosOficinaPage() {
                   )}
                   {estado && (
                     <p className={`mt-2 text-sm font-medium ${estado === 'aceito' ? 'text-emerald-700' : estado === 'perdido' || estado === 'recusado' ? 'text-gray-600' : estado === 'expirado' ? 'text-amber-800' : 'text-gray-700'}`}>
-                      {estado === 'aceito' ? `✔ ${t('clienteAceitou')}${slot ? ` — ${t('chegaEm', { dia: fmtDia.format(new Date(`${slot.data_checkin}T12:00:00Z`)), periodo: t(slot.turno === 'tarde' ? 'tarde' : 'manha') })}` : ''}`
+                      {estado === 'aceito' ? `✔ ${t('clienteAceitou')}${agendas.get(s.id) ? ` — ${t('chegaEm', { dia: fmtDiaAg.format(new Date(agendas.get(s.id)!)), periodo: fmtHoraAg.format(new Date(agendas.get(s.id)!)) })}` : slot ? ` — ${t('chegaEm', { dia: fmtDia.format(new Date(`${slot.data_checkin}T12:00:00Z`)), periodo: t(slot.turno === 'tarde' ? 'tarde' : 'manha') })}` : ''}`
                         : estado === 'entregue' ? `✔ ${t('servicoEntregue')}`
                         : estado === 'recusado' ? t('clienteRecusou')
                         : estado === 'expirado' ? t('orcamentoVenceu')

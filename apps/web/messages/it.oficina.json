@@ -934,7 +934,18 @@
     "avisoFaltas": "{count, plural, one {Questo cliente ha # assenza registrata} other {Questo cliente ha # assenze registrate}}",
     "orcamentoFechadoEntregue": "Auto consegnata: il preventivo è chiuso e non può più essere modificato.",
     "ligarCliente": "Chiama il cliente",
-    "clientePediuLigar": "Il cliente ha chiesto alle officine di chiamarlo."
+    "clientePediuLigar": "Il cliente ha chiesto alle officine di chiamarlo.",
+    "resumoAgenda": {
+      "titulo": "Il cliente ha accettato il preventivo",
+      "aceitoEm": "Accettato il {quando}",
+      "chegada": "Arrivo dell’auto",
+      "chegou": "Auto arrivata",
+      "previsao": "Consegna prevista",
+      "entregue": "Consegnata",
+      "mudancaAceita": "Data cambiata: il cliente ha accettato la nuova data il {quando}.",
+      "mudancaOficina": "Data cambiata dall’officina il {quando}.",
+      "propostaPendente": "Nuova data proposta ({quando}) in attesa della risposta del cliente. Fino ad allora vale la data sopra."
+    }
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Veicolo ricevuto in officina",

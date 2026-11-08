@@ -16,6 +16,7 @@ import { currencyForCountry } from '@/lib/currency';
 import { Link } from '@/i18n/navigation';
 import MidiaPrivada from '@/components/midia/MidiaPrivada';
 import DispensarPedido, { type Dispensa } from '@/components/oficina/DispensarPedido';
+import ResumoAgendamento from '@/components/oficina/ResumoAgendamento';
 
 export default function SolicitacaoDetalhePage() {
   const t = useTranslations('oficinaSolicitacaoDetalhe');
@@ -161,6 +162,7 @@ export default function SolicitacaoDetalhePage() {
 
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
+          {isAccepted && oficina && <ResumoAgendamento solicitacaoId={sol.id} oficinaId={oficina.id} pais={oficina.pais} />}
           {myQuote && (
             <div id="meu-orcamento" className="card border-2 border-primary-100 scroll-mt-24">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-3">

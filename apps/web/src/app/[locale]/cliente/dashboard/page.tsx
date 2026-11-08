@@ -10,7 +10,8 @@ import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useNotificacoes } from '@/hooks/use-notificacoes';
 import { useVeiculos } from '@/hooks/use-veiculos';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { formatCurrency, timeAgo, cleanDescricao } from '@/lib/utils';
+import { formatCurrency, timeAgo, cleanDescricao, INTL_LOCALE } from '@/lib/utils';
+import { fusoDoPais } from '@/lib/fuso';
 import { currencyForCountry } from '@/lib/currency';
 import GarantiasAtivas from '@/components/cliente/GarantiasAtivas';
 import AvaliacaoPendente from '@/components/cliente/AvaliacaoPendente';
@@ -39,6 +40,14 @@ export default function ClienteDashboard() {
   const listaAbertas = solicitacoes.filter((s) => ['aberta', 'em_orcamento', 'no_show', 'expirada'].includes(s.status as string));
   const agendadas = solicitacoes.filter((s) => ['aceita', 'em_andamento'].includes(s.status));
   const concluidas = solicitacoes.filter((s) => s.status === 'concluida');
+  // data ATUAL do carro na oficina, da agenda (pode ter mudado depois do aceite - dono 08/11)
+  const [agendasCli, setAgendasCli] = useState<Record<string, { inicio: string; prev: string | null }>>({});
+  const idsAgendadas = agendadas.map((s) => s.id).join(',');
+  useEffect(() => {
+    if (!idsAgendadas) return;
+    supabase.from('agenda').select('solicitacao_id, data_inicio, data_fim, data_fim_prevista').in('solicitacao_id', idsAgendadas.split(',')).in('status', ['agendado', 'em_andamento'])
+      .then(({ data }) => setAgendasCli(Object.fromEntries((data || []).map((a: any) => [a.solicitacao_id, { inicio: a.data_inicio, prev: a.data_fim_prevista || a.data_fim }]))));
+  }, [idsAgendadas]);
 
   const stats = {
     ativas: abertas.length,
@@ -208,15 +217,17 @@ export default function ClienteDashboard() {
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-500">{t('checkin')}</span>
                         <span className="font-medium text-gray-900">
-                          {formatDateShort(slotEscolhido.data_checkin, locale)}
-                          {' - '}
-                          {slotEscolhido.turno === 'manha' ? '08:00-12:00' : '13:00-17:00'}
+                          {agendasCli[sol.id]
+                            ? new Date(agendasCli[sol.id].inicio).toLocaleString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais(oficina?.pais), weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+                            : <>{formatDateShort(slotEscolhido.data_checkin, locale)}{' - '}{slotEscolhido.turno === 'manha' ? '08:00-12:00' : '13:00-17:00'}</>}
                         </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-500">{t('deliveryForecast')}</span>
                         <span className="font-medium text-gray-900">
-                          {formatDateShort(slotEscolhido.data_previsao_entrega, locale)}
+                          {agendasCli[sol.id]?.prev
+                            ? new Date(agendasCli[sol.id].prev!).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais(oficina?.pais), weekday: 'short', day: 'numeric', month: 'short' })
+                            : formatDateShort(slotEscolhido.data_previsao_entrega, locale)}
                         </span>
                       </div>
                       {orcAceito?.prazo_dias && (

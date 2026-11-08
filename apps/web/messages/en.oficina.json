@@ -934,7 +934,18 @@
     "avisoFaltas": "{count, plural, one {This customer has # recorded no-show} other {This customer has # recorded no-shows}}",
     "orcamentoFechadoEntregue": "Car delivered: the quote is closed and can no longer be changed.",
     "ligarCliente": "Call the customer",
-    "clientePediuLigar": "The customer asked repair shops to call."
+    "clientePediuLigar": "The customer asked repair shops to call.",
+    "resumoAgenda": {
+      "titulo": "The customer accepted the quote",
+      "aceitoEm": "Accepted on {quando}",
+      "chegada": "Car arrives",
+      "chegou": "Car arrived",
+      "previsao": "Expected ready",
+      "entregue": "Delivered",
+      "mudancaAceita": "Date changed: the customer accepted the new date on {quando}.",
+      "mudancaOficina": "Date changed by the repair shop on {quando}.",
+      "propostaPendente": "New date proposed ({quando}), waiting for the customer’s answer. Until then the date above applies."
+    }
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Vehicle received at the shop",
