@@ -4,7 +4,7 @@ import { useLocale } from 'next-intl';
 import { useState, useRef, useEffect } from 'react';
 import { usePathname } from '@/i18n/navigation';
 import { HREFLANG, MERCADOS, NOME_IDIOMA_NATIVO, caminhoNoIdioma, rotuloVersao, type Locale } from '@/i18n/routing';
-import { lembrarIdioma } from '@/lib/idioma-escolhido';
+import { irParaIdioma } from '@/lib/idioma-escolhido';
 import { useParams } from 'next/navigation';
 
 // Codigo em texto, nao bandeira-emoji (o Windows nao desenha bandeiras -
@@ -85,7 +85,7 @@ export default function LanguageSwitcher({ compacto = false }: { compacto?: bool
               href={caminhoNoIdioma(l, pathname, params)}
               hrefLang={HREFLANG[l]}
               lang={HREFLANG[l]}
-              onClick={() => { lembrarIdioma(l); setOpen(false); }}
+              onClick={(e) => { setOpen(false); irParaIdioma(e, l); }}
               aria-current={l === locale ? 'true' : undefined}
               className={`w-full flex items-center gap-2 px-4 py-2 text-sm text-left ${
                 l === locale ? 'text-primary-700 bg-primary-50 font-medium' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'

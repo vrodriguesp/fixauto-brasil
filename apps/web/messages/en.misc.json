@@ -1210,6 +1210,18 @@
     "enviarFoto": "Send photo"
   },
   "agendaMudanca": {
+    "escolhaTitulo": "What do you want to change?",
+    "escolhaTexto": "One thing at a time. The customer gets the proposal and accepts it or keeps what was agreed.",
+    "opcaoData": "Car drop-off date",
+    "opcaoDataTexto": "The car hasn't arrived yet and you agreed on another day.",
+    "opcaoValor": "Quote items or price",
+    "opcaoValorTexto": "Change, add or remove items. The new price only applies if the customer accepts.",
+    "escolherOutra": "Change something else",
+    "itemNovo": "New",
+    "itemAlterado": "Changed",
+    "itemRemovido": "Removed",
+    "itensRemovidos": "Removed items: {lista}",
+    "antes": "was: {valor}",
     "propostaTitulo": "Change the drop-off date",
     "propostaTexto": "The car has not arrived yet. Agreed on another date with the customer? Propose it here: they accept the new date or keep the current one.",
     "dataAtual": "Current date: {quando}",

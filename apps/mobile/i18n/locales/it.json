@@ -619,6 +619,9 @@
     "verMenos": "Mostra meno"
   },
   "agendaMudanca": {
+    "itemNovo": "Nuova",
+    "itemAlterado": "Modificata",
+    "itemRemovido": "Rimossa",
     "propostaTitulo": "Cambia la data di consegna",
     "propostaTexto": "L’auto non è ancora arrivata. Hai concordato un’altra data con il cliente? Proponila qui: il cliente accetta la nuova data o mantiene quella attuale.",
     "dataAtual": "Data attuale: {quando}",

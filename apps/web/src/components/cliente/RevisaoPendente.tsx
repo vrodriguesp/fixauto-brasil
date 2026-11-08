@@ -45,18 +45,25 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
   const [feito, setFeito] = useState<string | null>(null);
   const [naOficina, setNaOficina] = useState(false);
   const [dataAtual, setDataAtual] = useState<string | null>(null);
+  // itens do orcamento aceito (antes da revisao): destaca novo/alterado/removido (dono 07/11)
+  const [itensAntes, setItensAntes] = useState<{ descricao: string; quantidade: number; valor_total: number }[]>([]);
 
   useEffect(() => {
     supabase.from('orcamento_revisoes')
-      .select('id, tipo, nova_data_checkin, novo_turno, nova_previsao_entrega, valor_anterior, valor_novo, prazo_dias_novo, motivo, itens, oficina:oficinas(nome_fantasia, pais)')
+      .select('id, orcamento_id, tipo, nova_data_checkin, novo_turno, nova_previsao_entrega, valor_anterior, valor_novo, prazo_dias_novo, motivo, itens, oficina:oficinas(nome_fantasia, pais)')
       .eq('solicitacao_id', solicitacaoId).eq('status', 'pendente').maybeSingle()
-      .then(({ data }) => setRev((data as any) || null));
+      .then(({ data }) => {
+        setRev((data as any) || null);
+        const orcId = (data as any)?.orcamento_id;
+        if (orcId) supabase.from('orcamento_itens').select('descricao, quantidade, valor_total').eq('orcamento_id', orcId).then(({ data: its }) => setItensAntes((its as any) || []));
+      });
     supabase.from('agenda').select('status, checkin_em, data_inicio').eq('solicitacao_id', solicitacaoId).neq('status', 'cancelado')
       .then(({ data }) => { setNaOficina(carroNaOficina((data as any) || [])); setDataAtual(((data as any) || []).find((a: any) => a.status === 'agendado')?.data_inicio || null); });
   }, [solicitacaoId]);
 
   if (feito) return <p role="status" className="card mb-6 bg-green-50 text-green-800">{feito}</p>;
   if (!rev) return null;
+  const chave = (d: string) => (d || '').trim().toLowerCase();
   const moeda = currencyForCountry(rev.oficina?.pais);
   const fmt = (v: number) => formatCurrency(Number(v), moeda, locale);
   const subiu = Number(rev.valor_novo) > Number(rev.valor_anterior);
@@ -109,11 +116,27 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
       {rev.prazo_dias_novo ? <p className="text-sm text-gray-700">{t('novoPrazo', { dias: rev.prazo_dias_novo })}</p> : null}
       <p className="mt-3 text-sm text-gray-800"><span className="font-medium">{t('motivo')}:</span> {rev.motivo}</p>
       {rev.itens?.length > 0 && (
-        <ul className="mt-3 text-sm divide-y divide-amber-200 border-t border-amber-200">
-          {rev.itens.map((it, i) => (
-            <li key={i} className="flex justify-between gap-3 py-1.5">
-              <span className="min-w-0 break-words">{it.quantidade > 1 ? `${it.quantidade}× ` : ''}<TextoTraduzido compacto texto={it.descricao} /></span>
-              <span className="whitespace-nowrap">{fmt(it.valor_total)}</span>
+        <ul className="mt-3 text-sm divide-y divide-amber-200 border-t border-amber-200" data-testid="revisao-itens">
+          {rev.itens.map((it, i) => {
+            const antes = itensAntes.find((a) => chave(a.descricao) === chave(it.descricao));
+            const estado = !itensAntes.length ? null : !antes ? 'novo' : (Number(antes.quantidade) !== Number(it.quantidade) || Number(antes.valor_total) !== Number(it.valor_total)) ? 'alterado' : null;
+            return (
+              <li key={i} className={`flex justify-between gap-3 py-1.5 ${estado ? 'font-medium' : ''}`} data-estado={estado || undefined}>
+                <span className="min-w-0 break-words">
+                  {estado && <span className={`mr-1.5 rounded-full px-2 py-0.5 text-xs font-semibold ${estado === 'novo' ? 'bg-green-100 text-green-800' : 'bg-amber-200 text-amber-900'}`}>{tMud(estado === 'novo' ? 'itemNovo' : 'itemAlterado')}</span>}
+                  {it.quantidade > 1 ? `${it.quantidade}× ` : ''}<TextoTraduzido compacto texto={it.descricao} />
+                </span>
+                <span className="whitespace-nowrap text-right">
+                  {fmt(it.valor_total)}
+                  {estado === 'alterado' && antes && <span className="block text-xs font-normal text-gray-500 line-through">{fmt(antes.valor_total)}</span>}
+                </span>
+              </li>
+            );
+          })}
+          {itensAntes.filter((a) => !rev.itens.some((it) => chave(it.descricao) === chave(a.descricao))).map((a, i) => (
+            <li key={`r${i}`} className="flex justify-between gap-3 py-1.5 text-gray-500" data-estado="removido">
+              <span className="min-w-0 break-words"><span className="mr-1.5 rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800">{tMud('itemRemovido')}</span><span className="line-through"><TextoTraduzido compacto texto={a.descricao} /></span></span>
+              <span className="whitespace-nowrap line-through">{fmt(a.valor_total)}</span>
             </li>
           ))}
         </ul>

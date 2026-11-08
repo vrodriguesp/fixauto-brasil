@@ -3,7 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname, rota } from '@/i18n/navigation';
 import { HREFLANG, MERCADOS, caminhoNoIdioma, rotuloVersao, type Locale } from '@/i18n/routing';
-import { lembrarIdioma } from '@/lib/idioma-escolhido';
+import { irParaIdioma } from '@/lib/idioma-escolhido';
 import { useParams } from 'next/navigation';
 
 // Versoes = pais + idioma ("Eesti · Русский", "Italia · Italiano")
@@ -80,7 +80,7 @@ export default function SiteFooter({ temOficinas = false }: { temOficinas?: bool
               <li key={l}>
                 <a
                   href={caminhoNoIdioma(l, pathname, params)}
-                  onClick={() => lembrarIdioma(l)}
+                  onClick={(e) => irParaIdioma(e, l)}
                   hrefLang={HREFLANG[l]}
                   lang={HREFLANG[l]}
                   aria-current={l === locale ? 'true' : undefined}

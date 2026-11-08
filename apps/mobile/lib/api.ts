@@ -8,6 +8,9 @@ import { ErroApi } from './erro';
 // cookie de sessao do Next.js, manda o access token do Supabase no header
 // Authorization (ver apps/web/src/lib/api-auth.ts).
 export const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'https://bipfix.com';
+// Paginas do site abertas pelo app (oficina, termos). Igual a API em producao;
+// no teste local a API passa pelo servidor do app web e as paginas nao (teste do dono 07/11: 'Unmatched Route').
+export const SITE_URL = process.env.EXPO_PUBLIC_SITE_URL || API_BASE_URL;
 
 export async function apiFetch(path: string, options: RequestInit = {}) {
   const { data: { session } } = await supabase.auth.getSession();

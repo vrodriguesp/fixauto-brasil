@@ -9,6 +9,7 @@ import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
 import { API_BASE_URL } from '../../lib/api';
 import { IDIOMAS, escolherIdioma, idiomaPeloSistema, abrirAjustesDeIdioma } from '../../lib/idiomas';
+import { confirmar } from '../../lib/confirmar';
 
 export default function PerfilScreen() {
   // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
@@ -24,7 +25,7 @@ export default function PerfilScreen() {
   };
 
   const handleSair = () => {
-    Alert.alert(t('perfil.sair'), '', [
+    confirmar(t('perfil.sair'), '', [
       { text: t('common.cancelar'), style: 'cancel' },
       { text: t('perfil.sair'), style: 'destructive', onPress: () => { signOut(); router.replace('/(auth)/login'); } },
     ]);
@@ -36,7 +37,7 @@ export default function PerfilScreen() {
   const [excluindo, setExcluindo] = useState(false);
   const handleExcluir = () => {
     if (excluindo) return;
-    Alert.alert(t('perfil.excluirConta'), `${t('perfil.excluirContaTexto')}
+    confirmar(t('perfil.excluirConta'), `${t('perfil.excluirContaTexto')}
 
 ${t('perfil.excluirContaDetalhes')}
 

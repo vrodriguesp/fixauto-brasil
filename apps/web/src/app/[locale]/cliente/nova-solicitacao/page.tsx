@@ -11,6 +11,7 @@ import { supabase } from '@/lib/supabase';
 import { notifNovaSolicitacaoTitulo } from '@/lib/notif-i18n';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
+import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import {
   TIPOS_SERVICO, URGENCIAS,
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
@@ -28,6 +29,7 @@ export default function NovaSolicitacaoPage() {
   const [versaoAval, setVersaoAval] = useState(0);
   const avaliacaoPendente = useAvaliacaoPendente(versaoAval);
   const [step, setStep] = useState(1);
+  useTopoAoMudar(step);
   const totalSteps = 5;
 
   const [veiculoId, setVeiculoId] = useState('');

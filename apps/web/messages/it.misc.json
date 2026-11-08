@@ -1210,6 +1210,18 @@
     "enviarFoto": "Invia foto"
   },
   "agendaMudanca": {
+    "escolhaTitulo": "Cosa vuoi modificare?",
+    "escolhaTexto": "Una cosa alla volta. Il cliente riceve la proposta e la accetta o mantiene quanto concordato.",
+    "opcaoData": "Data di consegna dell'auto",
+    "opcaoDataTexto": "L'auto non è ancora arrivata e avete concordato un altro giorno.",
+    "opcaoValor": "Voci o importo del preventivo",
+    "opcaoValorTexto": "Modifica, aggiungi o togli voci. Il nuovo importo vale solo se il cliente accetta.",
+    "escolherOutra": "Modifica altro",
+    "itemNovo": "Nuova",
+    "itemAlterado": "Modificata",
+    "itemRemovido": "Rimossa",
+    "itensRemovidos": "Voci rimosse: {lista}",
+    "antes": "prima: {valor}",
     "propostaTitulo": "Cambia la data di consegna",
     "propostaTexto": "L’auto non è ancora arrivata. Hai concordato un’altra data con il cliente? Proponila qui: il cliente accetta la nuova data o mantiene quella attuale.",
     "dataAtual": "Data attuale: {quando}",

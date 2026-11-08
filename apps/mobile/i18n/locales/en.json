@@ -619,6 +619,9 @@
     "verMenos": "Show fewer"
   },
   "agendaMudanca": {
+    "itemNovo": "New",
+    "itemAlterado": "Changed",
+    "itemRemovido": "Removed",
     "propostaTitulo": "Change the drop-off date",
     "propostaTexto": "The car has not arrived yet. Agreed on another date with the customer? Propose it here: they accept the new date or keep the current one.",
     "dataAtual": "Current date: {quando}",

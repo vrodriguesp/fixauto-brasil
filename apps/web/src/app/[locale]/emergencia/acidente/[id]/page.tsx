@@ -12,6 +12,8 @@ import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { textoErroApi } from '@/lib/erro-api';
 import CampoTelefone from '@/components/forms/CampoTelefone';
+import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
+import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 
 interface Mensagem {
   id: string;
@@ -55,6 +57,7 @@ export default function AcidenteRegistroPage() {
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<'registro' | 'chat' | 'orcamentos'>('registro');
+  useTopoAoMudar(step);
 
   // Other vehicle registration
   const [outroNome, setOutroNome] = useState('');
@@ -324,7 +327,7 @@ export default function AcidenteRegistroPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
+        <div ref={rolarAteAqui} role="alert" className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
           <p className="text-sm text-red-800">{error}</p>
         </div>
       )}

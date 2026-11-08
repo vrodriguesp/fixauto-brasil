@@ -11,7 +11,7 @@ import { INTL_LOCALE } from '@/lib/utils';
 // entrega com justificativa (dono 07/11; /api/orcamento-revisao/data). O cliente
 // aceita (a agenda muda) ou mantem a data atual. Some depois do check-in.
 export default function ProporNovaData({ orcamentoId, solicitacaoId, oficinaId, pais, aoEnviar }: {
-  orcamentoId: string; solicitacaoId: string; oficinaId: string; pais: string | null | undefined; aoEnviar?: () => void;
+  orcamentoId: string; solicitacaoId: string; oficinaId: string; pais: string | null | undefined; aoEnviar?: (d: { data: string; turno: 'manha' | 'tarde' }) => void;
 }) {
   const t = useTranslations('agendaMudanca');
   const tErr = useTranslations('erros');
@@ -49,7 +49,7 @@ export default function ProporNovaData({ orcamentoId, solicitacaoId, oficinaId, 
     setEnviando(false);
     if (!r?.ok) { setErro(textoErroApi(tErr, r?.status || 500, d)); return; }
     setFeito(true);
-    aoEnviar?.();
+    aoEnviar?.({ data, turno });
   };
 
   return (

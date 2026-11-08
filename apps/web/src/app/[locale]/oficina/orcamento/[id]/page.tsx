@@ -16,6 +16,8 @@ import { formatCurrency, cleanDescricao, rotuloTipoPedido, INTL_LOCALE } from '@
 import { currencyForCountry } from '@/lib/currency';
 import { supabase } from '@/lib/supabase';
 import ProporNovaData from '@/components/oficina/ProporNovaData';
+import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
+import { useMostrarAlerta, rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 import { textoErroApi } from '@/lib/erro-api';
 import { hojeLocal, turnoDisponivel, primeiroTurnoLivre, type Turno } from '@/lib/turnos';
 
@@ -55,8 +57,17 @@ export default function EnviarOrcamentoPage() {
   // (migracao 049, /api/orcamento-revisao) - nunca altera o aceito direto
   const modoRevisaoAceito = existingQuote?.status === 'aceito';
   const [motivoRevisao, setMotivoRevisao] = useState('');
+  // revisao do aceito (teste do dono 07/11): primeiro a oficina escolhe O QUE
+  // muda - a data de entrega (so antes do check-in) ou itens/valor -, uma coisa
+  // por vez; antes as duas apareciam juntas e, depois de enviar a data, o
+  // formulario do valor continuava aberto
+  const [oQueMudar, setOQueMudar] = useState<'data' | 'valor' | null>(null);
+  const [temAgenda, setTemAgenda] = useState<boolean | null>(null);
+  useTopoAoMudar(oQueMudar);
+  const motivoRef = useRef<HTMLTextAreaElement>(null);
   const [revisaoPendente, setRevisaoPendente] = useState<{ valor_novo: number; created_at: string; tipo?: string; nova_data_checkin?: string | null; novo_turno?: string | null } | null>(null);
   const [erroRevisao, setErroRevisao] = useState('');
+  useMostrarAlerta(erroRevisao, motivoRef, true);
   useEffect(() => {
     if (!modoRevisaoAceito || !existingQuote?.id) return;
     supabase.from('orcamento_revisoes').select('valor_novo, created_at, tipo, nova_data_checkin, novo_turno').eq('orcamento_id', existingQuote.id).eq('status', 'pendente').maybeSingle()
@@ -319,6 +330,24 @@ ${d.observacoes}` : d.observacoes));
     }
   };
 
+  useEffect(() => {
+    if (!modoRevisaoAceito || !solicitacao?.id || !oficina?.id) return;
+    supabase.from('agenda').select('id').eq('solicitacao_id', solicitacao.id).eq('oficina_id', oficina.id).eq('status', 'agendado').maybeSingle()
+      .then(({ data }) => setTemAgenda(!!data));
+  }, [modoRevisaoAceito, solicitacao?.id, oficina?.id]);
+  // itens mudados na revisao: a oficina ve o que mudou (o cliente ve o mesmo destaque)
+  const chaveItem = (d: string) => (d || '').trim().toLowerCase();
+  const originais: any[] = modoRevisaoAceito ? (existingQuote?.itens || []) : [];
+  const estadoItem = (item: { descricao: string; tipo: string; valor_unitario: number; quantidade: number }) => {
+    if (!modoRevisaoAceito || !item.descricao.trim()) return null;
+    const o = originais.find((x) => chaveItem(x.descricao) === chaveItem(item.descricao));
+    if (!o) return 'novo';
+    return Number(o.valor_unitario) !== Number(item.valor_unitario) || Number(o.quantidade) !== Number(item.quantidade) || o.tipo !== item.tipo ? 'alterado' : null;
+  };
+  const removidos = originais.filter((o) => !itens.some((i) => chaveItem(i.descricao) === chaveItem(o.descricao)));
+  // o formulario do orcamento so aparece na revisao de itens/valor (ou sem agenda aberta: carro ja na oficina)
+  const mostraForm = !modoRevisaoAceito || temAgenda === false || oQueMudar === 'valor';
+
   if (!solicitacao) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
@@ -387,19 +416,42 @@ ${d.observacoes}` : d.observacoes));
       <h1 className="text-2xl font-bold text-gray-900 mb-2">
         {modoRevisaoAceito ? t('proporRevisaoTitulo') : isRevision ? t('revisarOrcamento') : t('enviarOrcamento')}
       </h1>
-      {/* antes do check-in: propor nova data de entrega (076), separado da revisao de preco */}
-      {modoRevisaoAceito && existingQuote && oficina && (
-        <ProporNovaData orcamentoId={existingQuote.id} solicitacaoId={solicitacao.id} oficinaId={oficina.id} pais={(oficina as any).pais} />
+      {modoRevisaoAceito && temAgenda && oQueMudar === null && (
+        <section className="mb-6 mt-4" data-testid="escolha-mudanca" aria-labelledby="escolha-titulo">
+          <h2 id="escolha-titulo" className="text-lg font-semibold text-gray-900">{tMud('escolhaTitulo')}</h2>
+          <p className="mt-1 mb-4 text-sm text-gray-600">{tMud('escolhaTexto')}</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <button type="button" onClick={() => setOQueMudar('data')} data-testid="opcao-mudar-data"
+              className="card text-left border-2 border-gray-100 hover:border-primary-300 focus-visible:border-primary-500">
+              <span className="block text-base font-semibold text-gray-900">📅 {tMud('opcaoData')}</span>
+              <span className="mt-1 block text-sm text-gray-600">{tMud('opcaoDataTexto')}</span>
+            </button>
+            <button type="button" onClick={() => setOQueMudar('valor')} data-testid="opcao-mudar-valor"
+              className="card text-left border-2 border-gray-100 hover:border-primary-300 focus-visible:border-primary-500">
+              <span className="block text-base font-semibold text-gray-900">🧾 {tMud('opcaoValor')}</span>
+              <span className="mt-1 block text-sm text-gray-600">{tMud('opcaoValorTexto')}</span>
+            </button>
+          </div>
+        </section>
       )}
-      {modoRevisaoAceito && (
+      {modoRevisaoAceito && temAgenda && oQueMudar !== null && (
+        <button type="button" onClick={() => setOQueMudar(null)} className="mb-4 mt-2 text-sm font-medium text-primary-700 hover:underline" data-testid="escolher-outra">← {tMud('escolherOutra')}</button>
+      )}
+      {/* antes do check-in: propor nova data de entrega (076); enviada, a pagina passa a "esperando o cliente" */}
+      {modoRevisaoAceito && oQueMudar === 'data' && existingQuote && oficina && (
+        <ProporNovaData orcamentoId={existingQuote.id} solicitacaoId={solicitacao.id} oficinaId={oficina.id} pais={(oficina as any).pais}
+          aoEnviar={(d) => setRevisaoPendente({ tipo: 'data', valor_novo: 0, created_at: new Date().toISOString(), nova_data_checkin: d.data, novo_turno: d.turno })} />
+      )}
+      {modoRevisaoAceito && mostraForm && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
           <p className="text-sm text-amber-900 mb-3">{t('proporRevisaoTexto')}</p>
           <label htmlFor="motivo-revisao" className="block text-sm font-medium text-gray-800 mb-1">{t('motivoRevisao')}</label>
-          <textarea id="motivo-revisao" className="input-field" rows={3} maxLength={1000} value={motivoRevisao}
+          <textarea ref={motivoRef} id="motivo-revisao" className="input-field" rows={3} maxLength={1000} value={motivoRevisao}
             placeholder={t('motivoRevisaoPlaceholder')} onChange={(e) => setMotivoRevisao(e.target.value)} />
           {erroRevisao && <p role="alert" className="text-sm text-red-700 mt-2">{erroRevisao}</p>}
         </div>
       )}
+      {mostraForm && (<>
       {isRevision && !modoRevisaoAceito && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-2">
           <p className="text-sm text-amber-800">
@@ -483,12 +535,24 @@ ${d.observacoes}` : d.observacoes));
 
         <div className="card mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('itensOrcamento')}</h2>
+          {removidos.length > 0 && (
+            <p data-testid="itens-removidos" className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+              {tMud('itensRemovidos', { lista: removidos.map((o) => o.descricao).join(', ') })}
+            </p>
+          )}
 
           <div className="space-y-4">
             {itens.map((item, index) => (
               <div key={index} className="p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-gray-700">{t('itemNumero', { numero: index + 1 })}</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    {t('itemNumero', { numero: index + 1 })}
+                    {estadoItem(item) && (
+                      <span data-testid={`item-${estadoItem(item)}`} className={`ml-2 rounded-full px-2 py-0.5 text-xs font-semibold ${estadoItem(item) === 'novo' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-900'}`}>
+                        {tMud(estadoItem(item) === 'novo' ? 'itemNovo' : 'itemAlterado')}
+                      </span>
+                    )}
+                  </span>
                   {itens.length > 1 && (
                     <button
                       type="button"
@@ -688,7 +752,7 @@ ${d.observacoes}` : d.observacoes));
               {t('ofereceDatas')}
             </p>
 
-            {erroHorario && <p className="text-sm text-red-700 mb-3" role="alert">{t('horarioPassado')}</p>}
+            {erroHorario && <p ref={rolarAteAqui} className="text-sm text-red-700 mb-3" role="alert">{t('horarioPassado')}</p>}
             <div className="space-y-3">
               {slots.map((slot, index) => (
                 // celular: data e turno um embaixo do outro (o turno ficava espremido ao lado da data)
@@ -774,6 +838,7 @@ ${d.observacoes}` : d.observacoes));
           </button>
         </div>
       </form>
+      </>)}
     </div>
   );
 }

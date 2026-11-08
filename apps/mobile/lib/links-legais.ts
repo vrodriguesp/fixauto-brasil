@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './api';
+import { SITE_URL } from './api';
 
 // Termos e Politica de Privacidade no site, na versao (pais/idioma) do idioma
 // do app. Os nomes das paginas sao traduzidos e o prefixo e /{pais}/{idioma} -
@@ -20,5 +20,5 @@ const PRIVACIDADE: Record<string, string> = {
   ru: '/ee/ru/konfidentsialnost',
 };
 
-export const urlTermos = (idioma: string) => `${API_BASE_URL}${TERMOS[idioma] || TERMOS.en}`;
-export const urlPrivacidade = (idioma: string) => `${API_BASE_URL}${PRIVACIDADE[idioma] || PRIVACIDADE.en}`;
+export const urlTermos = (idioma: string) => `${SITE_URL}${TERMOS[idioma] || TERMOS.en}`;
+export const urlPrivacidade = (idioma: string) => `${SITE_URL}${PRIVACIDADE[idioma] || PRIVACIDADE.en}`;

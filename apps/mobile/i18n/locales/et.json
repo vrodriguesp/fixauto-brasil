@@ -619,6 +619,9 @@
     "verMenos": "Näita vähem"
   },
   "agendaMudanca": {
+    "itemNovo": "Uus",
+    "itemAlterado": "Muudetud",
+    "itemRemovido": "Eemaldatud",
     "propostaTitulo": "Muuda auto toomise aega",
     "propostaTexto": "Auto pole veel kohal. Leppisid kliendiga kokku teise aja? Paku see siin: klient nõustub uue ajaga või jätab praeguse.",
     "dataAtual": "Praegune aeg: {quando}",

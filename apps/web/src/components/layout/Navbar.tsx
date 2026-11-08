@@ -55,6 +55,25 @@ export default function Navbar() {
   const contadorPedidos = paraResponder && paraResponder.total > 0 ? (
     <span className={`ml-1 inline-block min-w-[1.25rem] rounded-full px-1.5 text-center text-xs font-semibold leading-5 ${paraResponder.atrasados > 0 ? 'bg-red-600 text-white' : 'bg-primary-100 text-primary-800'}`} aria-label={t('pedidosEsperando', { n: paraResponder.total })}>{paraResponder.total}</span>
   ) : null;
+  // mensagens nao lidas (bolinha em Mensagens - pedido do dono 07/11): mesma conta
+  // da lista de conversas; a conversa aberta avisa ao marcar como lidas
+  const [msgsNovas, setMsgsNovas] = useState(0);
+  useEffect(() => {
+    if (!isLoggedIn || !user?.id || isAdmin || isLoja || (isOficina && (isMecanico || !oficina))) return;
+    let vivo = true;
+    const ler = () => {
+      let q = supabase.from('mensagens').select('id', { count: 'exact', head: true }).eq('lida', false).neq('remetente_id', user.id);
+      if (isOficina && oficina) q = q.eq('oficina_id', oficina.id);
+      q.then(({ count }) => { if (vivo) setMsgsNovas(count || 0); });
+    };
+    ler();
+    const i = setInterval(ler, 60e3);
+    window.addEventListener('bipfix:mensagens-lidas', ler);
+    return () => { vivo = false; clearInterval(i); window.removeEventListener('bipfix:mensagens-lidas', ler); };
+  }, [isLoggedIn, user?.id, isAdmin, isLoja, isOficina, isMecanico, oficina]);
+  const contadorMsgs = msgsNovas > 0 ? (
+    <span className="ml-1 inline-block min-w-[1.25rem] rounded-full bg-red-600 px-1.5 text-center text-xs font-semibold leading-5 text-white" aria-label={t('mensagensNovas', { n: msgsNovas })}>{msgsNovas > 99 ? '99+' : msgsNovas}</span>
+  ) : null;
   const menuOficina = isOficina && !isMecanico;
   // a barra de baixo (celular) nao pode cobrir o fim da pagina nem o rodape
   useEffect(() => {
@@ -110,7 +129,7 @@ export default function Navbar() {
                       <NavLink href="/oficina/hoje">{t('hoje')}</NavLink>
                       <NavLink href="/oficina/agenda">{t('agenda')}</NavLink>
                       {/* mensagens fora do "Mais" (pedido do dono 01/11) */}
-                      <NavLink href="/oficina/mensagens">{t('conversasOficina')}</NavLink>
+                      <NavLink href="/oficina/mensagens">{t('conversasOficina')}{contadorMsgs}</NavLink>
                       <NavLink href="/oficina/desempenho">{t('desempenho')}</NavLink>
                       {/* fixo ao lado dos outros: e onde a oficina edita tudo (pedido do dono 10/10) */}
                       <NavLink href="/oficina/perfil">{t('minhaOficina')}</NavLink>
@@ -140,7 +159,7 @@ export default function Navbar() {
                     <NavLink href="/cliente/veiculos">{t('veiculos')}</NavLink>
                     <NavLink href="/cliente/nova-solicitacao">{t('novaSolicitacao')}</NavLink>
                     <NavLink href="/cliente/orcamentos">{t('orcamentos')}</NavLink>
-                    <NavLink href="/cliente/mensagens">{t('mensagens')}</NavLink>
+                    <NavLink href="/cliente/mensagens">{t('mensagens')}{contadorMsgs}</NavLink>
                     <NavLink href="/cliente/historico">{t('historico')}</NavLink>
                   </>
                 )}
@@ -257,7 +276,7 @@ export default function Navbar() {
                 <MobileNavLink href="/cliente/veiculos" onClick={() => setMenuOpen(false)}>{t('veiculos')}</MobileNavLink>
                 <MobileNavLink href="/cliente/nova-solicitacao" onClick={() => setMenuOpen(false)}>{t('novaSolicitacao')}</MobileNavLink>
                 <MobileNavLink href="/cliente/orcamentos" onClick={() => setMenuOpen(false)}>{t('orcamentos')}</MobileNavLink>
-                <MobileNavLink href="/cliente/mensagens" onClick={() => setMenuOpen(false)}>{t('mensagens')}</MobileNavLink>
+                <MobileNavLink href="/cliente/mensagens" onClick={() => setMenuOpen(false)}>{t('mensagens')}{contadorMsgs}</MobileNavLink>
                 <MobileNavLink href="/cliente/historico" onClick={() => setMenuOpen(false)}>{t('historico')}</MobileNavLink>
                 <MobileNavLink href="/cliente/perfil" onClick={() => setMenuOpen(false)}>{t('perfil')}</MobileNavLink>
               </>
@@ -277,7 +296,7 @@ export default function Navbar() {
       <nav aria-label={t('menuPrincipal')} className="xl:hidden fixed bottom-0 inset-x-0 z-50 border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)]">
         <div className={`grid ${menuOficina ? 'grid-cols-5' : 'grid-cols-4'}`}>
           {(menuOficina
-            ? [{ href: '/oficina/pedidos', txt: t('pedidosOficina'), icone: 'caixa', extra: contadorPedidos }, { href: '/oficina/hoje', txt: t('hoje'), icone: 'hoje' }, { href: '/oficina/agenda', txt: t('agenda'), icone: 'agenda' }, { href: '/oficina/mensagens', txt: t('conversasOficina'), icone: 'mensagens' }]
+            ? [{ href: '/oficina/pedidos', txt: t('pedidosOficina'), icone: 'caixa', extra: contadorPedidos }, { href: '/oficina/hoje', txt: t('hoje'), icone: 'hoje' }, { href: '/oficina/agenda', txt: t('agenda'), icone: 'agenda' }, { href: '/oficina/mensagens', txt: t('conversasOficina'), icone: 'mensagens', extra: contadorMsgs }]
             : [{ href: '/oficina/hoje', txt: t('hoje'), icone: 'hoje' }, { href: '/oficina/agenda', txt: t('agenda'), icone: 'agenda' }, { href: '/oficina/aprender', txt: t('aprender'), icone: 'aprender' }]
           ).map((it: any) => <ItemBarra key={it.href} {...it} onClick={() => setMenuOpen(false)} />)}
           <button type="button" onClick={() => { setMenuOpen((v) => !v); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-expanded={menuOpen} aria-controls="menu-mobile"

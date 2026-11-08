@@ -172,7 +172,7 @@ export default function ClienteMensagensPage() {
         .eq('oficina_id', oficinaId)
         .neq('remetente_id', user.id);
       q = pagadorId ? q.eq('pagador_id', pagadorId) : q.is('pagador_id', null);
-      q.then();
+      q.then(() => window.dispatchEvent(new Event('bipfix:mensagens-lidas')));
     }
   }, [messages, user, id, oficinaId, pagadorId]);
 

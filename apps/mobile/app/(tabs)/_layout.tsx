@@ -1,9 +1,11 @@
 import { Redirect, Tabs } from 'expo-router';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Platform, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../lib/auth-context';
 import { useAvisos } from '../../lib/avisos';
+
+const WEB_ROTULO = Platform.OS === 'web' ? { lineHeight: 14, flexShrink: 0 } : {};
 
 export default function TabsLayout() {
   const { isLoggedIn, loading } = useAuth();
@@ -23,7 +25,9 @@ export default function TabsLayout() {
   if (!isLoggedIn) return <Redirect href="/(auth)/login" />;
 
   return (
-    <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: '#2563eb', tabBarLabelStyle: { fontSize: 11 } }}>
+    // versao web: a barra de 48 px deixava 10 px para o nome da aba, que saia cortado embaixo
+    // (teste do dono 07/11: icone 28 px + nome 14 px). No celular fica a altura da biblioteca.
+    <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: '#2563eb', tabBarLabelStyle: { fontSize: 11, ...WEB_ROTULO }, ...(Platform.OS === 'web' ? { tabBarStyle: { height: 58 } } : {}) }}>
       <Tabs.Screen
         name="index"
         options={{ title: t('tabs.inicio'), tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" size={size} color={color} /> }}

@@ -12,6 +12,7 @@ import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEnderec
 import { seguradorasDoPais } from '@/lib/seguradoras';
 import CampoNumero from '@/components/forms/CampoNumero';
 import CampoTelefone from '@/components/forms/CampoTelefone';
+import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
@@ -295,7 +296,7 @@ export default function PerfilOficinaPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
+        <div ref={rolarAteAqui} role="alert" className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
           <p className="text-sm text-red-800">{error}</p>
         </div>
       )}

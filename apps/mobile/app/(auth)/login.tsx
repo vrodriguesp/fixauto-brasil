@@ -206,7 +206,7 @@ export default function LoginScreen() {
         </KeyboardAwareScrollView>
 
       {/* Escolha de idioma */}
-      <Modal visible={menuIdioma} transparent animationType="fade" onRequestClose={() => setMenuIdioma(false)}>
+      <Modal visible={menuIdioma} transparent animationType={Platform.OS === 'web' ? 'none' : 'fade'} onRequestClose={() => setMenuIdioma(false)}>
         <Pressable className="flex-1 bg-black/40 justify-end" onPress={() => setMenuIdioma(false)}>
           <View className="bg-white rounded-t-3xl px-5 pt-5 pb-10">
             <Text className="text-lg font-bold text-gray-900 mb-3">{t('auth.idioma')}</Text>

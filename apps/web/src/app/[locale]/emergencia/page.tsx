@@ -11,6 +11,8 @@ import { SeguroReparoCampos, ProximosPassosSeguro, SEGURO_VAZIO, type ValorSegur
 import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 import { salvarRascunhoEmergencia, lerRascunhoEmergencia, apagarRascunhoEmergencia } from '@/lib/rascunho-emergencia';
 import CampoTelefone from '@/components/forms/CampoTelefone';
+import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
+import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 
 export default function EmergenciaPage() {
   const t = useTranslations('emergencia');
@@ -32,6 +34,8 @@ export default function EmergenciaPage() {
   const loginRef = useRef<HTMLDivElement>(null);
 
   const [step, setStep] = useState(1);
+
+  useTopoAoMudar(step);
   const [fotos, setFotos] = useState<{ file: File; preview: string }[]>([]);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -371,7 +375,7 @@ export default function EmergenciaPage() {
         )}
 
         {error && !(contaExistente && !isLoggedIn) && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
+          <div ref={rolarAteAqui} role="alert" className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
             <p className="text-sm text-red-800">{error}</p>
           </div>
         )}

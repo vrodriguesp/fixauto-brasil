@@ -6,6 +6,7 @@ import { Link, useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { temRascunhoEmergencia } from '@/lib/rascunho-emergencia';
+import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 
 export default function ResetPasswordPage() {
   const t = useTranslations('resetPassword');
@@ -145,7 +146,7 @@ export default function ResetPasswordPage() {
 
         <div className="card">
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
+            <div ref={rolarAteAqui} role="alert" className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
               <p className="text-sm text-red-800">{error}</p>
             </div>
           )}

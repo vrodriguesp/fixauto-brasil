@@ -6,6 +6,7 @@ import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import CampoTelefone from '@/components/forms/CampoTelefone';
+import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 
 export default function PerfilClientePage() {
   const t = useTranslations('clientePerfil');
@@ -65,7 +66,7 @@ export default function PerfilClientePage() {
       <h1 className="text-2xl font-bold text-gray-900 mb-8">{t('title')}</h1>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
+        <div ref={rolarAteAqui} role="alert" className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
           <p className="text-sm text-red-800">{error}</p>
         </div>
       )}

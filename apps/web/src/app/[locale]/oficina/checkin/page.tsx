@@ -14,6 +14,7 @@ import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { notifCheckinManual } from '@/lib/notif-i18n';
 import CampoTelefone from '@/components/forms/CampoTelefone';
+import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 
 export default function ManualCheckinPage() {
   const t = useTranslations('oficinaCheckin');
@@ -147,7 +148,7 @@ export default function ManualCheckinPage() {
       <p className="text-gray-600 mb-8">{t('subtitulo')}</p>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
+        <div ref={rolarAteAqui} role="alert" className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
           <p className="text-sm text-red-800">{error}</p>
         </div>
       )}

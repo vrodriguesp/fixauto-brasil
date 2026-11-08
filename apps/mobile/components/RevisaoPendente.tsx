@@ -7,6 +7,7 @@ import { apiFetch } from '../lib/api';
 import { mensagemErro } from '../lib/erro';
 import { tDias } from '../i18n';
 import { fusoDoPais } from '../lib/fuso';
+import { confirmar } from '../lib/confirmar';
 
 interface Revisao {
   id: string; valor_anterior: number; valor_novo: number; prazo_dias_novo: number | null; motivo: string;
@@ -29,12 +30,18 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
   const [enviando, setEnviando] = useState(false);
   const [naOficina, setNaOficina] = useState(false);
   const [dataAtual, setDataAtual] = useState<string | null>(null);
+  // itens do orcamento aceito: destaca novo/alterado/removido (dono 07/11, igual ao site)
+  const [itensAntes, setItensAntes] = useState<{ descricao: string; quantidade: number; valor_total: number }[]>([]);
 
   const carregar = useCallback(async () => {
     const { data } = await supabase.from('orcamento_revisoes')
-      .select('id, tipo, nova_data_checkin, novo_turno, nova_previsao_entrega, valor_anterior, valor_novo, prazo_dias_novo, motivo, itens, oficina:oficinas(nome_fantasia, pais)')
+      .select('id, orcamento_id, tipo, nova_data_checkin, novo_turno, nova_previsao_entrega, valor_anterior, valor_novo, prazo_dias_novo, motivo, itens, oficina:oficinas(nome_fantasia, pais)')
       .eq('solicitacao_id', solicitacaoId).eq('status', 'pendente').maybeSingle();
     setRev((data as any) || null);
+    if ((data as any)?.orcamento_id) {
+      const { data: its } = await supabase.from('orcamento_itens').select('descricao, quantidade, valor_total').eq('orcamento_id', (data as any).orcamento_id);
+      setItensAntes((its as any) || []);
+    }
     const { data: ags } = await supabase.from('agenda').select('status, checkin_em, data_inicio').eq('solicitacao_id', solicitacaoId).neq('status', 'cancelado');
     setNaOficina(carroNaOficina((ags as any) || []));
     setDataAtual(((ags as any) || []).find((a: any) => a.status === 'agendado')?.data_inicio || null);
@@ -42,6 +49,7 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
   useEffect(() => { carregar(); }, [carregar, recarregar]);
 
   if (!rev) return null;
+  const chave = (d: string) => (d || '').trim().toLowerCase();
   const moeda = currencyForCountry(rev.oficina?.pais);
   const fmt = (v: number) => formatCurrency(Number(v), moeda, i18n.language);
   const pct = Number(rev.valor_anterior) > 0 ? Math.round(((Number(rev.valor_novo) - Number(rev.valor_anterior)) / Number(rev.valor_anterior)) * 100) : 0;
@@ -59,7 +67,7 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
       setEnviando(false);
     }
   };
-  const confirmarRetirada = () => Alert.alert(
+  const confirmarRetirada = () => confirmar(
     t(naOficina ? 'revisao.recusar' : 'revisao.recusarSemCarro'),
     t(naOficina ? 'revisao.retirarConfirma' : 'revisao.recusarSemCarroConfirma'),
     [
@@ -102,10 +110,26 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
       </Text>
       {rev.prazo_dias_novo ? <Text className="text-sm text-gray-700">{tDias(t, 'revisao.novoPrazo', rev.prazo_dias_novo)}</Text> : null}
       <Text className="mt-2 text-sm text-gray-800"><Text className="font-medium">{t('revisao.motivo')}: </Text>{rev.motivo}</Text>
-      {(rev.itens || []).map((it, i) => (
-        <View key={i} className="flex-row justify-between gap-3 py-0.5">
-          <Text className="text-sm text-gray-700 flex-1">{it.quantidade > 1 ? `${it.quantidade}× ` : ''}{it.descricao}</Text>
-          <Text className="text-sm text-gray-900">{fmt(it.valor_total)}</Text>
+      {(rev.itens || []).map((it, i) => {
+        const antes = itensAntes.find((a) => chave(a.descricao) === chave(it.descricao));
+        const estado = !itensAntes.length ? null : !antes ? 'novo' : (Number(antes.quantidade) !== Number(it.quantidade) || Number(antes.valor_total) !== Number(it.valor_total)) ? 'alterado' : null;
+        return (
+          <View key={i} className="flex-row justify-between gap-3 py-0.5" testID={estado ? `item-${estado}` : undefined}>
+            <Text className={`text-sm text-gray-700 flex-1 ${estado ? 'font-semibold' : ''}`}>
+              {estado ? <Text className={estado === 'novo' ? 'text-green-700' : 'text-amber-800'}>{t(estado === 'novo' ? 'agendaMudanca.itemNovo' : 'agendaMudanca.itemAlterado')} · </Text> : null}
+              {it.quantidade > 1 ? `${it.quantidade}× ` : ''}{it.descricao}
+            </Text>
+            <View className="items-end">
+              <Text className="text-sm text-gray-900">{fmt(it.valor_total)}</Text>
+              {estado === 'alterado' && antes ? <Text className="text-xs text-gray-500 line-through">{fmt(antes.valor_total)}</Text> : null}
+            </View>
+          </View>
+        );
+      })}
+      {itensAntes.filter((a) => !(rev.itens || []).some((it) => chave(it.descricao) === chave(a.descricao))).map((a, i) => (
+        <View key={`r${i}`} className="flex-row justify-between gap-3 py-0.5" testID="item-removido">
+          <Text className="text-sm text-gray-500 flex-1"><Text className="text-red-700 font-semibold">{t('agendaMudanca.itemRemovido')} · </Text><Text className="line-through">{a.descricao}</Text></Text>
+          <Text className="text-sm text-gray-500 line-through">{fmt(a.valor_total)}</Text>
         </View>
       ))}
       <Text className="mt-2 text-xs text-gray-600">{t(naOficina ? 'revisao.explicacao' : 'revisao.explicacaoSemCarro')}</Text>

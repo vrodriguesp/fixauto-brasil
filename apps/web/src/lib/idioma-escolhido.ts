@@ -19,3 +19,16 @@ export function lembrarIdioma(locale: string) {
     document.cookie = `${COOKIE_IDIOMA}=${encodeURIComponent(locale)}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax${seguro}`;
   } catch {}
 }
+
+// Clique num link de idioma: troca a pagina SEM criar entrada nova no historico
+// (teste do dono 07/11: "voltar" depois de trocar o idioma abria a mesma pagina
+// no idioma anterior em vez da pagina anterior). O <a href> continua de verdade
+// para buscadores; quem ja tratou o clique (pedido sem cadastro) nao e afetado.
+export function irParaIdioma(ev: { defaultPrevented: boolean; button: number; metaKey: boolean; ctrlKey: boolean; shiftKey: boolean; altKey: boolean; preventDefault: () => void; currentTarget: EventTarget }, locale: string) {
+  lembrarIdioma(locale);
+  if (ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+  const href = (ev.currentTarget as HTMLAnchorElement).getAttribute?.('href');
+  if (!href) return;
+  ev.preventDefault();
+  window.location.replace(href);
+}

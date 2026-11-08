@@ -11,6 +11,8 @@ import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEnderec
 import { registrarConversaoCadastro } from '@/components/Analytics';
 import { useAuth } from '@/lib/auth-context';
 import CampoTelefone from '@/components/forms/CampoTelefone';
+import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
+import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 
 export default function CadastroPageWrapper() {
   const t = useTranslations('cadastro');
@@ -34,6 +36,7 @@ function CadastroPage() {
 
   const [userType, setUserType] = useState<'cliente' | 'oficina' | 'loja_pecas' | null>(tipoParam);
   const [step, setStep] = useState(tipoParam ? 2 : 1);
+  useTopoAoMudar(step);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
@@ -300,7 +303,7 @@ function CadastroPage() {
 
         <div className="card">
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
+            <div ref={rolarAteAqui} role="alert" className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
               <p className="text-sm text-red-800">{error}</p>
             </div>
           )}

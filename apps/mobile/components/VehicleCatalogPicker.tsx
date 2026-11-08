@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { View, Text, FlatList, Pressable, Modal, TextInput } from 'react-native';
+import { View, Text, FlatList, Pressable, Modal, TextInput, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../lib/api';
 
@@ -15,6 +15,11 @@ interface Props {
   onChange: (item: CatalogItem) => void;
   fetchUrl: string;
 }
+
+// Na versao web o Modal, ao terminar a animacao de fechar, devolve o foco ao botao que o
+// abriu e rouba o toque do campo seguinte (teste do dono 07/11: o ano/placa "perdia o clique").
+// Na web fecha sem animacao; no celular continua deslizando.
+const ANIMACAO_MODAL = Platform.OS === 'web' ? 'none' : 'slide';
 
 // Picker generico marca/modelo, reaproveitando o mesmo endpoint publico
 // /api/vehicle-catalog que o site ja usa (VehiclesDB, mundo todo).
@@ -51,7 +56,7 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
         <Text className={value ? 'text-gray-900' : 'text-gray-400'}>{value?.name || t('common.selecione')}</Text>
       </Pressable>
 
-      <Modal visible={open} animationType="slide" onRequestClose={() => setOpen(false)}>
+      <Modal visible={open} animationType={ANIMACAO_MODAL} onRequestClose={() => setOpen(false)}>
         <View className="flex-1 bg-white px-4" style={{ paddingTop: insets.top + 12 }}>
           <TextInput
             accessibilityLabel={label}

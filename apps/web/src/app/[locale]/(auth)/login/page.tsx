@@ -5,6 +5,7 @@ import { Link, useRouter } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 
 export default function LoginPage() {
   const t = useTranslations('login');
@@ -145,7 +146,7 @@ export default function LoginPage() {
 
         <div className="card">
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
+            <div ref={rolarAteAqui} role="alert" className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
               <p className="text-sm text-red-800">{error}</p>
               {naoConfirmado && !forgotMode && (
                 confirmacaoReenviada ? (

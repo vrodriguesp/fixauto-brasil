@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, TextInput, Pressable, Modal, FlatList } from 'react-native';
+import { View, Text, TextInput, Pressable, Modal, FlatList, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -38,7 +38,7 @@ export default function CampoTelefone({ value, onChange, rotulo }: { value: stri
       <TextInput accessibilityLabel={rotulo} value={numero} onChangeText={(v) => mudar(ddi, v)} placeholder={EXEMPLO_TELEFONE[ddi]}
         keyboardType="phone-pad" autoComplete="tel" textContentType="telephoneNumber" maxLength={30}
         className="flex-1 border border-gray-300 rounded-lg px-4 py-3 text-[16px] bg-white" />
-      <Modal visible={aberto} animationType="slide" onRequestClose={() => setAberto(false)}>
+      <Modal visible={aberto} animationType={Platform.OS === 'web' ? 'none' : 'slide'} onRequestClose={() => setAberto(false)}>
         <View className="flex-1 bg-white px-4" style={{ paddingTop: insets.top + 12, paddingBottom: insets.bottom }}>
           <Text className="text-lg font-semibold text-gray-900 mb-3">{t('constants.prefixoTelefone')}</Text>
           <FlatList

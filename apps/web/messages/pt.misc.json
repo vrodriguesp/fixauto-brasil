@@ -939,6 +939,18 @@
     "enviarFoto": "Enviar foto"
   },
   "agendaMudanca": {
+    "escolhaTitulo": "O que você quer mudar?",
+    "escolhaTexto": "Escolha uma coisa por vez. O cliente recebe a proposta e aceita ou mantém o que já estava combinado.",
+    "opcaoData": "Data de entrega do carro",
+    "opcaoDataTexto": "O carro ainda não chegou e vocês combinaram outro dia.",
+    "opcaoValor": "Itens ou valor do orçamento",
+    "opcaoValorTexto": "Mudar, acrescentar ou tirar itens. O valor novo só vale se o cliente aceitar.",
+    "escolherOutra": "Mudar outra coisa",
+    "itemNovo": "Novo",
+    "itemAlterado": "Alterado",
+    "itemRemovido": "Removido",
+    "itensRemovidos": "Itens removidos: {lista}",
+    "antes": "antes: {valor}",
     "propostaTitulo": "Mudar a data de entrega",
     "propostaTexto": "O carro ainda não chegou. Combinou outra data com o cliente? Proponha aqui: ele aceita a nova data ou mantém a atual.",
     "dataAtual": "Data atual: {quando}",
