@@ -125,3 +125,5 @@ main:has(.altura-conversa) { min-height: 0; }
   body.digitando .barra-inferior,
   body.digitando .chat-suporte-botao { display: none; }
 }
+/* botao redondo do chat cobria o ultimo botao da pagina (ex.: enviar orcamento) - espaco no fim do conteudo (dono 08/11) */
+body.com-chat-suporte main#conteudo { padding-bottom: 5.5rem; }

@@ -122,48 +122,48 @@ export default function ClienteDashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-        <Link href="/cliente/orcamentos" className="card flex items-center gap-4 hover:shadow-md transition-shadow">
-          <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+        <Link href="/cliente/orcamentos" className="card flex flex-col items-start gap-2 min-[480px]:flex-row min-[480px]:items-center min-[480px]:gap-4 hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 bg-blue-100 rounded-xl flex flex-shrink-0 items-center justify-center">
             <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-2xl font-bold text-gray-900">{stats.ativas}</p>
-            <p className="text-sm text-gray-500">{t('statActive')}</p>
+            <p className="text-sm text-gray-500 break-words">{t('statActive')}</p>
           </div>
         </Link>
-        <div className="card flex items-center gap-4">
-          <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+        <div className="card flex flex-col items-start gap-2 min-[480px]:flex-row min-[480px]:items-center min-[480px]:gap-4">
+          <div className="w-12 h-12 bg-green-100 rounded-xl flex flex-shrink-0 items-center justify-center">
             <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-2xl font-bold text-gray-900">{stats.agendadas}</p>
-            <p className="text-sm text-gray-500">{t('statScheduled')}</p>
+            <p className="text-sm text-gray-500 break-words">{t('statScheduled')}</p>
           </div>
         </div>
-        <Link href="/cliente/orcamentos" className="card flex items-center gap-4 hover:shadow-md transition-shadow">
-          <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+        <Link href="/cliente/orcamentos" className="card flex flex-col items-start gap-2 min-[480px]:flex-row min-[480px]:items-center min-[480px]:gap-4 hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 bg-yellow-100 rounded-xl flex flex-shrink-0 items-center justify-center">
             <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-2xl font-bold text-gray-900">{stats.orcamentosPendentes}</p>
-            <p className="text-sm text-gray-500">{t('statBudgets')}</p>
+            <p className="text-sm text-gray-500 break-words">{t('statBudgets')}</p>
           </div>
         </Link>
-        <Link href="/cliente/historico" className="card flex items-center gap-4 hover:shadow-md transition-shadow">
-          <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
+        <Link href="/cliente/historico" className="card flex flex-col items-start gap-2 min-[480px]:flex-row min-[480px]:items-center min-[480px]:gap-4 hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 bg-gray-100 rounded-xl flex flex-shrink-0 items-center justify-center">
             <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-2xl font-bold text-gray-900">{stats.concluidas}</p>
-            <p className="text-sm text-gray-500">{t('statCompleted')}</p>
+            <p className="text-sm text-gray-500 break-words">{t('statCompleted')}</p>
           </div>
         </Link>
       </div>

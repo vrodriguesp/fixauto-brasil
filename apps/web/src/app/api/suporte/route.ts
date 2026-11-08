@@ -101,24 +101,34 @@ export async function POST(req: NextRequest) {
   if (!dentroDoLimite(`suporte-enviar:${conversa.id}`, 30, 10 * 60 * 1000)) return NextResponse.json({ error: 'Muitas mensagens', codigo: 'LIMITE' }, { status: 429 });
 
   const cfg = await configSuporte();
-  const { traducao, origem } = await traduzirSeLigado(texto, IDIOMA_ADMIN, cfg.traducao, conversa.id);
   const agora = new Date().toISOString();
-  const { error } = await supabaseAdmin.from('suporte_mensagens').insert({ conversa_id: conversa.id, autor: 'usuario', texto, traducao, origem });
+  // a mensagem e gravada e aparece NA HORA; traducao para o admin e e-mail vao em segundo
+  // plano (antes a pessoa esperava o Gemini e o e-mail - ate 7 s, teste do dono 08/11)
+  const { data: msg, error } = await supabaseAdmin.from('suporte_mensagens').insert({ conversa_id: conversa.id, autor: 'usuario', texto }).select('id').single();
   if (error) { console.error('[suporte] enviar', error.message); return erroInterno(); }
 
   const mudancas: Record<string, unknown> = { ultima_mensagem_em: agora, nao_lidas_admin: conversa.nao_lidas_admin + 1, idioma, usuario_visto_em: agora };
   if (pagina) mudancas.pagina = pagina;
+  let avisarAdmin = false;
   if (!cfg.adminOnline) {
     // com o admin offline: resposta automatica (na lingua da pessoa) e e-mail ao admin
     if (await podeMandarAuto(conversa.id)) {
       await supabaseAdmin.from('suporte_mensagens').insert({ conversa_id: conversa.id, autor: 'auto', texto: SUPORTE_AUTO[linguaTexto(idioma)] });
     }
-    if (!recente(conversa.admin_avisado_em, AVISO_MS)) {
-      const r = await sendSuporteAdminEmail({ nome: nome || '?', contato: contato || '-', texto, traducao, locale: idioma, pagina });
-      // so conta como avisado se o e-mail saiu (senao tenta de novo na proxima mensagem)
-      if (r.success) mudancas.admin_avisado_em = agora;
-    }
+    // marcado ja (evita 2 e-mails com 2 mensagens seguidas); desfeito se o e-mail falhar
+    if (!recente(conversa.admin_avisado_em, AVISO_MS)) { avisarAdmin = true; mudancas.admin_avisado_em = agora; }
   }
   await supabaseAdmin.from('suporte_conversas').update(mudancas).eq('id', conversa.id);
+  const conversaId = conversa.id; const avisoAntes = conversa.admin_avisado_em;
+  void (async () => {
+    try {
+      const { traducao, origem } = await traduzirSeLigado(texto, IDIOMA_ADMIN, cfg.traducao, conversaId);
+      if (traducao) await supabaseAdmin.from('suporte_mensagens').update({ traducao, origem }).eq('id', msg.id);
+      if (avisarAdmin) {
+        const r = await sendSuporteAdminEmail({ nome: nome || '?', contato: contato || '-', texto, traducao, locale: idioma, pagina });
+        if (!r.success) await supabaseAdmin.from('suporte_conversas').update({ admin_avisado_em: avisoAntes }).eq('id', conversaId);
+      }
+    } catch (e) { console.error('[suporte] segundo plano', (e as Error).message); }
+  })();
   return NextResponse.json({ ok: true });
 }

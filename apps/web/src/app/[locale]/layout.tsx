@@ -9,6 +9,7 @@ import SiteFooter from '@/components/layout/SiteFooter';
 import ChatSuporte from '@/components/suporte/ChatSuporte';
 import { contarOficinasPublicas } from '@/lib/oficinas-publicas';
 import SugestaoIdioma from '@/components/layout/SugestaoIdioma';
+import TopoAoNavegar from '@/components/layout/TopoAoNavegar';
 import Analytics from '@/components/Analytics';
 import StructuredData from '@/components/seo/StructuredData';
 import { routing, type Locale, OG_LOCALE, HREFLANG } from '@/i18n/routing';
@@ -142,6 +143,7 @@ export default async function LocaleLayout({
         {t('pularConteudo')}
       </a>
       <BarraCarregando />
+      <TopoAoNavegar />
       <Navbar />
       <main id="conteudo" className="min-h-[calc(100vh-4rem)]">{children}</main>
       <SiteFooter temOficinas={temOficinas} />
