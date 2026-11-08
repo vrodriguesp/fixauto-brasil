@@ -247,7 +247,7 @@ export default function SolicitacaoDetailScreen() {
   const recarregar = async () => { setPuxando(true); await carregar(); setPuxando(false); };
 
   return (
-    <KeyboardAwareScrollView bottomOffset={24} keyboardDismissMode="on-drag" className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: insets.bottom }} refreshControl={<RefreshControl refreshing={puxando} onRefresh={recarregar} />}>
+    <KeyboardAwareScrollView bottomOffset={24} keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled" className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: insets.bottom }} refreshControl={<RefreshControl refreshing={puxando} onRefresh={recarregar} />}>
       <Stack.Screen options={opcoesTela} />
       <View className="p-4">
         <Text className="text-xl font-bold text-gray-900">

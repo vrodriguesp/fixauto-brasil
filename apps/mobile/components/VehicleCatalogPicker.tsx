@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, FlatList, Pressable, Modal, TextInput, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -49,6 +49,20 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
   const sem = (v: string) => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const filtrados = items.filter((i) => sem(i.name).includes(sem(busca.trim())));
 
+  // No Android, com o teclado aberto dentro do Modal, o primeiro toque num item nao vira
+  // "press" (so fecha o teclado) e era preciso tocar de novo (emulador 08/11). O toque em si
+  // chega ao item: encostar e soltar sem arrastar ja escolhe. onPress fica para leitor de tela.
+  const toque = useRef<{ y: number; t: number } | null>(null);
+  const escolhido = useRef(false);
+  useEffect(() => { if (open) escolhido.current = false; }, [open]);
+  const escolher = (item: CatalogItem) => {
+    if (escolhido.current) return; // toque + press do mesmo item
+    escolhido.current = true;
+    onChange(item);
+    setOpen(false);
+    setBusca('');
+  };
+
   return (
     <View className="mb-4">
       <Text className="text-sm font-medium text-gray-700 mb-1">{label}</Text>
@@ -71,11 +85,13 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
             keyExtractor={(item) => item.code}
             renderItem={({ item }) => (
               <Pressable
-                onPress={() => {
-                  onChange(item);
-                  setOpen(false);
-                  setBusca('');
+                onTouchStart={(e) => { toque.current = { y: e.nativeEvent.pageY, t: Date.now() }; }}
+                onTouchEnd={(e) => {
+                  const ini = toque.current;
+                  toque.current = null;
+                  if (Platform.OS === 'android' && ini && Math.abs(e.nativeEvent.pageY - ini.y) < 10 && Date.now() - ini.t < 700) escolher(item);
                 }}
+                onPress={() => escolher(item)}
                 className="py-3 border-b border-gray-100"
               >
                 <Text className="text-base text-gray-900">{item.name}</Text>

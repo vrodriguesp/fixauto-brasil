@@ -47,7 +47,7 @@ export default function NovoVeiculoScreen() {
   };
 
   return (
-    <KeyboardAwareScrollView bottomOffset={24} keyboardDismissMode="on-drag" className="flex-1 bg-white px-4 pt-4" contentContainerStyle={{ paddingBottom: insets.bottom }}>
+    <KeyboardAwareScrollView bottomOffset={24} keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled" className="flex-1 bg-white px-4 pt-4" contentContainerStyle={{ paddingBottom: insets.bottom }}>
       <Stack.Screen options={opcoesTela} />
 
       <VehicleCatalogPicker label={t('veiculos.marca')} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" />

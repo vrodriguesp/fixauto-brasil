@@ -59,7 +59,7 @@ export default function CadastroScreen() {
   }
 
   return (
-    <KeyboardAwareScrollView bottomOffset={24} className="flex-1 bg-white" keyboardDismissMode="on-drag" contentContainerClassName="flex-grow justify-center px-6 py-12" contentContainerStyle={{ paddingBottom: 48 + insets.bottom }}>
+    <KeyboardAwareScrollView bottomOffset={24} className="flex-1 bg-white" keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled" contentContainerClassName="flex-grow justify-center px-6 py-12" contentContainerStyle={{ paddingBottom: 48 + insets.bottom }}>
         <Text className="text-xl font-semibold text-gray-900 mb-6">{t('auth.cadastroTitulo')}</Text>
 
         {erro && (

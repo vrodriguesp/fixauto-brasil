@@ -1,5 +1,5 @@
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { View, Text, TextInput, Pressable, ActivityIndicator, Platform, ScrollView, Image, Modal } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Link, router } from 'expo-router';
@@ -17,6 +17,8 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [verSenha, setVerSenha] = useState(false);
+  // Enter do teclado: e-mail -> senha -> entrar (o botao fica atras do teclado)
+  const campoSenha = useRef<TextInput>(null);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [naoConfirmado, setNaoConfirmado] = useState(false);
@@ -152,6 +154,9 @@ export default function LoginScreen() {
                 autoComplete="email"
                 keyboardType="email-address"
                 textContentType="emailAddress"
+                returnKeyType="next"
+                submitBehavior="submit"
+                onSubmitEditing={() => campoSenha.current?.focus()}
                 className="flex-1 px-2 py-3 text-[16px]"
               />
             </View>
@@ -160,11 +165,14 @@ export default function LoginScreen() {
             <View className="flex-row items-center border border-gray-300 rounded-xl px-3 mb-2 bg-white">
               <Ionicons name="lock-closed-outline" size={18} color="#9ca3af" />
               <TextInput accessibilityLabel={t('auth.senha')}
+                ref={campoSenha}
                 value={senha}
                 onChangeText={setSenha}
                 secureTextEntry={!verSenha}
                 autoComplete="password"
                 textContentType="password"
+                returnKeyType="go"
+                onSubmitEditing={() => { if (!loading && email && senha) handleEntrar(); }}
                 className="flex-1 px-2 py-3 text-[16px]"
               />
               <Pressable onPress={() => setVerSenha(!verSenha)} hitSlop={10} accessibilityRole="button" accessibilityLabel={t(verSenha ? 'auth.ocultarSenha' : 'auth.mostrarSenha')}>
