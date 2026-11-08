@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
@@ -9,7 +9,7 @@ import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
 import { API_BASE_URL } from '../../lib/api';
 import { IDIOMAS, escolherIdioma, idiomaPeloSistema, abrirAjustesDeIdioma } from '../../lib/idiomas';
-import { confirmar } from '../../lib/confirmar';
+import { confirmar, avisar } from '../../lib/confirmar';
 
 export default function PerfilScreen() {
   // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
@@ -54,14 +54,14 @@ ${t('perfil.excluirContaConfirmar')}`, [
             });
             const d = await res.json().catch(() => ({}));
             if (!res.ok) {
-              Alert.alert(t('perfil.excluirConta'), d.codigo === 'CARRO_EM_SERVICO' ? t('perfil.excluirContaEmServico') : t('perfil.excluirContaErro'));
+              avisar(t('perfil.excluirConta'), d.codigo === 'CARRO_EM_SERVICO' ? t('perfil.excluirContaEmServico') : t('perfil.excluirContaErro'));
               return;
             }
-            Alert.alert(t('perfil.excluirConta'), t('perfil.excluirContaFeita'));
+            avisar(t('perfil.excluirConta'), t('perfil.excluirContaFeita'));
             await signOut();
             router.replace('/(auth)/login');
           } catch {
-            Alert.alert(t('perfil.excluirConta'), t('perfil.excluirContaErro'));
+            avisar(t('perfil.excluirConta'), t('perfil.excluirContaErro'));
           } finally {
             setExcluindo(false);
           }

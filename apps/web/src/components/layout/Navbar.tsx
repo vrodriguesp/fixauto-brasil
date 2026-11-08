@@ -60,11 +60,25 @@ export default function Navbar() {
   const [msgsNovas, setMsgsNovas] = useState(0);
   useEffect(() => {
     if (!isLoggedIn || !user?.id || isAdmin || isLoja || (isOficina && (isMecanico || !oficina))) return;
-    let vivo = true;
-    const ler = () => {
-      let q = supabase.from('mensagens').select('id', { count: 'exact', head: true }).eq('lida', false).neq('remetente_id', user.id);
-      if (isOficina && oficina) q = q.eq('oficina_id', oficina.id);
-      q.then(({ count }) => { if (vivo) setMsgsNovas(count || 0); });
+    let vivo = true; let ultima = 0;
+    // so conversas que a lista mostra (auditoria 08/11): outra oficina escolhida,
+    // orcamento recusado ou servico fora da garantia (conversa_aberta) e pedido
+    // no_show nao contam - senao a bolinha nunca sumia
+    const ler = async () => {
+      // uma leitura antiga que chega depois (marcou lidas no meio) nao sobrescreve a nova
+      const vez = ++ultima;
+      let q = supabase.from('mensagens').select('solicitacao_id, oficina_id').eq('lida', false).neq('remetente_id', user.id).limit(300);
+      q = isOficina && oficina ? q.eq('oficina_id', oficina.id) : q.is('pagador_id', null);
+      const { data } = await q;
+      const msgs = (data || []) as { solicitacao_id: string; oficina_id: string | null }[];
+      const pares = Array.from(new Set(msgs.map((m) => `${m.solicitacao_id}|${m.oficina_id || ''}`)));
+      const [abertas, sols] = await Promise.all([
+        Promise.all(pares.map((p) => { const [s, o] = p.split('|'); return o ? supabase.rpc('conversa_aberta', { p_sol: s, p_of: o }).then((r) => !!r.data) : Promise.resolve(true); })),
+        isOficina && pares.length ? supabase.from('solicitacoes').select('id, status').in('id', Array.from(new Set(msgs.map((m) => m.solicitacao_id)))).then((r) => r.data || []) : Promise.resolve([] as any[]),
+      ]);
+      const fora = new Set((sols as any[]).filter((s) => s.status === 'no_show').map((s) => s.id));
+      const valem = new Set(pares.filter((p, i) => abertas[i] && !fora.has(p.split('|')[0])));
+      if (vivo && vez === ultima) setMsgsNovas(msgs.filter((m) => valem.has(`${m.solicitacao_id}|${m.oficina_id || ''}`)).length);
     };
     ler();
     const i = setInterval(ler, 60e3);

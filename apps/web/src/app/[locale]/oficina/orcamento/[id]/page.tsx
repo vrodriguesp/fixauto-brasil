@@ -67,7 +67,9 @@ export default function EnviarOrcamentoPage() {
   const motivoRef = useRef<HTMLTextAreaElement>(null);
   const [revisaoPendente, setRevisaoPendente] = useState<{ valor_novo: number; created_at: string; tipo?: string; nova_data_checkin?: string | null; novo_turno?: string | null } | null>(null);
   const [erroRevisao, setErroRevisao] = useState('');
-  useMostrarAlerta(erroRevisao, motivoRef, true);
+  // conta as tentativas: o mesmo erro duas vezes seguidas tambem leva a tela ao campo
+  const [tentativaRevisao, setTentativaRevisao] = useState(0);
+  useMostrarAlerta(erroRevisao && tentativaRevisao, motivoRef, true);
   useEffect(() => {
     if (!modoRevisaoAceito || !existingQuote?.id) return;
     supabase.from('orcamento_revisoes').select('valor_novo, created_at, tipo, nova_data_checkin, novo_turno').eq('orcamento_id', existingQuote.id).eq('status', 'pendente').maybeSingle()
@@ -236,7 +238,7 @@ ${d.observacoes}` : d.observacoes));
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (modoRevisaoAceito && existingQuote) {
-      setErroRevisao('');
+      setErroRevisao(''); setTentativaRevisao((n) => n + 1);
       if (motivoRevisao.trim().length < 5) { setErroRevisao(t('motivoRevisaoObrigatorio')); return; }
       const res = await fetch('/api/orcamento-revisao', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -332,8 +334,8 @@ ${d.observacoes}` : d.observacoes));
 
   useEffect(() => {
     if (!modoRevisaoAceito || !solicitacao?.id || !oficina?.id) return;
-    supabase.from('agenda').select('id').eq('solicitacao_id', solicitacao.id).eq('oficina_id', oficina.id).eq('status', 'agendado').maybeSingle()
-      .then(({ data }) => setTemAgenda(!!data));
+    supabase.from('agenda').select('id').eq('solicitacao_id', solicitacao.id).eq('oficina_id', oficina.id).eq('status', 'agendado').limit(1)
+      .then(({ data }) => setTemAgenda(!!data?.length));
   }, [modoRevisaoAceito, solicitacao?.id, oficina?.id]);
   // itens mudados na revisao: a oficina ve o que mudou (o cliente ve o mesmo destaque)
   const chaveItem = (d: string) => (d || '').trim().toLowerCase();
@@ -416,6 +418,9 @@ ${d.observacoes}` : d.observacoes));
       <h1 className="text-2xl font-bold text-gray-900 mb-2">
         {modoRevisaoAceito ? t('proporRevisaoTitulo') : isRevision ? t('revisarOrcamento') : t('enviarOrcamento')}
       </h1>
+      {modoRevisaoAceito && temAgenda === null && (
+        <div className="mt-6 flex justify-center" role="status"><div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary-600" /></div>
+      )}
       {modoRevisaoAceito && temAgenda && oQueMudar === null && (
         <section className="mb-6 mt-4" data-testid="escolha-mudanca" aria-labelledby="escolha-titulo">
           <h2 id="escolha-titulo" className="text-lg font-semibold text-gray-900">{tMud('escolhaTitulo')}</h2>

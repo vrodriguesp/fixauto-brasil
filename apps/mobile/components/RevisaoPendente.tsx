@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { View, Text, Pressable, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency, currencyForCountry } from '@fixauto/shared';
 import { supabase } from '../lib/supabase';
@@ -7,7 +7,7 @@ import { apiFetch } from '../lib/api';
 import { mensagemErro } from '../lib/erro';
 import { tDias } from '../i18n';
 import { fusoDoPais } from '../lib/fuso';
-import { confirmar } from '../lib/confirmar';
+import { confirmar, avisar } from '../lib/confirmar';
 
 interface Revisao {
   id: string; valor_anterior: number; valor_novo: number; prazo_dias_novo: number | null; motivo: string;
@@ -58,11 +58,11 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
     setEnviando(true);
     try {
       await apiFetch('/api/orcamento-revisao/decidir', { method: 'POST', body: JSON.stringify({ revisaoId: rev.id, decisao }) });
-      Alert.alert(rev.tipo === 'data' ? t(decisao === 'aprovar' ? 'agendaMudanca.feitoAceita' : 'agendaMudanca.feitoMantida') : t(decisao === 'recusar' && !naOficina ? 'revisao.feito_recusarSemCarro' : `revisao.feito_${decisao}`));
+      avisar(rev.tipo === 'data' ? t(decisao === 'aprovar' ? 'agendaMudanca.feitoAceita' : 'agendaMudanca.feitoMantida') : t(decisao === 'recusar' && !naOficina ? 'revisao.feito_recusarSemCarro' : `revisao.feito_${decisao}`));
       setRev(null);
       aoDecidir?.();
     } catch (e) {
-      Alert.alert(t('common.erroGenerico'), mensagemErro(e));
+      avisar(t('common.erroGenerico'), mensagemErro(e));
     } finally {
       setEnviando(false);
     }

@@ -169,7 +169,7 @@ export async function sendQuoteNotificationEmail(params: {
 
   const s = EMAIL_I18N.quoteNotification[resolveEmailLocale(params.locale)];
   const orcamentosUrl = params.numero
-    ? `${SMS_LINK_BASE}/r/${params.numero}${params.locale ? `?l=${params.locale}` : ''}`
+    ? `${SMS_LINK_BASE}/r/${params.numero}?l=${resolveEmailLocale(params.locale)}`
     : `${siteNoIdioma(params.locale)}/cliente/orcamentos/${params.solicitacaoId}`;
 
   try {
