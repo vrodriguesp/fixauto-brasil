@@ -928,3 +928,5 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 
 - Playlist nova "Autojuhtidele – Just täna?" (pública) com os 4 Shorts publicados: pidurid (YDbYSGroTBo), hooldus (0OGNgNVWMLE), rehvid (hmpfE-vK7M), elekter (aOs45Ut0KdE). Título/descrição em ET seguindo as regras de texto para motoristas (sem "sem cadastro", sem "vários orçamentos"); "não é para crianças"; declarado uso de IA.
 - Promoções no YouTube Studio: 4 × €12,50 = €50, objetivo "visitas ao site", 9–23/11, Tallinn, idioma estoniano, 25+, etiqueta IA ligada. Destino `bipfix.com/ee/et/paring?utm_source=youtube&utm_medium=paid&utm_campaign=just_tana_<problema>`. Estado: em revisão do Google (até 24h).
+
+- 09/11 noite: preparado lote 5 de e-mails para 10 oficinas (envio 10/11), arquivo local em Documentos (fora do git). Texto do lote 4 atualizado: agora cita a propaganda para motoristas de novembro e o app no Google Play.
