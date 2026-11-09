@@ -5,6 +5,7 @@ import { ehUuid } from '@/lib/validacao';
 import { notifPedidoCanceladoOficina, chatPedidoCancelado } from '@/lib/notif-i18n';
 import { avisarCancelamentoPeloCliente } from '@/lib/email-cancelamento-cliente';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
+import { dentroDoLimite } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,6 +27,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     .eq('id', params.id).maybeSingle();
   if (!sol) return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
   if (sol.cliente_id !== userId) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+  // cancelar/reabrir sem parar mandaria um aviso as oficinas a cada vez (auditoria 09/11)
+  if (!dentroDoLimite(`pedido-cancelar:${userId}`, 5, 3600e3)) return NextResponse.json({ error: 'Muitas tentativas', codigo: 'RATE_LIMIT' }, { status: 429 });
   // check-in ja feito (pedido em andamento): o carro esta na oficina
   if (sol.status === 'em_andamento') return NextResponse.json({ error: 'Carro já na oficina', codigo: 'CARRO_NA_OFICINA' }, { status: 409 });
   if (!['aberta', 'em_orcamento', 'aceita'].includes(sol.status as string)) {

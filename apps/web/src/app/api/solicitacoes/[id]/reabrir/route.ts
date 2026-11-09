@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 import { ehUuid } from '@/lib/validacao';
 import { notifPedidoReabertoOficina } from '@/lib/notif-i18n';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
+import { dentroDoLimite } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,11 +17,14 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const userId = await getSessionUserId(req);
   if (!userId) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
   if (!ehUuid(params.id)) return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
-  const { data: sol } = await supabaseAdmin.from('solicitacoes').select('id, numero, status, cliente_id').eq('id', params.id).maybeSingle();
+  const { data: sol } = await supabaseAdmin.from('solicitacoes').select('id, numero, status, cliente_id, cancelada_em').eq('id', params.id).maybeSingle();
   if (!sol) return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
   if (sol.cliente_id !== userId) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
-  if (sol.status !== 'cancelada') return NextResponse.json({ error: 'Pedido não pode ser reaberto', codigo: 'PEDIDO_NAO_REABRIVEL' }, { status: 409 });
+  // pedido cancelado pelo admin (sem cancelada_em) nao volta pelo cliente (auditoria 09/11)
+  if (sol.status !== 'cancelada' || !sol.cancelada_em) return NextResponse.json({ error: 'Pedido não pode ser reaberto', codigo: 'PEDIDO_NAO_REABRIVEL' }, { status: 409 });
 
+  // cancelar/reabrir sem parar mandaria um aviso as oficinas a cada vez
+  if (!dentroDoLimite(`pedido-reabrir:${userId}`, 5, 3600e3)) return NextResponse.json({ error: 'Muitas tentativas', codigo: 'RATE_LIMIT' }, { status: 429 });
   const hoje = new Date().toISOString().slice(0, 10);
   await supabaseAdmin.from('orcamentos').update({ status: 'enviado', recusado_no_aceite: false })
     .eq('solicitacao_id', sol.id).eq('status', 'recusado').eq('recusado_no_aceite', true).gte('validade', hoje);

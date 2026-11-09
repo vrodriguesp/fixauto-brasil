@@ -271,7 +271,7 @@ export default function EquipePage() {
             </div>
             <div className="sm:col-span-2">
               <label htmlFor="cdcf5-3" className="block text-sm font-medium text-gray-700 mb-1">{t('senhaTemporariaObrigatorio')}</label>
-              <input id="cdcf5-3"
+              <input id="cdcf5-3" data-sem-rascunho autoComplete="new-password"
                 type="text"
                 className="input-field"
                 placeholder={t('placeholderMinimo6Caracteres')}

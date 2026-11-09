@@ -18,6 +18,9 @@ const caminho = (href: string) => { try { return new URL(href, window.location.h
 const chaveDoCampo = (el: Element) => el.id ? `#${el.id}` : (el.getAttribute('name') ? `@${el.getAttribute('name')}` : '');
 const ignorar = (el: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
   const tipo = (el as HTMLInputElement).type;
+  // senha nunca, nem visivel ("ver senha" vira type=text; senha temporaria da equipe) - auditoria 09/11
+  const auto = (el.getAttribute('autocomplete') || '').toLowerCase();
+  if (/password|one-time-code/.test(auto) || /senha|password|parool|pass/i.test(`${el.id} ${el.getAttribute('name') || ''}`) || el.closest('[data-sem-rascunho]')) return true;
   return ['password', 'file', 'hidden', 'submit', 'button', 'reset', 'image'].includes(tipo)
     || el.closest('[aria-hidden="true"]') !== null || el.tabIndex === -1 || el.disabled;
 };
@@ -46,7 +49,13 @@ export function guardarParaTrocaDeIdioma(destinoHref: string) {
 export function veioDeTrocaDeIdioma(): Rascunho | null {
   try {
     const r = JSON.parse(sessionStorage.getItem(CHAVE) || 'null') as Rascunho | null;
-    if (!r || Date.now() - r.ts > VALIDADE_MS || r.destino !== window.location.pathname) return null;
+    if (!r) return null;
+    if (Date.now() - r.ts > VALIDADE_MS || (r.destino !== window.location.pathname && Date.now() - r.ts > 10000)) {
+      // rascunho vencido ou de outra pagina (ex.: redirecionou): nao fica guardado na aba
+      sessionStorage.removeItem(CHAVE);
+      return null;
+    }
+    if (r.destino !== window.location.pathname) return null;
     return r;
   } catch { return null; }
 }

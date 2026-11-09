@@ -67,10 +67,10 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
         if (orcId) supabase.from('orcamento_itens').select('descricao, quantidade, valor_total').eq('orcamento_id', orcId).then(({ data: its }) => setItensAntes((its as any) || []));
       });
     supabase.from('orcamento_revisoes')
-      .select('id, orcamento_id, oficina_id, tipo, motivo, valor_anterior, valor_novo, prazo_dias_novo, itens, combinado, oficina:oficinas(nome_fantasia, pais)')
-      .eq('solicitacao_id', solicitacaoId).eq('tipo', 'data').eq('status', 'aprovada').eq('combinado', true).is('contestada_em', null)
+      .select('id, orcamento_id, oficina_id, tipo, motivo, valor_anterior, valor_novo, prazo_dias_novo, itens, combinado, status, contestada_em, oficina:oficinas(nome_fantasia, pais)')
+      .eq('solicitacao_id', solicitacaoId).eq('tipo', 'data').in('status', ['pendente', 'aprovada', 'recusada'])
       .order('created_at', { ascending: false }).limit(1)
-      .then(({ data }) => setCombinada(((data as any) || [])[0] || null));
+      .then(({ data }) => setCombinada(((d) => (d && d.status === 'aprovada' && d.combinado && !d.contestada_em ? d : null))(((data as any) || [])[0])));
     supabase.from('agenda').select('status, checkin_em, data_inicio').eq('solicitacao_id', solicitacaoId).neq('status', 'cancelado')
       .then(({ data }) => { setNaOficina(carroNaOficina((data as any) || [])); setDataAtual(((data as any) || []).find((a: any) => a.status === 'agendado')?.data_inicio || null); });
   }, [solicitacaoId]);

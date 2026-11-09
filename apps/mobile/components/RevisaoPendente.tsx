@@ -49,10 +49,12 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
       setItensAntes((its as any) || []);
     }
     const { data: comb } = await supabase.from('orcamento_revisoes')
-      .select('id, oficina_id, tipo, motivo, valor_anterior, valor_novo, prazo_dias_novo, itens, combinado, oficina:oficinas(nome_fantasia, pais)')
-      .eq('solicitacao_id', solicitacaoId).eq('tipo', 'data').eq('status', 'aprovada').eq('combinado', true).is('contestada_em', null)
+      .select('id, oficina_id, tipo, motivo, valor_anterior, valor_novo, prazo_dias_novo, itens, combinado, status, contestada_em, oficina:oficinas(nome_fantasia, pais)')
+      .eq('solicitacao_id', solicitacaoId).eq('tipo', 'data').in('status', ['pendente', 'aprovada', 'recusada'])
       .order('created_at', { ascending: false }).limit(1);
-    setCombinada(((comb as any) || [])[0] || null);
+    // so a ULTIMA mudanca de data pode ser contestada: se depois veio outra, a combinada antiga ja nao vale (auditoria 09/11)
+    const ult = ((comb as any) || [])[0];
+    setCombinada(ult && ult.status === 'aprovada' && ult.combinado && !ult.contestada_em ? ult : null);
     const { data: ags } = await supabase.from('agenda').select('status, checkin_em, data_inicio').eq('solicitacao_id', solicitacaoId).neq('status', 'cancelado');
     setNaOficina(carroNaOficina((ags as any) || []));
     setDataAtual(((ags as any) || []).find((a: any) => a.status === 'agendado')?.data_inicio || null);

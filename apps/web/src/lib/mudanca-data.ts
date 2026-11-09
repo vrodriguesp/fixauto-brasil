@@ -1,6 +1,7 @@
 import { supabaseAdmin } from './supabase-admin';
 import { horaLocalEmUtc, fusoDoPais, moverFimPrevisto } from './fuso';
 import { avisarClienteAgendamento, avisarClienteCancelamento } from './email-agendamento';
+import { avisarCancelamentoPeloCliente } from './email-cancelamento-cliente';
 import { textosAgenda, preencher, dataHora } from './notif-agenda';
 import { textosMudanca } from './notif-mudanca';
 import { agendaDaOficina, MOTIVO_MIN } from './agenda-oficina';
@@ -124,7 +125,10 @@ export async function cancelarAgendamento(ag: any, of: any, userId: string, moti
   const { data: voltam } = await supabaseAdmin.from('orcamentos').update({ status: 'enviado', recusado_no_aceite: false })
     .eq('solicitacao_id', ag.solicitacao_id).neq('oficina_id', ag.oficina_id).eq('status', 'recusado').eq('recusado_no_aceite', true).gte('validade', hoje).select('id');
   await supabaseAdmin.from('solicitacoes').update({ status: voltam?.length ? 'em_orcamento' : 'aberta', reaberta_em: new Date().toISOString() }).eq('id', ag.solicitacao_id);
-  const emailEnviado = await avisarClienteCancelamento(ag.id, motivo, true).catch(() => false);
+  // cancelado pelo CLIENTE: e-mail 'voce cancelou' (com o .ics) ao cliente e 'horario livre' a oficina (auditoria 09/11)
+  const emailEnviado = porCliente
+    ? await avisarCancelamentoPeloCliente(ag.id, null).then(() => true).catch(() => false)
+    : await avisarClienteCancelamento(ag.id, motivo, true).catch(() => false);
   return { ok: true as const, orcamentosDeVolta: voltam?.length || 0, emailEnviado };
 }
 
@@ -144,6 +148,10 @@ export async function decidirMudanca(rev: any, decisao: 'aprovar' | 'manter' | '
   if (decisao === 'contestar') {
     // "nao combinei isso": desfaz a mudanca combinada e a proposta volta a esperar o cliente
     if (!(rev.status === 'aprovada' && rev.combinado && !rev.contestada_em && rev.data_anterior)) return res(409, { error: 'Nada a contestar', codigo: 'REVISAO_DECIDIDA' });
+    // so desfaz se a agenda ainda esta na data que ESTA mudanca criou (outra mudanca depois - ja aceita - vale)
+    // e se a data antiga ainda nao passou (auditoria 09/11)
+    const criada = horaLocalEmUtc(rev.nova_data_checkin, rev.nova_hora || (rev.novo_turno === 'tarde' ? '13:00' : '08:00'), of?.pais);
+    if (Date.parse((ag as any).data_inicio) !== Date.parse(criada) || Date.parse(rev.data_anterior) <= Date.now()) return res(409, { error: 'Nada a contestar', codigo: 'REVISAO_DECIDIDA' });
     const { data: trava } = await supabaseAdmin.from('orcamento_revisoes').update({ status: 'pendente', combinado: false, contestada_em: new Date().toISOString(), decidido_em: null, decidido_por: null })
       .eq('id', rev.id).eq('status', 'aprovada').select('id');
     if (!trava?.length) return res(409, { error: 'Revisão já decidida', codigo: 'REVISAO_DECIDIDA' });
