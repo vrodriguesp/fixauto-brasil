@@ -1,7 +1,7 @@
 import { randomInt, createHash, randomUUID } from 'node:crypto';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import { supabaseAdmin } from './supabase-admin';
-import { ErroValidacao, texto, numero, umDe, extensaoDe } from './validacao';
+import { ErroValidacao, texto, numero, umDe, extensaoDe, placaCarro, anoCarro } from './validacao';
 import { iguaisSeguro } from './segredos';
 import { enviarEmail } from './email';
 import { escapeHtml } from './email-i18n';
@@ -54,9 +54,9 @@ export function validarPedido(d: Record<string, unknown>): DadosPedido {
       tipo: umDe(v.tipo ?? 'cars', 'veiculo.tipo', TIPOS_VEICULO),
       marca: texto(v.marca, 'veiculo.marca', 60, true)!,
       modelo: texto(v.modelo, 'veiculo.modelo', 100, true)!,
-      ano: texto(v.ano, 'veiculo.ano', 30, true)!,
+      ano: anoCarro(v.ano, 'veiculo.ano', true)!,
       codigo: texto(v.codigo, 'veiculo.codigo', 30),
-      placa: texto(v.placa, 'veiculo.placa', 15),
+      placa: placaCarro(v.placa, 'veiculo.placa'),
     },
   };
 }

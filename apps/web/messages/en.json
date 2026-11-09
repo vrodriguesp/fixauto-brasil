@@ -430,7 +430,10 @@
       "mecanica": "Mechanical",
       "eletrica": "Electrical",
       "pneu": "Tyres",
-      "outro": "Other"
+      "outro": "Other",
+      "manutencao": "Maintenance",
+      "pintura": "Painting",
+      "vidros": "Glass"
     },
     "urgencias": {
       "baixa": "Low",
@@ -680,7 +683,16 @@
     "CODIGO_EXPIRADO": "The code has expired or the request was already sent. Please fill in the request again.",
     "CODIGO_TENTATIVAS": "Too many wrong attempts. Tap “Send request” again and we will send a new code.",
     "EMAIL_EM_USO": "There is already an account with this e-mail. Go back and log in.",
-    "AVALIACAO_PENDENTE": "Please rate your previous service before a new request."
+    "AVALIACAO_PENDENTE": "Please rate your previous service before a new request.",
+    "MESMO_DIA_SO_COMBINADO": "Same-day changes only if you already agreed with the customer.",
+    "DATA_ATUAL_NAO_SERVE": "The shop can no longer do the booked date. Accept the new one, ask for another or cancel.",
+    "PREVISAO_ANTES_DA_DATA": "The expected ready date can’t be before the new drop-off date.",
+    "DATA_IGUAL_ATUAL": "That’s already the booked date and time. Choose a different date or time.",
+    "PLACA_INVALIDA": "Invalid number plate: use only letters, numbers, spaces or hyphens (2 to 10 characters).",
+    "ANO_INVALIDO": "Invalid year: use 4 digits, from 1950 to next year.",
+    "CARRO_NA_OFICINA": "The car is already at the repair shop: to cancel, talk to the shop in the chat.",
+    "PEDIDO_NAO_CANCELAVEL": "This request can no longer be cancelled.",
+    "PEDIDO_NAO_REABRIVEL": "This request cannot be reopened."
   },
   "sobre": {
     "metaTitle": "About BipFix",
@@ -930,5 +942,11 @@
     "linkSenhaEnviado": "We sent you a link to set a new password.",
     "jaTemConta": "Already have an account?",
     "entrar": "Log in"
+  },
+  "conversa": {
+    "enviando": "sending…",
+    "novaMensagem": "New message",
+    "enviar": "Send",
+    "naoEnviada": "not sent"
   }
 }

@@ -1,9 +1,12 @@
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { View, Text, TextInput, Pressable, FlatList, Platform, ActivityIndicator, Alert, RefreshControl } from 'react-native';
+import { View, Text, TextInput, Pressable, FlatList, Platform, ActivityIndicator, RefreshControl } from 'react-native';
+import { avisar } from '../../lib/confirmar';
 import { abrirOficina } from '../../lib/oficina-link';
 import { useTranslation } from 'react-i18next';
-import { useLocalSearchParams, Stack } from 'expo-router';
+import { useLocalSearchParams, Stack, router } from 'expo-router';
+import { formatDate } from '@fixauto/shared';
+import { usePresoNaAreaVisivel } from '../../lib/conversa-web';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
@@ -57,7 +60,8 @@ export default function ConversaScreen() {
   const [puxando, setPuxando] = useState(false);
   // titulo = oficina; o icone abre a pagina publica dela (avaliacoes, endereco)
   const oficinaDoTitulo = useRef<string | null>(null);
-  const opcoesTela = useMemo(() => ({
+  const naWeb = Platform.OS === 'web';
+  const opcoesTela = useMemo(() => (naWeb ? { headerShown: false } : {
     headerShown: true, title: tituloTela,
     headerRight: () => (oficinaDoTitulo.current ? (
       // botao com cara de botao e area de toque >= 44x44 (antes so o icone; dificil de tocar - teste do dono 31/10)
@@ -69,7 +73,7 @@ export default function ConversaScreen() {
         <Text className="text-sm font-semibold text-blue-700" numberOfLines={1}>{t('mensagens.verOficinaCurto')}</Text>
       </Pressable>
     ) : null),
-  }), [tituloTela, oficinaId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }), [tituloTela, oficinaId, naWeb]); // eslint-disable-line react-hooks/exhaustive-deps
   const { user } = useAuth();
   const { atualizar: atualizarAvisos } = useAvisos();
   // pagador=1: sou o outro motorista do acidente e pago o reparo - conversa
@@ -77,6 +81,10 @@ export default function ConversaScreen() {
   const pagadorId = pagador === '1' ? (user?.id ?? null) : null;
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [texto, setTexto] = useState('');
+  // altura da caixa: 1 linha vazia e cresce com o texto ate ~5 linhas (na web o textarea nascia com 2 linhas)
+  const [alturaCaixa, setAlturaCaixa] = useState(44);
+  // enviar nao fecha o teclado (dono 09/11): o foco volta a caixa ainda dentro do toque
+  const caixaRef = useRef<TextInput>(null);
   const [loading, setLoading] = useState(true);
   const [enviando, setEnviando] = useState(false);
   const listRef = useRef<FlatList>(null);
@@ -160,10 +168,24 @@ export default function ConversaScreen() {
   const estadoGravacao = useAudioRecorderState(gravador);
   const [gravando, setGravando] = useState(false);
   const [fechada, setFechada] = useState(false);
+  // servico concluido e conversa ainda aberta: diz ate quando (garantia ou 7 dias, regra do servidor)
+  const [abertaAte, setAbertaAte] = useState<string | null>(null);
   useEffect(() => {
     if (!id || !oficinaId) return;
     supabase.rpc('conversa_aberta', { p_sol: id, p_of: oficinaId }).then(({ data }) => setFechada(data === false));
+    Promise.all([
+      supabase.from('solicitacoes').select('status').eq('id', id).maybeSingle(),
+      supabase.from('orcamentos').select('garantia_dias').eq('solicitacao_id', id).eq('oficina_id', oficinaId).eq('status', 'aceito').maybeSingle(),
+      supabase.from('agenda').select('data_inicio, data_fim').eq('solicitacao_id', id).eq('oficina_id', oficinaId).eq('status', 'concluido').maybeSingle(),
+    ]).then(([{ data: s }, { data: o }, { data: a }]) => {
+      if ((s as any)?.status !== 'concluida' || !a) return;
+      const base = new Date((a as any).data_fim || (a as any).data_inicio);
+      base.setDate(base.getDate() + Math.max(Number((o as any)?.garantia_dias || 0), 7));
+      setAbertaAte(base.toISOString());
+    });
   }, [id, oficinaId]);
+  const raiz = useRef<View>(null);
+  usePresoNaAreaVisivel(raiz, !loading && !(!oficinaId && opcoes));
 
   // saiu da conversa gravando: para e volta o audio ao normal (auditoria E5).
   // Usa o estado DESTA tela (ref), nunca o gravador: na saida a biblioteca ja
@@ -179,16 +201,23 @@ export default function ConversaScreen() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const comecarGravacao = async () => {
-    const perm = await requestRecordingPermissionsAsync();
-    if (!perm.granted) {
-      Alert.alert(t('mensagens.microfoneTitulo'), t('mensagens.microfoneTexto'));
-      return;
+    // qualquer falha do microfone vira aviso na tela (antes o botao simplesmente nao fazia nada)
+    try {
+      const perm = await requestRecordingPermissionsAsync();
+      if (!perm.granted) {
+        avisar(t('mensagens.microfoneTitulo'), t('mensagens.microfoneTexto'));
+        return;
+      }
+      await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
+      await gravador.prepareToRecordAsync();
+      gravador.record();
+      setGravando(true);
+    } catch {
+      avisar(t('mensagens.microfoneTitulo'), t('mensagens.microfoneTexto'));
     }
-    await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
-    await gravador.prepareToRecordAsync();
-    gravador.record();
-    setGravando(true);
   };
+  // na versao web o navegador so da o microfone em endereco seguro (https): sem ele, nada de botao
+  const temMicrofone = Platform.OS !== 'web' || (typeof window !== 'undefined' && window.isSecureContext && !!navigator.mediaDevices?.getUserMedia);
 
   const pararGravacao = async (enviar: boolean) => {
     const duracao = Math.max(1, Math.round((estadoGravacao.durationMillis || 0) / 1000));
@@ -212,7 +241,7 @@ export default function ConversaScreen() {
       if (nova) setMensagens((prev) => (prev.some((m) => m.id === nova.id) ? prev : [...prev, nova as Mensagem]));
       if (nova?.id) apiFetch('/api/avisar-mensagem', { method: 'POST', body: JSON.stringify({ mensagemId: nova.id }) }).catch(() => {});
     } catch {
-      Alert.alert(t('common.erroGenerico'), t('mensagens.erroEnviar'));
+      avisar(t('common.erroGenerico'), t('mensagens.erroEnviar'));
     } finally {
       setEnviando(false);
     }
@@ -220,6 +249,7 @@ export default function ConversaScreen() {
 
   const handleEnviar = async () => {
     if (!texto.trim() || !user || !oficinaId || enviando) return;
+    caixaRef.current?.focus();
     const conteudo = texto.trim();
     setEnviando(true);
     const { data: nova, error } = await supabase.from('mensagens')
@@ -230,7 +260,7 @@ export default function ConversaScreen() {
     if (error) {
       // Nao limpa a caixa de texto - o usuario nao perde o que escreveu se
       // o envio falhar (rede caiu, RLS, etc.), e pode tentar de novo.
-      Alert.alert(t('common.erroGenerico'), t('mensagens.erroEnviar'));
+      avisar(t('common.erroGenerico'), t('mensagens.erroEnviar'));
       return;
     }
     setTexto('');
@@ -264,10 +294,29 @@ export default function ConversaScreen() {
     );
   }
 
+  // na versao web o navegador cuida do teclado: o KeyboardAvoidingView deixava a tela 109 px
+  // mais alta que o Safari, a caixa de escrever ficava fora da tela e a pagina pulava (dono 08/11)
+  const Envolve = Platform.OS === 'web' ? View : KeyboardAvoidingView;
   return (
-    <KeyboardAvoidingView behavior="padding" className="flex-1 bg-gray-50" keyboardVerticalOffset={insets.top + (Platform.OS === 'ios' ? 44 : 56)}>
+    <Envolve ref={raiz as any} {...({ dataSet: { conversa: 'sim' } } as any)} behavior="padding" className="flex-1 bg-gray-50" keyboardVerticalOffset={insets.top + (Platform.OS === 'ios' ? 44 : 56)}>
       <Stack.Screen options={opcoesTela} />
-      <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
+      {naWeb && (
+        // cabecalho proprio na web: fica sempre no alto da area visivel, mesmo com o teclado
+        <View className="flex-row items-center gap-2 px-2 py-2 bg-white border-b border-gray-200" style={{ paddingTop: Math.max(insets.top, 8) }} testID="conversa-cabecalho">
+          <Pressable onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))} accessibilityRole="button" accessibilityLabel={t('common.voltar')} hitSlop={8} className="w-11 h-11 items-center justify-center">
+            <Ionicons name="chevron-back" size={24} color="#111827" />
+          </Pressable>
+          <Text className="flex-1 text-base font-semibold text-gray-900" numberOfLines={1}>{tituloTela}</Text>
+          {oficinaId ? (
+            <Pressable onPress={() => abrirOficina(oficinaId, i18n.language)} accessibilityRole="link" accessibilityLabel={t('orcamentos.verOficina')} testID="conversa-ver-oficina"
+              className="flex-row items-center gap-1.5 px-3 rounded-full bg-blue-50 border border-blue-200" style={{ minHeight: 40 }}>
+              <Ionicons name="storefront-outline" size={18} color="#1d4ed8" />
+              <Text className="text-sm font-semibold text-blue-700" numberOfLines={1}>{t('mensagens.verOficinaCurto')}</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      )}
+      <FlatList keyboardDismissMode={Platform.OS === 'web' ? 'none' : 'on-drag'} keyboardShouldPersistTaps="handled"
         ref={listRef}
         data={mensagens}
         keyExtractor={(item) => item.id}
@@ -287,8 +336,9 @@ export default function ConversaScreen() {
           );
         }}
       />
+      {abertaAte && !fechada ? <Text className="px-4 py-2 bg-gray-100 border-t border-gray-200 text-gray-600 text-xs" testID="conversa-aberta-ate">{t('mensagens.abertaAte', { data: formatDate(abertaAte, i18n.language) })}</Text> : null}
       {fechada ? (
-        <Text className="px-4 py-4 bg-gray-100 border-t border-gray-200 text-gray-600 text-sm">{t('garantia.conversaEncerrada')}</Text>
+        <Text className="px-4 py-4 bg-gray-100 border-t border-gray-200 text-gray-600 text-sm" testID="conversa-encerrada">{t('garantia.conversaEncerrada')}</Text>
       ) : gravando ? (
         <View className="flex-row items-center gap-3 px-4 pt-3 bg-white border-t border-gray-200" style={fundoBarra}>
           <View className="w-3 h-3 rounded-full bg-red-500" />
@@ -304,24 +354,28 @@ export default function ConversaScreen() {
         </View>
       ) : (
         <View className="flex-row items-center gap-2 px-4 pt-3 bg-white border-t border-gray-200" style={fundoBarra}>
-          <TextInput accessibilityLabel={t('mensagens.digiteMensagem')}
+          <TextInput ref={caixaRef} accessibilityLabel={t('mensagens.digiteMensagem')}
             value={texto}
             onChangeText={setTexto}
             placeholder={t('mensagens.digiteMensagem')}
-            className="flex-1 border border-gray-300 rounded-full px-4 py-2"
+            // 16 px: com letra menor o Safari do iPhone da zoom ao tocar; ate ~5 linhas, depois rola
+            className="flex-1 border border-gray-300 rounded-3xl px-4 py-2 text-[16px]"
+            style={{ height: texto ? alturaCaixa : 44, maxHeight: 120 }}
+            numberOfLines={1}
+            onContentSizeChange={(e) => setAlturaCaixa(Math.min(120, Math.max(44, Math.ceil(e.nativeEvent.contentSize.height) + 2)))}
             multiline
           />
           {texto.trim() ? (
             <Pressable onPress={handleEnviar} disabled={enviando} accessibilityRole="button" accessibilityLabel={t('mensagens.enviar')} className="bg-primary-600 rounded-full w-11 h-11 items-center justify-center" style={{ opacity: enviando ? 0.5 : 1 }}>
               <Ionicons name="send" size={18} color="#fff" />
             </Pressable>
-          ) : (
+          ) : temMicrofone ? (
             <Pressable onPress={comecarGravacao} disabled={enviando} accessibilityRole="button" accessibilityLabel={t('mensagens.gravarAudio')} className="bg-green-600 rounded-full w-11 h-11 items-center justify-center" style={{ opacity: enviando ? 0.5 : 1 }}>
               {enviando ? <ActivityIndicator color="#fff" /> : <Ionicons name="mic" size={20} color="#fff" />}
             </Pressable>
-          )}
+          ) : null}
         </View>
       )}
-    </KeyboardAvoidingView>
+    </Envolve>
   );
 }

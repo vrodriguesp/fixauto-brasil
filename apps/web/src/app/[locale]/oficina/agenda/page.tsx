@@ -4,6 +4,7 @@ import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useState, useEffect, useMemo } from 'react';
 import { localParaIso, dataLocalDe, horaLocalDe } from '@/lib/turnos';
 import AcoesAgendamento from '@/components/oficina/AcoesAgendamento';
+import { useDatasNaoConfirmadas } from '@/hooks/use-datas-nao-confirmadas';
 import { exemploPlaca } from '@/lib/exemplos';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAgenda } from '@/hooks/use-agenda';
@@ -17,6 +18,7 @@ import { Link, useRouter } from '@/i18n/navigation';
 import { diaNaOficina, fusoDoPais } from '@/lib/fuso';
 import { nomeFuncionario } from '@/lib/funcionario';
 import QuadroOficina, { type Box } from '@/components/oficina/QuadroOficina';
+import { useEstadoQueVolta } from '@/hooks/use-estado-que-volta';
 import CapacidadeResumo from '@/components/oficina/CapacidadeResumo';
 
 // Visoes da agenda: Mes, Dia, Lista e Quadro (mecanicos/elevadores x dias).
@@ -63,6 +65,7 @@ export default function AgendaPage() {
   const { eventos, add: addEvento, update: updateEvento, remove: removeEvento, refresh } = useAgenda();
   const { refresh: refreshSolicitacoes } = useSolicitacoes();
   const { oficina, funcionario, user } = useAuth();
+  const naoConfirmadas = useDatasNaoConfirmadas(oficina?.id, eventos);
   const isMecanico = funcionario?.cargo === 'mecanico';
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showForm, setShowForm] = useState(false);
@@ -94,7 +97,8 @@ export default function AgendaPage() {
   const [confirmarEntrega, setConfirmarEntrega] = useState<any | null>(null);
   // entrega recusada pelo servidor (ex.: carro sem check-in): mostra o aviso
   const [erroEntrega, setErroEntrega] = useState<string | null>(null);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  // cartao aberto volta depois de trocar a lingua (dono 08/11)
+  const [expandedId, setExpandedId] = useEstadoQueVolta<string>('agenda-aberto', null);
   // confirmacao de "mudar data"/"cancelar" (076), fica no topo depois que a agenda recarrega
   const [avisoAgenda, setAvisoAgenda] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -497,6 +501,7 @@ export default function AgendaPage() {
                 )}
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase">{t('datas')}</p>
+                  {ev.solicitacao_id && ev.status === 'agendado' && naoConfirmadas.has(ev.solicitacao_id) && <p className="mt-1 inline-block rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-900" data-testid="data-nao-confirmada">⏳ {tMud('naoConfirmado')}</p>}
                   <p className="text-xs text-gray-700">{t('checkinLabel')}: {new Date(ev.data_inicio).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais((oficina as any)?.pais ?? null) })} {new Date(ev.data_inicio).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais((oficina as any)?.pais ?? null) })}</p>
                   <p className="text-xs text-gray-700">{t('prevEntregaLabel')}: {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais((oficina as any)?.pais ?? null) })} {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais((oficina as any)?.pais ?? null) })}</p>
                   {ev.status === 'concluido' && <p className="text-xs text-gray-700">{t('entregueLabel')}: {new Date(ev.data_fim).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB')}</p>}

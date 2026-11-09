@@ -9,6 +9,7 @@ import { CARGOS_FUNCIONARIO } from '@fixauto/shared';
 import type { Funcionario } from '@fixauto/shared';
 import { textoErroApi } from '@/lib/erro-api';
 import { nomeFuncionario } from '@/lib/funcionario';
+import { useEstadoQueVolta } from '@/hooks/use-estado-que-volta';
 import CampoTelefone from '@/components/forms/CampoTelefone';
 
 export default function EquipePage() {
@@ -18,7 +19,10 @@ export default function EquipePage() {
   const { oficina } = useAuth();
   const [funcionarios, setFuncionarios] = useState<(Funcionario & { nome?: string | null; telefone?: string | null; acesso_portal?: boolean; profile?: { nome: string; email: string; telefone: string | null } | null })[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+  // formulario aberto volta depois de trocar a lingua (teste 09/11)
+  const [formAberto, setFormAberto] = useEstadoQueVolta<'1'>('equipe-form', null);
+  const showForm = formAberto === '1';
+  const setShowForm = (v: boolean) => setFormAberto(v ? '1' : null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 

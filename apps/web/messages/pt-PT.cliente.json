@@ -31,7 +31,13 @@
     "accidentsInvolvedTitle": "Acidentes em que está envolvido",
     "accidentRegisteredBy": "Acidente registado por {name}",
     "yourVehiclePlate": "O seu veículo: matrícula {plate}",
-    "messages": "Mensagens"
+    "messages": "Mensagens",
+    "botaoAcidente": "Acabei de ter um acidente",
+    "botaoAcidenteDica": "Registe agora e receba orçamentos de oficinas próximas",
+    "badgeAcidente": "Acidente",
+    "acidenteSemCarro": "Acidente",
+    "pedidoSemCarro": "Pedido de orçamento",
+    "aguardandoOrcamentos": "À espera de orçamentos das oficinas"
   },
   "clienteVeiculos": {
     "loading": "A carregar...",
@@ -102,7 +108,7 @@
     "errorUnexpectedSubmit": "Erro inesperado ao criar o pedido",
     "successTitle": "Pedido enviado!",
     "successText": "As oficinas próximas foram notificadas. Em breve começará a receber orçamentos.",
-    "redirecting": "A redirecionar para o seu painel...",
+    "redirecting": "A ir para o início...",
     "pageTitle": "Novo Pedido",
     "pageSubtitle": "Descreva o problema do seu veículo para receber orçamentos",
     "step1Title": "Selecione o seu veículo",
@@ -154,7 +160,9 @@
     "createRequest": "Criar pedido",
     "quotesReceivedCount": "{count, plural, one {# orçamento recebido} other {# orçamentos recebidos}}",
     "deadlineDays": "Prazo da reparação: {days, plural, one {# dia} other {# dias}}",
-    "itemsCount": "{count, plural, one {# item} other {# itens}}"
+    "itemsCount": "{count, plural, one {# item} other {# itens}}",
+    "pedidoSemCarro": "Pedido de orçamento",
+    "aguardandoOrcamentos": "À espera de orçamentos das oficinas"
   },
   "clienteOrcamentoDetalhe": {
     "execDaysApprox": "{days, plural, one {~# dia útil} other {~# dias úteis}}",
@@ -169,7 +177,7 @@
     "checkin": "Check-in:",
     "deliveryForecast": "Entrega prevista:",
     "bringVehicleNote": "Leve o seu veículo à hora marcada. A oficina entrará em contacto se houver alguma alteração.",
-    "backToDashboard": "Voltar ao Painel",
+    "backToDashboard": "Voltar ao início",
     "back": "Voltar",
     "messageToWorkshop": "Enviar mensagem à oficina",
     "confirmCancelRequest": "Tem a certeza de que quer cancelar este pedido? As oficinas deixarão de poder enviar orçamentos.",
@@ -241,7 +249,26 @@
     "escolhido": "Orçamento escolhido",
     "verOficina": "Ver a oficina (avaliações, morada)",
     "pedidoCanceladoTitulo": "Pedido cancelado",
-    "pedidoCanceladoTexto": "Este pedido foi cancelado. Os orçamentos ficam aqui só para consulta."
+    "pedidoCanceladoTexto": "Este pedido foi cancelado. Os orçamentos ficam aqui só para consulta.",
+    "verAcidente": "Ver o acidente (outro condutor e mensagens)",
+    "cancelamento": {
+      "botao": "Cancelar pedido",
+      "titulo": "Cancelar este pedido?",
+      "texto": "As oficinas que enviaram orçamento serão avisadas e o pedido sai da lista delas. Pode reabri-lo depois.",
+      "motivoOpcional": "Porquê? (opcional)",
+      "motivos": {
+        "resolvido": "Já resolvi",
+        "outra_oficina": "Encontrei outra oficina",
+        "desisti": "Desisti da reparação",
+        "outro": "Outro motivo"
+      },
+      "confirmar": "Sim, cancelar o pedido",
+      "cancelando": "A cancelar...",
+      "voltar": "Não, voltar",
+      "reabrir": "Reabrir pedido",
+      "reabrindo": "A reabrir..."
+    },
+    "novaNoBipfix": "Nova no BipFix"
   },
   "clienteMensagens": {
     "workshopFallback": "Oficina",
@@ -288,7 +315,7 @@
     "progressConcluido": "Concluído",
     "progressEntregue": "Entregue",
     "noAppointmentFound": "Não foi encontrada nenhuma marcação para este pedido.",
-    "backToDashboard": "Voltar ao Painel",
+    "backToDashboard": "Voltar ao início",
     "pageTitle": "Acompanhamento da Reparação",
     "progressTitle": "Progresso",
     "checkin": "Check-in",
@@ -311,7 +338,7 @@
     "loading": "A carregar...",
     "rescheduleConfirmedTitle": "Remarcação confirmada!",
     "newTimeRegistered": "O seu novo horário foi registado com sucesso.",
-    "backToPanel": "Voltar ao painel",
+    "backToPanel": "Voltar ao início",
     "back": "Voltar",
     "pageTitle": "Alterar a marcação",
     "pageSubtitle": "Escolha uma nova data para a sua marcação.",
@@ -339,8 +366,8 @@
   },
   "editarPedido": {
     "acidente": "Acidente",
-    "completarCarro": "Complete os dados do carro",
-    "completarCarroDica": "Marca, modelo e matrícula ajudam a oficina a fazer o orçamento. Toque para completar.",
+    "completarCarro": "Adicione os dados do SEU carro",
+    "completarCarroDica": "Marca, modelo e matrícula do carro que VOCÊ conduzia ajudam a oficina a fazer o orçamento. Toque para adicionar.",
     "editar": "Editar pedido",
     "marca": "Marca",
     "modelo": "Modelo",

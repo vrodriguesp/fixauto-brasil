@@ -655,7 +655,14 @@
     "orcamentoFechadoExpirado": "See päring aegus ilma valikuta. Hinnapakkumist ei saa praegu muuta; kui klient päringu uuesti avab, saate seda jälle muuta.",
     "verPedido": "Vaata päringut",
     "prazoTotalDiasAjuda": "Mitu päeva auto on töökojas – vastuvõtust üleandmiseni. Hinnapakkumise kehtivus on eraldi väli.",
-    "prazoLongoAviso": "{dias} päeva töökojas {horas} töötunni jaoks – kas see on õige? Kui see on pakkumise kehtivus, kasuta välja „Hinnapakkumise kehtivus“."
+    "prazoLongoAviso": "{dias} päeva töökojas {horas} töötunni jaoks – kas see on õige? Kui see on pakkumise kehtivus, kasuta välja „Hinnapakkumise kehtivus“.",
+    "orcamentoRecusadoEncerrado": "Klient lükkas selle hinnapakkumise tagasi (või tühistas broneeringu sinu töökojas). See on suletud ja seda ei saa enam muuta.",
+    "orcamentoNovoAjuda": "Päring on veel avatud. Soovi korral saada uus hinnapakkumine: klient saab selle uue pakkumisena.",
+    "enviarOrcamentoNovo": "Saada uus hinnapakkumine",
+    "clienteRespondeuData": "Klient vastas uue aja ettepanekule. Vaata tulemust ja järgmist sammu päringus.",
+    "itemSemValor": "Lisa enne saatmist vähemalt üks hinnaga rida.",
+    "enviandoOrcamento": "Saadan...",
+    "erroEnvioOrcamento": "Hinnapakkumist ei õnnestunud saata. Proovi uuesti."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Parool peab olema vähemalt 8 tähemärki",

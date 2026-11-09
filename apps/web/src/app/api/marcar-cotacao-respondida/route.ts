@@ -5,6 +5,7 @@ import { sendCotacaoPecaRespondidaEmail } from '@/lib/notifications';
 import { currencyForCountry } from '@/lib/currency';
 import { notifCotacaoPecaRespondida } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 
 // A loja/oficina que responde uma cotacao nao e dona dela (a oficina
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest) {
         tipo: 'cotacao_peca_respondida',
         titulo: nn.titulo,
         mensagem: nn.mensagem,
-        dados: { cotacao_id: cotacaoId },
+        dados: { cotacao_id: cotacaoId, textos: emTodasAsLinguas((l) => notifCotacaoPecaRespondida(l, fornecedorNome, (cotacao as any).peca_descricao)) },
       });
 
       if (compradoraProfile.email) {

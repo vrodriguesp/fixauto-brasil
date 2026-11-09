@@ -10,6 +10,7 @@ import { currencyForCountry } from '@/lib/currency';
 import { formatCurrency } from '@/lib/utils';
 import { notifNovoOrcamento, chatNovoOrcamentoRecebido } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 
 export async function POST(req: NextRequest) {
@@ -77,7 +78,7 @@ export async function POST(req: NextRequest) {
       const n = notifNovoOrcamento(cliente?.idioma, oficinaNome, valorTotal);
       await supabaseAdmin.from('notificacoes').insert({
         profile_id: clienteId, tipo: 'novo_orcamento', titulo: n.titulo, mensagem: n.mensagem,
-        dados: { solicitacao_id: solId, orcamento_id: orcamentoId },
+        dados: { solicitacao_id: solId, orcamento_id: orcamentoId, textos: emTodasAsLinguas((l) => notifNovoOrcamento(l, oficinaNome, formatCurrency(orcamento.valor_total, moeda, l))) },
       });
     }
 
@@ -188,7 +189,7 @@ export async function POST(req: NextRequest) {
               tipo: 'novo_orcamento',
               titulo: n.titulo,
               mensagem: n.mensagem,
-              dados: { emergencia_id: emergFull.id },
+              dados: { emergencia_id: emergFull.id, textos: emTodasAsLinguas((l) => notifNovoOrcamento(l, oficinaNome, formatCurrency(orcamento.valor_total, moeda, l))) },
             });
           }
         }

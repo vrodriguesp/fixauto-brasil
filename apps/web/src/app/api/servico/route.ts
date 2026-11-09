@@ -5,6 +5,7 @@ import { notifCarroChegou, notifEtapa, notifProntoRetirar } from '@/lib/notif-se
 import { entregarServico } from '@/lib/entrega';
 import { conflitosNoPosto, postoAtivo } from '@/lib/postos';
 import { diaNaOficina } from '@/lib/fuso';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 export const dynamic = 'force-dynamic';
 
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
     const n = montar((sol as any).cliente?.idioma, carro);
     await supabaseAdmin.from('notificacoes').insert({
       profile_id: sol.cliente_id, tipo: 'servico_atualizado', titulo: n.titulo, mensagem: n.mensagem,
-      dados: { solicitacao_id: ev.solicitacao_id },
+      dados: { solicitacao_id: ev.solicitacao_id, textos: emTodasAsLinguas((l) => montar(l, carro)) },
     });
   };
 

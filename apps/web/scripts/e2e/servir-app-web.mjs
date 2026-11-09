@@ -18,12 +18,18 @@ const TIPOS = { '.html': 'text/html', '.js': 'application/javascript', '.css': '
 
 http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://x');
+  // o app compilado para o celular chama a API pelo IP da rede; aberto por localhost (testes) e
+  // outra origem: libera so origens locais (localhost / rede 192.168.x) - servidor de TESTE
+  const origem = req.headers.origin || '';
+  const cors = /^http:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+)(:\d+)?$/.test(origem)
+    ? { 'access-control-allow-origin': origem, 'access-control-allow-methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS', 'access-control-allow-headers': req.headers['access-control-request-headers'] || '*', vary: 'Origin' } : {};
+  if (url.pathname.startsWith('/api/') && req.method === 'OPTIONS') { res.writeHead(204, cors); res.end(); return; }
   if (url.pathname.startsWith('/api/')) {
     const corpo = await new Promise((ok) => { const b = []; req.on('data', (c) => b.push(c)); req.on('end', () => ok(Buffer.concat(b))); });
     const h = { ...req.headers };
     delete h.host; delete h.origin; delete h.referer; delete h['content-length'];
     const r = await fetch(SITE + url.pathname + url.search, { method: req.method, headers: h, body: ['GET', 'HEAD'].includes(req.method) ? undefined : corpo });
-    res.writeHead(r.status, { 'content-type': r.headers.get('content-type') || 'application/json' });
+    res.writeHead(r.status, { 'content-type': r.headers.get('content-type') || 'application/json', ...cors });
     res.end(Buffer.from(await r.arrayBuffer()));
     return;
   }

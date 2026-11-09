@@ -11,6 +11,7 @@ import en from '../../messages/en.json';
 import et from '../../messages/et.json';
 import it from '../../messages/it.json';
 import ru from '../../messages/ru.json';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 // Aviso de pedido novo as oficinas - no servidor (antes o navegador/app do
 // cliente inseria um aviso por oficina ativa DO MUNDO INTEIRO, em serie;
@@ -50,7 +51,10 @@ export async function avisarOficinasDoPedido(solicitacaoId: string): Promise<num
     return {
       profile_id: o.profile_id, tipo: 'nova_solicitacao', titulo: notifNovaSolicitacaoTitulo(idioma),
       mensagem: [TIPOS[idioma][sol.tipo] || sol.tipo, carro, sol.endereco].filter(Boolean).join(' - '),
-      dados: { solicitacao_id: solicitacaoId },
+      dados: {
+        solicitacao_id: solicitacaoId,
+        textos: emTodasAsLinguas((l) => ({ titulo: notifNovaSolicitacaoTitulo(l), mensagem: [(TIPOS[l] || TIPOS.en)[sol.tipo] || sol.tipo, carro, sol.endereco].filter(Boolean).join(' - ') })),
+      },
     };
   });
   if (linhas.length) await supabaseAdmin.from('notificacoes').insert(linhas);

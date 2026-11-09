@@ -1,12 +1,12 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { View, Text, FlatList, RefreshControl } from 'react-native';
+import { View, Text, FlatList, RefreshControl, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from 'expo-router';
 import type { Solicitacao } from '@fixauto/shared';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
-import SolicitacaoCard from '../../components/SolicitacaoCard';
+import CartaoPedido from '../../components/CartaoPedido';
 import { useAvisos } from '../../lib/avisos';
 
 export default function SolicitacoesScreen() {
@@ -41,12 +41,12 @@ export default function SolicitacoesScreen() {
   return (
     <View className="flex-1 bg-gray-50 px-4" style={{ paddingTop: insets.top + 8 }}>
       <Text className="text-2xl font-bold text-gray-900 mb-4">{t('tabs.solicitacoes')}</Text>
-      <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
+      <FlatList keyboardDismissMode={Platform.OS === 'web' ? 'none' : 'on-drag'} keyboardShouldPersistTaps="handled"
         data={solicitacoes}
         keyExtractor={(item) => item.id}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={carregar} />}
         contentContainerStyle={{ paddingBottom: 24 }}
-        renderItem={({ item }) => <SolicitacaoCard solicitacao={item} />}
+        renderItem={({ item }) => <CartaoPedido solicitacao={item} />}
         ListEmptyComponent={!loading ? <Text className="text-gray-500 text-center mt-8">{t('dashboard.nenhumaSolicitacao')}</Text> : null}
       />
     </View>

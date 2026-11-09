@@ -1,6 +1,8 @@
-import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
+import { type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
+import RolagemTeclado from '../components/RolagemTeclado';
 import { useEffect, useState, useRef } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert, Linking, Keyboard } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Linking, Keyboard } from 'react-native';
+import { confirmar, avisar } from '../lib/confirmar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
@@ -14,10 +16,11 @@ import { fetchComPrazo } from '../lib/rede';
 import i18n from '../i18n';
 import { ErroApi, ErroUsuario, mensagemErro } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
-import { obterPosicao, enderecoDaPosicao, useLocalizacaoAoVoltar } from '../lib/posicao';
+import { obterPosicao, permissaoLocal, enderecoDaPosicao, useLocalizacaoAoVoltar } from '../lib/posicao';
 import { regiaoSeguro, paisDoAcidente, PAISES_SEGURO, nomeDoPais } from '../lib/regiao';
 import VehicleCatalogPicker from '../components/VehicleCatalogPicker';
 import { arquivoDaFoto } from '../lib/anexo';
+import { placaValida } from '../lib/validar-carro';
 import CampoTelefone from '../components/CampoTelefone';
 
 type Tipo = 'eu_causei' | 'outro_causou' | 'sem_outro';
@@ -100,7 +103,7 @@ export default function EmergenciaScreen() {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
       // negada: explica e oferece os Ajustes (o iOS nao pergunta de novo - auditoria E7)
-      Alert.alert(t('emergencia.cameraNegadaTitulo'), t('emergencia.cameraNegadaTexto'), [
+      confirmar(t('emergencia.cameraNegadaTitulo'), t('emergencia.cameraNegadaTexto'), [
         { text: t('common.cancelar'), style: 'cancel' },
         { text: t('emergencia.abrirAjustes'), onPress: () => Linking.openSettings() },
       ]);
@@ -122,12 +125,12 @@ export default function EmergenciaScreen() {
     try {
       // ja negada: o sistema nao mostra o pedido de novo - entao vai direto
       // aos Ajustes; senao o sistema pergunta (permitir uma vez / sempre)
-      let perm = await Location.getForegroundPermissionsAsync();
-      if (perm.status !== 'granted' && perm.canAskAgain) perm = await Location.requestForegroundPermissionsAsync();
+      let perm = await permissaoLocal(false);
+      if (perm.status !== 'granted' && perm.canAskAgain) perm = await permissaoLocal(true);
       if (perm.status !== 'granted') {
         setEstadoLocal(perm.canAskAgain ? 'negado' : 'negadoAjustes');
         if (!silencioso && !perm.canAskAgain) {
-          Alert.alert(t('emergencia.localNegadaTitulo'), t('emergencia.localNegadaTexto'), [
+          confirmar(t('emergencia.localNegadaTitulo'), t('emergencia.localNegadaTexto'), [
             { text: t('common.cancelar'), style: 'cancel' },
             { text: t('emergencia.abrirAjustes'), onPress: () => Linking.openSettings() },
           ]);
@@ -213,7 +216,7 @@ export default function EmergenciaScreen() {
 
       setEnviado(true);
     } catch (e) {
-      Alert.alert(t('common.erroGenerico'), mensagemErro(e));
+      avisar(t('common.erroGenerico'), mensagemErro(e));
     } finally {
       setEnviando(false);
     }
@@ -245,7 +248,7 @@ export default function EmergenciaScreen() {
   }
 
   return (
-    <KeyboardAwareScrollView bottomOffset={24} keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom }}>
+    <RolagemTeclado bottomOffset={24} keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom }}>
       <Text className="text-gray-600 mb-6">{t('emergencia.subtitulo')}</Text>
 
       <Text className="text-sm font-medium text-gray-700 mb-1">{t('emergencia.fotoTitulo')}</Text>
@@ -304,8 +307,9 @@ export default function EmergenciaScreen() {
             <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={`/api/vehicle-catalog?tipo=cars&marca=${marca.code}`} />
           )}
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.placa')}</Text>
-          <TextInput accessibilityLabel={t('veiculos.placa')} value={placa} onChangeText={setPlaca} autoCapitalize="characters" maxLength={15}
+          <TextInput accessibilityLabel={t('veiculos.placa')} value={placa} onChangeText={(v) => setPlaca(v.toUpperCase())} autoCapitalize="characters" maxLength={10}
             className="border border-gray-300 rounded-lg px-4 py-3 text-[16px]" />
+          {!placaValida(placa) ? <Text className="text-sm text-red-700 mt-1" accessibilityRole="alert">{t('erros.PLACA_INVALIDA')}</Text> : null}
         </View>
       )}
       <View className="mb-6" />
@@ -434,11 +438,11 @@ export default function EmergenciaScreen() {
 
       <Pressable
         onPress={handleEnviar}
-        disabled={enviando || (!coords && !endereco) || faltaContato}
+        disabled={enviando || (!coords && !endereco) || faltaContato || !placaValida(placa)}
         className="bg-red-600 rounded-lg py-4 items-center mb-10 disabled:opacity-50"
       >
         {enviando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold text-base">{t('emergencia.enviarRegistro')}</Text>}
       </Pressable>
-    </KeyboardAwareScrollView>
+    </RolagemTeclado>
   );
 }

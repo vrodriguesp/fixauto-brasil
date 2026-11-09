@@ -5,6 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useVeiculos } from '@/hooks/use-veiculos';
 import type { Veiculo } from '@fixauto/shared';
+import { placaValida, anoDoCarroValido } from '@/lib/validar-carro';
+import { useEstadoQueVolta } from '@/hooks/use-estado-que-volta';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 
 export default function VeiculosPageWrapper() {
@@ -18,10 +20,14 @@ export default function VeiculosPageWrapper() {
 
 function VeiculosPage() {
   const t = useTranslations('clienteVeiculos');
+  const tErros = useTranslations('erros');
   const searchParams = useSearchParams();
   const autoOpen = searchParams.get('add') === 'true';
   const { veiculos, add, update, remove } = useVeiculos();
-  const [showForm, setShowForm] = useState(autoOpen);
+  // formulario aberto volta depois de trocar a lingua (teste 09/11)
+  const [formAberto, setFormAberto] = useEstadoQueVolta<'1'>('veiculo-form', autoOpen ? '1' : null);
+  const showForm = formAberto === '1';
+  const setShowForm = (v: boolean) => setFormAberto(v ? '1' : null);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
@@ -44,6 +50,7 @@ function VeiculosPage() {
 
   const handleSave = async () => {
     if (!formData.fipe_marca || !formData.fipe_modelo || !formData.fipe_ano) return;
+    if (!placaValida(formData.placa) || !anoDoCarroValido(formData.fipe_ano)) return; // aviso ao lado do campo
 
     if (editingId) {
       await update(editingId, formData);
@@ -133,9 +140,13 @@ function VeiculosPage() {
               <input id="c94de-1"
                 type="text"
                 className="input-field"
+                maxLength={10}
+                aria-invalid={!placaValida(formData.placa)}
                 value={formData.placa}
-                onChange={(e) => setFormData({ ...formData, placa: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, placa: e.target.value.toUpperCase() })}
               />
+              {!placaValida(formData.placa) && <p role="alert" className="mt-1 text-sm text-red-700">{tErros('PLACA_INVALIDA')}</p>}
+              {!anoDoCarroValido(formData.fipe_ano) && <p role="alert" className="mt-1 text-sm text-red-700">{tErros('ANO_INVALIDO')}</p>}
             </div>
             <div>
               <label htmlFor="c94de-2" className="block text-sm font-medium text-gray-700 mb-1">{t('colorLabel')}</label>

@@ -21,7 +21,8 @@ const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
-const SITE = process.argv[3] || 'https://bipfix.com';
+if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
+const SITE = process.argv[3] || 'http://localhost:3100';
 const sb = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 const MSG = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/messages';
 const msgs = (l) => Object.assign({}, ...['', '.cliente', '.oficina', '.loja', '.auth', '.misc'].map((a) => JSON.parse(fs.readFileSync(`${MSG}/${l}${a}.json`, 'utf8'))));
@@ -32,7 +33,8 @@ let falhas = 0;
 const ok = (n, c, x = '') => { if (!c) falhas++; console.log(`${c ? 'ok  ' : 'FALHA'} ${n}${x && !c ? ' - ' + String(x).replace(/\s+/g, ' ').slice(0, 200) : ''}`); };
 const tag = crypto.randomBytes(3).toString('hex');
 const contas = []; let ofId; const sols = []; const ags = [];
-const dia = (n) => { const d = new Date(Date.now() + n * 86400000); return `${d.toISOString().slice(0, 10)}T12:00:00Z`; };
+// dia no fuso da oficina (Sao Paulo): o quadro usa o dia local da oficina, nao o UTC (de noite no Brasil ja e outro dia em UTC)
+const dia = (n) => { const d = new Date(Date.now() + n * 86400000); return `${d.toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' })}T15:00:00Z`; };
 
 const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
 const ctxNovo = async (largo) => { const c = await browser.newContext(largo ? { viewport: { width: 1280, height: 900 } } : { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }); await c.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} }); return c; };

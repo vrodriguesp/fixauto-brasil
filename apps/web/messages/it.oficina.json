@@ -655,7 +655,14 @@
     "orcamentoFechadoExpirado": "Questa richiesta è scaduta senza una scelta. Il preventivo non può essere modificato; se il cliente la riapre, potrai modificarlo di nuovo.",
     "verPedido": "Vedi richiesta",
     "prazoTotalDiasAjuda": "Quanti giorni l'auto resta in officina, dalla consegna al ritiro. La validità del preventivo è un altro campo.",
-    "prazoLongoAviso": "{dias} giorni in officina per {horas} h di lavoro: è corretto? Se è la validità del preventivo, usa il campo \"Validità del preventivo\"."
+    "prazoLongoAviso": "{dias} giorni in officina per {horas} h di lavoro: è corretto? Se è la validità del preventivo, usa il campo \"Validità del preventivo\".",
+    "orcamentoRecusadoEncerrado": "Il cliente ha rifiutato questo preventivo (o ha annullato la prenotazione con la tua officina). È chiuso e non può più essere modificato.",
+    "orcamentoNovoAjuda": "La richiesta è ancora aperta. Se vuoi, invia un nuovo preventivo: il cliente lo riceve come nuovo preventivo.",
+    "enviarOrcamentoNovo": "Invia un nuovo preventivo",
+    "clienteRespondeuData": "Il cliente ha risposto alla proposta di nuova data. Guarda il risultato e il prossimo passo nella richiesta.",
+    "itemSemValor": "Aggiungi almeno una voce con un prezzo prima di inviare.",
+    "enviandoOrcamento": "Invio...",
+    "erroEnvioOrcamento": "Non è stato possibile inviare il preventivo. Riprova."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "La password deve avere almeno 8 caratteri",

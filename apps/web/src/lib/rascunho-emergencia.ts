@@ -13,6 +13,8 @@ export type RascunhoEmergencia = {
   localizacao: string; coords: { lat: number; lon: number } | null; geoResolved: boolean;
   veiculoInfo: { marca: string; modelo: string; ano: string; cor: string } | null;
   seguro: unknown;
+  // troca de lingua (dono 09/11): volta no mesmo passo e com o carro escolhido
+  passo?: number; veiculoId?: string | null;
   salvoEm?: number; qtdFotos?: number;
 };
 
@@ -27,10 +29,13 @@ function abrirBanco(): Promise<IDBDatabase> {
 
 async function gravarFotos(fotos: File[]): Promise<boolean> {
   try {
+    // bytes (ArrayBuffer), nao Blob: o Safari em navegacao privada (e o WebKit dos testes) recusa
+    // Blob no IndexedDB e a foto sumia ao trocar a lingua (dono 09/11)
+    const itens = await Promise.all(fotos.map(async (f) => ({ nome: f.name, tipo: f.type, bytes: await f.arrayBuffer() })));
     const db = await abrirBanco();
     await new Promise<void>((ok, falha) => {
       const tx = db.transaction(LOJA, 'readwrite');
-      tx.objectStore(LOJA).put(fotos.map((f) => ({ nome: f.name, tipo: f.type, blob: f as Blob })), 'atual');
+      tx.objectStore(LOJA).put(itens, 'atual');
       tx.oncomplete = () => ok();
       tx.onerror = () => falha(tx.error);
     });
@@ -49,7 +54,7 @@ async function lerFotos(): Promise<File[] | null> {
     });
     db.close();
     if (!Array.isArray(lista)) return null;
-    return lista.map((f) => new File([f.blob], f.nome || 'foto.jpg', { type: f.tipo || 'image/jpeg' }));
+    return lista.map((f) => new File([f.bytes ?? f.blob], f.nome || 'foto.jpg', { type: f.tipo || 'image/jpeg' }));
   } catch { return null; }
 }
 

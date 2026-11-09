@@ -18,7 +18,9 @@ export function useVeiculos() {
       .select('*')
       .eq('profile_id', user.id)
       .order('created_at', { ascending: false });
-    setVeiculos((data as Veiculo[]) || []);
+    // carro so com a placa (acidente sem marca/modelo) fica no pedido, nao em "Meus veiculos"
+    // - parecia ser o carro do outro motorista (dono 09/11)
+    setVeiculos(((data as Veiculo[]) || []).filter((v) => (v.fipe_marca || '').trim()));
     setLoading(false);
   }, [user]);
 

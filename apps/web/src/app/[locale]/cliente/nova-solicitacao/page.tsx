@@ -12,6 +12,7 @@ import { notifNovaSolicitacaoTitulo } from '@/lib/notif-i18n';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
+import { placaValida, anoDoCarroValido } from '@/lib/validar-carro';
 import {
   TIPOS_SERVICO, URGENCIAS,
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
@@ -19,10 +20,11 @@ import {
 
 export default function NovaSolicitacaoPage() {
   const t = useTranslations('clienteNovaSolicitacao');
+  const tErros = useTranslations('erros');
   const locale = useLocale();
   const tc = useTranslations('constants');
   const router = useRouter();
-  const { veiculos, add: addVeiculo } = useVeiculos();
+  const { veiculos, loading: carregandoVeiculos, add: addVeiculo } = useVeiculos();
   const { create: createSolicitacao, addPhotos } = useSolicitacoes();
   const fileInputRef = useRef<HTMLInputElement>(null);
   // servico entregue sem avaliacao: avaliar antes de pedir de novo (como no Uber)
@@ -34,6 +36,8 @@ export default function NovaSolicitacaoPage() {
 
   const [veiculoId, setVeiculoId] = useState('');
   const [showAddVeiculo, setShowAddVeiculo] = useState(false);
+  // sem nenhum carro: o formulario do carro ja abre (um toque a menos - teste 09/11)
+  useEffect(() => { if (!carregandoVeiculos && veiculos.length === 0) setShowAddVeiculo(true); }, [carregandoVeiculos, veiculos.length]);
   const [novoVeiculo, setNovoVeiculo] = useState({ fipe_tipo: 'cars', fipe_marca: '', fipe_modelo: '', fipe_ano: '', fipe_codigo: '', fipe_valor: '', placa: '', cor: '', apelido: '' });
   const [savingVeiculo, setSavingVeiculo] = useState(false);
   const [veiculoError, setVeiculoError] = useState('');
@@ -335,7 +339,9 @@ export default function NovaSolicitacaoPage() {
                 <div className="grid sm:grid-cols-3 gap-4 mt-4">
                   <div>
                     <label htmlFor="caee7-1" className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
-                    <input id="caee7-1" type="text" className="input-field" placeholder={exemploPlaca(locale)} value={novoVeiculo.placa} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, placa: e.target.value })} />
+                    <input id="caee7-1" type="text" className="input-field" placeholder={exemploPlaca(locale)} maxLength={10} aria-invalid={!placaValida(novoVeiculo.placa)} value={novoVeiculo.placa} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, placa: e.target.value.toUpperCase() })} />
+                    {!placaValida(novoVeiculo.placa) && <p role="alert" className="mt-1 text-sm text-red-700">{tErros('PLACA_INVALIDA')}</p>}
+                    {!anoDoCarroValido(novoVeiculo.fipe_ano) && <p role="alert" className="mt-1 text-sm text-red-700">{tErros('ANO_INVALIDO')}</p>}
                   </div>
                   <div>
                     <label htmlFor="caee7-2" className="block text-sm font-medium text-gray-700 mb-1">{t('colorLabel')}</label>
@@ -357,7 +363,7 @@ export default function NovaSolicitacaoPage() {
                   )}
                   <button
                     onClick={handleAddVeiculo}
-                    disabled={savingVeiculo || !novoVeiculo.fipe_marca || !novoVeiculo.fipe_modelo || !novoVeiculo.fipe_ano}
+                    disabled={savingVeiculo || !novoVeiculo.fipe_marca || !novoVeiculo.fipe_modelo || !novoVeiculo.fipe_ano || !placaValida(novoVeiculo.placa) || !anoDoCarroValido(novoVeiculo.fipe_ano)}
                     className="btn-primary disabled:opacity-50"
                   >
                     {savingVeiculo ? t('saving') : t('addAndContinue')}

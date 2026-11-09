@@ -31,7 +31,13 @@
     "accidentsInvolvedTitle": "Accidents you're involved in",
     "accidentRegisteredBy": "Accident reported by {name}",
     "yourVehiclePlate": "Your vehicle: plate {plate}",
-    "messages": "Messages"
+    "messages": "Messages",
+    "botaoAcidente": "I just had an accident",
+    "botaoAcidenteDica": "Report it now and get quotes from nearby repair shops",
+    "badgeAcidente": "Accident",
+    "acidenteSemCarro": "Accident",
+    "pedidoSemCarro": "Quote request",
+    "aguardandoOrcamentos": "Waiting for quotes from repair shops"
   },
   "clienteVeiculos": {
     "loading": "Loading...",
@@ -102,7 +108,7 @@
     "errorUnexpectedSubmit": "Unexpected error creating the request",
     "successTitle": "Request sent!",
     "successText": "Nearby repair shops have been notified. You'll start receiving quotes soon.",
-    "redirecting": "Redirecting to your dashboard...",
+    "redirecting": "Going to your home page...",
     "pageTitle": "New Request",
     "pageSubtitle": "Describe your vehicle's problem to receive quotes",
     "step1Title": "Select your vehicle",
@@ -154,7 +160,9 @@
     "createRequest": "Create request",
     "quotesReceivedCount": "{count, plural, one {# quote received} other {# quotes received}}",
     "deadlineDays": "Repair time: {days, plural, one {# day} other {# days}}",
-    "itemsCount": "{count, plural, one {# item} other {# items}}"
+    "itemsCount": "{count, plural, one {# item} other {# items}}",
+    "pedidoSemCarro": "Quote request",
+    "aguardandoOrcamentos": "Waiting for quotes from repair shops"
   },
   "clienteOrcamentoDetalhe": {
     "execDaysApprox": "{days, plural, one {~# business day} other {~# business days}}",
@@ -169,7 +177,7 @@
     "checkin": "Check-in:",
     "deliveryForecast": "Estimated delivery:",
     "bringVehicleNote": "Bring your vehicle at the scheduled time. The repair shop will get in touch if anything changes.",
-    "backToDashboard": "Back to Dashboard",
+    "backToDashboard": "Back to home",
     "back": "Back",
     "messageToWorkshop": "Message the repair shop",
     "confirmCancelRequest": "Are you sure you want to cancel this request? Repair shops will no longer be able to send quotes.",
@@ -241,7 +249,26 @@
     "escolhido": "Chosen quote",
     "verOficina": "See the repair shop (reviews, address)",
     "pedidoCanceladoTitulo": "Request cancelled",
-    "pedidoCanceladoTexto": "This request was cancelled. The quotes stay here for reference only."
+    "pedidoCanceladoTexto": "This request was cancelled. The quotes stay here for reference only.",
+    "verAcidente": "View the accident (other driver and messages)",
+    "cancelamento": {
+      "botao": "Cancel request",
+      "titulo": "Cancel this request?",
+      "texto": "Repair shops that sent a quote will be notified and the request leaves their list. You can reopen it later.",
+      "motivoOpcional": "Why? (optional)",
+      "motivos": {
+        "resolvido": "Already solved",
+        "outra_oficina": "Found another shop",
+        "desisti": "Not repairing it",
+        "outro": "Other reason"
+      },
+      "confirmar": "Yes, cancel the request",
+      "cancelando": "Cancelling...",
+      "voltar": "No, go back",
+      "reabrir": "Reopen request",
+      "reabrindo": "Reopening..."
+    },
+    "novaNoBipfix": "New on BipFix"
   },
   "clienteMensagens": {
     "workshopFallback": "Repair shop",
@@ -288,7 +315,7 @@
     "progressConcluido": "Completed",
     "progressEntregue": "Delivered",
     "noAppointmentFound": "No appointment found for this request.",
-    "backToDashboard": "Back to Dashboard",
+    "backToDashboard": "Back to home",
     "pageTitle": "Repair Tracking",
     "progressTitle": "Progress",
     "checkin": "Check-in",
@@ -311,7 +338,7 @@
     "loading": "Loading...",
     "rescheduleConfirmedTitle": "Reschedule confirmed!",
     "newTimeRegistered": "Your new time slot has been registered successfully.",
-    "backToPanel": "Back to dashboard",
+    "backToPanel": "Back to home",
     "back": "Back",
     "pageTitle": "Reschedule appointment",
     "pageSubtitle": "Choose a new date for your appointment.",
@@ -339,8 +366,8 @@
   },
   "editarPedido": {
     "acidente": "Accident",
-    "completarCarro": "Add your car details",
-    "completarCarroDica": "Make, model and plate help the repair shop prepare the quote. Tap to add.",
+    "completarCarro": "Add YOUR car’s details",
+    "completarCarroDica": "Make, model and plate of the car YOU were driving help the repair shop prepare the quote. Tap to add.",
     "editar": "Edit request",
     "marca": "Make",
     "modelo": "Model",

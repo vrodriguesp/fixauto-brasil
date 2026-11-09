@@ -1,14 +1,8 @@
-import * as WebBrowser from 'expo-web-browser';
-import { SITE_URL } from './api';
+import { router } from 'expo-router';
 
-// Pagina publica da oficina no site (avaliacoes, endereco, mapa), no idioma do
-// app, ja no endereco atual /{pais}/{idioma}/{pagina} (ver PATHNAMES em
-// apps/web/src/i18n/routing.ts) - antes /it/oficinas/... dependia de redirecionamento.
-const CAMINHO: Record<string, string> = {
-  pt: '/br/pt/oficinas', 'pt-PT': '/pt/pt/oficinas', en: '/ee/en/repair-shops',
-  et: '/ee/et/tookojad', it: '/it/it/officine', ru: '/ee/ru/avtoservisy',
-};
-
-export function abrirOficina(oficinaId: string, idioma: string) {
-  return WebBrowser.openBrowserAsync(`${SITE_URL}${CAMINHO[idioma] || CAMINHO.en}/${oficinaId}`);
+// Pagina da oficina: tela propria do app (app/oficina/[id].tsx). Antes abria a pagina do site
+// e, ao voltar, a pessoa caia no inicio do site, fora do app (dono 09/11, Android e iPhone).
+// O idioma fica no app; o parametro continua para nao mudar quem chama.
+export function abrirOficina(oficinaId: string, _idioma?: string) {
+  router.push(`/oficina/${oficinaId}`);
 }

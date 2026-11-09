@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { cleanDescricao } from '@/lib/utils';
+import { placaValida, anoDoCarroValido } from '@/lib/validar-carro';
 
 interface Veiculo { id: string; fipe_marca: string; fipe_modelo: string; fipe_ano: string; placa?: string | null }
 
@@ -19,6 +20,7 @@ export default function EditarPedido({ solicitacaoId, descricao, veiculo, aoSalv
   aoSalvar: () => void;
 }) {
   const t = useTranslations('editarPedido');
+  const tErros = useTranslations('erros');
   const incompleto = !veiculo?.fipe_marca;
   const [aberto, setAberto] = useState(false);
   const [marca, setMarca] = useState(veiculo?.fipe_marca || '');
@@ -73,11 +75,13 @@ export default function EditarPedido({ solicitacaoId, descricao, veiculo, aoSalv
           </div>
           <div>
             <label htmlFor="ep-ano" className="block text-sm font-medium text-gray-700 mb-1">{t('ano')}</label>
-            <input id="ep-ano" className="input-field" inputMode="numeric" value={ano} onChange={(e) => setAno(e.target.value)} maxLength={4} />
+            <input id="ep-ano" className="input-field" inputMode="numeric" aria-invalid={!anoDoCarroValido(ano)} value={ano} onChange={(e) => setAno(e.target.value.replace(/\D/g, ''))} maxLength={4} />
+            {!anoDoCarroValido(ano) && <p role="alert" className="mt-1 text-sm text-red-700">{tErros('ANO_INVALIDO')}</p>}
           </div>
           <div>
             <label htmlFor="ep-placa" className="block text-sm font-medium text-gray-700 mb-1">{t('placa')}</label>
-            <input id="ep-placa" className="input-field uppercase" value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} maxLength={15} />
+            <input id="ep-placa" className="input-field uppercase" aria-invalid={!placaValida(placa)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} maxLength={10} />
+            {!placaValida(placa) && <p role="alert" className="mt-1 text-sm text-red-700">{tErros('PLACA_INVALIDA')}</p>}
           </div>
         </div>
       )}
@@ -88,7 +92,7 @@ export default function EditarPedido({ solicitacaoId, descricao, veiculo, aoSalv
       {estado === 'erro' && <p className="text-sm text-red-700" role="alert">{t('erro')}</p>}
       <div className="grid grid-cols-2 gap-2">
         <button type="button" onClick={() => setAberto(false)} className="btn-secondary">{t('cancelar')}</button>
-        <button type="submit" disabled={estado === 'salvando'} className="btn-primary">{t('salvar')}</button>
+        <button type="submit" disabled={estado === 'salvando' || !placaValida(placa) || !anoDoCarroValido(ano)} className="btn-primary disabled:opacity-50">{t('salvar')}</button>
       </div>
     </form>
   );

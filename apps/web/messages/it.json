@@ -428,7 +428,10 @@
       "mecanica": "Meccanica",
       "eletrica": "Elettrauto",
       "pneu": "Pneumatici",
-      "outro": "Altro"
+      "outro": "Altro",
+      "manutencao": "Tagliando",
+      "pintura": "Verniciatura",
+      "vidros": "Cristalli"
     },
     "urgencias": {
       "baixa": "Bassa",
@@ -678,7 +681,16 @@
     "CODIGO_EXPIRADO": "Il codice è scaduto o la richiesta è già stata inviata. Compila di nuovo la richiesta.",
     "CODIGO_TENTATIVAS": "Troppi tentativi sbagliati. Premi di nuovo “Invia richiesta”: ti mandiamo un nuovo codice.",
     "EMAIL_EM_USO": "Esiste già un account con questa e-mail. Torna indietro e accedi.",
-    "AVALIACAO_PENDENTE": "Prima di una nuova richiesta valuta il servizio precedente."
+    "AVALIACAO_PENDENTE": "Prima di una nuova richiesta valuta il servizio precedente.",
+    "MESMO_DIA_SO_COMBINADO": "Cambio nello stesso giorno solo se hai già concordato con il cliente.",
+    "DATA_ATUAL_NAO_SERVE": "L’officina non può più nella data prenotata. Accetta la nuova, chiedi un’altra data o annulla.",
+    "PREVISAO_ANTES_DA_DATA": "La data di consegna prevista non può essere prima della nuova data di arrivo dell’auto.",
+    "DATA_IGUAL_ATUAL": "Questa è già la data e l’ora prenotate. Scegli un’altra data o un altro orario.",
+    "PLACA_INVALIDA": "Targa non valida: usa solo lettere, numeri, spazi o trattini (da 2 a 10 caratteri).",
+    "ANO_INVALIDO": "Anno non valido: usa 4 cifre, dal 1950 al prossimo anno.",
+    "CARRO_NA_OFICINA": "L'auto è già in officina: per annullare, scrivi all'officina nella chat.",
+    "PEDIDO_NAO_CANCELAVEL": "Questa richiesta non può più essere annullata.",
+    "PEDIDO_NAO_REABRIVEL": "Questa richiesta non può essere riaperta."
   },
   "sobre": {
     "metaTitle": "Chi è BipFix",
@@ -928,5 +940,11 @@
     "linkSenhaEnviado": "Ti abbiamo inviato un link per creare una nuova password.",
     "jaTemConta": "Hai già un account?",
     "entrar": "Accedi"
+  },
+  "conversa": {
+    "enviando": "invio…",
+    "novaMensagem": "Nuovo messaggio",
+    "enviar": "Invia",
+    "naoEnviada": "non inviato"
   }
 }

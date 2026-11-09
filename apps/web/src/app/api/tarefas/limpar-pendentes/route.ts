@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { iguaisSeguro } from '@/lib/segredos';
 import { limparPendentes, enviarLembretes } from '@/lib/pedido-sem-conta';
+import { lembretesMudanca } from '@/lib/mudanca-data';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +15,9 @@ export async function POST(req: NextRequest) {
   try {
     const apagados = await limparPendentes();
     const lembretes = await enviarLembretes();
-    return NextResponse.json({ ok: true, apagados, lembretes });
+    // mudanca de data sem resposta: lembrete ao cliente (24 h) e aviso na vespera (077)
+    const mudancas = await lembretesMudanca();
+    return NextResponse.json({ ok: true, apagados, lembretes, mudancas });
   } catch (err) {
     console.error('[limpar-pendentes]', (err as Error).message);
     return NextResponse.json({ error: 'falha' }, { status: 500 });

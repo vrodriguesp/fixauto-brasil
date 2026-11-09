@@ -1,6 +1,7 @@
 import { supabaseAdmin } from './supabase-admin';
 import { fusoDoPais } from './fuso';
 import { textosAgenda, preencher, dataHora } from './notif-agenda';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 // Comum as rotas da oficina que mudam a data ou cancelam um agendamento de
 // pedido antes do check-in (migracao 076).
@@ -51,6 +52,9 @@ export async function avisarNoChatENotificar(p: {
   await supabaseAdmin.from('notificacoes').insert({
     profile_id: sol.cliente_id, tipo: p.notif.tipo, titulo: tCli[p.notif.tituloChave],
     mensagem: preencher(tCli[p.notif.msgChave], { oficina: p.oficinaNome, quando: p.quando ? dataHora(p.quando, idiomaCli, fuso) : '', motivo: p.motivo }),
-    dados: { solicitacao_id: p.solicitacaoId },
+    dados: {
+      solicitacao_id: p.solicitacaoId,
+      textos: emTodasAsLinguas((l) => { const t = textosAgenda(l); return { titulo: t[p.notif.tituloChave], mensagem: preencher(t[p.notif.msgChave], { oficina: p.oficinaNome, quando: p.quando ? dataHora(p.quando, l, fuso) : '', motivo: p.motivo }) }; }),
+    },
   });
 }

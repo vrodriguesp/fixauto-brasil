@@ -655,7 +655,14 @@
     "orcamentoFechadoExpirado": "Este pedido expirou sem escolha. O orçamento não pode ser alterado; se o cliente o reabrir, poderá alterá-lo de novo.",
     "verPedido": "Ver pedido",
     "prazoTotalDiasAjuda": "Quantos dias o carro fica na oficina, da entrega ao levantamento. A validade do orçamento é outro campo.",
-    "prazoLongoAviso": "{dias} dias na oficina para {horas} h de trabalho — está certo? Se é a validade do orçamento, use o campo \"Validade do orçamento\"."
+    "prazoLongoAviso": "{dias} dias na oficina para {horas} h de trabalho — está certo? Se é a validade do orçamento, use o campo \"Validade do orçamento\".",
+    "orcamentoRecusadoEncerrado": "O cliente recusou este orçamento (ou cancelou a marcação com a sua oficina). Está encerrado e já não pode ser alterado.",
+    "orcamentoNovoAjuda": "O pedido ainda está aberto. Se quiser, envie um orçamento novo: o cliente recebe-o como um novo orçamento.",
+    "enviarOrcamentoNovo": "Enviar um orçamento novo",
+    "clienteRespondeuData": "O cliente respondeu à proposta de nova data. Veja o resultado e o próximo passo no pedido.",
+    "itemSemValor": "Indique pelo menos um item com valor antes de enviar.",
+    "enviandoOrcamento": "A enviar...",
+    "erroEnvioOrcamento": "Não foi possível enviar o orçamento. Tente novamente."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "A palavra-passe deve ter pelo menos 8 caracteres",

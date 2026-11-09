@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl';
 import { textoErroApi } from '@/lib/erro-api';
 import { dataLocalDe, horaLocalDe } from '@/lib/turnos';
 import { fusoDoPais } from '@/lib/fuso';
+import { useEstadoQueVolta } from '@/hooks/use-estado-que-volta';
+import OpcoesMudancaData from './OpcoesMudancaData';
 
 // Agenda da oficina, carro de pedido que ainda nao chegou (dono 07/11):
 // "Mudar data" e "Cancelar agendamento", sempre com justificativa curta. O
@@ -14,27 +16,34 @@ export default function AcoesAgendamento({ agendaId, dataInicio, pais, aoMudar }
 }) {
   const t = useTranslations('agendaMudanca');
   const tErr = useTranslations('erros');
-  const [modo, setModo] = useState<'data' | 'cancelar' | null>(null);
+  // formulario aberto volta depois de trocar a lingua (dono 08/11)
+  const [modo, setModo] = useEstadoQueVolta<'data' | 'cancelar'>(`agenda-modo:${agendaId}`, null);
   const [data, setData] = useState(dataLocalDe(dataInicio, pais));
   const [hora, setHora] = useState(horaLocalDe(dataInicio, pais) || '08:00');
   const [motivo, setMotivo] = useState('');
   const [erro, setErro] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [feito, setFeito] = useState('');
+  const [serve, setServe] = useState<boolean | null>(null);
+  const [combinado, setCombinado] = useState(false);
+  const mesmoDia = data === dataLocalDe(dataInicio, pais);
 
   const enviar = async () => {
     setErro('');
+    if (modo === 'data' && serve === null) { setErro(t('escolhaServe')); return; }
+    if (modo === 'data' && mesmoDia && hora === horaLocalDe(dataInicio, pais)) { setErro(tErr('DATA_IGUAL_ATUAL')); return; }
+    if (modo === 'data' && mesmoDia && !combinado) { setErro(t('mesmoDia')); return; }
     if (motivo.trim().length < 5) { setErro(t('motivoCurto')); return; }
     setEnviando(true);
     const r = await fetch(`/api/agenda/${agendaId}/${modo === 'data' ? 'mudar-data' : 'cancelar'}`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(modo === 'data' ? { data, hora, motivo } : { motivo }),
+      body: JSON.stringify(modo === 'data' ? { data, hora, motivo, dataAtualServe: serve, combinado } : { motivo }),
     }).catch(() => null);
     const d = r ? await r.json().catch(() => ({})) : {};
     setEnviando(false);
     if (!r?.ok) { setErro(textoErroApi(tErr, r?.status || 500, d)); return; }
     // a agenda recarrega (o cartao pode sumir/mudar de dia): a confirmacao vai para o topo da pagina
-    const aviso = t(modo === 'data' ? 'feitoData' : 'feitoCancelado');
+    const aviso = t(modo === 'data' ? (d?.aplicada ? 'feitoCombinado' : 'feitoPedido') : 'feitoCancelado');
     setFeito(aviso);
     setModo(null); setMotivo('');
     aoMudar(aviso);
@@ -68,11 +77,12 @@ export default function AcoesAgendamento({ agendaId, dataInicio, pais, aoMudar }
         <label htmlFor={`md-motivo-${agendaId}`} className="block text-xs font-medium text-gray-700 mb-1">{t('motivo')}</label>
         <textarea id={`md-motivo-${agendaId}`} rows={2} maxLength={500} className="input-field text-sm" placeholder={t('motivoPlaceholder')} value={motivo} onChange={(e) => setMotivo(e.target.value)} />
       </div>
+      {modo === 'data' && <OpcoesMudancaData id={`md-${agendaId}`} serve={serve} setServe={setServe} combinado={combinado} setCombinado={setCombinado} mesmoDia={mesmoDia} />}
       {erro && <p role="alert" className="text-xs text-red-700">{erro}</p>}
       <div className="flex flex-wrap gap-2">
         <button type="button" disabled={enviando} onClick={enviar}
           className={`${modo === 'data' ? 'btn-primary' : 'rounded-lg bg-red-600 px-4 text-white font-medium hover:bg-red-700'} !py-1.5 text-sm disabled:opacity-50`}>
-          {t(modo === 'data' ? 'salvarData' : 'cancelarAgendamento')}
+          {t(modo === 'data' ? (combinado ? 'enviarCombinado' : 'enviarProposta') : 'cancelarAgendamento')}
         </button>
         <button type="button" onClick={() => { setModo(null); setErro(''); }} className="btn-secondary !py-1.5 text-sm">{t('voltar')}</button>
       </div>

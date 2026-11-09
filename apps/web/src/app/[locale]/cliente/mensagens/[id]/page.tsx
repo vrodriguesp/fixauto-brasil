@@ -9,8 +9,9 @@ import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import AudioRecorder from '@/components/ui/AudioRecorder';
 import AudioMessage from '@/components/ui/AudioMessage';
-import { useAudioRecorder } from '@/hooks/use-audio-recorder';
-import { useVoltarAoFecharTeclado } from '@/hooks/use-voltar-ao-fechar-teclado';
+import { useAudioRecorder } from '@/hooks/use-audio-recorder';
+import { useConversaCelular } from '@/hooks/use-conversa-celular';
+import CampoConversa, { AvisoNovaMensagem } from '@/components/conversa/CampoConversa';
 
 interface Mensagem {
   id: string;
@@ -24,6 +25,8 @@ interface Mensagem {
   transcricao_status?: string;
   lida: boolean;
   created_at: string;
+  /** so na tela: mostrada na hora, ainda sem confirmacao do servidor */
+  enviando?: boolean;
   remetente?: {
     nome: string;
     tipo: string;
@@ -47,6 +50,7 @@ interface OficinaInfo {
 
 export default function ClienteMensagensPage() {
   const t = useTranslations('clienteMensagemDetalhe');
+  const tConv = useTranslations('conversa');
   const [erroEnvio, setErroEnvio] = useState(false);
   const locale = useLocale();
   const params = useParams();
@@ -54,7 +58,6 @@ export default function ClienteMensagensPage() {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Mensagem[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
   const [solicitacao, setSolicitacao] = useState<SolicitacaoInfo | null>(null);
   const [oficina, setOficina] = useState<OficinaInfo | null>(null);
@@ -73,17 +76,19 @@ export default function ClienteMensagensPage() {
     if (!ofId) return;
     supabase.rpc('conversa_aberta', { p_sol: id, p_of: ofId }).then(({ data }) => setConversaFechada(data === false));
   }, [id, oficinaId]);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
   const [uploadingAudio, setUploadingAudio] = useState(false);
   const { uploadAudio } = useAudioRecorder();
-
-  useVoltarAoFecharTeclado();
-  const scrollToBottom = () => {
-    // rola so a lista: scrollIntoView rolava a pagina toda no iPhone (31/10)
-    const lista = listaRef.current;
-    if (lista) lista.scrollTo({ top: lista.scrollHeight, behavior: 'smooth' });
-  };
+
+  // padrao unico das conversas: presa a area visivel no celular, abre no fim, aviso de nova mensagem
+  const conversaRef = useRef<HTMLDivElement>(null);
+  const { novaMensagem, irParaFim, propsLista } = useConversaCelular({
+    conversa: conversaRef, lista: listaRef, quantidade: messages.length,
+    ultimaMinha: messages[messages.length - 1]?.remetente_id === user?.id,
+    // so com uma conversa aberta (na escolha da oficina a pagina e normal)
+    ativo: !!oficinaId,
+  });
 
   // Cada oficina tem a sua conversa com o cliente: ?oficina=<id> diz qual.
   // Sem ele (link antigo, notificacao, botao geral): orcamento aceito -> essa
@@ -224,17 +229,24 @@ export default function ClienteMensagensPage() {
     };
   }, [id, oficinaId, pagadorId]);
 
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
   const handleSend = async () => {
-    if (!newMessage.trim() || !user || !oficinaId || sending) return;
+    if (!newMessage.trim() || !user || !oficinaId) return;
 
     const texto = newMessage.trim();
     setNewMessage('');
-    setSending(true);
+    setErroEnvio(false);
+    // aparece na hora ("enviando"); o campo continua com o foco (teclado aberto, sem pulo)
+    const tempId = `temp-${Date.now()}`;
+    setMessages((prev) => [...prev, {
+      id: tempId,
+      solicitacao_id: id,
+      remetente_id: user.id,
+      texto,
+      lida: false,
+      created_at: new Date().toISOString(),
+      remetente: { nome: user.nome, tipo: user.tipo },
+      enviando: true,
+    }]);
 
     const { data: novaMsg, error } = await supabase.from('mensagens').insert({
       solicitacao_id: id,
@@ -245,40 +257,18 @@ export default function ClienteMensagensPage() {
     }).select('id').single();
 
     if (error) {
-      // nao some o texto: devolve ao campo e avisa
+      // nao some o texto: tira a mensagem da lista, devolve ao campo e avisa
       console.error(error);
-      setNewMessage(texto);
+      setMessages((prev) => prev.filter((m) => m.id !== tempId));
+      setNewMessage((atual) => atual || texto);
       setErroEnvio(true);
-      setSending(false);
       return;
     }
-    setErroEnvio(false);
+    // confirmada: vira a mensagem de verdade (o tempo real nao duplica, ja tem o id)
+    setMessages((prev) => prev.some((m) => m.id === novaMsg.id) ? prev.filter((m) => m.id !== tempId) : prev.map((m) => m.id === tempId ? { ...m, id: novaMsg.id, enviando: false } : m));
 
-    if (!error) {
-      // Optimistically add to local state
-      setMessages(prev => [...prev, {
-        id: `temp-${Date.now()}`,
-        solicitacao_id: id,
-        remetente_id: user.id,
-        texto,
-        lida: false,
-        created_at: new Date().toISOString(),
-        remetente: { nome: user.nome, tipo: user.tipo },
-      }]);
-
-      // aviso a quem recebe, pelo servidor (idioma dele; antes falhava sem aparecer)
-      if (novaMsg?.id) fetch('/api/avisar-mensagem', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mensagemId: novaMsg.id }) }).catch(() => {});
-    }
-
-    setSending(false);
-    inputRef.current?.focus();
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
+    // aviso a quem recebe, pelo servidor (idioma dele; antes falhava sem aparecer)
+    if (novaMsg?.id) fetch('/api/avisar-mensagem', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mensagemId: novaMsg.id }) }).catch(() => {});
   };
 
   const handleAudioRecorded = async (blob: Blob, audioDuration: number) => {
@@ -372,7 +362,7 @@ export default function ClienteMensagensPage() {
   }
 
   return (
-    <div className="altura-conversa flex flex-col max-w-4xl mx-auto">
+    <div ref={conversaRef} data-conversa="" className="altura-conversa flex flex-col max-w-4xl mx-auto bg-white">
       {/* Header */}
       <div className="bg-white border-b px-4 py-3 flex items-center gap-3 flex-shrink-0">
         <Link
@@ -408,7 +398,8 @@ export default function ClienteMensagensPage() {
       </div>
 
       {/* Messages area */}
-      <div ref={listaRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 bg-gray-50">
+      <div className="relative flex-1 min-h-0 flex flex-col">
+      <div ref={listaRef} {...propsLista} className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 bg-gray-50" data-testid="conversa-lista">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
@@ -465,7 +456,7 @@ export default function ClienteMensagensPage() {
                           isOwn ? 'text-primary-200' : 'text-gray-400'
                         } text-right`}
                       >
-                        {formatTime(msg.created_at)}
+                        {msg.enviando ? tConv('enviando') : formatTime(msg.created_at)}
                       </p>
                     </div>
                   </div>
@@ -475,6 +466,8 @@ export default function ClienteMensagensPage() {
             <div ref={messagesEndRef} />
           </div>
         )}
+      </div>
+      <AvisoNovaMensagem visivel={novaMensagem} aoTocar={() => irParaFim()} texto={tConv('novaMensagem')} />
       </div>
 
       {/* Input area */}
@@ -491,38 +484,17 @@ export default function ClienteMensagensPage() {
             <span className="text-sm text-gray-500">{t('sendingAudio')}</span>
           </div>
         ) : (
-          <div className="flex items-center gap-2">
-            <input
-              ref={inputRef}
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={t('messagePlaceholder')}
-              className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            />
-            {newMessage.trim() ? (
-              <button
-                onClick={handleSend}
-                disabled={sending}
-                className="w-10 h-10 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-              </button>
-            ) : (
-              <button
-                onClick={() => setShowAudioRecorder(true)}
-                className="w-10 h-10 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-                title={t('recordAudio')}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                </svg>
-              </button>
-            )}
-          </div>
+          <CampoConversa
+            ref={inputRef}
+            valor={newMessage}
+            aoMudar={setNewMessage}
+            aoEnviar={handleSend}
+            placeholder={t('messagePlaceholder')}
+            rotuloEnviar={tConv('enviar')}
+            aoGravar={() => setShowAudioRecorder(true)}
+            rotuloGravar={t('recordAudio')}
+            testIdEnviar="conversa-enviar"
+          />
         )}
       </div>
       )}

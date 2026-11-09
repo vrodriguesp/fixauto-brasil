@@ -12,7 +12,8 @@ interface Garantia { solicitacaoId: string; oficinaId: string; oficina: string; 
 // Servicos entregues ainda na garantia (informada pela oficina no orcamento,
 // contada a partir da entrega): contagem regressiva na tela inicial e
 // atalho para falar com a oficina enquanto a garantia vale.
-export default function GarantiasAtivas() {
+// solicitacaoId: so a garantia daquele pedido (pagina do pedido concluido - teste 09/11)
+export default function GarantiasAtivas({ solicitacaoId }: { solicitacaoId?: string } = {}) {
   const t = useTranslations('garantia');
   const locale = useLocale();
   const { user } = useAuth();
@@ -21,9 +22,11 @@ export default function GarantiasAtivas() {
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const { data } = await supabase.from('solicitacoes')
+      let q = supabase.from('solicitacoes')
         .select('id, veiculo:veiculos(fipe_marca, fipe_modelo), orcamentos(oficina_id, status, garantia_dias, oficina:oficinas(nome_fantasia)), agenda(oficina_id, status, data_fim)')
         .eq('cliente_id', user.id).eq('status', 'concluida');
+      if (solicitacaoId) q = q.eq('id', solicitacaoId);
+      const { data } = await q;
       const agora = Date.now();
       const out: Garantia[] = [];
       for (const s of (data || []) as any[]) {
@@ -40,7 +43,7 @@ export default function GarantiasAtivas() {
       }
       setLista(out.sort((a, b) => a.fim.getTime() - b.fim.getTime()));
     })();
-  }, [user]);
+  }, [user, solicitacaoId]);
 
   if (!lista.length) return null;
   return (

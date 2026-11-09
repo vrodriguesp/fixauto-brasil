@@ -436,7 +436,10 @@
       "mecanica": "Mehaanika",
       "eletrica": "Elektritööd",
       "pneu": "Rehvid",
-      "outro": "Muu"
+      "outro": "Muu",
+      "manutencao": "Hooldus",
+      "pintura": "Värvimine",
+      "vidros": "Klaasid"
     },
     "urgencias": {
       "baixa": "Madal",
@@ -686,7 +689,16 @@
     "CODIGO_EXPIRADO": "Kood on aegunud või päring on juba saadetud. Täida päring uuesti.",
     "CODIGO_TENTATIVAS": "Liiga palju valesid katseid. Vajuta uuesti „Saada päring“ – saadame uue koodi.",
     "EMAIL_EM_USO": "Selle e-postiga on juba konto. Mine tagasi ja logi sisse.",
-    "AVALIACAO_PENDENTE": "Enne uut päringut hinda palun eelmist teenust."
+    "AVALIACAO_PENDENTE": "Enne uut päringut hinda palun eelmist teenust.",
+    "MESMO_DIA_SO_COMBINADO": "Sama päeva muutus ainult siis, kui oled kliendiga kokku leppinud.",
+    "DATA_ATUAL_NAO_SERVE": "Töökoda ei saa enam broneeritud ajal. Nõustu uuega, küsi teist aega või tühista.",
+    "PREVISAO_ANTES_DA_DATA": "Eeldatav valmimise kuupäev ei saa olla enne uut auto toomise kuupäeva.",
+    "DATA_IGUAL_ATUAL": "See on juba broneeritud kuupäev ja kellaaeg. Vali teine kuupäev või kellaaeg.",
+    "PLACA_INVALIDA": "Vigane numbrimärk: kasuta ainult tähti, numbreid, tühikut või sidekriipsu (2–10 märki).",
+    "ANO_INVALIDO": "Vigane aasta: kasuta 4 numbrit, alates 1950 kuni järgmise aastani.",
+    "CARRO_NA_OFICINA": "Auto on juba töökojas: tühistamiseks kirjuta töökojale vestluses.",
+    "PEDIDO_NAO_CANCELAVEL": "Seda päringut ei saa enam tühistada.",
+    "PEDIDO_NAO_REABRIVEL": "Seda päringut ei saa uuesti avada."
   },
   "sobre": {
     "metaTitle": "BipFixist",
@@ -936,5 +948,11 @@
     "linkSenhaEnviado": "Saatsime lingi uue parooli loomiseks sinu e-postile.",
     "jaTemConta": "Sul on juba konto?",
     "entrar": "Logi sisse"
+  },
+  "conversa": {
+    "enviando": "saadan…",
+    "novaMensagem": "Uus sõnum",
+    "enviar": "Saada",
+    "naoEnviada": "saatmata"
   }
 }

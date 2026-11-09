@@ -44,6 +44,12 @@ const primeira = <T,>(ps: Promise<T>[]) => new Promise<T>((ok, falha) => {
 const comPrazo = <T,>(p: Promise<T>, ms: number) =>
   Promise.race([p, new Promise<never>((_, rej) => setTimeout(() => rej(new Error('localizacao demorou')), ms))]);
 
+// Permissao da localizacao com prazo: no Safari sem https o pedido podia nunca responder e o
+// botao ficava "procurando" para sempre (dono 08/11). Estourou o prazo = falhou (o endereco
+// continua digitavel). Para perguntar o prazo e maior: a pessoa le o aviso do sistema.
+export const permissaoLocal = (pedir: boolean) =>
+  comPrazo(pedir ? Location.requestForegroundPermissionsAsync() : Location.getForegroundPermissionsAsync(), pedir ? 30000 : 5000);
+
 // Posicao do aparelho sem deixar a tela girando para sempre: usa a ultima
 // posicao conhecida (instantanea, ate 5 min); senao pede ao mesmo tempo pela
 // rede (Wi-Fi/antena, rapido dentro de casa) e pelo GPS de satelite (no local

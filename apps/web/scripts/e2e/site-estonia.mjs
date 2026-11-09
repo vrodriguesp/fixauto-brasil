@@ -14,7 +14,8 @@ const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
-const SITE = 'https://bipfix.com';
+if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
+const SITE = 'http://localhost:3100';
 const sb = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 let falhas = 0;
 const ok = (n, c, x = '') => { if (!c) falhas++; console.log(`${c ? 'ok  ' : 'FALHA'} ${n}${x ? ' - ' + String(x).slice(0, 240) : ''}`); };
@@ -50,7 +51,8 @@ try {
   const lista = await pO.innerText('body');
   // "Kokkupõrge" continua no filtro de tipos; no cartao do pedido vem a ocorrencia
   // desde 10/10 a lista e 'Pedidos' (cartoes sem .badge): confere o texto do cartao do pedido
-  const cartao = (await pO.innerText('body')).split(/\n/).filter((l) => /Juhtum teel|Kokkupõrge|Rehv purunes/.test(l));
+  // so os cartoes deste pedido (outros testes deixam pedidos de colisao sem ocorrencia, que mostram "Kokkupõrge" com razao)
+  const cartao = await pO.getByTestId('pedido-cartao').filter({ hasText: 'Rehv purunes' }).allInnerTexts();
   ok('2 oficina ve "Juhtum teel (teist sõidukit polnud)" e nao "Kokkupõrge" no pedido', cartao.some((b) => /Juhtum teel/.test(b)) && !cartao.some((b) => /Kokkupõrge/.test(b)), cartao.join(' | '));
 
   // 1 transcricao: copia um audio real em estoniano para a conversa do teste

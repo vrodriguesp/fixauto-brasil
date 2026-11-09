@@ -5,6 +5,7 @@ import { useState } from 'react';
 import RevisaoPendente from '@/components/cliente/RevisaoPendente';
 import AgendamentoCliente from '@/components/cliente/AgendamentoCliente';
 import PedidoExpirado from '@/components/cliente/PedidoExpirado';
+import { CancelarPedido, ReabrirPedidoCancelado } from '@/components/cliente/CancelarPedido';
 import { VALIDADE_PEDIDO_DIAS } from '@/lib/pedido-validade';
 import { textoErroApi } from '@/lib/erro-api';
 import { useParams } from 'next/navigation';
@@ -23,6 +24,8 @@ import MidiaPrivada from '@/components/midia/MidiaPrivada';
 import { turnoDisponivel, type Turno } from '@/lib/turnos';
 import EditarPedido from '@/components/cliente/EditarPedido';
 import { ehConvencionada } from '@/lib/seguradoras';
+import GarantiasAtivas from '@/components/cliente/GarantiasAtivas';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 function formatExecTime(hours: number | null, t: (key: string, values?: Record<string, string | number | Date>) => string): string {
   if (!hours) return '-';
@@ -53,13 +56,12 @@ export default function OrcamentoDetalhePage() {
   const locale = useLocale();
   const params = useParams();
   const router = useRouter();
-  const { solicitacoes, loading: carregandoPedidos, updateStatus, refresh } = useSolicitacoes();
+  const { solicitacoes, loading: carregandoPedidos, refresh } = useSolicitacoes();
   // aceite: trava de duplo clique e erro visivel (auditoria M14)
   const [confirmando, setConfirmando] = useState(false);
   const [erroAceite, setErroAceite] = useState('');
   const { accept, refuse } = useOrcamentos();
   const { avaliacoes, create: createAvaliacao, update: updateAvaliacao } = useAvaliacoes();
-  const [cancelling, setCancelling] = useState(false);
   const solicitacao = solicitacoes.find((s) => s.id === params.id);
   const [schedulingOrcId, setSchedulingOrcId] = useState<string | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<DisponibilidadeSlot | null>(null);
@@ -95,7 +97,7 @@ export default function OrcamentoDetalhePage() {
               tipo: 'orcamento_recusado',
               titulo: n.titulo,
               mensagem: n.mensagem,
-              dados: { solicitacao_id: solicitacao!.id },
+              dados: { solicitacao_id: solicitacao!.id, textos: emTodasAsLinguas((l) => notifOrcamentoRecusado(l)) },
             });
           } catch { /* Non-blocking */ }
         }
@@ -110,7 +112,7 @@ export default function OrcamentoDetalhePage() {
       );
       if (!otherPending || otherPending.length === 0) {
         if (confirm(t('confirmCancelAllRefused'))) {
-          await updateStatus(solicitacao!.id, 'cancelada');
+          await fetch(`/api/solicitacoes/${solicitacao!.id}/cancelar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => null);
           router.push('/cliente/dashboard');
           return;
         }
@@ -235,21 +237,6 @@ export default function OrcamentoDetalhePage() {
             </svg>
             {t('messageToWorkshop')}
           </Link>
-          {['aberta', 'em_orcamento'].includes(solicitacao.status) && (
-            <button
-              onClick={async () => {
-                if (!confirm(t('confirmCancelRequest'))) return;
-                setCancelling(true);
-                await updateStatus(solicitacao.id, 'cancelada');
-                setCancelling(false);
-                router.push('/cliente/dashboard');
-              }}
-              disabled={cancelling}
-              className="text-sm text-red-500 hover:text-red-700 border border-red-200 hover:border-red-300 px-4 py-2 rounded-lg transition-colors"
-            >
-              {cancelling ? t('cancelling') : t('cancelRequest')}
-            </button>
-          )}
         </div>
       </div>
 
@@ -262,6 +249,7 @@ export default function OrcamentoDetalhePage() {
         <div className="mb-6 rounded-lg border border-gray-300 bg-gray-50 p-4" role="status" data-testid="pedido-cancelado">
           <p className="font-semibold text-gray-900">{t('pedidoCanceladoTitulo')}</p>
           <p className="mt-1 text-sm text-gray-600">{t('pedidoCanceladoTexto')}</p>
+          <ReabrirPedidoCancelado solicitacaoId={solicitacao.id} aoReabrir={refresh} />
         </div>
       )}
 
@@ -390,6 +378,9 @@ export default function OrcamentoDetalhePage() {
               </div>
             </div>
 
+            {/* garantia deste pedido: ate quando vale e falar com a oficina */}
+            <GarantiasAtivas solicitacaoId={solicitacao.id} />
+
             {/* Review section */}
             {existingReview && !editingReview ? (
               <div className="card bg-gray-50">
@@ -473,8 +464,12 @@ export default function OrcamentoDetalhePage() {
       </h2>
 
       {!solicitacao.orcamentos || solicitacao.orcamentos.length === 0 ? (
-        <div className="card text-center py-8">
+        <div className="card text-center py-8" data-testid="aguardando-orcamentos">
           <p className="text-gray-500">{t('awaitingQuotes')}</p>
+          {/* pedido de acidente: daqui se chega ao acidente (outro motorista, mensagens) - dono 09/11 */}
+          {(solicitacao as { emergencia_id?: string | null }).emergencia_id && (
+            <Link href={rota('/emergencia/acidente/[id]', { id: (solicitacao as { emergencia_id?: string | null }).emergencia_id as string })} className="btn-secondary mt-4 inline-block" data-testid="ver-acidente">{t('verAcidente')}</Link>
+          )}
         </div>
       ) : (
         <div className="space-y-6">
@@ -519,18 +514,24 @@ export default function OrcamentoDetalhePage() {
                         {t('verOficina')} ›
                       </Link>
                     )}
-                    {orc.oficina?.id && (
+                    {/* orcamento escolhido: a conversa ja esta no quadro do agendamento abaixo (nao repetir) */}
+                    {orc.oficina?.id && orc.status !== 'aceito' && (
                       <Link href={`/cliente/mensagens/${solicitacao.id}?oficina=${orc.oficina.id}`}
                         className="inline-flex items-center gap-1 text-xs font-medium text-primary-700 hover:underline py-1">
                         {t('messageToWorkshop')}
                       </Link>
                     )}
+                    {/* sem avaliacoes ainda: "nova no BipFix" (antes 0.0 com estrelas vazias parecia nota ruim) */}
+                    {(orc.oficina?.total_avaliacoes || 0) > 0 ? (
                     <div className="flex items-center gap-2">
                       <StarRating rating={orc.oficina?.avaliacao_media || 0} size="sm" />
                       <span className="text-xs text-gray-500">
                         {(orc.oficina?.avaliacao_media || 0).toFixed(1)} ({t('reviewsCount', { count: orc.oficina?.total_avaliacoes || 0 })})
                       </span>
                     </div>
+                    ) : (
+                      <span className="inline-block rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-800" data-testid="oficina-nova">✨ {t('novaNoBipfix')}</span>
+                    )}
                     {/* Seals */}
                     <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                       {(orc.oficina?.avaliacao_media || 0) >= 4 && (
@@ -570,26 +571,24 @@ export default function OrcamentoDetalhePage() {
                 </div>
               </div>
 
-              {/* Execution time + availability summary */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 mb-4">
-                <div className="p-3 bg-blue-50 rounded-lg flex items-center justify-between gap-3 sm:block sm:text-center">
-                  <p className="text-xs text-blue-600">{t('execTimeLabel')}</p>
-                  <p className="text-sm font-bold text-blue-900">{formatExecTime(orc.tempo_execucao_horas, t)}</p>
-                </div>
-                {/* horarios oferecidos: so enquanto da para escolher (aceito/cancelado mostram o agendamento) */}
-                {orc.status === 'enviado' && ['aberta', 'em_orcamento'].includes(solicitacao.status) && (<>
-                <div className="p-3 bg-green-50 rounded-lg flex items-center justify-between gap-3 sm:block sm:text-center">
-                  <p className="text-xs text-green-600">{t('nextCheckinLabel')}</p>
-                  <p className="text-sm font-bold text-green-900">
-                    {orc.disponibilidade.length > 0 ? formatSlotDate(orc.disponibilidade[0].data_checkin, locale) : t('noSlotAvailable')}
-                  </p>
-                </div>
-                <div className="p-3 bg-purple-50 rounded-lg flex items-center justify-between gap-3 sm:block sm:text-center">
-                  <p className="text-xs text-purple-600">{t('availableDatesLabel')}</p>
-                  <p className="text-sm font-bold text-purple-900">{t('optionsCount', { count: orc.disponibilidade.length })}</p>
-                </div>
-                </>)}
-              </div>
+              {/* tempo de execucao so quando a oficina informou (antes aparecia "-"); as datas
+                  oferecidas estao na lista abaixo - sem os quadrinhos repetidos (dono 09/11) */}
+              {!!orc.tempo_execucao_horas && (
+                <p className="mb-3 text-sm text-gray-700"><span className="text-gray-500">{t('execTimeLabel')}:</span> <span className="font-medium">{formatExecTime(orc.tempo_execucao_horas, t)}</span></p>
+              )}
+
+              {/* as datas oferecidas ficam a vista no orcamento, antes de aceitar: o cliente compara
+                  tambem pela data (antes so apareciam depois de "aceitar e agendar" - dono 09/11) */}
+              {orc.status === 'enviado' && ['aberta', 'em_orcamento'].includes(solicitacao.status) && orc.disponibilidade.length > 0 && (
+                <ul className="mb-4 divide-y divide-purple-100 rounded-lg border border-purple-100 bg-purple-50/40 text-sm" data-testid="datas-oferecidas">
+                  {orc.disponibilidade.map((d: any) => (
+                    <li key={d.id} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 px-3 py-2">
+                      <span className="font-medium text-purple-900">{formatSlotDate(d.data_checkin, locale)} · {d.turno === 'manha' ? '08:00-12:00' : '13:00-17:00'}</span>
+                      {d.data_previsao_entrega && <span className="text-xs text-purple-700">{t('deliveryForecast')} {formatSlotDate(d.data_previsao_entrega, locale)}</span>}
+                    </li>
+                  ))}
+                </ul>
+              )}
 
               {/* Revision comparison */}
               {!!orc.valor_original && (orc.revisao_numero ?? 0) > 0 && (
@@ -795,7 +794,7 @@ export default function OrcamentoDetalhePage() {
                     )}
                   </p>
                   {/* pedido expirado: aceitar/recusar so depois de reabrir (aviso no topo) */}
-                  {(solicitacao.status as string) !== 'expirada' && (
+                  {!['expirada', 'cancelada'].includes(solicitacao.status as string) && (
                   <div className="flex gap-2 [&>button]:flex-1 sm:[&>button]:flex-none">
                     <button
                       onClick={() => handleRefuse(orc.id)}
@@ -819,6 +818,15 @@ export default function OrcamentoDetalhePage() {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* cancelar o pedido (item 52): ate o carro chegar na oficina; confirmacao na tela com motivo
+          opcional; as oficinas com orcamento sao avisadas (API). Discreto, no fim da pagina - a
+          acao principal sao os orcamentos (boa pratica: acao destrutiva nao compete com a principal) */}
+      {['aberta', 'em_orcamento', 'aceita'].includes(solicitacao.status) && (
+        <div className="mt-8 border-t border-gray-200 pt-4 flex justify-center">
+          <CancelarPedido solicitacaoId={solicitacao.id} aoCancelar={refresh} />
         </div>
       )}
     </div>

@@ -4,6 +4,7 @@ import { oficinasDoUsuario } from '@/lib/acesso-servico';
 import { dentroDoLimite } from '@/lib/rate-limit';
 import { notifNovaMensagem } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 // Aviso de "nova mensagem" para o outro lado da conversa (usado pelo app; o
 // site grava o aviso direto). So quem enviou a mensagem pode pedir o aviso
@@ -41,7 +42,11 @@ export async function POST(req: NextRequest) {
     tipo: 'nova_mensagem',
     titulo: audio ? n.tituloAudio : n.titulo,
     mensagem: audio ? n.mensagemAudio : String(msg.texto || '').slice(0, 100),
-    dados: { solicitacao_id: msg.solicitacao_id, oficina_id: msg.oficina_id, ...(msg.pagador_id ? { pagador_id: msg.pagador_id } : {}) },
+    dados: {
+      solicitacao_id: msg.solicitacao_id, oficina_id: msg.oficina_id, ...(msg.pagador_id ? { pagador_id: msg.pagador_id } : {}),
+      // so o titulo muda de lingua: o corpo e o texto da propria pessoa
+      textos: emTodasAsLinguas((l) => { const x = notifNovaMensagem(l); return audio ? { titulo: x.tituloAudio, mensagem: x.mensagemAudio } : { titulo: x.titulo, mensagem: String(msg.texto || '').slice(0, 100) }; }),
+    },
   });
   return NextResponse.json({ ok: true });
 }

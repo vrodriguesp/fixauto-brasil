@@ -14,20 +14,37 @@ export default function OrcamentosPage() {
   const solicitacoes = allSolicitacoes.filter(
     (s) => s.orcamentos && s.orcamentos.length > 0
   );
+  // pedidos abertos ainda sem orcamento: aparecem como "esperando orcamentos" (antes a pagina dizia
+  // "crie um pedido" a quem ja tinha um aberto - dono 09/11)
+  const esperando = allSolicitacoes.filter((s) => (!s.orcamentos || s.orcamentos.length === 0) && ['aberta', 'em_orcamento'].includes(s.status as string));
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('title')}</h1>
       <p className="text-gray-600 mb-8">{t('subtitle')}</p>
 
-      {solicitacoes.length === 0 ? (
+      {esperando.length > 0 && (
+        <div className="space-y-3 mb-6" data-testid="esperando-orcamentos">
+          {esperando.map((sol) => (
+            <Link key={sol.id} href={`/cliente/orcamentos/${sol.id}`} className="card block hover:shadow-md transition-shadow">
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <h2 className="font-semibold text-gray-900">{sol.veiculo?.fipe_marca ? `${sol.veiculo.fipe_marca} ${sol.veiculo.fipe_modelo || ''}` : t('pedidoSemCarro')}</h2>
+                <StatusBadge status={sol.status} />
+              </div>
+              <p className="text-sm font-medium text-amber-700">{t('aguardandoOrcamentos')}</p>
+              <p className="text-sm text-gray-500 line-clamp-2">{cleanDescricao(sol.descricao)}</p>
+            </Link>
+          ))}
+        </div>
+      )}
+      {solicitacoes.length === 0 && esperando.length === 0 ? (
         <div className="card text-center py-12">
           <p className="text-gray-500 mb-4">{t('noQuotesYet')}</p>
           <Link href="/cliente/nova-solicitacao" className="btn-primary">
             {t('createRequest')}
           </Link>
         </div>
-      ) : (
+      ) : solicitacoes.length === 0 ? null : (
         <div className="space-y-6">
           {solicitacoes.map((sol) => (
             <div key={sol.id} className="card">

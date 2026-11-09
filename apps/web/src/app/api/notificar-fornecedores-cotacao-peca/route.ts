@@ -6,6 +6,7 @@ import { getSessionUserId } from '@/lib/api-auth';
 import { dentroDoLimite } from '@/lib/rate-limit';
 import { oficinaDoUsuarioEhDona } from '@/lib/acesso-servico';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 
 // Notifica oficinas que se inscreveram como fornecedoras de pecas
@@ -81,7 +82,7 @@ export async function POST(req: NextRequest) {
         tipo: 'cotacao_peca_disponivel',
         titulo: nn.titulo,
         mensagem: nn.mensagem,
-        dados: { cotacao_id: cotacaoId },
+        dados: { cotacao_id: cotacaoId, textos: emTodasAsLinguas((l) => notifCotacaoPecaDisponivel(l)) },
       });
       const email = (of as any).profile?.email;
       if (email) {

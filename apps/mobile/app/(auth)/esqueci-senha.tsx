@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator} from 'react-native';
+import { avisar } from '../../lib/confirmar';
 import { useTranslation } from 'react-i18next';
 import { apiFetch } from '../../lib/api';
 import { mensagemErro } from '../../lib/erro';
@@ -24,7 +25,7 @@ export default function EsqueciSenhaScreen() {
       });
       setEnviado(true);
     } catch (err) {
-      Alert.alert(t('common.erroGenerico'), mensagemErro(err));
+      avisar(t('common.erroGenerico'), mensagemErro(err));
     } finally {
       setLoading(false);
     }

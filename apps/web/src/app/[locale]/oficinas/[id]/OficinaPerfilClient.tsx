@@ -50,8 +50,17 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
       <StructuredData data={autoRepairSchema} />
       <StructuredData data={reviewSchema} />
 
-      {/* Back link */}
-      <Link href="/" className="flex items-center gap-1 text-gray-500 hover:text-gray-700 mb-6">
+      {/* Voltar = de onde a pessoa veio (conversa, pedido...), nao o inicio do site (dono 09/11).
+          Aberta numa aba nova pelo app, sem historico: fecha a aba e a pessoa volta ao app;
+          so sem nada disso vai para o inicio. */}
+      <Link href="/" className="flex items-center gap-1 text-gray-500 hover:text-gray-700 mb-6"
+        onClick={(e) => {
+          if (window.history.length > 1) { e.preventDefault(); window.history.back(); return; }
+          e.preventDefault();
+          const inicio = e.currentTarget.href;
+          window.close();
+          setTimeout(() => { if (!window.closed) window.location.assign(inicio); }, 150);
+        }}>
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
@@ -106,6 +115,10 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
                 </span>
               )}
             </div>
+            {/* sem avaliacoes: "nova no BipFix" (0.0 com estrelas vazias parecia nota ruim - teste 09/11) */}
+            {totalAvaliacoes === 0 ? (
+              <span className="mt-1 inline-block rounded-full bg-blue-50 px-2.5 py-0.5 text-sm font-medium text-blue-800" data-testid="oficina-nova">✨ {t('novaNoBipfix')}</span>
+            ) : (
             <div className="flex items-center gap-x-2 gap-y-1 mt-1 flex-wrap">
               <StarRating rating={calculatedMedia} size="md" />
               <span className="text-sm text-gray-600 font-medium">
@@ -115,6 +128,7 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
                 {totalAvaliacoes === 1 ? t('reviewCountSingular', { count: totalAvaliacoes }) : t('reviewCountPlural', { count: totalAvaliacoes })}
               </span>
             </div>
+            )}
             <p className="text-sm text-gray-500 mt-1">
               {oficina.cidade} - {oficina.estado}
             </p>
@@ -200,7 +214,10 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
             height="300"
             style={{ border: 0 }}
             loading="lazy"
-            src={`https://www.google.com/maps?q=${encodeURIComponent(`${oficina.endereco}, ${oficina.cidade} - ${oficina.estado}${countryNameForCode(oficina.pais) ? `, ${countryNameForCode(oficina.pais)}` : ''}`)}&output=embed`}
+            // tela cheia do mapa permitida (sem erro no console) e o mapa na lingua da pagina (vinha em italiano)
+            allow="fullscreen"
+            allowFullScreen
+            src={`https://www.google.com/maps?hl=${locale}&q=${encodeURIComponent(`${oficina.endereco}, ${oficina.cidade} - ${oficina.estado}${countryNameForCode(oficina.pais) ? `, ${countryNameForCode(oficina.pais)}` : ''}`)}&output=embed`}
           />
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${oficina.endereco}, ${oficina.cidade} - ${oficina.estado}`)}`}

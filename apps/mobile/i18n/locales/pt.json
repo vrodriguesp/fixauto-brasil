@@ -205,7 +205,8 @@
     "descricaoPedido": "Descrição",
     "naoEncontrado": "Este pedido não existe mais ou não está disponível.",
     "fotosTitulo": "Fotos ({count})",
-    "fotoDoPedido": "Foto do pedido"
+    "fotoDoPedido": "Foto do pedido",
+    "tituloPedido": "Pedido"
   },
   "avaliacao": {
     "titulo": "Avalie o serviço",
@@ -237,7 +238,9 @@
     "audioIndisponivel": "Áudio indisponível",
     "microfoneTitulo": "Microfone desativado",
     "microfoneTexto": "Para enviar áudio, permita o acesso ao microfone nos Ajustes.",
-    "verOficinaCurto": "Oficina"
+    "verOficinaCurto": "Oficina",
+    "abertaAte": "Serviço concluído. A conversa fica aberta até {data} para dúvidas sobre o serviço.",
+    "verConversaEncerrada": "Ver conversa (encerrada)"
   },
   "veiculos": {
     "titulo": "Meus veículos",
@@ -259,7 +262,10 @@
       "mecanica": "Mecânica",
       "eletrica": "Elétrico",
       "pneu": "Pneu",
-      "outro": "Outro"
+      "outro": "Outro",
+      "manutencao": "Revisões",
+      "pintura": "Pintura",
+      "vidros": "Vidros"
     },
     "urgencias": {
       "baixa": "Baixa",
@@ -462,7 +468,9 @@
     "CODIGO_EXPIRADO": "O código expirou ou o pedido já foi enviado. Preencha o pedido de novo.",
     "CODIGO_TENTATIVAS": "Muitas tentativas erradas. Toque de novo em “Enviar pedido” e mandamos um novo código.",
     "EMAIL_EM_USO": "Já existe uma conta com este e-mail. Volte e entre na conta.",
-    "AVALIACAO_PENDENTE": "Antes de um novo pedido, avalie o serviço anterior."
+    "AVALIACAO_PENDENTE": "Antes de um novo pedido, avalie o serviço anterior.",
+    "PLACA_INVALIDA": "Placa inválida: use só letras, números, espaço ou hífen (2 a 10 caracteres).",
+    "ANO_INVALIDO": "Ano inválido: use 4 dígitos, de 1950 até o ano que vem."
   },
   "notificacoes": {
     "titulo": "Notificações",
@@ -656,8 +664,48 @@
     "dataExplicacao": "Se mantiver a data atual, o serviço continua como combinado.",
     "feitoAceita": "Nova data confirmada. Você vai receber um e-mail com o calendário atualizado.",
     "feitoMantida": "Você manteve a data atual. A oficina foi avisada.",
-    "notaRemarcar": "Para remarcar ou cancelar, escreva para a oficina no chat ou ligue para ela.",
+    "notaRemarcar": "Para mudar a data, escreva para a oficina no chat ou ligue para ela. Para cancelar, use “Cancelar pedido” no fim desta página.",
     "conversar": "Conversar com a oficina",
-    "levarCarro": "Levar o carro"
+    "levarCarro": "Levar o carro",
+    "naoServeAviso": "A oficina não pode mais na data marcada.",
+    "pedirOutraData": "Pedir outra data (conversa)",
+    "cancelarComOficina": "Cancelar com esta oficina",
+    "cancelarComOficinaTexto": "O pedido volta a ficar aberto e os outros orçamentos que você recebeu voltam a valer.",
+    "confirmarCancelar": "Cancelar o agendamento com {oficina}?",
+    "feitoCanceladoCliente": "Agendamento cancelado. O seu pedido está aberto de novo.",
+    "combinadoTitulo": "{oficina} mudou a data, como combinado com você",
+    "naoCombinei": "Não combinei isso",
+    "naoCombineiFeito": "A data voltou para a anterior. A oficina foi avisada; agora é você quem escolhe."
+  },
+  "oficinaPerfil": {
+    "titulo": "Oficina",
+    "endereco": "Endereço",
+    "abrirMapa": "Abrir no mapa",
+    "especialidades": "Serviços",
+    "sobre": "Sobre a oficina",
+    "avaliacoes": "Avaliações",
+    "mediaAvaliacoes": "{nota} de 5 · {n} avaliações",
+    "semAvaliacoes": "Ainda sem avaliações.",
+    "cliente": "Cliente",
+    "fotos": "Fotos",
+    "naoEncontrada": "Não encontramos esta oficina."
+  },
+  "pedidoCartao": {
+    "acidente": "Acidente",
+    "ativos": "Pedidos ativos ({n})"
+  },
+  "cancelarPedido": {
+    "botao": "Cancelar pedido",
+    "titulo": "Cancelar este pedido?",
+    "texto": "As oficinas que mandaram orçamento são avisadas e o pedido sai da lista delas. Você pode reabrir depois.",
+    "motivoTitulo": "Por que está cancelando? (opcional)",
+    "motivo_resolvido": "Já resolvi o problema",
+    "motivo_outraOficina": "Achei outra oficina",
+    "motivo_desisti": "Desisti do reparo",
+    "confirmar": "Cancelar pedido",
+    "feito": "Pedido cancelado.",
+    "carroNaOficina": "O carro já está na oficina: para cancelar, fale com a oficina na conversa.",
+    "reabrir": "Reabrir pedido",
+    "reaberto": "Pedido reaberto: as oficinas podem mandar orçamento de novo."
   }
 }

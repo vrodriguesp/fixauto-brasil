@@ -1,4 +1,4 @@
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import RolagemTeclado from '../../components/RolagemTeclado';
 import { useRef, useState } from 'react';
 import { View, Text, TextInput, Pressable, ActivityIndicator, Platform, ScrollView, Image, Modal, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -61,9 +61,10 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-sky-50" edges={['top']}>
-      <KeyboardAwareScrollView bottomOffset={24} className="flex-1" keyboardDismissMode="on-drag" contentContainerClassName="flex-grow px-5 pb-10" keyboardShouldPersistTaps="handled">
-          {/* Topo: idioma */}
-          <View className="flex-row justify-end pt-2">
+      <RolagemTeclado bottomOffset={24} className="flex-1" keyboardDismissMode="on-drag" contentContainerClassName="flex-grow px-5 pb-10" keyboardShouldPersistTaps="handled">
+          {/* Topo: logo e idioma na mesma linha - compacto: no iPhone 14 o botao Entrar tem de caber na 1a tela (dono 08/11) */}
+          <View className="flex-row items-center justify-between pt-4">
+            <Image source={require('../../assets/logo.png')} style={{ width: 186, height: 41 }} resizeMode="contain" accessibilityLabel="BipFix" />
             <Pressable
               onPress={() => (idiomaPeloSistema ? abrirAjustesDeIdioma() : setMenuIdioma(true))}
               accessibilityRole="button"
@@ -76,20 +77,16 @@ export default function LoginScreen() {
             </Pressable>
           </View>
 
-          {/* Marca */}
-          <View className="items-center mt-4 mb-6">
-            <Image source={require('../../assets/logo.png')} style={{ width: 220, height: 49 }} resizeMode="contain" accessibilityLabel="BipFix" />
-            <Text className="text-center text-gray-600 text-base mt-3 px-4">{t('auth.slogan')}</Text>
-          </View>
+          <Text className="text-gray-600 text-base leading-6 mt-5 mb-6">{t('auth.slogan')}</Text>
 
           {/* Acidente sem conta */}
           <Pressable
             onPress={() => router.push('/emergencia')}
             accessibilityRole="button"
-            className="bg-red-600 rounded-2xl p-4 flex-row items-center gap-4 mb-6 active:opacity-90"
+            className="bg-red-600 rounded-2xl px-4 py-3 flex-row items-center gap-3 mb-3 active:opacity-90"
             style={{ shadowColor: '#dc2626', shadowOpacity: 0.25, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 4 }}
           >
-            <View className="w-12 h-12 rounded-full bg-white/20 items-center justify-center">
+            <View className="w-10 h-10 rounded-full bg-white/20 items-center justify-center">
               <Ionicons name="car-sport" size={26} color="#fff" />
             </View>
             <View className="flex-1">
@@ -103,9 +100,9 @@ export default function LoginScreen() {
           <Pressable
             onPress={() => router.push('/pedido')}
             accessibilityRole="button"
-            className="bg-primary-600 rounded-2xl p-4 flex-row items-center gap-4 mb-6 active:opacity-90"
+            className="bg-primary-600 rounded-2xl px-4 py-3 flex-row items-center gap-3 mb-3 active:opacity-90"
           >
-            <View className="w-12 h-12 rounded-full bg-white/20 items-center justify-center">
+            <View className="w-10 h-10 rounded-full bg-white/20 items-center justify-center">
               <Ionicons name="construct" size={24} color="#fff" />
             </View>
             <View className="flex-1">
@@ -117,10 +114,10 @@ export default function LoginScreen() {
 
           {/* Login */}
           <View
-            className="bg-white rounded-2xl p-5 mb-6"
+            className="bg-white rounded-2xl p-4 mt-1 mb-6"
             style={{ shadowColor: '#0c4a6e', shadowOpacity: 0.08, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 2 }}
           >
-            <Text className="text-xl font-bold text-gray-900 mb-4">{t('auth.loginTitulo')}</Text>
+            <Text className="text-xl font-bold text-gray-900 mb-3">{t('auth.loginTitulo')}</Text>
 
             {erro && (
               <View className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4">
@@ -146,7 +143,7 @@ export default function LoginScreen() {
             )}
 
             <Text className="text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</Text>
-            <View className="flex-row items-center border border-gray-300 rounded-xl px-3 mb-4 bg-white">
+            <View className="flex-row items-center border border-gray-300 rounded-xl px-3 mb-3 bg-white">
               <Ionicons name="mail-outline" size={18} color="#9ca3af" />
               <TextInput autoCorrect={false} accessibilityLabel={t('auth.email')}
                 value={email}
@@ -183,7 +180,7 @@ export default function LoginScreen() {
               </Pressable>
             </View>
 
-            <Link href="/(auth)/esqueci-senha" className="text-primary-600 text-sm mb-5 self-end py-1">
+            <Link href="/(auth)/esqueci-senha" className="text-primary-600 text-sm mb-3 self-end py-1">
               {t('auth.esqueciSenha')}
             </Link>
 
@@ -214,7 +211,7 @@ export default function LoginScreen() {
               </View>
             ))}
           </View>
-        </KeyboardAwareScrollView>
+        </RolagemTeclado>
 
       {/* Escolha de idioma */}
       <Modal visible={menuIdioma} transparent animationType={Platform.OS === 'web' ? 'none' : 'fade'} onRequestClose={() => setMenuIdioma(false)}>

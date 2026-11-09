@@ -6,6 +6,7 @@ const { chromium } = createRequire(import.meta.url)('playwright-core');
 const req = createRequire('C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/package.json');
 const { createClient } = req('@supabase/supabase-js');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split(String.fromCharCode(10)).filter((l) => l.includes('=') && !l.startsWith('#')).map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
+if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
 const sb = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 const tag = crypto.randomBytes(3).toString('hex'); const email = `segpais-${tag}@example.test`; const senha = `Seg${tag}Senha9`;
 const { data: u } = await sb.auth.admin.createUser({ email, password: senha, email_confirm: true });
@@ -14,9 +15,9 @@ const b = await chromium.launch({ executablePath: path.join(process.env.LOCALAPP
 // italiano em Tallinn, sem permitir a localizacao
 const c = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, locale: 'it-IT', timezoneId: 'Europe/Tallinn', permissions: [] });
 const p = await c.newPage();
-await p.goto('https://bipfix.com/it/login', { waitUntil: 'networkidle' });
+await p.goto('http://localhost:3100/it/login', { waitUntil: 'networkidle' });
 await p.fill('input[type=email]', email); await p.fill('input[type=password]', senha); await p.click('button[type=submit]'); await p.waitForTimeout(4000);
-await p.goto('https://bipfix.com/it/incidente', { waitUntil: 'networkidle' }); await p.waitForTimeout(2500);
+await p.goto('http://localhost:3100/it/incidente', { waitUntil: 'networkidle' }); await p.waitForTimeout(2500);
 const lista = async () => p.$$eval('#lista-seguradoras option', (o) => o.map((x) => x.value));
 const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
 await p.locator('input[type=file]').first().setInputFiles({ name: 'foto.png', mimeType: 'image/png', buffer: png }).catch((e) => console.log('upload', e.message));
@@ -27,7 +28,7 @@ for (let i = 0; i < 6 && !(await p.locator('input[name=pagamento_reparo]').count
   if (!(await btn.count())) break; await btn.click().catch(() => {}); await p.waitForTimeout(800);
 }
 const n = await p.locator('input[name=pagamento_reparo]').count();
-console.log('opcoes de pagamento visiveis:', n); console.log('botoes:', (await p.locator('button').allInnerTexts()).join(' | ')); await p.screenshot({ path: 'seguro-pais.png', fullPage: true }); console.log((await p.innerText('body')).replace(/s+/g,' ').slice(0,400));
+console.log('opcoes de pagamento visiveis:', n); console.log('botoes:', (await p.locator('button').allInnerTexts()).join(' | ')); await p.screenshot({ path: 'seguro-pais.png', fullPage: true }); console.log((await p.innerText('body')).replace(/\s+/g, ' ').slice(0,400));
 if (n) {
   await p.locator('input[name=pagamento_reparo][value=seguro_proprio]').check();
   console.log('seguradoras sugeridas (Estonia esperado):', (await lista()).slice(0, 5).join(', '));

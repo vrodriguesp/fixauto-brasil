@@ -3,13 +3,14 @@ import { randomUUID } from 'node:crypto';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { getSessionUserId } from '@/lib/api-auth';
 import { limitarPorIp } from '@/lib/rate-limit';
-import { ErroValidacao, texto, email as validarEmail, numero, umDe, validarImagens, extensaoDe } from '@/lib/validacao';
+import { ErroValidacao, texto, email as validarEmail, numero, umDe, validarImagens, extensaoDe, placaCarro, anoCarro } from '@/lib/validacao';
 import { tokenAleatorio, hashToken } from '@/lib/segredos';
 import { garantirContaCliente } from '@/lib/conta-convite';
 import { avisarOficinasDoAcidente } from '@/lib/emergencia-oficinas';
 import { notifNovaSolicitacaoColisao } from '@/lib/notif-i18n';
 import { avisarAdminSeSemOficinas } from '@/lib/concierge';
 import { validarSeguro } from '@/lib/seguro-reparo';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,10 +51,11 @@ export async function POST(req: NextRequest) {
     const endereco = texto(d.endereco, 'endereco', 300)
       || (latitude != null && longitude != null ? `${latitude.toFixed(5)}, ${longitude.toFixed(5)}` : null);
     const idioma = texto(d.idioma, 'idioma', 10);
-    const placa = texto(d.placa, 'placa', 15);
+    const placa = placaCarro(d.placa, 'placa');
     // quem paga o reparo (opcional; pode ser completado depois na pagina do acidente)
     const seguro = validarSeguro(d);
     const vInfo = (d.veiculoInfo && typeof d.veiculoInfo === 'object' ? d.veiculoInfo : {}) as Record<string, unknown>;
+    anoCarro(vInfo.ano, 'veiculoInfo.ano');
 
     let nome = texto(d.nome, 'nome', 100);
     let email = validarEmail(d.email);
@@ -194,7 +196,7 @@ export async function POST(req: NextRequest) {
           tipo: 'nova_solicitacao',
           titulo: n.titulo,
           mensagem: n.mensagem,
-          dados: { solicitacao_id: solicitacaoId },
+          dados: { solicitacao_id: solicitacaoId, textos: emTodasAsLinguas((l) => notifNovaSolicitacaoColisao(l)) },
         });
       }
     }

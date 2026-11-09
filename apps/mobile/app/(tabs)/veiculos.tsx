@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { View, Text, FlatList, Pressable, RefreshControl } from 'react-native';
+import { View, Text, FlatList, Pressable, RefreshControl, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect, router } from 'expo-router';
 import type { Veiculo } from '@fixauto/shared';
@@ -18,7 +18,8 @@ export default function VeiculosScreen() {
   const carregar = useCallback(async () => {
     if (!user) return;
     const { data } = await supabase.from('veiculos').select('*').eq('profile_id', user.id).order('created_at', { ascending: false });
-    setVeiculos((data as Veiculo[]) || []);
+    // carro so com a placa (acidente sem marca/modelo) fica no pedido, nao na lista (dono 09/11)
+    setVeiculos(((data as Veiculo[]) || []).filter((v) => v.fipe_marca));
     setLoading(false);
   }, [user]);
 
@@ -36,7 +37,7 @@ export default function VeiculosScreen() {
           <Text className="text-white font-medium">{t('veiculos.adicionar')}</Text>
         </Pressable>
       </View>
-      <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
+      <FlatList keyboardDismissMode={Platform.OS === 'web' ? 'none' : 'on-drag'} keyboardShouldPersistTaps="handled"
         data={veiculos}
         keyExtractor={(item) => item.id}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={carregar} />}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Image, Pressable, TextInput, ActivityIndicator, Alert, ScrollView } from 'react-native';
+import { View, Text, Image, Pressable, TextInput, ActivityIndicator, ScrollView } from 'react-native';
+import { avisar } from '../lib/confirmar';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { apiFetch } from '../lib/api';
@@ -73,7 +74,7 @@ export function SeguroPedido({ emergenciaId, atual, aoSalvar }: { emergenciaId: 
       setEditando(false);
       aoSalvar();
     } catch (e) {
-      Alert.alert(t('common.erroGenerico'), mensagemErro(e));
+      avisar(t('common.erroGenerico'), mensagemErro(e));
     } finally {
       setSalvando(false);
     }

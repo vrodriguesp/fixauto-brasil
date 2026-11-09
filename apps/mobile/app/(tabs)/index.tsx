@@ -1,18 +1,17 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { View, Text, FlatList, Pressable, RefreshControl } from 'react-native';
+import { View, Text, FlatList, Pressable, RefreshControl, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect, router } from 'expo-router';
 import type { Solicitacao } from '@fixauto/shared';
 import { useAuth } from '../../lib/auth-context';
 import { supabase } from '../../lib/supabase';
-import SolicitacaoCard from '../../components/SolicitacaoCard';
+import CartaoPedido from '../../components/CartaoPedido';
 import { Ionicons } from '@expo/vector-icons';
 import { useAvisos } from '../../lib/avisos';
 import { TextoTraduzido } from '../../lib/traducao';
 import GarantiasAtivas from '../../components/GarantiasAtivas';
 import AvaliacaoPendente from '../../components/AvaliacaoPendente';
-import CartaoSituacao from '../../components/CartaoSituacao';
 import { situacaoDoPedido } from '../../lib/situacao';
 
 export default function DashboardScreen() {
@@ -48,14 +47,12 @@ export default function DashboardScreen() {
     }, [carregar, atualizar])
   );
 
-  // cartao de acao (auditoria 10/10, C1): o pedido mais urgente em destaque;
-  // a lista embaixo fica com os outros
-  const comSituacao = solicitacoes.map((s) => ({ s, sit: situacaoDoPedido(s) })).sort((a, b) => b.sit.prioridade - a.sit.prioridade);
-  const destaque = comSituacao[0];
-  const outros = comSituacao.slice(1).map((x) => x.s);
+  // todos os pedidos ativos no MESMO nivel, o mais urgente primeiro (dono 09/11: com 2 pedidos o
+  // segundo ficava escondido em "outros pedidos")
+  const pedidos = solicitacoes.map((s) => ({ s, sit: situacaoDoPedido(s) })).sort((a, b) => b.sit.prioridade - a.sit.prioridade).map((x) => x.s);
 
-  return (
-    <View className="flex-1 bg-gray-50 px-4" style={{ paddingTop: insets.top + 8 }}>
+  const topo = (
+    <View>
       <View className="flex-row items-center justify-between mb-1">
         <Text className="text-2xl font-bold text-gray-900 flex-1">{t('dashboard.saudacao', { nome: user?.nome?.split(' ')[0] || '' })}</Text>
         {/* sino: todas as interacoes, a mais recente no alto */}
@@ -80,9 +77,6 @@ export default function DashboardScreen() {
         </Pressable>
       </View>
 
-      {/* pedido mais urgente logo abaixo dos botoes, em destaque (dono 10/10) */}
-      {destaque && <CartaoSituacao solicitacao={destaque.s} situacao={destaque.sit} comBotao />}
-
       <AvaliacaoPendente recarregar={avisoChegou} />
       <GarantiasAtivas recarregar={avisoChegou} />
 
@@ -101,15 +95,21 @@ export default function DashboardScreen() {
         </View>
       )}
 
-      {(outros.length > 0 || (!loading && !destaque)) && <Text className="text-base font-semibold text-gray-900 mb-2">{destaque ? t('situacao.outros') : t('dashboard.solicitacoesAtivas')}</Text>}
+      <Text className="text-base font-semibold text-gray-900 mb-2">{pedidos.length ? t('pedidoCartao.ativos', { n: pedidos.length }) : t('dashboard.solicitacoesAtivas')}</Text>
+    </View>
+  );
 
-      <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
-        data={outros}
+  // uma rolagem so para a tela inteira (cabecalho, avisos e pedidos)
+  return (
+    <View className="flex-1 bg-gray-50" style={{ paddingTop: insets.top + 8 }}>
+      <FlatList keyboardDismissMode={Platform.OS === 'web' ? 'none' : 'on-drag'} keyboardShouldPersistTaps="handled"
+        data={pedidos}
+        ListHeaderComponent={topo}
         keyExtractor={(item) => item.id}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={carregar} />}
-        contentContainerStyle={{ paddingBottom: 24 }}
-        renderItem={({ item }) => <SolicitacaoCard solicitacao={item} />}
-        ListEmptyComponent={!loading && !destaque ? <Text className="text-gray-500 text-center mt-8">{t('dashboard.nenhumaSolicitacao')}</Text> : null}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+        renderItem={({ item }) => <CartaoPedido solicitacao={item} />}
+        ListEmptyComponent={!loading ? <Text className="text-gray-500 text-center mt-8">{t('dashboard.nenhumaSolicitacao')}</Text> : null}
       />
     </View>
   );

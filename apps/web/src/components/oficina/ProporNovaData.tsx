@@ -5,7 +5,9 @@ import { useLocale, useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { textoErroApi } from '@/lib/erro-api';
 import { fusoDoPais } from '@/lib/fuso';
+import { horaLocalDe } from '@/lib/turnos';
 import { INTL_LOCALE } from '@/lib/utils';
+import OpcoesMudancaData from './OpcoesMudancaData';
 
 // Orcamento aceito, carro ainda nao chegou: a oficina propoe uma nova data de
 // entrega com justificativa (dono 07/11; /api/orcamento-revisao/data). O cliente
@@ -23,7 +25,9 @@ export default function ProporNovaData({ orcamentoId, solicitacaoId, oficinaId, 
   const [motivo, setMotivo] = useState('');
   const [erro, setErro] = useState('');
   const [enviando, setEnviando] = useState(false);
-  const [feito, setFeito] = useState(false);
+  const [feito, setFeito] = useState<'' | 'pedido' | 'combinado'>('');
+  const [serve, setServe] = useState<boolean | null>(null);
+  const [combinado, setCombinado] = useState(false);
 
   useEffect(() => {
     supabase.from('agenda').select('data_inicio').eq('solicitacao_id', solicitacaoId).eq('oficina_id', oficinaId).eq('status', 'agendado').maybeSingle()
@@ -31,25 +35,33 @@ export default function ProporNovaData({ orcamentoId, solicitacaoId, oficinaId, 
   }, [solicitacaoId, oficinaId]);
 
   if (!atual) return null;
-  if (feito) return <p role="status" className="card mb-6 bg-green-50 text-green-800" data-testid="nova-data-enviada">{t('propostaEnviada')}</p>;
+  if (feito) return <p role="status" className="card mb-6 bg-green-50 text-green-800" data-testid="nova-data-enviada">{t(feito === 'combinado' ? 'feitoCombinado' : 'feitoPedido')}</p>;
 
   // "hoje" no fuso da oficina (de madrugada em Tallinn o UTC ainda e ontem)
   const hoje = new Date().toLocaleDateString('sv-SE', { timeZone: fusoDoPais(pais) });
   const quando = new Date(atual).toLocaleString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais(pais), weekday: 'short', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
 
+  const diaAtual = new Date(atual).toLocaleDateString('sv-SE', { timeZone: fusoDoPais(pais) });
+  const mesmoDia = !!data && data === diaAtual;
   const enviar = async () => {
     setErro('');
+    if (serve === null) { setErro(t('escolhaServe')); return; }
+    // confere aqui e diz exatamente o que corrigir (antes so "confira os dados" - dono 08/11)
+    if (data === diaAtual && (turno === 'tarde' ? '13:00' : '08:00') === horaLocalDe(atual, pais)) { setErro(tErr('DATA_IGUAL_ATUAL')); return; }
+    if (previsao && previsao < data) { setErro(tErr('PREVISAO_ANTES_DA_DATA')); return; }
+    if (mesmoDia && !combinado) { setErro(t('mesmoDia')); return; }
     if (motivo.trim().length < 5) { setErro(t('motivoCurto')); return; }
     setEnviando(true);
     const r = await fetch('/api/orcamento-revisao/data', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orcamentoId, data, turno, previsao: previsao || null, motivo }),
+      body: JSON.stringify({ orcamentoId, data, turno, previsao: previsao || null, motivo, dataAtualServe: serve, combinado }),
     }).catch(() => null);
     const d = r ? await r.json().catch(() => ({})) : {};
     setEnviando(false);
     if (!r?.ok) { setErro(textoErroApi(tErr, r?.status || 500, d)); return; }
-    setFeito(true);
-    aoEnviar?.({ data, turno });
+    setFeito(d?.aplicada ? 'combinado' : 'pedido');
+    // combinado ja vale: a pagina nao deve passar a "esperando o cliente"
+    if (!d?.aplicada) aoEnviar?.({ data, turno });
   };
 
   return (
@@ -71,13 +83,18 @@ export default function ProporNovaData({ orcamentoId, solicitacaoId, oficinaId, 
         </div>
         <div>
           <label htmlFor="nd-previsao" className="block text-sm font-medium text-gray-700 mb-1">{t('previsao')}</label>
-          <input id="nd-previsao" type="date" min={data || hoje} className="input-field" value={previsao} onChange={(e) => setPrevisao(e.target.value)} />
+          {/* opcional: no iPhone o seletor de data nao deixa esvaziar - botao "Limpar" (dono 08/11) */}
+          <div className="flex items-center gap-2">
+            <input id="nd-previsao" type="date" min={data || hoje} className="input-field" value={previsao} onChange={(e) => setPrevisao(e.target.value)} />
+            {previsao && <button type="button" onClick={() => setPrevisao('')} className="shrink-0 rounded-lg px-2 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100" data-testid="limpar-previsao">{t('limparData')}</button>}
+          </div>
         </div>
       </div>
       <label htmlFor="nd-motivo" className="mt-3 block text-sm font-medium text-gray-700 mb-1">{t('motivo')}</label>
       <textarea id="nd-motivo" rows={2} maxLength={1000} className="input-field" placeholder={t('motivoPlaceholder')} value={motivo} onChange={(e) => setMotivo(e.target.value)} />
+      <div className="mt-3"><OpcoesMudancaData id="nd" serve={serve} setServe={setServe} combinado={combinado} setCombinado={setCombinado} mesmoDia={mesmoDia} /></div>
       {erro && <p role="alert" className="mt-2 text-sm text-red-700">{erro}</p>}
-      <button type="button" disabled={enviando || !data} onClick={enviar} className="btn-primary mt-3 w-full sm:w-auto disabled:opacity-50">{t('enviarProposta')}</button>
+      <button type="button" disabled={enviando || !data} onClick={enviar} className="btn-primary mt-3 w-full sm:w-auto disabled:opacity-50">{t(combinado ? 'enviarCombinado' : 'enviarProposta')}</button>
     </section>
   );
 }

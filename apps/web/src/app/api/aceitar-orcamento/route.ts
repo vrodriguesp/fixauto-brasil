@@ -7,6 +7,7 @@ import { sendOrcamentoAceitoPagamentoEmail, sendOrcamentoAceitoOutroEmail } from
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { horaLocalEmUtc } from '@/lib/fuso';
 import { avisarClienteAgendamento } from '@/lib/email-agendamento';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 // Use service_role key to bypass RLS - the agenda insert needs
 // to be done by the server because the client user doesn't have
@@ -142,7 +143,7 @@ export async function POST(req: NextRequest) {
         tipo: 'orcamento_aceito',
         titulo: n.titulo,
         mensagem: n.mensagem,
-        dados: { solicitacao_id: orc.solicitacao_id, orcamento_id: orcamentoId },
+        dados: { solicitacao_id: orc.solicitacao_id, orcamento_id: orcamentoId, textos: emTodasAsLinguas((l) => notifOrcamentoAceito(l)) },
       });
     }
 
@@ -278,6 +279,7 @@ export async function POST(req: NextRequest) {
                 dados: {
                   solicitacao_id: orc.solicitacao_id, orcamento_id: orcamentoId, emergencia_id: emergencia.id, oficina_id: orc.oficina_id,
                   ...(responsavelProfileId !== clienteId ? { pagador_id: responsavelProfileId } : {}),
+                  textos: emTodasAsLinguas((l) => notifOrcamentoAceitoPagamento(l, formatCurrency(Number(orc.valor_total), moedaOrcamento, l), oficinaNome)),
                 },
               });
             }

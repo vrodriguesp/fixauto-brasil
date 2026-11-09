@@ -22,7 +22,9 @@ export default function ErrorBoundary({ error, reset }: { error: Error & { diges
   if (!tx || recarregando) {
     return <div className="max-w-md mx-auto px-4 py-24 text-center text-sm text-gray-500">{tx?.atualizando || ''}</div>;
   }
-  const pre = { pt: 'pt-br', 'pt-PT': 'pt-pt' }[idiomaDoEndereco() as 'pt' | 'pt-PT'] || idiomaDoEndereco();
+  // inicio no mesmo pais/lingua do endereco atual (/ee/et, /it/it...); senao, pela lingua
+  const mercado = typeof window !== 'undefined' ? (window.location.pathname.match(/^\/([a-z]{2}\/[a-z]{2})(\/|$)/) || [])[1] : null;
+  const pre = mercado || ({ pt: 'br/pt', 'pt-PT': 'pt/pt', it: 'it/it', ru: 'ee/ru', et: 'ee/et' } as Record<string, string>)[idiomaDoEndereco()] || 'ee/en';
   return (
     <div className="max-w-md mx-auto px-4 py-24 text-center">
       <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">

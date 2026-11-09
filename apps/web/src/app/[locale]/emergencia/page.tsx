@@ -10,6 +10,9 @@ import { textoErroApi } from '@/lib/erro-api';
 import { SeguroReparoCampos, ProximosPassosSeguro, SEGURO_VAZIO, type ValorSeguro } from '@/components/emergencia/SeguroReparo';
 import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 import { salvarRascunhoEmergencia, lerRascunhoEmergencia, apagarRascunhoEmergencia } from '@/lib/rascunho-emergencia';
+import { EVENTO_TROCA_IDIOMA } from '@/lib/idioma-escolhido';
+import { placaValida } from '@/lib/validar-carro';
+import { supabase } from '@/lib/supabase';
 import CampoTelefone from '@/components/forms/CampoTelefone';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
@@ -34,6 +37,8 @@ export default function EmergenciaPage() {
   const loginRef = useRef<HTMLDivElement>(null);
 
   const [step, setStep] = useState(1);
+  const [buscandoLocal, setBuscandoLocal] = useState(false);
+  const [avisoLocal, setAvisoLocal] = useState<'' | 'localBloqueada' | 'localIndisponivel'>('');
 
   useTopoAoMudar(step);
   const [fotos, setFotos] = useState<{ file: File; preview: string }[]>([]);
@@ -71,7 +76,20 @@ export default function EmergenciaPage() {
   const [seguro, setSeguro] = useState<ValorSeguro>(SEGURO_VAZIO);
   const [veiculoInfo, setVeiculoInfo] = useState<{ marca: string; modelo: string; ano: string; cor: string } | null>(null);
   const [buscandoPlaca, setBuscandoPlaca] = useState(false);
-  const [placaNaoEncontrada, setPlacaNaoEncontrada] = useState(false);
+  // "Seu carro" (dono 09/11): carros completos da conta para tocar, ou marca/modelo sempre visiveis
+  const [meusCarros, setMeusCarros] = useState<{ id: string; fipe_marca: string; fipe_modelo: string; placa: string | null }[]>([]);
+  const [veiculoId, setVeiculoId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!user?.id) return;
+    supabase.from('veiculos').select('id, fipe_marca, fipe_modelo, placa').eq('profile_id', user.id).neq('fipe_marca', '').order('created_at')
+      .then(({ data }) => {
+        const lista = (data as typeof meusCarros) || [];
+        setMeusCarros(lista);
+        if (lista.length === 1) setVeiculoId((v) => v ?? lista[0].id);
+      });
+  }, [user?.id]);
+  const mudarMarcaModelo = (campo: 'marca' | 'modelo', valor: string) =>
+    setVeiculoInfo((v) => ({ marca: v?.marca || '', modelo: v?.modelo || '', ano: v?.ano || '', cor: v?.cor || '', [campo]: valor }));
 
 
   const buscarPlaca = async (p: string) => {
@@ -81,23 +99,18 @@ export default function EmergenciaPage() {
     // base so do Brasil: decide pelo FORMATO da placa brasileira, nao pelo idioma
     if (!/^[A-Za-z]{3}\d[A-Za-z0-9]\d{2}$/.test(clean)) return;
     setBuscandoPlaca(true);
-    setPlacaNaoEncontrada(false);
-    setVeiculoInfo(null);
     try {
       const res = await fetch('/api/consultar-placa', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ placa: clean }),
       });
+      // achou: preenche marca/modelo (a pessoa ainda pode corrigir); nao achou: ela digita
       if (res.ok) {
         const data = await res.json();
         setVeiculoInfo({ marca: data.marca, modelo: data.modelo, ano: data.ano, cor: data.cor });
-      } else {
-        setPlacaNaoEncontrada(true);
       }
-    } catch {
-      setPlacaNaoEncontrada(true);
-    }
+    } catch { /* segue com o que a pessoa digitar */ }
     setBuscandoPlaca(false);
   };
 
@@ -119,15 +132,32 @@ export default function EmergenciaPage() {
       if (d.localizacao) setLocalizacao(d.localizacao);
       if (d.coords) { setCoords(d.coords); setGeoResolved(!!d.geoResolved); }
       setVeiculoInfo(d.veiculoInfo || null);
+      if (d.veiculoId) setVeiculoId(d.veiculoId);
       if (d.seguro && typeof d.seguro === 'object') setSeguro({ ...SEGURO_VAZIO, ...(d.seguro as ValorSeguro) });
       const fotosOk = !!r.fotos && r.fotos.length >= (d.qtdFotos || 0);
       if (r.fotos?.length) setFotos(r.fotos.map((file) => ({ file, preview: URL.createObjectURL(file) })));
       setRascunho(fotosOk ? 'restaurado' : 'semFotos');
-      // com as fotos de volta vai direto ao envio; sem elas, ao passo das fotos
-      setStep(fotosOk ? 3 : 1);
+      // troca de lingua: volta no mesmo passo; login/nova senha: com as fotos vai direto ao envio
+      setStep(d.passo || (fotosOk ? 3 : 1));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // trocar a lingua no meio do formulario nao apaga nada, nem as fotos (dono 09/11): guarda o
+  // rascunho (fotos no IndexedDB) antes de a pagina recarregar na lingua nova
+  const estadoRef = useRef<() => Promise<unknown>>(async () => {});
+  estadoRef.current = () => salvarRascunhoEmergencia(
+    { nome, email, telefone, descricao, placa, tipoAcidente, localizacao, coords, geoResolved, veiculoInfo, seguro, passo: step, veiculoId },
+    fotos.map((f) => f.file),
+  );
+  useEffect(() => {
+    const antes = (e: Event) => {
+      if (submitted) return;
+      (e as CustomEvent<{ esperar: (p: Promise<unknown>) => void }>).detail?.esperar(estadoRef.current());
+    };
+    window.addEventListener(EVENTO_TROCA_IDIOMA, antes);
+    return () => window.removeEventListener(EVENTO_TROCA_IDIOMA, antes);
+  }, [submitted]);
 
   // Auto-detect location
   useEffect(() => {
@@ -223,8 +253,9 @@ export default function EmergenciaPage() {
         endereco: localizacao,
         latitude: loc.lat,
         longitude: loc.lon,
-        placa: placa || null,
-        veiculoInfo: veiculoInfo || null,
+        placa: veiculoId ? null : (placa || null),
+        veiculoInfo: veiculoId ? null : (veiculoInfo?.marca?.trim() ? veiculoInfo : null),
+        veiculoId,
         ...seguro,
       }));
       fotos.forEach((f) => form.append('fotos', f.file));
@@ -310,8 +341,9 @@ export default function EmergenciaPage() {
               {t('nextStepText')}
             </p>
             <button
-              onClick={() => router.push(rota('/emergencia/acidente/[id]', { id: emergenciaId }))}
-              className="btn-primary w-full"
+              // replace: o voltar nunca leva de novo ao formulario ja enviado (dono 09/11)
+              onClick={() => router.replace(rota('/emergencia/acidente/[id]', { id: emergenciaId }))}
+              className="btn-primary w-full" data-testid="adicionar-outro-motorista"
             >
               {t('registerOtherVehicleBtn')}
             </button>
@@ -319,7 +351,7 @@ export default function EmergenciaPage() {
         )}
 
         {isLoggedIn ? (
-          <button onClick={() => router.push('/cliente/dashboard')} className="btn-secondary w-full">
+          <button onClick={() => router.replace('/cliente/dashboard')} className="btn-secondary w-full">
             {t('goToDashboardBtn')}
           </button>
         ) : (
@@ -484,15 +516,44 @@ export default function EmergenciaPage() {
                 </div>
               )}
 
-              {/* Placa lookup */}
-              <div className="mt-4">
+              {/* SEU carro (dono 09/11: ficava a duvida "de quem?") - toca num carro da conta ou digita */}
+              <div className="mt-6 rounded-xl border border-gray-200 p-4" data-testid="seu-carro">
+                <h3 className="font-semibold text-gray-900">{t('seuCarroTitulo')} <span className="text-sm font-normal text-gray-500">({t('opcional')})</span></h3>
+                <p className="text-xs text-gray-500 mb-3">{t('seuCarroDica')}</p>
+                {meusCarros.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-3" role="radiogroup" aria-label={t('seuCarroTitulo')}>
+                    {meusCarros.map((c) => (
+                      <button key={c.id} type="button" role="radio" aria-checked={veiculoId === c.id} onClick={() => setVeiculoId(c.id)} data-testid="meu-carro"
+                        className={`rounded-lg border-2 px-3 py-2 text-left text-sm ${veiculoId === c.id ? 'border-red-400 bg-red-50' : 'border-gray-200'}`}>
+                        <span className="block font-medium text-gray-900">{c.fipe_marca} {c.fipe_modelo}</span>
+                        {c.placa && <span className="block text-xs text-gray-500">{c.placa}</span>}
+                      </button>
+                    ))}
+                    <button type="button" role="radio" aria-checked={veiculoId === null} onClick={() => setVeiculoId(null)} data-testid="outro-carro-meu"
+                      className={`rounded-lg border-2 px-3 py-2 text-sm ${veiculoId === null ? 'border-red-400 bg-red-50' : 'border-gray-200'}`}>
+                      {t('outroCarroMeu')}
+                    </button>
+                  </div>
+                )}
+              {veiculoId === null && (<>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <label htmlFor="cc5ef-marca" className="block text-sm font-medium text-gray-700 mb-1">{t('marcaLabel')}</label>
+                    <input id="cc5ef-marca" type="text" className="input-field" maxLength={60} placeholder={t('marcaPlaceholder')} value={veiculoInfo?.marca || ''} onChange={(e) => mudarMarcaModelo('marca', e.target.value)} />
+                  </div>
+                  <div>
+                    <label htmlFor="cc5ef-modelo" className="block text-sm font-medium text-gray-700 mb-1">{t('modeloLabel')}</label>
+                    <input id="cc5ef-modelo" type="text" className="input-field" maxLength={80} placeholder={t('modeloPlaceholder')} value={veiculoInfo?.modelo || ''} onChange={(e) => mudarMarcaModelo('modelo', e.target.value)} />
+                  </div>
+                </div>
                 <label htmlFor="cc5ef-1" className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
                 <div className="flex gap-2">
                   <input id="cc5ef-1"
                     type="text"
                     className="input-field flex-1 uppercase"
                     placeholder={t('platePlaceholder')}
-                    maxLength={8}
+                    maxLength={10}
+                    aria-invalid={!placaValida(placa)}
                     value={placa}
                     onChange={(e) => {
                       const v = e.target.value.toUpperCase();
@@ -506,31 +567,11 @@ export default function EmergenciaPage() {
                     </div>
                   )}
                 </div>
-                {veiculoInfo && (
-                  <div className="mt-2 bg-green-50 border border-green-200 rounded-lg p-3">
-                    <p className="text-sm font-medium text-green-800">
-                      {veiculoInfo.marca} {veiculoInfo.modelo}
-                    </p>
-                    <p className="text-xs text-green-600">
-                      {t('vehicleYearColor', { ano: veiculoInfo.ano, cor: veiculoInfo.cor })}
-                    </p>
-                  </div>
+                {!placaValida(placa) && <p role="alert" className="mt-1 text-sm text-red-700" data-testid="placa-invalida">{tErros('PLACA_INVALIDA')}</p>}
+                {veiculoInfo?.ano && (
+                  <p className="mt-2 text-xs text-green-700">{t('vehicleYearColor', { ano: veiculoInfo.ano, cor: veiculoInfo.cor })}</p>
                 )}
-                {placaNaoEncontrada && (
-                  <div className="mt-3">
-                    <p className="text-xs text-orange-600 mb-2">{t('plateNotFoundText')}</p>
-                    <input
-                      type="text"
-                      className="input-field"
-                      placeholder={t('plateNotFoundPlaceholder')}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        const parts = val.split(' ');
-                        setVeiculoInfo({ marca: parts[0] || val, modelo: parts.slice(1).join(' ') || '', ano: '', cor: '' });
-                      }}
-                    />
-                  </div>
-                )}
+              </>)}
               </div>
 
               <div className="mt-4">
@@ -568,7 +609,7 @@ export default function EmergenciaPage() {
               </div>
 
               <div className="flex justify-end mt-6">
-                <button onClick={handleNext} disabled={fotos.length === 0}
+                <button onClick={handleNext} disabled={fotos.length === 0 || !placaValida(placa)}
                   className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50">
                   {t('nextBtn')}
                 </button>
@@ -620,20 +661,27 @@ export default function EmergenciaPage() {
                     onSelect={(s) => { setLocalizacao(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); setGeoResolved(true); }}
                   />
                 </div>
-                <button type="button" onClick={() => {
-                  if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                      (pos) => { setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }); setGeoResolved(true); setLocalizacao(t('locationCurrentDetected')); },
-                      () => setLocalizacao(''),
-                      { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 },
-                    );
-                  }
-                }} className="w-full p-3 border border-gray-300 rounded-lg text-sm text-primary-600 hover:bg-primary-50 flex items-center justify-center gap-2">
+                {/* nunca fica mudo nem apaga o endereco digitado: procurando..., e se falhar diz por que
+                    (bloqueada / indisponivel - ex.: sem https) e pede o endereco; prazo de 10 s (item 26) */}
+                <button type="button" disabled={buscandoLocal} aria-busy={buscandoLocal} onClick={() => {
+                  setAvisoLocal('');
+                  if (!navigator.geolocation || !window.isSecureContext) { setAvisoLocal('localIndisponivel'); return; }
+                  setBuscandoLocal(true);
+                  let respondeu = false;
+                  const fim = (aviso: '' | 'localBloqueada' | 'localIndisponivel') => { if (respondeu) return; respondeu = true; setBuscandoLocal(false); setAvisoLocal(aviso); };
+                  setTimeout(() => fim('localIndisponivel'), 12000);
+                  navigator.geolocation.getCurrentPosition(
+                    (pos) => { if (respondeu) return; setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }); setGeoResolved(true); setLocalizacao(t('locationCurrentDetected')); fim(''); },
+                    (err) => fim(err.code === err.PERMISSION_DENIED ? 'localBloqueada' : 'localIndisponivel'),
+                    { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 },
+                  );
+                }} className="w-full p-3 border border-gray-300 rounded-lg text-sm text-primary-600 hover:bg-primary-50 flex items-center justify-center gap-2 disabled:opacity-60">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
-                  {t('useCurrentLocationBtn')}
+                  {buscandoLocal ? t('procurandoLocal') : t('useCurrentLocationBtn')}
                 </button>
+                {avisoLocal && <p role="alert" className="mt-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-900" data-testid="aviso-localizacao">{t(avisoLocal)}</p>}
               </div>
 
               <div className="mt-6">

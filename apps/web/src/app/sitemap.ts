@@ -5,6 +5,7 @@ import { routing } from '@/i18n/routing';
 import { hreflangAlternates, localizedUrl, slugCidade } from '@/lib/seo-utils';
 import { alternatesDoGuia, caminhoDoGuia, todosOsGuias } from '@/lib/guias';
 import { perfisDeTeste } from '@/lib/oficinas-teste';
+import { fetchSemCache } from '@/lib/fetch-sem-cache';
 
 
 // Sem isso, o sitemap fica congelado com os dados de quando a build rodou -
@@ -36,10 +37,7 @@ const MUDOU = {
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-  );
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '', { global: { fetch: fetchSemCache } });
 
   // Paginas estaticas, uma entrada por idioma (com hreflang cruzado)
   const staticPages: MetadataRoute.Sitemap = [

@@ -205,7 +205,8 @@
     "descricaoPedido": "Descrizione",
     "naoEncontrado": "Questa richiesta non esiste più o non è disponibile.",
     "fotosTitulo": "Foto ({count})",
-    "fotoDoPedido": "Foto della richiesta"
+    "fotoDoPedido": "Foto della richiesta",
+    "tituloPedido": "Richiesta"
   },
   "avaliacao": {
     "titulo": "Valuta il servizio",
@@ -237,7 +238,9 @@
     "audioIndisponivel": "Audio non disponibile",
     "microfoneTitulo": "Microfono disattivato",
     "microfoneTexto": "Per inviare un audio, consenti l'accesso al microfono nelle Impostazioni.",
-    "verOficinaCurto": "Officina"
+    "verOficinaCurto": "Officina",
+    "abertaAte": "Lavoro concluso. La chat resta aperta fino al {data} per domande sul lavoro.",
+    "verConversaEncerrada": "Vedi chat (chiusa)"
   },
   "veiculos": {
     "titulo": "I miei veicoli",
@@ -259,7 +262,10 @@
       "mecanica": "Meccanica",
       "eletrica": "Elettrauto",
       "pneu": "Pneumatici",
-      "outro": "Altro"
+      "outro": "Altro",
+      "manutencao": "Tagliando",
+      "pintura": "Verniciatura",
+      "vidros": "Cristalli"
     },
     "urgencias": {
       "baixa": "Bassa",
@@ -462,7 +468,9 @@
     "CODIGO_EXPIRADO": "Il codice è scaduto o la richiesta è già stata inviata. Compila di nuovo la richiesta.",
     "CODIGO_TENTATIVAS": "Troppi tentativi sbagliati. Premi di nuovo “Invia richiesta”: ti mandiamo un nuovo codice.",
     "EMAIL_EM_USO": "Esiste già un account con questa e-mail. Torna indietro e accedi.",
-    "AVALIACAO_PENDENTE": "Prima di una nuova richiesta valuta il servizio precedente."
+    "AVALIACAO_PENDENTE": "Prima di una nuova richiesta valuta il servizio precedente.",
+    "PLACA_INVALIDA": "Targa non valida: usa solo lettere, numeri, spazi o trattini (da 2 a 10 caratteri).",
+    "ANO_INVALIDO": "Anno non valido: usa 4 cifre, dal 1950 al prossimo anno."
   },
   "notificacoes": {
     "titulo": "Notifiche",
@@ -656,8 +664,48 @@
     "dataExplicacao": "Se mantieni la data attuale, il servizio prosegue come concordato.",
     "feitoAceita": "Nuova data confermata. Riceverai un’e-mail con l’evento del calendario aggiornato.",
     "feitoMantida": "Hai mantenuto la data attuale. L’officina è stata avvisata.",
-    "notaRemarcar": "Per spostare o annullare, scrivi all’officina nella chat o chiamala.",
+    "notaRemarcar": "Per spostare la data, scrivi all’officina nella chat o chiamala. Per annullare, usa “Annulla richiesta” in fondo alla pagina.",
     "conversar": "Scrivi all’officina",
-    "levarCarro": "Consegna dell’auto"
+    "levarCarro": "Consegna dell’auto",
+    "naoServeAviso": "L’officina non può più nella data prenotata.",
+    "pedirOutraData": "Chiedi un’altra data (chat)",
+    "cancelarComOficina": "Annulla con questa officina",
+    "cancelarComOficinaTexto": "La richiesta si riapre e gli altri preventivi ricevuti tornano validi.",
+    "confirmarCancelar": "Annullare la prenotazione con {oficina}?",
+    "feitoCanceladoCliente": "Prenotazione annullata. La tua richiesta è di nuovo aperta.",
+    "combinadoTitulo": "{oficina} ha cambiato la data, come concordato con te",
+    "naoCombinei": "Non l’ho concordato",
+    "naoCombineiFeito": "La data è tornata quella precedente. L’officina è stata avvisata; ora scegli tu."
+  },
+  "oficinaPerfil": {
+    "titulo": "Officina",
+    "endereco": "Indirizzo",
+    "abrirMapa": "Apri nella mappa",
+    "especialidades": "Servizi",
+    "sobre": "Sull'officina",
+    "avaliacoes": "Recensioni",
+    "mediaAvaliacoes": "{nota} su 5 · {n} recensioni",
+    "semAvaliacoes": "Ancora nessuna recensione.",
+    "cliente": "Cliente",
+    "fotos": "Foto",
+    "naoEncontrada": "Non abbiamo trovato questa officina."
+  },
+  "pedidoCartao": {
+    "acidente": "Incidente",
+    "ativos": "Richieste attive ({n})"
+  },
+  "cancelarPedido": {
+    "botao": "Annulla richiesta",
+    "titulo": "Annullare questa richiesta?",
+    "texto": "Le officine che hanno inviato un preventivo vengono avvisate e la richiesta esce dal loro elenco. Potrai riaprirla dopo.",
+    "motivoTitulo": "Perché annulli? (facoltativo)",
+    "motivo_resolvido": "Ho già risolto",
+    "motivo_outraOficina": "Ho trovato un'altra officina",
+    "motivo_desisti": "Rinuncio alla riparazione",
+    "confirmar": "Annulla richiesta",
+    "feito": "Richiesta annullata.",
+    "carroNaOficina": "L'auto è già in officina: per annullare, scrivi all'officina nella chat.",
+    "reabrir": "Riapri richiesta",
+    "reaberto": "Richiesta riaperta: le officine possono di nuovo inviare preventivi."
   }
 }

@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator} from 'react-native';
+import { avisar } from '../lib/confirmar';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { limparDescricao, marcasDaDescricao } from '../lib/texto';
+import { placaValida, anoValido } from '../lib/validar-carro';
 import VehicleCatalogPicker from './VehicleCatalogPicker';
 
 interface Veiculo { id: string; fipe_marca: string; fipe_modelo: string; fipe_ano: string; placa: string | null }
@@ -41,7 +43,7 @@ export default function EditarPedido({ solicitacaoId, descricao, veiculo, aoSalv
       setAberto(false);
       aoSalvar();
     } catch {
-      Alert.alert(t('common.erroGenerico'), t('veiculos.erroSalvar'));
+      avisar(t('common.erroGenerico'), t('veiculos.erroSalvar'));
     } finally {
       setSalvando(false);
     }
@@ -78,13 +80,15 @@ export default function EditarPedido({ solicitacaoId, descricao, veiculo, aoSalv
           <View className="flex-row gap-2">
             <View className="flex-1">
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.ano')}</Text>
-              <TextInput accessibilityLabel={t('veiculos.ano')} value={ano} onChangeText={setAno} keyboardType="number-pad" maxLength={4}
+              <TextInput accessibilityLabel={t('veiculos.ano')} value={ano} onChangeText={(v) => setAno(v.replace(/\D/g, ''))} keyboardType="number-pad" maxLength={4}
                 className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]" />
             </View>
             <View className="flex-1">
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.placa')}</Text>
-              <TextInput accessibilityLabel={t('veiculos.placa')} value={placa} onChangeText={setPlaca} autoCapitalize="characters" maxLength={15}
+              <TextInput accessibilityLabel={t('veiculos.placa')} value={placa} onChangeText={(v) => setPlaca(v.toUpperCase())} autoCapitalize="characters" maxLength={10}
                 className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]" />
+              {!placaValida(placa) ? <Text className="text-sm text-red-700 -mt-2 mb-3" accessibilityRole="alert">{t('erros.PLACA_INVALIDA')}</Text> : null}
+              {!anoValido(ano) ? <Text className="text-sm text-red-700 -mt-2 mb-3" accessibilityRole="alert">{t('erros.ANO_INVALIDO')}</Text> : null}
             </View>
           </View>
         </>
@@ -96,7 +100,7 @@ export default function EditarPedido({ solicitacaoId, descricao, veiculo, aoSalv
         <Pressable onPress={() => setAberto(false)} className="flex-1 border border-gray-300 rounded-lg py-3 items-center">
           <Text className="text-gray-700 font-medium">{t('common.cancelar')}</Text>
         </Pressable>
-        <Pressable onPress={salvar} disabled={salvando} className="flex-1 bg-primary-600 rounded-lg py-3 items-center">
+        <Pressable onPress={salvar} disabled={salvando || !placaValida(placa) || !anoValido(ano)} className="flex-1 bg-primary-600 rounded-lg py-3 items-center">
           {salvando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold">{t('common.salvar')}</Text>}
         </Pressable>
       </View>

@@ -3,6 +3,7 @@ import { getSessionUserId } from '@/lib/api-auth';
 import { notifFaltaRegistrada } from '@/lib/notif-i18n';
 import { resolveEmailLocale } from '@/lib/email-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 
 export async function POST(req: NextRequest) {
@@ -95,7 +96,7 @@ export async function POST(req: NextRequest) {
         tipo: 'no_show',
         titulo: n.titulo,
         mensagem: n.mensagem,
-        dados: { agenda_id: agendaId, solicitacao_id: solicitacaoId },
+        dados: { agenda_id: agendaId, solicitacao_id: solicitacaoId, textos: emTodasAsLinguas((l) => notifFaltaRegistrada(l, veiculoNome || veiculoFallback[l])) },
       });
     }
 

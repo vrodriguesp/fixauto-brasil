@@ -12,6 +12,7 @@ import { usePush } from '../lib/push';
 import { restaurarIdioma } from '../lib/idiomas';
 import { AvisosProvider } from '../lib/avisos';
 import { instalarCapturaDeErros, enviarDiagnostico } from '../lib/diagnostico';
+import { centrarCampoAoDigitar } from '../lib/centrar-campo-web';
 
 // erros de JavaScript do aparelho chegam ao monitoramento do admin
 instalarCapturaDeErros();
@@ -42,6 +43,7 @@ function PushDaConta() {
 
 export default function RootLayout() {
   const { t } = useTranslation();
+  useEffect(() => { centrarCampoAoDigitar(); }, []);
   return (
     <SafeAreaProvider>
       {/* teclado: no Android edge-to-edge (SDK 54+) a janela nao encolhe mais
@@ -60,6 +62,8 @@ export default function RootLayout() {
           <Stack.Screen name="emergencia" options={{ presentation: 'modal', headerShown: true, title: t('emergencia.titulo') }} />
           <Stack.Screen name="nova-solicitacao" options={{ presentation: 'modal', headerShown: true, title: t('novaSolicitacao.titulo') }} />
           <Stack.Screen name="pedido" options={{ presentation: 'modal', headerShown: true, title: t('auth.pedirSemConta') }} />
+          {/* pagina da oficina dentro do app (voltar = de onde veio, sem sair do app - dono 09/11) */}
+          <Stack.Screen name="oficina/[id]" options={{ headerShown: true, title: t('oficinaPerfil.titulo') }} />
         </Stack>
         </AvisosProvider>
       </AuthProvider>

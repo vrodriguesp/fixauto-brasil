@@ -1,6 +1,8 @@
-import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
+import { type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
+import RolagemTeclado from '../components/RolagemTeclado';
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, Image, Alert, Linking, Keyboard } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator, Image, Linking, Keyboard } from 'react-native';
+import { confirmar as perguntar } from '../lib/confirmar';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -20,8 +22,9 @@ import { mensagemErro, ErroApi } from '../lib/erro';
 import { urlTermos, urlPrivacidade } from '../lib/links-legais';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
 import VehicleCatalogPicker from '../components/VehicleCatalogPicker';
-import { obterPosicao } from '../lib/posicao';
+import { obterPosicao, permissaoLocal } from '../lib/posicao';
 import { arquivoDaFoto } from '../lib/anexo';
+import { placaValida, anoValido } from '../lib/validar-carro';
 import CampoTelefone from '../components/CampoTelefone';
 
 // Pedido de orcamento SEM cadastro - o mesmo fluxo do site
@@ -114,7 +117,7 @@ export default function PedidoScreen() {
   const buscarLocal = async () => {
     setBuscandoLocal(true);
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await permissaoLocal(true);
       if (status !== 'granted') return;
       const pos = await obterPosicao();
       setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
@@ -142,7 +145,7 @@ export default function PedidoScreen() {
   const listaVisivel = listaCurta ? listaFiltrada.filter((sv, i) => i < LISTA_CURTA || servicos.includes(sv.value)) : listaFiltrada;
   // escreveu o que precisa OU marcou algum servico da lista
   const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
-  const carroOk = !!(marca && modelo && /^\d{4}$/.test(ano.trim()));
+  const carroOk = !!(marca && modelo && /^\d{4}$/.test(ano.trim())) && anoValido(ano) && placaValida(placa);
   const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && senha.length >= 8 && termos;
   const sugestao = sugestaoEmail(email);
 
@@ -254,7 +257,7 @@ export default function PedidoScreen() {
   const handleCamera = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert(t('emergencia.cameraNegadaTitulo'), t('emergencia.cameraNegadaTexto'), [
+      perguntar(t('emergencia.cameraNegadaTitulo'), t('emergencia.cameraNegadaTexto'), [
         { text: t('common.cancelar'), style: 'cancel' },
         { text: t('emergencia.abrirAjustes'), onPress: () => Linking.openSettings() },
       ]);
@@ -316,7 +319,7 @@ export default function PedidoScreen() {
   const indice = passos.indexOf(etapa);
 
   return (
-    <KeyboardAwareScrollView bottomOffset={24} keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white" style={{ backgroundColor: '#fff' }} keyboardShouldPersistTaps="handled"
+    <RolagemTeclado bottomOffset={24} keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white" style={{ backgroundColor: '#fff' }} keyboardShouldPersistTaps="handled"
       contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: insets.bottom }}>
       <Text className="text-xl font-bold text-gray-900">{t('pedidoSemConta.titulo')}</Text>
       <Text className="text-gray-600 mt-1 mb-4">{t('pedidoSemConta.subtitulo')}</Text>
@@ -434,8 +437,10 @@ export default function PedidoScreen() {
           )}
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.ano')}</Text>
           <TextInput accessibilityLabel={t('veiculos.ano')} value={ano} onChangeText={(v) => setAno(v.replace(/\D/g, '').slice(0, 4))} keyboardType="number-pad" maxLength={4} className={`${CAMPO} mb-4`} />
+          {ano.length === 4 && !anoValido(ano) ? <Text className="text-sm text-red-700 -mt-2 mb-3" accessibilityRole="alert">{t('erros.ANO_INVALIDO')}</Text> : null}
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.plateLabel')}</Text>
-          <TextInput accessibilityLabel={t('pedidoSemConta.plateLabel')} value={placa} onChangeText={(v) => setPlaca(v.toUpperCase())} autoCapitalize="characters" maxLength={15} className={CAMPO} />
+          <TextInput accessibilityLabel={t('pedidoSemConta.plateLabel')} value={placa} onChangeText={(v) => setPlaca(v.toUpperCase())} autoCapitalize="characters" maxLength={10} className={`${CAMPO} mb-3`} />
+          {!placaValida(placa) ? <Text className="text-sm text-red-700 -mt-2 mb-3" accessibilityRole="alert">{t('erros.PLACA_INVALIDA')}</Text> : null}
           <Navegar voltar="detalhe" ok={carroOk} avancar={() => setEtapa('local')} />
         </View>
       )}
@@ -560,6 +565,6 @@ export default function PedidoScreen() {
           )}
         </View>
       )}
-    </KeyboardAwareScrollView>
+    </RolagemTeclado>
   );
 }

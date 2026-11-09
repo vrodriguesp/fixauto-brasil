@@ -473,3 +473,51 @@ export function notifPedidoExpiradoOficina(locale: string | null | undefined, nu
   const s = pedidoExpiradoOficina[resolveEmailLocale(locale)];
   return { titulo: fmt(s.titulo, { numero }), mensagem: s.mensagem };
 }
+
+// Cliente cancelou o proprio pedido (item 52, 09/11): aviso as oficinas que mandaram
+// orcamento, motivo na lingua da oficina, e linha no chat na lingua do cliente.
+export const MOTIVOS_CANCELAMENTO = ['resolvido', 'outra_oficina', 'desisti', 'outro'] as const;
+const motivoCancelamento: Record<EmailLocale, Record<string, string>> = {
+  pt: { resolvido: 'Já resolvi o problema', outra_oficina: 'Escolhi outra oficina', desisti: 'Desisti do reparo', outro: 'Outro motivo' },
+  'pt-PT': { resolvido: 'Já resolvi o problema', outra_oficina: 'Escolhi outra oficina', desisti: 'Desisti da reparação', outro: 'Outro motivo' },
+  en: { resolvido: 'The problem is already solved', outra_oficina: 'I chose another repair shop', desisti: 'I decided not to repair', outro: 'Other reason' },
+  et: { resolvido: 'Probleem on juba lahendatud', outra_oficina: 'Valisin teise töökoja', desisti: 'Loobusin remondist', outro: 'Muu põhjus' },
+  ru: { resolvido: 'Проблема уже решена', outra_oficina: 'Выбрал другой автосервис', desisti: 'Решил не ремонтировать', outro: 'Другая причина' },
+  it: { resolvido: 'Ho già risolto il problema', outra_oficina: "Ho scelto un'altra officina", desisti: 'Ho rinunciato alla riparazione', outro: 'Altro motivo' },
+};
+export const motivoTexto = (l: EmailLocale, motivo: string | null | undefined) => (motivo ? (motivoCancelamento[l][motivo] || motivo) : '');
+
+const pedidoCanceladoOficina: Record<EmailLocale, { titulo: string; mensagem: string; motivo: string }> = {
+  pt: { titulo: 'Pedido nº {numero} cancelado pelo cliente', mensagem: 'O cliente cancelou o pedido. O seu orçamento não precisa de mais nada.', motivo: ' Motivo: {motivo}.' },
+  'pt-PT': { titulo: 'Pedido n.º {numero} cancelado pelo cliente', mensagem: 'O cliente cancelou o pedido. O seu orçamento já não precisa de mais nada.', motivo: ' Motivo: {motivo}.' },
+  en: { titulo: 'Request no. {numero} cancelled by the customer', mensagem: 'The customer cancelled the request. Nothing else is needed on your quote.', motivo: ' Reason: {motivo}.' },
+  et: { titulo: 'Klient tühistas päringu nr {numero}', mensagem: 'Klient tühistas päringu. Sinu hinnapakkumisega pole rohkem vaja midagi teha.', motivo: ' Põhjus: {motivo}.' },
+  ru: { titulo: 'Клиент отменил заявку № {numero}', mensagem: 'Клиент отменил заявку. По вашей смете больше ничего делать не нужно.', motivo: ' Причина: {motivo}.' },
+  it: { titulo: 'Richiesta n. {numero} annullata dal cliente', mensagem: 'Il cliente ha annullato la richiesta. Per il tuo preventivo non serve altro.', motivo: ' Motivo: {motivo}.' },
+};
+export function notifPedidoCanceladoOficina(locale: string | null | undefined, numero: string, motivo?: string | null) {
+  const l = resolveEmailLocale(locale); const s = pedidoCanceladoOficina[l]; const m = motivoTexto(l, motivo);
+  return { titulo: fmt(s.titulo, { numero }), mensagem: s.mensagem + (m ? fmt(s.motivo, { motivo: m }) : '') };
+}
+
+const pedidoReabertoOficina: Record<EmailLocale, { titulo: string; mensagem: string }> = {
+  pt: { titulo: 'Pedido nº {numero} reaberto', mensagem: 'O cliente reabriu o pedido. O seu orçamento voltou a valer.' },
+  'pt-PT': { titulo: 'Pedido n.º {numero} reaberto', mensagem: 'O cliente reabriu o pedido. O seu orçamento voltou a ser válido.' },
+  en: { titulo: 'Request no. {numero} reopened', mensagem: 'The customer reopened the request. Your quote is valid again.' },
+  et: { titulo: 'Päring nr {numero} avati uuesti', mensagem: 'Klient avas päringu uuesti. Sinu hinnapakkumine kehtib jälle.' },
+  ru: { titulo: 'Заявка № {numero} снова открыта', mensagem: 'Клиент снова открыл заявку. Ваша смета снова действует.' },
+  it: { titulo: 'Richiesta n. {numero} riaperta', mensagem: 'Il cliente ha riaperto la richiesta. Il tuo preventivo è di nuovo valido.' },
+};
+export function notifPedidoReabertoOficina(locale: string | null | undefined, numero: string) {
+  const s = pedidoReabertoOficina[resolveEmailLocale(locale)];
+  return { titulo: fmt(s.titulo, { numero }), mensagem: s.mensagem };
+}
+
+const chatCancelado: Record<EmailLocale, string> = {
+  pt: '❌ Cancelei o pedido.', 'pt-PT': '❌ Cancelei o pedido.', en: '❌ I cancelled the request.',
+  et: '❌ Tühistasin päringu.', ru: '❌ Я отменил заявку.', it: '❌ Ho annullato la richiesta.',
+};
+export function chatPedidoCancelado(locale: string | null | undefined, motivo?: string | null) {
+  const l = resolveEmailLocale(locale); const m = motivoTexto(l, motivo);
+  return chatCancelado[l] + (m ? ` ${m}.` : '');
+}

@@ -28,7 +28,8 @@ const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
-const SITE = process.argv[3] || 'https://bipfix.com';
+if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
+const SITE = process.argv[3] || 'http://localhost:3100';
 const sb = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 const MSG = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/messages';
 const msgs = (l) => Object.assign({}, ...['', '.cliente', '.oficina', '.loja', '.auth', '.misc'].map((a) => JSON.parse(fs.readFileSync(`${MSG}/${l}${a}.json`, 'utf8'))));
@@ -96,7 +97,9 @@ try {
   const cartoes = pD.getByTestId('pedido-cartao');
   const textos = await cartoes.allInnerTexts();
   const pos = (placaModelo) => textos.findIndex((t) => t.includes(placaModelo));
-  ok('2 acidente primeiro', pos(`M${P(3)}`) === 0, textos.map((t) => t.slice(0, 40)).join(' | '));
+  // outros pedidos de acidente (de outros testes) podem estar na frente: o nosso fica no bloco de acidentes, antes de todo pedido comum
+  const primeiroComum = textos.findIndex((t) => !/AVARII|ACCIDENT/i.test(t));
+  ok('2 acidente primeiro', pos(`M${P(3)}`) >= 0 && textos.slice(0, primeiroComum).some((t) => t.includes(`M${P(3)}`)) && textos.slice(primeiroComum).every((t) => !/AVARII/i.test(t)), textos.map((t) => t.slice(0, 40)).join(' | '));
   ok('2 depois quem espera mais (5 h antes de 2 h antes de 10 min)', pos(`M${P(2)}`) < pos(`M${P(4)}`) && pos(`M${P(4)}`) < pos(`M${P(1)}`), textos.map((t) => t.slice(0, 30)).join(' | '));
   const cor = async (placa) => (await cartoes.nth(pos(`M${placa}`)).getByTestId('contador').getAttribute('class')) || '';
   ok('2 contador vermelho > 4 h, ambar 1-4 h, verde < 1 h', (await cor(P(2))).includes('bg-red-100') && (await cor(P(4))).includes('bg-amber-100') && (await cor(P(1))).includes('bg-emerald-100'));

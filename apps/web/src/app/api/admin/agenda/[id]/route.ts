@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/admin-auth';
 import { registrarAuditoria } from '@/lib/admin-auditoria';
 import { notifAgendamentoCancelado } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 
 // Cancelamento de agendamento pelo admin (visao central de todas as
@@ -65,7 +66,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         tipo: 'agendamento_cancelado_admin',
         titulo: n.titulo,
         mensagem: n.mensagem,
-        dados: { agenda_id: params.id, solicitacao_id: agenda.solicitacao_id },
+        dados: { agenda_id: params.id, solicitacao_id: agenda.solicitacao_id, textos: emTodasAsLinguas((l) => notifAgendamentoCancelado(l, agenda.titulo)) },
       });
     }
 

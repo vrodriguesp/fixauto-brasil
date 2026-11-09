@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
+import { fetchSemCache } from './fetch-sem-cache';
 
 /**
  * Le a sessao do cookie (mesmo padrao do middleware.ts e de
@@ -22,19 +23,14 @@ export async function getSessionUserId(req?: Request): Promise<string | null> {
   const authHeader = req?.headers.get('authorization');
   if (authHeader?.startsWith('Bearer ')) {
     const token = authHeader.slice('Bearer '.length);
-    const supabaseAuth = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabaseAuth = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, { global: { fetch: fetchSemCache } });
     const { data: { user } } = await supabaseAuth.auth.getUser(token);
     return user?.id ?? null;
   }
 
   const cookieStore = cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+      global: { fetch: fetchSemCache },
       // so le: rota de API nao renova o login (quem renova e o navegador/middleware)
       cookies: {
         getAll() {

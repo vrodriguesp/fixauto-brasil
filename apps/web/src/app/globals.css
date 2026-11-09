@@ -127,3 +127,14 @@ main:has(.altura-conversa) { min-height: 0; }
 }
 /* botao redondo do chat cobria o ultimo botao da pagina (ex.: enviar orcamento) - espaco no fim do conteudo (dono 08/11) */
 body.com-chat-suporte main#conteudo { padding-bottom: 5.5rem; }
+
+
+/* conversa aberta no celular (padrao unico das conversas, dono 09/11): ocupa a area visivel, sem
+   menu de baixo nem botao do chat (nada aparece e some ao digitar/enviar); com o teclado aberto a
+   caixa de escrever nao leva a margem de baixo do iPhone */
+@media (max-width: 1023.98px) {
+  body.em-conversa .barra-inferior,
+  body.em-conversa .chat-suporte-botao { display: none !important; }
+  body.em-conversa .conversa-composer { padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); }
+  body.em-conversa.teclado-aberto .conversa-composer { padding-bottom: 0.75rem; }
+}

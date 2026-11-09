@@ -22,9 +22,24 @@ const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
+if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
 const SO = (process.argv[3] || 'EE,IT,PT,BR').split(',');
-const SITE = 'https://bipfix.com';
+const SITE = 'http://localhost:3100';
 const sb = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
+// desde 03/11 cada um le o texto do outro traduzido (DeepL): vale o original ou a
+// traducao guardada no cache (mesmo hash de lib/deepl.ts)
+const ALVO = { pt: 'PT-BR', 'pt-PT': 'PT-PT', en: 'EN-GB', et: 'ET', it: 'IT', ru: 'RU' };
+async function traducaoDe(texto, lingua) {
+  const hash = crypto.createHash('sha256').update(`${ALVO[lingua]}
+${texto.trim()}`).digest('hex');
+  const { data } = await sb.from('traducoes').select('traducao').eq('hash', hash).maybeSingle();
+  return data?.traducao || null;
+}
+async function aparece(corpo, texto, lingua, pedaco = 15) {
+  if (corpo.includes(texto.slice(0, pedaco))) return true;
+  const tr = await traducaoDe(texto, lingua);
+  return !!tr && corpo.includes(tr.slice(0, pedaco));
+}
 const MSG = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/messages';
 const msgs = (l) => Object.assign({}, ...['', '.cliente', '.oficina', '.loja', '.auth', '.misc'].map((a) => JSON.parse(fs.readFileSync(`${MSG}/${l}${a}.json`, 'utf8'))));
 const T = {}; const tr = (l) => (T[l] ||= (() => { const m = msgs(l); return (k, v = {}) => String(k.split('.').reduce((o, p) => o?.[p], m) ?? `??${k}`).replace(/\{(\w+)\}/g, (_, x) => v[x] ?? ''); })());
@@ -148,10 +163,10 @@ async function conversar(pC, cli, pO, dono, solId, frasesC, frasesO, mk) {
   const pre = PREFIXO[cli.idioma];
   await pC.goto(`${SITE}${pre}/cliente/mensagens/${solId}?oficina=${dono.oficinaId}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(2500);
   await pO.goto(`${SITE}${PREFIXO[dono.idioma]}/oficina/mensagens/${solId}`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(2500);
-  const bc = pC.locator('input[type=text]').last(); await bc.fill(frasesC); await bc.press('Enter'); await pC.waitForTimeout(3500);
-  ok(`${mk} conversa: oficina (${dono.idioma}) recebe a mensagem do cliente (${cli.idioma}) na hora`, (await pO.innerText('body')).includes(frasesC.slice(0, 15)));
-  const bo = pO.locator('input[type=text]').last(); await bo.fill(frasesO); await bo.press('Enter'); await pO.waitForTimeout(3500);
-  ok(`${mk} conversa: cliente recebe a resposta da oficina na hora`, (await pC.innerText('body')).includes(frasesO.slice(0, 15)));
+  const bc = pC.locator('[data-campo-conversa], input[type=text]').last(); await bc.fill(frasesC); await bc.press('Enter'); await pC.waitForTimeout(3500);
+  ok(`${mk} conversa: oficina (${dono.idioma}) recebe a mensagem do cliente (${cli.idioma}) na hora`, await aparece(await pO.innerText('body'), frasesC, dono.idioma));
+  const bo = pO.locator('[data-campo-conversa], input[type=text]').last(); await bo.fill(frasesO); await bo.press('Enter'); await pO.waitForTimeout(3500);
+  ok(`${mk} conversa: cliente recebe a resposta da oficina na hora`, await aparece(await pC.innerText('body'), frasesO, cli.idioma));
   ok(`${mk} conversa: tela do cliente sem chave crua e dentro do celular`, semChaveCrua(await pC.innerText('body')) && await semTransbordo(pC));
 }
 
@@ -292,6 +307,7 @@ try {
     const ctxC = await celular({ latitude: c.m.lat, longitude: c.m.lon }, c.m.fuso);
     const pC = await entrar(ctxC, cli);
     const solId = await criarPedido(pC, cli, c.m, `Teste ${mk}: rumore freni / pidurid / тормоза`);
+    const descricaoPedido = (await sb.from('solicitacoes').select('descricao').eq('id', solId).single()).data?.descricao || `Teste ${mk}`;
     if (!solId) { await ctxC.close(); continue; }
     await new Promise((r) => setTimeout(r, 3000));
     // avisos de pedido novo: so as oficinas do lugar
@@ -306,7 +322,7 @@ try {
       const pO = await entrar(ctxO, d); pags[k] = pO;
       await pO.goto(`${SITE}${PREFIXO[d.idioma]}/oficina/solicitacoes`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(2500);
       const lista = await pO.innerText('body');
-      ok(`${mk} ${d.nomeOficina} (${d.idioma}) ve o pedido na lista`, lista.includes(`Teste ${mk}`));
+      ok(`${mk} ${d.nomeOficina} (${d.idioma}) ve o pedido na lista`, await aparece(lista, descricaoPedido, d.idioma, 12));
       ok(`${mk} lista da oficina (${d.idioma}) sem chave crua e dentro do celular`, semChaveCrua(lista) && await semTransbordo(pO));
       orcs[k] = await orcar(pO, d, solId, c.valores[i], `Piduriklotsid / pastiglie / колодки ${i + 1}`);
       ok(`${mk} ${d.nomeOficina} mandou orcamento pela tela`, !!orcs[k]);
@@ -316,7 +332,7 @@ try {
       const ctxF = await celular({ latitude: MERCADOS[d.idioma === 'pt' ? 'BR' : d.idioma === 'pt-PT' ? 'PT' : d.idioma === 'it' ? 'IT' : 'EE'].lat, longitude: 0 }, 'UTC');
       const pF = await entrar(ctxF, d);
       await pF.goto(`${SITE}${PREFIXO[d.idioma]}/oficina/solicitacoes`, { waitUntil: 'networkidle' }); await pF.waitForTimeout(2500);
-      ok(`${mk} oficina de outro pais (${d.nomeOficina}) NAO ve o pedido na lista`, !(await pF.innerText('body')).includes(`Teste ${mk}`));
+      ok(`${mk} oficina de outro pais (${d.nomeOficina}) NAO ve o pedido na lista`, !(await aparece(await pF.innerText('body'), descricaoPedido, d.idioma, 12)));
       await ctxF.close();
     }
     // cliente ve os orcamentos na moeda certa

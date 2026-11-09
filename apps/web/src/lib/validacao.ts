@@ -2,6 +2,8 @@
 // formato de tudo que vem do cliente antes de usar).
 
 // `codigo` e estavel e traduzido na tela (messages: erros.<codigo>)
+import { placaValida, anoDoCarroValido } from './validar-carro';
+
 export class ErroValidacao extends Error {
   constructor(mensagem: string, public codigo: string = 'DADOS_INVALIDOS') {
     super(mensagem);
@@ -58,4 +60,16 @@ export function validarImagens(arquivos: File[], max: number): File[] {
 
 export function extensaoDe(tipo: string): string {
   return ({ 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/heic': 'heic', 'image/heif': 'heif' } as Record<string, string>)[tipo] || 'bin';
+}
+
+// Placa e ano do carro (item 53): mesma regra da tela (lib/validar-carro)
+export function placaCarro(v: unknown, campo: string): string | null {
+  const p = texto(v, campo, 15);
+  if (p && !placaValida(p)) throw new ErroValidacao(`${campo} inválida`, 'PLACA_INVALIDA');
+  return p ? p.trim().toUpperCase() : null;
+}
+export function anoCarro(v: unknown, campo: string, obrigatorio = false): string | null {
+  const a = texto(v, campo, 30, obrigatorio);
+  if (a && !anoDoCarroValido(a)) throw new ErroValidacao(`${campo} inválido`, 'ANO_INVALIDO');
+  return a;
 }

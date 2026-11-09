@@ -13,6 +13,7 @@ import { diaNaOficina, fusoDoPais } from '@/lib/fuso';
 import { nomeFuncionario } from '@/lib/funcionario';
 import NotasInternas from '@/components/veiculo/NotasInternas';
 import ProcurarPedido from '@/components/oficina/ProcurarPedido';
+import { useDatasNaoConfirmadas } from '@/hooks/use-datas-nao-confirmadas';
 import { duracao, etapasOrdenadas, montarBarra, somaDias, temposDoCarro, type Box } from '@/components/oficina/quadro-util';
 
 // "Hoje": operacao da oficina numa tela (auditoria do painel 10/10, secao D).
@@ -44,6 +45,8 @@ export default function HojePage() {
   const pais = (oficina as any)?.pais ?? null;
   const fuso = fusoDoPais(pais);
   const { eventos, refresh } = useAgenda();
+  const tMud = useTranslations('agendaMudanca');
+  const naoConfirmadas = useDatasNaoConfirmadas(oficina?.id, eventos);
   const { solicitacoes } = useSolicitacoes({ nearby: true });
   const ehMecanico = funcionario?.cargo === 'mecanico';
   const ehDono = !!oficina && !ehMecanico;
@@ -336,6 +339,7 @@ export default function HojePage() {
                       {bl.id === 'atrasados' && <span className="shrink-0 rounded-full bg-red-100 px-2.5 py-1 text-sm font-semibold text-red-800">⚠ {item.motivo === 'naoChegou' ? t('naoChegouDesde', { dia: fmtDiaCurto.format(new Date(ev.data_inicio)) }) : t('prazoEra', { dia: fmtDiaCurto.format(new Date(ev.data_fim_prevista || ev.data_fim)) })}</span>}
                     </div>
                     <p className="mt-0.5 text-sm text-gray-600">{[ev.solicitacao?.cliente?.nome, servicoDe(ev), mec ? t('mecanicoNome', { nome: mec }) : null].filter(Boolean).join(' · ')}</p>
+                    {ev.solicitacao_id && ev.status === 'agendado' && naoConfirmadas.has(ev.solicitacao_id) && <p className="mt-1 inline-block rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-900" data-testid="data-nao-confirmada">⏳ {tMud('naoConfirmado')}</p>}
                     <p className="mt-1 text-sm text-gray-800">
                       {ev.status === 'em_andamento' ? `${etapaTexto(ult)}${desdeEtapa ? ` · ${t('ha', { tempo: duracao((agora - Date.parse(desdeEtapa)) / 60e3) })}` : ''}`
                         : ev.status === 'agendado' ? t('chegaAs', { dia: fmtDiaCurto.format(new Date(ev.data_inicio)), hora: fmtHora.format(new Date(ev.data_inicio)) })

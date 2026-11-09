@@ -1,7 +1,8 @@
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import RolagemTeclado from '../../components/RolagemTeclado';
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { FotosPedido, SeguroPedido } from '../../components/FotosESeguroPedido';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput, RefreshControl, Keyboard } from 'react-native';
+import { View, Text, ScrollView, Pressable, ActivityIndicator, TextInput, RefreshControl, Keyboard } from 'react-native';
+import { avisar } from '../../lib/confirmar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useFocusEffect, router, Stack } from 'expo-router';
@@ -11,7 +12,7 @@ import { formatCurrency, formatDate, currencyForCountry } from '@fixauto/shared'
 import { supabase } from '../../lib/supabase';
 import { apiFetch } from '../../lib/api';
 import { useAuth } from '../../lib/auth-context';
-import { mensagemErro } from '../../lib/erro';
+import { mensagemErro, ErroApi } from '../../lib/erro';
 import { turnoDisponivel, type Turno } from '../../lib/turnos';
 import { limparDescricao, ehAcidente } from '../../lib/texto';
 import EditarPedido from '../../components/EditarPedido';
@@ -78,13 +79,23 @@ export default function SolicitacaoDetailScreen() {
   const insets = useSafeAreaInsets(); // barra do sistema no Android ponta a ponta
   // Opcoes do cabecalho criadas uma vez: objeto novo a cada desenho fazia o
   // cabecalho e a tela se redesenharem sem fim no iPhone ("Maximum update depth").
-  const tituloTela = t('acompanhamento.titulo');
-  const opcoesTela = useMemo(() => ({ headerShown: true, title: tituloTela }), [tituloTela]);
   const locale = i18n.language;
   const { user } = useAuth();
   const { atualizar: atualizarAvisos } = useAvisos();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [solicitacao, setSolicitacao] = useState<Solicitacao | null>(null);
+  // titulo: o carro do pedido (antes "Acompanhamento do reparo" mesmo na fase de orcamentos) e
+  // sempre um voltar - aberto por link (e-mail/aviso) nao ha tela anterior: leva ao inicio (teste 09/11)
+  const carroTitulo = (solicitacao as any)?.veiculo?.fipe_marca ? `${(solicitacao as any).veiculo.fipe_marca} ${(solicitacao as any).veiculo.fipe_modelo || ''}`.trim() : '';
+  const tituloTela = carroTitulo || t('acompanhamento.tituloPedido');
+  const opcoesTela = useMemo(() => ({
+    headerShown: true, title: tituloTela,
+    ...(router.canGoBack() ? {} : { headerLeft: () => (
+      <Pressable onPress={() => router.replace('/(tabs)')} accessibilityRole="button" accessibilityLabel={t('common.voltar')} hitSlop={10} style={{ paddingHorizontal: 8 }}>
+        <Ionicons name="chevron-back" size={24} color="#111827" />
+      </Pressable>
+    ) }),
+  }), [tituloTela]); // eslint-disable-line react-hooks/exhaustive-deps
   const [etapas, setEtapas] = useState<ManutencaoEtapa[]>([]);
   const [avaliacao, setAvaliacao] = useState<Avaliacao | null>(null);
   const [notaSelecionada, setNotaSelecionada] = useState(0);
@@ -99,6 +110,13 @@ export default function SolicitacaoDetailScreen() {
   // comparar orcamentos (auditoria 10/10, C2): ordem escolhida e os "outros" recolhidos
   const [ordemOrc, setOrdemOrc] = useState<Ordem>('preco');
   const [verOutros, setVerOutros] = useState(false);
+  // cancelar o proprio pedido (dono 09/11): painel na tela, motivo opcional; depois, reabrir
+  const [painelCancelar, setPainelCancelar] = useState(false);
+  const [motivoCancelar, setMotivoCancelar] = useState<string | null>(null);
+  const [cancelando, setCancelando] = useState(false);
+  const [avisoCancelar, setAvisoCancelar] = useState('');
+  // conversa com a oficina escolhida ja encerrada (servico terminou, sem garantia)
+  const [conversaFechada, setConversaFechada] = useState(false);
 
   const carregar = useCallback(async () => {
     const { data } = await supabase
@@ -167,13 +185,13 @@ export default function SolicitacaoDetailScreen() {
         .select()
         .single();
       if (error) {
-        Alert.alert(t('common.erroGenerico'), mensagemErro(error));
+        avisar(t('common.erroGenerico'), mensagemErro(error));
       } else if (data) {
         setAvaliacao(data as Avaliacao);
         await apiFetch('/api/atualizar-avaliacao-oficina', { method: 'POST', body: JSON.stringify({ oficinaId }) }).catch(() => {});
       }
     } catch (e) {
-      Alert.alert(t('common.erroGenerico'), mensagemErro(e));
+      avisar(t('common.erroGenerico'), mensagemErro(e));
     } finally {
       setEnviandoAvaliacao(false);
     }
@@ -188,7 +206,7 @@ export default function SolicitacaoDetailScreen() {
       await apiFetch('/api/aceitar-orcamento', { method: 'POST', body: JSON.stringify({ orcamentoId: orcamento.id, slotId }) });
       await carregar();
     } catch (e) {
-      Alert.alert(t('common.erroGenerico'), mensagemErro(e));
+      avisar(t('common.erroGenerico'), mensagemErro(e));
     } finally {
       setProcessando(null);
     }
@@ -200,6 +218,40 @@ export default function SolicitacaoDetailScreen() {
     await supabase.from('orcamentos').update({ status: 'recusado' }).eq('id', orcamento.id);
     await carregar();
     setProcessando(null);
+  };
+
+  useEffect(() => {
+    const ac = (solicitacao?.orcamentos || []).find((o) => o.status === 'aceito');
+    if (!solicitacao || !ac) { setConversaFechada(false); return; }
+    supabase.rpc('conversa_aberta', { p_sol: solicitacao.id, p_of: ac.oficina_id }).then(({ data }) => setConversaFechada(data === false));
+  }, [solicitacao]);
+
+  const cancelarPedido = async () => {
+    if (!solicitacao || cancelando) return;
+    setCancelando(true); setAvisoCancelar('');
+    try {
+      await apiFetch(`/api/solicitacoes/${solicitacao.id}/cancelar`, { method: 'POST', body: JSON.stringify(motivoCancelar ? { motivo: motivoCancelar } : {}) });
+      setPainelCancelar(false); setMotivoCancelar(null);
+      setAvisoCancelar(t('cancelarPedido.feito'));
+      await carregar();
+    } catch (e) {
+      setAvisoCancelar(e instanceof ErroApi && e.codigo === 'CARRO_NA_OFICINA' ? t('cancelarPedido.carroNaOficina') : mensagemErro(e));
+    } finally {
+      setCancelando(false);
+    }
+  };
+  const reabrirPedido = async () => {
+    if (!solicitacao || cancelando) return;
+    setCancelando(true); setAvisoCancelar('');
+    try {
+      await apiFetch(`/api/solicitacoes/${solicitacao.id}/reabrir`, { method: 'POST', body: '{}' });
+      setAvisoCancelar(t('cancelarPedido.reaberto'));
+      await carregar();
+    } catch (e) {
+      setAvisoCancelar(mensagemErro(e));
+    } finally {
+      setCancelando(false);
+    }
   };
 
   if (loading || !solicitacao) {
@@ -248,9 +300,12 @@ export default function SolicitacaoDetailScreen() {
   const moedaPedido = currencyForCountry((ativos[0]?.oficina as any)?.pais);
   const situacao = situacaoDoPedido(solicitacao, { agenda, etapas: etapas as any, avaliado: solicitacao.status === 'concluida' ? !!avaliacao : undefined });
   const recarregar = async () => { setPuxando(true); await carregar(); setPuxando(false); };
+  // ate o carro chegar na oficina (depois, so pela conversa com ela)
+  const podeCancelar = ['aberta', 'em_orcamento', 'aceita', 'expirada'].includes(solicitacao.status as string)
+    && !agenda.some((a: any) => ['em_andamento', 'concluido'].includes(a.status));
 
   return (
-    <KeyboardAwareScrollView bottomOffset={24} keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled" className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: insets.bottom }} refreshControl={<RefreshControl refreshing={puxando} onRefresh={recarregar} />}>
+    <RolagemTeclado bottomOffset={24} keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled" className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: insets.bottom }} refreshControl={<RefreshControl refreshing={puxando} onRefresh={recarregar} />}>
       <Stack.Screen options={opcoesTela} />
       <View className="p-4">
         <Text className="text-xl font-bold text-gray-900">
@@ -290,8 +345,9 @@ export default function SolicitacaoDetailScreen() {
         {/* revisao proposta pela oficina depois do aceite: o cliente decide */}
         <RevisaoPendente solicitacaoId={solicitacao.id} recarregar={avisoChegou} aoDecidir={carregar} />
 
-        <Pressable onPress={() => router.push(`/conversa/${solicitacao.id}`)} className="bg-primary-50 rounded-lg py-3 items-center mb-6">
-          <Text className="text-primary-700 font-medium">{t('mensagens.titulo')}</Text>
+        <Pressable onPress={() => (aceito ? router.push({ pathname: '/conversa/[id]', params: { id: solicitacao.id, oficina: aceito.oficina_id } }) : router.push(`/conversa/${solicitacao.id}`))}
+          className={`rounded-lg py-3 items-center mb-6 ${aceito && conversaFechada ? 'bg-gray-100' : 'bg-primary-50'}`} testID="botao-conversa">
+          <Text className={aceito && conversaFechada ? 'text-gray-600 font-medium' : 'text-primary-700 font-medium'}>{aceito && conversaFechada ? t('mensagens.verConversaEncerrada') : t('mensagens.titulo')}</Text>
         </Pressable>
 
         <Text className="text-base font-semibold text-gray-900 mb-1">{t('orcamentos.titulo')}</Text>
@@ -348,6 +404,14 @@ export default function SolicitacaoDetailScreen() {
             {itens.length > 0 && <ItensOrcamento itens={itens} moeda={moeda} locale={locale} />}
             {(orc as any).garantia_dias != null && (
               <Text className="text-sm text-gray-700 mb-3">🛡️ {(orc as any).garantia_dias > 0 ? tDias(t, 'garantia.noOrcamento', (orc as any).garantia_dias) : t('garantia.sem')}</Text>
+            )}
+            {/* antes de escolher: perguntar a ESTA oficina sobre o orcamento dela (no site cada orcamento ja
+                tinha "escrever a oficina"; no app so havia o botao geral - teste 09/11) */}
+            {!escolhido && orc.status !== 'recusado' && (
+              <Pressable onPress={() => router.push({ pathname: '/conversa/[id]', params: { id: solicitacao.id, oficina: orc.oficina_id } })} accessibilityRole="button"
+                className="self-start mb-3 bg-white border border-primary-200 rounded-lg px-3 py-2" testID="conversar-oficina-orcamento">
+                <Text className="text-primary-700 text-sm font-medium">💬 {t('agendaMudanca.conversar')}</Text>
+              </Pressable>
             )}
             {/* data atual da agenda (pode ter mudado depois do aceite) + como remarcar/cancelar (076) */}
             {escolhido && (() => {
@@ -460,7 +524,7 @@ export default function SolicitacaoDetailScreen() {
                   placeholder={t('avaliacao.comentarioPlaceholder')}
                   multiline
                   numberOfLines={3}
-                  className="border border-gray-300 rounded-lg px-3 py-2 mb-3 text-sm"
+                  className="border border-gray-300 rounded-lg px-3 py-2 mb-3 text-[16px]"
                   style={{ textAlignVertical: 'top' }}
                 />
                 <Pressable
@@ -474,7 +538,41 @@ export default function SolicitacaoDetailScreen() {
             )}
           </View>
         )}
+
+        {/* cancelar o pedido (antes do carro chegar) ou reabrir o cancelado */}
+        {avisoCancelar ? <Text className="text-sm text-gray-800 bg-gray-100 rounded-lg px-3 py-2 mb-3" testID="aviso-cancelar">{avisoCancelar}</Text> : null}
+        {podeCancelar && !painelCancelar && (
+          <Pressable onPress={() => { setPainelCancelar(true); setAvisoCancelar(''); }} accessibilityRole="button" className="self-center py-3 mb-6" testID="cancelar-pedido">
+            <Text className="text-red-600 font-medium">{t('cancelarPedido.botao')}</Text>
+          </Pressable>
+        )}
+        {podeCancelar && painelCancelar && (
+          <View className="bg-white border border-red-200 rounded-xl p-4 mb-6" testID="painel-cancelar">
+            <Text className="text-base font-semibold text-gray-900">{t('cancelarPedido.titulo')}</Text>
+            <Text className="text-sm text-gray-600 mt-1 mb-3">{t('cancelarPedido.texto')}</Text>
+            <Text className="text-sm font-medium text-gray-700 mb-2">{t('cancelarPedido.motivoTitulo')}</Text>
+            <View className="flex-row flex-wrap gap-2 mb-4">
+              {['resolvido', 'outraOficina', 'desisti'].map((m) => (
+                <Pressable key={m} onPress={() => setMotivoCancelar((x) => (x === m ? null : m))} accessibilityRole="radio" accessibilityState={{ checked: motivoCancelar === m }}
+                  className={`px-3 py-2 rounded-full border ${motivoCancelar === m ? 'bg-red-50 border-red-400' : 'bg-white border-gray-300'}`}>
+                  <Text className={motivoCancelar === m ? 'text-red-800 text-sm font-medium' : 'text-gray-700 text-sm'}>{t(`cancelarPedido.motivo_${m}`)}</Text>
+                </Pressable>
+              ))}
+            </View>
+            <Pressable onPress={cancelarPedido} disabled={cancelando} accessibilityRole="button" className="bg-red-600 rounded-lg py-3 items-center mb-2 disabled:opacity-50" testID="confirmar-cancelar-pedido">
+              {cancelando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold">{t('cancelarPedido.confirmar')}</Text>}
+            </Pressable>
+            <Pressable onPress={() => { setPainelCancelar(false); setMotivoCancelar(null); }} accessibilityRole="button" className="py-2 items-center">
+              <Text className="text-gray-700 font-medium">{t('common.voltar')}</Text>
+            </Pressable>
+          </View>
+        )}
+        {solicitacao.status === 'cancelada' && (
+          <Pressable onPress={reabrirPedido} disabled={cancelando} accessibilityRole="button" className="bg-white border border-primary-300 rounded-lg py-3 items-center mb-6" testID="reabrir-pedido">
+            {cancelando ? <ActivityIndicator color="#2563eb" /> : <Text className="text-primary-700 font-semibold">{t('cancelarPedido.reabrir')}</Text>}
+          </Pressable>
+        )}
       </View>
-    </KeyboardAwareScrollView>
+    </RolagemTeclado>
   );
 }

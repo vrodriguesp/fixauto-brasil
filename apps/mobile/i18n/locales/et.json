@@ -205,7 +205,8 @@
     "descricaoPedido": "Kirjeldus",
     "naoEncontrado": "Seda päringut enam ei ole või see pole saadaval.",
     "fotosTitulo": "Fotod ({count})",
-    "fotoDoPedido": "Päringu foto"
+    "fotoDoPedido": "Päringu foto",
+    "tituloPedido": "Päring"
   },
   "avaliacao": {
     "titulo": "Hinda teenust",
@@ -237,7 +238,9 @@
     "audioIndisponivel": "Heli pole saadaval",
     "microfoneTitulo": "Mikrofon on välja lülitatud",
     "microfoneTexto": "Helisõnumi saatmiseks luba seadetes juurdepääs mikrofonile.",
-    "verOficinaCurto": "Töökoda"
+    "verOficinaCurto": "Töökoda",
+    "abertaAte": "Töö on tehtud. Vestlus on avatud kuni {data} küsimusteks töö kohta.",
+    "verConversaEncerrada": "Vaata vestlust (suletud)"
   },
   "veiculos": {
     "titulo": "Minu sõidukid",
@@ -259,7 +262,10 @@
       "mecanica": "Mehaanika",
       "eletrica": "Elektritööd",
       "pneu": "Rehvid",
-      "outro": "Muu"
+      "outro": "Muu",
+      "manutencao": "Hooldus",
+      "pintura": "Värvimine",
+      "vidros": "Klaasid"
     },
     "urgencias": {
       "baixa": "Madal",
@@ -462,7 +468,9 @@
     "CODIGO_EXPIRADO": "Kood on aegunud või päring on juba saadetud. Täida päring uuesti.",
     "CODIGO_TENTATIVAS": "Liiga palju valesid katseid. Vajuta uuesti „Saada päring“ – saadame uue koodi.",
     "EMAIL_EM_USO": "Selle e-postiga on juba konto. Mine tagasi ja logi sisse.",
-    "AVALIACAO_PENDENTE": "Enne uut päringut hinda palun eelmist teenust."
+    "AVALIACAO_PENDENTE": "Enne uut päringut hinda palun eelmist teenust.",
+    "PLACA_INVALIDA": "Vigane numbrimärk: kasuta ainult tähti, numbreid, tühikut või sidekriipsu (2–10 märki).",
+    "ANO_INVALIDO": "Vigane aasta: kasuta 4 numbrit, alates 1950 kuni järgmise aastani."
   },
   "notificacoes": {
     "titulo": "Teated",
@@ -656,8 +664,48 @@
     "dataExplicacao": "Kui jätad praeguse aja, jätkub teenus kokkulepitud viisil.",
     "feitoAceita": "Uus aeg kinnitatud. Saad e-kirja uuendatud kalendrisündmusega.",
     "feitoMantida": "Jätsid praeguse aja. Töökoda sai teavituse.",
-    "notaRemarcar": "Aja muutmiseks või tühistamiseks kirjuta töökojale vestluses või helista.",
+    "notaRemarcar": "Aja muutmiseks kirjuta töökojale vestluses või helista. Tühistamiseks kasuta lehe allosas nuppu „Tühista päring”.",
     "conversar": "Kirjuta töökojale",
-    "levarCarro": "Auto toomine"
+    "levarCarro": "Auto toomine",
+    "naoServeAviso": "Töökoda ei saa enam broneeritud ajal.",
+    "pedirOutraData": "Küsi teist aega (vestlus)",
+    "cancelarComOficina": "Tühista selle töökojaga",
+    "cancelarComOficinaTexto": "Sinu päring avatakse uuesti ja teised saadud hinnapakkumised kehtivad jälle.",
+    "confirmarCancelar": "Tühistada broneering töökojas {oficina}?",
+    "feitoCanceladoCliente": "Broneering tühistatud. Sinu päring on jälle avatud.",
+    "combinadoTitulo": "{oficina} muutis aega, nagu sinuga kokku lepiti",
+    "naoCombinei": "Ma ei leppinud seda kokku",
+    "naoCombineiFeito": "Aeg on tagasi endine. Töökoda sai teate; nüüd valid sina."
+  },
+  "oficinaPerfil": {
+    "titulo": "Töökoda",
+    "endereco": "Aadress",
+    "abrirMapa": "Ava kaardil",
+    "especialidades": "Teenused",
+    "sobre": "Töökojast",
+    "avaliacoes": "Hinnangud",
+    "mediaAvaliacoes": "{nota} / 5 · {n} hinnangut",
+    "semAvaliacoes": "Hinnanguid veel pole.",
+    "cliente": "Klient",
+    "fotos": "Fotod",
+    "naoEncontrada": "Seda töökoda ei leitud."
+  },
+  "pedidoCartao": {
+    "acidente": "Õnnetus",
+    "ativos": "Aktiivsed päringud ({n})"
+  },
+  "cancelarPedido": {
+    "botao": "Tühista päring",
+    "titulo": "Tühistada see päring?",
+    "texto": "Pakkumise saatnud töökojad saavad teate ja päring kaob nende nimekirjast. Saad selle hiljem uuesti avada.",
+    "motivoTitulo": "Miks tühistad? (valikuline)",
+    "motivo_resolvido": "Probleem on lahendatud",
+    "motivo_outraOficina": "Leidsin teise töökoja",
+    "motivo_desisti": "Loobusin remondist",
+    "confirmar": "Tühista päring",
+    "feito": "Päring tühistatud.",
+    "carroNaOficina": "Auto on juba töökojas: tühistamiseks kirjuta töökojale vestluses.",
+    "reabrir": "Ava päring uuesti",
+    "reaberto": "Päring on uuesti avatud: töökojad saavad jälle pakkumisi saata."
   }
 }

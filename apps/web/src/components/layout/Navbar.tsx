@@ -201,7 +201,7 @@ export default function Navbar() {
                   </>
                 ) : (
                   <>
-                    <NavLink href="/cliente/dashboard">{t('dashboard')}</NavLink>
+                    <NavLink href="/cliente/dashboard">{t('inicio')}</NavLink>
                     <NavLink href="/cliente/veiculos">{t('veiculos')}</NavLink>
                     <NavLink href="/cliente/nova-solicitacao">{t('novaSolicitacao')}</NavLink>
                     <NavLink href="/cliente/orcamentos">{t('orcamentos')}</NavLink>
@@ -318,7 +318,7 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <MobileNavLink href="/cliente/dashboard" onClick={() => setMenuOpen(false)}>{t('dashboard')}</MobileNavLink>
+                <MobileNavLink href="/cliente/dashboard" onClick={() => setMenuOpen(false)}>{t('inicio')}</MobileNavLink>
                 <MobileNavLink href="/cliente/veiculos" onClick={() => setMenuOpen(false)}>{t('veiculos')}</MobileNavLink>
                 <MobileNavLink href="/cliente/nova-solicitacao" onClick={() => setMenuOpen(false)}>{t('novaSolicitacao')}</MobileNavLink>
                 <MobileNavLink href="/cliente/orcamentos" onClick={() => setMenuOpen(false)}>{t('orcamentos')}</MobileNavLink>

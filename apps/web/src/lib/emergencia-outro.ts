@@ -3,6 +3,7 @@ import { sendAccidentNotificationEmail, sendAccidentWhatsApp } from './notificat
 import { EMAIL_I18N, resolveEmailLocale, fmt, escapeHtml } from './email-i18n';
 import { notifRegistroAcidente } from './notif-i18n';
 import { garantirContaCliente } from './conta-convite';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 /**
  * Avisa o outro motorista de um acidente (e-mail, WhatsApp, notificacao) e
@@ -63,7 +64,7 @@ export async function avisarOutroMotorista(emergencia: any, outro: any, idioma: 
       tipo: 'acidente',
       titulo: n.titulo,
       mensagem: n.mensagem,
-      dados: { emergencia_id: emergencia.id, solicitacao_id: emergencia.solicitacao_id || null },
+      dados: { emergencia_id: emergencia.id, solicitacao_id: emergencia.solicitacao_id || null, textos: emTodasAsLinguas((l) => notifRegistroAcidente(l, emergencia.nome, outro.placa)) },
     });
   }
 }

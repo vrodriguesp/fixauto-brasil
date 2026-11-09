@@ -5,6 +5,7 @@ import { getSessionUserId } from '@/lib/api-auth';
 import { sendPedidoPecaEntregueEmail } from '@/lib/notifications';
 import { notifPedidoPecaEntregue } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 
 // Marca um pedido de peca como entregue e lanca a comissao da plataforma.
@@ -105,7 +106,7 @@ export async function POST(req: NextRequest) {
         tipo: 'pedido_peca_entregue',
         titulo: nn.titulo,
         mensagem: nn.mensagem,
-        dados: { pedido_id: pedidoId },
+        dados: { pedido_id: pedidoId, textos: emTodasAsLinguas((l) => notifPedidoPecaEntregue(l, fornecedorNome, cotacao.peca_descricao)) },
       });
 
       if (compradoraProfile.email) {

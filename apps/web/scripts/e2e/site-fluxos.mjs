@@ -15,7 +15,8 @@ const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
-const SITE = 'https://bipfix.com';
+if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
+const SITE = 'http://localhost:3100';
 const sb = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 const MSG = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/messages';
 const msgs = (l) => Object.assign({}, ...['', '.cliente', '.oficina', '.loja', '.auth', '.misc'].map((a) => JSON.parse(fs.readFileSync(`${MSG}/${l}${a}.json`, 'utf8'))));
@@ -134,7 +135,8 @@ try {
 
   await pC2.goto(`${SITE}/it/it/cliente/nova-solicitacao`, { waitUntil: 'networkidle' });
   await pC2.waitForTimeout(1500);
-  await botao(pC2, IT('clienteNovaSolicitacao.registerVehicle')).click();
+  // sem carro o formulario ja abre sozinho (09/11); o botao so existe se estiver fechado
+  { const b = botao(pC2, IT('clienteNovaSolicitacao.registerVehicle')); if (await b.isVisible().catch(() => false)) await b.click(); }
   const marca = campo(pC2, IT('veiculoForm.labelMarca'));
   await marca.waitFor({ timeout: 15000 });
   await pC2.waitForFunction(() => document.querySelectorAll('select option').length > 5, null, { timeout: 15000 }).catch(() => {});

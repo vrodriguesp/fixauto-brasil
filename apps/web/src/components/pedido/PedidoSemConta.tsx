@@ -11,6 +11,7 @@ import { textoErroApi } from '@/lib/erro-api';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 import CampoTelefone from '@/components/forms/CampoTelefone';
+import { placaValida, anoDoCarroValido } from '@/lib/validar-carro';
 import {
   TIPOS_SERVICO, URGENCIAS,
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
@@ -190,7 +191,8 @@ export default function PedidoSemConta() {
   const listaVisivel = listaCurta ? listaFiltrada.filter((sv, i) => i < LISTA_CURTA || servicos.includes(sv.value)) : listaFiltrada;
   // escreveu o que precisa OU marcou algum servico da lista
   const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
-  const carroOk = !!(carro.marca && carro.modelo && carro.ano);
+  // placa e ano conferidos aqui, com o aviso ao lado do campo (item 53)
+  const carroOk = !!(carro.marca && carro.modelo && carro.ano) && placaValida(placa) && anoDoCarroValido(carro.ano);
   const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && senha.length >= 8 && termos;
   const sugestao = sugestaoEmail(email);
 
@@ -411,7 +413,9 @@ export default function PedidoSemConta() {
             <FipeAutocomplete limparForaDoCatalogo value={{ tipo: carro.tipo, marca: carro.marca, modelo: carro.modelo, ano: carro.ano }}
               onChange={(f) => setCarro({ tipo: f.tipo, marca: f.marca, modelo: f.modelo, ano: f.ano, codigo: f.codigo || '' })} />
             <label htmlFor="pedido-placa" className="block text-sm font-medium text-gray-700 mt-4 mb-1">{tn('plateLabel')}</label>
-            <input id="pedido-placa" className="input-field" maxLength={15} placeholder={exemploPlaca(locale)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} />
+            {!anoDoCarroValido(carro.ano) && <p role="alert" className="mt-1 text-sm text-red-700">{te('ANO_INVALIDO')}</p>}
+            <input id="pedido-placa" className="input-field" maxLength={10} aria-invalid={!placaValida(placa)} placeholder={exemploPlaca(locale)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} />
+            {!placaValida(placa) && <p role="alert" className="mt-1 text-sm text-red-700" data-testid="placa-invalida">{te('PLACA_INVALIDA')}</p>}
             <Navegar voltar="detalhe" ok={carroOk} avancar={() => setEtapa('local')} />
           </div>
         )}

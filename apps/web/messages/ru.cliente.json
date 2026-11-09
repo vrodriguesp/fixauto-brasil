@@ -31,7 +31,13 @@
     "accidentsInvolvedTitle": "ДТП с вашим участием",
     "accidentRegisteredBy": "ДТП зарегистрировал(а) {name}",
     "yourVehiclePlate": "Ваш автомобиль: номер {plate}",
-    "messages": "Сообщения"
+    "messages": "Сообщения",
+    "botaoAcidente": "Я только что попал в ДТП",
+    "botaoAcidenteDica": "Сообщите сейчас и получите сметы от автосервисов рядом",
+    "badgeAcidente": "ДТП",
+    "acidenteSemCarro": "ДТП",
+    "pedidoSemCarro": "Запрос сметы",
+    "aguardandoOrcamentos": "Ожидаем сметы от автосервисов"
   },
   "clienteVeiculos": {
     "loading": "Загрузка...",
@@ -102,7 +108,7 @@
     "errorUnexpectedSubmit": "Непредвиденная ошибка при создании заявки",
     "successTitle": "Заявка отправлена!",
     "successText": "Ближайшие автосервисы уведомлены. Скоро вы начнёте получать сметы.",
-    "redirecting": "Переходим в личный кабинет...",
+    "redirecting": "Переходим на главную...",
     "pageTitle": "Новая заявка",
     "pageSubtitle": "Опишите проблему с автомобилем, чтобы получить сметы",
     "step1Title": "Выберите автомобиль",
@@ -154,7 +160,9 @@
     "createRequest": "Создать заявку",
     "quotesReceivedCount": "{count, plural, one {Получена # смета} few {Получено # сметы} many {Получено # смет} other {Получено # сметы}}",
     "deadlineDays": "Срок ремонта: {days, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
-    "itemsCount": "{count, plural, one {# позиция} few {# позиции} many {# позиций} other {# позиции}}"
+    "itemsCount": "{count, plural, one {# позиция} few {# позиции} many {# позиций} other {# позиции}}",
+    "pedidoSemCarro": "Запрос сметы",
+    "aguardandoOrcamentos": "Ожидаем сметы от автосервисов"
   },
   "clienteOrcamentoDetalhe": {
     "execDaysApprox": "{days, plural, one {~# рабочий день} few {~# рабочих дня} many {~# рабочих дней} other {~# рабочих дня}}",
@@ -169,7 +177,7 @@
     "checkin": "Приёмка:",
     "deliveryForecast": "Ожидаемая выдача:",
     "bringVehicleNote": "Привезите автомобиль в назначенное время. Если что-то изменится, автосервис свяжется с вами.",
-    "backToDashboard": "В личный кабинет",
+    "backToDashboard": "На главную",
     "back": "Назад",
     "messageToWorkshop": "Написать автосервису",
     "confirmCancelRequest": "Вы уверены, что хотите отменить эту заявку? Автосервисы больше не смогут отправлять сметы.",
@@ -241,7 +249,26 @@
     "escolhido": "Выбранная смета",
     "verOficina": "Об автосервисе (отзывы, адрес)",
     "pedidoCanceladoTitulo": "Заявка отменена",
-    "pedidoCanceladoTexto": "Эта заявка отменена. Сметы остаются здесь только для просмотра."
+    "pedidoCanceladoTexto": "Эта заявка отменена. Сметы остаются здесь только для просмотра.",
+    "verAcidente": "Открыть ДТП (другой водитель и сообщения)",
+    "cancelamento": {
+      "botao": "Отменить заявку",
+      "titulo": "Отменить эту заявку?",
+      "texto": "Автосервисы, приславшие смету, получат уведомление, и заявка исчезнет из их списка. Позже её можно открыть снова.",
+      "motivoOpcional": "Почему? (необязательно)",
+      "motivos": {
+        "resolvido": "Уже решил",
+        "outra_oficina": "Нашёл другой сервис",
+        "desisti": "Не буду ремонтировать",
+        "outro": "Другая причина"
+      },
+      "confirmar": "Да, отменить заявку",
+      "cancelando": "Отменяем...",
+      "voltar": "Нет, назад",
+      "reabrir": "Открыть заявку снова",
+      "reabrindo": "Открываем..."
+    },
+    "novaNoBipfix": "Новый в BipFix"
   },
   "clienteMensagens": {
     "workshopFallback": "Автосервис",
@@ -288,7 +315,7 @@
     "progressConcluido": "Готов к выдаче",
     "progressEntregue": "Выдан",
     "noAppointmentFound": "По этой заявке запись не найдена.",
-    "backToDashboard": "В личный кабинет",
+    "backToDashboard": "На главную",
     "pageTitle": "Отслеживание ремонта",
     "progressTitle": "Ход работ",
     "checkin": "Приёмка",
@@ -311,7 +338,7 @@
     "loading": "Загрузка...",
     "rescheduleConfirmedTitle": "Перенос подтверждён!",
     "newTimeRegistered": "Новое время записи успешно сохранено.",
-    "backToPanel": "В личный кабинет",
+    "backToPanel": "На главную",
     "back": "Назад",
     "pageTitle": "Перенести запись",
     "pageSubtitle": "Выберите новую дату записи.",
@@ -339,8 +366,8 @@
   },
   "editarPedido": {
     "acidente": "ДТП",
-    "completarCarro": "Укажите данные машины",
-    "completarCarroDica": "Марка, модель и номер помогут автосервису составить смету. Нажмите, чтобы указать.",
+    "completarCarro": "Добавьте данные ВАШЕГО автомобиля",
+    "completarCarroDica": "Марка, модель и номер автомобиля, которым управляли ВЫ, помогут автосервису подготовить смету. Нажмите, чтобы добавить.",
     "editar": "Изменить заявку",
     "marca": "Марка",
     "modelo": "Модель",

@@ -205,7 +205,8 @@
     "descricaoPedido": "Description",
     "naoEncontrado": "This request no longer exists or is not available.",
     "fotosTitulo": "Photos ({count})",
-    "fotoDoPedido": "Request photo"
+    "fotoDoPedido": "Request photo",
+    "tituloPedido": "Request"
   },
   "avaliacao": {
     "titulo": "Rate the service",
@@ -237,7 +238,9 @@
     "audioIndisponivel": "Audio unavailable",
     "microfoneTitulo": "Microphone off",
     "microfoneTexto": "To send audio, allow microphone access in Settings.",
-    "verOficinaCurto": "Shop"
+    "verOficinaCurto": "Shop",
+    "abertaAte": "Service completed. The chat stays open until {data} for questions about the job.",
+    "verConversaEncerrada": "View chat (closed)"
   },
   "veiculos": {
     "titulo": "My vehicles",
@@ -259,7 +262,10 @@
       "mecanica": "Mechanical",
       "eletrica": "Electrical",
       "pneu": "Tyres",
-      "outro": "Other"
+      "outro": "Other",
+      "manutencao": "Maintenance",
+      "pintura": "Painting",
+      "vidros": "Glass"
     },
     "urgencias": {
       "baixa": "Low",
@@ -462,7 +468,9 @@
     "CODIGO_EXPIRADO": "The code has expired or the request was already sent. Please fill in the request again.",
     "CODIGO_TENTATIVAS": "Too many wrong attempts. Tap “Send request” again and we will send a new code.",
     "EMAIL_EM_USO": "There is already an account with this e-mail. Go back and log in.",
-    "AVALIACAO_PENDENTE": "Please rate your previous service before a new request."
+    "AVALIACAO_PENDENTE": "Please rate your previous service before a new request.",
+    "PLACA_INVALIDA": "Invalid number plate: use only letters, numbers, spaces or hyphens (2 to 10 characters).",
+    "ANO_INVALIDO": "Invalid year: use 4 digits, from 1950 to next year."
   },
   "notificacoes": {
     "titulo": "Notifications",
@@ -656,8 +664,48 @@
     "dataExplicacao": "If you keep the current date, the service goes ahead as agreed.",
     "feitoAceita": "New date confirmed. You will get an e-mail with the updated calendar event.",
     "feitoMantida": "You kept the current date. The repair shop has been notified.",
-    "notaRemarcar": "To reschedule or cancel, write to the repair shop in the chat or call them.",
+    "notaRemarcar": "To change the date, write to the repair shop in the chat or call them. To cancel, use “Cancel request” at the bottom of this page.",
     "conversar": "Message the repair shop",
-    "levarCarro": "Drop-off"
+    "levarCarro": "Drop-off",
+    "naoServeAviso": "The repair shop can no longer do the booked date.",
+    "pedirOutraData": "Ask for another date (chat)",
+    "cancelarComOficina": "Cancel with this repair shop",
+    "cancelarComOficinaTexto": "Your request opens again and the other quotes you received become valid again.",
+    "confirmarCancelar": "Cancel the booking with {oficina}?",
+    "feitoCanceladoCliente": "Booking cancelled. Your request is open again.",
+    "combinadoTitulo": "{oficina} changed the date, as agreed with you",
+    "naoCombinei": "I didn’t agree to this",
+    "naoCombineiFeito": "The date is back to the previous one. The shop has been notified; now it’s your choice."
+  },
+  "oficinaPerfil": {
+    "titulo": "Repair shop",
+    "endereco": "Address",
+    "abrirMapa": "Open in maps",
+    "especialidades": "Services",
+    "sobre": "About the shop",
+    "avaliacoes": "Reviews",
+    "mediaAvaliacoes": "{nota} out of 5 · {n} reviews",
+    "semAvaliacoes": "No reviews yet.",
+    "cliente": "Customer",
+    "fotos": "Photos",
+    "naoEncontrada": "We could not find this repair shop."
+  },
+  "pedidoCartao": {
+    "acidente": "Accident",
+    "ativos": "Active requests ({n})"
+  },
+  "cancelarPedido": {
+    "botao": "Cancel request",
+    "titulo": "Cancel this request?",
+    "texto": "Shops that sent a quote are notified and the request leaves their list. You can reopen it later.",
+    "motivoTitulo": "Why are you cancelling? (optional)",
+    "motivo_resolvido": "Already fixed",
+    "motivo_outraOficina": "Found another shop",
+    "motivo_desisti": "Decided not to repair",
+    "confirmar": "Cancel request",
+    "feito": "Request cancelled.",
+    "carroNaOficina": "The car is already at the shop: to cancel, talk to the shop in the chat.",
+    "reabrir": "Reopen request",
+    "reaberto": "Request reopened: shops can send quotes again."
   }
 }

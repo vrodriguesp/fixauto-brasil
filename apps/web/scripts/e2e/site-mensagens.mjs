@@ -11,7 +11,8 @@ const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
-const SITE = 'https://bipfix.com';
+if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
+const SITE = 'http://localhost:3100';
 const sb = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 let falhas = 0;
 const ok = (n, c, x = '') => { if (!c) falhas++; console.log(`${c ? 'ok  ' : 'FALHA'} ${n}${x ? ' - ' + String(x).slice(0, 160) : ''}`); };
@@ -43,7 +44,7 @@ try {
   await pO.goto(`${SITE}/ee/et/oficina/mensagens/${solId}`, { waitUntil: 'networkidle' }); await pO.waitForTimeout(2500);
   const t0 = await pO.innerText('body');
   ok('nome do cliente nao fica em "carregando"', !/Laadimine|Carregando|Loading/i.test(t0.split('\n').slice(0, 12).join(' ')));
-  const box = pO.locator('input[type=text]').last();
+  const box = pO.locator('[data-campo-conversa], input[type=text]').last();
   ok('campo com 16px (sem zoom do iPhone)', (await box.evaluate((e) => getComputedStyle(e).fontSize)) === '16px');
   await box.fill('Tere, kas pidurid kriuksuvad?');
   await box.press('Enter'); await pO.waitForTimeout(3000);
@@ -54,8 +55,8 @@ try {
   const ctxO2 = await celular(); const pO2 = await entrar(ctxO2, ofi2.email, ofi2.senha, 'pt-br');
   await pO2.goto(`${SITE}/br/pt/oficina/mensagens/${solId}`, { waitUntil: 'networkidle' }); await pO2.waitForTimeout(2500);
   ok('oficina B nao ve a conversa da A (tela)', !(await pO2.innerText('body')).includes('kriuksuvad'));
-  await pO2.locator('input[type=text]').last().fill('Ola, posso ver o carro amanha.');
-  await pO2.locator('input[type=text]').last().press('Enter'); await pO2.waitForTimeout(3000);
+  await pO2.locator('[data-campo-conversa], input[type=text]').last().fill('Ola, posso ver o carro amanha.');
+  await pO2.locator('[data-campo-conversa], input[type=text]').last().press('Enter'); await pO2.waitForTimeout(3000);
   const anon = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } });
   await anon.auth.signInWithPassword({ email: ofi2.email, password: ofi2.senha });
   const { data: vistoB } = await anon.from('mensagens').select('texto, oficina_id').eq('solicitacao_id', solId);
@@ -74,7 +75,7 @@ try {
   await pC.getByRole('button', { name: `MSG SHOP ${tag}` }).click(); await pC.waitForTimeout(2500);
   const conversaA = await pC.innerText('body');
   ok('conversa A mostra so a oficina A', conversaA.includes('kriuksuvad') && !conversaA.includes('posso ver o carro'));
-  const boxC = pC.locator('input[type=text]').last();
+  const boxC = pC.locator('[data-campo-conversa], input[type=text]').last();
   await boxC.fill('Si, un po. Perfetto, arrivo alle 9.');
   await boxC.press('Enter'); await pC.waitForTimeout(4000);
   const { data: m2 } = await sb.from('mensagens').select('oficina_id').eq('solicitacao_id', solId).eq('remetente_id', cli.id);

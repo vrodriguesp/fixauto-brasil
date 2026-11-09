@@ -213,7 +213,7 @@ function CadastroPage() {
     // Conta, perfil e oficina/loja sao criados no servidor; o login so
     // funciona depois que a pessoa confirma o e-mail pelo link enviado.
     const local = parceiro ? await resolveLocation() : null;
-    if (parceiro && !local) { setError(t('erroEnderecoNaoEncontrado')); return; }
+    if (parceiro && !local) { setLoading(false); setError(t('erroEnderecoNaoEncontrado')); return; }
     const res = await fetch('/api/cadastro', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

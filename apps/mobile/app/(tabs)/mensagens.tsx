@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { View, Text, FlatList, Pressable, RefreshControl } from 'react-native';
+import { View, Text, FlatList, Pressable, RefreshControl, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect, router } from 'expo-router';
 import { useAuth } from '../../lib/auth-context';
@@ -137,7 +137,7 @@ export default function MensagensScreen() {
   return (
     <View className="flex-1 bg-gray-50 px-4" style={{ paddingTop: insets.top + 8 }}>
       <Text className="text-2xl font-bold text-gray-900 mb-4">{t('mensagens.titulo')}</Text>
-      <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
+      <FlatList keyboardDismissMode={Platform.OS === 'web' ? 'none' : 'on-drag'} keyboardShouldPersistTaps="handled"
         data={conversas}
         keyExtractor={(item) => `${item.solicitacaoId}-${item.oficinaId}-${item.pagador ? 'p' : 'c'}`}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={carregar} />}

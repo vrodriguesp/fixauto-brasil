@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/admin-auth';
 import { registrarAuditoria } from '@/lib/admin-auditoria';
 import { notifCorrecaoSuporte } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 
 export const dynamic = 'force-dynamic';
@@ -64,7 +65,7 @@ async function avisar(solicitacaoId: string | null, oficinaId: string | null, en
       tipo: 'status_atualizado_admin',
       titulo: n.titulo,
       mensagem: n.mensagem,
-      dados: { solicitacao_id: solicitacaoId, entidade },
+      dados: { solicitacao_id: solicitacaoId, entidade, textos: emTodasAsLinguas((l) => notifCorrecaoSuporte(l, entidade)) },
     });
   }
 }

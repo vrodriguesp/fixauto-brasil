@@ -3,6 +3,7 @@ import { tipoCompativel } from '@fixauto/shared';
 import { requireAdmin } from '@/lib/admin-auth';
 import { notifClienteEsperandoOrcamento } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 
 // Ferramenta de engajamento do admin: cobra oficinas proximas de uma
@@ -59,7 +60,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
         tipo: 'cobranca_admin_solicitacao',
         titulo: n.titulo,
         mensagem: n.mensagem,
-        dados: { solicitacao_id: solicitacao.id },
+        dados: { solicitacao_id: solicitacao.id, textos: emTodasAsLinguas((l) => notifClienteEsperandoOrcamento(l, solicitacao.descricao.slice(0, 60))) },
       });
       notificadas++;
     }

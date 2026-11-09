@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Stack, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
+import { naLinguaDoApp } from '../lib/aviso-lingua';
 import { useAuth } from '../lib/auth-context';
 import { useAvisos, type Aviso } from '../lib/avisos';
 import { TextoTraduzido } from '../lib/traducao';
@@ -36,7 +37,7 @@ export default function NotificacoesScreen() {
     if (!user) return;
     const { data } = await supabase.from('notificacoes').select('*').eq('profile_id', user.id)
       .order('created_at', { ascending: false }).limit(100);
-    setLista((data as Aviso[]) || []);
+    setLista(((data as Aviso[]) || []).map(naLinguaDoApp));
     setCarregando(false);
   }, [user]);
 

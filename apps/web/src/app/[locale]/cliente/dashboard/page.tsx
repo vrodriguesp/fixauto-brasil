@@ -68,6 +68,18 @@ export default function ClienteDashboard() {
         </Link>
       </div>
 
+      {/* Acidente sempre a 1 toque (dono 09/11): igual ao app; logado, usa os dados da conta */}
+      <Link href="/emergencia" className="mb-6 flex items-center gap-4 rounded-2xl bg-red-600 p-4 text-white shadow-md hover:bg-red-700" data-testid="botao-acidente">
+        <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-white/20" aria-hidden="true">
+          <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-lg font-bold">{t('botaoAcidente')}</span>
+          <span className="block text-sm text-red-50">{t('botaoAcidenteDica')}</span>
+        </span>
+        <span aria-hidden="true" className="text-2xl">›</span>
+      </Link>
+
       {/* Notification banner - above main content when there are unread notifications */}
       {topNotificacoes.length > 0 && (
         <div className="mb-8">
@@ -122,7 +134,8 @@ export default function ClienteDashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-        <Link href="/cliente/orcamentos" className="card flex flex-col items-start gap-2 min-[480px]:flex-row min-[480px]:items-center min-[480px]:gap-4 hover:shadow-md transition-shadow">
+        {/* "N pedidos abertos" leva aos pedidos (antes a pagina de orcamentos, vazia sem orcamento - dono 09/11) */}
+        <Link href={abertas.length === 1 ? `/cliente/orcamentos/${abertas[0].id}` : abertas.length > 1 ? '/cliente/dashboard#pedidos-abertos' : '/cliente/orcamentos'} data-testid="card-pedidos-abertos" className="card flex flex-col items-start gap-2 min-[480px]:flex-row min-[480px]:items-center min-[480px]:gap-4 hover:shadow-md transition-shadow">
           <div className="w-12 h-12 bg-blue-100 rounded-xl flex flex-shrink-0 items-center justify-center">
             <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -262,8 +275,8 @@ export default function ClienteDashboard() {
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Open requests - only abertas/em_orcamento */}
-        <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">{t('openRequestsTitle')}</h2>
+        <div className="lg:col-span-2 space-y-4 scroll-mt-20" id="pedidos-abertos">
+          <h2 className="text-lg font-semibold text-gray-900">{t('openRequestsTitle')}{listaAbertas.length > 1 ? ` (${listaAbertas.length})` : ''}</h2>
           {listaAbertas.length === 0 ? (
             <div className="card text-center py-12">
               <p className="text-gray-500 mb-4">
@@ -276,16 +289,23 @@ export default function ClienteDashboard() {
               </Link>
             </div>
           ) : (
-            listaAbertas.map((sol) => (
-              <Link key={sol.id} href={`/cliente/orcamentos/${sol.id}`} className="card block hover:shadow-md transition-shadow">
+            listaAbertas.map((sol) => {
+              // pedido de acidente com borda e selo vermelhos: distingue do pedido normal (dono 09/11)
+              const acidente = !!(sol as { emergencia_id?: string | null }).emergencia_id || sol.tipo === 'colisao';
+              const nOrc = sol.orcamentos?.length || 0;
+              return (
+              <Link key={sol.id} href={`/cliente/orcamentos/${sol.id}`} data-testid={acidente ? 'pedido-acidente' : 'pedido-aberto'}
+                className={`card block hover:shadow-md transition-shadow ${acidente ? 'border-2 border-red-400' : ''}`}>
                 <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      {acidente && <span className="rounded-full bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">{t('badgeAcidente')}</span>}
                       <h3 className="font-semibold text-gray-900">
-                        {sol.veiculo?.fipe_marca} {sol.veiculo?.fipe_modelo}
+                        {sol.veiculo?.fipe_marca ? `${sol.veiculo.fipe_marca} ${sol.veiculo.fipe_modelo || ''}` : t(acidente ? 'acidenteSemCarro' : 'pedidoSemCarro')}
                       </h3>
                       <StatusBadge status={sol.status} />
                     </div>
+                    {nOrc === 0 && sol.status !== 'expirada' && <p className="text-sm font-medium text-amber-700 mb-1">{t('aguardandoOrcamentos')}</p>}
                     <p className="text-sm text-gray-600 line-clamp-2">{cleanDescricao(sol.descricao)}</p>
                     <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
                       <span>{sol.endereco}</span>
@@ -307,7 +327,8 @@ export default function ClienteDashboard() {
                   )}
                 </div>
               </Link>
-            ))
+              );
+            })
           )}
         </div>
 
@@ -327,7 +348,8 @@ export default function ClienteDashboard() {
                     {v.apelido || `${v.fipe_marca} ${v.fipe_modelo}`}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {v.fipe_marca} {v.fipe_modelo} {v.fipe_ano} {v.placa && `- ${v.placa}`}
+                    {/* marca/modelo ja estao no titulo (salvo com apelido): aqui so ano e placa */}
+                    {[v.apelido ? `${v.fipe_marca} ${v.fipe_modelo}` : null, v.fipe_ano && v.fipe_ano !== '-' ? v.fipe_ano : null, v.placa].filter(Boolean).join(' · ')}
                   </p>
                 </div>
               ))}

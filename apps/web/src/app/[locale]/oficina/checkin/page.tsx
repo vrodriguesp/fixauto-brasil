@@ -16,6 +16,7 @@ import { notifCheckinManual } from '@/lib/notif-i18n';
 import CampoTelefone from '@/components/forms/CampoTelefone';
 import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 export default function ManualCheckinPage() {
   const t = useTranslations('oficinaCheckin');
@@ -51,24 +52,27 @@ export default function ManualCheckinPage() {
   const hojeLocal = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; })();
   const fazerCheckin = jaAqui && dataCheckin === hojeLocal;
 
+  // data de chegada vazia/invalida (no iPhone da para apagar a data): previsao em branco - antes
+  // "Invalid Date" derrubava a pagina inteira (teste 09/11)
   const dataEntrega = (() => {
     const d = new Date(dataCheckin + 'T12:00:00');
-    d.setDate(d.getDate() + prazoDias);
-    return d.toISOString().split('T')[0];
+    if (!dataCheckin || Number.isNaN(d.getTime())) return '';
+    d.setDate(d.getDate() + (Number(prazoDias) || 0));
+    return Number.isNaN(d.getTime()) ? '' : d.toISOString().split('T')[0];
   })();
 
   // campo preenchido: tira o destaque vermelho
   useEffect(() => {
-    const cheio: Record<string, string> = { 'c7917-1': clienteNome, 'c7917-4': veiculoMarca, 'c7917-5': veiculoModelo, 'walkin-tipo': tipoServico };
+    const cheio: Record<string, string> = { 'c7917-1': clienteNome, 'c7917-4': veiculoMarca, 'c7917-5': veiculoModelo, 'walkin-tipo': tipoServico, 'c7917-11': dataEntrega };
     if (faltando && cheio[faltando]) setFaltando('');
-  }, [faltando, clienteNome, veiculoMarca, veiculoModelo, tipoServico]);
+  }, [faltando, clienteNome, veiculoMarca, veiculoModelo, tipoServico, dataEntrega]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clienteNome || !veiculoMarca || !veiculoModelo || !tipoServico) {
+    if (!clienteNome || !veiculoMarca || !veiculoModelo || !tipoServico || !dataEntrega) {
       setError(t('erroCamposObrigatorios'));
       // leva ao 1o campo que falta (antes so o aviso no alto, sem dizer qual - dono 08/11)
-      const falta = !clienteNome ? 'c7917-1' : !veiculoMarca ? 'c7917-4' : !veiculoModelo ? 'c7917-5' : 'walkin-tipo';
+      const falta = !clienteNome ? 'c7917-1' : !veiculoMarca ? 'c7917-4' : !veiculoModelo ? 'c7917-5' : !tipoServico ? 'walkin-tipo' : 'c7917-11';
       const el = document.getElementById(falta);
       // depois do aviso aparecer no alto (ele empurra a tela), senao a rolagem se perde
       setTimeout(() => { el?.scrollIntoView({ block: 'center' }); if (el instanceof HTMLInputElement) el.focus({ preventScroll: true }); }, 80);
@@ -117,7 +121,7 @@ export default function ManualCheckinPage() {
           tipo: 'checkin_manual',
           titulo: n.titulo,
           mensagem: n.mensagem,
-          dados: { oficina_id: oficina?.id },
+          dados: { oficina_id: oficina?.id, textos: emTodasAsLinguas((l) => notifCheckinManual(l, { oficina: oficina?.nome_fantasia || '', marca: veiculoMarca, modelo: veiculoModelo })) },
         });
       }
     }

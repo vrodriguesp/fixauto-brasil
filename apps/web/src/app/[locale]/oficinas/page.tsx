@@ -10,6 +10,7 @@ import { capitalizarCidade, hreflangAlternates, slugCidade, imagemCompartilhamen
 import { OG_LOCALE, localePrefix as prefixoDoIdioma, type Locale } from '@/i18n/routing';
 import { countryNameForCode } from '@/lib/currency';
 import { perfisDeTeste } from '@/lib/oficinas-teste';
+import { fetchSemCache } from '@/lib/fetch-sem-cache';
 
 // Sem isso o build pre-renderiza a pagina como estatica (o
 // generateStaticParams do layout [locale] pesa mais que o uso de
@@ -44,10 +45,7 @@ function primeiro(valor: string | string[] | undefined): string {
 // e a cidade e texto livre no cadastro ("Tallinn", "tallinn ", "Tállinn"),
 // o que nao da pra comparar direito num .eq() do Postgres.
 const buscarOficinasAtivas = cache(async (): Promise<OficinaResumo[]> => {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, { global: { fetch: fetchSemCache } });
 
   const [{ data, error }, teste] = await Promise.all([
     supabase

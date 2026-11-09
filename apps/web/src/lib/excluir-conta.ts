@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { supabaseAdmin } from './supabase-admin';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 // aviso as oficinas que tinham orcamento num pedido cancelado pela exclusao da conta
 const AVISO_CANCELADO: Record<string, { titulo: string; mensagem: string }> = {
@@ -82,7 +83,8 @@ export async function excluirOuAnonimizarConta(userId: string): Promise<{ modo?:
     for (const o of (orcsAbertos || []) as any[]) if (o.oficina?.profile_id) porPerfil.set(o.oficina.profile_id, o.oficina.profile?.idioma || null);
     if (porPerfil.size) {
       await supabaseAdmin.from('notificacoes').insert(Array.from(porPerfil).map(([p, idioma]) => ({
-        profile_id: p, tipo: 'pedido_cancelado', ...AVISO_CANCELADO[(idioma && AVISO_CANCELADO[idioma]) ? idioma : 'en'], dados: {},
+        profile_id: p, tipo: 'pedido_cancelado', ...AVISO_CANCELADO[(idioma && AVISO_CANCELADO[idioma]) ? idioma : 'en'],
+        dados: { textos: emTodasAsLinguas((l) => AVISO_CANCELADO[l] || AVISO_CANCELADO.en) },
       })));
     }
   }

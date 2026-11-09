@@ -31,7 +31,13 @@
     "accidentsInvolvedTitle": "Sinuga seotud õnnetused",
     "accidentRegisteredBy": "Õnnetuse registreeris {name}",
     "yourVehiclePlate": "Sinu sõiduk: numbrimärk {plate}",
-    "messages": "Sõnumid"
+    "messages": "Sõnumid",
+    "botaoAcidente": "Tegin just avarii",
+    "botaoAcidenteDica": "Teata kohe ja saa pakkumisi lähedal asuvatelt töökodadelt",
+    "badgeAcidente": "Avarii",
+    "acidenteSemCarro": "Avarii",
+    "pedidoSemCarro": "Hinnapäring",
+    "aguardandoOrcamentos": "Ootab töökodade hinnapakkumisi"
   },
   "clienteVeiculos": {
     "loading": "Laadin...",
@@ -102,7 +108,7 @@
     "errorUnexpectedSubmit": "Ootamatu viga päringu loomisel",
     "successTitle": "Päring saadetud!",
     "successText": "Lähedal asuvad töökojad on saanud teate. Peagi hakkad saama hinnapakkumisi.",
-    "redirecting": "Suunan sind töölauale...",
+    "redirecting": "Suunan avalehele...",
     "pageTitle": "Uus päring",
     "pageSubtitle": "Kirjelda oma sõiduki probleemi, et saada hinnapakkumisi",
     "step1Title": "Vali sõiduk",
@@ -154,7 +160,9 @@
     "createRequest": "Loo päring",
     "quotesReceivedCount": "{count, plural, one {# hinnapakkumine saabunud} other {# hinnapakkumist saabunud}}",
     "deadlineDays": "Remondi kestus: {days, plural, one {# päev} other {# päeva}}",
-    "itemsCount": "{count, plural, one {# kirje} other {# kirjet}}"
+    "itemsCount": "{count, plural, one {# kirje} other {# kirjet}}",
+    "pedidoSemCarro": "Hinnapäring",
+    "aguardandoOrcamentos": "Ootab töökodade hinnapakkumisi"
   },
   "clienteOrcamentoDetalhe": {
     "execDaysApprox": "{days, plural, one {~# tööpäev} other {~# tööpäeva}}",
@@ -169,7 +177,7 @@
     "checkin": "Check-in:",
     "deliveryForecast": "Eeldatav valmimisaeg:",
     "bringVehicleNote": "Too oma sõiduk kokkulepitud ajal. Töökoda võtab ühendust, kui midagi peaks muutuma.",
-    "backToDashboard": "Tagasi töölauale",
+    "backToDashboard": "Tagasi avalehele",
     "back": "Tagasi",
     "messageToWorkshop": "Kirjuta töökojale",
     "confirmCancelRequest": "Kas oled kindel, et soovid selle päringu tühistada? Töökojad ei saa enam hinnapakkumisi saata.",
@@ -241,7 +249,26 @@
     "escolhido": "Valitud hinnapakkumine",
     "verOficina": "Vaata töökoda (hinnangud, aadress)",
     "pedidoCanceladoTitulo": "Päring tühistatud",
-    "pedidoCanceladoTexto": "See päring on tühistatud. Hinnapakkumised jäävad siia ainult vaatamiseks."
+    "pedidoCanceladoTexto": "See päring on tühistatud. Hinnapakkumised jäävad siia ainult vaatamiseks.",
+    "verAcidente": "Vaata avariid (teine juht ja sõnumid)",
+    "cancelamento": {
+      "botao": "Tühista päring",
+      "titulo": "Kas tühistada see päring?",
+      "texto": "Hinnapakkumise saatnud töökojad saavad teate ja päring kaob nende nimekirjast. Saad selle hiljem uuesti avada.",
+      "motivoOpcional": "Miks? (valikuline)",
+      "motivos": {
+        "resolvido": "Juba lahendatud",
+        "outra_oficina": "Leidsin teise töökoja",
+        "desisti": "Loobusin remondist",
+        "outro": "Muu põhjus"
+      },
+      "confirmar": "Jah, tühista päring",
+      "cancelando": "Tühistan...",
+      "voltar": "Ei, tagasi",
+      "reabrir": "Ava päring uuesti",
+      "reabrindo": "Avan..."
+    },
+    "novaNoBipfix": "Uus BipFixis"
   },
   "clienteMensagens": {
     "workshopFallback": "Töökoda",
@@ -288,7 +315,7 @@
     "progressConcluido": "Valmis",
     "progressEntregue": "Üle antud",
     "noAppointmentFound": "Selle päringu jaoks broneeringut ei leitud.",
-    "backToDashboard": "Tagasi töölauale",
+    "backToDashboard": "Tagasi avalehele",
     "pageTitle": "Remondi jälgimine",
     "progressTitle": "Edenemine",
     "checkin": "Check-in",
@@ -311,7 +338,7 @@
     "loading": "Laadin...",
     "rescheduleConfirmedTitle": "Uus aeg kinnitatud!",
     "newTimeRegistered": "Sinu uus aeg on edukalt salvestatud.",
-    "backToPanel": "Tagasi töölauale",
+    "backToPanel": "Tagasi avalehele",
     "back": "Tagasi",
     "pageTitle": "Muuda vastuvõtuaega",
     "pageSubtitle": "Vali oma vastuvõtule uus kuupäev.",
@@ -339,8 +366,8 @@
   },
   "editarPedido": {
     "acidente": "Õnnetus",
-    "completarCarro": "Lisa auto andmed",
-    "completarCarroDica": "Mark, mudel ja numbrimärk aitavad töökojal pakkumist teha. Puuduta lisamiseks.",
+    "completarCarro": "Lisa SINU auto andmed",
+    "completarCarroDica": "SINU juhitud auto mark, mudel ja numbrimärk aitavad töökojal pakkumist teha. Puuduta, et lisada.",
     "editar": "Muuda päringut",
     "marca": "Mark",
     "modelo": "Mudel",

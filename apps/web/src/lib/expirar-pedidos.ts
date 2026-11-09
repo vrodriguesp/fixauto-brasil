@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { notifPedidoExpiradoCliente, notifPedidoExpiradoOficina } from '@/lib/notif-i18n';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 // Pedido expira (dono 04/11, migracao 072): aberto/em orcamento ha N dias (30)
 // contados da criacao ou da ultima reabertura, sem orcamento escolhido -> "expirada".
@@ -40,7 +41,7 @@ export async function expirarPedidos(agora = Date.now()): Promise<{ expirados: n
     if (!mudou?.length) continue;
     expirados++;
     const nc = notifPedidoExpiradoCliente(s.cliente?.idioma, String(s.numero), dias);
-    const linhas: any[] = [{ profile_id: s.cliente_id, tipo: 'pedido_expirado', titulo: nc.titulo, mensagem: nc.mensagem, dados: { solicitacao_id: s.id } }];
+    const linhas: any[] = [{ profile_id: s.cliente_id, tipo: 'pedido_expirado', titulo: nc.titulo, mensagem: nc.mensagem, dados: { solicitacao_id: s.id, textos: emTodasAsLinguas((l) => notifPedidoExpiradoCliente(l, String(s.numero), dias)) } }];
     const { data: orcs } = await supabaseAdmin.from('orcamentos')
       .select('oficina:oficinas(profile_id, profile:profiles(idioma))')
       .eq('solicitacao_id', s.id).in('status', ['enviado', 'visualizado']);
@@ -48,7 +49,7 @@ export async function expirarPedidos(agora = Date.now()): Promise<{ expirados: n
     for (const o of (orcs || []) as any[]) {
       const pid = o.oficina?.profile_id; if (!pid || vistos.has(pid)) continue; vistos.add(pid);
       const no = notifPedidoExpiradoOficina(o.oficina?.profile?.idioma, String(s.numero));
-      linhas.push({ profile_id: pid, tipo: 'pedido_expirado', titulo: no.titulo, mensagem: no.mensagem, dados: { solicitacao_id: s.id } });
+      linhas.push({ profile_id: pid, tipo: 'pedido_expirado', titulo: no.titulo, mensagem: no.mensagem, dados: { solicitacao_id: s.id, textos: emTodasAsLinguas((l) => notifPedidoExpiradoOficina(l, String(s.numero))) } });
     }
     const { error: eN } = await supabaseAdmin.from('notificacoes').insert(linhas);
     if (eN) console.error('[expirar-pedidos] aviso:', eN.message); else avisos += linhas.length;

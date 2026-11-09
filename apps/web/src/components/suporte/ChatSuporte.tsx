@@ -5,6 +5,8 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { useConversaCelular } from '@/hooks/use-conversa-celular';
+import CampoConversa, { AvisoNovaMensagem } from '@/components/conversa/CampoConversa';
 
 // Chat de suporte com o admin (dono 03/11): botao no canto de todas as paginas.
 // Logado (oficina, loja, cliente): conversa da conta. Visitante: pergunta + nome +
@@ -13,7 +15,7 @@ import { useAuth } from '@/lib/auth-context';
 // da conversa fica neste navegador. Mensagens por
 // consulta periodica (4 s com o chat aberto, 45 s fechado so para o contador).
 
-type Msg = { id: string; autor: 'usuario' | 'admin' | 'auto'; texto: string; original: string | null; created_at: string };
+type Msg = { id: string; autor: 'usuario' | 'admin' | 'auto'; texto: string; original: string | null; created_at: string; enviando?: boolean };
 const CHAVE = 'bipfix_suporte';
 // pagina do acidente (tem conversa propria), nas 6 linguas - i18n/routing.ts
 const CONVERSA_ACIDENTE = /\/(emergencia\/acidente|accident\/report|avarii\/teade|incidente\/segnalazione|dtp\/soobshchenie)\/[^/]+/;
@@ -22,6 +24,7 @@ const lerChave = (): { c: string; t: string } | null => { try { return JSON.pars
 export default function ChatSuporte() {
   const t = useTranslations('suporte');
   const tTr = useTranslations('traducao');
+  const tConv = useTranslations('conversa');
   const locale = useLocale();
   const pathname = usePathname() || '';
   const busca = useSearchParams();
@@ -39,8 +42,7 @@ export default function ChatSuporte() {
   // tela ele cobria a ponta do botao principal ("Sou oficina") da pagina inicial
   const [rolou, setRolou] = useState(false);
   const listaRef = useRef<HTMLDivElement>(null);
-  // celular: altura e topo da area visivel (acima do teclado do iPhone)
-  const [vv, setVv] = useState<{ h: number; top: number } | null>(null);
+  const janelaRef = useRef<HTMLDivElement>(null);
   const botaoRef = useRef<HTMLButtonElement>(null);
   const voltarFoco = useRef(false);
 
@@ -59,7 +61,8 @@ export default function ChatSuporte() {
     const d = await r.json();
     setOnline(!!d.adminOnline);
     setTemConversa(!!d.conversa);
-    setMsgs(d.mensagens || []);
+    // mensagens ainda "enviando" (mostradas na hora) continuam ate o envio terminar
+    setMsgs((antes) => [...(d.mensagens || []), ...antes.filter((m) => m.enviando)]);
     setNaoLidas(d.naoLidas || 0);
   }, [visitante]);
 
@@ -79,28 +82,18 @@ export default function ChatSuporte() {
 
   // link do e-mail de resposta: ?suporte=1 abre o chat
   useEffect(() => { if (busca?.get('suporte') === '1') setAberto(true); }, [busca]);
-  // rola so a lista de mensagens (scrollIntoView rolava a pagina toda e no iPhone
-  // empurrava o cabecalho com o X para fora da tela - dono 08/11)
-  useEffect(() => { const l = listaRef.current; if (aberto && l) l.scrollTop = l.scrollHeight; }, [aberto, msgs.length]);
-  // aberto: foco no primeiro campo; no celular (tela cheia) a pagina de tras nao rola.
-  // fechado: o foco volta ao botao do chat
+  // padrao unico das conversas (dono 09/11): no celular (janela em tela cheia, < 640 px) presa a
+  // area visivel com a pagina de tras travada; abre no fim; aviso de nova mensagem
+  const { novaMensagem, irParaFim, propsLista } = useConversaCelular({
+    conversa: janelaRef, lista: listaRef, quantidade: msgs.length,
+    ultimaMinha: msgs[msgs.length - 1]?.autor === 'usuario', ativo: aberto, larguraMax: 640,
+  });
+  // aberto: foco no primeiro campo. fechado: o foco volta ao botao do chat
   useEffect(() => {
     if (aberto) {
       voltarFoco.current = true;
       setTimeout(() => (document.getElementById('suporte-pergunta') || document.getElementById('suporte-texto'))?.focus(), 50);
-      if (window.innerWidth >= 640) return;
-      // iPhone ignora overflow hidden no body: trava a pagina de tras fixando o body no lugar
-      const y = window.scrollY; const b = document.body.style;
-      const antes = { position: b.position, top: b.top, width: b.width, overflow: b.overflow };
-      b.position = 'fixed'; b.top = `-${y}px`; b.width = '100%'; b.overflow = 'hidden';
-      // a janela acompanha a area visivel: com o teclado aberto ela encolhe e o X continua a vista
-      const v = window.visualViewport;
-      const medir = () => { if (v) { setVv({ h: v.height, top: v.offsetTop }); window.scrollTo(0, 0); } };
-      medir(); v?.addEventListener('resize', medir); v?.addEventListener('scroll', medir);
-      return () => {
-        v?.removeEventListener('resize', medir); v?.removeEventListener('scroll', medir); setVv(null);
-        Object.assign(b, antes); window.scrollTo(0, y);
-      };
+      return;
     }
     if (voltarFoco.current) { voltarFoco.current = false; setTimeout(() => botaoRef.current?.focus(), 0); }
   }, [aberto]);
@@ -136,13 +129,16 @@ export default function ChatSuporte() {
 
   async function enviar() {
     const txt = texto.trim();
-    if (!txt || enviando) return;
-    setEnviando(true); setErro('');
+    if (!txt) return;
+    setErro('');
+    // aparece na hora ("enviando") e o campo continua com o foco: teclado aberto, tela parada
+    const tempId = `temp-${Date.now()}`;
+    setTexto('');
+    setMsgs((m) => [...m, { id: tempId, autor: 'usuario', texto: txt, original: null, created_at: new Date().toISOString(), enviando: true }]);
     const k = visitante ? lerChave() : null;
     const r = await fetch('/api/suporte', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ acao: 'enviar', texto: txt, idioma: locale, pagina: pathname, ...(k ? { c: k.c, t: k.t } : {}) }) }).catch(() => null);
-    setEnviando(false);
-    if (!r?.ok) { setErro(t('erro')); return; }
-    setTexto('');
+    setMsgs((m) => m.filter((x) => x.id !== tempId));
+    if (!r?.ok) { setTexto((atual) => atual || txt); setErro(t('erro')); return; }
     carregar(true);
   }
 
@@ -162,8 +158,7 @@ export default function ChatSuporte() {
       )}
 
       {aberto && (
-        <div role="dialog" aria-modal="true" aria-label={t('titulo')} data-testid="chat-suporte-janela"
-          style={vv ? { top: vv.top, height: vv.h, bottom: 'auto' } : undefined}
+        <div ref={janelaRef} role="dialog" aria-modal="true" aria-label={t('titulo')} data-testid="chat-suporte-janela" data-conversa=""
           onKeyDown={(e) => { if (e.key === 'Escape') setAberto(false); }}
           className="fixed inset-0 z-[60] flex flex-col bg-white sm:inset-auto sm:bottom-4 sm:right-4 sm:h-[560px] sm:max-h-[calc(100vh-2rem)] sm:w-[380px] sm:rounded-2xl sm:border sm:border-gray-200 sm:shadow-2xl">
           <div className="flex items-center justify-between gap-3 bg-primary-600 px-4 py-3 text-white sm:rounded-t-2xl">
@@ -205,7 +200,8 @@ export default function ChatSuporte() {
             </form>
           ) : (
             <>
-              <div ref={listaRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-gray-50 p-4" aria-live="polite">
+              <div className="relative flex min-h-0 flex-1 flex-col">
+              <div ref={listaRef} {...propsLista} className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-gray-50 p-4" aria-live="polite" data-testid="conversa-lista">
                 {msgs.length === 0 && <p className="text-center text-sm text-gray-500">{t('vazio')}</p>}
                 {msgs.map((m) => {
                   const minha = m.autor === 'usuario';
@@ -215,7 +211,7 @@ export default function ChatSuporte() {
                       <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${minha ? 'bg-primary-600 text-white' : m.autor === 'auto' ? 'border border-gray-200 bg-white italic text-gray-600' : 'border border-gray-200 bg-white text-gray-900'}`}>
                         <p className="whitespace-pre-wrap break-words">{verOriginal && m.original ? m.original : m.texto}</p>
                         <p className={`mt-1 text-[11px] ${minha ? 'text-primary-100' : 'text-gray-400'}`}>
-                          {hora(m.created_at)}
+                          {m.enviando ? tConv('enviando') : hora(m.created_at)}
                           {m.original && (
                             <> · <button type="button" className="underline" onClick={() => setOriginais((o) => ({ ...o, [m.id]: !o[m.id] }))}>
                               {verOriginal ? tTr('verTraducao') : `${t('traduzida')} · ${tTr('verOriginal')}`}
@@ -227,17 +223,12 @@ export default function ChatSuporte() {
                   );
                 })}
               </div>
-              <div className="border-t border-gray-200 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+              <AvisoNovaMensagem visivel={novaMensagem} aoTocar={() => irParaFim()} texto={tConv('novaMensagem')} />
+              </div>
+              <div className="conversa-composer border-t border-gray-200 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
                 {erro && <p className="mb-2 text-sm text-red-600" role="alert">{erro}</p>}
-                <div className="flex items-end gap-2">
-                  <label htmlFor="suporte-texto" className="sr-only">{t('placeholder')}</label>
-                  <textarea id="suporte-texto" rows={1} maxLength={2000} value={texto} placeholder={t('placeholder')}
-                    onChange={(e) => setTexto(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviar(); } }}
-                    className="input-field max-h-32 min-h-[44px] flex-1 resize-none" />
-                  <button type="button" onClick={enviar} disabled={enviando || !texto.trim()} data-testid="chat-suporte-enviar"
-                    className="btn-primary min-h-[44px] !px-4 disabled:opacity-50">{t('enviar')}</button>
-                </div>
+                <CampoConversa id="suporte-texto" valor={texto} aoMudar={setTexto} aoEnviar={enviar}
+                  placeholder={t('placeholder')} rotuloEnviar={t('enviar')} testIdEnviar="chat-suporte-enviar" />
               </div>
             </>
           )}

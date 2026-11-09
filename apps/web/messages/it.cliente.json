@@ -31,7 +31,13 @@
     "accidentsInvolvedTitle": "Incidenti che ti coinvolgono",
     "accidentRegisteredBy": "Incidente registrato da {name}",
     "yourVehiclePlate": "Il tuo veicolo: targa {plate}",
-    "messages": "Messaggi"
+    "messages": "Messaggi",
+    "botaoAcidente": "Ho appena avuto un incidente",
+    "botaoAcidenteDica": "Segnalalo ora e ricevi preventivi dalle officine vicine",
+    "badgeAcidente": "Incidente",
+    "acidenteSemCarro": "Incidente",
+    "pedidoSemCarro": "Richiesta di preventivo",
+    "aguardandoOrcamentos": "In attesa dei preventivi delle officine"
   },
   "clienteVeiculos": {
     "loading": "Caricamento...",
@@ -102,7 +108,7 @@
     "errorUnexpectedSubmit": "Errore imprevisto durante la creazione della richiesta",
     "successTitle": "Richiesta inviata!",
     "successText": "Le officine vicine sono state avvisate. Riceverai presto i preventivi.",
-    "redirecting": "Reindirizzamento alla tua area personale...",
+    "redirecting": "Torno alla home...",
     "pageTitle": "Nuova richiesta",
     "pageSubtitle": "Descrivi il problema del tuo veicolo per ricevere preventivi",
     "step1Title": "Seleziona il veicolo",
@@ -154,7 +160,9 @@
     "createRequest": "Crea richiesta",
     "quotesReceivedCount": "{count, plural, one {# preventivo ricevuto} other {# preventivi ricevuti}}",
     "deadlineDays": "Durata della riparazione: {days, plural, one {# giorno} other {# giorni}}",
-    "itemsCount": "{count, plural, one {# voce} other {# voci}}"
+    "itemsCount": "{count, plural, one {# voce} other {# voci}}",
+    "pedidoSemCarro": "Richiesta di preventivo",
+    "aguardandoOrcamentos": "In attesa dei preventivi delle officine"
   },
   "clienteOrcamentoDetalhe": {
     "execDaysApprox": "{days, plural, one {~# giorno lavorativo} other {~# giorni lavorativi}}",
@@ -169,7 +177,7 @@
     "checkin": "Check-in:",
     "deliveryForecast": "Consegna prevista:",
     "bringVehicleNote": "Porta il tuo veicolo all'orario concordato. L'officina ti contatterà in caso di variazioni.",
-    "backToDashboard": "Torna alla dashboard",
+    "backToDashboard": "Torna alla home",
     "back": "Indietro",
     "messageToWorkshop": "Scrivi all'officina",
     "confirmCancelRequest": "Sei sicuro di voler annullare questa richiesta? Le officine non potranno più inviare preventivi.",
@@ -241,7 +249,26 @@
     "escolhido": "Preventivo scelto",
     "verOficina": "Vedi l'officina (recensioni, indirizzo)",
     "pedidoCanceladoTitulo": "Richiesta annullata",
-    "pedidoCanceladoTexto": "Questa richiesta è stata annullata. I preventivi restano qui solo per consultazione."
+    "pedidoCanceladoTexto": "Questa richiesta è stata annullata. I preventivi restano qui solo per consultazione.",
+    "verAcidente": "Vedi l’incidente (altro conducente e messaggi)",
+    "cancelamento": {
+      "botao": "Annulla richiesta",
+      "titulo": "Annullare questa richiesta?",
+      "texto": "Le officine che hanno inviato un preventivo verranno avvisate e la richiesta sparirà dal loro elenco. Potrai riaprirla in seguito.",
+      "motivoOpcional": "Perché? (facoltativo)",
+      "motivos": {
+        "resolvido": "Ho già risolto",
+        "outra_oficina": "Ho trovato un'altra officina",
+        "desisti": "Non riparo più",
+        "outro": "Altro motivo"
+      },
+      "confirmar": "Sì, annulla la richiesta",
+      "cancelando": "Annullamento...",
+      "voltar": "No, torna indietro",
+      "reabrir": "Riapri la richiesta",
+      "reabrindo": "Riapertura..."
+    },
+    "novaNoBipfix": "Nuova su BipFix"
   },
   "clienteMensagens": {
     "workshopFallback": "Officina",
@@ -288,7 +315,7 @@
     "progressConcluido": "Completato",
     "progressEntregue": "Consegnato",
     "noAppointmentFound": "Nessun appuntamento trovato per questa richiesta.",
-    "backToDashboard": "Torna alla dashboard",
+    "backToDashboard": "Torna alla home",
     "pageTitle": "Stato della riparazione",
     "progressTitle": "Avanzamento",
     "checkin": "Check-in",
@@ -311,7 +338,7 @@
     "loading": "Caricamento...",
     "rescheduleConfirmedTitle": "Riprogrammazione confermata!",
     "newTimeRegistered": "Il tuo nuovo orario è stato registrato con successo.",
-    "backToPanel": "Torna alla dashboard",
+    "backToPanel": "Torna alla home",
     "back": "Indietro",
     "pageTitle": "Riprogramma l'appuntamento",
     "pageSubtitle": "Scegli una nuova data per il tuo appuntamento.",
@@ -339,8 +366,8 @@
   },
   "editarPedido": {
     "acidente": "Incidente",
-    "completarCarro": "Completa i dati dell'auto",
-    "completarCarroDica": "Marca, modello e targa aiutano l'officina a fare il preventivo. Tocca per completare.",
+    "completarCarro": "Aggiungi i dati della TUA auto",
+    "completarCarroDica": "Marca, modello e targa dell’auto che guidavi TU aiutano l’officina a preparare il preventivo. Tocca per aggiungere.",
     "editar": "Modifica richiesta",
     "marca": "Marca",
     "modelo": "Modello",

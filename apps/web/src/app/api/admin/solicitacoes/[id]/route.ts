@@ -4,6 +4,7 @@ import { registrarAuditoria } from '@/lib/admin-auditoria';
 import { STATUS_SOLICITACAO } from '@fixauto/shared';
 import { notifStatusSolicitacaoAtualizado, statusSolicitacaoLabelFor } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 
 export const dynamic = 'force-dynamic';
@@ -163,7 +164,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         tipo: 'status_atualizado_admin',
         titulo: n.titulo,
         mensagem: n.mensagem,
-        dados: { solicitacao_id: params.id, status_anterior: solicitacao.status, status_novo: status },
+        dados: { solicitacao_id: params.id, status_anterior: solicitacao.status, status_novo: status, textos: emTodasAsLinguas((l) => notifStatusSolicitacaoAtualizado(l, statusSolicitacaoLabelFor(l, status))) },
       });
     }
 
@@ -183,7 +184,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           tipo: 'status_atualizado_admin',
           titulo: n.titulo,
           mensagem: n.mensagem,
-          dados: { solicitacao_id: params.id, status_anterior: solicitacao.status, status_novo: status },
+          dados: { solicitacao_id: params.id, status_anterior: solicitacao.status, status_novo: status, textos: emTodasAsLinguas((l) => notifStatusSolicitacaoAtualizado(l, statusSolicitacaoLabelFor(l, status))) },
         });
       }
     }

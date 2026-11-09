@@ -2,6 +2,7 @@ import { supabaseAdmin } from './supabase-admin';
 import { tipoCompativel, distanciaKm } from '@fixauto/shared';
 import { oficinaTemCapacidade } from './capacidade';
 import { notifEmergenciaAcidenteProximo } from './notif-i18n';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 export type OficinaAvisada = { profile_id: string; idioma: string | null };
 
@@ -53,7 +54,7 @@ export async function avisarOficinasDoAcidente(emergenciaId: string, latitude: n
         tipo: 'emergencia',
         titulo: n.titulo,
         mensagem: n.mensagem,
-        dados: { emergencia_id: emergenciaId },
+        dados: { emergencia_id: emergenciaId, textos: emTodasAsLinguas((l) => notifEmergenciaAcidenteProximo(l)) },
       });
     }
   }

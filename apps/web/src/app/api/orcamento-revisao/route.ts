@@ -6,6 +6,7 @@ import { ehUuid } from '@/lib/validacao';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { notifRevisaoProposta } from '@/lib/notif-revisao';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 export const dynamic = 'force-dynamic';
 
@@ -70,7 +71,10 @@ export async function POST(req: NextRequest) {
   const n = notifRevisaoProposta(sol?.cliente?.idioma, { oficina: of?.nome_fantasia || '', de: fmt(Number(orc.valor_total)), para: fmt(valorNovo), motivo: motivoLimpo });
   await supabaseAdmin.from('notificacoes').insert({
     profile_id: sol.cliente_id, tipo: 'revisao_orcamento', titulo: n.titulo, mensagem: n.mensagem,
-    dados: { solicitacao_id: orc.solicitacao_id, orcamento_id: orc.id, revisao_id: rev.id },
+    dados: {
+      solicitacao_id: orc.solicitacao_id, orcamento_id: orc.id, revisao_id: rev.id,
+      textos: emTodasAsLinguas((l) => notifRevisaoProposta(l, { oficina: of?.nome_fantasia || '', de: formatCurrency(Number(orc.valor_total), moeda, l), para: formatCurrency(valorNovo, moeda, l), motivo: motivoLimpo })),
+    },
   });
   return NextResponse.json({ ok: true, revisaoId: rev.id });
 }

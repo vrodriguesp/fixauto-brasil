@@ -14,6 +14,9 @@ import { textoErroApi } from '@/lib/erro-api';
 import CampoTelefone from '@/components/forms/CampoTelefone';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
+import { useConversaCelular } from '@/hooks/use-conversa-celular';
+import { placaValida } from '@/lib/validar-carro';
+import CampoConversa, { AvisoNovaMensagem } from '@/components/conversa/CampoConversa';
 
 interface Mensagem {
   id: string;
@@ -93,6 +96,15 @@ export default function AcidenteRegistroPage() {
   const [registered, setRegistered] = useState(false);
   const [registering, setRegistering] = useState(false);
   const [outroVeiculoId, setOutroVeiculoId] = useState<string | null>(null);
+  // editar o outro motorista ja registrado / completar o proprio carro (dono 09/11)
+  const [editandoOutro, setEditandoOutro] = useState(false);
+  const editandoOutroRef = useRef(false);
+  editandoOutroRef.current = editandoOutro;
+  const [editandoCarro, setEditandoCarro] = useState(false);
+  const [carroMarca, setCarroMarca] = useState('');
+  const [carroModelo, setCarroModelo] = useState('');
+  const [carroPlaca, setCarroPlaca] = useState('');
+  const [salvandoCarro, setSalvandoCarro] = useState(false);
   const [error, setError] = useState('');
 
   // Chat
@@ -103,7 +115,7 @@ export default function AcidenteRegistroPage() {
   // Orcamentos
   const [orcamentos, setOrcamentos] = useState<Orcamento[]>([]);
   const [loadingOrc, setLoadingOrc] = useState(false);
-  const [emergData, setEmergData] = useState<{ solicitacao_id: string | null; profile_id: string | null; descricao: string | null; nome?: string | null; latitude?: number | null; longitude?: number | null } | null>(null);
+  const [emergData, setEmergData] = useState<{ solicitacao_id: string | null; profile_id: string | null; descricao: string | null; nome?: string | null; latitude?: number | null; longitude?: number | null; created_at?: string | null; endereco?: string | null; tipo_acidente?: string | null } | null>(null);
   // pais do acidente (pela localizacao): regras e seguradoras do local, nao do idioma
   const [paisAcidente, setPaisAcidente] = useState<string | null>(null);
   useEffect(() => {
@@ -116,6 +128,16 @@ export default function AcidenteRegistroPage() {
   const [seguro, setSeguro] = useState<ValorSeguro | null>(null);
   const [papel, setPapel] = useState<'proprietario' | 'outro' | 'oficina' | 'admin' | null>(null);
   const isProprietario = papel === 'proprietario';
+  // conversa do acidente no padrao unico (dono 09/11): abre no fim, aviso de nova mensagem e caixa
+  // de escrever que nao fecha o teclado; fica dentro da pagina (com as abas), sem tela cheia
+  const tConv = useTranslations('conversa');
+  const chatRef = useRef<HTMLDivElement>(null);
+  const chatListaRef = useRef<HTMLDivElement>(null);
+  const { novaMensagem: chatNova, irParaFim: chatParaFim, propsLista: chatPropsLista } = useConversaCelular({
+    conversa: chatRef, lista: chatListaRef, quantidade: mensagens.length,
+    ultimaMinha: mensagens[mensagens.length - 1]?.remetente_tipo === (papel === 'outro' ? 'outro' : 'proprietario'),
+    ativo: step === 'chat', fixar: false,
+  });
 
   // Determine if current user is the victim (only victims can accept quotes and send to responsible)
   // eu_causei: registrant is responsible, so registrant is NOT victim
@@ -135,7 +157,7 @@ export default function AcidenteRegistroPage() {
     const d = await res.json();
     setSemAcesso(false);
     const outro = d.outro as OutroVeiculo | null;
-    if (outro) {
+    if (outro && !editandoOutroRef.current) {
       setOutroNome(outro.nome);
       setOutroTelefone(outro.telefone || '');
       setOutroEmail(outro.email || '');
@@ -190,6 +212,19 @@ export default function AcidenteRegistroPage() {
   const handleRegister = async () => {
     setRegistering(true);
     setError('');
+    if (editandoOutro) {
+      const res = await fetch(`/api/emergencia/${emergenciaId}/outro-veiculo`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', ...headersEmergencia(emergenciaId) },
+        body: JSON.stringify({ nome: outroNome, telefone: outroTelefone || null, email: outroEmail || null, placa: outroPlaca, veiculo: outroVeiculo || null, observacoes: observacoes || null, idioma: locale }),
+      }).catch(() => null);
+      const r = res ? await res.json().catch(() => ({})) : {};
+      setRegistering(false);
+      if (!res?.ok) { setError(textoErroApi(tErros, res?.status || 500, r)); return; }
+      setEditandoOutro(false);
+      loadData();
+      return;
+    }
     const form = new FormData();
     form.append('dados', JSON.stringify({
       nome: outroNome,
@@ -215,6 +250,26 @@ export default function AcidenteRegistroPage() {
     setOutroVeiculoId(r.id);
     setRegistering(false);
     setRegistered(true);
+  };
+
+  const abrirEdicaoCarro = () => {
+    setCarroMarca(veiculoProprietario?.fipe_marca || '');
+    setCarroModelo(veiculoProprietario?.fipe_modelo || '');
+    setCarroPlaca(veiculoProprietario?.placa || '');
+    setEditandoCarro(true);
+  };
+  const salvarCarro = async () => {
+    setSalvandoCarro(true); setError('');
+    const res = await fetch(`/api/emergencia/${emergenciaId}/veiculo`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', ...headersEmergencia(emergenciaId) },
+      body: JSON.stringify({ marca: carroMarca, modelo: carroModelo, placa: carroPlaca }),
+    }).catch(() => null);
+    const r = res ? await res.json().catch(() => ({})) : {};
+    setSalvandoCarro(false);
+    if (!res?.ok) { setError(textoErroApi(tErros, res?.status || 500, r)); return; }
+    setEditandoCarro(false);
+    loadData();
   };
 
   const sendMessage = async () => {
@@ -258,7 +313,7 @@ export default function AcidenteRegistroPage() {
 
   // Parse accident type from emergencia descricao
   const tipoMatch = emergData?.descricao?.match(/\[TIPO:(\w+)\]/);
-  const tipoAcidente = tipoMatch ? tipoMatch[1] : null;
+  const tipoAcidente = tipoMatch ? tipoMatch[1] : (emergData?.tipo_acidente || null);
 
   // Fallback: try old format [RESP:xxx]
   const respMatch = !tipoAcidente ? emergData?.descricao?.match(/\[RESP:(\w+)\]/) : null;
@@ -315,7 +370,7 @@ export default function AcidenteRegistroPage() {
     <div className="max-w-2xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/emergencia" className="text-gray-400 hover:text-gray-600">
+        <Link href={user ? '/cliente/dashboard' : '/'} className="text-gray-400 hover:text-gray-600">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
@@ -378,20 +433,151 @@ export default function AcidenteRegistroPage() {
         </button>
       </div>
 
-      {/* Registration tab */}
-      {step === 'registro' && !registered && !isProprietario && papel && (
-        <div className="card"><p className="text-sm text-gray-600">{t('aguardandoRegistro')}</p></div>
-      )}
-      {step === 'registro' && !registered && isProprietario && (
-        <div className="card">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('formTitle')}</h2>
+      {/* Registration tab (dono 09/11): resumo, "Seu carro" e "Outro motorista" sempre com os dados
+          salvos e "Editar"; o formulario do outro so quando ainda nao ha registro (ou ao editar) */}
+      {step === 'registro' && papel && (
+        <div className="space-y-4" data-testid="acidente-resumo">
+          <div className="flex flex-wrap items-center gap-2">
+            {tipoAcidente && tipoBadge[tipoAcidente] && (
+              <span className={`inline-block px-3 py-1.5 rounded-full text-sm font-medium ${tipoBadge[tipoAcidente].color}`}>{tipoBadge[tipoAcidente].label}</span>
+            )}
+            {!tipoAcidente && responsabilidadeLegacy && respBadge[responsabilidadeLegacy] && (
+              <span className={`inline-block px-3 py-1.5 rounded-full text-sm font-medium ${respBadge[responsabilidadeLegacy].color}`}>{respBadge[responsabilidadeLegacy].label}</span>
+            )}
+          </div>
+          {(emergData?.created_at || emergData?.endereco) && (
+            <p className="text-sm text-gray-600" data-testid="acidente-quando">
+              {emergData?.created_at && new Date(emergData.created_at).toLocaleString(locale, { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+              {emergData?.created_at && emergData?.endereco ? ' · ' : ''}{emergData?.endereco}
+            </p>
+          )}
+
+          {/* Carro de quem registrou: para o dono, "Seu carro" */}
+          <div className={`card border-l-4 ${registranteBorderColor}`} data-testid="card-seu-carro">
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <p className={`text-xs font-semibold ${registranteColor} uppercase`}>
+                {isProprietario ? t('seuCarroTitulo') : registranteLabel}
+                {isProprietario && tipoAcidente !== 'sem_outro' && <span className="ml-1 font-normal normal-case text-gray-500">· {registranteLabel}</span>}
+              </p>
+              {isProprietario && !editandoCarro && (
+                <button type="button" onClick={abrirEdicaoCarro} className="text-sm font-medium text-primary-700 min-h-[36px]" data-testid="editar-seu-carro">{t('editar')}</button>
+              )}
+            </div>
+            {editandoCarro ? (
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label htmlFor="sc-marca" className="block text-sm font-medium text-gray-700 mb-1">{t('marcaLabel')}</label>
+                    <input id="sc-marca" className="input-field" maxLength={60} value={carroMarca} onChange={(e) => setCarroMarca(e.target.value)} />
+                  </div>
+                  <div>
+                    <label htmlFor="sc-modelo" className="block text-sm font-medium text-gray-700 mb-1">{t('modeloLabel')}</label>
+                    <input id="sc-modelo" className="input-field" maxLength={80} value={carroModelo} onChange={(e) => setCarroModelo(e.target.value)} />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="sc-placa" className="block text-sm font-medium text-gray-700 mb-1">{t('plateFieldLabel')}</label>
+                  <input id="sc-placa" className="input-field uppercase" maxLength={10} aria-invalid={!placaValida(carroPlaca)} value={carroPlaca} onChange={(e) => setCarroPlaca(e.target.value.toUpperCase())} />
+                  {!placaValida(carroPlaca) && <p role="alert" className="mt-1 text-sm text-red-700">{tErros('PLACA_INVALIDA')}</p>}
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button type="button" onClick={() => setEditandoCarro(false)} className="btn-secondary">{t('cancelar')}</button>
+                  <button type="button" onClick={salvarCarro} disabled={salvandoCarro || !carroMarca.trim() || !placaValida(carroPlaca)} className="btn-primary disabled:opacity-50" data-testid="salvar-seu-carro">{t('salvar')}</button>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                <div className="flex justify-between gap-3 text-sm">
+                  <span className="text-gray-500">{t('nameFieldLabel')}</span>
+                  <span className="text-gray-900 font-medium text-right">{emergData?.nome || (isProprietario ? user?.nome : '') || t('youFallback')}</span>
+                </div>
+                {veiculoProprietario?.fipe_marca ? (
+                  <div className="flex justify-between gap-3 text-sm">
+                    <span className="text-gray-500">{t('vehicleFieldLabel')}</span>
+                    <span className="text-gray-900 text-right">{veiculoProprietario.fipe_marca} {veiculoProprietario.fipe_modelo}{veiculoProprietario.fipe_ano && veiculoProprietario.fipe_ano !== '-' ? ` (${veiculoProprietario.fipe_ano})` : ''}</span>
+                  </div>
+                ) : isProprietario && (
+                  <button type="button" onClick={abrirEdicaoCarro} className="w-full text-left rounded-lg border border-amber-200 bg-amber-50 p-2 text-sm text-amber-900" data-testid="completar-seu-carro">{t('seuCarroCompletar')}</button>
+                )}
+                {veiculoProprietario?.placa && (
+                  <div className="flex justify-between gap-3 text-sm">
+                    <span className="text-gray-500">{t('plateFieldLabel')}</span>
+                    <span className="text-gray-900 font-mono">{veiculoProprietario.placa}</span>
+                  </div>
+                )}
+                {veiculoProprietario?.cor && (
+                  <div className="flex justify-between gap-3 text-sm">
+                    <span className="text-gray-500">{t('colorFieldLabel')}</span>
+                    <span className="text-gray-900">{veiculoProprietario.cor}</span>
+                  </div>
+                )}
+                {isProprietario && user?.telefone && (
+                  <div className="flex justify-between gap-3 text-sm">
+                    <span className="text-gray-500">{t('phoneFieldLabel')}</span>
+                    <a href={`tel:${user.telefone}`} className="text-primary-600 hover:underline">{user.telefone}</a>
+                  </div>
+                )}
+                {emergData?.solicitacao_id && <p className="text-xs text-gray-500 mt-1">{t('requestRegisteredNote')}</p>}
+              </div>
+            )}
+          </div>
+
+          {/* Outro motorista */}
+          {tipoAcidente === 'sem_outro' ? (
+            <div className="card text-sm text-gray-600" data-testid="sem-outro">{t('semOutroTexto')}</div>
+          ) : registered && !editandoOutro ? (
+            <div className={`card border-l-4 ${outroBorderColor}`} data-testid="card-outro-motorista">
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <p className={`text-xs font-semibold ${outroColor} uppercase`}>
+                  {isProprietario ? t('outroMotoristaTitulo') : outroLabel}
+                  {isProprietario && <span className="ml-1 font-normal normal-case text-gray-500">· {outroLabel}</span>}
+                </p>
+                {isProprietario ? (
+                  <button type="button" onClick={() => setEditandoOutro(true)} className="text-sm font-medium text-primary-700 min-h-[36px]" data-testid="editar-outro">{t('editar')}</button>
+                ) : (
+                  <span className="flex items-center gap-1 text-xs text-green-600"><span className="w-2 h-2 bg-green-400 rounded-full" />{t('notifiedBadge')}</span>
+                )}
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                <div className="flex justify-between gap-3 text-sm">
+                  <span className="text-gray-500">{t('nameFieldLabel')}</span>
+                  <span className="text-gray-900 font-medium text-right">{outroNome}</span>
+                </div>
+                <div className="flex justify-between gap-3 text-sm">
+                  <span className="text-gray-500">{t('vehicleFieldLabel')}</span>
+                  <span className="text-gray-900 text-right">{outroVeiculo || t('notInformed')}</span>
+                </div>
+                <div className="flex justify-between gap-3 text-sm">
+                  <span className="text-gray-500">{t('plateFieldLabel')}</span>
+                  <span className="text-gray-900 font-mono">{outroPlaca}</span>
+                </div>
+                {outroTelefone && (
+                  <div className="flex justify-between gap-3 text-sm">
+                    <span className="text-gray-500">{t('phoneFieldLabel')}</span>
+                    <a href={`tel:${outroTelefone}`} className="text-primary-600 hover:underline">{outroTelefone}</a>
+                  </div>
+                )}
+                {outroEmail && (
+                  <div className="flex justify-between gap-3 text-sm">
+                    <span className="text-gray-500">{t('emailLabel')}</span>
+                    <span className="text-gray-900 break-all text-right">{outroEmail}</span>
+                  </div>
+                )}
+                {observacoes && <p className="text-sm text-gray-700 whitespace-pre-line">{observacoes}</p>}
+              </div>
+            </div>
+          ) : isProprietario ? (
+        <div className="card" data-testid="form-outro-motorista">
+          <h2 className="text-lg font-semibold text-gray-900 mb-1">{editandoOutro ? t('editarOutroTitulo') : t('formTitle')}</h2>
+          <p className="text-sm text-gray-500 mb-4">{t('formSubtitulo')}</p>
 
           <div className="space-y-4">
             <div>
               <label htmlFor="cbacc-1" className="block text-sm font-medium text-gray-700 mb-1">{t('otherNameLabel')}</label>
               <input id="cbacc-1" type="text" className="input-field" placeholder={t('otherNamePlaceholder')} value={outroNome} onChange={(e) => setOutroNome(e.target.value)} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            {/* no celular um campo por linha: o telefone (pais + numero) ficava espremido (dono 09/11) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="cbacc-2" className="block text-sm font-medium text-gray-700 mb-1">{t('phoneLabel')}</label>
                 <CampoTelefone id="cbacc-2" value={outroTelefone} onChange={(v) => setOutroTelefone(v)} />
@@ -401,11 +587,11 @@ export default function AcidenteRegistroPage() {
                 <input id="cbacc-3" type="email" className="input-field" placeholder={t('emailPlaceholder')} value={outroEmail} onChange={(e) => setOutroEmail(e.target.value)} />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="cbacc-4" className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
                 <div className="flex gap-2">
-                  <input id="cbacc-4" type="text" className="input-field uppercase" placeholder={t('platePlaceholder')} maxLength={8} value={outroPlaca}
+                  <input id="cbacc-4" type="text" className="input-field uppercase" placeholder={t('platePlaceholder')} maxLength={10} aria-invalid={!placaValida(outroPlaca)} value={outroPlaca}
                     onChange={(e) => {
                       const v = e.target.value.toUpperCase();
                       setOutroPlaca(v);
@@ -413,6 +599,7 @@ export default function AcidenteRegistroPage() {
                     }} />
                   {buscandoOutroPlaca && <div className="flex items-center"><div className="w-5 h-5 border-2 border-primary-400 border-t-transparent rounded-full animate-spin" /></div>}
                 </div>
+                {!placaValida(outroPlaca) && <p role="alert" className="mt-1 text-sm text-red-700" data-testid="placa-outro-invalida">{tErros('PLACA_INVALIDA')}</p>}
                 {outroVeiculoDetalhes && (
                   <p className="text-xs text-green-600 mt-1">{outroVeiculoDetalhes.marca} {outroVeiculoDetalhes.modelo} - {outroVeiculoDetalhes.ano} {outroVeiculoDetalhes.cor}</p>
                 )}
@@ -423,6 +610,7 @@ export default function AcidenteRegistroPage() {
               </div>
             </div>
 
+            {!editandoOutro && (
             <div>
               <label htmlFor="cbacc-6" className="block text-sm font-medium text-gray-700 mb-1">{t('photosLabel')}</label>
               <input id="cbacc-6" ref={fileInputRef} type="file" accept="image/*" multiple className="sr-only" tabIndex={-1} onChange={handlePhotoUpload} />
@@ -443,6 +631,7 @@ export default function AcidenteRegistroPage() {
                 </button>
               </div>
             </div>
+            )}
 
             <div>
               <label htmlFor="cbacc-7" className="block text-sm font-medium text-gray-700 mb-1">{t('observationsLabel')}</label>
@@ -455,7 +644,7 @@ export default function AcidenteRegistroPage() {
             </div>
           </div>
 
-          {outroEmail && (
+          {outroEmail && !editandoOutro && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
               <p className="text-sm text-blue-800">
                 {t('notifyInfo')}
@@ -463,134 +652,45 @@ export default function AcidenteRegistroPage() {
             </div>
           )}
 
-          <button
-            onClick={handleRegister}
-            disabled={!outroNome || !outroPlaca || registering}
-            className="btn-primary w-full mt-6"
-          >
-            {registering ? t('registeringBtn') : t('registerBtn')}
-          </button>
+          <div className={`mt-6 grid gap-2 ${editandoOutro ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            {editandoOutro && <button type="button" onClick={() => { setEditandoOutro(false); loadData(); }} className="btn-secondary">{t('cancelar')}</button>}
+            <button
+              onClick={handleRegister}
+              disabled={!outroNome || !outroPlaca || !placaValida(outroPlaca) || registering}
+              className="btn-primary w-full disabled:opacity-50"
+              data-testid="registrar-outro"
+            >
+              {registering ? t('registeringBtn') : editandoOutro ? t('salvar') : t('registerBtn')}
+            </button>
+          </div>
         </div>
-      )}
-
-      {step === 'registro' && registered && (
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">{t('involvedTitle')}</h2>
-
-          {/* Accident type badge */}
-          {tipoAcidente && tipoBadge[tipoAcidente] && (
-            <div className={`inline-block px-3 py-1.5 rounded-full text-sm font-medium ${tipoBadge[tipoAcidente].color}`}>
-              {tipoBadge[tipoAcidente].label}
-            </div>
-          )}
-          {/* Legacy responsibility badge */}
-          {!tipoAcidente && responsabilidadeLegacy && respBadge[responsabilidadeLegacy] && (
-            <div className={`inline-block px-3 py-1.5 rounded-full text-sm font-medium ${respBadge[responsabilidadeLegacy].color}`}>
-              {respBadge[responsabilidadeLegacy].label}
-            </div>
+          ) : (
+            <div className="card"><p className="text-sm text-gray-600">{t('aguardandoRegistro')}</p></div>
           )}
 
-          {/* Registrant (proprietário) */}
-          <div className={`card border-l-4 ${registranteBorderColor}`}>
-            <p className={`text-xs font-semibold ${registranteColor} uppercase mb-2`}>{registranteLabel}</p>
-            <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{t('nameFieldLabel')}</span>
-                <span className="text-gray-900 font-medium">{emergData?.nome || (isProprietario ? user?.nome : '') || t('youFallback')}</span>
-              </div>
-              {veiculoProprietario && (
-                <>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">{t('vehicleFieldLabel')}</span>
-                    <span className="text-gray-900">{veiculoProprietario.fipe_marca} {veiculoProprietario.fipe_modelo}</span>
-                  </div>
-                  {veiculoProprietario.fipe_ano && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">{t('yearFieldLabel')}</span>
-                      <span className="text-gray-900">{veiculoProprietario.fipe_ano}</span>
-                    </div>
-                  )}
-                  {veiculoProprietario.placa && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">{t('plateFieldLabel')}</span>
-                      <span className="text-gray-900 font-mono">{veiculoProprietario.placa}</span>
-                    </div>
-                  )}
-                  {veiculoProprietario.cor && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">{t('colorFieldLabel')}</span>
-                      <span className="text-gray-900">{veiculoProprietario.cor}</span>
-                    </div>
-                  )}
-                </>
-              )}
-              {user?.telefone && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">{t('phoneFieldLabel')}</span>
-                  <a href={`tel:${user.telefone}`} className="text-primary-600 hover:underline">{user.telefone}</a>
-                </div>
-              )}
-              {emergData?.solicitacao_id && <p className="text-xs text-gray-500 mt-1">{t('requestRegisteredNote')}</p>}
+          {registered && !editandoOutro && (
+            <div className="flex gap-3 mt-4">
+              <button onClick={() => setStep('chat')} className="btn-primary flex-1">
+                {t('sendMessageBtn')}
+              </button>
+              <button onClick={() => setStep('orcamentos')} className="btn-secondary flex-1">
+                {t('viewQuotesBtn')}
+              </button>
             </div>
-          </div>
-
-          {/* Outro envolvido */}
-          <div className={`card border-l-4 ${outroBorderColor}`}>
-            <div className="flex items-center justify-between mb-2">
-              <p className={`text-xs font-semibold ${outroColor} uppercase`}>{outroLabel}</p>
-              <div className="flex items-center gap-1">
-                <div className="w-2 h-2 bg-green-400 rounded-full" />
-                <span className="text-xs text-green-600">{t('notifiedBadge')}</span>
-              </div>
-            </div>
-            <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{t('nameFieldLabel')}</span>
-                <span className="text-gray-900 font-medium">{outroNome}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{t('vehicleFieldLabel')}</span>
-                <span className="text-gray-900">{outroVeiculo || t('notInformed')}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">{t('plateFieldLabel')}</span>
-                <span className="text-gray-900 font-mono">{outroPlaca}</span>
-              </div>
-              {outroTelefone && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">{t('phoneFieldLabel')}</span>
-                  <a href={`tel:${outroTelefone}`} className="text-primary-600 hover:underline">{outroTelefone}</a>
-                </div>
-              )}
-              {outroEmail && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">{t('emailLabel')}</span>
-                  <span className="text-gray-900">{outroEmail}</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="flex gap-3 mt-4">
-            <button onClick={() => setStep('chat')} className="btn-primary flex-1">
-              {t('sendMessageBtn')}
-            </button>
-            <button onClick={() => setStep('orcamentos')} className="btn-secondary flex-1">
-              {t('viewQuotesBtn')}
-            </button>
-          </div>
+          )}
         </div>
       )}
 
       {/* Chat tab */}
       {step === 'chat' && (
-        <div className="card !p-0 overflow-hidden">
+        <div ref={chatRef} className="card !p-0 overflow-hidden">
           <div className="bg-gray-50 p-4 border-b">
             <p className="font-medium text-gray-900">{outroNome || t('chatOtherFallback')}</p>
             <p className="text-xs text-gray-500">{outroVeiculo || t('chatVehicleFallback')} - {outroPlaca || t('chatNoPlateFallback')}</p>
           </div>
 
-          <div className="h-[400px] overflow-y-auto p-4 space-y-3">
+          <div className="relative">
+          <div ref={chatListaRef} {...chatPropsLista} className="h-[400px] overflow-y-auto overscroll-contain p-4 space-y-3" data-testid="conversa-lista">
             {mensagens.length === 0 && (
               <div className="flex items-center justify-center h-full">
                 <p className="text-sm text-gray-400">{t('chatEmptyState')}</p>
@@ -613,7 +713,7 @@ export default function AcidenteRegistroPage() {
                     )}
                     <p className="text-sm">{msg.texto}</p>
                     <p className={`text-xs mt-1 ${isMyMsg ? 'text-white' : 'text-gray-500'}`}>
-                      {formatTime(msg.created_at)}
+                      {msg.id.startsWith('temp-') ? tConv('enviando') : formatTime(msg.created_at)}
                     </p>
                   </div>
                 </div>
@@ -621,20 +721,11 @@ export default function AcidenteRegistroPage() {
             })}
           </div>
 
-          <div className="p-4 border-t flex gap-2">
-            <input
-              type="text"
-              className="input-field flex-1"
-              placeholder={t('chatInputPlaceholder')}
-              value={novaMensagem}
-              onChange={(e) => setNovaMensagem(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && !sendingMsg && sendMessage()}
-            />
-            <button onClick={sendMessage} disabled={sendingMsg} className="btn-primary !px-4">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-            </button>
+          <AvisoNovaMensagem visivel={chatNova} aoTocar={() => chatParaFim()} texto={tConv('novaMensagem')} />
+          </div>
+          <div className="conversa-composer p-3 border-t">
+            <CampoConversa valor={novaMensagem} aoMudar={setNovaMensagem} aoEnviar={sendMessage}
+              placeholder={t('chatInputPlaceholder')} rotuloEnviar={tConv('enviar')} testIdEnviar="conversa-enviar" />
           </div>
         </div>
       )}

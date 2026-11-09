@@ -5,9 +5,10 @@ import { completarClientes } from '@/lib/resumo-clientes';
 import { useAuth } from '@/lib/auth-context';
 import { cleanDescricao, formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
-import { notifOrcamentoRevisado, chatOrcamentoRevisado } from '@/lib/notif-i18n';
+import { notifOrcamentoRevisado, notifNovoOrcamento, chatOrcamentoRevisado } from '@/lib/notif-i18n';
 import type { OrcamentoItem } from '@fixauto/shared';
 import { EVENTO_DISPENSA } from '@/lib/eventos';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 interface CreateOrcamentoInput {
   solicitacao_id: string;
@@ -119,6 +120,8 @@ export function useOrcamentos() {
       validade: string;
       valor_original: number;
       revisao_numero: number;
+      /** orcamento novo depois de recusado: o cliente recebe "novo orcamento", nao "revisado" */
+      eraRecusado?: boolean;
       garantia_dias?: number | null;
       anexo_url?: string | null;
       itens: Omit<OrcamentoItem, 'id' | 'orcamento_id'>[];
@@ -181,18 +184,21 @@ export function useOrcamentos() {
     if (sol) {
       const clienteIdioma = (sol.cliente as any)?.idioma;
       const valorFormatado = formatCurrency(input.valor_total, currencyForCountry(oficina.pais), clienteIdioma);
-      const n = notifOrcamentoRevisado(clienteIdioma, oficina.nome_fantasia, valorFormatado);
+      const n = input.eraRecusado ? notifNovoOrcamento(clienteIdioma, oficina.nome_fantasia, valorFormatado) : notifOrcamentoRevisado(clienteIdioma, oficina.nome_fantasia, valorFormatado);
       await supabase.from('notificacoes').insert({
         profile_id: sol.cliente_id,
         tipo: 'novo_orcamento',
         titulo: n.titulo,
         mensagem: n.mensagem,
-        dados: { solicitacao_id: input.solicitacao_id, orcamento_id: orcamentoId },
+        dados: {
+          solicitacao_id: input.solicitacao_id, orcamento_id: orcamentoId,
+          textos: emTodasAsLinguas((l) => { const v = formatCurrency(input.valor_total, currencyForCountry(oficina.pais), l); return input.eraRecusado ? notifNovoOrcamento(l, oficina.nome_fantasia, v) : notifOrcamentoRevisado(l, oficina.nome_fantasia, v); }),
+        },
       });
     }
 
-    // Send quote summary as a system message in the chat
-    try {
+    // Send quote summary as a system message in the chat (orcamento novo: sem "revisao n")
+    if (!input.eraRecusado) try {
       const valorFormatadoChat = formatCurrency(input.valor_total, currencyForCountry(oficina.pais), user?.idioma);
       await supabase.from('mensagens').insert({
         solicitacao_id: input.solicitacao_id,

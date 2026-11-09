@@ -8,6 +8,7 @@ const req = createRequire('C:/Users/vitor/Documents/Sites - Progetos/fixauto-bra
 const { createClient } = req('@supabase/supabase-js');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
+if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
 const sb = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 const tag = crypto.randomBytes(3).toString('hex');
 const email = `nativo${tag}@example.test`; const senha = `Nat${tag}Senha9`;

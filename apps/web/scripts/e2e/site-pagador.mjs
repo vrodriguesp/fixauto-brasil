@@ -12,7 +12,8 @@ const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
-const SITE = 'https://bipfix.com';
+if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
+const SITE = 'http://localhost:3100';
 const sb = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 let falhas = 0;
 const ok = (n, c, x = '') => { if (!c) falhas++; console.log(`${c ? 'ok  ' : 'FALHA'} ${n}${x ? ' - ' + String(x).slice(0, 200) : ''}`); };
@@ -64,8 +65,8 @@ try {
   const telaP = await pP.innerText('body');
   ok('quem paga le a conversa (antes nao conseguia)', pP.url().includes('pagador=1') && /Pagamento do reparo/.test(telaP), pP.url());
   ok('cabecalho sem "carregando"', !/Carregando|Loading/i.test(telaP.split('\n').slice(0, 10).join(' ')));
-  await pP.locator('input[type=text]').last().fill('Ola, posso pagar por transferencia?');
-  await pP.locator('input[type=text]').last().press('Enter'); await pP.waitForTimeout(3500);
+  await pP.locator('[data-campo-conversa], input[type=text]').last().fill('Ola, posso pagar por transferencia?');
+  await pP.locator('[data-campo-conversa], input[type=text]').last().press('Enter'); await pP.waitForTimeout(3500);
   const { data: mP } = await sb.from('mensagens').select('pagador_id, oficina_id').eq('solicitacao_id', solId).eq('remetente_id', pag.id);
   ok('mensagem de quem paga gravada na conversa dele', (mP || []).length === 1 && mP[0].pagador_id === pag.id && mP[0].oficina_id === ofId);
 
@@ -75,12 +76,12 @@ try {
   ok('oficina ve as abas Cliente e Quem paga', !!(await pO.getByRole('tab', { name: /Remondi eest maksja/ }).count()));
   ok('aba Cliente nao mostra a conversa de quem paga', !(await pO.innerText('body')).includes('transferencia'));
   await pO.getByRole('tab', { name: /Remondi eest maksja/ }).click(); await pO.waitForTimeout(3000);
-  ok('aba Quem paga mostra a mensagem dele', (await pO.innerText('body')).includes('transferencia'));
-  await pO.locator('input[type=text]').last().fill('Jah, pangaülekanne sobib.');
-  await pO.locator('input[type=text]').last().press('Enter'); await pO.waitForTimeout(4500);
+  ok('aba Quem paga mostra a mensagem dele', /transferencia|ülekan/i.test(await pO.innerText('body')));
+  await pO.locator('[data-campo-conversa], input[type=text]').last().fill('Jah, pangaülekanne sobib.');
+  await pO.locator('[data-campo-conversa], input[type=text]').last().press('Enter'); await pO.waitForTimeout(4500);
   const { data: mO } = await sb.from('mensagens').select('pagador_id').eq('solicitacao_id', solId).eq('remetente_id', ofi.id).ilike('texto', '%pangaülekanne%');
   ok('resposta da oficina foi para quem paga', (mO || []).length === 1 && mO[0].pagador_id === pag.id);
-  ok('quem paga recebe a resposta na hora', (await pP.innerText('body')).includes('pangaülekanne'));
+  ok('quem paga recebe a resposta na hora', /pangaülekanne|transferência bancária/i.test(await pP.innerText('body')));
   const { data: nPag2 } = await sb.from('notificacoes').select('dados').eq('profile_id', pag.id).eq('tipo', 'nova_mensagem');
   ok('quem paga e avisado da resposta', (nPag2 || []).length >= 1);
 

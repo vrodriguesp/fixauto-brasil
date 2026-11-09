@@ -31,7 +31,13 @@
     "accidentsInvolvedTitle": "Acidentes envolvidos",
     "accidentRegisteredBy": "Acidente registrado por {name}",
     "yourVehiclePlate": "Seu veículo: placa {plate}",
-    "messages": "Mensagens"
+    "messages": "Mensagens",
+    "botaoAcidente": "Acabei de bater",
+    "botaoAcidenteDica": "Registre agora e receba orçamentos de oficinas próximas",
+    "badgeAcidente": "Acidente",
+    "acidenteSemCarro": "Acidente",
+    "pedidoSemCarro": "Pedido de orçamento",
+    "aguardandoOrcamentos": "Esperando orçamentos das oficinas"
   },
   "clienteVeiculos": {
     "loading": "Carregando...",
@@ -102,7 +108,7 @@
     "errorUnexpectedSubmit": "Erro inesperado ao criar solicitação",
     "successTitle": "Solicitação enviada!",
     "successText": "Oficinas próximas a você foram notificadas. Você receberá orçamentos em breve.",
-    "redirecting": "Redirecionando para o dashboard...",
+    "redirecting": "Indo para o início...",
     "pageTitle": "Nova Solicitação",
     "pageSubtitle": "Descreva o problema do seu veículo para receber orçamentos",
     "step1Title": "Selecione o veículo",
@@ -154,7 +160,9 @@
     "createRequest": "Criar solicitação",
     "quotesReceivedCount": "{count} orçamento(s) recebido(s)",
     "deadlineDays": "Prazo do conserto: {days} dias",
-    "itemsCount": "{count} itens"
+    "itemsCount": "{count} itens",
+    "pedidoSemCarro": "Pedido de orçamento",
+    "aguardandoOrcamentos": "Esperando orçamentos das oficinas"
   },
   "clienteOrcamentoDetalhe": {
     "execDaysApprox": "~{days} dia(s) útil(eis)",
@@ -169,7 +177,7 @@
     "checkin": "Check-in:",
     "deliveryForecast": "Previsão entrega:",
     "bringVehicleNote": "Leve seu veículo no horário marcado. A oficina entrará em contato caso haja alguma mudança.",
-    "backToDashboard": "Voltar ao painel",
+    "backToDashboard": "Voltar ao início",
     "back": "Voltar",
     "messageToWorkshop": "Mensagem para oficina",
     "confirmCancelRequest": "Tem certeza que deseja cancelar esta solicitação? As oficinas não poderão mais enviar orçamentos.",
@@ -241,7 +249,26 @@
     "escolhido": "Orçamento escolhido",
     "verOficina": "Ver a oficina (avaliações, endereço)",
     "pedidoCanceladoTitulo": "Pedido cancelado",
-    "pedidoCanceladoTexto": "Este pedido foi cancelado. Os orçamentos ficam aqui só para consulta."
+    "pedidoCanceladoTexto": "Este pedido foi cancelado. Os orçamentos ficam aqui só para consulta.",
+    "verAcidente": "Ver o acidente (outro motorista e mensagens)",
+    "cancelamento": {
+      "botao": "Cancelar pedido",
+      "titulo": "Cancelar este pedido?",
+      "texto": "As oficinas que mandaram orçamento serão avisadas e o pedido sai da lista delas. Você pode reabrir depois.",
+      "motivoOpcional": "Por quê? (opcional)",
+      "motivos": {
+        "resolvido": "Já resolvi",
+        "outra_oficina": "Achei outra oficina",
+        "desisti": "Desisti do reparo",
+        "outro": "Outro motivo"
+      },
+      "confirmar": "Sim, cancelar o pedido",
+      "cancelando": "Cancelando...",
+      "voltar": "Não, voltar",
+      "reabrir": "Reabrir pedido",
+      "reabrindo": "Reabrindo..."
+    },
+    "novaNoBipfix": "Nova no BipFix"
   },
   "clienteMensagens": {
     "workshopFallback": "Oficina",
@@ -288,7 +315,7 @@
     "progressConcluido": "Concluído",
     "progressEntregue": "Entregue",
     "noAppointmentFound": "Nenhum agendamento encontrado para esta solicitação.",
-    "backToDashboard": "Voltar ao painel",
+    "backToDashboard": "Voltar ao início",
     "pageTitle": "Acompanhamento da Manutenção",
     "progressTitle": "Progresso",
     "checkin": "Check-in",
@@ -311,7 +338,7 @@
     "loading": "Carregando...",
     "rescheduleConfirmedTitle": "Reagendamento confirmado!",
     "newTimeRegistered": "Seu novo horário foi registrado com sucesso.",
-    "backToPanel": "Voltar ao painel",
+    "backToPanel": "Voltar ao início",
     "back": "Voltar",
     "pageTitle": "Reagendar atendimento",
     "pageSubtitle": "Escolha uma nova data para seu atendimento.",
@@ -339,8 +366,8 @@
   },
   "editarPedido": {
     "acidente": "Acidente",
-    "completarCarro": "Complete os dados do carro",
-    "completarCarroDica": "Marca, modelo e placa ajudam a oficina a fazer o orçamento. Toque para completar.",
+    "completarCarro": "Adicione os dados do SEU carro",
+    "completarCarroDica": "Marca, modelo e placa do carro que VOCÊ dirigia ajudam a oficina a fazer o orçamento. Toque para adicionar.",
     "editar": "Editar pedido",
     "marca": "Marca",
     "modelo": "Modelo",

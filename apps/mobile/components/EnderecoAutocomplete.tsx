@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, Pressable, Keyboard } from 'react-native';
+import { View, Text, TextInput, Pressable, Keyboard, Platform } from 'react-native';
 import * as Localization from 'expo-localization';
 import { API_BASE_URL } from '../lib/api';
 
@@ -63,7 +63,9 @@ export default function EnderecoAutocomplete({
         value={value}
         onChangeText={onChange}
         placeholder={placeholder}
-        onFocus={() => { focado.current = true; aoFocar?.(); }}
+        // na versao web o navegador ja rola ate o campo; a rolagem do app tirava o foco no
+        // Safari e nada mais entrava no endereco (teste do dono 08/11, "trava")
+        onFocus={() => { focado.current = true; if (Platform.OS !== 'web') aoFocar?.(); }}
         onBlur={() => { focado.current = false; }}
         autoCorrect={false}
         className="border border-gray-300 rounded-lg px-4 py-3 text-[16px]"

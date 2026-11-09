@@ -3,6 +3,7 @@ import { taxaEfetivaServicos, valorDaComissao } from '@/lib/comissao-regras';
 import { sendServicoConcluidoEmail, sendServicoConcluidoWhatsApp } from '@/lib/notifications';
 import { notifServicoConcluido } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 
 
@@ -53,7 +54,10 @@ export async function entregarServico(p: { eventoId: string; solicitacaoId: stri
           tipo: 'servico_concluido',
           titulo: nConcluido.titulo,
           mensagem: nConcluido.mensagem,
-          dados: { solicitacao_id: solicitacaoId },
+          dados: {
+            solicitacao_id: solicitacaoId,
+            textos: emTodasAsLinguas((l) => notifServicoConcluido(l, sol.veiculo ? veiculoNome : ({ pt: 'seu veículo', 'pt-PT': 'o seu veículo', en: 'your vehicle', et: 'sinu sõiduk', it: 'il tuo veicolo', ru: 'ваш автомобиль' } as Record<string, string>)[l])),
+          },
         });
 
         // 4b. Email + WhatsApp - cliente pode nao estar com o app aberto

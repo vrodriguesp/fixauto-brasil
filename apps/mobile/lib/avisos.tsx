@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from './supabase';
+import { naLinguaDoApp } from './aviso-lingua';
 import { useAuth } from './auth-context';
 import { destinoDoAviso } from './destino-aviso';
 import { TextoTraduzido } from './traducao';
@@ -51,7 +52,7 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
       supabase.from('notificacoes').select('*').eq('profile_id', user.id).eq('lida', false).order('created_at', { ascending: false }).limit(30),
       supabase.from('solicitacoes').select('id').eq('cliente_id', user.id),
     ]);
-    setNaoLidos((avisos as Aviso[]) || []);
+    setNaoLidos(((avisos as Aviso[]) || []).map(naLinguaDoApp));
     const ids = (sols || []).map((s: any) => s.id);
     // mensagens nao lidas: as dos meus pedidos e as da conversa em que eu pago o reparo
     const [{ count: c1 }, { count: c2 }] = await Promise.all([
@@ -102,7 +103,7 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
       if (!user || !desde) return;
       const { data } = await supabase.from('notificacoes').select('*').eq('profile_id', user.id).eq('lida', false)
         .gt('created_at', desde).order('created_at', { ascending: false }).limit(1);
-      if (data?.[0]) { mostrar(data[0] as Aviso); setChegou((n) => n + 1); }
+      if (data?.[0]) { mostrar(naLinguaDoApp(data[0] as Aviso)); setChegou((n) => n + 1); }
     });
     return () => sub.remove();
   }, [user?.id, atualizar, mostrar]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -113,7 +114,7 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
     const canal = supabase
       .channel(`avisos-${user.id}-${conexao}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notificacoes', filter: `profile_id=eq.${user.id}` }, (payload) => {
-        mostrar(payload.new as Aviso);
+        mostrar(naLinguaDoApp(payload.new as Aviso));
         atualizar();
         setChegou((n) => n + 1);
       })

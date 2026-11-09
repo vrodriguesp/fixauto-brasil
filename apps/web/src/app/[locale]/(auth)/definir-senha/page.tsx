@@ -71,10 +71,13 @@ export default function DefinirSenhaPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    // celular: comeca no alto, sem a altura da tela inteira (o menu de cima e o de baixo ja ocupam
+    // espaco - a caixa ficava cortada e o botao do chat cobria "Definir senha"; dono 09/11)
+    <div className="flex justify-center bg-gray-50 px-4 py-6 sm:min-h-[calc(100dvh-4rem)] sm:items-center sm:py-12">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <img src="/logo-80.webp" alt="BipFix" width={188} height={40} className="h-10 w-auto mx-auto mb-4" />
+        <div className="text-center mb-6 sm:mb-8">
+          {/* no celular o logo ja esta no menu de cima */}
+          <img src="/logo-80.webp" alt="BipFix" width={188} height={40} className="hidden sm:block h-10 w-auto mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900">{t('titulo')}</h1>
           <p className="text-gray-600 mt-2">
             {t('subtitulo')}

@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { INTL_LOCALE } from '@/lib/utils';
 import { notifNotaInterna } from '@/lib/notif-i18n';
 import type { VeiculoNotaInterna } from '@fixauto/shared';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 interface Props {
   agendaId: string;
@@ -97,7 +98,7 @@ export default function NotasInternas({ agendaId, oficinaId, funcionarioResponsa
           tipo: 'nota_interna_veiculo',
           titulo: notifNotaInterna(idioma).titulo,
           mensagem: `${user.nome}: "${valor.slice(0, 80)}" - ${veiculoLabel}`,
-          dados: { agenda_id: agendaId },
+          dados: { agenda_id: agendaId, textos: emTodasAsLinguas((l) => ({ titulo: notifNotaInterna(l).titulo, mensagem: `${user.nome}: "${valor.slice(0, 80)}" - ${veiculoLabel}` })) },
         });
       }
     }

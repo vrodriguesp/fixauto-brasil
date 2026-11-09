@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* versao web do app: sem o retangulo preto de foco do navegador dentro das caixas arredondadas
+   (parecia inacabado no Android/iPhone - teste 09/11); a propria caixa ja mostra o campo ativo */
+input:focus, textarea:focus { outline: none !important; }

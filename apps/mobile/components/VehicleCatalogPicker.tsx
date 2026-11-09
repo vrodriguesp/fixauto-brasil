@@ -52,6 +52,9 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
   // No Android, com o teclado aberto dentro do Modal, o primeiro toque num item nao vira
   // "press" (so fecha o teclado) e era preciso tocar de novo (emulador 08/11). O toque em si
   // chega ao item: encostar e soltar sem arrastar ja escolhe. onPress fica para leitor de tela.
+  // Na versao web (Safari) o mesmo: o 1o toque fechava o teclado da busca, a lista se mexia e o
+  // toque era cancelado - "as vezes nao pega o clique" (dono 09/11).
+  const peloToque = Platform.OS === 'android' || Platform.OS === 'web';
   const toque = useRef<{ y: number; t: number } | null>(null);
   const escolhido = useRef(false);
   useEffect(() => { if (open) escolhido.current = false; }, [open]);
@@ -80,7 +83,7 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
             autoFocus
             className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]"
           />
-          <FlatList keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled"
+          <FlatList keyboardDismissMode={Platform.OS === 'web' ? 'none' : 'on-drag'} keyboardShouldPersistTaps="handled"
             data={filtrados}
             keyExtractor={(item) => item.code}
             renderItem={({ item }) => (
@@ -89,7 +92,7 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
                 onTouchEnd={(e) => {
                   const ini = toque.current;
                   toque.current = null;
-                  if (Platform.OS === 'android' && ini && Math.abs(e.nativeEvent.pageY - ini.y) < 10 && Date.now() - ini.t < 700) escolher(item);
+                  if (peloToque && ini && Math.abs(e.nativeEvent.pageY - ini.y) < 10 && Date.now() - ini.t < 700) escolher(item);
                 }}
                 onPress={() => escolher(item)}
                 className="py-3 border-b border-gray-100"

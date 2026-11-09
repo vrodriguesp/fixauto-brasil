@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import { notifAvaliacaoRecebida } from '@/lib/notif-i18n';
 import type { Avaliacao } from '@fixauto/shared';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 export function useAvaliacoes(oficinaId?: string) {
   const { user, oficina } = useAuth();
@@ -78,7 +79,7 @@ export function useAvaliacoes(oficinaId?: string) {
             tipo: 'nova_avaliacao',
             titulo: n.titulo,
             mensagem: n.mensagem,
-            dados: { solicitacao_id: input.solicitacao_id, avaliacao_id: (data as any).id },
+            dados: { solicitacao_id: input.solicitacao_id, avaliacao_id: (data as any).id, textos: emTodasAsLinguas((l) => notifAvaliacaoRecebida(l, stars, user.nome, comentario)) },
           });
         } catch { /* Non-blocking */ }
       }

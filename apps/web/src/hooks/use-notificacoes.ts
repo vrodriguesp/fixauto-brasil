@@ -4,9 +4,13 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import type { Notificacao } from '@fixauto/shared';
+import { useLocale } from 'next-intl';
+import { textoDoAviso } from '@/lib/notif-textos';
 
 export function useNotificacoes() {
   const { user } = useAuth();
+  // avisos na lingua da tela (dados.textos), nao na da conta no envio (dono 08/11)
+  const locale = useLocale();
   // Canal precisa de nome unico por instancia do hook - desde que o sino
   // global (NotificationBell, no Navbar) foi adicionado, esse hook passou
   // a rodar em mais de um lugar ao mesmo tempo (Navbar + qualquer pagina
@@ -28,11 +32,11 @@ export function useNotificacoes() {
       .eq('profile_id', user.id)
       .order('created_at', { ascending: false })
       .limit(20);
-    const items = (data as Notificacao[]) || [];
+    const items = ((data as Notificacao[]) || []).map((n) => textoDoAviso(n, locale));
     setNotificacoes(items);
     setUnreadCount(items.filter((n) => !n.lida).length);
     setLoading(false);
-  }, [user]);
+  }, [user, locale]);
 
   useEffect(() => { fetch(); }, [fetch]);
   // lidas em outra parte da tela (pagina de notificacoes x sininho): todas as copias do
@@ -53,13 +57,13 @@ export function useNotificacoes() {
         table: 'notificacoes',
         filter: `profile_id=eq.${user.id}`,
       }, (payload) => {
-        setNotificacoes((prev) => [payload.new as Notificacao, ...prev]);
+        setNotificacoes((prev) => [textoDoAviso(payload.new as Notificacao, locale), ...prev]);
         setUnreadCount((prev) => prev + 1);
       })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [user]);
+  }, [user, locale]);
 
   const markAsRead = async (id: string) => {
     await supabase.from('notificacoes').update({ lida: true }).eq('id', id);

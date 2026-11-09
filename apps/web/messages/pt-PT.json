@@ -427,7 +427,10 @@
       "mecanica": "Mecânica",
       "eletrica": "Eletricidade",
       "pneu": "Pneus",
-      "outro": "Outro"
+      "outro": "Outro",
+      "manutencao": "Manutenção",
+      "pintura": "Pintura",
+      "vidros": "Vidros"
     },
     "urgencias": {
       "baixa": "Baixa",
@@ -677,7 +680,16 @@
     "CODIGO_EXPIRADO": "O código expirou ou o pedido já foi enviado. Preencha o pedido de novo.",
     "CODIGO_TENTATIVAS": "Demasiadas tentativas erradas. Toque novamente em “Enviar pedido” e enviamos um novo código.",
     "EMAIL_EM_USO": "Já existe uma conta com este e-mail. Volte atrás e inicie sessão.",
-    "AVALIACAO_PENDENTE": "Antes de um novo pedido, avalie o serviço anterior."
+    "AVALIACAO_PENDENTE": "Antes de um novo pedido, avalie o serviço anterior.",
+    "MESMO_DIA_SO_COMBINADO": "Mudança no mesmo dia só se já combinou com o cliente.",
+    "DATA_ATUAL_NAO_SERVE": "A oficina já não pode na data marcada. Aceite a nova, peça outra data ou cancele.",
+    "PREVISAO_ANTES_DA_DATA": "A previsão de entrega não pode ser antes da nova data de chegada do carro.",
+    "DATA_IGUAL_ATUAL": "Essa já é a data e a hora marcadas. Escolha outra data ou outra hora.",
+    "PLACA_INVALIDA": "Matrícula inválida: use só letras, números, espaço ou hífen (2 a 10 caracteres).",
+    "ANO_INVALIDO": "Ano inválido: use 4 dígitos, de 1950 até ao próximo ano.",
+    "CARRO_NA_OFICINA": "O carro já está na oficina: para cancelar, fale com a oficina pela conversa.",
+    "PEDIDO_NAO_CANCELAVEL": "Este pedido já não pode ser cancelado.",
+    "PEDIDO_NAO_REABRIVEL": "Este pedido não pode ser reaberto."
   },
   "sobre": {
     "metaTitle": "Sobre a BipFix",
@@ -927,5 +939,11 @@
     "linkSenhaEnviado": "Enviámos para o seu e-mail uma ligação para criar uma nova palavra-passe.",
     "jaTemConta": "Já tem conta?",
     "entrar": "Iniciar sessão"
+  },
+  "conversa": {
+    "enviando": "a enviar…",
+    "novaMensagem": "Nova mensagem",
+    "enviar": "Enviar",
+    "naoEnviada": "não enviada"
   }
 }

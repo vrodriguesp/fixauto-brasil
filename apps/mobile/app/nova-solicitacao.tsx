@@ -1,6 +1,8 @@
-import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
+import { type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
+import RolagemTeclado from '../components/RolagemTeclado';
 import { useCallback, useEffect, useState, useRef } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Alert, Linking, Keyboard } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Linking, Keyboard } from 'react-native';
+import { confirmar, avisar } from '../lib/confirmar';
 import { useTranslation } from 'react-i18next';
 import { router, useFocusEffect } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -16,7 +18,7 @@ import { fetchComPrazo } from '../lib/rede';
 import { mensagemErro, ErroUsuario } from '../lib/erro';
 import EnderecoAutocomplete from '../components/EnderecoAutocomplete';
 import OpcaoCartao from '../components/OpcaoCartao';
-import { obterPosicao, useLocalizacaoAoVoltar } from '../lib/posicao';
+import { obterPosicao, permissaoLocal, useLocalizacaoAoVoltar } from '../lib/posicao';
 import { arquivoDaFoto } from '../lib/anexo';
 import { useAvaliacaoPendente } from '../components/AvaliacaoPendente';
 
@@ -48,14 +50,14 @@ export default function NovaSolicitacaoScreen() {
   useFocusEffect(
     useCallback(() => {
       if (!user) return;
-      supabase.from('veiculos').select('*').eq('profile_id', user.id).then(({ data }) => setVeiculos((data as Veiculo[]) || []));
+      supabase.from('veiculos').select('*').eq('profile_id', user.id).then(({ data }) => setVeiculos(((data as Veiculo[]) || []).filter((v) => v.fipe_marca)));
     }, [user])
   );
 
   const buscarLocal = async () => {
     setBuscandoLocal(true);
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await permissaoLocal(true);
       if (status !== 'granted') return;
       const pos = await obterPosicao();
       setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
@@ -82,7 +84,7 @@ export default function NovaSolicitacaoScreen() {
   const handleCamera = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert(t('emergencia.cameraNegadaTitulo'), t('emergencia.cameraNegadaTexto'), [
+      confirmar(t('emergencia.cameraNegadaTitulo'), t('emergencia.cameraNegadaTexto'), [
         { text: t('common.cancelar'), style: 'cancel' },
         { text: t('emergencia.abrirAjustes'), onPress: () => Linking.openSettings() },
       ]);
@@ -158,7 +160,7 @@ export default function NovaSolicitacaoScreen() {
 
       setEnviado(true);
     } catch (e) {
-      Alert.alert(t('common.erroGenerico'), mensagemErro(e));
+      avisar(t('common.erroGenerico'), mensagemErro(e));
     } finally {
       setEnviando(false);
     }
@@ -200,7 +202,7 @@ export default function NovaSolicitacaoScreen() {
   }
 
   return (
-    <KeyboardAwareScrollView bottomOffset={24} keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom }}>
+    <RolagemTeclado bottomOffset={24} keyboardDismissMode="on-drag" ref={rolagem} className="flex-1 bg-white px-4 pt-4" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: insets.bottom }}>
 
       {/* o problema primeiro, depois o carro (auditoria 10/10, B3) */}
       <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoServico')}</Text>
@@ -297,6 +299,6 @@ export default function NovaSolicitacaoScreen() {
       >
         {enviando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold text-base">{t('novaSolicitacao.enviarSolicitacao')}</Text>}
       </Pressable>
-    </KeyboardAwareScrollView>
+    </RolagemTeclado>
   );
 }

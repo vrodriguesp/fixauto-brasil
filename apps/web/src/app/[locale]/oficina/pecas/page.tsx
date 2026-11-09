@@ -12,6 +12,7 @@ import { Link } from '@/i18n/navigation';
 import { notifPedidoConfirmado } from '@/lib/notif-i18n';
 import DetalhesPedidoPeca from '@/components/pecas/DetalhesPedidoPeca';
 import { compressImage } from '@/lib/image-compress';
+import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 interface CotacaoComRespostas extends CotacaoPeca {
   respostas: (CotacaoPecaResposta & {
@@ -151,7 +152,7 @@ export default function OficinaPecasPage() {
           tipo: 'pedido_peca_confirmado',
           titulo: nPedido.titulo,
           mensagem: nPedido.mensagem,
-          dados: { cotacao_id: cotacao.id },
+          dados: { cotacao_id: cotacao.id, textos: emTodasAsLinguas((l) => notifPedidoConfirmado(l, oficina.nome_fantasia, cotacao.peca_descricao)) },
         });
         const fornecedorProfile = (fornecedor as any).profile;
         if (fornecedorProfile?.email) {

@@ -15,7 +15,8 @@ const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
-const SITE = 'https://bipfix.com';
+if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
+const SITE = 'http://localhost:3100';
 const sb = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 let falhas = 0;
 const ok = (n, c, x = '') => { if (!c) falhas++; console.log(`${c ? 'ok  ' : 'FALHA'} ${n}${x ? ' - ' + String(x).slice(0, 220) : ''}`); };
@@ -58,8 +59,8 @@ try {
   const ctxB = await celular(); const pB = await ctxB.newPage();
   await entrar(pB, ofB.email, ofB.senha, 'it');
   await pB.goto(`${SITE}/it/it/oficina/mensagens/${s.id}`, { waitUntil: 'networkidle' }); await pB.waitForTimeout(2500);
-  await pB.locator('input[type=text]').last().fill('Buongiorno, il paraurti è solo graffiato?');
-  await pB.locator('input[type=text]').last().press('Enter'); await pB.waitForTimeout(4000);
+  await pB.locator('[data-campo-conversa], input[type=text]').last().fill('Buongiorno, il paraurti è solo graffiato?');
+  await pB.locator('[data-campo-conversa], input[type=text]').last().press('Enter'); await pB.waitForTimeout(4000);
   const { data: n1 } = await sb.from('notificacoes').select('titulo, dados').eq('profile_id', cli.id).eq('tipo', 'nova_mensagem');
   ok('1 cliente avisado da primeira mensagem da oficina', (n1 || []).length >= 1 && n1[0].dados?.oficina_id === idB, JSON.stringify(n1));
 
@@ -68,8 +69,14 @@ try {
   const fd = new FormData(); fd.append('arquivo', new Blob([pdfOrcamento()], { type: 'application/pdf' }), 'preventivo.pdf'); fd.append('idioma', 'it');
   const rL = await fetch(`${SITE}/api/ler-orcamento`, { method: 'POST', headers: { Authorization: `Bearer ${tA}` }, body: fd });
   const dL = await rL.json().catch(() => ({}));
-  ok('2 PDF lido: itens', rL.ok && dL.itens?.length >= 2, `${rL.status} ${dL.itens?.length}`);
-  ok('2 PDF lido: garantia de 12 meses e prazo de 3 dias', dL.garantia_dias >= 360 && dL.garantia_dias <= 366 && dL.prazo_dias === 3, `garantia=${dL.garantia_dias} prazo=${dL.prazo_dias}`);
+  // sem chave da IA no teste local (para nao gastar a cota): a leitura do PDF fica de fora e o
+  // resto da garantia continua (antes o teste parava aqui e a garantia nem era testada)
+  const semIA = rL.status === 503 || /GEMINI|IA_INDISPONIVEL/.test(JSON.stringify(dL));
+  if (semIA) console.log('(pulado 2: IA sem chave no teste local)');
+  else {
+    ok('2 PDF lido: itens', rL.ok && dL.itens?.length >= 2, `${rL.status} ${dL.itens?.length}`);
+    ok('2 PDF lido: garantia de 12 meses e prazo de 3 dias', dL.garantia_dias >= 360 && dL.garantia_dias <= 366 && dL.prazo_dias === 3, `garantia=${dL.garantia_dias} prazo=${dL.prazo_dias}`);
+  }
 
   // ---- 6) perfil: B nao aprovada ve aviso; A aprovada tem botoes na tela e pagina publica
   await sb.from('oficinas').update({ ativa: false }).eq('id', idB);
@@ -88,9 +95,15 @@ try {
   // ---- 3) orcamento com garantia (180) pela tela, aceite, check-in e entrega com confirmacao
   await pA.goto(`${SITE}/it/it/oficina/enviar-orcamento/${s.id}`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(3000);
   // o mesmo PDF pela tela: a IA preenche os itens
-  await pA.locator('input[type=file][accept*="pdf"]').setInputFiles({ name: 'preventivo.pdf', mimeType: 'application/pdf', buffer: pdfOrcamento() });
-  await pA.getByText(/Voci compilate dal documento/).waitFor({ timeout: 60000 }).catch(() => {});
-  ok('2 tela: itens preenchidos pelo PDF, com aviso para conferir', /Voci compilate dal documento/.test(await pA.innerText('body')));
+  if (!semIA) {
+    await pA.locator('input[type=file][accept*="pdf"]').setInputFiles({ name: 'preventivo.pdf', mimeType: 'application/pdf', buffer: pdfOrcamento() });
+    await pA.getByText(/Voci compilate dal documento/).waitFor({ timeout: 60000 }).catch(() => {});
+    ok('2 tela: itens preenchidos pelo PDF, com aviso para conferir', /Voci compilate dal documento/.test(await pA.innerText('body')));
+  } else {
+    // itens a mao, como a oficina faria sem o PDF
+    await pA.getByPlaceholder('Descrizione della voce').first().fill('Riparazione paraurti');
+    await pA.getByPlaceholder('Valore (€)').first().fill('180');
+  }
   await pA.selectOption('#orc-garantia', '180');
   await pA.locator('button[type=submit]').last().click(); await pA.waitForTimeout(5000);
   const { data: o } = await sb.from('orcamentos').select('id, garantia_dias').eq('solicitacao_id', s.id).eq('oficina_id', idA).maybeSingle();

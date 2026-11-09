@@ -141,15 +141,12 @@ export default function SolicitacaoDetalhePage() {
             </svg>
             {t('mensagem')}
           </Link>
-          {sol.status !== 'concluida' && sol.status !== 'cancelada' && (sol.status as string) !== 'expirada' && (
-            <Link href={action.href} className={`${isAccepted || myQuote || dispensa ? 'btn-secondary' : 'btn-primary'} text-center min-h-[44px] inline-flex items-center justify-center`}>
+          {/* com orcamento ja enviado, mudar/revisar fica no proprio cartao do orcamento logo abaixo -
+              antes havia 3 botoes para a mesma coisa (Muuda pakkumist 2x + Vaata pakkumist) - teste 09/11 */}
+          {!myQuote && sol.status !== 'concluida' && sol.status !== 'cancelada' && (sol.status as string) !== 'expirada' && (
+            <Link href={action.href} className={`${isAccepted || dispensa ? 'btn-secondary' : 'btn-primary'} text-center min-h-[44px] inline-flex items-center justify-center`}>
               {action.label}
             </Link>
-          )}
-          {myQuote && (
-            <a href="#meu-orcamento" className="btn-primary text-center min-h-[44px] inline-flex items-center justify-center col-span-2 sm:col-span-1">
-              {t('verOrcamento')}
-            </a>
           )}
         </div>
       </div>

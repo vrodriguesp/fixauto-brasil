@@ -19,6 +19,7 @@ import ProporNovaData from '@/components/oficina/ProporNovaData';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import { useMostrarAlerta, rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 import { textoErroApi } from '@/lib/erro-api';
+import { useEstadoQueVolta } from '@/hooks/use-estado-que-volta';
 import { hojeLocal, turnoDisponivel, primeiroTurnoLivre, type Turno } from '@/lib/turnos';
 
 interface ItemForm {
@@ -53,6 +54,11 @@ export default function EnviarOrcamentoPage() {
     (o) => o.oficina_id === oficina?.id
   );
   const isRevision = !!existingQuote;
+  // recusado pelo cliente (ou agendamento cancelado por ele): encerrado; so um orcamento NOVO, se
+  // a oficina quiser e o pedido seguir aberto - chega ao cliente como novo (decisao do dono 08/11)
+  const eraRecusado = existingQuote?.status === 'recusado';
+  const ehRevisao = isRevision && !eraRecusado;
+  const [novoAposRecusa, setNovoAposRecusa] = useState(false);
   // orcamento ja aceito: vira PROPOSTA de revisao que o cliente aprova ou nao
   // (migracao 049, /api/orcamento-revisao) - nunca altera o aceito direto
   const modoRevisaoAceito = existingQuote?.status === 'aceito';
@@ -61,7 +67,7 @@ export default function EnviarOrcamentoPage() {
   // muda - a data de entrega (so antes do check-in) ou itens/valor -, uma coisa
   // por vez; antes as duas apareciam juntas e, depois de enviar a data, o
   // formulario do valor continuava aberto
-  const [oQueMudar, setOQueMudar] = useState<'data' | 'valor' | null>(null);
+  const [oQueMudar, setOQueMudar] = useEstadoQueVolta<'data' | 'valor'>(`orc-mudar:${params.id}`, null);
   const [temAgenda, setTemAgenda] = useState<boolean | null>(null);
   useTopoAoMudar(oQueMudar);
   const motivoRef = useRef<HTMLTextAreaElement>(null);
@@ -70,10 +76,25 @@ export default function EnviarOrcamentoPage() {
   // conta as tentativas: o mesmo erro duas vezes seguidas tambem leva a tela ao campo
   const [tentativaRevisao, setTentativaRevisao] = useState(0);
   useMostrarAlerta(erroRevisao && tentativaRevisao, motivoRef, true);
+  // o cliente respondeu enquanto a pagina estava aberta: mostra isso (antes a pagina caia no
+  // formulario de mudar o valor - dono 08/11)
+  const [clienteRespondeu, setClienteRespondeu] = useState(false);
+  const tinhaPendente = useRef(false);
+  // proposta enviada nesta mesma pagina tambem conta como "esperando o cliente"
+  useEffect(() => { if (revisaoPendente) tinhaPendente.current = true; }, [revisaoPendente]);
   useEffect(() => {
     if (!modoRevisaoAceito || !existingQuote?.id) return;
-    supabase.from('orcamento_revisoes').select('valor_novo, created_at, tipo, nova_data_checkin, novo_turno').eq('orcamento_id', existingQuote.id).eq('status', 'pendente').maybeSingle()
-      .then(({ data }) => setRevisaoPendente((data as any) || null));
+    let vivo = true;
+    const ler = () => supabase.from('orcamento_revisoes').select('valor_novo, created_at, tipo, nova_data_checkin, novo_turno').eq('orcamento_id', existingQuote.id).eq('status', 'pendente').maybeSingle()
+      .then(({ data }) => {
+        if (!vivo) return;
+        if (tinhaPendente.current && !data) setClienteRespondeu(true);
+        tinhaPendente.current = !!data;
+        setRevisaoPendente((data as any) || null);
+      });
+    ler();
+    const tmr = setInterval(ler, 15000);
+    return () => { vivo = false; clearInterval(tmr); };
   }, [modoRevisaoAceito, existingQuote?.id]);
 
   const [itens, setItens] = useState<ItemForm[]>([
@@ -127,6 +148,10 @@ export default function EnviarOrcamentoPage() {
   // comeca no primeiro periodo ainda valido (antes: hoje de manha, mesmo a tarde)
   const [slots, setSlots] = useState<{ data: string; turno: 'manha' | 'tarde' }[]>(() => [primeiroTurnoLivre(undefined, (oficina as any)?.pais)]);
   const [erroHorario, setErroHorario] = useState(false);
+  // o botao "enviar" sempre responde: enviando..., o que falta, ou o erro - ao lado do botao (item 34:
+  // a oficina tocava e nada acontecia - botao desativado com total 0 e falha do servidor calada)
+  const [enviandoOrc, setEnviandoOrc] = useState(false);
+  const [erroEnvio, setErroEnvio] = useState('');
   // no 1o instante a oficina ainda nao carregou e o calculo usava o fuso padrao (Brasil: em
   // Tallinn 13:50 virava "hoje de manha", ja passado - dono 08/11): refaz com o pais da
   // oficina enquanto a pessoa nao mexeu no horario nem ha orcamento salvo
@@ -264,6 +289,9 @@ ${d.observacoes}` : d.observacoes));
       setSubmitted(true);
       return;
     }
+    if (enviandoOrc) return;
+    setErroEnvio('');
+    if (total === 0) { setErroEnvio(t('itemSemValor')); return; }
     if (slots.some((s) => s.data && !turnoDisponivel(s.data, s.turno, undefined, (oficina as any)?.pais ?? null))) {
       setErroHorario(true);
       return;
@@ -295,6 +323,7 @@ ${d.observacoes}` : d.observacoes));
     const valorFinal = total;
 
     let result: { data?: any; error?: any };
+    setEnviandoOrc(true);
 
     const garantia = garantiaDias === '' ? null : Number(garantiaDias);
 
@@ -309,6 +338,7 @@ ${d.observacoes}` : d.observacoes));
         validade,
         valor_original: existingQuote.valor_original || existingQuote.valor_total,
         revisao_numero: (existingQuote.revisao_numero || 0) + 1,
+        eraRecusado,
         garantia_dias: garantia,
         itens: itensPayload,
         slots: slotsPayload,
@@ -328,7 +358,13 @@ ${d.observacoes}` : d.observacoes));
       });
     }
 
-    if (!result.error) {
+    setEnviandoOrc(false);
+    if (result.error) {
+      const e = result.error as { codigo?: string; status?: number };
+      setErroEnvio(e.codigo || e.status ? textoErroApi(tErros, e.status || 500, { codigo: e.codigo }) : t('erroEnvioOrcamento'));
+      return;
+    }
+    {
       // Notify client via email + WhatsApp (non-blocking)
       const orcId = result.data?.id;
       if (orcId) {
@@ -383,6 +419,28 @@ ${d.observacoes}` : d.observacoes));
     );
   }
 
+  if (eraRecusado && !novoAposRecusa && !submitted) {
+    const aberto = statusSol === 'aberta' || statusSol === 'em_orcamento';
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-20 text-center" data-testid="orcamento-recusado">
+        <p className="text-gray-700 mb-3" role="status">{t('orcamentoRecusadoEncerrado')}</p>
+        {aberto && <p className="text-sm text-gray-600 mb-6">{t('orcamentoNovoAjuda')}</p>}
+        <div className="flex flex-col sm:flex-row gap-2 justify-center">
+          {aberto && <button type="button" onClick={() => setNovoAposRecusa(true)} className="btn-primary" data-testid="enviar-orcamento-novo">{t('enviarOrcamentoNovo')}</button>}
+          <Link href={`/oficina/pedidos/${solicitacao.id}`} className="btn-secondary">{t('verPedido')}</Link>
+        </div>
+      </div>
+    );
+  }
+  if (clienteRespondeu && !submitted) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-20 text-center" data-testid="cliente-respondeu">
+        <p className="text-gray-700 mb-6" role="status">{t('clienteRespondeuData')}</p>
+        <Link href={`/oficina/pedidos/${solicitacao.id}`} className="btn-primary inline-block">{t('verPedido')}</Link>
+      </div>
+    );
+  }
+
   // proposta de revisao ja enviada: espera a resposta do cliente
   if (modoRevisaoAceito && revisaoPendente && !submitted) {
     return (
@@ -405,12 +463,12 @@ ${d.observacoes}` : d.observacoes));
           </svg>
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          {modoRevisaoAceito ? t('revisaoEnviadaTitulo') : isRevision ? t('orcamentoRevisado') : t('orcamentoEnviado')}
+          {modoRevisaoAceito ? t('revisaoEnviadaTitulo') : ehRevisao ? t('orcamentoRevisado') : t('orcamentoEnviado')}
         </h1>
         <p className="text-gray-600">
           {modoRevisaoAceito
             ? t('revisaoEnviadaTexto')
-            : isRevision
+            : ehRevisao
             ? t('clienteNotificadoRevisao')
             : t('clienteNotificadoAceite')}
         </p>
@@ -428,7 +486,7 @@ ${d.observacoes}` : d.observacoes));
       </button>
 
       <h1 className="text-2xl font-bold text-gray-900 mb-2">
-        {modoRevisaoAceito ? t('proporRevisaoTitulo') : isRevision ? t('revisarOrcamento') : t('enviarOrcamento')}
+        {modoRevisaoAceito ? t('proporRevisaoTitulo') : ehRevisao ? t('revisarOrcamento') : t('enviarOrcamento')}
       </h1>
       {modoRevisaoAceito && temAgenda === null && (
         <div className="mt-6 flex justify-center" role="status"><div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary-600" /></div>
@@ -469,7 +527,7 @@ ${d.observacoes}` : d.observacoes));
         </div>
       )}
       {mostraForm && (<>
-      {isRevision && !modoRevisaoAceito && (
+      {ehRevisao && !modoRevisaoAceito && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-2">
           <p className="text-sm text-amber-800">
             {t('jaEnviouOrcamento', { numero: ((existingQuote?.revisao_numero) || 0) + 1 })}
@@ -784,7 +842,8 @@ ${d.observacoes}` : d.observacoes));
                       onChange={(e) => updateSlot(index, 'data', e.target.value)}
                     />
                   </div>
-                  <div className="flex-1 sm:flex-none sm:w-44">
+                  {/* celular: o periodo na linha inteira ("Hommik (8-12)" aparecia cortado - teste 09/11) */}
+                  <div className="w-full sm:flex-none sm:w-44">
                     <select
                       aria-label={t('manhaHorario') + ' / ' + t('tardeHorario')}
                       className={`input-field ${!turnoDisponivel(slot.data, slot.turno, undefined, (oficina as any)?.pais ?? null) ? '!border-red-400' : ''}`}
@@ -796,7 +855,7 @@ ${d.observacoes}` : d.observacoes));
                     </select>
                   </div>
                   {slot.data && (
-                    <div className="text-xs text-gray-500 sm:w-28">
+                    <div className="flex-1 text-xs text-gray-500 sm:flex-none sm:w-28">
                       {t('entregaAprox', { data: (() => {
                         const d = new Date(slot.data + 'T12:00:00');
                         d.setDate(d.getDate() + prazoDias);
@@ -846,12 +905,13 @@ ${d.observacoes}` : d.observacoes));
           </div>
         </div>
 
+        {erroEnvio && <p ref={rolarAteAqui} role="alert" className="mb-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800" data-testid="erro-envio-orcamento">{erroEnvio}</p>}
         <div className="flex justify-end gap-3">
           <button type="button" onClick={() => router.back()} className="btn-secondary">
             {t('cancelar')}
           </button>
-          <button type="submit" className="btn-success" disabled={total === 0}>
-            {modoRevisaoAceito ? t('enviarRevisao') : isRevision ? t('atualizarOrcamento') : t('enviarOrcamento')} - {formatCurrency(total, moeda, locale)}
+          <button type="submit" className="btn-success disabled:opacity-60" disabled={enviandoOrc} aria-busy={enviandoOrc} data-testid="enviar-orcamento">
+            {enviandoOrc ? t('enviandoOrcamento') : <>{modoRevisaoAceito ? t('enviarRevisao') : ehRevisao ? t('atualizarOrcamento') : t('enviarOrcamento')} - {formatCurrency(total, moeda, locale)}</>}
           </button>
         </div>
       </form>

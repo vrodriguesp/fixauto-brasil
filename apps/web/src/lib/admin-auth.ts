@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { fetchSemCache } from './fetch-sem-cache';
 
 
 /**
@@ -17,10 +18,8 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
  */
 export async function requireAdmin(): Promise<{ ok: true; userId: string } | { ok: false; response: NextResponse }> {
   const cookieStore = cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+      global: { fetch: fetchSemCache },
       // so le: rota de API nao renova o login (quem renova e o navegador/middleware)
       cookies: {
         getAll() {
@@ -37,7 +36,7 @@ export async function requireAdmin(): Promise<{ ok: true; userId: string } | { o
   // lib/sessao-api.ts) vale antes do cookie, que pode estar vencido
   const bearer = headers().get('authorization');
   const { data: { user } } = bearer?.startsWith('Bearer ')
-    ? await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!).auth.getUser(bearer.slice(7))
+    ? await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, { global: { fetch: fetchSemCache } }).auth.getUser(bearer.slice(7))
     : await supabase.auth.getUser();
   if (!user) {
     return { ok: false, response: NextResponse.json({ error: 'Não autenticado' }, { status: 401 }) };

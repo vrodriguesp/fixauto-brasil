@@ -655,7 +655,14 @@
     "orcamentoFechadoExpirado": "This request expired without a choice. The quote can no longer be changed; if the client reopens it, you can edit it again.",
     "verPedido": "View request",
     "prazoTotalDiasAjuda": "How many days the car stays at the workshop, from drop-off to pick-up. Quote validity is a separate field.",
-    "prazoLongoAviso": "{dias} days at the workshop for {horas} h of work — is that right? If this is how long the quote is valid, use \"Quote validity\"."
+    "prazoLongoAviso": "{dias} days at the workshop for {horas} h of work — is that right? If this is how long the quote is valid, use \"Quote validity\".",
+    "orcamentoRecusadoEncerrado": "The customer declined this quote (or cancelled the booking with your shop). It is closed and can no longer be changed.",
+    "orcamentoNovoAjuda": "The request is still open. If you want, send a new quote: the customer receives it as a new quote.",
+    "enviarOrcamentoNovo": "Send a new quote",
+    "clienteRespondeuData": "The customer answered the new date proposal. See the result and the next step in the request.",
+    "itemSemValor": "Add at least one item with a price before sending.",
+    "enviandoOrcamento": "Sending...",
+    "erroEnvioOrcamento": "The quote could not be sent. Please try again."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Password must be at least 8 characters",
