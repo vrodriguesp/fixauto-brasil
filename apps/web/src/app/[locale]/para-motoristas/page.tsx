@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Link, rota } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import StructuredData from '@/components/seo/StructuredData';
+import GooglePlaySelo from '@/components/GooglePlaySelo';
 import { OG_LOCALE, type Locale } from '@/i18n/routing';
 import { generateFAQSchema, hreflangAlternates, imagemCompartilhamento } from '@/lib/seo-utils';
 
@@ -77,6 +78,8 @@ export default async function ParaMotoristasPage({ params }: { params: Promise<{
               <Botao />
               <Link href="/login" className="text-center text-sm text-white/90 underline hover:text-white">{t('jaTenhoConta')}</Link>
             </div>
+            {/* app Android na loja (Estonia) - abaixo do botao principal, sem competir com ele */}
+            <div className="mt-4 flex justify-center sm:justify-start"><GooglePlaySelo locale={locale} className="h-11 w-auto" /></div>
           </div>
           <div className="mt-8 lg:mt-0">
             <Image src="/images/motoristas/foto-painel.webp" alt={t('fotoAlt')} width={900} height={1125} priority
@@ -142,6 +145,7 @@ export default async function ParaMotoristasPage({ params }: { params: Promise<{
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-bold mb-6">{t('ctaFinalTitulo')}</h2>
           <Botao grande />
+          <div className="mt-6 flex justify-center"><GooglePlaySelo locale={locale} /></div>
         </div>
       </section>
     </div>

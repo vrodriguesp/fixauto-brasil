@@ -49,3 +49,6 @@ google-play-service-account.json
 
 # Firebase (push): vai ao EAS como variavel de arquivo GOOGLE_SERVICES_JSON, nunca ao git
 google-services.json
+
+# credenciais iOS locais (gerado na hora do build, nunca no git)
+credentials.json
