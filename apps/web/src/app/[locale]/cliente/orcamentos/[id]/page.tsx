@@ -464,8 +464,10 @@ export default function OrcamentoDetalhePage() {
       </h2>
 
       {!solicitacao.orcamentos || solicitacao.orcamentos.length === 0 ? (
+        ['expirada', 'cancelada'].includes(solicitacao.status as string) && !(solicitacao as { emergencia_id?: string | null }).emergencia_id ? null :
         <div className="card text-center py-8" data-testid="aguardando-orcamentos">
-          <p className="text-gray-500">{t('awaitingQuotes')}</p>
+          {/* cancelado/expirado nao espera mais nada (teste em producao 09/11) */}
+          {!['expirada', 'cancelada'].includes(solicitacao.status as string) && <p className="text-gray-500">{t('awaitingQuotes')}</p>}
           {/* pedido de acidente: daqui se chega ao acidente (outro motorista, mensagens) - dono 09/11 */}
           {(solicitacao as { emergencia_id?: string | null }).emergencia_id && (
             <Link href={rota('/emergencia/acidente/[id]', { id: (solicitacao as { emergencia_id?: string | null }).emergencia_id as string })} className="btn-secondary mt-4 inline-block" data-testid="ver-acidente">{t('verAcidente')}</Link>

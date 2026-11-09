@@ -12,6 +12,7 @@ import { notifNovaSolicitacaoTitulo } from '@/lib/notif-i18n';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
+import { useValorQueVolta } from '@/hooks/use-estado-que-volta';
 import { placaValida, anoDoCarroValido } from '@/lib/validar-carro';
 import {
   TIPOS_SERVICO, URGENCIAS,
@@ -30,23 +31,24 @@ export default function NovaSolicitacaoPage() {
   // servico entregue sem avaliacao: avaliar antes de pedir de novo (como no Uber)
   const [versaoAval, setVersaoAval] = useState(0);
   const avaliacaoPendente = useAvaliacaoPendente(versaoAval);
-  const [step, setStep] = useState(1);
+  // passo e escolhas voltam depois de trocar a lingua (teste em producao 09/11: voltava ao passo 1)
+  const [step, setStep] = useValorQueVolta('pedido-passo', 1);
   useTopoAoMudar(step);
   const totalSteps = 5;
 
-  const [veiculoId, setVeiculoId] = useState('');
+  const [veiculoId, setVeiculoId] = useValorQueVolta('pedido-veiculo', '');
   const [showAddVeiculo, setShowAddVeiculo] = useState(false);
   // sem nenhum carro: o formulario do carro ja abre (um toque a menos - teste 09/11)
   useEffect(() => { if (!carregandoVeiculos && veiculos.length === 0) setShowAddVeiculo(true); }, [carregandoVeiculos, veiculos.length]);
   const [novoVeiculo, setNovoVeiculo] = useState({ fipe_tipo: 'cars', fipe_marca: '', fipe_modelo: '', fipe_ano: '', fipe_codigo: '', fipe_valor: '', placa: '', cor: '', apelido: '' });
   const [savingVeiculo, setSavingVeiculo] = useState(false);
   const [veiculoError, setVeiculoError] = useState('');
-  const [tipo, setTipo] = useState('');
-  const [descricao, setDescricao] = useState('');
-  const [urgencia, setUrgencia] = useState('media');
+  const [tipo, setTipo] = useValorQueVolta('pedido-tipo', '');
+  const [descricao, setDescricao] = useValorQueVolta('pedido-descricao', '');
+  const [urgencia, setUrgencia] = useValorQueVolta('pedido-urgencia', 'media');
   const [fotos, setFotos] = useState<{ file: File; preview: string }[]>([]);
-  const [servicosSelecionados, setServicosSelecionados] = useState<string[]>([]);
-  const [endereco, setEndereco] = useState('');
+  const [servicosSelecionados, setServicosSelecionados] = useValorQueVolta<string[]>('pedido-servicos', []);
+  const [endereco, setEndereco] = useValorQueVolta('pedido-endereco', '');
   const [submitted, setSubmitted] = useState(false);
   useTopoAoMudar(submitted); // tela trocada inteira: abre no alto (dono 08/11)
   const [submitError, setSubmitError] = useState('');
@@ -54,14 +56,16 @@ export default function NovaSolicitacaoPage() {
   // sobrescreve se o navegador conceder geolocalizacao - sem isso, toda
   // solicitacao gravava a mesma coordenada fixa, quebrando o "oficinas
   // proximas" pra qualquer cliente fora de Sao Paulo.
-  const [coords, setCoords] = useState({ lat: -23.5505, lon: -46.6333 });
+  const [coords, setCoords] = useValorQueVolta('pedido-coords', { lat: -23.5505, lon: -46.6333 });
   // Pais em codigo ISO - usado pra decidir a moeda de estimativas de preco
   // mostradas antes de qualquer oficina responder (ex: analise de dano
   // por IA). Nunca deduzir moeda pelo idioma da tela.
-  const [pais, setPais] = useState('BR');
-  const [geoResolved, setGeoResolved] = useState(false);
+  const [pais, setPais] = useValorQueVolta('pedido-pais', 'BR');
+  const [geoResolved, setGeoResolved] = useValorQueVolta('pedido-geo', false);
 
   useEffect(() => {
+    // local ja resolvido antes da troca de lingua (endereco escolhido): nao sobrescreve
+    if (geoResolved) return;
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
@@ -83,6 +87,7 @@ export default function NovaSolicitacaoPage() {
         { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 },
       );
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fallback quando o navegador nega geolocalizacao: geocodifica o endereco

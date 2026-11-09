@@ -173,7 +173,7 @@ export default function PedidosOficinaPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grupos, aba, ordens, filtros, agendas]);
   const contaEstado = (e: string) => grupos[aba].filter((it: any) => it.estado === e).length;
-  const fmtData = useMemo(() => new Intl.DateTimeFormat(intl, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }), [intl]);
+  const fmtData = useMemo(() => new Intl.DateTimeFormat(intl, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: fusoOf }), [intl, fusoOf]); // fuso da oficina, nao do navegador (teste em producao 09/11)
   const moeda = currencyForCountry((oficina as any)?.pais ?? null);
   const algumVermelho = grupos.responder.some(({ s }) => { const ms = agora - Date.parse(s.created_at); return ms > 4 * H && ms <= 48 * H; });
 

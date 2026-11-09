@@ -122,7 +122,8 @@ export function temposDoCarro(ev: any, agora = Date.now()): Tempos {
 /** 95 min -> "1 h 35"; 3 dias -> "3 d 4 h" */
 export function duracao(min: number | null | undefined): string {
   if (min == null || !Number.isFinite(min)) return '—';
-  const m = Math.round(min);
+  // relogio do aparelho um pouco atras do servidor dava "juba -1 min" (teste em producao 09/11)
+  const m = Math.max(0, Math.round(min));
   if (m < 60) return `${m} min`;
   const h = Math.floor(m / 60), r = m % 60;
   if (h < 24) return r ? `${h} h ${String(r).padStart(2, '0')}` : `${h} h`;
