@@ -28,6 +28,8 @@ export default function NovaSolicitacaoPage() {
   const { veiculos, loading: carregandoVeiculos, add: addVeiculo } = useVeiculos();
   const { create: createSolicitacao, addPhotos } = useSolicitacoes();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null); // camera separada da galeria (dono 10/11, igual ao /pedido)
+  const tp = useTranslations('pedidoSemConta');
   // servico entregue sem avaliacao: avaliar antes de pedir de novo (como no Uber)
   const [versaoAval, setVersaoAval] = useState(0);
   const avaliacaoPendente = useAvaliacaoPendente(versaoAval);
@@ -147,7 +149,7 @@ export default function NovaSolicitacaoPage() {
       preview: URL.createObjectURL(file),
     }));
     setFotos((prev) => [...prev, ...newFotos]);
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    e.target.value = '';
   };
 
   const removePhoto = (index: number) => {
@@ -458,6 +460,7 @@ export default function NovaSolicitacaoPage() {
                 <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('step3PhotoTitle')}</h2>
                 <p className="text-sm text-gray-500 mb-4">{t('step3PhotoSubtitle')}</p>
 
+                <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} onChange={handlePhotoUpload} />
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -486,18 +489,18 @@ export default function NovaSolicitacaoPage() {
                       </button>
                     </div>
                   ))}
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-primary-400 hover:bg-primary-50 transition-colors"
-                  >
-                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span className="text-xs text-gray-500 mt-1">{t('addPhoto')}</span>
+                  <button type="button" onClick={() => cameraInputRef.current?.click()}
+                    className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-primary-400 hover:bg-primary-50 transition-colors">
+                    <span className="text-2xl" aria-hidden>📷</span>
+                    <span className="text-xs text-gray-500 mt-1 text-center px-1">{tp('tirarFoto')}</span>
+                  </button>
+                  <button type="button" onClick={() => fileInputRef.current?.click()}
+                    className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-primary-400 hover:bg-primary-50 transition-colors">
+                    <span className="text-2xl" aria-hidden>🖼️</span>
+                    <span className="text-xs text-gray-500 mt-1 text-center px-1">{tp('escolherGaleria')}</span>
                   </button>
                 </div>
+                <p className="text-xs text-gray-500 mt-2">{tp('fotosAjuda')}</p>
               </>
             ) : (
               <>

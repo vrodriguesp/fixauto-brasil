@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/navigation';
 import { supabase } from '@/lib/supabase';
 import { textoErroApi } from '@/lib/erro-api';
+import { apagarFotosPedido } from '@/lib/rascunho-pedido-fotos';
 
 // Pagina do link do e-mail de lembrete (dono 06/11; api/pedido-sem-conta/retomar):
 // mostra o pedido guardado e deixa confirmar (vai para as oficinas e a pessoa ja
@@ -47,7 +48,8 @@ export default function RetomarPedido({ id, token, cancelar }: { id: string; tok
       setErro(textoErroApi(te, r?.status || 500, d));
       return;
     }
-    try { sessionStorage.removeItem('bipfix_pedido_rascunho'); } catch { /* ignora */ }
+    try { localStorage.removeItem('bipfix_pedido_rascunho'); sessionStorage.removeItem('bipfix_pedido_rascunho'); } catch { /* ignora */ }
+    apagarFotosPedido();
     // o link prova o e-mail: entra na conta e abre o pedido
     if (d.tokenHash) await supabase.auth.verifyOtp({ token_hash: d.tokenHash, type: 'email' }).catch(() => null);
     router.replace(`/cliente/orcamentos/${d.solicitacaoId}`);
@@ -64,7 +66,8 @@ export default function RetomarPedido({ id, token, cancelar }: { id: string; tok
       setErro(textoErroApi(te, r?.status || 500, d));
       return;
     }
-    try { sessionStorage.removeItem('bipfix_pedido_rascunho'); } catch { /* ignora */ }
+    try { localStorage.removeItem('bipfix_pedido_rascunho'); sessionStorage.removeItem('bipfix_pedido_rascunho'); } catch { /* ignora */ }
+    apagarFotosPedido();
     setEstado('cancelado');
   };
 

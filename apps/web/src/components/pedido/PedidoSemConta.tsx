@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useRouter as useRouterNext } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link, useRouter } from '@/i18n/navigation';
@@ -12,6 +12,7 @@ import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 import CampoTelefone from '@/components/forms/CampoTelefone';
 import { placaValida, anoDoCarroValido } from '@/lib/validar-carro';
+import { gravarFotosPedido, lerFotosPedido, apagarFotosPedido } from '@/lib/rascunho-pedido-fotos';
 import {
   TIPOS_SERVICO, URGENCIAS,
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
@@ -46,10 +47,12 @@ function sugestaoEmail(email: string): string | null {
 type Etapa = 'servico' | 'detalhe' | 'carro' | 'local' | 'contato' | 'codigo' | 'enviado';
 
 // Trocar de idioma no meio do pedido (dono 06/11: "mudei para ingles e voltou a pagina").
-// O resto do formulario vai num rascunho da aba (sessionStorage); senha e fotos ficam
-// so na memoria da pagina (nunca gravadas) e sobrevivem porque a troca de idioma
-// nesta pagina e feita sem recarregar (ver o clique nos links de idioma abaixo).
+// O formulario vai num rascunho no aparelho (localStorage, vale 24 h) e as fotos no
+// IndexedDB (lib/rascunho-pedido-fotos): no Android o Chrome fecha a aba ao abrir a
+// galeria/camera e a pagina volta do zero (emulador, dono 10/11); com sessionStorage
+// o pedido inteiro se perdia. A senha nunca e gravada: fica so na memoria da pagina.
 const RASCUNHO = 'bipfix_pedido_rascunho';
+const lerRascunho = () => localStorage.getItem(RASCUNHO) || sessionStorage.getItem(RASCUNHO); // sessionStorage: rascunho de antes de 10/11
 const memoria: { senha: string; senhaLogin: string; fotos: { file: File; preview: string }[] } = { senha: '', senhaLogin: '', fotos: [] };
 const LISTA_CURTA = 6; // "ver mais": a lista inteira so quando a pessoa pede
 
@@ -73,6 +76,12 @@ export default function PedidoSemConta() {
   const [fotos, setFotos] = useState<{ file: File; preview: string }[]>(() => memoria.fotos);
   const [listaAberta, setListaAberta] = useState(false);
   const inputFoto = useRef<HTMLInputElement>(null);
+  const inputCamera = useRef<HTMLInputElement>(null);
+  const adicionarFotos = (e: ChangeEvent<HTMLInputElement>) => {
+    const fs = Array.from(e.target.files || []).slice(0, 6 - fotos.length);
+    setFotos((x) => [...x, ...fs.map((file) => ({ file, preview: URL.createObjectURL(file) }))]);
+    e.target.value = '';
+  };
   // carro
   const [carro, setCarro] = useState({ tipo: 'cars', marca: '', modelo: '', ano: '', codigo: '' });
   const [placa, setPlaca] = useState('');
@@ -108,10 +117,12 @@ export default function PedidoSemConta() {
   }, [carregandoLogin, isLoggedIn]); // eslint-disable-line react-hooks/exhaustive-deps
   // rascunho: volta o que a pessoa ja tinha feito (troca de idioma ou recarregar)
   const [rascunhoLido, setRascunhoLido] = useState(false);
+  const etapaRestaurada = useRef<Etapa | null>(null);
+  const fotosVoltando = useRef(false); // lendo as fotos do aparelho: nao apagar antes de voltarem
   useEffect(() => {
     let tinha = false;
     try {
-      const r = JSON.parse(sessionStorage.getItem(RASCUNHO) || 'null');
+      const r = JSON.parse(lerRascunho() || 'null');
       if (r && Date.now() - (r.em || 0) < 24 * 3600 * 1000) {
         tinha = true;
         setTipo(r.tipo || ''); setServicos(Array.isArray(r.servicos) ? r.servicos : []); setDescricao(r.descricao || ''); setUrgencia(r.urgencia || 'media');
@@ -122,7 +133,15 @@ export default function PedidoSemConta() {
         if (r.pendente) setPendente(r.pendente);
         // codigo so com o pedido pendente guardado; senao volta ao contato
         const e: Etapa = r.etapa === 'codigo' && !r.pendente ? 'contato' : r.etapa;
-        if (e && e !== 'enviado') setEtapa(e);
+        if (e && e !== 'enviado') { etapaRestaurada.current = e; setEtapa(e); }
+        // a pagina recarregou (nao foi troca de idioma): as fotos voltam do aparelho
+        if (r.qtdFotos && !memoria.fotos.length) {
+          fotosVoltando.current = true;
+          lerFotosPedido().then((fs) => {
+            fotosVoltando.current = false;
+            if (fs.length) setFotos((x) => x.length ? x : fs.map((file) => ({ file, preview: URL.createObjectURL(file) })));
+          });
+        }
       }
     } catch { /* sem armazenamento: comeca do zero */ }
     if (!tinha) contar('abriu');
@@ -132,12 +151,17 @@ export default function PedidoSemConta() {
     if (!rascunhoLido) return;
     memoria.senha = senha; memoria.senhaLogin = senhaLogin; memoria.fotos = fotos;
     try {
-      sessionStorage.setItem(RASCUNHO, JSON.stringify({ em: Date.now(), etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, telefone, termos, contaExistente, pendente }));
+      localStorage.setItem(RASCUNHO, JSON.stringify({ em: Date.now(), etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, telefone, termos, contaExistente, pendente, qtdFotos: fotos.length }));
     } catch { /* ignora */ }
   }, [rascunhoLido, etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, telefone, termos, contaExistente, pendente, senha, senhaLogin, fotos]);
+  useEffect(() => {
+    if (!rascunhoLido || fotosVoltando.current) return;
+    if (fotos.length) gravarFotosPedido(fotos.map((f) => f.file)); else apagarFotosPedido();
+  }, [rascunhoLido, fotos]);
   const limparRascunho = () => {
     memoria.senha = ''; memoria.senhaLogin = ''; memoria.fotos = [];
-    try { sessionStorage.removeItem(RASCUNHO); } catch { /* ignora */ }
+    try { localStorage.removeItem(RASCUNHO); sessionStorage.removeItem(RASCUNHO); } catch { /* ignora */ }
+    apagarFotosPedido();
   };
   // links de idioma (cabecalho/rodape) nesta pagina: troca sem recarregar, para
   // senha e fotos (so na memoria) nao se perderem
@@ -159,7 +183,9 @@ export default function PedidoSemConta() {
   // passo novo comeca no alto (o anterior era mais comprido: a pessoa via so o rodape - teste do dono 06/11)
   const primeiraEtapa = useRef(true);
   useEffect(() => {
-    if (['detalhe', 'carro', 'local', 'contato'].includes(etapa)) contar(etapa);
+    // o passo que voltou do rascunho (pagina recarregada) ja foi contado antes
+    if (etapaRestaurada.current === etapa) etapaRestaurada.current = null;
+    else if (['detalhe', 'carro', 'local', 'contato'].includes(etapa)) contar(etapa);
     if (primeiraEtapa.current) { primeiraEtapa.current = false; return; }
     window.scrollTo({ top: 0 });
   }, [etapa]);
@@ -292,8 +318,10 @@ export default function PedidoSemConta() {
 
   const passos: Etapa[] = ['servico', 'detalhe', 'carro', 'local', 'contato'];
   const indice = passos.indexOf(etapa);
+  // no celular os botoes ficam presos no rodape da tela: "Edasi" ficava abaixo da dobra
+  // (y=876 numa tela de 780) e a pessoa achava que estava travada (Clarity, dono 10/11)
   const Navegar = ({ voltar, avancar, ok, rotulo }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string }) => (
-    <div className="flex justify-between mt-6 gap-3">
+    <div className="flex justify-between mt-6 gap-3 sticky bottom-0 z-10 -mx-6 px-6 py-3 bg-white/95 backdrop-blur border-t border-gray-100 rounded-b-xl sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0" data-testid="navegar">
       {voltar ? <button type="button" onClick={() => setEtapa(voltar)} className="btn-secondary">{tn('back')}</button> : <span />}
       <button type="button" onClick={avancar} disabled={!ok || enviando} aria-busy={enviando} className="btn-primary disabled:opacity-50">{rotulo || tn('next')}</button>
     </div>
@@ -377,19 +405,29 @@ export default function PedidoSemConta() {
               </div>
             )}
             <p className="text-sm font-medium text-gray-700 mt-5 mb-2">{t('fotosTitulo')}</p>
-            <input ref={inputFoto} type="file" accept="image/*" multiple className="sr-only" tabIndex={-1}
-              onChange={(e) => { const fs = Array.from(e.target.files || []).slice(0, 6 - fotos.length); setFotos((x) => [...x, ...fs.map((file) => ({ file, preview: URL.createObjectURL(file) }))]); e.target.value = ''; }} />
-            <div className="grid grid-cols-4 gap-2">
-              {fotos.map((f, i) => (
-                <div key={f.preview} className="relative aspect-square rounded-lg overflow-hidden">
-                  <img src={f.preview} alt={tn('photoAlt', { n: i + 1 })} className="w-full h-full object-cover" />
-                  <button type="button" aria-label={t('removerFoto')} onClick={() => setFotos((x) => x.filter((_, j) => j !== i))} className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full text-sm">×</button>
-                </div>
-              ))}
-              {fotos.length < 6 && (
-                <button type="button" onClick={() => inputFoto.current?.click()} className="aspect-square border-2 border-dashed border-gray-300 rounded-lg text-xs text-gray-500 hover:border-primary-400">+ {tn('addPhoto')}</button>
-              )}
-            </div>
+            {/* camera e galeria separadas (dono 10/11): com um so botao o Chrome novo do Android
+                abre direto a galeria, sem a opcao de tirar foto */}
+            <input ref={inputCamera} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} onChange={adicionarFotos} />
+            <input ref={inputFoto} type="file" accept="image/*" multiple className="sr-only" tabIndex={-1} onChange={adicionarFotos} />
+            {fotos.length > 0 && (
+              <div className="grid grid-cols-4 gap-2 mb-2">
+                {fotos.map((f, i) => (
+                  <div key={f.preview} className="relative aspect-square rounded-lg overflow-hidden">
+                    <img src={f.preview} alt={tn('photoAlt', { n: i + 1 })} className="w-full h-full object-cover" />
+                    <button type="button" aria-label={t('removerFoto')} onClick={() => setFotos((x) => x.filter((_, j) => j !== i))} className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full text-sm">×</button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {fotos.length < 6 && (
+              <div className="grid grid-cols-2 gap-2">
+                <button type="button" onClick={() => inputCamera.current?.click()} data-testid="foto-camera"
+                  className="min-h-[48px] border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-700 hover:border-primary-400">📷 {t('tirarFoto')}</button>
+                <button type="button" onClick={() => inputFoto.current?.click()} data-testid="foto-galeria"
+                  className="min-h-[48px] border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-700 hover:border-primary-400">🖼️ {t('escolherGaleria')}</button>
+              </div>
+            )}
+            <p className="text-xs text-gray-500 mt-2">{t('fotosAjuda')}</p>
             <p className="text-sm font-medium text-gray-700 mt-5 mb-2">{tn('urgencyLabel')}</p>
             <div className="grid sm:grid-cols-3 gap-2">
               {URGENCIAS.map((u) => (
