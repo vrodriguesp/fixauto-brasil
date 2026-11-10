@@ -194,9 +194,14 @@ export default function PedidoSemConta() {
     const i = setTimeout(() => setEsperaReenvio((s) => s - 1), 1000);
     return () => clearTimeout(i);
   }, [esperaReenvio]);
-  // posicao do aparelho (se permitida): aproxima as sugestoes de endereco e evita digitar
+  // posicao do aparelho (se permitida): aproxima as sugestoes de endereco e evita digitar.
+  // So no passo do endereco (dono 10/11: o pedido de localizacao ao abrir a pagina, antes de
+  // qualquer toque, assusta quem chega pelo anuncio). Nunca bloqueia: roda em segundo plano,
+  // o campo continua editavel e sem permissao/sinal o endereco digitado vira coordenada no envio.
+  const localPedido = useRef(false);
   useEffect(() => {
-    if (!navigator.geolocation) return;
+    if (etapa !== 'local' || localPedido.current || coords || !navigator.geolocation) return;
+    localPedido.current = true;
     navigator.geolocation.getCurrentPosition(async (p) => {
       const c = { lat: p.coords.latitude, lon: p.coords.longitude };
       setCoords((atual) => atual || c);
@@ -204,7 +209,7 @@ export default function PedidoSemConta() {
       const d = r?.ok ? await r.json().catch(() => ({})) : {};
       if (d.paisCodigo) setPais((x) => x || d.paisCodigo);
     }, () => {}, { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 });
-  }, []);
+  }, [etapa]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const tipoConfig = TIPOS_SERVICO.find((x) => x.value === tipo);
   const NS: Record<string, string> = { revisao: 'servicosRevisao', mecanica: 'servicosMecanica', eletrica: 'servicosEletrica', pneu: 'servicosPneu' };

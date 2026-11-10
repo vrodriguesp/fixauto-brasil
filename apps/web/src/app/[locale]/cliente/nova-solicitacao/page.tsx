@@ -65,9 +65,13 @@ export default function NovaSolicitacaoPage() {
   const [pais, setPais] = useValorQueVolta('pedido-pais', 'BR');
   const [geoResolved, setGeoResolved] = useValorQueVolta('pedido-geo', false);
 
+  // localizacao so no passo do endereco (5), nunca ao abrir a pagina (dono 10/11); em segundo
+  // plano, sem travar: o campo continua editavel e sem permissao o endereco digitado e usado
+  const geoPedida = useRef(false);
   useEffect(() => {
     // local ja resolvido antes da troca de lingua (endereco escolhido): nao sobrescreve
-    if (geoResolved) return;
+    if (geoResolved || step !== 5 || geoPedida.current) return;
+    geoPedida.current = true;
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
@@ -90,7 +94,7 @@ export default function NovaSolicitacaoPage() {
       );
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [step]);
 
   // Fallback quando o navegador nega geolocalizacao: geocodifica o endereco
   // digitado via Nominatim (gratuito, mundial) em vez de deixar a
