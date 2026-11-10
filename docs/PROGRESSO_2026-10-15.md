@@ -930,3 +930,5 @@ Continuação de `PROGRESSO_2026-10-08.md`. **Regra (pedido do dono, 16/10):** t
 - Promoções no YouTube Studio: 4 × €12,50 = €50, objetivo "visitas ao site", 9–23/11, Tallinn, idioma estoniano, 25+, etiqueta IA ligada. Destino `bipfix.com/ee/et/paring?utm_source=youtube&utm_medium=paid&utm_campaign=just_tana_<problema>`. Estado: em revisão do Google (até 24h).
 
 - 09/11 noite: preparado lote 5 de e-mails para 10 oficinas (envio 10/11), arquivo local em Documentos (fora do git). Texto do lote 4 atualizado: agora cita a propaganda para motoristas de novembro e o app no Google Play.
+- 10/11 08:03–08:15: lote 5 enviado pelo Zoho (10 oficinas, 1 por e-mail, de commercial@bipfix.com, ~1–2 min entre eles). Planilha local atualizada: lote 4 (30/10) e lote 5 marcados "E-mail 1 enviado" (45 oficinas contatadas no total).
+- 10/11: Clarity em /ee/et/paring (3 dias, 10 gravacoes, quase todas do YouTube): 1–13 s, quase 0 cliques; uma abriu em janela 716x267 (so cabecalho + titulo + banner de cookies, sem os botoes de servico); um toque foi em "Logi sisse". Ninguem passou do passo 1 (contador funil: 26 "abriu", 0 "servico"). Ideias em discussao com o dono, nada mudado.
