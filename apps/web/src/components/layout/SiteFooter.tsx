@@ -6,6 +6,7 @@ import { HREFLANG, MERCADOS, caminhoNoIdioma, rotuloVersao, type Locale } from '
 import { irParaIdioma } from '@/lib/idioma-escolhido';
 import { useParams } from 'next/navigation';
 import GooglePlaySelo from '@/components/GooglePlaySelo';
+import AppStoreSelo from '@/components/AppStoreSelo';
 
 // Versoes = pais + idioma ("Eesti · Русский", "Italia · Italiano")
 
@@ -45,7 +46,7 @@ export default function SiteFooter({ temOficinas = false }: { temOficinas?: bool
               <li><Link href="/guias" className="inline-block py-1.5 hover:text-white">{t('footerGuias')}</Link></li>
               <li><Link href="/sobre" className="inline-block py-1.5 hover:text-white">{t('footerSobre')}</Link></li>
             </ul>
-            <div className="mt-3"><GooglePlaySelo locale={locale} className="h-10 w-auto" /></div>
+            <div className="mt-3 flex flex-wrap items-center gap-2"><AppStoreSelo locale={locale} className="h-[30px] w-auto" /><GooglePlaySelo locale={locale} className="h-10 w-auto" /></div>
           </nav>
           <nav aria-label={t('footerOficinas')}>
             <h2 className="text-white font-semibold mb-3 text-base">{t('footerOficinas')}</h2>
