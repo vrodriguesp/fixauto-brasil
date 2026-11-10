@@ -177,7 +177,7 @@ async function site(l, largura) {
     ok(`${nm}: marcar um servico ja libera avancar`, await avancar.isEnabled());
     await page.locator('#pedido-busca').fill('');
     await page.locator('#pedido-descricao').fill(`Teste ${l} ${largura}`);
-    await page.locator('input[type=file]').setInputFiles(FOTO);
+    await page.locator('input[type=file][multiple]').setInputFiles(FOTO); // galeria (camera e um campo a parte desde 10/11)
     await page.waitForTimeout(400);
     ok(`${nm}: foto aparece`, (await page.locator('img[alt]').filter({ has: page.locator('xpath=.') }).count()) > 0 || (await page.locator('.aspect-square img').count()) > 0);
     await page.getByRole('button', { name: new RegExp(T('constants.urgencias.alta')) }).first().click();
