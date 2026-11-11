@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Script from 'next/script';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
@@ -34,6 +34,9 @@ export function registrarConversaoCadastro() {
 
 // Areas logadas: o endereco tem numero de pedido/oficina - nao vai para a Meta
 const AREA_PRIVADA = /^\/(cliente|oficina|admin|loja)(\/|$)/;
+
+// Anuncios da Meta so na Estonia: o Pixel so nas versoes et/ru/en (/ee/...)
+const MERCADO_META = new Set(['et', 'ru', 'en']);
 
 // Pedido enviado (Lead) e cadastro de oficina (CompleteRegistration) para a Meta
 // medir e otimizar os anuncios. So existe fbq depois do "Nõustun"; sem dados da pessoa.
@@ -70,6 +73,7 @@ function aplicarConsentimento(valor: 'accepted' | 'rejected') {
 export default function Analytics() {
   const t = useTranslations('cookieBanner');
   const pathname = usePathname();
+  const locale = useLocale();
   const [consent, setConsent] = useState<Consent>(null);
   const [mounted, setMounted] = useState(false);
   const avisoRef = useRef<HTMLDivElement>(null);
@@ -163,7 +167,7 @@ export default function Analytics() {
       {/* Pixel da Meta: diferente do gtag/Clarity, NEM carrega sem o "Nõustun"
           (o aviso de cookies cita "medir nossos anuncios"). autoConfig desligado: a
           Meta nao coleta cliques/textos dos botoes sozinha, so os 3 eventos nossos. */}
-      {META_PIXEL_ID && consent === 'accepted' && !AREA_PRIVADA.test(pathname) && <MetaPixel id={META_PIXEL_ID} pathname={pathname} />}
+      {META_PIXEL_ID && consent === 'accepted' && MERCADO_META.has(locale) && !AREA_PRIVADA.test(pathname) && <MetaPixel id={META_PIXEL_ID} pathname={pathname} />}
 
       {/* Aviso compacto (Google: banner de cookies "de tamanho razoavel";
           EDPB 05/2020: recusar tao facil quanto aceitar) e ausente no fluxo

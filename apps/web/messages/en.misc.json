@@ -265,6 +265,7 @@
         "subsecao": true,
         "itens": [
           "If you accept analytics cookies in the cookie banner, we use Google Analytics to produce aggregated statistics and Microsoft Clarity to understand how pages are used (for example clicks, scrolling and anonymised session recordings). With the same consent, the Google Ads conversion tag records whether a visit that came from one of our Google ads ended in a sign-up, so we can measure our ads; it is not used to personalise ads.",
+          "If you accept in the cookie banner, we also use the Meta Pixel (Meta Platforms Ireland Ltd). It records whether a visit that came from one of our Facebook or Instagram ads ended in a request being sent or a workshop signing up, so we can measure and improve our ads. We do not send Meta your name, e-mail, phone number or car details, and the Pixel is not used on logged-in pages. For collecting the data and sending it to Meta, we and Meta are joint controllers; Meta's further processing is governed by its own privacy policy (facebook.com/privacy/policy).",
           "<strong>Legal basis:</strong> your consent (Art. 6(1)(a)), which you can withdraw at any time without affecting the lawfulness of processing before withdrawal. Before you give consent, these tools run in a restricted mode without analytics cookies."
         ]
       },
@@ -296,6 +297,7 @@
           "<strong>Twilio</strong> (United States): text messages (SMS) about your own request, for example when a quote arrives. We send only your phone number and the message text. To stop receiving them, write to support@bipfix.com.",
           "<strong>Google</strong> (United States): Gemini artificial intelligence for damage analysis and voice transcription; Google Analytics and Google Ads conversion measurement (only with consent); Google Maps, shown on Partner profile pages.",
           "<strong>Microsoft</strong> (United States): Microsoft Clarity (only with consent).",
+          "<strong>Meta</strong> (Ireland; data may be transferred to the United States under the EU–US Data Privacy Framework): Meta Pixel for ad measurement (only with consent).",
           "<strong>OpenStreetMap Foundation</strong> (United Kingdom): converting addresses into map coordinates (Nominatim service).",
           "<strong>DeepL SE</strong> (Germany, European Union): automatic translation of chat messages, request descriptions and quotes. We send only the text to be translated, not your account name or email; anything you write inside the text itself is sent as written. DeepL acts as our processor under a data processing agreement, deletes the text once the translation is delivered and does not use it to train its models.",
           "<strong>Public authorities</strong>, when we are legally required to disclose data."
@@ -318,7 +320,7 @@
           "<strong>Accounting records:</strong> 7 years, as required by the Estonian Accounting Act.",
           "<strong>Server logs:</strong> up to 14 days.",
           "<strong>Visit summaries:</strong> deleted from the team mailbox after 12 months at the latest.",
-          "<strong>Analytics (only with consent):</strong> according to the retention settings of Google Analytics and Microsoft Clarity, at most 14 months.",
+          "<strong>Analytics and ad measurement (only with consent):</strong> according to the retention settings of Google Analytics and Microsoft Clarity, at most 14 months; the Meta Pixel cookie (_fbp) lasts 90 days.",
           "<strong>Partnership contacts (section 3.8):</strong> until you ask us to stop contacting you, and at most 24 months after our last contact.",
           "<strong>Support chat started without an account:</strong> deleted automatically 6 months after the last message.",
           "<strong>Automatic translations</strong> of request descriptions, quotes and messages between Customers and Partners: kept to avoid translating the same text twice, and deleted automatically after 24 months at the latest.",
@@ -353,7 +355,7 @@
       {
         "titulo": "9. Cookies and similar technologies",
         "paragrafos": [
-          "We use technologies that store information in your browser that are strictly necessary for the website to work: keeping you logged in, remembering your language and remembering your cookie choice. These do not require consent. Analytics and ad measurement cookies (Google Analytics, Google Ads conversion measurement and Microsoft Clarity) and the visit summaries described in section 3.7 are only used if you click \"Accept\" in the cookie banner; if you reject or ignore the banner, they are not used.",
+          "We use technologies that store information in your browser that are strictly necessary for the website to work: keeping you logged in, remembering your language and remembering your cookie choice. These do not require consent. Analytics and ad measurement cookies (Google Analytics, Google Ads conversion measurement, Meta Pixel and Microsoft Clarity) and the visit summaries described in section 3.7 are only used if you click \"Accept\" in the cookie banner; if you reject or ignore the banner, they are not used.",
           "To change your cookie choice, delete the data stored by bipfix.com in your browser settings; the cookie banner will appear again on your next visit."
         ]
       },

@@ -265,6 +265,7 @@
         "subsecao": true,
         "itens": [
           "Se aceitar os cookies de análise no aviso de cookies, utilizamos o Google Analytics para produzir estatísticas agregadas e o Microsoft Clarity para perceber como as páginas são usadas (por exemplo, cliques, deslocamento e gravações de sessão anonimizadas). Com o mesmo consentimento, a etiqueta de conversões do Google Ads regista se uma visita vinda de um anúncio nosso no Google terminou num registo, para medirmos os nossos anúncios; não é usada para personalizar publicidade.",
+          "Se aceitar no aviso de cookies, utilizamos também o Meta Pixel (Meta Platforms Ireland Ltd). Regista se uma visita vinda de um anúncio nosso no Facebook ou no Instagram terminou com o envio de um pedido ou com o registo de uma oficina, para podermos medir e melhorar os nossos anúncios. Não enviamos à Meta o seu nome, e-mail, telefone nem os dados do carro, e o Pixel não é usado nas páginas com sessão iniciada. Na recolha dos dados e no seu envio à Meta, nós e a Meta somos responsáveis conjuntos pelo tratamento; o tratamento posterior pela Meta rege-se pela sua própria política de privacidade (facebook.com/privacy/policy).",
           "<strong>Fundamento jurídico:</strong> o seu consentimento (art. 6.º, n.º 1, alínea a)), que pode retirar a qualquer momento sem afetar a licitude do tratamento anterior à retirada. Antes de dar o consentimento, estas ferramentas funcionam num modo restrito, sem cookies de análise."
         ]
       },
@@ -296,6 +297,7 @@
           "<strong>Twilio</strong> (Estados Unidos): mensagens SMS sobre o seu próprio pedido, por exemplo quando chega um orçamento. Enviamos apenas o seu número de telefone e o texto da mensagem. Para deixar de as receber, escreva para support@bipfix.com.",
           "<strong>Google</strong> (Estados Unidos): inteligência artificial Gemini para análise de danos e transcrição de voz; Google Analytics e medição de conversões do Google Ads (apenas com consentimento); Google Maps, apresentado nas páginas de perfil dos Parceiros.",
           "<strong>Microsoft</strong> (Estados Unidos): Microsoft Clarity (apenas com consentimento).",
+          "<strong>Meta</strong> (Irlanda; os dados podem ser transferidos para os Estados Unidos ao abrigo do Quadro de Privacidade de Dados UE–EUA): Meta Pixel para medição de anúncios (apenas com consentimento).",
           "<strong>OpenStreetMap Foundation</strong> (Reino Unido): conversão de moradas em coordenadas de mapa (serviço Nominatim).",
           "<strong>DeepL SE</strong> (Alemanha, União Europeia): tradução automática de mensagens do chat, descrições de pedidos e orçamentos. Enviamos apenas o texto a traduzir, não o nome da sua conta nem o seu e-mail; o que escrever dentro do próprio texto é enviado tal como está. A DeepL atua como nossa subcontratante ao abrigo de um acordo de tratamento de dados, apaga o texto após entregar a tradução e não o utiliza para treinar os seus modelos.",
           "<strong>Autoridades públicas</strong>, quando estamos legalmente obrigados a divulgar dados."
@@ -318,7 +320,7 @@
           "<strong>Registos contabilísticos:</strong> 7 anos, conforme exigido pela Lei da Contabilidade da Estónia.",
           "<strong>Logs do servidor:</strong> até 14 dias.",
           "<strong>Resumos de visita:</strong> apagados da caixa de correio da equipa, o mais tardar, ao fim de 12 meses.",
-          "<strong>Análise estatística (apenas com consentimento):</strong> de acordo com as definições de retenção do Google Analytics e do Microsoft Clarity, no máximo 14 meses.",
+          "<strong>Análise estatística e medição de anúncios (apenas com consentimento):</strong> de acordo com as definições de retenção do Google Analytics e do Microsoft Clarity, no máximo 14 meses; o cookie do Meta Pixel (_fbp) dura 90 dias.",
           "<strong>Contactos de parceria (secção 3.8):</strong> até nos pedir para deixarmos de o contactar e, no máximo, 24 meses após o nosso último contacto.",
           "<strong>Chat de apoio iniciado sem conta:</strong> eliminado automaticamente 6 meses após a última mensagem.",
           "<strong>Traduções automáticas</strong> de descrições de pedidos, orçamentos e mensagens entre Clientes e Parceiros: conservadas para não traduzir duas vezes o mesmo texto e eliminadas automaticamente, no máximo, após 24 meses.",
@@ -353,7 +355,7 @@
       {
         "titulo": "9. Cookies e tecnologias semelhantes",
         "paragrafos": [
-          "Utilizamos tecnologias que guardam informação no seu navegador e que são estritamente necessárias ao funcionamento do site: manter a sua sessão iniciada, lembrar o seu idioma e lembrar a sua escolha relativa aos cookies. Estas não requerem consentimento. Os cookies de análise e de medição de anúncios (Google Analytics, medição de conversões do Google Ads e Microsoft Clarity) e os resumos de visita descritos na secção 3.7 só são utilizados se clicar em \"Aceitar\" no aviso de cookies; se rejeitar ou ignorar o aviso, não são utilizados.",
+          "Utilizamos tecnologias que guardam informação no seu navegador e que são estritamente necessárias ao funcionamento do site: manter a sua sessão iniciada, lembrar o seu idioma e lembrar a sua escolha relativa aos cookies. Estas não requerem consentimento. Os cookies de análise e de medição de anúncios (Google Analytics, medição de conversões do Google Ads, Meta Pixel e Microsoft Clarity) e os resumos de visita descritos na secção 3.7 só são utilizados se clicar em \"Aceitar\" no aviso de cookies; se rejeitar ou ignorar o aviso, não são utilizados.",
           "Para alterar a sua escolha relativa aos cookies, apague os dados guardados pelo bipfix.com nas definições do seu navegador; o aviso de cookies voltará a aparecer na sua próxima visita."
         ]
       },
