@@ -1267,5 +1267,33 @@
     "vencidas": "Lõppenud viimase 90 päeva jooksul",
     "verPedido": "Vaata päringut",
     "conversa": "Vestlus"
+  },
+  "oficinaNovasDatas": {
+    "titulo": "Klient küsib uusi aegu",
+    "pedidoEm": "Küsitud {data}",
+    "texto": "Sinu hinnapakkumise ajad on möödas, kuid klient on huvitatud. Kinnita kliendi soovitud aeg või saada uued ajad.",
+    "sugestoesTitulo": "Kliendi soovitud ajad",
+    "semSugestoes": "Klient ei pakkunud aegu.",
+    "mensagemCliente": "Kliendi sõnum",
+    "confirmar": "Kinnita see aeg",
+    "confirmando": "Kinnitan…",
+    "jaPassou": "Möödas või liiga lähedal",
+    "confirmarAviso": "Kinnitamisel võetakse hinnapakkumine vastu ja auto broneeritakse sellele ajale.",
+    "outrasTitulo": "Saada teised ajad",
+    "data": "Kuupäev",
+    "turno": "Kellaaeg",
+    "manha": "Hommik (08:00–12:00)",
+    "tarde": "Pärastlõuna (13:00–17:00)",
+    "previsao": "Eeldatav valmimine",
+    "adicionar": "+ Veel üks aeg",
+    "remover": "Eemalda",
+    "enviar": "Saada ajad kliendile",
+    "enviando": "Saadan…",
+    "semMudarPreco": "Hinnapakkumine jääb samaks: sama summa ja see ei lähe muudatusena kirja.",
+    "feitoConfirmado": "Aeg kinnitatud. Broneering on tehtud.",
+    "feitoEnviadas": "Ajad saadeti kliendile.",
+    "selo": "Klient küsib uusi aegu",
+    "dicaModificar": "Klient küsis uusi aegu. Kui soovid saata ainult ajad, kasuta päringu kaarti: see ei lähe muudatusena kirja. Kui muudad hinnapakkumist, tühistatakse aegade soov.",
+    "dicaModificarLink": "Ava päring"
   }
 }

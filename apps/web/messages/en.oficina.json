@@ -1267,5 +1267,33 @@
     "vencidas": "Ended in the last 90 days",
     "verPedido": "View request",
     "conversa": "Conversation"
+  },
+  "oficinaNovasDatas": {
+    "titulo": "The customer asked for new dates",
+    "pedidoEm": "Asked on {data}",
+    "texto": "The dates in your quote have passed and the customer is interested. Confirm a date they suggested or send other dates.",
+    "sugestoesTitulo": "Dates suggested by the customer",
+    "semSugestoes": "The customer did not suggest dates.",
+    "mensagemCliente": "Message from the customer",
+    "confirmar": "Confirm this date",
+    "confirmando": "Confirming…",
+    "jaPassou": "Passed or too soon",
+    "confirmarAviso": "When you confirm, the quote is accepted and the car is booked on this date.",
+    "outrasTitulo": "Send other dates",
+    "data": "Date",
+    "turno": "Time of day",
+    "manha": "Morning (08:00–12:00)",
+    "tarde": "Afternoon (13:00–17:00)",
+    "previsao": "Estimated completion",
+    "adicionar": "+ Another date",
+    "remover": "Remove",
+    "enviar": "Send dates to the customer",
+    "enviando": "Sending…",
+    "semMudarPreco": "The quote stays the same: same amount, no new revision.",
+    "feitoConfirmado": "Date confirmed. The booking is done.",
+    "feitoEnviadas": "Dates sent to the customer.",
+    "selo": "New dates requested",
+    "dicaModificar": "The customer asked for new dates. To only send dates, use the card on the request: it does not count as a revision. If you change the quote, the request for dates is cancelled.",
+    "dicaModificarLink": "Open the request"
   }
 }

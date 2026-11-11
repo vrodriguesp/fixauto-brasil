@@ -1267,5 +1267,33 @@
     "vencidas": "Terminate negli ultimi 90 giorni",
     "verPedido": "Vedi richiesta",
     "conversa": "Conversazione"
+  },
+  "oficinaNovasDatas": {
+    "titulo": "Il cliente chiede nuove date",
+    "pedidoEm": "Richiesta del {data}",
+    "texto": "Le date del tuo preventivo sono passate e il cliente è interessato. Conferma una data suggerita da lui o manda altre date.",
+    "sugestoesTitulo": "Date suggerite dal cliente",
+    "semSugestoes": "Il cliente non ha suggerito date.",
+    "mensagemCliente": "Messaggio del cliente",
+    "confirmar": "Conferma questa data",
+    "confirmando": "Conferma in corso…",
+    "jaPassou": "Passata o troppo vicina",
+    "confirmarAviso": "Confermando, il preventivo viene accettato e l’auto è prenotata in questa data.",
+    "outrasTitulo": "Manda altre date",
+    "data": "Data",
+    "turno": "Fascia",
+    "manha": "Mattina (08:00–12:00)",
+    "tarde": "Pomeriggio (13:00–17:00)",
+    "previsao": "Consegna prevista",
+    "adicionar": "+ Un’altra data",
+    "remover": "Rimuovi",
+    "enviar": "Manda le date al cliente",
+    "enviando": "Invio…",
+    "semMudarPreco": "Il preventivo resta uguale: stesso importo, nessuna nuova revisione.",
+    "feitoConfirmado": "Data confermata. La prenotazione è fatta.",
+    "feitoEnviadas": "Date inviate al cliente.",
+    "selo": "Nuove date richieste",
+    "dicaModificar": "Il cliente ha chiesto nuove date. Per mandare solo le date usa la scheda nella richiesta: non conta come revisione. Se modifichi il preventivo, la richiesta di date viene annullata.",
+    "dicaModificarLink": "Apri la richiesta"
   }
 }

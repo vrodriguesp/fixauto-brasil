@@ -15,6 +15,8 @@ export async function GET(req: NextRequest, { params }: { params: { numero: stri
     .eq('numero', numero).maybeSingle();
   if (!sol) return NextResponse.redirect(SITE_URL, 302);
   const oficina = req.nextUrl.searchParams.get('o');
+  // &p=1: aviso de pedido de novas datas (079) -> pagina do pedido da oficina (cartao para responder)
+  if (oficina && req.nextUrl.searchParams.get('p')) return NextResponse.redirect(urlNoIdioma(oficina, `/oficina/pedidos/${sol.id}`), 302);
   if (oficina) return NextResponse.redirect(urlNoIdioma(oficina, `/oficina/enviar-orcamento/${sol.id}`), 302);
   // ?l=<idioma>: e-mail de orcamento para quem nao e o dono do pedido (outro motorista do acidente)
   const idioma = req.nextUrl.searchParams.get('l') || ((sol as any).cliente?.idioma ?? 'et');

@@ -410,5 +410,26 @@
     "reabrir": "Reopen request",
     "reabrindo": "Reopening…",
     "erro": "Could not reopen. Please try again."
+  },
+  "novasDatas": {
+    "titulo": "This repair shop’s dates have passed",
+    "texto": "If you’re still interested in this quote, ask the repair shop for new dates.",
+    "botao": "I’m interested, ask for new dates",
+    "sugerirTitulo": "Dates that suit you (optional, up to 3)",
+    "manha": "Morning",
+    "tarde": "Afternoon",
+    "mensagemLabel": "Message to the repair shop (optional)",
+    "mensagemPlaceholder": "E.g. I prefer mornings",
+    "caracteres": "{n}/300",
+    "avisoConfirmar": "If the repair shop confirms one of your dates, the booking is made with this quote.",
+    "enviar": "Ask for new dates",
+    "enviando": "Sending…",
+    "cancelar": "Cancel",
+    "pendente": "Request sent on {data}. Waiting for the repair shop.",
+    "suasDatas": "Your dates: {datas}",
+    "vencidoTitulo": "This quote expired on {data}",
+    "vencidoTexto": "You can no longer accept this quote or ask for new dates. Choose another active quote or make a new request.",
+    "vencidoOutro": "See another active quote",
+    "vencidoNovoPedido": "Make a new request"
   }
 }

@@ -410,5 +410,26 @@
     "reabrir": "Riapri richiesta",
     "reabrindo": "Riapertura…",
     "erro": "Impossibile riaprire. Riprova."
+  },
+  "novasDatas": {
+    "titulo": "Le date di questa officina sono passate",
+    "texto": "Se questo preventivo ti interessa ancora, chiedi nuove date all’officina.",
+    "botao": "Mi interessa, chiedi nuove date",
+    "sugerirTitulo": "Date che ti vanno bene (facoltativo, fino a 3)",
+    "manha": "Mattina",
+    "tarde": "Pomeriggio",
+    "mensagemLabel": "Messaggio all’officina (facoltativo)",
+    "mensagemPlaceholder": "Es.: preferisco la mattina",
+    "caracteres": "{n}/300",
+    "avisoConfirmar": "Se l’officina conferma una delle tue date, la prenotazione è fatta con questo preventivo.",
+    "enviar": "Chiedi nuove date",
+    "enviando": "Invio…",
+    "cancelar": "Annulla",
+    "pendente": "Richiesta inviata il {data}. In attesa dell’officina.",
+    "suasDatas": "Le tue date: {datas}",
+    "vencidoTitulo": "Questo preventivo è scaduto il {data}",
+    "vencidoTexto": "Non puoi più accettare questo preventivo né chiedere nuove date. Scegli un altro preventivo attivo o rifai la richiesta.",
+    "vencidoOutro": "Vedi un altro preventivo attivo",
+    "vencidoNovoPedido": "Fai una nuova richiesta"
   }
 }

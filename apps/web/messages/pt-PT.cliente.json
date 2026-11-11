@@ -410,5 +410,26 @@
     "reabrir": "Reabrir pedido",
     "reabrindo": "A reabrir…",
     "erro": "Não foi possível reabrir. Tente novamente."
+  },
+  "novasDatas": {
+    "titulo": "As datas desta oficina já passaram",
+    "texto": "Se ainda tiver interesse neste orçamento, peça novas datas à oficina.",
+    "botao": "Tenho interesse, peça novas datas",
+    "sugerirTitulo": "Datas que lhe convêm (opcional, até 3)",
+    "manha": "Manhã",
+    "tarde": "Tarde",
+    "mensagemLabel": "Mensagem para a oficina (opcional)",
+    "mensagemPlaceholder": "Ex.: prefiro de manhã",
+    "caracteres": "{n}/300",
+    "avisoConfirmar": "Se a oficina confirmar uma das suas datas, a marcação fica feita com este orçamento.",
+    "enviar": "Pedir novas datas",
+    "enviando": "A enviar…",
+    "cancelar": "Cancelar",
+    "pendente": "Pedido enviado em {data}. A aguardar a oficina.",
+    "suasDatas": "As suas datas: {datas}",
+    "vencidoTitulo": "Este orçamento expirou em {data}",
+    "vencidoTexto": "Já não é possível aceitar este orçamento nem pedir novas datas. Escolha outro orçamento ativo ou refaça o pedido.",
+    "vencidoOutro": "Ver outro orçamento ativo",
+    "vencidoNovoPedido": "Fazer um novo pedido"
   }
 }

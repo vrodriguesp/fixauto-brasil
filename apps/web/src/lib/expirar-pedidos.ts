@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { notifPedidoExpiradoCliente, notifPedidoExpiradoOficina } from '@/lib/notif-i18n';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
+import { cancelarPedidosDatasPendentes } from '@/lib/pedido-datas';
 
 // Pedido expira (dono 04/11, migracao 072): aberto/em orcamento ha N dias (30)
 // contados da criacao ou da ultima reabertura, sem orcamento escolhido -> "expirada".
@@ -40,6 +41,8 @@ export async function expirarPedidos(agora = Date.now()): Promise<{ expirados: n
       .eq('id', s.id).in('status', ESTADOS_QUE_EXPIRAM).select('id');
     if (!mudou?.length) continue;
     expirados++;
+    // pedido de novas datas ainda esperando a oficina perde o sentido (079)
+    await cancelarPedidosDatasPendentes({ solicitacaoId: s.id }).catch((e) => console.error('[expirar-pedidos] pedidos de datas:', (e as Error).message));
     const nc = notifPedidoExpiradoCliente(s.cliente?.idioma, String(s.numero), dias);
     const linhas: any[] = [{ profile_id: s.cliente_id, tipo: 'pedido_expirado', titulo: nc.titulo, mensagem: nc.mensagem, dados: { solicitacao_id: s.id, textos: emTodasAsLinguas((l) => notifPedidoExpiradoCliente(l, String(s.numero), dias)) } }];
     const { data: orcs } = await supabaseAdmin.from('orcamentos')

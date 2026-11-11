@@ -410,5 +410,26 @@
     "reabrir": "Ava päring uuesti",
     "reabrindo": "Avan uuesti…",
     "erro": "Päringut ei õnnestunud uuesti avada. Proovi uuesti."
+  },
+  "novasDatas": {
+    "titulo": "Selle töökoja ajad on möödas",
+    "texto": "Kui see hinnapakkumine sind endiselt huvitab, küsi töökojalt uusi aegu.",
+    "botao": "Olen huvitatud, küsi uusi aegu",
+    "sugerirTitulo": "Sulle sobivad ajad (valikuline, kuni 3)",
+    "manha": "Hommik",
+    "tarde": "Pärastlõuna",
+    "mensagemLabel": "Sõnum töökojale (valikuline)",
+    "mensagemPlaceholder": "Nt eelistan hommikut",
+    "caracteres": "{n}/300",
+    "avisoConfirmar": "Kui töökoda kinnitab ühe sinu aegadest, on broneering selle hinnapakkumisega tehtud.",
+    "enviar": "Küsi uusi aegu",
+    "enviando": "Saadan…",
+    "cancelar": "Tühista",
+    "pendente": "Soov saadetud {data}. Ootame töökoja vastust.",
+    "suasDatas": "Sinu ajad: {datas}",
+    "vencidoTitulo": "Selle hinnapakkumise kehtivus lõppes {data}",
+    "vencidoTexto": "Seda hinnapakkumist ei saa enam vastu võtta ega uusi aegu küsida. Vali teine kehtiv pakkumine või esita päring uuesti.",
+    "vencidoOutro": "Vaata teist kehtivat pakkumist",
+    "vencidoNovoPedido": "Esita uus päring"
   }
 }

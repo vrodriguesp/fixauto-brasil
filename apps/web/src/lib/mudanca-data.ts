@@ -1,5 +1,5 @@
 import { supabaseAdmin } from './supabase-admin';
-import { horaLocalEmUtc, fusoDoPais, moverFimPrevisto } from './fuso';
+import { horaLocalEmUtc, fusoDoPais, moverFimPrevisto, diaNaOficina } from './fuso';
 import { avisarClienteAgendamento, avisarClienteCancelamento } from './email-agendamento';
 import { avisarCancelamentoPeloCliente } from './email-cancelamento-cliente';
 import { textosAgenda, preencher, dataHora } from './notif-agenda';
@@ -121,7 +121,8 @@ export async function cancelarAgendamento(ag: any, of: any, userId: string, moti
   await supabaseAdmin.from('agenda_historico').insert({ agenda_id: ag.id, acao: porCliente ? 'cancelado_cliente' : 'cancelado_oficina', por_profile_id: userId, detalhe: { motivo } });
   await supabaseAdmin.from('orcamentos').update({ status: 'recusado' }).eq('solicitacao_id', ag.solicitacao_id).eq('oficina_id', ag.oficina_id).eq('status', 'aceito');
   await supabaseAdmin.from('orcamento_revisoes').update({ status: 'cancelada' }).eq('solicitacao_id', ag.solicitacao_id).eq('status', 'pendente');
-  const hoje = new Date().toISOString().slice(0, 10);
+  // validade no fuso da oficina, igual a orcamentoVencido (079; antes o dia em UTC)
+  const hoje = diaNaOficina(new Date(), of?.pais);
   const { data: voltam } = await supabaseAdmin.from('orcamentos').update({ status: 'enviado', recusado_no_aceite: false })
     .eq('solicitacao_id', ag.solicitacao_id).neq('oficina_id', ag.oficina_id).eq('status', 'recusado').eq('recusado_no_aceite', true).gte('validade', hoje).select('id');
   await supabaseAdmin.from('solicitacoes').update({ status: voltam?.length ? 'em_orcamento' : 'aberta', reaberta_em: new Date().toISOString() }).eq('id', ag.solicitacao_id);

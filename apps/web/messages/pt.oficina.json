@@ -1267,5 +1267,33 @@
     "vencidas": "Encerradas nos últimos 90 dias",
     "verPedido": "Ver pedido",
     "conversa": "Conversa"
+  },
+  "oficinaNovasDatas": {
+    "titulo": "O cliente pediu novas datas",
+    "pedidoEm": "Pedido em {data}",
+    "texto": "As datas do seu orçamento já passaram e o cliente tem interesse. Confirme uma data sugerida por ele ou mande outras datas.",
+    "sugestoesTitulo": "Datas sugeridas pelo cliente",
+    "semSugestoes": "O cliente não sugeriu datas.",
+    "mensagemCliente": "Mensagem do cliente",
+    "confirmar": "Confirmar esta data",
+    "confirmando": "Confirmando…",
+    "jaPassou": "Já passou ou está muito perto",
+    "confirmarAviso": "Ao confirmar, o orçamento fica aceito e o carro fica agendado nesta data.",
+    "outrasTitulo": "Mandar outras datas",
+    "data": "Data",
+    "turno": "Período",
+    "manha": "Manhã (08:00–12:00)",
+    "tarde": "Tarde (13:00–17:00)",
+    "previsao": "Previsão de entrega",
+    "adicionar": "+ Outra data",
+    "remover": "Remover",
+    "enviar": "Mandar datas ao cliente",
+    "enviando": "Enviando…",
+    "semMudarPreco": "O orçamento continua o mesmo: mesmo valor, sem nova revisão.",
+    "feitoConfirmado": "Data confirmada. O agendamento está feito.",
+    "feitoEnviadas": "Datas enviadas ao cliente.",
+    "selo": "Novas datas pedidas",
+    "dicaModificar": "O cliente pediu novas datas. Para só mandar datas, use o cartão no pedido: não conta como revisão. Se modificar o orçamento, o pedido de datas é cancelado.",
+    "dicaModificarLink": "Abrir o pedido"
   }
 }

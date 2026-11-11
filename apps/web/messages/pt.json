@@ -689,7 +689,15 @@
     "ANO_INVALIDO": "Ano inválido: use 4 dígitos, de 1950 até o ano que vem.",
     "CARRO_NA_OFICINA": "O carro já está na oficina: para cancelar, fale com a oficina pela conversa.",
     "PEDIDO_NAO_CANCELAVEL": "Este pedido não pode mais ser cancelado.",
-    "PEDIDO_NAO_REABRIVEL": "Este pedido não pode ser reaberto."
+    "PEDIDO_NAO_REABRIVEL": "Este pedido não pode ser reaberto.",
+    "DATAS_AINDA_VALIDAS": "Este orçamento ainda tem datas disponíveis. Escolha uma delas.",
+    "PEDIDO_DATAS_PENDENTE": "Você já pediu novas datas a esta oficina. Aguarde a resposta.",
+    "SUGESTAO_INVALIDA": "Uma das datas sugeridas já passou ou não é válida. Escolha outra.",
+    "PEDIDO_EXPIRADO": "Este pedido expirou. Reabra o pedido para continuar.",
+    "PEDIDO_DATAS_RESPONDIDO": "Este pedido de novas datas já foi respondido.",
+    "SUGESTAO_VENCIDA": "Esta data sugerida já passou. Mande outras datas.",
+    "ORCAMENTO_VENCIDO": "Este orçamento venceu. Escolha outro orçamento ativo ou refaça o pedido.",
+    "ORCAMENTO_MUDOU": "O orçamento mudou depois do pedido do cliente. Mande outras datas para ele escolher."
   },
   "sobre": {
     "metaTitle": "Sobre o BipFix",

@@ -692,7 +692,15 @@
     "ANO_INVALIDO": "Invalid year: use 4 digits, from 1950 to next year.",
     "CARRO_NA_OFICINA": "The car is already at the repair shop: to cancel, talk to the shop in the chat.",
     "PEDIDO_NAO_CANCELAVEL": "This request can no longer be cancelled.",
-    "PEDIDO_NAO_REABRIVEL": "This request cannot be reopened."
+    "PEDIDO_NAO_REABRIVEL": "This request cannot be reopened.",
+    "DATAS_AINDA_VALIDAS": "This quote still has available dates. Choose one of them.",
+    "PEDIDO_DATAS_PENDENTE": "You have already asked this repair shop for new dates. Wait for the answer.",
+    "SUGESTAO_INVALIDA": "One of the suggested dates has passed or is not valid. Choose another.",
+    "PEDIDO_EXPIRADO": "This request has expired. Reopen it to continue.",
+    "PEDIDO_DATAS_RESPONDIDO": "This request for new dates has already been answered.",
+    "SUGESTAO_VENCIDA": "This suggested date has passed. Send other dates.",
+    "ORCAMENTO_VENCIDO": "This quote has expired. Choose another active quote or make a new request.",
+    "ORCAMENTO_MUDOU": "The quote changed after the customer’s request. Send other dates for them to choose."
   },
   "sobre": {
     "metaTitle": "About BipFix",

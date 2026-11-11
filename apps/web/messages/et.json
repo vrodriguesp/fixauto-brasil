@@ -698,7 +698,15 @@
     "ANO_INVALIDO": "Vigane aasta: kasuta 4 numbrit, alates 1950 kuni järgmise aastani.",
     "CARRO_NA_OFICINA": "Auto on juba töökojas: tühistamiseks kirjuta töökojale vestluses.",
     "PEDIDO_NAO_CANCELAVEL": "Seda päringut ei saa enam tühistada.",
-    "PEDIDO_NAO_REABRIVEL": "Seda päringut ei saa uuesti avada."
+    "PEDIDO_NAO_REABRIVEL": "Seda päringut ei saa uuesti avada.",
+    "DATAS_AINDA_VALIDAS": "Sellel hinnapakkumisel on veel vabu aegu. Vali neist üks.",
+    "PEDIDO_DATAS_PENDENTE": "Oled sellelt töökojalt juba uusi aegu küsinud. Oota vastust.",
+    "SUGESTAO_INVALIDA": "Üks soovitud aegadest on möödas või ei sobi. Vali teine.",
+    "PEDIDO_EXPIRADO": "See päring on aegunud. Jätkamiseks ava päring uuesti.",
+    "PEDIDO_DATAS_RESPONDIDO": "Sellele uute aegade soovile on juba vastatud.",
+    "SUGESTAO_VENCIDA": "See soovitud aeg on möödas. Saada teised ajad.",
+    "ORCAMENTO_VENCIDO": "Selle hinnapakkumise kehtivus on lõppenud. Vali teine kehtiv pakkumine või esita uus päring.",
+    "ORCAMENTO_MUDOU": "Hinnapakkumine muutus pärast kliendi soovi. Saada kliendile valimiseks teised ajad."
   },
   "sobre": {
     "metaTitle": "BipFixist",

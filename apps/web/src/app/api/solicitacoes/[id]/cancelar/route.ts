@@ -6,6 +6,7 @@ import { notifPedidoCanceladoOficina, chatPedidoCancelado } from '@/lib/notif-i1
 import { avisarCancelamentoPeloCliente } from '@/lib/email-cancelamento-cliente';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
 import { dentroDoLimite } from '@/lib/rate-limit';
+import { cancelarPedidosDatasPendentes } from '@/lib/pedido-datas';
 
 export const dynamic = 'force-dynamic';
 
@@ -59,6 +60,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     await avisarCancelamentoPeloCliente(a.id, motivo || null).catch(() => {});
   }
   await supabaseAdmin.from('orcamento_revisoes').update({ status: 'cancelada' }).eq('solicitacao_id', sol.id).eq('status', 'pendente');
+  // pedido de novas datas esperando a oficina (079)
+  await cancelarPedidosDatasPendentes({ solicitacaoId: sol.id }).catch(() => 0);
   await supabaseAdmin.from('orcamentos').update({ status: 'recusado' }).eq('solicitacao_id', sol.id).eq('status', 'aceito');
 
   const numero = String(sol.numero ?? '');
