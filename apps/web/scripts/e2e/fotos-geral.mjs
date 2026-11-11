@@ -16,7 +16,7 @@ const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
 if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local');
 const SO = process.argv[3] || '';
-const SITE = `http://${process.env.HOST_LAN || 'localhost'}:3100`;
+const SITE = process.env.SITE || `http://${process.env.HOST_LAN || 'localhost'}:3100`;
 const RAIZ = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/Documentos/_teste_local';
 const OUT = `${RAIZ}/resultados/fotos-geral`; fs.mkdirSync(OUT, { recursive: true });
 const admin = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);

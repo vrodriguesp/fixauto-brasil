@@ -10,7 +10,7 @@ const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
 if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
-const SITE = `http://${process.env.HOST_LAN || 'localhost'}:3100`; // mesmo endereco do build (o /r/ leva ao NEXT_PUBLIC_SITE_URL)
+const SITE = process.env.SITE || `http://${process.env.HOST_LAN || 'localhost'}:3100`; // mesmo endereco do build (o /r/ leva ao NEXT_PUBLIC_SITE_URL)
 const APP = 'http://localhost:8090';
 const EMAILS = env.EMAIL_PASTA_TESTE;
 const RAIZ = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/Documentos/_teste_local';
