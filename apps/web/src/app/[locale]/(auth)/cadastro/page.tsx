@@ -8,7 +8,7 @@ import { textoErroApi } from '@/lib/erro-api';
 import { LOCALE_PREFIX, type Locale } from '@/i18n/routing';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEndereco } from '@/components/forms/EnderecoEstruturado';
-import { registrarConversaoCadastro } from '@/components/Analytics';
+import { registrarConversaoCadastro, registrarEventoMeta } from '@/components/Analytics';
 import { useAuth } from '@/lib/auth-context';
 import CampoTelefone from '@/components/forms/CampoTelefone';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
@@ -240,7 +240,7 @@ function CadastroPage() {
     }
     try { sessionStorage.removeItem(RASCUNHO); } catch { /* ignora */ }
     // conversao da campanha de Pesquisa do Google Ads (so oficinas)
-    if (tipo === 'oficina') registrarConversaoCadastro();
+    if (tipo === 'oficina') { registrarConversaoCadastro(); registrarEventoMeta('CompleteRegistration'); }
     setEnviado(true);
   };
 

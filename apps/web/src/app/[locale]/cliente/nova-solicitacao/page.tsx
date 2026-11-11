@@ -10,6 +10,7 @@ import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { supabase } from '@/lib/supabase';
 import { notifNovaSolicitacaoTitulo } from '@/lib/notif-i18n';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
+import { registrarEventoMeta } from '@/components/Analytics';
 import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import { useValorQueVolta } from '@/hooks/use-estado-que-volta';
@@ -271,6 +272,8 @@ export default function NovaSolicitacaoPage() {
         body: JSON.stringify({ solicitacaoId: data.id }),
       }).catch(() => {});
 
+      // area logada nao carrega o Pixel: so conta se ele ja veio de uma pagina publica
+      registrarEventoMeta('Lead');
       setSubmitted(true);
       setTimeout(() => router.replace('/cliente/dashboard'), 2000); // replace: o voltar nao cai no formulario ja enviado
     } catch (err) {

@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth-context';
 import { exemploPlaca } from '@/lib/exemplos';
 import { textoErroApi } from '@/lib/erro-api';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
+import { registrarEventoMeta } from '@/components/Analytics';
 import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 import CampoTelefone from '@/components/forms/CampoTelefone';
 import { placaValida, anoDoCarroValido } from '@/lib/validar-carro';
@@ -290,6 +291,7 @@ export default function PedidoSemConta() {
       // 5 codigos errados: volta ao contato (dados mantidos) para enviar de novo, com codigo novo
       if (d.codigo === 'CODIGO_TENTATIVAS') { setPendente(null); setEtapa('contato'); setErro(te('CODIGO_TENTATIVAS')); return; }
       if (!res || !res.ok) { setErro(textoErroApi(te, res?.status || 500, d)); return; }
+      registrarEventoMeta('Lead');
       if (pendente.contaNova) {
         // conta nova: ja entra com a senha que acabou de criar e abre o pedido
         const { error } = await signIn(pendente.email, senha);

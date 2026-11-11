@@ -7,6 +7,8 @@ import { Link, usePathname } from '@/i18n/navigation';
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const CLARITY_PROJECT_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
+// Pixel da Meta (Facebook/Instagram): sem o ID no .env nao carrega nada (dono decide ligar)
+const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 const CONSENT_KEY = 'bipfix_cookie_consent';
 // Google Ads (conta 590-930-3617), conversao "Cadastro oficina (BipFix)".
 // Identificadores publicos (aparecem no HTML de qualquer forma).
@@ -19,6 +21,7 @@ declare global {
   interface Window {
     gtag?: (...args: any[]) => void;
     clarity?: (...args: any[]) => void;
+    fbq?: (...args: any[]) => void;
   }
 }
 
@@ -27,6 +30,15 @@ declare global {
 export function registrarConversaoCadastro() {
   window.gtag?.('event', 'conversion', { send_to: CONVERSAO_CADASTRO });
   window.gtag?.('event', 'sign_up', { method: 'email' });
+}
+
+// Areas logadas: o endereco tem numero de pedido/oficina - nao vai para a Meta
+const AREA_PRIVADA = /^\/(cliente|oficina|admin|loja)(\/|$)/;
+
+// Pedido enviado (Lead) e cadastro de oficina (CompleteRegistration) para a Meta
+// medir e otimizar os anuncios. So existe fbq depois do "Nõustun"; sem dados da pessoa.
+export function registrarEventoMeta(evento: 'Lead' | 'CompleteRegistration') {
+  window.fbq?.('track', evento);
 }
 
 function aplicarConsentimento(valor: 'accepted' | 'rejected') {
@@ -105,7 +117,7 @@ export default function Analytics() {
     window.dispatchEvent(new Event('bipfix-consentimento'));
   };
 
-  if (!GA_MEASUREMENT_ID && !CLARITY_PROJECT_ID) return null;
+  if (!GA_MEASUREMENT_ID && !CLARITY_PROJECT_ID && !META_PIXEL_ID) return null;
 
   return (
     <>
@@ -148,6 +160,11 @@ export default function Analytics() {
         </Script>
       )}
 
+      {/* Pixel da Meta: diferente do gtag/Clarity, NEM carrega sem o "Nõustun"
+          (o aviso de cookies cita "medir nossos anuncios"). autoConfig desligado: a
+          Meta nao coleta cliques/textos dos botoes sozinha, so os 3 eventos nossos. */}
+      {META_PIXEL_ID && consent === 'accepted' && !AREA_PRIVADA.test(pathname) && <MetaPixel id={META_PIXEL_ID} pathname={pathname} />}
+
       {/* Aviso compacto (Google: banner de cookies "de tamanho razoavel";
           EDPB 05/2020: recusar tao facil quanto aceitar) e ausente no fluxo
           de acidente, onde cobria o formulario e nao ha o que medir. */}
@@ -171,5 +188,28 @@ export default function Analytics() {
         </div>
       )}
     </>
+  );
+}
+
+// PageView a cada pagina publica (o site troca de pagina sem recarregar)
+function MetaPixel({ id, pathname }: { id: string; pathname: string }) {
+  const primeira = useRef(true);
+  useEffect(() => {
+    if (primeira.current) { primeira.current = false; return; } // a primeira vai no init
+    window.fbq?.('track', 'PageView');
+  }, [pathname]);
+  return (
+    <Script id="meta-pixel" strategy="afterInteractive">
+      {`
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+        document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('set', 'autoConfig', false, '${id}');
+        fbq('init', '${id}');
+        fbq('track', 'PageView');
+      `}
+    </Script>
   );
 }
