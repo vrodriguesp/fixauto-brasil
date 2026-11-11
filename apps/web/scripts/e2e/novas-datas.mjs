@@ -16,7 +16,7 @@
 //     cliente pede a duas oficinas, uma confirma -> a outra e avisada e recebe ORCAMENTO_INDISPONIVEL;
 //     confirmar com o turno comecando em menos de 2 h -> SUGESTAO_VENCIDA; validade estendida as datas novas;
 //     link curto do e-mail da oficina (/r/<numero>?o=et&p=1); dica na pagina "Modificar orcamento";
-//  H) auditoria Fable: duas oficinas confirmando ao mesmo tempo, funcionario gerente responde e mecanico nao ve
+//  H) auditoria Fable: duas oficinas confirmando ao mesmo tempo, funcionario admin responde e mecanico nao ve
 //     o cartao, pedido em no_show (fluxo completo), app com o aparelho em outro fuso, limite 429.
 //   SITE=http://localhost:3101 node novas-datas.mjs <.env.local>
 import fs from 'node:fs';
@@ -542,7 +542,9 @@ try {
     // funcionario gerente responde; mecanico nao ve o cartao
     const gerEmail = `nd-ger-${tag}@example.test`;
     const gerId = await conta(gerEmail, senha, { tipo: 'oficina', nome: 'Gerente', idioma: 'et' });
-    const { data: fGer } = await admin.from('funcionarios').insert({ oficina_id: of1.id, profile_id: gerId, nome: 'Gerente', cargo: 'gerente', ativo: true }).select('id').single();
+    // cargos possiveis: admin | mecanico (enum cargo_funcionario); admin da oficina responde
+    const { data: fGer, error: eGer } = await admin.from('funcionarios').insert({ oficina_id: of1.id, profile_id: gerId, nome: 'Gerente', cargo: 'admin', ativo: true }).select('id').single();
+    if (eGer) throw new Error('funcionario admin: ' + eGer.message);
     if (fGer) funcs.add(fGer.id);
     const ger = await sessao(gerEmail, senha);
     const K = await novoPedido(22, { idioma: 'et' });
@@ -555,7 +557,7 @@ try {
       await ctx.close();
     }
     let r = await post(`/api/orcamento/${K.o1.id}/novas-datas`, ger.token, { horarios: [{ data: dia(5), turno: 'manha' }] });
-    ok('H: funcionario gerente manda datas -> 200', r.status === 200 && r.d.modo === 'novas_datas', JSON.stringify(r));
+    ok('H: funcionario admin (nao mecanico) manda datas -> 200', r.status === 200 && r.d.modo === 'novas_datas', JSON.stringify(r));
 
     // pedido em no_show (o orcamento volta a enviado com as datas velhas): fluxo completo
     const N = await novoPedido(23, { idioma: 'et' });
