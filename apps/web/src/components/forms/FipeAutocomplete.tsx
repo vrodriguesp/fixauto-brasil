@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { paisDoAparelho } from '@/lib/seguro-reparo';
 import { useLocale, useTranslations } from 'next-intl';
 import { TIPOS_VEICULO } from '@fixauto/shared';
@@ -43,8 +43,15 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
   // Catalogo do PAIS do carro, nao do idioma: um brasileiro na Estonia usando
   // o site em portugues tem carro estoniano (sem FIPE). Pais = onde o aparelho
   // esta (fuso horario); so sem esse sinal vale o idioma.
-  const [isBR, setIsBR] = useState(locale === 'pt');
-  useEffect(() => { const p = paisDoAparelho(); if (p) setIsBR(p === 'BR'); }, []);
+  // null = pais ainda nao conhecido: nenhuma lista e pedida antes. Antes a pagina
+  // /br/pt num aparelho fora do Brasil pedia a FIPE e logo depois o catalogo; se a
+  // FIPE respondia por ultimo, as marcas ficavam com codigos FIPE (Toyota=56) e os
+  // modelos eram pedidos ao catalogo com marca=56 - lista vazia (10/11)
+  const [isBR, setIsBR] = useState<boolean | null>(null);
+  useEffect(() => { const p = paisDoAparelho(); setIsBR(p ? p === 'BR' : locale === 'pt'); }, [locale]);
+  // so a resposta do pedido mais recente vale (uma lista que chega atrasada e ignorada)
+  const pedidoMarcas = useRef(0);
+  const pedidoModelos = useRef(0);
   const [marcas, setMarcas] = useState<FipeOption[]>([]);
   const [modelos, setModelos] = useState<FipeOption[]>([]);
   const [anos, setAnos] = useState<FipeOption[]>([]);
@@ -56,6 +63,8 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
   const [selectedAnoCode, setSelectedAnoCode] = useState('');
 
   const fetchMarcas = useCallback(async (tipo: string) => {
+    if (isBR === null) return;
+    const n = ++pedidoMarcas.current;
     setLoading('marcas');
     setError('');
     try {
@@ -63,8 +72,10 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
       const res = await fetch(url);
       if (!res.ok) throw new Error('Erro ao buscar marcas');
       const data = await res.json();
+      if (n !== pedidoMarcas.current) return;
       setMarcas(data);
     } catch {
+      if (n !== pedidoMarcas.current) return;
       setError(t('erroMarcas'));
       setMarcas(
         isBR
@@ -94,6 +105,7 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
   }, [isBR, t]);
 
   const fetchModelos = useCallback(async (tipo: string, marcaCode: string) => {
+    const n = ++pedidoModelos.current;
     setLoading('modelos');
     setError('');
     try {
@@ -103,8 +115,10 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
       const res = await fetch(url);
       if (!res.ok) throw new Error('Erro ao buscar modelos');
       const data = await res.json();
+      if (n !== pedidoModelos.current) return;
       setModelos(data);
     } catch {
+      if (n !== pedidoModelos.current) return;
       setError(t('erroModelos'));
       setModelos([]);
     }

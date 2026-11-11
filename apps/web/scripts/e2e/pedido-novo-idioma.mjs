@@ -30,7 +30,7 @@ try {
   await ctx.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} });
   const p = await ctx.newPage();
   await p.goto(`${SITE}/ee/et/login`, { waitUntil: 'networkidle' });
-  await p.fill('input[type=email]', email); await p.fill('input[type=password]', senha); await p.click('button[type=submit]'); await p.waitForTimeout(4500);
+  await p.fill('input[type=email]', email); await p.fill('input[type=password]', senha); await p.click('button[type=submit]'); await p.waitForURL((u) => u.pathname.includes('/cliente/dashboard'), { timeout: 30000 }); // login termina no painel (espera fixa falhava com o servidor de dev lento)
   await p.goto(`${SITE}/ee/et/cliente/nova-solicitacao`, { waitUntil: 'networkidle' }); await p.waitForTimeout(1500);
   const edasi = () => p.locator('main button').filter({ hasText: /^(Edasi|Далее)$/ }).first();
   await p.locator('main').getByText('Octavia').first().click(); await edasi().click(); await p.waitForTimeout(800);
