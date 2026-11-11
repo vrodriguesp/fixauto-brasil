@@ -197,9 +197,10 @@ export default function Analytics() {
 
 // PageView a cada pagina publica (o site troca de pagina sem recarregar)
 function MetaPixel({ id, pathname }: { id: string; pathname: string }) {
-  const primeira = useRef(true);
+  const ultima = useRef(pathname); // a primeira pagina vai no init
   useEffect(() => {
-    if (primeira.current) { primeira.current = false; return; } // a primeira vai no init
+    if (ultima.current === pathname) return; // efeito repetido sem trocar de pagina
+    ultima.current = pathname;
     window.fbq?.('track', 'PageView');
   }, [pathname]);
   return (
