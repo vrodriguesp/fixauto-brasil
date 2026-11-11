@@ -45,7 +45,8 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, aoMuda
     try {
       const r = await fetch(`/api/orcamento/${orcamentoId}/novas-datas`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) });
       const b = await r.json().catch(() => ({}));
-      if (!r.ok) { setErro(textoErroApi(tErr, r.status, b)); if (b?.codigo === 'PEDIDO_DATAS_RESPONDIDO') carregar(); return; }
+      // 409 (respondido, cancelado, orcamento mudou/vencido, sugestao vencida): rele o cartao e a pagina
+      if (!r.ok) { setErro(textoErroApi(tErr, r.status, b)); if (r.status === 409) { carregar(); aoMudar?.(); } return; }
       setFeito(msgOk); setPedido(null);
       aoMudar?.();
     } catch {

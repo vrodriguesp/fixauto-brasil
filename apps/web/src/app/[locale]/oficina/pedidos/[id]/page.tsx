@@ -25,7 +25,7 @@ export default function SolicitacaoDetalhePage() {
   const tc = useTranslations('constants');
   const locale = useLocale();
   const params = useParams();
-  const { oficina } = useAuth();
+  const { oficina, funcionario } = useAuth();
   const { solicitacoes, refresh } = useSolicitacoes();
   const solicitacao = solicitacoes.find((s) => s.id === params.id);
 
@@ -163,7 +163,8 @@ export default function SolicitacaoDetalhePage() {
         <div className="lg:col-span-2 space-y-6">
           {isAccepted && oficina && <ResumoAgendamento solicitacaoId={sol.id} oficinaId={oficina.id} pais={oficina.pais} />}
           {/* o cliente pediu novas datas (079): confirmar a sugestao dele ou mandar outras */}
-          {myQuote && ['enviado', 'visualizado'].includes(myQuote.status) && ['aberta', 'em_orcamento', 'no_show'].includes(sol.status) && !orcamentoVencido(myQuote.validade, oficina?.pais) && (
+          {/* mecanico nao responde (a API recusa): sem o cartao para ele */}
+          {myQuote && funcionario?.cargo !== 'mecanico' && ['enviado', 'visualizado'].includes(myQuote.status) && ['aberta', 'em_orcamento', 'no_show'].includes(sol.status) && !orcamentoVencido(myQuote.validade, oficina?.pais) && (
             <NovasDatasPedidas key={myQuote.id} orcamentoId={myQuote.id} prazoDias={myQuote.prazo_dias} pais={oficina?.pais ?? null} aoMudar={refresh} />
           )}
           {myQuote && (

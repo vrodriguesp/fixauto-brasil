@@ -99,3 +99,16 @@ A oficina manda o orçamento com datas de entrada (`orcamento_disponibilidade`).
   - lembrete pelo cron e limpeza;
   - textos ET e RU (sem chave crua, sem estouro de largura) no site e no build web do app.
 - Regressão: `agenda-mudanca.mjs`, `site-expirado.mjs`, `app-traducao-expirado.mjs`, testes de aceite, verificadores de tradução web e app, `tsc`.
+
+## Checklist de deploy 079 (da auditoria Fable, `docs/AUDITORIA_FABLE_079.md`, em ordem)
+1. **Local**: terminar a regressão do aceite (`cancelar-pedido`, `site-estonia`, `site-garantia`, `privacidade-agenda`, `site-conclusao`, `correcoes-0811`, `feedback-0711`, `fotos-geral`, `site-servico`, um por vez) e o `novas-datas.mjs` completo; `tsc` web e app e `checar-traducoes` web e app. Se nenhum e2e cobrir o aceite com acidente (`outro_causou`), teste manual local.
+2. **Aparelho**: emulador Android (Hermes) e iPhone: tela do pedido com orçamento com data de hoje, com todas as datas vencidas (cartão de pedir datas) e com orçamento vencido.
+3. **Backup** do banco de produção.
+4. **Conferir os dados**: `SELECT solicitacao_id, count(*) FROM orcamentos WHERE status='aceito' GROUP BY 1 HAVING count(*)>1;` (deve vir vazio; se vier linha, o mais antigo vira `recusado` à mão). Conferir `pg_policies` de `orcamento_disponibilidade` (uma policy de DELETE só).
+5. **Migração 079 em uma transação** (`BEGIN; … COMMIT;`).
+6. **Recarregar o esquema**: `NOTIFY pgrst, 'reload schema';` e conferir `SELECT * FROM pg_publication_tables WHERE tablename='orcamento_pedido_datas';`.
+7. **Deploy da API/site** (antes do OTA: o app novo chama `/api/orcamento/[id]/pedir-datas`), `pm2 restart`.
+8. **Smoke**: `/r/<numero>?o=et&p=1` → 302 para `/ee/et/oficina/pedidos/<id>`; `POST /api/orcamento/<uuid>/pedir-datas` sem login → 401; `limpar-pendentes` com a chave → `novasDatas: {lembretes, cancelados}` no JSON.
+9. **OTA do app no mesmo dia**, logo depois da API (o app publicado não tem o texto `erros.ORCAMENTO_VENCIDO`: até o OTA, quem tocar "Aceitar" em orçamento vencido vê erro genérico). Conferir num aparelho que o bundle novo subiu.
+10. **Avisar o dono**: orçamento vencido (validade antes de hoje) **não pode mais ser aceito**; as oficinas passam a receber aviso/push/e-mail quando o cliente pede datas.
+11. Registrar em `docs/PROGRESSO_*.md` e marcar o backlog 002.

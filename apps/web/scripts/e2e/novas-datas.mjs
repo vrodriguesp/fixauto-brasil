@@ -15,7 +15,9 @@
 //     orcamento ganhou datas futuras -> cron cancela; corrida confirmar x aceitar -> um aceito so;
 //     cliente pede a duas oficinas, uma confirma -> a outra e avisada e recebe ORCAMENTO_INDISPONIVEL;
 //     confirmar com o turno comecando em menos de 2 h -> SUGESTAO_VENCIDA; validade estendida as datas novas;
-//     link curto do e-mail da oficina (/r/<numero>?o=et&p=1); dica na pagina "Modificar orcamento".
+//     link curto do e-mail da oficina (/r/<numero>?o=et&p=1); dica na pagina "Modificar orcamento";
+//  H) auditoria Fable: duas oficinas confirmando ao mesmo tempo, funcionario gerente responde e mecanico nao ve
+//     o cartao, pedido em no_show (fluxo completo), app com o aparelho em outro fuso, limite 429.
 //   SITE=http://localhost:3101 node novas-datas.mjs <.env.local>
 import fs from 'node:fs';
 import path from 'node:path';
@@ -250,8 +252,11 @@ try {
       await p.getByTestId('novas-datas-pedidas').screenshot({ path: path.join(OUT, `oficina_cartao_${lg}_390.png`) }).catch(() => {});
       if (lg === 'et') {
         await p.getByTestId('confirmar-sugestao-0').click();
-        const feito = await esperarTeste(p, 'novas-datas-feito');
-        ok('B: confirmar pela tela -> "Aeg kinnitatud. Broneering on tehtud."', feito && (await p.getByTestId('novas-datas-feito').innerText()).includes(TW('oficinaNovasDatas.feitoConfirmado')));
+        // o cartao some quando a pagina recarrega (orcamento aceito): confere pelo banco e pela pagina sem o cartao
+        let aceito = false;
+        for (let i = 0; i < 40 && !aceito; i++) { aceito = (await admin.from('orcamentos').select('status').eq('id', A.o1.id).single()).data?.status === 'aceito'; if (!aceito) await sleep(400); }
+        await sleep(2500);
+        ok('B: confirmar pela tela -> orcamento aceito e o cartao de responder some', aceito && (await p.getByTestId('confirmar-sugestao-0').count()) === 0);
       }
       await ctx.close();
     }
@@ -514,6 +519,65 @@ try {
     ok('G: texto ru com "Автосервис «oficina»" (concordancia)', (nI?.dados?.textos?.ru?.mensagem || '').startsWith(`Автосервис «${of1.nome_fantasia}» подтвердил`), nI?.dados?.textos?.ru?.mensagem);
   }
 
+  // ================= H) auditoria Fable =================
+  {
+    // duas oficinas confirmam ao mesmo tempo -> um aceito so, uma agenda, o perdedor cancelado e sem horario sobrando
+    for (let i = 0; i < 2; i++) {
+      const J = await novoPedido(20 + i, { idioma: 'et', o2Passado: true });
+      await post(`/api/orcamento/${J.o1.id}/pedir-datas`, J.cli.token, { sugestoes: [{ data: dia(3), turno: 'manha' }] });
+      await post(`/api/orcamento/${J.o2.id}/pedir-datas`, J.cli.token, { sugestoes: [{ data: dia(4), turno: 'tarde' }] });
+      const [ra, rb] = await Promise.all([
+        post(`/api/orcamento/${J.o1.id}/novas-datas`, w1.token, { confirmar: 0 }),
+        post(`/api/orcamento/${J.o2.id}/novas-datas`, w2.token, { confirmar: 0 }),
+      ]);
+      const { data: aceitos } = await admin.from('orcamentos').select('id').eq('solicitacao_id', J.sol.id).eq('status', 'aceito');
+      const { data: ags } = await admin.from('agenda').select('id').eq('solicitacao_id', J.sol.id).eq('status', 'agendado');
+      ok(`H: A x B confirmam juntas (${i + 1}) -> um 200, um aceito, uma agenda`, [ra.status, rb.status].filter((x) => x === 200).length === 1 && aceitos?.length === 1 && ags?.length === 1, JSON.stringify({ ra, rb, aceitos, ags }));
+      const perdeu = ra.status === 200 ? J.o2.id : J.o1.id;
+      const rPerdeu = ra.status === 200 ? rb : ra;
+      const { data: sobra } = await admin.from('orcamento_disponibilidade').select('id').eq('orcamento_id', perdeu).eq('origem', 'cliente');
+      ok(`H: A x B (${i + 1}) -> perdedor com ORCAMENTO_INDISPONIVEL, pedido cancelado, sem horario do cliente`, rPerdeu.status === 409 && rPerdeu.d.codigo === 'ORCAMENTO_INDISPONIVEL' && (await pedidoDatas(perdeu)).status === 'cancelado' && !sobra?.length, JSON.stringify({ rPerdeu, sobra }));
+    }
+
+    // funcionario gerente responde; mecanico nao ve o cartao
+    const gerEmail = `nd-ger-${tag}@example.test`;
+    const gerId = await conta(gerEmail, senha, { tipo: 'oficina', nome: 'Gerente', idioma: 'et' });
+    const { data: fGer } = await admin.from('funcionarios').insert({ oficina_id: of1.id, profile_id: gerId, nome: 'Gerente', cargo: 'gerente', ativo: true }).select('id').single();
+    if (fGer) funcs.add(fGer.id);
+    const ger = await sessao(gerEmail, senha);
+    const K = await novoPedido(22, { idioma: 'et' });
+    await post(`/api/orcamento/${K.o1.id}/pedir-datas`, K.cli.token, {});
+    {
+      const ctx = await contexto(390);
+      const p = await entrarSite(ctx, mecEmail, senha, '/ee/et');
+      await p.goto(`${SITE}/ee/et/oficina/pedidos/${K.sol.id}`, { waitUntil: 'networkidle' }); await sleep(3000);
+      ok('H: mecanico nao ve o cartao de novas datas', (await p.getByTestId('novas-datas-pedidas').count()) === 0);
+      await ctx.close();
+    }
+    let r = await post(`/api/orcamento/${K.o1.id}/novas-datas`, ger.token, { horarios: [{ data: dia(5), turno: 'manha' }] });
+    ok('H: funcionario gerente manda datas -> 200', r.status === 200 && r.d.modo === 'novas_datas', JSON.stringify(r));
+
+    // pedido em no_show (o orcamento volta a enviado com as datas velhas): fluxo completo
+    const N = await novoPedido(23, { idioma: 'et' });
+    await admin.from('solicitacoes').update({ status: 'no_show' }).eq('id', N.sol.id);
+    await admin.from('orcamentos').update({ status: 'recusado' }).eq('id', N.o2.id);
+    r = await post(`/api/orcamento/${N.o1.id}/pedir-datas`, N.cli.token, { sugestoes: [{ data: dia(2), turno: 'tarde' }] });
+    ok('H: no_show -> cliente pede novas datas', r.status === 200, JSON.stringify(r));
+    r = await post(`/api/orcamento/${N.o1.id}/novas-datas`, w1.token, { horarios: [{ data: dia(5), turno: 'tarde' }] });
+    const { data: slN } = await admin.from('orcamento_disponibilidade').select('id').eq('orcamento_id', N.o1.id).eq('data_checkin', dia(5)).single();
+    const ra = await post('/api/aceitar-orcamento', N.cli.token, { orcamentoId: N.o1.id, slotId: slN?.id });
+    ok('H: no_show -> oficina manda datas e o cliente aceita (agenda criada)', r.status === 200 && ra.status === 200 && ((await admin.from('agenda').select('id').eq('solicitacao_id', N.sol.id).eq('status', 'agendado')).data || []).length === 1, JSON.stringify({ r, ra }));
+
+    // limite: 10/h por cliente no pedir-datas, 30/h por pessoa da oficina no novas-datas
+    const L = await novoPedido(24, { idioma: 'et' });
+    const sts = [];
+    for (let i = 0; i < 11; i++) sts.push((await post(`/api/orcamento/${L.o2.id}/pedir-datas`, L.cli.token, {})).status);
+    ok('H: 11 pedidos do cliente na hora -> o 11o e 429', sts.slice(0, 10).every((x) => x !== 429) && sts[10] === 429, JSON.stringify(sts));
+    const sto = [];
+    for (let i = 0; i < 31; i++) sto.push((await post(`/api/orcamento/${L.o2.id}/novas-datas`, ger.token, { confirmar: 0 })).status);
+    ok('H: 31 respostas da mesma pessoa da oficina na hora -> a 31a e 429', sto.filter((x) => x === 429).length >= 1 && sto[30] === 429, JSON.stringify(sto.slice(-3)));
+  }
+
   // ================= F) ET/RU no site (cliente pedindo) e no app web =================
   for (const lg of ['et', 'ru']) {
     const F = await novoPedido(lg === 'et' ? 6 : 7, { idioma: lg });
@@ -530,7 +594,8 @@ try {
     let appOk = false;
     try { appOk = (await fetch(APP, { signal: AbortSignal.timeout(4000) })).ok; } catch { /* sem app */ }
     if (!appOk) { ok(`F(${lg}) app: app web em ${APP} no ar`, false, 'compile o app e rode servir-app-web.mjs'); continue; }
-    const cA = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, locale: lg === 'ru' ? 'ru-RU' : 'et-EE' });
+    // ru: aparelho em outro fuso (Sao Paulo) - a grade continua no fuso da oficina (Tallinn)
+    const cA = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, locale: lg === 'ru' ? 'ru-RU' : 'et-EE', ...(lg === 'ru' ? { timezoneId: 'America/Sao_Paulo' } : {}) });
     const pa = await cA.newPage();
     const errApp = []; pa.on('pageerror', (e) => errApp.push(e.message));
     await pa.goto(APP, { waitUntil: 'networkidle' }); await sleep(1500);
@@ -541,6 +606,11 @@ try {
     const tem = await esperarTeste(pa, 'pedir-novas-datas', 20000);
     ok(`F(${lg}) app: cartao "${TA('novasDatas.titulo')}"`, tem && (await pa.getByTestId('pedir-novas-datas').innerText()).includes(TA('novasDatas.titulo')));
     await pa.getByTestId('abrir-pedir-datas').click(); await sleep(500);
+    {
+      const idsApp = await pa.locator('[data-testid^="chip-"]').evaluateAll((els) => els.map((e) => e.getAttribute('data-testid')));
+      let primeiro = 1; while (new Date(`${dia(primeiro)}T12:00:00Z`).getUTCDay() === 0) primeiro++;
+      ok(`F(${lg}) app: grade no fuso da oficina (comeca amanha em Tallinn${lg === 'ru' ? ', aparelho em Sao Paulo' : ''})`, idsApp.length > 0 && idsApp[0].slice(5, 15) === dia(primeiro) && idsApp.every((id) => id.slice(5, 15) > hojeTallinn()), JSON.stringify(idsApp.slice(0, 3)));
+    }
     await pa.locator('[data-testid^="chip-"]').nth(1).click();
     await pa.getByTestId('mensagem-datas').fill(`app ${lg} ${tag}`);
     const tApp = await pa.innerText('body');

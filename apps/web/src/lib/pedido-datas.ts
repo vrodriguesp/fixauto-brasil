@@ -150,7 +150,7 @@ async function estenderValidade(orc: any, datas: string[]) {
 /** Pedido de datas que nao pode mais ser respondido: codigo certo para a oficina (revisao Fable S4). */
 async function codigoPedidoFechado(orcamentoId: string): Promise<Res> {
   const { data } = await supabaseAdmin.from('orcamento_pedido_datas').select('status').eq('orcamento_id', orcamentoId).order('created_at', { ascending: false }).limit(1).maybeSingle();
-  if (data?.status === 'cancelado') return res(409, { error: 'Pedido cancelado', codigo: 'ORCAMENTO_INDISPONIVEL' });
+  if (!data || data.status === 'cancelado') return res(409, { error: 'Pedido cancelado', codigo: 'ORCAMENTO_INDISPONIVEL' });
   return res(409, { error: 'Pedido já respondido', codigo: 'PEDIDO_DATAS_RESPONDIDO' });
 }
 
@@ -252,10 +252,22 @@ export async function responderNovasDatas(userId: string, orcamentoId: string, c
       await supabaseAdmin.from('orcamento_pedido_datas').update(cancelar ? { status: 'cancelado' } : { status: 'pendente', resposta: null, atendido_em: null }).eq('id', pend.id).eq('status', 'atendido');
     };
     if (eSlot || !slot) { await desfazer(); return res(500, { error: eSlot?.message || 'falha' }); }
-    const { aceitarOrcamento } = await import('./aceitar-orcamento');
-    const r = await aceitarOrcamento({ orcamentoId: orc.id, slotId: slot.id, clienteId: sol.cliente_id }).catch((e) => ({ status: 500, body: { error: (e as Error).message } }));
-    if (r.status !== 200) { await desfazer(slot.id, (r.body as any)?.codigo === 'ORCAMENTO_INDISPONIVEL'); return r; }
+    // validade antes do aceite (a sugestao ja passou nas conferencias; depois do aceite ela nao importa - auditoria S7)
     await estenderValidade(orc, [sug.data]);
+    const { aceitarOrcamento } = await import('./aceitar-orcamento');
+    let r = await aceitarOrcamento({ orcamentoId: orc.id, slotId: slot.id, clienteId: sol.cliente_id }).catch((e) => ({ status: 500, body: { error: (e as Error).message } }));
+    if (r.status !== 200) {
+      // excecao DEPOIS do passo 1 do aceite: o orcamento ja ficou aceito neste horario - nao desfaz; o aceite
+      // aconteceu, segue como confirmado (auditoria Fable 079, S4)
+      const { data: agora } = await supabaseAdmin.from('orcamentos').select('status, disponibilidade_escolhida_id').eq('id', orc.id).maybeSingle();
+      if (agora?.status === 'aceito' && agora.disponibilidade_escolhida_id === slot.id) {
+        console.error('[novas-datas] aceite com erro depois de gravado:', JSON.stringify(r.body));
+        r = { status: 200, body: { success: true } };
+      } else {
+        await desfazer(slot.id, (r.body as any)?.codigo === 'ORCAMENTO_INDISPONIVEL');
+        return r;
+      }
+    }
     const inicio = horaLocalEmUtc(sug.data, sug.turno === 'tarde' ? '13:00' : '08:00', of?.pais);
     await supabaseAdmin.from('mensagens').insert({ solicitacao_id: orc.solicitacao_id, oficina_id: orc.oficina_id, remetente_id: userId, texto: preencher(textosNovasDatas(idiomaOf).chatConfirmada, { quando: dataHora(inicio, idiomaOf, fuso) }) });
     await notificar(sol.cliente_id, 'novas_datas_confirmada', idiomaCli, (l) => {
