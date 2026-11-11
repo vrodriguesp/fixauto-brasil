@@ -470,7 +470,15 @@
     "EMAIL_EM_USO": "Já existe uma conta com este e-mail. Volte atrás e inicie sessão.",
     "AVALIACAO_PENDENTE": "Antes de um novo pedido, avalie o serviço anterior.",
     "PLACA_INVALIDA": "Matrícula inválida: use só letras, números, espaço ou hífen (2 a 10 caracteres).",
-    "ANO_INVALIDO": "Ano inválido: use 4 dígitos, de 1950 até ao próximo ano."
+    "ANO_INVALIDO": "Ano inválido: use 4 dígitos, de 1950 até ao próximo ano.",
+    "DATAS_AINDA_VALIDAS": "Este orçamento ainda tem datas disponíveis. Escolha uma delas.",
+    "PEDIDO_DATAS_PENDENTE": "Já pediu novas datas a esta oficina. Aguarde a resposta.",
+    "SUGESTAO_INVALIDA": "Uma das datas sugeridas já passou ou não é válida. Escolha outra.",
+    "PEDIDO_EXPIRADO": "Este pedido expirou. Reabra o pedido para continuar.",
+    "PEDIDO_DATAS_RESPONDIDO": "Este pedido de novas datas já foi respondido.",
+    "SUGESTAO_VENCIDA": "Esta data sugerida já passou. Envie outras datas.",
+    "ORCAMENTO_VENCIDO": "Este orçamento expirou. Escolha outro orçamento ativo ou refaça o pedido.",
+    "ORCAMENTO_MUDOU": "O orçamento mudou depois do pedido do cliente. Envie outras datas para ele escolher."
   },
   "notificacoes": {
     "titulo": "Notificações",
@@ -707,5 +715,26 @@
     "carroNaOficina": "O carro já está na oficina: para cancelar, fale com a oficina na conversa.",
     "reabrir": "Reabrir pedido",
     "reaberto": "Pedido reaberto: as oficinas podem enviar orçamento de novo."
+  },
+  "novasDatas": {
+    "titulo": "As datas desta oficina já passaram",
+    "texto": "Se ainda tiver interesse neste orçamento, peça novas datas à oficina.",
+    "botao": "Tenho interesse, peça novas datas",
+    "sugerirTitulo": "Datas que lhe convêm (opcional, até 3)",
+    "manha": "Manhã",
+    "tarde": "Tarde",
+    "mensagemLabel": "Mensagem para a oficina (opcional)",
+    "mensagemPlaceholder": "Ex.: prefiro de manhã",
+    "caracteres": "{n}/300",
+    "avisoConfirmar": "Se a oficina confirmar uma das suas datas, a marcação fica feita com este orçamento.",
+    "enviar": "Pedir novas datas",
+    "enviando": "A enviar…",
+    "cancelar": "Cancelar",
+    "pendente": "Pedido enviado em {data}. A aguardar a oficina.",
+    "suasDatas": "As suas datas: {datas}",
+    "vencidoTitulo": "Este orçamento expirou em {data}",
+    "vencidoTexto": "Já não é possível aceitar este orçamento nem pedir novas datas. Escolha outro orçamento ativo ou refaça o pedido.",
+    "vencidoOutro": "Ver outro orçamento ativo",
+    "vencidoNovoPedido": "Fazer um novo pedido"
   }
 }

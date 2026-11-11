@@ -470,7 +470,15 @@
     "EMAIL_EM_USO": "Selle e-postiga on juba konto. Mine tagasi ja logi sisse.",
     "AVALIACAO_PENDENTE": "Enne uut päringut hinda palun eelmist teenust.",
     "PLACA_INVALIDA": "Vigane numbrimärk: kasuta ainult tähti, numbreid, tühikut või sidekriipsu (2–10 märki).",
-    "ANO_INVALIDO": "Vigane aasta: kasuta 4 numbrit, alates 1950 kuni järgmise aastani."
+    "ANO_INVALIDO": "Vigane aasta: kasuta 4 numbrit, alates 1950 kuni järgmise aastani.",
+    "DATAS_AINDA_VALIDAS": "Sellel hinnapakkumisel on veel vabu aegu. Vali neist üks.",
+    "PEDIDO_DATAS_PENDENTE": "Oled sellelt töökojalt juba uusi aegu küsinud. Oota vastust.",
+    "SUGESTAO_INVALIDA": "Üks soovitud aegadest on möödas või ei sobi. Vali teine.",
+    "PEDIDO_EXPIRADO": "See päring on aegunud. Jätkamiseks ava päring uuesti.",
+    "PEDIDO_DATAS_RESPONDIDO": "Sellele uute aegade soovile on juba vastatud.",
+    "SUGESTAO_VENCIDA": "See soovitud aeg on möödas. Saada teised ajad.",
+    "ORCAMENTO_VENCIDO": "Selle hinnapakkumise kehtivus on lõppenud. Vali teine kehtiv pakkumine või esita uus päring.",
+    "ORCAMENTO_MUDOU": "Hinnapakkumine muutus pärast kliendi soovi. Saada kliendile valimiseks teised ajad."
   },
   "notificacoes": {
     "titulo": "Teated",
@@ -707,5 +715,26 @@
     "carroNaOficina": "Auto on juba töökojas: tühistamiseks kirjuta töökojale vestluses.",
     "reabrir": "Ava päring uuesti",
     "reaberto": "Päring on uuesti avatud: töökojad saavad jälle pakkumisi saata."
+  },
+  "novasDatas": {
+    "titulo": "Selle töökoja ajad on möödas",
+    "texto": "Kui see hinnapakkumine sind endiselt huvitab, küsi töökojalt uusi aegu.",
+    "botao": "Olen huvitatud, küsi uusi aegu",
+    "sugerirTitulo": "Sulle sobivad ajad (valikuline, kuni 3)",
+    "manha": "Hommik",
+    "tarde": "Pärastlõuna",
+    "mensagemLabel": "Sõnum töökojale (valikuline)",
+    "mensagemPlaceholder": "Nt eelistan hommikut",
+    "caracteres": "{n}/300",
+    "avisoConfirmar": "Kui töökoda kinnitab ühe sinu aegadest, on broneering selle hinnapakkumisega tehtud.",
+    "enviar": "Küsi uusi aegu",
+    "enviando": "Saadan…",
+    "cancelar": "Tühista",
+    "pendente": "Soov saadetud {data}. Ootame töökoja vastust.",
+    "suasDatas": "Sinu ajad: {datas}",
+    "vencidoTitulo": "Selle hinnapakkumise kehtivus lõppes {data}",
+    "vencidoTexto": "Seda hinnapakkumist ei saa enam vastu võtta ega uusi aegu küsida. Vali teine kehtiv pakkumine või esita päring uuesti.",
+    "vencidoOutro": "Vaata teist kehtivat pakkumist",
+    "vencidoNovoPedido": "Esita uus päring"
   }
 }

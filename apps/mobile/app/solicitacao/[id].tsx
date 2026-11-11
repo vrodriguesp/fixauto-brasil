@@ -1,5 +1,5 @@
 import RolagemTeclado from '../../components/RolagemTeclado';
-import { useEffect, useCallback, useState, useMemo } from 'react';
+import { useEffect, useCallback, useState, useMemo, useRef } from 'react';
 import { FotosPedido, SeguroPedido } from '../../components/FotosESeguroPedido';
 import { View, Text, ScrollView, Pressable, ActivityIndicator, TextInput, RefreshControl, Keyboard } from 'react-native';
 import { avisar } from '../../lib/confirmar';
@@ -17,6 +17,8 @@ import { turnoDisponivel, type Turno } from '../../lib/turnos';
 import { limparDescricao, ehAcidente } from '../../lib/texto';
 import EditarPedido from '../../components/EditarPedido';
 import RevisaoPendente from '../../components/RevisaoPendente';
+import PedirNovasDatas from '../../components/PedirNovasDatas';
+import { orcamentoVencido } from '../../lib/orcamento-validade';
 import { useAvisos } from '../../lib/avisos';
 import { abrirOficina } from '../../lib/oficina-link';
 import { tDias } from '../../i18n';
@@ -117,11 +119,14 @@ export default function SolicitacaoDetailScreen() {
   const [avisoCancelar, setAvisoCancelar] = useState('');
   // conversa com a oficina escolhida ja encerrada (servico terminou, sem garantia)
   const [conversaFechada, setConversaFechada] = useState(false);
+  // orcamento vencido: "ver outro orcamento ativo" rola ate o cartao dele (079)
+  const rolagem = useRef<any>(null);
+  const posCartao = useRef<Record<string, number>>({});
 
   const carregar = useCallback(async () => {
     const { data } = await supabase
       .from('solicitacoes')
-      .select('*, veiculo:veiculos(*), orcamentos(*, oficina:oficinas(id, nome_fantasia, pais, profile_id, cidade, avaliacao_media, total_avaliacoes), itens:orcamento_itens(id, descricao, quantidade, valor_total), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*)), orcamento_revisoes(status, tipo)')
+      .select('*, veiculo:veiculos(*), orcamentos(*, oficina:oficinas(id, nome_fantasia, pais, profile_id, cidade, avaliacao_media, total_avaliacoes, horario_funcionamento), itens:orcamento_itens(id, descricao, quantidade, valor_total), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*)), orcamento_revisoes(status, tipo)')
       .eq('id', id)
       .single();
     setSolicitacao(data as Solicitacao);
@@ -279,7 +284,7 @@ export default function SolicitacaoDetailScreen() {
   const diasGarantia = fimGarantia ? Math.ceil((fimGarantia.getTime() - Date.now()) / 86400000) : 0;
   // escolhido primeiro; os ativos na ordem escolhida (menor preco, melhor
   // avaliada, dia mais cedo); recusados/vencidos recolhidos em "Outros"
-  const primeiroDia = (o: any) => ((o.disponibilidade || []) as DisponibilidadeSlot[]).filter((d) => turnoDisponivel(d.data_checkin, d.turno as Turno)).map((d) => d.data_checkin).sort()[0] || '9999';
+  const primeiroDia = (o: any) => ((o.disponibilidade || []) as DisponibilidadeSlot[]).filter((d) => turnoDisponivel(d.data_checkin, d.turno as Turno, undefined, o.oficina?.pais ?? null)).map((d) => d.data_checkin).sort()[0] || '9999';
   const nota = (o: any) => (o.oficina?.total_avaliacoes ? Number(o.oficina.avaliacao_media || 0) : -1);
   const todos = (solicitacao.orcamentos || []) as any[];
   const ativos = todos.filter((o) => ATIVO.includes(o.status)).sort((a, b) =>
@@ -305,7 +310,7 @@ export default function SolicitacaoDetailScreen() {
     && !agenda.some((a: any) => ['em_andamento', 'concluido'].includes(a.status));
 
   return (
-    <RolagemTeclado bottomOffset={24} keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled" className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: insets.bottom }} refreshControl={<RefreshControl refreshing={puxando} onRefresh={recarregar} />}>
+    <RolagemTeclado ref={rolagem} bottomOffset={24} keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled" className="flex-1 bg-gray-50" contentContainerStyle={{ paddingBottom: insets.bottom }} refreshControl={<RefreshControl refreshing={puxando} onRefresh={recarregar} />}>
       <Stack.Screen options={opcoesTela} />
       <View className="p-4">
         <Text className="text-xl font-bold text-gray-900">
@@ -377,7 +382,7 @@ export default function SolicitacaoDetailScreen() {
           const itens = ((orc as any).itens || []) as { id: string; descricao: string; quantidade: number; valor_total: number }[];
           const escolhido = orc.status === 'aceito';
           return (
-          <View key={orc.id} className={`rounded-xl p-4 mb-3 ${escolhido ? 'bg-emerald-50 border-2 border-emerald-500' : 'bg-white border border-gray-200'}`}
+          <View key={orc.id} onLayout={(e) => { posCartao.current[orc.id] = e.nativeEvent.layout.y; }} className={`rounded-xl p-4 mb-3 ${escolhido ? 'bg-emerald-50 border-2 border-emerald-500' : 'bg-white border border-gray-200'}`}
             style={orc.status === 'recusado' || orc.status === 'expirado' ? { opacity: 0.6 } : undefined}>
             {marca[orc.id] && (
               <View className="self-start bg-amber-100 rounded-full px-3 py-1 mb-2" testID={`marca-${marca[orc.id]}`}>
@@ -430,18 +435,40 @@ export default function SolicitacaoDetailScreen() {
             })()}
 
             {/* pedido expirado: aceitar/recusar so depois de reabrir (aviso no topo) */}
-            {(orc.status === 'enviado' || orc.status === 'visualizado') && (solicitacao.status as string) !== 'expirada' ? (
+            {/* orcamento vencido (validade passou, dono 11/11): nem aceitar nem pedir datas (079) */}
+            {(orc.status === 'enviado' || orc.status === 'visualizado') && !['expirada', 'cancelada'].includes(solicitacao.status as string) && orcamentoVencido((orc as any).validade, of?.pais) ? (
+              <View className="bg-gray-50 border border-gray-300 rounded-lg p-3" testID="orcamento-vencido">
+                <Text className="text-sm font-semibold text-gray-900">{t('novasDatas.vencidoTitulo', { data: formatDate((orc as any).validade, locale) })}</Text>
+                <Text className="text-sm text-gray-700 mt-1">{t('novasDatas.vencidoTexto')}</Text>
+                {(() => {
+                  const outro = ativos.find((o: any) => o.id !== orc.id && !orcamentoVencido(o.validade, o.oficina?.pais));
+                  return outro ? (
+                    <Pressable onPress={() => rolagem.current?.scrollTo?.({ y: Math.max(0, (posCartao.current[outro.id] || 0) - 8), animated: true })} accessibilityRole="link" hitSlop={6} className="self-start mt-2 py-1" testID="vencido-outro">
+                      <Text className="text-primary-700 text-sm font-medium underline">{t('novasDatas.vencidoOutro')} ›</Text>
+                    </Pressable>
+                  ) : null;
+                })()}
+                <Pressable onPress={() => router.push('/nova-solicitacao')} accessibilityRole="link" hitSlop={6} className="self-start mt-1 py-1" testID="vencido-novo-pedido">
+                  <Text className="text-primary-700 text-sm font-medium underline">{t('novasDatas.vencidoNovoPedido')} ›</Text>
+                </Pressable>
+              </View>
+            ) : (orc.status === 'enviado' || orc.status === 'visualizado') && (solicitacao.status as string) !== 'expirada' && ['aberta', 'em_orcamento', 'no_show'].includes(solicitacao.status) && !(orc.disponibilidade || []).some((slot: DisponibilidadeSlot) => turnoDisponivel(slot.data_checkin, slot.turno as Turno, undefined, of?.pais ?? null)) ? (
+              // datas vencidas: pedir novas datas a oficina no lugar de aceitar (079)
+              <>
+                <PedirNovasDatas orcamentoId={orc.id} pais={of?.pais ?? null} horario={of?.horario_funcionamento} />
+                <Pressable onPress={() => handleRecusar(orc)} disabled={processando === orc.id} accessibilityRole="button" hitSlop={8} className="self-center mt-3">
+                  <Text className="text-gray-500 text-sm underline">{t('orcamentos.naoMeInteressa')}</Text>
+                </Pressable>
+              </>
+            ) : (orc.status === 'enviado' || orc.status === 'visualizado') && (solicitacao.status as string) !== 'expirada' ? (
               <>
                 {(orc.disponibilidade || []).length > 0 && (
                   <Text className="text-sm font-medium text-gray-700 mb-2">{t('orcamentos.escolhaData')}</Text>
                 )}
-                {/* horario que ja passou nao se escolhe */}
-                {(orc.disponibilidade || []).length > 0 && (orc.disponibilidade || []).every((slot: DisponibilidadeSlot) => !turnoDisponivel(slot.data_checkin, slot.turno as Turno)) && (
-                  <Text className="text-sm text-amber-800 bg-amber-50 rounded-lg p-3 mb-2">{t('orcamentos.horariosVencidos')}</Text>
-                )}
+                {/* horario que ja passou nao se escolhe (todos vencidos: cartao de novas datas acima) */}
                 {/* horario sugerido pela oficina: cartao inteiro tocavel com radio (teste do dono 31/10) */}
                 <View accessibilityRole="radiogroup">
-                {(orc.disponibilidade || []).filter((slot: DisponibilidadeSlot) => turnoDisponivel(slot.data_checkin, slot.turno as Turno)).map((slot: DisponibilidadeSlot) => (
+                {(orc.disponibilidade || []).filter((slot: DisponibilidadeSlot) => turnoDisponivel(slot.data_checkin, slot.turno as Turno, undefined, of?.pais ?? null)).map((slot: DisponibilidadeSlot) => (
                   <OpcaoCartao
                     key={slot.id}
                     selecionado={slotSelecionado[orc.id] === slot.id}

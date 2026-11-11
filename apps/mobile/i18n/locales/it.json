@@ -470,7 +470,15 @@
     "EMAIL_EM_USO": "Esiste già un account con questa e-mail. Torna indietro e accedi.",
     "AVALIACAO_PENDENTE": "Prima di una nuova richiesta valuta il servizio precedente.",
     "PLACA_INVALIDA": "Targa non valida: usa solo lettere, numeri, spazi o trattini (da 2 a 10 caratteri).",
-    "ANO_INVALIDO": "Anno non valido: usa 4 cifre, dal 1950 al prossimo anno."
+    "ANO_INVALIDO": "Anno non valido: usa 4 cifre, dal 1950 al prossimo anno.",
+    "DATAS_AINDA_VALIDAS": "Questo preventivo ha ancora date disponibili. Scegline una.",
+    "PEDIDO_DATAS_PENDENTE": "Hai già chiesto nuove date a questa officina. Aspetta la risposta.",
+    "SUGESTAO_INVALIDA": "Una delle date suggerite è passata o non è valida. Scegline un’altra.",
+    "PEDIDO_EXPIRADO": "Questa richiesta è scaduta. Riaprila per continuare.",
+    "PEDIDO_DATAS_RESPONDIDO": "A questa richiesta di nuove date è già stato risposto.",
+    "SUGESTAO_VENCIDA": "Questa data suggerita è passata. Manda altre date.",
+    "ORCAMENTO_VENCIDO": "Questo preventivo è scaduto. Scegli un altro preventivo attivo o rifai la richiesta.",
+    "ORCAMENTO_MUDOU": "Il preventivo è cambiato dopo la richiesta del cliente. Manda altre date tra cui scegliere."
   },
   "notificacoes": {
     "titulo": "Notifiche",
@@ -707,5 +715,26 @@
     "carroNaOficina": "L'auto è già in officina: per annullare, scrivi all'officina nella chat.",
     "reabrir": "Riapri richiesta",
     "reaberto": "Richiesta riaperta: le officine possono di nuovo inviare preventivi."
+  },
+  "novasDatas": {
+    "titulo": "Le date di questa officina sono passate",
+    "texto": "Se questo preventivo ti interessa ancora, chiedi nuove date all’officina.",
+    "botao": "Mi interessa, chiedi nuove date",
+    "sugerirTitulo": "Date che ti vanno bene (facoltativo, fino a 3)",
+    "manha": "Mattina",
+    "tarde": "Pomeriggio",
+    "mensagemLabel": "Messaggio all’officina (facoltativo)",
+    "mensagemPlaceholder": "Es.: preferisco la mattina",
+    "caracteres": "{n}/300",
+    "avisoConfirmar": "Se l’officina conferma una delle tue date, la prenotazione è fatta con questo preventivo.",
+    "enviar": "Chiedi nuove date",
+    "enviando": "Invio…",
+    "cancelar": "Annulla",
+    "pendente": "Richiesta inviata il {data}. In attesa dell’officina.",
+    "suasDatas": "Le tue date: {datas}",
+    "vencidoTitulo": "Questo preventivo è scaduto il {data}",
+    "vencidoTexto": "Non puoi più accettare questo preventivo né chiedere nuove date. Scegli un altro preventivo attivo o rifai la richiesta.",
+    "vencidoOutro": "Vedi un altro preventivo attivo",
+    "vencidoNovoPedido": "Fai una nuova richiesta"
   }
 }

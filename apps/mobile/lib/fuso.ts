@@ -7,3 +7,15 @@ const FUSO_DO_PAIS: Record<string, string> = {
 };
 
 export const fusoDoPais = (pais?: string | null) => FUSO_DO_PAIS[(pais || '').toUpperCase()] || 'Europe/Tallinn';
+
+/** instante -> 'AAAA-MM-DD' no fuso da oficina (igual ao site) */
+export function diaNaOficina(instante: Date, pais?: string | null): string {
+  return instante.toLocaleDateString('en-CA', { timeZone: fusoDoPais(pais) });
+}
+
+/** instante -> minutos desde a meia-noite no fuso da oficina (0..1439) */
+export function minutoNaOficina(instante: Date, pais?: string | null): number {
+  const hm = instante.toLocaleTimeString('en-GB', { timeZone: fusoDoPais(pais), hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  const [h, m] = hm.split(':').map((x) => parseInt(x, 10));
+  return ((h % 24) * 60) + (m || 0);
+}
