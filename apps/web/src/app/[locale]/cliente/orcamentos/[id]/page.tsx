@@ -25,6 +25,8 @@ import { turnoDisponivel, type Turno } from '@/lib/turnos';
 import EditarPedido from '@/components/cliente/EditarPedido';
 import { ehConvencionada } from '@/lib/seguradoras';
 import GarantiasAtivas from '@/components/cliente/GarantiasAtivas';
+import PedirNovasDatas from '@/components/cliente/PedirNovasDatas';
+import { orcamentoVencido } from '@/lib/orcamento-validade';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 function formatExecTime(hours: number | null, t: (key: string, values?: Record<string, string | number | Date>) => string): string {
@@ -43,6 +45,9 @@ function formatSlotDate(dateStr: string, locale: string): string {
 const ORDEM_ORC: Record<string, number> = { aceito: 0, expirado: 2, recusado: 3 };
 const ordemOrc = (status: string) => ORDEM_ORC[status] ?? 1;
 
+// todos os horarios ja passaram (fuso da oficina): o cliente pode pedir novas datas (079)
+const semDatasFuturas = (orc: any) => !(orc.disponibilidade || []).some((s: any) => turnoDisponivel(s.data_checkin, s.turno as Turno, undefined, orc.oficina?.pais ?? null));
+
 // horario que o cliente escolheu no aceite (antes mostrava sempre o primeiro oferecido)
 const slotEscolhido = (orc: any) => orc.disponibilidade.find((d: any) => d.id === orc.disponibilidade_escolhida_id) ?? orc.disponibilidade[0];
 
@@ -51,6 +56,7 @@ export default function OrcamentoDetalhePage() {
   const tMud = useTranslations('agendaMudanca');
   const te = useTranslations('editarPedido');
   const tg = useTranslations('garantia');
+  const tNd = useTranslations('novasDatas');
   const tc = useTranslations('constants');
   const tErr = useTranslations('erros');
   const locale = useLocale();
@@ -479,7 +485,8 @@ export default function OrcamentoDetalhePage() {
           {[...solicitacao.orcamentos].sort((a, b) => ordemOrc(a.status) - ordemOrc(b.status)).map((orc) => (
             <div
               key={orc.id}
-              className={`card border-2 transition-all ${
+              id={`orc-${orc.id}`}
+              className={`card border-2 scroll-mt-24 transition-all ${
                 orc.status === 'aceito' ? 'border-emerald-500 bg-emerald-50/40' :
                 orc.status === 'recusado' || orc.status === 'expirado' ? 'border-transparent opacity-60' :
                 schedulingOrcId === orc.id ? 'border-green-500 ring-1 ring-green-200' : 'border-transparent'
@@ -651,7 +658,8 @@ export default function OrcamentoDetalhePage() {
               )}
 
               {/* Scheduling section - shown when user clicks "Agendar" */}
-              {schedulingOrcId === orc.id ? (
+              {/* sem datas futuras o painel de agendamento nao abre: o cartao de novas datas fica no lugar das acoes (079) */}
+              {schedulingOrcId === orc.id && !semDatasFuturas(orc) ? (
                 <div className="border-t pt-4 mt-4">
                   <h4 className="font-semibold text-gray-900 mb-1">
                     {t('chooseCheckinDate')}
@@ -659,9 +667,6 @@ export default function OrcamentoDetalhePage() {
                   <p className="text-sm text-gray-600 mb-3">{t('escolhaHorarioDica')}</p>
                   <div className="space-y-2">
                     {/* horario que ja passou nao se escolhe (a oficina pode ter oferecido hoje de manha) */}
-                    {orc.disponibilidade.every((slot) => !turnoDisponivel(slot.data_checkin, slot.turno as Turno, undefined, (orc as any).oficina?.pais ?? null)) && (
-                      <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-3">{t('horariosVencidos')}</p>
-                    )}
                     {orc.disponibilidade.filter((slot) => turnoDisponivel(slot.data_checkin, slot.turno as Turno, undefined, (orc as any).oficina?.pais ?? null)).map((slot) => (
                       <button
                         key={slot.id}
@@ -796,7 +801,32 @@ export default function OrcamentoDetalhePage() {
                     )}
                   </p>
                   {/* pedido expirado: aceitar/recusar so depois de reabrir (aviso no topo) */}
-                  {!['expirada', 'cancelada'].includes(solicitacao.status as string) && (
+                  {!['expirada', 'cancelada'].includes(solicitacao.status as string) && orcamentoVencido(orc.validade, (orc as any).oficina?.pais) ? (
+                    // orcamento vencido (validade passou, dono 11/11): nem aceitar nem pedir datas; outro ativo ou pedido novo
+                    <div className="w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm" role="status" data-testid="orcamento-vencido">
+                      <p className="font-semibold text-gray-900">{tNd('vencidoTitulo', { data: formatDate(orc.validade, locale) })}</p>
+                      <p className="mt-1 text-gray-700">{tNd('vencidoTexto')}</p>
+                      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+                        {(() => {
+                          const outro = (solicitacao.orcamentos || []).find((o: any) => o.id !== orc.id && ['enviado', 'visualizado'].includes(o.status) && !orcamentoVencido(o.validade, o.oficina?.pais));
+                          return outro ? <a href={`#orc-${outro.id}`} className="font-medium text-primary-700 underline min-h-[44px] inline-flex items-center" data-testid="vencido-outro">{tNd('vencidoOutro')} ›</a> : null;
+                        })()}
+                        <Link href="/cliente/nova-solicitacao" className="font-medium text-primary-700 underline min-h-[44px] inline-flex items-center" data-testid="vencido-novo-pedido">{tNd('vencidoNovoPedido')} ›</Link>
+                      </div>
+                    </div>
+                  ) : !['expirada', 'cancelada'].includes(solicitacao.status as string) && semDatasFuturas(orc) && ['aberta', 'em_orcamento', 'no_show'].includes(solicitacao.status) ? (
+                    // datas vencidas: no lugar de "aceitar e agendar", o pedido de novas datas (079)
+                    <div className="w-full space-y-2">
+                      <PedirNovasDatas orcamentoId={orc.id} pais={(orc as any).oficina?.pais ?? null} horario={(orc as any).oficina?.horario_funcionamento} />
+                      <button
+                        onClick={() => handleRefuse(orc.id)}
+                        disabled={refusing === orc.id}
+                        className="text-sm text-red-500 hover:text-red-700 border border-red-200 hover:border-red-300 px-4 py-2 rounded-lg transition-colors w-full sm:w-auto"
+                      >
+                        {refusing === orc.id ? t('refusing') : t('refuse')}
+                      </button>
+                    </div>
+                  ) : !['expirada', 'cancelada'].includes(solicitacao.status as string) && (
                   <div className="flex gap-2 [&>button]:flex-1 sm:[&>button]:flex-none">
                     <button
                       onClick={() => handleRefuse(orc.id)}

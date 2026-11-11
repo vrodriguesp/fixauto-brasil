@@ -17,6 +17,8 @@ import { Link } from '@/i18n/navigation';
 import MidiaPrivada from '@/components/midia/MidiaPrivada';
 import DispensarPedido, { type Dispensa } from '@/components/oficina/DispensarPedido';
 import ResumoAgendamento from '@/components/oficina/ResumoAgendamento';
+import NovasDatasPedidas from '@/components/oficina/NovasDatasPedidas';
+import { orcamentoVencido } from '@/lib/orcamento-validade';
 
 export default function SolicitacaoDetalhePage() {
   const t = useTranslations('oficinaSolicitacaoDetalhe');
@@ -24,7 +26,7 @@ export default function SolicitacaoDetalhePage() {
   const locale = useLocale();
   const params = useParams();
   const { oficina } = useAuth();
-  const { solicitacoes } = useSolicitacoes();
+  const { solicitacoes, refresh } = useSolicitacoes();
   const solicitacao = solicitacoes.find((s) => s.id === params.id);
 
   const [directSol, setDirectSol] = useState<any>(null);
@@ -160,6 +162,10 @@ export default function SolicitacaoDetalhePage() {
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           {isAccepted && oficina && <ResumoAgendamento solicitacaoId={sol.id} oficinaId={oficina.id} pais={oficina.pais} />}
+          {/* o cliente pediu novas datas (079): confirmar a sugestao dele ou mandar outras */}
+          {myQuote && ['enviado', 'visualizado'].includes(myQuote.status) && ['aberta', 'em_orcamento', 'no_show'].includes(sol.status) && !orcamentoVencido(myQuote.validade, oficina?.pais) && (
+            <NovasDatasPedidas key={myQuote.id} orcamentoId={myQuote.id} prazoDias={myQuote.prazo_dias} pais={oficina?.pais ?? null} aoMudar={refresh} />
+          )}
           {myQuote && (
             <div id="meu-orcamento" className="card border-2 border-primary-100 scroll-mt-24">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-3">

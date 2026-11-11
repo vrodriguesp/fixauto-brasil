@@ -58,6 +58,14 @@ export default function EnviarOrcamentoPage() {
   // a oficina quiser e o pedido seguir aberto - chega ao cliente como novo (decisao do dono 08/11)
   const eraRecusado = existingQuote?.status === 'recusado';
   const ehRevisao = isRevision && !eraRecusado;
+  // o cliente pediu novas datas (079): para so mandar datas, o cartao no pedido (nao conta como revisao)
+  const tNd = useTranslations('oficinaNovasDatas');
+  const [pedidoDatasPendente, setPedidoDatasPendente] = useState(false);
+  useEffect(() => {
+    if (!existingQuote?.id || !['enviado', 'visualizado'].includes(existingQuote.status)) { setPedidoDatasPendente(false); return; }
+    supabase.from('orcamento_pedido_datas').select('id').eq('orcamento_id', existingQuote.id).eq('status', 'pendente').maybeSingle()
+      .then(({ data }) => setPedidoDatasPendente(!!data));
+  }, [existingQuote?.id, existingQuote?.status]);
   const [novoAposRecusa, setNovoAposRecusa] = useState(false);
   // orcamento ja aceito: vira PROPOSTA de revisao que o cliente aprova ou nao
   // (migracao 049, /api/orcamento-revisao) - nunca altera o aceito direto
@@ -488,6 +496,12 @@ ${d.observacoes}` : d.observacoes));
       <h1 className="text-2xl font-bold text-gray-900 mb-2">
         {modoRevisaoAceito ? t('proporRevisaoTitulo') : ehRevisao ? t('revisarOrcamento') : t('enviarOrcamento')}
       </h1>
+      {!modoRevisaoAceito && pedidoDatasPendente && (
+        <p role="note" className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900" data-testid="dica-novas-datas">
+          📅 {tNd('dicaModificar')}{' '}
+          <Link href={`/oficina/pedidos/${solicitacao.id}`} className="font-medium underline">{tNd('dicaModificarLink')} ›</Link>
+        </p>
+      )}
       {modoRevisaoAceito && temAgenda === null && (
         <div className="mt-6 flex justify-center" role="status"><div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary-600" /></div>
       )}

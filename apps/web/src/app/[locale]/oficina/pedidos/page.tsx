@@ -41,6 +41,7 @@ const iconeTipo = (tipo: string) => TIPOS_SERVICO.find((x) => x.value === tipo)?
 export default function PedidosOficinaPage() {
   const t = useTranslations('oficinaPedidos');
   const tc = useTranslations('constants');
+  const tNd = useTranslations('oficinaNovasDatas');
   const locale = useLocale();
   const intl = INTL_LOCALE[locale] || locale;
   const { oficina, funcionario } = useAuth();
@@ -87,16 +88,25 @@ export default function PedidosOficinaPage() {
     const { data } = await supabase.from('agenda').select('solicitacao_id, data_inicio').eq('oficina_id', oficina.id).in('status', ['agendado', 'em_andamento']).not('solicitacao_id', 'is', null);
     setAgendas(new Map((data || []).map((a: any) => [a.solicitacao_id, a.data_inicio])));
   };
-  useEffect(() => { carregarVistos(); carregarDispensas(); carregarAgendas(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [oficina?.id]);
+  // pedidos de novas datas do cliente esperando resposta (079): selo no cartao
+  const [pedemDatas, setPedemDatas] = useState<Set<string>>(new Set());
+  const carregarPedidosDatas = async () => {
+    if (!oficina) return;
+    const { data } = await supabase.from('orcamento_pedido_datas').select('solicitacao_id').eq('oficina_id', oficina.id).eq('status', 'pendente');
+    setPedemDatas(new Set((data || []).map((p: any) => p.solicitacao_id)));
+  };
+  useEffect(() => { carregarVistos(); carregarDispensas(); carregarAgendas(); carregarPedidosDatas(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [oficina?.id]);
 
   // tempo real (migracao 060): pedido novo, orcamento enviado/aceito mudam a lista sem recarregar
   useEffect(() => {
     if (!oficina) return;
     let espera: ReturnType<typeof setTimeout> | null = null;
-    const recarregar = () => { if (espera) clearTimeout(espera); espera = setTimeout(() => { refresh(); carregarVistos(); carregarDispensas(); }, 600); };
+    const recarregar = () => { if (espera) clearTimeout(espera); espera = setTimeout(() => { refresh(); carregarVistos(); carregarDispensas(); carregarPedidosDatas(); }, 600); };
     const canal = supabase.channel(`pedidos-oficina-${oficina.id}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'solicitacoes' }, recarregar)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orcamentos' }, recarregar)
+      // pedido de novas datas do cliente (079): o selo acende sem recarregar
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orcamento_pedido_datas' }, recarregar)
       .subscribe();
     return () => { if (espera) clearTimeout(espera); supabase.removeChannel(canal); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -267,6 +277,9 @@ export default function PedidosOficinaPage() {
                     <p className="mt-1 text-xs text-gray-500" data-testid="pedido-datas">
                       {[t('pedidoEm', { data: fmtData.format(new Date(s.created_at)) }), t('orcamentoEm', { data: fmtData.format(new Date(meu.created_at)) }), meu.valor_total != null ? formatCurrency(meu.valor_total, moeda, locale) : null].filter(Boolean).join(' · ')}
                     </p>
+                  )}
+                  {pedemDatas.has(s.id) && ['enviado', 'visto'].includes(estado) && (
+                    <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900" data-testid="selo-novas-datas">📅 {tNd('selo')}</p>
                   )}
                   {estado && (
                     <p className={`mt-2 text-sm font-medium ${estado === 'aceito' ? 'text-emerald-700' : estado === 'perdido' || estado === 'recusado' ? 'text-gray-600' : estado === 'expirado' ? 'text-amber-800' : 'text-gray-700'}`}>
