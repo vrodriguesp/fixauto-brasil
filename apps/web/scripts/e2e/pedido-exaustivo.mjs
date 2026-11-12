@@ -146,7 +146,9 @@ async function site(l, largura) {
     ok(`${nm}: titulo com o tipo escolhido`, t.includes(T(`constants.tiposServico.${tipo}`)));
     ok(`${nm}: explica escrever ou procurar`, t.includes(T('pedidoSemConta.detalheTexto')));
     const avancar = page.getByRole('button', { name: T('clienteNovaSolicitacao.next'), exact: true });
-    ok(`${nm}: avancar desligado sem texto nem servico`, await avancar.isDisabled());
+    // desde 12/11 o Edasi fica clicavel: sem texto, servico nem foto mostra o que falta e nao avanca
+    await avancar.click();
+    ok(`${nm}: avancar sem texto nem servico avisa e fica no passo`, await page.getByTestId('passo-detalhe').getByTestId('falta-aviso').isVisible());
     // busca na lista: parte do nome do 1o servico (sem acento/maiusculas) acha; palavra sem sentido mostra o aviso
     const rotulos = () => page.getByTestId('lista-servicos').locator('label').allInnerTexts();
     let nomes = await rotulos();
@@ -174,7 +176,7 @@ async function site(l, largura) {
     await foto(page, `site-${l}-${largura}-1bbusca-vazia`);
     await page.locator('#pedido-busca').fill(pedaco);
     await page.getByTestId('lista-servicos').locator('input[type=checkbox]').first().check();
-    ok(`${nm}: marcar um servico ja libera avancar`, await avancar.isEnabled());
+    ok(`${nm}: marcar um servico ja tira o aviso`, (await page.getByTestId('passo-detalhe').getByTestId('falta-aviso').count()) === 0);
     await page.locator('#pedido-busca').fill('');
     await page.locator('#pedido-descricao').fill(`Teste ${l} ${largura}`);
     await page.locator('input[type=file][multiple]').setInputFiles(FOTO); // galeria (camera e um campo a parte desde 10/11)
@@ -200,7 +202,8 @@ async function site(l, largura) {
     await page.getByTestId('passo-carro').waitFor();
     await noAlto(page, 'passo-carro', nm + ' carro');
     await checar(page, `${nm} carro`);
-    ok(`${nm}: Edasi desligado sem carro`, await page.getByRole('button', { name: T('clienteNovaSolicitacao.next'), exact: true }).isDisabled());
+    await page.getByRole('button', { name: T('clienteNovaSolicitacao.next'), exact: true }).click();
+    ok(`${nm}: Edasi sem carro avisa e fica no passo`, await page.getByTestId('passo-carro').getByTestId('falta-aviso').isVisible());
     const marca = page.getByLabel(T('veiculoForm.labelMarca'), { exact: false }).locator('visible=true').first();
     await page.waitForFunction((el) => el.options.length > 2, await marca.elementHandle(), { timeout: 20000 });
     await marca.selectOption({ label: 'Toyota' });
@@ -266,9 +269,11 @@ async function site(l, largura) {
     await page.locator('#pedido-email').fill(email);
     await page.locator('#pedido-senha').fill('curta');
     const enviar = page.getByRole('button', { name: T('pedidoSemConta.enviarPedido') });
-    ok(`${nm}: senha curta nao envia`, await enviar.isDisabled());
+    await enviar.click();
+    ok(`${nm}: senha curta nao envia (avisa)`, await page.getByTestId('passo-contato').getByTestId('falta-aviso').isVisible());
     await page.locator('#pedido-senha').fill(senha);
-    ok(`${nm}: sem aceitar os termos nao envia`, await enviar.isDisabled());
+    await enviar.click();
+    ok(`${nm}: sem aceitar os termos nao envia (avisa)`, await page.getByTestId('passo-contato').getByTestId('falta-aviso').isVisible());
     await page.getByTestId('aceito-termos').check();
     ok(`${nm}: prefixo do telefone ja no pais do mercado (+${DDI[l]})`, (await page.getByTestId('passo-contato').getByTestId('prefixo-telefone').inputValue()) === DDI[l]);
     await page.locator('#pedido-telefone').fill(NUM[l]);
