@@ -119,6 +119,11 @@ export default function Analytics() {
     // Avisa o VisitTracker (mesma aba - o evento "storage" do navegador so
     // dispara em OUTRAS abas) pra comecar a registrar a visita ja nesta pagina.
     window.dispatchEvent(new Event('bipfix-consentimento'));
+    // na pagina do pedido: quantos respondem ao aviso (ele fica por cima da barra Tagasi/Edasi
+    // ate ser respondido - Clarity 12/11: 5 respostas em 159 visitas). So o numero do dia, sem dado pessoal.
+    if (pathname === '/pedido') {
+      try { fetch('/api/funil', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ funil: 'pedido_site', etapa: valor === 'accepted' ? 'cookie_aceito' : 'cookie_recusado' }), keepalive: true }).catch(() => {}); } catch { /* nunca atrapalha */ }
+    }
   };
 
   if (!GA_MEASUREMENT_ID && !CLARITY_PROJECT_ID && !META_PIXEL_ID) return null;
@@ -177,8 +182,8 @@ export default function Analytics() {
           <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-4 flex items-center gap-3 sm:gap-4">
             <p className="text-xs sm:text-sm text-gray-700 flex-1 leading-snug">
               {/* celular: uma linha curta (o texto longo cobria metade da tela) */}
-              <span className="sm:hidden">{t('textoCurto')}{' '}<Link href="/privacidade" className="text-primary-700 underline">{t('linkCurto')}</Link></span>
-              <span className="hidden sm:inline">{t('texto')}{' '}<Link href="/privacidade" className="text-primary-700 underline">{t('linkPrivacidade')}</Link>.</span>
+              <span className="aviso-cookies-curto sm:hidden">{t('textoCurto')}{' '}<Link href="/privacidade" className="text-primary-700 underline">{t('linkCurto')}</Link></span>
+              <span className="aviso-cookies-longo hidden sm:inline">{t('texto')}{' '}<Link href="/privacidade" className="text-primary-700 underline">{t('linkPrivacidade')}</Link>.</span>
             </p>
             <div className="flex gap-2 sm:gap-3 flex-shrink-0">
               <button onClick={() => responder('rejected')} className="btn-secondary !py-2 !px-3 sm:!px-4 text-sm min-h-[40px]">

@@ -101,11 +101,39 @@
 }
 /* aviso de cookies ainda sem resposta: o botao fica logo acima dele (a altura ja inclui a area segura do iPhone) */
 body.com-aviso-cookies .chat-suporte-botao { bottom: calc(var(--altura-cookies, 0px) + 1rem); }
+/* ...e a barra Tagasi/Edasi do pedido (components/pedido/PedidoSemConta.tsx, presa ao pe da tela no
+   celular) tambem: antes o aviso ficava por cima dela em ~97 % das visitas (Clarity, 12/11) */
+body.com-aviso-cookies [data-testid="navegar"] { bottom: var(--altura-cookies, 0px); }
 /* celular da oficina/loja: o aviso de cookies fica acima da barra de baixo (antes ficava atras dela, com os botoes escondidos) */
 @media (max-width: 1279.98px) {
   body.com-barra-inferior .aviso-cookies { bottom: calc(57px + env(safe-area-inset-bottom)); padding-bottom: 0 !important; }
 }
 body.com-chat-suporte footer { padding-bottom: 5rem; }
+
+/* Tela curta (celular deitado, ~740x300 - gravacao do Clarity 11/11: menu 64 px + aviso de cookies +
+   titulo/subtitulo/progresso nao deixavam ver nenhum botao de servico). Na pagina do pedido
+   (body.pagina-pedido, PedidoSemConta.tsx): menu baixo, sem subtitulo, titulo e progresso menores,
+   cartoes de servico compactos; o aviso de cookies vira uma linha. Celular em pe e computador: igual. */
+@media (max-height: 500px) {
+  body.pagina-pedido nav.sticky .h-16 { height: 2.75rem; }
+  body.pagina-pedido nav.sticky img[alt="BipFix"] { height: 1.5rem; }
+  body.pagina-pedido .pedido-pagina { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  body.pagina-pedido .pedido-titulo { font-size: 1.125rem; line-height: 1.5rem; }
+  body.pagina-pedido .pedido-subtitulo { display: none; }
+  body.pagina-pedido .pedido-progresso { margin-top: 0.5rem; margin-bottom: 0.5rem; }
+  body.pagina-pedido .pedido-progresso > div { height: 0.25rem; }
+  body.pagina-pedido .card { padding: 0.75rem; }
+  body.pagina-pedido [data-testid="passo-servico"] h2 { margin-bottom: 0.5rem; }
+  body.pagina-pedido [data-testid="passo-servico"] .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; }
+  body.pagina-pedido [data-testid="passo-servico"] .grid button { padding: 0.5rem; }
+  body.pagina-pedido [data-testid="passo-servico"] .grid button span { font-size: 1.25rem; line-height: 1.5rem; }
+  body.pagina-pedido [data-testid="passo-servico"] .grid button p { margin-top: 0.25rem; font-size: 0.875rem; }
+  body.pagina-pedido [data-testid="navegar"] { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  .aviso-cookies > div { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+  .aviso-cookies .aviso-cookies-longo { display: none; }
+  .aviso-cookies .aviso-cookies-curto { display: inline; }
+  .aviso-cookies button { min-height: 32px; padding-top: 0.25rem !important; padding-bottom: 0.25rem !important; }
+}
 
 /* Conversa (mensagens): cabe na parte visivel da tela, com a caixa de digitar
    sempre a vista. No iPhone a caixa ficava atras da barra de baixo da oficina

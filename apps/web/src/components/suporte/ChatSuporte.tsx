@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
+import { routing, hrefNoIdioma } from '@/i18n/routing';
 import { useAuth } from '@/lib/auth-context';
 import { useConversaCelular } from '@/hooks/use-conversa-celular';
 import CampoConversa, { AvisoNovaMensagem } from '@/components/conversa/CampoConversa';
@@ -19,6 +20,9 @@ type Msg = { id: string; autor: 'usuario' | 'admin' | 'auto'; texto: string; ori
 const CHAVE = 'bipfix_suporte';
 // pagina do acidente (tem conversa propria), nas 6 linguas - i18n/routing.ts
 const CONVERSA_ACIDENTE = /\/(emergencia\/acidente|accident\/report|avarii\/teade|incidente\/segnalazione|dtp\/soobshchenie)\/[^/]+/;
+// pedido de orcamento (/ee/et/paring, /ee/ru/zayavka, /ee/en/request...): sem balao - no celular
+// ele cobria a ponta direita do "Edasi" preso ao pe da tela (Clarity, 12/11)
+const PAGINAS_PEDIDO = new Set(routing.locales.map((l) => hrefNoIdioma(l, '/pedido')));
 const lerChave = (): { c: string; t: string } | null => { try { return JSON.parse(localStorage.getItem(CHAVE) || 'null'); } catch { return null; } };
 
 export default function ChatSuporte() {
@@ -47,7 +51,7 @@ export default function ChatSuporte() {
   const voltarFoco = useRef(false);
 
   // nas conversas (oficina <-> cliente, acidente) o botao cobriria a caixa de digitar
-  const escondido = loading || user?.tipo === 'admin' || /\/mensagens\/[^/]+/.test(pathname) || CONVERSA_ACIDENTE.test(pathname);
+  const escondido = loading || user?.tipo === 'admin' || /\/mensagens\/[^/]+/.test(pathname) || CONVERSA_ACIDENTE.test(pathname) || PAGINAS_PEDIDO.has(pathname.replace(/\/$/, ''));
   const visitante = !loading && !isLoggedIn;
 
   const carregar = useCallback(async (estaAberto: boolean) => {
