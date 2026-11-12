@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
+import { useLocale } from 'next-intl';
 import type { SugestaoEndereco } from '@/app/api/endereco/sugestoes/route';
+import { mercadoDe } from '@/i18n/routing';
 
 export type { SugestaoEndereco };
 
@@ -20,6 +22,7 @@ export default function EnderecoAutocomplete({
   required?: boolean;
 }) {
   const auto = useId();
+  const locale = useLocale();
   const listaId = `${id || auto}-sugestoes`;
   const [sugestoes, setSugestoes] = useState<SugestaoEndereco[]>([]);
   const [aberto, setAberto] = useState(false);
@@ -36,7 +39,7 @@ export default function EnderecoAutocomplete({
     const tmr = setTimeout(async () => {
       setProcurando(true);
       try {
-        const p = perto ? `&lat=${perto.lat}&lon=${perto.lon}` : '';
+        const p = (perto ? `&lat=${perto.lat}&lon=${perto.lon}` : '') + `&pais=${mercadoDe(locale).pais}`;
         const r = await fetch(`/api/endereco/sugestoes?q=${encodeURIComponent(q)}${p}`, { signal: ctl.signal });
         const d = r.ok ? ((await r.json()) as SugestaoEndereco[]) : [];
         setSugestoes(d);
@@ -46,7 +49,7 @@ export default function EnderecoAutocomplete({
       if (!ctl.signal.aborted) setProcurando(false);
     }, 300);
     return () => { clearTimeout(tmr); ctl.abort(); };
-  }, [value, perto]);
+  }, [value, perto, locale]);
 
   const escolher = (s: SugestaoEndereco) => {
     escolhidos.current = [s.endereco, s.rua, s.rotulo].filter(Boolean);

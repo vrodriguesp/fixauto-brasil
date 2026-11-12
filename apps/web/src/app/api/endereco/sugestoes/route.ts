@@ -10,6 +10,11 @@ const PHOTON = 'https://photon.komoot.io/api/';
 const USER_AGENT = 'BipFix/1.0 (+https://bipfix.com; support@bipfix.com)';
 const CACHE_MS = 10 * 60 * 1000;
 const cache = new Map<string, { corpo: unknown; em: number }>();
+// Sem a localizacao da pessoa, o Geoapify ia pelo mundo todo ("Lasnamäe" trazia La Scala, Italia).
+// Puxar para a capital do mercado deixou as ruas de Tallinn em 1o (teste 12/11: Narva mnt 5,
+// Kadaka tee 72a, Tartu mnt 67); filter/bias por pais piorava (Narva mnt 5 saia de Voka/Johvi).
+// O app nao manda o pais: Estonia.
+const CAPITAL: Record<string, [number, number]> = { EE: [24.745, 59.437], IT: [12.496, 41.903], PT: [-9.139, 38.722], BR: [-46.633, -23.55] };
 
 export interface SugestaoEndereco {
   rotulo: string;
@@ -33,7 +38,8 @@ export async function GET(req: NextRequest) {
   const lat = Number(req.nextUrl.searchParams.get('lat'));
   const lon = Number(req.nextUrl.searchParams.get('lon'));
   const perto = Number.isFinite(lat) && Number.isFinite(lon) && (lat || lon) ? `&lat=${lat.toFixed(2)}&lon=${lon.toFixed(2)}` : '';
-  const chave = `${q.toLowerCase()}|${perto}`;
+  const pais = (req.nextUrl.searchParams.get('pais') || 'EE').slice(0, 2).toUpperCase();
+  const chave = `${q.toLowerCase()}|${perto}|${pais}`;
   const c = cache.get(chave);
   if (c && Date.now() - c.em < CACHE_MS) return NextResponse.json(c.corpo);
 
@@ -42,11 +48,23 @@ export async function GET(req: NextRequest) {
     // com numero da casa. Sem chave: Photon publico (gratis, mas 4-7 s).
     const chaveGeoapify = process.env.GEOAPIFY_KEY;
     if (chaveGeoapify) {
-      const vies = Number.isFinite(lat) && Number.isFinite(lon) && (lat || lon) ? `&bias=proximity:${lon.toFixed(3)},${lat.toFixed(3)}` : '';
-      const r = await fetch(`https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(q)}&limit=6${vies}&apiKey=${chaveGeoapify}`, { signal: AbortSignal.timeout(4000) });
-      if (r.ok) {
-        const d = (await r.json()) as { features?: { properties: Record<string, any> }[] };
-        const lista: SugestaoEndereco[] = (d.features || []).map(({ properties: p }) => ({
+      const capital = CAPITAL[pais];
+      const centro = Number.isFinite(lat) && Number.isFinite(lon) && (lat || lon) ? [lon, lat] : capital;
+      const buscar = (vies: string) => fetch(`https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(q)}&limit=6${vies}&apiKey=${chaveGeoapify}`, { signal: AbortSignal.timeout(4000) });
+      let r = await buscar(centro ? `&bias=proximity:${centro[0].toFixed(3)},${centro[1].toFixed(3)}` : '');
+      let d = r.ok ? ((await r.json()) as { features?: { properties: Record<string, any> }[] }) : null;
+      const doPais = (f: { properties: Record<string, any> }) => String(f.properties.country_code || '').toUpperCase() === pais;
+      // nome da rua em russo ("Нарвское шоссе 5"): perto de Tallinn so achava a Russia; sem o
+      // vies ele acha a Narva mnt - segunda busca so quando nada do pais veio
+      if (d && capital && !(d.features || []).some(doPais)) {
+        const r2 = await buscar('');
+        const d2 = r2.ok ? ((await r2.json()) as { features?: { properties: Record<string, any> }[] }) : null;
+        if (d2 && (d2.features || []).some(doPais)) { r = r2; d = d2; }
+      }
+      if (r.ok && d) {
+        // o pais do mercado primeiro, sem esconder os outros (oficina perto da fronteira, endereco no exterior)
+        const feats = [...(d.features || [])].sort((a, b) => Number(doPais(b)) - Number(doPais(a)));
+        const lista: SugestaoEndereco[] = feats.map(({ properties: p }) => ({
           rotulo: p.formatted || [p.street, p.housenumber, p.city].filter(Boolean).join(' '),
           endereco: [p.street, p.housenumber].filter(Boolean).join(' ') || p.name || '',
           rua: p.street || p.name || '',
