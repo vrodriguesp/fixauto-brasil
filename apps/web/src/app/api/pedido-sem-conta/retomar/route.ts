@@ -4,6 +4,7 @@ import { limitarPorIp } from '@/lib/rate-limit';
 import { ehUuid } from '@/lib/validacao';
 import { iguaisSeguro } from '@/lib/segredos';
 import { PENDENTE_HORAS, hashRetomar, apagarPendente, ativarEPublicar, contarEtapa } from '@/lib/pedido-sem-conta';
+import { loginPorToken } from '@/lib/login-token';
 
 export const dynamic = 'force-dynamic';
 
@@ -59,18 +60,9 @@ export async function POST(req: NextRequest) {
         : NextResponse.json({ error: 'Avaliação pendente', codigo: 'AVALIACAO_PENDENTE' }, { status: 409 });
     }
     await contarEtapa('pedido_lembrete', 'confirmado');
-    // login de uso unico so para a conta criada agora (como no fluxo do codigo):
-    // conta que ja existia entra com a senha (a pagina do pedido manda para o login).
-    // O e-mail vem da propria conta (user_id), nunca do pedido.
-    let tokenHash: string | null = null;
-    if (p.conta_nova) {
-      const { data: u } = await supabaseAdmin.auth.admin.getUserById(p.user_id);
-      if (u?.user?.email) {
-        const { data: link } = await supabaseAdmin.auth.admin.generateLink({ type: 'magiclink', email: u.user.email });
-        tokenHash = link?.properties?.hashed_token || null;
-      }
-    }
-    return NextResponse.json({ solicitacaoId: r.id, numero: r.numero, tokenHash });
+    // o clique no link prova o e-mail: entra na conta (nova ou antiga, dono 12/11)
+    const login = await loginPorToken(p.user_id);
+    return NextResponse.json({ solicitacaoId: r.id, numero: r.numero, ...login });
   } catch (e) {
     await supabaseAdmin.from('pedidos_pendentes').insert(p).then(() => {}, () => {});
     console.error('[pedido-sem-conta/retomar]', e);

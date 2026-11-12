@@ -92,6 +92,7 @@ export async function POST(req: NextRequest) {
         prazoDias: orcamento.prazo_dias,
         solicitacaoId: (orcamento.solicitacao as any).id,
         numero: (orcamento.solicitacao as any).numero,
+        clienteId,
         locale: cliente.idioma,
       });
     }

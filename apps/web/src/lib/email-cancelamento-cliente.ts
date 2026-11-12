@@ -2,6 +2,7 @@ import { supabaseAdmin } from './supabase-admin';
 import { enviarEmail } from './email';
 import { escapeHtml } from './email-i18n';
 import { SITE_URL, idiomaDoSite } from './site-url';
+import { linkPedido } from './link-acesso';
 import { fusoDoPais } from './fuso';
 import { montarIcs } from './email-agendamento';
 import { motivoTexto } from './notif-i18n';
@@ -32,7 +33,7 @@ export async function avisarCancelamentoPeloCliente(agendaId: string, motivo: st
     .eq('id', agendaId).maybeSingle();
   if (!ag?.solicitacao_id) return;
   const { data: sol } = await supabaseAdmin.from('solicitacoes')
-    .select('numero, veiculo:veiculos(fipe_marca, fipe_modelo, placa), cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, idioma)')
+    .select('numero, veiculo:veiculos(fipe_marca, fipe_modelo, placa), cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, email, idioma)')
     .eq('id', ag.solicitacao_id).maybeSingle();
   if (!sol) return;
   const of = (ag as any).oficina || {}; const cliente = (sol as any).cliente || {}; const v = (sol as any).veiculo || {};
@@ -62,7 +63,7 @@ export async function avisarCancelamentoPeloCliente(agendaId: string, motivo: st
     }
     const html = caixa(`<p>${escapeHtml(preencher(x.ola, { n: cliente.nome || '' }))}</p>
       <p style="font-size:16px;"><strong>${escapeHtml(preencher(x.cli, { numero, oficina: nomeOf, quando }))}</strong></p>
-      ${linhaMotivo(x, l)}<p>${escapeHtml(x.reabrir)}</p>${botao(`${site}/r/${numero}`, x.verPedido)}
+      ${linhaMotivo(x, l)}<p>${escapeHtml(x.reabrir)}</p>${botao(await linkPedido(numero, cliente.id, ag.solicitacao_id), x.verPedido)}
       ${anexos.length ? `<p style="font-size:13px;color:#6b7280;">📅 ${escapeHtml(x.anexo)}</p>` : ''}`);
     await enviarEmail({ para: cliente.email, assunto: preencher(x.assCli, { oficina: nomeOf, quando }), html, anexos }).catch(() => false);
   }

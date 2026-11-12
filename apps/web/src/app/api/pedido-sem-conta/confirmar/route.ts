@@ -5,11 +5,13 @@ import { ehUuid } from '@/lib/validacao';
 import {
   CODIGO_TENTATIVAS, PENDENTE_HORAS, codigoConfere, apagarPendente, ativarEPublicar,
 } from '@/lib/pedido-sem-conta';
+import { loginPorToken } from '@/lib/login-token';
 
 export const dynamic = 'force-dynamic';
 
-// Codigo certo: ativa a conta (nova) ou confirma o e-mail (conta existente) e
-// so entao o pedido vira solicitacao e vai para as oficinas.
+// Codigo certo: ativa a conta (nova) ou confirma o e-mail (conta existente), so
+// entao o pedido vira solicitacao e vai para as oficinas - e a pessoa entra na
+// conta neste aparelho (tokenHash de uso unico; dono 12/11: conta nova e antiga).
 export async function POST(req: NextRequest) {
   if (!limitarPorIp(req, 'pedido-sem-conta-confirmar', 40, 60 * 60 * 1000)) {
     return NextResponse.json({ error: 'Muitas tentativas', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
@@ -49,7 +51,8 @@ export async function POST(req: NextRequest) {
         ? NextResponse.json({ error: 'Sem acesso', codigo: 'SEM_ACESSO' }, { status: 403 })
         : NextResponse.json({ error: 'Avaliação pendente', codigo: 'AVALIACAO_PENDENTE' }, { status: 409 });
     }
-    return NextResponse.json({ solicitacaoId: r.id, numero: r.numero, contaNova: p.conta_nova, email: p.email });
+    const login = await loginPorToken(p.user_id);
+    return NextResponse.json({ solicitacaoId: r.id, numero: r.numero, email: p.email, ...login });
   } catch (e) {
     // devolve o pendente para a pessoa poder tentar de novo
     await supabaseAdmin.from('pedidos_pendentes').insert(p).then(() => {}, () => {});

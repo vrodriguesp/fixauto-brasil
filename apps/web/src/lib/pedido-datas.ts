@@ -7,6 +7,7 @@ import { preencher, dataHora } from './notif-agenda';
 import { enviarEmail } from './email';
 import { escapeHtml } from './email-i18n';
 import { SITE_URL, idiomaDoSite } from './site-url';
+import { linkPedido } from './link-acesso';
 import { orcamentoVencido } from './orcamento-validade';
 
 // "Tenho interesse, mande novas datas" (migracao 079, dono 11/11, docs/DESENHO_079_novas_datas.md).
@@ -305,7 +306,7 @@ export async function responderNovasDatas(userId: string, orcamentoId: string, c
     const html = caixa(`<p>${escapeHtml(preencher(t.emailOla, { n: cli.nome || '' }))}</p>
       <p style="font-size:16px;"><strong>${escapeHtml(preencher(t.emailEnviadasTexto, { oficina: of?.nome_fantasia || '', numero }))}</strong></p>
       ${lista(itens.map((s) => diaETurno(s.data, s.turno, l)))}
-      ${botao(`${site()}/r/${numero}`, t.emailEnviadasBotao)}`);
+      ${botao(await linkPedido(numero, sol?.cliente_id, orc.solicitacao_id), t.emailEnviadasBotao)}`);
     await enviarEmail({ para: cli.email, assunto: preencher(t.emailEnviadasAssunto, { oficina: of?.nome_fantasia || '', numero }), html }).catch(() => false);
   }
   return res(200, { ok: true, modo: 'novas_datas', adicionados: novos.length });

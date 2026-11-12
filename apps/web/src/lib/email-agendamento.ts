@@ -2,6 +2,7 @@ import { supabaseAdmin } from './supabase-admin';
 import { enviarEmail } from './email';
 import { escapeHtml } from './email-i18n';
 import { SITE_URL, idiomaDoSite } from './site-url';
+import { linkPedido } from './link-acesso';
 import { formatCurrency } from './utils';
 import { currencyForCountry } from './currency';
 import { fusoDoPais } from './fuso';
@@ -149,7 +150,7 @@ export async function avisarClienteAgendamento(agendaId: string, opcoes: { motiv
   if (!marcado?.length) return false;
 
   const { data: sol } = await supabaseAdmin.from('solicitacoes')
-    .select('numero, veiculo:veiculos!solicitacoes_veiculo_id_fkey(fipe_marca, fipe_modelo, fipe_ano, placa), cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, idioma)')
+    .select('numero, veiculo:veiculos!solicitacoes_veiculo_id_fkey(fipe_marca, fipe_modelo, fipe_ano, placa), cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, email, idioma)')
     .eq('id', ag.solicitacao_id).maybeSingle();
   const cliente = (sol as any)?.cliente;
   if (!sol || !cliente?.email) return false;
@@ -176,6 +177,8 @@ export async function avisarClienteAgendamento(agendaId: string, opcoes: { motiv
   const itens = ((orc as any)?.itens || []) as { descricao: string; quantidade: number; valor_total: number }[];
   const link = `${SITE_URL.replace('://www.', '://')}/r/${(sol as any).numero}`;
   const linkChat = `${link}?c=1`;
+  // botao do e-mail: link de acesso de uso unico (entra na conta com um toque)
+  const linkBotao = await linkPedido((sol as any).numero, cliente.id, ag.solicitacao_id);
   const nomeOf = of.nome_fantasia || 'BipFix';
   const titulo = x.evento.replace('{oficina}', nomeOf);
   const descricao = [
@@ -212,7 +215,7 @@ export async function avisarClienteAgendamento(agendaId: string, opcoes: { motiv
           ${itens.length ? `<p style="margin:12px 0 4px;color:#6b7280;font-size:14px;">${escapeHtml(x.itens)}</p><ul style="margin:0;padding-left:20px;font-size:14px;color:#374151;">${itens.map((i) => `<li>${escapeHtml(i.descricao)}${i.quantidade > 1 ? ` × ${i.quantidade}` : ''} – ${escapeHtml(formatCurrency(Number(i.valor_total), moeda, idioma))}</li>`).join('')}</ul>` : ''}
           ${orc?.garantia_dias ? `<p style="margin:8px 0 0;font-size:14px;color:#374151;">${escapeHtml(x.garantia.replace('{n}', String(orc.garantia_dias)))}</p>` : ''}
         </div>
-        <p>${botao(google, x.google, '#ffffff', '#1e40af')}${botao(link, x.verPedido, '#374151', '#e5e7eb')}</p>
+        <p>${botao(google, x.google, '#ffffff', '#1e40af')}${botao(linkBotao, x.verPedido, '#374151', '#e5e7eb')}</p>
         <p style="font-size:13px;color:#6b7280;">📅 ${escapeHtml(x.anexo)}</p>
         <p style="font-size:14px;color:#374151;margin-top:16px;">${escapeHtml(x.remarcar)}</p>
         <p>${botao(linkChat, x.conversar, '#1e40af', '#dbeafe')}</p>
@@ -234,7 +237,7 @@ export async function avisarClienteCancelamento(agendaId: string, motivo: string
     .eq('id', agendaId).maybeSingle();
   if (!ag?.solicitacao_id) return false;
   const { data: sol } = await supabaseAdmin.from('solicitacoes')
-    .select('numero, cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, idioma)')
+    .select('numero, cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, email, idioma)')
     .eq('id', ag.solicitacao_id).maybeSingle();
   const cliente = (sol as any)?.cliente;
   if (!sol || !cliente?.email) return false;
@@ -247,6 +250,7 @@ export async function avisarClienteCancelamento(agendaId: string, motivo: string
   const quando = inicio.toLocaleString(loc, { timeZone: fuso, weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
   const nomeOf = of.nome_fantasia || 'BipFix';
   const link = `${SITE_URL.replace('://www.', '://')}/r/${(sol as any).numero}`;
+  const linkBotao = await linkPedido((sol as any).numero, cliente.id, ag.solicitacao_id);
   const anexos = [];
   if (ag.aviso_cliente_inicio) {
     const seq = (ag.aviso_cliente_seq || 0) + 1;
@@ -266,7 +270,7 @@ export async function avisarClienteCancelamento(agendaId: string, motivo: string
         <p style="font-size:16px;"><strong>${escapeHtml(x.introCanc.replace('{quando}', quando))}</strong></p>
         <p style="background:#fffbeb;border-left:4px solid #f59e0b;padding:10px 12px;"><strong>${escapeHtml(x.motivo)}:</strong> ${escapeHtml(motivo)}</p>
         ${reaberto ? `<p>${escapeHtml(x.reaberto)}</p>` : ''}
-        <p><a href="${link}" style="display:inline-block;padding:12px 20px;border-radius:8px;background:#1e40af;color:#ffffff;text-decoration:none;font-weight:bold;">${escapeHtml(x.verPedido)}</a></p>
+        <p><a href="${linkBotao}" style="display:inline-block;padding:12px 20px;border-radius:8px;background:#1e40af;color:#ffffff;text-decoration:none;font-weight:bold;">${escapeHtml(x.verPedido)}</a></p>
         ${anexos.length ? `<p style="font-size:13px;color:#6b7280;">📅 ${escapeHtml(x.anexoCanc)}</p>` : ''}
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
         <p style="font-size:12px;color:#9ca3af;">${escapeHtml(x.rodape)}</p>

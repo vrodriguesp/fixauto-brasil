@@ -3,6 +3,8 @@ import { iguaisSeguro } from '@/lib/segredos';
 import { limparPendentes, enviarLembretes } from '@/lib/pedido-sem-conta';
 import { lembretesMudanca } from '@/lib/mudanca-data';
 import { tarefasPedidoDatas } from '@/lib/pedido-datas';
+import { limparLinksAcesso } from '@/lib/link-acesso';
+import { limparCodigosLogin } from '@/lib/codigo-login';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +22,9 @@ export async function POST(req: NextRequest) {
     const mudancas = await lembretesMudanca();
     // pedido de novas datas (079): lembrete a oficina sem resposta em 24 h; pendentes sem sentido caem
     const novasDatas = await tarefasPedidoDatas();
+    // links de acesso dos e-mails e codigos de login vencidos (080)
+    await limparLinksAcesso();
+    await limparCodigosLogin();
     return NextResponse.json({ ok: true, apagados, lembretes, mudancas, novasDatas });
   } catch (err) {
     console.error('[limpar-pendentes]', (err as Error).message);

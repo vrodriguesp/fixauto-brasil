@@ -7,6 +7,7 @@ const resend = process.env.RESEND_API_KEY
   : null;
 
 import { SITE_URL, siteNoIdioma, urlNoIdioma, idiomaDoSite } from './site-url';
+import { linkPedido } from './link-acesso';
 
 // Sem moeda informada: reais so para a versao do Brasil; euro no resto
 const moedaPadrao = (idioma?: string | null) => (idiomaDoSite(idioma) === 'pt' ? 'BRL' : 'EUR');
@@ -160,6 +161,8 @@ export async function sendQuoteNotificationEmail(params: {
   solicitacaoId: string;
   /** numero do pedido: link curto /r/<numero> (sem nome de pagina em portugues) */
   numero?: string | number | null;
+  /** dono do pedido: o botao leva o link de acesso de uso unico (lib/link-acesso.ts) */
+  clienteId?: string | null;
   locale?: string;
 }) {
   if (!podeEnviar) {
@@ -169,7 +172,7 @@ export async function sendQuoteNotificationEmail(params: {
 
   const s = EMAIL_I18N.quoteNotification[resolveEmailLocale(params.locale)];
   const orcamentosUrl = params.numero
-    ? `${SMS_LINK_BASE}/r/${params.numero}?l=${resolveEmailLocale(params.locale)}`
+    ? await linkPedido(params.numero, params.clienteId, params.solicitacaoId, `l=${resolveEmailLocale(params.locale)}`)
     : `${siteNoIdioma(params.locale)}/cliente/orcamentos/${params.solicitacaoId}`;
 
   try {

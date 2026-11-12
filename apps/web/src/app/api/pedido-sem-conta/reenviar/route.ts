@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { limitarPorIp, dentroDoLimite } from '@/lib/rate-limit';
 import { ehUuid, email as validarEmail, ErroValidacao } from '@/lib/validacao';
-import { CODIGO_ENVIOS, novoCodigo, hashCodigo, enviarCodigo } from '@/lib/pedido-sem-conta';
+import { CODIGO_ENVIOS, novoCodigo, hashCodigo, enviarCodigo, contaParaEmail } from '@/lib/pedido-sem-conta';
 
 export const dynamic = 'force-dynamic';
 
-// Novo codigo (nao chegou) e, opcionalmente, correcao do e-mail digitado
-// errado - so para conta nova ainda nao ativada; o pedido continua o mesmo.
+// Novo codigo (nao chegou) e, opcionalmente, correcao do e-mail digitado errado;
+// o pedido continua o mesmo. O e-mail corrigido ganha a conta dele (existente ou
+// nova sem senha, como no envio) - vale para qualquer pedido pendente, para a
+// resposta nao revelar se o e-mail anterior tinha conta.
 export async function POST(req: NextRequest) {
   if (!limitarPorIp(req, 'pedido-sem-conta-reenviar', 15, 60 * 60 * 1000)) {
     return NextResponse.json({ error: 'Muitas tentativas', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
@@ -22,26 +24,31 @@ export async function POST(req: NextRequest) {
     }
 
     let email: string = p.email;
+    let userId: string = p.user_id;
+    let contaNova: boolean = p.conta_nova;
     const novoEmail = b.email != null ? validarEmail(b.email, true)! : null;
-    if (novoEmail && novoEmail.toLowerCase() !== p.email.toLowerCase()) {
-      if (!p.conta_nova) throw new ErroValidacao('conta existente', 'DADOS_INVALIDOS');
-      const { data: outra } = await supabaseAdmin.from('profiles').select('id').ilike('email', novoEmail.replace(/[%_\\]/g, '\\$&')).maybeSingle();
-      if (outra) return NextResponse.json({ error: 'E-mail de outra conta', codigo: 'EMAIL_EM_USO' }, { status: 409 });
-      const { error } = await supabaseAdmin.auth.admin.updateUserById(p.user_id, { email: novoEmail, email_confirm: false });
-      if (error) {
-        if (/already|registered|exists/i.test(error.message)) return NextResponse.json({ error: 'E-mail de outra conta', codigo: 'EMAIL_EM_USO' }, { status: 409 });
-        throw new Error(error.message);
-      }
-      email = novoEmail;
-    }
-
     // no maximo 5 e-mails de codigo por hora para o mesmo endereco (somando o envio do pedido)
-    if (!dentroDoLimite(`pedido-sem-conta:${email.toLowerCase()}`, 5, 60 * 60 * 1000)) {
+    if (!dentroDoLimite(`pedido-sem-conta:${(novoEmail || email).toLowerCase()}`, 5, 60 * 60 * 1000)) {
       return NextResponse.json({ error: 'Muitas tentativas', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
     }
+    if (novoEmail && novoEmail.toLowerCase() !== p.email.toLowerCase()) {
+      const conta = await contaParaEmail(novoEmail, p.idioma);
+      if ('erro' in conta) {
+        return conta.erro === 'SEM_ACESSO'
+          ? NextResponse.json({ error: 'Sem acesso', codigo: 'SEM_ACESSO' }, { status: 403 })
+          : NextResponse.json({ error: 'Avaliação pendente', codigo: 'AVALIACAO_PENDENTE' }, { status: 409 });
+      }
+      // a conta do e-mail errado, se foi criada so para este pedido, sai junto
+      if (p.conta_nova && conta.userId !== p.user_id) {
+        const { data: perfil } = await supabaseAdmin.from('profiles').select('id').eq('id', p.user_id).maybeSingle();
+        if (!perfil) await supabaseAdmin.auth.admin.deleteUser(p.user_id).catch(() => {});
+      }
+      email = novoEmail; userId = conta.userId; contaNova = conta.contaNova;
+    }
+
     const codigo = novoCodigo();
     await supabaseAdmin.from('pedidos_pendentes').update({
-      email, codigo_hash: hashCodigo(p.id, codigo), envios: p.envios + 1, ultimo_envio_em: new Date().toISOString(),
+      email, user_id: userId, conta_nova: contaNova, codigo_hash: hashCodigo(p.id, codigo), envios: p.envios + 1, ultimo_envio_em: new Date().toISOString(),
       // e-mail corrigido: o link do lembrete que foi para o endereco errado deixa de
       // valer e o lembrete pode ir de novo, agora para o endereco certo
       ...(email !== p.email ? { retomar_hash: null, lembrete_enviado_em: null } : {}),

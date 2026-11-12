@@ -8,18 +8,18 @@ import { idiomaDoSite } from '@/lib/site-url';
 import { TERMOS_VERSAO } from '@/lib/termos';
 import {
   validarPedido, criarPedido, guardarFotos, novoCodigo, hashCodigo, enviarCodigo,
-  apagarPendente, limparPendentes, contarEtapa,
+  apagarPendente, limparPendentes, contarEtapa, contaParaEmail,
 } from '@/lib/pedido-sem-conta';
 
 export const dynamic = 'force-dynamic';
 const HORA = 60 * 60 * 1000;
 
-// Pedido de orcamento sem cadastro (site e app; regras em lib/pedido-sem-conta.ts).
-// Com login: cria o pedido na hora. Sem login: guarda o pedido, cria a conta
-// (sem ativar) e manda o codigo de 6 digitos; o pedido so vai para as oficinas
-// em /api/pedido-sem-conta/confirmar. E-mail de quem ja tem conta: 409
-// CONTA_EXISTENTE (a tela pede a senha) ou, com modo 'codigo', o codigo vai
-// para esse e-mail e o pedido entra na conta dele so depois do codigo.
+// Pedido de orcamento sem cadastro e sem senha (site e app; regras em
+// lib/pedido-sem-conta.ts). Com login: cria o pedido na hora. Sem login: guarda o
+// pedido, acha ou cria a conta (sem senha, sem ativar) e manda o codigo de 6
+// digitos; o pedido so vai para as oficinas em /api/pedido-sem-conta/confirmar,
+// que tambem entra na conta. E-mail que ja tem conta recebe o mesmo codigo e a
+// resposta e a mesma ({ pendenteId, email }): nao revela quem tem conta.
 export async function POST(req: NextRequest) {
   // O app so conta como logado com o proprio login (Authorization: Bearer). Um
   // cookie do site no mesmo aparelho/navegador nao vale: no teste local (site e
@@ -65,60 +65,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Muitas tentativas', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
     }
 
-    const { data: existente } = await supabaseAdmin.from('profiles')
-      .select('id, tipo, ativo').ilike('email', email.replace(/[%_\\]/g, '\\$&')).maybeSingle();
-    let userIdPendente: string;
-    let contaNova: boolean;
-    if (existente) {
-      if (d.modo !== 'codigo') {
-        await contarEtapa(funil, 'conta_existente');
-        return NextResponse.json({ error: 'Entre na sua conta', codigo: 'CONTA_EXISTENTE' }, { status: 409 });
-      }
-      if (existente.tipo !== 'cliente' || existente.ativo === false) {
-        return NextResponse.json({ error: 'Sem acesso', codigo: 'SEM_ACESSO' }, { status: 403 });
-      }
-      // avaliacao pendente: avisa ANTES do codigo (depois a pessoa perderia o que digitou)
-      const { data: avaliar } = await supabaseAdmin.rpc('tem_avaliacao_pendente', { p_cliente: existente.id });
-      if (avaliar === true) return NextResponse.json({ error: 'Avaliação pendente', codigo: 'AVALIACAO_PENDENTE' }, { status: 409 });
-      // um pedido por codigo aberto por conta: o novo substitui o anterior
-      const { data: abertos } = await supabaseAdmin.from('pedidos_pendentes').select('id, user_id, conta_nova, fotos').eq('user_id', existente.id);
-      for (const p of abertos || []) await apagarPendente(p, true);
-      userIdPendente = existente.id;
-      contaNova = false;
-    } else {
-      const senha = typeof d.senha === 'string' ? d.senha : '';
-      if (senha.length < 8 || senha.length > 72) throw new ErroValidacao('senha curta', 'SENHA_CURTA');
-      // pedido anterior deste e-mail ainda sem codigo: reaproveita a conta (nova senha) e troca o pedido
-      const { data: anteriores } = await supabaseAdmin.from('pedidos_pendentes')
-        .select('id, user_id, conta_nova, fotos').ilike('email', email.replace(/[%_\\]/g, '\\$&')).eq('conta_nova', true);
-      const anterior = anteriores?.[0];
-      if (anterior) {
-        for (const p of anteriores!) await apagarPendente(p, p.user_id === anterior.user_id);
-        await supabaseAdmin.auth.admin.updateUserById(anterior.user_id, { password: senha });
-        userIdPendente = anterior.user_id;
-        reaproveitado = anterior.user_id;
-      } else {
-        const { data: auth, error } = await supabaseAdmin.auth.admin.createUser({
-          email, password: senha, email_confirm: false, user_metadata: { tipo: 'cliente', idioma, origem: 'pedido_sem_conta' },
-        });
-        if (error || !auth.user) {
-          // conta so no auth (cadastro pela metade): trata como conta existente
-          if (/already|registered|exists/i.test(error?.message || '')) {
-            return NextResponse.json({ error: 'Entre na sua conta', codigo: 'CONTA_EXISTENTE' }, { status: 409 });
-          }
-          throw new Error(error?.message || 'createUser falhou');
-        }
-        userIdPendente = auth.user.id;
-        criadoUser = auth.user.id;
-      }
-      contaNova = true;
+    // conta existente (o codigo entra nela) ou nova, sem senha
+    const conta = await contaParaEmail(email, idioma);
+    if ('erro' in conta) {
+      return conta.erro === 'SEM_ACESSO'
+        ? NextResponse.json({ error: 'Sem acesso', codigo: 'SEM_ACESSO' }, { status: 403 })
+        : NextResponse.json({ error: 'Avaliação pendente', codigo: 'AVALIACAO_PENDENTE' }, { status: 409 });
     }
+    if (conta.criada) criadoUser = conta.userId;
+    else if (conta.contaNova) reaproveitado = conta.userId;
+    // so para medir no funil (a resposta e a mesma)
+    if (!conta.contaNova) await contarEtapa(funil, 'conta_existente');
 
     const id = randomUUID();
     const codigo = novoCodigo();
     const caminhos = await guardarFotos(id, fotos);
     const { error: pErro } = await supabaseAdmin.from('pedidos_pendentes').insert({
-      id, user_id: userIdPendente, conta_nova: contaNova, email, nome, telefone, idioma, origem,
+      id, user_id: conta.userId, conta_nova: conta.contaNova, email, nome, telefone, idioma, origem,
       dados: pedido, fotos: caminhos, codigo_hash: hashCodigo(id, codigo),
       termos_aceitos_em: new Date().toISOString(), termos_versao: TERMOS_VERSAO,
     });
@@ -126,12 +89,12 @@ export async function POST(req: NextRequest) {
     criadoUser = null; reaproveitado = null; // dali em diante a limpeza das 24 h cuida da conta
     const enviado = await enviarCodigo(email, nome, codigo, idioma);
     if (!enviado) {
-      await apagarPendente({ id, user_id: userIdPendente, conta_nova: contaNova, fotos: caminhos });
+      await apagarPendente({ id, user_id: conta.userId, conta_nova: conta.contaNova, fotos: caminhos });
       throw new Error('e-mail do codigo nao enviado');
     }
     await contarEtapa(funil, 'codigo_enviado');
     limparPendentes().catch((e) => console.error('[pedido-sem-conta] limpeza', e));
-    return NextResponse.json({ pendenteId: id, email, contaNova });
+    return NextResponse.json({ pendenteId: id, email });
   } catch (e) {
     if (criadoUser) await supabaseAdmin.auth.admin.deleteUser(criadoUser).catch(() => {});
     // conta de um pedido anterior (ja apagado) reaproveitada e que ficou sem pedido:

@@ -9,14 +9,20 @@ import { idiomaDoSite, urlNoIdioma } from './site-url';
 import { avisarOficinasDoPedido, TIPOS as TIPOS_NOMES } from './avisar-oficinas-pedido';
 import { avisarAdminSeSemOficinas } from './concierge';
 
-// Pedido sem cadastro (dono 06/11; migracao 073). Regras que valem para o site
-// e para o app (mesmas rotas):
+// Pedido sem cadastro (dono 06/11; migracao 073) e SEM SENHA (dono 12/11;
+// migracao 080). Regras que valem para o site e para o app (mesmas rotas):
+// - o ultimo passo pede so nome, e-mail e telefone (opcional): nenhuma senha;
 // - o pedido so vai para as oficinas depois do CODIGO de 6 digitos enviado ao
 //   e-mail (prova que o e-mail e da pessoa; e-mail errado nao some no vazio);
+//   o mesmo codigo entra na conta neste aparelho (lib/login-token.ts);
 // - ate la ele fica em pedidos_pendentes, invisivel; sem confirmacao em 24 h,
 //   tudo e apagado (pedido, fotos e a conta nao ativada);
-// - e-mail de quem ja tem conta: entra com a senha ali mesmo ou pede o codigo;
-//   nunca cria pedido na conta de outra pessoa so por saber o e-mail;
+// - e-mail de quem ja tem conta: recebe o mesmo codigo, o pedido entra nessa
+//   conta e a pessoa entra nela (senha intocada). A resposta e igual para conta
+//   nova e antiga - nao revela quais e-mails tem conta; nunca cria pedido na
+//   conta de outra pessoa so por saber o e-mail;
+// - conta nova nasce sem senha (profiles.senha_definida = false): a tela
+//   "crie a sua senha" aparece a cada login ate a pessoa criar uma ou pular;
 // - o carro: mesma placa (ou, sem placa, mesma marca/modelo/ano) de um carro
 //   da conta = esse carro; senao um carro novo na conta.
 
@@ -111,6 +117,50 @@ export async function criarPedido(clienteId: string, d: DadosPedido, caminhosFot
   return { id: sol.id, numero: (sol as any).numero ?? null };
 }
 
+/**
+ * Conta para o e-mail do pedido: a que ja existe (perfil de cliente ativo) ou
+ * uma nova, criada SEM senha e sem ativar. Pedidos por codigo ainda abertos do
+ * mesmo e-mail sao substituidos (um por vez). Usado no envio do pedido e na
+ * correcao do e-mail (reenviar). `criada` = conta feita agora (apagar se o
+ * envio falhar); contaNova sem `criada` = conta de um pedido anterior reaproveitada.
+ */
+export async function contaParaEmail(email: string, idioma: string | null): Promise<
+  { userId: string; contaNova: boolean; criada: boolean } | { erro: 'SEM_ACESSO' | 'AVALIACAO_PENDENTE' }
+> {
+  const padrao = email.replace(/[%_\\]/g, '\\$&');
+  const { data: existente } = await supabaseAdmin.from('profiles').select('id, tipo, ativo').ilike('email', padrao).maybeSingle();
+  if (existente) {
+    if (existente.tipo !== 'cliente' || existente.ativo === false) return { erro: 'SEM_ACESSO' };
+    // avaliacao pendente: avisa ANTES do codigo (depois a pessoa perderia o que digitou)
+    const { data: avaliar } = await supabaseAdmin.rpc('tem_avaliacao_pendente', { p_cliente: existente.id });
+    if (avaliar === true) return { erro: 'AVALIACAO_PENDENTE' };
+    const { data: abertos } = await supabaseAdmin.from('pedidos_pendentes').select('id, user_id, conta_nova, fotos').eq('user_id', existente.id);
+    for (const p of abertos || []) await apagarPendente(p, true);
+    return { userId: existente.id, contaNova: false, criada: false };
+  }
+  // pedido anterior deste e-mail ainda sem codigo: reaproveita a conta e troca o pedido
+  const { data: anteriores } = await supabaseAdmin.from('pedidos_pendentes')
+    .select('id, user_id, conta_nova, fotos').ilike('email', padrao).eq('conta_nova', true);
+  const anterior = anteriores?.[0];
+  if (anterior) {
+    for (const p of anteriores!) await apagarPendente(p, p.user_id === anterior.user_id);
+    return { userId: anterior.user_id, contaNova: true, criada: false };
+  }
+  // conta nova sem senha: o GoTrue guarda um hash de senha vazia e recusa qualquer
+  // login por senha ate a pessoa criar uma (tela "crie a sua senha")
+  const { data: auth, error } = await supabaseAdmin.auth.admin.createUser({
+    email, email_confirm: false, user_metadata: { tipo: 'cliente', idioma, origem: 'pedido_sem_conta', sem_senha: true },
+  });
+  if (auth?.user) return { userId: auth.user.id, contaNova: true, criada: true };
+  // conta so no auth (cadastro pela metade, sem perfil): o codigo confirma o e-mail e cria o perfil.
+  // generateLink nao manda e-mail; serve so para achar o id da conta pelo e-mail.
+  if (/already|registered|exists/i.test(error?.message || '')) {
+    const { data: g } = await supabaseAdmin.auth.admin.generateLink({ type: 'magiclink', email });
+    if (g?.user?.id) return { userId: g.user.id, contaNova: true, criada: false };
+  }
+  throw new Error(error?.message || 'createUser falhou');
+}
+
 /** Fotos do pedido pendente: nomes aleatorios em damage-photos/pendentes/<id>/. */
 export async function guardarFotos(pendenteId: string, fotos: File[]): Promise<string[]> {
   const caminhos: string[] = [];
@@ -189,11 +239,13 @@ export async function contarEtapa(funil: string, etapa: string) {
  */
 export async function ativarEPublicar(p: Record<string, any>): Promise<{ id: string; numero: number | null } | { erro: 'SEM_ACESSO' | 'AVALIACAO_PENDENTE' }> {
   if (p.conta_nova) {
-    const { error: eConf } = await supabaseAdmin.auth.admin.updateUserById(p.user_id, { email_confirm: true });
+    const { data: u, error: eConf } = await supabaseAdmin.auth.admin.updateUserById(p.user_id, { email_confirm: true });
     if (eConf) throw new Error(eConf.message);
     const { error } = await supabaseAdmin.from('profiles').insert({
       id: p.user_id, tipo: 'cliente', nome: p.nome, email: p.email, telefone: p.telefone, idioma: p.idioma,
       termos_aceitos_em: p.termos_aceitos_em, termos_versao: p.termos_versao,
+      // conta criada pelo pedido nasce sem senha (cadastro pela metade reaproveitado: tinha senha)
+      senha_definida: !u?.user?.user_metadata?.sem_senha,
     });
     if (error && !/duplicate|unique/i.test(error.message)) throw new Error(error.message);
   } else {
