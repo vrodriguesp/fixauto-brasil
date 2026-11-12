@@ -620,6 +620,9 @@ async function extra(caso) {
       const page = await ctx.newPage();
       // 1) entra no SITE (cookie em localhost, que o app na outra porta tambem recebe)
       await page.goto(`${SITE}/ee/en/login`, { waitUntil: 'networkidle' });
+      // aviso de cookies do celular (12/11) tem fundo escuro: a pessoa responde antes de tocar no resto
+      const avisoCk = page.getByTestId('aviso-cookies');
+      if (await avisoCk.isVisible().catch(() => false)) await avisoCk.getByRole('button', { name: /Reject/ }).click();
       await page.fill('input[type=email]', emailSite); await page.fill('input[type=password]', senha);
       await page.click('button[type=submit]'); await page.waitForTimeout(4000);
       // 2) no APP, sem login, pede com OUTRO e-mail
