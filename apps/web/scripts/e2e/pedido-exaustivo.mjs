@@ -435,7 +435,8 @@ async function app(l) {
     await campo(T('pedidoSemConta.email')).fill('exaust@gmial.com');
     ok(`${nm}: sugere gmail.com`, (await page.innerText('body')).includes(T('pedidoSemConta.voceQuisDizer', { email: 'exaust@gmail.com' })));
     await campo(T('pedidoSemConta.email')).fill(email);
-    ok(`${nm}: sem campo de senha no contato`, (await page.getByLabel(T('auth.senha'), { exact: true }).count()) === 0);
+    // o login fica montado atras na versao web do app: conta so o campo visivel
+    ok(`${nm}: sem campo de senha no contato`, (await page.getByLabel(T('auth.senha'), { exact: true }).locator('visible=true').count()) === 0);
     ok(`${nm}: prefixo do telefone ja no pais do idioma (+${DDI[l]})`, (await page.getByRole('button', { name: new RegExp(`\\+${DDI[l]}$`) }).count()) === 1);
     await campo(T('pedidoSemConta.telefone')).fill(NUM[l]);
     await page.getByRole('checkbox').locator('visible=true').last().click({ position: { x: 10, y: 10 } });
