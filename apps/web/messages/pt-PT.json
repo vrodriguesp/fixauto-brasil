@@ -52,6 +52,11 @@
     "avisos": "Avisos"
   },
   "sejaParceiro": {
+    "formOuCadastroLink": "Registe a sua oficina",
+    "formOuCadastro": "Quer começar já?",
+    "ctaContato": "Quero ser contactado",
+    "ctaCadastroSub": "Grátis, cerca de 2 minutos",
+    "ctaCadastro": "Registar a minha oficina",
     "metaTitle": "Torne-se parceiro da BipFix",
     "metaDescription": "Para oficinas e lojas de peças: adesão gratuita, sem comissão e alterações avisadas com 30 dias. Deixe o seu contacto e falamos consigo.",
     "ogTitle": "Torne-se parceiro da BipFix",
@@ -66,8 +71,8 @@
     "beneficio2Texto": "Como um dos primeiros parceiros, o seu feedback direto define quais as funcionalidades que chegam a seguir.",
     "beneficio3Titulo": "Menos concorrência no início",
     "beneficio3Texto": "Hoje há poucas oficinas na plataforma, por isso quem adere cedo recebe pedidos com menos concorrência.",
-    "formTitulo": "Registe o seu interesse",
-    "formSubtitulo": "Demora menos de um minuto. Sem compromisso.",
+    "formTitulo": "Prefere que o contactemos?",
+    "formSubtitulo": "Deixe o seu contacto – respondemos em 1 dia útil por e-mail ou WhatsApp.",
     "souOficina": "Sou uma oficina",
     "souLoja": "Sou um fornecedor de peças",
     "campoResponsavel": "Nome do responsável",

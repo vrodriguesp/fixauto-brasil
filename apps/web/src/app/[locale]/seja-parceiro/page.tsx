@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Link } from '@/i18n/navigation';
+import { Link, rota } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { mercadoDe } from '@/i18n/routing';
 import { textoErroApi } from '@/lib/erro-api';
@@ -76,6 +76,24 @@ export default function SejaParceiroPage() {
           </span>
           <h1 className="text-3xl sm:text-4xl font-bold leading-tight">{t('heroTitulo')}</h1>
           <p className="mt-5 text-lg text-white leading-relaxed max-w-2xl mx-auto">{t('heroTexto')}</p>
+          {/* o QR dos flyers (ET/RU, 12/11) cai aqui: cadastro direto em 1 toque; o formulario fica para quem prefere ser contatado */}
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href={rota('/cadastro', undefined, { tipo: 'oficina' })}
+              data-testid="parceiro-cadastro"
+              className="bg-white text-primary-700 px-6 py-3 rounded-lg font-semibold text-lg hover:bg-primary-50 transition-colors text-center"
+            >
+              {t('ctaCadastro')}
+              <span className="block text-xs font-medium text-primary-600">{t('ctaCadastroSub')}</span>
+            </Link>
+            <a
+              href="#contato"
+              data-testid="parceiro-contato"
+              className="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold text-lg hover:bg-white/10 transition-colors text-center flex items-center justify-center"
+            >
+              {t('ctaContato')}
+            </a>
+          </div>
         </div>
       </section>
 
@@ -112,12 +130,16 @@ export default function SejaParceiroPage() {
         </div>
       </section>
 
-      {/* Form */}
-      <section className="py-16 bg-gray-50">
+      {/* Form: "prefiro que entrem em contato" */}
+      <section id="contato" className="py-16 bg-gray-50 scroll-mt-20">
         <div className="max-w-lg mx-auto px-4 sm:px-6 lg:px-8">
           <div className="card">
             <h2 className="text-xl font-bold text-gray-900 mb-1">{t('formTitulo')}</h2>
-            <p className="text-sm text-gray-500 mb-6">{t('formSubtitulo')}</p>
+            <p className="text-sm text-gray-500 mb-3">{t('formSubtitulo')}</p>
+            <p className="text-sm text-gray-600 mb-6">
+              {t('formOuCadastro')}{' '}
+              <Link href={rota('/cadastro', undefined, { tipo: 'oficina' })} className="text-primary-600 font-medium hover:underline">{t('formOuCadastroLink')}</Link>
+            </p>
 
             {erro && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
