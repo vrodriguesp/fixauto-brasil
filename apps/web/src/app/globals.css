@@ -128,7 +128,8 @@ body.com-chat-suporte footer { padding-bottom: 5rem; }
   body.pagina-pedido [data-testid="passo-servico"] .grid button { padding: 0.5rem; }
   body.pagina-pedido [data-testid="passo-servico"] .grid button span { font-size: 1.25rem; line-height: 1.5rem; }
   body.pagina-pedido [data-testid="passo-servico"] .grid button p { margin-top: 0.25rem; font-size: 0.875rem; }
-  body.pagina-pedido [data-testid="navegar"] { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  /* deitado o celular passa de 640 px de largura e o sm:static soltava a barra: fica presa ao pe da tela */
+  body.pagina-pedido [data-testid="navegar"] { position: sticky; bottom: var(--altura-cookies, 0px); z-index: 10; padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: rgb(255 255 255 / 0.95); }
   .aviso-cookies > div { padding-top: 0.25rem; padding-bottom: 0.25rem; }
   .aviso-cookies .aviso-cookies-longo { display: none; }
   .aviso-cookies .aviso-cookies-curto { display: inline; }
