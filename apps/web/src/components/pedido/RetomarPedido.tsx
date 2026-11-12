@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { Link, useRouter } from '@/i18n/navigation';
+import { Link, useRouter, rota } from '@/i18n/navigation';
 import { supabase } from '@/lib/supabase';
 import { textoErroApi } from '@/lib/erro-api';
 import { apagarFotosPedido } from '@/lib/rascunho-pedido-fotos';
@@ -50,9 +50,11 @@ export default function RetomarPedido({ id, token, cancelar }: { id: string; tok
     }
     try { localStorage.removeItem('bipfix_pedido_rascunho'); sessionStorage.removeItem('bipfix_pedido_rascunho'); } catch { /* ignora */ }
     apagarFotosPedido();
-    // o link prova o e-mail: entra na conta e abre o pedido
-    if (d.tokenHash) await supabase.auth.verifyOtp({ token_hash: d.tokenHash, type: 'email' }).catch(() => null);
-    router.replace(`/cliente/orcamentos/${d.solicitacaoId}`);
+    // o link prova o e-mail: entra na conta e abre o pedido; sem senha ainda, passa
+    // antes pela tela "crie a sua senha" (pode pular)
+    const destino = `/cliente/orcamentos/${d.solicitacaoId}`;
+    const sessao = d.tokenHash ? await supabase.auth.verifyOtp({ token_hash: d.tokenHash, type: 'email' }).catch(() => null) : null;
+    router.replace(sessao && !sessao.error && d.senhaDefinida === false ? rota('/criar-senha', undefined, { voltar: destino }) : destino);
     router.refresh();
   };
 

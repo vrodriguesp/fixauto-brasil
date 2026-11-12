@@ -109,6 +109,16 @@ export const PATHNAMES = {
     pt: '/escolher-tipo', 'pt-PT': '/escolher-tipo', en: '/choose-account',
     et: '/vali-konto', it: '/scegli-account', ru: '/vybor-akkaunta',
   },
+  // "crie a sua senha" depois de entrar sem senha (12/11)
+  '/criar-senha': {
+    pt: '/criar-senha', 'pt-PT': '/criar-palavra-passe', en: '/create-password',
+    et: '/loo-parool', it: '/crea-password', ru: '/sozdat-parol',
+  },
+  // pagina do link de acesso dos e-mails do pedido (/r/<numero>?k=...; 12/11)
+  '/ver-pedido': {
+    pt: '/ver-pedido', 'pt-PT': '/ver-pedido', en: '/view-request',
+    et: '/vaata-paringut', it: '/vedi-richiesta', ru: '/prosmotr-zayavki',
+  },
 } as const;
 
 export const routing = defineRouting({

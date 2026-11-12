@@ -118,5 +118,23 @@
     "abrirApp": "Abrir a aplicação BipFix",
     "jaConfirmadoTitulo": "Já confirmou o e-mail?",
     "jaConfirmadoTexto": "A ligação de confirmação só funciona uma vez. Se já a abriu antes, a sua conta está pronta: basta entrar com o seu e-mail e palavra-passe."
+  },
+  "criarSenha": {
+    "titulo": "Crie a sua palavra-passe",
+    "texto": "Com uma palavra-passe inicia sessão mais depressa da próxima vez. Sem ela, entra com um código enviado para o seu e-mail.",
+    "labelSenha": "Palavra-passe",
+    "labelConfirmar": "Repita a palavra-passe",
+    "placeholderSenha": "Mínimo 8 caracteres",
+    "placeholderConfirmar": "Repita a palavra-passe",
+    "mostrar": "Mostrar",
+    "ocultar": "Ocultar",
+    "salvar": "Guardar",
+    "salvando": "A guardar…",
+    "agoraNao": "Agora não",
+    "dica": "Pode criar a palavra-passe mais tarde, em qualquer início de sessão.",
+    "erroSenhaCurta": "A palavra-passe tem de ter pelo menos 8 caracteres.",
+    "erroSenhasNaoCoincidem": "As palavras-passe não coincidem.",
+    "salvaTitulo": "Palavra-passe criada!",
+    "salvaTexto": "Da próxima vez pode entrar com e-mail e palavra-passe."
   }
 }

@@ -63,7 +63,7 @@ const NAMESPACES_PUBLICOS = [
   'home', 'nav', 'cookieBanner', 'notificationBell', 'tutorialBanner', 'constants',
   'oficinaPerfilPublico', 'emergencia', 'emergenciaAcidenteDetalhe', 'damageAnalysis',
   'audioRecorder', 'audioMessage', 'veiculoForm', 'docsLayout', 'docsCliente', 'docsOficina',
-  'sejaParceiro', 'login', 'cadastro', 'confirmarEmail', 'definirSenha', 'escolherTipo', 'resetPassword', 'erros', 'seguroReparo', 'enderecoEstruturado', 'excluirConta', 'avisoJurisdicao',
+  'sejaParceiro', 'login', 'cadastro', 'confirmarEmail', 'definirSenha', 'criarSenha', 'escolherTipo', 'resetPassword', 'erros', 'seguroReparo', 'enderecoEstruturado', 'excluirConta', 'avisoJurisdicao',
   'contatoDuvidas',
   // chat de suporte (botao em todas as paginas) e o 'ver original' das mensagens traduzidas
   'suporte', 'traducao',

@@ -118,5 +118,23 @@
     "abrirApp": "Abrir o app BipFix",
     "jaConfirmadoTitulo": "Já confirmou o e-mail?",
     "jaConfirmadoTexto": "O link de confirmação funciona uma vez só. Se você já clicou nele antes, sua conta está pronta: é só entrar com seu e-mail e senha."
+  },
+  "criarSenha": {
+    "titulo": "Crie a sua senha",
+    "texto": "Com uma senha você entra mais rápido da próxima vez. Sem ela, você entra com um código enviado ao seu e-mail.",
+    "labelSenha": "Senha",
+    "labelConfirmar": "Repita a senha",
+    "placeholderSenha": "Mínimo 8 caracteres",
+    "placeholderConfirmar": "Repita a senha",
+    "mostrar": "Mostrar",
+    "ocultar": "Ocultar",
+    "salvar": "Salvar",
+    "salvando": "Salvando…",
+    "agoraNao": "Agora não",
+    "dica": "Você pode criar a senha depois, em qualquer entrada.",
+    "erroSenhaCurta": "A senha precisa ter pelo menos 8 caracteres.",
+    "erroSenhasNaoCoincidem": "As senhas não coincidem.",
+    "salvaTitulo": "Senha criada!",
+    "salvaTexto": "Da próxima vez você pode entrar com e-mail e senha."
   }
 }

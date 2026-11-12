@@ -3,9 +3,10 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useRouter as useRouterNext } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
-import { Link, useRouter } from '@/i18n/navigation';
+import { Link, useRouter, rota } from '@/i18n/navigation';
 import { routing, hrefNoIdioma } from '@/i18n/routing';
 import { useAuth } from '@/lib/auth-context';
+import { supabase } from '@/lib/supabase';
 import { exemploPlaca } from '@/lib/exemplos';
 import { textoErroApi } from '@/lib/erro-api';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
@@ -19,10 +20,11 @@ import {
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
 } from '@fixauto/shared';
 
-// Pedido de orcamento SEM cadastro (dono 06/11; regras em lib/pedido-sem-conta.ts).
-// Mesmo pedido do /cliente/nova-solicitacao (servico, carro, local), mais o
-// contato no fim; o pedido so vai para as oficinas depois do codigo de 6 digitos
-// enviado ao e-mail. O app faz o mesmo em apps/mobile/app/pedido.tsx.
+// Pedido de orcamento SEM cadastro e SEM senha (dono 06/11 e 12/11; regras em
+// lib/pedido-sem-conta.ts). Mesmo pedido do /cliente/nova-solicitacao (servico,
+// carro, local), mais nome e e-mail no fim; o pedido so vai para as oficinas
+// depois do codigo de 6 digitos enviado ao e-mail - e o mesmo codigo entra na
+// conta (nova ou ja existente). O app faz o mesmo em apps/mobile/app/pedido.tsx.
 const FUNIL = 'pedido_site';
 const contar = (etapa: string) => {
   try { fetch('/api/funil', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ funil: FUNIL, etapa }), keepalive: true }).catch(() => {}); } catch { /* nunca atrapalha o pedido */ }
@@ -51,10 +53,10 @@ type Etapa = 'servico' | 'detalhe' | 'carro' | 'local' | 'contato' | 'codigo' | 
 // O formulario vai num rascunho no aparelho (localStorage, vale 24 h) e as fotos no
 // IndexedDB (lib/rascunho-pedido-fotos): no Android o Chrome fecha a aba ao abrir a
 // galeria/camera e a pagina volta do zero (emulador, dono 10/11); com sessionStorage
-// o pedido inteiro se perdia. A senha nunca e gravada: fica so na memoria da pagina.
+// o pedido inteiro se perdia.
 const RASCUNHO = 'bipfix_pedido_rascunho';
 const lerRascunho = () => localStorage.getItem(RASCUNHO) || sessionStorage.getItem(RASCUNHO); // sessionStorage: rascunho de antes de 10/11
-const memoria: { senha: string; senhaLogin: string; fotos: { file: File; preview: string }[] } = { senha: '', senhaLogin: '', fotos: [] };
+const memoria: { fotos: { file: File; preview: string }[] } = { fotos: [] };
 const LISTA_CURTA = 6; // "ver mais": a lista inteira so quando a pessoa pede
 
 export default function PedidoSemConta() {
@@ -65,7 +67,7 @@ export default function PedidoSemConta() {
   const locale = useLocale();
   const router = useRouter();
   const routerNext = useRouterNext();
-  const { isLoggedIn, loading: carregandoLogin, signIn } = useAuth();
+  const { isLoggedIn, loading: carregandoLogin } = useAuth();
 
   const [etapa, setEtapa] = useState<Etapa>('servico');
   // servico
@@ -103,23 +105,19 @@ export default function PedidoSemConta() {
   // contato
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState(() => memoria.senha);
-  const [verSenha, setVerSenha] = useState(false);
   const [telefone, setTelefone] = useState('');
   const [termos, setTermos] = useState(false);
   const [site, setSite] = useState(''); // campo invisivel (robo)
   // envio / codigo
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState('');
-  const [contaExistente, setContaExistente] = useState(false);
-  const [senhaLogin, setSenhaLogin] = useState(() => memoria.senhaLogin);
-  const [pendente, setPendente] = useState<{ id: string; email: string; contaNova: boolean } | null>(null);
+  const [pendente, setPendente] = useState<{ id: string; email: string } | null>(null);
   const [codigo, setCodigo] = useState('');
   const [aviso, setAviso] = useState('');
   const [corrigindo, setCorrigindo] = useState(false);
   const [emailNovo, setEmailNovo] = useState('');
   const [esperaReenvio, setEsperaReenvio] = useState(0);
-  const [resultado, setResultado] = useState<{ numero: number | null; contaNova: boolean } | null>(null);
+  const [enviadoSemLogin, setEnviadoSemLogin] = useState(false);
 
   // quem ja esta logado usa o pedido normal (mesmos passos, sem contato/codigo)
   useEffect(() => {
@@ -140,8 +138,7 @@ export default function PedidoSemConta() {
         if (r.carro) setCarro(r.carro);
         setPlaca(r.placa || ''); setEndereco(r.endereco || ''); setCoords(r.coords || null); setPais(r.pais || null);
         setNome(r.nome || ''); setEmail(r.email || ''); setTelefone(r.telefone || ''); setTermos(!!r.termos);
-        setContaExistente(!!r.contaExistente);
-        if (r.pendente) setPendente(r.pendente);
+        if (r.pendente?.id && r.pendente?.email) setPendente({ id: r.pendente.id, email: r.pendente.email });
         // codigo so com o pedido pendente guardado; senao volta ao contato
         const e: Etapa = r.etapa === 'codigo' && !r.pendente ? 'contato' : r.etapa;
         if (e && e !== 'enviado') { etapaRestaurada.current = e; setEtapa(e); }
@@ -160,22 +157,22 @@ export default function PedidoSemConta() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!rascunhoLido) return;
-    memoria.senha = senha; memoria.senhaLogin = senhaLogin; memoria.fotos = fotos;
+    memoria.fotos = fotos;
     try {
-      localStorage.setItem(RASCUNHO, JSON.stringify({ em: Date.now(), etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, telefone, termos, contaExistente, pendente, qtdFotos: fotos.length }));
+      localStorage.setItem(RASCUNHO, JSON.stringify({ em: Date.now(), etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, telefone, termos, pendente, qtdFotos: fotos.length }));
     } catch { /* ignora */ }
-  }, [rascunhoLido, etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, telefone, termos, contaExistente, pendente, senha, senhaLogin, fotos]);
+  }, [rascunhoLido, etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, telefone, termos, pendente, fotos]);
   useEffect(() => {
     if (!rascunhoLido || fotosVoltando.current) return;
     if (fotos.length) gravarFotosPedido(fotos.map((f) => f.file)); else apagarFotosPedido();
   }, [rascunhoLido, fotos]);
   const limparRascunho = () => {
-    memoria.senha = ''; memoria.senhaLogin = ''; memoria.fotos = [];
+    memoria.fotos = [];
     try { localStorage.removeItem(RASCUNHO); sessionStorage.removeItem(RASCUNHO); } catch { /* ignora */ }
     apagarFotosPedido();
   };
   // links de idioma (cabecalho/rodape) nesta pagina: troca sem recarregar, para
-  // senha e fotos (so na memoria) nao se perderem
+  // as fotos (so na memoria) nao se perderem
   useEffect(() => {
     const aoClicar = (ev: MouseEvent) => {
       if (ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
@@ -244,11 +241,11 @@ export default function PedidoSemConta() {
   // placa e ano conferidos aqui, com o aviso ao lado do campo (item 53)
   const carroDados = !!(carro.marca && carro.modelo && carro.ano);
   const carroOk = carroDados && placaValida(placa) && anoDoCarroValido(carro.ano);
-  const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && senha.length >= 8 && termos;
+  const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && termos;
   const sugestao = sugestaoEmail(email);
   // o que falta em cada passo (aviso + campo que recebe o foco)
   const faltaCarro: [string, string] = !carroDados ? [t('faltaCarro'), !carro.marca ? 'cbbe3-101' : !carro.modelo ? 'cbbe3-102' : 'cbbe3-103'] : [t('faltaCarroConferir'), anoDoCarroValido(carro.ano) ? 'pedido-placa' : 'cbbe3-103'];
-  const faltaContato: [string, string] = !nome.trim() ? [t('faltaNome'), 'pedido-nome'] : !EMAIL_OK.test(email.trim()) ? [t('faltaEmail'), 'pedido-email'] : senha.length < 8 ? [t('faltaSenha'), 'pedido-senha'] : [t('faltaTermos'), 'pedido-termos'];
+  const faltaContato: [string, string] = !nome.trim() ? [t('faltaNome'), 'pedido-nome'] : !EMAIL_OK.test(email.trim()) ? [t('faltaEmail'), 'pedido-email'] : [t('faltaTermos'), 'pedido-termos'];
   useEffect(() => { setFaltando(''); }, [servicoOk, carroOk, endereco, contatoOk]); // corrigiu: o aviso some
 
   const descricaoFinal = () => servicos.length > 0
@@ -264,7 +261,7 @@ export default function PedidoSemConta() {
     return null;
   };
 
-  const enviar = async (modo?: 'codigo') => {
+  const enviar = async () => {
     if (enviando) return;
     setEnviando(true); setErro('');
     try {
@@ -272,35 +269,21 @@ export default function PedidoSemConta() {
       if (!local) { setErro(tn('erroLocalizacao')); setEtapa('local'); return; }
       const form = new FormData();
       form.append('dados', JSON.stringify({
-        origem: 'site', modo, site, idioma: locale, nome: nome.trim(), email: email.trim(), senha, telefone: telefone.trim(), aceitouTermos: termos,
+        origem: 'site', site, idioma: locale, nome: nome.trim(), email: email.trim(), telefone: telefone.trim(), aceitouTermos: termos,
         tipo, descricao: descricaoFinal(), urgencia, endereco, latitude: local.lat, longitude: local.lon, pais: local.pais,
         veiculo: { tipo: carro.tipo, marca: carro.marca, modelo: carro.modelo, ano: carro.ano, codigo: carro.codigo || null, placa: placa.trim() || null },
       }));
       for (const f of fotos) form.append('fotos', f.file);
       const res = await fetch('/api/pedido-sem-conta', { method: 'POST', body: form }).catch(() => null);
       const d = res ? await res.json().catch(() => ({})) : {};
-      if (res?.status === 409 && d.codigo === 'CONTA_EXISTENTE') { setContaExistente(true); return; }
       if (!res || !res.ok) { setErro(textoErroApi(te, res?.status || 500, d)); return; }
-      if (d.solicitacaoId) { limparRascunho(); router.replace(`/cliente/orcamentos/${d.solicitacaoId}`); return; } // entrou com a senha
-      setPendente({ id: d.pendenteId, email: d.email, contaNova: !!d.contaNova });
+      if (d.solicitacaoId) { limparRascunho(); router.replace(`/cliente/orcamentos/${d.solicitacaoId}`); return; } // ja estava logado
+      setPendente({ id: d.pendenteId, email: d.email });
       setEsperaReenvio(30); setCodigo(''); setAviso('');
       setEtapa('codigo');
     } finally {
       setEnviando(false);
     }
-  };
-
-  // e-mail que ja tem conta: entra aqui mesmo e o pedido segue com a sessao
-  const entrarEEnviar = async () => {
-    if (!senhaLogin || enviando) return;
-    setEnviando(true); setErro('');
-    const { error } = await signIn(email.trim(), senhaLogin);
-    setEnviando(false);
-    if (error) {
-      setErro(error === 'email_not_confirmed' ? t('loginNaoConfirmado') : error.startsWith('over_') ? te('MUITAS_TENTATIVAS') : t('loginErro'));
-      return;
-    }
-    await enviar();
   };
 
   const confirmar = async () => {
@@ -315,13 +298,18 @@ export default function PedidoSemConta() {
       if (d.codigo === 'CODIGO_TENTATIVAS') { setPendente(null); setEtapa('contato'); setErro(te('CODIGO_TENTATIVAS')); return; }
       if (!res || !res.ok) { setErro(textoErroApi(te, res?.status || 500, d)); return; }
       registrarEventoMeta('Lead');
-      if (pendente.contaNova) {
-        // conta nova: ja entra com a senha que acabou de criar e abre o pedido
-        const { error } = await signIn(pendente.email, senha);
-        if (!error) { limparRascunho(); router.replace(`/cliente/orcamentos/${d.solicitacaoId}`); return; }
-      }
       limparRascunho();
-      setResultado({ numero: d.numero ?? null, contaNova: pendente.contaNova });
+      // o codigo provou o e-mail: entra na conta (nova ou ja existente) e abre o pedido;
+      // quem ainda nao tem senha passa antes pela tela "crie a sua senha" (pode pular)
+      const destino = `/cliente/orcamentos/${d.solicitacaoId}`;
+      const sessao = d.tokenHash ? await supabase.auth.verifyOtp({ token_hash: d.tokenHash, type: 'email' }).catch(() => null) : null;
+      if (sessao && !sessao.error) {
+        router.replace(d.senhaDefinida === false ? rota('/criar-senha', undefined, { voltar: destino }) : destino);
+        router.refresh();
+        return;
+      }
+      // login falhou (raro): o pedido ja foi, a pessoa entra com um codigo pela tela de login
+      setEnviadoSemLogin(true);
       setEtapa('enviado');
     } finally {
       setEnviando(false);
@@ -360,7 +348,7 @@ export default function PedidoSemConta() {
     </div>
   );
 
-  if (etapa === 'enviado') {
+  if (etapa === 'enviado' && enviadoSemLogin) {
     return (
       <div className="max-w-xl mx-auto px-4 py-16 text-center" data-testid="pedido-enviado">
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -368,13 +356,8 @@ export default function PedidoSemConta() {
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('enviadoTitulo')}</h1>
         <p className="text-gray-600 mb-6">{t('enviadoTexto', { email: pendente?.email || email })}</p>
-        <Link href="/login" className="btn-primary inline-block">{t('enviadoEntrar')}</Link>
-        {!resultado?.contaNova && (aviso ? <p role="status" className="mt-4 text-sm text-green-700">{aviso}</p> : (
-          <button type="button" className="mt-4 text-sm text-primary-700 underline min-h-[44px]" onClick={async () => {
-            await fetch('/api/esqueci-senha', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: pendente?.email || email.trim(), locale }) }).catch(() => {});
-            setAviso(t('linkSenhaEnviado'));
-          }}>{t('enviadoCriarSenha')}</button>
-        ))}
+        {/* a tela de login ja abre em "receber um codigo por e-mail" */}
+        <Link href={rota('/login', undefined, { codigo: '1' })} className="btn-primary inline-block">{t('enviadoEntrar')}</Link>
       </div>
     );
   }
@@ -507,7 +490,7 @@ export default function PedidoSemConta() {
           <div data-testid="passo-contato">
             <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('contatoTitulo')}</h2>
             <p className="text-sm text-gray-500 mb-4">{t('contatoTexto')}</p>
-            {!contaExistente && (
+            {(
               <div className="space-y-3">
                 <div>
                   <label htmlFor="pedido-nome" className="block text-sm font-medium text-gray-700 mb-1">{t('nome')}</label>
@@ -519,14 +502,6 @@ export default function PedidoSemConta() {
                   {sugestao && (
                     <button type="button" onClick={() => setEmail(sugestao)} className="mt-1 text-sm text-amber-800 underline" data-testid="sugestao-email">{t('voceQuisDizer', { email: sugestao })}</button>
                   )}
-                </div>
-                <div>
-                  <label htmlFor="pedido-senha" className="block text-sm font-medium text-gray-700 mb-1">{t('senha')}</label>
-                  <div className="relative">
-                    <input id="pedido-senha" type={verSenha ? 'text' : 'password'} className="input-field pr-20" autoComplete="new-password" autoCapitalize="none" autoCorrect="off" spellCheck={false} minLength={8} maxLength={72} value={senha} onChange={(e) => setSenha(e.target.value)} />
-                    <button type="button" onClick={() => setVerSenha((v) => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-primary-700 px-2 py-1">{verSenha ? t('ocultar') : t('mostrar')}</button>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">{t('senhaDica')}</p>
                 </div>
                 <div>
                   <label htmlFor="pedido-telefone" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')} <span className="text-gray-400 font-normal">({t('opcional')})</span></label>
@@ -547,21 +522,10 @@ export default function PedidoSemConta() {
                     })}
                   </span>
                 </label>
+                {/* transparencia: com este e-mail nasce um acesso BipFix (sem senha; a pessoa cria depois se quiser) */}
+                <p className="text-xs text-gray-500" data-testid="acesso-texto">{t('acessoTexto')}</p>
                 {erro && <p role="alert" className="text-sm text-red-700">{erro}</p>}
                 <Navegar voltar="local" ok={contatoOk} avancar={() => enviar()} rotulo={enviando ? t('enviando') : t('enviarPedido')} falta={faltaContato[0]} campo={faltaContato[1]} />
-              </div>
-            )}
-
-            {contaExistente && (
-              <div className="rounded-lg border-2 border-amber-300 p-4" data-testid="conta-existente">
-                <h3 className="font-semibold text-gray-900 mb-1">{t('contaExistenteTitulo')}</h3>
-                <p className="text-sm text-gray-700 mb-3">{t('contaExistenteTexto', { email: email.trim() })}</p>
-                <label htmlFor="pedido-senha-login" className="block text-sm font-medium text-gray-700 mb-1">{t('senha')}</label>
-                <input id="pedido-senha-login" type="password" className="input-field" autoComplete="current-password" value={senhaLogin} onChange={(e) => setSenhaLogin(e.target.value)} />
-                {erro && <p role="alert" className="mt-2 text-sm text-red-700">{erro}</p>}
-                <button type="button" onClick={entrarEEnviar} disabled={!senhaLogin || enviando} className="btn-primary w-full mt-3 disabled:opacity-50">{t('entrarEEnviar')}</button>
-                <button type="button" onClick={() => enviar('codigo')} disabled={enviando} className="w-full mt-3 min-h-[44px] text-sm font-medium text-primary-700 underline" data-testid="enviar-codigo-conta">{t('naoLembroSenha')}</button>
-                <button type="button" onClick={() => { setContaExistente(false); setErro(''); }} className="w-full mt-1 min-h-[44px] text-sm text-gray-600 underline">{t('usarOutroEmail')}</button>
               </div>
             )}
           </div>
@@ -585,7 +549,7 @@ export default function PedidoSemConta() {
               <button type="button" onClick={() => reenviar()} disabled={esperaReenvio > 0 || enviando} className="min-h-[44px] text-sm text-primary-700 underline disabled:text-gray-400 disabled:no-underline text-left">
                 {esperaReenvio > 0 ? t('reenviarEm', { s: esperaReenvio }) : t('reenviarCodigo')}
               </button>
-              {pendente.contaNova && !corrigindo && (
+              {!corrigindo && (
                 <button type="button" onClick={() => { setCorrigindo(true); setEmailNovo(pendente.email); }} className="min-h-[44px] text-sm text-primary-700 underline text-left" data-testid="corrigir-email">{t('emailErrado')}</button>
               )}
               {corrigindo && (

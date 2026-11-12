@@ -118,5 +118,23 @@
     "abrirApp": "Open the BipFix app",
     "jaConfirmadoTitulo": "Already confirmed your e-mail?",
     "jaConfirmadoTexto": "The confirmation link works only once. If you already clicked it before, your account is ready – just log in with your e-mail and password."
+  },
+  "criarSenha": {
+    "titulo": "Create your password",
+    "texto": "With a password you sign in faster next time. Without one, you sign in with a code sent to your e-mail.",
+    "labelSenha": "Password",
+    "labelConfirmar": "Repeat the password",
+    "placeholderSenha": "At least 8 characters",
+    "placeholderConfirmar": "Repeat the password",
+    "mostrar": "Show",
+    "ocultar": "Hide",
+    "salvar": "Save",
+    "salvando": "Saving…",
+    "agoraNao": "Not now",
+    "dica": "You can create a password later, at any sign-in.",
+    "erroSenhaCurta": "The password needs at least 8 characters.",
+    "erroSenhasNaoCoincidem": "The passwords do not match.",
+    "salvaTitulo": "Password created!",
+    "salvaTexto": "Next time you can sign in with e-mail and password."
   }
 }

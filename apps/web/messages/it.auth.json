@@ -118,5 +118,23 @@
     "abrirApp": "Apri l'app BipFix",
     "jaConfirmadoTitulo": "Hai già confermato l'e-mail?",
     "jaConfirmadoTexto": "Il link di conferma funziona una sola volta. Se l'hai già aperto prima, il tuo account è pronto: accedi con e-mail e password."
+  },
+  "criarSenha": {
+    "titulo": "Crea la tua password",
+    "texto": "Con una password la prossima volta accedi più in fretta. Senza, accedi con un codice inviato alla tua e-mail.",
+    "labelSenha": "Password",
+    "labelConfirmar": "Ripeti la password",
+    "placeholderSenha": "Almeno 8 caratteri",
+    "placeholderConfirmar": "Ripeti la password",
+    "mostrar": "Mostra",
+    "ocultar": "Nascondi",
+    "salvar": "Salva",
+    "salvando": "Salvataggio…",
+    "agoraNao": "Non ora",
+    "dica": "Puoi creare la password più tardi, a qualsiasi accesso.",
+    "erroSenhaCurta": "La password deve avere almeno 8 caratteri.",
+    "erroSenhasNaoCoincidem": "Le password non coincidono.",
+    "salvaTitulo": "Password creata!",
+    "salvaTexto": "La prossima volta puoi accedere con e-mail e password."
   }
 }

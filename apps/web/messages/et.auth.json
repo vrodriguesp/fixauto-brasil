@@ -118,5 +118,23 @@
     "abrirApp": "Ava BipFixi rakendus",
     "jaConfirmadoTitulo": "Kas kinnitasid e-posti juba?",
     "jaConfirmadoTexto": "Kinnituslinki saab kasutada ainult üks kord. Kui vajutasid seda juba varem, on sinu konto valmis – logi lihtsalt sisse oma e-posti ja parooliga."
+  },
+  "criarSenha": {
+    "titulo": "Loo oma parool",
+    "texto": "Parooliga logid järgmine kord kiiremini sisse. Ilma paroolita logid sisse e-postiga saadetud koodiga.",
+    "labelSenha": "Parool",
+    "labelConfirmar": "Korda parooli",
+    "placeholderSenha": "Vähemalt 8 märki",
+    "placeholderConfirmar": "Korda parooli",
+    "mostrar": "Näita",
+    "ocultar": "Peida",
+    "salvar": "Salvesta",
+    "salvando": "Salvestan…",
+    "agoraNao": "Mitte praegu",
+    "dica": "Parooli saad luua ka hiljem, igal sisselogimisel.",
+    "erroSenhaCurta": "Parool peab olema vähemalt 8 märki.",
+    "erroSenhasNaoCoincidem": "Paroolid ei kattu.",
+    "salvaTitulo": "Parool loodud!",
+    "salvaTexto": "Järgmine kord saad sisse logida e-posti ja parooliga."
   }
 }
