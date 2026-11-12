@@ -121,6 +121,14 @@ try {
     const sol = (await admin.from('solicitacoes').select('id').eq('cliente_id', pedidos[l].user).maybeSingle()).data;
     ok(`${nm}: pedido criado`, !!sol);
     ok(`${nm}: entra logado e abre o pedido`, !!sol && page.url().includes(sol.id), page.url());
+    // desde 12/11: conta sem senha passa antes pela tela cheia "crie a sua senha" (pode pular)
+    const temCriarSenha = await page.getByTestId('criar-senha-agora-nao').isVisible().catch(() => false);
+    ok(`${nm}: mostra "crie a sua senha" antes do pedido`, temCriarSenha, page.url());
+    if (temCriarSenha) {
+      await page.getByTestId('criar-senha-agora-nao').click();
+      await page.waitForURL((u) => u.pathname.includes(sol.id), { timeout: 20000 }).catch(() => {});
+      await page.waitForTimeout(1500);
+    }
     const tp = await page.innerText('body');
     ok(`${nm}: tela do pedido mostra o pedido`, tp.includes(`descricao ${l}`) && tp.includes('Toyota'), tp.slice(0, 160));
     await page.screenshot({ path: `${OUT}/lembrete-${l}-${largura}-pedido.png`, fullPage: true });
@@ -192,7 +200,8 @@ try {
     const se = (await admin.from('solicitacoes').select('id, cliente_id').eq('id', d4.solicitacaoId || '00000000-0000-0000-0000-000000000000').maybeSingle()).data;
     ok('conta existente: link do lembrete cria o pedido na mesma conta', se?.cliente_id === ue.user.id, JSON.stringify(d4));
     // auditoria 07/11: conta que ja existia nao entra pelo link (como no fluxo do codigo)
-    ok('conta existente: link nao faz login (sem tokenHash)', r4.status === 200 && d4.tokenHash === null, JSON.stringify(d4));
+    // decisao do dono 12/11: conta existente tambem entra pelo link (o toque prova o e-mail) e mantem a senha
+    ok('conta existente: link entra na conta (tokenHash) e diz que a senha existe', r4.status === 200 && !!d4.tokenHash && d4.senhaDefinida === true, JSON.stringify(d4));
     // auditoria 07/11: e-mail digitado errado e corrigido depois do lembrete -> o link
     // que foi para o endereco errado deixa de valer; o lembrete vai de novo para o certo
     const errado = `lembrete-errado-${tag}@example.test`, certo = `lembrete-certo-${tag}@example.test`;
