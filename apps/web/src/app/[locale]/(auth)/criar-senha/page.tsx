@@ -45,8 +45,14 @@ export default function CriarSenhaPage() {
 
   useEffect(() => {
     if (carregandoLogin) return;
-    // sem login: entra primeiro e volta para ca
-    if (!authUser) { router.replace(rota('/login', undefined, { voltar: window.location.pathname + window.location.search })); return; }
+    // sem login: entra primeiro e volta para ca (confere direto no Supabase: logo depois do
+    // verifyOtp o contexto pode ainda nao ter recebido a sessao)
+    if (!authUser) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session) router.replace(rota('/login', undefined, { voltar: window.location.pathname + window.location.search }));
+      });
+      return;
+    }
     // ja tem senha (recarregou a pagina depois de salvar, ou chegou aqui por engano): segue
     if (user && user.senha_definida !== false && !salvando && !salva) irEmbora();
   }, [carregandoLogin, authUser, user]); // eslint-disable-line react-hooks/exhaustive-deps
