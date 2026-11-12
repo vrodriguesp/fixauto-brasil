@@ -80,8 +80,18 @@ export default function PedidoSemConta() {
   const inputCamera = useRef<HTMLInputElement>(null);
   const adicionarFotos = (e: ChangeEvent<HTMLInputElement>) => {
     const fs = Array.from(e.target.files || []).slice(0, 6 - fotos.length);
+    if (fs.length) contar('foto');
     setFotos((x) => [...x, ...fs.map((file) => ({ file, preview: URL.createObjectURL(file) }))]);
     e.target.value = '';
+  };
+  // "Edasi" tocado com algo faltando: o aviso fica ao lado do botao e o foco vai ao campo
+  // (Clarity 12/11: o botao so ficava palido, sem dizer o que faltava, e a pessoa desistia)
+  const [faltando, setFaltando] = useState('');
+  const focar = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    el.focus({ preventScroll: true });
   };
   // carro
   const [carro, setCarro] = useState({ tipo: 'cars', marca: '', modelo: '', ano: '', codigo: '' });
@@ -184,12 +194,18 @@ export default function PedidoSemConta() {
   // passo novo comeca no alto (o anterior era mais comprido: a pessoa via so o rodape - teste do dono 06/11)
   const primeiraEtapa = useRef(true);
   useEffect(() => {
+    setFaltando('');
     // o passo que voltou do rascunho (pagina recarregada) ja foi contado antes
     if (etapaRestaurada.current === etapa) etapaRestaurada.current = null;
     else if (['detalhe', 'carro', 'local', 'contato'].includes(etapa)) contar(etapa);
     if (primeiraEtapa.current) { primeiraEtapa.current = false; return; }
     window.scrollTo({ top: 0 });
   }, [etapa]);
+  // tela curta (celular deitado): globals.css encolhe o cabecalho desta pagina
+  useEffect(() => {
+    document.body.classList.add('pagina-pedido');
+    return () => document.body.classList.remove('pagina-pedido');
+  }, []);
   useEffect(() => {
     if (esperaReenvio <= 0) return;
     const i = setTimeout(() => setEsperaReenvio((s) => s - 1), 1000);
@@ -221,16 +237,22 @@ export default function PedidoSemConta() {
   const listaFiltrada = lista.filter((sv) => semAcento(rotuloServico(sv.value)).includes(semAcento(busca.trim())));
   const listaCurta = !listaAberta && !busca.trim() && listaFiltrada.length > LISTA_CURTA;
   const listaVisivel = listaCurta ? listaFiltrada.filter((sv, i) => i < LISTA_CURTA || servicos.includes(sv.value)) : listaFiltrada;
-  // escreveu o que precisa OU marcou algum servico da lista
-  const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
+  // escreveu o que precisa OU marcou algum servico da lista OU mandou foto (12/11: para
+  // colisao/lataria/outro nao ha lista e a foto e o que a pessoa mais toca - vale como descricao)
+  const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0 || fotos.length > 0);
   // placa e ano conferidos aqui, com o aviso ao lado do campo (item 53)
-  const carroOk = !!(carro.marca && carro.modelo && carro.ano) && placaValida(placa) && anoDoCarroValido(carro.ano);
+  const carroDados = !!(carro.marca && carro.modelo && carro.ano);
+  const carroOk = carroDados && placaValida(placa) && anoDoCarroValido(carro.ano);
   const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && senha.length >= 8 && termos;
   const sugestao = sugestaoEmail(email);
+  // o que falta em cada passo (aviso + campo que recebe o foco)
+  const faltaCarro: [string, string] = !carroDados ? [t('faltaCarro'), !carro.marca ? 'cbbe3-101' : !carro.modelo ? 'cbbe3-102' : 'cbbe3-103'] : [t('faltaCarroConferir'), anoDoCarroValido(carro.ano) ? 'pedido-placa' : 'cbbe3-103'];
+  const faltaContato: [string, string] = !nome.trim() ? [t('faltaNome'), 'pedido-nome'] : !EMAIL_OK.test(email.trim()) ? [t('faltaEmail'), 'pedido-email'] : senha.length < 8 ? [t('faltaSenha'), 'pedido-senha'] : [t('faltaTermos'), 'pedido-termos'];
+  useEffect(() => { setFaltando(''); }, [servicoOk, carroOk, endereco, contatoOk]); // corrigiu: o aviso some
 
   const descricaoFinal = () => servicos.length > 0
     ? `${tn('servicesPrefix')} ${servicos.map(rotuloServico).join(', ')}${descricao.trim() ? '. ' + descricao.trim() : ''}`
-    : (descricao.trim() || tn('defaultServiceDescription'));
+    : (descricao.trim() || (fotos.length > 0 ? t('descricaoSoFotos') : tn('defaultServiceDescription')));
 
   // sem posicao do aparelho: o endereco digitado vira coordenada (nunca um ponto fixo)
   const resolverLocal = async () => {
@@ -327,10 +349,13 @@ export default function PedidoSemConta() {
   const indice = passos.indexOf(etapa);
   // no celular os botoes ficam presos no rodape da tela: "Edasi" ficava abaixo da dobra
   // (y=876 numa tela de 780) e a pessoa achava que estava travada (Clarity, dono 10/11)
-  const Navegar = ({ voltar, avancar, ok, rotulo }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string }) => (
-    <div className="flex justify-between mt-6 gap-3 sticky bottom-0 z-10 -mx-6 px-6 py-3 bg-white/95 backdrop-blur border-t border-gray-100 rounded-b-xl sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0" data-testid="navegar">
+  // "Edasi" sempre clicavel (so trava enquanto envia): faltando algo, diz o que e e leva ao campo
+  const Navegar = ({ voltar, avancar, ok, rotulo, falta, campo }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string; falta: string; campo: string }) => (
+    <div className="flex flex-wrap justify-between mt-6 gap-3 sticky bottom-0 z-10 -mx-6 px-6 py-3 bg-white/95 backdrop-blur border-t border-gray-100 rounded-b-xl sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0" data-testid="navegar">
+      {faltando && <p role="alert" className="w-full text-sm text-red-700" data-testid="falta-aviso">{faltando}</p>}
       {voltar ? <button type="button" onClick={() => setEtapa(voltar)} className="btn-secondary">{tn('back')}</button> : <span />}
-      <button type="button" onClick={avancar} disabled={!ok || enviando} aria-busy={enviando} className="btn-primary disabled:opacity-50">{rotulo || tn('next')}</button>
+      <button type="button" onClick={() => { if (ok) { setFaltando(''); avancar(); return; } setFaltando(falta); contar(`edasi_bloqueado_${etapa}`); focar(campo); }}
+        disabled={enviando} aria-busy={enviando} className="btn-primary disabled:opacity-50">{rotulo || tn('next')}</button>
     </div>
   );
 
@@ -354,12 +379,12 @@ export default function PedidoSemConta() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">{t('titulo')}</h1>
-      <p className="text-gray-600 mt-1 mb-6">{t('subtitulo')}</p>
+    <div className="pedido-pagina max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <h1 className="pedido-titulo text-2xl font-bold text-gray-900">{t('titulo')}</h1>
+      <p className="pedido-subtitulo text-gray-600 mt-1 mb-6">{t('subtitulo')}</p>
 
       {indice >= 0 && (
-        <div className="flex items-center gap-2 mb-6" aria-label={t('passoDe', { n: indice + 1, total: passos.length })}>
+        <div className="pedido-progresso flex items-center gap-2 mb-6" aria-label={t('passoDe', { n: indice + 1, total: passos.length })}>
           {passos.map((p, i) => <div key={p} className={`flex-1 h-2 rounded-full ${i <= indice ? 'bg-primary-600' : 'bg-gray-200'}`} />)}
           <span className="text-sm text-gray-500 ml-2">{indice + 1}/{passos.length}</span>
         </div>
@@ -373,7 +398,7 @@ export default function PedidoSemConta() {
             <div className="grid grid-cols-2 gap-3">
               {TIPOS_SERVICO.map((s) => (
                 <button key={s.value} type="button" aria-pressed={tipo === s.value}
-                  onClick={() => { if (s.value !== tipo) { setServicos([]); setBusca(''); setListaAberta(false); } setTipo(s.value); setEtapa('detalhe'); }}
+                  onClick={() => { if (s.value !== tipo) { setServicos([]); setBusca(''); setListaAberta(false); } contar('servico'); setTipo(s.value); setEtapa('detalhe'); }}
                   className={`p-4 rounded-lg border-2 text-left transition-all ${tipo === s.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
                   <span className="text-2xl">{s.icon}</span>
                   <p className="font-medium text-gray-900 mt-2">{tc(`tiposServico.${s.value}`)}</p>
@@ -445,7 +470,7 @@ export default function PedidoSemConta() {
                 </button>
               ))}
             </div>
-            <Navegar voltar="servico" ok={servicoOk} avancar={() => setEtapa('carro')} />
+            <Navegar voltar="servico" ok={servicoOk} avancar={() => setEtapa('carro')} falta={lista.length > 0 ? t('faltaDescricaoLista') : t('faltaDescricao')} campo="pedido-descricao" />
           </div>
         )}
 
@@ -461,7 +486,7 @@ export default function PedidoSemConta() {
             {!anoDoCarroValido(carro.ano) && <p role="alert" className="mt-1 text-sm text-red-700">{te('ANO_INVALIDO')}</p>}
             <input id="pedido-placa" className="input-field" maxLength={10} aria-invalid={!placaValida(placa)} placeholder={exemploPlaca(locale)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} />
             {!placaValida(placa) && <p role="alert" className="mt-1 text-sm text-red-700" data-testid="placa-invalida">{te('PLACA_INVALIDA')}</p>}
-            <Navegar voltar="detalhe" ok={carroOk} avancar={() => setEtapa('local')} />
+            <Navegar voltar="detalhe" ok={carroOk} avancar={() => setEtapa('local')} falta={faltaCarro[0]} campo={faltaCarro[1]} />
           </div>
         )}
 
@@ -473,7 +498,7 @@ export default function PedidoSemConta() {
               onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); if (s.paisCodigo) setPais(s.paisCodigo); }} />
             <p className="text-xs text-gray-500 mt-1">{tn('addressHelp')}</p>
             {erro && <p role="alert" className="mt-3 text-sm text-red-700">{erro}</p>}
-            <Navegar voltar="carro" ok={endereco.trim().length > 2} avancar={() => { setErro(''); setEtapa('contato'); }} />
+            <Navegar voltar="carro" ok={endereco.trim().length > 2} avancar={() => { setErro(''); setEtapa('contato'); }} falta={t('faltaEndereco')} campo="pedido-endereco" />
           </div>
         )}
 
@@ -513,7 +538,7 @@ export default function PedidoSemConta() {
                   <input id="pedido-site" tabIndex={-1} autoComplete="off" value={site} onChange={(e) => setSite(e.target.value)} />
                 </div>
                 <label className="flex items-start gap-2 text-sm text-gray-700 pt-1">
-                  <input type="checkbox" checked={termos} onChange={(e) => setTermos(e.target.checked)} className="w-4 h-4 mt-0.5" data-testid="aceito-termos" />
+                  <input id="pedido-termos" type="checkbox" checked={termos} onChange={(e) => setTermos(e.target.checked)} className="w-4 h-4 mt-0.5" data-testid="aceito-termos" />
                   <span>
                     {t.rich('aceitoTermos', {
                       termos: (c) => <Link href="/termos" target="_blank" className="text-primary-700 underline">{c}</Link>,
@@ -522,7 +547,7 @@ export default function PedidoSemConta() {
                   </span>
                 </label>
                 {erro && <p role="alert" className="text-sm text-red-700">{erro}</p>}
-                <Navegar voltar="local" ok={contatoOk} avancar={() => enviar()} rotulo={enviando ? t('enviando') : t('enviarPedido')} />
+                <Navegar voltar="local" ok={contatoOk} avancar={() => enviar()} rotulo={enviando ? t('enviando') : t('enviarPedido')} falta={faltaContato[0]} campo={faltaContato[1]} />
               </div>
             )}
 
