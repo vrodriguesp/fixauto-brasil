@@ -579,7 +579,8 @@ async function extra(caso) {
         await page.getByTestId('confirmar-codigo').click();
         await page.waitForURL((u) => !u.pathname.endsWith('zayavka'), { timeout: 30000 }).catch(() => {});
         ok(`${nm}: confirmado com o e-mail corrigido`, !page.url().endsWith('zayavka'), page.url());
-        const pf = (await admin.from('profiles').select('email').eq('id', p.user_id).maybeSingle()).data;
+        // desde 12/11 o pedido passa para a conta do e-mail certo (a conta do errado e apagada)
+        const pf = (await admin.from('profiles').select('email').eq('email', certo).maybeSingle()).data;
         ok(`${nm}: conta com o e-mail certo`, pf?.email === certo, JSON.stringify(pf));
         await foto(page, 'extra-corrigir-email');
       } else {
