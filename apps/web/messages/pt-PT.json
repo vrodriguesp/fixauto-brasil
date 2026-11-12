@@ -316,7 +316,7 @@
   },
   "home": {
     "metaTitle": "Reparação automóvel em Tallinn: compare orçamentos | BipFix",
-    "metaDescription": "Envie fotografias do dano, receba orçamentos de oficinas de Tallinn e marque a reparação em minutos. Para quem vive na Estónia.",
+    "metaDescription": "Descreva o problema do carro, envie fotografias e peça orçamento a oficinas perto de si. Vê o preço e decide.",
     "metaKeywords": [
       "oficina automóvel perto de mim",
       "comparar orçamentos de reparação automóvel online",
@@ -325,15 +325,15 @@
       "oficina automóvel Tallinn Estónia"
     ],
     "ogTitle": "BipFix - Encontre a oficina certa para o seu carro",
-    "ogDescription": "Compare orçamentos de oficinas verificadas perto de si em minutos.",
+    "ogDescription": "Peça orçamento a oficinas perto de si: o pedido demora cerca de 2 minutos.",
     "carregando": "A carregar...",
     "heroTitulo": "Reparações automóveis,",
     "heroTituloDestaque": "sem surpresas.",
-    "heroTexto": "Transparência total do orçamento à entrega. Compare orçamentos detalhados de oficinas verificadas e acompanhe cada etapa da reparação em tempo real. Simples, seguro e sem custos escondidos.",
+    "heroTexto": "Do orçamento à entrega, tudo num só lugar. Compare orçamentos das oficinas e acompanhe cada etapa da reparação. Fica a saber o preço antes de decidir.",
     "ctaCliente": "Preciso de uma reparação",
     "ctaOficina": "Sou uma oficina ou fornecedor de peças",
     "emergenciaTitulo": "Acabei de bater!",
-    "emergenciaTexto": "Tire uma fotografia agora mesmo e receba orçamentos de oficinas próximas em minutos. Pode também registar o outro veículo envolvido.",
+    "emergenciaTexto": "Tire uma fotografia agora mesmo e envie o pedido a oficinas próximas. Pode também registar o outro veículo envolvido.",
     "comoFuncionaTitulo": "Como funciona",
     "comoFuncionaSubtitulo": "Em poucos passos, recebe orçamentos das melhores oficinas da sua zona",
     "step1Titulo": "Descreva o problema",
@@ -385,7 +385,7 @@
       },
       {
         "pergunta": "Posso usar a BipFix numa emergência?",
-        "resposta": "Sim! Temos um botão de emergência \"Acabei de bater\" que lhe permite registar o incidente rapidamente, tirar fotografias no local e receber orçamentos de oficinas próximas em minutos. Pode também registar o outro veículo envolvido."
+        "resposta": "Sim! Temos um botão de emergência \"Acabei de bater\" que lhe permite registar o incidente rapidamente, tirar fotografias no local e enviar o pedido a oficinas próximas. Pode também registar o outro veículo envolvido."
       },
       {
         "pergunta": "Que tipos de serviços oferecem as oficinas?",
@@ -725,7 +725,7 @@
   },
   "sobre": {
     "metaTitle": "Sobre a BipFix",
-    "metaDescription": "Quem somos, em que fase estamos e como funciona a BipFix: orçamentos de oficina transparentes, avaliações verificadas e nenhuma posição paga.",
+    "metaDescription": "Quem somos, em que fase estamos e como funciona a BipFix: orçamentos transparentes, avaliações só de quem já teve o carro reparado e nenhuma posição paga.",
     "titulo": "Sobre a BipFix",
     "intro": "A BipFix liga condutores que precisam de uma reparação a oficinas independentes: descreve o problema com fotografias, recebe orçamentos detalhados, compara e acompanha a reparação. A BipFix é apenas a plataforma — não faz reparações nem vende peças.",
     "estagioTitulo": "Em que fase estamos",
@@ -875,8 +875,8 @@
         "texto": "Enviar o pedido e comparar orçamentos não custa nada. A reparação paga-se diretamente à oficina."
       },
       {
-        "titulo": "Oficinas verificadas",
-        "texto": "Verificamos o registo de cada oficina antes de poder enviar orçamentos."
+        "titulo": "Oficinas que fazem este serviço",
+        "texto": "O pedido vai para oficinas que fazem este tipo de serviço."
       },
       {
         "titulo": "No seu idioma",

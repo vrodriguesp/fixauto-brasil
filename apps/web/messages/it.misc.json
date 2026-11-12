@@ -387,7 +387,7 @@
   },
   "emergencia": {
     "metaTitle": "Hai avuto un incidente? Segnalalo subito",
-    "metaDescription": "Hai avuto un incidente d'auto? Segnalalo, scatta foto del danno e ricevi preventivi dalle officine vicine in pochi minuti, gratis.",
+    "metaDescription": "Hai avuto un incidente d’auto? Segnalalo, scatta foto del danno e chiedi un preventivo alle officine vicine, gratis.",
     "metaKeywords": [
       "ho avuto un incidente d'auto",
       "cosa fare dopo un incidente stradale",
@@ -395,7 +395,7 @@
       "preventivo carrozzeria urgente"
     ],
     "ogTitle": "Hai avuto un incidente? Segnalalo subito",
-    "ogDescription": "Scatta foto del danno e ricevi preventivi dalle officine vicine in pochi minuti.",
+    "ogDescription": "Scatta foto del danno e chiedi un preventivo alle officine vicine.",
     "successTitle": "Emergenza registrata!",
     "successText": "Le officine vicine sono state avvisate e invieranno presto i preventivi.",
     "nextStepTitle": "Prossimo passo",
@@ -1126,7 +1126,7 @@
     "cta": {
       "pedido": {
         "titulo": "Ti serve un preventivo?",
-        "texto": "Descrivi il problema e ricevi preventivi da officine verificate vicino a te.",
+        "texto": "Descrivi il problema e chiedi un preventivo alle officine vicino a te.",
         "botao": "Richiedi preventivi"
       },
       "emergencia": {

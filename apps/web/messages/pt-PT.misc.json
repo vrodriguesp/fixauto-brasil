@@ -387,7 +387,7 @@
   },
   "emergencia": {
     "metaTitle": "Acabou de Bater com o Carro? Registe Já",
-    "metaDescription": "Acabou de ter um acidente de viação? Registe-o, tire fotografias do dano e receba orçamentos de oficinas próximas em minutos, gratuitamente.",
+    "metaDescription": "Acabou de ter um acidente de viação? Registe-o, tire fotografias do dano e peça orçamento a oficinas próximas, gratuitamente.",
     "metaKeywords": [
       "acabei de bater com o carro",
       "o que fazer depois de um acidente de viação",
@@ -395,7 +395,7 @@
       "orçamento urgente de bate-chapa"
     ],
     "ogTitle": "Acabou de Bater com o Carro? Registe Já",
-    "ogDescription": "Tire fotografias do dano e receba orçamentos de oficinas próximas em minutos.",
+    "ogDescription": "Tire fotografias do dano e peça orçamento a oficinas próximas.",
     "successTitle": "Emergência registada!",
     "successText": "As oficinas próximas foram notificadas e enviarão orçamentos em breve.",
     "nextStepTitle": "Próximo passo",
@@ -1126,7 +1126,7 @@
     "cta": {
       "pedido": {
         "titulo": "Precisa de um orçamento de reparação?",
-        "texto": "Descreva o problema e receba orçamentos de oficinas verificadas perto de si.",
+        "texto": "Descreva o problema e peça orçamento a oficinas perto de si.",
         "botao": "Receber orçamentos"
       },
       "emergencia": {

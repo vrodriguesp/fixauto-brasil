@@ -387,7 +387,7 @@
   },
   "emergencia": {
     "metaTitle": "Just Crashed Your Car? Report It Now",
-    "metaDescription": "Just had a car accident? Report it, take photos of the damage, and get quotes from nearby repair shops in minutes, for free.",
+    "metaDescription": "Just had a car accident? Report it, take photos of the damage and ask nearby repair shops for a price, for free.",
     "metaKeywords": [
       "just crashed my car",
       "what to do after a car accident",
@@ -395,7 +395,7 @@
       "urgent body shop quote"
     ],
     "ogTitle": "Just Crashed Your Car? Report It Now",
-    "ogDescription": "Take photos of the damage and get quotes from nearby repair shops in minutes.",
+    "ogDescription": "Take photos of the damage and ask nearby repair shops for a price.",
     "successTitle": "Emergency logged!",
     "successText": "Nearby repair shops have been notified and will send quotes shortly.",
     "nextStepTitle": "Next step",
@@ -1126,7 +1126,7 @@
     "cta": {
       "pedido": {
         "titulo": "Need a repair quote?",
-        "texto": "Describe the problem and get quotes from verified repair shops near you.",
+        "texto": "Describe the problem and ask repair shops near you for a price.",
         "botao": "Get quotes"
       },
       "emergencia": {

@@ -114,7 +114,7 @@
   },
   "emergencia": {
     "metaTitle": "Acabei de Bater - Registre o Acidente Agora",
-    "metaDescription": "Bateu o carro? Registre o acidente, tire fotos do dano e receba orçamentos de oficinas mecânicas próximas em minutos, gratuitamente.",
+    "metaDescription": "Bateu o carro? Registre o acidente, tire fotos do dano e peça orçamento para oficinas mecânicas próximas, gratuitamente.",
     "metaKeywords": [
       "acabei de bater o carro",
       "o que fazer depois de um acidente de carro",
@@ -122,7 +122,7 @@
       "orçamento funilaria urgente"
     ],
     "ogTitle": "Acabei de Bater - Registre o Acidente Agora",
-    "ogDescription": "Tire fotos do dano e receba orçamentos de oficinas próximas em minutos.",
+    "ogDescription": "Tire fotos do dano e peça orçamento para oficinas próximas.",
     "successTitle": "Emergência registrada!",
     "successText": "Oficinas próximas foram notificadas e enviarão orçamentos em breve.",
     "nextStepTitle": "Próximo passo",
@@ -853,7 +853,7 @@
     "cta": {
       "pedido": {
         "titulo": "Precisa de um orçamento?",
-        "texto": "Descreva o problema e receba orçamentos de oficinas verificadas perto de você.",
+        "texto": "Descreva o problema e peça orçamento para oficinas perto de você.",
         "botao": "Pedir orçamento"
       },
       "emergencia": {

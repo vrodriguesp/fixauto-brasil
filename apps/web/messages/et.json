@@ -325,7 +325,7 @@
   },
   "home": {
     "metaTitle": "Autoremont Tallinnas: võrdle hinnapakkumisi | BipFix",
-    "metaDescription": "Pildista oma auto kahjustust, saa hinnapakkumised kontrollitud töökodadelt sinu lähedal ja broneeri remont mõne minutiga. BipFix käivitub esmalt Tallinnas.",
+    "metaDescription": "Kirjelda auto probleemi, lisa foto ja küsi hinda Tallinna töökodadelt. Näed hinda ja otsustad ise. BipFix käivitub esmalt Tallinnas.",
     "metaKeywords": [
       "autotöökoda minu lähedal",
       "autoremondi hinnapakkumine",
@@ -334,15 +334,15 @@
       "autoremont Tallinn"
     ],
     "ogTitle": "BipFix - Leia õige töökoda oma autole",
-    "ogDescription": "Võrdle kontrollitud autotöökodade hinnapakkumisi sinu lähedal mõne minutiga.",
+    "ogDescription": "Küsi hinda Tallinna autotöökodadelt – päring võtab umbes 2 minutit.",
     "carregando": "Laadin...",
     "heroTitulo": "Autoremont Tallinnas,",
     "heroTituloDestaque": "ilma üllatusteta.",
-    "heroTexto": "Täielik läbipaistvus hinnapakkumisest kuni üleandmiseni. Võrdle kontrollitud töökodade detailseid hinnapakkumisi ja jälgi remondi iga etappi reaalajas. Lihtne, turvaline ja ilma varjatud kuludeta.",
+    "heroTexto": "Hinnapakkumisest kuni auto üleandmiseni – kõik ühes kohas. Võrdle Tallinna töökodade hinnapakkumisi ja jälgi remondi iga etappi. Näed hinda enne, kui otsustad.",
     "ctaCliente": "Vajan remonti",
     "ctaOficina": "Olen autotöökoda või varuosade müüja",
     "emergenciaTitulo": "Sattusin just avariisse!",
-    "emergenciaTexto": "Tee kohe foto ja saa lähedal asuvatelt töökodadelt hinnapakkumised mõne minutiga. Saad registreerida ka teise osalenud sõiduki.",
+    "emergenciaTexto": "Tee kohe foto ja saada päring lähedal asuvatele töökodadele. Saad registreerida ka teise osalenud sõiduki.",
     "comoFuncionaTitulo": "Kuidas see toimib",
     "comoFuncionaSubtitulo": "Mõne sammuga saad hinnapakkumised oma piirkonna parimatelt töökodadelt",
     "step1Titulo": "Kirjelda probleemi",
@@ -394,7 +394,7 @@
       },
       {
         "pergunta": "Kas saan BipFixi kasutada õnnetuse korral?",
-        "resposta": "Jah! Meil on hädaolukorra nupp \"Sattusin just avariisse\", millega saad juhtunu kiiresti registreerida, teha kohapeal fotod ja saada lähedal asuvatelt töökodadelt hinnapakkumised mõne minutiga. Saad registreerida ka teise osalenud sõiduki."
+        "resposta": "Jah! Meil on hädaolukorra nupp \"Sattusin just avariisse\", millega saad juhtunu kiiresti registreerida, teha kohapeal fotod ja saata päring lähedal asuvatele töökodadele. Saad registreerida ka teise osalenud sõiduki."
       },
       {
         "pergunta": "Milliseid teenuseid töökojad pakuvad?",
@@ -734,7 +734,7 @@
   },
   "sobre": {
     "metaTitle": "BipFixist",
-    "metaDescription": "Kes me oleme, millises faasis oleme ja kuidas BipFix töötab: läbipaistvad remondipakkumised, kontrollitud hinnangud ja ühtegi tasulist positsiooni ei ole.",
+    "metaDescription": "Kes me oleme ja kuidas BipFix töötab: läbipaistvad remondipakkumised, hinnangud ainult remonditud autode omanikelt, tasulisi positsioone pole.",
     "titulo": "BipFixist",
     "intro": "BipFix ühendab remonti vajavad autojuhid sõltumatute töökodadega: kirjeldad probleemi fotodega, saad üksikasjalikud hinnapakkumised, võrdled neid ja jälgid remonti. BipFix on ainult platvorm — me ei remondi autosid ega müü varuosi.",
     "estagioTitulo": "Kus me praegu oleme",
@@ -884,8 +884,8 @@
         "texto": "Päringu saatmine ja pakkumiste võrdlemine ei maksa midagi. Remondi eest maksad otse töökojale."
       },
       {
-        "titulo": "Kontrollitud töökojad",
-        "texto": "Kontrollime iga töökoja registreeringut äriregistris enne, kui ta saab pakkumisi saata."
+        "titulo": "Töökojad, kes teevad seda tööd",
+        "texto": "Päring läheb Tallinna töökodadele, kes sellist tööd teevad."
       },
       {
         "titulo": "Sinu keeles",

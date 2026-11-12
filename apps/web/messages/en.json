@@ -319,7 +319,7 @@
   },
   "home": {
     "metaTitle": "Car Repair Quotes in Tallinn – Compare Garages | BipFix",
-    "metaDescription": "Send photos of your car's damage, get quotes from verified repair shops near you, and book the fix in minutes. Now piloting in Tallinn, Estonia.",
+    "metaDescription": "Describe your car’s problem, add a photo and ask Tallinn repair shops for a price. You see the price and decide. Now piloting in Tallinn, Estonia.",
     "metaKeywords": [
       "find a car repair shop near me",
       "compare auto repair quotes online",
@@ -328,15 +328,15 @@
       "auto repair shop Tallinn Estonia"
     ],
     "ogTitle": "BipFix - Find the right repair shop for your car",
-    "ogDescription": "Compare quotes from verified repair shops near you in minutes.",
+    "ogDescription": "Ask Tallinn repair shops for a price – the request takes about 2 minutes.",
     "carregando": "Loading...",
     "heroTitulo": "Car repairs in Tallinn,",
     "heroTituloDestaque": "no surprises.",
-    "heroTexto": "Full transparency from quote to delivery. Compare detailed quotes from verified repair shops and track every stage of the repair in real time. Simple, secure, and no hidden costs.",
+    "heroTexto": "From quote to handover, all in one place. Compare quotes from Tallinn repair shops and follow every stage of the repair. You see the price before you decide.",
     "ctaCliente": "I need a repair",
     "ctaOficina": "I'm a repair shop or parts supplier",
     "emergenciaTitulo": "I've just crashed!",
-    "emergenciaTexto": "Take a photo right now and get quotes from nearby shops within minutes. You can also log the other vehicle involved.",
+    "emergenciaTexto": "Take a photo right now and send a request to nearby shops. You can also log the other vehicle involved.",
     "comoFuncionaTitulo": "How it works",
     "comoFuncionaSubtitulo": "In just a few steps, you get quotes from the best repair shops in your area",
     "step1Titulo": "Describe the problem",
@@ -388,7 +388,7 @@
       },
       {
         "pergunta": "Can I use BipFix in an emergency?",
-        "resposta": "Yes! We have an \"I've just crashed\" emergency button that lets you log the incident quickly, take photos on the spot and get quotes from nearby shops within minutes. You can also log the other vehicle involved."
+        "resposta": "Yes! We have an \"I've just crashed\" emergency button that lets you log the incident quickly, take photos on the spot and send a request to nearby shops. You can also log the other vehicle involved."
       },
       {
         "pergunta": "What kinds of services do the shops offer?",
@@ -728,7 +728,7 @@
   },
   "sobre": {
     "metaTitle": "About BipFix",
-    "metaDescription": "Who we are, what stage we are at and how BipFix works: transparent repair quotes, verified reviews and no paid rankings.",
+    "metaDescription": "Who we are, what stage we are at and how BipFix works: transparent repair quotes, reviews only from customers whose car was repaired, and no paid rankings.",
     "titulo": "About BipFix",
     "intro": "BipFix connects drivers who need a car repair with independent repair shops: you describe the problem with photos, receive detailed quotes, compare them and follow the repair. BipFix is only the platform — it does not repair cars or sell parts.",
     "estagioTitulo": "Where we are",
@@ -878,8 +878,8 @@
         "texto": "Sending a request and comparing quotes costs nothing. You pay the repair shop directly for the repair."
       },
       {
-        "titulo": "Checked repair shops",
-        "texto": "We check every shop’s registration in the Commercial Register before it can send quotes."
+        "titulo": "Shops that do this work",
+        "texto": "Your request goes to Tallinn repair shops that do this kind of work."
       },
       {
         "titulo": "In your language",

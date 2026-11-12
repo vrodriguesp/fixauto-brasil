@@ -2,7 +2,7 @@
   "meta": {
     "brand": "BipFix",
     "title": "BipFix - Ti mettiamo in contatto con la migliore officina",
-    "description": "Confronta i preventivi di officine verificate vicino a te: invia le foto del danno, ricevi le offerte e segui la riparazione. Semplice e trasparente.",
+    "description": "Descrivi il problema, invia le foto del danno e ricevi i preventivi delle officine. Vedi il prezzo e decidi tu.",
     "tituloLogin": "Accedi",
     "tituloCadastro": "Crea un account",
     "tituloEscolherTipo": "Scegli il tipo di account",
@@ -316,7 +316,7 @@
   },
   "home": {
     "metaTitle": "Riparazione auto in Italia: preventivi delle officine | BipFix",
-    "metaDescription": "Invia le foto del danno, ricevi preventivi dalle officine vicine a te — a Milano, Roma, Napoli, Torino e nel resto d'Italia — e prenota la riparazione in pochi minuti. Gratis per gli automobilisti.",
+    "metaDescription": "Descrivi il problema, invia le foto del danno e ricevi i preventivi delle officine. Vedi il prezzo e decidi tu.",
     "metaKeywords": [
       "officina meccanica vicino a me",
       "preventivo riparazione auto online",
@@ -326,15 +326,15 @@
       "confronto preventivi officina Italia"
     ],
     "ogTitle": "BipFix - L'officina giusta per la tua auto",
-    "ogDescription": "Confronta preventivi di officine verificate vicino a te, in tutta Italia, in pochi minuti.",
+    "ogDescription": "Chiedi un preventivo alle officine vicino a te: per la richiesta bastano circa 2 minuti.",
     "carregando": "Caricamento...",
     "heroTitulo": "Riparazione auto,",
     "heroTituloDestaque": "senza sorprese.",
-    "heroTexto": "Trasparenza totale dal preventivo alla consegna. Confronta preventivi dettagliati di officine verificate e segui ogni fase della riparazione in tempo reale. Semplice, sicuro e senza costi nascosti.",
+    "heroTexto": "Dal preventivo alla consegna, tutto in un unico posto. Confronta i preventivi delle officine e segui ogni fase della riparazione. Vedi il prezzo prima di decidere.",
     "ctaCliente": "Ho bisogno di una riparazione",
     "ctaOficina": "Sono un'officina o un fornitore di ricambi",
     "emergenciaTitulo": "Ho appena avuto un incidente!",
-    "emergenciaTexto": "Scatta subito una foto e ricevi preventivi dalle officine vicine in pochi minuti. Puoi registrare anche l'altro veicolo coinvolto.",
+    "emergenciaTexto": "Scatta subito una foto e invia la richiesta alle officine vicine. Puoi registrare anche l’altro veicolo coinvolto.",
     "comoFuncionaTitulo": "Come funziona",
     "comoFuncionaSubtitulo": "In pochi passaggi ricevi preventivi dalle officine della tua città, da Milano a Napoli",
     "step1Titulo": "Descrivi il problema",
@@ -386,7 +386,7 @@
       },
       {
         "pergunta": "Posso usare BipFix in caso di emergenza?",
-        "resposta": "Sì! Abbiamo un pulsante di emergenza \"Ho appena avuto un incidente\" che ti permette di registrare rapidamente l'accaduto, scattare foto sul posto e ricevere preventivi dalle officine vicine in pochi minuti. Puoi registrare anche l'altro veicolo coinvolto e compilare con calma la constatazione amichevole (CAI). Se ci sono feriti, chiama prima il 112 (o il 118)."
+        "resposta": "Sì! Abbiamo un pulsante di emergenza \"Ho appena avuto un incidente\" che ti permette di registrare rapidamente l'accaduto, scattare foto sul posto e inviare la richiesta alle officine vicine. Puoi registrare anche l'altro veicolo coinvolto e compilare con calma la constatazione amichevole (CAI). Se ci sono feriti, chiama prima il 112 (o il 118)."
       },
       {
         "pergunta": "Che tipo di servizi offrono le officine?",
@@ -726,7 +726,7 @@
   },
   "sobre": {
     "metaTitle": "Chi è BipFix",
-    "metaDescription": "Chi siamo, in che fase siamo e come funziona BipFix in Italia: preventivi di officina trasparenti, recensioni verificate e nessuna posizione a pagamento.",
+    "metaDescription": "Chi siamo, in che fase siamo e come funziona BipFix: preventivi trasparenti, recensioni solo di chi ha riparato l’auto e nessuna posizione a pagamento.",
     "titulo": "Chi è BipFix",
     "intro": "BipFix mette in contatto gli automobilisti che hanno bisogno di una riparazione con officine indipendenti in Italia: descrivi il problema con le foto, ricevi preventivi dettagliati, li confronti e segui la riparazione. BipFix è solo la piattaforma: non ripara auto e non vende ricambi.",
     "estagioTitulo": "In che fase siamo",
@@ -876,8 +876,8 @@
         "texto": "Inviare la richiesta e confrontare i preventivi non costa nulla. La riparazione la paghi direttamente all’officina."
       },
       {
-        "titulo": "Officine verificate",
-        "texto": "Verifichiamo la registrazione di ogni officina prima che possa inviare preventivi."
+        "titulo": "Officine che fanno questo lavoro",
+        "texto": "La richiesta va alle officine che fanno questo tipo di lavoro."
       },
       {
         "titulo": "Nella tua lingua",

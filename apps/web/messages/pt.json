@@ -316,7 +316,7 @@
   },
   "home": {
     "metaTitle": "Orçamentos de oficina mecânica: compare e agende | BipFix",
-    "metaDescription": "Envie fotos do dano do carro, receba orçamentos de oficinas mecânicas verificadas perto de você e agende o reparo em minutos. Rápido e transparente.",
+    "metaDescription": "Descreva o problema do carro, envie fotos e peça orçamento para oficinas mecânicas perto de você. Você vê o preço e decide.",
     "metaKeywords": [
       "oficina mecânica perto de mim",
       "orçamento de conserto de carro online",
@@ -325,15 +325,15 @@
       "orçamento de funilaria e pintura"
     ],
     "ogTitle": "BipFix - A oficina certa para o seu carro, sem sair de casa",
-    "ogDescription": "Compare orçamentos de oficinas mecânicas verificadas perto de você em minutos.",
+    "ogDescription": "Peça orçamento para oficinas perto de você: o pedido leva cerca de 2 minutos.",
     "carregando": "Carregando...",
     "heroTitulo": "Reparo do carro",
     "heroTituloDestaque": "sem surpresas.",
-    "heroTexto": "Transparência do orçamento até a entrega. Compare orçamentos detalhados de oficinas verificadas e acompanhe cada etapa do reparo em tempo real. Simples, seguro e sem custos ocultos.",
+    "heroTexto": "Do orçamento à entrega, tudo em um só lugar. Compare orçamentos das oficinas e acompanhe cada etapa do reparo. Você vê o preço antes de decidir.",
     "ctaCliente": "Preciso de um reparo",
     "ctaOficina": "Sou uma oficina ou loja de peças",
     "emergenciaTitulo": "Acabei de bater!",
-    "emergenciaTexto": "Tire uma foto agora e receba orçamentos de oficinas próximas em minutos. Registre o outro veículo envolvido.",
+    "emergenciaTexto": "Tire uma foto agora e envie o pedido para oficinas próximas. Registre o outro veículo envolvido.",
     "comoFuncionaTitulo": "Como funciona",
     "comoFuncionaSubtitulo": "Em poucos passos você recebe orçamentos das melhores oficinas da sua região",
     "step1Titulo": "Descreva o problema",
@@ -385,7 +385,7 @@
       },
       {
         "pergunta": "Posso usar o BipFix em caso de emergência?",
-        "resposta": "Sim! Temos um botão de emergência \"Acabei de bater\" que permite registrar o incidente rapidamente, tirar fotos na hora e receber orçamentos de oficinas próximas em minutos. Você também pode registrar o outro veículo envolvido."
+        "resposta": "Sim! Temos um botão de emergência \"Acabei de bater\" que permite registrar o incidente rapidamente, tirar fotos na hora e enviar o pedido para oficinas próximas. Você também pode registrar o outro veículo envolvido."
       },
       {
         "pergunta": "Quais tipos de serviço as oficinas oferecem?",
@@ -725,7 +725,7 @@
   },
   "sobre": {
     "metaTitle": "Sobre o BipFix",
-    "metaDescription": "Quem somos, em que fase estamos e como funciona o BipFix: orçamentos de oficina transparentes, avaliações verificadas e nenhuma posição paga.",
+    "metaDescription": "Quem somos, em que fase estamos e como funciona o BipFix: orçamentos transparentes, avaliações só de quem já teve o carro reparado e nenhuma posição paga.",
     "titulo": "Sobre o BipFix",
     "intro": "O BipFix conecta motoristas que precisam de um conserto a oficinas independentes: você descreve o problema com fotos, recebe orçamentos detalhados, compara e acompanha o reparo. O BipFix é só a plataforma — não faz reparos nem vende peças.",
     "estagioTitulo": "Em que fase estamos",
@@ -875,8 +875,8 @@
         "texto": "Enviar o pedido e comparar orçamentos não custa nada. O conserto você paga direto à oficina."
       },
       {
-        "titulo": "Oficinas verificadas",
-        "texto": "Verificamos o registro de cada oficina antes que ela possa mandar orçamentos."
+        "titulo": "Oficinas que fazem esse serviço",
+        "texto": "O pedido vai para oficinas que fazem esse tipo de serviço."
       },
       {
         "titulo": "No seu idioma",

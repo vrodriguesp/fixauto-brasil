@@ -387,7 +387,7 @@
   },
   "emergencia": {
     "metaTitle": "Autoavarii? Teata sellest kohe",
-    "metaDescription": "Sattusid avariisse? Teata õnnetusest, tee kahjustusest pildid ja saa lähedal asuvatelt töökodadelt hinnapakkumised minutitega, tasuta.",
+    "metaDescription": "Sattusid avariisse? Teata õnnetusest, tee kahjustusest pildid ja küsi lähedal asuvatelt töökodadelt hinda – tasuta.",
     "metaKeywords": [
       "autoavarii mida teha",
       "liiklusõnnetusest teatamine",
@@ -395,7 +395,7 @@
       "auto sai avariisse"
     ],
     "ogTitle": "Autoavarii? Teata sellest kohe",
-    "ogDescription": "Tee kahjustusest pildid ja saa lähedal asuvatelt töökodadelt hinnapakkumised minutitega.",
+    "ogDescription": "Tee kahjustusest pildid ja küsi lähedal asuvatelt töökodadelt hinda.",
     "successTitle": "Avarii registreeritud!",
     "successText": "Lähedal asuvaid töökodasid teavitati ja nad saadavad peagi hinnapakkumised.",
     "nextStepTitle": "Järgmine samm",
@@ -1126,7 +1126,7 @@
     "cta": {
       "pedido": {
         "titulo": "Vajad remondi hinnapakkumist?",
-        "texto": "Kirjelda muret ja saa pakkumised kontrollitud töökodadelt sinu lähedal.",
+        "texto": "Kirjelda muret ja küsi hinda lähedal asuvatelt töökodadelt.",
         "botao": "Küsi hinnapakkumist"
       },
       "emergencia": {
