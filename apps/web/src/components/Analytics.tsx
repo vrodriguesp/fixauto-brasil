@@ -177,19 +177,34 @@ export default function Analytics() {
       {/* Aviso compacto (Google: banner de cookies "de tamanho razoavel";
           EDPB 05/2020: recusar tao facil quanto aceitar) e ausente no fluxo
           de acidente, onde cobria o formulario e nao ha o que medir. */}
+      {/* Celular (dono 12/11, medicao de 14 sites grandes: Delfi 63% da tela, Rimi 60%, IKEA 47%,
+          Booking 38%, ERR/Telia/Swedbank/LHV tela cheia; o nosso tinha 7% e ficava por cima da
+          barra Tagasi/Edasi sem ninguem responder): cartao grande com fundo escurecido - a pessoa
+          decide logo e ele sai da frente. Recusar e aceitar do mesmo tamanho (EDPB 05/2020).
+          Computador: a faixa larga de sempre. */}
+      {mostrandoAviso && <div className="fixed inset-0 z-40 bg-black/40 sm:hidden" aria-hidden="true" data-testid="aviso-cookies-fundo" />}
       {mostrandoAviso && (
-        <div ref={avisoRef} data-testid="aviso-cookies" className="aviso-cookies fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-          <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-4 flex items-center gap-3 sm:gap-4">
-            <p className="text-xs sm:text-sm text-gray-700 flex-1 leading-snug">
-              {/* celular: uma linha curta (o texto longo cobria metade da tela) */}
-              <span className="aviso-cookies-curto sm:hidden">{t('textoCurto')}{' '}<Link href="/privacidade" className="text-primary-700 underline">{t('linkCurto')}</Link></span>
-              <span className="aviso-cookies-longo hidden sm:inline">{t('texto')}{' '}<Link href="/privacidade" className="text-primary-700 underline">{t('linkPrivacidade')}</Link>.</span>
+        <div ref={avisoRef} data-testid="aviso-cookies" role="dialog" aria-labelledby="aviso-cookies-titulo"
+          className="aviso-cookies fixed bottom-0 left-0 right-0 z-50 bg-white shadow-lg rounded-t-2xl sm:rounded-none border-t border-gray-200 max-h-[85vh] overflow-y-auto" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+          <div className="sm:hidden px-5 pt-5 pb-4">
+            <h2 id="aviso-cookies-titulo" className="text-lg font-semibold text-gray-900 mb-2">{t('titulo')}</h2>
+            <p className="text-[15px] text-gray-700 leading-relaxed">
+              {t('texto')}{' '}<Link href="/privacidade" className="text-primary-700 underline">{t('linkPrivacidade')}</Link>.
             </p>
-            <div className="flex gap-2 sm:gap-3 flex-shrink-0">
-              <button onClick={() => responder('rejected')} className="btn-secondary !py-2 !px-3 sm:!px-4 text-sm min-h-[40px]">
+            <div className="mt-4 grid gap-3">
+              <button onClick={() => responder('accepted')} className="btn-primary w-full min-h-[48px]">{t('aceitar')}</button>
+              <button onClick={() => responder('rejected')} className="w-full min-h-[48px] rounded-lg font-semibold border-2 border-primary-600 text-primary-700 bg-white active:bg-primary-50">{t('rejeitar')}</button>
+            </div>
+          </div>
+          <div className="hidden sm:flex max-w-6xl mx-auto px-4 py-4 items-center gap-4">
+            <p className="text-sm text-gray-700 flex-1 leading-snug">
+              {t('texto')}{' '}<Link href="/privacidade" className="text-primary-700 underline">{t('linkPrivacidade')}</Link>.
+            </p>
+            <div className="flex gap-3 flex-shrink-0">
+              <button onClick={() => responder('rejected')} className="btn-secondary !py-2 !px-4 text-sm min-h-[40px]">
                 {t('rejeitar')}
               </button>
-              <button onClick={() => responder('accepted')} className="btn-primary !py-2 !px-3 sm:!px-4 text-sm min-h-[40px]">
+              <button onClick={() => responder('accepted')} className="btn-primary !py-2 !px-4 text-sm min-h-[40px]">
                 {t('aceitar')}
               </button>
             </div>

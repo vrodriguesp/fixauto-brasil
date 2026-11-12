@@ -619,6 +619,7 @@
     "erroFotoInvalida": "Selle päringu fotosid ei õnnestunud lugeda. Palu kliendilt uus foto."
   },
   "cookieBanner": {
+    "titulo": "Küpsised",
     "texto": "Kasutame küpsiseid, et mõista, kuidas sa saiti kasutad, mõõta meie reklaame ja parandada sinu kasutuskogemust. Nõustudes kinnitad, et oled tutvunud meie",
     "linkPrivacidade": "privaatsuspoliitikaga",
     "rejeitar": "Keeldu",
