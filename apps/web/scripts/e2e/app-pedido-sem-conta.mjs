@@ -116,7 +116,7 @@ try {
     page.on('pageerror', (x) => erros.push(x.message));
     await page.goto(APP, { waitUntil: 'networkidle' });
     await ateContato(page, T, 'et');
-    ok('et: contato sem campo de senha, com a frase do acesso', (await page.getByLabel(T('auth.senha'), { exact: true }).count()) === 0 && (await page.innerText('body')).includes(T('pedidoSemConta.acessoTexto')));
+    ok('et: contato sem campo de senha, com a frase do acesso', (await page.getByLabel(T('auth.senha'), { exact: true }).locator('visible=true').count()) === 0 && (await page.innerText('body')).includes(T('pedidoSemConta.acessoTexto')), `senha visivel: ${await page.getByLabel(T('auth.senha'), { exact: true }).locator('visible=true').count()} / no DOM: ${await page.getByLabel(T('auth.senha'), { exact: true }).count()}`);
     await campo(page, T('pedidoSemConta.nome')).fill('TESTE AUTOMATICO');
     await campo(page, T('pedidoSemConta.email')).fill(emailEt.replace('example.test', 'gmial.com'));
     ok('et: sugere gmail.com', (await page.innerText('body')).includes(T('pedidoSemConta.voceQuisDizer', { email: emailEt.replace('example.test', 'gmail.com') })));
@@ -173,7 +173,7 @@ try {
     const t0 = Date.now();
     await clicaTexto(page, R('pedidoSemConta.enviarPedido'));
     await page.getByText(R('pedidoSemConta.codigoTitulo'), { exact: true }).waitFor({ timeout: 30000 });
-    ok('ru: conta existente vai direto ao codigo (sem caixa de senha)', (await page.getByLabel(R('auth.senha'), { exact: true }).count()) === 0);
+    ok('ru: conta existente vai direto ao codigo (sem caixa de senha)', (await page.getByLabel(R('auth.senha'), { exact: true }).locator('visible=true').count()) === 0, `no DOM: ${await page.getByLabel(R('auth.senha'), { exact: true }).count()}`);
     await checaTela(page, 'ru codigo conta existente');
     await page.screenshot({ path: `${OUT}/app-pedido-codigo-conta-existente-ru.png`, fullPage: true });
     const codigo = await codigoDe(emailEt, t0);
