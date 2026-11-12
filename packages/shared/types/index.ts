@@ -65,6 +65,9 @@ export interface Profile {
   // Idioma preferido pra e-mails/notificacoes assincronas (pt/en/et/it) -
   // capturado do locale da URL no cadastro, nunca do pais/moeda.
   idioma: string;
+  // false = conta criada pelo pedido sem senha e ainda sem senha (migracao 080):
+  // a tela "crie a sua senha" aparece a cada login ate a pessoa criar uma
+  senha_definida?: boolean;
   created_at: string;
 }
 
