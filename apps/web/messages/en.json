@@ -52,6 +52,11 @@
     "avisos": "Alerts"
   },
   "sejaParceiro": {
+    "formOuCadastroLink": "Register your shop yourself",
+    "formOuCadastro": "Want to start right away?",
+    "ctaContato": "Contact me",
+    "ctaCadastroSub": "Free, about 2 minutes",
+    "ctaCadastro": "Register your shop",
     "metaTitle": "Become a BipFix partner",
     "metaDescription": "For repair shops and parts stores: free to join, no commission, and 30 days' notice of any change. Leave your contact and we'll get in touch.",
     "ogTitle": "Become a BipFix partner",
@@ -66,8 +71,8 @@
     "beneficio2Texto": "As one of the first partners, your direct feedback shapes which features come next.",
     "beneficio3Titulo": "Less competition early on",
     "beneficio3Texto": "There are few shops on the platform today, so partners who join early receive requests with less competition.",
-    "formTitulo": "Register your interest",
-    "formSubtitulo": "Takes under a minute. No commitment.",
+    "formTitulo": "Prefer that we contact you?",
+    "formSubtitulo": "Leave your details – we reply within 1 business day by email or WhatsApp.",
     "souOficina": "I'm a repair shop",
     "souLoja": "I'm a parts supplier",
     "campoResponsavel": "Contact name",

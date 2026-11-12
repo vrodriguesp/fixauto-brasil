@@ -52,6 +52,11 @@
     "avisos": "Avvisi"
   },
   "sejaParceiro": {
+    "formOuCadastroLink": "Registra tu la tua officina",
+    "formOuCadastro": "Vuoi iniziare subito?",
+    "ctaContato": "Contattatemi",
+    "ctaCadastroSub": "Gratis, circa 2 minuti",
+    "ctaCadastro": "Registra la tua officina",
     "metaTitle": "Diventa partner di BipFix",
     "metaDescription": "Per officine e ricambisti: adesione gratuita, nessuna commissione e 30 giorni di preavviso per ogni modifica. Lascia il tuo contatto e ti richiamiamo.",
     "ogTitle": "Diventa partner di BipFix",
@@ -66,8 +71,8 @@
     "beneficio2Texto": "Come uno dei primi, il tuo feedback diretto contribuisce a decidere quali funzionalità arriveranno sulla piattaforma.",
     "beneficio3Titulo": "Meno concorrenza all'inizio",
     "beneficio3Texto": "Oggi sulla piattaforma ci sono poche officine, quindi chi entra presto riceve richieste con meno concorrenza.",
-    "formTitulo": "Registra il tuo interesse",
-    "formSubtitulo": "Richiede meno di un minuto. Nessun impegno.",
+    "formTitulo": "Preferisci essere contattato?",
+    "formSubtitulo": "Lascia i tuoi dati: rispondiamo entro 1 giorno lavorativo via email o WhatsApp.",
     "souOficina": "Sono un'officina",
     "souLoja": "Sono un fornitore di ricambi",
     "campoResponsavel": "Nome del referente",

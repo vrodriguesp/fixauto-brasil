@@ -52,6 +52,11 @@
     "avisos": "Teated"
   },
   "sejaParceiro": {
+    "formOuCadastroLink": "Registreeri töökoda ise",
+    "formOuCadastro": "Tahad kohe alustada?",
+    "ctaContato": "Võtke minuga ühendust",
+    "ctaCadastroSub": "Tasuta, umbes 2 minutit",
+    "ctaCadastro": "Registreeri töökoda",
     "metaTitle": "Saa BipFixi partneriks",
     "metaDescription": "Töökodadele ja varuosade poodidele: liitumine on tasuta, komisjonitasu ei ole ja muudatustest teatame 30 päeva ette. Jäta oma kontakt ja võtame ühendust.",
     "ogTitle": "Saa BipFixi partneriks",
@@ -66,8 +71,8 @@
     "beneficio2Texto": "Ühe esimese partnerina kujundab sinu otsene tagasiside, millised funktsioonid platvormile järgmisena lisatakse.",
     "beneficio3Titulo": "Vähem konkurentsi alguses",
     "beneficio3Texto": "Platvormil on praegu vähe töökodasid, nii et varakult liitunud partnerid saavad päringuid väiksema konkurentsiga.",
-    "formTitulo": "Registreeri oma huvi",
-    "formSubtitulo": "Võtab alla minuti. Ilma kohustusteta.",
+    "formTitulo": "Eelistad, et võtame ise ühendust?",
+    "formSubtitulo": "Jäta kontakt – vastame 1 tööpäeva jooksul e-posti või WhatsAppi teel.",
     "souOficina": "Olen autotöökoda",
     "souLoja": "Olen varuosade müüja",
     "campoResponsavel": "Kontaktisiku nimi",
