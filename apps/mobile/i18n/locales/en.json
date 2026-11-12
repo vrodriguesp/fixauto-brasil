@@ -28,6 +28,7 @@
     "opcional": "optional",
     "selecione": "Select",
     "nenhumResultado": "No results",
+    "usarTexto": "Use: “{texto}”",
     "fechar": "Close"
   },
   "tabs": {
@@ -73,7 +74,7 @@
     "dadosInvalidos": "Please check the details you entered.",
     "slogan": "Quotes from repair shops near you.",
     "emergenciaTexto": "Report the accident now, no account needed",
-    "selo1": "Shops with a verified company registration",
+    "selo1": "Workshops in Tallinn",
     "selo2": "Free for drivers",
     "selo3": "Your data is protected",
     "idioma": "Language",
@@ -586,7 +587,7 @@
   },
   "pedidoSemConta": {
     "titulo": "Get prices from Tallinn repair shops",
-    "subtitulo": "Free, no sign-up first – about 2 minutes.",
+    "subtitulo": "Free – about 2 minutes.",
     "passoDe": "Step {n} of {total}",
     "fotosTitulo": "Photos (optional)",
     "removerFoto": "Remove photo",

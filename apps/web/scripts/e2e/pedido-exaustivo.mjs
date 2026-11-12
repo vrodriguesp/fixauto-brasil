@@ -73,6 +73,23 @@ const codigoDe = async (email, depois) => {
   }
   return { codigo: null, assunto: '', texto: '' };
 };
+// carro (12/11): fora da FIPE marca/modelo sao campos de escrever com lista (CampoCatalogo);
+// na FIPE (aparelho no Brasil) continuam <select>. Escolhe/le do mesmo jeito nos dois.
+async function escolherCarroCampo(page, id, nome, re) {
+  const el = page.locator('#' + id);
+  await el.waitFor({ state: 'visible', timeout: 20000 });
+  if ((await el.evaluate((e) => e.tagName)) === 'SELECT') {
+    await page.waitForFunction((e) => e.options.length > 2, await el.elementHandle(), { timeout: 20000 });
+    const opc = await el.locator('option').allTextContents();
+    await el.selectOption({ label: opc.find((o) => (re || new RegExp('^' + nome + '$')).test(o)) || opc[1] });
+    return;
+  }
+  await page.waitForFunction((e) => !e.getAttribute('aria-busy') || e.getAttribute('aria-busy') === 'false', await el.elementHandle(), { timeout: 20000 }).catch(() => {});
+  await el.click(); await el.fill(nome.slice(0, 4));
+  const op = page.getByTestId(id + '-lista').getByRole('option', { name: nome, exact: true });
+  await op.waitFor({ timeout: 20000 }); await op.click();
+}
+const valorCarroCampo = (page, id) => page.locator('#' + id).evaluate((e) => e.tagName === 'SELECT' ? e.options[e.selectedIndex]?.text : e.value).catch(() => null);
 const lancar = () => chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
 const contexto = (browser, l, largura) => browser.newContext({
   viewport: { width: largura, height: largura < 500 ? 844 : 900 }, deviceScaleFactor: largura < 500 ? 2 : 1, isMobile: largura < 500, hasTouch: largura < 500,
@@ -205,13 +222,8 @@ async function site(l, largura) {
     await checar(page, `${nm} carro`);
     await page.getByRole('button', { name: T('clienteNovaSolicitacao.next'), exact: true }).click();
     ok(`${nm}: Edasi sem carro avisa e fica no passo`, await page.getByTestId('passo-carro').getByTestId('falta-aviso').isVisible());
-    const marca = page.getByLabel(T('veiculoForm.labelMarca'), { exact: false }).locator('visible=true').first();
-    await page.waitForFunction((el) => el.options.length > 2, await marca.elementHandle(), { timeout: 20000 });
-    await marca.selectOption({ label: 'Toyota' });
-    const modelo = page.getByLabel(T('veiculoForm.labelModelo'), { exact: false }).locator('visible=true').first();
-    await page.waitForFunction((el) => el.options.length > 2, await modelo.elementHandle(), { timeout: 20000 });
-    const opc = await modelo.locator('option').allTextContents();
-    await modelo.selectOption({ label: opc.find((o) => /Corolla/.test(o)) || opc[1] });
+    await escolherCarroCampo(page, 'cbbe3-101', 'Toyota');
+    await escolherCarroCampo(page, 'cbbe3-102', 'Corolla', /Corolla/);
     const ano = page.getByLabel(T('veiculoForm.labelAno'), { exact: false }).locator('visible=true').first();
     await ano.fill('2017').catch(async () => { await ano.selectOption({ index: 1 }); });
     await page.locator('#pedido-placa').fill(`${l.slice(0, 2)}${largura}`.toUpperCase());
@@ -223,18 +235,17 @@ async function site(l, largura) {
     await page.getByRole('button', { name: T('clienteNovaSolicitacao.next'), exact: true }).click();
     await page.getByTestId('passo-carro').waitFor();
     ok(`${nm}: avancar de novo mantem a placa`, (await page.locator('#pedido-placa').inputValue()).length > 0);
-    const marcaVolta = await marca.evaluate((el) => el.options[el.selectedIndex]?.text);
-    const modeloVolta = await modelo.evaluate((el) => el.options[el.selectedIndex]?.text).catch(() => null);
+    const marcaVolta = await valorCarroCampo(page, 'cbbe3-101');
+    const modeloVolta = await valorCarroCampo(page, 'cbbe3-102');
     ok(`${nm}: ir e voltar mantem marca e modelo`, marcaVolta === 'Toyota' && /Corolla/.test(modeloVolta || ''), `${marcaVolta} / ${modeloVolta}`);
     await foto(page, `site-${l}-${largura}-2carro`);
     {
       const outro = OUTRO[l];
       await trocarIdioma(page, l, outro, largura);
       await page.getByTestId('passo-carro').waitFor({ timeout: 5000 });
-      const m2 = page.locator('[data-testid=passo-carro] select').first();
-      await page.waitForFunction((el) => el.options.length > 2 && el.selectedIndex > 0, await m2.elementHandle(), { timeout: 20000 }).catch(() => {});
-      const marcaIdioma = await m2.evaluate((el) => el.options[el.selectedIndex]?.text);
-      const modeloIdioma = await page.locator('[data-testid=passo-carro] select').nth(1).evaluate((el) => el.options[el.selectedIndex]?.text).catch(() => null);
+      await page.waitForFunction(() => { const e = document.getElementById('cbbe3-101'); return !!e && (e.tagName === 'SELECT' ? e.selectedIndex > 0 : !!e.value); }, null, { timeout: 20000 }).catch(() => {});
+      const marcaIdioma = await valorCarroCampo(page, 'cbbe3-101');
+      const modeloIdioma = await valorCarroCampo(page, 'cbbe3-102');
       ok(`${nm}: trocar idioma no carro mantem marca, modelo e placa`, marcaIdioma === 'Toyota' && /Corolla/.test(modeloIdioma || '') && (await page.locator('#pedido-placa').inputValue()).length > 0, `${marcaIdioma} / ${modeloIdioma}`);
       await trocarIdioma(page, outro, l, largura);
       await page.getByTestId('passo-carro').waitFor({ timeout: 5000 });
@@ -497,13 +508,8 @@ async function extra(caso) {
       await page.getByRole('button', { name: new RegExp(T('constants.tiposServico.colisao')) }).first().click();
       await page.locator('#pedido-descricao').fill('Scratch');
       await page.getByRole('button', { name: T('clienteNovaSolicitacao.next'), exact: true }).click();
-      const marca = page.getByLabel(T('veiculoForm.labelMarca'), { exact: false }).locator('visible=true').first();
-      await page.waitForFunction((el) => el.options.length > 2, await marca.elementHandle(), { timeout: 20000 });
-      await marca.selectOption({ label: 'Toyota' });
-      const modelo = page.getByLabel(T('veiculoForm.labelModelo'), { exact: false }).locator('visible=true').first();
-      await page.waitForFunction((el) => el.options.length > 2, await modelo.elementHandle(), { timeout: 20000 });
-      const opc = await modelo.locator('option').allTextContents();
-      await modelo.selectOption({ label: opc.find((o) => /Corolla/.test(o)) || opc[1] });
+      await escolherCarroCampo(page, 'cbbe3-101', 'Toyota');
+      await escolherCarroCampo(page, 'cbbe3-102', 'Corolla', /Corolla/);
       await page.getByLabel(T('veiculoForm.labelAno'), { exact: false }).locator('visible=true').first().fill('2017').catch(() => {});
       await page.locator('#pedido-placa').fill('ex 123');
       await page.getByRole('button', { name: T('clienteNovaSolicitacao.next'), exact: true }).click();
@@ -545,12 +551,8 @@ async function extra(caso) {
       await page.getByRole('button', { name: new RegExp(T('constants.tiposServico.outro')) }).first().click();
       await page.locator('#pedido-descricao').fill('Test');
       await page.getByRole('button', { name: T('clienteNovaSolicitacao.next'), exact: true }).click();
-      const marca = page.getByLabel(T('veiculoForm.labelMarca'), { exact: false }).locator('visible=true').first();
-      await page.waitForFunction((el) => el.options.length > 2, await marca.elementHandle(), { timeout: 20000 });
-      await marca.selectOption({ label: 'Toyota' });
-      const modelo = page.getByLabel(T('veiculoForm.labelModelo'), { exact: false }).locator('visible=true').first();
-      await page.waitForFunction((el) => el.options.length > 2, await modelo.elementHandle(), { timeout: 20000 });
-      await modelo.selectOption({ index: 1 });
+      await escolherCarroCampo(page, 'cbbe3-101', 'Toyota');
+      await escolherCarroCampo(page, 'cbbe3-102', 'Corolla', /Corolla/);
       await page.getByLabel(T('veiculoForm.labelAno'), { exact: false }).locator('visible=true').first().fill('2017').catch(() => {});
       await page.getByRole('button', { name: T('clienteNovaSolicitacao.next'), exact: true }).click();
       await page.locator('#pedido-endereco').fill(l === 'it' ? 'Milano' : 'Tallinn');

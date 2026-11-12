@@ -412,7 +412,7 @@ export default function PedidoScreen() {
           <Text className="text-sm text-gray-500 mb-4">{t('pedidoSemConta.carroDica')}</Text>
           <VehicleCatalogPicker label={t('veiculos.marca')} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" />
           {marca && (
-            <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={`/api/vehicle-catalog?tipo=cars&marca=${marca.code}`} />
+            <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={marca.code ? `/api/vehicle-catalog?tipo=cars&marca=${marca.code}` : ''} />
           )}
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.ano')}</Text>
           <TextInput accessibilityLabel={t('veiculos.ano')} value={ano} onChangeText={(v) => setAno(v.replace(/\D/g, '').slice(0, 4))} keyboardType="number-pad" maxLength={4} className={`${CAMPO} mb-4`} />

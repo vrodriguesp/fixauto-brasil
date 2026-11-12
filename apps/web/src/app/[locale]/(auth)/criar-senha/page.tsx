@@ -27,6 +27,9 @@ export default function CriarSenhaPage() {
   const [erro, setErro] = useState('');
   const [salva, setSalva] = useState(false);
   const saiu = useRef(false);
+  // abre no alto: vindo do codigo do pedido a pagina chegava 40 px rolada e o titulo ficava
+  // embaixo do menu (jornada 360x640, 12/11)
+  useEffect(() => { window.scrollTo({ top: 0 }); }, []);
 
   // para onde ir depois: ?voltar= (caminho interno '/cliente/...' ou ja com o idioma
   // '/ee/et/cliente/...', como a tela de login manda); so endereco do proprio site

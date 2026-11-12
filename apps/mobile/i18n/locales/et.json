@@ -28,6 +28,7 @@
     "opcional": "valikuline",
     "selecione": "Vali",
     "nenhumResultado": "Tulemusi pole",
+    "usarTexto": "Kasuta: „{texto}“",
     "fechar": "Sulge"
   },
   "tabs": {
@@ -73,7 +74,7 @@
     "dadosInvalidos": "Kontrolli sisestatud andmeid.",
     "slogan": "Hinnapakkumised lähedal asuvatelt töökodadelt.",
     "emergenciaTexto": "Registreeri avarii kohe, kontot pole vaja",
-    "selo1": "Kontrollitud äriregistri andmetega töökojad",
+    "selo1": "Tallinna töökojad",
     "selo2": "Autojuhtidele tasuta",
     "selo3": "Sinu andmed on kaitstud",
     "idioma": "Keel",
@@ -586,7 +587,7 @@
   },
   "pedidoSemConta": {
     "titulo": "Küsi hinda Tallinna töökodadelt",
-    "subtitulo": "Tasuta ja ilma eelneva registreerimiseta – umbes 2 minutit.",
+    "subtitulo": "Tasuta – umbes 2 minutit.",
     "passoDe": "Samm {n}/{total}",
     "fotosTitulo": "Fotod (valikuline)",
     "removerFoto": "Eemalda foto",

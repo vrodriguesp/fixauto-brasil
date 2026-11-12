@@ -304,7 +304,7 @@ export default function EmergenciaScreen() {
         <View className="mb-2">
           <VehicleCatalogPicker label={t('veiculos.marca')} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" />
           {marca && (
-            <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={`/api/vehicle-catalog?tipo=cars&marca=${marca.code}`} />
+            <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={marca.code ? `/api/vehicle-catalog?tipo=cars&marca=${marca.code}` : ''} />
           )}
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.placa')}</Text>
           <TextInput accessibilityLabel={t('veiculos.placa')} value={placa} onChangeText={(v) => setPlaca(v.toUpperCase())} autoCapitalize="characters" maxLength={10}

@@ -36,6 +36,8 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
 
   useEffect(() => {
     if (!open) return;
+    // marca escrita pela pessoa (fora do catalogo): nao ha lista de modelos, so o campo de escrever
+    if (!fetchUrl) { setItems([]); return; }
     setLoading(true);
     setErro(false);
     fetch(`${API_BASE_URL}${fetchUrl}`)
@@ -48,6 +50,9 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
   // busca sem acento: "skoda" acha "Škoda", "citroen" acha "Citroën"
   const sem = (v: string) => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const filtrados = items.filter((i) => sem(i.name).includes(sem(busca.trim())));
+  // carro que nao esta no catalogo: fica com o que a pessoa escreveu (code '') - dono 12/11
+  const escrito = busca.trim();
+  const livre = escrito.length > 0 && !items.some((i) => sem(i.name) === sem(escrito));
 
   // No Android, com o teclado aberto dentro do Modal, o primeiro toque num item nao vira
   // "press" (so fecha o teclado) e era preciso tocar de novo (emulador 08/11). O toque em si
@@ -83,6 +88,12 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
             autoFocus
             className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]"
           />
+          {livre && (
+            <Pressable onPress={() => escolher({ code: '', name: escrito })} accessibilityRole="button" testID="usar-texto"
+              className="py-3 mb-2 border-b border-gray-200">
+              <Text className="text-base text-primary-700 font-medium">{t('common.usarTexto', { texto: escrito })}</Text>
+            </Pressable>
+          )}
           <FlatList keyboardDismissMode={Platform.OS === 'web' ? 'none' : 'on-drag'} keyboardShouldPersistTaps="handled"
             data={filtrados}
             keyExtractor={(item) => item.code}

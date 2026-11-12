@@ -4,7 +4,11 @@
 // lateral, elemento fora da tela, caixa vazando da borda, texto cortado, textos se
 // encostando, menu/botao cobrindo o campo em que se digita, tela nova que nao abre no
 // alto, erro de JS. Foto de cada tela em resultados/jornada-humana/<idioma>-<largura>/.
-//   node jornada-humana.mjs <.env.local> <idioma> <largura>      (ex.: et 390, ru 1280)
+//   node jornada-humana.mjs <.env.local> <idioma> <largura> [altura]   (ex.: et 390, ru 360 640, ru 1280)
+// 12/11 (Clarity: cliente real nao achou o campo do ano, escondido atras da barra Tagasi/Edasi): o
+// aviso de cookies aparece e a pessoa toca para recusar; o carro e escolhido pela lista da setinha e
+// escrevendo; depois de cada escolha o PROXIMO campo tem de estar na tela sem rolar; a area livre
+// desconta tudo o que e fixo/preso no pe da tela; cada tela tambem vai em foto do que a pessoa ve.
 // Atalho de preparo (banco): o carro "chega hoje" (data do agendamento movida para agora)
 // para a oficina registrar a chegada na tela "Hoje" - o resto e tudo pela tela.
 import fs from 'node:fs';
@@ -20,9 +24,10 @@ if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new E
 const L = process.argv[3] || 'et';
 const W = Number(process.argv[4] || 390);
 const CEL = W < 500;
+const H = Number(process.argv[5] || (CEL ? 844 : 900));
 const SITE = process.env.SITE || 'http://localhost:3100';
 const RAIZ = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/Documentos/_teste_local';
-const OUT = `${RAIZ}/resultados/jornada-humana/${L}-${W}`;
+const OUT = `${RAIZ}/resultados/jornada-humana/${L}-${W}x${H}`;
 fs.rmSync(OUT, { recursive: true, force: true }); fs.mkdirSync(OUT, { recursive: true });
 const EMAILS = env.EMAIL_PASTA_TESTE;
 const PRE = { pt: '/br/pt', 'pt-PT': '/pt/pt', en: '/ee/en', et: '/ee/et', it: '/it/it', ru: '/ee/ru' }[L];
@@ -51,10 +56,11 @@ const FOTO = `${RAIZ}/site/apps/web/public/apple-touch-icon.png`;
 
 const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
 const UA_IPHONE = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
-const contexto = async () => {
-  const c = await browser.newContext({ viewport: { width: W, height: CEL ? 844 : 900 }, deviceScaleFactor: CEL ? 2 : 1, isMobile: CEL, hasTouch: CEL, locale: LOCALE,
+const contexto = async ({ comCookies = false } = {}) => {
+  const c = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: CEL ? 2 : 1, isMobile: CEL, hasTouch: CEL, locale: LOCALE,
     ...(CEL ? { userAgent: UA_IPHONE } : {}), geolocation: { latitude: 59.437, longitude: 24.745 }, permissions: ['geolocation'], extraHTTPHeaders: { 'x-real-ip': ip() } });
-  await c.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} });
+  // o cliente ve o aviso de cookies como qualquer visitante novo; a oficina ja respondeu antes
+  if (!comCookies) await c.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} });
   await c.route('**/api/traduzir', (r) => r.fulfill({ json: { traducoes: [] } }));
   return c;
 };
@@ -68,13 +74,34 @@ async function ver(p, loc) {
   for (let i = 0; i < 40; i++) {
     const b = await loc.first().boundingBox();
     if (!b) { await sleep(150); continue; }
-    const { vh, barra } = await p.evaluate(() => { const b = document.querySelector('.barra-inferior'); return { vh: innerHeight, barra: !!b && getComputedStyle(b).display !== 'none' }; });
-    const topoLivre = 70, baseLivre = vh - (barra ? 80 : 10); // espaco do menu de baixo so quando ele esta na tela
+    const { topoLivre, baseLivre } = await areaLivre(p, loc);
     if (b.y >= topoLivre && b.y + Math.min(b.height, 60) <= baseLivre) return b;
     const dy = b.y < topoLivre ? Math.max(-500, b.y - topoLivre - 40) : Math.min(500, b.y + Math.min(b.height, 60) - baseLivre + 60);
     await p.mouse.wheel(0, dy); await sleep(120);
   }
   return loc.first().boundingBox();
+}
+// area da tela que a pessoa ve livre: abaixo do menu de cima e acima de tudo o que fica fixo/preso
+// no pe da tela (barra Tagasi/Edasi, aviso de cookies, menu de baixo) - menos o proprio elemento
+async function areaLivre(p, loc) {
+  return loc.first().evaluate((alvo) => {
+    let topo = 0, base = innerHeight;
+    for (const f of document.querySelectorAll('body *')) {
+      const cs = getComputedStyle(f);
+      if (!/fixed|sticky/.test(cs.position) || cs.display === 'none' || cs.visibility === 'hidden' || f.contains(alvo) || alvo.contains(f)) continue;
+      const q = f.getBoundingClientRect(); if (q.width < innerWidth / 2 || q.height < 10 || q.bottom <= 0 || q.top >= innerHeight) continue;
+      if (q.top <= 5) topo = Math.max(topo, q.bottom); else if (q.bottom >= innerHeight - 5 || q.top > innerHeight / 2) base = Math.min(base, q.top);
+    }
+    return { topoLivre: topo + 4, baseLivre: base - 4 };
+  });
+}
+// o campo esta na tela, sem a pessoa rolar? (ela nao sabe que existe algo mais abaixo)
+async function naTela(p, loc, nome) {
+  await loc.first().waitFor({ state: 'visible', timeout: 15000 }); await sleep(900); // rolagem suave do site
+  const b = await loc.first().boundingBox(); const { topoLivre, baseLivre } = await areaLivre(p, loc);
+  const vis = !!b && b.y >= topoLivre - 2 && b.y + Math.min(b.height, 44) <= baseLivre + 2;
+  ok(`"${nome}" aparece na tela sem rolar (nada por cima)`, vis && !(await coberto(p, loc)), b ? `campo y=${Math.round(b.y)}-${Math.round(b.y + b.height)}, area livre ${Math.round(topoLivre)}-${Math.round(baseLivre)}` : 'sem caixa');
+  await p.screenshot({ path: `${OUT}/${String(++nTela).padStart(2, '0')}-ve-${nome.replace(/[^a-z0-9]+/gi, '_').slice(0, 40)}.png` }).catch(() => {});
 }
 // o ponto do toque cai no proprio elemento? (nada cobrindo: menu, botao do chat, aviso)
 async function coberto(p, loc) {
@@ -153,7 +180,7 @@ async function tela(p, nome, { topo = false } = {}) {
     for (let i = 0; i < folhas.length; i++) for (let j = i + 1; j < folhas.length; j++) {
       const a = folhas[i], b = folhas[j]; if (a.e.contains(b.e) || b.e.contains(a.e)) continue;
       // folha/janela por cima da pagina: so compara textos da mesma camada
-      const camada = (e) => { for (let x = e; x && x !== document.body; x = x.parentElement) { if (getComputedStyle(x).position === 'fixed') return x; } return null; };
+      const camada = (e) => { for (let x = e; x && x !== document.body; x = x.parentElement) { if (/fixed|sticky/.test(getComputedStyle(x).position)) return x; } return null; };
       if (camada(a.e) !== camada(b.e)) continue;
       const w = Math.min(a.r.right, b.r.right) - Math.max(a.r.left, b.r.left), h = Math.min(a.r.bottom, b.r.bottom) - Math.max(a.r.top, b.r.top);
       if (w > 3 && h > 3) out.encosta.push(`${nome(a.e)} x ${nome(b.e)}`);
@@ -168,6 +195,8 @@ async function tela(p, nome, { topo = false } = {}) {
   ok(`[${nome}] nenhum texto cortado`, !r.cortado.length, r.cortado.join(' | '));
   ok(`[${nome}] nenhum texto por cima de outro`, !r.encosta.length, r.encosta.join(' | '));
   await p.screenshot({ path: `${OUT}/${String(nTela).padStart(2, '0')}-${nome.replace(/[^a-z0-9]+/gi, '_').slice(0, 50)}.png`, fullPage: true }).catch(() => {});
+  // o que a pessoa ve de fato (sem rolar)
+  await p.screenshot({ path: `${OUT}/${String(nTela).padStart(2, '0')}-${nome.replace(/[^a-z0-9]+/gi, '_').slice(0, 50)}-tela.png` }).catch(() => {});
 }
 const botao = (p, re) => p.getByRole('button', { name: re }).locator('visible=true');
 const rx = (s) => new RegExp(String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&').split(/\s*\{[^}]*\}\s*/)[0].trim(), 'i');
@@ -179,9 +208,16 @@ try {
   const { data: of } = await admin.from('oficinas').select('id, profile_id, nome_fantasia').eq('profile_id', ofp.id).single();
 
   // ================= 1) CLIENTE: pedido sem conta, como pessoa =================
-  const ctxC = await contexto(); const pC = await pagina(ctxC, 'cliente');
+  const ctxC = await contexto({ comCookies: true }); const pC = await pagina(ctxC, 'cliente');
   await pC.goto(`${SITE}${PRE}`, { waitUntil: 'networkidle' });
-  await tela(pC, 'inicio');
+  await tela(pC, 'inicio com aviso de cookies');
+  const aviso = pC.getByTestId('aviso-cookies');
+  ok('aviso de cookies aparece para quem chega', await aviso.isVisible().catch(() => false));
+  if (await aviso.isVisible().catch(() => false)) {
+    const ab = await aviso.boundingBox(); console.log(`     aviso de cookies: ${Math.round(ab.height)}px = ${Math.round(ab.height / H * 100)}% da tela`);
+    await tocar(pC, aviso.getByRole('button').first(), 'recusar cookies');
+    ok('aviso de cookies some depois da escolha', !(await aviso.isVisible().catch(() => false)));
+  }
   await tocar(pC, pC.locator(`main a[href$="${SLUG_PEDIDO}"]`), 'pedir orcamentos (inicio)');
   await pC.waitForURL(new RegExp(SLUG_PEDIDO), { timeout: 15000 });
   await tela(pC, 'pedido 1 tipos');
@@ -193,15 +229,37 @@ try {
     ok('foto: 1 toque abre a escolha de arquivo', !!fc); if (fc) { await fc.setFiles(FOTO); await sleep(1500); } }
   await tocar(pC, botao(pC, new RegExp(`^${T('clienteNovaSolicitacao.next')}$`, 'i')).last(), 'avancar (detalhe)');
   await tela(pC, 'pedido 3 carro', { topo: true });
-  const marca = pC.locator('[data-testid=passo-carro] select').first();
-  await pC.waitForFunction((el) => el.options.length > 2, await marca.elementHandle(), { timeout: 60000 }); // tabela de carros externa (FIPE, Brasil) as vezes demora
-  await escolher(pC, marca, { label: 'Toyota' }, 'marca');
-  const mod = pC.locator('[data-testid=passo-carro] select').nth(1);
-  await pC.waitForFunction((el) => el.options.length > 2, await mod.elementHandle(), { timeout: 60000 }); // tabela de carros externa (FIPE, Brasil) as vezes demora
-  const opc = await mod.locator('option').allTextContents();
-  await escolher(pC, mod, { label: opc.find((o) => /Corolla/.test(o)) || opc[1] }, 'modelo');
-  const ano = pC.getByLabel(T('veiculoForm.labelAno'), { exact: false }).locator('visible=true').first();
-  if (await ano.count()) { if ((await ano.evaluate((e) => e.tagName)) === 'SELECT') await escolher(pC, ano, '2017', 'ano'); else await digitar(pC, ano, '2017', 'ano'); }
+  if (await pC.getByTestId('cbbe3-101-abrir').count()) {
+    // catalogo europeu: campo de escrever + setinha da lista (dono 12/11: as duas formas)
+    await tocar(pC, pC.getByTestId('cbbe3-101-abrir'), 'setinha da lista de marcas');
+    const lista = pC.getByTestId('cbbe3-101-lista');
+    ok('setinha: a lista de marcas abre', await lista.isVisible().catch(() => false));
+    ok('setinha: o teclado nao abre (campo sem foco)', await pC.evaluate(() => document.activeElement?.id !== 'cbbe3-101'));
+    await tela(pC, 'carro lista de marcas aberta');
+    const toyota = lista.getByRole('option', { name: 'Toyota', exact: true });
+    await toyota.scrollIntoViewIfNeeded(); await sleep(300); // dedo rolando a lista
+    await tocar(pC, toyota, 'Toyota na lista');
+    ok('marca escolhida pela lista', (await pC.locator('#cbbe3-101').inputValue()) === 'Toyota');
+    // modelo: o campo ja vem com o foco e a lista aberta; a pessoa escreve e toca
+    await naTela(pC, pC.locator('#cbbe3-102'), 'campo do modelo depois da marca');
+    await pC.keyboard.type('coro', { delay: 60 }); await sleep(500);
+    const corolla = pC.getByTestId('cbbe3-102-lista').getByRole('option', { name: 'Corolla', exact: true });
+    ok('modelo: escrever "coro" mostra Corolla', await corolla.isVisible().catch(() => false));
+    await tela(pC, 'carro modelo escrevendo');
+    await tocar(pC, corolla, 'Corolla na lista filtrada');
+    await naTela(pC, pC.locator('#cbbe3-103'), 'campo do ano depois do modelo');
+    await digitar(pC, pC.locator('#cbbe3-103'), '2017', 'ano');
+  } else {
+    const marca = pC.locator('[data-testid=passo-carro] select').first();
+    await pC.waitForFunction((el) => el.options.length > 2, await marca.elementHandle(), { timeout: 60000 });
+    await escolher(pC, marca, { label: 'Toyota' }, 'marca');
+    const mod = pC.locator('[data-testid=passo-carro] select').nth(1);
+    await pC.waitForFunction((el) => el.options.length > 2, await mod.elementHandle(), { timeout: 60000 });
+    const opc = await mod.locator('option').allTextContents();
+    await escolher(pC, mod, { label: opc.find((o) => /Corolla/.test(o)) || opc[1] }, 'modelo');
+    const ano = pC.getByLabel(T('veiculoForm.labelAno'), { exact: false }).locator('visible=true').first();
+    if (await ano.count()) { if ((await ano.evaluate((e) => e.tagName)) === 'SELECT') await escolher(pC, ano, '2017', 'ano'); else await digitar(pC, ano, '2017', 'ano'); }
+  }
   await digitar(pC, pC.locator('#pedido-placa'), placa, 'placa');
   await tocar(pC, botao(pC, new RegExp(`^${T('clienteNovaSolicitacao.next')}$`, 'i')).last(), 'avancar (carro)');
   await tela(pC, 'pedido 4 local', { topo: true });
@@ -213,12 +271,21 @@ try {
   await tocar(pC, botao(pC, new RegExp(`^${T('clienteNovaSolicitacao.next')}$`, 'i')).last(), 'avancar (local)');
   await pC.getByTestId('passo-contato').waitFor();
   await tela(pC, 'pedido 5 contato', { topo: true });
+  // voltar sem perder nada (dono 12/11): botao voltar do celular 2x, o Tagasi da tela 1x, e para frente de novo
+  await pC.goBack(); await sleep(900);
+  ok('voltar do celular: volta ao passo do local (nao sai do pedido)', await pC.getByTestId('passo-local').isVisible().catch(() => false) && /zayavka|paring|request|pedido|richiesta/.test(pC.url()), pC.url());
+  ok('voltar do celular: endereco continua preenchido', (await pC.locator('#pedido-endereco').inputValue().catch(() => '')).length > 2);
+  await pC.goBack(); await sleep(900);
+  ok('voltar do celular 2x: passo do carro com tudo escolhido', await pC.getByTestId('passo-carro').isVisible().catch(() => false)
+    && /Toyota/.test(await pC.locator('#cbbe3-101').inputValue().catch(() => '')) && /Corolla/.test(await pC.locator('#cbbe3-102').inputValue().catch(() => ''))
+    && (await pC.locator('#pedido-placa').inputValue()) === placa);
+  await tela(pC, 'voltou ao carro');
+  await tocar(pC, pC.locator('[data-testid=passo-carro] [data-testid=navegar] .btn-secondary'), 'Tagasi da tela (carro)');
+  ok('Tagasi: descricao continua escrita', (await pC.locator('#pedido-descricao').inputValue()).includes(tag));
+  for (let i = 0; i < 3; i++) { await tocar(pC, botao(pC, new RegExp(`^${T('clienteNovaSolicitacao.next')}$`, 'i')).last(), `avancar de novo ${i + 1}`); await sleep(400); }
+  ok('para frente de novo: contato', await pC.getByTestId('passo-contato').isVisible().catch(() => false));
   await digitar(pC, pC.locator('#pedido-nome'), 'Humano Teste', 'nome');
   await digitar(pC, pC.locator('#pedido-email'), emailC, 'e-mail');
-  const mostrar = pC.locator('[data-testid=passo-contato] button').filter({ hasText: rx(T('pedidoSemConta.mostrar')) }).first();
-  if (await mostrar.count()) await tocar(pC, mostrar, 'mostrar senha');
-  await digitar(pC, pC.locator('#pedido-senha'), senha, 'senha (visivel)');
-  ok('senha visivel: sem maiuscula automatica nem corretor', await pC.locator('#pedido-senha').evaluate((e) => e.getAttribute('autocapitalize') === 'none' && e.getAttribute('autocorrect') === 'off'));
   await digitar(pC, pC.locator('#pedido-telefone'), '51234567', 'telefone');
   await tocar(pC, pC.getByTestId('aceito-termos'), 'aceito os termos');
   const t0 = Date.now();
@@ -229,6 +296,14 @@ try {
   ok('codigo chegou por e-mail', !!cod);
   await digitar(pC, pC.locator('#pedido-codigo'), cod || '000000', 'codigo');
   await tocar(pC, pC.getByTestId('confirmar-codigo'), 'confirmar codigo');
+  const telaSenha = await pC.getByTestId('criar-senha').waitFor({ timeout: 30000 }).then(() => true, () => false);
+  ok('depois do codigo: tela "crie a sua senha"', telaSenha);
+  if (telaSenha) {
+    await sleep(1500); const ySenha = await pC.evaluate(() => scrollY);
+    const bxSenha = await pC.getByTestId('criar-senha').boundingBox();
+    ok('crie a sua senha: cartao na tela ao abrir', !!bxSenha && bxSenha.y < H / 2, `y do cartao ${Math.round(bxSenha?.y ?? -1)}, rolagem ${ySenha}`);
+    await pC.screenshot({ path: `${OUT}/${String(++nTela).padStart(2, '0')}-senha-ao-abrir.png` });
+    await tela(pC, 'crie a sua senha', { topo: true }); await tocar(pC, pC.getByTestId('criar-senha-agora-nao'), 'agora nao (senha)'); }
   await pC.waitForURL(/orcamentos\//, { timeout: 30000 }).catch(() => {});
   const cliente = (await admin.from('profiles').select('id').eq('email', emailC).maybeSingle()).data;
   if (cliente) contas.add(cliente.id);
@@ -306,6 +381,8 @@ try {
   await ver(pO, pO.locator('#nd-data')); await pO.locator('#nd-data').fill(nd);
   await escolher(pO, pO.locator('#nd-turno'), 'tarde', 'turno');
   await digitar(pO, pO.locator('#nd-motivo'), 'Varuosa saabub alles neljapäeval', 'motivo da nova data');
+  // 079: a oficina diz se a data marcada ainda serve (obrigatorio) - aqui nao serve mais
+  await tocar(pO, pO.getByTestId('propor-nova-data').getByRole('radio', { name: rx(T('agendaMudanca.naoServe')) }), 'data atual nao serve mais');
   await tocar(pO, pO.getByTestId('propor-nova-data').getByRole('button', { name: rx(T('agendaMudanca.enviarProposta')) }), 'enviar proposta de data');
   await sleep(2500);
   await tela(pO, 'oficina proposta enviada');

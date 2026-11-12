@@ -28,6 +28,7 @@
     "opcional": "facoltativo",
     "selecione": "Seleziona",
     "nenhumResultado": "Nessun risultato",
+    "usarTexto": "Usa: «{texto}»",
     "fechar": "Chiudi"
   },
   "tabs": {
@@ -73,7 +74,7 @@
     "dadosInvalidos": "Controlla i dati inseriti.",
     "slogan": "Preventivi dalle officine vicino a te.",
     "emergenciaTexto": "Segnala l'incidente ora, senza bisogno di un account",
-    "selo1": "Officine con registrazione dell'impresa verificata",
+    "selo1": "Officine a Tallinn",
     "selo2": "Gratis per gli automobilisti",
     "selo3": "I tuoi dati sono protetti",
     "idioma": "Lingua",
@@ -586,7 +587,7 @@
   },
   "pedidoSemConta": {
     "titulo": "Chiedi un preventivo alle officine",
-    "subtitulo": "Gratis e senza registrazione iniziale – circa 2 minuti.",
+    "subtitulo": "Gratis – circa 2 minuti.",
     "passoDe": "Passo {n} di {total}",
     "fotosTitulo": "Foto (facoltative)",
     "removerFoto": "Rimuovi foto",

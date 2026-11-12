@@ -69,7 +69,7 @@ export default function EditarPedido({ solicitacaoId, descricao, veiculo, aoSalv
         <>
           <VehicleCatalogPicker label={t('veiculos.marca')} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" />
           {marca?.code ? (
-            <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={`/api/vehicle-catalog?tipo=cars&marca=${marca.code}`} />
+            <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={marca.code ? `/api/vehicle-catalog?tipo=cars&marca=${marca.code}` : ''} />
           ) : marca ? (
             <>
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.modelo')}</Text>

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { paisDoAparelho } from '@/lib/seguro-reparo';
 import { useLocale, useTranslations } from 'next-intl';
 import { TIPOS_VEICULO } from '@fixauto/shared';
+import CampoCatalogo, { type OpcaoCatalogo } from './CampoCatalogo';
 
 interface FipeValue {
   tipo: string;
@@ -61,6 +62,17 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
   const [selectedMarcaCode, setSelectedMarcaCode] = useState('');
   const [selectedModeloCode, setSelectedModeloCode] = useState('');
   const [selectedAnoCode, setSelectedAnoCode] = useState('');
+  // proximo campo a receber o foco depois de uma escolha da pessoa (nao no rascunho restaurado)
+  const [focar, setFocar] = useState<'' | 'modelo' | 'ano'>('');
+  const anoRef = useRef<HTMLInputElement>(null);
+  // o ano aparece abaixo do modelo: no celular ficava atras da barra Tagasi/Edasi e da faixa
+  // de cookies, a pessoa via so "escolha marca, modelo e ano" e desistia (Clarity 12/11)
+  useEffect(() => {
+    if (focar !== 'ano' || !value.modelo || !anoRef.current) return;
+    anoRef.current.focus({ preventScroll: true });
+    anoRef.current.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    setFocar('');
+  }, [focar, value.modelo]);
 
   const fetchMarcas = useCallback(async (tipo: string) => {
     if (isBR === null) return;
@@ -155,13 +167,14 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
     const m = marcas.find((x) => x.name.toLowerCase() === value.marca.toLowerCase());
     setSelectedModeloCode(''); setSelectedAnoCode(''); setModelos([]); setAnos([]);
     if (m) { setSelectedMarcaCode(m.code); fetchModelos(value.tipo, m.code); }
-    else { setSelectedMarcaCode(''); if (limparForaDoCatalogo) onChange({ ...value, marca: '', modelo: '', ano: '', codigo: undefined, valor: undefined }); }
+    // fora da FIPE a marca escrita pela pessoa (fora do catalogo) vale; so a FIPE precisa do codigo
+    else { setSelectedMarcaCode(''); if (limparForaDoCatalogo && isBR) onChange({ ...value, marca: '', modelo: '', ano: '', codigo: undefined, valor: undefined }); }
   }, [marcas]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!value.modelo || !modelos.length || modelos.some((x) => x.code === selectedModeloCode)) return;
     const m = modelos.find((x) => x.name.toLowerCase() === value.modelo.toLowerCase());
     if (m) { setSelectedModeloCode(m.code); if (isBR && selectedMarcaCode) fetchAnos(value.tipo, selectedMarcaCode, m.code); }
-    else if (limparForaDoCatalogo) onChange({ ...value, modelo: '', ano: '', codigo: undefined, valor: undefined });
+    else if (limparForaDoCatalogo && isBR) onChange({ ...value, modelo: '', ano: '', codigo: undefined, valor: undefined });
   }, [modelos]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (selectedAnoCode || !value.ano || !anos.length) return;
@@ -202,6 +215,19 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
         fetchAnos(value.tipo, selectedMarcaCode, modeloCode);
       }
     }
+  };
+
+  // fora da FIPE: marca/modelo pelo campo de escrever (do catalogo ou escrito pela pessoa)
+  const escolherMarca = (o: OpcaoCatalogo | null) => {
+    setFocar(o ? 'modelo' : '');
+    if (o?.code) { handleMarcaChange(o.code); return; }
+    setSelectedMarcaCode(''); setSelectedModeloCode(''); setModelos([]);
+    onChange({ ...value, marca: o?.name || '', modelo: '', ano: '', codigo: undefined, valor: undefined });
+  };
+  const escolherModelo = (o: OpcaoCatalogo | null) => {
+    setFocar(o ? 'ano' : '');
+    setSelectedModeloCode(o?.code || '');
+    onChange({ ...value, modelo: o?.name || '', ano: '', codigo: undefined, valor: undefined });
   };
 
   const handleAnoChange = async (anoCode: string) => {
@@ -266,6 +292,7 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
         <label htmlFor="cbbe3-101" className="block text-sm font-medium text-gray-700 mb-1">
           {t('labelMarca')} {loading === 'marcas' && <span className="text-gray-400">({t('carregando')})</span>}
         </label>
+        {isBR !== false ? (
         <select id="cbbe3-101"
           className="input-field"
           value={selectedMarcaCode}
@@ -279,10 +306,21 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
             </option>
           ))}
         </select>
+        ) : (
+          <CampoCatalogo id="cbbe3-101" opcoes={marcas} valor={value.marca} onEscolher={escolherMarca}
+            placeholder={t('escrevaMarca')} carregando={loading === 'marcas'} />
+        )}
       </div>
 
       {/* Modelo */}
-      {selectedMarcaCode && (
+      {!isBR && value.marca && (
+        <div>
+          <label htmlFor="cbbe3-102" className="block text-sm font-medium text-gray-700 mb-1">{t('labelModelo')}</label>
+          <CampoCatalogo key={value.marca} id="cbbe3-102" opcoes={modelos} valor={value.modelo} onEscolher={escolherModelo}
+            placeholder={t('escrevaModelo')} carregando={loading === 'modelos'} focoAoMontar={focar === 'modelo'} />
+        </div>
+      )}
+      {isBR && selectedMarcaCode && (
         <div>
           <label htmlFor="cbbe3-102" className="block text-sm font-medium text-gray-700 mb-1">
             {t('labelModelo')} {loading === 'modelos' && <span className="text-gray-400">({t('carregando')})</span>}
@@ -304,7 +342,7 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
       )}
 
       {/* Ano */}
-      {selectedModeloCode && (
+      {(isBR ? selectedModeloCode : value.modelo) && (
         <div>
           <label htmlFor="cbbe3-103" className="block text-sm font-medium text-gray-700 mb-1">
             {t('labelAno')} {isBR && loading === 'anos' && <span className="text-gray-400">({t('carregando')})</span>}
@@ -325,10 +363,11 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
             </select>
           ) : (
             <input
+              ref={anoRef}
               id="cbbe3-103"
               type="number"
               inputMode="numeric"
-              className="input-field"
+              className="input-field scroll-mt-24"
               placeholder={t('placeholderAno')}
               value={value.ano}
               onChange={(e) => onChange({ ...value, ano: e.target.value })}

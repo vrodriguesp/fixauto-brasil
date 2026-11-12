@@ -28,6 +28,7 @@
     "opcional": "opcional",
     "selecione": "Selecione",
     "nenhumResultado": "Nenhum resultado",
+    "usarTexto": "Usar: “{texto}”",
     "fechar": "Fechar"
   },
   "tabs": {
@@ -73,7 +74,7 @@
     "dadosInvalidos": "Verifique os dados introduzidos.",
     "slogan": "Orçamentos de oficinas perto de si.",
     "emergenciaTexto": "Registe o acidente agora, sem precisar de conta",
-    "selo1": "Oficinas com registo da empresa verificado",
+    "selo1": "Oficinas em Tallinn",
     "selo2": "Gratuito para condutores",
     "selo3": "Os seus dados protegidos",
     "idioma": "Idioma",
@@ -586,7 +587,7 @@
   },
   "pedidoSemConta": {
     "titulo": "Peça orçamento às oficinas",
-    "subtitulo": "Grátis e sem registo prévio – cerca de 2 minutos.",
+    "subtitulo": "Grátis – cerca de 2 minutos.",
     "passoDe": "Passo {n} de {total}",
     "fotosTitulo": "Fotos (opcional)",
     "removerFoto": "Remover foto",

@@ -188,6 +188,37 @@ export default function PedidoSemConta() {
     document.addEventListener('click', aoClicar, true);
     return () => document.removeEventListener('click', aoClicar, true);
   }, [locale, routerNext]);
+  // botao "voltar" do celular/navegador volta UM passo, sem perder nada (dono 12/11): antes os
+  // passos nao entravam no historico e o voltar saia do pedido. Cada passo novo vira uma entrada
+  // (o Next copia o estado interno dele - app-router.js); o Tagasi da tela usa o mesmo historico.
+  const ORDEM: Etapa[] = ['servico', 'detalhe', 'carro', 'local', 'contato', 'codigo'];
+  const doHistorico = useRef(false);
+  const etapaAnterior = useRef<Etapa | null>(null);
+  const empilhados = useRef(0);
+  useEffect(() => {
+    if (!rascunhoLido) return;
+    const ant = etapaAnterior.current; etapaAnterior.current = etapa;
+    if (doHistorico.current) { doHistorico.current = false; return; }
+    if (etapa === 'enviado') return;
+    const est = { ...window.history.state, pedidoEtapa: etapa };
+    if (ant && ORDEM.indexOf(etapa) > ORDEM.indexOf(ant)) { window.history.pushState(est, ''); empilhados.current++; }
+    else window.history.replaceState(est, '');
+  }, [etapa, rascunhoLido]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const voltou = (ev: PopStateEvent) => {
+      const e = ev.state?.pedidoEtapa as Etapa | undefined;
+      if (!e || !ORDEM.includes(e)) return;
+      empilhados.current = Math.max(0, empilhados.current - 1);
+      doHistorico.current = true;
+      setEtapa(e);
+    };
+    window.addEventListener('popstate', voltou);
+    return () => window.removeEventListener('popstate', voltou);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const voltarPara = (e: Etapa) => {
+    if (empilhados.current > 0 && window.history.state?.pedidoEtapa === etapa) window.history.back();
+    else setEtapa(e);
+  };
   // passo novo comeca no alto (o anterior era mais comprido: a pessoa via so o rodape - teste do dono 06/11)
   const primeiraEtapa = useRef(true);
   useEffect(() => {
@@ -244,7 +275,8 @@ export default function PedidoSemConta() {
   const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && termos;
   const sugestao = sugestaoEmail(email);
   // o que falta em cada passo (aviso + campo que recebe o foco)
-  const faltaCarro: [string, string] = !carroDados ? [t('faltaCarro'), !carro.marca ? 'cbbe3-101' : !carro.modelo ? 'cbbe3-102' : 'cbbe3-103'] : [t('faltaCarroConferir'), anoDoCarroValido(carro.ano) ? 'pedido-placa' : 'cbbe3-103'];
+  // diz SO o que falta: "marca, modelo e ano" com marca e modelo ja escolhidos confundia (Clarity 12/11)
+  const faltaCarro: [string, string] = !carroDados ? (!carro.marca ? [t('faltaMarca'), 'cbbe3-101'] : !carro.modelo ? [t('faltaModelo'), 'cbbe3-102'] : [t('faltaAno'), 'cbbe3-103']) :[t('faltaCarroConferir'), anoDoCarroValido(carro.ano) ? 'pedido-placa' : 'cbbe3-103'];
   const faltaContato: [string, string] = !nome.trim() ? [t('faltaNome'), 'pedido-nome'] : !EMAIL_OK.test(email.trim()) ? [t('faltaEmail'), 'pedido-email'] : [t('faltaTermos'), 'pedido-termos'];
   useEffect(() => { setFaltando(''); }, [servicoOk, carroOk, endereco, contatoOk]); // corrigiu: o aviso some
 
@@ -342,7 +374,7 @@ export default function PedidoSemConta() {
   const Navegar = ({ voltar, avancar, ok, rotulo, falta, campo }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string; falta: string; campo: string }) => (
     <div className="flex flex-wrap justify-between mt-6 gap-3 sticky bottom-0 z-10 -mx-6 px-6 py-3 bg-white/95 backdrop-blur border-t border-gray-100 rounded-b-xl sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0" data-testid="navegar">
       {faltando && <p role="alert" className="w-full text-sm text-red-700" data-testid="falta-aviso">{faltando}</p>}
-      {voltar ? <button type="button" onClick={() => setEtapa(voltar)} className="btn-secondary">{tn('back')}</button> : <span />}
+      {voltar ? <button type="button" onClick={() => voltarPara(voltar)} className="btn-secondary">{tn('back')}</button> : <span />}
       <button type="button" onClick={() => { if (ok) { setFaltando(''); avancar(); return; } setFaltando(falta); contar(`edasi_bloqueado_${etapa}`); focar(campo); }}
         disabled={enviando} aria-busy={enviando} className="btn-primary disabled:opacity-50">{rotulo || tn('next')}</button>
     </div>
