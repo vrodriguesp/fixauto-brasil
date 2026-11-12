@@ -38,13 +38,12 @@ export async function POST(req: NextRequest) {
           ? NextResponse.json({ error: 'Sem acesso', codigo: 'SEM_ACESSO' }, { status: 403 })
           : NextResponse.json({ error: 'Avaliação pendente', codigo: 'AVALIACAO_PENDENTE' }, { status: 409 });
       }
-      // a conta do e-mail errado, se foi criada so para este pedido, sai junto
-      if (p.conta_nova && conta.userId !== p.user_id) {
-        const { data: perfil } = await supabaseAdmin.from('profiles').select('id').eq('id', p.user_id).maybeSingle();
-        if (!perfil) await supabaseAdmin.auth.admin.deleteUser(p.user_id).catch(() => {});
-      }
       email = novoEmail; userId = conta.userId; contaNova = conta.contaNova;
     }
+    // a conta do e-mail errado, se foi criada so para este pedido, sai junto - mas so DEPOIS
+    // de o pendente passar para a conta certa: pedidos_pendentes.user_id e ON DELETE CASCADE
+    // e apagar antes levava o pedido junto (e2e 12/11)
+    const contaErrada = p.conta_nova && userId !== p.user_id ? p.user_id : null;
 
     const codigo = novoCodigo();
     await supabaseAdmin.from('pedidos_pendentes').update({
@@ -53,6 +52,10 @@ export async function POST(req: NextRequest) {
       // valer e o lembrete pode ir de novo, agora para o endereco certo
       ...(email !== p.email ? { retomar_hash: null, lembrete_enviado_em: null } : {}),
     }).eq('id', p.id);
+    if (contaErrada) {
+      const { data: perfil } = await supabaseAdmin.from('profiles').select('id').eq('id', contaErrada).maybeSingle();
+      if (!perfil) await supabaseAdmin.auth.admin.deleteUser(contaErrada).catch(() => {});
+    }
     const enviado = await enviarCodigo(email, p.nome, codigo, p.idioma);
     if (!enviado) throw new Error('e-mail do codigo nao enviado');
     return NextResponse.json({ ok: true, email });
