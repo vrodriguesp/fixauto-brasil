@@ -239,7 +239,8 @@ export default function PedidoSemConta() {
   const listaVisivel = listaCurta ? listaFiltrada.filter((sv, i) => i < LISTA_CURTA || servicos.includes(sv.value)) : listaFiltrada;
   // escreveu o que precisa OU marcou algum servico da lista OU mandou foto (12/11: para
   // colisao/lataria/outro nao ha lista e a foto e o que a pessoa mais toca - vale como descricao)
-  const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0 || fotos.length > 0);
+  // regra do dono (12/11): tipo + escrever o que precisa OU marcar da lista; a foto ajuda mas nao substitui o texto
+  const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
   // placa e ano conferidos aqui, com o aviso ao lado do campo (item 53)
   const carroDados = !!(carro.marca && carro.modelo && carro.ano);
   const carroOk = carroDados && placaValida(placa) && anoDoCarroValido(carro.ano);
@@ -252,7 +253,7 @@ export default function PedidoSemConta() {
 
   const descricaoFinal = () => servicos.length > 0
     ? `${tn('servicesPrefix')} ${servicos.map(rotuloServico).join(', ')}${descricao.trim() ? '. ' + descricao.trim() : ''}`
-    : (descricao.trim() || (fotos.length > 0 ? t('descricaoSoFotos') : tn('defaultServiceDescription')));
+    : (descricao.trim() || tn('defaultServiceDescription'));
 
   // sem posicao do aparelho: o endereco digitado vira coordenada (nunca um ponto fixo)
   const resolverLocal = async () => {

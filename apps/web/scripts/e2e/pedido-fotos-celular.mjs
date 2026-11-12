@@ -87,11 +87,15 @@ await p.evaluate(() => window.scrollTo(0, 600));
 await p.waitForTimeout(600);
 ok('sem balao do chat na pagina do pedido (depois de rolar)', (await p.getByTestId('chat-suporte-botao').count()) === 0 && !(await p.evaluate(() => document.body.classList.contains('com-chat-suporte'))));
 
-// so foto, sem texto: passa ao carro
+// so foto, sem texto: NAO passa (regra do dono 12/11: a oficina precisa de uma descricao para orcar)
 await p.locator('#pedido-descricao').fill('');
 await edasi().tap();
+await p.waitForTimeout(400);
+ok('so foto (sem texto) nao passa: avisa e fica no passo', await p.getByTestId('passo-detalhe').getByTestId('falta-aviso').isVisible() && !(await p.getByTestId('passo-carro').isVisible()));
+await p.locator('#pedido-descricao').fill('Kriuksub esirattast');
+await edasi().tap();
 await p.getByTestId('passo-carro').waitFor({ state: 'visible' });
-ok('so foto (sem texto) passa ao passo do carro', await p.getByTestId('passo-carro').isVisible());
+ok('com descricao passa ao passo do carro', await p.getByTestId('passo-carro').isVisible());
 // passo do carro: "Edasi" sem marca avisa e foca a marca
 await p.getByTestId('passo-carro').getByRole('button', { name: 'Edasi', exact: true }).tap();
 await p.waitForTimeout(400);
