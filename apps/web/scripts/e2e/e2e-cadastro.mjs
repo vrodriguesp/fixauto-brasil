@@ -1,6 +1,8 @@
 // E2E do cadastro com confirmacao em PRODUCAO (limpa tudo no fim).
 // E-mail: delivered+x@resend.dev (endereco de teste do Resend - entrega
-// simulada, sem caixa real). node e2e-cadastro.mjs <.env.local>
+// simulada, sem caixa real). SITE=http://localhost:3100 node e2e-cadastro.mjs <.env.local>
+// 12/11: tela do cadastro de oficina no celular - sem pedido de localizacao ao abrir (so no
+// passo do endereco), "Edasi" clicavel sem a caixinha dos termos com aviso, funil cadastro_site.
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import path from 'node:path';
@@ -11,7 +13,7 @@ const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
 if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
-const SITE = 'http://localhost:3100';
+const SITE = process.env.SITE || 'http://localhost:3100';
 const admin = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 const anon = () => createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } });
 let falhas = 0;
@@ -69,6 +71,50 @@ try {
   const sw = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   ok('painel sem transbordo no celular', sw <= 0, String(sw));
   await page.screenshot({ path: 'e2e-painel-analise.png' });
+
+  // 5b) tela do cadastro de oficina no celular (12/11): localizacao so no passo do endereco,
+  // "Edasi" clicavel sem os termos (aviso ao lado da caixinha), funil cadastro_site
+  {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, locale: 'et-EE' });
+    await ctx.addInitScript(() => { // conta os pedidos de localizacao (sem permissao concedida: so o pedido importa)
+      window.__geo = 0;
+      const g = navigator.geolocation;
+      if (g) { const orig = g.getCurrentPosition.bind(g); g.getCurrentPosition = (...a) => { window.__geo++; return orig(...a); }; }
+      try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {}
+    });
+    const funil = [];
+    await ctx.route('**/api/funil', async (r) => { try { const b = JSON.parse(r.request().postData() || '{}'); funil.push(`${b.funil}:${b.etapa}`); } catch {} await r.fulfill({ status: 200, body: '{"ok":true}' }); });
+    const pg = await ctx.newPage();
+    const errosPg = []; pg.on('pageerror', (e) => errosPg.push(e.message));
+    await pg.goto(`${SITE}/ee/et/registreeru?tipo=oficina`, { waitUntil: 'networkidle' });
+    await pg.waitForTimeout(1500);
+    const geo = () => pg.evaluate(() => window.__geo);
+    ok('cadastro: abrir a pagina nao pede localizacao', (await geo()) === 0, String(await geo()));
+    ok('cadastro: funil cadastro_site abriu', funil.includes('cadastro_site:abriu'), JSON.stringify(funil));
+    await pg.locator('#c6791-5').fill('TESTE AUTOMATICO');
+    await pg.locator('#c6791-6').fill(`delivered+tela${tag}@resend.dev`);
+    await pg.locator('#c6791-8').fill(senha);
+    const edasi = pg.getByRole('button', { name: 'Edasi', exact: true });
+    ok('cadastro: Edasi clicavel sem os termos (nao fica palido)', await edasi.isEnabled());
+    await edasi.tap();
+    await pg.waitForTimeout(400);
+    const falta = pg.getByTestId('falta-termos');
+    ok('cadastro: sem os termos, aviso ao lado da caixinha', await falta.isVisible() && /nõustuma/i.test(await falta.innerText().catch(() => '')), await falta.innerText().catch(() => ''));
+    ok('cadastro: foco na caixinha dos termos', await pg.evaluate(() => document.activeElement?.id) === 'cadastro-termos', await pg.evaluate(() => document.activeElement?.id));
+    ok('cadastro: continua no passo dos dados pessoais', await pg.locator('#c6791-5').isVisible());
+    ok('cadastro: funil cadastro_site edasi_bloqueado', funil.includes('cadastro_site:edasi_bloqueado'), JSON.stringify(funil));
+    await pg.locator('#cadastro-termos').check();
+    await pg.waitForTimeout(200);
+    ok('cadastro: marcou os termos, o aviso some', !(await falta.isVisible()));
+    ok('cadastro: ate aqui nenhum pedido de localizacao', (await geo()) === 0, String(await geo()));
+    await edasi.tap();
+    await pg.locator('#c6791-9').waitFor({ timeout: 10000 });
+    await pg.waitForTimeout(800);
+    ok('cadastro: passo do endereco (dados da oficina) aberto', await pg.locator('#c6791-9').isVisible());
+    ok('cadastro: localizacao pedida 1 vez, so no passo do endereco', (await geo()) === 1, String(await geo()));
+    ok('cadastro: sem erro de pagina', errosPg.length === 0, errosPg.join(' | '));
+    await ctx.close();
+  }
   await browser.close();
   const { data: u2 } = await admin.auth.admin.getUserById(perfil.id);
   ok('e-mail confirmado', !!u2.user.email_confirmed_at);

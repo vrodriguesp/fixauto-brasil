@@ -1,7 +1,9 @@
 // E2E LOCAL do pedido sem cadastro (06/11): API (conta nova, codigo errado,
 // reenvio, correcao do e-mail, conta existente por codigo e por senha, carro pela
 // placa, tentativas, limpeza das 24 h, funil) e telas (ET 390, RU 1280, logado).
-// node site-pedido-sem-conta.mjs <.env.local>
+// 12/11: funil com os passos novos (servico, foto, edasi_bloqueado_*, cookie_*, cadastro_site),
+// "Edasi" clicavel sem descricao com aviso, sem balao do chat na pagina do pedido.
+// SITE=http://localhost:3100 node site-pedido-sem-conta.mjs <.env.local>
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import path from 'node:path';
@@ -12,7 +14,7 @@ const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
 if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
-const SITE = 'http://localhost:3100';
+const SITE = process.env.SITE || 'http://localhost:3100';
 const EMAILS = env.EMAIL_PASTA_TESTE;
 const OUT = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/Documentos/_teste_local/resultados';
 const admin = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
@@ -207,12 +209,26 @@ try {
   ok('limpeza sem chave -> recusada', !(await fetch(`${SITE}/api/tarefas/limpar-pendentes`, { method: 'POST' })).ok);
 
   // 9) funil (contagem anonima)
-  const antes = (await admin.from('funil_contagem').select('total').eq('funil', 'pedido_app').eq('etapa', 'abriu').eq('dia', new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Tallinn' })).maybeSingle()).data?.total || 0;
+  const hoje = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Tallinn' });
+  const total = async (funil, etapa) => (await admin.from('funil_contagem').select('total').eq('funil', funil).eq('etapa', etapa).eq('dia', hoje).maybeSingle()).data?.total || 0;
+  const antes = await total('pedido_app', 'abriu');
   ok('funil -> 200', (await post('/api/funil', { funil: 'pedido_app', etapa: 'abriu' })).status < 300);
-  const depois = (await admin.from('funil_contagem').select('total').eq('funil', 'pedido_app').eq('etapa', 'abriu').eq('dia', new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Tallinn' })).maybeSingle()).data?.total || 0;
+  const depois = await total('pedido_app', 'abriu');
   ok('funil contou +1', depois === antes + 1, `${antes} -> ${depois}`);
   await post('/api/funil', { funil: 'x', etapa: 'abriu' });
   ok('funil desconhecido nao grava', !(await admin.from('funil_contagem').select('funil').eq('funil', 'x')).data?.length);
+  // passos novos (12/11): toque no servico, foto, Edasi bloqueado, cookies e o cadastro de oficina
+  for (const [funil, etapa] of [['pedido_site', 'servico'], ['pedido_site', 'foto'], ['pedido_site', 'edasi_bloqueado_detalhe'], ['pedido_site', 'edasi_bloqueado_carro'], ['pedido_site', 'edasi_bloqueado_local'], ['pedido_site', 'edasi_bloqueado_contato'], ['pedido_site', 'cookie_aceito'], ['pedido_site', 'cookie_recusado'], ['cadastro_site', 'abriu'], ['cadastro_site', 'edasi_bloqueado'], ['cadastro_site', 'enviado']]) {
+    const a = await total(funil, etapa);
+    await post('/api/funil', { funil, etapa });
+    const d = await total(funil, etapa);
+    ok(`funil ${funil} ${etapa} conta +1`, d === a + 1, `${a} -> ${d}`);
+  }
+  for (const [funil, etapa] of [['cadastro_site', 'servico'], ['pedido_site', 'edasi_bloqueado_x'], ['pedido_site', 'enviado']]) {
+    const a = await total(funil, etapa);
+    await post('/api/funil', { funil, etapa });
+    ok(`funil ${funil} ${etapa} (fora da lista) nao grava`, (await total(funil, etapa)) === a);
+  }
 
   // 10) telas
   const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
@@ -227,7 +243,19 @@ try {
     ok(`${idioma} ${largura}: pagina abre`, await page.getByTestId('passo-servico').isVisible());
     const robots = await page.locator('meta[name="robots"]').getAttribute('content');
     ok(`${idioma}: fora do Google (noindex)`, /noindex/.test(robots || ''), robots);
+    ok(`${idioma}: subtitulo sem "sem cadastro"`, !/registr|cadastr|sign-up/i.test(await page.locator('.pedido-subtitulo').innerText()), await page.locator('.pedido-subtitulo').innerText());
     await page.getByRole('button', { name: rotulos.mecanica }).click();
+    // "Edasi" sem descricao/servico: clicavel, avisa o que falta (com a lista: "...vali teenus nimekirjast...") e foca a caixa
+    const edasi = page.getByTestId('passo-detalhe').getByRole('button', { name: rotulos.next, exact: true });
+    ok(`${idioma}: Edasi clicavel sem descricao`, await edasi.isEnabled());
+    await edasi.click();
+    await page.waitForTimeout(300);
+    ok(`${idioma}: aviso do que falta (${rotulos.faltaDescricaoLista.slice(0, 20)}...)`, (await page.getByTestId('passo-detalhe').getByTestId('falta-aviso').innerText().catch(() => '')) === rotulos.faltaDescricaoLista);
+    ok(`${idioma}: foco na descricao`, await page.evaluate(() => document.activeElement?.id) === 'pedido-descricao');
+    // sem balao do chat de suporte nesta pagina
+    await page.evaluate(() => window.scrollTo(0, 600));
+    await page.waitForTimeout(500);
+    ok(`${idioma} ${largura}: sem balao do chat na pagina do pedido`, (await page.getByTestId('chat-suporte-botao').count()) === 0);
     await page.locator('#pedido-descricao').fill('Test');
     await page.getByRole('button', { name: rotulos.next, exact: true }).click();
     await page.getByTestId('passo-carro').waitFor();
@@ -281,8 +309,9 @@ try {
     await ctx.close();
   };
   const R = (l) => {
-    const m = { ...JSON.parse(fs.readFileSync(`../../messages/${l}.json`, 'utf8')), ...JSON.parse(fs.readFileSync(`../../messages/${l}.cliente.json`, 'utf8')) };
-    return { mecanica: new RegExp(m.constants.tiposServico.mecanica), next: m.clienteNovaSolicitacao.next, marca: m.veiculoForm?.labelMarca || 'Mark', modelo: m.veiculoForm?.labelModelo || 'Mudel', ano: m.veiculoForm?.labelAno || 'Aasta', enviar: m.pedidoSemConta.enviarPedido };
+    const MSG = new URL('../../messages/', import.meta.url); // apps/web/messages, de onde quer que o script rode
+    const m = { ...JSON.parse(fs.readFileSync(new URL(`${l}.json`, MSG), 'utf8')), ...JSON.parse(fs.readFileSync(new URL(`${l}.cliente.json`, MSG), 'utf8')) };
+    return { mecanica: new RegExp(m.constants.tiposServico.mecanica), next: m.clienteNovaSolicitacao.next, marca: m.veiculoForm?.labelMarca || 'Mark', modelo: m.veiculoForm?.labelModelo || 'Mudel', ano: m.veiculoForm?.labelAno || 'Aasta', enviar: m.pedidoSemConta.enviarPedido, faltaDescricaoLista: m.pedidoSemConta.faltaDescricaoLista };
   };
   await tela('et', 390, R('et'));
   await tela('ru', 1280, R('ru'));
