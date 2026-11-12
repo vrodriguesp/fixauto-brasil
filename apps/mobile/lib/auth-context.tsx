@@ -16,6 +16,9 @@ interface AuthContextType {
   loading: boolean;
   signUp: (email: string, password: string, nome: string, telefone: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  // token de uso unico devolvido pelas rotas do site depois do codigo de 6 digitos
+  // (pedido sem senha, login por codigo; apps/web/src/lib/login-token.ts)
+  signInComToken: (tokenHash: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -27,6 +30,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signUp: async () => ({ error: null }),
   signIn: async () => ({ error: null }),
+  signInComToken: async () => ({ error: null }),
   signOut: async () => {},
   refreshProfile: async () => {},
 });
@@ -169,6 +173,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: profileError };
   };
 
+  const signInComToken = async (tokenHash: string) => {
+    const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'email' });
+    if (error) return { error: error.code || 'invalid_credentials' };
+    if (!data.user) return { error: null };
+    const { error: profileError } = await fetchProfile(data.user.id);
+    return { error: profileError };
+  };
+
   const signOut = async () => {
     // este aparelho para de receber o push desta conta (antes de perder o login)
     await removerPush();
@@ -184,7 +196,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, authUser, isLoggedIn: !!user, loading, signUp, signIn, signOut, refreshProfile }}
+      value={{ user, authUser, isLoggedIn: !!user, loading, signUp, signIn, signInComToken, signOut, refreshProfile }}
     >
       {children}
     </AuthContext.Provider>

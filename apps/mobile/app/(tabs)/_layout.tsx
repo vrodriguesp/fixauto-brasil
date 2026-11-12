@@ -4,11 +4,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../lib/auth-context';
 import { useAvisos } from '../../lib/avisos';
+import { senhaAdiada } from '../../lib/senha-adiada';
 
 const WEB_ROTULO = Platform.OS === 'web' ? { lineHeight: 14, flexShrink: 0 } : {};
 
 export default function TabsLayout() {
-  const { isLoggedIn, loading } = useAuth();
+  const { isLoggedIn, loading, user } = useAuth();
   // numeros nas abas: avisos dos pedidos e mensagens nao lidas
   const { naoLidos, mensagensNaoLidas } = useAvisos();
   const avisosPedidos = naoLidos.filter((a) => a.tipo !== 'nova_mensagem').length;
@@ -23,6 +24,9 @@ export default function TabsLayout() {
   }
 
   if (!isLoggedIn) return <Redirect href="/(auth)/login" />;
+  // entrou sem senha (pedido ou codigo por e-mail): tela cheia "crie a sua senha", que pode
+  // pular ("agora nao" vale ate o app fechar; volta no proximo login) - dono 12/11
+  if (user?.senha_definida === false && !senhaAdiada()) return <Redirect href="/criar-senha" />;
 
   return (
     // versao web: a barra de 48 px deixava 10 px para o nome da aba, que saia cortado embaixo

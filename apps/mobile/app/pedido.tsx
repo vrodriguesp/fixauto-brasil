@@ -16,7 +16,7 @@ import {
 import i18n from '../i18n';
 import { useAuth } from '../lib/auth-context';
 import { supabase } from '../lib/supabase';
-import { API_BASE_URL, apiFetch } from '../lib/api';
+import { API_BASE_URL } from '../lib/api';
 import { fetchComPrazo } from '../lib/rede';
 import { mensagemErro, ErroApi } from '../lib/erro';
 import { urlTermos, urlPrivacidade } from '../lib/links-legais';
@@ -27,10 +27,11 @@ import { arquivoDaFoto } from '../lib/anexo';
 import { placaValida, anoValido } from '../lib/validar-carro';
 import CampoTelefone from '../components/CampoTelefone';
 
-// Pedido de orcamento SEM cadastro - o mesmo fluxo do site
+// Pedido de orcamento SEM cadastro e SEM senha - o mesmo fluxo do site
 // (apps/web/src/components/pedido/PedidoSemConta.tsx; regras em
-// apps/web/src/lib/pedido-sem-conta.ts): servico, carro, local, contato e o
-// codigo de 6 digitos do e-mail. O pedido so vai para as oficinas com o codigo.
+// apps/web/src/lib/pedido-sem-conta.ts): servico, carro, local, nome + e-mail e o
+// codigo de 6 digitos do e-mail. O pedido so vai para as oficinas com o codigo, e
+// o mesmo codigo entra na conta (nova ou ja existente) neste aparelho.
 const FUNIL = 'pedido_app';
 const contar = (etapa: string) => {
   fetch(`${API_BASE_URL}/api/funil`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ funil: FUNIL, etapa }) }).catch(() => {});
@@ -61,7 +62,7 @@ export default function PedidoScreen() {
   const insets = useSafeAreaInsets();
   const rolagem = useRef<KeyboardAwareScrollViewRef>(null);
   const posEndereco = useRef(0);
-  const { user, loading: carregandoLogin, signIn } = useAuth();
+  const { user, loading: carregandoLogin, signInComToken } = useAuth();
 
   const [etapa, setEtapa] = useState<Etapa>('servico');
   const [tipo, setTipo] = useState('');
@@ -81,21 +82,16 @@ export default function PedidoScreen() {
   const [buscandoLocal, setBuscandoLocal] = useState(false);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [verSenha, setVerSenha] = useState(false);
   const [telefone, setTelefone] = useState('');
   const [termos, setTermos] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState('');
-  const [contaExistente, setContaExistente] = useState(false);
-  const [senhaLogin, setSenhaLogin] = useState('');
-  const [pendente, setPendente] = useState<{ id: string; email: string; contaNova: boolean } | null>(null);
+  const [pendente, setPendente] = useState<{ id: string; email: string } | null>(null);
   const [codigo, setCodigo] = useState('');
   const [aviso, setAviso] = useState('');
   const [corrigindo, setCorrigindo] = useState(false);
   const [emailNovo, setEmailNovo] = useState('');
   const [esperaReenvio, setEsperaReenvio] = useState(0);
-  const [contaNovaFinal, setContaNovaFinal] = useState(false);
 
   // quem ja entrou usa o pedido normal (mesmos passos, sem contato/codigo)
   useEffect(() => {
@@ -146,7 +142,7 @@ export default function PedidoScreen() {
   // escreveu o que precisa OU marcou algum servico da lista
   const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
   const carroOk = !!(marca && modelo && /^\d{4}$/.test(ano.trim())) && anoValido(ano) && placaValida(placa);
-  const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && senha.length >= 8 && termos;
+  const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && termos;
   const sugestao = sugestaoEmail(email);
 
   const descricaoFinal = () => servicos.length > 0
@@ -163,7 +159,7 @@ export default function PedidoScreen() {
 
   const textoErro = (status: number, codigo?: string) => mensagemErro(new ErroApi(status, codigo));
 
-  const enviar = async (modo?: 'codigo') => {
+  const enviar = async () => {
     if (enviando) return;
     setEnviando(true); setErro('');
     try {
@@ -171,14 +167,14 @@ export default function PedidoScreen() {
       if (!local) { setErro(t('pedidoSemConta.erroLocalizacao')); setEtapa('local'); return; }
       const form = new FormData();
       form.append('dados', JSON.stringify({
-        origem: 'app', modo, site: '', idioma: i18n.language, nome: nome.trim(), email: email.trim(), senha, telefone: telefone.trim(), aceitouTermos: termos,
+        origem: 'app', site: '', idioma: i18n.language, nome: nome.trim(), email: email.trim(), telefone: telefone.trim(), aceitouTermos: termos,
         tipo, descricao: descricaoFinal(), urgencia, endereco, latitude: local.lat, longitude: local.lon, pais: local.pais,
         veiculo: { tipo: 'cars', marca: marca?.name || '', modelo: modelo?.name || '', ano: ano.trim(), codigo: null, placa: placa.trim().toUpperCase() || null },
       }));
       for (const [i, foto] of fotos.entries()) {
         form.append('fotos', await arquivoDaFoto(foto.uri), `foto-${i}.jpg`);
       }
-      // com login (entrou com a senha na caixa "ja tem conta"): o pedido vai direto
+      // ja logado: o pedido vai direto
       const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch(`${API_BASE_URL}/api/pedido-sem-conta`, {
         method: 'POST',
@@ -186,10 +182,9 @@ export default function PedidoScreen() {
         body: form,
       }).catch(() => null);
       const d = res ? await res.json().catch(() => ({})) : {};
-      if (res?.status === 409 && d.codigo === 'CONTA_EXISTENTE') { setContaExistente(true); return; }
       if (!res || !res.ok) { setErro(textoErro(res?.status || 500, d.codigo)); return; }
       if (d.solicitacaoId) { router.replace(`/solicitacao/${d.solicitacaoId}`); return; }
-      setPendente({ id: d.pendenteId, email: d.email, contaNova: !!d.contaNova });
+      setPendente({ id: d.pendenteId, email: d.email });
       setEsperaReenvio(30); setCodigo(''); setAviso('');
       setEtapa('codigo');
     } catch (e) {
@@ -197,18 +192,6 @@ export default function PedidoScreen() {
     } finally {
       setEnviando(false);
     }
-  };
-
-  const entrarEEnviar = async () => {
-    if (!senhaLogin || enviando) return;
-    setEnviando(true); setErro('');
-    const { error } = await signIn(email.trim(), senhaLogin);
-    setEnviando(false);
-    if (error) {
-      setErro(error === 'email_not_confirmed' ? t('pedidoSemConta.loginNaoConfirmado') : error.startsWith('over_') ? t('erros.MUITAS_TENTATIVAS') : t('pedidoSemConta.loginErro'));
-      return;
-    }
-    await enviar();
   };
 
   const confirmar = async () => {
@@ -223,12 +206,16 @@ export default function PedidoScreen() {
       // 5 codigos errados: volta ao contato (dados mantidos) para enviar de novo, com codigo novo
       if (d.codigo === 'CODIGO_TENTATIVAS') { setPendente(null); setEtapa('contato'); setErro(t('erros.CODIGO_TENTATIVAS')); return; }
       if (!res || !res.ok) { setErro(textoErro(res?.status || 500, d.codigo)); return; }
-      if (pendente.contaNova) {
-        // conta nova: ja entra com a senha que acabou de criar e abre o pedido
-        const { error } = await signIn(pendente.email, senha);
-        if (!error) { router.replace(`/solicitacao/${d.solicitacaoId}`); return; }
+      // o codigo provou o e-mail: entra na conta (nova ou ja existente) e abre o pedido;
+      // sem senha ainda, passa antes pela tela "crie a sua senha" (pode pular)
+      const { error } = d.tokenHash ? await signInComToken(d.tokenHash) : { error: 'sem_token' };
+      if (!error) {
+        const voltar = `/solicitacao/${d.solicitacaoId}`;
+        if (d.senhaDefinida === false) router.replace({ pathname: '/criar-senha', params: { voltar } });
+        else router.replace(voltar);
+        return;
       }
-      setContaNovaFinal(pendente.contaNova);
+      // login falhou (raro): o pedido ja foi; a pessoa entra com um codigo pela tela de login
       setEtapa('enviado');
     } finally {
       setEnviando(false);
@@ -300,17 +287,9 @@ export default function PedidoScreen() {
         <Ionicons name="checkmark-circle" size={64} color="#16a34a" />
         <Text className="text-xl font-bold text-gray-900 mt-4 mb-2 text-center">{t('pedidoSemConta.enviadoTitulo')}</Text>
         <Text className="text-gray-600 text-center mb-8">{t('pedidoSemConta.enviadoTexto', { email: pendente?.email || email })}</Text>
-        <Pressable onPress={() => router.replace('/(auth)/login')} accessibilityRole="button" className="bg-primary-600 rounded-lg px-6 py-3 self-stretch items-center">
+        <Pressable onPress={() => router.replace({ pathname: '/(auth)/codigo-login', params: { email: pendente?.email || email.trim() } })} accessibilityRole="button" className="bg-primary-600 rounded-lg px-6 py-3 self-stretch items-center">
           <Text className="text-white font-semibold">{t('pedidoSemConta.enviadoEntrar')}</Text>
         </Pressable>
-        {!contaNovaFinal && (aviso ? <Text accessibilityRole="alert" className="mt-4 text-sm text-green-700 text-center">{aviso}</Text> : (
-          <Pressable accessibilityRole="button" className="mt-4 min-h-[44px] justify-center" onPress={async () => {
-            await apiFetch('/api/esqueci-senha', { method: 'POST', body: JSON.stringify({ email: pendente?.email || email.trim(), locale: i18n.language }) }).catch(() => {});
-            setAviso(t('pedidoSemConta.linkSenhaEnviado'));
-          }}>
-            <Text className="text-primary-600 underline text-center">{t('pedidoSemConta.enviadoCriarSenha')}</Text>
-          </Pressable>
-        ))}
       </View>
     );
   }
@@ -471,7 +450,7 @@ export default function PedidoScreen() {
         <View>
           <Text className="text-lg font-semibold text-gray-900 mb-1">{t('pedidoSemConta.contatoTitulo')}</Text>
           <Text className="text-sm text-gray-500 mb-4">{t('pedidoSemConta.contatoTexto')}</Text>
-          {!contaExistente ? (
+          {(
             <View>
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.nome')}</Text>
               <TextInput accessibilityLabel={t('pedidoSemConta.nome')} value={nome} onChangeText={setNome} autoComplete="name" textContentType="name" maxLength={100} className={`${CAMPO} mb-4`} />
@@ -484,15 +463,6 @@ export default function PedidoScreen() {
                 </Pressable>
               ) : <View className="h-4" />}
 
-              <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.senha')}</Text>
-              <View className={`${CAMPO} flex-row items-center py-0`}>
-                <TextInput accessibilityLabel={t('pedidoSemConta.senha')} value={senha} onChangeText={setSenha} secureTextEntry={!verSenha} autoComplete="new-password" textContentType="newPassword" autoCapitalize="none" autoCorrect={false} maxLength={72} className="flex-1 py-3 text-[16px]" />
-                <Pressable onPress={() => setVerSenha((v) => !v)} hitSlop={10} accessibilityRole="button" accessibilityLabel={t(verSenha ? 'auth.ocultarSenha' : 'auth.mostrarSenha')}>
-                  <Ionicons name={verSenha ? 'eye-off-outline' : 'eye-outline'} size={22} color="#6b7280" />
-                </Pressable>
-              </View>
-              <Text className="text-xs text-gray-500 mt-1 mb-4">{t('pedidoSemConta.senhaDica')}</Text>
-
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.telefone')} <Text className="text-gray-400 font-normal">({t('pedidoSemConta.opcional')})</Text></Text>
               <CampoTelefone rotulo={t('pedidoSemConta.telefone')} value={telefone} onChange={setTelefone} />
               <Text className="text-xs text-gray-500 mt-1 mb-4">{t('pedidoSemConta.telefoneDica')}</Text>
@@ -501,25 +471,10 @@ export default function PedidoScreen() {
                 <Ionicons name={termos ? 'checkbox' : 'square-outline'} size={22} color={termos ? '#0284c7' : '#6b7280'} />
                 <Text className="flex-1 text-sm text-gray-700">{textoTermos()}</Text>
               </Pressable>
+              {/* transparencia: com este e-mail nasce um acesso BipFix (sem senha; cria depois se quiser) */}
+              <Text className="text-xs text-gray-500 mt-2">{t('pedidoSemConta.acessoTexto')}</Text>
               <Erro />
               <Navegar voltar="local" ok={contatoOk} avancar={() => enviar()} rotulo={t('pedidoSemConta.enviarPedido')} />
-            </View>
-          ) : (
-            <View className="rounded-lg border-2 border-amber-300 p-4 mb-10">
-              <Text className="font-semibold text-gray-900 mb-1">{t('pedidoSemConta.contaExistenteTitulo')}</Text>
-              <Text className="text-sm text-gray-700 mb-3">{t('pedidoSemConta.contaExistenteTexto', { email: email.trim() })}</Text>
-              <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.senha')}</Text>
-              <TextInput autoCorrect={false} accessibilityLabel={t('pedidoSemConta.senha')} value={senhaLogin} onChangeText={setSenhaLogin} secureTextEntry autoComplete="current-password" textContentType="password" autoCapitalize="none" className={CAMPO} />
-              <Erro />
-              <Pressable onPress={entrarEEnviar} disabled={!senhaLogin || enviando} accessibilityRole="button" className="bg-primary-600 rounded-lg py-4 items-center mt-3 disabled:opacity-50">
-                {enviando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold">{t('pedidoSemConta.entrarEEnviar')}</Text>}
-              </Pressable>
-              <Pressable onPress={() => enviar('codigo')} disabled={enviando} accessibilityRole="button" className="mt-3 min-h-[44px] justify-center">
-                <Text className="text-primary-600 underline text-center font-medium">{t('pedidoSemConta.naoLembroSenha')}</Text>
-              </Pressable>
-              <Pressable onPress={() => { setContaExistente(false); setErro(''); }} accessibilityRole="button" className="min-h-[44px] justify-center">
-                <Text className="text-gray-600 underline text-center">{t('pedidoSemConta.usarOutroEmail')}</Text>
-              </Pressable>
             </View>
           )}
         </View>
@@ -544,7 +499,7 @@ export default function PedidoScreen() {
               {esperaReenvio > 0 ? t('pedidoSemConta.reenviarEm', { s: esperaReenvio }) : t('pedidoSemConta.reenviarCodigo')}
             </Text>
           </Pressable>
-          {pendente.contaNova && !corrigindo && (
+          {!corrigindo && (
             <Pressable onPress={() => { setCorrigindo(true); setEmailNovo(pendente.email); }} accessibilityRole="button" className="min-h-[44px] justify-center">
               <Text className="text-primary-600 underline">{t('pedidoSemConta.emailErrado')}</Text>
             </Pressable>

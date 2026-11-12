@@ -192,6 +192,15 @@ export default function LoginScreen() {
               {loading ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold text-base">{t('auth.entrar')}</Text>}
             </Pressable>
 
+            {/* sem senha (pedido feito so com o e-mail) ou sem lembrar dela: codigo por e-mail (12/11) */}
+            <Pressable
+              onPress={() => router.push({ pathname: '/(auth)/codigo-login', params: email.trim() ? { email: email.trim() } : {} })}
+              accessibilityRole="button"
+              className="border border-primary-600 rounded-xl py-3.5 items-center mt-3"
+            >
+              <Text className="text-primary-700 font-semibold text-base">{t('auth.receberCodigo')}</Text>
+            </Pressable>
+
             <View className="flex-row justify-center gap-1 mt-5">
               <Text className="text-gray-600">{t('auth.naoTemConta')}</Text>
               <Link href="/(auth)/cadastro" className="text-primary-600 font-semibold">
