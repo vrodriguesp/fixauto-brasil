@@ -1,7 +1,9 @@
-// E2E LOCAL do pedido sem cadastro no APP (versao web do mesmo codigo, tela de
-// iPhone, servida por servir-app-web.mjs em :8090): botao na entrada nos 6
-// idiomas; ET conta nova (codigo do e-mail, entra e abre o pedido); RU e-mail que
-// ja tem conta (senha na hora). node app-pedido-sem-conta.mjs <.env.local>
+// E2E LOCAL do pedido sem cadastro e SEM SENHA no APP (versao web do mesmo codigo,
+// tela de iPhone, servida por servir-app-web.mjs em :8090): botao na entrada nos 6
+// idiomas; ET conta nova (contato sem senha, codigo do e-mail, tela cheia "crie a sua
+// senha", "agora nao" abre o pedido); RU e-mail que ja tem conta (mesmo codigo, pedido
+// entra na conta, cria a senha na hora); EN "receber um codigo por e-mail" na entrada.
+// node app-pedido-sem-conta.mjs <.env.local>
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import path from 'node:path';
@@ -12,11 +14,12 @@ const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
 if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
-const APP = 'http://localhost:8090';
+const APP = process.env.APP || 'http://localhost:8090';
 const EMAILS = env.EMAIL_PASTA_TESTE;
 const OUT = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/Documentos/_teste_local/resultados';
 const MOB = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/Documentos/_teste_local/site/apps/mobile/i18n/locales';
 const admin = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
+const anon = () => createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } });
 const LOC_BROWSER = { pt: 'pt-BR', 'pt-PT': 'pt-PT', en: 'en-GB', et: 'et-EE', it: 'it-IT', ru: 'ru-RU' };
 const txt = (loc) => {
   const j = JSON.parse(fs.readFileSync(`${MOB}/${loc}.json`, 'utf8'));
@@ -41,6 +44,7 @@ const codigoDe = async (email, depois) => {
   }
   return null;
 };
+const perfilDe = async (email) => (await admin.from('profiles').select('id, senha_definida').ilike('email', email).maybeSingle()).data;
 const clicaTexto = async (page, texto) => { await page.getByText(texto, { exact: true }).locator('visible=true').last().click(); };
 const campo = (page, rotulo) => page.getByLabel(rotulo, { exact: true }).locator('visible=true').first();
 const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
@@ -90,7 +94,7 @@ const ateContato = async (page, T, nome) => {
 };
 
 try {
-  // 1) botao na entrada nos 6 idiomas
+  // 1) botao na entrada nos 6 idiomas (texto sem "sem cadastro" - regra do dono)
   for (const loc of ['pt', 'pt-PT', 'en', 'et', 'it', 'ru']) {
     const T = txt(loc);
     const ctx = await novoContexto(loc); const page = await ctx.newPage();
@@ -98,11 +102,13 @@ try {
     await page.getByText(T('auth.slogan')).waitFor({ timeout: 15000 }).catch(() => {});
     const t = await checaTela(page, `[${loc}] entrada`);
     ok(`[${loc}] botao "${T('auth.pedirSemConta')}"`, t.includes(T('auth.pedirSemConta')) && t.includes(T('auth.pedirSemContaTexto')));
+    ok(`[${loc}] texto do botao sem "sem cadastro"`, !/registr|cadastr|sign-up|регистр/i.test(T('auth.pedirSemContaTexto')), T('auth.pedirSemContaTexto'));
+    ok(`[${loc}] entrada tem "receber um codigo por e-mail"`, t.includes(T('auth.receberCodigo')));
     if (loc === 'et' || loc === 'ru') await page.screenshot({ path: `${OUT}/app-entrada-${loc}.png`, fullPage: true });
     await ctx.close();
   }
 
-  // 2) ET: conta nova
+  // 2) ET: conta nova sem senha
   const T = txt('et');
   const emailEt = `app-pedido-et-${tag}@example.test`;
   {
@@ -110,11 +116,11 @@ try {
     page.on('pageerror', (x) => erros.push(x.message));
     await page.goto(APP, { waitUntil: 'networkidle' });
     await ateContato(page, T, 'et');
+    ok('et: contato sem campo de senha, com a frase do acesso', (await page.getByLabel(T('auth.senha'), { exact: true }).count()) === 0 && (await page.innerText('body')).includes(T('pedidoSemConta.acessoTexto')));
     await campo(page, T('pedidoSemConta.nome')).fill('TESTE AUTOMATICO');
     await campo(page, T('pedidoSemConta.email')).fill(emailEt.replace('example.test', 'gmial.com'));
     ok('et: sugere gmail.com', (await page.innerText('body')).includes(T('pedidoSemConta.voceQuisDizer', { email: emailEt.replace('example.test', 'gmail.com') })));
     await campo(page, T('pedidoSemConta.email')).fill(emailEt);
-    await campo(page, T('pedidoSemConta.senha')).fill(senha);
     await page.getByRole('checkbox', { name: /(Nõustun|Согласен|Согласна|Принимаю|Я принимаю)/ }).locator('visible=true').first().click({ position: { x: 10, y: 10 } });
     await checaTela(page, 'et contato');
     await page.screenshot({ path: `${OUT}/app-pedido-contato-et.png`, fullPage: true });
@@ -135,18 +141,27 @@ try {
     if (codigo !== '000000') ok('et: codigo errado mostra o aviso traduzido', tErr.includes(T('erros.CODIGO_INVALIDO')));
     await campo(page, T('pedidoSemConta.codigoCampo')).fill(codigo || '');
     await clicaTexto(page, T('pedidoSemConta.confirmarEnviar'));
+    // conta nova sem senha: tela cheia "crie a sua senha" antes do pedido
+    const criar = await page.getByText(T('auth.criarSenhaTitulo'), { exact: true }).waitFor({ timeout: 30000 }).then(() => true, () => false);
+    ok('et: codigo -> tela "crie a sua senha"', criar, page.url());
+    const tCriar = await checaTela(page, 'et criar senha');
+    ok('et: tela da senha com Salvar e Agora nao', tCriar.includes(T('common.salvar')) && tCriar.includes(T('auth.agoraNao')));
+    await page.screenshot({ path: `${OUT}/app-criar-senha-et.png`, fullPage: true });
+    await clicaTexto(page, T('auth.agoraNao'));
     await page.waitForURL(/\/solicitacao\//, { timeout: 30000 }).catch(() => {});
-    ok('et: entra e abre o pedido', /\/solicitacao\//.test(page.url()), page.url());
+    ok('et: "agora nao" entra e abre o pedido', /\/solicitacao\//.test(page.url()), page.url());
     await page.waitForTimeout(2000);
     await checaTela(page, 'et pedido aberto');
     await page.screenshot({ path: `${OUT}/app-pedido-aberto-et.png`, fullPage: true });
     const sol = (await admin.from('solicitacoes').select('id, descricao, veiculo:veiculos(placa)').eq('cliente_id', pend?.user_id).maybeSingle()).data;
     ok('et: pedido criado com carro e servico marcado', !!sol && sol.veiculo?.placa === '777APP' && /,|:/.test(sol.descricao || ''), JSON.stringify(sol));
+    ok('et: perfil sem senha (senha_definida=false)', (await perfilDe(emailEt))?.senha_definida === false);
+    ok('et: nenhuma senha entra', !!(await anon().auth.signInWithPassword({ email: emailEt, password: senha })).error);
     ok('et: sem erro de JS', !erros.length, erros.join(' | ').slice(0, 200));
     await ctx.close();
   }
 
-  // 3) RU: e-mail que ja tem conta -> senha na hora, pedido entra na conta
+  // 3) RU: e-mail que ja tem conta -> mesmo codigo, pedido entra na conta; cria a senha na hora
   {
     const R = txt('ru');
     const ctx = await novoContexto('ru'); const page = await ctx.newPage();
@@ -154,28 +169,67 @@ try {
     await ateContato(page, R, 'ru');
     await campo(page, R('pedidoSemConta.nome')).fill('TESTE AUTOMATICO');
     await campo(page, R('pedidoSemConta.email')).fill(emailEt);
-    await campo(page, R('pedidoSemConta.senha')).fill('outra-senha-123');
     await page.getByRole('checkbox', { name: /(Nõustun|Согласен|Согласна|Принимаю|Я принимаю)/ }).locator('visible=true').first().click({ position: { x: 10, y: 10 } });
+    const t0 = Date.now();
     await clicaTexto(page, R('pedidoSemConta.enviarPedido'));
-    await page.getByText(R('pedidoSemConta.contaExistenteTitulo'), { exact: true }).waitFor({ timeout: 20000 });
-    await checaTela(page, 'ru conta existente');
-    await page.screenshot({ path: `${OUT}/app-pedido-conta-existente-ru.png`, fullPage: true });
-    await campo(page, R('pedidoSemConta.senha')).fill('errada-errada');
-    await clicaTexto(page, R('pedidoSemConta.entrarEEnviar'));
-    await page.waitForTimeout(2000);
-    ok('ru: senha errada avisa', (await page.innerText('body')).includes(R('pedidoSemConta.loginErro')));
-    await campo(page, R('pedidoSemConta.senha')).fill(senha);
-    await clicaTexto(page, R('pedidoSemConta.entrarEEnviar'));
+    await page.getByText(R('pedidoSemConta.codigoTitulo'), { exact: true }).waitFor({ timeout: 30000 });
+    ok('ru: conta existente vai direto ao codigo (sem caixa de senha)', (await page.getByLabel(R('auth.senha'), { exact: true }).count()) === 0);
+    await checaTela(page, 'ru codigo conta existente');
+    await page.screenshot({ path: `${OUT}/app-pedido-codigo-conta-existente-ru.png`, fullPage: true });
+    const codigo = await codigoDe(emailEt, t0);
+    await campo(page, R('pedidoSemConta.codigoCampo')).fill(codigo || '');
+    await clicaTexto(page, R('pedidoSemConta.confirmarEnviar'));
+    await page.getByText(R('auth.criarSenhaTitulo'), { exact: true }).waitFor({ timeout: 30000 });
+    ok('ru: conta ainda sem senha -> tela "crie a sua senha" de novo', true);
+    await campo(page, R('auth.senha')).fill(senha);
+    await campo(page, R('auth.repitaSenha')).fill(senha + 'x');
+    await clicaTexto(page, R('common.salvar'));
+    await page.waitForTimeout(800);
+    ok('ru: senhas diferentes avisam', (await page.innerText('body')).includes(R('auth.senhasNaoConferem')));
+    await campo(page, R('auth.repitaSenha')).fill(senha);
+    await clicaTexto(page, R('common.salvar'));
+    await page.getByText(R('auth.senhaCriada'), { exact: true }).waitFor({ timeout: 20000 });
+    await page.screenshot({ path: `${OUT}/app-senha-criada-ru.png`, fullPage: true });
     await page.waitForURL(/\/solicitacao\//, { timeout: 30000 }).catch(() => {});
-    ok('ru: entrou e abriu o pedido', /\/solicitacao\//.test(page.url()), page.url());
+    ok('ru: senha criada -> abre o pedido', /\/solicitacao\//.test(page.url()), page.url());
     const id = [...contas][0];
     const n = (await admin.from('solicitacoes').select('id').eq('cliente_id', id)).data?.length;
     const v = (await admin.from('veiculos').select('id').eq('profile_id', id)).data?.length;
     ok('ru: 2o pedido na mesma conta, mesmo carro (placa)', n === 2 && v === 1, `pedidos ${n}, carros ${v}`);
+    ok('ru: senha_definida=true e login por senha funciona', (await perfilDe(emailEt))?.senha_definida === true && !(await anon().auth.signInWithPassword({ email: emailEt, password: senha })).error);
+    await ctx.close();
+  }
+
+  // 4) EN: "receber um codigo por e-mail" na entrada (conta ja com senha: entra direto nas abas)
+  {
+    const E = txt('en');
+    const ctx = await novoContexto('en'); const page = await ctx.newPage(); const erros = [];
+    page.on('pageerror', (x) => erros.push(x.message));
+    await page.goto(APP, { waitUntil: 'networkidle' });
+    await clicaTexto(page, E('auth.receberCodigo'));
+    await page.getByText(E('auth.codigoTitulo'), { exact: true }).waitFor({ timeout: 15000 });
+    await checaTela(page, 'en codigo de login');
+    await campo(page, E('auth.email')).fill(emailEt);
+    const t0 = Date.now();
+    await clicaTexto(page, E('auth.enviarCodigo'));
+    await page.getByText(E('auth.codigoEnviadoTexto', { email: emailEt }), { exact: true }).waitFor({ timeout: 20000 });
+    await page.screenshot({ path: `${OUT}/app-login-codigo-en.png`, fullPage: true });
+    const codigo = await codigoDe(emailEt, t0);
+    ok('en: e-mail do codigo de login chegou', !!codigo);
+    await campo(page, E('auth.codigo')).fill(codigo === '000000' ? '111111' : '000000');
+    await clicaTexto(page, E('auth.entrar'));
+    await page.waitForTimeout(1500);
+    ok('en: codigo errado avisa', (await page.innerText('body')).includes(E('erros.CODIGO_INVALIDO')));
+    await campo(page, E('auth.codigo')).fill(codigo || '');
+    await clicaTexto(page, E('auth.entrar'));
+    await page.getByText(E('tabs.inicio'), { exact: true }).first().waitFor({ timeout: 30000 }).catch(() => {});
+    const t = await page.innerText('body');
+    ok('en: entra nas abas sem a tela da senha (ja tem senha)', t.includes(E('tabs.inicio')) && !t.includes(E('auth.criarSenhaTitulo')), page.url());
+    ok('en: sem erro de JS', !erros.length, erros.join(' | ').slice(0, 200));
     await ctx.close();
   }
   const f = (await admin.from('funil_contagem').select('etapa, total').eq('funil', 'pedido_app').eq('dia', new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Tallinn' }))).data || [];
-  ok('funil do app conta os passos', ['abriu', 'carro', 'local', 'contato', 'codigo_enviado', 'confirmado'].every((e) => f.some((x) => x.etapa === e)), JSON.stringify(f));
+  ok('funil do app conta os passos', ['abriu', 'carro', 'local', 'contato', 'codigo_enviado', 'confirmado', 'conta_existente'].every((e) => f.some((x) => x.etapa === e)), JSON.stringify(f));
 } catch (e) {
   falhas++;
   console.log('FALHA excecao', e.stack || e.message);
@@ -190,6 +244,7 @@ try {
     await admin.from('solicitacoes').delete().eq('cliente_id', id);
     await admin.from('veiculos').delete().eq('profile_id', id);
     await admin.from('pedidos_pendentes').delete().eq('user_id', id);
+    await admin.from('codigos_login').delete().eq('user_id', id);
     await admin.from('profiles').delete().eq('id', id);
     await admin.auth.admin.deleteUser(id).catch(() => {});
   }

@@ -49,6 +49,7 @@ const msgApp = (l) => {
 };
 
 const admin = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
+const anon = () => createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const tag = crypto.randomBytes(3).toString('hex');
 const senha = 'Exaust-' + crypto.randomBytes(6).toString('hex');
@@ -257,7 +258,7 @@ async function site(l, largura) {
     await page.getByTestId('passo-contato').waitFor();
     await noAlto(page, 'passo-contato', nm + ' contato');
     t = await checar(page, `${nm} contato`);
-    ok(`${nm}: textos do contato no idioma`, t.includes(T('pedidoSemConta.contatoTitulo')) && t.includes(T('pedidoSemConta.senhaDica')));
+    ok(`${nm}: textos do contato no idioma (sem campo de senha)`, t.includes(T('pedidoSemConta.contatoTitulo')) && t.includes(T('pedidoSemConta.acessoTexto')) && (await page.locator('#pedido-senha').count()) === 0);
     const hrefs = await page.locator('[data-testid=passo-contato] a').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
     ok(`${nm}: termos e privacidade no mercado certo`, hrefs.length >= 2 && hrefs.every((h) => (h || '').startsWith(PREF[l] + '/')), JSON.stringify(hrefs));
     const email = `exaust-${l.toLowerCase()}-${largura}-${tag}@example.test`;
@@ -267,11 +268,7 @@ async function site(l, largura) {
     await page.getByTestId('sugestao-email').click();
     ok(`${nm}: sugestao aplicada`, (await page.locator('#pedido-email').inputValue()) === 'exaust@hotmail.com');
     await page.locator('#pedido-email').fill(email);
-    await page.locator('#pedido-senha').fill('curta');
     const enviar = page.getByRole('button', { name: T('pedidoSemConta.enviarPedido') });
-    await enviar.click();
-    ok(`${nm}: senha curta nao envia (avisa)`, await page.getByTestId('passo-contato').getByTestId('falta-aviso').isVisible());
-    await page.locator('#pedido-senha').fill(senha);
     await enviar.click();
     ok(`${nm}: sem aceitar os termos nao envia (avisa)`, await page.getByTestId('passo-contato').getByTestId('falta-aviso').isVisible());
     await page.getByTestId('aceito-termos').check();
@@ -280,8 +277,8 @@ async function site(l, largura) {
     {
       const outro = OUTRO[l];
       await trocarIdioma(page, l, outro, largura);
-      ok(`${nm}: trocar idioma no contato mantem nome, e-mail, senha, telefone e termos`, await page.getByTestId('passo-contato').isVisible()
-        && (await page.locator('#pedido-email').inputValue()) === email && (await page.locator('#pedido-senha').inputValue()) === senha
+      ok(`${nm}: trocar idioma no contato mantem nome, e-mail, telefone e termos`, await page.getByTestId('passo-contato').isVisible()
+        && (await page.locator('#pedido-email').inputValue()) === email
         && (await page.locator('#pedido-telefone').inputValue()).length > 5 && await page.getByTestId('aceito-termos').isChecked());
       await trocarIdioma(page, outro, l, largura);
     }
@@ -311,7 +308,13 @@ async function site(l, largura) {
     await foto(page, `site-${l}-${largura}-5codigo`);
     await page.locator('#pedido-codigo').fill(c.codigo || '');
     await page.getByTestId('confirmar-codigo').click();
-    await page.waitForURL((u) => !u.pathname.endsWith(PEDIDO[l].split('/').pop()), { timeout: 30000 }).catch(() => {});
+    const criarSenha = await page.getByTestId('criar-senha').waitFor({ timeout: 30000 }).then(() => true, () => false);
+    ok(`${nm}: tela cheia "crie a sua senha" depois do codigo (${new URL(page.url()).pathname})`, criarSenha && (await page.getByTestId('passo-codigo').count()) === 0, page.url());
+    t = await checar(page, `${nm} criar senha`);
+    ok(`${nm}: "crie a sua senha" no idioma`, t.includes(T('criarSenha.titulo')) && t.includes(T('criarSenha.agoraNao')));
+    await foto(page, `site-${l}-${largura}-5b-criar-senha`);
+    await page.getByTestId('criar-senha-agora-nao').click();
+    await page.waitForURL(/orcamentos\//, { timeout: 30000 }).catch(() => {});
     await page.waitForTimeout(2500);
     const sol = (await admin.from('solicitacoes').select('id, tipo, urgencia, descricao, veiculo:veiculos(placa, fipe_marca)').eq('cliente_id', p?.user_id).maybeSingle()).data;
     ok(`${nm}: pedido criado (tipo, urgencia, carro)`, sol?.tipo === tipo && sol?.urgencia === 'alta' && sol?.veiculo?.fipe_marca === 'Toyota', JSON.stringify(sol));
@@ -432,7 +435,7 @@ async function app(l) {
     await campo(T('pedidoSemConta.email')).fill('exaust@gmial.com');
     ok(`${nm}: sugere gmail.com`, (await page.innerText('body')).includes(T('pedidoSemConta.voceQuisDizer', { email: 'exaust@gmail.com' })));
     await campo(T('pedidoSemConta.email')).fill(email);
-    await campo(T('pedidoSemConta.senha')).fill(senha);
+    ok(`${nm}: sem campo de senha no contato`, (await page.getByLabel(T('auth.senha'), { exact: true }).count()) === 0);
     ok(`${nm}: prefixo do telefone ja no pais do idioma (+${DDI[l]})`, (await page.getByRole('button', { name: new RegExp(`\\+${DDI[l]}$`) }).count()) === 1);
     await campo(T('pedidoSemConta.telefone')).fill(NUM[l]);
     await page.getByRole('checkbox').locator('visible=true').last().click({ position: { x: 10, y: 10 } });
@@ -454,9 +457,14 @@ async function app(l) {
     await foto(page, `app-${l}-5codigo`);
     await campo(T('pedidoSemConta.codigoCampo')).fill(c.codigo || '');
     await clica(T('pedidoSemConta.confirmarEnviar'));
+    const criarSenha = await page.getByText(T('auth.criarSenhaTitulo'), { exact: true }).waitFor({ timeout: 30000 }).then(() => true, () => false);
+    ok(`${nm}: tela "crie a sua senha" depois do codigo`, criarSenha, page.url());
+    await checar(page, `${nm} criar senha`);
+    await foto(page, `app-${l}-5b-criar-senha`);
+    await clica(T('auth.agoraNao'));
     await page.waitForURL(/\/solicitacao\//, { timeout: 30000 }).catch(() => {});
     await page.waitForTimeout(2500);
-    ok(`${nm}: abre o pedido logado`, /\/solicitacao\//.test(page.url()), page.url());
+    ok(`${nm}: "agora nao" abre o pedido logado`, /\/solicitacao\//.test(page.url()), page.url());
     t = await checar(page, `${nm} pedido aberto`);
     ok(`${nm}: tela do pedido mostra o pedido (nao "nao existe")`, t.includes(`App ${l}`) && !t.includes(T('acompanhamento.naoEncontrado')), t.slice(0, 160));
     const sol = (await admin.from('solicitacoes').select('id, tipo, urgencia, descricao, veiculo:veiculos(fipe_marca, placa)').eq('cliente_id', p?.user_id).maybeSingle()).data;
@@ -502,36 +510,28 @@ async function extra(caso) {
       await page.getByRole('button', { name: T('clienteNovaSolicitacao.next'), exact: true }).click();
       await page.locator('#pedido-nome').fill('Exist');
       await page.locator('#pedido-email').fill(email.toUpperCase());
-      await page.locator('#pedido-senha').fill('outra-senha-1');
       await page.getByTestId('aceito-termos').check();
+      const t0 = Date.now();
       await page.getByRole('button', { name: T('pedidoSemConta.enviarPedido') }).click();
-      await page.getByTestId('conta-existente').waitFor({ timeout: 20000 });
-      ok(`${nm}: e-mail em maiusculas reconhece a conta`, true);
+      // 12/11: quem ja tem conta recebe o mesmo codigo, sem caixa de senha (nao revela que o e-mail tem conta)
+      await page.getByTestId('passo-codigo').waitFor({ timeout: 20000 });
+      ok(`${nm}: e-mail em maiusculas -> tela do codigo, sem caixa "ja tem conta"`, (await page.getByTestId('conta-existente').count()) === 0);
+      ok(`${nm}: "corrigir e-mail" igual ao de conta nova (nao revela a conta)`, (await page.getByTestId('corrigir-email').count()) === 1);
       await checar(page, nm);
       await foto(page, 'extra-conta-existente');
-      await page.locator('#pedido-senha-login').fill('errada-errada');
-      await page.getByRole('button', { name: T('pedidoSemConta.entrarEEnviar') }).click();
-      await page.locator('[role=alert]:not(#__next-route-announcer__)').first().waitFor();
-      ok(`${nm}: senha errada avisa`, (await page.locator('[role=alert]:not(#__next-route-announcer__)').first().innerText()).includes(T('pedidoSemConta.loginErro')));
-      const t0 = Date.now();
-      await page.getByTestId('enviar-codigo-conta').click();
-      await page.getByTestId('passo-codigo').waitFor({ timeout: 20000 });
-      ok(`${nm}: sem corrigir e-mail (conta existente)`, (await page.getByTestId('corrigir-email').count()) === 0);
       const c = await codigoDe(email, t0);
       await page.locator('#pedido-codigo').fill(c.codigo || '');
       await page.getByTestId('confirmar-codigo').click();
-      await page.getByTestId('pedido-enviado').waitFor({ timeout: 20000 });
-      const t = await checar(page, nm + ' enviado');
-      ok(`${nm}: tela final com e-mail e entrar`, t.includes(T('pedidoSemConta.enviadoTitulo')) && t.includes(T('pedidoSemConta.enviadoEntrar')));
-      await foto(page, 'extra-conta-existente-enviado');
+      // conta com senha: entra direto no pedido, sem a tela "crie a sua senha"
+      await page.waitForURL(/orcamentos\//, { timeout: 30000 }).catch(() => {});
+      ok(`${nm}: codigo entra na conta existente e abre o pedido`, /orcamentos\//.test(page.url()) && (await page.getByTestId('criar-senha').count()) === 0, page.url());
+      await foto(page, 'extra-conta-existente-pedido');
       const v = (await admin.from('veiculos').select('id').eq('profile_id', u.user.id)).data?.length;
       ok(`${nm}: placa "ex 123" = carro EX123 da conta (nao duplica)`, v === 1, String(v));
-      const t1 = Date.now();
-      await page.getByRole('button', { name: T('pedidoSemConta.enviadoCriarSenha') }).click();
-      await page.locator('[role=status]:not(#__next-route-announcer__)').first().waitFor();
-      const link = await codigoDe(email, t1).catch(() => null);
-      const arqs = fs.readdirSync(EMAILS).filter((f) => f.endsWith(`_${email}.html`) && Number(f.split('_')[0]) >= t1);
-      ok(`${nm}: link de nova senha enviado`, arqs.length > 0);
+      const sols = (await admin.from('solicitacoes').select('id').eq('cliente_id', u.user.id)).data?.length;
+      ok(`${nm}: pedido entrou na conta existente`, sols === 1, String(sols));
+      const l2 = await anon().auth.signInWithPassword({ email, password: senha });
+      ok(`${nm}: senha da conta intocada`, !l2.error, l2.error?.message);
       ok(`${nm}: sem erro de JS`, erros.filter((e) => e.startsWith('JS')).length === 0, erros.join(' | '));
     }
     if (caso === 'corrigir-email' || caso === 'tentativas') {
@@ -557,7 +557,6 @@ async function extra(caso) {
       const errado = `exaust-${caso}-${tag}@example.test`;
       await page.locator('#pedido-nome').fill('Test');
       await page.locator('#pedido-email').fill(errado);
-      await page.locator('#pedido-senha').fill(senha);
       await page.getByTestId('aceito-termos').check();
       const t0 = Date.now();
       await page.getByRole('button', { name: T('pedidoSemConta.enviarPedido') }).click();
@@ -640,7 +639,6 @@ async function extra(caso) {
       const emailApp = `exaust-app-novo-${tag}@example.test`;
       await campo(T('pedidoSemConta.nome')).fill('App');
       await campo(T('pedidoSemConta.email')).fill(emailApp);
-      await campo(T('pedidoSemConta.senha')).fill(senha);
       await page.getByRole('checkbox').locator('visible=true').last().click({ position: { x: 10, y: 10 } });
       const t0 = Date.now();
       await clica(T('pedidoSemConta.enviarPedido'));
@@ -653,6 +651,9 @@ async function extra(caso) {
       const c = await codigoDe(emailApp, t0);
       await campo(T('pedidoSemConta.codigoCampo')).fill(c.codigo || '');
       await clica(T('pedidoSemConta.confirmarEnviar'));
+      // conta nova sem senha: "crie a sua senha" -> agora nao -> pedido
+      await page.getByText(T('auth.criarSenhaTitulo'), { exact: true }).waitFor({ timeout: 30000 }).catch(() => {});
+      await clica(T('auth.agoraNao'));
       await page.waitForURL(/\/solicitacao\//, { timeout: 30000 }).catch(() => {});
       await page.waitForTimeout(3000);
       const tela = await page.innerText('body');
@@ -665,7 +666,7 @@ async function extra(caso) {
       for (const l of LOCS) {
         const email = `exaust-mail-${l.toLowerCase()}-${tag}@example.test`;
         const form = new FormData();
-        form.append('dados', JSON.stringify({ origem: 'site', idioma: l, nome: `Nome <b>${l}</b>`, email, senha, aceitouTermos: true, tipo: 'outro', descricao: 'x', urgencia: 'media', endereco: 'Tallinn', latitude: 59.43, longitude: 24.75, pais: 'EE', veiculo: { tipo: 'cars', marca: 'Toyota', modelo: 'Corolla', ano: '2017', placa: null } }));
+        form.append('dados', JSON.stringify({ origem: 'site', idioma: l, nome: `Nome <b>${l}</b>`, email, aceitouTermos: true, tipo: 'outro', descricao: 'x', urgencia: 'media', endereco: 'Tallinn', latitude: 59.43, longitude: 24.75, pais: 'EE', veiculo: { tipo: 'cars', marca: 'Toyota', modelo: 'Corolla', ano: '2017', placa: null } }));
         const t0 = Date.now();
         const r = await fetch(`${SITE}/api/pedido-sem-conta`, { method: 'POST', body: form, headers: { 'x-real-ip': ipFalso() } });
         const d = await r.json();
