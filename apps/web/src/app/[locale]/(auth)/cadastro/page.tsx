@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect, useRef } from 'react';
 import { Link } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
@@ -13,6 +13,12 @@ import { useAuth } from '@/lib/auth-context';
 import CampoTelefone from '@/components/forms/CampoTelefone';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
+
+// Passos do cadastro de oficina (onde as pessoas param): so o numero do dia, sem dado
+// pessoal - mesmo contador do pedido (api/funil, migracao 073). 12/11.
+const contar = (etapa: 'abriu' | 'edasi_bloqueado' | 'enviado') => {
+  try { fetch('/api/funil', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ funil: 'cadastro_site', etapa }), keepalive: true }).catch(() => {}); } catch { /* nunca atrapalha o cadastro */ }
+};
 
 export default function CadastroPageWrapper() {
   const t = useTranslations('cadastro');
@@ -44,6 +50,15 @@ function CadastroPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [aceitouTermos, setAceitouTermos] = useState(false);
+  // "Edasi" tocado sem a caixinha dos termos: aviso ao lado dela (antes o botao so ficava
+  // palido, sem dizer por que - Clarity 12/11: 3 toques no botao para 1 na caixinha)
+  const [faltaTermos, setFaltaTermos] = useState(false);
+  const bloqueadoContado = useRef(0);
+  const edasiBloqueado = () => { // 1 por tentativa (o navegador dispara 'invalid' por campo)
+    if (Date.now() - bloqueadoContado.current < 1000) return;
+    bloqueadoContado.current = Date.now();
+    contar('edasi_bloqueado');
+  };
   // oficina/loja: declara ser responsavel pela empresa e estar ciente de
   // possivel cobranca futura (aviso previo de 30 dias corridos)
   const [declaracao, setDeclaracao] = useState(false);
@@ -107,31 +122,43 @@ function CadastroPage() {
     } catch { /* ignora */ }
   }, [rascunhoLido, userType, step, nome, email, telefone, aceitouTermos, declaracao, nomeFantasia, cnpj, endereco, cidade, estado, cep, especialidades]);
 
+  // Posicao do aparelho so no passo do endereco (oficina/loja), como no pedido do motorista
+  // (b451b3d, 10/11): o pedido de localizacao ao abrir a pagina, antes de qualquer toque,
+  // assusta quem chega pelo anuncio. Nunca bloqueia: sem permissao, handleSubmit
+  // geocodifica o endereco digitado.
+  const localPedido = useRef(false);
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
-          setCoords({ lat, lon });
-          setGeoResolved(true);
-          // O navegador so devolve lat/lon, nunca o pais - precisa de uma
-          // geocodificacao reversa pra descobrir em que pais o
-          // dispositivo esta.
-          try {
-            const res = await fetch(`/api/geocode?lat=${lat}&lon=${lon}`);
-            if (res.ok) {
-              const data = await res.json();
-              if (data.paisCodigo) setPais(data.paisCodigo);
-            }
-          } catch {
-            // mantem o default BR se a geocodificacao reversa falhar
+    if (step !== 3 || localPedido.current || !navigator.geolocation) return;
+    localPedido.current = true;
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        setCoords({ lat, lon });
+        setGeoResolved(true);
+        // O navegador so devolve lat/lon, nunca o pais - precisa de uma
+        // geocodificacao reversa pra descobrir em que pais o
+        // dispositivo esta.
+        try {
+          const res = await fetch(`/api/geocode?lat=${lat}&lon=${lon}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.paisCodigo) setPais(data.paisCodigo);
           }
-        },
-        () => { /* sem permissao - handleSubmit tenta geocodificar o endereco digitado */ }
-      );
-    }
-  }, []);
+        } catch {
+          // mantem o pais da versao do site se a geocodificacao reversa falhar
+        }
+      },
+      () => { /* sem permissao - handleSubmit tenta geocodificar o endereco digitado */ }
+    );
+  }, [step]);
+  // funil: abriu o cadastro de oficina (uma vez por pagina)
+  const abriuContado = useRef(false);
+  useEffect(() => {
+    if (userType !== 'oficina' || abriuContado.current) return;
+    abriuContado.current = true;
+    contar('abriu');
+  }, [userType]);
 
   // Fallback quando o navegador nega geolocalizacao: geocodifica o endereco
   // que a oficina/loja digitou via Nominatim (gratuito, mundial) em vez de
@@ -240,7 +267,7 @@ function CadastroPage() {
     }
     try { sessionStorage.removeItem(RASCUNHO); } catch { /* ignora */ }
     // conversao da campanha de Pesquisa do Google Ads (so oficinas)
-    if (tipo === 'oficina') { registrarConversaoCadastro(); registrarEventoMeta('CompleteRegistration'); }
+    if (tipo === 'oficina') { registrarConversaoCadastro(); registrarEventoMeta('CompleteRegistration'); contar('enviado'); }
     setEnviado(true);
   };
 
@@ -366,7 +393,13 @@ function CadastroPage() {
 
           {/* Step 2: Personal info */}
           {step === 2 && (
-            <form onSubmit={(e) => { e.preventDefault(); (userType === 'oficina' || userType === 'loja_pecas') ? setStep(3) : handleSubmit(e); }} className="space-y-4">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              // "Edasi" sempre clicavel: sem a caixinha, avisa ao lado dela e leva o foco (nome/e-mail/senha
+              // vazios ja tem o aviso nativo do navegador, que so aparece com o botao habilitado)
+              if (!aceitouTermos) { setFaltaTermos(true); edasiBloqueado(); document.getElementById('cadastro-termos')?.focus(); return; }
+              (userType === 'oficina' || userType === 'loja_pecas') ? setStep(3) : handleSubmit(e);
+            }} onInvalidCapture={edasiBloqueado} className="space-y-4">
               {!tipoParam && (
                 <div className="flex items-center gap-2 mb-4">
                   <button type="button" onClick={() => setStep(1)} className="text-gray-400 hover:text-gray-600">
@@ -395,10 +428,12 @@ function CadastroPage() {
               </div>
               <label className="flex items-start gap-2 text-sm text-gray-600">
                 <input
+                  id="cadastro-termos"
                   type="checkbox"
                   className="mt-1 w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
                   checked={aceitouTermos}
-                  onChange={(e) => setAceitouTermos(e.target.checked)}
+                  aria-invalid={faltaTermos && !aceitouTermos}
+                  onChange={(e) => { setAceitouTermos(e.target.checked); if (e.target.checked) setFaltaTermos(false); }}
                 />
                 <span>
                   {t('aceiteTexto1')}{' '}
@@ -407,7 +442,8 @@ function CadastroPage() {
                   <Link href="/privacidade" target="_blank" className="text-primary-600 hover:underline">{t('politicaDePrivacidade')}</Link>
                 </span>
               </label>
-              <button type="submit" className="btn-primary w-full" disabled={loading || !aceitouTermos}>
+              {faltaTermos && !aceitouTermos && <p role="alert" className="text-sm text-red-700 -mt-2" data-testid="falta-termos">{t('errorTermos')}</p>}
+              <button type="submit" className="btn-primary w-full" disabled={loading}>
                 {loading ? t('criandoConta') : (userType === 'oficina' || userType === 'loja_pecas') ? t('proximo') : t('criarConta')}
               </button>
             </form>
