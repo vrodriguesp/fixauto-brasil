@@ -14,6 +14,8 @@ interface Props {
   value: CatalogItem | null;
   onChange: (item: CatalogItem) => void;
   fetchUrl: string;
+  /** a vista mas parado (modelo antes da marca), com este texto no lugar de "selecione" */
+  desativado?: string;
 }
 
 // Na versao web o Modal, ao terminar a animacao de fechar, devolve o foco ao botao que o
@@ -23,7 +25,7 @@ const ANIMACAO_MODAL = Platform.OS === 'web' ? 'none' : 'slide';
 
 // Picker generico marca/modelo, reaproveitando o mesmo endpoint publico
 // /api/vehicle-catalog que o site ja usa (VehiclesDB, mundo todo).
-export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl }: Props) {
+export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl, desativado }: Props) {
   // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
@@ -74,8 +76,10 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl 
   return (
     <View className="mb-4">
       <Text className="text-sm font-medium text-gray-700 mb-1">{label}</Text>
-      <Pressable onPress={() => { Keyboard.dismiss(); setOpen(true); }} accessibilityRole="button" accessibilityLabel={label} className="border border-gray-300 rounded-lg px-4 py-3">
-        <Text className={value ? 'text-gray-900' : 'text-gray-400'}>{value?.name || t('common.selecione')}</Text>
+      <Pressable onPress={() => { if (desativado) return; Keyboard.dismiss(); setOpen(true); }} disabled={!!desativado}
+        accessibilityRole="button" accessibilityLabel={label} accessibilityHint={desativado} accessibilityState={{ disabled: !!desativado }}
+        className={`border border-gray-300 rounded-lg px-4 py-3 ${desativado ? 'bg-gray-50' : ''}`}>
+        <Text className={value ? 'text-gray-900' : 'text-gray-400'}>{value?.name || desativado || t('common.selecione')}</Text>
       </Pressable>
 
       <Modal visible={open} animationType={ANIMACAO_MODAL} onRequestClose={() => setOpen(false)}>

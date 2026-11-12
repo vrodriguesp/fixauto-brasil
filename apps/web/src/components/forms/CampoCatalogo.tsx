@@ -16,7 +16,7 @@ const chave = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(
 // <select>: no celular abria a lista nativa de tela cheia, sem busca, e quem nao achava o
 // carro na lista nao tinha como seguir (dono 12/11).
 export default function CampoCatalogo({
-  id, opcoes, valor, onEscolher, placeholder, carregando, focoAoMontar,
+  id, opcoes, valor, onEscolher, placeholder, carregando, focoAoMontar, desativado,
 }: {
   id: string;
   opcoes: OpcaoCatalogo[];
@@ -27,6 +27,8 @@ export default function CampoCatalogo({
   placeholder?: string;
   carregando?: boolean;
   focoAoMontar?: boolean;
+  /** campo a vista mas parado (modelo antes da marca): a pessoa ve tudo o que vai preencher */
+  desativado?: boolean;
 }) {
   const t = useTranslations('veiculoForm');
   const listaId = `${useId()}-lista`;
@@ -86,7 +88,8 @@ export default function CampoCatalogo({
         ref={input}
         id={id}
         type="text"
-        className="input-field scroll-mt-24 pr-12"
+        className="input-field scroll-mt-24 pr-12 disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+        disabled={desativado}
         placeholder={carregando ? t('carregando') : placeholder}
         value={texto}
         autoComplete="off"
@@ -96,7 +99,7 @@ export default function CampoCatalogo({
         aria-controls={listaId}
         aria-autocomplete="list"
         aria-busy={carregando}
-        onFocus={() => setAberto(true)}
+        onFocus={() => { if (!desativado) setAberto(true); }}
         onChange={(e) => { setTexto(e.target.value); setAberto(true); setAtivo(-1); }}
         onBlur={() => setTimeout(() => { if (!escolhendo.current) confirmarTexto(); }, 150)}
         onKeyDown={(e) => {
@@ -107,14 +110,14 @@ export default function CampoCatalogo({
         }}
       />
       {/* as duas formas (dono 12/11): a setinha abre a lista inteira para escolher; escrever filtra */}
-      <button type="button" tabIndex={-1} aria-label={t('verLista')} data-testid={`${id}-abrir`}
+      <button type="button" tabIndex={-1} aria-label={t('verLista')} data-testid={`${id}-abrir`} disabled={desativado}
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           if (aberto) { setAberto(false); return; }
           // sem focar o campo: no celular so a lista abre, sem o teclado por cima
           setTexto(valor); setAtivo(-1); setAberto(true);
         }}
-        className="absolute inset-y-0 right-0 w-12 flex items-center justify-center text-gray-500">
+        className="absolute inset-y-0 right-0 w-12 flex items-center justify-center text-gray-500 disabled:text-gray-300">
         <svg className={`w-5 h-5 transition-transform ${aberto ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>

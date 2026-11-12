@@ -303,9 +303,9 @@ export default function EmergenciaScreen() {
       {veiculoEscolhido === null && (
         <View className="mb-2">
           <VehicleCatalogPicker label={t('veiculos.marca')} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" />
-          {marca && (
-            <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={marca.code ? `/api/vehicle-catalog?tipo=cars&marca=${marca.code}` : ''} />
-          )}
+          {/* modelo sempre a vista; antes da marca fica parado (dono 12/11) */}
+          <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={marca?.code ? `/api/vehicle-catalog?tipo=cars&marca=${marca.code}` : ''}
+            desativado={marca ? undefined : t('veiculos.escolhaMarcaPrimeiro')} />
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.placa')}</Text>
           <TextInput accessibilityLabel={t('veiculos.placa')} value={placa} onChangeText={(v) => setPlaca(v.toUpperCase())} autoCapitalize="characters" maxLength={10}
             className="border border-gray-300 rounded-lg px-4 py-3 text-[16px]" />

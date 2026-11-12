@@ -230,6 +230,9 @@ try {
   await tocar(pC, botao(pC, new RegExp(`^${T('clienteNovaSolicitacao.next')}$`, 'i')).last(), 'avancar (detalhe)');
   await tela(pC, 'pedido 3 carro', { topo: true });
   if (await pC.getByTestId('cbbe3-101-abrir').count()) {
+    // dono 12/11: marca, modelo, ano e placa a vista desde o inicio; modelo parado ate a marca
+    ok('carro: os 4 campos aparecem desde o inicio', (await Promise.all(['#cbbe3-101', '#cbbe3-102', '#cbbe3-103', '#pedido-placa'].map((s) => pC.locator(s).isVisible()))).every(Boolean));
+    ok('carro: modelo parado ate escolher a marca', await pC.locator('#cbbe3-102').isDisabled());
     // catalogo europeu: campo de escrever + setinha da lista (dono 12/11: as duas formas)
     await tocar(pC, pC.getByTestId('cbbe3-101-abrir'), 'setinha da lista de marcas');
     const lista = pC.getByTestId('cbbe3-101-lista');

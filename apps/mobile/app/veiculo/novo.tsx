@@ -55,9 +55,9 @@ export default function NovoVeiculoScreen() {
 
       <VehicleCatalogPicker label={t('veiculos.marca')} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" />
 
-      {marca && (
-        <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={marca.code ? `/api/vehicle-catalog?tipo=cars&marca=${marca.code}` : ''} />
-      )}
+      {/* modelo sempre a vista; antes da marca fica parado (dono 12/11) */}
+      <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={marca?.code ? `/api/vehicle-catalog?tipo=cars&marca=${marca.code}` : ''}
+        desativado={marca ? undefined : t('veiculos.escolhaMarcaPrimeiro')} />
 
       <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.ano')}</Text>
       <TextInput accessibilityLabel={t('veiculos.ano')} value={ano} onChangeText={(v) => setAno(v.replace(/\D/g, '').slice(0, 4))} keyboardType="number-pad" maxLength={4} className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-[16px]" />

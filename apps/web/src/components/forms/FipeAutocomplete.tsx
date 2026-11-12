@@ -197,7 +197,8 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
       setSelectedMarcaCode(marcaCode);
       setSelectedModeloCode('');
       setSelectedAnoCode('');
-      onChange({ ...value, marca: marca.name, modelo: '', ano: '', codigo: undefined, valor: undefined });
+      // fora da FIPE o ano nao depende da marca e fica a vista: nao apaga o que a pessoa ja escreveu
+      onChange({ ...value, marca: marca.name, modelo: '', ano: isBR ? '' : value.ano, codigo: undefined, valor: undefined });
       setModelos([]);
       setAnos([]);
       fetchModelos(value.tipo, marcaCode);
@@ -221,13 +222,14 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
   const escolherMarca = (o: OpcaoCatalogo | null) => {
     setFocar(o ? 'modelo' : '');
     if (o?.code) { handleMarcaChange(o.code); return; }
+    pedidoModelos.current++; // lista de modelos de uma marca escolhida antes nao chega atrasada
     setSelectedMarcaCode(''); setSelectedModeloCode(''); setModelos([]);
-    onChange({ ...value, marca: o?.name || '', modelo: '', ano: '', codigo: undefined, valor: undefined });
+    onChange({ ...value, marca: o?.name || '', modelo: '', codigo: undefined, valor: undefined });
   };
   const escolherModelo = (o: OpcaoCatalogo | null) => {
     setFocar(o ? 'ano' : '');
     setSelectedModeloCode(o?.code || '');
-    onChange({ ...value, modelo: o?.name || '', ano: '', codigo: undefined, valor: undefined });
+    onChange({ ...value, modelo: o?.name || '', codigo: undefined, valor: undefined });
   };
 
   const handleAnoChange = async (anoCode: string) => {
@@ -312,12 +314,14 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
         )}
       </div>
 
-      {/* Modelo */}
-      {!isBR && value.marca && (
+      {/* Modelo: fora da FIPE fica sempre a vista (dono 12/11: a pessoa ve marca, modelo, ano e placa
+          de uma vez, como nos sites grandes de carro); antes da marca fica parado, "escolha a marca" */}
+      {isBR === false && (
         <div>
           <label htmlFor="cbbe3-102" className="block text-sm font-medium text-gray-700 mb-1">{t('labelModelo')}</label>
-          <CampoCatalogo key={value.marca} id="cbbe3-102" opcoes={modelos} valor={value.modelo} onEscolher={escolherModelo}
-            placeholder={t('escrevaModelo')} carregando={loading === 'modelos'} focoAoMontar={focar === 'modelo'} />
+          <CampoCatalogo key={value.marca || '-'} id="cbbe3-102" opcoes={modelos} valor={value.modelo} onEscolher={escolherModelo}
+            placeholder={value.marca ? t('escrevaModelo') : t('escolhaMarcaPrimeiro')} desativado={!value.marca}
+            carregando={loading === 'modelos'} focoAoMontar={focar === 'modelo'} />
         </div>
       )}
       {isBR && selectedMarcaCode && (
@@ -341,8 +345,9 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
         </div>
       )}
 
-      {/* Ano */}
-      {(isBR ? selectedModeloCode : value.modelo) && (
+      {/* Ano: na FIPE a lista de anos vem do modelo; fora dela e um campo livre, sempre a vista
+          (escondido ate o modelo, ficava atras da barra Edasi e o cliente nao achava - Clarity 12/11) */}
+      {(isBR ? selectedModeloCode : isBR === false) && (
         <div>
           <label htmlFor="cbbe3-103" className="block text-sm font-medium text-gray-700 mb-1">
             {t('labelAno')} {isBR && loading === 'anos' && <span className="text-gray-400">({t('carregando')})</span>}
