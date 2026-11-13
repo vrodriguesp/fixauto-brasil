@@ -1,8 +1,8 @@
 {
   "meta": {
     "brand": "BipFix",
-    "title": "BipFix - Conectando você à melhor oficina mecânica",
-    "description": "Plataforma que conecta motoristas a oficinas mecânicas. Envie fotos do dano, receba orçamentos e escolha a melhor opção. Simples, rápido e transparente.",
+    "title": "BipFix - Pedidos de orçamento para oficinas mecânicas",
+    "description": "Plataforma que conecta motoristas a oficinas mecânicas. Descreva o problema, envie fotos, peça orçamento e decida você. Simples e transparente.",
     "tituloLogin": "Entrar",
     "tituloCadastro": "Criar conta",
     "tituloEscolherTipo": "Escolha o tipo de conta",
@@ -49,7 +49,10 @@
     "garantiasOficina": "Garantias",
     "inicio": "Início",
     "pedidosCliente": "Pedidos",
-    "avisos": "Avisos"
+    "avisos": "Avisos",
+    "pedirOrcamento": "Pedir orçamento",
+    "guias": "Guias",
+    "paraOficinas": "Para oficinas"
   },
   "sejaParceiro": {
     "formOuCadastroLink": "Cadastre sua oficina você mesmo",
@@ -336,7 +339,7 @@
     "emergenciaTitulo": "Acabei de bater!",
     "emergenciaTexto": "Tire uma foto agora e envie o pedido para oficinas próximas. Registre o outro veículo envolvido.",
     "comoFuncionaTitulo": "Como funciona",
-    "comoFuncionaSubtitulo": "Em poucos passos você recebe orçamentos das melhores oficinas da sua região",
+    "comoFuncionaSubtitulo": "Em poucos passos você pede orçamento às oficinas da sua região",
     "step1Titulo": "Descreva o problema",
     "step1Texto": "Envie fotos do dano e uma descrição do que aconteceu com seu veículo",
     "step2Titulo": "Oficinas recebem",
@@ -357,8 +360,6 @@
     "mock1Texto": "Colisão - VW Gol 2021 - 3km de você",
     "mock2Titulo": "Orçamento aceito!",
     "mock2Texto": "Funilaria - Chevrolet Onix 2023",
-    "mock3Titulo": "Nova avaliação: 5 estrelas",
-    "mock3Texto": "\"Excelente trabalho, recomendo!\"",
     "porQueBadge": "UM PROJETO AMBICIOSO, NO COMEÇO DA JORNADA",
     "porQueTitulo": "Por que estamos construindo o BipFix",
     "porQueTexto1": "Hoje, escolher onde consertar o carro costuma depender só de indicação ou de qual oficina está mais perto — sem comparar preço, prazo ou histórico de quem vai fazer o serviço. Acreditamos que motoristas merecem transparência, e que boas oficinas merecem ser encontradas pelo trabalho que entregam.",
@@ -377,8 +378,8 @@
         "resposta": "Sim. Antes de ativar uma oficina, conferimos o registro da empresa (CNPJ). Depois de cada serviço concluído, só o cliente que contratou pode avaliar — assim você vê a reputação real antes de decidir. Seus dados pessoais são protegidos e nunca compartilhados sem seu consentimento."
       },
       {
-        "pergunta": "Quanto custa usar o BipFix?",
-        "resposta": "Para motoristas, a plataforma é totalmente gratuita: você envia solicitações, recebe orçamentos e compara opções sem nenhum custo. Para oficinas e fornecedores de peças, hoje o uso do BipFix também é gratuito — sem comissão e sem mensalidade. Se mudarmos a forma como a plataforma cobra motoristas ou oficinas, avisaremos com pelo menos 30 dias corridos de antecedência."
+        "pergunta": "Como funciona o pagamento no BipFix?",
+        "resposta": "O motorista paga o conserto direto à oficina; o total do orçamento é o preço da oficina. Para oficinas e fornecedores de peças, hoje o uso do BipFix é gratuito — sem comissão e sem mensalidade. Se mudarmos a forma como a plataforma cobra motoristas ou oficinas, avisaremos com pelo menos 30 dias corridos de antecedência."
       },
       {
         "pergunta": "Como as oficinas são avaliadas?",
@@ -402,10 +403,10 @@
       },
       {
         "pergunta": "O preço do orçamento é o preço final?",
-        "resposta": "O total do orçamento é o valor que a oficina cobra pelo serviço descrito. O BipFix não cobra nada dos motoristas e nunca acrescenta taxa por cima. Se surgir algo novo durante o reparo, a oficina envia um orçamento revisado para você aprovar."
+        "resposta": "O total do orçamento é o valor que a oficina cobra pelo serviço descrito. O BipFix não acrescenta nenhuma taxa própria. Se surgir algo novo durante o reparo, a oficina envia um orçamento revisado para você aprovar."
       }
     ],
-    "footerTagline": "Conectando motoristas às melhores oficinas.",
+    "footerTagline": "Conectando motoristas às oficinas.",
     "footerMotoristas": "Para Motoristas",
     "footerCriarConta": "Criar conta",
     "footerAcabeiDeBater": "Acabei de bater",
@@ -736,7 +737,7 @@
     "principiosTitulo": "Como trabalhamos",
     "principio1": "Nenhuma oficina paga para aparecer primeiro.",
     "principio2": "Só avalia quem contratou e concluiu o serviço.",
-    "principio3": "Os preços são definidos pelas oficinas; o BipFix é gratuito para motoristas.",
+    "principio3": "Os preços são definidos pelas oficinas; o motorista paga o conserto direto à oficina.",
     "principio4": "Seus dados são tratados de acordo com a lei de proteção de dados e nunca vendidos.",
     "contatoTitulo": "Contato",
     "contatoTexto": "Dúvidas, sugestões ou parcerias: support@bipfix.com. Dados pessoais: privacy@bipfix.com."
@@ -838,18 +839,18 @@
   },
   "paraMotoristas": {
     "metaTitle": "Conserto de carro: peça orçamento às oficinas",
-    "metaDescription": "Descreva o problema, adicione uma foto e receba orçamentos das oficinas. Grátis e sem compromisso, conta e pedido em cerca de 2 minutos.",
+    "metaDescription": "Descreva o problema, adicione uma foto e envie o pedido às oficinas. Sem compromisso: você vê o orçamento e decide. Pedido em cerca de 2 minutos.",
     "heroEyebrow": "Para motoristas",
     "heroTitulo": "O carro precisa de conserto? Peça o preço às oficinas.",
     "heroTexto": "Descreva o problema e adicione uma foto. As oficinas mandam orçamentos – você compara e escolhe.",
     "vantagens": [
-      "Grátis e sem compromisso",
+      "Sem compromisso – você decide",
       "Conta e pedido em ~2 min",
       "Escreva no seu idioma",
       "Você paga direto à oficina"
     ],
-    "cta": "Enviar pedido grátis",
-    "ctaSub": "Grátis, em cerca de 2 minutos",
+    "cta": "Enviar pedido",
+    "ctaSub": "Em cerca de 2 minutos",
     "jaTenhoConta": "Já tenho conta – entrar",
     "fotoAlt": "Motorista fotografa a luz de aviso acesa no painel",
     "comoTitulo": "Como funciona",
@@ -872,8 +873,8 @@
     "motivosTitulo": "Por que a BipFix",
     "motivos": [
       {
-        "titulo": "Grátis para o motorista",
-        "texto": "Enviar o pedido e comparar orçamentos não custa nada. O conserto você paga direto à oficina."
+        "titulo": "Quem define o preço é a oficina",
+        "texto": "Você vê o orçamento antes de decidir. O conserto você paga direto à oficina."
       },
       {
         "titulo": "Oficinas que fazem esse serviço",
@@ -888,8 +889,8 @@
     "faqTitulo": "Perguntas frequentes",
     "faq": [
       {
-        "pergunta": "É grátis mesmo?",
-        "resposta": "Sim. Para o motorista, enviar o pedido e comparar orçamentos é grátis. O conserto é pago direto à oficina."
+        "pergunta": "Como funciona o pagamento?",
+        "resposta": "Você envia o pedido, vê o orçamento da oficina e decide. Se escolher uma oficina, paga o conserto direto a ela."
       },
       {
         "pergunta": "Quanto tempo leva o cadastro?",
@@ -927,7 +928,8 @@
     "buscarServico": "Procurar serviço…",
     "semResultadoBusca": "Não está na lista – escreva no campo acima.",
     "titulo": "Peça orçamento às oficinas",
-    "subtitulo": "Grátis – cerca de 2 minutos.",
+    "subtitulo": "Cerca de 2 minutos.",
+    "metaDescription": "Descreva o problema do carro, adicione uma foto e envie o pedido às oficinas. Leva cerca de 2 minutos.",
     "faltaDescricao": "Descreva o problema em poucas palavras.",
     "faltaDescricaoLista": "Descreva o problema ou escolha um serviço da lista.",
     "faltaCarro": "Escolha a marca, o modelo e o ano.",

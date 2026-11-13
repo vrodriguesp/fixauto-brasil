@@ -1,7 +1,8 @@
 'use client';
 
 import { Link, useRouter, usePathname } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { LOCALES_SO_RECRUTAMENTO } from '@/lib/mercados';
 import { useAuth } from '@/lib/auth-context';
 import { useEffect, useRef, useState } from 'react';
 import NotificationBell from './NotificationBell';
@@ -21,6 +22,8 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
   const t = useTranslations('nav');
+  const locale = useLocale();
+  const pathname = usePathname();
 
   const handleSignOut = async () => {
     await signOut();
@@ -93,6 +96,15 @@ export default function Navbar() {
     <span className="ml-1 inline-block min-w-[1.25rem] rounded-full bg-red-600 px-1.5 text-center text-xs font-semibold leading-5 text-white" aria-label={t('mensagensNovas', { n: msgsNovas })}>{msgsNovas > 99 ? '99+' : msgsNovas}</span>
   ) : null;
   const menuOficina = isOficina && !isMecanico;
+  // Links publicos para quem nao entrou (auditoria SEO 13/11: o cabecalho so tinha
+  // Entrar/Registrar; pedido, guias e a pagina das oficinas so no rodape). Nos
+  // mercados so de recrutamento (IT/PT/BR) so a pagina das oficinas.
+  const soRecrutamento = LOCALES_SO_RECRUTAMENTO.includes(locale);
+  const linksVisitante = [
+    ...(soRecrutamento ? [] : [{ href: '/pedido', label: t('pedirOrcamento') }, { href: '/guias', label: t('guias') }]),
+    { href: '/para-oficinas', label: t('paraOficinas') },
+  ];
+  const areaPrivada = ['/cliente', '/oficina', '/loja', '/admin', '/definir-senha'].some((p) => pathname === p || pathname?.startsWith(p + '/'));
   // a barra de baixo (celular) nao pode cobrir o fim da pagina nem o rodape
   useEffect(() => {
     const temBarra = isLoggedIn && (isOficina || isCliente);
@@ -151,6 +163,12 @@ export default function Navbar() {
                 </div>
               )}
             </LinkPainel>
+
+            {!isLoggedIn && (
+              <div className="hidden lg:flex items-center ml-5 gap-0.5">
+                {linksVisitante.map((l) => <NavLink key={l.href} href={l.href}>{l.label}</NavLink>)}
+              </div>
+            )}
 
             {isLoggedIn && (
               <div className="hidden xl:flex items-center ml-5 gap-0.5">
@@ -336,6 +354,25 @@ export default function Navbar() {
         )}
       </div>
     </nav>
+    {/* celular e tablet: os mesmos links numa linha abaixo do cabecalho, fora da
+        parte fixa (nao come altura da tela ao rolar). flex-wrap: se nao couber
+        (320 px), quebra em vez de vazar para o lado. Fora do /pedido: ali a altura
+        da tela e do formulario (Clarity 11/11, globals.css body.pagina-pedido) */}
+    {!isLoggedIn && !areaPrivada && pathname !== '/pedido' && (
+      <nav aria-label={t('menuPrincipal')} className="lg:hidden bg-white border-b border-gray-200">
+        <div className="flex flex-wrap justify-center gap-x-1 px-2 py-1">
+          {linksVisitante.map((l) => {
+            const ativo = pathname === l.href || pathname?.startsWith(l.href + '/');
+            return (
+              <Link key={l.href} href={l.href as any} aria-current={ativo ? 'page' : undefined}
+                className={`px-2.5 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${ativo ? 'text-primary-700 bg-primary-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'}`}>
+                {l.label}
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+    )}
     {isLoggedIn && isOficina && (
       // Barra de baixo no celular (auditoria do painel 10/10, B1): o principal
       // cabe no polegar; "Mais" abre o resto. Abaixo de 1280 px, como o menu.

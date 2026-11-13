@@ -387,7 +387,7 @@
   },
   "emergencia": {
     "metaTitle": "Acabou de Bater com o Carro? Registe Já",
-    "metaDescription": "Acabou de ter um acidente de viação? Registe-o, tire fotografias do dano e peça orçamento a oficinas próximas, gratuitamente.",
+    "metaDescription": "Acabou de ter um acidente de viação? Registe-o, tire fotografias do dano e peça orçamento a oficinas próximas.",
     "metaKeywords": [
       "acabei de bater com o carro",
       "o que fazer depois de um acidente de viação",
@@ -591,7 +591,7 @@
   "docsCliente": {
     "pageBackLink": "Voltar ao Centro de Ajuda",
     "pageTitle": "Guia do Condutor",
-    "pageSubtitle": "Tudo o que precisa de saber para pedir orçamentos a várias oficinas, escolher a melhor, acompanhar a reparação e resolver qualquer imprevisto, do registo até ao fim da garantia.",
+    "pageSubtitle": "Tudo o que precisa de saber para pedir orçamentos às oficinas, escolher a oficina certa, acompanhar a reparação e resolver qualquer imprevisto, do registo até ao fim da garantia.",
     "secoes": [
       {
         "titulo": "1. Criar a sua conta",
@@ -802,7 +802,7 @@
   },
   "docsClienteLayout": {
     "metaTitle": "Guia do Condutor: pedir orçamentos e acompanhar a reparação",
-    "metaDescription": "Como usar o BipFix: pedir orçamentos a várias oficinas, comparar, marcar, acompanhar a reparação, aprovar revisões de preço e usar o botão de acidente."
+    "metaDescription": "Como usar o BipFix: pedir orçamentos às oficinas, comparar, marcar, acompanhar a reparação, aprovar revisões de preço e usar o botão de acidente."
   },
   "docsOficina": {
     "pageBackLink": "Voltar ao Centro de Ajuda",
@@ -1089,11 +1089,11 @@
   "oficinasLista": {
     "metaTitle": "Oficinas automóveis parceiras",
     "metaTitleCidade": "Oficinas automóveis em {cidade}",
-    "metaDescription": "Encontre oficinas de mecânica, bate-chapa e pintura avaliadas por clientes reais. Compare, peça orçamentos online e marque através da BipFix.",
-    "metaDescriptionCidade": "Oficinas de mecânica, bate-chapa e pintura em {cidade} avaliadas por clientes reais. Peça orçamentos online e compare-os na BipFix.",
+    "metaDescription": "Encontre oficinas de mecânica, bate-chapa e pintura: serviços, morada e horários. Peça orçamento online e marque através da BipFix.",
+    "metaDescriptionCidade": "Oficinas de mecânica, bate-chapa e pintura em {cidade}: serviços, morada e horários. Peça orçamento online na BipFix.",
     "heroTitle": "Oficinas parceiras BipFix",
     "heroTitleCidade": "Oficinas automóveis em {cidade}",
-    "heroText": "Oficinas avaliadas por clientes reais. Veja os serviços e as avaliações, e peça orçamentos a várias oficinas de uma só vez.",
+    "heroText": "Veja os serviços, a morada e os horários das oficinas e peça orçamento online.",
     "filterCity": "Cidade",
     "filterAllCities": "Todas as cidades",
     "filterService": "Serviço",

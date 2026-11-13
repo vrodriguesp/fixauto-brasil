@@ -11,7 +11,7 @@ import RetomarPedido from '@/components/pedido/RetomarPedido';
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pedidoSemConta' });
-  return { title: t('titulo'), description: t('subtitulo'), robots: { index: false, follow: true } };
+  return { title: t('titulo'), description: t('metaDescription'), robots: { index: false, follow: true } };
 }
 
 // textos do formulario (o layout publico so entrega os NAMESPACES_PUBLICOS;

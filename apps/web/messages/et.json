@@ -1,8 +1,8 @@
 {
   "meta": {
     "brand": "BipFix",
-    "title": "BipFix - Ühendame sind parima autotöökojaga",
-    "description": "Platvorm, mis ühendab autojuhid autotöökodadega. Saada kahjustuse fotod, saa hinnapakkumised ja vali parim valik. Lihtne, kiire ja läbipaistev.",
+    "title": "BipFix – autoremondi hinnapäringud Tallinnas",
+    "description": "Platvorm, mis ühendab autojuhid autotöökodadega. Kirjelda auto probleemi, lisa foto, küsi hinda ja otsusta ise. Lihtne ja läbipaistev.",
     "tituloLogin": "Logi sisse",
     "tituloCadastro": "Loo konto",
     "tituloEscolherTipo": "Vali konto tüüp",
@@ -49,7 +49,10 @@
     "garantiasOficina": "Garantiid",
     "inicio": "Avaleht",
     "pedidosCliente": "Päringud",
-    "avisos": "Teated"
+    "avisos": "Teated",
+    "pedirOrcamento": "Küsi hinda",
+    "guias": "Juhendid",
+    "paraOficinas": "Töökodadele"
   },
   "sejaParceiro": {
     "formOuCadastroLink": "Registreeri töökoda ise",
@@ -345,7 +348,7 @@
     "emergenciaTitulo": "Sattusin just avariisse!",
     "emergenciaTexto": "Tee kohe foto ja saada päring lähedal asuvatele töökodadele. Saad registreerida ka teise osalenud sõiduki.",
     "comoFuncionaTitulo": "Kuidas see toimib",
-    "comoFuncionaSubtitulo": "Mõne sammuga saad hinnapakkumised oma piirkonna parimatelt töökodadelt",
+    "comoFuncionaSubtitulo": "Mõne sammuga küsid hinda oma piirkonna töökodadelt",
     "step1Titulo": "Kirjelda probleemi",
     "step1Texto": "Saada fotod kahjustusest ja kirjeldus juhtunust",
     "step2Titulo": "Töökojad saavad päringu",
@@ -366,8 +369,6 @@
     "mock1Texto": "Kokkupõrge - VW Golf 2021 - 3 km kaugusel",
     "mock2Titulo": "Hinnapakkumine kinnitatud!",
     "mock2Texto": "Kerekahjustus - Toyota Corolla 2023",
-    "mock3Titulo": "Uus hinnang: 5 tärni",
-    "mock3Texto": "\"Suurepärane töö, soovitan soojalt!\"",
     "porQueBadge": "AMBITSIOONIKAS PROJEKT, ALLES TEEKONNA ALGUSES",
     "porQueTitulo": "Miks me BipFixi ehitame",
     "porQueTexto1": "Täna sõltub auto remondikoha valik tavaliselt ainult soovitusest või sellest, milline töökoda on lähim — ilma võimaluseta võrrelda hinda, tähtaega või tehtud tööde tausta. Usume, et juhid väärivad läbipaistvust ja head töökojad väärivad, et neid leitaks üles nende tehtud töö põhjal.",
@@ -386,8 +387,8 @@
         "resposta": "Jah. Enne töökoja aktiveerimist kontrollime ettevõtte registreeringut. Pärast iga lõpetatud tööd saab hinnangu anda ainult klient, kes töö tellis — nii näed töökoja tegelikku mainet enne otsustamist. Sinu isikuandmed on kaitstud ja neid ei jagata ilma sinu nõusolekuta."
       },
       {
-        "pergunta": "Kui palju BipFixi kasutamine maksab?",
-        "resposta": "Autojuhtidele on platvorm täiesti tasuta: saad saata päringuid, saada hinnapakkumisi ja võrrelda valikuid ilma kuludeta. Ka töökodadele ja varuosade tarnijatele on BipFixi kasutamine praegu tasuta — ilma komisjonitasu ja kuutasuta. Kui muudame seda, kuidas platvorm autojuhtidelt või töökodadelt tasu võtab, teatame sulle sellest vähemalt 30 kalendripäeva ette."
+        "pergunta": "Kuidas BipFixis maksmine käib?",
+        "resposta": "Autojuht maksab remondi eest otse töökojale; hinnapakkumise summa on töökoja hind. Töökodadele ja varuosade tarnijatele on BipFixi kasutamine praegu tasuta — ilma komisjonitasu ja kuutasuta. Kui muudame seda, kuidas platvorm autojuhtidelt või töökodadelt tasu võtab, teatame sulle sellest vähemalt 30 kalendripäeva ette."
       },
       {
         "pergunta": "Kuidas töökodasid hinnatakse?",
@@ -411,10 +412,10 @@
       },
       {
         "pergunta": "Kas hinnapakkumise hind on lõplik?",
-        "resposta": "Hinnapakkumise kogusumma on see, mida töökoda kirjeldatud töö eest küsib. BipFix ei võta autojuhtidelt midagi ega lisa kunagi omalt poolt tasu. Kui remondi ajal ilmneb midagi uut, saadab töökoda sulle kinnitamiseks uuendatud hinnapakkumise."
+        "resposta": "Hinnapakkumise kogusumma on see, mida töökoda kirjeldatud töö eest küsib. BipFix ei lisa sellele omalt poolt tasu. Kui remondi ajal ilmneb midagi uut, saadab töökoda sulle kinnitamiseks uuendatud hinnapakkumise."
       }
     ],
-    "footerTagline": "Ühendame juhid parimate autotöökodadega.",
+    "footerTagline": "Ühendame juhid Tallinna autotöökodadega.",
     "footerMotoristas": "Juhtidele",
     "footerCriarConta": "Loo konto",
     "footerAcabeiDeBater": "Sattusin just avariisse",
@@ -745,7 +746,7 @@
     "principiosTitulo": "Kuidas me töötame",
     "principio1": "Ükski töökoda ei saa maksta, et olla eespool.",
     "principio2": "Hinnangu saab anda ainult see, kes töö tellis ja kelle töö on lõpule viidud.",
-    "principio3": "Hinnad määravad töökojad; autojuhtidele on BipFix tasuta.",
+    "principio3": "Hinnad määravad töökojad; autojuht maksab remondi eest otse töökojale.",
     "principio4": "Sinu andmeid töödeldakse isikuandmete kaitse üldmääruse (GDPR) järgi ja neid ei müüda kunagi.",
     "contatoTitulo": "Kontakt",
     "contatoTexto": "Küsimused, tagasiside või koostöö: support@bipfix.com. Isikuandmed: privacy@bipfix.com."
@@ -846,19 +847,19 @@
     "traduzida": "Automaatselt tõlgitud"
   },
   "paraMotoristas": {
-    "metaTitle": "Autoremont Tallinnas: küsi hinda töökodadelt tasuta",
-    "metaDescription": "Kirjelda probleemi, lisa foto ja saa hinnapakkumised Tallinna töökodadelt. Tasuta ja kohustusteta, konto ja päring umbes 2 minutiga.",
+    "metaTitle": "Kuidas küsida autoremondi hinda Tallinnas",
+    "metaDescription": "Kirjelda auto probleemi, lisa foto ja saada päring Tallinna töökodadele. Hinnapakkumise näed BipFixis ja otsustad ise. Päring võtab umbes 2 minutit.",
     "heroEyebrow": "Autojuhtidele · Tallinn",
     "heroTitulo": "Auto vajab remonti? Küsi hinda Tallinna töökodadelt.",
     "heroTexto": "Kirjelda probleemi ja lisa foto. Töökojad saadavad sulle hinnapakkumised – sina võrdled ja valid.",
     "vantagens": [
-      "Tasuta ja kohustusteta",
+      "Kohustusteta – otsustad ise",
       "Konto ja päring ~2 minutiga",
       "Kirjuta eesti või vene keeles",
       "Maksad otse töökojale"
     ],
-    "cta": "Saada päring tasuta",
-    "ctaSub": "Tasuta, umbes 2 minutiga",
+    "cta": "Saada päring",
+    "ctaSub": "Umbes 2 minutiga",
     "jaTenhoConta": "Mul on juba konto – logi sisse",
     "fotoAlt": "Autojuht teeb armatuurlaua hoiatustulest pildi",
     "comoTitulo": "Kuidas see töötab",
@@ -881,8 +882,8 @@
     "motivosTitulo": "Miks BipFix",
     "motivos": [
       {
-        "titulo": "Autojuhile tasuta",
-        "texto": "Päringu saatmine ja pakkumiste võrdlemine ei maksa midagi. Remondi eest maksad otse töökojale."
+        "titulo": "Hinna määrab töökoda",
+        "texto": "Näed hinnapakkumist enne, kui otsustad. Remondi eest maksad otse töökojale – BipFixi kaudu raha ei liigu."
       },
       {
         "titulo": "Töökojad, kes teevad seda tööd",
@@ -897,8 +898,8 @@
     "faqTitulo": "Korduma kippuvad küsimused",
     "faq": [
       {
-        "pergunta": "Kas see on tõesti tasuta?",
-        "resposta": "Jah. Autojuhile on päringu saatmine ja pakkumiste võrdlemine tasuta. Remondi eest maksad otse töökojale, BipFixi kaudu raha ei liigu."
+        "pergunta": "Kuidas maksmine käib?",
+        "resposta": "Saadad päringu, näed töökoja hinnapakkumist ja otsustad ise. Kui valid töökoja, maksad remondi eest otse töökojale – BipFixi kaudu raha ei liigu."
       },
       {
         "pergunta": "Kui kaua registreerumine võtab?",
@@ -936,7 +937,8 @@
     "buscarServico": "Otsi teenust…",
     "semResultadoBusca": "Sellist teenust nimekirjas pole – kirjuta see ülal olevasse lahtrisse.",
     "titulo": "Küsi hinda Tallinna töökodadelt",
-    "subtitulo": "Tasuta – umbes 2 minutit.",
+    "subtitulo": "Umbes 2 minutit.",
+    "metaDescription": "Kirjelda auto probleemi, lisa foto ja saada päring Tallinna töökodadele. Päring võtab umbes 2 minutit.",
     "faltaDescricao": "Kirjelda probleemi paari sõnaga.",
     "faltaDescricaoLista": "Kirjelda probleemi või vali teenus nimekirjast.",
     "faltaCarro": "Vali mark, mudel ja aasta.",

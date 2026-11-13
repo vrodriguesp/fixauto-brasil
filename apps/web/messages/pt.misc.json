@@ -114,7 +114,7 @@
   },
   "emergencia": {
     "metaTitle": "Acabei de Bater - Registre o Acidente Agora",
-    "metaDescription": "Bateu o carro? Registre o acidente, tire fotos do dano e peça orçamento para oficinas mecânicas próximas, gratuitamente.",
+    "metaDescription": "Bateu o carro? Registre o acidente, tire fotos do dano e peça orçamento para oficinas mecânicas próximas.",
     "metaKeywords": [
       "acabei de bater o carro",
       "o que fazer depois de um acidente de carro",
@@ -318,7 +318,7 @@
   "docsCliente": {
     "pageBackLink": "Voltar para Central de Ajuda",
     "pageTitle": "Guia do Motorista",
-    "pageSubtitle": "Tudo o que você precisa saber para pedir orçamentos a várias oficinas, escolher a melhor, acompanhar o reparo e resolver qualquer imprevisto, do cadastro até o fim da garantia.",
+    "pageSubtitle": "Tudo o que você precisa saber para pedir orçamentos às oficinas, escolher a oficina certa, acompanhar o reparo e resolver qualquer imprevisto, do cadastro até o fim da garantia.",
     "secoes": [
       {
         "titulo": "1. Criar sua conta",
@@ -529,7 +529,7 @@
   },
   "docsClienteLayout": {
     "metaTitle": "Guia do Motorista: pedir orçamentos e acompanhar o reparo",
-    "metaDescription": "Como usar o BipFix: pedir orçamentos a várias oficinas, comparar, agendar, acompanhar o reparo, aprovar revisões de preço e usar o botão de acidente."
+    "metaDescription": "Como usar o BipFix: pedir orçamentos às oficinas, comparar, agendar, acompanhar o reparo, aprovar revisões de preço e usar o botão de acidente."
   },
   "docsOficina": {
     "pageBackLink": "Voltar para Central de Ajuda",
@@ -816,11 +816,11 @@
   "oficinasLista": {
     "metaTitle": "Oficinas mecânicas parceiras",
     "metaTitleCidade": "Oficinas mecânicas em {cidade}",
-    "metaDescription": "Encontre oficinas mecânicas, de funilaria e pintura avaliadas por clientes reais. Compare, peça orçamentos online e agende pelo BipFix.",
-    "metaDescriptionCidade": "Oficinas mecânicas, de funilaria e pintura em {cidade} avaliadas por clientes reais. Peça orçamentos online e compare pelo BipFix.",
+    "metaDescription": "Encontre oficinas mecânicas, de funilaria e pintura: serviços, endereço e horários. Peça orçamento online e agende pelo BipFix.",
+    "metaDescriptionCidade": "Oficinas mecânicas, de funilaria e pintura em {cidade}: serviços, endereço e horários. Peça orçamento online pelo BipFix.",
     "heroTitle": "Oficinas parceiras BipFix",
     "heroTitleCidade": "Oficinas em {cidade}",
-    "heroText": "Oficinas avaliadas por clientes reais. Veja serviços e avaliações, e peça orçamentos de várias oficinas de uma vez.",
+    "heroText": "Veja serviços, endereço e horários das oficinas e peça orçamento online.",
     "filterCity": "Cidade",
     "filterAllCities": "Todas as cidades",
     "filterService": "Serviço",

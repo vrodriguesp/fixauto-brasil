@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
+import { indexavel } from '@/lib/mercados';
 import { routing, HREFLANG, LOCALE_PREFIX, MERCADOS, NOME_IDIOMA_NATIVO, hreflangsDe, type Locale } from '@/i18n/routing';
 
 // "https://bipfix.com/" = escolha de PAIS e idioma (x-default), sem
@@ -24,7 +25,9 @@ export const metadata: Metadata = {
     canonical: `${SITE}/`,
     languages: {
       'x-default': `${SITE}/`,
-      ...Object.fromEntries(routing.locales.flatMap((l) => hreflangsDe(l).map((c) => [c, `${SITE}${LOCALE_PREFIX[l]}`]))),
+      // so mercados indexaveis: a home de IT/PT/BR leva noindex (lib/mercados.ts),
+      // hreflang para ela seria "alternate para pagina nao indexada" no GSC
+      ...Object.fromEntries(routing.locales.filter((l) => indexavel(l, '/')).flatMap((l) => hreflangsDe(l).map((c) => [c, `${SITE}${LOCALE_PREFIX[l]}`]))),
     },
   },
   robots: { index: true, follow: true },
@@ -103,9 +106,9 @@ export default async function EscolherPais() {
           </ul>
 
           <div className="mt-10 grid gap-3 text-sm text-gray-600 sm:grid-cols-3">
-            <p lang="et">BipFix aitab Tallinna autojuhtidel küsida mitmelt töökojalt hinnapakkumisi, neid võrrelda ja broneerida remondi ühes kohas. Autojuhile tasuta.</p>
-            <p lang="ru">BipFix помогает водителям в Таллинне получить сметы от нескольких автосервисов, сравнить их и записаться на ремонт в одном месте. Для водителей бесплатно.</p>
-            <p lang="en">BipFix helps drivers in Tallinn get quotes from several garages, compare them and book the repair in one place. Free for drivers.</p>
+            <p lang="et">BipFix aitab autojuhtidel küsida Tallinna töökodadelt hinnapakkumisi, neid võrrelda ja broneerida remondi ühes kohas.</p>
+            <p lang="ru">BipFix помогает водителям запросить сметы у автосервисов Таллинна, сравнить их и записаться на ремонт в одном месте.</p>
+            <p lang="en">BipFix helps drivers ask Tallinn repair shops for quotes, compare them and book the repair in one place.</p>
           </div>
         </div>
       </main>

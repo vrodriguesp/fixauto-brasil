@@ -387,7 +387,7 @@
   },
   "emergencia": {
     "metaTitle": "Hai avuto un incidente? Segnalalo subito",
-    "metaDescription": "Hai avuto un incidente d’auto? Segnalalo, scatta foto del danno e chiedi un preventivo alle officine vicine, gratis.",
+    "metaDescription": "Hai avuto un incidente d’auto? Segnalalo, scatta foto del danno e chiedi un preventivo alle officine vicine.",
     "metaKeywords": [
       "ho avuto un incidente d'auto",
       "cosa fare dopo un incidente stradale",
@@ -591,7 +591,7 @@
   "docsCliente": {
     "pageBackLink": "Torna al Centro Assistenza",
     "pageTitle": "Guida per l'Automobilista",
-    "pageSubtitle": "Tutto quello che devi sapere per chiedere preventivi a più officine, scegliere la migliore, seguire la riparazione e risolvere qualsiasi imprevisto, dalla registrazione alla fine della garanzia.",
+    "pageSubtitle": "Tutto quello che devi sapere per chiedere preventivi alle officine, scegliere quella giusta, seguire la riparazione e risolvere qualsiasi imprevisto, dalla registrazione alla fine della garanzia.",
     "secoes": [
       {
         "titulo": "1. Creare il tuo account",
@@ -802,7 +802,7 @@
   },
   "docsClienteLayout": {
     "metaTitle": "Guida per l'Automobilista: preventivi e riparazione",
-    "metaDescription": "Come usare BipFix: chiedere preventivi a più officine, confrontarli, prenotare, seguire la riparazione, approvare le revisioni e usare il pulsante incidente."
+    "metaDescription": "Come usare BipFix: chiedere preventivi alle officine, confrontarli, prenotare, seguire la riparazione, approvare le revisioni e usare il pulsante incidente."
   },
   "docsOficina": {
     "pageBackLink": "Torna al Centro Assistenza",
@@ -1089,11 +1089,11 @@
   "oficinasLista": {
     "metaTitle": "Officine partner",
     "metaTitleCidade": "Officine meccaniche a {cidade}",
-    "metaDescription": "Trova officine meccaniche e carrozzerie valutate da clienti reali. Confronta, richiedi preventivi online e prenota con BipFix.",
-    "metaDescriptionCidade": "Officine meccaniche e carrozzerie a {cidade} valutate da clienti reali. Richiedi preventivi online e confrontali su BipFix.",
+    "metaDescription": "Trova officine meccaniche e carrozzerie: servizi, indirizzo e orari. Richiedi un preventivo online e prenota con BipFix.",
+    "metaDescriptionCidade": "Officine meccaniche e carrozzerie a {cidade}: servizi, indirizzo e orari. Richiedi un preventivo online su BipFix.",
     "heroTitle": "Officine partner BipFix",
     "heroTitleCidade": "Officine a {cidade}",
-    "heroText": "Officine valutate da clienti reali. Guarda servizi e recensioni e richiedi preventivi a più officine insieme.",
+    "heroText": "Guarda servizi, indirizzo e orari delle officine e richiedi un preventivo online.",
     "filterCity": "Città",
     "filterAllCities": "Tutte le città",
     "filterService": "Servizio",

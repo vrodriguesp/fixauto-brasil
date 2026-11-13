@@ -1,8 +1,8 @@
 {
   "meta": {
     "brand": "BipFix",
-    "title": "BipFix - Connecting you to the best auto repair shop",
-    "description": "The platform that connects drivers to auto repair shops. Send photos of the damage, get quotes, and choose the best option. Simple, fast, and transparent.",
+    "title": "BipFix – car repair quote requests in Tallinn",
+    "description": "The platform that connects drivers with auto repair shops. Describe the problem, add a photo, ask for a price and decide for yourself. Simple and transparent.",
     "tituloLogin": "Sign in",
     "tituloCadastro": "Create an account",
     "tituloEscolherTipo": "Choose your account type",
@@ -49,7 +49,10 @@
     "garantiasOficina": "Warranties",
     "inicio": "Home",
     "pedidosCliente": "Requests",
-    "avisos": "Alerts"
+    "avisos": "Alerts",
+    "pedirOrcamento": "Get a quote",
+    "guias": "Guides",
+    "paraOficinas": "For repair shops"
   },
   "sejaParceiro": {
     "formOuCadastroLink": "Register your shop yourself",
@@ -339,7 +342,7 @@
     "emergenciaTitulo": "I've just crashed!",
     "emergenciaTexto": "Take a photo right now and send a request to nearby shops. You can also log the other vehicle involved.",
     "comoFuncionaTitulo": "How it works",
-    "comoFuncionaSubtitulo": "In just a few steps, you get quotes from the best repair shops in your area",
+    "comoFuncionaSubtitulo": "In a few steps, you ask repair shops in your area for a price",
     "step1Titulo": "Describe the problem",
     "step1Texto": "Send photos of the damage and a description of what happened to your vehicle",
     "step2Titulo": "Shops receive it",
@@ -360,8 +363,6 @@
     "mock1Texto": "Collision - VW Golf 2021 - 3 km from you",
     "mock2Titulo": "Quote accepted!",
     "mock2Texto": "Bodywork - Toyota Corolla 2023",
-    "mock3Titulo": "New review: 5 stars",
-    "mock3Texto": "\"Excellent work, highly recommend!\"",
     "porQueBadge": "AN AMBITIOUS PROJECT, EARLY IN THE JOURNEY",
     "porQueTitulo": "Why we're building BipFix",
     "porQueTexto1": "Today, choosing where to get your car fixed usually comes down to a referral or whichever shop is closest — with no way to compare price, timeline or track record. We believe drivers deserve transparency, and that good repair shops deserve to be found for the work they deliver.",
@@ -380,8 +381,8 @@
         "resposta": "Yes. Before a shop is activated, we check its company registration. After each completed job, only the customer who hired the shop can leave a review — so you see its real reputation before deciding. Your personal data is protected and never shared without your consent."
       },
       {
-        "pergunta": "How much does BipFix cost?",
-        "resposta": "For drivers, the platform is completely free: you send requests, receive quotes and compare options at no cost. For garages and parts suppliers, using BipFix is currently free as well — no commission and no monthly fee. If we change how the platform charges drivers or garages, we will inform you at least 30 calendar days in advance."
+        "pergunta": "How does payment work on BipFix?",
+        "resposta": "Drivers pay the repair shop directly for the repair; the quote total is the shop’s price. For garages and parts suppliers, using BipFix is currently free — no commission and no monthly fee. If we change how the platform charges drivers or garages, we will inform you at least 30 calendar days in advance."
       },
       {
         "pergunta": "How are repair shops rated?",
@@ -405,10 +406,10 @@
       },
       {
         "pergunta": "Is the price in the quote the final price?",
-        "resposta": "The total in the quote is what the shop charges for the job described. BipFix charges drivers nothing and never adds a fee on top. If something new comes up during the repair, the shop sends you a revised quote to approve."
+        "resposta": "The total in the quote is what the shop charges for the job described. BipFix adds no fee of its own on top. If something new comes up during the repair, the shop sends you a revised quote to approve."
       }
     ],
-    "footerTagline": "Connecting drivers to the best auto repair shops.",
+    "footerTagline": "Connecting drivers with Tallinn repair shops.",
     "footerMotoristas": "For Drivers",
     "footerCriarConta": "Create account",
     "footerAcabeiDeBater": "I've just crashed",
@@ -739,7 +740,7 @@
     "principiosTitulo": "How we work",
     "principio1": "No repair shop can pay to appear first.",
     "principio2": "Only customers who hired a shop and completed the job can review it.",
-    "principio3": "Prices are set by the repair shops; BipFix is free for drivers.",
+    "principio3": "Prices are set by the repair shops; drivers pay the shop directly for the repair.",
     "principio4": "Your data is handled under the GDPR and never sold.",
     "contatoTitulo": "Contact",
     "contatoTexto": "Questions, feedback or partnerships: support@bipfix.com. Personal data: privacy@bipfix.com."
@@ -840,19 +841,19 @@
     "traduzida": "Automatically translated"
   },
   "paraMotoristas": {
-    "metaTitle": "Car repair in Tallinn: free quotes from repair shops",
-    "metaDescription": "Describe the problem, add a photo and get quotes from repair shops in Tallinn. Free, no obligation; account and request in about 2 minutes.",
+    "metaTitle": "How to get a car repair quote in Tallinn",
+    "metaDescription": "Describe the problem, add a photo and send a request to Tallinn repair shops. You see the quote on BipFix and decide. The request takes about 2 minutes.",
     "heroEyebrow": "For drivers · Tallinn",
     "heroTitulo": "Car needs a repair? Ask Tallinn repair shops for a price.",
     "heroTexto": "Describe the problem and add a photo. Repair shops send you quotes – you compare and choose.",
     "vantagens": [
-      "Free, no obligation",
+      "No obligation – you decide",
       "Account and request in ~2 min",
       "Write in Estonian, Russian or English",
       "You pay the shop directly"
     ],
-    "cta": "Send a free request",
-    "ctaSub": "Free, about 2 minutes",
+    "cta": "Send a request",
+    "ctaSub": "About 2 minutes",
     "jaTenhoConta": "I already have an account – log in",
     "fotoAlt": "A driver taking a photo of a warning light on the dashboard",
     "comoTitulo": "How it works",
@@ -875,8 +876,8 @@
     "motivosTitulo": "Why BipFix",
     "motivos": [
       {
-        "titulo": "Free for drivers",
-        "texto": "Sending a request and comparing quotes costs nothing. You pay the repair shop directly for the repair."
+        "titulo": "The shop sets the price",
+        "texto": "You see the quote before you decide. You pay the repair shop directly – no money goes through BipFix."
       },
       {
         "titulo": "Shops that do this work",
@@ -891,8 +892,8 @@
     "faqTitulo": "Frequently asked questions",
     "faq": [
       {
-        "pergunta": "Is it really free?",
-        "resposta": "Yes. For drivers, sending a request and comparing quotes is free. You pay the repair shop directly; no money goes through BipFix."
+        "pergunta": "How does payment work?",
+        "resposta": "You send a request, see the shop’s quote and decide. If you choose a shop, you pay it directly for the repair – no money goes through BipFix."
       },
       {
         "pergunta": "How long does signing up take?",
@@ -930,7 +931,8 @@
     "buscarServico": "Search services…",
     "semResultadoBusca": "Not in the list – just write it in the box above.",
     "titulo": "Get prices from Tallinn repair shops",
-    "subtitulo": "Free – about 2 minutes.",
+    "subtitulo": "About 2 minutes.",
+    "metaDescription": "Describe your car’s problem, add a photo and send a request to Tallinn repair shops. It takes about 2 minutes.",
     "faltaDescricao": "Describe the problem in a few words.",
     "faltaDescricaoLista": "Describe the problem or pick a service from the list.",
     "faltaCarro": "Choose the make, model and year.",

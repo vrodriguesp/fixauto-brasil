@@ -387,7 +387,7 @@
   },
   "emergencia": {
     "metaTitle": "Just Crashed Your Car? Report It Now",
-    "metaDescription": "Just had a car accident? Report it, take photos of the damage and ask nearby repair shops for a price, for free.",
+    "metaDescription": "Just had a car accident? Report it, take photos of the damage and ask nearby repair shops for a price.",
     "metaKeywords": [
       "just crashed my car",
       "what to do after a car accident",
@@ -591,7 +591,7 @@
   "docsCliente": {
     "pageBackLink": "Back to Help Centre",
     "pageTitle": "Driver Guide",
-    "pageSubtitle": "Everything you need to know to request quotes from several repair shops, pick the best one, follow the repair and sort out any surprise, from sign-up to the end of the warranty.",
+    "pageSubtitle": "Everything you need to know to request quotes from Tallinn repair shops, pick the one that suits you, follow the repair and sort out any surprise, from sign-up to the end of the warranty.",
     "secoes": [
       {
         "titulo": "1. Create your account",
@@ -802,7 +802,7 @@
   },
   "docsClienteLayout": {
     "metaTitle": "Driver Guide: get repair quotes and track the repair",
-    "metaDescription": "How to use BipFix: request quotes from several repair shops, compare them, book a slot, follow the repair, approve price revisions and use the accident button."
+    "metaDescription": "How to use BipFix: request quotes from Tallinn repair shops, compare them, book a slot, follow the repair, approve price revisions and use the accident button."
   },
   "docsOficina": {
     "pageBackLink": "Back to Help Centre",
@@ -1089,11 +1089,11 @@
   "oficinasLista": {
     "metaTitle": "Partner car repair shops",
     "metaTitleCidade": "Car repair shops in {cidade}",
-    "metaDescription": "Find mechanic, body and paint shops rated by real customers. Compare, request quotes online and book through BipFix.",
-    "metaDescriptionCidade": "Mechanic, body and paint shops in {cidade} rated by real customers. Request quotes online and compare them on BipFix.",
+    "metaDescription": "Find mechanic, body and paint shops: services, address and opening hours. Request a quote online and book through BipFix.",
+    "metaDescriptionCidade": "Mechanic, body and paint shops in {cidade}: services, address and opening hours. Request a quote online on BipFix.",
     "heroTitle": "BipFix partner shops",
     "heroTitleCidade": "Car repair shops in {cidade}",
-    "heroText": "Shops rated by real customers. See services and reviews, and request quotes from several shops at once.",
+    "heroText": "See each shop’s services, address and opening hours, and request a quote online.",
     "filterCity": "City",
     "filterAllCities": "All cities",
     "filterService": "Service",

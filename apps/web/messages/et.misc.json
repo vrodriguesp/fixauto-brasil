@@ -387,7 +387,7 @@
   },
   "emergencia": {
     "metaTitle": "Autoavarii? Teata sellest kohe",
-    "metaDescription": "Sattusid avariisse? Teata õnnetusest, tee kahjustusest pildid ja küsi lähedal asuvatelt töökodadelt hinda – tasuta.",
+    "metaDescription": "Sattusid avariisse? Teata õnnetusest, tee kahjustusest pildid ja küsi lähedal asuvatelt töökodadelt hinda.",
     "metaKeywords": [
       "autoavarii mida teha",
       "liiklusõnnetusest teatamine",
@@ -591,7 +591,7 @@
   "docsCliente": {
     "pageBackLink": "Tagasi abikeskusesse",
     "pageTitle": "Autojuhi juhend",
-    "pageSubtitle": "Kõik, mida pead teadma, et küsida hinnapakkumisi mitmelt töökojalt, valida parim, jälgida remonti ja lahendada iga ootamatus, alates registreerumisest kuni garantii lõpuni.",
+    "pageSubtitle": "Kõik, mida pead teadma, et küsida hinnapakkumisi Tallinna töökodadelt, valida sobiv töökoda, jälgida remonti ja lahendada iga ootamatus, alates registreerumisest kuni garantii lõpuni.",
     "secoes": [
       {
         "titulo": "1. Loo oma konto",
@@ -802,7 +802,7 @@
   },
   "docsClienteLayout": {
     "metaTitle": "Autojuhi juhend: küsi hinnapakkumisi ja jälgi remonti",
-    "metaDescription": "Kuidas BipFixi kasutada: küsi hinnapakkumisi mitmelt töökojalt, võrdle, broneeri aeg, jälgi remonti, kinnita hinnamuudatusi ja kasuta avariinuppu."
+    "metaDescription": "Kuidas BipFixi kasutada: küsi hinnapakkumisi Tallinna töökodadelt, võrdle, broneeri aeg, jälgi remonti, kinnita hinnamuudatusi ja kasuta avariinuppu."
   },
   "docsOficina": {
     "pageBackLink": "Tagasi abikeskusesse",
@@ -1089,11 +1089,11 @@
   "oficinasLista": {
     "metaTitle": "BipFixi partnertöökojad",
     "metaTitleCidade": "Autoremonditöökojad: {cidade}",
-    "metaDescription": "Leia päris klientide hinnatud autoremondi-, kere- ja värvitöökojad. Võrdle, küsi hinnapakkumisi veebis ja broneeri BipFixis.",
-    "metaDescriptionCidade": "Päris klientide hinnatud autoremondi-, kere- ja värvitöökojad – {cidade}. Küsi hinnapakkumisi veebis ja võrdle BipFixis.",
+    "metaDescription": "Leia autoremondi-, kere- ja värvitöökojad BipFixis: teenused, aadress ja lahtiolekuajad. Küsi hinnapakkumist veebis ja broneeri aeg.",
+    "metaDescriptionCidade": "Autoremondi-, kere- ja värvitöökojad – {cidade}: teenused, aadress ja lahtiolekuajad. Küsi hinnapakkumist veebis BipFixis.",
     "heroTitle": "BipFixi partnertöökojad",
     "heroTitleCidade": "Autoremonditöökojad: {cidade}",
-    "heroText": "Päris klientide hinnatud töökojad. Vaata teenuseid ja hinnanguid ning küsi hinnapakkumisi mitmelt töökojalt korraga.",
+    "heroText": "Vaata töökodade teenuseid, aadressi ja lahtiolekuaegu ning küsi hinnapakkumist veebis.",
     "filterCity": "Linn",
     "filterAllCities": "Kõik linnad",
     "filterService": "Teenus",

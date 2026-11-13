@@ -1,7 +1,7 @@
 {
   "meta": {
     "brand": "BipFix",
-    "title": "BipFix - Ti mettiamo in contatto con la migliore officina",
+    "title": "BipFix - Richieste di preventivo alle officine",
     "description": "Descrivi il problema, invia le foto del danno e ricevi i preventivi delle officine. Vedi il prezzo e decidi tu.",
     "tituloLogin": "Accedi",
     "tituloCadastro": "Crea un account",
@@ -49,7 +49,10 @@
     "garantiasOficina": "Garanzie",
     "inicio": "Home",
     "pedidosCliente": "Richieste",
-    "avisos": "Avvisi"
+    "avisos": "Avvisi",
+    "pedirOrcamento": "Chiedi un preventivo",
+    "guias": "Guide",
+    "paraOficinas": "Per le officine"
   },
   "sejaParceiro": {
     "formOuCadastroLink": "Registra tu la tua officina",
@@ -358,8 +361,6 @@
     "mock1Texto": "Incidente - VW Golf 2021 - a 3 km da te",
     "mock2Titulo": "Preventivo accettato!",
     "mock2Texto": "Carrozzeria - Toyota Corolla 2023",
-    "mock3Titulo": "Nuova recensione: 5 stelle",
-    "mock3Texto": "\"Lavoro eccellente, lo consiglio!\"",
     "porQueBadge": "UN PROGETTO AMBIZIOSO, AGLI INIZI DEL PERCORSO",
     "porQueTitulo": "Perché stiamo costruendo BipFix",
     "porQueTexto1": "Oggi, scegliere dove riparare l'auto dipende di solito solo da un passaparola o da quale officina è più vicina — senza poter confrontare prezzo, tempi o storico di chi farà il lavoro. Crediamo che gli automobilisti meritino trasparenza, e che le buone officine meritino di essere trovate per il lavoro che offrono.",
@@ -378,8 +379,8 @@
         "resposta": "Sì. Prima di attivare un'officina verifichiamo la registrazione dell'impresa (partita IVA e iscrizione alla Camera di Commercio). Dopo ogni lavoro completato, può lasciare una recensione solo il cliente che l'ha commissionato: così vedi la reputazione reale prima di decidere. I tuoi dati personali sono protetti secondo il GDPR e non vengono mai condivisi senza il tuo consenso."
       },
       {
-        "pergunta": "Quanto costa usare BipFix?",
-        "resposta": "Per gli automobilisti la piattaforma è completamente gratuita: invii richieste, ricevi preventivi e confronti le opzioni senza alcun costo. Anche per officine e fornitori di ricambi l'uso di BipFix è oggi gratuito — nessuna commissione e nessun canone mensile. Se cambieremo il modo in cui la piattaforma fa pagare automobilisti o officine, ti informeremo con almeno 30 giorni di calendario di anticipo."
+        "pergunta": "Come funzionano i pagamenti su BipFix?",
+        "resposta": "L’automobilista paga la riparazione direttamente all’officina; il totale del preventivo è il prezzo dell’officina. Per officine e fornitori di ricambi l'uso di BipFix è oggi gratuito — nessuna commissione e nessun canone mensile. Se cambieremo il modo in cui la piattaforma fa pagare automobilisti o officine, ti informeremo con almeno 30 giorni di calendario di anticipo."
       },
       {
         "pergunta": "Come vengono valutate le officine?",
@@ -403,10 +404,10 @@
       },
       {
         "pergunta": "Il prezzo del preventivo è quello finale?",
-        "resposta": "Il totale del preventivo è quanto l'officina chiede per il lavoro descritto. BipFix non fa pagare nulla agli automobilisti e non aggiunge mai costi. Se durante la riparazione emerge qualcosa di nuovo, l'officina ti invia un preventivo aggiornato da approvare."
+        "resposta": "Il totale del preventivo è quanto l'officina chiede per il lavoro descritto. BipFix non aggiunge costi propri. Se durante la riparazione emerge qualcosa di nuovo, l'officina ti invia un preventivo aggiornato da approvare."
       }
     ],
-    "footerTagline": "Colleghiamo gli automobilisti alle migliori officine.",
+    "footerTagline": "Colleghiamo gli automobilisti alle officine.",
     "footerMotoristas": "Per Automobilisti",
     "footerCriarConta": "Crea account",
     "footerAcabeiDeBater": "Ho appena avuto un incidente",
@@ -737,7 +738,7 @@
     "principiosTitulo": "Come lavoriamo",
     "principio1": "Nessuna officina può pagare per comparire per prima.",
     "principio2": "Recensisce solo chi ha commissionato e completato il lavoro.",
-    "principio3": "I prezzi li decidono le officine; per gli automobilisti BipFix è gratuito.",
+    "principio3": "I prezzi li decidono le officine; l’automobilista paga la riparazione direttamente all’officina.",
     "principio4": "I tuoi dati sono trattati secondo il GDPR e non vengono mai venduti.",
     "contatoTitulo": "Contatti",
     "contatoTexto": "Domande, suggerimenti o collaborazioni: support@bipfix.com. Dati personali: privacy@bipfix.com."
@@ -839,18 +840,18 @@
   },
   "paraMotoristas": {
     "metaTitle": "Riparazione auto: chiedi un preventivo alle officine",
-    "metaDescription": "Descrivi il problema, aggiungi una foto e ricevi preventivi dalle officine. Gratis e senza impegno, account e richiesta in circa 2 minuti.",
+    "metaDescription": "Descrivi il problema, aggiungi una foto e invia la richiesta alle officine. Senza impegno: vedi il preventivo e decidi tu. Richiesta in circa 2 minuti.",
     "heroEyebrow": "Per automobilisti",
     "heroTitulo": "L’auto ha bisogno di una riparazione? Chiedi il prezzo alle officine.",
     "heroTexto": "Descrivi il problema e aggiungi una foto. Le officine ti mandano i preventivi: tu confronti e scegli.",
     "vantagens": [
-      "Gratis e senza impegno",
+      "Senza impegno – decidi tu",
       "Account e richiesta in ~2 min",
       "Scrivi nella tua lingua",
       "Paghi direttamente l’officina"
     ],
-    "cta": "Invia una richiesta gratis",
-    "ctaSub": "Gratis, circa 2 minuti",
+    "cta": "Invia una richiesta",
+    "ctaSub": "Circa 2 minuti",
     "jaTenhoConta": "Ho già un account – accedi",
     "fotoAlt": "Un automobilista fotografa una spia accesa sul cruscotto",
     "comoTitulo": "Come funziona",
@@ -873,8 +874,8 @@
     "motivosTitulo": "Perché BipFix",
     "motivos": [
       {
-        "titulo": "Gratis per l’automobilista",
-        "texto": "Inviare la richiesta e confrontare i preventivi non costa nulla. La riparazione la paghi direttamente all’officina."
+        "titulo": "Il prezzo lo decide l’officina",
+        "texto": "Vedi il preventivo prima di decidere. La riparazione la paghi direttamente all’officina."
       },
       {
         "titulo": "Officine che fanno questo lavoro",
@@ -889,8 +890,8 @@
     "faqTitulo": "Domande frequenti",
     "faq": [
       {
-        "pergunta": "È davvero gratis?",
-        "resposta": "Sì. Per l’automobilista inviare la richiesta e confrontare i preventivi è gratis. La riparazione si paga direttamente all’officina."
+        "pergunta": "Come funziona il pagamento?",
+        "resposta": "Invii la richiesta, vedi il preventivo dell’officina e decidi tu. Se scegli un’officina, la riparazione la paghi direttamente a lei."
       },
       {
         "pergunta": "Quanto tempo serve per registrarsi?",
@@ -928,7 +929,8 @@
     "buscarServico": "Cerca un servizio…",
     "semResultadoBusca": "Non è nell’elenco: scrivilo nel campo qui sopra.",
     "titulo": "Chiedi un preventivo alle officine",
-    "subtitulo": "Gratis – circa 2 minuti.",
+    "subtitulo": "Circa 2 minuti.",
+    "metaDescription": "Descrivi il problema dell’auto, aggiungi una foto e invia la richiesta alle officine. Ci vogliono circa 2 minuti.",
     "faltaDescricao": "Descrivi il problema in poche parole.",
     "faltaDescricaoLista": "Descrivi il problema o scegli un servizio dall’elenco.",
     "faltaCarro": "Scegli marca, modello e anno.",
