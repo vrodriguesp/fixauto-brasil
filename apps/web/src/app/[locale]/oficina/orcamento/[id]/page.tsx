@@ -20,7 +20,7 @@ import ProporNovaData from '@/components/oficina/ProporNovaData';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import { useMostrarAlerta, rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 import { textoErroApi } from '@/lib/erro-api';
-import { useEstadoQueVolta } from '@/hooks/use-estado-que-volta';
+import { useEstadoQueVolta, useValorQueVolta } from '@/hooks/use-estado-que-volta';
 import { hojeLocal, janelaAindaVale, conflitoHorario, janelaDoSlot, turnoDaJanela, erroValidade, maiorData, somarDias, diaDoCalendario, formatarJanela, VALIDADE_FOLGA_DIAS, type HorarioSemana, type ContextoOficina } from '@/lib/turnos';
 import { LinkHorarioPerfil } from '@/components/oficina/AvisoHorarioSlot';
 import SeletorCheckin, { type LinhaCheckin } from '@/components/oficina/SeletorCheckin';
@@ -183,7 +183,10 @@ export default function EnviarOrcamentoPage() {
     document.addEventListener('visibilitychange', reler);
     return () => document.removeEventListener('visibilitychange', reler);
   }, [oficinaIdH]);
-  const [slots, setSlots] = useState<LinhaCheckin[]>([]);
+  // as datas escolhidas voltam depois de trocar a lingua no meio do formulario (dono 08/11; os outros campos voltam
+  // pelo rascunho da troca de idioma, que so le inputs)
+  const [slots, setSlots] = useValorQueVolta<LinhaCheckin[]>(`orc-checkin:${params.id}`, []);
+  const slotsVoltaram = useRef(slots.length > 0);
   const [erroHorario, setErroHorario] = useState(false);
   // data num dia em que a oficina esta fechada pelo proprio horario: bloqueia o envio (dono 14/11)
   const [erroDiaFechado, setErroDiaFechado] = useState(false);
@@ -226,7 +229,7 @@ export default function EnviarOrcamentoPage() {
       // revisao: validade e datas salvas vem preenchidas (o "vazio" vale so para orcamento novo - spec v2 2.11)
       setValidade(existingQuote.validade ? String(existingQuote.validade).slice(0, 10) : '');
       setGarantiaDias((existingQuote as any).garantia_dias != null ? String((existingQuote as any).garantia_dias) : '');
-      if (existingQuote.disponibilidade && existingQuote.disponibilidade.length > 0) {
+      if (!slotsVoltaram.current && existingQuote.disponibilidade && existingQuote.disponibilidade.length > 0) {
         // janela gravada; linha antiga (sem horas) = 08-12 / 13-17, que e o que o cliente viu
         setSlots(
           existingQuote.disponibilidade.map((s: any) => {

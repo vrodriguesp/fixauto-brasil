@@ -9,7 +9,7 @@ import { currencyForCountry } from '@/lib/currency';
 import { textoErroApi } from '@/lib/erro-api';
 import { fusoDoPais } from '@/lib/fuso';
 import { Link } from '@/i18n/navigation';
-import { formatarJanela, minutosDe, hhmm, JANELA_MIN } from '@/lib/turnos';
+import { formatarJanela, minutosDe, hhmm, JANELA_MIN, textoDaAgenda } from '@/lib/turnos';
 
 interface Revisao {
   id: string;
@@ -57,6 +57,8 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
   const [feito, setFeito] = useState<string | null>(null);
   const [naOficina, setNaOficina] = useState(false);
   const [dataAtual, setDataAtual] = useState<string | null>(null);
+  // fim da janela atual (check-in v2): a data atual aparece como dia + janela, igual ao resto
+  const [ateAtual, setAteAtual] = useState<string | null>(null);
   // itens do orcamento aceito (antes da revisao): destaca novo/alterado/removido (dono 07/11)
   const [itensAntes, setItensAntes] = useState<{ descricao: string; quantidade: number; valor_total: number }[]>([]);
 
@@ -74,8 +76,8 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
       .eq('solicitacao_id', solicitacaoId).eq('tipo', 'data').in('status', ['pendente', 'aprovada', 'recusada'])
       .order('created_at', { ascending: false }).limit(1)
       .then(({ data }) => setCombinada(((d) => (d && d.status === 'aprovada' && d.combinado && !d.contestada_em ? d : null))(((data as any) || [])[0])));
-    supabase.from('agenda').select('status, checkin_em, data_inicio').eq('solicitacao_id', solicitacaoId).neq('status', 'cancelado')
-      .then(({ data }) => { setNaOficina(carroNaOficina((data as any) || [])); setDataAtual(((data as any) || []).find((a: any) => a.status === 'agendado')?.data_inicio || null); });
+    supabase.from('agenda').select('status, checkin_em, data_inicio, checkin_ate').eq('solicitacao_id', solicitacaoId).neq('status', 'cancelado')
+      .then(({ data }) => { setNaOficina(carroNaOficina((data as any) || [])); const agA = ((data as any) || []).find((a: any) => a.status === 'agendado'); setDataAtual(agA?.data_inicio || null); setAteAtual(agA?.checkin_ate || null); });
   }, [solicitacaoId]);
 
   if (feito) return <p role="status" className="card mb-6 bg-green-50 text-green-800" data-testid="decisao-feita">{feito}</p>;
@@ -96,7 +98,7 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
     return (
       <section className="card mb-6 border border-blue-200 bg-blue-50/60" data-testid="mudanca-combinada">
         <p className="font-semibold text-gray-900">📅 {tMud('combinadoTitulo', { oficina: combinada.oficina?.nome_fantasia || '' })}</p>
-        <p className="mt-1 text-sm text-gray-800">{new Date(dataAtual).toLocaleString(loc, { timeZone: fusoDoPais(combinada.oficina?.pais), weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</p>
+        <p className="mt-1 text-sm text-gray-800">{textoDaAgenda(dataAtual, ateAtual, combinada.oficina?.pais ?? null, loc, { weekday: 'long', day: 'numeric', month: 'long' }, ', ')}</p>
         <p className="mt-2 text-sm text-gray-700"><span className="font-medium">{tMud('motivoOficina')}:</span> <TextoTraduzido compacto texto={combinada.motivo} /></p>
         {erro && <p role="alert" className="mt-2 text-sm text-red-700">{erro}</p>}
         <button type="button" disabled={enviando} onClick={contestar} className="mt-3 min-h-[40px] text-sm font-medium text-red-700 underline disabled:opacity-50" data-testid="nao-combinei">{tMud('naoCombinei')}</button>
@@ -136,7 +138,7 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
       <section className="card mb-6 border-2 border-blue-400 bg-blue-50" aria-labelledby="revisao-titulo" data-testid="proposta-nova-data">
         <h2 id="revisao-titulo" className="text-lg font-semibold text-gray-900">📅 {tMud('dataTitulo', { oficina: rev.oficina?.nome_fantasia || '' })}</h2>
         <dl className="mt-2 text-sm text-gray-800 space-y-1">
-          {dataAtual && <div><dt className="inline text-gray-600">{tMud('dataDe')}: </dt><dd className="inline line-through">{new Date(dataAtual).toLocaleString(loc, { timeZone: fuso, weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</dd></div>}
+          {dataAtual && <div><dt className="inline text-gray-600">{tMud('dataDe')}: </dt><dd className="inline line-through">{textoDaAgenda(dataAtual, ateAtual, rev?.oficina?.pais ?? null, loc, { weekday: 'long', day: 'numeric', month: 'long' }, ', ')}</dd></div>}
           <div><dt className="inline text-gray-600">{tMud('dataPara')}: </dt><dd className="inline font-bold">{nova}</dd></div>
           {rev.nova_previsao_entrega && <div><dd>{tMud('previsaoNova', { data: new Date(`${rev.nova_previsao_entrega}T12:00:00`).toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long' }) })}</dd></div>}
         </dl>

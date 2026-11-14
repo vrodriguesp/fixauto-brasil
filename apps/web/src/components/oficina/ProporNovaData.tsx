@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
+import { useValorQueVolta } from '@/hooks/use-estado-que-volta';
 import { textoErroApi } from '@/lib/erro-api';
 import { fusoDoPais } from '@/lib/fuso';
 import { horaLocalDe, textoDaAgenda, turnoDaJanela, type ContextoOficina } from '@/lib/turnos';
@@ -25,7 +26,8 @@ export default function ProporNovaData({ orcamentoId, solicitacaoId, oficinaId, 
   const [atual, setAtual] = useState<string | null>(null);
   const [atualAte, setAtualAte] = useState<string | null>(null);
   const [ctx, setCtx] = useState<ContextoOficina | null>(null);
-  const [linhas, setLinhas] = useState<LinhaCheckin[]>([]);
+  // dia + faixa voltam depois de trocar a lingua (o rascunho da troca de idioma so le inputs)
+  const [linhas, setLinhas] = useValorQueVolta<LinhaCheckin[]>(`pnd-checkin:${orcamentoId}`, []);
   const [semData, setSemData] = useState(false);
   const data = linhas[0]?.data || '';
   const [previsao, setPrevisao] = useState('');

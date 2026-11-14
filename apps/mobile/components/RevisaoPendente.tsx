@@ -7,7 +7,7 @@ import { apiFetch } from '../lib/api';
 import { mensagemErro } from '../lib/erro';
 import { tDias } from '../i18n';
 import { fusoDoPais } from '../lib/fuso';
-import { formatarJanela, minutosDe, hhmm, JANELA_MIN } from '../lib/turnos';
+import { formatarJanela, minutosDe, hhmm, JANELA_MIN, textoDaAgenda } from '../lib/turnos';
 import { confirmar, avisar } from '../lib/confirmar';
 import { useRouter } from 'expo-router';
 
@@ -39,6 +39,8 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
   const [enviando, setEnviando] = useState(false);
   const [naOficina, setNaOficina] = useState(false);
   const [dataAtual, setDataAtual] = useState<string | null>(null);
+  // fim da janela atual (check-in v2): a data atual aparece como dia + janela
+  const [ateAtual, setAteAtual] = useState<string | null>(null);
   // itens do orcamento aceito: destaca novo/alterado/removido (dono 07/11, igual ao site)
   const [itensAntes, setItensAntes] = useState<{ descricao: string; quantidade: number; valor_total: number }[]>([]);
 
@@ -58,9 +60,10 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
     // so a ULTIMA mudanca de data pode ser contestada: se depois veio outra, a combinada antiga ja nao vale (auditoria 09/11)
     const ult = ((comb as any) || [])[0];
     setCombinada(ult && ult.status === 'aprovada' && ult.combinado && !ult.contestada_em ? ult : null);
-    const { data: ags } = await supabase.from('agenda').select('status, checkin_em, data_inicio').eq('solicitacao_id', solicitacaoId).neq('status', 'cancelado');
+    const { data: ags } = await supabase.from('agenda').select('status, checkin_em, data_inicio, checkin_ate').eq('solicitacao_id', solicitacaoId).neq('status', 'cancelado');
     setNaOficina(carroNaOficina((ags as any) || []));
-    setDataAtual(((ags as any) || []).find((a: any) => a.status === 'agendado')?.data_inicio || null);
+    const agA = ((ags as any) || []).find((a: any) => a.status === 'agendado');
+    setDataAtual(agA?.data_inicio || null); setAteAtual(agA?.checkin_ate || null);
   }, [solicitacaoId]);
   useEffect(() => { carregar(); }, [carregar, recarregar]);
 
@@ -82,7 +85,7 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
     return (
       <View className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4" testID="mudanca-combinada">
         <Text className="text-base font-semibold text-gray-900">📅 {t('agendaMudanca.combinadoTitulo', { oficina: combinada.oficina?.nome_fantasia || '' })}</Text>
-        <Text className="mt-1 text-sm text-gray-800">{new Date(dataAtual).toLocaleString(loc, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais(combinada.oficina?.pais) })}</Text>
+        <Text className="mt-1 text-sm text-gray-800">{textoDaAgenda(dataAtual, ateAtual, combinada.oficina?.pais ?? null, loc, ', ')}</Text>
         <Text className="mt-2 text-sm text-gray-700"><Text className="font-medium">{t('agendaMudanca.motivoOficina')}: </Text>{combinada.motivo}</Text>
         <Pressable disabled={enviando} onPress={contestar} accessibilityRole="button" className="mt-2 py-2 self-start" testID="nao-combinei">
           {enviando ? <ActivityIndicator color="#b91c1c" /> : <Text className="text-red-700 font-medium underline">{t('agendaMudanca.naoCombinei')}</Text>}
@@ -138,7 +141,7 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
     return (
       <View className="bg-blue-50 border-2 border-blue-400 rounded-xl p-4 mb-4" testID="proposta-nova-data">
         <Text className="text-base font-semibold text-gray-900">📅 {t('agendaMudanca.dataTitulo', { oficina: rev.oficina?.nome_fantasia || '' })}</Text>
-        {dataAtual ? <Text className="mt-2 text-sm text-gray-600">{t('agendaMudanca.dataDe')}: <Text className="line-through">{new Date(dataAtual).toLocaleString(loc, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais(rev.oficina?.pais) })}</Text></Text> : null}
+        {dataAtual ? <Text className="mt-2 text-sm text-gray-600">{t('agendaMudanca.dataDe')}: <Text className="line-through">{textoDaAgenda(dataAtual, ateAtual, rev.oficina?.pais ?? null, loc, ', ')}</Text></Text> : null}
         <Text className="mt-1 text-sm text-gray-900">{t('agendaMudanca.dataPara')}: <Text className="font-bold">{rev.nova_data_checkin ? `${dia(rev.nova_data_checkin)}, ${janelaRev || t(rev.novo_turno === 'tarde' ? 'agendaMudanca.tarde' : 'agendaMudanca.manha')}` : ''}</Text></Text>
         {rev.nova_previsao_entrega ? <Text className="text-sm text-gray-700">{t('agendaMudanca.previsaoNova', { data: dia(rev.nova_previsao_entrega) })}</Text> : null}
         <Text className="mt-2 text-sm text-gray-800"><Text className="font-medium">{t('agendaMudanca.motivoOficina')}: </Text>{rev.motivo}</Text>

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
+import { useValorQueVolta } from '@/hooks/use-estado-que-volta';
 import { textoErroApi } from '@/lib/erro-api';
 import { hojeLocal, janelaAindaVale, conflitoHorario, localParaIso, janelaDaSugestao, formatarJanela, turnoDaJanela, type Turno, type HorarioSemana, type ContextoOficina } from '@/lib/turnos';
 import SeletorCheckin, { type LinhaCheckin } from '@/components/oficina/SeletorCheckin';
@@ -49,7 +50,7 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
   const [erro, setErro] = useState('');
   const [enviando, setEnviando] = useState<string | null>(null);
   // linhas vazias no inicio (check-in v2, decisao 1): a oficina escolhe dia + faixa
-  const [linhas, setLinhas] = useState<LinhaCheckin[]>([]);
+  const [linhas, setLinhas] = useValorQueVolta<LinhaCheckin[]>(`nd-checkin:${orcamentoId}`, []);
   const [semLinha, setSemLinha] = useState(false);
 
   const carregar = useCallback(async () => {
