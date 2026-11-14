@@ -24,6 +24,11 @@ interface CreateOrcamentoInput {
   slots: { data_checkin: string; turno: string; hora_inicio?: string; hora_fim?: string; data_previsao_entrega: string }[];
 }
 
+// erro do banco ao gravar os horarios -> codigo que a tela traduz (erros.DIA_FECHADO etc.). O trigger da
+// migracao 083 recusa um dia fechado pelo perfil com a mensagem 'DIA_FECHADO' (rede de seguranca, QA D16).
+const erroDosHorarios = (e: { message?: string; code?: string }) =>
+  /DIA_FECHADO/.test(e.message || '') ? { message: e.message || '', codigo: 'DIA_FECHADO', status: 409 } : e;
+
 export function useOrcamentos() {
   const { oficina, user } = useAuth();
 
@@ -56,12 +61,18 @@ export function useOrcamentos() {
       );
     }
 
-    // Insert availability slots (falha agora aparece: antes um horario recusado pelo banco sumia calado)
+    // Insert availability slots (falha agora aparece: antes um horario recusado pelo banco sumia calado).
+    // Recusado (CHECK da 082, dia fechado da 083): apaga o orcamento que acabou de ser criado - senao ficava
+    // um orcamento sem horario nenhum e o pedido sem 'em_orcamento' (auditoria Fable R-12; politica
+    // orcamentos_delete_orfao da 083: so o proprio, recem-criado e sem horario; os itens vao junto).
     if (input.slots.length > 0) {
       const { error: eSlots } = await supabase.from('orcamento_disponibilidade').insert(
         input.slots.map((s) => ({ ...s, orcamento_id: orc.id }))
       );
-      if (eSlots) return { error: eSlots };
+      if (eSlots) {
+        await supabase.from('orcamentos').delete().eq('id', orc.id);
+        return { error: erroDosHorarios(eSlots) };
+      }
     }
 
     // Update solicitacao status
@@ -132,6 +143,19 @@ export function useOrcamentos() {
   ) => {
     if (!oficina) return { error: { message: 'No oficina' } };
 
+    // Horarios NOVOS primeiro (auditoria Fable R-12): se o banco recusar (dia fechado, CHECK), nada do
+    // orcamento mudou - antes os horarios antigos ja tinham sido apagados e o orcamento ficava sem nenhum.
+    // Os antigos saem depois, pelo id.
+    const { data: antigos } = await supabase.from('orcamento_disponibilidade').select('id').eq('orcamento_id', orcamentoId);
+    let novosIds: string[] = [];
+    if (input.slots.length > 0) {
+      const { data: novos, error: eSlots } = await supabase.from('orcamento_disponibilidade').insert(
+        input.slots.map((s) => ({ ...s, orcamento_id: orcamentoId }))
+      ).select('id');
+      if (eSlots) return { error: erroDosHorarios(eSlots) };
+      novosIds = (novos || []).map((n: { id: string }) => n.id);
+    }
+
     const { error } = await supabase
       .from('orcamentos')
       .update({
@@ -150,9 +174,14 @@ export function useOrcamentos() {
       })
       .eq('id', orcamentoId);
 
-    if (error) return { error };
+    if (error) {
+      // o orcamento nao mudou: tira os horarios novos (os antigos continuam)
+      if (novosIds.length) await supabase.from('orcamento_disponibilidade').delete().in('id', novosIds);
+      return { error };
+    }
 
-    // Replace line items
+    // Replace line items (antes o DELETE nao apagava nada - sem politica RLS de DELETE - e os itens
+    // duplicavam a cada revisao: QA D4; politica itens_delete da migracao 083)
     await supabase.from('orcamento_itens').delete().eq('orcamento_id', orcamentoId);
     if (input.itens.length > 0) {
       await supabase.from('orcamento_itens').insert(
@@ -160,14 +189,9 @@ export function useOrcamentos() {
       );
     }
 
-    // Replace availability slots
-    await supabase.from('orcamento_disponibilidade').delete().eq('orcamento_id', orcamentoId);
-    if (input.slots.length > 0) {
-      const { error: eSlots } = await supabase.from('orcamento_disponibilidade').insert(
-        input.slots.map((s) => ({ ...s, orcamento_id: orcamentoId }))
-      );
-      if (eSlots) return { error: eSlots };
-    }
+    // horarios antigos saem (os novos ja estao gravados)
+    const idsAntigos = (antigos || []).map((a: { id: string }) => a.id).filter((id) => !novosIds.includes(id));
+    if (idsAntigos.length) await supabase.from('orcamento_disponibilidade').delete().in('id', idsAntigos);
 
     // Reset solicitacao status so client can review again
     await supabase
