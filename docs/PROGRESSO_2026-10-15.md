@@ -1035,3 +1035,13 @@ Caso real 14/11: a YuMotors mandou orcamento de 60 EUR no pedido 100140 com UMA 
   - Componente novo components/oficina/AvisoHorarioSlot.tsx (aviso/erro + link, usado nas duas telas); turnos.ts: primeiroTurnoAberto reescrito, primeiroTurnoLivre voltou ao original (sem margem). Textos: RU avisoTurnoForaHorario e EN avisoTurnoAcabaLogo reescritos (Fable §4); avisoDiaFechado -> erroDiaFechado + erroDiaFechadoEnvio, dicaHorarioPerfil, linkHorarioPerfil. Efeito da sugestao depende de oficina?.id (Fable nota 2).
   - Testes: tsc ok; checar-traducoes ok; NOVO scripts/teste-turnos.ts 35/35 (conflitoHorario em todos os formatos, proximo dia aberto, virada do dia no fuso de Tallinn, acaba-logo); e2e orcamento-datas-aviso 58/0 (A erro + link et/ru; B envio bloqueado -> link abre o perfil em aba nova no horario -> segunda -> envia; C revisao bloqueada e depois enviada com sexta a tarde; D sem avisos; E relogio seg 09:00 -> terca, sex 10:00 -> segunda, seg 15:30 aviso < 2 h; G novas datas + API DIA_FECHADO; F oficina sem horario); bateria datas1411b: novas-datas 137/2 e privacidade-agenda 100/1 (so app web :8090 desligado, igual antes), site-prazo 78/0, ui-melhorias-1411 131/0, site-pedido-sem-conta 142/0. novas-datas.mjs: oficinas do teste abertas todos os dias durante o teste (datas relativas cairiam num domingo fechado conforme o dia), horario da oficina fixa restaurado no fim.
   - Deploy: so build do site (sem migracao, sem OTA), com "ok deploy" do dono.
+
+### 14/11 noite — Horario de check-in mais preciso: decisoes do dono (so ideia, nada desenvolvido)
+Sobre as 8 decisoes da analise do Fable (Documentos/Analises/Fable_Horario_checkin_preciso_2026-11-14.md), dono no chat:
+1. Implementar as faixas (manha/tarde -> janela de chegada) baseadas no tempo de trabalho: com 2 h de trabalho total a faixa vai ate o fechamento - 2 h. A primeira sugestao parte sempre do dia de trabalho seguinte da oficina.
+2. Manha comeca na abertura de cada oficina.
+3. Hoje: depende do tempo de execucao e de a oficina escolher por conta propria; como sugestao fica sempre o proximo dia de trabalho.
+4. A oficina pode marcar janela de 30 min.
+5. Campo "recepcao de carros" no perfil; sem ele vale o horario de funcionamento com as regras acima.
+6. Tudo junto num deploy. 7. App so por OTA. 8. Capacidade e horario proposto pelo motorista ficam para a fase 3.
+Exigencias: tem que ser facil para as oficinas (sem passo obrigatorio a mais); a janela tem que aparecer e atualizar em todos os lugares que mostram o horario do reparo (sintese do pedido, agenda, e-mails com calendario .ics, chat, app...). So desenvolver depois que a ideia estiver clara; o Fable esta auditando e mapeando.
