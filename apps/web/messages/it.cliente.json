@@ -166,6 +166,7 @@
   },
   "clienteOrcamentoDetalhe": {
     "execDaysApprox": "{days, plural, one {~# giorno lavorativo} other {~# giorni lavorativi}}",
+    "execHours": "{h} h",
     "confirmRefuseInProgress": "Sei sicuro di voler rifiutare questo preventivo? Il veicolo deve essere ritirato dall'officina prima della chiusura. L'officina riceverà una notifica per effettuare il check-out.",
     "confirmRefuse": "Sei sicuro di voler rifiutare questo preventivo?",
     "confirmCancelAllRefused": "Tutti i preventivi sono stati rifiutati. Vuoi annullare questa richiesta?",
@@ -388,7 +389,7 @@
   },
   "revisaoOrcamento": {
     "titulo": "{oficina} ha proposto una revisione del preventivo",
-    "novoPrazo": "Nuovi tempi: {dias} giorni",
+    "novoPrazo": "Nuovi tempi: {dias, plural, one {# giorno} other {# giorni}}",
     "motivo": "Motivo",
     "explicacao": "Nulla cambia senza la tua decisione. Se approvi, vale il nuovo importo. Se rifiuti, il servizio viene chiuso e ritiri l'auto.",
     "aprovar": "Approva il nuovo importo",

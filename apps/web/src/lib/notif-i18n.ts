@@ -5,7 +5,7 @@
 // padrao; a maioria dos ~27 pontos que inserem em `notificacoes` ainda
 // grava texto fixo em portugues (ver docs/PROGRESSO - pendencia
 // conhecida, nao coberta nesta leva).
-import { resolveEmailLocale, fmt, type EmailLocale } from './email-i18n';
+import { resolveEmailLocale, fmt, diasTexto, type EmailLocale } from './email-i18n';
 
 const novaSolicitacaoColisao: Record<EmailLocale, { titulo: string; mensagem: string }> = {
   pt: { titulo: 'Nova solicitação!', mensagem: 'Emergência - Novo pedido de reparo por colisão na sua região.' },
@@ -349,12 +349,12 @@ export function notifPedidoConfirmado(locale: string | null | undefined, oficina
 // transacao acontece, entao essas mensagens usam o idioma da OFICINA
 // (representa o mercado/local da transacao) em vez de portugues fixo.
 const resumoOrcamentoAceitoChat: Record<EmailLocale, string> = {
-  pt: 'O orçamento de {valor} foi aceito na oficina {oficinaNome}{placaTexto}. O reparo está agendado com prazo de {dias} dias.',
-  en: 'The {valor} quote was accepted at {oficinaNome}{placaTexto}. The repair is scheduled with a {dias}-day timeline.',
-  et: 'Hinnapakkumine {valor} kinnitati töökojas {oficinaNome}{placaTexto}. Remont on planeeritud tähtajaga {dias} päeva.',
-  it: 'Il preventivo di {valor} è stato accettato presso {oficinaNome}{placaTexto}. La riparazione è programmata con un tempo di {dias} giorni.',
-  'pt-PT': 'O orçamento de {valor} foi aceite na oficina {oficinaNome}{placaTexto}. A reparação está marcada com um prazo de {dias} dias.',
-  ru: 'Смета на {valor} принята в автосервисе {oficinaNome}{placaTexto}. Ремонт запланирован со сроком {dias} дн.',
+  pt: 'O orçamento de {valor} foi aceito na oficina {oficinaNome}{placaTexto}. O reparo está agendado com prazo de {dias}.',
+  en: 'The {valor} quote was accepted at {oficinaNome}{placaTexto}. The repair is scheduled with a timeline of {dias}.',
+  et: 'Hinnapakkumine {valor} kinnitati töökojas {oficinaNome}{placaTexto}. Remont on planeeritud tähtajaga {dias}.',
+  it: 'Il preventivo di {valor} è stato accettato presso {oficinaNome}{placaTexto}. La riparazione è programmata con un tempo di {dias}.',
+  'pt-PT': 'O orçamento de {valor} foi aceite na oficina {oficinaNome}{placaTexto}. A reparação está marcada com um prazo de {dias}.',
+  ru: 'Смета на {valor} принята в автосервисе {oficinaNome}{placaTexto}. Ремонт запланирован со сроком {dias}',
 };
 const resumoOrcamentoAceitoChatPlaca: Record<EmailLocale, string> = {
   pt: ' para o veículo placa {placa}',
@@ -368,7 +368,7 @@ const resumoOrcamentoAceitoChatPlaca: Record<EmailLocale, string> = {
 export function chatResumoOrcamentoAceito(locale: string | null | undefined, valor: string, oficinaNome: string, dias: number, placa?: string) {
   const l = resolveEmailLocale(locale);
   const placaTexto = placa ? fmt(resumoOrcamentoAceitoChatPlaca[l], { placa }) : '';
-  return fmt(resumoOrcamentoAceitoChat[l], { valor, oficinaNome, dias, placaTexto });
+  return fmt(resumoOrcamentoAceitoChat[l], { valor, oficinaNome, dias: diasTexto(l, dias), placaTexto });
 }
 
 const orcamentoAceitoNegociarPagamentoChat: Record<EmailLocale, string> = {
@@ -385,25 +385,25 @@ export function chatOrcamentoAceitoNegociarPagamento(locale: string | null | und
 }
 
 const novoOrcamentoRecebidoChat: Record<EmailLocale, string> = {
-  pt: 'Novo orçamento recebido: {valor} da oficina {oficinaNome}. Prazo: {dias} dias.',
-  en: 'New quote received: {valor} from {oficinaNome}. Timeline: {dias} days.',
-  et: 'Uus hinnapakkumine saabus: {valor} töökojalt {oficinaNome}. Tähtaeg: {dias} päeva.',
-  it: 'Nuovo preventivo ricevuto: {valor} da {oficinaNome}. Tempi: {dias} giorni.',
-  'pt-PT': 'Novo orçamento recebido: {valor} da oficina {oficinaNome}. Prazo: {dias} dias.',
-  ru: 'Новая смета: {valor} от автосервиса {oficinaNome}. Срок: {dias} дн.',
+  pt: 'Novo orçamento recebido: {valor} da oficina {oficinaNome}. Prazo: {dias}.',
+  en: 'New quote received: {valor} from {oficinaNome}. Timeline: {dias}.',
+  et: 'Uus hinnapakkumine saabus: {valor} töökojalt {oficinaNome}. Tähtaeg: {dias}.',
+  it: 'Nuovo preventivo ricevuto: {valor} da {oficinaNome}. Tempi: {dias}.',
+  'pt-PT': 'Novo orçamento recebido: {valor} da oficina {oficinaNome}. Prazo: {dias}.',
+  ru: 'Новая смета: {valor} от автосервиса {oficinaNome}. Срок: {dias}',
 };
 
 export function chatNovoOrcamentoRecebido(locale: string | null | undefined, valor: string, oficinaNome: string, dias: number) {
-  return fmt(novoOrcamentoRecebidoChat[resolveEmailLocale(locale)], { valor, oficinaNome, dias });
+  return fmt(novoOrcamentoRecebidoChat[resolveEmailLocale(locale)], { valor, oficinaNome, dias: diasTexto(locale, dias) });
 }
 
 const orcamentoRevisadoChat: Record<EmailLocale, { revisado: string; valor: string; prazo: string }> = {
-  pt: { revisado: 'Orçamento revisado (Revisão #{numero})', valor: 'Valor: {valor}', prazo: 'Prazo: {dias} dias' },
-  en: { revisado: 'Quote revised (Revision #{numero})', valor: 'Amount: {valor}', prazo: 'Timeline: {dias} days' },
-  et: { revisado: 'Hinnapakkumine muudetud (versioon #{numero})', valor: 'Summa: {valor}', prazo: 'Tähtaeg: {dias} päeva' },
-  it: { revisado: 'Preventivo rivisto (Revisione #{numero})', valor: 'Importo: {valor}', prazo: 'Tempi: {dias} giorni' },
-  'pt-PT': { revisado: 'Orçamento revisto (Revisão #{numero})', valor: 'Valor: {valor}', prazo: 'Prazo: {dias} dias' },
-  ru: { revisado: 'Смета пересмотрена (версия #{numero})', valor: 'Сумма: {valor}', prazo: 'Срок: {dias} дн.' },
+  pt: { revisado: 'Orçamento revisado (Revisão #{numero})', valor: 'Valor: {valor}', prazo: 'Prazo: {dias}' },
+  en: { revisado: 'Quote revised (Revision #{numero})', valor: 'Amount: {valor}', prazo: 'Timeline: {dias}' },
+  et: { revisado: 'Hinnapakkumine muudetud (versioon #{numero})', valor: 'Summa: {valor}', prazo: 'Tähtaeg: {dias}' },
+  it: { revisado: 'Preventivo rivisto (Revisione #{numero})', valor: 'Importo: {valor}', prazo: 'Tempi: {dias}' },
+  'pt-PT': { revisado: 'Orçamento revisto (Revisão #{numero})', valor: 'Valor: {valor}', prazo: 'Prazo: {dias}' },
+  ru: { revisado: 'Смета пересмотрена (версия #{numero})', valor: 'Сумма: {valor}', prazo: 'Срок: {dias}' },
 };
 
 export function chatOrcamentoRevisado(locale: string | null | undefined, numero: number, valor: string, dias: number, observacoes: string) {
@@ -411,7 +411,7 @@ export function chatOrcamentoRevisado(locale: string | null | undefined, numero:
   const linhas = [
     `📋 ${fmt(s.revisado, { numero })}`,
     `💰 ${fmt(s.valor, { valor })}`,
-    `📅 ${fmt(s.prazo, { dias })}`,
+    `📅 ${fmt(s.prazo, { dias: diasTexto(locale, dias) })}`,
   ];
   if (observacoes) linhas.push(`📝 ${observacoes}`);
   return linhas.join('\n');

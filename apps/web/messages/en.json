@@ -49,7 +49,7 @@
     "garantiasOficina": "Warranties",
     "inicio": "Home",
     "pedidosCliente": "Requests",
-    "avisos": "Alerts",
+    "avisos": "Notifications",
     "pedirOrcamento": "Get a quote",
     "guias": "Guides",
     "paraOficinas": "For repair shops"
@@ -771,10 +771,10 @@
   },
   "garantia": {
     "titulo": "Active warranties",
-    "diasRestantes": "{dias} days left",
+    "diasRestantes": "{dias, plural, one {# day left} other {# days left}}",
     "ate": "until {data}",
     "falarComOficina": "Message the repair shop",
-    "noOrcamento": "Warranty: {dias} days from hand-over",
+    "noOrcamento": "Warranty: {dias, plural, one {# day} other {# days}} from hand-over",
     "sem": "No warranty",
     "documento": "Open the quote document",
     "conversaEncerrada": "Conversation closed: the job is finished and the warranty has ended (or this repair shop was not chosen).",

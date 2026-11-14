@@ -166,6 +166,7 @@
   },
   "clienteOrcamentoDetalhe": {
     "execDaysApprox": "{days, plural, one {~# tööpäev} other {~# tööpäeva}}",
+    "execHours": "{h} h",
     "confirmRefuseInProgress": "Kas oled kindel, et soovid selle hinnapakkumise tagasi lükata? Sõiduk tuleb enne lõpetamist töökojast ära viia. Töökoda saab teate, et teha check-out.",
     "confirmRefuse": "Kas oled kindel, et soovid selle hinnapakkumise tagasi lükata?",
     "confirmCancelAllRefused": "Kõik hinnapakkumised on tagasi lükatud. Kas soovid selle päringu tühistada?",
@@ -388,7 +389,7 @@
   },
   "revisaoOrcamento": {
     "titulo": "{oficina} pakkus hinnapakkumise muudatust",
-    "novoPrazo": "Uus tähtaeg: {dias} päeva",
+    "novoPrazo": "Uus tähtaeg: {dias, plural, one {# päev} other {# päeva}}",
     "motivo": "Põhjus",
     "explicacao": "Ilma sinu otsuseta ei muutu midagi. Kui kinnitad, kehtib uus hind. Kui keeldud, töö lõpetatakse ja viid auto ära.",
     "aprovar": "Kinnita uus summa",

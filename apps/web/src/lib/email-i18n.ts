@@ -18,6 +18,23 @@ function fmt(str: string, vars: Record<string, string | number> = {}): string {
   return str.replace(/\{(\w+)\}/g, (_, key) => String(vars[key] ?? ''));
 }
 
+// "N dias" com singular/plural por idioma, para e-mails e mensagens de chat
+// do sistema (fmt() nao tem plural ICU): antes saia "1 päeva", "1 days",
+// "1 giorni" (Fable 14/11). RU usa a abreviacao invariavel "дн." (correta).
+const DIAS: Record<EmailLocale, [string, string]> = {
+  pt: ['dia', 'dias'],
+  'pt-PT': ['dia', 'dias'],
+  en: ['day', 'days'],
+  et: ['päev', 'päeva'],
+  it: ['giorno', 'giorni'],
+  ru: ['дн.', 'дн.'],
+};
+
+export function diasTexto(locale: string | null | undefined, n: number): string {
+  const l = resolveEmailLocale(locale);
+  return `${n} ${DIAS[l][Number(n) === 1 ? 0 : 1]}`;
+}
+
 // Varios templates de e-mail interpolam texto livre digitado por quem nao
 // necessariamente tem conta (ex: nome do "outro motorista" no fluxo de
 // acidente, preenchido num formulario publico sem login) direto no HTML do
@@ -216,7 +233,7 @@ const quoteNotification: Record<EmailLocale, Dict> = {
     headerTag: 'Novo Orçamento',
     greeting: 'Olá <strong>{name}</strong>,',
     intro: 'A oficina <strong>{oficinaNome}</strong> enviou um orçamento para sua solicitação:',
-    prazo: 'Prazo do conserto: {prazoDias} dias',
+    prazo: 'Prazo do conserto: {prazoDias}',
     cta: 'Ver orçamento completo',
   },
   en: {
@@ -224,7 +241,7 @@ const quoteNotification: Record<EmailLocale, Dict> = {
     headerTag: 'New Quote',
     greeting: 'Hi <strong>{name}</strong>,',
     intro: 'Repair shop <strong>{oficinaNome}</strong> sent a quote for your request:',
-    prazo: 'Repair time: {prazoDias} days',
+    prazo: 'Repair time: {prazoDias}',
     cta: 'View full quote',
   },
   et: {
@@ -232,7 +249,7 @@ const quoteNotification: Record<EmailLocale, Dict> = {
     headerTag: 'Uus hinnapakkumine',
     greeting: 'Tere, <strong>{name}</strong>,',
     intro: 'Töökoda <strong>{oficinaNome}</strong> saatis sinu päringule hinnapakkumise:',
-    prazo: 'Remondi kestus: {prazoDias} päeva',
+    prazo: 'Remondi kestus: {prazoDias}',
     cta: 'Vaata täielikku hinnapakkumist',
   },
   it: {
@@ -240,7 +257,7 @@ const quoteNotification: Record<EmailLocale, Dict> = {
     headerTag: 'Nuovo Preventivo',
     greeting: 'Ciao <strong>{name}</strong>,',
     intro: "L'officina <strong>{oficinaNome}</strong> ha inviato un preventivo per la tua richiesta:",
-    prazo: 'Durata della riparazione: {prazoDias} giorni',
+    prazo: 'Durata della riparazione: {prazoDias}',
     cta: 'Vedi preventivo completo',
   },
   'pt-PT': {
@@ -248,7 +265,7 @@ const quoteNotification: Record<EmailLocale, Dict> = {
     headerTag: 'Novo Orçamento',
     greeting: 'Olá <strong>{name}</strong>,',
     intro: 'A oficina <strong>{oficinaNome}</strong> enviou um orçamento para o seu pedido:',
-    prazo: 'Prazo da reparação: {prazoDias} dias',
+    prazo: 'Prazo da reparação: {prazoDias}',
     cta: 'Ver orçamento completo',
   },
   ru: {
@@ -256,7 +273,7 @@ const quoteNotification: Record<EmailLocale, Dict> = {
     headerTag: 'Новая смета',
     greeting: 'Здравствуйте, <strong>{name}</strong>!',
     intro: 'Автосервис <strong>{oficinaNome}</strong> отправил смету по вашей заявке:',
-    prazo: 'Срок ремонта: {prazoDias} дн.',
+    prazo: 'Срок ремонта: {prazoDias}',
     cta: 'Посмотреть смету полностью',
   },
 };
@@ -363,7 +380,7 @@ const cotacaoPecaRespondida: Record<EmailLocale, Dict> = {
     headerTag: 'Resposta de cotação de peça',
     greeting: 'Olá <strong>{name}</strong>,',
     intro: '<strong>{fornecedorNome}</strong> respondeu sua cotação de "{pecaDescricao}":',
-    prazo: 'Prazo: {prazoDias} dia(s)',
+    prazo: 'Prazo: {prazoDias}',
     cta: 'Ver resposta completa',
   },
   en: {
@@ -371,7 +388,7 @@ const cotacaoPecaRespondida: Record<EmailLocale, Dict> = {
     headerTag: 'Part quote response',
     greeting: 'Hi <strong>{name}</strong>,',
     intro: '<strong>{fornecedorNome}</strong> responded to your quote request for "{pecaDescricao}":',
-    prazo: 'Delivery time: {prazoDias} day(s)',
+    prazo: 'Delivery time: {prazoDias}',
     cta: 'View full response',
   },
   et: {
@@ -379,7 +396,7 @@ const cotacaoPecaRespondida: Record<EmailLocale, Dict> = {
     headerTag: 'Varuosa hinnapäringu vastus',
     greeting: 'Tere, <strong>{name}</strong>,',
     intro: '<strong>{fornecedorNome}</strong> vastas sinu hinnapäringule "{pecaDescricao}":',
-    prazo: 'Tarneaeg: {prazoDias} päev(a)',
+    prazo: 'Tarneaeg: {prazoDias}',
     cta: 'Vaata täielikku vastust',
   },
   it: {
@@ -387,7 +404,7 @@ const cotacaoPecaRespondida: Record<EmailLocale, Dict> = {
     headerTag: 'Risposta preventivo ricambio',
     greeting: 'Ciao <strong>{name}</strong>,',
     intro: '<strong>{fornecedorNome}</strong> ha risposto alla tua richiesta di preventivo per "{pecaDescricao}":',
-    prazo: 'Tempi di consegna: {prazoDias} giorno/i',
+    prazo: 'Tempi di consegna: {prazoDias}',
     cta: 'Vedi risposta completa',
   },
   'pt-PT': {
@@ -395,7 +412,7 @@ const cotacaoPecaRespondida: Record<EmailLocale, Dict> = {
     headerTag: 'Resposta à cotação de peça',
     greeting: 'Olá <strong>{name}</strong>,',
     intro: '<strong>{fornecedorNome}</strong> respondeu à sua cotação de "{pecaDescricao}":',
-    prazo: 'Prazo: {prazoDias} dia(s)',
+    prazo: 'Prazo: {prazoDias}',
     cta: 'Ver resposta completa',
   },
   ru: {
@@ -403,7 +420,7 @@ const cotacaoPecaRespondida: Record<EmailLocale, Dict> = {
     headerTag: 'Ответ на запрос запчасти',
     greeting: 'Здравствуйте, <strong>{name}</strong>!',
     intro: '<strong>{fornecedorNome}</strong> ответил на ваш запрос «{pecaDescricao}»:',
-    prazo: 'Срок поставки: {prazoDias} дн.',
+    prazo: 'Срок поставки: {prazoDias}',
     cta: 'Посмотреть ответ полностью',
   },
 };
@@ -603,7 +620,7 @@ const orcamentoAceitoPagamento: Record<EmailLocale, Dict> = {
     headerTag: 'Orçamento Aceito - Pagamento',
     greeting: 'Olá <strong>{name}</strong>,',
     intro: 'O orçamento para o reparo do acidente foi aceito. Como responsável, você precisa acertar o pagamento com a oficina.',
-    prazo: 'Prazo do conserto: {dias} dias',
+    prazo: 'Prazo do conserto: {dias}',
     dadosOficinaLabel: 'Dados da oficina:',
     oficinaLabel: 'Oficina: {oficinaNome}',
     enderecoLabel: 'Endereço: {endereco}',
@@ -618,7 +635,7 @@ const orcamentoAceitoPagamento: Record<EmailLocale, Dict> = {
     headerTag: 'Quote Accepted - Payment',
     greeting: 'Hi <strong>{name}</strong>,',
     intro: 'The quote for the accident repair was accepted. As the responsible party, you need to arrange payment directly with the shop.',
-    prazo: 'Repair time: {dias} days',
+    prazo: 'Repair time: {dias}',
     dadosOficinaLabel: 'Shop details:',
     oficinaLabel: 'Shop: {oficinaNome}',
     enderecoLabel: 'Address: {endereco}',
@@ -633,7 +650,7 @@ const orcamentoAceitoPagamento: Record<EmailLocale, Dict> = {
     headerTag: 'Hinnapakkumine kinnitatud - Makse',
     greeting: 'Tere, <strong>{name}</strong>,',
     intro: 'Õnnetuse remondi hinnapakkumine kinnitati. Vastutava isikuna pead sa maksega töökojaga otse kokku leppima.',
-    prazo: 'Remondi kestus: {dias} päeva',
+    prazo: 'Remondi kestus: {dias}',
     dadosOficinaLabel: 'Töökoja andmed:',
     oficinaLabel: 'Töökoda: {oficinaNome}',
     enderecoLabel: 'Aadress: {endereco}',
@@ -648,7 +665,7 @@ const orcamentoAceitoPagamento: Record<EmailLocale, Dict> = {
     headerTag: 'Preventivo Accettato - Pagamento',
     greeting: 'Ciao <strong>{name}</strong>,',
     intro: "Il preventivo per la riparazione dell'incidente è stato accettato. Come responsabile, devi accordarti direttamente con l'officina per il pagamento.",
-    prazo: 'Durata della riparazione: {dias} giorni',
+    prazo: 'Durata della riparazione: {dias}',
     dadosOficinaLabel: "Dati dell'officina:",
     oficinaLabel: 'Officina: {oficinaNome}',
     enderecoLabel: 'Indirizzo: {endereco}',
@@ -663,7 +680,7 @@ const orcamentoAceitoPagamento: Record<EmailLocale, Dict> = {
     headerTag: 'Orçamento Aceite - Pagamento',
     greeting: 'Olá <strong>{name}</strong>,',
     intro: 'O orçamento para a reparação do acidente foi aceite. Como responsável, tem de acertar o pagamento diretamente com a oficina.',
-    prazo: 'Prazo da reparação: {dias} dias',
+    prazo: 'Prazo da reparação: {dias}',
     dadosOficinaLabel: 'Dados da oficina:',
     oficinaLabel: 'Oficina: {oficinaNome}',
     enderecoLabel: 'Morada: {endereco}',
@@ -678,7 +695,7 @@ const orcamentoAceitoPagamento: Record<EmailLocale, Dict> = {
     headerTag: 'Смета принята - оплата',
     greeting: 'Здравствуйте, <strong>{name}</strong>!',
     intro: 'Смета на ремонт после ДТП принята. Как ответственная сторона, вы должны договориться об оплате напрямую с автосервисом.',
-    prazo: 'Срок ремонта: {dias} дн.',
+    prazo: 'Срок ремонта: {dias}',
     dadosOficinaLabel: 'Данные автосервиса:',
     oficinaLabel: 'Автосервис: {oficinaNome}',
     enderecoLabel: 'Адрес: {endereco}',
@@ -698,7 +715,7 @@ const orcamentoAceitoOutro: Record<EmailLocale, Dict> = {
     introComPlaca: 'O orçamento para o reparo do veículo placa <strong>{placa}</strong> foi aceito:',
     introSemPlaca: 'O orçamento para o reparo do veículo foi aceito:',
     oficinaLabel: 'Oficina: {oficinaNome}',
-    prazo: 'Prazo do conserto: {dias} dias',
+    prazo: 'Prazo do conserto: {dias}',
     ctaText: 'Acesse a plataforma para acompanhar o andamento do reparo e trocar mensagens.',
     cta: 'Ver detalhes',
     footer: 'Equipe BipFix',
@@ -710,7 +727,7 @@ const orcamentoAceitoOutro: Record<EmailLocale, Dict> = {
     introComPlaca: 'The quote to repair the vehicle with plate <strong>{placa}</strong> was accepted:',
     introSemPlaca: 'The quote to repair the vehicle was accepted:',
     oficinaLabel: 'Shop: {oficinaNome}',
-    prazo: 'Repair time: {dias} days',
+    prazo: 'Repair time: {dias}',
     ctaText: 'Open the platform to follow the repair progress and exchange messages.',
     cta: 'View details',
     footer: 'The BipFix team',
@@ -722,7 +739,7 @@ const orcamentoAceitoOutro: Record<EmailLocale, Dict> = {
     introComPlaca: 'Hinnapakkumine sõiduki (reg.märk <strong>{placa}</strong>) remondiks kinnitati:',
     introSemPlaca: 'Hinnapakkumine sõiduki remondiks kinnitati:',
     oficinaLabel: 'Töökoda: {oficinaNome}',
-    prazo: 'Remondi kestus: {dias} päeva',
+    prazo: 'Remondi kestus: {dias}',
     ctaText: 'Ava platvorm, et jälgida remondi kulgu ja vestelda.',
     cta: 'Vaata üksikasju',
     footer: 'BipFixi meeskond',
@@ -734,7 +751,7 @@ const orcamentoAceitoOutro: Record<EmailLocale, Dict> = {
     introComPlaca: 'Il preventivo per la riparazione del veicolo targa <strong>{placa}</strong> è stato accettato:',
     introSemPlaca: 'Il preventivo per la riparazione del veicolo è stato accettato:',
     oficinaLabel: 'Officina: {oficinaNome}',
-    prazo: 'Durata della riparazione: {dias} giorni',
+    prazo: 'Durata della riparazione: {dias}',
     ctaText: 'Apri la piattaforma per seguire lo stato della riparazione e scambiare messaggi.',
     cta: 'Vedi dettagli',
     footer: 'Il team BipFix',
@@ -746,7 +763,7 @@ const orcamentoAceitoOutro: Record<EmailLocale, Dict> = {
     introComPlaca: 'O orçamento para a reparação do veículo com a matrícula <strong>{placa}</strong> foi aceite:',
     introSemPlaca: 'O orçamento para a reparação do veículo foi aceite:',
     oficinaLabel: 'Oficina: {oficinaNome}',
-    prazo: 'Prazo da reparação: {dias} dias',
+    prazo: 'Prazo da reparação: {dias}',
     ctaText: 'Aceda à plataforma para acompanhar a reparação e trocar mensagens.',
     cta: 'Ver detalhes',
     footer: 'Equipa BipFix',
@@ -758,7 +775,7 @@ const orcamentoAceitoOutro: Record<EmailLocale, Dict> = {
     introComPlaca: 'Смета на ремонт автомобиля с госномером <strong>{placa}</strong> принята:',
     introSemPlaca: 'Смета на ремонт автомобиля принята:',
     oficinaLabel: 'Автосервис: {oficinaNome}',
-    prazo: 'Срок ремонта: {dias} дн.',
+    prazo: 'Срок ремонта: {dias}',
     ctaText: 'Откройте платформу, чтобы следить за ходом ремонта и обмениваться сообщениями.',
     cta: 'Посмотреть детали',
     footer: 'Команда BipFix',

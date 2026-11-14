@@ -430,7 +430,9 @@ function ItemBarra({ href, txt, icone, extra, onClick }: { href: string; txt: st
   return (
     <Link href={href as any} onClick={onClick} aria-current={ativo ? 'page' : undefined}
       className={`relative flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-xs font-medium ${ativo ? 'text-primary-700' : 'text-gray-600'}`}>
-      <span className="relative"><Icone nome={icone} />{extra && <span className="absolute -right-3 -top-1">{extra}</span>}</span>{txt}
+      <span className="relative"><Icone nome={icone} />{extra && <span className="absolute -right-3 -top-1">{extra}</span>}</span>
+      {/* rotulo longo (RU "Уведомления", 11 letras: 80 px numa coluna de 72 px a 360 px) um pouco menor para caber */}
+      <span data-rotulo className={`whitespace-nowrap ${txt.length > 10 ? 'text-[10.5px] tracking-tight' : ''}`}>{txt}</span>
     </Link>
   );
 }

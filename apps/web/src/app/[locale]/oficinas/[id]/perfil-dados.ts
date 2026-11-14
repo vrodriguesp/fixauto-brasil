@@ -63,6 +63,8 @@ function abreviarNome(nome: string): string {
   return `${partes[0]} ${partes[partes.length - 1][0].toUpperCase()}.`;
 }
 
+export const MIN_AMOSTRA_TEMPO_RESPOSTA = 3;
+
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const carregarPerfilOficina = cache(async (id: string): Promise<PerfilOficina | null> => {
@@ -145,7 +147,9 @@ export const carregarPerfilOficina = cache(async (id: string): Promise<PerfilOfi
       cliente: a.cliente ? { nome: abreviarNome(a.cliente.nome) } : null,
     })),
     fotos: (fotosRes.data || []) as PerfilOficina['fotos'],
-    tempoMedioResposta: validos ? totalMs / validos / 3_600_000 : null,
+    // amostra minima (dono 14/11, proposta do Fable): com menos de 3 orcamentos a media
+    // e o selo "resposta rapida" nao aparecem (null esconde os dois na pagina)
+    tempoMedioResposta: validos >= MIN_AMOSTRA_TEMPO_RESPOSTA ? totalMs / validos / 3_600_000 : null,
     ajusteMedio,
     hasRevisions: revisados.length > 0,
     totalServicosConcluidos: servicosRes.count || 0,

@@ -166,6 +166,7 @@
   },
   "clienteOrcamentoDetalhe": {
     "execDaysApprox": "~{days} dia(s) útil(eis)",
+    "execHours": "{h}h",
     "confirmRefuseInProgress": "Tem certeza que deseja recusar este orçamento? O veículo precisa ser retirado da oficina antes de encerrar. A oficina será notificada para realizar o check-out.",
     "confirmRefuse": "Tem certeza que deseja recusar este orçamento?",
     "confirmCancelAllRefused": "Todos os orçamentos foram recusados. Deseja cancelar esta solicitação?",
@@ -388,7 +389,7 @@
   },
   "revisaoOrcamento": {
     "titulo": "{oficina} propôs uma revisão do orçamento",
-    "novoPrazo": "Novo prazo: {dias} dias",
+    "novoPrazo": "Novo prazo: {dias, plural, one {# dia} other {# dias}}",
     "motivo": "Motivo",
     "explicacao": "Nada muda sem a sua decisão. Se aprovar, vale o novo valor. Se recusar, o serviço é encerrado e você retira o carro.",
     "aprovar": "Aprovar novo valor",

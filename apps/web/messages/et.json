@@ -777,10 +777,10 @@
   },
   "garantia": {
     "titulo": "Kehtivad garantiid",
-    "diasRestantes": "{dias} päeva jäänud",
+    "diasRestantes": "{dias, plural, one {# päev jäänud} other {# päeva jäänud}}",
     "ate": "kuni {data}",
     "falarComOficina": "Kirjuta töökojale",
-    "noOrcamento": "Garantii: {dias} päeva alates üleandmisest",
+    "noOrcamento": "Garantii: {dias, plural, one {# päev} other {# päeva}} alates üleandmisest",
     "sem": "Garantii puudub",
     "documento": "Ava hinnapakkumise dokument",
     "conversaEncerrada": "Vestlus on suletud: töö on lõpetatud ja garantii on lõppenud (või seda töökoda ei valitud).",

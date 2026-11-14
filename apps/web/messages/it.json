@@ -49,7 +49,7 @@
     "garantiasOficina": "Garanzie",
     "inicio": "Home",
     "pedidosCliente": "Richieste",
-    "avisos": "Avvisi",
+    "avisos": "Notifiche",
     "pedirOrcamento": "Chiedi un preventivo",
     "guias": "Guide",
     "paraOficinas": "Per le officine"
@@ -769,10 +769,10 @@
   },
   "garantia": {
     "titulo": "Garanzie attive",
-    "diasRestantes": "mancano {dias} giorni",
+    "diasRestantes": "{dias, plural, one {manca # giorno} other {mancano # giorni}}",
     "ate": "fino al {data}",
     "falarComOficina": "Scrivi all'officina",
-    "noOrcamento": "Garanzia: {dias} giorni dalla consegna",
+    "noOrcamento": "Garanzia: {dias, plural, one {# giorno} other {# giorni}} dalla consegna",
     "sem": "Senza garanzia",
     "documento": "Apri il documento del preventivo",
     "conversaEncerrada": "Conversazione chiusa: il servizio è finito e la garanzia è scaduta (oppure non è stata scelta questa officina).",

@@ -166,6 +166,7 @@
   },
   "clienteOrcamentoDetalhe": {
     "execDaysApprox": "{days, plural, one {~# business day} other {~# business days}}",
+    "execHours": "{h}h",
     "confirmRefuseInProgress": "Are you sure you want to decline this quote? The vehicle needs to be picked up from the repair shop before closing it out. The repair shop will be notified to process the check-out.",
     "confirmRefuse": "Are you sure you want to decline this quote?",
     "confirmCancelAllRefused": "All quotes have been declined. Would you like to cancel this request?",
@@ -388,7 +389,7 @@
   },
   "revisaoOrcamento": {
     "titulo": "{oficina} proposed a quote revision",
-    "novoPrazo": "New time frame: {dias} days",
+    "novoPrazo": "New time frame: {dias, plural, one {# day} other {# days}}",
     "motivo": "Reason",
     "explicacao": "Nothing changes without your decision. If you approve, the new amount applies. If you decline, the job is closed and you collect your car.",
     "aprovar": "Approve new amount",

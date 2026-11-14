@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { EMAIL_I18N, WHATSAPP_I18N, SMS_I18N, resolveEmailLocale, fmt, escapeHtml, type EmailLocale } from './email-i18n';
+import { EMAIL_I18N, WHATSAPP_I18N, SMS_I18N, resolveEmailLocale, fmt, escapeHtml, diasTexto, type EmailLocale } from './email-i18n';
 import { formatCurrency } from '@fixauto/shared';
 
 const resend = process.env.RESEND_API_KEY
@@ -191,7 +191,7 @@ export async function sendQuoteNotificationEmail(params: {
             <p>${fmt(s.intro, { oficinaNome: escapeHtml(params.oficinaNome) })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${params.valorTotal}</p>
-              <p style="margin: 4px 0 0; color: #6b7280;">${fmt(s.prazo, { prazoDias: params.prazoDias })}</p>
+              <p style="margin: 4px 0 0; color: #6b7280;">${fmt(s.prazo, { prazoDias: diasTexto(params.locale, params.prazoDias) })}</p>
             </div>
             <p style="margin-top: 24px;">
               <a href="${orcamentosUrl}"
@@ -628,7 +628,7 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
             <p>${fmt(s.intro, { fornecedorNome: escapeHtml(params.fornecedorNome), pecaDescricao: escapeHtml(params.pecaDescricao) })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${precoFormatado}</p>
-              <p style="margin: 4px 0 0; color: #6b7280;">${fmt(s.prazo, { prazoDias: params.prazoDias })}</p>
+              <p style="margin: 4px 0 0; color: #6b7280;">${fmt(s.prazo, { prazoDias: diasTexto(params.locale, params.prazoDias) })}</p>
             </div>
             <p style="margin-top: 24px;">
               <a href="${siteNoIdioma(params.locale)}/oficina/pecas"
@@ -775,7 +775,7 @@ export async function sendOrcamentoAceitoPagamentoEmail(params: {
             <p>${s.intro}</p>
             <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 20px; font-weight: bold; color: #991b1b;">${params.valorFormatado}</p>
-              <p style="margin: 4px 0 0; color: #b91c1c;">${fmt(s.prazo, { dias: params.prazoDias })}</p>
+              <p style="margin: 4px 0 0; color: #b91c1c;">${fmt(s.prazo, { dias: diasTexto(params.locale, params.prazoDias) })}</p>
             </div>
             <div style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-weight: bold; color: #111827;">${s.dadosOficinaLabel}</p>
@@ -838,7 +838,7 @@ export async function sendOrcamentoAceitoOutroEmail(params: {
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 20px; font-weight: bold; color: #166534;">${params.valorFormatado}</p>
               <p style="margin: 4px 0 0; color: #15803d;">${fmt(s.oficinaLabel, { oficinaNome: escapeHtml(params.oficinaNome) })}</p>
-              <p style="margin: 4px 0 0; color: #15803d;">${fmt(s.prazo, { dias: params.prazoDias })}</p>
+              <p style="margin: 4px 0 0; color: #15803d;">${fmt(s.prazo, { dias: diasTexto(params.locale, params.prazoDias) })}</p>
             </div>
             <p>${s.ctaText}</p>
             <p style="margin-top: 24px;">

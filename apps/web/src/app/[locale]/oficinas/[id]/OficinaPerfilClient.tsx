@@ -24,6 +24,9 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
   const t = useTranslations('oficinaPerfilPublico');
   const tc = useTranslations('constants');
   const locale = useLocale();
+  // 1 casa decimal com o separador do idioma ("2,5 ч" em ru/et/it/pt, "2.5h" em en):
+  // o next-intl so formata numero em {x, number}; {x} simples vira String(x) (Fable 14/11)
+  const decimal1 = (n: number) => new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(n);
   // Dados ja vem do servidor (perfil-dados.ts): a pagina sai completa no HTML.
   const { oficina, avaliacoes, fotos, tempoMedioResposta, ajusteMedio, hasRevisions, totalServicosConcluidos } = dados;
 
@@ -102,11 +105,11 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
               {hasRevisions && ajusteMedio !== null ? (
                 ajusteMedio < 0 ? (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">
-                    {t('priceAdjustmentDown', { pct: ajusteMedio.toFixed(1) })}
+                    {t('priceAdjustmentDown', { pct: decimal1(ajusteMedio) })}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-800">
-                    {t('priceAdjustmentUp', { pct: ajusteMedio.toFixed(1) })}
+                    {t('priceAdjustmentUp', { pct: decimal1(ajusteMedio) })}
                   </span>
                 )
               ) : (
@@ -137,7 +140,7 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
                 {t('avgResponseTime', {
                   tempo: tempoMedioResposta < 1
                     ? t('avgResponseMinutes', { min: Math.round(tempoMedioResposta * 60) })
-                    : t('avgResponseHours', { horas: tempoMedioResposta.toFixed(1) }),
+                    : t('avgResponseHours', { horas: decimal1(tempoMedioResposta) }),
                 })}
               </p>
             )}

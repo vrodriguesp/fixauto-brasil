@@ -32,7 +32,7 @@ import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 function formatExecTime(hours: number | null, t: (key: string, values?: Record<string, string | number | Date>) => string): string {
   if (!hours) return '-';
-  if (hours < 8) return `${hours}h`;
+  if (hours < 8) return t('execHours', { h: hours });
   const days = Math.ceil(hours / 8);
   return t('execDaysApprox', { days });
 }

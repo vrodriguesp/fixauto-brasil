@@ -49,7 +49,7 @@
     "garantiasOficina": "Garantias",
     "inicio": "Início",
     "pedidosCliente": "Pedidos",
-    "avisos": "Avisos",
+    "avisos": "Notificações",
     "pedirOrcamento": "Pedir orçamento",
     "guias": "Guias",
     "paraOficinas": "Para oficinas"
@@ -768,10 +768,10 @@
   },
   "garantia": {
     "titulo": "Garantias ativas",
-    "diasRestantes": "faltam {dias} dias",
+    "diasRestantes": "{dias, plural, one {falta # dia} other {faltam # dias}}",
     "ate": "até {data}",
     "falarComOficina": "Falar com a oficina",
-    "noOrcamento": "Garantia: {dias} dias a partir da entrega",
+    "noOrcamento": "Garantia: {dias, plural, one {# dia} other {# dias}} a partir da entrega",
     "sem": "Sem garantia",
     "documento": "Ver o documento do orçamento",
     "conversaEncerrada": "Conversa encerrada: o serviço terminou e a garantia acabou (ou não foi escolhida esta oficina).",

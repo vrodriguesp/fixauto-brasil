@@ -1,6 +1,6 @@
 import { supabaseAdmin } from './supabase-admin';
 import { enviarEmail } from './email';
-import { escapeHtml } from './email-i18n';
+import { escapeHtml, diasTexto } from './email-i18n';
 import { SITE_URL, idiomaDoSite } from './site-url';
 import { linkPedido } from './link-acesso';
 import { formatCurrency } from './utils';
@@ -27,7 +27,7 @@ const TXT: Record<string, Txt> = {
     assuntoConf: 'Agendamento confirmado – {oficina}, {quando}', assuntoAlt: 'Horário alterado – {oficina}, {quando}', ola: 'Olá, {n}!',
     introConf: 'Você aceitou o orçamento. Estes são os detalhes do agendamento:', introAlt: 'O horário do seu agendamento mudou. Estes são os novos detalhes:',
     oficina: 'Oficina', endereco: 'Endereço', telefone: 'Telefone', levar: 'Levar o carro', pronto: 'Previsão de entrega', carro: 'Carro', valor: 'Valor do orçamento',
-    itens: 'O que está incluído', garantia: 'Garantia: {n} dias', mapa: 'Ver no mapa', google: 'Adicionar ao Google Calendar', verPedido: 'Ver o pedido',
+    itens: 'O que está incluído', garantia: 'Garantia: {n}', mapa: 'Ver no mapa', google: 'Adicionar ao Google Calendar', verPedido: 'Ver o pedido',
     anexo: 'O arquivo em anexo adiciona o agendamento ao calendário do iPhone, do Mac ou do Outlook, com lembretes no dia anterior e 1 hora antes.',
     evento: 'Levar o carro: {oficina}', rodape: 'Você recebe este e-mail porque aceitou um orçamento na BipFix.',
     remarcar: "Para remarcar ou cancelar, escreva para a oficina no chat do pedido ou ligue para ela.", conversar: "Conversar com a oficina", motivo: "Motivo da oficina", assuntoCanc: "Agendamento cancelado – {oficina}", introCanc: "A oficina cancelou o agendamento de {quando}.", reaberto: "Seu pedido voltou a ficar aberto: você pode escolher outro orçamento ou esperar novas ofertas.", anexoCanc: "O arquivo em anexo tira o agendamento do seu calendário.",
@@ -36,7 +36,7 @@ const TXT: Record<string, Txt> = {
     assuntoConf: 'Marcação confirmada – {oficina}, {quando}', assuntoAlt: 'Horário alterado – {oficina}, {quando}', ola: 'Olá, {n}!',
     introConf: 'Aceitou o orçamento. Estes são os detalhes da marcação:', introAlt: 'O horário da sua marcação mudou. Estes são os novos detalhes:',
     oficina: 'Oficina', endereco: 'Morada', telefone: 'Telefone', levar: 'Entregar o carro', pronto: 'Previsão de entrega', carro: 'Carro', valor: 'Valor do orçamento',
-    itens: 'O que está incluído', garantia: 'Garantia: {n} dias', mapa: 'Ver no mapa', google: 'Adicionar ao Google Calendar', verPedido: 'Ver o pedido',
+    itens: 'O que está incluído', garantia: 'Garantia: {n}', mapa: 'Ver no mapa', google: 'Adicionar ao Google Calendar', verPedido: 'Ver o pedido',
     anexo: 'O ficheiro em anexo adiciona a marcação ao calendário do iPhone, do Mac ou do Outlook, com lembretes no dia anterior e 1 hora antes.',
     evento: 'Entregar o carro: {oficina}', rodape: 'Recebe este e-mail porque aceitou um orçamento na BipFix.',
     remarcar: "Para remarcar ou cancelar, escreva à oficina no chat do pedido ou ligue-lhe.", conversar: "Conversar com a oficina", motivo: "Motivo da oficina", assuntoCanc: "Marcação cancelada – {oficina}", introCanc: "A oficina cancelou a marcação de {quando}.", reaberto: "O seu pedido voltou a ficar aberto: pode escolher outro orçamento ou esperar por novas propostas.", anexoCanc: "O ficheiro em anexo retira a marcação do seu calendário.",
@@ -45,7 +45,7 @@ const TXT: Record<string, Txt> = {
     assuntoConf: 'Booking confirmed – {oficina}, {quando}', assuntoAlt: 'Booking time changed – {oficina}, {quando}', ola: 'Hello {n},',
     introConf: 'You accepted the quote. Here are the booking details:', introAlt: 'The time of your booking has changed. Here are the new details:',
     oficina: 'Repair shop', endereco: 'Address', telefone: 'Phone', levar: 'Drop-off', pronto: 'Expected ready', carro: 'Car', valor: 'Quote total',
-    itens: 'What is included', garantia: 'Warranty: {n} days', mapa: 'Open in maps', google: 'Add to Google Calendar', verPedido: 'See the request',
+    itens: 'What is included', garantia: 'Warranty: {n}', mapa: 'Open in maps', google: 'Add to Google Calendar', verPedido: 'See the request',
     anexo: 'The attached file adds the booking to the calendar on your iPhone, Mac or Outlook, with reminders the day before and 1 hour before.',
     evento: 'Car drop-off: {oficina}', rodape: 'You receive this e-mail because you accepted a quote on BipFix.',
     remarcar: "To reschedule or cancel, write to the repair shop in the request chat or call them.", conversar: "Message the repair shop", motivo: "Reason given by the repair shop", assuntoCanc: "Booking cancelled – {oficina}", introCanc: "The repair shop cancelled the booking for {quando}.", reaberto: "Your request is open again: you can choose another quote or wait for new offers.", anexoCanc: "The attached file removes the booking from your calendar.",
@@ -54,7 +54,7 @@ const TXT: Record<string, Txt> = {
     assuntoConf: 'Broneering kinnitatud – {oficina}, {quando}', assuntoAlt: 'Broneeringu aeg muutus – {oficina}, {quando}', ola: 'Tere, {n}!',
     introConf: 'Võtsid hinnapakkumise vastu. Siin on broneeringu andmed:', introAlt: 'Sinu broneeringu aeg muutus. Siin on uued andmed:',
     oficina: 'Töökoda', endereco: 'Aadress', telefone: 'Telefon', levar: 'Auto viimine', pronto: 'Eeldatavalt valmis', carro: 'Auto', valor: 'Pakkumise summa',
-    itens: 'Mis on hinnas', garantia: 'Garantii: {n} päeva', mapa: 'Ava kaardil', google: 'Lisa Google\'i kalendrisse', verPedido: 'Vaata päringut',
+    itens: 'Mis on hinnas', garantia: 'Garantii: {n}', mapa: 'Ava kaardil', google: 'Lisa Google\'i kalendrisse', verPedido: 'Vaata päringut',
     anexo: 'Manuses olev fail lisab broneeringu iPhone\'i, Maci või Outlooki kalendrisse koos meeldetuletustega päev enne ja 1 tund enne.',
     evento: 'Auto viimine: {oficina}', rodape: 'Saad selle kirja, sest võtsid BipFixis hinnapakkumise vastu.',
     remarcar: "Aja muutmiseks või tühistamiseks kirjuta töökojale päringu vestluses või helista.", conversar: "Kirjuta töökojale", motivo: "Töökoja põhjendus", assuntoCanc: "Broneering tühistatud – {oficina}", introCanc: "Töökoda tühistas broneeringu ({quando}).", reaberto: "Sinu päring on jälle avatud: saad valida teise pakkumise või oodata uusi.", anexoCanc: "Manuses olev fail eemaldab broneeringu sinu kalendrist.",
@@ -63,7 +63,7 @@ const TXT: Record<string, Txt> = {
     assuntoConf: 'Запись подтверждена – {oficina}, {quando}', assuntoAlt: 'Время записи изменено – {oficina}, {quando}', ola: 'Здравствуйте, {n}!',
     introConf: 'Вы приняли смету. Вот данные записи:', introAlt: 'Время вашей записи изменилось. Вот новые данные:',
     oficina: 'Автосервис', endereco: 'Адрес', telefone: 'Телефон', levar: 'Сдать машину', pronto: 'Ожидаемая готовность', carro: 'Автомобиль', valor: 'Сумма сметы',
-    itens: 'Что входит', garantia: 'Гарантия: {n} дн.', mapa: 'Открыть на карте', google: 'Добавить в Google Календарь', verPedido: 'Открыть заявку',
+    itens: 'Что входит', garantia: 'Гарантия: {n}', mapa: 'Открыть на карте', google: 'Добавить в Google Календарь', verPedido: 'Открыть заявку',
     anexo: 'Прикреплённый файл добавит запись в календарь iPhone, Mac или Outlook с напоминаниями за день и за 1 час.',
     evento: 'Сдать машину: {oficina}', rodape: 'Вы получили это письмо, потому что приняли смету в BipFix.',
     remarcar: "Чтобы перенести или отменить запись, напишите автосервису в чате заявки или позвоните.", conversar: "Написать автосервису", motivo: "Причина от автосервиса", assuntoCanc: "Запись отменена – {oficina}", introCanc: "Автосервис отменил запись на {quando}.", reaberto: "Ваша заявка снова открыта: вы можете выбрать другую смету или дождаться новых предложений.", anexoCanc: "Прикреплённый файл удалит запись из вашего календаря.",
@@ -72,7 +72,7 @@ const TXT: Record<string, Txt> = {
     assuntoConf: 'Prenotazione confermata – {oficina}, {quando}', assuntoAlt: 'Orario della prenotazione modificato – {oficina}, {quando}', ola: 'Ciao {n},',
     introConf: 'Hai accettato il preventivo. Ecco i dettagli della prenotazione:', introAlt: 'L’orario della tua prenotazione è cambiato. Ecco i nuovi dettagli:',
     oficina: 'Officina', endereco: 'Indirizzo', telefone: 'Telefono', levar: 'Consegna dell’auto', pronto: 'Pronta prevista', carro: 'Auto', valor: 'Totale del preventivo',
-    itens: 'Cosa è incluso', garantia: 'Garanzia: {n} giorni', mapa: 'Apri nella mappa', google: 'Aggiungi a Google Calendar', verPedido: 'Vedi la richiesta',
+    itens: 'Cosa è incluso', garantia: 'Garanzia: {n}', mapa: 'Apri nella mappa', google: 'Aggiungi a Google Calendar', verPedido: 'Vedi la richiesta',
     anexo: 'Il file allegato aggiunge la prenotazione al calendario di iPhone, Mac o Outlook, con promemoria il giorno prima e 1 ora prima.',
     evento: 'Consegna dell’auto: {oficina}', rodape: 'Ricevi questa e-mail perché hai accettato un preventivo su BipFix.',
     remarcar: "Per spostare o annullare, scrivi all’officina nella chat della richiesta o chiamala.", conversar: "Scrivi all’officina", motivo: "Motivo dell’officina", assuntoCanc: "Prenotazione annullata – {oficina}", introCanc: "L’officina ha annullato la prenotazione del {quando}.", reaberto: "La tua richiesta è di nuovo aperta: puoi scegliere un altro preventivo o attendere nuove offerte.", anexoCanc: "Il file allegato rimuove la prenotazione dal tuo calendario.",
@@ -213,7 +213,7 @@ export async function avisarClienteAgendamento(agendaId: string, opcoes: { motiv
             ${linha(x.valor, valor ? `<strong>${escapeHtml(valor)}</strong>` : '')}
           </table>
           ${itens.length ? `<p style="margin:12px 0 4px;color:#6b7280;font-size:14px;">${escapeHtml(x.itens)}</p><ul style="margin:0;padding-left:20px;font-size:14px;color:#374151;">${itens.map((i) => `<li>${escapeHtml(i.descricao)}${i.quantidade > 1 ? ` × ${i.quantidade}` : ''} – ${escapeHtml(formatCurrency(Number(i.valor_total), moeda, idioma))}</li>`).join('')}</ul>` : ''}
-          ${orc?.garantia_dias ? `<p style="margin:8px 0 0;font-size:14px;color:#374151;">${escapeHtml(x.garantia.replace('{n}', String(orc.garantia_dias)))}</p>` : ''}
+          ${orc?.garantia_dias ? `<p style="margin:8px 0 0;font-size:14px;color:#374151;">${escapeHtml(x.garantia.replace('{n}', diasTexto(idioma, Number(orc.garantia_dias))))}</p>` : ''}
         </div>
         <p>${botao(google, x.google, '#ffffff', '#1e40af')}${botao(linkBotao, x.verPedido, '#374151', '#e5e7eb')}</p>
         <p style="font-size:13px;color:#6b7280;">📅 ${escapeHtml(x.anexo)}</p>
