@@ -66,7 +66,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
         : Promise.resolve({ data: null }),
       supabaseAdmin
         .from('agenda')
-        .select('*, funcionario:funcionarios(id, profile_id, cargo, profile:profiles(nome))')
+        .select('*, oficina:oficinas(pais), funcionario:funcionarios(id, profile_id, cargo, profile:profiles(nome))')
         .eq('solicitacao_id', params.id),
       // "nao tenho interesse" das oficinas, com o motivo (migracao 070)
       supabaseAdmin

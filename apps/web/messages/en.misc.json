@@ -1311,6 +1311,7 @@
     "proporOutra": "Propose another date",
     "cancelarAgendamentoOficina": "Cancel booking",
     "limparData": "Clear",
-    "erroSemNovaData": "Choose the new day and time."
+    "erroSemNovaData": "Choose the new day and time.",
+    "vemNaJanela": "Please arrive within the chosen time range. If you need an exact time, agree it with the repair shop in the chat."
   }
 }

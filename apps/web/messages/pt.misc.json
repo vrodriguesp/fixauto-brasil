@@ -1038,6 +1038,7 @@
     "proporOutra": "Propor outra data",
     "cancelarAgendamentoOficina": "Cancelar agendamento",
     "limparData": "Limpar",
-    "erroSemNovaData": "Escolha o novo dia e horário."
+    "erroSemNovaData": "Escolha o novo dia e horário.",
+    "vemNaJanela": "Chegue dentro do horário escolhido. Se precisar de uma hora exata, combine com a oficina pelo chat."
   }
 }

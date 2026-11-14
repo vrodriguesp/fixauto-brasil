@@ -92,6 +92,8 @@ export async function POST(req: NextRequest) {
     if (futuro) {
       // carro chegou antes: a entrada passa a ser agora; a entrega prevista fica
       mudancas.data_inicio = agora.toISOString();
+      // a janela de chegada combinada acabou de valer: a hora de entrada e a real (check-in v2)
+      mudancas.checkin_ate = null;
     }
     if (funcId) mudancas.funcionario_id = funcId;
     // "Colocar em": check-in e posto num clique (o gatilho da 057 abre a ocupacao)

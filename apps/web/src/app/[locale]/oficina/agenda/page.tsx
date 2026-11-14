@@ -2,7 +2,7 @@
 
 import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useState, useEffect, useMemo } from 'react';
-import { localParaIso, dataLocalDe, horaLocalDe } from '@/lib/turnos';
+import { localParaIso, dataLocalDe, horaLocalDe, textoDaAgenda } from '@/lib/turnos';
 import AcoesAgendamento from '@/components/oficina/AcoesAgendamento';
 import { useDatasNaoConfirmadas } from '@/hooks/use-datas-nao-confirmadas';
 import { exemploPlaca } from '@/lib/exemplos';
@@ -295,10 +295,16 @@ export default function AgendaPage() {
   const handleSaveEdit = async (evId: string) => {
     if (!editData) return;
     setUpdatingId(evId);
+    // check-in v2: a janela de chegada anda junto com o inicio (mesma duracao) - mapa de propagacao 7.2 B
+    const antes = allEventos.find((e) => e.id === evId) as any;
+    const novoInicio = localParaIso(editData.data_inicio, editData.hora_inicio, (oficina as any)?.pais ?? null);
+    const checkinAte = antes?.checkin_ate && antes?.data_inicio
+      ? new Date(Date.parse(novoInicio) + (Date.parse(antes.checkin_ate) - Date.parse(antes.data_inicio))).toISOString() : undefined;
     await updateEvento(evId, {
       titulo: editData.titulo,
       descricao: editData.descricao || null,
-      data_inicio: localParaIso(editData.data_inicio, editData.hora_inicio, (oficina as any)?.pais ?? null),
+      ...(checkinAte ? { checkin_ate: checkinAte } : {}),
+      data_inicio: novoInicio,
       data_fim: localParaIso(editData.data_fim, editData.hora_fim, (oficina as any)?.pais ?? null),
       funcionario_id: editData.funcionario_id || null,
       cor: editData.cor,
@@ -391,7 +397,8 @@ export default function AgendaPage() {
                   </div>
                 ) : (
                   <div className="flex items-center gap-1">
-                    {new Date(ev.data_inicio) < new Date() && !ev.no_show && (
+                    {/* falta so depois do FIM da janela de chegada (check-in v2; o servidor tambem confere) */}
+                    {new Date((ev as any).checkin_ate || ev.data_inicio) < new Date() && !ev.no_show && (
                       <button onClick={(e) => { e.stopPropagation(); handleNoShow(ev); }} disabled={noShowingId === ev.id}
                         className="px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white text-xs font-medium rounded-lg">
                         {noShowingId === ev.id ? '...' : t('btnMarcarFalta')}
@@ -502,7 +509,9 @@ export default function AgendaPage() {
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase">{t('datas')}</p>
                   {ev.solicitacao_id && ev.status === 'agendado' && naoConfirmadas.has(ev.solicitacao_id) && <p className="mt-1 inline-block rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-900" data-testid="data-nao-confirmada">⏳ {tMud('naoConfirmado')}</p>}
-                  <p className="text-xs text-gray-700">{t('checkinLabel')}: {new Date(ev.data_inicio).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais((oficina as any)?.pais ?? null) })} {new Date(ev.data_inicio).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais((oficina as any)?.pais ?? null) })}</p>
+                  <p className="text-xs text-gray-700" data-testid="agenda-checkin">{t('checkinLabel')}: {ev.status === 'agendado'
+                    ? textoDaAgenda(ev.data_inicio, (ev as any).checkin_ate, (oficina as any)?.pais ?? null, INTL_LOCALE[locale] || 'en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }, ' ')
+                    : `${new Date(ev.data_inicio).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais((oficina as any)?.pais ?? null) })} ${new Date(ev.data_inicio).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais((oficina as any)?.pais ?? null) })}`}</p>
                   <p className="text-xs text-gray-700">{t('prevEntregaLabel')}: {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais((oficina as any)?.pais ?? null) })} {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais((oficina as any)?.pais ?? null) })}</p>
                   {ev.status === 'concluido' && <p className="text-xs text-gray-700">{t('entregueLabel')}: {new Date(ev.data_fim).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB')}</p>}
                 </div>

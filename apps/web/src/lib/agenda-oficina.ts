@@ -16,7 +16,7 @@ export const motivoValido = (m: unknown) => (typeof m === 'string' ? m.trim().sl
 /** Agendamento de pedido, ainda sem o carro, e quem chama e dono ou equipe (nao mecanico) da oficina. */
 export async function agendaDaOficina(agendaId: string, userId: string) {
   const { data: ag } = await supabaseAdmin.from('agenda')
-    .select('id, status, tipo, data_inicio, data_fim, data_fim_prevista, solicitacao_id, oficina_id, oficina:oficinas(profile_id, nome_fantasia, pais, profile:profiles!oficinas_profile_id_fkey(idioma))')
+    .select('id, status, tipo, data_inicio, checkin_ate, data_fim, data_fim_prevista, solicitacao_id, oficina_id, oficina:oficinas(profile_id, nome_fantasia, pais, horario_funcionamento, recepcao_inicio, recepcao_fim, almoco_inicio, almoco_fim, profile:profiles!oficinas_profile_id_fkey(idioma))')
     .eq('id', agendaId).maybeSingle();
   if (!ag) return { erro: 404 as const };
   const of = (ag as any).oficina;

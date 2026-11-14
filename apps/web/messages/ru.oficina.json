@@ -1214,7 +1214,8 @@
     "bloco_entreguesDia": "Выданы в этот день",
     "painelDia": "Сводка дня",
     "pedidosEsperando": "Заявки ждут ответа",
-    "verTudo": "Показать всё"
+    "verTudo": "Показать всё",
+    "chegaJanela": "Приедет {dia}, {janela}"
   },
   "oficinaDesempenho": {
     "titulo": "Результаты",

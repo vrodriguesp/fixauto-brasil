@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
+import { formatarJanela, janelaDoSlot, janelaDaAgenda, slotAindaVale } from '@/lib/turnos';
 
 interface SlotOption {
   id: string;
@@ -63,10 +64,8 @@ export default function ReagendarPage() {
         // Filter out past dates and the current appointment date
         const now = new Date();
         const currentDate = agendaData.data_inicio?.slice(0, 10);
-        const futureSlots = orcamento.disponibilidade.filter((s: SlotOption) => {
-          const slotDate = new Date(s.data_checkin);
-          return slotDate > now && s.data_checkin !== currentDate;
-        });
+        // check-in v2: vale ate o fim da janela gravada (linha antiga 12:00 / 17:00)
+        const futureSlots = orcamento.disponibilidade.filter((s: SlotOption) => slotAindaVale(s as any, now, agendaData.solicitacao?.pais ?? null) && s.data_checkin !== currentDate);
         setDisponibilidade(futureSlots);
       }
 
@@ -160,7 +159,7 @@ export default function ReagendarPage() {
           </p>
         )}
         <p className="text-sm text-gray-600">
-          {t('originalDate', { date: new Date(agenda.data_inicio).toLocaleDateString(locale) })}
+          {t('originalDate', { date: `${new Date(agenda.data_inicio).toLocaleDateString(locale)} · ${formatarJanela(janelaDaAgenda(agenda.data_inicio, agenda.checkin_ate, agenda.solicitacao?.pais ?? null))}` })}
         </p>
         {agenda.no_show && (
           <div className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-red-700 bg-red-100 px-2 py-1 rounded">
@@ -208,7 +207,7 @@ export default function ReagendarPage() {
                       })}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {t('shiftLabel', { shift: slot.turno === 'manha' ? t('morningShift') : t('afternoonShift') })}
+                      {t('shiftLabel', { shift: formatarJanela(janelaDoSlot(slot as any)) })}
                     </p>
                   </div>
                 </div>

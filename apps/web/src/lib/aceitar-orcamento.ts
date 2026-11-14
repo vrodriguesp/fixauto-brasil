@@ -8,6 +8,7 @@ import { avisarClienteAgendamento } from '@/lib/email-agendamento';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
 import { cancelarPedidosDatasPendentes } from '@/lib/pedido-datas';
 import { orcamentoVencido } from '@/lib/orcamento-validade';
+import { janelaDoSlot } from '@/lib/turnos';
 
 // Nucleo do aceite de orcamento (antes dentro de api/aceitar-orcamento/route.ts; virou lib na
 // migracao 079 para a oficina confirmar a data sugerida pelo cliente com a MESMA logica):
@@ -25,7 +26,7 @@ export async function aceitarOrcamento(p: { orcamentoId: string; slotId: string;
   // os concorrentes e agendava o servico em nome de outra pessoa.
   const { data: orcamentoParaChecar } = await supabaseAdmin
     .from('orcamentos')
-    .select('status, validade, solicitacao_id, solicitacao:solicitacoes(cliente_id, status), oficina:oficinas(pais), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(id, data_checkin, turno)')
+    .select('status, validade, solicitacao_id, solicitacao:solicitacoes(cliente_id, status), oficina:oficinas(pais), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(id, data_checkin, turno, hora_inicio, hora_fim)')
     .eq('id', orcamentoId)
     .single();
   if (!orcamentoParaChecar || (orcamentoParaChecar as any).solicitacao?.cliente_id !== clienteId) {
@@ -47,7 +48,8 @@ export async function aceitarOrcamento(p: { orcamentoId: string; slotId: string;
   }
   const slotEscolhido = (chk.disponibilidade || []).find((s: { id: string }) => s.id === slotId);
   if (!slotEscolhido) return res(400, { error: 'Horário inválido', codigo: 'DADOS_INVALIDOS' });
-  const fimTurno = horaLocalEmUtc(slotEscolhido.data_checkin, slotEscolhido.turno === 'manha' ? '12:00' : '17:00', chk.oficina?.pais);
+  // ate o FIM da janela gravada (linha antiga: 12:00 / 17:00) - check-in v2
+  const fimTurno = horaLocalEmUtc(slotEscolhido.data_checkin, janelaDoSlot(slotEscolhido).fim, chk.oficina?.pais);
   if (new Date(fimTurno).getTime() < Date.now()) {
     return res(409, { error: 'Horário vencido', codigo: 'HORARIO_VENCIDO' });
   }
@@ -121,8 +123,10 @@ export async function aceitarOrcamento(p: { orcamentoId: string; slotId: string;
       solicitacao_id: orc.solicitacao_id,
       titulo: notifReparoAgendadoTitulo((orc.oficina as any)?.profile?.idioma),
       descricao: `${({ pt: 'Orçamento', 'pt-PT': 'Orçamento', en: 'Quote', et: 'Hinnapakkumine', it: 'Preventivo', ru: 'Смета' } as Record<string, string>)[(orc.oficina as any)?.profile?.idioma || 'en'] || 'Quote'} #${orcamentoId.slice(0, 8)}`,
-      // hora local da oficina (pais), gravada em UTC
-      data_inicio: horaLocalEmUtc(slot.data_checkin, slot.turno === 'manha' ? '08:00' : '13:00', (orc.oficina as any)?.pais),
+      // hora local da oficina (pais), gravada em UTC; janela de chegada = inicio..checkin_ate (check-in v2:
+      // depois do aceite a agenda e a fonte unica do horario)
+      data_inicio: horaLocalEmUtc(slot.data_checkin, janelaDoSlot(slot).inicio, (orc.oficina as any)?.pais),
+      checkin_ate: horaLocalEmUtc(slot.data_checkin, janelaDoSlot(slot).fim, (orc.oficina as any)?.pais),
       data_fim: horaLocalEmUtc(slot.data_previsao_entrega || slot.data_checkin, '18:00', (orc.oficina as any)?.pais),
       data_fim_prevista: horaLocalEmUtc(slot.data_previsao_entrega || slot.data_checkin, '18:00', (orc.oficina as any)?.pais),
       tipo: 'plataforma',

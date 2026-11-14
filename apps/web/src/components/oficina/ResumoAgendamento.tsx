@@ -7,12 +7,13 @@ import { fusoDoPais } from '@/lib/fuso';
 import { INTL_LOCALE } from '@/lib/utils';
 import { Link } from '@/i18n/navigation';
 import AcoesAgendamento from './AcoesAgendamento';
+import { textoDaAgenda, formatarJanela, diaDoCalendario, minutosDe, hhmm, JANELA_MIN } from '@/lib/turnos';
 
 // Resumo do agendamento na tela do pedido da oficina: quando o cliente aceitou, quando o
 // carro chega e a previsao de entrega, lidos da AGENDA (a data pode ter mudado depois do
 // aceite - proposta aceita ou "Mudar data"), e se ha nova data esperando o cliente.
 // Antes a oficina so via o orcamento, sem a confirmacao nem a data atual (dono 08/11).
-type Ag = { id: string; data_inicio: string; data_fim: string | null; data_fim_prevista: string | null; status: string; created_at: string; checkin_em: string | null; entregue_em: string | null };
+type Ag = { id: string; data_inicio: string; checkin_ate: string | null; data_fim: string | null; data_fim_prevista: string | null; status: string; created_at: string; checkin_em: string | null; entregue_em: string | null };
 
 export default function ResumoAgendamento({ solicitacaoId, oficinaId, pais }: { solicitacaoId: string; oficinaId: string; pais: string | null | undefined }) {
   const t = useTranslations('oficinaSolicitacaoDetalhe.resumoAgenda');
@@ -21,7 +22,7 @@ export default function ResumoAgendamento({ solicitacaoId, oficinaId, pais }: { 
   const [ag, setAg] = useState<Ag | null>(null);
   const [mudanca, setMudanca] = useState<{ acao: string; created_at: string } | null>(null);
   // ultima mudanca de data (077): pendente, contestada pelo cliente ou mantida por ele
-  const [rev, setRev] = useState<{ status: string; nova_data_checkin: string; novo_turno: string; contestada_em: string | null; decidido_em: string | null } | null>(null);
+  const [rev, setRev] = useState<{ status: string; nova_data_checkin: string; novo_turno: string; nova_hora: string | null; nova_hora_fim: string | null; contestada_em: string | null; decidido_em: string | null } | null>(null);
   const [aviso, setAviso] = useState('');
   const [versao, setVersao] = useState(0);
 
@@ -29,7 +30,7 @@ export default function ResumoAgendamento({ solicitacaoId, oficinaId, pais }: { 
     let vivo = true;
     (async () => {
       const { data: a } = await supabase.from('agenda')
-        .select('id, data_inicio, data_fim, data_fim_prevista, status, created_at, checkin_em, entregue_em')
+        .select('id, data_inicio, checkin_ate, data_fim, data_fim_prevista, status, created_at, checkin_em, entregue_em')
         .eq('solicitacao_id', solicitacaoId).eq('oficina_id', oficinaId).neq('status', 'cancelado')
         .order('created_at', { ascending: false }).limit(1);
       const linha = (a?.[0] as Ag) || null;
@@ -39,7 +40,7 @@ export default function ResumoAgendamento({ solicitacaoId, oficinaId, pais }: { 
       const [{ data: h }, { data: r }] = await Promise.all([
         supabase.from('agenda_historico').select('acao, created_at').eq('agenda_id', linha.id)
           .in('acao', ['data_proposta_aceita', 'data_mudada', 'data_combinada', 'data_contestada']).order('created_at', { ascending: false }).limit(1),
-        supabase.from('orcamento_revisoes').select('status, nova_data_checkin, novo_turno, contestada_em, decidido_em')
+        supabase.from('orcamento_revisoes').select('status, nova_data_checkin, novo_turno, nova_hora, nova_hora_fim, contestada_em, decidido_em')
           .eq('solicitacao_id', solicitacaoId).eq('oficina_id', oficinaId).eq('tipo', 'data').in('status', ['pendente', 'recusada'])
           .order('created_at', { ascending: false }).limit(1),
       ]);
@@ -70,7 +71,8 @@ export default function ResumoAgendamento({ solicitacaoId, oficinaId, pais }: { 
       <dl className="space-y-2 text-sm">
         <div className="flex justify-between gap-3">
           <dt className="text-gray-600">{ag.checkin_em ? t('chegou') : t('chegada')}</dt>
-          <dd className="font-semibold text-gray-900 text-right" data-testid="resumo-chegada">{diaHora(ag.checkin_em || ag.data_inicio)}</dd>
+          {/* chegou: a hora real; ainda nao: dia + janela de chegada (check-in v2: data_inicio..checkin_ate) */}
+          <dd className="font-semibold text-gray-900 text-right" data-testid="resumo-chegada">{ag.checkin_em ? diaHora(ag.checkin_em) : textoDaAgenda(ag.data_inicio, ag.checkin_ate, pais ?? null, loc, { weekday: 'short', day: 'numeric', month: 'short' }, ', ')}</dd>
         </div>
         {prev && (
           <div className="flex justify-between gap-3">
@@ -87,7 +89,7 @@ export default function ResumoAgendamento({ solicitacaoId, oficinaId, pais }: { 
       {pendente && (
         <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-2 text-sm text-amber-900" role="status" data-testid="resumo-pendente">
           <span className="font-semibold">{tMud('naoConfirmado')}.</span>{' '}
-          {contestou ? tMud('clienteContestou') : t('propostaPendente', { quando: dia(`${pendente.nova_data_checkin}T12:00:00Z`) })}
+          {contestou ? tMud('clienteContestou') : t('propostaPendente', { quando: `${diaDoCalendario(pendente.nova_data_checkin, loc)}${pendente.nova_hora ? `, ${formatarJanela({ inicio: pendente.nova_hora.slice(0, 5), fim: pendente.nova_hora_fim ? pendente.nova_hora_fim.slice(0, 5) : hhmm((minutosDe(pendente.nova_hora) ?? 0) + JANELA_MIN) })}` : ''}` })}
         </p>
       )}
       {manteve && <p className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-2 text-sm text-blue-900" role="status" data-testid="resumo-manteve">{tMud('clienteManteve')}</p>}

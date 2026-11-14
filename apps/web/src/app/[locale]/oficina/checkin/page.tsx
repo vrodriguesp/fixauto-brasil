@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import CampoNumero from '@/components/forms/CampoNumero';
-import { localParaIso } from '@/lib/turnos';
+import { localParaIso, janelaDaSugestao, formatarJanela, type Turno } from '@/lib/turnos';
 import { exemploPlaca, EXEMPLO_EMAIL, exemploValor } from '@/lib/exemplos';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
@@ -39,6 +39,8 @@ export default function ManualCheckinPage() {
   const [descricao, setDescricao] = useState('');
   const [dataCheckin, setDataCheckin] = useState(new Date().toISOString().split('T')[0]);
   const [turnoCheckin, setTurnoCheckin] = useState('manha');
+  const ctxOf = { horario: (oficina as any)?.horario_funcionamento, recepcao_inicio: (oficina as any)?.recepcao_inicio, recepcao_fim: (oficina as any)?.recepcao_fim, almoco_inicio: (oficina as any)?.almoco_inicio, almoco_fim: (oficina as any)?.almoco_fim };
+  const janelaManual = (tu: Turno) => janelaDaSugestao(dataCheckin || new Date().toISOString().slice(0, 10), tu, ctxOf);
   const [prazoDias, setPrazoDias] = useState(5);
   const [valorEstimado, setValorEstimado] = useState('');
   const [cor, setCor] = useState('#3B82F6');
@@ -88,7 +90,9 @@ export default function ManualCheckinPage() {
     const { data: criado, error: agendaError } = await addEvento({
       titulo: `${tipoLabel} - ${veiculoMarca} ${veiculoModelo}`,
       descricao: `${t('descricaoLabelCliente')}: ${clienteNome} | ${t('descricaoLabelPlaca')}: ${veiculoPlaca || t('descricaoNaoInformado')} | ${t('descricaoLabelTelefone')}: ${clienteTelefone || t('descricaoNaoInformado')}${descricao ? ' | ' + descricao : ''}${valorEstimado ? ` | ${t('descricaoLabelValor')}: ${formatCurrency(parseFlexibleNumber(valorEstimado), currencyForCountry(oficina?.pais), locale)}` : ''}`,
-      data_inicio: fazerCheckin ? new Date().toISOString() : localParaIso(dataCheckin, turnoCheckin === 'manha' ? '08:00' : '13:00', (oficina as any)?.pais ?? null),
+      // check-in v2: o turno vira a 1a faixa do perfil nesse turno (data_inicio..checkin_ate), igual ao 079
+      data_inicio: fazerCheckin ? new Date().toISOString() : localParaIso(dataCheckin, janelaManual(turnoCheckin as Turno).inicio, (oficina as any)?.pais ?? null),
+      ...(fazerCheckin ? {} : { checkin_ate: localParaIso(dataCheckin, janelaManual(turnoCheckin as Turno).fim, (oficina as any)?.pais ?? null) }),
       data_fim: localParaIso(dataEntrega, '18:00', (oficina as any)?.pais ?? null),
       tipo: 'externo',
       cor,
@@ -277,8 +281,8 @@ export default function ManualCheckinPage() {
             <div className={fazerCheckin ? 'hidden' : ''}>
               <label htmlFor="c7917-12" className="block text-sm font-medium text-gray-700 mb-1">{t('turno')}</label>
               <select id="c7917-12" className="input-field" value={turnoCheckin} onChange={(e) => setTurnoCheckin(e.target.value)}>
-                <option value="manha">{t('manha')}</option>
-                <option value="tarde">{t('tarde')}</option>
+                <option value="manha">{t('manha').replace(/s*(.*)s*$/, '')} {formatarJanela(janelaManual('manha'))}</option>
+                <option value="tarde">{t('tarde').replace(/s*(.*)s*$/, '')} {formatarJanela(janelaManual('tarde'))}</option>
               </select>
             </div>
             <div>

@@ -9,6 +9,7 @@ import { currencyForCountry } from '@/lib/currency';
 import { textoErroApi } from '@/lib/erro-api';
 import { fusoDoPais } from '@/lib/fuso';
 import { Link } from '@/i18n/navigation';
+import { formatarJanela, minutosDe, hhmm, JANELA_MIN } from '@/lib/turnos';
 
 interface Revisao {
   id: string;
@@ -25,6 +26,8 @@ interface Revisao {
   nova_previsao_entrega?: string | null;
   // 077: hora exata (agenda), a data atual ainda serve?, mudanca combinada
   nova_hora?: string | null;
+  // check-in v2: fim da janela proposta (nova_hora = inicio)
+  nova_hora_fim?: string | null;
   data_atual_serve?: boolean | null;
   combinado?: boolean;
   oficina_id?: string;
@@ -59,7 +62,7 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
 
   useEffect(() => {
     supabase.from('orcamento_revisoes')
-      .select('id, orcamento_id, oficina_id, tipo, nova_data_checkin, novo_turno, nova_hora, nova_previsao_entrega, data_atual_serve, combinado, valor_anterior, valor_novo, prazo_dias_novo, motivo, itens, oficina:oficinas(nome_fantasia, pais)')
+      .select('id, orcamento_id, oficina_id, tipo, nova_data_checkin, novo_turno, nova_hora, nova_hora_fim, nova_previsao_entrega, data_atual_serve, combinado, valor_anterior, valor_novo, prazo_dias_novo, motivo, itens, oficina:oficinas(nome_fantasia, pais)')
       .eq('solicitacao_id', solicitacaoId).eq('status', 'pendente').maybeSingle()
       .then(({ data }) => {
         setRev((data as any) || null);
@@ -125,7 +128,9 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
     // oficina (o pedido reabre e os outros orcamentos voltam a valer)
     const fuso = fusoDoPais(rev.oficina?.pais);
     const loc = INTL_LOCALE[locale] || 'en-GB';
-    const nova = `${new Date(`${rev.nova_data_checkin}T12:00:00`).toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long' })}, ${rev.nova_hora || tMud(rev.novo_turno === 'tarde' ? 'tarde' : 'manha')}`;
+    // janela proposta (inicio-fim; hora exata antiga = +30 min; so turno antigo = palavra manha/tarde)
+    const janelaRev = rev.nova_hora ? formatarJanela({ inicio: rev.nova_hora.slice(0, 5), fim: rev.nova_hora_fim ? rev.nova_hora_fim.slice(0, 5) : hhmm((minutosDe(rev.nova_hora) ?? 0) + JANELA_MIN) }) : '';
+    const nova = `${new Date(`${rev.nova_data_checkin}T12:00:00Z`).toLocaleDateString(loc, { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' })}, ${janelaRev || tMud(rev.novo_turno === 'tarde' ? 'tarde' : 'manha')}`;
     const podeManter = rev.data_atual_serve !== false;
     return (
       <section className="card mb-6 border-2 border-blue-400 bg-blue-50" aria-labelledby="revisao-titulo" data-testid="proposta-nova-data">

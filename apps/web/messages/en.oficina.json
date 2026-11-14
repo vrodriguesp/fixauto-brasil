@@ -1214,7 +1214,8 @@
     "bloco_entreguesDia": "Handed over on this day",
     "painelDia": "Day summary",
     "pedidosEsperando": "Requests waiting for a reply",
-    "verTudo": "Show all"
+    "verTudo": "Show all",
+    "chegaJanela": "Arrives {dia}, {janela}"
   },
   "oficinaDesempenho": {
     "titulo": "Results",

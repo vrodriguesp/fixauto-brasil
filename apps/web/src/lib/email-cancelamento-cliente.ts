@@ -5,6 +5,7 @@ import { SITE_URL, idiomaDoSite } from './site-url';
 import { linkPedido } from './link-acesso';
 import { fusoDoPais } from './fuso';
 import { montarIcs } from './email-agendamento';
+import { formatarJanela, janelaDaAgenda } from './turnos';
 import { motivoTexto } from './notif-i18n';
 import type { EmailLocale } from './email-i18n';
 
@@ -29,7 +30,7 @@ const botao = (href: string, texto: string) => `<p><a href="${href}" style="disp
 
 export async function avisarCancelamentoPeloCliente(agendaId: string, motivo: string | null): Promise<void> {
   const { data: ag } = await supabaseAdmin.from('agenda')
-    .select('id, data_inicio, aviso_cliente_inicio, aviso_cliente_seq, solicitacao_id, oficina:oficinas(nome_fantasia, endereco, cidade, pais, profile:profiles!oficinas_profile_id_fkey(email, idioma, nome))')
+    .select('id, data_inicio, checkin_ate, aviso_cliente_inicio, aviso_cliente_seq, solicitacao_id, oficina:oficinas(nome_fantasia, endereco, cidade, pais, profile:profiles!oficinas_profile_id_fkey(email, idioma, nome))')
     .eq('id', agendaId).maybeSingle();
   if (!ag?.solicitacao_id) return;
   const { data: sol } = await supabaseAdmin.from('solicitacoes')
@@ -39,7 +40,10 @@ export async function avisarCancelamentoPeloCliente(agendaId: string, motivo: st
   const of = (ag as any).oficina || {}; const cliente = (sol as any).cliente || {}; const v = (sol as any).veiculo || {};
   const fuso = fusoDoPais(of.pais || 'EE');
   const inicio = new Date(ag.data_inicio);
-  const quandoEm = (l: string) => inicio.toLocaleString(LOCALE[l] || 'en-GB', { timeZone: fuso, weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+  // dia + janela de chegada (check-in v2; agenda antiga sem checkin_ate: legado/hora exata)
+  const checkinAte = (ag as any).checkin_ate as string | null;
+  const janelaTxt = formatarJanela(janelaDaAgenda(ag.data_inicio, checkinAte, of.pais || 'EE'));
+  const quandoEm = (l: string) => `${inicio.toLocaleDateString(LOCALE[l] || 'en-GB', { timeZone: fuso, weekday: 'long', day: 'numeric', month: 'long' })}, ${janelaTxt}`;
   const numero = String((sol as any).numero ?? '');
   const nomeOf = of.nome_fantasia || 'BipFix';
   const carro = [v.fipe_marca, v.fipe_modelo, v.placa].filter(Boolean).join(' ') || '-';
@@ -56,7 +60,7 @@ export async function avisarCancelamentoPeloCliente(agendaId: string, motivo: st
       await supabaseAdmin.from('agenda').update({ aviso_cliente_seq: seq }).eq('id', ag.id);
       const titulo = x.evento.replace('{oficina}', nomeOf);
       anexos.push({ nome: 'bipfix-agendamento.ics', tipo: 'text/calendar; charset=utf-8; method=CANCEL', conteudo: montarIcs({
-        cancelar: true, uid: `agenda-${ag.id}@bipfix.com`, seq, inicio, fim: new Date(inicio.getTime() + 3600e3), titulo,
+        cancelar: true, uid: `agenda-${ag.id}@bipfix.com`, seq, inicio, fim: checkinAte && Date.parse(checkinAte) > inicio.getTime() ? new Date(checkinAte) : new Date(inicio.getTime() + 3600e3), titulo,
         local: [of.endereco, of.cidade].filter(Boolean).join(', '), descricao: motivo || '', url: `${site}/r/${numero}`,
         nomeCliente: cliente.nome || '', emailCliente: cliente.email, lembrete1: titulo, lembrete2: titulo,
       }) });

@@ -1214,7 +1214,8 @@
     "bloco_entreguesDia": "Entregues neste dia",
     "painelDia": "Resumo do dia",
     "pedidosEsperando": "Pedidos esperando resposta",
-    "verTudo": "Ver tudo"
+    "verTudo": "Ver tudo",
+    "chegaJanela": "Chega {dia}, {janela}"
   },
   "oficinaDesempenho": {
     "titulo": "Desempenho",

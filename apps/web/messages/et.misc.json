@@ -1311,6 +1311,7 @@
     "proporOutra": "Paku teist aega",
     "cancelarAgendamentoOficina": "Tühista broneering",
     "limparData": "Tühjenda",
-    "erroSemNovaData": "Vali uus päev ja aeg."
+    "erroSemNovaData": "Vali uus päev ja aeg.",
+    "vemNaJanela": "Tule valitud aja sees. Kui vajad kindlat kellaaega, lepi see töökojaga vestluses kokku."
   }
 }

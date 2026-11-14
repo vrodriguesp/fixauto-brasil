@@ -1,4 +1,5 @@
 import { idiomaDoSite } from './site-url';
+import { formatarJanela } from './turnos';
 
 // Avisos da mudanca de data e do cancelamento de agendamento (migracao 076):
 // notificacao no app/site e a linha que entra no chat do pedido (a conversa e
@@ -61,3 +62,13 @@ export const preencher = (s: string, v: Record<string, string>) => s.replace(/\{
 /** data e hora no idioma de quem le, no fuso da oficina */
 export const dataHora = (iso: string | Date, idioma: string | null | undefined, fuso: string) =>
   new Date(iso).toLocaleString(LOC[idiomaDoSite(idioma)] || 'en-GB', { timeZone: fuso, weekday: 'short', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+/** dia + janela de chegada ('ter., 17 de novembro, 09:00–11:00'; janela de 30 min = so a hora), no fuso da oficina.
+ *  Sem fim (agenda antiga): legado pelo inicio (08:00 -> 08-12, 13:00 -> 13-17) ou a hora exata. */
+export const dataJanela = (inicio: string | Date, fim: string | Date | null | undefined, idioma: string | null | undefined, fuso: string) => {
+  const loc = LOC[idiomaDoSite(idioma)] || 'en-GB';
+  const dia = new Date(inicio).toLocaleDateString(loc, { timeZone: fuso, weekday: 'short', day: 'numeric', month: 'long' });
+  const hora = (x: string | Date) => new Date(x).toLocaleTimeString('en-GB', { timeZone: fuso, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  const ini = hora(inicio);
+  const fimTxt = fim ? hora(fim) : ini === '08:00' ? '12:00' : ini === '13:00' ? '17:00' : ini;
+  return `${dia}, ${formatarJanela({ inicio: ini, fim: fimTxt })}`;
+};

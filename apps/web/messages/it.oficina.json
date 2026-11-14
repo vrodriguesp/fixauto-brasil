@@ -1214,7 +1214,8 @@
     "bloco_entreguesDia": "Consegnate in questo giorno",
     "painelDia": "Riepilogo del giorno",
     "pedidosEsperando": "Richieste in attesa di risposta",
-    "verTudo": "Mostra tutto"
+    "verTudo": "Mostra tutto",
+    "chegaJanela": "Arriva {dia}, {janela}"
   },
   "oficinaDesempenho": {
     "titulo": "Risultati",

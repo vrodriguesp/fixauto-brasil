@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 import { ehUuid } from '@/lib/validacao';
 import { horaLocalEmUtc } from '@/lib/fuso';
 import { avisarClienteAgendamento } from '@/lib/email-agendamento';
+import { janelaDoSlot } from '@/lib/turnos';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,22 +26,26 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   // o horario tem de ser do orcamento ACEITO deste pedido e ainda no futuro
   const { data: orc } = await supabaseAdmin.from('orcamentos')
-    .select('id, disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(id, data_checkin, turno, data_previsao_entrega)')
+    .select('id, disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(id, data_checkin, turno, hora_inicio, hora_fim, data_previsao_entrega)')
     .eq('solicitacao_id', ag.solicitacao_id).eq('status', 'aceito').maybeSingle();
   const slot = ((orc as any)?.disponibilidade || []).find((s: any) => s.id === slotId);
   if (!slot) return NextResponse.json({ error: 'Horário inválido', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
   const pais = (ag as any).oficina?.pais;
-  const inicio = horaLocalEmUtc(slot.data_checkin, slot.turno === 'manha' ? '08:00' : '13:00', pais);
-  if (new Date(inicio).getTime() < Date.now()) return NextResponse.json({ error: 'Horário vencido', codigo: 'HORARIO_VENCIDO' }, { status: 409 });
+  // janela gravada no horario (check-in v2; linha antiga 08-12 / 13-17): inicio..checkin_ate
+  const janela = janelaDoSlot(slot);
+  const inicio = horaLocalEmUtc(slot.data_checkin, janela.inicio, pais);
+  const checkinAte = horaLocalEmUtc(slot.data_checkin, janela.fim, pais);
+  // vale ate o fim da janela (mesma regra do aceite)
+  if (new Date(checkinAte).getTime() < Date.now()) return NextResponse.json({ error: 'Horário vencido', codigo: 'HORARIO_VENCIDO' }, { status: 409 });
   const fim = horaLocalEmUtc(slot.data_previsao_entrega || slot.data_checkin, slot.turno === 'manha' ? '12:00' : '18:00', pais);
 
   const { error } = await supabaseAdmin.from('agenda')
-    .update({ data_inicio: inicio, data_fim: fim, data_fim_prevista: fim, no_show: false, no_show_registrado_em: null })
+    .update({ data_inicio: inicio, checkin_ate: checkinAte, data_fim: fim, data_fim_prevista: fim, no_show: false, no_show_registrado_em: null })
     .eq('id', ag.id).eq('status', 'agendado');
   if (error) return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
   await supabaseAdmin.from('orcamentos').update({ disponibilidade_escolhida_id: slotId }).eq('id', (orc as any).id);
   await supabaseAdmin.from('no_show_historico').update({ reagendado: true, reagendado_em: new Date().toISOString() }).eq('agenda_id', ag.id).eq('reagendado', false);
   // e-mail ao cliente com o novo horario e o evento de calendario atualizado
   await avisarClienteAgendamento(ag.id).catch((e) => console.error('[agenda/reagendar] e-mail', e));
-  return NextResponse.json({ ok: true, data_inicio: inicio });
+  return NextResponse.json({ ok: true, data_inicio: inicio, checkin_ate: checkinAte });
 }

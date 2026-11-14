@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
     if (entidade === 'agenda') {
       const { data: antes } = await supabaseAdmin
         .from('agenda')
-        .select('id, status, data_inicio, data_fim, oficina_id, solicitacao_id')
+        .select('id, status, data_inicio, checkin_ate, data_fim, oficina_id, solicitacao_id')
         .eq('id', id)
         .maybeSingle();
       if (!antes) return erro('Agendamento não encontrado', 404);
@@ -97,6 +97,8 @@ export async function POST(req: NextRequest) {
         const d = dataISO(alteracoes.data_inicio);
         if (!d) return erro('Data de início inválida');
         upd.data_inicio = d;
+        // a janela de chegada anda junto (mesma duracao; check-in v2 - mapa 7.3 item 4)
+        if (antes.checkin_ate) upd.checkin_ate = new Date(new Date(d).getTime() + (new Date(antes.checkin_ate).getTime() - new Date(antes.data_inicio).getTime())).toISOString();
       }
       if (alteracoes.data_fim !== undefined) {
         const d = dataISO(alteracoes.data_fim);

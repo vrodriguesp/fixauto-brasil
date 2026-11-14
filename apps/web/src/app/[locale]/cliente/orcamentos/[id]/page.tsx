@@ -21,7 +21,7 @@ import { currencyForCountry } from '@/lib/currency';
 import type { DisponibilidadeSlot } from '@fixauto/shared';
 import { notifOrcamentoRecusado } from '@/lib/notif-i18n';
 import MidiaPrivada from '@/components/midia/MidiaPrivada';
-import { turnoDisponivel, type Turno } from '@/lib/turnos';
+import { slotAindaVale, formatarJanela, janelaDoSlot } from '@/lib/turnos';
 import EditarPedido from '@/components/cliente/EditarPedido';
 import { ehConvencionada } from '@/lib/seguradoras';
 import GarantiasAtivas from '@/components/cliente/GarantiasAtivas';
@@ -47,7 +47,10 @@ const ORDEM_ORC: Record<string, number> = { aceito: 0, expirado: 2, recusado: 3 
 const ordemOrc = (status: string) => ORDEM_ORC[status] ?? 1;
 
 // todos os horarios ja passaram (fuso da oficina): o cliente pode pedir novas datas (079)
-const semDatasFuturas = (orc: any) => !(orc.disponibilidade || []).some((s: any) => turnoDisponivel(s.data_checkin, s.turno as Turno, undefined, orc.oficina?.pais ?? null));
+// check-in v2: vale ate o FIM da janela gravada (linha antiga: 12:00 / 17:00)
+const semDatasFuturas = (orc: any) => !(orc.disponibilidade || []).some((s: any) => slotAindaVale(s, undefined, orc.oficina?.pais ?? null));
+// janela do horario oferecido ("09:00–11:00"; 30 min = so a hora; linha antiga = 08:00–12:00 / 13:00–17:00)
+const janelaTxt = (s: any) => formatarJanela(janelaDoSlot(s));
 
 // horario que o cliente escolheu no aceite (antes mostrava sempre o primeiro oferecido)
 const slotEscolhido = (orc: any) => orc.disponibilidade.find((d: any) => d.id === orc.disponibilidade_escolhida_id) ?? orc.disponibilidade[0];
@@ -184,7 +187,7 @@ export default function OrcamentoDetalhePage() {
             <div className="flex justify-between">
               <span className="text-gray-500">{t('checkin')}</span>
               <span className="text-gray-900 font-medium">
-                {formatSlotDate(acceptedSlot.data_checkin, locale)} - {acceptedSlot.turno === 'manha' ? '08:00 - 12:00' : '13:00 - 17:00'}
+                {formatSlotDate(acceptedSlot.data_checkin, locale)} · {janelaTxt(acceptedSlot)}
               </span>
             </div>
             <div className="flex justify-between">
@@ -198,6 +201,7 @@ export default function OrcamentoDetalhePage() {
             <p className="text-xs text-yellow-800">
               {t('bringVehicleNote')}
             </p>
+            <p className="mt-2 text-xs text-yellow-800" data-testid="vem-na-janela-aceite">{tMud('vemNaJanela')}</p>
             <p className="mt-2 text-xs text-yellow-800">{tMud('notaRemarcar')}</p>
           </div>
           {/* sem telefone no perfil: a oficina escolhida nao teria como ligar (dono 13/11) */}
@@ -601,7 +605,7 @@ export default function OrcamentoDetalhePage() {
                 <ul className="mb-4 divide-y divide-purple-100 rounded-lg border border-purple-100 bg-purple-50/40 text-sm" data-testid="datas-oferecidas">
                   {orc.disponibilidade.map((d: any) => (
                     <li key={d.id} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 px-3 py-2">
-                      <span className="font-medium text-purple-900">{formatSlotDate(d.data_checkin, locale)} · {d.turno === 'manha' ? '08:00-12:00' : '13:00-17:00'}</span>
+                      <span className="font-medium text-purple-900" data-testid="data-oferecida">{formatSlotDate(d.data_checkin, locale)} · {janelaTxt(d)}</span>
                       {d.data_previsao_entrega && <span className="text-xs text-purple-700">{t('deliveryForecast')} {formatSlotDate(d.data_previsao_entrega, locale)}</span>}
                     </li>
                   ))}
@@ -676,7 +680,7 @@ export default function OrcamentoDetalhePage() {
                   <p className="text-sm text-gray-600 mb-3">{t('escolhaHorarioDica')}</p>
                   <div className="space-y-2">
                     {/* horario que ja passou nao se escolhe (a oficina pode ter oferecido hoje de manha) */}
-                    {orc.disponibilidade.filter((slot) => turnoDisponivel(slot.data_checkin, slot.turno as Turno, undefined, (orc as any).oficina?.pais ?? null)).map((slot) => (
+                    {orc.disponibilidade.filter((slot) => slotAindaVale(slot, undefined, (orc as any).oficina?.pais ?? null)).map((slot) => (
                       <button
                         key={slot.id}
                         type="button"
@@ -691,8 +695,8 @@ export default function OrcamentoDetalhePage() {
                           <div>
                             <p className="font-medium text-gray-900">
                               {formatSlotDate(slot.data_checkin, locale)}
-                              <span className="ml-2 text-sm font-normal text-gray-500">
-                                {slot.turno === 'manha' ? '08:00 - 12:00' : '13:00 - 17:00'}
+                              <span className="ml-2 text-sm font-normal text-gray-500" data-testid="opcao-janela">
+                                {janelaTxt(slot)}
                               </span>
                             </p>
                             <p className="text-xs text-gray-500 mt-1">
@@ -715,6 +719,7 @@ export default function OrcamentoDetalhePage() {
                     ))}
                   </div>
 
+                  <p className="mt-3 text-xs text-gray-600">{tMud('vemNaJanela')}</p>
                   {erroAceite && <p role="alert" className="mt-4 text-sm text-red-700 bg-red-50 rounded-lg p-3">{erroAceite}</p>}
                   <div className="flex gap-3 mt-4">
                     <button
@@ -772,7 +777,7 @@ export default function OrcamentoDetalhePage() {
                           <div className="flex justify-between">
                             <span className="text-green-700">{t('checkin')}</span>
                             <span className="font-medium text-green-900">
-                              {formatSlotDate(slotEscolhido(orc).data_checkin, locale)} - {slotEscolhido(orc).turno === 'manha' ? '08:00-12:00' : '13:00-17:00'}
+                              {formatSlotDate(slotEscolhido(orc).data_checkin, locale)} · {janelaTxt(slotEscolhido(orc))}
                             </span>
                           </div>
                           <div className="flex justify-between">
@@ -827,7 +832,8 @@ export default function OrcamentoDetalhePage() {
                   ) : !['expirada', 'cancelada'].includes(solicitacao.status as string) && semDatasFuturas(orc) && ['aberta', 'em_orcamento', 'no_show'].includes(solicitacao.status) ? (
                     // datas vencidas: no lugar de "aceitar e agendar", o pedido de novas datas (079)
                     <div className="w-full space-y-2">
-                      <PedirNovasDatas orcamentoId={orc.id} pais={(orc as any).oficina?.pais ?? null} horario={(orc as any).oficina?.horario_funcionamento} />
+                      <PedirNovasDatas orcamentoId={orc.id} pais={(orc as any).oficina?.pais ?? null} horario={(orc as any).oficina?.horario_funcionamento}
+                        ctx={{ horario: (orc as any).oficina?.horario_funcionamento, recepcao_inicio: (orc as any).oficina?.recepcao_inicio, recepcao_fim: (orc as any).oficina?.recepcao_fim, almoco_inicio: (orc as any).oficina?.almoco_inicio, almoco_fim: (orc as any).oficina?.almoco_fim }} />
                       <button
                         onClick={() => handleRefuse(orc.id)}
                         disabled={refusing === orc.id}

@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import { chaveDesc } from '@/lib/utils';
+import { formatarJanela, janelaDaAgenda } from '@/lib/turnos';
 import { STATUS_MANUTENCAO } from '@fixauto/shared';
 import type { StatusManutencao, ManutencaoEtapa } from '@fixauto/shared';
 
@@ -14,6 +15,8 @@ interface AgendaData {
   id: string;
   oficina_id?: string;
   data_inicio: string;
+  checkin_ate?: string | null;
+  oficina?: { pais: string | null } | null;
   data_fim: string;
   status: string;
   funcionario: { profile: { nome: string } } | null;
@@ -111,7 +114,7 @@ export default function AcompanhamentoPage() {
       const { data: agendaData } = await supabase
         .from('agenda')
         .select(`
-          id, oficina_id, data_inicio, data_fim, status,
+          id, oficina_id, data_inicio, checkin_ate, data_fim, status, oficina:oficinas(pais),
           funcionario:funcionarios(profile:profiles(nome)),
           solicitacao:solicitacoes(id, status, tipo, descricao, veiculo:veiculos(fipe_marca, fipe_modelo, placa))
         `)
@@ -314,7 +317,7 @@ export default function AcompanhamentoPage() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-xs text-gray-500">{t('checkin')}</p>
-            <p className="text-sm font-medium text-gray-900">{formatDate(agenda.data_inicio)}</p>
+            <p className="text-sm font-medium text-gray-900" data-testid="acompanhamento-chegada">{formatDate(agenda.data_inicio)}{agenda.status === 'agendado' ? ` · ${formatarJanela(janelaDaAgenda(agenda.data_inicio, agenda.checkin_ate, agenda.oficina?.pais ?? null))}` : ''}</p>
           </div>
           <div>
             <p className="text-xs text-gray-500">{t('deliveryForecast')}</p>

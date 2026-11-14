@@ -51,6 +51,7 @@ export function useAgenda() {
     titulo: string;
     descricao?: string;
     data_inicio: string;
+    checkin_ate?: string | null;
     data_fim: string;
     tipo: 'plataforma' | 'externo';
     cor: string;

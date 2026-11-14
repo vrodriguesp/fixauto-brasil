@@ -1,4 +1,5 @@
 import { idiomaDoSite } from './site-url';
+import { formatarJanela, janelaDoSlot, type Janela } from './turnos';
 
 // Pedido de novas datas (migracao 079, dono 11/11): avisos no app/site, linhas do chat e e-mails.
 // {carro} marca+modelo, {oficina} nome da oficina, {datas} lista de datas, {quando} data/hora no
@@ -79,9 +80,10 @@ const NX: Record<string, N> = {
 export const textosNovasDatas = (idioma: string | null | undefined) => NX[idiomaDoSite(idioma)] || NX.en;
 
 const LOC: Record<string, string> = { et: 'et-EE', ru: 'ru-RU', en: 'en-GB', it: 'it-IT', 'pt-PT': 'pt-PT', pt: 'pt-BR' };
-/** "ter., 18 de novembro, 08:00–12:00" no idioma de quem le (dia de calendario, sem fuso) */
-export function diaETurno(data: string, turno: string, idioma: string | null | undefined): string {
+/** "ter., 18 de novembro, 08:00–10:00" no idioma de quem le (dia de calendario, sem fuso). A janela vem do
+ *  horario gravado (hora_inicio/hora_fim) ou, para sugestao do motorista, da regra 2.13; sem janela = legado. */
+export function diaETurno(data: string, turno: string, idioma: string | null | undefined, janela?: Janela | null): string {
   const dia = new Date(`${data}T12:00:00Z`).toLocaleDateString(LOC[idiomaDoSite(idioma)] || 'en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'long' });
-  return `${dia}, ${turno === 'tarde' ? '13:00–17:00' : '08:00–12:00'}`;
+  return `${dia}, ${formatarJanela(janela || janelaDoSlot({ turno }))}`;
 }
-export const listaDeDatas = (itens: { data: string; turno: string }[], idioma: string | null | undefined) => itens.map((s) => diaETurno(s.data, s.turno, idioma)).join('; ');
+export const listaDeDatas = (itens: { data: string; turno: string; janela?: Janela | null }[], idioma: string | null | undefined) => itens.map((s) => diaETurno(s.data, s.turno, idioma, s.janela)).join('; ');

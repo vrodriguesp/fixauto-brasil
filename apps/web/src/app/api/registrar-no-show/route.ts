@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     // 1. Get agenda info
     const { data: agenda } = await supabaseAdmin
       .from('agenda')
-      .select('oficina_id, solicitacao_id, status, data_inicio, oficina:oficinas(profile_id)')
+      .select('oficina_id, solicitacao_id, status, data_inicio, checkin_ate, oficina:oficinas(profile_id)')
       .eq('id', agendaId)
       .single();
 
@@ -36,6 +36,10 @@ export async function POST(req: NextRequest) {
     // reabria o orcamento de outra - auditoria Fable 08/10, A-02); e so vale
     // para agendamento que ainda esperava o carro (trava atomica).
     const solicitacaoId: string | null = (agenda as any).solicitacao_id || null;
+    // check-in v2: o cliente tem ate o FIM da janela de chegada (antes dava para marcar falta as 08:05 numa
+    // janela ate 12:00 - mapa de propagacao 7.3 item 7)
+    const ate = (agenda as any).checkin_ate as string | null;
+    if (ate && Date.parse(ate) > Date.now()) return NextResponse.json({ error: 'Janela de chegada ainda aberta', codigo: 'JANELA_NAO_ACABOU' }, { status: 409 });
     const { data: trava } = await supabaseAdmin.from('agenda').update({
       no_show: true,
       no_show_registrado_em: new Date().toISOString(),

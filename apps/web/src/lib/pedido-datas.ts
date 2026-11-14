@@ -3,13 +3,13 @@ import { horaLocalEmUtc, diaNaOficina, fusoDoPais } from './fuso';
 import { dataValida } from './agenda-oficina';
 import { emTodasAsLinguas, type TextoAviso } from './notif-textos';
 import { textosNovasDatas, listaDeDatas, diaETurno } from './notif-novas-datas';
-import { preencher, dataHora } from './notif-agenda';
+import { preencher, dataJanela } from './notif-agenda';
 import { enviarEmail } from './email';
 import { escapeHtml } from './email-i18n';
 import { SITE_URL, idiomaDoSite } from './site-url';
 import { linkPedido } from './link-acesso';
 import { orcamentoVencido } from './orcamento-validade';
-import { conflitoHorario } from './turnos';
+import { conflitoHorario, janelaDoSlot, janelaDaSugestao, turnoDaJanela, minutosDe, JANELA_MIN, type Janela, type ContextoOficina } from './turnos';
 
 // "Tenho interesse, mande novas datas" (migracao 079, dono 11/11, docs/DESENHO_079_novas_datas.md).
 //  - o motorista pede quando TODOS os horarios do orcamento ja passaram (fuso da oficina), com
@@ -38,17 +38,26 @@ export type Sugestao = { data: string; turno: Turno };
 const TURNOS: Turno[] = ['manha', 'tarde'];
 
 // ---------- regras puras ----------
-/** fim do turno (12:00 / 17:00 hora local da oficina) em ms - mesma regra do aceite (HORARIO_VENCIDO) */
-export const fimDoTurno = (data: string, turno: string, pais?: string | null) => Date.parse(horaLocalEmUtc(data, turno === 'manha' ? '12:00' : '17:00', pais));
-export const turnoAindaVale = (data: string, turno: string, pais?: string | null, agora = Date.now()) => fimDoTurno(data, turno, pais) > agora;
-/** inicio do turno (08:00 / 13:00 hora local da oficina) em ms */
-export const inicioDoTurno = (data: string, turno: string, pais?: string | null) => Date.parse(horaLocalEmUtc(data, turno === 'manha' ? '08:00' : '13:00', pais));
-/** a oficina so confirma a data sugerida (aceite automatico) com o turno comecando daqui a 2 h ou mais (revisao Fable S2) */
+// check-in v2: cada horario tem a JANELA gravada (hora_inicio/hora_fim); linha antiga = 08-12 / 13-17
+type SlotJ = { data_checkin: string; turno: string; hora_inicio?: string | null; hora_fim?: string | null };
+/** fim da janela (hora local da oficina) em ms - mesma regra do aceite (HORARIO_VENCIDO) */
+export const fimDoTurno = (data: string, turno: string, pais?: string | null, janela?: Janela | null) => Date.parse(horaLocalEmUtc(data, (janela || janelaDoSlot({ turno })).fim, pais));
+export const turnoAindaVale = (data: string, turno: string, pais?: string | null, agora = Date.now(), janela?: Janela | null) => fimDoTurno(data, turno, pais, janela) > agora;
+/** inicio da janela (hora local da oficina) em ms */
+export const inicioDoTurno = (data: string, turno: string, pais?: string | null, janela?: Janela | null) => Date.parse(horaLocalEmUtc(data, (janela || janelaDoSlot({ turno })).inicio, pais));
+/** a oficina so confirma a data sugerida (aceite automatico) com a janela comecando daqui a 2 h ou mais (revisao Fable S2);
+ *  a janela da sugestao e a 1a faixa do perfil/grade nesse turno (spec v2 2.13) */
 export const ANTECEDENCIA_CONFIRMAR_MS = 2 * 3600e3;
-export const podeConfirmarSugestao = (s: { data: string; turno: string }, pais?: string | null, agora = Date.now()) => inicioDoTurno(s.data, s.turno, pais) - agora >= ANTECEDENCIA_CONFIRMAR_MS;
+export const podeConfirmarSugestao = (s: { data: string; turno: string }, pais?: string | null, agora = Date.now(), ctx?: ContextoOficina | null) =>
+  inicioDoTurno(s.data, s.turno, pais, ctx ? janelaDaSugestao(s.data, s.turno as Turno, ctx) : null) - agora >= ANTECEDENCIA_CONFIRMAR_MS;
 /** nenhum horario ainda escolhivel (sem horario conta como sem datas) */
-export const semDatasFuturas = (slots: { data_checkin: string; turno: string }[], pais?: string | null, agora = Date.now()) =>
-  !slots.some((s) => turnoAindaVale(s.data_checkin, s.turno, pais, agora));
+export const semDatasFuturas = (slots: SlotJ[], pais?: string | null, agora = Date.now()) =>
+  !slots.some((s) => turnoAindaVale(s.data_checkin, s.turno, pais, agora, janelaDoSlot(s)));
+/** contexto do perfil da oficina para as faixas (horario + recepcao + almoco) */
+export const ctxDaOficina = (of: any): ContextoOficina => ({
+  horario: of?.horario_funcionamento, recepcao_inicio: of?.recepcao_inicio, recepcao_fim: of?.recepcao_fim, almoco_inicio: of?.almoco_inicio, almoco_fim: of?.almoco_fim,
+});
+const HORA_RE = /^([01]\d|2[0-3]):[0-5]\d(:00)?$/;
 const somarDias = (ymd: string, n: number) => { const d = new Date(`${ymd}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
 
 /** sugestoes do motorista (de amanha ate 30 dias, fuso da oficina): null = invalidas */
@@ -70,23 +79,38 @@ export function validarSugestoes(bruto: unknown, pais?: string | null, agora = D
   return out.sort((a, b) => (a.data + a.turno).localeCompare(b.data + b.turno));
 }
 
-/** horarios novos da oficina; a previsao de entrega cai para a data + prazo do orcamento */
-export function validarHorariosNovos(bruto: unknown, prazoDias: number, pais?: string | null, agora = Date.now()):
-  { ok: true; horarios: { data_checkin: string; turno: Turno; data_previsao_entrega: string }[] } | { ok: false; codigo: string } {
+/** horarios novos da oficina; a previsao de entrega cai para a data + prazo do orcamento. Check-in v2: cada horario
+ *  vem com a janela (hora_inicio/hora_fim, minimo 30 min) e o turno e derivado dela; sem janela (cliente antigo)
+ *  vale a 1a faixa do perfil nesse turno (mesma regra da confirmacao da sugestao). */
+export type HorarioNovo = { data_checkin: string; turno: Turno; hora_inicio: string; hora_fim: string; data_previsao_entrega: string };
+export function validarHorariosNovos(bruto: unknown, prazoDias: number, pais?: string | null, agora = Date.now(), ctx?: ContextoOficina | null):
+  { ok: true; horarios: HorarioNovo[] } | { ok: false; codigo: string } {
   if (!Array.isArray(bruto) || bruto.length < 1 || bruto.length > MAX_HORARIOS_NOVOS) return { ok: false, codigo: 'DADOS_INVALIDOS' };
   const limite = somarDias(diaNaOficina(new Date(agora), pais), MAX_DIAS_HORARIO);
   const vistos = new Set<string>();
-  const horarios: { data_checkin: string; turno: Turno; data_previsao_entrega: string }[] = [];
+  const horarios: HorarioNovo[] = [];
   for (const h of bruto) {
-    const data = (h as any)?.data, turno = (h as any)?.turno, prev = (h as any)?.previsao;
-    if (!dataValida(data) || !TURNOS.includes(turno) || data > limite) return { ok: false, codigo: 'DADOS_INVALIDOS' };
-    if (!turnoAindaVale(data, turno, pais, agora)) return { ok: false, codigo: 'HORARIO_VENCIDO' };
+    const data = (h as any)?.data, prev = (h as any)?.previsao;
+    if (!dataValida(data) || data > limite) return { ok: false, codigo: 'DADOS_INVALIDOS' };
+    const hi = (h as any)?.hora_inicio, hf = (h as any)?.hora_fim;
+    let janela: Janela;
+    if (hi != null || hf != null) {
+      if (!HORA_RE.test(String(hi)) || !HORA_RE.test(String(hf))) return { ok: false, codigo: 'DADOS_INVALIDOS' };
+      janela = { inicio: String(hi).slice(0, 5), fim: String(hf).slice(0, 5) };
+      if ((minutosDe(janela.fim) ?? 0) - (minutosDe(janela.inicio) ?? 0) < JANELA_MIN) return { ok: false, codigo: 'DADOS_INVALIDOS' };
+    } else {
+      const t0 = (h as any)?.turno;
+      if (!TURNOS.includes(t0)) return { ok: false, codigo: 'DADOS_INVALIDOS' };
+      janela = janelaDaSugestao(data, t0, ctx);
+    }
+    const turno = turnoDaJanela(janela);
+    if (!turnoAindaVale(data, turno, pais, agora, janela)) return { ok: false, codigo: 'HORARIO_VENCIDO' };
     if (prev != null && prev !== '' && !dataValida(prev)) return { ok: false, codigo: 'DADOS_INVALIDOS' };
     const previsao = prev ? String(prev) : somarDias(data, Math.max(0, Number(prazoDias) || 0));
     if (previsao < data) return { ok: false, codigo: 'PREVISAO_ANTES_DA_DATA' };
-    const k = `${data}|${turno}`;
+    const k = `${data}|${janela.inicio}|${janela.fim}`;
     if (vistos.has(k)) return { ok: false, codigo: 'DADOS_INVALIDOS' };
-    vistos.add(k); horarios.push({ data_checkin: data, turno, data_previsao_entrega: previsao });
+    vistos.add(k); horarios.push({ data_checkin: data, turno, hora_inicio: janela.inicio, hora_fim: janela.fim, data_previsao_entrega: previsao });
   }
   return { ok: true, horarios };
 }
@@ -94,9 +118,9 @@ export function validarHorariosNovos(bruto: unknown, prazoDias: number, pais?: s
 // ---------- apoio ----------
 const carroDe = (v: any) => [v?.fipe_marca, v?.fipe_modelo].filter(Boolean).join(' ');
 const SEL_ORC = 'id, status, prazo_dias, validade, valor_total, revisao_numero, solicitacao_id, oficina_id, '
-  + 'disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(id, data_checkin, turno, data_previsao_entrega), '
+  + 'disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(id, data_checkin, turno, hora_inicio, hora_fim, data_previsao_entrega), '
   + 'solicitacao:solicitacoes(id, numero, status, cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, idioma), veiculo:veiculos(fipe_marca, fipe_modelo)), '
-  + 'oficina:oficinas(id, nome_fantasia, pais, horario_funcionamento, profile_id, profile:profiles!oficinas_profile_id_fkey(nome, email, idioma))';
+  + 'oficina:oficinas(id, nome_fantasia, pais, horario_funcionamento, recepcao_inicio, recepcao_fim, almoco_inicio, almoco_fim, profile_id, profile:profiles!oficinas_profile_id_fkey(nome, email, idioma))';
 
 async function lerOrcamento(orcamentoId: string) {
   const { data } = await supabaseAdmin.from('orcamentos').select(SEL_ORC).eq('id', orcamentoId).maybeSingle();
@@ -186,7 +210,7 @@ export async function pedirNovasDatas(userId: string, orcamentoId: string, corpo
   const idiomaCli = sol?.cliente?.idioma, idiomaOf = of?.profile?.idioma;
   // linha no chat do pedido, na lingua de quem escreve (o chat traduz para quem le)
   const tCli = textosNovasDatas(idiomaCli);
-  const textoChat = [tCli.chatPedido, sugestoes.length ? preencher(tCli.chatSugestoes, { datas: listaDeDatas(sugestoes, idiomaCli) }) : '', mensagem].filter(Boolean).join('\n');
+  const textoChat = [tCli.chatPedido, sugestoes.length ? preencher(tCli.chatSugestoes, { datas: listaDeDatas(sugestoes.map((s) => ({ ...s, janela: janelaDaSugestao(s.data, s.turno, ctxDaOficina(of)) })), idiomaCli) }) : '', mensagem].filter(Boolean).join('\n');
   await supabaseAdmin.from('mensagens').insert({ solicitacao_id: orc.solicitacao_id, oficina_id: orc.oficina_id, remetente_id: userId, texto: textoChat });
   await notificar(of?.profile_id, 'pedido_novas_datas', idiomaOf, (l) => {
     const t = textosNovasDatas(l);
@@ -198,7 +222,7 @@ export async function pedirNovasDatas(userId: string, orcamentoId: string, corpo
     const l = idiomaDoSite(idiomaOf); const t = textosNovasDatas(l); const numero = String(sol?.numero ?? '');
     const html = caixa(`<p>${escapeHtml(preencher(t.emailOla, { n: pOf.nome || of?.nome_fantasia || '' }))}</p>
       <p style="font-size:16px;"><strong>${escapeHtml(preencher(t.emailPedidoTexto, { numero, carro: carro || '-' }))}</strong></p>
-      ${sugestoes.length ? `<p>${escapeHtml(t.emailSugestoes)}:</p>${lista(sugestoes.map((s) => diaETurno(s.data, s.turno, l)))}` : ''}
+      ${sugestoes.length ? `<p>${escapeHtml(t.emailSugestoes)}:</p>${lista(sugestoes.map((s) => diaETurno(s.data, s.turno, l, janelaDaSugestao(s.data, s.turno, ctxDaOficina(of)))))}` : ''}
       ${mensagem ? `<p style="background:#f3f4f6;padding:10px 12px;border-radius:8px;"><strong>${escapeHtml(t.emailMensagem)}:</strong> ${escapeHtml(mensagem)}</p>` : ''}
       ${botao(`${site()}/r/${numero}?o=${encodeURIComponent(l)}&p=1`, t.emailPedidoBotao)}`);
     await enviarEmail({ para: pOf.email, assunto: preencher(t.emailPedidoAssunto, { numero }), html }).catch(() => false);
@@ -229,7 +253,9 @@ export async function responderNovasDatas(userId: string, orcamentoId: string, c
     const i = Number(corpo.confirmar);
     const sug = Number.isInteger(i) ? (pend.sugestoes as Sugestao[])[i] : undefined;
     if (!sug) return res(400, { error: 'Sugestão inválida', codigo: 'DADOS_INVALIDOS' });
-    if (!podeConfirmarSugestao(sug, of?.pais)) return res(409, { error: 'Sugestão vencida', codigo: 'SUGESTAO_VENCIDA' });
+    // a janela que vale = 1a faixa do perfil/grade nesse turno (2.13); gravada no horario antes do aceite
+    const janelaSug = janelaDaSugestao(sug.data, sug.turno, ctxDaOficina(of));
+    if (!podeConfirmarSugestao(sug, of?.pais, Date.now(), ctxDaOficina(of))) return res(409, { error: 'Sugestão vencida', codigo: 'SUGESTAO_VENCIDA' });
     // o orcamento mudou depois do pedido: o cliente nao viu este preco - so mandar outras datas
     if (pend.valor_total_pedido != null && (Number(pend.valor_total_pedido) !== Number(orc.valor_total) || (pend.revisao_numero_pedido ?? 0) !== (orc.revisao_numero ?? 0))) {
       return res(409, { error: 'Orçamento mudou', codigo: 'ORCAMENTO_MUDOU' });
@@ -244,7 +270,7 @@ export async function responderNovasDatas(userId: string, orcamentoId: string, c
       .eq('id', pend.id).eq('status', 'pendente').select('id');
     if (!trava?.length) return codigoPedidoFechado(orc.id);
     const { data: slot, error: eSlot } = await supabaseAdmin.from('orcamento_disponibilidade')
-      .insert({ orcamento_id: orc.id, data_checkin: sug.data, turno: sug.turno, data_previsao_entrega: previsao, origem: 'cliente' }).select('id').single();
+      .insert({ orcamento_id: orc.id, data_checkin: sug.data, turno: turnoDaJanela(janelaSug), hora_inicio: janelaSug.inicio, hora_fim: janelaSug.fim, data_previsao_entrega: previsao, origem: 'cliente' }).select('id').single();
     // aceite recusado: o horario sai; o pedido volta a pendente, ou cai se outro orcamento ja foi aceito
     const desfazer = async (slotId?: string, cancelar = false) => {
       if (slotId) {
@@ -270,22 +296,24 @@ export async function responderNovasDatas(userId: string, orcamentoId: string, c
         return r;
       }
     }
-    const inicio = horaLocalEmUtc(sug.data, sug.turno === 'tarde' ? '13:00' : '08:00', of?.pais);
-    await supabaseAdmin.from('mensagens').insert({ solicitacao_id: orc.solicitacao_id, oficina_id: orc.oficina_id, remetente_id: userId, texto: preencher(textosNovasDatas(idiomaOf).chatConfirmada, { quando: dataHora(inicio, idiomaOf, fuso) }) });
+    const inicio = horaLocalEmUtc(sug.data, janelaSug.inicio, of?.pais);
+    const fim = horaLocalEmUtc(sug.data, janelaSug.fim, of?.pais);
+    await supabaseAdmin.from('mensagens').insert({ solicitacao_id: orc.solicitacao_id, oficina_id: orc.oficina_id, remetente_id: userId, texto: preencher(textosNovasDatas(idiomaOf).chatConfirmada, { quando: dataJanela(inicio, fim, idiomaOf, fuso) }) });
     await notificar(sol.cliente_id, 'novas_datas_confirmada', idiomaCli, (l) => {
       const t = textosNovasDatas(l);
-      return { titulo: t.confirmadaTitulo, mensagem: preencher(t.confirmadaMsg, { oficina: of?.nome_fantasia || '', quando: dataHora(inicio, l, fuso) }) };
+      return { titulo: t.confirmadaTitulo, mensagem: preencher(t.confirmadaMsg, { oficina: of?.nome_fantasia || '', quando: dataJanela(inicio, fim, l, fuso) }) };
     }, dadosCli);
     return res(200, { ok: true, modo: 'confirmou', slotId: slot.id });
   }
 
   // b) mandar outras datas
-  const v = validarHorariosNovos(corpo?.horarios, orc.prazo_dias, of?.pais);
+  const v = validarHorariosNovos(corpo?.horarios, orc.prazo_dias, of?.pais, Date.now(), ctxDaOficina(of));
   if (!v.ok) return res(v.codigo === 'HORARIO_VENCIDO' ? 409 : 400, { error: 'Dados inválidos', codigo: v.codigo });
   // dia em que a oficina esta fechada pelo proprio horario (dono 14/11; a tela ja bloqueia)
   if (v.horarios.some((h) => conflitoHorario(h.data_checkin, h.turno, of?.horario_funcionamento) === 'fechado')) return res(400, { error: 'Oficina fechada neste dia', codigo: 'DIA_FECHADO' });
-  const existentes = new Set((orc.disponibilidade || []).map((s: any) => `${s.data_checkin}|${s.turno}`));
-  const novos = v.horarios.filter((h) => !existentes.has(`${h.data_checkin}|${h.turno}`));
+  const chave = (s: { data_checkin: string; turno: string; hora_inicio?: string | null; hora_fim?: string | null }) => { const j = janelaDoSlot(s); return `${s.data_checkin}|${j.inicio}|${j.fim}`; };
+  const existentes = new Set((orc.disponibilidade || []).map(chave));
+  const novos = v.horarios.filter((h) => !existentes.has(chave(h)));
   if (!novos.length) return res(400, { error: 'Horários repetidos', codigo: 'DADOS_INVALIDOS' });
   const { data: trava } = await supabaseAdmin.from('orcamento_pedido_datas')
     .update({ status: 'atendido', resposta: 'novas_datas', atendido_em: new Date().toISOString() })
@@ -297,7 +325,7 @@ export async function responderNovasDatas(userId: string, orcamentoId: string, c
     return res(500, { error: eIns.message });
   }
   await estenderValidade(orc, novos.map((h) => h.data_checkin));
-  const itens = novos.map((h) => ({ data: h.data_checkin, turno: h.turno }));
+  const itens = novos.map((h) => ({ data: h.data_checkin, turno: h.turno, janela: { inicio: h.hora_inicio, fim: h.hora_fim } }));
   await supabaseAdmin.from('mensagens').insert({ solicitacao_id: orc.solicitacao_id, oficina_id: orc.oficina_id, remetente_id: userId, texto: preencher(textosNovasDatas(idiomaOf).chatEnviadas, { datas: listaDeDatas(itens, idiomaOf) }) });
   await notificar(sol?.cliente_id, 'novas_datas_enviadas', idiomaCli, (l) => {
     const t = textosNovasDatas(l);
@@ -308,7 +336,7 @@ export async function responderNovasDatas(userId: string, orcamentoId: string, c
     const l = idiomaDoSite(idiomaCli); const t = textosNovasDatas(l); const numero = String(sol?.numero ?? '');
     const html = caixa(`<p>${escapeHtml(preencher(t.emailOla, { n: cli.nome || '' }))}</p>
       <p style="font-size:16px;"><strong>${escapeHtml(preencher(t.emailEnviadasTexto, { oficina: of?.nome_fantasia || '', numero }))}</strong></p>
-      ${lista(itens.map((s) => diaETurno(s.data, s.turno, l)))}
+      ${lista(itens.map((s) => diaETurno(s.data, s.turno, l, s.janela)))}
       ${botao(await linkPedido(numero, sol?.cliente_id, orc.solicitacao_id), t.emailEnviadasBotao)}`);
     await enviarEmail({ para: cli.email, assunto: preencher(t.emailEnviadasAssunto, { oficina: of?.nome_fantasia || '', numero }), html }).catch(() => false);
   }

@@ -12,6 +12,7 @@ import { useVeiculos } from '@/hooks/use-veiculos';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { formatCurrency, timeAgo, cleanDescricao, INTL_LOCALE } from '@/lib/utils';
 import { fusoDoPais } from '@/lib/fuso';
+import { textoDaAgenda, formatarJanela, janelaDoSlot } from '@/lib/turnos';
 import { currencyForCountry } from '@/lib/currency';
 import GarantiasAtivas from '@/components/cliente/GarantiasAtivas';
 import AvaliacaoPendente from '@/components/cliente/AvaliacaoPendente';
@@ -41,12 +42,13 @@ export default function ClienteDashboard() {
   const agendadas = solicitacoes.filter((s) => ['aceita', 'em_andamento'].includes(s.status));
   const concluidas = solicitacoes.filter((s) => s.status === 'concluida');
   // data ATUAL do carro na oficina, da agenda (pode ter mudado depois do aceite - dono 08/11)
-  const [agendasCli, setAgendasCli] = useState<Record<string, { inicio: string; prev: string | null }>>({});
+  // check-in v2: janela de chegada da agenda (data_inicio..checkin_ate) - a fonte unica depois do aceite
+  const [agendasCli, setAgendasCli] = useState<Record<string, { inicio: string; ate: string | null; prev: string | null }>>({});
   const idsAgendadas = agendadas.map((s) => s.id).join(',');
   useEffect(() => {
     if (!idsAgendadas) return;
-    supabase.from('agenda').select('solicitacao_id, data_inicio, data_fim, data_fim_prevista').in('solicitacao_id', idsAgendadas.split(',')).in('status', ['agendado', 'em_andamento'])
-      .then(({ data }) => setAgendasCli(Object.fromEntries((data || []).map((a: any) => [a.solicitacao_id, { inicio: a.data_inicio, prev: a.data_fim_prevista || a.data_fim }]))));
+    supabase.from('agenda').select('solicitacao_id, data_inicio, checkin_ate, data_fim, data_fim_prevista').in('solicitacao_id', idsAgendadas.split(',')).in('status', ['agendado', 'em_andamento'])
+      .then(({ data }) => setAgendasCli(Object.fromEntries((data || []).map((a: any) => [a.solicitacao_id, { inicio: a.data_inicio, ate: a.checkin_ate ?? null, prev: a.data_fim_prevista || a.data_fim }]))));
   }, [idsAgendadas]);
 
   const stats = {
@@ -231,8 +233,8 @@ export default function ClienteDashboard() {
                         <span className="text-gray-500">{t('checkin')}</span>
                         <span className="font-medium text-gray-900">
                           {agendasCli[sol.id]
-                            ? new Date(agendasCli[sol.id].inicio).toLocaleString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais(oficina?.pais), weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
-                            : <>{formatDateShort(slotEscolhido.data_checkin, locale)}{' - '}{slotEscolhido.turno === 'manha' ? '08:00-12:00' : '13:00-17:00'}</>}
+                            ? textoDaAgenda(agendasCli[sol.id].inicio, agendasCli[sol.id].ate, oficina?.pais ?? null, INTL_LOCALE[locale] || 'en-GB', { weekday: 'short', day: 'numeric', month: 'short' }, ', ')
+                            : <>{formatDateShort(slotEscolhido.data_checkin, locale)}{' · '}{formatarJanela(janelaDoSlot(slotEscolhido))}</>}
                         </span>
                       </div>
                       <div className="flex justify-between text-sm">

@@ -1311,6 +1311,7 @@
     "proporOutra": "Proponi un’altra data",
     "cancelarAgendamentoOficina": "Annulla prenotazione",
     "limparData": "Cancella",
-    "erroSemNovaData": "Scegli il nuovo giorno e orario."
+    "erroSemNovaData": "Scegli il nuovo giorno e orario.",
+    "vemNaJanela": "Arriva entro la fascia oraria scelta. Se ti serve un orario preciso, concordalo con l’officina nella chat."
   }
 }

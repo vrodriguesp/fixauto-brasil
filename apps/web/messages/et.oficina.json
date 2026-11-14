@@ -1214,7 +1214,8 @@
     "bloco_entreguesDia": "Üle antud sel päeval",
     "painelDia": "Päeva kokkuvõte",
     "pedidosEsperando": "Vastust ootavad päringud",
-    "verTudo": "Näita kõiki"
+    "verTudo": "Näita kõiki",
+    "chegaJanela": "Saabub {dia}, {janela}"
   },
   "oficinaDesempenho": {
     "titulo": "Tulemused",
