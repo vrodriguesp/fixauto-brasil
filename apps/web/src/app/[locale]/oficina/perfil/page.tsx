@@ -95,6 +95,14 @@ export default function PerfilOficinaPage() {
     }
   }, [oficina]);
 
+  // link #horario-funcionamento (aviso de dia fechado no orcamento): a pagina so desenha o
+  // cartao depois de carregar, entao o navegador nao rola sozinho ate a ancora
+  useEffect(() => {
+    if (loading || !user || typeof window === 'undefined' || window.location.hash !== '#horario-funcionamento') return;
+    const tmr = setTimeout(() => document.getElementById('horario-funcionamento')?.scrollIntoView({ block: 'start' }), 100);
+    return () => clearTimeout(tmr);
+  }, [loading, user]);
+
   useEffect(() => {
     if (user) {
       setNome(user.nome || '');
@@ -491,8 +499,8 @@ export default function PerfilOficinaPage() {
         </div>
       </div>
 
-      {/* Working hours */}
-      <div className="card mb-6">
+      {/* Working hours (ancora: o aviso de dia fechado do orcamento abre aqui, numa aba nova) */}
+      <div id="horario-funcionamento" className="card mb-6 scroll-mt-24">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('horarioDeFuncionamento')}</h2>
         <div className="space-y-3">
           {DIAS.map(({ key, label }) => (

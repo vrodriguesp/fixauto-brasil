@@ -697,6 +697,7 @@
     "CONTA_EXISTENTE": "Questa email ha già un account BipFix. Accedi per segnalare l'incidente.",
     "ORCAMENTO_INDISPONIVEL": "Questo preventivo non è più disponibile.",
     "HORARIO_VENCIDO": "Quell'orario è già passato. Scegline un altro.",
+    "DIA_FECHADO": "Una delle date cade in un giorno in cui l'officina è chiusa secondo l'orario di apertura. Scegli un altro giorno.",
     "NAO_EM_SERVICO": "L'auto non è in lavorazione (manca il check-in).",
     "NAO_AGENDADO": "Questa prenotazione non è più in attesa dell'auto.",
     "REVISAO_PENDENTE": "Una revisione è già in attesa della risposta del cliente.",

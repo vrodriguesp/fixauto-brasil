@@ -696,6 +696,7 @@
     "CONTA_EXISTENTE": "Este e-mail já tem uma conta BipFix. Entre na sua conta para registrar o acidente.",
     "ORCAMENTO_INDISPONIVEL": "Este orçamento não está mais disponível.",
     "HORARIO_VENCIDO": "Esse horário já passou. Escolha outro.",
+    "DIA_FECHADO": "Uma das datas cai num dia em que a oficina está fechada pelo horário de funcionamento. Escolha outro dia.",
     "NAO_EM_SERVICO": "O carro não está em serviço (falta o check-in).",
     "NAO_AGENDADO": "Este agendamento não está mais aguardando o carro.",
     "REVISAO_PENDENTE": "Já existe uma revisão aguardando a resposta do cliente.",

@@ -29,16 +29,11 @@ export function turnoDisponivel(data: string, turno: Turno, agora = new Date(), 
   return hora < FIM_TURNO[turno];
 }
 
-/**
- * Primeiro periodo ainda valido: agora ou o proximo. Com `margemHoras`, pula o
- * periodo de hoje que acaba antes disso (o formulario do orcamento usa 2 h: o
- * cliente quase nunca aceita a tempo um periodo que fecha em minutos).
- */
-export function primeiroTurnoLivre(agora = new Date(), pais?: Pais, margemHoras = 0): { data: string; turno: Turno } {
+/** Primeiro periodo ainda valido: agora ou o proximo. */
+export function primeiroTurnoLivre(agora = new Date(), pais?: Pais): { data: string; turno: Turno } {
   const hoje = hojeLocal(agora, pais);
-  const serve = (tu: Turno) => turnoDisponivel(hoje, tu, agora, pais) && !(margemHoras > 0 && turnoAcabaLogo(hoje, tu, margemHoras, agora, pais));
-  if (serve('manha')) return { data: hoje, turno: 'manha' };
-  if (serve('tarde')) return { data: hoje, turno: 'tarde' };
+  if (turnoDisponivel(hoje, 'manha', agora, pais)) return { data: hoje, turno: 'manha' };
+  if (turnoDisponivel(hoje, 'tarde', agora, pais)) return { data: hoje, turno: 'tarde' };
   if (temPais(pais)) {
     const d = new Date(`${hoje}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + 1);
     return { data: d.toISOString().slice(0, 10), turno: 'manha' };
@@ -102,21 +97,19 @@ export function turnoAcabaLogo(data: string, turno: Turno, horas = 2, agora = ne
 }
 
 /**
- * Sugestao inicial do formulario do orcamento: o primeiro periodo valido (com
- * margem) em que a oficina abre pelo horario dela; procura ate 14 dias e, se o
- * horario nao ajudar (tudo fechado), fica no primeiro periodo valido.
+ * Sugestao inicial do formulario do orcamento (dono 14/11): nunca hoje - o primeiro
+ * dia DEPOIS de hoje (no fuso da oficina) em que ela abre pelo horario dela, de manha
+ * se o horario do dia cobre a manha, senao o primeiro periodo que cabe no horario.
+ * Procura ate 14 dias; sem horario cadastrado (ou tudo fechado) fica amanha de manha.
+ * A oficina ainda pode escolher hoje a mao.
  */
-export function primeiroTurnoAberto(agora = new Date(), pais?: Pais, horario?: HorarioSemana, margemHoras = 0): { data: string; turno: Turno } {
-  const p = primeiroTurnoLivre(agora, pais, margemHoras);
-  if (!horario) return p;
-  let data = p.data;
+export function primeiroTurnoAberto(agora = new Date(), pais?: Pais, horario?: HorarioSemana): { data: string; turno: Turno } {
+  const somar = (ymd: string, n: number) => { const d = new Date(`${ymd}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+  const amanha = somar(hojeLocal(agora, pais), 1);
+  if (!horario) return { data: amanha, turno: 'manha' };
   for (let i = 0; i < 14; i++) {
-    for (const tu of ['manha', 'tarde'] as Turno[]) {
-      if (data === p.data && tu === 'manha' && p.turno === 'tarde') continue;
-      if (!conflitoHorario(data, tu, horario)) return { data, turno: tu };
-    }
-    const d = new Date(`${data}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + 1);
-    data = d.toISOString().slice(0, 10);
+    const data = somar(amanha, i);
+    for (const turno of ['manha', 'tarde'] as Turno[]) if (!conflitoHorario(data, turno, horario)) return { data, turno };
   }
-  return p;
+  return { data: amanha, turno: 'manha' };
 }

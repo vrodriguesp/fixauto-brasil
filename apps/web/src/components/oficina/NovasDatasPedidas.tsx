@@ -4,7 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { textoErroApi } from '@/lib/erro-api';
-import { hojeLocal, turnoDisponivel, primeiroTurnoLivre, localParaIso, type Turno } from '@/lib/turnos';
+import { hojeLocal, turnoDisponivel, primeiroTurnoAberto, conflitoHorario, localParaIso, type Turno, type HorarioSemana } from '@/lib/turnos';
+import AvisoHorarioSlot, { useAvisoHorario } from '@/components/oficina/AvisoHorarioSlot';
 import { INTL_LOCALE } from '@/lib/utils';
 
 // O cliente pediu novas datas (migracao 079): a oficina confirma uma sugestao dele (o orcamento
@@ -18,7 +19,10 @@ const MAX = 3;
 const ANTECEDENCIA_MS = 2 * 3600e3;
 const somar = (ymd: string, n: number) => { const d = new Date(`${ymd}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
 
-export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, aoMudar }: { orcamentoId: string; prazoDias: number; pais?: string | null; aoMudar?: () => void }) {
+// Datas x horario de funcionamento (dono 14/11, igual ao formulario do orcamento): sugestao no proximo dia
+// em que a oficina abre (nunca hoje), dia fechado bloqueia (o servidor tambem recusa: DIA_FECHADO),
+// periodo fora do horario so avisa; link para corrigir o horario no perfil (aba nova).
+export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horario, aoMudar }: { orcamentoId: string; prazoDias: number; pais?: string | null; horario?: HorarioSemana; aoMudar?: () => void }) {
   const t = useTranslations('oficinaNovasDatas');
   const tErr = useTranslations('erros');
   const locale = useLocale();
@@ -27,7 +31,8 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, aoMuda
   const [feito, setFeito] = useState('');
   const [erro, setErro] = useState('');
   const [enviando, setEnviando] = useState<string | null>(null);
-  const novaLinha = useCallback((): Linha => { const p = primeiroTurnoLivre(undefined, pais ?? null); return { data: p.data, turno: p.turno, previsao: somar(p.data, prazoDias || 0), previsaoMexida: false }; }, [pais, prazoDias]);
+  const novaLinha = useCallback((): Linha => { const p = primeiroTurnoAberto(undefined, pais ?? null, horario); return { data: p.data, turno: p.turno, previsao: somar(p.data, prazoDias || 0), previsaoMexida: false }; }, [pais, prazoDias, horario]);
+  const avisoHorario = useAvisoHorario(horario, pais);
   const [linhas, setLinhas] = useState<Linha[]>(() => [novaLinha()]);
 
   const carregar = useCallback(async () => {
@@ -69,7 +74,7 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, aoMuda
     }
     return n;
   }));
-  const linhasOk = linhas.every((l) => l.data && turnoDisponivel(l.data, l.turno, undefined, pais ?? null) && (!l.previsao || l.previsao >= l.data));
+  const linhasOk = linhas.every((l) => l.data && turnoDisponivel(l.data, l.turno, undefined, pais ?? null) && (!l.previsao || l.previsao >= l.data) && conflitoHorario(l.data, l.turno, horario) !== 'fechado');
   const sugs = (pedido.sugestoes || []) as Sug[];
 
   return (
@@ -107,7 +112,9 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, aoMuda
         {linhas.map((l, i) => (
           <div key={i} className="grid grid-cols-1 gap-2 rounded-lg border border-gray-200 bg-white p-2 sm:grid-cols-3">
             <label className="text-xs text-gray-600 min-w-0">{t('data')}
-              <input type="date" min={hoje} value={l.data} onChange={(e) => mudar(i, 'data', e.target.value)} className="input-field mt-0.5 w-full" data-testid={`nd-data-${i}`} />
+              <input type="date" min={hoje} value={l.data} onChange={(e) => mudar(i, 'data', e.target.value)} data-testid={`nd-data-${i}`}
+                className={`input-field mt-0.5 w-full ${avisoHorario(l.data, l.turno)?.tipo === 'fechado' ? '!border-red-400' : ''}`}
+                aria-invalid={avisoHorario(l.data, l.turno)?.tipo === 'fechado' || undefined} aria-describedby={avisoHorario(l.data, l.turno) ? `nd-aviso-${i}` : undefined} />
             </label>
             <label className="text-xs text-gray-600 min-w-0">{t('turno')}
               <select value={l.turno} onChange={(e) => mudar(i, 'turno', e.target.value)} className="input-field mt-0.5 w-full" data-testid={`nd-turno-${i}`}>
@@ -118,6 +125,7 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, aoMuda
             <label className="text-xs text-gray-600 min-w-0">{t('previsao')}
               <input type="date" min={l.data || hoje} value={l.previsao} onChange={(e) => mudar(i, 'previsao', e.target.value)} className="input-field mt-0.5 w-full" data-testid={`nd-previsao-${i}`} />
             </label>
+            <div className="sm:col-span-3 empty:hidden"><AvisoHorarioSlot aviso={avisoHorario(l.data, l.turno)} id={`nd-aviso-${i}`} testid={`nd-aviso-${i}`} testidLink={`nd-link-horario-${i}`} /></div>
             {linhas.length > 1 && (
               <button type="button" onClick={() => setLinhas((ls) => ls.filter((_, j) => j !== i))} className="justify-self-start text-xs text-red-600 underline sm:col-span-3">{t('remover')}</button>
             )}

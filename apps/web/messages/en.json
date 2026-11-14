@@ -699,6 +699,7 @@
     "CONTA_EXISTENTE": "This email already has a BipFix account. Sign in to report the accident.",
     "ORCAMENTO_INDISPONIVEL": "This quote is no longer available.",
     "HORARIO_VENCIDO": "That time slot has passed. Please choose another.",
+    "DIA_FECHADO": "One of the dates falls on a day your workshop is closed according to your opening hours. Pick another day.",
     "NAO_EM_SERVICO": "The car is not in service (no check-in yet).",
     "NAO_AGENDADO": "This booking is no longer waiting for the car.",
     "REVISAO_PENDENTE": "A revision is already waiting for the customer’s answer.",

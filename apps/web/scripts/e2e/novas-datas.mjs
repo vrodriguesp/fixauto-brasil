@@ -114,14 +114,21 @@ const entrarSite = async (ctx, email, s, rot = '/ee/et') => {
 const esperarTeste = async (p, id, ms = 15000) => { try { await p.getByTestId(id).first().waitFor({ timeout: ms }); return true; } catch { return false; } };
 
 const INICIO = Date.now();
+// datas relativas a hoje (dia(5), dia(6)...) caem em qualquer dia da semana: durante o teste as oficinas
+// abrem todos os dias, senao um domingo fechado seria recusado (DIA_FECHADO, dono 14/11) e o resultado
+// dependeria do dia em que o teste roda; o horario da oficina fixa volta no fim
+const TODO_DIA = Object.fromEntries(['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'].map((k) => [k, { aberto: true, inicio: '08:00', fim: '18:00' }]));
+let horarioW1Antes; let of1IdH;
 try {
   const w1 = await sessao(W1_EMAIL, W1_SENHA);
   const w1Id = (await admin.from('profiles').select('id').eq('email', W1_EMAIL).single()).data.id;
   await admin.from('profiles').update({ idioma: 'et' }).eq('id', w1Id);
-  const { data: of1 } = await admin.from('oficinas').select('id, nome_fantasia, prazo:id').eq('profile_id', w1Id).single();
+  const { data: of1 } = await admin.from('oficinas').select('id, nome_fantasia, prazo:id, horario_funcionamento').eq('profile_id', w1Id).single();
+  of1IdH = of1.id; horarioW1Antes = of1.horario_funcionamento ?? null;
+  await admin.from('oficinas').update({ horario_funcionamento: TODO_DIA }).eq('id', of1.id);
   const w2Email = `nd-of2-${tag}@example.test`;
   const w2Id = await conta(w2Email, senha, { tipo: 'oficina', nome: 'Oficina Dois', idioma: 'ru', telefone: '+372 5000 4444' });
-  const { data: of2 } = await admin.from('oficinas').insert({ profile_id: w2Id, nome_fantasia: `Teine Töökoda ${tag}`, endereco: 'Pärnu mnt 20', cidade: 'Tallinn', estado: 'Harjumaa', cep: '10141', pais: 'EE', latitude: 59.43, longitude: 24.745, raio_atendimento_km: 30, especialidades: ['mecanica', 'eletrica', 'pneu', 'manutencao'], ativa: true }).select('id').single();
+  const { data: of2 } = await admin.from('oficinas').insert({ profile_id: w2Id, nome_fantasia: `Teine Töökoda ${tag}`, endereco: 'Pärnu mnt 20', cidade: 'Tallinn', estado: 'Harjumaa', cep: '10141', pais: 'EE', latitude: 59.43, longitude: 24.745, raio_atendimento_km: 30, especialidades: ['mecanica', 'eletrica', 'pneu', 'manutencao'], ativa: true, horario_funcionamento: TODO_DIA }).select('id').single();
   oficinasCriadas.add(of2.id);
   const w2 = await sessao(w2Email, senha);
   const mecEmail = `nd-mec-${tag}@example.test`;
@@ -639,6 +646,7 @@ try {
   console.log('FALHA excecao', (e.stack || e.message).split('\n').slice(0, 4).join(' | '));
 } finally {
   await browser.close();
+  if (of1IdH && horarioW1Antes !== undefined) await admin.from('oficinas').update({ horario_funcionamento: horarioW1Antes }).eq('id', of1IdH);
   for (const id of sols) {
     const { data: ags } = await admin.from('agenda').select('id').eq('solicitacao_id', id);
     for (const a of ags || []) { await admin.from('agenda_historico').delete().eq('agenda_id', a.id); await admin.from('manutencao_etapas').delete().eq('agenda_id', a.id); }

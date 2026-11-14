@@ -705,6 +705,7 @@
     "CONTA_EXISTENTE": "Selle e-postiga on juba BipFixi konto. Logi sisse, et õnnetusest teatada.",
     "ORCAMENTO_INDISPONIVEL": "See hinnapakkumine pole enam saadaval.",
     "HORARIO_VENCIDO": "See aeg on möödas. Vali mõni teine.",
+    "DIA_FECHADO": "Üks aegadest langeb päevale, mil töökoda on lahtiolekuaegade järgi suletud. Vali teine päev.",
     "NAO_EM_SERVICO": "Auto ei ole töös (check-in puudub).",
     "NAO_AGENDADO": "See broneering ei oota enam autot.",
     "REVISAO_PENDENTE": "Üks muudatus ootab juba kliendi vastust.",

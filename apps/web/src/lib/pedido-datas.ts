@@ -9,6 +9,7 @@ import { escapeHtml } from './email-i18n';
 import { SITE_URL, idiomaDoSite } from './site-url';
 import { linkPedido } from './link-acesso';
 import { orcamentoVencido } from './orcamento-validade';
+import { conflitoHorario } from './turnos';
 
 // "Tenho interesse, mande novas datas" (migracao 079, dono 11/11, docs/DESENHO_079_novas_datas.md).
 //  - o motorista pede quando TODOS os horarios do orcamento ja passaram (fuso da oficina), com
@@ -95,7 +96,7 @@ const carroDe = (v: any) => [v?.fipe_marca, v?.fipe_modelo].filter(Boolean).join
 const SEL_ORC = 'id, status, prazo_dias, validade, valor_total, revisao_numero, solicitacao_id, oficina_id, '
   + 'disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(id, data_checkin, turno, data_previsao_entrega), '
   + 'solicitacao:solicitacoes(id, numero, status, cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, idioma), veiculo:veiculos(fipe_marca, fipe_modelo)), '
-  + 'oficina:oficinas(id, nome_fantasia, pais, profile_id, profile:profiles!oficinas_profile_id_fkey(nome, email, idioma))';
+  + 'oficina:oficinas(id, nome_fantasia, pais, horario_funcionamento, profile_id, profile:profiles!oficinas_profile_id_fkey(nome, email, idioma))';
 
 async function lerOrcamento(orcamentoId: string) {
   const { data } = await supabaseAdmin.from('orcamentos').select(SEL_ORC).eq('id', orcamentoId).maybeSingle();
@@ -281,6 +282,8 @@ export async function responderNovasDatas(userId: string, orcamentoId: string, c
   // b) mandar outras datas
   const v = validarHorariosNovos(corpo?.horarios, orc.prazo_dias, of?.pais);
   if (!v.ok) return res(v.codigo === 'HORARIO_VENCIDO' ? 409 : 400, { error: 'Dados inválidos', codigo: v.codigo });
+  // dia em que a oficina esta fechada pelo proprio horario (dono 14/11; a tela ja bloqueia)
+  if (v.horarios.some((h) => conflitoHorario(h.data_checkin, h.turno, of?.horario_funcionamento) === 'fechado')) return res(400, { error: 'Oficina fechada neste dia', codigo: 'DIA_FECHADO' });
   const existentes = new Set((orc.disponibilidade || []).map((s: any) => `${s.data_checkin}|${s.turno}`));
   const novos = v.horarios.filter((h) => !existentes.has(`${h.data_checkin}|${h.turno}`));
   if (!novos.length) return res(400, { error: 'Horários repetidos', codigo: 'DADOS_INVALIDOS' });
