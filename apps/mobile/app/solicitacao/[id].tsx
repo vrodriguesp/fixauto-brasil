@@ -13,7 +13,7 @@ import { supabase } from '../../lib/supabase';
 import { apiFetch } from '../../lib/api';
 import { useAuth } from '../../lib/auth-context';
 import { mensagemErro, ErroApi } from '../../lib/erro';
-import { turnoDisponivel, type Turno } from '../../lib/turnos';
+import { slotAindaVale, janelaDoSlot, formatarJanela, textoDaAgenda } from '../../lib/turnos';
 import { limparDescricao, ehAcidente } from '../../lib/texto';
 import EditarPedido from '../../components/EditarPedido';
 import RevisaoPendente from '../../components/RevisaoPendente';
@@ -26,7 +26,6 @@ import CartaoSituacao from '../../components/CartaoSituacao';
 import OpcaoCartao from '../../components/OpcaoCartao';
 import { situacaoDoPedido } from '../../lib/situacao';
 import { useTraducoes, AvisoTraducao } from '../../lib/traducao';
-import { fusoDoPais } from '../../lib/fuso';
 import { TelefoneDepoisDoAceite, CompartilharTelefone } from '../../components/TelefoneOficina';
 
 type Ordem = 'preco' | 'nota' | 'cedo';
@@ -109,7 +108,7 @@ export default function SolicitacaoDetailScreen() {
   const [slotSelecionado, setSlotSelecionado] = useState<Record<string, string>>({});
   const [entrega, setEntrega] = useState<{ oficinaId: string; dataFim: string } | null>(null);
   const [puxando, setPuxando] = useState(false);
-  const [agenda, setAgenda] = useState<{ status: string; data_inicio: string | null }[]>([]);
+  const [agenda, setAgenda] = useState<{ status: string; data_inicio: string | null; checkin_ate?: string | null }[]>([]);
   // comparar orcamentos (auditoria 10/10, C2): ordem escolhida e os "outros" recolhidos
   const [ordemOrc, setOrdemOrc] = useState<Ordem>('preco');
   const [verOutros, setVerOutros] = useState(false);
@@ -127,7 +126,7 @@ export default function SolicitacaoDetailScreen() {
   const carregar = useCallback(async () => {
     const { data } = await supabase
       .from('solicitacoes')
-      .select('*, veiculo:veiculos(*), orcamentos(*, oficina:oficinas(id, nome_fantasia, pais, profile_id, cidade, avaliacao_media, total_avaliacoes, horario_funcionamento), itens:orcamento_itens(id, descricao, quantidade, valor_total), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*)), orcamento_revisoes(status, tipo)')
+      .select('*, veiculo:veiculos(*), orcamentos(*, oficina:oficinas(id, nome_fantasia, pais, profile_id, cidade, avaliacao_media, total_avaliacoes, horario_funcionamento, recepcao_inicio, recepcao_fim, almoco_inicio, almoco_fim), itens:orcamento_itens(id, descricao, quantidade, valor_total), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*)), orcamento_revisoes(status, tipo)')
       .eq('id', id)
       .single();
     setSolicitacao(data as Solicitacao);
@@ -140,7 +139,7 @@ export default function SolicitacaoDetailScreen() {
 
     const { data: agendaRows } = await supabase
       .from('agenda')
-      .select('id, oficina_id, status, data_inicio, data_fim')
+      .select('id, oficina_id, status, data_inicio, checkin_ate, data_fim')
       .eq('solicitacao_id', id);
     setAgenda((agendaRows || []) as any);
     const entregue = (agendaRows || []).find((a: any) => a.status === 'concluido' && a.data_fim);
@@ -285,7 +284,7 @@ export default function SolicitacaoDetailScreen() {
   const diasGarantia = fimGarantia ? Math.ceil((fimGarantia.getTime() - Date.now()) / 86400000) : 0;
   // escolhido primeiro; os ativos na ordem escolhida (menor preco, melhor
   // avaliada, dia mais cedo); recusados/vencidos recolhidos em "Outros"
-  const primeiroDia = (o: any) => ((o.disponibilidade || []) as DisponibilidadeSlot[]).filter((d) => turnoDisponivel(d.data_checkin, d.turno as Turno, undefined, o.oficina?.pais ?? null)).map((d) => d.data_checkin).sort()[0] || '9999';
+  const primeiroDia = (o: any) => ((o.disponibilidade || []) as DisponibilidadeSlot[]).filter((d) => slotAindaVale(d, undefined, o.oficina?.pais ?? null)).map((d) => d.data_checkin).sort()[0] || '9999';
   const nota = (o: any) => (o.oficina?.total_avaliacoes ? Number(o.oficina.avaliacao_media || 0) : -1);
   const todos = (solicitacao.orcamentos || []) as any[];
   const ativos = todos.filter((o) => ATIVO.includes(o.status)).sort((a, b) =>
@@ -431,7 +430,8 @@ export default function SolicitacaoDetailScreen() {
               if (!ag?.data_inicio) return null;
               return (
                 <View className="border-t border-emerald-200 pt-3 mb-3" testID="agendamento-atual">
-                  <Text className="text-sm text-emerald-900"><Text className="font-semibold">📅 {t('agendaMudanca.levarCarro')}: </Text>{new Date(ag.data_inicio).toLocaleString(locale === 'pt' ? 'pt-BR' : locale, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais((orc as any).oficina?.pais) })}</Text>
+                  <Text className="text-sm text-emerald-900"><Text className="font-semibold">📅 {t('agendaMudanca.levarCarro')}: </Text>{textoDaAgenda(ag.data_inicio, ag.checkin_ate, (orc as any).oficina?.pais ?? null, locale === 'pt' ? 'pt-BR' : locale)}</Text>
+                  <Text className="text-xs text-emerald-900 mt-2" testID="vem-na-janela">{t('agendaMudanca.vemNaJanela')}</Text>
                   <Text className="text-xs text-emerald-900 mt-2">{t('agendaMudanca.notaRemarcar')}</Text>
                   <Pressable onPress={() => router.push({ pathname: '/conversa/[id]', params: { id: solicitacao.id, oficina: orc.oficina_id } })} accessibilityRole="button"
                     className="self-start mt-2 bg-white border border-primary-200 rounded-lg px-3 py-2" testID="conversar-oficina">
@@ -459,10 +459,11 @@ export default function SolicitacaoDetailScreen() {
                   <Text className="text-primary-700 text-sm font-medium underline">{t('novasDatas.vencidoNovoPedido')} ›</Text>
                 </Pressable>
               </View>
-            ) : (orc.status === 'enviado' || orc.status === 'visualizado') && (solicitacao.status as string) !== 'expirada' && ['aberta', 'em_orcamento', 'no_show'].includes(solicitacao.status) && !(orc.disponibilidade || []).some((slot: DisponibilidadeSlot) => turnoDisponivel(slot.data_checkin, slot.turno as Turno, undefined, of?.pais ?? null)) ? (
+            ) : (orc.status === 'enviado' || orc.status === 'visualizado') && (solicitacao.status as string) !== 'expirada' && ['aberta', 'em_orcamento', 'no_show'].includes(solicitacao.status) && !(orc.disponibilidade || []).some((slot: DisponibilidadeSlot) => slotAindaVale(slot, undefined, of?.pais ?? null)) ? (
               // datas vencidas: pedir novas datas a oficina no lugar de aceitar (079)
               <>
-                <PedirNovasDatas orcamentoId={orc.id} pais={of?.pais ?? null} horario={of?.horario_funcionamento} />
+                <PedirNovasDatas orcamentoId={orc.id} pais={of?.pais ?? null} horario={of?.horario_funcionamento}
+                  ctx={{ horario: of?.horario_funcionamento, recepcao_inicio: of?.recepcao_inicio, recepcao_fim: of?.recepcao_fim, almoco_inicio: of?.almoco_inicio, almoco_fim: of?.almoco_fim }} />
                 <Pressable onPress={() => handleRecusar(orc)} disabled={processando === orc.id} accessibilityRole="button" hitSlop={8} className="self-center mt-3">
                   <Text className="text-gray-500 text-sm underline">{t('orcamentos.naoMeInteressa')}</Text>
                 </Pressable>
@@ -475,17 +476,19 @@ export default function SolicitacaoDetailScreen() {
                 {/* horario que ja passou nao se escolhe (todos vencidos: cartao de novas datas acima) */}
                 {/* horario sugerido pela oficina: cartao inteiro tocavel com radio (teste do dono 31/10) */}
                 <View accessibilityRole="radiogroup">
-                {(orc.disponibilidade || []).filter((slot: DisponibilidadeSlot) => turnoDisponivel(slot.data_checkin, slot.turno as Turno, undefined, of?.pais ?? null)).map((slot: DisponibilidadeSlot) => (
+                {(orc.disponibilidade || []).filter((slot: DisponibilidadeSlot) => slotAindaVale(slot, undefined, of?.pais ?? null)).map((slot: DisponibilidadeSlot) => (
                   <OpcaoCartao
                     key={slot.id}
                     selecionado={slotSelecionado[orc.id] === slot.id}
                     onPress={() => setSlotSelecionado((prev) => ({ ...prev, [orc.id]: slot.id }))}
                     icone="calendar-outline"
-                    titulo={`${formatDate(slot.data_checkin, locale)} · ${t(`orcamentos.turno_${slot.turno}`, slot.turno)} (${slot.turno === 'manha' ? '08:00-12:00' : '13:00-17:00'})`}
+                    titulo={`${formatDate(slot.data_checkin, locale)} · ${formatarJanela(janelaDoSlot(slot))}`}
                     subtitulo={(slot as any).data_previsao_entrega ? t('orcamentos.entregaPrevista', { data: formatDate((slot as any).data_previsao_entrega, locale) }) : null}
                   />
                 ))}
                 </View>
+                {/* check-in v2: o horario e uma janela de chegada, nao uma hora marcada */}
+                {(orc.disponibilidade || []).length > 0 && <Text className="text-xs text-gray-600 mt-1 mb-1" testID="vem-na-janela-escolha">{t('agendaMudanca.vemNaJanela')}</Text>}
                 <Pressable
                   onPress={() => handleAceitar(orc)}
                   disabled={processando === orc.id || !slotSelecionado[orc.id]}

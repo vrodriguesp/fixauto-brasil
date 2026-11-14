@@ -687,6 +687,7 @@
     "notaRemarcar": "To change the date, write to the repair shop in the chat or call them. To cancel, use “Cancel request” at the bottom of this page.",
     "conversar": "Message the repair shop",
     "levarCarro": "Drop-off",
+    "vemNaJanela": "Please arrive within the chosen time range. If you need an exact time, agree it with the repair shop in the chat.",
     "naoServeAviso": "The repair shop can no longer do the booked date.",
     "pedirOutraData": "Ask for another date (chat)",
     "cancelarComOficina": "Cancel with this repair shop",

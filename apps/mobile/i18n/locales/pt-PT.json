@@ -687,6 +687,7 @@
     "notaRemarcar": "Para mudar a data, escreva à oficina no chat ou ligue-lhe. Para cancelar, use “Cancelar pedido” no fim desta página.",
     "conversar": "Conversar com a oficina",
     "levarCarro": "Entregar o carro",
+    "vemNaJanela": "Chegue dentro do horário escolhido. Se precisar de uma hora exata, combine-a com a oficina no chat.",
     "naoServeAviso": "A oficina já não pode na data marcada.",
     "pedirOutraData": "Pedir outra data (conversa)",
     "cancelarComOficina": "Cancelar com esta oficina",

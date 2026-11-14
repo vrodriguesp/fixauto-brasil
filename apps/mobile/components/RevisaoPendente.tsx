@@ -7,6 +7,7 @@ import { apiFetch } from '../lib/api';
 import { mensagemErro } from '../lib/erro';
 import { tDias } from '../i18n';
 import { fusoDoPais } from '../lib/fuso';
+import { formatarJanela, minutosDe, hhmm, JANELA_MIN } from '../lib/turnos';
 import { confirmar, avisar } from '../lib/confirmar';
 import { useRouter } from 'expo-router';
 
@@ -18,6 +19,8 @@ interface Revisao {
   tipo?: 'valor' | 'data'; nova_data_checkin?: string | null; novo_turno?: 'manha' | 'tarde' | null; nova_previsao_entrega?: string | null;
   // 077: hora exata, a data atual ainda serve?, mudanca combinada
   nova_hora?: string | null; data_atual_serve?: boolean | null; combinado?: boolean; oficina_id?: string;
+  // check-in v2: fim da janela proposta (nova_hora = inicio)
+  nova_hora_fim?: string | null;
 }
 
 // O carro ja esta na oficina? (check-in feito, servico andando/feito ou o
@@ -41,7 +44,7 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
 
   const carregar = useCallback(async () => {
     const { data } = await supabase.from('orcamento_revisoes')
-      .select('id, orcamento_id, oficina_id, tipo, nova_data_checkin, novo_turno, nova_hora, nova_previsao_entrega, data_atual_serve, combinado, valor_anterior, valor_novo, prazo_dias_novo, motivo, itens, oficina:oficinas(nome_fantasia, pais)')
+      .select('id, orcamento_id, oficina_id, tipo, nova_data_checkin, novo_turno, nova_hora, nova_hora_fim, nova_previsao_entrega, data_atual_serve, combinado, valor_anterior, valor_novo, prazo_dias_novo, motivo, itens, oficina:oficinas(nome_fantasia, pais)')
       .eq('solicitacao_id', solicitacaoId).eq('status', 'pendente').maybeSingle();
     setRev((data as any) || null);
     if ((data as any)?.orcamento_id) {
@@ -129,12 +132,14 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
       ],
     );
     const loc = i18n.language === 'pt' ? 'pt-BR' : i18n.language;
-    const dia = (ymd: string) => new Date(`${ymd}T12:00:00`).toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long' });
+    const dia = (ymd: string) => new Date(`${ymd}T12:00:00Z`).toLocaleDateString(loc, { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
+    // janela proposta (inicio-fim; hora exata antiga = +30 min; so turno antigo = palavra manha/tarde)
+    const janelaRev = rev.nova_hora ? formatarJanela({ inicio: rev.nova_hora.slice(0, 5), fim: rev.nova_hora_fim ? rev.nova_hora_fim.slice(0, 5) : hhmm((minutosDe(rev.nova_hora) ?? 0) + JANELA_MIN) }) : '';
     return (
       <View className="bg-blue-50 border-2 border-blue-400 rounded-xl p-4 mb-4" testID="proposta-nova-data">
         <Text className="text-base font-semibold text-gray-900">📅 {t('agendaMudanca.dataTitulo', { oficina: rev.oficina?.nome_fantasia || '' })}</Text>
         {dataAtual ? <Text className="mt-2 text-sm text-gray-600">{t('agendaMudanca.dataDe')}: <Text className="line-through">{new Date(dataAtual).toLocaleString(loc, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais(rev.oficina?.pais) })}</Text></Text> : null}
-        <Text className="mt-1 text-sm text-gray-900">{t('agendaMudanca.dataPara')}: <Text className="font-bold">{rev.nova_data_checkin ? `${dia(rev.nova_data_checkin)}, ${rev.nova_hora || t(rev.novo_turno === 'tarde' ? 'agendaMudanca.tarde' : 'agendaMudanca.manha')}` : ''}</Text></Text>
+        <Text className="mt-1 text-sm text-gray-900">{t('agendaMudanca.dataPara')}: <Text className="font-bold">{rev.nova_data_checkin ? `${dia(rev.nova_data_checkin)}, ${janelaRev || t(rev.novo_turno === 'tarde' ? 'agendaMudanca.tarde' : 'agendaMudanca.manha')}` : ''}</Text></Text>
         {rev.nova_previsao_entrega ? <Text className="text-sm text-gray-700">{t('agendaMudanca.previsaoNova', { data: dia(rev.nova_previsao_entrega) })}</Text> : null}
         <Text className="mt-2 text-sm text-gray-800"><Text className="font-medium">{t('agendaMudanca.motivoOficina')}: </Text>{rev.motivo}</Text>
         {podeManter

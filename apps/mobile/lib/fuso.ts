@@ -35,3 +35,20 @@ export function diaNaOficina(instante: Date, pais?: string | null): string {
 export function minutoNaOficina(instante: Date, pais?: string | null): number {
   return partesNoFuso(instante, pais).min;
 }
+
+// diferenca (minutos) entre a hora local da oficina e o UTC naquele instante (mesmas partes acima, sem
+// `hourCycle`; Intl falhando = fuso do aparelho, como o resto do app)
+function deslocamento(instante: Date, pais?: string | null): number {
+  const { ymd, min } = partesNoFuso(instante, pais);
+  const [a, m, d] = ymd.split('-').map(Number);
+  return (Date.UTC(a, m - 1, d) + min * 60000 - Math.floor(instante.getTime() / 60000) * 60000) / 60000;
+}
+
+/** "2026-10-12" + "08:00" na hora local do pais -> ISO em UTC (igual ao site apps/web/src/lib/fuso.ts) */
+export function horaLocalEmUtc(data: string, hora: string, pais?: string | null): string {
+  const ingenuo = new Date(`${data}T${hora}:00Z`);
+  // duas passagens: acerta tambem perto da troca de horario de verao
+  let t = ingenuo.getTime() - deslocamento(ingenuo, pais) * 60000;
+  t = ingenuo.getTime() - deslocamento(new Date(t), pais) * 60000;
+  return new Date(t).toISOString();
+}

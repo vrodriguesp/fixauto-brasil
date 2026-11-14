@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { apiFetch } from '../lib/api';
 import { mensagemErro } from '../lib/erro';
-import { hojeLocal, turnoDisponivel, type Turno } from '../lib/turnos';
+import { hojeLocal, faixasDoDia, turnoDaJanela, janelaDaSugestao, formatarJanela, LEGADO, type Turno, type ContextoOficina } from '../lib/turnos';
 
 // "Tenho interesse, peca novas datas" (migracao 079, igual ao site components/cliente/PedirNovasDatas):
 // todas as datas do orcamento ja passaram. Ate 3 sugestoes (dia + manha/tarde) dos proximos 14 dias a partir
@@ -19,7 +19,10 @@ type Sug = { data: string; turno: Turno };
 type Pedido = { id: string; created_at: string; sugestoes: Sug[] };
 const somar = (ymd: string, n: number) => { const d = new Date(`${ymd}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
 
-export default function PedirNovasDatas({ orcamentoId, pais, horario }: { orcamentoId: string; pais?: string | null; horario?: Record<string, { aberto?: boolean }> | null }) {
+// Check-in v2: cada turno ja mostra a faixa que vai valer se a oficina confirmar (1a faixa do perfil dela nesse
+// turno, igual ao site; e so previa, a verdade e gravada na confirmacao); turno sem faixa nesse dia nao aparece.
+export default function PedirNovasDatas({ orcamentoId, pais, horario, ctx: ctxProp }: { orcamentoId: string; pais?: string | null; horario?: Record<string, { aberto?: boolean }> | null; ctx?: ContextoOficina | null }) {
+  const ctx: ContextoOficina = ctxProp ?? { horario: horario as ContextoOficina['horario'] };
   const { t, i18n } = useTranslation();
   const loc = i18n.language === 'pt' ? 'pt-BR' : i18n.language;
   const [pedido, setPedido] = useState<Pedido | null>(null);
@@ -38,7 +41,7 @@ export default function PedirNovasDatas({ orcamentoId, pais, horario }: { orcame
   useEffect(() => { carregar(); }, [carregar]);
 
   const diaTxt = (ymd: string) => new Date(`${ymd}T12:00:00Z`).toLocaleDateString(loc, { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
-  const turnoTxt = (tu: Turno) => `${t(`novasDatas.${tu}`)} ${tu === 'manha' ? '08–12' : '13–17'}`;
+  const turnoTxt = (tu: Turno, d?: string) => `${t(`novasDatas.${tu}`)} ${formatarJanela(d ? janelaDaSugestao(d, tu, ctx) : LEGADO[tu])}`;
 
   const dias = useMemo(() => {
     const hoje = hojeLocal(new Date(), pais ?? null);
@@ -49,11 +52,13 @@ export default function PedirNovasDatas({ orcamentoId, pais, horario }: { orcame
       if (dow === 0) continue;
       const h = horario?.[CHAVE_DIA[dow]];
       if (h && h.aberto === false) continue;
-      const turnos = (['manha', 'tarde'] as Turno[]).filter((tu) => turnoDisponivel(d, tu, new Date(), pais ?? null));
+      const fs = faixasDoDia(d, ctx);
+      const turnos = (['manha', 'tarde'] as Turno[]).filter((tu) => fs.some((j) => turnoDaJanela(j) === tu));
       if (turnos.length) out.push({ data: d, turnos });
     }
     return out;
-  }, [horario, pais]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- ctx vem do orcamento (estavel por render)
+  }, [horario, pais, ctxProp?.recepcao_inicio, ctxProp?.recepcao_fim, ctxProp?.almoco_inicio, ctxProp?.almoco_fim]);
 
   const marcada = (s: Sug) => escolhidas.some((x) => x.data === s.data && x.turno === s.turno);
   const alternar = (s: Sug) => setEscolhidas((l) => (marcada(s) ? l.filter((x) => !(x.data === s.data && x.turno === s.turno)) : l.length >= MAX ? l : [...l, s]));
@@ -81,7 +86,7 @@ export default function PedirNovasDatas({ orcamentoId, pais, horario }: { orcame
     return (
       <View className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-2" testID="novas-datas-pendente">
         <Text className="text-sm font-medium text-blue-900">⏳ {t('novasDatas.pendente', { data: new Date(pedido.created_at).toLocaleString(loc, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) })}</Text>
-        {sugs.length > 0 && <Text className="text-sm text-blue-800 mt-1">{t('novasDatas.suasDatas', { datas: sugs.map((s) => `${diaTxt(s.data)} ${turnoTxt(s.turno)}`).join('; ') })}</Text>}
+        {sugs.length > 0 && <Text className="text-sm text-blue-800 mt-1">{t('novasDatas.suasDatas', { datas: sugs.map((s) => `${diaTxt(s.data)} ${turnoTxt(s.turno, s.data)}`).join('; ') })}</Text>}
       </View>
     );
   }
@@ -107,9 +112,12 @@ export default function PedirNovasDatas({ orcamentoId, pais, horario }: { orcame
                 const bloqueado = !on && escolhidas.length >= MAX;
                 return (
                   <Pressable key={tu} onPress={() => alternar(s)} disabled={bloqueado} accessibilityRole="checkbox" accessibilityState={{ checked: on, disabled: bloqueado }}
-                    style={{ opacity: bloqueado ? 0.4 : 1, minHeight: 40 }} testID={`chip-${d.data}-${tu}`}
-                    className={`flex-1 rounded-full border px-2 items-center justify-center ${on ? 'border-primary-600 bg-primary-600' : 'border-gray-300 bg-white'}`}>
-                    <Text numberOfLines={1} className={`text-xs font-medium ${on ? 'text-white' : 'text-gray-700'}`}>{turnoTxt(tu)}</Text>
+                    style={{ opacity: bloqueado ? 0.4 : 1, minHeight: 44 }} testID={`chip-${d.data}-${tu}`}
+                    accessibilityLabel={turnoTxt(tu, d.data)}
+                    className={`flex-1 rounded-2xl border px-2 py-1 items-center justify-center ${on ? 'border-primary-600 bg-primary-600' : 'border-gray-300 bg-white'}`}>
+                    {/* duas linhas: turno pequeno + faixa (igual ao site) */}
+                    <Text numberOfLines={1} className={`text-[11px] ${on ? 'text-white' : 'text-gray-500'}`}>{t(`novasDatas.${tu}`)}</Text>
+                    <Text numberOfLines={1} className={`text-xs font-medium ${on ? 'text-white' : 'text-gray-700'}`} style={{ fontVariant: ['tabular-nums'] }}>{formatarJanela(janelaDaSugestao(d.data, tu, ctx))}</Text>
                   </Pressable>
                 );
               })}
