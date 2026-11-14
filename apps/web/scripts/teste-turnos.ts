@@ -4,7 +4,12 @@
 // - turnoAcabaLogo: no fuso da OFICINA (Tallinn), nao no do computador
 //
 //   npx tsx scripts/teste-turnos.ts
-import { conflitoHorario, horarioDoDia, primeiroTurnoAberto, turnoAcabaLogo, type HorarioSemana } from '../src/lib/turnos';
+import {
+  conflitoHorario, horarioDoDia, primeiroTurnoAberto, turnoAcabaLogo, type HorarioSemana,
+  faixasDoDia, formatarJanela, validarRecepcao, turnoDaJanela, janelaDoSlot, janelaAindaVale, faixasValidas, diaEscolhivel,
+  janelaAcabaLogo, primeiroDiaComFaixa, opcoesOutroHorario, janelaDaSugestao, instanteDaJanela, janelaDaAgenda,
+  erroValidade, maiorData, somarDias, VALIDADE_FOLGA_DIAS,
+} from '../src/lib/turnos';
 
 let falhas = 0;
 let total = 0;
@@ -64,6 +69,86 @@ confere('seg 14:30 tarde -> 2,5 h, nao', turnoAcabaLogo(SEG, 'tarde', 2, tallinn
 confere('seg 10:30 manha -> 1,5 h', turnoAcabaLogo(SEG, 'manha', 2, tallinn(SEG, '10:30'), 'EE'), true);
 confere('seg 17:30 tarde -> ja passou (nao e "acaba logo")', turnoAcabaLogo(SEG, 'tarde', 2, tallinn(SEG, '17:30'), 'EE'), false);
 confere('amanha -> nunca', turnoAcabaLogo(TER, 'tarde', 2, tallinn(SEG, '16:30'), 'EE'), false);
+
+// ===================== check-in v2 (decisoes finais 14/11 noite, spec Fable v2 D.3/D.4/D.5) =====================
+const fx = (data: string, ctx: Parameters<typeof faixasDoDia>[1]) => faixasDoDia(data, ctx).map(formatarJanela);
+const dia = (inicio: string, fim: string): HorarioSemana => ({ seg: aberto(inicio, fim) });
+// 4) grade de 2 h (tabela D.3)
+confere('D3 08-18 sem almoco -> 5 faixas', fx(SEG, { horario: dia('08:00', '18:00') }), ['08:00–10:00', '10:00–12:00', '12:00–14:00', '14:00–16:00', '16:00–18:00']);
+confere('D3 08-18 almoco 12-13 -> pula o almoco', fx(SEG, { horario: dia('08:00', '18:00'), almoco_inicio: '12:00', almoco_fim: '13:00' }), ['08:00–10:00', '10:00–12:00', '13:00–15:00', '15:00–17:00', '17:00–18:00']);
+confere('D3 09-18 almoco 12:30-13:30 (ultima de 30 min vale, mostrada como hora)', fx(SEG, { horario: dia('09:00', '18:00'), almoco_inicio: '12:30', almoco_fim: '13:30' }), ['09:00–11:00', '11:00–12:30', '13:30–15:30', '15:30–17:30', '17:30']);
+confere('D3 08-17 almoco 12-13', fx(SEG, { horario: dia('08:00', '17:00'), almoco_inicio: '12:00', almoco_fim: '13:00' }), ['08:00–10:00', '10:00–12:00', '13:00–15:00', '15:00–17:00']);
+confere('D3 08-17 almoco 12:15-13:00 -> 12:00-12:15 cai', fx(SEG, { horario: dia('08:00', '17:00'), almoco_inicio: '12:15', almoco_fim: '13:00' }), ['08:00–10:00', '10:00–12:00', '13:00–15:00', '15:00–17:00']);
+confere('D3 sab 08-12 almoco 12-13 -> almoco fora do dia ignorado', fx(SAB, { horario: { sab: aberto('08:00', '12:00') }, almoco_inicio: '12:00', almoco_fim: '13:00' }), ['08:00–10:00', '10:00–12:00']);
+confere('D3 14-20 almoco 12-13', fx(SEG, { horario: dia('14:00', '20:00'), almoco_inicio: '12:00', almoco_fim: '13:00' }), ['14:00–16:00', '16:00–18:00', '18:00–20:00']);
+confere('D3 08-17 sem almoco -> ultima 16-17', fx(SEG, { horario: dia('08:00', '17:00') }), ['08:00–10:00', '10:00–12:00', '12:00–14:00', '14:00–16:00', '16:00–17:00']);
+confere('D3 08:30-17:00 ancorada na abertura', fx(SEG, { horario: dia('08:30', '17:00') }), ['08:30–10:30', '10:30–12:30', '12:30–14:30', '14:30–16:30', '16:30']);
+confere('D3 abre 12:30 com almoco 12-13 -> comeca 13:00', fx(SEG, { horario: dia('12:30', '18:00'), almoco_inicio: '12:00', almoco_fim: '13:00' }), ['13:00–15:00', '15:00–17:00', '17:00–18:00']);
+// recepcao (um par para a semana, cortado pelo dia e pelo almoco)
+confere('D3 recepcao 08-10 + almoco 12-13 -> so 08-10', fx(SEG, { horario: dia('08:00', '18:00'), recepcao_inicio: '08:00', recepcao_fim: '10:00', almoco_inicio: '12:00', almoco_fim: '13:00' }), ['08:00–10:00']);
+confere('D3 recepcao 11-14 + almoco 12-13 -> duas faixas', fx(SEG, { horario: dia('08:00', '18:00'), recepcao_inicio: '11:00', recepcao_fim: '14:00', almoco_inicio: '12:00', almoco_fim: '13:00' }), ['11:00–12:00', '13:00–14:00']);
+confere('D3 hora fixa 09:00 (09:00-09:30) -> "09:00"', fx(SEG, { horario: dia('08:00', '18:00'), recepcao_inicio: '09:00', recepcao_fim: '09:30' }), ['09:00']);
+confere('recepcao 07-19 cortada pelo dia 08-17', fx(SEG, { horario: dia('08:00', '17:00'), recepcao_inicio: '07:00', recepcao_fim: '19:00' }), ['08:00–17:00']);
+confere('recepcao 09-13 no sabado 08-12 -> 09-12 (corte)', fx(SAB, { horario: { sab: aberto('08:00', '12:00') }, recepcao_inicio: '09:00', recepcao_fim: '13:00' }), ['09:00–12:00']);
+confere('recepcao 13-16 no sabado 08-12 -> nao cruza: grade do dia', fx(SAB, { horario: { sab: aberto('08:00', '12:00') }, recepcao_inicio: '13:00', recepcao_fim: '16:00' }), ['08:00–10:00', '10:00–12:00']);
+confere('dia fechado -> nenhuma faixa', fx(SAB, { horario: H }), []);
+confere('sem horario (null) -> padrao 006 seg 08-18', fx(SEG, { horario: null }), ['08:00–10:00', '10:00–12:00', '12:00–14:00', '14:00–16:00', '16:00–18:00']);
+confere('sem horario (null) -> padrao 006 sab 08-12', fx(SAB, { horario: null }), ['08:00–10:00', '10:00–12:00']);
+confere('sem horario (null) -> padrao 006 domingo fechado', fx(DOM, { horario: null }), []);
+confere('aberto sem horas -> horas do padrao', fx(SEG, { horario: { seg: { aberto: true } } }).length, 5);
+confere('horario virado 22-02 -> padrao', fx(SEG, { horario: dia('22:00', '02:00') }).length, 5);
+// validacao do perfil
+confere('perfil: hora fixa 12:30 dentro do almoco 12-13 -> erro', validarRecepcao({ horario: dia('08:00', '18:00'), recepcao_inicio: '12:30', recepcao_fim: '13:00', almoco_inicio: '12:00', almoco_fim: '13:00' }), 'recepcao_almoco');
+confere('perfil: recepcao de 20 min -> curta', validarRecepcao({ horario: H, recepcao_inicio: '09:00', recepcao_fim: '09:20' }), 'recepcao_curta');
+confere('perfil: recepcao 19-21 nao cruza nenhum dia -> fora', validarRecepcao({ horario: H, recepcao_inicio: '19:00', recepcao_fim: '21:00' }), 'recepcao_fora');
+confere('perfil: recepcao 08-10 ok', validarRecepcao({ horario: H, recepcao_inicio: '08:00', recepcao_fim: '10:00' }), null);
+confere('perfil: almoco invertido -> erro', validarRecepcao({ horario: H, almoco_inicio: '13:00', almoco_fim: '12:00' }), 'almoco_invalido');
+confere('perfil: so almoco valido -> ok', validarRecepcao({ horario: H, almoco_inicio: '12:00', almoco_fim: '13:00' }), null);
+// 5) turno derivado, janela do slot (linha antiga), formato
+confere('turno 11:30-13:30 -> manha', turnoDaJanela({ inicio: '11:30', fim: '13:30' }), 'manha');
+confere('turno 12:00-14:00 -> tarde', turnoDaJanela({ inicio: '12:00', fim: '14:00' }), 'tarde');
+confere('slot antigo manha -> 08-12', janelaDoSlot({ turno: 'manha', hora_inicio: null, hora_fim: null }), { inicio: '08:00', fim: '12:00' });
+confere('slot antigo tarde -> 13-17', janelaDoSlot({ turno: 'tarde' }), { inicio: '13:00', fim: '17:00' });
+confere('slot novo (time do Postgres)', janelaDoSlot({ turno: 'manha', hora_inicio: '09:30:00', hora_fim: '10:00:00' }), { inicio: '09:30', fim: '10:00' });
+confere('formato 30 min = hora', formatarJanela({ inicio: '09:30', fim: '10:00' }), '09:30');
+confere('formato 3 h', formatarJanela({ inicio: '09:00', fim: '12:00' }), '09:00–12:00');
+// 6) validade da janela e "hoje" (fuso de Tallinn)
+confere('janela 14-16 ainda vale as 15:59', janelaAindaVale(SEG, { inicio: '14:00', fim: '16:00' }, tallinn(SEG, '15:59'), 'EE'), true);
+confere('janela 14-16 acabou as 16:00', janelaAindaVale(SEG, { inicio: '14:00', fim: '16:00' }, tallinn(SEG, '16:00'), 'EE'), false);
+confere('janela 14-16 acabou as 16:01', janelaAindaVale(SEG, { inicio: '14:00', fim: '16:00' }, tallinn(SEG, '16:01'), 'EE'), false);
+confere('hoje 15:10 -> so 16-18 (as outras acabaram)', faixasValidas(SEG, { horario: dia('08:00', '18:00') }, tallinn(SEG, '15:10'), 'EE').map(formatarJanela), ['14:00–16:00', '16:00–18:00']);
+confere('hoje 18:30 -> dia nao escolhivel', diaEscolhivel(SEG, { horario: dia('08:00', '18:00') }, tallinn(SEG, '18:30'), 'EE'), false);
+confere('ontem -> nao escolhivel', diaEscolhivel(SEG, { horario: dia('08:00', '18:00') }, tallinn(TER, '09:00'), 'EE'), false);
+confere('sabado fechado -> nao escolhivel', diaEscolhivel(SAB, { horario: H }, tallinn(SEG, '09:00'), 'EE'), false);
+confere('janela 16-18 acaba logo as 16:30', janelaAcabaLogo(SEG, { inicio: '16:00', fim: '18:00' }, 2, tallinn(SEG, '16:30'), 'EE'), true);
+confere('realce do calendario: sex 10:00 (sab/dom fechados) -> segunda', primeiroDiaComFaixa(tallinn(SEX, '10:00'), 'EE', { horario: H }), '2026-11-23');
+confere('realce depois da 1a data (ter) -> quarta', primeiroDiaComFaixa(tallinn(SEG, '10:00'), 'EE', { horario: H }, TER), '2026-11-18');
+// outro horario (passo 30 min, dentro do dia)
+const oh = opcoesOutroHorario(SEX, { horario: H }, tallinn(SEG, '09:00'), 'EE');
+confere('outro horario sex 08-12: inicios 08:00..11:30', oh.inicios, ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30']);
+confere('outro horario sex: fins depois de 10:30', oh.fins('10:30'), ['11:00', '11:30', '12:00']);
+confere('outro horario hoje 10:10 -> 1o inicio 10:00 (09:30-10:00 ja acabou)', opcoesOutroHorario(SEX, { horario: H }, tallinn(SEX, '10:10'), 'EE').inicios[0], '10:00');
+confere('outro horario dia fechado -> nada', opcoesOutroHorario(SAB, { horario: H }, tallinn(SEG, '09:00'), 'EE').inicios, []);
+// 7) 079: sugestao "dia + turno" -> faixa (2.13)
+confere('079 manha -> 1a faixa da manha', janelaDaSugestao(SEG, 'manha', { horario: H }), { inicio: '08:00', fim: '10:00' });
+confere('079 tarde -> 1a faixa que comeca >= 12:00', janelaDaSugestao(SEG, 'tarde', { horario: H, almoco_inicio: '12:00', almoco_fim: '13:00' }), { inicio: '13:00', fim: '15:00' });
+confere('079 tarde com recepcao 08-10 -> sem faixa na tarde: legado', janelaDaSugestao(SEG, 'tarde', { horario: H, recepcao_inicio: '08:00', recepcao_fim: '10:00' }), { inicio: '13:00', fim: '17:00' });
+// 8) fuso / horario de verao (instante gravado na agenda)
+confere('DST 29/03/2026 08:00 Tallinn -> 05:00Z (EEST)', instanteDaJanela('2026-03-29', { inicio: '08:00', fim: '10:00' }, 'EE'), { inicio: '2026-03-29T05:00:00.000Z', fim: '2026-03-29T07:00:00.000Z' });
+confere('DST 25/10/2026 08:00 Tallinn -> 06:00Z (EET)', instanteDaJanela('2026-10-25', { inicio: '08:00', fim: '10:00' }, 'EE'), { inicio: '2026-10-25T06:00:00.000Z', fim: '2026-10-25T08:00:00.000Z' });
+confere('DST 28/03/2026 (vespera) 16:00-18:00 -> 14:00Z-16:00Z (EET)', instanteDaJanela('2026-03-28', { inicio: '16:00', fim: '18:00' }, 'EE'), { inicio: '2026-03-28T14:00:00.000Z', fim: '2026-03-28T16:00:00.000Z' });
+confere('17/11/2026 09:00 -> 07:00Z', instanteDaJanela('2026-11-17', { inicio: '09:00', fim: '09:30' }, 'EE').inicio, '2026-11-17T07:00:00.000Z');
+confere('agenda: 07:00Z + 09:00Z -> 09:00-11:00 Tallinn', janelaDaAgenda('2026-11-17T07:00:00.000Z', '2026-11-17T09:00:00.000Z', 'EE'), { inicio: '09:00', fim: '11:00' });
+confere('agenda verao 29/03: 05:00Z + 07:00Z -> 08:00-10:00', janelaDaAgenda('2026-03-29T05:00:00.000Z', '2026-03-29T07:00:00.000Z', 'EE'), { inicio: '08:00', fim: '10:00' });
+confere('agenda antiga 08:00 sem checkin_ate -> 08-12', janelaDaAgenda('2026-11-17T06:00:00.000Z', null, 'EE'), { inicio: '08:00', fim: '12:00' });
+confere('agenda antiga hora exata 14:00 -> so a hora', formatarJanela(janelaDaAgenda('2026-11-17T12:00:00.000Z', null, 'EE')), '14:00');
+// 9) validade (decisao 4)
+confere('validade vazia -> erro', erroValidade('', [SEG], SEG), 'vazia');
+confere('validade antes da ultima data -> erro', erroValidade(SEG, [SEG, '2026-11-25'], SEG), 'antes');
+confere('validade = ultima data -> ok', erroValidade('2026-11-25', [SEG, '2026-11-25'], SEG), null);
+confere('validade no passado (sem datas) -> erro', erroValidade('2026-11-10', [], SEG), 'passado');
+confere('validade +7 depois da ultima -> ok', erroValidade(somarDias('2026-11-25', VALIDADE_FOLGA_DIAS), ['2026-11-25'], SEG), null);
+confere('maiorData ignora vazios', maiorData(['', '2026-11-20', '2026-11-18', undefined]), '2026-11-20');
 
 console.log(`\n${total - falhas}/${total} ${falhas ? `- ${falhas} FALHA(S)` : 'TUDO OK'}`);
 process.exit(falhas ? 1 : 0);
