@@ -116,7 +116,9 @@ export default function ClienteDashboard() {
                   }`}
                 >
                   <p className="text-sm font-medium text-gray-900 line-clamp-1">{n.titulo}</p>
-                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">{n.mensagem}</p>
+                  {/* 4 linhas: a data + janela de uma proposta 077 ("... pakub N, 19. nov, 13:00–15:00") cabe inteira; so o
+                      motivo longo e cortado (QA D10; antes 2 linhas cortavam a data) */}
+                  <p className="text-xs text-gray-500 mt-1 line-clamp-4">{n.mensagem}</p>
                   {isServicoConcluido ? (
                     <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-yellow-700 bg-yellow-100 rounded-full px-2.5 py-1">
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

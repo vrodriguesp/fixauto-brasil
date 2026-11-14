@@ -7,7 +7,7 @@ import { apiFetch } from '../lib/api';
 import { mensagemErro } from '../lib/erro';
 import { tDias } from '../i18n';
 import { fusoDoPais } from '../lib/fuso';
-import { formatarJanela, minutosDe, hhmm, JANELA_MIN, textoDaAgenda } from '../lib/turnos';
+import { formatarJanela, minutosDe, hhmm, JANELA_MIN, LEGADO, textoDaAgenda, semQuebra } from '../lib/turnos';
 import { confirmar, avisar } from '../lib/confirmar';
 import { useRouter } from 'expo-router';
 
@@ -136,13 +136,13 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
     );
     const loc = i18n.language === 'pt' ? 'pt-BR' : i18n.language;
     const dia = (ymd: string) => new Date(`${ymd}T12:00:00Z`).toLocaleDateString(loc, { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
-    // janela proposta (inicio-fim; hora exata antiga = +30 min; so turno antigo = palavra manha/tarde)
-    const janelaRev = rev.nova_hora ? formatarJanela({ inicio: rev.nova_hora.slice(0, 5), fim: rev.nova_hora_fim ? rev.nova_hora_fim.slice(0, 5) : hhmm((minutosDe(rev.nova_hora) ?? 0) + JANELA_MIN) }) : '';
+    // janela proposta (inicio-fim; hora exata antiga = +30 min, ate 23:59; so turno antigo = 08-12 / 13-17, igual ao servidor)
+    const janelaRev = rev.nova_hora ? formatarJanela({ inicio: rev.nova_hora.slice(0, 5), fim: rev.nova_hora_fim ? rev.nova_hora_fim.slice(0, 5) : hhmm(Math.min((minutosDe(rev.nova_hora) ?? 0) + JANELA_MIN, 1439)) }) : formatarJanela(LEGADO[rev.novo_turno === 'tarde' ? 'tarde' : 'manha']);
     return (
       <View className="bg-blue-50 border-2 border-blue-400 rounded-xl p-4 mb-4" testID="proposta-nova-data">
         <Text className="text-base font-semibold text-gray-900">📅 {t('agendaMudanca.dataTitulo', { oficina: rev.oficina?.nome_fantasia || '' })}</Text>
-        {dataAtual ? <Text className="mt-2 text-sm text-gray-600">{t('agendaMudanca.dataDe')}: <Text className="line-through">{textoDaAgenda(dataAtual, ateAtual, rev.oficina?.pais ?? null, loc, ', ')}</Text></Text> : null}
-        <Text className="mt-1 text-sm text-gray-900">{t('agendaMudanca.dataPara')}: <Text className="font-bold">{rev.nova_data_checkin ? `${dia(rev.nova_data_checkin)}, ${janelaRev || t(rev.novo_turno === 'tarde' ? 'agendaMudanca.tarde' : 'agendaMudanca.manha')}` : ''}</Text></Text>
+        {dataAtual ? <Text className="mt-2 text-sm text-gray-600">{t('agendaMudanca.dataDe')}: <Text className="line-through">{semQuebra(textoDaAgenda(dataAtual, ateAtual, rev.oficina?.pais ?? null, loc, ', '))}</Text></Text> : null}
+        <Text className="mt-1 text-sm text-gray-900">{t('agendaMudanca.dataPara')}: <Text className="font-bold">{rev.nova_data_checkin ? `${dia(rev.nova_data_checkin)}, ${semQuebra(janelaRev)}` : ''}</Text></Text>
         {rev.nova_previsao_entrega ? <Text className="text-sm text-gray-700">{t('agendaMudanca.previsaoNova', { data: dia(rev.nova_previsao_entrega) })}</Text> : null}
         <Text className="mt-2 text-sm text-gray-800"><Text className="font-medium">{t('agendaMudanca.motivoOficina')}: </Text>{rev.motivo}</Text>
         {podeManter

@@ -201,6 +201,13 @@ export function janelaDaAgenda(dataInicio: string, checkinAte: string | null | u
   return { inicio: ini, fim: ini };
 }
 
+/**
+ * A janela nunca quebra no meio ("08:00–" / "10:00" - QA D13): o traco ganha "word joiners" (U+2060, largura
+ * zero) dos dois lados. So para texto corrido na tela (React Native nao tem white-space: nowrap); nunca em
+ * dados, e-mail ou comparacao.
+ */
+export const semQuebra = (s: string) => s.replace(/\u2013/g, '\u2060\u2013\u2060');
+
 /** agenda (depois do aceite): dia no fuso da oficina + janela ("ter, 17 nov · 09:00–11:00") */
 export const textoDaAgenda = (dataInicio: string, checkinAte: string | null | undefined, pais: Pais, intl: string, sep = ' · ') =>
   `${new Date(dataInicio).toLocaleDateString(intl, { weekday: 'short', day: 'numeric', month: 'short', timeZone: fusoDoPais(pais) })}${sep}${formatarJanela(janelaDaAgenda(dataInicio, checkinAte, pais))}`;

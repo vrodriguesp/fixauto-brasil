@@ -114,10 +114,11 @@ export default function PedirNovasDatas({ orcamentoId, pais, horario, ctx: ctxPr
                   <Pressable key={tu} onPress={() => alternar(s)} disabled={bloqueado} accessibilityRole="checkbox" accessibilityState={{ checked: on, disabled: bloqueado }}
                     style={{ opacity: bloqueado ? 0.4 : 1, minHeight: 44 }} testID={`chip-${d.data}-${tu}`}
                     accessibilityLabel={turnoTxt(tu, d.data)}
-                    className={`flex-1 rounded-2xl border px-2 py-1 items-center justify-center ${on ? 'border-primary-600 bg-primary-600' : 'border-gray-300 bg-white'}`}>
-                    {/* duas linhas: turno pequeno + faixa (igual ao site) */}
+                    className={`flex-1 rounded-2xl border px-1 py-1 items-center justify-center ${on ? 'border-primary-600 bg-primary-600' : 'border-gray-300 bg-white'}`}>
+                    {/* duas linhas: turno pequeno + faixa (igual ao site). A faixa nunca e cortada com "…" (QA D6, 360 px):
+                        mais espaco no chip e, se ainda nao couber, quebra depois do traco - nunca dentro de uma hora */}
                     <Text numberOfLines={1} className={`text-[11px] ${on ? 'text-white' : 'text-gray-500'}`}>{t(`novasDatas.${tu}`)}</Text>
-                    <Text numberOfLines={1} className={`text-xs font-medium ${on ? 'text-white' : 'text-gray-700'}`} style={{ fontVariant: ['tabular-nums'] }}>{formatarJanela(janelaDaSugestao(d.data, tu, ctx))}</Text>
+                    <Text className={`text-xs font-medium text-center ${on ? 'text-white' : 'text-gray-700'}`} style={{ fontVariant: ['tabular-nums'] }}>{formatarJanela(janelaDaSugestao(d.data, tu, ctx))}</Text>
                   </Pressable>
                 );
               })}

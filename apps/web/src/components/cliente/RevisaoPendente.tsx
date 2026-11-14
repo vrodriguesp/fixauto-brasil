@@ -9,7 +9,10 @@ import { currencyForCountry } from '@/lib/currency';
 import { textoErroApi } from '@/lib/erro-api';
 import { fusoDoPais } from '@/lib/fuso';
 import { Link } from '@/i18n/navigation';
-import { formatarJanela, minutosDe, hhmm, JANELA_MIN, textoDaAgenda } from '@/lib/turnos';
+import { formatarJanela, minutosDe, hhmm, JANELA_MIN, LEGADO, partesDaAgenda } from '@/lib/turnos';
+
+// dia + janela; a janela nunca quebra no meio ("08:00–" / "10:00" - QA D13)
+const DiaJanela = ({ dia, janela }: { dia: string; janela: string }) => <>{dia}, <span className="whitespace-nowrap">{janela}</span></>;
 
 interface Revisao {
   id: string;
@@ -98,7 +101,7 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
     return (
       <section className="card mb-6 border border-blue-200 bg-blue-50/60" data-testid="mudanca-combinada">
         <p className="font-semibold text-gray-900">📅 {tMud('combinadoTitulo', { oficina: combinada.oficina?.nome_fantasia || '' })}</p>
-        <p className="mt-1 text-sm text-gray-800">{textoDaAgenda(dataAtual, ateAtual, combinada.oficina?.pais ?? null, loc, { weekday: 'long', day: 'numeric', month: 'long' }, ', ')}</p>
+        <p className="mt-1 text-sm text-gray-800"><DiaJanela {...partesDaAgenda(dataAtual, ateAtual, combinada.oficina?.pais ?? null, loc, { weekday: 'long', day: 'numeric', month: 'long' })} /></p>
         <p className="mt-2 text-sm text-gray-700"><span className="font-medium">{tMud('motivoOficina')}:</span> <TextoTraduzido compacto texto={combinada.motivo} /></p>
         {erro && <p role="alert" className="mt-2 text-sm text-red-700">{erro}</p>}
         <button type="button" disabled={enviando} onClick={contestar} className="mt-3 min-h-[40px] text-sm font-medium text-red-700 underline disabled:opacity-50" data-testid="nao-combinei">{tMud('naoCombinei')}</button>
@@ -130,16 +133,16 @@ export default function RevisaoPendente({ solicitacaoId, aoDecidir }: { solicita
     // oficina (o pedido reabre e os outros orcamentos voltam a valer)
     const fuso = fusoDoPais(rev.oficina?.pais);
     const loc = INTL_LOCALE[locale] || 'en-GB';
-    // janela proposta (inicio-fim; hora exata antiga = +30 min; so turno antigo = palavra manha/tarde)
-    const janelaRev = rev.nova_hora ? formatarJanela({ inicio: rev.nova_hora.slice(0, 5), fim: rev.nova_hora_fim ? rev.nova_hora_fim.slice(0, 5) : hhmm((minutosDe(rev.nova_hora) ?? 0) + JANELA_MIN) }) : '';
-    const nova = `${new Date(`${rev.nova_data_checkin}T12:00:00Z`).toLocaleDateString(loc, { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' })}, ${janelaRev || tMud(rev.novo_turno === 'tarde' ? 'tarde' : 'manha')}`;
+    // janela proposta (inicio-fim; hora exata antiga = +30 min; so turno antigo = 08-12 / 13-17, a mesma regra do servidor)
+    const janelaRev = rev.nova_hora ? formatarJanela({ inicio: rev.nova_hora.slice(0, 5), fim: rev.nova_hora_fim ? rev.nova_hora_fim.slice(0, 5) : hhmm(Math.min((minutosDe(rev.nova_hora) ?? 0) + JANELA_MIN, 1439)) }) : formatarJanela(LEGADO[rev.novo_turno === 'tarde' ? 'tarde' : 'manha']);
+    const nova = { dia: new Date(`${rev.nova_data_checkin}T12:00:00Z`).toLocaleDateString(loc, { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' }), janela: janelaRev };
     const podeManter = rev.data_atual_serve !== false;
     return (
       <section className="card mb-6 border-2 border-blue-400 bg-blue-50" aria-labelledby="revisao-titulo" data-testid="proposta-nova-data">
         <h2 id="revisao-titulo" className="text-lg font-semibold text-gray-900">📅 {tMud('dataTitulo', { oficina: rev.oficina?.nome_fantasia || '' })}</h2>
         <dl className="mt-2 text-sm text-gray-800 space-y-1">
-          {dataAtual && <div><dt className="inline text-gray-600">{tMud('dataDe')}: </dt><dd className="inline line-through">{textoDaAgenda(dataAtual, ateAtual, rev?.oficina?.pais ?? null, loc, { weekday: 'long', day: 'numeric', month: 'long' }, ', ')}</dd></div>}
-          <div><dt className="inline text-gray-600">{tMud('dataPara')}: </dt><dd className="inline font-bold">{nova}</dd></div>
+          {dataAtual && <div><dt className="inline text-gray-600">{tMud('dataDe')}: </dt><dd className="inline line-through"><DiaJanela {...partesDaAgenda(dataAtual, ateAtual, rev?.oficina?.pais ?? null, loc, { weekday: 'long', day: 'numeric', month: 'long' })} /></dd></div>}
+          <div><dt className="inline text-gray-600">{tMud('dataPara')}: </dt><dd className="inline font-bold"><DiaJanela {...nova} /></dd></div>
           {rev.nova_previsao_entrega && <div><dd>{tMud('previsaoNova', { data: new Date(`${rev.nova_previsao_entrega}T12:00:00`).toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long' }) })}</dd></div>}
         </dl>
         <p className="mt-3 text-sm text-gray-800"><span className="font-medium">{tMud('motivoOficina')}:</span> <TextoTraduzido compacto texto={rev.motivo} /></p>

@@ -655,8 +655,6 @@
     "dataAtual": "Data attuale: {quando}",
     "novaData": "Nuova data",
     "turno": "Fascia oraria",
-    "manha": "Mattina (08:00)",
-    "tarde": "Pomeriggio (13:00)",
     "previsao": "Pronta prevista (facoltativo)",
     "motivo": "Motivo (il cliente lo vede)",
     "motivoPlaceholder": "Es.: il pezzo arriva solo giovedì",

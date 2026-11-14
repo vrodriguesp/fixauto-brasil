@@ -655,8 +655,6 @@
     "dataAtual": "Data atual: {quando}",
     "novaData": "Nova data",
     "turno": "Período",
-    "manha": "Manhã (08:00)",
-    "tarde": "Tarde (13:00)",
     "previsao": "Previsão de entrega (opcional)",
     "motivo": "Justificativa (o cliente vê)",
     "motivoPlaceholder": "Ex.: a peça só chega na quinta-feira",

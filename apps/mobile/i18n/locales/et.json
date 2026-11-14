@@ -655,8 +655,6 @@
     "dataAtual": "Praegune aeg: {quando}",
     "novaData": "Uus kuupäev",
     "turno": "Aeg",
-    "manha": "Hommik (08:00)",
-    "tarde": "Pärastlõuna (13:00)",
     "previsao": "Eeldatav valmimine (valikuline)",
     "motivo": "Põhjendus (klient näeb seda)",
     "motivoPlaceholder": "Nt varuosa saabub alles neljapäeval",

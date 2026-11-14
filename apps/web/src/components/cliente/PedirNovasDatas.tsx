@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { textoErroApi } from '@/lib/erro-api';
-import { hojeLocal, faixasDoDia, turnoDaJanela, janelaDaSugestao, formatarJanela, type Turno, type ContextoOficina } from '@/lib/turnos';
+import { hojeLocal, faixasDoDia, turnoDaJanela, janelaDaSugestao, formatarJanela, LEGADO, type Turno, type ContextoOficina } from '@/lib/turnos';
 import { INTL_LOCALE } from '@/lib/utils';
 
 // "Tenho interesse, peca novas datas" (migracao 079): todas as datas do orcamento ja passaram.
@@ -46,7 +46,7 @@ export default function PedirNovasDatas({ orcamentoId, pais, horario, ctx: ctxPr
 
   const fmtDia = useMemo(() => new Intl.DateTimeFormat(intl, { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' }), [intl]);
   const diaTxt = (ymd: string) => fmtDia.format(new Date(`${ymd}T12:00:00Z`));
-  const turnoTxt = (tu: Turno, d?: string) => `${t(tu)} ${d ? formatarJanela(janelaDaSugestao(d, tu, ctx)) : tu === 'manha' ? '08–12' : '13–17'}`;
+  const turnoTxt = (tu: Turno, d?: string) => `${t(tu)} ${formatarJanela(d ? janelaDaSugestao(d, tu, ctx) : LEGADO[tu])}`;
 
   // proximos 14 dias no fuso da oficina; so dias abertos e turnos que ainda nao acabaram
   const dias = useMemo(() => {
@@ -120,7 +120,7 @@ export default function PedirNovasDatas({ orcamentoId, pais, horario, ctx: ctxPr
                         <button key={tu} type="button" aria-pressed={on} onClick={() => alternar(s)} disabled={!on && escolhidas.length >= MAX}
                           className={`min-h-[44px] rounded-2xl border px-2 py-1 text-xs font-medium leading-tight disabled:opacity-40 ${on ? 'border-primary-600 bg-primary-600 text-white' : 'border-gray-300 bg-white text-gray-700'}`}
                           data-testid={`chip-${d.data}-${tu}`}>
-                          <span className="block text-[11px] font-normal opacity-80">{t(tu)}</span><span className="block tabular-nums">{formatarJanela(janelaDaSugestao(d.data, tu, ctx))}</span>
+                          <span className="block text-[11px] font-normal opacity-80">{t(tu)}</span><span className="block whitespace-nowrap tabular-nums">{formatarJanela(janelaDaSugestao(d.data, tu, ctx))}</span>
                         </button>
                       ) : <span key={tu} />;
                     })}
