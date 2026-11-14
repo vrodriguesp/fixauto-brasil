@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { conflitoHorario, horarioDoDia, turnoAcabaLogo, turnoDisponivel, type HorarioSemana, type Turno } from '@/lib/turnos';
+import { conflitoHorario, horarioDoDia, turnoAcabaLogo, turnoDisponivel, janelaAindaVale, janelaAcabaLogo, expedienteDoDia, minutosDe, type HorarioSemana, type Turno, type Janela } from '@/lib/turnos';
 
 // Data de check-in x horario de funcionamento da oficina (caso real 14/11: "sabado a tarde" com a
 // oficina fechada no sabado). Usado no formulario do orcamento e na resposta a "novas datas" (079).
@@ -20,6 +20,25 @@ export function useAvisoHorario(horario: HorarioSemana, pais: string | null | un
     if (c === 'fechado') return { tipo: 'fechado', texto: t('erroDiaFechado') };
     if (c === 'turno') { const h = horarioDoDia(data, horario); return { tipo: 'turno', texto: t('avisoTurnoForaHorario', { inicio: h?.inicio || '', fim: h?.fim || '' }) }; }
     if (turnoAcabaLogo(data, turno, MARGEM_HORAS, undefined, pais ?? null)) return { tipo: 'acaba-logo', texto: t('avisoTurnoAcabaLogo', { horas: MARGEM_HORAS }) };
+    return null;
+  };
+}
+
+/**
+ * Mesmos avisos para uma JANELA (check-in v2): dia fechado pelo perfil = erro (rede de seguranca: o calendario
+ * ja desativa o dia, mas a revisao traz datas salvas e o perfil pode ter mudado); janela fora do horario do dia
+ * (linha antiga 13-17 num dia que fecha 12:00) = aviso; janela de hoje que acaba em < 2 h = aviso.
+ */
+export function useAvisoJanela(horario: HorarioSemana, pais: string | null | undefined) {
+  const t = useTranslations('oficinaEnviarOrcamento');
+  return (data: string, j: Janela): AvisoHorario => {
+    if (!data || !janelaAindaVale(data, j, undefined, pais ?? null)) return null;
+    if (conflitoHorario(data, 'manha', horario) === 'fechado') return { tipo: 'fechado', texto: t('erroDiaFechado') };
+    const h = horarioDoDia(data, horario);
+    const e = h ? expedienteDoDia(data, horario) : null;
+    const a = minutosDe(j.inicio), b = minutosDe(j.fim);
+    if (e && h?.inicio && h?.fim && a != null && b != null && (a < e.ab || b > e.fe)) return { tipo: 'turno', texto: t('avisoTurnoForaHorario', { inicio: h.inicio, fim: h.fim }) };
+    if (janelaAcabaLogo(data, j, MARGEM_HORAS, undefined, pais ?? null)) return { tipo: 'acaba-logo', texto: t('avisoTurnoAcabaLogo', { horas: MARGEM_HORAS }) };
     return null;
   };
 }

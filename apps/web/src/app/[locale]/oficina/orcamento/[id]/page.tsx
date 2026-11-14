@@ -21,8 +21,10 @@ import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import { useMostrarAlerta, rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 import { textoErroApi } from '@/lib/erro-api';
 import { useEstadoQueVolta } from '@/hooks/use-estado-que-volta';
-import { hojeLocal, turnoDisponivel, primeiroTurnoAberto, conflitoHorario, type Turno, type HorarioSemana } from '@/lib/turnos';
-import AvisoHorarioSlot, { LinkHorarioPerfil, useAvisoHorario } from '@/components/oficina/AvisoHorarioSlot';
+import { hojeLocal, janelaAindaVale, conflitoHorario, janelaDoSlot, turnoDaJanela, erroValidade, maiorData, somarDias, diaDoCalendario, formatarJanela, VALIDADE_FOLGA_DIAS, type HorarioSemana, type ContextoOficina } from '@/lib/turnos';
+import { LinkHorarioPerfil } from '@/components/oficina/AvisoHorarioSlot';
+import SeletorCheckin, { type LinhaCheckin } from '@/components/oficina/SeletorCheckin';
+import InfoI from '@/components/ui/InfoI';
 
 interface ItemForm {
   descricao: string;
@@ -81,7 +83,7 @@ export default function EnviarOrcamentoPage() {
   const [temAgenda, setTemAgenda] = useState<boolean | null>(null);
   useTopoAoMudar(oQueMudar);
   const motivoRef = useRef<HTMLTextAreaElement>(null);
-  const [revisaoPendente, setRevisaoPendente] = useState<{ valor_novo: number; created_at: string; tipo?: string; nova_data_checkin?: string | null; novo_turno?: string | null } | null>(null);
+  const [revisaoPendente, setRevisaoPendente] = useState<{ valor_novo: number; created_at: string; tipo?: string; nova_data_checkin?: string | null; novo_turno?: string | null; nova_hora?: string | null; nova_hora_fim?: string | null } | null>(null);
   const [erroRevisao, setErroRevisao] = useState('');
   // conta as tentativas: o mesmo erro duas vezes seguidas tambem leva a tela ao campo
   const [tentativaRevisao, setTentativaRevisao] = useState(0);
@@ -95,7 +97,7 @@ export default function EnviarOrcamentoPage() {
   useEffect(() => {
     if (!modoRevisaoAceito || !existingQuote?.id) return;
     let vivo = true;
-    const ler = () => supabase.from('orcamento_revisoes').select('valor_novo, created_at, tipo, nova_data_checkin, novo_turno').eq('orcamento_id', existingQuote.id).eq('status', 'pendente').maybeSingle()
+    const ler = () => supabase.from('orcamento_revisoes').select('valor_novo, created_at, tipo, nova_data_checkin, novo_turno, nova_hora, nova_hora_fim').eq('orcamento_id', existingQuote.id).eq('status', 'pendente').maybeSingle()
       .then(({ data }) => {
         if (!vivo) return;
         if (tinhaPendente.current && !data) setClienteRespondeu(true);
@@ -114,7 +116,9 @@ export default function EnviarOrcamentoPage() {
   const [prazoDias, setPrazoDias] = useState(PRAZO_PADRAO_DIAS);
   const [tempoExecucaoHoras, setTempoExecucaoHoras] = useState(TEMPO_PADRAO_HORAS);
   const [observacoes, setObservacoes] = useState('');
-  const [validade, setValidade] = useState((() => { const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0]; })());
+  // validade OBRIGATORIA e vazia no inicio (check-in v2, decisao 4): a oficina escolhe; minimo = ultima data de
+  // check-in; o banco tambem garante (trigger 082). Antes nascia hoje + 30 pelo dia UTC do aparelho.
+  const [validade, setValidade] = useState('');
   const [submitted, setSubmitted] = useState(false);
   useTopoAoMudar(submitted); // tela trocada inteira: abre no alto (dono 08/11)
   // garantia do servico (dias, a partir da entrega); '' = nao informada
@@ -158,42 +162,41 @@ export default function EnviarOrcamentoPage() {
       .catch(() => {});
   }, [oficina?.id]);
 
-  // Availability slots
-  // sugestao inicial: nunca hoje - o 1o dia depois de hoje em que a oficina abre (dono 14/11)
-  // (caso real 14/11: so "sabado a tarde", fechada no sabado; o periodo venceu no mesmo dia)
-  // a oficina pode corrigir o horario no perfil (aberto em outra aba pelo link do aviso): ao voltar
-  // para esta aba relemos so o horario, sem perder o que ja foi preenchido aqui
-  const [horarioRelido, setHorarioRelido] = useState<HorarioSemana>(undefined);
-  const horarioOficina = (horarioRelido ?? (oficina as any)?.horario_funcionamento) as HorarioSemana;
+  // Datas de check-in (check-in v2, decisoes finais 14/11 noite): o campo comeca VAZIO e e obrigatorio; a
+  // oficina escolhe dia + faixa no mini calendario (dias passados e fechados desativados). As faixas vem do
+  // perfil (recepcao de carros ou grade de 2 h pulando o almoco). A oficina pode corrigir o perfil numa aba
+  // nova (link na folha / no erro): ao voltar para esta aba relemos o perfil, sem perder o que foi preenchido.
+  const [perfilRelido, setPerfilRelido] = useState<ContextoOficina | null>(null);
+  const horarioOficina = (perfilRelido?.horario ?? (oficina as any)?.horario_funcionamento) as HorarioSemana;
+  const ctxOficina: ContextoOficina = perfilRelido ?? {
+    horario: (oficina as any)?.horario_funcionamento, recepcao_inicio: (oficina as any)?.recepcao_inicio, recepcao_fim: (oficina as any)?.recepcao_fim,
+    almoco_inicio: (oficina as any)?.almoco_inicio, almoco_fim: (oficina as any)?.almoco_fim,
+  };
   const oficinaIdH = oficina?.id;
   useEffect(() => {
     if (!oficinaIdH) return;
     const reler = () => {
       if (document.visibilityState !== 'visible') return;
-      supabase.from('oficinas').select('horario_funcionamento').eq('id', oficinaIdH).maybeSingle()
-        .then(({ data }) => { if (data?.horario_funcionamento) setHorarioRelido(data.horario_funcionamento as HorarioSemana); });
+      supabase.from('oficinas').select('horario_funcionamento, recepcao_inicio, recepcao_fim, almoco_inicio, almoco_fim').eq('id', oficinaIdH).maybeSingle()
+        .then(({ data }) => { if (data) setPerfilRelido({ horario: data.horario_funcionamento as HorarioSemana, recepcao_inicio: data.recepcao_inicio, recepcao_fim: data.recepcao_fim, almoco_inicio: data.almoco_inicio, almoco_fim: data.almoco_fim }); });
     };
     document.addEventListener('visibilitychange', reler);
     return () => document.removeEventListener('visibilitychange', reler);
   }, [oficinaIdH]);
-  const [slots, setSlots] = useState<{ data: string; turno: 'manha' | 'tarde' }[]>(() => [primeiroTurnoAberto(undefined, (oficina as any)?.pais, horarioOficina)]);
+  const [slots, setSlots] = useState<LinhaCheckin[]>([]);
   const [erroHorario, setErroHorario] = useState(false);
   // data num dia em que a oficina esta fechada pelo proprio horario: bloqueia o envio (dono 14/11)
   const [erroDiaFechado, setErroDiaFechado] = useState(false);
+  // nenhuma data de check-in: caixa vermelha, nao envia (decisao 1)
+  const [erroSemCheckin, setErroSemCheckin] = useState(false);
+  // validade vazia / antes da ultima data / no passado: vermelha ao enviar (decisao 4)
+  const [erroVal, setErroVal] = useState<'vazia' | 'passado' | 'antes' | null>(null);
+  const refCheckin = useRef<HTMLDivElement>(null);
+  const refValidade = useRef<HTMLDivElement>(null);
   // o botao "enviar" sempre responde: enviando..., o que falta, ou o erro - ao lado do botao (item 34:
   // a oficina tocava e nada acontecia - botao desativado com total 0 e falha do servidor calada)
   const [enviandoOrc, setEnviandoOrc] = useState(false);
   const [erroEnvio, setErroEnvio] = useState('');
-  // no 1o instante a oficina ainda nao carregou e o calculo usava o fuso padrao (Brasil: em
-  // Tallinn 13:50 virava "hoje de manha", ja passado - dono 08/11): refaz com o pais da
-  // oficina enquanto a pessoa nao mexeu no horario nem ha orcamento salvo
-  const mexeuHorario = useRef(false);
-  const paisOficina = (oficina as any)?.pais;
-  useEffect(() => {
-    if (!paisOficina || mexeuHorario.current || existingQuote) return;
-    setSlots([primeiroTurnoAberto(undefined, paisOficina, horarioOficina)]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- horario lido junto com a oficina (id estavel; auditoria Fable 14/11)
-  }, [paisOficina, existingQuote, oficina?.id]);
 
   // Pre-fill form with existing quote data for revisions
   useEffect(() => {
@@ -220,39 +223,28 @@ export default function EnviarOrcamentoPage() {
       } else {
         setObservacoes(obsRaw);
       }
-      setValidade(existingQuote.validade || (() => { const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().split('T')[0]; })());
+      // revisao: validade e datas salvas vem preenchidas (o "vazio" vale so para orcamento novo - spec v2 2.11)
+      setValidade(existingQuote.validade ? String(existingQuote.validade).slice(0, 10) : '');
       setGarantiaDias((existingQuote as any).garantia_dias != null ? String((existingQuote as any).garantia_dias) : '');
       if (existingQuote.disponibilidade && existingQuote.disponibilidade.length > 0) {
+        // janela gravada; linha antiga (sem horas) = 08-12 / 13-17, que e o que o cliente viu
         setSlots(
-          existingQuote.disponibilidade.map((s: any) => ({
-            data: s.data_checkin,
-            turno: s.turno as 'manha' | 'tarde',
-          }))
+          existingQuote.disponibilidade.map((s: any) => {
+            const j = janelaDoSlot(s);
+            return { data: s.data_checkin, hora_inicio: j.inicio, hora_fim: j.fim };
+          }).sort((a: LinhaCheckin, b: LinhaCheckin) => `${a.data}${a.hora_inicio}`.localeCompare(`${b.data}${b.hora_inicio}`))
         );
       }
     }
   }, [existingQuote, prefilled]);
 
-  const addSlot = () => {
-    mexeuHorario.current = true;
-    setSlots([...slots, { data: '', turno: 'manha' as const }]);
-  };
-
-  const removeSlot = (index: number) => {
-    if (slots.length > 1) setSlots(slots.filter((_, i) => i !== index));
-  };
-
-  const updateSlot = (index: number, field: 'data' | 'turno', value: string) => {
-    mexeuHorario.current = true;
+  const mudarSlots = (ls: LinhaCheckin[]) => {
     setErroHorario(false);
     setErroDiaFechado(false);
-    setSlots(slots.map((s, i) => {
-      if (i !== index) return s;
-      const novo = { ...s, [field]: value } as { data: string; turno: Turno };
-      // trocou para hoje e a manha ja passou: vai para a tarde
-      if (field === 'data' && !turnoDisponivel(novo.data, novo.turno, undefined, (oficina as any)?.pais ?? null) && turnoDisponivel(novo.data, 'tarde', undefined, (oficina as any)?.pais ?? null)) novo.turno = 'tarde';
-      return novo;
-    }));
+    if (ls.length) setErroSemCheckin(false);
+    // a validade so fica vermelha de novo ao enviar (decisao 4); se a correcao ja resolveu, some
+    if (erroVal && !erroValidade(validade, ls.map((s) => s.data), hojeLocal(undefined, (oficina as any)?.pais ?? null))) setErroVal(null);
+    setSlots(ls);
   };
 
   const addItem = () => {
@@ -329,12 +321,18 @@ ${d.observacoes}` : d.observacoes));
     // carro ja na oficina (em_andamento): o cartao das datas nao aparece e a oficina nao tem como corrigir
     // a data - nao valida (as datas salvas continuam sendo regravadas como antes; auditoria Fable R1)
     const datasVisiveis = solicitacao?.status !== 'em_andamento';
-    if (datasVisiveis && slots.some((s) => s.data && !turnoDisponivel(s.data, s.turno, undefined, (oficina as any)?.pais ?? null))) {
-      setErroHorario(true);
-      return;
-    }
-    if (datasVisiveis && slots.some((s) => s.data && conflitoHorario(s.data, s.turno, horarioOficina) === 'fechado')) {
-      setErroDiaFechado(true);
+    const paisSub = (oficina as any)?.pais ?? null;
+    const semCheckin = datasVisiveis && slots.length === 0;
+    const passado = datasVisiveis && slots.some((s) => !janelaAindaVale(s.data, { inicio: s.hora_inicio, fim: s.hora_fim }, undefined, paisSub));
+    const fechado = datasVisiveis && slots.some((s) => conflitoHorario(s.data, 'manha', horarioOficina) === 'fechado');
+    // validade: obrigatoria; com o carro ja na oficina so "vazia" conta (as datas ficaram para tras)
+    const ev = erroValidade(validade, datasVisiveis ? slots.map((s) => s.data) : [], hojeLocal(undefined, paisSub));
+    const evConta = ev && (datasVisiveis || ev === 'vazia') ? ev : null;
+    setErroSemCheckin(semCheckin); setErroHorario(passado); setErroDiaFechado(fechado); setErroVal(evConta);
+    if (semCheckin || passado || fechado || evConta) {
+      // rola ate o primeiro erro (de cima para baixo: validade fica acima das datas)
+      const alvo = evConta ? refValidade.current : refCheckin.current;
+      setTimeout(() => { alvo?.scrollIntoView({ block: 'center', behavior: 'smooth' }); alvo?.querySelector<HTMLElement>('input, button')?.focus({ preventScroll: true }); }, 50);
       return;
     }
 
@@ -346,9 +344,12 @@ ${d.observacoes}` : d.observacoes));
       valor_total: item.valor_unitario * item.quantidade,
     }));
 
+    // janela gravada no envio (nunca recalculada); turno derivado do inicio (app antigo / e2e / 079)
     const slotsPayload = slots.filter(s => s.data).map(s => ({
       data_checkin: s.data,
-      turno: s.turno,
+      turno: turnoDaJanela({ inicio: s.hora_inicio, fim: s.hora_fim }),
+      hora_inicio: s.hora_inicio,
+      hora_fim: s.hora_fim,
       data_previsao_entrega: (() => {
         const d = new Date(s.data + 'T12:00:00');
         d.setDate(d.getDate() + prazoDias);
@@ -437,13 +438,17 @@ ${d.observacoes}` : d.observacoes));
   };
   const removidos = originais.filter((o) => !itens.some((i) => chaveItem(i.descricao) === chaveItem(o.descricao)));
   // datas do check-in x horario da oficina (dono 14/11): dia FECHADO bloqueia o envio; periodo fora do
-  // horario e periodo que acaba em < 2 h so avisam
+  // horario e periodo que acaba em < 2 h so avisam (os avisos ficam em cada linha do SeletorCheckin)
   const paisF = (oficina as any)?.pais ?? null;
-  const avisoHorario = useAvisoHorario(horarioOficina, paisF);
-  const avisoSlot = (s: { data: string; turno: Turno }) => avisoHorario(s.data, s.turno);
-  const temDiaFechado = slots.some((s) => s.data && conflitoHorario(s.data, s.turno, horarioOficina) === 'fechado');
+  const temDiaFechado = slots.some((s) => s.data && conflitoHorario(s.data, 'manha', horarioOficina) === 'fechado');
   // uma data so (ou todas no mesmo dia): recomenda pelo menos 2 dias diferentes, sem bloquear (dono 14/11)
-  const diasOferecidos = new Set(slots.filter((s) => s.data && turnoDisponivel(s.data, s.turno, undefined, paisF)).map((s) => s.data)).size;
+  const diasOferecidos = new Set(slots.filter((s) => s.data && janelaAindaVale(s.data, { inicio: s.hora_inicio, fim: s.hora_fim }, undefined, paisF)).map((s) => s.data)).size;
+  // validade: minimo = ultima data de check-in (ou hoje); recomendado = ultima + 7 (so texto e botao, nunca sozinho)
+  const hojeOf = hojeLocal(undefined, paisF);
+  const ultimaData = maiorData(slots.map((s) => s.data));
+  const validadeMin = ultimaData && ultimaData > hojeOf ? ultimaData : hojeOf;
+  const validadeRecomendada = ultimaData ? somarDias(ultimaData, VALIDADE_FOLGA_DIAS) : '';
+  const fmtCurta = (ymd: string) => diaDoCalendario(ymd, INTL_LOCALE[locale] || 'en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' });
   // o formulario do orcamento so aparece na revisao de itens/valor (ou sem agenda aberta: carro ja na oficina)
   const mostraForm = !modoRevisaoAceito || temAgenda === false || oQueMudar === 'valor';
 
@@ -496,7 +501,7 @@ ${d.observacoes}` : d.observacoes));
       <div className="max-w-2xl mx-auto px-4 py-20 text-center">
         <p className="text-gray-700 mb-6">{revisaoPendente.tipo === 'data'
           // proposta de nova data (076) esperando o cliente
-          ? tMud('propostaPendente', { quando: `${new Date(`${revisaoPendente.nova_data_checkin}T12:00:00`).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { weekday: 'short', day: 'numeric', month: 'long' })}, ${tMud(revisaoPendente.novo_turno === 'tarde' ? 'tarde' : 'manha')}` })
+          ? tMud('propostaPendente', { quando: `${diaDoCalendario(revisaoPendente.nova_data_checkin || '', INTL_LOCALE[locale] || 'en-GB', { weekday: 'short', day: 'numeric', month: 'long' })}, ${revisaoPendente.nova_hora ? formatarJanela({ inicio: revisaoPendente.nova_hora.slice(0, 5), fim: (revisaoPendente.nova_hora_fim || revisaoPendente.nova_hora).slice(0, 5) }) : tMud(revisaoPendente.novo_turno === 'tarde' ? 'tarde' : 'manha')}` })
           : t('revisaoAguardandoCliente', { valor: formatCurrency(Number(revisaoPendente.valor_novo), moeda, locale) })}</p>
         <Link href={`/oficina/mensagens/${solicitacao.id}`} className="btn-primary inline-block">{t('abrirConversa')}</Link>
       </div>
@@ -570,7 +575,7 @@ ${d.observacoes}` : d.observacoes));
       {/* antes do check-in: propor nova data de entrega (076); enviada, a pagina passa a "esperando o cliente" */}
       {modoRevisaoAceito && oQueMudar === 'data' && existingQuote && oficina && (
         <ProporNovaData orcamentoId={existingQuote.id} solicitacaoId={solicitacao.id} oficinaId={oficina.id} pais={(oficina as any).pais}
-          aoEnviar={(d) => setRevisaoPendente({ tipo: 'data', valor_novo: 0, created_at: new Date().toISOString(), nova_data_checkin: d.data, novo_turno: d.turno })} />
+          aoEnviar={(d) => setRevisaoPendente({ tipo: 'data', valor_novo: 0, created_at: new Date().toISOString(), nova_data_checkin: d.data, novo_turno: d.turno, nova_hora: d.hora_inicio, nova_hora_fim: d.hora_fim })} />
       )}
       {modoRevisaoAceito && mostraForm && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
@@ -801,9 +806,12 @@ ${d.observacoes}` : d.observacoes));
           <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('prazoExecucao')}</h2>
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
-              <label htmlFor="cacb1-101" className="block text-sm font-medium text-gray-700 mb-1">
-                {t('prazoTotalDias')}
-              </label>
+              <div className="mb-1 flex flex-wrap items-center gap-1.5">
+                <label htmlFor="cacb1-101" className="block text-sm font-medium text-gray-700">
+                  {t('prazoTotalDias')}
+                </label>
+                <InfoI rotulo={t('infoRotulo', { campo: t('prazoTotalDias') })} texto={t('info_prazoTotalDias')} testid="info-prazo" />
+              </div>
               <CampoNumero id="cacb1-101"
                 className="input-field"
                 min={1}
@@ -814,9 +822,12 @@ ${d.observacoes}` : d.observacoes));
               <p id="cacb1-101-ajuda" className="text-xs text-gray-500 mt-1">{t('prazoTotalDiasAjuda')}</p>
             </div>
             <div>
-              <label htmlFor="cacb1-102" className="block text-sm font-medium text-gray-700 mb-1">
-                {t('tempoExecucaoHoras')}
-              </label>
+              <div className="mb-1 flex flex-wrap items-center gap-1.5">
+                <label htmlFor="cacb1-102" className="block text-sm font-medium text-gray-700">
+                  {t('tempoExecucaoHoras')}
+                </label>
+                <InfoI rotulo={t('infoRotulo', { campo: t('tempoExecucaoHoras') })} texto={t('info_tempoExecucaoHoras')} testid="info-tempo" />
+              </div>
               <CampoNumero id="cacb1-102"
                 className="input-field"
                 min={1}
@@ -827,19 +838,44 @@ ${d.observacoes}` : d.observacoes));
                 {t('diasUteis', { count: Math.ceil(tempoExecucaoHoras / 8) })}
               </p>
             </div>
-            <div>
-              <label htmlFor="cacb1-103" className="block text-sm font-medium text-gray-700 mb-1">
-                {t('validadeOrcamento')}
-              </label>
+            <div ref={refValidade} data-testid="campo-validade">
+              <div className="mb-1 flex flex-wrap items-center gap-1.5">
+                <label htmlFor="cacb1-103" className="block text-sm font-medium text-gray-700">
+                  {t('validadeOrcamento')} <span className="text-red-600" aria-hidden="true">*</span>
+                </label>
+                <InfoI rotulo={t('infoRotulo', { campo: t('validadeOrcamento') })} texto={t('info_validadeOrcamento')} testid="info-validade" />
+              </div>
               <input id="cacb1-103"
                 type="date"
-                className="input-field"
+                required
+                className={`input-field ${erroVal ? '!border-red-400 bg-red-50' : ''}`}
+                aria-invalid={!!erroVal || undefined}
+                aria-describedby={erroVal ? 'erro-validade' : ultimaData ? 'dica-validade' : undefined}
+                min={validadeMin}
                 value={validade}
-                onChange={(e) => setValidade(e.target.value)}
+                onChange={(e) => { setValidade(e.target.value); if (erroVal && !erroValidade(e.target.value, solicitacao.status !== 'em_andamento' ? slots.map((s) => s.data) : [], hojeOf)) setErroVal(null); }}
               />
+              {erroVal ? (
+                <div id="erro-validade" role="alert" data-testid="erro-validade" data-tipo={erroVal} className="mt-1 rounded-lg border border-red-200 bg-red-50 p-2 text-sm text-red-800">
+                  <p>⛔ {erroVal === 'antes'
+                    ? t('validadeAntesErro', { ultima: fmtCurta(ultimaData), recomendada: fmtCurta(validadeRecomendada), dias: VALIDADE_FOLGA_DIAS })
+                    : erroVal === 'passado' ? t('validadePassadoErro')
+                      : ultimaData ? t('validadeVaziaErroComData', { ultima: fmtCurta(ultimaData), recomendada: fmtCurta(validadeRecomendada), dias: VALIDADE_FOLGA_DIAS })
+                        : t('validadeVaziaErro')}</p>
+                  {validadeRecomendada && (
+                    <button type="button" data-testid="usar-validade-recomendada" onClick={() => { setValidade(validadeRecomendada); setErroVal(null); }}
+                      className="mt-1.5 min-h-[40px] rounded-lg border border-red-300 bg-white px-3 text-sm font-medium text-red-800 hover:bg-red-100">{t('validadeUsar', { data: fmtCurta(validadeRecomendada) })}</button>
+                  )}
+                </div>
+              ) : ultimaData ? (
+                <p id="dica-validade" className="text-xs text-gray-500 mt-1" data-testid="dica-validade">{t('validadeDica', { ultima: fmtCurta(ultimaData), recomendada: fmtCurta(validadeRecomendada) })}</p>
+              ) : null}
             </div>
             <div>
-              <label htmlFor="orc-garantia" className="block text-sm font-medium text-gray-700 mb-1">{t('garantia')}</label>
+              <div className="mb-1 flex flex-wrap items-center gap-1.5">
+                <label htmlFor="orc-garantia" className="block text-sm font-medium text-gray-700">{t('garantia')}</label>
+                <InfoI rotulo={t('infoRotulo', { campo: t('garantia') })} texto={t('info_garantia')} testid="info-garantia" />
+              </div>
               <select id="orc-garantia" className="input-field" value={garantiaOutra || !garantiaPronta ? 'outra' : garantiaDias}
                 onChange={(e) => {
                   if (e.target.value === 'outra') { setGarantiaOutra(true); if (garantiaPronta) setGarantiaDias(''); }
@@ -879,78 +915,21 @@ ${d.observacoes}` : d.observacoes));
             </div>
           </div>
         ) : (
-          <div className="card mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('disponibilidadeCheckin')}</h2>
+          <div ref={refCheckin} className={`card mb-6 ${erroSemCheckin ? 'ring-2 ring-red-300' : ''}`} data-testid="cartao-checkin">
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900">{t('disponibilidadeCheckin')} <span className="text-red-600" aria-hidden="true">*</span></h2>
+              <InfoI rotulo={t('infoRotulo', { campo: t('disponibilidadeCheckin') })} texto={t('info_checkin')} testid="info-checkin" />
+            </div>
             <p className="text-sm text-gray-500 mb-4">
               {t('ofereceDatas')}
             </p>
 
-            {erroHorario && <p ref={rolarAteAqui} className="text-sm text-red-700 mb-3" role="alert">{t('horarioPassado')}</p>}
-            <div className="space-y-3">
-              {slots.map((slot, index) => (
-                // celular: data e turno um embaixo do outro (o turno ficava espremido ao lado da data)
-                <div key={index} className="flex flex-wrap items-center gap-2 sm:gap-3 rounded-lg border border-gray-200 p-3 sm:border-0 sm:p-0">
-                  <div className="w-full sm:w-auto sm:flex-1">
-                    <input
-                      aria-label={t('disponibilidadeCheckin')}
-                      type="date"
-                      className={`input-field ${avisoSlot(slot)?.tipo === 'fechado' ? '!border-red-400' : ''}`}
-                      aria-invalid={avisoSlot(slot)?.tipo === 'fechado' || undefined}
-                      min={hojeLocal(undefined, (oficina as any)?.pais ?? null)}
-                      value={slot.data}
-                      onChange={(e) => updateSlot(index, 'data', e.target.value)}
-                      aria-describedby={avisoSlot(slot) ? `aviso-slot-${index}` : undefined}
-                    />
-                  </div>
-                  {/* celular: o periodo na linha inteira ("Hommik (8-12)" aparecia cortado - teste 09/11) */}
-                  <div className="w-full sm:flex-none sm:w-44">
-                    <select
-                      aria-label={t('manhaHorario') + ' / ' + t('tardeHorario')}
-                      className={`input-field ${!turnoDisponivel(slot.data, slot.turno, undefined, (oficina as any)?.pais ?? null) ? '!border-red-400' : ''}`}
-                      value={slot.turno}
-                      onChange={(e) => updateSlot(index, 'turno', e.target.value)}
-                    >
-                      <option value="manha" disabled={!turnoDisponivel(slot.data, 'manha', undefined, (oficina as any)?.pais ?? null)}>{t('manhaHorario')}</option>
-                      <option value="tarde" disabled={!turnoDisponivel(slot.data, 'tarde', undefined, (oficina as any)?.pais ?? null)}>{t('tardeHorario')}</option>
-                    </select>
-                  </div>
-                  {slot.data && (
-                    <div className="flex-1 text-xs text-gray-500 sm:flex-none sm:w-28">
-                      {t('entregaAprox', { data: (() => {
-                        const d = new Date(slot.data + 'T12:00:00');
-                        d.setDate(d.getDate() + prazoDias);
-                        return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
-                      })() })}
-                    </div>
-                  )}
-                  {slots.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeSlot(index)}
-                      aria-label="✕"
-                      className="text-red-400 hover:text-red-600 p-2 -m-2"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  )}
-                  {/* dia fechado = erro (bloqueia); fora do horario / acaba logo = aviso; link do horario abre numa aba nova */}
-                  <AvisoHorarioSlot aviso={avisoSlot(slot)} id={`aviso-slot-${index}`} testid={`aviso-slot-${index}`} testidLink={`link-horario-${index}`} />
-                </div>
-              ))}
-            </div>
+            {erroHorario && <p className="text-sm text-red-700 mb-3" role="alert" data-testid="erro-horario-passado">{t('horarioPassado')}</p>}
+            <SeletorCheckin linhas={slots} aoMudar={mudarSlots} ctx={ctxOficina} pais={paisF} prazoDias={prazoDias} erro={erroSemCheckin} testid="ck" />
+            {erroSemCheckin && <p role="alert" className="mt-2 text-sm font-medium text-red-700" data-testid="erro-sem-checkin">⛔ {t('erroSemCheckin')}</p>}
             {diasOferecidos < 2 && (
               <p role="status" data-testid="dica-mais-datas" className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">💡 {t('dicaMaisDatas')}</p>
             )}
-
-            <button
-              type="button"
-              onClick={addSlot}
-              className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"
-            >
-              {t('adicionarDataDisponivel')}
-            </button>
           </div>
         )}
 

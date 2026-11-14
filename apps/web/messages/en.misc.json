@@ -1310,6 +1310,7 @@
     "abrirConversa": "Open chat",
     "proporOutra": "Propose another date",
     "cancelarAgendamentoOficina": "Cancel booking",
-    "limparData": "Clear"
+    "limparData": "Clear",
+    "erroSemNovaData": "Choose the new day and time."
   }
 }

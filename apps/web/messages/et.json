@@ -742,7 +742,8 @@
     "PEDIDO_DATAS_RESPONDIDO": "Sellele uute aegade soovile on juba vastatud.",
     "SUGESTAO_VENCIDA": "See soovitud aeg on möödas. Saada teised ajad.",
     "ORCAMENTO_VENCIDO": "Selle hinnapakkumise kehtivus on lõppenud. Vali teine kehtiv pakkumine või esita uus päring.",
-    "ORCAMENTO_MUDOU": "Hinnapakkumine muutus pärast kliendi soovi. Saada kliendile valimiseks teised ajad."
+    "ORCAMENTO_MUDOU": "Hinnapakkumine muutus pärast kliendi soovi. Saada kliendile valimiseks teised ajad.",
+    "JANELA_NAO_ACABOU": "Kliendi saabumisaeg pole veel läbi. Märgi mitteilmumine pärast aja lõppu."
   },
   "sobre": {
     "metaTitle": "BipFixist",

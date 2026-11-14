@@ -1310,6 +1310,7 @@
     "abrirConversa": "Открыть чат",
     "proporOutra": "Предложить другую дату",
     "cancelarAgendamentoOficina": "Отменить запись",
-    "limparData": "Очистить"
+    "limparData": "Очистить",
+    "erroSemNovaData": "Выберите новый день и время."
   }
 }

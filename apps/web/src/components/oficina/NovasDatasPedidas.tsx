@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { textoErroApi } from '@/lib/erro-api';
-import { hojeLocal, turnoDisponivel, primeiroTurnoAberto, conflitoHorario, localParaIso, type Turno, type HorarioSemana } from '@/lib/turnos';
-import AvisoHorarioSlot, { useAvisoHorario } from '@/components/oficina/AvisoHorarioSlot';
+import { hojeLocal, janelaAindaVale, conflitoHorario, localParaIso, janelaDaSugestao, formatarJanela, turnoDaJanela, type Turno, type HorarioSemana, type ContextoOficina } from '@/lib/turnos';
+import SeletorCheckin, { type LinhaCheckin } from '@/components/oficina/SeletorCheckin';
 import { INTL_LOCALE } from '@/lib/utils';
 
 // O cliente pediu novas datas (migracao 079): a oficina confirma uma sugestao dele (o orcamento
@@ -13,7 +13,6 @@ import { INTL_LOCALE } from '@/lib/utils';
 // So aparece com pedido PENDENTE do cliente (dono 11/11: a oficina nao propoe datas sem pedido).
 type Sug = { data: string; turno: Turno };
 type Pedido = { id: string; created_at: string; sugestoes: Sug[]; mensagem: string | null };
-type Linha = { data: string; turno: Turno; previsao: string; previsaoMexida: boolean };
 const MAX = 3;
 // confirmar a sugestao (aceite automatico) so com o turno comecando daqui a 2 h ou mais (igual ao servidor)
 const ANTECEDENCIA_MS = 2 * 3600e3;
@@ -22,18 +21,22 @@ const somar = (ymd: string, n: number) => { const d = new Date(`${ymd}T12:00:00Z
 // Datas x horario de funcionamento (dono 14/11, igual ao formulario do orcamento): sugestao no proximo dia
 // em que a oficina abre (nunca hoje), dia fechado bloqueia (o servidor tambem recusa: DIA_FECHADO),
 // periodo fora do horario so avisa; link para corrigir o horario no perfil (aba nova).
-export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horario: horarioProp, oficinaId, aoMudar }: { orcamentoId: string; prazoDias: number; pais?: string | null; horario?: HorarioSemana; oficinaId?: string; aoMudar?: () => void }) {
+// Check-in v2: "outras datas" usam o MESMO seletor do orcamento (dia no mini calendario + faixa; vazio no
+// inicio, ate 3); cada linha manda hora_inicio/hora_fim. A sugestao do motorista (dia + manha/tarde) vira a
+// 1a faixa do perfil nesse turno (regra 2.13) - o rotulo ja mostra essa faixa.
+export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horario: horarioProp, ctx: ctxProp, oficinaId, aoMudar }: { orcamentoId: string; prazoDias: number; pais?: string | null; horario?: HorarioSemana; ctx?: ContextoOficina | null; oficinaId?: string; aoMudar?: () => void }) {
   const t = useTranslations('oficinaNovasDatas');
-  // a oficina corrige o horario no perfil (aba nova pelo link do erro): ao voltar para esta aba relemos
-  // so o horario, sem perder as linhas preenchidas (igual ao formulario do orcamento; auditoria Fable R4)
-  const [horarioRelido, setHorarioRelido] = useState<HorarioSemana>(undefined);
-  const horario = horarioRelido ?? horarioProp;
+  // a oficina corrige o perfil (aba nova pelo link do erro): ao voltar para esta aba relemos horario,
+  // recepcao e almoco, sem perder as linhas preenchidas (igual ao formulario do orcamento; auditoria Fable R4)
+  const [ctxRelido, setCtxRelido] = useState<ContextoOficina | null>(null);
+  const ctx: ContextoOficina = ctxRelido ?? { ...(ctxProp || {}), horario: ctxProp?.horario ?? horarioProp };
+  const horario = ctx.horario;
   useEffect(() => {
     if (!oficinaId) return;
     const reler = () => {
       if (document.visibilityState !== 'visible') return;
-      supabase.from('oficinas').select('horario_funcionamento').eq('id', oficinaId).maybeSingle()
-        .then(({ data }) => { if (data?.horario_funcionamento) setHorarioRelido(data.horario_funcionamento as HorarioSemana); });
+      supabase.from('oficinas').select('horario_funcionamento, recepcao_inicio, recepcao_fim, almoco_inicio, almoco_fim').eq('id', oficinaId).maybeSingle()
+        .then(({ data }) => { if (data) setCtxRelido({ horario: data.horario_funcionamento as HorarioSemana, recepcao_inicio: data.recepcao_inicio, recepcao_fim: data.recepcao_fim, almoco_inicio: data.almoco_inicio, almoco_fim: data.almoco_fim }); });
     };
     document.addEventListener('visibilitychange', reler);
     return () => document.removeEventListener('visibilitychange', reler);
@@ -45,9 +48,9 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
   const [feito, setFeito] = useState('');
   const [erro, setErro] = useState('');
   const [enviando, setEnviando] = useState<string | null>(null);
-  const novaLinha = useCallback((): Linha => { const p = primeiroTurnoAberto(undefined, pais ?? null, horario); return { data: p.data, turno: p.turno, previsao: somar(p.data, prazoDias || 0), previsaoMexida: false }; }, [pais, prazoDias, horario]);
-  const avisoHorario = useAvisoHorario(horario, pais);
-  const [linhas, setLinhas] = useState<Linha[]>(() => [novaLinha()]);
+  // linhas vazias no inicio (check-in v2, decisao 1): a oficina escolhe dia + faixa
+  const [linhas, setLinhas] = useState<LinhaCheckin[]>([]);
+  const [semLinha, setSemLinha] = useState(false);
 
   const carregar = useCallback(async () => {
     const { data } = await supabase.from('orcamento_pedido_datas').select('id, created_at, sugestoes, mensagem').eq('orcamento_id', orcamentoId).eq('status', 'pendente').maybeSingle();
@@ -78,17 +81,8 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
   if (feito) return <p role="status" className="card border-2 border-emerald-200 bg-emerald-50 text-sm font-medium text-emerald-800" data-testid="novas-datas-feito">✔ {feito}</p>;
   if (!pedido) return null;
 
-  const mudar = (i: number, campo: 'data' | 'turno' | 'previsao', v: string) => setLinhas((ls) => ls.map((l, j) => {
-    if (j !== i) return l;
-    const n = { ...l, [campo]: v } as Linha;
-    if (campo === 'previsao') n.previsaoMexida = true;
-    if (campo === 'data') {
-      if (!turnoDisponivel(n.data, n.turno, undefined, pais ?? null) && turnoDisponivel(n.data, 'tarde', undefined, pais ?? null)) n.turno = 'tarde';
-      if (!l.previsaoMexida && n.data) n.previsao = somar(n.data, prazoDias || 0);
-    }
-    return n;
-  }));
-  const linhasOk = linhas.every((l) => l.data && turnoDisponivel(l.data, l.turno, undefined, pais ?? null) && (!l.previsao || l.previsao >= l.data) && conflitoHorario(l.data, l.turno, horario) !== 'fechado');
+  const mudarPrevisao = (i: number, v: string) => setLinhas((ls) => ls.map((l, j) => (j === i ? { ...l, previsao: v } : l)));
+  const linhasOk = linhas.length > 0 && linhas.every((l) => janelaAindaVale(l.data, { inicio: l.hora_inicio, fim: l.hora_fim }, undefined, pais ?? null) && (!l.previsao || l.previsao >= l.data) && conflitoHorario(l.data, 'manha', horario) !== 'fechado');
   const sugs = (pedido.sugestoes || []) as Sug[];
 
   return (
@@ -104,10 +98,12 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
       {sugs.length === 0 ? <p className="text-sm text-gray-600">{t('semSugestoes')}</p> : (
         <ul className="mt-2 space-y-2">
           {sugs.map((s, i) => {
-            const vale = Date.parse(localParaIso(s.data, s.turno === 'tarde' ? '13:00' : '08:00', pais ?? null)) - Date.now() >= ANTECEDENCIA_MS;
+            // a janela que vale ao confirmar = 1a faixa do perfil nesse turno (igual ao servidor)
+            const js = janelaDaSugestao(s.data, s.turno, ctx);
+            const vale = Date.parse(localParaIso(s.data, js.inicio, pais ?? null)) - Date.now() >= ANTECEDENCIA_MS;
             return (
               <li key={`${s.data}-${s.turno}`} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white p-2">
-                <span className="text-sm font-medium text-gray-900">{fmtDia.format(new Date(`${s.data}T12:00:00Z`))} · {s.turno === 'manha' ? '08:00–12:00' : '13:00–17:00'}</span>
+                <span className="text-sm font-medium text-gray-900" data-testid={`sugestao-${i}-texto`}>{fmtDia.format(new Date(`${s.data}T12:00:00Z`))} · {formatarJanela(js)}</span>
                 {vale ? (
                   <button type="button" onClick={() => enviar({ confirmar: i }, `c${i}`, t('feitoConfirmado'))} disabled={!!enviando}
                     className="btn-success !py-2 !px-3 text-sm min-h-[44px] w-full sm:w-auto disabled:opacity-60" data-testid={`confirmar-sugestao-${i}`}>
@@ -123,35 +119,17 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
 
       <h3 className="mt-5 text-sm font-semibold text-gray-900">{t('outrasTitulo')}</h3>
       <div className="mt-2 space-y-3" data-testid="editor-novas-datas">
-        {linhas.map((l, i) => (
-          <div key={i} className="grid grid-cols-1 gap-2 rounded-lg border border-gray-200 bg-white p-2 sm:grid-cols-3">
-            <label className="text-xs text-gray-600 min-w-0">{t('data')}
-              <input type="date" min={hoje} value={l.data} onChange={(e) => mudar(i, 'data', e.target.value)} data-testid={`nd-data-${i}`}
-                className={`input-field mt-0.5 w-full ${avisoHorario(l.data, l.turno)?.tipo === 'fechado' ? '!border-red-400' : ''}`}
-                aria-invalid={avisoHorario(l.data, l.turno)?.tipo === 'fechado' || undefined} aria-describedby={avisoHorario(l.data, l.turno) ? `nd-aviso-${i}` : undefined} />
+        <SeletorCheckin linhas={linhas} aoMudar={(ls) => { setLinhas(ls); if (ls.length) setSemLinha(false); }} ctx={ctx} pais={pais ?? null} prazoDias={prazoDias || 0} max={MAX} erro={semLinha} testid="nd" mostrarPrevisao={false}
+          extraLinha={(l, i) => (
+            <label className="mt-2 block text-xs text-gray-600">{t('previsao')}
+              <input type="date" min={l.data || hoje} value={l.previsao || ''} onChange={(e) => mudarPrevisao(i, e.target.value)} className="input-field mt-0.5 w-full sm:w-48" data-testid={`nd-previsao-${i}`} />
             </label>
-            <label className="text-xs text-gray-600 min-w-0">{t('turno')}
-              <select value={l.turno} onChange={(e) => mudar(i, 'turno', e.target.value)} className="input-field mt-0.5 w-full" data-testid={`nd-turno-${i}`}>
-                <option value="manha" disabled={!turnoDisponivel(l.data, 'manha', undefined, pais ?? null)}>{t('manha')}</option>
-                <option value="tarde" disabled={!turnoDisponivel(l.data, 'tarde', undefined, pais ?? null)}>{t('tarde')}</option>
-              </select>
-            </label>
-            <label className="text-xs text-gray-600 min-w-0">{t('previsao')}
-              <input type="date" min={l.data || hoje} value={l.previsao} onChange={(e) => mudar(i, 'previsao', e.target.value)} className="input-field mt-0.5 w-full" data-testid={`nd-previsao-${i}`} />
-            </label>
-            <div className="sm:col-span-3 empty:hidden"><AvisoHorarioSlot aviso={avisoHorario(l.data, l.turno)} id={`nd-aviso-${i}`} testid={`nd-aviso-${i}`} testidLink={`nd-link-horario-${i}`} /></div>
-            {linhas.length > 1 && (
-              <button type="button" onClick={() => setLinhas((ls) => ls.filter((_, j) => j !== i))} className="justify-self-start text-xs text-red-600 underline sm:col-span-3">{t('remover')}</button>
-            )}
-          </div>
-        ))}
-        {linhas.length < MAX && (
-          <button type="button" onClick={() => setLinhas((ls) => [...ls, novaLinha()])} className="text-sm font-medium text-primary-700" data-testid="nd-adicionar">{t('adicionar')}</button>
-        )}
+          )} />
+        {semLinha && <p role="alert" className="text-sm font-medium text-red-700" data-testid="nd-erro-sem-data">⛔ {t('erroSemData')}</p>}
         <p className="text-xs text-gray-600">{t('semMudarPreco')}</p>
         {erro && <p role="alert" className="text-sm text-red-700 bg-red-50 rounded-lg p-2">{erro}</p>}
-        <button type="button" disabled={!linhasOk || !!enviando}
-          onClick={() => enviar({ horarios: linhas.map((l) => ({ data: l.data, turno: l.turno, previsao: l.previsao || undefined })) }, 'h', t('feitoEnviadas'))}
+        <button type="button" disabled={!!enviando || (linhas.length > 0 && !linhasOk)}
+          onClick={() => { if (!linhas.length) { setSemLinha(true); return; } enviar({ horarios: linhas.map((l) => ({ data: l.data, turno: turnoDaJanela({ inicio: l.hora_inicio, fim: l.hora_fim }), hora_inicio: l.hora_inicio, hora_fim: l.hora_fim, previsao: l.previsao || undefined })) }, 'h', t('feitoEnviadas')); }}
           className="btn-primary w-full sm:w-auto min-h-[44px] disabled:opacity-60" data-testid="nd-enviar">
           {enviando === 'h' ? t('enviando') : t('enviar')}
         </button>

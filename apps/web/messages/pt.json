@@ -733,7 +733,8 @@
     "PEDIDO_DATAS_RESPONDIDO": "Este pedido de novas datas já foi respondido.",
     "SUGESTAO_VENCIDA": "Esta data sugerida já passou. Mande outras datas.",
     "ORCAMENTO_VENCIDO": "Este orçamento venceu. Escolha outro orçamento ativo ou refaça o pedido.",
-    "ORCAMENTO_MUDOU": "O orçamento mudou depois do pedido do cliente. Mande outras datas para ele escolher."
+    "ORCAMENTO_MUDOU": "O orçamento mudou depois do pedido do cliente. Mande outras datas para ele escolher.",
+    "JANELA_NAO_ACABOU": "A janela de chegada do cliente ainda não terminou. Marque a falta depois do fim da janela."
   },
   "sobre": {
     "metaTitle": "Sobre o BipFix",

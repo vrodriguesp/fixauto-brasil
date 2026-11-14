@@ -1310,6 +1310,7 @@
     "abrirConversa": "Apri chat",
     "proporOutra": "Proponi un’altra data",
     "cancelarAgendamentoOficina": "Annulla prenotazione",
-    "limparData": "Cancella"
+    "limparData": "Cancella",
+    "erroSemNovaData": "Scegli il nuovo giorno e orario."
   }
 }

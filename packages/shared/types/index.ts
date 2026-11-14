@@ -274,6 +274,9 @@ export interface DisponibilidadeSlot {
   id: string;
   data_checkin: string;
   turno: 'manha' | 'tarde';
+  // janela de chegada (check-in v2, migracao 082); nulas = linha antiga (08-12 / 13-17)
+  hora_inicio?: string | null;
+  hora_fim?: string | null;
   data_previsao_entrega: string;
 }
 

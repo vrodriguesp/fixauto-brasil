@@ -1310,6 +1310,7 @@
     "abrirConversa": "Abrir conversa",
     "proporOutra": "Propor outra data",
     "cancelarAgendamentoOficina": "Cancelar marcação",
-    "limparData": "Limpar"
+    "limparData": "Limpar",
+    "erroSemNovaData": "Escolha o novo dia e horário."
   }
 }

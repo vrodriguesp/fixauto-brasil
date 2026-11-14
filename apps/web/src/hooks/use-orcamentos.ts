@@ -20,7 +20,8 @@ interface CreateOrcamentoInput {
   garantia_dias?: number | null;
   anexo_url?: string | null;
   itens: Omit<OrcamentoItem, 'id' | 'orcamento_id'>[];
-  slots: { data_checkin: string; turno: string; data_previsao_entrega: string }[];
+  // check-in v2: janela gravada (hora_inicio/hora_fim 'HH:MM'); turno derivado do inicio
+  slots: { data_checkin: string; turno: string; hora_inicio?: string; hora_fim?: string; data_previsao_entrega: string }[];
 }
 
 export function useOrcamentos() {
@@ -55,11 +56,12 @@ export function useOrcamentos() {
       );
     }
 
-    // Insert availability slots
+    // Insert availability slots (falha agora aparece: antes um horario recusado pelo banco sumia calado)
     if (input.slots.length > 0) {
-      await supabase.from('orcamento_disponibilidade').insert(
+      const { error: eSlots } = await supabase.from('orcamento_disponibilidade').insert(
         input.slots.map((s) => ({ ...s, orcamento_id: orc.id }))
       );
+      if (eSlots) return { error: eSlots };
     }
 
     // Update solicitacao status
@@ -125,7 +127,7 @@ export function useOrcamentos() {
       garantia_dias?: number | null;
       anexo_url?: string | null;
       itens: Omit<OrcamentoItem, 'id' | 'orcamento_id'>[];
-      slots: { data_checkin: string; turno: string; data_previsao_entrega: string }[];
+      slots: { data_checkin: string; turno: string; hora_inicio?: string; hora_fim?: string; data_previsao_entrega: string }[];
     }
   ) => {
     if (!oficina) return { error: { message: 'No oficina' } };
@@ -161,9 +163,10 @@ export function useOrcamentos() {
     // Replace availability slots
     await supabase.from('orcamento_disponibilidade').delete().eq('orcamento_id', orcamentoId);
     if (input.slots.length > 0) {
-      await supabase.from('orcamento_disponibilidade').insert(
+      const { error: eSlots } = await supabase.from('orcamento_disponibilidade').insert(
         input.slots.map((s) => ({ ...s, orcamento_id: orcamentoId }))
       );
+      if (eSlots) return { error: eSlots };
     }
 
     // Reset solicitacao status so client can review again

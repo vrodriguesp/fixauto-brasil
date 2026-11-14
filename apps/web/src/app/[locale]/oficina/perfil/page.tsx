@@ -13,6 +13,9 @@ import { seguradorasDoPais } from '@/lib/seguradoras';
 import CampoNumero from '@/components/forms/CampoNumero';
 import CampoTelefone from '@/components/forms/CampoTelefone';
 import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
+import InfoI from '@/components/ui/InfoI';
+import { faixasDoDia, formatarJanela, validarRecepcao, minutosDe, hhmm, somarDias, diaDoCalendario, JANELA_MIN, type HorarioSemana } from '@/lib/turnos';
+import { INTL_LOCALE } from '@/lib/utils';
 
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
@@ -54,6 +57,18 @@ export default function PerfilOficinaPage() {
     dom: { aberto: false, inicio: '', fim: '' },
   };
   const [horario, setHorario] = useState<Record<string, { aberto: boolean; inicio: string; fim: string }>>(defaultHorario);
+  // Recepcao de carros + almoco (check-in v2, decisao 3): UM par para a semana toda, cortado pelo horario de
+  // cada dia; vazio = horario de funcionamento (faixas de 2 h). Hora fixa = janela de 30 min.
+  const [recModo, setRecModo] = useState<'funcionamento' | 'faixa' | 'hora'>('funcionamento');
+  const [recIni, setRecIni] = useState('08:00');
+  const [recFim, setRecFim] = useState('10:00');
+  const [recHora, setRecHora] = useState('09:00');
+  const [almoco, setAlmoco] = useState(false);
+  const [almIni, setAlmIni] = useState('12:00');
+  const [almFim, setAlmFim] = useState('13:00');
+  const [erroRecepcao, setErroRecepcao] = useState('');
+  // a oficina mexeu na secao (para "usar o horario de funcionamento" valer como resposta ao convite)
+  const mexeuRecepcao = useRef(false);
 
   // Capacity per service type
   const [capacidade, setCapacidade] = useState<Record<string, number>>({});
@@ -87,6 +102,17 @@ export default function PerfilOficinaPage() {
       if ((oficina as any).horario_funcionamento) {
         setHorario((oficina as any).horario_funcionamento);
       }
+      {
+        const o = oficina as any;
+        const ri = o.recepcao_inicio ? String(o.recepcao_inicio).slice(0, 5) : '', rf = o.recepcao_fim ? String(o.recepcao_fim).slice(0, 5) : '';
+        if (ri && rf) {
+          const dur = (minutosDe(rf) ?? 0) - (minutosDe(ri) ?? 0);
+          if (dur === JANELA_MIN) { setRecModo('hora'); setRecHora(ri); } else { setRecModo('faixa'); setRecIni(ri); setRecFim(rf); }
+        } else setRecModo('funcionamento');
+        const ai = o.almoco_inicio ? String(o.almoco_inicio).slice(0, 5) : '', af = o.almoco_fim ? String(o.almoco_fim).slice(0, 5) : '';
+        setAlmoco(!!(ai && af));
+        if (ai && af) { setAlmIni(ai); setAlmFim(af); }
+      }
       setCapacidadeTotal((oficina as any).capacidade_total || 0);
       setMonitoramento(!!(oficina as any).monitoramento_ativo);
       if ((oficina as any).capacidade_servicos) {
@@ -98,8 +124,9 @@ export default function PerfilOficinaPage() {
   // link #horario-funcionamento (aviso de dia fechado no orcamento): a pagina so desenha o
   // cartao depois de carregar, entao o navegador nao rola sozinho ate a ancora
   useEffect(() => {
-    if (loading || !user || typeof window === 'undefined' || window.location.hash !== '#horario-funcionamento') return;
-    const tmr = setTimeout(() => document.getElementById('horario-funcionamento')?.scrollIntoView({ block: 'start' }), 100);
+    if (loading || !user || typeof window === 'undefined' || !['#horario-funcionamento', '#recepcao'].includes(window.location.hash)) return;
+    const alvo = window.location.hash.slice(1);
+    const tmr = setTimeout(() => document.getElementById(alvo)?.scrollIntoView({ block: 'start' }), 100);
     return () => clearTimeout(tmr);
   }, [loading, user]);
 
@@ -189,10 +216,29 @@ export default function PerfilOficinaPage() {
     );
   };
 
+  // valores que vao para o banco (recepcao/almoco) e a previa das faixas que o orcamento vai oferecer
+  const recepcaoDb = recModo === 'faixa' ? { recepcao_inicio: recIni, recepcao_fim: recFim }
+    : recModo === 'hora' ? { recepcao_inicio: recHora, recepcao_fim: hhmm(Math.min((minutosDe(recHora) ?? 0) + JANELA_MIN, 1439)) }
+      : { recepcao_inicio: null, recepcao_fim: null };
+  const almocoDb = almoco ? { almoco_inicio: almIni, almoco_fim: almFim } : { almoco_inicio: null, almoco_fim: null };
+  const ctxPerfil = { horario: horario as HorarioSemana, ...recepcaoDb, ...almocoDb };
+  const diaPrevia = (() => { for (let i = 0; i < 7; i++) { const d = somarDias('2026-11-16', i); if (faixasDoDia(d, ctxPerfil).length) return d; } return ''; })();
+  const faixasPrevia = diaPrevia ? faixasDoDia(diaPrevia, ctxPerfil).map(formatarJanela) : [];
+
   const handleSave = async () => {
     setSaving(true);
     setError('');
+    setErroRecepcao('');
     setSuccess(false);
+
+    // recepcao/almoco: valida antes de gravar (faixa >= 30 min, cruza algum dia aberto, nao cai toda no almoco)
+    const errRec = validarRecepcao(ctxPerfil);
+    if (errRec) {
+      setErroRecepcao(t(`erro_${errRec}`));
+      setSaving(false);
+      setTimeout(() => document.getElementById(errRec === 'almoco_invalido' ? 'horario-funcionamento' : 'recepcao')?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 50);
+      return;
+    }
 
     // Update oficina
     if (oficina) {
@@ -212,6 +258,10 @@ export default function PerfilOficinaPage() {
           especialidades,
           seguradoras_convencionadas: convencionadas,
           horario_funcionamento: horario,
+          ...recepcaoDb,
+          ...almocoDb,
+          // "usar o horario de funcionamento" escolhido de proposito = resposta ao convite em Pedidos
+          ...(recModo === 'funcionamento' && mexeuRecepcao.current ? { recepcao_confirmada_em: new Date().toISOString() } : {}),
           capacidade_servicos: capacidade,
           capacidade_total: capacidadeTotal > 0 ? Math.min(500, capacidadeTotal) : null,
           monitoramento_ativo: monitoramento,
@@ -537,6 +587,71 @@ export default function PerfilOficinaPage() {
             </div>
           ))}
         </div>
+        {/* almoco: um par para a semana; as faixas do check-in pulam o almoco (check-in v2, D.3) */}
+        <div className="mt-4 border-t border-gray-100 pt-4" data-testid="perfil-almoco">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <label className="flex items-center gap-2 shrink-0">
+              <input type="checkbox" checked={almoco} onChange={(e) => { setAlmoco(e.target.checked); mexeuRecepcao.current = true; }} className="w-4 h-4 text-primary-600 rounded" data-testid="almoco-ativo" />
+              <span className="text-sm font-medium text-gray-700">{t('almocoTitulo')}</span>
+            </label>
+            {almoco && (
+              <div className="flex items-center gap-2 min-w-0">
+                <input type="time" aria-label={`${t('almocoTitulo')} – ${t('recepcaoInicioAria')}`} className="input-field !py-1 !px-2 text-sm !w-[6.75rem] min-w-0" value={almIni} onChange={(e) => setAlmIni(e.target.value)} data-testid="almoco-inicio" />
+                <span className="text-gray-400">{t('as')}</span>
+                <input type="time" aria-label={`${t('almocoTitulo')} – ${t('recepcaoFimAria')}`} className="input-field !py-1 !px-2 text-sm !w-[6.75rem] min-w-0" value={almFim} onChange={(e) => setAlmFim(e.target.value)} data-testid="almoco-fim" />
+              </div>
+            )}
+          </div>
+          <p className="mt-1 text-xs text-gray-500">{t('almocoAjuda')}</p>
+        </div>
+      </div>
+
+      {/* Recepcao de carros (check-in v2, decisao 3; ancora #recepcao = convite em Pedidos) */}
+      <div id="recepcao" className="card mb-6 scroll-mt-24" data-testid="perfil-recepcao">
+        <div className="mb-1 flex flex-wrap items-center gap-2">
+          <h2 className="text-lg font-semibold text-gray-900">{t('recepcaoTitulo')}</h2>
+          <InfoI rotulo={t('infoRecepcaoRotulo')} texto={t('infoRecepcao')} testid="info-recepcao" />
+        </div>
+        <p className="mb-3 text-sm text-gray-600">{t('recepcaoTexto')}</p>
+        <fieldset className="space-y-3">
+          <legend className="sr-only">{t('recepcaoTitulo')}</legend>
+          <label className="flex items-start gap-2">
+            <input type="radio" name="recepcao-modo" className="mt-1" checked={recModo === 'funcionamento'} onChange={() => { setRecModo('funcionamento'); mexeuRecepcao.current = true; }} data-testid="recepcao-funcionamento" />
+            <span className="text-sm text-gray-800">{t('recepcaoModoFuncionamento')}</span>
+          </label>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <label className="flex items-center gap-2">
+              <input type="radio" name="recepcao-modo" checked={recModo === 'faixa'} onChange={() => { setRecModo('faixa'); mexeuRecepcao.current = true; }} data-testid="recepcao-faixa" />
+              <span className="text-sm text-gray-800">{t('recepcaoModoFaixa')}</span>
+            </label>
+            {recModo === 'faixa' && (
+              <div className="flex items-center gap-2 min-w-0">
+                <input type="time" step={900} aria-label={`${t('recepcaoModoFaixa')} – ${t('recepcaoInicioAria')}`} className="input-field !py-1 !px-2 text-sm !w-[6.75rem] min-w-0" value={recIni} onChange={(e) => setRecIni(e.target.value)} data-testid="recepcao-inicio" />
+                <span className="text-gray-400">{t('as')}</span>
+                <input type="time" step={900} aria-label={`${t('recepcaoModoFaixa')} – ${t('recepcaoFimAria')}`} className="input-field !py-1 !px-2 text-sm !w-[6.75rem] min-w-0" value={recFim} onChange={(e) => setRecFim(e.target.value)} data-testid="recepcao-fim" />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <label className="flex items-center gap-2">
+              <input type="radio" name="recepcao-modo" checked={recModo === 'hora'} onChange={() => { setRecModo('hora'); mexeuRecepcao.current = true; }} data-testid="recepcao-hora" />
+              <span className="text-sm text-gray-800">{t('recepcaoModoHora')}</span>
+            </label>
+            {recModo === 'hora' && (
+              <>
+                <input type="time" step={900} aria-label={t('recepcaoModoHora')} className="input-field !py-1 !px-2 text-sm !w-[6.75rem] min-w-0" value={recHora} onChange={(e) => setRecHora(e.target.value)} data-testid="recepcao-hora-valor" />
+                <span className="basis-full text-xs text-gray-500">{t('recepcaoHoraAjuda')}</span>
+              </>
+            )}
+          </div>
+        </fieldset>
+        <p className="mt-3 text-xs text-gray-500">{t('recepcaoAjuda')}</p>
+        {faixasPrevia.length > 0 && (
+          <p className="mt-2 rounded-lg bg-gray-50 p-2 text-sm text-gray-700" data-testid="recepcao-previa">
+            {t('recepcaoPrevia', { dia: diaDoCalendario(diaPrevia, INTL_LOCALE[locale] || 'en-GB', { weekday: 'long' }), faixas: faixasPrevia.join(', ') })}
+          </p>
+        )}
+        {erroRecepcao && <p role="alert" className="mt-2 rounded-lg border border-red-200 bg-red-50 p-2 text-sm text-red-800" data-testid="erro-recepcao">⛔ {erroRecepcao}</p>}
       </div>
 
       {/* Photos */}

@@ -15,6 +15,8 @@ import TutorialBanner from '@/components/tutorial/TutorialBanner';
 import PerfilCompleto from '@/components/oficina/PerfilCompleto';
 import ProcurarPedido from '@/components/oficina/ProcurarPedido';
 import DispensarPedido, { type Dispensa } from '@/components/oficina/DispensarPedido';
+import ConviteRecepcao from '@/components/oficina/ConviteRecepcao';
+import { hojeLocal, formatarJanela, janelaDaAgenda, janelaDoSlot } from '@/lib/turnos';
 
 // Caixa de pedidos: pagina inicial da oficina (auditoria do painel 10/10,
 // docs/AUDITORIA_PAINEL_OFICINA_2026-10-10.md, secao C). Foco do produto:
@@ -82,11 +84,12 @@ export default function PedidosOficinaPage() {
   };
   // chegada ATUAL do carro, da agenda: a data pode ter mudado depois do aceite (proposta
   // aceita ou "Mudar data"); antes a lista mostrava o horario do aceite (dono 08/11)
-  const [agendas, setAgendas] = useState<Map<string, string>>(new Map());
+  // check-in v2: a janela de chegada (data_inicio..checkin_ate) e a fonte unica depois do aceite
+  const [agendas, setAgendas] = useState<Map<string, { inicio: string; ate: string | null }>>(new Map());
   const carregarAgendas = async () => {
     if (!oficina) return;
-    const { data } = await supabase.from('agenda').select('solicitacao_id, data_inicio').eq('oficina_id', oficina.id).in('status', ['agendado', 'em_andamento']).not('solicitacao_id', 'is', null);
-    setAgendas(new Map((data || []).map((a: any) => [a.solicitacao_id, a.data_inicio])));
+    const { data } = await supabase.from('agenda').select('solicitacao_id, data_inicio, checkin_ate').eq('oficina_id', oficina.id).in('status', ['agendado', 'em_andamento']).not('solicitacao_id', 'is', null);
+    setAgendas(new Map((data || []).map((a: any) => [a.solicitacao_id, { inicio: a.data_inicio, ate: a.checkin_ate ?? null }])));
   };
   // pedidos de novas datas do cliente esperando resposta (079): selo no cartao
   const [pedemDatas, setPedemDatas] = useState<Set<string>>(new Set());
@@ -112,7 +115,9 @@ export default function PedidosOficinaPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [oficina?.id]);
 
-  const hojeYmd = new Date(agora).toISOString().slice(0, 10);
+  // "hoje" no fuso da OFICINA (antes o dia UTC: entre 00:00 e 02:00 em Tallinn a lista e a pagina discordavam
+  // sobre o orcamento vencido - auditoria Fable v2 D.4.3)
+  const hojeYmd = hojeLocal(new Date(agora), (oficina as any)?.pais ?? null);
   const grupos = useMemo(() => {
     const g: Record<Aba, any[]> = { responder: [], respondidos: [], encerrados: [] };
     if (!oficina) return g;
@@ -162,7 +167,7 @@ export default function PedidosOficinaPage() {
   // ordem e filtro escolhidos (a ordem padrao de cada aba e a de antes)
   const lista = useMemo(() => {
     const ts = (x?: string | null) => (x ? Date.parse(x) : 0);
-    const chegada = (it: any) => { const ag = agendas.get(it.s.id); if (ag) return ag; const sl = it.meu?.disponibilidade?.find((d: any) => d.id === it.meu.disponibilidade_escolhida_id); return sl ? sl.data_checkin : '9999'; };
+    const chegada = (it: any) => { const ag = agendas.get(it.s.id); if (ag) return ag.inicio; const sl = it.meu?.disponibilidade?.find((d: any) => d.id === it.meu.disponibilidade_escolhida_id); return sl ? sl.data_checkin : '9999'; };
     const dist = (it: any) => distancia(it.s) ?? 9e9;
     const quando = (it: any) => ts(it.meu?.created_at || it.disp?.created_at);
     const filtrada = grupos[aba].filter((it: any) => filtros[aba] === 'todos' || it.estado === filtros[aba]);
@@ -191,6 +196,7 @@ export default function PedidosOficinaPage() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 pb-8">
       <TutorialBanner href="/oficina/aprender" storageKey="bipfix_tutorial_banner_oficina" />
       <PerfilCompleto compacto />
+      <ConviteRecepcao />
       {(oficina as { ativa?: boolean } | null)?.ativa === false && (
         <p role="status" className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{t('cadastroEmAnalise')}</p>
       )}
@@ -283,7 +289,7 @@ export default function PedidosOficinaPage() {
                   )}
                   {estado && (
                     <p className={`mt-2 text-sm font-medium ${estado === 'aceito' ? 'text-emerald-700' : estado === 'perdido' || estado === 'recusado' ? 'text-gray-600' : estado === 'expirado' ? 'text-amber-800' : 'text-gray-700'}`}>
-                      {estado === 'aceito' ? `✔ ${t('clienteAceitou')}${agendas.get(s.id) ? ` — ${t('chegaEm', { dia: fmtDiaAg.format(new Date(agendas.get(s.id)!)), periodo: fmtHoraAg.format(new Date(agendas.get(s.id)!)) })}` : slot ? ` — ${t('chegaEm', { dia: fmtDia.format(new Date(`${slot.data_checkin}T12:00:00Z`)), periodo: t(slot.turno === 'tarde' ? 'tarde' : 'manha') })}` : ''}`
+                      {estado === 'aceito' ? `✔ ${t('clienteAceitou')}${agendas.get(s.id) ? ` — ${t('chegaEm', { dia: fmtDiaAg.format(new Date(agendas.get(s.id)!.inicio)), periodo: formatarJanela(janelaDaAgenda(agendas.get(s.id)!.inicio, agendas.get(s.id)!.ate, (oficina as any)?.pais ?? null)) })}` : slot ? ` — ${t('chegaEm', { dia: fmtDia.format(new Date(`${slot.data_checkin}T12:00:00Z`)), periodo: formatarJanela(janelaDoSlot(slot)) })}` : ''}`
                         : estado === 'entregue' ? `✔ ${t('servicoEntregue')}`
                         : estado === 'recusado' ? t('clienteRecusou')
                         : estado === 'expirado' ? t('orcamentoVenceu')

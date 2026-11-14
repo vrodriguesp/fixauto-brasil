@@ -1310,6 +1310,7 @@
     "abrirConversa": "Ava vestlus",
     "proporOutra": "Paku teist aega",
     "cancelarAgendamentoOficina": "Tühista broneering",
-    "limparData": "Tühjenda"
+    "limparData": "Tühjenda",
+    "erroSemNovaData": "Vali uus päev ja aeg."
   }
 }

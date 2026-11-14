@@ -734,7 +734,8 @@
     "PEDIDO_DATAS_RESPONDIDO": "A questa richiesta di nuove date è già stato risposto.",
     "SUGESTAO_VENCIDA": "Questa data suggerita è passata. Manda altre date.",
     "ORCAMENTO_VENCIDO": "Questo preventivo è scaduto. Scegli un altro preventivo attivo o rifai la richiesta.",
-    "ORCAMENTO_MUDOU": "Il preventivo è cambiato dopo la richiesta del cliente. Manda altre date tra cui scegliere."
+    "ORCAMENTO_MUDOU": "Il preventivo è cambiato dopo la richiesta del cliente. Manda altre date tra cui scegliere.",
+    "JANELA_NAO_ACABOU": "La fascia di arrivo del cliente non è ancora finita. Segna l’assenza dopo la fine della fascia."
   },
   "sobre": {
     "metaTitle": "Chi è BipFix",

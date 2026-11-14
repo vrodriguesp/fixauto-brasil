@@ -736,7 +736,8 @@
     "PEDIDO_DATAS_RESPONDIDO": "This request for new dates has already been answered.",
     "SUGESTAO_VENCIDA": "This suggested date has passed. Send other dates.",
     "ORCAMENTO_VENCIDO": "This quote has expired. Choose another active quote or make a new request.",
-    "ORCAMENTO_MUDOU": "The quote changed after the customer’s request. Send other dates for them to choose."
+    "ORCAMENTO_MUDOU": "The quote changed after the customer’s request. Send other dates for them to choose.",
+    "JANELA_NAO_ACABOU": "The customer’s arrival window has not ended yet. Mark the no-show after the window ends."
   },
   "sobre": {
     "metaTitle": "About BipFix",
