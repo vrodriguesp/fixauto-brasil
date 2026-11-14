@@ -29,11 +29,16 @@ export function turnoDisponivel(data: string, turno: Turno, agora = new Date(), 
   return hora < FIM_TURNO[turno];
 }
 
-/** Primeiro periodo ainda valido: agora ou o proximo. */
-export function primeiroTurnoLivre(agora = new Date(), pais?: Pais): { data: string; turno: Turno } {
+/**
+ * Primeiro periodo ainda valido: agora ou o proximo. Com `margemHoras`, pula o
+ * periodo de hoje que acaba antes disso (o formulario do orcamento usa 2 h: o
+ * cliente quase nunca aceita a tempo um periodo que fecha em minutos).
+ */
+export function primeiroTurnoLivre(agora = new Date(), pais?: Pais, margemHoras = 0): { data: string; turno: Turno } {
   const hoje = hojeLocal(agora, pais);
-  if (turnoDisponivel(hoje, 'manha', agora, pais)) return { data: hoje, turno: 'manha' };
-  if (turnoDisponivel(hoje, 'tarde', agora, pais)) return { data: hoje, turno: 'tarde' };
+  const serve = (tu: Turno) => turnoDisponivel(hoje, tu, agora, pais) && !(margemHoras > 0 && turnoAcabaLogo(hoje, tu, margemHoras, agora, pais));
+  if (serve('manha')) return { data: hoje, turno: 'manha' };
+  if (serve('tarde')) return { data: hoje, turno: 'tarde' };
   if (temPais(pais)) {
     const d = new Date(`${hoje}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + 1);
     return { data: d.toISOString().slice(0, 10), turno: 'manha' };
@@ -57,4 +62,61 @@ export function horaLocalDe(iso: string, pais?: Pais): string {
   if (temPais(pais)) { const m = minutoNaOficina(iso, pais); return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; }
   const d = new Date(iso);
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+// Horario de funcionamento (oficinas.horario_funcionamento: seg..dom com
+// {aberto, inicio, fim}) x periodo de check-in. Caso real 14/11: a oficina
+// ofereceu so "sabado a tarde" estando fechada no sabado pelo proprio perfil.
+// So avisa (a oficina pode abrir excepcionalmente); sem horario, nada a dizer.
+export type HorarioDia = { aberto?: boolean; inicio?: string; fim?: string };
+export type HorarioSemana = Record<string, HorarioDia | undefined> | null | undefined;
+const INICIO_TURNO: Record<Turno, number> = { manha: 8, tarde: 13 };
+const CHAVE_DIA = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+const minutos = (hhmm?: string) => { const m = /^(\d{1,2}):(\d{2})/.exec(hhmm || ''); return m ? Number(m[1]) * 60 + Number(m[2]) : null; };
+
+/** Horario do dia da semana de `data` ('YYYY-MM-DD', dia de calendario - sem fuso). */
+export function horarioDoDia(data: string, horario: HorarioSemana): HorarioDia | undefined {
+  if (!data || !horario) return undefined;
+  return horario[CHAVE_DIA[new Date(`${data}T12:00:00Z`).getUTCDay()]];
+}
+
+/**
+ * 'fechado': a oficina nao abre nesse dia; 'turno': abre, mas o horario dela nao
+ * cruza o periodo (ex.: fecha as 12 e o periodo e a tarde 13-17); null: tudo certo
+ * ou horario nao cadastrado.
+ */
+export function conflitoHorario(data: string, turno: Turno, horario: HorarioSemana): 'fechado' | 'turno' | null {
+  const h = horarioDoDia(data, horario);
+  if (!h) return null;
+  if (h.aberto === false) return 'fechado';
+  const ini = minutos(h.inicio), fim = minutos(h.fim);
+  if (ini == null || fim == null || fim <= ini) return null;
+  return fim <= INICIO_TURNO[turno] * 60 || ini >= FIM_TURNO[turno] * 60 ? 'turno' : null;
+}
+
+/** Periodo de hoje que ainda vale, mas acaba em menos de `horas` (no fuso da oficina). */
+export function turnoAcabaLogo(data: string, turno: Turno, horas = 2, agora = new Date(), pais?: Pais): boolean {
+  if (!data || data !== hojeLocal(agora, pais) || !turnoDisponivel(data, turno, agora, pais)) return false;
+  const min = temPais(pais) ? minutoNaOficina(agora, pais) : agora.getHours() * 60 + agora.getMinutes();
+  return FIM_TURNO[turno] * 60 - min < horas * 60;
+}
+
+/**
+ * Sugestao inicial do formulario do orcamento: o primeiro periodo valido (com
+ * margem) em que a oficina abre pelo horario dela; procura ate 14 dias e, se o
+ * horario nao ajudar (tudo fechado), fica no primeiro periodo valido.
+ */
+export function primeiroTurnoAberto(agora = new Date(), pais?: Pais, horario?: HorarioSemana, margemHoras = 0): { data: string; turno: Turno } {
+  const p = primeiroTurnoLivre(agora, pais, margemHoras);
+  if (!horario) return p;
+  let data = p.data;
+  for (let i = 0; i < 14; i++) {
+    for (const tu of ['manha', 'tarde'] as Turno[]) {
+      if (data === p.data && tu === 'manha' && p.turno === 'tarde') continue;
+      if (!conflitoHorario(data, tu, horario)) return { data, turno: tu };
+    }
+    const d = new Date(`${data}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + 1);
+    data = d.toISOString().slice(0, 10);
+  }
+  return p;
 }

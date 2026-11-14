@@ -21,7 +21,10 @@ import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import { useMostrarAlerta, rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 import { textoErroApi } from '@/lib/erro-api';
 import { useEstadoQueVolta } from '@/hooks/use-estado-que-volta';
-import { hojeLocal, turnoDisponivel, primeiroTurnoLivre, type Turno } from '@/lib/turnos';
+import { hojeLocal, turnoDisponivel, primeiroTurnoAberto, conflitoHorario, horarioDoDia, turnoAcabaLogo, type Turno, type HorarioSemana } from '@/lib/turnos';
+
+// periodo de hoje que fecha em menos disso nao entra como sugestao e ganha aviso (caso 14/11)
+const MARGEM_HORAS = 2;
 
 interface ItemForm {
   descricao: string;
@@ -159,7 +162,9 @@ export default function EnviarOrcamentoPage() {
 
   // Availability slots
   // comeca no primeiro periodo ainda valido (antes: hoje de manha, mesmo a tarde)
-  const [slots, setSlots] = useState<{ data: string; turno: 'manha' | 'tarde' }[]>(() => [primeiroTurnoLivre(undefined, (oficina as any)?.pais)]);
+  // e cai num dia em que a oficina abre pelo horario dela (caso real 14/11: so "sabado a tarde", fechada no sabado)
+  const horarioOficina = (oficina as any)?.horario_funcionamento as HorarioSemana;
+  const [slots, setSlots] = useState<{ data: string; turno: 'manha' | 'tarde' }[]>(() => [primeiroTurnoAberto(undefined, (oficina as any)?.pais, horarioOficina, MARGEM_HORAS)]);
   const [erroHorario, setErroHorario] = useState(false);
   // o botao "enviar" sempre responde: enviando..., o que falta, ou o erro - ao lado do botao (item 34:
   // a oficina tocava e nada acontecia - botao desativado com total 0 e falha do servidor calada)
@@ -172,8 +177,8 @@ export default function EnviarOrcamentoPage() {
   const paisOficina = (oficina as any)?.pais;
   useEffect(() => {
     if (!paisOficina || mexeuHorario.current || existingQuote) return;
-    setSlots([primeiroTurnoLivre(undefined, paisOficina)]);
-  }, [paisOficina, existingQuote]);
+    setSlots([primeiroTurnoAberto(undefined, paisOficina, horarioOficina, MARGEM_HORAS)]);
+  }, [paisOficina, existingQuote, horarioOficina]);
 
   // Pre-fill form with existing quote data for revisions
   useEffect(() => {
@@ -408,6 +413,18 @@ ${d.observacoes}` : d.observacoes));
     return Number(o.valor_unitario) !== Number(item.valor_unitario) || Number(o.quantidade) !== Number(item.quantidade) || o.tipo !== item.tipo ? 'alterado' : null;
   };
   const removidos = originais.filter((o) => !itens.some((i) => chaveItem(i.descricao) === chaveItem(o.descricao)));
+  // datas do check-in x horario da oficina (so avisos: enviar continua possivel - dono 14/11)
+  const paisF = (oficina as any)?.pais ?? null;
+  const avisoSlot = (s: { data: string; turno: Turno }) => {
+    if (!s.data || !turnoDisponivel(s.data, s.turno, undefined, paisF)) return null;
+    const c = conflitoHorario(s.data, s.turno, horarioOficina);
+    if (c === 'fechado') return { tipo: 'fechado', texto: t('avisoDiaFechado') };
+    if (c === 'turno') { const h = horarioDoDia(s.data, horarioOficina); return { tipo: 'turno', texto: t('avisoTurnoForaHorario', { inicio: h?.inicio || '', fim: h?.fim || '' }) }; }
+    if (turnoAcabaLogo(s.data, s.turno, MARGEM_HORAS, undefined, paisF)) return { tipo: 'acaba-logo', texto: t('avisoTurnoAcabaLogo', { horas: MARGEM_HORAS }) };
+    return null;
+  };
+  // uma data so (ou todas no mesmo dia): recomenda pelo menos 2 dias diferentes, sem bloquear (dono 14/11)
+  const diasOferecidos = new Set(slots.filter((s) => s.data && turnoDisponivel(s.data, s.turno, undefined, paisF)).map((s) => s.data)).size;
   // o formulario do orcamento so aparece na revisao de itens/valor (ou sem agenda aberta: carro ja na oficina)
   const mostraForm = !modoRevisaoAceito || temAgenda === false || oQueMudar === 'valor';
 
@@ -862,6 +879,7 @@ ${d.observacoes}` : d.observacoes));
                       min={hojeLocal(undefined, (oficina as any)?.pais ?? null)}
                       value={slot.data}
                       onChange={(e) => updateSlot(index, 'data', e.target.value)}
+                      aria-describedby={avisoSlot(slot) ? `aviso-slot-${index}` : undefined}
                     />
                   </div>
                   {/* celular: o periodo na linha inteira ("Hommik (8-12)" aparecia cortado - teste 09/11) */}
@@ -897,9 +915,16 @@ ${d.observacoes}` : d.observacoes));
                       </svg>
                     </button>
                   )}
+                  {(() => { const a = avisoSlot(slot); return a && (
+                    <p id={`aviso-slot-${index}`} role="status" data-testid={`aviso-slot-${index}`} data-tipo={a.tipo}
+                      className="w-full rounded-lg border border-amber-200 bg-amber-50 p-2 text-sm text-amber-900">⚠️ {a.texto}</p>
+                  ); })()}
                 </div>
               ))}
             </div>
+            {diasOferecidos < 2 && (
+              <p role="status" data-testid="dica-mais-datas" className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">💡 {t('dicaMaisDatas')}</p>
+            )}
 
             <button
               type="button"
