@@ -2,15 +2,16 @@
 
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { conflitoHorario, horarioDoDia, turnoAcabaLogo, turnoDisponivel, janelaAindaVale, janelaAcabaLogo, expedienteDoDia, minutosDe, type HorarioSemana, type Turno, type Janela } from '@/lib/turnos';
+import { conflitoHorario, horarioDoDia, turnoAcabaLogo, turnoDisponivel, janelaAindaVale, janelaAcabaLogo, expedienteDoDia, minutosDe, localParaIso, type HorarioSemana, type Turno, type Janela } from '@/lib/turnos';
 
 // Data de check-in x horario de funcionamento da oficina (caso real 14/11: "sabado a tarde" com a
 // oficina fechada no sabado). Usado no formulario do orcamento e na resposta a "novas datas" (079).
 //  - 'fechado': dia fechado pelo horario do perfil -> ERRO (bloqueia o envio - dono 14/11)
 //  - 'turno': abre nesse dia, mas fora do periodo -> aviso
-//  - 'acaba-logo': hoje e o periodo acaba em menos de MARGEM_HORAS -> aviso
+//  - 'acaba-logo': hoje e o periodo acaba em menos de MARGEM_HORAS -> aviso (a oficina decide; dono 15/11, D18)
+//  - 'passado': a janela ja acabou (revisao de orcamento antigo) -> ERRO na propria linha (QA D17)
 export const MARGEM_HORAS = 2;
-export type AvisoHorario = { tipo: 'fechado' | 'turno' | 'acaba-logo'; texto: string } | null;
+export type AvisoHorario = { tipo: 'fechado' | 'turno' | 'acaba-logo' | 'passado'; texto: string } | null;
 
 export function useAvisoHorario(horario: HorarioSemana, pais: string | null | undefined) {
   const t = useTranslations('oficinaEnviarOrcamento');
@@ -32,13 +33,20 @@ export function useAvisoHorario(horario: HorarioSemana, pais: string | null | un
 export function useAvisoJanela(horario: HorarioSemana, pais: string | null | undefined) {
   const t = useTranslations('oficinaEnviarOrcamento');
   return (data: string, j: Janela): AvisoHorario => {
-    if (!data || !janelaAindaVale(data, j, undefined, pais ?? null)) return null;
+    if (!data) return null;
+    // janela que ja acabou: a linha fica vermelha (antes so o erro geral no envio - QA D17)
+    if (!janelaAindaVale(data, j, undefined, pais ?? null)) return { tipo: 'passado', texto: t('linhaPassada') };
     if (conflitoHorario(data, 'manha', horario) === 'fechado') return { tipo: 'fechado', texto: t('erroDiaFechado') };
     const h = horarioDoDia(data, horario);
     const e = h ? expedienteDoDia(data, horario) : null;
     const a = minutosDe(j.inicio), b = minutosDe(j.fim);
     if (e && h?.inicio && h?.fim && a != null && b != null && (a < e.ab || b > e.fe)) return { tipo: 'turno', texto: t('avisoTurnoForaHorario', { inicio: h.inicio, fim: h.fim }) };
-    if (janelaAcabaLogo(data, j, MARGEM_HORAS, undefined, pais ?? null)) return { tipo: 'acaba-logo', texto: t('avisoTurnoAcabaLogo', { horas: MARGEM_HORAS }) };
+    // janela de hoje que acaba logo: NAO bloqueia nem some (a oficina decide - dono 15/11, D18); o texto diz a hora
+    // do fim, quanto tempo sobra e o que fazer
+    if (janelaAcabaLogo(data, j, MARGEM_HORAS, undefined, pais ?? null)) {
+      const resta = Math.max(1, Math.floor((Date.parse(localParaIso(data, j.fim, pais ?? null)) - Date.now()) / 60000));
+      return { tipo: 'acaba-logo', texto: t('avisoJanelaAcabaLogo', { fim: j.fim, horas: MARGEM_HORAS, min: resta }) };
+    }
     return null;
   };
 }
@@ -57,12 +65,12 @@ export function LinkHorarioPerfil({ testid }: { testid: string }) {
 /** Caixa do aviso/erro abaixo da data; `id` liga ao campo por aria-describedby. */
 export default function AvisoHorarioSlot({ aviso, id, testid, testidLink }: { aviso: AvisoHorario; id: string; testid: string; testidLink: string }) {
   if (!aviso) return null;
-  const erro = aviso.tipo === 'fechado';
+  const erro = aviso.tipo === 'fechado' || aviso.tipo === 'passado';
   return (
     <div id={id} role={erro ? 'alert' : 'status'} data-testid={testid} data-tipo={aviso.tipo}
       className={`w-full rounded-lg border p-2 text-sm ${erro ? 'border-red-200 bg-red-50 text-red-800' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>
       <p>{erro ? '⛔' : '⚠️'} {aviso.texto}</p>
-      {aviso.tipo !== 'acaba-logo' && <LinkHorarioPerfil testid={testidLink} />}
+      {(aviso.tipo === 'fechado' || aviso.tipo === 'turno') && <LinkHorarioPerfil testid={testidLink} />}
     </div>
   );
 }

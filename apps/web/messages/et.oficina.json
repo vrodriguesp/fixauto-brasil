@@ -516,8 +516,8 @@
     "agendamento": "Broneering",
     "dataCheckin": "Check-ini kuupäev",
     "turno": "Ajavahemik",
-    "manha": "Hommik (08:00 - 12:00)",
-    "tarde": "Pärastlõuna (13:00 - 17:00)",
+    "manha": "Hommik",
+    "tarde": "Pärastlõuna",
     "prazoDias": "Tähtaeg (päevades)",
     "previsaoEntrega": "Eeldatav valmimine",
     "corNaAgenda": "Värv ajakavas",
@@ -607,8 +607,6 @@
     "checkinJaRealizado": "Check-in on juba tehtud. Uus hinnapakkumine rakendub käimasolevale teenusele.",
     "disponibilidadeCheckin": "Võimalikud check-ini ajad",
     "ofereceDatas": "Paku kliendile kuupäevi sõiduki toomiseks. Klient valib neist ühe.",
-    "manhaHorario": "Hommik (8-12)",
-    "tardeHorario": "Pärastlõuna (13-17)",
     "entregaAprox": "Valmimine: ~{data}",
     "adicionarDataDisponivel": "+ Lisa saadaolev kuupäev",
     "erroDiaFechado": "Sinu lahtiolekuaegade järgi on töökoda sel päeval suletud. Vali teine päev.",
@@ -682,7 +680,9 @@
     "validadeVaziaErro": "Vali, milleni pakkumine kehtib.",
     "validadeVaziaErroComData": "Vali, milleni pakkumine kehtib: vähemalt viimane check-ini päev ({ultima}); soovitame vähemalt {dias} päeva pärast seda ({recomendada}).",
     "validadeUsar": "Kasuta {data}",
-    "validadeDica": "Vähemalt {ultima}. Soovitame {recomendada} või hiljem."
+    "validadeDica": "Vähemalt {ultima}. Soovitame {recomendada} või hiljem.",
+    "linhaPassada": "See aeg on juba möödas. Eemalda see või vali teine aeg.",
+    "avisoJanelaAcabaLogo": "See aeg lõpeb täna kell {fim} – kliendil jääb auto toomiseks vähem kui {horas} tundi (umbes {min} min). Kui see sobib, võid saata; muidu vali hilisem päev."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Parool peab olema vähemalt 8 tähemärki",
@@ -925,7 +925,8 @@
     "erro_recepcao_almoco": "Kellaaeg langeb lõunale.",
     "erro_almoco_invalido": "Lõuna peab lõppema hiljem kui algab (vähemalt 15 minutit).",
     "recepcaoInicioAria": "algus",
-    "recepcaoFimAria": "lõpp"
+    "recepcaoFimAria": "lõpp",
+    "erro_recepcao_invertida": "Lõpp peab olema pärast algust."
   },
   "oficinaSolicitacoes": {
     "titulo": "Päringud",
@@ -991,7 +992,8 @@
       "mudancaOficina": "Aega muutis töökoda {quando}.",
       "propostaPendente": "Pakutud uus aeg ({quando}) ootab kliendi vastust. Seni kehtib ülaltoodud aeg."
     },
-    "clienteEnviouNumero": "Klient saatis sulle oma telefoninumbri."
+    "clienteEnviouNumero": "Klient saatis sulle oma telefoninumbri.",
+    "orcamentoVencidoTexto": "Selle hinnapakkumise kehtivus lõppes {data}. Klient ei saa seda enam vastu võtta. Jätkamiseks muuda hinnapakkumist: lisa uued check-ini ajad ja uus kehtivus."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Sõiduk vastu võetud töökojas",
@@ -1322,8 +1324,6 @@
     "outrasTitulo": "Saada teised ajad",
     "data": "Kuupäev",
     "turno": "Kellaaeg",
-    "manha": "Hommik (08:00–12:00)",
-    "tarde": "Pärastlõuna (13:00–17:00)",
     "previsao": "Eeldatav valmimine",
     "adicionar": "+ Veel üks aeg",
     "remover": "Eemalda",
@@ -1335,7 +1335,9 @@
     "selo": "Klient küsib uusi aegu",
     "dicaModificar": "Klient küsis uusi aegu. Kui soovid saata ainult ajad, kasuta päringu kaarti: see ei lähe muudatusena kirja. Kui muudad hinnapakkumist, tühistatakse aegade soov.",
     "dicaModificarLink": "Ava päring",
-    "erroSemData": "Lisa vähemalt üks aeg."
+    "erroSemData": "Lisa vähemalt üks aeg.",
+    "vencidoTexto": "Sinu hinnapakkumine on aegunud, seega siin ei saa aegu kinnitada ega saata. Muuda hinnapakkumist uute aegade ja uue kehtivusega: klient saab selle ja võib vastu võtta.",
+    "vencidoRevisar": "Muuda pakkumist"
   },
   "seletorCheckin": {
     "adicionar": "+ Lisa check-ini aeg",

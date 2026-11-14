@@ -52,6 +52,7 @@ export default function SeletorCheckin({
   const [oFim, setOFim] = useState('');
   const botaoAbrir = useRef<HTMLButtonElement>(null);
   const folha = useRef<HTMLDivElement>(null);
+  const raiz = useRef<HTMLDivElement>(null);
   const avisoJanela = useAvisoJanela(ctx?.horario, pais);
   const hoje = hojeLocal(new Date(), pais ?? null);
   const ultima = linhas.map((l) => l.data).filter(Boolean).sort().at(-1);
@@ -71,6 +72,18 @@ export default function SeletorCheckin({
     setAberto(true);
   };
   const fechar = () => { setAberto(false); setTimeout(() => botaoAbrir.current?.focus(), 0); };
+  // remover uma linha: o foco vai para a proxima linha (o "x" dela), senao a anterior, senao o "+" (QA D12;
+  // antes caia no body e o leitor de tela perdia o lugar)
+  const remover = (i: number) => {
+    aoMudar(linhas.filter((_, j) => j !== i));
+    setTimeout(() => {
+      const r = raiz.current;
+      const alvo = r?.querySelector<HTMLElement>(`[data-testid="${testid}-remover-${i}"]`)
+        || r?.querySelector<HTMLElement>(`[data-testid="${testid}-remover-${i - 1}"]`)
+        || botaoAbrir.current;
+      alvo?.focus();
+    }, 0);
+  };
   const adicionar = (j: Janela) => {
     if (!dia) return;
     const nova: LinhaCheckin = { data: dia, hora_inicio: j.inicio, hora_fim: j.fim, ...(prazoDias != null ? { previsao: previsaoDe(dia) } : {}) };
@@ -95,22 +108,22 @@ export default function SeletorCheckin({
   const tituloDia = dia ? diaDoCalendario(dia, intl, { weekday: 'short', day: 'numeric', month: 'short' }) : '';
 
   return (
-    <div data-testid={`${testid}-seletor`}>
+    <div ref={raiz} data-testid={`${testid}-seletor`}>
       {linhas.length > 0 && (
         <ul className="mb-2 space-y-2" data-testid={`${testid}-linhas`}>
           {linhas.map((l, i) => {
             const av = avisoJanela(l.data, { inicio: l.hora_inicio, fim: l.hora_fim });
             return (
-              <li key={chave(l)} className={`rounded-lg border bg-white p-2.5 ${av?.tipo === 'fechado' ? 'border-red-300' : 'border-gray-200'}`} data-testid={`${testid}-linha-${i}`}
-                data-data={l.data} data-inicio={l.hora_inicio} data-fim={l.hora_fim}>
+              <li key={chave(l)} className={`rounded-lg border p-2.5 ${av?.tipo === 'fechado' || av?.tipo === 'passado' ? 'border-red-300 bg-red-50/40' : 'border-gray-200 bg-white'}`} data-testid={`${testid}-linha-${i}`}
+                data-data={l.data} data-inicio={l.hora_inicio} data-fim={l.hora_fim} data-erro={av?.tipo === 'fechado' || av?.tipo === 'passado' ? av.tipo : undefined}>
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                   <span className="min-w-0 flex-1 text-sm font-semibold text-gray-900" data-testid={`${testid}-linha-${i}-texto`}>
-                    {diaDoCalendario(l.data, intl, { weekday: 'short', day: 'numeric', month: 'short' })} · {formatarJanela({ inicio: l.hora_inicio, fim: l.hora_fim })}
+                    {diaDoCalendario(l.data, intl, { weekday: 'short', day: 'numeric', month: 'short' })} · <span className="whitespace-nowrap tabular-nums">{formatarJanela({ inicio: l.hora_inicio, fim: l.hora_fim })}</span>
                   </span>
                   {mostrarPrevisao && prazoDias != null && l.data && (
                     <span className="text-xs text-gray-500">{t('valmimine', { data: diaDoCalendario(previsaoDe(l.data), intl, { day: '2-digit', month: '2-digit' }) })}</span>
                   )}
-                  <button type="button" onClick={() => aoMudar(linhas.filter((_, j) => j !== i))} data-testid={`${testid}-remover-${i}`}
+                  <button type="button" onClick={() => remover(i)} data-testid={`${testid}-remover-${i}`}
                     aria-label={t('remover', { quando: `${diaDoCalendario(l.data, intl)} ${formatarJanela({ inicio: l.hora_inicio, fim: l.hora_fim })}` })}
                     className="-m-1 inline-flex h-11 w-11 items-center justify-center rounded-full text-red-500 hover:bg-red-50 hover:text-red-700">
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -167,7 +180,7 @@ export default function SeletorCheckin({
                       <button key={`${j.inicio}-${j.fim}`} type="button" disabled={usada} onClick={() => adicionar(j)} title={usada ? t('jaEscolhida') : undefined}
                         data-testid={`${testid}-faixa-${tid(j.inicio)}-${tid(j.fim)}`}
                         className="min-h-[44px] rounded-full border border-primary-300 bg-white px-4 text-sm font-semibold tabular-nums text-primary-800 hover:bg-primary-50 disabled:cursor-not-allowed disabled:border-gray-200 disabled:text-gray-400">
-                        {formatarJanela(j)}{usada ? ' ✓' : ''}
+                        <span className="whitespace-nowrap">{formatarJanela(j)}{usada ? ' ✓' : ''}</span>
                       </button>
                     );
                   })}

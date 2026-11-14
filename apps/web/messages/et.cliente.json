@@ -349,8 +349,6 @@
     "chooseNewDateTitle": "Vali uus kuupäev",
     "noDatesAvailable": "Hetkel pole vabu aegu saadaval. Uue aja kokkuleppimiseks võta ühendust töökojaga.",
     "shiftLabel": "Ajavahemik: {shift}",
-    "morningShift": "Hommik (8–12)",
-    "afternoonShift": "Pärastlõuna (13–17)",
     "deliveryForecastInline": "Eeldatav valmimine: {date}",
     "rescheduling": "Muudan aega...",
     "confirmReschedule": "Kinnita uus aeg"

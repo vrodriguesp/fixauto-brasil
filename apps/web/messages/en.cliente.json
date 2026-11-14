@@ -349,8 +349,6 @@
     "chooseNewDateTitle": "Choose a new date",
     "noDatesAvailable": "No dates available right now. Please contact the repair shop to arrange a new time.",
     "shiftLabel": "Time slot: {shift}",
-    "morningShift": "Morning (8am - 12pm)",
-    "afternoonShift": "Afternoon (1pm - 5pm)",
     "deliveryForecastInline": "Est. delivery: {date}",
     "rescheduling": "Rescheduling...",
     "confirmReschedule": "Confirm reschedule"

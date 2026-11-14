@@ -73,6 +73,8 @@ export default function ProporNovaData({ orcamentoId, solicitacaoId, oficinaId, 
     const d = r ? await r.json().catch(() => ({})) : {};
     setEnviando(false);
     if (!r?.ok) { setErro(textoErroApi(tErr, r?.status || 500, d)); return; }
+    // enviado: a linha guardada para a troca de lingua sai (auditoria Fable R-02)
+    setLinhas([]);
     setFeito(d?.aplicada ? 'combinado' : 'pedido');
     // combinado ja vale: a pagina nao deve passar a "esperando o cliente"
     if (!d?.aplicada) aoEnviar?.({ data, turno: turnoDaJanela({ inicio: linha.hora_inicio, fim: linha.hora_fim }), hora_inicio: linha.hora_inicio, hora_fim: linha.hora_fim });

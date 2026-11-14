@@ -69,7 +69,7 @@ export default function AcoesAgendamento({ agendaId, dataInicio, pais, aoMudar }
           </div>
           <div>
             <label htmlFor={`md-hora-${agendaId}`} className="block text-xs font-medium text-gray-700 mb-1">{t('hora')}</label>
-            <input id={`md-hora-${agendaId}`} type="time" className="input-field !py-1.5 text-sm" value={hora} onChange={(e) => setHora(e.target.value)} />
+            <input id={`md-hora-${agendaId}`} type="time" max="23:29" className="input-field !py-1.5 text-sm" value={hora} onChange={(e) => setHora(e.target.value)} />
           </div>
         </div>
       )}

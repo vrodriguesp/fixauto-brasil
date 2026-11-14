@@ -11,7 +11,8 @@ import { completarClientes } from '@/lib/resumo-clientes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import NoShowWarning from '@/components/ui/NoShowWarning';
 import DamageAnalysis from '@/components/ui/DamageAnalysis';
-import { formatDate, formatCurrency, getUrgenciaColor, cleanDescricao } from '@/lib/utils';
+import { formatDate, formatCurrency, getUrgenciaColor, cleanDescricao, INTL_LOCALE } from '@/lib/utils';
+import { diaDoCalendario } from '@/lib/turnos';
 import { currencyForCountry } from '@/lib/currency';
 import { Link } from '@/i18n/navigation';
 import MidiaPrivada from '@/components/midia/MidiaPrivada';
@@ -102,6 +103,8 @@ export default function SolicitacaoDetalhePage() {
   const myQuote = sol.orcamentos?.find((o: any) => o.oficina_id === oficina?.id);
   const isAccepted = myQuote?.status === 'aceito';
   const isEmAndamento = sol.status === 'em_andamento';
+  // orcamento enviado cuja validade ja passou (fuso da oficina): "Aegunud" (QA D5)
+  const quoteVencido = !!myQuote && ['enviado', 'visualizado'].includes(myQuote.status) && orcamentoVencido(myQuote.validade, oficina?.pais);
 
   // Determine button label and availability
   const getActionButton = () => {
@@ -171,15 +174,25 @@ export default function SolicitacaoDetalhePage() {
           {isAccepted && oficina && <ResumoAgendamento solicitacaoId={sol.id} oficinaId={oficina.id} pais={oficina.pais} />}
           {/* o cliente pediu novas datas (079): confirmar a sugestao dele ou mandar outras */}
           {/* mecanico nao responde (a API recusa): sem o cartao para ele */}
-          {myQuote && funcionario?.cargo !== 'mecanico' && ['enviado', 'visualizado'].includes(myQuote.status) && ['aberta', 'em_orcamento', 'no_show'].includes(sol.status) && !orcamentoVencido(myQuote.validade, oficina?.pais) && (
-            <NovasDatasPedidas key={myQuote.id} orcamentoId={myQuote.id} prazoDias={myQuote.prazo_dias} pais={oficina?.pais ?? null} horario={(oficina as any)?.horario_funcionamento} ctx={{ horario: (oficina as any)?.horario_funcionamento, recepcao_inicio: (oficina as any)?.recepcao_inicio, recepcao_fim: (oficina as any)?.recepcao_fim, almoco_inicio: (oficina as any)?.almoco_inicio, almoco_fim: (oficina as any)?.almoco_fim }} oficinaId={oficina?.id} aoMudar={refresh} />
+          {/* orcamento vencido: o cartao continua (o pedido do motorista nao some), so com o que a oficina pode
+              fazer - revisar o orcamento com datas e validade novas (QA D5) */}
+          {myQuote && funcionario?.cargo !== 'mecanico' && ['enviado', 'visualizado'].includes(myQuote.status) && ['aberta', 'em_orcamento', 'no_show'].includes(sol.status) && (
+            <NovasDatasPedidas key={myQuote.id} orcamentoId={myQuote.id} vencido={quoteVencido} solicitacaoId={sol.id} prazoDias={myQuote.prazo_dias} pais={oficina?.pais ?? null} horario={(oficina as any)?.horario_funcionamento} ctx={{ horario: (oficina as any)?.horario_funcionamento, recepcao_inicio: (oficina as any)?.recepcao_inicio, recepcao_fim: (oficina as any)?.recepcao_fim, almoco_inicio: (oficina as any)?.almoco_inicio, almoco_fim: (oficina as any)?.almoco_fim }} oficinaId={oficina?.id} aoMudar={refresh} />
           )}
           {myQuote && (
             <div id="meu-orcamento" className="card border-2 border-primary-100 scroll-mt-24">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <h2 className="font-semibold text-gray-900">{t('seuOrcamento')}</h2>
-                <span className="badge bg-gray-100 text-gray-700">{t(`statusOrcamento.${myQuote.status}`)}</span>
+                {quoteVencido
+                  ? <span className="badge bg-red-100 text-red-800" data-testid="orcamento-aegunud">{t('statusOrcamento.expirado')}</span>
+                  : <span className="badge bg-gray-100 text-gray-700">{t(`statusOrcamento.${myQuote.status}`)}</span>}
               </div>
+              {/* validade passou (no fuso da oficina): o motorista nao aceita nem pede datas; a oficina revisa (QA D5) */}
+              {quoteVencido && (
+                <p role="status" className="mb-3 rounded-lg border border-red-200 bg-red-50 p-2 text-sm text-red-800" data-testid="orcamento-vencido-oficina">
+                  {t('orcamentoVencidoTexto', { data: diaDoCalendario(String(myQuote.validade).slice(0, 10), INTL_LOCALE[locale] || 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) })}
+                </p>
+              )}
               <p className="text-2xl font-bold text-gray-900">{formatCurrency(Number(myQuote.valor_total), currencyForCountry(oficina?.pais), locale)}</p>
               <p className="text-sm text-gray-600 mt-1">{t('prazoDias', { dias: myQuote.prazo_dias })}</p>
               {(myQuote.itens || []).length > 0 && (

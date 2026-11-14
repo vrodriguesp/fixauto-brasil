@@ -223,7 +223,10 @@ export default function PerfilOficinaPage() {
   const almocoDb = almoco ? { almoco_inicio: almIni, almoco_fim: almFim } : { almoco_inicio: null, almoco_fim: null };
   const ctxPerfil = { horario: horario as HorarioSemana, ...recepcaoDb, ...almocoDb };
   const diaPrevia = (() => { for (let i = 0; i < 7; i++) { const d = somarDias('2026-11-16', i); if (faixasDoDia(d, ctxPerfil).length) return d; } return ''; })();
-  const faixasPrevia = diaPrevia ? faixasDoDia(diaPrevia, ctxPerfil).map(formatarJanela) : [];
+  // com a recepcao/almoco invalidos a previa some (antes mostrava a grade do funcionamento enquanto o erro dizia
+  // outra coisa - QA D15); valida, ela mostra exatamente o que foi digitado
+  const recepcaoInvalida = !!validarRecepcao(ctxPerfil);
+  const faixasPrevia = diaPrevia && !recepcaoInvalida ? faixasDoDia(diaPrevia, ctxPerfil).map(formatarJanela) : [];
 
   const handleSave = async () => {
     setSaving(true);
@@ -590,8 +593,8 @@ export default function PerfilOficinaPage() {
         {/* almoco: um par para a semana; as faixas do check-in pulam o almoco (check-in v2, D.3) */}
         <div className="mt-4 border-t border-gray-100 pt-4" data-testid="perfil-almoco">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <label className="flex items-center gap-2 shrink-0">
-              <input type="checkbox" checked={almoco} onChange={(e) => { setAlmoco(e.target.checked); mexeuRecepcao.current = true; }} className="w-4 h-4 text-primary-600 rounded" data-testid="almoco-ativo" />
+            <label className="flex min-h-[44px] items-center gap-2 shrink-0">
+              <input type="checkbox" checked={almoco} onChange={(e) => { setAlmoco(e.target.checked); mexeuRecepcao.current = true; }} className="w-5 h-5 text-primary-600 rounded" data-testid="almoco-ativo" />
               <span className="text-sm font-medium text-gray-700">{t('almocoTitulo')}</span>
             </label>
             {almoco && (
@@ -615,13 +618,14 @@ export default function PerfilOficinaPage() {
         <p className="mb-3 text-sm text-gray-600">{t('recepcaoTexto')}</p>
         <fieldset className="space-y-3">
           <legend className="sr-only">{t('recepcaoTitulo')}</legend>
-          <label className="flex items-start gap-2">
-            <input type="radio" name="recepcao-modo" className="mt-1" checked={recModo === 'funcionamento'} onChange={() => { setRecModo('funcionamento'); mexeuRecepcao.current = true; }} data-testid="recepcao-funcionamento" />
+          {/* area de toque >= 44 px (QA D14) */}
+          <label className="flex min-h-[44px] items-center gap-2">
+            <input type="radio" name="recepcao-modo" className="h-5 w-5 shrink-0" checked={recModo === 'funcionamento'} onChange={() => { setRecModo('funcionamento'); mexeuRecepcao.current = true; }} data-testid="recepcao-funcionamento" />
             <span className="text-sm text-gray-800">{t('recepcaoModoFuncionamento')}</span>
           </label>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <label className="flex items-center gap-2">
-              <input type="radio" name="recepcao-modo" checked={recModo === 'faixa'} onChange={() => { setRecModo('faixa'); mexeuRecepcao.current = true; }} data-testid="recepcao-faixa" />
+            <label className="flex min-h-[44px] items-center gap-2">
+              <input type="radio" name="recepcao-modo" className="h-5 w-5 shrink-0" checked={recModo === 'faixa'} onChange={() => { setRecModo('faixa'); mexeuRecepcao.current = true; }} data-testid="recepcao-faixa" />
               <span className="text-sm text-gray-800">{t('recepcaoModoFaixa')}</span>
             </label>
             {recModo === 'faixa' && (
@@ -633,8 +637,8 @@ export default function PerfilOficinaPage() {
             )}
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <label className="flex items-center gap-2">
-              <input type="radio" name="recepcao-modo" checked={recModo === 'hora'} onChange={() => { setRecModo('hora'); mexeuRecepcao.current = true; }} data-testid="recepcao-hora" />
+            <label className="flex min-h-[44px] items-center gap-2">
+              <input type="radio" name="recepcao-modo" className="h-5 w-5 shrink-0" checked={recModo === 'hora'} onChange={() => { setRecModo('hora'); mexeuRecepcao.current = true; }} data-testid="recepcao-hora" />
               <span className="text-sm text-gray-800">{t('recepcaoModoHora')}</span>
             </label>
             {recModo === 'hora' && (

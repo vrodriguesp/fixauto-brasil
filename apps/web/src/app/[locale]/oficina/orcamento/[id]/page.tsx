@@ -21,7 +21,8 @@ import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import { useMostrarAlerta, rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 import { textoErroApi } from '@/lib/erro-api';
 import { useEstadoQueVolta, useValorQueVolta } from '@/hooks/use-estado-que-volta';
-import { hojeLocal, janelaAindaVale, conflitoHorario, janelaDoSlot, turnoDaJanela, erroValidade, maiorData, somarDias, diaDoCalendario, formatarJanela, VALIDADE_FOLGA_DIAS, type HorarioSemana, type ContextoOficina } from '@/lib/turnos';
+import { hojeLocal, janelaAindaVale, conflitoHorario, janelaDoSlot, turnoDaJanela, erroValidade, maiorData, validadeSugerida, diaDoCalendario, formatarJanela, VALIDADE_FOLGA_DIAS, type HorarioSemana, type ContextoOficina } from '@/lib/turnos';
+import { gravarEstadoUi, veioDeTrocaDeIdioma } from '@/lib/rascunho-troca-idioma';
 import { LinkHorarioPerfil } from '@/components/oficina/AvisoHorarioSlot';
 import SeletorCheckin, { type LinhaCheckin } from '@/components/oficina/SeletorCheckin';
 import InfoI from '@/components/ui/InfoI';
@@ -186,7 +187,9 @@ export default function EnviarOrcamentoPage() {
   // as datas escolhidas voltam depois de trocar a lingua no meio do formulario (dono 08/11; os outros campos voltam
   // pelo rascunho da troca de idioma, que so le inputs)
   const [slots, setSlots] = useValorQueVolta<LinhaCheckin[]>(`orc-checkin:${params.id}`, []);
-  const slotsVoltaram = useRef(slots.length > 0);
+  // so valem as linhas que voltaram de uma troca de lingua NESTA pagina; fora disso a revisao usa as datas do
+  // banco (auditoria Fable R-02: linhas velhas da aba apagavam as datas do 079 numa revisao)
+  const slotsVoltaram = useRef(slots.length > 0 && !!veioDeTrocaDeIdioma());
   const [erroHorario, setErroHorario] = useState(false);
   // data num dia em que a oficina esta fechada pelo proprio horario: bloqueia o envio (dono 14/11)
   const [erroDiaFechado, setErroDiaFechado] = useState(false);
@@ -333,9 +336,14 @@ ${d.observacoes}` : d.observacoes));
     const evConta = ev && (datasVisiveis || ev === 'vazia') ? ev : null;
     setErroSemCheckin(semCheckin); setErroHorario(passado); setErroDiaFechado(fechado); setErroVal(evConta);
     if (semCheckin || passado || fechado || evConta) {
-      // rola ate o primeiro erro (de cima para baixo: validade fica acima das datas)
-      const alvo = evConta ? refValidade.current : refCheckin.current;
-      setTimeout(() => { alvo?.scrollIntoView({ block: 'center', behavior: 'smooth' }); alvo?.querySelector<HTMLElement>('input, button')?.focus({ preventScroll: true }); }, 50);
+      // rola ate o primeiro erro, de cima para baixo (datas de check-in, depois a validade - QA D7), e o foco vai
+      // para o CAMPO com erro, nunca para o (i) (QA D11): sem data -> "+"; linha passada/fechada -> o "x" dela
+      const ruim = slots.findIndex((s) => !janelaAindaVale(s.data, { inicio: s.hora_inicio, fim: s.hora_fim }, undefined, paisSub) || conflitoHorario(s.data, 'manha', horarioOficina) === 'fechado');
+      const alvo = semCheckin || passado || fechado ? refCheckin.current : refValidade.current;
+      const campo = semCheckin ? alvo?.querySelector<HTMLElement>('[data-testid="ck-adicionar"]')
+        : passado || fechado ? alvo?.querySelector<HTMLElement>(`[data-testid="ck-remover-${ruim}"]`)
+          : document.getElementById('cacb1-103');
+      setTimeout(() => { alvo?.scrollIntoView({ block: 'center', behavior: 'smooth' }); campo?.focus({ preventScroll: true }); }, 50);
       return;
     }
 
@@ -420,6 +428,8 @@ ${d.observacoes}` : d.observacoes));
         }).catch(() => {});
       }
 
+      // enviado: as linhas guardadas para a troca de lingua saem (auditoria Fable R-02)
+      gravarEstadoUi(`orc-checkin:${params.id}`, null);
       setSubmitted(true);
       setTimeout(() => router.push('/oficina/pedidos?aba=respondidos'), 2000);
     }
@@ -446,11 +456,14 @@ ${d.observacoes}` : d.observacoes));
   const temDiaFechado = slots.some((s) => s.data && conflitoHorario(s.data, 'manha', horarioOficina) === 'fechado');
   // uma data so (ou todas no mesmo dia): recomenda pelo menos 2 dias diferentes, sem bloquear (dono 14/11)
   const diasOferecidos = new Set(slots.filter((s) => s.data && janelaAindaVale(s.data, { inicio: s.hora_inicio, fim: s.hora_fim }, undefined, paisF)).map((s) => s.data)).size;
-  // validade: minimo = ultima data de check-in (ou hoje); recomendado = ultima + 7 (so texto e botao, nunca sozinho)
+  // validade: minimo = ultima data de check-in (ou hoje); recomendado = ultima data VALIDA (futura, dia aberto) + 7,
+  // nunca num dia fechado (QA D17) - so texto e botao, nunca sozinho
   const hojeOf = hojeLocal(undefined, paisF);
   const ultimaData = maiorData(slots.map((s) => s.data));
+  const ultimaValida = maiorData(slots.filter((s) => janelaAindaVale(s.data, { inicio: s.hora_inicio, fim: s.hora_fim }, undefined, paisF) && conflitoHorario(s.data, 'manha', horarioOficina) !== 'fechado').map((s) => s.data));
   const validadeMin = ultimaData && ultimaData > hojeOf ? ultimaData : hojeOf;
-  const validadeRecomendada = ultimaData ? somarDias(ultimaData, VALIDADE_FOLGA_DIAS) : '';
+  const validadeRecomendada = validadeSugerida(ultimaValida, horarioOficina);
+  const validadeRecTexto = validadeRecomendada || validadeSugerida(ultimaData, horarioOficina);
   const fmtCurta = (ymd: string) => diaDoCalendario(ymd, INTL_LOCALE[locale] || 'en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' });
   // o formulario do orcamento so aparece na revisao de itens/valor (ou sem agenda aberta: carro ja na oficina)
   const mostraForm = !modoRevisaoAceito || temAgenda === false || oQueMudar === 'valor';
@@ -842,39 +855,6 @@ ${d.observacoes}` : d.observacoes));
                 {t('diasUteis', { count: Math.ceil(tempoExecucaoHoras / 8) })}
               </p>
             </div>
-            <div ref={refValidade} data-testid="campo-validade">
-              <div className="mb-1 flex flex-wrap items-center gap-1.5">
-                <label htmlFor="cacb1-103" className="block text-sm font-medium text-gray-700">
-                  {t('validadeOrcamento')} <span className="text-red-600" aria-hidden="true">*</span>
-                </label>
-                <InfoI rotulo={t('infoRotulo', { campo: t('validadeOrcamento') })} texto={t('info_validadeOrcamento')} testid="info-validade" />
-              </div>
-              <input id="cacb1-103"
-                type="date"
-                aria-required="true"
-                className={`input-field ${erroVal ? '!border-red-400 bg-red-50' : ''}`}
-                aria-invalid={!!erroVal || undefined}
-                aria-describedby={erroVal ? 'erro-validade' : ultimaData ? 'dica-validade' : undefined}
-                min={validadeMin}
-                value={validade}
-                onChange={(e) => { setValidade(e.target.value); if (erroVal && !erroValidade(e.target.value, solicitacao.status !== 'em_andamento' ? slots.map((s) => s.data) : [], hojeOf)) setErroVal(null); }}
-              />
-              {erroVal ? (
-                <div id="erro-validade" role="alert" data-testid="erro-validade" data-tipo={erroVal} className="mt-1 rounded-lg border border-red-200 bg-red-50 p-2 text-sm text-red-800">
-                  <p>⛔ {erroVal === 'antes'
-                    ? t('validadeAntesErro', { ultima: fmtCurta(ultimaData), recomendada: fmtCurta(validadeRecomendada), dias: VALIDADE_FOLGA_DIAS })
-                    : erroVal === 'passado' ? t('validadePassadoErro')
-                      : ultimaData ? t('validadeVaziaErroComData', { ultima: fmtCurta(ultimaData), recomendada: fmtCurta(validadeRecomendada), dias: VALIDADE_FOLGA_DIAS })
-                        : t('validadeVaziaErro')}</p>
-                  {validadeRecomendada && (
-                    <button type="button" data-testid="usar-validade-recomendada" onClick={() => { setValidade(validadeRecomendada); setErroVal(null); }}
-                      className="mt-1.5 min-h-[40px] rounded-lg border border-red-300 bg-white px-3 text-sm font-medium text-red-800 hover:bg-red-100">{t('validadeUsar', { data: fmtCurta(validadeRecomendada) })}</button>
-                  )}
-                </div>
-              ) : ultimaData ? (
-                <p id="dica-validade" className="text-xs text-gray-500 mt-1" data-testid="dica-validade">{t('validadeDica', { ultima: fmtCurta(ultimaData), recomendada: fmtCurta(validadeRecomendada) })}</p>
-              ) : null}
-            </div>
             <div>
               <div className="mb-1 flex flex-wrap items-center gap-1.5">
                 <label htmlFor="orc-garantia" className="block text-sm font-medium text-gray-700">{t('garantia')}</label>
@@ -931,11 +911,48 @@ ${d.observacoes}` : d.observacoes));
             {erroHorario && <p className="text-sm text-red-700 mb-3" role="alert" data-testid="erro-horario-passado">{t('horarioPassado')}</p>}
             <SeletorCheckin linhas={slots} aoMudar={mudarSlots} ctx={ctxOficina} pais={paisF} prazoDias={prazoDias} erro={erroSemCheckin} testid="ck" />
             {erroSemCheckin && <p role="alert" className="mt-2 text-sm font-medium text-red-700" data-testid="erro-sem-checkin">⛔ {t('erroSemCheckin')}</p>}
-            {diasOferecidos < 2 && (
+            {/* so com exatamente 1 dia: com zero o erro vermelho ja diz o que falta (QA D8) */}
+            {diasOferecidos === 1 && (
               <p role="status" data-testid="dica-mais-datas" className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">💡 {t('dicaMaisDatas')}</p>
             )}
           </div>
         )}
+
+        {/* Validade logo DEPOIS das datas de check-in: o minimo dela depende das datas (QA D7; antes ficava no
+            cartao do prazo, acima das datas, e a oficina levava vermelho ao enviar) */}
+        <div ref={refValidade} className="card mb-6" data-testid="campo-validade">
+          <div className="mb-1 flex flex-wrap items-center gap-1.5">
+            <label htmlFor="cacb1-103" className="block text-sm font-medium text-gray-700">
+              {t('validadeOrcamento')} <span className="text-red-600" aria-hidden="true">*</span>
+            </label>
+            <InfoI rotulo={t('infoRotulo', { campo: t('validadeOrcamento') })} texto={t('info_validadeOrcamento')} testid="info-validade" />
+          </div>
+          <input id="cacb1-103"
+            type="date"
+            aria-required="true"
+            className={`input-field sm:max-w-xs ${erroVal ? '!border-red-400 bg-red-50' : ''}`}
+            aria-invalid={!!erroVal || undefined}
+            aria-describedby={erroVal ? 'erro-validade' : ultimaData ? 'dica-validade' : undefined}
+            min={validadeMin}
+            value={validade}
+            onChange={(e) => { setValidade(e.target.value); if (erroVal && !erroValidade(e.target.value, solicitacao.status !== 'em_andamento' ? slots.map((s) => s.data) : [], hojeOf)) setErroVal(null); }}
+          />
+          {erroVal ? (
+            <div id="erro-validade" role="alert" data-testid="erro-validade" data-tipo={erroVal} className="mt-1 rounded-lg border border-red-200 bg-red-50 p-2 text-sm text-red-800">
+              <p>⛔ {erroVal === 'antes'
+                ? t('validadeAntesErro', { ultima: fmtCurta(ultimaData), recomendada: fmtCurta(validadeRecTexto), dias: VALIDADE_FOLGA_DIAS })
+                : erroVal === 'passado' ? t('validadePassadoErro')
+                  : ultimaData ? t('validadeVaziaErroComData', { ultima: fmtCurta(ultimaData), recomendada: fmtCurta(validadeRecTexto), dias: VALIDADE_FOLGA_DIAS })
+                    : t('validadeVaziaErro')}</p>
+              {validadeRecomendada && (
+                <button type="button" data-testid="usar-validade-recomendada" onClick={() => { setValidade(validadeRecomendada); setErroVal(null); }}
+                  className="mt-1.5 min-h-[44px] rounded-lg border border-red-300 bg-white px-3 text-sm font-medium text-red-800 hover:bg-red-100">{t('validadeUsar', { data: fmtCurta(validadeRecomendada) })}</button>
+              )}
+            </div>
+          ) : ultimaData ? (
+            <p id="dica-validade" className="text-xs text-gray-500 mt-1" data-testid="dica-validade">{t('validadeDica', { ultima: fmtCurta(validadeMin), recomendada: fmtCurta(validadeRecTexto) })}</p>
+          ) : null}
+        </div>
 
         {/* Observacoes */}
         <div className="card mb-6">

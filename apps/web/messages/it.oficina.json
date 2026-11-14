@@ -516,8 +516,8 @@
     "agendamento": "Programmazione",
     "dataCheckin": "Data check-in",
     "turno": "Fascia oraria",
-    "manha": "Mattina (08:00 - 12:00)",
-    "tarde": "Pomeriggio (13:00 - 17:00)",
+    "manha": "Mattina",
+    "tarde": "Pomeriggio",
     "prazoDias": "Tempi (giorni)",
     "previsaoEntrega": "Consegna prevista",
     "corNaAgenda": "Colore in agenda",
@@ -607,8 +607,6 @@
     "checkinJaRealizado": "Il check-in è già stato effettuato. Il nuovo preventivo verrà applicato al servizio in corso.",
     "disponibilidadeCheckin": "Disponibilità per il check-in",
     "ofereceDatas": "Offri delle date al cliente per lasciare il veicolo. Il cliente ne sceglierà una.",
-    "manhaHorario": "Mattina (8-12)",
-    "tardeHorario": "Pomeriggio (13-17)",
     "entregaAprox": "Consegna: ~{data}",
     "adicionarDataDisponivel": "+ Aggiungi data disponibile",
     "erroDiaFechado": "Secondo il tuo orario di apertura, l'officina è chiusa in questo giorno. Scegli un altro giorno.",
@@ -682,7 +680,9 @@
     "validadeVaziaErro": "Scegli fino a quando vale il preventivo.",
     "validadeVaziaErroComData": "Scegli fino a quando vale il preventivo: almeno l’ultimo giorno di check-in ({ultima}); consigliamo almeno {dias} giorni dopo ({recomendada}).",
     "validadeUsar": "Usa {data}",
-    "validadeDica": "Minimo: {ultima}. Consigliato: {recomendada} o dopo."
+    "validadeDica": "Minimo: {ultima}. Consigliato: {recomendada} o dopo.",
+    "linhaPassada": "Questo orario è già passato. Rimuovilo o scegli un'altra data.",
+    "avisoJanelaAcabaLogo": "Questa fascia finisce oggi alle {fim} – il cliente avrà meno di {horas} ore (circa {min} min) per portare l'auto. Se va bene, puoi inviare; altrimenti scegli un giorno successivo."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "La password deve avere almeno 8 caratteri",
@@ -925,7 +925,8 @@
     "erro_recepcao_almoco": "L’orario di accettazione cade nella pausa pranzo.",
     "erro_almoco_invalido": "La pausa pranzo deve finire dopo l’inizio (almeno 15 minuti).",
     "recepcaoInicioAria": "inizio",
-    "recepcaoFimAria": "fine"
+    "recepcaoFimAria": "fine",
+    "erro_recepcao_invertida": "La fine deve essere dopo l'inizio."
   },
   "oficinaSolicitacoes": {
     "titulo": "Richieste",
@@ -991,7 +992,8 @@
       "mudancaOficina": "Data cambiata dall’officina il {quando}.",
       "propostaPendente": "Nuova data proposta ({quando}) in attesa della risposta del cliente. Fino ad allora vale la data sopra."
     },
-    "clienteEnviouNumero": "Il cliente ti ha inviato il suo numero di telefono."
+    "clienteEnviouNumero": "Il cliente ti ha inviato il suo numero di telefono.",
+    "orcamentoVencidoTexto": "Questo preventivo è scaduto il {data}. Il cliente non può più accettarlo. Per continuare, modifica il preventivo con nuove date di check-in e una nuova validità."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Veicolo ricevuto in officina",
@@ -1322,8 +1324,6 @@
     "outrasTitulo": "Manda altre date",
     "data": "Data",
     "turno": "Fascia",
-    "manha": "Mattina (08:00–12:00)",
-    "tarde": "Pomeriggio (13:00–17:00)",
     "previsao": "Consegna prevista",
     "adicionar": "+ Un’altra data",
     "remover": "Rimuovi",
@@ -1335,7 +1335,9 @@
     "selo": "Nuove date richieste",
     "dicaModificar": "Il cliente ha chiesto nuove date. Per mandare solo le date usa la scheda nella richiesta: non conta come revisione. Se modifichi il preventivo, la richiesta di date viene annullata.",
     "dicaModificarLink": "Apri la richiesta",
-    "erroSemData": "Aggiungi almeno una data."
+    "erroSemData": "Aggiungi almeno una data.",
+    "vencidoTexto": "Il tuo preventivo è scaduto, quindi qui non puoi confermare né inviare date. Modifica il preventivo con nuove date e una nuova validità: il cliente lo riceve e può accettare.",
+    "vencidoRevisar": "Modifica il preventivo"
   },
   "seletorCheckin": {
     "adicionar": "+ Aggiungi data di check-in",

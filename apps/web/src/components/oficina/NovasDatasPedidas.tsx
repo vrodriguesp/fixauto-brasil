@@ -8,6 +8,7 @@ import { textoErroApi } from '@/lib/erro-api';
 import { hojeLocal, janelaAindaVale, conflitoHorario, localParaIso, janelaDaSugestao, formatarJanela, turnoDaJanela, type Turno, type HorarioSemana, type ContextoOficina } from '@/lib/turnos';
 import SeletorCheckin, { type LinhaCheckin } from '@/components/oficina/SeletorCheckin';
 import { INTL_LOCALE } from '@/lib/utils';
+import { Link } from '@/i18n/navigation';
 
 // O cliente pediu novas datas (migracao 079): a oficina confirma uma sugestao dele (o orcamento
 // fica aceito e o carro agendado) ou manda de 1 a 3 datas novas (mesmo orcamento, sem revisao).
@@ -25,7 +26,9 @@ const somar = (ymd: string, n: number) => { const d = new Date(`${ymd}T12:00:00Z
 // Check-in v2: "outras datas" usam o MESMO seletor do orcamento (dia no mini calendario + faixa; vazio no
 // inicio, ate 3); cada linha manda hora_inicio/hora_fim. A sugestao do motorista (dia + manha/tarde) vira a
 // 1a faixa do perfil nesse turno (regra 2.13) - o rotulo ja mostra essa faixa.
-export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horario: horarioProp, ctx: ctxProp, oficinaId, aoMudar }: { orcamentoId: string; prazoDias: number; pais?: string | null; horario?: HorarioSemana; ctx?: ContextoOficina | null; oficinaId?: string; aoMudar?: () => void }) {
+// vencido (validade passou): o pedido do motorista continua visivel, mas so para ler - o servidor recusa
+// confirmar/mandar datas (ORCAMENTO_VENCIDO); o que a oficina pode fazer e revisar o orcamento (QA D5)
+export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horario: horarioProp, ctx: ctxProp, oficinaId, aoMudar, vencido = false, solicitacaoId }: { orcamentoId: string; prazoDias: number; pais?: string | null; horario?: HorarioSemana; ctx?: ContextoOficina | null; oficinaId?: string; aoMudar?: () => void; vencido?: boolean; solicitacaoId?: string }) {
   const t = useTranslations('oficinaNovasDatas');
   // a oficina corrige o perfil (aba nova pelo link do erro): ao voltar para esta aba relemos horario,
   // recepcao e almoco, sem perder as linhas preenchidas (igual ao formulario do orcamento; auditoria Fable R4)
@@ -70,7 +73,8 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
       const b = await r.json().catch(() => ({}));
       // 409 (respondido, cancelado, orcamento mudou/vencido, sugestao vencida): rele o cartao e a pagina
       if (!r.ok) { setErro(textoErroApi(tErr, r.status, b)); if (r.status === 409) { carregar(); aoMudar?.(); } return; }
-      setFeito(msgOk); setPedido(null);
+      // enviado: as linhas guardadas para a troca de lingua saem (auditoria Fable R-02)
+      setFeito(msgOk); setPedido(null); setLinhas([]);
       aoMudar?.();
     } catch {
       setErro(tErr('GENERICO'));
@@ -85,6 +89,28 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
   const mudarPrevisao = (i: number, v: string) => setLinhas((ls) => ls.map((l, j) => (j === i ? { ...l, previsao: v } : l)));
   const linhasOk = linhas.length > 0 && linhas.every((l) => janelaAindaVale(l.data, { inicio: l.hora_inicio, fim: l.hora_fim }, undefined, pais ?? null) && (!l.previsao || l.previsao >= l.data) && conflitoHorario(l.data, 'manha', horario) !== 'fechado');
   const sugs = (pedido.sugestoes || []) as Sug[];
+
+  if (vencido) {
+    return (
+      <div className="card border-2 border-amber-300 bg-amber-50/60" data-testid="novas-datas-pedidas-vencido">
+        <h2 className="font-semibold text-gray-900">📅 {t('titulo')}</h2>
+        <p className="text-xs text-gray-500">{t('pedidoEm', { data: new Date(pedido.created_at).toLocaleString(intl, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) })}</p>
+        {pedido.mensagem && (
+          <p className="mt-2 rounded-lg bg-white p-2 text-sm text-gray-800 break-words"><span className="font-medium">{t('mensagemCliente')}:</span> {pedido.mensagem}</p>
+        )}
+        {sugs.length > 0 && (
+          <>
+            <h3 className="mt-3 text-sm font-semibold text-gray-900">{t('sugestoesTitulo')}</h3>
+            <ul className="mt-1 list-disc pl-5 text-sm text-gray-800">
+              {sugs.map((s) => <li key={`${s.data}-${s.turno}`}>{fmtDia.format(new Date(`${s.data}T12:00:00Z`))} · <span className="whitespace-nowrap">{formatarJanela(janelaDaSugestao(s.data, s.turno, ctx))}</span></li>)}
+            </ul>
+          </>
+        )}
+        <p role="status" className="mt-3 rounded-lg border border-red-200 bg-white p-2 text-sm text-red-800" data-testid="novas-datas-vencido-texto">{t('vencidoTexto')}</p>
+        {solicitacaoId && <Link href={`/oficina/orcamento/${solicitacaoId}`} className="btn-primary mt-3 inline-flex min-h-[44px] w-full items-center justify-center sm:w-auto" data-testid="novas-datas-revisar">{t('vencidoRevisar')}</Link>}
+      </div>
+    );
+  }
 
   return (
     <div className="card border-2 border-amber-300 bg-amber-50/60" data-testid="novas-datas-pedidas">
@@ -104,7 +130,7 @@ export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horari
             const vale = Date.parse(localParaIso(s.data, js.inicio, pais ?? null)) - Date.now() >= ANTECEDENCIA_MS;
             return (
               <li key={`${s.data}-${s.turno}`} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white p-2">
-                <span className="text-sm font-medium text-gray-900" data-testid={`sugestao-${i}-texto`}>{fmtDia.format(new Date(`${s.data}T12:00:00Z`))} · {formatarJanela(js)}</span>
+                <span className="text-sm font-medium text-gray-900" data-testid={`sugestao-${i}-texto`}>{fmtDia.format(new Date(`${s.data}T12:00:00Z`))} · <span className="whitespace-nowrap">{formatarJanela(js)}</span></span>
                 {vale ? (
                   <button type="button" onClick={() => enviar({ confirmar: i }, `c${i}`, t('feitoConfirmado'))} disabled={!!enviando}
                     className="btn-success !py-2 !px-3 text-sm min-h-[44px] w-full sm:w-auto disabled:opacity-60" data-testid={`confirmar-sugestao-${i}`}>

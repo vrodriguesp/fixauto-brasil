@@ -281,8 +281,9 @@ export default function ManualCheckinPage() {
             <div className={fazerCheckin ? 'hidden' : ''}>
               <label htmlFor="c7917-12" className="block text-sm font-medium text-gray-700 mb-1">{t('turno')}</label>
               <select id="c7917-12" className="input-field" value={turnoCheckin} onChange={(e) => setTurnoCheckin(e.target.value)}>
-                <option value="manha">{t('manha').replace(/s*(.*)s*$/, '')} {formatarJanela(janelaManual('manha'))}</option>
-                <option value="tarde">{t('tarde').replace(/s*(.*)s*$/, '')} {formatarJanela(janelaManual('tarde'))}</option>
+                {/* rotulo = palavra do periodo + a faixa do perfil (antes uma regex quebrada apagava a palavra; auditoria Fable R-04) */}
+                <option value="manha">{t('manha')} ({formatarJanela(janelaManual('manha'))})</option>
+                <option value="tarde">{t('tarde')} ({formatarJanela(janelaManual('tarde'))})</option>
               </select>
             </div>
             <div>

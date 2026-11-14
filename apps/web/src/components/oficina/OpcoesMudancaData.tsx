@@ -15,17 +15,18 @@ export default function OpcoesMudancaData({ id, serve, setServe, combinado, setC
       <fieldset>
         <legend className="block text-sm font-medium text-gray-700 mb-1">{t('dataAtualServe')}</legend>
         <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
-          <label className="flex min-h-[40px] items-center gap-2 text-sm text-gray-800">
+          <label className="flex min-h-[44px] items-center gap-2 text-sm text-gray-800">
             <input type="radio" id={`${id}-serve-sim`} name={`${id}-serve`} checked={serve === true} onChange={() => setServe(true)} className="h-4 w-4" data-testid="serve-sim" />
             {t('simServe')}
           </label>
-          <label className="flex min-h-[40px] items-center gap-2 text-sm text-gray-800">
+          <label className="flex min-h-[44px] items-center gap-2 text-sm text-gray-800">
             <input type="radio" id={`${id}-serve-nao`} name={`${id}-serve`} checked={serve === false} onChange={() => setServe(false)} className="h-4 w-4" data-testid="serve-nao" />
             {t('naoServe')}
           </label>
         </div>
       </fieldset>
-      <label className="flex items-start gap-2 text-sm text-gray-800">
+      {/* area de toque >= 44 px (QA D14) */}
+      <label className="flex min-h-[44px] items-start gap-2 py-1 text-sm text-gray-800">
         <input type="checkbox" id={`${id}-combinei`} checked={combinado} onChange={(e) => setCombinado(e.target.checked)} className="mt-0.5 h-4 w-4 flex-shrink-0" data-testid="ja-combinei" />
         <span>
           <span className="font-medium">{t('combinado')}</span>
