@@ -615,7 +615,7 @@
     "estimativaMaoObra": "Manodopera",
     "estimativaHoras": "≈ {horas} h",
     "estimativaAviso": "Importo indicativo calcolato dall'IA, solo come riferimento. Non è un preventivo: conferma dopo aver visto l'auto.",
-    "semEstimativa": "L'IA non è riuscita a stimare il costo da quanto scritto dal cliente. Usa le domande qui sotto per saperne di più.",
+    "semEstimativa": "L'IA non è riuscita a stimare il costo da quanto scritto dal cliente. Chiedi più dettagli al cliente.",
     "observacoes": "Osservazioni",
     "perguntasCliente": "Domande per il cliente",
     "perguntasDica": "Inviale in chat per un preventivo preciso.",

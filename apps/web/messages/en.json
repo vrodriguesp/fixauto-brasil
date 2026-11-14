@@ -617,7 +617,7 @@
     "estimativaMaoObra": "Labour",
     "estimativaHoras": "≈ {horas} h",
     "estimativaAviso": "Approximate figure from the AI, for reference only. Not a quote: confirm once you have seen the car.",
-    "semEstimativa": "The AI couldn't estimate a price from what the customer wrote. Use the questions below to find out more.",
+    "semEstimativa": "The AI couldn't estimate a price from what the customer wrote. Ask the customer for more details.",
     "observacoes": "Notes",
     "perguntasCliente": "Questions for the customer",
     "perguntasDica": "Send them in the chat to quote accurately.",

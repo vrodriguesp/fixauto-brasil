@@ -16,7 +16,7 @@ export function EstimativaIA({ e, moeda, compacto = false }: { e: Estimativa; mo
   const locale = useLocale();
   const t = useTranslations('damageAnalysis');
   const din = (a?: number | null, b?: number | null) =>
-    a == null || b == null ? null : a === b ? formatCurrency(a, moeda, locale) : `${formatCurrency(a, moeda, locale)} – ${formatCurrency(b, moeda, locale)}`;
+    a == null || b == null ? null : a === b ? `≈ ${formatCurrency(a, moeda, locale)}` : `${formatCurrency(a, moeda, locale)} – ${formatCurrency(b, moeda, locale)}`;
   const num = (n: number) => new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(n);
   const horas = e.horas_min != null && e.horas_max != null
     ? t('estimativaHoras', { horas: e.horas_min === e.horas_max ? num(e.horas_min) : `${num(e.horas_min)}–${num(e.horas_max)}` })

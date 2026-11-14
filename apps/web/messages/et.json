@@ -623,7 +623,7 @@
     "estimativaMaoObra": "Töötasu",
     "estimativaHoras": "≈ {horas} h",
     "estimativaAviso": "AI pakutud ligikaudne summa, ainult orienteeruv. See ei ole hinnapakkumine: kinnita pärast auto ülevaatust.",
-    "semEstimativa": "AI ei saanud kliendi kirjelduse põhjal hinda hinnata. Täpsusta allolevate küsimustega.",
+    "semEstimativa": "AI ei saanud kliendi kirjelduse põhjal hinda hinnata. Küsi kliendilt täpsustusi.",
     "observacoes": "Tähelepanekud",
     "perguntasCliente": "Küsimused kliendile",
     "perguntasDica": "Saada need vestluses, et hinnapakkumine oleks täpne.",

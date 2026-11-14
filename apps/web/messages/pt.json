@@ -614,7 +614,7 @@
     "estimativaMaoObra": "Mão de obra",
     "estimativaHoras": "≈ {horas} h",
     "estimativaAviso": "Valor aproximado calculado pela IA, só como referência. Não é um orçamento: confirme ao ver o carro.",
-    "semEstimativa": "A IA não conseguiu estimar o valor com o que o cliente escreveu. Use as perguntas abaixo para saber mais.",
+    "semEstimativa": "A IA não conseguiu estimar o valor com o que o cliente escreveu. Peça mais detalhes ao cliente.",
     "observacoes": "Observações",
     "perguntasCliente": "Perguntas para o cliente",
     "perguntasDica": "Envie pelo chat para orçar com precisão.",
