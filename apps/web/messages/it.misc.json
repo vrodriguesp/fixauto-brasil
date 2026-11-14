@@ -167,7 +167,7 @@
     "metaDescription": "Come BipFix tratta i dati personali di automobilisti, officine e rivenditori di ricambi nell'Unione europea, in conformità al GDPR.",
     "pageTitle": "Informativa sulla privacy",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
-    "updatedDate": "7 novembre 2026",
+    "updatedDate": "14 novembre 2026",
     "secoes": [
       {
         "titulo": "1. Chi è responsabile dei tuoi dati",
@@ -291,7 +291,7 @@
           "Condividiamo i dati personali solo nella misura necessaria:"
         ],
         "itens": [
-          "<strong>Altri utenti:</strong> per inviare un preventivo, il Partner vede il nome del Cliente e i dati della richiesta (veicolo, foto, zona). Il telefono e l'email del Cliente vanno solo al Partner scelto dal Cliente, quando il preventivo viene accettato; dopo un incidente, anche alle Officine avvisate, se il Cliente seleziona \"Voglio che le officine mi chiamino\". Il Cliente vede i dati dei Partner che rispondono. I profili dei Partner e le recensioni sono pubblici.",
+          "<strong>Altri utenti:</strong> per inviare un preventivo, il Partner vede il nome del Cliente e i dati della richiesta (veicolo, foto, zona). Il telefono e l'email del Cliente vanno solo al Partner scelto dal Cliente, quando il preventivo viene accettato; dopo un incidente, anche alle Officine avvisate, se il Cliente seleziona \"Voglio che le officine mi chiamino\". Se, prima di accettare un preventivo, il Cliente tocca \"Invia il mio numero all’officina\", il numero va solo a quell’Officina e resta associato alla richiesta perché l’Officina possa chiamarlo. Il Cliente vede i dati dei Partner che rispondono. I profili dei Partner e le recensioni sono pubblici.",
           "<strong>Hosting:</strong> i nostri server e il database si trovano nei Paesi Bassi (Unione europea).",
           "<strong>Resend</strong> (Stati Uniti): invio delle email.",
           "<strong>Twilio</strong> (Stati Uniti): SMS sulla tua richiesta, per esempio quando arriva un preventivo. Inviamo solo il tuo numero di telefono e il testo del messaggio. Per non riceverli più, scrivi a support@bipfix.com.",

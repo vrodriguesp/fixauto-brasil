@@ -431,5 +431,23 @@
     "vencidoTexto": "Non puoi più accettare questo preventivo né chiedere nuove date. Scegli un altro preventivo attivo o rifai la richiesta.",
     "vencidoOutro": "Vedi un altro preventivo attivo",
     "vencidoNovoPedido": "Fai una nuova richiesta"
+  },
+  "telefoneOficina": {
+    "avisoTitulo": "Aggiungi il tuo numero di telefono",
+    "avisoTexto": "Così {oficina} può chiamarti per l’auto.",
+    "privacidade": "Tra le officine, solo quella di cui hai accettato il preventivo vede il numero. Non lo usiamo per pubblicità.",
+    "salvar": "Salva",
+    "salvando": "Salvataggio…",
+    "salvo": "Salvato. {oficina} ora vede il tuo numero.",
+    "numeroInvalido": "Controlla il numero.",
+    "erro": "Non è riuscito. Riprova.",
+    "seuNumero": "L’officina vede il tuo numero: {tel}",
+    "alterar": "Modifica",
+    "compartilhar": "Invia il mio numero all’officina",
+    "compartilharTexto": "Solo {oficina} riceve il numero (appare anche nella chat), così può chiamarti. Le altre officine non lo vedono.",
+    "compartilharEnviar": "Invia numero",
+    "cancelar": "Annulla",
+    "compartilhado": "Il numero è stato inviato all’officina.",
+    "verConversa": "Apri la chat"
   }
 }

@@ -57,7 +57,14 @@ export default function SolicitacaoDetalhePage() {
     if (!sol?.id || !sol.emergencia_id || sol.cliente?.telefone) return;
     supabase.rpc('telefone_acidente', { p_sol: sol.id }).then(({ data }) => setTelAcidente((data as string) || null));
   }, [sol?.id, sol?.emergencia_id, sol?.cliente?.telefone]);
-  const telCliente: string | null = sol?.cliente?.telefone || telAcidente;
+  // numero que o motorista enviou a ESTA oficina pelo orcamento (dono 13/11; migracao 081)
+  const [telEnviado, setTelEnviado] = useState<string | null>(null);
+  useEffect(() => {
+    if (!sol?.id || !oficina?.id || sol.cliente?.telefone) return;
+    supabase.from('telefone_compartilhado').select('telefone').eq('solicitacao_id', sol.id).eq('oficina_id', oficina.id).maybeSingle()
+      .then(({ data }) => setTelEnviado((data as { telefone: string } | null)?.telefone || null));
+  }, [sol?.id, oficina?.id, sol?.cliente?.telefone]);
+  const telCliente: string | null = sol?.cliente?.telefone || telAcidente || telEnviado;
 
   // a oficina abriu o pedido (caixa Pedidos: o cartao deixa de aparecer como novo)
   useEffect(() => {
@@ -290,6 +297,7 @@ export default function SolicitacaoDetalhePage() {
                 {sol.emergencia_id && !(sol.orcamentos || []).some((o: any) => o.oficina_id === oficina?.id && o.status === 'aceito') && (
                   <p className="mb-2 text-xs text-gray-600">{t('clientePediuLigar')}</p>
                 )}
+                {!sol.cliente?.telefone && !telAcidente && telEnviado && <p className="mb-2 text-xs text-gray-600" data-testid="cliente-enviou-numero">{t('clienteEnviouNumero')}</p>}
                 <a href={`tel:${telCliente.replace(/\s/g, '')}`} className="btn-primary flex min-h-[48px] w-full flex-col items-center justify-center text-center sm:w-auto sm:px-6">
                   <span><span aria-hidden="true">📞 </span>{t('ligarCliente')}</span>
                   <span className="whitespace-nowrap text-sm font-normal">{telCliente}</span>

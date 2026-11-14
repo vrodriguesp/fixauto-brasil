@@ -167,7 +167,7 @@
     "metaDescription": "How BipFix processes the personal data of drivers, repair shops and parts stores in the European Union, in accordance with the GDPR.",
     "pageTitle": "Privacy Policy",
     "lastUpdatedLabel": "Last updated:",
-    "updatedDate": "November 7, 2026",
+    "updatedDate": "November 14, 2026",
     "secoes": [
       {
         "titulo": "1. Who is responsible for your data",
@@ -291,7 +291,7 @@
           "We share personal data only as far as necessary:"
         ],
         "itens": [
-          "<strong>Other users:</strong> to send a quote, the Partner sees the Customer's name and the details of the request (vehicle, photos, area). The Customer's phone number and email go only to the Partner the Customer chooses, when the quote is accepted; after an accident, also to the Repair Shops notified about it, if the Customer ticks \"I want repair shops to call me\". The Customer sees the details of the Partners that answer. Partner profiles and reviews are public.",
+          "<strong>Other users:</strong> to send a quote, the Partner sees the Customer's name and the details of the request (vehicle, photos, area). The Customer's phone number and email go only to the Partner the Customer chooses, when the quote is accepted; after an accident, also to the Repair Shops notified about it, if the Customer ticks \"I want repair shops to call me\". If, before accepting a quote, the Customer taps \"Send my phone number to the repair shop\", the number goes only to that Repair Shop and is kept with the request so the Repair Shop can call. The Customer sees the details of the Partners that answer. Partner profiles and reviews are public.",
           "<strong>Hosting:</strong> our servers and database are located in the Netherlands (European Union).",
           "<strong>Resend</strong> (United States): sending of emails.",
           "<strong>Twilio</strong> (United States): text messages (SMS) about your own request, for example when a quote arrives. We send only your phone number and the message text. To stop receiving them, write to support@bipfix.com.",

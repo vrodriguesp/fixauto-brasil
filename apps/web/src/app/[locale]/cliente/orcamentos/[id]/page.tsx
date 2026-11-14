@@ -26,6 +26,7 @@ import EditarPedido from '@/components/cliente/EditarPedido';
 import { ehConvencionada } from '@/lib/seguradoras';
 import GarantiasAtivas from '@/components/cliente/GarantiasAtivas';
 import PedirNovasDatas from '@/components/cliente/PedirNovasDatas';
+import { TelefoneDepoisDoAceite, CompartilharTelefone } from '@/components/cliente/TelefoneOficina';
 import { orcamentoVencido } from '@/lib/orcamento-validade';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
 
@@ -199,6 +200,8 @@ export default function OrcamentoDetalhePage() {
             </p>
             <p className="mt-2 text-xs text-yellow-800">{tMud('notaRemarcar')}</p>
           </div>
+          {/* sem telefone no perfil: a oficina escolhida nao teria como ligar (dono 13/11) */}
+          <TelefoneDepoisDoAceite oficinaNome={acceptedOficinaNome} />
         </div>
 
         <button onClick={() => router.push('/cliente/dashboard')} className="btn-primary">
@@ -580,6 +583,12 @@ export default function OrcamentoDetalhePage() {
                 </div>
               </div>
 
+              {/* pedido aberto: o motorista pode passar o celular a ESTA oficina (dono 13/11; 081) - na
+                  largura do cartao (na coluna do nome o campo ficava com 51-81 px no celular, Fable 14/11) */}
+              {orc.oficina?.id && ['enviado', 'visualizado'].includes(orc.status) && ['aberta', 'em_orcamento'].includes(solicitacao.status) && (
+                <div className="-mt-2 mb-3"><CompartilharTelefone solicitacaoId={solicitacao.id} oficinaId={orc.oficina.id} oficinaNome={orc.oficina.nome_fantasia || ''} /></div>
+              )}
+
               {/* tempo de execucao so quando a oficina informou (antes aparecia "-"); as datas
                   oferecidas estao na lista abaixo - sem os quadrinhos repetidos (dono 09/11) */}
               {!!orc.tempo_execucao_horas && (
@@ -755,6 +764,7 @@ export default function OrcamentoDetalhePage() {
                         )}
                       </div>
                     )}
+                    <TelefoneDepoisDoAceite oficinaNome={orc.oficina?.nome_fantasia || ''} />
                     {/* data atual da agenda (pode ter mudado depois do aceite) + como remarcar/cancelar */}
                     <AgendamentoCliente solicitacaoId={solicitacao.id} oficinaId={orc.oficina_id} pais={(orc as any).oficina?.pais} rotuloEntrega={t('checkin')} rotuloPrevisao={t('deliveryForecast')}>
                       {orc.disponibilidade && orc.disponibilidade.length > 0 && (

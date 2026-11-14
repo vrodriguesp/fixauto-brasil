@@ -12,6 +12,8 @@ const ETAPAS_PEDIDO = [
   'abriu', 'servico', 'detalhe', 'carro', 'local', 'contato', 'foto',
   'edasi_bloqueado_detalhe', 'edasi_bloqueado_carro', 'edasi_bloqueado_local', 'edasi_bloqueado_contato',
   'cookie_aceito', 'cookie_recusado',
+  // 13/11 (Fable): no passo contato, digitou algo / marcou "quero SMS" (uma vez por visita)
+  'contato_digitou', 'contato_sms_opt',
 ];
 const FUNIS: Record<string, string[]> = {
   pedido_site: ETAPAS_PEDIDO,
@@ -20,7 +22,7 @@ const FUNIS: Record<string, string[]> = {
 };
 
 export async function POST(req: NextRequest) {
-  if (!limitarPorIp(req, 'funil', 60, 60 * 60 * 1000)) return NextResponse.json({ ok: true });
+  if (!limitarPorIp(req, 'funil', 120, 60 * 60 * 1000)) return NextResponse.json({ ok: true });
   const b = await req.json().catch(() => ({}));
   if (typeof b?.funil === 'string' && FUNIS[b.funil]?.includes(b?.etapa)) await contarEtapa(b.funil, b.etapa);
   return NextResponse.json({ ok: true });

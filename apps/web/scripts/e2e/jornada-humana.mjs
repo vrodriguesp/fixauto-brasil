@@ -289,6 +289,7 @@ try {
   ok('para frente de novo: contato', await pC.getByTestId('passo-contato').isVisible().catch(() => false));
   await digitar(pC, pC.locator('#pedido-nome'), 'Humano Teste', 'nome');
   await digitar(pC, pC.locator('#pedido-email'), emailC, 'e-mail');
+  await pC.getByTestId('quer-sms').check(); // 13/11: celular so com SMS marcado
   await digitar(pC, pC.locator('#pedido-telefone'), '51234567', 'telefone');
   await tocar(pC, pC.getByTestId('aceito-termos'), 'aceito os termos');
   const t0 = Date.now();

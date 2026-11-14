@@ -431,5 +431,23 @@
     "vencidoTexto": "You can no longer accept this quote or ask for new dates. Choose another active quote or make a new request.",
     "vencidoOutro": "See another active quote",
     "vencidoNovoPedido": "Make a new request"
+  },
+  "telefoneOficina": {
+    "avisoTitulo": "Add your phone number",
+    "avisoTexto": "Then {oficina} can call you about the car.",
+    "privacidade": "Of the repair shops, only the one whose quote you accepted sees the number. We don’t use it for advertising.",
+    "salvar": "Save",
+    "salvando": "Saving…",
+    "salvo": "Saved. {oficina} can now see your number.",
+    "numeroInvalido": "Check the number.",
+    "erro": "That didn’t work. Please try again.",
+    "seuNumero": "The repair shop sees your number: {tel}",
+    "alterar": "Change",
+    "compartilhar": "Send my phone number to the repair shop",
+    "compartilharTexto": "Only {oficina} gets the number (it also appears in the chat), so they can call you. Other repair shops won’t see it.",
+    "compartilharEnviar": "Send number",
+    "cancelar": "Cancel",
+    "compartilhado": "The number was sent to the repair shop.",
+    "verConversa": "Open the chat"
   }
 }

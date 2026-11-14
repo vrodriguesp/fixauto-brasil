@@ -159,7 +159,7 @@ try {
   const gLink = (h1.match(/href="(https:\/\/calendar\.google\.com\/calendar\/render\?[^"]+)"/) || [])[1]?.replace(/&amp;/g, '&');
   const gq = gLink ? new URL(gLink).searchParams : null;
   ok('C: botao Google Calendar com a data certa', !!gq && gq.get('action') === 'TEMPLATE' && gq.get('dates')?.startsWith(icsData(ag.data_inicio)) && /Car drop-off/.test(gq.get('text') || ''), gLink);
-  ok('C: link do pedido e o curto /r/<numero> (sem nome de pagina em portugues)', h1.includes(`/r/${sol.numero}"`) && !/\/cliente\//.test(h1));
+  ok('C: link do pedido e o curto /r/<numero> (sem nome de pagina em portugues)', new RegExp(`/r/${sol.numero}["?]`).test(h1) && !/\/cliente\//.test(h1));
   const ics1 = e1 ? icsDe(e1.f) : null;
   ok('C: .ics anexo', !!ics1);
   ok('C: .ics com UID do agendamento, SEQUENCE 0, inicio certo e 2 lembretes',

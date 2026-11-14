@@ -952,7 +952,8 @@
       "mudancaAceita": "Дата изменена: клиент принял новую дату {quando}.",
       "mudancaOficina": "Дата изменена автосервисом {quando}.",
       "propostaPendente": "Предложена новая дата ({quando}), ждём ответа клиента. До тех пор действует дата выше."
-    }
+    },
+    "clienteEnviouNumero": "Клиент отправил вам свой номер телефона."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Автомобиль принят в автосервисе",

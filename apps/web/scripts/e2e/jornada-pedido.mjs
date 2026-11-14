@@ -77,19 +77,29 @@ const entrarSite = async (ctx, email, s) => {
   return p;
 };
 // pedido sem cadastro pela tela do site (ate a tela do codigo); devolve o e-mail usado
+// marca/modelo: <select> ou campo com lista (desde bf92546 "marca, modelo e ano a vista") - igual ao pedido-exaustivo
+async function escolherCarroCampo(page, id, nome, re) {
+  const el = page.locator('#' + id);
+  await el.waitFor({ state: 'visible', timeout: 20000 });
+  if ((await el.evaluate((e) => e.tagName)) === 'SELECT') {
+    await page.waitForFunction((e) => e.options.length > 2, await el.elementHandle(), { timeout: 20000 });
+    const opc = await el.locator('option').allTextContents();
+    await el.selectOption({ label: opc.find((o) => (re || new RegExp('^' + nome + '$')).test(o)) || opc[1] });
+    return;
+  }
+  await page.waitForFunction((e) => !e.getAttribute('aria-busy') || e.getAttribute('aria-busy') === 'false', await el.elementHandle(), { timeout: 20000 }).catch(() => {});
+  await el.click(); await el.fill(nome.slice(0, 4));
+  const op = page.getByTestId(id + '-lista').getByRole('option', { name: nome, exact: true });
+  await op.waitFor({ timeout: 20000 }); await op.click();
+}
 async function pedidoSite(page, { email, placa, tipo = 'pneu', desc, modelo = /Corolla/ }) {
   await page.goto(`${SITE}/ee/et/paring`, { waitUntil: 'networkidle' });
   await page.getByRole('button', { name: new RegExp(T(`constants.tiposServico.${tipo}`)) }).first().click();
   await page.getByTestId('passo-detalhe').waitFor();
   await page.locator('#pedido-descricao').fill(desc);
   await page.getByRole('button', { name: T('clienteNovaSolicitacao.next'), exact: true }).click();
-  const marca = page.locator('[data-testid=passo-carro] select').first();
-  await page.waitForFunction((el) => el.options.length > 2, await marca.elementHandle(), { timeout: 20000 });
-  await marca.selectOption({ label: 'Toyota' });
-  const mod = page.locator('[data-testid=passo-carro] select').nth(1);
-  await page.waitForFunction((el) => el.options.length > 2, await mod.elementHandle(), { timeout: 20000 });
-  const opc = await mod.locator('option').allTextContents();
-  await mod.selectOption({ label: opc.find((o) => modelo.test(o)) || opc[1] });
+  await escolherCarroCampo(page, 'cbbe3-101', 'Toyota');
+  await escolherCarroCampo(page, 'cbbe3-102', 'Corolla', modelo);
   await page.getByLabel(T('veiculoForm.labelAno'), { exact: false }).locator('visible=true').first().fill('2017').catch(() => {});
   await page.locator('#pedido-placa').fill(placa || '');
   await page.getByRole('button', { name: T('clienteNovaSolicitacao.next'), exact: true }).click();
@@ -101,7 +111,8 @@ async function pedidoSite(page, { email, placa, tipo = 'pneu', desc, modelo = /C
   await page.getByTestId('passo-contato').waitFor();
   await page.locator('#pedido-nome').fill('Jornada Teste');
   await page.locator('#pedido-email').fill(email);
-  await page.locator('#pedido-senha').fill(senha);
+  // sem senha desde 12/11 (080): a confirmacao e o codigo do e-mail
+  await page.getByTestId('quer-sms').check(); // 13/11: celular so com SMS marcado
   await page.locator('#pedido-telefone').fill('5123 4567');
   await page.getByTestId('aceito-termos').check();
   const t0 = Date.now();
@@ -211,10 +222,11 @@ try {
   const ctxE = await contexto(390);
   const pE = await ctxE.newPage();
   const pedirComConta = async (placa, desc, modelo) => {
-    await pedidoSite(pE, { email: emailC, placa, desc, tipo: 'mecanica', modelo });
-    await pE.getByTestId('conta-existente').waitFor({ timeout: 20000 });
-    await pE.locator('#pedido-senha-login').fill(senha);
-    await pE.getByRole('button', { name: T('pedidoSemConta.entrarEEnviar') }).click();
+    // conta existente: mesmo fluxo (codigo no e-mail, o pedido entra na conta) desde 12/11
+    const tE = await pedidoSite(pE, { email: emailC, placa, desc, tipo: 'mecanica', modelo });
+    await pE.getByTestId('passo-codigo').waitFor({ timeout: 30000 });
+    await pE.locator('#pedido-codigo').fill((await codigoDe(emailC, tE)) || '');
+    await pE.getByTestId('confirmar-codigo').click();
     await pE.waitForURL(/orcamentos\//, { timeout: 30000 }).catch(() => {});
     await pE.waitForTimeout(2000);
     const s = (await admin.from('solicitacoes').select('id').eq('cliente_id', cliente.id).ilike('descricao', `%${desc}%`).maybeSingle()).data;

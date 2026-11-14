@@ -27,6 +27,7 @@ import OpcaoCartao from '../../components/OpcaoCartao';
 import { situacaoDoPedido } from '../../lib/situacao';
 import { useTraducoes, AvisoTraducao } from '../../lib/traducao';
 import { fusoDoPais } from '../../lib/fuso';
+import { TelefoneDepoisDoAceite, CompartilharTelefone } from '../../components/TelefoneOficina';
 
 type Ordem = 'preco' | 'nota' | 'cedo';
 const ATIVO = ['enviado', 'visualizado'];
@@ -418,6 +419,12 @@ export default function SolicitacaoDetailScreen() {
                 <Text className="text-primary-700 text-sm font-medium">💬 {t('agendaMudanca.conversar')}</Text>
               </Pressable>
             )}
+            {/* pedido aberto: o motorista pode passar o celular a ESTA oficina (dono 13/11; 081) */}
+            {!escolhido && ['enviado', 'visualizado'].includes(orc.status) && ['aberta', 'em_orcamento'].includes(solicitacao.status as string) && (
+              <CompartilharTelefone solicitacaoId={solicitacao.id} oficinaId={orc.oficina_id} oficinaNome={of?.nome_fantasia || ''} />
+            )}
+            {/* escolhida sem telefone no perfil: a oficina nao teria como ligar (dono 13/11) */}
+            {escolhido && <TelefoneDepoisDoAceite oficinaNome={of?.nome_fantasia || ''} />}
             {/* data atual da agenda (pode ter mudado depois do aceite) + como remarcar/cancelar (076) */}
             {escolhido && (() => {
               const ag = agenda.find((a: any) => a.status === 'agendado' && a.oficina_id === orc.oficina_id) as any;

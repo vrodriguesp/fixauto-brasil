@@ -29,14 +29,17 @@ import CampoTelefone from '../components/CampoTelefone';
 
 // Pedido de orcamento SEM cadastro e SEM senha - o mesmo fluxo do site
 // (apps/web/src/components/pedido/PedidoSemConta.tsx; regras em
-// apps/web/src/lib/pedido-sem-conta.ts): servico, carro, local, nome + e-mail e o
-// codigo de 6 digitos do e-mail. O pedido so vai para as oficinas com o codigo, e
-// o mesmo codigo entra na conta (nova ou ja existente) neste aparelho.
+// apps/web/src/lib/pedido-sem-conta.ts): servico, carro, local, nome + e-mail (celular
+// so com "quero SMS", dono 13/11) e a confirmacao pelo e-mail. No app o CODIGO vem
+// primeiro (o botao do e-mail abre o navegador, nao o app); o codigo entra na conta
+// (nova ou ja existente) neste aparelho. Confirmado pelo botao: o codigo da 410 e a
+// tela diz "ja nao espera" + entrar com codigo.
 const FUNIL = 'pedido_app';
 const contar = (etapa: string) => {
   fetch(`${API_BASE_URL}/api/funil`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ funil: FUNIL, etapa }) }).catch(() => {});
 };
 const EMAIL_OK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const TELEFONE_OK = (v: string) => v.replace(/\D/g, '').length >= 8;
 const DOMINIOS = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com', 'icloud.com', 'mail.ru', 'yandex.ru', 'live.com', 'mail.ee', 'hot.ee', 'online.ee'];
 function sugestaoEmail(email: string): string | null {
   const m = email.trim().toLowerCase().match(/^([^@\s]+)@([^@\s]+)$/);
@@ -83,7 +86,11 @@ export default function PedidoScreen() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
+  const [querSms, setQuerSms] = useState(false);
   const [termos, setTermos] = useState(false);
+  // funil do passo contato: digitou algo / marcou SMS (uma vez)
+  const contado = useRef<Record<string, boolean>>({});
+  const contarUmaVez = (e: string) => { if (!contado.current[e]) { contado.current[e] = true; contar(e); } };
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState('');
   const [pendente, setPendente] = useState<{ id: string; email: string } | null>(null);
@@ -92,6 +99,7 @@ export default function PedidoScreen() {
   const [corrigindo, setCorrigindo] = useState(false);
   const [emailNovo, setEmailNovo] = useState('');
   const [esperaReenvio, setEsperaReenvio] = useState(0);
+  const [jaConfirmou, setJaConfirmou] = useState(false);
 
   // quem ja entrou usa o pedido normal (mesmos passos, sem contato/codigo)
   useEffect(() => {
@@ -142,7 +150,7 @@ export default function PedidoScreen() {
   // escreveu o que precisa OU marcou algum servico da lista
   const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
   const carroOk = !!(marca && modelo && /^\d{4}$/.test(ano.trim())) && anoValido(ano) && placaValida(placa);
-  const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && termos;
+  const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && (!querSms || TELEFONE_OK(telefone)) && termos;
   const sugestao = sugestaoEmail(email);
 
   const descricaoFinal = () => servicos.length > 0
@@ -167,7 +175,7 @@ export default function PedidoScreen() {
       if (!local) { setErro(t('pedidoSemConta.erroLocalizacao')); setEtapa('local'); return; }
       const form = new FormData();
       form.append('dados', JSON.stringify({
-        origem: 'app', site: '', idioma: i18n.language, nome: nome.trim(), email: email.trim(), telefone: telefone.trim(), aceitouTermos: termos,
+        origem: 'app', site: '', idioma: i18n.language, nome: nome.trim(), email: email.trim(), querSms, telefone: querSms ? telefone.trim() : '', aceitouTermos: termos,
         tipo, descricao: descricaoFinal(), urgencia, endereco, latitude: local.lat, longitude: local.lon, pais: local.pais,
         veiculo: { tipo: 'cars', marca: marca?.name || '', modelo: modelo?.name || '', ano: ano.trim(), codigo: null, placa: placa.trim().toUpperCase() || null },
       }));
@@ -205,6 +213,8 @@ export default function PedidoScreen() {
       const d = res ? await res.json().catch(() => ({})) : {};
       // 5 codigos errados: volta ao contato (dados mantidos) para enviar de novo, com codigo novo
       if (d.codigo === 'CODIGO_TENTATIVAS') { setPendente(null); setEtapa('contato'); setErro(t('erros.CODIGO_TENTATIVAS')); return; }
+      // ja confirmado pelo botao do e-mail (no navegador) ou passou das 24 h
+      if (res?.status === 410) { setJaConfirmou(true); return; }
       if (!res || !res.ok) { setErro(textoErro(res?.status || 500, d.codigo)); return; }
       // o codigo provou o e-mail: entra na conta (nova ou ja existente) e abre o pedido;
       // sem senha ainda, passa antes pela tela "crie a sua senha" (pode pular)
@@ -231,6 +241,7 @@ export default function PedidoScreen() {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: pendente.id, email: comEmail }),
       }).catch(() => null);
       const d = res ? await res.json().catch(() => ({})) : {};
+      if (res?.status === 410) { setJaConfirmou(true); return; }
       if (!res || !res.ok) { setErro(textoErro(res?.status || 500, d.codigo)); return; }
       setPendente({ ...pendente, email: d.email || pendente.email });
       if (comEmail) setEmail(comEmail);
@@ -280,6 +291,19 @@ export default function PedidoScreen() {
       </Pressable>
     </View>
   );
+
+  if (etapa === 'codigo' && jaConfirmou) {
+    return (
+      <View className="flex-1 bg-white items-center justify-center px-6" testID="pedido-ja-confirmado">
+        <Ionicons name="mail-open-outline" size={56} color="#0284c7" />
+        <Text className="text-xl font-bold text-gray-900 mt-4 mb-2 text-center">{t('pedidoSemConta.jaConfirmouTitulo')}</Text>
+        <Text className="text-gray-600 text-center mb-8">{t('pedidoSemConta.jaConfirmouTexto')}</Text>
+        <Pressable onPress={() => router.replace({ pathname: '/(auth)/codigo-login', params: { email: pendente?.email || email.trim() } })} accessibilityRole="button" className="bg-primary-600 rounded-lg px-6 py-3 self-stretch items-center">
+          <Text className="text-white font-semibold">{t('pedidoSemConta.entrar')}</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   if (etapa === 'enviado') {
     return (
@@ -453,26 +477,41 @@ export default function PedidoScreen() {
           {(
             <View>
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.nome')}</Text>
-              <TextInput accessibilityLabel={t('pedidoSemConta.nome')} value={nome} onChangeText={setNome} autoComplete="name" textContentType="name" maxLength={100} className={`${CAMPO} mb-4`} />
+              <TextInput accessibilityLabel={t('pedidoSemConta.nome')} value={nome} onChangeText={(v) => { setNome(v); contarUmaVez('contato_digitou'); }} autoComplete="name" textContentType="name" maxLength={100} className={`${CAMPO} mb-4`} />
 
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.email')}</Text>
-              <TextInput accessibilityLabel={t('pedidoSemConta.email')} value={email} onChangeText={setEmail} autoComplete="email" textContentType="emailAddress" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} maxLength={254} className={CAMPO} />
+              <TextInput accessibilityLabel={t('pedidoSemConta.email')} value={email} onChangeText={(v) => { setEmail(v); contarUmaVez('contato_digitou'); }} autoComplete="email" textContentType="emailAddress" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} maxLength={254} className={CAMPO} />
               {sugestao ? (
                 <Pressable onPress={() => setEmail(sugestao)} accessibilityRole="button" className="min-h-[36px] justify-center">
                   <Text className="text-sm text-amber-800 underline">{t('pedidoSemConta.voceQuisDizer', { email: sugestao })}</Text>
                 </Pressable>
               ) : <View className="h-4" />}
 
-              <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.telefone')} <Text className="text-gray-400 font-normal">({t('pedidoSemConta.opcional')})</Text></Text>
-              <CampoTelefone rotulo={t('pedidoSemConta.telefone')} value={telefone} onChange={setTelefone} />
-              <Text className="text-xs text-gray-500 mt-1 mb-4">{t('pedidoSemConta.telefoneDica')}</Text>
+              {/* celular so para quem quer SMS (dono 13/11): desmarcado, o campo nem aparece */}
+              <View className="rounded-lg border border-gray-200 p-3 mb-4">
+                <Pressable onPress={() => { const v = !querSms; setQuerSms(v); if (v) contarUmaVez('contato_sms_opt'); else setTelefone(''); }}
+                  accessibilityRole="checkbox" accessibilityState={{ checked: querSms }} className="flex-row items-start gap-2" testID="quer-sms">
+                  <Ionicons name={querSms ? 'checkbox' : 'square-outline'} size={22} color={querSms ? '#0284c7' : '#6b7280'} />
+                  <Text className="flex-1 text-sm text-gray-800">{t('pedidoSemConta.querSms')}</Text>
+                </Pressable>
+                {querSms && (
+                  <View className="mt-3">
+                    <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.telefone')}</Text>
+                    <CampoTelefone rotulo={t('pedidoSemConta.telefone')} value={telefone} onChange={setTelefone} />
+                    <Text className="text-xs text-gray-500 mt-1">{t('pedidoSemConta.telefoneDica')}</Text>
+                    <View className="flex-row items-start gap-1.5 mt-2" testID="sms-privacidade">
+                      <Ionicons name="lock-closed-outline" size={14} color="#15803d" style={{ marginTop: 2 }} />
+                      <Text className="flex-1 text-xs text-gray-600">{t('pedidoSemConta.smsPrivacidade')}</Text>
+                    </View>
+                    {!TELEFONE_OK(telefone) && <Text className="text-xs text-amber-800 mt-2">{t('pedidoSemConta.faltaTelefone')}</Text>}
+                  </View>
+                )}
+              </View>
 
               <Pressable onPress={() => setTermos((v) => !v)} accessibilityRole="checkbox" accessibilityState={{ checked: termos }} className="flex-row items-start gap-2">
                 <Ionicons name={termos ? 'checkbox' : 'square-outline'} size={22} color={termos ? '#0284c7' : '#6b7280'} />
                 <Text className="flex-1 text-sm text-gray-700">{textoTermos()}</Text>
               </Pressable>
-              {/* transparencia: com este e-mail nasce um acesso BipFix (sem senha; cria depois se quiser) */}
-              <Text className="text-xs text-gray-500 mt-2">{t('pedidoSemConta.acessoTexto')}</Text>
               <Erro />
               <Navegar voltar="local" ok={contatoOk} avancar={() => enviar()} rotulo={t('pedidoSemConta.enviarPedido')} />
             </View>
@@ -482,8 +521,9 @@ export default function PedidoScreen() {
 
       {etapa === 'codigo' && pendente && (
         <View className="mb-10">
-          <Text className="text-lg font-semibold text-gray-900 mb-1">{t('pedidoSemConta.codigoTitulo')}</Text>
-          <Text className="text-sm text-gray-700 mb-4">{t('pedidoSemConta.codigoTexto', { email: pendente.email })}</Text>
+          <View className="items-center mb-2"><Ionicons name="mail-outline" size={44} color="#0284c7" /></View>
+          <Text className="text-lg font-semibold text-gray-900 mb-1 text-center">{t('pedidoSemConta.codigoTitulo')}</Text>
+          <Text className="text-sm text-gray-700 mb-4 text-center">{t('pedidoSemConta.codigoTexto', { email: pendente.email })}</Text>
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.codigoCampo')}</Text>
           <TextInput accessibilityLabel={t('pedidoSemConta.codigoCampo')} value={codigo} onChangeText={(v) => setCodigo(v.replace(/\D/g, '').slice(0, 6))}
             keyboardType="number-pad" autoComplete="one-time-code" textContentType="oneTimeCode" maxLength={6}
@@ -493,7 +533,8 @@ export default function PedidoScreen() {
           <Pressable onPress={confirmar} disabled={codigo.length !== 6 || enviando} accessibilityRole="button" className="bg-green-600 rounded-lg py-4 items-center mt-4 disabled:opacity-50">
             {enviando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold text-base">{t('pedidoSemConta.confirmarEnviar')}</Text>}
           </Pressable>
-          <Text className="text-xs text-gray-500 mt-3">{t('pedidoSemConta.codigoSpam')}</Text>
+          <Text className="text-xs text-gray-600 mt-3">{t('pedidoSemConta.codigoBotaoEmail')}</Text>
+          <Text className="text-xs text-gray-500 mt-2">{t('pedidoSemConta.codigoSpam')}</Text>
           <Pressable onPress={() => reenviar()} disabled={esperaReenvio > 0 || enviando} accessibilityRole="button" className="mt-3 min-h-[44px] justify-center">
             <Text className={esperaReenvio > 0 ? 'text-gray-400' : 'text-primary-600 underline'}>
               {esperaReenvio > 0 ? t('pedidoSemConta.reenviarEm', { s: esperaReenvio }) : t('pedidoSemConta.reenviarCodigo')}
@@ -518,6 +559,8 @@ export default function PedidoScreen() {
               </Pressable>
             </View>
           )}
+          {/* transparencia: com este e-mail nasce um acesso BipFix (sem senha) - aqui, nao no contato (Fable 13/11) */}
+          <Text className="text-xs text-gray-500 mt-4">{t('pedidoSemConta.acessoTexto')}</Text>
         </View>
       )}
     </RolagemTeclado>

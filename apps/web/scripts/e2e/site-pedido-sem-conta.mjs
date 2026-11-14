@@ -29,6 +29,21 @@ let ipN = 1;
 const ip = () => `10.77.${Math.floor(ipN / 250)}.${(ipN++ % 250) + 1}`; // cada chamada com um IP (limite por IP)
 const contas = new Set();
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// marca/modelo: <select> ou campo com lista (desde bf92546 "marca, modelo e ano a vista") - igual ao pedido-exaustivo
+async function escolherCarroCampo(page, id, nome, re) {
+  const el = page.locator('#' + id);
+  await el.waitFor({ state: 'visible', timeout: 20000 });
+  if ((await el.evaluate((e) => e.tagName)) === 'SELECT') {
+    await page.waitForFunction((e) => e.options.length > 2, await el.elementHandle(), { timeout: 20000 });
+    const opc = await el.locator('option').allTextContents();
+    await el.selectOption({ label: opc.find((o) => (re || new RegExp('^' + nome + '$')).test(o)) || opc[1] });
+    return;
+  }
+  await page.waitForFunction((e) => !e.getAttribute('aria-busy') || e.getAttribute('aria-busy') === 'false', await el.elementHandle(), { timeout: 20000 }).catch(() => {});
+  await el.click(); await el.fill(nome.slice(0, 4));
+  const op = page.getByTestId(id + '-lista').getByRole('option', { name: nome, exact: true });
+  await op.waitFor({ timeout: 20000 }); await op.click();
+}
 
 const FOTO = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==', 'base64');
 const DADOS = (extra) => ({
@@ -283,6 +298,8 @@ try {
   const LOGIN = { et: '/ee/et/login', ru: '/ee/ru/login' };
   const tela = async (idioma, largura, rotulos, modo) => {
     const ctx = await browser.newContext({ viewport: { width: largura, height: largura < 500 ? 844 : 900 }, deviceScaleFactor: largura < 500 ? 2 : 1, isMobile: largura < 500, hasTouch: largura < 500, extraHTTPHeaders: { 'x-real-ip': ip() } });
+    // aviso de cookies respondido (no celular o fundo dele bloqueia os toques - desde 12/11)
+    await ctx.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} });
     const page = await ctx.newPage();
     const erros = [];
     page.on('pageerror', (e) => erros.push(e.message));
@@ -308,14 +325,8 @@ try {
     await page.locator('#pedido-descricao').fill('Test');
     await page.getByRole('button', { name: rotulos.next, exact: true }).click();
     await page.getByTestId('passo-carro').waitFor();
-    const marca = page.getByLabel(rotulos.marca, { exact: false }).locator('visible=true').first();
-    await marca.waitFor({ timeout: 15000 });
-    await page.waitForFunction((el) => el.options.length > 2, await marca.elementHandle(), { timeout: 15000 });
-    await marca.selectOption({ label: 'Toyota' });
-    const modelo = page.getByLabel(rotulos.modelo, { exact: false }).locator('visible=true').first();
-    await page.waitForFunction((el) => el.options.length > 2, await modelo.elementHandle(), { timeout: 15000 });
-    const opcoes = await modelo.locator('option').allTextContents();
-    await modelo.selectOption({ label: opcoes.find((o) => /Corolla/.test(o)) || opcoes[1] });
+    await escolherCarroCampo(page, 'cbbe3-101', 'Toyota');
+    await escolherCarroCampo(page, 'cbbe3-102', 'Corolla', /Corolla/);
     const ano = page.getByLabel(rotulos.ano, { exact: false }).locator('visible=true').first();
     await ano.fill('2019').catch(async () => { await page.waitForFunction((el) => el.options.length > 1, await ano.elementHandle()); await ano.selectOption({ index: 1 }); });
     await page.locator('#pedido-placa').fill('555TST');
@@ -329,7 +340,7 @@ try {
     await page.getByRole('button', { name: rotulos.next, exact: true }).click();
     await page.getByTestId('passo-contato').waitFor();
     const email = emailDe(`tela-${idioma}`);
-    ok(`${idioma}: contato sem campo de senha, com a frase do acesso`, (await page.locator('#pedido-senha').count()) === 0 && (await page.getByTestId('acesso-texto').innerText()) === rotulos.m.pedidoSemConta.acessoTexto);
+    ok(`${idioma}: contato sem campo de senha e sem telefone (so com SMS marcado)`, (await page.locator('#pedido-senha').count()) === 0 && (await page.locator('#pedido-telefone').count()) === 0);
     await page.locator('#pedido-nome').fill('TESTE AUTOMATICO');
     await page.locator('#pedido-email').fill(email.replace('example.test', 'gmial.com'));
     ok(`${idioma}: sugere o e-mail certo (gmial -> gmail)`, await page.getByTestId('sugestao-email').isVisible());
@@ -340,6 +351,7 @@ try {
     const t1 = Date.now();
     await page.getByRole('button', { name: rotulos.enviar }).click();
     await page.getByTestId('passo-codigo').waitFor({ timeout: 30000 });
+    ok(`${idioma}: tela "quase pronto" com a frase do acesso`, (await page.getByTestId('acesso-texto').innerText()) === rotulos.m.pedidoSemConta.acessoTexto);
     ok(`${idioma}: "e-mail errado?" aparece (igual para todo mundo)`, (await page.getByTestId('corrigir-email').count()) === 1);
     await page.screenshot({ path: `${OUT}/pedido-codigo-${idioma}-${largura}.png`, fullPage: true });
     const c = await codigoDe(email, t1);

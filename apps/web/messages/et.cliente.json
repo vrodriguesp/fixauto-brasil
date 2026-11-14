@@ -431,5 +431,23 @@
     "vencidoTexto": "Seda hinnapakkumist ei saa enam vastu võtta ega uusi aegu küsida. Vali teine kehtiv pakkumine või esita päring uuesti.",
     "vencidoOutro": "Vaata teist kehtivat pakkumist",
     "vencidoNovoPedido": "Esita uus päring"
+  },
+  "telefoneOficina": {
+    "avisoTitulo": "Lisa oma telefoninumber",
+    "avisoTexto": "Siis saab {oficina} sulle auto kohta helistada.",
+    "privacidade": "Töökodadest näeb numbrit ainult see, kelle pakkumise sa vastu võtsid. Me ei kasuta seda reklaamiks.",
+    "salvar": "Salvesta",
+    "salvando": "Salvestan…",
+    "salvo": "Salvestatud. {oficina} näeb nüüd sinu numbrit.",
+    "numeroInvalido": "Kontrolli numbrit.",
+    "erro": "Ei õnnestunud. Proovi uuesti.",
+    "seuNumero": "Töökoda näeb sinu numbrit: {tel}",
+    "alterar": "Muuda",
+    "compartilhar": "Saada töökojale oma telefoninumber",
+    "compartilharTexto": "Number läheb ainult töökojale {oficina} (ka vestlusesse), et nad saaksid sulle helistada. Teised töökojad seda ei näe.",
+    "compartilharEnviar": "Saada number",
+    "cancelar": "Tühista",
+    "compartilhado": "Number on töökojale saadetud.",
+    "verConversa": "Ava vestlus"
   }
 }

@@ -1,19 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, useRouter, rota } from '@/i18n/navigation';
 import { supabase } from '@/lib/supabase';
 import { textoErroApi } from '@/lib/erro-api';
 import { apagarFotosPedido } from '@/lib/rascunho-pedido-fotos';
+import { registrarEventoMeta } from '@/components/Analytics';
 
-// Pagina do link do e-mail de lembrete (dono 06/11; api/pedido-sem-conta/retomar):
-// mostra o pedido guardado e deixa confirmar (vai para as oficinas e a pessoa ja
-// entra logada) ou cancelar (apaga na hora). Nada acontece so por abrir o link.
-type Resumo = { tipo: string; descricao: string; endereco: string; carro: string; fotos: number; expiraEm: string };
+// Pagina do botao dos e-mails de confirmacao (1o e-mail e lembrete; dono 06/11 e
+// 13/11; api/pedido-sem-conta/retomar): mostra o pedido guardado e deixa confirmar
+// (vai para as oficinas e a pessoa ja entra logada) ou cancelar (apaga na hora).
+// Nada acontece so por abrir o link (leitores de e-mail abrem links sozinhos).
+type Resumo = { tipo: string; descricao: string; carro: string; telefone: string | null; fotos: number; expiraEm: string };
 const FUSO: Record<string, string> = { it: 'Europe/Rome', 'pt-PT': 'Europe/Lisbon', pt: 'America/Sao_Paulo' };
 
-export default function RetomarPedido({ id, token, cancelar }: { id: string; token: string; cancelar: boolean }) {
+export default function RetomarPedido({ id, token: tokenConsulta, cancelar, doLembrete }: { id: string; token: string; cancelar: boolean; doLembrete?: boolean }) {
   const t = useTranslations('pedidoSemConta');
   const tc = useTranslations('constants');
   const te = useTranslations('erros');
@@ -23,14 +25,26 @@ export default function RetomarPedido({ id, token, cancelar }: { id: string; tok
   const [resumo, setResumo] = useState<Resumo | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState('');
+  // token: no fragmento (#t=, link novo - nao chega ao servidor nem as estatisticas) ou
+  // na consulta (?t=, link antigo do lembrete)
+  const token = useRef(tokenConsulta);
 
   const chamar = (acao: string) => fetch('/api/pedido-sem-conta/retomar', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, t: token, acao }),
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, t: token.current, acao, o: doLembrete ? 'l' : undefined }),
   }).then(async (r) => ({ r, d: await r.json().catch(() => ({})) }), () => ({ r: null as Response | null, d: {} as any }));
 
   useEffect(() => {
-    // o link fica fora da barra de endereco (nao vai para historico/compartilhamento)
-    window.history.replaceState(null, '', window.location.pathname);
+    // o token fica so nesta aba (sessionStorage): recarregar a pagina continua no pedido
+    // (Fable 14/11) sem o token voltar para a barra de endereco
+    const chave = `bipfix_link_${id}`;
+    const doFragmento = new URLSearchParams(window.location.hash.slice(1)).get('t');
+    try {
+      if (doFragmento) sessionStorage.setItem(chave, doFragmento);
+      else if (!token.current) token.current = sessionStorage.getItem(chave) || '';
+    } catch { /* sem armazenamento: so o link do e-mail */ }
+    if (doFragmento) token.current = doFragmento;
+    // o link fica fora da barra de endereco (nao vai para historico/compartilhamento); so o id fica
+    window.history.replaceState(null, '', `${window.location.pathname}?p=${id}${doLembrete ? '&o=l' : ''}${cancelar ? '&acao=cancelar' : ''}`);
     chamar('ver').then(({ r, d }) => {
       if (!r?.ok) { setEstado('invalido'); return; }
       setResumo(d);
@@ -48,7 +62,9 @@ export default function RetomarPedido({ id, token, cancelar }: { id: string; tok
       setErro(textoErroApi(te, r?.status || 500, d));
       return;
     }
-    try { localStorage.removeItem('bipfix_pedido_rascunho'); sessionStorage.removeItem('bipfix_pedido_rascunho'); } catch { /* ignora */ }
+    // conversao da campanha: antes so o caminho do codigo contava (Fable 13/11)
+    registrarEventoMeta('Lead');
+    try { localStorage.removeItem('bipfix_pedido_rascunho'); sessionStorage.removeItem('bipfix_pedido_rascunho'); sessionStorage.removeItem(`bipfix_link_${id}`); } catch { /* ignora */ }
     apagarFotosPedido();
     // o link prova o e-mail: entra na conta e abre o pedido; sem senha ainda, passa
     // antes pela tela "crie a sua senha" (pode pular)
@@ -68,7 +84,7 @@ export default function RetomarPedido({ id, token, cancelar }: { id: string; tok
       setErro(textoErroApi(te, r?.status || 500, d));
       return;
     }
-    try { localStorage.removeItem('bipfix_pedido_rascunho'); sessionStorage.removeItem('bipfix_pedido_rascunho'); } catch { /* ignora */ }
+    try { localStorage.removeItem('bipfix_pedido_rascunho'); sessionStorage.removeItem('bipfix_pedido_rascunho'); sessionStorage.removeItem(`bipfix_link_${id}`); } catch { /* ignora */ }
     apagarFotosPedido();
     setEstado('cancelado');
   };
@@ -89,7 +105,7 @@ export default function RetomarPedido({ id, token, cancelar }: { id: string; tok
             <p className="font-semibold text-gray-900">{tc(`tiposServico.${resumo.tipo}`)}</p>
             {resumo.carro && <p className="text-gray-700">{resumo.carro}</p>}
             {resumo.descricao && <p className="text-gray-700 break-words">{resumo.descricao}</p>}
-            {resumo.endereco && <p className="text-sm text-gray-500 break-words">{resumo.endereco}</p>}
+            {resumo.telefone && <p className="text-sm text-gray-500" data-testid="retomar-telefone">📱 {resumo.telefone}</p>}
             {resumo.fotos > 0 && <p className="text-sm text-gray-500">{t('retomarFotos', { n: resumo.fotos })}</p>}
           </div>
           <p className="text-sm text-gray-500 mb-6">{t('retomarAte', { h: ate })}</p>

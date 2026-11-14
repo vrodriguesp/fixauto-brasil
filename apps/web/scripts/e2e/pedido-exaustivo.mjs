@@ -269,7 +269,8 @@ async function site(l, largura) {
     await page.getByTestId('passo-contato').waitFor();
     await noAlto(page, 'passo-contato', nm + ' contato');
     t = await checar(page, `${nm} contato`);
-    ok(`${nm}: textos do contato no idioma (sem campo de senha)`, t.includes(T('pedidoSemConta.contatoTitulo')) && t.includes(T('pedidoSemConta.acessoTexto')) && (await page.locator('#pedido-senha').count()) === 0);
+    // 13/11: sem senha e sem telefone a vista (so com "quero SMS"); a frase do acesso foi para a tela do codigo
+    ok(`${nm}: textos do contato no idioma (sem campo de senha nem telefone)`, t.includes(T('pedidoSemConta.contatoTitulo')) && t.includes(T('pedidoSemConta.querSms')) && (await page.locator('#pedido-senha').count()) === 0 && (await page.locator('#pedido-telefone').count()) === 0);
     const hrefs = await page.locator('[data-testid=passo-contato] a').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
     ok(`${nm}: termos e privacidade no mercado certo`, hrefs.length >= 2 && hrefs.every((h) => (h || '').startsWith(PREF[l] + '/')), JSON.stringify(hrefs));
     const email = `exaust-${l.toLowerCase()}-${largura}-${tag}@example.test`;
@@ -283,6 +284,7 @@ async function site(l, largura) {
     await enviar.click();
     ok(`${nm}: sem aceitar os termos nao envia (avisa)`, await page.getByTestId('passo-contato').getByTestId('falta-aviso').isVisible());
     await page.getByTestId('aceito-termos').check();
+    await page.getByTestId('quer-sms').check(); // 13/11: celular so com SMS marcado
     ok(`${nm}: prefixo do telefone ja no pais do mercado (+${DDI[l]})`, (await page.getByTestId('passo-contato').getByTestId('prefixo-telefone').inputValue()) === DDI[l]);
     await page.locator('#pedido-telefone').fill(NUM[l]);
     {
@@ -448,6 +450,7 @@ async function app(l) {
     await campo(T('pedidoSemConta.email')).fill(email);
     // o login fica montado atras na versao web do app: conta so o campo visivel
     ok(`${nm}: sem campo de senha no contato`, (await page.getByLabel(T('auth.senha'), { exact: true }).locator('visible=true').count()) === 0);
+    await page.getByTestId('quer-sms').locator('visible=true').first().click(); // 13/11: celular so com SMS marcado
     ok(`${nm}: prefixo do telefone ja no pais do idioma (+${DDI[l]})`, (await page.getByRole('button', { name: new RegExp(`\\+${DDI[l]}$`) }).count()) === 1);
     await campo(T('pedidoSemConta.telefone')).fill(NUM[l]);
     await page.getByRole('checkbox').locator('visible=true').last().click({ position: { x: 10, y: 10 } });

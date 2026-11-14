@@ -33,6 +33,22 @@ async function abrir({ consentimento } = {}) {
 const fila = (page) => page.evaluate(() => (window.fbq?.queue || []).map((a) => Array.from(a).map((x) => (typeof x === 'object' ? JSON.stringify(x) : String(x))).join(' ')));
 const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// marca/modelo: <select> ou campo com lista (desde bf92546 "marca, modelo e ano a vista") - igual ao pedido-exaustivo
+async function escolherCarroCampo(page, id, nome, re) {
+  const el = page.locator('#' + id);
+  await el.waitFor({ state: 'visible', timeout: 20000 });
+  if ((await el.evaluate((e) => e.tagName)) === 'SELECT') {
+    await page.waitForFunction((e) => e.options.length > 2, await el.elementHandle(), { timeout: 20000 });
+    const opc = await el.locator('option').allTextContents();
+    await el.selectOption({ label: opc.find((o) => (re || new RegExp('^' + nome + '$')).test(o)) || opc[1] });
+    return;
+  }
+  await page.waitForFunction((e) => !e.getAttribute('aria-busy') || e.getAttribute('aria-busy') === 'false', await el.elementHandle(), { timeout: 20000 }).catch(() => {});
+  await el.click(); await el.fill(nome.slice(0, 4));
+  const op = page.getByTestId(id + '-lista').getByRole('option', { name: nome, exact: true });
+  await op.waitFor({ timeout: 20000 }); await op.click();
+}
+
 try {
   ok('ID do Pixel no .env', /^\d{15,16}$/.test(ID || ''), ID);
 
@@ -61,7 +77,8 @@ try {
     ok('coleta automatica desligada antes do init', f[0] === `set autoConfig false ${ID}`, JSON.stringify(f));
     ok('init com o ID e PageView', f.includes(`init ${ID}`) && f.filter((x) => x === 'track PageView').length === 1, JSON.stringify(f));
     // navegacao interna (sem recarregar) para outra pagina publica
-    await page.locator(`a[href="/ee/et/paring"]`).first().click();
+    // 13/11: o cabecalho tem "Küsi hinda" em duas versoes (uma escondida por largura): o link visivel
+    await page.locator(`a[href="/ee/et/paring"]`).locator("visible=true").first().click();
     await page.waitForURL(/\/ee\/et\/paring/);
     await esperar(1500);
     const f2 = await fila(page);
@@ -116,12 +133,8 @@ try {
     await page.locator('#pedido-descricao').fill('Pixel test');
     await next().click();
     await page.getByTestId('passo-carro').waitFor();
-    const s = (i) => page.locator('[data-testid=passo-carro] select').nth(i);
-    await page.waitForFunction((el) => el.options.length > 2, await s(0).elementHandle(), { timeout: 20000 });
-    await s(0).selectOption({ label: 'Toyota' });
-    await page.waitForFunction((el) => el.options.length > 2, await s(1).elementHandle(), { timeout: 20000 });
-    const mods = await s(1).locator('option').allTextContents();
-    await s(1).selectOption({ label: mods.find((o) => /Corolla/.test(o)) || mods[1] });
+    await escolherCarroCampo(page, 'cbbe3-101', 'Toyota');
+    await escolherCarroCampo(page, 'cbbe3-102', 'Corolla', /Corolla/);
     await page.locator('[data-testid=passo-carro] input[type=number]').fill('2017').catch(() => {});
     await page.locator('#pedido-placa').fill('123ABC');
     await next().click();
@@ -136,6 +149,7 @@ try {
     await page.locator('#pedido-email').fill(email);
     await page.locator('#pedido-senha').fill(senha);
     await page.getByTestId('aceito-termos').check();
+    await page.getByTestId('quer-sms').check(); // 13/11: celular so com SMS marcado
     await page.locator('#pedido-telefone').fill('5123 4567');
     const t0 = Date.now();
     ok('antes de enviar: nenhum Lead', !(await fila(page)).includes('track Lead'));

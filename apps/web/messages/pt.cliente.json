@@ -431,5 +431,23 @@
     "vencidoTexto": "Não é mais possível aceitar este orçamento nem pedir novas datas. Escolha outro orçamento ativo ou refaça o pedido.",
     "vencidoOutro": "Ver outro orçamento ativo",
     "vencidoNovoPedido": "Fazer um novo pedido"
+  },
+  "telefoneOficina": {
+    "avisoTitulo": "Adicione seu telefone",
+    "avisoTexto": "Assim a {oficina} pode te ligar sobre o carro.",
+    "privacidade": "Das oficinas, só aquela cujo orçamento você aceitou vê o número. Não o usamos para publicidade.",
+    "salvar": "Salvar",
+    "salvando": "Salvando…",
+    "salvo": "Salvo. A {oficina} agora vê seu número.",
+    "numeroInvalido": "Confira o número.",
+    "erro": "Não deu certo. Tente de novo.",
+    "seuNumero": "A oficina vê seu número: {tel}",
+    "alterar": "Alterar",
+    "compartilhar": "Enviar meu telefone para a oficina",
+    "compartilharTexto": "Só a {oficina} recebe o número (ele aparece também na conversa), para poder te ligar. As outras oficinas não o veem.",
+    "compartilharEnviar": "Enviar número",
+    "cancelar": "Cancelar",
+    "compartilhado": "O número foi enviado à oficina.",
+    "verConversa": "Abrir a conversa"
   }
 }

@@ -7,7 +7,7 @@ import { ErroValidacao, texto, email as validarEmail, validarImagens } from '@/l
 import { idiomaDoSite } from '@/lib/site-url';
 import { TERMOS_VERSAO } from '@/lib/termos';
 import {
-  validarPedido, criarPedido, guardarFotos, novoCodigo, hashCodigo, enviarCodigo,
+  validarPedido, criarPedido, guardarFotos, novoCodigo, hashCodigo, enviarConfirmacao,
   apagarPendente, limparPendentes, contarEtapa, contaParaEmail,
 } from '@/lib/pedido-sem-conta';
 
@@ -16,9 +16,9 @@ const HORA = 60 * 60 * 1000;
 
 // Pedido de orcamento sem cadastro e sem senha (site e app; regras em
 // lib/pedido-sem-conta.ts). Com login: cria o pedido na hora. Sem login: guarda o
-// pedido, acha ou cria a conta (sem senha, sem ativar) e manda o codigo de 6
-// digitos; o pedido so vai para as oficinas em /api/pedido-sem-conta/confirmar,
-// que tambem entra na conta. E-mail que ja tem conta recebe o mesmo codigo e a
+// pedido, acha ou cria a conta (sem senha, sem ativar) e manda o e-mail com o
+// codigo de 6 digitos e o botao (link); o pedido so vai para as oficinas em
+// /confirmar (codigo) ou /retomar (link), que tambem entram na conta. E-mail que ja tem conta recebe o mesmo codigo e a
 // resposta e a mesma ({ pendenteId, email }): nao revela quem tem conta.
 export async function POST(req: NextRequest) {
   // O app so conta como logado com o proprio login (Authorization: Bearer). Um
@@ -58,7 +58,8 @@ export async function POST(req: NextRequest) {
 
     const nome = texto(d.nome, 'nome', 100, true)!;
     const email = validarEmail(d.email, true)!;
-    const telefone = texto(d.telefone, 'telefone', 30);
+    // telefone so com "quero SMS" marcado (dono 13/11); app antigo sem o campo: como antes
+    const telefone = d.querSms === false ? null : texto(d.telefone, 'telefone', 30);
     const idioma = idiomaDoSite(typeof d.idioma === 'string' ? d.idioma : null);
     if (d.aceitouTermos !== true) throw new ErroValidacao('termos', 'TERMOS_OBRIGATORIOS');
     if (!dentroDoLimite(`pedido-sem-conta:${email.toLowerCase()}`, 5, HORA)) {
@@ -80,14 +81,15 @@ export async function POST(req: NextRequest) {
     const id = randomUUID();
     const codigo = novoCodigo();
     const caminhos = await guardarFotos(id, fotos);
-    const { error: pErro } = await supabaseAdmin.from('pedidos_pendentes').insert({
+    const codigoHash = hashCodigo(id, codigo);
+    const { data: novo, error: pErro } = await supabaseAdmin.from('pedidos_pendentes').insert({
       id, user_id: conta.userId, conta_nova: conta.contaNova, email, nome, telefone, idioma, origem,
-      dados: pedido, fotos: caminhos, codigo_hash: hashCodigo(id, codigo),
+      dados: pedido, fotos: caminhos, codigo_hash: codigoHash,
       termos_aceitos_em: new Date().toISOString(), termos_versao: TERMOS_VERSAO,
-    });
-    if (pErro) throw new Error(pErro.message);
+    }).select('created_at').single();
+    if (pErro || !novo) throw new Error(pErro?.message || 'pendente nao gravado');
     criadoUser = null; reaproveitado = null; // dali em diante a limpeza das 24 h cuida da conta
-    const enviado = await enviarCodigo(email, nome, codigo, idioma);
+    const enviado = await enviarConfirmacao({ id, email, nome, idioma, dados: pedido, created_at: novo.created_at, codigo_hash: codigoHash }, codigo);
     if (!enviado) {
       await apagarPendente({ id, user_id: conta.userId, conta_nova: conta.contaNova, fotos: caminhos });
       throw new Error('e-mail do codigo nao enviado');

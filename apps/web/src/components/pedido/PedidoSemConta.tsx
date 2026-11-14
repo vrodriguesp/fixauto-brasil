@@ -22,14 +22,17 @@ import {
 
 // Pedido de orcamento SEM cadastro e SEM senha (dono 06/11 e 12/11; regras em
 // lib/pedido-sem-conta.ts). Mesmo pedido do /cliente/nova-solicitacao (servico,
-// carro, local), mais nome e e-mail no fim; o pedido so vai para as oficinas
-// depois do codigo de 6 digitos enviado ao e-mail - e o mesmo codigo entra na
+// carro, local), mais nome e e-mail no fim (telefone so se a pessoa quiser SMS, dono
+// 13/11); o pedido so vai para as oficinas depois da confirmacao pelo e-mail - o
+// botao do e-mail OU o codigo de 6 digitos digitado aqui - e quem confirma entra na
 // conta (nova ou ja existente). O app faz o mesmo em apps/mobile/app/pedido.tsx.
 const FUNIL = 'pedido_site';
 const contar = (etapa: string) => {
   try { fetch('/api/funil', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ funil: FUNIL, etapa }), keepalive: true }).catch(() => {}); } catch { /* nunca atrapalha o pedido */ }
 };
 const EMAIL_OK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// numero do celular: prefixo + ao menos 6 digitos ("+372 5123 4567")
+const TELEFONE_OK = (v: string) => v.replace(/\D/g, '').length >= 8;
 // erros de digitacao mais comuns no dominio (gmail.con, hotmial.com...)
 const DOMINIOS = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com', 'icloud.com', 'mail.ru', 'yandex.ru', 'live.com', 'mail.ee', 'hot.ee', 'online.ee'];
 function sugestaoEmail(email: string): string | null {
@@ -106,6 +109,9 @@ export default function PedidoSemConta() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
+  // e-mail e sempre o canal; o celular so com a caixa marcada (dono 13/11: as pessoas
+  // desistiam diante do telefone, mesmo opcional)
+  const [querSms, setQuerSms] = useState(false);
   const [termos, setTermos] = useState(false);
   const [site, setSite] = useState(''); // campo invisivel (robo)
   // envio / codigo
@@ -118,6 +124,11 @@ export default function PedidoSemConta() {
   const [emailNovo, setEmailNovo] = useState('');
   const [esperaReenvio, setEsperaReenvio] = useState(0);
   const [enviadoSemLogin, setEnviadoSemLogin] = useState(false);
+  // confirmado pelo botao do e-mail (ou expirou) enquanto esta tela esperava o codigo
+  const [jaConfirmou, setJaConfirmou] = useState(false);
+  // funil do passo contato: digitou algo / marcou SMS (uma vez por visita)
+  const contado = useRef<Record<string, boolean>>({});
+  const contarUmaVez = (etapa: string) => { if (!contado.current[etapa]) { contado.current[etapa] = true; contar(etapa); } };
 
   // quem ja esta logado usa o pedido normal (mesmos passos, sem contato/codigo)
   useEffect(() => {
@@ -137,7 +148,7 @@ export default function PedidoSemConta() {
         setTipo(r.tipo || ''); setServicos(Array.isArray(r.servicos) ? r.servicos : []); setDescricao(r.descricao || ''); setUrgencia(r.urgencia || 'media');
         if (r.carro) setCarro(r.carro);
         setPlaca(r.placa || ''); setEndereco(r.endereco || ''); setCoords(r.coords || null); setPais(r.pais || null);
-        setNome(r.nome || ''); setEmail(r.email || ''); setTelefone(r.telefone || ''); setTermos(!!r.termos);
+        setNome(r.nome || ''); setEmail(r.email || ''); setQuerSms(!!r.querSms); setTelefone(r.querSms ? r.telefone || '' : ''); setTermos(!!r.termos);
         if (r.pendente?.id && r.pendente?.email) setPendente({ id: r.pendente.id, email: r.pendente.email });
         // codigo so com o pedido pendente guardado; senao volta ao contato
         const e: Etapa = r.etapa === 'codigo' && !r.pendente ? 'contato' : r.etapa;
@@ -159,9 +170,9 @@ export default function PedidoSemConta() {
     if (!rascunhoLido) return;
     memoria.fotos = fotos;
     try {
-      localStorage.setItem(RASCUNHO, JSON.stringify({ em: Date.now(), etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, telefone, termos, pendente, qtdFotos: fotos.length }));
+      localStorage.setItem(RASCUNHO, JSON.stringify({ em: Date.now(), etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, querSms, telefone, termos, pendente, qtdFotos: fotos.length }));
     } catch { /* ignora */ }
-  }, [rascunhoLido, etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, telefone, termos, pendente, fotos]);
+  }, [rascunhoLido, etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, querSms, telefone, termos, pendente, fotos]);
   useEffect(() => {
     if (!rascunhoLido || fotosVoltando.current) return;
     if (fotos.length) gravarFotosPedido(fotos.map((f) => f.file)); else apagarFotosPedido();
@@ -272,12 +283,13 @@ export default function PedidoSemConta() {
   // placa e ano conferidos aqui, com o aviso ao lado do campo (item 53)
   const carroDados = !!(carro.marca && carro.modelo && carro.ano);
   const carroOk = carroDados && placaValida(placa) && anoDoCarroValido(carro.ano);
-  const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && termos;
+  const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && (!querSms || TELEFONE_OK(telefone)) && termos;
   const sugestao = sugestaoEmail(email);
   // o que falta em cada passo (aviso + campo que recebe o foco)
   // diz SO o que falta: "marca, modelo e ano" com marca e modelo ja escolhidos confundia (Clarity 12/11)
   const faltaCarro: [string, string] = !carroDados ? (!carro.marca ? [t('faltaMarca'), 'cbbe3-101'] : !carro.modelo ? [t('faltaModelo'), 'cbbe3-102'] : [t('faltaAno'), 'cbbe3-103']) :[t('faltaCarroConferir'), anoDoCarroValido(carro.ano) ? 'pedido-placa' : 'cbbe3-103'];
-  const faltaContato: [string, string] = !nome.trim() ? [t('faltaNome'), 'pedido-nome'] : !EMAIL_OK.test(email.trim()) ? [t('faltaEmail'), 'pedido-email'] : [t('faltaTermos'), 'pedido-termos'];
+  const faltaContato: [string, string] = !nome.trim() ? [t('faltaNome'), 'pedido-nome'] : !EMAIL_OK.test(email.trim()) ? [t('faltaEmail'), 'pedido-email']
+    : querSms && !TELEFONE_OK(telefone) ? [t('faltaTelefone'), 'pedido-telefone'] : [t('faltaTermos'), 'pedido-termos'];
   useEffect(() => { setFaltando(''); }, [servicoOk, carroOk, endereco, contatoOk]); // corrigiu: o aviso some
 
   const descricaoFinal = () => servicos.length > 0
@@ -301,7 +313,7 @@ export default function PedidoSemConta() {
       if (!local) { setErro(tn('erroLocalizacao')); setEtapa('local'); return; }
       const form = new FormData();
       form.append('dados', JSON.stringify({
-        origem: 'site', site, idioma: locale, nome: nome.trim(), email: email.trim(), telefone: telefone.trim(), aceitouTermos: termos,
+        origem: 'site', site, idioma: locale, nome: nome.trim(), email: email.trim(), querSms, telefone: querSms ? telefone.trim() : '', aceitouTermos: termos,
         tipo, descricao: descricaoFinal(), urgencia, endereco, latitude: local.lat, longitude: local.lon, pais: local.pais,
         veiculo: { tipo: carro.tipo, marca: carro.marca, modelo: carro.modelo, ano: carro.ano, codigo: carro.codigo || null, placa: placa.trim() || null },
       }));
@@ -328,6 +340,8 @@ export default function PedidoSemConta() {
       const d = res ? await res.json().catch(() => ({})) : {};
       // 5 codigos errados: volta ao contato (dados mantidos) para enviar de novo, com codigo novo
       if (d.codigo === 'CODIGO_TENTATIVAS') { setPendente(null); setEtapa('contato'); setErro(te('CODIGO_TENTATIVAS')); return; }
+      // ja confirmado pelo botao do e-mail (aqui ou noutro aparelho) ou passou das 24 h
+      if (res?.status === 410) { limparRascunho(); setJaConfirmou(true); return; }
       if (!res || !res.ok) { setErro(textoErroApi(te, res?.status || 500, d)); return; }
       registrarEventoMeta('Lead');
       limparRascunho();
@@ -356,6 +370,7 @@ export default function PedidoSemConta() {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: pendente.id, email: comEmail }),
       }).catch(() => null);
       const d = res ? await res.json().catch(() => ({})) : {};
+      if (res?.status === 410) { limparRascunho(); setJaConfirmou(true); return; }
       if (!res || !res.ok) { setErro(textoErroApi(te, res?.status || 500, d)); return; }
       setPendente({ ...pendente, email: d.email || pendente.email });
       if (comEmail) setEmail(comEmail);
@@ -379,6 +394,19 @@ export default function PedidoSemConta() {
         disabled={enviando} aria-busy={enviando} className="btn-primary disabled:opacity-50">{rotulo || tn('next')}</button>
     </div>
   );
+
+  if (etapa === 'codigo' && jaConfirmou) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-16 text-center" data-testid="pedido-ja-confirmado">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('jaConfirmouTitulo')}</h1>
+        <p className="text-gray-600 mb-6">{t('jaConfirmouTexto')}</p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link href={rota('/login', undefined, { codigo: '1' })} className="btn-primary inline-block">{t('entrar')}</Link>
+          <a href={hrefNoIdioma(locale, '/pedido')} className="btn-secondary inline-block">{t('retomarNovo')}</a>
+        </div>
+      </div>
+    );
+  }
 
   if (etapa === 'enviado' && enviadoSemLogin) {
     return (
@@ -526,19 +554,33 @@ export default function PedidoSemConta() {
               <div className="space-y-3">
                 <div>
                   <label htmlFor="pedido-nome" className="block text-sm font-medium text-gray-700 mb-1">{t('nome')}</label>
-                  <input id="pedido-nome" className="input-field" autoComplete="name" maxLength={100} value={nome} onChange={(e) => setNome(e.target.value)} />
+                  <input id="pedido-nome" className="input-field" autoComplete="name" maxLength={100} value={nome} onChange={(e) => { setNome(e.target.value); contarUmaVez('contato_digitou'); }} />
                 </div>
                 <div>
                   <label htmlFor="pedido-email" className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
-                  <input id="pedido-email" type="email" inputMode="email" className="input-field" autoComplete="email" maxLength={254} value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <input id="pedido-email" type="email" inputMode="email" className="input-field" autoComplete="email" maxLength={254} value={email} onChange={(e) => { setEmail(e.target.value); contarUmaVez('contato_digitou'); }} />
                   {sugestao && (
                     <button type="button" onClick={() => setEmail(sugestao)} className="mt-1 text-sm text-amber-800 underline" data-testid="sugestao-email">{t('voceQuisDizer', { email: sugestao })}</button>
                   )}
                 </div>
-                <div>
-                  <label htmlFor="pedido-telefone" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')} <span className="text-gray-400 font-normal">({t('opcional')})</span></label>
-                  <CampoTelefone id="pedido-telefone" value={telefone} onChange={setTelefone} />
-                  <p className="text-xs text-gray-500 mt-1">{t('telefoneDica')}</p>
+                {/* celular so para quem quer SMS (dono 13/11): desmarcado, o campo nem aparece e nada e enviado */}
+                <div className="rounded-lg border border-gray-200 p-3">
+                  <label className="flex items-start gap-2 text-sm text-gray-800">
+                    <input id="pedido-quer-sms" type="checkbox" checked={querSms} className="w-4 h-4 mt-0.5" data-testid="quer-sms"
+                      onChange={(e) => { setQuerSms(e.target.checked); if (e.target.checked) contarUmaVez('contato_sms_opt'); else setTelefone(''); }} />
+                    <span>{t('querSms')}</span>
+                  </label>
+                  {querSms && (
+                    <div className="mt-3">
+                      <label htmlFor="pedido-telefone" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
+                      <CampoTelefone id="pedido-telefone" value={telefone} onChange={setTelefone} />
+                      <p className="text-xs text-gray-500 mt-1">{t('telefoneDica')}</p>
+                      <p className="flex items-start gap-1.5 text-xs text-gray-600 mt-2" data-testid="sms-privacidade">
+                        <svg aria-hidden="true" className="w-4 h-4 shrink-0 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                        <span>{t('smsPrivacidade')}</span>
+                      </p>
+                    </div>
+                  )}
                 </div>
                 {/* campo invisivel para robos (pessoas nao veem nem preenchem) */}
                 <div aria-hidden="true" className="absolute -left-[9999px] w-px h-px overflow-hidden">
@@ -554,8 +596,6 @@ export default function PedidoSemConta() {
                     })}
                   </span>
                 </label>
-                {/* transparencia: com este e-mail nasce um acesso BipFix (sem senha; a pessoa cria depois se quiser) */}
-                <p className="text-xs text-gray-500" data-testid="acesso-texto">{t('acessoTexto')}</p>
                 {erro && <p role="alert" className="text-sm text-red-700">{erro}</p>}
                 <Navegar voltar="local" ok={contatoOk} avancar={() => enviar()} rotulo={enviando ? t('enviando') : t('enviarPedido')} falta={faltaContato[0]} campo={faltaContato[1]} />
               </div>
@@ -565,8 +605,12 @@ export default function PedidoSemConta() {
 
         {etapa === 'codigo' && pendente && (
           <div data-testid="passo-codigo">
-            <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('codigoTitulo')}</h2>
-            <p className="text-sm text-gray-700 mb-4">{t('codigoTexto', { email: pendente.email })}</p>
+            <div className="text-center mb-2" aria-hidden="true">
+              <svg className="w-12 h-12 mx-auto text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+            </div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-1 text-center">{t('codigoTitulo')}</h2>
+            <p className="text-sm text-gray-700 mb-2 text-center">{t('codigoTexto', { email: pendente.email })}</p>
+            <p className="text-sm font-medium text-gray-900 mb-5 text-center">{t('codigoBotaoEmail')}</p>
             <label htmlFor="pedido-codigo" className="block text-sm font-medium text-gray-700 mb-1">{t('codigoCampo')}</label>
             <input id="pedido-codigo" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]*" maxLength={6}
               className="input-field text-center text-2xl tracking-[0.5em] font-semibold" value={codigo}
@@ -593,6 +637,9 @@ export default function PedidoSemConta() {
                 </div>
               )}
             </div>
+            {/* transparencia: com este e-mail nasce um acesso BipFix (sem senha; a pessoa cria depois
+                se quiser) - aqui e nao no passo contato, onde as pessoas desistiam (Fable 13/11) */}
+            <p className="text-xs text-gray-500 mt-4" data-testid="acesso-texto">{t('acessoTexto')}</p>
           </div>
         )}
       </div>

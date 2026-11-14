@@ -1,4 +1,4 @@
-import { randomInt, createHash, randomUUID } from 'node:crypto';
+import { randomInt, createHash, createHmac, randomUUID } from 'node:crypto';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import { supabaseAdmin } from './supabase-admin';
 import { ErroValidacao, texto, numero, umDe, extensaoDe, placaCarro, anoCarro } from './validacao';
@@ -11,10 +11,12 @@ import { avisarAdminSeSemOficinas } from './concierge';
 
 // Pedido sem cadastro (dono 06/11; migracao 073) e SEM SENHA (dono 12/11;
 // migracao 080). Regras que valem para o site e para o app (mesmas rotas):
-// - o ultimo passo pede so nome, e-mail e telefone (opcional): nenhuma senha;
-// - o pedido so vai para as oficinas depois do CODIGO de 6 digitos enviado ao
-//   e-mail (prova que o e-mail e da pessoa; e-mail errado nao some no vazio);
-//   o mesmo codigo entra na conta neste aparelho (lib/login-token.ts);
+// - o ultimo passo pede so nome e e-mail (telefone so com "quero SMS", dono 13/11):
+//   nenhuma senha;
+// - o pedido so vai para as oficinas depois da confirmacao pelo e-mail: o CODIGO
+//   de 6 digitos OU o botao do mesmo e-mail (link; dono 13/11) - prova que o e-mail
+//   e da pessoa; o que vier primeiro vale e o outro morre junto (a linha some);
+//   quem confirma entra na conta naquele aparelho (lib/login-token.ts);
 // - ate la ele fica em pedidos_pendentes, invisivel; sem confirmacao em 24 h,
 //   tudo e apagado (pedido, fotos e a conta nao ativada);
 // - e-mail de quem ja tem conta: recebe o mesmo codigo, o pedido entra nessa
@@ -179,30 +181,81 @@ export const hashCodigo = (pendenteId: string, codigo: string) => createHash('sh
 export const codigoConfere = (pendenteId: string, codigo: string, hash: string) =>
   /^\d{6}$/.test(codigo) && iguaisSeguro(hashCodigo(pendenteId, codigo), hash);
 
-// E-mail do codigo (6 idiomas). O codigo vai grande e sozinho na linha: no
-// celular a pessoa le no app de e-mail e digita na tela do pedido.
-const TXT: Record<string, { assunto: string; ola: string; texto: string; validade: string; ignore: string }> = {
-  et: { assunto: 'Sinu BipFixi kood: {c}', ola: 'Tere, {n}!', texto: 'Sisesta see kood BipFixi päringu lehel, et päring töökodadele saata:', validade: 'Kood kehtib 24 tundi.', ignore: 'Kui sa päringut ei saatnud, ignoreeri seda kirja – ilma koodita ei saadeta midagi ja andmed kustutatakse 24 tunni pärast.' },
-  ru: { assunto: 'Ваш код BipFix: {c}', ola: 'Здравствуйте, {n}!', texto: 'Введите этот код на странице заявки BipFix, чтобы отправить заявку автосервисам:', validade: 'Код действует 24 часа.', ignore: 'Если вы не отправляли заявку, просто проигнорируйте это письмо – без кода ничего не отправляется, а данные удаляются через 24 часа.' },
-  en: { assunto: 'Your BipFix code: {c}', ola: 'Hello {n},', texto: 'Enter this code on the BipFix request page to send your request to the repair shops:', validade: 'The code is valid for 24 hours.', ignore: 'If you did not send a request, ignore this e-mail – nothing is sent without the code and the data is deleted after 24 hours.' },
-  it: { assunto: 'Il tuo codice BipFix: {c}', ola: 'Ciao {n},', texto: 'Inserisci questo codice nella pagina della richiesta BipFix per inviarla alle officine:', validade: 'Il codice è valido per 24 ore.', ignore: 'Se non hai inviato una richiesta, ignora questa e-mail: senza il codice non viene inviato nulla e i dati vengono cancellati dopo 24 ore.' },
-  pt: { assunto: 'Seu código BipFix: {c}', ola: 'Olá, {n}!', texto: 'Digite este código na página do pedido da BipFix para enviar o pedido às oficinas:', validade: 'O código vale por 24 horas.', ignore: 'Se você não enviou um pedido, ignore este e-mail – sem o código nada é enviado e os dados são apagados em 24 horas.' },
-  'pt-PT': { assunto: 'O seu código BipFix: {c}', ola: 'Olá, {n}!', texto: 'Introduza este código na página do pedido da BipFix para enviar o pedido às oficinas:', validade: 'O código é válido durante 24 horas.', ignore: 'Se não enviou um pedido, ignore este e-mail – sem o código nada é enviado e os dados são apagados ao fim de 24 horas.' },
+// Link de confirmacao (dono 13/11): o 1o e-mail traz o codigo E um botao. O token
+// do link nao fica no banco: e um HMAC do pedido + e-mail + hash do codigo atual,
+// entao (1) o lembrete das 2 h repete o MESMO link, (2) um codigo novo (reenvio ou
+// e-mail corrigido) mata o link anterior - so o e-mail mais recente vale - e (3)
+// confirmar por codigo ou por link apaga a linha: o outro deixa de valer.
+// Chave: PEDIDO_LINK_SEGREDO ou, sem ela, derivada da chave de servico do Supabase (trocar
+// a chave invalida os links em aberto - o codigo do e-mail continua valendo). Sem nenhuma
+// das duas o link nao e gerado (nunca uma chave previsivel - Fable 14/11).
+const chaveLink = () => {
+  const base = process.env.PEDIDO_LINK_SEGREDO || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!base) throw new Error('PEDIDO_LINK_SEGREDO/SUPABASE_SERVICE_ROLE_KEY ausente: link de confirmacao desligado');
+  return createHash('sha256').update(`pedido-link:${base}`).digest();
+};
+export const tokenLink = (p: { id: string; email: string; codigo_hash: string }) =>
+  createHmac('sha256', chaveLink()).update(`${p.id}:${p.email.trim().toLowerCase()}:${p.codigo_hash}`).digest('hex');
+/** O link confere: o atual (HMAC) ou o do lembrete antigo (retomar_hash, pendentes de antes de 14/11). */
+export function linkConfere(p: { id: string; email: string; codigo_hash: string; retomar_hash?: string | null }, token: string): boolean {
+  if (!/^[a-f0-9]{64}$/.test(token)) return false;
+  if (iguaisSeguro(tokenLink(p), token)) return true;
+  return !!p.retomar_hash && iguaisSeguro(hashRetomar(token, p.email), p.retomar_hash);
+}
+// token no fragmento (#t=): nao vai para o servidor, Pixel, Clarity nem GA (auditoria
+// Fable 13/11); so o id do pedido fica na consulta. "o=l" = veio do lembrete (funil).
+export const urlConfirmacao = (idioma: string, id: string, token: string, extra = '') =>
+  `${urlNoIdioma(idioma, '/pedido')}?p=${id}${extra}#t=${token}`;
+
+const FUSO: Record<string, string> = { et: 'Europe/Tallinn', ru: 'Europe/Tallinn', en: 'Europe/Tallinn', it: 'Europe/Rome', 'pt-PT': 'Europe/Lisbon', pt: 'America/Sao_Paulo' };
+const LOCALE_DATA: Record<string, string> = { et: 'et-EE', ru: 'ru-RU', en: 'en-GB', it: 'it-IT', 'pt-PT': 'pt-PT', pt: 'pt-BR' };
+/** Prazo do pedido (criacao + 24 h; o reenvio nao reinicia) no fuso e no idioma da pessoa. */
+const prazoTexto = (idioma: string, criadoEm: string) =>
+  new Date(new Date(criadoEm).getTime() + PENDENTE_HORAS * 3600 * 1000)
+    .toLocaleString(LOCALE_DATA[idioma] || 'en-GB', { timeZone: FUSO[idioma] || 'Europe/Tallinn', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+const resumoPedido = (idioma: string, d: any) => ({
+  tipo: TIPOS_NOMES[idioma]?.[d?.tipo] || d?.tipo || '',
+  carro: [d?.veiculo?.marca, d?.veiculo?.modelo, d?.veiculo?.ano].filter(Boolean).join(' '),
+});
+const botao = (href: string, txt: string, cor: string, fundo: string) =>
+  `<a href="${href}" style="display:inline-block;padding:14px 22px;border-radius:8px;background:${fundo};color:${cor};text-decoration:none;font-weight:bold;margin:6px 6px 6px 0;">${txt}</a>`;
+
+// 1o e-mail (6 idiomas): botao para confirmar + o codigo (quem esta na tela do pedido
+// digita; o codigo vai tambem no assunto, que aparece na notificacao do celular).
+// Mostra so o tipo de servico e o carro (e-mail digitado errado: um estranho nao ve
+// endereco, descricao nem telefone).
+const TXT: Record<string, { assunto: string; ola: string; texto: string; confirmar: string; ou: string; validade: string; cancelar: string; ignore: string }> = {
+  et: { assunto: 'Kinnita oma BipFixi päring (kood {c})', ola: 'Tere, {n}!', texto: 'Sinu päring pole veel töökodadele saadetud. Kinnita see nupuga:', confirmar: 'Kinnita ja saada päring', ou: 'Või sisesta BipFixi lehel see kood:', validade: 'Link ja kood kehtivad kuni {h}.', cancelar: 'Tühista päring', ignore: 'Kui sa päringut ei saatnud, ignoreeri seda kirja – ilma kinnituseta ei saadeta midagi ja andmed kustutatakse 24 tunni pärast.' },
+  ru: { assunto: 'Подтвердите заявку BipFix (код {c})', ola: 'Здравствуйте, {n}!', texto: 'Ваша заявка ещё не отправлена автосервисам. Подтвердите её кнопкой:', confirmar: 'Подтвердить и отправить заявку', ou: 'Или введите этот код на странице BipFix:', validade: 'Ссылка и код действуют до {h}.', cancelar: 'Отменить заявку', ignore: 'Если вы не отправляли заявку, проигнорируйте это письмо – без подтверждения ничего не отправляется, а данные удаляются через 24 часа.' },
+  en: { assunto: 'Confirm your BipFix request (code {c})', ola: 'Hello {n},', texto: 'Your request has not been sent to the repair shops yet. Confirm it with the button:', confirmar: 'Confirm and send the request', ou: 'Or enter this code on the BipFix page:', validade: 'The link and the code are valid until {h}.', cancelar: 'Cancel the request', ignore: 'If you did not send a request, ignore this e-mail – nothing is sent without confirmation and the data is deleted after 24 hours.' },
+  it: { assunto: 'Conferma la tua richiesta BipFix (codice {c})', ola: 'Ciao {n},', texto: 'La tua richiesta non è ancora stata inviata alle officine. Confermala con il pulsante:', confirmar: 'Conferma e invia la richiesta', ou: 'Oppure inserisci questo codice nella pagina BipFix:', validade: 'Il link e il codice sono validi fino alle {h}.', cancelar: 'Annulla la richiesta', ignore: 'Se non hai inviato una richiesta, ignora questa e-mail: senza conferma non viene inviato nulla e i dati vengono cancellati dopo 24 ore.' },
+  pt: { assunto: 'Confirme seu pedido na BipFix (código {c})', ola: 'Olá, {n}!', texto: 'Seu pedido ainda não foi enviado às oficinas. Confirme pelo botão:', confirmar: 'Confirmar e enviar o pedido', ou: 'Ou digite este código na página da BipFix:', validade: 'O link e o código valem até {h}.', cancelar: 'Cancelar o pedido', ignore: 'Se você não enviou um pedido, ignore este e-mail – sem confirmação nada é enviado e os dados são apagados em 24 horas.' },
+  'pt-PT': { assunto: 'Confirme o seu pedido na BipFix (código {c})', ola: 'Olá, {n}!', texto: 'O seu pedido ainda não foi enviado às oficinas. Confirme-o no botão:', confirmar: 'Confirmar e enviar o pedido', ou: 'Ou introduza este código na página da BipFix:', validade: 'O link e o código são válidos até {h}.', cancelar: 'Cancelar o pedido', ignore: 'Se não enviou um pedido, ignore este e-mail – sem confirmação nada é enviado e os dados são apagados ao fim de 24 horas.' },
 };
 
-export async function enviarCodigo(email: string, nome: string, codigo: string, idioma: string | null): Promise<boolean> {
-  const x = TXT[idiomaDoSite(idioma)] || TXT.en;
-  const f = (s: string) => s.replace('{c}', codigo).replace('{n}', escapeHtml(nome));
-  return enviarEmail({ para: email, assunto: f(x.assunto), html: `
+/** 1o e-mail e reenvio: botao (link) + codigo. `p` ja com o codigo_hash do `codigo`. */
+export async function enviarConfirmacao(
+  p: { id: string; email: string; nome: string; idioma: string | null; dados: any; created_at: string; codigo_hash: string },
+  codigo: string,
+): Promise<boolean> {
+  const idioma = idiomaDoSite(p.idioma);
+  const x = TXT[idioma] || TXT.en;
+  const { tipo, carro } = resumoPedido(idioma, p.dados);
+  const token = tokenLink(p);
+  return enviarEmail({ para: p.email, assunto: x.assunto.replace('{c}', codigo), html: `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
       <div style="background:#0c4a6e;color:white;padding:24px;border-radius:12px 12px 0 0;"><h1 style="margin:0;font-size:24px;">BipFix</h1></div>
       <div style="background:white;padding:24px;border:1px solid #e5e7eb;border-radius:0 0 12px 12px;">
-        <p>${f(x.ola)}</p>
+        <p>${x.ola.replace('{n}', escapeHtml(p.nome))}</p>
         <p>${x.texto}</p>
-        <p style="font-size:36px;font-weight:bold;letter-spacing:8px;margin:24px 0;color:#0c4a6e;">${codigo}</p>
-        <p style="color:#6b7280;">${x.validade}</p>
+        <p style="background:#f3f4f6;border-radius:8px;padding:12px 16px;"><strong>${escapeHtml(tipo)}</strong>${carro ? `<br>${escapeHtml(carro)}` : ''}</p>
+        <p>${botao(urlConfirmacao(idioma, p.id, token), x.confirmar, '#ffffff', '#16a34a')}</p>
+        <p style="margin-top:20px;">${x.ou}</p>
+        <p style="font-size:36px;font-weight:bold;letter-spacing:8px;margin:12px 0 20px;color:#0c4a6e;">${codigo}</p>
+        <p style="color:#6b7280;">${x.validade.replace('{h}', escapeHtml(prazoTexto(idioma, p.created_at)))}</p>
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
         <p style="font-size:12px;color:#9ca3af;">${x.ignore}</p>
+        <p style="font-size:12px;"><a href="${urlConfirmacao(idioma, p.id, token, '&acao=cancelar')}" style="color:#6b7280;">${x.cancelar}</a></p>
       </div>
     </div>` });
 }
@@ -234,10 +287,10 @@ export async function contarEtapa(funil: string, etapa: string) {
 /**
  * Pedido ja reservado (linha apagada de pedidos_pendentes por quem confirmou):
  * ativa a conta nova ou confirma o e-mail da existente e publica o pedido para as
- * oficinas. Usado pelo codigo (/confirmar) e pelo link do lembrete (/retomar).
+ * oficinas. Usado pelo codigo (/confirmar) e pelo link dos e-mails (/retomar).
  * Erro inesperado sobe (quem chamou devolve o pendente para a pessoa tentar de novo).
  */
-export async function ativarEPublicar(p: Record<string, any>): Promise<{ id: string; numero: number | null } | { erro: 'SEM_ACESSO' | 'AVALIACAO_PENDENTE' }> {
+export async function ativarEPublicar(p: Record<string, any>, via: 'codigo' | 'link'): Promise<{ id: string; numero: number | null } | { erro: 'SEM_ACESSO' | 'AVALIACAO_PENDENTE' }> {
   if (p.conta_nova) {
     const { data: u, error: eConf } = await supabaseAdmin.auth.admin.updateUserById(p.user_id, { email_confirm: true });
     if (eConf) throw new Error(eConf.message);
@@ -268,68 +321,61 @@ export async function ativarEPublicar(p: Record<string, any>): Promise<{ id: str
       const { error: eConf } = await supabaseAdmin.auth.admin.updateUserById(p.user_id, { email_confirm: true });
       if (eConf) throw new Error(eConf.message);
     }
-    if (p.telefone) await supabaseAdmin.from('profiles').update({ telefone: p.telefone }).eq('id', p.user_id).is('telefone', null);
+    // telefone novo so pelo codigo (quem digitou esta com o aparelho): pelo link, quem
+    // digitou o e-mail de outra pessoa plantaria o proprio numero no perfil dela (Fable 13/11)
+    if (p.telefone && via === 'codigo') await supabaseAdmin.from('profiles').update({ telefone: p.telefone }).eq('id', p.user_id).is('telefone', null);
   }
   const r = await criarPedido(p.user_id, p.dados as DadosPedido, p.fotos || []);
   await contarEtapa(`pedido_${p.origem}`, 'confirmado');
+  await contarEtapa(`pedido_${p.origem}`, `confirmado_${via}`);
   return r;
 }
 
 // ---------------------------------------------------------------------------
-// Lembrete (dono 06/11): quem nao digitou o codigo recebe UM e-mail ~2 h depois
-// com um link de uso unico para confirmar (sem o codigo: clicar prova o e-mail)
-// ou cancelar na hora. O pedido continua guardado ate as 24 h. O e-mail mostra so
-// o tipo de servico e o carro (se o e-mail foi digitado errado, um estranho nao
-// ve endereco, descricao nem telefone). Disparado pela tarefa de hora em hora.
+// Lembrete (dono 06/11): quem nao confirmou recebe UM e-mail ~2 h depois com o
+// mesmo link do 1o e-mail (confirmar ou cancelar na hora). O pedido continua
+// guardado ate as 24 h. O e-mail mostra so o tipo de servico e o carro. Disparado
+// pela tarefa de hora em hora.
 export const LEMBRETE_HORAS = 2;
-// o token vale so para o e-mail para onde foi enviado: corrigir o e-mail depois
-// (reenviar) invalida o link que foi para o endereco errado
+// link do lembrete antigo (ate 13/11 o token ficava em retomar_hash): vale so para o
+// e-mail para onde foi enviado
 export const hashRetomar = (token: string, email: string) => createHash('sha256').update(`retomar:${token}:${email.trim().toLowerCase()}`).digest('hex');
 
 const TXT_LEMBRETE: Record<string, { assunto: string; ola: string; texto: string; prazo: string; confirmar: string; cancelar: string; ignore: string }> = {
-  et: { assunto: 'Sinu päring pole veel töökodadeni jõudnud', ola: 'Tere, {n}!', texto: 'Alustasid BipFixis hinnapäringut, kuid koodi ei sisestatud, seega ei ole töökojad seda veel näinud:', prazo: 'Hoiame päringut kuni {h}. Seejärel kustutatakse see koos fotode ja aktiveerimata kontoga.', confirmar: 'Kinnita ja saada päring', cancelar: 'Tühista päring', ignore: 'Kui sa päringut ei alustanud, ignoreeri seda kirja – midagi ei saadeta ja andmed kustutatakse.' },
-  ru: { assunto: 'Ваша заявка ещё не дошла до автосервисов', ola: 'Здравствуйте, {n}!', texto: 'Вы начали заявку на расчёт цены в BipFix, но код не был введён, поэтому автосервисы её ещё не видели:', prazo: 'Мы храним заявку до {h}. После этого она удаляется вместе с фото и неактивированным аккаунтом.', confirmar: 'Подтвердить и отправить заявку', cancelar: 'Отменить заявку', ignore: 'Если вы не начинали заявку, проигнорируйте это письмо – ничего не будет отправлено, а данные будут удалены.' },
-  en: { assunto: 'Your request has not reached the repair shops yet', ola: 'Hello {n},', texto: 'You started a quote request on BipFix, but the code was not entered, so the repair shops have not seen it yet:', prazo: 'We keep the request until {h}. After that it is deleted together with the photos and the unactivated account.', confirmar: 'Confirm and send the request', cancelar: 'Cancel the request', ignore: 'If you did not start a request, ignore this e-mail – nothing is sent and the data is deleted.' },
-  it: { assunto: 'La tua richiesta non è ancora arrivata alle officine', ola: 'Ciao {n},', texto: 'Hai iniziato una richiesta di preventivo su BipFix, ma il codice non è stato inserito, quindi le officine non l’hanno ancora vista:', prazo: 'Conserviamo la richiesta fino alle {h}. Dopo viene cancellata insieme alle foto e all’account non attivato.', confirmar: 'Conferma e invia la richiesta', cancelar: 'Annulla la richiesta', ignore: 'Se non hai iniziato una richiesta, ignora questa e-mail: non viene inviato nulla e i dati vengono cancellati.' },
-  pt: { assunto: 'Seu pedido ainda não chegou às oficinas', ola: 'Olá, {n}!', texto: 'Você começou um pedido de orçamento na BipFix, mas o código não foi digitado, então as oficinas ainda não o viram:', prazo: 'Guardamos o pedido até {h}. Depois disso ele é apagado junto com as fotos e a conta não ativada.', confirmar: 'Confirmar e enviar o pedido', cancelar: 'Cancelar o pedido', ignore: 'Se você não começou um pedido, ignore este e-mail – nada é enviado e os dados são apagados.' },
-  'pt-PT': { assunto: 'O seu pedido ainda não chegou às oficinas', ola: 'Olá, {n}!', texto: 'Começou um pedido de orçamento na BipFix, mas o código não foi introduzido, por isso as oficinas ainda não o viram:', prazo: 'Guardamos o pedido até {h}. Depois disso é apagado juntamente com as fotografias e a conta não ativada.', confirmar: 'Confirmar e enviar o pedido', cancelar: 'Cancelar o pedido', ignore: 'Se não começou um pedido, ignore este e-mail – nada é enviado e os dados são apagados.' },
+  et: { assunto: 'Sinu päring pole veel töökodadeni jõudnud', ola: 'Tere, {n}!', texto: 'Alustasid BipFixis hinnapäringut, kuid pole seda veel kinnitanud, seega ei ole töökojad seda näinud:', prazo: 'Hoiame päringut kuni {h}. Seejärel kustutatakse see koos fotode ja aktiveerimata kontoga.', confirmar: 'Kinnita ja saada päring', cancelar: 'Tühista päring', ignore: 'Kui sa päringut ei alustanud, ignoreeri seda kirja – midagi ei saadeta ja andmed kustutatakse.' },
+  ru: { assunto: 'Ваша заявка ещё не дошла до автосервисов', ola: 'Здравствуйте, {n}!', texto: 'Вы начали заявку на расчёт цены в BipFix, но ещё не подтвердили её, поэтому автосервисы её не видели:', prazo: 'Мы храним заявку до {h}. После этого она удаляется вместе с фото и неактивированным аккаунтом.', confirmar: 'Подтвердить и отправить заявку', cancelar: 'Отменить заявку', ignore: 'Если вы не начинали заявку, проигнорируйте это письмо – ничего не будет отправлено, а данные будут удалены.' },
+  en: { assunto: 'Your request has not reached the repair shops yet', ola: 'Hello {n},', texto: 'You started a quote request on BipFix but have not confirmed it yet, so the repair shops have not seen it:', prazo: 'We keep the request until {h}. After that it is deleted together with the photos and the unactivated account.', confirmar: 'Confirm and send the request', cancelar: 'Cancel the request', ignore: 'If you did not start a request, ignore this e-mail – nothing is sent and the data is deleted.' },
+  it: { assunto: 'La tua richiesta non è ancora arrivata alle officine', ola: 'Ciao {n},', texto: 'Hai iniziato una richiesta di preventivo su BipFix ma non l’hai ancora confermata, quindi le officine non l’hanno vista:', prazo: 'Conserviamo la richiesta fino alle {h}. Dopo viene cancellata insieme alle foto e all’account non attivato.', confirmar: 'Conferma e invia la richiesta', cancelar: 'Annulla la richiesta', ignore: 'Se non hai iniziato una richiesta, ignora questa e-mail: non viene inviato nulla e i dati vengono cancellati.' },
+  pt: { assunto: 'Seu pedido ainda não chegou às oficinas', ola: 'Olá, {n}!', texto: 'Você começou um pedido de orçamento na BipFix, mas ainda não o confirmou, então as oficinas não o viram:', prazo: 'Guardamos o pedido até {h}. Depois disso ele é apagado junto com as fotos e a conta não ativada.', confirmar: 'Confirmar e enviar o pedido', cancelar: 'Cancelar o pedido', ignore: 'Se você não começou um pedido, ignore este e-mail – nada é enviado e os dados são apagados.' },
+  'pt-PT': { assunto: 'O seu pedido ainda não chegou às oficinas', ola: 'Olá, {n}!', texto: 'Começou um pedido de orçamento na BipFix, mas ainda não o confirmou, por isso as oficinas não o viram:', prazo: 'Guardamos o pedido até {h}. Depois disso é apagado juntamente com as fotografias e a conta não ativada.', confirmar: 'Confirmar e enviar o pedido', cancelar: 'Cancelar o pedido', ignore: 'Se não começou um pedido, ignore este e-mail – nada é enviado e os dados são apagados.' },
 };
-const FUSO: Record<string, string> = { et: 'Europe/Tallinn', ru: 'Europe/Tallinn', en: 'Europe/Tallinn', it: 'Europe/Rome', 'pt-PT': 'Europe/Lisbon', pt: 'America/Sao_Paulo' };
-const LOCALE_DATA: Record<string, string> = { et: 'et-EE', ru: 'ru-RU', en: 'en-GB', it: 'it-IT', 'pt-PT': 'pt-PT', pt: 'pt-BR' };
-
 /** Envia os lembretes devidos (pedidos com 2 h a 23 h, ainda sem lembrete). */
 export async function enviarLembretes(): Promise<number> {
   const agora = Date.now();
   const { data: devidos } = await supabaseAdmin.from('pedidos_pendentes')
-    .select('id, email, nome, idioma, dados, created_at')
+    .select('id, email, nome, idioma, dados, created_at, codigo_hash')
     .is('lembrete_enviado_em', null)
     .lt('created_at', new Date(agora - LEMBRETE_HORAS * 3600 * 1000).toISOString())
     .gt('created_at', new Date(agora - (PENDENTE_HORAS - 1) * 3600 * 1000).toISOString())
     .limit(100);
   let enviados = 0;
   for (const p of devidos || []) {
-    const token = randomUUID().replace(/-/g, '') + randomUUID().replace(/-/g, '');
     // marca antes de enviar (so um lembrete, mesmo com duas tarefas ao mesmo tempo)
     const { data: marcado } = await supabaseAdmin.from('pedidos_pendentes')
-      .update({ lembrete_enviado_em: new Date().toISOString(), retomar_hash: hashRetomar(token, p.email) })
+      .update({ lembrete_enviado_em: new Date().toISOString() })
       .eq('id', p.id).is('lembrete_enviado_em', null).select('id');
     if (!marcado?.length) continue;
-    if (await enviarLembrete(p, token)) { enviados++; await contarEtapa('pedido_lembrete', 'enviado'); }
+    if (await enviarLembrete(p)) { enviados++; await contarEtapa('pedido_lembrete', 'enviado'); }
   }
   return enviados;
 }
 
-async function enviarLembrete(p: { id: string; email: string; nome: string; idioma: string | null; dados: any; created_at: string }, token: string): Promise<boolean> {
+async function enviarLembrete(p: { id: string; email: string; nome: string; idioma: string | null; dados: any; created_at: string; codigo_hash: string }): Promise<boolean> {
   const idioma = idiomaDoSite(p.idioma);
   const x = TXT_LEMBRETE[idioma] || TXT_LEMBRETE.en;
-  const d = p.dados || {};
-  const tipo = TIPOS_NOMES[idioma]?.[d.tipo] || d.tipo || '';
-  const carro = [d.veiculo?.marca, d.veiculo?.modelo, d.veiculo?.ano].filter(Boolean).join(' ');
-  const ate = new Date(new Date(p.created_at).getTime() + PENDENTE_HORAS * 3600 * 1000)
-    .toLocaleString(LOCALE_DATA[idioma] || 'en-GB', { timeZone: FUSO[idioma] || 'Europe/Tallinn', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
-  const base = `${urlNoIdioma(idioma, '/pedido')}?retomar=${p.id}&t=${token}`;
-  const botao = (href: string, txt: string, cor: string, fundo: string) =>
-    `<a href="${href}" style="display:inline-block;padding:14px 22px;border-radius:8px;background:${fundo};color:${cor};text-decoration:none;font-weight:bold;margin:6px 6px 6px 0;">${txt}</a>`;
+  const { tipo, carro } = resumoPedido(idioma, p.dados);
+  // o mesmo link do 1o e-mail (HMAC do codigo atual); "o=l" so marca o funil do lembrete
+  const token = tokenLink(p);
   return enviarEmail({ para: p.email, assunto: x.assunto, html: `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
       <div style="background:#0c4a6e;color:white;padding:24px;border-radius:12px 12px 0 0;"><h1 style="margin:0;font-size:24px;">BipFix</h1></div>
@@ -337,8 +383,8 @@ async function enviarLembrete(p: { id: string; email: string; nome: string; idio
         <p>${x.ola.replace('{n}', escapeHtml(p.nome))}</p>
         <p>${x.texto}</p>
         <p style="background:#f3f4f6;border-radius:8px;padding:12px 16px;"><strong>${escapeHtml(tipo)}</strong>${carro ? `<br>${escapeHtml(carro)}` : ''}</p>
-        <p>${x.prazo.replace('{h}', escapeHtml(ate))}</p>
-        <p>${botao(base, x.confirmar, '#ffffff', '#16a34a')}${botao(`${base}&acao=cancelar`, x.cancelar, '#374151', '#e5e7eb')}</p>
+        <p>${x.prazo.replace('{h}', escapeHtml(prazoTexto(idioma, p.created_at)))}</p>
+        <p>${botao(urlConfirmacao(idioma, p.id, token, '&o=l'), x.confirmar, '#ffffff', '#16a34a')}${botao(urlConfirmacao(idioma, p.id, token, '&o=l&acao=cancelar'), x.cancelar, '#374151', '#e5e7eb')}</p>
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
         <p style="font-size:12px;color:#9ca3af;">${x.ignore}</p>
       </div>

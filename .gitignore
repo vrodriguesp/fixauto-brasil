@@ -11,3 +11,11 @@ supabase/.temp/
 # Documentos privados (dados pessoais, contatos de oficinas, documentos da empresa) - nunca publicar
 Documentos/
 Docs Rpyrus/
+
+# saidas dos testes locais (prints, builds do app web, contas de teste) - nunca publicar (Fable 14/11)
+/apps/web/*.png
+/apps/web/scripts/e2e/*.png
+/apps/web/scripts/e2e/_*.json
+/apps/web/scripts/e2e/_*.mjs
+/apps/web/scripts/e2e/app-web*/
+/apps/mobile/teste-local/

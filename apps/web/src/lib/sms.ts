@@ -74,7 +74,7 @@ export async function avisarOrcamentoPorSms(p: {
       throw new Error(eRes.message);
     }
     // numero sem "+" recebe o DDI do pais do PEDIDO do cliente (o cadastro nao pergunta o pais
-    // do telefone); o envio so aceita +372
+    // do telefone); desde 13/11 qualquer pais (a Twilio so entrega nos liberados no console)
     const r = await sendQuoteSms({ toPhone: cliente!.telefone!, pais: (sol as any).pais || p.pais || 'EE', numero: (sol as any).numero, locale: cliente?.idioma ?? undefined });
     // erro da Twilio pode trazer o numero inteiro: nao guarda nem mostra
     const motivo = r.success ? null : semNumero(r.error || '');

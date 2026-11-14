@@ -167,7 +167,7 @@
     "metaDescription": "Kuidas BipFix töötleb Euroopa Liidus autojuhtide, autotöökodade ja varuosade müüjate isikuandmeid kooskõlas isikuandmete kaitse üldmäärusega (GDPR).",
     "pageTitle": "Privaatsuspoliitika",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "7. november 2026",
+    "updatedDate": "14. november 2026",
     "secoes": [
       {
         "titulo": "1. Kes vastutab sinu andmete eest",
@@ -291,7 +291,7 @@
           "Jagame isikuandmeid ainult vajalikus ulatuses:"
         ],
         "itens": [
-          "<strong>Teised kasutajad:</strong> hinnapakkumise saatmiseks näeb partner kliendi nime ja päringu andmeid (sõiduk, fotod, piirkond). Kliendi telefoninumber ja e-post lähevad ainult partnerile, kelle klient valib, kui pakkumine on vastu võetud; pärast õnnetust ka sellest teavitatud töökodadele, kui klient märgib „Soovin, et töökojad mulle helistaksid“. Klient näeb vastanud partnerite andmeid. Partnerite profiilid ja arvustused on avalikud.",
+          "<strong>Teised kasutajad:</strong> hinnapakkumise saatmiseks näeb partner kliendi nime ja päringu andmeid (sõiduk, fotod, piirkond). Kliendi telefoninumber ja e-post lähevad ainult partnerile, kelle klient valib, kui pakkumine on vastu võetud; pärast õnnetust ka sellest teavitatud töökodadele, kui klient märgib „Soovin, et töökojad mulle helistaksid“. Kui klient vajutab enne pakkumise vastuvõtmist nupule „Saada töökojale oma telefoninumber“, läheb tema number ainult sellele töökojale ja jääb päringu juurde, et töökoda saaks talle helistada. Klient näeb vastanud partnerite andmeid. Partnerite profiilid ja arvustused on avalikud.",
           "<strong>Majutus:</strong> meie serverid ja andmebaas asuvad Madalmaades (Euroopa Liit).",
           "<strong>Resend</strong> (Ameerika Ühendriigid): e-kirjade saatmine.",
           "<strong>Twilio</strong> (Ameerika Ühendriigid): tekstisõnumid (SMS) sinu enda päringu kohta, näiteks kui saabub hinnapakkumine. Saadame ainult sinu telefoninumbri ja sõnumi teksti. Kui sa ei soovi neid enam saada, kirjuta aadressile support@bipfix.com.",

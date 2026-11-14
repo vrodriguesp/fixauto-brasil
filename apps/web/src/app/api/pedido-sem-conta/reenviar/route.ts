@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { limitarPorIp, dentroDoLimite } from '@/lib/rate-limit';
 import { ehUuid, email as validarEmail, ErroValidacao } from '@/lib/validacao';
-import { CODIGO_ENVIOS, novoCodigo, hashCodigo, enviarCodigo, contaParaEmail } from '@/lib/pedido-sem-conta';
+import { CODIGO_ENVIOS, novoCodigo, hashCodigo, enviarConfirmacao, contaParaEmail } from '@/lib/pedido-sem-conta';
 
 export const dynamic = 'force-dynamic';
 
-// Novo codigo (nao chegou) e, opcionalmente, correcao do e-mail digitado errado;
-// o pedido continua o mesmo. O e-mail corrigido ganha a conta dele (existente ou
+// Novo e-mail de confirmacao (nao chegou) e, opcionalmente, correcao do e-mail
+// digitado errado; o pedido continua o mesmo. O codigo novo muda o link (HMAC do
+// codigo): o botao do e-mail anterior deixa de valer, so o mais recente confirma. O e-mail corrigido ganha a conta dele (existente ou
 // nova sem senha, como no envio) - vale para qualquer pedido pendente, para a
 // resposta nao revelar se o e-mail anterior tinha conta.
 export async function POST(req: NextRequest) {
@@ -46,17 +47,20 @@ export async function POST(req: NextRequest) {
     const contaErrada = p.conta_nova && userId !== p.user_id ? p.user_id : null;
 
     const codigo = novoCodigo();
+    const codigoHash = hashCodigo(p.id, codigo);
     await supabaseAdmin.from('pedidos_pendentes').update({
-      email, user_id: userId, conta_nova: contaNova, codigo_hash: hashCodigo(p.id, codigo), envios: p.envios + 1, ultimo_envio_em: new Date().toISOString(),
-      // e-mail corrigido: o link do lembrete que foi para o endereco errado deixa de
-      // valer e o lembrete pode ir de novo, agora para o endereco certo
-      ...(email !== p.email ? { retomar_hash: null, lembrete_enviado_em: null } : {}),
+      email, user_id: userId, conta_nova: contaNova, codigo_hash: codigoHash, envios: p.envios + 1, ultimo_envio_em: new Date().toISOString(),
+      // link de lembrete antigo (retomar_hash) morre junto com o codigo anterior; e-mail
+      // corrigido: o lembrete pode ir de novo, agora para o endereco certo
+      retomar_hash: null,
+      ...(email !== p.email ? { lembrete_enviado_em: null } : {}),
     }).eq('id', p.id);
     if (contaErrada) {
       const { data: perfil } = await supabaseAdmin.from('profiles').select('id').eq('id', contaErrada).maybeSingle();
       if (!perfil) await supabaseAdmin.auth.admin.deleteUser(contaErrada).catch(() => {});
     }
-    const enviado = await enviarCodigo(email, p.nome, codigo, p.idioma);
+    // prazo continua contando da criacao (created_at): o reenvio nao estica as 24 h
+    const enviado = await enviarConfirmacao({ id: p.id, email, nome: p.nome, idioma: p.idioma, dados: p.dados, created_at: p.created_at, codigo_hash: codigoHash }, codigo);
     if (!enviado) throw new Error('e-mail do codigo nao enviado');
     return NextResponse.json({ ok: true, email });
   } catch (e) {

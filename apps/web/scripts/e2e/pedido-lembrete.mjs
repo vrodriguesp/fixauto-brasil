@@ -51,7 +51,9 @@ const pedir = async (l, email, extra = {}) => {
   return { id: d.pendenteId, user: p?.user_id, codigo: cod };
 };
 const envelhecer = (id, horas) => admin.from('pedidos_pendentes').update({ created_at: new Date(Date.now() - horas * 3600e3).toISOString() }).eq('id', id);
-const linksDo = (html) => [...html.matchAll(/href="([^"]+retomar=[^"]+)"/g)].map((m) => m[1].replace(/&amp;/g, '&').replace(/^https?:\/\/[^/]+/, SITE));
+const linksDo = (html) => [...html.matchAll(/href="([^"]+\?p=[^"]+)"/g)].map((m) => m[1].replace(/&amp;/g, '&').replace(/^https?:\/\/[^/]+/, SITE));
+// 13/11: id na consulta (?p=), token no fragmento (#t=), o=l = veio do lembrete
+const idT = (u) => ({ id: u.searchParams.get('p'), t: new URLSearchParams(u.hash.slice(1)).get('t'), o: u.searchParams.get('o') || undefined });
 
 const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
 const contexto = (largura) => browser.newContext({ viewport: { width: largura, height: largura < 500 ? 844 : 900 }, deviceScaleFactor: largura < 500 ? 2 : 1, isMobile: largura < 500, hasTouch: largura < 500 });
@@ -178,12 +180,12 @@ try {
     const lv = linksDo(hv)[0];
     await envelhecer(venc.id, 25);
     const u = new URL(lv);
-    const r2 = await fetch(`${SITE}/api/pedido-sem-conta/retomar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ id: u.searchParams.get('retomar'), t: u.searchParams.get('t'), acao: 'confirmar' }) });
+    const r2 = await fetch(`${SITE}/api/pedido-sem-conta/retomar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ ...idT(u), acao: 'confirmar' }) });
     ok('link depois de 24 h -> 410 e tudo apagado', r2.status === 410 && !(await admin.from('pedidos_pendentes').select('id').eq('id', venc.id).maybeSingle()).data);
     const cod = await pedir('ru', `lembrete-cod-${tag}@example.test`);
     await envelhecer(cod.id, 3); await tarefa();
     const r3 = await fetch(`${SITE}/api/pedido-sem-conta/confirmar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ id: cod.id, codigo: cod.codigo }) });
-    ok('codigo antigo continua valendo depois do lembrete', r3.status === 200, String(r3.status));
+    ok('codigo continua valendo depois do lembrete', r3.status === 200, String(r3.status));
     // conta existente ("nao lembro a senha"): lembrete tambem funciona e entra na mesma conta
     const emailExist = `lembrete-exist-${tag}@example.test`;
     const { data: ue } = await admin.auth.admin.createUser({ email: emailExist, password: senha, email_confirm: true });
@@ -195,7 +197,7 @@ try {
     await envelhecer(de.pendenteId, 3); const t4 = Date.now(); await tarefa();
     const le = linksDo(emailsDe(emailExist, t4).at(-1) || '')[0];
     const ue2 = new URL(le);
-    const r4 = await fetch(`${SITE}/api/pedido-sem-conta/retomar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ id: ue2.searchParams.get('retomar'), t: ue2.searchParams.get('t'), acao: 'confirmar' }) });
+    const r4 = await fetch(`${SITE}/api/pedido-sem-conta/retomar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ ...idT(ue2), acao: 'confirmar' }) });
     const d4 = await r4.json();
     const se = (await admin.from('solicitacoes').select('id, cliente_id').eq('id', d4.solicitacaoId || '00000000-0000-0000-0000-000000000000').maybeSingle()).data;
     ok('conta existente: link do lembrete cria o pedido na mesma conta', se?.cliente_id === ue.user.id, JSON.stringify(d4));
@@ -211,14 +213,14 @@ try {
     await admin.from('pedidos_pendentes').update({ ultimo_envio_em: new Date(Date.now() - 60e3).toISOString() }).eq('id', pe.id);
     const rc = await fetch(`${SITE}/api/pedido-sem-conta/reenviar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ id: pe.id, email: certo }) });
     ok('corrigir o e-mail depois do lembrete', rc.status === 200, String(rc.status));
-    const rv = await fetch(`${SITE}/api/pedido-sem-conta/retomar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ id: lErrado.searchParams.get('retomar'), t: lErrado.searchParams.get('t'), acao: 'ver' }) });
-    const rx = await fetch(`${SITE}/api/pedido-sem-conta/retomar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ id: lErrado.searchParams.get('retomar'), t: lErrado.searchParams.get('t'), acao: 'confirmar' }) });
+    const rv = await fetch(`${SITE}/api/pedido-sem-conta/retomar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ ...idT(lErrado), acao: 'ver' }) });
+    const rx = await fetch(`${SITE}/api/pedido-sem-conta/retomar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ ...idT(lErrado), acao: 'confirmar' }) });
     ok('link do e-mail errado nao abre nem confirma (410)', rv.status === 410 && rx.status === 410, `${rv.status} ${rx.status}`);
     const t6 = Date.now(); await tarefa();
     const hCerto = emailsDe(certo, t6).at(-1) || '';
     ok('lembrete vai de novo, agora para o e-mail certo', linksDo(hCerto).length === 2);
     const lCerto = new URL(linksDo(hCerto)[0]);
-    const r6 = await fetch(`${SITE}/api/pedido-sem-conta/retomar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ id: lCerto.searchParams.get('retomar'), t: lCerto.searchParams.get('t'), acao: 'confirmar' }) });
+    const r6 = await fetch(`${SITE}/api/pedido-sem-conta/retomar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ ...idT(lCerto), acao: 'confirmar' }) });
     const d6 = await r6.json();
     ok('link do e-mail certo confirma e entra (conta nova)', r6.status === 200 && !!d6.tokenHash && !!d6.solicitacaoId, JSON.stringify(d6));
   }

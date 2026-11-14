@@ -952,7 +952,8 @@
       "mudancaAceita": "Data alterada: o cliente aceitou a nova data em {quando}.",
       "mudancaOficina": "Data alterada pela oficina em {quando}.",
       "propostaPendente": "Nova data proposta ({quando}) à espera da resposta do cliente. Até lá vale a data acima."
-    }
+    },
+    "clienteEnviouNumero": "O cliente enviou-lhe o número de telefone."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Viatura recebida na oficina",

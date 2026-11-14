@@ -266,10 +266,13 @@ const TWILIO_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 // WhatsApp so com remetente proprio configurado: a conta Twilio existe agora por
 // causa do SMS (04/11) e o sandbox de teste da Twilio nao entrega a clientes.
 const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM;
-// SMS: remetente alfanumerico (aceito na Estonia sem registro previo; o cliente
-// nao consegue responder). Geo permissions da conta liberam so +372.
+// SMS: remetente alfanumerico (aceito na Estonia e na maior parte da Europa sem
+// registro previo; o cliente nao consegue responder). Desde 13/11 (dono) qualquer
+// pais: onde o alfanumerico nao vale (EUA/Canada, Brasil...) a Twilio recusa e,
+// com TWILIO_SMS_FROM_NUMERO, tenta de novo com o numero. A Twilio so entrega nos
+// paises liberados em Geo Permissions (console da Twilio - decisao do dono).
 const TWILIO_SMS_FROM = process.env.TWILIO_SMS_FROM || 'BipFix';
-const SMS_PAISES = ['372'];
+const TWILIO_SMS_FROM_NUMERO = process.env.TWILIO_SMS_FROM_NUMERO;
 const SMS_LINK_BASE = (process.env.SMS_LINK_BASE || SITE_URL.replace('://www.', '://')).replace(/\/$/, '');
 
 // Telefone em E.164 (padrao internacional). "+372 5..." / "00372..." ja traz o
@@ -317,11 +320,16 @@ async function sendSms(to: string, message: string, pais?: string | null): Promi
   if (!TWILIO_SID || !TWILIO_TOKEN) return { success: false, error: 'SMS service not configured' };
   const phone = telefoneE164(to, pais);
   if (!phone) return { success: false, error: 'Telefone sem país' };
-  if (!SMS_PAISES.some((p) => phone.startsWith(p))) return { success: false, error: 'SMS só para a Estónia' };
-  // numero estoniano tem 7-8 digitos depois do 372: barra numero estrangeiro digitado sem "+"
-  if (!/^372\d{7,8}$/.test(phone)) return { success: false, error: 'Número estoniano inválido' };
+  // E.164: 8 a 15 digitos; numero estoniano tem 7-8 digitos depois do 372 (barra numero
+  // estrangeiro digitado sem "+", que viraria +372...)
+  if (!/^\d{8,15}$/.test(phone)) return { success: false, error: 'Número inválido' };
+  if (phone.startsWith('372') && !/^372\d{7,8}$/.test(phone)) return { success: false, error: 'Número estoniano inválido' };
   try {
-    const r = await twilioMensagem({ From: TWILIO_SMS_FROM, To: `+${phone}`, Body: message });
+    let r = await twilioMensagem({ From: TWILIO_SMS_FROM, To: `+${phone}`, Body: message });
+    // pais sem remetente alfanumerico: de novo com o numero da conta, se houver
+    if (!r.success && TWILIO_SMS_FROM_NUMERO && !phone.startsWith('372')) {
+      r = await twilioMensagem({ From: TWILIO_SMS_FROM_NUMERO, To: `+${phone}`, Body: message });
+    }
     if (!r.success) console.error('[Notifications] SMS recusado:', r.error);
     return r;
   } catch (err) {

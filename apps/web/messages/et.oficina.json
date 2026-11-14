@@ -952,7 +952,8 @@
       "mudancaAceita": "Aeg muudetud: klient kinnitas uue aja {quando}.",
       "mudancaOficina": "Aega muutis töökoda {quando}.",
       "propostaPendente": "Pakutud uus aeg ({quando}) ootab kliendi vastust. Seni kehtib ülaltoodud aeg."
-    }
+    },
+    "clienteEnviouNumero": "Klient saatis sulle oma telefoninumbri."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Sõiduk vastu võetud töökojas",

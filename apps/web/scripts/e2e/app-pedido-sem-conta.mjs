@@ -116,11 +116,17 @@ try {
     page.on('pageerror', (x) => erros.push(x.message));
     await page.goto(APP, { waitUntil: 'networkidle' });
     await ateContato(page, T, 'et');
-    ok('et: contato sem campo de senha, com a frase do acesso', (await page.getByLabel(T('auth.senha'), { exact: true }).locator('visible=true').count()) === 0 && (await page.innerText('body')).includes(T('pedidoSemConta.acessoTexto')), `senha visivel: ${await page.getByLabel(T('auth.senha'), { exact: true }).locator('visible=true').count()} / no DOM: ${await page.getByLabel(T('auth.senha'), { exact: true }).count()}`);
+    // 13/11: sem senha e sem telefone a vista (celular so com "quero SMS"); a frase do acesso foi para a tela do codigo
+    const tC = await page.innerText('body');
+    ok('et: contato sem campo de senha e sem telefone, com a caixa do SMS', (await page.getByLabel(T('auth.senha'), { exact: true }).locator('visible=true').count()) === 0 && !tC.includes(T('pedidoSemConta.smsPrivacidade')) && tC.includes(T('pedidoSemConta.querSms')) && tC.includes(T('pedidoSemConta.contatoTitulo')), `senha visivel: ${await page.getByLabel(T('auth.senha'), { exact: true }).locator('visible=true').count()}`);
     await campo(page, T('pedidoSemConta.nome')).fill('TESTE AUTOMATICO');
     await campo(page, T('pedidoSemConta.email')).fill(emailEt.replace('example.test', 'gmial.com'));
     ok('et: sugere gmail.com', (await page.innerText('body')).includes(T('pedidoSemConta.voceQuisDizer', { email: emailEt.replace('example.test', 'gmail.com') })));
     await campo(page, T('pedidoSemConta.email')).fill(emailEt);
+    await page.getByTestId('quer-sms').locator('visible=true').first().click();
+    await page.getByText(T('pedidoSemConta.smsPrivacidade')).waitFor({ timeout: 5000 }).catch(() => {});
+    ok('et: SMS marcado mostra o telefone e o cadeado', (await page.innerText('body')).includes(T('pedidoSemConta.smsPrivacidade')));
+    await page.getByLabel(T('pedidoSemConta.telefone'), { exact: true }).locator('visible=true').last().fill('5123 4567');
     await page.getByRole('checkbox', { name: /(Nõustun|Согласен|Согласна|Принимаю|Я принимаю)/ }).locator('visible=true').first().click({ position: { x: 10, y: 10 } });
     await checaTela(page, 'et contato');
     await page.screenshot({ path: `${OUT}/app-pedido-contato-et.png`, fullPage: true });
@@ -130,7 +136,10 @@ try {
     const pend = (await admin.from('pedidos_pendentes').select('user_id, origem, fotos').ilike('email', emailEt).maybeSingle()).data;
     if (pend) contas.add(pend.user_id);
     ok('et: pendente com origem app', pend?.origem === 'app', JSON.stringify(pend));
-    await checaTela(page, 'et codigo');
+    const tQ = await checaTela(page, 'et codigo');
+    ok('et: "quase pronto" com codigo primeiro, botao do e-mail e frase do acesso', (tQ || await page.innerText('body')).includes(T('pedidoSemConta.codigoBotaoEmail')) && (await page.innerText('body')).includes(T('pedidoSemConta.acessoTexto')));
+    const telP = (await admin.from('pedidos_pendentes').select('telefone').ilike('email', emailEt).maybeSingle()).data?.telefone;
+    ok('et: telefone do SMS guardado no pendente', /^\+372 ?5123 ?4567$/.test(telP || ''), telP);
     await page.screenshot({ path: `${OUT}/app-pedido-codigo-et.png`, fullPage: true });
     // codigo errado primeiro
     await campo(page, T('pedidoSemConta.codigoCampo')).fill('000000');

@@ -33,6 +33,9 @@ export async function POST(req: NextRequest) {
   const { data: t } = await supabaseAdmin.rpc('pendente_tentativa', { p_id: id, p_max: CODIGO_TENTATIVAS });
   const tentativa = (t as { codigo_hash: string; tentativas: number }[] | null)?.[0];
   if (!tentativa) {
+    // a linha sumiu entre a leitura e a tentativa: confirmado pelo link (ou cancelado) agora
+    const { data: ainda } = await supabaseAdmin.from('pedidos_pendentes').select('id').eq('id', id).maybeSingle();
+    if (!ainda) return NextResponse.json({ error: 'Já confirmado', codigo: 'CODIGO_EXPIRADO' }, { status: 410 });
     return NextResponse.json({ error: 'Tentativas esgotadas', codigo: 'CODIGO_TENTATIVAS' }, { status: 429 });
   }
   if (!codigoConfere(id, codigo, tentativa.codigo_hash)) {
@@ -45,7 +48,7 @@ export async function POST(req: NextRequest) {
   if (!reservado?.length) return NextResponse.json({ error: 'Já confirmado', codigo: 'CODIGO_EXPIRADO' }, { status: 410 });
 
   try {
-    const r = await ativarEPublicar(p);
+    const r = await ativarEPublicar(p, 'codigo');
     if ('erro' in r) {
       return r.erro === 'SEM_ACESSO'
         ? NextResponse.json({ error: 'Sem acesso', codigo: 'SEM_ACESSO' }, { status: 403 })

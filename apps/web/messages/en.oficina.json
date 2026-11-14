@@ -952,7 +952,8 @@
       "mudancaAceita": "Date changed: the customer accepted the new date on {quando}.",
       "mudancaOficina": "Date changed by the repair shop on {quando}.",
       "propostaPendente": "New date proposed ({quando}), waiting for the customer’s answer. Until then the date above applies."
-    }
+    },
+    "clienteEnviouNumero": "The customer sent you their phone number."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Vehicle received at the shop",
