@@ -3,7 +3,9 @@ import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { sendOrcamentoAceitoPagamentoEmail, sendOrcamentoAceitoOutroEmail } from '@/lib/notifications';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { horaLocalEmUtc } from '@/lib/fuso';
+import { horaLocalEmUtc, fimPrevistoDoServico, fusoDoPais } from '@/lib/fuso';
+import { dataJanela } from '@/lib/notif-agenda';
+import { avisarOficinaAceite } from '@/lib/email-aceite-oficina';
 import { avisarClienteAgendamento } from '@/lib/email-agendamento';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
 import { cancelarPedidosDatasPendentes } from '@/lib/pedido-datas';
@@ -19,7 +21,8 @@ import { janelaDoSlot } from '@/lib/turnos';
 export type ResultadoAceite = { status: number; body: Record<string, unknown> };
 const res = (status: number, body: Record<string, unknown>): ResultadoAceite => ({ status, body });
 
-export async function aceitarOrcamento(p: { orcamentoId: string; slotId: string; clienteId: string }): Promise<ResultadoAceite> {
+// emailOficina: false quando a propria oficina confirma (079: ela ja sabe; so o aviso no sino)
+export async function aceitarOrcamento(p: { orcamentoId: string; slotId: string; clienteId: string; emailOficina?: boolean }): Promise<ResultadoAceite> {
   const { orcamentoId, slotId, clienteId } = p;
   // So o cliente dono da solicitacao pode aceitar o orcamento dela - sem
   // isso, qualquer orcamentoId adivinhado aceitava o orcamento, recusava
@@ -110,6 +113,8 @@ export async function aceitarOrcamento(p: { orcamentoId: string; slotId: string;
   // 5. Find the chosen slot and create agenda entry
   //    Delete any existing agenda for this solicitacao to avoid duplicates (e.g. re-quote)
   const slot = orc.disponibilidade?.find((s: { id: string }) => s.id === slotId);
+  // dia + janela de chegada para o aviso da oficina (QA D9), no fuso dela
+  let janelaAviso: { inicio: string; fim: string } | null = null;
   if (slot) {
     await supabaseAdmin
       .from('agenda')
@@ -127,8 +132,8 @@ export async function aceitarOrcamento(p: { orcamentoId: string; slotId: string;
       // depois do aceite a agenda e a fonte unica do horario)
       data_inicio: horaLocalEmUtc(slot.data_checkin, janelaDoSlot(slot).inicio, (orc.oficina as any)?.pais),
       checkin_ate: horaLocalEmUtc(slot.data_checkin, janelaDoSlot(slot).fim, (orc.oficina as any)?.pais),
-      data_fim: horaLocalEmUtc(slot.data_previsao_entrega || slot.data_checkin, '18:00', (orc.oficina as any)?.pais),
-      data_fim_prevista: horaLocalEmUtc(slot.data_previsao_entrega || slot.data_checkin, '18:00', (orc.oficina as any)?.pais),
+      data_fim: fimPrevistoDoServico(slot.data_previsao_entrega || slot.data_checkin, horaLocalEmUtc(slot.data_checkin, janelaDoSlot(slot).fim, (orc.oficina as any)?.pais), (orc.oficina as any)?.pais),
+      data_fim_prevista: fimPrevistoDoServico(slot.data_previsao_entrega || slot.data_checkin, horaLocalEmUtc(slot.data_checkin, janelaDoSlot(slot).fim, (orc.oficina as any)?.pais), (orc.oficina as any)?.pais),
       tipo: 'plataforma',
       status: 'agendado',
       cor: '#3B82F6',
@@ -137,21 +142,27 @@ export async function aceitarOrcamento(p: { orcamentoId: string; slotId: string;
     if (agendaError) {
       console.error('[aceitar-orcamento] Agenda insert error:', agendaError);
     } else if (agendaNova) {
+      janelaAviso = { inicio: horaLocalEmUtc(slot.data_checkin, janelaDoSlot(slot).inicio, (orc.oficina as any)?.pais), fim: horaLocalEmUtc(slot.data_checkin, janelaDoSlot(slot).fim, (orc.oficina as any)?.pais) };
       // e-mail ao cliente: detalhes do agendamento + Google/Apple Calendar (dono 07/11)
       await avisarClienteAgendamento(agendaNova.id).catch((e) => console.error('[aceitar-orcamento] e-mail do agendamento', e));
+      // e-mail a oficina com o dia + janela (QA D9; mesmo padrao do e-mail "o cliente cancelou")
+      if (p.emailOficina !== false) await avisarOficinaAceite(agendaNova.id, Number(orc.valor_total)).catch((e) => console.error('[aceitar-orcamento] e-mail da oficina', e));
     }
   }
 
   // 6. Notify the workshop
   const oficinaProfileId = (orc.oficina as any)?.profile_id;
   if (oficinaProfileId) {
-    const n = notifOrcamentoAceito((orc.oficina as any)?.profile?.idioma);
+    const fusoOf = fusoDoPais((orc.oficina as any)?.pais);
+    const quando = (l: string | null | undefined) => (janelaAviso ? dataJanela(janelaAviso.inicio, janelaAviso.fim, l, fusoOf) : undefined);
+    const idiomaOf = (orc.oficina as any)?.profile?.idioma;
+    const n = notifOrcamentoAceito(idiomaOf, quando(idiomaOf));
     await supabaseAdmin.from('notificacoes').insert({
       profile_id: oficinaProfileId,
       tipo: 'orcamento_aceito',
       titulo: n.titulo,
       mensagem: n.mensagem,
-      dados: { solicitacao_id: orc.solicitacao_id, orcamento_id: orcamentoId, textos: emTodasAsLinguas((l) => notifOrcamentoAceito(l)) },
+      dados: { solicitacao_id: orc.solicitacao_id, orcamento_id: orcamentoId, textos: emTodasAsLinguas((l) => notifOrcamentoAceito(l, quando(l))) },
     });
   }
 

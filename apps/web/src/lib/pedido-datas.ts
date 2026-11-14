@@ -283,7 +283,7 @@ export async function responderNovasDatas(userId: string, orcamentoId: string, c
     // validade antes do aceite (a sugestao ja passou nas conferencias; depois do aceite ela nao importa - auditoria S7)
     await estenderValidade(orc, [sug.data]);
     const { aceitarOrcamento } = await import('./aceitar-orcamento');
-    let r = await aceitarOrcamento({ orcamentoId: orc.id, slotId: slot.id, clienteId: sol.cliente_id }).catch((e) => ({ status: 500, body: { error: (e as Error).message } }));
+    let r = await aceitarOrcamento({ orcamentoId: orc.id, slotId: slot.id, clienteId: sol.cliente_id, emailOficina: false }).catch((e) => ({ status: 500, body: { error: (e as Error).message } }));
     if (r.status !== 200) {
       // excecao DEPOIS do passo 1 do aceite: o orcamento ja ficou aceito neste horario - nao desfaz; o aceite
       // aconteceu, segue como confirmado (auditoria Fable 079, S4)

@@ -195,10 +195,13 @@ export function faixasDoDia(data: string, ctx: ContextoOficina | null | undefine
 }
 
 /** a recepcao do perfil vale em algum dia aberto? (validacao ao salvar o perfil) */
-export function validarRecepcao(ctx: ContextoOficina): 'recepcao_curta' | 'recepcao_fora' | 'recepcao_almoco' | 'almoco_invalido' | null {
+export function validarRecepcao(ctx: ContextoOficina): 'recepcao_curta' | 'recepcao_invertida' | 'recepcao_fora' | 'recepcao_almoco' | 'almoco_invalido' | null {
   const temAlmoco = !!(ctx.almoco_inicio || ctx.almoco_fim);
   if (temAlmoco && !parValido(ctx.almoco_inicio, ctx.almoco_fim, 15)) return 'almoco_invalido';
   if (!ctx.recepcao_inicio && !ctx.recepcao_fim) return null;
+  // fim antes (ou igual) do inicio, ex. 16:00-09:00: "o fim precisa ser depois do inicio" (QA D20; antes "minimo 30 min")
+  const ri = minutos(ctx.recepcao_inicio || ''), rf = minutos(ctx.recepcao_fim || '');
+  if (ri != null && rf != null && rf <= ri) return 'recepcao_invertida';
   if (!parValido(ctx.recepcao_inicio, ctx.recepcao_fim, JANELA_MIN)) return 'recepcao_curta';
   let cruza = false;
   for (let i = 0; i < 7; i++) {
@@ -299,6 +302,10 @@ export function janelaDaSugestao(data: string, turno: Turno, ctx: ContextoOficin
 export function janelaDaAgenda(dataInicio: string, checkinAte: string | null | undefined, pais?: Pais): Janela {
   const ini = horaLocalDe(dataInicio, pais);
   if (checkinAte) return { inicio: ini, fim: horaLocalDe(checkinAte, pais) };
+  return janelaLegadaDoInicio(ini);
+}
+/** agenda antiga sem checkin_ate, pela hora local de inicio: 08:00 -> 08-12, 13:00 -> 13-17, outra = hora exata */
+export function janelaLegadaDoInicio(ini: string): Janela {
   if (ini === LEGADO.manha.inicio) return LEGADO.manha;
   if (ini === LEGADO.tarde.inicio) return LEGADO.tarde;
   return { inicio: ini, fim: ini };
@@ -314,13 +321,28 @@ export const diaDoCalendario = (ymd: string, intl: string, opc: OpcDia = DIA_CUR
 export const textoDoSlot = (s: { data_checkin: string; turno?: string | null; hora_inicio?: string | null; hora_fim?: string | null }, intl: string, opc: OpcDia = DIA_CURTO, sep = ' · ') =>
   `${diaDoCalendario(s.data_checkin, intl, opc)}${sep}${formatarJanela(janelaDoSlot(s))}`;
 /** agenda (depois do aceite): dia no fuso da oficina + janela data_inicio..checkin_ate */
-export const textoDaAgenda = (dataInicio: string, checkinAte: string | null | undefined, pais: Pais, intl: string, opc: OpcDia = DIA_CURTO, sep = ' · ') =>
-  `${new Date(dataInicio).toLocaleDateString(intl, { ...opc, timeZone: fusoDoPais(pais) })}${sep}${formatarJanela(janelaDaAgenda(dataInicio, checkinAte, pais))}`;
+export const textoDaAgenda = (dataInicio: string, checkinAte: string | null | undefined, pais: Pais, intl: string, opc: OpcDia = DIA_CURTO, sep = ' · ') => {
+  const p = partesDaAgenda(dataInicio, checkinAte, pais, intl, opc);
+  return `${p.dia}${sep}${p.janela}`;
+};
+/** dia e janela separados (a tela poe a janela num span sem quebra: "08:00–" / "10:00" nunca - QA D13) */
+export const partesDaAgenda = (dataInicio: string, checkinAte: string | null | undefined, pais: Pais, intl: string, opc: OpcDia = DIA_CURTO) =>
+  ({ dia: new Date(dataInicio).toLocaleDateString(intl, { ...opc, timeZone: fusoDoPais(pais) }), janela: formatarJanela(janelaDaAgenda(dataInicio, checkinAte, pais)) });
 
 // ---------- validade do orcamento (decisao 4: obrigatoria, >= ultima data de check-in) ----------
 export const maiorData = (datas: (string | null | undefined)[]) => datas.filter((d): d is string => !!d).sort().at(-1) || '';
 /** dias recomendados depois da ultima data de check-in (texto do erro da validade) */
 export const VALIDADE_FOLGA_DIAS = 7;
+/**
+ * Sugestao do botao "Usar <data>" da validade (QA D17): a ultima data de check-in VALIDA (futura e num dia
+ * aberto) + 7 dias; se cair num dia fechado, o proximo dia aberto. Sem data valida = sem sugestao.
+ */
+export function validadeSugerida(ultimaValida: string, horario: HorarioSemana, folga = VALIDADE_FOLGA_DIAS): string {
+  if (!ultimaValida) return '';
+  let d = somarDiasYmd(ultimaValida, folga);
+  for (let i = 0; i < 14 && !expedienteDoDia(d, horario); i++) d = somarDiasYmd(d, 1);
+  return d;
+}
 export function erroValidade(validade: string, datas: string[], hoje: string): 'vazia' | 'passado' | 'antes' | null {
   if (!validade) return 'vazia';
   const m = maiorData(datas);

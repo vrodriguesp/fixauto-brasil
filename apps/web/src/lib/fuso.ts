@@ -27,6 +27,16 @@ export function horaLocalEmUtc(data: string, hora: string, pais?: string | null)
   return new Date(t).toISOString();
 }
 
+/**
+ * Fim previsto do servico (agenda.data_fim/data_fim_prevista) ao marcar pelo horario oferecido: 18:00 (hora
+ * local) do dia da previsao de entrega - a mesma regra no aceite e no reagendar (auditoria Fable R-05; antes o
+ * reagendar usava 12:00 para a manha) - e nunca antes do fim da janela de chegada (checkin_ate).
+ */
+export function fimPrevistoDoServico(diaPrevisao: string, checkinAte: string, pais?: string | null): string {
+  const fim = horaLocalEmUtc(diaPrevisao, '18:00', pais);
+  return Date.parse(fim) < Date.parse(checkinAte) ? checkinAte : fim;
+}
+
 // Dia e hora no fuso da OFICINA (o Quadro nao usa o fuso do navegador: o dono
 // pode olhar a oficina de Tallinn estando na Italia ou no Brasil).
 function partesNoFuso(instante: Date, fuso: string) {

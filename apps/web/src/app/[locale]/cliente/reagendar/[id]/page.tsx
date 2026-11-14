@@ -7,7 +7,8 @@ import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
-import { formatarJanela, janelaDoSlot, janelaDaAgenda, slotAindaVale } from '@/lib/turnos';
+import { formatarJanela, janelaDoSlot, janelaDaAgenda, slotAindaVale, dataLocalDe } from '@/lib/turnos';
+import { fusoDoPais } from '@/lib/fuso';
 
 interface SlotOption {
   id: string;
@@ -43,7 +44,8 @@ export default function ReagendarPage() {
       // Fetch agenda with solicitacao and veiculo
       const { data: agendaData } = await supabase
         .from('agenda')
-        .select('*, solicitacao:solicitacoes(*, veiculo:veiculos(*), orcamentos(*, disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*)))')
+        // pais da OFICINA (fuso do horario); solicitacoes nao tem coluna pais (auditoria Fable R-07)
+        .select('*, oficina:oficinas(pais), solicitacao:solicitacoes(*, veiculo:veiculos(*), orcamentos(*, disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*)))')
         .eq('id', agendaId)
         .single();
 
@@ -63,9 +65,10 @@ export default function ReagendarPage() {
       if (orcamento?.disponibilidade) {
         // Filter out past dates and the current appointment date
         const now = new Date();
-        const currentDate = agendaData.data_inicio?.slice(0, 10);
+        const paisOf = (agendaData as any).oficina?.pais ?? null;
+        const currentDate = agendaData.data_inicio ? dataLocalDe(agendaData.data_inicio, paisOf) : '';
         // check-in v2: vale ate o fim da janela gravada (linha antiga 12:00 / 17:00)
-        const futureSlots = orcamento.disponibilidade.filter((s: SlotOption) => slotAindaVale(s as any, now, agendaData.solicitacao?.pais ?? null) && s.data_checkin !== currentDate);
+        const futureSlots = orcamento.disponibilidade.filter((s: SlotOption) => slotAindaVale(s as any, now, paisOf) && s.data_checkin !== currentDate);
         setDisponibilidade(futureSlots);
       }
 
@@ -159,7 +162,7 @@ export default function ReagendarPage() {
           </p>
         )}
         <p className="text-sm text-gray-600">
-          {t('originalDate', { date: `${new Date(agenda.data_inicio).toLocaleDateString(locale)} · ${formatarJanela(janelaDaAgenda(agenda.data_inicio, agenda.checkin_ate, agenda.solicitacao?.pais ?? null))}` })}
+          {t('originalDate', { date: `${new Date(agenda.data_inicio).toLocaleDateString(locale, { timeZone: fusoDoPais(agenda.oficina?.pais) })} · ${formatarJanela(janelaDaAgenda(agenda.data_inicio, agenda.checkin_ate, agenda.oficina?.pais ?? null))}` })}
         </p>
         {agenda.no_show && (
           <div className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-red-700 bg-red-100 px-2 py-1 rounded">

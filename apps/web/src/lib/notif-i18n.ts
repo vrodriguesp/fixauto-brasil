@@ -141,8 +141,19 @@ const orcamentoAceito: Record<EmailLocale, { titulo: string; mensagem: string }>
   ru: { titulo: 'Смета принята!', mensagem: 'Клиент принял вашу смету и записался на ремонт.' },
 };
 
-export function notifOrcamentoAceito(locale: string | null | undefined) {
-  return orcamentoAceito[resolveEmailLocale(locale)];
+// com o dia + a janela de chegada (QA check-in v2 D9; decisao 8: o horario aparece igual nos avisos)
+const orcamentoAceitoQuando: Record<EmailLocale, string> = {
+  pt: 'Um cliente aceitou seu orçamento e agendou o serviço: {quando}.',
+  en: 'A customer accepted your quote and booked the service: {quando}.',
+  et: 'Klient kinnitas sinu hinnapakkumise ja broneeris teenuse: {quando}.',
+  it: 'Un cliente ha accettato il tuo preventivo e prenotato il servizio: {quando}.',
+  'pt-PT': 'Um cliente aceitou o seu orçamento e marcou o serviço: {quando}.',
+  ru: 'Клиент принял вашу смету и записался на ремонт: {quando}.',
+};
+
+export function notifOrcamentoAceito(locale: string | null | undefined, quando?: string) {
+  const l = resolveEmailLocale(locale);
+  return quando ? { titulo: orcamentoAceito[l].titulo, mensagem: fmt(orcamentoAceitoQuando[l], { quando }) } : orcamentoAceito[l];
 }
 
 const reparoAgendado: Record<EmailLocale, string> = {

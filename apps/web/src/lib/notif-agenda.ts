@@ -1,5 +1,5 @@
 import { idiomaDoSite } from './site-url';
-import { formatarJanela } from './turnos';
+import { formatarJanela, janelaLegadaDoInicio } from './turnos';
 
 // Avisos da mudanca de data e do cancelamento de agendamento (migracao 076):
 // notificacao no app/site e a linha que entra no chat do pedido (a conversa e
@@ -69,6 +69,6 @@ export const dataJanela = (inicio: string | Date, fim: string | Date | null | un
   const dia = new Date(inicio).toLocaleDateString(loc, { timeZone: fuso, weekday: 'short', day: 'numeric', month: 'long' });
   const hora = (x: string | Date) => new Date(x).toLocaleTimeString('en-GB', { timeZone: fuso, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
   const ini = hora(inicio);
-  const fimTxt = fim ? hora(fim) : ini === '08:00' ? '12:00' : ini === '13:00' ? '17:00' : ini;
-  return `${dia}, ${formatarJanela({ inicio: ini, fim: fimTxt })}`;
+  // agenda antiga sem fim: a mesma regra do resto do site (turnos.ts; auditoria Fable R-10)
+  return `${dia}, ${formatarJanela(fim ? { inicio: ini, fim: hora(fim) } : janelaLegadaDoInicio(ini))}`;
 };

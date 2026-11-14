@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   if (!ehUuid(revisaoId) || !decisao || !DATA.includes(decisao)) return NextResponse.json({ error: 'Dados inválidos', codigo: 'DADOS_INVALIDOS' }, { status: 400 });
 
   const { data: rev } = await supabaseAdmin.from('orcamento_revisoes')
-    .select('id, tipo, nova_data_checkin, novo_turno, nova_hora, nova_previsao_entrega, data_atual_serve, combinado, contestada_em, data_anterior, fim_anterior, status, orcamento_id, solicitacao_id, oficina_id, valor_anterior, valor_novo, prazo_dias_novo, itens, solicitacao:solicitacoes(cliente_id, veiculo:veiculos(fipe_marca, fipe_modelo)), oficina:oficinas(profile_id, pais, profile:profiles!oficinas_profile_id_fkey(idioma))')
+    .select('id, tipo, nova_data_checkin, novo_turno, nova_hora, nova_hora_fim, nova_previsao_entrega, data_atual_serve, combinado, contestada_em, data_anterior, fim_anterior, checkin_ate_anterior, status, orcamento_id, solicitacao_id, oficina_id, valor_anterior, valor_novo, prazo_dias_novo, itens, solicitacao:solicitacoes(cliente_id, veiculo:veiculos(fipe_marca, fipe_modelo)), oficina:oficinas(profile_id, pais, profile:profiles!oficinas_profile_id_fkey(idioma))')
     .eq('id', revisaoId).maybeSingle();
   if (!rev) return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
   if ((rev as any).solicitacao?.cliente_id !== userId) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });

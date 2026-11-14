@@ -3,7 +3,7 @@ import { horaLocalEmUtc, fusoDoPais, moverFimPrevisto, diaNaOficina } from './fu
 import { avisarClienteAgendamento, avisarClienteCancelamento } from './email-agendamento';
 import { avisarCancelamentoPeloCliente } from './email-cancelamento-cliente';
 import { textosAgenda, preencher, dataJanela } from './notif-agenda';
-import { janelaDaSugestao, turnoDaJanela, minutosDe, hhmm, horaCurta, JANELA_MIN, type Janela } from './turnos';
+import { janelaDaSugestao, turnoDaJanela, minutosDe, hhmm, horaCurta, JANELA_MIN, LEGADO, type Janela } from './turnos';
 import { ctxDaOficina } from './pedido-datas';
 import { textosMudanca } from './notif-mudanca';
 import { agendaDaOficina, MOTIVO_MIN } from './agenda-oficina';
@@ -20,6 +20,8 @@ import { emTodasAsLinguas, type TextoAviso } from './notif-textos';
 // Depois de cada resposta a oficina recebe o proximo passo; lembretes em lembretesMudanca().
 
 type Res = { status: number; body: Record<string, unknown> };
+/** 23:59 em minutos: fim maximo de uma janela no dia */
+const ULTIMO_MINUTO = 23 * 60 + 59;
 const res = (status: number, body: Record<string, unknown>): Res => ({ status, body });
 const diaLocal = (iso: string | Date, fuso: string) => new Date(iso).toLocaleDateString('en-CA', { timeZone: fuso });
 const SEL_AG = 'id, status, tipo, data_inicio, checkin_ate, data_fim, data_fim_prevista, solicitacao_id, oficina_id, oficina:oficinas(profile_id, nome_fantasia, pais, profile:profiles!oficinas_profile_id_fkey(idioma))';
@@ -28,10 +30,11 @@ const SEL_AG = 'id, status, tipo, data_inicio, checkin_ate, data_fim, data_fim_p
 export function janelaDaRevisao(rev: { nova_hora?: string | null; nova_hora_fim?: string | null; novo_turno?: string | null }): Janela {
   if (rev.nova_hora) {
     const ini = horaCurta(rev.nova_hora);
-    const fim = rev.nova_hora_fim ? horaCurta(rev.nova_hora_fim) : hhmm((minutosDe(ini) ?? 0) + JANELA_MIN);
+    // nunca passa de 23:59 (hora exata 23:45 + 30 min dava "24:15" -> data invalida; auditoria Fable R-06)
+    const fim = rev.nova_hora_fim ? horaCurta(rev.nova_hora_fim) : hhmm(Math.min((minutosDe(ini) ?? 0) + JANELA_MIN, ULTIMO_MINUTO));
     return { inicio: ini, fim };
   }
-  return rev.novo_turno === 'tarde' ? { inicio: '13:00', fim: '17:00' } : { inicio: '08:00', fim: '12:00' };
+  return LEGADO[rev.novo_turno === 'tarde' ? 'tarde' : 'manha'];
 }
 
 async function dadosPedido(solicitacaoId: string) {
@@ -86,6 +89,8 @@ export async function proporMudanca(p: {
   // (cliente antigo) = 1a faixa do perfil nesse turno. O servidor grava sempre inicio E fim (as telas so leem).
   let janela: Janela;
   if (p.hora) {
+    // hora exata (agenda) sem fim: a janela de 30 min tem de caber no dia (23:45 + 30 min = "24:15" dava 500; R-06)
+    if (!(p.horaFim && (minutosDe(p.horaFim) ?? 0) - (minutosDe(p.hora) ?? 0) >= JANELA_MIN) && (minutosDe(p.hora) ?? 0) + JANELA_MIN > ULTIMO_MINUTO) return res(400, { error: 'Dados inválidos', codigo: 'DADOS_INVALIDOS' });
     const fimH = p.horaFim && (minutosDe(p.horaFim) ?? 0) - (minutosDe(p.hora) ?? 0) >= JANELA_MIN ? p.horaFim : hhmm((minutosDe(p.hora) ?? 0) + JANELA_MIN);
     janela = { inicio: p.hora, fim: fimH };
   } else {

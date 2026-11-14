@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSessionUserId } from '@/lib/api-auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { ehUuid } from '@/lib/validacao';
-import { horaLocalEmUtc } from '@/lib/fuso';
+import { horaLocalEmUtc, fimPrevistoDoServico } from '@/lib/fuso';
 import { avisarClienteAgendamento } from '@/lib/email-agendamento';
 import { janelaDoSlot } from '@/lib/turnos';
 
@@ -37,7 +37,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const checkinAte = horaLocalEmUtc(slot.data_checkin, janela.fim, pais);
   // vale ate o fim da janela (mesma regra do aceite)
   if (new Date(checkinAte).getTime() < Date.now()) return NextResponse.json({ error: 'Horário vencido', codigo: 'HORARIO_VENCIDO' }, { status: 409 });
-  const fim = horaLocalEmUtc(slot.data_previsao_entrega || slot.data_checkin, slot.turno === 'manha' ? '12:00' : '18:00', pais);
+  // fim previsto igual ao aceite: 18:00 do dia da previsao, nunca antes do fim da janela (auditoria Fable R-05)
+  const fim = fimPrevistoDoServico(slot.data_previsao_entrega || slot.data_checkin, checkinAte, pais);
 
   const { error } = await supabaseAdmin.from('agenda')
     .update({ data_inicio: inicio, checkin_ate: checkinAte, data_fim: fim, data_fim_prevista: fim, no_show: false, no_show_registrado_em: null })
