@@ -15,7 +15,11 @@
 //  E relogio fixo: seg 09:00 -> sugestao terca de manha; sex 10:00 (sabado fechado) -> segunda;
 //    seg 15:30 escolhendo hoje -> tarde + aviso "menos de 2 horas"
 //  G resposta a "novas datas" (079): sugestao no 1o dia aberto, sabado = erro + botao desativado, sexta a
-//    tarde = aviso e envia; API recusa sabado com DIA_FECHADO
+//    tarde = aviso e envia; API recusa sabado com DIA_FECHADO; horario mudado no perfil + volta para a aba
+//    (visibilitychange) -> o cartao rele o horario e o erro some / volta (auditoria Fable R4)
+//  H carro ja na oficina (em_andamento): cartao das datas escondido; editar o orcamento com datas salvas
+//    num sabado fechado e no passado NAO bloqueia (nao ha campo para corrigir) e as datas ficam como
+//    estavam (auditoria Fable R1)
 //  F oficina sem horario_funcionamento: sugestao amanha de manha, nenhum aviso, envio normal
 //  + sem rolagem lateral a 390 px
 //   node orcamento-datas-aviso.mjs <.env.local>
@@ -289,6 +293,13 @@ try {
     ok('G: sem rolagem lateral (390 px)', await semRolagem(pG));
     await avG.evaluate((e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); await pG.waitForTimeout(300);
     await pG.screenshot({ path: `${OUT}/novas-datas-sabado-et-390.png` });
+    // R4: a oficina abre o sabado no perfil (outra aba) e volta: o cartao rele o horario sem recarregar
+    await sb.from('oficinas').update({ horario_funcionamento: { ...HORARIO, sab: { aberto: true, inicio: '08:00', fim: '18:00' } } }).eq('id', ofId);
+    await pG.evaluate(() => document.dispatchEvent(new Event('visibilitychange'))); await pG.waitForTimeout(1500);
+    ok('G R4: sabado aberto no perfil + volta para a aba -> erro some, botao ativa, data mantida', !(await visivel(pG, 'nd-aviso-0')) && await pG.getByTestId('nd-enviar').isEnabled() && (await pG.getByTestId('nd-data-0').inputValue()) === SAB, await avG.innerText().catch(() => 'sem aviso'));
+    await sb.from('oficinas').update({ horario_funcionamento: HORARIO }).eq('id', ofId);
+    await pG.evaluate(() => document.dispatchEvent(new Event('visibilitychange'))); await pG.waitForTimeout(1500);
+    ok('G R4: sabado fechado de novo + volta -> erro volta e o botao desativa', (await avG.getAttribute('data-tipo').catch(() => '')) === 'fechado' && await pG.getByTestId('nd-enviar').isDisabled());
     await pG.getByTestId('nd-data-0').fill(SEX); await pG.getByTestId('nd-turno-0').selectOption('tarde'); await pG.waitForTimeout(400);
     ok('G: sexta a tarde -> aviso do periodo (nao bloqueia)', (await avG.getAttribute('data-tipo').catch(() => '')) === 'turno' && await pG.getByTestId('nd-enviar').isEnabled());
     await pG.getByTestId('nd-enviar').click();
@@ -296,6 +307,34 @@ try {
     const { data: sl5 } = await sb.from('orcamento_disponibilidade').select('data_checkin, turno, origem').eq('orcamento_id', o5.id).gte('data_checkin', hojeTallinn);
     ok('G: enviada a sexta a tarde (aviso nao bloqueia)', (await visivel(pG, 'novas-datas-feito')) && sl5?.length === 1 && sl5[0].data_checkin === SEX && sl5[0].turno === 'tarde' && sl5[0].origem === 'oficina', JSON.stringify(sl5));
     await ctxG.close();
+  }
+
+  // ---------- H: em_andamento (cartao das datas escondido): datas salvas invalidas nao bloqueiam (R1)
+  {
+    const T = tr('et');
+    const sol6 = await novoPedido(cli, v.id, 6);
+    await sb.from('solicitacoes').update({ status: 'em_andamento' }).eq('id', sol6);
+    const { data: o6, error: eO6 } = await sb.from('orcamentos').insert({ solicitacao_id: sol6, oficina_id: ofId, status: 'enviado', valor_total: 60, prazo_dias: 1, validade: somar(hojeTallinn, 30) }).select('id').single();
+    if (eO6) throw new Error(eO6.message);
+    await sb.from('orcamento_itens').insert({ orcamento_id: o6.id, descricao: 'Õlivahetus', tipo: 'mao_de_obra', quantidade: 1, valor_unitario: 60, valor_total: 60 });
+    const PASSADO = somar(hojeTallinn, -3);
+    await sb.from('orcamento_disponibilidade').insert([
+      { orcamento_id: o6.id, data_checkin: PASSADO, turno: 'manha', data_previsao_entrega: somar(PASSADO, 1) },
+      { orcamento_id: o6.id, data_checkin: SAB, turno: 'manha', data_previsao_entrega: somar(SAB, 1) },
+    ]);
+    const ctxH = await celular(); const pH = await ctxH.newPage();
+    await entrar(pH, dono);
+    await pH.goto(`${SITE}/ee/et/oficina/orcamento/${sol6}`, { waitUntil: 'networkidle' });
+    const valor = pH.getByPlaceholder(T('oficinaEnviarOrcamento.placeholderValor')).first();
+    await valor.waitFor({ timeout: 20000 }).catch(() => {}); await pH.waitForTimeout(1500);
+    ok('H: em_andamento -> "veiculo ja na oficina" e nenhum campo de data', (await pH.getByText(T('oficinaEnviarOrcamento.veiculoJaNaOficina')).isVisible().catch(() => false)) && (await datas(pH).count()) === 0);
+    await valor.fill('90');
+    await enviar(pH);
+    const r = await disp(sol6);
+    ok('H: edicao enviada mesmo com datas salvas num sabado fechado e no passado', !!r.o && Number(r.o.valor_total) === 90 && r.o.revisao_numero === 1, JSON.stringify(r));
+    ok('H: sem erro na tela (dia fechado / envio)', !(await visivel(pH, 'erro-dia-fechado')) && !(await visivel(pH, 'erro-envio-orcamento')));
+    ok('H: datas salvas regravadas como estavam', r.d.map((x) => `${x.data_checkin} ${x.turno}`).join(',') === `${PASSADO} manha,${SAB} manha`, JSON.stringify(r.d));
+    await ctxH.close();
   }
 
   // ---------- F: oficina sem horario_funcionamento: amanha de manha, nenhum aviso de horario, envio normal

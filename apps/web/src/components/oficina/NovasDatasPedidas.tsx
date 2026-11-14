@@ -22,8 +22,22 @@ const somar = (ymd: string, n: number) => { const d = new Date(`${ymd}T12:00:00Z
 // Datas x horario de funcionamento (dono 14/11, igual ao formulario do orcamento): sugestao no proximo dia
 // em que a oficina abre (nunca hoje), dia fechado bloqueia (o servidor tambem recusa: DIA_FECHADO),
 // periodo fora do horario so avisa; link para corrigir o horario no perfil (aba nova).
-export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horario, aoMudar }: { orcamentoId: string; prazoDias: number; pais?: string | null; horario?: HorarioSemana; aoMudar?: () => void }) {
+export default function NovasDatasPedidas({ orcamentoId, prazoDias, pais, horario: horarioProp, oficinaId, aoMudar }: { orcamentoId: string; prazoDias: number; pais?: string | null; horario?: HorarioSemana; oficinaId?: string; aoMudar?: () => void }) {
   const t = useTranslations('oficinaNovasDatas');
+  // a oficina corrige o horario no perfil (aba nova pelo link do erro): ao voltar para esta aba relemos
+  // so o horario, sem perder as linhas preenchidas (igual ao formulario do orcamento; auditoria Fable R4)
+  const [horarioRelido, setHorarioRelido] = useState<HorarioSemana>(undefined);
+  const horario = horarioRelido ?? horarioProp;
+  useEffect(() => {
+    if (!oficinaId) return;
+    const reler = () => {
+      if (document.visibilityState !== 'visible') return;
+      supabase.from('oficinas').select('horario_funcionamento').eq('id', oficinaId).maybeSingle()
+        .then(({ data }) => { if (data?.horario_funcionamento) setHorarioRelido(data.horario_funcionamento as HorarioSemana); });
+    };
+    document.addEventListener('visibilitychange', reler);
+    return () => document.removeEventListener('visibilitychange', reler);
+  }, [oficinaId]);
   const tErr = useTranslations('erros');
   const locale = useLocale();
   const intl = INTL_LOCALE[locale] || locale;

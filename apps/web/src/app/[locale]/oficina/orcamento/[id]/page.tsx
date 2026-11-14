@@ -326,11 +326,14 @@ ${d.observacoes}` : d.observacoes));
     if (enviandoOrc) return;
     setErroEnvio('');
     if (total === 0) { setErroEnvio(t('itemSemValor')); return; }
-    if (slots.some((s) => s.data && !turnoDisponivel(s.data, s.turno, undefined, (oficina as any)?.pais ?? null))) {
+    // carro ja na oficina (em_andamento): o cartao das datas nao aparece e a oficina nao tem como corrigir
+    // a data - nao valida (as datas salvas continuam sendo regravadas como antes; auditoria Fable R1)
+    const datasVisiveis = solicitacao?.status !== 'em_andamento';
+    if (datasVisiveis && slots.some((s) => s.data && !turnoDisponivel(s.data, s.turno, undefined, (oficina as any)?.pais ?? null))) {
       setErroHorario(true);
       return;
     }
-    if (slots.some((s) => s.data && conflitoHorario(s.data, s.turno, horarioOficina) === 'fechado')) {
+    if (datasVisiveis && slots.some((s) => s.data && conflitoHorario(s.data, s.turno, horarioOficina) === 'fechado')) {
       setErroDiaFechado(true);
       return;
     }

@@ -172,7 +172,7 @@ export default function SolicitacaoDetalhePage() {
           {/* o cliente pediu novas datas (079): confirmar a sugestao dele ou mandar outras */}
           {/* mecanico nao responde (a API recusa): sem o cartao para ele */}
           {myQuote && funcionario?.cargo !== 'mecanico' && ['enviado', 'visualizado'].includes(myQuote.status) && ['aberta', 'em_orcamento', 'no_show'].includes(sol.status) && !orcamentoVencido(myQuote.validade, oficina?.pais) && (
-            <NovasDatasPedidas key={myQuote.id} orcamentoId={myQuote.id} prazoDias={myQuote.prazo_dias} pais={oficina?.pais ?? null} horario={(oficina as any)?.horario_funcionamento} aoMudar={refresh} />
+            <NovasDatasPedidas key={myQuote.id} orcamentoId={myQuote.id} prazoDias={myQuote.prazo_dias} pais={oficina?.pais ?? null} horario={(oficina as any)?.horario_funcionamento} oficinaId={oficina?.id} aoMudar={refresh} />
           )}
           {myQuote && (
             <div id="meu-orcamento" className="card border-2 border-primary-100 scroll-mt-24">
