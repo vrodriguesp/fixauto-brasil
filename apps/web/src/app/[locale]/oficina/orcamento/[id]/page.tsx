@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { compressImage } from '@/lib/image-compress';
 import CampoNumero from '@/components/forms/CampoNumero';
 import SeguroDoPedido from '@/components/oficina/SeguroDoPedido';
+import { EstimativaIA } from '@/components/ui/DamageAnalysis';
 import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter, Link } from '@/i18n/navigation';
@@ -127,14 +128,18 @@ export default function EnviarOrcamentoPage() {
   const [analise, setAnalise] = useState<AnaliseDano | null>(null);
   // analise guardada na lingua de quem pediu primeiro: traduz o bloco todo
   const [iaOriginal, setIaOriginal] = useState(false);
-  const trIA = useTraducoes(analise ? [analise.resumo || '', ...(analise.pecas_afetadas || [])] : null, iaOriginal);
+  // observacoes da IA (versao 2, 14/11): pecas relacionadas e riscos ajudam a orcar
+  const obsIA0 = ((analise?.raw_response as { observacoes?: unknown } | undefined)?.observacoes as string[] | undefined || []).filter((x) => typeof x === 'string' && x.trim());
+  const nPecasIA = (analise?.pecas_afetadas || []).length;
+  const trIA = useTraducoes(analise ? [analise.resumo || '', ...(analise.pecas_afetadas || []), ...obsIA0] : null, iaOriginal);
   const resumoIA = trIA.textos[0];
-  const pecasIA = trIA.textos.slice(1);
+  const pecasIA = trIA.textos.slice(1, 1 + nPecasIA);
+  const obsIA = trIA.textos.slice(1 + nPecasIA);
 
   // Fetch AI analysis if exists
   useEffect(() => {
     if (params.id) {
-      supabase.from('analise_dano').select('*').eq('solicitacao_id', params.id).single()
+      supabase.from('analise_dano').select('*').eq('solicitacao_id', params.id).maybeSingle()
         .then(({ data }) => { if (data) setAnalise(data as AnaliseDano); });
     }
   }, [params.id]);
@@ -585,10 +590,13 @@ ${d.observacoes}` : d.observacoes));
               ))}
             </div>
           )}
+          {obsIA.length > 0 && (
+            <ul className="list-disc pl-4 mb-2 space-y-0.5 text-xs text-indigo-800">
+              {obsIA.map((o, i) => <li key={i} className="break-words">{o}</li>)}
+            </ul>
+          )}
           {analise.estimativa_custo && Number(analise.estimativa_custo.max) > 0 && (
-            <p className="text-xs text-indigo-600">
-              {t('estimativaIA')}: {formatCurrency(analise.estimativa_custo.min, moeda, locale)} - {formatCurrency(analise.estimativa_custo.max, moeda, locale)}
-            </p>
+            <EstimativaIA e={analise.estimativa_custo} moeda={moeda} compacto />
           )}
           <AvisoTraducao origem={trIA.origem} original={iaOriginal} alternar={() => setIaOriginal((o) => !o)} className="mt-2 !text-indigo-500" />
         </div>

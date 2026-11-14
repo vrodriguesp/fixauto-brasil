@@ -348,9 +348,15 @@ export interface AnaliseDano {
   severidade: 'leve' | 'moderado' | 'grave' | 'severo';
   checklist_inspecao: string[];
   pecas_afetadas: string[];
-  estimativa_custo: { min: number; max: number } | null;
+  // faixa APROXIMADA (total; pecas, mao de obra e horas quando a IA consegue - versao 2, 14/11)
+  estimativa_custo: {
+    min: number; max: number;
+    pecas_min?: number | null; pecas_max?: number | null;
+    mao_obra_min?: number | null; mao_obra_max?: number | null;
+    horas_min?: number | null; horas_max?: number | null;
+  } | null;
   confianca: number | null;
-  raw_response?: { perguntas_sugeridas?: string[]; [key: string]: unknown };
+  raw_response?: { perguntas_sugeridas?: string[]; observacoes?: string[]; versao?: number; [key: string]: unknown };
   created_at: string;
 }
 
