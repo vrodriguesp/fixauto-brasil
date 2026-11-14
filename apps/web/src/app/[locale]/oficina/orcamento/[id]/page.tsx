@@ -643,7 +643,8 @@ ${d.observacoes}` : d.observacoes));
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
+      {/* noValidate: a validacao e nossa (caixa vermelha + texto do dono); o "min" da validade nao pode travar o envio calado */}
+      <form onSubmit={handleSubmit} noValidate>
         {/* Orcamento feito em outro sistema: a IA preenche, a oficina confere */}
         <div className="card mb-6 border-2 border-dashed border-primary-200">
           <h2 className="text-base font-semibold text-gray-900 mb-1">{t('importarTitulo')}</h2>
@@ -847,7 +848,7 @@ ${d.observacoes}` : d.observacoes));
               </div>
               <input id="cacb1-103"
                 type="date"
-                required
+                aria-required="true"
                 className={`input-field ${erroVal ? '!border-red-400 bg-red-50' : ''}`}
                 aria-invalid={!!erroVal || undefined}
                 aria-describedby={erroVal ? 'erro-validade' : ultimaData ? 'dica-validade' : undefined}
