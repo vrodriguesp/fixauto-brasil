@@ -10,6 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { createRequire } from 'node:module';
+import { escolherCheckin, preencherCheckinEValidade } from './ajuda-checkin.mjs';
 const req = createRequire('C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/package.json');
 const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
@@ -184,7 +185,8 @@ try {
     const valor = pD.getByLabel(ET('oficinaEnviarOrcamento.placeholderValor'), { exact: true }).locator('visible=true');
     await valor.first().fill('150');
     // data de entrada = amanha: hoje, depois das 17 h de Tallinn, nenhum turno sobra e o envio fica bloqueado
-    await pD.locator('input[type=date]:not(#cacb1-103)').first().fill(new Date(Date.now() + 86400e3).toISOString().slice(0, 10));
+    // check-in v2: data de check-in (dia realcado + 1a faixa) e validade (+7) escolhidas no seletor novo
+    await preencherCheckinEValidade(pD);
     await pD.waitForTimeout(500);
     await pD.screenshot({ path: 'fluxo-oficina-orcamento.png', fullPage: true });
     await pD.locator('button[type=submit]').locator('visible=true').last().click();

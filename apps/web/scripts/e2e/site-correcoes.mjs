@@ -95,18 +95,25 @@ try {
   // ---- 6) orcamento: periodos de hoje (relogio do navegador fixado)
   const ctxQ = await celular(); const pQ = await ctxQ.newPage();
   await entrar(pQ, ofi.email, ofi.senha, 'it');
-  await pQ.clock.setFixedTime(new Date().setHours(15, 0, 0, 0));
-  await pQ.goto(`${SITE}/it/it/oficina/enviar-orcamento/${s.id}`, { waitUntil: 'load' }); await pQ.locator('input[type=date][aria-label]').first().waitFor(); await pQ.waitForTimeout(1500);
+  // check-in v2 (decisoes do dono 14/11 noite): nada pre-escolhido; no calendario hoje so com faixa que ainda nao
+  // acabou (padrao 006: 08-18 em 2 h) e, depois do fechamento, hoje fica desativado
   const hoje = iso(new Date());
-  const dataSlot = await pQ.locator('input[type=date][aria-label]').first().inputValue();
-  const turnoSlot = await pQ.locator('select[aria-label*="/"]').first().inputValue();
-  const manhaDesligada = await pQ.locator('select[aria-label*="/"] option[value=manha]').first().isDisabled();
-  ok('6 as 15h: comeca hoje a tarde e a manha de hoje fica bloqueada', dataSlot === hoje && turnoSlot === 'tarde' && manhaDesligada, `${dataSlot} ${turnoSlot} manhaBloq=${manhaDesligada}`);
-  ok('6 data minima = hoje', (await pQ.locator('input[type=date][aria-label]').first().getAttribute('min')) === hoje);
-  await pQ.clock.setFixedTime(new Date().setHours(18, 0, 0, 0));
-  await pQ.reload({ waitUntil: 'load' }); await pQ.locator('input[type=date][aria-label]').first().waitFor(); await pQ.waitForTimeout(1500);
-  const amanha = iso(new Date(Date.now() + 86400000));
-  ok('6 as 18h: comeca amanha de manha', (await pQ.locator('input[type=date][aria-label]').first().inputValue()) === amanha && (await pQ.locator('select[aria-label*="/"]').first().inputValue()) === 'manha');
+  const diaSemana = new Date().getDay();
+  await pQ.clock.setFixedTime(new Date().setHours(15, 0, 0, 0));
+  await pQ.goto(`${SITE}/it/it/oficina/enviar-orcamento/${s.id}`, { waitUntil: 'load' }); await pQ.getByTestId('ck-adicionar').waitFor(); await pQ.waitForTimeout(1500);
+  ok('6 datas comecam vazias (nada pre-escolhido)', (await pQ.getByTestId('ck-linha-0').count()) === 0);
+  await pQ.getByTestId('ck-adicionar').click(); await pQ.waitForTimeout(400);
+  if (diaSemana === 0) ok('6 domingo: hoje desativado (padrao 006)', await pQ.getByTestId(`ck-dia-${hoje}`).isDisabled());
+  else {
+    await pQ.getByTestId(`ck-dia-${hoje}`).click(); await pQ.waitForTimeout(300);
+    const chips = await pQ.locator('[data-testid^="ck-faixa-"]').evaluateAll((els) => els.map((e) => e.getAttribute('data-testid')));
+    ok('6 as 15h: hoje so as faixas que ainda nao acabaram', chips.length > 0 && chips.every((id) => id.split('-').at(-1) > '1500'), JSON.stringify(chips));
+  }
+  await pQ.keyboard.press('Escape');
+  await pQ.clock.setFixedTime(new Date().setHours(19, 0, 0, 0));
+  await pQ.reload({ waitUntil: 'load' }); await pQ.getByTestId('ck-adicionar').waitFor(); await pQ.waitForTimeout(1500);
+  await pQ.getByTestId('ck-adicionar').click(); await pQ.waitForTimeout(400);
+  ok('6 as 19h: hoje desativado (todas as faixas acabaram)', await pQ.getByTestId(`ck-dia-${hoje}`).isDisabled());
   await pQ.screenshot({ path: 'cor-orcamento-horarios.png', fullPage: true });
   await ctxQ.close();
 

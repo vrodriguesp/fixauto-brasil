@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { createRequire } from 'node:module';
+import { escolherCheckin, preencherCheckinEValidade } from './ajuda-checkin.mjs';
 const req = createRequire('C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/package.json');
 const { createClient } = req('@supabase/supabase-js');
 const { webkit } = createRequire(import.meta.url)('playwright-core');
@@ -65,7 +66,7 @@ try {
     const ctx = await ctxNovo(); const p = await entrar(ctx, W1, W1S);
     await p.goto(`${SITE}/ee/et/oficina/orcamento/${P.sol.id}`, { waitUntil: 'networkidle' }); await p.waitForTimeout(2500);
     await p.getByTestId('opcao-mudar-data').click(); await p.waitForTimeout(1200);
-    await p.locator('#nd-data').fill(dia(6)); await p.locator('#nd-turno').selectOption('tarde');
+    await escolherCheckin(p, { pre: 'pnd', dia: dia(6), faixa: 'tarde' }); // check-in v2
     await p.locator('#nd-previsao').fill(dia(2));
     await p.getByTestId('serve-sim').check(); await p.locator('#nd-motivo').fill('Varuosa saabub hiljem');
     await p.getByTestId('propor-nova-data').getByRole('button', { name: T('agendaMudanca.enviarProposta') }).click(); await p.waitForTimeout(800);
@@ -80,7 +81,7 @@ try {
     ok('11: trocou para a pagina em russo', /\/ee\/ru\//.test(p.url()), p.url());
     ok('11: o formulario de nova data continua aberto', (await p.locator('#nd-motivo').count()) === 1);
     ok('11: o texto digitado voltou', (await p.locator('#nd-motivo').inputValue().catch(() => '')) === 'Tekst enne keele vahetust', await p.locator('#nd-motivo').inputValue().catch(() => '?'));
-    ok('11: a data e o turno voltaram', (await p.locator('#nd-data').inputValue().catch(() => '')) === dia(6) && (await p.locator('#nd-turno').inputValue().catch(() => '')) === 'tarde');
+    ok('11: a data e a faixa voltaram', (await p.getByTestId('pnd-linha-0').getAttribute('data-data').catch(() => '')) === dia(6) && (await p.getByTestId('pnd-linha-0').getAttribute('data-inicio').catch(() => '')) >= '12:00');
     ok('11: a escolha "ainda serve" voltou', await p.getByTestId('serve-sim').isChecked().catch(() => false));
     const { data: pr } = await admin.from('profiles').select('idioma').eq('id', w1Id).single();
     ok('14b: trocar a lingua mudou a lingua da conta (ru)', pr.idioma === 'ru', pr.idioma);

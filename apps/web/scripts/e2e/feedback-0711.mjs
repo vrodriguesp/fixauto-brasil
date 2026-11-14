@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { createRequire } from 'node:module';
+import { escolherCheckin, preencherCheckinEValidade } from './ajuda-checkin.mjs';
 const req = createRequire('C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/package.json');
 const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
@@ -276,7 +277,7 @@ try {
     const ctx = await contexto(390); const p = await entrarSite(ctx, W1_EMAIL, W1_SENHA);
     await p.goto(`${SITE}/ee/et/oficina/orcamento/${P2.sol.id}`, { waitUntil: 'networkidle' }); await p.waitForTimeout(3000);
     await p.getByTestId('opcao-mudar-data').click(); await p.waitForTimeout(1200);
-    await p.locator('#nd-data').fill(dia(6)); await p.locator('#nd-motivo').fill('Varuosa saabub hiljem');
+    await escolherCheckin(p, { pre: 'pnd', dia: dia(6), faixa: 'manha' }); await p.locator('#nd-motivo').fill('Varuosa saabub hiljem'); // check-in v2
     // desde 08/11 (migracao 077) a oficina diz se o horario atual ainda serve (pergunta obrigatoria)
     await p.locator('[id$="-serve-sim"]').first().check();
     await p.getByTestId('propor-nova-data').getByRole('button').last().click(); await p.waitForTimeout(3000);

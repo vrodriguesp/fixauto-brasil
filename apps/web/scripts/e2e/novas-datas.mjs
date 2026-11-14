@@ -24,6 +24,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { escolherCheckin } from './ajuda-checkin.mjs';
 const req = createRequire('C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/package.json');
 const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
@@ -274,7 +275,8 @@ try {
     ok('B: orcamento aceito no horario sugerido (origem cliente, previsao = data + prazo)', o1.status === 'aceito' && slot?.origem === 'cliente' && slot.data_checkin === sug0.data && slot.turno === sug0.turno && slot.data_previsao_entrega === (() => { const d = new Date(`${sug0.data}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + 2); return d.toISOString().slice(0, 10); })(), JSON.stringify({ o1, slot }));
     ok('B: valor e revisao iguais', Number(o1.valor_total) === 150 && (o1.revisao_numero || 0) === 0);
     const { data: ag } = await admin.from('agenda').select('data_inicio, status, oficina_id').eq('solicitacao_id', A.sol.id).eq('status', 'agendado');
-    ok('B: agenda criada na oficina (08:00/13:00 Tallinn)', ag?.length === 1 && ag[0].oficina_id === of1.id && new Date(ag[0].data_inicio).toISOString() === tallinn(sug0.data, sug0.turno === 'manha' ? '08:00' : '13:00'), JSON.stringify(ag));
+    // check-in v2: a sugestao confirmada vira a 1a faixa do perfil no turno (grade de 2 h, 08-18 sem almoco: 08-10 / 12-14)
+    ok('B: agenda criada na oficina (1a faixa do turno: 08:00 / 12:00 Tallinn)', ag?.length === 1 && ag[0].oficina_id === of1.id && new Date(ag[0].data_inicio).toISOString() === tallinn(sug0.data, sug0.turno === 'manha' ? '08:00' : '12:00'), JSON.stringify(ag));
     const { data: o2 } = await admin.from('orcamentos').select('status, recusado_no_aceite').eq('id', A.o2.id).single();
     ok('B: o outro orcamento recusado (marcado recusado_no_aceite)', o2.status === 'recusado' && o2.recusado_no_aceite === true, JSON.stringify(o2));
     const { data: sol } = await admin.from('solicitacoes').select('status').eq('id', A.sol.id).single();
@@ -318,12 +320,11 @@ try {
     await p.goto(`${SITE}/ee/et/oficina/pedidos/${C.sol.id}`, { waitUntil: 'networkidle' });
     await esperarTeste(p, 'novas-datas-pedidas');
     ok('C: sem sugestoes -> "Klient ei pakkunud aegu."', (await p.getByTestId('novas-datas-pedidas').innerText()).includes(msgWeb('et')('oficinaNovasDatas.semSugestoes')));
-    await p.getByTestId('nd-data-0').fill(dia(6));
-    await p.getByTestId('nd-turno-0').selectOption('tarde');
+    // check-in v2: linhas vazias; dia + faixa no mini calendario (12-14 = 1a faixa da tarde na grade de 2 h)
+    ok('C: "outras datas" comecam vazias', (await p.getByTestId('nd-linha-0').count()) === 0);
+    await escolherCheckin(p, { pre: 'nd', dia: dia(6), faixa: '1200-1400' });
     ok('C: previsao de entrega sugerida = data + prazo (2 dias)', (await p.getByTestId('nd-previsao-0').inputValue()) === dia(8), await p.getByTestId('nd-previsao-0').inputValue());
-    await p.getByTestId('nd-adicionar').click();
-    await p.getByTestId('nd-data-1').fill(dia(7));
-    await p.getByTestId('nd-turno-1').selectOption('manha');
+    await escolherCheckin(p, { pre: 'nd', dia: dia(7), faixa: '0800-1000' });
     await design(p, 'C: editor de novas datas da oficina (et, 390)');
     await p.getByTestId('nd-enviar').click();
     const feito = await esperarTeste(p, 'novas-datas-feito');
@@ -338,7 +339,7 @@ try {
     const pd = await pedidoDatas(C.o1.id);
     ok('C: pedido atendido (novas_datas)', pd.status === 'atendido' && pd.resposta === 'novas_datas', JSON.stringify(pd));
     const { data: nCli } = await admin.from('notificacoes').select('tipo, titulo, mensagem, dados').eq('profile_id', C.cId).eq('tipo', 'novas_datas_enviadas');
-    ok('C: cliente avisado em ru com as datas', nCli?.length === 1 && nCli[0].titulo === 'Автосервис прислал новые даты' && nCli[0].mensagem.includes('13:00–17:00') && !!nCli[0].dados?.textos?.et, JSON.stringify(nCli));
+    ok('C: cliente avisado em ru com as datas', nCli?.length === 1 && nCli[0].titulo === 'Автосервис прислал новые даты' && nCli[0].mensagem.includes('12:00–14:00') && !!nCli[0].dados?.textos?.et, JSON.stringify(nCli));
     const em = await esperarEmail(C.cEmail, t1, (e) => e.html.includes('прислал новые даты'));
     ok('C: e-mail ao cliente (ru) com link neutro /r/<numero>', !!em && em.html.includes(`/r/${C.sol.numero}`) && !em.html.includes('/cliente/orcamentos'), em?.f);
     const { data: chat } = await admin.from('mensagens').select('texto, remetente_id').eq('solicitacao_id', C.sol.id).eq('oficina_id', of1.id);
@@ -353,7 +354,7 @@ try {
     await orcC.getByText(TR('clienteOrcamentoDetalhe.confirmAppointment')).click(); await sleep(3500);
     const { data: oAc } = await admin.from('orcamentos').select('status, disponibilidade_escolhida_id').eq('id', C.o1.id).single();
     const { data: agC } = await admin.from('agenda').select('data_inicio').eq('solicitacao_id', C.sol.id).eq('status', 'agendado');
-    ok('C: cliente aceita a nova data -> aceito e agendado (13:00 Tallinn)', oAc.status === 'aceito' && agC?.length === 1 && new Date(agC[0].data_inicio).toISOString() === tallinn(dia(6), '13:00'), JSON.stringify({ oAc, agC }));
+    ok('C: cliente aceita a nova data -> aceito e agendado (12:00 Tallinn, janela 12-14)', oAc.status === 'aceito' && agC?.length === 1 && new Date(agC[0].data_inicio).toISOString() === tallinn(dia(6), '12:00'), JSON.stringify({ oAc, agC }));
     await ctxC.close();
   }
 
@@ -414,6 +415,9 @@ try {
     let r = await post(`/api/orcamento/${E.o1.id}/pedir-datas`, E.cli.token, {});
     ok('E: orcamento vencido -> pedir-datas ORCAMENTO_VENCIDO', r.status === 409 && r.d.codigo === 'ORCAMENTO_VENCIDO', JSON.stringify(r));
     const { data: sf } = await admin.from('orcamento_disponibilidade').insert({ orcamento_id: E.o1.id, data_checkin: dia(3), turno: 'manha', data_previsao_entrega: dia(4) }).select('id').single();
+    // migracao 082: o trigger empurra a validade ate o horario novo (rede de seguranca); aqui o cenario e um
+    // orcamento ANTIGO ja vencido com horario futuro, entao a validade volta para ontem depois do insert
+    await admin.from('orcamentos').update({ validade: dia(-1) }).eq('id', E.o1.id);
     r = await post('/api/aceitar-orcamento', E.cli.token, { orcamentoId: E.o1.id, slotId: sf.id });
     ok('E: orcamento vencido -> aceitar ORCAMENTO_VENCIDO', r.status === 409 && r.d.codigo === 'ORCAMENTO_VENCIDO', JSON.stringify(r));
     await admin.from('orcamento_disponibilidade').delete().eq('id', sf.id);

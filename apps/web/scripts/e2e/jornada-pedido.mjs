@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { createRequire } from 'node:module';
+import { escolherCheckin, preencherCheckinEValidade } from './ajuda-checkin.mjs';
 const req = createRequire('C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/package.json');
 const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
@@ -125,7 +126,8 @@ async function orcar(pO, solId, valor, item) {
   await pO.waitForTimeout(2500);
   await pO.locator('input[placeholder="' + T('oficinaEnviarOrcamento.placeholderDescricaoItem') + '"]').first().fill(item);
   await pO.getByLabel(T('oficinaEnviarOrcamento.placeholderValor'), { exact: true }).locator('visible=true').first().fill(String(valor));
-  await pO.locator('input[type=date]:not(#cacb1-103)').first().fill(new Date(Date.now() + 86400e3).toISOString().slice(0, 10));
+  // check-in v2: data de check-in (dia realcado + 1a faixa) e validade (+7) escolhidas no seletor novo
+  await preencherCheckinEValidade(pO);
   await pO.waitForTimeout(500);
   await pO.locator('button[type=submit]').locator('visible=true').last().click();
   await pO.waitForTimeout(4000);
@@ -206,7 +208,8 @@ try {
   await pC.goto(`${SITE}/ee/et/cliente/orcamentos/${sol.id}`, { waitUntil: 'networkidle' }); await pC.waitForTimeout(2500);
   await pC.getByRole('button', { name: T('clienteOrcamentoDetalhe.acceptAndSchedule'), exact: false }).locator('visible=true').last().click();
   await pC.waitForTimeout(1500);
-  await pC.locator('button').filter({ hasText: /\d{2}:\d{2} - \d{2}:\d{2}/ }).locator('visible=true').first().click();
+  // check-in v2: o cartao mostra a janela ("08:00–10:00") ou a hora unica
+  await pC.getByTestId('opcao-janela').locator('visible=true').first().click();
   await design(pC, 'D escolha do horario (cliente)');
   await pC.screenshot({ path: `${OUT}/jornada-D-cliente-horario.png`, fullPage: true });
   await pC.getByRole('button', { name: T('clienteOrcamentoDetalhe.confirmAppointment'), exact: false }).locator('visible=true').last().click();

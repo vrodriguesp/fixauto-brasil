@@ -15,6 +15,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { createRequire } from 'node:module';
+import { escolherCheckin, preencherCheckinEValidade } from './ajuda-checkin.mjs';
 const req = createRequire('C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/Documentos/_teste_local/site/apps/web/package.json');
 const { createClient } = req('@supabase/supabase-js');
 const { chromium } = req('playwright-core');
@@ -335,8 +336,8 @@ try {
   await digitar(pO, pO.locator(`input[placeholder="${T('oficinaEnviarOrcamento.placeholderDescricaoItem')}"]`).first(), 'Piduriklotsid ja töö', 'item do orcamento');
   await digitar(pO, pO.getByLabel(T('oficinaEnviarOrcamento.placeholderValor'), { exact: true }).locator('visible=true').first(), '139', 'valor');
   // horario de chegada: o campo de data do cartao de horarios (o 1o e a validade do orcamento)
-  const dataOrc = pO.locator('input[type=date]').last();
-  await ver(pO, dataOrc); await dataOrc.fill(new Date(Date.now() + 2 * 86400e3).toISOString().slice(0, 10)); await sleep(500);
+  // check-in v2: data de check-in (dia realcado + 1a faixa) e validade (+7) escolhidas no seletor novo
+  await ver(pO, pO.getByTestId('ck-adicionar')); await preencherCheckinEValidade(pO); await sleep(500);
   await tocar(pO, pO.locator('button[type=submit]').locator('visible=true').last(), 'enviar orcamento');
   await sleep(3500);
   const orc = (await admin.from('orcamentos').select('id, status').eq('solicitacao_id', sol.id).eq('oficina_id', of.id).maybeSingle()).data;
@@ -382,8 +383,8 @@ try {
   await tela(pO, 'oficina orcamento aceito (mudar)');
   await tocar(pO, pO.getByTestId('opcao-mudar-data'), 'quero mudar a data');
   const nd = new Date(Date.now() + 4 * 86400e3).toISOString().slice(0, 10);
-  await ver(pO, pO.locator('#nd-data')); await pO.locator('#nd-data').fill(nd);
-  await escolher(pO, pO.locator('#nd-turno'), 'tarde', 'turno');
+  // check-in v2: dia + faixa da tarde no mesmo seletor do orcamento
+  await ver(pO, pO.getByTestId('pnd-adicionar')); await escolherCheckin(pO, { pre: 'pnd', dia: nd, faixa: 'tarde' });
   await digitar(pO, pO.locator('#nd-motivo'), 'Varuosa saabub alles neljapäeval', 'motivo da nova data');
   // 079: a oficina diz se a data marcada ainda serve (obrigatorio) - aqui nao serve mais
   await tocar(pO, pO.getByTestId('propor-nova-data').getByRole('radio', { name: rx(T('agendaMudanca.naoServe')) }), 'data atual nao serve mais');

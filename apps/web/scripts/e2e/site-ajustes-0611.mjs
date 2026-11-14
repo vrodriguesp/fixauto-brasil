@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { createRequire } from 'node:module';
+import { escolherCheckin, preencherCheckinEValidade } from './ajuda-checkin.mjs';
 import { fileURLToPath } from 'node:url';
 const req = createRequire('C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/package.json');
 const { createClient } = req('@supabase/supabase-js');
@@ -71,7 +72,8 @@ try {
   ok('1 sem aviso de prazo longo', (await p.locator('[data-testid="aviso-prazo-longo"]').count()) === 0);
   await p.locator(`input[placeholder="${ET.oficinaEnviarOrcamento.placeholderDescricaoItem}"]`).first().fill('Õli ja filter');
   await p.getByLabel(ET.oficinaEnviarOrcamento.placeholderValor, { exact: true }).locator('visible=true').first().fill('95');
-  await p.locator('input[type=date]:not(#cacb1-103)').first().fill(new Date(Date.now() + 86400e3).toISOString().slice(0, 10));
+  // check-in v2: data de check-in (dia realcado + 1a faixa) e validade (+7) escolhidas no seletor novo
+  await preencherCheckinEValidade(p);
   await p.waitForTimeout(400);
   const t0 = Date.now();
   await p.locator('button[type=submit]').locator('visible=true').last().click();

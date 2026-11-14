@@ -14,6 +14,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { createRequire } from 'node:module';
+import { escolherCheckin } from './ajuda-checkin.mjs';
 const req = createRequire('C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/package.json');
 const { createClient } = req('@supabase/supabase-js');
 const { chromium } = createRequire(import.meta.url)('playwright-core');
@@ -101,12 +102,17 @@ const entrarSite = async (ctx, email, s, rot = '/ee/et') => {
 };
 
 const INICIO = Date.now();
+let perfilW1Antes = null;
 try {
   const T = msgWeb('et'); const TE = msgWeb('en');
   const w1 = await sessao(W1_EMAIL, W1_SENHA);
   const w1Id = (await admin.from('profiles').select('id').eq('email', W1_EMAIL).single()).data.id;
   await admin.from('profiles').update({ idioma: 'et' }).eq('id', w1Id); // conta compartilhada: um teste manual pode ter trocado o idioma
-  const { data: of1 } = await admin.from('oficinas').select('id, nome_fantasia').eq('profile_id', w1Id).single();
+  const { data: of1 } = await admin.from('oficinas').select('id, nome_fantasia, horario_funcionamento, almoco_inicio, almoco_fim').eq('profile_id', w1Id).single();
+  // check-in v2: durante o teste a oficina fixa abre todos os dias 08-18 com almoco 12-13 (a 1a faixa da tarde e 13-15,
+  // entao "tarde" continua comecando as 13:00 como antes); o perfil volta no fim
+  perfilW1Antes = { id: of1.id, horario_funcionamento: of1.horario_funcionamento, almoco_inicio: of1.almoco_inicio, almoco_fim: of1.almoco_fim };
+  await admin.from('oficinas').update({ horario_funcionamento: Object.fromEntries(['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'].map((k) => [k, { aberto: true, inicio: '08:00', fim: '18:00' }])), almoco_inicio: '12:00', almoco_fim: '13:00' }).eq('id', of1.id);
   const w2Email = `agen-of2-${tag}@example.test`;
   const w2Id = await conta(w2Email, senha, { tipo: 'oficina', nome: 'Oficina Dois', idioma: 'et', telefone: '+372 5000 3333' });
   const { data: of2 } = await admin.from('oficinas').insert({ profile_id: w2Id, nome_fantasia: `Teine Töökoda ${tag}`, endereco: 'Pärnu mnt 20', cidade: 'Tallinn', estado: 'Harjumaa', cep: '10141', pais: 'EE', latitude: 59.43, longitude: 24.745, raio_atendimento_km: 30, especialidades: ['mecanica', 'eletrica', 'pneu', 'manutencao'], ativa: true }).select('id').single();
@@ -168,8 +174,8 @@ try {
     const caixa = p.getByTestId('propor-nova-data');
     ok('1: orcamento aceito mostra "Muuda auto toomise aega" com a data atual', (await caixa.count()) === 1 && (await caixa.innerText()).includes(T('agendaMudanca.propostaTitulo')));
     await design(p, '1: tela do orcamento com a proposta (oficina, celular)');
-    await p.locator('#nd-data').fill(dia(6));
-    await p.locator('#nd-turno').selectOption('tarde');
+    // check-in v2: dia + faixa no mesmo seletor do orcamento (tarde = 13-15 com o almoco 12-13)
+    await escolherCheckin(p, { pre: 'pnd', dia: dia(6), faixa: '1300-1500' });
     await p.locator('#nd-previsao').fill(dia(7));
     await p.locator('#nd-motivo').fill('abc');
     // 077: primeiro a oficina diz se a data marcada ainda serve
@@ -202,7 +208,7 @@ try {
     const prop = p.getByTestId('proposta-nova-data');
     const tp = (await prop.count()) ? await prop.innerText() : '';
     ok('1: cliente ve a proposta com a nova data, o motivo e os botoes (aceitar, manter, outra data, cancelar)', tp.includes('proposes a new date') && tp.includes('Varuosa saabub') && tp.includes(TE('agendaMudanca.aceitarData')) && tp.includes(TE('agendaMudanca.manterData'))
-      && tp.includes(TE('agendaMudanca.pedirOutraData')) && tp.includes(TE('agendaMudanca.cancelarComOficina')) && /Afternoon/.test(tp), tp);
+      && tp.includes(TE('agendaMudanca.pedirOutraData')) && tp.includes(TE('agendaMudanca.cancelarComOficina')) && tp.includes('13:00–15:00'), tp); // check-in v2: a janela no lugar da palavra Afternoon
     const hrefOutra = await prop.getByTestId('pedir-outra-data').getAttribute('href').catch(() => '');
     ok('077: "pedir outra data" abre a conversa com esta oficina', (hrefOutra || '').includes(`/cliente/mensagens/${P.sol.id}?oficina=${of1.id}`), hrefOutra);
     const tPag = await design(p, '1: pedido do cliente com a proposta (celular, en)');
@@ -517,6 +523,7 @@ try {
   console.log('FALHA excecao', (e.stack || e.message).split('\n').slice(0, 4).join(' | '));
 } finally {
   await browser.close();
+  if (perfilW1Antes) { const { id, ...resto } = perfilW1Antes; await admin.from('oficinas').update(resto).eq('id', id); }
   for (const id of sols) {
     const { data: orcs } = await admin.from('orcamentos').select('id').eq('solicitacao_id', id);
     for (const o of orcs || []) { await admin.from('orcamento_disponibilidade').delete().eq('orcamento_id', o.id); await admin.from('orcamento_itens').delete().eq('orcamento_id', o.id); }
