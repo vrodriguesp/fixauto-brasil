@@ -1105,7 +1105,9 @@
       "propostaPendente": "New date proposed ({quando}), waiting for the customer’s answer. Until then the date above applies."
     },
     "clienteEnviouNumero": "The customer sent you their phone number.",
-    "orcamentoVencidoTexto": "This quote expired on {data}. The customer can no longer accept it. To continue, change the quote with new check-in dates and a new validity date."
+    "orcamentoVencidoTexto": "This quote expired on {data}. The customer can no longer accept it. To continue, change the quote with new check-in dates and a new validity date.",
+    "convidada": "Sent to you by BipFix",
+    "convidadaTexto": "BipFix sent this request to you. You can send a quote even if it is not your usual service."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Vehicle received at the shop",
@@ -1248,7 +1250,8 @@
     "estado_dispensado": "Not interested",
     "voceDispensou": "You marked not interested: {motivo}",
     "desfazerDispensa": "Reply after all",
-    "erroDispensa": "Could not save. Please try again."
+    "erroDispensa": "Could not save. Please try again.",
+    "convidada": "Sent to you by BipFix"
   },
   "oficinaHoje": {
     "titulo": "Today",

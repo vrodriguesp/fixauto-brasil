@@ -260,6 +260,9 @@ export interface Solicitacao {
   fotos?: SolicitacaoFoto[];
   orcamentos?: Orcamento[];
   cliente?: Profile;
+  // pedido enviado pela BipFix a esta oficina (migracao 085; a RLS so devolve os da propria oficina).
+  // origem 'tipo_alterado' = acesso mantido ao mudar o tipo (sem selo "enviado pela BipFix")
+  convites?: { oficina_id: string; origem?: 'admin' | 'tipo_alterado' }[];
 }
 
 export interface SolicitacaoFoto {

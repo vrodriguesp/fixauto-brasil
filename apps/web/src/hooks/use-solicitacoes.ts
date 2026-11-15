@@ -23,6 +23,7 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
         veiculo:veiculos(*),
         fotos:solicitacao_fotos(*),
         cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo, telefone),
+        convites:pedido_convites(oficina_id, origem),
         orcamentos(
           *,
           itens:orcamento_itens(*),
@@ -86,7 +87,10 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
         const withinRadius = s.latitude != null && oficina.latitude != null &&
           distanciaKm(s.latitude, s.longitude, oficina.latitude, oficina.longitude) <= (oficina.raio_atendimento_km || 30);
         const matchesEspecialidade = tipoCompativel(oficina.especialidades, s.tipo);
-        return withinRadius && matchesEspecialidade;
+        // enviado pela BipFix a esta oficina (migracao 085): o banco ja libera (minha_oficina_atende); sem isto o
+        // filtro do navegador escondia a convidada de outro tipo ou fora do raio
+        const convidada = s.convites?.some((c) => c.oficina_id === oficina.id);
+        return !!convidada || (withinRadius && matchesEspecialidade);
       });
     }
 

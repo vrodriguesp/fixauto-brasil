@@ -1105,7 +1105,9 @@
       "propostaPendente": "Nova data proposta ({quando}) à espera da resposta do cliente. Até lá vale a data acima."
     },
     "clienteEnviouNumero": "O cliente enviou-lhe o número de telefone.",
-    "orcamentoVencidoTexto": "A validade deste orçamento terminou a {data}. O cliente já não o pode aceitar. Para continuar, altere o orçamento com novas datas de check-in e uma nova validade."
+    "orcamentoVencidoTexto": "A validade deste orçamento terminou a {data}. O cliente já não o pode aceitar. Para continuar, altere o orçamento com novas datas de check-in e uma nova validade.",
+    "convidada": "Enviado para si pela BipFix",
+    "convidadaTexto": "A BipFix enviou-lhe este pedido. Pode enviar orçamento mesmo que não seja a sua especialidade."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Viatura recebida na oficina",
@@ -1248,7 +1250,8 @@
     "estado_dispensado": "Sem interesse",
     "voceDispensou": "Marcou sem interesse: {motivo}",
     "desfazerDispensa": "Voltar a responder",
-    "erroDispensa": "Não foi possível guardar. Tente novamente."
+    "erroDispensa": "Não foi possível guardar. Tente novamente.",
+    "convidada": "Enviado para si pela BipFix"
   },
   "oficinaHoje": {
     "titulo": "Hoje",

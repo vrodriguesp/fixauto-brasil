@@ -38,7 +38,7 @@ export default function SolicitacaoDetalhePage() {
       supabase
         .from('solicitacoes')
         .select(
-          '*, veiculo:veiculos(*), fotos:solicitacao_fotos(*), cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo, telefone), orcamentos(*, itens:orcamento_itens(*), oficina:oficinas(*, profile:profiles(*)), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))'
+          '*, veiculo:veiculos(*), fotos:solicitacao_fotos(*), cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo, telefone), convites:pedido_convites(oficina_id, origem), orcamentos(*, itens:orcamento_itens(*), oficina:oficinas(*, profile:profiles(*)), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))'
         )
         .eq('id', params.id)
         .single()
@@ -100,6 +100,8 @@ export default function SolicitacaoDetalhePage() {
   }
 
   const v = sol.veiculo;
+  // enviado pela BipFix a esta oficina (migracao 085); o acesso mantido ao mudar o tipo nao ganha selo
+  const convidada = !!oficina && !!sol.convites?.some((c: any) => c.oficina_id === oficina.id && c.origem !== 'tipo_alterado');
   const myQuote = sol.orcamentos?.find((o: any) => o.oficina_id === oficina?.id);
   const isAccepted = myQuote?.status === 'aceito';
   const isEmAndamento = sol.status === 'em_andamento';
@@ -142,6 +144,12 @@ export default function SolicitacaoDetalhePage() {
               {t('urgencia')}: {tc.has(`urgencias.${sol.urgencia}`) ? tc(`urgencias.${sol.urgencia}`) : sol.urgencia}
             </span>
           </div>
+          {convidada && (
+            <div className="mt-3 rounded-lg border border-indigo-200 bg-indigo-50 p-3" data-testid="convidada-detalhe">
+              <p className="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-semibold text-indigo-900" data-testid="selo-convidada"><span aria-hidden="true">📨</span> {t('convidada')}</p>
+              <p className="mt-1.5 text-sm text-indigo-950">{t('convidadaTexto')}</p>
+            </div>
+          )}
         </div>
         <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:flex-shrink-0">
           <Link

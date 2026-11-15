@@ -1105,7 +1105,9 @@
       "propostaPendente": "Nuova data proposta ({quando}) in attesa della risposta del cliente. Fino ad allora vale la data sopra."
     },
     "clienteEnviouNumero": "Il cliente ti ha inviato il suo numero di telefono.",
-    "orcamentoVencidoTexto": "Questo preventivo è scaduto il {data}. Il cliente non può più accettarlo. Per continuare, modifica il preventivo con nuove date di check-in e una nuova validità."
+    "orcamentoVencidoTexto": "Questo preventivo è scaduto il {data}. Il cliente non può più accettarlo. Per continuare, modifica il preventivo con nuove date di check-in e una nuova validità.",
+    "convidada": "Inviata a te da BipFix",
+    "convidadaTexto": "BipFix ti ha inviato questa richiesta. Puoi inviare un preventivo anche se non è il tuo servizio abituale."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Veicolo ricevuto in officina",
@@ -1248,7 +1250,8 @@
     "estado_dispensado": "Non interessa",
     "voceDispensou": "Hai segnato \"non mi interessa\": {motivo}",
     "desfazerDispensa": "Rispondi comunque",
-    "erroDispensa": "Salvataggio non riuscito. Riprova."
+    "erroDispensa": "Salvataggio non riuscito. Riprova.",
+    "convidada": "Inviata a te da BipFix"
   },
   "oficinaHoje": {
     "titulo": "Oggi",

@@ -286,6 +286,10 @@ export default function PedidosOficinaPage() {
                       {[t('pedidoEm', { data: fmtData.format(new Date(s.created_at)) }), t('orcamentoEm', { data: fmtData.format(new Date(meu.created_at)) }), meu.valor_total != null ? formatCurrency(meu.valor_total, moeda, locale) : null].filter(Boolean).join(' · ')}
                     </p>
                   )}
+                  {/* enviado pela BipFix (085); o acesso mantido ao mudar o tipo nao ganha selo */}
+                  {oficina && s.convites?.some((c: any) => c.oficina_id === oficina.id && c.origem !== 'tipo_alterado') && (
+                    <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-semibold text-indigo-900" data-testid="selo-convidada"><span aria-hidden="true">📨</span> {t('convidada')}</p>
+                  )}
                   {pedemDatas.has(s.id) && ['enviado', 'visto'].includes(estado) && (
                     <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900" data-testid="selo-novas-datas">📅 {tNd('selo')}</p>
                   )}

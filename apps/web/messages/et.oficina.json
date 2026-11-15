@@ -1105,7 +1105,9 @@
       "propostaPendente": "Pakutud uus aeg ({quando}) ootab kliendi vastust. Seni kehtib ülaltoodud aeg."
     },
     "clienteEnviouNumero": "Klient saatis sulle oma telefoninumbri.",
-    "orcamentoVencidoTexto": "Selle hinnapakkumise kehtivus lõppes {data}. Klient ei saa seda enam vastu võtta. Jätkamiseks muuda hinnapakkumist: lisa uued check-ini ajad ja uus kehtivus."
+    "orcamentoVencidoTexto": "Selle hinnapakkumise kehtivus lõppes {data}. Klient ei saa seda enam vastu võtta. Jätkamiseks muuda hinnapakkumist: lisa uued check-ini ajad ja uus kehtivus.",
+    "convidada": "Saadetud sulle BipFixi poolt",
+    "convidadaTexto": "BipFix saatis selle päringu sulle. Võid pakkumise saata ka siis, kui see pole sinu põhiteenus."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Sõiduk vastu võetud töökojas",
@@ -1248,7 +1250,8 @@
     "estado_dispensado": "Pole huvi",
     "voceDispensou": "Märkisid, et pole huvi: {motivo}",
     "desfazerDispensa": "Vasta siiski",
-    "erroDispensa": "Salvestamine ebaõnnestus. Proovi uuesti."
+    "erroDispensa": "Salvestamine ebaõnnestus. Proovi uuesti.",
+    "convidada": "Saadetud sulle BipFixi poolt"
   },
   "oficinaHoje": {
     "titulo": "Täna",
