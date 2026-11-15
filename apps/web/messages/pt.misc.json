@@ -885,7 +885,8 @@
     "marcadoEntendido": "Marcado como entendido ✓",
     "marcarConcluido": "Entendi, marcar como concluído",
     "encontrei": "Encontrei! Módulo concluído.",
-    "aindaNao": "Ainda não encontrei isso no seu perfil. Faça a ação na tela real e clique em verificar de novo."
+    "aindaNao": "Ainda não encontrei isso no seu perfil. Faça a ação na tela real e clique em verificar de novo.",
+    "novo": "Novo"
   },
   "seguroReparo": {
     "titulo": "Quem vai pagar o conserto?",

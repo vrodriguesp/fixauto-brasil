@@ -9,7 +9,8 @@ import { useAuth } from '@/lib/auth-context';
 // responder. [Preencher] leva ao perfil (#recepcao); [O horario de funcionamento serve] grava
 // recepcao_confirmada_em e nao aparece mais; ✕ adia 7 dias (no aparelho). Some sozinho quando o perfil
 // ja tem recepcao de carros. Banner, nao modal: a oficina entre dois carros vai direto ao pedido.
-const CHAVE = 'bipfix_convite_recepcao_ate';
+export const CHAVE_CONVITE_RECEPCAO = 'bipfix_convite_recepcao_ate';
+const CHAVE = CHAVE_CONVITE_RECEPCAO;
 const SETE_DIAS = 7 * 24 * 3600e3;
 
 export default function ConviteRecepcao() {

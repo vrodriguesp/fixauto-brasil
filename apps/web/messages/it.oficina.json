@@ -363,6 +363,22 @@
         "desafio": "Invia un preventivo reale per una richiesta aperta nella tua zona.",
         "dica": "Più velocemente rispondi, più è probabile che il cliente scelga il tuo preventivo."
       },
+      "horariosCheckin": {
+        "titulo": "Orari di check-in e validità",
+        "resumo": "In ogni preventivo scegli quando il cliente può portare l’auto: un giorno nel calendario e una fascia oraria. Le fasce vengono dal tuo profilo: impostale una volta.",
+        "passosGuiados": [
+          "Apri La mia officina → “Accettazione auto”: scegli “Usa l’orario di apertura (fasce di 2 ore)”, “Una fascia fissa” o “Un orario fisso”. Se chiudi a pranzo, spunta “Chiuso a pranzo” e inserisci gli orari. Tocca “Salva Modifiche”. Vale per tutta la settimana.",
+          "Nel preventivo le date di check-in all’inizio sono vuote e obbligatorie. Tocca “+ Aggiungi data di check-in” e scegli un giorno nel piccolo calendario. I giorni in grigio sono passati o chiusi secondo il tuo orario.",
+          "Scegli una fascia oraria. Le fasce durano 2 ore, dall’apertura alla chiusura, e saltano il pranzo. Ti serve altro? Tocca “Altro orario” e scegli a passi di 30 minuti (30 minuti = orario preciso).",
+          "Aggiungi almeno 2 orari in giorni diversi, distribuiti fino alla validità: il cliente sceglie quello che gli va meglio.",
+          "Compila “Validità del preventivo” (obbligatoria): almeno l’ultimo giorno di check-in. Consigliamo almeno 7 giorni dopo — il pulsante “Usa <data>” inserisce la data consigliata.",
+          "Se scegli oggi e la fascia finisce tra meno di 2 ore, compare un avviso giallo: il cliente potrebbe non fare in tempo. Puoi inviare lo stesso o scegliere un giorno successivo.",
+          "Se le date sono passate ma il cliente è ancora interessato, può chiederti nuove date. La richiesta mostra allora “Nuove date richieste”: conferma l’orario del cliente o invia nuove date."
+        ],
+        "desafio": "Imposta l’accettazione auto in La mia officina (o conferma che l’orario di apertura va bene), poi invia un preventivo con un orario di check-in scelto dal calendario.",
+        "linkRotulo": "Apri l’accettazione auto",
+        "dica": "Accettazione auto non impostata? Allora usiamo l’orario di apertura in fasce di 2 ore. Impostala una volta nel profilo e ogni preventivo la segue."
+      },
       "checkin": {
         "titulo": "Agenda, check-in e consegna",
         "resumo": "Dopo che il cliente accetta il preventivo, il veicolo entra nella tua agenda. Fai il check-in quando arriva, registri le fasi della riparazione e confermi la consegna alla fine.",
@@ -429,7 +445,103 @@
         ],
         "desafio": "Crea una richiesta di ricambio per qualcosa che la tua officina usa davvero ogni giorno."
       }
+    },
+    "guias": {
+      "titulo": "Guide e video",
+      "texto": "L’ultima versione di ogni guida, da scaricare o condividere con il tuo team. Qui è sempre aggiornata: non serve aspettare un’e-mail.",
+      "temas": {
+        "perfilOficina": "Profilo dell’officina e preventivi, passo dopo passo"
+      },
+      "outraLingua": "Non ancora disponibile nella tua lingua. Disponibile in:",
+      "video": "Video guida (YouTube)",
+      "baixarPdf": "Scarica la guida PDF – {idioma}",
+      "verVideo": "Guarda il video – {idioma}",
+      "sempreAtual": "Quando aggiorniamo una guida, il link resta lo stesso."
     }
+  },
+  "oficinaMelhorias": {
+    "carregando": "Caricamento…",
+    "soGestor": "Questa pagina è per il titolare dell’officina o un amministratore.",
+    "titulo": "Miglioramenti",
+    "subtitulo": "Aiutaci a rendere BipFix più semplice per la tua officina. Qui è tutto facoltativo.",
+    "novidadesTitulo": "Novità su BipFix",
+    "novidadesTexto": "Accettazione auto e pausa pranzo: impostale una volta in La mia officina e gli orari di check-in nei preventivi seguiranno la tua giornata.",
+    "novidadesPerfil": "Imposta l’accettazione auto",
+    "novidadesAprender": "Come funzionano gli orari di check-in",
+    "pesquisaTitulo": "Il tuo calendario oggi",
+    "pesquisaTexto": "6 domande veloci, tutte facoltative. Le risposte ci aiutano a creare le funzioni di calendario che ti servono. Puoi cambiarle quando vuoi.",
+    "variasRespostas": "Puoi sceglierne più di una.",
+    "p1": {
+      "pergunta": "Come prenotate oggi l’arrivo delle auto?",
+      "opcoes": {
+        "telefone": "Telefono",
+        "mensageiro": "WhatsApp o Messenger",
+        "email": "E-mail",
+        "site": "Il nostro sito",
+        "programa": "Gestionale per officine",
+        "papel": "Quaderno o agenda di carta",
+        "outro": "Altro"
+      },
+      "outroPlaceholder": "Altro – cosa?"
+    },
+    "p2": {
+      "pergunta": "Cosa usate per l’agenda o gli ordini di lavoro?",
+      "opcoes": {
+        "nenhum": "Niente",
+        "google": "Google Calendar",
+        "outlook": "Outlook",
+        "planilha": "Excel o un foglio di calcolo",
+        "programa_oficina": "Gestionale per officine",
+        "outro": "Altro"
+      },
+      "nomePlaceholder": "Quale?"
+    },
+    "p3": {
+      "pergunta": "Quante auto ricevete in media al giorno?",
+      "opcoes": {
+        "ate3": "1–3",
+        "ate8": "4–8",
+        "ate15": "9–15",
+        "mais15": "Più di 15"
+      }
+    },
+    "p4": {
+      "pergunta": "Come preferite indicare al cliente l’orario di arrivo?",
+      "opcoes": {
+        "exata": "Un orario preciso",
+        "faixa": "Una fascia di 1–2 ore",
+        "manha_tarde": "Mattina o pomeriggio",
+        "telefone": "Ci accordiamo al telefono"
+      }
+    },
+    "p5": {
+      "pergunta": "Vorreste vedere le prenotazioni BipFix nel vostro calendario Google o Outlook?",
+      "opcoes": {
+        "sim": "Sì",
+        "talvez": "Forse",
+        "nao": "No"
+      }
+    },
+    "p6": {
+      "pergunta": "Cosa vi fa perdere più tempo oggi con le prenotazioni?",
+      "placeholder": "Per esempio: richiamare i clienti, spostare gli appuntamenti…"
+    },
+    "salvar": "Salva le risposte",
+    "salvarAlteracoes": "Salva le modifiche",
+    "salvando": "Salvataggio…",
+    "salvaEm": "Ultimo salvataggio: {data}",
+    "obrigado": "Grazie! Le risposte sono salvate.",
+    "erroSalvar": "Impossibile salvare. Riprova.",
+    "sugestaoTitulo": "Suggerisci un miglioramento o una nuova funzione",
+    "sugestaoTexto": "Cosa ti renderebbe il lavoro più facile? Scrivilo con parole tue: leggiamo ogni messaggio.",
+    "sugestaoPlaceholder": "Per esempio: vorrei vedere tutte le auto di domani in una sola schermata…",
+    "enviar": "Invia il suggerimento",
+    "enviando": "Invio…",
+    "enviada": "Grazie! Abbiamo ricevuto il tuo suggerimento.",
+    "erroEnviar": "Impossibile inviare. Riprova.",
+    "erroCurta": "Scrivi qualcosa in più (almeno 3 caratteri).",
+    "minhasSugestoes": "I tuoi suggerimenti",
+    "semSugestoes": "Non hai ancora inviato suggerimenti."
   },
   "oficinaAvaliacoes": {
     "titulo": "Recensioni",
@@ -1376,5 +1488,17 @@
     "serve": "L’orario di apertura va bene",
     "fechar": "Chiudi (ricordamelo tra 7 giorni)",
     "erro": "Impossibile salvare. Riprova."
+  },
+  "novidadesOficina": {
+    "titulo": "Novità su BipFix",
+    "fechar": "Chiudi",
+    "recepcaoTitulo": "Accettazione auto e pausa pranzo",
+    "recepcaoTexto": "In La mia officina ora puoi indicare quando i clienti possono portare l’auto e quando sei chiuso a pranzo. Così gli orari di check-in nei preventivi si adattano alla tua giornata. Fino ad allora offriamo fasce di 2 ore in base all’orario di apertura.",
+    "recepcaoFeita": "Fatto: gli orari di check-in nei preventivi seguono il tuo profilo. Puoi cambiarli quando vuoi in La mia officina.",
+    "abrirPerfil": "Apri La mia officina",
+    "melhoriasTitulo": "Nuova pagina: Miglioramenti",
+    "melhoriasTexto": "Rispondi a 6 domande veloci su come prenotate le auto oggi e suggerisci nuove funzioni. Ci vogliono circa 2 minuti.",
+    "abrirMelhorias": "Apri Miglioramenti",
+    "comoFunciona": "Come funzionano gli orari di check-in →"
   }
 }

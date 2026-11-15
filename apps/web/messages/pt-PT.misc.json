@@ -1158,7 +1158,8 @@
     "marcadoEntendido": "Marcado como percebido ✓",
     "marcarConcluido": "Percebi, marcar como concluído",
     "encontrei": "Encontrei! Módulo concluído.",
-    "aindaNao": "Ainda não encontrei isto no seu perfil. Faça a ação no ecrã real e clique novamente em verificar."
+    "aindaNao": "Ainda não encontrei isto no seu perfil. Faça a ação no ecrã real e clique novamente em verificar.",
+    "novo": "Novo"
   },
   "seguroReparo": {
     "titulo": "Quem vai pagar a reparação?",

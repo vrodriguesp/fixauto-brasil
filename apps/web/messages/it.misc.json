@@ -1158,7 +1158,8 @@
     "marcadoEntendido": "Segnato come capito ✓",
     "marcarConcluido": "Ho capito, segna come completato",
     "encontrei": "Trovato! Modulo completato.",
-    "aindaNao": "Non lo troviamo ancora nel tuo profilo. Fallo sulla schermata reale e premi di nuovo verifica."
+    "aindaNao": "Non lo troviamo ancora nel tuo profilo. Fallo sulla schermata reale e premi di nuovo verifica.",
+    "novo": "Nuovo"
   },
   "seguroReparo": {
     "titulo": "Chi pagherà la riparazione?",

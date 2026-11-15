@@ -363,6 +363,22 @@
         "desafio": "Envie um orçamento real para um pedido aberto na sua zona.",
         "dica": "Quanto mais depressa responder, maior a probabilidade de o cliente escolher o seu orçamento."
       },
+      "horariosCheckin": {
+        "titulo": "Horários de check-in e validade",
+        "resumo": "Em cada orçamento escolhe quando o cliente pode trazer o carro: um dia no calendário e um intervalo de horas. Os intervalos vêm do seu perfil — configure-os uma vez.",
+        "passosGuiados": [
+          "Abra A minha oficina → “Receção de carros”: escolha “Usar o horário de funcionamento (intervalos de 2 h)”, “Um intervalo fixo” ou “Uma hora fixa”. Se fecham ao almoço, marque “Fechado ao almoço” e indique o horário. Toque em “Guardar Alterações”. Vale para a semana inteira.",
+          "No orçamento, as datas de check-in começam vazias e são obrigatórias. Toque em “+ Adicionar data de check-in” e escolha o dia no pequeno calendário. Os dias a cinzento já passaram ou estão fechados no seu horário.",
+          "Escolha um intervalo. Os intervalos têm 2 horas, da abertura ao fecho, e saltam o almoço. Precisa de outro? Toque em “Outro horário” e escolha de 30 em 30 minutos (30 minutos = hora marcada).",
+          "Adicione pelo menos 2 horários em dias diferentes, distribuídos até à validade: o cliente escolhe o que lhe der mais jeito.",
+          "Preencha “Validade do orçamento” (obrigatória): pelo menos o último dia de check-in. Recomendamos pelo menos 7 dias depois — o botão “Usar <data>” coloca a data recomendada.",
+          "Se escolher hoje e o intervalo acabar em menos de 2 horas, aparece um aviso amarelo: o cliente pode não chegar a tempo. Pode enviar na mesma ou escolher um dia mais tarde.",
+          "Se as datas passaram mas o cliente ainda está interessado, pode pedir-lhe novas datas. O pedido mostra então “Novas datas pedidas”: confirme o horário do cliente ou envie outras datas."
+        ],
+        "desafio": "Configure a receção de carros em A minha oficina (ou confirme que o horário de funcionamento serve) e envie um orçamento com um horário de check-in escolhido no calendário.",
+        "linkRotulo": "Abrir receção de carros",
+        "dica": "Sem receção de carros configurada? Usamos o horário de funcionamento em intervalos de 2 horas. Configure-a uma vez no perfil e todos os orçamentos a seguem."
+      },
       "checkin": {
         "titulo": "Agenda, check-in e entrega",
         "resumo": "Assim que o cliente aceita o orçamento, a viatura entra na sua agenda. Faz o check-in quando ela chega, regista as etapas da reparação e confirma a entrega no fim.",
@@ -429,7 +445,103 @@
         ],
         "desafio": "Crie um pedido de cotação de peças para algo que a sua oficina use de facto no dia a dia."
       }
+    },
+    "guias": {
+      "titulo": "Guias e vídeo",
+      "texto": "A versão mais recente de cada guia, para descarregar ou partilhar com a equipa. Aqui está sempre atualizada — não precisa de esperar por um e-mail.",
+      "temas": {
+        "perfilOficina": "Perfil da oficina e orçamento, passo a passo"
+      },
+      "outraLingua": "Ainda não disponível no seu idioma. Disponível em:",
+      "video": "Vídeo guia (YouTube)",
+      "baixarPdf": "Descarregar o guia em PDF – {idioma}",
+      "verVideo": "Ver o vídeo – {idioma}",
+      "sempreAtual": "Quando atualizamos um guia, o link mantém-se."
     }
+  },
+  "oficinaMelhorias": {
+    "carregando": "A carregar…",
+    "soGestor": "Esta página é para o dono da oficina ou um administrador.",
+    "titulo": "Melhorias",
+    "subtitulo": "Ajude-nos a tornar o BipFix mais fácil para a sua oficina. Aqui tudo é opcional.",
+    "novidadesTitulo": "Novidades no BipFix",
+    "novidadesTexto": "Receção de carros e almoço: indique-os uma vez em A minha oficina e os horários de check-in do orçamento ajustam-se ao seu dia.",
+    "novidadesPerfil": "Indicar a receção de carros",
+    "novidadesAprender": "Como funcionam os horários de check-in",
+    "pesquisaTitulo": "A sua agenda hoje",
+    "pesquisaTexto": "6 perguntas rápidas, todas opcionais. As respostas ajudam-nos a criar as funções de agenda de que precisa. Pode alterá-las quando quiser.",
+    "variasRespostas": "Pode escolher mais de uma.",
+    "p1": {
+      "pergunta": "Como marcam hoje a entrada dos carros?",
+      "opcoes": {
+        "telefone": "Telefone",
+        "mensageiro": "WhatsApp ou Messenger",
+        "email": "E-mail",
+        "site": "Site próprio",
+        "programa": "Programa de oficina",
+        "papel": "Caderno ou agenda em papel",
+        "outro": "Outro"
+      },
+      "outroPlaceholder": "Outro – qual?"
+    },
+    "p2": {
+      "pergunta": "Que programa usam para a agenda ou as ordens de reparação?",
+      "opcoes": {
+        "nenhum": "Nenhum",
+        "google": "Google Calendar",
+        "outlook": "Outlook",
+        "planilha": "Excel ou folha de cálculo",
+        "programa_oficina": "Programa de oficina",
+        "outro": "Outro"
+      },
+      "nomePlaceholder": "Qual?"
+    },
+    "p3": {
+      "pergunta": "Quantos carros recebem por dia, em média?",
+      "opcoes": {
+        "ate3": "1–3",
+        "ate8": "4–8",
+        "ate15": "9–15",
+        "mais15": "Mais de 15"
+      }
+    },
+    "p4": {
+      "pergunta": "Como preferem indicar ao cliente a hora de chegada?",
+      "opcoes": {
+        "exata": "Hora exata",
+        "faixa": "Intervalo de 1–2 h",
+        "manha_tarde": "Manhã ou tarde",
+        "telefone": "Combinamos por telefone"
+      }
+    },
+    "p5": {
+      "pergunta": "Gostariam de ver as marcações do BipFix no vosso calendário (Google ou Outlook)?",
+      "opcoes": {
+        "sim": "Sim",
+        "talvez": "Talvez",
+        "nao": "Não"
+      }
+    },
+    "p6": {
+      "pergunta": "O que mais demora nas marcações hoje?",
+      "placeholder": "Por exemplo: ligar de volta aos clientes, remarcar…"
+    },
+    "salvar": "Guardar respostas",
+    "salvarAlteracoes": "Guardar alterações",
+    "salvando": "A guardar…",
+    "salvaEm": "Guardado pela última vez: {data}",
+    "obrigado": "Obrigado! Respostas guardadas.",
+    "erroSalvar": "Não foi possível guardar. Tente novamente.",
+    "sugestaoTitulo": "Sugira uma melhoria ou uma nova função",
+    "sugestaoTexto": "O que tornaria o seu trabalho mais fácil? Escreva por palavras suas — lemos todas as mensagens.",
+    "sugestaoPlaceholder": "Por exemplo: gostava de ver todos os carros de amanhã num só ecrã…",
+    "enviar": "Enviar sugestão",
+    "enviando": "A enviar…",
+    "enviada": "Obrigado! Recebemos a sua sugestão.",
+    "erroEnviar": "Não foi possível enviar. Tente novamente.",
+    "erroCurta": "Escreva um pouco mais (pelo menos 3 caracteres).",
+    "minhasSugestoes": "As suas sugestões",
+    "semSugestoes": "Ainda não enviou sugestões."
   },
   "oficinaAvaliacoes": {
     "titulo": "Avaliações",
@@ -1376,5 +1488,17 @@
     "serve": "O horário de funcionamento serve",
     "fechar": "Fechar (lembrar daqui a 7 dias)",
     "erro": "Não foi possível guardar. Tente novamente."
+  },
+  "novidadesOficina": {
+    "titulo": "Novidades no BipFix",
+    "fechar": "Fechar",
+    "recepcaoTitulo": "Receção de carros e almoço",
+    "recepcaoTexto": "Em A minha oficina, já pode indicar quando os clientes podem trazer o carro e quando fecham para almoço. Assim, os horários de check-in do orçamento ajustam-se ao seu dia. Até lá, oferecemos intervalos de 2 horas pelo seu horário de funcionamento.",
+    "recepcaoFeita": "Feito: os horários de check-in do orçamento seguem o seu perfil. Pode alterá-los quando quiser em A minha oficina.",
+    "abrirPerfil": "Abrir A minha oficina",
+    "melhoriasTitulo": "Nova página: Melhorias",
+    "melhoriasTexto": "Responda a 6 perguntas rápidas sobre como marcam os carros hoje e sugira novas funções. Demora cerca de 2 minutos.",
+    "abrirMelhorias": "Abrir Melhorias",
+    "comoFunciona": "Como funcionam os horários de check-in →"
   }
 }

@@ -1158,7 +1158,8 @@
     "marcadoEntendido": "Marked as understood ✓",
     "marcarConcluido": "Got it, mark as completed",
     "encontrei": "Found it! Module completed.",
-    "aindaNao": "We can't find this in your profile yet. Do it on the real screen and click check again."
+    "aindaNao": "We can't find this in your profile yet. Do it on the real screen and click check again.",
+    "novo": "New"
   },
   "seguroReparo": {
     "titulo": "Who will pay for the repair?",

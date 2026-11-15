@@ -15,6 +15,7 @@ const sidebarLinks = [
   { href: '/admin/suporte', label: 'Suporte (chat)', icon: ChatIcon },
   { href: '/admin/sms', label: 'SMS aos clientes', icon: ChatIcon },
   { href: '/admin/leads-parceiros', label: 'Interessados', icon: UsersIcon },
+  { href: '/admin/melhorias', label: 'Melhorias (oficinas)', icon: ChatIcon },
   { href: '/admin/comissoes', label: 'Comissões', icon: CurrencyIcon },
   { href: '/admin/oficinas/performance-ruim', label: 'Performance Ruim', icon: AlertIcon },
   { href: '/admin/pecas', label: 'Peças', icon: PackageIcon },

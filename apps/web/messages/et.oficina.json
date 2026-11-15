@@ -363,6 +363,22 @@
         "desafio": "Saada päris hinnapakkumine mõnele sinu piirkonna avatud päringule.",
         "dica": "Mida kiiremini vastad, seda tõenäolisemalt valib klient sinu pakkumise."
       },
+      "horariosCheckin": {
+        "titulo": "Check-ini ajad ja kehtivus",
+        "resumo": "Igas hinnapakkumises valid, millal klient saab auto tuua: päeva kalendrist ja ajavahemiku. Vahemikud tulevad sinu profiilist – seadista need üks kord.",
+        "passosGuiados": [
+          "Ava „Minu töökoda” → „Autode vastuvõtt”: vali „Kasutan lahtiolekuaegu (2-tunnised vahemikud)”, „Kindel vahemik” või „Kindel kellaaeg”. Kui olete lõunal suletud, märgi „Lõunal suletud” ja kellaajad. Vajuta „Salvesta muudatused”. Seade kehtib kogu nädala.",
+          "Hinnapakkumises on check-ini ajad alguses tühjad ja kohustuslikud. Vajuta „+ Lisa check-ini aeg” ja vali väikesest kalendrist päev. Hallid päevad on möödas või sinu lahtiolekuaegade järgi suletud.",
+          "Vali ajavahemik. Vahemikud on 2-tunnised, avamisest sulgemiseni, ja jätavad lõuna välja. Vajad muud aega? Vajuta „Muu aeg” ja vali 30-minutilise sammuga (30 minutit = kindel kellaaeg).",
+          "Lisa vähemalt 2 aega eri päevadel, jaotatuna kuni kehtivuse lõpuni: klient valib endale sobiva.",
+          "Täida „Hinnapakkumise kehtivus” (kohustuslik): vähemalt viimane check-ini päev. Soovitame vähemalt 7 päeva pärast seda – nupp „Kasuta <kuupäev>” paneb soovitatud kuupäeva.",
+          "Kui valid tänase päeva ja vahemik lõpeb vähem kui 2 tunni pärast, ilmub kollane hoiatus: klient ei pruugi jõuda. Võid ikkagi saata või valida hilisema päeva.",
+          "Kui ajad on möödas, aga klient on endiselt huvitatud, saab ta sinult uusi aegu küsida. Päringul on siis märge „Klient küsib uusi aegu”: kinnita kliendi soovitud aeg või saada uued ajad."
+        ],
+        "desafio": "Seadista lehel „Minu töökoda” autode vastuvõtt (või kinnita, et lahtiolekuajad sobivad) ja saada hinnapakkumine, mille check-ini aeg on valitud kalendrist.",
+        "linkRotulo": "Ava autode vastuvõtt",
+        "dica": "Autode vastuvõttu pole seadistatud? Siis kasutame lahtiolekuaegu 2-tunniste vahemikena. Seadista see profiilis üks kord ja iga pakkumine järgib seda."
+      },
       "checkin": {
         "titulo": "Ajakava, check-in ja üleandmine",
         "resumo": "Kui klient nõustub hinnapakkumisega, lisatakse sõiduk sinu ajakavva. Tee check-in, kui sõiduk saabub, registreeri remondietapid ja kinnita lõpus üleandmine.",
@@ -429,7 +445,103 @@
         ],
         "desafio": "Loo varuosa hinnapäring millegi kohta, mida sinu töökoda päriselt igapäevaselt kasutab."
       }
+    },
+    "guias": {
+      "titulo": "Juhendid ja video",
+      "texto": "Iga juhendi uusim versioon – laadi alla või jaga oma meeskonnaga. Siin on alati värskeim, e-kirja ootama ei pea.",
+      "temas": {
+        "perfilOficina": "Töökoja profiil ja hinnapakkumine samm-sammult"
+      },
+      "outraLingua": "Sinu keeles veel pole. Saadaval:",
+      "video": "Videojuhend (YouTube)",
+      "baixarPdf": "Laadi alla PDF-juhend – {idioma}",
+      "verVideo": "Vaata videot – {idioma}",
+      "sempreAtual": "Kui juhendit uuendame, jääb link samaks."
     }
+  },
+  "oficinaMelhorias": {
+    "carregando": "Laadin…",
+    "soGestor": "See leht on töökoja omanikule või administraatorile.",
+    "titulo": "Ettepanekud",
+    "subtitulo": "Aita meil teha BipFix sinu töökojale lihtsamaks. Kõik siin on vabatahtlik.",
+    "novidadesTitulo": "Uut BipFixis",
+    "novidadesTexto": "Autode vastuvõtt ja lõunapaus: märgi need üks kord lehel „Minu töökoda” ja pakkumise check-ini ajad sobivad sinu päevaga.",
+    "novidadesPerfil": "Märgi autode vastuvõtt",
+    "novidadesAprender": "Kuidas check-ini ajad töötavad",
+    "pesquisaTitulo": "Sinu kalender praegu",
+    "pesquisaTexto": "6 lühikest küsimust, kõik vabatahtlikud. Vastused aitavad meil teha just neid kalendrifunktsioone, mida vajad. Vastuseid saad igal ajal muuta.",
+    "variasRespostas": "Võid märkida mitu.",
+    "p1": {
+      "pergunta": "Kuidas te praegu autosid töökotta broneerite?",
+      "opcoes": {
+        "telefone": "Telefoni teel",
+        "mensageiro": "WhatsApp või Messenger",
+        "email": "E-postiga",
+        "site": "Oma kodulehe kaudu",
+        "programa": "Töökojaprogrammiga",
+        "papel": "Märkmik või paberkalender",
+        "outro": "Muu"
+      },
+      "outroPlaceholder": "Muu – mis?"
+    },
+    "p2": {
+      "pergunta": "Mida kasutate kalendri või töökäskude jaoks?",
+      "opcoes": {
+        "nenhum": "Mitte midagi",
+        "google": "Google’i kalender",
+        "outlook": "Outlook",
+        "planilha": "Excel või tabel",
+        "programa_oficina": "Töökojaprogramm",
+        "outro": "Muu"
+      },
+      "nomePlaceholder": "Milline?"
+    },
+    "p3": {
+      "pergunta": "Mitu autot võtate keskmiselt päevas vastu?",
+      "opcoes": {
+        "ate3": "1–3",
+        "ate8": "4–8",
+        "ate15": "9–15",
+        "mais15": "Üle 15"
+      }
+    },
+    "p4": {
+      "pergunta": "Kuidas eelistate kliendile saabumisaega öelda?",
+      "opcoes": {
+        "exata": "Täpne kellaaeg",
+        "faixa": "1–2-tunnine vahemik",
+        "manha_tarde": "Hommik või pärastlõuna",
+        "telefone": "Lepime telefonis kokku"
+      }
+    },
+    "p5": {
+      "pergunta": "Kas soovite näha BipFixi broneeringuid oma Google’i või Outlooki kalendris?",
+      "opcoes": {
+        "sim": "Jah",
+        "talvez": "Võib-olla",
+        "nao": "Ei"
+      }
+    },
+    "p6": {
+      "pergunta": "Mis võtab broneerimisel praegu kõige rohkem aega?",
+      "placeholder": "Näiteks: klientidele tagasi helistamine, aegade ümbertõstmine…"
+    },
+    "salvar": "Salvesta vastused",
+    "salvarAlteracoes": "Salvesta muudatused",
+    "salvando": "Salvestan…",
+    "salvaEm": "Viimati salvestatud: {data}",
+    "obrigado": "Aitäh! Vastused on salvestatud.",
+    "erroSalvar": "Salvestamine ebaõnnestus. Proovi uuesti.",
+    "sugestaoTitulo": "Paku parendust või uut funktsiooni",
+    "sugestaoTexto": "Mis teeks sinu töö lihtsamaks? Kirjuta oma sõnadega – loeme iga sõnumi läbi.",
+    "sugestaoPlaceholder": "Näiteks: tahan näha kõiki homseid autosid ühel ekraanil…",
+    "enviar": "Saada ettepanek",
+    "enviando": "Saadan…",
+    "enviada": "Aitäh! Saime sinu ettepaneku kätte.",
+    "erroEnviar": "Saatmine ebaõnnestus. Proovi uuesti.",
+    "erroCurta": "Kirjuta veidi rohkem (vähemalt 3 tähemärki).",
+    "minhasSugestoes": "Sinu ettepanekud",
+    "semSugestoes": "Sa pole veel ettepanekuid saatnud."
   },
   "oficinaAvaliacoes": {
     "titulo": "Hinnangud",
@@ -1376,5 +1488,17 @@
     "serve": "Lahtiolekuajad sobivad",
     "fechar": "Sulge (meenuta 7 päeva pärast)",
     "erro": "Salvestamine ebaõnnestus. Proovi uuesti."
+  },
+  "novidadesOficina": {
+    "titulo": "Uut BipFixis",
+    "fechar": "Sulge",
+    "recepcaoTitulo": "Autode vastuvõtt ja lõunapaus",
+    "recepcaoTexto": "Lehel „Minu töökoda” saad nüüd märkida, millal kliendid saavad auto tuua ja millal olete lõunal suletud. Siis sobivad pakkumise check-ini ajad sinu päevaga. Seni pakume lahtiolekuaegade järgi 2-tunniseid vahemikke.",
+    "recepcaoFeita": "Tehtud – pakkumise check-ini ajad tulevad sinu profiilist. Saad neid igal ajal muuta lehel „Minu töökoda”.",
+    "abrirPerfil": "Ava „Minu töökoda”",
+    "melhoriasTitulo": "Uus leht: Ettepanekud",
+    "melhoriasTexto": "Vasta 6 lühikesele küsimusele selle kohta, kuidas te praegu autosid broneerite, ja paku uusi funktsioone. See võtab umbes 2 minutit.",
+    "abrirMelhorias": "Ava „Ettepanekud”",
+    "comoFunciona": "Kuidas check-ini ajad töötavad →"
   }
 }

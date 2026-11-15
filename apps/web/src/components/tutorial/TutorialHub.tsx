@@ -14,6 +14,8 @@ export interface TutorialModulo {
   linkReal: string;
   linkRotulo?: string;
   opcional?: boolean;
+  /** selo "Novo" (tema de uma funcao recem-lancada) */
+  novo?: boolean;
   dica?: string;
   verificar?: () => Promise<boolean>;
 }
@@ -52,6 +54,18 @@ export default function TutorialHub({ titulo, subtitulo, storageKey, modulos }: 
   useEffect(() => {
     setProgresso(lerProgresso(storageKey));
   }, [storageKey]);
+
+  // ?tema=<id> abre direto um tema (links do cartao "Novidades" e da pagina Melhorias)
+  useEffect(() => {
+    try {
+      const tema = new URLSearchParams(window.location.search).get('tema');
+      if (tema && modulos.some((m) => m.id === tema)) {
+        setSelecionadoId(tema);
+        // celular: a lista de temas rola na horizontal - mostra o tema aberto
+        requestAnimationFrame(() => document.querySelector(`[data-testid="tema-${tema}"]`)?.scrollIntoView({ block: 'nearest', inline: 'center' }));
+      }
+    } catch { /* sem URL: fica o primeiro tema */ }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selecionado = useMemo(() => modulos.find((m) => m.id === selecionadoId) || modulos[0], [modulos, selecionadoId]);
   const totalConcluidos = modulos.filter((m) => progresso[m.id]).length;
@@ -111,12 +125,15 @@ export default function TutorialHub({ titulo, subtitulo, storageKey, modulos }: 
               <button
                 key={m.id}
                 onClick={() => handleSelecionar(m.id)}
+                data-testid={`tema-${m.id}`}
+                aria-pressed={ativo}
                 className={`flex items-center gap-2 text-left px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap md:whitespace-normal transition-colors flex-shrink-0 md:flex-shrink ${
                   ativo ? 'bg-primary-50 text-primary-700 ring-1 ring-primary-200' : 'text-gray-600 hover:bg-gray-50'
                 }`}
               >
                 <span className="text-base">{feito ? '✅' : m.emoji}</span>
                 <span>{m.titulo}</span>
+                {m.novo && !feito && <span className="text-[10px] font-semibold uppercase bg-green-100 text-green-800 px-1.5 py-0.5 rounded ml-auto md:ml-1">{tt('novo')}</span>}
                 {m.opcional && !feito && <span className="text-[10px] text-gray-500 ml-auto md:ml-1">{tt('opcionalMinusculo')}</span>}
               </button>
             );

@@ -205,6 +205,7 @@ export default function Navbar() {
                           { href: '/oficina/equipe', label: t('equipe') },
                           { href: '/oficina/avaliacoes', label: t('avaliacoes') },
                           { href: '/oficina/aprender', label: t('aprender') },
+                          { href: '/oficina/melhorias', label: t('melhorias') },
                         ]}
                       />
                     </>
@@ -323,6 +324,7 @@ export default function Navbar() {
                   <MobileNavLink href="/oficina/equipe" onClick={() => setMenuOpen(false)}>{t('equipe')}</MobileNavLink>
                   <MobileNavLink href="/oficina/avaliacoes" onClick={() => setMenuOpen(false)}>{t('avaliacoes')}</MobileNavLink>
                   <MobileNavLink href="/oficina/aprender" onClick={() => setMenuOpen(false)}>{t('aprender')}</MobileNavLink>
+                  <MobileNavLink href="/oficina/melhorias" onClick={() => setMenuOpen(false)}>{t('melhorias')}</MobileNavLink>
                 </>
               )
             ) : isLoja ? (

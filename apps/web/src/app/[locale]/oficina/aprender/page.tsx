@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import TutorialHub, { TutorialModulo } from '@/components/tutorial/TutorialHub';
+import GuiasOficina from '@/components/oficina/GuiasOficina';
 
 export default function OficinaAprenderPage() {
   const t = useTranslations('oficinaAprender');
@@ -97,6 +98,28 @@ export default function OficinaAprenderPage() {
       },
     },
     {
+      // check-in v2 (14-15/11): datas vazias e obrigatorias, faixas de 2 h, validade, recepcao/almoco no perfil
+      id: 'horarios-checkin',
+      emoji: '🕑',
+      novo: true,
+      titulo: t('geral.horariosCheckin.titulo'),
+      resumo: t('geral.horariosCheckin.resumo'),
+      passosGuiados: t.raw('geral.horariosCheckin.passosGuiados') as string[],
+      desafio: t('geral.horariosCheckin.desafio'),
+      linkReal: '/oficina/perfil#recepcao',
+      linkRotulo: t('geral.horariosCheckin.linkRotulo'),
+      dica: t('geral.horariosCheckin.dica'),
+      verificar: async () => {
+        // desafio: recepcao respondida no perfil + um horario de check-in com faixa (082) num orcamento
+        const o = oficina as { recepcao_inicio?: string | null; recepcao_confirmada_em?: string | null };
+        if (!o.recepcao_inicio && !o.recepcao_confirmada_em) return false;
+        const { count } = await supabase.from('orcamento_disponibilidade')
+          .select('id, orcamento:orcamentos!inner(oficina_id)', { count: 'exact', head: true })
+          .eq('orcamento.oficina_id', oficina.id).not('hora_inicio', 'is', null);
+        return (count || 0) > 0;
+      },
+    },
+    {
       id: 'checkin',
       emoji: '🔧',
       titulo: t('geral.checkin.titulo'),
@@ -170,11 +193,15 @@ export default function OficinaAprenderPage() {
   ];
 
   return (
-    <TutorialHub
-      titulo={t('tituloGeral')}
-      subtitulo={t('subtituloGeral')}
-      storageKey="bipfix_tutorial_oficina"
-      modulos={modulos}
-    />
+    <>
+      <TutorialHub
+        titulo={t('tituloGeral')}
+        subtitulo={t('subtituloGeral')}
+        storageKey="bipfix_tutorial_oficina"
+        modulos={modulos}
+      />
+      {/* guias (PDF) e video mais recentes, endereco fixo (pedido do dono 15/11) */}
+      <GuiasOficina />
+    </>
   );
 }

@@ -1158,7 +1158,8 @@
     "marcadoEntendido": "Märgitud arusaaduks ✓",
     "marcarConcluido": "Sain aru, märgi tehtuks",
     "encontrei": "Leitud! Moodul on tehtud.",
-    "aindaNao": "Me ei leia seda veel sinu profiilist. Tee toiming päris vaates ja vajuta uuesti „kontrolli“."
+    "aindaNao": "Me ei leia seda veel sinu profiilist. Tee toiming päris vaates ja vajuta uuesti „kontrolli“.",
+    "novo": "Uus"
   },
   "seguroReparo": {
     "titulo": "Kes maksab remondi eest?",

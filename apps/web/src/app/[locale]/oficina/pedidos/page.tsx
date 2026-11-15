@@ -15,7 +15,7 @@ import TutorialBanner from '@/components/tutorial/TutorialBanner';
 import PerfilCompleto from '@/components/oficina/PerfilCompleto';
 import ProcurarPedido from '@/components/oficina/ProcurarPedido';
 import DispensarPedido, { type Dispensa } from '@/components/oficina/DispensarPedido';
-import ConviteRecepcao from '@/components/oficina/ConviteRecepcao';
+import NovidadesOficina from '@/components/oficina/NovidadesOficina';
 import { hojeLocal, formatarJanela, janelaDaAgenda, janelaDoSlot } from '@/lib/turnos';
 
 // Caixa de pedidos: pagina inicial da oficina (auditoria do painel 10/10,
@@ -196,7 +196,8 @@ export default function PedidosOficinaPage() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 pb-8">
       <TutorialBanner href="/oficina/aprender" storageKey="bipfix_tutorial_banner_oficina" />
       <PerfilCompleto compacto />
-      <ConviteRecepcao />
+      {/* Novidades (084) + convite da recepcao num cartao so: nunca dois banners */}
+      <NovidadesOficina />
       {(oficina as { ativa?: boolean } | null)?.ativa === false && (
         <p role="status" className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{t('cadastroEmAnalise')}</p>
       )}

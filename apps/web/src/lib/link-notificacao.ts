@@ -8,6 +8,8 @@ export function linkDaNotificacao(n: Pick<Notificacao, 'tipo' | 'dados'>, tipoUs
   const d = (n.dados || {}) as Record<string, string | undefined>;
   if (n.tipo === 'nota_interna_veiculo') return d.agenda_id ? `/oficina/hoje?ev=${d.agenda_id}` : '/oficina/hoje';
   if (tipoUsuario === 'oficina') {
+    // "Novidades" (migracao 084): pagina Melhorias, que tambem leva ao perfil (recepcao/almoco)
+    if (n.tipo === 'novidades') return d.link && d.link.startsWith('/oficina/') ? d.link : '/oficina/melhorias';
     if (n.tipo === 'nova_mensagem' && d.solicitacao_id) return `/oficina/mensagens/${d.solicitacao_id}`;
     if (d.solicitacao_id) return `/oficina/pedidos/${d.solicitacao_id}`;
     if (d.cotacao_id) return '/oficina/pecas';
