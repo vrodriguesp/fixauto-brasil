@@ -116,7 +116,8 @@ export default function TriagemPedido({ solicitacao, historico, aoMudar }: { sol
     setEnviandoConvite(false); setConfirmandoConvite(false);
     if (!res.ok) { setMsgConvite({ ok: false, txt: r.error || 'Erro ao enviar.' }); return; }
     const puladas = (r.puladas || []).map((p: any) => `${p.nome} (${PULADA[p.motivo] || p.motivo})`).join(', ');
-    setMsgConvite({ ok: true, txt: `${r.convidadas ? `Enviado para ${r.convidadas}: ${(r.oficinas || []).map((o: any) => o.nome).join(', ')}.` : 'Nenhum envio novo.'}${puladas ? ` Não enviado (já tinham o pedido): ${puladas}.` : ''}` });
+    const acesso = (r.acessoSemAviso || []).map((o: any) => o.nome).join(', ');
+    setMsgConvite({ ok: true, txt: `${r.convidadas ? `Enviado para ${r.convidadas}: ${(r.oficinas || []).map((o: any) => o.nome).join(', ')}.` : 'Nenhum envio novo.'}${acesso ? ` Acesso liberado sem novo aviso (já tinham recebido o aviso): ${acesso}.` : ''}${puladas ? ` Não enviado (já tinham o pedido): ${puladas}.` : ''}` });
     setEscolhidas(new Map());
     await carregarLista(busca);
     await aoMudar();

@@ -305,6 +305,29 @@ try {
     await c.close();
   }
 
+  // ---------- F: correcoes do veredito Fable (I-3 e M-4) ----------
+  // I-3: G (Mehaanika) so recebeu o AVISO de P3 (ex.: pelo "Cobrar", fora do tipo) e nao ve o pedido.
+  // Convidar libera o acesso SEM mandar outro aviso.
+  const P3 = await novoPedido({});
+  await sb.from('notificacoes').insert({ profile_id: dG.id, tipo: 'nova_solicitacao', titulo: 'Uus päring', mensagem: 'teste', dados: { solicitacao_id: P3.id } });
+  const sG = await sessao(dG);
+  const veP3 = async () => ((await sG.c.from('solicitacoes').select('id').eq('id', P3.id)).data || []).length;
+  ok('F G (so aviso, outro tipo) nao ve P3 antes do convite', (await veP3()) === 0);
+  const avP3 = await totalAvisos(P3.id); const tF = Date.now();
+  const rSoAcesso = await api('POST', `/api/admin/solicitacoes/${P3.id}/convidar`, { oficinaIds: [G] }, tAdm);
+  ok('F convidar G (ja tinha o aviso) = 200, convidadas 0, acessoSemAviso [G]', rSoAcesso.status === 200 && rSoAcesso.j.convidadas === 0
+    && (rSoAcesso.j.acessoSemAviso || []).length === 1 && rSoAcesso.j.acessoSemAviso[0].oficina_id === G, JSON.stringify(rSoAcesso));
+  await sleep(2000);
+  ok('F nenhum aviso novo em P3 e nenhum e-mail', (await totalAvisos(P3.id)) === avP3 && emails(tF).filter((x) => x.para.includes(tag)).length === 0, `${avP3} -> ${await totalAvisos(P3.id)}`);
+  ok('F G agora ve P3 (acesso liberado)', (await veP3()) === 1);
+  const rDeNovo = await api('POST', `/api/admin/solicitacoes/${P3.id}/convidar`, { oficinaIds: [G] }, tAdm);
+  ok('F convidar G de novo = pulada (ja_convidada), sem aviso', rDeNovo.status === 200 && rDeNovo.j.convidadas === 0 && (rDeNovo.j.acessoSemAviso || []).length === 0
+    && (rDeNovo.j.puladas || []).some((p) => p.id === G && p.motivo === 'ja_convidada'), JSON.stringify(rDeNovo));
+  // M-4: convidar num pedido de acidente = 409, nada gravado
+  const rConvAc = await api('POST', `/api/admin/solicitacoes/${PAc.id}/convidar`, { oficinaIds: [B] }, tAdm);
+  const { count: convAc } = await sb.from('pedido_convites').select('oficina_id', { count: 'exact', head: true }).eq('solicitacao_id', PAc.id);
+  ok('F convidar em pedido de acidente = 409 e nenhum convite gravado', rConvAc.status === 409 && convAc === 0, JSON.stringify(rConvAc));
+
   // ---------- 12-15, R: acesso pelo banco ----------
   const sD = await sessao(dD), sE = await sessao(dE), sN = await sessao(dN), sL = await sessao(dL), sA = await sessao(dA), sT = await sessao(dT);
   const ve = async (s) => ((await s.c.from('solicitacoes').select('id').eq('id', P.id)).data || []).length;
