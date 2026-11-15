@@ -266,7 +266,7 @@ export default function PedidoScreen() {
     if (!result.canceled) setFotos((prev) => [...prev, ...result.assets].slice(0, 6));
   };
   const handleGaleria = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.7, allowsMultipleSelection: true, selectionLimit: Math.max(1, 6 - fotos.length) });
+    const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.7, preferredAssetRepresentationMode: ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Compatible, allowsMultipleSelection: true, selectionLimit: Math.max(1, 6 - fotos.length) });
     if (!result.canceled) setFotos((prev) => [...prev, ...result.assets].slice(0, 6));
   };
 

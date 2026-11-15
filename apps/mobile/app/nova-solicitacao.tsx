@@ -98,7 +98,7 @@ export default function NovaSolicitacaoScreen() {
   const handleFoto = async () => {
     // o seletor de fotos do sistema nao precisa de permissao (iOS 14+, Android
     // 13+); pedir antes bloqueava a galeria no Android antigo (auditoria L2)
-    const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.7, allowsMultipleSelection: true });
+    const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.7, preferredAssetRepresentationMode: ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Compatible, allowsMultipleSelection: true });
     if (!result.canceled) setFotos((prev) => [...prev, ...result.assets]);
   };
 
