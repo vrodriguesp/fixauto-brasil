@@ -7,6 +7,7 @@ import { useValorQueVolta } from '@/hooks/use-estado-que-volta';
 import { textoErroApi } from '@/lib/erro-api';
 import { fusoDoPais } from '@/lib/fuso';
 import { horaLocalDe, textoDaAgenda, turnoDaJanela, type ContextoOficina } from '@/lib/turnos';
+import SemQuebra from '@/components/ui/SemQuebra';
 import { INTL_LOCALE } from '@/lib/utils';
 import OpcoesMudancaData from './OpcoesMudancaData';
 import SeletorCheckin, { type LinhaCheckin } from './SeletorCheckin';
@@ -84,7 +85,7 @@ export default function ProporNovaData({ orcamentoId, solicitacaoId, oficinaId, 
     <section className="card mb-6 border border-blue-200 bg-blue-50/50" data-testid="propor-nova-data" aria-labelledby="nova-data-titulo">
       <h2 id="nova-data-titulo" className="text-lg font-semibold text-gray-900">📅 {t('propostaTitulo')}</h2>
       <p className="mt-1 text-sm text-gray-700">{t('propostaTexto')}</p>
-      <p className="mt-2 text-sm font-medium text-gray-900">{t('dataAtual', { quando })}</p>
+      <p className="mt-2 text-sm font-medium text-gray-900"><SemQuebra>{t('dataAtual', { quando })}</SemQuebra></p>
       <div className="mt-3 grid gap-3 sm:grid-cols-3">
         <div className="sm:col-span-2" data-testid="pnd-nova-janela">
           <p className="block text-sm font-medium text-gray-700 mb-1">{t('novaData')} <span className="text-red-600" aria-hidden="true">*</span></p>

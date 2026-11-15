@@ -397,7 +397,7 @@ export default function AdminSolicitacaoDetalhePage() {
                   <p className="text-white font-medium">{a.titulo}</p>
                   <p className="text-slate-400 text-sm">
                     {formatDateTime(a.data_inicio)} — {formatDateTime(a.data_fim)}
-                    {a.status === 'agendado' && <span data-testid="admin-janela"> · janela {formatarJanela(janelaDaAgenda(a.data_inicio, a.checkin_ate, a.oficina?.pais ?? 'EE'))}</span>}
+                    {a.status === 'agendado' && <span data-testid="admin-janela"> · janela <span className="whitespace-nowrap">{formatarJanela(janelaDaAgenda(a.data_inicio, a.checkin_ate, a.oficina?.pais ?? 'EE'))}</span></span>}
                     {a.funcionario?.profile?.nome && ` · ${a.funcionario.profile.nome}`}
                   </p>
                 </div>

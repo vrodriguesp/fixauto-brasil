@@ -7,6 +7,7 @@ import { useNotificacoes } from '@/hooks/use-notificacoes';
 import { useAuth } from '@/lib/auth-context';
 import { linkDaNotificacao } from '@/lib/link-notificacao';
 import type { Notificacao } from '@fixauto/shared';
+import SemQuebra from '@/components/ui/SemQuebra';
 
 function timeAgo(iso: string, t: (key: string, values?: Record<string, string | number | Date>) => string): string {
   const diffMs = Date.now() - new Date(iso).getTime();
@@ -84,7 +85,7 @@ export default function NotificationBell() {
                     <p className={`text-sm ${!n.lida ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>{n.titulo}</p>
                     <span className="text-[10px] text-gray-400 flex-shrink-0">{timeAgo(n.created_at, t)}</span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{n.mensagem}</p>
+                  <p className="text-xs text-gray-500 mt-0.5 line-clamp-2"><SemQuebra>{n.mensagem}</SemQuebra></p>
                 </button>
               ))
             )}

@@ -466,7 +466,7 @@ export default function QuadroOficina({ eventos, todosEventos, funcionarios, box
                 <dt className="text-gray-500">{t('quadroPrevisto')}</dt>
                 <dd className="text-gray-800">{fmtData.format(new Date(ev.data_inicio_prevista || ev.data_inicio))} → {fmtData.format(new Date(ev.data_fim_prevista || ev.data_fim))}</dd>
                 <dt className="text-gray-500">{t('quadroReal')}</dt>
-                <dd className="text-gray-800">{b.realIni ? `${fmtDataHora.format(new Date(ev.checkin_em || ev.data_inicio))} → ${ev.status === 'concluido' ? fmtDataHora.format(new Date(ev.entregue_em || ev.data_fim)) : t('quadroNaOficinaAgora')}` : `${t('quadroAindaNaoChegou')} · ${formatarJanela(janelaDaAgenda(ev.data_inicio, ev.checkin_ate, pais))}`}</dd>
+                <dd className="text-gray-800">{b.realIni ? `${fmtDataHora.format(new Date(ev.checkin_em || ev.data_inicio))} → ${ev.status === 'concluido' ? fmtDataHora.format(new Date(ev.entregue_em || ev.data_fim)) : t('quadroNaOficinaAgora')}` : <>{t('quadroAindaNaoChegou')} · <span className="whitespace-nowrap">{formatarJanela(janelaDaAgenda(ev.data_inicio, ev.checkin_ate, pais))}</span></>}</dd>
               </dl>
               {b.atrasoDesde && <p role="alert" className="text-sm text-red-700">⚠ {t('quadroPassouPrevisto', { dias: diasEntre(b.prevFim, hoje) })}</p>}
 

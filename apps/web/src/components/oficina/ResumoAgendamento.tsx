@@ -8,6 +8,7 @@ import { INTL_LOCALE } from '@/lib/utils';
 import { Link } from '@/i18n/navigation';
 import AcoesAgendamento from './AcoesAgendamento';
 import { textoDaAgenda, formatarJanela, diaDoCalendario, minutosDe, hhmm, JANELA_MIN } from '@/lib/turnos';
+import SemQuebra from '@/components/ui/SemQuebra';
 
 // Resumo do agendamento na tela do pedido da oficina: quando o cliente aceitou, quando o
 // carro chega e a previsao de entrega, lidos da AGENDA (a data pode ter mudado depois do
@@ -72,7 +73,7 @@ export default function ResumoAgendamento({ solicitacaoId, oficinaId, pais }: { 
         <div className="flex justify-between gap-3">
           <dt className="text-gray-600">{ag.checkin_em ? t('chegou') : t('chegada')}</dt>
           {/* chegou: a hora real; ainda nao: dia + janela de chegada (check-in v2: data_inicio..checkin_ate) */}
-          <dd className="font-semibold text-gray-900 text-right" data-testid="resumo-chegada">{ag.checkin_em ? diaHora(ag.checkin_em) : textoDaAgenda(ag.data_inicio, ag.checkin_ate, pais ?? null, loc, { weekday: 'short', day: 'numeric', month: 'short' }, ', ')}</dd>
+          <dd className="font-semibold text-gray-900 text-right" data-testid="resumo-chegada">{ag.checkin_em ? diaHora(ag.checkin_em) : <SemQuebra>{textoDaAgenda(ag.data_inicio, ag.checkin_ate, pais ?? null, loc, { weekday: 'short', day: 'numeric', month: 'short' }, ', ')}</SemQuebra>}</dd>
         </div>
         {prev && (
           <div className="flex justify-between gap-3">
@@ -89,7 +90,7 @@ export default function ResumoAgendamento({ solicitacaoId, oficinaId, pais }: { 
       {pendente && (
         <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-2 text-sm text-amber-900" role="status" data-testid="resumo-pendente">
           <span className="font-semibold">{tMud('naoConfirmado')}.</span>{' '}
-          {contestou ? tMud('clienteContestou') : t('propostaPendente', { quando: `${diaDoCalendario(pendente.nova_data_checkin, loc)}${pendente.nova_hora ? `, ${formatarJanela({ inicio: pendente.nova_hora.slice(0, 5), fim: pendente.nova_hora_fim ? pendente.nova_hora_fim.slice(0, 5) : hhmm((minutosDe(pendente.nova_hora) ?? 0) + JANELA_MIN) })}` : ''}` })}
+          {contestou ? tMud('clienteContestou') : <SemQuebra>{t('propostaPendente', { quando: `${diaDoCalendario(pendente.nova_data_checkin, loc)}${pendente.nova_hora ? `, ${formatarJanela({ inicio: pendente.nova_hora.slice(0, 5), fim: pendente.nova_hora_fim ? pendente.nova_hora_fim.slice(0, 5) : hhmm((minutosDe(pendente.nova_hora) ?? 0) + JANELA_MIN) })}` : ''}` })}</SemQuebra>}
         </p>
       )}
       {manteve && <p className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-2 text-sm text-blue-900" role="status" data-testid="resumo-manteve">{tMud('clienteManteve')}</p>}

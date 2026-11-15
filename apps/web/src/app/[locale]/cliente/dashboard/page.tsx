@@ -13,6 +13,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import { formatCurrency, timeAgo, cleanDescricao, INTL_LOCALE } from '@/lib/utils';
 import { fusoDoPais } from '@/lib/fuso';
 import { textoDaAgenda, formatarJanela, janelaDoSlot } from '@/lib/turnos';
+import SemQuebra from '@/components/ui/SemQuebra';
 import { currencyForCountry } from '@/lib/currency';
 import GarantiasAtivas from '@/components/cliente/GarantiasAtivas';
 import AvaliacaoPendente from '@/components/cliente/AvaliacaoPendente';
@@ -118,7 +119,7 @@ export default function ClienteDashboard() {
                   <p className="text-sm font-medium text-gray-900 line-clamp-1">{n.titulo}</p>
                   {/* 4 linhas: a data + janela de uma proposta 077 ("... pakub N, 19. nov, 13:00–15:00") cabe inteira; so o
                       motivo longo e cortado (QA D10; antes 2 linhas cortavam a data) */}
-                  <p className="text-xs text-gray-500 mt-1 line-clamp-4">{n.mensagem}</p>
+                  <p className="text-xs text-gray-500 mt-1 line-clamp-4"><SemQuebra>{n.mensagem}</SemQuebra></p>
                   {isServicoConcluido ? (
                     <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-yellow-700 bg-yellow-100 rounded-full px-2.5 py-1">
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -235,8 +236,8 @@ export default function ClienteDashboard() {
                         <span className="text-gray-500">{t('checkin')}</span>
                         <span className="font-medium text-gray-900">
                           {agendasCli[sol.id]
-                            ? textoDaAgenda(agendasCli[sol.id].inicio, agendasCli[sol.id].ate, oficina?.pais ?? null, INTL_LOCALE[locale] || 'en-GB', { weekday: 'short', day: 'numeric', month: 'short' }, ', ')
-                            : <>{formatDateShort(slotEscolhido.data_checkin, locale)}{' · '}{formatarJanela(janelaDoSlot(slotEscolhido))}</>}
+                            ? <SemQuebra>{textoDaAgenda(agendasCli[sol.id].inicio, agendasCli[sol.id].ate, oficina?.pais ?? null, INTL_LOCALE[locale] || 'en-GB', { weekday: 'short', day: 'numeric', month: 'short' }, ', ')}</SemQuebra>
+                            : <>{formatDateShort(slotEscolhido.data_checkin, locale)}{' · '}<span className="whitespace-nowrap">{formatarJanela(janelaDoSlot(slotEscolhido))}</span></>}
                         </span>
                       </div>
                       <div className="flex justify-between text-sm">

@@ -17,6 +17,7 @@ import ProcurarPedido from '@/components/oficina/ProcurarPedido';
 import DispensarPedido, { type Dispensa } from '@/components/oficina/DispensarPedido';
 import NovidadesOficina from '@/components/oficina/NovidadesOficina';
 import { hojeLocal, formatarJanela, janelaDaAgenda, janelaDoSlot } from '@/lib/turnos';
+import SemQuebra from '@/components/ui/SemQuebra';
 
 // Caixa de pedidos: pagina inicial da oficina (auditoria do painel 10/10,
 // docs/AUDITORIA_PAINEL_OFICINA_2026-10-10.md, secao C). Foco do produto:
@@ -290,7 +291,7 @@ export default function PedidosOficinaPage() {
                   )}
                   {estado && (
                     <p className={`mt-2 text-sm font-medium ${estado === 'aceito' ? 'text-emerald-700' : estado === 'perdido' || estado === 'recusado' ? 'text-gray-600' : estado === 'expirado' ? 'text-amber-800' : 'text-gray-700'}`}>
-                      {estado === 'aceito' ? `✔ ${t('clienteAceitou')}${agendas.get(s.id) ? ` — ${t('chegaEm', { dia: fmtDiaAg.format(new Date(agendas.get(s.id)!.inicio)), periodo: formatarJanela(janelaDaAgenda(agendas.get(s.id)!.inicio, agendas.get(s.id)!.ate, (oficina as any)?.pais ?? null)) })}` : slot ? ` — ${t('chegaEm', { dia: fmtDia.format(new Date(`${slot.data_checkin}T12:00:00Z`)), periodo: formatarJanela(janelaDoSlot(slot)) })}` : ''}`
+                      {estado === 'aceito' ? <SemQuebra>{`✔ ${t('clienteAceitou')}${agendas.get(s.id) ? ` — ${t('chegaEm', { dia: fmtDiaAg.format(new Date(agendas.get(s.id)!.inicio)), periodo: formatarJanela(janelaDaAgenda(agendas.get(s.id)!.inicio, agendas.get(s.id)!.ate, (oficina as any)?.pais ?? null)) })}` : slot ? ` — ${t('chegaEm', { dia: fmtDia.format(new Date(`${slot.data_checkin}T12:00:00Z`)), periodo: formatarJanela(janelaDoSlot(slot)) })}` : ''}`}</SemQuebra>
                         : estado === 'entregue' ? `✔ ${t('servicoEntregue')}`
                         : estado === 'recusado' ? t('clienteRecusou')
                         : estado === 'expirado' ? t('orcamentoVenceu')

@@ -15,6 +15,7 @@ import NotasInternas from '@/components/veiculo/NotasInternas';
 import ProcurarPedido from '@/components/oficina/ProcurarPedido';
 import { useDatasNaoConfirmadas } from '@/hooks/use-datas-nao-confirmadas';
 import { formatarJanela, janelaDaAgenda } from '@/lib/turnos';
+import SemQuebra from '@/components/ui/SemQuebra';
 import { duracao, etapasOrdenadas, montarBarra, somaDias, temposDoCarro, type Box } from '@/components/oficina/quadro-util';
 
 // "Hoje": operacao da oficina numa tela (auditoria do painel 10/10, secao D).
@@ -343,7 +344,7 @@ export default function HojePage() {
                     {ev.solicitacao_id && ev.status === 'agendado' && naoConfirmadas.has(ev.solicitacao_id) && <p className="mt-1 inline-block rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-900" data-testid="data-nao-confirmada">⏳ {tMud('naoConfirmado')}</p>}
                     <p className="mt-1 text-sm text-gray-800">
                       {ev.status === 'em_andamento' ? `${etapaTexto(ult)}${desdeEtapa ? ` · ${t('ha', { tempo: duracao((agora - Date.parse(desdeEtapa)) / 60e3) })}` : ''}`
-                        : ev.status === 'agendado' ? t('chegaJanela', { dia: fmtDiaCurto.format(new Date(ev.data_inicio)), janela: formatarJanela(janelaDaAgenda(ev.data_inicio, ev.checkin_ate, (oficina as any)?.pais ?? null)) })
+                        : ev.status === 'agendado' ? <SemQuebra>{t('chegaJanela', { dia: fmtDiaCurto.format(new Date(ev.data_inicio)), janela: formatarJanela(janelaDaAgenda(ev.data_inicio, ev.checkin_ate, (oficina as any)?.pais ?? null)) })}</SemQuebra>
                         : t('entregueAs', { hora: fmtHora.format(new Date(ev.entregue_em || ev.data_fim)) })}
                     </p>
                   </button>

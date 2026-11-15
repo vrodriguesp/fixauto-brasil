@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { fusoDoPais } from '@/lib/fuso';
 import { INTL_LOCALE } from '@/lib/utils';
 import { textoDaAgenda } from '@/lib/turnos';
+import SemQuebra from '@/components/ui/SemQuebra';
 
 // Data de entrega do carro na tela do pedido do cliente, lida da AGENDA (pode ter
 // mudado depois do aceite: a oficina mudou a data ou o cliente aceitou uma nova
@@ -42,7 +43,7 @@ export default function AgendamentoCliente({ solicitacaoId, oficinaId, pais, rot
         <div className="mt-3 pt-3 border-t border-green-200 space-y-1 text-sm" data-testid="agendamento-atual">
           <div className="flex justify-between gap-3">
             <span className="text-green-700">{rotuloEntrega}</span>
-            <span className="font-medium text-green-900 text-right" data-testid="agendamento-chegada">{chegadaTxt}</span>
+            <span className="font-medium text-green-900 text-right" data-testid="agendamento-chegada"><SemQuebra>{chegadaTxt}</SemQuebra></span>
           </div>
           {ag.status === 'agendado' && !ag.checkin_em && <p className="text-xs text-green-800" data-testid="vem-na-janela">{t('vemNaJanela')}</p>}
           {prev && (

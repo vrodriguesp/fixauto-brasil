@@ -22,6 +22,7 @@ import { useMostrarAlerta, rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 import { textoErroApi } from '@/lib/erro-api';
 import { useEstadoQueVolta, useValorQueVolta } from '@/hooks/use-estado-que-volta';
 import { hojeLocal, janelaAindaVale, conflitoHorario, janelaDoSlot, turnoDaJanela, erroValidade, maiorData, validadeSugerida, diaDoCalendario, formatarJanela, VALIDADE_FOLGA_DIAS, type HorarioSemana, type ContextoOficina } from '@/lib/turnos';
+import SemQuebra from '@/components/ui/SemQuebra';
 import { gravarEstadoUi, veioDeTrocaDeIdioma } from '@/lib/rascunho-troca-idioma';
 import { LinkHorarioPerfil } from '@/components/oficina/AvisoHorarioSlot';
 import SeletorCheckin, { type LinhaCheckin } from '@/components/oficina/SeletorCheckin';
@@ -517,7 +518,7 @@ ${d.observacoes}` : d.observacoes));
       <div className="max-w-2xl mx-auto px-4 py-20 text-center">
         <p className="text-gray-700 mb-6">{revisaoPendente.tipo === 'data'
           // proposta de nova data (076) esperando o cliente
-          ? tMud('propostaPendente', { quando: `${diaDoCalendario(revisaoPendente.nova_data_checkin || '', INTL_LOCALE[locale] || 'en-GB', { weekday: 'short', day: 'numeric', month: 'long' })}, ${revisaoPendente.nova_hora ? formatarJanela({ inicio: revisaoPendente.nova_hora.slice(0, 5), fim: (revisaoPendente.nova_hora_fim || revisaoPendente.nova_hora).slice(0, 5) }) : tMud(revisaoPendente.novo_turno === 'tarde' ? 'tarde' : 'manha')}` })
+          ? <SemQuebra>{tMud('propostaPendente', { quando: `${diaDoCalendario(revisaoPendente.nova_data_checkin || '', INTL_LOCALE[locale] || 'en-GB', { weekday: 'short', day: 'numeric', month: 'long' })}, ${revisaoPendente.nova_hora ? formatarJanela({ inicio: revisaoPendente.nova_hora.slice(0, 5), fim: (revisaoPendente.nova_hora_fim || revisaoPendente.nova_hora).slice(0, 5) }) : tMud(revisaoPendente.novo_turno === 'tarde' ? 'tarde' : 'manha')}` })}</SemQuebra>
           : t('revisaoAguardandoCliente', { valor: formatCurrency(Number(revisaoPendente.valor_novo), moeda, locale) })}</p>
         <Link href={`/oficina/mensagens/${solicitacao.id}`} className="btn-primary inline-block">{t('abrirConversa')}</Link>
       </div>

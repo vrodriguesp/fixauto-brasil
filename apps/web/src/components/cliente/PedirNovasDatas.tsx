@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { textoErroApi } from '@/lib/erro-api';
 import { hojeLocal, faixasDoDia, turnoDaJanela, janelaDaSugestao, formatarJanela, LEGADO, type Turno, type ContextoOficina } from '@/lib/turnos';
+import SemQuebra from '@/components/ui/SemQuebra';
 import { INTL_LOCALE } from '@/lib/utils';
 
 // "Tenho interesse, peca novas datas" (migracao 079): todas as datas do orcamento ja passaram.
@@ -92,7 +93,7 @@ export default function PedirNovasDatas({ orcamentoId, pais, horario, ctx: ctxPr
     return (
       <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm" role="status" data-testid="novas-datas-pendente">
         <p className="font-medium text-blue-900">⏳ {t('pendente', { data: new Date(pedido.created_at).toLocaleString(intl, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) })}</p>
-        {sugs.length > 0 && <p className="mt-1 text-blue-800 break-words">{t('suasDatas', { datas: sugs.map((s) => `${diaTxt(s.data)} ${turnoTxt(s.turno, s.data)}`).join('; ') })}</p>}
+        {sugs.length > 0 && <p className="mt-1 text-blue-800 break-words"><SemQuebra>{t('suasDatas', { datas: sugs.map((s) => `${diaTxt(s.data)} ${turnoTxt(s.turno, s.data)}`).join('; ') })}</SemQuebra></p>}
       </div>
     );
   }

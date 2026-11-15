@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import { formatarJanela, janelaDoSlot, janelaDaAgenda, slotAindaVale, dataLocalDe } from '@/lib/turnos';
+import SemQuebra from '@/components/ui/SemQuebra';
 import { fusoDoPais } from '@/lib/fuso';
 
 interface SlotOption {
@@ -162,7 +163,7 @@ export default function ReagendarPage() {
           </p>
         )}
         <p className="text-sm text-gray-600">
-          {t('originalDate', { date: `${new Date(agenda.data_inicio).toLocaleDateString(locale, { timeZone: fusoDoPais(agenda.oficina?.pais) })} · ${formatarJanela(janelaDaAgenda(agenda.data_inicio, agenda.checkin_ate, agenda.oficina?.pais ?? null))}` })}
+          <SemQuebra>{t('originalDate', { date: `${new Date(agenda.data_inicio).toLocaleDateString(locale, { timeZone: fusoDoPais(agenda.oficina?.pais) })} · ${formatarJanela(janelaDaAgenda(agenda.data_inicio, agenda.checkin_ate, agenda.oficina?.pais ?? null))}` })}</SemQuebra>
         </p>
         {agenda.no_show && (
           <div className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-red-700 bg-red-100 px-2 py-1 rounded">
@@ -210,7 +211,7 @@ export default function ReagendarPage() {
                       })}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {t('shiftLabel', { shift: formatarJanela(janelaDoSlot(slot as any)) })}
+                      <SemQuebra>{t('shiftLabel', { shift: formatarJanela(janelaDoSlot(slot as any)) })}</SemQuebra>
                     </p>
                   </div>
                 </div>

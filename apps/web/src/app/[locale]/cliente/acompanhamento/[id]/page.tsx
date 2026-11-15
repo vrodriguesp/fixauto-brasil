@@ -317,7 +317,7 @@ export default function AcompanhamentoPage() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-xs text-gray-500">{t('checkin')}</p>
-            <p className="text-sm font-medium text-gray-900" data-testid="acompanhamento-chegada">{formatDate(agenda.data_inicio)}{agenda.status === 'agendado' ? ` · ${formatarJanela(janelaDaAgenda(agenda.data_inicio, agenda.checkin_ate, agenda.oficina?.pais ?? null))}` : ''}</p>
+            <p className="text-sm font-medium text-gray-900" data-testid="acompanhamento-chegada">{formatDate(agenda.data_inicio)}{agenda.status === 'agendado' ? <> · <span className="whitespace-nowrap">{formatarJanela(janelaDaAgenda(agenda.data_inicio, agenda.checkin_ate, agenda.oficina?.pais ?? null))}</span></> : ''}</p>
           </div>
           <div>
             <p className="text-xs text-gray-500">{t('deliveryForecast')}</p>

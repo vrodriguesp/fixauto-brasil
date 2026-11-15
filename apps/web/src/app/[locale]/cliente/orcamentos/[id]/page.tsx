@@ -50,7 +50,8 @@ const ordemOrc = (status: string) => ORDEM_ORC[status] ?? 1;
 // check-in v2: vale ate o FIM da janela gravada (linha antiga: 12:00 / 17:00)
 const semDatasFuturas = (orc: any) => !(orc.disponibilidade || []).some((s: any) => slotAindaVale(s, undefined, orc.oficina?.pais ?? null));
 // janela do horario oferecido ("09:00–11:00"; 30 min = so a hora; linha antiga = 08:00–12:00 / 13:00–17:00)
-const janelaTxt = (s: any) => formatarJanela(janelaDoSlot(s));
+// janela num span sem quebra (QA D13)
+const janelaTxt = (s: any) => <span className="whitespace-nowrap">{formatarJanela(janelaDoSlot(s))}</span>;
 
 // horario que o cliente escolheu no aceite (antes mostrava sempre o primeiro oferecido)
 const slotEscolhido = (orc: any) => orc.disponibilidade.find((d: any) => d.id === orc.disponibilidade_escolhida_id) ?? orc.disponibilidade[0];

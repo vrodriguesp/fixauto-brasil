@@ -190,17 +190,18 @@ export default function SeletorCheckin({
                   </button>
                 </div>
                 {!temRecepcao && <p className="mt-2 text-xs text-gray-500" data-testid={`${testid}-dica-perfil`}>{t('dicaPerfil')}</p>}
+                {/* "Muu aeg": rotulo EM CIMA do select (antes encostava ao lado, "Alates[13:30]" - verificacao 15/11) */}
                 {outro && (
-                  <div className="mt-3 flex flex-wrap items-end gap-2 rounded-lg bg-gray-50 p-3" data-testid={`${testid}-outro-painel`}>
-                    <label className="text-xs text-gray-600">{t('outroInicio')}
-                      <select className="input-field mt-0.5 !w-28" value={oIni} data-testid={`${testid}-outro-inicio`}
+                  <div className="mt-3 flex flex-wrap items-end gap-x-3 gap-y-2 rounded-lg bg-gray-50 p-3" data-testid={`${testid}-outro-painel`}>
+                    <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">{t('outroInicio')}
+                      <select className="input-field !w-28" value={oIni} data-testid={`${testid}-outro-inicio`}
                         onChange={(e) => { setOIni(e.target.value); const fs = outras.fins(e.target.value); setOFim(fs[0] || ''); }}>
                         <option value="">—</option>
                         {outras.inicios.map((h) => <option key={h} value={h}>{h}</option>)}
                       </select>
                     </label>
-                    <label className="text-xs text-gray-600">{t('outroFim')}
-                      <select className="input-field mt-0.5 !w-28" value={oFim} disabled={!oIni} data-testid={`${testid}-outro-fim`} onChange={(e) => setOFim(e.target.value)}>
+                    <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">{t('outroFim')}
+                      <select className="input-field !w-28" value={oFim} disabled={!oIni} data-testid={`${testid}-outro-fim`} onChange={(e) => setOFim(e.target.value)}>
                         {finsOutro.map((h) => <option key={h} value={h}>{h}</option>)}
                       </select>
                     </label>

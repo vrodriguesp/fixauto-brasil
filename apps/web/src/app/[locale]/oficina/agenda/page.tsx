@@ -3,6 +3,7 @@
 import TextoTraduzido from '@/components/ui/TextoTraduzido';
 import { useState, useEffect, useMemo } from 'react';
 import { localParaIso, dataLocalDe, horaLocalDe, textoDaAgenda } from '@/lib/turnos';
+import SemQuebra from '@/components/ui/SemQuebra';
 import AcoesAgendamento from '@/components/oficina/AcoesAgendamento';
 import { useDatasNaoConfirmadas } from '@/hooks/use-datas-nao-confirmadas';
 import { exemploPlaca } from '@/lib/exemplos';
@@ -510,7 +511,7 @@ export default function AgendaPage() {
                   <p className="text-xs font-semibold text-gray-500 uppercase">{t('datas')}</p>
                   {ev.solicitacao_id && ev.status === 'agendado' && naoConfirmadas.has(ev.solicitacao_id) && <p className="mt-1 inline-block rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-900" data-testid="data-nao-confirmada">⏳ {tMud('naoConfirmado')}</p>}
                   <p className="text-xs text-gray-700" data-testid="agenda-checkin">{t('checkinLabel')}: {ev.status === 'agendado'
-                    ? textoDaAgenda(ev.data_inicio, (ev as any).checkin_ate, (oficina as any)?.pais ?? null, INTL_LOCALE[locale] || 'en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }, ' ')
+                    ? <SemQuebra>{textoDaAgenda(ev.data_inicio, (ev as any).checkin_ate, (oficina as any)?.pais ?? null, INTL_LOCALE[locale] || 'en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }, ' ')}</SemQuebra>
                     : `${new Date(ev.data_inicio).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais((oficina as any)?.pais ?? null) })} ${new Date(ev.data_inicio).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais((oficina as any)?.pais ?? null) })}`}</p>
                   <p className="text-xs text-gray-700">{t('prevEntregaLabel')}: {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB', { timeZone: fusoDoPais((oficina as any)?.pais ?? null) })} {new Date(ev.data_fim_prevista || ev.data_fim).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit', timeZone: fusoDoPais((oficina as any)?.pais ?? null) })}</p>
                   {ev.status === 'concluido' && <p className="text-xs text-gray-700">{t('entregueLabel')}: {new Date(ev.data_fim).toLocaleDateString(INTL_LOCALE[locale] || 'en-GB')}</p>}

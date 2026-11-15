@@ -15,6 +15,7 @@ import CampoTelefone from '@/components/forms/CampoTelefone';
 import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 import InfoI from '@/components/ui/InfoI';
 import { faixasDoDia, formatarJanela, validarRecepcao, minutosDe, hhmm, somarDias, diaDoCalendario, JANELA_MIN, type HorarioSemana } from '@/lib/turnos';
+import SemQuebra from '@/components/ui/SemQuebra';
 import { INTL_LOCALE } from '@/lib/utils';
 
 export default function PerfilOficinaPage() {
@@ -652,7 +653,7 @@ export default function PerfilOficinaPage() {
         <p className="mt-3 text-xs text-gray-500">{t('recepcaoAjuda')}</p>
         {faixasPrevia.length > 0 && (
           <p className="mt-2 rounded-lg bg-gray-50 p-2 text-sm text-gray-700" data-testid="recepcao-previa">
-            {t('recepcaoPrevia', { dia: diaDoCalendario(diaPrevia, INTL_LOCALE[locale] || 'en-GB', { weekday: 'long' }), faixas: faixasPrevia.join(', ') })}
+            <SemQuebra>{t('recepcaoPrevia', { dia: diaDoCalendario(diaPrevia, INTL_LOCALE[locale] || 'en-GB', { weekday: 'long' }), faixas: faixasPrevia.join(', ') })}</SemQuebra>
           </p>
         )}
         {erroRecepcao && <p role="alert" className="mt-2 rounded-lg border border-red-200 bg-red-50 p-2 text-sm text-red-800" data-testid="erro-recepcao">⛔ {erroRecepcao}</p>}
