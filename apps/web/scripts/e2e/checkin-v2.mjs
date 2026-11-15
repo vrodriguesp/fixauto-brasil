@@ -13,6 +13,11 @@
 //  N 079: motorista ve a faixa da oficina em cada turno; oficina confirma (grava a faixa) ou manda outras datas pelo
 //    seletor (vazio = erro)
 //  I idiomas: o seletor e os (i) nos 6 idiomas, sem chave faltando
+//  15/11 (auditoria Fable + QA do check-in v2): R revisao pelo navegador sem itens duplicados (D4, RLS) e
+//    sessionStorage limpo (R-02); B triggers da 083/082 pelo caminho do navegador (anon logado como oficina:
+//    dia fechado recusado, validade empurrada, passado/em_andamento/service role liberados, apagar orfao - R-08,
+//    D16, R-12); aceite: e-mail + aviso da oficina com a janela (D9); C 077 contestar e aceitar mantem a janela
+//    real na agenda, e-mail/.ics, telas e no horario da falta (D1, D2)
 //   node checkin-v2.mjs <.env.local>
 import fs from 'node:fs';
 import path from 'node:path';
@@ -127,6 +132,8 @@ try {
   const sol4 = await novoPedido(cli, v.id, 4);
   const sol5 = await novoPedido(cli, v.id, 5);
 
+  const sol6 = await novoPedido(cli, v.id, 6);
+
   const ctxO = await contexto(390); const p = await ctxO.newPage();
   await entrar(p, dono);
 
@@ -182,6 +189,8 @@ try {
   await p.getByTestId('enviar-orcamento').click(); await sleep(1500);
   let { data: oSol1 } = await sb.from('orcamentos').select('id').eq('solicitacao_id', sol1.id);
   ok('F: enviar sem data = caixa vermelha + texto, nada gravado', await visivel(p, 'erro-sem-checkin') && (await p.getByTestId('ck-adicionar').getAttribute('aria-invalid')) === 'true' && !oSol1?.length);
+  ok('F: com ZERO datas a dica "pode enviar assim" nao aparece (QA D8)', !(await visivel(p, 'dica-mais-datas')));
+  ok('F: foco no 1o campo com erro = "+" das datas, nao um (i) (QA D11)', (await p.evaluate(() => document.activeElement?.getAttribute('data-testid'))) === 'ck-adicionar', await p.evaluate(() => document.activeElement?.outerHTML?.slice(0, 120)));
   ok('F: validade vazia fica vermelha (obrigatoria)', (await p.getByTestId('erro-validade').getAttribute('data-tipo').catch(() => '')) === 'vazia' && (await texto(p, 'erro-validade')).includes(T('oficinaEnviarOrcamento.validadeVaziaErro')));
   await p.screenshot({ path: `${OUT}/F_vazio_vermelho_390.png`, fullPage: true });
   // (i): botao com rotulo, abre por toque, fecha com Esc e tocando fora
@@ -252,6 +261,21 @@ try {
   ok('F: enviado; validade = ultima + 7', !!o1 && String(o1.validade) === somar(QUA, 7), JSON.stringify(o1));
   ok('F: horarios gravados com a janela e o turno derivado', JSON.stringify((d1 || []).map((s) => [s.data_checkin, s.turno, s.hora_inicio, s.hora_fim])) === JSON.stringify([[SEG, 'manha', '08:00:00', '10:00:00'], [TER, 'manha', '09:30:00', '10:00:00'], [QUA, 'tarde', '13:00:00', '15:00:00']]), JSON.stringify(d1));
 
+  ok('F: enviado -> linhas guardadas para a troca de lingua apagadas (R-02)', (await p.evaluate((id) => sessionStorage.getItem(`bipfix_ui:orc-checkin:${id}`), sol1.id)) === null);
+
+  // ---------- R: revisao pelo navegador (RLS): itens NAO duplicam (QA D4), datas do banco voltam (R-02) ----------
+  await p.goto(`${SITE}/ee/et/oficina/orcamento/${sol1.id}`, { waitUntil: 'networkidle' }); await sleep(2500);
+  const linhasRev = await p.getByTestId('ck-linhas').locator('li').evaluateAll((els) => els.map((e) => `${e.getAttribute('data-data')} ${e.getAttribute('data-inicio')}`));
+  ok('R: revisao traz as 3 datas do banco', JSON.stringify(linhasRev) === JSON.stringify([`${SEG} 08:00`, `${TER} 09:30`, `${QUA} 13:00`]), JSON.stringify(linhasRev));
+  await p.getByPlaceholder(T('oficinaEnviarOrcamento.placeholderValor')).first().fill('65');
+  await p.getByTestId('enviar-orcamento').click(); await sleep(4500);
+  const { data: o1r } = await sb.from('orcamentos').select('valor_total, revisao_numero, validade').eq('id', o1.id).single();
+  const { data: it1 } = await sb.from('orcamento_itens').select('descricao, valor_total').eq('orcamento_id', o1.id);
+  const { data: d1r } = await sb.from('orcamento_disponibilidade').select('data_checkin, hora_inicio, hora_fim').eq('orcamento_id', o1.id).order('data_checkin');
+  ok('R: revisao gravada (65 EUR, revisao 1, validade mantida)', Number(o1r.valor_total) === 65 && o1r.revisao_numero === 1 && String(o1r.validade) === somar(QUA, 7), JSON.stringify(o1r));
+  ok('R: UM item depois da revisao (antes duplicava - QA D4)', (it1 || []).length === 1 && Number(it1[0].valor_total) === 65, JSON.stringify(it1));
+  ok('R: as mesmas 3 datas (horarios novos gravados, antigos apagados)', JSON.stringify((d1r || []).map((s) => `${s.data_checkin} ${s.hora_inicio}-${s.hora_fim}`)) === JSON.stringify([`${SEG} 08:00:00-10:00:00`, `${TER} 09:30:00-10:00:00`, `${QUA} 13:00:00-15:00:00`]), JSON.stringify(d1r));
+
   // computador: folha centralizada, sem nada por cima
   const ctxD = await contexto(1280); const pd = await ctxD.newPage();
   await entrar(pd, dono);
@@ -271,6 +295,47 @@ try {
   ok('T: janela < 30 min recusada pelo banco', !!bad.error);
   const bad2 = await sb.from('orcamento_disponibilidade').insert({ orcamento_id: o4, data_checkin: SEG2, turno: 'manha', hora_inicio: '13:00', hora_fim: '15:00', data_previsao_entrega: SEG2 });
   ok('T: turno incoerente com a janela recusado pelo banco', !!bad2.error);
+
+  // ---------- B: triggers pelo caminho do navegador (anon logado como a oficina, RLS + triggers de protecao) ----------
+  {
+    const ca = anon(); await ca.auth.signInWithPassword({ email: dono.email, password: dono.senha });
+    const o6 = await orcamentoNoBanco(sol6.id, SEG, [{ data_checkin: SEG, turno: 'manha', hora_inicio: '08:00', hora_fim: '10:00' }]);
+    const ins = (data_checkin, turno = 'tarde', h = ['13:00', '15:00']) => ca.from('orcamento_disponibilidade').insert({ orcamento_id: o6, data_checkin, turno, hora_inicio: h[0], hora_fim: h[1], data_previsao_entrega: data_checkin });
+    const r1 = await ins(SEG2);
+    const { data: v6 } = await sb.from('orcamentos').select('validade').eq('id', o6).single();
+    ok('B: horario depois da validade pelo navegador -> aceito e validade empurrada (trigger 082, R-08)', !r1.error && String(v6.validade) === SEG2, `${r1.error?.message} ${JSON.stringify(v6)}`);
+    const r2 = await ins(SAB);
+    ok('B: sabado (fechado no perfil) pelo navegador -> recusado DIA_FECHADO (trigger 083, QA D16)', !!r2.error && /DIA_FECHADO/.test(r2.error.message), r2.error?.message || 'gravado');
+    let sabPassado = somar(hojeTallinn, -1); while (new Date(`${sabPassado}T12:00:00Z`).getUTCDay() !== 6) sabPassado = somar(sabPassado, -1);
+    const r3 = await ins(sabPassado);
+    ok('B: sabado PASSADO (revisao regrava datas salvas) -> liberado', !r3.error, r3.error?.message);
+    const r4 = await sb.from('orcamento_disponibilidade').insert({ orcamento_id: o6, data_checkin: DOM, turno: 'manha', data_previsao_entrega: DOM });
+    ok('B: domingo pelo servidor/fixture (service role) -> liberado', !r4.error, r4.error?.message);
+    await sb.from('solicitacoes').update({ status: 'em_andamento' }).eq('id', sol6.id);
+    const r5 = await ins(SAB, 'manha', ['08:00', '10:00']);
+    ok('B: pedido em_andamento (datas salvas regravadas sem validar, e769e31) -> sabado liberado', !r5.error, r5.error?.message);
+    await sb.from('solicitacoes').update({ status: 'em_orcamento' }).eq('id', sol6.id);
+    // apagar orcamento orfao (R-12): so o recem-criado e sem horario
+    const dOrc = await ca.from('orcamentos').delete().eq('id', o6).select('id');
+    ok('B: orcamento COM horarios nao pode ser apagado pelo navegador', !dOrc.error && !(dOrc.data || []).length && !!(await sb.from('orcamentos').select('id').eq('id', o6).maybeSingle()).data);
+    const { data: orfao } = await ca.from('orcamentos').insert({ solicitacao_id: sol5.id, oficina_id: ofId, valor_total: 10, prazo_dias: 1, tempo_execucao_horas: 1, validade: SEG2 }).select('id').single();
+    const rOrf = await ca.from('orcamento_disponibilidade').insert({ orcamento_id: orfao?.id, data_checkin: SAB, turno: 'manha', hora_inicio: '08:00', hora_fim: '10:00', data_previsao_entrega: SAB });
+    const dOrf = await ca.from('orcamentos').delete().eq('id', orfao?.id).select('id');
+    ok('B: orcamento recem-criado cujo horario foi recusado -> o navegador apaga (R-12)', !!rOrf.error && (dOrf.data || []).length === 1, `${rOrf.error?.message} ${JSON.stringify(dOrf)}`);
+    const { data: velho } = await sb.from('orcamentos').insert({ solicitacao_id: sol5.id, oficina_id: ofId, valor_total: 10, prazo_dias: 1, validade: SEG2, status: 'enviado' }).select('id').single();
+    await sb.from('orcamentos').update({ created_at: new Date(Date.now() - 3600e3).toISOString() }).eq('id', velho.id);
+    const dVelho = await ca.from('orcamentos').delete().eq('id', velho.id).select('id');
+    ok('B: orcamento sem horario mas antigo (> 10 min) -> NAO apaga', !(dVelho.data || []).length);
+    await sb.from('orcamentos').delete().eq('id', velho.id);
+    // itens: o dono apaga num orcamento enviado (revisao), nunca num aceito
+    const dIt = await ca.from('orcamento_itens').delete().eq('orcamento_id', o6).select('id');
+    ok('B: itens de orcamento enviado: DELETE pelo navegador funciona (politica itens_delete, D4)', (dIt.data || []).length === 1, JSON.stringify(dIt));
+    await sb.from('orcamentos').update({ status: 'aceito' }).eq('id', o6);
+    await sb.from('orcamento_itens').insert({ orcamento_id: o6, descricao: 'Töö', tipo: 'mao_de_obra', valor_unitario: 80, quantidade: 1, valor_total: 80 });
+    const dIt2 = await ca.from('orcamento_itens').delete().eq('orcamento_id', o6).select('id');
+    ok('B: itens de orcamento ACEITO: o navegador nao apaga', !(dIt2.data || []).length);
+    await sb.from('orcamentos').update({ status: 'recusado' }).eq('id', o6);
+  }
 
   // ---------- D: motorista (site) ----------
   const ctxC = await contexto(390); const pc = await ctxC.newPage();
@@ -295,6 +360,10 @@ try {
   const ics1 = em1 ? icsDe(em1.f) : null;
   ok('D: e-mail do agendamento com a janela e a frase', !!em1 && em1.html.includes('13:00–15:00') && em1.html.includes('Tule selle aja sees'), em1?.f);
   ok('D: .ics DTSTART/DTEND = janela, SEQUENCE 0', !!ics1 && ics1.includes(`UID:agenda-${ag1.id}@bipfix.com`) && ics1.includes(`DTSTART:${icsData(tallinn(QUA, '13:00'))}`) && ics1.includes(`DTEND:${icsData(tallinn(QUA, '15:00'))}`) && /SEQUENCE:0\r\n/.test(ics1));
+  const emOf1 = await esperarEmail(dono.email, tAceite - 1000);
+  ok('D: e-mail da OFICINA no aceite com o dia e a janela (QA D9)', !!emOf1 && emOf1.html.includes('13:00–15:00'), emOf1?.f);
+  const { data: notOf1 } = await sb.from('notificacoes').select('mensagem').eq('profile_id', dono.id).eq('tipo', 'orcamento_aceito').order('created_at', { ascending: false }).limit(1);
+  ok('D: aviso da oficina no aceite com o dia e a janela (QA D9)', (notOf1?.[0]?.mensagem || '').includes('13:00–15:00'), JSON.stringify(notOf1));
   ok('D: link do Google Calendar com as duas horas', !!em1 && em1.html.includes(`${icsData(tallinn(QUA, '13:00'))}%2F${icsData(tallinn(QUA, '15:00'))}`));
   await pc.goto(`${SITE}/ee/et/cliente/orcamentos/${sol1.id}`, { waitUntil: 'networkidle' }); await sleep(2500);
   ok('D: painel do pedido (agenda) com a janela', (await texto(pc, 'agendamento-chegada')).includes('13:00–15:00') && await visivel(pc, 'vem-na-janela'), await texto(pc, 'agendamento-chegada'));
@@ -342,6 +411,39 @@ try {
   await p.goto(`${SITE}/ee/et/oficina/pedidos?aba=respondidos`, { waitUntil: 'networkidle' }); await sleep(2000);
   const lista = await p.locator('body').innerText();
   ok('M: lista de Pedidos com a janela nova', lista.includes('10:00–12:00') && !lista.includes('13:00–15:00'));
+
+  // ---------- C: 077 contestar ("nao combinei") e aceitar a proposta mantem a janela REAL (QA D1, D2) ----------
+  {
+    const tokC0 = await token(cli);
+    const { data: rvC } = await sb.from('orcamento_revisoes').select('id').eq('solicitacao_id', sol1.id).eq('tipo', 'data').eq('status', 'aprovada').order('created_at', { ascending: false }).limit(1).single();
+    const tCont = Date.now();
+    const rc = await post('/api/orcamento-revisao/decidir', tokC0, { revisaoId: rvC.id, decisao: 'contestar' });
+    const { data: agC } = await sb.from('agenda').select('data_inicio, checkin_ate').eq('id', ag1.id).single();
+    ok('C: contestar volta inicio E fim da janela anterior (qua 13:00–15:00, nao 13–17 - D2)', rc.status === 200 && new Date(agC.data_inicio).toISOString() === tallinn(QUA, '13:00') && new Date(agC.checkin_ate).toISOString() === tallinn(QUA, '15:00'), JSON.stringify({ rc, agC }));
+    const emC = await esperarEmail(cli.email, tCont - 500, (e) => e.f !== em2?.f && e.f !== em1?.f);
+    const icsC = emC ? icsDe(emC.f) : null;
+    ok('C: e-mail/.ics depois de contestar = 13:00–15:00 (DTEND 15:00)', !!icsC && icsC.includes(`DTSTART:${icsData(tallinn(QUA, '13:00'))}`) && icsC.includes(`DTEND:${icsData(tallinn(QUA, '15:00'))}`) && emC.html.includes('13:00–15:00'), emC?.f);
+    await pc.goto(`${SITE}/ee/et/cliente/orcamentos/${sol1.id}`, { waitUntil: 'networkidle' }); await sleep(2500);
+    ok('C: painel do motorista depois de contestar = 13:00–15:00', (await texto(pc, 'agendamento-chegada')).includes('13:00–15:00'), await texto(pc, 'agendamento-chegada'));
+    // a proposta (seg2 10-12) voltou a esperar o motorista: ele aceita
+    const tAc = Date.now();
+    const ra = await post('/api/orcamento-revisao/decidir', tokC0, { revisaoId: rvC.id, decisao: 'aprovar' });
+    const { data: agA } = await sb.from('agenda').select('data_inicio, checkin_ate').eq('id', ag1.id).single();
+    ok('C: aceitar a proposta grava a janela inteira (seg2 10:00–12:00, nao 10:00–10:30 - D1)', ra.status === 200 && new Date(agA.data_inicio).toISOString() === tallinn(SEG2, '10:00') && new Date(agA.checkin_ate).toISOString() === tallinn(SEG2, '12:00'), JSON.stringify({ ra, agA }));
+    const emA = await esperarEmail(cli.email, tAc - 500, (e) => e.f !== emC?.f);
+    const icsA = emA ? icsDe(emA.f) : null;
+    ok('C: e-mail/.ics depois de aceitar = 10:00–12:00 (DTEND 12:00)', !!icsA && icsA.includes(`DTSTART:${icsData(tallinn(SEG2, '10:00'))}`) && icsA.includes(`DTEND:${icsData(tallinn(SEG2, '12:00'))}`) && emA.html.includes('10:00–12:00'), emA?.f);
+    await pc.goto(`${SITE}/ee/et/cliente/orcamentos/${sol1.id}`, { waitUntil: 'networkidle' }); await sleep(2500);
+    ok('C: painel do motorista = 10:00–12:00', (await texto(pc, 'agendamento-chegada')).includes('10:00–12:00'), await texto(pc, 'agendamento-chegada'));
+    await p.goto(`${SITE}/ee/et/oficina/pedidos/${sol1.id}`, { waitUntil: 'networkidle' }); await sleep(2500);
+    ok('C: resumo da oficina = 10:00–12:00', (await texto(p, 'resumo-chegada')).includes('10:00–12:00'), await texto(p, 'resumo-chegada'));
+    // horario da falta segue a janela real: com o inicio 45 min atras (o bug dava fim = inicio + 30) ainda nao pode
+    const delta = Date.now() - 45 * 60e3 - Date.parse(agA.data_inicio);
+    await sb.from('agenda').update({ data_inicio: new Date(Date.parse(agA.data_inicio) + delta).toISOString(), checkin_ate: new Date(Date.parse(agA.checkin_ate) + delta).toISOString() }).eq('id', ag1.id);
+    const nsC = await p.evaluate(async (id) => { const r = await fetch('/api/registrar-no-show', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ agendaId: id }) }); return { s: r.status, d: await r.json().catch(() => ({})) }; }, ag1.id);
+    ok('C: inicio ha 45 min, janela de 2 h -> falta ainda recusada (JANELA_NAO_ACABOU)', nsC.s === 409 && nsC.d.codigo === 'JANELA_NAO_ACABOU', JSON.stringify(nsC));
+    await sb.from('agenda').update({ data_inicio: agA.data_inicio, checkin_ate: agA.checkin_ate }).eq('id', ag1.id);
+  }
 
   // ---------- N: 079 novas datas ----------
   const o2 = await orcamentoNoBanco(sol2.id, SEG2, [{ data_checkin: ONTEM, turno: 'manha', hora_inicio: '08:00', hora_fim: '10:00' }]);

@@ -211,6 +211,9 @@ const FOCO = () => {
   return { el: `${el.tagName.toLowerCase()}[${t}]`, visivel: contorno || sombra, estilo: `${s.outlineStyle} ${s.outlineWidth} | ${s.boxShadow.slice(0, 40)}` };
 };
 const IGNORAR = [/chat-suporte-botao.*alvo/, /barra-carregando/];
+// cortes/sobreposicoes ANTIGOS, fora do check-in v2, ja listados no QA de 14/11 como "nao conta" (cortes de desenho da
+// Agenda mes/Quadro; cabecalho do app rolado a 360 px, D-A3). Continuam no relatorio (achados), mas nao reprovam a tela.
+const CONHECIDOS = [/^span\[1 (Ootel|Ожидается|Pending|In attesa|Pendente)\] texto-cortado/, /^button\[[A-Z0-9]+ · .*\] texto-cortado/, /^button\[(Muuda päringut|Изменить заявку)\] coberto/, /^button\[(Tagasi|Назад)\] sobreposto/];
 let nAud = 0;
 /** auditoria de uma tela: topo + fim da pagina (cobertura), print, achados no relatorio. info: { pagina, estado, loc, vp } */
 async function auditar(p, info, opts = {}) {
@@ -251,7 +254,9 @@ async function auditar(p, info, opts = {}) {
   // dedupe por tipo+el
   const unicos = [...new Map(achados.map((a) => [`${a.tipo}|${a.el}|${a.det.includes('fim da') ? 'f' : 't'}`, a])).values()].filter((a) => !IGNORAR.some((re) => re.test(`${a.el} ${a.tipo}`)));
   for (const a of unicos) R.achados.push({ ...info, ...a, shot: path.basename(shot) });
-  const graves = unicos.filter((a) => ['rolagem-lateral', 'coberto', 'sobreposto', 'texto-cortado', 'fora-da-tela', 'dialogo-fora', 'nota-fora', 'erro'].includes(a.tipo));
+  const graves0 = unicos.filter((a) => ['rolagem-lateral', 'coberto', 'sobreposto', 'texto-cortado', 'fora-da-tela', 'dialogo-fora', 'nota-fora', 'erro'].includes(a.tipo));
+  const graves = graves0.filter((a) => !CONHECIDOS.some((re) => re.test(`${a.el} ${a.tipo}`)));
+  for (const a of graves0.filter((x) => !graves.includes(x))) console.log(`info [A] conhecido (fora do check-in v2): ${info.pagina}/${info.estado} ${info.loc} ${info.vp} ${a.tipo} ${a.el} ${a.det}`);
   ok(`A: ${info.pagina}/${info.estado} ${info.loc} ${info.vp}: sem nada coberto/sobreposto/cortado/fora`, !graves.length, graves.map((a) => `${a.tipo} ${a.el} ${a.det}`).join(' ; '), path.basename(shot));
   return unicos;
 }
@@ -592,7 +597,7 @@ try {
     await pw.screenshot({ path: path.join(OUT, 'B1_preencher_ancora_390.png') });
     const invalidos = [
       ['faixa 20 min', async () => { await pw.getByTestId('recepcao-faixa').check(); await pw.getByTestId('recepcao-inicio').fill('09:00'); await pw.getByTestId('recepcao-fim').fill('09:20'); }, 'oficinaPerfil.erro_recepcao_curta'],
-      ['faixa invertida 16:00-09:00', async () => { await pw.getByTestId('recepcao-faixa').check(); await pw.getByTestId('recepcao-inicio').fill('16:00'); await pw.getByTestId('recepcao-fim').fill('09:00'); }, null],
+      ['faixa invertida 16:00-09:00', async () => { await pw.getByTestId('recepcao-faixa').check(); await pw.getByTestId('recepcao-inicio').fill('16:00'); await pw.getByTestId('recepcao-fim').fill('09:00'); }, 'oficinaPerfil.erro_recepcao_invertida'],
       ['faixa fora do horario 05:00-07:00', async () => { await pw.getByTestId('recepcao-faixa').check(); await pw.getByTestId('recepcao-inicio').fill('05:00'); await pw.getByTestId('recepcao-fim').fill('07:00'); }, null],
       ['hora fixa no almoco', async () => { await pw.getByTestId('almoco-ativo').check(); await pw.getByTestId('almoco-inicio').fill('12:00'); await pw.getByTestId('almoco-fim').fill('13:00'); await pw.getByTestId('recepcao-hora').check(); await pw.getByTestId('recepcao-hora-valor').fill('12:30'); }, 'oficinaPerfil.erro_recepcao_almoco'],
       ['almoco invertido 13:00-12:00', async () => { await pw.getByTestId('recepcao-funcionamento').check(); await pw.getByTestId('almoco-ativo').check(); await pw.getByTestId('almoco-inicio').fill('13:00'); await pw.getByTestId('almoco-fim').fill('12:00'); }, null],
@@ -601,7 +606,10 @@ try {
     for (const [nome, fazer, chave] of invalidos) {
       await ir(pw, '/ee/et/oficina/perfil#recepcao', 2500);
       try { await fazer(); } catch (e) { ok(`B1: perfil invalido "${nome}" - preencher`, false, e.message); continue; }
-      await sleep(200); await salvarPerfil();
+      await sleep(200);
+      // D15 (corrigido 15/11): com a recepcao/almoco invalidos a previa some (antes mostrava a grade do funcionamento)
+      ok(`B1: perfil invalido "${nome}" -> sem previa enganosa (D15)`, !(await visivel(pw, 'recepcao-previa')), await texto(pw, 'recepcao-previa'));
+      await salvarPerfil();
       const db = await perfilDb();
       const err = await texto(pw, 'erro-recepcao');
       ok(`B1: perfil invalido "${nome}" -> erro na tela e nada gravado`, !!err && !db.recepcao_inicio && !db.almoco_inicio && (!chave || err.includes(T(chave))), `erro="${err}" db=${JSON.stringify(db)}`);
@@ -658,7 +666,10 @@ try {
     let nOrc = (await sb.from('orcamentos').select('id').eq('solicitacao_id', sB1.id)).data?.length;
     ok('B2: enviar sem data e sem validade -> bloqueado (nada gravado), dois erros', !nOrc && await visivel(pf, 'erro-sem-checkin') && (await pf.getByTestId('erro-validade').getAttribute('data-tipo').catch(() => '')) === 'vazia');
     const foco1 = await pf.evaluate(() => document.activeElement?.id || document.activeElement?.getAttribute('data-testid'));
-    ok('B2: foco vai para o 1o erro (validade, que fica acima das datas)', foco1 === 'cacb1-103', String(foco1));
+    // D7 + D11 (corrigidos 15/11): validade logo DEPOIS das datas; o foco vai para o 1o CAMPO com erro (o "+"), nunca para um (i)
+    ok('B2: foco vai para o 1o erro = "+" das datas (D11)', foco1 === 'ck-adicionar', String(foco1));
+    ok('B2: validade vem DEPOIS do cartao das datas (D7)', await pf.evaluate(() => { const a = document.querySelector('[data-testid="cartao-checkin"]'), b = document.querySelector('[data-testid="campo-validade"]'); return !!a && !!b && !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING); }));
+    ok('B2: com ZERO datas a dica "pode enviar assim" nao aparece (D8)', !(await visivel(pf, 'dica-mais-datas')));
     // calendario: passado e fechados
     await pf.getByTestId('ck-adicionar').click(); await sleep(400);
     const estados = await pf.locator('[data-testid^="ck-dia-"]').evaluateAll((els) => els.map((e) => [e.getAttribute('data-testid').slice(7), e.disabled]));
@@ -691,7 +702,7 @@ try {
     linhas = await pf.getByTestId('ck-linhas').locator('li').evaluateAll((els) => els.map((e) => `${e.getAttribute('data-data')} ${e.getAttribute('data-inicio')}`));
     ok('B2: remover a 2a linha', JSON.stringify(linhas) === JSON.stringify([`${SEG} 08:00`, `${TER} 16:30`]), JSON.stringify(linhas));
     const foco2 = await pf.evaluate(() => document.activeElement?.getAttribute('data-testid') || document.activeElement?.tagName);
-    ok('B2: depois de remover o foco nao se perde no body', foco2 !== 'BODY', String(foco2));
+    ok('B2: depois de remover o foco vai para a proxima linha (D12)', foco2 === 'ck-remover-1', String(foco2));
     // validade
     await pf.locator('#cacb1-103').fill(ONTEM); await sleep(150);
     await pf.getByTestId('enviar-orcamento').click(); await sleep(1200);
@@ -746,6 +757,15 @@ try {
       let fxh = [];
       if (estadoHoje !== 'desativado' && estadoHoje !== 'sem') { await pt.getByTestId(`ck-dia-${sexPassada}`).click(); await sleep(300); fxh = await pt.locator('[data-testid^="ck-faixa-"]').evaluateAll((els) => els.map((e) => e.getAttribute('data-testid').replace('ck-faixa-', ''))); }
       await pt.screenshot({ path: path.join(OUT, `B2_hoje_${hora.replace(':', '')}_390.png`) });
+      // D18 (dono 15/11): a faixa de hoje continua (a oficina decide), mas a linha mostra um ALERTA claro, sem bloquear
+      if (esperado === 'sobra' && fxh.length) {
+        await pt.getByTestId(`ck-faixa-${fxh[0]}`).click(); await sleep(400);
+        const tipoAv = await pt.getByTestId('ck-aviso-0').getAttribute('data-tipo').catch(() => '');
+        const txtAv = await texto(pt, 'ck-aviso-0');
+        const fimFx = `${fxh[0].split('-')[1].slice(0, 2)}:${fxh[0].split('-')[1].slice(2)}`;
+        ok(`B2: hoje as ${hora} faixa ${fxh[0]} -> alerta "acaba logo" (fim ${fimFx} + tempo que sobra + o que fazer), sem bloquear (D18)`, tipoAv === 'acaba-logo' && txtAv.includes(T('oficinaEnviarOrcamento.avisoJanelaAcabaLogo', { fim: fimFx, horas: 2, min: 'X' }).split('(')[0].trim()) && /\d+ min/.test(txtAv), `${tipoAv} | ${txtAv}`);
+        await pt.screenshot({ path: path.join(OUT, `B2_hoje_${hora.replace(':', '')}_alerta_390.png`) });
+      }
       if (esperado === 'sobra') ok(`B2: hoje as ${hora} (sexta, fecha 17, almoco 12-13) -> dia ativo, so a faixa que ainda nao acabou (15:00–17:00? 13-15 ja passou)`, estadoHoje !== 'desativado' && fxh.length >= 1 && fxh.every((f) => f.split('-')[1] > hora.replace(':', '')), `${estadoHoje} ${JSON.stringify(fxh)}`);
       else ok(`B2: hoje as ${hora} (depois do fechamento) -> dia desativado`, estadoHoje === 'desativado', `${estadoHoje} ${JSON.stringify(fxh)}`);
       await ct.close();
@@ -936,7 +956,8 @@ try {
     const { data: oFake, error: eFake } = await cliO.from('orcamentos').insert({ solicitacao_id: sC1.id, oficina_id: ofId, valor_total: 60, prazo_dias: 1, tempo_execucao_horas: 1, validade: SAB, status: 'enviado' }).select('id').single();
     let sabDb = null;
     if (oFake) { sabDb = await cliO.from('orcamento_disponibilidade').insert({ orcamento_id: oFake.id, data_checkin: SAB, turno: 'tarde', hora_inicio: '14:00', hora_fim: '16:00', data_previsao_entrega: SAB }); }
-    ok('C1: rede de seguranca - sabado gravado direto pelo navegador da oficina (sem o formulario) e recusado pelo banco?', !!eFake || !!sabDb?.error, `orcamento ${eFake?.message || 'gravado'}; horario sabado ${sabDb?.error?.message || 'GRAVADO (sem trava no banco)'}`);
+    // D16 (corrigido 15/11, migracao 083): o banco recusa o sabado fechado (DIA_FECHADO)
+    ok('C1: rede de seguranca - sabado gravado direto pelo navegador da oficina (sem o formulario) e recusado pelo banco (D16)', !!eFake || /DIA_FECHADO/.test(sabDb?.error?.message || ''), `orcamento ${eFake?.message || 'gravado'}; horario sabado ${sabDb?.error?.message || 'GRAVADO (sem trava no banco)'}`);
     if (oFake) { await sb.from('orcamento_disponibilidade').delete().eq('orcamento_id', oFake.id); await sb.from('orcamentos').delete().eq('id', oFake.id); await sb.from('solicitacoes').update({ status: 'aberta' }).eq('id', sC1.id); }
     // C2 validade >= ultima data
     await pf.reload({ waitUntil: 'networkidle' }); await sleep(2000);
@@ -1036,10 +1057,11 @@ try {
     ok('C3c: pedir datas num vencido (API) -> recusado', pdVenc.status === 409 && ['ORCAMENTO_VENCIDO', 'PEDIDO_DATAS_PENDENTE'].includes(pdVenc.d.codigo), JSON.stringify(pdVenc));
     await ir(pw, `/ee/et/oficina/pedidos/${sC3.id}`, 3000);
     await pw.screenshot({ path: path.join(OUT, 'C3c_vencido_oficina_390.png'), fullPage: true });
-    const cartaoPend = await visivel(pw, 'novas-datas-pedidas');
-    let erroConf = '';
-    if (cartaoPend && await visivel(pw, 'confirmar-sugestao-0')) { await pw.getByTestId('confirmar-sugestao-0').click(); await sleep(3000); erroConf = (await corpo(pw)).match(new RegExp(T('erros.ORCAMENTO_VENCIDO').slice(0, 20).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))?.[0] || ''; }
-    ok('C3c: oficina - pedido pendente num orcamento vencido: cartao some OU confirmar mostra o erro claro (revisar o orcamento)', !cartaoPend || !!erroConf, `cartao=${cartaoPend} erro="${erroConf}"`);
+    // D5 (corrigido 15/11): a oficina ve "Aegunud", o texto do que aconteceu e o pedido de datas do motorista (so leitura)
+    // com o caminho: revisar o orcamento (confirmar/mandar datas num vencido o servidor recusa)
+    ok('C3c: oficina - selo "Aegunud" no cartao do orcamento (D5)', (await texto(pw, 'orcamento-aegunud')) === T('oficinaSolicitacaoDetalhe.statusOrcamento.expirado'), await texto(pw, 'orcamento-aegunud'));
+    ok('C3c: oficina - texto do vencido com o que fazer (D5)', await visivel(pw, 'orcamento-vencido-oficina'), await texto(pw, 'orcamento-vencido-oficina'));
+    ok('C3c: oficina - pedido de datas pendente continua visivel, sem confirmar/enviar, com "Muuda pakkumist" (D5)', await visivel(pw, 'novas-datas-pedidas-vencido') && (await texto(pw, 'novas-datas-pedidas-vencido')).includes(T('oficinaNovasDatas.vencidoTexto').slice(0, 40)) && await visivel(pw, 'novas-datas-revisar') && !(await pw.getByTestId('confirmar-sugestao-0').count()) && !(await pw.getByTestId('nd-enviar').count()), (await texto(pw, 'novas-datas-pedidas-vencido')).slice(0, 200));
     await pw.screenshot({ path: path.join(OUT, 'C3c_vencido_oficina_confirmar_390.png'), fullPage: true });
     // oficina revisa o orcamento vencido: nova validade + data
     pf = await cw.newPage();
@@ -1083,17 +1105,22 @@ try {
     await ir(pf, `/ee/et/oficina/orcamento/${sC4.id}`, 3000);
     const l0 = await texto(pf, 'ck-linha-0-texto');
     const borda = await pf.getByTestId('ck-linha-0').evaluate((e) => e.className).catch(() => '');
-    ok('C4: revisao do antigo - a linha de sabado vem 13:00–17:00 marcada (borda vermelha/aviso de dia fechado)', l0.includes('13:00–17:00') && /red/.test(borda), `${l0} | ${borda.slice(0, 80)}`);
+    // D17 (corrigido 15/11): a linha passada fica vermelha com o aviso NELA
+    const erroL0 = await pf.getByTestId('ck-linha-0').getAttribute('data-erro').catch(() => '');
+    ok('C4: revisao do antigo - a linha de sabado vem 13:00–17:00 marcada em vermelho com o aviso na propria linha (D17)', l0.includes('13:00–17:00') && /red/.test(borda) && ['passado', 'fechado'].includes(erroL0) && await visivel(pf, 'ck-aviso-0'), `${l0} | ${erroL0} | ${borda.slice(0, 80)}`);
     await auditar(pf, { pagina: 'C4-revisao-antiga', estado: 'sabado-vencido', loc: 'et', vp: 390 }, { full: true });
     await pf.getByTestId('enviar-orcamento').click(); await sleep(1500);
     const er4 = { fechado: await visivel(pf, 'erro-dia-fechado'), passado: await visivel(pf, 'erro-horario-passado'), validade: await pf.getByTestId('erro-validade').getAttribute('data-tipo').catch(() => '') };
     ok('C4: enviar sem mudar -> bloqueado (dia fechado / horario passado / validade passada)', er4.fechado || er4.passado || !!er4.validade, JSON.stringify(er4));
+    ok('C4: so a data antiga (passada) -> nenhuma sugestao "Kasuta" baseada nela (D17)', !(await visivel(pf, 'usar-validade-recomendada')), await texto(pf, 'usar-validade-recomendada'));
     await pf.screenshot({ path: path.join(OUT, 'C4_revisao_erros_390.png'), fullPage: true });
     await pf.getByTestId('ck-remover-0').click(); await sleep(200);
     await escolherCheckin(pf, { dia: SEG, faixa: 'manha' });
     await escolherCheckin(pf, { dia: TER, faixa: 'tarde' });
     await pf.getByTestId('enviar-orcamento').click(); await sleep(1300);
     ok('C4: com datas novas a validade antiga (sabado) fica vermelha', !!(await pf.getByTestId('erro-validade').getAttribute('data-tipo').catch(() => '')));
+    const fmtEt = (ymd) => new Date(`${ymd}T12:00:00Z`).toLocaleDateString('et-EE', { timeZone: 'UTC', day: 'numeric', month: 'numeric', year: 'numeric' });
+    ok('C4: "Kasuta" = ultima data VALIDA + 7 (ter + 7, dia aberto) (D17)', (await texto(pf, 'usar-validade-recomendada')).includes(fmtEt(somar(TER, 7))), await texto(pf, 'usar-validade-recomendada'));
     await pf.getByTestId('usar-validade-recomendada').click().catch(() => {}); await sleep(200);
     await pf.getByTestId('enviar-orcamento').click(); await sleep(4500);
     const { data: o4r } = await sb.from('orcamentos').select('validade, revisao_numero').eq('id', o4.id).single();
@@ -1115,19 +1142,21 @@ try {
     await sb.from('solicitacoes').update({ status: 'em_orcamento' }).eq('id', sC5.id);
     await ir(pc, `/ee/et/cliente/orcamentos/${sC5.id}`, 2800);
     await pc.screenshot({ path: path.join(OUT, 'C5_sabado_futuro_motorista_390.png'), fullPage: true });
-    const ac5 = await aceitarApi(cli, o5.id, (await slotsDe(o5.id))[0].id);
-    ok('C5: aceitar sabado antigo com a oficina FECHADA no sabado -> recusado (DIA_FECHADO)?', ac5.status >= 400, JSON.stringify(ac5));
+    // revisao ANTES do aceite: o sabado futuro (linha antiga) aparece marcado e o envio e bloqueado
     pf = await cw.newPage();
     await ir(pf, `/ee/et/oficina/orcamento/${sC5.id}`, 3000);
-    if (ac5.status >= 400) {
-      const bordaF = await pf.getByTestId('ck-linha-0').evaluate((e) => e.className).catch(() => '');
-      const aviso = await texto(pf, 'ck-aviso-0');
-      ok('C5: revisao - sabado futuro marcado como dia fechado na linha', /red/.test(bordaF) || !!aviso, `${bordaF.slice(0, 60)} | ${aviso}`);
-      await pf.getByTestId('enviar-orcamento').click(); await sleep(1500);
-      ok('C5: enviar a revisao com o sabado -> erro-dia-fechado', await visivel(pf, 'erro-dia-fechado'));
-      await pf.screenshot({ path: path.join(OUT, 'C5_revisao_sabado_390.png'), fullPage: true });
-    }
+    const bordaF = await pf.getByTestId('ck-linha-0').evaluate((e) => e.className).catch(() => '');
+    const aviso = await texto(pf, 'ck-aviso-0');
+    ok('C5: revisao - sabado futuro marcado como dia fechado na linha', /red/.test(bordaF) || !!aviso, `${bordaF.slice(0, 60)} | ${aviso}`);
+    await pf.getByTestId('enviar-orcamento').click(); await sleep(1500);
+    ok('C5: enviar a revisao com o sabado -> erro-dia-fechado', await visivel(pf, 'erro-dia-fechado'));
+    await pf.screenshot({ path: path.join(OUT, 'C5_revisao_sabado_390.png'), fullPage: true });
     await pf.close();
+    // D3 - decidido pelo dono 15/11: SEM mudanca no aceite (producao, so leitura: nenhum orcamento aberto com horario
+    // futuro num dia fechado; horarios novos sao barrados pela tela + trigger 083). So registra o comportamento.
+    const ac5 = await aceitarApi(cli, o5.id, (await slotsDe(o5.id))[0].id);
+    ok('C5: INFO D3 (decidido: sem mudanca) - aceite de orcamento ANTIGO num sabado fechado', true, `aceite respondeu ${ac5.status}`);
+    console.log(`info [C] D3: aceite do sabado antigo respondeu ${ac5.status} (decisao do dono: sem mudanca)`);
     if (ca) await ca.close();
     await cc.close(); await cw.close();
     salvar();

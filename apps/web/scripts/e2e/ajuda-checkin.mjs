@@ -25,7 +25,7 @@ export async function abrirDia(page, opcoes = {}) {
  * Escolhe dia + faixa. faixa: 'HHMM-HHMM' exata, ou turno 'manha' (1a faixa que comeca antes de 12:00) / 'tarde'
  * (1a que comeca as 12:00 ou depois); sem faixa: a 1a disponivel. Devolve { dia, inicio, fim }.
  */
-export async function escolherCheckin(page, { pre = 'ck', dia, faixa } = {}) {
+export async function escolherCheckin(page, { pre = 'ck', dia, faixa, _tentativa = 0 } = {}) {
   const alvo = await abrirDia(page, { pre, dia, pularFechado: arguments[1]?.pularFechado });
   await page.getByTestId(`${pre}-dia-${alvo}`).click();
   await page.getByTestId(`${pre}-faixas`).waitFor({ timeout: 10000 });
@@ -34,6 +34,11 @@ export async function escolherCheckin(page, { pre = 'ck', dia, faixa } = {}) {
   else {
     const ids = await page.locator(`[data-testid^="${pre}-faixa-"]:not([disabled])`).evaluateAll((els) => els.map((e) => e.getAttribute('data-testid')));
     const pega = ids.find((id) => { const ini = id.split('-').at(-2); return !faixa || (faixa === 'manha' ? ini < '1200' : ini >= '1200'); });
+    // data relativa caiu num dia sem esse turno (ex.: sabado 08-12 e 'tarde'): o proximo dia, como no dia fechado (15/11)
+    if (!pega && dia && arguments[1]?.pularFechado !== false && _tentativa < 7) {
+      await page.keyboard.press('Escape'); await page.waitForTimeout(250);
+      return escolherCheckin(page, { pre, dia: somar(alvo, 1), faixa, _tentativa: _tentativa + 1 });
+    }
     if (!pega) throw new Error(`sem faixa ${faixa || ''} em ${alvo}`);
     chip = page.getByTestId(pega);
   }

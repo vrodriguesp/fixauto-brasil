@@ -8,8 +8,9 @@ import {
   conflitoHorario, horarioDoDia, primeiroTurnoAberto, turnoAcabaLogo, type HorarioSemana,
   faixasDoDia, formatarJanela, validarRecepcao, turnoDaJanela, janelaDoSlot, janelaAindaVale, faixasValidas, diaEscolhivel,
   janelaAcabaLogo, primeiroDiaComFaixa, opcoesOutroHorario, janelaDaSugestao, instanteDaJanela, janelaDaAgenda,
-  erroValidade, maiorData, somarDias, VALIDADE_FOLGA_DIAS,
+  erroValidade, maiorData, somarDias, VALIDADE_FOLGA_DIAS, validadeSugerida, janelaLegadaDoInicio, partesDaAgenda, textoDaAgenda,
 } from '../src/lib/turnos';
+import { fimPrevistoDoServico } from '../src/lib/fuso';
 
 let falhas = 0;
 let total = 0;
@@ -149,6 +150,29 @@ confere('validade = ultima data -> ok', erroValidade('2026-11-25', [SEG, '2026-1
 confere('validade no passado (sem datas) -> erro', erroValidade('2026-11-10', [], SEG), 'passado');
 confere('validade +7 depois da ultima -> ok', erroValidade(somarDias('2026-11-25', VALIDADE_FOLGA_DIAS), ['2026-11-25'], SEG), null);
 confere('maiorData ignora vazios', maiorData(['', '2026-11-20', '2026-11-18', undefined]), '2026-11-20');
+
+// 10) correcoes 15/11 (auditoria Fable + QA do check-in v2)
+// D17: sugestao da validade = ultima data valida + 7; dia fechado -> proximo dia aberto; sem data valida -> nada
+confere('D17: validade sugerida seg 16 + 7 = seg 23 (aberto)', validadeSugerida(SEG, H), '2026-11-23');
+confere('D17: validade sugerida sex 20 + 7 = sex 27 (aberto)', validadeSugerida(SEX, H), '2026-11-27');
+confere('D17: sab 14 + 7 = sab 21 fechado -> seg 23', validadeSugerida('2026-11-14', H), '2026-11-23');
+confere('D17: folga 8: sab 14 + 8 = dom 22 fechado -> seg 23', validadeSugerida('2026-11-14', H, 8), '2026-11-23');
+confere('D17: sem data valida -> sem sugestao', validadeSugerida('', H), '');
+confere('D17: sem horario -> padrao 006 (domingo fechado): sab 15 + 7 = dom 22 -> seg 23', validadeSugerida('2026-11-15', null), '2026-11-23');
+// D20: faixa invertida tem erro proprio
+confere('D20: recepcao 16:00-09:00 -> invertida', validarRecepcao({ horario: H, recepcao_inicio: '16:00', recepcao_fim: '09:00' }), 'recepcao_invertida');
+confere('D20: recepcao 09:00-09:00 -> invertida', validarRecepcao({ horario: H, recepcao_inicio: '09:00', recepcao_fim: '09:00' }), 'recepcao_invertida');
+confere('D20: recepcao 09:00-09:20 continua curta', validarRecepcao({ horario: H, recepcao_inicio: '09:00', recepcao_fim: '09:20' }), 'recepcao_curta');
+// R-10: uma regra so para agenda antiga
+confere('R-10: legado 08:00 -> 08-12', janelaLegadaDoInicio('08:00'), { inicio: '08:00', fim: '12:00' });
+confere('R-10: legado 13:00 -> 13-17', janelaLegadaDoInicio('13:00'), { inicio: '13:00', fim: '17:00' });
+confere('R-10: legado 10:15 -> hora exata', janelaLegadaDoInicio('10:15'), { inicio: '10:15', fim: '10:15' });
+// R-05: fim previsto 18:00 do dia da previsao, nunca antes do fim da janela
+confere('R-05: previsao ter 17 -> 18:00 Tallinn (16:00Z)', fimPrevistoDoServico(TER, '2026-11-17T09:00:00.000Z', 'EE'), '2026-11-17T16:00:00.000Z');
+confere('R-05: janela ate 19:00 no mesmo dia -> fim = 19:00 (nao 18:00)', fimPrevistoDoServico(TER, '2026-11-17T17:00:00.000Z', 'EE'), '2026-11-17T17:00:00.000Z');
+// D13: dia e janela separados (a tela poe a janela sem quebra); o texto inteiro continua igual
+confere('D13: partesDaAgenda', partesDaAgenda('2026-11-17T07:00:00.000Z', '2026-11-17T09:00:00.000Z', 'EE', 'en-GB'), { dia: 'Tue 17 Nov', janela: '09:00–11:00' });
+confere('D13: textoDaAgenda = dia · janela', textoDaAgenda('2026-11-17T07:00:00.000Z', '2026-11-17T09:00:00.000Z', 'EE', 'en-GB'), 'Tue 17 Nov · 09:00–11:00');
 
 console.log(`\n${total - falhas}/${total} ${falhas ? `- ${falhas} FALHA(S)` : 'TUDO OK'}`);
 process.exit(falhas ? 1 : 0);

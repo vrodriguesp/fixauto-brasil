@@ -5,7 +5,7 @@
 //   node <tmp>/scripts/teste-turnos.js
 import {
   faixasDoDia, formatarJanela, turnoDaJanela, janelaDoSlot, janelaAindaVale, slotAindaVale, janelaDaSugestao,
-  instanteDaJanela, janelaDaAgenda, expedienteDoDia, horaCurta, LEGADO, type HorarioSemana,
+  instanteDaJanela, janelaDaAgenda, expedienteDoDia, horaCurta, LEGADO, semQuebra, type HorarioSemana,
 } from '../lib/turnos';
 import { horaLocalEmUtc } from '../lib/fuso';
 
@@ -75,6 +75,9 @@ confere('agenda verao 29/03: 05:00Z + 07:00Z -> 08:00-10:00', janelaDaAgenda('20
 confere('agenda antiga 08:00 sem checkin_ate -> 08-12', janelaDaAgenda('2026-11-17T06:00:00.000Z', null, 'EE'), { inicio: '08:00', fim: '12:00' });
 confere('agenda antiga 13:00 sem checkin_ate -> 13-17', janelaDaAgenda('2026-11-17T11:00:00.000Z', null, 'EE'), { inicio: '13:00', fim: '17:00' });
 confere('agenda antiga hora exata 14:00 -> so a hora', formatarJanela(janelaDaAgenda('2026-11-17T12:00:00.000Z', null, 'EE')), '14:00');
+// D13 (15/11): a janela nao quebra no meio - word joiners (U+2060) dos dois lados do traco, so na tela
+confere('D13: semQuebra 08:00–10:00', semQuebra('08:00–10:00'), '08:00⁠–⁠10:00');
+confere('D13: semQuebra sem janela nao muda', semQuebra('ter, 17 nov, 09:00'), 'ter, 17 nov, 09:00');
 
 console.log(`\n${total - falhas}/${total} ${falhas ? `- ${falhas} FALHA(S)` : 'TUDO OK'}`);
 if (falhas) throw new Error(`${falhas} falha(s)`);

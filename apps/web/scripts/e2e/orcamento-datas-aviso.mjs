@@ -69,7 +69,6 @@ const conta = async (tipo, nome) => {
 };
 const semRolagem = (p) => p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
 const datas = (p) => p.locator('input[type=date]:not(#cacb1-103)');
-const turnos = (p, T) => p.locator(`select[aria-label="${T('oficinaEnviarOrcamento.manhaHorario')} / ${T('oficinaEnviarOrcamento.tardeHorario')}"]`);
 const visivel = (p, id) => p.getByTestId(id).isVisible().catch(() => false);
 const texto = (p, id) => p.getByTestId(id).innerText().catch(() => '');
 // mini calendario: avanca ate o mes do dia (a folha precisa estar aberta)
