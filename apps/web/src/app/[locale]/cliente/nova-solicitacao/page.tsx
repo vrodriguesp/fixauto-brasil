@@ -431,7 +431,9 @@ export default function NovaSolicitacaoPage() {
         {/* Step 2: Service type */}
         {step === 2 && (
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('step2Title')}</h2>
+            {/* mesmo titulo + ajuda do pedido publico (rascunho 15/11): o tipo principal, o resto se escreve depois */}
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">{tp('servicoTitulo')}</h2>
+            <p className="text-sm text-gray-700 mb-4">{tp('servicoAjuda')}</p>
             <div className="grid grid-cols-2 gap-3">
               {TIPOS_SERVICO.map((svc) => (
                 <button

@@ -76,7 +76,6 @@ export default function PedidoSemConta() {
   // servico
   const [tipo, setTipo] = useState('');
   const [servicos, setServicos] = useState<string[]>([]);
-  const [busca, setBusca] = useState('');
   const [descricao, setDescricao] = useState('');
   const [urgencia, setUrgencia] = useState('media');
   const [fotos, setFotos] = useState<{ file: File; preview: string }[]>(() => memoria.fotos);
@@ -271,11 +270,14 @@ export default function PedidoSemConta() {
   const NS: Record<string, string> = { revisao: 'servicosRevisao', mecanica: 'servicosMecanica', eletrica: 'servicosEletrica', pneu: 'servicosPneu' };
   const lista = tipo === 'revisao' ? SERVICOS_REVISAO : tipo === 'mecanica' ? SERVICOS_MECANICA : tipo === 'eletrica' ? SERVICOS_ELETRICA : tipo === 'pneu' ? SERVICOS_PNEU : [];
   const rotuloServico = (v: string) => (NS[tipo] ? tc(`${NS[tipo]}.${v}`) : v);
-  // busca sem acento e sem maiusculas ('rehvi' acha 'Rehvide vahetus')
-  const semAcento = (v: string) => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  const listaFiltrada = lista.filter((sv) => semAcento(rotuloServico(sv.value)).includes(semAcento(busca.trim())));
-  const listaCurta = !listaAberta && !busca.trim() && listaFiltrada.length > LISTA_CURTA;
-  const listaVisivel = listaCurta ? listaFiltrada.filter((sv, i) => i < LISTA_CURTA || servicos.includes(sv.value)) : listaFiltrada;
+  // passo 2 (rascunho aprovado 15/11): primeiro a caixa de texto, a lista do tipo embaixo
+  // ("ou escolha abaixo"); sem campo de busca. "Ver todos" abre a lista inteira.
+  const temLista = lista.length > 0;
+  const listaCurta = !listaAberta && lista.length > LISTA_CURTA;
+  const listaVisivel = listaCurta ? lista.filter((sv, i) => i < LISTA_CURTA || servicos.includes(sv.value)) : lista;
+  const ehDano = tipo === 'colisao' || tipo === 'funilaria';
+  const EXEMPLO: Record<string, string> = { revisao: 'exemploRevisao', mecanica: 'exemploMecanica', eletrica: 'exemploEletrica', pneu: 'exemploPneu', colisao: 'exemploFoto', funilaria: 'exemploFoto' };
+  const exemplo = EXEMPLO[tipo] ? t(EXEMPLO[tipo]) : tn('placeholderDescribeIssue');
   // escreveu o que precisa OU marcou algum servico da lista OU mandou foto (12/11: para
   // colisao/lataria/outro nao ha lista e a foto e o que a pessoa mais toca - vale como descricao)
   // regra do dono (12/11): tipo + escrever o que precisa OU marcar da lista; a foto ajuda mas nao substitui o texto
@@ -291,6 +293,11 @@ export default function PedidoSemConta() {
   const faltaContato: [string, string] = !nome.trim() ? [t('faltaNome'), 'pedido-nome'] : !EMAIL_OK.test(email.trim()) ? [t('faltaEmail'), 'pedido-email']
     : querSms && !TELEFONE_OK(telefone) ? [t('faltaTelefone'), 'pedido-telefone'] : [t('faltaTermos'), 'pedido-termos'];
   useEffect(() => { setFaltando(''); }, [servicoOk, carroOk, endereco, contatoOk]); // corrigiu: o aviso some
+
+  // linha acima do Edasi no passo 2: o que falta (cinza) ou o que ja basta (verde)
+  const statusDetalhe: { texto: string; tom: 'neutro' | 'ok' } = servicos.length > 0 ? { texto: t('detalheStatusLista', { n: servicos.length }), tom: 'ok' }
+    : descricao.trim() ? { texto: t('detalheStatusTexto'), tom: 'ok' }
+    : { texto: temLista ? t('detalheStatusVazio') : t('detalheStatusVazioTexto'), tom: 'neutro' };
 
   const descricaoFinal = () => servicos.length > 0
     ? `${tn('servicesPrefix')} ${servicos.map(rotuloServico).join(', ')}${descricao.trim() ? '. ' + descricao.trim() : ''}`
@@ -386,9 +393,11 @@ export default function PedidoSemConta() {
   // no celular os botoes ficam presos no rodape da tela: "Edasi" ficava abaixo da dobra
   // (y=876 numa tela de 780) e a pessoa achava que estava travada (Clarity, dono 10/11)
   // "Edasi" sempre clicavel (so trava enquanto envia): faltando algo, diz o que e e leva ao campo
-  const Navegar = ({ voltar, avancar, ok, rotulo, falta, campo }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string; falta: string; campo: string }) => (
+  // status (passo 2): linha cinza/verde acima dos botoes; com aviso vermelho, so o aviso (nunca os dois)
+  const Navegar = ({ voltar, avancar, ok, rotulo, falta, campo, status }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string; falta: string; campo: string; status?: { texto: string; tom: 'neutro' | 'ok' } }) => (
     <div className="flex flex-wrap justify-between mt-6 gap-3 sticky bottom-0 z-10 -mx-6 px-6 py-3 bg-white/95 backdrop-blur border-t border-gray-100 rounded-b-xl sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0" data-testid="navegar">
-      {faltando && <p role="alert" className="w-full text-sm text-red-700" data-testid="falta-aviso">{faltando}</p>}
+      {faltando && <p role="alert" className="w-full text-sm text-red-700 font-medium" data-testid="falta-aviso">{faltando}</p>}
+      {!faltando && status && <p role="status" data-testid="status-passo" data-tom={status.tom} className={`w-full text-sm ${status.tom === 'ok' ? 'text-green-700 font-medium' : 'text-gray-600'}`}>{status.texto}</p>}
       {voltar ? <button type="button" onClick={() => voltarPara(voltar)} className="btn-secondary">{tn('back')}</button> : <span />}
       <button type="button" onClick={() => { if (ok) { setFaltando(''); avancar(); return; } setFaltando(falta); contar(`edasi_bloqueado_${etapa}`); focar(campo); }}
         disabled={enviando} aria-busy={enviando} className="btn-primary disabled:opacity-50">{rotulo || tn('next')}</button>
@@ -438,11 +447,13 @@ export default function PedidoSemConta() {
         {/* 1) so o tipo: um toque e ja vai para a pagina seguinte (guiado, pedido do dono 06/11) */}
         {etapa === 'servico' && (
           <div data-testid="passo-servico">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">{tn('step2Title')}</h2>
+            {/* "o tipo principal": quem precisa de varias coisas escreve as outras no passo 2 (rascunho 15/11) */}
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('servicoTitulo')}</h2>
+            <p className="pedido-ajuda text-sm text-gray-700 mb-4">{t('servicoAjuda')}</p>
             <div className="grid grid-cols-2 gap-3">
               {TIPOS_SERVICO.map((s) => (
                 <button key={s.value} type="button" aria-pressed={tipo === s.value}
-                  onClick={() => { if (s.value !== tipo) { setServicos([]); setBusca(''); setListaAberta(false); } contar('servico'); setTipo(s.value); setEtapa('detalhe'); }}
+                  onClick={() => { if (s.value !== tipo) { setServicos([]); setListaAberta(false); } contar('servico'); setTipo(s.value); setEtapa('detalhe'); }}
                   className={`min-w-0 p-4 rounded-lg border-2 text-left transition-all ${tipo === s.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
                   <span className="text-2xl">{s.icon}</span>
                   {/* palavra longa (RU "Техобслуживание") nao invade o cartao do lado a 360 px */}
@@ -453,29 +464,32 @@ export default function PedidoSemConta() {
           </div>
         )}
 
-        {/* 2) o que precisa: escreve com as proprias palavras OU procura na lista do tipo */}
+        {/* 2) o que precisa (rascunho aprovado 15/11): a pergunta, a caixa de texto com um exemplo do
+            tipo e, embaixo, a lista do tipo como alternativa. Basta escrever OU marcar (servicoOk). */}
         {etapa === 'detalhe' && (
           <div data-testid="passo-detalhe">
-            <h2 className="text-lg font-semibold text-gray-900 mb-1">{tipoConfig?.icon} {tc(`tiposServico.${tipo}`)}</h2>
-            <p className="text-sm text-gray-500 mb-4">{lista.length > 0 ? t('detalheTexto') : tn('placeholderDescribeIssue')}</p>
-            <label htmlFor="pedido-descricao" className="block text-sm font-medium text-gray-700 mb-1">{tn('describeProblem')}</label>
-            <textarea id="pedido-descricao" className="input-field min-h-[100px]" maxLength={1800} value={descricao} onChange={(e) => setDescricao(e.target.value)}
-              placeholder={tn('placeholderDescribeIssue')} />
-            {lista.length > 0 && (
+            <p className="text-sm text-gray-500" data-testid="detalhe-tipo">{tipoConfig?.icon} {tc(`tiposServico.${tipo}`)}</p>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">{temLista || tipo === 'outro' ? t('detalheTitulo') : t('detalheTituloFoto')}</h2>
+            <label htmlFor="pedido-descricao" className="block text-sm font-medium text-gray-700 mb-1">{ehDano ? t('detalheRotuloFoto') : t('detalheRotuloTexto')}</label>
+            <textarea id="pedido-descricao" className={`input-field min-h-[96px] ${faltando ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`} maxLength={1800} value={descricao} aria-invalid={!!faltando}
+              aria-describedby={faltando ? 'pedido-descricao-aviso' : undefined}
+              onChange={(e) => { setDescricao(e.target.value); if (e.target.value.trim()) contarUmaVez('detalhe_escreveu'); }}
+              placeholder={exemplo} />
+            {faltando && <p role="alert" id="pedido-descricao-aviso" data-testid="falta-aviso-topo" className="text-sm text-red-700 font-medium mt-1">{faltando}</p>}
+            {temLista && (
               <div className="mt-5">
-                <label htmlFor="pedido-busca" className="block text-sm font-medium text-gray-700 mb-1">{tn('step3ServiceTitle')}</label>
-                <input id="pedido-busca" type="search" className="input-field" value={busca} onChange={(e) => setBusca(e.target.value)} placeholder={t('buscarServico')} />
-                <div className="space-y-2 mt-2" data-testid="lista-servicos">
+                <p className="text-sm font-medium text-gray-700 mb-2">{t('detalheOuEscolha')}</p>
+                <div className="space-y-2" data-testid="lista-servicos">
                   {listaVisivel.map((sv) => (
                     <label key={sv.value} className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer ${servicos.includes(sv.value) ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}>
-                      <input type="checkbox" checked={servicos.includes(sv.value)} onChange={() => setServicos((x) => x.includes(sv.value) ? x.filter((y) => y !== sv.value) : [...x, sv.value])} className="w-4 h-4" />
+                      <input type="checkbox" checked={servicos.includes(sv.value)} className="w-4 h-4"
+                        onChange={() => { if (!servicos.includes(sv.value)) contarUmaVez('detalhe_escolheu_lista'); setServicos((x) => x.includes(sv.value) ? x.filter((y) => y !== sv.value) : [...x, sv.value]); }} />
                       <span className="text-sm text-gray-900">{rotuloServico(sv.value)}</span>
                     </label>
                   ))}
-                  {listaFiltrada.length === 0 && <p className="text-sm text-gray-500 py-2">{t('semResultadoBusca')}</p>}
-                  {listaFiltrada.length > LISTA_CURTA && !busca.trim() && (
-                    <button type="button" onClick={() => setListaAberta((x) => !x)} className="w-full min-h-[44px] text-sm font-medium text-primary-700 underline" data-testid="ver-mais">
-                      {listaCurta ? t('verTodos', { n: listaFiltrada.length }) : t('verMenos')}
+                  {lista.length > LISTA_CURTA && (
+                    <button type="button" onClick={() => { if (listaCurta) contarUmaVez('detalhe_ver_todos'); setListaAberta((x) => !x); }} className="w-full min-h-[44px] text-sm font-medium text-primary-700 underline" data-testid="ver-mais">
+                      {listaCurta ? t('verTodos', { n: lista.length }) : t('verMenos')}
                     </button>
                   )}
                 </div>
@@ -515,7 +529,7 @@ export default function PedidoSemConta() {
                 </button>
               ))}
             </div>
-            <Navegar voltar="servico" ok={servicoOk} avancar={() => setEtapa('carro')} falta={lista.length > 0 ? t('faltaDescricaoLista') : t('faltaDescricao')} campo="pedido-descricao" />
+            <Navegar voltar="servico" ok={servicoOk} avancar={() => setEtapa('carro')} falta={temLista ? t('faltaDescricaoLista') : t('faltaDescricao')} campo="pedido-descricao" status={statusDetalhe} />
           </div>
         )}
 

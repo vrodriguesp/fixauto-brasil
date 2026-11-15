@@ -14,6 +14,8 @@ const ETAPAS_PEDIDO = [
   'cookie_aceito', 'cookie_recusado',
   // 13/11 (Fable): no passo contato, digitou algo / marcou "quero SMS" (uma vez por visita)
   'contato_digitou', 'contato_sms_opt',
+  // 15/11 (passo 2 novo): escreveu na caixa / marcou da lista / abriu "ver todos" (uma vez por visita)
+  'detalhe_escreveu', 'detalhe_escolheu_lista', 'detalhe_ver_todos',
 ];
 const FUNIS: Record<string, string[]> = {
   pedido_site: ETAPAS_PEDIDO,

@@ -145,6 +145,8 @@ body.com-chat-suporte footer { padding-bottom: 5rem; }
   body.pagina-pedido .pedido-pagina { padding-top: 0.5rem; padding-bottom: 0.5rem; }
   body.pagina-pedido .pedido-titulo { font-size: 1.125rem; line-height: 1.5rem; }
   body.pagina-pedido .pedido-subtitulo { display: none; }
+  /* a linha de ajuda do passo 1 (15/11) tambem sai: os cartoes de servico continuam a vista */
+  body.pagina-pedido .pedido-ajuda { display: none; }
   body.pagina-pedido .pedido-progresso { margin-top: 0.5rem; margin-bottom: 0.5rem; }
   body.pagina-pedido .pedido-progresso > div { height: 0.25rem; }
   body.pagina-pedido .card { padding: 0.75rem; }
