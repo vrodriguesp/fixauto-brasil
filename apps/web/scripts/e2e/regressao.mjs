@@ -21,7 +21,7 @@ const T = [
   ['pedido-exaustivo.mjs', [ENV]], ['pedido-lembrete.mjs', [ENV]], ['jornada-pedido.mjs', [ENV]], ['privacidade-agenda.mjs', [ENV]], ['agenda-mudanca.mjs', [ENV]], ['feedback-0711.mjs', [ENV]],
   ['site-pedido-sem-conta.mjs', [ENV]], ['app-pedido-sem-conta.mjs', [ENV]],
   // cadastro, acidente, seguro, seguranca
-  ['e2e-cadastro.mjs', [ENV]], ['e2e-acidente.mjs', [ENV]], ['e2e-seguro.mjs', [ENV]], ['seguranca-rls.mjs', [ENV]],
+  ['e2e-cadastro.mjs', [ENV]], ['e2e-acidente.mjs', [ENV]], ['e2e-seguro.mjs', [ENV]], ['seguranca-rls.mjs', [ENV]], ['admin-triagem-pedido.mjs', [ENV]],
   // site: fluxos de cliente/oficina/loja/admin
   ['site-fluxos.mjs', [ENV]], ['site-mensagens.mjs', [ENV]], ['site-revisao.mjs', [ENV]], ['site-expirado.mjs', [ENV]],
   ['site-prazo.mjs', [ENV]], ['site-quadro.mjs', [ENV]], ['site-quadro-hora.mjs', [ENV]], ['site-conclusao.mjs', [ENV]],
