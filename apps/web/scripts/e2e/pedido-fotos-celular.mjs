@@ -55,6 +55,7 @@ await p.waitForTimeout(400);
 const aviso = p.getByTestId('passo-detalhe').getByTestId('falta-aviso'); // (o passo do carro fica montado escondido, com a barra dele)
 ok('Edasi sem descricao: aviso do que falta', await aviso.isVisible() && /Kirjelda probleemi/.test(await aviso.innerText()), await aviso.innerText().catch(() => ''));
 ok('Edasi sem descricao: foco vai a caixa de texto', await p.evaluate(() => document.activeElement?.id) === 'pedido-descricao', await p.evaluate(() => document.activeElement?.id));
+ok('aviso tambem sob a caixa (passo 2 novo, 15/11)', await p.getByTestId('falta-aviso-topo').isVisible() && /Kirjelda probleemi/.test(await p.getByTestId('falta-aviso-topo').innerText()));
 ok('Edasi sem descricao: continua no passo 2', await p.getByTestId('passo-detalhe').isVisible() && !(await p.getByTestId('passo-carro').isVisible()));
 ok('funil: edasi_bloqueado_detalhe', funil.includes('edasi_bloqueado_detalhe'), JSON.stringify(funil));
 await p.locator('#pedido-descricao').fill('Kriimustus esiuksel');
@@ -100,7 +101,8 @@ ok('com descricao passa ao passo do carro', await p.getByTestId('passo-carro').i
 await p.getByTestId('passo-carro').getByRole('button', { name: 'Edasi', exact: true }).tap();
 await p.waitForTimeout(400);
 const avisoCarro = p.getByTestId('passo-carro').getByTestId('falta-aviso');
-ok('carro: Edasi sem marca avisa "Vali mark, mudel ja aasta"', await avisoCarro.isVisible() && /Vali mark/.test(await avisoCarro.innerText()), await avisoCarro.innerText().catch(() => ''));
+// desde 12/11 o aviso diz so o que falta (faltaMarca), nao mais "Vali mark, mudel ja aasta"
+ok('carro: Edasi sem marca avisa "Kirjuta või vali auto mark."', await avisoCarro.isVisible() && /vali auto mark/.test(await avisoCarro.innerText()), await avisoCarro.innerText().catch(() => ''));
 ok('carro: foco no seletor de marca', await p.evaluate(() => document.activeElement?.id) === 'cbbe3-101', await p.evaluate(() => document.activeElement?.id));
 ok('funil: edasi_bloqueado_carro', funil.includes('edasi_bloqueado_carro'), JSON.stringify(funil));
 await p.getByTestId('passo-carro').getByRole('button', { name: 'Tagasi' }).tap();
@@ -140,7 +142,8 @@ await ctx.close();
   await p.goto(`${SITE}/ee/et/paring`, { waitUntil: 'networkidle' });
   const banner = p.getByTestId('aviso-cookies');
   ok('390x780: aviso de cookies na tela', await banner.isVisible());
-  await p.getByRole('button', { name: /Kere- ja/ }).first().tap();
+  // o fundo escuro do aviso de cookies (desde 12/11) segura o toque: o clique vai direto ao cartao
+  await p.getByRole('button', { name: /Kere- ja/ }).first().dispatchEvent('click');
   await p.getByTestId('passo-detalhe').waitFor();
   await p.waitForTimeout(500);
   const b = await banner.boundingBox(), n = await p.getByTestId('passo-detalhe').getByTestId('navegar').boundingBox();
@@ -174,6 +177,37 @@ await ctx.close();
   const n = await p.getByTestId('passo-detalhe').getByTestId('navegar').boundingBox();
   ok('740x300: barra Tagasi/Edasi visivel acima do aviso', n && n.y >= 0 && n.y + n.height <= (b ? b.y : 300) + 1, `barra ${r(n)}`);
   ok('740x300: sem erro de pagina', erros.length === 0, erros.join(' | '));
+  await ctx.close();
+}
+
+// ---- 4) passo 2 novo (rascunho 15/11): linha de estado e funil (escreveu / marcou da lista / ver todos), uma vez por visita
+{
+  const { ctx, p, funil, erros } = await contexto({ viewport: { width: 360, height: 800 }, cookies: 'denied' });
+  await p.goto(`${SITE}/ee/et/paring`, { waitUntil: 'networkidle' });
+  await p.getByRole('button', { name: /Hooldus/ }).first().tap();
+  await p.getByTestId('passo-detalhe').waitFor();
+  const estado = p.getByTestId('passo-detalhe').getByTestId('status-passo');
+  ok('360: linha de estado cinza ao abrir', (await estado.innerText()) === 'Kirjuta paar sõna või vali allpool' && (await estado.getAttribute('data-tom')) === 'neutro', await estado.innerText());
+  const nav = await p.getByTestId('passo-detalhe').getByTestId('navegar').boundingBox();
+  ok('360: barra com a linha de estado inteira na tela', nav && nav.y >= 0 && nav.y + nav.height <= 800, r(nav));
+  const caixa = await p.locator('#pedido-descricao').boundingBox();
+  ok('360: caixa de texto acima da barra (sem rolar)', caixa && nav && caixa.y + caixa.height <= nav.y, `caixa ${r(caixa)} barra ${r(nav)}`);
+  await p.locator('#pedido-descricao').pressSequentially('Hooldus', { delay: 20 });
+  await p.waitForTimeout(300);
+  ok('escreveu: verde "✓ Kirjeldus olemas"', (await estado.innerText()) === '✓ Kirjeldus olemas' && (await estado.getAttribute('data-tom')) === 'ok');
+  ok('funil: detalhe_escreveu 1 vez (varias letras)', funil.filter((e) => e === 'detalhe_escreveu').length === 1, JSON.stringify(funil));
+  await p.locator('#pedido-descricao').fill('');
+  const ver = p.getByTestId('ver-mais');
+  await ver.tap(); await ver.tap(); await ver.tap();
+  ok('funil: detalhe_ver_todos 1 vez (abriu, fechou, abriu)', funil.filter((e) => e === 'detalhe_ver_todos').length === 1, JSON.stringify(funil));
+  const caixas = p.getByTestId('lista-servicos').locator('input[type=checkbox]');
+  await caixas.nth(0).check(); await caixas.nth(1).check();
+  await p.waitForTimeout(300);
+  ok('marcou 2: verde "✓ 2 teenust valitud"', (await estado.innerText()) === '✓ 2 teenust valitud', await estado.innerText());
+  ok('funil: detalhe_escolheu_lista 1 vez (2 marcados)', funil.filter((e) => e === 'detalhe_escolheu_lista').length === 1, JSON.stringify(funil));
+  await caixas.nth(0).uncheck(); await caixas.nth(1).uncheck();
+  ok('desmarcou tudo: volta ao cinza', (await estado.getAttribute('data-tom')) === 'neutro');
+  ok('360 passo 2: sem erro de pagina', erros.length === 0, erros.join(' | '));
   await ctx.close();
 }
 

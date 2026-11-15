@@ -317,6 +317,8 @@ try {
     await edasi.click();
     await page.waitForTimeout(300);
     ok(`${idioma}: aviso do que falta (${rotulos.faltaDescricaoLista.slice(0, 20)}...)`, (await page.getByTestId('passo-detalhe').getByTestId('falta-aviso').innerText().catch(() => '')) === rotulos.faltaDescricaoLista);
+    // passo 2 novo (15/11): o aviso tambem aparece logo sob a caixa
+    ok(`${idioma}: aviso tambem sob a caixa`, (await page.getByTestId('falta-aviso-topo').innerText().catch(() => '')) === rotulos.faltaDescricaoLista);
     ok(`${idioma}: foco na descricao`, await page.evaluate(() => document.activeElement?.id) === 'pedido-descricao');
     // sem balao do chat de suporte nesta pagina
     await page.evaluate(() => window.scrollTo(0, 600));

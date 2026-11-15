@@ -65,7 +65,19 @@ const ateContato = async (page, T, nome) => {
   await clicaTexto(page, T('auth.pedirSemConta'));
   await page.getByText(T('pedidoSemConta.titulo')).first().waitFor({ timeout: 15000 });
   await page.getByText(new RegExp(T('constants.tiposServico.mecanica'))).locator('visible=true').first().click();
+  // passo 2 novo (rascunho 15/11): "Edasi" ativo; vazio avisa em vermelho e fica no passo; marcar deixa verde
+  await page.getByText(T('pedidoSemConta.detalheTitulo'), { exact: true }).first().waitFor({ timeout: 10000 });
+  const estado = async () => page.getByTestId('status-passo').innerText().catch(() => '');
+  ok(`${nome}: passo 2 abre com a linha cinza "${T('pedidoSemConta.detalheStatusVazio')}"`, (await estado()) === T('pedidoSemConta.detalheStatusVazio'), await estado());
+  const edasi = page.getByRole('button', { name: T('pedidoSemConta.next'), exact: true }).locator('visible=true').last();
+  ok(`${nome}: Edasi habilitado com o passo vazio`, await edasi.isEnabled() && (await edasi.getAttribute('aria-disabled')) !== 'true');
+  await edasi.click();
+  await page.waitForTimeout(400);
+  ok(`${nome}: Edasi vazio -> aviso vermelho e continua no passo`, (await page.getByTestId('falta-aviso').innerText().catch(() => '')) === T('pedidoSemConta.faltaDescricaoLista')
+    && (await page.getByTestId('falta-aviso-topo').isVisible()) && (await page.getByText(T('pedidoSemConta.detalheTitulo'), { exact: true }).first().isVisible()));
   await clicaTexto(page, T('constants.servicosMecanica.motor_perda_potencia'));
+  await page.waitForTimeout(300);
+  ok(`${nome}: marcou da lista -> verde "${T('pedidoSemConta.detalheStatusListaUm')}" e o aviso some`, (await estado()) === T('pedidoSemConta.detalheStatusListaUm') && (await page.getByTestId('falta-aviso').count()) === 0, await estado());
   await campo(page, T('novaSolicitacao.passoSintomas')).fill('Test app');
   await checaTela(page, `${nome} servico`);
   await page.screenshot({ path: `${OUT}/app-pedido-servico-${nome}.png`, fullPage: true });

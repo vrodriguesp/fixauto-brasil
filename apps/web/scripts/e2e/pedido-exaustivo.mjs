@@ -43,6 +43,14 @@ const msgWeb = (l) => {
   for (const area of ['cliente', 'misc', 'auth']) Object.assign(base, JSON.parse(fs.readFileSync(`${WEBMSG}/${l}.${area}.json`, 'utf8')));
   return (k, v = {}) => String(k.split('.').reduce((o, p) => o?.[p], base) ?? `??${k}`).replace(/\{(\w+)\}/g, (_, x) => v[x] ?? '');
 };
+// plural ICU do site ({n, plural, one {...} few {...} other {...}}) como o next-intl formata
+const plural = (txt, n, l) => {
+  const m = String(txt).match(/^\{\w+, plural, (.*)\}$/);
+  if (!m) return String(txt);
+  const casos = Object.fromEntries([...m[1].matchAll(/(\w+) \{([^}]*)\}/g)].map((x) => [x[1], x[2]]));
+  const cat = new Intl.PluralRules(l).select(n);
+  return (casos[cat] ?? casos.other).replace(/#/g, String(n));
+};
 const msgApp = (l) => {
   const j = JSON.parse(fs.readFileSync(`${MOB}/${l}.json`, 'utf8'));
   return (k, v = {}) => String(k.split('.').reduce((o, p) => o?.[p], j) ?? `??${k}`).replace(/\{(\w+)\}/g, (_, x) => v[x] ?? '');
@@ -162,12 +170,29 @@ async function site(l, largura) {
     await noAlto(page, 'passo-detalhe', nm + ' detalhe');
     t = await checar(page, `${nm} detalhe`);
     ok(`${nm}: titulo com o tipo escolhido`, t.includes(T(`constants.tiposServico.${tipo}`)));
-    ok(`${nm}: explica escrever ou procurar`, t.includes(T('pedidoSemConta.detalheTexto')));
+    // passo 2 novo (rascunho 15/11): pergunta, rotulo da caixa e "ou escolha abaixo"; sem campo de busca
+    ok(`${nm}: pergunta "${T('pedidoSemConta.detalheTitulo')}" e rotulo da caixa`, t.includes(T('pedidoSemConta.detalheTitulo')) && t.includes(T('pedidoSemConta.detalheRotuloTexto')) && t.includes(T('pedidoSemConta.detalheOuEscolha')));
+    ok(`${nm}: sem campo de busca na lista`, (await page.locator('#pedido-busca').count()) === 0);
+    const EX = { pneu: 'exemploPneu', mecanica: 'exemploMecanica', revisao: 'exemploRevisao', eletrica: 'exemploEletrica' }[tipo];
+    ok(`${nm}: exemplo do tipo na caixa`, (await page.locator('#pedido-descricao').getAttribute('placeholder')) === T(`pedidoSemConta.${EX}`), await page.locator('#pedido-descricao').getAttribute('placeholder'));
+    const estado = page.getByTestId('passo-detalhe').getByTestId('status-passo');
+    const leEstado = async () => [await estado.innerText().catch(() => ''), await estado.getAttribute('data-tom').catch(() => '')];
+    let [et_, tom] = await leEstado();
+    ok(`${nm}: linha de estado cinza "${T('pedidoSemConta.detalheStatusVazio')}"`, et_ === T('pedidoSemConta.detalheStatusVazio') && tom === 'neutro', `${et_} ${tom}`);
     const avancar = page.getByRole('button', { name: T('clienteNovaSolicitacao.next'), exact: true });
     // desde 12/11 o Edasi fica clicavel: sem texto, servico nem foto mostra o que falta e nao avanca
     await avancar.click();
     ok(`${nm}: avancar sem texto nem servico avisa e fica no passo`, await page.getByTestId('passo-detalhe').getByTestId('falta-aviso').isVisible());
-    // busca na lista: parte do nome do 1o servico (sem acento/maiusculas) acha; palavra sem sentido mostra o aviso
+    ok(`${nm}: aviso tambem sob a caixa, caixa marcada invalida`, await page.getByTestId('falta-aviso-topo').isVisible()
+      && (await page.getByTestId('falta-aviso-topo').innerText()) === T('pedidoSemConta.faltaDescricaoLista') && (await page.locator('#pedido-descricao').getAttribute('aria-invalid')) === 'true');
+    ok(`${nm}: com o aviso vermelho a linha cinza some (nunca as duas)`, (await estado.count()) === 0);
+    // escrever: verde "descricao preenchida"; apagar: volta ao cinza
+    await page.locator('#pedido-descricao').fill('x');
+    [et_, tom] = await leEstado();
+    ok(`${nm}: escreveu -> verde "${T('pedidoSemConta.detalheStatusTexto')}" e os avisos somem`, et_ === T('pedidoSemConta.detalheStatusTexto') && tom === 'ok'
+      && (await page.getByTestId('falta-aviso-topo').count()) === 0 && (await page.locator('#pedido-descricao').getAttribute('aria-invalid')) === 'false', `${et_} ${tom}`);
+    await page.locator('#pedido-descricao').fill('');
+    ok(`${nm}: apagou -> volta ao cinza`, (await leEstado())[1] === 'neutro');
     const rotulos = () => page.getByTestId('lista-servicos').locator('label').allInnerTexts();
     let nomes = await rotulos();
     ok(`${nm}: lista do tipo aparece`, nomes.length > 1, String(nomes.length));
@@ -185,17 +210,17 @@ async function site(l, largura) {
       ok(`${nm}: "ver menos" mantem o marcado visivel`, curtos.length === 7 && curtos.some((x) => x.trim() === nomes.at(-1).trim()), String(curtos.length));
       await foto(page, `site-${l}-${largura}-1cvermais`);
     }
-    const pedaco = nomes[1].trim().slice(0, 5).toUpperCase();
-    await page.locator('#pedido-busca').fill(pedaco);
-    const achados = await rotulos();
-    ok(`${nm}: busca "${pedaco}" filtra a lista`, achados.length >= 1 && achados.length < nomes.length && achados.some((x) => x.trim() === nomes[1].trim()), JSON.stringify(achados));
-    await page.locator('#pedido-busca').fill('zzqqxx');
-    ok(`${nm}: busca sem resultado explica o que fazer`, (await page.getByTestId('lista-servicos').innerText()).includes(T('pedidoSemConta.semResultadoBusca')));
-    await foto(page, `site-${l}-${largura}-1bbusca-vazia`);
-    await page.locator('#pedido-busca').fill(pedaco);
+    // marcar da lista: verde com a contagem (plural do idioma); o aviso vermelho nao volta
+    if (!temVerMais) {
+      await avancar.click();
+      ok(`${nm}: Edasi vazio de novo avisa`, await page.getByTestId('falta-aviso-topo').isVisible());
+    }
     await page.getByTestId('lista-servicos').locator('input[type=checkbox]').first().check();
-    ok(`${nm}: marcar um servico ja tira o aviso`, (await page.getByTestId('passo-detalhe').getByTestId('falta-aviso').count()) === 0);
-    await page.locator('#pedido-busca').fill('');
+    const marcados = await page.getByTestId('lista-servicos').locator('input:checked').count();
+    [et_, tom] = await leEstado();
+    ok(`${nm}: marcou ${marcados} -> verde "${plural(T('pedidoSemConta.detalheStatusLista'), marcados, l)}"`, et_ === plural(T('pedidoSemConta.detalheStatusLista'), marcados, l) && tom === 'ok', `${et_} ${tom}`);
+    ok(`${nm}: marcar um servico ja tira o aviso`, (await page.getByTestId('passo-detalhe').getByTestId('falta-aviso').count()) === 0 && (await page.getByTestId('falta-aviso-topo').count()) === 0);
+    await foto(page, `site-${l}-${largura}-1bmarcou`);
     await page.locator('#pedido-descricao').fill(`Teste ${l} ${largura}`);
     await page.locator('input[type=file][multiple]').setInputFiles(FOTO); // galeria (camera e um campo a parte desde 10/11)
     await page.waitForTimeout(400);
@@ -209,7 +234,7 @@ async function site(l, largura) {
       ok(`${nm}: ... com o texto, os servicos e a foto`, (await page.locator('#pedido-descricao').inputValue()) === `Teste ${l} ${largura}`
         && (await page.getByTestId('lista-servicos').locator('input:checked').count()) === marcadosAntes
         && (await page.locator('.aspect-square img').count()) === 1, `marcados ${marcadosAntes}`);
-      ok(`${nm}: ... e os textos no idioma novo (${outro})`, (await page.innerText('body')).includes(TO('pedidoSemConta.detalheTexto')));
+      ok(`${nm}: ... e os textos no idioma novo (${outro})`, (await page.innerText('body')).includes(TO('pedidoSemConta.detalheTitulo')));
       await trocarIdioma(page, outro, l, largura);
       ok(`${nm}: voltar ao idioma mantem tudo`, await page.getByTestId('passo-detalhe').isVisible() && (await page.locator('#pedido-descricao').inputValue()) === `Teste ${l} ${largura}`);
     }
@@ -377,8 +402,19 @@ async function app(l) {
     ok(`${nm}: 1a pagina so com os tipos`, (await page.getByText(T('pedidoSemConta.next'), { exact: true }).count()) === 0);
     await foto(page, `app-${l}-0tipos`);
     await page.getByText(new RegExp(T(`constants.tiposServico.${tipo}`))).locator('visible=true').first().click();
-    await page.getByText(T('pedidoSemConta.detalheTexto'), { exact: true }).waitFor({ timeout: 5000 });
-    await checar(page, `${nm} detalhe`);
+    await page.getByText(T('pedidoSemConta.detalheTitulo'), { exact: true }).waitFor({ timeout: 5000 });
+    t = await checar(page, `${nm} detalhe`);
+    // passo 2 novo (rascunho 15/11): titulo/ajuda do passo 1 ja passaram; rotulo, "ou escolha abaixo", sem busca
+    ok(`${nm}: rotulo da caixa e "ou escolha abaixo"`, t.includes(T('pedidoSemConta.detalheRotuloTexto')) && t.includes(T('pedidoSemConta.detalheOuEscolha')));
+    const estadoApp = async () => page.getByTestId('status-passo').innerText().catch(() => '');
+    ok(`${nm}: linha de estado "${T('pedidoSemConta.detalheStatusVazio')}"`, (await estadoApp()) === T('pedidoSemConta.detalheStatusVazio'), await estadoApp());
+    // "Edasi" ativo (antes ficava palido): vazio avisa em vermelho (sob a caixa e acima do botao) e fica no passo
+    const edasiApp = page.getByRole('button', { name: T('pedidoSemConta.next'), exact: true }).locator('visible=true').last();
+    ok(`${nm}: Edasi ativo com o passo vazio`, await edasiApp.isEnabled() && (await edasiApp.getAttribute('aria-disabled')) !== 'true');
+    await edasiApp.click();
+    await page.waitForTimeout(400);
+    ok(`${nm}: Edasi vazio avisa (caixa e barra) e fica no passo`, (await page.getByTestId('falta-aviso').innerText().catch(() => '')) === T('pedidoSemConta.faltaDescricaoLista')
+      && (await page.getByTestId('falta-aviso-topo').isVisible()) && (await page.getByText(T('pedidoSemConta.detalheTitulo'), { exact: true }).isVisible()));
     const j = JSON.parse(fs.readFileSync(`${MOB}/${l}.json`, 'utf8'));
     const todos = Object.values(j.constants[NS]);
     const primeiro = todos[0];
@@ -390,16 +426,10 @@ async function app(l) {
       ok(`${nm}: "ver todos" mostra a lista inteira`, visiveisTodos === todos.length, `${visiveisTodos}/${todos.length}`);
       await clica(T('pedidoSemConta.verMenos'));
     }
-    const pedaco = String(primeiro).slice(0, 5).toUpperCase();
-    await campo(T('pedidoSemConta.buscarServico')).fill(pedaco);
-    await page.waitForTimeout(300);
-    const visiveis = (await Promise.all(todos.map(async (n) => (await page.getByText(n, { exact: true }).count()) > 0))).filter(Boolean).length;
-    ok(`${nm}: busca "${pedaco}" filtra a lista`, visiveis >= 1 && visiveis < todos.length, `${visiveis}/${todos.length}`);
-    await campo(T('pedidoSemConta.buscarServico')).fill('zzqqxx');
-    ok(`${nm}: busca sem resultado explica`, (await page.innerText('body')).includes(T('pedidoSemConta.semResultadoBusca')));
-    await campo(T('pedidoSemConta.buscarServico')).fill(pedaco);
     await clica(primeiro);
-    await campo(T('pedidoSemConta.buscarServico')).fill('');
+    await page.waitForTimeout(300);
+    ok(`${nm}: marcou 1 -> "${T('pedidoSemConta.detalheStatusListaUm')}" e o aviso some`, (await estadoApp()) === T('pedidoSemConta.detalheStatusListaUm')
+      && (await page.getByTestId('falta-aviso').count()) === 0 && (await page.getByTestId('falta-aviso-topo').count()) === 0, await estadoApp());
     await campo(T('novaSolicitacao.passoSintomas')).fill(`App ${l}`);
     await clica(T(`constants.urgencias.alta`));
     await foto(page, `app-${l}-1detalhe`);
@@ -423,7 +453,7 @@ async function app(l) {
     t = await checar(page, `${nm} carro`);
     await foto(page, `app-${l}-2carro`);
     await clica(T('pedidoSemConta.back'));
-    await page.getByText(T('pedidoSemConta.detalheTexto'), { exact: true }).waitFor({ timeout: 5000 });
+    await page.getByText(T('pedidoSemConta.detalheTitulo'), { exact: true }).waitFor({ timeout: 5000 });
     ok(`${nm}: voltar do carro abre o que precisa com o texto`, (await campo(T('novaSolicitacao.passoSintomas')).inputValue()) === `App ${l}`);
     await clica(T('pedidoSemConta.next'));
     await page.waitForTimeout(500);
