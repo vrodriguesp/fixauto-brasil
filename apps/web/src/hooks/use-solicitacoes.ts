@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import type { Solicitacao } from '@fixauto/shared';
 import { tipoCompativel, distanciaKm } from '@fixauto/shared';
-import { completarClientes } from '@/lib/resumo-clientes';
+import { completarClientesEContato } from '@/lib/resumo-clientes';
 
 export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) {
   const { user, oficina } = useAuth();
@@ -22,7 +22,7 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
         *,
         veiculo:veiculos(*),
         fotos:solicitacao_fotos(*),
-        cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo, telefone),
+        cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo),
         convites:pedido_convites(oficina_id, origem),
         orcamentos(
           *,
@@ -70,8 +70,9 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
     }
 
     let results = (data as Solicitacao[]) || [];
-    // oficina antes de ser escolhida: nome/codigo do cliente sem contato (migracao 074)
-    if (user.tipo !== 'cliente') results = await completarClientes(supabase, results as any[]);
+    // oficina: nome/codigo do cliente por resumo_clientes (074) e telefone/e-mail so nos
+    // pedidos em que ela foi escolhida (contato_clientes, 086)
+    if (user.tipo !== 'cliente') results = await completarClientesEContato(supabase, results as any[]);
 
     // For workshops, filter by distance/especialidades BUT always show accepted ones
     if (user.tipo === 'oficina' && oficina && filter?.nearby) {

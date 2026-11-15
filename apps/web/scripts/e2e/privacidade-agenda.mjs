@@ -164,13 +164,22 @@ try {
   ok('C: .ics anexo', !!ics1);
   ok('C: .ics com UID do agendamento, SEQUENCE 0, inicio certo e 2 lembretes',
     !!ics1 && ics1.includes(`UID:agenda-${ag.id}@bipfix.com`) && /SEQUENCE:0\r\n/.test(ics1) && ics1.includes(`DTSTART:${icsData(ag.data_inicio)}`) && /TRIGGER:-P1D/.test(ics1) && /TRIGGER:-PT1H/.test(ics1) && /METHOD:REQUEST/.test(ics1));
+  // dono 15/11: responder no calendario (METHOD:REQUEST mostra aceitar/recusar) nao muda nada
+  const icsPlano = (ics1 || '').replace(/\r\n /g, '');
+  ok('C: .ics: DESCRIPTION comeca dizendo que responder no calendario nao muda a reserva, com o link do pedido',
+    /DESCRIPTION:Replying in your calendar does not change the booking\. To change or cancel it\\, open BipFix: https?:\/\/[^\s\\]+\/r\/\d+/.test(icsPlano), (icsPlano.match(/DESCRIPTION:[^\r]*/) || [])[0]);
+  ok('C: e-mail com a mesma frase e o link', /data-calendario="1">Replying in your calendar does not change the booking\. To change or cancel it, open BipFix: <a href="https?:\/\/[^"]+\/r\/\d+"/.test(h1));
   ok('C: .ics no formato do padrao (CRLF, linhas <= 75 bytes)', !!ics1 && !/[^\r]\n/.test(ics1) && ics1.split('\r\n').every((l) => Buffer.byteLength(l, 'utf8') <= 75));
   ok('C: agenda marca o aviso (075)', ag.aviso_cliente_inicio && new Date(ag.aviso_cliente_inicio).getTime() === new Date(ag.data_inicio).getTime() && ag.aviso_cliente_seq === 0, JSON.stringify(ag));
   fs.writeFileSync(path.join(OUT, 'agendamento.ics'), ics1 || '');
 
   // ---------- A) depois do aceite ----------
-  const p1 = await lerPerfil(w1.c, cId);
-  ok('A: oficina ESCOLHIDA le telefone e e-mail do cliente', p1[0]?.telefone === TEL && p1[0]?.email === cEmail, JSON.stringify(p1));
+  // 086: contato por pedido (contato_clientes); a linha do perfil nao abre mais para oficina
+  const { data: p1 } = await w1.c.rpc('contato_clientes', { p_sols: [sol.id] });
+  ok('A: oficina ESCOLHIDA le telefone e e-mail do cliente neste pedido (contato_clientes)', p1?.[0]?.telefone === TEL && p1?.[0]?.email === cEmail, JSON.stringify(p1));
+  ok('A: nem a escolhida le a linha do perfil (086)', (await lerPerfil(w1.c, cId)).length === 0);
+  const { data: p1w2 } = await w2.c.rpc('contato_clientes', { p_sols: [sol.id] });
+  ok('A: contato_clientes nao devolve nada para a que perdeu', !(p1w2 || []).length, JSON.stringify(p1w2));
   ok('A: oficina que PERDEU continua sem o contato', (await lerPerfil(w2.c, cId)).length === 0);
   // auditoria H1: a oficina que perdeu tenta criar agenda no pedido pela API para ganhar o contato
   const { error: eFalsa } = await w2.c.from('agenda').insert({ oficina_id: of2.id, solicitacao_id: sol.id, titulo: 'x', tipo: 'plataforma', status: 'agendado', data_inicio: new Date(Date.now() + 86400e3).toISOString(), data_fim: new Date(Date.now() + 2 * 86400e3).toISOString() });

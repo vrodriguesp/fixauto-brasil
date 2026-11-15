@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import type { Agenda } from '@fixauto/shared';
+import { completarClientesEContato } from '@/lib/resumo-clientes';
 
 export function useAgenda() {
   const { oficina } = useAuth();
@@ -17,14 +18,19 @@ export function useAgenda() {
       .from('agenda')
       .select(`
         *,
-        solicitacao:solicitacoes(*, veiculo:veiculos(*), cliente:profiles!solicitacoes_cliente_id_fkey(*)),
+        solicitacao:solicitacoes(*, veiculo:veiculos(*), cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo, idioma)),
         funcionario:funcionarios(*, profile:profiles(nome, email)),
         etapas:manutencao_etapas(*, funcionario:funcionarios(*, profile:profiles(nome))),
         ocupacoes:posto_ocupacoes(*)
       `)
       .eq('oficina_id', oficina.id)
       .order('data_inicio', { ascending: true });
-    setEventos((data as Agenda[]) || []);
+    // cliente: a oficina nao le a linha dele em profiles (086) - nome por resumo_clientes e
+    // telefone/e-mail so dos pedidos em que ela foi escolhida (contato_clientes)
+    const evs = (data as any[]) || [];
+    const sols = evs.map((e) => e.solicitacao).filter(Boolean);
+    const completas = new Map((await completarClientesEContato(supabase, sols)).map((s: any) => [s.id, s]));
+    setEventos(evs.map((e) => (e.solicitacao ? { ...e, solicitacao: completas.get(e.solicitacao.id) || e.solicitacao } : e)) as Agenda[]);
     setLoading(false);
   }, [oficina]);
 

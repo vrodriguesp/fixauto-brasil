@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import { notifAvaliacaoRecebida } from '@/lib/notif-i18n';
 import type { Avaliacao } from '@fixauto/shared';
+import { completarClientes } from '@/lib/resumo-clientes';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
 
 export function useAvaliacoes(oficinaId?: string) {
@@ -22,10 +23,11 @@ export function useAvaliacoes(oficinaId?: string) {
     if (targetId) {
       const { data } = await supabase
         .from('avaliacoes')
-        .select('*, cliente:profiles!avaliacoes_cliente_id_fkey(*)')
+        .select('*, cliente:profiles!avaliacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo)')
         .eq('oficina_id', targetId)
         .order('created_at', { ascending: false });
-      setAvaliacoes((data as Avaliacao[]) || []);
+      // a oficina le o nome de quem avaliou por resumo_clientes (sem contato; 086)
+      setAvaliacoes(((await completarClientes(supabase, (data as any[]) || [])) as Avaliacao[]) || []);
     } else if (user.tipo === 'cliente') {
       // Client view: fetch avaliacoes by cliente_id
       const { data } = await supabase

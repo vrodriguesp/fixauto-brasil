@@ -6,6 +6,7 @@ import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { formatDate } from '@/lib/utils';
+import { completarClientes } from '@/lib/resumo-clientes';
 
 interface Garantia {
   solicitacaoId: string;
@@ -35,16 +36,18 @@ export default function OficinaGarantiasPage() {
     if (!oficina?.id) return;
     (async () => {
       const { data } = await supabase.from('orcamentos')
-        .select('solicitacao_id, garantia_dias, solicitacao:solicitacoes(id, numero, status, cliente:profiles!solicitacoes_cliente_id_fkey(nome), veiculo:veiculos!solicitacoes_veiculo_id_fkey(fipe_marca, fipe_modelo, placa))')
+        .select('solicitacao_id, garantia_dias, solicitacao:solicitacoes(id, numero, status, cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(nome), veiculo:veiculos!solicitacoes_veiculo_id_fkey(fipe_marca, fipe_modelo, placa))')
         .eq('oficina_id', oficina.id).eq('status', 'aceito').gt('garantia_dias', 0);
       const ids = (data || []).map((o: any) => o.solicitacao_id);
       const { data: ags } = ids.length
         ? await supabase.from('agenda').select('solicitacao_id, data_fim').eq('oficina_id', oficina.id).eq('status', 'concluido').in('solicitacao_id', ids)
         : { data: [] as any[] };
+      // nome do cliente por resumo_clientes: a oficina nao le a linha dele em profiles (086)
+      const comNome = new Map((await completarClientes(supabase, (data || []).map((o: any) => o.solicitacao).filter(Boolean))).map((s: any) => [s.id, s]));
       const agora = Date.now();
       const out: Garantia[] = [];
       for (const o of (data || []) as any[]) {
-        const s = o.solicitacao;
+        const s = o.solicitacao ? comNome.get(o.solicitacao.id) || o.solicitacao : null;
         const ent = (ags || []).find((a: any) => a.solicitacao_id === o.solicitacao_id && a.data_fim);
         if (!s || s.status !== 'concluida' || !ent) continue;
         const entregue = new Date(ent.data_fim);

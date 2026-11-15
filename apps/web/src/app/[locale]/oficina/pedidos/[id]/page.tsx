@@ -7,7 +7,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { completarClientes } from '@/lib/resumo-clientes';
+import { completarClientesEContato } from '@/lib/resumo-clientes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import NoShowWarning from '@/components/ui/NoShowWarning';
 import DamageAnalysis from '@/components/ui/DamageAnalysis';
@@ -38,13 +38,13 @@ export default function SolicitacaoDetalhePage() {
       supabase
         .from('solicitacoes')
         .select(
-          '*, veiculo:veiculos(*), fotos:solicitacao_fotos(*), cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo, telefone), convites:pedido_convites(oficina_id, origem), orcamentos(*, itens:orcamento_itens(*), oficina:oficinas(*, profile:profiles(*)), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))'
+          '*, veiculo:veiculos(*), fotos:solicitacao_fotos(*), cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo), convites:pedido_convites(oficina_id, origem), orcamentos(*, itens:orcamento_itens(*), oficina:oficinas(*, profile:profiles(*)), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))'
         )
         .eq('id', params.id)
         .single()
         .then(({ data }) => {
-          // nome do cliente antes de a oficina ser escolhida (migracao 074)
-          if (data) completarClientes(supabase, [data as any]).then(([d]) => setDirectSol(d));
+          // nome do cliente (074) e o contato so se o orcamento desta oficina foi aceito NESTE pedido (086)
+          if (data) completarClientesEContato(supabase, [data as any]).then(([d]) => setDirectSol(d));
           setBuscaFeita(true);
         });
     }
@@ -312,7 +312,8 @@ export default function SolicitacaoDetalhePage() {
             <p className="text-xs text-gray-500">
               {t('solicitadoEm', { data: formatDate(sol.created_at, locale) })}
             </p>
-            {/* telefone so chega para a oficina escolhida ou, no acidente, se o cliente pediu ligacao (migracao 074) */}
+            {/* telefone so para a oficina escolhida NESTE pedido (contato_clientes, 086) ou, no acidente, se o
+                cliente pediu ligacao (074), ou o numero que ele enviou a esta oficina (081) */}
             {telCliente && (
               <div className="mt-3 border-t border-gray-100 pt-3" data-testid="ligar-cliente">
                 {sol.emergencia_id && !(sol.orcamentos || []).some((o: any) => o.oficina_id === oficina?.id && o.status === 'aceito') && (
