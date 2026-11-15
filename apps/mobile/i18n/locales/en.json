@@ -208,7 +208,8 @@
     "marca_cedo": "Earliest",
     "prazoDias": "Ready in {n} days",
     "prazoDias_um": "Ready in 1 day",
-    "outros": "Other quotes ({n})"
+    "outros": "Other quotes ({n})",
+    "observacoes": "Notes"
   },
   "acompanhamento": {
     "titulo": "Repair tracking",
@@ -394,7 +395,8 @@
     "excluirContaErro": "Could not delete right now. Please try again in a few minutes.",
     "excluirContaDetalhes": "The history of completed jobs is kept anonymously (without your data), because it also belongs to the shop (warranty and accounting).",
     "idiomaAjustes": "Change in Settings",
-    "idiomaAjustesDica": "BipFix uses your iPhone language. To use a different one just for BipFix: Settings → BipFix → Language."
+    "idiomaAjustesDica": "BipFix uses your iPhone language. To use a different one just for BipFix: Settings → BipFix → Language.",
+    "telefoneSalvo": "Number saved."
   },
   "seguro": {
     "titulo": "Who will pay for the repair?",
@@ -772,11 +774,12 @@
     "numeroInvalido": "Check the number.",
     "erro": "That didn’t work. Please try again.",
     "seuNumero": "The repair shop sees your number: {tel}",
-    "alterar": "Change",
+    "alterar": "Change number",
     "compartilhar": "Send my phone number to the repair shop",
     "compartilharTexto": "Only {oficina} gets the number (it also appears in the chat), so they can call you. Other repair shops won’t see it.",
     "compartilharEnviar": "Send number",
     "cancelar": "Cancel",
-    "compartilhado": "The number was sent to the repair shop."
+    "compartilhado": "The number was sent to the repair shop.",
+    "contatoNoAceite": "If you choose this repair shop, only it will see your e-mail and phone number (if added)."
   }
 }

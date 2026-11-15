@@ -208,7 +208,8 @@
     "marca_cedo": "Kõige varem",
     "prazoDias": "Valmis {n} päevaga",
     "prazoDias_um": "Valmis 1 päevaga",
-    "outros": "Muud pakkumised ({n})"
+    "outros": "Muud pakkumised ({n})",
+    "observacoes": "Märkused"
   },
   "acompanhamento": {
     "titulo": "Remondi jälgimine",
@@ -394,7 +395,8 @@
     "excluirContaErro": "Praegu ei õnnestunud kustutada. Proovi mõne minuti pärast uuesti.",
     "excluirContaDetalhes": "Tehtud tööde ajalugu jääb alles anonüümselt (ilma sinu andmeteta), sest see kuulub ka töökojale (garantii ja raamatupidamine).",
     "idiomaAjustes": "Muuda seadetes",
-    "idiomaAjustesDica": "BipFix kasutab iPhone'i keelt. Teise keele valimiseks ainult BipFixile: Seaded → BipFix → Keel."
+    "idiomaAjustesDica": "BipFix kasutab iPhone'i keelt. Teise keele valimiseks ainult BipFixile: Seaded → BipFix → Keel.",
+    "telefoneSalvo": "Number salvestatud."
   },
   "seguro": {
     "titulo": "Kes maksab remondi eest?",
@@ -772,11 +774,12 @@
     "numeroInvalido": "Kontrolli numbrit.",
     "erro": "Ei õnnestunud. Proovi uuesti.",
     "seuNumero": "Töökoda näeb sinu numbrit: {tel}",
-    "alterar": "Muuda",
+    "alterar": "Muuda numbrit",
     "compartilhar": "Saada töökojale oma telefoninumber",
     "compartilharTexto": "Number läheb ainult töökojale {oficina} (ka vestlusesse), et nad saaksid sulle helistada. Teised töökojad seda ei näe.",
     "compartilharEnviar": "Saada number",
     "cancelar": "Tühista",
-    "compartilhado": "Number on töökojale saadetud."
+    "compartilhado": "Number on töökojale saadetud.",
+    "contatoNoAceite": "Selle töökoja valimisel näeb ainult tema sinu e-posti ja telefoninumbrit (kui see on lisatud)."
   }
 }

@@ -441,12 +441,13 @@
     "numeroInvalido": "Check the number.",
     "erro": "That didn’t work. Please try again.",
     "seuNumero": "The repair shop sees your number: {tel}",
-    "alterar": "Change",
+    "alterar": "Change number",
     "compartilhar": "Send my phone number to the repair shop",
     "compartilharTexto": "Only {oficina} gets the number (it also appears in the chat), so they can call you. Other repair shops won’t see it.",
     "compartilharEnviar": "Send number",
     "cancelar": "Cancel",
     "compartilhado": "The number was sent to the repair shop.",
-    "verConversa": "Open the chat"
+    "verConversa": "Open the chat",
+    "contatoNoAceite": "If you choose this repair shop, only it will see your e-mail and phone number (if added)."
   }
 }

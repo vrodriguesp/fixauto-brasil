@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, Pressable, ScrollView, ActivityIndicator, Keyboard } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
@@ -10,6 +11,10 @@ import { supabase } from '../../lib/supabase';
 import { API_BASE_URL } from '../../lib/api';
 import { IDIOMAS, escolherIdioma, idiomaPeloSistema, abrirAjustesDeIdioma } from '../../lib/idiomas';
 import { confirmar, avisar } from '../../lib/confirmar';
+import CampoTelefone from '../../components/CampoTelefone';
+
+// mesma regra do pedido e de "Enviar meu numero" (TelefoneOficina): pelo menos 8 digitos
+const TELEFONE_OK = (v: string) => v.replace(/\D/g, '').length >= 8;
 
 export default function PerfilScreen() {
   // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
@@ -22,6 +27,28 @@ export default function PerfilScreen() {
     await escolherIdioma(codigo);
     await supabase.from('profiles').update({ idioma: codigo }).eq('id', user.id);
     await refreshProfile();
+  };
+
+  // telefone do perfil (dono 15/11): o "Muuda numbrit" do pedido aceito abre esta tela, que nao
+  // tinha o campo. E o numero que a oficina escolhida ve e o do SMS (quando o pedido pediu SMS).
+  const [telefone, setTelefone] = useState(user?.telefone || '');
+  const [salvandoTel, setSalvandoTel] = useState(false);
+  const [erroTel, setErroTel] = useState('');
+  const [telSalvo, setTelSalvo] = useState(false);
+  useEffect(() => { setTelefone(user?.telefone || ''); }, [user?.telefone]);
+  const telMudou = telefone.trim() !== (user?.telefone || '').trim();
+  const salvarTelefone = async () => {
+    Keyboard.dismiss();
+    if (!user || salvandoTel) return;
+    const novo = telefone.trim();
+    // apagar o numero e permitido (campo vazio); digitado tem que ter 8 digitos
+    if (novo && !TELEFONE_OK(novo)) { setErroTel(t('telefoneOficina.numeroInvalido')); return; }
+    setSalvandoTel(true); setErroTel(''); setTelSalvo(false);
+    const { error } = await supabase.from('profiles').update({ telefone: novo || null }).eq('id', user.id);
+    setSalvandoTel(false);
+    if (error) { setErroTel(t('telefoneOficina.erro')); return; }
+    setTelSalvo(true);
+    refreshProfile().catch(() => {});
   };
 
   const handleSair = () => {
@@ -71,7 +98,7 @@ ${t('perfil.excluirContaConfirmar')}`, [
   };
 
   return (
-    <View className="flex-1 bg-gray-50 px-4" style={{ paddingTop: insets.top + 8 }}>
+    <ScrollView className="flex-1 bg-gray-50" contentContainerStyle={{ paddingTop: insets.top + 8, paddingHorizontal: 16, paddingBottom: 24 }} keyboardShouldPersistTaps="handled">
       <Text className="text-2xl font-bold text-gray-900 mb-6">{t('perfil.titulo')}</Text>
 
       <View className="bg-white rounded-xl p-4 mb-6 border border-gray-200">
@@ -82,6 +109,25 @@ ${t('perfil.excluirContaConfirmar')}`, [
             <Text className="mt-1 font-medium text-gray-800" selectable>{t('constants.codigoCliente', { n: (user as any).codigo })}</Text>
             <Text className="text-xs text-gray-500">{t('constants.codigoClienteDica')}</Text>
           </>
+        ) : null}
+      </View>
+
+      <View className="mb-6" testID="perfil-telefone">
+        <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.telefone')}</Text>
+        <CampoTelefone rotulo={t('pedidoSemConta.telefone')} value={telefone} onChange={(v) => { setTelefone(v); setErroTel(''); setTelSalvo(false); }} />
+        {erroTel ? <Text accessibilityRole="alert" className="text-sm text-red-700 mt-1">{erroTel}</Text> : null}
+        {telSalvo ? <Text accessibilityRole="alert" className="text-sm text-emerald-800 mt-1" testID="perfil-telefone-salvo">{t('perfil.telefoneSalvo')}</Text> : null}
+        {user?.tipo === 'cliente' ? (
+          <View className="flex-row items-start gap-1.5 mt-2">
+            <Ionicons name="lock-closed-outline" size={14} color="#15803d" style={{ marginTop: 2 }} />
+            <Text className="flex-1 text-xs text-gray-600">{t('pedidoSemConta.smsPrivacidade')}</Text>
+          </View>
+        ) : null}
+        {telMudou ? (
+          <Pressable onPress={salvarTelefone} disabled={salvandoTel} accessibilityRole="button" testID="perfil-telefone-salvar"
+            className="self-start bg-primary-600 rounded-lg px-5 py-3 items-center mt-3" style={{ opacity: salvandoTel ? 0.5 : 1 }}>
+            {salvandoTel ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold">{t('common.salvar')}</Text>}
+          </Pressable>
         ) : null}
       </View>
 
@@ -121,6 +167,6 @@ ${t('perfil.excluirContaConfirmar')}`, [
       <Text className="text-center text-xs text-gray-400 mt-2">
         BipFix {Constants.expoConfig?.version ?? ''}{!Updates.isEmbeddedLaunch && Updates.updateId ? ` · ${Updates.updateId.slice(0, 8)}` : ''}
       </Text>
-    </View>
+    </ScrollView>
   );
 }

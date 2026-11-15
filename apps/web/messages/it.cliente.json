@@ -441,12 +441,13 @@
     "numeroInvalido": "Controlla il numero.",
     "erro": "Non è riuscito. Riprova.",
     "seuNumero": "L’officina vede il tuo numero: {tel}",
-    "alterar": "Modifica",
+    "alterar": "Modifica numero",
     "compartilhar": "Invia il mio numero all’officina",
     "compartilharTexto": "Solo {oficina} riceve il numero (appare anche nella chat), così può chiamarti. Le altre officine non lo vedono.",
     "compartilharEnviar": "Invia numero",
     "cancelar": "Annulla",
     "compartilhado": "Il numero è stato inviato all’officina.",
-    "verConversa": "Apri la chat"
+    "verConversa": "Apri la chat",
+    "contatoNoAceite": "Se scegli questa officina, solo lei vedrà la tua e-mail e il tuo numero di telefono (se l’hai aggiunto)."
   }
 }

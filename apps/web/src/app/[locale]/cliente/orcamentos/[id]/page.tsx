@@ -59,6 +59,7 @@ const slotEscolhido = (orc: any) => orc.disponibilidade.find((d: any) => d.id ==
 export default function OrcamentoDetalhePage() {
   const t = useTranslations('clienteOrcamentoDetalhe');
   const tMud = useTranslations('agendaMudanca');
+  const tTel = useTranslations('telefoneOficina');
   const te = useTranslations('editarPedido');
   const tg = useTranslations('garantia');
   const tNd = useTranslations('novasDatas');
@@ -721,6 +722,8 @@ export default function OrcamentoDetalhePage() {
                   </div>
 
                   <p className="mt-3 text-xs text-gray-600">{tMud('vemNaJanela')}</p>
+                  {/* o que a oficina recebe ao ser escolhida (074/086): dito junto da acao, nao so na politica */}
+                  <p className="mt-2 text-xs text-gray-600" data-testid="contato-no-aceite">{tTel('contatoNoAceite')}</p>
                   {erroAceite && <p role="alert" className="mt-4 text-sm text-red-700 bg-red-50 rounded-lg p-3">{erroAceite}</p>}
                   <div className="flex gap-3 mt-4">
                     <button

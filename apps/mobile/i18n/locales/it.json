@@ -208,7 +208,8 @@
     "marca_cedo": "Prima data",
     "prazoDias": "Pronta in {n} giorni",
     "prazoDias_um": "Pronta in 1 giorno",
-    "outros": "Altri preventivi ({n})"
+    "outros": "Altri preventivi ({n})",
+    "observacoes": "Note"
   },
   "acompanhamento": {
     "titulo": "Stato riparazione",
@@ -394,7 +395,8 @@
     "excluirContaErro": "Non è stato possibile eliminare ora. Riprova tra qualche minuto.",
     "excluirContaDetalhes": "Lo storico dei servizi già svolti resta anonimo (senza i tuoi dati), perché appartiene anche all'officina (garanzia e contabilità).",
     "idiomaAjustes": "Cambia in Impostazioni",
-    "idiomaAjustesDica": "BipFix usa la lingua dell'iPhone. Per usarne un'altra solo per BipFix: Impostazioni → BipFix → Lingua."
+    "idiomaAjustesDica": "BipFix usa la lingua dell'iPhone. Per usarne un'altra solo per BipFix: Impostazioni → BipFix → Lingua.",
+    "telefoneSalvo": "Numero salvato."
   },
   "seguro": {
     "titulo": "Chi pagherà la riparazione?",
@@ -772,11 +774,12 @@
     "numeroInvalido": "Controlla il numero.",
     "erro": "Non è riuscito. Riprova.",
     "seuNumero": "L’officina vede il tuo numero: {tel}",
-    "alterar": "Modifica",
+    "alterar": "Modifica numero",
     "compartilhar": "Invia il mio numero all’officina",
     "compartilharTexto": "Solo {oficina} riceve il numero (appare anche nella chat), così può chiamarti. Le altre officine non lo vedono.",
     "compartilharEnviar": "Invia numero",
     "cancelar": "Annulla",
-    "compartilhado": "Il numero è stato inviato all’officina."
+    "compartilhado": "Il numero è stato inviato all’officina.",
+    "contatoNoAceite": "Se scegli questa officina, solo lei vedrà la tua e-mail e il tuo numero di telefono (se l’hai aggiunto)."
   }
 }

@@ -52,6 +52,23 @@ function ItensOrcamento({ itens, moeda, locale }: { itens: { id: string; descric
   );
 }
 
+// observacoes da oficina no orcamento (dono 15/11): o site mostrava traduzidas, o app nem mostrava.
+// Mesma limpeza do site (cleanDescricao = limparDescricao: tira [COMISSAO:...] etc.); vazio = nada.
+function ObservacoesOrcamento({ texto }: { texto: string | null | undefined }) {
+  const { t } = useTranslation();
+  const [original, setOriginal] = useState(false);
+  const limpo = limparDescricao(texto);
+  const tr = useTraducoes([limpo], original, !!limpo);
+  if (!limpo) return null;
+  return (
+    <View className="border-t border-gray-100 pt-2 mb-2" testID="orcamento-observacoes">
+      <Text className="text-xs font-semibold text-gray-700 mb-1">{t('orcamentos.observacoes')}</Text>
+      <Text className="text-sm text-gray-700">{tr.textos[0]}</Text>
+      <AvisoTraducao traduzido={tr.traduzido} original={original} alternar={() => setOriginal((o) => !o)} />
+    </View>
+  );
+}
+
 // pedido expirado (072): o cartao de situacao ja explica; aqui so o botao de
 // reabrir (volta com os mesmos orcamentos) - o aviso longo repetia o cartao
 function PedidoExpirado({ solicitacaoId, aoReabrir }: { solicitacaoId: string; aoReabrir: () => void }) {
@@ -407,6 +424,7 @@ export default function SolicitacaoDetailScreen() {
             <Text className="text-2xl font-bold text-gray-900">{formatCurrency(orc.valor_total, moeda, locale)}</Text>
             <Text className="text-xs text-gray-500 mb-2">{[(orc as any).prazo_dias ? tDias(t, 'orcamentos.prazoDias', (orc as any).prazo_dias, 'n') : null, t(`orcamentos.status${orc.status.charAt(0).toUpperCase()}${orc.status.slice(1)}`)].filter(Boolean).join(' · ')}</Text>
             {itens.length > 0 && <ItensOrcamento itens={itens} moeda={moeda} locale={locale} />}
+            <ObservacoesOrcamento texto={(orc as any).observacoes} />
             {(orc as any).garantia_dias != null && (
               <Text className="text-sm text-gray-700 mb-3">🛡️ {(orc as any).garantia_dias > 0 ? tDias(t, 'garantia.noOrcamento', (orc as any).garantia_dias) : t('garantia.sem')}</Text>
             )}
@@ -489,6 +507,8 @@ export default function SolicitacaoDetailScreen() {
                 </View>
                 {/* check-in v2: o horario e uma janela de chegada, nao uma hora marcada */}
                 {(orc.disponibilidade || []).length > 0 && <Text className="text-xs text-gray-600 mt-1 mb-1" testID="vem-na-janela-escolha">{t('agendaMudanca.vemNaJanela')}</Text>}
+                {/* o que a oficina recebe ao ser escolhida (074/086): dito junto do botao */}
+                <Text className="text-xs text-gray-600 mt-1 mb-1" testID="contato-no-aceite">{t('telefoneOficina.contatoNoAceite')}</Text>
                 <Pressable
                   onPress={() => handleAceitar(orc)}
                   disabled={processando === orc.id || !slotSelecionado[orc.id]}

@@ -208,7 +208,8 @@
     "marca_cedo": "Mais cedo",
     "prazoDias": "Pronto em {n} dias",
     "prazoDias_um": "Pronto em 1 dia",
-    "outros": "Outros orçamentos ({n})"
+    "outros": "Outros orçamentos ({n})",
+    "observacoes": "Observações"
   },
   "acompanhamento": {
     "titulo": "Acompanhamento",
@@ -394,7 +395,8 @@
     "excluirContaErro": "Não foi possível excluir agora. Tente de novo em alguns minutos.",
     "excluirContaDetalhes": "O histórico de serviços já feitos fica anônimo (sem os seus dados), porque também pertence à oficina (garantia e contabilidade).",
     "idiomaAjustes": "Mudar nos Ajustes",
-    "idiomaAjustesDica": "O BipFix usa o idioma do iPhone. Para usar outro só no BipFix: Ajustes → BipFix → Idioma."
+    "idiomaAjustesDica": "O BipFix usa o idioma do iPhone. Para usar outro só no BipFix: Ajustes → BipFix → Idioma.",
+    "telefoneSalvo": "Número salvo."
   },
   "seguro": {
     "titulo": "Quem vai pagar o conserto?",
@@ -772,11 +774,12 @@
     "numeroInvalido": "Confira o número.",
     "erro": "Não deu certo. Tente de novo.",
     "seuNumero": "A oficina vê seu número: {tel}",
-    "alterar": "Alterar",
+    "alterar": "Alterar número",
     "compartilhar": "Enviar meu telefone para a oficina",
     "compartilharTexto": "Só a {oficina} recebe o número (ele aparece também na conversa), para poder te ligar. As outras oficinas não o veem.",
     "compartilharEnviar": "Enviar número",
     "cancelar": "Cancelar",
-    "compartilhado": "O número foi enviado à oficina."
+    "compartilhado": "O número foi enviado à oficina.",
+    "contatoNoAceite": "Se você escolher esta oficina, só ela verá seu e-mail e seu telefone (se você o adicionou)."
   }
 }

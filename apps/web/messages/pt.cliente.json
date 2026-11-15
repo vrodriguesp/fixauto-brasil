@@ -441,12 +441,13 @@
     "numeroInvalido": "Confira o número.",
     "erro": "Não deu certo. Tente de novo.",
     "seuNumero": "A oficina vê seu número: {tel}",
-    "alterar": "Alterar",
+    "alterar": "Alterar número",
     "compartilhar": "Enviar meu telefone para a oficina",
     "compartilharTexto": "Só a {oficina} recebe o número (ele aparece também na conversa), para poder te ligar. As outras oficinas não o veem.",
     "compartilharEnviar": "Enviar número",
     "cancelar": "Cancelar",
     "compartilhado": "O número foi enviado à oficina.",
-    "verConversa": "Abrir a conversa"
+    "verConversa": "Abrir a conversa",
+    "contatoNoAceite": "Se você escolher esta oficina, só ela verá seu e-mail e seu telefone (se você o adicionou)."
   }
 }
