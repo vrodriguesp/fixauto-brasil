@@ -8,6 +8,7 @@ import { naLinguaDoApp } from '../lib/aviso-lingua';
 import { useAuth } from '../lib/auth-context';
 import { useAvisos, type Aviso } from '../lib/avisos';
 import { TextoTraduzido } from '../lib/traducao';
+import { semQuebra } from '../lib/turnos';
 
 // "ha 5 min", "ontem 14:30", "12/10 09:15"
 function quando(iso: string, idioma: string, t: (k: string, o?: any) => string) {
@@ -76,7 +77,7 @@ export default function NotificacoesScreen() {
                 <Text className={`flex-1 ${item.lida ? 'text-gray-800' : 'text-gray-900 font-semibold'}`} numberOfLines={2}>{item.titulo}</Text>
                 {!item.lida && <Text className="text-xs font-bold text-primary-700">{index === 0 ? t('notificacoes.maisRecente') : t('notificacoes.nova')}</Text>}
               </View>
-              {item.mensagem ? <TextoTraduzido texto={item.mensagem} ativo={item.tipo === 'nova_mensagem'} className="text-gray-600 text-sm mt-0.5" numberOfLines={3} /> : null}
+              {item.mensagem ? <TextoTraduzido texto={item.tipo === 'nova_mensagem' ? item.mensagem : semQuebra(item.mensagem)} ativo={item.tipo === 'nova_mensagem'} className="text-gray-600 text-sm mt-0.5" numberOfLines={3} /> : null}
               <Text className="text-gray-400 text-xs mt-1">{quando(item.created_at, i18n.language, t)}</Text>
             </View>
           </Pressable>

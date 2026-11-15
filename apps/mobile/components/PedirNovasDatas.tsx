@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { apiFetch } from '../lib/api';
 import { mensagemErro } from '../lib/erro';
-import { hojeLocal, faixasDoDia, turnoDaJanela, janelaDaSugestao, formatarJanela, LEGADO, type Turno, type ContextoOficina } from '../lib/turnos';
+import { hojeLocal, faixasDoDia, turnoDaJanela, janelaDaSugestao, formatarJanela, LEGADO, semQuebra, type Turno, type ContextoOficina } from '../lib/turnos';
 
 // "Tenho interesse, peca novas datas" (migracao 079, igual ao site components/cliente/PedirNovasDatas):
 // todas as datas do orcamento ja passaram. Ate 3 sugestoes (dia + manha/tarde) dos proximos 14 dias a partir
@@ -86,7 +86,7 @@ export default function PedirNovasDatas({ orcamentoId, pais, horario, ctx: ctxPr
     return (
       <View className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-2" testID="novas-datas-pendente">
         <Text className="text-sm font-medium text-blue-900">⏳ {t('novasDatas.pendente', { data: new Date(pedido.created_at).toLocaleString(loc, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) })}</Text>
-        {sugs.length > 0 && <Text className="text-sm text-blue-800 mt-1">{t('novasDatas.suasDatas', { datas: sugs.map((s) => `${diaTxt(s.data)} ${turnoTxt(s.turno, s.data)}`).join('; ') })}</Text>}
+        {sugs.length > 0 && <Text className="text-sm text-blue-800 mt-1">{t('novasDatas.suasDatas', { datas: sugs.map((s) => `${diaTxt(s.data)} ${semQuebra(turnoTxt(s.turno, s.data))}`).join('; ') })}</Text>}
       </View>
     );
   }

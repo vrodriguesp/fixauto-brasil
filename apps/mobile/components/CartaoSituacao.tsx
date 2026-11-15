@@ -2,8 +2,8 @@ import { View, Text, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { formatDate } from '@fixauto/shared';
 import { situacaoDoPedido, type Situacao } from '../lib/situacao';
+import { textoDaAgenda, semQuebra } from '../lib/turnos';
 
 // Cartao "o que esta acontecendo e o que fazer agora" (auditoria do site 10/10,
 // C1/C2). No Inicio mostra o pedido mais urgente com um botao; no pedido e o
@@ -16,7 +16,8 @@ const COR_ICONE: Record<Situacao['chave'], string> = {
 export function textoSituacao(t: (k: string, o?: any) => string, s: Situacao, locale: string) {
   const titulo = t(`situacao.titulo_${s.chave}`, { n: s.n });
   let agora = t(`situacao.agora_${s.chave}`);
-  if (s.chave === 'agendado') agora = s.dia ? t('situacao.agora_agendado', { dia: formatDate(s.dia, locale) }) : t('situacao.agora_agendadoSemDia');
+  // check-in v2: dia + janela de chegada, o MESMO texto do painel do pedido ("N, 19. nov · 13:30–15:00"; antes so "19.11.2026")
+  if (s.chave === 'agendado') agora = s.dia ? t('situacao.agora_agendado', { dia: semQuebra(textoDaAgenda(s.dia, s.ate, s.pais ?? null, locale === 'pt' ? 'pt-BR' : locale)) }) : t('situacao.agora_agendadoSemDia');
   if (s.chave === 'naOficina') agora = s.etapa ? t('situacao.agora_naOficina', { etapa: t(`constants.statusManutencao.${s.etapa}`, s.etapa) }) : t('situacao.agora_naOficinaSemEtapa');
   return { titulo, agora };
 }

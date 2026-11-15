@@ -13,6 +13,7 @@ import { TextoTraduzido } from '../../lib/traducao';
 import GarantiasAtivas from '../../components/GarantiasAtivas';
 import AvaliacaoPendente from '../../components/AvaliacaoPendente';
 import { situacaoDoPedido } from '../../lib/situacao';
+import { semQuebra } from '../../lib/turnos';
 
 export default function DashboardScreen() {
   // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
@@ -27,7 +28,7 @@ export default function DashboardScreen() {
     if (!user) return;
     const { data } = await supabase
       .from('solicitacoes')
-      .select('*, veiculo:veiculos(*), orcamentos(*), agenda(status, data_inicio, etapas:manutencao_etapas(status, created_at)), orcamento_revisoes(status, tipo)')
+      .select('*, veiculo:veiculos(*), orcamentos(*), agenda(status, data_inicio, checkin_ate, oficina_id, oficina:oficinas(pais), etapas:manutencao_etapas(status, created_at)), orcamento_revisoes(status, tipo)')
       .eq('cliente_id', user.id)
       // expirada (072) continua no Inicio: o motorista reabre com um toque
       .in('status', ['aberta', 'em_orcamento', 'aceita', 'em_andamento', 'expirada'])
@@ -88,7 +89,7 @@ export default function DashboardScreen() {
               <Ionicons name="notifications-outline" size={18} color="#92400e" />
               <View className="flex-1">
                 <Text className="text-amber-900 font-semibold" numberOfLines={1}>{a.titulo}</Text>
-                {a.mensagem ? <TextoTraduzido texto={a.mensagem} ativo={a.tipo === 'nova_mensagem'} className="text-amber-800 text-sm" numberOfLines={2} /> : null}
+                {a.mensagem ? <TextoTraduzido texto={a.tipo === 'nova_mensagem' ? a.mensagem : semQuebra(a.mensagem)} ativo={a.tipo === 'nova_mensagem'} className="text-amber-800 text-sm" numberOfLines={2} /> : null}
               </View>
             </Pressable>
           ))}

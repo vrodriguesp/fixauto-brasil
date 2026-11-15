@@ -9,6 +9,7 @@ import { naLinguaDoApp } from './aviso-lingua';
 import { useAuth } from './auth-context';
 import { destinoDoAviso } from './destino-aviso';
 import { TextoTraduzido } from './traducao';
+import { semQuebra } from './turnos';
 
 export interface Aviso {
   id: string;
@@ -141,7 +142,7 @@ export function AvisosProvider({ children }: { children: ReactNode }) {
               <Ionicons name="notifications" size={20} color="#fff" />
               <View style={{ flex: 1 }}>
                 <Text style={{ color: '#fff', fontWeight: '600' }} numberOfLines={1}>{banner.titulo}</Text>
-                {banner.mensagem ? <TextoTraduzido texto={banner.mensagem} ativo={banner.tipo === 'nova_mensagem'} style={{ color: '#e5e7eb', fontSize: 13 }} numberOfLines={2} /> : null}
+                {banner.mensagem ? <TextoTraduzido texto={banner.tipo === 'nova_mensagem' ? banner.mensagem : semQuebra(banner.mensagem)} ativo={banner.tipo === 'nova_mensagem'} style={{ color: '#e5e7eb', fontSize: 13 }} numberOfLines={2} /> : null}
               </View>
             </Pressable>
             <Pressable onPress={fechar} accessibilityRole="button" accessibilityLabel={i18n.t('common.fechar')} hitSlop={10} style={{ paddingHorizontal: 14, paddingVertical: 12 }}>

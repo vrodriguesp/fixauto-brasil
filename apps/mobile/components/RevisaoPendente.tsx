@@ -85,7 +85,7 @@ export default function RevisaoPendente({ solicitacaoId, recarregar, aoDecidir }
     return (
       <View className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4" testID="mudanca-combinada">
         <Text className="text-base font-semibold text-gray-900">📅 {t('agendaMudanca.combinadoTitulo', { oficina: combinada.oficina?.nome_fantasia || '' })}</Text>
-        <Text className="mt-1 text-sm text-gray-800">{textoDaAgenda(dataAtual, ateAtual, combinada.oficina?.pais ?? null, loc, ', ')}</Text>
+        <Text className="mt-1 text-sm text-gray-800">{semQuebra(textoDaAgenda(dataAtual, ateAtual, combinada.oficina?.pais ?? null, loc, ', '))}</Text>
         <Text className="mt-2 text-sm text-gray-700"><Text className="font-medium">{t('agendaMudanca.motivoOficina')}: </Text>{combinada.motivo}</Text>
         <Pressable disabled={enviando} onPress={contestar} accessibilityRole="button" className="mt-2 py-2 self-start" testID="nao-combinei">
           {enviando ? <ActivityIndicator color="#b91c1c" /> : <Text className="text-red-700 font-medium underline">{t('agendaMudanca.naoCombinei')}</Text>}

@@ -13,7 +13,7 @@ import { supabase } from '../../lib/supabase';
 import { apiFetch } from '../../lib/api';
 import { useAuth } from '../../lib/auth-context';
 import { mensagemErro, ErroApi } from '../../lib/erro';
-import { slotAindaVale, janelaDoSlot, formatarJanela, textoDaAgenda } from '../../lib/turnos';
+import { slotAindaVale, janelaDoSlot, formatarJanela, textoDaAgenda, semQuebra } from '../../lib/turnos';
 import { limparDescricao, ehAcidente } from '../../lib/texto';
 import EditarPedido from '../../components/EditarPedido';
 import RevisaoPendente from '../../components/RevisaoPendente';
@@ -430,7 +430,7 @@ export default function SolicitacaoDetailScreen() {
               if (!ag?.data_inicio) return null;
               return (
                 <View className="border-t border-emerald-200 pt-3 mb-3" testID="agendamento-atual">
-                  <Text className="text-sm text-emerald-900"><Text className="font-semibold">📅 {t('agendaMudanca.levarCarro')}: </Text>{textoDaAgenda(ag.data_inicio, ag.checkin_ate, (orc as any).oficina?.pais ?? null, locale === 'pt' ? 'pt-BR' : locale)}</Text>
+                  <Text className="text-sm text-emerald-900"><Text className="font-semibold">📅 {t('agendaMudanca.levarCarro')}: </Text>{semQuebra(textoDaAgenda(ag.data_inicio, ag.checkin_ate, (orc as any).oficina?.pais ?? null, locale === 'pt' ? 'pt-BR' : locale))}</Text>
                   <Text className="text-xs text-emerald-900 mt-2" testID="vem-na-janela">{t('agendaMudanca.vemNaJanela')}</Text>
                   <Text className="text-xs text-emerald-900 mt-2">{t('agendaMudanca.notaRemarcar')}</Text>
                   <Pressable onPress={() => router.push({ pathname: '/conversa/[id]', params: { id: solicitacao.id, oficina: orc.oficina_id } })} accessibilityRole="button"
@@ -482,7 +482,7 @@ export default function SolicitacaoDetailScreen() {
                     selecionado={slotSelecionado[orc.id] === slot.id}
                     onPress={() => setSlotSelecionado((prev) => ({ ...prev, [orc.id]: slot.id }))}
                     icone="calendar-outline"
-                    titulo={`${formatDate(slot.data_checkin, locale)} · ${formatarJanela(janelaDoSlot(slot))}`}
+                    titulo={`${formatDate(slot.data_checkin, locale)} · ${semQuebra(formatarJanela(janelaDoSlot(slot)))}`}
                     subtitulo={(slot as any).data_previsao_entrega ? t('orcamentos.entregaPrevista', { data: formatDate((slot as any).data_previsao_entrega, locale) }) : null}
                   />
                 ))}
