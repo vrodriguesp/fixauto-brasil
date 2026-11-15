@@ -40,8 +40,19 @@ async function prepararCanal() {
   });
 }
 
+// No iPhone, getExpoPushTokenAsync dispara o addPushTokenListener; se o listener chamasse
+// registrarPush de novo, virava um laco infinito (15/11: ~20 mil chamadas em 3 min).
+// Uma chamada por vez e o listener so reage a token do aparelho DIFERENTE do ultimo visto.
+let emAndamento: Promise<void> | null = null;
+let ultimoTokenAparelho: string | null = null;
+
 /** Pede permissao (se ainda nao respondeu) e grava o token desta conta. */
-export async function registrarPush(): Promise<void> {
+export function registrarPush(): Promise<void> {
+  if (!emAndamento) emAndamento = registrar().finally(() => { emAndamento = null; });
+  return emAndamento;
+}
+
+async function registrar(): Promise<void> {
   // emulador/Expo Go nao recebem push de verdade
   if (!Device.isDevice) return;
   try {
@@ -83,8 +94,16 @@ export function usePush(userId: string | null | undefined) {
   useEffect(() => {
     if (!userId) return;
     registrarPush();
-    // o sistema trocou o token do aparelho: grava o novo
-    const subToken = Notifications.addPushTokenListener(() => { registrarPush(); });
+    // o sistema trocou o token do aparelho: grava o novo (o mesmo token de novo nao conta)
+    const subToken = Notifications.addPushTokenListener((t) => {
+      const novo = typeof t?.data === 'string' ? t.data : JSON.stringify(t?.data ?? '');
+      if (novo === ultimoTokenAparelho) return;
+      const primeiro = ultimoTokenAparelho === null;
+      ultimoTokenAparelho = novo;
+      // o 1o aviso vem do proprio registrarPush acima (mesmo token): nao registra de novo
+      if (primeiro) return;
+      registrarPush();
+    });
     // toque no aviso com o app aberto ou em segundo plano
     const subToque = Notifications.addNotificationResponseReceivedListener((resp) => {
       tratada.current = resp.notification.request.identifier;
