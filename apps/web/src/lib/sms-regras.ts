@@ -2,6 +2,8 @@
 // Regras: so pedido aberto e com orcamento; automatico so com o interruptor do
 // admin ligado, uma vez por orcamento e so para quem NAO tem o app (push);
 // envio manual do admin ignora interruptor/app mas nunca pedido fechado.
+// Pedido em que o cliente NAO marcou "quero SMS" (086): nenhum SMS, automatico ou manual,
+// mesmo com telefone no perfil.
 
 /** tem o app = abriu o app (token de push visto) nos ultimos N dias */
 export const SMS_APP_DIAS = 60;
@@ -15,7 +17,10 @@ export function decidirSms(p: {
   temApp: boolean; jaEnviado: boolean; temOrcamento: boolean;
   /** orcamento criado antes do inicio do SMS (plataforma_config.sms_desde): so manual */
   orcamentoAnterior?: boolean;
+  /** caixa "quero SMS" deste pedido (solicitacoes.sms_avisos, 086): desmarcada = nenhum SMS, nem manual */
+  smsPedido?: boolean;
 }): DecisaoSms {
+  if (p.smsPedido === false) return { enviar: false, motivo: 'sem_sms_no_pedido' };
   if (!p.telefone || !p.telefone.replace(/\D/g, '')) return { enviar: false, motivo: 'sem_telefone' };
   if (!p.status || !ABERTOS.includes(p.status)) return { enviar: false, motivo: 'pedido_fechado' };
   if (!p.temOrcamento) return { enviar: false, motivo: 'sem_orcamento' };

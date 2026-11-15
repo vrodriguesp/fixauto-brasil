@@ -256,6 +256,32 @@ try {
     ok(`A7: conta existente pelo ${via}: pedido na conta e telefone ${via === 'link' ? 'NAO gravado' : 'gravado'}`, r.status === 200 && (via === 'link' ? tel === null : tel === '+372 5888 7777'), `${r.status} ${tel}`);
   }
 
+  // A7b (dono 15/11, 086) conta existente COM telefone: o numero digitado com "quero SMS" substitui
+  // o do perfil pelo codigo (antes era descartado sem aviso); pelo link o perfil fica como estava.
+  // E a caixa vale por pedido: sms_avisos = querSms (desmarcada = nenhum SMS deste pedido).
+  for (const via of ['link', 'codigo']) {
+    for (const querSms of [true, false]) {
+      const e = emailDe(`a7b${via}${querSms ? 's' : 'n'}`);
+      const uid = await conta(e, senha, { tipo: 'cliente', nome: 'Olemas Tel', idioma: 'et', telefone: '+372 5111 0000' });
+      t0 = Date.now();
+      const p = await enviarPedido(DADOS({ email: e, querSms, telefone: querSms ? '+372 5222 3333' : '+372 5999 9999' }));
+      const m = await ultimoEmail(e, t0);
+      const r = via === 'link'
+        ? await post('/api/pedido-sem-conta/retomar', { ...idT(m.links.find((u) => !u.searchParams.get('acao'))), acao: 'confirmar' })
+        : await post('/api/pedido-sem-conta/confirmar', { id: p.d.pendenteId, codigo: m.codigo });
+      if (r.d.solicitacaoId) sols.add(r.d.solicitacaoId);
+      const tel = (await admin.from('profiles').select('telefone').eq('id', uid).single()).data?.telefone;
+      const sms = r.d.solicitacaoId ? (await admin.from('solicitacoes').select('sms_avisos').eq('id', r.d.solicitacaoId).single()).data?.sms_avisos : undefined;
+      const telEsperado = via === 'codigo' && querSms ? '+372 5222 3333' : '+372 5111 0000';
+      ok(`A7b: conta com telefone, ${via}, SMS ${querSms ? 'marcado' : 'desmarcado'}: perfil ${telEsperado}, sms_avisos=${querSms}`, r.status === 200 && tel === telEsperado && sms === querSms, `${r.status} ${tel} ${sms}`);
+    }
+  }
+  // pedido de antes da 086 (sem a coluna preenchida pelo site) continua com SMS: o padrao do banco e true
+  {
+    const { data: col } = await admin.from('solicitacoes').select('sms_avisos').limit(1);
+    ok('A7b: coluna sms_avisos existe (migracao 086)', Array.isArray(col));
+  }
+
   // A8 corrida: link e codigo ao mesmo tempo -> um pedido so
   {
     const e = emailDe('a8'); t0 = Date.now();
@@ -502,9 +528,11 @@ try {
         ok('C aceite: telefone gravado no perfil', tel === '+372 5444 3322', tel);
         const w1 = await sessao(W1_EMAIL, W1_SENHA);
         const w2 = await sessao(w2Email, senha);
-        const v1 = (await w1.from('profiles').select('telefone').eq('id', cId).maybeSingle()).data?.telefone;
-        const v2 = (await w2.from('profiles').select('telefone').eq('id', cId).maybeSingle()).data?.telefone;
-        ok('C aceite: a oficina aceita le o numero; a recusada nao (RLS 074)', v1 === '+372 5444 3322' && !v2, `${v1} / ${v2}`);
+        // 086: o contato e por pedido (contato_clientes); a linha do perfil nao abre para oficina nenhuma
+        const v1 = ((await w1.rpc('contato_clientes', { p_sols: [sol.id] })).data || [])[0]?.telefone;
+        const v2 = ((await w2.rpc('contato_clientes', { p_sols: [sol.id] })).data || [])[0]?.telefone;
+        const linha1 = (await w1.from('profiles').select('telefone').eq('id', cId).maybeSingle()).data;
+        ok('C aceite: a oficina aceita le o numero NESTE pedido; a recusada nao (086)', v1 === '+372 5444 3322' && !v2 && !linha1, `${v1} / ${v2} / ${JSON.stringify(linha1)}`);
       } else {
         await page.getByTestId('telefone-oficina-ve').waitFor({ timeout: 15000 });
         const t = await design(page, `C aceite ${largura}`);

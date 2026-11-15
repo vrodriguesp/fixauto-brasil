@@ -50,6 +50,10 @@ export async function POST(req: NextRequest) {
       if (eu?.tipo !== 'cliente' || eu.ativo === false) return NextResponse.json({ error: 'Sem acesso', codigo: 'SEM_ACESSO' }, { status: 403 });
       const { data: pendente } = await supabaseAdmin.rpc('tem_avaliacao_pendente', { p_cliente: userId });
       if (pendente === true) return NextResponse.json({ error: 'Avaliação pendente', codigo: 'AVALIACAO_PENDENTE' }, { status: 409 });
+      // ja logado e marcou "quero SMS" com um numero: vai para o perfil dele (o SMS do pedido
+      // usa o telefone do perfil; antes o numero digitado era descartado - dono 15/11)
+      const telLogado = d.querSms === true ? texto(d.telefone, 'telefone', 30) : null;
+      if (telLogado && telLogado.replace(/\D/g, '').length >= 8) await supabaseAdmin.from('profiles').update({ telefone: telLogado }).eq('id', userId);
       const caminhos = await guardarFotos(randomUUID(), fotos);
       const r = await criarPedido(userId, pedido, caminhos);
       await contarEtapa(funil, 'enviado_logado');

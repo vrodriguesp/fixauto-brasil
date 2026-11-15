@@ -44,6 +44,8 @@ export interface DadosPedido {
   longitude: number;
   pais: string | null;
   veiculo: { tipo: string; marca: string; modelo: string; ano: string; codigo: string | null; placa: string | null };
+  /** caixa "quero SMS" (086): desmarcada = nenhum SMS deste pedido; app antigo sem o campo = true */
+  smsAvisos?: boolean;
 }
 
 /** Valida o corpo do pedido (o mesmo formulario do site e do app). */
@@ -66,6 +68,7 @@ export function validarPedido(d: Record<string, unknown>): DadosPedido {
       codigo: texto(v.codigo, 'veiculo.codigo', 30),
       placa: placaCarro(v.placa, 'veiculo.placa'),
     },
+    smsAvisos: d.querSms !== false,
   };
 }
 
@@ -95,6 +98,8 @@ export async function criarPedido(clienteId: string, d: DadosPedido, caminhosFot
   const { data: sol, error } = await supabaseAdmin.from('solicitacoes').insert({
     cliente_id: clienteId, veiculo_id: veiculoId, tipo: d.tipo, descricao: d.descricao, urgencia: d.urgencia,
     latitude: d.latitude, longitude: d.longitude, endereco: d.endereco, pais: d.pais,
+    // pendente gravado antes da 086 nao tem o campo: SMS como antes
+    sms_avisos: d.smsAvisos !== false,
   }).select('id, numero').single();
   if (error || !sol) throw new Error(error?.message || 'solicitacao nao criada');
   for (const temporario of caminhosFotos) {
@@ -322,8 +327,11 @@ export async function ativarEPublicar(p: Record<string, any>, via: 'codigo' | 'l
       if (eConf) throw new Error(eConf.message);
     }
     // telefone novo so pelo codigo (quem digitou esta com o aparelho): pelo link, quem
-    // digitou o e-mail de outra pessoa plantaria o proprio numero no perfil dela (Fable 13/11)
-    if (p.telefone && via === 'codigo') await supabaseAdmin.from('profiles').update({ telefone: p.telefone }).eq('id', p.user_id).is('telefone', null);
+    // digitou o e-mail de outra pessoa plantaria o proprio numero no perfil dela (Fable 13/11).
+    // Pelo codigo o numero digitado com "quero SMS" SUBSTITUI o do perfil (dono 15/11: antes era
+    // descartado sem aviso quando o perfil ja tinha um; o SMS do pedido vai para o numero que a
+    // pessoa acabou de digitar).
+    if (p.telefone && via === 'codigo') await supabaseAdmin.from('profiles').update({ telefone: p.telefone }).eq('id', p.user_id);
   }
   const r = await criarPedido(p.user_id, p.dados as DadosPedido, p.fotos || []);
   await contarEtapa(`pedido_${p.origem}`, 'confirmado');

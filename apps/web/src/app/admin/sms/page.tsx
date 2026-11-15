@@ -20,6 +20,7 @@ const MOTIVO: Record<string, string> = {
   nao_configurado: 'chaves da Twilio não configuradas no servidor',
   ja_enviado: 'já enviado para este orçamento',
   orcamento_anterior: 'orçamento anterior ao início do SMS',
+  sem_sms_no_pedido: 'cliente não quis SMS neste pedido',
 };
 const STATUS: Record<Envio['status'], string> = {
   enviando: 'bg-amber-100 text-amber-800', enviado: 'bg-green-100 text-green-800', recusado: 'bg-red-100 text-red-800', pulado: 'bg-gray-100 text-gray-700',

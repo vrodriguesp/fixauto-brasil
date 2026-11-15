@@ -29,6 +29,11 @@ confere('auto: telefone so com espacos', motivo({ telefone: '  ' }), 'sem_telefo
 confere('auto: sem orcamento', motivo({ temOrcamento: false }), 'sem_orcamento');
 confere('auto: orcamento anterior ao SMS', motivo({ orcamentoAnterior: true } as any), 'orcamento_anterior');
 confere('manual: orcamento anterior ao SMS envia', motivo({ tipo: 'manual', orcamentoAnterior: true } as any), 'envia');
+// 086: caixa "quero SMS" do pedido
+confere('auto: pedido sem "quero SMS"', motivo({ smsPedido: false } as any), 'sem_sms_no_pedido');
+confere('manual: pedido sem "quero SMS"', motivo({ tipo: 'manual', smsPedido: false } as any), 'sem_sms_no_pedido');
+confere('auto: pedido com "quero SMS"', motivo({ smsPedido: true } as any), 'envia');
+confere('auto: pedido antigo (sem o campo)', motivo({ smsPedido: undefined } as any), 'envia');
 // cancelado vence o interruptor e o app (pedido fechado nunca recebe)
 confere('auto: cancelado + desligado', motivo({ status: 'cancelada', smsAtivo: false }), 'pedido_fechado');
 

@@ -134,6 +134,18 @@ async function main() {
     confere('nenhum SMS para fora da Estonia (so o +372 valido saiu)', enviados.length, nE + 1);
     await db.from('profiles').update({ telefone: '5123 4567' }).eq('id', alvo.cliente_id); await limparRegistro();
 
+    // 086: pedido em que o cliente NAO marcou "quero SMS" -> nenhum SMS (auto nem manual), mesmo com
+    // telefone no perfil; o pedido antigo (coluna com o padrao true) continua como antes
+    await db.from('solicitacoes').update({ sms_avisos: false }).eq('id', alvo.id); await limparRegistro();
+    const nS = enviados.length;
+    r = await auto(); confere('pedido sem "quero SMS" -> auto pulado', r, { status: 'pulado', motivo: 'sem_sms_no_pedido' });
+    r = await manual(); confere('pedido sem "quero SMS" -> manual pulado', r, { status: 'pulado', motivo: 'sem_sms_no_pedido' });
+    confere('pedido sem "quero SMS": nenhum SMS saiu', enviados.length, nS);
+    const { data: lS } = await db.from('sms_envios').select('status, motivo').eq('solicitacao_id', alvo.id).gte('created_at', inicio);
+    confere('pedido sem "quero SMS": registro diz o motivo', (lS || []).every((x: any) => x.status === 'pulado' && x.motivo === 'sem_sms_no_pedido') && (lS || []).length === 2, true);
+    await db.from('solicitacoes').update({ sms_avisos: true }).eq('id', alvo.id); await limparRegistro();
+    r = await auto(); confere('pedido com "quero SMS" (padrao) -> envia', r.status, 'enviado'); await limparRegistro();
+
     // interruptor desligado
     await db.from('plataforma_config').update({ sms_ativo: false }).eq('id', 1);
     r = await auto(); confere('auto com SMS desligado -> pulado', r, { status: 'pulado', motivo: 'sms_desligado' });
@@ -153,7 +165,7 @@ async function main() {
     await db.from('solicitacoes').update({ status: 'cancelada' }).eq('id', alvo.id);
     r = await auto(); confere('pedido cancelado -> pulado', r, { status: 'pulado', motivo: 'pedido_fechado' });
     r = await manual(); confere('manual em pedido cancelado -> pulado', r, { status: 'pulado', motivo: 'pedido_fechado' });
-    await db.from('solicitacoes').update({ status: alvo.status }).eq('id', alvo.id);
+    await db.from('solicitacoes').update({ status: alvo.status, sms_avisos: true }).eq('id', alvo.id);
 
     // orcamento recusado nao conta como "orcamento novo"
     const { count: validos } = await db.from('orcamentos').select('id', { count: 'exact', head: true }).eq('solicitacao_id', alvo.id).in('status', ['enviado', 'visualizado']);

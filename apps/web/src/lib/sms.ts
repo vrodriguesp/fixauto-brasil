@@ -32,7 +32,7 @@ export async function avisarOrcamentoPorSms(p: {
   if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) return { status: 'pulado', motivo: 'nao_configurado' };
   try {
     const { data: sol } = await supabaseAdmin.from('solicitacoes')
-      .select('id, numero, status, pais, cliente_id, cliente:profiles!solicitacoes_cliente_id_fkey(telefone, idioma)')
+      .select('id, numero, status, pais, cliente_id, sms_avisos, cliente:profiles!solicitacoes_cliente_id_fkey(telefone, idioma)')
       .eq('id', p.solicitacaoId).maybeSingle();
     if (!sol) return { status: 'pulado', motivo: 'pedido_nao_encontrado' };
     const cliente = (sol as any).cliente as { telefone: string | null; idioma: string | null } | null;
@@ -55,6 +55,8 @@ export async function avisarOrcamentoPorSms(p: {
       temApp: (app.count ?? 0) > 0, jaEnviado: (ja.count ?? 0) > 0, temOrcamento: (orc.count ?? 0) > 0,
       // automatico sem data confiavel (sem config ou orcamento) nao envia
       orcamentoAnterior: !cfg.desde || !criado || new Date(criado) < new Date(cfg.desde),
+      // caixa "quero SMS" do pedido (086); pedido antigo = true (como antes)
+      smsPedido: (sol as any).sms_avisos !== false,
     });
     const base = {
       solicitacao_id: sol.id, orcamento_id: p.orcamentoId ?? null, profile_id: sol.cliente_id, tipo: p.tipo,
