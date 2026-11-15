@@ -23,8 +23,8 @@ export const GUIAS_OFICINA: GuiaOficina[] = [
 
 // Video mais recente por idioma (guia do perfil e do orcamento). Trocar aqui quando sair o video novo.
 export const VIDEO_GUIA_OFICINA: Partial<Record<IdiomaGuia, string>> = {
-  et: 'https://youtu.be/xERYpCB-yhI',
-  ru: 'https://youtu.be/zmCLEkNA_e8',
+  et: 'https://youtu.be/WpW58JVM8ic',
+  ru: 'https://youtu.be/e0OpFjdtNsc',
 };
 
 // Nome de cada idioma na propria lingua (padrao dos seletores de idioma)

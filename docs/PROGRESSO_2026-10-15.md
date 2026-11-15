@@ -1161,3 +1161,9 @@ Tudo local (Supabase Docker bipfix-teste, next start :3100, app web :8090, emula
 - Testes: tsc site e app ok; checar-traducoes site e app ok; next build ok; app web :8090 reexportado. e2e (resultados/pneu1511b_*.log, um por vez): site-pedido-sem-conta 142/0, ui-melhorias-1411 131/0, app-pedido-sem-conta 79/0, checkin-v2 122/0.
 - Risco restante: iOS < 15.4 no site (Safari nao tem COLRv1 -> fica como antes, quadrado vazio; aparelhos parados no iOS 12 ou sem atualizar); navegador muito velho sem `tech()`; no app, o ramo da imagem (Android < 13 / iOS < 15.4) nao foi visto num aparelho de verdade (a web usa o emoji). Visto de passagem (antigo, nao mexido): no site RU a 360 px "Техобслуживание" encosta/vaza no cartao do lado.
 - Ambiente: containers do bipfix-teste religados com `docker start` e parados no fim; :3100 e :8090 parados.
+
+### 15/11 — Video novo do guia no site + palavra longa no cartao de servico (nada publicado no site ainda)
+- Dono aprovou no chat as 5 decisoes (nome ET/RU da pagina, aviso a todas as oficinas, cartao adia o convite 7 dias, mecanicos fora, YouTube). Videos v2 publicados como "nao listado": RU https://youtu.be/e0OpFjdtNsc, ET https://youtu.be/WpW58JVM8ic; descricao dos antigos com "versao atualizada".
+- `lib/guias-oficina.ts` VIDEO_GUIA_OFICINA -> links novos (o redirect fixo /guias/video-oficina-et|ru passa a levar a eles); e2e oficina-melhorias atualizado.
+- Cartoes de servico (pedido sem conta e cliente/nova-solicitacao): `min-w-0` + `hyphens-auto [overflow-wrap:anywhere]` - RU "Техобслуживание" invadia o cartao do lado a 360 px (preexistente); agora hifeniza ("Техобслу-живание"), nenhum rotulo passa da borda (conferido no Chromium 360 px).
+- Testes: tsc web ok; next build ok; oficina-melhorias 71/0, site-pedido-sem-conta 142/0 (resultados/pneufin_*.log).

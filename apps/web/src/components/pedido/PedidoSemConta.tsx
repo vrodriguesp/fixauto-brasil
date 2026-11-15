@@ -443,9 +443,10 @@ export default function PedidoSemConta() {
               {TIPOS_SERVICO.map((s) => (
                 <button key={s.value} type="button" aria-pressed={tipo === s.value}
                   onClick={() => { if (s.value !== tipo) { setServicos([]); setBusca(''); setListaAberta(false); } contar('servico'); setTipo(s.value); setEtapa('detalhe'); }}
-                  className={`p-4 rounded-lg border-2 text-left transition-all ${tipo === s.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                  className={`min-w-0 p-4 rounded-lg border-2 text-left transition-all ${tipo === s.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
                   <span className="text-2xl">{s.icon}</span>
-                  <p className="font-medium text-gray-900 mt-2">{tc(`tiposServico.${s.value}`)}</p>
+                  {/* palavra longa (RU "Техобслуживание") nao invade o cartao do lado a 360 px */}
+                  <p className="font-medium text-gray-900 mt-2 hyphens-auto [overflow-wrap:anywhere]">{tc(`tiposServico.${s.value}`)}</p>
                 </button>
               ))}
             </div>

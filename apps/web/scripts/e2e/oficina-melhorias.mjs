@@ -155,7 +155,7 @@ try {
     const r404 = await fetch(`${SITE}/guias/perfil-oficina-en.pdf`);
     ok('L idioma sem arquivo nao e oferecido (EN = 404 e sem botao)', r404.status === 404 && !links.some((l) => l.id.endsWith('-en')));
     const vids = await p.locator('[data-testid^="video-guia-"]').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
-    ok('L video: ET e RU com os links atuais (constante unica)', vids.join(' ') === 'https://youtu.be/xERYpCB-yhI https://youtu.be/zmCLEkNA_e8', vids.join(' '));
+    ok('L video: ET e RU com os links atuais (constante unica)', vids.join(' ') === 'https://youtu.be/WpW58JVM8ic https://youtu.be/e0OpFjdtNsc', vids.join(' '));
     ok('L guias: botoes >= 44 px e nada cortado a 360 px', (await alvosPequenos(p, '[data-testid=guias-oficina] a')).length === 0 && (await cortados(p, '[data-testid=guias-oficina]')).length === 0,
       JSON.stringify([await alvosPequenos(p, '[data-testid=guias-oficina] a'), await cortados(p, '[data-testid=guias-oficina]')]));
     await p.getByTestId('guias-oficina').scrollIntoViewIfNeeded();

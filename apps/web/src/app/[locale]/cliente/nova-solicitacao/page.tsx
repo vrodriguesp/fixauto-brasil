@@ -438,14 +438,15 @@ export default function NovaSolicitacaoPage() {
                   key={svc.value}
                   type="button"
                   onClick={() => { setTipo(svc.value); setServicosSelecionados([]); }}
-                  className={`p-4 rounded-lg border-2 text-left transition-all ${
+                  className={`min-w-0 p-4 rounded-lg border-2 text-left transition-all ${
                     tipo === svc.value
                       ? 'border-primary-500 bg-primary-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <span className="text-2xl">{svc.icon}</span>
-                  <p className="font-medium text-gray-900 mt-2">{tc(`tiposServico.${svc.value}`)}</p>
+                  {/* palavra longa (RU "Техобслуживание") nao invade o cartao do lado a 360 px */}
+                  <p className="font-medium text-gray-900 mt-2 hyphens-auto [overflow-wrap:anywhere]">{tc(`tiposServico.${svc.value}`)}</p>
                   {!svc.needsPhoto && (
                     <p className="text-xs text-gray-500 mt-1">{t('selectServices')}</p>
                   )}
