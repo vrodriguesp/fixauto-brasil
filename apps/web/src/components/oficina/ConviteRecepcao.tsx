@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
@@ -16,13 +16,12 @@ const SETE_DIAS = 7 * 24 * 3600e3;
 export default function ConviteRecepcao() {
   const t = useTranslations('conviteRecepcao');
   const { oficina, funcionario, refreshProfile } = useAuth();
-  const [adiado, setAdiado] = useState(true);
+  // lido ja no 1o desenho (so existe no navegador: NovidadesOficina o mostra depois de carregar),
+  // senao o cartao aparecia um quadro depois e empurrava a lista
+  const [adiado] = useState(() => { try { return Number(localStorage.getItem(CHAVE) || 0) > Date.now(); } catch { return false; } });
   const [some, setSome] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState(false);
-  useEffect(() => {
-    try { setAdiado(Number(localStorage.getItem(CHAVE) || 0) > Date.now()); } catch { setAdiado(false); }
-  }, []);
   const o = oficina as any;
   const podeVer = !!oficina && (!funcionario || funcionario.cargo === 'admin');
   if (!podeVer || adiado || some || o?.recepcao_inicio || o?.recepcao_confirmada_em) return null;

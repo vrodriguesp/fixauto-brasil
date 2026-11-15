@@ -9,10 +9,12 @@ import { supabase } from '@/lib/supabase';
 // "Seu perfil esta X% completo": o que falta para o perfil publico convencer
 // (o cliente compara logo, descricao, fotos, horario). Some aos 100%.
 // compacto: uma linha so (caixa de Pedidos - o foco e a lista, auditoria do painel 10/10, C5)
-export default function PerfilCompleto({ compacto = false }: { compacto?: boolean }) {
+// aoDefinir: avisa a pagina quando ja sabe se aparece (Pedidos espera para nao empurrar a lista)
+export default function PerfilCompleto({ compacto = false, aoDefinir }: { compacto?: boolean; aoDefinir?: () => void }) {
   const t = useTranslations('oficinaDashboard');
   const { user, oficina } = useAuth();
   const [fotos, setFotos] = useState<number | null>(null);
+  useEffect(() => { if (fotos !== null) aoDefinir?.(); }, [fotos]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!oficina?.id) return;

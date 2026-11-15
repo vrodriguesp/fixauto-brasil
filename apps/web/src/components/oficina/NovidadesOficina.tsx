@@ -17,7 +17,8 @@ import ConviteRecepcao, { CHAVE_CONVITE_RECEPCAO } from '@/components/oficina/Co
 export const CHAVE_NOVIDADES = 'oficina-2026-11';
 const SETE_DIAS = 7 * 24 * 3600e3;
 
-export default function NovidadesOficina() {
+// aoDefinir: avisa a pagina quando ja sabe se aparece (Pedidos espera para nao empurrar a lista)
+export default function NovidadesOficina({ aoDefinir }: { aoDefinir?: () => void } = {}) {
   const t = useTranslations('novidadesOficina');
   const tc = useTranslations('conviteRecepcao');
   const { user, oficina, funcionario, refreshProfile } = useAuth();
@@ -40,6 +41,7 @@ export default function NovidadesOficina() {
     })().catch(() => { if (vivo) setEstado('nao'); });
     return () => { vivo = false; };
   }, [user?.id, podeVer]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (estado !== 'carregando') aoDefinir?.(); }, [estado]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!podeVer || estado === 'carregando') return null;
   if (estado === 'nao') return <ConviteRecepcao />;

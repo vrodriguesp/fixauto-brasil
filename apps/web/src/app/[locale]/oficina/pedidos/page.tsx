@@ -58,6 +58,13 @@ export default function PedidosOficinaPage() {
   const [agora, setAgora] = useState(() => Date.now());
   const [aba, setAbaState] = useState<Aba>('responder');
   const [carregou, setCarregou] = useState(false);
+  // Cartoes do topo (perfil incompleto, Novidades) chegam depois da lista: antes empurravam a pagina
+  // inteira para baixo (CLS 0,4 no Clarity, 15/11). Ate 3 s esperando; depois mostra de qualquer jeito.
+  const [topoPronto, setTopoPronto] = useState({ perfil: false, novidades: false });
+  const [topoLimite, setTopoLimite] = useState(false);
+  // conta a partir da oficina conhecida: no celular lento o login demora e o limite estourava antes (Fable 15/11)
+  useEffect(() => { if (!oficina?.id) return; const i = setTimeout(() => setTopoLimite(true), 3000); return () => clearTimeout(i); }, [oficina?.id]);
+  const topoEsperando = !topoLimite && !(topoPronto.perfil && topoPronto.novidades);
   const [ordens, setOrdens] = useState<Record<Aba, Ordem>>({ responder: 'prioridade', respondidos: 'situacao', encerrados: 'resposta' });
   const [filtros, setFiltros] = useState<Record<Aba, string>>({ responder: 'todos', respondidos: 'todos', encerrados: 'todos' });
   // a ordem escolhida fica guardada no aparelho
@@ -196,9 +203,11 @@ export default function PedidosOficinaPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 pb-8">
       <TutorialBanner href="/oficina/aprender" storageKey="bipfix_tutorial_banner_oficina" />
-      <PerfilCompleto compacto />
+      <PerfilCompleto compacto aoDefinir={() => setTopoPronto((x) => ({ ...x, perfil: true }))} />
       {/* Novidades (084) + convite da recepcao num cartao so: nunca dois banners */}
-      <NovidadesOficina />
+      <NovidadesOficina aoDefinir={() => setTopoPronto((x) => ({ ...x, novidades: true }))} />
+      {/* o resto espera os cartoes de cima decidirem se aparecem (invisivel, sem pular para baixo) */}
+      <div style={topoEsperando ? { visibility: 'hidden' } : undefined}>
       {(oficina as { ativa?: boolean } | null)?.ativa === false && (
         <p role="status" className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{t('cadastroEmAnalise')}</p>
       )}
@@ -327,6 +336,7 @@ export default function PedidosOficinaPage() {
           })}
         </ul>
       )}
+      </div>
     </div>
   );
 }

@@ -78,7 +78,7 @@ export default function OficinaMelhoriasPage() {
     setCarregando(false);
   }, [oficina?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => { if (podeUsar) carregar(); }, [podeUsar, carregar]);
+  useEffect(() => { if (podeUsar) carregar().catch(() => setCarregando(false)); }, [podeUsar, carregar]);
 
   const quando = (iso: string) => new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
   const mudar = (parcial: Partial<Pesquisa>) => { setP((x) => ({ ...x, ...parcial })); setStatusPesquisa(null); };
@@ -120,7 +120,8 @@ export default function OficinaMelhoriasPage() {
     setStatusSugestao('enviada');
   };
 
-  if (loading) return <div className="max-w-3xl mx-auto px-4 py-20 text-center text-gray-400">{t('carregando')}</div>;
+  // espera tambem a pesquisa: o formulario crescia depois e empurrava "Sugestoes" (CLS, Clarity 15/11)
+  if (loading || (podeUsar && carregando)) return <div className="max-w-3xl mx-auto px-4 py-20 text-center text-gray-400">{t('carregando')}</div>;
   if (!podeUsar) return <div className="max-w-3xl mx-auto px-4 py-20 text-center text-gray-600">{t('soGestor')}</div>;
 
 

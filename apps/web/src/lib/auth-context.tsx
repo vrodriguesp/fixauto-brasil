@@ -51,49 +51,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .eq('id', userId)
       .single();
 
-    if (profile) {
-      setUser(profile as Profile);
+    if (!profile) return;
 
-      if (profile.tipo === 'oficina') {
-        // Check if this profile owns an oficina
-        const { data: ofi } = await supabase
-          .from('oficinas')
-          .select('*')
+    // Busca tudo antes de mudar o estado: perfil, oficina e loja chegam juntos. Antes o perfil
+    // vinha sozinho e a oficina uma ida ao banco depois - a pagina pintava "logado sem oficina" e
+    // depois empurrava o conteudo (CLS ~0,4 em todo o painel da oficina, Clarity 15/11).
+    let ofi: Oficina | null = null;
+    let func: Funcionario | null = null;
+    let lj: LojaPecas | null = null;
+    if (profile.tipo === 'oficina') {
+      // Check if this profile owns an oficina
+      const { data } = await supabase
+        .from('oficinas')
+        .select('*')
+        .eq('profile_id', userId)
+        .single();
+      ofi = data as Oficina | null;
+
+      // Also check if they're a funcionario (admin of their own oficina doesn't need this)
+      if (!ofi) {
+        const { data: f } = await supabase
+          .from('funcionarios')
+          .select('*, oficina:oficinas(*)')
           .eq('profile_id', userId)
+          .eq('ativo', true)
           .single();
-        setOficina(ofi as Oficina | null);
-
-        // Also check if they're a funcionario (admin of their own oficina doesn't need this)
-        if (!ofi) {
-          const { data: func } = await supabase
-            .from('funcionarios')
-            .select('*, oficina:oficinas(*)')
-            .eq('profile_id', userId)
-            .eq('ativo', true)
-            .single();
-          if (func) {
-            setFuncionario(func as Funcionario);
-            setOficina(func.oficina as Oficina);
-          }
-        } else {
-          setFuncionario(null);
+        if (f) {
+          func = f as Funcionario;
+          ofi = f.oficina as Oficina;
         }
-      } else {
-        setOficina(null);
-        setFuncionario(null);
-      }
-
-      if (profile.tipo === 'loja_pecas') {
-        const { data: lj } = await supabase
-          .from('lojas_pecas')
-          .select('*')
-          .eq('profile_id', userId)
-          .single();
-        setLoja(lj as LojaPecas | null);
-      } else {
-        setLoja(null);
       }
     }
+    if (profile.tipo === 'loja_pecas') {
+      const { data } = await supabase
+        .from('lojas_pecas')
+        .select('*')
+        .eq('profile_id', userId)
+        .single();
+      lj = data as LojaPecas | null;
+    }
+    setUser(profile as Profile);
+    setOficina(ofi);
+    setFuncionario(func);
+    setLoja(lj);
   }, []);
 
   // renova o login antes de cada chamada as rotas /api (evita "sessao expirada" no celular)
@@ -106,10 +106,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Check current session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // loading so termina com o perfil (e a oficina) carregados: as paginas esperam um passo so,
+    // sem desenhar a tela pela metade. Limite de 8 s para nunca ficar presa em "carregando".
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
         setAuthUser(session.user);
-        fetchProfile(session.user.id);
+        await Promise.race([
+          fetchProfile(session.user.id).catch(() => {}),
+          new Promise((r) => setTimeout(r, 8000)),
+        ]);
       }
       setLoading(false);
     });
