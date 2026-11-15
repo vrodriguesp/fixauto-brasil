@@ -12,7 +12,7 @@ export const TIPOS_SERVICO = [
   { value: 'revisao', label: 'Revisões', icon: '🔧', needsPhoto: false },
   { value: 'mecanica', label: 'Mecânica', icon: '⚙️', needsPhoto: false },
   { value: 'eletrica', label: 'Elétrico', icon: '⚡', needsPhoto: false },
-  { value: 'pneu', label: 'Pneu', icon: '🔴', needsPhoto: false },
+  { value: 'pneu', label: 'Pneu', icon: '🛞', needsPhoto: false },
   { value: 'outro', label: 'Outro', icon: '📋', needsPhoto: true },
 ] as const;
 

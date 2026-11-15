@@ -11,7 +11,9 @@ import VisitTracker from '@/components/VisitTracker';
 // ([locale]/*) QUANTO /admin (que fica de fora do i18n, so em portugues).
 // O <html lang> e dinamico via header setado pelo middleware, ja que
 // /admin nao tem o parametro de rota [locale] disponivel.
-const inter = Inter({ subsets: ['latin'] });
+// Inter como variavel (--font-inter): a pilha do body fica em globals.css
+// (Inter + o emoji do pneu 🛞 para aparelho antigo, 15/11).
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 // Cor da barra do navegador no celular (site so em tema claro, por decisao)
 export const viewport: Viewport = { themeColor: '#2563eb', colorScheme: 'light' };
@@ -53,7 +55,7 @@ export default async function RootLayout({
 
   return (
     <html lang={lang}>
-      <body className={inter.className}>
+      <body className={inter.variable}>
         <AuthProvider>
           <ErrorReporter />
           <VisitTracker />

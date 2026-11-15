@@ -17,7 +17,7 @@ Arquivos-fonte principais cobertos:
 
 ## 0. Conceitos e dados-base (para entender tudo o resto)
 
-- **Tipos de serviço** (`TIPOS_SERVICO`): `colisao` 💥, `funilaria` 🎨, `revisao` 🔧, `mecanica` ⚙️, `eletrica` ⚡, `pneu` 🔴, `outro` 📋. Cada tipo tem a flag `needsPhoto`: `colisao`, `funilaria` e `outro` pedem fotos do dano; `revisao`, `mecanica`, `eletrica`, `pneu` pedem uma lista de checkboxes de serviços específicos (ex.: "Troca de óleo e filtro", "Bateria - não liga" etc.) em vez de fotos.
+- **Tipos de serviço** (`TIPOS_SERVICO`): `colisao` 💥, `funilaria` 🎨, `revisao` 🔧, `mecanica` ⚙️, `eletrica` ⚡, `pneu` 🛞, `outro` 📋. Cada tipo tem a flag `needsPhoto`: `colisao`, `funilaria` e `outro` pedem fotos do dano; `revisao`, `mecanica`, `eletrica`, `pneu` pedem uma lista de checkboxes de serviços específicos (ex.: "Troca de óleo e filtro", "Bateria - não liga" etc.) em vez de fotos.
 - **Status da solicitação** (`StatusSolicitacao`): `aberta` → `em_orcamento` → `aceita` → `em_andamento` → `concluida`, com desvios possíveis para `cancelada` ou `no_show`.
 - **Status do orçamento** (`StatusOrcamento`): `enviado`, `visualizado` (não usado ativamente no código lido), `aceito`, `recusado`, `expirado` (não há job que expire automaticamente — é só um valor possível).
 - **Urgência**: `baixa`, `media`, `alta` (cores verde/amarelo/vermelho).

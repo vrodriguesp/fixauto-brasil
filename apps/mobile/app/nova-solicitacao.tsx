@@ -1,5 +1,6 @@
 import { type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import RolagemTeclado from '../components/RolagemTeclado';
+import IconeServico from '../components/IconeServico';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image, Linking, Keyboard } from 'react-native';
 import { confirmar, avisar } from '../lib/confirmar';
@@ -213,7 +214,7 @@ export default function NovaSolicitacaoScreen() {
             onPress={() => setTipo(s.value)}
             className={`px-4 py-2 rounded-full border ${tipo === s.value ? 'bg-primary-600 border-primary-600' : 'border-gray-300'}`}
           >
-            <Text className={tipo === s.value ? 'text-white' : 'text-gray-700'}>{s.icon} {t(`constants.tiposServico.${s.value}`)}</Text>
+            <Text className={tipo === s.value ? 'text-white' : 'text-gray-700'}><IconeServico tipo={s.value} icon={s.icon} tamanho={14} /> {t(`constants.tiposServico.${s.value}`)}</Text>
           </Pressable>
         ))}
       </View>

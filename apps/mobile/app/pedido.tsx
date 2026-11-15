@@ -26,6 +26,7 @@ import { obterPosicao, permissaoLocal } from '../lib/posicao';
 import { arquivoDaFoto } from '../lib/anexo';
 import { placaValida, anoValido } from '../lib/validar-carro';
 import CampoTelefone from '../components/CampoTelefone';
+import IconeServico from '../components/IconeServico';
 
 // Pedido de orcamento SEM cadastro e SEM senha - o mesmo fluxo do site
 // (apps/web/src/components/pedido/PedidoSemConta.tsx; regras em
@@ -343,7 +344,7 @@ export default function PedidoScreen() {
               <Pressable key={s.value} accessibilityRole="button" accessibilityState={{ selected: tipo === s.value }}
                 onPress={() => { if (s.value !== tipo) { setServicos([]); setBusca(''); setListaAberta(false); } setTipo(s.value); setEtapa('detalhe'); }}
                 className={`w-[48.5%] p-4 mb-3 rounded-lg border-2 ${tipo === s.value ? 'border-primary-600 bg-primary-50' : 'border-gray-200'}`}>
-                <Text className="text-2xl">{s.icon}</Text>
+                <Text className="text-2xl"><IconeServico tipo={s.value} icon={s.icon} tamanho={24} /></Text>
                 <Text className="font-medium text-gray-900 mt-2">{t(`constants.tiposServico.${s.value}`)}</Text>
               </Pressable>
             ))}
@@ -360,7 +361,7 @@ export default function PedidoScreen() {
       {/* 2) o que precisa: escreve com as proprias palavras OU procura na lista do tipo */}
       {etapa === 'detalhe' && (
         <View>
-          <Text className="text-lg font-semibold text-gray-900 mb-1">{tipoConfig?.icon} {t(`constants.tiposServico.${tipo}`)}</Text>
+          <Text className="text-lg font-semibold text-gray-900 mb-1">{tipoConfig && <IconeServico tipo={tipoConfig.value} icon={tipoConfig.icon} tamanho={18} />} {t(`constants.tiposServico.${tipo}`)}</Text>
           <Text className="text-sm text-gray-500 mb-4">{lista.length > 0 ? t('pedidoSemConta.detalheTexto') : t('pedidoSemConta.placeholderDescribeIssue')}</Text>
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.describeProblem')}</Text>
           <TextInput accessibilityLabel={t('novaSolicitacao.passoSintomas')} value={descricao} onChangeText={setDescricao} multiline numberOfLines={4} maxLength={1800}

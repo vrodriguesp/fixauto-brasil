@@ -2,9 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Emoji do pneu (🛞, Emoji 14 - servico 'pneu' em TIPOS_SERVICO, dono 15/11).
+   Windows 10, Android <= 11 e iOS < 15.4 nao tem esse desenho na fonte de emoji
+   e mostravam um quadrado vazio. Ordem: a fonte de emoji do PROPRIO aparelho
+   (local(), so para o U+1F6DE) e, se ela nao tiver o desenho, a fonte servida
+   pelo site: 2 KB, so o pneu (recorte do Noto Color Emoji, licenca OFL -
+   googlefonts/noto-emoji), sem pedido ao Google, sem preload; o navegador so
+   baixa quando a pagina tem o 🛞 e nenhuma fonte do aparelho o desenha.
+   tech(color-COLRv1): navegador sem COLRv1 (Safari) ignora e fica como antes. */
+@font-face { font-family: "BipFix Pneu Apple"; src: local("Apple Color Emoji"), local("AppleColorEmoji"); unicode-range: U+1F6DE; }
+@font-face { font-family: "BipFix Pneu Segoe"; src: local("Segoe UI Emoji"), local("SegoeUIEmoji"); unicode-range: U+1F6DE; }
+@font-face { font-family: "BipFix Pneu Noto"; src: local("Noto Color Emoji"), local("NotoColorEmoji"); unicode-range: U+1F6DE; }
+@font-face { font-family: "BipFix Pneu Web"; src: url("./fonts/noto-emoji-pneu.woff2") format("woff2") tech(color-COLRv1); unicode-range: U+1F6DE; font-display: swap; }
+
 @layer base {
   body {
     @apply bg-gray-50 text-gray-900 antialiased;
+    /* Inter (next/font, layout.tsx) e as familias do pneu 🛞 abaixo - cada uma
+       cobre SO o U+1F6DE, entao qualquer outro caractere (✓ ✕ ⚠ ▾ ...) cai no
+       mesmo fallback do sistema de antes (15/11: listar "Segoe UI Emoji" etc.
+       pelo nome trocava 14 simbolos de fonte no Windows). */
+    font-family: var(--font-inter), "BipFix Pneu Apple", "BipFix Pneu Segoe", "BipFix Pneu Noto", "BipFix Pneu Web";
   }
 }
 
