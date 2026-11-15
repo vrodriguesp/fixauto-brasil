@@ -8,6 +8,7 @@ import { currencyForCountry } from '@/lib/currency';
 import { STATUS_SOLICITACAO, STATUS_ORCAMENTO } from '@fixauto/shared';
 import MidiaPrivada from '@/components/midia/MidiaPrivada';
 import { formatarJanela, janelaDaAgenda } from '@/lib/turnos';
+import TriagemPedido, { rotuloTipo } from '@/components/admin/TriagemPedido';
 
 const STATUS_BADGE: Record<string, string> = {
   aberta: 'bg-blue-500/20 text-blue-400',
@@ -52,6 +53,10 @@ const ACAO_LABEL: Record<string, string> = {
   cancelar_agendamento: 'Agendamento cancelado',
   adicionar_etapa: 'Etapa adicionada',
   remover_etapa: 'Etapa removida',
+  // triagem do pedido (085)
+  mudar_tipo: 'Tipo do pedido alterado',
+  avisar_tipo_novo: 'Oficinas avisadas após mudar o tipo',
+  convidar_oficinas: 'Pedido enviado a oficinas escolhidas',
 };
 
 // <input type="datetime-local"> trabalha no horario local, sem fuso
@@ -65,7 +70,7 @@ function resumo(v: any): string {
   if (!v || typeof v !== 'object') return '—';
   return Object.entries(v)
     .filter(([k]) => !['id', 'agenda_id', 'funcionario_id', 'created_at'].includes(k))
-    .map(([k, val]) => `${k}: ${typeof val === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(val) ? formatDateTime(val) : String(val ?? '—')}`)
+    .map(([k, val]) => Array.isArray(val) ? `${k}: ${val.length}` : `${k}: ${typeof val === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(val) ? formatDateTime(val) : String(val ?? '—')}`)
     .join(' · ');
 }
 
@@ -92,8 +97,9 @@ export default function AdminSolicitacaoDetalhePage() {
   const [agendaEdit, setAgendaEdit] = useState<Record<string, { status: string; inicio: string; fim: string }>>({});
   const [novaEtapa, setNovaEtapa] = useState<Record<string, { status: string; observacao: string }>>({});
 
-  const fetchData = async () => {
-    setLoading(true);
+  // recarregando = depois de uma acao da triagem: sem a tela "Carregando..." (o bloco nao some com a mensagem)
+  const fetchData = async (recarregando = false) => {
+    if (!recarregando) setLoading(true);
     const res = await fetch(`/api/admin/solicitacoes/${id}`);
     const json = res.ok ? await res.json() : null;
     setData(json);
@@ -187,7 +193,9 @@ export default function AdminSolicitacaoDetalhePage() {
   if (loading) return <div className="text-slate-400">Carregando...</div>;
   if (!data) return <div className="text-slate-400">Solicitação não encontrada.</div>;
 
-  const { solicitacao, fotos, orcamentos, mensagens, avaliacao, analiseDano, emergencia, agenda, etapas, notasInternas, dispensas = [], totalVistos = 0 } = data;
+  const { solicitacao, fotos, orcamentos, mensagens, avaliacao, analiseDano, emergencia, agenda, etapas, notasInternas, dispensas = [], totalVistos = 0, convites = [] } = data;
+  const convidadasAdmin = convites.filter((c: any) => c.origem === 'admin');
+  const acessoMantido = convites.filter((c: any) => c.origem === 'tipo_alterado');
 
   return (
     <div className="max-w-5xl">
@@ -200,6 +208,8 @@ export default function AdminSolicitacaoDetalhePage() {
               {STATUS_SOLICITACAO[solicitacao.status as keyof typeof STATUS_SOLICITACAO]?.label}
             </span>
             {emergencia && <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-400">⚡ Acidente</span>}
+            <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-slate-700 text-slate-200" data-testid="tipo-atual">{rotuloTipo(solicitacao.tipo)}</span>
+            {solicitacao.numero && <span className="text-slate-400 text-xs">Pedido {solicitacao.numero}</span>}
             <span className="text-slate-500 text-xs">Criada em {formatDateTime(solicitacao.created_at)}</span>
           </div>
         </div>
@@ -228,6 +238,7 @@ export default function AdminSolicitacaoDetalhePage() {
               <button onClick={handleCobrar} disabled={cobrando} className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                 {cobrando ? 'Notificando...' : 'Cobrar oficinas próximas'}
               </button>
+              <p className="text-[11px] text-slate-500 mt-1 max-w-[260px] ml-auto">Cobra oficinas num raio de 40 km que ainda não orçaram, inclusive as que nunca receberam o pedido, e as convidadas pela BipFix.</p>
               {cobrancaResultado && <p className="text-xs text-slate-400 mt-2 max-w-[220px]">{cobrancaResultado}</p>}
             </div>
           )}
@@ -260,6 +271,8 @@ export default function AdminSolicitacaoDetalhePage() {
           </div>
         )}
       </div>
+
+      <TriagemPedido solicitacao={solicitacao} historico={historico} aoMudar={() => fetchData(true)} />
 
       <div className="grid sm:grid-cols-2 gap-4 mb-8">
         <div className="bg-slate-800 border border-slate-700 rounded-xl p-4">
@@ -380,6 +393,26 @@ export default function AdminSolicitacaoDetalhePage() {
                 </div>
                 {d.comentario && <p className="text-slate-300 text-sm mt-2 break-words">“{d.comentario}”</p>}
                 <p className="text-slate-500 text-xs mt-2">{formatDateTime(d.created_at)}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* enviado pela BipFix a oficinas escolhidas (085) */}
+      <div className="mb-8" data-testid="admin-convites">
+        <p className="text-slate-400 text-xs uppercase tracking-wide mb-3">
+          Convidadas pela BipFix ({convidadasAdmin.length}){acessoMantido.length > 0 && ` · ${acessoMantido.length} com acesso mantido ao mudar o tipo`}
+        </p>
+        {convidadasAdmin.length === 0 ? (
+          <p className="text-slate-500 text-sm">Nenhuma oficina convidada para este pedido.</p>
+        ) : (
+          <div className="space-y-2">
+            {convidadasAdmin.map((c: any) => (
+              <div key={c.oficina_id} className="bg-slate-800 border border-slate-700 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+                <p className="text-white text-sm font-medium">{c.oficina?.nome_fantasia || '—'}{c.oficina?.cidade && <span className="text-slate-400 font-normal"> · {c.oficina.cidade}</span>}</p>
+                <p className="text-slate-500 text-xs">{formatDateTime(c.created_at)}{c.admin?.nome ? ` · ${c.admin.nome}` : ''}</p>
+                {c.motivo && <p className="w-full text-slate-300 text-xs">Motivo: {c.motivo}</p>}
               </div>
             ))}
           </div>
