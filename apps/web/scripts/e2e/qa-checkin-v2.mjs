@@ -96,8 +96,10 @@ const entrarApp = async (pa, u, l = 'et') => {
 };
 const ir = async (p, url, espera = 2200) => { await p.goto(url.startsWith('http') ? url : `${SITE}${url}`, { waitUntil: 'networkidle' }).catch(() => {}); await sleep(espera); };
 const visivel = (p, id) => p.getByTestId(id).first().isVisible().catch(() => false);
-const texto = (p, id) => p.getByTestId(id).first().innerText().catch(() => '');
-const corpo = (p) => p.locator('body').innerText().catch(() => '');
+// app: a janela tem word joiners (U+2060, semQuebra - QA D13) que o innerText devolve; o texto visivel e o mesmo
+const semWJ = (s) => String(s).replace(/\u2060/g, '');
+const texto = (p, id) => p.getByTestId(id).first().innerText().then(semWJ).catch(() => '');
+const corpo = (p) => p.locator('body').innerText().then(semWJ).catch(() => '');
 const esperarTeste = async (p, id, ms = 15000) => { try { await p.getByTestId(id).first().waitFor({ timeout: ms }); return true; } catch { return false; } };
 
 // ---------- auditoria visual (roda no navegador) ----------
@@ -180,18 +182,61 @@ const AUDIT = (o) => {
     const s = getComputedStyle(el);
     const r = el.getBoundingClientRect();
     if (el.scrollWidth > el.clientWidth + 1 && /(hidden|clip)/.test(s.overflowX) && el.clientWidth > 0) add('texto-cortado', el, `largura ${el.clientWidth}px, conteudo ${el.scrollWidth}px${s.textOverflow === 'ellipsis' ? ' (reticencias)' : ''}`);
-    else if (el.scrollHeight > el.clientHeight + 2 && /(hidden|clip)/.test(s.overflowY) && el.clientHeight > 0 && !/(auto|scroll)/.test(s.overflowY)) add('texto-cortado', el, `altura ${el.clientHeight}px, conteudo ${el.scrollHeight}px`);
+    else if (el.scrollHeight > el.clientHeight + 2 && /(hidden|clip)/.test(s.overflowY) && el.clientHeight > 0 && !/(auto|scroll)/.test(s.overflowY))
+      // N linhas + "…" de proposito (numberOfLines do app = -webkit-line-clamp; ex.: avisos do Inicio em 2 linhas): so registra
+      add(s.webkitLineClamp && s.webkitLineClamp !== 'none' ? 'texto-resumido' : 'texto-cortado', el, `altura ${el.clientHeight}px, conteudo ${el.scrollHeight}px`);
     if ((r.right > W + 1 || r.left < -1) && !emRolagemX(el)) { foraSet.add(el); }
   }
   for (const el of foraSet) { if (el.parentElement && foraSet.has(el.parentElement)) continue; const r = el.getBoundingClientRect(); add('fora-da-tela', el, `x ${Math.round(r.left)}..${Math.round(r.right)} (tela ${W})`); }
+  // area extra de toque do ::after (absoluto): os insets contam da caixa SEM a borda (padding box)
+  const areaExtra = (el, r = el.getBoundingClientRect()) => {
+    const af = getComputedStyle(el, '::after');
+    if (!(af.content && af.content !== 'none' && af.position === 'absolute')) return null;
+    const s = getComputedStyle(el), n = (v) => parseFloat(v) || 0;
+    return { left: r.left + n(s.borderLeftWidth) + n(af.left), right: r.right - n(s.borderRightWidth) - n(af.right), top: r.top + n(s.borderTopWidth) + n(af.top), bottom: r.bottom - n(s.borderBottomWidth) - n(af.bottom) };
+  };
   // 4) alvo de toque < 40 px (com a area extra do ::after; checkbox/radio pelo label; link dentro de texto fica de fora)
   for (const el of ctrls) {
     let r = el.getBoundingClientRect(); let w = r.width, h = r.height;
     if (el.matches('input[type=checkbox], input[type=radio]')) { const lb = el.closest('label') || (el.id && document.querySelector(`label[for="${el.id}"]`)); if (lb) { const q = lb.getBoundingClientRect(); w = q.width; h = q.height; } }
-    const af = getComputedStyle(el, '::after');
-    if (af.content && af.content !== 'none' && af.position === 'absolute') { w += Math.max(0, -parseFloat(af.left) || 0) + Math.max(0, -parseFloat(af.right) || 0); h += Math.max(0, -parseFloat(af.top) || 0) + Math.max(0, -parseFloat(af.bottom) || 0); }
+    const ax = areaExtra(el, r);
+    if (ax) { w = Math.max(w, ax.right - ax.left); h = Math.max(h, ax.bottom - ax.top); }
     if (el.tagName === 'A' && getComputedStyle(el).display === 'inline' && el.parentElement && (el.parentElement.innerText || '').trim().length > (el.innerText || '').trim().length + 3) continue;
     if (Math.min(w, h) < 40) add('alvo-pequeno', el, `${Math.round(w)}x${Math.round(h)} px`);
+  }
+  // 4b) area de toque extra (::after, ex.: botao (i)): tem de ser tocavel de verdade (elementFromPoint nos cantos)
+  //     e nao pode invadir a area de outro controle (verificacao 15/11)
+  for (const el of ctrls) {
+    const r = el.getBoundingClientRect();
+    const ex = areaExtra(el, r);
+    if (!ex || (ex.right - ex.left <= r.width + 1 && ex.bottom - ex.top <= r.height + 1)) continue;
+    if (Math.min(ex.right - ex.left, ex.bottom - ex.top) < 43.5) add('alvo-extra-pequeno', el, `${Math.round(ex.right - ex.left)}x${Math.round(ex.bottom - ex.top)} px (D14: 44)`);
+    for (const [x, y, onde] of [[ex.left + 1, ex.top + 1, 'canto sup esq'], [ex.right - 1, ex.top + 1, 'canto sup dir'], [ex.left + 1, ex.bottom - 1, 'canto inf esq'], [ex.right - 1, ex.bottom - 1, 'canto inf dir']]) {
+      if (x < 0 || y < 0 || x >= W || y >= H) continue;
+      const top = document.elementFromPoint(x, y);
+      // coberto por camada fixa (cabecalho/barra de baixo) depende da rolagem: o check 1 (coberto) cuida disso
+      if (top && camada(top) && camada(top) !== camada(el)) continue;
+      if (top && !(top === el || el.contains(top))) { add('alvo-extra-nao-tocavel', el, `${onde} (${Math.round(x)},${Math.round(y)}) vai para ${d(top)}`); break; }
+    }
+    for (const o of ctrls) {
+      if (o === el || o.contains(el) || el.contains(o) || camada(o) !== camada(el)) continue;
+      const q = o.getBoundingClientRect();
+      const ix = Math.min(ex.right, q.right) - Math.max(ex.left, q.left), iy = Math.min(ex.bottom, q.bottom) - Math.max(ex.top, q.top);
+      if (ix > 0.5 && iy > 0.5) add('alvo-extra-sobreposto', el, `invade ${d(o)} (${Math.round(ix)}x${Math.round(iy)} px)`);
+    }
+  }
+  // 4c) janela de chegada quebrada no meio ("13:30–" / "15:00") - QA D13, verificacao 15/11
+  {
+    const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const RE = /\d{1,2}:\d{2}\u2060?–\u2060?\d{1,2}:\d{2}/g;
+    for (let n = tw.nextNode(); n; n = tw.nextNode()) {
+      if (!n.parentElement || !vis(n.parentElement)) continue;
+      for (const m of n.textContent.matchAll(RE)) {
+        const rg = document.createRange(); rg.setStart(n, m.index); rg.setEnd(n, m.index + m[0].length);
+        const tops = [...rg.getClientRects()].filter((q) => q.width > 0.5).map((q) => Math.round(q.top));
+        if (tops.length && Math.max(...tops) - Math.min(...tops) > 2) add('janela-quebrada', n.parentElement, `"${m[0].replace(/\u2060/g, '')}" em ${new Set(tops).size} linhas`);
+      }
+    }
   }
   // 5) folhas / dialogos / notas inteiros na tela
   for (const dl of [...document.querySelectorAll('[role=dialog], [role=note]:not([hidden])')].filter(vis)) {
@@ -213,7 +258,12 @@ const FOCO = () => {
 const IGNORAR = [/chat-suporte-botao.*alvo/, /barra-carregando/];
 // cortes/sobreposicoes ANTIGOS, fora do check-in v2, ja listados no QA de 14/11 como "nao conta" (cortes de desenho da
 // Agenda mes/Quadro; cabecalho do app rolado a 360 px, D-A3). Continuam no relatorio (achados), mas nao reprovam a tela.
-const CONHECIDOS = [/^span\[1 (Ootel|Ожидается|Pending|In attesa|Pendente)\] texto-cortado/, /^button\[[A-Z0-9]+ · .*\] texto-cortado/, /^button\[(Muuda päringut|Изменить заявку)\] coberto/, /^button\[(Tagasi|Назад)\] sobreposto/];
+const CONHECIDOS = [/^span\[1 (Ootel|Ожидается|Pending|In attesa|Pendente)\] texto-cortado/, /^button\[[A-Z0-9]+ · .*\] texto-cortado/, /^button\[(Muuda päringut|Изменить заявку)\] coberto/, /^button\[(Tagasi|Назад)\] sobreposto/,
+  // Inicio do app (tela nova no QA, 15/11): cartoes da lista rolados para baixo da barra de abas (FlatList do RN web; o
+  // print mostra a barra por cima, como no celular; a barra nao e position:fixed no RN web) - nao e defeito de layout
+  /^button\[cartao-pedido(-acidente)?\] (sobreposto|coberto)/,
+  // rotulo da aba "Автомобили" com "…" a 360 px (barra de abas do app, anterior ao check-in v2)
+  /^div\[Автомобили\] texto-cortado/];
 let nAud = 0;
 /** auditoria de uma tela: topo + fim da pagina (cobertura), print, achados no relatorio. info: { pagina, estado, loc, vp } */
 async function auditar(p, info, opts = {}) {
@@ -254,7 +304,7 @@ async function auditar(p, info, opts = {}) {
   // dedupe por tipo+el
   const unicos = [...new Map(achados.map((a) => [`${a.tipo}|${a.el}|${a.det.includes('fim da') ? 'f' : 't'}`, a])).values()].filter((a) => !IGNORAR.some((re) => re.test(`${a.el} ${a.tipo}`)));
   for (const a of unicos) R.achados.push({ ...info, ...a, shot: path.basename(shot) });
-  const graves0 = unicos.filter((a) => ['rolagem-lateral', 'coberto', 'sobreposto', 'texto-cortado', 'fora-da-tela', 'dialogo-fora', 'nota-fora', 'erro'].includes(a.tipo));
+  const graves0 = unicos.filter((a) => ['rolagem-lateral', 'coberto', 'sobreposto', 'texto-cortado', 'fora-da-tela', 'dialogo-fora', 'nota-fora', 'alvo-extra-nao-tocavel', 'alvo-extra-sobreposto', 'alvo-extra-pequeno', 'janela-quebrada', 'erro'].includes(a.tipo));
   const graves = graves0.filter((a) => !CONHECIDOS.some((re) => re.test(`${a.el} ${a.tipo}`)));
   for (const a of graves0.filter((x) => !graves.includes(x))) console.log(`info [A] conhecido (fora do check-in v2): ${info.pagina}/${info.estado} ${info.loc} ${info.vp} ${a.tipo} ${a.el} ${a.det}`);
   ok(`A: ${info.pagina}/${info.estado} ${info.loc} ${info.vp}: sem nada coberto/sobreposto/cortado/fora`, !graves.length, graves.map((a) => `${a.tipo} ${a.el} ${a.det}`).join(' ; '), path.basename(shot));
@@ -555,7 +605,23 @@ try {
         await ir(pa, `${APP}/solicitacao/${sA2.id}`, 1000); await sleep(4000);
         ok(`A: app - janelas no pedido ${l} ${vp}`, (await corpo(pa)).includes('08:00–10:00') && (await corpo(pa)).includes('13:00–15:00'), (await corpo(pa)).slice(0, 200));
         await auditar(pa, inf('app-solicitacao', 'janelas'), { full: true });
+        // cartao ESCOLHIDO (2 icones de check estreitam o texto): a janela nao quebra no meio (verificacao 15/11, D13)
+        const radio = pa.getByRole('radio').filter({ hasText: '13:00' }).first();
+        if (await radio.count()) {
+          await radio.click(); await sleep(500);
+          ok(`A: app - cartao escolhido com a janela inteira ${l} ${vp}`, semWJ(await radio.innerText()).includes('13:00–15:00'), semWJ(await radio.innerText()));
+          await auditar(pa, inf('app-solicitacao', 'janela-escolhida'), { full: true });
+        } else ok(`A: app - cartao 13:00 para escolher ${l} ${vp}`, false, (await corpo(pa)).slice(0, 200));
+        // Inicio: o pedido agendado mostra o dia E a janela (antes so "Vii auto töökotta 19.11.2026.")
+        await ir(pa, APP, 1000); await esperarTeste(pa, 'cartao-pedido', 15000); await sleep(1500);
+        const prefAg = trApp(l)('situacao.agora_agendado', { dia: '§' }).split('§')[0].trim();
+        const cartoes = (await pa.getByTestId('cartao-pedido').allInnerTexts().catch(() => [])).map(semWJ);
+        ok(`A: app - Inicio: agendado com o dia e a janela 13:00–15:00 ${l} ${vp}`, cartoes.some((c) => c.includes(prefAg) && c.includes('13:00–15:00')), JSON.stringify(cartoes.filter((c) => c.includes(prefAg))).slice(0, 300));
+        const cartaoAg = pa.getByTestId('cartao-pedido').filter({ hasText: prefAg }).first();
+        if (await cartaoAg.count()) { await cartaoAg.scrollIntoViewIfNeeded().catch(() => {}); await sleep(300); await cartaoAg.screenshot({ path: path.join(OUT, `A_app-inicio_cartao-agendado_${l}_${vp}.png`) }).catch(() => {}); }
+        await auditar(pa, inf('app-inicio', 'agendado'), { full: true });
         await ir(pa, `${APP}/solicitacao/${sA3.id}`, 1000); await esperarTeste(pa, 'agendamento-atual', 15000);
+        ok(`A: app - cabecalho do pedido agendado com a janela ${l} ${vp}`, semWJ(await texto(pa, 'situacao-agendado')).includes('13:00–15:00'), await texto(pa, 'situacao-agendado'));
         ok(`A: app - agendamento com a janela 13:00–15:00 ${l} ${vp}`, (await texto(pa, 'agendamento-atual')).includes('13:00–15:00'), await texto(pa, 'agendamento-atual'));
         await auditar(pa, inf('app-solicitacao', 'agendado'), { full: true });
         await ir(pa, `${APP}/solicitacao/${sA4.id}`, 1000); await esperarTeste(pa, 'abrir-pedir-datas', 15000);
