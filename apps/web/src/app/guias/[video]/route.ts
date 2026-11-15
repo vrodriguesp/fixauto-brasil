@@ -13,6 +13,9 @@ const NOME = /^video-oficina-([a-z]{2}(?:-[a-z]{2})?)$/i;
 
 export function GET(_req: Request, { params }: { params: { video: string } }) {
   const m = NOME.exec(String(params.video || ''));
+  // outro nome (ex.: um PDF de /guias que nao existe, /guias/perfil-oficina-en.pdf) continua 404 como antes
+  // desta rota; so video-oficina-<idioma sem video> vai para a home
+  if (!m) return new NextResponse('Not found', { status: 404, headers: { 'X-Robots-Tag': 'noindex', 'Cache-Control': 'no-store' } });
   const idioma = (m?.[1] || '').toLowerCase().replace('pt-pt', 'pt-PT') as IdiomaGuia;
   const destino = (m && VIDEO_GUIA_OFICINA[idioma]) || SITE_URL;
   const res = NextResponse.redirect(destino, 302);
