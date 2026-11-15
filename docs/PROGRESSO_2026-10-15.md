@@ -1237,3 +1237,10 @@ Pedido do dono (e-mail "Performance", 15/11 19:18): "Sim! E todos outros element
 - `087_procurar_oficina_sem_perfil.sql`: mesmo corpo da 061, cliente por `resumo_clientes` (nome/codigo, regra 074) e telefone por `contato_clientes` (086: so com o orcamento desta oficina aceito). Idempotente; aplicada 2x no local.
 - Com 087 + mudanca de desempenho (build novo): tsc ok, next build ok, `site-painel-oficina` 66/0 (TUDO OK, inclusive busca pelo codigo de cliente, Enter -> Procurar, "Abrir em Hoje"). Auditoria do Fable pedida (Documentos/Analises/Fable_veredito_desempenho_087_2026-11-15.md).
 - Fable: AUTORIZADO (Documentos/Analises/Fable_veredito_desempenho_087_2026-11-15.md), sem achado medio/alto. Aplicado o achado 3 (o limite de 3 s de Pedidos conta a partir da oficina conhecida; tsc ok). Ficam como sugestao: buscas do perfil em paralelo, evitar o fetchProfile duplo, aviso `checkin_manual` por rota de servidor (ja na lista). Ordem sugerida: 087 primeiro (corrige bug ao vivo, independe do build), depois build + restart. Deploy so com o OK do dono no chat.
+
+### 15/11 ~21:00 Tallinn — DEPLOY desempenho (CLS do painel) + 087 (busca da oficina pelo cliente)
+- Dono no chat: "ok, pode fazer" e "se sou so eu que esta logado no site pode proceder". Producao: 0 pedidos/orcamentos/mensagens nos 30 min antes; so uma sessao logada (a do dono).
+- master = 27060d6; VM pull + npm install + build sem restart; backup /root/backups/antes_087_20261115_2000.dump; 087 numa transacao ok; NOTIFY pgrst; REST: procurar_na_oficina anon -> 42501 (existe, sem permissao). pm2 restart ok.
+- Fumaca: /ee/et, paring, zayavka, tookodadele, login, registreeru 200; /ee/ru/oficina/pedidos sem login 307 (login). Log de erro sem erro novo depois do restart (so os "Server Action x" de robos, de antes).
+- Busca em producao (simulada como uma oficina real, transacao com ROLLBACK): pelo codigo de cliente -> 2 resultados, os 2 com o nome do cliente.
+- Falta: medir o CLS real no Clarity nos proximos dias (o painel logado so com sessao de oficina).
