@@ -1,7 +1,7 @@
 import { type KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import RolagemTeclado from '../components/RolagemTeclado';
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, Image, Linking, Keyboard } from 'react-native';
+import { View, Text, TextInput, Pressable, ActivityIndicator, Image, Linking, Keyboard, Platform } from 'react-native';
 import { confirmar as perguntar } from '../lib/confirmar';
 import { useTranslation } from 'react-i18next';
 import { router } from 'expo-router';
@@ -66,12 +66,15 @@ export default function PedidoScreen() {
   const insets = useSafeAreaInsets();
   const rolagem = useRef<KeyboardAwareScrollViewRef>(null);
   const posEndereco = useRef(0);
+  // passo 2: posicao da caixa de texto (bloco do passo + caixa dentro dele) para rolar ate ela
+  const posDetalhe = useRef(0);
+  const posDescricao = useRef(0);
+  const caixaDescricao = useRef<TextInput>(null);
   const { user, loading: carregandoLogin, signInComToken } = useAuth();
 
   const [etapa, setEtapa] = useState<Etapa>('servico');
   const [tipo, setTipo] = useState('');
   const [servicos, setServicos] = useState<string[]>([]);
-  const [busca, setBusca] = useState('');
   const [listaAberta, setListaAberta] = useState(false);
   const [descricao, setDescricao] = useState('');
   const [urgencia, setUrgencia] = useState('media');
@@ -101,6 +104,8 @@ export default function PedidoScreen() {
   const [emailNovo, setEmailNovo] = useState('');
   const [esperaReenvio, setEsperaReenvio] = useState(0);
   const [jaConfirmou, setJaConfirmou] = useState(false);
+  // "Edasi" tocado com algo faltando (passo 2): aviso vermelho + rola e foca a caixa (igual ao site)
+  const [faltando, setFaltando] = useState('');
 
   // quem ja entrou usa o pedido normal (mesmos passos, sem contato/codigo)
   useEffect(() => {
@@ -108,6 +113,7 @@ export default function PedidoScreen() {
   }, [carregandoLogin, user]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { contar('abriu'); }, []);
   useEffect(() => {
+    setFaltando('');
     if (['detalhe', 'carro', 'local', 'contato'].includes(etapa)) contar(etapa);
     rolagem.current?.scrollTo({ y: 0, animated: false });
     if (etapa === 'local' && !coords) buscarLocal();
@@ -141,15 +147,26 @@ export default function PedidoScreen() {
   const NS: Record<string, string> = { revisao: 'servicosRevisao', mecanica: 'servicosMecanica', eletrica: 'servicosEletrica', pneu: 'servicosPneu' };
   const lista = tipo === 'revisao' ? SERVICOS_REVISAO : tipo === 'mecanica' ? SERVICOS_MECANICA : tipo === 'eletrica' ? SERVICOS_ELETRICA : tipo === 'pneu' ? SERVICOS_PNEU : [];
   const rotuloServico = (v: string) => (NS[tipo] ? t(`constants.${NS[tipo]}.${v}`) : v);
-  // busca sem acento e sem maiusculas ('rehvi' acha 'Rehvide vahetus')
-  const semAcento = (v: string) => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  const listaFiltrada = lista.filter((sv) => semAcento(rotuloServico(sv.value)).includes(semAcento(busca.trim())));
-  // "ver mais": 6 primeiros (e os ja marcados); busca ou "ver todos" mostram tudo - igual ao site
+  // passo 2 (rascunho aprovado 15/11, igual ao site): caixa de texto primeiro, a lista do tipo
+  // embaixo ("ou escolha abaixo"), sem busca; "ver todos" mostra o resto (6 primeiros + marcados)
   const LISTA_CURTA = 6;
-  const listaCurta = !listaAberta && !busca.trim() && listaFiltrada.length > LISTA_CURTA;
-  const listaVisivel = listaCurta ? listaFiltrada.filter((sv, i) => i < LISTA_CURTA || servicos.includes(sv.value)) : listaFiltrada;
+  const temLista = lista.length > 0;
+  const listaCurta = !listaAberta && lista.length > LISTA_CURTA;
+  const listaVisivel = listaCurta ? lista.filter((sv, i) => i < LISTA_CURTA || servicos.includes(sv.value)) : lista;
+  const ehDano = tipo === 'colisao' || tipo === 'funilaria';
+  const EXEMPLO: Record<string, string> = { revisao: 'exemploRevisao', mecanica: 'exemploMecanica', eletrica: 'exemploEletrica', pneu: 'exemploPneu', colisao: 'exemploFoto', funilaria: 'exemploFoto' };
+  const exemplo = t(`pedidoSemConta.${EXEMPLO[tipo] || 'placeholderDescribeIssue'}`);
   // escreveu o que precisa OU marcou algum servico da lista
   const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
+  useEffect(() => { setFaltando(''); }, [servicoOk]); // corrigiu: o aviso some
+  const statusDetalhe: { texto: string; tom: 'neutro' | 'ok' } = servicos.length > 0
+    ? { texto: servicos.length === 1 ? t('pedidoSemConta.detalheStatusListaUm') : t('pedidoSemConta.detalheStatusListaN', { n: servicos.length }), tom: 'ok' }
+    : descricao.trim() ? { texto: t('pedidoSemConta.detalheStatusTexto'), tom: 'ok' }
+    : { texto: temLista ? t('pedidoSemConta.detalheStatusVazio') : t('pedidoSemConta.detalheStatusVazioTexto'), tom: 'neutro' };
+  const irParaDescricao = () => {
+    rolagem.current?.scrollTo({ y: Math.max(0, posDetalhe.current + posDescricao.current - 40), animated: true });
+    setTimeout(() => caixaDescricao.current?.focus(), Platform.OS === 'web' ? 0 : 300);
+  };
   const carroOk = !!(marca && modelo && /^\d{4}$/.test(ano.trim())) && anoValido(ano) && placaValida(placa);
   const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && (!querSms || TELEFONE_OK(telefone)) && termos;
   const sugestao = sugestaoEmail(email);
@@ -279,19 +296,31 @@ export default function PedidoScreen() {
   });
 
   const Erro = () => (erro ? <Text accessibilityRole="alert" className="text-sm text-red-700 mt-3">{erro}</Text> : null);
-  const Navegar = ({ voltar, avancar, ok, rotulo }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string }) => (
-    <View className="flex-row gap-3 mt-6 mb-10">
-      {voltar && (
-        <Pressable onPress={() => { Keyboard.dismiss(); setErro(''); setEtapa(voltar); }} accessibilityRole="button" className="flex-1 border border-gray-300 rounded-lg py-4 items-center">
-          <Text className="text-gray-700 font-semibold text-base">{t('pedidoSemConta.back')}</Text>
-        </Pressable>
-      )}
-      <Pressable onPress={() => { Keyboard.dismiss(); avancar(); }} disabled={!ok || enviando} accessibilityRole="button" accessibilityState={{ disabled: !ok || enviando, busy: enviando }}
-        className="flex-[2] bg-primary-600 rounded-lg py-4 items-center disabled:opacity-50">
-        {enviando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold text-base">{rotulo || t('pedidoSemConta.next')}</Text>}
-      </Pressable>
-    </View>
-  );
+  // com `falta` (passo 2) o "Edasi" fica sempre ativo: faltando algo, diz o que e e leva a caixa
+  // (antes ficava palido sem explicar - rascunho 15/11); os outros passos seguem como antes
+  const Navegar = ({ voltar, avancar, ok, rotulo, falta, aoFaltar, status }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string; falta?: string; aoFaltar?: () => void; status?: { texto: string; tom: 'neutro' | 'ok' } }) => {
+    const travado = enviando || (falta === undefined && !ok);
+    return (
+      <View className="mt-6 mb-10">
+        {faltando && falta !== undefined ? <Text role="alert" testID="falta-aviso" className="text-sm text-red-700 font-medium mb-2">{faltando}</Text>
+          : status ? <Text role="status" testID="status-passo" className={`text-sm mb-2 ${status.tom === 'ok' ? 'text-green-700 font-medium' : 'text-gray-600'}`}>{status.texto}</Text> : null}
+        <View className="flex-row gap-3">
+          {voltar && (
+            <Pressable onPress={() => { Keyboard.dismiss(); setErro(''); setEtapa(voltar); }} accessibilityRole="button" className="flex-1 border border-gray-300 rounded-lg py-4 items-center">
+              <Text className="text-gray-700 font-semibold text-base">{t('pedidoSemConta.back')}</Text>
+            </Pressable>
+          )}
+          <Pressable onPress={() => {
+            if (!ok && falta !== undefined) { setFaltando(falta); contar(`edasi_bloqueado_${etapa}`); aoFaltar?.(); return; }
+            Keyboard.dismiss(); setFaltando(''); avancar();
+          }} disabled={travado} accessibilityRole="button" accessibilityState={{ disabled: travado, busy: enviando }}
+            className="flex-[2] bg-primary-600 rounded-lg py-4 items-center disabled:opacity-50">
+            {enviando ? <ActivityIndicator color="#fff" /> : <Text className="text-white font-semibold text-base">{rotulo || t('pedidoSemConta.next')}</Text>}
+          </Pressable>
+        </View>
+      </View>
+    );
+  };
 
   if (etapa === 'codigo' && jaConfirmou) {
     return (
@@ -338,11 +367,13 @@ export default function PedidoScreen() {
       {/* 1) so o tipo: um toque e ja vai para a pagina seguinte (guiado, pedido do dono 06/11) */}
       {etapa === 'servico' && (
         <View>
-          <Text className="text-sm font-medium text-gray-700 mb-2">{t('novaSolicitacao.passoServico')}</Text>
+          {/* "o tipo principal": quem precisa de varias coisas escreve as outras no passo 2 (rascunho 15/11) */}
+          <Text role="heading" className="text-lg font-semibold text-gray-900 mb-1">{t('pedidoSemConta.servicoTitulo')}</Text>
+          <Text className="text-sm text-gray-700 mb-3">{t('pedidoSemConta.servicoAjuda')}</Text>
           <View className="flex-row flex-wrap justify-between">
             {TIPOS_SERVICO.map((s) => (
               <Pressable key={s.value} accessibilityRole="button" accessibilityState={{ selected: tipo === s.value }}
-                onPress={() => { if (s.value !== tipo) { setServicos([]); setBusca(''); setListaAberta(false); } setTipo(s.value); setEtapa('detalhe'); }}
+                onPress={() => { if (s.value !== tipo) { setServicos([]); setListaAberta(false); } setTipo(s.value); setEtapa('detalhe'); }}
                 className={`w-[48.5%] p-4 mb-3 rounded-lg border-2 ${tipo === s.value ? 'border-primary-600 bg-primary-50' : 'border-gray-200'}`}>
                 <Text className="text-2xl"><IconeServico tipo={s.value} icon={s.icon} tamanho={24} /></Text>
                 <Text className="font-medium text-gray-900 mt-2">{t(`constants.tiposServico.${s.value}`)}</Text>
@@ -358,24 +389,27 @@ export default function PedidoScreen() {
         </View>
       )}
 
-      {/* 2) o que precisa: escreve com as proprias palavras OU procura na lista do tipo */}
+      {/* 2) o que precisa (rascunho aprovado 15/11, igual ao site): a pergunta, a caixa com um exemplo do
+          tipo e, embaixo, a lista do tipo como alternativa. Basta escrever OU marcar (servicoOk). */}
       {etapa === 'detalhe' && (
-        <View>
-          <Text className="text-lg font-semibold text-gray-900 mb-1">{tipoConfig && <IconeServico tipo={tipoConfig.value} icon={tipoConfig.icon} tamanho={18} />} {t(`constants.tiposServico.${tipo}`)}</Text>
-          <Text className="text-sm text-gray-500 mb-4">{lista.length > 0 ? t('pedidoSemConta.detalheTexto') : t('pedidoSemConta.placeholderDescribeIssue')}</Text>
-          <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.describeProblem')}</Text>
-          <TextInput accessibilityLabel={t('novaSolicitacao.passoSintomas')} value={descricao} onChangeText={setDescricao} multiline numberOfLines={4} maxLength={1800}
-            placeholder={t('pedidoSemConta.placeholderDescribeIssue')}
-            className={`${CAMPO} mb-5 min-h-[100px]`} style={{ textAlignVertical: 'top' }} />
-          {lista.length > 0 && (
-            <View className="mb-3">
-              <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.step3ServiceTitle')}</Text>
-              <TextInput accessibilityLabel={t('pedidoSemConta.buscarServico')} value={busca} onChangeText={setBusca} placeholder={t('pedidoSemConta.buscarServico')}
-                autoCorrect={false} className={`${CAMPO} mb-2`} />
+        <View onLayout={(e) => { posDetalhe.current = e.nativeEvent.layout.y; }}>
+          <Text className="text-sm text-gray-500">{tipoConfig && <IconeServico tipo={tipoConfig.value} icon={tipoConfig.icon} tamanho={16} />} {t(`constants.tiposServico.${tipo}`)}</Text>
+          <Text role="heading" className="text-lg font-semibold text-gray-900 mb-3">{temLista || tipo === 'outro' ? t('pedidoSemConta.detalheTitulo') : t('pedidoSemConta.detalheTituloFoto')}</Text>
+          <View onLayout={(e) => { posDescricao.current = e.nativeEvent.layout.y; }}>
+            <Text className="text-sm font-medium text-gray-700 mb-1">{ehDano ? t('pedidoSemConta.detalheRotuloFoto') : t('pedidoSemConta.detalheRotuloTexto')}</Text>
+            <TextInput ref={caixaDescricao} accessibilityLabel={t('novaSolicitacao.passoSintomas')} accessibilityHint={ehDano ? t('pedidoSemConta.detalheRotuloFoto') : t('pedidoSemConta.detalheRotuloTexto')}
+              value={descricao} onChangeText={(v) => { setDescricao(v); if (v.trim()) contarUmaVez('detalhe_escreveu'); }} multiline numberOfLines={3} maxLength={1800}
+              placeholder={exemplo} aria-invalid={!!faltando}
+              className={`${CAMPO} min-h-[84px] ${faltando ? 'border-red-500' : ''}`} style={{ textAlignVertical: 'top' }} />
+            {faltando ? <Text role="alert" testID="falta-aviso-topo" className="text-sm text-red-700 font-medium mt-1">{faltando}</Text> : null}
+          </View>
+          {temLista ? (
+            <View className="mt-5 mb-3">
+              <Text className="text-sm font-medium text-gray-700 mb-2">{t('pedidoSemConta.detalheOuEscolha')}</Text>
               {listaVisivel.map((sv) => {
                 const marcado = servicos.includes(sv.value);
                 return (
-                  <Pressable key={sv.value} onPress={() => setServicos((x) => (marcado ? x.filter((y) => y !== sv.value) : [...x, sv.value]))}
+                  <Pressable key={sv.value} onPress={() => { if (!marcado) contarUmaVez('detalhe_escolheu_lista'); setServicos((x) => (marcado ? x.filter((y) => y !== sv.value) : [...x, sv.value])); }}
                     accessibilityRole="checkbox" accessibilityState={{ checked: marcado }}
                     className={`flex-row items-center gap-3 p-3 mb-2 rounded-lg border ${marcado ? 'border-primary-600 bg-primary-50' : 'border-gray-200'}`}>
                     <Ionicons name={marcado ? 'checkbox' : 'square-outline'} size={20} color={marcado ? '#0284c7' : '#9ca3af'} />
@@ -383,14 +417,13 @@ export default function PedidoScreen() {
                   </Pressable>
                 );
               })}
-              {listaFiltrada.length === 0 && <Text className="text-sm text-gray-500 py-2">{t('pedidoSemConta.semResultadoBusca')}</Text>}
-              {listaFiltrada.length > LISTA_CURTA && !busca.trim() && (
-                <Pressable onPress={() => setListaAberta((x) => !x)} accessibilityRole="button" className="min-h-[44px] items-center justify-center">
-                  <Text className="text-primary-600 font-medium underline">{listaCurta ? t('pedidoSemConta.verTodos', { n: listaFiltrada.length }) : t('pedidoSemConta.verMenos')}</Text>
+              {lista.length > LISTA_CURTA && (
+                <Pressable onPress={() => { if (listaCurta) contarUmaVez('detalhe_ver_todos'); setListaAberta((x) => !x); }} accessibilityRole="button" className="min-h-[44px] items-center justify-center">
+                  <Text className="text-primary-600 font-medium underline">{listaCurta ? t('pedidoSemConta.verTodos', { n: lista.length }) : t('pedidoSemConta.verMenos')}</Text>
                 </Pressable>
               )}
             </View>
-          )}
+          ) : <View className="h-5" />}
 
           <Text className="text-sm font-medium text-gray-700 mb-2">{t('pedidoSemConta.fotosTitulo')}</Text>
           <View className="flex-row flex-wrap gap-2 mb-2">
@@ -427,7 +460,8 @@ export default function PedidoScreen() {
               </Pressable>
             ))}
           </View>
-          <Navegar voltar="servico" ok={servicoOk} avancar={() => setEtapa('carro')} />
+          <Navegar voltar="servico" ok={servicoOk} avancar={() => setEtapa('carro')} falta={temLista ? t('pedidoSemConta.faltaDescricaoLista') : t('pedidoSemConta.faltaDescricao')}
+            aoFaltar={irParaDescricao} status={statusDetalhe} />
         </View>
       )}
 
