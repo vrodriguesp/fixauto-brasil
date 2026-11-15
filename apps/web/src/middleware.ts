@@ -244,7 +244,8 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     // tudo, exceto arquivos estaticos/internos do Next, a pasta /api e o link
-    // curto do SMS /r/<numero> (app/r/[numero]/route.ts)
-    '/((?!api|r/|_next|_vercel|.*\\..*).*)',
+    // curto do SMS /r/<numero> (app/r/[numero]/route.ts) e o link fixo do video-guia
+    // da oficina /guias/video-oficina-<idioma> (app/guias/[video]/route.ts; os outros /guias/... seguem aqui)
+    '/((?!api|r/|guias/video-oficina-|_next|_vercel|.*\\..*).*)',
   ],
 };
