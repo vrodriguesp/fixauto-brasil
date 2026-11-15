@@ -45,6 +45,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       { data: agendaRows },
       { data: dispensas },
       { count: totalVistos },
+      { data: convites },
     ] = await Promise.all([
       supabaseAdmin.from('solicitacao_fotos').select('*').eq('solicitacao_id', params.id),
       supabaseAdmin
@@ -75,6 +76,12 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
         .eq('solicitacao_id', params.id)
         .order('created_at', { ascending: true }),
       supabaseAdmin.from('pedido_vistos').select('oficina_id', { count: 'exact', head: true }).eq('solicitacao_id', params.id),
+      // enviado pela BipFix a oficinas escolhidas / acesso mantido ao mudar o tipo (migracao 085)
+      supabaseAdmin
+        .from('pedido_convites')
+        .select('oficina_id, origem, motivo, created_at, convidado_por, oficina:oficinas(id, nome_fantasia, cidade), admin:profiles(nome)')
+        .eq('solicitacao_id', params.id)
+        .order('created_at', { ascending: true }),
     ]);
 
     let etapas: any[] = [];
@@ -110,6 +117,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       notasInternas,
       dispensas: dispensas || [],
       totalVistos: totalVistos || 0,
+      convites: convites || [],
     });
   } catch (error) {
     console.error('[admin/solicitacoes/:id]', error);

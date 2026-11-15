@@ -51,6 +51,20 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
       return tipoCompativel(o.especialidades, solicitacao.tipo);
     });
 
+    // convidadas pela BipFix (migracao 085) contam como as compativeis: tambem sao cobradas enquanto nao orcam,
+    // mesmo fora da caixa de 40 km ou sem o tipo (decisao do dono 15/11: convidada = oficina como as outras)
+    const { data: convites } = await supabaseAdmin.from('pedido_convites').select('oficina_id').eq('solicitacao_id', params.id);
+    const jaNaLista = new Set(destinatarias.map((o) => o.id));
+    const idsConvidadas = (convites || []).map((c) => c.oficina_id).filter((id) => !idsJaResponderam.has(id) && !jaNaLista.has(id));
+    if (idsConvidadas.length) {
+      const { data: convidadas } = await supabaseAdmin
+        .from('oficinas')
+        .select('id, profile_id, nome_fantasia, especialidades, profile:profiles!oficinas_profile_id_fkey(idioma)')
+        .eq('ativa', true)
+        .in('id', idsConvidadas);
+      destinatarias.push(...(convidadas || []));
+    }
+
     let notificadas = 0;
     for (const oficina of destinatarias) {
       if (!oficina.profile_id) continue;

@@ -20,6 +20,21 @@ export function notifNovaSolicitacaoColisao(locale: string | null | undefined) {
   return novaSolicitacaoColisao[resolveEmailLocale(locale)];
 }
 
+// pedido enviado pela BipFix a uma oficina escolhida no admin (migracao 085, tipo 'pedido_convite');
+// a mensagem e a mesma do pedido novo: tipo - carro - endereco
+const pedidoConviteTitulo: Record<EmailLocale, string> = {
+  pt: 'A BipFix enviou um pedido para você',
+  en: 'BipFix sent you a request',
+  et: 'BipFix saatis sulle päringu',
+  it: 'BipFix ti ha inviato una richiesta',
+  'pt-PT': 'A BipFix enviou-lhe um pedido',
+  ru: 'BipFix отправил вам заявку',
+};
+
+export function notifPedidoConviteTitulo(locale: string | null | undefined) {
+  return pedidoConviteTitulo[resolveEmailLocale(locale)];
+}
+
 const novaSolicitacaoTitulo: Record<EmailLocale, string> = {
   pt: 'Nova solicitação!',
   en: 'New request!',

@@ -54,7 +54,7 @@ export async function carregarDesempenho(opts: { oficinaId: string; donoProfileI
   const zeros = () => faixas.map(() => 0);
 
   const [notifs, orcs, ags, avs, revs, ofi] = await Promise.all([
-    supabase.from('notificacoes').select('created_at, dados').eq('profile_id', donoProfileId).in('tipo', ['nova_solicitacao', 'emergencia']).gte('created_at', desdeIso),
+    supabase.from('notificacoes').select('created_at, dados').eq('profile_id', donoProfileId).in('tipo', ['nova_solicitacao', 'emergencia', 'pedido_convite']).gte('created_at', desdeIso),
     supabase.from('orcamentos').select('id, created_at, status, valor_total, solicitacao_id, solicitacao:solicitacoes(created_at, status)').eq('oficina_id', oficinaId).gte('created_at', desdeIso),
     supabase.from('agenda').select('id, created_at, tipo, status, solicitacao_id, data_fim, data_fim_prevista, entregue_em, etapas:manutencao_etapas(status, created_at)').eq('oficina_id', oficinaId).gte('created_at', desdeIso),
     supabase.from('avaliacoes').select('nota, comentario, created_at').eq('oficina_id', oficinaId).order('created_at', { ascending: false }),
