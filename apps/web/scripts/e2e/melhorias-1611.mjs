@@ -48,7 +48,8 @@ const codigoDe = async (email, depois) => {
   }
   return { codigo: null, html: '' };
 };
-const hoje = new Date().toISOString().slice(0, 10);
+// dia de Tallinn (o contador do funil grava o dia de Tallinn; de madrugada o dia UTC ainda e o anterior)
+const hoje = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Tallinn' }).format(new Date());
 const total = async (funil, etapa) => (await admin.from('funil_contagem').select('total').eq('funil', funil).eq('etapa', etapa).eq('dia', hoje).maybeSingle()).data?.total || 0;
 const CHROME = path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe');
 const WEBKIT = path.join(process.env.LOCALAPPDATA, 'ms-playwright/webkit-2388/Playwright.exe');

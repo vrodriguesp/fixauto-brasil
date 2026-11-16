@@ -105,6 +105,9 @@ export default function Navbar() {
     { href: '/para-oficinas', label: t('paraOficinas') },
   ];
   const areaPrivada = ['/cliente', '/oficina', '/loja', '/admin', '/definir-senha'].some((p) => pathname === p || pathname?.startsWith(p + '/'));
+  // paginas de conta e a do link do e-mail: sem os links de motorista (caso 16/11: oficina
+  // vinda do e-mail clicou em "pedir orcamento" no login e saiu). Pelo caminho (SSR, sem salto).
+  const paginaDeConta = ['/login', '/cadastro', '/escolher-tipo', '/criar-senha', '/reset-password', '/definir-senha', '/ver-pedido'].some((p) => pathname === p || pathname?.startsWith(p + '/'));
   // a barra de baixo (celular) nao pode cobrir o fim da pagina nem o rodape
   useEffect(() => {
     const temBarra = isLoggedIn && (isOficina || isCliente);
@@ -164,7 +167,7 @@ export default function Navbar() {
               )}
             </LinkPainel>
 
-            {!isLoggedIn && (
+            {!isLoggedIn && !paginaDeConta && (
               <div className="hidden lg:flex items-center ml-5 gap-0.5">
                 {linksVisitante.map((l) => <NavLink key={l.href} href={l.href}>{l.label}</NavLink>)}
               </div>
@@ -360,7 +363,7 @@ export default function Navbar() {
         parte fixa (nao come altura da tela ao rolar). flex-wrap: se nao couber
         (320 px), quebra em vez de vazar para o lado. Fora do /pedido: ali a altura
         da tela e do formulario (Clarity 11/11, globals.css body.pagina-pedido) */}
-    {!isLoggedIn && !areaPrivada && pathname !== '/pedido' && (
+    {!isLoggedIn && !areaPrivada && !paginaDeConta && pathname !== '/pedido' && (
       <nav aria-label={t('menuPrincipal')} className="lg:hidden bg-white border-b border-gray-200">
         <div className="flex flex-wrap justify-center gap-x-1 px-2 py-1">
           {linksVisitante.map((l) => {

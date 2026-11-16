@@ -676,7 +676,11 @@
     "codigoSpam": "Non è arrivato? Controlla anche lo spam.",
     "codigoVencido": "Il codice è scaduto o ha avuto troppi tentativi errati. Richiedi un nuovo codice.",
     "outroEmail": "Usa un'altra e-mail",
-    "ou": "oppure"
+    "ou": "oppure",
+    "oficinaTitulo": "Accedi all'account dell'officina per vedere la richiesta {n} e inviare il preventivo",
+    "oficinaTituloSemNumero": "Accedi all'account dell'officina per vedere la richiesta e inviare il preventivo",
+    "oficinaTexto": "Usa l'e-mail e la password dell'account BipFix della tua officina.",
+    "oficinaCodigo": "Hai dimenticato la password? Ricevi un codice via e-mail ed entra senza password."
   },
   "naoEncontrado": {
     "titulo": "Pagina non trovata",
@@ -1035,6 +1039,18 @@
     "abrindo": "Apertura…",
     "invalidoTitulo": "Questo link è già stato usato o è scaduto",
     "invalidoTexto": "Ogni link funziona una volta e vale 7 giorni. Per vedere la richiesta, accedi con un codice inviato alla tua e-mail.",
-    "receberCodigo": "Ricevi un codice via e-mail"
+    "receberCodigo": "Ricevi un codice via e-mail",
+    "oficinaTitulo": "Ciao, {oficina}!",
+    "oficinaTexto": "La richiesta {numero} aspetta il tuo preventivo.",
+    "oficinaAbrir": "Apri la richiesta e invia il preventivo",
+    "oficinaNaoInteresse": "Non mi interessa",
+    "oficinaJaOrcou": "Hai già inviato un preventivo per questa richiesta.",
+    "oficinaJaDispensou": "Hai segnalato che non ti interessa ({motivo}).",
+    "oficinaDispensado": "Grazie. Non invieremo altri promemoria per questa richiesta.",
+    "oficinaDesfazer": "Annulla",
+    "oficinaFechadoTitulo": "Questa richiesta è chiusa",
+    "oficinaFechadoTexto": "La richiesta {numero} non accetta più preventivi. Accedi per vedere le altre richieste.",
+    "oficinaInvalidoTexto": "Ogni link funziona una volta e vale 3 giorni. Accedi all'account dell'officina per vedere la richiesta.",
+    "entrar": "Accedi"
   }
 }

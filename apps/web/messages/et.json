@@ -684,7 +684,11 @@
     "codigoSpam": "Ei jõudnud kohale? Vaata ka rämpsposti.",
     "codigoVencido": "Kood aegus või oli liiga palju valesid katseid. Küsi uus kood.",
     "outroEmail": "Kasuta teist e-posti",
-    "ou": "või"
+    "ou": "või",
+    "oficinaTitulo": "Logi sisse töökoja kontole, et näha päringut {n} ja saata hinnapakkumine",
+    "oficinaTituloSemNumero": "Logi sisse töökoja kontole, et näha päringut ja saata hinnapakkumine",
+    "oficinaTexto": "Kasuta oma töökoja BipFixi konto e-posti ja parooli.",
+    "oficinaCodigo": "Unustasid parooli? Saa kood e-postiga ja logi sisse ilma paroolita."
   },
   "naoEncontrado": {
     "titulo": "Lehte ei leitud",
@@ -1043,6 +1047,18 @@
     "abrindo": "Avan…",
     "invalidoTitulo": "See link on juba kasutatud või aegunud",
     "invalidoTexto": "Iga link töötab ühe korra ja kehtib 7 päeva. Päringu nägemiseks logi sisse e-postiga saadetud koodiga.",
-    "receberCodigo": "Saada kood e-postiga"
+    "receberCodigo": "Saada kood e-postiga",
+    "oficinaTitulo": "Tere, {oficina}!",
+    "oficinaTexto": "Päring {numero} ootab sinu hinnapakkumist.",
+    "oficinaAbrir": "Ava päring ja saada pakkumine",
+    "oficinaNaoInteresse": "Pole huvitatud",
+    "oficinaJaOrcou": "Oled sellele päringule juba pakkumise saatnud.",
+    "oficinaJaDispensou": "Märkisid, et sul pole huvi ({motivo}).",
+    "oficinaDispensado": "Aitäh. Selle päringu kohta me rohkem meeldetuletusi ei saada.",
+    "oficinaDesfazer": "Võta tagasi",
+    "oficinaFechadoTitulo": "See päring on suletud",
+    "oficinaFechadoTexto": "Päring {numero} ei võta enam pakkumisi vastu. Logi sisse, et näha teisi päringuid.",
+    "oficinaInvalidoTexto": "Iga link töötab ühe korra ja kehtib 3 päeva. Päringu nägemiseks logi sisse töökoja kontole.",
+    "entrar": "Logi sisse"
   }
 }

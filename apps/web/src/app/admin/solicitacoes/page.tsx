@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { formatDate, cleanDescricao } from '@/lib/utils';
 import { TIPOS_SERVICO, STATUS_SOLICITACAO } from '@fixauto/shared';
+import LembretesHoje from '@/components/admin/LembretesHoje';
 
 const STATUS_BADGE: Record<string, string> = {
   aberta: 'bg-blue-500/20 text-blue-400',
@@ -82,6 +83,8 @@ function AdminSolicitacoesContent() {
           Exportar CSV
         </a>
       </div>
+
+      <LembretesHoje />
 
       {resumo && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">

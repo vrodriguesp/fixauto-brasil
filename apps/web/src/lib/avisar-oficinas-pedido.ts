@@ -12,6 +12,7 @@ import et from '../../messages/et.json';
 import it from '../../messages/it.json';
 import ru from '../../messages/ru.json';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
+import { linkPedidoOficina } from './link-acesso';
 
 // Aviso de pedido novo as oficinas - no servidor (antes o navegador/app do
 // cliente inseria um aviso por oficina ativa DO MUNDO INTEIRO, em serie;
@@ -159,30 +160,46 @@ async function enviarAvisos(sol: PedidoAviso, alvo: OficinaAviso[], tipo: string
       dados: {
         solicitacao_id: sol.id, ...extra,
         textos: emTodasAsLinguas((l) => ({ titulo: titulo(l), mensagem: mensagemDe(sol, l, carro) })),
-      },
+        // sem e-mail: fica registrado ja no aviso (historico do admin)
+        ...(o.email ? {} : { email: 'sem_email', email_em: new Date().toISOString() }),
+      } as Record<string, unknown>,
     };
   });
   let erro: string | null = null;
+  // id de cada aviso: depois do e-mail, o resultado fica nos dados do proprio aviso
+  // (historico de contato do admin, dono 16/11: "e o e-mail saiu?")
+  const idDoAviso = new Map<string, string>();
   if (linhas.length) {
-    const { error } = await supabaseAdmin.from('notificacoes').insert(linhas);
+    const { data, error } = await supabaseAdmin.from('notificacoes').insert(linhas).select('id, profile_id');
     if (error) { erro = error.message; console.error('[avisar-oficinas] aviso', error.message); }
+    for (const n of (data || []) as { id: string; profile_id: string }[]) idDoAviso.set(n.profile_id, n.id);
   }
+  const marcar = (o: OficinaAviso, email: string) => {
+    const id = idDoAviso.get(o.profile_id);
+    const linha = linhas.find((l) => l.profile_id === o.profile_id);
+    if (!id || !linha) return Promise.resolve();
+    return supabaseAdmin.from('notificacoes').update({ dados: { ...linha.dados, email, email_em: new Date().toISOString() } }).eq('id', id).then(() => {}, () => {});
+  };
   // e-mail tambem (dono 07/11: "a oficina recebe e-mail quando chega um pedido novo");
   // um erro de e-mail nao segura o aviso no painel. Em segundo plano (a resposta ao
   // cliente nao espera) e um de cada vez: o Resend aceita poucos envios por segundo
   // e, todos juntos, a maioria voltava 429 sem e-mail (auditoria 07/11). No maximo
   // EMAILS_POR_DIA por oficina, contra quem abre pedidos so para mandar e-mail.
-  const comEmail = erro ? [] : alvo.filter((o) => o.email && dentroDoLimite(`email-pedido-oficina:${o.profile_id}`, EMAILS_POR_DIA, 24 * 3600 * 1000));
+  const alvoEmail = erro ? [] : alvo;
+  const convite = extra.convite === true;
   void (async () => {
-    for (const o of comEmail) {
-      await emailPedido(o, sol, carro, textos).catch((e) => console.error('[avisar-oficinas] e-mail', e));
-      await new Promise((ok) => setTimeout(ok, 600));
+    for (const o of alvoEmail) {
+      if (!o.email) continue; // ja marcado 'sem_email' no aviso
+      if (!dentroDoLimite(`email-pedido-oficina:${o.profile_id}`, EMAILS_POR_DIA, 24 * 3600 * 1000)) { await marcar(o, 'limite'); continue; }
+      const ok = await emailPedido(o, sol, carro, textos, convite).catch((e) => { console.error('[avisar-oficinas] e-mail', e); return false; });
+      await marcar(o, ok ? 'enviado' : 'falhou');
+      await new Promise((r) => setTimeout(r, 600));
     }
   })();
   return { inseridas: linhas.length, erro };
 }
 
-const EMAILS_POR_DIA = 15;
+export const EMAILS_POR_DIA = 15;
 
 type TextoEmail = { assunto: string; ola: string; texto: string; urg: Record<string, string>; botao: string; rodape: string };
 
@@ -193,6 +210,12 @@ const TXT_EMAIL: Record<string, TextoEmail> = {
   it: { assunto: 'Nuova richiesta: {t}', ola: 'Ciao {n},', texto: 'C’è una nuova richiesta di preventivo nella tua zona che corrisponde ai servizi della tua officina:', urg: { baixa: 'Non urgente', media: 'Entro poche settimane', alta: 'Urgente' }, botao: 'Vedi la richiesta e invia un preventivo', rodape: 'Ricevi questa e-mail perché la tua officina è su BipFix e offre questo servizio in questa zona.' },
   pt: { assunto: 'Novo pedido: {t}', ola: 'Olá, {n}!', texto: 'Chegou um novo pedido de orçamento na sua região que combina com os serviços da sua oficina:', urg: { baixa: 'Sem pressa', media: 'Nas próximas semanas', alta: 'Urgente' }, botao: 'Ver o pedido e enviar orçamento', rodape: 'Você recebe este e-mail porque sua oficina está na BipFix e faz este serviço nesta região.' },
   'pt-PT': { assunto: 'Novo pedido: {t}', ola: 'Olá, {n}!', texto: 'Chegou um novo pedido de orçamento na sua zona que corresponde aos serviços da sua oficina:', urg: { baixa: 'Sem pressa', media: 'Nas próximas semanas', alta: 'Urgente' }, botao: 'Ver o pedido e enviar orçamento', rodape: 'Recebe este e-mail porque a sua oficina está na BipFix e faz este serviço nesta zona.' },
+};
+
+// link de texto abaixo do botao (089): "nao tenho interesse" sem login, com motivo e "Desfazer"
+export const SEM_INTERESSE: Record<string, string> = {
+  et: 'Pole huvitatud sellest päringust', ru: 'Эта заявка мне не интересна', en: 'Not interested in this request',
+  it: 'Non mi interessa questa richiesta', pt: 'Não tenho interesse neste pedido', 'pt-PT': 'Não tenho interesse neste pedido',
 };
 
 // convite da BipFix (Lote 2): sem "combina com os servicos da sua oficina" - pode nao combinar
@@ -206,18 +229,19 @@ const TXT_EMAIL_CONVITE: Record<string, TextoEmail> = {
   'pt-PT': { ...TXT_EMAIL['pt-PT'], assunto: 'A BipFix enviou-lhe um pedido: {t}', texto: 'A BipFix enviou este pedido diretamente para a sua oficina. Veja e, se fizer sentido, envie um orçamento.', rodape: 'Recebe este e-mail porque a BipFix escolheu a sua oficina para este pedido.' },
 };
 
-async function emailPedido(o: OficinaAviso, sol: PedidoAviso, carro: string, textos: Record<string, TextoEmail>) {
+async function emailPedido(o: OficinaAviso, sol: PedidoAviso, carro: string, textos: Record<string, TextoEmail>, convite = false): Promise<boolean> {
   const para = o.email;
-  if (!para) return;
+  if (!para) return false;
   const idioma = o.idioma && textos[o.idioma] ? o.idioma : 'en';
   const x = textos[idioma];
   const tipo = TIPOS[idioma]?.[sol.tipo] || sol.tipo;
   const ano = sol.veiculo?.fipe_ano;
   // texto do cliente sem links (o e-mail sai de noreply@bipfix.com: nada de link de terceiros)
   const desc = String(sol.descricao || '').slice(0, 300).replace(/\b(?:https?:\/\/|www\.)\S+/gi, '[…]');
-  // link curto neutro (sem nome de pagina em portugues): /r/<numero>?o=<idioma>
-  const link = `${SITE_URL.replace('://www.', '://')}/r/${sol.numero}?o=${encodeURIComponent(idioma)}`;
-  await enviarEmail({ para, assunto: x.assunto.replace('{t}', [tipo, carro].filter(Boolean).join(' – ')), html: `
+  // link curto neutro (sem nome de pagina em portugues): /r/<numero>?o=<idioma>&k=<token> -
+  // entra direto na conta com o toque (089); sem token (oficina inativa, erro) pede login
+  const links = await linkPedidoOficina({ numero: sol.numero, idioma, oficinaId: o.oficina_id, solicitacaoId: sol.id });
+  return enviarEmail({ para, ...(convite && process.env.ADMIN_NOTIFICATION_EMAIL ? { responderPara: process.env.ADMIN_NOTIFICATION_EMAIL } : {}), assunto: x.assunto.replace('{t}', [tipo, carro].filter(Boolean).join(' – ')), html: `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
       <div style="background:#1e40af;color:white;padding:24px;border-radius:12px 12px 0 0;"><h1 style="margin:0;font-size:24px;">BipFix</h1></div>
       <div style="background:white;padding:24px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;">
@@ -229,7 +253,8 @@ async function emailPedido(o: OficinaAviso, sol: PedidoAviso, carro: string, tex
           ${desc ? `<p style="margin:0 0 6px;color:#374151;">${escapeHtml(desc)}</p>` : ''}
           <p style="margin:0;color:#6b7280;font-size:14px;">${escapeHtml(sol.endereco || '')} · ${x.urg[sol.urgencia || ''] || ''}</p>
         </div>
-        <p style="margin-top:24px;"><a href="${link}" style="display:inline-block;background:#1e40af;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">${x.botao}</a></p>
+        <p style="margin-top:24px;"><a href="${links.abrir}" style="display:inline-block;background:#1e40af;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">${x.botao}</a></p>
+        ${links.naoTenhoInteresse !== links.abrir ? `<p style="margin:12px 0 0;font-size:14px;"><a href="${links.naoTenhoInteresse}" style="color:#4b5563;">${SEM_INTERESSE[idioma] || SEM_INTERESSE.en}</a></p>` : ''}
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
         <p style="font-size:12px;color:#9ca3af;">${x.rodape}</p>
       </div>

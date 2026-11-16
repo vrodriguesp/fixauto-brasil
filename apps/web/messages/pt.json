@@ -675,7 +675,11 @@
     "codigoSpam": "Não chegou? Veja também a caixa de spam.",
     "codigoVencido": "O código venceu ou teve muitas tentativas erradas. Peça um novo código.",
     "outroEmail": "Usar outro e-mail",
-    "ou": "ou"
+    "ou": "ou",
+    "oficinaTitulo": "Entre na conta da oficina para ver o pedido {n} e enviar o orçamento",
+    "oficinaTituloSemNumero": "Entre na conta da oficina para ver o pedido e enviar o orçamento",
+    "oficinaTexto": "Use o e-mail e a senha da conta da sua oficina na BipFix.",
+    "oficinaCodigo": "Esqueceu a senha? Receba um código por e-mail e entre sem senha."
   },
   "naoEncontrado": {
     "titulo": "Página não encontrada",
@@ -1034,6 +1038,18 @@
     "abrindo": "Abrindo…",
     "invalidoTitulo": "Este link já foi usado ou venceu",
     "invalidoTexto": "Cada link funciona uma vez e vale 7 dias. Para ver o pedido, entre com um código enviado ao seu e-mail.",
-    "receberCodigo": "Receber um código por e-mail"
+    "receberCodigo": "Receber um código por e-mail",
+    "oficinaTitulo": "Olá, {oficina}!",
+    "oficinaTexto": "O pedido {numero} espera o seu orçamento.",
+    "oficinaAbrir": "Abrir o pedido e enviar orçamento",
+    "oficinaNaoInteresse": "Não tenho interesse",
+    "oficinaJaOrcou": "Você já enviou um orçamento para este pedido.",
+    "oficinaJaDispensou": "Você marcou que não tem interesse ({motivo}).",
+    "oficinaDispensado": "Obrigado. Não enviaremos mais lembretes deste pedido.",
+    "oficinaDesfazer": "Desfazer",
+    "oficinaFechadoTitulo": "Este pedido já foi encerrado",
+    "oficinaFechadoTexto": "O pedido {numero} não recebe mais orçamentos. Entre na conta para ver os outros pedidos.",
+    "oficinaInvalidoTexto": "Cada link funciona uma vez e vale 3 dias. Entre na conta da oficina para ver o pedido.",
+    "entrar": "Entrar"
   }
 }

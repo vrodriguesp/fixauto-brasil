@@ -678,7 +678,11 @@
     "codigoSpam": "Not there? Check the spam folder too.",
     "codigoVencido": "The code expired or had too many wrong attempts. Request a new code.",
     "outroEmail": "Use another e-mail",
-    "ou": "or"
+    "ou": "or",
+    "oficinaTitulo": "Log in to your shop account to see request {n} and send your quote",
+    "oficinaTituloSemNumero": "Log in to your shop account to see the request and send your quote",
+    "oficinaTexto": "Use the e-mail and password of your shop's BipFix account.",
+    "oficinaCodigo": "Forgot your password? Get a code by e-mail and log in without it."
   },
   "naoEncontrado": {
     "titulo": "Page not found",
@@ -1037,6 +1041,18 @@
     "abrindo": "Opening…",
     "invalidoTitulo": "This link was already used or has expired",
     "invalidoTexto": "Each link works once and is valid for 7 days. To see the request, sign in with a code sent to your e-mail.",
-    "receberCodigo": "Get a code by e-mail"
+    "receberCodigo": "Get a code by e-mail",
+    "oficinaTitulo": "Hello, {oficina}!",
+    "oficinaTexto": "Request {numero} is waiting for your quote.",
+    "oficinaAbrir": "Open the request and send a quote",
+    "oficinaNaoInteresse": "Not interested",
+    "oficinaJaOrcou": "You have already sent a quote for this request.",
+    "oficinaJaDispensou": "You marked that you're not interested ({motivo}).",
+    "oficinaDispensado": "Thank you. We won't send more reminders about this request.",
+    "oficinaDesfazer": "Undo",
+    "oficinaFechadoTitulo": "This request is closed",
+    "oficinaFechadoTexto": "Request {numero} no longer accepts quotes. Log in to see your other requests.",
+    "oficinaInvalidoTexto": "Each link works once and is valid for 3 days. Log in to your shop account to see the request.",
+    "entrar": "Log in"
   }
 }

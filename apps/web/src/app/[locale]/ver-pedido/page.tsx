@@ -13,7 +13,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return { title: t('ver'), robots: { index: false, follow: false } };
 }
 
-const NAMESPACES = ['verPedido', 'erros'];
+// oficinaPedidos: motivos do "nao tenho interesse" no modo oficina (089)
+const NAMESPACES = ['verPedido', 'erros', 'oficinaPedidos'];
 
 export default async function VerPedidoPage({ params, searchParams }: {
   params: Promise<{ locale: string }>;
@@ -26,7 +27,8 @@ export default async function VerPedidoPage({ params, searchParams }: {
   const messages = Object.fromEntries(NAMESPACES.filter((n) => n in todas).map((n) => [n, todas[n]]));
   return (
     <NextIntlClientProvider locale={locale} messages={messages as any}>
-      <VerPedido token={typeof busca.k === 'string' ? busca.k : ''} chat={busca.c === '1'} />
+      {/* o=1 / d=1 (link da oficina) so escolhem o esqueleto inicial; o modo vem da API */}
+      <VerPedido token={typeof busca.k === 'string' ? busca.k : ''} chat={busca.c === '1'} oficina={busca.o === '1'} dispensar={busca.d === '1'} />
     </NextIntlClientProvider>
   );
 }

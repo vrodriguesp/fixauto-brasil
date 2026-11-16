@@ -35,6 +35,41 @@ export async function linkPedido(numero: string | number | null | undefined, use
   return `${base}?k=${token}${consulta ? `&${consulta}` : ''}`;
 }
 
+// Link de acesso dos e-mails de pedido para a OFICINA (dono 16/11; migracao 089):
+// a oficina clicava no link do e-mail, caia no login e saia. Mesmo mecanismo do
+// cliente (nada ao abrir; so o toque gasta), 72 h, preso ao dono da oficina, a
+// oficina e ao pedido. Um token por e-mail serve aos dois links (Abrir / Nao tenho
+// interesse); "nao tenho interesse" nao gasta o token (api/link-acesso).
+export const LINK_ACESSO_OFICINA_HORAS = 72;
+
+/**
+ * Links do e-mail de pedido para a oficina. So gera token para o dono ativo
+ * (tipo oficina) de oficina ativa; senao, ou se o banco falhar, os dois links
+ * sao o link curto de hoje (/r/<numero>?o=<idioma>), que pede login.
+ */
+export async function linkPedidoOficina(p: { numero: string | number | null | undefined; idioma: string; oficinaId: string; solicitacaoId: string }): Promise<{ abrir: string; naoTenhoInteresse: string }> {
+  const simples = `${site()}/r/${p.numero ?? ''}?o=${encodeURIComponent(p.idioma)}`;
+  const semToken = { abrir: simples, naoTenhoInteresse: simples };
+  if (!p.numero) return semToken;
+  const { data: of } = await supabaseAdmin.from('oficinas')
+    .select('id, profile_id, ativa, profile:profiles!oficinas_profile_id_fkey(tipo, ativo)')
+    .eq('id', p.oficinaId).maybeSingle();
+  const perfil = (of as any)?.profile as { tipo?: string; ativo?: boolean | null } | null;
+  if (!of?.profile_id || !of.ativa || !perfil || perfil.tipo !== 'oficina' || perfil.ativo === false) return semToken;
+  const token = tokenAleatorio();
+  const { error } = await supabaseAdmin.from('links_acesso').insert({
+    user_id: of.profile_id, solicitacao_id: p.solicitacaoId, oficina_id: p.oficinaId, finalidade: 'oficina',
+    token_hash: hashLinkAcesso(token),
+    expira_em: new Date(Date.now() + LINK_ACESSO_OFICINA_HORAS * 3600 * 1000).toISOString(),
+  });
+  if (error) {
+    console.error('[link-acesso] insert oficina', error.message);
+    return semToken;
+  }
+  const abrir = `${simples}&k=${token}`;
+  return { abrir, naoTenhoInteresse: `${abrir}&d=1` };
+}
+
 /** Apaga links vencidos ha mais de 1 dia (tarefa de hora em hora). */
 export async function limparLinksAcesso(): Promise<void> {
   await supabaseAdmin.from('links_acesso').delete().lt('expira_em', new Date(Date.now() - 24 * 3600 * 1000).toISOString()).then(() => {}, () => {});

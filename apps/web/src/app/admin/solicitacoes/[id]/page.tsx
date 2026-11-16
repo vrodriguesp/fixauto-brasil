@@ -77,12 +77,25 @@ function resumo(v: any): string {
 // motivos de "nao tenho interesse" (components/oficina/DispensarPedido.tsx)
 const MOTIVO_DISPENSA: Record<string, string> = { nao_faz: 'Não faz o serviço', faz_parte: 'Faz só parte', sem_agenda: 'Sem agenda', longe: 'Longe demais', outro: 'Outro motivo' };
 
+const MOTIVO_FORA: Record<string, string> = {
+  orcou: 'já orçou', dispensou: 'disse que não tem interesse', inativa: 'oficina inativa', dono_inativo: 'conta do dono desativada',
+  sem_email: 'sem e-mail', conta_teste: 'conta de teste diferente da do cliente', nao_atende: 'já não atende este pedido (raio/serviço)',
+  aviso_recente: 'avisada há menos de 12 h', lembrada_recente: 'lembrada há pouco (48 h no pedido / 24 h na oficina)',
+};
+const EVENTO_CONTATO: Record<string, string> = {
+  avisada: 'avisada do pedido', convidada: 'convidada pela BipFix', lembrada: 'lembrete', link_enviado: 'link de acesso enviado',
+  link_visto: 'abriu o link', link_entrou: 'entrou pelo link', orcou: 'enviou orçamento', dispensou: 'não tenho interesse',
+};
+
 export default function AdminSolicitacaoDetalhePage() {
   const { id } = useParams<{ id: string }>();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [cobrando, setCobrando] = useState(false);
-  const [cobrancaResultado, setCobrancaResultado] = useState<string | null>(null);
+  // lembrete as oficinas que receberam e nao responderam (dono 16/11): previa com caixas -> enviar
+  const [previaLembrete, setPreviaLembrete] = useState<{ recebem: any[]; ficamFora: any[] } | null>(null);
+  const [marcadas, setMarcadas] = useState<Set<string>>(new Set());
+  const [lembrando, setLembrando] = useState(false);
+  const [lembreteResultado, setLembreteResultado] = useState<string | null>(null);
   const [novoStatus, setNovoStatus] = useState('');
   const [salvandoStatus, setSalvandoStatus] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
@@ -137,17 +150,25 @@ export default function AdminSolicitacaoDetalhePage() {
 
   useEffect(() => { fetchData(); }, [id]);
 
-  const handleCobrar = async () => {
-    setCobrando(true);
-    setCobrancaResultado(null);
-    const res = await fetch(`/api/admin/solicitacoes/${id}/cobrar`, { method: 'POST' });
-    const result = await res.json();
-    setCobrancaResultado(
-      res.ok
-        ? `${result.oficinasNotificadas} oficina(s) próxima(s) notificada(s).`
-        : result.error || 'Erro ao cobrar oficinas.'
-    );
-    setCobrando(false);
+  const abrirPreviaLembrete = async () => {
+    setLembrando(true); setLembreteResultado(null);
+    const res = await fetch(`/api/admin/solicitacoes/${id}/lembrar`);
+    const r = await res.json().catch(() => ({}));
+    setLembrando(false);
+    if (!res.ok) { setLembreteResultado(r.error || 'Erro ao montar a prévia.'); return; }
+    setPreviaLembrete(r);
+    setMarcadas(new Set((r.recebem || []).map((o: any) => o.oficina_id)));
+  };
+  const enviarLembrete = async () => {
+    if (!marcadas.size) return;
+    setLembrando(true);
+    const res = await fetch(`/api/admin/solicitacoes/${id}/lembrar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ oficinaIds: Array.from(marcadas) }) });
+    const r = await res.json().catch(() => ({}));
+    setLembrando(false);
+    if (!res.ok) { setLembreteResultado(r.error || 'Erro ao enviar o lembrete.'); return; }
+    setPreviaLembrete(null);
+    setLembreteResultado((r.enviados || []).map((e: any) => `${e.nome}: e-mail ${e.email}`).join(' · ') || 'Nenhum lembrete enviado.');
+    fetchData();
   };
 
   const handleSalvarStatus = async () => {
@@ -193,7 +214,7 @@ export default function AdminSolicitacaoDetalhePage() {
   if (loading) return <div className="text-slate-400">Carregando...</div>;
   if (!data) return <div className="text-slate-400">Solicitação não encontrada.</div>;
 
-  const { solicitacao, fotos, orcamentos, mensagens, avaliacao, analiseDano, emergencia, agenda, etapas, notasInternas, dispensas = [], totalVistos = 0, convites = [] } = data;
+  const { solicitacao, fotos, orcamentos, mensagens, avaliacao, analiseDano, emergencia, agenda, etapas, notasInternas, dispensas = [], totalVistos = 0, convites = [], contatos = [] } = data;
   const convidadasAdmin = convites.filter((c: any) => c.origem === 'admin');
   const acessoMantido = convites.filter((c: any) => c.origem === 'tipo_alterado');
 
@@ -235,11 +256,11 @@ export default function AdminSolicitacaoDetalhePage() {
           {statusMsg && <p className="text-xs text-slate-400 max-w-[280px]">{statusMsg}</p>}
           {(solicitacao.status === 'aberta' || solicitacao.status === 'em_orcamento') && (
             <div>
-              <button onClick={handleCobrar} disabled={cobrando} className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-                {cobrando ? 'Notificando...' : 'Cobrar oficinas próximas'}
+              <button onClick={abrirPreviaLembrete} disabled={lembrando} data-testid="lembrar-oficinas" className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+                {lembrando && !previaLembrete ? 'Calculando...' : 'Lembrar oficinas'}
               </button>
-              <p className="text-[11px] text-slate-500 mt-1 max-w-[260px] ml-auto">Cobra oficinas num raio de 40 km que ainda não orçaram, inclusive as que nunca receberam o pedido, e as convidadas pela BipFix.</p>
-              {cobrancaResultado && <p className="text-xs text-slate-400 mt-2 max-w-[220px]">{cobrancaResultado}</p>}
+              <p className="text-[11px] text-slate-500 mt-1 max-w-[260px] ml-auto">Lembra só as oficinas que já receberam este pedido e ainda não orçaram nem disseram que não têm interesse. Você vê a lista antes de enviar.</p>
+              {lembreteResultado && <p className="text-xs text-slate-400 mt-2 max-w-[260px] ml-auto" data-testid="lembrar-resultado">{lembreteResultado}</p>}
             </div>
           )}
         </div>
@@ -370,6 +391,65 @@ export default function AdminSolicitacaoDetalhePage() {
                     </button>
                   </div>
                 )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {previaLembrete && (
+        <div className="mb-8 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4" data-testid="lembrar-previa">
+          <p className="text-slate-200 text-sm font-medium mb-2">Lembrete do pedido {solicitacao.numero}: quem recebe</p>
+          {previaLembrete.recebem.length === 0 ? (
+            <p className="text-slate-400 text-sm">Nenhuma oficina para lembrar agora.</p>
+          ) : (
+            <ul className="space-y-1 mb-3">
+              {previaLembrete.recebem.map((o: any) => (
+                <li key={o.oficina_id} data-testid="lembrar-oficina" data-oficina={o.oficina_id}>
+                  <label className="flex items-center gap-2 text-sm text-slate-200">
+                    <input type="checkbox" checked={marcadas.has(o.oficina_id)}
+                      onChange={(e) => setMarcadas((m) => { const n = new Set(m); if (e.target.checked) n.add(o.oficina_id); else n.delete(o.oficina_id); return n; })} />
+                    <span>{o.nome}</span>
+                    <span className="text-slate-500 text-xs">{o.email}{o.ultimoAviso ? ` · último aviso ${formatDateTime(o.ultimoAviso)}` : ''}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          )}
+          {previaLembrete.ficamFora.length > 0 && (
+            <div className="mb-3" data-testid="lembrar-fora">
+              <p className="text-slate-400 text-xs uppercase tracking-wide mb-1">Ficam de fora</p>
+              <ul className="text-xs text-slate-400 space-y-0.5">
+                {previaLembrete.ficamFora.map((f: any) => <li key={f.oficina_id} data-oficina={f.oficina_id} data-motivo={f.motivo}>{f.nome}: {MOTIVO_FORA[f.motivo] || f.motivo}</li>)}
+              </ul>
+            </div>
+          )}
+          <div className="flex flex-wrap gap-2">
+            <button onClick={enviarLembrete} disabled={lembrando || !marcadas.size} data-testid="lembrar-confirmar" className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg">
+              {lembrando ? 'Enviando...' : `Enviar lembrete a ${marcadas.size}`}
+            </button>
+            <button onClick={() => setPreviaLembrete(null)} className="text-slate-300 text-sm px-4 py-2 rounded-lg border border-slate-600">Cancelar</button>
+          </div>
+        </div>
+      )}
+
+      {/* historico de contato com as oficinas (dono 16/11: acompanhar tudo pelo admin) */}
+      <div className="mb-8" data-testid="admin-contatos-oficinas">
+        <p className="text-slate-400 text-xs uppercase tracking-wide mb-3">Contato com as oficinas — pedido {solicitacao.numero}</p>
+        {contatos.length === 0 ? (
+          <p className="text-slate-500 text-sm">Nenhuma oficina recebeu este pedido.</p>
+        ) : (
+          <div className="space-y-2">
+            {contatos.map((c: any) => (
+              <div key={c.oficina_id} className="bg-slate-800 border border-slate-700 rounded-lg p-3" data-testid="contato-oficina" data-oficina={c.oficina_id}>
+                <p className="text-slate-200 text-sm font-medium mb-1">{c.nome}</p>
+                <ul className="text-xs text-slate-400 space-y-0.5">
+                  {c.eventos.map((e: any, i: number) => (
+                    <li key={i} data-evento={e.tipo}>
+                      <span className="text-slate-500">{formatDateTime(e.em)}</span> · {EVENTO_CONTATO[e.tipo] || e.tipo}{e.detalhe ? ` (${e.detalhe})` : ''}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>

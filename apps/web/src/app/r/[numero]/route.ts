@@ -18,12 +18,19 @@ export async function GET(req: NextRequest, { params }: { params: { numero: stri
     .eq('numero', numero).maybeSingle();
   if (!sol) return NextResponse.redirect(SITE_URL, 302);
   const oficina = req.nextUrl.searchParams.get('o');
+  const k = req.nextUrl.searchParams.get('k');
+  // ?o=<idioma>&k=<token>: link de acesso da oficina (089, lib/link-acesso.ts) -> pagina "ver pedido"
+  // em modo oficina, que nao entra sozinha ao abrir; &d=1 abre ja no "nao tenho interesse" (sem gravar).
+  // Na pagina, o=1 so escolhe o esqueleto inicial: quem decide o modo e a API (finalidade do link).
+  if (oficina && k && TOKEN_ACESSO.test(k)) {
+    return NextResponse.redirect(`${urlNoIdioma(oficina, '/ver-pedido')}?k=${k}&o=1${req.nextUrl.searchParams.get('d') === '1' ? '&d=1' : ''}`, 302);
+  }
   // &p=1: aviso de pedido de novas datas (079) -> pagina do pedido da oficina (cartao para responder)
   if (oficina && req.nextUrl.searchParams.get('p')) return NextResponse.redirect(urlNoIdioma(oficina, `/oficina/pedidos/${sol.id}`), 302);
-  if (oficina) return NextResponse.redirect(urlNoIdioma(oficina, `/oficina/enviar-orcamento/${sol.id}`), 302);
+  // sem token: pede login; ?n= leva o numero do pedido para a caixa "modo oficina" do login
+  if (oficina) return NextResponse.redirect(`${urlNoIdioma(oficina, `/oficina/enviar-orcamento/${sol.id}`)}?n=${numero}`, 302);
   // ?l=<idioma>: e-mail de orcamento para quem nao e o dono do pedido (outro motorista do acidente)
   const idioma = req.nextUrl.searchParams.get('l') || ((sol as any).cliente?.idioma ?? 'et');
-  const k = req.nextUrl.searchParams.get('k');
   if (k && TOKEN_ACESSO.test(k)) return NextResponse.redirect(`${urlNoIdioma(idioma, '/ver-pedido')}?k=${k}${req.nextUrl.searchParams.get('c') ? '&c=1' : ''}`, 302);
   // ?c=1: botao "conversar com a oficina" do e-mail de agendamento -> chat com a oficina escolhida
   if (req.nextUrl.searchParams.get('c')) {

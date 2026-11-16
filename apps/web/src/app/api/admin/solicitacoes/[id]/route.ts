@@ -5,6 +5,7 @@ import { STATUS_SOLICITACAO } from '@fixauto/shared';
 import { notifStatusSolicitacaoAtualizado, statusSolicitacaoLabelFor } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
+import { contatosDoPedido } from '@/lib/contatos-pedido';
 
 
 export const dynamic = 'force-dynamic';
@@ -84,6 +85,9 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
         .order('created_at', { ascending: true }),
     ]);
 
+    // historico de contato por oficina (dono 16/11): avisada, convidada, lembrada, link, orcou, dispensou
+    const contatos = await contatosDoPedido(params.id).catch((e) => { console.error('[admin/solicitacoes/:id] contatos', e); return []; });
+
     let etapas: any[] = [];
     let notasInternas: any[] = [];
     const agendaIds = (agendaRows || []).map((a: any) => a.id);
@@ -118,6 +122,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       dispensas: dispensas || [],
       totalVistos: totalVistos || 0,
       convites: convites || [],
+      contatos,
     });
   } catch (error) {
     console.error('[admin/solicitacoes/:id]', error);

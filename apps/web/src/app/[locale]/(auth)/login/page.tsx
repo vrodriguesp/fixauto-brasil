@@ -9,6 +9,19 @@ import { textoErroApi } from '@/lib/erro-api';
 import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 
+// voltar com ou sem o prefixo /<pais>/<idioma> (/ee/ru/oficina/...); casa so o segmento
+// "oficina" (nao /oficinas/..., o perfil publico). O numero vem de ?n= do login ou do voltar.
+function modoOficinaDe(params: URLSearchParams): { numero: string | null } | null {
+  const voltar = params.get('voltar') || '';
+  if (!voltar.startsWith('/') || voltar.startsWith('//')) return null;
+  let destino: URL;
+  try { destino = new URL(voltar, 'https://x.invalid'); } catch { return null; }
+  const caminho = destino.pathname.replace(/^\/[a-z]{2}\/[a-z]{2}(-[A-Z]{2})?(?=\/|$)/, '');
+  if (!/^\/oficina(\/|$)/.test(caminho)) return null;
+  const n = params.get('n') || destino.searchParams.get('n') || '';
+  return { numero: /^\d{1,12}$/.test(n) ? n : null };
+}
+
 // Entrar com e-mail + senha ou "receber um codigo por e-mail" (dono 12/11): o
 // codigo entra em contas com ou sem senha (quem pediu orcamento sem senha). Quem
 // ainda nao tem senha passa pela tela "crie a sua senha" (pode pular) antes de seguir.
@@ -29,6 +42,9 @@ export default function LoginPage() {
   const [codigoId, setCodigoId] = useState<string | null>(null);
   const [codigo, setCodigo] = useState('');
   const [esperaReenvio, setEsperaReenvio] = useState(0);
+  // "modo oficina": chegou pelo link do e-mail de pedido (voltar=/oficina/...; caso CARVEX 16/11:
+  // a pagina nao dizia o que fazer). So muda texto; n = numero do pedido (so digitos).
+  const [modoOficina, setModoOficina] = useState<{ numero: string | null } | null>(null);
   const locale = useLocale();
   const { signIn } = useAuth();
   const router = useRouter();
@@ -43,6 +59,7 @@ export default function LoginPage() {
     }
     // ?codigo=1: ja abre em "receber um codigo" (link do e-mail vencido, pedido enviado)
     if (params.get('codigo') === '1') setCodigoMode(true);
+    setModoOficina(modoOficinaDe(params));
   }, [t]);
   useEffect(() => {
     if (esperaReenvio <= 0) return;
@@ -205,6 +222,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
+        {modoOficina && (
+          <div className="mb-6 rounded-lg border border-primary-200 bg-primary-50 p-4" data-testid="login-oficina-aviso" role="note">
+            <p className="font-semibold text-gray-900">
+              {modoOficina.numero ? t('oficinaTitulo', { n: modoOficina.numero }) : t('oficinaTituloSemNumero')}
+            </p>
+            <p className="mt-1 text-sm text-gray-700">{t('oficinaTexto')}</p>
+          </div>
+        )}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
             {forgotMode ? t('recuperarSenhaTitulo') : codigoMode ? t('codigoTitulo') : t('entrarTitulo')}
@@ -327,6 +352,7 @@ export default function LoginPage() {
               <button type="button" onClick={() => { setCodigoMode(true); setError(''); }} className="btn-secondary w-full" data-testid="login-receber-codigo">
                 {t('receberCodigo')}
               </button>
+              {modoOficina && <p className="mt-2 text-center text-sm text-gray-600" data-testid="login-oficina-codigo-dica">{t('oficinaCodigo')}</p>}
 
               <p className="text-center text-sm text-gray-600 mt-6">
                 {t('naoTemConta')}{' '}
