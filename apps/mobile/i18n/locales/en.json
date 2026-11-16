@@ -661,7 +661,17 @@
     "faltaTelefone": "Enter your phone number or untick SMS.",
     "jaConfirmouTitulo": "This request is no longer waiting",
     "jaConfirmouTexto": "If you confirmed it from the e-mail, it has already gone to the repair shops. Sign in to see it.",
-    "codigoBotaoEmail": "You can also tap “Confirm and send the request” in the e-mail – it opens in the browser."
+    "codigoBotaoEmail": "You can also tap “Confirm and send the request” in the e-mail – it opens in the browser.",
+    "faltaEndereco": "Enter an address, district or city.",
+    "placaRotulo": "Number plate (optional)",
+    "placaAjuda": "The workshop can see the car's exact details from it.",
+    "localTitulo": "Where is the car?",
+    "localPlaceholder": "Address, district or city",
+    "localAjuda": "You can enter the exact address, a district or just the city. We use it to find workshops nearby.",
+    "localUsarMinha": "Use my location",
+    "localProcurando": "Finding your location...",
+    "localNegado": "Couldn't use your location. Enter an address, district or city.",
+    "anoOpcional": "Year (optional)"
   },
   "agendaMudanca": {
     "itemNovo": "New",

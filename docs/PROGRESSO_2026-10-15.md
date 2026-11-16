@@ -1304,3 +1304,8 @@ Pedido do dono (e-mail "Performance", 15/11 19:18): "Sim! E todos outros element
 - Ficam: B5 (sem nome na busca reversa o endereco vira coordenadas), B7 (script antigo catalogo-carro-pais), app ainda exige o ano (OTA junto com o deploy).
 - Teste de novo (build novo no :3100): `scripts/e2e/melhorias-1611.mjs` TUDO OK (log resultados/melhorias-1611/melhorias-1611b.log). tsc ok, build ok.
 - **NAO publicado** - aguarda OK do dono no chat.
+
+#### 16/11 noite — app (dono: "deploy all together with the app")
+- `apps/mobile/app/pedido.tsx`: ano opcional (carroOk so exige marca+modelo; se preenchido, ano valido), rotulos "Aasta (soovi korral)" e "Numbrimärk (soovi korral)" + ajuda da placa; passo do local SEM pedir a localizacao ao entrar (antes `buscarLocal()` no efeito da etapa) - botao "Kasuta minu asukohta" (testID usar-minha-localizacao) pede so no toque e preenche rua/numero, bairro e cidade (busca reversa do site devolve os tres desde 16/11); negado/erro: aviso curto, o botao some. Textos copiados do site nos 6 idiomas (`i18n/locales/*.json`, pedidoSemConta.*). Pedido do cliente logado (nova-solicitacao) nao mudou (pede ao abrir, ajuste do dono de 31/10).
+- `scripts/e2e/app-pedido-sem-conta.mjs` atualizado (conta getCurrentPosition: 0 ao entrar no passo; ET usa o botao; RU sem ano e "Ласнамяэ"): TUDO OK com a versao web do app (export em Documentos/_teste_local/app-web-1611, servida em :8090 contra o site :3100). `checar-traducoes` do app: completo. tsc do app ok.
+- Publicacao: site + OTA do app juntos (canal production), **aguarda o fim da revisao Fable do app**.

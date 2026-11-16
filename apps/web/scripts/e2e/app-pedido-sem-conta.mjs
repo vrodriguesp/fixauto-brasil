@@ -48,10 +48,20 @@ const perfilDe = async (email) => (await admin.from('profiles').select('id, senh
 const clicaTexto = async (page, texto) => { await page.getByText(texto, { exact: true }).locator('visible=true').last().click(); };
 const campo = (page, rotulo) => page.getByLabel(rotulo, { exact: true }).locator('visible=true').first();
 const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
-const novoContexto = (loc) => browser.newContext({
-  viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, locale: LOC_BROWSER[loc],
-  geolocation: { latitude: 59.437, longitude: 24.745 }, permissions: ['geolocation'],
-});
+const novoContexto = async (loc) => {
+  const ctx = await browser.newContext({
+    viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, locale: LOC_BROWSER[loc],
+    geolocation: { latitude: 59.437, longitude: 24.745 }, permissions: ['geolocation'],
+  });
+  // conta os pedidos de localizacao (16/11: so no botao "Kasuta minu asukohta", nunca ao entrar no passo)
+  await ctx.addInitScript(() => {
+    window.__geo = 0;
+    const g = navigator.geolocation;
+    if (g) { const a = g.getCurrentPosition.bind(g); g.getCurrentPosition = (...x) => { window.__geo++; return a(...x); };
+      const w = g.watchPosition.bind(g); g.watchPosition = (...x) => { window.__geo++; return w(...x); }; }
+  });
+  return ctx;
+};
 const checaTela = async (page, nome) => {
   const t = await page.innerText('body');
   const crua = t.match(CHAVE_CRUA);
@@ -92,13 +102,24 @@ const ateContato = async (page, T, nome) => {
   await page.waitForTimeout(2500);
   await page.getByText('Corolla', { exact: true }).last().click({ timeout: 10000 });
   await page.waitForTimeout(800);
-  await campo(page, T('veiculos.ano')).fill('2019');
-  await campo(page, T('pedidoSemConta.plateLabel')).fill('777APP');
+  // ano opcional (16/11): ET preenche, RU deixa vazio e o Edasi passa
+  if (nome === 'et') await campo(page, T('pedidoSemConta.anoOpcional')).fill('2019');
+  await campo(page, T('pedidoSemConta.placaRotulo')).fill('777APP');
   await checaTela(page, `${nome} carro`);
   await page.screenshot({ path: `${OUT}/app-pedido-carro-${nome}.png`, fullPage: true });
   await clicaTexto(page, T('pedidoSemConta.next'));
-  await page.waitForTimeout(2500); // posicao do aparelho preenche a cidade
-  const end = campo(page, T('novaSolicitacao.passoLocal'));
+  await page.getByText(T('pedidoSemConta.localTitulo')).first().waitFor({ timeout: 10000 });
+  await page.waitForTimeout(1500);
+  const end = campo(page, T('pedidoSemConta.localTitulo'));
+  ok(`${nome}: passo do local sem pedir a localizacao ao entrar`, (await page.evaluate(() => window.__geo)) === 0 && !(await end.inputValue().catch(() => '')), String(await page.evaluate(() => window.__geo)));
+  ok(`${nome}: botao "${T('pedidoSemConta.localUsarMinha')}" e o texto de ajuda`, await page.getByTestId('usar-minha-localizacao').isVisible() && (await page.innerText('body')).includes(T('pedidoSemConta.localAjuda')));
+  if (nome === 'et') {
+    await page.getByTestId('usar-minha-localizacao').click();
+    await page.waitForTimeout(4000);
+    ok(`${nome}: o botao pediu a localizacao e preencheu o endereco`, (await page.evaluate(() => window.__geo)) >= 1 && !!(await end.inputValue().catch(() => '')), await end.inputValue().catch(() => ''));
+  } else {
+    await end.fill('Ласнамяэ');
+  }
   if (!(await end.inputValue().catch(() => ''))) await end.fill('Tallinn');
   await checaTela(page, `${nome} local`);
   await clicaTexto(page, T('pedidoSemConta.next'));

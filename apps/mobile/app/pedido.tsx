@@ -87,6 +87,8 @@ export default function PedidoScreen() {
   const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [pais, setPais] = useState<string | null>(null);
   const [buscandoLocal, setBuscandoLocal] = useState(false);
+  // localizacao negada/indisponivel: o botao some e nao pede de novo (igual ao site, 16/11)
+  const [localNegado, setLocalNegado] = useState(false);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
@@ -116,7 +118,7 @@ export default function PedidoScreen() {
     setFaltando('');
     if (['detalhe', 'carro', 'local', 'contato'].includes(etapa)) contar(etapa);
     rolagem.current?.scrollTo({ y: 0, animated: false });
-    if (etapa === 'local' && !coords) buscarLocal();
+    // 16/11 (dono + Fable): sem pedir a localizacao ao entrar no passo - so no botao "Kasuta minu asukohta"
   }, [etapa]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (esperaReenvio <= 0) return;
@@ -129,15 +131,19 @@ export default function PedidoScreen() {
     setBuscandoLocal(true);
     try {
       const { status } = await permissaoLocal(true);
-      if (status !== 'granted') return;
+      if (status !== 'granted') { setLocalNegado(true); return; }
       const pos = await obterPosicao();
       setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
       const res = await fetchComPrazo(`${API_BASE_URL}/api/geocode?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&idioma=${i18n.language}`);
       const data = await res.json();
-      if (data.cidade) setEndereco((atual) => atual || [data.cidade, data.estado, data.pais].filter(Boolean).join(', '));
+      // rua e numero, bairro e cidade (a busca reversa do site devolve os tres desde 16/11)
+      const rua = [data.rua, data.numero].filter(Boolean).join(' ');
+      const texto = [rua, data.bairro, data.cidade].filter(Boolean).join(', ') || [data.cidade, data.estado, data.pais].filter(Boolean).join(', ');
+      if (texto) setEndereco(texto);
       if (data.paisCodigo) setPais(data.paisCodigo);
     } catch {
       // sem posicao o endereco continua digitavel
+      setLocalNegado(true);
     } finally {
       setBuscandoLocal(false);
     }
@@ -167,7 +173,8 @@ export default function PedidoScreen() {
     rolagem.current?.scrollTo({ y: Math.max(0, posDetalhe.current + posDescricao.current - 40), animated: true });
     setTimeout(() => caixaDescricao.current?.focus(), Platform.OS === 'web' ? 0 : 300);
   };
-  const carroOk = !!(marca && modelo && /^\d{4}$/.test(ano.trim())) && anoValido(ano) && placaValida(placa);
+  // ano opcional (dono 16/11): se preenchido, 4 digitos validos
+  const carroOk = !!(marca && modelo) && anoValido(ano) && placaValida(placa);
   const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && (!querSms || TELEFONE_OK(telefone)) && termos;
   const sugestao = sugestaoEmail(email);
 
@@ -473,11 +480,12 @@ export default function PedidoScreen() {
           {/* modelo sempre a vista; antes da marca fica parado (dono 12/11) */}
           <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={marca?.code ? `/api/vehicle-catalog?tipo=cars&marca=${marca.code}` : ''}
             desativado={marca ? undefined : t('veiculos.escolhaMarcaPrimeiro')} />
-          <Text className="text-sm font-medium text-gray-700 mb-1">{t('veiculos.ano')}</Text>
-          <TextInput accessibilityLabel={t('veiculos.ano')} value={ano} onChangeText={(v) => setAno(v.replace(/\D/g, '').slice(0, 4))} keyboardType="number-pad" maxLength={4} className={`${CAMPO} mb-4`} />
-          {ano.length === 4 && !anoValido(ano) ? <Text className="text-sm text-red-700 -mt-2 mb-3" accessibilityRole="alert">{t('erros.ANO_INVALIDO')}</Text> : null}
-          <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.plateLabel')}</Text>
-          <TextInput accessibilityLabel={t('pedidoSemConta.plateLabel')} value={placa} onChangeText={(v) => setPlaca(v.toUpperCase())} autoCapitalize="characters" maxLength={10} className={`${CAMPO} mb-3`} />
+          <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.anoOpcional')}</Text>
+          <TextInput accessibilityLabel={t('pedidoSemConta.anoOpcional')} value={ano} onChangeText={(v) => setAno(v.replace(/\D/g, '').slice(0, 4))} keyboardType="number-pad" maxLength={4} className={`${CAMPO} mb-4`} />
+          {ano.length > 0 && !anoValido(ano) ? <Text className="text-sm text-red-700 -mt-2 mb-3" accessibilityRole="alert">{t('erros.ANO_INVALIDO')}</Text> : null}
+          <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.placaRotulo')}</Text>
+          <TextInput accessibilityLabel={t('pedidoSemConta.placaRotulo')} value={placa} onChangeText={(v) => setPlaca(v.toUpperCase())} autoCapitalize="characters" maxLength={10} className={`${CAMPO} mb-1`} />
+          <Text className="text-xs text-gray-500 mb-3">{t('pedidoSemConta.placaAjuda')}</Text>
           {!placaValida(placa) ? <Text className="text-sm text-red-700 -mt-2 mb-3" accessibilityRole="alert">{t('erros.PLACA_INVALIDA')}</Text> : null}
           <Navegar voltar="detalhe" ok={carroOk} avancar={() => setEtapa('local')} />
         </View>
@@ -486,20 +494,27 @@ export default function PedidoScreen() {
       {etapa === 'local' && (
         <View>
           <Text className="text-lg font-semibold text-gray-900 mb-3">{t('pedidoSemConta.step5Title')}</Text>
-          <Text className="text-sm font-medium text-gray-700 mb-1">
-            {t('novaSolicitacao.passoLocal')} {buscandoLocal && <ActivityIndicator size="small" color="#2563eb" />}
-          </Text>
+          <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.localTitulo')}</Text>
+          <Text className="text-xs text-gray-500 mb-2">{t('pedidoSemConta.localAjuda')}</Text>
           <View onLayout={(e) => { posEndereco.current = e.nativeEvent.layout.y; }} />
           <EnderecoAutocomplete
             aoFocar={() => setTimeout(() => rolagem.current?.scrollTo({ y: Math.max(0, posEndereco.current - 40), animated: true }), 250)}
             value={endereco}
             onChange={(v) => { setEndereco(v); setCoords(null); }}
             perto={coords}
-            rotulo={t('novaSolicitacao.passoLocal')}
-            placeholder={t('novaSolicitacao.enderecoPlaceholder')}
+            rotulo={t('pedidoSemConta.localTitulo')}
+            placeholder={t('pedidoSemConta.localPlaceholder')}
             onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); if (s.paisCodigo) setPais(s.paisCodigo); }}
           />
-          <Text className="text-xs text-gray-500 -mt-2">{t('pedidoSemConta.addressHelp')}</Text>
+          {/* localizacao so quando a pessoa toca (antes pedia ao entrar no passo) */}
+          {!coords && !localNegado ? (
+            <Pressable onPress={buscarLocal} disabled={buscandoLocal} accessibilityRole="button" testID="usar-minha-localizacao"
+              className="flex-row items-center self-start border border-gray-300 rounded-lg px-4 py-3 mb-2">
+              {buscandoLocal ? <ActivityIndicator size="small" color="#2563eb" /> : null}
+              <Text className="text-gray-800 font-medium ml-1">{buscandoLocal ? t('pedidoSemConta.localProcurando') : t('pedidoSemConta.localUsarMinha')}</Text>
+            </Pressable>
+          ) : null}
+          {localNegado ? <Text className="text-xs text-gray-600 mb-2">{t('pedidoSemConta.localNegado')}</Text> : null}
           <Erro />
           <Navegar voltar="carro" ok={endereco.trim().length > 2} avancar={() => { setErro(''); setEtapa('contato'); }} />
         </View>

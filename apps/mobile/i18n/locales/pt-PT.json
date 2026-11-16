@@ -661,7 +661,17 @@
     "faltaTelefone": "Introduza o número de telemóvel ou desmarque o SMS.",
     "jaConfirmouTitulo": "O pedido já não aguarda confirmação",
     "jaConfirmouTexto": "Se o confirmou pelo e-mail, já foi enviado às oficinas. Entre para o ver.",
-    "codigoBotaoEmail": "Também pode tocar em “Confirmar e enviar o pedido” no e-mail – abre no navegador."
+    "codigoBotaoEmail": "Também pode tocar em “Confirmar e enviar o pedido” no e-mail – abre no navegador.",
+    "faltaEndereco": "Escreva a morada, bairro ou cidade.",
+    "placaRotulo": "Matrícula (opcional)",
+    "placaAjuda": "Com ela a oficina vê os dados exatos do carro.",
+    "localTitulo": "Onde está o carro?",
+    "localPlaceholder": "Morada, bairro ou cidade",
+    "localAjuda": "Pode escrever a morada exata, o bairro ou só a cidade. Com ela encontramos oficinas por perto.",
+    "localUsarMinha": "Usar a minha localização",
+    "localProcurando": "A procurar a sua localização...",
+    "localNegado": "Não foi possível usar a sua localização. Escreva a morada, bairro ou cidade.",
+    "anoOpcional": "Ano (opcional)"
   },
   "agendaMudanca": {
     "itemNovo": "Novo",
