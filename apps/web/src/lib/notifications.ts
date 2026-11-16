@@ -6,7 +6,7 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-import { SITE_URL, siteNoIdioma, urlNoIdioma, idiomaDoSite } from './site-url';
+import { SITE_URL, siteNoIdioma, urlNoIdioma, idiomaDoSite, linkNeutroPecas } from './site-url';
 import { linkPedido } from './link-acesso';
 
 // Sem moeda informada: reais so para a versao do Brasil; euro no resto
@@ -597,7 +597,7 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
             </div>
             <p>${s.callToAction}</p>
             <p style="margin-top: 24px;">
-              <a href="${urlNoIdioma(params.locale, params.linkInterno)}"
+              <a href="${linkNeutroPecas(params.locale, params.linkInterno)}"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>
@@ -650,7 +650,7 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
               <p style="margin: 4px 0 0; color: #6b7280;">${fmt(s.prazo, { prazoDias: diasTexto(params.locale, params.prazoDias) })}</p>
             </div>
             <p style="margin-top: 24px;">
-              <a href="${siteNoIdioma(params.locale)}/oficina/pecas"
+              <a href="${linkNeutroPecas(params.locale, '/oficina/pecas')}"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>
@@ -718,7 +718,7 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
             ${contatoHtml}
             <p>${s.deliveryNote}</p>
             <p style="margin-top: 24px;">
-              <a href="${urlNoIdioma(params.locale, params.linkInterno)}"
+              <a href="${linkNeutroPecas(params.locale, params.linkInterno)}"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>
@@ -760,7 +760,7 @@ export async function sendMensagemPecaEmail(params: {
             <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
             <p>${fmt(s.intro, { remetente: escapeHtml(params.remetente), pecaDescricao: escapeHtml(params.pecaDescricao) })}</p>
             <p style="margin-top: 24px;">
-              <a href="${urlNoIdioma(params.locale, params.linkInterno)}"
+              <a href="${linkNeutroPecas(params.locale, params.linkInterno)}"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>
@@ -795,7 +795,7 @@ export async function sendLojaAtivadaEmail(params: { toEmail: string; toName: st
             <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
             <p>${fmt(s.intro, { lojaNome: escapeHtml(params.lojaNome) })}</p>
             <p style="margin-top: 24px;">
-              <a href="${urlNoIdioma(params.locale, '/loja/cotacoes')}"
+              <a href="${linkNeutroPecas(params.locale, '/loja/cotacoes')}"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>
@@ -838,7 +838,7 @@ export async function sendPedidoPecaEntregueEmail(params: {
             <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
             <p>${fmt(s.intro, { fornecedorNome: escapeHtml(params.fornecedorNome), pecaDescricao: escapeHtml(params.pecaDescricao) })}</p>
             <p style="margin-top: 24px;">
-              <a href="${siteNoIdioma(params.locale)}/oficina/pecas"
+              <a href="${linkNeutroPecas(params.locale, '/oficina/pecas')}"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>

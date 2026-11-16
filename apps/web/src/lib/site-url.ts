@@ -24,3 +24,10 @@ export function siteNoIdioma(idioma?: string | null): string {
 export function urlNoIdioma(idioma: string | null | undefined, interno: string): string {
   return `${SITE_URL}${hrefNoIdioma(idiomaDoSite(idioma), interno)}`;
 }
+
+// Link de e-mail sem nome de pagina em portugues para as areas logadas das
+// pecas (/loja/..., /oficina/pecas...): bipfix.com/v/<base64url>?o=<idioma>,
+// resolvido por app/v/[c]/route.ts.
+export function linkNeutroPecas(idioma: string | null | undefined, interno: string): string {
+  return `${SITE_URL.replace('://www.', '://')}/v/${Buffer.from(interno, 'utf8').toString('base64url')}?o=${encodeURIComponent(idiomaDoSite(idioma))}`;
+}

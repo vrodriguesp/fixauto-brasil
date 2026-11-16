@@ -58,7 +58,18 @@ export async function POST(req: NextRequest) {
     const foto = Array.isArray(cot.fotos) && cot.fotos.length ? String(cot.fotos[0]) : null;
     const vars = (perto: boolean) => ({ peca: pecaDescricao, oficina: oficinaCompradoraNome, carro, quantidade, perto });
 
+    // Auditoria Fable 16/11 (M-A): cada fornecedor e avisado uma vez por cotacao,
+    // mesmo se a rota for chamada de novo (rede, F5) - nada de e-mail repetido.
+    const { data: jaAvisados } = await supabaseAdmin
+      .from('notificacoes')
+      .select('profile_id')
+      .eq('tipo', 'cotacao_peca_disponivel')
+      .eq('dados->>cotacao_id', cotacaoId);
+    const avisados = new Set((jaAvisados || []).map((n: any) => n.profile_id));
+
     const avisar = async (alvo: { profileId: string; idioma?: string | null; email?: string | null; nome?: string | null }, paraLoja: boolean) => {
+      if (avisados.has(alvo.profileId)) return false;
+      avisados.add(alvo.profileId);
       const link = paraLoja ? '/loja/cotacoes' : '/oficina/pecas?aba=vender';
       const nn = notifCotacaoPecaDisponivel(alvo.idioma, vars(!paraLoja));
       await supabaseAdmin.from('notificacoes').insert({
@@ -83,6 +94,7 @@ export async function POST(req: NextRequest) {
           locale: alvo.idioma || undefined,
         }).catch(() => {});
       }
+      return true;
     };
 
     // ---- lojas de pecas do mesmo pais ----
@@ -96,8 +108,7 @@ export async function POST(req: NextRequest) {
       for (const l of lojas || []) {
         const p = (l as any).profile;
         if (!l.profile_id || !p || p.ativo === false || !!p.conta_teste !== compradoraTeste) continue;
-        await avisar({ profileId: l.profile_id, idioma: p.idioma, email: p.email, nome: p.nome || l.nome_fantasia }, true);
-        lojasNotificadas++;
+        if (await avisar({ profileId: l.profile_id, idioma: p.idioma, email: p.email, nome: p.nome || l.nome_fantasia }, true)) lojasNotificadas++;
       }
     }
 
@@ -128,8 +139,7 @@ export async function POST(req: NextRequest) {
         const p = (o as any).profile;
         if (!!p?.conta_teste !== compradoraTeste) continue;
         if (distanciaKm(latitude, longitude, o.latitude, o.longitude) > (o.raio_atendimento_km || 30)) continue;
-        await avisar({ profileId: o.profile_id, idioma: p?.idioma, email: p?.email, nome: p?.nome || o.nome_fantasia }, false);
-        oficinasNotificadas++;
+        if (await avisar({ profileId: o.profile_id, idioma: p?.idioma, email: p?.email, nome: p?.nome || o.nome_fantasia }, false)) oficinasNotificadas++;
       }
     }
 
