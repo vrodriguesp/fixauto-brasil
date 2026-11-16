@@ -16,7 +16,7 @@ const chave = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(
 // <select>: no celular abria a lista nativa de tela cheia, sem busca, e quem nao achava o
 // carro na lista nao tinha como seguir (dono 12/11).
 export default function CampoCatalogo({
-  id, opcoes, valor, onEscolher, placeholder, carregando, focoAoMontar, desativado,
+  id, opcoes, valor, onEscolher, placeholder, carregando, focoAoMontar, desativado, populares, apelidos, descricaoId,
 }: {
   id: string;
   opcoes: OpcaoCatalogo[];
@@ -29,6 +29,12 @@ export default function CampoCatalogo({
   focoAoMontar?: boolean;
   /** campo a vista mas parado (modelo antes da marca): a pessoa ve tudo o que vai preencher */
   desativado?: boolean;
+  /** codigos mostrados num bloco no topo da lista inteira (marcas mais comuns, Fable 16/11) */
+  populares?: string[];
+  /** outros nomes por codigo (cirilico: "Тойота" acha Toyota) */
+  apelidos?: Record<string, string[]>;
+  /** id do texto de ajuda sob o rotulo (aria-describedby) */
+  descricaoId?: string;
 }) {
   const t = useTranslations('veiculoForm');
   const listaId = `${useId()}-lista`;
@@ -55,18 +61,25 @@ export default function CampoCatalogo({
     input.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }, [focoAoMontar]);
 
+  // cada opcao e procurada pelo nome e pelos apelidos (cirilico/abreviacao)
+  const chaves = useMemo(() => new Map(opcoes.map((o) => [o.code, [chave(o.name), ...(apelidos?.[o.code] || []).map(chave)]])), [opcoes, apelidos]);
+  const k = chave(texto);
+  // campo vazio ou com o valor ja escolhido: mostra a lista toda para trocar
+  const listaInteira = !k || texto === valor;
   const filtradas = useMemo(() => {
-    const k = chave(texto);
-    // campo com o valor ja escolhido: mostra a lista toda para trocar
-    if (!k || texto === valor) return opcoes;
-    const comeca = opcoes.filter((o) => chave(o.name).startsWith(k));
-    const contem = opcoes.filter((o) => !chave(o.name).startsWith(k) && chave(o.name).includes(k));
+    if (listaInteira) return opcoes;
+    const ks = (o: OpcaoCatalogo) => chaves.get(o.code) || [chave(o.name)];
+    const comeca = opcoes.filter((o) => ks(o).some((x) => x.startsWith(k)));
+    const contem = opcoes.filter((o) => !ks(o).some((x) => x.startsWith(k)) && ks(o).some((x) => x.includes(k)));
     return [...comeca, ...contem];
-  }, [texto, valor, opcoes]);
-  const exata = opcoes.find((o) => chave(o.name) === chave(texto));
+  }, [listaInteira, k, opcoes, chaves]);
+  // lista inteira: primeiro o bloco das mais comuns, depois todas de A a Z (Fable 16/11: ninguem rola 300 marcas)
+  const topo = useMemo(() => (listaInteira && populares?.length
+    ? populares.map((c) => opcoes.find((o) => o.code === c)).filter((o): o is OpcaoCatalogo => !!o) : []), [listaInteira, populares, opcoes]);
+  const exata = k ? opcoes.find((o) => (chaves.get(o.code) || []).includes(k)) : undefined;
   const mostrarLivre = texto.trim().length > 0 && !exata && texto !== valor;
-  // lista inteira (marcas ~150, modelos <100): cortar em 50 escondia Toyota/Volkswagen de quem rola pela setinha (jornada 12/11)
-  const itens: OpcaoCatalogo[] = [...filtradas,...(mostrarLivre ? [{ code: '', name: texto.trim() }] : [])];
+  // lista inteira (marcas ~300, modelos <100): cortar em 50 escondia Toyota/Volkswagen de quem rola pela setinha (jornada 12/11)
+  const itens: OpcaoCatalogo[] = [...topo, ...filtradas, ...(mostrarLivre ? [{ code: '', name: texto.trim() }] : [])];
 
   const escolher = (o: OpcaoCatalogo | null) => {
     escolhendo.current = false;
@@ -99,6 +112,7 @@ export default function CampoCatalogo({
         aria-controls={listaId}
         aria-autocomplete="list"
         aria-busy={carregando}
+        aria-describedby={descricaoId}
         onFocus={() => { if (!desativado) setAberto(true); }}
         onChange={(e) => { setTexto(e.target.value); setAberto(true); setAtivo(-1); }}
         onBlur={() => setTimeout(() => { if (!escolhendo.current) confirmarTexto(); }, 150)}
@@ -125,15 +139,21 @@ export default function CampoCatalogo({
       {aberto && itens.length > 0 && (
         <ul id={listaId} role="listbox" data-testid={`${id}-lista`}
           className="absolute z-30 mt-1 w-full max-h-56 overflow-auto bg-white border border-gray-200 rounded-lg shadow-lg">
-          {itens.map((o, i) => (
-            <li key={o.code || `livre-${o.name}`} role="option" aria-selected={i === ativo}
+          {itens.map((o, i) => [
+            topo.length > 0 && (i === 0 || i === topo.length) && (
+              <li key={`grupo-${i}`} role="presentation" data-testid={`${id}-grupo`}
+                className={`px-4 pt-3 pb-1 text-xs font-semibold uppercase tracking-wide text-gray-500 ${i ? 'border-t border-gray-100' : ''}`}>
+                {i === 0 ? t('marcasPopulares') : t('marcasTodas')}
+              </li>
+            ),
+            <li key={`${i < topo.length ? 'topo-' : ''}${o.code || `livre-${o.name}`}`} role="option" aria-selected={i === ativo}
               onPointerDown={() => { escolhendo.current = true; setTimeout(() => { escolhendo.current = false; }, 600); }}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => escolher(o)}
               className={`px-4 py-3 min-h-[44px] cursor-pointer text-gray-900 ${i === ativo ? 'bg-primary-50' : 'hover:bg-gray-50'} ${o.code ? '' : 'border-t border-gray-100 text-primary-700'}`}>
               {o.code ? o.name : t('usarTexto', { texto: o.name })}
-            </li>
-          ))}
+            </li>,
+          ])}
         </ul>
       )}
     </div>

@@ -326,7 +326,12 @@
     "buscandoValor": "Otsime väärtust...",
     "valorFipe": "Võrdlusväärtus",
     "valorFipeIndisponivel": "Võrdlusväärtus pole saadaval",
-    "codigoFipe": "Kood"
+    "codigoFipe": "Kood",
+    "ajudaMarca": "Kirjuta auto mark või vali nimekirjast.",
+    "ajudaModelo": "Kirjuta mudel või vali nimekirjast.",
+    "labelAnoOpcional": "Aasta (soovi korral)",
+    "marcasPopulares": "Levinud margid",
+    "marcasTodas": "Kõik margid A–Z"
   },
   "home": {
     "metaTitle": "Autoremont Tallinnas: võrdle hinnapakkumisi | BipFix",
@@ -971,7 +976,7 @@
     "faltaModelo": "Kirjuta või vali auto mudel.",
     "faltaAno": "Kirjuta auto väljalaskeaasta.",
     "faltaCarroConferir": "Kontrolli aastat ja numbrimärki.",
-    "faltaEndereco": "Kirjuta aadress või piirkond.",
+    "faltaEndereco": "Kirjuta aadress, linnaosa või linn.",
     "faltaNome": "Kirjuta oma nimi.",
     "faltaEmail": "Kirjuta kehtiv e-posti aadress.",
     "faltaTermos": "Nõustu kasutustingimuste ja privaatsuspoliitikaga.",
@@ -1015,7 +1020,15 @@
     "faltaTelefone": "Kirjuta telefoninumber või eemalda SMS-i linnuke.",
     "codigoBotaoEmail": "Vajuta kirjas nuppu „Kinnita ja saada päring“.",
     "jaConfirmouTitulo": "Päring ei oota enam kinnitust",
-    "jaConfirmouTexto": "Kui kinnitasid selle e-kirjast, on see juba töökodadele saadetud. Logi sisse, et seda näha."
+    "jaConfirmouTexto": "Kui kinnitasid selle e-kirjast, on see juba töökodadele saadetud. Logi sisse, et seda näha.",
+    "placaRotulo": "Numbrimärk (soovi korral)",
+    "placaAjuda": "Töökoda näeb selle järgi auto täpsed andmed.",
+    "localTitulo": "Kus auto asub?",
+    "localPlaceholder": "Aadress, linnaosa või linn",
+    "localAjuda": "Võid kirjutada täpse aadressi, linnaosa (nt Lasnamäe) või ainult „Tallinn“. Selle järgi leiame lähedal asuvad töökojad.",
+    "localUsarMinha": "Kasuta minu asukohta",
+    "localProcurando": "Asukoha otsimine...",
+    "localNegado": "Asukohta ei saanud kasutada. Kirjuta aadress, linnaosa või linn."
   },
   "conversa": {
     "enviando": "saadan…",

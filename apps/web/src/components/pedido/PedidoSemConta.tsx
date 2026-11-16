@@ -249,22 +249,32 @@ export default function PedidoSemConta() {
     const i = setTimeout(() => setEsperaReenvio((s) => s - 1), 1000);
     return () => clearTimeout(i);
   }, [esperaReenvio]);
-  // posicao do aparelho (se permitida): aproxima as sugestoes de endereco e evita digitar.
-  // So no passo do endereco (dono 10/11: o pedido de localizacao ao abrir a pagina, antes de
-  // qualquer toque, assusta quem chega pelo anuncio). Nunca bloqueia: roda em segundo plano,
-  // o campo continua editavel e sem permissao/sinal o endereco digitado vira coordenada no envio.
-  const localPedido = useRef(false);
-  useEffect(() => {
-    if (etapa !== 'local' || localPedido.current || coords || !navigator.geolocation) return;
-    localPedido.current = true;
+  // posicao do aparelho SO quando a pessoa toca em "Kasuta minu asukohta" (dono 16/11, parecer do
+  // Fable): o pedido de localizacao ao entrar no passo, sem contexto, e o que mais leva a recusa
+  // (Chrome). Antes (10/11) era pedido automaticamente ao abrir o passo. Recusou ou falhou: nada
+  // muda, o campo continua e o botao some (nao pergunta de novo); o texto digitado - endereco,
+  // linnaosa ou so "Tallinn" - vira coordenada no envio (resolverLocal).
+  const [localizando, setLocalizando] = useState(false);
+  const [localNegado, setLocalNegado] = useState(false);
+  const [posAparelho, setPosAparelho] = useState<{ lat: number; lon: number } | null>(null);
+  const usarMinhaLocalizacao = () => {
+    if (localizando || localNegado) return;
+    if (!navigator.geolocation) { setLocalNegado(true); return; }
+    setLocalizando(true);
+    contar('local_gps');
     navigator.geolocation.getCurrentPosition(async (p) => {
       const c = { lat: p.coords.latitude, lon: p.coords.longitude };
-      setCoords((atual) => atual || c);
-      const r = await fetch(`/api/geocode?lat=${c.lat}&lon=${c.lon}`, { signal: AbortSignal.timeout(10000) }).catch(() => null);
+      setPosAparelho(c);
+      const r = await fetch(`/api/geocode?lat=${c.lat}&lon=${c.lon}&idioma=${locale}`, { signal: AbortSignal.timeout(10000) }).catch(() => null);
       const d = r?.ok ? await r.json().catch(() => ({})) : {};
-      if (d.paisCodigo) setPais((x) => x || d.paisCodigo);
-    }, () => {}, { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 });
-  }, [etapa]); // eslint-disable-line react-hooks/exhaustive-deps
+      // campo preenchido com a rua/linnaosa/linn da posicao (a pessoa pode corrigir); sem nome, as coordenadas
+      const rotulo = [[d.rua, d.numero].filter(Boolean).join(' '), d.bairro, d.cidade].filter((x, i, a) => x && a.indexOf(x) === i).join(', ');
+      setEndereco(rotulo || `${c.lat.toFixed(5)}, ${c.lon.toFixed(5)}`);
+      setCoords(c);
+      if (d.paisCodigo) setPais(d.paisCodigo);
+      setLocalizando(false);
+    }, () => { setLocalizando(false); setLocalNegado(true); contar('local_gps_negado'); }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 });
+  };
 
   const tipoConfig = TIPOS_SERVICO.find((x) => x.value === tipo);
   const NS: Record<string, string> = { revisao: 'servicosRevisao', mecanica: 'servicosMecanica', eletrica: 'servicosEletrica', pneu: 'servicosPneu' };
@@ -282,17 +292,24 @@ export default function PedidoSemConta() {
   // colisao/lataria/outro nao ha lista e a foto e o que a pessoa mais toca - vale como descricao)
   // regra do dono (12/11): tipo + escrever o que precisa OU marcar da lista; a foto ajuda mas nao substitui o texto
   const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
-  // placa e ano conferidos aqui, com o aviso ao lado do campo (item 53)
-  const carroDados = !!(carro.marca && carro.modelo && carro.ano);
-  const carroOk = carroDados && placaValida(placa) && anoDoCarroValido(carro.ano);
+  // placa e ano conferidos aqui, com o aviso ao lado do campo (item 53). Ano OPCIONAL desde 16/11
+  // (dono, parecer do Fable): basta marca + modelo; ano escrito tem de ser valido.
+  const carroDados = !!(carro.marca && carro.modelo);
+  const anoOk = anoDoCarroValido(carro.ano);
+  const carroOk = carroDados && placaValida(placa) && anoOk;
   const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && (!querSms || TELEFONE_OK(telefone)) && termos;
   const sugestao = sugestaoEmail(email);
   // o que falta em cada passo (aviso + campo que recebe o foco)
   // diz SO o que falta: "marca, modelo e ano" com marca e modelo ja escolhidos confundia (Clarity 12/11)
-  const faltaCarro: [string, string] = !carroDados ? (!carro.marca ? [t('faltaMarca'), 'cbbe3-101'] : !carro.modelo ? [t('faltaModelo'), 'cbbe3-102'] : [t('faltaAno'), 'cbbe3-103']) :[t('faltaCarroConferir'), anoDoCarroValido(carro.ano) ? 'pedido-placa' : 'cbbe3-103'];
+  // [aviso, campo, motivo] - o motivo vai ao funil (edasi_bloqueado_carro_marca/_modelo/_ano/_placa)
+  const faltaCarro: [string, string, string] = !carro.marca ? [t('faltaMarca'), 'cbbe3-101', 'marca'] : !carro.modelo ? [t('faltaModelo'), 'cbbe3-102', 'modelo']
+    : !anoOk ? [te('ANO_INVALIDO'), 'cbbe3-103', 'ano'] : [te('PLACA_INVALIDA'), 'pedido-placa', 'placa'];
+  const motivoCarro = carroOk ? '' : faltaCarro[2];
   const faltaContato: [string, string] = !nome.trim() ? [t('faltaNome'), 'pedido-nome'] : !EMAIL_OK.test(email.trim()) ? [t('faltaEmail'), 'pedido-email']
     : querSms && !TELEFONE_OK(telefone) ? [t('faltaTelefone'), 'pedido-telefone'] : [t('faltaTermos'), 'pedido-termos'];
-  useEffect(() => { setFaltando(''); }, [servicoOk, carroOk, endereco, contatoOk]); // corrigiu: o aviso some
+  // corrigiu: o aviso some. No carro, pelo motivo (16/11): antes dependia de carroOk, que nao muda ao
+  // escolher a marca (ainda falta o modelo) - o aviso "kirjuta mark" ficava parado com a marca escolhida
+  useEffect(() => { setFaltando(''); }, [servicoOk, motivoCarro, endereco, contatoOk]);
 
   // linha acima do Edasi no passo 2: o que falta (cinza) ou o que ja basta (verde)
   const statusDetalhe: { texto: string; tom: 'neutro' | 'ok' } = servicos.length > 0 ? { texto: t('detalheStatusLista', { n: servicos.length }), tom: 'ok' }
@@ -394,12 +411,12 @@ export default function PedidoSemConta() {
   // (y=876 numa tela de 780) e a pessoa achava que estava travada (Clarity, dono 10/11)
   // "Edasi" sempre clicavel (so trava enquanto envia): faltando algo, diz o que e e leva ao campo
   // status (passo 2): linha cinza/verde acima dos botoes; com aviso vermelho, so o aviso (nunca os dois)
-  const Navegar = ({ voltar, avancar, ok, rotulo, falta, campo, status }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string; falta: string; campo: string; status?: { texto: string; tom: 'neutro' | 'ok' } }) => (
+  const Navegar = ({ voltar, avancar, ok, rotulo, falta, campo, motivo, status }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string; falta: string; campo: string; motivo?: string; status?: { texto: string; tom: 'neutro' | 'ok' } }) => (
     <div className="flex flex-wrap justify-between mt-6 gap-3 sticky bottom-0 z-10 -mx-6 px-6 py-3 bg-white/95 backdrop-blur border-t border-gray-100 rounded-b-xl sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0" data-testid="navegar">
       {faltando && <p role="alert" className="w-full text-sm text-red-700 font-medium" data-testid="falta-aviso">{faltando}</p>}
       {!faltando && status && <p role="status" data-testid="status-passo" data-tom={status.tom} className={`w-full text-sm ${status.tom === 'ok' ? 'text-green-700 font-medium' : 'text-gray-600'}`}>{status.texto}</p>}
       {voltar ? <button type="button" onClick={() => voltarPara(voltar)} className="btn-secondary">{tn('back')}</button> : <span />}
-      <button type="button" onClick={() => { if (ok) { setFaltando(''); avancar(); return; } setFaltando(falta); contar(`edasi_bloqueado_${etapa}`); focar(campo); }}
+      <button type="button" onClick={() => { if (ok) { setFaltando(''); avancar(); return; } setFaltando(falta); contar(`edasi_bloqueado_${etapa}`); if (motivo) contar(`edasi_bloqueado_${etapa}_${motivo}`); focar(campo); }}
         disabled={enviando} aria-busy={enviando} className="btn-primary disabled:opacity-50">{rotulo || tn('next')}</button>
     </div>
   );
@@ -539,23 +556,37 @@ export default function PedidoSemConta() {
           <div data-testid="passo-carro" hidden={etapa !== 'carro'}>
             <h2 className="text-lg font-semibold text-gray-900 mb-1">{tn('step1Title')}</h2>
             <p className="text-sm text-gray-500 mb-4">{t('carroDica')}</p>
-            <FipeAutocomplete limparForaDoCatalogo value={{ tipo: carro.tipo, marca: carro.marca, modelo: carro.modelo, ano: carro.ano }}
+            <FipeAutocomplete limparForaDoCatalogo anoOpcional atalhosMarca value={{ tipo: carro.tipo, marca: carro.marca, modelo: carro.modelo, ano: carro.ano }}
+              // ano invalido: o aviso aparece com os 4 digitos (ou ao tocar Edasi), nao a cada digito
+              erroAno={!anoOk && (carro.ano.length >= 4 || motivoCarro === 'ano' && !!faltando) ? te('ANO_INVALIDO') : null}
               onChange={(f) => setCarro({ tipo: f.tipo, marca: f.marca, modelo: f.modelo, ano: f.ano, codigo: f.codigo || '' })} />
-            <label htmlFor="pedido-placa" className="block text-sm font-medium text-gray-700 mt-4 mb-1">{tn('plateLabel')}</label>
-            {!anoDoCarroValido(carro.ano) && <p role="alert" className="mt-1 text-sm text-red-700">{te('ANO_INVALIDO')}</p>}
-            <input id="pedido-placa" className="input-field" maxLength={10} aria-invalid={!placaValida(placa)} placeholder={exemploPlaca(locale)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} />
+            {/* placa opcional: diz o que ela da a oficina (Fable 16/11) */}
+            <label htmlFor="pedido-placa" className="block text-sm font-medium text-gray-700 mt-4 mb-1">{t('placaRotulo')}</label>
+            <p id="pedido-placa-ajuda" className="text-xs text-gray-500 mb-2">{t('placaAjuda')}</p>
+            <input id="pedido-placa" className="input-field" maxLength={10} aria-invalid={!placaValida(placa)} aria-describedby="pedido-placa-ajuda" placeholder={exemploPlaca(locale)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} />
             {!placaValida(placa) && <p role="alert" className="mt-1 text-sm text-red-700" data-testid="placa-invalida">{te('PLACA_INVALIDA')}</p>}
-            <Navegar voltar="detalhe" ok={carroOk} avancar={() => setEtapa('local')} falta={faltaCarro[0]} campo={faltaCarro[1]} />
+            <Navegar voltar="detalhe" ok={carroOk} avancar={() => setEtapa('local')} falta={faltaCarro[0]} campo={faltaCarro[1]} motivo={faltaCarro[2]} />
           </div>
         )}
 
         {etapa === 'local' && (
           <div data-testid="passo-local">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">{tn('step5Title')}</h2>
+            {/* aceita endereco exato, linnaosa ou so a cidade; localizacao so pelo botao (Fable 16/11) */}
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('localTitulo')}</h2>
             <label htmlFor="pedido-endereco" className="block text-sm font-medium text-gray-700 mb-1">{tn('addressLabel')}</label>
-            <EnderecoAutocomplete id="pedido-endereco" value={endereco} onChange={(v) => { setEndereco(v); }} placeholder={tn('placeholderAddress')} perto={coords}
+            <p id="pedido-endereco-ajuda" className="text-xs text-gray-500 mb-2">{t('localAjuda')}</p>
+            {/* escreveu: a coordenada passa a ser a do texto (no envio); a de uma sugestao/do aparelho valia para o texto anterior */}
+            <EnderecoAutocomplete id="pedido-endereco" value={endereco} onChange={(v) => { setEndereco(v); setCoords(null); }} placeholder={t('localPlaceholder')} perto={coords || posAparelho}
               onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); if (s.paisCodigo) setPais(s.paisCodigo); }} />
-            <p className="text-xs text-gray-500 mt-1">{tn('addressHelp')}</p>
+            {!localNegado ? (
+              <button type="button" onClick={usarMinhaLocalizacao} disabled={localizando} aria-busy={localizando} data-testid="usar-localizacao"
+                className="mt-3 inline-flex items-center gap-2 min-h-[44px] px-4 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-800 hover:border-primary-400 disabled:opacity-60">
+                <svg aria-hidden="true" className="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                {localizando ? t('localProcurando') : t('localUsarMinha')}
+              </button>
+            ) : (
+              <p role="status" className="mt-3 text-sm text-gray-600" data-testid="localizacao-negada">{t('localNegado')}</p>
+            )}
             {erro && <p role="alert" className="mt-3 text-sm text-red-700">{erro}</p>}
             <Navegar voltar="carro" ok={endereco.trim().length > 2} avancar={() => { setErro(''); setEtapa('contato'); }} falta={t('faltaEndereco')} campo="pedido-endereco" />
           </div>

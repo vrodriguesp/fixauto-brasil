@@ -121,12 +121,12 @@ ok('recarregou: as 2 fotos voltam', await imgs() === 2, await imgs());
 ok('recarregou: passo nao conta de novo no funil', funil.filter((e) => e === 'detalhe').length === detalhesAntes, JSON.stringify(funil));
 ok('recarregou: ainda sem pedido de localizacao', await p.evaluate(() => window.__geo) === 0);
 
-// passo do endereco: a localizacao e pedida uma vez (rascunho no passo 'local')
+// passo do endereco: desde 16/11 a localizacao NAO e pedida ao entrar (so pelo botao "Kasuta minu asukohta")
 await p.evaluate(() => { const r = JSON.parse(localStorage.getItem('bipfix_pedido_rascunho')); r.etapa = 'local'; localStorage.setItem('bipfix_pedido_rascunho', JSON.stringify(r)); });
 await p.reload({ waitUntil: 'networkidle' });
 await p.getByTestId('passo-local').waitFor();
 await p.waitForTimeout(800);
-ok('passo do endereco pede localizacao 1 vez', await p.evaluate(() => window.__geo) === 1, await p.evaluate(() => window.__geo));
+ok('passo do endereco nao pede localizacao ao entrar (16/11)', await p.evaluate(() => window.__geo) === 0, await p.evaluate(() => window.__geo));
 // "Edasi" sem endereco avisa
 await p.getByTestId('passo-local').getByRole('button', { name: 'Edasi', exact: true }).tap();
 await p.waitForTimeout(300);

@@ -317,7 +317,12 @@
     "placeholderMarca": "Ex: Volkswagen",
     "placeholderModelo": "Ex: Golf",
     "placeholderAno": "Ex: 2018",
-    "manualNotice": "Informe os dados do seu veículo abaixo."
+    "manualNotice": "Informe os dados do seu veículo abaixo.",
+    "ajudaMarca": "Escreva a marca do carro ou escolha na lista.",
+    "ajudaModelo": "Escreva o modelo ou escolha na lista.",
+    "labelAnoOpcional": "Ano (opcional)",
+    "marcasPopulares": "Marcas populares",
+    "marcasTodas": "Todas as marcas A–Z"
   },
   "home": {
     "metaTitle": "Orçamentos de oficina mecânica: compare e agende | BipFix",
@@ -962,7 +967,7 @@
     "faltaModelo": "Digite ou escolha o modelo do carro.",
     "faltaAno": "Informe o ano do carro.",
     "faltaCarroConferir": "Confira o ano e a placa.",
-    "faltaEndereco": "Informe um endereço ou região.",
+    "faltaEndereco": "Escreva o endereço, bairro ou cidade.",
     "faltaNome": "Informe seu nome.",
     "faltaEmail": "Informe um e-mail válido.",
     "faltaTermos": "Aceite os termos de uso e a política de privacidade.",
@@ -1006,7 +1011,15 @@
     "faltaTelefone": "Digite o número do celular ou desmarque o SMS.",
     "codigoBotaoEmail": "Toque no botão “Confirmar e enviar o pedido” no e-mail.",
     "jaConfirmouTitulo": "O pedido não está mais esperando confirmação",
-    "jaConfirmouTexto": "Se você confirmou pelo e-mail, ele já foi enviado às oficinas. Entre para vê-lo."
+    "jaConfirmouTexto": "Se você confirmou pelo e-mail, ele já foi enviado às oficinas. Entre para vê-lo.",
+    "placaRotulo": "Placa (opcional)",
+    "placaAjuda": "Com ela a oficina vê os dados exatos do carro.",
+    "localTitulo": "Onde está o carro?",
+    "localPlaceholder": "Endereço, bairro ou cidade",
+    "localAjuda": "Pode escrever o endereço exato, o bairro ou só a cidade. Com ele encontramos oficinas por perto.",
+    "localUsarMinha": "Usar minha localização",
+    "localProcurando": "Buscando sua localização...",
+    "localNegado": "Não foi possível usar sua localização. Escreva o endereço, bairro ou cidade."
   },
   "conversa": {
     "enviando": "enviando…",

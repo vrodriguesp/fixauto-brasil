@@ -16,7 +16,10 @@ import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 
 // Passos do cadastro de oficina (onde as pessoas param): so o numero do dia, sem dado
 // pessoal - mesmo contador do pedido (api/funil, migracao 073). 12/11.
-const contar = (etapa: 'abriu' | 'edasi_bloqueado' | 'enviado') => {
+// 16/11: passo2 = chegou aos dados da oficina; declaracao_bloqueada / servicos_bloqueado = tocou
+// "Loo töökoja konto" sem a declaracao / sem nenhum servico marcado.
+type EtapaFunil = 'abriu' | 'edasi_bloqueado' | 'passo2' | 'declaracao_bloqueada' | 'servicos_bloqueado' | 'enviado';
+const contar = (etapa: EtapaFunil) => {
   try { fetch('/api/funil', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ funil: 'cadastro_site', etapa }), keepalive: true }).catch(() => {}); } catch { /* nunca atrapalha o cadastro */ }
 };
 
@@ -62,6 +65,29 @@ function CadastroPage() {
   // oficina/loja: declara ser responsavel pela empresa e estar ciente de
   // possivel cobranca futura (aviso previo de 30 dias corridos)
   const [declaracao, setDeclaracao] = useState(false);
+  // "criar conta" tocado sem a declaracao (ou, na oficina, sem servico): o botao ficava palido sem
+  // dizer por que (dono 16/11). Agora fica clicavel, avisa ao lado da caixinha e leva o foco - como
+  // os termos no passo anterior.
+  const [faltaDeclaracao, setFaltaDeclaracao] = useState(false);
+  const [faltaServicos, setFaltaServicos] = useState(false);
+  const conferirPasso2 = (e: React.FormEvent) => {
+    e.preventDefault();
+    const oficina = userType === 'oficina';
+    if (oficina && especialidades.length === 0) {
+      setFaltaServicos(true); contar('servicos_bloqueado');
+      const el = document.getElementById('cadastro-servico-0');
+      el?.scrollIntoView({ block: 'center', behavior: 'smooth' }); el?.focus({ preventScroll: true });
+      return;
+    }
+    if (!declaracao) {
+      setFaltaDeclaracao(true);
+      if (oficina) contar('declaracao_bloqueada');
+      const el = document.getElementById('cadastro-declaracao');
+      el?.scrollIntoView({ block: 'center', behavior: 'smooth' }); el?.focus({ preventScroll: true });
+      return;
+    }
+    handleSubmit(e);
+  };
   const [enviado, setEnviado] = useState(false);
   useTopoAoMudar(enviado); // tela trocada inteira: abre no alto (dono 08/11)
   const [reenviado, setReenviado] = useState(false);
@@ -159,6 +185,13 @@ function CadastroPage() {
     abriuContado.current = true;
     contar('abriu');
   }, [userType]);
+  // funil: chegou ao 2o passo (dados da oficina), uma vez por pagina (16/11)
+  const passo2Contado = useRef(false);
+  useEffect(() => {
+    if (step !== 3 || userType !== 'oficina' || passo2Contado.current) return;
+    passo2Contado.current = true;
+    contar('passo2');
+  }, [step, userType]);
 
   // Fallback quando o navegador nega geolocalizacao: geocodifica o endereco
   // que a oficina/loja digitou via Nominatim (gratuito, mundial) em vez de
@@ -451,7 +484,7 @@ function CadastroPage() {
 
           {/* Step 3: Workshop info */}
           {step === 3 && userType === 'oficina' && (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={conferirPasso2} className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
                 <button type="button" onClick={() => setStep(2)} className="text-gray-400 hover:text-gray-600">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -479,7 +512,7 @@ function CadastroPage() {
                   {t('servicosAjuda')}
                 </p>
                 <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-2">
-                  {TIPOS_SERVICO.map((tipo) => (
+                  {TIPOS_SERVICO.map((tipo, i) => (
                     <label
                       key={tipo.value}
                       className={`flex items-center gap-2 p-3 min-w-0 rounded-lg border-2 cursor-pointer transition-all ${
@@ -489,9 +522,11 @@ function CadastroPage() {
                       }`}
                     >
                       <input
+                        id={`cadastro-servico-${i}`}
                         type="checkbox"
                         checked={especialidades.includes(tipo.value)}
-                        onChange={() => toggleEspecialidade(tipo.value)}
+                        aria-invalid={faltaServicos && especialidades.length === 0}
+                        onChange={() => { toggleEspecialidade(tipo.value); setFaltaServicos(false); }}
                         className="w-4 h-4 flex-shrink-0 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
                       />
                       <span className="text-lg flex-shrink-0">{tipo.icon}</span>
@@ -499,6 +534,7 @@ function CadastroPage() {
                     </label>
                   ))}
                 </div>
+                {faltaServicos && especialidades.length === 0 && <p role="alert" className="text-sm text-red-700 mt-2" data-testid="falta-servicos">{t('faltaServicos')}</p>}
                 {especialidades.length > 0 && (
                   <p className="text-xs text-primary-600 mt-2">
                     {t('servicosSelecionados', { count: especialidades.length })}
@@ -508,14 +544,18 @@ function CadastroPage() {
 
               <label className="flex items-start gap-2 text-sm text-gray-600">
                 <input
+                  id="cadastro-declaracao"
                   type="checkbox"
                   className="mt-1 w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
                   checked={declaracao}
-                  onChange={(e) => setDeclaracao(e.target.checked)}
+                  aria-invalid={faltaDeclaracao && !declaracao}
+                  aria-describedby={faltaDeclaracao && !declaracao ? 'cadastro-declaracao-aviso' : undefined}
+                  onChange={(e) => { setDeclaracao(e.target.checked); if (e.target.checked) setFaltaDeclaracao(false); }}
                 />
                 <span>{t('declaracaoResponsavel')}</span>
               </label>
-              <button type="submit" className="btn-primary w-full" disabled={loading || especialidades.length === 0 || !declaracao}>
+              {faltaDeclaracao && !declaracao && <p role="alert" id="cadastro-declaracao-aviso" className="text-sm text-red-700 -mt-2" data-testid="falta-declaracao">{te('DECLARACAO_OBRIGATORIA')}</p>}
+              <button type="submit" className="btn-primary w-full" disabled={loading}>
                 {loading ? t('criandoConta') : t('criarContaOficina')}
               </button>
             </form>
@@ -523,7 +563,7 @@ function CadastroPage() {
 
           {/* Step 3: Parts store info */}
           {step === 3 && userType === 'loja_pecas' && (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={conferirPasso2} className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
                 <button type="button" onClick={() => setStep(2)} className="text-gray-400 hover:text-gray-600">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -543,14 +583,18 @@ function CadastroPage() {
               {renderEnderecoFields()}
               <label className="flex items-start gap-2 text-sm text-gray-600">
                 <input
+                  id="cadastro-declaracao"
                   type="checkbox"
                   className="mt-1 w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500"
                   checked={declaracao}
-                  onChange={(e) => setDeclaracao(e.target.checked)}
+                  aria-invalid={faltaDeclaracao && !declaracao}
+                  aria-describedby={faltaDeclaracao && !declaracao ? 'cadastro-declaracao-aviso' : undefined}
+                  onChange={(e) => { setDeclaracao(e.target.checked); if (e.target.checked) setFaltaDeclaracao(false); }}
                 />
                 <span>{t('declaracaoResponsavel')}</span>
               </label>
-              <button type="submit" className="btn-primary w-full" disabled={loading || !declaracao}>
+              {faltaDeclaracao && !declaracao && <p role="alert" id="cadastro-declaracao-aviso" className="text-sm text-red-700 -mt-2" data-testid="falta-declaracao">{te('DECLARACAO_OBRIGATORIA')}</p>}
+              <button type="submit" className="btn-primary w-full" disabled={loading}>
                 {loading ? t('criandoConta') : t('criarContaLoja')}
               </button>
             </form>

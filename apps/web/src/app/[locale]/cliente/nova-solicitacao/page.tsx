@@ -167,7 +167,8 @@ export default function NovaSolicitacaoPage() {
   };
 
   const handleAddVeiculo = async () => {
-    if (!novoVeiculo.fipe_marca || !novoVeiculo.fipe_modelo || !novoVeiculo.fipe_ano) return;
+    // ano opcional desde 16/11 (como no pedido sem conta)
+    if (!novoVeiculo.fipe_marca || !novoVeiculo.fipe_modelo) return;
     setSavingVeiculo(true);
     setVeiculoError('');
     const result = await addVeiculo({
@@ -334,6 +335,7 @@ export default function NovaSolicitacaoPage() {
             {showAddVeiculo ? (
               <div>
                 <FipeAutocomplete
+                  anoOpcional
                   value={{
                     tipo: novoVeiculo.fipe_tipo,
                     marca: novoVeiculo.fipe_marca,
@@ -377,7 +379,7 @@ export default function NovaSolicitacaoPage() {
                   )}
                   <button
                     onClick={handleAddVeiculo}
-                    disabled={savingVeiculo || !novoVeiculo.fipe_marca || !novoVeiculo.fipe_modelo || !novoVeiculo.fipe_ano || !placaValida(novoVeiculo.placa) || !anoDoCarroValido(novoVeiculo.fipe_ano)}
+                    disabled={savingVeiculo || !novoVeiculo.fipe_marca || !novoVeiculo.fipe_modelo || !placaValida(novoVeiculo.placa) || !anoDoCarroValido(novoVeiculo.fipe_ano)}
                     className="btn-primary disabled:opacity-50"
                   >
                     {savingVeiculo ? t('saving') : t('addAndContinue')}

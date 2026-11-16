@@ -16,11 +16,16 @@ const ETAPAS_PEDIDO = [
   'contato_digitou', 'contato_sms_opt',
   // 15/11 (passo 2 novo): escreveu na caixa / marcou da lista / abriu "ver todos" (uma vez por visita)
   'detalhe_escreveu', 'detalhe_escolheu_lista', 'detalhe_ver_todos',
+  // 16/11 (Fable): por que o passo do carro travou (alem do edasi_bloqueado_carro de sempre) e o
+  // botao "usar minha localizacao" (tocado / recusado ou sem sinal)
+  'edasi_bloqueado_carro_marca', 'edasi_bloqueado_carro_modelo', 'edasi_bloqueado_carro_ano', 'edasi_bloqueado_carro_placa',
+  'local_gps', 'local_gps_negado',
 ];
 const FUNIS: Record<string, string[]> = {
   pedido_site: ETAPAS_PEDIDO,
   pedido_app: ETAPAS_PEDIDO,
-  cadastro_site: ['abriu', 'edasi_bloqueado', 'enviado'],
+  // 16/11: chegou ao 2o passo (dados da oficina), tocou "criar" sem a declaracao / sem servico
+  cadastro_site: ['abriu', 'edasi_bloqueado', 'passo2', 'declaracao_bloqueada', 'servicos_bloqueado', 'enviado'],
 };
 
 export async function POST(req: NextRequest) {

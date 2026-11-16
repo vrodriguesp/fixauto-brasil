@@ -65,7 +65,8 @@
     "declaracaoResponsavel": "Declaro que sou o responsável por esta empresa (sócio, gerente ou pessoa com poderes para a representar) e que tenho conhecimento de que a utilização da BipFix, hoje gratuita, poderá ser cobrada no futuro, com um aviso prévio de 30 dias de calendário.",
     "erroEnderecoNaoEncontrado": "Não encontrámos a morada. Escolha uma das sugestões ou permita a localização.",
     "jaConectado": "Já tem sessão iniciada como {email}. Para criar outra conta, termine a sessão primeiro.",
-    "sairParaCadastrar": "Terminar sessão e continuar o registo"
+    "sairParaCadastrar": "Terminar sessão e continuar o registo",
+    "faltaServicos": "Escolha pelo menos um serviço que a oficina oferece."
   },
   "definirSenha": {
     "erroSenhaCurta": "A palavra-passe deve ter pelo menos 8 caracteres",

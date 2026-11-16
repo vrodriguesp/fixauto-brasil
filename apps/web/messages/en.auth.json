@@ -65,7 +65,8 @@
     "declaracaoResponsavel": "I declare that I am the person responsible for this business (owner, director or someone authorised to represent it) and that I am aware that using BipFix, which is free today, may be charged in the future, with 30 calendar days' prior notice.",
     "erroEnderecoNaoEncontrado": "We couldn't find the address. Pick one of the address suggestions or allow location.",
     "jaConectado": "You are already signed in as {email}. To create another account, sign out first.",
-    "sairParaCadastrar": "Sign out and continue"
+    "sairParaCadastrar": "Sign out and continue",
+    "faltaServicos": "Select at least one service your workshop offers."
   },
   "definirSenha": {
     "erroSenhaCurta": "Password must be at least 8 characters",

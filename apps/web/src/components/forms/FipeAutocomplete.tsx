@@ -5,6 +5,7 @@ import { paisDoAparelho } from '@/lib/seguro-reparo';
 import { useLocale, useTranslations } from 'next-intl';
 import { TIPOS_VEICULO } from '@fixauto/shared';
 import CampoCatalogo, { type OpcaoCatalogo } from './CampoCatalogo';
+import { MARCAS_POPULARES, ATALHOS_MARCA, APELIDOS_MARCA } from '@/lib/marcas-carro';
 
 interface FipeValue {
   tipo: string;
@@ -21,6 +22,12 @@ interface FipeAutocompleteProps {
   /** apaga marca/modelo que nao existem no catalogo (so no pedido sem conta). Fora
    * dele (editar um carro ja salvo) os nomes salvos ficam, so as listas ficam sem selecao */
   limparForaDoCatalogo?: boolean;
+  /** ano opcional (pedido sem conta, dono 16/11): o rotulo diz "(soovi korral)" */
+  anoOpcional?: boolean;
+  /** atalhos de um toque com as marcas mais comuns acima do campo da marca (pedido sem conta) */
+  atalhosMarca?: boolean;
+  /** aviso do ano (invalido), mostrado logo abaixo do campo */
+  erroAno?: string | null;
 }
 
 interface FipeOption {
@@ -34,7 +41,7 @@ const TIPO_LABEL_KEY: Record<string, 'tipoCarro' | 'tipoMoto' | 'tipoCaminhao'> 
   trucks: 'tipoCaminhao',
 };
 
-export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo = false }: FipeAutocompleteProps) {
+export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo = false, anoOpcional = false, atalhosMarca = false, erroAno }: FipeAutocompleteProps) {
   const locale = useLocale();
   const t = useTranslations('veiculoForm');
   // A FIPE (tabela de precos de veiculos) so cobre o mercado brasileiro -
@@ -294,6 +301,25 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
         <label htmlFor="cbbe3-101" className="block text-sm font-medium text-gray-700 mb-1">
           {t('labelMarca')} {loading === 'marcas' && <span className="text-gray-400">({t('carregando')})</span>}
         </label>
+        {/* ajuda fixa sob o rotulo (o placeholder some ao escrever) e atalhos das marcas mais comuns:
+            no celular um toque basta para a maioria (parecer do Fable, dono 16/11) */}
+        {isBR === false && <p id="cbbe3-101-ajuda" className="text-xs text-gray-500 mb-2">{t('ajudaMarca')}</p>}
+        {isBR === false && atalhosMarca && value.tipo === 'cars' && marcas.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-2" data-testid="atalhos-marca">
+            {ATALHOS_MARCA.map((a) => {
+              const m = marcas.find((x) => x.code === a.code);
+              if (!m) return null;
+              const escolhida = value.marca === m.name;
+              return (
+                <button key={a.code} type="button" aria-pressed={escolhida} data-testid={`atalho-marca-${a.code}`}
+                  onClick={() => escolherMarca(m)}
+                  className={`min-h-[40px] px-3 rounded-full border text-sm font-medium transition-colors ${escolhida ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-gray-800 border-gray-300 hover:border-primary-400'}`}>
+                  {a.rotulo}
+                </button>
+              );
+            })}
+          </div>
+        )}
         {isBR !== false ? (
         <select id="cbbe3-101"
           className="input-field"
@@ -310,7 +336,8 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
         </select>
         ) : (
           <CampoCatalogo id="cbbe3-101" opcoes={marcas} valor={value.marca} onEscolher={escolherMarca}
-            placeholder={t('escrevaMarca')} carregando={loading === 'marcas'} />
+            placeholder={t('escrevaMarca')} carregando={loading === 'marcas'} descricaoId="cbbe3-101-ajuda"
+            populares={value.tipo === 'cars' ? MARCAS_POPULARES : undefined} apelidos={APELIDOS_MARCA} />
         )}
       </div>
 
@@ -319,7 +346,8 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
       {isBR === false && (
         <div>
           <label htmlFor="cbbe3-102" className="block text-sm font-medium text-gray-700 mb-1">{t('labelModelo')}</label>
-          <CampoCatalogo key={value.marca || '-'} id="cbbe3-102" opcoes={modelos} valor={value.modelo} onEscolher={escolherModelo}
+          <p id="cbbe3-102-ajuda" className="text-xs text-gray-500 mb-2">{t('ajudaModelo')}</p>
+          <CampoCatalogo key={value.marca || '-'} id="cbbe3-102" opcoes={modelos} valor={value.modelo} onEscolher={escolherModelo} descricaoId="cbbe3-102-ajuda"
             placeholder={value.marca ? t('escrevaModelo') : t('escolhaMarcaPrimeiro')} desativado={!value.marca}
             carregando={loading === 'modelos'} focoAoMontar={focar === 'modelo'} />
         </div>
@@ -350,7 +378,7 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
       {(isBR ? selectedModeloCode : isBR === false) && (
         <div>
           <label htmlFor="cbbe3-103" className="block text-sm font-medium text-gray-700 mb-1">
-            {t('labelAno')} {isBR && loading === 'anos' && <span className="text-gray-400">({t('carregando')})</span>}
+            {anoOpcional ? t('labelAnoOpcional') : t('labelAno')} {isBR && loading === 'anos' && <span className="text-gray-400">({t('carregando')})</span>}
           </label>
           {isBR ? (
             <select id="cbbe3-103"
@@ -367,17 +395,24 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
               ))}
             </select>
           ) : (
+            // so digitos (dono 16/11, Fable): type="number" aceitava "e", "-" e 5 digitos
             <input
               ref={anoRef}
               id="cbbe3-103"
-              type="number"
+              type="text"
               inputMode="numeric"
-              className="input-field scroll-mt-24"
+              pattern="[0-9]*"
+              maxLength={4}
+              autoComplete="off"
+              className={`input-field scroll-mt-24 ${erroAno ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
               placeholder={t('placeholderAno')}
               value={value.ano}
-              onChange={(e) => onChange({ ...value, ano: e.target.value })}
+              aria-invalid={!!erroAno}
+              aria-describedby={erroAno ? 'cbbe3-103-erro' : undefined}
+              onChange={(e) => onChange({ ...value, ano: e.target.value.replace(/\D/g, '').slice(0, 4) })}
             />
           )}
+          {erroAno && <p id="cbbe3-103-erro" role="alert" className="mt-1 text-sm text-red-700" data-testid="ano-invalido">{erroAno}</p>}
         </div>
       )}
 

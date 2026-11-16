@@ -64,7 +64,8 @@ export function validarPedido(d: Record<string, unknown>): DadosPedido {
       tipo: umDe(v.tipo ?? 'cars', 'veiculo.tipo', TIPOS_VEICULO),
       marca: texto(v.marca, 'veiculo.marca', 60, true)!,
       modelo: texto(v.modelo, 'veiculo.modelo', 100, true)!,
-      ano: anoCarro(v.ano, 'veiculo.ano', true)!,
+      // ano opcional desde 16/11 (dono): vazio grava '' (veiculos.fipe_ano e NOT NULL); escrito, tem de ser valido
+      ano: anoCarro(v.ano, 'veiculo.ano') ?? '',
       codigo: texto(v.codigo, 'veiculo.codigo', 30),
       placa: placaCarro(v.placa, 'veiculo.placa'),
     },

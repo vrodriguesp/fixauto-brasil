@@ -317,7 +317,12 @@
     "buscandoValor": "A procurar o valor...",
     "valorFipe": "Valor de referência",
     "valorFipeIndisponivel": "Valor de referência indisponível",
-    "codigoFipe": "Código"
+    "codigoFipe": "Código",
+    "ajudaMarca": "Escreva a marca do carro ou escolha da lista.",
+    "ajudaModelo": "Escreva o modelo ou escolha da lista.",
+    "labelAnoOpcional": "Ano (opcional)",
+    "marcasPopulares": "Marcas populares",
+    "marcasTodas": "Todas as marcas A–Z"
   },
   "home": {
     "metaTitle": "Reparação automóvel em Tallinn: compare orçamentos | BipFix",
@@ -962,7 +967,7 @@
     "faltaModelo": "Escreva ou escolha o modelo do carro.",
     "faltaAno": "Indique o ano do carro.",
     "faltaCarroConferir": "Verifique o ano e a matrícula.",
-    "faltaEndereco": "Indique uma morada ou zona.",
+    "faltaEndereco": "Escreva a morada, bairro ou cidade.",
     "faltaNome": "Indique o seu nome.",
     "faltaEmail": "Indique um e-mail válido.",
     "faltaTermos": "Aceite os termos de uso e a política de privacidade.",
@@ -1006,7 +1011,15 @@
     "faltaTelefone": "Introduza o número de telemóvel ou desmarque o SMS.",
     "codigoBotaoEmail": "Toque no botão “Confirmar e enviar o pedido” no e-mail.",
     "jaConfirmouTitulo": "O pedido já não aguarda confirmação",
-    "jaConfirmouTexto": "Se o confirmou pelo e-mail, já foi enviado às oficinas. Entre para o ver."
+    "jaConfirmouTexto": "Se o confirmou pelo e-mail, já foi enviado às oficinas. Entre para o ver.",
+    "placaRotulo": "Matrícula (opcional)",
+    "placaAjuda": "Com ela a oficina vê os dados exatos do carro.",
+    "localTitulo": "Onde está o carro?",
+    "localPlaceholder": "Morada, bairro ou cidade",
+    "localAjuda": "Pode escrever a morada exata, o bairro ou só a cidade. Com ela encontramos oficinas por perto.",
+    "localUsarMinha": "Usar a minha localização",
+    "localProcurando": "A procurar a sua localização...",
+    "localNegado": "Não foi possível usar a sua localização. Escreva a morada, bairro ou cidade."
   },
   "conversa": {
     "enviando": "a enviar…",

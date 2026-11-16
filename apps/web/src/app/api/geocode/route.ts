@@ -28,6 +28,10 @@ function fromAddress(addr: Record<string, string>) {
     // ISO 3166-1 alpha-2 (ex: "br", "ee") - usado pra decidir moeda, nunca
     // pra exibir pro usuario (usar "pais" pra isso).
     paisCodigo: (addr.country_code || '').toUpperCase(),
+    // rua/numero/linnaosa: o botao "usar minha localizacao" do pedido preenche o campo com eles (16/11)
+    rua: addr.road || addr.pedestrian || '',
+    numero: addr.house_number || '',
+    bairro: addr.suburb || addr.city_district || addr.quarter || addr.neighbourhood || '',
   };
 }
 

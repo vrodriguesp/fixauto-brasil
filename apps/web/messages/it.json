@@ -317,7 +317,12 @@
     "buscandoValor": "Ricerca del valore...",
     "valorFipe": "Valore di riferimento",
     "valorFipeIndisponivel": "Valore di riferimento non disponibile",
-    "codigoFipe": "Codice"
+    "codigoFipe": "Codice",
+    "ajudaMarca": "Scrivi la marca dell'auto o sceglila dall'elenco.",
+    "ajudaModelo": "Scrivi il modello o sceglilo dall'elenco.",
+    "labelAnoOpcional": "Anno (facoltativo)",
+    "marcasPopulares": "Marche diffuse",
+    "marcasTodas": "Tutte le marche A–Z"
   },
   "home": {
     "metaTitle": "Riparazione auto in Italia: preventivi delle officine | BipFix",
@@ -963,7 +968,7 @@
     "faltaModelo": "Scrivi o scegli il modello dell’auto.",
     "faltaAno": "Indica l’anno dell’auto.",
     "faltaCarroConferir": "Controlla l’anno e la targa.",
-    "faltaEndereco": "Inserisci un indirizzo o una zona.",
+    "faltaEndereco": "Scrivi indirizzo, quartiere o città.",
     "faltaNome": "Inserisci il tuo nome.",
     "faltaEmail": "Inserisci un’e-mail valida.",
     "faltaTermos": "Accetta i termini d’uso e l’informativa sulla privacy.",
@@ -1007,7 +1012,15 @@
     "faltaTelefone": "Inserisci il numero di telefono o togli la spunta SMS.",
     "codigoBotaoEmail": "Tocca il pulsante «Conferma e invia la richiesta» nell’e-mail.",
     "jaConfirmouTitulo": "La richiesta non è più in attesa",
-    "jaConfirmouTexto": "Se l’hai confermata dall’e-mail, è già stata inviata alle officine. Accedi per vederla."
+    "jaConfirmouTexto": "Se l’hai confermata dall’e-mail, è già stata inviata alle officine. Accedi per vederla.",
+    "placaRotulo": "Targa (facoltativa)",
+    "placaAjuda": "Dalla targa l'officina vede i dati esatti dell'auto.",
+    "localTitulo": "Dove si trova l'auto?",
+    "localPlaceholder": "Indirizzo, quartiere o città",
+    "localAjuda": "Puoi scrivere l’indirizzo esatto, il quartiere o solo la città. Ci serve per trovare le officine vicine.",
+    "localUsarMinha": "Usa la mia posizione",
+    "localProcurando": "Ricerca della posizione...",
+    "localNegado": "Impossibile usare la tua posizione. Scrivi indirizzo, quartiere o città."
   },
   "conversa": {
     "enviando": "invio…",

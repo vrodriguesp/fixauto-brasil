@@ -320,7 +320,12 @@
     "buscandoValor": "Looking up the value...",
     "valorFipe": "Reference value",
     "valorFipeIndisponivel": "Reference value not available",
-    "codigoFipe": "Code"
+    "codigoFipe": "Code",
+    "ajudaMarca": "Type the car make or pick it from the list.",
+    "ajudaModelo": "Type the model or pick it from the list.",
+    "labelAnoOpcional": "Year (optional)",
+    "marcasPopulares": "Popular makes",
+    "marcasTodas": "All makes A–Z"
   },
   "home": {
     "metaTitle": "Car Repair Quotes in Tallinn – Compare Garages | BipFix",
@@ -965,7 +970,7 @@
     "faltaModelo": "Type or choose the car model.",
     "faltaAno": "Enter the car’s year.",
     "faltaCarroConferir": "Check the year and the plate.",
-    "faltaEndereco": "Enter an address or area.",
+    "faltaEndereco": "Enter an address, district or city.",
     "faltaNome": "Enter your name.",
     "faltaEmail": "Enter a valid e-mail address.",
     "faltaTermos": "Accept the terms of use and the privacy policy.",
@@ -1009,7 +1014,15 @@
     "faltaTelefone": "Enter your phone number or untick SMS.",
     "codigoBotaoEmail": "Tap the “Confirm and send the request” button in the e-mail.",
     "jaConfirmouTitulo": "This request is no longer waiting",
-    "jaConfirmouTexto": "If you confirmed it from the e-mail, it has already gone to the repair shops. Sign in to see it."
+    "jaConfirmouTexto": "If you confirmed it from the e-mail, it has already gone to the repair shops. Sign in to see it.",
+    "placaRotulo": "Number plate (optional)",
+    "placaAjuda": "The workshop can see the car's exact details from it.",
+    "localTitulo": "Where is the car?",
+    "localPlaceholder": "Address, district or city",
+    "localAjuda": "You can enter the exact address, a district or just the city. We use it to find workshops nearby.",
+    "localUsarMinha": "Use my location",
+    "localProcurando": "Finding your location...",
+    "localNegado": "Couldn't use your location. Enter an address, district or city."
   },
   "conversa": {
     "enviando": "sending…",

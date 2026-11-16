@@ -49,7 +49,8 @@ function VeiculosPage() {
   };
 
   const handleSave = async () => {
-    if (!formData.fipe_marca || !formData.fipe_modelo || !formData.fipe_ano) return;
+    // ano opcional desde 16/11 (como no pedido sem conta): carro salvo sem ano tambem pode ser editado
+    if (!formData.fipe_marca || !formData.fipe_modelo) return;
     if (!placaValida(formData.placa) || !anoDoCarroValido(formData.fipe_ano)) return; // aviso ao lado do campo
 
     if (editingId) {
@@ -115,6 +116,7 @@ function VeiculosPage() {
           </h2>
 
           <FipeAutocomplete
+            anoOpcional
             value={{
               tipo: formData.fipe_tipo,
               marca: formData.fipe_marca,
@@ -206,7 +208,7 @@ function VeiculosPage() {
                     {v.fipe_marca} {v.fipe_modelo}
                   </h3>
                   <p className="text-sm text-gray-500 mt-1">
-                    {t('yearLabel', { year: v.fipe_ano })} {v.cor && t('colorInline', { color: v.cor })} {v.placa && t('plateInline', { plate: v.placa })}
+                    {v.fipe_ano && v.fipe_ano !== '-' && t('yearLabel', { year: v.fipe_ano })} {v.cor && t('colorInline', { color: v.cor })} {v.placa && t('plateInline', { plate: v.placa })}
                   </p>
                   {v.fipe_valor && (
                     <p className="text-sm text-green-600 mt-1">{t('fipeValueLabel')} {v.fipe_valor}</p>
