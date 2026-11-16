@@ -312,7 +312,7 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
               const escolhida = value.marca === m.name;
               return (
                 <button key={a.code} type="button" aria-pressed={escolhida} data-testid={`atalho-marca-${a.code}`}
-                  onClick={() => escolherMarca(m)}
+                  onClick={() => { if (!escolhida) escolherMarca(m); }}
                   className={`min-h-[40px] px-3 rounded-full border text-sm font-medium transition-colors ${escolhida ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-gray-800 border-gray-300 hover:border-primary-400'}`}>
                   {a.rotulo}
                 </button>

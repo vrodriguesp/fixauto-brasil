@@ -94,6 +94,13 @@ export default function Analytics() {
     if (stored) aplicarConsentimento(stored);
   }, []);
 
+  // O Clarity so entra depois de montar (aparelho do admin fica sem): o consentimento ja dado
+  // tem de ser repassado quando o script entra, senao a visita de retorno grava sem cookie
+  // (auditoria Fable 16/11, A1). O stub window.clarity existe desde o efeito do <Script>.
+  useEffect(() => {
+    if (mounted && !semClarity && consent) window.clarity?.('consentv2', { ad_Storage: 'denied', analytics_Storage: consent === 'accepted' ? 'granted' : 'denied' });
+  }, [mounted, semClarity]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Altura do aviso de cookies em --altura-cookies: o botao do chat de suporte
   // sobe acima dele enquanto a pessoa nao responde (dono 04/11: o aviso tampava o botao).
   const mostrandoAviso = mounted && consent === null && !pathname.startsWith('/emergencia');

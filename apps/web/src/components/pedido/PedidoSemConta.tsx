@@ -309,7 +309,8 @@ export default function PedidoSemConta() {
     : querSms && !TELEFONE_OK(telefone) ? [t('faltaTelefone'), 'pedido-telefone'] : [t('faltaTermos'), 'pedido-termos'];
   // corrigiu: o aviso some. No carro, pelo motivo (16/11): antes dependia de carroOk, que nao muda ao
   // escolher a marca (ainda falta o modelo) - o aviso "kirjuta mark" ficava parado com a marca escolhida
-  useEffect(() => { setFaltando(''); }, [servicoOk, motivoCarro, endereco, contatoOk]);
+  // contato pelo campo que falta (Fable B3): escrever o nome tira o "kirjuta oma nimi" na hora
+  useEffect(() => { setFaltando(''); }, [servicoOk, motivoCarro, endereco, contatoOk, faltaContato[1]]);
 
   // linha acima do Edasi no passo 2: o que falta (cinza) ou o que ja basta (verde)
   const statusDetalhe: { texto: string; tom: 'neutro' | 'ok' } = servicos.length > 0 ? { texto: t('detalheStatusLista', { n: servicos.length }), tom: 'ok' }

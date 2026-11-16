@@ -1297,3 +1297,10 @@ Pedido do dono (e-mail "Performance", 15/11 19:18): "Sim! E todos outros element
   - Regressao: `e2e-cadastro.mjs` TUDO OK; `site-pedido-sem-conta.mjs` TUDO OK (144); `pedido-exaustivo.mjs site et 390` e `site ru 390` 81 ok cada; `pedido-fotos-celular.mjs` 55 ok / 2 falhas ja existentes (tela deitada 740x300: aviso de cookies com 67 px > 48 - o cartao de cookies mudou em 4c3b7ee, 12/11 22:21, depois desse teste; nada deste lote mexe nos cookies) - assercao "passo do endereco pede localizacao 1 vez" trocada para 0 (mudanca de proposito); `catalogo-carro-pais.mjs` ja estava obsoleto (espera `<select>` fora do Brasil; desde bf92546 de 12/11 e o campo de escrever) - nao mexido.
 - **Fica para o dono:** o app (apps/mobile/app/pedido.tsx:170) ainda exige o ano - o servidor aceita os dois; tirar do app pede OTA. "Marca fora do catalogo" (medicao sugerida pelo Fable) nao foi para o funil. Fase 2 da placa (consulta Transpordiamet/AVP) nao feita.
 - **NAO publicado** - aguarda OK do dono no chat.
+
+#### 16/11 noite — auditoria Fable das melhorias (Documentos/Analises/Fable_auditoria_melhorias_2026-11-16.md) e ajustes
+- Veredito: pode ir depois de A1. Feito: **A1** `components/Analytics.tsx` repassa o consentimento ja dado ao Clarity quando o script entra (depois de montar), senao a visita de retorno gravava sem cookie.
+- Tambem: **B2** `lib/pedido-sem-conta.ts` ano vazio '' e '-' contam como o mesmo na dedupe de "meus veiculos"; **B3** `PedidoSemConta.tsx` o aviso do passo contato some ao corrigir o campo; **B4** `FipeAutocomplete.tsx` tocar de novo no atalho da marca ja escolhida nao apaga o modelo; **B6** `messages/ru.json` "Все марки A–Z".
+- Ficam: B5 (sem nome na busca reversa o endereco vira coordenadas), B7 (script antigo catalogo-carro-pais), app ainda exige o ano (OTA junto com o deploy).
+- Teste de novo (build novo no :3100): `scripts/e2e/melhorias-1611.mjs` TUDO OK (log resultados/melhorias-1611/melhorias-1611b.log). tsc ok, build ok.
+- **NAO publicado** - aguarda OK do dono no chat.

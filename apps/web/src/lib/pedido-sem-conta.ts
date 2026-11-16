@@ -75,6 +75,8 @@ export function validarPedido(d: Record<string, unknown>): DadosPedido {
 
 const normPlaca = (p: string | null | undefined) => (p || '').replace(/[^a-z0-9]/gi, '').toUpperCase();
 const norm = (s: string | null | undefined) => (s || '').trim().toLowerCase();
+// ano vazio: '' (pedido do site, 16/11) e '-' (editar pedido / app) sao o mesmo "sem ano" (Fable B2)
+const anoSemValor = (a: string | null | undefined) => { const s = norm(a); return s === '-' ? '' : s; };
 
 /** Carro do pedido: o da conta com a mesma placa (ou mesma marca/modelo/ano sem placa); senao um novo. */
 export async function veiculoDoPedido(clienteId: string, v: DadosPedido['veiculo']): Promise<string> {
@@ -83,7 +85,7 @@ export async function veiculoDoPedido(clienteId: string, v: DadosPedido['veiculo
   const placa = normPlaca(v.placa);
   const igual = placa
     ? (meus || []).find((m) => normPlaca(m.placa) === placa)
-    : (meus || []).find((m) => norm(m.fipe_marca) === norm(v.marca) && norm(m.fipe_modelo) === norm(v.modelo) && norm(m.fipe_ano) === norm(v.ano));
+    : (meus || []).find((m) => norm(m.fipe_marca) === norm(v.marca) && norm(m.fipe_modelo) === norm(v.modelo) && anoSemValor(m.fipe_ano) === anoSemValor(v.ano));
   if (igual) return igual.id;
   const { data: novo, error } = await supabaseAdmin.from('veiculos').insert({
     profile_id: clienteId, fipe_tipo: v.tipo, fipe_marca: v.marca, fipe_modelo: v.modelo, fipe_ano: v.ano,
