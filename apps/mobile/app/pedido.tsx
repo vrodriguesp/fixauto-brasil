@@ -128,18 +128,21 @@ export default function PedidoScreen() {
 
   // posicao do aparelho (se a pessoa permitir): preenche a cidade e aproxima as sugestoes
   const buscarLocal = async () => {
+    Keyboard.dismiss(); // campo focado + texto do GPS abriria a lista de sugestoes (Fable N4)
     setBuscandoLocal(true);
+    contar('local_gps');
     try {
       const { status } = await permissaoLocal(true);
-      if (status !== 'granted') { setLocalNegado(true); return; }
+      if (status !== 'granted') { setLocalNegado(true); contar('local_gps_negado'); return; }
       const pos = await obterPosicao();
       setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
       const res = await fetchComPrazo(`${API_BASE_URL}/api/geocode?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&idioma=${i18n.language}`);
-      const data = await res.json();
-      // rua e numero, bairro e cidade (a busca reversa do site devolve os tres desde 16/11)
+      const data = res.ok ? await res.json().catch(() => ({})) : {};
+      // rua e numero, bairro e cidade (a busca reversa do site devolve os tres desde 16/11), sem repetir ("Keila, Keila")
       const rua = [data.rua, data.numero].filter(Boolean).join(' ');
-      const texto = [rua, data.bairro, data.cidade].filter(Boolean).join(', ') || [data.cidade, data.estado, data.pais].filter(Boolean).join(', ');
-      if (texto) setEndereco(texto);
+      const unico = (xs: unknown[]) => xs.filter((x, i, a) => x && a.indexOf(x) === i).join(', ');
+      const texto = unico([rua, data.bairro, data.cidade]) || unico([data.cidade, data.estado, data.pais]);
+      if (texto) setEndereco(texto); else setLocalNegado(true);
       if (data.paisCodigo) setPais(data.paisCodigo);
     } catch {
       // sem posicao o endereco continua digitavel
@@ -164,7 +167,7 @@ export default function PedidoScreen() {
   const exemplo = t(`pedidoSemConta.${EXEMPLO[tipo] || 'placeholderDescribeIssue'}`);
   // escreveu o que precisa OU marcou algum servico da lista
   const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
-  useEffect(() => { setFaltando(''); }, [servicoOk]); // corrigiu: o aviso some
+  useEffect(() => { setFaltando(''); }, [servicoOk, endereco]); // corrigiu: o aviso some (servico e endereco)
   const statusDetalhe: { texto: string; tom: 'neutro' | 'ok' } = servicos.length > 0
     ? { texto: servicos.length === 1 ? t('pedidoSemConta.detalheStatusListaUm') : t('pedidoSemConta.detalheStatusListaN', { n: servicos.length }), tom: 'ok' }
     : descricao.trim() ? { texto: t('pedidoSemConta.detalheStatusTexto'), tom: 'ok' }
@@ -482,7 +485,7 @@ export default function PedidoScreen() {
             desativado={marca ? undefined : t('veiculos.escolhaMarcaPrimeiro')} />
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.anoOpcional')}</Text>
           <TextInput accessibilityLabel={t('pedidoSemConta.anoOpcional')} value={ano} onChangeText={(v) => setAno(v.replace(/\D/g, '').slice(0, 4))} keyboardType="number-pad" maxLength={4} className={`${CAMPO} mb-4`} />
-          {ano.length > 0 && !anoValido(ano) ? <Text className="text-sm text-red-700 -mt-2 mb-3" accessibilityRole="alert">{t('erros.ANO_INVALIDO')}</Text> : null}
+          {ano.length >= 4 && !anoValido(ano) ? <Text className="text-sm text-red-700 -mt-2 mb-3" accessibilityRole="alert">{t('erros.ANO_INVALIDO')}</Text> : null}
           <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.placaRotulo')}</Text>
           <TextInput accessibilityLabel={t('pedidoSemConta.placaRotulo')} value={placa} onChangeText={(v) => setPlaca(v.toUpperCase())} autoCapitalize="characters" maxLength={10} className={`${CAMPO} mb-1`} />
           <Text className="text-xs text-gray-500 mb-3">{t('pedidoSemConta.placaAjuda')}</Text>
@@ -516,7 +519,7 @@ export default function PedidoScreen() {
           ) : null}
           {localNegado ? <Text className="text-xs text-gray-600 mb-2">{t('pedidoSemConta.localNegado')}</Text> : null}
           <Erro />
-          <Navegar voltar="carro" ok={endereco.trim().length > 2} avancar={() => { setErro(''); setEtapa('contato'); }} />
+          <Navegar voltar="carro" ok={endereco.trim().length > 2} avancar={() => { setErro(''); setEtapa('contato'); }} falta={t('pedidoSemConta.faltaEndereco')} />
         </View>
       )}
 
