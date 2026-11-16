@@ -87,7 +87,7 @@
   },
   "lojaCatalogo": {
     "pageTitle": "Parts Catalogue",
-    "pageSubtitle": "List parts you have in stock - shops can view and buy directly",
+    "pageSubtitle": "Internal list of your stock. Workshops can't see this list yet: they reach you through part requests.",
     "addButton": "+ New Part",
     "formTitle": "Add Part",
     "labelNome": "Part name *",

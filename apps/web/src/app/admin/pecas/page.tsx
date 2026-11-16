@@ -29,6 +29,7 @@ interface Resumo {
   cotacoesRespondidas: number;
   pedidosConfirmados: number;
   pedidosEntregues: number;
+  entreguesSemComissao: number;
   comissaoPendentePorMoeda: Record<string, number>;
   comissaoPagaPorMoeda: Record<string, number>;
 }
@@ -135,7 +136,7 @@ export default function AdminPecasPage() {
           <p className="text-sm text-slate-400 mb-1">Comissão pendente</p>
           <p className="text-2xl font-bold text-amber-400">
             {Object.keys(resumo.comissaoPendentePorMoeda).length === 0
-              ? formatCurrency(0)
+              ? '—' // M5 (16/11): sem lancamento nao ha moeda (antes "R$ 0,00" para a Estonia)
               : Object.entries(resumo.comissaoPendentePorMoeda).map(([moeda, v]) => formatCurrency(v, moeda)).join(' + ')}
           </p>
         </div>
@@ -143,15 +144,16 @@ export default function AdminPecasPage() {
           <p className="text-sm text-slate-400 mb-1">Comissão paga</p>
           <p className="text-2xl font-bold text-emerald-400">
             {Object.keys(resumo.comissaoPagaPorMoeda).length === 0
-              ? formatCurrency(0)
+              ? '—' // M5 (16/11): sem lancamento nao ha moeda (antes "R$ 0,00" para a Estonia)
               : Object.entries(resumo.comissaoPagaPorMoeda).map(([moeda, v]) => formatCurrency(v, moeda)).join(' + ')}
           </p>
         </div>
       </div>
 
-      {resumo.pedidosEntregues > 0 && Object.keys(resumo.comissaoPendentePorMoeda).length === 0 && Object.keys(resumo.comissaoPagaPorMoeda).length === 0 && (
+      {/* M5 (16/11): so pedidos cujo fornecedor tem taxa > 0 (com a regra isenta o alerta era falso) */}
+      {resumo.entreguesSemComissao > 0 && (
         <div className="bg-amber-900/20 border border-amber-800 text-amber-300 p-4 rounded-lg text-sm">
-          Há {resumo.pedidosEntregues} pedido(s) entregue(s) mas nenhuma comissão lançada — vale investigar antes de decidir se o canal compensa.
+          Há {resumo.entreguesSemComissao} pedido(s) entregue(s) com taxa acima de 0% e sem comissão lançada — vale investigar antes de decidir se o canal compensa.
         </div>
       )}
 

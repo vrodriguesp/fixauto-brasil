@@ -12,11 +12,12 @@ export function linkDaNotificacao(n: Pick<Notificacao, 'tipo' | 'dados'>, tipoUs
     if (n.tipo === 'novidades') return d.link && d.link.startsWith('/oficina/') ? d.link : '/oficina/melhorias';
     if (n.tipo === 'nova_mensagem' && d.solicitacao_id) return `/oficina/mensagens/${d.solicitacao_id}`;
     if (d.solicitacao_id) return `/oficina/pedidos/${d.solicitacao_id}`;
-    if (d.cotacao_id) return '/oficina/pecas';
+    // portal de pecas (16/11): o aviso traz a tela certa (aba Vender, conversa...)
+    if (d.cotacao_id) return d.link && d.link.startsWith('/oficina/pecas') ? d.link : '/oficina/pecas';
     if (d.emergencia_id) return `/emergencia/acidente/${d.emergencia_id}`;
     return null;
   }
-  if (tipoUsuario === 'loja_pecas') return d.cotacao_id ? '/loja/cotacoes' : null;
+  if (tipoUsuario === 'loja_pecas') return d.cotacao_id ? (d.link && d.link.startsWith('/loja/') ? d.link : '/loja/cotacoes') : null;
   // cliente
   if (n.tipo === 'acidente' && d.emergencia_id) return `/emergencia/acidente/${d.emergencia_id}`;
   // quem paga o reparo do acidente nao ve o pedido do outro, so a conversa dele

@@ -16,6 +16,9 @@ interface Props {
   fornecedorId: string;
   titulo: string;
   subtitulo?: string;
+  /** botao Voltar dentro do cabecalho do chat (M11: antes ficava acima e saia da tela) */
+  onVoltar?: () => void;
+  voltarLabel?: string;
 }
 
 /**
@@ -24,7 +27,7 @@ interface Props {
  * respostas -> a conversa e por par (cotacao, fornecedor), pra nao vazar
  * entre concorrentes (mesma logica de "lance fechado" das respostas).
  */
-export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorId, titulo, subtitulo }: Props) {
+export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorId, titulo, subtitulo, onVoltar, voltarLabel }: Props) {
   const { user } = useAuth();
   const locale = useLocale();
   const tChat = useTranslations('chatCotacaoPeca');
@@ -34,7 +37,23 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
   const [sending, setSending] = useState(false);
   const [uploadingImg, setUploadingImg] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const endRef = useRef<HTMLDivElement>(null);
+  const listaRef = useRef<HTMLDivElement>(null);
+
+  // A1 (16/11): mensagens da outra parte viram lidas ao abrir a conversa (o cartao
+  // do pedido mostra quantas nao lidas ha em cada conversa)
+  const marcarLidas = async () => {
+    if (!user) return;
+    await supabase.from('cotacoes_pecas_mensagens').update({ lida: true })
+      .eq('cotacao_id', cotacaoId).eq('fornecedor_tipo', fornecedorTipo).eq('fornecedor_id', fornecedorId)
+      .neq('remetente_id', user.id).eq('lida', false);
+  };
+  // A2 (16/11): aviso (sino; e-mail no maximo 1 por hora) para a outra parte
+  const avisarOutraParte = (mensagemId?: string) => {
+    if (!mensagemId) return;
+    fetch('/api/notificar-mensagem-peca', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mensagemId }),
+    }).catch(() => {});
+  };
 
   const fetchMessages = async () => {
     const { data } = await supabase
@@ -46,9 +65,11 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
       .order('created_at', { ascending: true });
     setMessages((data as any[]) || []);
     setLoading(false);
+    if ((data || []).some((m: any) => !m.lida && m.remetente_id !== user?.id)) marcarLidas();
   };
 
-  useEffect(() => { fetchMessages(); }, [cotacaoId, fornecedorTipo, fornecedorId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchMessages(); }, [cotacaoId, fornecedorTipo, fornecedorId, user?.id]);
 
   useEffect(() => {
     const channel = supabase
@@ -65,27 +86,31 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
             .single();
           if (data) {
             setMessages((prev) => (prev.some((m) => m.id === data.id) ? prev : [...prev, data as any]));
+            if ((data as any).remetente_id !== user?.id) marcarLidas();
           }
         }
       )
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [cotacaoId, fornecedorTipo, fornecedorId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cotacaoId, fornecedorTipo, fornecedorId, user?.id]);
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+  // rola so a lista (antes scrollIntoView rolava a pagina inteira e o cabecalho sumia - M11)
+  useEffect(() => { const el = listaRef.current; if (el) el.scrollTop = el.scrollHeight; }, [messages]);
 
   const handleSend = async () => {
     if (!texto.trim() || !user || sending) return;
     const value = texto.trim();
     setTexto('');
     setSending(true);
-    await supabase.from('cotacoes_pecas_mensagens').insert({
+    const { data: nova } = await supabase.from('cotacoes_pecas_mensagens').insert({
       cotacao_id: cotacaoId,
       fornecedor_tipo: fornecedorTipo,
       fornecedor_id: fornecedorId,
       remetente_id: user.id,
       texto: value,
-    });
+    }).select('id').single();
+    avisarOutraParte(nova?.id);
     await fetchMessages();
     setSending(false);
   };
@@ -103,13 +128,14 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
         .upload(path, compressed, { contentType: compressed.type });
       if (uploadData?.path) {
         const { data: urlData } = supabase.storage.from('damage-photos').getPublicUrl(uploadData.path);
-        await supabase.from('cotacoes_pecas_mensagens').insert({
+        const { data: nova } = await supabase.from('cotacoes_pecas_mensagens').insert({
           cotacao_id: cotacaoId,
           fornecedor_tipo: fornecedorTipo,
           fornecedor_id: fornecedorId,
           remetente_id: user.id,
           imagem_url: urlData.publicUrl,
-        });
+        }).select('id').single();
+        avisarOutraParte(nova?.id);
         await fetchMessages();
       }
     } finally {
@@ -122,13 +148,22 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
     new Date(dateStr).toLocaleTimeString(INTL_LOCALE[locale] || 'en-GB', { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] max-w-3xl mx-auto">
-      <div className="bg-white border-b px-4 py-3 flex-shrink-0">
-        <h1 className="font-semibold text-gray-900 text-sm">{titulo}</h1>
-        {subtitulo && <p className="text-xs text-gray-500">{subtitulo}</p>}
+    <div className="altura-conversa flex flex-col max-w-3xl mx-auto bg-white" data-testid="chat-peca">
+      <div className="bg-white border-b px-4 py-3 flex-shrink-0 flex items-center gap-3">
+        {onVoltar && (
+          <button type="button" onClick={onVoltar} aria-label={voltarLabel} title={voltarLabel} className="-ml-1 p-1 text-gray-500 hover:text-gray-700 flex-shrink-0">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+        )}
+        <div className="min-w-0">
+          <h1 className="font-semibold text-gray-900 text-sm truncate">{titulo}</h1>
+          {subtitulo && <p className="text-xs text-gray-500 truncate">{subtitulo}</p>}
+        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4 bg-gray-50">
+      <div ref={listaRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 bg-gray-50">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
@@ -164,12 +199,11 @@ export default function ChatCotacaoPeca({ cotacaoId, fornecedorTipo, fornecedorI
                 </div>
               );
             })}
-            <div ref={endRef} />
           </div>
         )}
       </div>
 
-      <div className="bg-white border-t px-4 py-3 flex-shrink-0">
+      <div className="conversa-composer bg-white border-t px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex-shrink-0">
         {uploadingImg ? (
           <div className="flex items-center justify-center gap-2 py-2">
             <div className="w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />

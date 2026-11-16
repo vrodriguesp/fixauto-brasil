@@ -50,8 +50,8 @@ export default function ChatSuporte() {
   const botaoRef = useRef<HTMLButtonElement>(null);
   const voltarFoco = useRef(false);
 
-  // nas conversas (oficina <-> cliente, acidente) o botao cobriria a caixa de digitar
-  const escondido = loading || user?.tipo === 'admin' || /\/mensagens\/[^/]+/.test(pathname) || CONVERSA_ACIDENTE.test(pathname) || PAGINAS_PEDIDO.has(pathname.replace(/\/$/, ''));
+  // nas conversas (oficina <-> cliente, acidente, pedido de peca - M11 16/11) o botao cobriria a caixa de digitar
+  const escondido = loading || user?.tipo === 'admin' || /\/mensagens\/[^/]+/.test(pathname) || /\/(pecas|loja)\/conversa\//.test(pathname) ||CONVERSA_ACIDENTE.test(pathname) || PAGINAS_PEDIDO.has(pathname.replace(/\/$/, ''));
   const visitante = !loading && !isLoggedIn;
 
   const carregar = useCallback(async (estaAberto: boolean) => {

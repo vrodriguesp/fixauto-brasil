@@ -87,7 +87,7 @@
   },
   "lojaCatalogo": {
     "pageTitle": "Catálogo de Peças",
-    "pageSubtitle": "Liste as peças que tem em stock - as oficinas podem ver e comprar diretamente",
+    "pageSubtitle": "Lista interna do seu stock. As oficinas ainda não veem esta lista: chegam até si através dos pedidos de peças.",
     "addButton": "+ Nova Peça",
     "formTitle": "Adicionar Peça",
     "labelNome": "Nome da peça *",

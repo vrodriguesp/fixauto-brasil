@@ -22,7 +22,9 @@ export async function POST(req: NextRequest) {
     }
 
     const { cotacaoId } = await req.json();
-    if (!dentroDoLimite(`cotacao-resp:${cotacaoId}`, 5, 60 * 60 * 1000) || !dentroDoLimite(`cotacao-resp-u:${callerId}`, 60, 60 * 60 * 1000)) {
+    // M7 (16/11): limite por fornecedor (por cotacao e no total), nao por cotacao - antes
+    // a 6a loja que respondia na mesma hora gravava a oferta, mas a compradora nao era avisada
+    if (!dentroDoLimite(`cotacao-resp:${cotacaoId}:${callerId}`, 5, 60 * 60 * 1000) || !dentroDoLimite(`cotacao-resp-u:${callerId}`, 60, 60 * 60 * 1000)) {
       return NextResponse.json({ error: 'Muitas requisições', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
     }
     if (!cotacaoId) {

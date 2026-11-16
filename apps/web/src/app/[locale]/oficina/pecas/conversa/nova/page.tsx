@@ -1,12 +1,17 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { supabase } from '@/lib/supabase';
 import ChatCotacaoPeca from '@/components/pecas/ChatCotacaoPeca';
 
+// Conversa sobre um pedido de peca ainda sem oferta deste fornecedor.
+//  - sem fornecedorId: a oficina e a FORNECEDORA (aba "Vender") e pergunta a compradora;
+//  - com fornecedorTipo + fornecedorId (A1, 16/11): a oficina e a COMPRADORA e abre a
+//    conversa que uma loja/oficina comecou antes de mandar oferta.
 function OficinaConversaNovaContent() {
   const t = useTranslations('oficinaPecasConversaNova');
   const params = useSearchParams();
@@ -16,6 +21,17 @@ function OficinaConversaNovaContent() {
   const cotacaoId = params.get('cotacaoId') || '';
   const compradoraNome = params.get('compradoraNome') || t('oficinaFallback');
   const pecaDescricao = params.get('pecaDescricao') || '';
+  const tipoParam = params.get('fornecedorTipo');
+  const fornecedorTipo: 'loja' | 'oficina' | null = tipoParam === 'loja' || tipoParam === 'oficina' ? tipoParam : null;
+  const fornecedorId = params.get('fornecedorId') || '';
+  const modoCompradora = !!(fornecedorTipo && fornecedorId);
+  const [fornecedorNome, setFornecedorNome] = useState('');
+
+  useEffect(() => {
+    if (!modoCompradora) return;
+    supabase.from(fornecedorTipo === 'loja' ? 'lojas_pecas' : 'oficinas').select('nome_fantasia').eq('id', fornecedorId).maybeSingle()
+      .then(({ data }) => setFornecedorNome((data as { nome_fantasia?: string } | null)?.nome_fantasia || ''));
+  }, [modoCompradora, fornecedorTipo, fornecedorId]);
 
   if (loading || !oficina) {
     return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-400">{t('carregando')}</div>;
@@ -25,22 +41,17 @@ function OficinaConversaNovaContent() {
     return <div className="max-w-3xl mx-auto px-4 py-16 text-center text-gray-500">{t('conversaInvalida')}</div>;
   }
 
+  const destino = modoCompradora ? '/oficina/pecas' : '/oficina/pecas?aba=vender';
   return (
     <div>
-      <div className="max-w-3xl mx-auto px-4 pt-4">
-        <button onClick={() => router.back()} className="flex items-center gap-1 text-gray-500 hover:text-gray-700 text-sm">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          {t('voltar')}
-        </button>
-      </div>
       <ChatCotacaoPeca
+        onVoltar={() => { if (window.history.length > 1) router.back(); else router.push(destino); }}
+        voltarLabel={t('voltar')}
         cotacaoId={cotacaoId}
-        fornecedorTipo="oficina"
-        fornecedorId={oficina.id}
-        titulo={compradoraNome}
-        subtitulo={pecaDescricao ? t('subtituloComPeca', { peca: pecaDescricao }) : t('subtituloSemPeca')}
+        fornecedorTipo={modoCompradora ? fornecedorTipo! : 'oficina'}
+        fornecedorId={modoCompradora ? fornecedorId : oficina.id}
+        titulo={modoCompradora ? (fornecedorNome || t('fornecedorFallback')) : compradoraNome}
+        subtitulo={modoCompradora ? pecaDescricao : (pecaDescricao ? t('subtituloComPeca', { peca: pecaDescricao }) : t('subtituloSemPeca'))}
       />
     </div>
   );

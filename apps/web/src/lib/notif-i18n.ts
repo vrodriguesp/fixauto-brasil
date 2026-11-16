@@ -79,17 +79,58 @@ export function notifPedidoPecaEntregue(locale: string | null | undefined, forne
   return { titulo: s.titulo, mensagem: fmt(s.mensagem, { fornecedorNome: fornecedorNome || fornecedorSemNome[l], pecaDescricao }) };
 }
 
-const cotacaoPecaDisponivel: Record<EmailLocale, { titulo: string; mensagem: string }> = {
-  pt: { titulo: 'Oficina próxima precisa de uma peça', mensagem: 'Uma oficina perto de você abriu uma cotação de peça. Responda se tiver em estoque.' },
-  en: { titulo: 'A nearby shop needs a part', mensagem: 'A repair shop near you opened a part request. Respond if you have it in stock.' },
-  et: { titulo: 'Lähedal asuv töökoda vajab varuosa', mensagem: 'Sinu lähedal asuv töökoda avas varuosa hinnapäringu. Vasta, kui sul on see laos.' },
-  it: { titulo: "Un'officina vicina ha bisogno di un ricambio", mensagem: "Un'officina vicino a te ha aperto una richiesta di ricambio. Rispondi se lo hai in magazzino." },
-  'pt-PT': { titulo: 'Oficina próxima precisa de uma peça', mensagem: 'Uma oficina perto de si abriu uma cotação de peça. Responda se tiver em stock.' },
-  ru: { titulo: 'Автосервису рядом нужна запчасть', mensagem: 'Автосервис рядом с вами открыл запрос запчасти. Ответьте, если она есть в наличии.' },
+// Pedido de peca novo (B3/M6, 16/11): vai para as lojas do pais e para as oficinas
+// vizinhas que vendem sobra. Diz qual peca, para qual carro e quantas (antes era um
+// aviso generico "uma oficina precisa de uma peca").
+const cotacaoPecaDisponivel: Record<EmailLocale, { titulo: string; tituloPerto: string; mensagem: string; carro: string }> = {
+  pt: { titulo: 'Novo pedido de peça: {peca}', tituloPerto: 'Oficina próxima precisa de: {peca}', mensagem: '{oficina} precisa de "{peca}"{carro}. Quantidade: {quantidade}.', carro: ' para {carro}' },
+  en: { titulo: 'New part request: {peca}', tituloPerto: 'A nearby shop needs: {peca}', mensagem: '{oficina} needs "{peca}"{carro}. Quantity: {quantidade}.', carro: ' for {carro}' },
+  et: { titulo: 'Uus varuosa päring: {peca}', tituloPerto: 'Lähedal asuv töökoda vajab: {peca}', mensagem: '{oficina} vajab: "{peca}"{carro}. Kogus: {quantidade}.', carro: ' (sõiduk: {carro})' },
+  it: { titulo: 'Nuova richiesta di ricambio: {peca}', tituloPerto: "Un'officina vicina cerca: {peca}", mensagem: '{oficina} cerca "{peca}"{carro}. Quantità: {quantidade}.', carro: ' per {carro}' },
+  'pt-PT': { titulo: 'Novo pedido de peça: {peca}', tituloPerto: 'Oficina próxima precisa de: {peca}', mensagem: '{oficina} precisa de "{peca}"{carro}. Quantidade: {quantidade}.', carro: ' para {carro}' },
+  ru: { titulo: 'Новый запрос запчасти: {peca}', tituloPerto: 'Автосервису рядом нужно: {peca}', mensagem: '{oficina} ищет «{peca}»{carro}. Количество: {quantidade}.', carro: ' для {carro}' },
 };
 
-export function notifCotacaoPecaDisponivel(locale: string | null | undefined) {
-  return cotacaoPecaDisponivel[resolveEmailLocale(locale)];
+export function notifCotacaoPecaDisponivel(
+  locale: string | null | undefined,
+  v: { peca: string; oficina: string; carro?: string | null; quantidade: number; perto?: boolean }
+) {
+  const s = cotacaoPecaDisponivel[resolveEmailLocale(locale)];
+  const carro = v.carro?.trim() ? fmt(s.carro, { carro: v.carro.trim() }) : '';
+  return {
+    titulo: fmt(v.perto ? s.tituloPerto : s.titulo, { peca: v.peca }),
+    mensagem: fmt(s.mensagem, { oficina: v.oficina, peca: v.peca, carro, quantidade: v.quantidade }),
+  };
+}
+
+// A5 (16/11): a oficina escolheu outra oferta. Sem preco nem nome de quem ganhou.
+const cotacaoPecaFechadaOutro: Record<EmailLocale, { titulo: string; mensagem: string }> = {
+  pt: { titulo: 'Pedido de peça fechado', mensagem: 'O pedido "{peca}" foi fechado com outro fornecedor. Obrigado pela sua oferta.' },
+  en: { titulo: 'Part request closed', mensagem: 'The request "{peca}" was closed with another supplier. Thank you for your offer.' },
+  et: { titulo: 'Varuosa päring suletud', mensagem: 'Päring "{peca}" suleti teise tarnijaga. Aitäh pakkumise eest.' },
+  it: { titulo: 'Richiesta di ricambio chiusa', mensagem: 'La richiesta "{peca}" è stata chiusa con un altro fornitore. Grazie per la tua offerta.' },
+  'pt-PT': { titulo: 'Pedido de peça fechado', mensagem: 'O pedido "{peca}" foi fechado com outro fornecedor. Obrigado pela sua oferta.' },
+  ru: { titulo: 'Запрос запчасти закрыт', mensagem: 'Запрос «{peca}» закрыт с другим поставщиком. Спасибо за ваше предложение.' },
+};
+
+export function notifCotacaoPecaFechadaOutro(locale: string | null | undefined, peca: string) {
+  const s = cotacaoPecaFechadaOutro[resolveEmailLocale(locale)];
+  return { titulo: s.titulo, mensagem: fmt(s.mensagem, { peca }) };
+}
+
+// A2 (16/11): mensagem nova na conversa de um pedido de peca (oficina <-> fornecedor)
+const mensagemPeca: Record<EmailLocale, { titulo: string; mensagem: string }> = {
+  pt: { titulo: 'Nova mensagem sobre peça', mensagem: '{nome} escreveu sobre "{peca}"' },
+  en: { titulo: 'New message about a part', mensagem: '{nome} wrote about "{peca}"' },
+  et: { titulo: 'Uus sõnum varuosa kohta', mensagem: '{nome} kirjutas päringu "{peca}" kohta' },
+  it: { titulo: 'Nuovo messaggio su un ricambio', mensagem: '{nome} ha scritto riguardo a "{peca}"' },
+  'pt-PT': { titulo: 'Nova mensagem sobre peça', mensagem: '{nome} escreveu sobre "{peca}"' },
+  ru: { titulo: 'Новое сообщение о запчасти', mensagem: '{nome}: новое сообщение по запросу «{peca}»' },
+};
+
+export function notifMensagemPeca(locale: string | null | undefined, nome: string, peca: string) {
+  const s = mensagemPeca[resolveEmailLocale(locale)];
+  return { titulo: s.titulo, mensagem: fmt(s.mensagem, { nome, peca }) };
 }
 
 const novoOrcamento: Record<EmailLocale, { titulo: string; mensagem: string }> = {

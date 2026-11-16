@@ -933,7 +933,16 @@
     "confirmarCancelarPedido": "Отменить этот запрос? Магазины больше не будут его видеть.",
     "simCancelar": "Да, отменить",
     "naoManter": "Нет, оставить",
-    "salvarPedido": "Сохранить изменения"
+    "salvarPedido": "Сохранить изменения",
+    "pedidoJaFechado": "Этот запрос уже закрыт или отменён.",
+    "erroConfirmarPedido": "Не удалось подтвердить заказ. Попробуйте ещё раз.",
+    "ofertaEscolhida": "Выбрано",
+    "mensagensNaoLidas": "{n, plural, one {# непрочитанное сообщение} few {# непрочитанных сообщения} many {# непрочитанных сообщений} other {# непрочитанного сообщения}}",
+    "contatoFornecedor": "Контакты поставщика",
+    "telefoneLabel": "Телефон",
+    "enderecoLabel": "Адрес",
+    "perguntasFornecedores": "Вопросы от поставщиков",
+    "abrirConversa": "Открыть переписку"
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Загружаем переписку...",
@@ -950,7 +959,8 @@
     "conversaInvalida": "Недействительная переписка.",
     "voltar": "Назад",
     "subtituloComPeca": "{peca} · уточните детали перед ответом",
-    "subtituloSemPeca": "Уточните детали перед ответом"
+    "subtituloSemPeca": "Уточните детали перед ответом",
+    "fornecedorFallback": "Поставщик"
   },
   "oficinaPerfil": {
     "cepNaoEncontrado": "Индекс не найден — проверьте номер или заполните адрес вручную",

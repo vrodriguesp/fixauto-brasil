@@ -87,7 +87,7 @@
   },
   "lojaCatalogo": {
     "pageTitle": "Catalogo Ricambi",
-    "pageSubtitle": "Metti in vetrina i ricambi in magazzino - le officine possono vederli e acquistarli direttamente",
+    "pageSubtitle": "Elenco interno del tuo magazzino. Le officine non vedono ancora questo elenco: ti raggiungono tramite le richieste di ricambi.",
     "addButton": "+ Nuovo ricambio",
     "formTitle": "Aggiungi ricambio",
     "labelNome": "Nome del ricambio *",

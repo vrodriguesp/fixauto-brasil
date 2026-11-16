@@ -547,38 +547,57 @@ export async function sendPerguntaSiteEmail(params: {
 // EMAIL - PORTAL DE PEÇAS (cotações entre oficinas e fornecedores)
 // ============================================================
 
+// Linha "rotulo: valor" dos e-mails de pecas (valor ja escapado por quem chama)
+const linhaPeca = (rotulo: string, valor: string) => `<p style="margin: 6px 0 0; color: #374151;"><strong>${rotulo}:</strong> ${valor}</p>`;
+
+// Pedido de peca novo: loja do pais (paraLoja) ou oficina vizinha que vende sobra.
+// B3/M6 (16/11): leva carro, quantidade, detalhes e a 1a foto; o botao abre a tela
+// certa (loja: /loja/cotacoes; oficina: aba "Vender" de /oficina/pecas).
 export async function sendCotacaoPecaDisponivelEmail(params: {
   toEmail: string;
   toName: string;
   pecaDescricao: string;
   oficinaCompradoraNome: string;
+  carro?: string | null;
+  quantidade?: number;
+  observacao?: string | null;
+  foto?: string | null;
+  paraLoja?: boolean;
+  linkInterno: string;
   locale?: string;
 }) {
   if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured');
     return { success: false, error: 'Email service not configured' };
   }
-  const s = EMAIL_I18N.cotacaoPecaDisponivel[resolveEmailLocale(params.locale)];
+  const l = resolveEmailLocale(params.locale);
+  const s = EMAIL_I18N.cotacaoPecaDisponivel[l];
+  const d = EMAIL_I18N.pecaDetalhes[l];
+  const foto = params.foto && /^https?:\/\//.test(params.foto) ? params.foto : null;
   try {
     await sendOrThrow({
       from: FROM_EMAIL,
       to: params.toEmail,
-      subject: fmt(s.subject, { pecaDescricao: params.pecaDescricao }),
+      subject: fmt(params.paraLoja ? d.subjectLoja : s.subject, { pecaDescricao: params.pecaDescricao }),
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
             <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
-            <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
+            <p style="margin: 8px 0 0; opacity: 0.8;">${params.paraLoja ? d.headerTagLoja : s.headerTag}</p>
           </div>
           <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
-            <p>${fmt(s.intro, { oficinaCompradoraNome: escapeHtml(params.oficinaCompradoraNome) })}</p>
+            <p>${fmt(params.paraLoja ? d.introLoja : s.intro, { oficinaCompradoraNome: escapeHtml(params.oficinaCompradoraNome) })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 18px; font-weight: bold; color: #111827;">${escapeHtml(params.pecaDescricao)}</p>
+              ${params.carro?.trim() ? linhaPeca(d.veiculo, escapeHtml(params.carro.trim())) : ''}
+              ${linhaPeca(d.quantidade, String(params.quantidade || 1))}
+              ${params.observacao?.trim() ? linhaPeca(d.detalhes, escapeHtml(params.observacao.trim().slice(0, 500))) : ''}
+              ${foto ? `<p style="margin: 12px 0 0;"><img src="${escapeHtml(foto)}" alt="" width="160" style="max-width: 160px; border-radius: 8px; border: 1px solid #e5e7eb;" /></p>` : ''}
             </div>
             <p>${s.callToAction}</p>
             <p style="margin-top: 24px;">
-              <a href="${siteNoIdioma(params.locale)}/oficina/pecas"
+              <a href="${urlNoIdioma(params.locale, params.linkInterno)}"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>
@@ -647,13 +666,18 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
   }
 }
 
+// A4 (16/11): botao pela tela do fornecedor (loja: /loja/pedidos; oficina: aba
+// "Vender"), valor TOTAL (preco x quantidade) e contato da oficina compradora.
 export async function sendPedidoPecaConfirmadoEmail(params: {
   toEmail: string;
   toName: string;
   oficinaCompradoraNome: string;
   pecaDescricao: string;
   valorTotal: number;
+  quantidade?: number;
   moeda?: string;
+  linkInterno: string;
+  contato?: { telefone?: string | null; endereco?: string | null };
   locale?: string;
 }) {
   if (!podeEnviar) {
@@ -661,7 +685,17 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
     return { success: false, error: 'Email service not configured' };
   }
   const s = EMAIL_I18N.pedidoPecaConfirmado[resolveEmailLocale(params.locale)];
+  const d = EMAIL_I18N.pecaDetalhes[resolveEmailLocale(params.locale)];
   const valorFormatado = formatCurrency(params.valorTotal, params.moeda || moedaPadrao(params.locale), params.locale || 'en');
+  const tel = params.contato?.telefone?.trim();
+  const end = params.contato?.endereco?.trim();
+  const contatoHtml = tel || end
+    ? `<div style="background: #eff6ff; padding: 16px; border-radius: 8px; margin: 16px 0;">
+         <p style="margin: 0; font-weight: bold; color: #1e3a8a;">${d.contatoTitulo}: ${escapeHtml(params.oficinaCompradoraNome)}</p>
+         ${tel ? linhaPeca(d.telefone, `<a href="tel:${escapeHtml(tel.replace(/[^\d+]/g, ''))}">${escapeHtml(tel)}</a>`) : ''}
+         ${end ? linhaPeca(d.endereco, escapeHtml(end)) : ''}
+       </div>`
+    : '';
   try {
     await sendOrThrow({
       from: FROM_EMAIL,
@@ -677,11 +711,14 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
             <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
             <p>${fmt(s.intro, { oficinaCompradoraNome: escapeHtml(params.oficinaCompradoraNome), pecaDescricao: escapeHtml(params.pecaDescricao) })}</p>
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
-              <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${valorFormatado}</p>
+              <p style="margin: 0; font-size: 13px; color: #6b7280;">${d.total}</p>
+              <p style="margin: 2px 0 0; font-size: 24px; font-weight: bold; color: #111827;">${valorFormatado}</p>
+              ${linhaPeca(d.quantidade, String(params.quantidade || 1))}
             </div>
+            ${contatoHtml}
             <p>${s.deliveryNote}</p>
             <p style="margin-top: 24px;">
-              <a href="${siteNoIdioma(params.locale)}/oficina/pecas"
+              <a href="${urlNoIdioma(params.locale, params.linkInterno)}"
                  style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                 ${s.cta}
               </a>
@@ -693,6 +730,83 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
     return { success: true };
   } catch (error) {
     console.error('[Notifications] Erro ao enviar e-mail de pedido confirmado:', error);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+// A2 (16/11): mensagem nova na conversa de um pedido de peca (no maximo 1 por hora por conversa)
+export async function sendMensagemPecaEmail(params: {
+  toEmail: string;
+  toName: string;
+  remetente: string;
+  pecaDescricao: string;
+  linkInterno: string;
+  locale?: string;
+}) {
+  if (!podeEnviar) return { success: false, error: 'Email service not configured' };
+  const s = EMAIL_I18N.mensagemPeca[resolveEmailLocale(params.locale)];
+  try {
+    await sendOrThrow({
+      from: FROM_EMAIL,
+      to: params.toEmail,
+      subject: fmt(s.subject, { pecaDescricao: params.pecaDescricao }),
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
+            <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
+            <p>${fmt(s.intro, { remetente: escapeHtml(params.remetente), pecaDescricao: escapeHtml(params.pecaDescricao) })}</p>
+            <p style="margin-top: 24px;">
+              <a href="${urlNoIdioma(params.locale, params.linkInterno)}"
+                 style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                ${s.cta}
+              </a>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('[Notifications] Erro ao enviar e-mail de mensagem de peca:', error);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+// M1 (16/11): loja de pecas ativada pelo admin
+export async function sendLojaAtivadaEmail(params: { toEmail: string; toName: string; lojaNome: string; locale?: string }) {
+  if (!podeEnviar) return { success: false, error: 'Email service not configured' };
+  const s = EMAIL_I18N.lojaAtivada[resolveEmailLocale(params.locale)];
+  try {
+    await sendOrThrow({
+      from: FROM_EMAIL,
+      to: params.toEmail,
+      subject: s.subject,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
+            <p style="margin: 8px 0 0; opacity: 0.8;">${s.headerTag}</p>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
+            <p>${fmt(s.intro, { lojaNome: escapeHtml(params.lojaNome) })}</p>
+            <p style="margin-top: 24px;">
+              <a href="${urlNoIdioma(params.locale, '/loja/cotacoes')}"
+                 style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                ${s.cta}
+              </a>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('[Notifications] Erro ao enviar e-mail de loja ativada:', error);
     return { success: false, error: 'Failed to send email' };
   }
 }

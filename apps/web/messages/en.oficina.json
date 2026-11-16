@@ -933,7 +933,16 @@
     "confirmarCancelarPedido": "Cancel this request? Stores will no longer see it.",
     "simCancelar": "Yes, cancel",
     "naoManter": "No, keep it",
-    "salvarPedido": "Save changes"
+    "salvarPedido": "Save changes",
+    "pedidoJaFechado": "This request is already closed or cancelled.",
+    "erroConfirmarPedido": "The order could not be confirmed. Please try again.",
+    "ofertaEscolhida": "Chosen",
+    "mensagensNaoLidas": "{n, plural, one {# unread message} other {# unread messages}}",
+    "contatoFornecedor": "Supplier contact",
+    "telefoneLabel": "Phone",
+    "enderecoLabel": "Address",
+    "perguntasFornecedores": "Questions from suppliers",
+    "abrirConversa": "Open conversation"
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Loading conversation...",
@@ -950,7 +959,8 @@
     "conversaInvalida": "Invalid conversation.",
     "voltar": "Back",
     "subtituloComPeca": "{peca} · ask questions before replying",
-    "subtituloSemPeca": "Ask questions before replying"
+    "subtituloSemPeca": "Ask questions before replying",
+    "fornecedorFallback": "Supplier"
   },
   "oficinaPerfil": {
     "cepNaoEncontrado": "Postal code not found - check the number or fill it in manually",

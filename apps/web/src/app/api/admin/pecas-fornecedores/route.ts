@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-auth';
 import { currencyForCountry } from '@/lib/currency';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { lerPlataformaConfig, resolverPecas } from '@/lib/comissao-regras';
 
 
 export const dynamic = 'force-dynamic';
@@ -25,6 +26,9 @@ export async function GET() {
       { count: pedidosConfirmados },
       { count: pedidosEntregues },
       { data: comissoes },
+      { data: entregues },
+      { data: cfgsPecas },
+      pc,
     ] = await Promise.all([
       supabaseAdmin
         .from('lojas_pecas')
@@ -35,11 +39,16 @@ export async function GET() {
         .select('id, nome_fantasia, cnpj, cidade, estado, pais, ativa, created_at, profile_id, profile:profiles(email)')
         .eq('vende_pecas', true)
         .order('created_at', { ascending: false }),
-      supabaseAdmin.from('cotacoes_pecas').select('*', { count: 'exact', head: true }),
-      supabaseAdmin.from('cotacoes_pecas').select('*', { count: 'exact', head: true }).neq('status', 'aberta'),
+      // M5 (16/11): "abertas" = ainda recebendo ofertas (aberta ou respondida); antes
+      // contava todas, inclusive fechadas e canceladas. "respondidas" = abertas com oferta.
+      supabaseAdmin.from('cotacoes_pecas').select('*', { count: 'exact', head: true }).in('status', ['aberta', 'respondida']),
+      supabaseAdmin.from('cotacoes_pecas').select('*', { count: 'exact', head: true }).eq('status', 'respondida'),
       supabaseAdmin.from('pedidos_pecas').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('pedidos_pecas').select('*', { count: 'exact', head: true }).eq('status', 'entregue'),
-      supabaseAdmin.from('comissao_pecas_lancamento').select('status, valor_comissao, fornecedor_tipo, fornecedor_id'),
+      supabaseAdmin.from('comissao_pecas_lancamento').select('status, valor_comissao, fornecedor_tipo, fornecedor_id, pedido_id'),
+      supabaseAdmin.from('pedidos_pecas').select('id, fornecedor_tipo, loja_id, oficina_fornecedora_id').eq('status', 'entregue'),
+      supabaseAdmin.from('comissao_pecas_config').select('*'),
+      lerPlataformaConfig(supabaseAdmin),
     ]);
 
     if (lojasError) return NextResponse.json({ error: lojasError.message }, { status: 500 });
@@ -92,6 +101,18 @@ export async function GET() {
       alvo[moeda] = (alvo[moeda] || 0) + Number(c.valor_comissao);
     });
 
+    // M5 (16/11): alerta "entregue sem comissao" so conta pedido cujo fornecedor TEM
+    // taxa > 0 pela regra que vale (individual > global). Com a regra global 0% (isento)
+    // a falta de lancamento e o esperado - antes o alerta laranja era falso.
+    // resolverPecas sem taxa calculada (nao grava nada; no modo desempenho usa a base).
+    const comLancamento = new Set((comissoes || []).map((c: any) => c.pedido_id));
+    const cfgPor = new Map((cfgsPecas || []).map((c: any) => [`${c.fornecedor_tipo}:${c.fornecedor_id}`, c]));
+    const entreguesSemComissao = (entregues || []).filter((p: any) => {
+      if (comLancamento.has(p.id)) return false;
+      const fid = p.fornecedor_tipo === 'loja' ? p.loja_id : p.oficina_fornecedora_id;
+      return resolverPecas(cfgPor.get(`${p.fornecedor_tipo}:${fid}`), pc, null).taxa > 0;
+    }).length;
+
     const resumo = {
       totalLojas: (lojas || []).length,
       lojasAtivas: (lojas || []).filter((l) => l.ativa).length,
@@ -105,6 +126,7 @@ export async function GET() {
       cotacoesRespondidas: cotacoesRespondidas || 0,
       pedidosConfirmados: pedidosConfirmados || 0,
       pedidosEntregues: pedidosEntregues || 0,
+      entreguesSemComissao,
       comissaoPendentePorMoeda,
       comissaoPagaPorMoeda,
     };

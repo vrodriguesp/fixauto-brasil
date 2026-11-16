@@ -933,7 +933,16 @@
     "confirmarCancelarPedido": "Cancelar este pedido? As lojas deixam de o ver.",
     "simCancelar": "Sim, cancelar",
     "naoManter": "Não, manter",
-    "salvarPedido": "Guardar alterações"
+    "salvarPedido": "Guardar alterações",
+    "pedidoJaFechado": "Este pedido já foi fechado ou cancelado.",
+    "erroConfirmarPedido": "Não foi possível confirmar a encomenda. Tente novamente.",
+    "ofertaEscolhida": "Escolhida",
+    "mensagensNaoLidas": "{n, plural, one {# mensagem não lida} other {# mensagens não lidas}}",
+    "contatoFornecedor": "Contacto do fornecedor",
+    "telefoneLabel": "Telefone",
+    "enderecoLabel": "Morada",
+    "perguntasFornecedores": "Perguntas de fornecedores",
+    "abrirConversa": "Abrir conversa"
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "A carregar conversa...",
@@ -950,7 +959,8 @@
     "conversaInvalida": "Conversa inválida.",
     "voltar": "Voltar",
     "subtituloComPeca": "{peca} · esclareça dúvidas antes de responder",
-    "subtituloSemPeca": "Esclareça dúvidas antes de responder"
+    "subtituloSemPeca": "Esclareça dúvidas antes de responder",
+    "fornecedorFallback": "Fornecedor"
   },
   "oficinaPerfil": {
     "cepNaoEncontrado": "Código postal não encontrado - verifique o número ou preencha manualmente",

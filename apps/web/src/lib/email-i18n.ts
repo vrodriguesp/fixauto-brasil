@@ -521,6 +521,38 @@ const pedidoPecaEntregue: Record<EmailLocale, Dict> = {
   },
 };
 
+// Portal de pecas (16/11): rotulos comuns dos e-mails de pedido novo (B3/M6) e de
+// pedido confirmado (A4) - carro, quantidade, detalhes, valor total e contato.
+const pecaDetalhes: Record<EmailLocale, Dict> = {
+  pt: { subjectLoja: 'Novo pedido de peça: {pecaDescricao}', headerTagLoja: 'Novo pedido de peça', introLoja: 'A oficina <strong>{oficinaCompradoraNome}</strong> precisa de:', veiculo: 'Veículo', quantidade: 'Quantidade', detalhes: 'Detalhes', total: 'Valor total', contatoTitulo: 'Contato da oficina', telefone: 'Telefone', endereco: 'Endereço' },
+  en: { subjectLoja: 'New part request: {pecaDescricao}', headerTagLoja: 'New part request', introLoja: 'Repair shop <strong>{oficinaCompradoraNome}</strong> needs:', veiculo: 'Vehicle', quantidade: 'Quantity', detalhes: 'Details', total: 'Total', contatoTitulo: 'Shop contact', telefone: 'Phone', endereco: 'Address' },
+  et: { subjectLoja: 'Uus varuosa päring: {pecaDescricao}', headerTagLoja: 'Uus varuosa päring', introLoja: 'Töökoda <strong>{oficinaCompradoraNome}</strong> vajab:', veiculo: 'Sõiduk', quantidade: 'Kogus', detalhes: 'Üksikasjad', total: 'Kokku', contatoTitulo: 'Töökoja kontakt', telefone: 'Telefon', endereco: 'Aadress' },
+  it: { subjectLoja: 'Nuova richiesta di ricambio: {pecaDescricao}', headerTagLoja: 'Nuova richiesta di ricambio', introLoja: "L'officina <strong>{oficinaCompradoraNome}</strong> cerca:", veiculo: 'Veicolo', quantidade: 'Quantità', detalhes: 'Dettagli', total: 'Totale', contatoTitulo: "Contatto dell'officina", telefone: 'Telefono', endereco: 'Indirizzo' },
+  'pt-PT': { subjectLoja: 'Novo pedido de peça: {pecaDescricao}', headerTagLoja: 'Novo pedido de peça', introLoja: 'A oficina <strong>{oficinaCompradoraNome}</strong> precisa de:', veiculo: 'Veículo', quantidade: 'Quantidade', detalhes: 'Detalhes', total: 'Valor total', contatoTitulo: 'Contacto da oficina', telefone: 'Telefone', endereco: 'Morada' },
+  ru: { subjectLoja: 'Новый запрос запчасти: {pecaDescricao}', headerTagLoja: 'Новый запрос запчасти', introLoja: 'Автосервису <strong>{oficinaCompradoraNome}</strong> нужно:', veiculo: 'Автомобиль', quantidade: 'Количество', detalhes: 'Подробности', total: 'Итого', contatoTitulo: 'Контакты автосервиса', telefone: 'Телефон', endereco: 'Адрес' },
+};
+
+// A2 (16/11): mensagem nova na conversa de um pedido de peca. Sai no maximo uma vez
+// por hora por conversa (rota /api/notificar-mensagem-peca).
+const mensagemPeca: Record<EmailLocale, Dict> = {
+  pt: { subject: 'Nova mensagem sobre: {pecaDescricao}', headerTag: 'Nova mensagem', greeting: 'Olá <strong>{name}</strong>,', intro: '<strong>{remetente}</strong> escreveu sobre o pedido de peça "{pecaDescricao}".', cta: 'Abrir conversa' },
+  en: { subject: 'New message about: {pecaDescricao}', headerTag: 'New message', greeting: 'Hi <strong>{name}</strong>,', intro: '<strong>{remetente}</strong> wrote about the part request "{pecaDescricao}".', cta: 'Open conversation' },
+  et: { subject: 'Uus sõnum: {pecaDescricao}', headerTag: 'Uus sõnum', greeting: 'Tere, <strong>{name}</strong>,', intro: '<strong>{remetente}</strong> kirjutas varuosa päringu "{pecaDescricao}" kohta.', cta: 'Ava vestlus' },
+  it: { subject: 'Nuovo messaggio su: {pecaDescricao}', headerTag: 'Nuovo messaggio', greeting: 'Ciao <strong>{name}</strong>,', intro: '<strong>{remetente}</strong> ha scritto riguardo alla richiesta di ricambio "{pecaDescricao}".', cta: 'Apri la conversazione' },
+  'pt-PT': { subject: 'Nova mensagem sobre: {pecaDescricao}', headerTag: 'Nova mensagem', greeting: 'Olá <strong>{name}</strong>,', intro: '<strong>{remetente}</strong> escreveu sobre o pedido de peça "{pecaDescricao}".', cta: 'Abrir conversa' },
+  ru: { subject: 'Новое сообщение: {pecaDescricao}', headerTag: 'Новое сообщение', greeting: 'Здравствуйте, <strong>{name}</strong>!', intro: '<strong>{remetente}</strong> написал(а) по запросу запчасти «{pecaDescricao}».', cta: 'Открыть переписку' },
+};
+
+// M1 (16/11): o admin ativou a loja de pecas
+const lojaAtivada: Record<EmailLocale, Dict> = {
+  pt: { subject: 'Sua loja foi ativada na BipFix', headerTag: 'Conta ativada', greeting: 'Olá <strong>{name}</strong>,', intro: 'A loja <strong>{lojaNome}</strong> foi ativada. A partir de agora você recebe os pedidos de peça das oficinas e pode responder com preço e prazo.', cta: 'Ver pedidos de peça' },
+  en: { subject: 'Your store is now active on BipFix', headerTag: 'Account activated', greeting: 'Hi <strong>{name}</strong>,', intro: '<strong>{lojaNome}</strong> has been activated. From now on you receive part requests from repair shops and can reply with a price and delivery time.', cta: 'View part requests' },
+  et: { subject: 'Sinu pood on BipFixis aktiveeritud', headerTag: 'Konto aktiveeritud', greeting: 'Tere, <strong>{name}</strong>,', intro: 'Pood <strong>{lojaNome}</strong> on aktiveeritud. Nüüdsest saad töökodade varuosa päringuid ja saad vastata hinna ja tarneajaga.', cta: 'Vaata hinnapäringuid' },
+  it: { subject: 'Il tuo negozio è attivo su BipFix', headerTag: 'Account attivato', greeting: 'Ciao <strong>{name}</strong>,', intro: 'Il negozio <strong>{lojaNome}</strong> è stato attivato. Da ora ricevi le richieste di ricambi delle officine e puoi rispondere con prezzo e tempi di consegna.', cta: 'Vedi le richieste' },
+  'pt-PT': { subject: 'A sua loja foi ativada na BipFix', headerTag: 'Conta ativada', greeting: 'Olá <strong>{name}</strong>,', intro: 'A loja <strong>{lojaNome}</strong> foi ativada. A partir de agora recebe os pedidos de peças das oficinas e pode responder com preço e prazo.', cta: 'Ver pedidos de peças' },
+  ru: { subject: 'Ваш магазин активирован в BipFix', headerTag: 'Аккаунт активирован', greeting: 'Здравствуйте, <strong>{name}</strong>!', intro: 'Магазин <strong>{lojaNome}</strong> активирован. Теперь вы получаете запросы запчастей от автосервисов и можете отвечать ценой и сроком поставки.', cta: 'Посмотреть запросы' },
+};
+
 const contaCriadaEmergencia: Record<EmailLocale, Dict> = {
   pt: {
     subject: 'BipFix - Sua conta foi criada',
@@ -855,6 +887,9 @@ export const EMAIL_I18N = {
   cotacaoPecaRespondida,
   pedidoPecaConfirmado,
   pedidoPecaEntregue,
+  pecaDetalhes,
+  mensagemPeca,
+  lojaAtivada,
   contaCriadaEmergencia,
   orcamentoAceitoPagamento,
   orcamentoAceitoOutro,

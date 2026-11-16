@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/admin-auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { excluirOuAnonimizarConta } from '@/lib/excluir-conta';
 import { registrarAuditoria } from '@/lib/admin-auditoria';
+import { sendLojaAtivadaEmail } from '@/lib/notifications';
 
 
 export const dynamic = 'force-dynamic';
@@ -29,6 +30,11 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Nada para atualizar' }, { status: 400 });
     }
 
+    // M1 (16/11): loja de pecas inativa que o admin ativa agora recebe e-mail
+    const { data: lojasAntes } = ativo === true
+      ? await supabaseAdmin.from('lojas_pecas').select('nome_fantasia, ativa').eq('profile_id', id)
+      : { data: null };
+
     const { error } = await supabaseAdmin.from('profiles').update(updates).eq('id', id);
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -37,6 +43,14 @@ export async function PATCH(req: NextRequest) {
     if (ativo !== undefined) {
       await supabaseAdmin.from('oficinas').update({ ativa: ativo }).eq('profile_id', id);
       await supabaseAdmin.from('lojas_pecas').update({ ativa: ativo }).eq('profile_id', id);
+    }
+
+    const lojaAtivada = (lojasAntes || []).find((l) => !l.ativa);
+    if (lojaAtivada) {
+      const { data: perfil } = await supabaseAdmin.from('profiles').select('email, nome, idioma').eq('id', id).maybeSingle();
+      if (perfil?.email) {
+        await sendLojaAtivadaEmail({ toEmail: perfil.email, toName: perfil.nome || '', lojaNome: lojaAtivada.nome_fantasia, locale: perfil.idioma || undefined }).catch(() => {});
+      }
     }
 
     return NextResponse.json({ success: true });

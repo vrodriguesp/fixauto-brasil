@@ -933,7 +933,16 @@
     "confirmarCancelarPedido": "Annullare questa richiesta? I negozi non la vedranno più.",
     "simCancelar": "Sì, annulla",
     "naoManter": "No, mantieni",
-    "salvarPedido": "Salva modifiche"
+    "salvarPedido": "Salva modifiche",
+    "pedidoJaFechado": "Questa richiesta è già chiusa o annullata.",
+    "erroConfirmarPedido": "Non è stato possibile confermare l'ordine. Riprova.",
+    "ofertaEscolhida": "Scelta",
+    "mensagensNaoLidas": "{n, plural, one {# messaggio non letto} other {# messaggi non letti}}",
+    "contatoFornecedor": "Contatto del fornitore",
+    "telefoneLabel": "Telefono",
+    "enderecoLabel": "Indirizzo",
+    "perguntasFornecedores": "Domande dai fornitori",
+    "abrirConversa": "Apri la conversazione"
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Caricamento conversazione...",
@@ -950,7 +959,8 @@
     "conversaInvalida": "Conversazione non valida.",
     "voltar": "Indietro",
     "subtituloComPeca": "{peca} · fai domande prima di rispondere",
-    "subtituloSemPeca": "Fai domande prima di rispondere"
+    "subtituloSemPeca": "Fai domande prima di rispondere",
+    "fornecedorFallback": "Fornitore"
   },
   "oficinaPerfil": {
     "cepNaoEncontrado": "CAP non trovato - controlla il numero o compila manualmente",

@@ -16,7 +16,7 @@ interface PedidoRow {
   status: string;
   created_at: string;
   cotacao: { peca_descricao: string } | null;
-  oficina: { nome_fantasia: string; cidade: string; estado: string; profile?: { telefone: string | null } } | null;
+  oficina: { nome_fantasia: string; endereco?: string | null; numero?: string | null; cidade: string; estado: string; profile?: { telefone: string | null } } | null;
 }
 
 export default function LojaPedidosPage() {
@@ -31,7 +31,9 @@ export default function LojaPedidosPage() {
     setLoading(true);
     const { data } = await supabase
       .from('pedidos_pecas')
-      .select('*, cotacao:cotacoes_pecas(peca_descricao), oficina:oficinas(nome_fantasia, cidade, estado, profile:profiles(telefone))')
+      // B1 (16/11): pedidos_pecas tem 2 ligacoes com oficinas (compradora e oficina_fornecedora);
+      // sem dizer qual, o Supabase devolvia erro PGRST201 e a lista ficava sempre vazia
+      .select('*, cotacao:cotacoes_pecas(peca_descricao), oficina:oficinas!pedidos_pecas_oficina_id_fkey(nome_fantasia, endereco, numero, cidade, estado, profile:profiles!oficinas_profile_id_fkey(telefone))')
       .eq('loja_id', loja.id)
       .order('created_at', { ascending: false });
     setPedidos((data as any[]) || []);
@@ -74,18 +76,18 @@ export default function LojaPedidosPage() {
           {pedidos.map((p) => {
             const statusLabel = p.status === 'entregue' ? t('statusEntregue') : p.status === 'cancelado' ? t('statusCancelado') : p.status === 'confirmado' ? t('statusConfirmado') : p.status;
             return (
-            <div key={p.id} className="card flex items-center justify-between gap-4">
+            <div key={p.id} data-testid="pedido-loja" className="card flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <div>
                 <p className="font-medium text-gray-900">{p.cotacao?.peca_descricao}</p>
                 <p className="text-sm text-gray-500">
-                  {p.oficina?.nome_fantasia} - {p.oficina?.cidade}, {p.oficina?.estado}
+                  {p.oficina?.nome_fantasia} - {[[p.oficina?.endereco, p.oficina?.numero].filter(Boolean).join(' '), p.oficina?.cidade].filter(Boolean).join(', ')}
                   {p.oficina?.profile?.telefone && ` · ${p.oficina.profile.telefone}`}
                 </p>
                 <p className="text-sm text-gray-600 mt-1">
                   {t('infoLinha', { preco: formatCurrency(p.preco_total, currencyForCountry(loja?.pais), locale), quantidade: p.quantidade, data: formatDate(p.created_at, locale) })}
                 </p>
               </div>
-              <div className="flex items-center gap-3 flex-shrink-0">
+              <div className="flex items-center justify-end gap-3 flex-shrink-0">
                 <Link href={`/loja/conversa/${p.resposta_id}`} className="text-xs text-primary-600 hover:underline font-medium">
                   {t('conversarLink')}
                 </Link>

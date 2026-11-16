@@ -933,7 +933,16 @@
     "confirmarCancelarPedido": "Tühistada see päring? Poed ei näe seda enam.",
     "simCancelar": "Jah, tühista",
     "naoManter": "Ei, jäta alles",
-    "salvarPedido": "Salvesta muudatused"
+    "salvarPedido": "Salvesta muudatused",
+    "pedidoJaFechado": "See päring on juba suletud või tühistatud.",
+    "erroConfirmarPedido": "Tellimust ei õnnestunud kinnitada. Proovi uuesti.",
+    "ofertaEscolhida": "Valitud",
+    "mensagensNaoLidas": "{n, plural, one {# lugemata sõnum} other {# lugemata sõnumit}}",
+    "contatoFornecedor": "Tarnija kontakt",
+    "telefoneLabel": "Telefon",
+    "enderecoLabel": "Aadress",
+    "perguntasFornecedores": "Küsimused tarnijatelt",
+    "abrirConversa": "Ava vestlus"
   },
   "oficinaPecasConversaDetalhe": {
     "carregandoConversa": "Vestluse laadimine...",
@@ -950,7 +959,8 @@
     "conversaInvalida": "Vestlus pole kehtiv.",
     "voltar": "Tagasi",
     "subtituloComPeca": "{peca} · küsi täpsustust enne vastamist",
-    "subtituloSemPeca": "Küsi täpsustust enne vastamist"
+    "subtituloSemPeca": "Küsi täpsustust enne vastamist",
+    "fornecedorFallback": "Tarnija"
   },
   "oficinaPerfil": {
     "cepNaoEncontrado": "Sihtnumbrit ei leitud - kontrolli numbrit või täida käsitsi",

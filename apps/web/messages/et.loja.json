@@ -87,7 +87,7 @@
   },
   "lojaCatalogo": {
     "pageTitle": "Varuosade kataloog",
-    "pageSubtitle": "Kuva laos olevaid varuosi - töökojad näevad neid ja saavad otse osta",
+    "pageSubtitle": "Sinu lao sisemine nimekiri. Töökojad seda nimekirja veel ei näe: nad jõuavad sinuni hinnapäringute kaudu.",
     "addButton": "+ Uus varuosa",
     "formTitle": "Lisa varuosa",
     "labelNome": "Varuosa nimi *",

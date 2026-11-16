@@ -87,7 +87,7 @@
   },
   "lojaCatalogo": {
     "pageTitle": "Catálogo de Peças",
-    "pageSubtitle": "Anuncie peças em estoque - oficinas podem ver e comprar direto",
+    "pageSubtitle": "Lista interna do seu estoque. As oficinas ainda não veem esta lista: elas chegam até você pelos pedidos de peça.",
     "addButton": "+ Nova Peça",
     "formTitle": "Adicionar Peça",
     "labelNome": "Nome da peça *",
