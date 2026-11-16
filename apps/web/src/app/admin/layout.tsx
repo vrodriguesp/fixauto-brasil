@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { ReactNode, useEffect, useState } from 'react';
+import { marcarAparelhoSemClarity } from '@/lib/sem-clarity';
 
 const sidebarLinks = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: ChartIcon },
@@ -28,6 +29,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const [menuAberto, setMenuAberto] = useState(false);
+  useEffect(() => { marcarAparelhoSemClarity(); }, []);
   const [suporteNaoLidas, setSuporteNaoLidas] = useState(0);
 
   // Chat de suporte: com o admin aberto voce conta como online (sem mensagem

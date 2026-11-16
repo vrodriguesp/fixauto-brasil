@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
+import { aparelhoSemClarity } from '@/lib/sem-clarity';
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const CLARITY_PROJECT_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
@@ -76,9 +77,12 @@ export default function Analytics() {
   const locale = useLocale();
   const [consent, setConsent] = useState<Consent>(null);
   const [mounted, setMounted] = useState(false);
+  // aparelho que ja abriu o painel admin: sem Clarity (lib/sem-clarity.ts, dono 16/11)
+  const [semClarity, setSemClarity] = useState(true);
   const avisoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setSemClarity(aparelhoSemClarity());
     let stored: Consent = null;
     try {
       stored = localStorage.getItem(CONSENT_KEY) as Consent;
@@ -157,7 +161,7 @@ export default function Analytics() {
         </>
       )}
 
-      {CLARITY_PROJECT_ID && (
+      {CLARITY_PROJECT_ID && mounted && !semClarity && (
         <Script id="clarity-init" strategy="afterInteractive">
           {`
             (function(c,l,a,r,i,t,y){
