@@ -90,6 +90,10 @@ export interface Oficina {
   ativa: boolean;
   capacidade_servicos?: Record<string, number> | null;
   vende_pecas?: boolean;
+  // 092: perfil fiscal de quem vende pecas (informacao publica)
+  iva_registrado?: boolean | null;
+  iva_pct?: number | null;
+  regime_margem_usadas?: boolean;
   created_at: string;
   // Joined
   profile?: Profile;
@@ -103,6 +107,9 @@ export type TipoFornecedorPeca = 'loja' | 'oficina';
 export type TipoCotacaoPeca = 'carro' | 'sem_carro';
 export type UnidadePeca = 'un' | 'jogo' | 'par' | 'litro' | 'kg' | 'metro' | 'caixa';
 export type AlvoCotacaoPeca = 'todos' | 'so_lojas';
+// lote 2 de pecas (092): urgencia da cotacao e IVA da oferta (retrato do perfil do fornecedor)
+export type UrgenciaCotacaoPeca = 'hoje' | 'amanha' | 'sem_pressa';
+export type IvaModoPeca = 'registrado' | 'nao_registrado' | 'margem';
 
 export interface LojaPecas {
   id: string;
@@ -118,6 +125,10 @@ export interface LojaPecas {
   longitude: number | null;
   raio_atendimento_km: number;
   ativa: boolean;
+  // 092: perfil fiscal de quem vende pecas (informacao publica)
+  iva_registrado?: boolean | null;
+  iva_pct?: number | null;
+  regime_margem_usadas?: boolean;
   created_at: string;
   // Joined
   profile?: Profile;
@@ -158,6 +169,8 @@ export interface CotacaoPeca {
   enviar_placa?: boolean;
   expira_em?: string;
   reaberta_vezes?: number;
+  // 092 (lote 2): NULL = nao informada (tela de hoje) = e-mail imediato
+  urgencia?: UrgenciaCotacaoPeca | null;
   // Joined
   oficina?: Oficina;
   respostas?: CotacaoPecaResposta[];
@@ -173,6 +186,10 @@ export interface CotacaoPecaResposta {
   preco: number;
   prazo_dias: number;
   observacao: string | null;
+  // 092: quantidade ofertada (NULL = a pedida) e IVA (NULL = oferta sem perfil fiscal, como hoje)
+  quantidade_ofertada?: number | null;
+  iva_pct?: number | null;
+  iva_modo?: IvaModoPeca | null;
   created_at: string;
   // Joined
   loja?: LojaPecas;
