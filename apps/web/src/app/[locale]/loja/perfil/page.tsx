@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase';
 import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEndereco } from '@/components/forms/EnderecoEstruturado';
 import CampoTelefone from '@/components/forms/CampoTelefone';
 import { usePecasV3 } from '@/hooks/use-pecas-v3';
+import { PerfilFiscalCampos, fiscalDoPerfil, colunasFiscais, type ValorFiscal } from '@/components/pecas/FornecedorV3';
 
 export default function PerfilLojaPage() {
   const t = useTranslations('lojaPerfil');
@@ -18,6 +19,8 @@ export default function PerfilLojaPage() {
   const v3 = usePecasV3();
   const [telefoneComercial, setTelefoneComercial] = useState('');
   const [tinhaComercial, setTinhaComercial] = useState(false);
+  // lote 2: perfil fiscal (registro no IVA, aliquota, regime de margem para usadas), so com o interruptor
+  const [fiscal, setFiscal] = useState<ValorFiscal>({ registrado: null, pct: '', margem: false });
 
   const [nomeFantasia, setNomeFantasia] = useState('');
   const [cnpj, setCnpj] = useState('');
@@ -40,6 +43,7 @@ export default function PerfilLojaPage() {
         latitude: l.latitude != null ? Number(l.latitude) : null, longitude: l.longitude != null ? Number(l.longitude) : null, pais: l.pais || '',
       });
       setRaio(loja.raio_atendimento_km || 30);
+      setFiscal(fiscalDoPerfil(loja));
     }
   }, [loja]);
 
@@ -70,6 +74,8 @@ export default function PerfilLojaPage() {
       ...(end.latitude != null && end.longitude != null ? { latitude: end.latitude, longitude: end.longitude } : {}),
       ...(end.pais ? { pais: end.pais } : {}),
       raio_atendimento_km: raio,
+      // lote 2: so com o interruptor e so depois de preenchido uma vez (sem isso, nada muda)
+      ...(v3 ? colunasFiscais(fiscal) || {} : {}),
     }).eq('id', loja.id);
 
     await supabase.from('profiles').update({ nome, telefone }).eq('id', user!.id);
@@ -138,6 +144,7 @@ export default function PerfilLojaPage() {
           <label htmlFor="c9a81-5" className="block text-sm font-medium text-gray-700 mb-1">{t('labelCnpj')}</label>
           <input id="c9a81-5" type="text" className="input-field" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
         </div>
+        {v3 && <PerfilFiscalCampos valor={fiscal} aoMudar={setFiscal} pais={end.pais || loja.pais} />}
         <EnderecoEstruturado idBase="loja-end" valor={end} onChange={setEnd}
           perto={end.latitude != null && end.longitude != null ? { lat: end.latitude, lon: end.longitude } : null} />
         <div>

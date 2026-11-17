@@ -18,6 +18,7 @@ import { faixasDoDia, formatarJanela, validarRecepcao, minutosDe, hhmm, somarDia
 import SemQuebra from '@/components/ui/SemQuebra';
 import { INTL_LOCALE } from '@/lib/utils';
 import { usePecasV3 } from '@/hooks/use-pecas-v3';
+import { PerfilFiscalCampos, fiscalDoPerfil, colunasFiscais, type ValorFiscal } from '@/components/pecas/FornecedorV3';
 
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
@@ -32,6 +33,10 @@ export default function PerfilOficinaPage() {
   const v3 = usePecasV3();
   const [telefoneComercial, setTelefoneComercial] = useState('');
   const [tinhaComercial, setTinhaComercial] = useState(false);
+  // lote 2: telefone comercial e perfil fiscal so para o DONO da oficina (a equipe nao grava - 092)
+  const ehDono = !!oficina && !!user && oficina.profile_id === user.id;
+  const [fiscal, setFiscal] = useState<ValorFiscal>({ registrado: null, pct: '', margem: false });
+  useEffect(() => { if (oficina) setFiscal(fiscalDoPerfil(oficina)); }, [oficina]);
   useEffect(() => {
     if (!v3 || !oficina) return;
     supabase.from('fornecedores_contato').select('telefone').eq('fornecedor_tipo', 'oficina').eq('fornecedor_id', oficina.id).maybeSingle()
@@ -281,6 +286,8 @@ export default function PerfilOficinaPage() {
           capacidade_servicos: capacidade,
           capacidade_total: capacidadeTotal > 0 ? Math.min(500, capacidadeTotal) : null,
           monitoramento_ativo: monitoramento,
+          // lote 2: perfil fiscal de quem vende pecas (so o dono, so com o interruptor, so depois de preenchido)
+          ...(v3 && ehDono && oficina.vende_pecas ? colunasFiscais(fiscal) || {} : {}),
           // posicao conferida no mapa (distancia ate os clientes)
           ...(end.latitude != null && end.longitude != null ? { latitude: end.latitude, longitude: end.longitude } : {}),
           ...(end.pais ? { pais: end.pais } : {}),
@@ -307,7 +314,7 @@ export default function PerfilOficinaPage() {
     }
 
     // telefone comercial (pecas): vazio = usa o do perfil (sem DELETE pelo cliente: grava vazio)
-    if (v3 && oficina && (telefoneComercial.trim() || tinhaComercial)) {
+    if (v3 && oficina && ehDono && (telefoneComercial.trim() || tinhaComercial)) {
       const { error: eTel } = await supabase.from('fornecedores_contato').upsert(
         { fornecedor_tipo: 'oficina', fornecedor_id: oficina.id, telefone: telefoneComercial.trim().slice(0, 30), updated_at: new Date().toISOString() },
         { onConflict: 'fornecedor_tipo,fornecedor_id' }
@@ -572,7 +579,7 @@ export default function PerfilOficinaPage() {
             <label htmlFor="c83a1-9" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
             <CampoTelefone id="c83a1-9" value={telefone} onChange={(v) => setTelefone(v)} pais={end.pais} />
           </div>
-          {v3 && oficina && (
+          {v3 && oficina && ehDono && (
             <div>
               <label htmlFor="perfil-telefone-comercial" className="block text-sm font-medium text-gray-700 mb-1">{tp('telefoneComercial')}</label>
               <input id="perfil-telefone-comercial" data-testid="perfil-telefone-comercial" type="tel" inputMode="tel" autoComplete="tel" maxLength={30} className="input-field"
@@ -580,6 +587,7 @@ export default function PerfilOficinaPage() {
               <p className="text-xs text-gray-500 mt-1">{tp('telefoneComercialAjuda')}</p>
             </div>
           )}
+          {v3 && oficina && ehDono && oficina.vende_pecas && <PerfilFiscalCampos valor={fiscal} aoMudar={setFiscal} pais={end.pais || oficina.pais} />}
         </div>
       </div>
 

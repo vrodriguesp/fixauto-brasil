@@ -11,6 +11,7 @@ import type { CotacaoPeca } from '@fixauto/shared';
 import DetalhesPedidoPeca from '@/components/pecas/DetalhesPedidoPeca';
 import { usePecasV3, usePlacasDoFornecedor } from '@/hooks/use-pecas-v3';
 import { numeroDaQuantidade } from '@/lib/pecas-formato';
+import { NaoTenhoCartao, CamposRespostaV3, camposOfertaV3 } from '@/components/pecas/FornecedorV3';
 
 interface CotacaoComOficina extends Omit<CotacaoPeca, 'oficina'> {
   oficina: { nome_fantasia: string; cidade: string; estado: string } | null;
@@ -31,11 +32,16 @@ export default function LojaCotacoesPage() {
   const [respondendoId, setRespondendoId] = useState<string | null>(null);
   const [respostaForm, setRespostaForm] = useState({ preco: '', prazo_dias: '2', observacao: '' });
   const [saving, setSaving] = useState(false);
+  // oferta recusada pelo banco (preco 0, CHECK...): erro no proprio formulario, que continua aberto
+  const [erroResposta, setErroResposta] = useState<string | null>(null);
+  // lote 2 (so com o interruptor): quantidade ofertada e "peca usada" (regime de margem)
+  const [respQtd, setRespQtd] = useState('');
+  const [respUsada, setRespUsada] = useState(false);
 
   const fetchCotacoes = async () => {
     if (!loja) return;
     setLoading(true);
-    const [{ data: abertas }, { data: minhasRespostas }] = await Promise.all([
+    const [{ data: abertas }, { data: minhasRespostas }, { data: minhasDispensas }] = await Promise.all([
       supabase
         .from('cotacoes_pecas')
         // !inner pra poder filtrar pelo pais da oficina que pediu a peca -
@@ -51,10 +57,17 @@ export default function LojaCotacoesPage() {
         .from('cotacoes_pecas_respostas')
         .select('id, cotacao_id, preco, prazo_dias')
         .eq('loja_id', loja.id),
+      // lote 2: as que esta loja disse "nao tenho" saem da lista (so existem com o interruptor)
+      supabase
+        .from('cotacoes_pecas_dispensas')
+        .select('cotacao_id')
+        .eq('fornecedor_tipo', 'loja')
+        .eq('fornecedor_id', loja.id),
     ]);
 
     const respostaPorCotacao = new Map((minhasRespostas || []).map((r) => [r.cotacao_id, r]));
-    const combinado = ((abertas as any[]) || []).map((c) => ({
+    const dispensadas = new Set(((minhasDispensas as any[]) || []).map((d) => d.cotacao_id));
+    const combinado = ((abertas as any[]) || []).filter((c) => !dispensadas.has(c.id)).map((c) => ({
       ...c,
       minhaResposta: respostaPorCotacao.get(c.id) || null,
     }));
@@ -80,6 +93,8 @@ export default function LojaCotacoesPage() {
   const handleResponder = async (cotacaoId: string) => {
     if (!loja || !respostaForm.preco) return;
     setSaving(true);
+    setErroResposta(null);
+    const cot = cotacoes.find((c) => c.id === cotacaoId);
     const { error } = await supabase.from('cotacoes_pecas_respostas').insert({
       cotacao_id: cotacaoId,
       fornecedor_tipo: 'loja',
@@ -87,7 +102,16 @@ export default function LojaCotacoesPage() {
       preco: parseFloat(respostaForm.preco),
       prazo_dias: parseInt(respostaForm.prazo_dias) || 1,
       observacao: respostaForm.observacao || null,
+      // lote 2: quantidade ofertada (NULL = a pedida) e retrato do IVA do perfil da loja
+      ...(v3 && cot ? camposOfertaV3(respQtd, Number(cot.quantidade), loja, respUsada) : {}),
     });
+
+    // recusada pelo banco (preco 0, prazo fora da faixa...): antes o formulario fechava em silencio
+    if (error) {
+      setErroResposta(cotacaoId);
+      setSaving(false);
+      return;
+    }
 
     if (!error) {
       // Marca a cotacao como respondida e notifica a oficina compradora
@@ -105,6 +129,21 @@ export default function LojaCotacoesPage() {
     setRespostaForm({ preco: '', prazo_dias: '2', observacao: '' });
     setSaving(false);
     await fetchCotacoes();
+  };
+
+  // lote 2: "nao tenho" pelo painel (INSERT direto pela RLS; a cotacao sai da lista desta loja)
+  const naoTenho = async (cotacaoId: string, motivo: string | null) => {
+    if (!loja?.profile_id) return false;
+    const { error } = await supabase.from('cotacoes_pecas_dispensas').insert({ cotacao_id: cotacaoId, fornecedor_tipo: 'loja', fornecedor_id: loja.id, profile_id: loja.profile_id, motivo, origem: 'painel' });
+    if (error) return false;
+    await fetchCotacoes();
+    return true;
+  };
+  const abrirResposta = (c: CotacaoComOficina) => {
+    setRespondendoId(c.id);
+    setErroResposta(null);
+    setRespQtd(String(Number(c.quantidade) || 1));
+    setRespUsada(false);
   };
 
   // espera tambem o interruptor: os cartoes nao aparecem na forma de hoje para depois trocar
@@ -151,6 +190,7 @@ export default function LojaCotacoesPage() {
                   ) : (
                   <p className="text-sm text-gray-500">{t('quantidadeInfo', { quantidade: c.quantidade })}</p>
                   )}
+                  {v3 && c.urgencia && <p className="text-sm text-gray-500">{tp('urgencia')}: {tp(`urgencias.${c.urgencia === 'sem_pressa' ? 'semPressa' : c.urgencia}`)}</p>}
                   <DetalhesPedidoPeca observacao={c.observacao} fotos={c.fotos} />
                 </div>
                 <div className="flex flex-col items-end gap-1 flex-shrink-0">
@@ -188,15 +228,29 @@ export default function LojaCotacoesPage() {
                     </div>
                   </div>
                   <input type="text" className="input-field !py-1.5" placeholder={t('observacaoPlaceholder')} value={respostaForm.observacao} onChange={(e) => setRespostaForm({ ...respostaForm, observacao: e.target.value })} />
+                  {v3 && (
+                    <CamposRespostaV3 quantidadePedida={Number(c.quantidade) || 1} unidade={c.unidade} quantidade={respQtd} setQuantidade={setRespQtd}
+                      usada={respUsada} setUsada={setRespUsada} preco={respostaForm.preco} perfil={loja} moeda={currencyForCountry(loja?.pais)} />
+                  )}
+                  {erroResposta === c.id && (
+                    <p role="alert" data-testid="resposta-erro" className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{tp('respostaErro')}</p>
+                  )}
                   <div className="flex justify-end gap-2">
-                    <button onClick={() => setRespondendoId(null)} className="btn-secondary !py-1.5 !px-3 text-sm">{t('cancelarButton')}</button>
+                    <button onClick={() => { setRespondendoId(null); setErroResposta(null); }} className="btn-secondary !py-1.5 !px-3 text-sm">{t('cancelarButton')}</button>
                     <button onClick={() => handleResponder(c.id)} disabled={saving || !respostaForm.preco} className="btn-primary !py-1.5 !px-3 text-sm disabled:opacity-50">
                       {saving ? t('enviandoButton') : t('enviarRespostaButton')}
                     </button>
                   </div>
                 </div>
+              ) : v3 ? (
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+                  <button onClick={() => abrirResposta(c)} className="btn-primary !py-1.5 !px-3 text-sm">
+                    {t('responderCotacaoButton')}
+                  </button>
+                  <NaoTenhoCartao aoConfirmar={(motivo) => naoTenho(c.id, motivo)} />
+                </div>
               ) : (
-                <button onClick={() => setRespondendoId(c.id)} className="btn-primary !py-1.5 !px-3 text-sm mt-2">
+                <button onClick={() => abrirResposta(c)} className="btn-primary !py-1.5 !px-3 text-sm mt-2">
                   {t('responderCotacaoButton')}
                 </button>
               )}

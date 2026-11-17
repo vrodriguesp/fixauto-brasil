@@ -20,13 +20,17 @@ import DispensarPedido, { type Dispensa } from '@/components/oficina/DispensarPe
 import ResumoAgendamento from '@/components/oficina/ResumoAgendamento';
 import NovasDatasPedidas from '@/components/oficina/NovasDatasPedidas';
 import { orcamentoVencido } from '@/lib/orcamento-validade';
+import { usePecasV3 } from '@/hooks/use-pecas-v3';
 
 export default function SolicitacaoDetalhePage() {
   const t = useTranslations('oficinaSolicitacaoDetalhe');
   const tc = useTranslations('constants');
+  const tp = useTranslations('pecas');
   const locale = useLocale();
   const params = useParams();
   const { oficina, funcionario } = useAuth();
+  // lote 2 de pecas: botao "pedir peca" so com o interruptor (o resto da pagina nao espera por ele)
+  const v3 = usePecasV3();
   const { solicitacoes, refresh } = useSolicitacoes();
   const solicitacao = solicitacoes.find((s) => s.id === params.id);
 
@@ -293,6 +297,14 @@ export default function SolicitacaoDetalhePage() {
               </dl>
             ) : (
               <p className="text-sm text-gray-400">{t('dadosVeiculoIndisponiveis')}</p>
+            )}
+            {/* lote 2 de pecas (so com o interruptor): pedir a peca deste carro - a tela de pecas abre
+                com marca/modelo/ano/placa lidos daqui (?solicitacao=); nada do motorista vai a cotacao */}
+            {v3 && v?.fipe_marca && (
+              <Link href={`/oficina/pecas?solicitacao=${sol.id}`} data-testid="pedir-peca"
+                className="btn-secondary mt-4 w-full inline-flex items-center justify-center min-h-[44px] text-sm">
+                🔧 {tp('pedirPeca')}
+              </Link>
             )}
           </div>
 

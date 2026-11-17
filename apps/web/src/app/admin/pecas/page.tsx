@@ -131,6 +131,8 @@ export default function AdminPecasPage() {
               ? 'Ligada para todos: placa, unidade, "sem carro", "enviar a", validade de 7 dias e telefone comercial.'
               : 'Desligada: só as contas de teste veem a tela nova; os demais veem a tela de hoje.'}
           </p>
+          {/* lote 2: o resumo de 2 h respeita o interruptor por cotacao */}
+          <p className="text-xs text-slate-500 mt-1">Ao desligar o global, os resumos de e-mail pendentes de contas reais ficam parados (não saem) até ligar de novo.</p>
           {erroV3 && <p role="alert" className="text-sm text-red-300 mt-1">{erroV3}</p>}
         </div>
         <button type="button" role="switch" aria-checked={v3Ativo === true} onClick={alternarV3} disabled={salvandoV3 || v3Ativo === null} data-testid="pecas-v3-interruptor"

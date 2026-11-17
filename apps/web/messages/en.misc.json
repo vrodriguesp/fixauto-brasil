@@ -1359,6 +1359,40 @@
     "erroReabrir": "Couldn't reopen. Please try again.",
     "erroCriar": "Couldn't send the request. Check that your repair shop is active and try again.",
     "telefoneComercial": "Business phone (parts)",
-    "telefoneComercialAjuda": "Shared with the other party only after a confirmed parts order. Empty: we use your account phone."
+    "telefoneComercialAjuda": "Shared with the other party only after a confirmed parts order. Empty: we use your account phone.",
+    "urgencia": "Urgency",
+    "urgencias": {
+      "hoje": "Today",
+      "amanha": "Tomorrow",
+      "semPressa": "No rush"
+    },
+    "pedirPeca": "Request a part for this car",
+    "naoTenho": "I don't have it",
+    "naoTenhoMotivo": "Reason (optional)",
+    "naoTenhoMotivos": {
+      "semEstoque": "Out of stock",
+      "naoTrabalho": "I don't sell this part",
+      "outro": "Other"
+    },
+    "naoTenhoConfirmar": "Confirm: I don't have this part",
+    "naoTenhoFeito": "Done. This request left your list and you will not get more notices about it.",
+    "naoTenhoDesfazer": "Undo",
+    "naoTenhoVencido": "This link has expired or the request is already closed. Nothing was changed.",
+    "naoTenhoJaRespondeu": "You already sent an offer for this request.",
+    "naoTenhoJaDispensou": "You already said you don't have this part.",
+    "naoTenhoInvalido": "Invalid link. Open the part requests on the website.",
+    "naoTenhoTitulo": "I don't have this part",
+    "naoTemContagem": "{n, plural, one {# supplier does not have it} other {# suppliers do not have it}}",
+    "quantidadeOfertada": "Quantity you have",
+    "ofertaParcial": "Partial offer: {ofertada} of {pedida}",
+    "pecaUsada": "This part is used (margin scheme)",
+    "ivaRegistrado": "VAT-registered",
+    "ivaPct": "VAT %",
+    "regimeMargem": "I sell used parts under the margin scheme",
+    "semIva": "excl. VAT ≈ {valor} ({pct} %)",
+    "ivaNaoAplicavel": "VAT not applicable (supplier not VAT-registered)",
+    "ivaMargem": "VAT not deductible — margin scheme (used part)",
+    "ivaCompletePerfil": "Add your VAT details to your profile so repair shops can compare offers.",
+    "respostaErro": "Could not send. Check the price (above zero) and the delivery time and try again."
   }
 }

@@ -1359,6 +1359,40 @@
     "erroReabrir": "Uuesti avamine ebaõnnestus. Proovi uuesti.",
     "erroCriar": "Päringut ei õnnestunud saata. Kontrolli, et sinu töökoda on aktiivne, ja proovi uuesti.",
     "telefoneComercial": "Äritelefon (varuosad)",
-    "telefoneComercialAjuda": "Läheb teisele poolele alles pärast kinnitatud varuosatellimust. Tühi: kasutame sinu konto telefoni."
+    "telefoneComercialAjuda": "Läheb teisele poolele alles pärast kinnitatud varuosatellimust. Tühi: kasutame sinu konto telefoni.",
+    "urgencia": "Kiireloomulisus",
+    "urgencias": {
+      "hoje": "Täna",
+      "amanha": "Homme",
+      "semPressa": "Pole kiiret"
+    },
+    "pedirPeca": "Küsi selle auto jaoks varuosa",
+    "naoTenho": "Mul pole",
+    "naoTenhoMotivo": "Põhjus (valikuline)",
+    "naoTenhoMotivos": {
+      "semEstoque": "Pole laos",
+      "naoTrabalho": "Ma ei müü seda varuosa",
+      "outro": "Muu"
+    },
+    "naoTenhoConfirmar": "Kinnita: mul seda varuosa pole",
+    "naoTenhoFeito": "Valmis. Päring eemaldati sinu nimekirjast ja sa ei saa selle kohta enam teateid.",
+    "naoTenhoDesfazer": "Võta tagasi",
+    "naoTenhoVencido": "See link on aegunud või päring on juba suletud. Midagi ei muudetud.",
+    "naoTenhoJaRespondeu": "Sa oled sellele päringule juba pakkumise saatnud.",
+    "naoTenhoJaDispensou": "Sa oled juba märkinud, et sul seda varuosa pole.",
+    "naoTenhoInvalido": "Vigane link. Ava varuosa päringud veebilehel.",
+    "naoTenhoTitulo": "Mul seda varuosa pole",
+    "naoTemContagem": "{n, plural, one {# tarnijal seda pole} other {# tarnijal seda pole}}",
+    "quantidadeOfertada": "Kogus, mis sul on",
+    "ofertaParcial": "Osaline pakkumine: {ofertada} / {pedida}",
+    "pecaUsada": "See on kasutatud varuosa (kasumimarginaali kord)",
+    "ivaRegistrado": "Käibemaksukohustuslane",
+    "ivaPct": "KM %",
+    "regimeMargem": "Müün kasutatud varuosi kasumimarginaali korra alusel",
+    "semIva": "km-ta ≈ {valor} ({pct} %)",
+    "ivaNaoAplicavel": "Käibemaks ei kohaldu (tarnija pole käibemaksukohustuslane)",
+    "ivaMargem": "Käibemaks pole mahaarvatav — kasumimarginaali kord (kasutatud varuosa)",
+    "ivaCompletePerfil": "Lisa profiili käibemaksu andmed, et töökojad saaksid pakkumisi võrrelda.",
+    "respostaErro": "Saatmine ebaõnnestus. Kontrolli hinda (üle nulli) ja tarneaega ning proovi uuesti."
   }
 }

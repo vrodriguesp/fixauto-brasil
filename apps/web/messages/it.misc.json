@@ -1359,6 +1359,40 @@
     "erroReabrir": "Impossibile riaprire. Riprova.",
     "erroCriar": "Impossibile inviare la richiesta. Controlla che la tua officina sia attiva e riprova.",
     "telefoneComercial": "Telefono aziendale (ricambi)",
-    "telefoneComercialAjuda": "Va all'altra parte solo dopo un ordine di ricambi confermato. Vuoto: usiamo il telefono del tuo account."
+    "telefoneComercialAjuda": "Va all'altra parte solo dopo un ordine di ricambi confermato. Vuoto: usiamo il telefono del tuo account.",
+    "urgencia": "Urgenza",
+    "urgencias": {
+      "hoje": "Oggi",
+      "amanha": "Domani",
+      "semPressa": "Senza fretta"
+    },
+    "pedirPeca": "Chiedi un ricambio per questa auto",
+    "naoTenho": "Non disponibile",
+    "naoTenhoMotivo": "Motivo (facoltativo)",
+    "naoTenhoMotivos": {
+      "semEstoque": "Esaurito",
+      "naoTrabalho": "Non tratto questo ricambio",
+      "outro": "Altro"
+    },
+    "naoTenhoConfirmar": "Conferma: non ho questo ricambio",
+    "naoTenhoFeito": "Fatto. La richiesta è uscita dal tuo elenco e non riceverai altri avvisi.",
+    "naoTenhoDesfazer": "Annulla",
+    "naoTenhoVencido": "Il link è scaduto o la richiesta è già chiusa. Non è stato modificato nulla.",
+    "naoTenhoJaRespondeu": "Hai già inviato un’offerta per questa richiesta.",
+    "naoTenhoJaDispensou": "Hai già indicato di non avere questo ricambio.",
+    "naoTenhoInvalido": "Link non valido. Apri le richieste di ricambi dal sito.",
+    "naoTenhoTitulo": "Non ho questo ricambio",
+    "naoTemContagem": "{n, plural, one {# fornitore non ce l’ha} other {# fornitori non ce l’hanno}}",
+    "quantidadeOfertada": "Quantità disponibile",
+    "ofertaParcial": "Offerta parziale: {ofertada} su {pedida}",
+    "pecaUsada": "Questo ricambio è usato (regime del margine)",
+    "ivaRegistrado": "Registrato ai fini IVA",
+    "ivaPct": "IVA %",
+    "regimeMargem": "Vendo ricambi usati nel regime del margine",
+    "semIva": "IVA esclusa ≈ {valor} ({pct} %)",
+    "ivaNaoAplicavel": "IVA non applicabile (fornitore non registrato)",
+    "ivaMargem": "IVA non detraibile — regime del margine (ricambio usato)",
+    "ivaCompletePerfil": "Completa i dati IVA nel profilo per permettere alle officine di confrontare le offerte.",
+    "respostaErro": "Invio non riuscito. Controlla il prezzo (maggiore di zero) e i tempi e riprova."
   }
 }

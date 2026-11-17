@@ -119,6 +119,11 @@ export const PATHNAMES = {
     pt: '/ver-pedido', 'pt-PT': '/ver-pedido', en: '/view-request',
     et: '/vaata-paringut', it: '/vedi-richiesta', ru: '/prosmotr-zayavki',
   },
+  // pagina do link "nao tenho" dos e-mails de pecas (/n/<token>; lote 2, 17/11)
+  '/peca-nao-tenho': {
+    pt: '/peca-nao-tenho', 'pt-PT': '/peca-nao-tenho', en: '/part-not-available',
+    et: '/varuosa-puudub', it: '/ricambio-non-disponibile', ru: '/zapchasti-net',
+  },
 } as const;
 
 export const routing = defineRouting({

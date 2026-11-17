@@ -13,6 +13,8 @@ import DetalhesPedidoPeca from '@/components/pecas/DetalhesPedidoPeca';
 import { compressImage } from '@/lib/image-compress';
 import { usePecasV3, usePlacasDoFornecedor } from '@/hooks/use-pecas-v3';
 import { UNIDADES_PECA, TETO_REABERTURAS, lerQuantidade, numeroDaQuantidade, normalizarPlaca, placaValida, diasParaExpirar } from '@/lib/pecas-formato';
+import { totalDaOferta } from '@/lib/pecas-iva';
+import { NaoTenhoCartao, CamposRespostaV3, camposOfertaV3, textoIvaOferta } from '@/components/pecas/FornecedorV3';
 
 interface CotacaoComRespostas extends CotacaoPeca {
   respostas: (CotacaoPecaResposta & {
@@ -33,8 +35,11 @@ interface CotacaoDeOutraOficina extends Omit<CotacaoPeca, 'oficina'> {
   minhaResposta?: { id: string; preco: number; prazo_dias: number } | null;
 }
 
-// lote 1 de pecas (17/11): campos novos do formulario so com o interruptor (tipo, unidade, placa, "enviar a")
-const FORM_VAZIO = { peca_descricao: '', fipe_marca: '', fipe_modelo: '', fipe_ano: '', quantidade: '1', observacao: '', tipo: 'carro' as 'carro' | 'sem_carro', unidade: 'un', placa: '', ocultarPlaca: false, alvo: 'todos' as 'todos' | 'so_lojas' };
+// lote 1 de pecas (17/11): campos novos do formulario so com o interruptor (tipo, unidade, placa, "enviar a");
+// lote 2: urgencia (padrao "sem pressa" = so o resumo de 2 h; a tela de hoje grava NULL = e-mail imediato)
+const FORM_VAZIO = { peca_descricao: '', fipe_marca: '', fipe_modelo: '', fipe_ano: '', quantidade: '1', observacao: '', tipo: 'carro' as 'carro' | 'sem_carro', unidade: 'un', placa: '', ocultarPlaca: false, alvo: 'todos' as 'todos' | 'so_lojas', urgencia: 'sem_pressa' as 'hoje' | 'amanha' | 'sem_pressa' };
+const URGENCIAS = [['hoje', 'hoje', 'hoje'], ['amanha', 'amanha', 'amanha'], ['sem_pressa', 'semPressa', 'sem-pressa']] as const;
+const chaveUrgencia = (u: string) => (u === 'sem_pressa' ? 'semPressa' : u);
 
 export default function OficinaPecasPage() {
   const t = useTranslations('oficinaPecas');
@@ -77,6 +82,8 @@ export default function OficinaPecasPage() {
   const [placasMinhas, setPlacasMinhas] = useState<Record<string, string>>({});
   const [reabrindoId, setReabrindoId] = useState<string | null>(null);
   const [erroReabrir, setErroReabrir] = useState<{ cotacaoId: string; msg: string } | null>(null);
+  // lote 2: "N fornecedores nao tem" por cotacao (a compradora le as dispensas pela RLS)
+  const [naoTem, setNaoTem] = useState<Record<string, { n: number; motivos: Record<string, number> }>>({});
 
   const buscarContatos = async (pedidoIds: string[]) => {
     if (!pedidoIds.length) return;
@@ -137,6 +144,36 @@ export default function OficinaPecasPage() {
       .then(({ data }) => setPlacasMinhas(Object.fromEntries(((data as any[]) || []).map((p) => [p.cotacao_id, p.placa]))));
   }, [v3, cotacoes]);
 
+  // lote 2: quantos fornecedores disseram "nao tenho" (e por que), por cotacao
+  useEffect(() => {
+    if (!v3) return;
+    const ids = cotacoes.filter((c) => ['aberta', 'respondida', 'expirada'].includes(c.status)).map((c) => c.id);
+    if (!ids.length) { setNaoTem({}); return; }
+    supabase.from('cotacoes_pecas_dispensas').select('cotacao_id, motivo').in('cotacao_id', ids).then(({ data }) => {
+      const mapa: Record<string, { n: number; motivos: Record<string, number> }> = {};
+      for (const d of (data as any[]) || []) {
+        const m = (mapa[d.cotacao_id] = mapa[d.cotacao_id] || { n: 0, motivos: {} });
+        m.n++;
+        if (d.motivo) m.motivos[d.motivo] = (m.motivos[d.motivo] || 0) + 1;
+      }
+      setNaoTem(mapa);
+    });
+  }, [v3, cotacoes]);
+
+  // lote 2: "pedir peca" a partir do pedido do motorista (?solicitacao=<id>): carro e placa do pedido,
+  // lidos com a RLS da oficina (so abre preenchido se ela ve o pedido); nada e gravado na cotacao
+  useEffect(() => {
+    if (!v3 || !oficina) return;
+    const solicitacaoId = new URLSearchParams(window.location.search).get('solicitacao');
+    if (!solicitacaoId || !/^[0-9a-f-]{36}$/i.test(solicitacaoId)) return;
+    supabase.from('solicitacoes').select('id, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, placa)').eq('id', solicitacaoId).maybeSingle().then(({ data }) => {
+      const v = (data as any)?.veiculo;
+      if (!v) return;
+      setForm((f) => ({ ...f, tipo: 'carro', fipe_marca: v.fipe_marca || '', fipe_modelo: v.fipe_modelo || '', fipe_ano: v.fipe_ano ? String(v.fipe_ano) : '', placa: v.placa ? normalizarPlaca(v.placa) : '' }));
+      setShowForm(true);
+    });
+  }, [v3, oficina]);
+
   const handleCriar = async () => {
     if (!oficina || !form.peca_descricao) return;
     setErroCriar(null);
@@ -153,7 +190,7 @@ export default function OficinaPecasPage() {
       fipe_ano: comCarro ? form.fipe_ano || null : null,
       quantidade: v3 ? lerQuantidade(form.quantidade) : parseInt(form.quantidade) || 1,
       observacao: form.observacao.trim() || null,
-      ...(v3 ? { tipo: form.tipo, unidade: form.unidade, alvo: form.alvo, enviar_placa: !form.ocultarPlaca } : {}),
+      ...(v3 ? { tipo: form.tipo, unidade: form.unidade, alvo: form.alvo, enviar_placa: !form.ocultarPlaca, urgencia: form.urgencia } : {}),
     }).select().single();
 
     // recusado pelo banco (ex.: oficina inativa): antes limpava o formulario em silencio
@@ -248,6 +285,11 @@ export default function OficinaPecasPage() {
   const [savingResposta, setSavingResposta] = useState(false);
   const [pedidosFornecedora, setPedidosFornecedora] = useState<any[]>([]);
   const [marcandoEntregueId, setMarcandoEntregueId] = useState<string | null>(null);
+  // oferta recusada pelo banco: erro no formulario, que continua aberto (com e sem interruptor)
+  const [erroResposta, setErroResposta] = useState<string | null>(null);
+  // lote 2: quantidade ofertada e "peca usada" (regime de margem) no formulario de resposta
+  const [respQtd, setRespQtd] = useState('');
+  const [respUsada, setRespUsada] = useState(false);
   // lote 1: placa das cotacoes das vizinhas, so pela rota do servidor (regra ao vivo)
   const placasVizinhas = usePlacasDoFornecedor(cotacoesVizinhas, v3);
 
@@ -282,7 +324,7 @@ export default function OficinaPecasPage() {
   const fetchCotacoesVizinhas = async () => {
     if (!oficina || !oficina.latitude || !oficina.longitude) return;
     setLoadingVender(true);
-    const [{ data: abertas }, { data: minhasRespostas }] = await Promise.all([
+    const [{ data: abertas }, { data: minhasRespostas }, { data: minhasDispensas }] = await Promise.all([
       supabase
         .from('cotacoes_pecas')
         .select('*, oficina:oficinas!cotacoes_pecas_oficina_id_fkey(nome_fantasia, cidade, estado, latitude, longitude)')
@@ -296,13 +338,21 @@ export default function OficinaPecasPage() {
         .select('id, cotacao_id, preco, prazo_dias')
         .eq('fornecedor_tipo', 'oficina')
         .eq('oficina_fornecedora_id', oficina.id),
+      // lote 2: as que esta oficina disse "nao tenho" saem da lista (so existem com o interruptor)
+      supabase
+        .from('cotacoes_pecas_dispensas')
+        .select('cotacao_id')
+        .eq('fornecedor_tipo', 'oficina')
+        .eq('fornecedor_id', oficina.id),
     ]);
 
     const respostaPorCotacao = new Map((minhasRespostas || []).map((r) => [r.cotacao_id, r]));
+    const dispensadas = new Set(((minhasDispensas as any[]) || []).map((d) => d.cotacao_id));
     const raio = oficina.raio_atendimento_km || 30;
     const proximas = ((abertas as any[]) || [])
       .filter((c) => {
         const o = c.oficina;
+        if (dispensadas.has(c.id)) return false;
         if (!o?.latitude || !o?.longitude) return false;
         return distanciaKm(oficina.latitude, oficina.longitude, o.latitude, o.longitude) <= raio;
       })
@@ -377,6 +427,8 @@ export default function OficinaPecasPage() {
   const handleResponderComoOficina = async (cotacaoId: string) => {
     if (!oficina || !respostaForm.preco) return;
     setSavingResposta(true);
+    setErroResposta(null);
+    const cot = cotacoesVizinhas.find((c) => c.id === cotacaoId);
     const { error } = await supabase.from('cotacoes_pecas_respostas').insert({
       cotacao_id: cotacaoId,
       fornecedor_tipo: 'oficina',
@@ -384,7 +436,16 @@ export default function OficinaPecasPage() {
       preco: parseFloat(respostaForm.preco),
       prazo_dias: parseInt(respostaForm.prazo_dias) || 1,
       observacao: respostaForm.observacao || null,
+      // lote 2: quantidade ofertada (NULL = a pedida) e retrato do IVA do perfil da oficina
+      ...(v3 && cot ? camposOfertaV3(respQtd, Number(cot.quantidade), oficina, respUsada) : {}),
     });
+
+    // recusada pelo banco (preco 0, prazo fora da faixa...): antes o formulario fechava em silencio
+    if (error) {
+      setErroResposta(cotacaoId);
+      setSavingResposta(false);
+      return;
+    }
 
     if (!error) {
       // Marca a cotacao como respondida e notifica a oficina compradora
@@ -400,6 +461,21 @@ export default function OficinaPecasPage() {
     setRespostaForm({ preco: '', prazo_dias: '2', observacao: '' });
     setSavingResposta(false);
     await fetchCotacoesVizinhas();
+  };
+
+  // lote 2: "nao tenho" pela aba Vender (INSERT direto pela RLS; so o dono da oficina que vende)
+  const naoTenhoComoOficina = async (cotacaoId: string, motivo: string | null) => {
+    if (!oficina || !user) return false;
+    const { error } = await supabase.from('cotacoes_pecas_dispensas').insert({ cotacao_id: cotacaoId, fornecedor_tipo: 'oficina', fornecedor_id: oficina.id, profile_id: user.id, motivo, origem: 'painel' });
+    if (error) return false;
+    await fetchCotacoesVizinhas();
+    return true;
+  };
+  const abrirRespostaComoOficina = (c: CotacaoDeOutraOficina) => {
+    setRespondendoId(c.id);
+    setErroResposta(null);
+    setRespQtd(String(Number(c.quantidade) || 1));
+    setRespUsada(false);
   };
 
   if (loading || !oficina) {
@@ -507,7 +583,8 @@ export default function OficinaPecasPage() {
                   <div className="space-y-2">
                     <div>
                       <label htmlFor="cotacao-placa" className="block text-sm font-medium text-gray-700 mb-1">{tp('placa')}</label>
-                      <input id="cotacao-placa" data-testid="cotacao-placa" type="text" autoComplete="off" autoCapitalize="characters" spellCheck={false} maxLength={16} className="input-field !w-44 uppercase" value={form.placa} onChange={(e) => setForm({ ...form, placa: e.target.value })} />
+                      <input id="cotacao-placa" data-testid="cotacao-placa" type="text" autoComplete="off" autoCapitalize="characters" spellCheck={false} maxLength={16} className="input-field !w-44 uppercase" value={form.placa} onChange={(e) => setForm({ ...form, placa: e.target.value })}
+                        onBlur={() => setForm((f) => ({ ...f, placa: normalizarPlaca(f.placa) }))} />
                       <p data-testid="cotacao-placa-dica" className="text-xs text-gray-500 mt-1">{tp('placaDica')}</p>
                     </div>
                     <label className="flex items-start gap-2 text-sm text-gray-800">
@@ -531,6 +608,20 @@ export default function OficinaPecasPage() {
                         <input type="radio" name="cotacao-alvo" data-testid="cotacao-alvo-so-lojas" checked={form.alvo === 'so_lojas'} onChange={() => setForm({ ...form, alvo: 'so_lojas' })} />
                         {tp('alvoSoLojas')}
                       </label>
+                    </div>
+                  </fieldset>
+                )}
+                {/* lote 2: urgencia - hoje/amanha = e-mail na hora as lojas; sem pressa = resumo de 2 h */}
+                {v3 && (
+                  <fieldset>
+                    <legend className="block text-sm font-medium text-gray-700 mb-1">{tp('urgencia')}</legend>
+                    <div className="flex flex-wrap gap-x-5 gap-y-2">
+                      {URGENCIAS.map(([valor, chave, id]) => (
+                        <label key={valor} className="inline-flex items-center gap-2 text-sm text-gray-800">
+                          <input type="radio" name="cotacao-urgencia" data-testid={`cotacao-urgencia-${id}`} checked={form.urgencia === valor} onChange={() => setForm({ ...form, urgencia: valor })} />
+                          {tp(`urgencias.${chave}`)}
+                        </label>
+                      ))}
                     </div>
                   </fieldset>
                 )}
@@ -592,6 +683,13 @@ export default function OficinaPecasPage() {
                           {c.tipo !== 'sem_carro' && placasMinhas[c.id] && (
                             <p className="text-sm text-gray-500">{tp('placa')}: <span data-testid="cotacao-placa-valor" className="font-mono">{placasMinhas[c.id]}</span></p>
                           )}
+                          {c.urgencia && <p className="text-sm text-gray-500">{tp('urgencia')}: {tp(`urgencias.${chaveUrgencia(c.urgencia)}`)}</p>}
+                          {naoTem[c.id]?.n > 0 && (
+                            <p data-testid="cotacao-nao-tem-contagem" className="text-sm text-gray-500">
+                              {tp('naoTemContagem', { n: naoTem[c.id].n })}
+                              {Object.keys(naoTem[c.id].motivos).length > 0 && ` (${Object.entries(naoTem[c.id].motivos).map(([m, q]) => `${tp(`naoTenhoMotivos.${m === 'sem_estoque' ? 'semEstoque' : m === 'nao_trabalho' ? 'naoTrabalho' : 'outro'}`)}: ${q}`).join(', ')})`}
+                            </p>
+                          )}
                         </>
                       ) : (c.fipe_marca || c.fipe_modelo) && (
                         <p className="text-sm text-gray-500">{c.fipe_marca} {c.fipe_modelo} {c.fipe_ano} · {t('qtd')}: {c.quantidade}</p>
@@ -621,8 +719,9 @@ export default function OficinaPecasPage() {
                   {erroConfirmar?.cotacaoId === c.id && (
                     <p role="alert" className="mb-3 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{erroConfirmar.msg}</p>
                   )}
-                  {/* lote 1: vencida (7 dias) -> reabrir por mais 7 dias, ate 3 vezes */}
-                  {v3 && c.status === 'expirada' && (
+                  {/* lote 1: vencida (7 dias) -> reabrir por mais 7 dias, ate 3 vezes. Lote 2: tambem sem o
+                      interruptor (o global foi desligado depois de vencer): senao ela ficava presa */}
+                  {c.status === 'expirada' && (
                     <div className="flex flex-wrap items-center gap-2 mb-3">
                       {(c.reaberta_vezes || 0) < TETO_REABERTURAS ? (
                         <button type="button" data-testid="cotacao-reabrir" disabled={reabrindoId === c.id} onClick={() => handleReabrir(c)}
@@ -679,8 +778,13 @@ export default function OficinaPecasPage() {
 
                   {c.respostas && c.respostas.length > 0 && (
                     <div className="border-t pt-3 space-y-2">
-                      {c.respostas.map((r) => {
+                      {/* lote 2 (so com o interruptor): a mais barata primeiro, pelo total da quantidade ofertada */}
+                      {(v3 ? [...c.respostas].sort((a, b) => totalDaOferta(a.preco, Number(a.quantidade_ofertada ?? c.quantidade)) - totalDaOferta(b.preco, Number(b.quantidade_ofertada ?? c.quantidade))) : c.respostas).map((r) => {
                         const escolhida = !!pedido && pedido.resposta_id === r.id;
+                        const qtdOferta = Number(r.quantidade_ofertada ?? c.quantidade) || 1;
+                        const moedaOferta = currencyForCountry(r.loja?.pais || r.oficina_fornecedora?.pais);
+                        const totalOferta = totalDaOferta(r.preco, qtdOferta);
+                        const ivaOferta = v3 ? textoIvaOferta(tp, r, totalOferta, moedaOferta, locale) : null;
                         const naoLidas = conversas[chaveConversa(c.id, r.fornecedor_tipo, r.loja_id || r.oficina_fornecedora_id)]?.naoLidas || 0;
                         return (
                         <div key={r.id} data-testid={escolhida ? 'oferta-escolhida' : 'oferta'} className={`rounded-lg p-3 ${escolhida ? 'bg-green-50 border border-green-300' : 'bg-gray-50'} ${pedido && !escolhida ? 'opacity-60' : ''}`}>
@@ -696,10 +800,17 @@ export default function OficinaPecasPage() {
                               )}
                             </p>
                             {v3 ? (
-                              // lote 1: total da quantidade na unidade (preco unitario x 4,5 l)
-                              <p className="text-sm text-gray-600">
-                                {formatCurrency(r.preco, currencyForCountry(r.loja?.pais || r.oficina_fornecedora?.pais), locale)} × {qtdTexto(c)} = <span data-testid="oferta-total" className="font-semibold text-gray-900">{formatCurrency(Math.round(Number(r.preco) * Number(c.quantidade) * 100) / 100, currencyForCountry(r.loja?.pais || r.oficina_fornecedora?.pais), locale)}</span> · {t('prazoDias', { dias: r.prazo_dias })}
-                              </p>
+                              // lote 1: total da quantidade na unidade (preco unitario x 4,5 l); lote 2: pela
+                              // quantidade OFERTADA, com a linha do IVA e "oferta parcial"
+                              <>
+                                <p className="text-sm text-gray-600">
+                                  {formatCurrency(r.preco, moedaOferta, locale)} × {qtdTexto({ quantidade: qtdOferta, unidade: c.unidade })} = <span data-testid="oferta-total" className="font-semibold text-gray-900">{formatCurrency(totalOferta, moedaOferta, locale)}</span> · {t('prazoDias', { dias: r.prazo_dias })}
+                                </p>
+                                {ivaOferta && <p data-testid="oferta-iva" className="text-xs text-gray-500">{ivaOferta}</p>}
+                                {r.quantidade_ofertada != null && Number(r.quantidade_ofertada) < Number(c.quantidade) && (
+                                  <p data-testid="oferta-parcial" className="text-xs font-medium text-amber-800">{tp('ofertaParcial', { ofertada: qtdTexto({ quantidade: Number(r.quantidade_ofertada), unidade: c.unidade }), pedida: qtdTexto(c) })}</p>
+                                )}
+                              </>
                             ) : (
                             <p className="text-sm text-gray-600">
                               {formatCurrency(r.preco, currencyForCountry(r.loja?.pais || r.oficina_fornecedora?.pais), locale)} {c.quantidade > 1 && `x ${c.quantidade} = ${formatCurrency(r.preco * c.quantidade, currencyForCountry(r.loja?.pais || r.oficina_fornecedora?.pais), locale)}`} · {t('prazoDias', { dias: r.prazo_dias })}
@@ -859,6 +970,7 @@ export default function OficinaPecasPage() {
                           <p className="text-sm text-gray-500">{tp('placa')}: <span data-testid="cotacao-placa-valor" className="font-mono">{placasVizinhas[c.id]}</span></p>
                         )}
                         <p className="text-sm text-gray-500">{t('quantidadeLabel')}: {v3 ? <span data-testid="cotacao-quantidade-valor">{qtdTexto(c)}</span> : c.quantidade}</p>
+                        {v3 && c.urgencia && <p className="text-sm text-gray-500">{tp('urgencia')}: {tp(`urgencias.${chaveUrgencia(c.urgencia)}`)}</p>}
                         <DetalhesPedidoPeca observacao={c.observacao} fotos={c.fotos} />
                       </div>
                       <div className="flex flex-col items-end gap-1 flex-shrink-0">
@@ -893,15 +1005,29 @@ export default function OficinaPecasPage() {
                           </div>
                         </div>
                         <input type="text" className="input-field !py-1.5" placeholder={t('placeholderObservacaoOpcional')} value={respostaForm.observacao} onChange={(e) => setRespostaForm({ ...respostaForm, observacao: e.target.value })} />
+                        {v3 && (
+                          <CamposRespostaV3 quantidadePedida={Number(c.quantidade) || 1} unidade={c.unidade} quantidade={respQtd} setQuantidade={setRespQtd}
+                            usada={respUsada} setUsada={setRespUsada} preco={respostaForm.preco} perfil={oficina} moeda={currencyForCountry(oficina?.pais)} />
+                        )}
+                        {erroResposta === c.id && (
+                          <p role="alert" data-testid="resposta-erro" className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{tp('respostaErro')}</p>
+                        )}
                         <div className="flex justify-end gap-2">
-                          <button onClick={() => setRespondendoId(null)} className="btn-secondary !py-1.5 !px-3 text-sm">{t('cancelar')}</button>
+                          <button onClick={() => { setRespondendoId(null); setErroResposta(null); }} className="btn-secondary !py-1.5 !px-3 text-sm">{t('cancelar')}</button>
                           <button onClick={() => handleResponderComoOficina(c.id)} disabled={savingResposta || !respostaForm.preco} className="btn-primary !py-1.5 !px-3 text-sm disabled:opacity-50">
                             {savingResposta ? t('enviando') : t('enviarResposta')}
                           </button>
                         </div>
                       </div>
+                    ) : v3 && oficina.profile_id === user?.id ? (
+                      <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+                        <button onClick={() => abrirRespostaComoOficina(c)} className="btn-primary !py-1.5 !px-3 text-sm">
+                          {t('responderCotacao')}
+                        </button>
+                        <NaoTenhoCartao aoConfirmar={(motivo) => naoTenhoComoOficina(c.id, motivo)} />
+                      </div>
                     ) : (
-                      <button onClick={() => setRespondendoId(c.id)} className="btn-primary !py-1.5 !px-3 text-sm mt-2">
+                      <button onClick={() => abrirRespostaComoOficina(c)} className="btn-primary !py-1.5 !px-3 text-sm mt-2">
                         {t('responderCotacao')}
                       </button>
                     )}

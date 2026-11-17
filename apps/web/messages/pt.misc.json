@@ -1086,6 +1086,40 @@
     "erroReabrir": "Não foi possível reabrir. Tente de novo.",
     "erroCriar": "Não foi possível enviar o pedido. Confira se a sua oficina está ativa e tente de novo.",
     "telefoneComercial": "Telefone comercial (peças)",
-    "telefoneComercialAjuda": "Vai para a outra parte só depois de um pedido de peça confirmado. Vazio: usamos o telefone da sua conta."
+    "telefoneComercialAjuda": "Vai para a outra parte só depois de um pedido de peça confirmado. Vazio: usamos o telefone da sua conta.",
+    "urgencia": "Urgência",
+    "urgencias": {
+      "hoje": "Hoje",
+      "amanha": "Amanhã",
+      "semPressa": "Sem pressa"
+    },
+    "pedirPeca": "Pedir peça para este carro",
+    "naoTenho": "Não tenho",
+    "naoTenhoMotivo": "Motivo (opcional)",
+    "naoTenhoMotivos": {
+      "semEstoque": "Sem estoque",
+      "naoTrabalho": "Não trabalho com esta peça",
+      "outro": "Outro"
+    },
+    "naoTenhoConfirmar": "Confirmar: não tenho esta peça",
+    "naoTenhoFeito": "Pronto. Este pedido saiu da sua lista e você não recebe mais avisos dele.",
+    "naoTenhoDesfazer": "Desfazer",
+    "naoTenhoVencido": "Este link venceu ou o pedido já foi fechado. Nada foi alterado.",
+    "naoTenhoJaRespondeu": "Você já mandou uma oferta para este pedido.",
+    "naoTenhoJaDispensou": "Você já disse que não tem esta peça.",
+    "naoTenhoInvalido": "Link inválido. Abra os pedidos de peça pelo site.",
+    "naoTenhoTitulo": "Não tenho esta peça",
+    "naoTemContagem": "{n, plural, one {# fornecedor não tem} other {# fornecedores não têm}}",
+    "quantidadeOfertada": "Quantidade que você tem",
+    "ofertaParcial": "Oferta parcial: {ofertada} de {pedida}",
+    "pecaUsada": "Esta peça é usada (regime de margem)",
+    "ivaRegistrado": "Registrado no IVA",
+    "ivaPct": "IVA %",
+    "regimeMargem": "Vendo peças usadas no regime de margem",
+    "semIva": "sem IVA ≈ {valor} ({pct} %)",
+    "ivaNaoAplicavel": "IVA não aplicável (fornecedor não registrado)",
+    "ivaMargem": "IVA não dedutível — regime de margem (peça usada)",
+    "ivaCompletePerfil": "Complete o IVA no seu perfil para a oficina comparar as ofertas.",
+    "respostaErro": "Não foi possível enviar. Confira o preço (maior que zero) e o prazo e tente de novo."
   }
 }
