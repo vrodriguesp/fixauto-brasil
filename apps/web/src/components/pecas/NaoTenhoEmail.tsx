@@ -26,8 +26,9 @@ export default function NaoTenhoEmail({ token: tokenDaPagina }: { token: string 
   useEffect(() => {
     if (iniciado.current) return;
     iniciado.current = true;
-    // pagina gerada sem a consulta (cache): o token tambem e lido da barra
-    const k = tokenDaPagina || new URLSearchParams(window.location.search).get('k') || '';
+    // pagina gerada sem a consulta (cache): o token tambem e lido da barra; lote 3: o link novo traz o
+    // token no fragmento (#k=), que o script da pagina ja tirou da barra e guardou em window.__naoTenhoK
+    const k = tokenDaPagina || (window as unknown as { __naoTenhoK?: string }).__naoTenhoK || new URLSearchParams(window.location.search).get('k') || (window.location.hash.match(/[#&]k=([A-Za-z0-9_-]+)/) || [])[1] || '';
     setToken(k);
     // o token nao fica no historico nem vai junto se a pessoa compartilhar a pagina
     window.history.replaceState(null, '', window.location.pathname);

@@ -12,6 +12,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return { title: t('naoTenhoTitulo'), robots: { index: false, follow: false } };
 }
 
+const TIRAR_TOKEN_DA_BARRA = "(function(){try{var h=location.hash.match(/[#&]k=([A-Za-z0-9_-]+)/);var q=new URLSearchParams(location.search).get('k');var k=(h&&h[1])||q||'';if(k||h){window.__naoTenhoK=k;history.replaceState(null,'',location.pathname);}}catch(e){}})();";
+
 // so os textos que a pagina usa (o layout publico nao entrega os paineis)
 const CHAVES = ['naoTenhoTitulo', 'naoTenho', 'naoTenhoMotivo', 'naoTenhoMotivos', 'naoTenhoConfirmar', 'naoTenhoFeito', 'naoTenhoVencido', 'naoTenhoJaRespondeu', 'naoTenhoJaDispensou', 'naoTenhoInvalido', 'respostaErro'];
 
@@ -26,6 +28,9 @@ export default async function PecaNaoTenhoPage({ params, searchParams }: {
   const pecas = Object.fromEntries(CHAVES.filter((k) => k in (todas.pecas || {})).map((k) => [k, todas.pecas[k]]));
   return (
     <NextIntlClientProvider locale={locale} messages={{ pecas } as any}>
+      {/* lote 3 (item 5 do Fable): o token (#k= ou o antigo ?k=) sai da barra ANTES de qualquer analytics
+          (GA/Clarity carregam depois da hidratacao e leriam location.href); guardado so na memoria da pagina */}
+      <script dangerouslySetInnerHTML={{ __html: TIRAR_TOKEN_DA_BARRA }} />
       <NaoTenhoEmail token={typeof busca.k === 'string' ? busca.k : ''} />
     </NextIntlClientProvider>
   );

@@ -341,7 +341,7 @@ try {
     const k = tokQ1lj1; if (!k) throw new Error('sem token da loja 1 (D.1)');
     for (const l of IDIOMAS) {
       const r = await A.get302(`/n/${k}?o=${encodeURIComponent(l)}`);
-      ok(`D.5a GET /n/<token>?o=${l} -> 302 ${SLUG_NAO_TENHO[l]}?k=<token>`, r.status === 302 && r.location.includes(`${SLUG_NAO_TENHO[l]}?k=${k}`), `${r.status} ${r.location}`);
+      ok(`D.5a GET /n/<token>?o=${l} -> 302 ${SLUG_NAO_TENHO[l]}#k=<token>`, r.status === 302 && r.location.includes(`${SLUG_NAO_TENHO[l]}#k=${k}`), `${r.status} ${r.location}`);
     }
     await pN.goto(`${SITE}/n/${k}?o=et`, { waitUntil: 'networkidle' }).catch(() => {});
     await pN.getByTestId('nao-tenho-peca').waitFor({ timeout: 15000 });

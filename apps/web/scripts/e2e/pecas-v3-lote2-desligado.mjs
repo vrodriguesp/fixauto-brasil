@@ -205,9 +205,9 @@ try {
   await tentar('L7', async () => {
     const k = 'A'.repeat(43);
     const r1 = await A.get302(`/n/${k}?o=et`);
-    ok(`[NOVO] L7a GET /n/<token>?o=et -> 302 para ${SLUG_NAO_TENHO.et}?k=<token>`, r1.status === 302 && r1.location.includes(`${SLUG_NAO_TENHO.et}?k=${k}`), `${r1.status} ${r1.location}`);
+    ok(`[NOVO] L7a GET /n/<token>?o=et -> 302 para ${SLUG_NAO_TENHO.et}#k=<token>`, r1.status === 302 && r1.location.includes(`${SLUG_NAO_TENHO.et}#k=${k}`), `${r1.status} ${r1.location}`);
     const r2 = await A.get302(`/n/${k}`);
-    ok('[NOVO] L7b sem ?o= -> 302 para a pagina em ingles (padrao)', r2.status === 302 && r2.location.includes(`${SLUG_NAO_TENHO.en}?k=${k}`), `${r2.status} ${r2.location}`);
+    ok('[NOVO] L7b sem ?o= -> 302 para a pagina em ingles (padrao)', r2.status === 302 && r2.location.includes(`${SLUG_NAO_TENHO.en}#k=${k}`), `${r2.status} ${r2.location}`);
     const v1 = await A.naoTenhoEmail({ k: 'abc', acao: 'ver' }), v2 = await A.naoTenhoEmail({ k, acao: 'ver' }), v3 = await A.naoTenhoEmail({ k, acao: 'confirmar' }), v4 = await A.naoTenhoEmail({ k, acao: 'xyz' });
     ok(`[NOVO] L7c POST ${ROTA_NAO_TENHO_EMAIL}: formato errado 410 LINK_INVALIDO; token desconhecido: ver 410, confirmar 410; acao desconhecida 410`, [v1, v2, v3, v4].every((x) => x.status === 410 && x.d.codigo === 'LINK_INVALIDO'), [v1, v2, v3, v4].map((x) => x.status).join('/'));
     const ctxN = await nav.contexto('chromium', 390, A.ip); const pN = await ctxN.newPage(); vigiar(pN, erros, 'L7');
