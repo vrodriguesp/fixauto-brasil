@@ -41,7 +41,12 @@ ALTER TABLE pedidos_pecas ADD COLUMN IF NOT EXISTS entregue_em timestamptz;
 ALTER TABLE pedidos_pecas ADD COLUMN IF NOT EXISTS contato_visivel_ate timestamptz;
 ALTER TABLE pedidos_pecas ADD COLUMN IF NOT EXISTS lembretes_feedback integer NOT NULL DEFAULT 0;
 ALTER TABLE pedidos_pecas ADD COLUMN IF NOT EXISTS pos_cancelamento text;
-ALTER TABLE pedidos_pecas ADD COLUMN IF NOT EXISTS nova_cotacao_id uuid REFERENCES cotacoes_pecas(id) ON DELETE SET NULL;
+-- SEM chave estrangeira (de proposito, desvio do contrato E.0d): uma 2a FK de pedidos_pecas para
+-- cotacoes_pecas deixa ambiguo todo embed sem dica (cotacoes_pecas -> pedidos_pecas e o inverso) e o
+-- PostgREST responde PGRST201 - o codigo no ar (lote 2) quebrava as telas de pecas com a 093 aplicada
+-- (fase B, 18/11). Quem le trata id que nao existe mais como "sem nova cotacao".
+ALTER TABLE pedidos_pecas ADD COLUMN IF NOT EXISTS nova_cotacao_id uuid;
+ALTER TABLE pedidos_pecas DROP CONSTRAINT IF EXISTS pedidos_pecas_nova_cotacao_id_fkey;
 
 ALTER TABLE pedidos_pecas DROP CONSTRAINT IF EXISTS pedidos_pecas_problema_check;
 ALTER TABLE pedidos_pecas ADD CONSTRAINT pedidos_pecas_problema_check
