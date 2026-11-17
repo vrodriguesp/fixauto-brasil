@@ -28,7 +28,7 @@ export async function resumoCotacoesPecas(agora = Date.now()): Promise<{ slot: s
   const global = await interruptorPecasV3Global();
 
   const { data: pend, error } = await supabaseAdmin.from('avisos_email_pecas')
-    .select('id, profile_id, cotacao_id, fornecedor_tipo, reaberta, tentativas, cotacao:cotacoes_pecas(id, status, expira_em, peca_descricao, fipe_marca, fipe_modelo, fipe_ano, quantidade, unidade, tipo, urgencia, oficina:oficinas!cotacoes_pecas_oficina_id_fkey(cidade, profile:profiles!oficinas_profile_id_fkey(conta_teste)))')
+    .select('id, profile_id, cotacao_id, fornecedor_tipo, fornecedor_id, reaberta, tentativas, cotacao:cotacoes_pecas(id, status, expira_em, peca_descricao, fipe_marca, fipe_modelo, fipe_ano, quantidade, unidade, tipo, urgencia, oficina:oficinas!cotacoes_pecas_oficina_id_fkey(cidade, profile:profiles!oficinas_profile_id_fkey(conta_teste)))')
     .eq('tipo', 'resumo').is('enviado_em', null)
     .order('criado_em')
     .limit(3000);
@@ -53,9 +53,15 @@ export async function resumoCotacoesPecas(agora = Date.now()): Promise<{ slot: s
     }
     const linhas = Array.from(maisNova.values());
     const { data: perfil } = await supabaseAdmin.from('profiles').select('email, nome, idioma, ativo').eq('id', profileId).maybeSingle();
+    // lote 3 (item 1 do Fable): o fornecedor pelo id gravado na linha; linha antiga (NULL) pelo perfil, como antes
+    const fornecedorId = linhas.find((r) => r.fornecedor_id)?.fornecedor_id || null;
     const forn = tipo === 'loja'
-      ? (await supabaseAdmin.from('lojas_pecas').select('id, nome_fantasia, pais, ativa').eq('profile_id', profileId).maybeSingle()).data
-      : (await supabaseAdmin.from('oficinas').select('id, nome_fantasia, pais, ativa, vende_pecas').eq('profile_id', profileId).eq('vende_pecas', true).maybeSingle()).data;
+      ? (await (fornecedorId
+        ? supabaseAdmin.from('lojas_pecas').select('id, nome_fantasia, pais, ativa').eq('id', fornecedorId).eq('profile_id', profileId)
+        : supabaseAdmin.from('lojas_pecas').select('id, nome_fantasia, pais, ativa').eq('profile_id', profileId)).maybeSingle()).data
+      : (await (fornecedorId
+        ? supabaseAdmin.from('oficinas').select('id, nome_fantasia, pais, ativa, vende_pecas').eq('id', fornecedorId).eq('profile_id', profileId).eq('vende_pecas', true)
+        : supabaseAdmin.from('oficinas').select('id, nome_fantasia, pais, ativa, vende_pecas').eq('profile_id', profileId).eq('vende_pecas', true)).maybeSingle()).data;
     const ids = linhas.map((r) => r.cotacao_id);
     const [{ data: disp }, { data: resp }] = await Promise.all([
       forn ? supabaseAdmin.from('cotacoes_pecas_dispensas').select('cotacao_id').eq('fornecedor_tipo', tipo).eq('fornecedor_id', forn.id).in('cotacao_id', ids) : Promise.resolve({ data: [] as any[] }),

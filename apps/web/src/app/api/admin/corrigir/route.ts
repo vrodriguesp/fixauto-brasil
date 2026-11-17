@@ -177,7 +177,16 @@ export async function POST(req: NextRequest) {
     const a = antes as any;
     if (a.status === alteracoes.status) return erro('O status já é esse');
 
-    const { error } = await supabaseAdmin.from(cfg.tabela).update({ status: alteracoes.status }).eq('id', id);
+    // lote 3 (093): pedido de peca v3 cancelado pelo admin grava quem cancelou e fecha o contato
+    // (nao gera pendencia no P-7); tirar do cancelado limpa o "quem" (CHECK cancelado_coerente)
+    let extraPedido: Record<string, unknown> = {};
+    if (entidade === 'pedido_peca') {
+      const { data: l3 } = await supabaseAdmin.from('pedidos_pecas').select('v3, cancelado_por').eq('id', id).maybeSingle();
+      const agora = new Date().toISOString();
+      if (alteracoes.status === 'cancelado' && (l3 as any)?.v3) extraPedido = { cancelado_por: 'admin', cancelado_em: agora, contato_visivel_ate: agora };
+      else if (alteracoes.status !== 'cancelado' && (l3 as any)?.cancelado_por) extraPedido = { cancelado_por: null, cancelado_motivo: null, cancelado_texto: null, cancelado_em: null };
+    }
+    const { error } = await supabaseAdmin.from(cfg.tabela).update({ status: alteracoes.status, ...extraPedido }).eq('id', id);
     if (error) return erro(error.message, 500);
     await registrarAuditoria(supabaseAdmin, {
       adminId, entidade, entidadeId: id, acao: 'corrigir_status',

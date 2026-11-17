@@ -11,7 +11,9 @@ import { telefonesComerciais } from '@/lib/pecas-v3';
 // Service role para nao abrir profiles de uma oficina para outra na RLS.
 // Lote 1 (17/11): o telefone comercial (fornecedores_contato, tabela so do dono) vale
 // antes do telefone do perfil; sem telefone comercial a resposta e a de antes.
-type Contato = { nome: string | null; telefone: string | null; endereco: string | null };
+// Lote 3 (093, P-13): pedido com contato_visivel_ate vencido (recebido/entregue + 30 dias, ou cancelado)
+// devolve { arquivado: true } no lugar do contato, para as duas partes; NULL (pedido de hoje) = sempre.
+type Contato = { nome: string | null; telefone: string | null; endereco: string | null } | { arquivado: true };
 
 const enderecoDe = (o: { endereco?: string | null; numero?: string | null; cidade?: string | null } | null) =>
   o ? [[o.endereco, o.numero].filter(Boolean).join(' '), o.cidade].filter(Boolean).join(', ') || null : null;
@@ -30,7 +32,7 @@ export async function POST(req: NextRequest) {
     const { data: pedidos } = await supabaseAdmin
       .from('pedidos_pecas')
       .select(`
-        id, fornecedor_tipo, oficina_id, loja_id, oficina_fornecedora_id,
+        id, fornecedor_tipo, oficina_id, loja_id, oficina_fornecedora_id, contato_visivel_ate,
         compradora:oficinas!pedidos_pecas_oficina_id_fkey(profile_id, nome_fantasia, endereco, numero, cidade, profile:profiles!oficinas_profile_id_fkey(telefone)),
         loja:lojas_pecas(profile_id, nome_fantasia, endereco, cidade, profile:profiles(telefone)),
         oficina_fornecedora:oficinas!pedidos_pecas_oficina_fornecedora_id_fkey(profile_id, nome_fantasia, endereco, numero, cidade, profile:profiles!oficinas_profile_id_fkey(telefone))
@@ -46,6 +48,11 @@ export async function POST(req: NextRequest) {
     for (const p of lista) {
       const fornecedor = p.fornecedor_tipo === 'loja' ? p.loja : p.oficina_fornecedora;
       const fornecedorId = p.fornecedor_tipo === 'loja' ? p.loja_id : p.oficina_fornecedora_id;
+      const arquivado = !!p.contato_visivel_ate && Date.parse(p.contato_visivel_ate) <= Date.now();
+      if (arquivado && (p.compradora?.profile_id === callerId || fornecedor?.profile_id === callerId)) {
+        contatos[p.id] = { arquivado: true };
+        continue;
+      }
       if (p.compradora?.profile_id === callerId && fornecedor) {
         const telefone = comerciais.get(`${p.fornecedor_tipo}:${fornecedorId}`) || fornecedor.profile?.telefone || null;
         contatos[p.id] = { nome: fornecedor.nome_fantasia || null, telefone, endereco: enderecoDe(fornecedor) };

@@ -7,6 +7,7 @@ import { dataHoraTexto } from '@/lib/email-i18n';
 import { fusoDoPais } from '@/lib/fuso';
 import { TETO_IMEDIATOS_DIA, inicioDoDiaTallinn } from '@/lib/pecas-avisos';
 import { linkNaoTenho } from '@/lib/pecas-nao-tenho';
+import { enviarPushNavegador } from '@/lib/push-navegador';
 
 // Avisa (sino + e-mail) quem pode vender a peca de um pedido (antes, o corpo da rota
 // notificar-fornecedores-cotacao-peca; lote 2 tirou para ca para o "reabrir" re-avisar):
@@ -86,8 +87,9 @@ export async function avisarFornecedoresCotacao(cot: CotacaoParaAviso, reaberta 
   const inicioDia = inicioDoDiaTallinn();
 
   // linha do log/fila: UNIQUE (fornecedor, cotacao, rodada). O re-aviso do "reabrir" e outra rodada.
-  const gravarLinha = async (profileId: string, fornecedorTipo: 'loja' | 'oficina', campos: { tipo: 'imediato' | 'resumo'; motivo: 'sem_pressa' | 'teto' | null; enviado_em?: string | null }): Promise<string | null> => {
-    const linha = { profile_id: profileId, cotacao_id: cotacaoId, fornecedor_tipo: fornecedorTipo, reaberta, tipo: campos.tipo, motivo: campos.motivo, enviado_em: campos.enviado_em ?? null };
+  // lote 3 (093): fornecedor_id na linha (o resumo deixa de procurar o fornecedor pelo perfil)
+  const gravarLinha = async (profileId: string, fornecedorTipo: 'loja' | 'oficina', fornecedorId: string, campos: { tipo: 'imediato' | 'resumo'; motivo: 'sem_pressa' | 'teto' | null; enviado_em?: string | null }): Promise<string | null> => {
+    const linha = { profile_id: profileId, cotacao_id: cotacaoId, fornecedor_tipo: fornecedorTipo, fornecedor_id: fornecedorId, reaberta, tipo: campos.tipo, motivo: campos.motivo, enviado_em: campos.enviado_em ?? null };
     // ON CONFLICT DO NOTHING: se outra chamada ja tratou este fornecedor nesta rodada, nao manda de novo
     const { data, error } = await supabaseAdmin.from('avisos_email_pecas').upsert(linha, { onConflict: 'profile_id,cotacao_id,reaberta', ignoreDuplicates: true }).select('id');
     if (error) { console.error('[avisar-fornecedores] fila:', error.message); return null; }
@@ -113,27 +115,31 @@ export async function avisarFornecedoresCotacao(cot: CotacaoParaAviso, reaberta 
     if (!urgencia) {
       const r = await sendCotacaoPecaDisponivelEmail(email).catch(() => ({ success: false }));
       if (r.success) emailsImediatos++;
-      await gravarLinha(alvo.profileId, alvo.tipo, { tipo: 'imediato', motivo: null, enviado_em: new Date().toISOString() }).catch(() => null);
+      await gravarLinha(alvo.profileId, alvo.tipo, alvo.fornecedorId, { tipo: 'imediato', motivo: null, enviado_em: new Date().toISOString() }).catch(() => null);
       return true;
     }
     if (urgencia === 'sem_pressa') {
-      if (await gravarLinha(alvo.profileId, alvo.tipo, { tipo: 'resumo', motivo: 'sem_pressa' })) naFila++;
+      if (await gravarLinha(alvo.profileId, alvo.tipo, alvo.fornecedorId, { tipo: 'resumo', motivo: 'sem_pressa' })) naFila++;
       return true;
     }
     // hoje / amanha: imediato ate o teto do dia (Tallinn); o teto e "macio" (sem trava)
     const { count } = await supabaseAdmin.from('avisos_email_pecas').select('id', { count: 'exact', head: true })
       .eq('profile_id', alvo.profileId).eq('tipo', 'imediato').gte('enviado_em', inicioDia);
     if ((count || 0) >= TETO_IMEDIATOS_DIA) {
-      if (await gravarLinha(alvo.profileId, alvo.tipo, { tipo: 'resumo', motivo: 'teto' })) naFila++;
+      if (await gravarLinha(alvo.profileId, alvo.tipo, alvo.fornecedorId, { tipo: 'resumo', motivo: 'teto' })) naFila++;
       return true;
     }
-    const linhaId = await gravarLinha(alvo.profileId, alvo.tipo, { tipo: 'imediato', motivo: null });
+    const linhaId = await gravarLinha(alvo.profileId, alvo.tipo, alvo.fornecedorId, { tipo: 'imediato', motivo: null });
     if (!linhaId) return true; // outra chamada ja mandou
     const naoTenhoUrl = cot.expira_em ? await linkNaoTenho({ profileId: alvo.profileId, cotacaoId, fornecedorTipo: alvo.tipo, fornecedorId: alvo.fornecedorId, expiraEm: cot.expira_em, idioma: alvo.idioma }) : null;
     const abertaAte = cot.expira_em ? dataHoraTexto(alvo.idioma, cot.expira_em, fusoDoPais(alvo.pais || compradora.pais)) : null;
     const r = await sendCotacaoPecaDisponivelEmail({ ...email, urgencia, abertaAte, naoTenhoUrl }).catch(() => ({ success: false }));
     if (r.success) emailsImediatos++;
-    await supabaseAdmin.from('avisos_email_pecas').update(r.success ? { enviado_em: new Date().toISOString() } : { enviado_em: new Date().toISOString(), erro: 'falha_envio' }).eq('id', linhaId);
+    // lote 3 (item 2 do Fable): imediato que falhou vai para a fila do resumo (sai do teto do dia)
+    await supabaseAdmin.from('avisos_email_pecas').update(r.success ? { enviado_em: new Date().toISOString() } : { enviado_em: null, tipo: 'resumo', motivo: 'falha', erro: 'falha_envio' }).eq('id', linhaId);
+    if (!r.success) naFila++;
+    // 3c (D-8): cotacao urgente com e-mail imediato tambem avisa no navegador (nunca o resumo)
+    else enviarPushNavegador(alvo.profileId, { titulo: nn.titulo, mensagem: nn.mensagem, link, urgente: urgencia === 'hoje' }).catch(() => {});
     return true;
   };
 
@@ -163,9 +169,10 @@ export async function avisarFornecedoresCotacao(cot: CotacaoParaAviso, reaberta 
     const BOUNDING_BOX_KM = 100;
     const radiusLat = BOUNDING_BOX_KM / 111;
     const radiusLon = BOUNDING_BOX_KM / (111 * Math.cos(latitude * Math.PI / 180));
+    const CAMPOS_VENDEDORA = 'id, profile_id, nome_fantasia, pais, latitude, longitude, raio_atendimento_km, pecas_alcance, profile:profiles!oficinas_profile_id_fkey(email, nome, idioma, conta_teste)';
     const { data: candidatas, error } = await supabaseAdmin
       .from('oficinas')
-      .select('id, profile_id, nome_fantasia, pais, latitude, longitude, raio_atendimento_km, profile:profiles!oficinas_profile_id_fkey(email, nome, idioma, conta_teste)')
+      .select(CAMPOS_VENDEDORA)
       .eq('vende_pecas', true)
       .eq('ativa', true)
       .neq('id', compradora.id)
@@ -174,12 +181,24 @@ export async function avisarFornecedoresCotacao(cot: CotacaoParaAviso, reaberta 
       .gte('longitude', longitude - radiusLon)
       .lte('longitude', longitude + radiusLon);
     if (error) return { erro: error.message, status: 500 };
+    // lote 3 (3b, N-6): a vendedora com alcance 'pais' recebe do pais inteiro, sem a caixa de 100 km
+    // (so muda QUEM e avisado; o texto do sino/e-mail e o de hoje)
+    const { data: doPais } = compradora.pais
+      ? await supabaseAdmin.from('oficinas').select(CAMPOS_VENDEDORA).eq('vende_pecas', true).eq('ativa', true).eq('pecas_alcance', 'pais').eq('pais', compradora.pais).neq('id', compradora.id)
+      : { data: [] as any[] };
+    const vistas = new Set<string>();
+    const todas = [...((candidatas as any[]) || []), ...((doPais as any[]) || [])].filter((o) => !vistas.has(o.id) && !!vistas.add(o.id));
 
-    for (const o of candidatas || []) {
-      if (o.latitude == null || o.longitude == null || !o.profile_id) continue;
+    for (const o of todas) {
+      if (!o.profile_id) continue;
       const p = (o as any).profile;
       if (!!p?.conta_teste !== compradoraTeste) continue;
-      if (distanciaKm(latitude, longitude, o.latitude, o.longitude) > (o.raio_atendimento_km || 30)) continue;
+      if (o.pecas_alcance === 'pais') {
+        if (o.pais !== compradora.pais) continue;
+      } else {
+        if (o.latitude == null || o.longitude == null) continue;
+        if (distanciaKm(latitude, longitude, o.latitude, o.longitude) > (o.raio_atendimento_km || 30)) continue;
+      }
       if (await avisar({ profileId: o.profile_id, idioma: p?.idioma, email: p?.email, nome: p?.nome || o.nome_fantasia, tipo: 'oficina', fornecedorId: o.id, pais: (o as any).pais }, false)) oficinasNotificadas++;
     }
   }

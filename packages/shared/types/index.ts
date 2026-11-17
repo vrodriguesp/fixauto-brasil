@@ -90,6 +90,8 @@ export interface Oficina {
   ativa: boolean;
   capacidade_servicos?: Record<string, number> | null;
   vende_pecas?: boolean;
+  // lote 3 (093, N-6): alcance da oficina vendedora; NULL = raio de hoje
+  pecas_alcance?: 'pais' | 'raio' | null;
   // 092: perfil fiscal de quem vende pecas (informacao publica)
   iva_registrado?: boolean | null;
   iva_pct?: number | null;
@@ -190,6 +192,8 @@ export interface CotacaoPecaResposta {
   quantidade_ofertada?: number | null;
   iva_pct?: number | null;
   iva_modo?: IvaModoPeca | null;
+  // lote 3 (093, P-23): condicao da peca ofertada; NULL = oferta de hoje
+  condicao?: 'nova' | 'sobra_nova' | 'usada_propria' | 'recondicionada' | null;
   created_at: string;
   // Joined
   loja?: LojaPecas;
@@ -208,6 +212,21 @@ export interface PedidoPeca {
   quantidade: number;
   status: StatusPedidoPeca;
   created_at: string;
+  // lote 3 de pecas (093): NULL = pedido de hoje
+  v3?: boolean | null;
+  recebido_em?: string | null;
+  problema?: 'nao_entregou' | 'peca_errada' | 'avariada' | 'outro' | null;
+  problema_em?: string | null;
+  problema_texto?: string | null;
+  cancelado_por?: 'compradora' | 'fornecedor' | 'admin' | null;
+  cancelado_motivo?: string | null;
+  cancelado_texto?: string | null;
+  cancelado_em?: string | null;
+  entregue_em?: string | null;
+  contato_visivel_ate?: string | null;
+  lembretes_feedback?: number;
+  pos_cancelamento?: 'reaberta' | 'nova_cotacao' | null;
+  nova_cotacao_id?: string | null;
   // Joined
   oficina?: Oficina;
   loja?: LojaPecas;

@@ -6,6 +6,9 @@ import { sendPedidoPecaEntregueEmail } from '@/lib/notifications';
 import { notifPedidoPecaEntregue } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
+import { dentroDoLimite } from '@/lib/rate-limit';
+import { v3AtivoPara, sino, emailL3, linkPedidoCompradora, JANELA_CONTATO_MS } from '@/lib/pecas-confianca';
+import { notifEntregueV3 } from '@/lib/pecas-confianca-textos';
 
 
 // Marca um pedido de peca como entregue e lanca a comissao da plataforma.
@@ -19,6 +22,10 @@ export async function POST(req: NextRequest) {
     if (!callerId) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
+    // lote 3: 30 por hora por usuario, antes de qualquer atalho (inclusive o "ja entregue")
+    if (!dentroDoLimite(`entregue-peca-u:${callerId}`, 30, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Muitas requisições', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
+    }
 
     const { pedidoId } = await req.json();
     if (!pedidoId) {
@@ -28,10 +35,10 @@ export async function POST(req: NextRequest) {
     const { data: pedido, error: pedidoError } = await supabaseAdmin
       .from('pedidos_pecas')
       .select(`
-        id, fornecedor_tipo, loja_id, oficina_fornecedora_id, preco_total, status,
+        id, fornecedor_tipo, loja_id, oficina_fornecedora_id, preco_total, status, v3, cotacao_id,
         loja:lojas_pecas(profile_id, nome_fantasia),
         oficina_fornecedora:oficinas!pedidos_pecas_oficina_fornecedora_id_fkey(profile_id, nome_fantasia),
-        cotacao:cotacoes_pecas(peca_descricao, oficina:oficinas(profile_id, profile:profiles(email, nome, idioma)))
+        cotacao:cotacoes_pecas!pedidos_pecas_cotacao_id_fkey(peca_descricao, oficina:oficinas(profile_id, profile:profiles(email, nome, idioma, conta_teste)))
       `)
       .eq('id', pedidoId)
       .single();
@@ -55,7 +62,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, jaEntregue: true });
     }
 
-    await supabaseAdmin.from('pedidos_pecas').update({ status: 'entregue' }).eq('id', pedidoId);
+    // lote 3 (093): data da entrega sempre; pedido v3 (com a tela nova valendo para a compradora) abre a
+    // janela do contato (entrega + 30 dias, P-13) e o aviso pergunta "recebeu?". Pedido de hoje: igual.
+    const agora = new Date();
+    const cotacaoV3 = (pedido as any).cotacao;
+    const ramoV3 = (pedido as any).v3 === true && await v3AtivoPara(cotacaoV3?.oficina?.profile || null);
+    await supabaseAdmin.from('pedidos_pecas').update({
+      status: 'entregue', entregue_em: agora.toISOString(),
+      ...(ramoV3 ? { contato_visivel_ate: new Date(agora.getTime() + JANELA_CONTATO_MS).toISOString() } : {}),
+    }).eq('id', pedidoId);
 
     const fornecedorId = pedido.fornecedor_tipo === 'loja' ? pedido.loja_id : pedido.oficina_fornecedora_id;
 
@@ -95,7 +110,13 @@ export async function POST(req: NextRequest) {
     // ela so ficava sabendo se checasse o status manualmente).
     const cotacao = (pedido as any).cotacao;
     const compradoraProfile = cotacao?.oficina?.profile;
-    if (compradoraProfile && cotacao.oficina?.profile_id) {
+    if (ramoV3 && compradoraProfile && cotacao.oficina?.profile_id) {
+      const fornecedorNome = (pedido.fornecedor_tipo === 'loja' ? (pedido as any).loja?.nome_fantasia : (pedido as any).oficina_fornecedora?.nome_fantasia) || '-';
+      const link = linkPedidoCompradora(pedidoId);
+      await sino(cotacao.oficina.profile_id, compradoraProfile.idioma, 'pedido_peca_entregue', (l) => notifEntregueV3(l, fornecedorNome, cotacao.peca_descricao),
+        { pedido_id: pedidoId, cotacao_id: (pedido as any).cotacao_id, link });
+      await emailL3({ tipo: 'entregueV3', para: compradoraProfile.email, nome: compradoraProfile.nome, idioma: compradoraProfile.idioma, vars: { fornecedor: fornecedorNome, peca: cotacao.peca_descricao || '-' }, linkInterno: link });
+    } else if (compradoraProfile && cotacao.oficina?.profile_id) {
       const fornecedorNome = pedido.fornecedor_tipo === 'loja'
         ? (pedido as any).loja?.nome_fantasia
         : (pedido as any).oficina_fornecedora?.nome_fantasia;

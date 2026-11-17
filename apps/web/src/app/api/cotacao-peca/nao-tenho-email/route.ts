@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     if (!tk) return invalido();
 
     const [{ data: cot }, { data: resp }, { data: disp }] = await Promise.all([
-      supabaseAdmin.from('cotacoes_pecas').select('id, oficina_id, status, expira_em, peca_descricao').eq('id', tk.cotacao_id).maybeSingle(),
+      supabaseAdmin.from('cotacoes_pecas').select('id, oficina_id, status, expira_em, peca_descricao, alvo').eq('id', tk.cotacao_id).maybeSingle(),
       supabaseAdmin.from('cotacoes_pecas_respostas').select('id').eq('cotacao_id', tk.cotacao_id)
         .eq(tk.fornecedor_tipo === 'loja' ? 'loja_id' : 'oficina_fornecedora_id', tk.fornecedor_id).limit(1),
       supabaseAdmin.from('cotacoes_pecas_dispensas').select('cotacao_id').eq('cotacao_id', tk.cotacao_id)
@@ -40,7 +40,9 @@ export async function POST(req: NextRequest) {
     if (!cot) return invalido();
     const agora = Date.now();
     const vencido = !!tk.usado_em || Date.parse(tk.expira_em) <= agora;
-    const aberta = ['aberta', 'respondida'].includes(String(cot.status)) && !(cot.expira_em && Date.parse(cot.expira_em) <= agora);
+    // lote 3 (item 4 do Fable): oficina numa cotacao que virou "so lojas" ja nao pode dispensar (alvo re-checado)
+    const foraDoAlvo = tk.fornecedor_tipo === 'oficina' && (cot as { alvo?: string | null }).alvo === 'so_lojas';
+    const aberta = ['aberta', 'respondida'].includes(String(cot.status)) && !(cot.expira_em && Date.parse(cot.expira_em) <= agora) && !foraDoAlvo;
     const jaRespondeu = !!resp?.length;
     const jaDispensou = !!disp?.length;
 

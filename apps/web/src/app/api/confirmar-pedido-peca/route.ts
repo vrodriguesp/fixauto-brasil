@@ -6,7 +6,9 @@ import { notifPedidoConfirmado, notifCotacaoPecaFechadaOutro } from '@/lib/notif
 import { currencyForCountry } from '@fixauto/shared';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
-import { telefonesComerciais } from '@/lib/pecas-v3';
+import { telefonesComerciais, pecasV3Ativo } from '@/lib/pecas-v3';
+import { pendentesDaOficina } from '@/lib/pecas-confianca';
+import { enviarPushNavegador } from '@/lib/push-navegador';
 
 // B2 (16/11): a oficina compradora confirma uma oferta. Antes isso era feito do
 // navegador: o aviso para uma OFICINA vendedora era barrado pela regra de
@@ -52,6 +54,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
+    // lote 3 (093): P-7 (D-7) - com retorno/avaliacao de pecas pendente (global OU conta de teste, pela
+    // funcao do banco) a confirmacao nao fecha nada; e a oferta de quem falhou numa cotacao reaberta (D-5)
+    // nao pode ser escolhida de novo. Pedido de conta real com o global desligado: igual a hoje.
+    const { data: bloqueada } = await supabaseAdmin.rpc('oficina_feedback_pecas_pendente', { p_oficina: compradora.id });
+    if (bloqueada === true) {
+      const pend = await pendentesDaOficina(compradora.id);
+      return NextResponse.json({ error: 'Avaliação de peças pendente', codigo: 'FEEDBACK_PENDENTE', pedidos: pend.pedidos.filter((x) => x.bloqueia) }, { status: 409 });
+    }
+    if (['aberta', 'respondida'].includes(String(cotacao.status))) {
+      const { data: cancelados } = await supabaseAdmin.from('pedidos_pecas').select('id').eq('resposta_id', resposta.id).eq('status', 'cancelado').limit(1);
+      if (cancelados?.length) return NextResponse.json({ error: 'Oferta de um pedido cancelado', codigo: 'OFERTA_CANCELADA' }, { status: 409 });
+    }
+    const v3 = await pecasV3Ativo(callerId);
+
     // 1. fecha a cotacao de forma atomica: se outra aba ja fechou, nao cria 2o pedido
     const statusAntes = cotacao.status;
     const { data: fechada } = await supabaseAdmin
@@ -80,6 +96,8 @@ export async function POST(req: NextRequest) {
         oficina_fornecedora_id: resposta.fornecedor_tipo === 'oficina' ? resposta.oficina_fornecedora_id : null,
         preco_total: precoTotal,
         quantidade,
+        // lote 3: marca "pelo dado" - so o pedido nascido com a tela nova entra no ciclo novo
+        ...(v3 ? { v3: true } : {}),
       })
       .select('id')
       .single();
@@ -105,6 +123,8 @@ export async function POST(req: NextRequest) {
         mensagem: n.mensagem,
         dados: { cotacao_id: cotacao.id, pedido_id: pedido.id, link: linkFornecedor, textos: emTodasAsLinguas((l) => notifPedidoConfirmado(l, compradora.nome_fantasia, cotacao.peca_descricao)) },
       });
+      // 3c (D-8): pedido confirmado e aviso no navegador do fornecedor (so quem ligou; nada sai sem inscricao)
+      if (v3) enviarPushNavegador(fornecedor.profile_id, { titulo: n.titulo, mensagem: n.mensagem, link: linkFornecedor }).catch(() => {});
       if (perfil?.email) {
         const endereco = [[compradora.endereco, compradora.numero].filter(Boolean).join(' '), compradora.cidade].filter(Boolean).join(', ');
         const telefone = (await telefonesComerciais([{ tipo: 'oficina', id: compradora.id }])).get(`oficina:${compradora.id}`) || compradora.profile?.telefone || null;
