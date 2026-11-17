@@ -67,7 +67,7 @@ try {
     const fn = (nome) => psql(`select coalesce((select prosecdef::text||':'||provolatile::text||':'||coalesce(array_to_string(proconfig, ';'),'')||':'||has_function_privilege('anon', p.oid, 'execute')::text||':'||has_function_privilege('authenticated', p.oid, 'execute')::text from pg_proc p where proname='${nome}' and pronamespace='public'::regnamespace limit 1), 'ausente')`);
     for (const nome of ['fornecedor_conta_teste', 'fornecedor_resumo', 'oficina_feedback_pecas_pendente']) {
       const f = fn(nome);
-      ok(`E.0g funcao ${nome}: SECURITY DEFINER, STABLE, search_path=public, sem EXECUTE para anon/PUBLIC, com EXECUTE para authenticated`, /^true:s:search_path=public:false:true$/.test(f), f);
+      ok(`E.0g funcao ${nome}: SECURITY DEFINER, STABLE, search_path=public, sem EXECUTE para anon/PUBLIC, com EXECUTE para authenticated`, /^true:s:search_path=public(, ?pg_temp)?:false:true$/.test(f), f);
     }
     ok('E.0h plataforma_config.pecas_p7_minimo integer NOT NULL DEFAULT 1 (valor 1)', col('plataforma_config', 'pecas_p7_minimo') === 'integer:NO:1' && psql("select coalesce(to_jsonb(c)->>'pecas_p7_minimo','') from plataforma_config c where id=1") === '1', col('plataforma_config', 'pecas_p7_minimo'));
     const pIns = A.politica('cotacoes_pecas', 'cotacoes_pecas_insert');
@@ -131,7 +131,7 @@ try {
   let P1 = null, Q2 = null, P2 = null, P3 = null, P4 = null, P6 = null, Q6 = null, avP1 = null, Q9 = null;
 
   // ======================= E.0b: CHECKs na pratica (service role) =======================
-  await tentar('E.0b', async () => {
+  await tentar('E.0 pratica', async () => {
     const pk = await A.pedidoV3(ofC3, L3, { descricao: 'Check' });
     const { error: e1 } = await A.admin.from('pedidos_pecas').update({ cancelado_por: 'admin' }).eq('id', pk.id);
     ok('E.0s CHECK: cancelado_por preenchido com status confirmado -> 23514', e1?.code === '23514', e1 ? `${e1.code} ${e1.message}` : 'gravou');
@@ -236,6 +236,8 @@ try {
     const sP = await A.esperarAviso(lojas['2'].d.id, 'pedido_peca_problema');
     const mP = await A.esperarEmail(lojas['2'].d.email, tP, (e) => e.html.includes(Q2.descricao), 30);
     ok('E.3b loja 2 (fornecedora) recebe sino pedido_peca_problema (dados.pedido_id) + e-mail "problema no pedido"', sP.some((n) => n.dados?.pedido_id === P2) && !!mP, mP?.assunto || 'sem e-mail');
+    const sAdm = await A.esperarAviso(adm.id, 'pedido_peca_problema', 20);
+    ok('E.3b2 o admin tambem e avisado do "nao entregou" (mesmo tipo pedido_peca_problema, dados.pedido_id) - D-4', sAdm.some((n) => n.dados?.pedido_id === P2), String(sAdm.length));
     const k1 = await contatoDe(P2, S.c1), k2 = await contatoDe(P2, S.l2);
     ok('E.3c contato do pedido cancelado: arquivado nos dois lados (sem telefone nem endereco)', k1?.arquivado === true && !k1?.telefone && !k1?.endereco && k2?.arquivado === true && !k2?.telefone, JSON.stringify({ k1, k2 }));
     await ir(pD, '/ee/et/oficina/pecas', 3000);
@@ -261,6 +263,9 @@ try {
     const s2 = await A.avisos(lojas['2'].d.id, 'cotacao_peca_reaberta_cancelamento');
     const m1 = await A.esperarEmail(lojas['1'].d.email, tR, (e) => e.html.includes(Q2.descricao), 20);
     ok('E.3k "voltou a abrir - confirme sua oferta": sino (+ e-mail) as lojas 1 e 3 com oferta; NADA a loja 2 (a que falhou)', s1.some((n) => n.dados?.cotacao_id === Q2.id) && s3.some((n) => n.dados?.cotacao_id === Q2.id) && !s2.some((n) => n.dados?.cotacao_id === Q2.id) && !!m1, `${s1.length}/${s3.length}/${s2.length} ${m1 ? 'email' : 'sem email'}`);
+    await ir(pD, '/ee/et/oficina/pecas', 3000);
+    const o2 = card.getByTestId('oferta').filter({ hasText: L2.nome }), o3 = card.getByTestId('oferta').filter({ hasText: L3.nome });
+    ok('E.3k2 cotacao reaberta (respondida) na tela: a oferta da loja 2 (falhou) SEM "Confirmar"; a da loja 3 COM', (await o2.count()) === 1 && (await botao(o2, ET('oficinaPecas.confirmarPedidoBtn')).count()) === 0 && (await botao(o3, ET('oficinaPecas.confirmarPedidoBtn')).count()) === 1);
     const rL2 = await A.confirmar(r2, S.c1.token);
     ok('E.3l a oferta da loja que falhou nao pode ser escolhida de novo: confirmar -> 409 OFERTA_CANCELADA; cotacao continua respondida', codigo(rL2, 409, 'OFERTA_CANCELADA') && (await A.cotacaoNoBanco(Q2.id))?.status === 'respondida', mostra(rL2));
     const d2 = await A.depois(P2, 'nova_cotacao', S.c1);
@@ -270,9 +275,16 @@ try {
     ok('E.3n confirmar a loja 3 na cotacao reaberta -> 200 (2o pedido na mesma cotacao, v3)', r3c.status === 200 && ped(P3)?.v3 === true, mostra(r3c));
     await ir(pD, '/ee/et/oficina/pecas', 3000);
     const esc = card.getByTestId('oferta-escolhida');
-    ok('E.3o o cartao mostra o pedido VIVO (loja 3): oferta-escolhida = loja 3, pedido-cancelar visivel; nenhuma oferta da loja 2 confirmavel', (await esc.count()) === 1 && (await esc.innerText()).includes(L3.nome) && await visivel(card.getByTestId('pedido-cancelar')) && (await card.getByTestId('oferta').filter({ hasText: L2.nome }).locator('button').count()) === 0, (await card.innerText().catch(() => '')).slice(0, 300));
+    ok('E.3o o cartao mostra o pedido VIVO (loja 3): oferta-escolhida = loja 3, pedido-cancelar visivel', (await esc.count()) === 1 && (await esc.innerText()).includes(L3.nome) && await visivel(card.getByTestId('pedido-cancelar')), (await card.innerText().catch(() => '')).slice(0, 300));
     const rs = await A.resumoForn(S.c1, 'loja', L2.id);
     ok('E.3p fornecedor_resumo(loja 2): total 1, nao_entregou_n 1, media NULL (< 3 avaliacoes)', !rs.error && Number(rs.linha?.total) === 1 && Number(rs.linha?.nao_entregou_n) === 1 && rs.linha?.media === null, JSON.stringify(rs));
+    // D-5 "direto": cancelamento pela compradora (nao conta contra ninguem) -> reabrir SEM avaliar
+    const pr = await A.pedidoV3(ofC1, L3, { descricao: 'Reabrir direto', outras: [L4] });
+    const cR = await A.cancelar(pr.id, 'carro_saiu', S.c1);
+    const dR = await A.depois(pr.id, 'reabrir', S.c1);
+    const sR4 = await A.esperarAviso(lojas['4'].d.id, 'cotacao_peca_reaberta_cancelamento', 20);
+    const sR3 = await A.avisos(lojas['3'].d.id, 'cotacao_peca_reaberta_cancelamento');
+    ok("E.3q D-5 sem avaliacao (cancelado pela compradora): reabrir -> 200, cotacao 'respondida', pos_cancelamento 'reaberta'; aviso a loja 4 (outra oferta), nenhum a loja 3 (a do pedido)", cR.status === 200 && dR.status === 200 && (await A.cotacaoNoBanco(pr.cotacao.id))?.status === 'respondida' && ped(pr.id)?.pos_cancelamento === 'reaberta' && sR4.some((n) => n.dados?.cotacao_id === pr.cotacao.id) && !sR3.some((n) => n.dados?.cotacao_id === pr.cotacao.id), `${mostra(cR)} | ${mostra(dR)}`);
     void r1;
   });
 
@@ -310,7 +322,7 @@ try {
     await card6.getByTestId('cancelar-enviar').click();
     const j6 = await esperar(() => ped(P6), (x) => x?.status === 'cancelado');
     const s6 = await A.esperarAviso(lojas['3'].d.id, 'pedido_peca_cancelado');
-    ok("E.4g compradora cancela pela tela (comprei noutro lugar): cancelado_por 'compradora'; loja 3 avisada; sem pendencia; nota da loja 3 intocada (D-10)", j6?.cancelado_por === 'compradora' && j6?.cancelado_motivo === 'comprei_outro' && s6.some((n) => n.dados?.pedido_id === P6) && !((await A.pendentes(S.c1)).d?.pedidos || []).some((x) => x.id === P6) && (await A.avaliacoesDe({ pedido_id: P6 })).length === 0, JSON.stringify(j6)?.slice(0, 200));
+    ok("E.4g compradora cancela pela tela (comprei noutro lugar): cancelado_por 'compradora'; loja 3 avisada; sem pendencia; nota da loja 3 intocada (D-10)", j6?.cancelado_por === 'compradora' && j6?.cancelado_motivo === 'comprei_outro' && s6.some((n) => n.dados?.pedido_id === P6) && !((await A.pendentes(S.c1)).d?.pedidos || []).some((x) => x.id === P6) && (await A.avaliacoesDe({ pedido_id: P6 })).length === 0 && Number((await A.resumoForn(S.c1, 'loja', L3.id)).linha?.nao_entregou_n || 0) === 0, JSON.stringify(j6)?.slice(0, 200));
     const P7 = (await A.pedidoV3(ofC1, L1, { descricao: 'Motivo errado' })).id;
     const w1 = await A.cancelar(P7, 'comprei_outro', S.l1), w2 = await A.cancelar(P7, 'sem_estoque', S.c1), w3 = await A.cancelar(P7, 'sem_estoque', S.l3), w4 = await A.cancelar(P7, 'comprei_outro', S.f1), w5 = await A.cancelar(P1, 'comprei_outro', S.c1);
     ok('E.4h motivo do lado errado 400 MOTIVO_INVALIDO (loja e compradora); terceiro 403; funcionario 403 (D-6); pedido entregue 409 JA_ENTREGUE', codigo(w1, 400, 'MOTIVO_INVALIDO') && codigo(w2, 400, 'MOTIVO_INVALIDO') && codigo(w3, 403) && codigo(w4, 403) && codigo(w5, 409, 'JA_ENTREGUE') && ped(P7)?.status === 'confirmado', [w1, w2, w3, w4, w5].map((x) => `${x.status}:${x.d?.codigo}`).join(' '));
@@ -610,6 +622,9 @@ try {
     const pend20 = await A.pendentes(S.c4);
     ok('E.9i P-20: compradora com o MESMO codigo de registro da loja (normalizado: "12-345-678" = "12345678") -> 409 MESMO_REGISTRO, nada gravado', codigo(a20, 409, 'MESMO_REGISTRO') && !(await A.avaliacaoDoPedido(p20.id)), mostra(a20));
     ok('E.9j ... e esse pedido NAO prende a compradora no P-7 (nao ha avaliacao possivel)', pend20.status === 200 && pend20.d?.bloqueado === false && !(pend20.d?.pedidos || []).some((x) => x.id === p20.id), mostra(pend20));
+    await A.feedback(agoraIso(25 * 3600e3));
+    await sleep(1200);
+    ok('E.9k par mesmo registro: a tarefa de lembretes tambem o exclui (lembretes_feedback continua 1, nenhum e-mail)', Number(ped(p20.id)?.lembretes_feedback) === 1 && A.emailsDe(dC4.email, t0).every((e) => !e.html.includes(p20.descricao)), String(ped(p20.id)?.lembretes_feedback));
   });
 
   // ======================= E.10: 3c Web Push do navegador =======================
@@ -643,6 +658,7 @@ try {
       const srv = http.createServer((q, s) => { let b = ''; q.on('data', (c) => { b += c; }); q.on('end', () => { recebidos.push({ url: q.url, headers: q.headers, t: Date.now() }); s.statusCode = responder; s.end(); }); });
       await new Promise((r) => srv.listen(Number(new URL(urlTeste).port), r));
       try {
+        await A.admin.from('push_navegador').delete().eq('profile_id', lojas['3'].d.id); // as 5 do E.10e receberiam push tambem
         const E2 = ep('fake');
         await inscrever(S.l1, E2);
         const n0 = recebidos.length;
@@ -669,6 +685,7 @@ try {
       const abertos = []; const ouvintes = {};
       const ctxVm = { self: { addEventListener: (t, f) => { ouvintes[t] = f; }, registration: { showNotification: async () => {} }, location: { origin: SITE } }, clients: { openWindow: async (u) => { abertos.push(u); }, matchAll: async () => [] }, URL, console };
       ctxVm.self.clients = ctxVm.clients;
+      ctxVm.addEventListener = ctxVm.self.addEventListener; ctxVm.registration = ctxVm.self.registration; // SW escrito sem "self."
       try { vm.runInNewContext(swTxt, ctxVm, { timeout: 1000 }); } catch { /* segue */ }
       const clicar = async (link) => { const ev = { notification: { data: { link }, close() {} }, waitUntil: (p) => p, action: '' }; try { await ouvintes.notificationclick?.(ev); } catch { /* segue */ } await sleep(50); };
       await clicar('https://evil.example.com/roubar'); await clicar('//evil.example.com/x'); await clicar('/loja/cotacoes');
@@ -685,6 +702,11 @@ try {
       const daL1 = fila.find((r) => r.profile_id === lojas['1'].d.id), daV = fila.find((r) => r.profile_id === dV.id);
       ok('E.11a avisos_email_pecas.fornecedor_id gravado nos dois ramos (loja 1 -> id da loja; vendedora -> id da oficina)', daL1?.fornecedor_id === L1.id && daV?.fornecedor_id === ofV.id, JSON.stringify(fila.map((r) => [r.profile_id === lojas['1'].d.id ? 'L1' : r.profile_id === dV.id ? 'V' : '?', r.fornecedor_id])).slice(0, 300));
     } else ok('E.11a fornecedor_id no log', false, 'Q9 ausente (E.9 falhou)');
+    const Qsp = await A.cotacao(ofC3, 'Fila fornecedor_id', { urgencia: 'sem_pressa', alvo: 'todos' });
+    await A.notificarFornecedores(Qsp.id, S.c3.token);
+    const filaSp = await A.avisosEmail({ cotacao_id: Qsp.id });
+    const spL1 = filaSp.find((r) => r.profile_id === lojas['1'].d.id), spV = filaSp.find((r) => r.profile_id === dV.id);
+    ok("E.11a2 ramo FILA (sem pressa): linhas 'resumo' tambem com fornecedor_id (loja 1 e vendedora)", spL1?.tipo === 'resumo' && spL1?.fornecedor_id === L1.id && spV?.tipo === 'resumo' && spV?.fornecedor_id === ofV.id, JSON.stringify(filaSp.map((r) => [r.tipo, r.fornecedor_id])).slice(0, 300));
     const Qf = await A.cotacao(ofC3, 'Falha de envio', { urgencia: 'hoje', alvo: 'so_lojas' });
     let desbloquear = null;
     try { desbloquear = pastaEmailsBloqueada(A.EMAILS); await A.notificarFornecedores(Qf.id, S.c3.token); await sleep(1500); } finally { desbloquear?.(); }
@@ -692,11 +714,15 @@ try {
     ok("E.11b imediato que FALHA vira fila: enviado_em NULL, tipo 'resumo', motivo 'falha' (sai do teto)", !!lf && lf.enviado_em === null && lf.tipo === 'resumo' && lf.motivo === 'falha', JSON.stringify(lf));
     // nao-tenho-email re-checa o alvo (oficina numa cotacao que virou "so lojas")
     if (Q9) {
-      const mV = A.emailsDe(dV.email, t0).find((e) => e.html.includes(Q9.descricao));
+      // cotacao LIMPA (a vendedora respondeu a Q9 em E.9f: JA_RESPONDEU viria antes da re-checagem do alvo)
+      const tQa = Date.now();
+      const Qa = await A.cotacao(ofC1, 'Alvo re-checado', { urgencia: 'hoje', alvo: 'todos' });
+      await A.notificarFornecedores(Qa.id, S.c1.token);
+      const mV = await A.esperarEmail(dV.email, tQa, (e) => e.html.includes(Qa.descricao), 40);
       const tokV = mV ? tokensNaoTenho(mV.html)[0]?.token : null;
-      await A.admin.from('cotacoes_pecas').update({ alvo: 'so_lojas' }).eq('id', Q9.id);
+      await A.admin.from('cotacoes_pecas').update({ alvo: 'so_lojas' }).eq('id', Qa.id);
       const rt = tokV ? await A.naoTenhoEmail({ k: tokV, acao: 'confirmar' }) : { status: 0, d: { erro: 'sem token da vendedora' } };
-      ok('E.11c "nao tenho" por e-mail de OFICINA numa cotacao "so lojas" -> 410 (alvo re-checado)', rt.status === 410 && (await A.dispensas(Q9.id)).every((x) => x.fornecedor_id !== ofV.id), mostra(rt));
+      ok('E.11c "nao tenho" por e-mail de OFICINA numa cotacao que virou "so lojas" -> 410 (alvo re-checado), nenhuma dispensa da vendedora', rt.status === 410 && (await A.dispensas(Qa.id)).every((x) => x.fornecedor_id !== ofV.id), mostra(rt));
       const mL = A.emailsDe(lojas['1'].d.email, t0).find((e) => e.html.includes(Q9.descricao));
       const tokL = mL ? tokensNaoTenho(mL.html)[0]?.token : null;
       if (tokL) {
@@ -704,11 +730,12 @@ try {
         ok('E.11d /n/<token> -> 302 com o token no FRAGMENTO (#k=), nunca na query (?k=) - nao vai ao servidor/nginx', r.status === 302 && r.location.includes(`${SLUG_NAO_TENHO.et}#k=${tokL}`) && !r.location.includes('?k='), r.location);
         const ctxN = await nav.contexto('chromium', 390, A.ip); await ctxN.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'accepted'); } catch {} });
         const urlsAnalytics = [];
-        await ctxN.route(/google-analytics|googletagmanager|clarity\.ms|facebook\.(com|net)/, (rt2) => { urlsAnalytics.push(rt2.request().url()); return rt2.abort(); });
+        // gtag/js vira um stub que grava a URL no instante em que o analytics carregaria (abortar nao provaria nada); o resto e abortado
+        await ctxN.route(/google-analytics|googletagmanager|clarity\.ms|facebook\.(com|net)/, (rt2) => { const u = rt2.request().url(); urlsAnalytics.push(u); if (/gtag\/js/.test(u)) return rt2.fulfill({ contentType: 'application/javascript', body: 'window.__hrefNoLoad = location.href;' }); return rt2.abort(); });
         const pN = await ctxN.newPage(); vigiar(pN, erros, 'E.11 /n');
         await pN.goto(`${SITE}${SLUG_NAO_TENHO.et}#k=${tokL}`, { waitUntil: 'networkidle' }).catch(() => {});
         await pN.waitForTimeout(2500);
-        ok('E.11e pagina pelo fragmento: mostra a peca e LIMPA o hash (history.replaceState) antes do analytics; nenhuma chamada de GA/Clarity leva o token', await visivel(pN.getByTestId('nao-tenho-peca')) && !pN.url().includes(tokL) && urlsAnalytics.every((u) => !u.includes(tokL) && !decodeURIComponent(u).includes(tokL)), `${pN.url()} analytics=${urlsAnalytics.length}`);
+        ok('E.11e pagina pelo fragmento: mostra a peca e LIMPA o hash (history.replaceState) antes do analytics; nenhuma chamada de GA/Clarity leva o token', await visivel(pN.getByTestId('nao-tenho-peca')) && !pN.url().includes(tokL) && urlsAnalytics.every((u) => !u.includes(tokL) && !decodeURIComponent(u).includes(tokL)) && !String(await pN.evaluate(() => window.__hrefNoLoad || '').catch(() => '')).includes(tokL), `${pN.url()} analytics=${urlsAnalytics.length} hrefNoLoad=${await pN.evaluate(() => window.__hrefNoLoad || '').catch(() => '?')}`);
         await pN.goto(`${SITE}${SLUG_NAO_TENHO.et}?k=${tokL}`, { waitUntil: 'networkidle' }).catch(() => {});
         await pN.waitForTimeout(1500);
         ok('E.11f link antigo com ?k= (e-mails ja enviados) continua aceito e sai da barra', await visivel(pN.getByTestId('nao-tenho-peca')) && !pN.url().includes(tokL), pN.url());

@@ -52,7 +52,7 @@ try {
   const dTeste = await A.conta('oficina', 'compradora-teste', { contaTeste: true }); const ofTeste = await A.oficina(dTeste, 'Compradora teste', { km: 0.7 });
   const dLojaTeste = await A.conta('loja_pecas', 'loja-teste', { contaTeste: true }); const ljTeste = await A.loja(dLojaTeste, 'Loja teste');
   const func = await A.funcionario(ofReal, 'funcionario-real');
-  const sReal = await A.sessao(dReal), sLojaReal = await A.sessao(dLojaReal), sVendReal = await A.sessao(dVendReal), sTeste = await A.sessao(dTeste), sFunc = await A.sessao(func);
+  const sReal = await A.sessao(dReal), sLojaReal = await A.sessao(dLojaReal), sVendReal = await A.sessao(dVendReal), sTeste = await A.sessao(dTeste), sLojaTeste = await A.sessao(dLojaTeste), sFunc = await A.sessao(func);
   const PECA = `Esipiduriklotsid ${A.tag}`;
   let cotId = null, pedA = null, pedB = null;
 
@@ -255,12 +255,15 @@ try {
     await ir(pM, '/ee/et/oficina/perfil', 2500);
     const n4 = await semNovos(pM);
     ok('M8e /oficina/perfil (compradora real): sem perfil-pecas-alcance-*, sem push-*', (await pM.locator('#c83a1-9').count()) === 1 && n4.vazio, n4.lista);
+    // ancora: 1 avaliacao de TESTE semeada (sem ela, 0 linhas sairia igual com uma RLS aberta)
+    if (tem.aval && tem.v3) { const pT = await A.pedidoV3(ofTeste, ljTeste, { status: 'entregue', descricao: 'Avaliacao de teste', campos: { entregue_em: new Date().toISOString() } }); await A.avaliacaoSemente(pT, ofTeste, dTeste, ljTeste, { nota: 5 }); }
     if (tem.aval) {
+      const { data: d0 } = await sTeste.c.from('fornecedores_avaliacoes').select('id').eq('fornecedor_id', ljTeste.id);
       const { data: d1, error: e1 } = await sLojaReal.c.from('fornecedores_avaliacoes').select('id');
       const { data: d2, error: e2 } = await sReal.c.from('fornecedores_avaliacoes').select('id');
-      ok('M8f REST fornecedores_avaliacoes: loja real e oficina real leem 0 linhas de fornecedores de teste (paridade)', !e1 && !e2 && (d1 || []).length === 0 && (d2 || []).length === 0, `${(d1 || []).length}/${(d2 || []).length} ${e1?.message || ''}${e2?.message || ''}`);
+      ok('M8f REST fornecedores_avaliacoes: a oficina de TESTE le a avaliacao semeada (ancora, 1); loja real e oficina real leem 0 (paridade)', (d0 || []).length === 1 && !e1 && !e2 && (d1 || []).length === 0 && (d2 || []).length === 0, `teste=${(d0 || []).length} ${(d1 || []).length}/${(d2 || []).length} ${e1?.message || ''}${e2?.message || ''}`);
     } else ok('M8f fornecedores_avaliacoes ainda nao existe: nada a conferir', true);
-    if (tem.fResumo) { const r = await A.resumoForn(sLojaReal, 'loja', ljTeste.id); ok('M8g fornecedor_resumo(loja de TESTE) chamado pela loja real -> vazio (paridade conta_teste)', !r.error && (!r.linha || r.linha.total == null || Number(r.linha.total) === 0), JSON.stringify(r)); }
+    if (tem.fResumo) { const r0 = await A.resumoForn(sLojaTeste, 'loja', ljTeste.id); const r = await A.resumoForn(sLojaReal, 'loja', ljTeste.id); ok('M8g fornecedor_resumo(loja de TESTE): pela propria loja de teste total 1 (ancora); pela loja real -> vazio (paridade conta_teste)', Number(r0.linha?.total) === 1 && !r.error && (!r.linha || r.linha.total == null || Number(r.linha.total) === 0), JSON.stringify(r)); }
     else ok('M8g fornecedor_resumo ainda nao existe: nada a conferir', true);
     // paridade: cotacao de teste nao chega a loja real
     const cotT = await A.cotacao(ofTeste, 'Cotacao de TESTE');
@@ -318,8 +321,16 @@ try {
     const respD = await A.resposta(cotD, ljReal, { preco: 11 });
     const rD = await A.confirmar(respD, sReal.token);
     ok('M10e ... e CONFIRMA (200, sem FEEDBACK_PENDENTE)', rD.status === 200 && !!rD.d?.pedidoId, `${rD.status} ${JSON.stringify(rD.d).slice(0, 160)}`);
+    // o unico dado real com a marca v3: depois do liga/desliga as telas de hoje continuam (decide o interruptor, nao o dado)
+    await ir(pM, '/ee/et/oficina/pecas', 3000);
+    const nK = await semNovos(pM);
+    const cardOn = cardCom(pM, cotOn.descricao);
+    ok('M10k tela da compradora REAL com o pedido v3 (entregue, 1 lembrete quando a 093 existe) e global OFF: cartao de hoje, sem recebi/problema/avaliar/p7', (await cardOn.count()) === 1 && nK.vazio && (!pedOn || !tem.v3 || (await cardOn.getByTestId('cotacao-status').innerText().catch(() => '')).trim() === ET('oficinaPecas.entregue')), nK.lista);
+    await ir(pL, '/ee/et/loja/pedidos', 3000);
+    const nL = await semNovos(pL);
+    ok('M10l /loja/pedidos da loja REAL com o mesmo pedido v3: sem pedido-cancelar/contato-arquivado/recebido-info, telefone da compradora como hoje', nL.vazio && (await pL.getByTestId('pedido-loja').filter({ hasText: cotOn.descricao }).innerText().catch(() => '')).includes(dReal.telefone), nL.lista);
     const pd = await A.pendentes(sReal);
-    ok(`[NOVO] M10f GET ${ROTA.pendentes} com o global desligado -> bloqueado false`, pd.status === 200 && pd.d?.bloqueado === false, `${pd.status} ${JSON.stringify(pd.d).slice(0, 160)}`);
+    ok(`[NOVO] M10f GET ${ROTA.pendentes} com o global desligado -> { bloqueado: false, pedidos: [] } (mesmo com o pedido real v3 pendente)`, pd.status === 200 && pd.d?.bloqueado === false && Array.isArray(pd.d?.pedidos) && pd.d.pedidos.length === 0, `${pd.status} ${JSON.stringify(pd.d).slice(0, 160)}`);
     if (tem.fP7) { const r = await A.pendenteRpc(sReal, ofReal.id); ok('M10g oficina_feedback_pecas_pendente(conta real, global off) = false', !r.error && r.valor === false, r.error?.message || String(r.valor)); }
     else ok('M10g funcao P-7 ainda nao existe: nada a conferir', true);
     // tarefa de lembretes: nao toca conta real com o global desligado

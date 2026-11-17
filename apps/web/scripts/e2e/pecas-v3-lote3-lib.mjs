@@ -125,9 +125,11 @@ export function ambienteL3(env) {
   const tem093 = () => temColuna('pedidos_pecas', 'v3') && A.tabelaExiste('fornecedores_avaliacoes');
 
   // pedido v3 semeado pela service role (cotacao fechada + resposta + pedido). Campos do lote 3 em `campos`.
-  const pedidoV3 = async (of, forn, { tipo = 'loja', status = 'confirmado', campos = {}, descricao = 'Pedido v3', preco = 10, v3 = true } = {}) => {
+  // `outras`: lojas que tambem ofertaram (antes de fechar), para os testes de reabrir (D-5)
+  const pedidoV3 = async (of, forn, { tipo = 'loja', status = 'confirmado', campos = {}, descricao = 'Pedido v3', preco = 10, v3 = true, outras = [] } = {}) => {
     const cot = await A.cotacao(of, descricao, { urgencia: 'hoje', alvo: tipo === 'loja' ? 'so_lojas' : 'todos' });
     const respostaId = await A.resposta(cot, forn, { tipo, preco });
+    for (const o of outras) await A.resposta(cot, o, { preco: preco + 1 });
     const { error: eF } = await admin.from('cotacoes_pecas').update({ status: 'fechada' }).eq('id', cot.id);
     if (eF) throw new Error(`fechar cotacao: ${eF.message}`);
     const linha = { cotacao_id: cot.id, resposta_id: respostaId, oficina_id: of.id, fornecedor_tipo: tipo, loja_id: tipo === 'loja' ? forn.id : null, oficina_fornecedora_id: tipo === 'oficina' ? forn.id : null, preco_total: preco, quantidade: 1, status, ...(v3 === null ? {} : { v3 }), ...campos };
@@ -183,6 +185,7 @@ export function ambienteL3(env) {
     if (criado.oficinas.length) for (const c of await lerOuVazio(admin.from('cotacoes_pecas').select('id').in('oficina_id', criado.oficinas))) cots.add(c.id);
     if (cots.size) for (const p of await lerOuVazio(admin.from('pedidos_pecas').select('id').in('cotacao_id', [...cots]))) pedIds.add(p.id);
     const peds = [...pedIds];
+    criado.pedidosTodos = peds; // para verificarLimpeza (sinos de admins pre-existentes)
     // sinos de pedido (inclusive os de admins pre-existentes: "nao entregou" avisa o admin)
     for (const id of peds) await del('notificacoes', 'dados->>pedido_id', id);
     if (peds.length) await del('fornecedores_avaliacoes', 'pedido_id', peds, 'in');
@@ -203,6 +206,8 @@ export function ambienteL3(env) {
     if (criado.lojas.length) await conta1('fornecedores_avaliacoes (lojas)', admin.from('fornecedores_avaliacoes').select('id', { count: 'exact', head: true }).in('fornecedor_id', criado.lojas));
     if (criado.contas.length) await conta1('push_navegador', admin.from('push_navegador').select('id', { count: 'exact', head: true }).in('profile_id', criado.contas));
     if (criado.pedidos.length) await conta1('pedidos_pecas', admin.from('pedidos_pecas').select('id', { count: 'exact', head: true }).in('id', criado.pedidos));
+    // sinos com dados.pedido_id de pedidos desta rodada (inclusive de admins pre-existentes: "nao entregou" avisa o admin)
+    for (const id of criado.pedidosTodos || []) await conta1(`notificacoes pedido ${id.slice(0, 8)}`, admin.from('notificacoes').select('id', { count: 'exact', head: true }).eq('dados->>pedido_id', id));
     return sobras;
   };
   const limparAoInterromper = (fecharNavegadores) => {
