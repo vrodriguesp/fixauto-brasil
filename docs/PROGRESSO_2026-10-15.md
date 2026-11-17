@@ -1340,3 +1340,8 @@ Pedido do dono (e-mail "Performance", 15/11 19:18): "Sim! E todos outros element
 - Nota (Fable 2.5): o token do link passa na URL e fica no access log do nginx por ate 72 h (uso unico) - igual ao link do cliente desde 12/11.
 - Rollback se precisar: `git checkout 9b66993` + build + restart; a 089 pode ficar (o codigo antigo funciona com a funcao nova).
 - Notas nao bloqueantes do Fable para depois: codigo morto em VerPedido (65), campo `vencido` sem uso, lista de motivos duplicada, oficina inativa ve o texto "3 dias"; envio do lembrete e sincrono (ok para o volume atual).
+
+#### 17/11 08:38 Tallinn — lembretes enviados (OK do dono no chat: "pode enviar os lembretes", "nao precisa esperar ate as 12")
+- Antes: nenhuma das 3 oficinas orcou ou dispensou 100140/100142 desde 16/11 (banco); os 2 pedidos seguem 'aberta'.
+- Admin "Lembretes de hoje": previa = A-Autokile (100140, 100142), Autokere Meister (100140, 100142), CARVEX (100140); fora: quem ja orcou (CARVEX 100133, YuMotors 100140, Janta 100142); 100130 e 100093 ausentes. Enviado: 3 e-mails, todos "enviado".
+- Conferido no banco: 5 avisos `cobranca_admin_solicitacao` com `dados.lembrete=true` e `email=enviado`; 5 links `finalidade='oficina'` (validos ate 20/11 08:38 Tallinn); auditoria `lembrar_oficinas`. Quadro "Contato com as oficinas" do 100140 mostra "lembrete (e-mail: enviado)" + "link de acesso enviado" para as 3. Sem erro no log do app.
