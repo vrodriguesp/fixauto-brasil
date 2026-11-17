@@ -43,6 +43,8 @@ async function conta(tipo) {
 }
 const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
 async function entrar(ctx, c, prefixo) {
+  // desde 12/11 o aviso de cookies no celular escurece a tela e cobre o botao: a varredura e das paginas logadas
+  await ctx.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} });
   const page = await ctx.newPage();
   await page.goto(`${SITE}/${prefixo}/login`, { waitUntil: 'networkidle' });
   await page.fill('input[type=email]', c.email);

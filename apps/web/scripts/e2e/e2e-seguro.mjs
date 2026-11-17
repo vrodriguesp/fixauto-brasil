@@ -54,7 +54,10 @@ try {
 
   // a oficina ve no pedido e na lista
   const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1223/chrome-win64/chrome.exe') });
-  const page = await (await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true })).newPage();
+  const ctxSeg = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  // desde 12/11 o aviso de cookies no celular escurece a tela e cobre o botao de entrar
+  await ctxSeg.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} });
+  const page = await ctxSeg.newPage();
   await page.goto(`${SITE}/ee/et/login`, { waitUntil: 'networkidle' });
   await page.fill('input[type=email]', emailO); await page.fill('input[type=password]', senhaO); await page.click('button[type=submit]');
   await page.waitForTimeout(4000);
