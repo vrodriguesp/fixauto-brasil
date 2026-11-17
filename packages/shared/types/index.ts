@@ -95,9 +95,14 @@ export interface Oficina {
   profile?: Profile;
 }
 
-export type StatusCotacaoPeca = 'aberta' | 'respondida' | 'fechada' | 'cancelada';
+// 'expirada' (091): cotacao vencida (7 dias), gravada so pela tarefa horaria (lote 1 de pecas)
+export type StatusCotacaoPeca = 'aberta' | 'respondida' | 'fechada' | 'cancelada' | 'expirada';
 export type StatusPedidoPeca = 'confirmado' | 'entregue' | 'cancelado';
 export type TipoFornecedorPeca = 'loja' | 'oficina';
+// lote 1 de pecas (091): pedido com ou sem carro (oleo, consumiveis), unidade da quantidade e a quem vai
+export type TipoCotacaoPeca = 'carro' | 'sem_carro';
+export type UnidadePeca = 'un' | 'jogo' | 'par' | 'litro' | 'kg' | 'metro' | 'caixa';
+export type AlvoCotacaoPeca = 'todos' | 'so_lojas';
 
 export interface LojaPecas {
   id: string;
@@ -146,6 +151,13 @@ export interface CotacaoPeca {
   fotos?: string[] | null;
   status: StatusCotacaoPeca;
   created_at: string;
+  // 091 (todas com padrao igual ao comportamento de hoje)
+  tipo?: TipoCotacaoPeca;
+  unidade?: UnidadePeca;
+  alvo?: AlvoCotacaoPeca;
+  enviar_placa?: boolean;
+  expira_em?: string;
+  reaberta_vezes?: number;
   // Joined
   oficina?: Oficina;
   respostas?: CotacaoPecaResposta[];

@@ -18,6 +18,10 @@ import { emTodasAsLinguas } from '@/lib/notif-textos';
 //    compradora tem coordenadas.
 // Conta de teste so avisa conta de teste, e conta real so conta real (regra da 063).
 // Dados lidos do banco (id da cotacao + sessao); o corpo nao decide nada.
+// Lote 1 de pecas (17/11), pelo DADO da cotacao (os padroes = hoje, entao a cotacao da
+// tela de hoje gera o mesmo aviso e o mesmo e-mail): "so lojas" nao avisa oficinas;
+// vencida (expira_em no passado) nao avisa ninguem; quantidade com unidade e "sem
+// veiculo"; a placa NUNCA vai no aviso nem no e-mail (so pela rota /api/cotacao-peca/placa).
 export async function POST(req: NextRequest) {
   try {
     const { cotacaoId } = await req.json();
@@ -30,13 +34,14 @@ export async function POST(req: NextRequest) {
     if (!userId) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     const { data: cot } = await supabaseAdmin
       .from('cotacoes_pecas')
-      .select('id, oficina_id, peca_descricao, fipe_marca, fipe_modelo, fipe_ano, quantidade, observacao, fotos, status')
+      .select('id, oficina_id, peca_descricao, fipe_marca, fipe_modelo, fipe_ano, quantidade, observacao, fotos, status, tipo, unidade, alvo, expira_em')
       .eq('id', cotacaoId)
       .maybeSingle();
     if (!cot || !(await oficinaDoUsuarioEhDona(userId, cot.oficina_id))) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
-    if (!['aberta', 'respondida'].includes(cot.status)) {
+    const vencida = !!cot.expira_em && Date.parse(cot.expira_em) < Date.now();
+    if (!['aberta', 'respondida'].includes(cot.status) || vencida) {
       return NextResponse.json({ success: true, lojasNotificadas: 0, oficinasNotificadas: 0 });
     }
     if (!dentroDoLimite(`fornecedores:${userId}`, 20, 60 * 60 * 1000)) {
@@ -53,10 +58,12 @@ export async function POST(req: NextRequest) {
 
     const pecaDescricao = cot.peca_descricao || '-';
     const oficinaCompradoraNome = compradora.nome_fantasia || '-';
-    const carro = [cot.fipe_marca, cot.fipe_modelo, cot.fipe_ano].filter(Boolean).join(' ');
-    const quantidade = cot.quantidade || 1;
+    const semCarro = cot.tipo === 'sem_carro';
+    const carro = semCarro ? '' : [cot.fipe_marca, cot.fipe_modelo, cot.fipe_ano].filter(Boolean).join(' ');
+    const quantidade = Number(cot.quantidade) || 1;
+    const unidade = cot.unidade || 'un';
     const foto = Array.isArray(cot.fotos) && cot.fotos.length ? String(cot.fotos[0]) : null;
-    const vars = (perto: boolean) => ({ peca: pecaDescricao, oficina: oficinaCompradoraNome, carro, quantidade, perto });
+    const vars = (perto: boolean) => ({ peca: pecaDescricao, oficina: oficinaCompradoraNome, carro, quantidade, unidade, semCarro, perto });
 
     // Auditoria Fable 16/11 (M-A): cada fornecedor e avisado uma vez por cotacao,
     // mesmo se a rota for chamada de novo (rede, F5) - nada de e-mail repetido.
@@ -87,6 +94,7 @@ export async function POST(req: NextRequest) {
           oficinaCompradoraNome,
           carro,
           quantidade,
+          unidade,
           observacao: cot.observacao,
           foto,
           paraLoja,
@@ -113,10 +121,11 @@ export async function POST(req: NextRequest) {
     }
 
     // ---- oficinas vizinhas que vendem sobra (precisa das coordenadas da compradora) ----
+    // "so lojas" (alvo, lote 1): nenhuma oficina e avisada
     let oficinasNotificadas = 0;
     const latitude = compradora.latitude;
     const longitude = compradora.longitude;
-    if (latitude != null && longitude != null) {
+    if (latitude != null && longitude != null && cot.alvo !== 'so_lojas') {
       // Caixa larga (100km) so pra pre-filtrar no banco; o corte de verdade e o
       // raio de atendimento de cada oficina (o mesmo da aba "Vender excedente").
       const BOUNDING_BOX_KM = 100;

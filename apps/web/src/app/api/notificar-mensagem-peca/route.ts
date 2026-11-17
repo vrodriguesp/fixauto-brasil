@@ -12,6 +12,8 @@ import { emTodasAsLinguas } from '@/lib/notif-textos';
 //  - sino: 1 aviso nao lido por conversa (se ja ha um nao lido, nao cria outro);
 //  - e-mail: no maximo 1 por conversa por hora (conta os avisos da ultima hora).
 // Quem chama tem de ser o remetente da mensagem e parte da conversa.
+// Lote 1 (17/11): conta de teste e conta real nao se avisam (a conversa de teste com uma
+// loja real nao gera sino nem e-mail para ela, e vice-versa) -> { avisado: false }.
 export async function POST(req: NextRequest) {
   try {
     const callerId = await getSessionUserId(req);
@@ -31,11 +33,11 @@ export async function POST(req: NextRequest) {
 
     const [{ data: cot }, { data: fornecedor }, { data: resposta }] = await Promise.all([
       supabaseAdmin.from('cotacoes_pecas')
-        .select('id, peca_descricao, oficina:oficinas!cotacoes_pecas_oficina_id_fkey(id, profile_id, nome_fantasia, profile:profiles!oficinas_profile_id_fkey(email, nome, idioma))')
+        .select('id, peca_descricao, oficina:oficinas!cotacoes_pecas_oficina_id_fkey(id, profile_id, nome_fantasia, profile:profiles!oficinas_profile_id_fkey(email, nome, idioma, conta_teste))')
         .eq('id', msg.cotacao_id).single(),
       msg.fornecedor_tipo === 'loja'
-        ? supabaseAdmin.from('lojas_pecas').select('id, profile_id, nome_fantasia, profile:profiles(email, nome, idioma)').eq('id', msg.fornecedor_id).maybeSingle()
-        : supabaseAdmin.from('oficinas').select('id, profile_id, nome_fantasia, profile:profiles!oficinas_profile_id_fkey(email, nome, idioma)').eq('id', msg.fornecedor_id).maybeSingle(),
+        ? supabaseAdmin.from('lojas_pecas').select('id, profile_id, nome_fantasia, profile:profiles(email, nome, idioma, conta_teste)').eq('id', msg.fornecedor_id).maybeSingle()
+        : supabaseAdmin.from('oficinas').select('id, profile_id, nome_fantasia, profile:profiles!oficinas_profile_id_fkey(email, nome, idioma, conta_teste)').eq('id', msg.fornecedor_id).maybeSingle(),
       supabaseAdmin.from('cotacoes_pecas_respostas').select('id')
         .eq('cotacao_id', msg.cotacao_id)
         .eq(msg.fornecedor_tipo === 'loja' ? 'loja_id' : 'oficina_fornecedora_id', msg.fornecedor_id)
@@ -48,6 +50,8 @@ export async function POST(req: NextRequest) {
     const souCompradora = compradora.profile_id === callerId;
     const souFornecedor = forn.profile_id === callerId;
     if (!souCompradora && !souFornecedor) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    // paridade teste x real: a conversa existe (gravada antes da 091 ou pela compradora), mas ninguem e avisado
+    if (!!compradora.profile?.conta_teste !== !!forn.profile?.conta_teste) return NextResponse.json({ success: true, avisado: false });
 
     // destinatario, nome de quem escreveu (empresa, nao a pessoa) e o link da conversa para ele
     const dest = souCompradora ? { profileId: forn.profile_id, perfil: forn.profile } : { profileId: compradora.profile_id, perfil: compradora.profile };

@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { EMAIL_I18N, WHATSAPP_I18N, SMS_I18N, resolveEmailLocale, fmt, escapeHtml, diasTexto, type EmailLocale } from './email-i18n';
+import { EMAIL_I18N, WHATSAPP_I18N, SMS_I18N, resolveEmailLocale, fmt, escapeHtml, diasTexto, quantidadeTexto, type EmailLocale } from './email-i18n';
 import { formatCurrency } from '@fixauto/shared';
 
 const resend = process.env.RESEND_API_KEY
@@ -560,6 +560,8 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
   oficinaCompradoraNome: string;
   carro?: string | null;
   quantidade?: number;
+  // lote 1 de pecas (17/11): "4,5 l"; sem unidade ou 'un' com numero inteiro = a linha de antes
+  unidade?: string | null;
   observacao?: string | null;
   foto?: string | null;
   paraLoja?: boolean;
@@ -591,7 +593,7 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 18px; font-weight: bold; color: #111827;">${escapeHtml(params.pecaDescricao)}</p>
               ${params.carro?.trim() ? linhaPeca(d.veiculo, escapeHtml(params.carro.trim())) : ''}
-              ${linhaPeca(d.quantidade, String(params.quantidade || 1))}
+              ${linhaPeca(d.quantidade, quantidadeTexto(l, params.quantidade, params.unidade))}
               ${params.observacao?.trim() ? linhaPeca(d.detalhes, escapeHtml(params.observacao.trim().slice(0, 500))) : ''}
               ${foto ? `<p style="margin: 12px 0 0;"><img src="${escapeHtml(foto)}" alt="" width="160" style="max-width: 160px; border-radius: 8px; border: 1px solid #e5e7eb;" /></p>` : ''}
             </div>
@@ -675,6 +677,7 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
   pecaDescricao: string;
   valorTotal: number;
   quantidade?: number;
+  unidade?: string | null;
   moeda?: string;
   linkInterno: string;
   contato?: { telefone?: string | null; endereco?: string | null };
@@ -713,7 +716,7 @@ export async function sendPedidoPecaConfirmadoEmail(params: {
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 13px; color: #6b7280;">${d.total}</p>
               <p style="margin: 2px 0 0; font-size: 24px; font-weight: bold; color: #111827;">${valorFormatado}</p>
-              ${linhaPeca(d.quantidade, String(params.quantidade || 1))}
+              ${linhaPeca(d.quantidade, quantidadeTexto(params.locale, params.quantidade, params.unidade))}
             </div>
             ${contatoHtml}
             <p>${s.deliveryNote}</p>

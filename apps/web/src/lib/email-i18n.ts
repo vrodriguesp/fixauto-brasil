@@ -532,6 +532,27 @@ const pecaDetalhes: Record<EmailLocale, Dict> = {
   ru: { subjectLoja: 'Новый запрос запчасти: {pecaDescricao}', headerTagLoja: 'Новый запрос запчасти', introLoja: 'Автосервису <strong>{oficinaCompradoraNome}</strong> нужно:', veiculo: 'Автомобиль', quantidade: 'Количество', detalhes: 'Подробности', total: 'Итого', contatoTitulo: 'Контакты автосервиса', telefone: 'Телефон', endereco: 'Адрес' },
 };
 
+// Lote 1 de pecas (17/11): rotulos curtos das unidades (os mesmos da tela, messages
+// pecas.unidades.*) e o numero no formato da lingua de quem recebe.
+const UNIDADES_PECA_TEXTO: Record<EmailLocale, Record<string, string>> = {
+  pt: { un: 'un', jogo: 'jg', par: 'pr', litro: 'l', kg: 'kg', metro: 'm', caixa: 'cx' },
+  'pt-PT': { un: 'un', jogo: 'jg', par: 'pr', litro: 'l', kg: 'kg', metro: 'm', caixa: 'cx' },
+  en: { un: 'pcs', jogo: 'set', par: 'pair', litro: 'l', kg: 'kg', metro: 'm', caixa: 'box' },
+  et: { un: 'tk', jogo: 'kmpl', par: 'paar', litro: 'l', kg: 'kg', metro: 'm', caixa: 'karp' },
+  it: { un: 'pz', jogo: 'kit', par: 'paio', litro: 'l', kg: 'kg', metro: 'm', caixa: 'conf.' },
+  ru: { un: 'шт.', jogo: 'компл.', par: 'пар', litro: 'л', kg: 'кг', metro: 'м', caixa: 'кор.' },
+};
+const NUMERO_LOCALE: Record<EmailLocale, string> = { pt: 'pt-BR', 'pt-PT': 'pt-PT', en: 'en-GB', et: 'et-EE', it: 'it-IT', ru: 'ru-RU' };
+
+/** Quantidade para e-mail e aviso. Unidade 'un' com numero inteiro: exatamente como antes ("2"). */
+export function quantidadeTexto(locale: string | null | undefined, quantidade: number | string | null | undefined, unidade?: string | null): string {
+  const n = Number(quantidade) || 1;
+  if ((!unidade || unidade === 'un') && Number.isInteger(n)) return String(n);
+  const l = resolveEmailLocale(locale);
+  const numero = new Intl.NumberFormat(NUMERO_LOCALE[l], { maximumFractionDigits: 2 }).format(n);
+  return `${numero} ${UNIDADES_PECA_TEXTO[l][unidade || 'un'] || unidade}`;
+}
+
 // A2 (16/11): mensagem nova na conversa de um pedido de peca. Sai no maximo uma vez
 // por hora por conversa (rota /api/notificar-mensagem-peca).
 const mensagemPeca: Record<EmailLocale, Dict> = {

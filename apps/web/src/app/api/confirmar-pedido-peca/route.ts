@@ -6,6 +6,7 @@ import { notifPedidoConfirmado, notifCotacaoPecaFechadaOutro } from '@/lib/notif
 import { currencyForCountry } from '@fixauto/shared';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
+import { telefonesComerciais } from '@/lib/pecas-v3';
 
 // B2 (16/11): a oficina compradora confirma uma oferta. Antes isso era feito do
 // navegador: o aviso para uma OFICINA vendedora era barrado pela regra de
@@ -14,6 +15,10 @@ import { emTodasAsLinguas } from '@/lib/notif-textos';
 //  2. grava pedidos_pecas com o valor total (preco x quantidade);
 //  3. avisa quem ganhou (sino + e-mail com contato da compradora - A4);
 //  4. avisa quem perdeu, sem preco (A5).
+// Lote 1 (17/11): quantidade com casas decimais (4,5 l x 10,00 = 45,00); cotacao
+// 'expirada' cai no 409 JA_FECHADA (so aberta/respondida fecha); o e-mail leva o
+// telefone comercial da compradora quando ha; conta de teste e conta real nao se
+// avisam (o pedido e gravado, mas sem sino/e-mail para o outro tipo de conta).
 export async function POST(req: NextRequest) {
   try {
     const callerId = await getSessionUserId(req);
@@ -29,8 +34,8 @@ export async function POST(req: NextRequest) {
       .from('cotacoes_pecas_respostas')
       .select(`
         id, cotacao_id, preco, fornecedor_tipo, loja_id, oficina_fornecedora_id,
-        loja:lojas_pecas(profile_id, nome_fantasia, pais, profile:profiles(email, nome, idioma)),
-        oficina_fornecedora:oficinas!cotacoes_pecas_respostas_oficina_fornecedora_id_fkey(profile_id, nome_fantasia, pais, profile:profiles!oficinas_profile_id_fkey(email, nome, idioma))
+        loja:lojas_pecas(profile_id, nome_fantasia, pais, profile:profiles(email, nome, idioma, conta_teste)),
+        oficina_fornecedora:oficinas!cotacoes_pecas_respostas_oficina_fornecedora_id_fkey(profile_id, nome_fantasia, pais, profile:profiles!oficinas_profile_id_fkey(email, nome, idioma, conta_teste))
       `)
       .eq('id', respostaId)
       .maybeSingle();
@@ -38,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     const { data: cotacao } = await supabaseAdmin
       .from('cotacoes_pecas')
-      .select('id, status, quantidade, peca_descricao, oficina:oficinas!cotacoes_pecas_oficina_id_fkey(id, profile_id, nome_fantasia, endereco, numero, cidade, pais, profile:profiles!oficinas_profile_id_fkey(telefone))')
+      .select('id, status, quantidade, unidade, peca_descricao, oficina:oficinas!cotacoes_pecas_oficina_id_fkey(id, profile_id, nome_fantasia, endereco, numero, cidade, pais, profile:profiles!oficinas_profile_id_fkey(telefone, conta_teste))')
       .eq('id', resposta.cotacao_id)
       .single();
     const compradora = (cotacao as any)?.oficina;
@@ -60,8 +65,9 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. pedido com o valor total
-    const quantidade = cotacao.quantidade || 1;
-    const precoTotal = Math.round(Number(resposta.preco) * quantidade * 100) / 100;
+    // quantidade numeric (091): chega como numero (4.5); total arredondado a 2 casas
+    const quantidade = Number(cotacao.quantidade) || 1;
+    const precoTotal = Math.round((Number(resposta.preco) * quantidade + Number.EPSILON) * 100) / 100;
     const { data: pedido, error: ePedido } = await supabaseAdmin
       .from('pedidos_pecas')
       .insert({
@@ -85,7 +91,10 @@ export async function POST(req: NextRequest) {
     // 3. quem ganhou
     const fornecedor = resposta.fornecedor_tipo === 'loja' ? (resposta.loja as any) : (resposta.oficina_fornecedora as any);
     const linkFornecedor = resposta.fornecedor_tipo === 'loja' ? '/loja/pedidos' : '/oficina/pecas?aba=vender';
-    if (fornecedor?.profile_id) {
+    // paridade teste x real (091): a RLS ja nao deixa ofertar no outro tipo de conta; aqui o resto
+    const compradoraTeste = !!compradora.profile?.conta_teste;
+    const mesmoTipo = (perfil: { conta_teste?: boolean | null } | null | undefined) => !!perfil?.conta_teste === compradoraTeste;
+    if (fornecedor?.profile_id && mesmoTipo(fornecedor.profile)) {
       const perfil = fornecedor.profile;
       const n = notifPedidoConfirmado(perfil?.idioma, compradora.nome_fantasia, cotacao.peca_descricao);
       await supabaseAdmin.from('notificacoes').insert({
@@ -97,6 +106,7 @@ export async function POST(req: NextRequest) {
       });
       if (perfil?.email) {
         const endereco = [[compradora.endereco, compradora.numero].filter(Boolean).join(' '), compradora.cidade].filter(Boolean).join(', ');
+        const telefone = (await telefonesComerciais([{ tipo: 'oficina', id: compradora.id }])).get(`oficina:${compradora.id}`) || compradora.profile?.telefone || null;
         await sendPedidoPecaConfirmadoEmail({
           toEmail: perfil.email,
           toName: perfil.nome || fornecedor.nome_fantasia || '',
@@ -104,9 +114,10 @@ export async function POST(req: NextRequest) {
           pecaDescricao: cotacao.peca_descricao,
           valorTotal: precoTotal,
           quantidade,
+          unidade: cotacao.unidade,
           moeda: currencyForCountry(fornecedor.pais || compradora.pais),
           linkInterno: linkFornecedor,
-          contato: { telefone: compradora.profile?.telefone || null, endereco },
+          contato: { telefone, endereco },
           locale: perfil.idioma || undefined,
         }).catch(() => {});
       }
@@ -115,13 +126,13 @@ export async function POST(req: NextRequest) {
     // 4. quem perdeu: so o sino, sem preco nem nome de quem ganhou
     const { data: outras } = await supabaseAdmin
       .from('cotacoes_pecas_respostas')
-      .select('id, fornecedor_tipo, loja:lojas_pecas(profile_id, profile:profiles(idioma)), oficina_fornecedora:oficinas!cotacoes_pecas_respostas_oficina_fornecedora_id_fkey(profile_id, profile:profiles!oficinas_profile_id_fkey(idioma))')
+      .select('id, fornecedor_tipo, loja:lojas_pecas(profile_id, profile:profiles(idioma, conta_teste)), oficina_fornecedora:oficinas!cotacoes_pecas_respostas_oficina_fornecedora_id_fkey(profile_id, profile:profiles!oficinas_profile_id_fkey(idioma, conta_teste))')
       .eq('cotacao_id', cotacao.id)
       .neq('id', resposta.id);
     const avisados = new Set<string>([fornecedor?.profile_id].filter(Boolean));
     for (const r of outras || []) {
       const f = r.fornecedor_tipo === 'loja' ? (r.loja as any) : (r.oficina_fornecedora as any);
-      if (!f?.profile_id || avisados.has(f.profile_id)) continue;
+      if (!f?.profile_id || avisados.has(f.profile_id) || !mesmoTipo(f.profile)) continue;
       avisados.add(f.profile_id);
       const n = notifCotacaoPecaFechadaOutro(f.profile?.idioma, cotacao.peca_descricao);
       await supabaseAdmin.from('notificacoes').insert({

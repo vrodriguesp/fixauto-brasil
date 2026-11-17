@@ -5,7 +5,7 @@
 // padrao; a maioria dos ~27 pontos que inserem em `notificacoes` ainda
 // grava texto fixo em portugues (ver docs/PROGRESSO - pendencia
 // conhecida, nao coberta nesta leva).
-import { resolveEmailLocale, fmt, diasTexto, type EmailLocale } from './email-i18n';
+import { resolveEmailLocale, fmt, diasTexto, quantidadeTexto, type EmailLocale } from './email-i18n';
 
 const novaSolicitacaoColisao: Record<EmailLocale, { titulo: string; mensagem: string }> = {
   pt: { titulo: 'Nova solicitação!', mensagem: 'Emergência - Novo pedido de reparo por colisão na sua região.' },
@@ -82,25 +82,43 @@ export function notifPedidoPecaEntregue(locale: string | null | undefined, forne
 // Pedido de peca novo (B3/M6, 16/11): vai para as lojas do pais e para as oficinas
 // vizinhas que vendem sobra. Diz qual peca, para qual carro e quantas (antes era um
 // aviso generico "uma oficina precisa de uma peca").
-const cotacaoPecaDisponivel: Record<EmailLocale, { titulo: string; tituloPerto: string; mensagem: string; carro: string }> = {
-  pt: { titulo: 'Novo pedido de peça: {peca}', tituloPerto: 'Oficina próxima precisa de: {peca}', mensagem: '{oficina} precisa de "{peca}"{carro}. Quantidade: {quantidade}.', carro: ' para {carro}' },
-  en: { titulo: 'New part request: {peca}', tituloPerto: 'A nearby shop needs: {peca}', mensagem: '{oficina} needs "{peca}"{carro}. Quantity: {quantidade}.', carro: ' for {carro}' },
-  et: { titulo: 'Uus varuosa päring: {peca}', tituloPerto: 'Lähedal asuv töökoda vajab: {peca}', mensagem: '{oficina} vajab: "{peca}"{carro}. Kogus: {quantidade}.', carro: ' (sõiduk: {carro})' },
-  it: { titulo: 'Nuova richiesta di ricambio: {peca}', tituloPerto: "Un'officina vicina cerca: {peca}", mensagem: '{oficina} cerca "{peca}"{carro}. Quantità: {quantidade}.', carro: ' per {carro}' },
-  'pt-PT': { titulo: 'Novo pedido de peça: {peca}', tituloPerto: 'Oficina próxima precisa de: {peca}', mensagem: '{oficina} precisa de "{peca}"{carro}. Quantidade: {quantidade}.', carro: ' para {carro}' },
-  ru: { titulo: 'Новый запрос запчасти: {peca}', tituloPerto: 'Автосервису рядом нужно: {peca}', mensagem: '{oficina} ищет «{peca}»{carro}. Количество: {quantidade}.', carro: ' для {carro}' },
+// Lote 1 (17/11): quantidade com unidade ("4,5 l") e "sem veiculo" (oleo, consumiveis);
+// com unidade 'un' e cotacao com carro o texto e o mesmo de antes.
+const cotacaoPecaDisponivel: Record<EmailLocale, { titulo: string; tituloPerto: string; mensagem: string; carro: string; semCarro: string }> = {
+  pt: { titulo: 'Novo pedido de peça: {peca}', tituloPerto: 'Oficina próxima precisa de: {peca}', mensagem: '{oficina} precisa de "{peca}"{carro}. Quantidade: {quantidade}.', carro: ' para {carro}', semCarro: ' (sem veículo)' },
+  en: { titulo: 'New part request: {peca}', tituloPerto: 'A nearby shop needs: {peca}', mensagem: '{oficina} needs "{peca}"{carro}. Quantity: {quantidade}.', carro: ' for {carro}', semCarro: ' (no vehicle)' },
+  et: { titulo: 'Uus varuosa päring: {peca}', tituloPerto: 'Lähedal asuv töökoda vajab: {peca}', mensagem: '{oficina} vajab: "{peca}"{carro}. Kogus: {quantidade}.', carro: ' (sõiduk: {carro})', semCarro: ' (sõidukita)' },
+  it: { titulo: 'Nuova richiesta di ricambio: {peca}', tituloPerto: "Un'officina vicina cerca: {peca}", mensagem: '{oficina} cerca "{peca}"{carro}. Quantità: {quantidade}.', carro: ' per {carro}', semCarro: ' (senza veicolo)' },
+  'pt-PT': { titulo: 'Novo pedido de peça: {peca}', tituloPerto: 'Oficina próxima precisa de: {peca}', mensagem: '{oficina} precisa de "{peca}"{carro}. Quantidade: {quantidade}.', carro: ' para {carro}', semCarro: ' (sem veículo)' },
+  ru: { titulo: 'Новый запрос запчасти: {peca}', tituloPerto: 'Автосервису рядом нужно: {peca}', mensagem: '{oficina} ищет «{peca}»{carro}. Количество: {quantidade}.', carro: ' для {carro}', semCarro: ' (без автомобиля)' },
 };
 
 export function notifCotacaoPecaDisponivel(
   locale: string | null | undefined,
-  v: { peca: string; oficina: string; carro?: string | null; quantidade: number; perto?: boolean }
+  v: { peca: string; oficina: string; carro?: string | null; quantidade: number; unidade?: string | null; semCarro?: boolean; perto?: boolean }
 ) {
   const s = cotacaoPecaDisponivel[resolveEmailLocale(locale)];
-  const carro = v.carro?.trim() ? fmt(s.carro, { carro: v.carro.trim() }) : '';
+  const carro = v.semCarro ? s.semCarro : v.carro?.trim() ? fmt(s.carro, { carro: v.carro.trim() }) : '';
   return {
     titulo: fmt(v.perto ? s.tituloPerto : s.titulo, { peca: v.peca }),
-    mensagem: fmt(s.mensagem, { oficina: v.oficina, peca: v.peca, carro, quantidade: v.quantidade }),
+    mensagem: fmt(s.mensagem, { oficina: v.oficina, peca: v.peca, carro, quantidade: quantidadeTexto(locale, v.quantidade, v.unidade) }),
   };
+}
+
+// Lote 1 (17/11): a cotacao venceu (7 dias sem escolher oferta) - aviso a compradora.
+// Diz que saiu da lista dos fornecedores e que pode ser reaberta (sem re-aviso a eles).
+const cotacaoPecaExpirada: Record<EmailLocale, { titulo: string; mensagem: string }> = {
+  pt: { titulo: 'Pedido de peça vencido', mensagem: 'O pedido "{peca}" passou de 7 dias sem oferta escolhida e saiu da lista dos fornecedores. Você pode reabri-lo por mais 7 dias em Peças.' },
+  en: { titulo: 'Part request expired', mensagem: 'The request "{peca}" passed 7 days without a chosen offer and was removed from the suppliers\' list. You can reopen it for 7 more days in Parts.' },
+  et: { titulo: 'Varuosa päring aegus', mensagem: 'Päring "{peca}" oli 7 päeva ilma valitud pakkumiseta ja eemaldati tarnijate nimekirjast. Saad selle jaotises Varuosad veel 7 päevaks uuesti avada.' },
+  it: { titulo: 'Richiesta di ricambio scaduta', mensagem: 'La richiesta "{peca}" ha superato i 7 giorni senza un\'offerta scelta ed è stata tolta dall\'elenco dei fornitori. Puoi riaprirla per altri 7 giorni in Ricambi.' },
+  'pt-PT': { titulo: 'Pedido de peça expirado', mensagem: 'O pedido "{peca}" passou 7 dias sem proposta escolhida e saiu da lista dos fornecedores. Pode reabri-lo por mais 7 dias em Peças.' },
+  ru: { titulo: 'Срок запроса запчасти истёк', mensagem: 'Запрос «{peca}» 7 дней оставался без выбранного предложения и убран из списка поставщиков. Его можно открыть снова ещё на 7 дней в разделе «Запчасти».' },
+};
+
+export function notifCotacaoPecaExpirada(locale: string | null | undefined, peca: string) {
+  const s = cotacaoPecaExpirada[resolveEmailLocale(locale)];
+  return { titulo: s.titulo, mensagem: fmt(s.mensagem, { peca }) };
 }
 
 // A5 (16/11): a oficina escolheu outra oferta. Sem preco nem nome de quem ganhou.
