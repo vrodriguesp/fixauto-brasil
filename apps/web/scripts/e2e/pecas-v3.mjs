@@ -262,7 +262,7 @@ try {
     ok(`D.2x NENHUM e-mail desta rodada (${mails.length}) contem a placa`, mails.length > 0 && vazou.length === 0, vazou.join(','));
     const { data: avs } = await A.admin.from('notificacoes').select('tipo, titulo, mensagem, dados').in('profile_id', A.criado.contas);
     const vazouSino = (avs || []).filter((n) => !semPlaca(JSON.stringify(n)));
-    ok(`D.2y NENHUM aviso (${(avs || []).length}) traz a placa em titulo/mensagem/dados`, (avs || []).length > 0 && vazouSino.length === 0, JSON.stringify(vazouSino[0]).slice(0, 200));
+    ok(`D.2y NENHUM aviso (${(avs || []).length}) traz a placa em titulo/mensagem/dados`, (avs || []).length > 0 && vazouSino.length === 0, String(JSON.stringify(vazouSino[0]) ?? '').slice(0, 200));
     const mConf = await A.esperarEmail(dLoja1.email, t3, (ee) => /40[,.]00|80[,.]00/.test(ee.html), 30);
     ok('D.2z e-mail "pedido confirmado" ao escolhido sem a placa (contato pela rota, nao pelo e-mail)', !!mConf && semPlaca(mConf.html), mConf?.assunto);
   });
@@ -506,7 +506,7 @@ try {
     const rid = await A.resposta(cotReal, lj1, { preco: 20, prazo: 1 });
     const rc = await A.confirmar(rid, S.real.token);
     await sleep(1500);
-    ok('D.7h confirmar (compradora real) com oferta de loja de TESTE: pedido gravado, mas SEM sino/e-mail para a loja de teste (paridade)', rc.status === 200 && (await A.avisos(dLoja1.id, 'pedido_peca_confirmado')).length === 0 && A.emailsDe(dLoja1.email, t7).length === 0, JSON.stringify(rc));
+    ok('D.7h confirmar (compradora real) com oferta de loja de TESTE: pedido gravado, mas SEM sino/e-mail para a loja de teste (paridade)', rc.status === 200 && (await A.avisos(dLoja1.id, 'pedido_peca_confirmado')).filter((n) => n.dados?.cotacao_id === cotReal.id).length === 0 && A.emailsDe(dLoja1.email, t7).length === 0, JSON.stringify(rc));
     // notificar-fornecedores com expira_em no passado: ninguem e avisado
     const cotVencida = await A.cotacao(ofComp, 'Vencida sem aviso', { expira_em: horasAtras(1) });
     const tV = Date.now();
