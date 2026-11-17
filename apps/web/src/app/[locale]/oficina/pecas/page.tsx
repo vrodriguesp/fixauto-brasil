@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { exemploVeiculo } from '@/lib/exemplos';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
@@ -15,13 +15,15 @@ import { usePecasV3, usePlacasDoFornecedor } from '@/hooks/use-pecas-v3';
 import { UNIDADES_PECA, TETO_REABERTURAS, lerQuantidade, numeroDaQuantidade, normalizarPlaca, placaValida, diasParaExpirar } from '@/lib/pecas-formato';
 import { totalDaOferta } from '@/lib/pecas-iva';
 import { NaoTenhoCartao, CamposRespostaV3, camposOfertaV3, textoIvaOferta } from '@/components/pecas/FornecedorV3';
+import { RecebiProblema, CancelarPedidoV3, CanceladoInfo, AvaliarForm, PosCancelamento, BannerP7, NotaOferta, ModalAvaliacoes, AvaliacoesDoFornecedor, ResumoProprio, lerResumo, chaveCondicao, chaveProblema, CONDICOES, type PedidoV3, type DadosP7, type PendenteP7, type ResumoFornecedor } from '@/components/pecas/ConfiancaV3';
 
 interface CotacaoComRespostas extends CotacaoPeca {
   respostas: (CotacaoPecaResposta & {
     loja: { nome_fantasia: string } | null;
     oficina_fornecedora: { nome_fantasia: string } | null;
   })[];
-  pedidos?: { id: string; status: string; resposta_id: string }[];
+  // lote 3: pedidos_pecas(*) - as colunas do ciclo novo (v3, recebido_em, cancelado_*...) vem junto
+  pedidos?: PedidoV3[];
 }
 
 // A1 (16/11): conversa de um fornecedor sobre um pedido (com ou sem oferta)
@@ -84,6 +86,18 @@ export default function OficinaPecasPage() {
   const [erroReabrir, setErroReabrir] = useState<{ cotacaoId: string; msg: string } | null>(null);
   // lote 2: "N fornecedores nao tem" por cotacao (a compradora le as dispensas pela RLS)
   const [naoTem, setNaoTem] = useState<Record<string, { n: number; motivos: Record<string, number> }>>({});
+  // lote 3 (so com o interruptor): P-7 (pendentes de retorno/avaliacao), avaliacoes ja feitas, formularios
+  // fechados com "Depois" nesta carga, nota dos fornecedores das ofertas, lista de avaliacoes aberta
+  const [p7, setP7] = useState<DadosP7 | null>(null);
+  const [avaliados, setAvaliados] = useState<Set<string>>(new Set());
+  const [fechados, setFechados] = useState<Set<string>>(new Set());
+  const [enviadas, setEnviadas] = useState<Set<string>>(new Set());
+  const [resumos, setResumos] = useState<Record<string, ResumoFornecedor | null>>({});
+  const [modalForn, setModalForn] = useState<{ tipo: 'loja' | 'oficina'; id: string; nome: string } | null>(null);
+  // D-5 "pedir de novo": pedido cancelado que deu origem ao formulario pre-preenchido
+  const [repetirDe, setRepetirDe] = useState<string | null>(null);
+  const resumosPedidos = useRef(new Set<string>());
+  const focoInicial = useRef(false);
 
   const buscarContatos = async (pedidoIds: string[]) => {
     if (!pedidoIds.length) return;
@@ -98,7 +112,7 @@ export default function OficinaPecasPage() {
     // tela trocava pelo esqueleto e o formulario aberto perdia o foco
     const { data } = await supabase
       .from('cotacoes_pecas')
-      .select('*, respostas:cotacoes_pecas_respostas(*, loja:lojas_pecas(nome_fantasia, pais), oficina_fornecedora:oficinas!cotacoes_pecas_respostas_oficina_fornecedora_id_fkey(nome_fantasia, pais)), pedidos:pedidos_pecas(id, status, resposta_id)')
+      .select('*, respostas:cotacoes_pecas_respostas(*, loja:lojas_pecas(nome_fantasia, pais), oficina_fornecedora:oficinas!cotacoes_pecas_respostas_oficina_fornecedora_id_fkey(nome_fantasia, pais)), pedidos:pedidos_pecas(*)')
       .eq('oficina_id', oficina.id)
       .order('created_at', { ascending: false });
     const lista = ((data as any[]) || []) as CotacaoComRespostas[];
@@ -160,6 +174,64 @@ export default function OficinaPecasPage() {
     });
   }, [v3, cotacoes]);
 
+  // lote 3: P-7 e avaliacoes ja feitas (so com a tela nova); a rota decide pelo dado (global OU teste)
+  const carregarP7 = async () => {
+    const r = await fetch('/api/pedido-peca/pendentes', { cache: 'no-store' }).catch(() => null);
+    const j = r?.ok ? await r.json().catch(() => null) : null;
+    if (j && Array.isArray(j.pedidos)) setP7(j as DadosP7);
+  };
+  useEffect(() => {
+    if (!v3 || !oficina) return;
+    const espera = setTimeout(() => {
+      carregarP7();
+      const ids = cotacoes.flatMap((c) => (c.pedidos || []).filter((p) => p.v3).map((p) => p.id));
+      if (ids.length) supabase.from('fornecedores_avaliacoes').select('pedido_id').in('pedido_id', ids.slice(0, 200)).then(({ data }) => setAvaliados(new Set(((data as any[]) || []).map((a) => a.pedido_id))));
+      // nota dos fornecedores das ofertas (1 vez por fornecedor nesta pagina)
+      const fornecedores = Array.from(new Set(cotacoes.flatMap((c) => (c.respostas || []).map((r) => `${r.fornecedor_tipo}:${r.loja_id || r.oficina_fornecedora_id}`))))
+        .filter((k) => !resumosPedidos.current.has(k)).slice(0, 40);
+      fornecedores.forEach((k) => resumosPedidos.current.add(k));
+      Promise.all(fornecedores.map(async (k) => { const [tipo, id] = k.split(':'); return [k, await lerResumo(tipo as 'loja' | 'oficina', id)] as const; }))
+        .then((lista) => { if (lista.length) setResumos((antes) => ({ ...antes, ...Object.fromEntries(lista) })); });
+    }, 250);
+    return () => clearTimeout(espera);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [v3, cotacoes, oficina]);
+  const recarregarTudo = async () => { await fetchCotacoes(); if (v3) await carregarP7(); };
+
+  // lote 3: link dos e-mails (?pedido=<id>) abre o cartao daquele pedido; "pedir de novo" (?repetir=<cotacao>)
+  // abre o formulario pre-preenchido com os dados da cotacao de origem
+  const preencherDe = (c: CotacaoComRespostas) => {
+    setForm({ ...FORM_VAZIO, peca_descricao: c.peca_descricao || '', fipe_marca: c.fipe_marca || '', fipe_modelo: c.fipe_modelo || '', fipe_ano: c.fipe_ano ? String(c.fipe_ano) : '',
+      quantidade: String(c.quantidade || 1), observacao: c.observacao || '', tipo: c.tipo === 'sem_carro' ? 'sem_carro' : 'carro', unidade: c.unidade || 'un',
+      placa: placasMinhas[c.id] || '', ocultarPlaca: c.enviar_placa === false, alvo: c.alvo === 'so_lojas' ? 'so_lojas' : 'todos',
+      urgencia: c.urgencia === 'hoje' || c.urgencia === 'amanha' ? c.urgencia : 'sem_pressa' });
+    const cancelado = (c.pedidos || []).find((p) => p.v3 && p.status === 'cancelado' && !p.pos_cancelamento);
+    setRepetirDe(cancelado?.id || null);
+    setErroCriar(null);
+    setShowForm(true);
+    setTimeout(() => document.getElementById('c8551-1')?.scrollIntoView({ block: 'center' }), 50);
+  };
+  const irAoPedido = (pedidoId: string) => {
+    setFechados((f) => { const n = new Set(f); n.delete(pedidoId); return n; });
+    setTimeout(() => document.getElementById(`pedido-${pedidoId}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 50);
+  };
+  useEffect(() => {
+    if (!v3 || focoInicial.current || !cotacoes.length) return;
+    focoInicial.current = true;
+    const busca = new URLSearchParams(window.location.search);
+    const pedidoId = busca.get('pedido');
+    if (pedidoId && /^[0-9a-f-]{36}$/i.test(pedidoId)) irAoPedido(pedidoId);
+    const repetir = busca.get('repetir');
+    const origem = repetir ? cotacoes.find((c) => c.id === repetir) : null;
+    if (origem) preencherDe(origem);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [v3, cotacoes]);
+  const pedirDeNovo = (c: CotacaoComRespostas) => {
+    try { const u = new URL(window.location.href); u.searchParams.set('repetir', c.id); window.history.pushState(window.history.state, '', u.toString()); } catch { /* so o formulario */ }
+    setTab('comprar');
+    preencherDe(c);
+  };
+
   // lote 2: "pedir peca" a partir do pedido do motorista (?solicitacao=<id>): carro e placa do pedido,
   // lidos com a RLS da oficina (so abre preenchido se ela ve o pedido); nada e gravado na cotacao
   useEffect(() => {
@@ -197,7 +269,16 @@ export default function OficinaPecasPage() {
     if (!nova) {
       setErroCriar(tp('erroCriar'));
       setSaving(false);
+      // lote 3: recusa do P-7 (42501) reabre o aviso com os pedidos a avaliar
+      if (v3) carregarP7();
       return;
+    }
+
+    // lote 3 (D-5): "pedir de novo" - o pedido cancelado guarda a escolha e a cotacao nova (so a rota grava)
+    if (v3 && repetirDe) {
+      await fetch('/api/pedido-peca/depois-do-cancelamento', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pedidoId: repetirDe, escolha: 'nova_cotacao', novaCotacaoId: nova.id }) }).catch(() => null);
+      setRepetirDe(null);
+      try { const u = new URL(window.location.href); u.searchParams.delete('repetir'); window.history.replaceState(window.history.state, '', u.toString()); } catch { /* segue */ }
     }
 
     // placa: so na tabela da compradora (nunca em cotacoes_pecas, que vai no tempo real a todos os parceiros)
@@ -251,7 +332,9 @@ export default function OficinaPecasPage() {
     }).catch(() => null);
     if (!r?.ok) {
       const j = r ? await r.json().catch(() => null) : null;
-      setErroConfirmar({ cotacaoId: cotacao.id, msg: j?.codigo === 'JA_FECHADA' ? t('pedidoJaFechado') : t('erroConfirmarPedido') });
+      setErroConfirmar({ cotacaoId: cotacao.id, msg: j?.codigo === 'JA_FECHADA' ? t('pedidoJaFechado') : j?.codigo === 'FEEDBACK_PENDENTE' ? tp('p7.confirmarBloqueado') : t('erroConfirmarPedido') });
+      // lote 3: P-7 que escapou da tela (outra aba) reabre o aviso
+      if (j?.codigo === 'FEEDBACK_PENDENTE') carregarP7();
     }
 
     setConfirmandoId(null);
@@ -290,6 +373,9 @@ export default function OficinaPecasPage() {
   // lote 2: quantidade ofertada e "peca usada" (regime de margem) no formulario de resposta
   const [respQtd, setRespQtd] = useState('');
   const [respUsada, setRespUsada] = useState(false);
+  // lote 3 (3b, P-23): condicao da peca ofertada ('' = nao informada, oferta de hoje)
+  const [respCondicao, setRespCondicao] = useState('');
+  const [resumoProprio, setResumoProprio] = useState<ResumoFornecedor | null>(null);
   // lote 1: placa das cotacoes das vizinhas, so pela rota do servidor (regra ao vivo)
   const placasVizinhas = usePlacasDoFornecedor(cotacoesVizinhas, v3);
 
@@ -297,7 +383,7 @@ export default function OficinaPecasPage() {
     if (!oficina) return;
     const { data } = await supabase
       .from('pedidos_pecas')
-      .select('id, resposta_id, preco_total, quantidade, status, created_at, cotacao:cotacoes_pecas(peca_descricao), oficina:oficinas!pedidos_pecas_oficina_id_fkey(nome_fantasia, cidade, estado)')
+      .select('*, cotacao:cotacoes_pecas!pedidos_pecas_cotacao_id_fkey(peca_descricao), oficina:oficinas!pedidos_pecas_oficina_id_fkey(nome_fantasia, cidade, estado)')
       .eq('fornecedor_tipo', 'oficina')
       .eq('oficina_fornecedora_id', oficina.id)
       .order('created_at', { ascending: false });
@@ -327,7 +413,7 @@ export default function OficinaPecasPage() {
     const [{ data: abertas }, { data: minhasRespostas }, { data: minhasDispensas }] = await Promise.all([
       supabase
         .from('cotacoes_pecas')
-        .select('*, oficina:oficinas!cotacoes_pecas_oficina_id_fkey(nome_fantasia, cidade, estado, latitude, longitude)')
+        .select('*, oficina:oficinas!cotacoes_pecas_oficina_id_fkey(nome_fantasia, cidade, estado, latitude, longitude, pais)')
         // recebe ofertas ate a oficina escolher uma (fechada): antes so 'aberta', e a
         // 1a resposta (que muda para 'respondida') escondia o pedido das outras lojas
         .in('status', ['aberta', 'respondida'])
@@ -349,10 +435,13 @@ export default function OficinaPecasPage() {
     const respostaPorCotacao = new Map((minhasRespostas || []).map((r) => [r.cotacao_id, r]));
     const dispensadas = new Set(((minhasDispensas as any[]) || []).map((d) => d.cotacao_id));
     const raio = oficina.raio_atendimento_km || 30;
+    // lote 3 (3b, N-6): alcance 'pais' = o pais inteiro, sem distancia; NULL/'raio' = raio de hoje
+    const doPais = oficina.pecas_alcance === 'pais';
     const proximas = ((abertas as any[]) || [])
       .filter((c) => {
         const o = c.oficina;
         if (dispensadas.has(c.id)) return false;
+        if (doPais) return !!o && (!o.pais || !oficina.pais || o.pais === oficina.pais);
         if (!o?.latitude || !o?.longitude) return false;
         return distanciaKm(oficina.latitude, oficina.longitude, o.latitude, o.longitude) <= raio;
       })
@@ -438,6 +527,8 @@ export default function OficinaPecasPage() {
       observacao: respostaForm.observacao || null,
       // lote 2: quantidade ofertada (NULL = a pedida) e retrato do IVA do perfil da oficina
       ...(v3 && cot ? camposOfertaV3(respQtd, Number(cot.quantidade), oficina, respUsada) : {}),
+      // lote 3 (3b): condicao da peca so com o interruptor e so quando escolhida
+      ...(v3 && respCondicao ? { condicao: respCondicao } : {}),
     });
 
     // recusada pelo banco (preco 0, prazo fora da faixa...): antes o formulario fechava em silencio
@@ -476,7 +567,14 @@ export default function OficinaPecasPage() {
     setErroResposta(null);
     setRespQtd(String(Number(c.quantidade) || 1));
     setRespUsada(false);
+    setRespCondicao('');
   };
+
+  // lote 3: "Sua nota como fornecedora" na aba Vender (so com o interruptor)
+  useEffect(() => {
+    if (!v3 || !oficina || tab !== 'vender') return;
+    lerResumo('oficina', oficina.id).then(setResumoProprio);
+  }, [v3, oficina, tab]);
 
   if (loading || !oficina) {
     return (
@@ -504,6 +602,9 @@ export default function OficinaPecasPage() {
           {t('tabVenderExcedente')}
         </button>
       </div>
+
+      {/* lote 3 (P-7): aviso amarelo antes do bloqueio / bloqueio vermelho, uma linha por pedido (as duas abas) */}
+      {v3 && <BannerP7 dados={p7} aoAvaliar={(x: PendenteP7) => { setTab('comprar'); irAoPedido(x.id); }} />}
 
       {tab === 'comprar' ? (
         <>
@@ -637,12 +738,15 @@ export default function OficinaPecasPage() {
                 </div>
               </div>
               {v3 && <p data-testid="cotacao-validade-aviso" className="mt-4 text-sm text-gray-600">{tp('vale7Dias')}</p>}
+              {v3 && p7?.bloqueado && (
+                <p role="alert" data-testid="p7-criar-bloqueado" className="mt-4 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{tp('p7.criarBloqueado')}</p>
+              )}
               {erroCriar && (
                 <p role="alert" data-testid="cotacao-erro-criar" className="mt-4 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{erroCriar}</p>
               )}
               <div className="flex justify-end gap-3 mt-6">
                 <button onClick={() => { setShowForm(false); setErroCriar(null); }} className="btn-secondary">{t('cancelar')}</button>
-                <button onClick={handleCriar} disabled={saving || !form.peca_descricao} className="btn-primary disabled:opacity-50">
+                <button onClick={handleCriar} disabled={saving || !form.peca_descricao || (v3 === true && !!p7?.bloqueado)} className="btn-primary disabled:opacity-50">
                   {saving ? t('enviando') : t('enviarCotacao')}
                 </button>
               </div>
@@ -661,8 +765,20 @@ export default function OficinaPecasPage() {
             <div className="space-y-4">
               {cotacoes.map((c) => {
                 // A3 (16/11): pedido confirmado desta cotacao (oferta escolhida, entregue ou nao)
-                const pedido = (c.pedidos || [])[0] || null;
+                // lote 3: com a tela nova e pedido v3, o pedido VIVO mais recente (o cancelado nao e mais o
+                // escolhido; numa cotacao reaberta pode haver um 2o pedido). Sem isso, o de hoje (pedidos[0]).
+                const pedidosC = (c.pedidos || []) as PedidoV3[];
+                const cardNovo = v3 === true && pedidosC.some((p) => p.v3);
+                const ordenados = cardNovo ? [...pedidosC].sort((a, b) => String(b.created_at).localeCompare(String(a.created_at))) : pedidosC;
+                const pedido = cardNovo ? (ordenados.find((p) => p.status !== 'cancelado') || null) : (pedidosC[0] || null);
                 const entregue = pedido?.status === 'entregue';
+                const falhou = (respostaId: string) => cardNovo && pedidosC.some((p) => p.status === 'cancelado' && p.resposta_id === respostaId);
+                const pendenteDe = (pedidoId: string) => p7?.pedidos.find((x) => x.id === pedidoId) || null;
+                const vencida = c.status === 'expirada' || (!!c.expira_em && Date.parse(c.expira_em) <= Date.now());
+                // blocos do ciclo novo: o pedido vivo + cancelados que ainda pedem avaliacao ou a escolha do D-5
+                const precisaAcao = (p: PedidoV3) => !!p.v3 && p.status === 'cancelado' && (!!pendenteDe(p.id) || (!p.pos_cancelamento && !pedido && p7 !== null));
+                const blocos = cardNovo ? [...(pedido?.v3 ? [pedido] : []), ...ordenados.filter((p) => p !== pedido && precisaAcao(p))] : [];
+                const ultimoCancelado = cardNovo && !pedido && !blocos.length ? ordenados.find((p) => p.v3 && p.status === 'cancelado') || null : null;
                 const contato = pedido ? contatos[pedido.id] : undefined;
                 // A1: conversas de fornecedores que ainda nao mandaram oferta
                 const comOferta = new Set((c.respostas || []).map((r) => chaveConversa(c.id, r.fornecedor_tipo, r.loja_id || r.oficina_fornecedora_id)));
@@ -703,7 +819,7 @@ export default function OficinaPecasPage() {
                         c.status === 'cancelada' || c.status === 'expirada' ? 'bg-gray-100 text-gray-600' :
                         'bg-yellow-100 text-yellow-700'
                       }`}>
-                        {c.status === 'aberta' ? t('aguardandoRespostas') : c.status === 'respondida' ? t('respondida') : c.status === 'fechada' ? (entregue ? t('entregue') : t('pedidoConfirmado')) : c.status === 'expirada' ? tp('expirada') : t('cancelada')}
+                        {c.status === 'aberta' ? t('aguardandoRespostas') : c.status === 'respondida' ? t('respondida') : c.status === 'fechada' ? (cardNovo && !pedido ? t('cancelada') : entregue ? t('entregue') : t('pedidoConfirmado')) : c.status === 'expirada' ? tp('expirada') : t('cancelada')}
                       </span>
                       <p className="text-xs text-gray-400 mt-1">{timeAgo(c.created_at, locale)}</p>
                       {v3 && ['aberta', 'respondida'].includes(c.status) && (
@@ -805,6 +921,12 @@ export default function OficinaPecasPage() {
                                 <span className="ml-1.5 inline-block whitespace-nowrap text-[10px] font-semibold text-green-800 bg-green-200 px-1.5 py-0.5 rounded-full align-middle">✓ {t('ofertaEscolhida')}</span>
                               )}
                             </p>
+                            {/* lote 3: nota do fornecedor (a partir de 3 avaliacoes; antes "novo") e a condicao da peca */}
+                            {v3 && (
+                              <NotaOferta resumo={resumos[`${r.fornecedor_tipo}:${r.loja_id || r.oficina_fornecedora_id}`]}
+                                aoVer={() => setModalForn({ tipo: r.fornecedor_tipo as 'loja' | 'oficina', id: (r.loja_id || r.oficina_fornecedora_id) as string, nome: r.loja?.nome_fantasia || r.oficina_fornecedora?.nome_fantasia || '' })} />
+                            )}
+                            {v3 && r.condicao && <p data-testid="oferta-condicao" className="text-xs text-gray-600">{tp('condicao')}: {tp(`condicoes.${chaveCondicao(r.condicao)}`)}</p>}
                             {v3 ? (
                               // lote 1: total da quantidade na unidade (preco unitario x 4,5 l); lote 2: pela
                               // quantidade OFERTADA, com a linha do IVA e "oferta parcial"
@@ -829,7 +951,13 @@ export default function OficinaPecasPage() {
                               {t('conversar')}
                               {naoLidas > 0 && <span className="min-w-[1.25rem] rounded-full bg-red-600 px-1 text-center text-[11px] font-bold leading-5 text-white" aria-label={t('mensagensNaoLidas', { n: naoLidas })}>{naoLidas}</span>}
                             </Link>
-                            {c.status !== 'fechada' && c.status !== 'expirada' && (
+                            {c.status !== 'fechada' && c.status !== 'expirada' && !falhou(r.id) && (
+                              v3 && p7?.bloqueado ? (
+                                // lote 3 (P-7, D-7): confirmar fica bloqueado ate avaliar
+                                <button type="button" data-testid="p7-confirmar-bloqueado" disabled aria-disabled="true" className="btn-primary !py-1.5 !px-3 text-sm opacity-50 cursor-not-allowed">
+                                  {tp('p7.confirmarBloqueado')}
+                                </button>
+                              ) : (
                               <button
                                 onClick={() => handleConfirmarPedido(c, r)}
                                 disabled={confirmandoId === r.id}
@@ -837,6 +965,7 @@ export default function OficinaPecasPage() {
                               >
                                 {confirmandoId === r.id ? t('confirmando') : t('confirmarPedidoBtn')}
                               </button>
+                              )
                             )}
                           </div>
                         </div>
@@ -853,6 +982,34 @@ export default function OficinaPecasPage() {
                       })}
                     </div>
                   )}
+
+                  {/* lote 3: ciclo do pedido v3 (recebi/problema, cancelar, avaliar, depois do cancelamento) */}
+                  {blocos.map((p) => {
+                    const pend = pendenteDe(p.id);
+                    const faltaAvaliacao = pend?.falta === 'avaliacao' && !enviadas.has(p.id);
+                    const semRetorno = p.status === 'confirmado' || (p.status === 'entregue' && !p.recebido_em && !p.problema);
+                    return (
+                      <div key={p.id} id={`pedido-${p.id}`} className="border-t pt-2 mt-3 scroll-mt-24">
+                        {p.recebido_em && <p className="text-sm text-gray-600">{tp('recebidoEm', { data: formatDate(p.recebido_em, locale) })}</p>}
+                        {p.problema && p.status !== 'cancelado' && <p className="text-sm text-amber-800">{tp('problemaInfo', { problema: tp(`problemas.${chaveProblema(p.problema)}`) })}</p>}
+                        {p.status === 'cancelado' && <CanceladoInfo pedido={p} />}
+                        {semRetorno && <RecebiProblema pedidoId={p.id} aoTerminar={recarregarTudo} />}
+                        {p.status === 'confirmado' && <CancelarPedidoV3 pedidoId={p.id} lado="compradora" aoTerminar={recarregarTudo} />}
+                        {faltaAvaliacao && (fechados.has(p.id) ? (
+                          <button type="button" data-testid="pedido-falta-avaliar" onClick={() => setFechados((f) => { const n = new Set(f); n.delete(p.id); return n; })}
+                            className="mt-3 px-3 py-1.5 text-sm rounded-lg border border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100">★ {tp('faltaAvaliar')}</button>
+                        ) : (
+                          <AvaliarForm pedidoId={p.id} aoFechar={() => setFechados((f) => new Set(f).add(p.id))}
+                            aoEnviar={() => { setEnviadas((e) => new Set(e).add(p.id)); setAvaliados((a) => new Set(a).add(p.id)); recarregarTudo(); }} />
+                        ))}
+                        {(enviadas.has(p.id) || (avaliados.has(p.id) && !pend)) && <p data-testid="avaliacao-enviada" className="mt-2 text-sm text-green-700">✓ {tp('avaliacao.enviada')}</p>}
+                        {p.status === 'cancelado' && !p.pos_cancelamento && !pedido && p7 !== null && !(pend && !enviadas.has(p.id)) && (
+                          <PosCancelamento pedidoId={p.id} vencida={vencida} aoReaberta={recarregarTudo} aoPedirDeNovo={() => pedirDeNovo(c)} />
+                        )}
+                      </div>
+                    );
+                  })}
+                  {ultimoCancelado && <CanceladoInfo pedido={ultimoCancelado} />}
 
                   {/* A1 (16/11): pergunta de fornecedor antes de mandar oferta */}
                   {semOferta.length > 0 && (
@@ -919,6 +1076,10 @@ export default function OficinaPecasPage() {
                       <p className="text-xs text-gray-500">
                         {p.oficina?.nome_fantasia} · {formatCurrency(p.preco_total, currencyForCountry(oficina?.pais), locale)} · {formatDate(p.created_at, locale)}
                       </p>
+                      {v3 && p.v3 && p.recebido_em && <p className="text-xs text-gray-600 mt-0.5">{tp('recebidoEm', { data: formatDate(p.recebido_em, locale) })}</p>}
+                      {v3 && p.v3 && p.problema && p.status !== 'cancelado' && <p className="text-xs text-amber-800 mt-0.5">{tp('problemaInfo', { problema: tp(`problemas.${chaveProblema(p.problema)}`) })}</p>}
+                      {v3 && p.v3 && p.status === 'cancelado' && <CanceladoInfo pedido={p} />}
+                      {v3 && p.v3 && p.status === 'confirmado' && oficina.profile_id === user?.id && <CancelarPedidoV3 pedidoId={p.id} lado="fornecedor" aoTerminar={fetchPedidosFornecedora} />}
                       {(contatos[p.id]?.telefone || contatos[p.id]?.endereco) && (
                         <p className="text-xs text-gray-600 mt-0.5">
                           {contatos[p.id]?.telefone && <a href={`tel:${contatos[p.id].telefone!.replace(/[^\d+]/g, '')}`} className="text-primary-700 underline">{contatos[p.id].telefone}</a>}
@@ -943,6 +1104,19 @@ export default function OficinaPecasPage() {
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* lote 3: "Sua nota como fornecedora" + avaliacoes (responder 1x, pedir revisao) - so com a tela nova */}
+          {v3 && (vendePecas || (resumoProprio?.total || 0) > 0) && (
+            <div className="card mb-6">
+              <h2 className="font-semibold text-gray-900 mb-2">{tp('suaNotaFornecedora')}</h2>
+              <ResumoProprio resumo={resumoProprio} testid="fornecedora-nota" />
+              {(resumoProprio?.total || 0) > 0 && (
+                <div className="mt-3">
+                  <AvaliacoesDoFornecedor tipo="oficina" id={oficina.id} podeAgir={oficina.profile_id === user?.id} aoMudar={() => lerResumo('oficina', oficina.id).then(setResumoProprio)} />
+                </div>
+              )}
             </div>
           )}
 
@@ -1015,6 +1189,19 @@ export default function OficinaPecasPage() {
                           <CamposRespostaV3 quantidadePedida={Number(c.quantidade) || 1} unidade={c.unidade} quantidade={respQtd} setQuantidade={setRespQtd}
                             usada={respUsada} setUsada={setRespUsada} preco={respostaForm.preco} perfil={oficina} moeda={currencyForCountry(oficina?.pais)} />
                         )}
+                        {v3 && (
+                          <fieldset>
+                            <legend className="block text-xs font-medium text-gray-700 mb-1">{tp('condicao')}</legend>
+                            <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                              {CONDICOES.map(([valor, chave]) => (
+                                <label key={valor} className="inline-flex items-center gap-1.5 text-sm text-gray-800">
+                                  <input type="radio" name={`resposta-condicao-${c.id}`} data-testid={`resposta-condicao-${valor}`} checked={respCondicao === valor} onChange={() => setRespCondicao(valor)} />
+                                  {tp(`condicoes.${chave}`)}
+                                </label>
+                              ))}
+                            </div>
+                          </fieldset>
+                        )}
                         {erroResposta === c.id && (
                           <p role="alert" data-testid="resposta-erro" className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{tp('respostaErro')}</p>
                         )}
@@ -1044,6 +1231,7 @@ export default function OficinaPecasPage() {
           ))}
         </>
       )}
+      {v3 && modalForn && <ModalAvaliacoes tipo={modalForn.tipo} id={modalForn.id} nome={modalForn.nome} aoFechar={() => setModalForn(null)} />}
     </div>
   );
 }

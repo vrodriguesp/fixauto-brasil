@@ -1393,6 +1393,101 @@
     "ivaNaoAplicavel": "VAT not applicable (supplier not VAT-registered)",
     "ivaMargem": "VAT not deductible — margin scheme (used part)",
     "ivaCompletePerfil": "Add your VAT details to your profile so repair shops can compare offers.",
-    "respostaErro": "Could not send. Check the price (above zero) and the delivery time and try again."
+    "respostaErro": "Could not send. Check the price (above zero) and the delivery time and try again.",
+    "recebi": "Received",
+    "recebeuPeca": "Did you get the part?",
+    "problema": "Problem",
+    "problemas": {
+      "naoEntregou": "Not delivered",
+      "pecaErrada": "Wrong part",
+      "avariada": "Damaged part",
+      "outro": "Other problem"
+    },
+    "problemaEnviar": "Send problem",
+    "problemaTexto": "Details (optional)",
+    "cancelarPedidoPeca": "Cancel order",
+    "cancelarEnviar": "Confirm cancellation",
+    "cancelarTexto": "Comment (optional)",
+    "motivosCancelamento": {
+      "semEstoque": "Out of stock",
+      "prazo": "Cannot deliver in time",
+      "compradoraPediu": "The buyer asked",
+      "compreiOutro": "Bought elsewhere",
+      "carroSaiu": "The car left the shop",
+      "erroPedido": "I ordered by mistake",
+      "naoEntregou": "Not delivered",
+      "outro": "Other reason"
+    },
+    "canceladoPor": "Cancelled by {quem}: {motivo}",
+    "canceladoPorQuem": {
+      "compradora": "the workshop",
+      "fornecedor": "the supplier",
+      "admin": "BipFix"
+    },
+    "faltaAvaliar": "This order still needs your rating",
+    "avaliacao": {
+      "titulo": "Rate the supplier",
+      "pecaCerta": "Was it the right part?",
+      "noPrazo": "Did it arrive on time?",
+      "comentario": "Comment (optional, up to 300 characters)",
+      "enviar": "Send rating",
+      "depois": "Later",
+      "enviada": "Rating sent. Thank you!",
+      "sim": "Yes",
+      "nao": "No",
+      "erro": "Could not send the rating. Please try again.",
+      "contatoNoTexto": "Remove the phone number or e-mail from the text.",
+      "estrelas": "{n} of 5"
+    },
+    "posCancelamento": {
+      "titulo": "What next?",
+      "reabrir": "Reopen for the other offers",
+      "nova": "Request again",
+      "vencida": "This request has expired: request again to get offers."
+    },
+    "p7": {
+      "aviso": "Confirm receipt and rate by {data} to keep requesting parts:",
+      "bloqueio": "To request or confirm parts, rate:",
+      "linha": "{peca} - {fornecedor} (delivered on {data})",
+      "avaliar": "Rate",
+      "confirmarBloqueado": "Rate the pending order to confirm",
+      "criarBloqueado": "To request parts, first rate the pending orders above."
+    },
+    "notaFornecedor": "Rating ★ {media} ({total})",
+    "noPrazoPct": "{pct}% on time",
+    "novoNoBipfix": "New on BipFix · {n} delivered",
+    "verAvaliacoes": "See reviews",
+    "fechar": "Close",
+    "contatoArquivado": "Contact archived (order closed over 30 days ago or cancelled)",
+    "recebidoEm": "Received on {data}",
+    "problemaInfo": "Problem reported: {problema}",
+    "suaNotaFornecedora": "Your rating as a supplier",
+    "responderAvaliacao": "Reply",
+    "denunciarAvaliacao": "Ask for review",
+    "respostaFornecedor": "Supplier reply",
+    "respostaTexto": "Your reply (public, up to 300 characters)",
+    "respostaEnviar": "Send reply",
+    "denunciaMotivo": "Why should this review be checked?",
+    "denunciaEnviar": "Send review request",
+    "denunciada": "Review request sent to BipFix",
+    "erroAcao": "Could not save. Please try again.",
+    "semAvaliacoes": "No reviews yet",
+    "condicoes": {
+      "nova": "New",
+      "sobraNova": "Unused surplus",
+      "usadaPropria": "Used, from our own car",
+      "recondicionada": "Reconditioned"
+    },
+    "condicao": "Part condition",
+    "alcance": {
+      "titulo": "How far you sell parts",
+      "pais": "The whole country (default)",
+      "raio": "Only within my service radius",
+      "ajuda": "With \"whole country\" you get requests from workshops across the country, not only nearby ones."
+    },
+    "lojaAvaliacoes": {
+      "titulo": "Reviews",
+      "vazio": "Your shop has no reviews yet. They show up here after deliveries."
+    }
   }
 }

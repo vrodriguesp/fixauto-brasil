@@ -37,6 +37,9 @@ export default function PerfilOficinaPage() {
   const ehDono = !!oficina && !!user && oficina.profile_id === user.id;
   const [fiscal, setFiscal] = useState<ValorFiscal>({ registrado: null, pct: '', margem: false });
   useEffect(() => { if (oficina) setFiscal(fiscalDoPerfil(oficina)); }, [oficina]);
+  // lote 3 (3b, N-6): alcance da vendedora; sem escolha (NULL) a tela propoe "o pais todo" e so grava ao salvar
+  const [alcance, setAlcance] = useState<'pais' | 'raio'>('pais');
+  useEffect(() => { if (oficina) setAlcance(oficina.pecas_alcance === 'raio' ? 'raio' : 'pais'); }, [oficina]);
   useEffect(() => {
     if (!v3 || !oficina) return;
     supabase.from('fornecedores_contato').select('telefone').eq('fornecedor_tipo', 'oficina').eq('fornecedor_id', oficina.id).maybeSingle()
@@ -288,6 +291,8 @@ export default function PerfilOficinaPage() {
           monitoramento_ativo: monitoramento,
           // lote 2: perfil fiscal de quem vende pecas (so o dono, so com o interruptor, so depois de preenchido)
           ...(v3 && ehDono && oficina.vende_pecas ? colunasFiscais(fiscal) || {} : {}),
+          // lote 3: alcance da vendedora (so o dono, so com o interruptor, so quem vende)
+          ...(v3 && ehDono && oficina.vende_pecas ? { pecas_alcance: alcance } : {}),
           // posicao conferida no mapa (distancia ate os clientes)
           ...(end.latitude != null && end.longitude != null ? { latitude: end.latitude, longitude: end.longitude } : {}),
           ...(end.pais ? { pais: end.pais } : {}),
@@ -588,6 +593,20 @@ export default function PerfilOficinaPage() {
             </div>
           )}
           {v3 && oficina && ehDono && oficina.vende_pecas && <PerfilFiscalCampos valor={fiscal} aoMudar={setFiscal} pais={end.pais || oficina.pais} />}
+          {v3 && oficina && ehDono && oficina.vende_pecas && (
+            <fieldset className="sm:col-span-2">
+              <legend className="block text-sm font-medium text-gray-700 mb-1">{tp('alcance.titulo')}</legend>
+              <div className="flex flex-col gap-1.5">
+                {(['pais', 'raio'] as const).map((v) => (
+                  <label key={v} className="inline-flex items-center gap-2 text-sm text-gray-800">
+                    <input type="radio" name="perfil-pecas-alcance" data-testid={`perfil-pecas-alcance-${v}`} checked={alcance === v} onChange={() => setAlcance(v)} />
+                    {tp(`alcance.${v}`)}
+                  </label>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">{tp('alcance.ajuda')}</p>
+            </fieldset>
+          )}
         </div>
       </div>
 

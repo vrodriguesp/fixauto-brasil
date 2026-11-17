@@ -12,6 +12,7 @@ import NextLink from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { contarPedidosNovos } from '@/lib/caixa-pedidos';
 import BolinhaPedidosNovos from '@/components/oficina/BolinhaPedidosNovos';
+import { usePecasV3Conhecido } from '@/hooks/use-pecas-v3';
 
 // /admin nao tem idioma: link comum. O Link do next-intl poria /pt-br na
 // frente (/pt-br/admin/oficinas -> 404) - achado no teste do admin, 30/09.
@@ -39,6 +40,10 @@ export default function Navbar() {
   // cliente no celular: menu de baixo como o da oficina, com os avisos a vista (dono 08/11)
   const { unreadCount: avisosNovos } = useNotificacoes();
   const isLoja = user?.tipo === 'loja_pecas';
+  // lote 3 de pecas: "Avaliacoes" da loja so com a tela nova (conta de teste, ou o global ja confirmado
+  // por uma pagina de pecas desta sessao); o menu nao pergunta ao servidor (o painel inicial nao gasta GET)
+  const pecasV3Conhecido = usePecasV3Conhecido();
+  const lojaVeAvaliacoes = isLoja && (!!(user as { conta_teste?: boolean } | null)?.conta_teste || pecasV3Conhecido);
   const isMecanico = funcionario?.cargo === 'mecanico';
   const dashboardPath = isAdmin
     ? '/admin/dashboard'
@@ -240,6 +245,7 @@ export default function Navbar() {
                     <NavLink href="/loja/cotacoes">{t('cotacoes')}</NavLink>
                     <NavLink href="/loja/catalogo">{t('catalogo')}</NavLink>
                     <NavLink href="/loja/pedidos">{t('pedidos')}</NavLink>
+                    {lojaVeAvaliacoes && <NavLink href="/loja/avaliacoes">{t('avaliacoes')}</NavLink>}
                     <NavLink href="/loja/aprender">🎓 {t('aprender')}</NavLink>
                   </>
                 ) : (
@@ -357,6 +363,7 @@ export default function Navbar() {
                 <MobileNavLink href="/loja/cotacoes" onClick={() => setMenuOpen(false)}>{t('cotacoes')}</MobileNavLink>
                 <MobileNavLink href="/loja/catalogo" onClick={() => setMenuOpen(false)}>{t('catalogo')}</MobileNavLink>
                 <MobileNavLink href="/loja/pedidos" onClick={() => setMenuOpen(false)}>{t('pedidos')}</MobileNavLink>
+                {lojaVeAvaliacoes && <MobileNavLink href="/loja/avaliacoes" onClick={() => setMenuOpen(false)}>{t('avaliacoes')}</MobileNavLink>}
                 <MobileNavLink href="/loja/aprender" onClick={() => setMenuOpen(false)}>🎓 {t('aprender')}</MobileNavLink>
                 <MobileNavLink href="/loja/perfil" onClick={() => setMenuOpen(false)}>{t('perfil')}</MobileNavLink>
               </>

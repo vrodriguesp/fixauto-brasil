@@ -9,6 +9,7 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import { usePecasV3 } from '@/hooks/use-pecas-v3';
 import { numeroDaQuantidade } from '@/lib/pecas-formato';
+import { CancelarPedidoV3, CanceladoInfo, chaveProblema } from '@/components/pecas/ConfiancaV3';
 
 interface PedidoRow {
   id: string;
@@ -19,6 +20,14 @@ interface PedidoRow {
   created_at: string;
   cotacao: { peca_descricao: string; unidade?: string | null } | null;
   oficina: { nome_fantasia: string; endereco?: string | null; numero?: string | null; cidade: string; estado: string } | null;
+  // lote 3 (093): ciclo do pedido v3 (NULL = pedido de hoje)
+  v3?: boolean | null;
+  recebido_em?: string | null;
+  problema?: string | null;
+  cancelado_por?: string | null;
+  cancelado_motivo?: string | null;
+  cancelado_texto?: string | null;
+  cotacao_id?: string;
 }
 
 export default function LojaPedidosPage() {
@@ -31,6 +40,8 @@ export default function LojaPedidosPage() {
   // lote 1 (17/11): telefone da compradora pela rota do servidor (o comercial dela, se houver;
   // senao o do perfil, como antes) - a loja deixa de ler o perfil da oficina direto
   const [telefones, setTelefones] = useState<Record<string, string>>({});
+  // lote 3 (P-13): contato arquivado pela rota (recebido/entregue + 30 dias, ou cancelado)
+  const [arquivados, setArquivados] = useState<Set<string>>(new Set());
   const v3 = usePecasV3();
 
   const fetchPedidos = async () => {
@@ -46,12 +57,17 @@ export default function LojaPedidosPage() {
     const lista = ((data as any[]) || []) as PedidoRow[];
     // o telefone chega junto com a lista (sem a linha aparecer sem ele e mudar depois); a rota aceita 50 por vez
     const tels: Record<string, string> = {};
+    const arq = new Set<string>();
     for (let i = 0; i < lista.length; i += 50) {
       const r = await fetch('/api/contato-pedido-peca', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pedidoIds: lista.slice(i, i + 50).map((p) => p.id) }) }).catch(() => null);
       const j = r?.ok ? await r.json().catch(() => null) : null;
-      for (const [id, c] of Object.entries((j?.contatos || {}) as Record<string, { telefone: string | null }>)) if (c?.telefone) tels[id] = c.telefone;
+      for (const [id, c] of Object.entries((j?.contatos || {}) as Record<string, { telefone?: string | null; arquivado?: boolean }>)) {
+        if (c?.telefone) tels[id] = c.telefone;
+        if (c?.arquivado) arq.add(id);
+      }
     }
     setTelefones(tels);
+    setArquivados(arq);
     setPedidos(lista);
     setLoading(false);
   };
@@ -99,6 +115,12 @@ export default function LojaPedidosPage() {
                   {p.oficina?.nome_fantasia} - {[[p.oficina?.endereco, p.oficina?.numero].filter(Boolean).join(' '), p.oficina?.cidade].filter(Boolean).join(', ')}
                   {telefones[p.id] && ` · ${telefones[p.id]}`}
                 </p>
+                {/* lote 3: so com a tela nova e em pedido v3 */}
+                {v3 && p.v3 && arquivados.has(p.id) && <p data-testid="contato-arquivado" className="text-xs text-gray-500 mt-0.5">{tp('contatoArquivado')}</p>}
+                {v3 && p.v3 && p.recebido_em && <p data-testid="pedido-recebido-info" className="text-sm text-green-700 mt-1">{tp('recebidoEm', { data: formatDate(p.recebido_em, locale) })}</p>}
+                {v3 && p.v3 && p.problema && p.status !== 'cancelado' && <p data-testid="pedido-problema-info" className="text-sm text-amber-800 mt-1">{tp('problemaInfo', { problema: tp(`problemas.${chaveProblema(p.problema)}`) })}</p>}
+                {v3 && p.v3 && p.status === 'cancelado' && <CanceladoInfo pedido={p as any} />}
+                {v3 && p.v3 && p.status === 'confirmado' && <CancelarPedidoV3 pedidoId={p.id} lado="fornecedor" aoTerminar={fetchPedidos} />}
                 <p className="text-sm text-gray-600 mt-1">
                   {t('infoLinha', {
                     preco: formatCurrency(p.preco_total, currencyForCountry(loja?.pais), locale),

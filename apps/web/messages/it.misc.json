@@ -1393,6 +1393,101 @@
     "ivaNaoAplicavel": "IVA non applicabile (fornitore non registrato)",
     "ivaMargem": "IVA non detraibile — regime del margine (ricambio usato)",
     "ivaCompletePerfil": "Completa i dati IVA nel profilo per permettere alle officine di confrontare le offerte.",
-    "respostaErro": "Invio non riuscito. Controlla il prezzo (maggiore di zero) e i tempi e riprova."
+    "respostaErro": "Invio non riuscito. Controlla il prezzo (maggiore di zero) e i tempi e riprova.",
+    "recebi": "Ricevuto",
+    "recebeuPeca": "Hai ricevuto il ricambio?",
+    "problema": "Problema",
+    "problemas": {
+      "naoEntregou": "Non consegnato",
+      "pecaErrada": "Ricambio sbagliato",
+      "avariada": "Ricambio danneggiato",
+      "outro": "Altro problema"
+    },
+    "problemaEnviar": "Invia problema",
+    "problemaTexto": "Dettagli (facoltativo)",
+    "cancelarPedidoPeca": "Annulla ordine",
+    "cancelarEnviar": "Conferma annullamento",
+    "cancelarTexto": "Commento (facoltativo)",
+    "motivosCancelamento": {
+      "semEstoque": "Non disponibile",
+      "prazo": "Non riesco nei tempi",
+      "compradoraPediu": "L’acquirente ha chiesto",
+      "compreiOutro": "Comprato altrove",
+      "carroSaiu": "L’auto ha lasciato l’officina",
+      "erroPedido": "Ho ordinato per errore",
+      "naoEntregou": "Non consegnato",
+      "outro": "Altro motivo"
+    },
+    "canceladoPor": "Annullato da {quem}: {motivo}",
+    "canceladoPorQuem": {
+      "compradora": "l’officina",
+      "fornecedor": "il fornitore",
+      "admin": "BipFix"
+    },
+    "faltaAvaliar": "Questo ordine va ancora valutato",
+    "avaliacao": {
+      "titulo": "Valuta il fornitore",
+      "pecaCerta": "Era il ricambio giusto?",
+      "noPrazo": "È arrivato in tempo?",
+      "comentario": "Commento (facoltativo, fino a 300 caratteri)",
+      "enviar": "Invia valutazione",
+      "depois": "Più tardi",
+      "enviada": "Valutazione inviata. Grazie!",
+      "sim": "Sì",
+      "nao": "No",
+      "erro": "Impossibile inviare la valutazione. Riprova.",
+      "contatoNoTexto": "Togli dal testo il telefono o l’e-mail.",
+      "estrelas": "{n} su 5"
+    },
+    "posCancelamento": {
+      "titulo": "E ora?",
+      "reabrir": "Riapri per le altre offerte",
+      "nova": "Richiedi di nuovo",
+      "vencida": "Questa richiesta è scaduta: richiedi di nuovo per ricevere offerte."
+    },
+    "p7": {
+      "aviso": "Conferma la ricezione e valuta entro il {data} per continuare a chiedere ricambi:",
+      "bloqueio": "Per chiedere o confermare ricambi, valuta:",
+      "linha": "{peca} - {fornecedor} (consegnato il {data})",
+      "avaliar": "Valuta",
+      "confirmarBloqueado": "Valuta l’ordine in sospeso per confermare",
+      "criarBloqueado": "Per chiedere ricambi, valuta prima gli ordini in sospeso qui sopra."
+    },
+    "notaFornecedor": "Voto ★ {media} ({total})",
+    "noPrazoPct": "{pct}% in tempo",
+    "novoNoBipfix": "Nuovo su BipFix · {n} consegnati",
+    "verAvaliacoes": "Vedi recensioni",
+    "fechar": "Chiudi",
+    "contatoArquivado": "Contatto archiviato (ordine chiuso da oltre 30 giorni o annullato)",
+    "recebidoEm": "Ricevuto il {data}",
+    "problemaInfo": "Problema segnalato: {problema}",
+    "suaNotaFornecedora": "Il tuo voto come fornitore",
+    "responderAvaliacao": "Rispondi",
+    "denunciarAvaliacao": "Chiedi revisione",
+    "respostaFornecedor": "Risposta del fornitore",
+    "respostaTexto": "La tua risposta (pubblica, fino a 300 caratteri)",
+    "respostaEnviar": "Invia risposta",
+    "denunciaMotivo": "Perché questa recensione va rivista?",
+    "denunciaEnviar": "Invia richiesta di revisione",
+    "denunciada": "Richiesta di revisione inviata a BipFix",
+    "erroAcao": "Impossibile salvare. Riprova.",
+    "semAvaliacoes": "Ancora nessuna recensione",
+    "condicoes": {
+      "nova": "Nuovo",
+      "sobraNova": "Eccedenza mai usata",
+      "usadaPropria": "Usato, da una nostra auto",
+      "recondicionada": "Ricondizionato"
+    },
+    "condicao": "Condizione del ricambio",
+    "alcance": {
+      "titulo": "Fin dove vendi ricambi",
+      "pais": "Tutto il paese (predefinito)",
+      "raio": "Solo nel mio raggio di servizio",
+      "ajuda": "Con \"tutto il paese\" ricevi le richieste delle officine di tutto il paese, non solo di quelle vicine."
+    },
+    "lojaAvaliacoes": {
+      "titulo": "Recensioni",
+      "vazio": "Il tuo negozio non ha ancora recensioni. Compaiono qui dopo le consegne."
+    }
   }
 }

@@ -1393,6 +1393,101 @@
     "ivaNaoAplicavel": "Käibemaks ei kohaldu (tarnija pole käibemaksukohustuslane)",
     "ivaMargem": "Käibemaks pole mahaarvatav — kasumimarginaali kord (kasutatud varuosa)",
     "ivaCompletePerfil": "Lisa profiili käibemaksu andmed, et töökojad saaksid pakkumisi võrrelda.",
-    "respostaErro": "Saatmine ebaõnnestus. Kontrolli hinda (üle nulli) ja tarneaega ning proovi uuesti."
+    "respostaErro": "Saatmine ebaõnnestus. Kontrolli hinda (üle nulli) ja tarneaega ning proovi uuesti.",
+    "recebi": "Sain kätte",
+    "recebeuPeca": "Kas varuosa jõudis kohale?",
+    "problema": "Probleem",
+    "problemas": {
+      "naoEntregou": "Jäi tarnimata",
+      "pecaErrada": "Vale varuosa",
+      "avariada": "Kahjustatud varuosa",
+      "outro": "Muu probleem"
+    },
+    "problemaEnviar": "Saada probleem",
+    "problemaTexto": "Üksikasjad (valikuline)",
+    "cancelarPedidoPeca": "Tühista tellimus",
+    "cancelarEnviar": "Kinnita tühistamine",
+    "cancelarTexto": "Kommentaar (valikuline)",
+    "motivosCancelamento": {
+      "semEstoque": "Laos pole",
+      "prazo": "Ei jõua õigeks ajaks",
+      "compradoraPediu": "Ostja palus",
+      "compreiOutro": "Ostsin mujalt",
+      "carroSaiu": "Auto lahkus töökojast",
+      "erroPedido": "Tellisin ekslikult",
+      "naoEntregou": "Jäi tarnimata",
+      "outro": "Muu põhjus"
+    },
+    "canceladoPor": "Tühistas {quem}: {motivo}",
+    "canceladoPorQuem": {
+      "compradora": "töökoda",
+      "fornecedor": "tarnija",
+      "admin": "BipFix"
+    },
+    "faltaAvaliar": "See tellimus on veel hindamata",
+    "avaliacao": {
+      "titulo": "Hinda tarnijat",
+      "pecaCerta": "Kas varuosa oli õige?",
+      "noPrazo": "Kas see jõudis õigeks ajaks?",
+      "comentario": "Kommentaar (valikuline, kuni 300 tähemärki)",
+      "enviar": "Saada hinnang",
+      "depois": "Hiljem",
+      "enviada": "Hinnang saadetud. Aitäh!",
+      "sim": "Jah",
+      "nao": "Ei",
+      "erro": "Hinnangu saatmine ebaõnnestus. Proovi uuesti.",
+      "contatoNoTexto": "Eemalda tekstist telefoninumber või e-post.",
+      "estrelas": "{n} / 5"
+    },
+    "posCancelamento": {
+      "titulo": "Mis edasi?",
+      "reabrir": "Ava uuesti teistele pakkumistele",
+      "nova": "Küsi uuesti",
+      "vencida": "See hinnapäring on aegunud: küsi uuesti, et saada pakkumisi."
+    },
+    "p7": {
+      "aviso": "Kinnita kättesaamine ja hinda hiljemalt {data}, et saaksid edasi varuosi küsida:",
+      "bloqueio": "Varuosade küsimiseks või kinnitamiseks hinda:",
+      "linha": "{peca} - {fornecedor} (tarnitud {data})",
+      "avaliar": "Hinda",
+      "confirmarBloqueado": "Kinnitamiseks hinda ootel tellimust",
+      "criarBloqueado": "Varuosade küsimiseks hinda kõigepealt ülal olevad tellimused."
+    },
+    "notaFornecedor": "Hinne ★ {media} ({total})",
+    "noPrazoPct": "{pct}% õigel ajal",
+    "novoNoBipfix": "Uus BipFixis · {n} tarnitud",
+    "verAvaliacoes": "Vaata hinnanguid",
+    "fechar": "Sulge",
+    "contatoArquivado": "Kontakt arhiveeritud (tellimus lõppes üle 30 päeva tagasi või tühistati)",
+    "recebidoEm": "Kätte saadud {data}",
+    "problemaInfo": "Teatatud probleem: {problema}",
+    "suaNotaFornecedora": "Sinu hinne tarnijana",
+    "responderAvaliacao": "Vasta",
+    "denunciarAvaliacao": "Palu üle vaadata",
+    "respostaFornecedor": "Tarnija vastus",
+    "respostaTexto": "Sinu vastus (avalik, kuni 300 tähemärki)",
+    "respostaEnviar": "Saada vastus",
+    "denunciaMotivo": "Miks tuleks see hinnang üle vaadata?",
+    "denunciaEnviar": "Saada ülevaatamise palve",
+    "denunciada": "Ülevaatamise palve saadeti BipFixile",
+    "erroAcao": "Salvestamine ebaõnnestus. Proovi uuesti.",
+    "semAvaliacoes": "Hinnanguid veel pole",
+    "condicoes": {
+      "nova": "Uus",
+      "sobraNova": "Kasutamata ülejääk",
+      "usadaPropria": "Kasutatud, meie oma autolt",
+      "recondicionada": "Taastatud"
+    },
+    "condicao": "Varuosa seisukord",
+    "alcance": {
+      "titulo": "Kui kaugele varuosi müüd",
+      "pais": "Kogu riik (vaikimisi)",
+      "raio": "Ainult minu teeninduspiirkonnas",
+      "ajuda": "Valikuga \"kogu riik\" saad päringuid töökodadelt üle kogu riigi, mitte ainult naabritelt."
+    },
+    "lojaAvaliacoes": {
+      "titulo": "Hinnangud",
+      "vazio": "Sinu pood pole veel hinnanguid saanud. Need ilmuvad siia pärast tarneid."
+    }
   }
 }

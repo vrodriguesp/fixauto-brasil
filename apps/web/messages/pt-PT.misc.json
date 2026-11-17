@@ -1393,6 +1393,101 @@
     "ivaNaoAplicavel": "IVA não aplicável (fornecedor não registado)",
     "ivaMargem": "IVA não dedutível — regime da margem (peça usada)",
     "ivaCompletePerfil": "Complete o IVA no seu perfil para a oficina comparar as propostas.",
-    "respostaErro": "Não foi possível enviar. Verifique o preço (maior que zero) e o prazo e tente novamente."
+    "respostaErro": "Não foi possível enviar. Verifique o preço (maior que zero) e o prazo e tente novamente.",
+    "recebi": "Recebi",
+    "recebeuPeca": "Recebeu a peça?",
+    "problema": "Problema",
+    "problemas": {
+      "naoEntregou": "Não foi entregue",
+      "pecaErrada": "Peça errada",
+      "avariada": "Peça danificada",
+      "outro": "Outro problema"
+    },
+    "problemaEnviar": "Enviar problema",
+    "problemaTexto": "Detalhes (opcional)",
+    "cancelarPedidoPeca": "Cancelar encomenda",
+    "cancelarEnviar": "Confirmar cancelamento",
+    "cancelarTexto": "Comentário (opcional)",
+    "motivosCancelamento": {
+      "semEstoque": "Sem stock",
+      "prazo": "Não consigo no prazo",
+      "compradoraPediu": "A compradora pediu",
+      "compreiOutro": "Comprei noutro sítio",
+      "carroSaiu": "O carro saiu da oficina",
+      "erroPedido": "Enganei-me no pedido",
+      "naoEntregou": "Não entregou",
+      "outro": "Outro motivo"
+    },
+    "canceladoPor": "Cancelado por {quem}: {motivo}",
+    "canceladoPorQuem": {
+      "compradora": "a oficina",
+      "fornecedor": "o fornecedor",
+      "admin": "a BipFix"
+    },
+    "faltaAvaliar": "Falta avaliar esta encomenda",
+    "avaliacao": {
+      "titulo": "Avalie o fornecedor",
+      "pecaCerta": "Era a peça certa?",
+      "noPrazo": "Chegou no prazo?",
+      "comentario": "Comentário (opcional, até 300 caracteres)",
+      "enviar": "Enviar avaliação",
+      "depois": "Depois",
+      "enviada": "Avaliação enviada. Obrigado!",
+      "sim": "Sim",
+      "nao": "Não",
+      "erro": "Não foi possível enviar a avaliação. Tente novamente.",
+      "contatoNoTexto": "Retire o telefone ou o e-mail do texto.",
+      "estrelas": "{n} de 5"
+    },
+    "posCancelamento": {
+      "titulo": "E agora?",
+      "reabrir": "Reabrir para as outras ofertas",
+      "nova": "Pedir novamente",
+      "vencida": "Esta cotação já expirou: peça novamente para receber ofertas."
+    },
+    "p7": {
+      "aviso": "Confirme a receção e avalie até {data} para continuar a pedir peças:",
+      "bloqueio": "Para pedir ou confirmar peças, avalie:",
+      "linha": "{peca} - {fornecedor} (entregue a {data})",
+      "avaliar": "Avaliar",
+      "confirmarBloqueado": "Avalie a encomenda pendente para confirmar",
+      "criarBloqueado": "Para pedir peças, avalie primeiro as encomendas pendentes acima."
+    },
+    "notaFornecedor": "Nota ★ {media} ({total})",
+    "noPrazoPct": "{pct}% no prazo",
+    "novoNoBipfix": "Novo na BipFix · {n} entregues",
+    "verAvaliacoes": "Ver avaliações",
+    "fechar": "Fechar",
+    "contatoArquivado": "Contacto arquivado (encomenda encerrada há mais de 30 dias ou cancelada)",
+    "recebidoEm": "Recebido a {data}",
+    "problemaInfo": "Problema indicado: {problema}",
+    "suaNotaFornecedora": "A sua nota como fornecedora",
+    "responderAvaliacao": "Responder",
+    "denunciarAvaliacao": "Pedir revisão",
+    "respostaFornecedor": "Resposta do fornecedor",
+    "respostaTexto": "A sua resposta (pública, até 300 caracteres)",
+    "respostaEnviar": "Enviar resposta",
+    "denunciaMotivo": "Porque deve esta avaliação ser revista?",
+    "denunciaEnviar": "Enviar pedido de revisão",
+    "denunciada": "Pedido de revisão enviado à BipFix",
+    "erroAcao": "Não foi possível guardar. Tente novamente.",
+    "semAvaliacoes": "Ainda sem avaliações",
+    "condicoes": {
+      "nova": "Nova",
+      "sobraNova": "Sobra nova (sem uso)",
+      "usadaPropria": "Usada, de um carro nosso",
+      "recondicionada": "Recondicionada"
+    },
+    "condicao": "Estado da peça",
+    "alcance": {
+      "titulo": "Até onde vende peças",
+      "pais": "Todo o país (padrão)",
+      "raio": "Só no meu raio de atendimento",
+      "ajuda": "Com \"todo o país\" recebe os pedidos das oficinas de todo o país, não só das vizinhas."
+    },
+    "lojaAvaliacoes": {
+      "titulo": "Avaliações",
+      "vazio": "A sua loja ainda não recebeu avaliações. Aparecem aqui depois das entregas."
+    }
   }
 }

@@ -1,12 +1,16 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { createContext, createElement, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useAuth } from '@/lib/auth-context';
 
 // Lote 1 de pecas (17/11): a tela nova vale para esta sessao? (GET /api/pecas-v3 =
 // interruptor global OU conta de teste - lib/pecas-v3.ts). null enquanto nao sabe:
 // as telas esperam a resposta antes de desenhar o formulario e os cartoes, para
 // nao mostrar a tela de hoje por meio segundo e trocar. Erro de rede = tela de hoje.
 // Lote 2 (veredito do lote 1): a rota travada vira "tela de hoje" em 8 s (antes, esqueleto eterno).
+// Lote 3 (item 3 do Fable, lote 2): PecasV3Provider nos layouts da oficina e da loja - 1 GET por sessao,
+// LAZY (so no 1o usePecasV3 de uma pagina que precisa; o painel inicial nao pergunta). Sem o provider
+// (outras areas) cada pagina pergunta como antes.
 const ESPERA_MAXIMA_MS = 8000;
 const sinalComPrazo = (ms: number): AbortSignal | undefined => {
   if (typeof AbortSignal !== 'undefined' && typeof (AbortSignal as any).timeout === 'function') return (AbortSignal as any).timeout(ms);
@@ -16,19 +20,67 @@ const sinalComPrazo = (ms: number): AbortSignal | undefined => {
   return c.signal;
 };
 
-export function usePecasV3(): boolean | null {
-  const [ativo, setAtivo] = useState<boolean | null>(null);
-  useEffect(() => {
-    let vivo = true;
+/** pergunta ao servidor (com o prazo de 8 s); erro ou demora = false (tela de hoje) */
+function perguntar(): Promise<boolean> {
+  return new Promise((resolve) => {
+    let feito = false;
+    const fim = (v: boolean) => { if (!feito) { feito = true; resolve(v); } };
     // garantia extra: mesmo que o navegador ignore o sinal, a tela de hoje aparece no prazo
-    const prazo = setTimeout(() => { if (vivo) setAtivo((a) => (a === null ? false : a)); }, ESPERA_MAXIMA_MS + 200);
+    setTimeout(() => fim(false), ESPERA_MAXIMA_MS + 200);
     fetch('/api/pecas-v3', { cache: 'no-store', signal: sinalComPrazo(ESPERA_MAXIMA_MS) })
       .then((r) => (r.ok ? r.json() : null))
-      .then((j) => { if (vivo) setAtivo((a) => (a === null ? j?.ativo === true : a)); })
-      .catch(() => { if (vivo) setAtivo((a) => (a === null ? false : a)); });
-    return () => { vivo = false; clearTimeout(prazo); };
-  }, []);
-  return ativo;
+      .then((j) => fim(j?.ativo === true))
+      .catch(() => fim(false));
+  });
+}
+
+// o menu (fora dos layouts) mostra os links novos quando ja se sabe que a tela nova vale
+const ouvintes = new Set<(v: boolean) => void>();
+let conhecidoAtivo = false;
+function anunciar(v: boolean) { conhecidoAtivo = v; ouvintes.forEach((f) => f(v)); }
+export function usePecasV3Conhecido(): boolean {
+  const [v, setV] = useState(conhecidoAtivo);
+  useEffect(() => { ouvintes.add(setV); return () => { ouvintes.delete(setV); }; }, []);
+  return v;
+}
+
+type Ctx = { ativo: boolean | null; pedir: () => void };
+const PecasV3Contexto = createContext<Ctx | null>(null);
+
+export function PecasV3Provider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+  const [ativo, setAtivo] = useState<boolean | null>(null);
+  // usuario para quem ja perguntou (null = ainda nao perguntou; '' = antes do login carregar na tela:
+  // a rota responde pela sessao do cookie, entao vale para quem chegar)
+  const pedido = useRef<string | null>(null);
+  const rodada = useRef(0);
+  const usuario = user?.id || '';
+  useEffect(() => {
+    if (!usuario || pedido.current === null) return;
+    if (pedido.current === '') { pedido.current = usuario; return; }
+    // troca de conta na mesma aba: pergunta de novo
+    if (pedido.current !== usuario) { pedido.current = null; rodada.current++; setAtivo(null); }
+  }, [usuario]);
+  const pedir = useCallback(() => {
+    if (pedido.current !== null) return;
+    pedido.current = usuario;
+    const minha = ++rodada.current;
+    perguntar().then((v) => { if (rodada.current === minha) { setAtivo(v); anunciar(v); } });
+  }, [usuario]);
+  return createElement(PecasV3Contexto.Provider, { value: { ativo, pedir } }, children);
+}
+
+export function usePecasV3(): boolean | null {
+  const ctx = useContext(PecasV3Contexto);
+  const [local, setLocal] = useState<boolean | null>(null);
+  useEffect(() => {
+    if (ctx) { ctx.pedir(); return; }
+    let vivo = true;
+    perguntar().then((v) => { if (vivo) setLocal((a) => (a === null ? v : a)); });
+    return () => { vivo = false; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ctx?.pedir]);
+  return ctx ? ctx.ativo : local;
 }
 
 // Placa das cotacoes que o FORNECEDOR ve (loja e aba "Vender"): so pela rota do servidor,
