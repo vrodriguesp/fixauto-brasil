@@ -10,6 +10,8 @@ import crypto from 'node:crypto';
 import { ambiente, naoExiste, psql, SITE, sleep, normalizarEmail, RESULTADOS, NOVOS_TESTIDS } from './pecas-v3-lib.mjs';
 export * from './pecas-v3-lib.mjs';
 
+let desbloquearPendente = null; // pastaEmailsBloqueada(): restauro pendente (SIGINT / saida)
+
 // ---------------- contrato do lote 2: nomes ----------------
 export const ROTA_RESUMO = '/api/tarefas/resumo-cotacoes-pecas';
 export const ROTA_NAO_TENHO_EMAIL = '/api/cotacao-peca/nao-tenho-email';
@@ -124,7 +126,9 @@ export function ambienteL2(env) {
   // rotas novas
   const resumo = (agora, chave = env.TAREFAS_CHAVE) => A.api('POST', ROTA_RESUMO, agora ? { agora } : {}, null, { 'x-tarefa-chave': chave });
   const naoTenhoEmail = (corpo, ip) => A.api('POST', ROTA_NAO_TENHO_EMAIL, corpo, null, ip ? { 'x-real-ip': ip } : {});
-  const get302 = async (caminho, ip) => { const r = await fetch(`${SITE}${caminho}`, { redirect: 'manual', headers: { 'x-real-ip': ip || A.ip() } }); return { status: r.status, location: r.headers.get('location') || '' }; };
+  const get302 = async (caminho, ip) => { const r = await fetch(`${SITE}${caminho}`, { redirect: 'manual', headers: { 'x-real-ip': ip || A.ip() } }); return { status: r.status, location: r.headers.get('location') || '', cacheControl: r.headers.get('cache-control') || '', setCookie: r.headers.get('set-cookie') || '' }; };
+  // POST cru (para ler cabecalhos: Cache-Control, Set-Cookie)
+  const postCru = async (rota, corpo, ip) => { const r = await fetch(`${SITE}${rota}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip || A.ip() }, body: JSON.stringify(corpo) }); return { status: r.status, cacheControl: r.headers.get('cache-control') || '', setCookie: r.headers.get('set-cookie') || '', d: await r.json().catch(() => ({})) }; };
 
   // leituras das tabelas novas (service role); tabela ausente = []
   const lerOuVazio = async (q) => { const { data, error } = await q; if (error && !naoExiste(error)) throw new Error(error.message); return data || []; };
@@ -167,6 +171,7 @@ export function ambienteL2(env) {
     for (const sinal of ['SIGINT', 'SIGTERM']) process.on(sinal, async () => {
       if (limpando) return; limpando = true;
       console.log(`\n${sinal}: limpando o que esta rodada criou antes de sair...`);
+      desbloquearPendente?.(); // pasta de e-mails de volta antes de tudo
       try { await fecharNavegadores?.(); } catch { /* segue */ }
       const erros = await limpar();
       console.log(erros.length ? `limpeza com erros: ${erros.join(' | ')}` : 'limpeza ok');
@@ -174,15 +179,28 @@ export function ambienteL2(env) {
     });
   };
 
-  return { ...A, temSimulacao, cliente, solicitacao, funcionario, resumo, naoTenhoEmail, get302, dispensas, avisosEmail, tokensEmail, tokenNoBanco, sinoDisponivel, inserirDispensa, limpar, verificarLimpeza, limparAoInterromper };
+  return { ...A, temSimulacao, cliente, solicitacao, funcionario, resumo, naoTenhoEmail, get302, postCru, dispensas, avisosEmail, tokensEmail, tokenNoBanco, sinoDisponivel, inserirDispensa, limpar, verificarLimpeza, limparAoInterromper };
 }
 
-// o site escreve o e-mail numa pasta; para simular falha de envio a pasta vira um ARQUIVO (mkdir falha)
+// o site escreve o e-mail numa pasta; para simular falha de envio a pasta vira um ARQUIVO (mkdir falha).
+// So a pasta de _teste_local; o desbloqueio fica pendente em modulo e roda tambem no SIGINT e na saida
+// do processo (uma pasta deixada como arquivo faria toda rodada seguinte perder os e-mails).
 export function pastaEmailsBloqueada(EMAILS) {
+  if (!/_teste_local/.test(String(EMAILS))) throw new Error('TESTE LOCAL: so bloqueio a pasta de e-mails de _teste_local');
+  if (desbloquearPendente) throw new Error('pasta de e-mails ja esta bloqueada');
   const bak = `${EMAILS}.bloqueada-${Date.now()}`;
   fs.renameSync(EMAILS, bak);
   fs.writeFileSync(EMAILS, 'pasta bloqueada pelo teste pecas-v3-lote2 (simula falha de envio)');
-  return () => { try { fs.rmSync(EMAILS, { force: true }); } catch { /* ja */ } fs.renameSync(bak, EMAILS); };
+  const desbloquear = () => {
+    if (desbloquearPendente !== desbloquear) return;
+    desbloquearPendente = null;
+    try { fs.rmSync(EMAILS, { force: true }); } catch { /* ja */ }
+    try { fs.renameSync(bak, EMAILS); } catch (e) { console.log(`AVISO: nao consegui restaurar a pasta de e-mails (${e.message}); copia em ${bak}`); }
+  };
+  desbloquearPendente = desbloquear;
+  return desbloquear;
 }
+export const desbloquearPastaEmails = () => { desbloquearPendente?.(); };
+process.on('exit', () => { desbloquearPendente?.(); });
 export const sleepMs = sleep;
 export const sqlLocal = psql;

@@ -13,7 +13,8 @@
 //   L7 [NOVO] /n/<token> 302 + 410 sem escrever | L8 [NOVO] seguranca/qualidade independente do interruptor
 //   L9 paridade: loja real nao recebe nada (sino, e-mail, fila, token) de cotacao de teste
 // Referencias em resultados/pecas-v3/: gravadas SO com PECAS_V3_GRAVAR_REFERENCIA=1 (codigo de hoje);
-// sem o arquivo e sem a variavel o check FALHA. Ctrl+C limpa. Nao rodar junto com as outras suites.
+// sem o arquivo e sem a variavel o check FALHA. Ctrl+C limpa. Nao rodar junto com as outras suites,
+// nem entre 23:55 e 00:05 Europe/Tallinn (o teto diario de e-mails vira a meia-noite de Tallinn).
 //   node pecas-v3-lote2-desligado.mjs [<.env.local>]
 import { lerEnv, ambienteL2, abrirNavegadores, contador, tradutor, SITE, ENV_PADRAO, siteNoAr, semRolagemLateral, vigiar, entrarPelaTela, ir, visivel, semChaveCrua, botao, normalizarEmail, normalizarSino, compararReferencia, semTestidsNovosL2, REFERENCIA_EMAIL, REFERENCIA_EMAIL_PEDIDO, REFERENCIA_EMAIL_RESPONDIDA, REFERENCIA_SINO_DISPONIVEL, REFERENCIA_SINO_RESPONDIDA, PRINTS, sleep, horasAtras, DIA_MS, psql, tallinnEmUtc, proximoDiaUtilTallinn, slotDe, SLUG_NAO_TENHO, ROTA_RESUMO, ROTA_NAO_TENHO_EMAIL, ROTA_TAREFA } from './pecas-v3-lote2-lib.mjs';
 
@@ -105,6 +106,16 @@ try {
     await pM.waitForTimeout(1200);
     const n = await semNovos(pM);
     ok('L2k cartao da compradora como hoje ("Kogus: 2"), sem elementos novos', (await cardCom(pM, PECA).count()) === 1 && /Kogus:\s*2\b/.test(await cardCom(pM, PECA).innerText()) && n.vazio, n.lista);
+    // aba Vender da vizinha real: cartao de hoje, sem "nao tenho"/quantidade ofertada/IVA
+    const ctxV = await nav.contexto('chromium', 390, A.ip); const pV = await ctxV.newPage(); vigiar(pV, erros, 'L2l vizinha');
+    await entrarPelaTela(pV, '/ee/et', dVendReal);
+    await ir(pV, '/ee/et/oficina/pecas?aba=vender', 3500);
+    const cv = cartaoLoja(pV, PECA);
+    await botao(cv, ET('oficinaPecas.responderCotacao')).click().catch(() => {});
+    const nV = await semNovos(pV);
+    ok('L2l aba Vender da vizinha real (formulario de resposta aberto): cartao de hoje, sem NENHUM testid novo', (await cv.count()) === 1 && (await pV.locator('#c8551-6').isVisible().catch(() => false)) && nV.vazio, nV.lista);
+    await pV.screenshot({ path: `${PRINTS}/lote2-desligado-vender-et-390.png`, fullPage: true });
+    await ctxV.close();
   });
 
   // ======================= L3: loja responde pela tela de hoje -> e-mail "respondida" + sino = referencia =======================
@@ -221,7 +232,8 @@ try {
     if (eX) throw new Error('expirada: ' + eX.message);
     await ir(pM, '/ee/et/oficina/pecas', 3000);
     const card = cardCom(pM, cot3.descricao);
-    ok('[NOVO] L8c cotacao real "expirada" com o global desligado: badge pecas.expirada e botao reabrir (sem outro elemento novo)', (await card.getByTestId('cotacao-status').innerText().catch(() => '')).trim() === ET('pecas.expirada') && await visivel(card.getByTestId('cotacao-reabrir')), (await card.innerText().catch(() => '')).slice(0, 120));
+    const outrosNovos = (await semTestidsNovosL2(pM)).filter((t) => t !== 'cotacao-reabrir');
+    ok('[NOVO] L8c cotacao real "expirada" com o global desligado: badge pecas.expirada e botao reabrir (sem outro elemento novo)', (await card.getByTestId('cotacao-status').innerText().catch(() => '')).trim() === ET('pecas.expirada') && await visivel(card.getByTestId('cotacao-reabrir')) && outrosNovos.length === 0, `${(await card.innerText().catch(() => '')).slice(0, 120)} ${outrosNovos.join(',')}`);
     await card.getByTestId('cotacao-reabrir').click().catch(() => {});
     let c = null; for (let i = 0; i < 30; i++) { c = await A.cotacaoNoBanco(cot3.id); if (c?.status !== 'expirada') break; await sleep(300); }
     ok("[NOVO] L8d reabrir funciona sem v3: volta a 'aberta', reaberta_vezes 1", c?.status === 'aberta' && c?.reaberta_vezes === 1, JSON.stringify(c));
@@ -240,15 +252,15 @@ try {
     // timeout do hook: /api/pecas-v3 travado -> tela de hoje em ate 8 s (hoje: esqueleto eterno)
     const ctxT = await nav.contexto('chromium', 390, A.ip); const pT = await ctxT.newPage(); vigiar(pT, erros, 'L8g');
     await entrarPelaTela(pT, '/ee/et', dReal);
-    await ctxT.route('**/api/pecas-v3*', async (r) => { await sleep(15000); await r.abort().catch(() => {}); });
-    const inicio = Date.now();
+    let tReq = 0; // o timeout de 8 s do hook conta a partir do pedido, nao do goto
+    await ctxT.route('**/api/pecas-v3*', async (r) => { tReq = tReq || Date.now(); await sleep(15000); await r.abort().catch(() => {}); });
     await pT.goto(`${SITE}/ee/et/oficina/pecas`, { waitUntil: 'domcontentloaded' });
     // o botao "nova cotacao" aparece antes da resposta; o FORMULARIO (de hoje ou novo) so depois dela
     await botao(pT, ET('oficinaPecas.novaCotacao')).click({ timeout: 15000 });
-    const apareceu = await pT.locator('#c8551-1').waitFor({ state: 'visible', timeout: 9500 }).then(() => true, () => false);
-    const demorou = (Date.now() - inicio) / 1000;
+    const apareceu = await pT.locator('#c8551-1').waitFor({ state: 'visible', timeout: 10500 }).then(() => true, () => false);
+    const demorou = tReq ? (Date.now() - tReq) / 1000 : -1;
     const formAntigo = apareceu && (await pT.getByTestId('cotacao-tipo-carro').count()) === 0;
-    ok('[NOVO] L8g /api/pecas-v3 travado: o formulario de hoje aparece em ate ~8 s (timeout do hook), nunca o novo', apareceu && formAntigo && demorou < 9.8, `formulario=${apareceu} antigo=${formAntigo} em ${demorou.toFixed(1)}s`);
+    ok('[NOVO] L8g /api/pecas-v3 travado: o formulario de hoje aparece entre 7 e 9,8 s depois do pedido (timeout do hook), nunca o novo', apareceu && formAntigo && demorou >= 7 && demorou < 9.8, `formulario=${apareceu} antigo=${formAntigo} ${demorou.toFixed(1)}s depois do pedido${tReq ? '' : ' (pedido nao interceptado)'}`);
     await ctxT.unroute('**/api/pecas-v3*');
     await ctxT.close();
   });
@@ -266,7 +278,7 @@ try {
     else ok('L9c avisos_email_pecas ainda nao existe: nada a conferir', true);
     if (tem.links) ok('L9d loja REAL: sem token em pecas_links_email para a cotacao de teste', (await A.tokensEmail({ cotacao_id: cotT.id })).every((r) => r.profile_id !== dLojaReal.id));
     else ok('L9d pecas_links_email ainda nao existe: nada a conferir', true);
-    if (tem.dispensas) { const { error } = await A.inserirDispensa(sLojaReal, cotT.id, 'loja', ljReal.id); ok('L9e loja REAL nao consegue "nao tenho" numa cotacao de teste (RLS via cotacoes_pecas)', !!error, error?.message || 'gravou'); }
+    if (tem.dispensas) { const { error } = await A.inserirDispensa(sLojaReal, cotT.id, 'loja', ljReal.id); ok('L9e loja REAL nao consegue "nao tenho" numa cotacao de teste (RLS via cotacoes_pecas: 42501)', error?.code === '42501', error ? `${error.code} ${error.message}` : 'gravou'); }
     else ok('L9e cotacoes_pecas_dispensas ainda nao existe: nada a conferir', true);
   });
 
