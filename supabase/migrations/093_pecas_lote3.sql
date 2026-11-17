@@ -118,8 +118,7 @@ CREATE OR REPLACE FUNCTION fornecedor_conta_teste(p_tipo tipo_fornecedor_peca, p
 AS $function$
   SELECT CASE WHEN p_tipo = 'loja'
     THEN coalesce((SELECT p.conta_teste FROM lojas_pecas l JOIN profiles p ON p.id = l.profile_id WHERE l.id = p_id), false)
-    ELSE oficina_conta_teste(p_id)
-  END;
+    ELSE oficina_conta_teste(p_id) END;
 $function$;
 REVOKE ALL ON FUNCTION fornecedor_conta_teste(tipo_fornecedor_peca, uuid) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION fornecedor_conta_teste(tipo_fornecedor_peca, uuid) TO authenticated, service_role;
