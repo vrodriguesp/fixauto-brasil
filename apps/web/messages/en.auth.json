@@ -66,7 +66,14 @@
     "erroEnderecoNaoEncontrado": "We couldn't find the address. Pick one of the address suggestions or allow location.",
     "jaConectado": "You are already signed in as {email}. To create another account, sign out first.",
     "sairParaCadastrar": "Sign out and continue",
-    "faltaServicos": "Select at least one service your workshop offers."
+    "faltaServicos": "Select at least one service your workshop offers.",
+    "emailErradoCorrigir": "Wrong email? Fix it",
+    "corrigirEmailLabel": "Correct email address",
+    "corrigirEmailSalvar": "Save and send a new link",
+    "corrigirEmailSalvando": "Sending...",
+    "corrigirEmailCancelar": "Cancel",
+    "corrigirEmailNovoCadastro": "Start a new sign-up",
+    "emailCorrigidoEnviado": "Email updated. We sent a new link to {email}."
   },
   "definirSenha": {
     "erroSenhaCurta": "Password must be at least 8 characters",

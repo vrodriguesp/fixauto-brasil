@@ -8,6 +8,7 @@ import { enviarEmail } from '@/lib/email';
 import { escapeHtml } from '@/lib/email-i18n';
 import { idiomaDoSite } from '@/lib/site-url';
 import { TERMOS_VERSAO } from '@/lib/termos';
+import { novoTokenCorrecao, tokenFantasma, CORRECAO_PRAZO_MS } from '@/lib/cadastro-correcao';
 
 // Cadastro com confirmacao de e-mail (site e app). O cadastro direto no
 // GoTrue (supabase.auth.signUp) fica DESLIGADO (GOTRUE_DISABLE_SIGNUP): toda
@@ -18,6 +19,9 @@ import { TERMOS_VERSAO } from '@/lib/termos';
 //
 // Resposta igual exista ou nao o e-mail (nao revela quem tem conta); quem ja
 // tem conta recebe um aviso no proprio e-mail.
+//
+// `correcao`: token para "E-mail errado? Corrigir" na tela seguinte (lib/cadastro-correcao,
+// 17/11). E-mail ja cadastrado: token fantasma no mesmo formato (a resposta continua igual).
 const TIPOS = ['cliente', 'oficina', 'loja_pecas'] as const;
 const ESPECIALIDADES = TIPOS_SERVICO.map((t) => t.value) as readonly string[];
 
@@ -45,7 +49,7 @@ export async function POST(req: NextRequest) {
       if (dentroDoLimite(`cadastro-existe:${email}`, 1, 10 * 60 * 1000)) {
         await enviarAvisoContaExistente(email, existente.idioma || idioma);
       }
-      return NextResponse.json({ ok: true });
+      return NextResponse.json({ ok: true, correcao: tokenFantasma() });
     }
 
     const { data: auth, error: authErro } = await supabaseAdmin.auth.admin.createUser({
@@ -53,11 +57,15 @@ export async function POST(req: NextRequest) {
     });
     if (authErro || !auth.user) {
       // conta so no auth (sem perfil) ou corrida de dois cadastros: mesma resposta
-      if (/already|registered|exists/i.test(authErro?.message || '')) return NextResponse.json({ ok: true });
+      if (/already|registered|exists/i.test(authErro?.message || '')) return NextResponse.json({ ok: true, correcao: tokenFantasma() });
       throw new Error(authErro?.message || 'createUser falhou');
     }
     criado = auth.user.id;
     const agora = new Date().toISOString();
+    // so o hash do token fica na conta (app_metadata: o navegador nao consegue escrever)
+    const correcao = novoTokenCorrecao(criado, Date.now() + CORRECAO_PRAZO_MS);
+    const { error: mErro } = await supabaseAdmin.auth.admin.updateUserById(criado, { app_metadata: { correcao_email: correcao.guardar } });
+    if (mErro) throw new Error(mErro.message);
 
     const { error: pErro } = await supabaseAdmin.from('profiles').insert({
       id: criado, tipo, nome, email, telefone, idioma,
@@ -85,7 +93,7 @@ export async function POST(req: NextRequest) {
           <p>Depois de conferir, ative em ${tipo === 'oficina' ? '/admin/oficinas' : '/admin/pecas'}.</p>`,
       });
     }
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, correcao: correcao.token });
   } catch (e) {
     if (criado) {
       // desfaz o cadastro pela metade: a pessoa pode tentar de novo

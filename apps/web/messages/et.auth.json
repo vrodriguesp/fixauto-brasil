@@ -66,7 +66,14 @@
     "erroEnderecoNaoEncontrado": "Aadressi ei leitud. Vali aadressisoovitustest või luba asukoht.",
     "jaConectado": "Olete juba sisse logitud kontoga {email}. Uue konto loomiseks logige esmalt välja.",
     "sairParaCadastrar": "Logi välja ja jätka registreerimist",
-    "faltaServicos": "Vali vähemalt üks teenus, mida töökoda pakub."
+    "faltaServicos": "Vali vähemalt üks teenus, mida töökoda pakub.",
+    "emailErradoCorrigir": "Vale e-posti aadress? Paranda",
+    "corrigirEmailLabel": "Õige e-posti aadress",
+    "corrigirEmailSalvar": "Salvesta ja saada uus link",
+    "corrigirEmailSalvando": "Saatmine...",
+    "corrigirEmailCancelar": "Tühista",
+    "corrigirEmailNovoCadastro": "Registreeru uuesti",
+    "emailCorrigidoEnviado": "E-posti aadress on parandatud. Saatsime uue lingi aadressile {email}."
   },
   "definirSenha": {
     "erroSenhaCurta": "Parool peab olema vähemalt 8 tähemärki pikk",

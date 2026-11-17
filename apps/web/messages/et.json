@@ -754,7 +754,11 @@
     "SUGESTAO_VENCIDA": "See soovitud aeg on möödas. Saada teised ajad.",
     "ORCAMENTO_VENCIDO": "Selle hinnapakkumise kehtivus on lõppenud. Vali teine kehtiv pakkumine või esita uus päring.",
     "ORCAMENTO_MUDOU": "Hinnapakkumine muutus pärast kliendi soovi. Saada kliendile valimiseks teised ajad.",
-    "JANELA_NAO_ACABOU": "Kliendi saabumisaeg pole veel läbi. Märgi mitteilmumine pärast aja lõppu."
+    "JANELA_NAO_ACABOU": "Kliendi saabumisaeg pole veel läbi. Märgi mitteilmumine pärast aja lõppu.",
+    "CORRECAO_INVALIDA": "E-posti aadressi ei õnnestunud siin parandada. Kui oled konto juba kinnitanud, logi lihtsalt sisse. Muul juhul registreeru uuesti või kirjuta aadressile support@bipfix.com.",
+    "CORRECAO_EXPIRADA": "E-posti aadressi parandamise aeg (24 tundi) on läbi. Registreeru uuesti või kirjuta aadressile support@bipfix.com.",
+    "CORRECOES_ESGOTADAS": "E-posti aadressi on juba 3 korda parandatud. Registreeru uuesti või kirjuta aadressile support@bipfix.com.",
+    "EMAIL_IGUAL": "See on sama e-posti aadress. Sisesta õige aadress."
   },
   "sobre": {
     "metaTitle": "BipFixist",

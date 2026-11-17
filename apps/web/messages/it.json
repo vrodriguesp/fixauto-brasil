@@ -746,7 +746,11 @@
     "SUGESTAO_VENCIDA": "Questa data suggerita è passata. Manda altre date.",
     "ORCAMENTO_VENCIDO": "Questo preventivo è scaduto. Scegli un altro preventivo attivo o rifai la richiesta.",
     "ORCAMENTO_MUDOU": "Il preventivo è cambiato dopo la richiesta del cliente. Manda altre date tra cui scegliere.",
-    "JANELA_NAO_ACABOU": "La fascia di arrivo del cliente non è ancora finita. Segna l’assenza dopo la fine della fascia."
+    "JANELA_NAO_ACABOU": "La fascia di arrivo del cliente non è ancora finita. Segna l’assenza dopo la fine della fascia.",
+    "CORRECAO_INVALIDA": "Non è stato possibile correggere l'email qui. Se hai già confermato l'account, accedi normalmente. Altrimenti registrati di nuovo o scrivi a support@bipfix.com.",
+    "CORRECAO_EXPIRADA": "Il tempo per correggere l'email (24 ore) è scaduto. Registrati di nuovo o scrivi a support@bipfix.com.",
+    "CORRECOES_ESGOTADAS": "L'email è già stata corretta 3 volte. Registrati di nuovo o scrivi a support@bipfix.com.",
+    "EMAIL_IGUAL": "È la stessa email. Inserisci l'indirizzo corretto."
   },
   "sobre": {
     "metaTitle": "Chi è BipFix",

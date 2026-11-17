@@ -91,6 +91,19 @@ function CadastroPage() {
   const [enviado, setEnviado] = useState(false);
   useTopoAoMudar(enviado); // tela trocada inteira: abre no alto (dono 08/11)
   const [reenviado, setReenviado] = useState(false);
+  // "E-mail errado? Corrigir" (17/11): token do POST /api/cadastro - so este navegador pode
+  // corrigir o e-mail da conta que acabou de criar. Guardado na sessao junto com o e-mail:
+  // recarregar a tela "confira seu e-mail" nao perde a correcao.
+  const ENVIADO = 'bipfix_cadastro_enviado';
+  const [correcao, setCorrecao] = useState<string | null>(null);
+  const [corrigindo, setCorrigindo] = useState(false);
+  const [novoEmail, setNovoEmail] = useState('');
+  const [corrErro, setCorrErro] = useState<{ texto: string; refazer: boolean } | null>(null);
+  const [corrEnviadoPara, setCorrEnviadoPara] = useState('');
+  const [corrLoading, setCorrLoading] = useState(false);
+  const guardarEnviado = (dados: { email: string; correcao: string | null; userType: string | null }) => {
+    try { sessionStorage.setItem(ENVIADO, JSON.stringify({ ...dados, em: Date.now() })); } catch { /* ignora */ }
+  };
   // Workshop fields
   const [nomeFantasia, setNomeFantasia] = useState('');
   const [cnpj, setCnpj] = useState('');
@@ -137,6 +150,14 @@ function CadastroPage() {
         setNomeFantasia(r.nomeFantasia || ''); setCnpj(r.cnpj || ''); setEndereco(r.endereco || '');
         setCidade(r.cidade || ''); setEstado(r.estado || ''); setCep(r.cep || '');
         setEspecialidades(Array.isArray(r.especialidades) ? r.especialidades : []);
+      }
+      // cadastro ja enviado nesta aba (ate 24 h): volta para a tela "confira seu e-mail"
+      const env = JSON.parse(sessionStorage.getItem(ENVIADO) || 'null');
+      if (env && typeof env.email === 'string' && Date.now() - Number(env.em) < 24 * 60 * 60 * 1000 && (!tipoParam || env.userType === tipoParam)) {
+        setEmail(env.email);
+        if (env.userType) setUserType(env.userType);
+        setCorrecao(typeof env.correcao === 'string' ? env.correcao : null);
+        setEnviado(true);
       }
     } catch { /* sem armazenamento: segue sem rascunho */ }
     setRascunhoLido(true);
@@ -299,6 +320,10 @@ function CadastroPage() {
       return;
     }
     try { sessionStorage.removeItem(RASCUNHO); } catch { /* ignora */ }
+    const corpoOk = await res.json().catch(() => null);
+    const tokenCorrecao = typeof corpoOk?.correcao === 'string' ? corpoOk.correcao : null;
+    setCorrecao(tokenCorrecao);
+    guardarEnviado({ email, correcao: tokenCorrecao, userType: tipo });
     // conversao da campanha de Pesquisa do Google Ads (so oficinas)
     if (tipo === 'oficina') { registrarConversaoCadastro(); registrarEventoMeta('CompleteRegistration'); contar('enviado'); }
     setEnviado(true);
@@ -315,6 +340,41 @@ function CadastroPage() {
     setReenviado(true);
   };
 
+  const abrirCorrecao = () => {
+    setNovoEmail(email); setCorrErro(null); setCorrigindo(true);
+  };
+  const corrigirEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCorrErro(null);
+    setCorrLoading(true);
+    const res = await fetch('/api/cadastro/corrigir-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, novoEmail: novoEmail.trim(), token: correcao, idioma: locale }),
+    }).catch(() => null);
+    const corpo = res ? await res.json().catch(() => null) : null;
+    setCorrLoading(false);
+    if (!res || !res.ok || typeof corpo?.email !== 'string') {
+      // prazo acabou, token invalido ou limite: a saida e um cadastro novo (ou o suporte)
+      const refazer = ['CORRECAO_EXPIRADA', 'CORRECAO_INVALIDA', 'CORRECOES_ESGOTADAS'].includes(corpo?.codigo);
+      setCorrErro({ texto: textoErroApi(te, res?.status || 500, corpo), refazer });
+      return;
+    }
+    const proximo = typeof corpo.correcao === 'string' ? corpo.correcao : null;
+    setEmail(corpo.email);
+    setCorrecao(proximo);
+    setCorrEnviadoPara(corpo.email);
+    setCorrigindo(false);
+    setReenviado(false); // "enviar de novo" volta a valer, agora para o endereco novo
+    guardarEnviado({ email: corpo.email, correcao: proximo, userType });
+  };
+  const novoCadastro = () => {
+    try { sessionStorage.removeItem(ENVIADO); } catch { /* ignora */ }
+    setEnviado(false); setCorrigindo(false); setCorrErro(null); setCorrEnviadoPara(''); setCorrecao(null); setReenviado(false);
+    setPassword('');
+    setStep(userType ? 2 : 1);
+  };
+
   if (enviado) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
@@ -325,7 +385,42 @@ function CadastroPage() {
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-3">{t('verifiqueTitulo')}</h1>
-          <p className="text-gray-600">{t('verifiqueTexto1')} <strong className="break-all">{email}</strong>.</p>
+          <p className="text-gray-600">{t('verifiqueTexto1')} <strong className="break-all" data-testid="cadastro-email-enviado">{email}</strong>.</p>
+          {corrEnviadoPara && !corrigindo && (
+            <p className="text-sm text-green-700 mt-2" role="status">{t('emailCorrigidoEnviado', { email: corrEnviadoPara })}</p>
+          )}
+          {correcao && !corrigindo && (
+            <p className="mt-2">
+              <button type="button" onClick={abrirCorrecao} aria-expanded={false}
+                className="text-sm font-medium text-primary-600 underline hover:text-primary-700">
+                {t('emailErradoCorrigir')}
+              </button>
+            </p>
+          )}
+          {corrigindo && (
+            <form id="cadastro-corrigir-email" onSubmit={corrigirEmail}
+              className="mt-4 text-left bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <label htmlFor="cadastro-novo-email" className="block text-sm font-medium text-gray-700 mb-1">{t('corrigirEmailLabel')}</label>
+              <input id="cadastro-novo-email" type="email" className="input-field" autoComplete="email" inputMode="email" autoFocus required
+                maxLength={254} value={novoEmail} onChange={(e) => setNovoEmail(e.target.value)} aria-describedby={corrErro ? 'cadastro-corrigir-erro' : undefined} />
+              {corrErro && (
+                <div id="cadastro-corrigir-erro" role="alert" className="mt-2 text-sm text-red-700">
+                  <p>{corrErro.texto}</p>
+                  {corrErro.refazer && (
+                    <button type="button" onClick={novoCadastro} className="mt-1 font-medium underline">{t('corrigirEmailNovoCadastro')}</button>
+                  )}
+                </div>
+              )}
+              <div className="flex flex-col sm:flex-row gap-2 mt-3">
+                <button type="submit" className="btn-primary sm:flex-1" disabled={corrLoading}>
+                  {corrLoading ? t('corrigirEmailSalvando') : t('corrigirEmailSalvar')}
+                </button>
+                <button type="button" className="btn-secondary" onClick={() => { setCorrigindo(false); setCorrErro(null); }}>
+                  {t('corrigirEmailCancelar')}
+                </button>
+              </div>
+            </form>
+          )}
           <p className="text-gray-600 mt-2">{t('verifiqueTexto2')}</p>
           {(userType === 'oficina' || userType === 'loja_pecas') && (
             <p className="text-sm text-gray-600 mt-4 bg-blue-50 border border-blue-100 rounded-lg p-3">{t('verifiqueAnalise')}</p>

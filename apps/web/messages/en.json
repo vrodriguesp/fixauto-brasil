@@ -748,7 +748,11 @@
     "SUGESTAO_VENCIDA": "This suggested date has passed. Send other dates.",
     "ORCAMENTO_VENCIDO": "This quote has expired. Choose another active quote or make a new request.",
     "ORCAMENTO_MUDOU": "The quote changed after the customer’s request. Send other dates for them to choose.",
-    "JANELA_NAO_ACABOU": "The customer’s arrival window has not ended yet. Mark the no-show after the window ends."
+    "JANELA_NAO_ACABOU": "The customer’s arrival window has not ended yet. Mark the no-show after the window ends.",
+    "CORRECAO_INVALIDA": "We couldn't change the email here. If you have already confirmed your account, just sign in. Otherwise, sign up again or write to support@bipfix.com.",
+    "CORRECAO_EXPIRADA": "The time to fix the email (24 hours) has run out. Sign up again or write to support@bipfix.com.",
+    "CORRECOES_ESGOTADAS": "The email has already been changed 3 times. Sign up again or write to support@bipfix.com.",
+    "EMAIL_IGUAL": "That's the same email. Enter the correct address."
   },
   "sobre": {
     "metaTitle": "About BipFix",

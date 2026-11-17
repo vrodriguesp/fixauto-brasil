@@ -66,7 +66,14 @@
     "erroEnderecoNaoEncontrado": "Адрес не найден. Выберите один из предложенных вариантов или разрешите доступ к геолокации.",
     "jaConectado": "Вы уже вошли как {email}. Чтобы создать другой аккаунт, сначала выйдите.",
     "sairParaCadastrar": "Выйти и продолжить регистрацию",
-    "faltaServicos": "Выберите хотя бы одну услугу, которую оказывает автосервис."
+    "faltaServicos": "Выберите хотя бы одну услугу, которую оказывает автосервис.",
+    "emailErradoCorrigir": "Ошиблись в адресе? Исправить",
+    "corrigirEmailLabel": "Правильный адрес электронной почты",
+    "corrigirEmailSalvar": "Сохранить и отправить новую ссылку",
+    "corrigirEmailSalvando": "Отправка...",
+    "corrigirEmailCancelar": "Отмена",
+    "corrigirEmailNovoCadastro": "Зарегистрироваться заново",
+    "emailCorrigidoEnviado": "Адрес исправлен. Мы отправили новую ссылку на {email}."
   },
   "definirSenha": {
     "erroSenhaCurta": "Пароль должен содержать не менее 8 символов",

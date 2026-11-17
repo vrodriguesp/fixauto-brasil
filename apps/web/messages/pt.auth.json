@@ -66,7 +66,14 @@
     "erroEnderecoNaoEncontrado": "Não encontramos o endereço. Escolha uma das sugestões do endereço ou permita a localização.",
     "jaConectado": "Você já está conectado como {email}. Para criar outra conta, saia primeiro.",
     "sairParaCadastrar": "Sair e continuar o cadastro",
-    "faltaServicos": "Escolha pelo menos um serviço que a oficina oferece."
+    "faltaServicos": "Escolha pelo menos um serviço que a oficina oferece.",
+    "emailErradoCorrigir": "E-mail errado? Corrigir",
+    "corrigirEmailLabel": "E-mail correto",
+    "corrigirEmailSalvar": "Salvar e enviar novo link",
+    "corrigirEmailSalvando": "Enviando...",
+    "corrigirEmailCancelar": "Cancelar",
+    "corrigirEmailNovoCadastro": "Fazer um novo cadastro",
+    "emailCorrigidoEnviado": "E-mail corrigido. Enviamos um novo link para {email}."
   },
   "definirSenha": {
     "erroSenhaCurta": "A senha deve ter pelo menos 8 caracteres",

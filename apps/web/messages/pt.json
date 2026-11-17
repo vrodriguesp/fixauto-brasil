@@ -745,7 +745,11 @@
     "SUGESTAO_VENCIDA": "Esta data sugerida já passou. Mande outras datas.",
     "ORCAMENTO_VENCIDO": "Este orçamento venceu. Escolha outro orçamento ativo ou refaça o pedido.",
     "ORCAMENTO_MUDOU": "O orçamento mudou depois do pedido do cliente. Mande outras datas para ele escolher.",
-    "JANELA_NAO_ACABOU": "A janela de chegada do cliente ainda não terminou. Marque a falta depois do fim da janela."
+    "JANELA_NAO_ACABOU": "A janela de chegada do cliente ainda não terminou. Marque a falta depois do fim da janela.",
+    "CORRECAO_INVALIDA": "Não foi possível corrigir o e-mail por aqui. Se você já confirmou a conta, é só entrar. Se não, faça um novo cadastro ou escreva para support@bipfix.com.",
+    "CORRECAO_EXPIRADA": "O prazo para corrigir o e-mail (24 horas) acabou. Faça um novo cadastro ou escreva para support@bipfix.com.",
+    "CORRECOES_ESGOTADAS": "O e-mail já foi corrigido 3 vezes. Faça um novo cadastro ou escreva para support@bipfix.com.",
+    "EMAIL_IGUAL": "Esse é o mesmo e-mail. Digite o endereço correto."
   },
   "sobre": {
     "metaTitle": "Sobre o BipFix",

@@ -66,7 +66,14 @@
     "erroEnderecoNaoEncontrado": "Non abbiamo trovato l'indirizzo. Scegli uno dei suggerimenti o consenti la posizione.",
     "jaConectado": "Hai già effettuato l'accesso come {email}. Per creare un altro account, esci prima.",
     "sairParaCadastrar": "Esci e continua la registrazione",
-    "faltaServicos": "Scegli almeno un servizio offerto dall'officina."
+    "faltaServicos": "Scegli almeno un servizio offerto dall'officina.",
+    "emailErradoCorrigir": "Email sbagliata? Correggi",
+    "corrigirEmailLabel": "Email corretta",
+    "corrigirEmailSalvar": "Salva e invia un nuovo link",
+    "corrigirEmailSalvando": "Invio in corso...",
+    "corrigirEmailCancelar": "Annulla",
+    "corrigirEmailNovoCadastro": "Registrati di nuovo",
+    "emailCorrigidoEnviado": "Email corretta. Abbiamo inviato un nuovo link a {email}."
   },
   "definirSenha": {
     "erroSenhaCurta": "La password deve contenere almeno 8 caratteri",
