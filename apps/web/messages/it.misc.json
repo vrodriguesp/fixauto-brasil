@@ -8,7 +8,7 @@
     "metaDescription": "Termini di utilizzo della piattaforma BipFix per automobilisti, officine e rivenditori di ricambi nell'Unione europea.",
     "pageTitle": "Termini di utilizzo",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
-    "updatedDate": "20 ottobre 2026",
+    "updatedDate": "17 novembre 2026",
     "secoes": [
       {
         "titulo": "1. Chi siamo e quando si applicano questi Termini",
@@ -73,6 +73,7 @@
           "non indurre i Clienti a concludere l'affare o a pagare fuori dalla Piattaforma per evitare un costo in vigore e comunicato ai sensi della sezione 5;",
           "non manipolare, comprare o scambiare recensioni o valutazioni;",
           "trattare Clienti e altri Partner con rispetto, senza discriminazioni, molestie, pressioni o pratiche commerciali sleali o ingannevoli;",
+          "usare i dati del veicolo (compresa la targa) che un'Officina condivide in una richiesta di ricambio solo per individuare il ricambio giusto, senza conservarli né usarli per altri scopi;",
           "rispettare le leggi applicabili alla tua attività, comprese quelle su tutela dei consumatori, fisco, lavoro e ambiente, e usare i dati personali dei Clienti solo per fornire il servizio richiesto."
         ]
       },
@@ -167,7 +168,7 @@
     "metaDescription": "Come BipFix tratta i dati personali di automobilisti, officine e rivenditori di ricambi nell'Unione europea, in conformità al GDPR.",
     "pageTitle": "Informativa sulla privacy",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
-    "updatedDate": "14 novembre 2026",
+    "updatedDate": "17 novembre 2026",
     "secoes": [
       {
         "titulo": "1. Chi è responsabile dei tuoi dati",
@@ -292,6 +293,7 @@
         ],
         "itens": [
           "<strong>Altri utenti:</strong> per inviare un preventivo, il Partner vede il nome del Cliente e i dati della richiesta (veicolo, foto, zona). Il telefono e l'email del Cliente vanno solo al Partner scelto dal Cliente, quando il preventivo viene accettato; dopo un incidente, anche alle Officine avvisate, se il Cliente seleziona \"Voglio che le officine mi chiamino\". Se, prima di accettare un preventivo, il Cliente tocca \"Invia il mio numero all’officina\", il numero va solo a quell’Officina e resta associato alla richiesta perché l’Officina possa chiamarlo. Il Cliente vede i dati dei Partner che rispondono. I profili dei Partner e le recensioni sono pubblici.",
+          "<strong>Negozi di ricambi e officine che vendono ricambi:</strong> quando un'Officina chiede un ricambio per la riparazione del tuo veicolo, i negozi di ricambi e le officine fornitrici attivi vedono i dati del veicolo (marca, modello, anno e, salvo che l'Officina la nasconda, la targa) per individuare il ricambio giusto. La targa non viene inviata via email e non è più visibile quando la richiesta si chiude, tranne che al fornitore scelto. I fornitori possono usare questi dati solo per individuare il ricambio.",
           "<strong>Hosting:</strong> i nostri server e il database si trovano nei Paesi Bassi (Unione europea).",
           "<strong>Resend</strong> (Stati Uniti): invio delle email.",
           "<strong>Twilio</strong> (Stati Uniti): SMS sulla tua richiesta, per esempio quando arriva un preventivo. Inviamo solo il tuo numero di telefono e il testo del messaggio. Per non riceverli più, scrivi a support@bipfix.com.",
@@ -1314,5 +1316,49 @@
     "limparData": "Cancella",
     "erroSemNovaData": "Scegli il nuovo giorno e orario.",
     "vemNaJanela": "Arriva entro la fascia oraria scelta. Se ti serve un orario preciso, concordalo con l’officina nella chat."
+  },
+  "pecas": {
+    "tipo": "Per cosa serve il ricambio?",
+    "tipoCarro": "Per un veicolo",
+    "tipoSemCarro": "Senza veicolo (olio, materiali di consumo)",
+    "semCarro": "Senza veicolo",
+    "unidade": "Unità",
+    "unidades": {
+      "un": "pz",
+      "jogo": "kit",
+      "par": "paio",
+      "litro": "l",
+      "kg": "kg",
+      "metro": "m",
+      "caixa": "conf."
+    },
+    "unidadesNome": {
+      "un": "Pezzi (pz)",
+      "jogo": "Kit",
+      "par": "Paio",
+      "litro": "Litri (l)",
+      "kg": "Chilogrammi (kg)",
+      "metro": "Metri (m)",
+      "caixa": "Confezione (conf.)"
+    },
+    "quantidade": "Quantità",
+    "placa": "Targa",
+    "placaDica": "Non scrivere la targa nella descrizione: va solo in questo campo.",
+    "placaInvalida": "Targa non valida: usa da 2 a 12 lettere e cifre.",
+    "ocultarPlaca": "Non mostrare la targa ai fornitori",
+    "ocultarPlacaAjuda": "Chi fa un'offerta non la vede; la riceve solo il fornitore che scegli, dopo la conferma.",
+    "enviarA": "Invia a",
+    "alvoTodos": "Negozi di ricambi e officine che vendono ricambi",
+    "alvoSoLojas": "Solo negozi di ricambi",
+    "vale7Dias": "La richiesta riceve offerte per 7 giorni. Dopo puoi riaprirla.",
+    "expiraEm": "{dias, plural, one {Scade tra # giorno} other {Scade tra # giorni}}",
+    "expirada": "Scaduta",
+    "reabrir": "Riapri per altri 7 giorni",
+    "reabrindo": "Riapertura…",
+    "reabrirTeto": "Questa richiesta è già stata riaperta {n} volte (massimo). Crea una nuova richiesta.",
+    "erroReabrir": "Impossibile riaprire. Riprova.",
+    "erroCriar": "Impossibile inviare la richiesta. Controlla che la tua officina sia attiva e riprova.",
+    "telefoneComercial": "Telefono aziendale (ricambi)",
+    "telefoneComercialAjuda": "Va all'altra parte solo dopo un ordine di ricambi confermato. Vuoto: usiamo il telefono del tuo account."
   }
 }

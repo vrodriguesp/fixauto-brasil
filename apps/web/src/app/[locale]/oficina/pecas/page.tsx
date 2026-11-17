@@ -11,6 +11,8 @@ import type { CotacaoPeca, CotacaoPecaResposta } from '@fixauto/shared';
 import { Link } from '@/i18n/navigation';
 import DetalhesPedidoPeca from '@/components/pecas/DetalhesPedidoPeca';
 import { compressImage } from '@/lib/image-compress';
+import { usePecasV3, usePlacasDoFornecedor } from '@/hooks/use-pecas-v3';
+import { UNIDADES_PECA, TETO_REABERTURAS, lerQuantidade, numeroDaQuantidade, normalizarPlaca, placaValida, diasParaExpirar } from '@/lib/pecas-formato';
 
 interface CotacaoComRespostas extends CotacaoPeca {
   respostas: (CotacaoPecaResposta & {
@@ -31,10 +33,18 @@ interface CotacaoDeOutraOficina extends Omit<CotacaoPeca, 'oficina'> {
   minhaResposta?: { id: string; preco: number; prazo_dias: number } | null;
 }
 
+// lote 1 de pecas (17/11): campos novos do formulario so com o interruptor (tipo, unidade, placa, "enviar a")
+const FORM_VAZIO = { peca_descricao: '', fipe_marca: '', fipe_modelo: '', fipe_ano: '', quantidade: '1', observacao: '', tipo: 'carro' as 'carro' | 'sem_carro', unidade: 'un', placa: '', ocultarPlaca: false, alvo: 'todos' as 'todos' | 'so_lojas' };
+
 export default function OficinaPecasPage() {
   const t = useTranslations('oficinaPecas');
+  const tp = useTranslations('pecas');
   const locale = useLocale();
   const { oficina, user, refreshProfile } = useAuth();
+  // lote 1 (17/11): tela nova so com o interruptor (global ou conta de teste); null = ainda nao sabe,
+  // e o formulario e os cartoes esperam (nada da tela de hoje aparece para depois trocar)
+  const v3 = usePecasV3();
+  const qtdTexto = (c: { quantidade: number; unidade?: string | null }) => `${numeroDaQuantidade(c.quantidade, locale)} ${tp(`unidades.${c.unidade || 'un'}`)}`;
   // aba no endereco (?aba=vender): ao voltar da conversa com uma oficina a
   // pagina reabre na mesma aba (antes voltava sempre para "Comprar")
   const [tab, setTabState] = useState<'comprar' | 'vender'>('comprar');
@@ -55,12 +65,18 @@ export default function OficinaPecasPage() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [confirmandoId, setConfirmandoId] = useState<string | null>(null);
-  const [form, setForm] = useState({ peca_descricao: '', fipe_marca: '', fipe_modelo: '', fipe_ano: '', quantidade: '1', observacao: '' });
+  const [form, setForm] = useState(FORM_VAZIO);
   // fotos da peca (ate 4), enviadas depois de criar o pedido
   const [fotosPeca, setFotosPeca] = useState<File[]>([]);
   const [conversas, setConversas] = useState<Record<string, ConversaResumo>>({});
   const [contatos, setContatos] = useState<Record<string, ContatoPedido>>({});
   const [erroConfirmar, setErroConfirmar] = useState<{ cotacaoId: string; msg: string } | null>(null);
+  // INSERT recusado (oficina inativa, 091): erro na tela e o formulario fica como estava (com e sem interruptor)
+  const [erroCriar, setErroCriar] = useState<string | null>(null);
+  // lote 1: placa das proprias cotacoes (a compradora le a tabela pela RLS), reabrir a vencida
+  const [placasMinhas, setPlacasMinhas] = useState<Record<string, string>>({});
+  const [reabrindoId, setReabrindoId] = useState<string | null>(null);
+  const [erroReabrir, setErroReabrir] = useState<{ cotacaoId: string; msg: string } | null>(null);
 
   const buscarContatos = async (pedidoIds: string[]) => {
     if (!pedidoIds.length) return;
@@ -112,18 +128,43 @@ export default function OficinaPecasPage() {
 
   useEffect(() => { fetchCotacoes(); }, [oficina]);
 
+  // lote 1: a placa das cotacoes com carro (tabela propria, so a compradora le)
+  useEffect(() => {
+    if (!v3) return;
+    const ids = cotacoes.filter((c) => c.tipo !== 'sem_carro').map((c) => c.id);
+    if (!ids.length) return;
+    supabase.from('cotacoes_pecas_placa').select('cotacao_id, placa').in('cotacao_id', ids)
+      .then(({ data }) => setPlacasMinhas(Object.fromEntries(((data as any[]) || []).map((p) => [p.cotacao_id, p.placa]))));
+  }, [v3, cotacoes]);
+
   const handleCriar = async () => {
     if (!oficina || !form.peca_descricao) return;
+    setErroCriar(null);
+    // com o interruptor: tipo, unidade, "enviar a" e placa; desligado = o INSERT de hoje
+    const comCarro = !v3 || form.tipo === 'carro';
+    const placa = v3 && comCarro ? normalizarPlaca(form.placa) : '';
+    if (placa && !placaValida(placa)) { setErroCriar(tp('placaInvalida')); return; }
     setSaving(true);
     const { data: nova } = await supabase.from('cotacoes_pecas').insert({
       oficina_id: oficina.id,
       peca_descricao: form.peca_descricao,
-      fipe_marca: form.fipe_marca || null,
-      fipe_modelo: form.fipe_modelo || null,
-      fipe_ano: form.fipe_ano || null,
-      quantidade: parseInt(form.quantidade) || 1,
+      fipe_marca: comCarro ? form.fipe_marca || null : null,
+      fipe_modelo: comCarro ? form.fipe_modelo || null : null,
+      fipe_ano: comCarro ? form.fipe_ano || null : null,
+      quantidade: v3 ? lerQuantidade(form.quantidade) : parseInt(form.quantidade) || 1,
       observacao: form.observacao.trim() || null,
+      ...(v3 ? { tipo: form.tipo, unidade: form.unidade, alvo: form.alvo, enviar_placa: !form.ocultarPlaca } : {}),
     }).select().single();
+
+    // recusado pelo banco (ex.: oficina inativa): antes limpava o formulario em silencio
+    if (!nova) {
+      setErroCriar(tp('erroCriar'));
+      setSaving(false);
+      return;
+    }
+
+    // placa: so na tabela da compradora (nunca em cotacoes_pecas, que vai no tempo real a todos os parceiros)
+    if (placa) await supabase.from('cotacoes_pecas_placa').insert({ cotacao_id: nova.id, placa });
 
     // fotos: pasta publica da propria oficina (a regra de envio ja permite)
     if (nova && fotosPeca.length) {
@@ -147,7 +188,7 @@ export default function OficinaPecasPage() {
       }).catch(() => {});
     }
 
-    setForm({ peca_descricao: '', fipe_marca: '', fipe_modelo: '', fipe_ano: '', quantidade: '1', observacao: '' });
+    setForm(FORM_VAZIO);
     setFotosPeca([]);
     setShowForm(false);
     setSaving(false);
@@ -180,6 +221,23 @@ export default function OficinaPecasPage() {
     await fetchCotacoes();
   };
 
+  // lote 1: cotacao vencida (7 dias) volta por mais 7 dias, ate 3 vezes, sem novo aviso as lojas
+  const handleReabrir = async (cotacao: CotacaoComRespostas) => {
+    setReabrindoId(cotacao.id);
+    setErroReabrir(null);
+    const r = await fetch('/api/cotacao-peca/reabrir', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cotacaoId: cotacao.id }),
+    }).catch(() => null);
+    if (!r?.ok) {
+      const j = r ? await r.json().catch(() => null) : null;
+      setErroReabrir({ cotacaoId: cotacao.id, msg: j?.codigo === 'TETO_REABERTURAS' ? tp('reabrirTeto', { n: TETO_REABERTURAS }) : tp('erroReabrir') });
+    }
+    setReabrindoId(null);
+    await fetchCotacoes();
+  };
+
   // === Vender (oficina como fornecedora de excedente) ===
   const [vendePecas, setVendePecas] = useState(false);
   const [savingVende, setSavingVende] = useState(false);
@@ -190,6 +248,8 @@ export default function OficinaPecasPage() {
   const [savingResposta, setSavingResposta] = useState(false);
   const [pedidosFornecedora, setPedidosFornecedora] = useState<any[]>([]);
   const [marcandoEntregueId, setMarcandoEntregueId] = useState<string | null>(null);
+  // lote 1: placa das cotacoes das vizinhas, so pela rota do servidor (regra ao vivo)
+  const placasVizinhas = usePlacasDoFornecedor(cotacoesVizinhas, v3);
 
   const fetchPedidosFornecedora = async () => {
     if (!oficina) return;
@@ -288,7 +348,8 @@ export default function OficinaPecasPage() {
     setSalvandoEdicao(true);
     await supabase.from('cotacoes_pecas').update({
       peca_descricao: editForm.peca_descricao.trim(),
-      quantidade: Math.max(1, parseInt(editForm.quantidade) || 1),
+      // com o interruptor a quantidade tem casas decimais (4,5 l); sem ele, inteira como hoje
+      quantidade: v3 ? lerQuantidade(editForm.quantidade) : Math.max(1, parseInt(editForm.quantidade) || 1),
       observacao: editForm.observacao.trim() || null,
     }).eq('id', id).in('status', ['aberta', 'respondida']);
     setSalvandoEdicao(false);
@@ -377,11 +438,36 @@ export default function OficinaPecasPage() {
           {showForm && (
             <div className="card mb-6">
               <h2 className="font-semibold text-gray-900 mb-4">{t('solicitarCotacaoPeca')}</h2>
+              {v3 === null ? (
+                // interruptor ainda sem resposta: nem o formulario de hoje nem o novo
+                <div className="animate-pulse space-y-3" aria-busy="true">
+                  <div className="h-10 bg-gray-200 rounded-lg" />
+                  <div className="h-10 bg-gray-200 rounded-lg" />
+                  <div className="h-24 bg-gray-200 rounded-lg" />
+                </div>
+              ) : (
+              <>
               <div className="space-y-4">
+                {v3 && (
+                  <fieldset>
+                    <legend className="block text-sm font-medium text-gray-700 mb-1">{tp('tipo')}</legend>
+                    <div className="flex flex-wrap gap-x-5 gap-y-2">
+                      <label className="inline-flex items-center gap-2 text-sm text-gray-800">
+                        <input type="radio" name="cotacao-tipo" data-testid="cotacao-tipo-carro" checked={form.tipo === 'carro'} onChange={() => setForm({ ...form, tipo: 'carro' })} />
+                        {tp('tipoCarro')}
+                      </label>
+                      <label className="inline-flex items-center gap-2 text-sm text-gray-800">
+                        <input type="radio" name="cotacao-tipo" data-testid="cotacao-tipo-sem-carro" checked={form.tipo === 'sem_carro'} onChange={() => setForm({ ...form, tipo: 'sem_carro' })} />
+                        {tp('tipoSemCarro')}
+                      </label>
+                    </div>
+                  </fieldset>
+                )}
                 <div>
                   <label htmlFor="c8551-1" className="block text-sm font-medium text-gray-700 mb-1">{t('oQueVocePrecisa')}</label>
                   <input id="c8551-1" type="text" className="input-field" placeholder={t('placeholderFarol')} value={form.peca_descricao} onChange={(e) => setForm({ ...form, peca_descricao: e.target.value })} />
                 </div>
+                {(!v3 || form.tipo === 'carro') && (
                 <div className="grid sm:grid-cols-3 gap-4">
                   <div>
                     <label htmlFor="c8551-2" className="block text-sm font-medium text-gray-700 mb-1">{t('marca')}</label>
@@ -396,10 +482,58 @@ export default function OficinaPecasPage() {
                     <input id="c8551-4" type="text" className="input-field" placeholder="2020" value={form.fipe_ano} onChange={(e) => setForm({ ...form, fipe_ano: e.target.value })} />
                   </div>
                 </div>
+                )}
+                {v3 ? (
+                  <div className="flex flex-wrap gap-4">
+                    <div>
+                      <label htmlFor="c8551-5" className="block text-sm font-medium text-gray-700 mb-1">{t('quantidade')}</label>
+                      <input id="c8551-5" data-testid="cotacao-quantidade" type="text" inputMode="decimal" className="input-field !w-28" value={form.quantidade} onChange={(e) => setForm({ ...form, quantidade: e.target.value.replace(/[^\d.,]/g, '') })} />
+                    </div>
+                    <div>
+                      <label htmlFor="cotacao-unidade" className="block text-sm font-medium text-gray-700 mb-1">{tp('unidade')}</label>
+                      <select id="cotacao-unidade" data-testid="cotacao-unidade" className="input-field !w-auto pr-8" value={form.unidade} onChange={(e) => setForm({ ...form, unidade: e.target.value })}>
+                        {UNIDADES_PECA.map((u) => <option key={u} value={u}>{tp(`unidadesNome.${u}`)}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                ) : (
                 <div>
                   <label htmlFor="c8551-5" className="block text-sm font-medium text-gray-700 mb-1">{t('quantidade')}</label>
                   <input id="c8551-5" type="number" className="input-field !w-24" value={form.quantidade} onChange={(e) => setForm({ ...form, quantidade: e.target.value })} />
                 </div>
+                )}
+                {/* placa: campo proprio (tabela so da compradora), nunca no texto nem no e-mail */}
+                {v3 && form.tipo === 'carro' && (
+                  <div className="space-y-2">
+                    <div>
+                      <label htmlFor="cotacao-placa" className="block text-sm font-medium text-gray-700 mb-1">{tp('placa')}</label>
+                      <input id="cotacao-placa" data-testid="cotacao-placa" type="text" autoComplete="off" autoCapitalize="characters" spellCheck={false} maxLength={16} className="input-field !w-44 uppercase" value={form.placa} onChange={(e) => setForm({ ...form, placa: e.target.value })} />
+                      <p data-testid="cotacao-placa-dica" className="text-xs text-gray-500 mt-1">{tp('placaDica')}</p>
+                    </div>
+                    <label className="flex items-start gap-2 text-sm text-gray-800">
+                      <input type="checkbox" data-testid="cotacao-ocultar-placa" className="mt-0.5" checked={form.ocultarPlaca} onChange={(e) => setForm({ ...form, ocultarPlaca: e.target.checked })} />
+                      <span>
+                        {tp('ocultarPlaca')}
+                        <span data-testid="cotacao-ocultar-placa-ajuda" className="block text-xs text-gray-500">{tp('ocultarPlacaAjuda')}</span>
+                      </span>
+                    </label>
+                  </div>
+                )}
+                {v3 && (
+                  <fieldset>
+                    <legend className="block text-sm font-medium text-gray-700 mb-1">{tp('enviarA')}</legend>
+                    <div className="flex flex-wrap gap-x-5 gap-y-2">
+                      <label className="inline-flex items-center gap-2 text-sm text-gray-800">
+                        <input type="radio" name="cotacao-alvo" data-testid="cotacao-alvo-todos" checked={form.alvo === 'todos'} onChange={() => setForm({ ...form, alvo: 'todos' })} />
+                        {tp('alvoTodos')}
+                      </label>
+                      <label className="inline-flex items-center gap-2 text-sm text-gray-800">
+                        <input type="radio" name="cotacao-alvo" data-testid="cotacao-alvo-so-lojas" checked={form.alvo === 'so_lojas'} onChange={() => setForm({ ...form, alvo: 'so_lojas' })} />
+                        {tp('alvoSoLojas')}
+                      </label>
+                    </div>
+                  </fieldset>
+                )}
                 <div className="sm:col-span-2">
                   <label htmlFor="peca-detalhes" className="block text-sm font-medium text-gray-700 mb-1">{t('detalhesLabel')}</label>
                   <textarea id="peca-detalhes" className="input-field min-h-[90px]" maxLength={1000} placeholder={t('detalhesPlaceholder')} value={form.observacao} onChange={(e) => setForm({ ...form, observacao: e.target.value })} />
@@ -411,16 +545,24 @@ export default function OficinaPecasPage() {
                   <p className="text-xs text-gray-500 mt-1">{t('fotosAjuda')}{fotosPeca.length ? ` (${fotosPeca.length})` : ''}</p>
                 </div>
               </div>
+              {v3 && <p data-testid="cotacao-validade-aviso" className="mt-4 text-sm text-gray-600">{tp('vale7Dias')}</p>}
+              {erroCriar && (
+                <p role="alert" data-testid="cotacao-erro-criar" className="mt-4 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{erroCriar}</p>
+              )}
               <div className="flex justify-end gap-3 mt-6">
-                <button onClick={() => setShowForm(false)} className="btn-secondary">{t('cancelar')}</button>
+                <button onClick={() => { setShowForm(false); setErroCriar(null); }} className="btn-secondary">{t('cancelar')}</button>
                 <button onClick={handleCriar} disabled={saving || !form.peca_descricao} className="btn-primary disabled:opacity-50">
                   {saving ? t('enviando') : t('enviarCotacao')}
                 </button>
               </div>
+              </>
+              )}
             </div>
           )}
 
-          {cotacoes.length === 0 ? (
+          {v3 === null ? (
+            <div className="animate-pulse h-32 bg-gray-200 rounded-xl" />
+          ) : cotacoes.length === 0 ? (
             <div className="card text-center py-12">
               <p className="text-gray-500">{t('nenhumaCotacaoAinda')}</p>
             </div>
@@ -439,20 +581,36 @@ export default function OficinaPecasPage() {
                   <div className="flex items-start justify-between gap-4 mb-3">
                     <div className="min-w-0">
                       <p className="font-medium text-gray-900">{c.peca_descricao}</p>
-                      {(c.fipe_marca || c.fipe_modelo) && (
+                      {v3 ? (
+                        <>
+                          <p className="text-sm text-gray-500">
+                            {c.tipo === 'sem_carro'
+                              ? <span data-testid="cotacao-sem-carro" className="mr-1.5 inline-block rounded-full bg-amber-100 px-1.5 py-0.5 text-[11px] font-semibold text-amber-800 align-middle">{tp('semCarro')}</span>
+                              : (c.fipe_marca || c.fipe_modelo) && <>{c.fipe_marca} {c.fipe_modelo} {c.fipe_ano} · </>}
+                            {t('qtd')}: <span data-testid="cotacao-quantidade-valor">{qtdTexto(c)}</span>
+                          </p>
+                          {c.tipo !== 'sem_carro' && placasMinhas[c.id] && (
+                            <p className="text-sm text-gray-500">{tp('placa')}: <span data-testid="cotacao-placa-valor" className="font-mono">{placasMinhas[c.id]}</span></p>
+                          )}
+                        </>
+                      ) : (c.fipe_marca || c.fipe_modelo) && (
                         <p className="text-sm text-gray-500">{c.fipe_marca} {c.fipe_modelo} {c.fipe_ano} · {t('qtd')}: {c.quantidade}</p>
                       )}
                     </div>
                     <div className="text-right flex-shrink-0">
+                      {/* 'expirada' (lote 1) tambem sem o interruptor: nunca como "cancelada" */}
                       <span data-testid="cotacao-status" className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                         c.status === 'fechada' ? 'bg-green-100 text-green-700' :
                         c.status === 'respondida' ? 'bg-blue-100 text-blue-700' :
-                        c.status === 'cancelada' ? 'bg-gray-100 text-gray-600' :
+                        c.status === 'cancelada' || c.status === 'expirada' ? 'bg-gray-100 text-gray-600' :
                         'bg-yellow-100 text-yellow-700'
                       }`}>
-                        {c.status === 'aberta' ? t('aguardandoRespostas') : c.status === 'respondida' ? t('respondida') : c.status === 'fechada' ? (entregue ? t('entregue') : t('pedidoConfirmado')) : t('cancelada')}
+                        {c.status === 'aberta' ? t('aguardandoRespostas') : c.status === 'respondida' ? t('respondida') : c.status === 'fechada' ? (entregue ? t('entregue') : t('pedidoConfirmado')) : c.status === 'expirada' ? tp('expirada') : t('cancelada')}
                       </span>
                       <p className="text-xs text-gray-400 mt-1">{timeAgo(c.created_at, locale)}</p>
+                      {v3 && ['aberta', 'respondida'].includes(c.status) && (
+                        <p data-testid="cotacao-expira-em" className="text-xs text-gray-500 mt-0.5">{tp('expiraEm', { dias: diasParaExpirar(c.expira_em) })}</p>
+                      )}
                     </div>
                   </div>
 
@@ -462,6 +620,22 @@ export default function OficinaPecasPage() {
                   )}
                   {erroConfirmar?.cotacaoId === c.id && (
                     <p role="alert" className="mb-3 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{erroConfirmar.msg}</p>
+                  )}
+                  {/* lote 1: vencida (7 dias) -> reabrir por mais 7 dias, ate 3 vezes */}
+                  {v3 && c.status === 'expirada' && (
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                      {(c.reaberta_vezes || 0) < TETO_REABERTURAS ? (
+                        <button type="button" data-testid="cotacao-reabrir" disabled={reabrindoId === c.id} onClick={() => handleReabrir(c)}
+                          className="px-3 py-1.5 text-sm rounded-lg border border-primary-300 text-primary-700 hover:bg-primary-50 disabled:opacity-50">
+                          ↻ {reabrindoId === c.id ? tp('reabrindo') : tp('reabrir')}
+                        </button>
+                      ) : (
+                        <p className="text-sm text-gray-600">{tp('reabrirTeto', { n: TETO_REABERTURAS })}</p>
+                      )}
+                    </div>
+                  )}
+                  {erroReabrir?.cotacaoId === c.id && (
+                    <p role="alert" className="mb-3 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{erroReabrir.msg}</p>
                   )}
                   {['aberta', 'respondida'].includes(c.status) && editandoId !== c.id && (
                     <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -486,7 +660,11 @@ export default function OficinaPecasPage() {
                       </label>
                       <label className="block">
                         <span className="block text-sm font-medium text-gray-700 mb-1">{t('quantidade')}</span>
-                        <input className="input-field !w-28" inputMode="numeric" value={editForm.quantidade} onChange={(e) => setEditForm({ ...editForm, quantidade: e.target.value.replace(/\D/g, '') })} />
+                        {v3 ? (
+                          <input className="input-field !w-28" inputMode="decimal" value={editForm.quantidade} onChange={(e) => setEditForm({ ...editForm, quantidade: e.target.value.replace(/[^\d.,]/g, '') })} />
+                        ) : (
+                          <input className="input-field !w-28" inputMode="numeric" value={editForm.quantidade} onChange={(e) => setEditForm({ ...editForm, quantidade: e.target.value.replace(/\D/g, '') })} />
+                        )}
                       </label>
                       <label className="block">
                         <span className="block text-sm font-medium text-gray-700 mb-1">{t('detalhesLabel')}</span>
@@ -517,9 +695,16 @@ export default function OficinaPecasPage() {
                                 <span className="ml-1.5 inline-block whitespace-nowrap text-[10px] font-semibold text-green-800 bg-green-200 px-1.5 py-0.5 rounded-full align-middle">✓ {t('ofertaEscolhida')}</span>
                               )}
                             </p>
+                            {v3 ? (
+                              // lote 1: total da quantidade na unidade (preco unitario x 4,5 l)
+                              <p className="text-sm text-gray-600">
+                                {formatCurrency(r.preco, currencyForCountry(r.loja?.pais || r.oficina_fornecedora?.pais), locale)} × {qtdTexto(c)} = <span data-testid="oferta-total" className="font-semibold text-gray-900">{formatCurrency(Math.round(Number(r.preco) * Number(c.quantidade) * 100) / 100, currencyForCountry(r.loja?.pais || r.oficina_fornecedora?.pais), locale)}</span> · {t('prazoDias', { dias: r.prazo_dias })}
+                              </p>
+                            ) : (
                             <p className="text-sm text-gray-600">
                               {formatCurrency(r.preco, currencyForCountry(r.loja?.pais || r.oficina_fornecedora?.pais), locale)} {c.quantidade > 1 && `x ${c.quantidade} = ${formatCurrency(r.preco * c.quantidade, currencyForCountry(r.loja?.pais || r.oficina_fornecedora?.pais), locale)}`} · {t('prazoDias', { dias: r.prazo_dias })}
                             </p>
+                            )}
                             {r.observacao && <p className="text-xs text-gray-500 mt-0.5">{r.observacao}</p>}
                           </div>
                           <div className="flex items-center justify-end gap-3 flex-shrink-0">
@@ -527,7 +712,7 @@ export default function OficinaPecasPage() {
                               {t('conversar')}
                               {naoLidas > 0 && <span className="min-w-[1.25rem] rounded-full bg-red-600 px-1 text-center text-[11px] font-bold leading-5 text-white" aria-label={t('mensagensNaoLidas', { n: naoLidas })}>{naoLidas}</span>}
                             </Link>
-                            {c.status !== 'fechada' && (
+                            {c.status !== 'fechada' && c.status !== 'expirada' && (
                               <button
                                 onClick={() => handleConfirmarPedido(c, r)}
                                 disabled={confirmandoId === r.id}
@@ -647,7 +832,7 @@ export default function OficinaPecasPage() {
           {/* "Minha comissao como fornecedora" escondido da oficina (dono 03/11):
               sem cobranca hoje, so assustava quem esta entrando */}
 
-          {vendePecas && (loadingVender ? (
+          {vendePecas && (loadingVender || v3 === null ? (
             <div className="animate-pulse h-32 bg-gray-200 rounded-xl" />
           ) : cotacoesVizinhas.length === 0 ? (
             <div className="card text-center py-12">
@@ -665,10 +850,15 @@ export default function OficinaPecasPage() {
                         <p className="text-sm text-gray-500">
                           {c.oficina?.nome_fantasia} - {c.oficina?.cidade}, {c.oficina?.estado} {km != null && `· ${km}km`}
                         </p>
-                        {(c.fipe_marca || c.fipe_modelo) && (
+                        {v3 && c.tipo === 'sem_carro' ? (
+                          <p className="text-sm"><span data-testid="cotacao-sem-carro" className="inline-block rounded-full bg-amber-100 px-1.5 py-0.5 text-[11px] font-semibold text-amber-800">{tp('semCarro')}</span></p>
+                        ) : (c.fipe_marca || c.fipe_modelo) && (
                           <p className="text-sm text-gray-500">{t('veiculoLabel')}: {c.fipe_marca} {c.fipe_modelo} {c.fipe_ano}</p>
                         )}
-                        <p className="text-sm text-gray-500">{t('quantidadeLabel')}: {c.quantidade}</p>
+                        {v3 && c.enviar_placa !== false && placasVizinhas[c.id] && (
+                          <p className="text-sm text-gray-500">{tp('placa')}: <span data-testid="cotacao-placa-valor" className="font-mono">{placasVizinhas[c.id]}</span></p>
+                        )}
+                        <p className="text-sm text-gray-500">{t('quantidadeLabel')}: {v3 ? <span data-testid="cotacao-quantidade-valor">{qtdTexto(c)}</span> : c.quantidade}</p>
                         <DetalhesPedidoPeca observacao={c.observacao} fotos={c.fotos} />
                       </div>
                       <div className="flex flex-col items-end gap-1 flex-shrink-0">

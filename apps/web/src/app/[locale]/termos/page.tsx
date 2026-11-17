@@ -85,6 +85,8 @@ async function TermosBrasil({ locale }: { locale: string }) {
             <li>{t.rich('list5_3', { strong })}</li>
             <li>{t.rich('list5_4', { strong })}</li>
             <li>{t.rich('list5_5', { strong })}</li>
+            {/* pecas (lote 1, 17/11): dados do veiculo so para identificar a peca */}
+            <li>{t.rich('list5_7', { strong })}</li>
             <li>{t.rich('list5_6', { strong })}</li>
           </ul>
         </section>

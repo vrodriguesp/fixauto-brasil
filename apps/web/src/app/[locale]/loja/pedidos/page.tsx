@@ -7,6 +7,8 @@ import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
+import { usePecasV3 } from '@/hooks/use-pecas-v3';
+import { numeroDaQuantidade } from '@/lib/pecas-formato';
 
 interface PedidoRow {
   id: string;
@@ -15,16 +17,21 @@ interface PedidoRow {
   quantidade: number;
   status: string;
   created_at: string;
-  cotacao: { peca_descricao: string } | null;
-  oficina: { nome_fantasia: string; endereco?: string | null; numero?: string | null; cidade: string; estado: string; profile?: { telefone: string | null } } | null;
+  cotacao: { peca_descricao: string; unidade?: string | null } | null;
+  oficina: { nome_fantasia: string; endereco?: string | null; numero?: string | null; cidade: string; estado: string } | null;
 }
 
 export default function LojaPedidosPage() {
   const t = useTranslations('lojaPedidos');
+  const tp = useTranslations('pecas');
   const locale = useLocale();
   const { loja } = useAuth();
   const [pedidos, setPedidos] = useState<PedidoRow[]>([]);
   const [loading, setLoading] = useState(true);
+  // lote 1 (17/11): telefone da compradora pela rota do servidor (o comercial dela, se houver;
+  // senao o do perfil, como antes) - a loja deixa de ler o perfil da oficina direto
+  const [telefones, setTelefones] = useState<Record<string, string>>({});
+  const v3 = usePecasV3();
 
   const fetchPedidos = async () => {
     if (!loja) return;
@@ -33,10 +40,19 @@ export default function LojaPedidosPage() {
       .from('pedidos_pecas')
       // B1 (16/11): pedidos_pecas tem 2 ligacoes com oficinas (compradora e oficina_fornecedora);
       // sem dizer qual, o Supabase devolvia erro PGRST201 e a lista ficava sempre vazia
-      .select('*, cotacao:cotacoes_pecas(peca_descricao), oficina:oficinas!pedidos_pecas_oficina_id_fkey(nome_fantasia, endereco, numero, cidade, estado, profile:profiles!oficinas_profile_id_fkey(telefone))')
+      .select('*, cotacao:cotacoes_pecas(peca_descricao, unidade), oficina:oficinas!pedidos_pecas_oficina_id_fkey(nome_fantasia, endereco, numero, cidade, estado)')
       .eq('loja_id', loja.id)
       .order('created_at', { ascending: false });
-    setPedidos((data as any[]) || []);
+    const lista = ((data as any[]) || []) as PedidoRow[];
+    // o telefone chega junto com a lista (sem a linha aparecer sem ele e mudar depois); a rota aceita 50 por vez
+    const tels: Record<string, string> = {};
+    for (let i = 0; i < lista.length; i += 50) {
+      const r = await fetch('/api/contato-pedido-peca', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pedidoIds: lista.slice(i, i + 50).map((p) => p.id) }) }).catch(() => null);
+      const j = r?.ok ? await r.json().catch(() => null) : null;
+      for (const [id, c] of Object.entries((j?.contatos || {}) as Record<string, { telefone: string | null }>)) if (c?.telefone) tels[id] = c.telefone;
+    }
+    setTelefones(tels);
+    setPedidos(lista);
     setLoading(false);
   };
 
@@ -51,7 +67,7 @@ export default function LojaPedidosPage() {
     await fetchPedidos();
   };
 
-  if (loading) {
+  if (loading || v3 === null) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="animate-pulse space-y-4">
@@ -81,10 +97,15 @@ export default function LojaPedidosPage() {
                 <p className="font-medium text-gray-900">{p.cotacao?.peca_descricao}</p>
                 <p className="text-sm text-gray-500">
                   {p.oficina?.nome_fantasia} - {[[p.oficina?.endereco, p.oficina?.numero].filter(Boolean).join(' '), p.oficina?.cidade].filter(Boolean).join(', ')}
-                  {p.oficina?.profile?.telefone && ` · ${p.oficina.profile.telefone}`}
+                  {telefones[p.id] && ` · ${telefones[p.id]}`}
                 </p>
                 <p className="text-sm text-gray-600 mt-1">
-                  {t('infoLinha', { preco: formatCurrency(p.preco_total, currencyForCountry(loja?.pais), locale), quantidade: p.quantidade, data: formatDate(p.created_at, locale) })}
+                  {t('infoLinha', {
+                    preco: formatCurrency(p.preco_total, currencyForCountry(loja?.pais), locale),
+                    // lote 1: com o interruptor, "4,5 l" (numero + unidade); sem ele, o numero como hoje
+                    quantidade: v3 && p.cotacao?.unidade && p.cotacao.unidade !== 'un' ? `${numeroDaQuantidade(p.quantidade, locale)} ${tp(`unidades.${p.cotacao.unidade}`)}` : p.quantidade,
+                    data: formatDate(p.created_at, locale),
+                  })}
                 </p>
               </div>
               <div className="flex items-center justify-end gap-3 flex-shrink-0">

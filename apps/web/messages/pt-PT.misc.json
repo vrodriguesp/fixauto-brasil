@@ -8,7 +8,7 @@
     "metaDescription": "Termos de Utilização da plataforma BipFix para condutores, oficinas e lojas de peças na União Europeia.",
     "pageTitle": "Termos de Utilização",
     "lastUpdatedLabel": "Última atualização:",
-    "updatedDate": "20 de outubro de 2026",
+    "updatedDate": "17 de novembro de 2026",
     "secoes": [
       {
         "titulo": "1. Quem somos e quando se aplicam estes Termos",
@@ -73,6 +73,7 @@
           "não incentivar os Clientes a fechar o negócio ou a pagar fora da Plataforma para evitar uma taxa em vigor e anunciada nos termos da secção 5;",
           "não manipular, comprar ou trocar avaliações ou classificações;",
           "tratar os Clientes e os outros Parceiros com respeito, sem discriminação, assédio, pressão ou práticas comerciais desleais ou enganosas;",
+          "utilizar os dados do veículo (incluindo a matrícula) que uma Oficina partilha num pedido de peça apenas para identificar a peça certa, sem os guardar nem os usar para qualquer outro fim;",
           "cumprir as leis aplicáveis ao seu negócio, incluindo a legislação de proteção do consumidor, fiscal, laboral e ambiental, e utilizar os dados pessoais dos Clientes apenas para prestar o serviço que pediram."
         ]
       },
@@ -167,7 +168,7 @@
     "metaDescription": "Como a BipFix trata os dados pessoais de condutores, oficinas e lojas de peças na União Europeia, em conformidade com o RGPD.",
     "pageTitle": "Política de Privacidade",
     "lastUpdatedLabel": "Última atualização:",
-    "updatedDate": "14 de novembro de 2026",
+    "updatedDate": "17 de novembro de 2026",
     "secoes": [
       {
         "titulo": "1. Quem é responsável pelos seus dados",
@@ -292,6 +293,7 @@
         ],
         "itens": [
           "<strong>Outros utilizadores:</strong> para enviar um orçamento, o Parceiro vê o nome do Cliente e os dados do pedido (veículo, fotografias, zona). O telefone e o e-mail do Cliente vão apenas para o Parceiro que o Cliente escolher, quando o orçamento é aceite; após um acidente, também para as Oficinas avisadas, se o Cliente marcar \"Quero que as oficinas me liguem\". Se, antes de aceitar um orçamento, o Cliente tocar em \"Enviar o meu número à oficina\", o número vai apenas para essa Oficina e fica guardado com o pedido para que a Oficina possa ligar. O Cliente vê os dados dos Parceiros que respondem. Os perfis dos Parceiros e as avaliações são públicos.",
+          "<strong>Lojas de peças e oficinas que vendem peças:</strong> quando uma Oficina pede uma peça para a reparação do seu veículo, as lojas de peças e as oficinas fornecedoras ativas veem os dados do veículo (marca, modelo, ano e, salvo se a Oficina a ocultar, a matrícula) para identificarem a peça certa. A matrícula não é enviada por e-mail e deixa de estar visível quando o pedido fecha, exceto para o fornecedor escolhido. Os fornecedores só podem usar estes dados para identificar a peça.",
           "<strong>Alojamento:</strong> os nossos servidores e a base de dados estão localizados nos Países Baixos (União Europeia).",
           "<strong>Resend</strong> (Estados Unidos): envio de e-mails.",
           "<strong>Twilio</strong> (Estados Unidos): mensagens SMS sobre o seu próprio pedido, por exemplo quando chega um orçamento. Enviamos apenas o seu número de telefone e o texto da mensagem. Para deixar de as receber, escreva para support@bipfix.com.",
@@ -1314,5 +1316,49 @@
     "limparData": "Limpar",
     "erroSemNovaData": "Escolha o novo dia e horário.",
     "vemNaJanela": "Chegue dentro do horário escolhido. Se precisar de uma hora exata, combine-a com a oficina no chat."
+  },
+  "pecas": {
+    "tipo": "Para que é a peça?",
+    "tipoCarro": "Para um veículo",
+    "tipoSemCarro": "Sem veículo (óleo, consumíveis)",
+    "semCarro": "Sem veículo",
+    "unidade": "Unidade",
+    "unidades": {
+      "un": "un",
+      "jogo": "jg",
+      "par": "pr",
+      "litro": "l",
+      "kg": "kg",
+      "metro": "m",
+      "caixa": "cx"
+    },
+    "unidadesNome": {
+      "un": "Unidade (un)",
+      "jogo": "Jogo (jg)",
+      "par": "Par (pr)",
+      "litro": "Litro (l)",
+      "kg": "Quilo (kg)",
+      "metro": "Metro (m)",
+      "caixa": "Caixa (cx)"
+    },
+    "quantidade": "Quantidade",
+    "placa": "Matrícula do veículo",
+    "placaDica": "Não escreva a matrícula na descrição: ela vai apenas neste campo.",
+    "placaInvalida": "Matrícula inválida: use 2 a 12 letras e números.",
+    "ocultarPlaca": "Não mostrar a matrícula aos fornecedores",
+    "ocultarPlacaAjuda": "A matrícula não aparece a quem envia propostas; só o fornecedor que escolher a recebe, depois da confirmação.",
+    "enviarA": "Enviar a",
+    "alvoTodos": "Lojas de peças e oficinas que vendem",
+    "alvoSoLojas": "Só lojas de peças",
+    "vale7Dias": "O pedido recebe propostas durante 7 dias. Depois pode reabri-lo.",
+    "expiraEm": "{dias, plural, one {Expira dentro de # dia} other {Expira dentro de # dias}}",
+    "expirada": "Expirada",
+    "reabrir": "Reabrir por mais 7 dias",
+    "reabrindo": "A reabrir…",
+    "reabrirTeto": "Este pedido já foi reaberto {n} vezes (máximo). Faça um pedido novo.",
+    "erroReabrir": "Não foi possível reabrir. Tente novamente.",
+    "erroCriar": "Não foi possível enviar o pedido. Confirme que a sua oficina está ativa e tente novamente.",
+    "telefoneComercial": "Telefone comercial (peças)",
+    "telefoneComercialAjuda": "Só é enviado à outra parte depois de uma encomenda de peça confirmada. Vazio: usamos o telefone da sua conta."
   }
 }

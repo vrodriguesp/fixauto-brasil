@@ -7,10 +7,17 @@ import { supabase } from '@/lib/supabase';
 // endereco com pais e mapa (antes so CEP brasileiro via ViaCEP - auditoria M-14)
 import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEndereco } from '@/components/forms/EnderecoEstruturado';
 import CampoTelefone from '@/components/forms/CampoTelefone';
+import { usePecasV3 } from '@/hooks/use-pecas-v3';
 
 export default function PerfilLojaPage() {
   const t = useTranslations('lojaPerfil');
+  const tp = useTranslations('pecas');
   const { user, loja, loading, refreshProfile } = useAuth();
+  // lote 1 de pecas (17/11): telefone comercial (fornecedores_contato, so o dono le), so com o
+  // interruptor; vai para a oficina compradora so depois do pedido confirmado (/api/contato-pedido-peca)
+  const v3 = usePecasV3();
+  const [telefoneComercial, setTelefoneComercial] = useState('');
+  const [tinhaComercial, setTinhaComercial] = useState(false);
 
   const [nomeFantasia, setNomeFantasia] = useState('');
   const [cnpj, setCnpj] = useState('');
@@ -44,6 +51,12 @@ export default function PerfilLojaPage() {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (!v3 || !loja) return;
+    supabase.from('fornecedores_contato').select('telefone').eq('fornecedor_tipo', 'loja').eq('fornecedor_id', loja.id).maybeSingle()
+      .then(({ data }) => { setTelefoneComercial(data?.telefone || ''); setTinhaComercial(!!data); });
+  }, [v3, loja]);
+
   const handleSave = async () => {
     if (!loja) return;
     setSaving(true);
@@ -61,13 +74,22 @@ export default function PerfilLojaPage() {
 
     await supabase.from('profiles').update({ nome, telefone }).eq('id', user!.id);
 
+    // vazio = usa o telefone do perfil (a tabela nao tem DELETE pelo cliente: grava vazio)
+    if (v3 && (telefoneComercial.trim() || tinhaComercial)) {
+      const { error: eTel } = await supabase.from('fornecedores_contato').upsert(
+        { fornecedor_tipo: 'loja', fornecedor_id: loja.id, telefone: telefoneComercial.trim().slice(0, 30), updated_at: new Date().toISOString() },
+        { onConflict: 'fornecedor_tipo,fornecedor_id' }
+      );
+      if (!eTel) setTinhaComercial(true);
+    }
+
     await refreshProfile();
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
 
-  if (loading || !loja) {
+  if (loading || !loja || v3 === null) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="animate-pulse space-y-4">
@@ -96,6 +118,14 @@ export default function PerfilLojaPage() {
           <label htmlFor="c9a81-3" className="block text-sm font-medium text-gray-700 mb-1">{t('labelTelefone')}</label>
           <CampoTelefone id="c9a81-3" value={telefone} onChange={(v) => setTelefone(v)} pais={end.pais} />
         </div>
+        {v3 && (
+          <div>
+            <label htmlFor="perfil-telefone-comercial" className="block text-sm font-medium text-gray-700 mb-1">{tp('telefoneComercial')}</label>
+            <input id="perfil-telefone-comercial" data-testid="perfil-telefone-comercial" type="tel" inputMode="tel" autoComplete="tel" maxLength={30} className="input-field"
+              value={telefoneComercial} onChange={(e) => setTelefoneComercial(e.target.value)} />
+            <p className="text-xs text-gray-500 mt-1">{tp('telefoneComercialAjuda')}</p>
+          </div>
+        )}
       </div>
 
       <div className="card space-y-4">

@@ -9,6 +9,8 @@ import { timeAgo, formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import type { CotacaoPeca } from '@fixauto/shared';
 import DetalhesPedidoPeca from '@/components/pecas/DetalhesPedidoPeca';
+import { usePecasV3, usePlacasDoFornecedor } from '@/hooks/use-pecas-v3';
+import { numeroDaQuantidade } from '@/lib/pecas-formato';
 
 interface CotacaoComOficina extends Omit<CotacaoPeca, 'oficina'> {
   oficina: { nome_fantasia: string; cidade: string; estado: string } | null;
@@ -17,10 +19,15 @@ interface CotacaoComOficina extends Omit<CotacaoPeca, 'oficina'> {
 
 export default function LojaCotacoesPage() {
   const t = useTranslations('lojaCotacoes');
+  const tp = useTranslations('pecas');
   const locale = useLocale();
   const { loja } = useAuth();
   const [cotacoes, setCotacoes] = useState<CotacaoComOficina[]>([]);
   const [loading, setLoading] = useState(true);
+  // lote 1 de pecas (17/11): unidade, "sem veiculo" e placa so com o interruptor (global ou conta
+  // de teste); a placa vem da rota do servidor, que decide ao vivo (oculta, vencida, outro pais...)
+  const v3 = usePecasV3();
+  const placas = usePlacasDoFornecedor(cotacoes, v3);
   const [respondendoId, setRespondendoId] = useState<string | null>(null);
   const [respostaForm, setRespostaForm] = useState({ preco: '', prazo_dias: '2', observacao: '' });
   const [saving, setSaving] = useState(false);
@@ -100,7 +107,8 @@ export default function LojaCotacoesPage() {
     await fetchCotacoes();
   };
 
-  if (loading) {
+  // espera tambem o interruptor: os cartoes nao aparecem na forma de hoje para depois trocar
+  if (loading || v3 === null) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="animate-pulse space-y-4">
@@ -130,10 +138,19 @@ export default function LojaCotacoesPage() {
                   <p className="text-sm text-gray-500">
                     {c.oficina?.nome_fantasia} - {c.oficina?.cidade}, {c.oficina?.estado}
                   </p>
-                  {(c.fipe_marca || c.fipe_modelo) && (
+                  {v3 && c.tipo === 'sem_carro' ? (
+                    <p className="text-sm"><span data-testid="cotacao-sem-carro" className="inline-block rounded-full bg-amber-100 px-1.5 py-0.5 text-[11px] font-semibold text-amber-800">{tp('semCarro')}</span></p>
+                  ) : (c.fipe_marca || c.fipe_modelo) && (
                     <p className="text-sm text-gray-500">{t('veiculoInfo', { marca: c.fipe_marca || '', modelo: c.fipe_modelo || '', ano: c.fipe_ano || '' })}</p>
                   )}
+                  {v3 && c.enviar_placa !== false && placas[c.id] && (
+                    <p className="text-sm text-gray-500">{tp('placa')}: <span data-testid="cotacao-placa-valor" className="font-mono">{placas[c.id]}</span></p>
+                  )}
+                  {v3 ? (
+                    <p className="text-sm text-gray-500">{tp('quantidade')}: <span data-testid="cotacao-quantidade-valor">{numeroDaQuantidade(c.quantidade, locale)} {tp(`unidades.${c.unidade || 'un'}`)}</span></p>
+                  ) : (
                   <p className="text-sm text-gray-500">{t('quantidadeInfo', { quantidade: c.quantidade })}</p>
+                  )}
                   <DetalhesPedidoPeca observacao={c.observacao} fotos={c.fotos} />
                 </div>
                 <div className="flex flex-col items-end gap-1 flex-shrink-0">

@@ -8,7 +8,7 @@
     "metaDescription": "Terms of Use of the BipFix platform for drivers, repair shops and parts stores in the European Union.",
     "pageTitle": "Terms of Use",
     "lastUpdatedLabel": "Last updated:",
-    "updatedDate": "October 20, 2026",
+    "updatedDate": "November 17, 2026",
     "secoes": [
       {
         "titulo": "1. Who we are and when these Terms apply",
@@ -73,6 +73,7 @@
           "not encourage Customers to conclude the deal or pay outside the Platform in order to avoid a fee that is in force and has been announced under section 5;",
           "not manipulate, buy or exchange reviews or ratings;",
           "treat Customers and other Partners with respect, without discrimination, harassment, pressure or unfair or misleading commercial practices;",
+          "use the vehicle details (including the registration number) that a Repair Shop shares in a part request only to identify the right part, and not store them or use them for any other purpose;",
           "comply with the laws that apply to your business, including consumer protection, tax, labour and environmental law, and use the personal data of Customers only to provide the service they requested."
         ]
       },
@@ -167,7 +168,7 @@
     "metaDescription": "How BipFix processes the personal data of drivers, repair shops and parts stores in the European Union, in accordance with the GDPR.",
     "pageTitle": "Privacy Policy",
     "lastUpdatedLabel": "Last updated:",
-    "updatedDate": "November 14, 2026",
+    "updatedDate": "November 17, 2026",
     "secoes": [
       {
         "titulo": "1. Who is responsible for your data",
@@ -292,6 +293,7 @@
         ],
         "itens": [
           "<strong>Other users:</strong> to send a quote, the Partner sees the Customer's name and the details of the request (vehicle, photos, area). The Customer's phone number and email go only to the Partner the Customer chooses, when the quote is accepted; after an accident, also to the Repair Shops notified about it, if the Customer ticks \"I want repair shops to call me\". If, before accepting a quote, the Customer taps \"Send my phone number to the repair shop\", the number goes only to that Repair Shop and is kept with the request so the Repair Shop can call. The Customer sees the details of the Partners that answer. Partner profiles and reviews are public.",
+          "<strong>Parts stores and repair shops that sell parts:</strong> when a Repair Shop requests a part for the repair of your vehicle, active parts stores and supplying repair shops see the vehicle details (make, model, year and, unless the Repair Shop hides it, the registration number) to identify the right part. The registration number is not sent by email and stops being visible when the request closes, except to the chosen supplier. Suppliers may use these details only to identify the part.",
           "<strong>Hosting:</strong> our servers and database are located in the Netherlands (European Union).",
           "<strong>Resend</strong> (United States): sending of emails.",
           "<strong>Twilio</strong> (United States): text messages (SMS) about your own request, for example when a quote arrives. We send only your phone number and the message text. To stop receiving them, write to support@bipfix.com.",
@@ -1314,5 +1316,49 @@
     "limparData": "Clear",
     "erroSemNovaData": "Choose the new day and time.",
     "vemNaJanela": "Please arrive within the chosen time range. If you need an exact time, agree it with the repair shop in the chat."
+  },
+  "pecas": {
+    "tipo": "What is the part for?",
+    "tipoCarro": "For a vehicle",
+    "tipoSemCarro": "No vehicle (oil, consumables)",
+    "semCarro": "No vehicle",
+    "unidade": "Unit",
+    "unidades": {
+      "un": "pcs",
+      "jogo": "set",
+      "par": "pair",
+      "litro": "l",
+      "kg": "kg",
+      "metro": "m",
+      "caixa": "box"
+    },
+    "unidadesNome": {
+      "un": "Pieces (pcs)",
+      "jogo": "Set",
+      "par": "Pair",
+      "litro": "Litres (l)",
+      "kg": "Kilograms (kg)",
+      "metro": "Metres (m)",
+      "caixa": "Box"
+    },
+    "quantidade": "Quantity",
+    "placa": "Registration number",
+    "placaDica": "Don't write the registration number in the description: it goes only in this field.",
+    "placaInvalida": "Invalid registration number: use 2 to 12 letters and digits.",
+    "ocultarPlaca": "Don't show the registration number to suppliers",
+    "ocultarPlacaAjuda": "Suppliers making offers won't see it; only the supplier you choose receives it, after you confirm.",
+    "enviarA": "Send to",
+    "alvoTodos": "Parts stores and repair shops that sell parts",
+    "alvoSoLojas": "Parts stores only",
+    "vale7Dias": "The request takes offers for 7 days. After that you can reopen it.",
+    "expiraEm": "{dias, plural, one {Expires in # day} other {Expires in # days}}",
+    "expirada": "Expired",
+    "reabrir": "Reopen for 7 more days",
+    "reabrindo": "Reopening…",
+    "reabrirTeto": "This request has already been reopened {n} times (maximum). Create a new request.",
+    "erroReabrir": "Couldn't reopen. Please try again.",
+    "erroCriar": "Couldn't send the request. Check that your repair shop is active and try again.",
+    "telefoneComercial": "Business phone (parts)",
+    "telefoneComercialAjuda": "Shared with the other party only after a confirmed parts order. Empty: we use your account phone."
   }
 }

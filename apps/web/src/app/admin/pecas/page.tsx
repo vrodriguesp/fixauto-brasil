@@ -57,6 +57,26 @@ export default function AdminPecasPage() {
 
   useEffect(() => { fetchData(); }, []);
 
+  // Lote 1 de pecas (17/11): interruptor global da tela nova (placa, unidade, sem carro, "enviar a",
+  // validade de 7 dias, telefone comercial). Desligado: so as contas de teste a veem. Ao ligar, as
+  // cotacoes abertas ganham 7 dias a partir de agora (api/admin/pecas-v3). Com auditoria.
+  const [v3Ativo, setV3Ativo] = useState<boolean | null>(null);
+  const [salvandoV3, setSalvandoV3] = useState(false);
+  const [erroV3, setErroV3] = useState<string | null>(null);
+  useEffect(() => {
+    fetch('/api/admin/pecas-v3', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).then((j) => setV3Ativo(typeof j?.ativo === 'boolean' ? j.ativo : null)).catch(() => {});
+  }, []);
+  const alternarV3 = async () => {
+    if (v3Ativo === null) return;
+    if (!v3Ativo && !confirm('Ligar a tela nova de peças para TODOS? As cotações abertas passam a vencer em 7 dias a partir de agora.')) return;
+    setSalvandoV3(true); setErroV3(null);
+    const r = await fetch('/api/admin/pecas-v3', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ativo: !v3Ativo }) }).catch(() => null);
+    const j = r?.ok ? await r.json().catch(() => null) : null;
+    setSalvandoV3(false);
+    if (typeof j?.ativo === 'boolean') setV3Ativo(j.ativo);
+    else setErroV3('Não foi possível salvar. Tente de novo.');
+  };
+
   // Loja nova nasce inativa: o admin confere o registro da empresa e ativa
   const [ocupado, setOcupado] = useState<string | null>(null);
   const alternarAtiva = async (f: Fornecedor) => {
@@ -100,6 +120,23 @@ export default function AdminPecasPage() {
       <div>
         <h1 className="text-2xl font-bold text-white">Portal de Peças</h1>
         <p className="text-slate-400 text-sm mt-1">Rastreabilidade de quem está usando o canal e se a comissão está de fato rendendo</p>
+      </div>
+
+      {/* Interruptor do lote 1 (tela nova de pecas) */}
+      <div className="bg-slate-800 rounded-xl border border-slate-700 p-5 flex flex-wrap items-center justify-between gap-4">
+        <div className="min-w-0">
+          <h2 className="font-semibold text-white">Tela nova de peças (lote 1)</h2>
+          <p className="text-sm text-slate-400 mt-1">
+            {v3Ativo === null ? 'Carregando…' : v3Ativo
+              ? 'Ligada para todos: placa, unidade, "sem carro", "enviar a", validade de 7 dias e telefone comercial.'
+              : 'Desligada: só as contas de teste veem a tela nova; os demais veem a tela de hoje.'}
+          </p>
+          {erroV3 && <p role="alert" className="text-sm text-red-300 mt-1">{erroV3}</p>}
+        </div>
+        <button type="button" role="switch" aria-checked={v3Ativo === true} onClick={alternarV3} disabled={salvandoV3 || v3Ativo === null} data-testid="pecas-v3-interruptor"
+          className={`inline-flex min-h-[44px] items-center rounded-lg px-5 text-sm font-semibold text-white disabled:opacity-50 ${v3Ativo ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-600 hover:bg-slate-500'}`}>
+          {salvandoV3 ? 'Salvando…' : v3Ativo ? 'Ligada — desligar' : 'Desligada — ligar'}
+        </button>
       </div>
 
       {/* Resumo de cadastro/atividade */}

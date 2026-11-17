@@ -85,6 +85,8 @@ async function PrivacidadeLgpd({ locale }: { locale: string }) {
           <p>{t('intro4')}</p>
           <ul>
             <li>{t('list4_1')}</li>
+            {/* pecas (lote 1, 17/11): dados do veiculo e placa para lojas/oficinas fornecedoras */}
+            <li>{t('list4_5')}</li>
             <li>{t('list4_2')}</li>
             {/* DeepL (traducao automatica, 03/11) antes das autoridades, que fecham a lista */}
             <li>{t('list4_4')}</li>

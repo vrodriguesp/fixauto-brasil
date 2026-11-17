@@ -8,7 +8,7 @@
     "metaDescription": "BipFixi platvormi kasutustingimused autojuhtidele, autotöökodadele ja varuosade müüjatele Euroopa Liidus.",
     "pageTitle": "Kasutustingimused",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "20. oktoober 2026",
+    "updatedDate": "17. november 2026",
     "secoes": [
       {
         "titulo": "1. Kes me oleme ja millal need tingimused kehtivad",
@@ -73,6 +73,7 @@
           "mitte suunama kliente tehingut sõlmima või maksma väljaspool platvormi, et vältida punkti 5 alusel teatatud ja kehtivat tasu;",
           "mitte manipuleerima, ostma ega vahetama arvustusi ega hinnanguid;",
           "kohtlema kliente ja teisi partnereid lugupidavalt, ilma diskrimineerimise, ahistamise, survestamise ning ebaausate või eksitavate kaubandustavadeta;",
+          "kasutama sõiduki andmeid (sh registreerimisnumbrit), mida töökoda varuosa päringus jagab, ainult õige varuosa leidmiseks, mitte neid säilitama ega muul eesmärgil kasutama;",
           "järgima oma tegevusele kohalduvaid seadusi, sealhulgas tarbijakaitse-, maksu-, töö- ja keskkonnaõigust, ning kasutama klientide isikuandmeid ainult nende soovitud teenuse osutamiseks."
         ]
       },
@@ -167,7 +168,7 @@
     "metaDescription": "Kuidas BipFix töötleb Euroopa Liidus autojuhtide, autotöökodade ja varuosade müüjate isikuandmeid kooskõlas isikuandmete kaitse üldmäärusega (GDPR).",
     "pageTitle": "Privaatsuspoliitika",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "14. november 2026",
+    "updatedDate": "17. november 2026",
     "secoes": [
       {
         "titulo": "1. Kes vastutab sinu andmete eest",
@@ -292,6 +293,7 @@
         ],
         "itens": [
           "<strong>Teised kasutajad:</strong> hinnapakkumise saatmiseks näeb partner kliendi nime ja päringu andmeid (sõiduk, fotod, piirkond). Kliendi telefoninumber ja e-post lähevad ainult partnerile, kelle klient valib, kui pakkumine on vastu võetud; pärast õnnetust ka sellest teavitatud töökodadele, kui klient märgib „Soovin, et töökojad mulle helistaksid“. Kui klient vajutab enne pakkumise vastuvõtmist nupule „Saada töökojale oma telefoninumber“, läheb tema number ainult sellele töökojale ja jääb päringu juurde, et töökoda saaks talle helistada. Klient näeb vastanud partnerite andmeid. Partnerite profiilid ja arvustused on avalikud.",
+          "<strong>Varuosapoed ja varuosi müüvad töökojad:</strong> kui töökoda küsib sinu sõiduki remondiks varuosa, näevad aktiivsed varuosapoed ja varuosi müüvad töökojad sõiduki andmeid (mark, mudel, aasta ja, kui töökoda seda ei peida, registreerimisnumber), et leida õige varuosa. Registreerimisnumbrit ei saadeta e-postiga ja see ei ole pärast päringu sulgemist enam nähtav, välja arvatud valitud tarnijale. Tarnijad tohivad neid andmeid kasutada ainult varuosa leidmiseks.",
           "<strong>Majutus:</strong> meie serverid ja andmebaas asuvad Madalmaades (Euroopa Liit).",
           "<strong>Resend</strong> (Ameerika Ühendriigid): e-kirjade saatmine.",
           "<strong>Twilio</strong> (Ameerika Ühendriigid): tekstisõnumid (SMS) sinu enda päringu kohta, näiteks kui saabub hinnapakkumine. Saadame ainult sinu telefoninumbri ja sõnumi teksti. Kui sa ei soovi neid enam saada, kirjuta aadressile support@bipfix.com.",
@@ -1314,5 +1316,49 @@
     "limparData": "Tühjenda",
     "erroSemNovaData": "Vali uus päev ja aeg.",
     "vemNaJanela": "Tule valitud aja sees. Kui vajad kindlat kellaaega, lepi see töökojaga vestluses kokku."
+  },
+  "pecas": {
+    "tipo": "Milleks varuosa on?",
+    "tipoCarro": "Sõidukile",
+    "tipoSemCarro": "Sõidukita (õli, kulumaterjalid)",
+    "semCarro": "Sõidukita",
+    "unidade": "Ühik",
+    "unidades": {
+      "un": "tk",
+      "jogo": "kmpl",
+      "par": "paar",
+      "litro": "l",
+      "kg": "kg",
+      "metro": "m",
+      "caixa": "karp"
+    },
+    "unidadesNome": {
+      "un": "Tükk (tk)",
+      "jogo": "Komplekt (kmpl)",
+      "par": "Paar",
+      "litro": "Liiter (l)",
+      "kg": "Kilogramm (kg)",
+      "metro": "Meeter (m)",
+      "caixa": "Karp"
+    },
+    "quantidade": "Kogus",
+    "placa": "Registreerimisnumber",
+    "placaDica": "Ära kirjuta registreerimisnumbrit kirjeldusse: see käib ainult sellesse lahtrisse.",
+    "placaInvalida": "Vigane registreerimisnumber: kasuta 2–12 tähte ja numbrit.",
+    "ocultarPlaca": "Ära näita registreerimisnumbrit tarnijatele",
+    "ocultarPlacaAjuda": "Pakkujad seda ei näe; selle saab ainult sinu valitud tarnija pärast kinnitamist.",
+    "enviarA": "Kellele saata",
+    "alvoTodos": "Varuosapoed ja varuosi müüvad töökojad",
+    "alvoSoLojas": "Ainult varuosapoed",
+    "vale7Dias": "Päring võtab pakkumisi vastu 7 päeva. Pärast seda saad selle uuesti avada.",
+    "expiraEm": "{dias, plural, one {Aegub # päeva pärast} other {Aegub # päeva pärast}}",
+    "expirada": "Aegunud",
+    "reabrir": "Ava uuesti 7 päevaks",
+    "reabrindo": "Avan uuesti…",
+    "reabrirTeto": "Seda päringut on juba {n} korda uuesti avatud (maksimum). Loo uus päring.",
+    "erroReabrir": "Uuesti avamine ebaõnnestus. Proovi uuesti.",
+    "erroCriar": "Päringut ei õnnestunud saata. Kontrolli, et sinu töökoda on aktiivne, ja proovi uuesti.",
+    "telefoneComercial": "Äritelefon (varuosad)",
+    "telefoneComercialAjuda": "Läheb teisele poolele alles pärast kinnitatud varuosatellimust. Tühi: kasutame sinu konto telefoni."
   }
 }

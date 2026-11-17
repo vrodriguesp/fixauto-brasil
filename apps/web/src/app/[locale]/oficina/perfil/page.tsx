@@ -17,14 +17,26 @@ import InfoI from '@/components/ui/InfoI';
 import { faixasDoDia, formatarJanela, validarRecepcao, minutosDe, hhmm, somarDias, diaDoCalendario, JANELA_MIN, type HorarioSemana } from '@/lib/turnos';
 import SemQuebra from '@/components/ui/SemQuebra';
 import { INTL_LOCALE } from '@/lib/utils';
+import { usePecasV3 } from '@/hooks/use-pecas-v3';
 
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
   const tErr = useTranslations('erros');
   const tx = useTranslations('excluirConta');
   const tc = useTranslations('constants');
+  const tp = useTranslations('pecas');
   const locale = useLocale();
   const { user, oficina, loading, refreshProfile } = useAuth();
+  // lote 1 de pecas (17/11): telefone comercial da oficina para as pecas (compradora ou fornecedora),
+  // em fornecedores_contato (so o dono le); so com o interruptor
+  const v3 = usePecasV3();
+  const [telefoneComercial, setTelefoneComercial] = useState('');
+  const [tinhaComercial, setTinhaComercial] = useState(false);
+  useEffect(() => {
+    if (!v3 || !oficina) return;
+    supabase.from('fornecedores_contato').select('telefone').eq('fornecedor_tipo', 'oficina').eq('fornecedor_id', oficina.id).maybeSingle()
+      .then(({ data }) => { setTelefoneComercial(data?.telefone || ''); setTinhaComercial(!!data); });
+  }, [v3, oficina]);
 
   const [nomeFantasia, setNomeFantasia] = useState('');
   const [descricao, setDescricao] = useState('');
@@ -294,13 +306,23 @@ export default function PerfilOficinaPage() {
       }
     }
 
+    // telefone comercial (pecas): vazio = usa o do perfil (sem DELETE pelo cliente: grava vazio)
+    if (v3 && oficina && (telefoneComercial.trim() || tinhaComercial)) {
+      const { error: eTel } = await supabase.from('fornecedores_contato').upsert(
+        { fornecedor_tipo: 'oficina', fornecedor_id: oficina.id, telefone: telefoneComercial.trim().slice(0, 30), updated_at: new Date().toISOString() },
+        { onConflict: 'fornecedor_tipo,fornecedor_id' }
+      );
+      if (eTel) { console.error(eTel); setError(tErr('GENERICO')); setSaving(false); return; }
+      setTinhaComercial(true);
+    }
+
     await refreshProfile();
     setSaving(false);
     setSuccess(true);
     setTimeout(() => setSuccess(false), 3000);
   };
 
-  if (loading || !user) {
+  if (loading || !user || v3 === null) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <div className="animate-pulse text-gray-400">{t('carregandoPerfil')}</div>
@@ -550,6 +572,14 @@ export default function PerfilOficinaPage() {
             <label htmlFor="c83a1-9" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
             <CampoTelefone id="c83a1-9" value={telefone} onChange={(v) => setTelefone(v)} pais={end.pais} />
           </div>
+          {v3 && oficina && (
+            <div>
+              <label htmlFor="perfil-telefone-comercial" className="block text-sm font-medium text-gray-700 mb-1">{tp('telefoneComercial')}</label>
+              <input id="perfil-telefone-comercial" data-testid="perfil-telefone-comercial" type="tel" inputMode="tel" autoComplete="tel" maxLength={30} className="input-field"
+                value={telefoneComercial} onChange={(e) => setTelefoneComercial(e.target.value)} />
+              <p className="text-xs text-gray-500 mt-1">{tp('telefoneComercialAjuda')}</p>
+            </div>
+          )}
         </div>
       </div>
 
