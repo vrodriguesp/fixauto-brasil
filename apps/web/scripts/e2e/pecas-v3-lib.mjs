@@ -317,8 +317,12 @@ export async function abrirNavegadores(precisaWebkit = true) {
 }
 export const semRolagemLateral = (p) => p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
 export const visivel = (loc, ms = 8000) => loc.first().waitFor({ state: 'visible', timeout: ms }).then(() => true, () => false);
+// WebKit relata um fetch/prefetch da MESMA origem abortado pela nossa propria navegacao ou pelo fecho do
+// contexto como "<url> due to access control checks" (prefetch RSC dos links do painel, /api/traduzir):
+// artefato do motor, nao erro do site - so esse padrao, e so em localhost, e ignorado
+const artefatoWebkit = (msg) => /due to access control checks/.test(msg) && /\/\/?localhost:\d+\//.test(msg);
 export const vigiar = (p, erros, quem) => {
-  p.on('pageerror', (e) => erros.push(`${quem}: ${String(e.message).slice(0, 200)}`));
+  p.on('pageerror', (e) => { const msg = String(e.message); if (!artefatoWebkit(msg)) erros.push(`${quem}: ${msg.slice(0, 200)}`); });
   p.on('dialog', (d) => d.accept().catch(() => {}));
 };
 export const entrarPelaTela = async (p, prefixo, u, voltar) => {
@@ -328,7 +332,11 @@ export const entrarPelaTela = async (p, prefixo, u, voltar) => {
   await p.locator('#login-senha').fill(u.senha);
   await p.locator('form:has(#login-senha) button[type=submit]').click();
   await p.waitForURL((x) => !/\/login/.test(x.pathname), { timeout: 30000 }).catch(() => {});
+  // espera chegar ao painel (nao a passagem pela home): navegar no meio da troca aborta o prefetch RSC
+  // do menu e o WebKit registra "due to access control checks" como erro de pagina (falso erro)
+  await p.waitForURL((x) => /\/(oficina|loja|cliente|admin)(\/|$)/.test(x.pathname), { timeout: 20000 }).catch(() => {});
   await p.waitForLoadState('networkidle').catch(() => {});
+  await p.waitForTimeout(400);
 };
 export const ir = async (p, url, ms = 2000) => { await p.goto(`${SITE}${url}`, { waitUntil: 'networkidle' }).catch(() => {}); await p.waitForTimeout(ms); };
 // nenhum dos testids novos no DOM (tela de hoje)

@@ -115,6 +115,8 @@ try {
     await pW.getByTestId('cotacao-quantidade').fill('4.5');
     await pW.getByTestId('cotacao-unidade').selectOption('litro');
     await marcar(pW, 'cotacao-alvo-so-lojas');
+    // lote 2: o padrao do formulario novo e "sem pressa" (e-mail vai para o resumo); "hoje" mantem o e-mail imediato que este teste confere
+    if (await pW.getByTestId('cotacao-urgencia-hoje').count()) await marcar(pW, 'cotacao-urgencia-hoje');
     ok('D.1e sem rolagem lateral com o formulario novo aberto (WebKit 390)', await semRolagemLateral(pW));
     await pW.screenshot({ path: `${PRINTS}/ligado-criar-sem-carro-et-webkit-390.png`, fullPage: true });
     await botao(pW, ET('oficinaPecas.enviarCotacao')).click();
@@ -170,6 +172,7 @@ try {
     await pD.locator('#c8551-4').fill('2012');
     await pD.getByTestId('cotacao-quantidade').fill('2');
     await pD.getByTestId('cotacao-placa').fill('123 abc');
+    if (await pD.getByTestId('cotacao-urgencia-hoje').count()) await marcar(pD, 'cotacao-urgencia-hoje'); // lote 2: e-mail imediato (padrao "sem pressa" iria ao resumo)
     const dica = await pD.getByTestId('cotacao-placa-dica').innerText();
     const ajuda = await pD.getByTestId('cotacao-ocultar-placa-ajuda').innerText().catch(() => '');
     ok('D.1p dica "nao escreva a placa na descricao" e rotulo do "ocultar" explicam que o escolhido recebe depois da confirmacao', dica.trim().length > 0 && ajuda.trim().length > 0 && semChaveCrua(dica + ajuda), `${dica} | ${ajuda}`.slice(0, 200));
@@ -308,7 +311,12 @@ try {
     ok("D.3j reabrir pela tela: volta a 'respondida' (tem oferta valida), expira_em = +7 dias, reaberta_vezes 1", c?.status === 'respondida' && dentro7d(c?.expira_em) && c?.reaberta_vezes === 1, JSON.stringify(c));
     await pM.waitForTimeout(1500);
     ok('D.3k cartao volta ao badge "respondida" e a oferta volta a ter "confirmar"', (await card.getByTestId('cotacao-status').innerText()).trim() === ET('oficinaPecas.respondida') && (await botao(card, ET('oficinaPecas.confirmarPedidoBtn')).count()) >= 1);
-    ok('D.3k2 reabrir pela tela NAO re-avisa as lojas (mesmo numero de sinos cotacao_peca_disponivel, sem e-mail novo)', nAntes >= 2 && (await avisosDisp()) === nAntes && A.emailsDe(dLoja1.email, tR).length === 0 && A.emailsDe(dLoja2.email, tR).length === 0, `antes=${nAntes} depois=${await avisosDisp()}`);
+    // lote 2 inverte o "sem re-aviso" do lote 1: reabrir re-avisa SO quem nao respondeu nem disse "nao tenho"
+    // (aqui a loja 2 respondeu; a loja 1 nao). E-mail imediato so quando a urgencia e hoje/amanha.
+    const sinoDe = async (d) => (await A.avisos(d.id, 'cotacao_peca_disponivel')).filter((n) => n.dados?.cotacao_id === id);
+    const urgente = async () => ['hoje', 'amanha'].includes(String((await A.cotacaoNoBanco(id))?.urgencia || ''));
+    const urgK = await urgente();
+    ok('D.3k2 reabrir pela tela re-avisa SO quem nao respondeu (lote 2): +1 sino (loja 1, dados.reaberta "1"); loja 2 (respondeu) sem sino novo nem e-mail; e-mail a loja 1 se hoje/amanha', nAntes >= 2 && (await avisosDisp()) === nAntes + 1 && (await sinoDe(dLoja1)).some((n) => n.dados?.reaberta === '1') && (await sinoDe(dLoja2)).every((n) => !n.dados?.reaberta) && A.emailsDe(dLoja2.email, tR).length === 0 && A.emailsDe(dLoja1.email, tR).length === (urgK ? 1 : 0), `antes=${nAntes} depois=${await avisosDisp()} urgente=${urgK} emails_loja1=${A.emailsDe(dLoja1.email, tR).length}`);
     ok('D.3l a loja volta a ver a cotacao (select = 1)', ((await S.lj1.c.from('cotacoes_pecas').select('id').eq('id', id).in('status', ['aberta', 'respondida'])).data || []).length === 1);
     const rr1 = await A.reabrir(id, S.comp.token);
     ok(`D.3m POST ${ROTA_REABRIR} em cotacao nao expirada -> 409 NAO_EXPIRADA`, rr1.status === 409 && rr1.d.codigo === 'NAO_EXPIRADA', JSON.stringify(rr1));
@@ -322,7 +330,8 @@ try {
     const rr7 = await A.reabrir(id, S.comp.token);
     ok('D.3p reabrir pela rota (dona) -> 200 {status:"respondida", reabertaVezes:2, expiraEm +7d}', rr7.status === 200 && rr7.d.status === 'respondida' && rr7.d.reabertaVezes === 2 && dentro7d(rr7.d.expiraEm) && (await A.cotacaoNoBanco(id))?.status === 'respondida', JSON.stringify(rr7));
     await sleep(1500);
-    ok('D.3p2 reabrir pela rota NAO re-avisa (sinos cotacao_peca_disponivel iguais, sem e-mail)', (await avisosDisp()) === nAntes7 && A.emailsDe(dLoja1.email, tR7).length === 0 && A.emailsDe(dLoja2.email, tR7).length === 0, `antes=${nAntes7} depois=${await avisosDisp()}`);
+    const urgP = await urgente();
+    ok('D.3p2 reabrir pela rota re-avisa SO quem nao respondeu: +1 sino (loja 1, dados.reaberta "2"); loja 2 nada; e-mail a loja 1 se hoje/amanha', (await avisosDisp()) === nAntes7 + 1 && (await sinoDe(dLoja1)).some((n) => n.dados?.reaberta === '2') && (await sinoDe(dLoja2)).every((n) => !n.dados?.reaberta) && A.emailsDe(dLoja2.email, tR7).length === 0 && A.emailsDe(dLoja1.email, tR7).length === (urgP ? 1 : 0), `antes=${nAntes7} depois=${await avisosDisp()} urgente=${urgP} emails_loja1=${A.emailsDe(dLoja1.email, tR7).length}`);
     // sem oferta -> volta a 'aberta'
     const cC = await A.cotacao(ofComp, 'Sem oferta vencida', { expira_em: horasAtras(1) });
     const r3 = await A.tarefa();

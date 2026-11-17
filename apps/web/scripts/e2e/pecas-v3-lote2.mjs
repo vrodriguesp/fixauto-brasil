@@ -51,7 +51,7 @@ try {
     const colsF = psql("select string_agg(table_name||'.'||column_name||':'||data_type||':'||coalesce(column_default,''), ',' order by 1) from information_schema.columns where table_name in ('lojas_pecas','oficinas') and column_name in ('iva_registrado','iva_pct','regime_margem_usadas')");
     ok('D.0d lojas_pecas e oficinas: iva_registrado boolean, iva_pct numeric, regime_margem_usadas boolean default false', ['lojas_pecas', 'oficinas'].every((t) => colsF.includes(`${t}.iva_registrado:boolean`) && colsF.includes(`${t}.iva_pct:numeric`) && colsF.includes(`${t}.regime_margem_usadas:boolean:false`)), colsF);
     const pkD = psql("select pg_get_constraintdef(oid) from pg_constraint where conrelid='cotacoes_pecas_dispensas'::regclass and contype='p'");
-    const polD = psql("select string_agg(polname||':'||polcmd, ',' order by polname) from pg_policy where polrelid='cotacoes_pecas_dispensas'::regclass");
+    const polD = psql("select string_agg(polname||':'||polcmd::text, ',' order by polname) from pg_policy where polrelid='cotacoes_pecas_dispensas'::regclass");
     const chkD = psql("select string_agg(pg_get_constraintdef(oid), ' | ') from pg_constraint where conrelid='cotacoes_pecas_dispensas'::regclass and contype='c'");
     ok('D.0e cotacoes_pecas_dispensas: PK (cotacao_id, fornecedor_tipo, fornecedor_id), RLS, politicas select/insert/delete (sem update), CHECK motivo/origem, indice profile_id, fora do realtime, sem visto_em', A.tabelaExiste('cotacoes_pecas_dispensas') && /cotacao_id, fornecedor_tipo, fornecedor_id/.test(pkD) && psql("select relrowsecurity from pg_class where relname='cotacoes_pecas_dispensas'") === 't' && /cotacoes_pecas_dispensas_select:r/.test(polD) && /cotacoes_pecas_dispensas_insert:a/.test(polD) && /cotacoes_pecas_dispensas_delete:d/.test(polD) && !/:w/.test(polD) && /sem_estoque/.test(chkD) && /'email'/.test(chkD) && Number(psql("select count(*) from pg_indexes where tablename='cotacoes_pecas_dispensas' and indexdef ilike '%(profile_id)%'")) >= 1 && psql("select count(*) from pg_publication_tables where pubname='supabase_realtime' and tablename in ('cotacoes_pecas_dispensas','avisos_email_pecas','pecas_links_email')") === '0' && !A.colunaExiste('cotacoes_pecas_dispensas', 'visto_em'), `${pkD} | ${polD} | ${chkD.slice(0, 200)}`);
     const colsA = psql("select string_agg(column_name, ',' order by column_name) from information_schema.columns where table_name='avisos_email_pecas'");
@@ -155,8 +155,9 @@ try {
     let c = null; for (let i = 0; i < 40 && !c; i++) { c = (await A.admin.from('cotacoes_pecas').select('*').eq('oficina_id', ofComp.id).eq('peca_descricao', PECA2).maybeSingle()).data; if (!c) await sleep(300); }
     Q2 = c ? { id: c.id, descricao: PECA2 } : null;
     ok("D.1i cotacao 'sem pressa' (padrao da tela) gravada com urgencia 'sem_pressa'", !!c && c.urgencia === 'sem_pressa', JSON.stringify(c?.urgencia));
-    const a1 = await A.esperarAviso(dLoja1.id, 'cotacao_peca_disponivel', 40);
-    ok('D.1j sino sempre imediato: loja 1 tem o sino de Q2', a1.some((n) => n.dados?.cotacao_id === Q2?.id));
+    // espera o sino DE Q2 (a loja 1 ja tem o de Q1: esperarAviso voltaria cedo demais)
+    let temQ2 = false; for (let i = 0; i < 40 && !temQ2; i++) { temQ2 = (await A.sinoDisponivel(dLoja1.id, Q2?.id)).length === 1; if (!temQ2) await sleep(300); }
+    ok('D.1j sino sempre imediato: loja 1 tem o sino de Q2', temQ2);
     await sleep(3000);
     const fila = await A.avisosEmail({ cotacao_id: Q2?.id });
     ok("D.1k 'sem pressa': NENHUM e-mail, linha na fila tipo 'resumo' motivo 'sem_pressa' enviado_em NULL para as 3 lojas, nenhum token", A.emailsDe(dLoja1.email, t2).length === 0 && A.emailsDe(dLoja2.email, t2).length === 0 && [dLoja1.id, dLoja2.id, dLoja3.id].every((id) => fila.some((r) => r.profile_id === id && r.tipo === 'resumo' && r.motivo === 'sem_pressa' && r.enviado_em === null)) && (await A.tokensEmail({ cotacao_id: Q2?.id })).length === 0, JSON.stringify(fila).slice(0, 300));
@@ -323,10 +324,13 @@ try {
     await A.notificarFornecedores(QV.id, S.comp.token);
     const { error: eVd } = await S.vend.c.from('cotacoes_pecas_dispensas').insert({ cotacao_id: QV.id, fornecedor_tipo: 'oficina', fornecedor_id: ofVend.id, profile_id: dVend.id, origem: 'painel', motivo: 'nao_trabalho' });
     ok("D.4l oficina vendedora dispensa pela RLS (fornecedor_tipo 'oficina'); a compradora le a linha", !eVd && ((await S.comp.c.from('cotacoes_pecas_dispensas').select('fornecedor_tipo').eq('cotacao_id', QV.id)).data || []).some((r) => r.fornecedor_tipo === 'oficina'), eVd?.message);
+    // outra cotacao "lojas e oficinas" que a vendedora ainda ve (todas as demais da rodada sao "so lojas")
+    const QV0 = await A.cotacao(ofComp, 'Vendedora ve', { urgencia: 'hoje', alvo: 'todos' });
+    await A.notificarFornecedores(QV0.id, S.comp.token);
     const ctxVd = await nav.contexto('chromium', 390, A.ip); const pVd = await ctxVd.newPage(); vigiar(pVd, erros, 'D.4 vendedora');
     await entrarPelaTela(pVd, '/ee/et', dVend);
     await ir(pVd, '/ee/et/oficina/pecas?aba=vender', 3500);
-    ok('D.4m aba Vender da vendedora: a dispensada some; o cartao de outra cotacao "todos" tem o botao cotacao-nao-tenho', (await cartaoLoja(pVd, QV.descricao).count()) === 0 && (await pVd.getByTestId('cotacao-nao-tenho').count()) >= 1, String(await pVd.getByTestId('cotacao-nao-tenho').count()));
+    ok('D.4m aba Vender da vendedora: a dispensada some; o cartao da outra cotacao "todos" (ancora) tem o botao cotacao-nao-tenho', (await cartaoLoja(pVd, QV.descricao).count()) === 0 && (await cartaoLoja(pVd, QV0.descricao).count()) === 1 && (await cartaoLoja(pVd, QV0.descricao).getByTestId('cotacao-nao-tenho').count()) === 1, `dispensada=${await cartaoLoja(pVd, QV.descricao).count()} outra=${await cartaoLoja(pVd, QV0.descricao).count()}`);
     await ctxVd.close();
   });
   await ctxL2.close();
@@ -543,7 +547,9 @@ try {
     await pM.locator('#c8551-1').fill(`Pelo pedido ${A.tag}`);
     await botao(pM, ET('oficinaPecas.enviarCotacao')).click();
     let c = null; for (let i = 0; i < 40 && !c; i++) { c = (await A.admin.from('cotacoes_pecas').select('id, fipe_marca').eq('oficina_id', ofComp.id).eq('peca_descricao', `Pelo pedido ${A.tag}`).maybeSingle()).data; if (!c) await sleep(300); }
-    ok('D.9c cotacao criada com o carro do pedido e a placa TA1234 em cotacoes_pecas_placa (sem solicitacao_id)', !!c && c.fipe_marca === 'Toyota' && (await A.admin.from('cotacoes_pecas_placa').select('placa').eq('cotacao_id', c.id).maybeSingle()).data?.placa === 'TA1234');
+    // a tela grava a placa logo DEPOIS da cotacao: espera a linha da placa
+    let placa9 = null; for (let i = 0; i < 30 && c && !placa9; i++) { placa9 = (await A.admin.from('cotacoes_pecas_placa').select('placa').eq('cotacao_id', c.id).maybeSingle()).data?.placa || null; if (!placa9) await sleep(300); }
+    ok('D.9c cotacao criada com o carro do pedido e a placa TA1234 em cotacoes_pecas_placa (sem solicitacao_id)', !!c && c.fipe_marca === 'Toyota' && placa9 === 'TA1234', `marca=${c?.fipe_marca} placa=${placa9}`);
     await pM.screenshot({ path: `${PRINTS}/lote2-pedir-peca-et-390.png`, fullPage: true });
     await ir(pM, `/ee/et/oficina/pecas?solicitacao=${solReal.id}`, 3000);
     if (!(await pM.locator('#c8551-1').isVisible().catch(() => false))) await botao(pM, ET('oficinaPecas.novaCotacao')).click().catch(() => {});
@@ -611,11 +617,14 @@ try {
 
   // ======================= D.11: paridade =======================
   await tentar('D.11', async () => {
-    const cots = (await A.admin.from('cotacoes_pecas').select('id').in('oficina_id', [ofComp.id, ofComp2.id, ofComp3.id])).data.map((c) => c.id);
+    const deTeste = (await A.admin.from('cotacoes_pecas').select('id, peca_descricao').in('oficina_id', [ofComp.id, ofComp2.id, ofComp3.id, ofComp4.id])).data || [];
+    const cots = deTeste.map((c) => c.id);
     const fila = (await A.avisosEmail({ profile_id: dLojaReal.id })).filter((r) => cots.includes(r.cotacao_id));
     const toks = (await A.tokensEmail({ profile_id: dLojaReal.id })).filter((r) => cots.includes(r.cotacao_id));
     ok('D.11a loja REAL: nenhuma linha em avisos_email_pecas nem em pecas_links_email para cotacoes de teste', fila.length === 0 && toks.length === 0, `fila=${fila.length} tokens=${toks.length}`);
-    ok('D.11b loja REAL nao le dispensas de cotacoes de teste (select = 0) e nao recebeu e-mail algum nesta rodada', ((await S.ljReal.c.from('cotacoes_pecas_dispensas').select('*')).data || []).length === 0 && A.emailsDe(dLojaReal.email, t0).length === 0);
+    // a loja real recebe de proposito o resumo da cotacao REAL em D.10d3: o que nao pode e qualquer e-mail dela citar cotacao de teste
+    const vazados = A.emailsDe(dLojaReal.email, t0).filter((m) => deTeste.some((c) => m.html.includes(c.peca_descricao)));
+    ok('D.11b loja REAL nao le dispensas de cotacoes de teste (select = 0) e nenhum e-mail dela cita cotacao de teste', ((await S.ljReal.c.from('cotacoes_pecas_dispensas').select('*')).data || []).length === 0 && vazados.length === 0, vazados.map((m) => m.f).join(','));
     const { error } = await A.inserirDispensa(S.ljReal, Q2.id, 'loja', ljReal.id);
     ok('D.11c loja REAL nao dispensa cotacao de teste (RLS 42501)', error?.code === '42501', error ? `${error.code} ${error.message}` : 'gravou');
     console.log('info D.11 Varuosamees: nao existe no banco local; em producao conferir count(*) = 0 em cotacoes_pecas e cotacoes_pecas_dispensas com o JWT dela (fase E)');
