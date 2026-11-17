@@ -111,6 +111,21 @@ try {
   r = await corrigir(errado, `ce-a2-${tag}@example.test`, A.token);
   ok('token anterior a uma correcao deixa de valer', r.status === 403 && r.corpo.codigo === 'CORRECAO_INVALIDA', JSON.stringify(r));
 
+  // e-mail que existe so no auth (conta sem perfil): tambem responde como sucesso, sem trocar (Fable M1)
+  {
+    const E = await cadastrar(`ce-e-${tag}@gmail.con`);
+    const emOrf = `ce-orf-${tag}@example.test`;
+    const { data: orf } = await sb.auth.admin.createUser({ email: emOrf, password: senha, email_confirm: false });
+    contas.add(orf.user.id);
+    const rE = await corrigir(`ce-e-${tag}@gmail.con`, emOrf, E.token);
+    ok('e-mail so no auth -> 200 igual a sucesso (nao 500)', rE.status === 200 && rE.corpo.email === emOrf && !!rE.corpo.correcao, JSON.stringify(rE));
+    const uE = await usuario(E.id);
+    ok('... conta intacta (e-mail e perfil), tentativa contada', uE.email === `ce-e-${tag}@gmail.con` && (await perfilDe(`ce-e-${tag}@gmail.con`))?.id === E.id && uE.app_metadata?.correcao_email?.usadas === 1, JSON.stringify({ e: uE.email, m: uE.app_metadata }));
+    ok('... conta sem perfil intacta', (await usuario(orf.user.id)).email === emOrf);
+    const rE2 = await corrigir(emOrf, `ce-e2-${tag}@example.test`, rE.corpo.correcao);
+    ok('... e o token novo corrige depois', rE2.status === 200 && (await usuario(E.id)).email === `ce-e2-${tag}@example.test`, JSON.stringify(rE2));
+  }
+
   // correcao de verdade (2a): auth + perfil trocados, sem confirmar, link so no novo
   const certo = `ce-a2-${tag}@example.test`;
   const antesErrado = emailsDe(errado).length;

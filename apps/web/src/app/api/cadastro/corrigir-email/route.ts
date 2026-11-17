@@ -20,6 +20,24 @@ export const dynamic = 'force-dynamic';
 // Nao revela mais que o cadastro: e-mail novo ja cadastrado responde igual a sucesso (o
 // dono daquele e-mail recebe o aviso "voce ja tem conta", como no cadastro) e o token
 // fantasma do cadastro com e-mail existente tambem.
+// Conta no auth com este e-mail exato (a API de admin do supabase-js nao busca por e-mail;
+// o GoTrue aceita ?filter= em /admin/users). Falha na busca = "nao sei" -> false (vira 500).
+async function existeNoAuth(email: string): Promise<boolean> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const chave = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !chave) return false;
+  try {
+    const r = await fetch(`${url}/auth/v1/admin/users?filter=${encodeURIComponent(email)}&per_page=50`, {
+      headers: { apikey: chave, Authorization: `Bearer ${chave}` }, cache: 'no-store',
+    });
+    if (!r.ok) return false;
+    const j = await r.json();
+    return Array.isArray(j?.users) && j.users.some((u: { email?: string }) => (u.email || '').toLowerCase() === email);
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(req: NextRequest) {
   if (!limitarPorIp(req, 'cadastro-corrigir', 10, 60 * 60 * 1000)) {
     return NextResponse.json({ error: 'Muitas tentativas', codigo: 'MUITAS_TENTATIVAS' }, { status: 429 });
@@ -88,7 +106,18 @@ export async function POST(req: NextRequest) {
     }
 
     const { error: aErro } = await supabaseAdmin.auth.admin.updateUserById(user.id, { email: novo, app_metadata: { correcao_email: guardar } });
-    if (aErro) throw new Error(aErro.message);
+    if (aErro) {
+      // e-mail que existe so no auth (conta sem perfil): o GoTrue recusa a troca. Igual ao
+      // cadastro (api/cadastro, "already registered"): responde como sucesso, sem trocar. O
+      // GoTrue v2.197 responde so "Error updating user" (500) nesse caso - por isso tambem a
+      // busca pelo e-mail no auth antes de tratar como falha (revisao Fable M1, 17/11)
+      if (/already|registered|exists/i.test(aErro.message) || await existeNoAuth(novo)) {
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(user.id, { app_metadata: { correcao_email: guardar } });
+        if (error) throw new Error(error.message);
+        return NextResponse.json({ ok: true, email: novo, correcao: proximo.token });
+      }
+      throw new Error(aErro.message);
+    }
     const { data: perfil, error: pErro } = await supabaseAdmin
       .from('profiles').update({ email: novo }).eq('id', user.id).select('nome, idioma').maybeSingle();
     if (pErro || !perfil) {
