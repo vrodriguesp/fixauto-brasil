@@ -5,6 +5,7 @@ import type { Profile, Oficina, Funcionario, LojaPecas } from '@fixauto/shared';
 import { supabase, isSupabaseConfigured } from './supabase';
 import type { User } from '@supabase/supabase-js';
 import { instalarSessaoNasApis } from './sessao-api';
+import { desligarAvisos } from './push-navegador-cliente';
 
 interface AuthContextType {
   user: Profile | null;
@@ -155,6 +156,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    // lote 3c de pecas: o aviso no navegador sai com a conta (a inscricao e apagada antes do logout)
+    await desligarAvisos();
     await supabase.auth.signOut({ scope: 'local' });
     setUser(null);
     setOficina(null);

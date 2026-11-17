@@ -1488,6 +1488,17 @@
     "lojaAvaliacoes": {
       "titulo": "Avaliações",
       "vazio": "A sua loja ainda não recebeu avaliações. Aparecem aqui depois das entregas."
+    },
+    "push": {
+      "titulo": "Avisos no navegador",
+      "ligar": "Ligar avisos neste navegador",
+      "desligar": "Desligar avisos neste navegador",
+      "ligado": "Ligado neste navegador: recebe os avisos de peças mesmo com o separador fechado (com o navegador aberto).",
+      "desligado": "Desligado neste navegador.",
+      "negado": "O navegador bloqueou os avisos. Para ligar, permita as notificações de bipfix.com nas definições do navegador.",
+      "semSuporte": "Este navegador não recebe avisos. Os e-mails continuam a chegar.",
+      "iosDica": "No iPhone/iPad, adicione a BipFix ao ecrã principal (Partilhar → Adicionar ao ecrã principal) e abra por lá para receber avisos.",
+      "ajuda": "O e-mail continua a ser enviado; o aviso no navegador é um extra."
     }
   }
 }

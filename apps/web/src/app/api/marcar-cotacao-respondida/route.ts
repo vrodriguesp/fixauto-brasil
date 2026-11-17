@@ -6,6 +6,7 @@ import { currencyForCountry } from '@/lib/currency';
 import { notifCotacaoPecaRespondida } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
+import { enviarPushNavegador } from '@/lib/push-navegador';
 
 
 // A loja/oficina que responde uma cotacao nao e dona dela (a oficina
@@ -79,6 +80,8 @@ export async function POST(req: NextRequest) {
         mensagem: nn.mensagem,
         dados: { cotacao_id: cotacaoId, textos: emTodasAsLinguas((l) => notifCotacaoPecaRespondida(l, fornecedorNome, (cotacao as any).peca_descricao)) },
       });
+      // lote 3c (D-8): oferta recebida tambem no navegador da oficina que ligou o aviso (sem inscricao, nada sai)
+      enviarPushNavegador((cotacao as any).oficina.profile_id, { titulo: nn.titulo, mensagem: nn.mensagem, link: '/oficina/pecas' }).catch(() => {});
 
       if (compradoraProfile.email) {
         await sendCotacaoPecaRespondidaEmail({

@@ -19,6 +19,7 @@ import SemQuebra from '@/components/ui/SemQuebra';
 import { INTL_LOCALE } from '@/lib/utils';
 import { usePecasV3 } from '@/hooks/use-pecas-v3';
 import { PerfilFiscalCampos, fiscalDoPerfil, colunasFiscais, type ValorFiscal } from '@/components/pecas/FornecedorV3';
+import AvisosNavegador from '@/components/pecas/AvisosNavegador';
 
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
@@ -778,6 +779,8 @@ export default function PerfilOficinaPage() {
           {saving ? t('salvando') : t('salvarAlteracoes')}
         </button>
       </div>
+      {/* lote 3c: avisos no navegador (so com a tela nova, so o dono) */}
+      {v3 && ehDono && <AvisosNavegador />}
       <div className="mt-10 pt-6 border-t border-gray-200 text-right">
           <Link href="/excluir-conta" className="text-sm text-red-700 hover:underline">{tx('link')}</Link>
         </div>

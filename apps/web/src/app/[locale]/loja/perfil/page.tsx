@@ -9,6 +9,7 @@ import EnderecoEstruturado, { juntarEndereco, separarEndereco, type ValorEnderec
 import CampoTelefone from '@/components/forms/CampoTelefone';
 import { usePecasV3 } from '@/hooks/use-pecas-v3';
 import { PerfilFiscalCampos, fiscalDoPerfil, colunasFiscais, type ValorFiscal } from '@/components/pecas/FornecedorV3';
+import AvisosNavegador from '@/components/pecas/AvisosNavegador';
 
 export default function PerfilLojaPage() {
   const t = useTranslations('lojaPerfil');
@@ -159,6 +160,8 @@ export default function PerfilLojaPage() {
           {saved && <span className="text-sm text-green-600">{t('salvoMsg')}</span>}
         </div>
       </div>
+      {/* lote 3c: avisos no navegador (so com a tela nova) */}
+      {v3 && <AvisosNavegador />}
     </div>
   );
 }

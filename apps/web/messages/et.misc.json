@@ -1488,6 +1488,17 @@
     "lojaAvaliacoes": {
       "titulo": "Hinnangud",
       "vazio": "Sinu pood pole veel hinnanguid saanud. Need ilmuvad siia pärast tarneid."
+    },
+    "push": {
+      "titulo": "Teavitused brauseris",
+      "ligar": "Lülita teavitused selles brauseris sisse",
+      "desligar": "Lülita teavitused selles brauseris välja",
+      "ligado": "Selles brauseris sees: saad varuosade teavitused ka suletud vahelehega (kui brauser on avatud).",
+      "desligado": "Selles brauseris väljas.",
+      "negado": "Brauser blokeeris teavitused. Sisselülitamiseks luba bipfix.com teavitused brauseri seadetes.",
+      "semSuporte": "See brauser ei saa teavitusi vastu võtta. E-kirjad tulevad edasi.",
+      "iosDica": "iPhone/iPadis lisa BipFix avakuvale (Jaga → Lisa avakuvale) ja ava see sealt, et teavitusi saada.",
+      "ajuda": "E-kirjad saadetakse edasi; brauseri teavitus on lisaks."
     }
   }
 }

@@ -1488,6 +1488,17 @@
     "lojaAvaliacoes": {
       "titulo": "Recensioni",
       "vazio": "Il tuo negozio non ha ancora recensioni. Compaiono qui dopo le consegne."
+    },
+    "push": {
+      "titulo": "Notifiche nel browser",
+      "ligar": "Attiva le notifiche in questo browser",
+      "desligar": "Disattiva le notifiche in questo browser",
+      "ligado": "Attive in questo browser: ricevi le notifiche dei ricambi anche con la scheda chiusa (con il browser aperto).",
+      "desligado": "Disattivate in questo browser.",
+      "negado": "Il browser ha bloccato le notifiche. Per attivarle, consenti le notifiche di bipfix.com nelle impostazioni del browser.",
+      "semSuporte": "Questo browser non riceve notifiche. Le e-mail continuano ad arrivare.",
+      "iosDica": "Su iPhone/iPad aggiungi BipFix alla schermata Home (Condividi → Aggiungi alla schermata Home) e aprila da lì per ricevere notifiche.",
+      "ajuda": "Le e-mail vengono comunque inviate; la notifica nel browser è un extra."
     }
   }
 }

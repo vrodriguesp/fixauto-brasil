@@ -1488,6 +1488,17 @@
     "lojaAvaliacoes": {
       "titulo": "Reviews",
       "vazio": "Your shop has no reviews yet. They show up here after deliveries."
+    },
+    "push": {
+      "titulo": "Browser notifications",
+      "ligar": "Turn on notifications in this browser",
+      "desligar": "Turn off notifications in this browser",
+      "ligado": "On in this browser: you get parts notifications even with the tab closed (while the browser is open).",
+      "desligado": "Off in this browser.",
+      "negado": "The browser blocked notifications. To turn them on, allow notifications for bipfix.com in the browser settings.",
+      "semSuporte": "This browser cannot receive notifications. E-mails keep arriving.",
+      "iosDica": "On iPhone/iPad, add BipFix to the Home Screen (Share → Add to Home Screen) and open it from there to get notifications.",
+      "ajuda": "E-mails are still sent; browser notifications are an extra."
     }
   }
 }

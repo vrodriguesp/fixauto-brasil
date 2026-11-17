@@ -5,6 +5,7 @@ import { sendMensagemPecaEmail } from '@/lib/notifications';
 import { notifMensagemPeca } from '@/lib/notif-i18n';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { emTodasAsLinguas } from '@/lib/notif-textos';
+import { enviarPushNavegador } from '@/lib/push-navegador';
 
 // A2 (16/11): mensagem nova na conversa de um pedido de peca -> aviso no sino da
 // outra parte (oficina compradora <-> loja / oficina vendedora). Antes ninguem era
@@ -87,6 +88,8 @@ export async function POST(req: NextRequest) {
       mensagem: n.mensagem,
       dados: { cotacao_id: cot.id, conversa, link, textos: emTodasAsLinguas((l) => notifMensagemPeca(l, remetenteNome, cot.peca_descricao)) },
     });
+    // lote 3c (D-8): mensagem tambem no navegador de quem ligou o aviso (sem inscricao, nada sai)
+    enviarPushNavegador(dest.profileId, { titulo: n.titulo, mensagem: n.mensagem, link }).catch(() => {});
 
     let email = false;
     if (!naUltimaHora && dest.perfil?.email) {
