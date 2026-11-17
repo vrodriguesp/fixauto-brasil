@@ -310,7 +310,10 @@ try {
     const card = cardCom(pM, cot3.descricao);
     const badge = (await card.getByTestId('cotacao-status').innerText().catch(() => '')).trim();
     ok("[NOVO] C14b tela de hoje com cotacao 'expirada': badge = pecas.expirada (fallback), nao 'Tühistatud', sem editar/cancelar", badge === ET('pecas.expirada') && badge !== ET('oficinaPecas.cancelada') && (await botao(card, ET('oficinaPecas.editarPedido')).count()) === 0, badge);
-    ok('[NOVO] C14c com o interruptor desligado NAO aparece o botao reabrir nem outro elemento novo (tela de hoje)', (await card.count()) === 1 && (await semTestidsNovos(pM)).length === 0, (await semTestidsNovos(pM)).join(','));
+    // lote 2 (Contrato_testids_lote2.md sec. 7.8): "reabrir" aparece para 'expirada' tambem sem o interruptor
+    // (o global desligado depois de vencer deixava a cotacao presa); nenhum OUTRO elemento novo
+    const outrosNovos = (await semTestidsNovos(pM)).filter((x) => x !== 'cotacao-reabrir');
+    ok('[NOVO] C14c com o interruptor desligado o cartao expirado tem o botao reabrir (lote 2) e nenhum outro elemento novo', (await card.count()) === 1 && (await card.getByTestId('cotacao-reabrir').count()) === 1 && outrosNovos.length === 0, outrosNovos.join(','));
   });
 
   // ======================= C15: perfis = hoje (sem campo de telefone comercial) =======================
