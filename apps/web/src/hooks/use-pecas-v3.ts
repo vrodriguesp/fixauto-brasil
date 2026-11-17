@@ -6,15 +6,27 @@ import { useEffect, useRef, useState } from 'react';
 // interruptor global OU conta de teste - lib/pecas-v3.ts). null enquanto nao sabe:
 // as telas esperam a resposta antes de desenhar o formulario e os cartoes, para
 // nao mostrar a tela de hoje por meio segundo e trocar. Erro de rede = tela de hoje.
+// Lote 2 (veredito do lote 1): a rota travada vira "tela de hoje" em 8 s (antes, esqueleto eterno).
+const ESPERA_MAXIMA_MS = 8000;
+const sinalComPrazo = (ms: number): AbortSignal | undefined => {
+  if (typeof AbortSignal !== 'undefined' && typeof (AbortSignal as any).timeout === 'function') return (AbortSignal as any).timeout(ms);
+  if (typeof AbortController === 'undefined') return undefined;
+  const c = new AbortController();
+  setTimeout(() => c.abort(), ms);
+  return c.signal;
+};
+
 export function usePecasV3(): boolean | null {
   const [ativo, setAtivo] = useState<boolean | null>(null);
   useEffect(() => {
     let vivo = true;
-    fetch('/api/pecas-v3', { cache: 'no-store' })
+    // garantia extra: mesmo que o navegador ignore o sinal, a tela de hoje aparece no prazo
+    const prazo = setTimeout(() => { if (vivo) setAtivo((a) => (a === null ? false : a)); }, ESPERA_MAXIMA_MS + 200);
+    fetch('/api/pecas-v3', { cache: 'no-store', signal: sinalComPrazo(ESPERA_MAXIMA_MS) })
       .then((r) => (r.ok ? r.json() : null))
-      .then((j) => { if (vivo) setAtivo(j?.ativo === true); })
-      .catch(() => { if (vivo) setAtivo(false); });
-    return () => { vivo = false; };
+      .then((j) => { if (vivo) setAtivo((a) => (a === null ? j?.ativo === true : a)); })
+      .catch(() => { if (vivo) setAtivo((a) => (a === null ? false : a)); });
+    return () => { vivo = false; clearTimeout(prazo); };
   }, []);
   return ativo;
 }

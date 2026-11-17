@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
-import { EMAIL_I18N, WHATSAPP_I18N, SMS_I18N, resolveEmailLocale, fmt, escapeHtml, diasTexto, quantidadeTexto, type EmailLocale } from './email-i18n';
+import { EMAIL_I18N, WHATSAPP_I18N, SMS_I18N, resolveEmailLocale, fmt, escapeHtml, diasTexto, quantidadeTexto, numeroTexto, type EmailLocale } from './email-i18n';
+import { semIva, totalDaOferta } from './pecas-iva';
 import { formatCurrency } from '@fixauto/shared';
 
 const resend = process.env.RESEND_API_KEY
@@ -567,6 +568,11 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
   paraLoja?: boolean;
   linkInterno: string;
   locale?: string;
+  // lote 2 de pecas (17/11), so com a tela nova (cotacao com urgencia): urgencia, "aberta ate"
+  // (ja no fuso de quem recebe) e o botao "Nao tenho" (token proprio). Ausentes = e-mail de hoje.
+  urgencia?: string | null;
+  abertaAte?: string | null;
+  naoTenhoUrl?: string | null;
 }) {
   if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured');
@@ -575,7 +581,9 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
   const l = resolveEmailLocale(params.locale);
   const s = EMAIL_I18N.cotacaoPecaDisponivel[l];
   const d = EMAIL_I18N.pecaDetalhes[l];
+  const a = EMAIL_I18N.pecaAvisos[l];
   const foto = params.foto && /^https?:\/\//.test(params.foto) ? params.foto : null;
+  const urgencia = params.urgencia && a[`urg_${params.urgencia}`] ? a[`urg_${params.urgencia}`] : null;
   try {
     await sendOrThrow({
       from: FROM_EMAIL,
@@ -594,6 +602,8 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
               <p style="margin: 0; font-size: 18px; font-weight: bold; color: #111827;">${escapeHtml(params.pecaDescricao)}</p>
               ${params.carro?.trim() ? linhaPeca(d.veiculo, escapeHtml(params.carro.trim())) : ''}
               ${linhaPeca(d.quantidade, quantidadeTexto(l, params.quantidade, params.unidade))}
+              ${urgencia ? `<p data-campo="urgencia" style="margin: 6px 0 0; color: #374151;"><strong>${a.urgencia}:</strong> ${urgencia}</p>` : ''}
+              ${params.abertaAte ? `<p data-campo="aberta-ate" style="margin: 6px 0 0; color: #374151;"><strong>${a.abertaAte}:</strong> ${escapeHtml(params.abertaAte)}</p>` : ''}
               ${params.observacao?.trim() ? linhaPeca(d.detalhes, escapeHtml(params.observacao.trim().slice(0, 500))) : ''}
               ${foto ? `<p style="margin: 12px 0 0;"><img src="${escapeHtml(foto)}" alt="" width="160" style="max-width: 160px; border-radius: 8px; border: 1px solid #e5e7eb;" /></p>` : ''}
             </div>
@@ -604,6 +614,7 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
                 ${s.cta}
               </a>
             </p>
+            ${params.naoTenhoUrl ? `<p style="margin-top: 16px;"><a data-campo="nao-tenho" href="${escapeHtml(params.naoTenhoUrl)}" style="display: inline-block; border: 1px solid #9ca3af; color: #374151; padding: 10px 20px; border-radius: 8px; text-decoration: none;">${a.naoTenho}</a></p><p style="margin: 6px 0 0; font-size: 12px; color: #6b7280;">${a.naoTenhoAjuda}</p>` : ''}
           </div>
         </div>
       `,
@@ -611,6 +622,68 @@ export async function sendCotacaoPecaDisponivelEmail(params: {
     return { success: true };
   } catch (error) {
     console.error('[Notifications] Erro ao enviar e-mail de cotação de peça:', error);
+    return { success: false, error: 'Failed to send email' };
+  }
+}
+
+// Lote 2 de pecas (17/11): resumo de 2 h (dias uteis, 8-18 h Tallinn) com as cotacoes da fila
+// (sem pressa ou acima do teto diario). Uma linha por cotacao (data-cotacao, para os testes) com o
+// proprio link "Nao tenho"; sem placa e sem foto; botao neutro para a lista. Devolve success false
+// (sem lancar) quando o envio falha: a tarefa desfaz a reserva e tenta no proximo slot.
+export async function sendResumoCotacoesPecasEmail(params: {
+  toEmail: string;
+  toName: string;
+  locale?: string;
+  linkInterno: string;
+  cotacoes: { id: string; peca: string; carro: string | null; semCarro: boolean; quantidade: number; unidade?: string | null; urgencia?: string | null; cidade?: string | null; abertaAte: string; naoTenhoUrl: string | null }[];
+}) {
+  if (!podeEnviar) {
+    console.warn('[Notifications] Resend not configured');
+    return { success: false, error: 'Email service not configured' };
+  }
+  const l = resolveEmailLocale(params.locale);
+  const s = EMAIL_I18N.cotacaoPecaDisponivel[l];
+  const d = EMAIL_I18N.pecaDetalhes[l];
+  const a = EMAIL_I18N.pecaAvisos[l];
+  const linhas = params.cotacoes.map((c) => {
+    const urg = c.urgencia && a[`urg_${c.urgencia}`] ? ` · ${a.urgencia}: ${a[`urg_${c.urgencia}`]}` : '';
+    const veiculo = c.semCarro ? a.semVeiculo : c.carro?.trim() ? escapeHtml(c.carro.trim()) : '';
+    return `<div data-cotacao="${c.id}" style="border-top: 1px solid #e5e7eb; padding: 10px 0;">`
+      + `<p style="margin: 0; font-weight: bold; color: #111827;">${escapeHtml(c.peca)}</p>`
+      + `<p style="margin: 4px 0 0; color: #374151;">${veiculo ? `${veiculo} · ` : ''}${d.quantidade}: ${quantidadeTexto(l, c.quantidade, c.unidade)}${urg}</p>`
+      + `<p style="margin: 4px 0 0; color: #6b7280;">${c.cidade ? `${a.cidade} ${escapeHtml(c.cidade)} · ` : ''}${a.abertaAte}: ${escapeHtml(c.abertaAte)}</p>`
+      + (c.naoTenhoUrl ? `<p style="margin: 6px 0 0;"><a data-campo="nao-tenho" href="${escapeHtml(c.naoTenhoUrl)}" style="color: #374151;">${a.naoTenho}</a></p>` : '')
+      + '</div>';
+  }).join('');
+  try {
+    await sendOrThrow({
+      from: FROM_EMAIL,
+      to: params.toEmail,
+      subject: fmt(a.resumoAssunto, { n: params.cotacoes.length }),
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">BipFix</h1>
+            <p style="margin: 8px 0 0; opacity: 0.8;">${a.resumoTag}</p>
+          </div>
+          <div style="background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+            <p>${fmt(s.greeting, { name: escapeHtml(params.toName) })}</p>
+            <p>${a.resumoIntro}</p>
+            <div style="margin: 16px 0;">${linhas}</div>
+            <p style="margin-top: 24px;">
+              <a href="${linkNeutroPecas(params.locale, params.linkInterno)}"
+                 style="display: inline-block; background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                ${a.resumoCta}
+              </a>
+            </p>
+            <p style="margin-top: 16px; font-size: 12px; color: #6b7280;">${a.resumoRodape}</p>
+          </div>
+        </div>
+      `,
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('[Notifications] Erro ao enviar o resumo de cotacoes de pecas:', (error as Error)?.message);
     return { success: false, error: 'Failed to send email' };
   }
 }
@@ -624,6 +697,9 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
   prazoDias: number;
   moeda?: string;
   locale?: string;
+  // lote 2 de pecas (17/11): oferta com IVA e/ou quantidade ofertada (tela nova). Sem iva_modo e sem
+  // quantidade ofertada = e-mail de hoje (nenhuma linha nova).
+  oferta?: { quantidadePedida: number; quantidadeOfertada?: number | null; unidade?: string | null; ivaModo?: string | null; ivaPct?: number | null } | null;
 }) {
   if (!podeEnviar) {
     console.warn('[Notifications] Resend not configured');
@@ -633,6 +709,20 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
   const s = EMAIL_I18N.cotacaoPecaRespondida[locale];
   // Moeda e formato do idioma de quem recebe (antes: sempre pt-BR/BRL, tambem na Europa)
   const precoFormatado = formatCurrency(params.preco, params.moeda || moedaPadrao(params.locale), params.locale || 'en');
+  const linhasOferta = (() => {
+    const o = params.oferta;
+    if (!o || (!o.ivaModo && o.quantidadeOfertada == null)) return '';
+    const a = EMAIL_I18N.pecaAvisos[locale];
+    const moeda = params.moeda || moedaPadrao(params.locale);
+    const qtd = Number(o.quantidadeOfertada ?? o.quantidadePedida) || 1;
+    const total = totalDaOferta(params.preco, qtd);
+    const linhas = [`<p data-campo="total" style="margin: 6px 0 0; color: #374151;"><strong>${a.total}:</strong> ${formatCurrency(total, moeda, params.locale || 'en')} (${quantidadeTexto(locale, qtd, o.unidade)})</p>`];
+    if (o.ivaModo === 'registrado' && o.ivaPct != null) linhas.push(`<p data-campo="iva" style="margin: 4px 0 0; color: #6b7280;">${fmt(a.ivaSem, { valor: formatCurrency(semIva(total, o.ivaPct), moeda, params.locale || 'en'), pct: numeroTexto(locale, o.ivaPct) })}</p>`);
+    else if (o.ivaModo === 'nao_registrado') linhas.push(`<p data-campo="iva" style="margin: 4px 0 0; color: #6b7280;">${a.ivaNaoAplicavel}</p>`);
+    else if (o.ivaModo === 'margem') linhas.push(`<p data-campo="iva" style="margin: 4px 0 0; color: #6b7280;">${a.ivaMargem}</p>`);
+    if (o.quantidadeOfertada != null && Number(o.quantidadeOfertada) < Number(o.quantidadePedida)) linhas.push(`<p data-campo="parcial" style="margin: 4px 0 0; color: #92400e;">${fmt(a.ofertaParcial, { ofertada: quantidadeTexto(locale, o.quantidadeOfertada, o.unidade), pedida: quantidadeTexto(locale, o.quantidadePedida, o.unidade) })}</p>`);
+    return linhas.join('');
+  })();
   try {
     await sendOrThrow({
       from: FROM_EMAIL,
@@ -650,6 +740,7 @@ export async function sendCotacaoPecaRespondidaEmail(params: {
             <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
               <p style="margin: 0; font-size: 24px; font-weight: bold; color: #111827;">${precoFormatado}</p>
               <p style="margin: 4px 0 0; color: #6b7280;">${fmt(s.prazo, { prazoDias: diasTexto(params.locale, params.prazoDias) })}</p>
+              ${linhasOferta}
             </div>
             <p style="margin-top: 24px;">
               <a href="${linkNeutroPecas(params.locale, '/oficina/pecas')}"

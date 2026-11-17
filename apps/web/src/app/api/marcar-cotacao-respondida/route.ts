@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     const { data: respostas } = await supabaseAdmin
       .from('cotacoes_pecas_respostas')
       .select(`
-        id, fornecedor_tipo, preco, prazo_dias,
+        id, fornecedor_tipo, preco, prazo_dias, quantidade_ofertada, iva_pct, iva_modo,
         loja:lojas_pecas(profile_id, nome_fantasia),
         oficina_fornecedora:oficinas!cotacoes_pecas_respostas_oficina_fornecedora_id_fkey(profile_id, nome_fantasia)
       `)
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
 
     const { data: cotacao } = await supabaseAdmin
       .from('cotacoes_pecas')
-      .select('peca_descricao, oficina:oficinas(profile_id, pais, profile:profiles(email, nome, idioma))')
+      .select('peca_descricao, quantidade, unidade, oficina:oficinas(profile_id, pais, profile:profiles(email, nome, idioma))')
       .eq('id', cotacaoId)
       .single();
 
@@ -90,6 +90,8 @@ export async function POST(req: NextRequest) {
           prazoDias: minhaResposta.prazo_dias,
           moeda: currencyForCountry((cotacao as any).oficina.pais),
           locale: compradoraProfile.idioma,
+          // lote 2: IVA e quantidade ofertada da oferta (sem eles, o e-mail de hoje)
+          oferta: { quantidadePedida: Number((cotacao as any).quantidade) || 1, quantidadeOfertada: minhaResposta.quantidade_ofertada ?? null, unidade: (cotacao as any).unidade, ivaModo: minhaResposta.iva_modo ?? null, ivaPct: minhaResposta.iva_pct ?? null },
         }).catch(() => {});
       }
     }

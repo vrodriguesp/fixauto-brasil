@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     const { data: resposta } = await supabaseAdmin
       .from('cotacoes_pecas_respostas')
       .select(`
-        id, cotacao_id, preco, fornecedor_tipo, loja_id, oficina_fornecedora_id,
+        id, cotacao_id, preco, fornecedor_tipo, loja_id, oficina_fornecedora_id, quantidade_ofertada,
         loja:lojas_pecas(profile_id, nome_fantasia, pais, profile:profiles(email, nome, idioma, conta_teste)),
         oficina_fornecedora:oficinas!cotacoes_pecas_respostas_oficina_fornecedora_id_fkey(profile_id, nome_fantasia, pais, profile:profiles!oficinas_profile_id_fkey(email, nome, idioma, conta_teste))
       `)
@@ -65,8 +65,9 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. pedido com o valor total
-    // quantidade numeric (091): chega como numero (4.5); total arredondado a 2 casas
-    const quantidade = Number(cotacao.quantidade) || 1;
+    // quantidade numeric (091): chega como numero (4.5); total arredondado a 2 casas.
+    // Lote 2: a quantidade OFERTADA (oferta parcial) quando ha; sem ela, a pedida (= lote 1)
+    const quantidade = Number((resposta as any).quantidade_ofertada ?? cotacao.quantidade) || 1;
     const precoTotal = Math.round((Number(resposta.preco) * quantidade + Number.EPSILON) * 100) / 100;
     const { data: pedido, error: ePedido } = await supabaseAdmin
       .from('pedidos_pecas')

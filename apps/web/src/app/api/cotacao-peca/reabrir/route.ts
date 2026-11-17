@@ -4,6 +4,7 @@ import { dentroDoLimite } from '@/lib/rate-limit';
 import { oficinasDoUsuario } from '@/lib/acesso-servico';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { TETO_REABERTURAS, VALIDADE_COTACAO_DIAS } from '@/lib/pecas-formato';
+import { avisarFornecedoresCotacao, carregarCotacaoParaAviso } from '@/lib/avisar-fornecedores-cotacao';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,8 +12,8 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // Lote 1 de pecas (17/11): a compradora reabre uma cotacao vencida ('expirada', gravada
 // pela tarefa horaria) por mais 7 dias, ate 3 vezes. Volta a 'respondida' se ja tem
-// oferta, senao a 'aberta'. Sem novo aviso aos fornecedores (lote 2): ela so volta as
-// listas. O status so muda pelo servidor (trigger da 091), por isso a rota.
+// oferta, senao a 'aberta'. O status so muda pelo servidor (trigger da 091), por isso a rota.
+// Lote 2: re-avisa quem nao respondeu nem dispensou (antes ela so voltava as listas).
 export async function POST(req: NextRequest) {
   try {
     const userId = await getSessionUserId(req);
@@ -46,7 +47,15 @@ export async function POST(req: NextRequest) {
       .select('id');
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     if (!mudou?.length) return NextResponse.json({ error: 'A cotação não está vencida', codigo: 'NAO_EXPIRADA' }, { status: 409 });
-    return NextResponse.json({ success: true, status, expiraEm, reabertaVezes: vezes + 1 });
+    // lote 2: re-aviso so a quem nao respondeu nem disse "nao tenho" (sino com dados.reaberta,
+    // e-mail conforme a urgencia: imediato com token novo ou fila do resumo)
+    let avisados = 0;
+    const atual = await carregarCotacaoParaAviso(cot.id);
+    if (atual) {
+      const r = await avisarFornecedoresCotacao(atual, vezes + 1).catch((e) => { console.error('[reabrir] re-aviso:', (e as Error).message); return null; });
+      if (r && !('erro' in r)) avisados = r.lojasNotificadas + r.oficinasNotificadas;
+    }
+    return NextResponse.json({ success: true, status, expiraEm, reabertaVezes: vezes + 1, avisados });
   } catch (err) {
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
   }

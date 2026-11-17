@@ -14,12 +14,23 @@ export const ESTADOS_QUE_VENCEM = ['aberta', 'respondida'];
 export async function expirarCotacoesPecas(agora = Date.now()): Promise<{ expiradas: number; avisos: number }> {
   const global = await interruptorPecasV3Global();
   const limite = new Date(agora).toISOString();
-  const { data: cand, error } = await supabaseAdmin.from('cotacoes_pecas')
+  // lote 2 (veredito do lote 1): com o global desligado o filtro de conta de teste vai NA CONSULTA -
+  // antes, 500 cotacoes reais vencidas enchiam o lote e a de teste nunca chegava a vez dela
+  let oficinasDeTeste: string[] | null = null;
+  if (!global) {
+    const { data: testes } = await supabaseAdmin.from('profiles').select('id').eq('conta_teste', true);
+    const donos = ((testes as any[]) || []).map((p) => p.id);
+    if (!donos.length) return { expiradas: 0, avisos: 0 };
+    const { data: ofs } = await supabaseAdmin.from('oficinas').select('id').in('profile_id', donos);
+    oficinasDeTeste = ((ofs as any[]) || []).map((o) => o.id);
+    if (!oficinasDeTeste.length) return { expiradas: 0, avisos: 0 };
+  }
+  let consulta = supabaseAdmin.from('cotacoes_pecas')
     .select('id, peca_descricao, reaberta_vezes, oficina:oficinas!cotacoes_pecas_oficina_id_fkey(profile_id, profile:profiles!oficinas_profile_id_fkey(idioma, conta_teste))')
     .in('status', ESTADOS_QUE_VENCEM)
-    .lt('expira_em', limite)
-    .order('expira_em')
-    .limit(500);
+    .lt('expira_em', limite);
+  if (oficinasDeTeste) consulta = consulta.in('oficina_id', oficinasDeTeste);
+  const { data: cand, error } = await consulta.order('expira_em').limit(500);
   if (error) throw new Error(error.message);
   let expiradas = 0, avisos = 0;
   for (const c of (cand || []) as any[]) {

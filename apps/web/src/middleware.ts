@@ -245,8 +245,8 @@ export const config = {
   matcher: [
     // tudo, exceto arquivos estaticos/internos do Next, a pasta /api e o link
     // curto do SMS /r/<numero> (app/r/[numero]/route.ts), o link neutro das pecas /v/<c>
-    // (app/v/[c]/route.ts) e o link fixo do video-guia
+    // (app/v/[c]/route.ts), o link "nao tenho" das pecas /n/<token> (app/n/[token]/route.ts) e o link fixo do video-guia
     // da oficina /guias/video-oficina-<idioma> (app/guias/[video]/route.ts; os outros /guias/... seguem aqui)
-    '/((?!api|r/|v/|guias/video-oficina-|_next|_vercel|.*\\..*).*)',
+    '/((?!api|r/|v/|n/|guias/video-oficina-|_next|_vercel|.*\\..*).*)',
   ],
 };

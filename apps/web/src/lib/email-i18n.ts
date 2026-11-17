@@ -532,6 +532,17 @@ const pecaDetalhes: Record<EmailLocale, Dict> = {
   ru: { subjectLoja: 'Новый запрос запчасти: {pecaDescricao}', headerTagLoja: 'Новый запрос запчасти', introLoja: 'Автосервису <strong>{oficinaCompradoraNome}</strong> нужно:', veiculo: 'Автомобиль', quantidade: 'Количество', detalhes: 'Подробности', total: 'Итого', contatoTitulo: 'Контакты автосервиса', telefone: 'Телефон', endereco: 'Адрес' },
 };
 
+// Lote 2 de pecas (17/11): urgencia, "aberta ate", botao "Nao tenho", resumo de 2 h e IVA/oferta
+// parcial. So aparecem quando a cotacao/oferta tem esses dados (tela nova); sem eles o e-mail e o de hoje.
+const pecaAvisos: Record<EmailLocale, Dict> = {
+  pt: { urgencia: 'Urgência', urg_hoje: 'Hoje', urg_amanha: 'Amanhã', urg_sem_pressa: 'Sem pressa', abertaAte: 'Aberto a ofertas até', naoTenho: 'Não tenho esta peça', naoTenhoAjuda: 'Um toque e este pedido some da sua lista (sem precisar entrar).', semVeiculo: 'Sem veículo', resumoAssunto: 'BipFix: pedidos de peça à espera da sua oferta ({n})', resumoTag: 'Resumo de pedidos de peça', resumoIntro: 'Estes pedidos de peça das oficinas ainda estão abertos e sem oferta sua:', resumoCta: 'Ver pedidos de peça', resumoRodape: 'Pedidos sem pressa chegam neste resumo nos dias úteis (8h e a cada 2 horas, até as 18h). Os urgentes continuam chegando na hora.', cidade: 'Oficina em', total: 'Total', ivaSem: 'sem IVA ≈ {valor} ({pct} %)', ivaNaoAplicavel: 'IVA não aplicável (fornecedor não registrado)', ivaMargem: 'IVA não dedutível — regime de margem (peça usada)', ofertaParcial: 'Oferta parcial: {ofertada} de {pedida}' },
+  'pt-PT': { urgencia: 'Urgência', urg_hoje: 'Hoje', urg_amanha: 'Amanhã', urg_sem_pressa: 'Sem pressa', abertaAte: 'Aberto a propostas até', naoTenho: 'Não tenho esta peça', naoTenhoAjuda: 'Um toque e este pedido sai da sua lista (sem precisar de entrar).', semVeiculo: 'Sem veículo', resumoAssunto: 'BipFix: pedidos de peças à espera da sua proposta ({n})', resumoTag: 'Resumo de pedidos de peças', resumoIntro: 'Estes pedidos de peças das oficinas ainda estão abertos e sem proposta sua:', resumoCta: 'Ver pedidos de peças', resumoRodape: 'Os pedidos sem pressa chegam neste resumo nos dias úteis (às 8h e a cada 2 horas, até às 18h). Os urgentes continuam a chegar na hora.', cidade: 'Oficina em', total: 'Total', ivaSem: 'sem IVA ≈ {valor} ({pct} %)', ivaNaoAplicavel: 'IVA não aplicável (fornecedor não registado)', ivaMargem: 'IVA não dedutível — regime de margem (peça usada)', ofertaParcial: 'Proposta parcial: {ofertada} de {pedida}' },
+  en: { urgencia: 'Urgency', urg_hoje: 'Today', urg_amanha: 'Tomorrow', urg_sem_pressa: 'No rush', abertaAte: 'Open for offers until', naoTenho: "I don't have this part", naoTenhoAjuda: 'One tap and this request leaves your list (no login needed).', semVeiculo: 'No vehicle', resumoAssunto: 'BipFix: part requests waiting for your offer ({n})', resumoTag: 'Part requests summary', resumoIntro: 'These part requests from repair shops are still open and have no offer from you:', resumoCta: 'View part requests', resumoRodape: 'Requests with no rush arrive in this summary on working days (8:00 and every 2 hours until 18:00). Urgent ones still arrive right away.', cidade: 'Repair shop in', total: 'Total', ivaSem: 'excl. VAT ≈ {valor} ({pct} %)', ivaNaoAplicavel: 'VAT not applicable (supplier not VAT-registered)', ivaMargem: 'VAT not deductible — margin scheme (used part)', ofertaParcial: 'Partial offer: {ofertada} of {pedida}' },
+  et: { urgencia: 'Kiireloomulisus', urg_hoje: 'Täna', urg_amanha: 'Homme', urg_sem_pressa: 'Pole kiiret', abertaAte: 'Pakkumisi oodatakse kuni', naoTenho: 'Mul seda varuosa pole', naoTenhoAjuda: 'Üks puudutus ja päring kaob sinu nimekirjast (sisselogimist pole vaja).', semVeiculo: 'Sõidukita', resumoAssunto: 'BipFix: varuosa päringud ootavad sinu pakkumist ({n})', resumoTag: 'Varuosa päringute kokkuvõte', resumoIntro: 'Need töökodade varuosa päringud on veel avatud ja sinu pakkumiseta:', resumoCta: 'Vaata varuosa päringuid', resumoRodape: 'Kiireloomulisuseta päringud tulevad sellesse kokkuvõttesse tööpäevadel (kell 8 ja iga 2 tunni järel kuni 18-ni). Kiireloomulised tulevad endiselt kohe.', cidade: 'Töökoda asukohaga', total: 'Kokku', ivaSem: 'km-ta ≈ {valor} ({pct} %)', ivaNaoAplicavel: 'Käibemaks ei kohaldu (tarnija pole käibemaksukohustuslane)', ivaMargem: 'Käibemaks pole mahaarvatav — kasumimarginaali kord (kasutatud varuosa)', ofertaParcial: 'Osaline pakkumine: {ofertada} / {pedida}' },
+  it: { urgencia: 'Urgenza', urg_hoje: 'Oggi', urg_amanha: 'Domani', urg_sem_pressa: 'Senza fretta', abertaAte: 'Aperta alle offerte fino a', naoTenho: 'Non ho questo ricambio', naoTenhoAjuda: 'Un tocco e la richiesta esce dal tuo elenco (senza accedere).', semVeiculo: 'Senza veicolo', resumoAssunto: 'BipFix: richieste di ricambi in attesa della tua offerta ({n})', resumoTag: 'Riepilogo richieste di ricambi', resumoIntro: 'Queste richieste di ricambi delle officine sono ancora aperte e senza una tua offerta:', resumoCta: 'Vedi le richieste', resumoRodape: 'Le richieste senza fretta arrivano in questo riepilogo nei giorni feriali (alle 8 e ogni 2 ore fino alle 18). Quelle urgenti arrivano subito.', cidade: 'Officina a', total: 'Totale', ivaSem: 'IVA esclusa ≈ {valor} ({pct} %)', ivaNaoAplicavel: 'IVA non applicabile (fornitore non registrato)', ivaMargem: 'IVA non detraibile — regime del margine (ricambio usato)', ofertaParcial: 'Offerta parziale: {ofertada} su {pedida}' },
+  ru: { urgencia: 'Срочность', urg_hoje: 'Сегодня', urg_amanha: 'Завтра', urg_sem_pressa: 'Не срочно', abertaAte: 'Предложения принимаются до', naoTenho: 'У меня нет этой запчасти', naoTenhoAjuda: 'Одно нажатие — и запрос исчезнет из вашего списка (без входа).', semVeiculo: 'Без автомобиля', resumoAssunto: 'BipFix: запросы запчастей ждут вашего предложения ({n})', resumoTag: 'Сводка запросов запчастей', resumoIntro: 'Эти запросы запчастей от автосервисов ещё открыты, и от вас нет предложения:', resumoCta: 'Посмотреть запросы', resumoRodape: 'Несрочные запросы приходят в этой сводке по рабочим дням (в 8:00 и каждые 2 часа до 18:00). Срочные по-прежнему приходят сразу.', cidade: 'Автосервис в', total: 'Итого', ivaSem: 'без НДС ≈ {valor} ({pct} %)', ivaNaoAplicavel: 'НДС не применяется (поставщик не плательщик НДС)', ivaMargem: 'НДС не вычитается — режим маржи (б/у запчасть)', ofertaParcial: 'Частичное предложение: {ofertada} из {pedida}' },
+};
+
 // Lote 1 de pecas (17/11): rotulos curtos das unidades (os mesmos da tela, messages
 // pecas.unidades.*) e o numero no formato da lingua de quem recebe.
 const UNIDADES_PECA_TEXTO: Record<EmailLocale, Record<string, string>> = {
@@ -543,6 +554,16 @@ const UNIDADES_PECA_TEXTO: Record<EmailLocale, Record<string, string>> = {
   ru: { un: 'шт.', jogo: 'компл.', par: 'пар', litro: 'л', kg: 'кг', metro: 'м', caixa: 'кор.' },
 };
 const NUMERO_LOCALE: Record<EmailLocale, string> = { pt: 'pt-BR', 'pt-PT': 'pt-PT', en: 'en-GB', et: 'et-EE', it: 'it-IT', ru: 'ru-RU' };
+
+/** numero no formato da lingua de quem recebe (ate 2 casas) */
+export function numeroTexto(locale: string | null | undefined, n: number): string {
+  return new Intl.NumberFormat(NUMERO_LOCALE[resolveEmailLocale(locale)], { maximumFractionDigits: 2 }).format(Number(n) || 0);
+}
+
+/** data e hora no fuso de quem recebe (lote 2: "aberta ate" nos e-mails de pecas) */
+export function dataHoraTexto(locale: string | null | undefined, iso: string, fuso: string): string {
+  return new Intl.DateTimeFormat(NUMERO_LOCALE[resolveEmailLocale(locale)], { timeZone: fuso, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
+}
 
 /** Quantidade para e-mail e aviso. Unidade 'un' com numero inteiro: exatamente como antes ("2"). */
 export function quantidadeTexto(locale: string | null | undefined, quantidade: number | string | null | undefined, unidade?: string | null): string {
@@ -909,6 +930,7 @@ export const EMAIL_I18N = {
   pedidoPecaConfirmado,
   pedidoPecaEntregue,
   pecaDetalhes,
+  pecaAvisos,
   mensagemPeca,
   lojaAtivada,
   contaCriadaEmergencia,
