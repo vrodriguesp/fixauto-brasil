@@ -26,6 +26,8 @@ export function lerEnv(arq = ENV_PADRAO) {
   if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/?$/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
   if (!env.SUPABASE_SERVICE_ROLE_KEY || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) throw new Error('TESTE LOCAL: faltam as chaves do Supabase no .env.local');
   if (!env.EMAIL_PASTA_TESTE) throw new Error('TESTE LOCAL: EMAIL_PASTA_TESTE nao definido - sem ele o site mandaria e-mail de verdade');
+  // lib/email.ts so grava em pasta quando NAO ha Resend: com a chave presente a suite mandaria e-mail real
+  if (env.RESEND_API_KEY || env.TWILIO_ACCOUNT_SID || env.TWILIO_AUTH_TOKEN) throw new Error('TESTE LOCAL: chave de envio real presente no .env (RESEND_API_KEY / TWILIO_*) - parado para nao mandar e-mail/SMS de verdade');
   if (!env.TAREFAS_CHAVE) throw new Error('TESTE LOCAL: TAREFAS_CHAVE nao definido (rota da tarefa de expiracao)');
   return env;
 }
@@ -52,6 +54,12 @@ export const pegaChave = (m, k) => k.split('.').reduce((o, p) => o?.[p], m);
 export const tradutor = (l) => { const m = mensagens(l); return (k, v = {}) => String(pegaChave(m, k) ?? `??${k}`).replace(/\{(\w+)\}/g, (_, x) => v[x] ?? ''); };
 export const IDIOMAS = ['pt', 'pt-PT', 'en', 'et', 'it', 'ru'];
 export const PREFIXO = { et: '/ee/et', ru: '/ee/ru', en: '/ee/en', it: '/it/it', pt: '/br/pt', 'pt-PT': '/pt/pt' };
+export const escapeRegex = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// "4,5 l" / "2.5 kg": numero + rotulo da unidade inteiro (nao basta includes('l'))
+export const quantidadeComUnidade = (texto, numeroRe, rotulo) => new RegExp(`(?<![\\p{N}])${numeroRe}\\s*${escapeRegex(rotulo)}(?![\\p{L}\\p{N}])`, 'u').test(String(texto));
+// botao pelo texto EXATO da traducao, admitindo so um prefixo de simbolo/emoji ("✏️ Muuda", "✕ Tühista päring"):
+// getByRole sem exact casa substring ("Muuda" casaria "Salvesta muudatused") e viraria strict mode violation
+export const botao = (escopo, texto) => escopo.getByRole('button', { name: new RegExp(`^[^\\p{L}\\p{N}]*${escapeRegex(texto)}$`, 'u') });
 
 // ---------------- contrato: nomes que as telas/rotas novas usam ----------------
 export const UNIDADES = ['un', 'jogo', 'par', 'litro', 'kg', 'metro', 'caixa'];
@@ -102,6 +110,7 @@ export function ambiente(env) {
   const anon = () => createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } });
   const EMAILS = env.EMAIL_PASTA_TESTE;
   const tag = crypto.randomBytes(3).toString('hex');
+  const inicio = Date.now(); // e-mails gravados a partir daqui com a tag no corpo (lojas pre-existentes) tambem sao apagados
   const senha = `Pecas-${crypto.randomBytes(5).toString('hex')}A1`;
   let ipN = 1;
   const ip = () => `10.78.${Math.floor(ipN / 250)}.${(ipN++ % 250) + 1}`;
@@ -200,6 +209,9 @@ export function ambiente(env) {
   // todos os e-mails gravados desde t0, de qualquer destinatario (vazamento da placa)
   const emailsDesde = (depois = 0) => (fs.existsSync(EMAILS) ? fs.readdirSync(EMAILS) : []).filter((f) => f.endsWith('.html') && Number(f.split('_')[0]) >= depois).sort().map(lerEmail);
   const esperarEmail = async (email, depois, filtro = () => true, tentativas = 40) => { for (let i = 0; i < tentativas; i++) { const e = emailsDe(email, depois).filter(filtro).at(-1); if (e) return e; await sleep(300); } return null; };
+  // arquivo de e-mail desta rodada: de uma conta criada aqui, ou gravado desde o inicio com a tag no corpo
+  // (lojas pre-existentes do banco local recebem o aviso da cotacao de uma compradora real)
+  const emailDaRodada = (f) => criado.emails.some((e) => f.endsWith(arqDe(e))) || (f.endsWith('.html') && Number(f.split('_')[0]) >= inicio && (() => { try { return fs.readFileSync(path.join(EMAILS, f), 'utf8').includes(tag); } catch { return false; } })());
 
   // apaga tudo desta rodada; devolve a lista de erros (tabelas que ainda nao existem no esquema de hoje nao contam)
   const limpar = async () => {
@@ -233,8 +245,8 @@ export function ambiente(env) {
     if (criado.lojas.length) await del('lojas_pecas', 'id', criado.lojas, 'in');
     if (criado.oficinas.length) await del('oficinas', 'id', criado.oficinas, 'in');
     for (const id of criado.contas) { await del('profiles', 'id', id); const { error } = await admin.auth.admin.deleteUser(id); if (error) erros.push(`auth ${id}: ${error.message}`); }
-    if (EMAILS && fs.existsSync(EMAILS)) for (const f of fs.readdirSync(EMAILS)) if (criado.emails.some((e) => f.endsWith(arqDe(e)))) fs.rmSync(path.join(EMAILS, f), { force: true });
-    // interruptor global de volta ao que era (quando a coluna existe)
+    if (EMAILS && fs.existsSync(EMAILS)) for (const f of fs.readdirSync(EMAILS)) if (emailDaRodada(f)) fs.rmSync(path.join(EMAILS, f), { force: true });
+    // interruptor global de voltar ao que era (quando a coluna existe)
     if (interruptorAntes !== undefined && interruptorAntes !== null) {
       const { error } = await admin.from('plataforma_config').update({ pecas_v3_ativo: interruptorAntes }).eq('id', 1);
       if (error && !naoExiste(error)) erros.push(`plataforma_config: ${error.message}`);
@@ -261,20 +273,33 @@ export function ambiente(env) {
       await conta1('fornecedores_contato (lojas)', admin.from('fornecedores_contato').select('fornecedor_id', { count: 'exact', head: true }).in('fornecedor_id', criado.lojas));
     }
     if (criado.cotacoes.length) await conta1('cotacoes_pecas_placa', admin.from('cotacoes_pecas_placa').select('cotacao_id', { count: 'exact', head: true }).in('cotacao_id', criado.cotacoes));
-    const mails = EMAILS && fs.existsSync(EMAILS) ? fs.readdirSync(EMAILS).filter((f) => criado.emails.some((e) => f.endsWith(arqDe(e)))).length : 0;
+    const mails = EMAILS && fs.existsSync(EMAILS) ? fs.readdirSync(EMAILS).filter(emailDaRodada).length : 0;
     if (mails) sobras.push(`e-mails: ${mails}`);
     return sobras;
   };
+  // Ctrl+C / kill: o Node sai sem passar pelo finally - limpa antes de sair (so banco local)
+  const limparAoInterromper = (fecharNavegadores) => {
+    let limpando = false;
+    for (const sinal of ['SIGINT', 'SIGTERM']) process.on(sinal, async () => {
+      if (limpando) return; limpando = true;
+      console.log(`\n${sinal}: limpando o que esta rodada criou antes de sair...`);
+      try { await fecharNavegadores?.(); } catch { /* segue */ }
+      const erros = await limpar();
+      console.log(erros.length ? `limpeza com erros: ${erros.join(' | ')}` : 'limpeza ok');
+      process.exit(130);
+    });
+  };
 
-  return { admin, anon, EMAILS, tag, senha, ip, criado, conta, oficina, loja, cotacao, resposta, cotacaoNoBanco, linhaJson, colunaExiste, tabelaExiste, enumTem, politica, sessao, api, tarefa, placa, reabrir, pecasV3, confirmar, contato, notificarFornecedores, marcarRespondida, notificarMensagem, adminInterruptor, avisos, esperarAviso, interruptor, interruptorEstado, emailsDe, emailsDesde, esperarEmail, limpar, verificarLimpeza };
+  return { admin, anon, EMAILS, tag, inicio, senha, ip, criado, conta, oficina, loja, cotacao, resposta, cotacaoNoBanco, linhaJson, colunaExiste, tabelaExiste, enumTem, politica, sessao, api, tarefa, placa, reabrir, pecasV3, confirmar, contato, notificarFornecedores, marcarRespondida, notificarMensagem, adminInterruptor, avisos, esperarAviso, interruptor, interruptorEstado, emailsDe, emailsDesde, esperarEmail, limpar, verificarLimpeza, limparAoInterromper };
 }
 
 // navegadores: Chromium (390 ou 1280) e WebKit (iPhone 13)
 export async function abrirNavegadores(precisaWebkit = true) {
   const chrome = await chromium.launch({ executablePath: CHROME });
-  const wk = precisaWebkit ? await webkit.launch({ executablePath: WEBKIT }) : null;
+  let wk = precisaWebkit ? await webkit.launch({ executablePath: WEBKIT }) : null;
   const contexto = async (motor, largura, ip, extra = {}) => {
     const B = motor === 'webkit' ? wk : chrome;
+    if (!B) throw new Error(`navegador ${motor} nao esta aberto (ja fechado ou nao pedido)`);
     const base = motor === 'webkit' ? { ...devices['iPhone 13'] }
       : { viewport: { width: largura, height: largura < 500 ? 844 : 900 }, deviceScaleFactor: largura < 500 ? 2 : 1, isMobile: largura < 500, hasTouch: largura < 500 };
     const ctx = await B.newContext({ ...base, locale: 'et-EE', extraHTTPHeaders: { 'x-real-ip': ip() }, ...extra });
@@ -285,8 +310,10 @@ export async function abrirNavegadores(precisaWebkit = true) {
     await ctx.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); localStorage.setItem('bipfix_tutorial_banner_oficina', '1'); } catch {} });
     return ctx;
   };
-  const fechar = async () => { await chrome.close().catch(() => {}); await wk?.close().catch(() => {}); };
-  return { contexto, fechar };
+  // WebKit so e preciso no fluxo de criar (D.1): fechar logo depois poupa ~300 MB no pico
+  const fecharWebkit = async () => { await wk?.close().catch(() => {}); wk = null; };
+  const fechar = async () => { await chrome.close().catch(() => {}); await fecharWebkit(); };
+  return { contexto, fechar, fecharWebkit };
 }
 export const semRolagemLateral = (p) => p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
 export const visivel = (loc, ms = 8000) => loc.first().waitFor({ state: 'visible', timeout: ms }).then(() => true, () => false);

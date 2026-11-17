@@ -11,11 +11,14 @@
 //   C6 [NOVO] oficina inativa nao cria + erro inline | C7 [NOVO] tarefa de expiracao = 0 com interruptor desligado
 //   C8 [NOVO] trigger/RLS | C9 [NOVO] paridade teste/real | C12 [NOVO] GET /api/pecas-v3 | C13 sem telefone publico
 //   C14 [NOVO] badge de status desconhecido ('expirada') na tela de hoje
-// Referencia do e-mail: resultados/pecas-v3/referencia-email-cotacao-un.html (gravada na 1a rodada
-// no codigo de hoje; nas seguintes o HTML normalizado tem de ser identico; PECAS_V3_GRAVAR_REFERENCIA=1 regrava).
+// Referencias dos e-mails de hoje em resultados/pecas-v3/: referencia-email-cotacao-un.html (cotacao nova,
+// unidade un) e referencia-email-pedido-confirmado.html. Gravadas SO com PECAS_V3_GRAVAR_REFERENCIA=1
+// (rodando no codigo de hoje); sem o arquivo e sem a variavel o check FALHA (a prova "identico a hoje" nao
+// pode sumir em silencio). Nas rodadas seguintes o HTML normalizado tem de ser identico.
 //   node pecas-v3-desligado.mjs [<.env.local>]
 import fs from 'node:fs';
-import { lerEnv, ambiente, abrirNavegadores, contador, tradutor, SITE, ENV_PADRAO, siteNoAr, semRolagemLateral, vigiar, entrarPelaTela, ir, visivel, semTestidsNovos, semChaveCrua, normalizarEmail, REFERENCIA_EMAIL, PRINTS, sleep, horasAtras, DIA_MS, psql, ROTA_TAREFA, ROTA_INTERRUPTOR } from './pecas-v3-lib.mjs';
+import path from 'node:path';
+import { lerEnv, ambiente, abrirNavegadores, contador, tradutor, SITE, ENV_PADRAO, siteNoAr, semRolagemLateral, vigiar, entrarPelaTela, ir, visivel, semTestidsNovos, semChaveCrua, normalizarEmail, REFERENCIA_EMAIL, RESULTADOS, PRINTS, sleep, horasAtras, DIA_MS, psql, botao, ROTA_TAREFA, ROTA_INTERRUPTOR } from './pecas-v3-lib.mjs';
 
 const env = lerEnv(process.argv[2] || ENV_PADRAO);
 if (!(await siteNoAr())) { console.log(`FALHA site local nao responde em ${SITE} - nada rodou (nao inicio o site sozinho)`); process.exit(2); }
@@ -24,9 +27,26 @@ const { ok, fim, tentar } = contador();
 const ET = tradutor('et');
 const erros = [];
 const nav = await abrirNavegadores(false);
+A.limparAoInterromper(nav.fechar);
 const cardCom = (p, texto) => p.getByTestId('cotacao-peca').filter({ hasText: texto });
 const cartaoLoja = (p, texto) => p.locator('div.card').filter({ hasText: texto });
 const dentro7d = (iso) => !!iso && Math.abs(new Date(iso) - (Date.now() + 7 * DIA_MS)) < 3600e3;
+const REFERENCIA_EMAIL_PEDIDO = path.join(RESULTADOS, 'referencia-email-pedido-confirmado.html');
+// e-mail de hoje = referencia gravada (HTML normalizado). Sem referencia: FALHA, salvo PECAS_V3_GRAVAR_REFERENCIA=1
+const compararReferencia = (nome, arquivo, html) => {
+  const norm = normalizarEmail(html, A.tag);
+  if (process.env.PECAS_V3_GRAVAR_REFERENCIA === '1') {
+    fs.writeFileSync(arquivo, norm);
+    console.log(`info ${nome}: referencia gravada em ${arquivo} (PECAS_V3_GRAVAR_REFERENCIA=1) - so faz sentido no codigo de hoje`);
+    ok(`${nome} referencia gravada agora (rodada de base)`, true);
+    return;
+  }
+  if (!fs.existsSync(arquivo)) { ok(`${nome} IDENTICO a referencia`, false, `referencia ausente: ${arquivo} - rode no codigo de hoje com PECAS_V3_GRAVAR_REFERENCIA=1`); return; }
+  const ref = fs.readFileSync(arquivo, 'utf8');
+  let detalhe = '';
+  if (ref !== norm) { let i = 0; while (i < ref.length && ref[i] === norm[i]) i++; detalhe = `difere a partir de ${i}: ref="${ref.slice(i, i + 120)}" agora="${norm.slice(i, i + 120)}"`; }
+  ok(`${nome} IDENTICO a referencia (ignorando ids, datas e links)`, ref === norm, detalhe);
+};
 
 try {
   // ======================= C0: interruptor global desligado =======================
@@ -55,7 +75,7 @@ try {
     for (const [p, rotulo] of [[pD, '1280'], [pM, '390']]) {
       await entrarPelaTela(p, '/ee/et', dReal);
       await ir(p, '/ee/et/oficina/pecas', 2500);
-      await p.getByRole('button', { name: ET('oficinaPecas.novaCotacao') }).click();
+      await botao(p, ET('oficinaPecas.novaCotacao')).click();
       await p.locator('#c8551-1').waitFor();
       const antigos = ['#c8551-1', '#c8551-2', '#c8551-3', '#c8551-4', '#c8551-5', '#peca-detalhes', '#peca-fotos'];
       const faltam = []; for (const s of antigos) if (!(await p.locator(s).isVisible().catch(() => false))) faltam.push(s);
@@ -78,7 +98,7 @@ try {
     await pM.locator('#c8551-4').fill('2012');
     await pM.locator('#c8551-5').fill('2');
     await pM.locator('#peca-detalhes').fill('Esiketaste läbimõõt 312 mm.');
-    await pM.getByRole('button', { name: ET('oficinaPecas.enviarCotacao') }).click();
+    await botao(pM, ET('oficinaPecas.enviarCotacao')).click();
     let cot = null;
     for (let i = 0; i < 40 && !cot; i++) { cot = (await A.admin.from('cotacoes_pecas').select('*').eq('oficina_id', ofReal.id).maybeSingle()).data; if (!cot) await sleep(300); }
     cotId = cot?.id || null;
@@ -99,20 +119,9 @@ try {
     const html = m?.html || '';
     ok('C3b linha da quantidade IDENTICA a de hoje (<strong>Kogus:</strong> 2</p>, sem unidade)', /<strong>Kogus:<\/strong> 2<\/p>/.test(html), (html.match(/<strong>Kogus:<\/strong>[^<]*<\/p>/) || [''])[0]);
     ok('C3c linha do veiculo como hoje e sem "placa"/"reg" no e-mail', /<strong>Sõiduk:<\/strong> Volkswagen Passat 2012<\/p>/.test(html) && !/placa|matr[ií]cula|reg\.?\s*nr|license plate/i.test(m?.texto || ''), (html.match(/<strong>Sõiduk:<\/strong>[^<]*<\/p>/) || [''])[0]);
-    // diff com a referencia (HTML normalizado): gravada na 1a rodada (codigo de hoje)
-    if (m) {
-      const norm = normalizarEmail(html, A.tag);
-      if (!fs.existsSync(REFERENCIA_EMAIL) || process.env.PECAS_V3_GRAVAR_REFERENCIA === '1') {
-        fs.writeFileSync(REFERENCIA_EMAIL, norm);
-        console.log(`info C3d referencia do e-mail gravada em ${REFERENCIA_EMAIL} (linha de base) - nas proximas rodadas e comparada`);
-        ok('C3d e-mail da cotacao (unidade un) = referencia (gravada agora)', true);
-      } else {
-        const ref = fs.readFileSync(REFERENCIA_EMAIL, 'utf8');
-        let detalhe = '';
-        if (ref !== norm) { let i = 0; while (i < ref.length && ref[i] === norm[i]) i++; detalhe = `difere a partir de ${i}: ref="${ref.slice(i, i + 120)}" agora="${norm.slice(i, i + 120)}"`; }
-        ok('C3d e-mail da cotacao (unidade un) IDENTICO a referencia (ignorando ids, datas e links)', ref === norm, detalhe);
-      }
-    }
+    // diff com a referencia (HTML normalizado) gravada no codigo de hoje
+    if (m) compararReferencia('C3d e-mail da cotacao (unidade un)', REFERENCIA_EMAIL, html);
+    else ok('C3d e-mail da cotacao (unidade un) IDENTICO a referencia', false, 'sem e-mail para comparar');
     const aL = await A.esperarAviso(dLojaReal.id, 'cotacao_peca_disponivel');
     ok('C3e sino da loja real como hoje (link /loja/cotacoes, textos nas 6 linguas, sem placa em dados)', aL.length === 1 && aL[0].dados?.link === '/loja/cotacoes' && aL[0].dados?.cotacao_id === cotId && Object.keys(aL[0].dados?.textos || {}).length === 6 && !/placa/i.test(JSON.stringify(aL[0].dados)), JSON.stringify(aL[0]?.dados).slice(0, 200));
     const aV = await A.esperarAviso(dVendReal.id, 'cotacao_peca_disponivel');
@@ -156,35 +165,41 @@ try {
     ok('C10c contato da compradora para a loja = telefone do perfil da compradora', ctL.status === 200 && ctL.d.contatos?.[ped?.id]?.telefone === dReal.telefone, JSON.stringify(ctL.d));
     const mL = await A.esperarEmail(dLojaReal.email, t1, (e) => /80[,.]00/.test(e.html), 40);
     ok('C10d e-mail "pedido confirmado" da loja como hoje: total 80, telefone do perfil da compradora', !!mL && mL.texto.includes(dReal.telefone), mL?.assunto);
+    // rota alterada (paridade + telefone comercial): o e-mail de hoje tambem tem referencia
+    if (mL) compararReferencia('C10d2 e-mail "pedido confirmado" (sem telefone comercial)', REFERENCIA_EMAIL_PEDIDO, mL.html);
+    else ok('C10d2 e-mail "pedido confirmado" IDENTICO a referencia', false, 'sem e-mail para comparar');
     await ir(pL, '/ee/et/loja/pedidos', 3000);
     const linha = pL.getByTestId('pedido-loja').filter({ hasText: PECA });
     ok('C10e /loja/pedidos lista o pedido com o telefone da compradora (= hoje)', (await linha.count()) === 1 && (await linha.innerText()).includes(dReal.telefone) && (await semTestidsNovos(pL)).length === 0, (await linha.innerText().catch(() => '')).slice(0, 200));
     await ir(pM, '/ee/et/oficina/pecas', 3000);
     const card = cardCom(pM, PECA);
-    ok('C10f compradora ve a oferta escolhida e o contato (= hoje)', (await card.getByTestId('oferta-escolhida').count()) === 1 && (await card.getByTestId('contato-fornecedor').count()) === 1 && (await card.innerText()).includes(dLojaReal.telefone));
+    ok('C10f compradora ve a oferta escolhida e o contato (= hoje), sem elementos novos (oferta-total, expira em...)', (await card.getByTestId('oferta-escolhida').count()) === 1 && (await card.getByTestId('contato-fornecedor').count()) === 1 && (await card.innerText()).includes(dLojaReal.telefone) && (await semTestidsNovos(pM)).length === 0, (await semTestidsNovos(pM)).join(','));
   });
 
   // ======================= C5: editar e cancelar de hoje passam na trigger =======================
   await tentar('C5', async () => {
     const PECA2 = `Generaator ${A.tag}`;
     const c2 = await A.cotacao(ofReal, 'Generaator', { peca_descricao: PECA2, quantidade: 1 });
+    // page.tsx:137 - logo depois do INSERT a tela grava as fotos com um UPDATE pela sessao: coluna de conteudo, passa na trigger
+    const { error: eFotos } = await sReal.c.from('cotacoes_pecas').update({ fotos: ['https://x.test/a.jpg'] }).eq('id', c2.id);
+    ok('C5a update({ fotos }) de hoje (logo depois do INSERT) continua passando', !eFotos && JSON.stringify((await A.cotacaoNoBanco(c2.id))?.fotos) === JSON.stringify(['https://x.test/a.jpg']), eFotos?.message);
+    const jAntes = A.linhaJson('cotacoes_pecas', c2.id);
     await ir(pM, '/ee/et/oficina/pecas', 3000);
     const card = cardCom(pM, PECA2);
-    await card.getByRole('button', { name: ET('oficinaPecas.editarPedido') }).click();
+    await botao(card, ET('oficinaPecas.editarPedido')).click();
     const qtd = card.locator('input[inputmode="numeric"]');
     await qtd.fill('3');
-    await card.getByRole('button', { name: ET('oficinaPecas.salvarPedido') }).click();
+    await botao(card, ET('oficinaPecas.salvarPedido')).click();
     let c = null; for (let i = 0; i < 30; i++) { c = await A.cotacaoNoBanco(c2.id); if (Number(c?.quantidade) === 3) break; await sleep(300); }
-    ok('C5a "editar" de hoje (UPDATE direto de quantidade/descricao) continua funcionando', Number(c?.quantidade) === 3 && c?.status === 'aberta', JSON.stringify(c));
-    const jAntes = A.linhaJson('cotacoes_pecas', c2.id);
-    await card.getByRole('button', { name: ET('oficinaPecas.cancelarPedido') }).click();
-    await card.getByRole('button', { name: ET('oficinaPecas.simCancelar') }).click();
+    ok('C5b "editar" de hoje (UPDATE direto de quantidade/descricao) continua funcionando', Number(c?.quantidade) === 3 && c?.status === 'aberta', JSON.stringify(c));
+    await botao(card, ET('oficinaPecas.cancelarPedido')).click();
+    await botao(card, ET('oficinaPecas.simCancelar')).click();
     for (let i = 0; i < 30; i++) { c = await A.cotacaoNoBanco(c2.id); if (c?.status === 'cancelada') break; await sleep(300); }
-    ok('C5b "cancelar" de hoje (UPDATE status = cancelada) continua funcionando', c?.status === 'cancelada', JSON.stringify(c));
+    ok('C5c "cancelar" de hoje (UPDATE status = cancelada) continua funcionando', c?.status === 'cancelada', JSON.stringify(c));
     const jDepois = A.linhaJson('cotacoes_pecas', c2.id);
-    ok('C5c campos de controle (oficina_id, created_at, expira_em, reaberta_vezes) intactos depois do editar/cancelar', !!jAntes && !!jDepois && ['oficina_id', 'created_at', 'expira_em', 'reaberta_vezes'].every((k) => jAntes[k] === jDepois[k]), JSON.stringify({ jAntes, jDepois }).slice(0, 300));
+    ok('C5d campos de controle (oficina_id, created_at, expira_em, reaberta_vezes) intactos depois de fotos + editar + cancelar', !!jAntes && !!jDepois && ['oficina_id', 'created_at', 'expira_em', 'reaberta_vezes'].every((k) => jAntes[k] === jDepois[k]), JSON.stringify({ jAntes, jDepois }).slice(0, 300));
     await pM.waitForTimeout(1000);
-    ok('C5d cartao cancelado como hoje: badge "Tühistatud", sem editar/cancelar', (await card.getByTestId('cotacao-status').innerText()).trim() === ET('oficinaPecas.cancelada') && (await card.getByRole('button', { name: ET('oficinaPecas.editarPedido') }).count()) === 0);
+    ok('C5e cartao cancelado como hoje: badge "Tühistatud", sem editar/cancelar', (await card.getByTestId('cotacao-status').innerText()).trim() === ET('oficinaPecas.cancelada') && (await botao(card, ET('oficinaPecas.editarPedido')).count()) === 0);
   });
 
   // ======================= C6: [NOVO] oficina inativa nao cria cotacao =======================
@@ -192,14 +207,16 @@ try {
     const ctxI = await nav.contexto('chromium', 390, A.ip); const pI = await ctxI.newPage(); vigiar(pI, erros, 'C6');
     await entrarPelaTela(pI, '/ee/et', dInat);
     await ir(pI, '/ee/et/oficina/pecas', 2500);
-    await pI.getByRole('button', { name: ET('oficinaPecas.novaCotacao') }).click();
+    await botao(pI, ET('oficinaPecas.novaCotacao')).click();
     await pI.locator('#c8551-1').fill(`Inativa ${A.tag}`);
-    await pI.getByRole('button', { name: ET('oficinaPecas.enviarCotacao') }).click();
+    await botao(pI, ET('oficinaPecas.enviarCotacao')).click();
     await pI.waitForTimeout(4000);
     const { count } = await A.admin.from('cotacoes_pecas').select('id', { count: 'exact', head: true }).eq('oficina_id', ofInat.id);
     ok('[NOVO] C6a oficina INATIVA nao cria cotacao pela tela (RLS cotacoes_pecas_insert exige oficinas.ativa)', count === 0, `linhas: ${count}`);
     const erroInline = pI.getByTestId('cotacao-erro-criar');
-    ok('[NOVO] C6b a tela mostra o erro inline (testid cotacao-erro-criar) em vez de limpar o formulario em silencio', await visivel(erroInline, 3000) && semChaveCrua(await erroInline.innerText().catch(() => '')) && (await erroInline.innerText().catch(() => '')).trim().length > 0);
+    const textoErro = await visivel(erroInline, 3000) ? await erroInline.innerText().catch(() => '') : '';
+    const descricaoMantida = await pI.locator('#c8551-1').inputValue().catch(() => '');
+    ok('[NOVO] C6b a tela mostra o erro inline (testid cotacao-erro-criar) e NAO limpa o formulario (descricao continua digitada)', textoErro.trim().length > 0 && semChaveCrua(textoErro) && descricaoMantida === `Inativa ${A.tag}`, `erro="${textoErro.slice(0, 80)}" descricao="${descricaoMantida}"`);
     await pI.screenshot({ path: `${PRINTS}/desligado-inativa-erro-et-390.png`, fullPage: true });
     await ctxI.close();
     const { error } = await sInat.c.from('cotacoes_pecas').insert({ oficina_id: ofInat.id, peca_descricao: `Inativa API ${A.tag}`, quantidade: 1 });
@@ -292,8 +309,16 @@ try {
     await ir(pM, '/ee/et/oficina/pecas', 3000);
     const card = cardCom(pM, cot3.descricao);
     const badge = (await card.getByTestId('cotacao-status').innerText().catch(() => '')).trim();
-    ok("[NOVO] C14b tela de hoje com cotacao 'expirada': badge = pecas.expirada (fallback), nao 'Tühistatud', sem editar/cancelar", badge === ET('pecas.expirada') && badge !== ET('oficinaPecas.cancelada') && (await card.getByRole('button', { name: ET('oficinaPecas.editarPedido') }).count()) === 0, badge);
-    ok('[NOVO] C14c com o interruptor desligado NAO aparece o botao reabrir (tela de hoje)', (await card.getByTestId('cotacao-reabrir').count()) === 0);
+    ok("[NOVO] C14b tela de hoje com cotacao 'expirada': badge = pecas.expirada (fallback), nao 'Tühistatud', sem editar/cancelar", badge === ET('pecas.expirada') && badge !== ET('oficinaPecas.cancelada') && (await botao(card, ET('oficinaPecas.editarPedido')).count()) === 0, badge);
+    ok('[NOVO] C14c com o interruptor desligado NAO aparece o botao reabrir nem outro elemento novo (tela de hoje)', (await card.count()) === 1 && (await semTestidsNovos(pM)).length === 0, (await semTestidsNovos(pM)).join(','));
+  });
+
+  // ======================= C15: perfis = hoje (sem campo de telefone comercial) =======================
+  await tentar('C15', async () => {
+    await ir(pL, '/ee/et/loja/perfil', 2500);
+    ok('C15a /loja/perfil (loja real): formulario de hoje (#c9a81-3 telefone do perfil), sem perfil-telefone-comercial nem outro elemento novo', (await pL.locator('#c9a81-3').count()) === 1 && (await semTestidsNovos(pL)).length === 0, (await semTestidsNovos(pL)).join(','));
+    await ir(pM, '/ee/et/oficina/perfil', 2500);
+    ok('C15b /oficina/perfil (compradora real): formulario de hoje (#c83a1-9 telefone do perfil), sem perfil-telefone-comercial nem outro elemento novo', (await pM.locator('#c83a1-9').count()) === 1 && (await semTestidsNovos(pM)).length === 0, (await semTestidsNovos(pM)).join(','));
   });
 
   await ctxD.close(); await ctxM.close(); await ctxL.close();
