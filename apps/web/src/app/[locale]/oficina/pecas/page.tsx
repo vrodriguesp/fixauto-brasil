@@ -778,8 +778,14 @@ export default function OficinaPecasPage() {
 
                   {c.respostas && c.respostas.length > 0 && (
                     <div className="border-t pt-3 space-y-2">
-                      {/* lote 2 (so com o interruptor): a mais barata primeiro, pelo total da quantidade ofertada */}
-                      {(v3 ? [...c.respostas].sort((a, b) => totalDaOferta(a.preco, Number(a.quantidade_ofertada ?? c.quantidade)) - totalDaOferta(b.preco, Number(b.quantidade_ofertada ?? c.quantidade))) : c.respostas).map((r) => {
+                      {/* lote 2 (so com o interruptor): "sem pressa" = a mais barata primeiro (pelo total da quantidade
+                          ofertada); hoje/amanha = a mais rapida primeiro e, no empate, a mais barata (N-9 / proposta v3 sec. 3) */}
+                      {(v3 ? [...c.respostas].sort((a, b) => {
+                        const ta = totalDaOferta(a.preco, Number(a.quantidade_ofertada ?? c.quantidade));
+                        const tb = totalDaOferta(b.preco, Number(b.quantidade_ofertada ?? c.quantidade));
+                        if (c.urgencia === 'sem_pressa') return ta - tb;
+                        return (Number(a.prazo_dias ?? 99) - Number(b.prazo_dias ?? 99)) || (ta - tb);
+                      }) : c.respostas).map((r) => {
                         const escolhida = !!pedido && pedido.resposta_id === r.id;
                         const qtdOferta = Number(r.quantidade_ofertada ?? c.quantidade) || 1;
                         const moedaOferta = currencyForCountry(r.loja?.pais || r.oficina_fornecedora?.pais);

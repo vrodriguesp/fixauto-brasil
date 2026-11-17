@@ -319,8 +319,11 @@ export const semRolagemLateral = (p) => p.evaluate(() => document.documentElemen
 export const visivel = (loc, ms = 8000) => loc.first().waitFor({ state: 'visible', timeout: ms }).then(() => true, () => false);
 // WebKit relata um fetch/prefetch da MESMA origem abortado pela nossa propria navegacao ou pelo fecho do
 // contexto como "<url> due to access control checks" (prefetch RSC dos links do painel, /api/traduzir):
-// artefato do motor, nao erro do site - so esse padrao, e so em localhost, e ignorado
-const artefatoWebkit = (msg) => /due to access control checks/.test(msg) && /\/\/?localhost:\d+\//.test(msg);
+// artefato do motor, nao erro do site - so esse padrao, e so na origem do proprio site (:3100), e ignorado
+// (veredito Fable lote 2: um erro de CORS real contra o Supabase local nao pode ser silenciado)
+// (o WebKit escreve so "/localhost:3100/<caminho> due to access control checks.", sem o esquema: compara pelo host:porta)
+const HOST_SITE = (() => { try { return new URL(SITE).host; } catch { return 'localhost:3100'; } })();
+const artefatoWebkit = (msg) => /due to access control checks/.test(msg) && msg.includes(`${HOST_SITE}/`);
 export const vigiar = (p, erros, quem) => {
   p.on('pageerror', (e) => { const msg = String(e.message); if (!artefatoWebkit(msg)) erros.push(`${quem}: ${msg.slice(0, 200)}`); });
   p.on('dialog', (d) => d.accept().catch(() => {}));
