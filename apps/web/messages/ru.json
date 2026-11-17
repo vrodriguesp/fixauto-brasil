@@ -44,6 +44,7 @@
     "minhaOficina": "Мой автосервис",
     "menuPrincipal": "Главное меню",
     "pedidosEsperando": "{n, plural, one {# заявка ждёт ответа} few {# заявки ждут ответа} many {# заявок ждут ответа} other {# заявки ждут ответа}}",
+    "pedidosNovos": "{n, plural, one {# новая заявка ещё не открыта} few {# новые заявки ещё не открыты} many {# новых заявок ещё не открыты} other {# новой заявки ещё не открыто}}",
     "mensagensNovas": "Непрочитанных сообщений: {n}",
     "minhaOficinaCurto": "Сервис",
     "conversasOficina": "Сообщения",

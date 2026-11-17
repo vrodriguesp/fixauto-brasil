@@ -10,6 +10,8 @@ import { useNotificacoes } from '@/hooks/use-notificacoes';
 import LanguageSwitcher from './LanguageSwitcher';
 import NextLink from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { contarPedidosNovos } from '@/lib/caixa-pedidos';
+import BolinhaPedidosNovos from '@/components/oficina/BolinhaPedidosNovos';
 
 // /admin nao tem idioma: link comum. O Link do next-intl poria /pt-br na
 // frente (/pt-br/admin/oficinas -> 404) - achado no teste do admin, 30/09.
@@ -62,6 +64,24 @@ export default function Navbar() {
   const contadorPedidos = paraResponder && paraResponder.total > 0 ? (
     <span className={`ml-1 inline-block min-w-[1.25rem] rounded-full px-1.5 text-center text-xs font-semibold leading-5 ${paraResponder.atrasados > 0 ? 'bg-red-600 text-white' : 'bg-primary-100 text-primary-800'}`} aria-label={t('pedidosEsperando', { n: paraResponder.total })}>{paraResponder.total}</span>
   ) : null;
+  // bolinha vermelha dos pedidos NOVOS (dono 17/11): os da aba "Para responder" que a oficina ainda nao
+  // abriu (lib/caixa-pedidos.ts, mesma regra da lista). Uma conta ao entrar no painel, a cada pagina e
+  // quando o contador acima muda (sem outro relogio); a caixa de pedidos manda a conta da propria lista
+  // (tempo real) e a pagina do pedido avisa quando gravou o "visto"
+  const [pedidosNovos, setPedidosNovos] = useState(0);
+  const vezNovos = useRef(0);
+  const totalParaResponder = paraResponder?.total;
+  useEffect(() => {
+    if (!isOficina || isMecanico || !oficina) return;
+    let vivo = true;
+    // uma leitura antiga que chega depois nao sobrescreve a nova (nem a conta que veio da lista)
+    const ler = () => { const vez = ++vezNovos.current; contarPedidosNovos(supabase, oficina).then((n) => { if (vivo && n != null && vez === vezNovos.current) setPedidosNovos(n); }); };
+    const daLista = (e: Event) => { vezNovos.current++; const n = (e as CustomEvent<number>).detail; if (typeof n === 'number') setPedidosNovos(n); };
+    ler();
+    window.addEventListener('bipfix:pedido-visto', ler);
+    window.addEventListener('bipfix:pedidos-novos', daLista);
+    return () => { vivo = false; window.removeEventListener('bipfix:pedido-visto', ler); window.removeEventListener('bipfix:pedidos-novos', daLista); };
+  }, [isOficina, isMecanico, oficina, pathname, totalParaResponder]);
   // mensagens nao lidas (bolinha em Mensagens - pedido do dono 07/11): mesma conta
   // da lista de conversas; a conversa aberta avisa ao marcar como lidas
   const [msgsNovas, setMsgsNovas] = useState(0);
@@ -192,7 +212,8 @@ export default function Navbar() {
                     </>
                   ) : (
                     <>
-                      <NavLink href="/oficina/pedidos">{t('pedidosOficina')}{contadorPedidos}</NavLink>
+                      {/* bolinha no canto (fora da linha): o texto continua "Pedidos N" */}
+                      <NavLink href="/oficina/pedidos">{t('pedidosOficina')}{contadorPedidos}<BolinhaPedidosNovos n={pedidosNovos} className="absolute -right-1 -top-1" /></NavLink>
                       <NavLink href="/oficina/hoje">{t('hoje')}</NavLink>
                       <NavLink href="/oficina/agenda">{t('agenda')}</NavLink>
                       {/* mensagens fora do "Mais" (pedido do dono 01/11) */}
@@ -383,8 +404,10 @@ export default function Navbar() {
       // cabe no polegar; "Mais" abre o resto. Abaixo de 1280 px, como o menu.
       <nav aria-label={t('menuPrincipal')} className="barra-inferior xl:hidden fixed bottom-0 inset-x-0 z-50 border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)]">
         <div className={`grid ${menuOficina ? 'grid-cols-5' : 'grid-cols-4'}`}>
+          {/* no canto do icone cabe um numero so: com pedido novo vale a bolinha vermelha (dono 17/11);
+              sem, o total esperando resposta de antes */}
           {(menuOficina
-            ? [{ href: '/oficina/pedidos', txt: t('pedidosOficina'), icone: 'caixa', extra: contadorPedidos }, { href: '/oficina/hoje', txt: t('hoje'), icone: 'hoje' }, { href: '/oficina/agenda', txt: t('agenda'), icone: 'agenda' }, { href: '/oficina/mensagens', txt: t('conversasOficina'), icone: 'mensagens', extra: contadorMsgs }]
+            ? [{ href: '/oficina/pedidos', txt: t('pedidosOficina'), icone: 'caixa', extra: pedidosNovos > 0 ? <BolinhaPedidosNovos n={pedidosNovos} /> : contadorPedidos }, { href: '/oficina/hoje', txt: t('hoje'), icone: 'hoje' }, { href: '/oficina/agenda', txt: t('agenda'), icone: 'agenda' }, { href: '/oficina/mensagens', txt: t('conversasOficina'), icone: 'mensagens', extra: contadorMsgs }]
             : [{ href: '/oficina/hoje', txt: t('hoje'), icone: 'hoje' }, { href: '/oficina/agenda', txt: t('agenda'), icone: 'agenda' }, { href: '/oficina/aprender', txt: t('aprender'), icone: 'aprender' }]
           ).map((it: any) => <ItemBarra key={it.href} {...it} onClick={() => setMenuOpen(false)} />)}
           <button type="button" onClick={() => { setMenuOpen((v) => !v); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-expanded={menuOpen} aria-controls="menu-mobile"
@@ -448,7 +471,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <LinkPainel
       href={href}
-      className={`px-2.5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+      className={`relative px-2.5 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
         active ? 'text-primary-700 bg-primary-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
       }`}
     >

@@ -44,6 +44,7 @@
     "minhaOficina": "My workshop",
     "menuPrincipal": "Main menu",
     "pedidosEsperando": "{n} requests waiting for a reply",
+    "pedidosNovos": "{n, plural, one {# new request not opened yet} other {# new requests not opened yet}}",
     "mensagensNovas": "{n} unread messages",
     "minhaOficinaCurto": "Workshop",
     "conversasOficina": "Messages",

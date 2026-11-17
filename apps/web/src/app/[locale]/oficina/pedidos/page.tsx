@@ -18,6 +18,8 @@ import DispensarPedido, { type Dispensa } from '@/components/oficina/DispensarPe
 import NovidadesOficina from '@/components/oficina/NovidadesOficina';
 import { hojeLocal, formatarJanela, janelaDaAgenda, janelaDoSlot } from '@/lib/turnos';
 import SemQuebra from '@/components/ui/SemQuebra';
+import BolinhaPedidosNovos from '@/components/oficina/BolinhaPedidosNovos';
+import { STATUS_PEDIDO_ABERTO, paraResponder } from '@/lib/caixa-pedidos';
 
 // Caixa de pedidos: pagina inicial da oficina (auditoria do painel 10/10,
 // docs/AUDITORIA_PAINEL_OFICINA_2026-10-10.md, secao C). Foco do produto:
@@ -106,7 +108,12 @@ export default function PedidosOficinaPage() {
     const { data } = await supabase.from('orcamento_pedido_datas').select('solicitacao_id').eq('oficina_id', oficina.id).eq('status', 'pendente');
     setPedemDatas(new Set((data || []).map((p: any) => p.solicitacao_id)));
   };
-  useEffect(() => { carregarVistos(); carregarDispensas(); carregarAgendas(); carregarPedidosDatas(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [oficina?.id]);
+  // vistos e dispensas lidos: so entao a bolinha dos pedidos novos conta (antes disso todo pedido pareceria novo)
+  const [marcasOk, setMarcasOk] = useState(false);
+  useEffect(() => {
+    if (oficina) Promise.all([carregarVistos(), carregarDispensas()]).then(() => setMarcasOk(true));
+    carregarAgendas(); carregarPedidosDatas();
+  /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [oficina?.id]);
 
   // tempo real (migracao 060): pedido novo, orcamento enviado/aceito mudam a lista sem recarregar
   useEffect(() => {
@@ -131,9 +138,11 @@ export default function PedidosOficinaPage() {
     if (!oficina) return g;
     for (const s of solicitacoes as any[]) {
       const meu = (s.orcamentos || []).find((o: any) => o.oficina_id === oficina.id);
-      const aberto = ['aberta', 'em_orcamento'].includes(s.status);
+      const aberto = STATUS_PEDIDO_ABERTO.includes(s.status);
       const disp = dispensas.get(s.id);
-      if (!meu) { if (disp) g.encerrados.push({ s, disp, estado: 'dispensado' }); else if (aberto) g.responder.push({ s }); continue; }
+      // regra da aba em lib/caixa-pedidos.ts: a bolinha do menu conta com ela (dono 17/11)
+      if (paraResponder(s, oficina.id, !!disp)) { g.responder.push({ s }); continue; }
+      if (!meu) { if (disp) g.encerrados.push({ s, disp, estado: 'dispensado' }); continue; }
       const vencido = meu.status === 'expirado' || (meu.validade && meu.validade < hojeYmd && ['enviado', 'visualizado'].includes(meu.status));
       if (meu.status === 'aceito' && s.status !== 'concluida') g.respondidos.push({ s, meu, estado: 'aceito' });
       else if (meu.status === 'aceito') g.encerrados.push({ s, meu, estado: 'entregue' });
@@ -199,6 +208,16 @@ export default function PedidosOficinaPage() {
   const fmtData = useMemo(() => new Intl.DateTimeFormat(intl, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: fusoOf }), [intl, fusoOf]); // fuso da oficina, nao do navegador (teste em producao 09/11)
   const moeda = currencyForCountry((oficina as any)?.pais ?? null);
   const algumVermelho = grupos.responder.some(({ s }) => { const ms = agora - Date.parse(s.created_at); return ms > 4 * H && ms <= 48 * H; });
+  // bolinha vermelha na aba "Para responder" (dono 17/11): os cartoes da aba que a oficina ainda nao abriu
+  // (os mesmos com "● Novo"); aparece em qualquer aba e vai para o menu (Navbar) pelo evento. So com a
+  // lista, os vistos e as dispensas lidos; enquanto recarrega fica o numero anterior
+  const novosAgora = oficina && !loading && marcasOk ? grupos.responder.filter(({ s }) => !vistos.has(s.id)).length : null;
+  const [novos, setNovos] = useState(0);
+  useEffect(() => {
+    if (novosAgora == null) return;
+    setNovos(novosAgora);
+    window.dispatchEvent(new CustomEvent('bipfix:pedidos-novos', { detail: novosAgora }));
+  }, [novosAgora]);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 pb-8">
@@ -222,10 +241,12 @@ export default function PedidosOficinaPage() {
       <div className="grid grid-cols-3 gap-1 rounded-xl bg-gray-100 p-1 mb-5" role="tablist" aria-label={t('titulo')}>
         {ABAS.map((a) => (
           <button key={a} type="button" role="tab" aria-selected={aba === a} onClick={() => setAba(a)}
-            className={`min-h-[44px] rounded-lg px-2 text-sm font-medium leading-tight ${aba === a ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'}`}>
+            className={`relative min-h-[44px] rounded-lg px-2 text-sm font-medium leading-tight ${aba === a ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'}`}>
             {t(`aba_${a}`)}{a !== 'encerrados' && grupos[a].length > 0 && (
               <span className={`ml-1.5 inline-block min-w-[1.5rem] rounded-full px-1.5 text-xs font-semibold ${a === 'responder' && algumVermelho ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-800'}`}>{grupos[a].length}</span>
             )}
+            {/* no alto da propria aba, por dentro da borda direita: no canto ela parecia da aba vizinha */}
+            {a === 'responder' && <BolinhaPedidosNovos n={novos} className="absolute right-2 -top-3" />}
           </button>
         ))}
       </div>

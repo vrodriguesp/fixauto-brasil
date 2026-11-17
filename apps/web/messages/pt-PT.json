@@ -44,6 +44,7 @@
     "minhaOficina": "A minha oficina",
     "menuPrincipal": "Menu principal",
     "pedidosEsperando": "{n} pedidos à espera de resposta",
+    "pedidosNovos": "{n, plural, one {# pedido novo ainda não aberto} other {# pedidos novos ainda não abertos}}",
     "mensagensNovas": "{n} mensagens por ler",
     "minhaOficinaCurto": "Oficina",
     "conversasOficina": "Mensagens",

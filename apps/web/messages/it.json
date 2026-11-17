@@ -44,6 +44,7 @@
     "minhaOficina": "La mia officina",
     "menuPrincipal": "Menu principale",
     "pedidosEsperando": "{n} richieste in attesa di risposta",
+    "pedidosNovos": "{n, plural, one {# nuova richiesta non ancora aperta} other {# nuove richieste non ancora aperte}}",
     "mensagensNovas": "{n} messaggi non letti",
     "minhaOficinaCurto": "Officina",
     "conversasOficina": "Messaggi",

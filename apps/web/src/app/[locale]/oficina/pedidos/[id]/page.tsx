@@ -74,7 +74,9 @@ export default function SolicitacaoDetalhePage() {
   // a oficina abriu o pedido (caixa Pedidos: o cartao deixa de aparecer como novo)
   useEffect(() => {
     if (!oficina?.id || !params.id) return;
-    supabase.from('pedido_vistos').upsert({ solicitacao_id: params.id as string, oficina_id: oficina.id }, { onConflict: 'solicitacao_id,oficina_id', ignoreDuplicates: true }).then(() => {});
+    // gravado: a bolinha dos pedidos novos do menu conta de novo (Navbar, dono 17/11)
+    supabase.from('pedido_vistos').upsert({ solicitacao_id: params.id as string, oficina_id: oficina.id }, { onConflict: 'solicitacao_id,oficina_id', ignoreDuplicates: true })
+      .then(() => { window.dispatchEvent(new Event('bipfix:pedido-visto')); });
   }, [oficina?.id, params.id]);
 
   // "nao tenho interesse" (migracao 070)

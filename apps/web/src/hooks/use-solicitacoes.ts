@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import type { Solicitacao } from '@fixauto/shared';
-import { tipoCompativel, distanciaKm } from '@fixauto/shared';
 import { completarClientesEContato } from '@/lib/resumo-clientes';
+import { oficinaVePedido } from '@/lib/caixa-pedidos';
 
 export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) {
   const { user, oficina } = useAuth();
@@ -76,23 +76,9 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
 
     // For workshops, filter by distance/especialidades BUT always show accepted ones
     if (user.tipo === 'oficina' && oficina && filter?.nearby) {
-      // mesma regra do banco (migracao 056): especialidade compativel + raio
-      results = results.filter((s) => {
-        // Always show solicitations where this oficina has an accepted quote
-        const hasAcceptedQuote = s.orcamentos?.some(
-          (o) => o.oficina_id === oficina.id && ['aceito'].includes(o.status)
-        );
-        if (hasAcceptedQuote) return true;
-
-        // For new solicitations, filter by distance and especialidades
-        const withinRadius = s.latitude != null && oficina.latitude != null &&
-          distanciaKm(s.latitude, s.longitude, oficina.latitude, oficina.longitude) <= (oficina.raio_atendimento_km || 30);
-        const matchesEspecialidade = tipoCompativel(oficina.especialidades, s.tipo);
-        // enviado pela BipFix a esta oficina (migracao 085): o banco ja libera (minha_oficina_atende); sem isto o
-        // filtro do navegador escondia a convidada de outro tipo ou fora do raio
-        const convidada = s.convites?.some((c) => c.oficina_id === oficina.id);
-        return !!convidada || (withinRadius && matchesEspecialidade);
-      });
+      // mesma regra do banco (migracao 056): especialidade compativel + raio; a regra mora em
+      // lib/caixa-pedidos.ts para a bolinha dos pedidos novos contar igual a lista (17/11)
+      results = results.filter((s) => oficinaVePedido(s, oficina));
     }
 
     setSolicitacoes(results);

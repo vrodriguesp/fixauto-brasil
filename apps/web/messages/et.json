@@ -44,6 +44,7 @@
     "minhaOficina": "Minu töökoda",
     "menuPrincipal": "Peamenüü",
     "pedidosEsperando": "{n} päringut ootab vastust",
+    "pedidosNovos": "{n, plural, one {# uus päring, mida pole veel avatud} other {# uut päringut, mida pole veel avatud}}",
     "mensagensNovas": "{n} lugemata sõnumit",
     "minhaOficinaCurto": "Töökoda",
     "conversasOficina": "Sõnumid",
