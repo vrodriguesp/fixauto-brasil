@@ -158,6 +158,8 @@ try {
     ok('N.7 cadastro: voltar/avancar 3x nao conta "abriu"', abriu() === 1, JSON.stringify(f2));
     await q.goto(`${SITE}/ee/et/registreeru?tipo=oficina`, { waitUntil: 'networkidle' }); await sleep(1500);
     ok('N.8 cadastro: abrir de novo pelo endereco (navegacao nova) conta "abriu" (2)', abriu() === 2, JSON.stringify(f2));
+    await q.reload({ waitUntil: 'networkidle' }); await sleep(1500);
+    ok('N.9 cadastro: recarregar (F5) nao conta outro "abriu" (continua 2)', abriu() === 2, JSON.stringify(f2));
     await ctx2.close();
   });
 

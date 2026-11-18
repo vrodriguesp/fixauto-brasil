@@ -201,13 +201,14 @@ function CadastroPage() {
   }, [step]);
   // funil: abriu o cadastro de oficina (uma vez por pagina). Chegar pelo voltar/avancar do navegador
   // nao e abrir de novo (mesmo criterio do pedido sem conta: popstate marcado pelo TopoAoNavegar ou a
-  // pagina carregada inteira por back_forward neste mesmo endereco) - antes cada volta contava outro "abriu"
+  // pagina carregada inteira por back_forward neste mesmo endereco) - antes cada volta contava outro "abriu".
+  // Recarregar (F5) a mesma pagina tambem nao e abrir de novo (veredito Fable 18/11)
   const abriuContado = useRef(false);
   useEffect(() => {
     if (userType !== 'oficina' || abriuContado.current) return;
     abriuContado.current = true;
     const nav = performance.getEntriesByType?.('navigation')[0] as PerformanceNavigationTiming | undefined;
-    const voltou = Date.now() - ((window as any).__bipfixVoltou || 0) < 5000 || (nav?.type === 'back_forward' && nav.name === window.location.href);
+    const voltou = Date.now() - ((window as any).__bipfixVoltou || 0) < 5000 || ((nav?.type === 'back_forward' || nav?.type === 'reload') && nav.name === window.location.href);
     if (!voltou) contar('abriu');
   }, [userType]);
   // funil: chegou ao 2o passo (dados da oficina), uma vez por pagina (16/11)
