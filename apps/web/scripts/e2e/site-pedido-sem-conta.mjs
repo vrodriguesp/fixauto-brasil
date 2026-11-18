@@ -425,6 +425,22 @@ try {
       ok(`${idioma}: senha_definida=true e login por senha funciona`, (await perfilDe(email))?.senha_definida === true && !(await anon().auth.signInWithPassword({ email, password: senha })).error);
     }
     ok(`${idioma}: sem erro de pagina`, !erros.length, erros.join(' | '));
+    if (modo === 'criar') {
+      // "voltar" depois do pedido (anuncio RU, 18/11): os passos do formulario continuam no historico;
+      // logado, o 1o voltar que cai neles vai ao inicio UMA vez e o seguinte sai do pedido
+      // (antes cada passo voltava ao inicio de novo: 5 voltas e 5 "abriu" no funil)
+      const abriu = []; const ouvir = (r) => { if (r.url().includes('/api/funil') && /"abriu"/.test(r.postData() || '')) abriu.push(1); };
+      page.on('request', ouvir);
+      const visitas = [];
+      for (let i = 0; i < 6; i++) {
+        await page.goBack({ timeout: 8000 }).catch(() => {}); await page.waitForTimeout(1500);
+        visitas.push(page.url().startsWith(SITE) ? new URL(page.url()).pathname : page.url());
+        if (!page.url().startsWith(SITE)) break;
+      }
+      page.off('request', ouvir);
+      ok(`${idioma}: voltar depois do pedido -> inicio uma vez e depois sai (sem ciclo nos passos)`, visitas.length <= 2 && visitas[0]?.endsWith('/cliente/dashboard') && !page.url().startsWith(SITE), visitas.join(' > '));
+      ok(`${idioma}: voltar aos passos nao conta "abriu" no funil`, !abriu.length, String(abriu.length));
+    }
     // ja logado: /paring leva ao pedido normal
     await page.goto(SITE + caminho, { waitUntil: 'networkidle' });
     await page.waitForTimeout(1500);

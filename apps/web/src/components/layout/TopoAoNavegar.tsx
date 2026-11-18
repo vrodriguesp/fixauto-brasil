@@ -12,7 +12,9 @@ export default function TopoAoNavegar() {
   const voltando = useRef(false);
   useEffect(() => {
     // tambem avisa as paginas (ex.: o pedido sem conta) que a chegada foi pelo "voltar"
-    const marcar = () => { voltando.current = true; (window as any).__bipfixVoltou = Date.now(); };
+    // e guarda o estado da entrada: quando o Next precisa buscar a pagina de novo ele regrava o
+    // history.state sem os campos proprios (pedidoEtapa/pedidoPilha) antes de a pagina montar
+    const marcar = (ev: PopStateEvent) => { voltando.current = true; (window as any).__bipfixVoltou = Date.now(); (window as any).__bipfixVoltouEstado = ev.state; };
     window.addEventListener('popstate', marcar);
     return () => window.removeEventListener('popstate', marcar);
   }, []);

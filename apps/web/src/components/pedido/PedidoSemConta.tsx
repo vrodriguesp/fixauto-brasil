@@ -130,9 +130,28 @@ export default function PedidoSemConta() {
   const contarUmaVez = (etapa: string) => { if (!contado.current[etapa]) { contado.current[etapa] = true; contar(etapa); } };
 
   // quem ja esta logado usa o pedido normal (mesmos passos, sem contato/codigo)
+  const pulandoPassos = useRef(false);
+  // estado da entrada do historico: o Next regrava o history.state sem os nossos campos quando busca
+  // a pagina de novo ao voltar (cache vencido); vale entao o guardado no popstate (TopoAoNavegar)
+  const estadoDaEntrada = () => { const s = window.history.state; if (s?.pedidoEtapa) return s; const w = window as any; return Date.now() - (w.__bipfixVoltou || 0) < 5000 ? w.__bipfixVoltouEstado : null; };
   useEffect(() => {
-    // chegou pelo "voltar" depois de pedir (ja logado): vai ao inicio, nao abre outro pedido (dono 08/11)
-    if (!carregandoLogin && isLoggedIn && etapa === 'servico' && !pendente) { const voltou = Date.now() - ((window as any).__bipfixVoltou || 0) < 5000 || (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type === 'back_forward'; limparRascunho(); router.replace(voltou ? '/cliente/dashboard' : '/cliente/nova-solicitacao'); }
+    if (!carregandoLogin && isLoggedIn && etapa === 'servico' && !pendente) {
+      limparRascunho();
+      // "voltar" caiu num passo de um pedido ja enviado (cada passo e uma entrada do historico):
+      // pula todos os passos de uma vez ate a 1a entrada do pedido. Antes ia ao inicio a partir
+      // de cada passo e cada "voltar" seguinte caia no passo anterior - 5 voltas ao inicio e 5
+      // "abriu" no funil (anuncio RU, 18/11).
+      const pilha = Number(estadoDaEntrada()?.pedidoPilha) || 0;
+      if (pilha > 0) {
+        pulandoPassos.current = true;
+        window.history.go(-pilha);
+        setTimeout(() => { if (pulandoPassos.current) { pulandoPassos.current = false; router.replace('/cliente/dashboard'); } }, 1500);
+        return;
+      }
+      // chegou pelo "voltar" depois de pedir (ja logado): vai ao inicio, nao abre outro pedido (dono 08/11)
+      const voltou = Date.now() - ((window as any).__bipfixVoltou || 0) < 5000 || (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type === 'back_forward';
+      router.replace(voltou ? '/cliente/dashboard' : '/cliente/nova-solicitacao');
+    }
   }, [carregandoLogin, isLoggedIn]); // eslint-disable-line react-hooks/exhaustive-deps
   // rascunho: volta o que a pessoa ja tinha feito (troca de idioma ou recarregar)
   const [rascunhoLido, setRascunhoLido] = useState(false);
@@ -162,7 +181,8 @@ export default function PedidoSemConta() {
         }
       }
     } catch { /* sem armazenamento: comeca do zero */ }
-    if (!tinha) contar('abriu');
+    // entrada do historico que ja e um passo do pedido = voltou a ele, nao abriu de novo
+    if (!tinha && !estadoDaEntrada()?.pedidoEtapa) contar('abriu');
     setRascunhoLido(true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -211,11 +231,14 @@ export default function PedidoSemConta() {
     if (doHistorico.current) { doHistorico.current = false; return; }
     if (etapa === 'enviado') return;
     const est = { ...window.history.state, pedidoEtapa: etapa };
-    if (ant && ORDEM.indexOf(etapa) > ORDEM.indexOf(ant)) { window.history.pushState(est, ''); empilhados.current++; }
+    // pedidoPilha: quantos passos deste pedido ficam abaixo desta entrada (o efeito "ja logado" pula todos)
+    if (ant && ORDEM.indexOf(etapa) > ORDEM.indexOf(ant)) { window.history.pushState({ ...est, pedidoPilha: (Number(est.pedidoPilha) || 0) + 1 }, ''); empilhados.current++; }
     else window.history.replaceState(est, '');
   }, [etapa, rascunhoLido]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const voltou = (ev: PopStateEvent) => {
+      // chegou a 1a entrada do pedido pulando os passos (ja logado): vai ao inicio, sem outro pedido
+      if (pulandoPassos.current) { pulandoPassos.current = false; router.replace('/cliente/dashboard'); return; }
       const e = ev.state?.pedidoEtapa as Etapa | undefined;
       if (!e || !ORDEM.includes(e)) return;
       empilhados.current = Math.max(0, empilhados.current - 1);
