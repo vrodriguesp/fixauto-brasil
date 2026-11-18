@@ -284,7 +284,10 @@
       "outro": "Altro",
       "manutencao": "Tagliando",
       "pintura": "Verniciatura",
-      "vidros": "Cristalli"
+      "vidros": "Vetri"
+    },
+    "tiposServicoMotorista": {
+      "outro": "Altro / non so"
     },
     "urgencias": {
       "baixa": "Bassa",
@@ -642,6 +645,7 @@
     "exemploMecanica": "Es.: il motore batte in accelerazione · la frizione slitta",
     "exemploEletrica": "Es.: non parte la mattina · spia accesa",
     "exemploPneu": "Es.: cambio gomme invernali, le ho già",
+    "exemploVidro": "Es.: crepa sul parabrezza da un sasso, circa 10 cm",
     "exemploFoto": "Es.: paraurti posteriore ammaccato, fanale destro rotto",
     "detalheOuEscolha": "Oppure scegli qui sotto, se preferisci",
     "detalheStatusVazio": "Scrivi qualche parola o scegli qui sotto",

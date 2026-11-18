@@ -286,6 +286,9 @@
       "pintura": "Värvimine",
       "vidros": "Klaasid"
     },
+    "tiposServicoMotorista": {
+      "outro": "Muu / ei tea"
+    },
     "urgencias": {
       "baixa": "Madal",
       "baixaDesc": "Kiiret ei ole, võin oodata",
@@ -642,6 +645,7 @@
     "exemploMecanica": "Nt: mootor koliseb kiirendamisel · sidur libiseb",
     "exemploEletrica": "Nt: auto ei käivitu hommikul · armatuuril põleb tuli",
     "exemploPneu": "Nt: talverehvide vahetus, rehvid on kaasas",
+    "exemploVidro": "Nt: kivi tegi esiklaasi mõra, umbes 10 cm",
     "exemploFoto": "Nt: tagumine põrkeraud mõlkis, parem tagatuli katki",
     "detalheOuEscolha": "Või vali allpool, kui soovid",
     "detalheStatusVazio": "Kirjuta paar sõna või vali allpool",

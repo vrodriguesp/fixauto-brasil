@@ -1,4 +1,5 @@
 import { Image, Platform } from 'react-native';
+import { iconeTipoMotorista } from '@fixauto/shared';
 
 // Icone do tipo de servico (TIPOS_SERVICO.icon). O do pneu e o 🛞 (Emoji 14,
 // dono 15/11): a fonte de emoji do Android < 13 e do iOS < 15.4 nao tem esse
@@ -18,7 +19,8 @@ export const semEmojiPneu = (() => {
 
 // tamanho = tamanho da letra do <Text> em volta (a imagem tem margem em volta do pneu)
 export default function IconeServico({ tipo, icon, tamanho }: { tipo: string; icon: string; tamanho: number }) {
-  if (tipo !== 'pneu' || !semEmojiPneu) return <>{icon}</>;
+  // o app e so do motorista: 'outro' aparece como ❓ ("Muu / ei tea", dono 18/11)
+  if (tipo !== 'pneu' || !semEmojiPneu) return <>{iconeTipoMotorista(tipo, icon)}</>;
   const lado = Math.round(tamanho * 1.25);
   return <Image source={PNG_PNEU} style={{ width: lado, height: lado }} accessibilityIgnoresInvertColors />;
 }

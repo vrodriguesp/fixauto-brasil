@@ -11,6 +11,7 @@ import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TIPOS_SERVICO, URGENCIAS } from '@fixauto/shared';
+import { rotuloTipoMotorista } from '../lib/tipo-servico';
 import type { Veiculo } from '@fixauto/shared';
 import { useAuth } from '../lib/auth-context';
 import { supabase } from '../lib/supabase';
@@ -214,7 +215,7 @@ export default function NovaSolicitacaoScreen() {
             onPress={() => setTipo(s.value)}
             className={`px-4 py-2 rounded-full border ${tipo === s.value ? 'bg-primary-600 border-primary-600' : 'border-gray-300'}`}
           >
-            <Text className={tipo === s.value ? 'text-white' : 'text-gray-700'}><IconeServico tipo={s.value} icon={s.icon} tamanho={14} /> {t(`constants.tiposServico.${s.value}`)}</Text>
+            <Text className={tipo === s.value ? 'text-white' : 'text-gray-700'}><IconeServico tipo={s.value} icon={s.icon} tamanho={14} /> {rotuloTipoMotorista(t, s.value)}</Text>
           </Pressable>
         ))}
       </View>

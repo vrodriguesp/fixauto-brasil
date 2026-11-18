@@ -14,6 +14,7 @@ import {
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
 } from '@fixauto/shared';
 import i18n from '../i18n';
+import { rotuloTipoMotorista } from '../lib/tipo-servico';
 import { useAuth } from '../lib/auth-context';
 import { supabase } from '../lib/supabase';
 import { API_BASE_URL } from '../lib/api';
@@ -163,7 +164,7 @@ export default function PedidoScreen() {
   const listaCurta = !listaAberta && lista.length > LISTA_CURTA;
   const listaVisivel = listaCurta ? lista.filter((sv, i) => i < LISTA_CURTA || servicos.includes(sv.value)) : lista;
   const ehDano = tipo === 'colisao' || tipo === 'funilaria';
-  const EXEMPLO: Record<string, string> = { revisao: 'exemploRevisao', mecanica: 'exemploMecanica', eletrica: 'exemploEletrica', pneu: 'exemploPneu', colisao: 'exemploFoto', funilaria: 'exemploFoto' };
+  const EXEMPLO: Record<string, string> = { revisao: 'exemploRevisao', mecanica: 'exemploMecanica', eletrica: 'exemploEletrica', pneu: 'exemploPneu', vidros: 'exemploVidro', colisao: 'exemploFoto', funilaria: 'exemploFoto' };
   const exemplo = t(`pedidoSemConta.${EXEMPLO[tipo] || 'placeholderDescribeIssue'}`);
   // escreveu o que precisa OU marcou algum servico da lista
   const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
@@ -386,7 +387,7 @@ export default function PedidoScreen() {
                 onPress={() => { if (s.value !== tipo) { setServicos([]); setListaAberta(false); } setTipo(s.value); setEtapa('detalhe'); }}
                 className={`w-[48.5%] p-4 mb-3 rounded-lg border-2 ${tipo === s.value ? 'border-primary-600 bg-primary-50' : 'border-gray-200'}`}>
                 <Text className="text-2xl"><IconeServico tipo={s.value} icon={s.icon} tamanho={24} /></Text>
-                <Text className="font-medium text-gray-900 mt-2">{t(`constants.tiposServico.${s.value}`)}</Text>
+                <Text className="font-medium text-gray-900 mt-2">{rotuloTipoMotorista(t, s.value)}</Text>
               </Pressable>
             ))}
           </View>
@@ -403,7 +404,7 @@ export default function PedidoScreen() {
           tipo e, embaixo, a lista do tipo como alternativa. Basta escrever OU marcar (servicoOk). */}
       {etapa === 'detalhe' && (
         <View onLayout={(e) => { posDetalhe.current = e.nativeEvent.layout.y; }}>
-          <Text className="text-sm text-gray-500">{tipoConfig && <IconeServico tipo={tipoConfig.value} icon={tipoConfig.icon} tamanho={16} />} {t(`constants.tiposServico.${tipo}`)}</Text>
+          <Text className="text-sm text-gray-500">{tipoConfig && <IconeServico tipo={tipoConfig.value} icon={tipoConfig.icon} tamanho={16} />} {rotuloTipoMotorista(t, tipo)}</Text>
           <Text role="heading" className="text-lg font-semibold text-gray-900 mb-3">{temLista || tipo === 'outro' ? t('pedidoSemConta.detalheTitulo') : t('pedidoSemConta.detalheTituloFoto')}</Text>
           <View onLayout={(e) => { posDescricao.current = e.nativeEvent.layout.y; }}>
             <Text className="text-sm font-medium text-gray-700 mb-1">{ehDano ? t('pedidoSemConta.detalheRotuloFoto') : t('pedidoSemConta.detalheRotuloTexto')}</Text>

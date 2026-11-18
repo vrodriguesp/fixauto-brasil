@@ -26,12 +26,12 @@ export function notifNovaSolicitacaoTitulo(locale: string | null | undefined) {
 // t() do proprio app so reflete o idioma de quem esta criando a
 // solicitacao (o cliente), nao de quem vai receber a notificacao.
 const tiposServico: Record<NotifLocale, Record<string, string>> = {
-  pt: { colisao: 'Colisão', funilaria: 'Funilaria e Pintura', revisao: 'Revisões', mecanica: 'Mecânica', eletrica: 'Elétrico', pneu: 'Pneu', outro: 'Outro' },
-  'pt-PT': { colisao: 'Colisão', funilaria: 'Bate-chapa e Pintura', revisao: 'Manutenção', mecanica: 'Mecânica', eletrica: 'Eletricidade', pneu: 'Pneus', outro: 'Outro' },
-  en: { colisao: 'Collision', funilaria: 'Bodywork & Paint', revisao: 'Maintenance', mecanica: 'Mechanical', eletrica: 'Electrical', pneu: 'Tyres', outro: 'Other' },
-  et: { colisao: 'Kokkupõrge', funilaria: 'Kere- ja värvitööd', revisao: 'Hooldus', mecanica: 'Mehaanika', eletrica: 'Elektritööd', pneu: 'Rehvid', outro: 'Muu' },
-  it: { colisao: 'Collisione', funilaria: 'Carrozzeria e Verniciatura', revisao: 'Tagliando', mecanica: 'Meccanica', eletrica: 'Elettrauto', pneu: 'Pneumatici', outro: 'Altro' },
-  ru: { colisao: 'ДТП', funilaria: 'Кузовной ремонт и покраска', revisao: 'Техобслуживание', mecanica: 'Механика', eletrica: 'Электрика', pneu: 'Шины', outro: 'Другое' },
+  pt: { colisao: 'Colisão', funilaria: 'Funilaria e Pintura', revisao: 'Revisões', mecanica: 'Mecânica', eletrica: 'Elétrico', pneu: 'Pneu', vidros: 'Vidros', outro: 'Outro' },
+  'pt-PT': { colisao: 'Colisão', funilaria: 'Bate-chapa e Pintura', revisao: 'Manutenção', mecanica: 'Mecânica', eletrica: 'Eletricidade', pneu: 'Pneus', vidros: 'Vidros', outro: 'Outro' },
+  en: { colisao: 'Collision', funilaria: 'Bodywork & Paint', revisao: 'Maintenance', mecanica: 'Mechanical', eletrica: 'Electrical', pneu: 'Tyres', vidros: 'Glass', outro: 'Other' },
+  et: { colisao: 'Kokkupõrge', funilaria: 'Kere- ja värvitööd', revisao: 'Hooldus', mecanica: 'Mehaanika', eletrica: 'Elektritööd', pneu: 'Rehvid', vidros: 'Klaasid', outro: 'Muu' },
+  it: { colisao: 'Collisione', funilaria: 'Carrozzeria e Verniciatura', revisao: 'Tagliando', mecanica: 'Meccanica', eletrica: 'Elettrauto', pneu: 'Pneumatici', vidros: 'Vetri', outro: 'Altro' },
+  ru: { colisao: 'ДТП', funilaria: 'Кузовной ремонт и покраска', revisao: 'Техобслуживание', mecanica: 'Механика', eletrica: 'Электрика', pneu: 'Шины', vidros: 'Стёкла', outro: 'Другое' },
 };
 
 export function tipoServicoLabel(locale: string | null | undefined, tipo: string): string {

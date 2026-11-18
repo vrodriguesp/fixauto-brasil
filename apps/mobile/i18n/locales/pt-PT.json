@@ -286,6 +286,9 @@
       "pintura": "Pintura",
       "vidros": "Vidros"
     },
+    "tiposServicoMotorista": {
+      "outro": "Outro / não sei"
+    },
     "urgencias": {
       "baixa": "Baixa",
       "baixaDesc": "Sem pressa, posso esperar",
@@ -642,6 +645,7 @@
     "exemploMecanica": "Ex.: o motor bate ao acelerar · a embraiagem patina",
     "exemploEletrica": "Ex.: não pega de manhã · luz acesa no painel",
     "exemploPneu": "Ex.: troca para pneus de inverno, já tenho os pneus",
+    "exemploVidro": "Ex.: racha no para-brisas causada por uma pedra, cerca de 10 cm",
     "exemploFoto": "Ex.: para-choques traseiro amolgado, farolim direito partido",
     "detalheOuEscolha": "Ou escolha abaixo, se preferir",
     "detalheStatusVazio": "Escreva algumas palavras ou escolha abaixo",
