@@ -656,7 +656,7 @@
           },
           {
             "title": "Type of service",
-            "desc": "Mechanics, bodywork, paint, electrics, servicing, tyres and more. The type decides which workshops receive the request."
+            "desc": "Mechanics, bodywork, paint, electrics, servicing, glass, tyres and more. The type decides which workshops receive the request."
           },
           {
             "title": "Photos and description",
@@ -854,7 +854,7 @@
           },
           {
             "title": "Specialities",
-            "desc": "Tick what your workshop does: mechanics, bodywork, paint, electrics, servicing, tyres, etc. You only receive requests for these specialties."
+            "desc": "Tick what your workshop does: mechanics, bodywork, paint, electrics, servicing, glass, tyres, etc. You only receive requests for these specialties."
           },
           {
             "title": "Service radius",

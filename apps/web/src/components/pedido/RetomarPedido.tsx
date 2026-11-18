@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { textoErroApi } from '@/lib/erro-api';
 import { apagarFotosPedido } from '@/lib/rascunho-pedido-fotos';
 import { registrarEventoMeta } from '@/components/Analytics';
+import { rotuloTipoMotorista } from '@/lib/utils';
 
 // Pagina do botao dos e-mails de confirmacao (1o e-mail e lembrete; dono 06/11 e
 // 13/11; api/pedido-sem-conta/retomar): mostra o pedido guardado e deixa confirmar
@@ -102,7 +103,7 @@ export default function RetomarPedido({ id, token: tokenConsulta, cancelar, doLe
           <h1 className="text-2xl font-bold text-gray-900 mb-1">{t('retomarTitulo')}</h1>
           <p className="text-gray-600 mb-5">{t('retomarTexto')}</p>
           <div className="rounded-lg bg-gray-50 border border-gray-200 p-4 space-y-1 mb-3" data-testid="retomar-resumo">
-            <p className="font-semibold text-gray-900">{tc(`tiposServico.${resumo.tipo}`)}</p>
+            <p className="font-semibold text-gray-900">{rotuloTipoMotorista(tc, resumo.tipo)}</p>
             {resumo.carro && <p className="text-gray-700">{resumo.carro}</p>}
             {resumo.descricao && <p className="text-gray-700 break-words">{resumo.descricao}</p>}
             {resumo.telefone && <p className="text-sm text-gray-500" data-testid="retomar-telefone">📱 {resumo.telefone}</p>}

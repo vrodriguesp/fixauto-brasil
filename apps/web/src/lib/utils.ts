@@ -89,3 +89,12 @@ export function rotuloTipoPedido(tc: { (k: string): string; has: (k: string) => 
   if (oc && tc.has(`tiposOcorrencia.${oc}`)) return tc(`tiposOcorrencia.${oc}`);
   return tc.has(`tiposServico.${tipo}`) ? tc(`tiposServico.${tipo}`) : tipo;
 }
+
+// Rotulo do tipo na tela do MOTORISTA (dono 18/11): 'outro' = "Muu / ei tea" (chave
+// constants.tiposServicoMotorista); os outros tipos = o mesmo rotulo da oficina. Tipo
+// desconhecido (app/site mais novo que esta versao) mostra o valor cru, nunca quebra.
+export function rotuloTipoMotorista(tc: { (k: string): string; has: (k: string) => boolean }, tipo: string | null | undefined) {
+  if (!tipo) return '';
+  if (tc.has(`tiposServicoMotorista.${tipo}`)) return tc(`tiposServicoMotorista.${tipo}`);
+  return tc.has(`tiposServico.${tipo}`) ? tc(`tiposServico.${tipo}`) : tipo;
+}

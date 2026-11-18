@@ -6,7 +6,7 @@ import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useAvaliacoes } from '@/hooks/use-avaliacoes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import StarRating from '@/components/ui/StarRating';
-import { formatCurrency, formatDate, cleanDescricao } from '@/lib/utils';
+import { formatCurrency, formatDate, cleanDescricao, rotuloTipoMotorista } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 
 function ReviewForm({
@@ -349,7 +349,7 @@ export default function HistóricoPage() {
                                   {t('refusedBadge')}
                                 </span>
                               </div>
-                              <p className="text-sm text-gray-600">{tc(`tiposServico.${sol.tipo}`)}</p>
+                              <p className="text-sm text-gray-600">{rotuloTipoMotorista(tc, sol.tipo)}</p>
                               <p className="text-xs text-gray-500 mt-1">{formatDate(sol.created_at, locale)}</p>
                             </div>
                           </div>

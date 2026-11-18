@@ -364,7 +364,7 @@
           },
           {
             "title": "Tipo de serviço",
-            "desc": "Mecânica, funilaria, pintura, elétrica, revisão, pneus e outros. O tipo define quais oficinas recebem o pedido."
+            "desc": "Mecânica, funilaria, pintura, elétrica, revisão, vidros, pneus e outros. O tipo define quais oficinas recebem o pedido."
           },
           {
             "title": "Fotos e descrição",
@@ -562,7 +562,7 @@
           },
           {
             "title": "Especialidades",
-            "desc": "Marque o que a oficina faz: mecânica, funilaria, pintura, elétrica, revisão, pneus etc. Você só recebe pedidos dessas especialidades."
+            "desc": "Marque o que a oficina faz: mecânica, funilaria, pintura, elétrica, revisão, vidros, pneus etc. Você só recebe pedidos dessas especialidades."
           },
           {
             "title": "Raio de atendimento",

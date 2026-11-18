@@ -656,7 +656,7 @@
           },
           {
             "title": "Teenuse tüüp",
-            "desc": "Mehaanika, kereremont, värvimine, elekter, hooldus, rehvid ja muu. Liik määrab, millised töökojad päringu saavad."
+            "desc": "Mehaanika, kereremont, värvimine, elekter, hooldus, klaasid, rehvid ja muu. Liik määrab, millised töökojad päringu saavad."
           },
           {
             "title": "Fotod ja kirjeldus",
@@ -854,7 +854,7 @@
           },
           {
             "title": "Erialad",
-            "desc": "Märgi, mida töökoda teeb: mehaanika, kereremont, värvimine, elekter, hooldus, rehvid jne. Saad ainult nende erialade päringuid."
+            "desc": "Märgi, mida töökoda teeb: mehaanika, kereremont, värvimine, elekter, hooldus, klaasid, rehvid jne. Saad ainult nende erialade päringuid."
           },
           {
             "title": "Teeninduspiirkond",

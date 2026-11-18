@@ -453,6 +453,9 @@
       "pintura": "Painting",
       "vidros": "Glass"
     },
+    "tiposServicoMotorista": {
+      "outro": "Other / I don't know"
+    },
     "urgencias": {
       "baixa": "Low",
       "baixaDesc": "No rush, I can wait",
@@ -963,6 +966,7 @@
     "exemploMecanica": "E.g. engine knocks when accelerating · clutch slips",
     "exemploEletrica": "E.g. won't start in the morning · warning light on",
     "exemploPneu": "E.g. switch to winter tyres, I have the tyres",
+    "exemploVidro": "E.g. a stone chip turned into a crack in the windscreen, about 10 cm",
     "exemploFoto": "E.g. rear bumper dented, right tail light broken",
     "detalheOuEscolha": "Or choose below, if you prefer",
     "detalheStatusVazio": "Write a few words or choose below",

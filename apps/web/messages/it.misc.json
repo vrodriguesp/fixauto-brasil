@@ -656,7 +656,7 @@
           },
           {
             "title": "Tipo di intervento",
-            "desc": "Meccanica, carrozzeria, verniciatura, impianto elettrico, tagliando, gomme e altro. Il tipo decide quali officine ricevono la richiesta."
+            "desc": "Meccanica, carrozzeria, verniciatura, impianto elettrico, tagliando, vetri, gomme e altro. Il tipo decide quali officine ricevono la richiesta."
           },
           {
             "title": "Foto e descrizione",
@@ -854,7 +854,7 @@
           },
           {
             "title": "Specializzazioni",
-            "desc": "Seleziona cosa fa l'officina: meccanica, carrozzeria, verniciatura, impianto elettrico, tagliando, gomme ecc. Ricevi solo richieste di queste specialità."
+            "desc": "Seleziona cosa fa l'officina: meccanica, carrozzeria, verniciatura, impianto elettrico, tagliando, vetri, gomme ecc. Ricevi solo richieste di queste specialità."
           },
           {
             "title": "Raggio di servizio",

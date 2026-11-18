@@ -15,8 +15,9 @@ import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
 import { useTopoAoMudar } from '@/hooks/use-topo-ao-mudar';
 import { useValorQueVolta } from '@/hooks/use-estado-que-volta';
 import { placaValida, anoDoCarroValido } from '@/lib/validar-carro';
+import { rotuloTipoMotorista } from '@/lib/utils';
 import {
-  TIPOS_SERVICO, URGENCIAS,
+  TIPOS_SERVICO, URGENCIAS, iconeTipoMotorista,
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
 } from '@fixauto/shared';
 
@@ -448,9 +449,9 @@ export default function NovaSolicitacaoPage() {
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <span className="text-2xl">{svc.icon}</span>
+                  <span className="text-2xl">{iconeTipoMotorista(svc.value, svc.icon)}</span>
                   {/* palavra longa (RU "Техобслуживание") nao invade o cartao do lado a 360 px */}
-                  <p className="font-medium text-gray-900 mt-2 hyphens-auto [overflow-wrap:anywhere]">{tc(`tiposServico.${svc.value}`)}</p>
+                  <p className="font-medium text-gray-900 mt-2 hyphens-auto [overflow-wrap:anywhere]">{rotuloTipoMotorista(tc, svc.value)}</p>
                   {!svc.needsPhoto && (
                     <p className="text-xs text-gray-500 mt-1">{t('selectServices')}</p>
                   )}
@@ -662,7 +663,7 @@ export default function NovaSolicitacaoPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">{t('typeLabel')}</span>
-                    <span className="text-gray-900">{tipoConfig ? tc(`tiposServico.${tipoConfig.value}`) : ''}</span>
+                    <span className="text-gray-900">{tipoConfig ? rotuloTipoMotorista(tc, tipoConfig.value) : ''}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">{t('urgencyLabelColon')}</span>

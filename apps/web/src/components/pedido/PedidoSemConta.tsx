@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { exemploPlaca } from '@/lib/exemplos';
 import { textoErroApi } from '@/lib/erro-api';
+import { rotuloTipoMotorista } from '@/lib/utils';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import { registrarEventoMeta } from '@/components/Analytics';
 import EnderecoAutocomplete from '@/components/forms/EnderecoAutocomplete';
@@ -16,7 +17,7 @@ import CampoTelefone from '@/components/forms/CampoTelefone';
 import { placaValida, anoDoCarroValido } from '@/lib/validar-carro';
 import { gravarFotosPedido, lerFotosPedido, apagarFotosPedido } from '@/lib/rascunho-pedido-fotos';
 import {
-  TIPOS_SERVICO, URGENCIAS,
+  TIPOS_SERVICO, URGENCIAS, iconeTipoMotorista,
   SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
 } from '@fixauto/shared';
 
@@ -320,7 +321,7 @@ export default function PedidoSemConta() {
   const listaCurta = !listaAberta && lista.length > LISTA_CURTA;
   const listaVisivel = listaCurta ? lista.filter((sv, i) => i < LISTA_CURTA || servicos.includes(sv.value)) : lista;
   const ehDano = tipo === 'colisao' || tipo === 'funilaria';
-  const EXEMPLO: Record<string, string> = { revisao: 'exemploRevisao', mecanica: 'exemploMecanica', eletrica: 'exemploEletrica', pneu: 'exemploPneu', colisao: 'exemploFoto', funilaria: 'exemploFoto' };
+  const EXEMPLO: Record<string, string> = { revisao: 'exemploRevisao', mecanica: 'exemploMecanica', eletrica: 'exemploEletrica', pneu: 'exemploPneu', vidros: 'exemploVidro', colisao: 'exemploFoto', funilaria: 'exemploFoto' };
   const exemplo = EXEMPLO[tipo] ? t(EXEMPLO[tipo]) : tn('placeholderDescribeIssue');
   // escreveu o que precisa OU marcou algum servico da lista OU mandou foto (12/11: para
   // colisao/lataria/outro nao ha lista e a foto e o que a pessoa mais toca - vale como descricao)
@@ -507,9 +508,9 @@ export default function PedidoSemConta() {
                 <button key={s.value} type="button" aria-pressed={tipo === s.value}
                   onClick={() => { if (s.value !== tipo) { setServicos([]); setListaAberta(false); } contarUmaVez('servico'); setTipo(s.value); setEtapa('detalhe'); }}
                   className={`min-w-0 p-4 rounded-lg border-2 text-left transition-all ${tipo === s.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                  <span className="text-2xl">{s.icon}</span>
+                  <span className="text-2xl">{iconeTipoMotorista(s.value, s.icon)}</span>
                   {/* palavra longa (RU "Техобслуживание") nao invade o cartao do lado a 360 px */}
-                  <p className="font-medium text-gray-900 mt-2 hyphens-auto [overflow-wrap:anywhere]">{tc(`tiposServico.${s.value}`)}</p>
+                  <p className="font-medium text-gray-900 mt-2 hyphens-auto [overflow-wrap:anywhere]">{rotuloTipoMotorista(tc, s.value)}</p>
                 </button>
               ))}
             </div>
@@ -520,7 +521,7 @@ export default function PedidoSemConta() {
             tipo e, embaixo, a lista do tipo como alternativa. Basta escrever OU marcar (servicoOk). */}
         {etapa === 'detalhe' && (
           <div data-testid="passo-detalhe">
-            <p className="text-sm text-gray-500" data-testid="detalhe-tipo">{tipoConfig?.icon} {tc(`tiposServico.${tipo}`)}</p>
+            <p className="text-sm text-gray-500" data-testid="detalhe-tipo">{tipoConfig ? iconeTipoMotorista(tipoConfig.value, tipoConfig.icon) : ''} {rotuloTipoMotorista(tc, tipo)}</p>
             <h2 className="text-lg font-semibold text-gray-900 mb-3">{temLista || tipo === 'outro' ? t('detalheTitulo') : t('detalheTituloFoto')}</h2>
             <label htmlFor="pedido-descricao" className="block text-sm font-medium text-gray-700 mb-1">{ehDano ? t('detalheRotuloFoto') : t('detalheRotuloTexto')}</label>
             <textarea id="pedido-descricao" className={`input-field min-h-[96px] ${faltando ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`} maxLength={1800} value={descricao} aria-invalid={!!faltando}

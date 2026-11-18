@@ -6,7 +6,7 @@ import { Link } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
-import { chaveDesc } from '@/lib/utils';
+import { chaveDesc, rotuloTipoMotorista } from '@/lib/utils';
 import { formatarJanela, janelaDaAgenda } from '@/lib/turnos';
 import { STATUS_MANUTENCAO } from '@fixauto/shared';
 import type { StatusManutencao, ManutencaoEtapa } from '@fixauto/shared';
@@ -331,7 +331,7 @@ export default function AcompanhamentoPage() {
           )}
           <div>
             <p className="text-xs text-gray-500">{t('serviceLabel')}</p>
-            <p className="text-sm font-medium text-gray-900">{agenda.solicitacao?.tipo ? tc(`tiposServico.${agenda.solicitacao.tipo}`) : '-'}</p>
+            <p className="text-sm font-medium text-gray-900">{agenda.solicitacao?.tipo ? rotuloTipoMotorista(tc, agenda.solicitacao.tipo) : '-'}</p>
           </div>
         </div>
       </div>

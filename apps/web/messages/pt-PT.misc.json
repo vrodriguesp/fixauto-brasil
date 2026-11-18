@@ -656,7 +656,7 @@
           },
           {
             "title": "Tipo de serviço",
-            "desc": "Mecânica, bate-chapa, pintura, elétrica, revisão, pneus e outros. O tipo define que oficinas recebem o pedido."
+            "desc": "Mecânica, bate-chapa, pintura, elétrica, revisão, vidros, pneus e outros. O tipo define que oficinas recebem o pedido."
           },
           {
             "title": "Fotografias e descrição",
@@ -854,7 +854,7 @@
           },
           {
             "title": "Especialidades",
-            "desc": "Marque o que a oficina faz: mecânica, bate-chapa, pintura, elétrica, revisão, pneus, etc. Só recebe pedidos dessas especialidades."
+            "desc": "Marque o que a oficina faz: mecânica, bate-chapa, pintura, elétrica, revisão, vidros, pneus, etc. Só recebe pedidos dessas especialidades."
           },
           {
             "title": "Raio de atendimento",
