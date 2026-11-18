@@ -5,6 +5,8 @@
 //      direito de sair; NADA chega ao Resend
 //   E  envio so com --enviar, pelo Resend FALSO deste script (RESEND_BASE_URL), com --so=<email>; registro em
 //      envios.jsonl; rodar de novo nao repete
+//   R  registro entre pastas/dias (A-2, veredito Fable lote 4): outra pasta nao reenvia a quem ja recebeu; envio
+//      antigo com outra vigencia para o script (codigo 4) sem --retomar; falha antiga nao conta; previa mostra o registro
 //   G  guardas: banco nao local sem --producao-confirmada para antes de ler; --dias < 30; --enviar com data que nao e
 //      hoje; --enviar sem chave
 // So banco local. Nenhum site precisa estar no ar.
@@ -22,8 +24,10 @@ const env = lerEnv(ARQ_ENV);
 const SCRIPT = process.env.AVISO_SCRIPT || path.resolve(RAIZ, '../../_scripts/aviso_termos_pecas_9_1.mjs');
 const A = ambiente(env);
 const { ok, fim, tentar } = contador();
-const SAIDA = fs.mkdtempSync(path.join(os.tmpdir(), 'aviso-termos-'));
+// registro temporario (no lugar de Documentos/Avisos_parceiros): uma pasta por "dia" dentro dele
+const REGISTRO = fs.mkdtempSync(path.join(os.tmpdir(), 'aviso-termos-'));
 const hoje = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Tallinn' }).format(new Date());
+const SAIDA = path.join(REGISTRO, `termos_9_1_${hoje}`);
 const mais30 = (() => { const d = new Date(`${hoje}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + 30); return d.toISOString().slice(0, 10); })();
 
 // Resend falso: guarda cada POST /emails
@@ -40,8 +44,8 @@ await new Promise((r) => falso.listen(0, '127.0.0.1', r));
 const RESEND_FALSO = `http://127.0.0.1:${falso.address().port}`;
 
 // spawn assincrono (o Resend falso roda neste mesmo processo: spawnSync travaria o servidor)
-const rodar = (extra, envExtra = {}, arq = ARQ_ENV) => new Promise((resolve) => {
-  const p = spawn(process.execPath, [SCRIPT, arq, `--saida=${SAIDA}`, ...extra], { env: { ...process.env, RESEND_API_KEY: '', RESEND_BASE_URL: RESEND_FALSO, ...envExtra } });
+const rodar = (extra, envExtra = {}, arq = ARQ_ENV, saida = SAIDA) => new Promise((resolve) => {
+  const p = spawn(process.execPath, [SCRIPT, arq, `--saida=${saida}`, `--registro=${REGISTRO}`, ...extra], { env: { ...process.env, RESEND_API_KEY: '', RESEND_BASE_URL: RESEND_FALSO, ...envExtra } });
   let out = ''; p.stdout.on('data', (d) => { out += d; }); p.stderr.on('data', (d) => { out += d; });
   p.on('close', (status) => resolve({ status, out }));
 });
@@ -107,6 +111,30 @@ try {
     ok('E.5 --so=<conta de teste>: ninguem na lista, nenhum POST', r3.status === 0 && /destinatarios: 0/.test(r3.out) && recebidos.length === 1, r3.out);
   });
 
+  await tentar('R', async () => {
+    const env0 = { RESEND_API_KEY: 're_falso_teste' };
+    const n0 = recebidos.length;
+    // outra pasta (ex.: retomada noutro dia com --saida diferente): quem ja recebeu (ru, ok:true) nao recebe de novo
+    const outra = path.join(REGISTRO, 'termos_9_1_outra-pasta');
+    const r1 = await rodar(['--enviar', `--so=${dRu.email}`, '--intervalo-ms=0'], env0, ARQ_ENV, outra);
+    ok('R.1 outra pasta, mesmo destinatario: 0 enviados, 1 ja tinha recebido, nenhum POST', r1.status === 0 && /0 enviados, 0 falhas, 1 ja tinham recebido/.test(r1.out) && recebidos.length === n0, r1.out);
+    // "ontem": pasta antiga com envio ok para a oficina et (vigencia diferente) e uma FALHA para o dono com 2 negocios
+    const ontem = path.join(REGISTRO, 'termos_9_1_2026-01-01');
+    fs.mkdirSync(ontem, { recursive: true });
+    fs.writeFileSync(path.join(ontem, 'envios.jsonl'), [
+      { profile_id: dEt.id, email: dEt.email, ok: true, vigencia: '2026-01-31', resend_id: 'antigo' },
+      { profile_id: dDois.id, email: dDois.email, ok: false, vigencia: '2026-01-31', erro: '429 daily quota' },
+    ].map((x) => JSON.stringify(x)).join('\n') + '\n');
+    const r2 = await rodar(['--enviar', `--so=${dDois.email}`, '--intervalo-ms=0'], env0);
+    ok('R.2 registro com OUTRA vigencia e alguem que ainda nao recebeu: PARADO (codigo 4) sem --retomar, nenhum POST', r2.status === 4 && /PARADO: o registro ja tem envios com vigencia 2026-01-31/.test(r2.out) && recebidos.length === n0, r2.out);
+    const r3 = await rodar(['--enviar', `--so=${dDois.email}`, '--intervalo-ms=0', '--retomar'], env0);
+    ok('R.3 --retomar: a falha antiga nao conta (1 enviado) e avisa a maior vigencia a respeitar', r3.status === 0 && /ENVIO: 1 enviados, 0 falhas, 0 ja tinham recebido/.test(r3.out) && r3.out.includes(`ligar so a partir de ${mais30}`) && recebidos.length === n0 + 1 && recebidos.at(-1).j?.to === dDois.email, r3.out);
+    const r4 = await rodar(['--enviar', `--so=${dEt.email}`, '--intervalo-ms=0', '--retomar'], env0);
+    ok('R.4 quem recebeu "ontem" (outra pasta, outra vigencia) nao recebe de novo', r4.status === 0 && /0 enviados, 0 falhas, 1 ja tinham recebido/.test(r4.out) && recebidos.length === n0 + 1, r4.out);
+    const r5 = await rodar([]);
+    ok('R.5 previa mostra o registro (ja receberam 3) e o aviso da vigencia diferente', r5.status === 0 && /ja receberam \(ok\): 3 de \d+/.test(r5.out) && /ATENCAO: ja houve envio com outra vigencia \(2026-01-31\)/.test(r5.out), r5.out);
+  });
+
   await tentar('G', async () => {
     const arqProd = path.join(SAIDA, 'env-nao-local');
     fs.writeFileSync(arqProd, 'NEXT_PUBLIC_SUPABASE_URL=https://banco-remoto.invalid\nSUPABASE_SERVICE_ROLE_KEY=x\n');
@@ -128,9 +156,9 @@ try {
   ok('excecao geral', false, e?.stack || e?.message);
 } finally {
   falso.close();
-  try { fs.rmSync(SAIDA, { recursive: true, force: true }); } catch { /* */ }
+  try { fs.rmSync(REGISTRO, { recursive: true, force: true }); } catch { /* */ }
   const errosLimpeza = await A.limpar();
   const sobras = await A.verificarLimpeza();
-  ok('limpeza: nada desta rodada ficou no banco nem na pasta temporaria', errosLimpeza.length === 0 && sobras.length === 0 && !fs.existsSync(SAIDA), [...errosLimpeza, ...sobras].join(' | '));
+  ok('limpeza: nada desta rodada ficou no banco nem na pasta temporaria', errosLimpeza.length === 0 && sobras.length === 0 && !fs.existsSync(REGISTRO), [...errosLimpeza, ...sobras].join(' | '));
   process.exitCode = fim() ? 1 : 0;
 }
