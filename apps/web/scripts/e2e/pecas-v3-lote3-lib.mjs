@@ -106,9 +106,11 @@ export function compararReferenciaL3(ok, nome, arquivo, normalizado) {
 }
 
 // politicas RLS que o lote 3 NAO pode mudar (D-12: sem anonimato; so cotacoes_pecas_insert muda pelo P-7).
-// md5 tirado do banco local com 091+092 em 17/11 (= producao): 25 politicas.
-export const POLITICAS_INTOCADAS_SQL = "select md5(string_agg(c.relname||'.'||polname||':'||polcmd::text||':'||coalesce(pg_get_expr(polqual,polrelid),'')||':'||coalesce(pg_get_expr(polwithcheck,polrelid),''), '|' order by c.relname, polname))||'|'||count(*) from pg_policy p join pg_class c on c.oid=p.polrelid where c.relname in ('cotacoes_pecas','cotacoes_pecas_respostas','cotacoes_pecas_mensagens','cotacoes_pecas_dispensas','pedidos_pecas','cotacoes_pecas_placa','fornecedores_contato','oficinas','lojas_pecas','notificacoes') and not (c.relname='cotacoes_pecas' and polname='cotacoes_pecas_insert')";
-export const POLITICAS_INTOCADAS_MD5 = '0a2f6091747a01f6f3a7888ce5c183a8|25';
+// md5 tirado do banco local com 091+092 em 17/11 (= producao): 25 politicas (0a2f6091747a01f6f3a7888ce5c183a8|25).
+// 18/11: a 098 (seguranca, fora do lote 3) troca lojas_pecas_select de USING(true) para so logado/relacionado - ela
+// sai desta conta (24 politicas; md5 das 24 conferido igual antes e depois da 098) e e testada em seguranca-rls.mjs.
+export const POLITICAS_INTOCADAS_SQL = "select md5(string_agg(c.relname||'.'||polname||':'||polcmd::text||':'||coalesce(pg_get_expr(polqual,polrelid),'')||':'||coalesce(pg_get_expr(polwithcheck,polrelid),''), '|' order by c.relname, polname))||'|'||count(*) from pg_policy p join pg_class c on c.oid=p.polrelid where c.relname in ('cotacoes_pecas','cotacoes_pecas_respostas','cotacoes_pecas_mensagens','cotacoes_pecas_dispensas','pedidos_pecas','cotacoes_pecas_placa','fornecedores_contato','oficinas','lojas_pecas','notificacoes') and not (c.relname='cotacoes_pecas' and polname='cotacoes_pecas_insert') and not (c.relname='lojas_pecas' and polname='lojas_pecas_select')";
+export const POLITICAS_INTOCADAS_MD5 = 'a709ed497e6f757cd9ef31a11475425f|24';
 
 // normalizacao do e-mail para as referencias (a mesma do lote 2)
 export const normalizarEmailL3 = normalizarEmail;

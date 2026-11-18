@@ -13,7 +13,7 @@ const sb = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_
 let falhas = 0;
 const ok = (n, c, x = '') => { if (!c) falhas++; console.log(`${c ? 'ok  ' : 'FALHA'} ${n}${x ? ' - ' + String(x).slice(0, 200) : ''}`); };
 const tag = crypto.randomBytes(3).toString('hex');
-const contas = []; const sols = []; const ofs = [];
+const contas = []; const sols = []; const ofs = []; const ljs = [];
 const conta = async (tipo) => {
   const email = `seg-${tipo}${contas.length}-${tag}@example.test`; const senha = `Seg${tag}Senha9`;
   const { data } = await sb.auth.admin.createUser({ email, password: senha, email_confirm: true });
@@ -116,6 +116,33 @@ try {
   const { data: vis2 } = await of.a.from('solicitacoes').select('id').eq('id', s3.id);
   ok('M-10 legitimo: oficina aprovada ve o pedido aberto', (vis2 || []).length === 1);
 
+  // L-01..L-07 (migracao 098, 18/11): lojas_pecas era SELECT USING(true) para todos - a chave publica lia todas as
+  // colunas (registro/cnpj, IVA, coordenadas, colunas da 097). Agora: so a propria loja, admin e oficinas.
+  const lj = await conta('loja_pecas'); const lj2c = await conta('loja_pecas');
+  const baseL = { endereco: 'Narva mnt 9', cidade: 'Tallinn', estado: 'Harju', cep: '10117', pais: 'EE', latitude: 59.43, longitude: 24.75, ativa: true };
+  const { data: l1, error: eL1 } = await sb.from('lojas_pecas').insert({ profile_id: lj.id, nome_fantasia: `SEG LOJA ${tag}`, cnpj: `REG-${tag}`, ...baseL }).select('id').single();
+  const { data: l2, error: eL2 } = await sb.from('lojas_pecas').insert({ profile_id: lj2c.id, nome_fantasia: `SEG LOJA2 ${tag}`, cnpj: `REG2-${tag}`, ...baseL }).select('id').single();
+  if (eL1 || eL2) throw new Error(`loja: ${eL1?.message || eL2?.message}`);
+  ljs.push(l1.id, l2.id);
+  const anonC = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } });
+  const { data: lA } = await anonC.from('lojas_pecas').select('id, cnpj, nome_fantasia').eq('id', l1.id);
+  const { data: lAll } = await anonC.from('lojas_pecas').select('id').limit(5);
+  ok('L-01 anon (chave publica sem login) NAO le lojas_pecas (nem a linha, nem a lista)', !(lA || []).length && !(lAll || []).length, JSON.stringify({ lA, n: (lAll || []).length }));
+  const { error: eAU } = await anonC.from('lojas_pecas').update({ nome_fantasia: 'hack' }).eq('id', l1.id);
+  const { data: l1d } = await sb.from('lojas_pecas').select('nome_fantasia').eq('id', l1.id).single();
+  ok('L-02 anon NAO altera loja', l1d.nome_fantasia === `SEG LOJA ${tag}`, eAU?.message);
+  const { data: lCli } = await cli.a.from('lojas_pecas').select('id, cnpj').eq('id', l1.id);
+  ok('L-03 motorista logado NAO le loja de pecas', !(lCli || []).length, JSON.stringify(lCli));
+  const { data: lOutra } = await lj2c.a.from('lojas_pecas').select('id, cnpj').eq('id', l1.id);
+  ok('L-04 outra loja NAO le a concorrente', !(lOutra || []).length, JSON.stringify(lOutra));
+  const { data: lPropria, error: ePropria } = await lj.a.from('lojas_pecas').select('*').eq('profile_id', lj.id).single();
+  ok('L-05 legitimo: a loja le a propria linha inteira (perfil / auth-context select *)', !ePropria && lPropria?.id === l1.id && lPropria?.cnpj === `REG-${tag}`, ePropria?.message);
+  const { error: eUpdL } = await lj.a.from('lojas_pecas').update({ cidade: 'Tartu' }).eq('id', l1.id);
+  ok('L-06 legitimo: a loja continua salvando o proprio perfil', !eUpdL && (await sb.from('lojas_pecas').select('cidade').eq('id', l1.id).single()).data?.cidade === 'Tartu', eUpdL?.message);
+  const { data: lOf } = await of.a.from('lojas_pecas').select('id, nome_fantasia, pais').in('id', [l1.id, l2.id]);
+  const { data: lOf2 } = await of2.a.from('lojas_pecas').select('id, nome_fantasia').eq('id', l1.id);
+  ok('L-07 legitimo: oficina (aprovada ou nao) le nome/pais das lojas (telas de pecas, conversa)', (lOf || []).length === 2 && (lOf2 || []).length === 1 && lOf.some((x) => x.nome_fantasia === `SEG LOJA ${tag}`), JSON.stringify({ n: (lOf || []).length, n2: (lOf2 || []).length }));
+
   // M-05: avisos em massa pelo navegador sao barrados
   let barrado = false;
   for (let i = 0; i < 45 && !barrado; i++) {
@@ -136,6 +163,7 @@ finally {
     await sb.from('solicitacoes').delete().eq('id', sid);
   }
   for (const oid of ofs) await sb.from('oficinas').delete().eq('id', oid);
+  for (const lid of ljs) await sb.from('lojas_pecas').delete().eq('id', lid);
   for (const id of contas) { await sb.from('veiculos').delete().eq('profile_id', id); await sb.from('notificacoes').delete().eq('profile_id', id); await sb.from('profiles').delete().eq('id', id); await sb.auth.admin.deleteUser(id); }
   console.log(falhas ? `${falhas} FALHA(S)` : 'TUDO OK');
 }
