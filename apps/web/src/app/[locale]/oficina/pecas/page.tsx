@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { exemploVeiculo } from '@/lib/exemplos';
 import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
@@ -42,6 +43,16 @@ interface CotacaoDeOutraOficina extends Omit<CotacaoPeca, 'oficina'> {
 const FORM_VAZIO = { peca_descricao: '', fipe_marca: '', fipe_modelo: '', fipe_ano: '', quantidade: '1', observacao: '', tipo: 'carro' as 'carro' | 'sem_carro', unidade: 'un', placa: '', ocultarPlaca: false, alvo: 'todos' as 'todos' | 'so_lojas', urgencia: 'sem_pressa' as 'hoje' | 'amanha' | 'sem_pressa' };
 const URGENCIAS = [['hoje', 'hoje', 'hoje'], ['amanha', 'amanha', 'amanha'], ['sem_pressa', 'semPressa', 'sem-pressa']] as const;
 const chaveUrgencia = (u: string) => (u === 'sem_pressa' ? 'semPressa' : u);
+
+// D-5 "pedir de novo" (?repetir=<cotacao>): avisa a pagina quando o parametro muda na barra
+// (voltar/avancar do navegador). Componente separado, dentro de Suspense, para o useSearchParams
+// nao mudar a renderizacao da pagina.
+function VigiaRepetir({ aoMudar }: { aoMudar: (repetir: string | null) => void }) {
+  const repetir = useSearchParams().get('repetir');
+  useEffect(() => { aoMudar(repetir); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [repetir]);
+  return null;
+}
 
 export default function OficinaPecasPage() {
   const t = useTranslations('oficinaPecas');
@@ -96,6 +107,9 @@ export default function OficinaPecasPage() {
   const [modalForn, setModalForn] = useState<{ tipo: 'loja' | 'oficina'; id: string; nome: string } | null>(null);
   // D-5 "pedir de novo": pedido cancelado que deu origem ao formulario pre-preenchido
   const [repetirDe, setRepetirDe] = useState<string | null>(null);
+  // formulario aberto pelo ?repetir= (o voltar do navegador o desfaz) e o ultimo valor visto na barra
+  const formDoRepetir = useRef(false);
+  const repetirNaBarra = useRef<string | null | undefined>(undefined);
   const resumosPedidos = useRef(new Set<string>());
   const focoInicial = useRef(false);
 
@@ -207,6 +221,7 @@ export default function OficinaPecasPage() {
       urgencia: c.urgencia === 'hoje' || c.urgencia === 'amanha' ? c.urgencia : 'sem_pressa' });
     const cancelado = (c.pedidos || []).find((p) => p.v3 && p.status === 'cancelado' && !p.pos_cancelamento);
     setRepetirDe(cancelado?.id || null);
+    formDoRepetir.current = true;
     setErroCriar(null);
     setShowForm(true);
     setTimeout(() => document.getElementById('c8551-1')?.scrollIntoView({ block: 'center' }), 50);
@@ -226,8 +241,29 @@ export default function OficinaPecasPage() {
     if (origem) preencherDe(origem);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [v3, cotacoes]);
+  // voltar/avancar: sem ?repetir= na barra, o formulario pre-preenchido e o vinculo com o pedido
+  // cancelado somem (antes, um envio depois do voltar ainda gravava a escolha D-5 no pedido)
+  const repetirMudou = (repetir: string | null) => {
+    const antes = repetirNaBarra.current;
+    repetirNaBarra.current = repetir;
+    if (antes === undefined || antes === repetir) return; // 1a leitura: o efeito de cima cuida do link
+    if (!repetir) {
+      if (!formDoRepetir.current) return;
+      formDoRepetir.current = false;
+      setRepetirDe(null);
+      setForm(FORM_VAZIO);
+      setFotosPeca([]);
+      setErroCriar(null);
+      setShowForm(false);
+      return;
+    }
+    const origem = cotacoes.find((c) => c.id === repetir);
+    if (v3 && origem) preencherDe(origem);
+  };
   const pedirDeNovo = (c: CotacaoComRespostas) => {
-    try { const u = new URL(window.location.href); u.searchParams.set('repetir', c.id); window.history.pushState(window.history.state, '', u.toString()); } catch { /* so o formulario */ }
+    // estado sem os campos internos do Next (__NA): so assim o roteador registra a URL nova e o useSearchParams
+    // (VigiaRepetir) a enxerga - com __NA o Next trata a chamada como dele e ignora (app-router.js)
+    try { const u = new URL(window.location.href); u.searchParams.set('repetir', c.id); window.history.pushState({}, '', u.toString()); } catch { /* so o formulario */ }
     setTab('comprar');
     preencherDe(c);
   };
@@ -276,9 +312,16 @@ export default function OficinaPecasPage() {
 
     // lote 3 (D-5): "pedir de novo" - o pedido cancelado guarda a escolha e a cotacao nova (so a rota grava)
     if (v3 && repetirDe) {
-      await fetch('/api/pedido-peca/depois-do-cancelamento', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pedidoId: repetirDe, escolha: 'nova_cotacao', novaCotacaoId: nova.id }) }).catch(() => null);
+      // so a dona grava a escolha (D-6) e so com a avaliacao do cancelado feita (Fable 4.6: antes o
+      // ?repetir= digitado na barra mandava e a rota recusava em silencio com AVALIACAO_PENDENTE)
+      const pendente = !!p7?.pedidos.some((x) => x.id === repetirDe) && !enviadas.has(repetirDe);
+      if (oficina.profile_id === user?.id && !pendente) {
+        const r = await fetch('/api/pedido-peca/depois-do-cancelamento', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pedidoId: repetirDe, escolha: 'nova_cotacao', novaCotacaoId: nova.id }) }).catch(() => null);
+        if (r && !r.ok) console.warn('[pecas] escolha do pedido cancelado nao gravada', r.status);
+      }
+      formDoRepetir.current = false;
       setRepetirDe(null);
-      try { const u = new URL(window.location.href); u.searchParams.delete('repetir'); window.history.replaceState(window.history.state, '', u.toString()); } catch { /* segue */ }
+      try { const u = new URL(window.location.href); u.searchParams.delete('repetir'); window.history.replaceState({}, '', u.toString()); } catch { /* segue */ }
     }
 
     // placa: so na tabela da compradora (nunca em cotacoes_pecas, que vai no tempo real a todos os parceiros)
@@ -306,6 +349,7 @@ export default function OficinaPecasPage() {
       }).catch(() => {});
     }
 
+    formDoRepetir.current = false;
     setForm(FORM_VAZIO);
     setFotosPeca([]);
     setShowForm(false);
@@ -604,7 +648,8 @@ export default function OficinaPecasPage() {
       </div>
 
       {/* lote 3 (P-7): aviso amarelo antes do bloqueio / bloqueio vermelho, uma linha por pedido (as duas abas) */}
-      {v3 && <BannerP7 dados={p7} aoAvaliar={(x: PendenteP7) => { setTab('comprar'); irAoPedido(x.id); }} />}
+      <Suspense fallback={null}><VigiaRepetir aoMudar={repetirMudou} /></Suspense>
+      {v3 && <BannerP7 dados={p7} podeAvaliar={!!oficina && oficina.profile_id === user?.id} aoAvaliar={(x: PendenteP7) => { setTab('comprar'); irAoPedido(x.id); }} />}
 
       {tab === 'comprar' ? (
         <>

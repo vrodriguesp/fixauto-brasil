@@ -1451,7 +1451,8 @@
       "linha": "{peca} - {fornecedor} (tarnitud {data})",
       "avaliar": "Hinda",
       "confirmarBloqueado": "Kinnitamiseks hinda ootel tellimust",
-      "criarBloqueado": "Varuosade küsimiseks hinda kõigepealt ülal olevad tellimused."
+      "criarBloqueado": "Varuosade küsimiseks hinda kõigepealt ülal olevad tellimused.",
+      "soDona": "Neid tellimusi saab hinnata ainult töökoja omanik."
     },
     "notaFornecedor": "Hinne ★ {media} ({total})",
     "noPrazoPct": "{pct}% õigel ajal",

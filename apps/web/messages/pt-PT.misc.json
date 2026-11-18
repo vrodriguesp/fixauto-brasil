@@ -1451,7 +1451,8 @@
       "linha": "{peca} - {fornecedor} (entregue a {data})",
       "avaliar": "Avaliar",
       "confirmarBloqueado": "Avalie a encomenda pendente para confirmar",
-      "criarBloqueado": "Para pedir peças, avalie primeiro as encomendas pendentes acima."
+      "criarBloqueado": "Para pedir peças, avalie primeiro as encomendas pendentes acima.",
+      "soDona": "Só o proprietário da oficina pode avaliar estas encomendas."
     },
     "notaFornecedor": "Nota ★ {media} ({total})",
     "noPrazoPct": "{pct}% no prazo",

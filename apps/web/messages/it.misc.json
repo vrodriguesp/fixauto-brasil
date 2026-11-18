@@ -1451,7 +1451,8 @@
       "linha": "{peca} - {fornecedor} (consegnato il {data})",
       "avaliar": "Valuta",
       "confirmarBloqueado": "Valuta l’ordine in sospeso per confermare",
-      "criarBloqueado": "Per chiedere ricambi, valuta prima gli ordini in sospeso qui sopra."
+      "criarBloqueado": "Per chiedere ricambi, valuta prima gli ordini in sospeso qui sopra.",
+      "soDona": "Solo il titolare dell'officina può valutare questi ordini."
     },
     "notaFornecedor": "Voto ★ {media} ({total})",
     "noPrazoPct": "{pct}% in tempo",

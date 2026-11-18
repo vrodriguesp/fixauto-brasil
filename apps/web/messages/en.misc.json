@@ -1451,7 +1451,8 @@
       "linha": "{peca} - {fornecedor} (delivered on {data})",
       "avaliar": "Rate",
       "confirmarBloqueado": "Rate the pending order to confirm",
-      "criarBloqueado": "To request parts, first rate the pending orders above."
+      "criarBloqueado": "To request parts, first rate the pending orders above.",
+      "soDona": "Only the workshop owner can rate these orders."
     },
     "notaFornecedor": "Rating ★ {media} ({total})",
     "noPrazoPct": "{pct}% on time",

@@ -228,7 +228,8 @@ export function PosCancelamento({ pedidoId, vencida, semOutrasOfertas = false, a
 }
 
 // ---------------- P-7: aviso amarelo / bloqueio vermelho ----------------
-export function BannerP7({ dados, aoAvaliar }: { dados: DadosP7 | null; aoAvaliar: (p: PendenteP7) => void }) {
+// podeAvaliar: so a dona avalia (D-6); a equipe ve a lista e uma linha dizendo isso, sem o botao
+export function BannerP7({ dados, aoAvaliar, podeAvaliar = true }: { dados: DadosP7 | null; aoAvaliar: (p: PendenteP7) => void; podeAvaliar?: boolean }) {
   const t = useTranslations('pecas');
   const locale = useLocale();
   if (!dados || !dados.pedidos.length) return null;
@@ -245,10 +246,11 @@ export function BannerP7({ dados, aoAvaliar }: { dados: DadosP7 | null; aoAvalia
         {dados.pedidos.map((p) => (
           <li key={p.id} data-testid={`p7-pedido-${p.id}`} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm text-gray-800">
             <span className="min-w-0 break-words">{t('p7.linha', { peca: p.peca, fornecedor: p.fornecedorNome, data: formatDate(p.referencia, locale) })}</span>
-            <button type="button" data-testid={`p7-avaliar-${p.id}`} onClick={() => aoAvaliar(p)} className={`flex-shrink-0 ${botaoPri}`}>{t('p7.avaliar')}</button>
+            {podeAvaliar && <button type="button" data-testid={`p7-avaliar-${p.id}`} onClick={() => aoAvaliar(p)} className={`flex-shrink-0 ${botaoPri}`}>{t('p7.avaliar')}</button>}
           </li>
         ))}
       </ul>
+      {!podeAvaliar && <p data-testid="p7-so-dona" className="mt-3 text-sm text-gray-700">{t('p7.soDona')}</p>}
     </div>
   );
 }
