@@ -9,6 +9,9 @@
 //       aviso pedido_fotos (quem recebe, dedupe 30 min, push falso, conta de teste), faixa na oficina e nota no
 //       motorista, revisao apaga a faixa, admin ve e apaga com motivo (auditoria + aviso), voltar x3, 3 linguas,
 //       sem rolagem lateral a 390 px, app ANTIGO (export web de 16/11 em :8090) le as fotos sem erro
+//   C   fotos da CRIACAO do pedido logado (19/11): tela nova-solicitacao com JPEG 3000x2000+GPS -> gravado sem
+//       EXIF/GPS, <= 1600 px, origem criacao, sem aviso pedido_fotos, nao apagavel; API origem=criacao: teto 10,
+//       janela de 30 min, recusada depois de foto adicionada, outra pessoa, status fechado
 //   node fotos-pedido.mjs [<.env.local>]
 import fs from 'node:fs';
 import path from 'node:path';
@@ -498,6 +501,83 @@ try {
     ok(`A.14 app ANTIGO (JS de 16/11, FotosPedido sem filtro): abre o pedido, mostra as ${total} fotos (criacao + adicionadas) com link assinado, sem erro de pagina`, imgs === total && errosApp.length === 0 && corpo.includes(tm('acompanhamento.fotosTitulo').replace('{count}', String(total))), JSON.stringify([imgs, total, errosApp, consoleErros.slice(0, 3)]));
     await print(p, 'A14-app-antigo-et');
     await ctx.close();
+  });
+
+  // ======================= C: fotos da CRIACAO do pedido logado (19/11) =======================
+  // Antes a tela nova-solicitacao subia as fotos cruas pelo navegador (producao: JPEG 3000x2000 de 4,1 MB com
+  // EXIF+GPS). Agora vao pela rota com origem=criacao: reencode sem metadados, <= 1600 px, origem 'criacao'.
+  await tentar('C.1', async () => {
+    const ctx = await contexto(390); await ctx.grantPermissions(['geolocation']); await ctx.setGeolocation({ latitude: L.NARVA.lat, longitude: L.NARVA.lon });
+    const p = await ctx.newPage(); vig(p, 'criacao logada');
+    await entrarPelaTela(p, PRE.et, cli);
+    await p.goto(`${SITE}${PRE.et}/cliente/nova-solicitacao`, { waitUntil: 'networkidle' }); await p.waitForTimeout(1200);
+    const tag = `TESTE-ACESSO fotos criacao ${crypto.randomBytes(3).toString('hex')}`;
+    await p.locator('button, label').filter({ hasText: /Toyota|Corolla/ }).first().click();
+    await p.getByRole('button', { name: T.et('clienteNovaSolicitacao.next'), exact: true }).click();
+    await p.waitForTimeout(600);
+    await p.locator('div.grid.grid-cols-2 > button').first().click(); // colisao: pede fotos
+    await p.waitForTimeout(600);
+    if (!(await p.locator('input[type=file][multiple]').count())) await p.getByRole('button', { name: T.et('clienteNovaSolicitacao.next'), exact: true }).click().catch(() => {});
+    const gps = await jpegComGps(3000, 90);
+    const g0 = await semGps(gps);
+    await p.locator('input[type=file][multiple]').setInputFiles([arquivo('IMG_3000x2000.jpg', 'image/jpeg', gps), arquivo('tela.png', 'image/png', await pngPequeno())]);
+    await esperar(() => p.locator('img[src^="blob:"]').count(), (n) => n === 2, 20, 300);
+    ok('C.1 tela de criar (et, 390): 2 fotos escolhidas (JPEG 3000x2000 com GPS + PNG) aparecem na grade', (await p.locator('img[src^="blob:"]').count()) === 2 && g0.gps && Math.max(g0.w, g0.h) === 3000, JSON.stringify(g0));
+    for (let k = 0; k < 4 && !(await p.locator('#caee7-102').count()); k++) {
+      const desc = p.locator('textarea').locator('visible=true').first();
+      if (await desc.count()) await desc.fill(tag);
+      await p.getByRole('button', { name: T.et('clienteNovaSolicitacao.next'), exact: true }).click().catch(() => {});
+      await p.waitForTimeout(700);
+    }
+    await p.locator('#caee7-102').fill('Tallinna mnt 1, Narva'); await p.keyboard.press('Escape').catch(() => {});
+    await p.waitForTimeout(1500); // geolocalizacao do contexto resolve as coordenadas
+    ok('C.1a sem rolagem lateral a 390 px no ultimo passo', await semRolagemLateral(p));
+    await print(p, 'C1-criacao-et-390-resumo');
+    await p.getByRole('button', { name: T.et('clienteNovaSolicitacao.sendRequest'), exact: true }).click();
+    await p.getByText(T.et('clienteNovaSolicitacao.successTitle'), { exact: true }).waitFor({ timeout: 60000 });
+    const nova = await esperar(async () => (await A.admin.from('solicitacoes').select('id, descricao, created_at').eq('cliente_id', cli.id).ilike('descricao', `%${tag}%`)).data || [], (l) => l.length === 1, 30, 400);
+    ok('C.1b pedido criado pela tela (1 linha com a descricao do teste)', nova.length === 1, JSON.stringify(nova));
+    if (!nova.length) { await ctx.close(); return; }
+    extras.sols.push(nova[0].id);
+    const fl = await esperar(() => fotosDe(nova[0].id), (l) => l.length === 2, 30, 400);
+    ok('C.1c banco: 2 fotos com origem=criacao, bytes/largura/altura preenchidos, caminhos .jpg em solicitacoes/<id>/', fl.length === 2 && fl.every((f) => f.origem === 'criacao' && f.bytes > 0 && f.largura > 0 && f.altura > 0 && f.foto_url.endsWith('.jpg') && f.foto_url.includes(`/solicitacoes/${nova[0].id}/`)), JSON.stringify(fl.map((f) => [f.origem, f.bytes, f.largura, f.altura])));
+    const gs = [];
+    for (const f of fl) gs.push(await semGps(await baixar(f.foto_url)));
+    ok('C.1d fotos gravadas: JPEG sem EXIF/GPS/Make, lado maior <= 1600 (a de 3000 px virou 1600), bem menores que o original', gs.length === 2 && gs.every((g) => !g.exif && !g.gps && !g.make && Math.max(g.w, g.h) <= 1600) && gs.some((g) => Math.max(g.w, g.h) === 1600) && gs.every((g) => g.bytes < g0.bytes / 2), JSON.stringify(gs));
+    const objs = (await objetosDe(nova[0].id)).length;
+    ok('C.1e storage: exatamente 2 objetos do pedido (nenhum original cru ao lado)', objs === 2, String(objs));
+    const av = (await A.admin.from('notificacoes').select('id').eq('tipo', 'pedido_fotos').eq('dados->>solicitacao_id', nova[0].id)).data || [];
+    ok('C.1f nenhum aviso pedido_fotos para fotos da criacao (as oficinas sao avisadas do pedido por /api/pedido-criado)', av.length === 0, String(av.length));
+    const d1 = await delFoto(nova[0].id, fl[0].id, S.cli.token);
+    ok('C.1g foto da criacao nao pode ser apagada pelo motorista: 409 FOTO_NAO_APAGAVEL', d1.status === 409 && d1.d?.codigo === 'FOTO_NAO_APAGAVEL', JSON.stringify(d1));
+    await ctx.close();
+  });
+
+  await tentar('C.2', async () => {
+    const form = (lista) => { const f = formComFotos(lista); f.append('origem', 'criacao'); return f; };
+    const post = async (solId, lista, token) => { const r = await fetch(`${SITE}/api/solicitacoes/${solId}/fotos`, { method: 'POST', body: form(lista), headers: { 'x-real-ip': '10.76.0.77', Authorization: `Bearer ${token}` } }); return { status: r.status, d: await r.json().catch(() => ({})) }; };
+    // pedido recem-criado sem fotos: 10 de uma vez (teto) e a 11a recusada
+    const s1 = await A.pedido(cli3, { descricao: 'criacao api' });
+    const dez = []; for (let i = 0; i < 10; i++) dez.push(arquivo(`c${i}.jpg`, 'image/jpeg', await jpegPequeno({ r: 20 * i, g: 80, b: 120 })));
+    const r1 = await post(s1.id, dez, S.cli3.token);
+    const r2 = await post(s1.id, [arquivo('c11.jpg', 'image/jpeg', await jpegPequeno())], S.cli3.token);
+    const f1 = await fotosDe(s1.id);
+    ok('C.2 API origem=criacao: 10 fotos -> 200 (origem criacao, total 10, avisos 0); a 11a -> 400 FOTOS_PEDIDO_MAX', r1.status === 200 && r1.d?.total === 10 && r1.d?.avisos?.inseridos === 0 && f1.length === 10 && f1.every((f) => f.origem === 'criacao') && r2.status === 400 && r2.d?.codigo === 'FOTOS_PEDIDO_MAX', JSON.stringify([r1.status, r1.d?.total, r1.d?.avisos, r2]));
+    // pedido criado ha mais de 30 min: origem=criacao recusada (so as fotos adicionadas, pela tela do pedido)
+    const s2 = await A.pedido(cli3, { descricao: 'criacao velha' });
+    await A.admin.from('solicitacoes').update({ created_at: new Date(Date.now() - 31 * 60000).toISOString() }).eq('id', s2.id);
+    const r3 = await post(s2.id, [arquivo('v.jpg', 'image/jpeg', await jpegPequeno())], S.cli3.token);
+    ok('C.2a origem=criacao em pedido de mais de 30 min: 409 FOTO_STATUS, nada gravado', r3.status === 409 && r3.d?.codigo === 'FOTO_STATUS' && (await fotosDe(s2.id)).length === 0, JSON.stringify(r3));
+    // pedido que ja tem foto 'adicionada': origem=criacao recusada
+    const s3 = await A.pedido(cli3, { descricao: 'criacao depois de adicionada' });
+    const r4 = await postFotos(s3.id, [arquivo('a.jpg', 'image/jpeg', await jpegPequeno())], S.cli3.token);
+    const r5 = await post(s3.id, [arquivo('b.jpg', 'image/jpeg', await jpegPequeno())], S.cli3.token);
+    ok('C.2b pedido com foto adicionada: origem=criacao -> 409 FOTO_STATUS', r4.status === 200 && r5.status === 409 && r5.d?.codigo === 'FOTO_STATUS', JSON.stringify([r4.status, r5]));
+    // pedido de outra pessoa e status fechado continuam recusados
+    const r6 = await post(s1.id, [arquivo('x.jpg', 'image/jpeg', await jpegPequeno())], S.outro.token);
+    const s4 = await A.pedido(cli3, { descricao: 'criacao aceita', status: 'aceita' });
+    const r7 = await post(s4.id, [arquivo('y.jpg', 'image/jpeg', await jpegPequeno())], S.cli3.token);
+    ok('C.2c origem=criacao: pedido de outra pessoa 403; pedido aceita 409 FOTO_STATUS', r6.status === 403 && r7.status === 409 && r7.d?.codigo === 'FOTO_STATUS', JSON.stringify([r6, r7]));
   });
 
   ok('sem erro de pagina (console) em nenhuma tela', erros.length === 0, erros.join(' | '));

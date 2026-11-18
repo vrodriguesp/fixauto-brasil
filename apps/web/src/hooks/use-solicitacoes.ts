@@ -106,16 +106,12 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
     return { data, error };
   };
 
-  const addPhotos = async (solicitacaoId: string, urls: string[]) => {
-    const rows = urls.map((url) => ({ solicitacao_id: solicitacaoId, foto_url: url }));
-    return supabase.from('solicitacao_fotos').insert(rows);
-  };
-
   const updateStatus = async (id: string, status: string) => {
     const { error } = await supabase.from('solicitacoes').update({ status }).eq('id', id);
     if (!error) await fetch();
     return { error };
   };
 
-  return { solicitacoes, loading, create, addPhotos, updateStatus, refresh: fetch };
+  // fotos da criacao: rota /api/solicitacoes/[id]/fotos com origem=criacao (reencode no servidor, 19/11)
+  return { solicitacoes, loading, create, updateStatus, refresh: fetch };
 }

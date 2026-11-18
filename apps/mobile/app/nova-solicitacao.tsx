@@ -10,7 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { TIPOS_SERVICO, URGENCIAS } from '@fixauto/shared';
+import { TIPOS_SERVICO, URGENCIAS, FOTOS_POR_PEDIDO } from '@fixauto/shared';
 import { rotuloTipoMotorista } from '../lib/tipo-servico';
 import type { Veiculo } from '@fixauto/shared';
 import { useAuth } from '../lib/auth-context';
@@ -138,21 +138,20 @@ export default function NovaSolicitacaoScreen() {
       if (error && /row-level security/i.test(error.message || '')) { setVersaoAval((v) => v + 1); return; }
       if (error || !sol) throw error || new Error('solicitacao nao criada');
 
+      // fotos pelo servidor (19/11; mesma rota das fotos adicionadas, origem=criacao): reencode sem
+      // EXIF/GPS, lado maior 1600 px. Uma chamada por foto: uma foto ruim nao derruba as outras.
       if (fotos.length > 0) {
-        const urls: string[] = [];
-        for (const foto of fotos) {
-          const ext = foto.uri.split('.').pop() || 'jpg';
-          const fileName = `solicitacoes/${sol.id}/${Date.now()}.${ext}`;
-          const blob = await arquivoDaFoto(foto.uri);
-          const { data: uploadData, error: uploadError } = await supabase.storage.from('damage-photos').upload(fileName, blob, { contentType: foto.mimeType || (ext === 'png' ? 'image/png' : ext === 'heic' ? 'image/heic' : 'image/jpeg') });
-          if (uploadError) continue;
-          if (uploadData?.path) {
-            const { data: urlData } = supabase.storage.from('damage-photos').getPublicUrl(uploadData.path);
-            urls.push(urlData.publicUrl);
-          }
-        }
-        if (urls.length > 0) {
-          await supabase.from('solicitacao_fotos').insert(urls.map((url) => ({ solicitacao_id: sol.id, foto_url: url })));
+        const { data: { session } } = await supabase.auth.getSession();
+        for (const [i, foto] of fotos.slice(0, FOTOS_POR_PEDIDO).entries()) {
+          try {
+            const form = new FormData();
+            form.append('fotos', await arquivoDaFoto(foto.uri), `foto-${i}.jpg`);
+            form.append('origem', 'criacao');
+            await fetch(`${API_BASE_URL}/api/solicitacoes/${sol.id}/fotos`, {
+              method: 'POST', body: form,
+              headers: { 'x-bipfix-origem': 'app', ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}) },
+            });
+          } catch { /* segue com as outras fotos (antes: continue no erro do upload) */ }
         }
       }
 

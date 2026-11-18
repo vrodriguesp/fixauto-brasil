@@ -7,7 +7,6 @@ import { useTranslations, useLocale } from 'next-intl';
 import AvaliacaoPendente, { useAvaliacaoPendente } from '@/components/cliente/AvaliacaoPendente';
 import { useVeiculos } from '@/hooks/use-veiculos';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
-import { supabase } from '@/lib/supabase';
 import { notifNovaSolicitacaoTitulo } from '@/lib/notif-i18n';
 import FipeAutocomplete from '@/components/forms/FipeAutocomplete';
 import { registrarEventoMeta } from '@/components/Analytics';
@@ -18,7 +17,7 @@ import { placaValida, anoDoCarroValido } from '@/lib/validar-carro';
 import { rotuloTipoMotorista } from '@/lib/utils';
 import {
   TIPOS_SERVICO, URGENCIAS, iconeTipoMotorista,
-  SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
+  SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU, FOTOS_POR_PEDIDO,
 } from '@fixauto/shared';
 
 export default function NovaSolicitacaoPage() {
@@ -28,7 +27,7 @@ export default function NovaSolicitacaoPage() {
   const tc = useTranslations('constants');
   const router = useRouter();
   const { veiculos, loading: carregandoVeiculos, add: addVeiculo } = useVeiculos();
-  const { create: createSolicitacao, addPhotos } = useSolicitacoes();
+  const { create: createSolicitacao } = useSolicitacoes();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null); // camera separada da galeria (dono 10/11, igual ao /pedido)
   const tp = useTranslations('pedidoSemConta');
@@ -154,7 +153,12 @@ export default function NovaSolicitacaoPage() {
       file,
       preview: URL.createObjectURL(file),
     }));
-    setFotos((prev) => [...prev, ...newFotos]);
+    // teto do pedido (10, o mesmo do servidor): o que passar nao entra na lista
+    setFotos((prev) => {
+      const todas = [...prev, ...newFotos];
+      todas.slice(FOTOS_POR_PEDIDO).forEach((f) => URL.revokeObjectURL(f.preview));
+      return todas.slice(0, FOTOS_POR_PEDIDO);
+    });
     e.target.value = '';
   };
 
@@ -239,30 +243,17 @@ export default function NovaSolicitacaoPage() {
         return;
       }
 
-      // Upload photos to Supabase Storage if any
-      if (fotos.length > 0) {
-        const uploadedUrls: string[] = [];
-        for (const foto of fotos) {
-          const ext = foto.file.name.split('.').pop() || 'jpg';
-          const fileName = `solicitacoes/${data.id}/${Date.now()}.${ext}`;
-          const { data: uploadData, error: uploadError } = await supabase.storage
-            .from('damage-photos')
-            .upload(fileName, foto.file, { contentType: foto.file.type });
-
-          if (uploadError) {
-            console.error('Upload error:', uploadError.message);
-            continue;
-          }
-
-          if (uploadData?.path) {
-            const { data: urlData } = supabase.storage
-              .from('damage-photos')
-              .getPublicUrl(uploadData.path);
-            uploadedUrls.push(urlData.publicUrl);
-          }
-        }
-        if (uploadedUrls.length > 0) {
-          await addPhotos(data.id, uploadedUrls);
+      // Fotos pelo servidor (19/11): reencode sem EXIF/GPS, lado maior 1600 px, tipo pelos bytes
+      // (antes subiam cruas pelo navegador). Uma chamada por foto: uma foto ruim nao derruba as outras.
+      for (const foto of fotos.slice(0, FOTOS_POR_PEDIDO)) {
+        try {
+          const form = new FormData();
+          form.append('fotos', foto.file, foto.file.name || 'foto.jpg');
+          form.append('origem', 'criacao');
+          const res = await fetch(`/api/solicitacoes/${data.id}/fotos`, { method: 'POST', body: form });
+          if (!res.ok) console.error('Upload error:', res.status, (await res.json().catch(() => ({}))).codigo);
+        } catch (e) {
+          console.error('Upload error:', (e as Error).message);
         }
       }
 

@@ -26,10 +26,26 @@ const caminhoPrivado = (url: string | null | undefined) => {
 export const JANELA_DEDUPE_MS = 30 * 60 * 1000;
 export const FOTOS_POR_HORA = 20;
 
-export type Pedido = { id: string; numero: number | null; status: string; cliente_id: string };
+export type Pedido = { id: string; numero: number | null; status: string; cliente_id: string; created_at?: string | null };
+
+// Fotos da CRIACAO do pedido logado (site e app, 19/11): antes subiam cruas pelo navegador
+// (teste em producao: JPEG 3000x2000 de 4,1 MB com EXIF+GPS). Agora passam pela mesma rota,
+// com origem = 'criacao' (o motorista nao apaga; as oficinas sao avisadas por /api/pedido-criado,
+// nao pelo aviso de fotos). So logo depois de criar: ate 30 min e sem nenhuma foto 'adicionada'.
+export const JANELA_CRIACAO_MS = 30 * 60 * 1000;
+export const FOTOS_CRIACAO_POR_HORA = 40; // a tela manda uma chamada por foto (ate 10 por pedido)
+export type OrigemFoto = 'criacao' | 'adicionada';
+
+export async function podeFotosDaCriacao(sol: Pedido): Promise<boolean> {
+  const criado = sol.created_at ? new Date(sol.created_at).getTime() : NaN;
+  if (!Number.isFinite(criado) || Date.now() - criado > JANELA_CRIACAO_MS) return false;
+  const { count, error } = await supabaseAdmin.from('solicitacao_fotos').select('id', { count: 'exact', head: true })
+    .eq('solicitacao_id', sol.id).eq('origem', 'adicionada');
+  return !error && !count;
+}
 
 export async function carregarPedidoDoDono(solicitacaoId: string, userId: string): Promise<Pedido> {
-  const { data: sol } = await supabaseAdmin.from('solicitacoes').select('id, numero, status, cliente_id').eq('id', solicitacaoId).maybeSingle();
+  const { data: sol } = await supabaseAdmin.from('solicitacoes').select('id, numero, status, cliente_id, created_at').eq('id', solicitacaoId).maybeSingle();
   if (!sol) throw new ErroValidacao('pedido não encontrado', 'NAO_ENCONTRADO');
   if (sol.cliente_id !== userId) throw new ErroValidacao('acesso negado', 'SEM_ACESSO');
   return sol as Pedido;
@@ -40,7 +56,7 @@ export const statusPermiteFotos = (status: string) => (STATUS_FOTOS_EDITAVEIS as
 export type FotoGravada = { id: string; solicitacao_id: string; foto_url: string; origem: string; created_at: string; bytes: number | null; largura: number | null; altura: number | null };
 
 /** Grava as fotos (todas ou nenhuma) em solicitacoes/<id>/ e devolve as linhas novas. */
-export async function adicionarFotos(sol: Pedido, arquivos: File[]): Promise<{ fotos: FotoGravada[]; total: number }> {
+export async function adicionarFotos(sol: Pedido, arquivos: File[], origem: OrigemFoto = 'adicionada'): Promise<{ fotos: FotoGravada[]; total: number }> {
   if (!statusPermiteFotos(sol.status)) throw new ErroValidacao('pedido não aceita fotos neste status', 'FOTO_STATUS');
   if (!arquivos.length) throw new ErroValidacao('nenhuma foto', 'CAMPO_OBRIGATORIO');
   const { count } = await supabaseAdmin.from('solicitacao_fotos').select('id', { count: 'exact', head: true }).eq('solicitacao_id', sol.id);
@@ -61,7 +77,7 @@ export async function adicionarFotos(sol: Pedido, arquivos: File[]): Promise<{ f
       subidas.push(caminho);
       linhas.push({
         solicitacao_id: sol.id, foto_url: supabaseAdmin.storage.from('damage-photos').getPublicUrl(caminho).data.publicUrl,
-        origem: 'adicionada', bytes: img.bytes, largura: img.largura, altura: img.altura,
+        origem, bytes: img.bytes, largura: img.largura, altura: img.altura,
       });
     }
     const { data, error } = await supabaseAdmin.from('solicitacao_fotos').insert(linhas).select('id, solicitacao_id, foto_url, origem, created_at, bytes, largura, altura');
