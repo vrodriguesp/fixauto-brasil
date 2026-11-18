@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { aplicarIdentidade } from './email-marca';
+import { emailDeContaTeste } from './conta-teste-envio';
 
 // Ponto unico de envio de e-mail (Resend): remetente de uma variavel so e
 // erro do Resend tratado igual em todo lugar (o SDK devolve { error } em vez
@@ -31,6 +32,12 @@ export async function enviarEmail(p: { para: string; assunto: string; html: stri
     }
     console.warn('[email] RESEND_API_KEY ausente - e-mail nao enviado');
     return false;
+  }
+  // conta de teste (profiles.conta_teste) nao recebe e-mail de verdade (dono 18/11);
+  // conta como enviado, para ninguem tentar de novo. Sem o endereco no log.
+  if (await emailDeContaTeste(p.para)) {
+    console.log('[email] conta de teste - nao enviado');
+    return true;
   }
   const { error } = await resend.emails.send({
     from: FROM_EMAIL, to: p.para, subject: p.assunto, html,

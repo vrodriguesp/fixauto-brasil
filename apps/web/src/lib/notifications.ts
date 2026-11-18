@@ -13,6 +13,7 @@ import { linkPedido } from './link-acesso';
 // Sem moeda informada: reais so para a versao do Brasil; euro no resto
 const moedaPadrao = (idioma?: string | null) => (idiomaDoSite(idioma) === 'pt' ? 'BRL' : 'EUR');
 import { FROM_EMAIL, enviarEmail } from '@/lib/email';
+import { emailDeContaTeste } from './conta-teste-envio';
 import { aplicarIdentidade } from './email-marca';
 import { SUPORTE_EMAIL_RESPOSTA, linguaTexto } from './suporte-textos';
 
@@ -28,6 +29,12 @@ async function sendOrThrow(payload: Parameters<Resend['emails']['send']>[0]) {
   if (!resend) {
     const p = payload as { to: string | string[]; subject: string; html?: string };
     if (!(await enviarEmail({ para: String(Array.isArray(p.to) ? p.to[0] : p.to), assunto: p.subject, html: p.html || '' }))) throw new Error('e-mail de teste nao gravado');
+    return;
+  }
+  // conta de teste nao recebe e-mail de verdade (dono 18/11; mesma regra do lib/email.ts)
+  const destinos = ([] as string[]).concat((payload as { to: string | string[] }).to);
+  if (destinos.length && (await Promise.all(destinos.map((d) => emailDeContaTeste(d)))).every(Boolean)) {
+    console.log('[email] conta de teste - nao enviado');
     return;
   }
   // logo, cores e rodape da BipFix (lib/email-marca.ts); sem Resend, enviarEmail ja aplica

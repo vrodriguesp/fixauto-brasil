@@ -1,4 +1,5 @@
 import { supabaseAdmin } from './supabase-admin';
+import { perfilDeContaTeste } from './conta-teste-envio';
 
 // Push no celular (app fechado) pelo servico da Expo, que entrega pelo FCM
 // (Android) e APNs (iPhone). Chamado pela rota /api/push/notificacao, que o
@@ -14,6 +15,11 @@ export async function enviarPushDoAviso(avisoId: string): Promise<{ enviados: nu
   const { data: aviso } = await supabaseAdmin.from('notificacoes')
     .select('id, profile_id, tipo, titulo, mensagem, dados').eq('id', avisoId).maybeSingle<Aviso>();
   if (!aviso) return { enviados: 0, removidos: 0 };
+  // conta de teste nao recebe push do app (dono 18/11; mesma regra do e-mail e do SMS)
+  if (await perfilDeContaTeste(aviso.profile_id)) {
+    console.log('[push] conta de teste - nao enviado');
+    return { enviados: 0, removidos: 0 };
+  }
   const { data: tokens } = await supabaseAdmin.from('push_tokens').select('token').eq('profile_id', aviso.profile_id);
   const lista = (tokens || []).map((t: any) => t.token as string).filter(Boolean);
   if (!lista.length) return { enviados: 0, removidos: 0 };

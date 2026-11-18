@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { sendQuoteSms } from '@/lib/notifications';
+import { perfilDeContaTeste } from '@/lib/conta-teste-envio';
 import { decidirSms, SMS_APP_DIAS, type TipoSms } from '@/lib/sms-regras';
 
 export type { TipoSms } from '@/lib/sms-regras';
@@ -35,6 +36,11 @@ export async function avisarOrcamentoPorSms(p: {
       .select('id, numero, status, pais, cliente_id, sms_avisos, cliente:profiles!solicitacoes_cliente_id_fkey(telefone, idioma)')
       .eq('id', p.solicitacaoId).maybeSingle();
     if (!sol) return { status: 'pulado', motivo: 'pedido_nao_encontrado' };
+    // conta de teste nao recebe SMS de verdade (dono 18/11); nada vai para sms_envios
+    if (await perfilDeContaTeste(sol.cliente_id)) {
+      console.log('[sms] conta de teste - nao enviado');
+      return { status: 'pulado', motivo: 'conta_teste' };
+    }
     const cliente = (sol as any).cliente as { telefone: string | null; idioma: string | null } | null;
     const desde = new Date(Date.now() - SMS_APP_DIAS * 86400000).toISOString();
     const [cfg, app, ja, orc, este] = await Promise.all([
