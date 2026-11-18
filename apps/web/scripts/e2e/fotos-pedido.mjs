@@ -17,7 +17,7 @@ import crypto from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
 
-const PORTA_SITE = 3103;
+const PORTA_SITE = Number(process.env.PORTA_SITE || 3103);
 process.env.SITE = `http://localhost:${PORTA_SITE}`;
 const L = await import('./acesso-oficinas-lib.mjs');
 const { lerEnv, ambiente, contador, tradutor, SITE, ENV_PADRAO, WEB, sleep, chromium, CHROME, entrarPelaTela, vigiar, psql } = L;
@@ -130,7 +130,7 @@ try {
   let no = false;
   for (let i = 0; i < 90 && !no; i++) { await sleep(1000); no = await siteNoAr(); }
   ok(`site "como producao" no ar em ${SITE} (Resend e Expo falsos)`, no, log.slice(-300));
-  if (!no) throw new Error('site :3103 nao subiu');
+  if (!no) throw new Error('site :${PORTA_SITE} nao subiu');
 
   // contas
   const cli = await A.conta('cliente', 'fotos-cli', { idioma: 'et' });
