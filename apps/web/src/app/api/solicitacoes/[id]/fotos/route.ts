@@ -26,7 +26,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const sol = await carregarPedidoDoDono(params.id, userId);
     const form = await req.formData();
     // ate o teto do pedido por chamada; o teto de verdade (fotos ja existentes) e conferido em adicionarFotos
-    const arquivos = validarImagens(form.getAll('fotos').filter((f): f is File => f instanceof File), FOTOS_POR_PEDIDO, 'FOTOS_PEDIDO_MAX');
+    const arquivos = validarImagens(form.getAll('fotos').filter((f): f is File => f instanceof File), FOTOS_POR_PEDIDO, 'FOTOS_PEDIDO_MAX', { tipoPelosBytes: true });
     if (!arquivos.length) throw new ErroValidacao('nenhuma foto', 'CAMPO_OBRIGATORIO');
     // 20 fotos/h por pessoa (abuso de volume; auditoria Fable sec. 4) - contado so com um lote valido
     if (!dentroDoLimite(`fotos-pedido:${userId}`, FOTOS_POR_HORA, 3600e3)) return NextResponse.json({ error: 'Muitas tentativas', codigo: 'RATE_LIMIT' }, { status: 429 });

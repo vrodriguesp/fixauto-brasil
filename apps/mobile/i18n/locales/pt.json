@@ -474,7 +474,7 @@
     "CAMPO_OBRIGATORIO": "Preencha todos os campos obrigatórios.",
     "EMAIL_INVALIDO": "Confira o e-mail informado.",
     "FOTOS_MAX": "Envie no máximo 6 fotos.",
-    "FOTO_TIPO": "Envie fotos em JPG, PNG, WebP ou HEIC.",
+    "FOTO_TIPO": "Envie fotos em JPG, PNG ou WebP.",
     "FOTO_TAMANHO": "Cada foto pode ter no máximo 10 MB.",
     "MUITAS_TENTATIVAS": "Muitas tentativas em pouco tempo. Tente de novo mais tarde.",
     "SEM_ACESSO": "Você não tem acesso a isso.",

@@ -474,7 +474,7 @@
     "CAMPO_OBRIGATORIO": "Please fill in all required fields.",
     "EMAIL_INVALIDO": "Please check the email address.",
     "FOTOS_MAX": "You can send up to 6 photos.",
-    "FOTO_TIPO": "Please send photos in JPG, PNG, WebP or HEIC.",
+    "FOTO_TIPO": "Please send photos in JPG, PNG or WebP.",
     "FOTO_TAMANHO": "Each photo can be up to 10 MB.",
     "MUITAS_TENTATIVAS": "Too many attempts in a short time. Please try again later.",
     "SEM_ACESSO": "You don't have access to this.",

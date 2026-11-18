@@ -51,12 +51,15 @@ export const IMAGEM_MAX_BYTES = 10 * 1024 * 1024;
 
 // Primeira barreira (quantidade e tamanho). O tipo de verdade e lido pelos BYTES no servidor
 // (lib/imagem-servidor.ts, lote 0 - 18/11): o File.type so descarta o que se declara outra coisa;
-// vazio / octet-stream (alguns Android) passa para a assinatura decidir.
+// vazio / octet-stream (alguns Android) passa para a assinatura decidir - SO nas rotas que passam
+// pelos bytes (tipoPelosBytes: pedido-sem-conta e /api/solicitacoes/[id]/fotos). As rotas de emergencia
+// sobem o ficheiro tal e qual e continuam estritas no tipo (veredito Fable 18/11, A2).
 const TIPOS_INDEFINIDOS = ['', 'application/octet-stream'];
-export function validarImagens(arquivos: File[], max: number, codigoMax = 'FOTOS_MAX'): File[] {
+export function validarImagens(arquivos: File[], max: number, codigoMax = 'FOTOS_MAX', opcoes?: { tipoPelosBytes?: boolean }): File[] {
   if (arquivos.length > max) throw new ErroValidacao(`no máximo ${max} fotos`, codigoMax);
   for (const f of arquivos) {
-    if (!(IMAGEM_TIPOS as readonly string[]).includes(f.type) && !TIPOS_INDEFINIDOS.includes(f.type)) throw new ErroValidacao('tipo de arquivo não permitido', 'FOTO_TIPO');
+    const tipoOk = (IMAGEM_TIPOS as readonly string[]).includes(f.type) || (opcoes?.tipoPelosBytes === true && TIPOS_INDEFINIDOS.includes(f.type));
+    if (!tipoOk) throw new ErroValidacao('tipo de arquivo não permitido', 'FOTO_TIPO');
     if (f.size > IMAGEM_MAX_BYTES) throw new ErroValidacao('foto maior que 10 MB', 'FOTO_TAMANHO');
   }
   return arquivos;
