@@ -165,6 +165,18 @@
     "aguardandoOrcamentos": "Waiting for quotes from repair shops"
   },
   "clienteOrcamentoDetalhe": {
+    "fotosCamera": "Take a photo",
+    "fotosGaleria": "Choose from gallery",
+    "fotosContador": "{n} of {max} photos",
+    "fotosEnviando": "Sending photos…",
+    "fotosEnviadas": "{n, plural, one {# photo added} other {# photos added}}. The repair shops that received your request have been notified.",
+    "fotosNova": "New",
+    "fotosApagar": "Delete photo",
+    "fotosApagarConfirma": "Delete this photo?",
+    "fotosLimiteCheio": "This request already has the maximum of {max} photos.",
+    "fotosAjuda": "Photos help the shops quote more accurately. They are visible to every shop that received this request.",
+    "fotosErro": "The photos could not be sent. Please try again.",
+    "fotosOrcamentoAntes": "Quote made before the new photos",
     "execDaysApprox": "{days, plural, one {~# business day} other {~# business days}}",
     "execHours": "{h}h",
     "confirmRefuseInProgress": "Are you sure you want to decline this quote? The vehicle needs to be picked up from the repair shop before closing it out. The repair shop will be notified to process the check-out.",

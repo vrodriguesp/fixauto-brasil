@@ -165,6 +165,18 @@
     "aguardandoOrcamentos": "Ootab töökodade hinnapakkumisi"
   },
   "clienteOrcamentoDetalhe": {
+    "fotosCamera": "Tee foto",
+    "fotosGaleria": "Vali galeriist",
+    "fotosContador": "{n}/{max} fotot",
+    "fotosEnviando": "Fotode saatmine…",
+    "fotosEnviadas": "{n, plural, one {# foto lisatud} other {# fotot lisatud}}. Töökojad, kes said sinu päringu, on teavitatud.",
+    "fotosNova": "Uus",
+    "fotosApagar": "Kustuta foto",
+    "fotosApagarConfirma": "Kas kustutada see foto?",
+    "fotosLimiteCheio": "Sellel päringul on juba maksimaalne arv fotosid ({max}).",
+    "fotosAjuda": "Fotod aitavad töökodadel täpsemat pakkumist teha. Neid näevad kõik töökojad, kes said selle päringu.",
+    "fotosErro": "Fotode saatmine ebaõnnestus. Proovi uuesti.",
+    "fotosOrcamentoAntes": "Pakkumine tehti enne uusi fotosid",
     "execDaysApprox": "{days, plural, one {~# tööpäev} other {~# tööpäeva}}",
     "execHours": "{h} h",
     "confirmRefuseInProgress": "Kas oled kindel, et soovid selle hinnapakkumise tagasi lükata? Sõiduk tuleb enne lõpetamist töökojast ära viia. Töökoda saab teate, et teha check-out.",

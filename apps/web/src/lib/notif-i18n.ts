@@ -606,3 +606,32 @@ export function chatPedidoCancelado(locale: string | null | undefined, motivo?: 
   const l = resolveEmailLocale(locale); const m = motivoTexto(l, motivo);
   return chatCancelado[l] + (m ? ` ${m}.` : '');
 }
+
+// Fotos adicionadas ao pedido depois do envio (lote A, 18/11; tipo 'pedido_fotos'): so painel + push,
+// uma por rajada de 30 min (a rota atualiza a contagem em vez de inserir outro aviso).
+const pedidoFotos: Record<EmailLocale, { titulo: string; mensagem: string }> = {
+  pt: { titulo: 'Novas fotos no pedido nº {n}', mensagem: 'O cliente adicionou {k} foto(s). Veja o pedido antes de orçar.' },
+  'pt-PT': { titulo: 'Novas fotografias no pedido n.º {n}', mensagem: 'O cliente adicionou {k} fotografia(s). Veja o pedido antes de orçar.' },
+  en: { titulo: 'New photos on request no. {n}', mensagem: 'The customer added {k} photo(s). Check the request before quoting.' },
+  et: { titulo: 'Uued fotod päringule nr {n}', mensagem: 'Klient lisas {k} fotot. Vaata päringut enne pakkumise tegemist.' },
+  it: { titulo: 'Nuove foto nella richiesta n. {n}', mensagem: 'Il cliente ha aggiunto {k} foto. Guarda la richiesta prima di fare il preventivo.' },
+  ru: { titulo: 'Новые фото к заявке № {n}', mensagem: 'Клиент добавил фото: {k}. Посмотрите заявку перед расчётом.' },
+};
+export function notifPedidoFotos(locale: string | null | undefined, numero: string, quantidade: number) {
+  const x = pedidoFotos[resolveEmailLocale(locale)];
+  return { titulo: fmt(x.titulo, { n: numero }), mensagem: fmt(x.mensagem, { k: String(quantidade) }) };
+}
+
+// Admin apagou uma foto do pedido com motivo (DSA art. 17: o autor sabe o porque) - aviso ao motorista
+const fotoRemovida: Record<EmailLocale, { titulo: string; mensagem: string }> = {
+  pt: { titulo: 'Uma foto do pedido nº {n} foi removida', mensagem: 'A BipFix removeu uma foto do seu pedido. Motivo: {m}. Dúvidas: support@bipfix.com' },
+  'pt-PT': { titulo: 'Uma fotografia do pedido n.º {n} foi removida', mensagem: 'A BipFix removeu uma fotografia do seu pedido. Motivo: {m}. Dúvidas: support@bipfix.com' },
+  en: { titulo: 'A photo was removed from request no. {n}', mensagem: 'BipFix removed a photo from your request. Reason: {m}. Questions: support@bipfix.com' },
+  et: { titulo: 'Päringult nr {n} eemaldati foto', mensagem: 'BipFix eemaldas sinu päringult ühe foto. Põhjus: {m}. Küsimused: support@bipfix.com' },
+  it: { titulo: 'Una foto è stata rimossa dalla richiesta n. {n}', mensagem: 'BipFix ha rimosso una foto dalla tua richiesta. Motivo: {m}. Domande: support@bipfix.com' },
+  ru: { titulo: 'Из заявки № {n} удалено фото', mensagem: 'BipFix удалил фото из вашей заявки. Причина: {m}. Вопросы: support@bipfix.com' },
+};
+export function notifFotoRemovida(locale: string | null | undefined, numero: string, motivo: string) {
+  const x = fotoRemovida[resolveEmailLocale(locale)];
+  return { titulo: fmt(x.titulo, { n: numero }), mensagem: fmt(x.mensagem, { m: motivo }) };
+}

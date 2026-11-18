@@ -5,6 +5,8 @@ export function destinoDoAviso(a: { tipo: string; dados: Record<string, string> 
   // pedido de novas datas (079) e aviso para a OFICINA: o app nao tem telas de oficina (ela responde pelo
   // site) - nao abre a tela do motorista (auditoria Fable 079, S1)
   if (a.tipo.startsWith('pedido_novas_datas')) return null;
+  // fotos novas num pedido (lote A, 18/11) tambem sao aviso para a OFICINA (veredito Fable N1)
+  if (a.tipo === 'pedido_fotos') return null;
   if (a.tipo === 'nova_mensagem' && d.solicitacao_id) {
     const p = new URLSearchParams();
     if (d.oficina_id) p.set('oficina', d.oficina_id);

@@ -20,9 +20,10 @@ import { formatCurrency, formatDate, getUrgenciaColor, cleanDescricao } from '@/
 import { currencyForCountry } from '@/lib/currency';
 import type { DisponibilidadeSlot } from '@fixauto/shared';
 import { notifOrcamentoRecusado } from '@/lib/notif-i18n';
-import MidiaPrivada from '@/components/midia/MidiaPrivada';
 import { slotAindaVale, formatarJanela, janelaDoSlot } from '@/lib/turnos';
 import EditarPedido from '@/components/cliente/EditarPedido';
+import FotosPedido from '@/components/cliente/FotosPedido';
+import { fotosDepoisDoOrcamento } from '@/lib/fotos-depois';
 import { ehConvencionada } from '@/lib/seguradoras';
 import GarantiasAtivas from '@/components/cliente/GarantiasAtivas';
 import PedirNovasDatas from '@/components/cliente/PedirNovasDatas';
@@ -297,28 +298,8 @@ export default function OrcamentoDetalhePage() {
           <span>{formatDate(solicitacao.created_at, locale)}</span>
         </div>
 
-        {solicitacao.fotos && solicitacao.fotos.length > 0 && (
-          <div className="mt-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">{t('photosCount', { count: solicitacao.fotos.length })}</p>
-            <div className="flex gap-2">
-              {solicitacao.fotos.map((foto) => (
-                <MidiaPrivada key={foto.id} url={foto.foto_url}>{(u) => (
-<a href={u} target="_blank" rel="noopener noreferrer" className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden block">
-                  {foto.foto_url ? (
-                    <img src={u} alt={foto.descricao || t('photoFallback')} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                  )}
-                </a>
-)}</MidiaPrivada>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* fotos da criacao + adicionadas depois (lote A, 18/11): camera/galeria e apagar enquanto aberto */}
+        <FotosPedido solicitacaoId={solicitacao.id} fotos={(solicitacao.fotos || []) as any} status={solicitacao.status} aoMudar={refresh} />
       </div>
 
       {/* revisao proposta pela oficina depois do aceite: o cliente decide */}
@@ -503,6 +484,10 @@ export default function OrcamentoDetalhePage() {
             >
               {orc.status === 'aceito' && (
                 <span className="inline-flex items-center gap-1 px-3 py-1 mb-3 rounded-full text-xs font-semibold bg-emerald-600 text-white">✓ {t('escolhido')}</span>
+              )}
+              {/* orcamento feito antes das fotos adicionadas: informa sem assustar (lote A, 18/11) */}
+              {['enviado', 'visualizado'].includes(orc.status) && fotosDepoisDoOrcamento(solicitacao.fotos as any, orc as any).length > 0 && (
+                <p className="mb-3 text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded px-2 py-1" data-testid="orcamento-antes-fotos">{t('fotosOrcamentoAntes')}</p>
               )}
               {/* Workshop header (cabe em 390 px com nome longo - auditoria B6); no celular o preco
                   fica embaixo do nome (o nome quebrava no meio da palavra - teste do dono 06/11) */}

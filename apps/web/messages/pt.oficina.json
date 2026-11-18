@@ -1065,6 +1065,9 @@
     "veiculoSemDados": "Carro ainda sem dados"
   },
   "oficinaSolicitacaoDetalhe": {
+    "fotosDepoisOrcamento": "{count, plural, one {# foto foi adicionada} other {# fotos foram adicionadas}} depois do seu orçamento. Veja se o valor se mantém.",
+    "fotosDepoisRever": "Revisar o orçamento",
+    "fotoNova": "Nova",
     "solicitacaoNaoEncontrada": "Solicitação não encontrada",
     "refazerOrcamento": "Refazer Orçamento",
     "revisarOrcamento": "Revisar Orçamento",

@@ -1,6 +1,6 @@
 import RolagemTeclado from '../../components/RolagemTeclado';
 import { useEffect, useCallback, useState, useMemo, useRef } from 'react';
-import { FotosPedido, SeguroPedido } from '../../components/FotosESeguroPedido';
+import { FotosPedido, SeguroPedido, type FotoDoPedido } from '../../components/FotosESeguroPedido';
 import { View, Text, ScrollView, Pressable, ActivityIndicator, TextInput, RefreshControl, Keyboard } from 'react-native';
 import { avisar } from '../../lib/confirmar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -140,6 +140,13 @@ export default function SolicitacaoDetailScreen() {
   const rolagem = useRef<any>(null);
   const posCartao = useRef<Record<string, number>>({});
 
+  // fotos do pedido (lote A): a lista vem do FotosPedido; orcamento feito antes das fotos novas ganha uma nota
+  const [fotosPedido, setFotosPedido] = useState<FotoDoPedido[]>([]);
+  const orcamentoAntesDasFotos = (orc: { status: string; created_at?: string | null; revisado_em?: string | null }) => {
+    if (!['enviado', 'visualizado'].includes(orc.status)) return false;
+    const marco = Math.max(Date.parse(orc.created_at || '') || 0, Date.parse((orc as any).revisado_em || '') || 0);
+    return !!marco && fotosPedido.some((f) => f.origem === 'adicionada' && (Date.parse(f.created_at || '') || 0) > marco);
+  };
   const carregar = useCallback(async () => {
     const { data } = await supabase
       .from('solicitacoes')
@@ -344,7 +351,7 @@ export default function SolicitacaoDetailScreen() {
         )}
 
         {/* fotos enviadas e, no acidente, quem paga o reparo (teste 09/10, ponto 2) */}
-        <FotosPedido solicitacaoId={solicitacao.id} />
+        <FotosPedido solicitacaoId={solicitacao.id} status={solicitacao.status} aoMudar={carregar} aoFotos={setFotosPedido} />
         {(solicitacao as any).emergencia_id && !['cancelada', 'concluida'].includes(solicitacao.status) && (
           <SeguroPedido key={`${(solicitacao as any).pagamento_reparo}-${(solicitacao as any).sinistro_numero}`} emergenciaId={(solicitacao as any).emergencia_id}
             atual={{ pagamento_reparo: (solicitacao as any).pagamento_reparo ?? null, seguradora: (solicitacao as any).seguradora ?? null, sinistro_numero: (solicitacao as any).sinistro_numero ?? null, franquia: (solicitacao as any).franquia ?? null }}
@@ -404,6 +411,11 @@ export default function SolicitacaoDetailScreen() {
             {marca[orc.id] && (
               <View className="self-start bg-amber-100 rounded-full px-3 py-1 mb-2" testID={`marca-${marca[orc.id]}`}>
                 <Text className="text-amber-900 text-xs font-semibold">★ {t(`orcamentos.marca_${marca[orc.id]}`)}</Text>
+              </View>
+            )}
+            {orcamentoAntesDasFotos(orc as any) && (
+              <View className="self-start bg-amber-50 border border-amber-200 rounded px-2 py-1 mb-2" testID="orcamento-antes-fotos">
+                <Text className="text-amber-800 text-xs">{t('acompanhamento.fotosOrcamentoAntes')}</Text>
               </View>
             )}
             {escolhido && (

@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     try { d = JSON.parse(String(form.get('dados') || '{}')); } catch { throw new ErroValidacao('dados inválidos'); }
     // campo invisivel: so robo preenche
     if (typeof d.site === 'string' && d.site.trim()) throw new ErroValidacao('dados inválidos');
-    const fotos = validarImagens(form.getAll('fotos').filter((f): f is File => f instanceof File), 6);
+    const fotos = validarImagens(form.getAll('fotos').filter((f): f is File => f instanceof File), 6, 'FOTOS_MAX', { tipoPelosBytes: true });
     const pedido = validarPedido(d);
     const origem = d.origem === 'app' ? 'app' : 'site';
     const funil = `pedido_${origem}`;

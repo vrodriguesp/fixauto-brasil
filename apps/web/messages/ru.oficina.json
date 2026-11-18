@@ -1065,6 +1065,9 @@
     "veiculoSemDados": "Данные машины ещё не указаны"
   },
   "oficinaSolicitacaoDetalhe": {
+    "fotosDepoisOrcamento": "После вашей сметы {count, plural, one {добавлено # фото} few {добавлено # фото} many {добавлено # фото} other {добавлено # фото}}. Проверьте, актуальна ли цена.",
+    "fotosDepoisRever": "Пересмотреть смету",
+    "fotoNova": "Новое",
     "solicitacaoNaoEncontrada": "Заявка не найдена",
     "refazerOrcamento": "Составить смету заново",
     "revisarOrcamento": "Пересмотреть смету",

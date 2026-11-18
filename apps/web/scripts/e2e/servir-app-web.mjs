@@ -16,6 +16,8 @@ if (!/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(SITE) && process.env.PERM
 }
 const TIPOS = { '.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css', '.png': 'image/png', '.json': 'application/json', '.ttf': 'font/ttf', '.ico': 'image/x-icon', '.svg': 'image/svg+xml' };
 
+// PORTA: outra porta quando o :8090 esta ocupado (fotos-pedido.mjs usa 8093)
+const PORTA = Number(process.env.PORTA) || 8090;
 http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://x');
   // o app compilado para o celular chama a API pelo IP da rede; aberto por localhost (testes) e
@@ -40,4 +42,4 @@ http.createServer(async (req, res) => {
   }
   res.writeHead(200, { 'content-type': TIPOS[path.extname(arq)] || 'application/octet-stream' });
   fs.createReadStream(arq).pipe(res);
-}).listen(8090, () => console.log('app web em http://localhost:8090'));
+}).listen(PORTA, () => console.log(`app web em http://localhost:${PORTA}`));

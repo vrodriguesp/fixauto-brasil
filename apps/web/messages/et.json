@@ -702,10 +702,15 @@
     "emergencia": "Sattusin just avariisse"
   },
   "erros": {
+    "FOTOS_PEDIDO_MAX": "Ühel päringul võib olla kuni {max} fotot.",
+    "FOTO_STATUS": "Fotosid saab lisada ainult siis, kui päring on avatud.",
+    "FOTO_NAO_APAGAVEL": "Kustutada saab ainult pärast saatmist lisatud fotosid.",
+    "FOTO_INVALIDA": "Seda faili ei õnnestunud fotona lugeda.",
+    "RATE_LIMIT": "Liiga palju katseid lühikese aja jooksul. Proovi hiljem uuesti.",
     "CAMPO_OBRIGATORIO": "Täida kõik kohustuslikud väljad.",
     "EMAIL_INVALIDO": "Kontrolli e-posti aadressi.",
     "FOTOS_MAX": "Saad saata kuni 6 fotot.",
-    "FOTO_TIPO": "Saada fotod JPG-, PNG-, WebP- või HEIC-vormingus.",
+    "FOTO_TIPO": "Saada fotod JPG-, PNG- või WebP-vormingus.",
     "FOTO_TAMANHO": "Iga foto võib olla kuni 10 MB.",
     "MUITAS_TENTATIVAS": "Liiga palju katseid lühikese aja jooksul. Proovi hiljem uuesti.",
     "SEM_ACESSO": "Sul ei ole sellele juurdepääsu.",

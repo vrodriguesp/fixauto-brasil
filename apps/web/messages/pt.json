@@ -693,10 +693,15 @@
     "emergencia": "Acabei de bater"
   },
   "erros": {
+    "FOTOS_PEDIDO_MAX": "Um pedido pode ter no máximo {max} fotos.",
+    "FOTO_STATUS": "Só é possível adicionar fotos enquanto o pedido está aberto.",
+    "FOTO_NAO_APAGAVEL": "Só é possível apagar fotos adicionadas depois do envio.",
+    "FOTO_INVALIDA": "Não foi possível ler este arquivo como foto.",
+    "RATE_LIMIT": "Muitas tentativas em pouco tempo. Tente de novo mais tarde.",
     "CAMPO_OBRIGATORIO": "Preencha todos os campos obrigatórios.",
     "EMAIL_INVALIDO": "Confira o e-mail informado.",
     "FOTOS_MAX": "Envie no máximo 6 fotos.",
-    "FOTO_TIPO": "Envie fotos em JPG, PNG, WebP ou HEIC.",
+    "FOTO_TIPO": "Envie fotos em JPG, PNG ou WebP.",
     "FOTO_TAMANHO": "Cada foto pode ter no máximo 10 MB.",
     "MUITAS_TENTATIVAS": "Muitas tentativas em pouco tempo. Tente de novo mais tarde.",
     "SEM_ACESSO": "Você não tem acesso a isso.",

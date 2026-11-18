@@ -165,6 +165,18 @@
     "aguardandoOrcamentos": "In attesa dei preventivi delle officine"
   },
   "clienteOrcamentoDetalhe": {
+    "fotosCamera": "Scatta una foto",
+    "fotosGaleria": "Scegli dalla galleria",
+    "fotosContador": "{n} di {max} foto",
+    "fotosEnviando": "Invio delle foto…",
+    "fotosEnviadas": "{n, plural, one {# foto aggiunta} other {# foto aggiunte}}. Le officine che hanno ricevuto la richiesta sono state avvisate.",
+    "fotosNova": "Nuova",
+    "fotosApagar": "Elimina foto",
+    "fotosApagarConfirma": "Eliminare questa foto?",
+    "fotosLimiteCheio": "Questa richiesta ha già il massimo di {max} foto.",
+    "fotosAjuda": "Le foto aiutano le officine a fare un preventivo più preciso. Sono visibili a tutte le officine che hanno ricevuto la richiesta.",
+    "fotosErro": "Impossibile inviare le foto. Riprova.",
+    "fotosOrcamentoAntes": "Preventivo fatto prima delle nuove foto",
     "execDaysApprox": "{days, plural, one {~# giorno lavorativo} other {~# giorni lavorativi}}",
     "execHours": "{h} h",
     "confirmRefuseInProgress": "Sei sicuro di voler rifiutare questo preventivo? Il veicolo deve essere ritirato dall'officina prima della chiusura. L'officina riceverà una notifica per effettuare il check-out.",

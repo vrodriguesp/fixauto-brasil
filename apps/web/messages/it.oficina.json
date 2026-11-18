@@ -1065,6 +1065,9 @@
     "veiculoSemDados": "Dati auto non ancora inseriti"
   },
   "oficinaSolicitacaoDetalhe": {
+    "fotosDepoisOrcamento": "{count, plural, one {È stata aggiunta # foto} other {Sono state aggiunte # foto}} dopo il tuo preventivo. Controlla se il prezzo è ancora valido.",
+    "fotosDepoisRever": "Rivedi il preventivo",
+    "fotoNova": "Nuova",
     "solicitacaoNaoEncontrada": "Richiesta non trovata",
     "refazerOrcamento": "Rifai Preventivo",
     "revisarOrcamento": "Revisiona Preventivo",

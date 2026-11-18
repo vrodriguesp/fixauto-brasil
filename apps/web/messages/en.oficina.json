@@ -1065,6 +1065,9 @@
     "veiculoSemDados": "Car details not given yet"
   },
   "oficinaSolicitacaoDetalhe": {
+    "fotosDepoisOrcamento": "{count, plural, one {# photo was added} other {# photos were added}} after your quote. Check whether the price still holds.",
+    "fotosDepoisRever": "Review the quote",
+    "fotoNova": "New",
     "solicitacaoNaoEncontrada": "Request not found",
     "refazerOrcamento": "Redo Quote",
     "revisarOrcamento": "Revise Quote",

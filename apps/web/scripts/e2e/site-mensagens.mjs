@@ -108,7 +108,7 @@ try {
   const nome = await pC.innerText('body');
   if (/Accetta e programma/.test(nome)) {
     await pC.getByRole('button', { name: /Accetta e programma/ }).last().click(); await pC.waitForTimeout(1000);
-    await pC.locator('button').filter({ hasText: /\d{2}:\d{2} - \d{2}:\d{2}/ }).first().click();
+    await pC.locator('button').filter({ hasText: /\d{2}:\d{2}\s*[-–]\s*\d{2}:\d{2}/ }).first().click();
     await pC.getByRole('button', { name: /Conferma appuntamento/ }).last().click(); await pC.waitForTimeout(4000);
     const { data: o2 } = await sb.from('orcamentos').select('status').eq('id', o.id).single();
     ok('aceitou mesmo com o cookie vencido (login renovado)', o2.status === 'aceito', o2.status);
