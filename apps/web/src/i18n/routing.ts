@@ -65,6 +65,15 @@ export const PATHNAMES = {
     pt: '/oficinas/[id]', 'pt-PT': '/oficinas/[id]', en: '/repair-shops/[id]',
     et: '/tookojad/[id]', it: '/officine/[id]', ru: '/avtoservisy/[id]',
   },
+  // pecas lote 4 (18/11): pagina publica das lojas de pecas (so a Estonia responde; it/pt dao 404)
+  '/lojas': {
+    pt: '/pecas', 'pt-PT': '/pecas', en: '/parts',
+    et: '/varuosad', it: '/ricambi', ru: '/zapchasti',
+  },
+  '/lojas/[slug]': {
+    pt: '/pecas/[slug]', 'pt-PT': '/pecas/[slug]', en: '/parts/[slug]',
+    et: '/varuosad/[slug]', it: '/ricambi/[slug]', ru: '/zapchasti/[slug]',
+  },
   '/guias': {
     pt: '/guias', 'pt-PT': '/guias', en: '/guides',
     et: '/juhendid', it: '/guide', ru: '/stati',

@@ -78,6 +78,25 @@ export default function AdminPecasPage() {
     else setErroV3('Não foi possível salvar. Tente de novo.');
   };
 
+  // Lote 4 de pecas (18/11): interruptor proprio da pagina publica das lojas (api/admin/lojas-pagina-publica).
+  // Separado do lote 1: a pagina mostra avaliacoes a visitantes (precisa do texto legal novo + aviso de 30 dias).
+  const [pubAtivo, setPubAtivo] = useState<boolean | null>(null);
+  const [salvandoPub, setSalvandoPub] = useState(false);
+  const [erroPub, setErroPub] = useState<string | null>(null);
+  useEffect(() => {
+    fetch('/api/admin/lojas-pagina-publica', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).then((j) => setPubAtivo(typeof j?.ativo === 'boolean' ? j.ativo : null)).catch(() => {});
+  }, []);
+  const alternarPub = async () => {
+    if (pubAtivo === null) return;
+    if (!pubAtivo && !confirm('Ligar a página pública das lojas para TODAS? Visitantes passam a ver as lojas que ligaram a página e as avaliações delas (a partir de 3). Só depois do texto legal novo e do aviso de 30 dias.')) return;
+    setSalvandoPub(true); setErroPub(null);
+    const r = await fetch('/api/admin/lojas-pagina-publica', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ativo: !pubAtivo }) }).catch(() => null);
+    const j = r?.ok ? await r.json().catch(() => null) : null;
+    setSalvandoPub(false);
+    if (typeof j?.ativo === 'boolean') setPubAtivo(j.ativo);
+    else setErroPub('Não foi possível salvar. Tente de novo.');
+  };
+
   // Loja nova nasce inativa: o admin confere o registro da empresa e ativa
   const [ocupado, setOcupado] = useState<string | null>(null);
   const alternarAtiva = async (f: Fornecedor) => {
@@ -139,6 +158,24 @@ export default function AdminPecasPage() {
         <button type="button" role="switch" aria-checked={v3Ativo === true} onClick={alternarV3} disabled={salvandoV3 || v3Ativo === null} data-testid="pecas-v3-interruptor"
           className={`inline-flex min-h-[44px] items-center rounded-lg px-5 text-sm font-semibold text-white disabled:opacity-50 ${v3Ativo ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-600 hover:bg-slate-500'}`}>
           {salvandoV3 ? 'Salvando…' : v3Ativo ? 'Ligada — desligar' : 'Desligada — ligar'}
+        </button>
+      </div>
+
+      {/* Interruptor do lote 4 (pagina publica das lojas) */}
+      <div className="bg-slate-800 rounded-xl border border-slate-700 p-5 flex flex-wrap items-center justify-between gap-4">
+        <div className="min-w-0">
+          <h2 className="font-semibold text-white">Página pública das lojas (lote 4)</h2>
+          <p className="text-sm text-slate-400 mt-1">
+            {pubAtivo === null ? 'Carregando…' : pubAtivo
+              ? 'Ligada: lojas que ligaram a página aparecem para visitantes (e no Google quando o perfil está completo).'
+              : 'Desligada: só lojas de conta de teste têm página (sempre fora do Google).'}
+          </p>
+          <p className="text-xs text-slate-500 mt-1">Ligar só depois do texto novo dos termos/privacidade e de 30 dias do aviso aos parceiros.</p>
+          {erroPub && <p role="alert" className="text-sm text-red-300 mt-1">{erroPub}</p>}
+        </div>
+        <button type="button" role="switch" aria-checked={pubAtivo === true} onClick={alternarPub} disabled={salvandoPub || pubAtivo === null} data-testid="lojas-pagina-publica-interruptor"
+          className={`inline-flex min-h-[44px] items-center rounded-lg px-5 text-sm font-semibold text-white disabled:opacity-50 ${pubAtivo ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-600 hover:bg-slate-500'}`}>
+          {salvandoPub ? 'Salvando…' : pubAtivo ? 'Ligada — desligar' : 'Desligada — ligar'}
         </button>
       </div>
 

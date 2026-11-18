@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 // endereco com pais e mapa (antes so CEP brasileiro via ViaCEP - auditoria M-14)
@@ -10,6 +10,7 @@ import CampoTelefone from '@/components/forms/CampoTelefone';
 import { usePecasV3 } from '@/hooks/use-pecas-v3';
 import { PerfilFiscalCampos, fiscalDoPerfil, colunasFiscais, type ValorFiscal } from '@/components/pecas/FornecedorV3';
 import AvisosNavegador from '@/components/pecas/AvisosNavegador';
+import PaginaPublicaLoja, { paginaPublicaDoPerfil, colunasPaginaPublica, type ValorPaginaPublica } from '@/components/pecas/PaginaPublicaLoja';
 
 export default function PerfilLojaPage() {
   const t = useTranslations('lojaPerfil');
@@ -22,6 +23,12 @@ export default function PerfilLojaPage() {
   const [tinhaComercial, setTinhaComercial] = useState(false);
   // lote 2: perfil fiscal (registro no IVA, aliquota, regime de margem para usadas), so com o interruptor
   const [fiscal, setFiscal] = useState<ValorFiscal>({ registrado: null, pct: '', margem: false });
+  // lote 4: pagina publica (so quando liberada para a loja: interruptor proprio ou conta de teste)
+  const locale = useLocale();
+  const [pub, setPub] = useState<ValorPaginaPublica>(() => paginaPublicaDoPerfil(null));
+  const [estadoPub, setEstadoPub] = useState<{ liberada: boolean; existe: boolean; teste: boolean; url: string | null } | null>(null);
+  const carregarEstadoPub = () => fetch(`/api/loja/pagina-publica?l=${encodeURIComponent(locale)}`, { cache: 'no-store' })
+    .then((r) => (r.ok ? r.json() : null)).then((j) => setEstadoPub(j ? { liberada: !!j.liberada, existe: !!j.existe, teste: !!j.teste, url: j.url || null } : null)).catch(() => setEstadoPub(null));
 
   const [nomeFantasia, setNomeFantasia] = useState('');
   const [cnpj, setCnpj] = useState('');
@@ -45,6 +52,7 @@ export default function PerfilLojaPage() {
       });
       setRaio(loja.raio_atendimento_km || 30);
       setFiscal(fiscalDoPerfil(loja));
+      setPub(paginaPublicaDoPerfil(loja));
     }
   }, [loja]);
 
@@ -55,6 +63,12 @@ export default function PerfilLojaPage() {
       setTelefone(user.telefone || '');
     }
   }, [user]);
+
+  useEffect(() => {
+    if (!v3 || !loja) return;
+    carregarEstadoPub();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [v3, loja?.id]);
 
   useEffect(() => {
     if (!v3 || !loja) return;
@@ -77,6 +91,8 @@ export default function PerfilLojaPage() {
       raio_atendimento_km: raio,
       // lote 2: so com o interruptor e so depois de preenchido uma vez (sem isso, nada muda)
       ...(v3 ? colunasFiscais(fiscal) || {} : {}),
+      // lote 4: so com a pagina liberada (sem isso, nada muda)
+      ...(v3 && estadoPub?.liberada ? colunasPaginaPublica(pub) : {}),
     }).eq('id', loja.id);
 
     await supabase.from('profiles').update({ nome, telefone }).eq('id', user!.id);
@@ -91,6 +107,7 @@ export default function PerfilLojaPage() {
     }
 
     await refreshProfile();
+    if (v3 && estadoPub?.liberada) await carregarEstadoPub();
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
@@ -160,6 +177,19 @@ export default function PerfilLojaPage() {
           {saved && <span className="text-sm text-green-600">{t('salvoMsg')}</span>}
         </div>
       </div>
+      {/* lote 4: pagina publica (so com a tela nova e a pagina liberada) */}
+      {v3 && estadoPub?.liberada && (
+        <PaginaPublicaLoja valor={pub} aoMudar={setPub} teste={estadoPub.teste} url={estadoPub.existe ? estadoPub.url : null}
+          endereco={{ latitude: end.latitude, longitude: end.longitude, cidade: end.cidade, endereco: juntarEndereco(end.rua, end.numero) }} />
+      )}
+      {v3 && estadoPub?.liberada && (
+        <div className="flex items-center gap-3 mt-4">
+          <button onClick={handleSave} disabled={saving} className="btn-primary disabled:opacity-50" data-testid="loja-pagina-publica-salvar">
+            {saving ? t('salvandoButton') : t('salvarButton')}
+          </button>
+          {saved && <span className="text-sm text-green-600">{t('salvoMsg')}</span>}
+        </div>
+      )}
       {/* lote 3c: avisos no navegador (so com a tela nova) */}
       {v3 && <AvisosNavegador />}
     </div>

@@ -16,7 +16,8 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { spawn } from 'node:child_process';
 
-const PORTA_SITE = 3101;
+// PORTA_SITE troca a porta (ex.: 3102 quando o :3101 esta ocupado por outra revisao)
+const PORTA_SITE = Number(process.env.PORTA_SITE || 3101);
 process.env.SITE = `http://localhost:${PORTA_SITE}`;
 const L = await import('./pecas-v3-lote3-lib.mjs');
 const { lerEnv, ambienteL3, abrirNavegadores, contador, tradutor, SITE, ENV_PADRAO, WEB, siteNoAr, vigiar, entrarPelaTela, ir, visivel, sleep, DIA_MS, IDIOMAS } = L;

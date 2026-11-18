@@ -6,6 +6,9 @@ import { hreflangAlternates, localizedUrl, slugCidade } from '@/lib/seo-utils';
 import { alternatesDoGuia, caminhoDoGuia, todosOsGuias } from '@/lib/guias';
 import { perfisDeTeste } from '@/lib/oficinas-teste';
 import { fetchSemCache } from '@/lib/fetch-sem-cache';
+import { listarLojasPublicas } from '@/lib/loja-publica';
+import { LOCALES_LOJA } from '@/lib/loja-publica-regras';
+import { alternatesLoja } from './[locale]/lojas/loja-seo';
 
 
 // Sem isso, o sitemap fica congelado com os dados de quando a build rodou -
@@ -126,5 +129,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...listagemPages, ...guiasIndex, ...guiasPages, ...oficinasPages];
+  // Pecas lote 4: paginas publicas das lojas - so as indexaveis (interruptor proprio ligado, nao teste,
+  // perfil completo), so nos idiomas da Estonia; a lista entra quando ha pelo menos uma. Erro = sem lojas.
+  const lojas = (await listarLojasPublicas().catch(() => [])).filter((l) => l.indexavel);
+  const entradaLoja = (interno: string, lastModified: Date, priority: number): MetadataRoute.Sitemap => {
+    const { languages } = alternatesLoja('et', interno);
+    return LOCALES_LOJA.map((l) => ({ url: localizedUrl(l, interno), lastModified, changeFrequency: 'weekly' as const, priority, alternates: { languages } }));
+  };
+  const lojasPages: MetadataRoute.Sitemap = lojas.length
+    ? [
+        ...entradaLoja('/lojas', new Date(lojas.map((l) => l.created_at).sort().pop()!), 0.7),
+        ...lojas.flatMap((l) => entradaLoja(`/lojas/${l.segmento}`, new Date(l.created_at), 0.6)),
+      ]
+    : [];
+
+  return [...staticPages, ...listagemPages, ...guiasIndex, ...guiasPages, ...oficinasPages, ...lojasPages];
 }

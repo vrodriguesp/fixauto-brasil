@@ -247,6 +247,7 @@ export const config = {
     // curto do SMS /r/<numero> (app/r/[numero]/route.ts), o link neutro das pecas /v/<c>
     // (app/v/[c]/route.ts), o link "nao tenho" das pecas /n/<token> (app/n/[token]/route.ts) e o link fixo do video-guia
     // da oficina /guias/video-oficina-<idioma> (app/guias/[video]/route.ts; os outros /guias/... seguem aqui)
-    '/((?!api|r/|v/|n/|guias/video-oficina-|_next|_vercel|.*\\..*).*)',
+    // e o link curto da pagina publica da loja /p/<numero> (app/p/[numero]/route.ts, pecas lote 4)
+    '/((?!api|r/|v/|n/|p/|guias/video-oficina-|_next|_vercel|.*\\..*).*)',
   ],
 };
