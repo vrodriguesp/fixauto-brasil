@@ -25,21 +25,31 @@ const podeEnviar = !!resend || !!process.env.EMAIL_PASTA_TESTE;
 // { error }. Sem esta checagem, toda funcao abaixo retornava success: true
 // e nada ia pro log, mesmo sem o e-mail ter saido. Lancando aqui, o catch
 // que cada funcao ja tem passa a registrar a falha e retornar success: false.
-async function sendOrThrow(payload: Parameters<Resend['emails']['send']>[0]) {
+// exportada so para o teste de unidade (scripts/e2e/conta-teste-envio-equipe.mjs)
+export async function sendOrThrow(payload: Parameters<Resend['emails']['send']>[0]) {
+  const destinos = ([] as string[]).concat((payload as { to: string | string[] }).to).filter(Boolean);
+  if (!destinos.length) throw new Error('e-mail sem destinatario');
   if (!resend) {
-    const p = payload as { to: string | string[]; subject: string; html?: string };
-    if (!(await enviarEmail({ para: String(Array.isArray(p.to) ? p.to[0] : p.to), assunto: p.subject, html: p.html || '' }))) throw new Error('e-mail de teste nao gravado');
+    // modo local (EMAIL_PASTA_TESTE): 1 arquivo por destinatario (antes so o 1o de uma lista)
+    const p = payload as { subject: string; html?: string };
+    for (const para of destinos) {
+      if (!(await enviarEmail({ para, assunto: p.subject, html: p.html || '' }))) throw new Error('e-mail de teste nao gravado');
+    }
     return;
   }
-  // conta de teste nao recebe e-mail de verdade (dono 18/11; mesma regra do lib/email.ts)
-  const destinos = ([] as string[]).concat((payload as { to: string | string[] }).to);
-  if (destinos.length && (await Promise.all(destinos.map((d) => emailDeContaTeste(d)))).every(Boolean)) {
+  // conta de teste nao recebe e-mail de verdade (dono 18/11; mesma regra do lib/email.ts). Lote 3.2: com
+  // varios destinatarios, so os de teste saem da lista (antes: todos de teste = nada; misto = todos recebiam)
+  const teste = await Promise.all(destinos.map((d) => emailDeContaTeste(d)));
+  const reais = destinos.filter((_, i) => !teste[i]);
+  if (!reais.length) {
     console.log('[email] conta de teste - nao enviado');
     return;
   }
+  if (reais.length < destinos.length) console.log(`[email] conta de teste - ${destinos.length - reais.length} destinatario(s) fora da lista`);
   // logo, cores e rodape da BipFix (lib/email-marca.ts); sem Resend, enviarEmail ja aplica
   const p2 = payload as { html?: string };
-  const { error } = await resend!.emails.send({ ...payload, ...(p2.html ? { html: aplicarIdentidade(p2.html) } : {}) } as typeof payload);
+  const to = Array.isArray((payload as { to: string | string[] }).to) ? reais : reais[0];
+  const { error } = await resend!.emails.send({ ...payload, to, ...(p2.html ? { html: aplicarIdentidade(p2.html) } : {}) } as typeof payload);
   if (error) throw new Error(`Resend recusou o e-mail: ${error.name} - ${error.message}`);
 }
 
