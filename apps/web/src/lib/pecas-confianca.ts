@@ -121,11 +121,12 @@ export async function sinoAdmins(tipo: string, titulo: string, mensagem: string,
 }
 
 /** e-mail do lote 3: cabecalho, saudacao, texto, botao com link neutro (/v/...) */
-export async function emailL3(p: { tipo: keyof typeof EMAIL_L3; para: string | null | undefined; nome?: string | null; idioma?: string | null; vars: Record<string, string | number>; linkInterno: string; extra?: boolean }): Promise<boolean> {
+export async function emailL3(p: { tipo: keyof typeof EMAIL_L3; para: string | null | undefined; nome?: string | null; idioma?: string | null; vars: Record<string, string | number>; linkInterno: string; extra?: boolean; responderPara?: string }): Promise<boolean> {
   if (!p.para) return false;
   const { s, saudacao } = textoEmailL3(p.tipo, p.idioma);
   const esc = Object.fromEntries(Object.entries(p.vars).map(([k, v]) => [k, escapeHtml(String(v))]));
-  const extra = p.extra && s.extra ? `<p style="color: #374151;">${fmt(s.extra, esc)}</p>` : '';
+  const extra = (p.extra && s.extra ? `<p style="color: #374151;">${fmt(s.extra, esc)}</p>` : '')
+    + (s.rodape ? `<p style="color: #374151;">${s.rodape}</p>` : '');
   const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #1e40af; color: white; padding: 24px; border-radius: 12px 12px 0 0;">
@@ -145,7 +146,7 @@ export async function emailL3(p: { tipo: keyof typeof EMAIL_L3; para: string | n
           </div>
         </div>
       `;
-  return enviarEmail({ para: p.para, assunto: fmt(s.subject, p.vars as Record<string, string>), html }).catch(() => false);
+  return enviarEmail({ para: p.para, assunto: fmt(s.subject, p.vars as Record<string, string>), html, ...(p.responderPara ? { responderPara: p.responderPara } : {}) }).catch(() => false);
 }
 
 /** comissao da plataforma na entrega (mesma regra do marcar-pedido-peca-entregue; 0% nao lanca; 1 vez por pedido) */
