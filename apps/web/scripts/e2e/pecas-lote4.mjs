@@ -1,6 +1,7 @@
 // E2E LOCAL do lote 4 de pecas ("loja visivel": perfil + pagina publica + lista), 18/11.
-// Mapa: Documentos/Analises/Pecas_lote4_2026-11-18/Mapa_lote4.md (migracao 094).
-//   B  banco: numero da loja (unico, nao muda pelo dono), colunas novas, interruptor proprio
+// Mapa: Documentos/Analises/Pecas_lote4_2026-11-18/Mapa_lote4.md (migracao 097, era 094).
+//   B  banco: numero da loja (unico, nao muda pelo dono), colunas novas, interruptor proprio; C-3 marcas/horario
+//      validados pelo banco; 098 anon nao le lojas_pecas
 //   P  interruptor DESLIGADO: loja de teste tem pagina (noindex), loja real 404, link curto, slug errado -> 308,
 //      idiomas fora da Estonia 404, sem contato no HTML, hreflang so EE
 //   R  avaliacoes na pagina: so com >= 3 visiveis; oculta fora; sem nome de quem avaliou; aggregateRating no JSON-LD
@@ -81,6 +82,26 @@ try {
     const { error: eD } = await S.dR.c.from('lojas_pecas').update({ descricao: 'x'.repeat(601) }).eq('id', R.id);
     ok('B.3 descricao > 600 recusada pelo banco', !!eD, eD?.message);
     ok('B.4 interruptor proprio existe e esta desligado', psql("select lojas_pagina_publica_ativo from plataforma_config where id = 1") === 'f');
+    // C-3 (Fable 18/11): a loja grava direto pela API (politica de UPDATE do dono) - o banco barra lixo
+    const { error: eM } = await S.dR.c.from('lojas_pecas').update({ marcas: ['VW', 'x'.repeat(41)] }).eq('id', R.id);
+    const { error: eM2 } = await S.dR.c.from('lojas_pecas').update({ marcas: [''] }).eq('id', R.id);
+    ok('B.5 marca com 41 caracteres ou vazia: recusada pelo banco', !!eM && !!eM2, `${eM?.message} | ${eM2?.message}`);
+    const ruins = [
+      { seg: { aberto: true, inicio: '8:00', fim: '17:00' } },
+      { seg: { aberto: true, inicio: '08:00', fim: '<b>17</b>' } },
+      { seg: { aberto: true, inicio: '08:00', fim: '24:00' } },
+      { xyz: { aberto: true, inicio: '08:00', fim: '17:00' } },
+      { seg: { aberto: 'sim', inicio: '08:00', fim: '17:00' } },
+      { seg: { aberto: true, inicio: '08:00', fim: '17:00', extra: 'x'.repeat(50) } },
+    ];
+    const erros5 = [];
+    for (const h of ruins) { const { error } = await S.dR.c.from('lojas_pecas').update({ horario_funcionamento: h }).eq('id', R.id); if (!error) erros5.push(JSON.stringify(h)); }
+    ok('B.6 horario fora do formato (hora sem zero, HTML, 24:00, dia inventado, aberto texto, campo extra): todos recusados', erros5.length === 0, erros5.join(' '));
+    const { error: eH } = await S.dR.c.from('lojas_pecas').update({ horario_funcionamento: HORARIO, marcas: ['VW', 'Škoda'] }).eq('id', R.id);
+    ok('B.7 horario certo (com dia fechado de horas vazias) e marcas normais: aceitos', !eH, eH?.message);
+    // 098: a chave publica (anon) nao le mais lojas_pecas pelo REST (registro, IVA, colunas da 097)
+    const { data: dAnon, error: eAnon } = await A.anon().from('lojas_pecas').select('id, cnpj, descricao').eq('id', R.id);
+    ok('B.8 anon (chave publica, sem login) NAO le lojas_pecas pelo REST', !(dAnon || []).length, `${eAnon?.message || ''} linhas=${(dAnon || []).length}`);
   });
 
   // ======================= P: desligado =======================
@@ -109,6 +130,31 @@ try {
     ok('P.11 lista /ee/en/parts: 200, so a loja de teste (sem as reais), noindex', p7.status === 200 && p7.html.includes(T.nome) && !p7.html.includes(R.nome) && !p7.html.includes(R2.nome) && robotsNoindex(p7.html), `${p7.status}`);
     const p8 = await get('/it/it/ricambi');
     ok('P.12 lista no idioma it: 404', p8.status === 404, `${p8.status}`);
+    // C-1 (Fable 18/11): segmento com "%" solto nao pode dar 500 (decodeURIComponent lancava URIError). No Next
+    // desta versao o pedido com "%25"/"%" solto ja volta 400 antes da pagina (em qualquer rota com idioma); a pagina
+    // passou a descodificar sem lancar (segmentoDaUrl) para nao depender disso - conferido pela funcao (P.13b).
+    const p9 = await get(`/ee/et/varuosad/50%25-${T.numero}`);
+    const p9b = await get(`/ee/et/varuosad/%E0%A4%A-${T.numero}`);
+    ok('P.13 URL malformada ("50%25-<n>", "%E0%A4%A-<n>"): sem 500 (400 do Next ou 308 para o endereco atual)', [p9, p9b].every((x) => [308, 400, 404].includes(x.status)) && (p9.status !== 308 || p9.location.endsWith(`/ee/et/varuosad/${T.seg}`)), `${p9.status} ${p9.location} | ${p9b.status}`);
+    {
+      const req = createRequire(import.meta.url);
+      const jiti = req('jiti')(path.join(WEB, 'scripts/e2e/x.js'), { requireCache: false, interopDefault: true });
+      const R_ = jiti(path.join(WEB, 'src/lib/loja-publica-regras.ts'));
+      let lancou = null; let r = [];
+      try { r = ['50%-1004', '%E0%A4%A-1004', 'kiili-1004', 'k%C3%BC-1004'].map((x) => [R_.segmentoDaUrl(x), R_.numeroDoSegmento(R_.segmentoDaUrl(x))]); } catch (e) { lancou = e; }
+      ok('P.13b segmentoDaUrl: "%" solto nao lanca (devolve como veio), numero continua lido; %C3%BC descodifica', !lancou && r[0][0] === '50%-1004' && r[0][1] === 1004 && r[1][1] === 1004 && r[2][1] === 1004 && r[3][0] === 'kü-1004', `${lancou?.message || ''} ${JSON.stringify(r)}`);
+      const h = R_.limparHorario({ seg: { aberto: true, inicio: '08:00', fim: '17:00' }, ter: { aberto: true, inicio: '8:00', fim: '17:00' }, qua: { aberto: true, inicio: '<b>', fim: '17:00' }, xyz: { aberto: true, inicio: '08:00', fim: '09:00' } });
+      const m = R_.limparMarcas(['VW', '', 'x'.repeat(60), 5, ...Array.from({ length: 40 }, (_, i) => `M${i}`)]);
+      ok('P.13c limparHorario/limparMarcas (C-3, lado da leitura): hora invalida = dia fechado sem hora, dia inventado fora; marcas <= 30, <= 40 caracteres, sem vazias', h.seg.aberto && h.ter.aberto === false && h.ter.inicio === '' && h.qua.aberto === false && !('xyz' in h) && m.length === 30 && m[1].length === 40 && !m.includes(''), JSON.stringify({ h, n: m.length }));
+    }
+    // C-2: desligado e sem nenhuma loja (de teste) com pagina -> a lista nao existe (404), em todos os idiomas EE
+    const outras = Number(psql(`select count(*) from lojas_pecas l join profiles p on p.id = l.profile_id where l.ativa and l.pagina_publica and coalesce(l.pais,'EE') = 'EE' and p.conta_teste and l.id <> '${T.id}'`));
+    await A.admin.from('lojas_pecas').update({ pagina_publica: false }).eq('id', T.id);
+    const v1 = await get('/ee/et/varuosad'); const v2 = await get('/ee/ru/zapchasti'); const v3 = await get('/ee/en/parts');
+    await A.admin.from('lojas_pecas').update({ pagina_publica: true }).eq('id', T.id);
+    ok('P.14 lista com o interruptor desligado e nenhuma loja: 404 (et, ru, en)', outras > 0 ? true : [v1, v2, v3].every((v) => v.status === 404), outras > 0 ? `nao conferido: ${outras} outra(s) loja(s) de teste com pagina no banco local` : `${v1.status} ${v2.status} ${v3.status}`);
+    const v4 = await get('/ee/et/varuosad');
+    ok('P.15 com a loja de teste de volta: lista 200 de novo (noindex)', v4.status === 200 && v4.html.includes(T.nome) && robotsNoindex(v4.html), `${v4.status}`);
   });
 
   // ======================= R: avaliacoes =======================

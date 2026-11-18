@@ -5,12 +5,14 @@ import { Link } from '@/i18n/navigation';
 import { OG_LOCALE, type Locale } from '@/i18n/routing';
 import { imagemCompartilhamento } from '@/lib/seo-utils';
 import { INTL_LOCALE } from '@/lib/utils';
-import { listarLojasPublicas } from '@/lib/loja-publica';
+import { listarLojasPublicas, paginaPublicaGlobal } from '@/lib/loja-publica';
 import { CATEGORIAS_LOJA, ehLocaleLoja } from '@/lib/loja-publica-regras';
 import { alternatesLoja } from './loja-seo';
 
 // Lista das lojas de pecas com pagina publica (lote 4, 18/11). So nos idiomas da Estonia; noindex enquanto
 // nenhuma loja for indexavel (lista vazia ou so lojas de teste/incompletas).
+// C-2 (Fable 18/11): com o interruptor global desligado E nenhuma loja (de teste) para mostrar, a lista nao existe
+// (404) - em producao, desligado, nenhuma pagina nova fica visivel. Ligado e vazia: 200 "ainda nao ha lojas" (noindex).
 // sem cache: ligar/desligar a pagina (loja ou interruptor) vale na hora; pouco trafego
 export const dynamic = 'force-dynamic';
 
@@ -21,6 +23,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!ehLocaleLoja(locale)) return { robots: { index: false, follow: false } };
   const t = await getTranslations({ locale, namespace: 'lojaPublica' });
   const lojas = await listarLojasPublicas();
+  if (!lojas.length && !(await paginaPublicaGlobal())) return { robots: { index: false, follow: false } };
   const title = t('listaMetaTitle');
   const description = t('listaMetaDescription');
   const alternates = alternatesLoja(locale, '/lojas');
@@ -38,6 +41,7 @@ export default async function LojasPage({ params }: Params) {
   if (!ehLocaleLoja(locale)) notFound();
   const t = await getTranslations({ locale, namespace: 'lojaPublica' });
   const lojas = await listarLojasPublicas();
+  if (!lojas.length && !(await paginaPublicaGlobal())) notFound();
   const intl = INTL_LOCALE[locale] || 'en-GB';
   const decimal = (n: number) => new Intl.NumberFormat(intl, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(n);
 

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import {
-  CATEGORIAS_LOJA, DIAS_LOJA, MAX_DESCRICAO, faltandoParaIndexar, lerMarcas,
+  CATEGORIAS_LOJA, DIAS_LOJA, MAX_DESCRICAO, faltandoParaIndexar, lerMarcas, limparHorario,
   type HorarioLoja, type ItemFaltando,
 } from '@/lib/loja-publica-regras';
 
@@ -32,7 +32,7 @@ export function paginaPublicaDoPerfil(loja: any): ValorPaginaPublica {
   };
 }
 
-/** Colunas da 094 para o update de lojas_pecas. */
+/** Colunas da 097 (lote 4) para o update de lojas_pecas. */
 export function colunasPaginaPublica(v: ValorPaginaPublica) {
   return {
     pagina_publica: v.pagina_publica,
@@ -40,7 +40,8 @@ export function colunasPaginaPublica(v: ValorPaginaPublica) {
     categorias: v.categorias.filter((c) => (CATEGORIAS_LOJA as readonly string[]).includes(c)),
     marcas: lerMarcas(v.marcasTexto),
     entrega: v.entrega,
-    horario_funcionamento: v.horario,
+    // C-3: so seg..dom e horas HH:MM (o CHECK da 097 recusa o resto e o update inteiro falharia)
+    horario_funcionamento: limparHorario(v.horario),
   };
 }
 

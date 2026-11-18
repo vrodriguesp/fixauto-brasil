@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { supabaseAdmin } from './supabase-admin';
 import {
-  MIN_AVALIACOES_PUBLICAS, faltandoParaIndexar, segmentoLoja, type HorarioLoja, type ItemFaltando,
+  MIN_AVALIACOES_PUBLICAS, faltandoParaIndexar, limparHorario, limparMarcas, segmentoLoja, type HorarioLoja, type ItemFaltando,
 } from './loja-publica-regras';
 
-// Pagina publica da loja de pecas (lote 4, 18/11; migracao 094). SO no servidor (service role), com campos
+// Pagina publica da loja de pecas (lote 4, 18/11; migracao 097, era 094). SO no servidor (service role), com campos
 // escolhidos a dedo: nada de telefone, e-mail, registro, IVA ou dados do dono. Existe quando a loja esta
 // ativa, quer a pagina (pagina_publica) e e da Estonia, E o interruptor proprio esta ligado OU o dono e conta
 // de teste (sempre noindex). Avaliacoes: so as visiveis, e so com >= 3 (D-2); sem o nome de quem avaliou
@@ -51,7 +51,7 @@ const cache: <T extends (...a: any[]) => any>(f: T) => T = (React as any).cache 
 
 const CAMPOS = 'id, numero, nome_fantasia, descricao, endereco, cidade, estado, cep, pais, latitude, longitude, categorias, marcas, horario_funcionamento, entrega, created_at, ativa, pagina_publica, profile:profiles(conta_teste)';
 
-/** Interruptor global da pagina publica (sem a coluna = antes da 094: desligado). */
+/** Interruptor global da pagina publica (sem a coluna = antes da 097: desligado). */
 export async function paginaPublicaGlobal(): Promise<boolean> {
   const { data, error } = await supabaseAdmin.from('plataforma_config').select('lojas_pagina_publica_ativo').eq('id', 1).maybeSingle();
   if (error) return false;
@@ -60,14 +60,16 @@ export async function paginaPublicaGlobal(): Promise<boolean> {
 
 function montar(bruta: any, avs: any[]): LojaPublica {
   const teste = !!bruta.profile?.conta_teste;
-  const faltando = faltandoParaIndexar(bruta);
+  // C-3: horario e marcas limpos antes de ir para a pagina e para o JSON-LD (o CHECK da 097 ja barra na escrita)
+  const horario = limparHorario(bruta.horario_funcionamento);
+  const faltando = faltandoParaIndexar({ ...bruta, horario_funcionamento: horario });
   const visiveis = avs.length >= MIN_AVALIACOES_PUBLICAS ? avs : [];
   const comPrazo = visiveis.filter((a) => a.no_prazo !== null && a.no_prazo !== undefined);
   return {
     id: bruta.id, numero: Number(bruta.numero), nome_fantasia: bruta.nome_fantasia, descricao: bruta.descricao,
     endereco: bruta.endereco, cidade: bruta.cidade, estado: bruta.estado, cep: bruta.cep, pais: bruta.pais,
-    latitude: bruta.latitude, longitude: bruta.longitude, categorias: bruta.categorias || [], marcas: bruta.marcas || [],
-    horario_funcionamento: bruta.horario_funcionamento, entrega: !!bruta.entrega, created_at: bruta.created_at,
+    latitude: bruta.latitude, longitude: bruta.longitude, categorias: bruta.categorias || [], marcas: limparMarcas(bruta.marcas),
+    horario_funcionamento: horario, entrega: !!bruta.entrega, created_at: bruta.created_at,
     segmento: segmentoLoja(bruta.nome_fantasia, bruta.numero), teste, faltando, indexavel: !teste && faltando.length === 0,
     resumo: visiveis.length
       ? {

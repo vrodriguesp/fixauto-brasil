@@ -7,7 +7,7 @@ import StructuredData from '@/components/seo/StructuredData';
 import { imagemCompartilhamento } from '@/lib/seo-utils';
 import { INTL_LOCALE } from '@/lib/utils';
 import { carregarLojaPublica } from '@/lib/loja-publica';
-import { DIAS_LOJA, CATEGORIAS_LOJA, ehLocaleLoja, numeroDoSegmento } from '@/lib/loja-publica-regras';
+import { DIAS_LOJA, CATEGORIAS_LOJA, ehLocaleLoja, numeroDoSegmento, segmentoDaUrl } from '@/lib/loja-publica-regras';
 import { alternatesLoja, schemaLoja } from '../loja-seo';
 
 // Pagina publica da loja de pecas (lote 4, 18/11). Renderizada no servidor; dados de lib/loja-publica.ts
@@ -20,7 +20,7 @@ type Params = { params: Promise<{ locale: string; slug: string }> };
 
 async function carregar(locale: string, slug: string) {
   if (!ehLocaleLoja(locale)) return null;
-  const numero = numeroDoSegmento(decodeURIComponent(slug));
+  const numero = numeroDoSegmento(segmentoDaUrl(slug));
   return numero ? carregarLojaPublica(numero) : null;
 }
 
@@ -47,7 +47,7 @@ export default async function LojaPublicaPage({ params }: Params) {
   const { locale, slug } = await params;
   const loja = await carregar(locale, slug);
   if (!loja) notFound();
-  if (decodeURIComponent(slug) !== loja.segmento) permanentRedirect(hrefNoIdioma(locale, `/lojas/${loja.segmento}`));
+  if (segmentoDaUrl(slug) !== loja.segmento) permanentRedirect(hrefNoIdioma(locale, `/lojas/${loja.segmento}`));
 
   const t = await getTranslations({ locale, namespace: 'lojaPublica' });
   const intl = INTL_LOCALE[locale] || 'en-GB';

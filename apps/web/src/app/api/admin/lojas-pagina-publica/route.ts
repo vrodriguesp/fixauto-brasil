@@ -7,7 +7,7 @@ import { paginaPublicaGlobal } from '@/lib/loja-publica';
 export const dynamic = 'force-dynamic';
 
 // Pecas lote 4 (18/11): interruptor global da pagina publica das lojas (plataforma_config.lojas_pagina_publica_ativo,
-// migracao 094). Separado do pecas_v3_ativo: a pagina mostra avaliacoes a visitantes, o que os termos so cobrem
+// migracao 097, era 094). Separado do pecas_v3_ativo: a pagina mostra avaliacoes a visitantes, o que os termos so cobrem
 // depois do texto novo + aviso de 30 dias (Mapa_lote4.md sec. 0). Desligado: so lojas de conta de teste. Com auditoria.
 export async function GET() {
   const auth = await requireAdmin();
