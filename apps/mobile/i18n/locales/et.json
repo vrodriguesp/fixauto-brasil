@@ -212,6 +212,19 @@
     "observacoes": "Märkused"
   },
   "acompanhamento": {
+    "fotosAdicionar": "Lisa fotosid",
+    "fotosCamera": "Tee foto",
+    "fotosGaleria": "Vali galeriist",
+    "fotosContador": "{n}/{max} fotot",
+    "fotosEnviando": "Fotode saatmine…",
+    "fotosEnviadas": "Fotosid lisatud: {n}. Töökojad, kes said sinu päringu, on teavitatud.",
+    "fotosNova": "Uus",
+    "fotosApagar": "Kustuta foto",
+    "fotosApagarConfirma": "Kas kustutada see foto?",
+    "fotosLimiteCheio": "Sellel päringul on juba maksimaalne arv fotosid ({max}).",
+    "fotosAjuda": "Fotod aitavad töökodadel täpsemat pakkumist teha. Neid näevad kõik töökojad, kes said selle päringu.",
+    "fotosErro": "Fotode saatmine ebaõnnestus. Proovi uuesti.",
+    "fotosOrcamentoAntes": "Pakkumine tehti enne uusi fotosid",
     "titulo": "Remondi jälgimine",
     "etapaAtual": "Praegune etapp",
     "previsaoEntrega": "Eeldatav valmimisaeg",
@@ -453,6 +466,11 @@
     "cartaVerde": "Välismaa kindlustus (roheline kaart): sinu kindlustusandja menetleb kahju oma esindaja kaudu riigis {pais}. Küsi kindlustusandjalt või vaata riikliku büroo nimekirja:"
   },
   "erros": {
+    "FOTOS_PEDIDO_MAX": "Ühel päringul võib olla kuni {max} fotot.",
+    "FOTO_STATUS": "Fotosid saab lisada ainult siis, kui päring on avatud.",
+    "FOTO_NAO_APAGAVEL": "Kustutada saab ainult pärast saatmist lisatud fotosid.",
+    "FOTO_INVALIDA": "Seda faili ei õnnestunud fotona lugeda.",
+    "RATE_LIMIT": "Liiga palju katseid lühikese aja jooksul. Proovi hiljem uuesti.",
     "CAMPO_OBRIGATORIO": "Täida kõik kohustuslikud väljad.",
     "EMAIL_INVALIDO": "Kontrolli e-posti aadressi.",
     "FOTOS_MAX": "Saad saata kuni 6 fotot.",

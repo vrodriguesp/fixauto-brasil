@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Image, Pressable, TextInput, ActivityIndicator, ScrollView } from 'react-native';
-import { avisar } from '../lib/confirmar';
+import { View, Text, Image, Pressable, TextInput, ActivityIndicator, ScrollView, Linking } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { avisar, confirmar } from '../lib/confirmar';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
-import { apiFetch } from '../lib/api';
-import { mensagemErro } from '../lib/erro';
+import { apiFetch, API_BASE_URL } from '../lib/api';
+import { mensagemErro, ErroApi } from '../lib/erro';
+import { arquivoDaFoto } from '../lib/anexo';
 
 // Fotos do pedido e "quem paga o reparo" na tela do pedido (teste do dono
 // 09/10, ponto 2): a foto nao aparecia e nao dava para completar o seguro e o
@@ -18,33 +20,155 @@ const caminhoPrivado = (url: string) => {
   return i >= 0 ? decodeURIComponent(url.slice(i + MARCA.length).split('?')[0]) : null;
 };
 
-export function FotosPedido({ solicitacaoId }: { solicitacaoId: string }) {
+export type FotoDoPedido = { id: string; foto_url: string; origem?: string | null; created_at?: string | null; url?: string };
+export const STATUS_FOTOS_EDITAVEIS = ['aberta', 'em_orcamento'];
+const FOTOS_POR_PEDIDO = 10;
+
+// Lote A (18/11, chega por OTA): com o pedido aberta/em_orcamento o motorista adiciona fotos (camera ou
+// galeria, mesmo ImagePicker do pedido) pela rota /api/solicitacoes/[id]/fotos (reencode no servidor,
+// aviso as oficinas) e apaga as que ele mesmo adicionou. `aoFotos` devolve a lista para a tela marcar
+// os orcamentos feitos antes das fotos novas. O app ANTIGO (sem este JS) continua lendo foto_url.
+export function FotosPedido({ solicitacaoId, status, aoMudar, aoFotos }: { solicitacaoId: string; status?: string; aoMudar?: () => void; aoFotos?: (fotos: FotoDoPedido[]) => void }) {
   const { t } = useTranslation();
-  const [urls, setUrls] = useState<string[] | null>(null);
+  const [fotos, setFotos] = useState<FotoDoPedido[] | null>(null);
+  const [enviando, setEnviando] = useState(false);
+  const [apagando, setApagando] = useState<string | null>(null);
+  const [erro, setErro] = useState('');
+  const [aviso, setAviso] = useState('');
+  const [versao, setVersao] = useState(0);
+  const podeEditar = !!status && STATUS_FOTOS_EDITAVEIS.includes(status);
+
   useEffect(() => {
     let vivo = true;
     (async () => {
-      const { data } = await supabase.from('solicitacao_fotos').select('foto_url').eq('solicitacao_id', solicitacaoId);
-      const lista: string[] = [];
-      for (const f of data || []) {
+      const { data } = await supabase.from('solicitacao_fotos').select('id, foto_url, origem, created_at').eq('solicitacao_id', solicitacaoId).order('created_at');
+      const lista: FotoDoPedido[] = [];
+      for (const f of (data || []) as FotoDoPedido[]) {
         const c = caminhoPrivado(f.foto_url);
-        if (!c) { lista.push(f.foto_url); continue; }
+        if (!c) { lista.push({ ...f, url: f.foto_url }); continue; }
         const { data: s } = await supabase.storage.from('damage-photos').createSignedUrl(c, 3600);
-        if (s?.signedUrl) lista.push(s.signedUrl);
+        if (s?.signedUrl) lista.push({ ...f, url: s.signedUrl });
       }
-      if (vivo) setUrls(lista);
+      if (vivo) { setFotos(lista); aoFotos?.(lista); }
     })();
     return () => { vivo = false; };
-  }, [solicitacaoId]);
-  if (!urls || urls.length === 0) return null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [solicitacaoId, versao]);
+
+  const total = fotos?.length || 0;
+  const restam = Math.max(0, FOTOS_POR_PEDIDO - total);
+
+  const enviar = async (assets: ImagePicker.ImagePickerAsset[]) => {
+    if (!assets.length) return;
+    setErro(''); setAviso('');
+    if (assets.length > restam) { setErro(t('erros.FOTOS_PEDIDO_MAX', { max: FOTOS_POR_PEDIDO })); return; }
+    setEnviando(true);
+    try {
+      const form = new FormData();
+      for (const [i, foto] of assets.entries()) form.append('fotos', await arquivoDaFoto(foto.uri), `foto-${i}.jpg`);
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${API_BASE_URL}/api/solicitacoes/${solicitacaoId}/fotos`, {
+        method: 'POST', body: form,
+        headers: { 'x-bipfix-origem': 'app', ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}) },
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) { setErro(mensagemErro(new ErroApi(res.status, d.codigo))); return; }
+      setAviso(t('acompanhamento.fotosEnviadas', { n: (d.fotos || []).length }));
+      setVersao((v) => v + 1);
+      aoMudar?.();
+    } catch {
+      setErro(t('acompanhamento.fotosErro'));
+    } finally {
+      setEnviando(false);
+    }
+  };
+  const camera = async () => {
+    const { status: perm } = await ImagePicker.requestCameraPermissionsAsync();
+    if (perm !== 'granted') {
+      confirmar(t('emergencia.cameraNegadaTitulo'), t('emergencia.cameraNegadaTexto'), [
+        { text: t('common.cancelar'), style: 'cancel' },
+        { text: t('emergencia.abrirAjustes'), onPress: () => Linking.openSettings() },
+      ]);
+      return;
+    }
+    const r = await ImagePicker.launchCameraAsync({ quality: 0.7 });
+    if (!r.canceled) await enviar(r.assets);
+  };
+  const galeria = async () => {
+    const r = await ImagePicker.launchImageLibraryAsync({ quality: 0.7, preferredAssetRepresentationMode: ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Compatible, allowsMultipleSelection: true, selectionLimit: Math.max(1, restam) });
+    if (!r.canceled) await enviar(r.assets);
+  };
+  const apagar = (f: FotoDoPedido) => {
+    confirmar(t('acompanhamento.fotosApagar'), t('acompanhamento.fotosApagarConfirma'), [
+      { text: t('common.cancelar'), style: 'cancel' },
+      { text: t('acompanhamento.fotosApagar'), style: 'destructive', onPress: async () => {
+        setErro(''); setAviso(''); setApagando(f.id);
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          const res = await fetch(`${API_BASE_URL}/api/solicitacoes/${solicitacaoId}/fotos?foto=${f.id}`, {
+            method: 'DELETE', headers: { 'x-bipfix-origem': 'app', ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}) },
+          });
+          const d = await res.json().catch(() => ({}));
+          if (!res.ok) { setErro(mensagemErro(new ErroApi(res.status, d.codigo))); return; }
+          setVersao((v) => v + 1);
+          aoMudar?.();
+        } catch {
+          setErro(t('acompanhamento.fotosErro'));
+        } finally {
+          setApagando(null);
+        }
+      } },
+    ]);
+  };
+
+  if (!fotos || (fotos.length === 0 && !podeEditar)) return null;
   return (
-    <View className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
-      <Text className="font-semibold text-gray-900 mb-2">{t('acompanhamento.fotosTitulo', { count: urls.length })}</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {urls.map((u) => (
-          <Image key={u} source={{ uri: u }} accessibilityLabel={t('acompanhamento.fotoDoPedido')} className="w-28 h-28 rounded-lg mr-2 bg-gray-100" resizeMode="cover" />
-        ))}
-      </ScrollView>
+    <View className="bg-white rounded-xl border border-gray-200 p-4 mb-4" testID="fotos-pedido">
+      <View className="flex-row items-center justify-between mb-2">
+        <Text className="font-semibold text-gray-900">{t('acompanhamento.fotosTitulo', { count: total })}</Text>
+        {podeEditar ? <Text className="text-xs text-gray-500" testID="fotos-contador">{t('acompanhamento.fotosContador', { n: total, max: FOTOS_POR_PEDIDO })}</Text> : null}
+      </View>
+      {total > 0 && (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {fotos.map((f) => {
+            const adicionada = f.origem === 'adicionada';
+            return (
+              <View key={f.id} className="mr-2 mb-1" testID={adicionada ? 'foto-adicionada' : 'foto-criacao'}>
+                <Image source={{ uri: f.url }} accessibilityLabel={t('acompanhamento.fotoDoPedido')} className="w-28 h-28 rounded-lg bg-gray-100" resizeMode="cover" />
+                {adicionada ? (
+                  <View className="absolute bottom-1 left-1 bg-primary-600 rounded px-1.5 py-0.5"><Text className="text-white text-[10px] font-semibold">{t('acompanhamento.fotosNova')}</Text></View>
+                ) : null}
+                {podeEditar && adicionada ? (
+                  <Pressable onPress={() => apagar(f)} disabled={apagando === f.id} accessibilityRole="button" accessibilityLabel={t('acompanhamento.fotosApagar')} hitSlop={8} testID="foto-apagar"
+                    className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-red-600 items-center justify-center">
+                    <Text className="text-white font-bold">×</Text>
+                  </Pressable>
+                ) : null}
+              </View>
+            );
+          })}
+        </ScrollView>
+      )}
+      {podeEditar ? (
+        <View className="mt-2">
+          {restam > 0 ? (
+            <View className="flex-row gap-2">
+              <Pressable onPress={camera} disabled={enviando} accessibilityRole="button" testID="fotos-camera" className="flex-1 border-2 border-dashed border-gray-300 rounded-lg py-3 items-center">
+                <Text className="text-gray-700 text-sm">📷 {t('acompanhamento.fotosCamera')}</Text>
+              </Pressable>
+              <Pressable onPress={galeria} disabled={enviando} accessibilityRole="button" testID="fotos-galeria" className="flex-1 border-2 border-dashed border-gray-300 rounded-lg py-3 items-center">
+                <Text className="text-gray-700 text-sm">🖼️ {t('acompanhamento.fotosGaleria')}</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <Text className="text-sm text-gray-600" testID="fotos-cheio">{t('acompanhamento.fotosLimiteCheio', { max: FOTOS_POR_PEDIDO })}</Text>
+          )}
+          {enviando ? <View className="flex-row items-center gap-2 mt-2"><ActivityIndicator /><Text className="text-sm text-gray-600">{t('acompanhamento.fotosEnviando')}</Text></View> : null}
+          {aviso && !enviando ? <Text className="text-sm text-emerald-700 mt-2" testID="fotos-ok">{aviso}</Text> : null}
+          {erro ? <Text className="text-sm text-red-700 mt-2" accessibilityRole="alert" testID="fotos-erro">{erro}</Text> : null}
+          <Text className="text-xs text-gray-500 mt-2">{t('acompanhamento.fotosAjuda')}</Text>
+        </View>
+      ) : null}
     </View>
   );
 }

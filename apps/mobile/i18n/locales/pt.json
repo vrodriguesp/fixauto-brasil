@@ -212,6 +212,19 @@
     "observacoes": "Observações"
   },
   "acompanhamento": {
+    "fotosAdicionar": "Adicionar fotos",
+    "fotosCamera": "Tirar foto",
+    "fotosGaleria": "Escolher da galeria",
+    "fotosContador": "{n} de {max} fotos",
+    "fotosEnviando": "Enviando fotos…",
+    "fotosEnviadas": "Fotos adicionadas: {n}. As oficinas que receberam seu pedido foram avisadas.",
+    "fotosNova": "Nova",
+    "fotosApagar": "Apagar foto",
+    "fotosApagarConfirma": "Apagar esta foto?",
+    "fotosLimiteCheio": "Este pedido já tem o máximo de {max} fotos.",
+    "fotosAjuda": "As fotos ajudam as oficinas a orçar com mais precisão. Ficam visíveis para todas as oficinas que receberam este pedido.",
+    "fotosErro": "Não foi possível enviar as fotos. Tente de novo.",
+    "fotosOrcamentoAntes": "Orçamento feito antes das fotos novas",
     "titulo": "Acompanhamento",
     "etapaAtual": "Etapa atual",
     "previsaoEntrega": "Previsão de entrega",
@@ -453,6 +466,11 @@
     "cartaVerde": "Seguro estrangeiro (Carta Verde): a sua seguradora atende pelo representante dela em {pais}. Peça o contato à seguradora ou veja a lista do escritório nacional:"
   },
   "erros": {
+    "FOTOS_PEDIDO_MAX": "Um pedido pode ter no máximo {max} fotos.",
+    "FOTO_STATUS": "Só é possível adicionar fotos enquanto o pedido está aberto.",
+    "FOTO_NAO_APAGAVEL": "Só é possível apagar fotos adicionadas depois do envio.",
+    "FOTO_INVALIDA": "Não foi possível ler este arquivo como foto.",
+    "RATE_LIMIT": "Muitas tentativas em pouco tempo. Tente de novo mais tarde.",
     "CAMPO_OBRIGATORIO": "Preencha todos os campos obrigatórios.",
     "EMAIL_INVALIDO": "Confira o e-mail informado.",
     "FOTOS_MAX": "Envie no máximo 6 fotos.",
