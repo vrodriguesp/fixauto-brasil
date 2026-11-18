@@ -195,7 +195,8 @@ export function AvaliarForm({ pedidoId, aoEnviar, aoFechar }: { pedidoId: string
 }
 
 // ---------------- depois do cancelamento (D-5) ----------------
-export function PosCancelamento({ pedidoId, vencida, aoReaberta, aoPedirDeNovo }: { pedidoId: string; vencida: boolean; aoReaberta: () => void; aoPedirDeNovo: () => void }) {
+// semOutrasOfertas: nenhuma oferta valida sobrou (todas com pedido cancelado) -> "Reabrir" nao leva a nada, so "Pedir de novo"
+export function PosCancelamento({ pedidoId, vencida, semOutrasOfertas = false, aoReaberta, aoPedirDeNovo }: { pedidoId: string; vencida: boolean; semOutrasOfertas?: boolean; aoReaberta: () => void; aoPedirDeNovo: () => void }) {
   const t = useTranslations('pecas');
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState(false);
@@ -218,7 +219,7 @@ export function PosCancelamento({ pedidoId, vencida, aoReaberta, aoPedirDeNovo }
       <p className="text-sm font-medium text-gray-900">{t('posCancelamento.titulo')}</p>
       {vencida && <p data-testid="pos-cancelamento-vencida" className="text-sm text-gray-600">{t('posCancelamento.vencida')}</p>}
       <div className="flex flex-wrap gap-2">
-        {!vencida && <button type="button" data-testid="pos-cancelamento-reabrir" disabled={salvando} onClick={reabrir} className={botaoPri}>↻ {t('posCancelamento.reabrir')}</button>}
+        {!vencida && !semOutrasOfertas && <button type="button" data-testid="pos-cancelamento-reabrir" disabled={salvando} onClick={reabrir} className={botaoPri}>↻ {t('posCancelamento.reabrir')}</button>}
         <button type="button" data-testid="pos-cancelamento-nova" disabled={salvando} onClick={nova} className={botaoSec}>{t('posCancelamento.nova')}</button>
       </div>
       {erro && <p role="alert" className="text-sm text-red-700">{t('erroAcao')}</p>}

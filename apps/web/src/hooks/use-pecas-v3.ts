@@ -58,8 +58,9 @@ export function PecasV3Provider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!usuario || pedido.current === null) return;
     if (pedido.current === '') { pedido.current = usuario; return; }
-    // troca de conta na mesma aba: pergunta de novo
-    if (pedido.current !== usuario) { pedido.current = null; rodada.current++; setAtivo(null); }
+    // troca de conta na mesma aba: pergunta de novo AQUI (o efeito do filho que chama pedir() roda antes
+    // deste e ainda via o usuario antigo, entao ninguem mais perguntaria - veredito Fable 4.5)
+    if (pedido.current !== usuario) { pedido.current = usuario; const minha = ++rodada.current; setAtivo(null); perguntar().then((v) => { if (rodada.current === minha) { setAtivo(v); anunciar(v); } }); }
   }, [usuario]);
   const pedir = useCallback(() => {
     if (pedido.current !== null) return;

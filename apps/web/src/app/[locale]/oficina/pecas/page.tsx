@@ -780,6 +780,8 @@ export default function OficinaPecasPage() {
                 const blocos = cardNovo ? [...(pedido?.v3 ? [pedido] : []), ...ordenados.filter((p) => p !== pedido && precisaAcao(p))] : [];
                 const ultimoCancelado = cardNovo && !pedido && !blocos.length ? ordenados.find((p) => p.v3 && p.status === 'cancelado') || null : null;
                 const contato = pedido ? contatos[pedido.id] : undefined;
+                // D-6: so a dona age no ciclo v3 (a rota recusa a equipe com 403); a equipe ve so o estado
+                const dona = oficina.profile_id === user?.id;
                 // A1: conversas de fornecedores que ainda nao mandaram oferta
                 const comOferta = new Set((c.respostas || []).map((r) => chaveConversa(c.id, r.fornecedor_tipo, r.loja_id || r.oficina_fornecedora_id)));
                 const semOferta = Object.entries(conversas).filter(([k, v]) => v.cotacaoId === c.id && !comOferta.has(k)).map(([, v]) => v);
@@ -993,9 +995,9 @@ export default function OficinaPecasPage() {
                         {p.recebido_em && <p className="text-sm text-gray-600">{tp('recebidoEm', { data: formatDate(p.recebido_em, locale) })}</p>}
                         {p.problema && p.status !== 'cancelado' && <p className="text-sm text-amber-800">{tp('problemaInfo', { problema: tp(`problemas.${chaveProblema(p.problema)}`) })}</p>}
                         {p.status === 'cancelado' && <CanceladoInfo pedido={p} />}
-                        {semRetorno && <RecebiProblema pedidoId={p.id} aoTerminar={recarregarTudo} />}
-                        {p.status === 'confirmado' && <CancelarPedidoV3 pedidoId={p.id} lado="compradora" aoTerminar={recarregarTudo} />}
-                        {faltaAvaliacao && (fechados.has(p.id) ? (
+                        {dona && semRetorno && <RecebiProblema pedidoId={p.id} aoTerminar={recarregarTudo} />}
+                        {dona && p.status === 'confirmado' && <CancelarPedidoV3 pedidoId={p.id} lado="compradora" aoTerminar={recarregarTudo} />}
+                        {dona && faltaAvaliacao && (fechados.has(p.id) ? (
                           <button type="button" data-testid="pedido-falta-avaliar" onClick={() => setFechados((f) => { const n = new Set(f); n.delete(p.id); return n; })}
                             className="mt-3 px-3 py-1.5 text-sm rounded-lg border border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100">★ {tp('faltaAvaliar')}</button>
                         ) : (
@@ -1003,8 +1005,8 @@ export default function OficinaPecasPage() {
                             aoEnviar={() => { setEnviadas((e) => new Set(e).add(p.id)); setAvaliados((a) => new Set(a).add(p.id)); recarregarTudo(); }} />
                         ))}
                         {(enviadas.has(p.id) || (avaliados.has(p.id) && !pend)) && <p data-testid="avaliacao-enviada" className="mt-2 text-sm text-green-700">✓ {tp('avaliacao.enviada')}</p>}
-                        {p.status === 'cancelado' && !p.pos_cancelamento && !pedido && p7 !== null && !(pend && !enviadas.has(p.id)) && (
-                          <PosCancelamento pedidoId={p.id} vencida={vencida} aoReaberta={recarregarTudo} aoPedirDeNovo={() => pedirDeNovo(c)} />
+                        {dona && p.status === 'cancelado' && !p.pos_cancelamento && !pedido && p7 !== null && !(pend && !enviadas.has(p.id)) && (
+                          <PosCancelamento pedidoId={p.id} vencida={vencida} semOutrasOfertas={!(c.respostas || []).some((r) => !falhou(r.id))} aoReaberta={recarregarTudo} aoPedirDeNovo={() => pedirDeNovo(c)} />
                         )}
                       </div>
                     );
