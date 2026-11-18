@@ -687,6 +687,9 @@ try {
     // build web do app de 15/11 (scripts/e2e/app-web) contra este site: o motorista do pedido de vidros abre a lista e o pedido
     const dir = path.join(WEB, 'scripts/e2e/app-web');
     if (!fs.existsSync(path.join(dir, 'index.html'))) { ok('V.3 build antigo do app em scripts/e2e/app-web', false, 'nao encontrado'); return; }
+    // copia do apps/web sem assets/node_modules (robocopy /XD node_modules): as fontes do app viram index.html e o
+    // expo-font rejeita com "NetworkError: A network error occurred." em toda pagina (falso V.3, 19/11)
+    if (!fs.existsSync(path.join(dir, 'assets/node_modules'))) { ok('V.3 export antigo completo (fontes em app-web/assets/node_modules) - copie a pasta inteira', false, 'assets/node_modules ausente'); return; }
     appWeb = spawn(process.execPath, [path.join(WEB, 'scripts/e2e/servir-app-web.mjs')], { env: { ...process.env, SITE, APP_WEB: dir }, stdio: 'ignore' });
     await sleep(1500);
     const { data: pf } = await admin.from('profiles').select('id, email').eq('id', cli.id).single();

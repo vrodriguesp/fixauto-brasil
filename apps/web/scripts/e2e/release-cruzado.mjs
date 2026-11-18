@@ -186,6 +186,9 @@ try {
   await tentar('X.3', async () => {
     const dir = path.join(WEB, 'scripts/e2e/app-web');
     if (!fs.existsSync(path.join(dir, 'index.html'))) { ok('X.3 export antigo do app em scripts/e2e/app-web', false, 'nao encontrado'); return; }
+    // copia do apps/web sem assets/node_modules (robocopy /XD node_modules): as fontes do app viram index.html e o
+    // expo-font rejeita com "NetworkError: A network error occurred." em toda pagina (falso X.3, 19/11)
+    if (!fs.existsSync(path.join(dir, 'assets/node_modules'))) { ok('X.3 export antigo completo (fontes em app-web/assets/node_modules) - copie a pasta inteira', false, 'assets/node_modules ausente'); return; }
     appWeb = spawn(process.execPath, [path.join(WEB, 'scripts/e2e/servir-app-web.mjs')], { env: { ...process.env, SITE, APP_WEB: dir }, stdio: 'ignore' });
     const no = await esperar(async () => { try { return (await fetch('http://localhost:8090/', { signal: AbortSignal.timeout(2000) })).ok; } catch { return false; } }, (v) => v, 30, 500);
     if (!no) { ok('X.3 servidor do app antigo (:8090) no ar', false); return; }
