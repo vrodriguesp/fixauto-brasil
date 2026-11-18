@@ -99,6 +99,18 @@ export default function AdminSolicitacaoDetalhePage() {
   const [novoStatus, setNovoStatus] = useState('');
   const [salvandoStatus, setSalvandoStatus] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
+  // apagar foto do pedido (conteudo denunciado): motivo obrigatorio, auditoria e aviso ao motorista
+  const [apagandoFoto, setApagandoFoto] = useState<string | null>(null);
+  const apagarFoto = async (fotoId: string) => {
+    const motivo = window.prompt('Motivo da remoção (vai para a auditoria e para o aviso ao motorista):')?.trim();
+    if (!motivo) return;
+    setApagandoFoto(fotoId);
+    const res = await fetch(`/api/admin/solicitacoes/${id}/fotos`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fotoId, motivo }) });
+    const r = await res.json().catch(() => ({}));
+    setStatusMsg(res.ok ? 'Foto removida. O motorista foi avisado com o motivo.' : (r.error || 'Erro ao remover a foto.'));
+    setApagandoFoto(null);
+    if (res.ok) await fetchData();
+  };
   const [cancelandoAgendaId, setCancelandoAgendaId] = useState<string | null>(null);
   // Modo correcao: toda correcao exige motivo e fica no historico
   const [corrigindo, setCorrigindo] = useState(false);
@@ -331,11 +343,16 @@ export default function AdminSolicitacaoDetalhePage() {
           <p className="text-slate-400 text-xs uppercase tracking-wide mb-3">Fotos ({fotos.length})</p>
           <div className="flex gap-3 overflow-x-auto pb-2">
             {fotos.map((f: any) => (
-              <MidiaPrivada key={f.id} url={f.foto_url}>{(u) => (
-<a href={u} target="_blank" rel="noopener noreferrer" className="flex-shrink-0">
-                <img src={u} alt="Foto" className="w-32 h-32 object-cover rounded-lg border border-slate-700" />
-              </a>
+              <div key={f.id} className="flex-shrink-0 w-32" data-testid={f.origem === 'adicionada' ? 'admin-foto-adicionada' : 'admin-foto-criacao'}>
+                <MidiaPrivada url={f.foto_url}>{(u) => (
+<a href={u} target="_blank" rel="noopener noreferrer" className="block">
+                  <img src={u} alt="Foto" className="w-32 h-32 object-cover rounded-lg border border-slate-700" />
+                </a>
 )}</MidiaPrivada>
+                <p className="text-[11px] text-slate-500 mt-1">{f.origem === 'adicionada' ? 'adicionada depois' : 'na criação'}{f.bytes ? ` · ${Math.round(f.bytes / 1024)} KB` : ''}</p>
+                <button type="button" onClick={() => apagarFoto(f.id)} disabled={apagandoFoto === f.id} data-testid="admin-apagar-foto"
+                  className="text-xs text-red-400 hover:text-red-300 disabled:opacity-50">Apagar com motivo</button>
+              </div>
             ))}
           </div>
         </div>

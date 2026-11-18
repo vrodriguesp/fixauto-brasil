@@ -1065,6 +1065,9 @@
     "veiculoSemDados": "Auto andmed puuduvad"
   },
   "oficinaSolicitacaoDetalhe": {
+    "fotosDepoisOrcamento": "Pärast sinu pakkumist {count, plural, one {lisati # foto} other {lisati # fotot}}. Vaata üle, kas hind kehtib endiselt.",
+    "fotosDepoisRever": "Vaata pakkumine üle",
+    "fotoNova": "Uus",
     "solicitacaoNaoEncontrada": "Päringut ei leitud",
     "refazerOrcamento": "Uuenda hinnapakkumist",
     "revisarOrcamento": "Muuda hinnapakkumist",

@@ -165,6 +165,18 @@
     "aguardandoOrcamentos": "Esperando orçamentos das oficinas"
   },
   "clienteOrcamentoDetalhe": {
+    "fotosCamera": "Tirar foto",
+    "fotosGaleria": "Escolher da galeria",
+    "fotosContador": "{n} de {max} fotos",
+    "fotosEnviando": "Enviando fotos…",
+    "fotosEnviadas": "{n, plural, one {# foto adicionada} other {# fotos adicionadas}}. As oficinas que receberam seu pedido foram avisadas.",
+    "fotosNova": "Nova",
+    "fotosApagar": "Apagar foto",
+    "fotosApagarConfirma": "Apagar esta foto?",
+    "fotosLimiteCheio": "Este pedido já tem o máximo de {max} fotos.",
+    "fotosAjuda": "As fotos ajudam as oficinas a orçar com mais precisão. Ficam visíveis para todas as oficinas que receberam este pedido.",
+    "fotosErro": "Não foi possível enviar as fotos. Tente de novo.",
+    "fotosOrcamentoAntes": "Orçamento feito antes das fotos novas",
     "execDaysApprox": "~{days} dia(s) útil(eis)",
     "execHours": "{h}h",
     "confirmRefuseInProgress": "Tem certeza que deseja recusar este orçamento? O veículo precisa ser retirado da oficina antes de encerrar. A oficina será notificada para realizar o check-out.",

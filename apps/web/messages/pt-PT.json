@@ -690,6 +690,11 @@
     "emergencia": "Tive um acidente"
   },
   "erros": {
+    "FOTOS_PEDIDO_MAX": "Um pedido pode ter no máximo {max} fotografias.",
+    "FOTO_STATUS": "Só é possível adicionar fotografias enquanto o pedido está aberto.",
+    "FOTO_NAO_APAGAVEL": "Só é possível apagar fotografias adicionadas depois do envio.",
+    "FOTO_INVALIDA": "Não foi possível ler este ficheiro como fotografia.",
+    "RATE_LIMIT": "Demasiadas tentativas em pouco tempo. Tente novamente mais tarde.",
     "CAMPO_OBRIGATORIO": "Preencha todos os campos obrigatórios.",
     "EMAIL_INVALIDO": "Confirme o e-mail indicado.",
     "FOTOS_MAX": "Envie no máximo 6 fotografias.",

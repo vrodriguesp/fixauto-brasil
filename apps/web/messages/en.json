@@ -693,6 +693,11 @@
     "emergencia": "I just had an accident"
   },
   "erros": {
+    "FOTOS_PEDIDO_MAX": "A request can have up to {max} photos.",
+    "FOTO_STATUS": "Photos can only be added while the request is open.",
+    "FOTO_NAO_APAGAVEL": "Only photos added after sending can be deleted.",
+    "FOTO_INVALIDA": "This file could not be read as a photo.",
+    "RATE_LIMIT": "Too many attempts in a short time. Please try again later.",
     "CAMPO_OBRIGATORIO": "Please fill in all required fields.",
     "EMAIL_INVALIDO": "Please check the email address.",
     "FOTOS_MAX": "You can send up to 6 photos.",

@@ -16,6 +16,7 @@ import { diaDoCalendario } from '@/lib/turnos';
 import { currencyForCountry } from '@/lib/currency';
 import { Link } from '@/i18n/navigation';
 import MidiaPrivada from '@/components/midia/MidiaPrivada';
+import { fotosDepoisDoOrcamento } from '@/lib/fotos-depois';
 import DispensarPedido, { type Dispensa } from '@/components/oficina/DispensarPedido';
 import ResumoAgendamento from '@/components/oficina/ResumoAgendamento';
 import NovasDatasPedidas from '@/components/oficina/NovasDatasPedidas';
@@ -113,6 +114,8 @@ export default function SolicitacaoDetalhePage() {
   const isEmAndamento = sol.status === 'em_andamento';
   // orcamento enviado cuja validade ja passou (fuso da oficina): "Aegunud" (QA D5)
   const quoteVencido = !!myQuote && ['enviado', 'visualizado'].includes(myQuote.status) && orcamentoVencido(myQuote.validade, oficina?.pais);
+  // fotos que o cliente adicionou DEPOIS do meu orcamento (lote A, 18/11): faixa para rever o valor; some ao revisar
+  const fotosDepois = myQuote && ['enviado', 'visualizado'].includes(myQuote.status) ? fotosDepoisDoOrcamento(sol.fotos, myQuote) : [];
 
   // Determine button label and availability
   const getActionButton = () => {
@@ -201,6 +204,14 @@ export default function SolicitacaoDetalhePage() {
                   ? <span className="badge bg-red-100 text-red-800" data-testid="orcamento-aegunud">{t('statusOrcamento.expirado')}</span>
                   : <span className="badge bg-gray-100 text-gray-700">{t(`statusOrcamento.${myQuote.status}`)}</span>}
               </div>
+              {fotosDepois.length > 0 && (
+                <div role="status" className="mb-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900" data-testid="fotos-depois-orcamento">
+                  <p>{t('fotosDepoisOrcamento', { count: fotosDepois.length })}</p>
+                  {sol.status !== 'concluida' && sol.status !== 'cancelada' && (sol.status as string) !== 'expirada' && (
+                    <Link href={`/oficina/orcamento/${sol.id}`} className="inline-block mt-1 font-medium underline">{t('fotosDepoisRever')}</Link>
+                  )}
+                </div>
+              )}
               {/* validade passou (no fuso da oficina): o motorista nao aceita nem pede datas; a oficina revisa (QA D5) */}
               {quoteVencido && (
                 <p role="status" className="mb-3 rounded-lg border border-red-200 bg-red-50 p-2 text-sm text-red-800" data-testid="orcamento-vencido-oficina">
@@ -242,7 +253,8 @@ export default function SolicitacaoDetalhePage() {
               <div className="grid grid-cols-3 gap-3">
                 {sol.fotos.map((foto: any) => (
                   <MidiaPrivada key={foto.id} url={foto.foto_url}>{(u) => (
-<a href={u} target="_blank" rel="noopener noreferrer" className="aspect-square bg-gray-200 rounded-lg overflow-hidden block">
+<a href={u} target="_blank" rel="noopener noreferrer" className="relative aspect-square bg-gray-200 rounded-lg overflow-hidden block" data-testid={foto.origem === 'adicionada' ? 'foto-adicionada' : 'foto-criacao'}>
+                    {foto.origem === 'adicionada' && <span className="absolute bottom-1 left-1 z-10 px-1.5 py-0.5 rounded bg-primary-600 text-white text-[10px] font-semibold">{t('fotoNova')}</span>}
                     {foto.foto_url ? (
                       <img src={u} alt={foto.descricao || t('fotoDoDanoAlt')} className="w-full h-full object-cover hover:opacity-90 transition-opacity" />
                     ) : (
