@@ -9,6 +9,7 @@ export type TipoServico =
   | 'mecanica'
   | 'eletrica'
   | 'pneu'
+  | 'vidros'
   | 'pintura'
   | 'manutencao'
   | 'outro';

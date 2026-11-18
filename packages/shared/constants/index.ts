@@ -13,8 +13,18 @@ export const TIPOS_SERVICO = [
   { value: 'mecanica', label: 'Mecânica', icon: '⚙️', needsPhoto: false },
   { value: 'eletrica', label: 'Elétrico', icon: '⚡', needsPhoto: false },
   { value: 'pneu', label: 'Pneu', icon: '🛞', needsPhoto: false },
+  // Vidros (dono 18/11): para-brisa, vidro lateral/traseiro. Valor 'vidros' = o que o enum do banco ja
+  // tem desde a migracao 055 (e a chave de traducao que o app antigo ja traz). Fora do grupo carroceria
+  // e sem o "vai para todas" do 'outro': so a oficina que marcou Vidros recebe (tipoCompativel, 095).
+  { value: 'vidros', label: 'Vidros', icon: '🪟', needsPhoto: true },
+  // 'outro' para o motorista e "Outro / nao sei" com ❓ (iconeTipoMotorista e a chave
+  // constants.tiposServicoMotorista.outro); para a oficina (cadastro, perfil, caixa) segue "Outro".
   { value: 'outro', label: 'Outro', icon: '📋', needsPhoto: true },
 ] as const;
+
+// Icone do tipo na tela do MOTORISTA quando difere do da oficina (dono 18/11: "Outro / nao sei" = ❓).
+export const ICONE_TIPO_MOTORISTA: Readonly<Record<string, string>> = { outro: '❓' };
+export const iconeTipoMotorista = (tipo: string, icon?: string): string => ICONE_TIPO_MOTORISTA[tipo] ?? icon ?? '';
 
 // Grupo "carroceria": uma oficina com qualquer um destes atende pedido de
 // qualquer um deles (acidente chega como 'colisao').
