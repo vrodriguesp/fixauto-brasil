@@ -5,6 +5,7 @@ import OficinaPerfilClient from './OficinaPerfilClient';
 import { carregarPerfilOficina } from './perfil-dados';
 import { OG_LOCALE, type Locale } from '@/i18n/routing';
 import { capitalizarCidade, hreflangAlternates, imagemCompartilhamento } from '@/lib/seo-utils';
+import { descricaoParaLocale, tipoOficinaTitulo } from '@/lib/oficina-publica';
 
 // Dados da oficina mudam (aprovacao, fotos): sem isto a pagina ficava guardada
 // como 404 mesmo depois de a oficina ser aprovada.
@@ -22,8 +23,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   const { oficina } = dados;
   const cidade = capitalizarCidade(oficina.cidade);
-  const title = t('metaTitleTemplate', { nome: oficina.nome_fantasia, cidade, estado: oficina.estado });
-  const description = t('metaDescriptionTemplate', { nome: oficina.nome_fantasia, cidade, estado: oficina.estado });
+  // title/description pelo tipo da oficina (auditoria 18/11: uma vidraria aparecia como
+  // "autoremonditöökoda"); description = a descricao do dono na lingua da pagina, se houver
+  const tipo = tipoOficinaTitulo(oficina.especialidades);
+  const vars = { nome: oficina.nome_fantasia, cidade, estado: oficina.estado };
+  const title = t(tipo === 'carroceria' ? 'metaTitleCarroceria' : tipo === 'geral' ? 'metaTitleGeral' : 'metaTitleTemplate', vars);
+  const descricaoDono = (descricaoParaLocale(oficina.descricao, oficina.descricao_traducoes, locale).texto || '').replace(/\s+/g, ' ').trim();
+  const description = descricaoDono.length >= 40
+    ? `${oficina.nome_fantasia}, ${cidade}: ${descricaoDono}`.slice(0, 158)
+    : t(tipo === 'carroceria' ? 'metaDescriptionCarroceria' : tipo === 'geral' ? 'metaDescriptionGeral' : 'metaDescriptionTemplate', vars);
   const alternates = hreflangAlternates(locale, `/oficinas/${id}`);
 
   return {
@@ -32,7 +40,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     alternates,
     ...(dados.teste ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
-      images: imagemCompartilhamento(locale),
+      images: oficina.logo_url ? [{ url: oficina.logo_url }] : imagemCompartilhamento(locale),
       type: 'website',
       locale: OG_LOCALE[locale as Locale],
       siteName: 'BipFix',

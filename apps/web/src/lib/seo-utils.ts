@@ -1,5 +1,6 @@
 import { routing, hreflangsDe, X_DEFAULT_LOCALE, localePrefix, hrefNoIdioma } from '@/i18n/routing';
 import { indexavel } from '@/lib/mercados';
+import { MIN_HISTORICO_SELOS } from '@/lib/oficina-publica';
 
 interface OficinaSchema {
   id: string;
@@ -12,6 +13,9 @@ interface OficinaSchema {
   latitude?: number | null;
   longitude?: number | null;
   especialidades?: string[];
+  /** descricao na lingua da pagina (traducao guardada) - auditoria 18/11 */
+  descricao?: string | null;
+  logo_url?: string | null;
   profile?: {
     telefone?: string | null;
     nome?: string;
@@ -81,6 +85,8 @@ export function generateAutoRepairSchema(oficina: OficinaSchema, locale: string 
     '@id': `${BASE_URL}/oficinas/${oficina.id}`,
     name: oficina.nome_fantasia,
     url: localizedUrl(locale, `/oficinas/${oficina.id}`),
+    ...(oficina.descricao ? { description: oficina.descricao } : {}),
+    ...(oficina.logo_url ? { image: oficina.logo_url, logo: oficina.logo_url } : {}),
     address: {
       '@type': 'PostalAddress',
       streetAddress: oficina.endereco,
@@ -138,7 +144,8 @@ export function generateReviewSchema(
   oficina: OficinaSchema,
   avaliacoes: AvaliacaoSchema[]
 ) {
-  if (avaliacoes.length === 0) return null;
+  // sem historico (menos de MIN_HISTORICO_SELOS avaliacoes) nem nota agregada nos dados estruturados (dono 18/11)
+  if (avaliacoes.length < MIN_HISTORICO_SELOS) return null;
 
   const totalNotas = avaliacoes.reduce((sum, a) => sum + a.nota, 0);
   const media = totalNotas / avaliacoes.length;

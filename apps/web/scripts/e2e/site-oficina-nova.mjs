@@ -102,7 +102,8 @@ try {
   const pub = await ctx.newPage();
   await pub.goto(`${SITE}/ee/ru/avtoservisy/${ofId}`, { waitUntil: 'networkidle' }); await pub.waitForTimeout(1500);
   const txt = await pub.locator('body').innerText();
-  ok('3 pagina publica mostra endereco e complemento', txt.includes('Kesktee tn., 6a') && txt.includes('HOOLDUSKESKUS TEST, 2 этаж'), txt.slice(0, 200));
+  // desde 19/11 (paginas publicas) o endereco estonio sai sem a virgula entre rua e numero: "Kesktee tn. 6a"
+  ok('3 pagina publica mostra endereco e complemento', txt.includes('Kesktee tn. 6a') && txt.includes('HOOLDUSKESKUS TEST, 2 этаж'), txt.slice(0, 200));
 } catch (e) {
   falhas++; console.log('ERRO', e.message);
 } finally {

@@ -332,6 +332,9 @@ export default function PerfilOficinaPage() {
     await refreshProfile();
     setSaving(false);
     setSuccess(true);
+    // descricao publica: traduzida UMA vez para as linguas do site (so se mudou) e guardada
+    // em descricao_traducoes (migracao 099) - a pagina publica le o guardado (auditoria 18/11)
+    if (oficina) fetch('/api/oficina/traduzir-descricao', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ oficina_id: oficina.id }) }).catch(() => {});
     setTimeout(() => setSuccess(false), 3000);
   };
 
