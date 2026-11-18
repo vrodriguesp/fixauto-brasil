@@ -1462,3 +1462,9 @@ Pedido do dono depois da funilaria presa por `@gmail.con` (item acima). Vale par
 - Causa: o formulário empilha uma entrada no histórico por passo (PedidoSemConta) e o redirecionamento de quem está logado usa router.replace, que só troca a entrada atual.
 - Correção: cada passo grava quantos passos tem embaixo (pedidoPilha); ao cair num passo já enviado, o formulário pula todos de uma vez (history.go) e troca a primeira entrada pelo painel. TopoAoNavegar guarda o history.state do popstate, porque o Next o regrava sem esses campos quando busca a página de novo. Voltar a um passo não conta mais "abriu".
 - Teste: site-pedido-sem-conta.mjs ganhou a checagem (voltar até 6 vezes: uma parada no painel, depois sai do site, 0 "abriu"); navegacao-voltar.mjs OK.
+
+## 18/11 — Deploy do lote 3 de peças + correção do "voltar" (439d64f)
+- OK do dono por e-mail (18/11), depois do veredito do Fable (lote 3: aprovado com ajustes, ajustes feitos; 439d64f: aprovado).
+- VM: pull, backup pg_dump (/root/backups/pre093_20261118_0749.dump), npm install (web-push), chaves VAPID geradas no .env.production.local (WEB_PUSH_URL_TESTE e TAREFAS_SIMULAR_HORA ausentes), build → migração 093 (psql -1) → pm2 restart, nessa ordem. O primeiro build travou sem CPU por ~28 min e foi refeito; o site antigo ficou no ar o tempo todo.
+- Crontab novo: `07 * * * * /root/feedback-pecas.sh` (lembretes do P-7, log em /var/log/feedback-pecas.log).
+- Fumaça em produção só com contas de teste (/root/teste_pecas/prod_jornada_lote3.mjs): 54/55; a única falha era expectativa errada do script (entregues_n conta todos os pedidos entregues, como o contrato diz). Varuosamees sem nada antes/depois; dados de teste limpos; pecas_v3_ativo continua false.
