@@ -8,7 +8,7 @@
     "metaDescription": "Terms of Use of the BipFix platform for drivers, repair shops and parts stores in the European Union.",
     "pageTitle": "Terms of Use",
     "lastUpdatedLabel": "Last updated:",
-    "updatedDate": "November 17, 2026",
+    "updatedDate": "November 18, 2026",
     "secoes": [
       {
         "titulo": "1. Who we are and when these Terms apply",
@@ -96,6 +96,23 @@
         ]
       },
       {
+        "titulo": "9.1 Ratings of parts suppliers between Partners",
+        "subsecao": true,
+        "paragrafos": [
+          "When a Repair Shop buys a part through the Platform, it can rate the supplier (a parts store or a repair shop that sells parts). These ratings exist to build trust between Partners and are separate from Customer reviews: they do not affect a Repair Shop's public rating or the order in which offers are shown."
+        ],
+        "itens": [
+          "<strong>Who can rate:</strong> only the account owner of the buying Repair Shop (not its staff), and only an order that the supplier has marked as delivered, that the Repair Shop has marked as received, or for which a problem has been reported. An order can also be rated if it was cancelled because the part was not delivered, or if the supplier cancelled it for a reason other than the Repair Shop's own request. Each order can be rated once. Businesses with the same registration code cannot rate each other.",
+          "<strong>What a rating contains:</strong> a score from 1 to 5 stars, optional answers on whether the right part was delivered and whether it arrived on time, and a comment of up to 300 characters.",
+          "<strong>Who sees ratings:</strong> only active Partners (Repair Shops and Stores) logged in to the Platform; Customers and website visitors do not see them. Each rating is shown with the business name of the Repair Shop that gave it (not the name of the account user), the score, the date, the comment and the supplier's reply. A supplier's average score and the share of ratings saying the part arrived on time are shown only once the supplier has at least 3 visible ratings; until then, the number of orders delivered through the Platform is shown.",
+          "<strong>Editing:</strong> the author can edit their rating within 48 hours of sending it, and only as long as the supplier has not replied to it.",
+          "<strong>Supplier's reply:</strong> the supplier is notified of a new rating on the Platform and by email. The supplier can reply once to each rating (up to 300 characters); the reply is shown under the rating and cannot be changed later.",
+          "<strong>Rules for the text:</strong> comments and replies must not contain a phone number or email address (the Platform does not save such text), and must not be illegal, offensive or unrelated to the order.",
+          "<strong>Review and hiding:</strong> the supplier can use the \"Ask for review\" button to ask BipFix to review a rating; the rating stays visible until we decide. We hide a rating from other Partners only if it is illegal, demonstrably false, offensive, unrelated to the order or contains contact details, and we record the reason for the decision. A hidden rating is not deleted and does not count towards the average; the supplier still sees it, together with the reason. We inform the supplier and the author of the rating of the decision and the reason for it. Anyone can also report illegal content as described in section 10.",
+          "<strong>Rating is mandatory:</strong> for every order that can be rated, the buying Repair Shop must rate the supplier and, for a delivered order, also confirm whether it received the part or had a problem. We send a reminder one day after the date of delivery (or of receipt, problem report or cancellation) and a second one on the third day. If an order is still not rated 3 days after that date and after the first reminder, the Repair Shop cannot send new parts requests or confirm offers until it gives the rating. This does not apply to orders the Repair Shop cancelled itself (unless the part was not delivered) or to suppliers with the same registration code."
+        ]
+      },
+      {
         "titulo": "10. Your content and reporting illegal content",
         "paragrafos": [
           "You are responsible for the content you publish on the Platform (descriptions, photos, messages, reviews, profile information). It must not be illegal, misleading or infringe the rights of others. You keep the rights to your content, and you give BipFix a free licence to store and display it on the Platform to the extent needed to provide the service.",
@@ -168,7 +185,7 @@
     "metaDescription": "How BipFix processes the personal data of drivers, repair shops and parts stores in the European Union, in accordance with the GDPR.",
     "pageTitle": "Privacy Policy",
     "lastUpdatedLabel": "Last updated:",
-    "updatedDate": "November 17, 2026",
+    "updatedDate": "November 18, 2026",
     "secoes": [
       {
         "titulo": "1. Who is responsible for your data",
@@ -287,6 +304,16 @@
         ]
       },
       {
+        "titulo": "3.12 Ratings of parts suppliers between Partners",
+        "subsecao": true,
+        "itens": [
+          "<strong>Data:</strong> the business name of the Repair Shop that gave the rating, the order it relates to, the score, the answers on the right part and on-time delivery, the comment, dates, the supplier's reply, and any review request with its reason. We also record which account sent the rating, but this is not shown to other Partners. Where a business name contains a person's name (for example, a sole trader), this is personal data.",
+          "<strong>Purpose:</strong> building trust between Partners and improving the quality of parts deliveries: Repair Shops can see other Partners' experience when choosing a supplier, and suppliers can reply to ratings and ask for them to be reviewed.",
+          "<strong>Who sees it:</strong> active Partners (Repair Shops and parts stores) logged in to the Platform; Customers and website visitors do not. Hidden ratings are seen only by the supplier, the Repair Shop that gave the rating and BipFix.",
+          "<strong>Legal basis:</strong> performance of a contract (Art. 6(1)(b)), as rating the supplier is part of the conditions for parts orders (section 9.1 of the <a href=\"/termos\">Terms of Use</a>); showing ratings to other Partners together with the business name of the Repair Shop that gave them is based on our legitimate interest, and that of other Partners, in reliable information about parts suppliers (Art. 6(1)(f)). You can object to this processing (section 7) or ask for a rating to be reviewed; we will then assess whether your interests override those of other Partners."
+        ]
+      },
+      {
         "titulo": "4. Who receives your data",
         "paragrafos": [
           "We share personal data only as far as necessary:"
@@ -294,6 +321,7 @@
         "itens": [
           "<strong>Other users:</strong> to send a quote, the Partner sees the Customer's name and the details of the request (vehicle, photos, area). The Customer's phone number and email go only to the Partner the Customer chooses, when the quote is accepted; after an accident, also to the Repair Shops notified about it, if the Customer ticks \"I want repair shops to call me\". If, before accepting a quote, the Customer taps \"Send my phone number to the repair shop\", the number goes only to that Repair Shop and is kept with the request so the Repair Shop can call. The Customer sees the details of the Partners that answer. Partner profiles and reviews are public.",
           "<strong>Parts stores and repair shops that sell parts:</strong> when a Repair Shop requests a part for the repair of your vehicle, active parts stores and supplying repair shops see the vehicle details (make, model, year and, unless the Repair Shop hides it, the registration number) to identify the right part. The registration number is not sent by email and stops being visible when the request closes, except to the chosen supplier. Suppliers may use these details only to identify the part.",
+          "<strong>Ratings of parts suppliers:</strong> a rating that a Repair Shop gives a supplier, together with the Repair Shop's business name, is visible to all active Partners logged in to the Platform (see section 3.12); it is not shown to Customers or website visitors.",
           "<strong>Hosting:</strong> our servers and database are located in the Netherlands (European Union).",
           "<strong>Resend</strong> (United States): sending of emails.",
           "<strong>Twilio</strong> (United States): text messages (SMS) about your own request, for example when a quote arrives. We send only your phone number and the message text. To stop receiving them, write to support@bipfix.com.",
@@ -319,6 +347,7 @@
         "itens": [
           "<strong>Account data:</strong> as long as your account is active. After you ask us to delete your account, we delete or anonymise your data within 30 days, except for the data listed below that we must or may keep for longer.",
           "<strong>Requests, quotes, orders and messages:</strong> as long as your account is active and up to 3 years after the last transaction, to deal with possible disputes and warranty claims.",
+          "<strong>Ratings of parts suppliers (section 3.12):</strong> as long as the order they relate to, and deleted together with it.",
           "<strong>Accounting records:</strong> 7 years, as required by the Estonian Accounting Act.",
           "<strong>Server logs:</strong> up to 14 days.",
           "<strong>Visit summaries:</strong> deleted from the team mailbox after 12 months at the latest.",

@@ -8,7 +8,7 @@
     "metaDescription": "BipFixi platvormi kasutustingimused autojuhtidele, autotöökodadele ja varuosade müüjatele Euroopa Liidus.",
     "pageTitle": "Kasutustingimused",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "17. november 2026",
+    "updatedDate": "18. november 2026",
     "secoes": [
       {
         "titulo": "1. Kes me oleme ja millal need tingimused kehtivad",
@@ -96,6 +96,23 @@
         ]
       },
       {
+        "titulo": "9.1 Varuosatarnijate hinnangud partnerite vahel",
+        "subsecao": true,
+        "paragrafos": [
+          "Kui töökoda ostab platvormi kaudu varuosa, saab ta hinnata tarnijat (varuosapoodi või varuosi müüvat töökoda). Need hinnangud on mõeldud partnerite omavahelise usalduse suurendamiseks ja on klientide arvustustest eraldi: need ei mõjuta töökoja avalikku hinnangut ega pakkumiste järjekorda."
+        ],
+        "itens": [
+          "<strong>Kes saab hinnata:</strong> ainult ostnud töökoja konto omanik (mitte töökoja töötajad) ja ainult tellimust, mille tarnija on märkinud tarnituks, mille töökoda on märkinud kättesaaduks või mille kohta on teatatud probleemist. Hinnata saab ka tellimust, mis tühistati, sest varuosa jäi tarnimata, või mille tarnija tühistas muul põhjusel kui töökoja enda palvel. Iga tellimust saab hinnata üks kord. Sama registrikoodiga ettevõtted üksteist hinnata ei saa.",
+          "<strong>Hinnangu sisu:</strong> hinne 1–5 tärni, soovi korral vastused küsimustele, kas tarniti õige varuosa ja kas see jõudis kohale õigel ajal, ning kuni 300 tähemärgi pikkune kommentaar.",
+          "<strong>Kes hinnanguid näeb:</strong> ainult platvormile sisse loginud aktiivsed partnerid (töökojad ja poed); kliendid ja veebilehe külastajad neid ei näe. Iga hinnangu juures näidatakse hinnanud töökoja ärinime (mitte konto kasutaja nime), hinnet, kuupäeva, kommentaari ja tarnija vastust. Tarnija keskmist hinnet ja nende hinnangute osakaalu, mille järgi varuosa jõudis kohale õigel ajal, näidatakse alles siis, kui tarnijal on vähemalt 3 nähtavat hinnangut; enne seda näidatakse platvormi kaudu tarnitud tellimuste arvu.",
+          "<strong>Muutmine:</strong> autor saab oma hinnangut muuta 48 tunni jooksul pärast saatmist ja ainult seni, kuni tarnija ei ole sellele vastanud.",
+          "<strong>Tarnija vastus:</strong> tarnija saab uuest hinnangust teate platvormil ja e-posti teel. Ta saab igale hinnangule vastata ühe korra (kuni 300 tähemärki); vastus näidatakse hinnangu all ja seda ei saa hiljem muuta.",
+          "<strong>Teksti reeglid:</strong> kommentaar ja vastus ei tohi sisaldada telefoninumbrit ega e-posti aadressi (platvorm sellist teksti ei salvesta) ega olla ebaseaduslikud, solvavad või tellimusega mitteseotud.",
+          "<strong>Ülevaatamine ja peitmine:</strong> tarnija saab nupuga „Palu üle vaadata“ paluda BipFixil hinnangu üle vaadata; kuni otsuseni jääb hinnang nähtavaks. Peidame hinnangu teiste partnerite eest ainult siis, kui see on ebaseaduslik, tõendatult vale, solvav, tellimusega mitteseotud või sisaldab kontaktandmeid, ning märgime otsuse põhjuse. Peidetud hinnangut ei kustutata ega arvestata keskmise hinde hulka; tarnija näeb seda koos põhjusega. Teatame otsusest ja selle põhjusest tarnijale ja hinnangu autorile. Ebaseaduslikust sisust võib igaüks teatada ka punktis 10 kirjeldatud viisil.",
+          "<strong>Hindamine on kohustuslik:</strong> iga hinnatava tellimuse puhul peab ostnud töökoda tarnijat hindama ning tarnitud tellimuse puhul ka märkima, kas ta sai varuosa kätte või tekkis probleem. Saadame meeldetuletuse üks päev pärast tarnimise (või kättesaamise, probleemist teatamise või tühistamise) kuupäeva ja teise kolmandal päeval. Kui tellimus on ka 3 päeva pärast seda kuupäeva ja pärast esimest meeldetuletust hindamata, ei saa töökoda enne hinnangu andmist saata uusi varuosapäringuid ega kinnitada pakkumisi. See ei kehti tellimuste kohta, mille töökoda ise tühistas (välja arvatud juhul, kui varuosa jäi tarnimata), ega sama registrikoodiga tarnijate kohta."
+        ]
+      },
+      {
         "titulo": "10. Sinu sisu ja ebaseaduslikust sisust teatamine",
         "paragrafos": [
           "Vastutad platvormil avaldatud sisu eest (kirjeldused, fotod, sõnumid, arvustused, profiiliandmed). See ei tohi olla ebaseaduslik, eksitav ega rikkuda teiste õigusi. Õigused sinu sisule jäävad sulle ning annad BipFixile tasuta litsentsi seda platvormil säilitada ja näidata ulatuses, mis on vajalik teenuse osutamiseks.",
@@ -168,7 +185,7 @@
     "metaDescription": "Kuidas BipFix töötleb Euroopa Liidus autojuhtide, autotöökodade ja varuosade müüjate isikuandmeid kooskõlas isikuandmete kaitse üldmäärusega (GDPR).",
     "pageTitle": "Privaatsuspoliitika",
     "lastUpdatedLabel": "Viimati uuendatud:",
-    "updatedDate": "17. november 2026",
+    "updatedDate": "18. november 2026",
     "secoes": [
       {
         "titulo": "1. Kes vastutab sinu andmete eest",
@@ -287,6 +304,16 @@
         ]
       },
       {
+        "titulo": "3.12 Varuosatarnijate hinnangud partnerite vahel",
+        "subsecao": true,
+        "itens": [
+          "<strong>Andmed:</strong> hinnanud töökoja ärinimi, tellimus, mille kohta hinnang anti, hinne, vastused õige varuosa ja õigeaegse tarnimise kohta, kommentaar, kuupäevad, tarnija vastus ning ülevaatamise palve koos selle põhjusega. Salvestame ka, milliselt kontolt hinnang saadeti, kuid seda teistele partneritele ei näidata. Kui ärinimes on inimese nimi (näiteks füüsilisest isikust ettevõtja puhul), on need isikuandmed.",
+          "<strong>Eesmärk:</strong> partnerite omavahelise usalduse ja varuosatarnete kvaliteedi suurendamine: töökojad näevad tarnijat valides teiste partnerite kogemusi ning tarnijad saavad hinnangutele vastata ja paluda nende ülevaatamist.",
+          "<strong>Kes näeb:</strong> platvormile sisse loginud aktiivsed partnerid (töökojad ja varuosapoed); kliendid ja veebilehe külastajad neid ei näe. Peidetud hinnanguid näevad ainult tarnija, hinnanud töökoda ja BipFix.",
+          "<strong>Õiguslik alus:</strong> lepingu täitmine (art 6 lg 1 p b), sest tarnija hindamine on osa varuosatellimuste tingimustest (<a href=\"/termos\">kasutustingimuste</a> punkt 9.1); hinnangute näitamine teistele partneritele koos hinnanud töökoja ärinimega põhineb meie ja teiste partnerite õigustatud huvil saada varuosatarnijate kohta usaldusväärset teavet (art 6 lg 1 p f). Võid selle töötlemise vastu esitada vastuväite (punkt 7) või paluda hinnangu ülevaatamist; siis hindame, kas sinu huvid kaaluvad üles teiste partnerite huvi."
+        ]
+      },
+      {
         "titulo": "4. Kes sinu andmeid saavad",
         "paragrafos": [
           "Jagame isikuandmeid ainult vajalikus ulatuses:"
@@ -294,6 +321,7 @@
         "itens": [
           "<strong>Teised kasutajad:</strong> hinnapakkumise saatmiseks näeb partner kliendi nime ja päringu andmeid (sõiduk, fotod, piirkond). Kliendi telefoninumber ja e-post lähevad ainult partnerile, kelle klient valib, kui pakkumine on vastu võetud; pärast õnnetust ka sellest teavitatud töökodadele, kui klient märgib „Soovin, et töökojad mulle helistaksid“. Kui klient vajutab enne pakkumise vastuvõtmist nupule „Saada töökojale oma telefoninumber“, läheb tema number ainult sellele töökojale ja jääb päringu juurde, et töökoda saaks talle helistada. Klient näeb vastanud partnerite andmeid. Partnerite profiilid ja arvustused on avalikud.",
           "<strong>Varuosapoed ja varuosi müüvad töökojad:</strong> kui töökoda küsib sinu sõiduki remondiks varuosa, näevad aktiivsed varuosapoed ja varuosi müüvad töökojad sõiduki andmeid (mark, mudel, aasta ja, kui töökoda seda ei peida, registreerimisnumber), et leida õige varuosa. Registreerimisnumbrit ei saadeta e-postiga ja see ei ole pärast päringu sulgemist enam nähtav, välja arvatud valitud tarnijale. Tarnijad tohivad neid andmeid kasutada ainult varuosa leidmiseks.",
+          "<strong>Varuosatarnijate hinnangud:</strong> töökoja antud hinnang tarnijale koos töökoja ärinimega on nähtav kõigile platvormile sisse loginud aktiivsetele partneritele (vt punkt 3.12); klientidele ja veebilehe külastajatele seda ei näidata.",
           "<strong>Majutus:</strong> meie serverid ja andmebaas asuvad Madalmaades (Euroopa Liit).",
           "<strong>Resend</strong> (Ameerika Ühendriigid): e-kirjade saatmine.",
           "<strong>Twilio</strong> (Ameerika Ühendriigid): tekstisõnumid (SMS) sinu enda päringu kohta, näiteks kui saabub hinnapakkumine. Saadame ainult sinu telefoninumbri ja sõnumi teksti. Kui sa ei soovi neid enam saada, kirjuta aadressile support@bipfix.com.",
@@ -319,6 +347,7 @@
         "itens": [
           "<strong>Konto andmed:</strong> seni, kuni sinu konto on aktiivne. Pärast seda, kui palud oma konto kustutada, kustutame või anonüümime sinu andmed 30 päeva jooksul, välja arvatud allpool loetletud andmed, mida peame või võime kauem säilitada.",
           "<strong>Päringud, hinnapakkumised, tellimused ja sõnumid:</strong> seni, kuni sinu konto on aktiivne, ja kuni 3 aastat pärast viimast tehingut, et lahendada võimalikke vaidlusi ja garantiinõudeid.",
+          "<strong>Varuosatarnijate hinnangud (punkt 3.12):</strong> sama kaua kui tellimus, mille kohta hinnang anti, ja need kustutatakse koos sellega.",
           "<strong>Raamatupidamisdokumendid:</strong> 7 aastat, nagu nõuab raamatupidamise seadus.",
           "<strong>Serverilogid:</strong> kuni 14 päeva.",
           "<strong>Külastuste kokkuvõtted:</strong> kustutatakse meeskonna postkastist hiljemalt 12 kuu möödudes.",

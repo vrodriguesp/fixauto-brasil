@@ -8,7 +8,7 @@
     "metaDescription": "Termos de Utilização da plataforma BipFix para condutores, oficinas e lojas de peças na União Europeia.",
     "pageTitle": "Termos de Utilização",
     "lastUpdatedLabel": "Última atualização:",
-    "updatedDate": "17 de novembro de 2026",
+    "updatedDate": "18 de novembro de 2026",
     "secoes": [
       {
         "titulo": "1. Quem somos e quando se aplicam estes Termos",
@@ -96,6 +96,23 @@
         ]
       },
       {
+        "titulo": "9.1 Avaliações de fornecedores de peças entre Parceiros",
+        "subsecao": true,
+        "paragrafos": [
+          "Quando uma Oficina compra uma peça através da Plataforma, pode avaliar o fornecedor (uma loja de peças ou uma oficina que vende peças). Estas avaliações servem para criar confiança entre os Parceiros e são distintas das avaliações dos Clientes: não afetam a classificação pública de uma Oficina nem a ordem em que as ofertas são apresentadas."
+        ],
+        "itens": [
+          "<strong>Quem pode avaliar:</strong> apenas o titular da conta da Oficina compradora (não os seus funcionários) e apenas uma encomenda que o fornecedor marcou como entregue, que a Oficina marcou como recebida ou relativamente à qual foi comunicado um problema. Também se pode avaliar uma encomenda cancelada porque a peça não foi entregue, ou cancelada pelo fornecedor por motivo diferente de um pedido da própria Oficina. Cada encomenda pode ser avaliada uma vez. Empresas com o mesmo número de registo não se podem avaliar entre si.",
+          "<strong>Conteúdo da avaliação:</strong> uma nota de 1 a 5 estrelas, respostas facultativas sobre se foi entregue a peça certa e se chegou a tempo, e um comentário com até 300 caracteres.",
+          "<strong>Quem vê as avaliações:</strong> apenas os Parceiros ativos (Oficinas e Lojas) com sessão iniciada na Plataforma; os Clientes e os visitantes do site não as veem. Cada avaliação é apresentada com o nome comercial da Oficina que a fez (não o nome do utilizador da conta), a nota, a data, o comentário e a resposta do fornecedor. A nota média do fornecedor e a percentagem de avaliações segundo as quais a peça chegou a tempo só são apresentadas quando o fornecedor tem pelo menos 3 avaliações visíveis; até lá, é apresentado o número de encomendas entregues através da Plataforma.",
+          "<strong>Edição:</strong> o autor pode editar a sua avaliação durante 48 horas após o envio, e apenas enquanto o fornecedor não lhe tiver respondido.",
+          "<strong>Resposta do fornecedor:</strong> o fornecedor é avisado de uma nova avaliação na Plataforma e por e-mail. Pode responder uma vez a cada avaliação (até 300 caracteres); a resposta é apresentada por baixo da avaliação e não pode ser alterada depois.",
+          "<strong>Regras para o texto:</strong> comentários e respostas não podem conter números de telefone nem endereços de e-mail (a Plataforma não guarda esse tipo de texto), nem ser ilegais, ofensivos ou sem relação com a encomenda.",
+          "<strong>Revisão e ocultação:</strong> o fornecedor pode usar o botão \"Pedir revisão\" para pedir à BipFix que reveja uma avaliação; até à decisão, a avaliação continua visível. Só ocultamos uma avaliação aos outros Parceiros se for ilegal, comprovadamente falsa, ofensiva, sem relação com a encomenda ou se contiver dados de contacto, e registamos o motivo da decisão. Uma avaliação ocultada não é apagada nem conta para a média; o fornecedor continua a vê-la, juntamente com o motivo. Comunicamos a decisão e o respetivo motivo ao fornecedor e ao autor da avaliação. Qualquer pessoa pode também denunciar conteúdo ilegal da forma descrita no ponto 10.",
+          "<strong>A avaliação é obrigatória:</strong> em cada encomenda que pode ser avaliada, a Oficina compradora tem de avaliar o fornecedor e, numa encomenda entregue, indicar também se recebeu a peça ou se houve um problema. Enviamos um lembrete um dia após a data de entrega (ou de receção, comunicação do problema ou cancelamento) e um segundo no terceiro dia. Se, 3 dias após essa data e depois do primeiro lembrete, a encomenda continuar sem avaliação, a Oficina não pode enviar novos pedidos de peças nem confirmar ofertas até fazer a avaliação. Isto não se aplica a encomendas que a própria Oficina cancelou (exceto quando a peça não foi entregue) nem a fornecedores com o mesmo número de registo."
+        ]
+      },
+      {
         "titulo": "10. O seu conteúdo e a denúncia de conteúdos ilegais",
         "paragrafos": [
           "É responsável pelo conteúdo que publica na Plataforma (descrições, fotografias, mensagens, avaliações, informações de perfil). Esse conteúdo não pode ser ilegal ou enganoso nem violar os direitos de terceiros. Mantém os direitos sobre o seu conteúdo e concede à BipFix uma licença gratuita para o armazenar e apresentar na Plataforma na medida necessária à prestação do serviço.",
@@ -168,7 +185,7 @@
     "metaDescription": "Como a BipFix trata os dados pessoais de condutores, oficinas e lojas de peças na União Europeia, em conformidade com o RGPD.",
     "pageTitle": "Política de Privacidade",
     "lastUpdatedLabel": "Última atualização:",
-    "updatedDate": "17 de novembro de 2026",
+    "updatedDate": "18 de novembro de 2026",
     "secoes": [
       {
         "titulo": "1. Quem é responsável pelos seus dados",
@@ -287,6 +304,16 @@
         ]
       },
       {
+        "titulo": "3.12 Avaliações de fornecedores de peças entre Parceiros",
+        "subsecao": true,
+        "itens": [
+          "<strong>Dados:</strong> o nome comercial da Oficina que fez a avaliação, a encomenda a que se refere, a nota, as respostas sobre a peça certa e a entrega a tempo, o comentário, as datas, a resposta do fornecedor e o eventual pedido de revisão com o respetivo motivo. Registamos também a partir de que conta a avaliação foi enviada, mas isso não é mostrado aos outros Parceiros. Se o nome comercial contiver o nome de uma pessoa (por exemplo, um empresário em nome individual), trata-se de dados pessoais.",
+          "<strong>Finalidade:</strong> criar confiança entre os Parceiros e melhorar a qualidade das entregas de peças: as Oficinas veem a experiência de outros Parceiros ao escolher um fornecedor, e os fornecedores podem responder às avaliações e pedir a sua revisão.",
+          "<strong>Quem vê:</strong> os Parceiros ativos (Oficinas e lojas de peças) com sessão iniciada na Plataforma; os Clientes e os visitantes do site não. As avaliações ocultadas só são vistas pelo fornecedor, pela Oficina que fez a avaliação e pela BipFix.",
+          "<strong>Fundamento jurídico:</strong> execução de um contrato (art. 6.º, n.º 1, alínea b)), uma vez que avaliar o fornecedor faz parte das condições das encomendas de peças (ponto 9.1 dos <a href=\"/termos\">Termos de Utilização</a>); a apresentação das avaliações aos outros Parceiros com o nome comercial da Oficina que as fez baseia-se no nosso interesse legítimo, e no dos outros Parceiros, em informação fiável sobre fornecedores de peças (art. 6.º, n.º 1, alínea f)). Pode opor-se a este tratamento (ponto 7) ou pedir a revisão de uma avaliação; avaliaremos então se os seus interesses prevalecem sobre os dos outros Parceiros."
+        ]
+      },
+      {
         "titulo": "4. Quem recebe os seus dados",
         "paragrafos": [
           "Só partilhamos dados pessoais na medida do necessário:"
@@ -294,6 +321,7 @@
         "itens": [
           "<strong>Outros utilizadores:</strong> para enviar um orçamento, o Parceiro vê o nome do Cliente e os dados do pedido (veículo, fotografias, zona). O telefone e o e-mail do Cliente vão apenas para o Parceiro que o Cliente escolher, quando o orçamento é aceite; após um acidente, também para as Oficinas avisadas, se o Cliente marcar \"Quero que as oficinas me liguem\". Se, antes de aceitar um orçamento, o Cliente tocar em \"Enviar o meu número à oficina\", o número vai apenas para essa Oficina e fica guardado com o pedido para que a Oficina possa ligar. O Cliente vê os dados dos Parceiros que respondem. Os perfis dos Parceiros e as avaliações são públicos.",
           "<strong>Lojas de peças e oficinas que vendem peças:</strong> quando uma Oficina pede uma peça para a reparação do seu veículo, as lojas de peças e as oficinas fornecedoras ativas veem os dados do veículo (marca, modelo, ano e, salvo se a Oficina a ocultar, a matrícula) para identificarem a peça certa. A matrícula não é enviada por e-mail e deixa de estar visível quando o pedido fecha, exceto para o fornecedor escolhido. Os fornecedores só podem usar estes dados para identificar a peça.",
+          "<strong>Avaliações de fornecedores de peças:</strong> a avaliação que uma Oficina faz a um fornecedor, com o nome comercial da Oficina, é visível para todos os Parceiros ativos com sessão iniciada na Plataforma (ver ponto 3.12); não é mostrada aos Clientes nem aos visitantes do site.",
           "<strong>Alojamento:</strong> os nossos servidores e a base de dados estão localizados nos Países Baixos (União Europeia).",
           "<strong>Resend</strong> (Estados Unidos): envio de e-mails.",
           "<strong>Twilio</strong> (Estados Unidos): mensagens SMS sobre o seu próprio pedido, por exemplo quando chega um orçamento. Enviamos apenas o seu número de telefone e o texto da mensagem. Para deixar de as receber, escreva para support@bipfix.com.",
@@ -319,6 +347,7 @@
         "itens": [
           "<strong>Dados da conta:</strong> enquanto a sua conta estiver ativa. Depois de nos pedir para apagar a sua conta, apagamos ou anonimizamos os seus dados no prazo de 30 dias, com exceção dos dados abaixo indicados que devemos ou podemos conservar durante mais tempo.",
           "<strong>Pedidos, orçamentos, encomendas e mensagens:</strong> enquanto a sua conta estiver ativa e até 3 anos após a última transação, para lidar com eventuais litígios e reclamações de garantia.",
+          "<strong>Avaliações de fornecedores de peças (ponto 3.12):</strong> enquanto for conservada a encomenda a que se referem, sendo apagadas juntamente com ela.",
           "<strong>Registos contabilísticos:</strong> 7 anos, conforme exigido pela Lei da Contabilidade da Estónia.",
           "<strong>Logs do servidor:</strong> até 14 dias.",
           "<strong>Resumos de visita:</strong> apagados da caixa de correio da equipa, o mais tardar, ao fim de 12 meses.",

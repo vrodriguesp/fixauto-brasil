@@ -110,6 +110,17 @@ async function TermosBrasil({ locale }: { locale: string }) {
         <section>
           <h2>{t('title7')}</h2>
           <p>{t('body7')}</p>
+          {/* pecas (lote 3): avaliacao de fornecedor entre Parceiros (fornecedores_avaliacoes, P-7) */}
+          <p>{t('body7b')}</p>
+          <ul>
+            <li>{t.rich('list7b_1', { strong })}</li>
+            <li>{t.rich('list7b_2', { strong })}</li>
+            <li>{t.rich('list7b_3', { strong })}</li>
+            <li>{t.rich('list7b_4', { strong })}</li>
+            <li>{t.rich('list7b_5', { strong })}</li>
+            <li>{t.rich('list7b_6', { strong })}</li>
+            <li>{t.rich('list7b_7', { strong })}</li>
+          </ul>
         </section>
 
         <section>

@@ -8,7 +8,7 @@
     "metaDescription": "Termini di utilizzo della piattaforma BipFix per automobilisti, officine e rivenditori di ricambi nell'Unione europea.",
     "pageTitle": "Termini di utilizzo",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
-    "updatedDate": "17 novembre 2026",
+    "updatedDate": "18 novembre 2026",
     "secoes": [
       {
         "titulo": "1. Chi siamo e quando si applicano questi Termini",
@@ -96,6 +96,23 @@
         ]
       },
       {
+        "titulo": "9.1 Valutazioni dei fornitori di ricambi tra Partner",
+        "subsecao": true,
+        "paragrafos": [
+          "Quando un'Officina acquista un ricambio tramite la Piattaforma, può valutare il fornitore (un negozio di ricambi o un'officina che vende ricambi). Queste valutazioni servono a creare fiducia tra i Partner e sono separate dalle recensioni dei Clienti: non influiscono sulla valutazione pubblica di un'Officina né sull'ordine in cui vengono mostrate le offerte."
+        ],
+        "itens": [
+          "<strong>Chi può valutare:</strong> solo il titolare dell'account dell'Officina acquirente (non i suoi dipendenti) e solo un ordine che il fornitore ha segnato come consegnato, che l'Officina ha segnato come ricevuto o per il quale è stato segnalato un problema. Si può valutare anche un ordine annullato perché il ricambio non è stato consegnato, oppure annullato dal fornitore per un motivo diverso dalla richiesta dell'Officina stessa. Ogni ordine può essere valutato una sola volta. Le imprese con lo stesso codice di registrazione non possono valutarsi a vicenda.",
+          "<strong>Contenuto della valutazione:</strong> un voto da 1 a 5 stelle, risposte facoltative sul fatto che sia stato consegnato il ricambio giusto e che sia arrivato in tempo, e un commento di massimo 300 caratteri.",
+          "<strong>Chi vede le valutazioni:</strong> solo i Partner attivi (Officine e Rivenditori) che hanno effettuato l'accesso alla Piattaforma; i Clienti e i visitatori del sito non le vedono. Ogni valutazione è mostrata con la denominazione commerciale dell'Officina che l'ha data (non il nome dell'utente dell'account), il voto, la data, il commento e la risposta del fornitore. Il voto medio del fornitore e la quota di valutazioni secondo cui il ricambio è arrivato in tempo sono mostrati solo quando il fornitore ha almeno 3 valutazioni visibili; fino ad allora viene mostrato il numero di ordini consegnati tramite la Piattaforma.",
+          "<strong>Modifica:</strong> l'autore può modificare la propria valutazione entro 48 ore dall'invio, e solo finché il fornitore non ha risposto.",
+          "<strong>Risposta del fornitore:</strong> il fornitore riceve un avviso della nuova valutazione sulla Piattaforma e via email. Può rispondere una sola volta a ogni valutazione (massimo 300 caratteri); la risposta è mostrata sotto la valutazione e non può essere modificata in seguito.",
+          "<strong>Regole per il testo:</strong> commenti e risposte non devono contenere numeri di telefono o indirizzi email (la Piattaforma non salva questo tipo di testo) e non devono essere illeciti, offensivi o estranei all'ordine.",
+          "<strong>Revisione e oscuramento:</strong> il fornitore può usare il pulsante \"Chiedi revisione\" per chiedere a BipFix di riesaminare una valutazione; fino alla decisione la valutazione resta visibile. Nascondiamo una valutazione agli altri Partner solo se è illecita, dimostrabilmente falsa, offensiva, estranea all'ordine o contiene dati di contatto, e registriamo il motivo della decisione. Una valutazione nascosta non viene cancellata e non conta nella media; il fornitore continua a vederla, insieme al motivo. Comunichiamo la decisione e il suo motivo al fornitore e all'autore della valutazione. Chiunque può inoltre segnalare contenuti illeciti come descritto al punto 10.",
+          "<strong>La valutazione è obbligatoria:</strong> per ogni ordine che si può valutare, l'Officina acquirente deve valutare il fornitore e, per un ordine consegnato, anche indicare se ha ricevuto il ricambio o se c'è stato un problema. Inviamo un promemoria un giorno dopo la data di consegna (o di ricezione, segnalazione del problema o annullamento) e un secondo il terzo giorno. Se dopo 3 giorni da quella data, e dopo il primo promemoria, l'ordine non è ancora valutato, l'Officina non può inviare nuove richieste di ricambi né confermare offerte finché non dà la valutazione. Ciò non vale per gli ordini annullati dall'Officina stessa (salvo il caso in cui il ricambio non sia stato consegnato) né per i fornitori con lo stesso codice di registrazione."
+        ]
+      },
+      {
         "titulo": "10. I tuoi contenuti e la segnalazione di contenuti illegali",
         "paragrafos": [
           "Sei responsabile dei contenuti che pubblichi sulla Piattaforma (descrizioni, foto, messaggi, recensioni, informazioni del profilo). Non devono essere illeciti, ingannevoli né violare i diritti altrui. I diritti sui tuoi contenuti restano tuoi, e concedi a BipFix una licenza gratuita per conservarli e mostrarli sulla Piattaforma nella misura necessaria a fornire il servizio.",
@@ -168,7 +185,7 @@
     "metaDescription": "Come BipFix tratta i dati personali di automobilisti, officine e rivenditori di ricambi nell'Unione europea, in conformità al GDPR.",
     "pageTitle": "Informativa sulla privacy",
     "lastUpdatedLabel": "Ultimo aggiornamento:",
-    "updatedDate": "17 novembre 2026",
+    "updatedDate": "18 novembre 2026",
     "secoes": [
       {
         "titulo": "1. Chi è responsabile dei tuoi dati",
@@ -287,6 +304,16 @@
         ]
       },
       {
+        "titulo": "3.12 Valutazioni dei fornitori di ricambi tra Partner",
+        "subsecao": true,
+        "itens": [
+          "<strong>Dati:</strong> la denominazione commerciale dell'Officina che ha dato la valutazione, l'ordine a cui si riferisce, il voto, le risposte sul ricambio giusto e sulla consegna puntuale, il commento, le date, la risposta del fornitore e l'eventuale richiesta di revisione con il suo motivo. Registriamo anche da quale account è stata inviata la valutazione, ma questo non viene mostrato agli altri Partner. Se la denominazione commerciale contiene il nome di una persona (ad esempio, una ditta individuale), si tratta di dati personali.",
+          "<strong>Finalità:</strong> creare fiducia tra i Partner e migliorare la qualità delle consegne di ricambi: le Officine vedono l'esperienza degli altri Partner quando scelgono un fornitore, e i fornitori possono rispondere alle valutazioni e chiederne la revisione.",
+          "<strong>Chi le vede:</strong> i Partner attivi (Officine e negozi di ricambi) che hanno effettuato l'accesso alla Piattaforma; i Clienti e i visitatori del sito no. Le valutazioni nascoste sono visibili solo al fornitore, all'Officina che ha dato la valutazione e a BipFix.",
+          "<strong>Base giuridica:</strong> esecuzione di un contratto (art. 6, par. 1, lett. b), poiché valutare il fornitore fa parte delle condizioni degli ordini di ricambi (punto 9.1 dei <a href=\"/termos\">Termini di utilizzo</a>); mostrare le valutazioni agli altri Partner insieme alla denominazione commerciale dell'Officina che le ha date si basa sul nostro legittimo interesse, e su quello degli altri Partner, a informazioni affidabili sui fornitori di ricambi (art. 6, par. 1, lett. f). Puoi opporti a questo trattamento (punto 7) o chiedere la revisione di una valutazione; valuteremo allora se i tuoi interessi prevalgono su quelli degli altri Partner."
+        ]
+      },
+      {
         "titulo": "4. Chi riceve i tuoi dati",
         "paragrafos": [
           "Condividiamo i dati personali solo nella misura necessaria:"
@@ -294,6 +321,7 @@
         "itens": [
           "<strong>Altri utenti:</strong> per inviare un preventivo, il Partner vede il nome del Cliente e i dati della richiesta (veicolo, foto, zona). Il telefono e l'email del Cliente vanno solo al Partner scelto dal Cliente, quando il preventivo viene accettato; dopo un incidente, anche alle Officine avvisate, se il Cliente seleziona \"Voglio che le officine mi chiamino\". Se, prima di accettare un preventivo, il Cliente tocca \"Invia il mio numero all’officina\", il numero va solo a quell’Officina e resta associato alla richiesta perché l’Officina possa chiamarlo. Il Cliente vede i dati dei Partner che rispondono. I profili dei Partner e le recensioni sono pubblici.",
           "<strong>Negozi di ricambi e officine che vendono ricambi:</strong> quando un'Officina chiede un ricambio per la riparazione del tuo veicolo, i negozi di ricambi e le officine fornitrici attivi vedono i dati del veicolo (marca, modello, anno e, salvo che l'Officina la nasconda, la targa) per individuare il ricambio giusto. La targa non viene inviata via email e non è più visibile quando la richiesta si chiude, tranne che al fornitore scelto. I fornitori possono usare questi dati solo per individuare il ricambio.",
+          "<strong>Valutazioni dei fornitori di ricambi:</strong> la valutazione che un'Officina dà a un fornitore, insieme alla denominazione commerciale dell'Officina, è visibile a tutti i Partner attivi che hanno effettuato l'accesso alla Piattaforma (vedi punto 3.12); non viene mostrata ai Clienti né ai visitatori del sito.",
           "<strong>Hosting:</strong> i nostri server e il database si trovano nei Paesi Bassi (Unione europea).",
           "<strong>Resend</strong> (Stati Uniti): invio delle email.",
           "<strong>Twilio</strong> (Stati Uniti): SMS sulla tua richiesta, per esempio quando arriva un preventivo. Inviamo solo il tuo numero di telefono e il testo del messaggio. Per non riceverli più, scrivi a support@bipfix.com.",
@@ -319,6 +347,7 @@
         "itens": [
           "<strong>Dati dell'account:</strong> finché il tuo account è attivo. Dopo che ci chiedi di eliminare l'account, cancelliamo o anonimizziamo i tuoi dati entro 30 giorni, tranne i dati elencati di seguito che dobbiamo o possiamo conservare più a lungo.",
           "<strong>Richieste, preventivi, ordini e messaggi:</strong> finché il tuo account è attivo e fino a 3 anni dopo l'ultima transazione, per gestire eventuali controversie e richieste di garanzia.",
+          "<strong>Valutazioni dei fornitori di ricambi (punto 3.12):</strong> per tutto il tempo in cui è conservato l'ordine a cui si riferiscono, e cancellate insieme a esso.",
           "<strong>Scritture contabili:</strong> 7 anni, come previsto dalla legge estone sulla contabilità.",
           "<strong>Log del server:</strong> fino a 14 giorni.",
           "<strong>Riepiloghi delle visite:</strong> cancellati dalla casella email del team al più tardi dopo 12 mesi.",

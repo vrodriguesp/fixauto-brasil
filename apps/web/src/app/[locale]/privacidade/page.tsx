@@ -67,6 +67,8 @@ async function PrivacidadeLgpd({ locale }: { locale: string }) {
             <li>{t.rich('list2_6', { strong })}</li>
             <li>{t.rich('list2_7', { strong })}</li>
             <li>{t.rich('list2_8', { strong })}</li>
+            {/* pecas (lote 3): avaliacao de fornecedor entre Parceiros */}
+            <li>{t.rich('list2_9', { strong })}</li>
           </ul>
         </section>
 
@@ -87,6 +89,8 @@ async function PrivacidadeLgpd({ locale }: { locale: string }) {
             <li>{t('list4_1')}</li>
             {/* pecas (lote 1, 17/11): dados do veiculo e placa para lojas/oficinas fornecedoras */}
             <li>{t('list4_5')}</li>
+            {/* pecas (lote 3): avaliacoes de fornecedor visiveis aos Parceiros logados */}
+            <li>{t('list4_6')}</li>
             <li>{t('list4_2')}</li>
             {/* DeepL (traducao automatica, 03/11) antes das autoridades, que fecham a lista */}
             <li>{t('list4_4')}</li>
