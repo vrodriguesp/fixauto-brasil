@@ -7,8 +7,8 @@ import { TIPOS_SERVICO } from '@fixauto/shared';
 import StarRating from '@/components/ui/StarRating';
 import StructuredData from '@/components/seo/StructuredData';
 import { capitalizarCidade, hreflangAlternates, slugCidade, imagemCompartilhamento } from '@/lib/seo-utils';
+import { MIN_HISTORICO_SELOS, cidadeRegiao, ordenarEspecialidades } from '@/lib/oficina-publica';
 import { OG_LOCALE, localePrefix as prefixoDoIdioma, type Locale } from '@/i18n/routing';
-import { countryNameForCode } from '@/lib/currency';
 import { perfisDeTeste } from '@/lib/oficinas-teste';
 import { fetchSemCache } from '@/lib/fetch-sem-cache';
 
@@ -254,8 +254,9 @@ export default async function OficinasPage({
               {filtradas.map((o) => {
                 const media = Number(o.avaliacao_media || 0);
                 const total = o.total_avaliacoes || 0;
-                const especialidades = o.especialidades || [];
-                const pais = countryNameForCode(o.pais);
+                const especialidades = ordenarEspecialidades(o.especialidades);
+                // nota so com historico (>= 3 avaliacoes); sem ela nem "nova" (dono 18/11)
+                const comNota = total >= MIN_HISTORICO_SELOS;
                 return (
                   <li key={o.id}>
                     <Link
@@ -264,38 +265,33 @@ export default async function OficinasPage({
                     >
                       <div className="flex items-start gap-3">
                         {o.logo_url ? (
+                          // logos retangulares: quadrado com object-contain (no circulo cortava)
                           <img
                             src={o.logo_url}
                             alt=""
-                            className="w-12 h-12 rounded-full object-cover flex-shrink-0 border border-gray-100"
+                            loading="lazy"
+                            className="w-14 h-14 rounded-lg object-contain bg-white flex-shrink-0 border border-gray-200 p-0.5"
                           />
                         ) : (
-                          <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <div className="w-14 h-14 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
                             <span className="text-primary-700 font-bold text-lg">{o.nome_fantasia.charAt(0)}</span>
                           </div>
                         )}
                         <div className="min-w-0">
                           <h2 className="font-semibold text-gray-900 truncate">{o.nome_fantasia}</h2>
                           <p className="text-sm text-gray-500 truncate">
-                            {capitalizarCidade(o.cidade)} - {o.estado}
-                            {pais ? `, ${pais}` : ''}
+                            {cidadeRegiao(capitalizarCidade(o.cidade), o.estado, locale, o.pais)}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 mt-3">
-                        {total > 0 ? (
-                          <>
-                            <StarRating rating={media} size="sm" />
-                            <span className="text-sm font-medium text-gray-700">{media.toFixed(1)}</span>
-                            <span className="text-sm text-gray-500">{t('reviewsCount', { count: total })}</span>
-                          </>
-                        ) : (
-                          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-800">
-                            {t('newOnPlatform')}
-                          </span>
-                        )}
-                      </div>
+                      {comNota && (
+                        <div className="flex items-center gap-2 mt-3">
+                          <StarRating rating={media} size="sm" />
+                          <span className="text-sm font-medium text-gray-700">{media.toFixed(1)}</span>
+                          <span className="text-sm text-gray-500">{t('reviewsCount', { count: total })}</span>
+                        </div>
+                      )}
 
                       {especialidades.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mt-3">
@@ -312,7 +308,7 @@ export default async function OficinasPage({
                         </div>
                       )}
 
-                      <span className="mt-auto pt-4 text-sm font-medium text-primary-600">{t('viewProfile')} →</span>
+                      <span className="mt-auto pt-4 text-sm font-medium text-primary-600 min-h-[44px] flex items-end">{t('viewProfile')} →</span>
                     </Link>
                   </li>
                 );
