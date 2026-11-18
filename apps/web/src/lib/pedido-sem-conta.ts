@@ -1,7 +1,8 @@
 import { randomInt, createHash, createHmac, randomUUID } from 'node:crypto';
 import { TIPOS_SERVICO } from '@fixauto/shared';
 import { supabaseAdmin } from './supabase-admin';
-import { ErroValidacao, texto, numero, umDe, extensaoDe, placaCarro, anoCarro } from './validacao';
+import { ErroValidacao, texto, numero, umDe, placaCarro, anoCarro } from './validacao';
+import { tratarImagem } from './imagem-servidor';
 import { iguaisSeguro } from './segredos';
 import { enviarEmail } from './email';
 import { escapeHtml } from './email-i18n';
@@ -171,13 +172,18 @@ export async function contaParaEmail(email: string, idioma: string | null): Prom
   throw new Error(error?.message || 'createUser falhou');
 }
 
-/** Fotos do pedido pendente: nomes aleatorios em damage-photos/pendentes/<id>/. */
+/**
+ * Fotos do pedido pendente: nomes aleatorios em damage-photos/pendentes/<id>/.
+ * Lote 0 (18/11): cada foto e conferida pelos bytes e reencodada em JPEG sem EXIF/GPS
+ * (lib/imagem-servidor.ts); arquivo que nao e imagem sobe como ErroValidacao (FOTO_TIPO).
+ */
 export async function guardarFotos(pendenteId: string, fotos: File[]): Promise<string[]> {
   const caminhos: string[] = [];
   for (const f of fotos) {
-    const caminho = `pendentes/${pendenteId}/${randomUUID()}.${extensaoDe(f.type)}`;
+    const img = await tratarImagem(Buffer.from(await f.arrayBuffer()));
+    const caminho = `pendentes/${pendenteId}/${randomUUID()}.${img.extensao}`;
     const { error } = await supabaseAdmin.storage.from('damage-photos')
-      .upload(caminho, Buffer.from(await f.arrayBuffer()), { contentType: f.type });
+      .upload(caminho, img.buffer, { contentType: img.tipo });
     if (error) { console.error('[pedido-sem-conta] upload', error.message); continue; }
     caminhos.push(caminho);
   }

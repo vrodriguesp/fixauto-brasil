@@ -175,3 +175,9 @@ export const COMISSAO_PECAS_CONFIG = {
   BONUS_RESPOSTA_2H: 0.01,
   BONUS_RESPOSTA_6H: 0.005,
 } as const;
+
+// Fotos do pedido (dono 18/11): ate 10 no total por pedido (6 na criacao + as adicionadas
+// depois, em qualquer combinacao). Vale para o site, o app e a rota /api/solicitacoes/[id]/fotos.
+export const FOTOS_POR_PEDIDO = 10;
+/** Status em que o motorista ainda pode adicionar/apagar fotos do pedido (mesma regra do EditarPedido). */
+export const STATUS_FOTOS_EDITAVEIS = ['aberta', 'em_orcamento'] as const;

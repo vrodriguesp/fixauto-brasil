@@ -319,6 +319,11 @@ export interface SolicitacaoFoto {
   foto_url: string;
   descricao: string | null;
   created_at: string;
+  // migracao 096 (18/11): 'criacao' (com o pedido) ou 'adicionada' (depois do envio); tamanho tratado no servidor
+  origem?: 'criacao' | 'adicionada';
+  bytes?: number | null;
+  largura?: number | null;
+  altura?: number | null;
 }
 
 export interface DisponibilidadeSlot {
