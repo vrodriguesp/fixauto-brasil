@@ -119,6 +119,14 @@
 }
 /* aviso de cookies ainda sem resposta: o botao fica logo acima dele (a altura ja inclui a area segura do iPhone) */
 body.com-aviso-cookies .chat-suporte-botao { bottom: calc(var(--altura-cookies, 0px) + 1rem); }
+/* pagina publica da oficina no celular (oficinas/[id]/OficinaPerfilClient.tsx): a barra fixa do CTA e mais alta
+   (73 px, ja com a area segura) que a barra de baixo da oficina (56 px) - o botao do chat e o aviso de cookies
+   sobem pela altura medida (--altura-cta-fixo); com o aviso aberto o botao continua acima do aviso (dono 19/11) */
+@media (max-width: 639.98px) {
+  body.com-barra-inferior.com-cta-fixo .chat-suporte-botao { bottom: calc(var(--altura-cta-fixo, 73px) + 1rem); }
+  body.com-barra-inferior.com-cta-fixo .aviso-cookies { bottom: var(--altura-cta-fixo, 73px); padding-bottom: 0 !important; }
+  body.com-barra-inferior.com-cta-fixo.com-aviso-cookies .chat-suporte-botao { bottom: calc(var(--altura-cookies, 0px) + 1rem); }
+}
 /* ...e a barra Tagasi/Edasi do pedido (components/pedido/PedidoSemConta.tsx, presa ao pe da tela no
    celular) tambem: antes o aviso ficava por cima dela em ~97 % das visitas (Clarity, 12/11) */
 body.com-aviso-cookies [data-testid="navegar"] { bottom: var(--altura-cookies, 0px); }

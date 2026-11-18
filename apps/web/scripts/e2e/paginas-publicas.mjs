@@ -150,6 +150,36 @@ try {
           && i.linhas[5].texto.includes(tp(l, 'hoursClosed')) && i.linhas[6].texto.includes(tp(l, 'hoursClosed')) && i.linhas[0].texto.includes('08:30–17:00'),
         JSON.stringify(i.linhas));
       ok(`${n}: bloco do horario com altura razoavel (< 260 px)`, i.horario && i.horario.h < 260, i.horario?.h);
+      if (w < 700) {
+        // dono 19/11: ao parar a rolagem com a tabela do horario na altura do botao redondo do chat, o botao
+        // cobria a ponta de uma linha. Rola ate a tabela (o botao so aparece depois de 300 px) e confere que
+        // o botao nao cruza nenhuma linha nem a barra fixa do CTA, e que nenhuma linha quebrou.
+        await r.page.evaluate(() => window.scrollBy(0, 400));
+        await r.page.waitForSelector('[data-testid="chat-suporte-botao"]', { timeout: 5000 }).catch(() => null);
+        // leva o meio da tabela ate o meio do botao
+        await r.page.evaluate(() => { const b = document.querySelector('[data-testid="chat-suporte-botao"]')?.getBoundingClientRect(); const t = document.querySelector('[data-testid="oficina-horario"]').getBoundingClientRect(); if (b) window.scrollBy(0, (t.top + t.height / 2) - (b.top + b.height / 2)); });
+        await r.page.waitForTimeout(300);
+        const c = await r.page.evaluate(() => {
+          const b = document.querySelector('[data-testid="chat-suporte-botao"]')?.getBoundingClientRect();
+          const cruza = (a) => b && a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+          const linhas = [...document.querySelectorAll('[data-testid^="horario-"]')].map((tr) => tr.getBoundingClientRect());
+          const cta = document.querySelector('[data-testid="cta-fixo"]')?.getBoundingClientRect();
+          return { botao: b ? { l: Math.round(b.left), t: Math.round(b.top), r: Math.round(b.right), b: Math.round(b.bottom) } : null, ctaTop: cta ? Math.round(cta.top) : null, linhasNaTela: linhas.filter((x) => b && x.top < b.bottom && x.bottom > b.top).length, cruzaLinha: linhas.some(cruza), cruzaCta: !!(cta && cruza(cta)), tabelaDireita: Math.round(document.querySelector('[data-testid="oficina-horario"]').getBoundingClientRect().right), alturas: linhas.map((x) => Math.round(x.height)) };
+        });
+        ok(`${n}: botao do chat na altura da tabela do horario NAO cobre nenhuma linha (${c.linhasNaTela} na mesma altura) nem a barra do CTA, e nenhuma linha quebrou`,
+          c.botao && c.linhasNaTela >= 1 && !c.cruzaLinha && !c.cruzaCta && c.tabelaDireita <= c.botao.l && c.botao.b <= c.ctaTop && c.alturas.every((h) => h < 40), JSON.stringify(c));
+        if (l === 'et' && w === 390) {
+          // 1a visita (aviso de cookies sem resposta): o aviso fica acima da barra do CTA e o botao do chat acima do aviso
+          const ctx2 = await browser.newContext({ viewport: { width: w, height: 844 }, isMobile: true, hasTouch: true });
+          const p2 = await ctx2.newPage();
+          await p2.goto(r.page.url(), { waitUntil: 'networkidle' }).catch(() => null);
+          await p2.evaluate(() => window.scrollBy(0, 400)); await p2.waitForTimeout(600);
+          const k = await p2.evaluate(() => { const g = (s) => { const e = document.querySelector(s); if (!e) return null; const q = e.getBoundingClientRect(); return { t: Math.round(q.top), b: Math.round(q.bottom), h: Math.round(q.height) }; }; return { aviso: g('.aviso-cookies'), cta: g('[data-testid="cta-fixo"]'), botao: g('[data-testid="chat-suporte-botao"]') }; });
+          ok(`${n}: com o aviso de cookies aberto, o aviso termina acima da barra do CTA e o botao do chat fica acima do aviso`,
+            k.aviso && k.cta && k.aviso.b <= k.cta.t + 1 && (!k.botao || k.botao.b <= k.aviso.t + 1), JSON.stringify(k));
+          await ctx2.close();
+        }
+      }
       ok(`${n}: nomes dos dias inteiros (pt: Segunda-feira / ru: понедельник / et: esmaspäev)`, /segunda|monday|esmaspäev|понедельник|lunedì/i.test(i.linhas[0].texto), i.linhas[0].texto);
       ok(`${n}: CTA "${tp(l, 'ctaPedirOrcamento')}" visivel no topo e, no celular, barra fixa visivel`, i.cta?.visivel && i.texto.includes(tp(l, 'ctaPedirOrcamento')) && (w > 700 ? !i.ctaFixo?.visivel : i.ctaFixo?.visivel && i.ctaFixo.bottom <= 844 + 1), JSON.stringify({ cta: i.cta, fixo: i.ctaFixo }));
       if (w === 360) {

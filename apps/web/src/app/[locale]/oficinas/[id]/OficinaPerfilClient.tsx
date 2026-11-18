@@ -57,13 +57,25 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
   const descr = descricaoParaLocale(oficina.descricao, oficina.descricao_traducoes, locale);
   const [verOriginal, setVerOriginal] = useState(false);
 
-  // barra fixa do CTA no celular: o botao redondo do chat sobe (regra body.com-barra-inferior do globals.css)
+  // barra fixa do CTA no celular: o botao redondo do chat e o aviso de cookies sobem pela altura MEDIDA da
+  // barra (73 px: 48 do botao + 2x12 + borda; as regras genericas body.com-barra-inferior do globals.css
+  // assumem os 56 px da barra de baixo da oficina e deixavam o botao 1 px dentro da barra e o aviso 16 px
+  // por cima dela - dono 19/11). Regras body.com-cta-fixo + --altura-cta-fixo no globals.css.
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 639.98px)');
-    const aplicar = () => document.body.classList.toggle('com-barra-inferior', mq.matches);
+    const aplicar = () => {
+      document.body.classList.toggle('com-barra-inferior', mq.matches);
+      document.body.classList.toggle('com-cta-fixo', mq.matches);
+      const h = mq.matches ? document.querySelector('[data-testid="cta-fixo"]')?.getBoundingClientRect().height || 0 : 0;
+      document.documentElement.style.setProperty('--altura-cta-fixo', `${Math.ceil(h)}px`);
+    };
     aplicar();
     mq.addEventListener('change', aplicar);
-    return () => { mq.removeEventListener('change', aplicar); document.body.classList.remove('com-barra-inferior'); };
+    window.addEventListener('resize', aplicar);
+    return () => {
+      mq.removeEventListener('change', aplicar); window.removeEventListener('resize', aplicar);
+      document.body.classList.remove('com-barra-inferior', 'com-cta-fixo'); document.documentElement.style.removeProperty('--altura-cta-fixo');
+    };
   }, []);
   const textoDescricao = descr.traduzida && verOriginal ? (oficina.descricao || '').trim() : descr.texto;
 
@@ -275,7 +287,10 @@ export default function OficinaPerfilClient({ dados }: { dados: PerfilOficina })
             {/* Horario real cadastrado pela oficina, em tabela: nome do dia inteiro
                 (cabia mal abreviado em pt/ru), hoje em destaque, fechado em cinza */}
             {oficina.horario_funcionamento ? (
-              <table className="w-full text-sm border-collapse" data-testid="oficina-horario">
+              /* celular: a tabela para antes da coluna do botao redondo do chat (fixo a direita: 56 px + 1 rem;
+                 o cartao tem 1.5 rem de borda, sobram 2 rem cobertos + folga), senao o botao cobre a ponta da
+                 linha (a de hoje, com fundo, ficava "cortada" quando a rolagem parava ali - dono 19/11) */
+              <table className="w-full max-w-[calc(100%-2.5rem)] sm:max-w-none text-sm border-collapse" data-testid="oficina-horario">
                 <tbody>
                   {DIAS.map((dia, i) => {
                     const h = oficina.horario_funcionamento?.[dia];
