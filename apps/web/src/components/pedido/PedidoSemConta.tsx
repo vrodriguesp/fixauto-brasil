@@ -58,6 +58,7 @@ type Etapa = 'servico' | 'detalhe' | 'carro' | 'local' | 'contato' | 'codigo' | 
 // galeria/camera e a pagina volta do zero (emulador, dono 10/11); com sessionStorage
 // o pedido inteiro se perdia.
 const RASCUNHO = 'bipfix_pedido_rascunho';
+const FUNIL_CONTADOS = 'bipfix_pedido_funil'; // passos ja contados no funil deste pedido (aba)
 const lerRascunho = () => localStorage.getItem(RASCUNHO) || sessionStorage.getItem(RASCUNHO); // sessionStorage: rascunho de antes de 10/11
 const memoria: { fotos: { file: File; preview: string }[] } = { fotos: [] };
 const LISTA_CURTA = 6; // "ver mais": a lista inteira so quando a pessoa pede
@@ -125,9 +126,18 @@ export default function PedidoSemConta() {
   const [enviadoSemLogin, setEnviadoSemLogin] = useState(false);
   // confirmado pelo botao do e-mail (ou expirou) enquanto esta tela esperava o codigo
   const [jaConfirmou, setJaConfirmou] = useState(false);
-  // funil do passo contato: digitou algo / marcou SMS (uma vez por visita)
+  // funil: passos e "digitou/marcou" contam uma vez por pedido nesta aba (sessionStorage, apagado com o
+  // rascunho): voltar/avancar entre os passos ou recarregar nao conta de novo (antes cada volta inflava o funil)
   const contado = useRef<Record<string, boolean>>({});
-  const contarUmaVez = (etapa: string) => { if (!contado.current[etapa]) { contado.current[etapa] = true; contar(etapa); } };
+  const contarUmaVez = (etapa: string) => {
+    if (contado.current[etapa]) return;
+    let lista: string[] = [];
+    try { lista = JSON.parse(sessionStorage.getItem(FUNIL_CONTADOS) || '[]'); } catch { /* sem armazenamento: so a memoria */ }
+    contado.current[etapa] = true;
+    if (Array.isArray(lista) && lista.includes(etapa)) return;
+    try { sessionStorage.setItem(FUNIL_CONTADOS, JSON.stringify([...(Array.isArray(lista) ? lista : []), etapa])); } catch { /* ignora */ }
+    contar(etapa);
+  };
 
   // quem ja esta logado usa o pedido normal (mesmos passos, sem contato/codigo)
   const pulandoPassos = useRef(false);
@@ -198,7 +208,8 @@ export default function PedidoSemConta() {
   }, [rascunhoLido, fotos]);
   const limparRascunho = () => {
     memoria.fotos = [];
-    try { localStorage.removeItem(RASCUNHO); sessionStorage.removeItem(RASCUNHO); } catch { /* ignora */ }
+    try { localStorage.removeItem(RASCUNHO); sessionStorage.removeItem(RASCUNHO); sessionStorage.removeItem(FUNIL_CONTADOS); } catch { /* ignora */ }
+    contado.current = {};
     apagarFotosPedido();
   };
   // links de idioma (cabecalho/rodape) nesta pagina: troca sem recarregar, para
@@ -258,7 +269,7 @@ export default function PedidoSemConta() {
     setFaltando('');
     // o passo que voltou do rascunho (pagina recarregada) ja foi contado antes
     if (etapaRestaurada.current === etapa) etapaRestaurada.current = null;
-    else if (['detalhe', 'carro', 'local', 'contato'].includes(etapa)) contar(etapa);
+    else if (['detalhe', 'carro', 'local', 'contato'].includes(etapa)) contarUmaVez(etapa);
     if (primeiraEtapa.current) { primeiraEtapa.current = false; return; }
     window.scrollTo({ top: 0 });
   }, [etapa]);
@@ -494,7 +505,7 @@ export default function PedidoSemConta() {
             <div className="grid grid-cols-2 gap-3">
               {TIPOS_SERVICO.map((s) => (
                 <button key={s.value} type="button" aria-pressed={tipo === s.value}
-                  onClick={() => { if (s.value !== tipo) { setServicos([]); setListaAberta(false); } contar('servico'); setTipo(s.value); setEtapa('detalhe'); }}
+                  onClick={() => { if (s.value !== tipo) { setServicos([]); setListaAberta(false); } contarUmaVez('servico'); setTipo(s.value); setEtapa('detalhe'); }}
                   className={`min-w-0 p-4 rounded-lg border-2 text-left transition-all ${tipo === s.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
                   <span className="text-2xl">{s.icon}</span>
                   {/* palavra longa (RU "Техобслуживание") nao invade o cartao do lado a 360 px */}

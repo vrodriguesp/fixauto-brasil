@@ -199,12 +199,16 @@ function CadastroPage() {
       () => { /* sem permissao - handleSubmit tenta geocodificar o endereco digitado */ }
     );
   }, [step]);
-  // funil: abriu o cadastro de oficina (uma vez por pagina)
+  // funil: abriu o cadastro de oficina (uma vez por pagina). Chegar pelo voltar/avancar do navegador
+  // nao e abrir de novo (mesmo criterio do pedido sem conta: popstate marcado pelo TopoAoNavegar ou a
+  // pagina carregada inteira por back_forward neste mesmo endereco) - antes cada volta contava outro "abriu"
   const abriuContado = useRef(false);
   useEffect(() => {
     if (userType !== 'oficina' || abriuContado.current) return;
     abriuContado.current = true;
-    contar('abriu');
+    const nav = performance.getEntriesByType?.('navigation')[0] as PerformanceNavigationTiming | undefined;
+    const voltou = Date.now() - ((window as any).__bipfixVoltou || 0) < 5000 || (nav?.type === 'back_forward' && nav.name === window.location.href);
+    if (!voltou) contar('abriu');
   }, [userType]);
   // funil: chegou ao 2o passo (dados da oficina), uma vez por pagina (16/11)
   const passo2Contado = useRef(false);
