@@ -319,10 +319,12 @@ export default function OficinaPecasPage() {
         const r = await fetch('/api/pedido-peca/depois-do-cancelamento', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pedidoId: repetirDe, escolha: 'nova_cotacao', novaCotacaoId: nova.id }) }).catch(() => null);
         if (r && !r.ok) console.warn('[pecas] escolha do pedido cancelado nao gravada', r.status);
       }
-      formDoRepetir.current = false;
       setRepetirDe(null);
-      try { const u = new URL(window.location.href); u.searchParams.delete('repetir'); window.history.replaceState({}, '', u.toString()); } catch { /* segue */ }
     }
+    // lote 3.2: o ?repetir= sai da barra em TODO envio (antes so quando havia pedido cancelado a vincular; sem
+    // ele - escolha ja feita, cotacao sem cancelado - ficava na barra e um F5 reabria o formulario preenchido)
+    formDoRepetir.current = false;
+    try { const u = new URL(window.location.href); if (u.searchParams.has('repetir')) { u.searchParams.delete('repetir'); window.history.replaceState({}, '', u.toString()); } } catch { /* segue */ }
 
     // placa: so na tabela da compradora (nunca em cotacoes_pecas, que vai no tempo real a todos os parceiros)
     if (placa) await supabase.from('cotacoes_pecas_placa').insert({ cotacao_id: nova.id, placa });
