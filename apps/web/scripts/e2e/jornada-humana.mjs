@@ -240,7 +240,12 @@ try {
     ok('setinha: a lista de marcas abre', await lista.isVisible().catch(() => false));
     ok('setinha: o teclado nao abre (campo sem foco)', await pC.evaluate(() => document.activeElement?.id !== 'cbbe3-101'));
     await tela(pC, 'carro lista de marcas aberta');
-    const toyota = lista.getByRole('option', { name: 'Toyota', exact: true });
+    // Toyota aparece 2 vezes de proposito (16/11, parecer Fable aprovado pelo dono): no bloco "mais comuns" e no A-Z;
+    // a pessoa toca a primeira (bloco do topo). A API do catalogo tem a marca 1 vez so (conferido abaixo).
+    ok('lista: Toyota 1x nas mais comuns e 1x no A-Z', (await lista.getByRole('option', { name: 'Toyota', exact: true }).count()) === 2);
+    { const marcas = await (await fetch(`${SITE}/api/vehicle-catalog?tipo=cars`)).json().catch(() => []);
+      ok('catalogo: Toyota 1 vez so na API', marcas.filter((m) => m.name === 'Toyota').length === 1); }
+    const toyota = lista.getByRole('option', { name: 'Toyota', exact: true }).first();
     await toyota.scrollIntoViewIfNeeded(); await sleep(300); // dedo rolando a lista
     await tocar(pC, toyota, 'Toyota na lista');
     ok('marca escolhida pela lista', (await pC.locator('#cbbe3-101').inputValue()) === 'Toyota');
@@ -366,7 +371,7 @@ try {
   await pC.goto(`${SITE}${PRE}/cliente/orcamentos/${sol.id}`, { waitUntil: 'networkidle' }); await sleep(2500);
   await tela(pC, 'cliente orcamento recebido');
   await tocar(pC, botao(pC, rx(T('clienteOrcamentoDetalhe.acceptAndSchedule'))).last(), 'aceitar e agendar');
-  await tocar(pC, pC.locator('button').filter({ hasText: /\d{2}:\d{2} - \d{2}:\d{2}/ }).locator('visible=true').first(), 'escolher horario');
+  await tocar(pC, pC.locator('button').filter({ hasText: /\d{2}:\d{2}\s*[-–]\s*\d{2}:\d{2}/ }).locator('visible=true').first(), 'escolher horario'); // janela "13:00–15:00" desde o check-in v2 (15/11)
   await tela(pC, 'cliente escolha do horario');
   await tocar(pC, botao(pC, rx(T('clienteOrcamentoDetalhe.confirmAppointment'))).last(), 'confirmar agendamento');
   await sleep(3500);
@@ -384,7 +389,9 @@ try {
   await tocar(pO, pO.getByTestId('opcao-mudar-data'), 'quero mudar a data');
   const nd = new Date(Date.now() + 4 * 86400e3).toISOString().slice(0, 10);
   // check-in v2: dia + faixa da tarde no mesmo seletor do orcamento
-  await ver(pO, pO.getByTestId('pnd-adicionar')); await escolherCheckin(pO, { pre: 'pnd', dia: nd, faixa: 'tarde' });
+  await ver(pO, pO.getByTestId('pnd-adicionar')); const faixaNova = await escolherCheckin(pO, { pre: 'pnd', dia: nd, faixa: 'tarde' });
+  // hora da faixa escolhida (a 1a da tarde depende do horario da oficina; antes o teste fixava 13:00)
+  const horaNova = new RegExp(faixaNova.inicio.replace(':', '[:.]'));
   await digitar(pO, pO.locator('#nd-motivo'), 'Varuosa saabub alles neljapäeval', 'motivo da nova data');
   // 079: a oficina diz se a data marcada ainda serve (obrigatorio) - aqui nao serve mais
   await tocar(pO, pO.getByTestId('propor-nova-data').getByRole('radio', { name: rx(T('agendaMudanca.naoServe')) }), 'data atual nao serve mais');
@@ -397,10 +404,10 @@ try {
   await tocar(pC, botao(pC, rx(T('agendaMudanca.aceitarData'))).last(), 'aceitar nova data');
   await sleep(3000);
   await pC.reload({ waitUntil: 'networkidle' }); await sleep(2500);
-  ok('cliente: data atual e a nova (13:00)', /13[:.]00/.test(await pC.getByTestId('agendamento-atual').innerText().catch(() => '')));
+  ok(`cliente: data atual e a nova (${faixaNova.inicio})`, horaNova.test(await pC.getByTestId('agendamento-atual').innerText().catch(() => '')));
   await tela(pC, 'cliente nova data aceita');
   await pO.goto(`${SITE}${PRE}/oficina/pedidos/${sol.id}`, { waitUntil: 'networkidle' }); await sleep(2500);
-  ok('oficina: resumo com a nova data e o aceite do cliente', /13[:.]00/.test(await pO.getByTestId('resumo-chegada').innerText().catch(() => '')) && (await pO.getByTestId('resumo-mudanca').count()) === 1);
+  ok('oficina: resumo com a nova data e o aceite do cliente', horaNova.test(await pO.getByTestId('resumo-chegada').innerText().catch(() => '')) && (await pO.getByTestId('resumo-mudanca').count()) === 1);
 
   // ================= 5) OFICINA: chegada, etapas, pronto, entrega (tela Hoje) =================
   const { data: ag } = await admin.from('agenda').select('id').eq('solicitacao_id', sol.id).eq('oficina_id', of.id).eq('status', 'agendado').single();
