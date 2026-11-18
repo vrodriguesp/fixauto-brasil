@@ -42,7 +42,7 @@ try {
   const { data: perfil } = await admin.from('profiles').select('id, tipo, idioma, termos_versao, responsavel_declarado_em').eq('email', email).maybeSingle();
   ok('perfil criado', !!perfil);
   if (perfil) contas.push(perfil.id);
-  ok('idioma et, termos 2026-09-30, declaracao gravada', perfil?.idioma === 'et' && perfil?.termos_versao === '2026-09-30' && !!perfil?.responsavel_declarado_em);
+  ok('idioma et, termos 2026-11-18, declaracao gravada', perfil?.idioma === 'et' && perfil?.termos_versao === '2026-11-18' && !!perfil?.responsavel_declarado_em);
   const { data: u } = await admin.auth.admin.getUserById(perfil.id);
   ok('e-mail ainda nao confirmado', !u.user.email_confirmed_at);
   const { data: ofi } = await admin.from('oficinas').select('id, ativa, cnpj, pais').eq('profile_id', perfil.id).single();

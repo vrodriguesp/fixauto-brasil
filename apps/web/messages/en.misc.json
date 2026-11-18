@@ -99,7 +99,7 @@
         "titulo": "9.1 Ratings of parts suppliers between Partners",
         "subsecao": true,
         "paragrafos": [
-          "When a Repair Shop buys a part through the Platform, it can rate the supplier (a parts store or a repair shop that sells parts). These ratings exist to build trust between Partners and are separate from Customer reviews: they do not affect a Repair Shop's public rating or the order in which offers are shown."
+          "When a Repair Shop buys a part through the Platform, it can rate the supplier (a parts store or a repair shop that sells parts). These ratings exist to build trust between Partners and are separate from Customer reviews: they do not affect a Repair Shop's public rating or the order in which offers are shown. This section applies from the date on which the supplier-rating feature is made available to Partners on the Platform; we will announce that date in advance, as described in section 17."
         ],
         "itens": [
           "<strong>Who can rate:</strong> only the account owner of the buying Repair Shop (not its staff), and only an order that the supplier has marked as delivered, that the Repair Shop has marked as received, or for which a problem has been reported. An order can also be rated if it was cancelled because the part was not delivered, or if the supplier cancelled it for a reason other than the Repair Shop's own request. Each order can be rated once. Businesses with the same registration code cannot rate each other.",
