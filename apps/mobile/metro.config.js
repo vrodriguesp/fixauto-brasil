@@ -21,11 +21,20 @@ config.resolver.blockList = [/[\\/]apps[\\/]web[\\/].*/];
 
 module.exports = withNativeWind(config, { input: './global.css' });
 
-// SO NO TESTE LOCAL (BIPFIX_EXPO_GO=1): push vira um modulo vazio no Expo Go
+// SO NO TESTE LOCAL (BIPFIX_EXPO_GO=1): push vira um modulo vazio no Expo Go; e o
+// @fixauto/shared e o desta copia do codigo (nos worktrees de teste o node_modules e
+// partilhado e apontaria para o packages/shared de outra copia)
 if (process.env.BIPFIX_EXPO_GO === '1') {
+  // node_modules partilhado por atalho (junction/symlink) com outra copia do codigo: o Metro
+  // so enxerga arquivos dentro das pastas vigiadas, por isso vigia tambem o caminho real
+  const fs = require('fs');
+  for (const nm of [path.join(projectRoot, 'node_modules'), path.join(workspaceRoot, 'node_modules')]) {
+    try { const real = fs.realpathSync(nm); if (real !== nm) module.exports.watchFolders.push(real); } catch { /* sem a pasta */ }
+  }
   const anterior = module.exports.resolver.resolveRequest;
-  module.exports.resolver.resolveRequest = (ctx, nome, plat) =>
-    nome === 'expo-notifications'
-      ? { type: 'sourceFile', filePath: path.resolve(projectRoot, 'teste-local/expo-notifications-stub.js') }
-      : (anterior || ctx.resolveRequest)(ctx, nome, plat);
+  module.exports.resolver.resolveRequest = (ctx, nome, plat) => {
+    if (nome === 'expo-notifications') return { type: 'sourceFile', filePath: path.resolve(projectRoot, 'teste-local/expo-notifications-stub.js') };
+    if (nome === '@fixauto/shared') return { type: 'sourceFile', filePath: path.resolve(workspaceRoot, 'packages/shared/index.ts') };
+    return (anterior || ctx.resolveRequest)(ctx, nome, plat);
+  };
 }

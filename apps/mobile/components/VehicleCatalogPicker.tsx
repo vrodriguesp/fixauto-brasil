@@ -16,6 +16,8 @@ interface Props {
   fetchUrl: string;
   /** a vista mas parado (modelo antes da marca), com este texto no lugar de "selecione" */
   desativado?: string;
+  /** campo obrigatorio em falta (Edasi tocado): borda vermelha + esta mensagem embaixo */
+  faltando?: string;
 }
 
 // Na versao web o Modal, ao terminar a animacao de fechar, devolve o foco ao botao que o
@@ -25,7 +27,7 @@ const ANIMACAO_MODAL = Platform.OS === 'web' ? 'none' : 'slide';
 
 // Picker generico marca/modelo, reaproveitando o mesmo endpoint publico
 // /api/vehicle-catalog que o site ja usa (VehiclesDB, mundo todo).
-export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl, desativado }: Props) {
+export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl, desativado, faltando }: Props) {
   // topo pela area segura (Dynamic Island / Android edge-to-edge) - auditoria E16
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
@@ -77,10 +79,11 @@ export default function VehicleCatalogPicker({ label, value, onChange, fetchUrl,
     <View className="mb-4">
       <Text className="text-sm font-medium text-gray-700 mb-1">{label}</Text>
       <Pressable onPress={() => { if (desativado) return; Keyboard.dismiss(); setOpen(true); }} disabled={!!desativado}
-        accessibilityRole="button" accessibilityLabel={label} accessibilityHint={desativado} accessibilityState={{ disabled: !!desativado }}
-        className={`border border-gray-300 rounded-lg px-4 py-3 ${desativado ? 'bg-gray-50' : ''}`}>
+        accessibilityRole="button" accessibilityLabel={label} accessibilityHint={desativado} accessibilityState={{ disabled: !!desativado }} aria-invalid={!!faltando}
+        className={`border rounded-lg px-4 py-3 ${faltando ? 'border-red-500' : 'border-gray-300'} ${desativado ? 'bg-gray-50' : ''}`}>
         <Text className={value ? 'text-gray-900' : 'text-gray-400'}>{value?.name || desativado || t('common.selecione')}</Text>
       </Pressable>
+      {faltando ? <Text role="alert" className="text-sm text-red-700 mt-1">{faltando}</Text> : null}
 
       <Modal visible={open} animationType={ANIMACAO_MODAL} onRequestClose={() => setOpen(false)}>
         <View className="flex-1 bg-white px-4" style={{ paddingTop: insets.top + 12 }}>
