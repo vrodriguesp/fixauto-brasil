@@ -8,12 +8,32 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 // - completarClientes poe nome/codigo/foto/idioma (resumo_clientes);
 // - completarContato poe telefone/e-mail SO nos pedidos em que o orcamento dela foi
 //   aceito (contato_clientes, por pedido).
-export async function completarClientes<T extends { cliente_id?: string | null; cliente?: any }>(sb: SupabaseClient, linhas: T[]): Promise<T[]> {
-  const faltam = Array.from(new Set(linhas.filter((l) => !l.cliente && l.cliente_id).map((l) => l.cliente_id as string)));
-  if (!faltam.length) return linhas;
-  const { data } = await sb.rpc('resumo_clientes', { p_ids: faltam });
-  const porId = new Map(((data as any[]) || []).map((c) => [c.id, c]));
-  return linhas.map((l) => (!l.cliente && l.cliente_id && porId.has(l.cliente_id) ? { ...l, cliente: porId.get(l.cliente_id) } : l));
+// Migracao 101 (dono 19/11): o NOME e a foto do cliente so chegam a oficina depois de o orcamento ser aceito -
+// por pedido (resumo_clientes_pedidos, quando a linha e um pedido: lista, detalhe, formulario, conversa) ou,
+// nas telas por cliente (avaliacoes, garantias, agenda), quando ha orcamento aceito com esse cliente. Antes
+// disso vem so o codigo/idioma e as telas mostram "Cliente · codigo".
+export async function completarClientes<T extends { id?: string | null; solicitacao_id?: string | null; cliente_id?: string | null; cliente?: any }>(sb: SupabaseClient, linhas: T[]): Promise<T[]> {
+  const semCliente = linhas.filter((l) => !l.cliente && l.cliente_id);
+  if (!semCliente.length) return linhas;
+  // linha = pedido (tem id/solicitacao_id): regra por pedido
+  const chavePedido = (l: T) => (l.solicitacao_id || l.id || null) as string | null;
+  const sols = Array.from(new Set(semCliente.map(chavePedido).filter(Boolean) as string[]));
+  const porSol = new Map<string, any>();
+  if (sols.length) {
+    const { data } = await sb.rpc('resumo_clientes_pedidos', { p_sols: sols });
+    for (const c of (data as any[]) || []) porSol.set(c.solicitacao_id, { id: c.id, nome: c.nome, codigo: c.codigo, avatar_url: c.avatar_url, idioma: c.idioma, tipo: c.tipo });
+  }
+  const faltam = Array.from(new Set(semCliente.filter((l) => !porSol.has(chavePedido(l) || '')).map((l) => l.cliente_id as string)));
+  const porId = new Map<string, any>();
+  if (faltam.length) {
+    const { data } = await sb.rpc('resumo_clientes', { p_ids: faltam });
+    for (const c of (data as any[]) || []) porId.set(c.id, c);
+  }
+  return linhas.map((l) => {
+    if (l.cliente || !l.cliente_id) return l;
+    const c = porSol.get(chavePedido(l) || '') || porId.get(l.cliente_id);
+    return c ? { ...l, cliente: c } : l;
+  });
 }
 
 /** Telefone e e-mail do cliente, pedido a pedido (so onde a oficina foi escolhida - 086). */

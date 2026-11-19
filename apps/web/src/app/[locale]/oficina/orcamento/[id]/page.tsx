@@ -25,6 +25,7 @@ import { hojeLocal, janelaAindaVale, conflitoHorario, janelaDoSlot, turnoDaJanel
 import SemQuebra from '@/components/ui/SemQuebra';
 import { gravarEstadoUi, veioDeTrocaDeIdioma } from '@/lib/rascunho-troca-idioma';
 import { LinkHorarioPerfil } from '@/components/oficina/AvisoHorarioSlot';
+import DispensarPedido from '@/components/oficina/DispensarPedido';
 import SeletorCheckin, { type LinhaCheckin } from '@/components/oficina/SeletorCheckin';
 import InfoI from '@/components/ui/InfoI';
 
@@ -123,9 +124,20 @@ export default function EnviarOrcamentoPage() {
   const [prazoDias, setPrazoDias] = useState(PRAZO_PADRAO_DIAS);
   const [tempoExecucaoHoras, setTempoExecucaoHoras] = useState(TEMPO_PADRAO_HORAS);
   const [observacoes, setObservacoes] = useState('');
-  // validade OBRIGATORIA e vazia no inicio (check-in v2, decisao 4): a oficina escolhe; minimo = ultima data de
-  // check-in; o banco tambem garante (trigger 082). Antes nascia hoje + 30 pelo dia UTC do aparelho.
+  // validade OBRIGATORIA; nasce vazia e, assim que a oficina escolhe uma data de check-in, e PRE-PREENCHIDA com
+  // "ultima data valida + 7 dias" (validadeSugerida), editavel (dono 19/11 - P5; substitui a decisao 4 do check-in
+  // v2, em que ficava vazia ate a oficina escolher). Mexida a mao, deixa de ser recalculada. Minimo = ultima data
+  // de check-in; o banco tambem garante (trigger 082).
   const [validade, setValidade] = useState('');
+  const validadeManual = useRef(false);
+  const [validadeAuto, setValidadeAuto] = useState(false);
+  // primeiro orcamento desta oficina na plataforma (P7): mostra um exemplo pronto, fechado
+  const [primeiroDaOficina, setPrimeiroDaOficina] = useState(false);
+  useEffect(() => {
+    if (!oficina?.id) return;
+    supabase.from('orcamentos').select('id', { count: 'exact', head: true }).eq('oficina_id', oficina.id)
+      .then(({ count }) => setPrimeiroDaOficina(count === 0));
+  }, [oficina?.id]);
   const [submitted, setSubmitted] = useState(false);
   useTopoAoMudar(submitted); // tela trocada inteira: abre no alto (dono 08/11)
   // garantia do servico (dias, a partir da entrega); '' = nao informada
@@ -209,6 +221,20 @@ export default function EnviarOrcamentoPage() {
   // a oficina tocava e nada acontecia - botao desativado com total 0 e falha do servidor calada)
   const [enviandoOrc, setEnviandoOrc] = useState(false);
   const [erroEnvio, setErroEnvio] = useState('');
+  // dono 19/11: "evidencia clara dos campos obrigatorios e, ao tentar enviar, mostrar ONDE falta": preco sem valor
+  // fica vermelho no proprio campo (erroItemValor) e um resumo ao lado do botao lista o que falta com links que
+  // levam ao campo (resumoFaltas); cada erro some assim que o campo e preenchido
+  const [erroItemValor, setErroItemValor] = useState(false);
+  const [resumoFaltas, setResumoFaltas] = useState<('valor' | 'datas' | 'validade')[]>([]);
+  const refItens = useRef<HTMLDivElement>(null);
+  const tiraFalta = (f: 'valor' | 'datas' | 'validade') => setResumoFaltas((r) => (r.includes(f) ? r.filter((x) => x !== f) : r));
+  // leva a tela ao campo e poe o foco nele (links do resumo e primeiro erro ao enviar)
+  const irAoCampo = (f: 'valor' | 'datas' | 'validade') => {
+    const alvo = f === 'valor' ? refItens.current : f === 'datas' ? refCheckin.current : refValidade.current;
+    const campo = f === 'valor' ? document.getElementById('orc-item-valor-0')
+      : f === 'datas' ? alvo?.querySelector<HTMLElement>('[data-testid="ck-adicionar"]') : document.getElementById('cacb1-103');
+    setTimeout(() => { alvo?.scrollIntoView({ block: 'center', behavior: 'smooth' }); campo?.focus({ preventScroll: true }); }, 50);
+  };
 
   // Pre-fill form with existing quote data for revisions
   useEffect(() => {
@@ -235,8 +261,10 @@ export default function EnviarOrcamentoPage() {
       } else {
         setObservacoes(obsRaw);
       }
-      // revisao: validade e datas salvas vem preenchidas (o "vazio" vale so para orcamento novo - spec v2 2.11)
+      // revisao: validade e datas salvas vem preenchidas (o "vazio" vale so para orcamento novo - spec v2 2.11);
+      // a validade gravada conta como escolhida a mao (nao e recalculada ao mexer nas datas)
       setValidade(existingQuote.validade ? String(existingQuote.validade).slice(0, 10) : '');
+      if (existingQuote.validade) validadeManual.current = true;
       setGarantiaDias((existingQuote as any).garantia_dias != null ? String((existingQuote as any).garantia_dias) : '');
       if (!slotsVoltaram.current && existingQuote.disponibilidade && existingQuote.disponibilidade.length > 0) {
         // janela gravada; linha antiga (sem horas) = 08-12 / 13-17, que e o que o cliente viu
@@ -253,10 +281,19 @@ export default function EnviarOrcamentoPage() {
   const mudarSlots = (ls: LinhaCheckin[]) => {
     setErroHorario(false);
     setErroDiaFechado(false);
-    if (ls.length) setErroSemCheckin(false);
+    if (ls.length) { setErroSemCheckin(false); tiraFalta('datas'); }
     // a validade so fica vermelha de novo ao enviar (decisao 4); se a correcao ja resolveu, some
     if (erroVal && !erroValidade(validade, ls.map((s) => s.data), hojeLocal(undefined, (oficina as any)?.pais ?? null))) setErroVal(null);
     setSlots(ls);
+    // P5: validade = ultima data valida + 7 dias, enquanto a oficina nao a escolheu a mao
+    if (!validadeManual.current) {
+      const pais = (oficina as any)?.pais ?? null;
+      const ultimaOk = maiorData(ls.filter((s) => janelaAindaVale(s.data, { inicio: s.hora_inicio, fim: s.hora_fim }, undefined, pais) && conflitoHorario(s.data, 'manha', horarioOficina) !== 'fechado').map((s) => s.data));
+      const rec = validadeSugerida(ultimaOk, horarioOficina);
+      setValidade(rec || '');
+      setValidadeAuto(!!rec);
+      if (rec) { setErroVal(null); tiraFalta('validade'); }
+    }
   };
 
   const addItem = () => {
@@ -329,7 +366,6 @@ ${d.observacoes}` : d.observacoes));
     }
     if (enviandoOrc) return;
     setErroEnvio('');
-    if (total === 0) { setErroEnvio(t('itemSemValor')); return; }
     // carro ja na oficina (em_andamento): o cartao das datas nao aparece e a oficina nao tem como corrigir
     // a data - nao valida (as datas salvas continuam sendo regravadas como antes; auditoria Fable R1)
     const datasVisiveis = solicitacao?.status !== 'em_andamento';
@@ -340,16 +376,22 @@ ${d.observacoes}` : d.observacoes));
     // validade: obrigatoria; com o carro ja na oficina so "vazia" conta (as datas ficaram para tras)
     const ev = erroValidade(validade, datasVisiveis ? slots.map((s) => s.data) : [], hojeLocal(undefined, paisSub));
     const evConta = ev && (datasVisiveis || ev === 'vazia') ? ev : null;
-    setErroSemCheckin(semCheckin); setErroHorario(passado); setErroDiaFechado(fechado); setErroVal(evConta);
-    if (semCheckin || passado || fechado || evConta) {
-      // rola ate o primeiro erro, de cima para baixo (datas de check-in, depois a validade - QA D7), e o foco vai
-      // para o CAMPO com erro, nunca para o (i) (QA D11): sem data -> "+"; linha passada/fechada -> o "x" dela
-      const ruim = slots.findIndex((s) => !janelaAindaVale(s.data, { inicio: s.hora_inicio, fim: s.hora_fim }, undefined, paisSub) || conflitoHorario(s.data, 'manha', horarioOficina) === 'fechado');
-      const alvo = semCheckin || passado || fechado ? refCheckin.current : refValidade.current;
-      const campo = semCheckin ? alvo?.querySelector<HTMLElement>('[data-testid="ck-adicionar"]')
-        : passado || fechado ? alvo?.querySelector<HTMLElement>(`[data-testid="ck-remover-${ruim}"]`)
-          : document.getElementById('cacb1-103');
-      setTimeout(() => { alvo?.scrollIntoView({ block: 'center', behavior: 'smooth' }); campo?.focus({ preventScroll: true }); }, 50);
+    const semValor = total === 0;
+    setErroItemValor(semValor); setErroSemCheckin(semCheckin); setErroHorario(passado); setErroDiaFechado(fechado); setErroVal(evConta);
+    // resumo ao lado do botao: o que falta, na ordem da tela (preco, datas, validade)
+    const faltas: ('valor' | 'datas' | 'validade')[] = [];
+    if (semValor) faltas.push('valor');
+    if (semCheckin || passado || fechado) faltas.push('datas');
+    if (evConta) faltas.push('validade');
+    setResumoFaltas(faltas);
+    if (faltas.length) {
+      // rola ate o primeiro erro, de cima para baixo (preco, datas de check-in, depois a validade - QA D7), e o foco
+      // vai para o CAMPO com erro, nunca para o (i) (QA D11): sem data -> "+"; linha passada/fechada -> o "x" dela
+      if (faltas[0] === 'datas' && !semCheckin) {
+        const ruim = slots.findIndex((s) => !janelaAindaVale(s.data, { inicio: s.hora_inicio, fim: s.hora_fim }, undefined, paisSub) || conflitoHorario(s.data, 'manha', horarioOficina) === 'fechado');
+        const alvo = refCheckin.current; const campo = alvo?.querySelector<HTMLElement>(`[data-testid="ck-remover-${ruim}"]`);
+        setTimeout(() => { alvo?.scrollIntoView({ block: 'center', behavior: 'smooth' }); campo?.focus({ preventScroll: true }); }, 50);
+      } else irAoCampo(faltas[0]);
       return;
     }
 
@@ -626,17 +668,33 @@ ${d.observacoes}` : d.observacoes));
         {solicitacao.veiculo?.fipe_marca} {solicitacao.veiculo?.fipe_modelo} - {rotuloTipoPedido(tc, solicitacao.tipo, solicitacao.descricao)}
       </p>
       {!isRevision && (
-        <p role="note" data-testid="passos-orcamento" className="mb-6 rounded-lg border border-primary-200 bg-primary-50 p-3 text-sm text-primary-900">
+        <p role="note" data-testid="passos-orcamento" className="mb-3 rounded-lg border border-primary-200 bg-primary-50 p-3 text-sm text-primary-900">
           {t('passosResumo')}
         </p>
+      )}
+      <p className="mb-3 text-xs text-gray-500" data-testid="legenda-obrigatorio"><span className="text-red-600" aria-hidden="true">*</span> {t('legendaObrigatorio')}</p>
+      {/* P7 (dono 19/11): primeiro orcamento da oficina na plataforma - um exemplo pronto, fechado, de como fica para o cliente */}
+      {!isRevision && primeiroDaOficina && (
+        <details className="mb-6 rounded-lg border border-gray-200 bg-white p-3 text-sm" data-testid="exemplo-orcamento">
+          <summary className="cursor-pointer font-medium text-gray-900 min-h-[44px] flex items-center">📄 {t('exemploTitulo')}</summary>
+          <div className="mt-3 rounded-lg bg-gray-50 p-3 text-gray-800 space-y-1">
+            <p className="font-semibold">{t('exemploItem')}</p>
+            <p>{t('exemploDatas')}</p>
+            <p>{t('exemploValidade')}</p>
+            <p className="text-gray-600">{t('exemploNota')}</p>
+          </div>
+          <p className="mt-2 text-xs text-gray-500">{t('exemploRodape')}</p>
+        </details>
       )}
 
       {/* Request summary */}
       <div className="bg-gray-50 rounded-lg p-4 mb-6">
         <TextoTraduzido texto={cleanDescricao(solicitacao.descricao)} className="text-sm text-gray-600" />
-        <p className="text-xs text-gray-500 mt-2">
-          {/* antes do aceite a oficina nao le o nome (privacidade): so o local, sem "Cliente: |" */}
-          {solicitacao.cliente?.nome ? `${t('clienteLabel')}: ${solicitacao.cliente.nome} | ${solicitacao.endereco || ''}` : solicitacao.endereco}
+        <p className="text-xs text-gray-500 mt-2" data-testid="cliente-local-form">
+          {/* antes do aceite (101): sem nome e sem rua - so "Cliente · codigo" e a area; depois, nome e endereco */}
+          {solicitacao.cliente?.nome
+            ? `${t('clienteLabel')}: ${solicitacao.cliente.nome} | ${solicitacao.endereco || ''}`
+            : [(solicitacao.cliente as any)?.codigo ? `${t('clienteLabel')} · ${(solicitacao.cliente as any).codigo}` : null, (solicitacao as any).area || null].filter(Boolean).join(' | ')}
         </p>
       </div>
 
@@ -705,8 +763,9 @@ ${d.observacoes}` : d.observacoes));
           {lendoDoc === 'grande' && <p className="text-sm text-red-700 mt-2" role="alert">{t('importarGrande')}</p>}
         </div>
 
-        <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center" data-testid="titulo-itens"><Passo n={1} />{t('itensOrcamento')}</h2>
+        <div ref={refItens} className={`card mb-6 ${erroItemValor ? 'ring-2 ring-red-300' : ''}`} data-testid="cartao-itens">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center" data-testid="titulo-itens"><Passo n={1} />{t('itensOrcamento')} <span className="text-red-600 ml-1" aria-hidden="true">*</span></h2>
+          {erroItemValor && <p id="erro-item-valor" role="alert" className="mb-3 text-sm font-medium text-red-700" data-testid="erro-item-valor">⛔ {t('itemSemValor')}</p>}
           {removidos.length > 0 && (
             <p data-testid="itens-removidos" className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
               {tMud('itensRemovidos', { lista: removidos.map((o) => o.descricao).join(', ') })}
@@ -760,13 +819,17 @@ ${d.observacoes}` : d.observacoes));
                   <div className="flex gap-3">
                     <div className="flex-1">
                       <CampoNumero
-                        className="input-field"
+                        id={`orc-item-valor-${index}`}
+                        className={`input-field ${erroItemValor ? '!border-red-400 bg-red-50' : ''}`}
                         placeholder={t('placeholderValor')}
-                        aria-label={t('placeholderValor')}
+                        aria-label={`${t('placeholderValor')} *`}
+                        aria-required="true"
+                        aria-invalid={erroItemValor || undefined}
+                        aria-describedby={erroItemValor ? 'erro-item-valor' : undefined}
                         decimal
                         vazioQuandoZero
                         value={item.valor_unitario}
-                        onChange={(n) => updateItem(index, 'valor_unitario', n)}
+                        onChange={(n) => { updateItem(index, 'valor_unitario', n); if (n > 0) { setErroItemValor(false); tiraFalta('valor'); } }}
                       />
                     </div>
                     <div className="w-20">
@@ -789,6 +852,13 @@ ${d.observacoes}` : d.observacoes));
               </div>
             ))}
           </div>
+
+          {/* nao sabe o preco exato (dono 19/11): o maximo que acha que pode custar, ou conversa com o cliente antes
+              (a oficina pode escrever ao cliente enquanto ve o pedido - pode_escrever_conversa, 035) */}
+          <p role="note" data-testid="dica-preco-maximo" className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+            💡 {t('dicaPrecoMaximo')}{' '}
+            <Link href={`/oficina/mensagens/${solicitacao.id}`} className="font-medium underline" data-testid="link-conversa-antes">{t('dicaPrecoMaximoChat')} ›</Link>
+          </p>
 
           <button
             type="button"
@@ -837,7 +907,7 @@ ${d.observacoes}` : d.observacoes));
 
         {/* Prazo & Execucao */}
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('prazoExecucao')}</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('prazoExecucao')} <span className="text-sm font-normal text-gray-500">{t('opcionalSufixo')}</span></h2>
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
               <div className="mb-1 flex flex-wrap items-center gap-1.5">
@@ -952,8 +1022,11 @@ ${d.observacoes}` : d.observacoes));
             aria-describedby={erroVal ? 'erro-validade' : ultimaData ? 'dica-validade' : undefined}
             min={validadeMin}
             value={validade}
-            onChange={(e) => { setValidade(e.target.value); if (erroVal && !erroValidade(e.target.value, solicitacao.status !== 'em_andamento' ? slots.map((s) => s.data) : [], hojeOf)) setErroVal(null); }}
+            onChange={(e) => { validadeManual.current = true; setValidadeAuto(false); setValidade(e.target.value); if (erroVal && !erroValidade(e.target.value, solicitacao.status !== 'em_andamento' ? slots.map((s) => s.data) : [], hojeOf)) { setErroVal(null); tiraFalta('validade'); } }}
           />
+          {validadeAuto && validade && !erroVal && (
+            <p className="mt-1 text-xs text-gray-500" data-testid="validade-auto">{t('validadeAutoDica')}</p>
+          )}
           {erroVal ? (
             <div id="erro-validade" role="alert" data-testid="erro-validade" data-tipo={erroVal} className="mt-1 rounded-lg border border-red-200 bg-red-50 p-2 text-sm text-red-800">
               <p>⛔ {erroVal === 'antes'
@@ -962,7 +1035,7 @@ ${d.observacoes}` : d.observacoes));
                   : ultimaData ? t('validadeVaziaErroComData', { ultima: fmtCurta(ultimaData), recomendada: fmtCurta(validadeRecTexto), dias: VALIDADE_FOLGA_DIAS })
                     : t('validadeVaziaErro')}</p>
               {validadeRecomendada && (
-                <button type="button" data-testid="usar-validade-recomendada" onClick={() => { setValidade(validadeRecomendada); setErroVal(null); }}
+                <button type="button" data-testid="usar-validade-recomendada" onClick={() => { setValidade(validadeRecomendada); setErroVal(null); tiraFalta('validade'); }}
                   className="mt-1.5 min-h-[44px] rounded-lg border border-red-300 bg-white px-3 text-sm font-medium text-red-800 hover:bg-red-100">{t('validadeUsar', { data: fmtCurta(validadeRecomendada) })}</button>
               )}
             </div>
@@ -972,7 +1045,7 @@ ${d.observacoes}` : d.observacoes));
               {/* a data recomendada tambem ANTES do erro (19/11): a oficina continua escolhendo - o campo nasce vazio
                   (decisao 4) e so muda se ela tocar no botao */}
               {validadeRecomendada && !validade && (
-                <button type="button" data-testid="usar-validade-sugerida" onClick={() => setValidade(validadeRecomendada)}
+                <button type="button" data-testid="usar-validade-sugerida" onClick={() => { setValidade(validadeRecomendada); setValidadeAuto(true); tiraFalta('validade'); }}
                   className="min-h-[36px] rounded-lg border border-primary-300 bg-white px-3 text-sm font-medium text-primary-800 hover:bg-primary-50">{t('validadeUsar', { data: fmtCurta(validadeRecomendada) })}</button>
               )}
             </div>
@@ -981,7 +1054,7 @@ ${d.observacoes}` : d.observacoes));
 
         {/* Observacoes */}
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('observacoes')}</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('observacoes')} <span className="text-sm font-normal text-gray-500">{t('opcionalSufixo')}</span></h2>
           <div className="mt-4">
             <label htmlFor="cacb1-104" className="block text-sm font-medium text-gray-700 mb-1">
               {t('observacoesOpcional')}
@@ -1002,6 +1075,23 @@ ${d.observacoes}` : d.observacoes));
           </div>
         )}
         {erroEnvio && <p ref={rolarAteAqui} role="alert" className="mb-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800" data-testid="erro-envio-orcamento">{erroEnvio}</p>}
+        {/* resumo do que falta, ao lado do botao, com links que levam ao campo (dono 19/11) */}
+        {resumoFaltas.length > 0 && (
+          <div role="alert" className="mb-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800" data-testid="resumo-faltas" data-n={resumoFaltas.length}>
+            <span className="font-medium">{t('faltasResumo', { n: resumoFaltas.length })}</span>{' '}
+            {resumoFaltas.map((f, i) => (
+              <span key={f}>
+                <button type="button" onClick={() => irAoCampo(f)} className="underline font-medium min-h-[32px]" data-testid={`falta-${f}`}>{t(`campo_${f}`)}</button>{i < resumoFaltas.length - 1 ? ', ' : ''}
+              </span>
+            ))}
+          </div>
+        )}
+        {/* P4 (dono 19/11): "nao tenho interesse" tambem aqui - o pedido sai de "Para responder" e volta a lista */}
+        {!isRevision && oficina && ['aberta', 'em_orcamento'].includes(statusSol) && (
+          <div className="mb-3 flex justify-end" data-testid="dispensar-no-form">
+            <DispensarPedido destaque solicitacaoId={solicitacao.id} oficinaId={oficina.id} aoMudar={() => router.push('/oficina/pedidos')} />
+          </div>
+        )}
         <div className="flex justify-end gap-3">
           <button type="button" onClick={() => router.back()} className="btn-secondary">
             {t('cancelar')}

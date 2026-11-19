@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import ExcluirContaClient from './ExcluirContaClient';
+import PausarAvisos from '@/components/conta/PausarAvisos';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -22,6 +23,8 @@ export default async function ExcluirContaPage({ params }: { params: Promise<{ l
         <li>{t('item3')}</li>
         <li>{t('item4')}</li>
       </ul>
+      {/* oficina: antes de apagar, a opcao de so pausar os avisos (101, dono 19/11) */}
+      <div className="mb-6"><PausarAvisos /></div>
       <ExcluirContaClient />
     </div>
   );

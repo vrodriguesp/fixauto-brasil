@@ -143,6 +143,35 @@ try {
   const { data: lOf2 } = await of2.a.from('lojas_pecas').select('id, nome_fantasia').eq('id', l1.id);
   ok('L-07 legitimo: oficina (aprovada ou nao) le nome/pais das lojas (telas de pecas, conversa)', (lOf || []).length === 2 && (lOf2 || []).length === 1 && lOf.some((x) => x.nome_fantasia === `SEG LOJA ${tag}`), JSON.stringify({ n: (lOf || []).length, n2: (lOf2 || []).length }));
 
+  // N-01..N-07 (migracao 101, dono 19/11): antes do aceite a oficina NAO le o nome/foto do cliente (so o codigo) nem a
+  // rua do pedido (so a area); depois do aceite, tudo como antes. A pausa dos avisos so na propria linha.
+  const { data: sN } = await cli.a.from('solicitacoes').insert({ cliente_id: cli.id, veiculo_id: v.id, tipo: 'mecanica', descricao: 'privacidade', urgencia: 'media', latitude: 59.43, longitude: 24.75, endereco: 'Narva mnt 7, 10117 Tallinn, Estonia' }).select('id, area').single();
+  sols.push(sN.id);
+  // o orcamento de A-03 ficou 'aceito' (pedido s): sem ele a oficina ainda nao atende este cliente
+  await sb.from('orcamentos').update({ status: 'enviado' }).eq('id', orc.id);
+  ok('N-01 area derivada = bairro/cidade, sem rua nem codigo postal', sN.area === 'Tallinn, Estonia', sN.area);
+  const { data: rc1 } = await of.a.rpc('resumo_clientes', { p_ids: [cli.id] });
+  ok('N-02 oficina no raio SEM aceite: resumo_clientes da codigo mas NAO nome/foto', (rc1 || []).length === 1 && rc1[0].codigo != null && rc1[0].nome == null && rc1[0].avatar_url == null, JSON.stringify(rc1));
+  const { data: rp1 } = await of.a.rpc('resumo_clientes_pedidos', { p_sols: [sN.id] });
+  ok('N-03 resumo_clientes_pedidos SEM aceite: codigo sim, nome nao', (rp1 || []).length === 1 && rp1[0].codigo != null && rp1[0].nome == null, JSON.stringify(rp1));
+  const { data: rpOutro } = await outro.a.rpc('resumo_clientes_pedidos', { p_sols: [sN.id] });
+  ok('N-04 outro motorista NAO le o resumo do cliente pelo pedido', !(rpOutro || []).length, JSON.stringify(rpOutro));
+  const { data: oN } = await sb.from('orcamentos').insert({ solicitacao_id: sN.id, oficina_id: o.id, valor_total: 100, prazo_dias: 1, tempo_execucao_horas: 1, validade: dia(10), status: 'aceito' }).select('id').single();
+  const { data: rp2 } = await of.a.rpc('resumo_clientes_pedidos', { p_sols: [sN.id] });
+  const { data: rc2 } = await of.a.rpc('resumo_clientes', { p_ids: [cli.id] });
+  ok('N-05 legitimo: com orcamento ACEITO a oficina le o nome (por pedido e por cliente)', rp2?.[0]?.nome === 'Novo Nome' && rc2?.[0]?.nome === 'Novo Nome', JSON.stringify({ rp2, rc2 }));
+  const { data: rpSelf } = await cli.a.rpc('resumo_clientes_pedidos', { p_sols: [sN.id] });
+  ok('N-05 legitimo: o proprio cliente le o proprio nome', rpSelf?.[0]?.nome === 'Novo Nome');
+  await sb.from('orcamentos').delete().eq('id', oN.id);
+  const { error: ePausa } = await of.a.from('profiles').update({ avisos_pausados_ate: new Date(Date.now() + 7 * 86400000).toISOString() }).eq('id', of.id);
+  const { data: pPausa } = await sb.from('profiles').select('avisos_pausados_ate').eq('id', of.id).single();
+  ok('N-06 legitimo: oficina pausa os proprios avisos', !ePausa && !!pPausa?.avisos_pausados_ate, ePausa?.message);
+  await cli.a.from('profiles').update({ avisos_pausados_ate: null }).eq('id', of.id);
+  const { data: pPausa2 } = await sb.from('profiles').select('avisos_pausados_ate').eq('id', of.id).single();
+  ok('N-07 outro usuario NAO mexe na pausa alheia', !!pPausa2?.avisos_pausados_ate);
+  await sb.from('profiles').update({ avisos_pausados_ate: null }).eq('id', of.id);
+  await sb.from('orcamentos').update({ status: 'aceito' }).eq('id', orc.id);
+
   // M-05: avisos em massa pelo navegador sao barrados
   let barrado = false;
   for (let i = 0; i < 45 && !barrado; i++) {

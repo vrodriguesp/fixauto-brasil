@@ -735,8 +735,8 @@
     "atualizarOrcamento": "Update Quote",
     "semComissaoOrcamento": "BipFix charges no commission on this quote. The amount you send is the amount the customer sees.",
     "horarioPassado": "One of the times has already passed. Pick a period today that has not ended yet, or a later day.",
-    "importarTitulo": "Already have the quote in another system?",
-    "importarTexto": "Upload the photo or PDF: the AI rewrites the quote into the fields below. Check and correct before sending. The document is not sent to the customer.",
+    "importarTitulo": "Optional: already have the quote in another system?",
+    "importarTexto": "If you like, upload the photo or PDF and the AI fills in the items below (check before sending). Not required: you can type the items yourself.",
     "importarLendo": "Reading the document…",
     "importarConfira": "Items filled in from the document. Check quantities and prices before sending.",
     "importarErro": "This document could not be read. Try a sharper photo or the PDF.",
@@ -795,7 +795,22 @@
     "validadeDica": "Minimum: {ultima}. Recommended: {recomendada} or later.",
     "linhaPassada": "This time has already passed. Remove it or pick another date.",
     "avisoJanelaAcabaLogo": "This window ends today at {fim} – the customer will have less than {horas} hours (about {min} min) to bring the car. If that works, you can send it; otherwise pick a later day.",
-    "passosResumo": "To send a quote you only need 3 things: ① one item with a price, ② one check-in date, ③ the quote validity date. Everything else is optional."
+    "passosResumo": "To send a quote you only need 3 things: ① one item with a price, ② one check-in date, ③ the quote validity date. Everything else is optional.",
+    "dicaPrecoMaximo": "Not sure of the exact price? Put the maximum you think it could cost — customers are happy when they end up paying less. Or ask the customer for details before quoting:",
+    "dicaPrecoMaximoChat": "chat with the customer",
+    "validadeAutoDica": "Filled in automatically: last check-in date + 7 days. You can change it.",
+    "exemploTitulo": "Example: what a finished quote looks like to the customer",
+    "exemploItem": "Rear bumper repair and paint — €300",
+    "exemploDatas": "Check-in: Tue 25/11, 08:00–10:00 or Wed 26/11, 13:00–15:00",
+    "exemploValidade": "Quote valid until 03/12",
+    "exemploNota": "Note: maximum price; it may be lower after inspection.",
+    "exemploRodape": "The customer sees this, picks a date and accepts. Not sure of the price? Put the maximum or ask in the chat.",
+    "legendaObrigatorio": "required",
+    "opcionalSufixo": "(optional)",
+    "faltasResumo": "{n, plural, one {Fill in # field:} other {Fill in # fields:}}",
+    "campo_valor": "price",
+    "campo_datas": "check-in date",
+    "campo_validade": "quote validity"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Password must be at least 8 characters",
@@ -1121,7 +1136,8 @@
     "clienteEnviouNumero": "The customer sent you their phone number.",
     "orcamentoVencidoTexto": "This quote expired on {data}. The customer can no longer accept it. To continue, change the quote with new check-in dates and a new validity date.",
     "convidada": "Sent to you by BipFix",
-    "convidadaTexto": "BipFix sent this request to you. You can send a quote even if it is not your usual service."
+    "convidadaTexto": "BipFix sent this request to you. You can send a quote even if it is not your usual service.",
+    "nomeAposAceite": "The customer’s name and address appear after they accept your quote."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Vehicle received at the shop",

@@ -182,7 +182,7 @@ export default function SolicitacaoDetalhePage() {
 
       {!myQuote && oficina && ['aberta', 'em_orcamento'].includes(sol.status) && (
         <div className="mb-6 -mt-2">
-          <DispensarPedido solicitacaoId={sol.id} oficinaId={oficina.id} dispensa={dispensa} aoMudar={carregarDispensa} />
+          <DispensarPedido destaque solicitacaoId={sol.id} oficinaId={oficina.id} dispensa={dispensa} aoMudar={carregarDispensa} />
         </div>
       )}
 
@@ -331,8 +331,10 @@ export default function SolicitacaoDetalhePage() {
                 </span>
               </div>
               <div>
-                <p className="font-medium text-gray-900 text-sm">{sol.cliente?.nome || t('clienteFallback')}</p>
-                <p className="text-xs text-gray-500">{sol.endereco}</p>
+                {/* nome e rua so depois do aceite (101, dono 19/11): antes, "Cliente · codigo" e a area */}
+                <p className="font-medium text-gray-900 text-sm" data-testid="cliente-nome">{sol.cliente?.nome || (sol.cliente?.codigo ? `${t('clienteFallback')} · ${sol.cliente.codigo}` : t('clienteFallback'))}</p>
+                <p className="text-xs text-gray-500" data-testid="cliente-local">{isAccepted || isEmAndamento || sol.status === 'concluida' ? sol.endereco : (sol as any).area || ''}</p>
+                {!(isAccepted || isEmAndamento || sol.status === 'concluida') && <p className="mt-1 text-xs text-gray-400" data-testid="nome-apos-aceite">{t('nomeAposAceite')}</p>}
               </div>
             </div>
             <p className="text-xs text-gray-500">

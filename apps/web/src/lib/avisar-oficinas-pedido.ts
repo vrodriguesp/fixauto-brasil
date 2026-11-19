@@ -30,7 +30,7 @@ export const TIPOS: Record<string, Record<string, string>> = {
 export const TETO_AVISO_ADMIN = 50;
 
 export type PedidoAviso = {
-  id: string; numero: number | null; tipo: string; descricao: string | null; urgencia: string | null; endereco: string | null;
+  id: string; numero: number | null; tipo: string; descricao: string | null; urgencia: string | null; endereco: string | null; area: string | null;
   latitude: number | null; longitude: number | null; pais: string | null; status: string; emergencia_id: string | null;
   veiculo: { fipe_marca?: string | null; fipe_modelo?: string | null; fipe_ano?: string | null } | null;
   cliente: { conta_teste?: boolean | null } | null;
@@ -40,12 +40,14 @@ export type OficinaAviso = {
   oficina_id: string; profile_id: string; nome: string; cidade: string | null; endereco: string | null; pais: string | null;
   especialidades: string[]; ativa: boolean; km: number | null; raio: number;
   idioma: string | null; conta_teste: boolean; email: string | null; nome_dono: string | null;
+  avisos_pausados_ate: string | null; // 101: a oficina pausou os avisos de pedido novo ate esta data
 };
 
 export type MotivoJaRecebeu = 'aviso' | 'orcamento' | 'dispensa' | 'convite';
 export type JaRecebeu = { oficina_id: string; profile_id: string; nome: string; motivo: MotivoJaRecebeu; motivos: MotivoJaRecebeu[]; origem_convite: string | null };
 
-const SELECT_PEDIDO = 'id, numero, tipo, descricao, urgencia, endereco, latitude, longitude, pais, status, emergencia_id, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano), cliente:profiles!solicitacoes_cliente_id_fkey(conta_teste)';
+// area (101): bairro/cidade sem a rua - e o que a oficina ve antes do aceite (sino, push, e-mail)
+const SELECT_PEDIDO = 'id, numero, tipo, descricao, urgencia, endereco, area, latitude, longitude, pais, status, emergencia_id, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano), cliente:profiles!solicitacoes_cliente_id_fkey(conta_teste)';
 
 export async function carregarPedido(solicitacaoId: string): Promise<PedidoAviso | null> {
   const { data } = await supabaseAdmin.from('solicitacoes').select(SELECT_PEDIDO).eq('id', solicitacaoId).maybeSingle();
@@ -55,13 +57,14 @@ export async function carregarPedido(solicitacaoId: string): Promise<PedidoAviso
 /** Todas as oficinas (ativas ou nao), com a distancia ate o pedido. */
 export async function oficinasComDistancia(sol: Pick<PedidoAviso, 'latitude' | 'longitude'>): Promise<OficinaAviso[]> {
   const { data } = await supabaseAdmin.from('oficinas')
-    .select('id, profile_id, nome_fantasia, cidade, endereco, pais, ativa, especialidades, latitude, longitude, raio_atendimento_km, profile:profiles!oficinas_profile_id_fkey(idioma, conta_teste, email, nome)');
+    .select('id, profile_id, nome_fantasia, cidade, endereco, pais, ativa, especialidades, latitude, longitude, raio_atendimento_km, profile:profiles!oficinas_profile_id_fkey(idioma, conta_teste, email, nome, avisos_pausados_ate)');
   return (data || []).map((o: any) => ({
     oficina_id: o.id, profile_id: o.profile_id, nome: o.nome_fantasia || '', cidade: o.cidade ?? null, endereco: o.endereco ?? null, pais: o.pais ?? null,
     especialidades: o.especialidades || [], ativa: !!o.ativa, raio: o.raio_atendimento_km || 30,
     km: sol.latitude != null && sol.longitude != null && o.latitude != null && o.longitude != null
       ? distanciaKm(sol.latitude, sol.longitude, o.latitude, o.longitude) : null,
     idioma: o.profile?.idioma ?? null, conta_teste: !!o.profile?.conta_teste, email: o.profile?.email ?? null, nome_dono: o.profile?.nome ?? null,
+    avisos_pausados_ate: o.profile?.avisos_pausados_ate ?? null,
   }));
 }
 
@@ -99,6 +102,8 @@ export function motivosDe(o: Pick<OficinaAviso, 'oficina_id' | 'profile_id'>, j:
 /** A regra do aviso automatico (igual a minha_oficina_atende sem o convite, migracoes 056/064/067). */
 export function oficinaBate(o: OficinaAviso, sol: Pick<PedidoAviso, 'tipo' | 'cliente'>, tipo = sol.tipo): boolean {
   const clienteTeste = !!sol.cliente?.conta_teste;
+  // avisos pausados pela oficina (101): nao recebe pedido novo ate a data
+  if (o.avisos_pausados_ate && Date.parse(o.avisos_pausados_ate) > Date.now()) return false;
   // conta de teste (revisor das lojas) so avisa oficina de teste, e vice-versa (migracao 063)
   return o.ativa && o.conta_teste === clienteTeste && tipoCompativel(o.especialidades, tipo) && o.km != null && o.km <= o.raio;
 }
@@ -135,7 +140,8 @@ export async function avisarOficinasDoPedido(solicitacaoId: string): Promise<num
 
 const carroDe = (sol: PedidoAviso) => [sol.veiculo?.fipe_marca, sol.veiculo?.fipe_modelo].filter(Boolean).join(' ');
 const idiomaDe = (o: OficinaAviso) => (o.idioma && TIPOS[o.idioma] ? o.idioma : 'en');
-const mensagemDe = (sol: PedidoAviso, l: string, carro: string) => [(TIPOS[l] || TIPOS.en)[sol.tipo] || sol.tipo, carro, sol.endereco].filter(Boolean).join(' - ');
+// so a area (101): a rua do cliente nunca sai no aviso antes do aceite
+const mensagemDe = (sol: PedidoAviso, l: string, carro: string) => [(TIPOS[l] || TIPOS.en)[sol.tipo] || sol.tipo, carro, sol.area].filter(Boolean).join(' - ');
 
 /**
  * Aviso de pedido novo (sino `nova_solicitacao` nas 6 linguas + e-mail + push pelo gatilho 066), identico ao do
@@ -251,7 +257,7 @@ async function emailPedido(o: OficinaAviso, sol: PedidoAviso, carro: string, tex
           <p style="margin:0 0 6px;font-size:18px;font-weight:bold;color:#111827;">${escapeHtml(tipo)}</p>
           ${carro ? `<p style="margin:0 0 6px;">${escapeHtml(carro)}${ano && ano !== '-' ? ' ' + escapeHtml(String(ano)) : ''}</p>` : ''}
           ${desc ? `<p style="margin:0 0 6px;color:#374151;">${escapeHtml(desc)}</p>` : ''}
-          <p style="margin:0;color:#6b7280;font-size:14px;">${escapeHtml(sol.endereco || '')} · ${x.urg[sol.urgencia || ''] || ''}</p>
+          <p style="margin:0;color:#6b7280;font-size:14px;">${escapeHtml(sol.area || '')} · ${x.urg[sol.urgencia || ''] || ''}</p>
         </div>
         <p style="margin-top:24px;"><a href="${links.abrir}" style="display:inline-block;background:#1e40af;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;">${x.botao}</a></p>
         ${links.naoTenhoInteresse !== links.abrir ? `<p style="margin:12px 0 0;font-size:14px;"><a href="${links.naoTenhoInteresse}" style="color:#4b5563;">${SEM_INTERESSE[idioma] || SEM_INTERESSE.en}</a></p>` : ''}

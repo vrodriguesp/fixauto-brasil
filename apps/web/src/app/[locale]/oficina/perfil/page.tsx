@@ -20,11 +20,11 @@ import { INTL_LOCALE } from '@/lib/utils';
 import { usePecasV3 } from '@/hooks/use-pecas-v3';
 import { PerfilFiscalCampos, fiscalDoPerfil, colunasFiscais, type ValorFiscal } from '@/components/pecas/FornecedorV3';
 import AvisosNavegador from '@/components/pecas/AvisosNavegador';
+import CartaoConta from '@/components/conta/CartaoConta';
 
 export default function PerfilOficinaPage() {
   const t = useTranslations('oficinaPerfil');
   const tErr = useTranslations('erros');
-  const tx = useTranslations('excluirConta');
   const tc = useTranslations('constants');
   const tp = useTranslations('pecas');
   const locale = useLocale();
@@ -784,9 +784,8 @@ export default function PerfilOficinaPage() {
       </div>
       {/* lote 3c: avisos no navegador (so com a tela nova, so o dono) */}
       {v3 && ehDono && <AvisosNavegador />}
-      <div className="mt-10 pt-6 border-t border-gray-200 text-right">
-          <Link href="/excluir-conta" className="text-sm text-red-700 hover:underline">{tx('link')}</Link>
-        </div>
+      {/* conta: e-mail, pausa dos avisos e exclusao com confirmacao (P6, dono 19/11) */}
+      <CartaoConta />
     </div>
   );
 }

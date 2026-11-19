@@ -735,8 +735,8 @@
     "atualizarOrcamento": "Aggiorna Preventivo",
     "semComissaoOrcamento": "BipFix non applica commissioni su questo preventivo. L'importo che invii è quello che vede il cliente.",
     "horarioPassado": "Uno degli orari è già passato. Scegli oggi una fascia non ancora finita, oppure un giorno successivo.",
-    "importarTitulo": "Hai già il preventivo in un altro sistema?",
-    "importarTexto": "Carica la foto o il PDF: l'IA riscrive il preventivo nei campi qui sotto. Controlla e correggi prima di inviare. Il documento non viene inviato al cliente.",
+    "importarTitulo": "Facoltativo: hai già il preventivo in un altro sistema?",
+    "importarTexto": "Se vuoi, carica la foto o il PDF e l’IA compila le voci qui sotto (controlla prima di inviare). Non è obbligatorio: puoi inserire le voci a mano.",
     "importarLendo": "Lettura del documento…",
     "importarConfira": "Voci compilate dal documento. Controlla quantità e prezzi prima di inviare.",
     "importarErro": "Impossibile leggere questo documento. Prova una foto più nitida o il PDF.",
@@ -795,7 +795,22 @@
     "validadeDica": "Minimo: {ultima}. Consigliato: {recomendada} o dopo.",
     "linhaPassada": "Questo orario è già passato. Rimuovilo o scegli un'altra data.",
     "avisoJanelaAcabaLogo": "Questa fascia finisce oggi alle {fim} – il cliente avrà meno di {horas} ore (circa {min} min) per portare l'auto. Se va bene, puoi inviare; altrimenti scegli un giorno successivo.",
-    "passosResumo": "Per inviare bastano 3 cose: ① una voce con prezzo, ② una data di check-in, ③ la validità del preventivo. Il resto è facoltativo."
+    "passosResumo": "Per inviare bastano 3 cose: ① una voce con prezzo, ② una data di check-in, ③ la validità del preventivo. Il resto è facoltativo.",
+    "dicaPrecoMaximo": "Non sai il prezzo esatto? Indica il massimo che pensi possa costare — il cliente è contento quando alla fine paga meno. Oppure chiedi i dettagli al cliente prima di quotare:",
+    "dicaPrecoMaximoChat": "scrivi al cliente",
+    "validadeAutoDica": "Compilata automaticamente: ultima data di check-in + 7 giorni. Puoi modificarla.",
+    "exemploTitulo": "Esempio: come appare un preventivo pronto al cliente",
+    "exemploItem": "Riparazione e verniciatura paraurti posteriore — 300 €",
+    "exemploDatas": "Check-in: mar 25/11, 08:00–10:00 o mer 26/11, 13:00–15:00",
+    "exemploValidade": "Preventivo valido fino al 03/12",
+    "exemploNota": "Nota: prezzo massimo; dopo il controllo può costare meno.",
+    "exemploRodape": "Il cliente vede questo, sceglie una data e accetta. Se non sai il prezzo esatto, metti il massimo o chiedi in chat.",
+    "legendaObrigatorio": "obbligatorio",
+    "opcionalSufixo": "(facoltativo)",
+    "faltasResumo": "{n, plural, one {Compila # campo:} other {Compila # campi:}}",
+    "campo_valor": "prezzo",
+    "campo_datas": "data di check-in",
+    "campo_validade": "validità del preventivo"
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "La password deve avere almeno 8 caratteri",
@@ -1121,7 +1136,8 @@
     "clienteEnviouNumero": "Il cliente ti ha inviato il suo numero di telefono.",
     "orcamentoVencidoTexto": "Questo preventivo è scaduto il {data}. Il cliente non può più accettarlo. Per continuare, modifica il preventivo con nuove date di check-in e una nuova validità.",
     "convidada": "Inviata a te da BipFix",
-    "convidadaTexto": "BipFix ti ha inviato questa richiesta. Puoi inviare un preventivo anche se non è il tuo servizio abituale."
+    "convidadaTexto": "BipFix ti ha inviato questa richiesta. Puoi inviare un preventivo anche se non è il tuo servizio abituale.",
+    "nomeAposAceite": "Nome e indirizzo del cliente compaiono dopo che accetta il tuo preventivo."
   },
   "oficinaVeiculosEmServico": {
     "notaVeiculoRecebido": "Veicolo ricevuto in officina",

@@ -14,13 +14,14 @@ export type Dispensa = { solicitacao_id: string; motivo: string; comentario: str
 import { EVENTO_DISPENSA } from '@/lib/eventos';
 export { EVENTO_DISPENSA };
 
-export default function DispensarPedido({ solicitacaoId, oficinaId, dispensa, aoMudar, compacto, aoLado }: {
+export default function DispensarPedido({ solicitacaoId, oficinaId, dispensa, aoMudar, compacto, aoLado, destaque }: {
   solicitacaoId: string;
   oficinaId: string;
   dispensa?: Dispensa | null;
   aoMudar: () => void;
   compacto?: boolean;
   aoLado?: boolean; // na lista fica ao lado de "Fazer orcamento" (sm+)
+  destaque?: boolean; // botao visivel (borda), nao texto cinza: detalhe do pedido e formulario (dono 19/11 - P4)
 }) {
   const t = useTranslations('oficinaPedidos');
   const [aberto, setAberto] = useState(false);
@@ -70,7 +71,9 @@ export default function DispensarPedido({ solicitacaoId, oficinaId, dispensa, ao
   if (!aberto) {
     return (
       <button type="button" onClick={() => setAberto(true)} data-testid="nao-tenho-interesse"
-        className={`mt-2 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg px-4 text-sm font-medium text-gray-600 underline-offset-2 hover:bg-gray-50 hover:underline sm:w-auto ${aoLado ? 'sm:ml-2' : ''}`}>
+        className={destaque
+          ? `btn-secondary inline-flex min-h-[44px] w-full items-center justify-center sm:w-auto ${aoLado ? 'sm:ml-2' : ''}`
+          : `mt-2 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg px-4 text-sm font-medium text-gray-600 underline-offset-2 hover:bg-gray-50 hover:underline sm:w-auto ${aoLado ? 'sm:ml-2' : ''}`}>
         {t('naoTenhoInteresse')}
       </button>
     );
