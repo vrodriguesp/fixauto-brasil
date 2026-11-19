@@ -28,6 +28,11 @@ interface FipeAutocompleteProps {
   atalhosMarca?: boolean;
   /** aviso do ano (invalido), mostrado logo abaixo do campo */
   erroAno?: string | null;
+  /** avisos de marca/modelo em falta, logo abaixo de cada campo (dono 19/11: dizer onde falta) */
+  erroMarca?: string | null;
+  erroModelo?: string | null;
+  /** marca e modelo com o asterisco de obrigatorio no rotulo */
+  obrigatorios?: boolean;
 }
 
 interface FipeOption {
@@ -41,7 +46,8 @@ const TIPO_LABEL_KEY: Record<string, 'tipoCarro' | 'tipoMoto' | 'tipoCaminhao'> 
   trucks: 'tipoCaminhao',
 };
 
-export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo = false, anoOpcional = false, atalhosMarca = false, erroAno }: FipeAutocompleteProps) {
+export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo = false, anoOpcional = false, atalhosMarca = false, erroAno, erroMarca, erroModelo, obrigatorios = false }: FipeAutocompleteProps) {
+  const Obrig = () => (obrigatorios ? <span className="text-red-600" aria-hidden="true"> *</span> : null);
   const locale = useLocale();
   const t = useTranslations('veiculoForm');
   // A FIPE (tabela de precos de veiculos) so cobre o mercado brasileiro -
@@ -299,7 +305,7 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
       {/* Marca */}
       <div>
         <label htmlFor="cbbe3-101" className="block text-sm font-medium text-gray-700 mb-1">
-          {t('labelMarca')} {loading === 'marcas' && <span className="text-gray-400">({t('carregando')})</span>}
+          {t('labelMarca')}<Obrig /> {loading === 'marcas' && <span className="text-gray-400">({t('carregando')})</span>}
         </label>
         {/* ajuda fixa sob o rotulo (o placeholder some ao escrever) e atalhos das marcas mais comuns:
             no celular um toque basta para a maioria (parecer do Fable, dono 16/11) */}
@@ -336,7 +342,7 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
         </select>
         ) : (
           <CampoCatalogo id="cbbe3-101" opcoes={marcas} valor={value.marca} onEscolher={escolherMarca}
-            placeholder={t('escrevaMarca')} carregando={loading === 'marcas'} descricaoId="cbbe3-101-ajuda"
+            placeholder={t('escrevaMarca')} carregando={loading === 'marcas'} descricaoId="cbbe3-101-ajuda" erro={erroMarca} obrigatorio={obrigatorios}
             populares={value.tipo === 'cars' ? MARCAS_POPULARES : undefined} apelidos={APELIDOS_MARCA} />
         )}
       </div>
@@ -345,9 +351,9 @@ export default function FipeAutocomplete({ value, onChange, limparForaDoCatalogo
           de uma vez, como nos sites grandes de carro); antes da marca fica parado, "escolha a marca" */}
       {isBR === false && (
         <div>
-          <label htmlFor="cbbe3-102" className="block text-sm font-medium text-gray-700 mb-1">{t('labelModelo')}</label>
+          <label htmlFor="cbbe3-102" className="block text-sm font-medium text-gray-700 mb-1">{t('labelModelo')}<Obrig /></label>
           <p id="cbbe3-102-ajuda" className="text-xs text-gray-500 mb-2">{t('ajudaModelo')}</p>
-          <CampoCatalogo key={value.marca || '-'} id="cbbe3-102" opcoes={modelos} valor={value.modelo} onEscolher={escolherModelo} descricaoId="cbbe3-102-ajuda"
+          <CampoCatalogo key={value.marca || '-'} id="cbbe3-102" opcoes={modelos} valor={value.modelo} onEscolher={escolherModelo} descricaoId="cbbe3-102-ajuda" erro={erroModelo} obrigatorio={obrigatorios}
             placeholder={value.marca ? t('escrevaModelo') : t('escolhaMarcaPrimeiro')} desativado={!value.marca}
             carregando={loading === 'modelos'} focoAoMontar={focar === 'modelo'} />
         </div>

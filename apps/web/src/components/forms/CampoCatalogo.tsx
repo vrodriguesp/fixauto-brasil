@@ -16,7 +16,7 @@ const chave = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(
 // <select>: no celular abria a lista nativa de tela cheia, sem busca, e quem nao achava o
 // carro na lista nao tinha como seguir (dono 12/11).
 export default function CampoCatalogo({
-  id, opcoes, valor, onEscolher, placeholder, carregando, focoAoMontar, desativado, populares, apelidos, descricaoId,
+  id, opcoes, valor, onEscolher, placeholder, carregando, focoAoMontar, desativado, populares, apelidos, descricaoId, erro, obrigatorio,
 }: {
   id: string;
   opcoes: OpcaoCatalogo[];
@@ -35,6 +35,9 @@ export default function CampoCatalogo({
   apelidos?: Record<string, string[]>;
   /** id do texto de ajuda sob o rotulo (aria-describedby) */
   descricaoId?: string;
+  /** aviso do que falta/esta errado, logo abaixo do campo (borda vermelha, aria-invalid) - dono 19/11 */
+  erro?: string | null;
+  obrigatorio?: boolean;
 }) {
   const t = useTranslations('veiculoForm');
   const listaId = `${useId()}-lista`;
@@ -101,8 +104,10 @@ export default function CampoCatalogo({
         ref={input}
         id={id}
         type="text"
-        className="input-field scroll-mt-24 pr-12 disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+        className={`input-field scroll-mt-24 pr-12 disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed ${erro ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
         disabled={desativado}
+        aria-invalid={!!erro}
+        aria-required={obrigatorio || undefined}
         placeholder={carregando ? t('carregando') : placeholder}
         value={texto}
         autoComplete="off"
@@ -112,7 +117,7 @@ export default function CampoCatalogo({
         aria-controls={listaId}
         aria-autocomplete="list"
         aria-busy={carregando}
-        aria-describedby={descricaoId}
+        aria-describedby={[descricaoId, erro ? `${id}-erro` : ''].filter(Boolean).join(' ') || undefined}
         onFocus={() => { if (!desativado) setAberto(true); }}
         onChange={(e) => { setTexto(e.target.value); setAberto(true); setAtivo(-1); }}
         onBlur={() => setTimeout(() => { if (!escolhendo.current) confirmarTexto(); }, 150)}
@@ -156,6 +161,7 @@ export default function CampoCatalogo({
           ])}
         </ul>
       )}
+      {erro && <p id={`${id}-erro`} role="alert" className="mt-1 text-sm text-red-700" data-testid={`${id}-erro`}>{erro}</p>}
     </div>
   );
 }

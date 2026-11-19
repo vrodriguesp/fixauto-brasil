@@ -9,6 +9,8 @@
 //   voltar do navegador = passo anterior, ate sair da pagina (Back xN); ir e voltar nao perde nada; funil conta
 //   cada passo uma vez (fotos, fotos_pulou novos; nada de urgencia). Uma rodada envia de verdade (Resend falso ->
 //   pasta): codigo -> "crie a sua senha" -> agora nao -> pedido; depois Back xN nao reabre o pedido (18/11).
+//   Obrigatorios (dono 19/11): rotulo com *, opcionais "(valikuline)"; Edasi com algo em falta -> CADA campo em falta
+//   com borda vermelha + aviso logo abaixo (aria-invalid/aria-describedby), foco no primeiro, e o aviso some ao corrigir.
 //   SITE=http://localhost:3106 [MOTOR=chromium|webkit] node pedido-v2-telas.mjs <.env.local>
 import fs from 'node:fs';
 import path from 'node:path';
@@ -54,7 +56,7 @@ const codigoDe = async (email, depois) => {
 };
 let nFoto = 0;
 // a tela cabe: documento nao maior que a tela, sem rolagem lateral; Edasi visivel e nao coberto
-const conferir = async (p, nome, { rolagemOk = false } = {}) => {
+const conferir = async (p, nome, { rolagemOk = false, edasiOk = false } = {}) => {
   await p.waitForTimeout(350);
   const r = await p.evaluate(() => {
     const doc = document.documentElement;
@@ -72,10 +74,23 @@ const conferir = async (p, nome, { rolagemOk = false } = {}) => {
   await p.screenshot({ path: path.join(OUT, `${String(nFoto).padStart(2, '0')}_${nome.replace(/[^\w-]+/g, '_')}.png`) });
   const cabe = r.alt <= r.tela + 1 && r.larg <= 0;
   ok(`${nome}: cabe sem rolar (${r.alt}/${r.tela}${r.larg > 0 ? ', largura +' + r.larg : ''})`, cabe || rolagemOk, cabe ? '' : rolagemOk ? 'rola (aceite: SMS aberto)' : '');
-  if (r.edasi) ok(`${nome}: "${r.edasi.texto}" dentro da tela e nao coberto`, r.edasi.dentro && !r.edasi.coberto, JSON.stringify(r.edasi));
+  if (r.edasi) ok(`${nome}: "${r.edasi.texto}" dentro da tela e nao coberto`, (r.edasi.dentro || edasiOk) && !r.edasi.coberto, JSON.stringify(r.edasi));
   ok(`${nome}: sem chave crua de traducao`, !r.cru.length, r.cru.join(' '));
 };
 const etapa = (p) => p.locator('.pedido-pagina').getAttribute('data-etapa').catch(() => null);
+// campo em falta: aviso proprio visivel com o texto, aria-invalid e aria-describedby apontando ao aviso
+const emFalta = async (p, id, texto) => {
+  const av = p.locator(`#${id}-erro`);
+  const vis = await av.isVisible().catch(() => false);
+  const t = vis ? (await av.innerText()).trim() : '';
+  const inv = await p.locator('#' + id).getAttribute('aria-invalid').catch(() => null);
+  const desc = (await p.locator('#' + id).getAttribute('aria-describedby').catch(() => '')) || '';
+  return { ok: vis && t === texto && inv === 'true' && desc.includes(`${id}-erro`), t, inv, desc };
+};
+// rotulo sem o asterisco de obrigatorio / "(valikuline)" / texto so para leitor de tela
+const rotulo = async (p, sel) => (await p.locator(sel).innerText()).replace(/\s*\*[\s\S]*$/, '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+const semFalta = async (p, id) => (await p.locator(`#${id}-erro`).count()) === 0 && (await p.locator('#' + id).getAttribute('aria-invalid').catch(() => null)) !== 'true';
+const temAsterisco = async (p, seletor) => /\*/.test(await p.locator(seletor).innerText().catch(() => ''));
 const edasi = (p, passo) => p.getByTestId(`passo-${passo}`).getByTestId('edasi');
 async function carroCampo(p, id, nome, re) {
   const el = p.locator('#' + id);
@@ -105,7 +120,7 @@ async function fluxo(l, w, h, { enviar = false, ua = null, nomeExtra = '' } = {}
   await p.getByTestId('passo-servico').locator('button').nth(3).click(); // Mehaanika
   await p.getByTestId('passo-detalhe').waitFor();
   // 2) Mis autol viga on?
-  ok(`${nome}: passo 2 "Samm 2/6", titulo "${ps.detalheTitulo}", rotulo fora da caixa`, (await p.getByTestId('progresso').innerText()).includes(ps.passoDe.replace('{n}', '2').replace('{total}', '6')) && (await p.locator('[data-testid=passo-detalhe] h2').innerText()) === ps.detalheTitulo && (await p.locator('label[for=pedido-descricao]').innerText()) === ps.detalheRotuloTexto);
+  ok(`${nome}: passo 2 "Samm 2/6", titulo "${ps.detalheTitulo}", rotulo fora da caixa`, (await p.getByTestId('progresso').innerText()).includes(ps.passoDe.replace('{n}', '2').replace('{total}', '6')) && (await p.locator('[data-testid=passo-detalhe] h2').innerText()) === ps.detalheTitulo && (await rotulo(p, 'label[for=pedido-descricao]')) === ps.detalheRotuloTexto);
   const nChips = await p.getByTestId('chip-servico').count();
   ok(`${nome}: ${w < 380 || h <= 700 ? 4 : 6} chips de problemas comuns`, nChips === (w < 380 || h <= 700 ? 4 : 6), String(nChips));
   ok(`${nome}: chips com rotulo curto (constants.servicosCurto)`, (await p.getByTestId('chip-servico').first().innerText()).trim() === m.constants.servicosCurto.freio_barulho_frear, await p.getByTestId('chip-servico').first().innerText());
@@ -117,6 +132,7 @@ async function fluxo(l, w, h, { enviar = false, ua = null, nomeExtra = '' } = {}
   ok(`${nome}: aviso "${ps.faltaDescricaoLista.slice(0, 25)}..." ao lado do botao e sob a caixa`, (await p.getByTestId('passo-detalhe').getByTestId('falta-aviso').innerText().catch(() => '')) === ps.faltaDescricaoLista && (await p.getByTestId('falta-aviso-topo').innerText().catch(() => '')) === ps.faltaDescricaoLista);
   ok(`${nome}: foco na caixa de texto`, (await p.evaluate(() => document.activeElement?.id)) === 'pedido-descricao');
   ok(`${nome}: continua no passo 2`, (await etapa(p)) === 'detalhe');
+  ok(`${nome}: caixa marcada como obrigatoria (*) e em falta (aria-invalid + aviso sob a caixa explica texto OU chip)`, await temAsterisco(p, 'label[for=pedido-descricao]') && (await p.locator('#pedido-descricao').getAttribute('aria-invalid')) === 'true' && ((await p.locator('#pedido-descricao').getAttribute('aria-describedby')) || '').includes('pedido-descricao-aviso'));
   // chip: marca com check, conta como servico, aviso some
   const chip1 = p.getByTestId('chip-servico').first();
   await p.waitForTimeout(400);
@@ -152,7 +168,8 @@ async function fluxo(l, w, h, { enviar = false, ua = null, nomeExtra = '' } = {}
   await edasi(p, 'detalhe').click();
   await p.getByTestId('passo-fotos').waitFor();
   // 3) Fotod
-  ok(`${nome}: passo 3 "Samm 3/6", "${ps.fotosTitulo}", botao "${ps.semFotos}" sem fotos`, (await p.getByTestId('progresso').innerText()).includes(ps.passoDe.replace('{n}', '3').replace('{total}', '6')) && (await p.locator('[data-testid=passo-fotos] h2').innerText()) === ps.fotosTitulo && (await edasi(p, 'fotos').innerText()).trim() === ps.semFotos);
+  ok(`${nome}: passo 3 "Samm 3/6", "${ps.fotosTitulo}", botao "${ps.semFotos}" sem fotos`, (await p.getByTestId('progresso').innerText()).includes(ps.passoDe.replace('{n}', '3').replace('{total}', '6')) && (await rotulo(p, '[data-testid=passo-fotos] h2')) === ps.fotosTitulo && (await edasi(p, 'fotos').innerText()).trim() === ps.semFotos);
+  ok(`${nome}: fotos marcadas como opcionais "(${ps.opcional})"`, (await p.locator('[data-testid=passo-fotos] h2').innerText()).includes(`(${ps.opcional})`));
   ok(`${nome}: camera e galeria separadas`, await p.getByTestId('foto-camera').isVisible() && await p.getByTestId('foto-galeria').isVisible());
   await conferir(p, `${nome} 3 fotod`);
   await p.getByTestId('passo-fotos').locator('input[type=file][multiple]').setInputFiles([{ name: 'a.png', mimeType: 'image/png', buffer: FOTO }, { name: 'b.png', mimeType: 'image/png', buffer: FOTO }]);
@@ -172,8 +189,14 @@ async function fluxo(l, w, h, { enviar = false, ua = null, nomeExtra = '' } = {}
   await conferir(p, `${nome} 4 auto`);
   await edasi(p, 'carro').click(); await p.waitForTimeout(300);
   ok(`${nome}: Edasi sem marca avisa "${ps.faltaMarca}" e foca a marca`, (await p.getByTestId('passo-carro').getByTestId('falta-aviso').innerText().catch(() => '')) === ps.faltaMarca && (await p.evaluate(() => document.activeElement?.id)) === 'cbbe3-101');
+  ok(`${nome}: marca e modelo com *, ano e numbrimark sem *`, await temAsterisco(p, 'label[for=cbbe3-101]') && await temAsterisco(p, 'label[for=cbbe3-102]') && !(await temAsterisco(p, 'label[for=cbbe3-103]')) && !(await temAsterisco(p, 'label[for=pedido-placa]')));
+  const fm = await emFalta(p, 'cbbe3-101', ps.faltaMarca), fmo = await emFalta(p, 'cbbe3-102', ps.faltaModelo);
+  ok(`${nome}: marca E modelo em falta, cada um com o aviso proprio + aria`, fm.ok && fmo.ok, JSON.stringify([fm, fmo]));
+  await conferir(p, `${nome} 4c auto vigadega`, { rolagemOk: true, edasiOk: true });
   await carroCampo(p, 'cbbe3-101', 'Toyota');
+  ok(`${nome}: marca escolhida -> aviso da marca some, o do modelo fica`, await semFalta(p, 'cbbe3-101') && (await emFalta(p, 'cbbe3-102', ps.faltaModelo)).ok);
   await carroCampo(p, 'cbbe3-102', 'Corolla', /Corolla/);
+  ok(`${nome}: modelo escolhido -> nenhum aviso`, await semFalta(p, 'cbbe3-102') && (await p.getByTestId('passo-carro').getByTestId('falta-aviso').count()) === 0);
   await p.locator('#cbbe3-103').fill('2015');
   await p.locator('#pedido-placa').fill('123ABC');
   await conferir(p, `${nome} 4b auto taidetud`);
@@ -187,12 +210,16 @@ async function fluxo(l, w, h, { enviar = false, ua = null, nomeExtra = '' } = {}
   await edasi(p, 'carro').click();
   await p.getByTestId('passo-local').waitFor();
   // 5) Asukoht
-  ok(`${nome}: passo 5 "Samm 5/6", "${ps.localTitulo}", linha destacada, rotulo "${ps.localRotulo}", placeholder`, (await p.locator('[data-testid=passo-local] h2').innerText()) === ps.localTitulo && (await p.getByTestId('local-claro').innerText()) === ps.localAjuda && (await p.locator('label[for=pedido-endereco]').innerText()) === ps.localRotulo && (await p.locator('#pedido-endereco').getAttribute('placeholder')) === ps.localPlaceholder);
+  ok(`${nome}: passo 5 "Samm 5/6", "${ps.localTitulo}", linha destacada, rotulo "${ps.localRotulo}", placeholder`, (await p.locator('[data-testid=passo-local] h2').innerText()) === ps.localTitulo && (await p.getByTestId('local-claro').innerText()) === ps.localAjuda && (await rotulo(p, 'label[for=pedido-endereco]')) === ps.localRotulo && (await p.locator('#pedido-endereco').getAttribute('placeholder')) === ps.localPlaceholder);
   ok(`${nome}: sem mapa antes de haver coordenada`, (await p.getByTestId('mapa-estatico').count()) === 0);
   await conferir(p, `${nome} 5 asukoht`);
   await edasi(p, 'local').click(); await p.waitForTimeout(300);
   ok(`${nome}: Edasi sem endereco avisa e foca`, (await p.getByTestId('passo-local').getByTestId('falta-aviso').innerText().catch(() => '')) === ps.faltaEndereco && (await p.evaluate(() => document.activeElement?.id)) === 'pedido-endereco');
+  const fe = await emFalta(p, 'pedido-endereco', ps.faltaEndereco);
+  ok(`${nome}: endereco com * e aviso proprio sob o campo + aria`, await temAsterisco(p, 'label[for=pedido-endereco]') && fe.ok, JSON.stringify(fe));
+  await conferir(p, `${nome} 5c asukoht vigadega`);
   await p.locator('#pedido-endereco').fill(l === 'et' ? 'Lasnamäe' : 'Ласнамяэ');
+  ok(`${nome}: escreveu -> aviso do endereco some`, await semFalta(p, 'pedido-endereco'));
   await p.waitForTimeout(1800);
   const sug = p.getByRole('option').first();
   const escolheu = await sug.isVisible().catch(() => false);
@@ -211,7 +238,20 @@ async function fluxo(l, w, h, { enviar = false, ua = null, nomeExtra = '' } = {}
   // 6) Kontakt
   ok(`${nome}: passo 6 "Samm 6/6", sem senha e sem telefone`, (await p.getByTestId('progresso').innerText()).includes(ps.passoDe.replace('{n}', '6').replace('{total}', '6')) && (await p.locator('#pedido-senha').count()) === 0 && (await p.locator('#pedido-telefone').count()) === 0);
   await conferir(p, `${nome} 6 kontakt`);
+  ok(`${nome}: nimi, e-post e termos com *; SMS "(${ps.opcional})"`, await temAsterisco(p, 'label[for=pedido-nome]') && await temAsterisco(p, 'label[for=pedido-email]') && /\*/.test(await p.locator('label:has(#pedido-termos)').innerText()) && (await p.locator('label:has(#pedido-quer-sms)').innerText()).includes(`(${ps.opcional})`));
+  await edasi(p, 'contato').click(); await p.waitForTimeout(300);
+  const fn = await emFalta(p, 'pedido-nome', ps.faltaNome), fe2 = await emFalta(p, 'pedido-email', ps.faltaEmail), ft = await emFalta(p, 'pedido-termos', ps.faltaTermos);
+  ok(`${nome}: Saada com tudo vazio -> nimi, e-post e termos cada um com o aviso proprio + aria; foco no nome`, fn.ok && fe2.ok && ft.ok && (await p.evaluate(() => document.activeElement?.id)) === 'pedido-nome', JSON.stringify([fn, fe2, ft]));
+  ok(`${nome}: barra repete o primeiro aviso ("${ps.faltaNome}")`, (await p.getByTestId('passo-contato').getByTestId('falta-aviso').innerText().catch(() => '')) === ps.faltaNome);
+  await conferir(p, `${nome} 6c kontakt vigadega`, { rolagemOk: h <= 700 });
   await p.locator('#pedido-nome').fill('TESTE AUTOMATICO');
+  ok(`${nome}: nome escrito -> so o aviso do nome some; barra passa ao e-mail`, await semFalta(p, 'pedido-nome') && (await emFalta(p, 'pedido-email', ps.faltaEmail)).ok && (await p.getByTestId('passo-contato').getByTestId('falta-aviso').innerText()) === ps.faltaEmail);
+  await p.getByTestId('quer-sms').check(); await edasi(p, 'contato').click(); await p.waitForTimeout(300);
+  ok(`${nome}: SMS marcado + Saada -> telefone com * e aviso proprio`, await temAsterisco(p, 'label[for=pedido-telefone]') && (await emFalta(p, 'pedido-telefone', ps.faltaTelefone)).ok);
+  await p.getByTestId('quer-sms').uncheck();
+  await p.locator('#pedido-email').fill(`x-${tag}@example.test`); await p.getByTestId('aceito-termos').check();
+  ok(`${nome}: e-mail e termos preenchidos -> nenhum aviso`, await semFalta(p, 'pedido-email') && await semFalta(p, 'pedido-termos') && (await p.getByTestId('passo-contato').getByTestId('falta-aviso').count()) === 0);
+  await p.getByTestId('aceito-termos').uncheck(); await p.locator('#pedido-email').fill('');
   await p.getByTestId('quer-sms').check(); await p.waitForTimeout(200);
   await conferir(p, `${nome} 6b kontakt sms`, { rolagemOk: true });
   await p.getByTestId('quer-sms').uncheck();
@@ -289,10 +329,10 @@ async function semLista(l, w, h) {
   await ctx.route('**/api/funil', (r) => r.fulfill({ status: 200, body: '{"ok":true}' }));
   const p = await ctx.newPage();
   await p.goto(SITE + CAMINHO[l], { waitUntil: 'networkidle' });
-  for (const [idx, titulo, rotulo, ex] of [[0, ps.detalheTituloFoto, ps.detalheRotuloFoto, ps.exemploFoto], [6, ps.detalheTituloFoto, ps.detalheRotuloFoto, ps.exemploVidro], [7, ps.detalheTitulo, ps.detalheRotuloTexto, m.clienteNovaSolicitacao.placeholderDescribeIssue]]) {
+  for (const [idx, titulo, rot, ex] of [[0, ps.detalheTituloFoto, ps.detalheRotuloFoto, ps.exemploFoto], [6, ps.detalheTituloFoto, ps.detalheRotuloFoto, ps.exemploVidro], [7, ps.detalheTitulo, ps.detalheRotuloTexto, m.clienteNovaSolicitacao.placeholderDescribeIssue]]) {
     await p.getByTestId('passo-servico').locator('button').nth(idx).click();
     await p.getByTestId('passo-detalhe').waitFor();
-    ok(`${nome} tipo #${idx}: "${titulo}", rotulo "${rotulo}", exemplo, sem chips nem "Naita koiki"`, (await p.locator('[data-testid=passo-detalhe] h2').innerText()) === titulo && (await p.locator('label[for=pedido-descricao]').innerText()) === rotulo && (await p.locator('#pedido-descricao').getAttribute('placeholder')) === ex && (await p.getByTestId('chip-servico').count()) === 0 && (await p.getByTestId('ver-mais').count()) === 0);
+    ok(`${nome} tipo #${idx}: "${titulo}", rotulo "${rot}", exemplo, sem chips nem "Naita koiki"`, (await p.locator('[data-testid=passo-detalhe] h2').innerText()) === titulo && (await rotulo(p, 'label[for=pedido-descricao]')) === rot && (await p.locator('#pedido-descricao').getAttribute('placeholder')) === ex && (await p.getByTestId('chip-servico').count()) === 0 && (await p.getByTestId('ver-mais').count()) === 0);
     await p.locator('#pedido-descricao').fill(''); // o texto fica ao trocar de tipo (regra); aqui queremos a caixa vazia
     await edasi(p, 'detalhe').click(); await p.waitForTimeout(250);
     ok(`${nome} tipo #${idx}: Edasi vazio -> "${ps.faltaDescricao}"`, (await p.getByTestId('passo-detalhe').getByTestId('falta-aviso').innerText().catch(() => '')) === ps.faltaDescricao);

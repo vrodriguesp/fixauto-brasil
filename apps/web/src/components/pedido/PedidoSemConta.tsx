@@ -102,9 +102,11 @@ export default function PedidoSemConta() {
     setFotos((x) => [...x, ...fs.map((file) => ({ file, preview: URL.createObjectURL(file) }))]);
     e.target.value = '';
   };
-  // "Edasi" tocado com algo faltando: o aviso fica ao lado do botao e o foco vai ao campo
-  // (Clarity 12/11: o botao so ficava palido, sem dizer o que faltava, e a pessoa desistia)
-  const [faltando, setFaltando] = useState('');
+  // "Edasi" tocado com algo faltando (dono 19/11, "clear evidence of all mandatory fields"): CADA campo em
+  // falta fica com borda vermelha e o aviso logo abaixo (aria-invalid/aria-describedby), o foco vai ao primeiro,
+  // a barra repete o primeiro aviso; o aviso de um campo some assim que ele e corrigido (derivado ao vivo).
+  // Obrigatorios levam * no rotulo (+ "(kohustuslik)" para leitores de tela); opcionais "(valikuline)".
+  const [mostrarFaltas, setMostrarFaltas] = useState(false);
   const focar = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -288,7 +290,7 @@ export default function PedidoSemConta() {
   // passo novo comeca no alto (o anterior era mais comprido: a pessoa via so o rodape - teste do dono 06/11)
   const primeiraEtapa = useRef(true);
   useEffect(() => {
-    setFaltando('');
+    setMostrarFaltas(false);
     // o passo que voltou do rascunho (pagina recarregada) ja foi contado antes
     if (etapaRestaurada.current === etapa) etapaRestaurada.current = null;
     else if (CONTAR_AO_ENTRAR[etapa]) contarUmaVez(CONTAR_AO_ENTRAR[etapa]!);
@@ -368,19 +370,32 @@ export default function PedidoSemConta() {
   // [aviso, campo, motivo] - o motivo vai ao funil (edasi_bloqueado_carro_marca/_modelo/_ano/_placa)
   const faltaCarro: [string, string, string] = !carro.marca ? [t('faltaMarca'), 'cbbe3-101', 'marca'] : !carro.modelo ? [t('faltaModelo'), 'cbbe3-102', 'modelo']
     : !anoOk ? [te('ANO_INVALIDO'), 'cbbe3-103', 'ano'] : [te('PLACA_INVALIDA'), 'pedido-placa', 'placa'];
-  const motivoCarro = carroOk ? '' : faltaCarro[2];
   const faltaContato: [string, string] = !nome.trim() ? [t('faltaNome'), 'pedido-nome'] : !EMAIL_OK.test(email.trim()) ? [t('faltaEmail'), 'pedido-email']
     : querSms && !TELEFONE_OK(telefone) ? [t('faltaTelefone'), 'pedido-telefone'] : [t('faltaTermos'), 'pedido-termos'];
   // corrigiu: o aviso some. No carro, pelo motivo (16/11): antes dependia de carroOk, que nao muda ao
   // escolher a marca (ainda falta o modelo) - o aviso "kirjuta mark" ficava parado com a marca escolhida
   // contato pelo campo que falta (Fable B3): escrever o nome tira o "kirjuta oma nimi" na hora
-  useEffect(() => { setFaltando(''); }, [servicoOk, motivoCarro, endereco, contatoOk, faltaContato[1]]);
-
   // linha acima do Edasi no passo 2: o que falta (cinza) ou o que ja basta (verde)
   const statusDetalhe: { texto: string; tom: 'neutro' | 'ok' } = servicos.length > 0 ? { texto: t('detalheStatusLista', { n: servicos.length }), tom: 'ok' }
     : descricao.trim() ? { texto: t('detalheStatusTexto'), tom: 'ok' }
     : { texto: temLista ? t('detalheStatusVazio') : t('detalheStatusVazioTexto'), tom: 'neutro' };
   const faltaDetalhe = temLista ? t('faltaDescricaoLista') : t('faltaDescricao');
+  // tudo o que falta no passo atual, por campo (id -> aviso), na ordem da tela
+  const faltasPasso = (): Record<string, string> => {
+    const f: Record<string, string> = {};
+    if (etapa === 'detalhe' || etapa === 'lista') { if (!servicoOk) f['pedido-descricao'] = faltaDetalhe; }
+    else if (etapa === 'carro') { if (!carro.marca) f['cbbe3-101'] = t('faltaMarca'); if (!carro.modelo) f['cbbe3-102'] = t('faltaModelo'); if (!anoOk) f['cbbe3-103'] = te('ANO_INVALIDO'); if (!placaValida(placa)) f['pedido-placa'] = te('PLACA_INVALIDA'); }
+    else if (etapa === 'local') { if (endereco.trim().length <= 2) f['pedido-endereco'] = t('faltaEndereco'); }
+    else if (etapa === 'contato') { if (!nome.trim()) f['pedido-nome'] = t('faltaNome'); if (!EMAIL_OK.test(email.trim())) f['pedido-email'] = t('faltaEmail'); if (querSms && !TELEFONE_OK(telefone)) f['pedido-telefone'] = t('faltaTelefone'); if (!termos) f['pedido-termos'] = t('faltaTermos'); }
+    return f;
+  };
+  const faltas = mostrarFaltas ? faltasPasso() : {};
+  const faltando = Object.values(faltas)[0] || '';
+  const erroDe = (id: string) => faltas[id] || null;
+  const classeErro = (id: string) => (faltas[id] ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '');
+  const Aviso = ({ id }: { id: string }) => (faltas[id] ? <p id={`${id}-erro`} role="alert" className="mt-1 text-sm text-red-700" data-testid={`${id}-erro`}>{faltas[id]}</p> : null);
+  const Obrig = () => <><span className="text-red-600" aria-hidden="true"> *</span><span className="sr-only"> ({t('obrigatorio')})</span></>;
+  const Opcional = () => <span className="font-normal text-gray-500"> ({t('opcional')})</span>;
 
   const descricaoFinal = () => servicos.length > 0
     ? `${tn('servicesPrefix')} ${servicos.map(rotuloServico).join(', ')}${descricao.trim() ? '. ' + descricao.trim() : ''}`
@@ -482,7 +497,7 @@ export default function PedidoSemConta() {
       {faltando && <p role="alert" className="w-full text-sm text-red-700 font-medium" data-testid="falta-aviso">{faltando}</p>}
       {!faltando && status && <p role="status" data-testid="status-passo" data-tom={status.tom} className={`w-full text-sm ${status.tom === 'ok' ? 'text-green-700 font-medium' : 'text-gray-600'}`}>{status.texto}</p>}
       {voltar ? <button type="button" onClick={() => voltarPara(voltar)} className="btn-secondary">{tn('back')}</button> : <span />}
-      <button type="button" onClick={() => { if (ok) { setFaltando(''); avancar(); return; } setFaltando(falta); contar(`edasi_bloqueado_${etapa === 'lista' ? 'detalhe' : etapa}`); if (motivo) contar(`edasi_bloqueado_${etapa}_${motivo}`); focar(campo); }}
+      <button type="button" onClick={() => { if (ok) { setMostrarFaltas(false); avancar(); return; } setMostrarFaltas(true); void falta; contar(`edasi_bloqueado_${etapa === 'lista' ? 'detalhe' : etapa}`); if (motivo) contar(`edasi_bloqueado_${etapa}_${motivo}`); focar(campo); }}
         disabled={enviando} aria-busy={enviando} data-testid="edasi" className={`${secundario ? 'btn-secondary border-primary-300 text-primary-800' : 'btn-primary'} flex-1 disabled:opacity-50`}>{rotulo || tn('next')}</button>
     </div>
   );
@@ -559,12 +574,12 @@ export default function PedidoSemConta() {
           <div data-testid="passo-detalhe">
             {linhaTipo}
             <h2 className="text-lg font-semibold text-gray-900 mb-3">{ehDano ? t('detalheTituloFoto') : t('detalheTitulo')}</h2>
-            <label htmlFor="pedido-descricao" className="block text-sm font-medium text-gray-700 mb-1">{ehDano ? t('detalheRotuloFoto') : t('detalheRotuloTexto')}</label>
-            <textarea id="pedido-descricao" className={`input-field pedido-caixa ${temLista ? 'min-h-[104px]' : 'min-h-[140px]'} ${faltando ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`} maxLength={1800} value={descricao} aria-invalid={!!faltando}
-              aria-describedby={faltando ? 'pedido-descricao-aviso' : undefined}
+            <label htmlFor="pedido-descricao" className="block text-sm font-medium text-gray-700 mb-1">{ehDano ? t('detalheRotuloFoto') : t('detalheRotuloTexto')}<Obrig /></label>
+            <textarea id="pedido-descricao" className={`input-field pedido-caixa ${temLista ? 'min-h-[104px]' : 'min-h-[140px]'} ${classeErro('pedido-descricao')}`} maxLength={1800} value={descricao} aria-invalid={!!erroDe('pedido-descricao')} aria-required
+              aria-describedby={erroDe('pedido-descricao') ? 'pedido-descricao-aviso' : undefined}
               onChange={(e) => { setDescricao(e.target.value); if (e.target.value.trim()) contarUmaVez('detalhe_escreveu'); }}
               placeholder={exemplo} />
-            {faltando && <p role="alert" id="pedido-descricao-aviso" data-testid="falta-aviso-topo" className="text-sm text-red-700 font-medium mt-1">{faltando}</p>}
+            {erroDe('pedido-descricao') && <p role="alert" id="pedido-descricao-aviso" data-testid="falta-aviso-topo" className="text-sm text-red-700 font-medium mt-1">{faltas['pedido-descricao']}</p>}
             {temLista && (
               <div className="mt-4">
                 <p className="text-sm font-medium text-gray-700 mb-2">{t('detalheOuEscolha')}</p>
@@ -608,6 +623,7 @@ export default function PedidoSemConta() {
                 </label>
               ))}
             </div>
+            {erroDe('pedido-descricao') && <p role="alert" data-testid="lista-servicos-erro" className="text-sm text-red-700 font-medium mt-2">{faltas['pedido-descricao']}</p>}
             <Navegar voltar="detalhe" ok={servicoOk} avancar={() => setEtapa('fotos')} falta={faltaDetalhe} campo="lista-servicos" status={statusDetalhe} />
           </div>
         )}
@@ -617,7 +633,7 @@ export default function PedidoSemConta() {
             "Jatka ilma fotota"; a foto nunca substitui a descricao (o passo 2 ja exigiu texto ou chip). */}
         {etapa === 'fotos' && (
           <div data-testid="passo-fotos">
-            <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('fotosTitulo')}</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('fotosTitulo')}<Opcional /></h2>
             <p className="pedido-ajuda text-sm text-gray-700 mb-4">{t('fotosTexto')}</p>
             <input ref={inputCamera} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} onChange={adicionarFotos} />
             <input ref={inputFoto} type="file" accept="image/*" multiple className="sr-only" tabIndex={-1} onChange={adicionarFotos} />
@@ -652,14 +668,15 @@ export default function PedidoSemConta() {
             <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('carroTitulo')}</h2>
             <p className="pedido-ajuda hidden sm:block text-sm text-gray-500 mb-4">{t('carroDica')}</p>
             <div className="pedido-carro">
-              <FipeAutocomplete limparForaDoCatalogo anoOpcional atalhosMarca value={{ tipo: carro.tipo, marca: carro.marca, modelo: carro.modelo, ano: carro.ano }}
+              <FipeAutocomplete limparForaDoCatalogo anoOpcional atalhosMarca obrigatorios value={{ tipo: carro.tipo, marca: carro.marca, modelo: carro.modelo, ano: carro.ano }}
+                erroMarca={erroDe('cbbe3-101')} erroModelo={erroDe('cbbe3-102')}
                 // ano invalido: o aviso aparece com os 4 digitos (ou ao tocar Edasi), nao a cada digito
-                erroAno={!anoOk && (carro.ano.length >= 4 || motivoCarro === 'ano' && !!faltando) ? te('ANO_INVALIDO') : null}
+                erroAno={!anoOk && (carro.ano.length >= 4 || !!erroDe('cbbe3-103')) ? te('ANO_INVALIDO') : null}
                 onChange={(f) => setCarro({ tipo: f.tipo, marca: f.marca, modelo: f.modelo, ano: f.ano, codigo: f.codigo || '' })} />
               {/* placa opcional: diz o que ela da a oficina (Fable 16/11) */}
               <div className="pedido-placa mt-4">
                 <label htmlFor="pedido-placa" className="block text-sm font-medium text-gray-700 mb-1">{t('placaRotulo')}</label>
-                <input id="pedido-placa" className="input-field" maxLength={10} aria-invalid={!placaValida(placa)} aria-describedby="pedido-placa-ajuda" placeholder={exemploPlaca(locale)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} />
+                <input id="pedido-placa" className={`input-field ${placaValida(placa) ? '' : 'border-red-500 focus:border-red-500 focus:ring-red-500'}`} maxLength={10} aria-invalid={!placaValida(placa)} aria-describedby="pedido-placa-ajuda" placeholder={exemploPlaca(locale)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} />
                 {!placaValida(placa) && <p role="alert" className="mt-1 text-sm text-red-700" data-testid="placa-invalida">{te('PLACA_INVALIDA')}</p>}
               </div>
               {/* no celular esta linha fica sob a dupla ano + placa (grade em globals.css) */}
@@ -675,10 +692,12 @@ export default function PedidoSemConta() {
           <div data-testid="passo-local">
             <h2 className="text-lg font-semibold text-gray-900 mb-3">{t('localTitulo')}</h2>
             <p id="pedido-endereco-ajuda" className="text-sm text-primary-900 bg-primary-50 border-l-4 border-primary-400 rounded-r-lg px-3 py-2 mb-3" data-testid="local-claro">{t('localAjuda')}</p>
-            <label htmlFor="pedido-endereco" className="block text-sm font-medium text-gray-700 mb-1">{t('localRotulo')}</label>
+            <label htmlFor="pedido-endereco" className="block text-sm font-medium text-gray-700 mb-1">{t('localRotulo')}<Obrig /></label>
             {/* escreveu: a coordenada passa a ser a do texto (no envio); a de uma sugestao/do aparelho valia para o texto anterior */}
-            <EnderecoAutocomplete id="pedido-endereco" value={endereco} onChange={(v) => { setEndereco(v); setCoords(null); }} placeholder={t('localPlaceholder')} perto={coords || posAparelho}
+            <EnderecoAutocomplete id="pedido-endereco" value={endereco} onChange={(v) => { setEndereco(v); setCoords(null); }} placeholder={t('localPlaceholder')} perto={coords || posAparelho} required
+              className={`input-field ${classeErro('pedido-endereco')}`} erroId={erroDe('pedido-endereco') ? 'pedido-endereco-erro' : null}
               onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); if (s.paisCodigo) setPais(s.paisCodigo); }} />
+            <Aviso id="pedido-endereco" />
             {!localNegado ? (
               <button type="button" onClick={usarMinhaLocalizacao} disabled={localizando} aria-busy={localizando} data-testid="usar-localizacao"
                 className="mt-3 inline-flex items-center gap-2 min-h-[44px] px-4 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-800 hover:border-primary-400 disabled:opacity-60">
@@ -705,12 +724,14 @@ export default function PedidoSemConta() {
             {(
               <div className="space-y-3">
                 <div>
-                  <label htmlFor="pedido-nome" className="block text-sm font-medium text-gray-700 mb-1">{t('nome')}</label>
-                  <input id="pedido-nome" className="input-field" autoComplete="name" maxLength={100} value={nome} onChange={(e) => { setNome(e.target.value); contarUmaVez('contato_digitou'); }} />
+                  <label htmlFor="pedido-nome" className="block text-sm font-medium text-gray-700 mb-1">{t('nome')}<Obrig /></label>
+                  <input id="pedido-nome" className={`input-field ${classeErro('pedido-nome')}`} autoComplete="name" maxLength={100} value={nome} aria-required aria-invalid={!!erroDe('pedido-nome')} aria-describedby={erroDe('pedido-nome') ? 'pedido-nome-erro' : undefined} onChange={(e) => { setNome(e.target.value); contarUmaVez('contato_digitou'); }} />
+                  <Aviso id="pedido-nome" />
                 </div>
                 <div>
-                  <label htmlFor="pedido-email" className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
-                  <input id="pedido-email" type="email" inputMode="email" className="input-field" autoComplete="email" maxLength={254} value={email} onChange={(e) => { setEmail(e.target.value); contarUmaVez('contato_digitou'); }} />
+                  <label htmlFor="pedido-email" className="block text-sm font-medium text-gray-700 mb-1">{t('email')}<Obrig /></label>
+                  <input id="pedido-email" type="email" inputMode="email" className={`input-field ${classeErro('pedido-email')}`} autoComplete="email" maxLength={254} value={email} aria-required aria-invalid={!!erroDe('pedido-email')} aria-describedby={erroDe('pedido-email') ? 'pedido-email-erro' : undefined} onChange={(e) => { setEmail(e.target.value); contarUmaVez('contato_digitou'); }} />
+                  <Aviso id="pedido-email" />
                   {sugestao && (
                     <button type="button" onClick={() => setEmail(sugestao)} className="mt-1 text-sm text-amber-800 underline" data-testid="sugestao-email">{t('voceQuisDizer', { email: sugestao })}</button>
                   )}
@@ -720,12 +741,13 @@ export default function PedidoSemConta() {
                   <label className="flex items-start gap-2 text-sm text-gray-800">
                     <input id="pedido-quer-sms" type="checkbox" checked={querSms} className="w-4 h-4 mt-0.5" data-testid="quer-sms"
                       onChange={(e) => { setQuerSms(e.target.checked); if (e.target.checked) contarUmaVez('contato_sms_opt'); else setTelefone(''); }} />
-                    <span>{t('querSms')}</span>
+                    <span>{t('querSms')}<Opcional /></span>
                   </label>
                   {querSms && (
                     <div className="mt-2 sm:mt-3">
-                      <label htmlFor="pedido-telefone" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
-                      <CampoTelefone id="pedido-telefone" value={telefone} onChange={setTelefone} />
+                      <label htmlFor="pedido-telefone" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}<Obrig /></label>
+                      <CampoTelefone id="pedido-telefone" value={telefone} onChange={setTelefone} required erroId={erroDe('pedido-telefone') ? 'pedido-telefone-erro' : null} />
+                      <Aviso id="pedido-telefone" />
                       <p className="pedido-ajuda text-xs text-gray-500 mt-1">{t('telefoneDica')}</p>
                       <p className="flex items-start gap-1.5 text-xs text-gray-600 mt-2" data-testid="sms-privacidade">
                         <svg aria-hidden="true" className="w-4 h-4 shrink-0 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
@@ -739,15 +761,16 @@ export default function PedidoSemConta() {
                   <label htmlFor="pedido-site">Website</label>
                   <input id="pedido-site" tabIndex={-1} autoComplete="off" value={site} onChange={(e) => setSite(e.target.value)} />
                 </div>
-                <label className="flex items-start gap-2 text-sm text-gray-700 pt-1">
-                  <input id="pedido-termos" type="checkbox" checked={termos} onChange={(e) => setTermos(e.target.checked)} className="w-4 h-4 mt-0.5" data-testid="aceito-termos" />
-                  <span>
+                <label className={`flex items-start gap-2 text-sm text-gray-700 pt-1 ${erroDe('pedido-termos') ? 'rounded-lg -mx-2 px-2 py-1 border border-red-500' : ''}`}>
+                  <input id="pedido-termos" type="checkbox" checked={termos} onChange={(e) => setTermos(e.target.checked)} className="w-4 h-4 mt-0.5" data-testid="aceito-termos" aria-required aria-invalid={!!erroDe('pedido-termos')} aria-describedby={erroDe('pedido-termos') ? 'pedido-termos-erro' : undefined} />
+                  <span><Obrig />{' '}
                     {t.rich('aceitoTermos', {
                       termos: (c) => <Link href="/termos" target="_blank" className="text-primary-700 underline">{c}</Link>,
                       privacidade: (c) => <Link href="/privacidade" target="_blank" className="text-primary-700 underline">{c}</Link>,
                     })}
                   </span>
                 </label>
+                <Aviso id="pedido-termos" />
                 {erro && <p role="alert" className="text-sm text-red-700">{erro}</p>}
                 <Navegar voltar="local" ok={contatoOk} avancar={() => enviar()} rotulo={enviando ? t('enviando') : t('enviarPedido')} falta={faltaContato[0]} campo={faltaContato[1]} />
               </div>

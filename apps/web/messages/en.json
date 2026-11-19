@@ -1027,6 +1027,7 @@
     "fotosAjuda": "If the camera or gallery doesn't open, allow your browser to access the camera and photos in your phone settings.",
     "carroDica": "Repair shops need this to price the job.",
     "opcional": "optional",
+    "obrigatorio": "required",
     "contatoTitulo": "Where should we send the quote?",
     "contatoTexto": "We send the quote and updates to your e-mail.",
     "nome": "Name",
