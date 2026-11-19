@@ -169,6 +169,72 @@ body.com-chat-suporte footer { padding-bottom: 5rem; }
   .aviso-cookies button { min-height: 32px; padding-top: 0.25rem !important; padding-bottom: 0.25rem !important; }
 }
 
+/* Pedido em etapas (19/11): cada tela cabe SEM rolar a 390x844 e a 360x640 (regra do dono; Proposta
+   sec. 14). A lista inteira ("Naita koiki") rola dentro da propria caixa, nunca a pagina. */
+/* no celular o rodape do site sai da pagina do pedido: a tela e o formulario (termos e privacidade estao
+   no passo do contato); com o rodape a pagina rolava 3 telas abaixo do Edasi (medido 19/11) */
+@media (max-width: 639.98px) { body.pagina-pedido footer.rodape-site { display: none; } }
+body.pagina-pedido .pedido-lista-rolavel { max-height: calc(100dvh - 25rem - var(--altura-cookies, 0px)); }
+@media (max-width: 639.98px) { body.pagina-pedido [data-testid="passo-contato"] .input-field { padding-top: 0.625rem; padding-bottom: 0.625rem; } }
+/* tela do carro no celular: ano e numbrimark lado a lado (mesma entidade - Baymard), ajudas de marca/modelo
+   escondidas; o seletor de marca/modelo (FipeAutocomplete) vira "display: contents" para entrar na grade */
+@media (max-width: 639.98px) {
+  body.pagina-pedido .pedido-carro { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  body.pagina-pedido .pedido-carro > .space-y-4 { display: contents; }
+  body.pagina-pedido .pedido-carro > .space-y-4 > * { margin-top: 0; grid-column: span 2; }
+  body.pagina-pedido .pedido-carro > .space-y-4 > div:has(#cbbe3-103), body.pagina-pedido .pedido-carro > .pedido-placa { grid-column: span 1; margin-top: 0; }
+  body.pagina-pedido .pedido-carro > .pedido-placa-ajuda { grid-column: span 2; margin-top: -0.25rem; }
+  body.pagina-pedido .pedido-carro #cbbe3-101-ajuda, body.pagina-pedido .pedido-carro #cbbe3-102-ajuda { display: none; }
+  body.pagina-pedido .pedido-carro > .space-y-4 > div > .flex.gap-2 > button { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+}
+@media (max-height: 700px) {
+  /* celular pequeno (360x640): menu baixo, sem subtitulo/ajudas, titulo da pagina so na 1a tela */
+  body.pagina-pedido nav.sticky .h-16 { height: 3rem; }
+  body.pagina-pedido nav.sticky img[alt="BipFix"] { height: 1.75rem; }
+  body.pagina-pedido .pedido-pagina { padding-top: 0.5rem; padding-bottom: 0.25rem; }
+  body.pagina-pedido .pedido-titulo { font-size: 1.125rem; line-height: 1.5rem; }
+  body.pagina-pedido .pedido-pagina:not([data-grupo="1"]) .pedido-titulo { display: none; }
+  body.pagina-pedido .pedido-subtitulo { display: none; }
+  body.pagina-pedido .pedido-ajuda { display: none; }
+  body.pagina-pedido .pedido-progresso { margin-top: 0.25rem; margin-bottom: 0.5rem; }
+  body.pagina-pedido .pedido-progresso > div { height: 0.25rem; }
+  body.pagina-pedido .card { padding: 0.75rem; }
+  body.pagina-pedido .pedido-rodape { margin-top: 0.5rem; }
+  /* tela 1: os 8 tipos viram linhas (icone + nome) */
+  body.pagina-pedido [data-testid="passo-servico"] h2 { margin-bottom: 0.5rem; font-size: 1rem; }
+  body.pagina-pedido [data-testid="passo-servico"] .grid { gap: 0.5rem; }
+  body.pagina-pedido [data-testid="passo-servico"] .grid button { padding: 0.5rem 0.625rem; display: flex; align-items: center; gap: 0.5rem; min-height: 3rem; }
+  body.pagina-pedido [data-testid="passo-servico"] .grid button span { font-size: 1.25rem; line-height: 1.5rem; }
+  body.pagina-pedido [data-testid="passo-servico"] .grid button p { margin-top: 0; font-size: 0.875rem; line-height: 1.125rem; }
+  /* tela 2: caixa mais baixa, chips mais juntos */
+  body.pagina-pedido [data-testid="passo-detalhe"] h2 { margin-bottom: 0.375rem; }
+  body.pagina-pedido [data-testid="passo-detalhe"] .pedido-caixa { min-height: 4.25rem; padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  body.pagina-pedido [data-testid="passo-detalhe"] .mt-4 { margin-top: 0.5rem; }
+  body.pagina-pedido [data-testid="passo-detalhe"] label { margin-bottom: 0.125rem; }
+  body.pagina-pedido [data-testid="passo-contato"] .space-y-3 > * + * { margin-top: 0.5rem; }
+  body.pagina-pedido [data-testid="passo-contato"] .input-field { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  body.pagina-pedido [data-testid="chip-servico"] { min-height: 2.5rem; padding: 0.375rem 0.75rem; }
+  body.pagina-pedido [data-testid="chips-servicos"] { gap: 0.375rem; }
+  body.pagina-pedido [data-testid="status-passo"] { font-size: 0.8125rem; line-height: 1.125rem; }
+  body.pagina-pedido [data-testid="ver-mais"] { min-height: 2.25rem; margin-top: 0.25rem; }
+  body.pagina-pedido .pedido-lista-rolavel { max-height: calc(100dvh - 18.5rem - var(--altura-cookies, 0px)); }
+  /* tela 4 (carro): ajudas escondidas (acima), ano e numbrimark lado a lado */
+  body.pagina-pedido .pedido-carro { gap: 0.5rem; }
+  body.pagina-pedido .pedido-carro .input-field { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  body.pagina-pedido .pedido-carro p.text-xs { display: none; }
+  body.pagina-pedido .pedido-carro label { margin-bottom: 0.125rem; }
+  body.pagina-pedido [data-testid="passo-carro"] h2 { margin-bottom: 0.5rem; }
+  /* so a 1a fila de atalhos de marca e o seletor de tipo mais baixo */
+  body.pagina-pedido .pedido-carro [data-testid="atalhos-marca"] button:nth-child(n+5) { display: none; }
+  body.pagina-pedido .pedido-carro [data-testid="atalhos-marca"] { margin-bottom: 0.375rem; }
+  body.pagina-pedido .pedido-carro > .space-y-4 > div > .flex.gap-2 > button { padding-top: 0.25rem; padding-bottom: 0.25rem; font-size: 0.8125rem; line-height: 1.125rem; }
+  /* tela 5: mapa mais baixo */
+  body.pagina-pedido .pedido-mapa img { height: 6rem; }
+  /* barra Tagasi/Edasi mais baixa */
+  body.pagina-pedido [data-testid="navegar"] { margin-top: 0.75rem; padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  body.pagina-pedido [data-testid="navegar"] button { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+}
+
 /* Conversa (mensagens): cabe na parte visivel da tela, com a caixa de digitar
    sempre a vista. No iPhone a caixa ficava atras da barra de baixo da oficina
    e era preciso rolar (teste do dono, 31/10). dvh = altura visivel no Safari. */

@@ -17,16 +17,18 @@ import CampoTelefone from '@/components/forms/CampoTelefone';
 import { placaValida, anoDoCarroValido } from '@/lib/validar-carro';
 import { gravarFotosPedido, lerFotosPedido, apagarFotosPedido } from '@/lib/rascunho-pedido-fotos';
 import {
-  TIPOS_SERVICO, URGENCIAS, iconeTipoMotorista,
-  SERVICOS_REVISAO, SERVICOS_MECANICA, SERVICOS_ELETRICA, SERVICOS_PNEU,
+  TIPOS_SERVICO, iconeTipoMotorista, listaServicos, servicosComuns, SERVICOS_COMUNS_MAX, URGENCIA_PADRAO,
 } from '@fixauto/shared';
 
 // Pedido de orcamento SEM cadastro e SEM senha (dono 06/11 e 12/11; regras em
-// lib/pedido-sem-conta.ts). Mesmo pedido do /cliente/nova-solicitacao (servico,
-// carro, local), mais nome e e-mail no fim (telefone so se a pessoa quiser SMS, dono
-// 13/11); o pedido so vai para as oficinas depois da confirmacao pelo e-mail - o
-// botao do e-mail OU o codigo de 6 digitos digitado aqui - e quem confirma entra na
-// conta (nova ou ja existente). O app faz o mesmo em apps/mobile/app/pedido.tsx.
+// lib/pedido-sem-conta.ts), em etapas de UMA pergunta por tela (dono 19/11, Proposta_pedido_em_
+// etapas_2026-11-19 sec. 14/15, opcao A): 1 Teenus -> 2 "Mis autol viga on?" (caixa de texto +
+// chips dos problemas comuns; "Naita koiki" abre a lista inteira numa tela propria) -> 3 Fotod ->
+// 4 Auto -> 5 Asukoht (com mapa) -> 6 Kontakt -> codigo do e-mail. Sem tela de urgencia (fica
+// "media"). Cada tela cabe sem rolar a 390x844 e 360x640 (CSS em globals.css, body.pagina-pedido).
+// O pedido so vai para as oficinas depois da confirmacao pelo e-mail - o botao do e-mail OU o
+// codigo de 6 digitos digitado aqui - e quem confirma entra na conta (nova ou ja existente).
+// O app faz o mesmo em apps/mobile/app/pedido.tsx (mesmas constantes de @fixauto/shared).
 const FUNIL = 'pedido_site';
 const contar = (etapa: string) => {
   try { fetch('/api/funil', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ funil: FUNIL, etapa }), keepalive: true }).catch(() => {}); } catch { /* nunca atrapalha o pedido */ }
@@ -51,7 +53,15 @@ function sugestaoEmail(email: string): string | null {
   return perto ? `${m[1]}@${perto}` : null;
 }
 
-type Etapa = 'servico' | 'detalhe' | 'carro' | 'local' | 'contato' | 'codigo' | 'enviado';
+// 'lista' = tela "Naita koiki" (lista inteira do tipo), sub-tela do grupo 2 (mesmo numero na barra)
+type Etapa = 'servico' | 'detalhe' | 'lista' | 'fotos' | 'carro' | 'local' | 'contato' | 'codigo' | 'enviado';
+// ordem das entradas do historico (voltar do celular = um passo atras, inclusive da sub-tela da lista)
+const ORDEM: Etapa[] = ['servico', 'detalhe', 'lista', 'fotos', 'carro', 'local', 'contato', 'codigo'];
+// grupo da barra de progresso "Samm n/6" (0 = sem barra)
+const GRUPO: Record<Etapa, number> = { servico: 1, detalhe: 2, lista: 2, fotos: 3, carro: 4, local: 5, contato: 6, codigo: 0, enviado: 0 };
+const GRUPOS = 6;
+// passos contados no funil ao entrar (uma vez por pedido); 'lista' conta como detalhe_ver_todos ao abrir
+const CONTAR_AO_ENTRAR: Partial<Record<Etapa, string>> = { detalhe: 'detalhe', fotos: 'fotos', carro: 'carro', local: 'local', contato: 'contato' };
 
 // Trocar de idioma no meio do pedido (dono 06/11: "mudei para ingles e voltou a pagina").
 // O formulario vai num rascunho no aparelho (localStorage, vale 24 h) e as fotos no
@@ -62,7 +72,9 @@ const RASCUNHO = 'bipfix_pedido_rascunho';
 const FUNIL_CONTADOS = 'bipfix_pedido_funil'; // passos ja contados no funil deste pedido (aba)
 const lerRascunho = () => localStorage.getItem(RASCUNHO) || sessionStorage.getItem(RASCUNHO); // sessionStorage: rascunho de antes de 10/11
 const memoria: { fotos: { file: File; preview: string }[] } = { fotos: [] };
-const LISTA_CURTA = 6; // "ver mais": a lista inteira so quando a pessoa pede
+const FOTOS_MAX = 6;
+// tela pequena (360x640 ou mais baixa): 4 chips em vez de 6, para o passo 2 caber sem rolar
+const COMPACTO = '(max-height: 700px), (max-width: 379px)';
 
 export default function PedidoSemConta() {
   const t = useTranslations('pedidoSemConta');
@@ -79,14 +91,14 @@ export default function PedidoSemConta() {
   const [tipo, setTipo] = useState('');
   const [servicos, setServicos] = useState<string[]>([]);
   const [descricao, setDescricao] = useState('');
-  const [urgencia, setUrgencia] = useState('media');
   const [fotos, setFotos] = useState<{ file: File; preview: string }[]>(() => memoria.fotos);
-  const [listaAberta, setListaAberta] = useState(false);
+  // "Jatka ilma fotota": a tela de fotos nao reaparece "vazia" como erro ao voltar
+  const [fotosPuladas, setFotosPuladas] = useState(false);
   const inputFoto = useRef<HTMLInputElement>(null);
   const inputCamera = useRef<HTMLInputElement>(null);
   const adicionarFotos = (e: ChangeEvent<HTMLInputElement>) => {
-    const fs = Array.from(e.target.files || []).slice(0, 6 - fotos.length);
-    if (fs.length) contar('foto');
+    const fs = Array.from(e.target.files || []).slice(0, FOTOS_MAX - fotos.length);
+    if (fs.length) { contar('foto'); setFotosPuladas(false); }
     setFotos((x) => [...x, ...fs.map((file) => ({ file, preview: URL.createObjectURL(file) }))]);
     e.target.value = '';
   };
@@ -139,6 +151,15 @@ export default function PedidoSemConta() {
     try { sessionStorage.setItem(FUNIL_CONTADOS, JSON.stringify([...(Array.isArray(lista) ? lista : []), etapa])); } catch { /* ignora */ }
     contar(etapa);
   };
+  // tela pequena: menos chips (ver COMPACTO)
+  const [compacto, setCompacto] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(COMPACTO);
+    const ler = () => setCompacto(mq.matches);
+    ler();
+    mq.addEventListener('change', ler);
+    return () => mq.removeEventListener('change', ler);
+  }, []);
 
   // quem ja esta logado usa o pedido normal (mesmos passos, sem contato/codigo)
   const pulandoPassos = useRef(false);
@@ -174,14 +195,15 @@ export default function PedidoSemConta() {
       const r = JSON.parse(lerRascunho() || 'null');
       if (r && Date.now() - (r.em || 0) < 24 * 3600 * 1000) {
         tinha = true;
-        setTipo(r.tipo || ''); setServicos(Array.isArray(r.servicos) ? r.servicos : []); setDescricao(r.descricao || ''); setUrgencia(r.urgencia || 'media');
+        setTipo(r.tipo || ''); setServicos(Array.isArray(r.servicos) ? r.servicos : []); setDescricao(r.descricao || ''); setFotosPuladas(!!r.fotosPuladas);
         if (r.carro) setCarro(r.carro);
         setPlaca(r.placa || ''); setEndereco(r.endereco || ''); setCoords(r.coords || null); setPais(r.pais || null);
         setNome(r.nome || ''); setEmail(r.email || ''); setQuerSms(!!r.querSms); setTelefone(r.querSms ? r.telefone || '' : ''); setTermos(!!r.termos);
         if (r.pendente?.id && r.pendente?.email) setPendente({ id: r.pendente.id, email: r.pendente.email });
-        // codigo so com o pedido pendente guardado; senao volta ao contato
-        const e: Etapa = r.etapa === 'codigo' && !r.pendente ? 'contato' : r.etapa;
-        if (e && e !== 'enviado') { etapaRestaurada.current = e; setEtapa(e); }
+        // codigo so com o pedido pendente guardado; senao volta ao contato. Rascunho de antes de 19/11
+        // (passo 'detalhe' com tudo junto) continua valido: 'detalhe' existe no fluxo novo.
+        const e: Etapa = r.etapa === 'codigo' && !r.pendente ? 'contato' : ORDEM.includes(r.etapa) ? r.etapa : 'servico';
+        if (e !== 'enviado') { etapaRestaurada.current = e; setEtapa(e); }
         // a pagina recarregou (nao foi troca de idioma): as fotos voltam do aparelho
         if (r.qtdFotos && !memoria.fotos.length) {
           fotosVoltando.current = true;
@@ -200,9 +222,9 @@ export default function PedidoSemConta() {
     if (!rascunhoLido) return;
     memoria.fotos = fotos;
     try {
-      localStorage.setItem(RASCUNHO, JSON.stringify({ em: Date.now(), etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, querSms, telefone, termos, pendente, qtdFotos: fotos.length }));
+      localStorage.setItem(RASCUNHO, JSON.stringify({ em: Date.now(), etapa, tipo, servicos, descricao, fotosPuladas, carro, placa, endereco, coords, pais, nome, email, querSms, telefone, termos, pendente, qtdFotos: fotos.length }));
     } catch { /* ignora */ }
-  }, [rascunhoLido, etapa, tipo, servicos, descricao, urgencia, carro, placa, endereco, coords, pais, nome, email, querSms, telefone, termos, pendente, fotos]);
+  }, [rascunhoLido, etapa, tipo, servicos, descricao, fotosPuladas, carro, placa, endereco, coords, pais, nome, email, querSms, telefone, termos, pendente, fotos]);
   useEffect(() => {
     if (!rascunhoLido || fotosVoltando.current) return;
     if (fotos.length) gravarFotosPedido(fotos.map((f) => f.file)); else apagarFotosPedido();
@@ -233,7 +255,6 @@ export default function PedidoSemConta() {
   // botao "voltar" do celular/navegador volta UM passo, sem perder nada (dono 12/11): antes os
   // passos nao entravam no historico e o voltar saia do pedido. Cada passo novo vira uma entrada
   // (o Next copia o estado interno dele - app-router.js); o Tagasi da tela usa o mesmo historico.
-  const ORDEM: Etapa[] = ['servico', 'detalhe', 'carro', 'local', 'contato', 'codigo'];
   const doHistorico = useRef(false);
   const etapaAnterior = useRef<Etapa | null>(null);
   const empilhados = useRef(0);
@@ -270,11 +291,11 @@ export default function PedidoSemConta() {
     setFaltando('');
     // o passo que voltou do rascunho (pagina recarregada) ja foi contado antes
     if (etapaRestaurada.current === etapa) etapaRestaurada.current = null;
-    else if (['detalhe', 'carro', 'local', 'contato'].includes(etapa)) contarUmaVez(etapa);
+    else if (CONTAR_AO_ENTRAR[etapa]) contarUmaVez(CONTAR_AO_ENTRAR[etapa]!);
     if (primeiraEtapa.current) { primeiraEtapa.current = false; return; }
     window.scrollTo({ top: 0 });
   }, [etapa]);
-  // tela curta (celular deitado): globals.css encolhe o cabecalho desta pagina
+  // tela curta/pequena: globals.css encolhe o cabecalho desta pagina
   useEffect(() => {
     document.body.classList.add('pagina-pedido');
     return () => document.body.classList.remove('pagina-pedido');
@@ -310,21 +331,29 @@ export default function PedidoSemConta() {
       setLocalizando(false);
     }, () => { setLocalizando(false); setLocalNegado(true); contar('local_gps_negado'); }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 });
   };
+  // mapa estatico com o pino (Geoapify pelo servidor, /api/mapa-estatico): so depois de haver
+  // coordenada (sugestao escolhida ou "minha localizacao"); sem chave/falha a imagem some
+  const [mapaFalhou, setMapaFalhou] = useState(false);
+  useEffect(() => { setMapaFalhou(false); }, [coords]);
 
   const tipoConfig = TIPOS_SERVICO.find((x) => x.value === tipo);
   const NS: Record<string, string> = { revisao: 'servicosRevisao', mecanica: 'servicosMecanica', eletrica: 'servicosEletrica', pneu: 'servicosPneu' };
-  const lista = tipo === 'revisao' ? SERVICOS_REVISAO : tipo === 'mecanica' ? SERVICOS_MECANICA : tipo === 'eletrica' ? SERVICOS_ELETRICA : tipo === 'pneu' ? SERVICOS_PNEU : [];
+  const lista = listaServicos(tipo);
   const rotuloServico = (v: string) => (NS[tipo] ? tc(`${NS[tipo]}.${v}`) : v);
-  // passo 2 (rascunho aprovado 15/11): primeiro a caixa de texto, a lista do tipo embaixo
-  // ("ou escolha abaixo"); sem campo de busca. "Ver todos" abre a lista inteira.
+  // chips: rotulo curto (constants.servicosCurto) dos mais pedidos; os ja marcados ficam sempre a vista
+  const rotuloCurto = (v: string) => (tc.has(`servicosCurto.${v}`) ? tc(`servicosCurto.${v}`) : rotuloServico(v));
+  const comuns = servicosComuns(tipo);
+  const limiteChips = compacto ? 4 : SERVICOS_COMUNS_MAX;
+  const chips = comuns.filter((v, i) => i < limiteChips || servicos.includes(v));
   const temLista = lista.length > 0;
-  const listaCurta = !listaAberta && lista.length > LISTA_CURTA;
-  const listaVisivel = listaCurta ? lista.filter((sv, i) => i < LISTA_CURTA || servicos.includes(sv.value)) : lista;
-  const ehDano = tipo === 'colisao' || tipo === 'funilaria';
+  // tipos de dano/vidro: "Mis juhtus?" + "kirjelda kahju"; outro/ei tea: a pergunta generica
+  const ehDano = tipo === 'colisao' || tipo === 'funilaria' || tipo === 'vidros';
   const EXEMPLO: Record<string, string> = { revisao: 'exemploRevisao', mecanica: 'exemploMecanica', eletrica: 'exemploEletrica', pneu: 'exemploPneu', vidros: 'exemploVidro', colisao: 'exemploFoto', funilaria: 'exemploFoto' };
   const exemplo = EXEMPLO[tipo] ? t(EXEMPLO[tipo]) : tn('placeholderDescribeIssue');
-  // escreveu o que precisa OU marcou algum servico da lista OU mandou foto (12/11: para
-  // colisao/lataria/outro nao ha lista e a foto e o que a pessoa mais toca - vale como descricao)
+  const alternarServico = (v: string) => {
+    if (!servicos.includes(v)) contarUmaVez('detalhe_escolheu_lista');
+    setServicos((x) => x.includes(v) ? x.filter((y) => y !== v) : [...x, v]);
+  };
   // regra do dono (12/11): tipo + escrever o que precisa OU marcar da lista; a foto ajuda mas nao substitui o texto
   const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
   // placa e ano conferidos aqui, com o aviso ao lado do campo (item 53). Ano OPCIONAL desde 16/11
@@ -351,6 +380,7 @@ export default function PedidoSemConta() {
   const statusDetalhe: { texto: string; tom: 'neutro' | 'ok' } = servicos.length > 0 ? { texto: t('detalheStatusLista', { n: servicos.length }), tom: 'ok' }
     : descricao.trim() ? { texto: t('detalheStatusTexto'), tom: 'ok' }
     : { texto: temLista ? t('detalheStatusVazio') : t('detalheStatusVazioTexto'), tom: 'neutro' };
+  const faltaDetalhe = temLista ? t('faltaDescricaoLista') : t('faltaDescricao');
 
   const descricaoFinal = () => servicos.length > 0
     ? `${tn('servicesPrefix')} ${servicos.map(rotuloServico).join(', ')}${descricao.trim() ? '. ' + descricao.trim() : ''}`
@@ -374,7 +404,7 @@ export default function PedidoSemConta() {
       const form = new FormData();
       form.append('dados', JSON.stringify({
         origem: 'site', site, idioma: locale, nome: nome.trim(), email: email.trim(), querSms, telefone: querSms ? telefone.trim() : '', aceitouTermos: termos,
-        tipo, descricao: descricaoFinal(), urgencia, endereco, latitude: local.lat, longitude: local.lon, pais: local.pais,
+        tipo, descricao: descricaoFinal(), urgencia: URGENCIA_PADRAO, endereco, latitude: local.lat, longitude: local.lon, pais: local.pais,
         veiculo: { tipo: carro.tipo, marca: carro.marca, modelo: carro.modelo, ano: carro.ano, codigo: carro.codigo || null, placa: placa.trim() || null },
       }));
       for (const f of fotos) form.append('fotos', f.file);
@@ -441,19 +471,19 @@ export default function PedidoSemConta() {
     }
   };
 
-  const passos: Etapa[] = ['servico', 'detalhe', 'carro', 'local', 'contato'];
-  const indice = passos.indexOf(etapa);
+  const grupo = GRUPO[etapa];
   // no celular os botoes ficam presos no rodape da tela: "Edasi" ficava abaixo da dobra
   // (y=876 numa tela de 780) e a pessoa achava que estava travada (Clarity, dono 10/11)
   // "Edasi" sempre clicavel (so trava enquanto envia): faltando algo, diz o que e e leva ao campo
   // status (passo 2): linha cinza/verde acima dos botoes; com aviso vermelho, so o aviso (nunca os dois)
-  const Navegar = ({ voltar, avancar, ok, rotulo, falta, campo, motivo, status }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string; falta: string; campo: string; motivo?: string; status?: { texto: string; tom: 'neutro' | 'ok' } }) => (
-    <div className="flex flex-wrap justify-between mt-6 gap-3 sticky bottom-0 z-10 -mx-6 px-6 py-3 bg-white/95 backdrop-blur border-t border-gray-100 rounded-b-xl sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0" data-testid="navegar">
+  // secundario: o botao principal com a cara de "Jatka ilma fotota" (fotos sao opcionais)
+  const Navegar = ({ voltar, avancar, ok, rotulo, falta, campo, motivo, status, secundario }: { voltar?: Etapa; avancar: () => void; ok: boolean; rotulo?: string; falta: string; campo: string; motivo?: string; status?: { texto: string; tom: 'neutro' | 'ok' }; secundario?: boolean }) => (
+    <div className="flex flex-wrap justify-between mt-5 gap-3 sticky bottom-0 z-10 -mx-4 px-4 py-3 bg-white/95 backdrop-blur border-t border-gray-100 rounded-b-xl sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0" data-testid="navegar">
       {faltando && <p role="alert" className="w-full text-sm text-red-700 font-medium" data-testid="falta-aviso">{faltando}</p>}
       {!faltando && status && <p role="status" data-testid="status-passo" data-tom={status.tom} className={`w-full text-sm ${status.tom === 'ok' ? 'text-green-700 font-medium' : 'text-gray-600'}`}>{status.texto}</p>}
       {voltar ? <button type="button" onClick={() => voltarPara(voltar)} className="btn-secondary">{tn('back')}</button> : <span />}
-      <button type="button" onClick={() => { if (ok) { setFaltando(''); avancar(); return; } setFaltando(falta); contar(`edasi_bloqueado_${etapa}`); if (motivo) contar(`edasi_bloqueado_${etapa}_${motivo}`); focar(campo); }}
-        disabled={enviando} aria-busy={enviando} className="btn-primary disabled:opacity-50">{rotulo || tn('next')}</button>
+      <button type="button" onClick={() => { if (ok) { setFaltando(''); avancar(); return; } setFaltando(falta); contar(`edasi_bloqueado_${etapa === 'lista' ? 'detalhe' : etapa}`); if (motivo) contar(`edasi_bloqueado_${etapa}_${motivo}`); focar(campo); }}
+        disabled={enviando} aria-busy={enviando} data-testid="edasi" className={`${secundario ? 'btn-secondary border-primary-300 text-primary-800' : 'btn-primary'} flex-1 disabled:opacity-50`}>{rotulo || tn('next')}</button>
     </div>
   );
 
@@ -484,77 +514,115 @@ export default function PedidoSemConta() {
     );
   }
 
-  return (
-    <div className="pedido-pagina max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="pedido-titulo text-2xl font-bold text-gray-900">{t('titulo')}</h1>
-      <p className="pedido-subtitulo text-gray-600 mt-1 mb-6">{t('subtitulo')}</p>
+  // linha do tipo escolhido no alto dos passos 2 (icone + nome)
+  const linhaTipo = <p className="text-sm text-gray-500" data-testid="detalhe-tipo">{tipoConfig ? iconeTipoMotorista(tipoConfig.value, tipoConfig.icon) : ''} {rotuloTipoMotorista(tc, tipo)}</p>;
 
-      {indice >= 0 && (
-        <div className="pedido-progresso flex items-center gap-2 mb-6" aria-label={t('passoDe', { n: indice + 1, total: passos.length })}>
-          {passos.map((p, i) => <div key={p} className={`flex-1 h-2 rounded-full ${i <= indice ? 'bg-primary-600' : 'bg-gray-200'}`} />)}
-          <span className="text-sm text-gray-500 ml-2">{indice + 1}/{passos.length}</span>
+  return (
+    <div className="pedido-pagina max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6" data-grupo={grupo} data-etapa={etapa}>
+      <h1 className="pedido-titulo text-lg leading-tight sm:text-2xl sm:leading-normal font-bold text-gray-900">{t('titulo')}</h1>
+      {/* "umbes 2 minutit" so na 1a tela (poupa altura nas outras) */}
+      {etapa === 'servico' ? <p className="pedido-subtitulo text-sm sm:text-base text-gray-600 mt-0.5 mb-4">{t('subtitulo')}</p> : <div className="mb-3" />}
+
+      {grupo > 0 && (
+        <div className="pedido-progresso flex items-center gap-2 mb-4" aria-label={t('passoDe', { n: grupo, total: GRUPOS })} data-testid="progresso">
+          {Array.from({ length: GRUPOS }, (_, i) => <div key={i} className={`flex-1 h-2 rounded-full ${i < grupo ? 'bg-primary-600' : 'bg-gray-200'}`} />)}
+          <span className="text-sm text-gray-500 ml-2 whitespace-nowrap">{t('passoDe', { n: grupo, total: GRUPOS })}</span>
         </div>
       )}
 
-      <div className="card">
+      <div className="card p-4 sm:p-6">
         {/* 1) so o tipo: um toque e ja vai para a pagina seguinte (guiado, pedido do dono 06/11) */}
         {etapa === 'servico' && (
           <div data-testid="passo-servico">
             {/* "o tipo principal": quem precisa de varias coisas escreve as outras no passo 2 (rascunho 15/11) */}
             <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('servicoTitulo')}</h2>
-            <p className="pedido-ajuda text-sm text-gray-700 mb-4">{t('servicoAjuda')}</p>
-            <div className="grid grid-cols-2 gap-3">
+            <p className="pedido-ajuda text-sm text-gray-700 mb-3">{t('servicoAjuda')}</p>
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
               {TIPOS_SERVICO.map((s) => (
                 <button key={s.value} type="button" aria-pressed={tipo === s.value}
-                  onClick={() => { if (s.value !== tipo) { setServicos([]); setListaAberta(false); } contarUmaVez('servico'); setTipo(s.value); setEtapa('detalhe'); }}
-                  className={`min-w-0 p-4 rounded-lg border-2 text-left transition-all ${tipo === s.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                  <span className="text-2xl">{iconeTipoMotorista(s.value, s.icon)}</span>
+                  onClick={() => { if (s.value !== tipo) setServicos([]); contarUmaVez('servico'); setTipo(s.value); setEtapa('detalhe'); }}
+                  className={`min-w-0 p-3 sm:p-4 rounded-lg border-2 text-left transition-all ${tipo === s.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                  <span className="text-xl sm:text-2xl">{iconeTipoMotorista(s.value, s.icon)}</span>
                   {/* palavra longa (RU "Техобслуживание") nao invade o cartao do lado a 360 px */}
-                  <p className="font-medium text-gray-900 mt-2 hyphens-auto [overflow-wrap:anywhere]">{rotuloTipoMotorista(tc, s.value)}</p>
+                  <p className="font-medium text-gray-900 mt-1 sm:mt-2 hyphens-auto [overflow-wrap:anywhere]">{rotuloTipoMotorista(tc, s.value)}</p>
                 </button>
               ))}
             </div>
           </div>
         )}
 
-        {/* 2) o que precisa (rascunho aprovado 15/11): a pergunta, a caixa de texto com um exemplo do
-            tipo e, embaixo, a lista do tipo como alternativa. Basta escrever OU marcar (servicoOk). */}
+        {/* 2) "Mis autol viga on?" (opcao A, dono 19/11): rotulo visivel FORA da caixa (NN/g), a caixa de
+            texto onde se escreve ali mesmo e, embaixo, os problemas mais pedidos do tipo como chips (toque
+            = marcado com check); "Naita koiki" abre a lista inteira. Basta escrever OU marcar (servicoOk).
+            Tipos sem lista (colisao, lataria, vidros, outro): so a caixa. */}
         {etapa === 'detalhe' && (
           <div data-testid="passo-detalhe">
-            <p className="text-sm text-gray-500" data-testid="detalhe-tipo">{tipoConfig ? iconeTipoMotorista(tipoConfig.value, tipoConfig.icon) : ''} {rotuloTipoMotorista(tc, tipo)}</p>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">{temLista || tipo === 'outro' ? t('detalheTitulo') : t('detalheTituloFoto')}</h2>
+            {linhaTipo}
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">{ehDano ? t('detalheTituloFoto') : t('detalheTitulo')}</h2>
             <label htmlFor="pedido-descricao" className="block text-sm font-medium text-gray-700 mb-1">{ehDano ? t('detalheRotuloFoto') : t('detalheRotuloTexto')}</label>
-            <textarea id="pedido-descricao" className={`input-field min-h-[96px] ${faltando ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`} maxLength={1800} value={descricao} aria-invalid={!!faltando}
+            <textarea id="pedido-descricao" className={`input-field pedido-caixa ${temLista ? 'min-h-[104px]' : 'min-h-[140px]'} ${faltando ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`} maxLength={1800} value={descricao} aria-invalid={!!faltando}
               aria-describedby={faltando ? 'pedido-descricao-aviso' : undefined}
               onChange={(e) => { setDescricao(e.target.value); if (e.target.value.trim()) contarUmaVez('detalhe_escreveu'); }}
               placeholder={exemplo} />
             {faltando && <p role="alert" id="pedido-descricao-aviso" data-testid="falta-aviso-topo" className="text-sm text-red-700 font-medium mt-1">{faltando}</p>}
             {temLista && (
-              <div className="mt-5">
+              <div className="mt-4">
                 <p className="text-sm font-medium text-gray-700 mb-2">{t('detalheOuEscolha')}</p>
-                <div className="space-y-2" data-testid="lista-servicos">
-                  {listaVisivel.map((sv) => (
-                    <label key={sv.value} className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer ${servicos.includes(sv.value) ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}>
-                      <input type="checkbox" checked={servicos.includes(sv.value)} className="w-4 h-4"
-                        onChange={() => { if (!servicos.includes(sv.value)) contarUmaVez('detalhe_escolheu_lista'); setServicos((x) => x.includes(sv.value) ? x.filter((y) => y !== sv.value) : [...x, sv.value]); }} />
-                      <span className="text-sm text-gray-900">{rotuloServico(sv.value)}</span>
-                    </label>
-                  ))}
-                  {lista.length > LISTA_CURTA && (
-                    <button type="button" onClick={() => { if (listaCurta) contarUmaVez('detalhe_ver_todos'); setListaAberta((x) => !x); }} className="w-full min-h-[44px] text-sm font-medium text-primary-700 underline" data-testid="ver-mais">
-                      {listaCurta ? t('verTodos', { n: lista.length }) : t('verMenos')}
-                    </button>
-                  )}
+                <div className="flex flex-wrap gap-2" data-testid="chips-servicos">
+                  {chips.map((v) => {
+                    const marcado = servicos.includes(v);
+                    return (
+                      <button key={v} type="button" aria-pressed={marcado} data-testid="chip-servico" data-valor={v} onClick={() => alternarServico(v)}
+                        className={`min-h-[44px] px-3.5 py-2 rounded-full border-2 text-sm font-medium transition-colors ${marcado ? 'border-primary-600 bg-primary-50 text-primary-800' : 'border-gray-300 bg-white text-gray-800 hover:border-primary-400'}`}>
+                        {marcado ? '✓ ' : ''}{rotuloCurto(v)}
+                      </button>
+                    );
+                  })}
                 </div>
+                {/* os marcados que nao estao entre os chips (vieram da lista inteira) */}
+                {servicos.some((v) => !chips.includes(v)) && (
+                  <p className="text-sm text-primary-800 mt-2" data-testid="chips-extra">✓ {servicos.filter((v) => !chips.includes(v)).map(rotuloServico).join(', ')}</p>
+                )}
+                {lista.length > chips.length && (
+                  <button type="button" onClick={() => { contarUmaVez('detalhe_ver_todos'); setEtapa('lista'); }} className="block mx-auto mt-2 min-h-[44px] text-sm font-medium text-primary-700 underline" data-testid="ver-mais">
+                    {t('verTodos', { n: lista.length })}
+                  </button>
+                )}
               </div>
             )}
-            <p className="text-sm font-medium text-gray-700 mt-5 mb-2">{t('fotosTitulo')}</p>
-            {/* camera e galeria separadas (dono 10/11): com um so botao o Chrome novo do Android
-                abre direto a galeria, sem a opcao de tirar foto */}
+            <Navegar voltar="servico" ok={servicoOk} avancar={() => setEtapa('fotos')} falta={faltaDetalhe} campo="pedido-descricao" status={statusDetalhe} />
+          </div>
+        )}
+
+        {/* 2b) "Naita koiki": a lista inteira do tipo com caixas de marcar, tela propria (volta com Tagasi, o
+            marcado fica). So a lista rola (dentro da caixa), a pagina nao - a barra Tagasi/Edasi fica a vista. */}
+        {etapa === 'lista' && (
+          <div data-testid="passo-lista">
+            {linhaTipo}
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">{t('listaTitulo')}</h2>
+            <div className="pedido-lista-rolavel space-y-2 overflow-y-auto -mx-1 px-1" data-testid="lista-servicos">
+              {lista.map((sv) => (
+                <label key={sv.value} className={`flex items-center gap-3 px-3 py-2 min-h-[44px] rounded-lg border-2 cursor-pointer ${servicos.includes(sv.value) ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}>
+                  <input type="checkbox" checked={servicos.includes(sv.value)} className="w-4 h-4" onChange={() => alternarServico(sv.value)} />
+                  <span className="text-sm text-gray-900">{rotuloServico(sv.value)}</span>
+                </label>
+              ))}
+            </div>
+            <Navegar voltar="detalhe" ok={servicoOk} avancar={() => setEtapa('fotos')} falta={faltaDetalhe} campo="lista-servicos" status={statusDetalhe} />
+          </div>
+        )}
+
+        {/* 3) Fotod (opcionais): camera e galeria separadas (dono 10/11: com um so botao o Chrome novo do
+            Android abre direto a galeria, sem a opcao de tirar foto). Sem fotos o botao principal e
+            "Jatka ilma fotota"; a foto nunca substitui a descricao (o passo 2 ja exigiu texto ou chip). */}
+        {etapa === 'fotos' && (
+          <div data-testid="passo-fotos">
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('fotosTitulo')}</h2>
+            <p className="pedido-ajuda text-sm text-gray-700 mb-4">{t('fotosTexto')}</p>
             <input ref={inputCamera} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} onChange={adicionarFotos} />
             <input ref={inputFoto} type="file" accept="image/*" multiple className="sr-only" tabIndex={-1} onChange={adicionarFotos} />
             {fotos.length > 0 && (
-              <div className="grid grid-cols-4 gap-2 mb-2">
+              <div className="grid grid-cols-4 gap-2 mb-3" data-testid="fotos-miniaturas">
                 {fotos.map((f, i) => (
                   <div key={f.preview} className="relative aspect-square rounded-lg overflow-hidden">
                     <img src={f.preview} alt={tn('photoAlt', { n: i + 1 })} className="w-full h-full object-cover" />
@@ -563,54 +631,51 @@ export default function PedidoSemConta() {
                 ))}
               </div>
             )}
-            {fotos.length < 6 && (
-              <div className="grid grid-cols-2 gap-2">
+            {fotos.length < FOTOS_MAX && (
+              <div className="grid grid-cols-2 gap-3">
                 <button type="button" onClick={() => inputCamera.current?.click()} data-testid="foto-camera"
-                  className="min-h-[48px] border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-700 hover:border-primary-400">📷 {t('tirarFoto')}</button>
+                  className="min-h-[64px] border-2 border-dashed border-gray-300 rounded-lg text-sm font-medium text-gray-800 hover:border-primary-400"><span className="block text-2xl" aria-hidden="true">📷</span>{t('tirarFoto')}</button>
                 <button type="button" onClick={() => inputFoto.current?.click()} data-testid="foto-galeria"
-                  className="min-h-[48px] border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-700 hover:border-primary-400">🖼️ {t('escolherGaleria')}</button>
+                  className="min-h-[64px] border-2 border-dashed border-gray-300 rounded-lg text-sm font-medium text-gray-800 hover:border-primary-400"><span className="block text-2xl" aria-hidden="true">🖼️</span>{t('escolherGaleria')}</button>
               </div>
             )}
-            <p className="text-xs text-gray-500 mt-2">{t('fotosAjuda')}</p>
-            <p className="text-sm font-medium text-gray-700 mt-5 mb-2">{tn('urgencyLabel')}</p>
-            <div className="grid sm:grid-cols-3 gap-2">
-              {URGENCIAS.map((u) => (
-                <button key={u.value} type="button" onClick={() => setUrgencia(u.value)} aria-pressed={urgencia === u.value}
-                  className={`p-3 rounded-lg border-2 text-left ${urgencia === u.value ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}>
-                  <p className="font-medium text-gray-900 text-sm">{tc(`urgencias.${u.value}`)}</p>
-                  <p className="text-xs text-gray-500">{tc(`urgencias.${u.value}Desc`)}</p>
-                </button>
-              ))}
-            </div>
-            <Navegar voltar="servico" ok={servicoOk} avancar={() => setEtapa('carro')} falta={temLista ? t('faltaDescricaoLista') : t('faltaDescricao')} campo="pedido-descricao" status={statusDetalhe} />
+            <p className="pedido-ajuda text-xs text-gray-500 mt-3">{t('fotosAjuda')}</p>
+            <Navegar voltar="detalhe" ok avancar={() => { if (!fotos.length) { setFotosPuladas(true); contarUmaVez('fotos_pulou'); } setEtapa('carro'); }}
+              rotulo={fotos.length ? undefined : t('semFotos')} secundario={!fotos.length} falta="" campo="foto-galeria" />
           </div>
         )}
 
-        {/* o passo do carro fica montado (so escondido): o seletor de marca/modelo guarda a
+        {/* 4) Auto: o passo fica montado (so escondido): o seletor de marca/modelo guarda a
             escolha dentro dele e, desmontado, voltava vazio ao ir e voltar (teste 06/11) */}
         {(
           <div data-testid="passo-carro" hidden={etapa !== 'carro'}>
-            <h2 className="text-lg font-semibold text-gray-900 mb-1">{tn('step1Title')}</h2>
-            <p className="text-sm text-gray-500 mb-4">{t('carroDica')}</p>
-            <FipeAutocomplete limparForaDoCatalogo anoOpcional atalhosMarca value={{ tipo: carro.tipo, marca: carro.marca, modelo: carro.modelo, ano: carro.ano }}
-              // ano invalido: o aviso aparece com os 4 digitos (ou ao tocar Edasi), nao a cada digito
-              erroAno={!anoOk && (carro.ano.length >= 4 || motivoCarro === 'ano' && !!faltando) ? te('ANO_INVALIDO') : null}
-              onChange={(f) => setCarro({ tipo: f.tipo, marca: f.marca, modelo: f.modelo, ano: f.ano, codigo: f.codigo || '' })} />
-            {/* placa opcional: diz o que ela da a oficina (Fable 16/11) */}
-            <label htmlFor="pedido-placa" className="block text-sm font-medium text-gray-700 mt-4 mb-1">{t('placaRotulo')}</label>
-            <p id="pedido-placa-ajuda" className="text-xs text-gray-500 mb-2">{t('placaAjuda')}</p>
-            <input id="pedido-placa" className="input-field" maxLength={10} aria-invalid={!placaValida(placa)} aria-describedby="pedido-placa-ajuda" placeholder={exemploPlaca(locale)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} />
-            {!placaValida(placa) && <p role="alert" className="mt-1 text-sm text-red-700" data-testid="placa-invalida">{te('PLACA_INVALIDA')}</p>}
-            <Navegar voltar="detalhe" ok={carroOk} avancar={() => setEtapa('local')} falta={faltaCarro[0]} campo={faltaCarro[1]} motivo={faltaCarro[2]} />
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('carroTitulo')}</h2>
+            <p className="pedido-ajuda hidden sm:block text-sm text-gray-500 mb-4">{t('carroDica')}</p>
+            <div className="pedido-carro">
+              <FipeAutocomplete limparForaDoCatalogo anoOpcional atalhosMarca value={{ tipo: carro.tipo, marca: carro.marca, modelo: carro.modelo, ano: carro.ano }}
+                // ano invalido: o aviso aparece com os 4 digitos (ou ao tocar Edasi), nao a cada digito
+                erroAno={!anoOk && (carro.ano.length >= 4 || motivoCarro === 'ano' && !!faltando) ? te('ANO_INVALIDO') : null}
+                onChange={(f) => setCarro({ tipo: f.tipo, marca: f.marca, modelo: f.modelo, ano: f.ano, codigo: f.codigo || '' })} />
+              {/* placa opcional: diz o que ela da a oficina (Fable 16/11) */}
+              <div className="pedido-placa mt-4">
+                <label htmlFor="pedido-placa" className="block text-sm font-medium text-gray-700 mb-1">{t('placaRotulo')}</label>
+                <input id="pedido-placa" className="input-field" maxLength={10} aria-invalid={!placaValida(placa)} aria-describedby="pedido-placa-ajuda" placeholder={exemploPlaca(locale)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} />
+                {!placaValida(placa) && <p role="alert" className="mt-1 text-sm text-red-700" data-testid="placa-invalida">{te('PLACA_INVALIDA')}</p>}
+              </div>
+              {/* no celular esta linha fica sob a dupla ano + placa (grade em globals.css) */}
+              <p id="pedido-placa-ajuda" className="pedido-ajuda pedido-placa-ajuda text-xs text-gray-500 mt-1">{t('placaAjuda')}</p>
+            </div>
+            <Navegar voltar="fotos" ok={carroOk} avancar={() => setEtapa('local')} falta={faltaCarro[0]} campo={faltaCarro[1]} motivo={faltaCarro[2]} />
           </div>
         )}
 
+        {/* 5) Asukoht: basta a zona (dono 19/11, v3) - linha destacada diz que o endereco exato nao e preciso;
+            localizacao so pelo botao (Fable 16/11); mapa estatico com o pino depois de haver coordenada */}
         {etapa === 'local' && (
           <div data-testid="passo-local">
-            {/* aceita endereco exato, linnaosa ou so a cidade; localizacao so pelo botao (Fable 16/11) */}
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('localTitulo')}</h2>
-            <label htmlFor="pedido-endereco" className="block text-sm font-medium text-gray-700 mb-1">{tn('addressLabel')}</label>
-            <p id="pedido-endereco-ajuda" className="text-xs text-gray-500 mb-2">{t('localAjuda')}</p>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">{t('localTitulo')}</h2>
+            <p id="pedido-endereco-ajuda" className="text-sm text-primary-900 bg-primary-50 border-l-4 border-primary-400 rounded-r-lg px-3 py-2 mb-3" data-testid="local-claro">{t('localAjuda')}</p>
+            <label htmlFor="pedido-endereco" className="block text-sm font-medium text-gray-700 mb-1">{t('localRotulo')}</label>
             {/* escreveu: a coordenada passa a ser a do texto (no envio); a de uma sugestao/do aparelho valia para o texto anterior */}
             <EnderecoAutocomplete id="pedido-endereco" value={endereco} onChange={(v) => { setEndereco(v); setCoords(null); }} placeholder={t('localPlaceholder')} perto={coords || posAparelho}
               onSelect={(s) => { setEndereco(s.rotulo); setCoords({ lat: s.latitude, lon: s.longitude }); if (s.paisCodigo) setPais(s.paisCodigo); }} />
@@ -623,6 +688,11 @@ export default function PedidoSemConta() {
             ) : (
               <p role="status" className="mt-3 text-sm text-gray-600" data-testid="localizacao-negada">{t('localNegado')}</p>
             )}
+            {coords && !mapaFalhou && (
+              <div className="pedido-mapa mt-3 rounded-lg overflow-hidden border border-gray-200 bg-gray-100" data-testid="mapa-estatico">
+                <img src={`/api/mapa-estatico?lat=${coords.lat.toFixed(4)}&lon=${coords.lon.toFixed(4)}`} alt={t('mapaAlt')} className="w-full h-36 object-cover" onError={() => setMapaFalhou(true)} />
+              </div>
+            )}
             {erro && <p role="alert" className="mt-3 text-sm text-red-700">{erro}</p>}
             <Navegar voltar="carro" ok={endereco.trim().length > 2} avancar={() => { setErro(''); setEtapa('contato'); }} falta={t('faltaEndereco')} campo="pedido-endereco" />
           </div>
@@ -631,7 +701,7 @@ export default function PedidoSemConta() {
         {etapa === 'contato' && (
           <div data-testid="passo-contato">
             <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('contatoTitulo')}</h2>
-            <p className="text-sm text-gray-500 mb-4">{t('contatoTexto')}</p>
+            <p className="pedido-ajuda text-sm text-gray-500 mb-4">{t('contatoTexto')}</p>
             {(
               <div className="space-y-3">
                 <div>
@@ -646,17 +716,17 @@ export default function PedidoSemConta() {
                   )}
                 </div>
                 {/* celular so para quem quer SMS (dono 13/11): desmarcado, o campo nem aparece e nada e enviado */}
-                <div className="rounded-lg border border-gray-200 p-3">
+                <div className="rounded-lg border border-gray-200 p-2.5 sm:p-3">
                   <label className="flex items-start gap-2 text-sm text-gray-800">
                     <input id="pedido-quer-sms" type="checkbox" checked={querSms} className="w-4 h-4 mt-0.5" data-testid="quer-sms"
                       onChange={(e) => { setQuerSms(e.target.checked); if (e.target.checked) contarUmaVez('contato_sms_opt'); else setTelefone(''); }} />
                     <span>{t('querSms')}</span>
                   </label>
                   {querSms && (
-                    <div className="mt-3">
+                    <div className="mt-2 sm:mt-3">
                       <label htmlFor="pedido-telefone" className="block text-sm font-medium text-gray-700 mb-1">{t('telefone')}</label>
                       <CampoTelefone id="pedido-telefone" value={telefone} onChange={setTelefone} />
-                      <p className="text-xs text-gray-500 mt-1">{t('telefoneDica')}</p>
+                      <p className="pedido-ajuda text-xs text-gray-500 mt-1">{t('telefoneDica')}</p>
                       <p className="flex items-start gap-1.5 text-xs text-gray-600 mt-2" data-testid="sms-privacidade">
                         <svg aria-hidden="true" className="w-4 h-4 shrink-0 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                         <span>{t('smsPrivacidade')}</span>
@@ -727,7 +797,7 @@ export default function PedidoSemConta() {
       </div>
 
       {etapa === 'servico' && (
-        <p className="text-center text-sm text-gray-600 mt-6">{t('jaTemConta')} <Link href="/login" className="text-primary-700 underline">{t('entrar')}</Link></p>
+        <p className="pedido-rodape text-center text-sm text-gray-600 mt-5">{t('jaTemConta')} <Link href="/login" className="text-primary-700 underline">{t('entrar')}</Link></p>
       )}
     </div>
   );
