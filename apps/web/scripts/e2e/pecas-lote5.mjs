@@ -185,11 +185,52 @@ try {
     await pl.getByRole('button', { name: ET('lojaCatalogo.addButton') }).first().click().catch(() => {});
     await pl.waitForTimeout(800);
     ok('S.3b /loja/catalogo da loja real: formulario de hoje (sem campos v3, sem link de promocoes)', (await semNovos(pl)).length === 0 && (await pl.locator('#c50c4-1').count()) === 1, (await semNovos(pl)).join(','));
+    // M2: fluxo de hoje inteiro pela tela (criar, desativar, apagar) + preco 0 com aviso
+    await pl.locator('#c50c4-1').fill(`TESTE-PECAS Real tela ${A.tag}`);
+    await pl.locator('#c50c4-6').fill('15');
+    await pl.getByRole('button', { name: ET('lojaCatalogo.addConfirmButton') }).click();
+    await pl.waitForTimeout(2000);
+    const criadoReal = (await A.admin.from('pecas_catalogo').select('id, visibilidade, unidade, condicao, ativo').eq('loja_id', ljR.id).ilike('nome', '%Real tela%')).data?.[0];
+    ok('S.3c loja real cria pelo formulario de hoje: item "interno"/"un"/"nova" (nao entra no Shop)', criadoReal?.visibilidade === 'interno' && criadoReal?.unidade === 'un' && criadoReal?.condicao === 'nova', JSON.stringify(criadoReal || {}));
+    await pl.locator('.card', { hasText: 'Real tela' }).getByRole('button', { name: ET('lojaCatalogo.desativarButton') }).click();
+    await pl.waitForTimeout(1500);
+    ok('S.3d desativar pela tela de hoje funciona', psql(`select ativo from pecas_catalogo where id = '${criadoReal?.id}'`) === 'f');
+    await pl.locator('.card', { hasText: 'Real tela' }).locator('button').last().click();
+    await pl.waitForTimeout(1500);
+    ok('S.3e apagar pela tela de hoje funciona', psql(`select count(*) from pecas_catalogo where id = '${criadoReal?.id}'`) === '0');
+    await pl.getByRole('button', { name: ET('lojaCatalogo.addButton') }).first().click();
+    await pl.locator('#c50c4-1').fill('x'); await pl.locator('#c50c4-6').fill('0');
+    await pl.getByRole('button', { name: ET('lojaCatalogo.addConfirmButton') }).click();
+    await pl.waitForTimeout(1500);
+    ok('S.3f preco 0 na tela de hoje: aviso de erro (antes falhava calado), nada gravado', await visivel(pl.locator('[data-testid="catalogo-erro"]')) && psql(`select count(*) from pecas_catalogo where loja_id = '${ljR.id}' and nome = 'x'`) === '0');
     await ctxL.close();
     const s4 = await A.api('GET', '/api/pecas/shop-imagem?c=banners/00000000-0000-0000-0000-000000000000.jpg', undefined, S.ofR.token);
     ok('S.4 /api/pecas/shop-imagem para oficina real: 404', s4.status === 404, `${s4.status}`);
     const sm = await get('/sitemap.xml');
     ok('S.5 sitemap sem /oficina/shop', sm.status === 200 && !/oficina\/shop|\/shop</.test(sm.texto), `${sm.status}`);
+  });
+
+  // ======================= S6: v3 LIGADA e Shop DESLIGADO (o proximo estado provavel em producao) =======================
+  await tentar('S6', async () => {
+    v3Interruptor(true);
+    try {
+      const a = await shopApi(S.ofR); const e = await shopApi(S.ofR, '?estado=1'); const pd = await pedir(S.ofR, { itemId: iReal.id, quantidade: 1 });
+      ok('S6.1 oficina real com v3 ligada e Shop desligado: Shop 404, estado false, pedir 404', a.status === 404 && e.d.ativo === false && pd.status === 404, `${a.status} ${JSON.stringify(e.d)} ${pd.status}`);
+      const ctx = await nav.contexto('chromium', 390, A.ip); const p = await ctx.newPage(); vigiar(p, erros, 'S6-oficina');
+      await entrarPelaTela(p, '/ee/et', dOfR);
+      const resp = p.waitForResponse((r) => r.url().includes('/api/pecas/shop?estado=1'), { timeout: 15000 }).catch(() => null);
+      await ir(p, '/ee/et/oficina/pecas', 1000);
+      const rr = await resp;
+      ok('S6.2 aba Pecas: pergunta o estado do Shop (false) e NAO mostra o link', !!rr && (await rr.json().catch(() => ({}))).ativo === false && (await p.locator('[data-testid="link-shop"]').count()) === 0);
+      ok('S6.3 /oficina/shop: 404', (await status404(p, '/ee/et/oficina/shop')) === 404);
+      await ctx.close();
+      const ctxL = await nav.contexto('chromium', 390, A.ip); const pl = await ctxL.newPage(); vigiar(pl, erros, 'S6-loja');
+      await entrarPelaTela(pl, '/ee/et', dLjR);
+      ok('S6.4 loja real com v3: /loja/promocoes 200 (prepara antes de o Shop abrir)', (await status404(pl, '/ee/et/loja/promocoes')) === 200);
+      await ir(pl, '/ee/et/loja/catalogo', 2000);
+      ok('S6.5 loja real com v3: aviso "entram no Shop quando ele for aberto" e campos v3', await visivel(pl.locator('[data-testid="catalogo-v3-aviso"]')) && (await pl.locator('[data-testid="catalogo-v3-aviso"]').innerText()).includes(ET('pecasL5.catalogoAviso').slice(0, 20)));
+      await ctxL.close();
+    } finally { v3Interruptor(false); }
   });
 
   // ======================= T: contas de teste =======================
@@ -256,14 +297,14 @@ try {
     await ir(pl, '/ee/et/loja/cotacoes', 2500);
     const cartao = pl.locator('.card', { hasText: cot.peca_descricao.slice(0, 30) }).first();
     ok('T.5a loja-alvo ve a cotacao com a etiqueta "Pedido direto do seu catalogo"', await visivel(cartao.locator('[data-testid="cotacao-pedido-direto-loja"]')));
-    await cartao.getByRole('button', { name: ET('lojaCotacoes.responderCotacaoButton') }).first().click().catch(() => {});
+    await cartao.getByRole('button', { name: ET('lojaCotacoes.responderCotacaoButton') }).first().click();
     await pl.waitForTimeout(800);
-    ok('T.5b preco pre-preenchido com o preco do catalogo (85)', (await pl.locator('#c40f3-1').inputValue().catch(() => '')) === '85');
-    await pl.locator('#c40f3-1').fill('84');
-    await pl.getByRole('button', { name: ET('lojaCotacoes.enviarRespostaButton') }).click().catch(() => {});
+    ok('T.5b preco POR UNIDADE pre-preenchido (42.5 = 85 / 2)', (await pl.locator('#c40f3-1').inputValue()) === '42.5', await pl.locator('#c40f3-1').inputValue().catch(() => ''));
+    await pl.locator('#c40f3-1').fill('42');
+    await pl.getByRole('button', { name: ET('lojaCotacoes.enviarRespostaButton') }).click();
     await pl.waitForTimeout(2500);
     const resp = (await A.admin.from('cotacoes_pecas_respostas').select('id, preco').eq('cotacao_id', cot.id).eq('loja_id', ljT.id)).data?.[0];
-    ok('T.5c oferta gravada (84)', Number(resp?.preco) === 84, JSON.stringify(resp || {}));
+    ok('T.5c oferta gravada (42 por unidade)', Number(resp?.preco) === 42, JSON.stringify(resp || {}));
     await ctxL.close();
     const conf = resp ? await A.confirmar(resp.id, S.ofT.token) : { status: 0 };
     const ped = (await A.admin.from('pedidos_pecas').select('id, status, loja_id').eq('cotacao_id', cot.id)).data?.[0];
@@ -315,7 +356,9 @@ try {
     ok('T.9d preco 0: aviso de erro, formulario continua aberto', await visivel(pc.locator('[data-testid="catalogo-erro"]')));
     await pc.locator('[data-testid="link-promocoes"]').click();
     await pc.waitForURL(/\/loja\/promocoes/, { timeout: 15000 }).catch(() => {});
-    ok('T.9e promocoes: contador com 1 destaque de 3', await visivel(pc.locator('[data-testid="promo-contador"]')) && /1\/3/.test(await pc.locator('[data-testid="promo-contador"]').innerText()));
+    await visivel(pc.locator('[data-testid="promo-linha"]'), 15000);
+    const contTxt = (await visivel(pc.locator('[data-testid="promo-contador"]'))) ? await pc.locator('[data-testid="promo-contador"]').innerText() : '';
+    ok('T.9e promocoes: contador com 1 destaque de 3', /1\/3/.test(contTxt), `${pc.url()} | ${contTxt} | ${(await pc.locator('body').innerText().catch(() => '')).slice(0, 200)}`);
     await pc.locator('[data-testid="promo-nova"]').click();
     await pc.locator('[data-testid="promo-titulo"]').fill(`TESTE-PECAS Nova promo ${A.tag}`);
     await pc.locator('[data-testid="promo-preco"]').fill('9,90');
@@ -323,7 +366,15 @@ try {
     await pc.locator('[data-testid="promo-destaque"]').check();
     await pc.locator('[data-testid="promo-salvar"]').click();
     await pc.waitForTimeout(2000);
-    ok('T.9f promocao criada pela tela (destaque, 9,90 e preco anterior 12)', Number(psql(`select count(*) from promocoes_pecas where loja_id = '${ljT2.id}' and titulo like '%Nova promo%' and destaque and preco = 9.90 and preco_anterior = 12`)) === 1);
+    ok('T.9f promocao criada pela tela com a DATA PADRAO (destaque, 9,90 e preco anterior 12)', Number(psql(`select count(*) from promocoes_pecas where loja_id = '${ljT2.id}' and titulo like '%Nova promo%' and destaque and preco = 9.90 and preco_anterior = 12`)) === 1, await pc.locator('[data-testid="promo-erro"]').innerText().catch(() => ''));
+    await pc.locator('[data-testid="promo-nova"]').click();
+    await pc.locator('[data-testid="promo-titulo"]').fill(`TESTE-PECAS Data maxima ${A.tag}`);
+    await pc.locator('[data-testid="promo-preco"]').fill('5');
+    const maxData = await pc.locator('[data-testid="promo-ate"]').getAttribute('max');
+    await pc.locator('[data-testid="promo-ate"]').fill(maxData);
+    await pc.locator('[data-testid="promo-salvar"]').click();
+    await pc.waitForTimeout(2000);
+    ok('T.9f2 promocao com a DATA MAXIMA do seletor salva (dentro dos 30 dias)', Number(psql(`select count(*) from promocoes_pecas where loja_id = '${ljT2.id}' and titulo like '%Data maxima%' and valido_ate <= valido_de + interval '30 days'`)) === 1, maxData);
     await A.admin.from('promocoes_pecas').update({ destaque: true }).eq('id', promos[0].id);
     await pc.reload({ waitUntil: 'networkidle' }); await pc.waitForTimeout(1500);
     await pc.locator(`[data-testid="promo-linha"][data-id="${promos[1].id}"] [data-testid="promo-alternar-destaque"]`).click();
@@ -331,6 +382,89 @@ try {
     ok('T.9g 4o destaque pela tela: mensagem de erro (et)', await visivel(pc.locator('[data-testid="promo-erro"]')) && (await pc.locator('[data-testid="promo-erro"]').innerText()).includes(ET('pecasL5.erroPromo.destaques')));
     ok('T.9h 390 px sem rolagem lateral nas promocoes', await semRolagemLateral(pc));
     await ctxC.close();
+  });
+
+
+  // ======================= X: exposicao a nao-alvo, avisos, funcionario, inativas, promocao (auditoria dos testes M6-M12) =======================
+  await tentar('X', async () => {
+    // vendedora de teste no raio da compradora (alcance pais) - nao pode ver nem ser avisada da cotacao de 1 fornecedor
+    const dVend = await A.conta('oficina', 'l5-vendedora', { contaTeste: true }); const ofVend = await A.oficina(dVend, 'L5 Vendedora', { km: 1, vendePecas: true });
+    await A.admin.from('oficinas').update({ pecas_alcance: 'pais' }).eq('id', ofVend.id);
+    const sVend = await A.sessao(dVend);
+    // tempo real: loja nao-alvo assina INSERT em cotacoes_pecas antes do pedido
+    const eventos = { alvo: [], nao: [] };
+    const canal = (s, k) => s.c.channel(`l5-rt-${k}-${A.tag}`).on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'cotacoes_pecas' }, (p) => eventos[k].push(p.new?.id)).subscribe();
+    const cA = canal(S.ljT, 'alvo'); const cN = canal(S.ljT2, 'nao');
+    await sleep(2500);
+    const t0 = Date.now();
+    const r = await pedir(S.ofT, { itemId: iOleo.id, quantidade: 3 }); // item da ljT2 -> alvo = ljT2
+    const cid = r.d.cotacaoId; if (cid) A.criado.cotacoes.push(cid);
+    ok('X.0 pedir item da 2a loja: 200', r.status === 200 && !!cid, JSON.stringify(r.d));
+    await sleep(4000);
+    ok('X.1 tempo real: a loja-ALVO recebe o INSERT (controle) e a nao-alvo NAO', eventos.alvo.includes(cid) && !eventos.nao.includes(cid), JSON.stringify({ alvo: eventos.alvo.includes(cid), nao: eventos.nao.includes(cid), nAlvo: eventos.alvo.length, nNao: eventos.nao.length }));
+    await S.ljT.c.removeChannel(cA); await S.ljT2.c.removeChannel(cN);
+    // alvo desta cotacao = ljT2; ljT e a nao-alvo agora
+    const linhas = (await A.admin.from('avisos_email_pecas').select('profile_id, fornecedor_id').eq('cotacao_id', cid)).data || [];
+    ok('X.2 avisos_email_pecas: so a loja-alvo (nenhuma outra loja nem a vendedora)', linhas.length >= 1 && linhas.every((l) => l.profile_id === dLjT2.id), JSON.stringify(linhas));
+    const sinosVend = (await A.avisos(dVend.id, 'cotacao_peca_disponivel')).filter((a) => a.dados?.cotacao_id === cid);
+    const sinosT = (await A.avisos(dLjT.id, 'cotacao_peca_disponivel')).filter((a) => a.dados?.cotacao_id === cid);
+    const emailsOutros = [...A.emailsDe(dLjT.email, t0), ...A.emailsDe(dVend.email, t0)];
+    ok('X.3 vendedora no raio e loja nao-alvo: 0 sino; e-mails da rodada so para a alvo', sinosVend.length === 0 && sinosT.length === 0 && emailsOutros.length === 0, `${sinosVend.length} ${sinosT.length} ${emailsOutros.length}`);
+    const nf = await A.notificarFornecedores(cid, S.ofT.token);
+    ok('X.4 notificar-fornecedores de novo numa cotacao de 1 fornecedor: no maximo a alvo (0 oficinas)', nf.status === 200 && Number(nf.d.oficinasNotificadas || 0) === 0 && Number(nf.d.lojasNotificadas || 0) <= 1, JSON.stringify(nf.d));
+    // nao-alvo: controles positivos numa cotacao "todos" e 42501 na de 1 fornecedor
+    const todos = await A.cotacao(ofT, 'X controle', { alvo: 'todos', tipo: 'sem_carro' });
+    const rPos = await S.ljT.c.from('cotacoes_pecas_respostas').insert({ cotacao_id: todos.id, fornecedor_tipo: 'loja', loja_id: ljT.id, preco: 5, prazo_dias: 1 });
+    const rNeg = await S.ljT.c.from('cotacoes_pecas_respostas').insert({ cotacao_id: cid, fornecedor_tipo: 'loja', loja_id: ljT.id, preco: 5, prazo_dias: 1 });
+    const mPos = await S.ljT.c.from('cotacoes_pecas_mensagens').insert({ cotacao_id: todos.id, fornecedor_tipo: 'loja', fornecedor_id: ljT.id, remetente_id: dLjT.id, texto: 'ok' });
+    const mNeg = await S.ljT.c.from('cotacoes_pecas_mensagens').insert({ cotacao_id: cid, fornecedor_tipo: 'loja', fornecedor_id: ljT.id, remetente_id: dLjT.id, texto: 'nao' });
+    ok('X.5 loja nao-alvo: resposta/mensagem em cotacao "todos" passam (controle) e na de 1 fornecedor dao 42501', !rPos.error && !mPos.error && rNeg.error?.code === '42501' && mNeg.error?.code === '42501', JSON.stringify({ rPos: rPos.error?.message, mPos: mPos.error?.message, rNeg: rNeg.error?.code, mNeg: mNeg.error?.code }));
+    const mComp = await S.ofT.c.from('cotacoes_pecas_mensagens').insert({ cotacao_id: cid, fornecedor_tipo: 'loja', fornecedor_id: ljT.id, remetente_id: dOfT.id, texto: 'a nao-alvo' });
+    const mCompOk = await S.ofT.c.from('cotacoes_pecas_mensagens').insert({ cotacao_id: cid, fornecedor_tipo: 'loja', fornecedor_id: ljT2.id, remetente_id: dOfT.id, texto: 'a alvo' });
+    ok('X.6 compradora NAO abre conversa com loja nao-alvo (42501); com a alvo sim', mComp.error?.code === '42501' && !mCompOk.error, JSON.stringify({ n: mComp.error?.code, a: mCompOk.error?.message }));
+    const { data: vVend } = await sVend.c.from('cotacoes_pecas').select('id').eq('id', cid);
+    const rVend = await sVend.c.from('cotacoes_pecas_respostas').insert({ cotacao_id: cid, fornecedor_tipo: 'oficina', oficina_fornecedora_id: ofVend.id, preco: 5, prazo_dias: 1 });
+    ok('X.7 oficina vendedora: nao ve nem responde a cotacao de 1 fornecedor', !(vVend || []).length && !!rVend.error, rVend.error?.message);
+    // placa: cotacao com carro e placa, de 1 fornecedor (service role)
+    const { data: cp } = await A.admin.from('cotacoes_pecas').insert({ oficina_id: ofT.id, peca_descricao: `TESTE-PECAS placa ${A.tag}`, tipo: 'carro', fipe_marca: 'Skoda', enviar_placa: true, alvo: 'fornecedor_unico', fornecedor_alvo_tipo: 'loja', fornecedor_alvo_id: ljT2.id, origem: 'shop' }).select('id').single();
+    A.criado.cotacoes.push(cp.id);
+    await A.admin.from('cotacoes_pecas_placa').insert({ cotacao_id: cp.id, placa: '123ABC' });
+    const pAlvo = await A.placa(cp.id, S.ljT2.token); const pNao = await A.placa(cp.id, S.ljT.token);
+    ok('X.8 placa numa cotacao com carro de 1 fornecedor: alvo 200, nao-alvo 404', pAlvo.status === 200 && pAlvo.d.placa === '123ABC' && pNao.status === 404, `${pAlvo.status} ${pNao.status}`);
+    // funcionario da oficina de teste
+    const dFun = await A.conta('oficina', 'l5-funcionario', { contaTeste: true });
+    await A.admin.from('funcionarios').insert({ profile_id: dFun.id, oficina_id: ofT.id, cargo: 'mecanico', ativo: true, nome: 'Func L5' });
+    const sFun = await A.sessao(dFun);
+    const fShop = await shopApi(sFun); const fPedir = await pedir(sFun, { itemId: iOf.id, quantidade: 1 });
+    const { data: fVe } = await sFun.c.from('cotacoes_pecas').select('id').eq('id', cid);
+    ok('X.9 funcionario: Shop 404, pedir 403; ve a cotacao direta da oficina (RLS da equipe)', fShop.status === 404 && fPedir.status === 403 && (fVe || []).length === 1, `${fShop.status} ${fPedir.status} ${(fVe || []).length}`);
+    // pedir por promocao
+    const pr = promos[0];
+    const rp = await pedir(S.ofT, { promocaoId: pr.id, quantidade: 2 });
+    if (rp.d.cotacaoId) A.criado.cotacoes.push(rp.d.cotacaoId);
+    const cpr = rp.d.cotacaoId ? A.linhaJson('cotacoes_pecas', rp.d.cotacaoId) : null;
+    ok('X.10 pedir por promocao: promocao_id e preco_referencia = preco x qtd', rp.status === 200 && cpr?.promocao_id === pr.id && Number(cpr?.preco_referencia) === Number(pr.preco) * 2, JSON.stringify(rp.d));
+    const venc = await promo(ljT2, { titulo: `TESTE-PECAS vencida ${A.tag}`, valido_de: new Date(Date.now() - 5 * 86400e3).toISOString(), valido_ate: new Date(Date.now() - 86400e3).toISOString() });
+    const fut = await promo(ljT2, { titulo: `TESTE-PECAS futura ${A.tag}`, valido_de: new Date(Date.now() + 2 * 86400e3).toISOString(), valido_ate: new Date(Date.now() + 5 * 86400e3).toISOString() });
+    const ocu = await promo(ljT2, { titulo: `TESTE-PECAS oculta ${A.tag}` }); await A.admin.from('promocoes_pecas').update({ oculta: true, oculta_motivo: 'teste' }).eq('id', ocu.id);
+    const [a1, a2, a3] = [await pedir(S.ofT, { promocaoId: venc.id }), await pedir(S.ofT, { promocaoId: fut.id }), await pedir(S.ofT, { promocaoId: ocu.id })];
+    ok('X.11 promocao vencida, futura ou oculta: 404', a1.status === 404 && a2.status === 404 && a3.status === 404, `${a1.status} ${a2.status} ${a3.status}`);
+    await S.ljT2.c.from('promocoes_pecas').delete().eq('id', ocu.id);
+    ok('X.12 loja NAO apaga promocao oculta pelo admin', psql(`select count(*) from promocoes_pecas where id = '${ocu.id}'`) === '1');
+    if (cpr) { await S.ljT2.c.from('promocoes_pecas').delete().eq('id', pr.id); ok('X.13 loja apaga a promocao pedida: a cotacao fica com promocao_id nulo', A.linhaJson('cotacoes_pecas', rp.d.cotacaoId).promocao_id === null); }
+    // inativas
+    await A.admin.from('oficinas').update({ ativa: false }).eq('id', ofT.id);
+    const iShop = await shopApi(S.ofT); const iPed = await pedir(S.ofT, { itemId: iOf.id, quantidade: 1 });
+    await A.admin.from('oficinas').update({ ativa: true }).eq('id', ofT.id);
+    await A.admin.from('lojas_pecas').update({ ativa: false }).eq('id', ljT.id);
+    const lShop = await shopApi(S.ofT); const lPed = await pedir(S.ofT, { itemId: iOf.id, quantidade: 1 });
+    await A.admin.from('lojas_pecas').update({ ativa: true }).eq('id', ljT.id);
+    ok('X.14 oficina inativa: Shop 404 e pedir 403; loja inativa: itens fora do Shop e pedir 404', iShop.status === 404 && iPed.status === 403 && !(lShop.d.resultados || []).some((x) => x.id === iOf.id) && lPed.status === 404, `${iShop.status} ${iPed.status} ${lPed.status}`);
+    // restritivas: md5 das expressoes e nenhuma *_lote5 permissiva
+    const restMd5 = psql("select md5(string_agg(polname||':'||coalesce(pg_get_expr(polqual,polrelid),'')||':'||coalesce(pg_get_expr(polwithcheck,polrelid),''), '|' order by polname)) from pg_policy where polname like '%\\_lote5'");
+    const perm = psql("select count(*) from pg_policy where polname like '%\\_lote5' and polpermissive");
+    ok('X.15 restritivas *_lote5: nenhuma permissiva; md5 registrado', perm === '0' && restMd5.length === 32, `${perm} ${restMd5}`);
+    console.log(`   md5 restritivas lote5: ${restMd5}`);
   });
 
   // ======================= A: admin / editor =======================
@@ -345,7 +479,14 @@ try {
     const n3 = await fetch(`${SITE}/api/admin/shop-pagina`).then((r) => r.status);
     const fd0 = new FormData(); fd0.append('arquivo', new Blob([Buffer.from('oi')]), 'a.jpg');
     const n4 = await rq(po).post(`${SITE}/api/admin/shop-pagina/imagem`, { multipart: { arquivo: { name: 'a.jpg', mimeType: 'image/jpeg', buffer: Buffer.from('oi') } } });
-    ok('A.1a nao-admin (oficina) e sem login: editor 401/403 (GET, PUT, imagem)', [401, 403].includes(n1.status()) && [401, 403].includes(n2.status()) && [401, 403].includes(n3) && [401, 403].includes(n4.status()), `${n1.status()} ${n2.status()} ${n3} ${n4.status()}`);
+    ok('A.1a oficina logada (cookie): editor 403 (GET, PUT, imagem); sem login 401', n1.status() === 403 && n2.status() === 403 && n3 === 401 && n4.status() === 403, `${n1.status()} ${n2.status()} ${n3} ${n4.status()}`);
+    const ctxLj = await nav.contexto('chromium', 1280, A.ip); const plj = await ctxLj.newPage(); vigiar(plj, erros, 'A-loja');
+    await entrarPelaTela(plj, '/ee/et', dLjT);
+    const rotas = [['GET', '/api/admin/shop-pagina/rotulos?l=et'], ['POST', '/api/admin/shop-pagina/restaurar'], ['POST', '/api/admin/shop-pagina/destaques'], ['GET', '/api/admin/pecas-shop'], ['PATCH', '/api/admin/pecas-shop']];
+    const st = [];
+    for (const pg of [po, plj]) for (const [m, u] of rotas) st.push((await rq(pg).fetch(`${SITE}${u}`, { method: m, data: m === 'GET' ? undefined : {} })).status());
+    ok('A.1c oficina e loja (cookie): 403 em rotulos, restaurar, destaques e pecas-shop GET/PATCH', st.every((x) => x === 403), st.join(','));
+    await ctxLj.close();
     const { data: rest } = await S.ofT.c.from('shop_pagina_versoes').insert({ estado: 'publicada', conteudo: {} }).select('id');
     ok('A.1b oficina NAO grava versao pelo REST', !(rest || []).length);
     // A.2/A.3 rascunho, publicar, fallback e limpeza
@@ -411,8 +552,8 @@ try {
     const w390 = await pa.locator('[data-testid="sp-previa"]').evaluate((e) => e.getBoundingClientRect().width);
     ok('A.7c previa 1280 e 390 de largura', Math.round(w1280) === 1280 && Math.round(w390) === 390, `${w1280} ${w390}`);
     await pa.locator('[data-testid="sp-idioma-ru"]').click();
-    let txtRu = ''; for (let i = 0; i < 20 && !txtRu.includes(RU('pecasL5.pedir')); i++) { await pa.waitForTimeout(300); txtRu = await pa.locator('[data-testid="sp-previa"]').innerText(); }
-    ok('A.7d aba ru: previa com os rotulos ru (botao Pedir em ru) e o titulo et pelo fallback', txtRu.includes(RU('pecasL5.pedir')) && txtRu.includes('Uus pealkiri eelvaates'), txtRu.slice(0, 200));
+    let txtRu = ''; for (let i = 0; i < 25 && !txtRu.includes(RU('pecasL5.destaqueBipfix')); i++) { await pa.waitForTimeout(300); txtRu = await pa.locator('[data-testid="sp-previa"]').innerText(); }
+    ok('A.7d aba ru: previa com os rotulos ru (Destaque BipFix em ru) e o titulo pelo fallback ru -> en', txtRu.includes(RU('pecasL5.destaqueBipfix')) && txtRu.includes('Parts straight from shops'), txtRu.slice(0, 200));
     await pa.locator('[data-testid="sp-idioma-et"]').click();
     await pa.locator('[data-testid="sp-publicar"]').click();
     await pa.waitForTimeout(2500);
@@ -429,7 +570,7 @@ try {
     const t8 = await shopApi(S.ofT);
     ok('A.8c item oculto sai do Shop', !(t8.d.resultados || []).some((x) => x.id === iOleo.id));
     const naoAdm = await rq(po).patch(`${SITE}/api/admin/pecas-shop`, { data: { chave: 'shop', ativo: true } });
-    ok('A.8d oficina nao liga o Shop (401/403)', [401, 403].includes(naoAdm.status()) && psql('select pecas_shop_ativo from plataforma_config where id = 1') === 'f', `${naoAdm.status()}`);
+    ok('A.8d oficina nao liga o Shop (403)', naoAdm.status() === 403 && psql('select pecas_shop_ativo from plataforma_config where id = 1') === 'f', `${naoAdm.status()}`);
     // A.9 ligado de verdade
     const on = await rq(pa).patch(`${SITE}/api/admin/pecas-shop`, { data: { chave: 'shop', ativo: true } });
     const soShop = await shopApi(S.ofR);
@@ -453,7 +594,8 @@ try {
   await restaurar();
   const errosLimpeza = await A.limpar();
   const sobras = await A.verificarLimpeza();
-  ok('L limpeza: contas, lojas, cotacoes, versoes do editor e banners desta rodada apagados; interruptores de volta', errosLimpeza.length === 0 && sobras.length === 0 && psql("select coalesce(to_jsonb(c)->>'pecas_shop_ativo','') from plataforma_config c where id = 1") === shopAntes, `${errosLimpeza.join(' | ')} ${sobras.join(' | ')}`);
+  const sobrasL5 = { promos: psql(`select count(*) from promocoes_pecas where titulo like '%${A.tag}%'`), itens: psql(`select count(*) from pecas_catalogo where nome like '%${A.tag}%'`), versoes: psql("select count(*) from shop_pagina_versoes").split(',')[0], banners: caminhosBanner.length ? psql(`select count(*) from storage.objects where bucket_id = 'shop-pagina' and name in (${caminhosBanner.map((c) => `'${c}'`).join(',')})`) : '0' };
+  ok('L limpeza: contas, lojas, cotacoes, promocoes, itens, versoes do editor e banners desta rodada apagados; interruptores de volta', errosLimpeza.length === 0 && sobras.length === 0 && sobrasL5.promos === '0' && sobrasL5.itens === '0' && Number(sobrasL5.versoes) === versoesAntes.size && sobrasL5.banners === '0' && psql("select coalesce(to_jsonb(c)->>'pecas_shop_ativo','') from plataforma_config c where id = 1") === shopAntes && psql("select coalesce(to_jsonb(c)->>'pecas_v3_ativo','') from plataforma_config c where id = 1") === v3Antes, `${errosLimpeza.join(' | ')} ${sobras.join(' | ')} ${JSON.stringify(sobrasL5)}`);
   try { fs.writeFileSync('C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/Documentos/_teste_local/resultados/pecas5/lote5-ultimo-log-site.txt', log.slice(-20000)); } catch { /* */ }
   fim();
 }

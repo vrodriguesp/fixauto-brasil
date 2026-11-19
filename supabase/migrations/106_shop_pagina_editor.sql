@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS shop_pagina_versoes (
     AND (nota IS NULL OR char_length(nota) <= 200)
   )
 );
+-- no maximo UMA publicada (publicar arquiva a anterior antes; dois publicar ao mesmo tempo: o 2o falha e a rota devolve erro)
+CREATE UNIQUE INDEX IF NOT EXISTS shop_pagina_uma_publicada ON shop_pagina_versoes ((estado)) WHERE estado = 'publicada';
 CREATE INDEX IF NOT EXISTS idx_shop_pagina_versoes_estado ON shop_pagina_versoes (estado, criado_em DESC);
 
 ALTER TABLE shop_pagina_versoes ENABLE ROW LEVEL SECURITY;

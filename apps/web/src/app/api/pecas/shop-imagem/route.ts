@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSessionUserId } from '@/lib/api-auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { ehAdmin } from '@/lib/acesso-servico';
-import { pecasShopAtivo } from '@/lib/pecas-lote5';
+import { oficinaDaDona, pecasShopAtivo } from '@/lib/pecas-lote5';
 import { CAMINHO_BANNER } from '@/lib/shop-pagina';
 
 export const dynamic = 'force-dynamic';
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   if (!CAMINHO_BANNER.test(caminho)) return nada();
   const userId = await getSessionUserId(req);
   if (!userId) return nada();
-  if (!(await ehAdmin(userId)) && !(await pecasShopAtivo(userId))) return nada();
+  if (!(await ehAdmin(userId)) && !((await pecasShopAtivo(userId)) && (await oficinaDaDona(userId)))) return nada();
   const { data } = await supabaseAdmin.storage.from('shop-pagina').createSignedUrl(caminho, 600);
   if (!data?.signedUrl) return nada();
   return NextResponse.redirect(data.signedUrl, { status: 302, headers: { 'Cache-Control': 'private, no-store' } });

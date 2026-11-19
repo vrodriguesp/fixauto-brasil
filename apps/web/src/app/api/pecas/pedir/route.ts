@@ -8,6 +8,17 @@ import { avisarFornecedoresCotacao, carregarCotacaoParaAviso } from '@/lib/avisa
 export const dynamic = 'force-dynamic';
 const SEM_CACHE = { 'Cache-Control': 'no-store' };
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// B3 (auditoria dos testes): contar e inserir sem corrida para o mesmo par (oficina, loja) neste processo
+const travas = new Map<string, Promise<unknown>>();
+async function comTrava<T>(chave: string, fn: () => Promise<T>): Promise<T> {
+  const antes = travas.get(chave) || Promise.resolve();
+  let soltar: () => void = () => {};
+  const minha = new Promise<void>((r) => { soltar = r; });
+  const fila = antes.then(() => minha);
+  travas.set(chave, fila);
+  await antes.catch(() => {});
+  try { return await fn(); } finally { soltar(); if (travas.get(chave) === fila) travas.delete(chave); }
+}
 const erro = (status: number, codigo: string) => NextResponse.json({ error: codigo }, { status, headers: SEM_CACHE });
 
 // Pecas lote 5 (20/11): "Pedir" do Shop (item do catalogo ou promocao) e "Pedir de novo" (pedido entregue de uma loja).
@@ -79,6 +90,7 @@ export async function POST(req: NextRequest) {
       return erro(404, 'NAO_ENCONTRADO');
     }
 
+    return await comTrava(`${of.id}:${loja.id}`, async () => {
     // teto por par (oficina, loja): no maximo MAX_ABERTAS_POR_PAR cotacoes de 1 fornecedor abertas ao mesmo tempo
     const { count: abertas } = await supabaseAdmin.from('cotacoes_pecas').select('id', { count: 'exact', head: true })
       .eq('oficina_id', of.id).eq('alvo', 'fornecedor_unico').eq('fornecedor_alvo_id', loja.id).in('status', ['aberta', 'respondida']);
@@ -101,6 +113,7 @@ export async function POST(req: NextRequest) {
     const cot = await carregarCotacaoParaAviso(nova.id);
     if (cot) await avisarFornecedoresCotacao(cot).catch((e) => console.error('[pecas/pedir] aviso', (e as Error).message));
     return NextResponse.json({ cotacaoId: nova.id }, { headers: SEM_CACHE });
+    });
   } catch (err) {
     console.error('[pecas/pedir]', (err as Error).message);
     return erro(500, 'ERRO');
