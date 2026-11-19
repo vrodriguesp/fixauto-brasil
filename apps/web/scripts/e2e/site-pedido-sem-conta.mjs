@@ -275,13 +275,13 @@ try {
   // o servidor continua contando os passos (codigo_enviado, confirmado; conta_existente so para medir)
   for (const e of ['codigo_enviado', 'confirmado', 'conta_existente']) ok(`funil pedido_site ${e} > 0`, (await total('pedido_site', e)) > 0);
   // passos novos (12/11): toque no servico, foto, Edasi bloqueado, cookies e o cadastro de oficina
-  for (const [funil, etapa] of [['pedido_site', 'servico'], ['pedido_site', 'foto'], ['pedido_site', 'edasi_bloqueado_detalhe'], ['pedido_site', 'edasi_bloqueado_carro'], ['pedido_site', 'edasi_bloqueado_local'], ['pedido_site', 'edasi_bloqueado_contato'], ['pedido_site', 'cookie_aceito'], ['pedido_site', 'cookie_recusado'], ['cadastro_site', 'abriu'], ['cadastro_site', 'edasi_bloqueado'], ['cadastro_site', 'enviado']]) {
+  for (const [funil, etapa] of [['pedido_site', 'servico'], ['pedido_site', 'foto'], ['pedido_site', 'fotos'], ['pedido_site', 'fotos_pulou'], ['pedido_site', 'edasi_bloqueado_detalhe'], ['pedido_site', 'edasi_bloqueado_carro'], ['pedido_site', 'edasi_bloqueado_local'], ['pedido_site', 'edasi_bloqueado_contato'], ['pedido_site', 'cookie_aceito'], ['pedido_site', 'cookie_recusado'], ['cadastro_site', 'abriu'], ['cadastro_site', 'edasi_bloqueado'], ['cadastro_site', 'enviado']]) {
     const a = await total(funil, etapa);
     await post('/api/funil', { funil, etapa });
     const d = await total(funil, etapa);
     ok(`funil ${funil} ${etapa} conta +1`, d === a + 1, `${a} -> ${d}`);
   }
-  for (const [funil, etapa] of [['cadastro_site', 'servico'], ['pedido_site', 'edasi_bloqueado_x'], ['pedido_site', 'enviado']]) {
+  for (const [funil, etapa] of [['cadastro_site', 'servico'], ['pedido_site', 'edasi_bloqueado_x'], ['pedido_site', 'enviado'], ['pedido_site', 'kiirus'], ['pedido_site', 'detalhe_modo_lista']]) {
     const a = await total(funil, etapa);
     await post('/api/funil', { funil, etapa });
     ok(`funil ${funil} ${etapa} (fora da lista) nao grava`, (await total(funil, etapa)) === a);
@@ -324,9 +324,15 @@ try {
     await page.evaluate(() => window.scrollTo(0, 600));
     await page.waitForTimeout(500);
     ok(`${idioma} ${largura}: sem balao do chat na pagina do pedido`, (await page.getByTestId('chat-suporte-botao').count()) === 0);
+    // pedido em etapas (19/11): chips dos problemas comuns no passo 2 (texto OU chip basta)
+    ok(`${idioma}: chips dos problemas comuns (6) e "Naita koiki"`, (await page.getByTestId('chip-servico').count()) === 6 && (await page.getByTestId('ver-mais').count()) === 1);
     await page.locator('#pedido-descricao').fill('Test');
     await page.getByRole('button', { name: rotulos.next, exact: true }).click();
-    await page.getByTestId('passo-carro').waitFor();
+    // passo 3 (fotos, opcional): sem foto o botao e "Jatka ilma fotota"
+    await page.getByTestId('passo-fotos').waitFor();
+    ok(`${idioma}: passo das fotos com "${rotulos.m.pedidoSemConta.semFotos}"`, (await page.getByTestId('passo-fotos').getByTestId('edasi').innerText()).trim() === rotulos.m.pedidoSemConta.semFotos);
+    await page.getByTestId('passo-fotos').getByTestId('edasi').click();
+    await page.getByTestId('passo-carro').waitFor({ state: 'visible' });
     await escolherCarroCampo(page, 'cbbe3-101', 'Toyota');
     await escolherCarroCampo(page, 'cbbe3-102', 'Corolla', /Corolla/);
     const ano = page.getByLabel(rotulos.ano, { exact: false }).locator('visible=true').first();

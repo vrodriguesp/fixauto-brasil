@@ -1,3 +1,4 @@
+// NOTA 19/11: a parte do pedido sem conta refere-se ao passo 2 antigo (titulo/ajuda do endereco mudaram no fluxo em etapas) - o fluxo novo esta em pedido-v2-telas.mjs.
 // E2E LOCAL das melhorias de 16/11 (parecer do Fable sobre carro e endereco, aprovado pelo dono):
 // pedido sem conta - ano opcional, atalhos de marca, marca em cirilico, marca fora do catalogo,
 // aviso que some ao corrigir, motivo do bloqueio no funil, nenhum pedido de localizacao ao entrar

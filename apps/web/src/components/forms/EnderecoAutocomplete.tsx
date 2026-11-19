@@ -10,7 +10,7 @@ export type { SugestaoEndereco };
 // Campo de endereco com sugestoes enquanto digita (a partir de 3 letras).
 // Continua aceitando texto livre. Teclado: setas + Enter; toque: linhas de 44 px.
 export default function EnderecoAutocomplete({
-  value, onChange, onSelect, placeholder, id, perto, className = 'input-field', required,
+  value, onChange, onSelect, placeholder, id, perto, className = 'input-field', required, erroId,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -20,6 +20,8 @@ export default function EnderecoAutocomplete({
   perto?: { lat: number; lon: number } | null;
   className?: string;
   required?: boolean;
+  /** id da mensagem de erro mostrada por quem usa (aria-invalid + aria-describedby) */
+  erroId?: string | null;
 }) {
   const auto = useId();
   const locale = useLocale();
@@ -67,6 +69,9 @@ export default function EnderecoAutocomplete({
         placeholder={placeholder}
         value={value}
         required={required}
+        aria-required={required || undefined}
+        aria-invalid={!!erroId}
+        aria-describedby={erroId || undefined}
         autoComplete="off"
         role="combobox"
         aria-expanded={aberto}

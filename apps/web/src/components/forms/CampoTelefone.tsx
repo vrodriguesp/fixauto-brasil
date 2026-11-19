@@ -7,7 +7,9 @@ import { PREFIXOS_TELEFONE, EXEMPLO_TELEFONE, prefixoPadrao, separarTelefone, ju
 // Telefone com prefixo internacional (dono 06/11): bandeira + codigo ja no pais do
 // mercado do site, ao lado do numero. Devolve o numero completo ("+372 5123 4567").
 // O mesmo campo no app: apps/mobile/components/CampoTelefone.tsx.
-export default function CampoTelefone({ id, value, onChange, placeholder, required, autoComplete = 'tel', pais }: {
+export default function CampoTelefone({ id, value, onChange, placeholder, required, autoComplete = 'tel', pais, erroId }: {
+  /** id da mensagem de erro de quem usa (aria-invalid + borda vermelha) */
+  erroId?: string | null;
   id: string; value: string; onChange: (v: string) => void; placeholder?: string; required?: boolean; autoComplete?: string;
   /** pais do cadastro (oficina/loja): prefixo de numero antigo salvo sem "+" */
   pais?: string | null;
@@ -38,7 +40,7 @@ export default function CampoTelefone({ id, value, onChange, placeholder, requir
           <option key={p.pais} value={p.ddi}>{p.bandeira} +{p.ddi}</option>
         ))}
       </select>
-      <input id={id} type="tel" inputMode="tel" autoComplete={autoComplete === 'tel' ? 'tel-national' : autoComplete} className="input-field min-w-0 flex-1" maxLength={30}
+      <input id={id} type="tel" inputMode="tel" autoComplete={autoComplete === 'tel' ? 'tel-national' : autoComplete} className={`input-field min-w-0 flex-1 ${erroId ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`} aria-invalid={!!erroId} aria-describedby={erroId || undefined} aria-required={required || undefined} maxLength={30}
         placeholder={EXEMPLO_TELEFONE[ddi] ?? placeholder} required={required} value={numero} onChange={(e) => mudar(ddi, e.target.value)} />
     </div>
   );

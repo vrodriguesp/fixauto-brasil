@@ -20,6 +20,9 @@ const ETAPAS_PEDIDO = [
   // botao "usar minha localizacao" (tocado / recusado ou sem sinal)
   'edasi_bloqueado_carro_marca', 'edasi_bloqueado_carro_modelo', 'edasi_bloqueado_carro_ano', 'edasi_bloqueado_carro_placa',
   'local_gps', 'local_gps_negado',
+  // 19/11 (pedido em etapas, Proposta sec. 14): chegou a tela de fotos / tocou "Jatka ilma fotota"
+  // (uma vez por pedido). 'detalhe' = chegou ao passo "Mis autol viga on?" (lista ou texto, como antes).
+  'fotos', 'fotos_pulou',
 ];
 const FUNIS: Record<string, string[]> = {
   pedido_site: ETAPAS_PEDIDO,

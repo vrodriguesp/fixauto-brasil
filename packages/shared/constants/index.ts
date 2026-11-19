@@ -110,6 +110,35 @@ export const SERVICOS_PNEU = [
   { value: 'troca_roda_calota', label: 'Troca de roda / calota' },
 ] as const;
 
+// Pedido em etapas (dono 19/11, Proposta_pedido_em_etapas_2026-11-19 sec. 14/15, opcao A):
+// a lista de problemas comuns de cada tipo e, no passo "Mis autol viga on?", os 6 MAIS PEDIDOS
+// como botoes curtos (chips) - rotulo curto em messages/*.json `constants.servicosCurto.<value>`;
+// os restantes so na tela "Naita koiki" com o rotulo longo de sempre. Ordem = os mais pedidos
+// primeiro (quando o funil `detalhe_escolheu_lista` tiver dados por item, reordenar aqui).
+// Site (PedidoSemConta.tsx) e app (pedido.tsx) usam as mesmas constantes - nomes estaveis.
+export const SERVICOS_POR_TIPO: Readonly<Record<string, readonly { value: string; label: string }[]>> = {
+  revisao: SERVICOS_REVISAO,
+  mecanica: SERVICOS_MECANICA,
+  eletrica: SERVICOS_ELETRICA,
+  pneu: SERVICOS_PNEU,
+};
+export const SERVICOS_COMUNS: Readonly<Record<string, readonly string[]>> = {
+  revisao: ['troca_oleo_filtro', 'revisao_completa_km', 'verificacao_freios', 'troca_pastilhas_freio', 'alinhamento_balanceamento', 'troca_correia_dentada'],
+  mecanica: ['freio_barulho_frear', 'motor_barulho_estranho', 'motor_perda_potencia', 'embreagem_patinando', 'vazamento_oleo', 'cambio_dificuldade_engatar'],
+  eletrica: ['bateria_nao_liga', 'painel_luzes_alerta', 'farois_lanternas', 'ar_condicionado', 'bateria_descarregando_rapido', 'alternador_luz_painel'],
+  pneu: ['troca_pneus', 'conserto_furo', 'alinhamento', 'balanceamento', 'rodizio_pneus', 'calibragem'],
+};
+/** Quantos chips aparecem no passo 2 (6 a 390 px; a 360x640 o CSS do site esconde os 2 ultimos). */
+export const SERVICOS_COMUNS_MAX = 6;
+/** Lista inteira do tipo ([] para colisao, funilaria, vidros e outro - so a caixa de texto). */
+export const listaServicos = (tipo: string): readonly { value: string; label: string }[] => SERVICOS_POR_TIPO[tipo] ?? [];
+/** Os mais pedidos do tipo, na ordem dos chips ([] para tipos sem lista). */
+export const servicosComuns = (tipo: string): readonly string[] => SERVICOS_COMUNS[tipo] ?? [];
+/** Tipos cujo passo 2 pergunta "Mis juhtus?" so com a caixa de texto. */
+export const tipoSemLista = (tipo: string): boolean => listaServicos(tipo).length === 0;
+/** Urgencia do pedido quando nao e perguntada (dono 19/11: sem tela de urgencia; a oficina ajusta depois). */
+export const URGENCIA_PADRAO = 'media';
+
 export const URGENCIAS = [
   { value: 'baixa', label: 'Baixa', description: 'Sem pressa, posso esperar', color: 'green' },
   { value: 'media', label: 'Média', description: 'Preciso em algumas semanas', color: 'yellow' },

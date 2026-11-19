@@ -1,3 +1,4 @@
+// OBSOLETO desde 19/11 (pedido em etapas: fotos e lista ja nao ficam no passo 2) - ver pedido-v2-telas.mjs.
 // /pedido no celular (dono 10/11, emulador Android + video do Moto E13):
 // camera e galeria em botoes separados, fotos e texto voltam se a pagina recarregar,
 // Tagasi/Edasi sempre na tela, passo restaurado nao conta de novo no funil e a
