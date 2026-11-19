@@ -143,6 +143,44 @@ try {
   const { data: lOf2 } = await of2.a.from('lojas_pecas').select('id, nome_fantasia').eq('id', l1.id);
   ok('L-07 legitimo: oficina (aprovada ou nao) le nome/pais das lojas (telas de pecas, conversa)', (lOf || []).length === 2 && (lOf2 || []).length === 1 && lOf.some((x) => x.nome_fantasia === `SEG LOJA ${tag}`), JSON.stringify({ n: (lOf || []).length, n2: (lOf2 || []).length }));
 
+  // P5-01..P5-08 (migracoes 104-106, pecas lote 5, 20/11): catalogo nao e mais publico; promocoes e versoes do editor
+  // do Shop so para a dona / admin; cotacao de 1 fornecedor so pelo servidor; bucket do banner privado.
+  const { data: it1 } = await sb.from('pecas_catalogo').insert({ loja_id: l1.id, nome: `SEG ITEM ${tag}`, preco: 12.3, visibilidade: 'oficinas' }).select('id').single();
+  const { data: itA } = await anonC.from('pecas_catalogo').select('id, preco').eq('id', it1.id);
+  const { data: itAll } = await anonC.from('pecas_catalogo').select('id').limit(5);
+  ok('P5-01 anon NAO le pecas_catalogo (nem a linha, nem a lista)', !(itA || []).length && !(itAll || []).length, JSON.stringify({ n: (itA || []).length, all: (itAll || []).length }));
+  const { data: itCli } = await cli.a.from('pecas_catalogo').select('id').eq('id', it1.id);
+  const ljOutra = lj2c.a;
+  const { data: itOutra } = await ljOutra.from('pecas_catalogo').select('id').eq('id', it1.id);
+  ok('P5-02 motorista e outra loja NAO leem o catalogo (preco de loja)', !(itCli || []).length && !(itOutra || []).length, JSON.stringify({ cli: (itCli || []).length, outra: (itOutra || []).length }));
+  const { data: itProp } = await lj.a.from('pecas_catalogo').select('id, preco').eq('id', it1.id);
+  const { error: eItNovo } = await lj.a.from('pecas_catalogo').insert({ loja_id: l1.id, nome: `SEG ITEM2 ${tag}`, preco: 5 });
+  ok('P5-03 legitimo: a loja le e cria o proprio item', (itProp || []).length === 1 && !eItNovo, eItNovo?.message);
+  const { data: pr1, error: ePr1 } = await lj.a.from('promocoes_pecas').insert({ loja_id: l1.id, titulo: `SEG PROMO ${tag}`, preco: 9 }).select('id').single();
+  const { data: prA } = await anonC.from('promocoes_pecas').select('id').limit(5);
+  const { data: prCli } = await cli.a.from('promocoes_pecas').select('id').eq('id', pr1?.id || '00000000-0000-0000-0000-000000000000');
+  const { data: prOutra } = await ljOutra.from('promocoes_pecas').select('id').eq('id', pr1?.id || '00000000-0000-0000-0000-000000000000');
+  const { error: ePrOutra } = await ljOutra.from('promocoes_pecas').insert({ loja_id: l1.id, titulo: 'x', preco: 1 });
+  ok('P5-04 promocoes: dona cria; anon, motorista e outra loja NAO leem; outra loja NAO cria em nome dela', !ePr1 && !(prA || []).length && !(prCli || []).length && !(prOutra || []).length && !!ePrOutra, JSON.stringify({ e: ePr1?.message, a: (prA || []).length, c: (prCli || []).length, o: (prOutra || []).length }));
+  const { data: vS } = await sb.from('shop_pagina_versoes').insert({ estado: 'rascunho', conteudo: {}, nota: `SEG ${tag}` }).select('id').single();
+  const { data: vA } = await anonC.from('shop_pagina_versoes').select('id').limit(5);
+  const { data: vOf } = await of.a.from('shop_pagina_versoes').select('id').limit(5);
+  const { error: eVOf } = await of.a.from('shop_pagina_versoes').insert({ estado: 'publicada', conteudo: {} });
+  ok('P5-05 versoes do editor do Shop: anon e oficina NAO leem; oficina NAO grava', !(vA || []).length && !(vOf || []).length && !!eVOf, JSON.stringify({ a: (vA || []).length, o: (vOf || []).length }));
+  await sb.from('shop_pagina_versoes').delete().eq('id', vS.id);
+  const { error: eFu } = await of.a.from('cotacoes_pecas').insert({ oficina_id: o.id, peca_descricao: 'x', alvo: 'fornecedor_unico', fornecedor_alvo_tipo: 'loja', fornecedor_alvo_id: l1.id });
+  ok('P5-06 oficina NAO cria cotacao de 1 fornecedor pela API (so o servidor)', !!eFu, eFu?.message);
+  const caminhoSeg = `banners/${crypto.randomUUID()}.jpg`;
+  await sb.storage.from('shop-pagina').upload(caminhoSeg, Buffer.from([0xff, 0xd8, 0xff, 0xd9]), { contentType: 'image/jpeg' });
+  const { data: bA } = await anonC.storage.from('shop-pagina').download(caminhoSeg);
+  const { data: bOf } = await of.a.storage.from('shop-pagina').download(caminhoSeg);
+  const { error: eUpOf } = await of.a.storage.from('shop-pagina').upload(`banners/${crypto.randomUUID()}.jpg`, Buffer.from([0xff, 0xd8, 0xff, 0xd9]), { contentType: 'image/jpeg' });
+  ok('P5-07 bucket shop-pagina privado: anon e oficina NAO baixam; oficina NAO envia', !bA && !bOf && !!eUpOf, JSON.stringify({ a: !!bA, o: !!bOf, up: eUpOf?.message }));
+  await sb.storage.from('shop-pagina').remove([caminhoSeg]);
+  const { error: eOc } = await lj.a.from('pecas_catalogo').update({ oculto: true }).eq('id', it1.id);
+  const { data: itOc } = await sb.from('pecas_catalogo').select('oculto').eq('id', it1.id).single();
+  ok('P5-08 a loja NAO marca o proprio item como oculto (so admin)', itOc?.oculto === false, eOc?.message);
+
   // P-01..P-06 (migracao 101, dono 19/11): presenca "online agora" - so a propria linha
   // e escrita; so o admin le a dos outros; anon nada; ninguem apaga
   const admP = await conta('admin');
