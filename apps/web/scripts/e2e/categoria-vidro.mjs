@@ -533,7 +533,7 @@ try {
       await p.goto(`${SITE}${PREFIXO.et}/oficina/orcamento/${alvo.solId}`, { waitUntil: 'networkidle' }); await p.waitForTimeout(2500);
       ok('O.5 formulario do orcamento mostra o tipo "Klaasid"', (await textoTela(p)).includes(VIDROS.et));
       await p.locator(`input[placeholder="${T.et('oficinaEnviarOrcamento.placeholderDescricaoItem')}"]`).first().fill('Esiklaasi vahetus');
-      await p.getByLabel(T.et('oficinaEnviarOrcamento.placeholderValor'), { exact: true }).locator('visible=true').first().fill('320');
+      await p.getByLabel(T.et('oficinaEnviarOrcamento.placeholderValor')).locator('visible=true').first().fill('320');
       const { preencherCheckinEValidade } = await import('./ajuda-checkin.mjs');
       await preencherCheckinEValidade(p);
       await conferirTela(p, 'O orcamento formulario', v);
