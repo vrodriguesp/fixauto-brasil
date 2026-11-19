@@ -97,13 +97,15 @@ export async function veiculoDoPedido(clienteId: string, v: DadosPedido['veiculo
 }
 
 /** Cria a solicitacao (com fotos ja no storage) e avisa as oficinas do raio. */
-export async function criarPedido(clienteId: string, d: DadosPedido, caminhosFotos: string[]): Promise<{ id: string; numero: number | null }> {
+export async function criarPedido(clienteId: string, d: DadosPedido, caminhosFotos: string[], pendenteId?: string): Promise<{ id: string; numero: number | null }> {
   const veiculoId = await veiculoDoPedido(clienteId, d.veiculo);
   const { data: sol, error } = await supabaseAdmin.from('solicitacoes').insert({
     cliente_id: clienteId, veiculo_id: veiculoId, tipo: d.tipo, descricao: d.descricao, urgencia: d.urgencia,
     latitude: d.latitude, longitude: d.longitude, endereco: d.endereco, pais: d.pais,
     // pendente gravado antes da 086 nao tem o campo: SMS como antes
     sms_avisos: d.smsAvisos !== false,
+    // pedido guardado de onde veio (100, dono 19/11): o botao antigo do e-mail leva ao pedido
+    ...(pendenteId ? { pendente_id: pendenteId } : {}),
   }).select('id, numero').single();
   if (error || !sol) throw new Error(error?.message || 'solicitacao nao criada');
   for (const temporario of caminhosFotos) {
@@ -342,7 +344,7 @@ export async function ativarEPublicar(p: Record<string, any>, via: 'codigo' | 'l
     // pessoa acabou de digitar).
     if (p.telefone && via === 'codigo') await supabaseAdmin.from('profiles').update({ telefone: p.telefone }).eq('id', p.user_id);
   }
-  const r = await criarPedido(p.user_id, p.dados as DadosPedido, p.fotos || []);
+  const r = await criarPedido(p.user_id, p.dados as DadosPedido, p.fotos || [], p.id);
   await contarEtapa(`pedido_${p.origem}`, 'confirmado');
   await contarEtapa(`pedido_${p.origem}`, `confirmado_${via}`);
   return r;
