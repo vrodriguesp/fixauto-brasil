@@ -101,13 +101,15 @@ try {
   ok('A.3 detalhe do pedido: oficina que recebeu com "Escrever a oficina"', (await pA.getByTestId('contato-oficina').filter({ hasText: `ACO Autoteenindus ${tag}` }).innerText()).includes('Escrever à oficina'));
 
   const csv = await (await pA.request.get(`${SITE}/api/admin/export?tipo=solicitacoes`)).text();
-  const cab = csv.split('\n')[0].split(','); const linhaCsv = csv.split('\n').find((l) => l.includes(tag)) || '';
+  // campos do CSV respeitando as aspas (a rua tem virgulas: "Pikk 12, 10123 Tallinn, Estonia")
+  const csvCampos = (l) => { const r = []; let c = ''; let q = false; for (const ch of l.replace(/\r$/, '')) { if (ch === '"') q = !q; else if (ch === ',' && !q) { r.push(c); c = ''; } else c += ch; } r.push(c); return r; };
+  const cab = csvCampos(csv.split('\n')[0]); const linhaCsv = csv.split('\n').find((l) => l.includes(tag)) || ''; const camposCsv = csvCampos(linhaCsv);
   ok('A.4 CSV: rua completa na linha (102)', linhaCsv.includes('Pikk 12'), linhaCsv.slice(0, 160));
   ok('setup 102: a linha publica do pedido ficou so com a area', s.endereco === 'Tallinn, Estonia', s.endereco);
   const listaRua = await (await pA.request.get(`${SITE}/api/admin/solicitacoes?q=${encodeURIComponent('Pikk 12')}`)).json();
   const naLista = (listaRua.solicitacoes || []).find((x) => x.id === s.id);
   ok('A.4 lista (API): busca pela RUA acha o pedido e devolve a rua completa ao admin (102)', !!naLista && naLista.endereco === 'Pikk 12, 10123 Tallinn, Estonia', JSON.stringify({ n: (listaRua.solicitacoes || []).length, endereco: naLista?.endereco }));
-  ok('A.4 CSV: coluna cliente_codigo e numero na linha', cab.includes('cliente_codigo') && cab.includes('numero') && linhaCsv.split(',')[cab.indexOf('cliente_codigo')] === String(cli.codigo) && linhaCsv.split(',')[cab.indexOf('numero')] === String(s.numero), `${cab.join('|')} / ${linhaCsv.slice(0, 120)}`);
+  ok('A.4 CSV: coluna cliente_codigo e numero na linha', cab.includes('cliente_codigo') && cab.includes('numero') && camposCsv[cab.indexOf('cliente_codigo')] === String(cli.codigo) && camposCsv[cab.indexOf('numero')] === String(s.numero), `${cab.join('|')} / ${linhaCsv.slice(0, 120)}`);
 
   await pA.goto(`${SITE}/admin/oficinas/${of.id}`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(2000);
   ok('A.5 detalhe da oficina: "Pedido N" nas solicitacoes recentes (link ao pedido)', (await pA.getByTestId('admin-numero-pedido').first().innerText()) === `Pedido ${s.numero}` && (await pA.getByTestId('admin-numero-pedido').first().getAttribute('href')) === `/admin/solicitacoes/${s.id}`);

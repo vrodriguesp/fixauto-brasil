@@ -129,17 +129,10 @@ try {
   // contador no botao fechado
   const cont = await esperar(async () => (await pV.getByTestId('chat-suporte-nao-lidas').innerText().catch(() => '')) === '1', 60000);
   ok('2 botao fechado mostra 1 nao lida', !!cont);
-  // release 20/11: na pagina do pedido em etapas (celular) o botao do chat so aparece com mensagem por ler
-  // e fica ACIMA da barra Tagasi/Edasi (nunca a cobre); sem nada por ler nem aparece (site-pedido-sem-conta)
+  // pagina do pedido em etapas (celular): o balao NUNCA aparece ali (PAGINAS_PEDIDO no ChatSuporte, Clarity 12/11 -
+  // cobria a ponta do Edasi preso ao pe da tela), nem com mensagem por ler; o rotulo novo (19/11) nao muda isso
   await pV.goto(`${SITE}/ee/ru/zayavka`, { waitUntil: 'networkidle' }); await pV.waitForTimeout(2500);
-  const geoPedido = await esperar(async () => pV.evaluate(() => {
-    const el = document.querySelector('[data-testid="chat-suporte-botao"]'); const n = document.querySelector('[data-testid="navegar"]');
-    if (!el || !n) return null;
-    const b = el.getBoundingClientRect(); const r = n.getBoundingClientRect();
-    return { visivel: b.width > 0 && getComputedStyle(el).display !== 'none', botaoBottom: Math.round(b.bottom), barraTop: Math.round(r.top), naoLidas: el.getAttribute('data-nao-lidas') };
-  }), 30000);
-  ok('2 pedido em etapas (celular): botao com 1 nao lida visivel e ACIMA da barra Tagasi/Edasi', !!geoPedido && geoPedido.visivel && geoPedido.naoLidas === '1' && geoPedido.botaoBottom <= geoPedido.barraTop, JSON.stringify(geoPedido));
-  await pV.screenshot({ path: `pedido-etapas-balao-acima-barra.png` }).catch(() => {});
+  ok('2 pedido em etapas (celular): sem balao do chat mesmo com 1 nao lida; barra Tagasi/Edasi livre', (await pV.getByTestId('chat-suporte-botao').count()) === 0 && (await pV.getByTestId('navegar').count()) === 1);
   await pV.goto(`${SITE}/ee/ru`, { waitUntil: 'networkidle' }); await pV.waitForTimeout(1500);
   await esperar(async () => (await pV.getByTestId('chat-suporte-nao-lidas').innerText().catch(() => '')) === '1', 30000);
   await pV.getByTestId('chat-suporte-botao').click();

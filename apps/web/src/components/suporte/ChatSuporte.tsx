@@ -163,7 +163,7 @@ export default function ChatSuporte() {
   return (
     <>
       {botaoVisivel && (
-        <button type="button" ref={botaoRef} onClick={() => setAberto(true)} aria-label={naoLidas > 0 ? `${t('abrir')} (${naoLidas})` : t('abrir')} title={t('titulo')} data-testid="chat-suporte-botao" data-rotulo={rotulo ? '1' : '0'} {...(naoLidas > 0 ? { 'data-nao-lidas': String(naoLidas) } : {})}
+        <button type="button" ref={botaoRef} onClick={() => setAberto(true)} aria-label={naoLidas > 0 ? `${t('abrir')} (${naoLidas})` : t('abrir')} title={t('titulo')} data-testid="chat-suporte-botao" data-rotulo={rotulo ? '1' : '0'}
           className={`chat-suporte-botao fixed right-4 z-40 flex h-14 items-center justify-center gap-2 rounded-full bg-primary-600 text-white shadow-lg hover:bg-primary-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 ${rotulo ? 'pl-4 pr-5' : 'w-14'} sm:w-auto sm:pl-4 sm:pr-5`}>
           {/* atendente (fone de ouvido) dentro do balao: "falar com alguem do BipFix" (dono 19/11) */}
           <svg className="h-7 w-7 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
