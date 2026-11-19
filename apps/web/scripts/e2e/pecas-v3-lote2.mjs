@@ -405,7 +405,8 @@ try {
     ok('D.6a /loja/perfil: perfil-iva-registrado presente; regime de margem so aparece depois de marcar "registrado"', (await pL1.getByTestId('perfil-iva-registrado').count()) === 1 && !(await pL1.getByTestId('perfil-regime-margem').isVisible().catch(() => false)));
     await marcar(pL1, 'perfil-iva-registrado');
     ok('D.6b ao marcar: perfil-iva-pct sugerido 24 (EE) e perfil-regime-margem visivel (desmarcado)', /^24([.,]00?)?$/.test(await pL1.getByTestId('perfil-iva-pct').inputValue()) && await visivel(pL1.getByTestId('perfil-regime-margem')) && !(await pL1.getByTestId('perfil-regime-margem').isChecked()), await pL1.getByTestId('perfil-iva-pct').inputValue().catch(() => ''));
-    await botao(pL1, ET('lojaPerfil.salvarButton')).click();
+    // desde o lote 4 o perfil da loja de TESTE tem um 2o 'Salvesta' (secao da pagina publica): o do formulario principal e o 1o
+    await botao(pL1, ET('lojaPerfil.salvarButton')).first().click();
     let lj = null; for (let i = 0; i < 30; i++) { lj = (await A.admin.from('lojas_pecas').select('iva_registrado, iva_pct, regime_margem_usadas').eq('id', lj1.id).single()).data; if (lj?.iva_registrado) break; await sleep(300); }
     ok('D.6c salvar grava lojas_pecas.iva_registrado true, iva_pct 24, regime false', lj?.iva_registrado === true && Number(lj?.iva_pct) === 24 && lj?.regime_margem_usadas === false, JSON.stringify(lj));
     await pL1.screenshot({ path: `${PRINTS}/lote2-loja-perfil-iva-et-390.png`, fullPage: true });

@@ -394,7 +394,8 @@ try {
     // tempo real: loja nao-alvo assina INSERT em cotacoes_pecas antes do pedido
     const eventos = { alvo: [], nao: [] };
     const canal = (s, k) => s.c.channel(`l5-rt-${k}-${A.tag}`).on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'cotacoes_pecas' }, (p) => eventos[k].push(p.new?.id)).subscribe();
-    const cA = canal(S.ljT, 'alvo'); const cN = canal(S.ljT2, 'nao');
+    // o item e da ljT2: ela e a ALVO; a ljT e a nao-alvo
+    const cA = canal(S.ljT2, 'alvo'); const cN = canal(S.ljT, 'nao');
     await sleep(2500);
     const t0 = Date.now();
     const r = await pedir(S.ofT, { itemId: iOleo.id, quantidade: 3 }); // item da ljT2 -> alvo = ljT2
@@ -402,7 +403,7 @@ try {
     ok('X.0 pedir item da 2a loja: 200', r.status === 200 && !!cid, JSON.stringify(r.d));
     await sleep(4000);
     ok('X.1 tempo real: a loja-ALVO recebe o INSERT (controle) e a nao-alvo NAO', eventos.alvo.includes(cid) && !eventos.nao.includes(cid), JSON.stringify({ alvo: eventos.alvo.includes(cid), nao: eventos.nao.includes(cid), nAlvo: eventos.alvo.length, nNao: eventos.nao.length }));
-    await S.ljT.c.removeChannel(cA); await S.ljT2.c.removeChannel(cN);
+    await S.ljT2.c.removeChannel(cA); await S.ljT.c.removeChannel(cN);
     // alvo desta cotacao = ljT2; ljT e a nao-alvo agora
     const linhas = (await A.admin.from('avisos_email_pecas').select('profile_id, fornecedor_id').eq('cotacao_id', cid)).data || [];
     ok('X.2 avisos_email_pecas: so a loja-alvo (nenhuma outra loja nem a vendedora)', linhas.length >= 1 && linhas.every((l) => l.profile_id === dLjT2.id), JSON.stringify(linhas));
@@ -431,6 +432,8 @@ try {
     await A.admin.from('cotacoes_pecas_placa').insert({ cotacao_id: cp.id, placa: '123ABC' });
     const pAlvo = await A.placa(cp.id, S.ljT2.token); const pNao = await A.placa(cp.id, S.ljT.token);
     ok('X.8 placa numa cotacao com carro de 1 fornecedor: alvo 200, nao-alvo 404', pAlvo.status === 200 && pAlvo.d.placa === '123ABC' && pNao.status === 404, `${pAlvo.status} ${pNao.status}`);
+    // libera o teto do par (oficina, ljT2) para os pedidos por promocao abaixo
+    await A.admin.from('cotacoes_pecas').update({ status: 'cancelada' }).eq('oficina_id', ofT.id).eq('fornecedor_alvo_id', ljT2.id);
     // funcionario da oficina de teste
     const dFun = await A.conta('oficina', 'l5-funcionario', { contaTeste: true });
     await A.admin.from('funcionarios').insert({ profile_id: dFun.id, oficina_id: ofT.id, cargo: 'mecanico', ativo: true, nome: 'Func L5' });
