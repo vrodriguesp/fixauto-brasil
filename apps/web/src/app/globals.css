@@ -130,9 +130,6 @@ body.com-aviso-cookies .chat-suporte-botao { bottom: calc(var(--altura-cookies, 
 /* ...e a barra Tagasi/Edasi do pedido (components/pedido/PedidoSemConta.tsx, presa ao pe da tela no
    celular) tambem: antes o aviso ficava por cima dela em ~97 % das visitas (Clarity, 12/11) */
 body.com-aviso-cookies [data-testid="navegar"] { bottom: var(--altura-cookies, 0px); }
-/* aviso de cookies aberto: o conteudo ganha espaco embaixo pela altura dele (no login em 360 px o botao
-   "Entrar" ficava em parte debaixo do aviso e a pagina nao rolava - teste 19/11) */
-body.com-aviso-cookies main#conteudo { padding-bottom: calc(var(--altura-cookies, 0px) + 1rem); }
 /* regra do dono (12/11): a barra Tagasi/Edasi NUNCA cobre um campo. (1) ao levar a tela ate um campo
    (foco, aviso do que falta) sobra o espaco da barra + aviso de cookies; (2) no celular, digitando,
    a barra deixa de ficar presa ao pe da tela (teclado + barra nao deixavam ver o campo) */
