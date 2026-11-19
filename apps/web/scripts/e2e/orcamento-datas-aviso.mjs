@@ -4,7 +4,7 @@
 // DESATIVADOS, faixas do perfil; dia fechado salvo (revisao/API) continua erro que bloqueia.
 //  A calendario et/ru: vazio, realce do 1o dia aberto, sabado desativado, sexta 08-12 so com faixas da manha, legenda+link
 //  B revisao com data salva num sabado fechado: erro na linha + envio bloqueado + link do perfil (aba nova); troca -> envia
-//  C ru: 2 faixas no mesmo dia = 1 dia (dica); validade vazia vermelha; envio com 3 janelas
+//  C ru: 2 faixas no mesmo dia = 1 dia (dica); validade pre-preenchida (P5, 19/11); envio com 3 janelas
 //  E relogio fixo: hoje so faixas que nao acabaram, aviso < 2 h, depois do fechamento hoje desativado, realce na segunda
 //  G novas datas (079): mesmo seletor; sabado desativado; API DIA_FECHADO (turno e janela) e < 30 min; R4 rele o perfil
 //  H em_andamento: datas salvas invalidas nao bloqueiam (R1)
@@ -180,9 +180,9 @@ try {
     ok('C ru: 2 faixas no mesmo dia -> dica continua (1 dia so)', await visivel(p, 'dica-mais-datas'));
     await escolherCheckin(p, { dia: TER, faixa: 'tarde' });
     ok('C ru: dias diferentes -> sem dica e sem aviso', !(await visivel(p, 'dica-mais-datas')) && (await p.locator('[data-testid^=ck-aviso-]').count()) === 0);
-    await p.getByTestId('enviar-orcamento').click(); await p.waitForTimeout(1500);
-    ok('C ru: sem validade -> vermelha em ru, nada gravado', (await texto(p, 'erro-validade')).includes(T('oficinaEnviarOrcamento.validadeVaziaErroComData').split('(')[0].trim().slice(0, 25)) && !(await disp(sol1)).o, await texto(p, 'erro-validade'));
-    await p.getByTestId('usar-validade-recomendada').click();
+    // P5 (dono 19/11): a validade e pre-preenchida com ultima data valida + 7 assim que ha datas (antes ficava vazia
+    // e vermelha ao enviar)
+    ok('C ru: validade pre-preenchida = ultima data + 7 (P5)', (await p.locator('#cacb1-103').inputValue()) === somar(TER, 7) && (await visivel(p, 'validade-auto')), await p.locator('#cacb1-103').inputValue());
     await enviar(p);
     const r = await disp(sol1);
     ok('C: enviado com as 3 janelas', r.d.length === 3 && r.d.every((x) => x.hora_inicio && x.hora_fim), JSON.stringify(r));

@@ -27,7 +27,8 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       .select(
         `*,
          cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, email, telefone, created_at, codigo),
-         veiculo:veiculos(*)`
+         veiculo:veiculos(*),
+         privado:solicitacoes_privado(endereco, latitude, longitude)`
       )
       .eq('id', params.id)
       .single();
@@ -35,6 +36,9 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
     if (error || !solicitacao) {
       return NextResponse.json({ error: 'Solicitação não encontrada' }, { status: 404 });
     }
+    // 102: o admin ve a rua e as coordenadas exatas (tabela privada); a linha guarda so a area
+    const priv = (solicitacao as any).privado as { endereco?: string; latitude?: number | null; longitude?: number | null } | null;
+    if (priv) Object.assign(solicitacao as any, { endereco: priv.endereco || (solicitacao as any).endereco, latitude: priv.latitude ?? (solicitacao as any).latitude, longitude: priv.longitude ?? (solicitacao as any).longitude });
 
     const [
       { data: fotos },

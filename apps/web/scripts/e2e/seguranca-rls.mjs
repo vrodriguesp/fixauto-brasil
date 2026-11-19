@@ -149,20 +149,67 @@ try {
   const { error: eP1 } = await cli.a.from('presenca').upsert({ profile_id: cli.id, visto_em: new Date().toISOString() }, { onConflict: 'profile_id' });
   ok('P-01 legitimo: a conta grava o proprio sinal de presenca', !eP1, eP1?.message);
   const { error: eP2 } = await cli.a.from('presenca').upsert({ profile_id: of.id, visto_em: new Date().toISOString() }, { onConflict: 'profile_id' });
-  const { data: pOf } = await sb.from('presenca').select('profile_id').eq('profile_id', of.id);
-  ok('P-02 cliente NAO grava sinal em nome de outra conta', !!eP2 && !(pOf || []).length, eP2?.message);
+  const { data: pOfP } = await sb.from('presenca').select('profile_id').eq('profile_id', of.id);
+  ok('P-02 cliente NAO grava sinal em nome de outra conta', !!eP2 && !(pOfP || []).length, eP2?.message);
   const { error: eP3 } = await cli.a.from('presenca').update({ visto_em: '2020-01-01T00:00:00Z' }).eq('profile_id', cli.id);
-  const { data: pCli } = await sb.from('presenca').select('visto_em').eq('profile_id', cli.id).single();
-  ok('P-03 legitimo: a conta atualiza o proprio sinal', !eP3 && pCli?.visto_em?.startsWith('2020-01-01'), eP3?.message);
-  const { data: pOutro } = await outro.a.from('presenca').select('profile_id, visto_em').eq('profile_id', cli.id);
+  const { data: pCliP } = await sb.from('presenca').select('visto_em').eq('profile_id', cli.id).single();
+  ok('P-03 legitimo: a conta atualiza o proprio sinal', !eP3 && pCliP?.visto_em?.startsWith('2020-01-01'), eP3?.message);
+  const { data: pOutroP } = await outro.a.from('presenca').select('profile_id, visto_em').eq('profile_id', cli.id);
   const { data: pAnon } = await anon.from('presenca').select('profile_id').limit(1);
-  ok('P-04 outra conta e anon NAO leem a presenca dos outros', !(pOutro || []).length && !(pAnon || []).length, JSON.stringify({ pOutro, pAnon }));
+  ok('P-04 outra conta e anon NAO leem a presenca dos outros', !(pOutroP || []).length && !(pAnon || []).length, JSON.stringify({ pOutroP, pAnon }));
   const { data: pAdm } = await admP.a.from('presenca').select('profile_id, visto_em').eq('profile_id', cli.id);
   ok('P-05 legitimo: admin le a presenca de qualquer conta', (pAdm || []).length === 1 && pAdm[0].visto_em.startsWith('2020-01-01'), JSON.stringify(pAdm));
   const { error: eP6 } = await cli.a.from('presenca').delete().eq('profile_id', cli.id);
   const { data: pAinda } = await sb.from('presenca').select('profile_id').eq('profile_id', cli.id);
   ok('P-06 ninguem apaga a presenca pelo navegador (nem a propria)', (pAinda || []).length === 1, eP6?.message || 'delete passou');
   await sb.from('presenca').delete().eq('profile_id', cli.id);
+
+  // N-01..N-07 (migracao 102, dono 19/11): antes do aceite a oficina NAO le o nome/foto do cliente (so o codigo) nem a
+  // rua do pedido (so a area); depois do aceite, tudo como antes. A pausa dos avisos so na propria linha.
+  const { data: sN } = await cli.a.from('solicitacoes').insert({ cliente_id: cli.id, veiculo_id: v.id, tipo: 'mecanica', descricao: 'privacidade', urgencia: 'media', latitude: 59.4371, longitude: 24.7536, endereco: 'Narva mnt 7, 10117 Tallinn, Estonia' }).select('id, area, endereco, latitude, longitude').single();
+  sols.push(sN.id);
+  // S-01..S-06 (102): a rua e as coordenadas exatas ficam em solicitacoes_privado; a linha publica so tem area + ~1 km
+  ok('S-01 linha de solicitacoes devolvida ao motorista ja vem mascarada (area, ~1 km)', sN.endereco === 'Tallinn, Estonia' && sN.latitude === 59.44 && sN.longitude === 24.75, JSON.stringify(sN));
+  const { data: sOf } = await of.a.from('solicitacoes').select('endereco, area, latitude, longitude, privado:solicitacoes_privado(endereco, latitude, longitude)').eq('id', sN.id).maybeSingle();
+  ok('S-02 oficina no raio SEM aceite: le a area e ~1 km, NAO a rua (REST, select direto + embed)', !!sOf && sOf.endereco === 'Tallinn, Estonia' && !/\d/.test(sOf.endereco) && sOf.latitude === 59.44 && (sOf.privado == null || (Array.isArray(sOf.privado) && !sOf.privado.length)), JSON.stringify(sOf));
+  const { data: pOf } = await of.a.from('solicitacoes_privado').select('*').eq('solicitacao_id', sN.id);
+  ok('S-02b oficina SEM aceite: solicitacoes_privado vazio', !(pOf || []).length, JSON.stringify(pOf));
+  const { data: pCli } = await cli.a.from('solicitacoes_privado').select('endereco, latitude').eq('solicitacao_id', sN.id).maybeSingle();
+  ok('S-03 legitimo: o motorista le a rua e as coordenadas exatas do proprio pedido', pCli?.endereco === 'Narva mnt 7, 10117 Tallinn, Estonia' && pCli?.latitude === 59.4371, JSON.stringify(pCli));
+  const { data: pOutro } = await outro.a.from('solicitacoes_privado').select('endereco').eq('solicitacao_id', sN.id);
+  ok('S-04 outro motorista NAO le a rua', !(pOutro || []).length);
+  const { error: eIns } = await of.a.from('solicitacoes_privado').insert({ solicitacao_id: sN.id, endereco: 'hack' });
+  const { error: eUpd } = await cli.a.from('solicitacoes_privado').update({ endereco: 'hack' }).eq('solicitacao_id', sN.id);
+  const { data: pCheck } = await sb.from('solicitacoes_privado').select('endereco').eq('solicitacao_id', sN.id).single();
+  ok('S-05 ninguem escreve na tabela privada pela API (so o gatilho)', !!eIns && (!!eUpd || pCheck.endereco !== 'hack') && pCheck.endereco === 'Narva mnt 7, 10117 Tallinn, Estonia', `${eIns?.message} / ${eUpd?.message}`);
+  const { data: vAtende } = await of.a.rpc('minha_oficina_atende', { p_sol: sN.id });
+  ok('S-06 legitimo: a oficina no raio continua a ver o pedido (distancia pelas coordenadas exatas)', vAtende === true, String(vAtende));
+  // o orcamento de A-03 ficou 'aceito' (pedido s): sem ele a oficina ainda nao atende este cliente
+  await sb.from('orcamentos').update({ status: 'enviado' }).eq('id', orc.id);
+  ok('N-01 area derivada = bairro/cidade, sem rua nem codigo postal', sN.area === 'Tallinn, Estonia', sN.area);
+  const { data: rc1 } = await of.a.rpc('resumo_clientes', { p_ids: [cli.id] });
+  ok('N-02 oficina no raio SEM aceite: resumo_clientes da codigo mas NAO nome/foto', (rc1 || []).length === 1 && rc1[0].codigo != null && rc1[0].nome == null && rc1[0].avatar_url == null, JSON.stringify(rc1));
+  const { data: rp1 } = await of.a.rpc('resumo_clientes_pedidos', { p_sols: [sN.id] });
+  ok('N-03 resumo_clientes_pedidos SEM aceite: codigo sim, nome nao', (rp1 || []).length === 1 && rp1[0].codigo != null && rp1[0].nome == null, JSON.stringify(rp1));
+  const { data: rpOutro } = await outro.a.rpc('resumo_clientes_pedidos', { p_sols: [sN.id] });
+  ok('N-04 outro motorista NAO le o resumo do cliente pelo pedido', !(rpOutro || []).length, JSON.stringify(rpOutro));
+  const { data: oN } = await sb.from('orcamentos').insert({ solicitacao_id: sN.id, oficina_id: o.id, valor_total: 100, prazo_dias: 1, tempo_execucao_horas: 1, validade: dia(10), status: 'aceito' }).select('id').single();
+  const { data: rp2 } = await of.a.rpc('resumo_clientes_pedidos', { p_sols: [sN.id] });
+  const { data: rc2 } = await of.a.rpc('resumo_clientes', { p_ids: [cli.id] });
+  ok('N-05 legitimo: com orcamento ACEITO a oficina le o nome (por pedido e por cliente)', rp2?.[0]?.nome === 'Novo Nome' && rc2?.[0]?.nome === 'Novo Nome', JSON.stringify({ rp2, rc2 }));
+  const { data: pOfAceito } = await of.a.from('solicitacoes_privado').select('endereco, latitude').eq('solicitacao_id', sN.id).maybeSingle();
+  ok('S-07 legitimo: com orcamento ACEITO a oficina le a rua e as coordenadas exatas', pOfAceito?.endereco === 'Narva mnt 7, 10117 Tallinn, Estonia' && pOfAceito?.latitude === 59.4371, JSON.stringify(pOfAceito));
+  const { data: rpSelf } = await cli.a.rpc('resumo_clientes_pedidos', { p_sols: [sN.id] });
+  ok('N-05 legitimo: o proprio cliente le o proprio nome', rpSelf?.[0]?.nome === 'Novo Nome');
+  await sb.from('orcamentos').delete().eq('id', oN.id);
+  const { error: ePausa } = await of.a.from('profiles').update({ avisos_pausados_ate: new Date(Date.now() + 7 * 86400000).toISOString() }).eq('id', of.id);
+  const { data: pPausa } = await sb.from('profiles').select('avisos_pausados_ate').eq('id', of.id).single();
+  ok('N-06 legitimo: oficina pausa os proprios avisos', !ePausa && !!pPausa?.avisos_pausados_ate, ePausa?.message);
+  await cli.a.from('profiles').update({ avisos_pausados_ate: null }).eq('id', of.id);
+  const { data: pPausa2 } = await sb.from('profiles').select('avisos_pausados_ate').eq('id', of.id).single();
+  ok('N-07 outro usuario NAO mexe na pausa alheia', !!pPausa2?.avisos_pausados_ate);
+  await sb.from('profiles').update({ avisos_pausados_ate: null }).eq('id', of.id);
+  await sb.from('orcamentos').update({ status: 'aceito' }).eq('id', orc.id);
 
   // M-05: avisos em massa pelo navegador sao barrados
   let barrado = false;

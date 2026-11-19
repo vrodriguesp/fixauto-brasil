@@ -143,7 +143,9 @@ try {
   const { ctx, p } = await paginaOficina(w1);
   let pg = await textoPedido(p, sB.id, 'oficina1_pedidoB_antes_390');
   ok('A pagina: pedido B sem botao ligar e sem o numero', pg.ligar === 0 && !pg.t.includes(TEL_DIG) && !pg.t.includes(cEmail), pg.t.slice(0, 200));
-  ok('A pagina: pedido B mostra o nome do cliente', pg.t.includes('Kontakt Klient'));
+  // 102 (dono 19/11): no pedido B (sem orcamento aceito) a oficina NAO ve o nome - so "Klient · codigo" - mesmo tendo
+  // atendido este cliente no pedido A
+  ok('A pagina: pedido B SEM o nome do cliente (so o codigo) antes do aceite (102)', !pg.t.includes('Kontakt Klient') && pg.t.includes('Klient'), pg.t.slice(0, 200));
   pg = await textoPedido(p, sA.id, 'oficina1_pedidoA_390');
   ok('A pagina: pedido A (escolhida) com ligar e o numero', pg.ligar === 1 && pg.t.includes(TEL_DIG), pg.t.slice(0, 200));
   // agenda (calendario) e Hoje: nome e telefone do trabalho aceito

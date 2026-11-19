@@ -6,13 +6,13 @@ import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import CampoTelefone from '@/components/forms/CampoTelefone';
+import CartaoConta from '@/components/conta/CartaoConta';
 import { rolarAteAqui } from '@/hooks/use-mostrar-alerta';
 
 export default function PerfilClientePage() {
   const t = useTranslations('clientePerfil');
   const tc = useTranslations('constants');
   const tErr = useTranslations('erros');
-  const tx = useTranslations('excluirConta');
   const { user, loading, refreshProfile } = useAuth();
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -110,9 +110,8 @@ export default function PerfilClientePage() {
             {saving ? t('saving') : t('saveChanges')}
           </button>
         </div>
-        <div className="mt-10 pt-6 border-t border-gray-200 text-right">
-          <Link href="/excluir-conta" className="text-sm text-red-700 hover:underline">{tx('link')}</Link>
-        </div>
+        {/* conta: e-mail e exclusao com confirmacao (P6, dono 19/11) */}
+        <CartaoConta />
       </div>
     </div>
   );
