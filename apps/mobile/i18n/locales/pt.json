@@ -740,7 +740,9 @@
     "faltaAno": "Informe o ano do carro.",
     "faltaNome": "Informe seu nome.",
     "faltaEmail": "Informe um e-mail válido.",
-    "faltaTermos": "Aceite os termos de uso e a política de privacidade."
+    "faltaTermos": "Aceite os termos de uso e a política de privacidade.",
+    "obrigatorio": "(obrigatório)",
+    "faltaCampos": "Preencha os campos que faltam – estão marcados em vermelho."
   },
   "agendaMudanca": {
     "itemNovo": "Novo",

@@ -8,7 +8,7 @@ import { PREFIXOS_TELEFONE, EXEMPLO_TELEFONE, prefixoPadrao, separarTelefone, ju
 // Telefone com prefixo internacional (dono 06/11): bandeira + codigo (no pais do
 // mercado do idioma do app) ao lado do numero; devolve o numero completo
 // ("+372 5123 4567"). O mesmo campo no site: apps/web/src/components/forms/CampoTelefone.tsx.
-export default function CampoTelefone({ value, onChange, rotulo }: { value: string; onChange: (v: string) => void; rotulo: string }) {
+export default function CampoTelefone({ value, onChange, rotulo, erro }: { value: string; onChange: (v: string) => void; rotulo: string; /** em falta: borda vermelha */ erro?: boolean }) {
   const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
   const padrao = prefixoPadrao(i18n.language);
@@ -37,7 +37,8 @@ export default function CampoTelefone({ value, onChange, rotulo }: { value: stri
       </Pressable>
       <TextInput accessibilityLabel={rotulo} value={numero} onChangeText={(v) => mudar(ddi, v)} placeholder={EXEMPLO_TELEFONE[ddi]}
         keyboardType="phone-pad" autoComplete="tel" textContentType="telephoneNumber" maxLength={30}
-        className="flex-1 border border-gray-300 rounded-lg px-4 py-3 text-[16px] bg-white" />
+        aria-invalid={!!erro}
+        className={`flex-1 border rounded-lg px-4 py-3 text-[16px] bg-white ${erro ? 'border-red-500' : 'border-gray-300'}`} />
       <Modal visible={aberto} animationType={Platform.OS === 'web' ? 'none' : 'slide'} onRequestClose={() => setAberto(false)}>
         <View className="flex-1 bg-white px-4" style={{ paddingTop: insets.top + 12, paddingBottom: insets.bottom }}>
           <Text className="text-lg font-semibold text-gray-900 mb-3">{t('constants.prefixoTelefone')}</Text>

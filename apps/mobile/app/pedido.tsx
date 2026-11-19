@@ -1,5 +1,5 @@
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { View, Text, TextInput, Pressable, ActivityIndicator, Image, Linking, Keyboard, Platform, ScrollView, BackHandler, useWindowDimensions } from 'react-native';
 import { confirmar as perguntar } from '../lib/confirmar';
 import { useTranslation } from 'react-i18next';
@@ -116,8 +116,14 @@ export default function PedidoScreen() {
   const [emailNovo, setEmailNovo] = useState('');
   const [esperaReenvio, setEsperaReenvio] = useState(0);
   const [jaConfirmou, setJaConfirmou] = useState(false);
-  // "Edasi" tocado com algo faltando: aviso vermelho no rodape + foco no campo (igual ao site)
-  const [faltando, setFaltando] = useState('');
+  // "Edasi" tocado com algo faltando (dono 19/11): cada campo obrigatorio em falta fica com borda
+  // vermelha + mensagem embaixo, o rodape avisa e o foco vai ao primeiro; some assim que e preenchido
+  const [mostrarFaltas, setMostrarFaltas] = useState(false);
+  const campoNome = useRef<TextInput>(null);
+  const campoEmail = useRef<TextInput>(null);
+  const campoEndereco = useRef<TextInput>(null);
+  const campoAno = useRef<TextInput>(null);
+  const campoPlaca = useRef<TextInput>(null);
   const [rascunhoLido, setRascunhoLido] = useState(false);
 
   // quem ja entrou usa o pedido normal (mesmos dados, sem contato/codigo)
@@ -154,7 +160,7 @@ export default function PedidoScreen() {
   }, [rascunhoLido, etapa, tipo, servicos, descricao, fotos, fotosPuladas, marca, modelo, ano, placa, endereco, coords, pais, nome, email, querSms, telefone, termos, pendente]);
 
   useEffect(() => {
-    setFaltando('');
+    setMostrarFaltas(false);
     if (['detalhe', 'fotos', 'carro', 'local', 'contato'].includes(etapa)) contarUmaVez(etapa);
     rolagem.current?.scrollTo({ y: 0, animated: false });
     // 16/11 (dono + Fable): sem pedir a localizacao ao entrar no passo - so no botao "Kasuta minu asukohta"
@@ -221,7 +227,6 @@ export default function PedidoScreen() {
   const tituloDetalhe = temLista || tipo === 'outro' ? t('pedidoSemConta.detalheTituloViga') : t('pedidoSemConta.detalheTituloFoto');
   // escreveu o que precisa OU marcou algum servico da lista (regra do dono 12/11: a foto nunca substitui)
   const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
-  useEffect(() => { setFaltando(''); }, [servicoOk, endereco, marca, modelo, nome, email, termos]); // corrigiu: o aviso some
   const statusDetalhe: { texto: string; tom: 'neutro' | 'ok' } = servicos.length > 0
     ? { texto: servicos.length === 1 ? t('pedidoSemConta.detalheStatusListaUm') : t('pedidoSemConta.detalheStatusListaN', { n: servicos.length }), tom: 'ok' }
     : descricao.trim() ? { texto: t('pedidoSemConta.detalheStatusTexto'), tom: 'ok' }
@@ -231,15 +236,44 @@ export default function PedidoScreen() {
     if (!marcado) contarUmaVez('detalhe_escolheu_lista');
     setServicos((x) => (marcado ? x.filter((y) => y !== v) : [...x, v]));
   };
-  const irParaDescricao = () => {
-    rolagem.current?.scrollTo({ y: 0, animated: true });
-    setTimeout(() => caixaDescricao.current?.focus(), Platform.OS === 'web' ? 0 : 300);
-  };
   // ano opcional (dono 16/11): se preenchido, 4 digitos validos
   const carroOk = !!(marca && modelo) && anoValido(ano) && placaValida(placa);
-  const faltaCarro = !marca ? t('pedidoSemConta.faltaMarca') : !modelo ? t('pedidoSemConta.faltaModelo') : !anoValido(ano) ? t('pedidoSemConta.faltaAno') : t('erros.PLACA_INVALIDA');
   const contatoOk = nome.trim().length > 0 && EMAIL_OK.test(email.trim()) && (!querSms || TELEFONE_OK(telefone)) && termos;
   const sugestao = sugestaoEmail(email);
+  // o que falta AGORA no passo (campo -> mensagem), na ordem da tela; recalculado a cada tecla,
+  // por isso a marca vermelha de um campo some assim que ele e preenchido
+  const faltasPasso = (): Record<string, string> => {
+    const f: Record<string, string> = {};
+    if (etapa === 'detalhe' && !servicoOk) f.descricao = temLista ? t('pedidoSemConta.faltaDescricaoChips') : t('pedidoSemConta.faltaDescricao');
+    if (etapa === 'carro') {
+      if (!marca) f.marca = t('pedidoSemConta.faltaMarca');
+      if (!modelo) f.modelo = t('pedidoSemConta.faltaModelo');
+      if (!anoValido(ano)) f.ano = t('pedidoSemConta.faltaAno');
+      if (!placaValida(placa)) f.placa = t('erros.PLACA_INVALIDA');
+    }
+    if (etapa === 'local' && endereco.trim().length <= 2) f.endereco = t('pedidoSemConta.faltaEndereco');
+    if (etapa === 'contato') {
+      if (!nome.trim()) f.nome = t('pedidoSemConta.faltaNome');
+      if (!EMAIL_OK.test(email.trim())) f.email = t('pedidoSemConta.faltaEmail');
+      if (querSms && !TELEFONE_OK(telefone)) f.telefone = t('pedidoSemConta.faltaTelefone');
+      if (!termos) f.termos = t('pedidoSemConta.faltaTermos');
+    }
+    return f;
+  };
+  const faltasAgora = faltasPasso();
+  const erroDe = (campo: string): string | undefined => (mostrarFaltas ? faltasAgora[campo] : undefined);
+  const chavesFalta = Object.keys(faltasAgora);
+  // rodape: uma falta = a propria mensagem; varias = "preenche os campos em vermelho"
+  const avisoRodape = mostrarFaltas && chavesFalta.length > 0 ? (chavesFalta.length === 1 ? faltasAgora[chavesFalta[0]] : t('pedidoSemConta.faltaCampos')) : '';
+  const FOCO: Record<string, RefObject<TextInput | null>> = { descricao: caixaDescricao, ano: campoAno, placa: campoPlaca, endereco: campoEndereco, nome: campoNome, email: campoEmail };
+  const focarPrimeiro = (campo: string) => {
+    const ref = FOCO[campo];
+    if (ref) setTimeout(() => ref.current?.focus(), Platform.OS === 'web' ? 0 : 300);
+    else rolagem.current?.scrollTo({ y: 0, animated: true }); // marca/modelo/telefone/termos: so a vista
+  };
+  // rotulos: obrigatorio marcado em todos os campos que travam o Edasi (dono 19/11); opcionais dizem "valikuline"
+  const obrig = (rotulo: string) => `${rotulo} ${t('pedidoSemConta.obrigatorio')}`;
+  const opc = (rotulo: string) => `${rotulo} (${t('pedidoSemConta.opcional')})`;
 
   const descricaoFinal = () => servicos.length > 0
     ? `${t('pedidoSemConta.servicesPrefix')} ${servicos.map(rotuloServico).join(', ')}${descricao.trim() ? '. ' + descricao.trim() : ''}`
@@ -408,17 +442,17 @@ export default function PedidoScreen() {
 
   // rodape fixo (zona do polegar): linha de estado/aviso + Tagasi / Edasi. O Edasi nunca fica
   // desativado: faltando algo, diz o que e (vermelho) e leva ao campo (igual ao site)
-  const rodape = ({ voltar, avancar, ok, rotulo, falta, aoFaltar, status, secundario }: { voltar: Etapa; avancar: () => void; ok: boolean; rotulo?: string; falta: string; aoFaltar?: () => void; status?: { texto: string; tom: 'neutro' | 'ok' }; secundario?: boolean }) => (
+  const rodape = ({ voltar, avancar, rotulo, status, secundario }: { voltar: Etapa; avancar: () => void; rotulo?: string; status?: { texto: string; tom: 'neutro' | 'ok' }; secundario?: boolean }) => (
     <View className="px-4 pt-2 border-t border-gray-100 bg-white" style={{ paddingBottom: Math.max(insets.bottom, 12) }} testID="rodape-passo">
-      {faltando ? <Text role="alert" testID="falta-aviso" className="text-sm text-red-700 font-medium mb-2">{faltando}</Text>
+      {avisoRodape ? <Text role="alert" testID="falta-aviso" className="text-sm text-red-700 font-medium mb-2">{avisoRodape}</Text>
         : status ? <Text role="status" testID="status-passo" className={`text-sm mb-2 ${status.tom === 'ok' ? 'text-green-700 font-medium' : 'text-gray-600'}`}>{status.texto}</Text> : null}
       <View className="flex-row gap-3">
         <Pressable onPress={() => voltarPara(voltar)} accessibilityRole="button" className="flex-1 border border-gray-300 rounded-lg py-4 items-center">
           <Text className="text-gray-700 font-semibold text-base">{t('pedidoSemConta.back')}</Text>
         </Pressable>
         <Pressable onPress={() => {
-          if (!ok) { setFaltando(falta); contarUmaVez(`edasi_bloqueado_${etapa}`); aoFaltar?.(); return; }
-          Keyboard.dismiss(); setFaltando(''); avancar();
+          if (chavesFalta.length > 0) { setMostrarFaltas(true); contarUmaVez(`edasi_bloqueado_${etapa}`); focarPrimeiro(chavesFalta[0]); return; }
+          Keyboard.dismiss(); setMostrarFaltas(false); avancar();
         }} disabled={enviando} accessibilityRole="button" accessibilityState={{ disabled: enviando, busy: enviando }}
           className={`flex-[2] rounded-lg py-4 items-center ${secundario ? 'border border-gray-300 bg-white' : 'bg-primary-600'} disabled:opacity-50`}>
           {enviando ? <ActivityIndicator color="#fff" /> : <Text className={`font-semibold text-base ${secundario ? 'text-gray-800' : 'text-white'}`}>{rotulo || t('pedidoSemConta.next')}</Text>}
@@ -477,11 +511,13 @@ export default function PedidoScreen() {
         <View>
           <Text className="text-sm text-gray-500">{tipoConfig && <IconeServico tipo={tipoConfig.value} icon={tipoConfig.icon} tamanho={16} />} {rotuloTipoMotorista(t, tipo)}</Text>
           <Text role="heading" className="text-lg font-semibold text-gray-900 mb-2">{tituloDetalhe}</Text>
-          <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.detalheRotulo')}</Text>
+          {/* com lista a regra e "texto OU um chip" (explicada embaixo da caixa quando falta); sem lista o texto e obrigatorio */}
+          <Text className="text-sm font-medium text-gray-700 mb-1">{temLista ? t('pedidoSemConta.detalheRotulo') : obrig(t('pedidoSemConta.detalheRotulo'))}</Text>
           <TextInput ref={caixaDescricao} accessibilityLabel={t('pedidoSemConta.detalheRotulo')} accessibilityHint={ehDano ? t('pedidoSemConta.detalheRotuloFoto') : t('pedidoSemConta.detalheRotuloTexto')}
             value={descricao} onChangeText={(v) => { setDescricao(v); if (v.trim()) contarUmaVez('detalhe_escreveu'); }} multiline numberOfLines={temLista ? 3 : 5} maxLength={1800}
-            placeholder={exemplo} placeholderTextColor="#9ca3af" aria-invalid={!!faltando} testID="caixa-descricao"
-            className={`${CAMPO} ${temLista ? (baixa ? 'min-h-[76px]' : 'min-h-[96px]') : 'min-h-[140px]'} ${faltando ? 'border-red-500' : ''}`} style={{ textAlignVertical: 'top' }} />
+            placeholder={exemplo} placeholderTextColor="#9ca3af" aria-invalid={!!erroDe('descricao')} testID="caixa-descricao"
+            className={`${CAMPO} ${temLista ? (baixa ? 'min-h-[76px]' : 'min-h-[96px]') : 'min-h-[140px]'} ${erroDe('descricao') ? 'border-red-500' : ''}`} style={{ textAlignVertical: 'top' }} />
+          {erroDe('descricao') ? <Text role="alert" testID="falta-descricao" className="text-sm text-red-700 mt-1">{erroDe('descricao')}</Text> : null}
           {temLista && (
             <View className="mt-3">
               <Text className="text-sm font-medium text-gray-700 mb-2">{t('pedidoSemConta.chipsTitulo')}</Text>
@@ -558,23 +594,27 @@ export default function PedidoScreen() {
         <View>
           <Text role="heading" className="text-lg font-semibold text-gray-900 mb-1">{t('pedidoSemConta.carroTitulo')}</Text>
           <Text className="text-sm text-gray-500 mb-3">{t('pedidoSemConta.carroDica')}</Text>
-          <VehicleCatalogPicker label={t('veiculos.marca')} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" />
+          <VehicleCatalogPicker label={obrig(t('veiculos.marca'))} value={marca} onChange={(m) => { setMarca(m); setModelo(null); }} fetchUrl="/api/vehicle-catalog?tipo=cars" faltando={erroDe('marca')} />
           {/* modelo sempre a vista; antes da marca fica parado (dono 12/11) */}
-          <VehicleCatalogPicker label={t('veiculos.modelo')} value={modelo} onChange={setModelo} fetchUrl={marca?.code ? `/api/vehicle-catalog?tipo=cars&marca=${marca.code}` : ''}
-            desativado={marca ? undefined : t('veiculos.escolhaMarcaPrimeiro')} />
+          <VehicleCatalogPicker label={obrig(t('veiculos.modelo'))} value={modelo} onChange={setModelo} fetchUrl={marca?.code ? `/api/vehicle-catalog?tipo=cars&marca=${marca.code}` : ''}
+            desativado={marca ? undefined : t('veiculos.escolhaMarcaPrimeiro')} faltando={erroDe('modelo')} />
           <View className="flex-row gap-3">
             <View className="flex-1">
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.anoOpcional')}</Text>
-              <TextInput accessibilityLabel={t('pedidoSemConta.anoOpcional')} value={ano} onChangeText={(v) => setAno(v.replace(/\D/g, '').slice(0, 4))} keyboardType="number-pad" maxLength={4} className={CAMPO} />
+              <TextInput ref={campoAno} accessibilityLabel={t('pedidoSemConta.anoOpcional')} value={ano} onChangeText={(v) => setAno(v.replace(/\D/g, '').slice(0, 4))} keyboardType="number-pad" maxLength={4}
+                aria-invalid={!!erroDe('ano')} className={`${CAMPO} ${erroDe('ano') ? 'border-red-500' : ''}`} />
             </View>
             <View className="flex-1">
               <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.placaRotulo')}</Text>
-              <TextInput accessibilityLabel={t('pedidoSemConta.placaRotulo')} value={placa} onChangeText={(v) => setPlaca(v.toUpperCase())} autoCapitalize="characters" maxLength={10} className={CAMPO} />
+              <TextInput ref={campoPlaca} accessibilityLabel={t('pedidoSemConta.placaRotulo')} value={placa} onChangeText={(v) => setPlaca(v.toUpperCase())} autoCapitalize="characters" maxLength={10}
+                aria-invalid={!!erroDe('placa')} className={`${CAMPO} ${erroDe('placa') ? 'border-red-500' : ''}`} />
             </View>
           </View>
+          {/* ano/matricula sao opcionais, mas se escritos tem de ser validos: aviso logo ao escrever (como antes) */}
+          {erroDe('ano') ? <Text className="text-sm text-red-700 mt-1" accessibilityRole="alert">{erroDe('ano')}</Text>
+            : ano.length >= 4 && !anoValido(ano) ? <Text className="text-sm text-red-700 mt-1" accessibilityRole="alert">{t('erros.ANO_INVALIDO')}</Text> : null}
+          {!placaValida(placa) ? <Text className="text-sm text-red-700 mt-1" accessibilityRole="alert">{t('erros.PLACA_INVALIDA')}</Text> : null}
           <Text className="text-xs text-gray-500 mt-1">{t('pedidoSemConta.placaAjuda')}</Text>
-          {ano.length >= 4 && !anoValido(ano) ? <Text className="text-sm text-red-700 mt-2" accessibilityRole="alert">{t('erros.ANO_INVALIDO')}</Text> : null}
-          {!placaValida(placa) ? <Text className="text-sm text-red-700 mt-2" accessibilityRole="alert">{t('erros.PLACA_INVALIDA')}</Text> : null}
         </View>
       )}
 
@@ -585,8 +625,9 @@ export default function PedidoScreen() {
           <View className="bg-primary-50 border-l-4 border-primary-600 rounded-lg px-3 py-2 mb-3" testID="local-claro">
             <Text className="text-sm text-gray-800">{t('pedidoSemConta.localClaro')}</Text>
           </View>
-          <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.localRotulo')}</Text>
+          <Text className="text-sm font-medium text-gray-700 mb-1">{obrig(t('pedidoSemConta.localRotulo'))}</Text>
           <EnderecoAutocomplete
+            campoRef={campoEndereco} erro={erroDe('endereco')}
             aoFocar={() => setTimeout(() => rolagem.current?.scrollTo({ y: 0, animated: true }), 250)}
             value={endereco}
             onChange={(v) => { setEndereco(v); setCoords(null); }}
@@ -614,11 +655,15 @@ export default function PedidoScreen() {
         <View>
           <Text role="heading" className="text-lg font-semibold text-gray-900 mb-1">{t('pedidoSemConta.contatoTitulo')}</Text>
           <Text className="text-sm text-gray-500 mb-3">{t('pedidoSemConta.contatoTexto')}</Text>
-          <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.nome')}</Text>
-          <TextInput accessibilityLabel={t('pedidoSemConta.nome')} value={nome} onChangeText={(v) => { setNome(v); contarUmaVez('contato_digitou'); }} autoComplete="name" textContentType="name" maxLength={100} className={`${CAMPO} mb-3`} />
+          <Text className="text-sm font-medium text-gray-700 mb-1">{obrig(t('pedidoSemConta.nome'))}</Text>
+          <TextInput ref={campoNome} accessibilityLabel={t('pedidoSemConta.nome')} value={nome} onChangeText={(v) => { setNome(v); contarUmaVez('contato_digitou'); }} autoComplete="name" textContentType="name" maxLength={100}
+            aria-invalid={!!erroDe('nome')} className={`${CAMPO} ${erroDe('nome') ? 'border-red-500' : ''}`} />
+          {erroDe('nome') ? <Text role="alert" className="text-sm text-red-700 mt-1 mb-2">{erroDe('nome')}</Text> : <View className="h-3" />}
 
-          <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.email')}</Text>
-          <TextInput accessibilityLabel={t('pedidoSemConta.email')} value={email} onChangeText={(v) => { setEmail(v); contarUmaVez('contato_digitou'); }} autoComplete="email" textContentType="emailAddress" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} maxLength={254} className={CAMPO} />
+          <Text className="text-sm font-medium text-gray-700 mb-1">{obrig(t('pedidoSemConta.email'))}</Text>
+          <TextInput ref={campoEmail} accessibilityLabel={t('pedidoSemConta.email')} value={email} onChangeText={(v) => { setEmail(v); contarUmaVez('contato_digitou'); }} autoComplete="email" textContentType="emailAddress" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} maxLength={254}
+            aria-invalid={!!erroDe('email')} className={`${CAMPO} ${erroDe('email') ? 'border-red-500' : ''}`} />
+          {erroDe('email') ? <Text role="alert" className="text-sm text-red-700 mt-1 mb-2">{erroDe('email')}</Text> : null}
           {sugestao ? (
             <Pressable onPress={() => setEmail(sugestao)} accessibilityRole="button" className="min-h-[36px] justify-center">
               <Text className="text-sm text-amber-800 underline">{t('pedidoSemConta.voceQuisDizer', { email: sugestao })}</Text>
@@ -630,26 +675,29 @@ export default function PedidoScreen() {
             <Pressable onPress={() => { const v = !querSms; setQuerSms(v); if (v) contarUmaVez('contato_sms_opt'); else setTelefone(''); }}
               accessibilityRole="checkbox" accessibilityState={{ checked: querSms }} className="flex-row items-start gap-2" testID="quer-sms">
               <Ionicons name={querSms ? 'checkbox' : 'square-outline'} size={22} color={querSms ? '#0284c7' : '#6b7280'} />
-              <Text className="flex-1 text-sm text-gray-800">{t('pedidoSemConta.querSms')}</Text>
+              <Text className="flex-1 text-sm text-gray-800">{opc(t('pedidoSemConta.querSms'))}</Text>
             </Pressable>
             {querSms && (
               <View className="mt-3">
-                <Text className="text-sm font-medium text-gray-700 mb-1">{t('pedidoSemConta.telefone')}</Text>
-                <CampoTelefone rotulo={t('pedidoSemConta.telefone')} value={telefone} onChange={setTelefone} />
+                <Text className="text-sm font-medium text-gray-700 mb-1">{obrig(t('pedidoSemConta.telefone'))}</Text>
+                <CampoTelefone rotulo={t('pedidoSemConta.telefone')} value={telefone} onChange={setTelefone} erro={!!erroDe('telefone')} />
+                {erroDe('telefone') ? <Text role="alert" className="text-sm text-red-700 mt-1">{erroDe('telefone')}</Text> : null}
                 <Text className="text-xs text-gray-500 mt-1">{t('pedidoSemConta.telefoneDica')}</Text>
                 <View className="flex-row items-start gap-1.5 mt-2" testID="sms-privacidade">
                   <Ionicons name="lock-closed-outline" size={14} color="#15803d" style={{ marginTop: 2 }} />
                   <Text className="flex-1 text-xs text-gray-600">{t('pedidoSemConta.smsPrivacidade')}</Text>
                 </View>
-                {!TELEFONE_OK(telefone) && <Text className="text-xs text-amber-800 mt-2">{t('pedidoSemConta.faltaTelefone')}</Text>}
+                {!TELEFONE_OK(telefone) && !erroDe('telefone') && <Text className="text-xs text-amber-800 mt-2">{t('pedidoSemConta.faltaTelefone')}</Text>}
               </View>
             )}
           </View>
 
-          <Pressable onPress={() => setTermos((v) => !v)} accessibilityRole="checkbox" accessibilityState={{ checked: termos }} className="flex-row items-start gap-2" testID="aceito-termos">
-            <Ionicons name={termos ? 'checkbox' : 'square-outline'} size={22} color={termos ? '#0284c7' : '#6b7280'} />
-            <Text className="flex-1 text-sm text-gray-700">{textoTermos()}</Text>
+          <Pressable onPress={() => setTermos((v) => !v)} accessibilityRole="checkbox" accessibilityState={{ checked: termos }} aria-invalid={!!erroDe('termos')} testID="aceito-termos"
+            className={`flex-row items-start gap-2 rounded-lg ${erroDe('termos') ? 'border border-red-500 p-2 -m-2' : ''}`}>
+            <Ionicons name={termos ? 'checkbox' : 'square-outline'} size={22} color={termos ? '#0284c7' : erroDe('termos') ? '#dc2626' : '#6b7280'} />
+            <Text className="flex-1 text-sm text-gray-700">{textoTermos()} <Text className="text-gray-500">{t('pedidoSemConta.obrigatorio')}</Text></Text>
           </Pressable>
+          {erroDe('termos') ? <Text role="alert" className="text-sm text-red-700 mt-3">{erroDe('termos')}</Text> : null}
           <Erro />
         </View>
       )}
@@ -700,14 +748,13 @@ export default function PedidoScreen() {
       )}
       </ScrollView>
 
-      {etapa === 'detalhe' && rodape({ voltar: 'servico', ok: servicoOk, avancar: () => setEtapa('fotos'), falta: temLista ? t('pedidoSemConta.faltaDescricaoChips') : t('pedidoSemConta.faltaDescricao'), aoFaltar: irParaDescricao, status: statusDetalhe })}
-      {etapa === 'lista' && rodape({ voltar: 'detalhe', ok: true, avancar: () => setEtapa('detalhe'), falta: '', rotulo: t('pedidoSemConta.listaValmis'), status: servicos.length > 0 ? statusDetalhe : undefined })}
-      {etapa === 'fotos' && rodape({ voltar: 'detalhe', ok: true, falta: '', secundario: fotos.length === 0, rotulo: fotos.length === 0 ? t('pedidoSemConta.semFotos') : undefined,
+      {etapa === 'detalhe' && rodape({ voltar: 'servico', avancar: () => setEtapa('fotos'), status: statusDetalhe })}
+      {etapa === 'lista' && rodape({ voltar: 'detalhe', avancar: () => setEtapa('detalhe'), rotulo: t('pedidoSemConta.listaValmis'), status: servicos.length > 0 ? statusDetalhe : undefined })}
+      {etapa === 'fotos' && rodape({ voltar: 'detalhe', secundario: fotos.length === 0, rotulo: fotos.length === 0 ? t('pedidoSemConta.semFotos') : undefined,
         avancar: () => { if (fotos.length === 0) { setFotosPuladas(true); contarUmaVez('fotos_pulou'); } setEtapa('carro'); } })}
-      {etapa === 'carro' && rodape({ voltar: 'fotos', ok: carroOk, avancar: () => setEtapa('local'), falta: faltaCarro })}
-      {etapa === 'local' && rodape({ voltar: 'carro', ok: endereco.trim().length > 2, avancar: () => { setErro(''); setEtapa('contato'); }, falta: t('pedidoSemConta.faltaEndereco') })}
-      {etapa === 'contato' && rodape({ voltar: 'local', ok: contatoOk, avancar: () => enviar(), rotulo: t('pedidoSemConta.enviarPedido'),
-        falta: !nome.trim() ? t('pedidoSemConta.faltaNome') : !EMAIL_OK.test(email.trim()) ? t('pedidoSemConta.faltaEmail') : querSms && !TELEFONE_OK(telefone) ? t('pedidoSemConta.faltaTelefone') : t('pedidoSemConta.faltaTermos') })}
+      {etapa === 'carro' && rodape({ voltar: 'fotos', avancar: () => setEtapa('local') })}
+      {etapa === 'local' && rodape({ voltar: 'carro', avancar: () => { setErro(''); setEtapa('contato'); } })}
+      {etapa === 'contato' && rodape({ voltar: 'local', avancar: () => enviar(), rotulo: t('pedidoSemConta.enviarPedido') })}
     </Moldura>
   );
 }

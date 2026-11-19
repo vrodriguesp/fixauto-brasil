@@ -740,7 +740,9 @@
     "faltaAno": "Enter the car’s year.",
     "faltaNome": "Enter your name.",
     "faltaEmail": "Enter a valid e-mail address.",
-    "faltaTermos": "Accept the terms of use and the privacy policy."
+    "faltaTermos": "Accept the terms of use and the privacy policy.",
+    "obrigatorio": "(required)",
+    "faltaCampos": "Fill in the missing fields – they are marked in red."
   },
   "agendaMudanca": {
     "itemNovo": "New",

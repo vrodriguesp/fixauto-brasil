@@ -740,7 +740,9 @@
     "faltaAno": "Kirjuta auto väljalaskeaasta.",
     "faltaNome": "Kirjuta oma nimi.",
     "faltaEmail": "Kirjuta kehtiv e-posti aadress.",
-    "faltaTermos": "Nõustu kasutustingimuste ja privaatsuspoliitikaga."
+    "faltaTermos": "Nõustu kasutustingimuste ja privaatsuspoliitikaga.",
+    "obrigatorio": "(kohustuslik)",
+    "faltaCampos": "Täida puuduvad väljad – need on märgitud punasega."
   },
   "agendaMudanca": {
     "itemNovo": "Uus",

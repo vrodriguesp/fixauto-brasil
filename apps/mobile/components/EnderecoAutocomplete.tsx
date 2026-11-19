@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type Ref } from 'react';
 import { View, Text, TextInput, Pressable, Keyboard, Platform } from 'react-native';
 import * as Localization from 'expo-localization';
 import { API_BASE_URL } from '../lib/api';
@@ -25,9 +25,13 @@ export interface SugestaoEndereco {
 // Endereco com sugestoes enquanto digita (mesma rota do site, a partir de 3
 // letras). Aceita texto livre; ao escolher, devolve coordenadas e pais.
 export default function EnderecoAutocomplete({
-  value, onChange, onSelect, placeholder, perto, rotulo, aoFocar,
+  value, onChange, onSelect, placeholder, perto, rotulo, aoFocar, campoRef, erro,
 }: {
   rotulo?: string;
+  /** referencia do campo (para a tela levar o foco ate ele) */
+  campoRef?: Ref<TextInput>;
+  /** obrigatorio em falta: borda vermelha + mensagem embaixo */
+  erro?: string;
   /** a tela rola para deixar o campo no alto: a lista de sugestoes fica acima do teclado */
   aoFocar?: () => void;
   value: string;
@@ -59,6 +63,8 @@ export default function EnderecoAutocomplete({
   return (
     <View className="mb-6">
       <TextInput
+        ref={campoRef}
+        aria-invalid={!!erro}
         accessibilityLabel={rotulo || placeholder}
         value={value}
         onChangeText={onChange}
@@ -68,8 +74,9 @@ export default function EnderecoAutocomplete({
         onFocus={() => { focado.current = true; if (Platform.OS !== 'web') aoFocar?.(); }}
         onBlur={() => { focado.current = false; }}
         autoCorrect={false}
-        className="border border-gray-300 rounded-lg px-4 py-3 text-[16px]"
+        className={`border rounded-lg px-4 py-3 text-[16px] ${erro ? 'border-red-500' : 'border-gray-300'}`}
       />
+      {erro ? <Text role="alert" className="text-sm text-red-700 mt-1">{erro}</Text> : null}
       {sugestoes.length > 0 && (
         <View className="border border-gray-200 rounded-lg mt-1 bg-white overflow-hidden">
           {sugestoes.map((s) => (
