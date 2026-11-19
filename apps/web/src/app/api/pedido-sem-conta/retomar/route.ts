@@ -27,7 +27,15 @@ export async function POST(req: NextRequest) {
   if (!ehUuid(id) || !/^[a-f0-9]{64}$/.test(token) || !['ver', 'confirmar', 'cancelar'].includes(acao)) return invalido;
 
   const { data: p } = await supabaseAdmin.from('pedidos_pendentes').select('*').eq('id', id).maybeSingle();
-  if (!p || !linkConfere(p, token)) return invalido;
+  if (!p) {
+    // link ja usado (dono 19/11: link que mandamos nunca pode morrer): se o pedido ja foi
+    // confirmado, a pagina leva ao pedido (a area do cliente pede login). Nao devolve dados
+    // do pedido; cancelar ou confirmar de novo nao faz nada.
+    const { data: sol } = await supabaseAdmin.from('solicitacoes').select('id').eq('pendente_id', id).maybeSingle();
+    if (sol) return NextResponse.json({ jaEnviado: true, solicitacaoId: sol.id });
+    return invalido;
+  }
+  if (!linkConfere(p, token)) return invalido;
   const expira = new Date(p.created_at).getTime() + PENDENTE_HORAS * 3600 * 1000;
   if (Date.now() > expira) {
     await apagarPendente(p);

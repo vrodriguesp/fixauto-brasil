@@ -30,6 +30,15 @@ export default function RetomarPedido({ id, token: tokenConsulta, cancelar, doLe
   // na consulta (?t=, link antigo do lembrete)
   const token = useRef(tokenConsulta);
 
+  // link ja usado num pedido que ja foi para as oficinas (100, dono 19/11): vai direto para o
+  // pedido (sem sessao, a area do cliente leva ao login e volta para o pedido)
+  const irParaPedido = (d: any) => {
+    if (!d?.jaEnviado || !d.solicitacaoId) return false;
+    try { sessionStorage.removeItem(`bipfix_link_${id}`); } catch { /* ignora */ }
+    router.replace(`/cliente/orcamentos/${d.solicitacaoId}`);
+    return true;
+  };
+
   const chamar = (acao: string) => fetch('/api/pedido-sem-conta/retomar', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, t: token.current, acao, o: doLembrete ? 'l' : undefined }),
   }).then(async (r) => ({ r, d: await r.json().catch(() => ({})) }), () => ({ r: null as Response | null, d: {} as any }));
@@ -48,6 +57,7 @@ export default function RetomarPedido({ id, token: tokenConsulta, cancelar, doLe
     window.history.replaceState(null, '', `${window.location.pathname}?p=${id}${doLembrete ? '&o=l' : ''}${cancelar ? '&acao=cancelar' : ''}`);
     chamar('ver').then(({ r, d }) => {
       if (!r?.ok) { setEstado('invalido'); return; }
+      if (irParaPedido(d)) return;
       setResumo(d);
       setEstado(cancelar ? 'perguntaCancelar' : 'pedido');
     });
@@ -63,6 +73,7 @@ export default function RetomarPedido({ id, token: tokenConsulta, cancelar, doLe
       setErro(textoErroApi(te, r?.status || 500, d));
       return;
     }
+    if (irParaPedido(d)) return;
     // conversao da campanha: antes so o caminho do codigo contava (Fable 13/11)
     registrarEventoMeta('Lead');
     try { localStorage.removeItem('bipfix_pedido_rascunho'); sessionStorage.removeItem('bipfix_pedido_rascunho'); sessionStorage.removeItem(`bipfix_link_${id}`); } catch { /* ignora */ }
@@ -85,6 +96,7 @@ export default function RetomarPedido({ id, token: tokenConsulta, cancelar, doLe
       setErro(textoErroApi(te, r?.status || 500, d));
       return;
     }
+    if (irParaPedido(d)) return;
     try { localStorage.removeItem('bipfix_pedido_rascunho'); sessionStorage.removeItem('bipfix_pedido_rascunho'); sessionStorage.removeItem(`bipfix_link_${id}`); } catch { /* ignora */ }
     apagarFotosPedido();
     setEstado('cancelado');
@@ -146,8 +158,10 @@ export default function RetomarPedido({ id, token: tokenConsulta, cancelar, doLe
           <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('retomarInvalido')}</h1>
           <p className="text-gray-600 mb-6">{t('retomarInvalidoTexto')}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/pedido" className="btn-primary inline-block">{t('retomarNovo')}</Link>
-            <Link href="/login" className="btn-secondary inline-block">{t('entrar')}</Link>
+            {/* link antigo sem o rasto do pedido (antes da 100): leva a area dos pedidos da pessoa
+                (login e depois a lista), nunca um beco sem saida (dono 19/11) */}
+            <Link href="/cliente/orcamentos" className="btn-primary inline-block" data-testid="retomar-meus-pedidos">{t('retomarMeusPedidos')}</Link>
+            <Link href="/pedido" className="btn-secondary inline-block">{t('retomarNovo')}</Link>
           </div>
         </div>
       )}

@@ -14,7 +14,7 @@ const { chromium } = createRequire(import.meta.url)('playwright-core');
 const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\n').filter((l) => l.includes('=') && !l.startsWith('#'))
   .map((l) => [l.slice(0, l.indexOf('=')).trim(), l.slice(l.indexOf('=') + 1).trim().replace(/^"|"$/g, '')]));
 if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
-const SITE = 'http://localhost:3100';
+const SITE = process.env.SITE || 'http://localhost:3100'; // SITE: servidor de teste a parte (gate)
 const EMAILS = env.EMAIL_PASTA_TESTE;
 const OUT = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/Documentos/_teste_local/resultados/exaustivo';
 fs.mkdirSync(OUT, { recursive: true });
@@ -138,10 +138,10 @@ try {
     ok(`${nm}: oficinas avisadas`, count > 0, String(count));
     const perfil = (await admin.from('profiles').select('tipo, idioma').eq('id', pedidos[l].user).maybeSingle()).data;
     ok(`${nm}: conta ativada (cliente, idioma ${l})`, perfil?.tipo === 'cliente' && perfil?.idioma === l, JSON.stringify(perfil));
-    // o mesmo link de novo: nao vale
+    // o mesmo link de novo (dono 19/11, mig 100): leva ao pedido, nunca a "link invalido"
     await page.goto(pedidos[l].links[0], { waitUntil: 'networkidle' });
-    await page.getByTestId('retomar-invalido').waitFor({ timeout: 15000 });
-    ok(`${nm}: link usado nao vale mais`, (await page.innerText('body')).includes(T('pedidoSemConta.retomarInvalido')));
+    const deNovo = await page.waitForURL((u) => u.pathname.includes(sol.id), { timeout: 15000 }).then(() => true, () => false);
+    ok(`${nm}: link usado de novo leva ao pedido (nao a "link invalido")`, deNovo && (await page.getByTestId('retomar-invalido').count()) === 0, page.url());
     ok(`${nm}: sem erro de JS`, !erros.length, erros.join(' | '));
     await ctx.close();
   }
@@ -171,9 +171,14 @@ try {
 
   // 4) seguranca: link adulterado, link vencido (24 h), codigo antigo continua valendo depois do lembrete
   {
-    const [lnk] = pedidos['et'].links;
-    const r1 = await fetch(`${SITE}/api/pedido-sem-conta/retomar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ id: pedidos['et'].id, t: 'f'.repeat(64), acao: 'ver' }) });
+    // pendente ainda aberto (o de 'et' ja foi confirmado no passo 2 e desde a 100 o link usado leva ao pedido)
+    const adult = await pedir('et', `lembrete-adult-${tag}@example.test`);
+    const r1 = await fetch(`${SITE}/api/pedido-sem-conta/retomar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ id: adult.id, t: 'f'.repeat(64), acao: 'ver' }) });
     ok('link adulterado -> 410', r1.status === 410);
+    // link ja usado (pedido confirmado no passo 2): so { jaEnviado, solicitacaoId }, nunca dados do pedido
+    const r1b = await fetch(`${SITE}/api/pedido-sem-conta/retomar`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-real-ip': ip() }, body: JSON.stringify({ id: pedidos['et'].id, t: 'f'.repeat(64), acao: 'ver' }) });
+    const d1b = await r1b.json().catch(() => ({}));
+    ok('link usado -> jaEnviado sem dados do pedido', r1b.status === 200 && d1b.jaEnviado === true && Object.keys(d1b).sort().join() === 'jaEnviado,solicitacaoId', JSON.stringify(d1b));
     const venc = await pedir('en', `lembrete-venc-${tag}@example.test`);
     await envelhecer(venc.id, 3); await tarefa();
     const hv = emailsDe(`lembrete-venc-${tag}@example.test`).at(-1) || '';
