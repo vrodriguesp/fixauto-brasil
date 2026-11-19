@@ -600,7 +600,7 @@ export default function PedidoSemConta() {
           <div data-testid="passo-lista">
             {linhaTipo}
             <h2 className="text-lg font-semibold text-gray-900 mb-3">{t('listaTitulo')}</h2>
-            <div className="pedido-lista-rolavel space-y-2 overflow-y-auto -mx-1 px-1" data-testid="lista-servicos">
+            <div id="lista-servicos" tabIndex={-1} className="pedido-lista-rolavel space-y-2 overflow-y-auto -mx-1 px-1 outline-none" data-testid="lista-servicos">
               {lista.map((sv) => (
                 <label key={sv.value} className={`flex items-center gap-3 px-3 py-2 min-h-[44px] rounded-lg border-2 cursor-pointer ${servicos.includes(sv.value) ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}`}>
                   <input type="checkbox" checked={servicos.includes(sv.value)} className="w-4 h-4" onChange={() => alternarServico(sv.value)} />

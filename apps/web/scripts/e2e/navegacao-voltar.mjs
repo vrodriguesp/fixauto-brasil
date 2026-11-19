@@ -89,14 +89,13 @@ try {
     await p.locator('#pedido-nome').fill('Kliendi Test');
     await fotografar(p, 'pedido_6_kontakt'); await telaOk(p, 'pedido 6 kontakt');
     const visitas = [];
-    for (let i = 0; i < 8; i++) {
-      await p.goBack({ timeout: 8000 }).catch(() => {}); await p.waitForTimeout(600);
-      if (!p.url().includes('/paring')) { visitas.push('(saiu)'); break; }
-      visitas.push(await etapaDe());
-    }
-    ok('pedido: voltar (navegador) xN = um passo de cada vez, depois sai', visitas.join('>') === 'local>carro>fotos>detalhe>servico>(saiu)', visitas.join(' > '));
-    for (let i = 0; i < 6; i++) { await p.goForward({ timeout: 8000 }).catch(() => {}); await p.waitForTimeout(400); }
-    ok('pedido: avancar xN volta ao contato com os dados (nome, carro, chip)', (await etapaDe()) === 'contato' && (await p.locator('#pedido-nome').inputValue()) === 'Kliendi Test' && (await p.locator('#cbbe3-101').inputValue()) === 'Toyota', await etapaDe());
+    for (let i = 0; i < 5; i++) { await p.goBack({ timeout: 8000 }).catch(() => {}); await p.waitForTimeout(600); visitas.push(await etapaDe()); }
+    ok('pedido: voltar (navegador) x5 = um passo de cada vez ate a tela 1', visitas.join('>') === 'local>carro>fotos>detalhe>servico', visitas.join(' > '));
+    for (let i = 0; i < 5; i++) { await p.goForward({ timeout: 8000 }).catch(() => {}); await p.waitForTimeout(500); }
+    ok('pedido: avancar x5 volta ao contato com os dados (nome, carro, chip)', (await etapaDe()) === 'contato' && (await p.locator('#pedido-nome').inputValue()) === 'Kliendi Test' && (await p.locator('#cbbe3-101').inputValue()) === 'Toyota', await etapaDe());
+    let saiu = false;
+    for (let i = 0; i < 7; i++) { await p.goBack({ timeout: 8000 }).catch(() => {}); await p.waitForTimeout(600); if (!p.url().includes('/paring')) { saiu = true; break; } }
+    ok('pedido: voltar xN acaba por sair da pagina (nunca preso nos passos)', saiu, p.url());
     ok('pedido: sem erro de JavaScript', !erros.length, erros.join(' || ').slice(0, 400));
     await ctx.close();
   }

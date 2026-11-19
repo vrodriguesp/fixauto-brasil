@@ -119,7 +119,8 @@ async function fluxo(l, w, h, { enviar = false, ua = null, nomeExtra = '' } = {}
   ok(`${nome}: continua no passo 2`, (await etapa(p)) === 'detalhe');
   // chip: marca com check, conta como servico, aviso some
   const chip1 = p.getByTestId('chip-servico').first();
-  await chip1.click(); await p.waitForTimeout(200);
+  await p.waitForTimeout(400);
+  await chip1.click({ timeout: 10000 }).catch(async () => { console.log('aviso: click do chip demorou (WebKit) - tap'); await chip1.tap(); }); await p.waitForTimeout(200);
   ok(`${nome}: chip tocado fica marcado com check`, (await chip1.getAttribute('aria-pressed')) === 'true' && (await chip1.innerText()).startsWith('✓'), await chip1.innerText());
   ok(`${nome}: status "1 teenus valitud" e aviso sumiu`, (await p.getByTestId('status-passo').getAttribute('data-tom')) === 'ok' && (await p.getByTestId('passo-detalhe').getByTestId('falta-aviso').count()) === 0);
   await conferir(p, `${nome} 2 detalhe chip`);
@@ -215,17 +216,22 @@ async function fluxo(l, w, h, { enviar = false, ua = null, nomeExtra = '' } = {}
   await conferir(p, `${nome} 6b kontakt sms`, { rolagemOk: true });
   await p.getByTestId('quer-sms').uncheck();
   // Back xN a partir do contato: local -> carro -> fotos -> lista -> detalhe -> servico -> fora da pagina
-  const visitas = [];
-  for (let i = 0; i < 8; i++) {
-    await p.goBack({ timeout: 8000 }).catch(() => {}); await p.waitForTimeout(500);
-    if (!p.url().includes(CAMINHO[l])) { visitas.push('(saiu)'); break; }
-    visitas.push(await etapa(p));
-  }
   // (a entrada da lista saiu do historico quando o passo 2 foi reaberto a partir da tela 1 - e assim num navegador)
-  ok(`${nome}: Back xN volta passo a passo e depois sai`, visitas.join('>') === 'local>carro>fotos>detalhe>servico>(saiu)', visitas.join(' > '));
+  const visitas = [];
+  for (let i = 0; i < 5; i++) { await p.goBack({ timeout: 8000 }).catch(() => {}); await p.waitForTimeout(500); visitas.push(await etapa(p)); }
+  ok(`${nome}: Back x5 volta passo a passo ate a tela 1`, visitas.join('>') === 'local>carro>fotos>detalhe>servico', visitas.join(' > '));
   // volta tudo para a frente (nada se perdeu): servico -> ... -> contato pelo historico
-  for (let i = 0; i < 6; i++) { await p.goForward({ timeout: 8000 }).catch(() => {}); await p.waitForTimeout(400); }
-  ok(`${nome}: avancar xN chega de novo ao contato com o nome escrito`, (await etapa(p)) === 'contato' && (await p.locator('#pedido-nome').inputValue()) === 'TESTE AUTOMATICO', await etapa(p));
+  for (let i = 0; i < 5; i++) { await p.goForward({ timeout: 8000 }).catch(() => {}); await p.waitForTimeout(500); }
+  ok(`${nome}: avancar x5 chega de novo ao contato com o nome escrito`, (await etapa(p)) === 'contato' && (await p.locator('#pedido-nome').inputValue()) === 'TESTE AUTOMATICO', await etapa(p));
+  // ...e mais 6 voltas: tela 1 e depois FORA da pagina (nunca preso)
+  let saiu = false;
+  for (let i = 0; i < 7; i++) { await p.goBack({ timeout: 8000 }).catch(() => {}); await p.waitForTimeout(500); if (!p.url().includes(CAMINHO[l])) { saiu = true; break; } }
+  ok(`${nome}: voltar xN acaba por sair da pagina (nao prende)`, saiu, p.url());
+  for (let i = 0; i < 7; i++) { await p.goForward({ timeout: 8000 }).catch(() => {}); await p.waitForTimeout(400); if ((await etapa(p)) === 'contato') break; }
+  if ((await etapa(p)) !== 'contato') { // WebKit recarrega a pagina ao voltar de fora: segue pelo rascunho ate o contato
+    for (let i = 0; i < 6 && (await etapa(p)) !== 'contato'; i++) { const e = await etapa(p); if (e === 'servico') await p.getByTestId('passo-servico').locator('button').nth(3).click(); else await p.getByTestId(`passo-${e}`).getByTestId('edasi').click(); await p.waitForTimeout(400); }
+  }
+  ok(`${nome}: de volta ao contato, nome ainda escrito (rascunho)`, (await etapa(p)) === 'contato' && (await p.locator('#pedido-nome').inputValue()) === 'TESTE AUTOMATICO', await etapa(p));
   // funil: cada passo uma vez; novos fotos/fotos_pulou; nenhum passo de urgencia
   const vezes = (e) => funil.filter((x) => x === e).length;
   ok(`${nome}: funil - abriu/servico/detalhe/fotos/carro/local/contato uma vez cada`, ['abriu', 'servico', 'detalhe', 'fotos', 'carro', 'local', 'contato'].every((e) => vezes(e) === 1), funil.join(','));
