@@ -131,7 +131,7 @@ try {
   ok('2 botao fechado mostra 1 nao lida', !!cont);
   // release 20/11: na pagina do pedido em etapas (celular) o botao do chat so aparece com mensagem por ler
   // e fica ACIMA da barra Tagasi/Edasi (nunca a cobre); sem nada por ler nem aparece (site-pedido-sem-conta)
-  await pV.goto(`${SITE}/ee/ru/pedido`, { waitUntil: 'networkidle' }); await pV.waitForTimeout(2500);
+  await pV.goto(`${SITE}/ee/ru/zayavka`, { waitUntil: 'networkidle' }); await pV.waitForTimeout(2500);
   const geoPedido = await esperar(async () => pV.evaluate(() => {
     const el = document.querySelector('[data-testid="chat-suporte-botao"]'); const n = document.querySelector('[data-testid="navegar"]');
     if (!el || !n) return null;
