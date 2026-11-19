@@ -213,6 +213,14 @@ try {
       await p.evaluate(() => window.scrollTo(0, 700)); await p.waitForTimeout(400);
       const bt = p.getByTestId('chat-suporte-botao');
       ok(`6 ${tela} ${l}: botao traduzido e sem rolagem lateral`, (await bt.getAttribute('aria-label')) === tr(l)('suporte.abrir') && await semRolagem(p));
+      // 19/11 (dono): icone de atendente + rotulo "Kusi meilt" visivel; no celular recolhe ao icone em 5 s
+      const rot = bt.getByTestId('chat-suporte-rotulo');
+      ok(`6 ${tela} ${l}: rotulo "${tr(l)('suporte.rotulo')}" visivel ao lado do icone, com tooltip`, await rot.isVisible() && (await rot.innerText()) === tr(l)('suporte.rotulo') && (await bt.getAttribute('title')) === tr(l)('suporte.titulo') && await semRolagem(p));
+      if (tela === 'celular' && l === 'et') {
+        await p.waitForTimeout(5500);
+        const caixa = await bt.boundingBox();
+        ok(`6 ${tela} ${l}: 5 s depois o rotulo recolhe e fica so o icone redondo (56 px)`, !(await rot.isVisible()) && caixa && caixa.width <= 60, JSON.stringify(caixa));
+      }
     }
     await ctx.close();
   }

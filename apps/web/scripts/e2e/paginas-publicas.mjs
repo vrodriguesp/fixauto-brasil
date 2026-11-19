@@ -158,6 +158,8 @@ try {
         await r.page.waitForSelector('[data-testid="chat-suporte-botao"]', { timeout: 5000 }).catch(() => null);
         // leva o meio da tabela ate o meio do botao
         await r.page.evaluate(() => { const b = document.querySelector('[data-testid="chat-suporte-botao"]')?.getBoundingClientRect(); const t = document.querySelector('[data-testid="oficina-horario"]').getBoundingClientRect(); if (b) window.scrollBy(0, (t.top + t.height / 2) - (b.top + b.height / 2)); });
+        // 19/11: o botao nasce com o rotulo "Kusi meilt" e recolhe ao icone em 5 s no celular - mede ja recolhido
+        await r.page.waitForFunction(() => document.querySelector('[data-testid="chat-suporte-botao"]')?.getAttribute('data-rotulo') === '0', null, { timeout: 8000 }).catch(() => null);
         await r.page.waitForTimeout(300);
         const c = await r.page.evaluate(() => {
           const b = document.querySelector('[data-testid="chat-suporte-botao"]')?.getBoundingClientRect();
