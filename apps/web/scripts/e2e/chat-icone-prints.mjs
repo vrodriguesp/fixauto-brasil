@@ -40,14 +40,6 @@ try {
     await ctx.close();
     console.log(`prints ${FASE} ${l} ${w}`);
   }
-  // pagina publica da oficina em 360 (tabela do horario ao lado do botao) e login com o aviso de cookies em 360
-  const ctx = await browser.newContext(TELAS[360]); const p = await ctx.newPage();
-  await p.goto(`${SITE}/ee/et/login`, { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
-  await p.screenshot({ path: `${PASTA}/${FASE}_login_cookies_et_360.png` });
-  const r = await p.evaluate(() => { const b = document.querySelector('button[type=submit]'); const a = document.querySelector('[data-testid=aviso-cookies]'); if (!b) return 'sem botao'; b.scrollIntoView({ block: 'start' }); const x = b.getBoundingClientRect(); const topo = document.elementFromPoint(x.left + x.width / 2, x.top + x.height / 2); return JSON.stringify({ botaoBottom: Math.round(x.bottom), avisoTop: a ? Math.round(a.getBoundingClientRect().top) : null, coberto: !!topo && !b.contains(topo) && topo !== b }); });
-  console.log('login 360 com aviso de cookies, botao rolado para o topo:', r);
-  await p.screenshot({ path: `${PASTA}/${FASE}_login_cookies_et_360_rolado.png` });
-  await ctx.close();
 } finally {
   await browser.close();
   await sb.from('oficinas').delete().eq('id', of.id); await sb.from('profiles').delete().eq('id', u.user.id); await sb.auth.admin.deleteUser(u.user.id);
