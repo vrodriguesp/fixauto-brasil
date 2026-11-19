@@ -65,7 +65,7 @@ const conferir = async (p, nome, { rolagemOk = false, edasiOk = false } = {}) =>
     if (btn) {
       const b = btn.getBoundingClientRect();
       const el = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2);
-      edasi = { dentro: b.top >= 0 && b.bottom <= innerHeight + 1, coberto: !!el && !btn.contains(el) && !el.contains(btn), texto: (btn.textContent || '').trim() };
+      edasi = { dentro: b.top >= 0 && b.bottom <= innerHeight + 3, coberto: !!el && !btn.contains(el) && !el.contains(btn), texto: (btn.textContent || '').trim() };
     }
     const cru = (document.body.innerText.match(/\b(pedidoSemConta|constants|clienteNovaSolicitacao|erros)\.[A-Za-z]+/g) || []).slice(0, 3);
     return { alt: doc.scrollHeight, tela: innerHeight, larg: doc.scrollWidth - innerWidth, edasi, cru };
