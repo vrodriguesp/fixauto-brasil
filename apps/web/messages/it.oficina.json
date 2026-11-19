@@ -698,7 +698,7 @@
     "itensOrcamento": "Voci del preventivo",
     "itemNumero": "Voce {numero}",
     "remover": "Rimuovi",
-    "placeholderDescricaoItem": "Descrizione della voce",
+    "placeholderDescricaoItem": "Es.: riparazione e verniciatura del paraurti posteriore",
     "maoDeObra": "Manodopera",
     "peca": "Ricambio",
     "material": "Materiale",
@@ -794,7 +794,8 @@
     "validadeUsar": "Usa {data}",
     "validadeDica": "Minimo: {ultima}. Consigliato: {recomendada} o dopo.",
     "linhaPassada": "Questo orario è già passato. Rimuovilo o scegli un'altra data.",
-    "avisoJanelaAcabaLogo": "Questa fascia finisce oggi alle {fim} – il cliente avrà meno di {horas} ore (circa {min} min) per portare l'auto. Se va bene, puoi inviare; altrimenti scegli un giorno successivo."
+    "avisoJanelaAcabaLogo": "Questa fascia finisce oggi alle {fim} – il cliente avrà meno di {horas} ore (circa {min} min) per portare l'auto. Se va bene, puoi inviare; altrimenti scegli un giorno successivo.",
+    "passosResumo": "Per inviare bastano 3 cose: ① una voce con prezzo, ② una data di check-in, ③ la validità del preventivo. Il resto è facoltativo."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "La password deve avere almeno 8 caratteri",

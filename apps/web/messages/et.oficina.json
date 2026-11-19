@@ -698,7 +698,7 @@
     "itensOrcamento": "Hinnapakkumise kirjed",
     "itemNumero": "Kirje {numero}",
     "remover": "Eemalda",
-    "placeholderDescricaoItem": "Kirje kirjeldus",
+    "placeholderDescricaoItem": "Nt tagumise põrkeraua remont ja värvimine",
     "maoDeObra": "Töö",
     "peca": "Varuosa",
     "material": "Materjal",
@@ -794,7 +794,8 @@
     "validadeUsar": "Kasuta {data}",
     "validadeDica": "Vähemalt {ultima}. Soovitame {recomendada} või hiljem.",
     "linhaPassada": "See aeg on juba möödas. Eemalda see või vali teine aeg.",
-    "avisoJanelaAcabaLogo": "See aeg lõpeb täna kell {fim} – kliendil jääb auto toomiseks vähem kui {horas} tundi (umbes {min} min). Kui see sobib, võid saata; muidu vali hilisem päev."
+    "avisoJanelaAcabaLogo": "See aeg lõpeb täna kell {fim} – kliendil jääb auto toomiseks vähem kui {horas} tundi (umbes {min} min). Kui see sobib, võid saata; muidu vali hilisem päev.",
+    "passosResumo": "Pakkumise saatmiseks on vaja vaid 3 asja: ① üks hinnaga rida, ② üks check-ini aeg, ③ pakkumise kehtivus. Kõik muu on valikuline."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Parool peab olema vähemalt 8 tähemärki",

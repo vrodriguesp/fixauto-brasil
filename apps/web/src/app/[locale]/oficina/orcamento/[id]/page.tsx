@@ -35,6 +35,11 @@ interface ItemForm {
   quantidade: number;
 }
 
+// numero do passo obrigatorio no cartao (1 itens, 2 datas, 3 validade) - so visual; o leitor de tela le o titulo
+const Passo = ({ n }: { n: number }) => (
+  <span aria-hidden="true" className="mr-2 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-600 text-sm font-bold text-white">{n}</span>
+);
+
 const PRAZO_PADRAO_DIAS = 1;
 const TEMPO_PADRAO_HORAS = 2;
 
@@ -348,8 +353,11 @@ ${d.observacoes}` : d.observacoes));
       return;
     }
 
+    // item com valor e sem nome (caso real 19/11: a oficina digitou so o preco): o cliente via uma linha em branco
+    // com o valor; vai com o rotulo do tipo do pedido (ex.: "Kere ja värvimine")
+    const nomePadrao = rotuloTipoPedido(tc, solicitacao?.tipo || 'outro', solicitacao?.descricao);
     const itensPayload = itens.map(item => ({
-      descricao: item.descricao,
+      descricao: item.descricao.trim() || nomePadrao,
       tipo: item.tipo,
       valor_unitario: item.valor_unitario,
       quantidade: item.quantidade,
@@ -468,6 +476,9 @@ ${d.observacoes}` : d.observacoes));
   const fmtCurta = (ymd: string) => diaDoCalendario(ymd, INTL_LOCALE[locale] || 'en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' });
   // o formulario do orcamento so aparece na revisao de itens/valor (ou sem agenda aberta: carro ja na oficina)
   const mostraForm = !modoRevisaoAceito || temAgenda === false || oQueMudar === 'valor';
+  // primeiro orcamento (caso real 19/11, Clarity: a oficina pos 300 EUR, tocou nos (i) das datas e da validade e saiu
+  // em "Cancelar"): os 3 passos obrigatorios numerados nos cartoes e resumidos no alto; o resto e opcional
+  const mostraDatas = !modoRevisaoAceito && solicitacao?.status !== 'em_andamento';
 
   if (!solicitacao) {
     return (
@@ -614,6 +625,11 @@ ${d.observacoes}` : d.observacoes));
       <p className="text-gray-600 mb-6">
         {solicitacao.veiculo?.fipe_marca} {solicitacao.veiculo?.fipe_modelo} - {rotuloTipoPedido(tc, solicitacao.tipo, solicitacao.descricao)}
       </p>
+      {!isRevision && (
+        <p role="note" data-testid="passos-orcamento" className="mb-6 rounded-lg border border-primary-200 bg-primary-50 p-3 text-sm text-primary-900">
+          {t('passosResumo')}
+        </p>
+      )}
 
       {/* Request summary */}
       <div className="bg-gray-50 rounded-lg p-4 mb-6">
@@ -690,7 +706,7 @@ ${d.observacoes}` : d.observacoes));
         </div>
 
         <div className="card mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('itensOrcamento')}</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center" data-testid="titulo-itens"><Passo n={1} />{t('itensOrcamento')}</h2>
           {removidos.length > 0 && (
             <p data-testid="itens-removidos" className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
               {tMud('itensRemovidos', { lista: removidos.map((o) => o.descricao).join(', ') })}
@@ -902,7 +918,7 @@ ${d.observacoes}` : d.observacoes));
         ) : (
           <div ref={refCheckin} className={`card mb-6 ${erroSemCheckin ? 'ring-2 ring-red-300' : ''}`} data-testid="cartao-checkin">
             <div className="mb-2 flex flex-wrap items-center gap-2">
-              <h2 className="text-lg font-semibold text-gray-900">{t('disponibilidadeCheckin')} <span className="text-red-600" aria-hidden="true">*</span></h2>
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center" data-testid="titulo-checkin"><Passo n={2} />{t('disponibilidadeCheckin')} <span className="text-red-600 ml-1" aria-hidden="true">*</span></h2>
               <InfoI rotulo={t('infoRotulo', { campo: t('disponibilidadeCheckin') })} texto={t('info_checkin')} testid="info-checkin" />
             </div>
             <p className="text-sm text-gray-500 mb-4">
@@ -923,8 +939,8 @@ ${d.observacoes}` : d.observacoes));
             cartao do prazo, acima das datas, e a oficina levava vermelho ao enviar) */}
         <div ref={refValidade} className="card mb-6" data-testid="campo-validade">
           <div className="mb-1 flex flex-wrap items-center gap-1.5">
-            <label htmlFor="cacb1-103" className="block text-sm font-medium text-gray-700">
-              {t('validadeOrcamento')} <span className="text-red-600" aria-hidden="true">*</span>
+            <label htmlFor="cacb1-103" className="flex items-center text-sm font-medium text-gray-700" data-testid="titulo-validade">
+              <Passo n={mostraDatas ? 3 : 2} />{t('validadeOrcamento')} <span className="text-red-600 ml-1" aria-hidden="true">*</span>
             </label>
             <InfoI rotulo={t('infoRotulo', { campo: t('validadeOrcamento') })} texto={t('info_validadeOrcamento')} testid="info-validade" />
           </div>
@@ -951,7 +967,15 @@ ${d.observacoes}` : d.observacoes));
               )}
             </div>
           ) : ultimaData ? (
-            <p id="dica-validade" className="text-xs text-gray-500 mt-1" data-testid="dica-validade">{t('validadeDica', { ultima: fmtCurta(validadeMin), recomendada: fmtCurta(validadeRecTexto) })}</p>
+            <div id="dica-validade" className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500" data-testid="dica-validade">
+              <span>{t('validadeDica', { ultima: fmtCurta(validadeMin), recomendada: fmtCurta(validadeRecTexto) })}</span>
+              {/* a data recomendada tambem ANTES do erro (19/11): a oficina continua escolhendo - o campo nasce vazio
+                  (decisao 4) e so muda se ela tocar no botao */}
+              {validadeRecomendada && !validade && (
+                <button type="button" data-testid="usar-validade-sugerida" onClick={() => setValidade(validadeRecomendada)}
+                  className="min-h-[36px] rounded-lg border border-primary-300 bg-white px-3 text-sm font-medium text-primary-800 hover:bg-primary-50">{t('validadeUsar', { data: fmtCurta(validadeRecomendada) })}</button>
+              )}
+            </div>
           ) : null}
         </div>
 

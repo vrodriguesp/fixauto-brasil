@@ -698,7 +698,7 @@
     "itensOrcamento": "Itens do orçamento",
     "itemNumero": "Item {numero}",
     "remover": "Remover",
-    "placeholderDescricaoItem": "Descrição do item",
+    "placeholderDescricaoItem": "Ex.: reparo e pintura do para-choque traseiro",
     "maoDeObra": "Mão de obra",
     "peca": "Peça",
     "material": "Material",
@@ -794,7 +794,8 @@
     "validadeUsar": "Usar {data}",
     "validadeDica": "Mínimo: {ultima}. Recomendado: {recomendada} ou depois.",
     "linhaPassada": "Este horário já passou. Remova-o ou escolha outra data.",
-    "avisoJanelaAcabaLogo": "Este horário termina hoje às {fim} – o cliente terá menos de {horas} horas (cerca de {min} min) para levar o carro. Se servir, pode enviar; senão, escolha um dia mais tarde."
+    "avisoJanelaAcabaLogo": "Este horário termina hoje às {fim} – o cliente terá menos de {horas} horas (cerca de {min} min) para levar o carro. Se servir, pode enviar; senão, escolha um dia mais tarde.",
+    "passosResumo": "Para enviar, bastam 3 coisas: ① um item com valor, ② uma data de check-in, ③ a validade do orçamento. O resto é opcional."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "A senha deve ter pelo menos 8 caracteres",

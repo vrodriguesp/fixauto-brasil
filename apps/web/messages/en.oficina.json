@@ -698,7 +698,7 @@
     "itensOrcamento": "Quote items",
     "itemNumero": "Item {numero}",
     "remover": "Remove",
-    "placeholderDescricaoItem": "Item description",
+    "placeholderDescricaoItem": "E.g. rear bumper repair and paint",
     "maoDeObra": "Labour",
     "peca": "Part",
     "material": "Material",
@@ -794,7 +794,8 @@
     "validadeUsar": "Use {data}",
     "validadeDica": "Minimum: {ultima}. Recommended: {recomendada} or later.",
     "linhaPassada": "This time has already passed. Remove it or pick another date.",
-    "avisoJanelaAcabaLogo": "This window ends today at {fim} – the customer will have less than {horas} hours (about {min} min) to bring the car. If that works, you can send it; otherwise pick a later day."
+    "avisoJanelaAcabaLogo": "This window ends today at {fim} – the customer will have less than {horas} hours (about {min} min) to bring the car. If that works, you can send it; otherwise pick a later day.",
+    "passosResumo": "To send a quote you only need 3 things: ① one item with a price, ② one check-in date, ③ the quote validity date. Everything else is optional."
   },
   "oficinaEquipe": {
     "erroSenhaMinima": "Password must be at least 8 characters",
