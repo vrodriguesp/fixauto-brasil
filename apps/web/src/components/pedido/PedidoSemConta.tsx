@@ -390,11 +390,12 @@ export default function PedidoSemConta() {
     return f;
   };
   const faltas = mostrarFaltas ? faltasPasso() : {};
-  const faltando = Object.values(faltas)[0] || '';
+  // barra: com UM campo em falta repete o aviso dele; com varios, "preenche os campos marcados a vermelho" (mesmo texto do app)
+  const faltando = Object.keys(faltas).length > 1 ? t('faltaCampos') : Object.values(faltas)[0] || '';
   const erroDe = (id: string) => faltas[id] || null;
   const classeErro = (id: string) => (faltas[id] ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '');
   const Aviso = ({ id }: { id: string }) => (faltas[id] ? <p id={`${id}-erro`} role="alert" className="mt-1 text-sm text-red-700" data-testid={`${id}-erro`}>{faltas[id]}</p> : null);
-  const Obrig = () => <><span className="text-red-600" aria-hidden="true"> *</span><span className="sr-only"> ({t('obrigatorio')})</span></>;
+  const Obrig = () => <><span className="text-red-600" aria-hidden="true"> *</span><span className="sr-only"> {t('obrigatorio')}</span></>;
   const Opcional = () => <span className="font-normal text-gray-500"> ({t('opcional')})</span>;
 
   const descricaoFinal = () => servicos.length > 0
