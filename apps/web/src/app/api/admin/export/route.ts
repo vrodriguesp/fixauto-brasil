@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
       let query = supabaseAdmin
         .from('solicitacoes')
         .select(
-          `id, tipo, status, urgencia, descricao, endereco, created_at,
+          `id, numero, tipo, status, urgencia, descricao, endereco, created_at,
            cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, telefone),
            veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, placa),
            orcamentos(valor_total, status)`
@@ -86,6 +86,7 @@ export async function GET(req: NextRequest) {
       let linhas = (data || []).map((s: any) => {
         const aceito = (s.orcamentos || []).find((o: any) => o.status === 'aceito');
         return {
+          numero: s.numero ?? '',
           solicitacao_id: s.id,
           tipo_servico: s.tipo,
           status: s.status,

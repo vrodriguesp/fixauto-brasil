@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     let query = supabaseAdmin
       .from('solicitacoes')
       .select(
-        `id, tipo, descricao, urgencia, status, endereco, created_at, emergencia_id,
+        `id, numero, tipo, descricao, urgencia, status, endereco, created_at, emergencia_id,
          cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, email, telefone),
          veiculo:veiculos(id, fipe_marca, fipe_modelo, fipe_ano, placa),
          orcamentos(id, status, valor_total, oficina_id),
@@ -44,7 +44,9 @@ export async function GET(req: NextRequest) {
     if (veiculoId) query = query.eq('veiculo_id', veiculoId);
     if (de) query = query.gte('created_at', de);
     if (ate) query = query.lte('created_at', ate);
-    if (q) query = query.or(`descricao.ilike.%${q}%,endereco.ilike.%${q}%`);
+    // numero do pedido (100145) busca exato; texto busca na descricao/endereco (dono 19/11)
+    if (q && /^\d{4,9}$/.test(q)) query = query.eq('numero', Number(q));
+    else if (q) query = query.or(`descricao.ilike.%${q}%,endereco.ilike.%${q}%`);
 
     const { data, error } = await query;
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });

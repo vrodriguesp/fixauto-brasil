@@ -18,6 +18,7 @@ const STATUS_BADGE: Record<string, string> = {
 
 interface Row {
   id: string;
+  numero: number | null;
   tipo: string;
   descricao: string;
   status: string;
@@ -114,7 +115,7 @@ function AdminSolicitacoesContent() {
           type="text"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Buscar por descrição ou endereço..."
+          placeholder="Buscar por nº do pedido, descrição ou endereço..."
           className="flex-1 min-w-[220px] bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <select value={status} onChange={(e) => setStatus(e.target.value)} className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -140,7 +141,7 @@ function AdminSolicitacoesContent() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-700">
-                {['Cliente', 'Veículo', 'Serviço', 'Orçamentos', 'Status', 'Criada em', ''].map((h) => (
+                {['Nº', 'Cliente', 'Veículo', 'Serviço', 'Orçamentos', 'Status', 'Criada em', ''].map((h) => (
                   <th key={h} className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3 whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -148,6 +149,10 @@ function AdminSolicitacoesContent() {
             <tbody className="divide-y divide-slate-700">
               {rows.map((r) => (
                 <tr key={r.id} className="hover:bg-slate-700/50 transition-colors">
+                  {/* numero do pedido (o mesmo dos e-mails e do /r/<numero>; dono 19/11) */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <Link href={`/admin/solicitacoes/${r.id}`} className="text-white font-semibold hover:text-blue-300" data-testid="admin-numero-pedido">{r.numero ?? '—'}</Link>
+                  </td>
                   <td className="px-6 py-4">
                     <p className="text-white font-medium">{r.cliente?.nome || '—'}</p>
                     <p className="text-slate-500 text-xs">{r.cliente?.email}</p>
@@ -183,7 +188,7 @@ function AdminSolicitacoesContent() {
                 </tr>
               ))}
               {rows.length === 0 && (
-                <tr><td colSpan={7} className="px-6 py-12 text-center text-slate-500">Nenhuma solicitação encontrada</td></tr>
+                <tr><td colSpan={8} className="px-6 py-12 text-center text-slate-500">Nenhuma solicitação encontrada</td></tr>
               )}
             </tbody>
           </table>
