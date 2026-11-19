@@ -207,7 +207,7 @@ try {
   const lido = await esperar(async () => { const t = await pO.getByTestId('chat-suporte-janela').innerText().catch(() => ''); return t.includes(`(${tag})`) ? t : null; });
   ok('6 oficina le a mensagem do admin no chat', !!lido, (lido || '').slice(-200));
   await pO.locator('#suporte-texto').fill(`Jah, saadan pakkumise täna pärastlõunal. (${tag}-vastus)`); await pO.getByTestId('chat-suporte-enviar').click(); await pO.waitForTimeout(2000);
-  const resp = await esperar(async () => { const t = await pA.locator('main').innerText(); return t.includes(`(${tag}-`) && t.includes('traduzido do estoniano') ? t : null; }, 40000);
+  const resp = await esperar(async () => { const t = await pA.locator('main').innerText(); return t.includes(tag) && t.includes('traduzido do estoniano') ? t : null; }, 40000); // a traducao (DeepL) reescreve o texto - basta a etiqueta + "traduzido do estoniano"
   ok('6 admin ve a resposta da oficina', !!resp, (resp || '').slice(-200));
   await pO.screenshot({ path: `${OUT}/6-oficina-chat.png` }); await pA.screenshot({ path: `${OUT}/6-admin-suporte.png` });
   await ctxO.close(); await ctxA.close();
