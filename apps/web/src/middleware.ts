@@ -248,6 +248,7 @@ export const config = {
     // (app/v/[c]/route.ts), o link "nao tenho" das pecas /n/<token> (app/n/[token]/route.ts) e o link fixo do video-guia
     // da oficina /guias/video-oficina-<idioma> (app/guias/[video]/route.ts; os outros /guias/... seguem aqui)
     // e o link curto da pagina publica da loja /p/<numero> (app/p/[numero]/route.ts, pecas lote 4)
-    '/((?!api|r/|v/|n/|p/|guias/video-oficina-|_next|_vercel|.*\\..*).*)',
+    // e o link curto do SMS da oficina /o e /o/<idioma> (app/o/[[...l]]/route.ts, 19/11)
+    '/((?!api|r/|v/|n/|p/|o/|o$|guias/video-oficina-|_next|_vercel|.*\\..*).*)',
   ],
 };
