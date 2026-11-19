@@ -143,6 +143,27 @@ try {
   const { data: lOf2 } = await of2.a.from('lojas_pecas').select('id, nome_fantasia').eq('id', l1.id);
   ok('L-07 legitimo: oficina (aprovada ou nao) le nome/pais das lojas (telas de pecas, conversa)', (lOf || []).length === 2 && (lOf2 || []).length === 1 && lOf.some((x) => x.nome_fantasia === `SEG LOJA ${tag}`), JSON.stringify({ n: (lOf || []).length, n2: (lOf2 || []).length }));
 
+  // P-01..P-06 (migracao 101, dono 19/11): presenca "online agora" - so a propria linha
+  // e escrita; so o admin le a dos outros; anon nada; ninguem apaga
+  const admP = await conta('admin');
+  const { error: eP1 } = await cli.a.from('presenca').upsert({ profile_id: cli.id, visto_em: new Date().toISOString() }, { onConflict: 'profile_id' });
+  ok('P-01 legitimo: a conta grava o proprio sinal de presenca', !eP1, eP1?.message);
+  const { error: eP2 } = await cli.a.from('presenca').upsert({ profile_id: of.id, visto_em: new Date().toISOString() }, { onConflict: 'profile_id' });
+  const { data: pOf } = await sb.from('presenca').select('profile_id').eq('profile_id', of.id);
+  ok('P-02 cliente NAO grava sinal em nome de outra conta', !!eP2 && !(pOf || []).length, eP2?.message);
+  const { error: eP3 } = await cli.a.from('presenca').update({ visto_em: '2020-01-01T00:00:00Z' }).eq('profile_id', cli.id);
+  const { data: pCli } = await sb.from('presenca').select('visto_em').eq('profile_id', cli.id).single();
+  ok('P-03 legitimo: a conta atualiza o proprio sinal', !eP3 && pCli?.visto_em?.startsWith('2020-01-01'), eP3?.message);
+  const { data: pOutro } = await outro.a.from('presenca').select('profile_id, visto_em').eq('profile_id', cli.id);
+  const { data: pAnon } = await anon.from('presenca').select('profile_id').limit(1);
+  ok('P-04 outra conta e anon NAO leem a presenca dos outros', !(pOutro || []).length && !(pAnon || []).length, JSON.stringify({ pOutro, pAnon }));
+  const { data: pAdm } = await admP.a.from('presenca').select('profile_id, visto_em').eq('profile_id', cli.id);
+  ok('P-05 legitimo: admin le a presenca de qualquer conta', (pAdm || []).length === 1 && pAdm[0].visto_em.startsWith('2020-01-01'), JSON.stringify(pAdm));
+  const { error: eP6 } = await cli.a.from('presenca').delete().eq('profile_id', cli.id);
+  const { data: pAinda } = await sb.from('presenca').select('profile_id').eq('profile_id', cli.id);
+  ok('P-06 ninguem apaga a presenca pelo navegador (nem a propria)', (pAinda || []).length === 1, eP6?.message || 'delete passou');
+  await sb.from('presenca').delete().eq('profile_id', cli.id);
+
   // M-05: avisos em massa pelo navegador sao barrados
   let barrado = false;
   for (let i = 0; i < 45 && !barrado; i++) {
