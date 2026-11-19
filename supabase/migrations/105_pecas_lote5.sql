@@ -85,7 +85,14 @@ BEGIN
       NEW.oculto := OLD.oculto; NEW.oculto_motivo := OLD.oculto_motivo; NEW.oculto_em := OLD.oculto_em;
     END IF;
   END IF;
-  NEW.atualizado_em := now();
+  -- "atualizado ha" so muda quando muda o que a oficina compara (auditoria dos testes B4): moderacao, quem ve e ativo nao contam
+  IF TG_OP = 'INSERT' OR NEW.preco IS DISTINCT FROM OLD.preco OR NEW.nome IS DISTINCT FROM OLD.nome OR NEW.codigo IS DISTINCT FROM OLD.codigo
+     OR NEW.especificacao IS DISTINCT FROM OLD.especificacao OR NEW.unidade IS DISTINCT FROM OLD.unidade OR NEW.embalagem IS DISTINCT FROM OLD.embalagem
+     OR NEW.condicao IS DISTINCT FROM OLD.condicao OR NEW.descricao IS DISTINCT FROM OLD.descricao THEN
+    NEW.atualizado_em := now();
+  ELSE
+    NEW.atualizado_em := OLD.atualizado_em;
+  END IF;
   RETURN NEW;
 END $function$;
 DROP TRIGGER IF EXISTS trg_p5_catalogo ON pecas_catalogo;

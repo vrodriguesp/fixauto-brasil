@@ -79,13 +79,17 @@ export default function LojaCatalogoPage() {
   };
 
   const mudarVisibilidade = async (peca: ItemV3) => {
-    await supabase.from('pecas_catalogo').update({ visibilidade: peca.visibilidade === 'interno' ? 'oficinas' : 'interno' }).eq('id', peca.id);
+    setErroSalvar(false);
+    const { error } = await supabase.from('pecas_catalogo').update({ visibilidade: peca.visibilidade === 'interno' ? 'oficinas' : 'interno' }).eq('id', peca.id);
+    if (error) setErroSalvar(true);
     await fetchPecas();
   };
 
   const handleDelete = async (peca: PecaCatalogo) => {
     if (!confirm(t('confirmRemove', { nome: peca.nome }))) return;
-    await supabase.from('pecas_catalogo').delete().eq('id', peca.id);
+    // item oculto pela BipFix nao se apaga (105): antes nada acontecia sem aviso
+    const { error, count } = await supabase.from('pecas_catalogo').delete({ count: 'exact' }).eq('id', peca.id);
+    setErroSalvar(!!error || !count);
     await fetchPecas();
   };
 
@@ -182,7 +186,7 @@ export default function LojaCatalogoPage() {
               </div>
             </div>
           )}
-          {erroSalvar && <p role="alert" data-testid="catalogo-erro" className="mt-4 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{t5('erroSalvarItem')}</p>}
+          {erroSalvar && showForm && <p role="alert" data-testid="catalogo-erro" className="mt-4 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{t5('erroSalvarItem')}</p>}
           <div className="flex justify-end gap-3 mt-6">
             <button onClick={() => setShowForm(false)} className="btn-secondary">{t('cancelButton')}</button>
             <button onClick={handleAdd} disabled={saving || !form.nome || !form.preco} className="btn-primary disabled:opacity-50">
@@ -192,6 +196,7 @@ export default function LojaCatalogoPage() {
         </div>
       )}
 
+      {erroSalvar && !showForm && <p role="alert" data-testid="catalogo-erro" className="mb-4 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{t5('erroSalvarItem')}</p>}
       {pecas.length === 0 ? (
         <div className="card text-center py-12">
           <p className="text-gray-500">{t('emptyState')}</p>

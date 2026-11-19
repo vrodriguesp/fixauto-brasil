@@ -146,8 +146,9 @@ export default function LojaCotacoesPage() {
     setRespQtd(String(Number(c.quantidade) || 1));
     setRespUsada(false);
     // lote 5: pedido direto do Shop - preco do catalogo/promocao ja preenchido (a loja confirma ou muda)
-    const ref = (c as any).alvo === 'fornecedor_unico' ? Number((c as any).preco_referencia) : NaN;
-    if (v3 && ref > 0) setRespostaForm((f) => ({ ...f, preco: String(ref) }));
+    // preco_referencia e o TOTAL (preco x quantidade); o campo da oferta e por unidade (auditoria dos testes B1)
+    const ref = (c as any).alvo === 'fornecedor_unico' ? Number((c as any).preco_referencia) / (Number(c.quantidade) || 1) : NaN;
+    if (v3 && ref > 0) setRespostaForm((f) => ({ ...f, preco: String(Math.round(ref * 100) / 100) }));
   };
 
   // espera tambem o interruptor: os cartoes nao aparecem na forma de hoje para depois trocar

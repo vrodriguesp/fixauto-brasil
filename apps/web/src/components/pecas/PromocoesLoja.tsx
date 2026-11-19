@@ -15,7 +15,9 @@ import { currencyForCountry } from '@/lib/currency';
 type Promo = { id: string; titulo: string; descricao: string | null; preco: number; unidade: string; preco_anterior: number | null; destaque: boolean; valido_de: string; valido_ate: string; oculta: boolean; oculta_motivo: string | null; item_id: string | null };
 const UNIDADES = ['un', 'jogo', 'par', 'litro', 'kg', 'metro', 'caixa'];
 const dataMais = (dias: number) => new Date(Date.now() + dias * 86400000).toISOString().slice(0, 10);
-const VAZIO = { titulo: '', descricao: '', preco: '', unidade: 'un', preco_anterior: '', destaque: false, ate: dataMais(30), item_id: '' };
+// o fim do dia escolhido nunca passa de agora + 30 dias (CHECK da 105): o ultimo dia possivel e "hoje + 29"
+const ULTIMO_DIA = 29;
+const VAZIO = { titulo: '', descricao: '', preco: '', unidade: 'un', preco_anterior: '', destaque: false, ate: dataMais(ULTIMO_DIA), item_id: '' };
 
 export default function PromocoesLoja() {
   const t = useTranslations('pecasL5');
@@ -51,18 +53,18 @@ export default function PromocoesLoja() {
     if (!loja) return;
     const preco = Number(form.preco.replace(',', '.'));
     const anterior = form.preco_anterior.trim() ? Number(form.preco_anterior.replace(',', '.')) : null;
-    const ate = new Date(`${form.ate}T23:59:00`);
-    const max = Date.now() + 30 * 86400000;
-    if (!form.titulo.trim() || !(preco > 0) || (anterior !== null && !(anterior > preco)) || !(ate.getTime() > Date.now()) || ate.getTime() > max) { setErro('dados'); return; }
+    const inicio = Date.now();
+    const ate = new Date(Math.min(new Date(`${form.ate}T23:59:00`).getTime(), inicio + 30 * 86400000 - 120000));
+    if (!form.titulo.trim() || !(preco > 0) || (anterior !== null && !(anterior > preco)) || !(ate.getTime() > inicio)) { setErro('dados'); return; }
     setSalvando(true); setErro(null);
     const { error } = await supabase.from('promocoes_pecas').insert({
       loja_id: loja.id, titulo: form.titulo.trim(), descricao: form.descricao.trim() || null, preco, unidade: form.unidade,
-      preco_anterior: anterior, destaque: form.destaque, valido_de: new Date().toISOString(), valido_ate: ate.toISOString(),
+      preco_anterior: anterior, destaque: form.destaque, valido_de: new Date(inicio).toISOString(), valido_ate: ate.toISOString(),
       item_id: form.item_id || null, visibilidade: 'oficinas',
     });
     setSalvando(false);
     if (error) { setErro(codigoErro(error.message)); return; }
-    setForm({ ...VAZIO, ate: dataMais(30) }); setAberto(false);
+    setForm({ ...VAZIO, ate: dataMais(ULTIMO_DIA) }); setAberto(false);
     await carregar();
   };
 
@@ -73,12 +75,16 @@ export default function PromocoesLoja() {
     await carregar();
   };
   const encerrar = async (p: Promo) => {
-    await supabase.from('promocoes_pecas').update({ valido_ate: new Date().toISOString() }).eq('id', p.id);
+    setErro(null);
+    const { error } = await supabase.from('promocoes_pecas').update({ valido_ate: new Date(Math.max(Date.now(), Date.parse(p.valido_de) + 60000)).toISOString() }).eq('id', p.id);
+    if (error) setErro('geral');
     await carregar();
   };
   const apagar = async (p: Promo) => {
     if (!confirm(t('confirmarApagar', { titulo: p.titulo }))) return;
-    await supabase.from('promocoes_pecas').delete().eq('id', p.id);
+    setErro(null);
+    const { error, count } = await supabase.from('promocoes_pecas').delete({ count: 'exact' }).eq('id', p.id);
+    if (error || !count) setErro('geral');
     await carregar();
   };
   const usarItem = (id: string) => {
@@ -138,7 +144,7 @@ export default function PromocoesLoja() {
             </div>
             <div>
               <label htmlFor="p5p-ate" className="block text-sm font-medium text-gray-700 mb-1">{t('validaAteRotulo')}</label>
-              <input id="p5p-ate" data-testid="promo-ate" type="date" className="input-field" min={dataMais(0)} max={dataMais(30)} value={form.ate} onChange={(e) => setForm({ ...form, ate: e.target.value })} />
+              <input id="p5p-ate" data-testid="promo-ate" type="date" className="input-field" min={dataMais(0)} max={dataMais(ULTIMO_DIA)} value={form.ate} onChange={(e) => setForm({ ...form, ate: e.target.value })} />
             </div>
             <label className="sm:col-span-2 inline-flex items-center gap-2 text-sm text-gray-700">
               <input type="checkbox" data-testid="promo-destaque" checked={form.destaque} onChange={(e) => setForm({ ...form, destaque: e.target.checked })} />

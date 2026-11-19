@@ -46,14 +46,26 @@ export async function PUT(req: NextRequest) {
   const nota = typeof corpo.nota === 'string' ? corpo.nota.trim().slice(0, 200) || null : null;
   const publicar = corpo.acao === 'publicar';
   const agora = new Date().toISOString();
-  if (publicar) {
-    const { error: eArq } = await supabaseAdmin.from('shop_pagina_versoes').update({ estado: 'arquivada' }).eq('estado', 'publicada');
-    if (eArq) return NextResponse.json({ error: eArq.message }, { status: 500 });
+  // banner sem texto alternativo nao publica (et e ru, ou en que e o fallback deles)
+  if (publicar && conteudo.banner && !(conteudo.textos.en?.bannerAlt || (conteudo.textos.et?.bannerAlt && conteudo.textos.ru?.bannerAlt))) {
+    return NextResponse.json({ error: 'texto alternativo do banner obrigatório (ET e RU, ou EN)', codigo: 'BANNER_ALT' }, { status: 400 });
   }
+  // grava como rascunho e so depois troca: se algo falhar no meio, a publicada anterior continua no ar
   const { data: nova, error } = await supabaseAdmin.from('shop_pagina_versoes')
-    .insert({ estado: publicar ? 'publicada' : 'rascunho', conteudo, nota, criado_por: auth.userId, publicado_em: publicar ? agora : null })
+    .insert({ estado: 'rascunho', conteudo, nota, criado_por: auth.userId })
     .select('id, estado, criado_em, publicado_em').single();
   if (error || !nova) return NextResponse.json({ error: error?.message || 'erro' }, { status: 500 });
+  if (publicar) {
+    const { data: anterior } = await supabaseAdmin.from('shop_pagina_versoes').select('id').eq('estado', 'publicada').maybeSingle();
+    if (anterior) await supabaseAdmin.from('shop_pagina_versoes').update({ estado: 'arquivada' }).eq('id', anterior.id).eq('estado', 'publicada');
+    const { error: ePub } = await supabaseAdmin.from('shop_pagina_versoes').update({ estado: 'publicada', publicado_em: agora }).eq('id', nova.id);
+    if (ePub) {
+      // indice unico (106): outro publicar ganhou a corrida - devolve a anterior e avisa
+      if (anterior) await supabaseAdmin.from('shop_pagina_versoes').update({ estado: 'publicada' }).eq('id', anterior.id).eq('estado', 'arquivada');
+      return NextResponse.json({ error: 'outra publicação ao mesmo tempo; tente de novo', codigo: 'CORRIDA' }, { status: 409 });
+    }
+    nova.estado = 'publicada'; nova.publicado_em = agora;
+  }
   // historico: so as ultimas MAX_VERSOES (a publicada nunca sai)
   const { data: velhas } = await supabaseAdmin.from('shop_pagina_versoes').select('id').neq('estado', 'publicada').order('criado_em', { ascending: false }).range(MAX_VERSOES, MAX_VERSOES + 200);
   if (velhas?.length) await supabaseAdmin.from('shop_pagina_versoes').delete().in('id', velhas.map((v) => v.id));
