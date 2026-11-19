@@ -74,7 +74,10 @@ export default function LojaCatalogoPage() {
   };
 
   const handleToggleAtivo = async (peca: PecaCatalogo) => {
-    await supabase.from('pecas_catalogo').update({ ativo: !peca.ativo }).eq('id', peca.id);
+    // linha antiga fora do CHECK da 105 (NOT VALID) ou item recusado pelo banco: aviso em vez de nada (veredito Fable R-2)
+    setErroSalvar(false);
+    const { error } = await supabase.from('pecas_catalogo').update({ ativo: !peca.ativo }).eq('id', peca.id);
+    if (error) setErroSalvar(true);
     await fetchPecas();
   };
 
