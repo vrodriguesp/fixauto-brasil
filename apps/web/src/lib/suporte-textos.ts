@@ -25,4 +25,15 @@ export const SUPORTE_EMAIL_RESPOSTA: Record<L, { assunto: string; titulo: string
   ru: { assunto: 'Ответ от BipFix', titulo: 'Вам ответили в BipFix', ola: 'Здравствуйте, {nome}!', abrir: 'Открыть чат', rodape: 'Чтобы ответить, ответьте на это письмо или откройте чат на сайте в том же браузере, где вы его начали.', porque: 'Вы получили это письмо, потому что на bipfix.com начали чат с этим адресом. Если это были не вы, просто проигнорируйте его.' },
 };
 
+// conversa que o ADMIN comecou (dono 19/11: escrever a oficina pelo painel) e a pessoa ainda
+// nao respondeu: "mensagem do BipFix" em vez de "resposta". Mesmos campos do e-mail de resposta.
+export const SUPORTE_EMAIL_MENSAGEM: Record<L, { assunto: string; titulo: string; ola: string; abrir: string; rodape: string; porque: string }> = {
+  pt: { assunto: 'Mensagem do BipFix', titulo: 'Você tem uma mensagem do BipFix', ola: 'Olá {nome},', abrir: 'Abrir a conversa', rodape: 'Para responder, responda a este e-mail ou abra a conversa no site (botão de chat no canto, com o seu login).', porque: 'Você recebeu este e-mail porque tem uma conta no bipfix.com com este endereço.' },
+  'pt-PT': { assunto: 'Mensagem do BipFix', titulo: 'Tem uma mensagem do BipFix', ola: 'Olá {nome},', abrir: 'Abrir a conversa', rodape: 'Para responder, responda a este e-mail ou abra a conversa no site (botão de chat no canto, com o seu login).', porque: 'Recebeu este e-mail porque tem uma conta no bipfix.com com este endereço.' },
+  en: { assunto: 'Message from BipFix', titulo: 'You have a message from BipFix', ola: 'Hi {nome},', abrir: 'Open the chat', rodape: 'To reply, answer this e-mail or open the chat on the website (chat button in the corner, after logging in).', porque: 'You received this e-mail because you have a bipfix.com account with this address.' },
+  et: { assunto: 'BipFixi sõnum', titulo: 'Sulle on BipFixist sõnum', ola: 'Tere, {nome}!', abrir: 'Ava vestlus', rodape: 'Vastamiseks vasta sellele e-kirjale või ava vestlus veebilehel (vestlusnupp nurgas, pärast sisselogimist).', porque: 'Said selle e-kirja, sest sul on bipfix.com konto selle aadressiga.' },
+  it: { assunto: 'Messaggio da BipFix', titulo: 'Hai un messaggio da BipFix', ola: 'Ciao {nome},', abrir: 'Apri la chat', rodape: 'Per rispondere, rispondi a questa e-mail o apri la chat sul sito (pulsante chat nell\'angolo, dopo aver effettuato l\'accesso).', porque: 'Hai ricevuto questa e-mail perché hai un account bipfix.com con questo indirizzo.' },
+  ru: { assunto: 'Сообщение от BipFix', titulo: 'Вам сообщение от BipFix', ola: 'Здравствуйте, {nome}!', abrir: 'Открыть чат', rodape: 'Чтобы ответить, ответьте на это письмо или откройте чат на сайте (кнопка чата в углу, после входа в аккаунт).', porque: 'Вы получили это письмо, потому что у вас есть аккаунт bipfix.com с этим адресом.' },
+};
+
 export const linguaTexto = (l: string): L => (['pt', 'pt-PT', 'en', 'et', 'it', 'ru'].includes(l) ? l : 'et') as L;

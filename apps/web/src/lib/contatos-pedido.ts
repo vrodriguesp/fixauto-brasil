@@ -6,7 +6,7 @@ import { supabaseAdmin } from './supabase-admin';
 // aberto, entrou), orcamentos e "nao tenho interesse" (motivo e origem painel/e-mail).
 // Limite conhecido: uma dispensa desfeita, ou apagada quando a oficina orca, some daqui.
 export type TipoEvento = 'avisada' | 'convidada' | 'lembrada' | 'link_enviado' | 'link_visto' | 'link_entrou' | 'orcou' | 'dispensou';
-export type ContatoOficina = { oficina_id: string; nome: string; eventos: { tipo: TipoEvento; em: string; detalhe?: string }[] };
+export type ContatoOficina = { oficina_id: string; nome: string; profile_id: string | null; eventos: { tipo: TipoEvento; em: string; detalhe?: string }[] };
 
 const TIPO_AVISO: Record<string, TipoEvento> = { nova_solicitacao: 'avisada', pedido_convite: 'convidada', cobranca_admin_solicitacao: 'lembrada' };
 
@@ -61,7 +61,7 @@ export async function contatosDoPedido(solicitacaoId: string): Promise<ContatoOf
   const lista: ContatoOficina[] = [];
   for (const [id, evs] of Array.from(eventos.entries())) {
     evs.sort((a, b) => a.em.localeCompare(b.em));
-    lista.push({ oficina_id: id, nome: oficinas.get(id)!.nome, eventos: evs });
+    lista.push({ oficina_id: id, nome: oficinas.get(id)!.nome, profile_id: oficinas.get(id)!.profile_id, eventos: evs });
   }
   return lista.sort((a, b) => a.eventos[0].em.localeCompare(b.eventos[0].em) || a.nome.localeCompare(b.nome));
 }

@@ -878,6 +878,7 @@
   },
   "suporte": {
     "abrir": "Apri la chat con BipFix",
+    "rotulo": "Scrivici",
     "fechar": "Chiudi la chat",
     "titulo": "Scrivi a BipFix",
     "online": "Online ora",

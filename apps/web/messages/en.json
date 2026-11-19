@@ -880,6 +880,7 @@
   },
   "suporte": {
     "abrir": "Open chat with BipFix",
+    "rotulo": "Ask us",
     "fechar": "Close chat",
     "titulo": "Chat with BipFix",
     "online": "Online now",

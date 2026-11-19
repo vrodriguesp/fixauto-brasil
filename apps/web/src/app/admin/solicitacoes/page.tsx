@@ -25,7 +25,7 @@ interface Row {
   urgencia: string;
   created_at: string;
   emergencia_id: string | null;
-  cliente: { nome: string; email: string } | null;
+  cliente: { id: string; nome: string; email: string; codigo: number | null } | null;
   veiculo: { fipe_marca: string; fipe_modelo: string; placa: string | null } | null;
   totalOrcamentos: number;
   orcamentoAceito: boolean;
@@ -115,7 +115,7 @@ function AdminSolicitacoesContent() {
           type="text"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Buscar por nº do pedido, descrição ou endereço..."
+          placeholder="Buscar por nº do pedido, nº do cliente, descrição ou endereço..."
           className="flex-1 min-w-[220px] bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <select value={status} onChange={(e) => setStatus(e.target.value)} className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -155,7 +155,8 @@ function AdminSolicitacoesContent() {
                   </td>
                   <td className="px-6 py-4">
                     <p className="text-white font-medium">{r.cliente?.nome || '—'}</p>
-                    <p className="text-slate-500 text-xs">{r.cliente?.email}</p>
+                    {/* numero do cliente (profiles.codigo, migracao 061; dono 19/11) */}
+                    <p className="text-slate-500 text-xs">{r.cliente?.codigo != null && <span className="text-slate-300" data-testid="admin-numero-cliente">nº {r.cliente.codigo} · </span>}{r.cliente?.email}</p>
                   </td>
                   <td className="px-6 py-4 text-slate-300 text-sm">
                     {r.veiculo ? `${r.veiculo.fipe_marca} ${r.veiculo.fipe_modelo}` : '—'}

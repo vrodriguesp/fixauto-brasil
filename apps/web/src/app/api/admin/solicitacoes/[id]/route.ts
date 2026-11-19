@@ -26,7 +26,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       .from('solicitacoes')
       .select(
         `*,
-         cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, email, telefone, created_at),
+         cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, email, telefone, created_at, codigo),
          veiculo:veiculos(*)`
       )
       .eq('id', params.id)

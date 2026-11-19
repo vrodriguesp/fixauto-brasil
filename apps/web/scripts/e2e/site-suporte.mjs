@@ -26,7 +26,8 @@ const env = Object.fromEntries(fs.readFileSync(process.argv[2], 'utf8').split('\
 if (!/localhost|127.0.0.1/.test(env.NEXT_PUBLIC_SUPABASE_URL || '')) throw new Error('TESTE LOCAL: o banco configurado nao e o local - parado para nao tocar a producao');
 const SITE = process.argv[3] || 'http://localhost:3100';
 const sb = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
-const MSG = 'C:/Users/vitor/Documents/Sites - Progetos/fixauto-brasil/apps/web/messages';
+// traducoes da MESMA copia do codigo que esta sendo testada (antes apontava ao repositorio principal)
+const MSG = new URL('../../messages/', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1').replace(/%20/g, ' ');
 const msgs = (l) => Object.assign({}, ...['', '.cliente', '.oficina', '.loja', '.auth', '.misc'].map((a) => JSON.parse(fs.readFileSync(`${MSG}/${l}${a}.json`, 'utf8'))));
 const tr = (l) => { const m = msgs(l); return (k) => String(k.split('.').reduce((o, p) => o?.[p], m) ?? `??${k}`); };
 const RU = tr('ru');
@@ -213,6 +214,14 @@ try {
       await p.evaluate(() => window.scrollTo(0, 700)); await p.waitForTimeout(400);
       const bt = p.getByTestId('chat-suporte-botao');
       ok(`6 ${tela} ${l}: botao traduzido e sem rolagem lateral`, (await bt.getAttribute('aria-label')) === tr(l)('suporte.abrir') && await semRolagem(p));
+      // 19/11 (dono): icone de atendente + rotulo "Kusi meilt" visivel; no celular recolhe ao icone em 5 s
+      const rot = bt.getByTestId('chat-suporte-rotulo');
+      ok(`6 ${tela} ${l}: rotulo "${tr(l)('suporte.rotulo')}" visivel ao lado do icone, com tooltip`, await rot.isVisible() && (await rot.innerText()) === tr(l)('suporte.rotulo') && (await bt.getAttribute('title')) === tr(l)('suporte.titulo') && await semRolagem(p));
+      if (tela === 'celular' && l === 'et') {
+        await p.waitForTimeout(5500);
+        const caixa = await bt.boundingBox();
+        ok(`6 ${tela} ${l}: 5 s depois o rotulo recolhe e fica so o icone redondo (56 px)`, !(await rot.isVisible()) && caixa && caixa.width <= 60, JSON.stringify(caixa));
+      }
     }
     await ctx.close();
   }
@@ -246,7 +255,10 @@ try {
     await ctx.close();
   }
   {
-    const ctx = await semConsent('celular'); const p = await entrar(ctx, dono);
+    // no celular o aviso de cookies e modal (fundo escuro): entra no tamanho de computador e
+    // so depois encolhe a tela para o celular (19/11: antes o clique em "Entrar" batia no fundo)
+    const ctx = await semConsent('pc'); const p = await entrar(ctx, dono);
+    await p.setViewportSize(TELAS.celular.viewport);
     await p.goto(`${SITE}/ee/ru/oficina/pedidos`, { waitUntil: 'networkidle' }); await p.waitForTimeout(1500);
     await acimaDoAviso(p, 'oficina celular (com a barra de baixo)');
     await p.screenshot({ path: 'cookies-chat-oficina.png' });

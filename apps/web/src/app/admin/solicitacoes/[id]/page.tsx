@@ -9,6 +9,7 @@ import { STATUS_SOLICITACAO, STATUS_ORCAMENTO } from '@fixauto/shared';
 import MidiaPrivada from '@/components/midia/MidiaPrivada';
 import { formatarJanela, janelaDaAgenda } from '@/lib/turnos';
 import TriagemPedido, { rotuloTipo } from '@/components/admin/TriagemPedido';
+import { Presenca, usePresenca } from '@/components/admin/Presenca';
 
 const STATUS_BADGE: Record<string, string> = {
   aberta: 'bg-blue-500/20 text-blue-400',
@@ -121,6 +122,10 @@ export default function AdminSolicitacaoDetalhePage() {
   const [orcStatus, setOrcStatus] = useState<Record<string, string>>({});
   const [agendaEdit, setAgendaEdit] = useState<Record<string, { status: string; inicio: string; fim: string }>>({});
   const [novaEtapa, setNovaEtapa] = useState<Record<string, { status: string; observacao: string }>>({});
+  // "online agora / visto ha X" do cliente e das oficinas que receberam o pedido (dono 19/11, migracao 101)
+  const presenca = usePresenca(
+    [data?.solicitacao?.cliente?.id, ...((data?.contatos || []) as any[]).map((c) => c.profile_id)].filter(Boolean),
+  );
 
   // recarregando = depois de uma acao da triagem: sem a tela "Carregando..." (o bloco nao some com a mensagem)
   const fetchData = async (recarregando = false) => {
@@ -242,7 +247,7 @@ export default function AdminSolicitacaoDetalhePage() {
             </span>
             {emergencia && <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-400">⚡ Acidente</span>}
             <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-slate-700 text-slate-200" data-testid="tipo-atual">{rotuloTipo(solicitacao.tipo)}</span>
-            {solicitacao.numero && <span className="text-slate-400 text-xs">Pedido {solicitacao.numero}</span>}
+            {solicitacao.numero && <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-700 text-white" data-testid="admin-detalhe-numero">Pedido {solicitacao.numero}</span>}
             <span className="text-slate-500 text-xs">Criada em {formatDateTime(solicitacao.created_at)}</span>
           </div>
         </div>
@@ -310,12 +315,18 @@ export default function AdminSolicitacaoDetalhePage() {
       <div className="grid sm:grid-cols-2 gap-4 mb-8">
         <div className="bg-slate-800 border border-slate-700 rounded-xl p-4">
           <p className="text-slate-400 text-xs uppercase tracking-wide mb-2">Cliente</p>
-          <p className="text-white font-medium">{solicitacao.cliente?.nome}</p>
+          <p className="text-white font-medium">{solicitacao.cliente?.nome}{solicitacao.cliente?.codigo != null && <span className="text-slate-300 font-normal" data-testid="admin-detalhe-cliente-codigo"> · nº {solicitacao.cliente.codigo}</span>}</p>
           <p className="text-slate-400 text-sm">{solicitacao.cliente?.email}</p>
           <p className="text-slate-400 text-sm">{solicitacao.cliente?.telefone}</p>
-          <Link href={`/admin/solicitacoes?cliente_id=${solicitacao.cliente?.id}`} className="text-blue-400 hover:underline text-xs mt-2 inline-block">
-            Ver outras solicitações deste cliente →
-          </Link>
+          {solicitacao.cliente?.id && <Presenca vistoEm={presenca.profiles[solicitacao.cliente.id]} className="mt-1" />}
+          <div className="flex flex-wrap gap-x-4 mt-2">
+            <Link href={`/admin/solicitacoes?cliente_id=${solicitacao.cliente?.id}`} className="text-blue-400 hover:underline text-xs inline-block">
+              Ver outras solicitações deste cliente →
+            </Link>
+            {solicitacao.cliente?.id && (
+              <Link href={`/admin/suporte?profile=${solicitacao.cliente.id}`} className="text-blue-400 hover:underline text-xs inline-block">Escrever ao cliente →</Link>
+            )}
+          </div>
         </div>
         <div className="bg-slate-800 border border-slate-700 rounded-xl p-4">
           <p className="text-slate-400 text-xs uppercase tracking-wide mb-2">Veículo</p>
@@ -459,7 +470,11 @@ export default function AdminSolicitacaoDetalhePage() {
           <div className="space-y-2">
             {contatos.map((c: any) => (
               <div key={c.oficina_id} className="bg-slate-800 border border-slate-700 rounded-lg p-3" data-testid="contato-oficina" data-oficina={c.oficina_id}>
-                <p className="text-slate-200 text-sm font-medium mb-1">{c.nome}</p>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-1">
+                  <p className="text-slate-200 text-sm font-medium">{c.nome}</p>
+                  {c.profile_id && <Presenca vistoEm={presenca.profiles[c.profile_id]} />}
+                  {c.profile_id && <Link href={`/admin/suporte?profile=${c.profile_id}`} className="text-blue-400 hover:underline text-xs">Escrever à oficina →</Link>}
+                </div>
                 <ul className="text-xs text-slate-400 space-y-0.5">
                   {c.eventos.map((e: any, i: number) => (
                     <li key={i} data-evento={e.tipo}>

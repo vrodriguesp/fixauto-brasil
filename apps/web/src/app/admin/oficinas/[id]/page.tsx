@@ -8,6 +8,7 @@ import { currencyForCountry } from '@/lib/currency';
 import { formatDate } from '@/lib/utils';
 import type { Oficina, Solicitacao, Orcamento } from '@fixauto/shared';
 import TrocarEmail from '@/components/admin/TrocarEmail';
+import { Presenca, usePresenca } from '@/components/admin/Presenca';
 
 interface ComissaoResumo {
   individual: { taxa: number | null; ate: string | null; motivo: string | null; vigente: boolean } | null;
@@ -38,6 +39,8 @@ export default function AdminOficinaDetailPage() {
   const [loading, setLoading] = useState(true);
   const [lancamentos, setLancamentos] = useState<ComissaoLancamento[]>([]);
   const [marcandoPagoId, setMarcandoPagoId] = useState<string | null>(null);
+  // "online agora / visto ha X" do dono (dono 19/11, migracao 101)
+  const presenca = usePresenca([], oficina ? [oficina.id] : []);
 
   useEffect(() => {
     async function fetchData() {
@@ -162,6 +165,13 @@ export default function AdminOficinaDetailPage() {
         >
           {oficina.ativa ? 'Ativa' : 'Inativa'}
         </span>
+        <Presenca vistoEm={presenca.oficinas[oficina.id]} />
+        {/* conversa de suporte com a oficina, comecada pelo admin (dono 19/11) */}
+        <Link href={`/admin/suporte?profile=${oficina.profile_id}`} data-testid="admin-escrever-oficina"
+          className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium px-3 py-2">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+          Escrever à oficina
+        </Link>
       </div>
 
       {/* Info card */}
@@ -346,7 +356,9 @@ export default function AdminOficinaDetailPage() {
               >
                 <div>
                   <p className="text-white text-sm font-medium">
-                    {sol.tipo} - {sol.veiculo?.fipe_modelo || 'Veículo'}
+                    {/* numero do pedido em toda tela do admin (dono 19/11) */}
+                    {(sol as any).numero && <Link href={`/admin/solicitacoes/${sol.id}`} className="text-blue-300 hover:text-blue-200" data-testid="admin-numero-pedido">Pedido {(sol as any).numero}</Link>}
+                    {(sol as any).numero ? ' · ' : ''}{sol.tipo} - {sol.veiculo?.fipe_modelo || 'Veículo'}
                   </p>
                   <p className="text-slate-400 text-xs mt-0.5">
                     {new Date(sol.created_at).toLocaleDateString('pt-BR')}

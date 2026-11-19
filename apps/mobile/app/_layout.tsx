@@ -9,6 +9,7 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider, useAuth } from '../lib/auth-context';
 import { usePush } from '../lib/push';
+import { usePresenca } from '../lib/presenca';
 import { restaurarIdioma } from '../lib/idiomas';
 import { AvisosProvider } from '../lib/avisos';
 import { instalarCapturaDeErros, enviarDiagnostico } from '../lib/diagnostico';
@@ -38,6 +39,8 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 function PushDaConta() {
   const { user } = useAuth();
   usePush(user?.id);
+  // "online agora" no admin (dono 19/11): sinal por minuto com o app em primeiro plano
+  usePresenca(user?.id);
   return null;
 }
 

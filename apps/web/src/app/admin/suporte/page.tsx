@@ -1,7 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { timeAgo } from '@/lib/utils';
+import { Presenca } from '@/components/admin/Presenca';
 
 // Chat de suporte (dono 03/11): conversas com oficinas, lojas, clientes e
 // visitantes. A mensagem da pessoa aparece traduzida para o portugues (com
@@ -11,8 +13,12 @@ import { timeAgo } from '@/lib/utils';
 // o admin conta como "online" e nao sai a mensagem automatica.
 // Visual (dono 03/11 "parece feinha", sugestao do Fable): caixa de entrada escura
 // como o resto do admin, lista | conversa no computador e uma de cada vez no celular.
+// 19/11 (dono): o admin tambem COMECA uma conversa com uma oficina/loja/cliente
+// ("Nova conversa" aqui, "Escrever a oficina" nas telas da oficina/pedido/usuarios ->
+// ?profile=<id>) e ve "online agora / visto ha X" de quem tem conta (migracao 101).
 
-interface Conversa { id: string; idioma: string; pagina: string | null; ultima: string; naoLidas: number; nome: string; email: string; tipo: string; previa: { autor: string; texto: string } | null }
+interface Conversa { id: string; idioma: string; pagina: string | null; ultima: string; naoLidas: number; nome: string; email: string; tipo: string; profileId: string | null; codigo: number | null; vistoEm: string | null; previa: { autor: string; texto: string } | null }
+interface ContaBusca { id: string; nome: string; email: string; tipo: string; codigo: number | null; idioma: string; ativo: boolean; empresa: string | null }
 interface Msg { id: string; autor: 'usuario' | 'admin' | 'auto'; texto: string; traducao: string | null; origem: string | null; created_at: string }
 type Aviso = { tom: 'alerta' | 'info' | 'erro'; texto: string };
 
@@ -57,7 +63,17 @@ function IconeChat({ className = 'h-10 w-10' }: { className?: string }) {
   );
 }
 
-export default function SuporteAdmin() {
+export default function SuporteAdminPage() {
+  return (
+    <Suspense fallback={<div className="text-slate-400">Carregando...</div>}>
+      <SuporteAdmin />
+    </Suspense>
+  );
+}
+
+function SuporteAdmin() {
+  const busca = useSearchParams();
+  const router = useRouter();
   const [conversas, setConversas] = useState<Conversa[]>([]);
   const [carregado, setCarregado] = useState(false);
   const [traducao, setTraducao] = useState(true);
@@ -70,6 +86,11 @@ export default function SuporteAdmin() {
   const [traduzirResposta, setTraduzirResposta] = useState(true);
   const [traduzindo, setTraduzindo] = useState<string | null>(null);
   const [verOriginal, setVerOriginal] = useState<Record<string, boolean>>({});
+  // nova conversa comecada pelo admin (dono 19/11): caixa de busca de contas
+  const [novaAberta, setNovaAberta] = useState(false);
+  const [novaBusca, setNovaBusca] = useState('');
+  const [novaContas, setNovaContas] = useState<ContaBusca[] | null>(null);
+  const [iniciando, setIniciando] = useState<string | null>(null);
   // a caixa "traduzir esta resposta" volta a marcada em cada conversa aberta;
   // a conversa anterior nao pisca enquanto a nova carrega
   // (o rascunho tambem: nao manda para B o que foi escrito para A)
@@ -93,6 +114,36 @@ export default function SuporteAdmin() {
   }, []);
 
   useEffect(() => { carregarLista(); const i = setInterval(carregarLista, 10000); return () => clearInterval(i); }, [carregarLista]);
+
+  // comecar (ou abrir) a conversa de uma conta: a mesma conversa do balao do site (uma por conta)
+  const iniciarCom = useCallback(async (profileId: string) => {
+    setIniciando(profileId);
+    const r = await fetch('/api/admin/suporte/iniciar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ profileId }) }).catch(() => null);
+    setIniciando(null);
+    const d = r?.ok ? await r.json() : null;
+    if (!d?.conversaId) { setAvisos([{ tom: 'erro', texto: 'Não foi possível abrir a conversa com esta conta.' }]); return; }
+    await carregarLista();
+    setNovaAberta(false); setNovaBusca(''); setNovaContas(null);
+    setAberta(d.conversaId);
+  }, [carregarLista]);
+  // ?profile=<id> vindo de "Escrever a oficina" (oficina, pedido, usuarios): abre direto
+  const profileParam = busca?.get('profile') || null;
+  useEffect(() => {
+    if (!profileParam) return;
+    iniciarCom(profileParam);
+    router.replace('/admin/suporte');
+  }, [profileParam, iniciarCom, router]);
+  // busca de contas para a nova conversa (nome, e-mail, oficina/loja, nº do cliente)
+  useEffect(() => {
+    if (!novaAberta) return;
+    const q = novaBusca.trim();
+    if (q.length < 2) { setNovaContas(null); return; }
+    const t = setTimeout(async () => {
+      const r = await fetch(`/api/admin/suporte/iniciar?q=${encodeURIComponent(q)}`).catch(() => null);
+      if (r?.ok) setNovaContas((await r.json()).contas || []);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [novaAberta, novaBusca]);
   useEffect(() => {
     if (!aberta) return;
     carregarConversa(aberta);
@@ -156,12 +207,44 @@ export default function SuporteAdmin() {
               <h1 className="font-semibold text-white">Suporte</h1>
               {porResponder > 0 && <p className="text-xs text-slate-400">{porResponder} por responder</p>}
             </div>
-            <button type="button" onClick={() => setModoAberto((v) => !v)} aria-expanded={modoAberto}
-              className="inline-flex items-center gap-1 rounded-md border border-slate-600 px-2 py-1 text-xs text-slate-300 hover:bg-slate-700">
-              Tradução: {traducao ? 'Automática' : 'Manual'}
-              <svg className={`h-3 w-3 transition-transform ${modoAberto ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-            </button>
+            <div className="flex items-center gap-1.5">
+              <button type="button" onClick={() => { setNovaAberta((v) => !v); setNovaBusca(''); setNovaContas(null); }} aria-expanded={novaAberta} data-testid="suporte-nova-conversa"
+                className="inline-flex items-center gap-1 whitespace-nowrap rounded-md bg-primary-600 px-2 py-1 text-xs font-medium text-white hover:bg-primary-500">
+                + Nova conversa
+              </button>
+              <button type="button" onClick={() => setModoAberto((v) => !v)} aria-expanded={modoAberto}
+                className="inline-flex items-center gap-1 rounded-md border border-slate-600 px-2 py-1 text-xs text-slate-300 hover:bg-slate-700">
+                Tradução: {traducao ? 'Automática' : 'Manual'}
+                <svg className={`h-3 w-3 transition-transform ${modoAberto ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              </button>
+            </div>
           </div>
+          {/* nova conversa (dono 19/11): escolher a oficina/loja/cliente; a mensagem vai pela conversa normal */}
+          {novaAberta && (
+            <div className="mt-3 rounded-lg border border-slate-600 bg-slate-900 p-2" data-testid="suporte-nova-caixa">
+              <input type="search" value={novaBusca} onChange={(e) => setNovaBusca(e.target.value)} autoFocus aria-label="Escrever a quem?" data-testid="suporte-nova-busca"
+                placeholder="Oficina, loja, cliente, e-mail ou nº do cliente" className="w-full rounded-md border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-white placeholder-slate-500 outline-none focus:border-primary-500" />
+              {novaContas && (
+                <ul className="mt-2 max-h-56 divide-y divide-slate-700/70 overflow-y-auto">
+                  {novaContas.length === 0 && <li className="px-2 py-2 text-xs text-slate-500">Nenhuma conta encontrada</li>}
+                  {novaContas.map((c) => (
+                    <li key={c.id}>
+                      <button type="button" onClick={() => iniciarCom(c.id)} disabled={iniciando === c.id} data-testid="suporte-nova-conta"
+                        className="flex w-full items-center gap-2 px-2 py-2 text-left hover:bg-slate-800 disabled:opacity-50">
+                        <span className={`${chip} ${COR[c.tipo] || COR.visitante}`}>{TIPO[c.tipo] || c.tipo}</span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm text-white">{c.empresa || c.nome}{c.empresa ? <span className="text-slate-400"> · {c.nome}</span> : ''}</span>
+                          <span className="block truncate text-xs text-slate-400">{c.codigo != null ? `nº ${c.codigo} · ` : ''}{c.email}{!c.ativo ? ' · desativada' : ''}</span>
+                        </span>
+                        <span className={`${chip} bg-slate-700 uppercase text-slate-300`}>{c.idioma}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p className="mt-1 px-1 text-[11px] text-slate-500">A pessoa vê a mensagem no botão de chat do site; sem o chat aberto, recebe também por e-mail na língua dela.</p>
+            </div>
+          )}
           {/* o modo fica escondido: muda pouco; os radios continuam (testes e teclado) */}
           <fieldset className={`mt-3 ${modoAberto ? '' : 'hidden'}`}>
             <legend className="sr-only">Tradução (DeepL)</legend>
@@ -202,9 +285,10 @@ export default function SuporteAdmin() {
                         <span className={`truncate text-white ${c.naoLidas > 0 ? 'font-semibold' : 'font-medium'}`}>{c.nome}</span>
                         <span className="shrink-0 text-xs text-slate-500">{timeAgo(c.ultima, 'pt')}</span>
                       </div>
-                      <div className="mt-0.5 flex gap-1.5">
+                      <div className="mt-0.5 flex items-center gap-1.5">
                         <span className={`${chip} ${COR[c.tipo] || COR.visitante}`}>{TIPO[c.tipo] || c.tipo}</span>
                         <span className={`${chip} bg-slate-700 uppercase text-slate-300`}>{c.idioma}</span>
+                        {c.profileId && <Presenca vistoEm={c.vistoEm} curto />}
                       </div>
                       <div className="mt-1 flex items-center gap-2">
                         <p className="line-clamp-1 flex-1 text-sm text-slate-400">{c.previa ? `${c.previa.autor === 'usuario' ? '' : 'Você: '}${c.previa.texto}` : ''}</p>
@@ -235,7 +319,9 @@ export default function SuporteAdmin() {
                 <span className={`${chip} bg-slate-700 text-slate-300`}>{IDIOMA[conv.idioma] || conv.idioma}</span>
                 {conv.pagina && <span className={`${chip} max-w-[12rem] truncate bg-slate-700/60 text-slate-400`} title={conv.pagina}>em {conv.pagina}</span>}
               </div>
-              <p className="truncate text-xs text-slate-400">{conv.email}</p>
+              <p className="truncate text-xs text-slate-400">{conv.codigo != null && <span data-testid="suporte-codigo">nº {conv.codigo} · </span>}{conv.email}</p>
+              {/* "online agora / visto ha X" de quem tem conta (dono 19/11); visitante nao manda sinal */}
+              {conv.profileId && <Presenca vistoEm={conv.vistoEm} className="mt-0.5" />}
               {conv.tipo === 'visitante' && (
                 <p className="mt-1 inline-flex items-center gap-1 rounded-md border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[11px] text-amber-300">
                   E-mail não verificado — não passe dados de conta
@@ -253,7 +339,7 @@ export default function SuporteAdmin() {
                 {['w-2/3', 'ml-auto w-1/2', 'w-1/2', 'ml-auto w-2/3'].map((w, i) => <div key={i} className={`h-10 animate-pulse rounded-2xl bg-slate-700/50 ${w}`} />)}
               </div>
             ) : msgs.length === 0 ? (
-              <p className="pt-10 text-center text-sm text-slate-500">Sem mensagens</p>
+              <p className="pt-10 text-center text-sm text-slate-500">Sem mensagens ainda — escreva abaixo; {conv.nome} vê no botão de chat do site.</p>
             ) : msgs.map((m, i) => {
               const novoDia = i === 0 || dia(msgs[i - 1].created_at) !== dia(m.created_at);
               const separador = novoDia && (

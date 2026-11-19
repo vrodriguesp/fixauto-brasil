@@ -15,7 +15,7 @@ const moedaPadrao = (idioma?: string | null) => (idiomaDoSite(idioma) === 'pt' ?
 import { FROM_EMAIL, enviarEmail } from '@/lib/email';
 import { emailDeContaTeste } from './conta-teste-envio';
 import { aplicarIdentidade } from './email-marca';
-import { SUPORTE_EMAIL_RESPOSTA, linguaTexto } from './suporte-textos';
+import { SUPORTE_EMAIL_MENSAGEM, SUPORTE_EMAIL_RESPOSTA, linguaTexto } from './suporte-textos';
 
 // teste local sem Resend: os e-mails viram arquivos (lib/email.ts, EMAIL_PASTA_TESTE)
 const podeEnviar = !!resend || !!process.env.EMAIL_PASTA_TESTE;
@@ -1121,9 +1121,10 @@ export async function sendSuporteAdminEmail(params: { nome: string; contato: str
 }
 
 /** Resposta do admin para quem nao esta com o chat aberto (no maximo 1 a cada 15 min por conversa). */
-export async function sendSuporteRespostaEmail(params: { toEmail: string; toName: string; texto: string; locale: string; visitante?: boolean }) {
+export async function sendSuporteRespostaEmail(params: { toEmail: string; toName: string; texto: string; locale: string; visitante?: boolean; iniciada?: boolean }) {
   if (!podeEnviar) return { success: false, error: 'Email service not configured' };
-  const s = SUPORTE_EMAIL_RESPOSTA[linguaTexto(params.locale)];
+  // iniciada: conversa que o admin comecou (dono 19/11) - "mensagem", nao "resposta"
+  const s = (params.iniciada ? SUPORTE_EMAIL_MENSAGEM : SUPORTE_EMAIL_RESPOSTA)[linguaTexto(params.locale)];
   const url = `${siteNoIdioma(params.locale)}?suporte=1`;
   try {
     await sendOrThrow({

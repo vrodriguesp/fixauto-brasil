@@ -7,6 +7,7 @@ import Navbar from '@/components/layout/Navbar';
 import BarraCarregando from '@/components/layout/BarraCarregando';
 import SiteFooter from '@/components/layout/SiteFooter';
 import ChatSuporte from '@/components/suporte/ChatSuporte';
+import PresencaSinal from '@/components/PresencaSinal';
 import { contarOficinasPublicas } from '@/lib/oficinas-publicas';
 import SugestaoIdioma from '@/components/layout/SugestaoIdioma';
 import TopoAoNavegar from '@/components/layout/TopoAoNavegar';
@@ -153,6 +154,8 @@ export default async function LocaleLayout({
       <SiteFooter temOficinas={temOficinas} />
       {/* chat de suporte com o admin (dono 03/11); Suspense: le ?suporte=1 do endereco */}
       <Suspense fallback={null}><ChatSuporte /></Suspense>
+      {/* sinal "online agora" para o admin (dono 19/11): so com login */}
+      <PresencaSinal />
     </NextIntlClientProvider>
   );
 }

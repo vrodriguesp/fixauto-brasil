@@ -45,6 +45,10 @@ export default function ChatSuporte() {
   // celular, visitante: o botao so aparece depois de rolar um pouco - na primeira
   // tela ele cobria a ponta do botao principal ("Sou oficina") da pagina inicial
   const [rolou, setRolou] = useState(false);
+  // rotulo "Pergunte a nos" ao lado do icone (dono 19/11: o balao sozinho "nem sempre passa a ideia").
+  // No computador fica sempre; no celular aparece com o botao e recolhe ao icone depois de 5 s
+  // (uma pilula larga cobriria a tabela do horario da pagina publica da oficina e a ponta de botoes)
+  const [rotulo, setRotulo] = useState(true);
   const listaRef = useRef<HTMLDivElement>(null);
   const janelaRef = useRef<HTMLDivElement>(null);
   const botaoRef = useRef<HTMLButtonElement>(null);
@@ -77,6 +81,13 @@ export default function ChatSuporte() {
     return () => clearInterval(id);
   }, [aberto, escondido, carregar]);
 
+  // celular: o rotulo recolhe 5 s depois de o botao aparecer (no computador, >= 640 px, nunca)
+  const botaoVisivel = !aberto && (!visitante || rolou || naoLidas > 0 || temConversa);
+  useEffect(() => {
+    if (escondido || !botaoVisivel || window.innerWidth >= 640) return;
+    const t = setTimeout(() => setRotulo(false), 5000);
+    return () => clearTimeout(t);
+  }, [escondido, botaoVisivel]);
   useEffect(() => {
     const ver = () => setRolou(window.scrollY > 300 || window.innerWidth >= 640);
     ver();
@@ -151,12 +162,16 @@ export default function ChatSuporte() {
 
   return (
     <>
-      {!aberto && (!visitante || rolou || naoLidas > 0 || temConversa) && (
-        <button type="button" ref={botaoRef} onClick={() => setAberto(true)} aria-label={naoLidas > 0 ? `${t('abrir')} (${naoLidas})` : t('abrir')} data-testid="chat-suporte-botao"
-          className="chat-suporte-botao fixed right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-white shadow-lg hover:bg-primary-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300">
-          <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+      {botaoVisivel && (
+        <button type="button" ref={botaoRef} onClick={() => setAberto(true)} aria-label={naoLidas > 0 ? `${t('abrir')} (${naoLidas})` : t('abrir')} title={t('titulo')} data-testid="chat-suporte-botao" data-rotulo={rotulo ? '1' : '0'}
+          className={`chat-suporte-botao fixed right-4 z-40 flex h-14 items-center justify-center gap-2 rounded-full bg-primary-600 text-white shadow-lg hover:bg-primary-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 ${rotulo ? 'pl-4 pr-5' : 'w-14'} sm:w-auto sm:pl-4 sm:pr-5`}>
+          {/* atendente (fone de ouvido) dentro do balao: "falar com alguem do BipFix" (dono 19/11) */}
+          <svg className="h-7 w-7 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.9} d="M21 11.5c0 4.14-4.03 7.5-9 7.5-1.2 0-2.35-.2-3.4-.55L4 20l1.3-3.3C3.87 15.4 3 13.55 3 11.5 3 7.36 7.03 4 12 4s9 3.36 9 7.5z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.9} d="M8.5 12.2v-1.1a3.5 3.5 0 017 0v1.1" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.9} d="M8.5 11.6h1.2v2.4H8.5a1 1 0 01-1-1v-.4a1 1 0 011-1zm7 0h-1.2v2.4h1.2a1 1 0 001-1v-.4a1 1 0 00-1-1zM12 15.4h1.5" />
           </svg>
+          <span className={`${rotulo ? '' : 'hidden'} whitespace-nowrap text-sm font-semibold sm:inline`} data-testid="chat-suporte-rotulo">{t('rotulo')}</span>
           {naoLidas > 0 && <span aria-hidden="true" className="absolute -right-0.5 -top-0.5 min-w-[1.25rem] rounded-full bg-red-600 px-1 text-center text-xs font-bold leading-5" data-testid="chat-suporte-nao-lidas">{naoLidas}</span>}
         </button>
       )}
