@@ -52,6 +52,10 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const { traducao, origem } = await traduzirSeLigado(texto, c.idioma, traduzir, c.id);
   // era para traduzir, pessoa em outra lingua e nada voltou: avisa o admin (chave/cota do DeepL)
   const semTraducao = traduzir && !traducao && !origem && !c.idioma.startsWith('pt');
+  // conversa que o admin comecou (dono 19/11) e a pessoa ainda nao escreveu: o e-mail diz
+  // "mensagem do BipFix", nao "resposta"
+  const { count: dela } = await supabaseAdmin.from('suporte_mensagens').select('id', { count: 'exact', head: true }).eq('conversa_id', c.id).eq('autor', 'usuario');
+  const iniciada = !dela;
   const { error } = await supabaseAdmin.from('suporte_mensagens').insert({ conversa_id: c.id, autor: 'admin', texto, traducao, origem });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
@@ -62,7 +66,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const email = perfil?.email || c.visitante_email;
   let porEmail = false;
   if (email && !recente(c.usuario_visto_em, ATIVO_MS) && !recente(c.usuario_avisado_em, AVISO_MS)) {
-    const r = await sendSuporteRespostaEmail({ toEmail: email, toName: perfil?.nome || c.visitante_nome || '', texto: traducao || texto, locale: c.idioma, visitante: !perfil?.email });
+    const r = await sendSuporteRespostaEmail({ toEmail: email, toName: perfil?.nome || c.visitante_nome || '', texto: traducao || texto, locale: c.idioma, visitante: !perfil?.email, iniciada });
     porEmail = r.success;
     if (porEmail) mudancas.usuario_avisado_em = agora;
   }

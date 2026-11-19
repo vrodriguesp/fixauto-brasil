@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { configSuporte } from '@/lib/suporte';
+import { presencaDe } from '@/lib/presenca';
 
 // Chat de suporte, lado do admin (dono 03/11): lista das conversas, interruptor
 // da traducao automatica e "admin online" (o painel do admin aberto manda um
@@ -11,7 +12,7 @@ export async function GET() {
   const auth = await requireAdmin();
   if (!auth.ok) return auth.response;
   const { data: conversas } = await supabaseAdmin.from('suporte_conversas')
-    .select('id, profile_id, visitante_nome, visitante_email, idioma, pagina, ultima_mensagem_em, nao_lidas_admin, usuario_visto_em, profile:profiles(nome, email, tipo)')
+    .select('id, profile_id, visitante_nome, visitante_email, idioma, pagina, ultima_mensagem_em, nao_lidas_admin, usuario_visto_em, profile:profiles(nome, email, tipo, codigo)')
     .order('ultima_mensagem_em', { ascending: false }).limit(100);
   const ids = (conversas || []).map((c) => c.id);
   // ultima mensagem de cada conversa (para a previa da lista)
@@ -21,6 +22,8 @@ export async function GET() {
   const previa = new Map<string, any>();
   for (const m of ultimas || []) if (!previa.has(m.conversa_id)) previa.set(m.conversa_id, m);
   const cfg = await configSuporte();
+  // "online agora / visto ha X" de quem tem conta (dono 19/11, migracao 101)
+  const presenca = await presencaDe((conversas || []).map((c) => c.profile_id).filter(Boolean) as string[]);
   return NextResponse.json({
     traducao: cfg.traducao,
     conversas: (conversas || []).map((c: any) => {
@@ -28,7 +31,8 @@ export async function GET() {
       return {
         id: c.id, idioma: c.idioma, pagina: c.pagina, ultima: c.ultima_mensagem_em, naoLidas: c.nao_lidas_admin,
         nome: c.profile?.nome || c.visitante_nome || '?', email: c.profile?.email || c.visitante_email || '',
-        tipo: c.profile?.tipo || 'visitante',
+        tipo: c.profile?.tipo || 'visitante', profileId: c.profile_id || null, codigo: c.profile?.codigo ?? null,
+        vistoEm: c.profile_id ? presenca[c.profile_id] || null : null,
         previa: u ? { autor: u.autor, texto: (u.autor === 'usuario' && u.traducao) || u.texto } : null,
       };
     }),
