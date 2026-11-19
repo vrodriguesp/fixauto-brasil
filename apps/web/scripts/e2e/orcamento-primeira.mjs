@@ -136,7 +136,7 @@ try {
     }
     console.log('prints em', OUT);
   } else {
-    ok('banco: area do pedido = bairro/cidade, sem a rua (101)', s1.area === AREA, s1.area);
+    ok('banco: area do pedido = bairro/cidade, sem a rua (102)', s1.area === AREA, s1.area);
     // ---------- A: ru 1366
     {
       const c = await contexto(1366); const p = await c.newPage();

@@ -143,10 +143,26 @@ try {
   const { data: lOf2 } = await of2.a.from('lojas_pecas').select('id, nome_fantasia').eq('id', l1.id);
   ok('L-07 legitimo: oficina (aprovada ou nao) le nome/pais das lojas (telas de pecas, conversa)', (lOf || []).length === 2 && (lOf2 || []).length === 1 && lOf.some((x) => x.nome_fantasia === `SEG LOJA ${tag}`), JSON.stringify({ n: (lOf || []).length, n2: (lOf2 || []).length }));
 
-  // N-01..N-07 (migracao 101, dono 19/11): antes do aceite a oficina NAO le o nome/foto do cliente (so o codigo) nem a
+  // N-01..N-07 (migracao 102, dono 19/11): antes do aceite a oficina NAO le o nome/foto do cliente (so o codigo) nem a
   // rua do pedido (so a area); depois do aceite, tudo como antes. A pausa dos avisos so na propria linha.
-  const { data: sN } = await cli.a.from('solicitacoes').insert({ cliente_id: cli.id, veiculo_id: v.id, tipo: 'mecanica', descricao: 'privacidade', urgencia: 'media', latitude: 59.43, longitude: 24.75, endereco: 'Narva mnt 7, 10117 Tallinn, Estonia' }).select('id, area').single();
+  const { data: sN } = await cli.a.from('solicitacoes').insert({ cliente_id: cli.id, veiculo_id: v.id, tipo: 'mecanica', descricao: 'privacidade', urgencia: 'media', latitude: 59.4371, longitude: 24.7536, endereco: 'Narva mnt 7, 10117 Tallinn, Estonia' }).select('id, area, endereco, latitude, longitude').single();
   sols.push(sN.id);
+  // S-01..S-06 (102): a rua e as coordenadas exatas ficam em solicitacoes_privado; a linha publica so tem area + ~1 km
+  ok('S-01 linha de solicitacoes devolvida ao motorista ja vem mascarada (area, ~1 km)', sN.endereco === 'Tallinn, Estonia' && sN.latitude === 59.44 && sN.longitude === 24.75, JSON.stringify(sN));
+  const { data: sOf } = await of.a.from('solicitacoes').select('endereco, area, latitude, longitude, privado:solicitacoes_privado(endereco, latitude, longitude)').eq('id', sN.id).maybeSingle();
+  ok('S-02 oficina no raio SEM aceite: le a area e ~1 km, NAO a rua (REST, select direto + embed)', !!sOf && sOf.endereco === 'Tallinn, Estonia' && !/\d/.test(sOf.endereco) && sOf.latitude === 59.44 && (sOf.privado == null || (Array.isArray(sOf.privado) && !sOf.privado.length)), JSON.stringify(sOf));
+  const { data: pOf } = await of.a.from('solicitacoes_privado').select('*').eq('solicitacao_id', sN.id);
+  ok('S-02b oficina SEM aceite: solicitacoes_privado vazio', !(pOf || []).length, JSON.stringify(pOf));
+  const { data: pCli } = await cli.a.from('solicitacoes_privado').select('endereco, latitude').eq('solicitacao_id', sN.id).maybeSingle();
+  ok('S-03 legitimo: o motorista le a rua e as coordenadas exatas do proprio pedido', pCli?.endereco === 'Narva mnt 7, 10117 Tallinn, Estonia' && pCli?.latitude === 59.4371, JSON.stringify(pCli));
+  const { data: pOutro } = await outro.a.from('solicitacoes_privado').select('endereco').eq('solicitacao_id', sN.id);
+  ok('S-04 outro motorista NAO le a rua', !(pOutro || []).length);
+  const { error: eIns } = await of.a.from('solicitacoes_privado').insert({ solicitacao_id: sN.id, endereco: 'hack' });
+  const { error: eUpd } = await cli.a.from('solicitacoes_privado').update({ endereco: 'hack' }).eq('solicitacao_id', sN.id);
+  const { data: pCheck } = await sb.from('solicitacoes_privado').select('endereco').eq('solicitacao_id', sN.id).single();
+  ok('S-05 ninguem escreve na tabela privada pela API (so o gatilho)', !!eIns && (!!eUpd || pCheck.endereco !== 'hack') && pCheck.endereco === 'Narva mnt 7, 10117 Tallinn, Estonia', `${eIns?.message} / ${eUpd?.message}`);
+  const { data: vAtende } = await of.a.rpc('minha_oficina_atende', { p_sol: sN.id });
+  ok('S-06 legitimo: a oficina no raio continua a ver o pedido (distancia pelas coordenadas exatas)', vAtende === true, String(vAtende));
   // o orcamento de A-03 ficou 'aceito' (pedido s): sem ele a oficina ainda nao atende este cliente
   await sb.from('orcamentos').update({ status: 'enviado' }).eq('id', orc.id);
   ok('N-01 area derivada = bairro/cidade, sem rua nem codigo postal', sN.area === 'Tallinn, Estonia', sN.area);
@@ -160,6 +176,8 @@ try {
   const { data: rp2 } = await of.a.rpc('resumo_clientes_pedidos', { p_sols: [sN.id] });
   const { data: rc2 } = await of.a.rpc('resumo_clientes', { p_ids: [cli.id] });
   ok('N-05 legitimo: com orcamento ACEITO a oficina le o nome (por pedido e por cliente)', rp2?.[0]?.nome === 'Novo Nome' && rc2?.[0]?.nome === 'Novo Nome', JSON.stringify({ rp2, rc2 }));
+  const { data: pOfAceito } = await of.a.from('solicitacoes_privado').select('endereco, latitude').eq('solicitacao_id', sN.id).maybeSingle();
+  ok('S-07 legitimo: com orcamento ACEITO a oficina le a rua e as coordenadas exatas', pOfAceito?.endereco === 'Narva mnt 7, 10117 Tallinn, Estonia' && pOfAceito?.latitude === 59.4371, JSON.stringify(pOfAceito));
   const { data: rpSelf } = await cli.a.rpc('resumo_clientes_pedidos', { p_sols: [sN.id] });
   ok('N-05 legitimo: o proprio cliente le o proprio nome', rpSelf?.[0]?.nome === 'Novo Nome');
   await sb.from('orcamentos').delete().eq('id', oN.id);

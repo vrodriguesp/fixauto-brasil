@@ -33,7 +33,8 @@ export async function GET(req: NextRequest) {
          veiculo:veiculos(id, fipe_marca, fipe_modelo, fipe_ano, placa),
          orcamentos(id, status, valor_total, oficina_id),
          dispensas:pedido_dispensas(oficina_id),
-         vistos:pedido_vistos(oficina_id)`
+         vistos:pedido_vistos(oficina_id),
+         privado:solicitacoes_privado(endereco)`
       )
       .order('created_at', { ascending: false })
       .limit(300);
@@ -51,7 +52,9 @@ export async function GET(req: NextRequest) {
     const { data, error } = await query;
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-    const solicitacoes = (data || []).map(({ dispensas, vistos, ...s }: any) => ({
+    // 102: o admin ve a rua (tabela privada); a linha so tem a area
+    const solicitacoes = (data || []).map(({ dispensas, vistos, privado, ...s }: any) => ({
+      endereco: privado?.endereco || s.endereco,
       ...s,
       // oficinas que abriram o pedido e que marcaram "nao tenho interesse" (migracao 070)
       totalVistos: vistos?.length || 0,

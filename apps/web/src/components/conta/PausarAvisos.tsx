@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { INTL_LOCALE } from '@/lib/utils';
 
-// Pausa dos avisos de pedido novo (migracao 101, dono 19/11 - P6): em vez de apagar a conta, a oficina para de
+// Pausa dos avisos de pedido novo (migracao 102, dono 19/11 - P6): em vez de apagar a conta, a oficina para de
 // receber sino/e-mail/push de pedidos novos por 7 ou 30 dias (profiles.avisos_pausados_ate; quem recebe e
 // decidido em lib/avisar-oficinas-pedido.ts). Conta, pedidos e conversas ficam como estao. So para oficinas.
 export default function PausarAvisos({ compacto = false }: { compacto?: boolean }) {

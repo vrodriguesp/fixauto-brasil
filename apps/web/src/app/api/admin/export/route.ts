@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
       let query = supabaseAdmin
         .from('solicitacoes')
         .select(
-          `id, numero, tipo, status, urgencia, descricao, endereco, created_at,
+          `id, numero, tipo, status, urgencia, descricao, endereco, created_at, privado:solicitacoes_privado(endereco),
            cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, telefone),
            veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, placa),
            orcamentos(valor_total, status)`
@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
           status: s.status,
           urgencia: s.urgencia,
           descricao: s.descricao,
-          endereco: s.endereco,
+          endereco: (s as any).privado?.endereco || s.endereco,
           cliente_nome: s.cliente?.nome || '',
           cliente_email: s.cliente?.email || '',
           cliente_telefone: s.cliente?.telefone || '',

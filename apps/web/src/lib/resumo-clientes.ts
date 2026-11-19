@@ -8,7 +8,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 // - completarClientes poe nome/codigo/foto/idioma (resumo_clientes);
 // - completarContato poe telefone/e-mail SO nos pedidos em que o orcamento dela foi
 //   aceito (contato_clientes, por pedido).
-// Migracao 101 (dono 19/11): o NOME e a foto do cliente so chegam a oficina depois de o orcamento ser aceito -
+// Migracao 102 (dono 19/11): o NOME e a foto do cliente so chegam a oficina depois de o orcamento ser aceito -
 // por pedido (resumo_clientes_pedidos, quando a linha e um pedido: lista, detalhe, formulario, conversa) ou,
 // nas telas por cliente (avaliacoes, garantias, agenda), quando ha orcamento aceito com esse cliente. Antes
 // disso vem so o codigo/idioma e as telas mostram "Cliente · codigo".
@@ -33,6 +33,19 @@ export async function completarClientes<T extends { id?: string | null; solicita
     if (l.cliente || !l.cliente_id) return l;
     const c = porSol.get(chavePedido(l) || '') || porId.get(l.cliente_id);
     return c ? { ...l, cliente: c } : l;
+  });
+}
+
+/**
+ * Endereco completo e coordenadas exatas do pedido (migracao 102): a linha de solicitacoes guarda so a area e
+ * ~1 km; a rua esta em solicitacoes_privado, que a RLS so devolve ao motorista do pedido, ao admin e a oficina
+ * com orcamento ACEITO. Quem embute privado:solicitacoes_privado(endereco, latitude, longitude) passa por aqui.
+ */
+export function comEnderecoPrivado<T extends { endereco?: string | null; latitude?: number | null; longitude?: number | null; privado?: any }>(linhas: T[]): T[] {
+  return linhas.map((l) => {
+    const p = Array.isArray(l.privado) ? l.privado[0] : l.privado;
+    if (!p) return l;
+    return { ...l, endereco: p.endereco || l.endereco, latitude: p.latitude ?? l.latitude, longitude: p.longitude ?? l.longitude };
   });
 }
 

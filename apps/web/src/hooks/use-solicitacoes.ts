@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import type { Solicitacao } from '@fixauto/shared';
-import { completarClientesEContato } from '@/lib/resumo-clientes';
+import { completarClientesEContato, comEnderecoPrivado } from '@/lib/resumo-clientes';
 import { oficinaVePedido } from '@/lib/caixa-pedidos';
 
 export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) {
@@ -24,6 +24,7 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
         fotos:solicitacao_fotos(*),
         cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo),
         convites:pedido_convites(oficina_id, origem),
+        privado:solicitacoes_privado(endereco, latitude, longitude),
         orcamentos(
           *,
           itens:orcamento_itens(*),
@@ -73,6 +74,8 @@ export function useSolicitacoes(filter?: { status?: string; nearby?: boolean }) 
     // oficina: nome/codigo do cliente por resumo_clientes (074) e telefone/e-mail so nos
     // pedidos em que ela foi escolhida (contato_clientes, 086)
     if (user.tipo !== 'cliente') results = await completarClientesEContato(supabase, results as any[]);
+    // 102: rua e coordenadas exatas so para quem pode (privado); senao a area e ~1 km que estao na linha
+    results = comEnderecoPrivado(results as any[]) as any;
 
     // For workshops, filter by distance/especialidades BUT always show accepted ones
     if (user.tipo === 'oficina' && oficina && filter?.nearby) {

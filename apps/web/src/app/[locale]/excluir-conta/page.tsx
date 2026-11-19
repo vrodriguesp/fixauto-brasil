@@ -23,7 +23,7 @@ export default async function ExcluirContaPage({ params }: { params: Promise<{ l
         <li>{t('item3')}</li>
         <li>{t('item4')}</li>
       </ul>
-      {/* oficina: antes de apagar, a opcao de so pausar os avisos (101, dono 19/11) */}
+      {/* oficina: antes de apagar, a opcao de so pausar os avisos (102, dono 19/11) */}
       <div className="mb-6"><PausarAvisos /></div>
       <ExcluirContaClient />
     </div>

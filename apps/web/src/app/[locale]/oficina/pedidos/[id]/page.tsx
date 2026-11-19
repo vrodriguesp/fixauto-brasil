@@ -7,7 +7,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useSolicitacoes } from '@/hooks/use-solicitacoes';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { completarClientesEContato } from '@/lib/resumo-clientes';
+import { completarClientesEContato, comEnderecoPrivado } from '@/lib/resumo-clientes';
 import StatusBadge from '@/components/ui/StatusBadge';
 import NoShowWarning from '@/components/ui/NoShowWarning';
 import DamageAnalysis from '@/components/ui/DamageAnalysis';
@@ -43,13 +43,13 @@ export default function SolicitacaoDetalhePage() {
       supabase
         .from('solicitacoes')
         .select(
-          '*, veiculo:veiculos(*), fotos:solicitacao_fotos(*), cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo), convites:pedido_convites(oficina_id, origem), orcamentos(*, itens:orcamento_itens(*), oficina:oficinas(*, profile:profiles(*)), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))'
+          '*, veiculo:veiculos(*), fotos:solicitacao_fotos(*), cliente:profiles!solicitacoes_cliente_id_fkey(id, nome, avatar_url, tipo, codigo), convites:pedido_convites(oficina_id, origem), privado:solicitacoes_privado(endereco, latitude, longitude), orcamentos(*, itens:orcamento_itens(*), oficina:oficinas(*, profile:profiles(*)), disponibilidade:orcamento_disponibilidade!orcamento_disponibilidade_orcamento_id_fkey(*))'
         )
         .eq('id', params.id)
         .single()
         .then(({ data }) => {
           // nome do cliente (074) e o contato so se o orcamento desta oficina foi aceito NESTE pedido (086)
-          if (data) completarClientesEContato(supabase, [data as any]).then(([d]) => setDirectSol(d));
+          if (data) completarClientesEContato(supabase, comEnderecoPrivado([data as any])).then(([d]) => setDirectSol(d));
           setBuscaFeita(true);
         });
     }
@@ -331,7 +331,7 @@ export default function SolicitacaoDetalhePage() {
                 </span>
               </div>
               <div>
-                {/* nome e rua so depois do aceite (101, dono 19/11): antes, "Cliente · codigo" e a area */}
+                {/* nome e rua so depois do aceite (102, dono 19/11): antes, "Cliente · codigo" e a area */}
                 <p className="font-medium text-gray-900 text-sm" data-testid="cliente-nome">{sol.cliente?.nome || (sol.cliente?.codigo ? `${t('clienteFallback')} · ${sol.cliente.codigo}` : t('clienteFallback'))}</p>
                 <p className="text-xs text-gray-500" data-testid="cliente-local">{isAccepted || isEmAndamento || sol.status === 'concluida' ? sol.endereco : (sol as any).area || ''}</p>
                 {!(isAccepted || isEmAndamento || sol.status === 'concluida') && <p className="mt-1 text-xs text-gray-400" data-testid="nome-apos-aceite">{t('nomeAposAceite')}</p>}

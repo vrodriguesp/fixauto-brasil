@@ -691,7 +691,7 @@ ${d.observacoes}` : d.observacoes));
       <div className="bg-gray-50 rounded-lg p-4 mb-6">
         <TextoTraduzido texto={cleanDescricao(solicitacao.descricao)} className="text-sm text-gray-600" />
         <p className="text-xs text-gray-500 mt-2" data-testid="cliente-local-form">
-          {/* antes do aceite (101): sem nome e sem rua - so "Cliente · codigo" e a area; depois, nome e endereco */}
+          {/* antes do aceite (102): sem nome e sem rua - so "Cliente · codigo" e a area; depois, nome e endereco */}
           {solicitacao.cliente?.nome
             ? `${t('clienteLabel')}: ${solicitacao.cliente.nome} | ${solicitacao.endereco || ''}`
             : [(solicitacao.cliente as any)?.codigo ? `${t('clienteLabel')} · ${(solicitacao.cliente as any).codigo}` : null, (solicitacao as any).area || null].filter(Boolean).join(' | ')}

@@ -164,7 +164,7 @@ async function emailLembrete(o: OficinaAviso, idioma: string, pedidos: PedidoAvi
           <p style="margin:0 0 6px;font-size:18px;font-weight:bold;color:#111827;">#${escapeHtml(String(sol.numero ?? ''))} · ${escapeHtml(tipoDe(sol))}</p>
           ${carro ? `<p style="margin:0 0 6px;">${escapeHtml(carro)}${ano && ano !== '-' ? ' ' + escapeHtml(String(ano)) : ''}</p>` : ''}
           ${desc ? `<p style="margin:0 0 6px;color:#374151;">${escapeHtml(desc)}</p>` : ''}
-          ${sol.endereco ? `<p style="margin:0 0 12px;color:#6b7280;font-size:14px;">${escapeHtml(sol.endereco)}</p>` : ''}
+          ${sol.area ? `<p style="margin:0 0 12px;color:#6b7280;font-size:14px;">${escapeHtml(sol.area)}</p>` : ''}
           <p style="margin:0;"><a href="${links.abrir}" style="display:inline-block;background:#1e40af;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">${x.abrir}</a></p>
           ${links.naoTenhoInteresse !== links.abrir ? `<p style="margin:10px 0 0;font-size:14px;"><a href="${links.naoTenhoInteresse}" style="color:#4b5563;">${SEM_INTERESSE[idioma] || SEM_INTERESSE.en}</a></p>` : ''}
         </div>`);

@@ -40,18 +40,21 @@ export type OficinaAviso = {
   oficina_id: string; profile_id: string; nome: string; cidade: string | null; endereco: string | null; pais: string | null;
   especialidades: string[]; ativa: boolean; km: number | null; raio: number;
   idioma: string | null; conta_teste: boolean; email: string | null; nome_dono: string | null;
-  avisos_pausados_ate: string | null; // 101: a oficina pausou os avisos de pedido novo ate esta data
+  avisos_pausados_ate: string | null; // 102: a oficina pausou os avisos de pedido novo ate esta data
 };
 
 export type MotivoJaRecebeu = 'aviso' | 'orcamento' | 'dispensa' | 'convite';
 export type JaRecebeu = { oficina_id: string; profile_id: string; nome: string; motivo: MotivoJaRecebeu; motivos: MotivoJaRecebeu[]; origem_convite: string | null };
 
-// area (101): bairro/cidade sem a rua - e o que a oficina ve antes do aceite (sino, push, e-mail)
-const SELECT_PEDIDO = 'id, numero, tipo, descricao, urgencia, endereco, area, latitude, longitude, pais, status, emergencia_id, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano), cliente:profiles!solicitacoes_cliente_id_fkey(conta_teste)';
+// area (102): bairro/cidade sem a rua - e o que a oficina ve antes do aceite (sino, push, e-mail)
+// 102: a linha guarda area + ~1 km; a rua e as coordenadas exatas (para a distancia) estao em privado (service role)
+const SELECT_PEDIDO = 'id, numero, tipo, descricao, urgencia, endereco, area, latitude, longitude, pais, status, emergencia_id, veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano), cliente:profiles!solicitacoes_cliente_id_fkey(conta_teste), privado:solicitacoes_privado(endereco, latitude, longitude)';
 
 export async function carregarPedido(solicitacaoId: string): Promise<PedidoAviso | null> {
   const { data } = await supabaseAdmin.from('solicitacoes').select(SELECT_PEDIDO).eq('id', solicitacaoId).maybeSingle();
-  return (data as unknown as PedidoAviso) || null;
+  if (!data) return null;
+  const p = (data as any).privado as { endereco?: string; latitude?: number | null; longitude?: number | null } | null;
+  return { ...(data as unknown as PedidoAviso), latitude: p?.latitude ?? (data as any).latitude, longitude: p?.longitude ?? (data as any).longitude };
 }
 
 /** Todas as oficinas (ativas ou nao), com a distancia ate o pedido. */
@@ -102,7 +105,7 @@ export function motivosDe(o: Pick<OficinaAviso, 'oficina_id' | 'profile_id'>, j:
 /** A regra do aviso automatico (igual a minha_oficina_atende sem o convite, migracoes 056/064/067). */
 export function oficinaBate(o: OficinaAviso, sol: Pick<PedidoAviso, 'tipo' | 'cliente'>, tipo = sol.tipo): boolean {
   const clienteTeste = !!sol.cliente?.conta_teste;
-  // avisos pausados pela oficina (101): nao recebe pedido novo ate a data
+  // avisos pausados pela oficina (102): nao recebe pedido novo ate a data
   if (o.avisos_pausados_ate && Date.parse(o.avisos_pausados_ate) > Date.now()) return false;
   // conta de teste (revisor das lojas) so avisa oficina de teste, e vice-versa (migracao 063)
   return o.ativa && o.conta_teste === clienteTeste && tipoCompativel(o.especialidades, tipo) && o.km != null && o.km <= o.raio;
@@ -140,7 +143,7 @@ export async function avisarOficinasDoPedido(solicitacaoId: string): Promise<num
 
 const carroDe = (sol: PedidoAviso) => [sol.veiculo?.fipe_marca, sol.veiculo?.fipe_modelo].filter(Boolean).join(' ');
 const idiomaDe = (o: OficinaAviso) => (o.idioma && TIPOS[o.idioma] ? o.idioma : 'en');
-// so a area (101): a rua do cliente nunca sai no aviso antes do aceite
+// so a area (102): a rua do cliente nunca sai no aviso antes do aceite
 const mensagemDe = (sol: PedidoAviso, l: string, carro: string) => [(TIPOS[l] || TIPOS.en)[sol.tipo] || sol.tipo, carro, sol.area].filter(Boolean).join(' - ');
 
 /**
