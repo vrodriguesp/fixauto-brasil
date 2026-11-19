@@ -217,8 +217,8 @@ export default function PedidoScreen() {
   const ehDano = tipo === 'colisao' || tipo === 'funilaria';
   const EXEMPLO: Record<string, string> = { revisao: 'exemploRevisao', mecanica: 'exemploMecanica', eletrica: 'exemploEletrica', pneu: 'exemploPneu', vidros: 'exemploVidro', colisao: 'exemploFoto', funilaria: 'exemploFoto' };
   const exemplo = t(`pedidoSemConta.${EXEMPLO[tipo] || 'placeholderDescribeIssue'}`);
-  // a pergunta do passo 2: "Mis autol viga on?" (defeito), "Mis on vaja teha?" (hooldus), "Mis juhtus?" (dano/vidro)
-  const tituloDetalhe = tipo === 'revisao' ? t('pedidoSemConta.detalheTitulo') : temLista || tipo === 'outro' ? t('pedidoSemConta.detalheTituloViga') : t('pedidoSemConta.detalheTituloFoto');
+  // a pergunta do passo 2 (igual ao site): "Mis autol viga on?" (tipos com lista e "Muu / ei tea"), "Mis juhtus?" (dano/vidro)
+  const tituloDetalhe = temLista || tipo === 'outro' ? t('pedidoSemConta.detalheTituloViga') : t('pedidoSemConta.detalheTituloFoto');
   // escreveu o que precisa OU marcou algum servico da lista (regra do dono 12/11: a foto nunca substitui)
   const servicoOk = !!tipo && (descricao.trim().length > 0 || servicos.length > 0);
   useEffect(() => { setFaltando(''); }, [servicoOk, endereco, marca, modelo, nome, email, termos]); // corrigiu: o aviso some
