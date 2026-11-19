@@ -410,7 +410,8 @@ try {
     const campo = pP.getByTestId('perfil-telefone-comercial');
     ok('D.6b /loja/perfil tem o campo "telefone comercial" (perfil-telefone-comercial)', await visivel(campo));
     await campo.fill('+372 600 1234');
-    await botao(pP, ET('lojaPerfil.salvarButton')).click();
+    // desde o lote 4 o perfil da loja de TESTE tem um 2o 'Salvesta' (secao da pagina publica): o do formulario principal e o 1o
+    await botao(pP, ET('lojaPerfil.salvarButton')).first().click();
     let row = null; for (let i = 0; i < 30 && !row; i++) { row = (await A.admin.from('fornecedores_contato').select('telefone').eq('fornecedor_tipo', 'loja').eq('fornecedor_id', lj1.id).maybeSingle()).data; if (!row) await sleep(300); }
     ok('D.6c salvar grava fornecedores_contato (loja, id, "+372 600 1234")', row?.telefone === '+372 600 1234', JSON.stringify(row));
     await pP.screenshot({ path: `${PRINTS}/ligado-loja-perfil-telefone-et-390.png`, fullPage: true });
