@@ -9,26 +9,23 @@
 -- Itens antigos do catalogo ficam 'interno' (a tela de hoje promete "as oficinas ainda nao veem esta lista"):
 -- so entram no Shop quando a loja escolher "oficinas" (auditoria, achado 1).
 --
--- Rollback (so depois de voltar o codigo):
---   DROP POLICY IF EXISTS cotacoes_pecas_alvo_lote5 ON cotacoes_pecas;
---   DROP POLICY IF EXISTS cotacoes_respostas_alvo_lote5 ON cotacoes_pecas_respostas;
---   DROP POLICY IF EXISTS pecas_mensagens_alvo_lote5 ON cotacoes_pecas_mensagens;
---   DROP TRIGGER IF EXISTS trg_p5_cotacao_alvo ON cotacoes_pecas; DROP FUNCTION IF EXISTS p5_cotacao_alvo();
---   DROP FUNCTION IF EXISTS cotacao_alvo_permite(uuid, text, uuid);
---   ALTER TABLE cotacoes_pecas DROP CONSTRAINT IF EXISTS cotacoes_pecas_alvo_check;
---   ALTER TABLE cotacoes_pecas ADD CONSTRAINT cotacoes_pecas_alvo_check CHECK (alvo IN ('todos', 'so_lojas'));  -- (falha se houver linhas 'fornecedor_unico': apagar/mudar antes)
---   ALTER TABLE cotacoes_pecas DROP COLUMN IF EXISTS fornecedor_alvo_tipo, DROP COLUMN IF EXISTS fornecedor_alvo_id,
---     DROP COLUMN IF EXISTS catalogo_item_id, DROP COLUMN IF EXISTS promocao_id, DROP COLUMN IF EXISTS preco_referencia,
---     DROP COLUMN IF EXISTS origem;
---   DROP TABLE IF EXISTS promocoes_pecas; DROP FUNCTION IF EXISTS p5_promocao_regras();
---   DROP TRIGGER IF EXISTS trg_p5_catalogo ON pecas_catalogo; DROP FUNCTION IF EXISTS p5_catalogo_regras();
---   ALTER TABLE pecas_catalogo DROP CONSTRAINT IF EXISTS pecas_catalogo_p5_check;
---   ALTER TABLE pecas_catalogo DROP COLUMN IF EXISTS codigo, DROP COLUMN IF EXISTS especificacao, DROP COLUMN IF EXISTS unidade,
---     DROP COLUMN IF EXISTS embalagem, DROP COLUMN IF EXISTS condicao, DROP COLUMN IF EXISTS visibilidade,
---     DROP COLUMN IF EXISTS atualizado_em, DROP COLUMN IF EXISTS oculto, DROP COLUMN IF EXISTS oculto_motivo, DROP COLUMN IF EXISTS oculto_em;
---   DROP POLICY IF EXISTS pecas_catalogo_delete_oculto_lote5 ON pecas_catalogo; DROP POLICY IF EXISTS promocoes_pecas_delete_oculta_lote5 ON promocoes_pecas;
---   ALTER TABLE plataforma_config DROP COLUMN IF EXISTS pecas_shop_ativo;
---   NOTIFY pgrst, 'reload schema';
+-- Rollback (so depois de voltar o codigo; ORDEM do veredito Fable sec. 7 - as politicas dependem das colunas):
+--   1) DELETE/UPDATE das cotacoes com alvo = 'fornecedor_unico' (o CHECK antigo nao as aceita)
+--   2) DROP POLICY IF EXISTS cotacoes_pecas_alvo_lote5 ON cotacoes_pecas; DROP POLICY IF EXISTS cotacoes_respostas_alvo_lote5 ON cotacoes_pecas_respostas;
+--      DROP POLICY IF EXISTS pecas_mensagens_alvo_lote5 ON cotacoes_pecas_mensagens; DROP POLICY IF EXISTS pecas_catalogo_delete_oculto_lote5 ON pecas_catalogo;
+--      DROP POLICY IF EXISTS promocoes_pecas_delete_oculta_lote5 ON promocoes_pecas;
+--   3) DROP TRIGGER IF EXISTS trg_p5_cotacao_alvo ON cotacoes_pecas; DROP TRIGGER IF EXISTS trg_p5_catalogo ON pecas_catalogo;
+--      DROP FUNCTION IF EXISTS p5_cotacao_alvo(); DROP FUNCTION IF EXISTS cotacao_alvo_permite(uuid, text, uuid); DROP FUNCTION IF EXISTS p5_catalogo_regras();
+--   4) ALTER TABLE cotacoes_pecas DROP CONSTRAINT IF EXISTS cotacoes_pecas_alvo_p5_check, DROP CONSTRAINT IF EXISTS cotacoes_pecas_alvo_check;
+--      ALTER TABLE cotacoes_pecas ADD CONSTRAINT cotacoes_pecas_alvo_check CHECK (alvo IN ('todos', 'so_lojas'));
+--      ALTER TABLE pecas_catalogo DROP CONSTRAINT IF EXISTS pecas_catalogo_p5_check;
+--   5) ALTER TABLE cotacoes_pecas DROP COLUMN IF EXISTS fornecedor_alvo_tipo, DROP COLUMN IF EXISTS fornecedor_alvo_id, DROP COLUMN IF EXISTS catalogo_item_id,
+--      DROP COLUMN IF EXISTS promocao_id, DROP COLUMN IF EXISTS preco_referencia, DROP COLUMN IF EXISTS origem;
+--   6) DROP TABLE IF EXISTS promocoes_pecas; DROP FUNCTION IF EXISTS p5_promocao_regras();
+--   7) ALTER TABLE pecas_catalogo DROP COLUMN IF EXISTS codigo, DROP COLUMN IF EXISTS especificacao, DROP COLUMN IF EXISTS unidade, DROP COLUMN IF EXISTS embalagem,
+--      DROP COLUMN IF EXISTS condicao, DROP COLUMN IF EXISTS visibilidade, DROP COLUMN IF EXISTS atualizado_em, DROP COLUMN IF EXISTS oculto,
+--      DROP COLUMN IF EXISTS oculto_motivo, DROP COLUMN IF EXISTS oculto_em;
+--   8) ALTER TABLE plataforma_config DROP COLUMN IF EXISTS pecas_shop_ativo; NOTIFY pgrst, 'reload schema';
 BEGIN;
 SET LOCAL lock_timeout = '5s';
 
