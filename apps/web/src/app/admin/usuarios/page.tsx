@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import type { Profile } from '@fixauto/shared';
 import TrocarEmail from '@/components/admin/TrocarEmail';
+import { Presenca, usePresenca } from '@/components/admin/Presenca';
 
 interface OficinaVinculo {
   nome: string;
@@ -20,6 +21,8 @@ export default function AdminUsuariosPage() {
   const [editForm, setEditForm] = useState({ nome: '', telefone: '' });
   const [saving, setSaving] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
+  // "online agora / visto ha X" (dono 19/11, migracao 101)
+  const presenca = usePresenca(profiles.map((p) => p.id));
 
   const fetchProfiles = async () => {
     setLoading(true);
@@ -28,9 +31,10 @@ export default function AdminUsuariosPage() {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (search.trim()) {
-      query = query.or(`nome.ilike.%${search}%,email.ilike.%${search}%`);
-    }
+    // numero do cliente (profiles.codigo, dono 19/11) busca exato; texto busca nome/e-mail
+    const termo = search.trim().replace(/[,()*%\\]/g, ' ').trim();
+    if (/^\d{3,9}$/.test(termo)) query = query.eq('codigo', Number(termo));
+    else if (termo) query = query.or(`nome.ilike.%${termo}%,email.ilike.%${termo}%`);
 
     const { data } = await query.limit(100);
     setProfiles((data as Profile[]) || []);
@@ -135,7 +139,7 @@ export default function AdminUsuariosPage() {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por nome ou email..."
+          placeholder="Buscar por nome, email ou nº do cliente..."
           className="w-full max-w-md bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
@@ -151,12 +155,14 @@ export default function AdminUsuariosPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-700">
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">Nº</th>
                 <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">Nome</th>
                 <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">Email</th>
                 <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">Tipo</th>
                 <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">Oficina</th>
                 <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">Status</th>
                 <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">Cadastro</th>
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">Online</th>
                 <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">Ações</th>
               </tr>
             </thead>
@@ -164,7 +170,7 @@ export default function AdminUsuariosPage() {
               {profiles.map((profile) => (
                 <tr key={profile.id} className={`hover:bg-slate-700/50 transition-colors ${!profile.ativo ? 'opacity-50' : ''}`}>
                   {editingId === profile.id ? (
-                    <td colSpan={7} className="px-6 py-4">
+                    <td colSpan={9} className="px-6 py-4">
                       <div className="flex flex-wrap items-end gap-3">
                         <div>
                           <label htmlFor="cf7d7-1" className="block text-xs text-slate-400 mb-1">Nome</label>
@@ -198,6 +204,8 @@ export default function AdminUsuariosPage() {
                     </td>
                   ) : (
                     <>
+                      {/* numero do cliente/conta (profiles.codigo, migracao 061; dono 19/11) */}
+                      <td className="px-6 py-4 text-slate-300 text-sm whitespace-nowrap" data-testid="admin-usuario-codigo">{(profile as any).codigo ?? '—'}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center">
@@ -232,11 +240,17 @@ export default function AdminUsuariosPage() {
                       <td className="px-6 py-4 text-slate-400 text-sm">
                         {new Date(profile.created_at).toLocaleDateString('pt-BR')}
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap">{profile.tipo !== 'admin' && <Presenca vistoEm={presenca.profiles[profile.id]} />}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3 text-sm">
                           {profile.tipo === 'cliente' && (
                             <Link href={`/admin/solicitacoes?cliente_id=${profile.id}`} className="text-slate-300 hover:text-white font-medium">
                               Ver atividade
+                            </Link>
+                          )}
+                          {profile.tipo !== 'admin' && (
+                            <Link href={`/admin/suporte?profile=${profile.id}`} className="text-blue-400 hover:text-blue-300 font-medium" data-testid="admin-escrever">
+                              Escrever
                             </Link>
                           )}
                           <button onClick={() => startEdit(profile)} className="text-blue-400 hover:text-blue-300 font-medium">
@@ -268,7 +282,7 @@ export default function AdminUsuariosPage() {
               ))}
               {profiles.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={9} className="px-6 py-12 text-center text-slate-500">
                     Nenhum usuário encontrado
                   </td>
                 </tr>

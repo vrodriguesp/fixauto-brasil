@@ -73,7 +73,7 @@ export default function AdminVeiculoDetalhePage() {
               return (
                 <div key={s.id} className="bg-slate-800 border border-slate-700 rounded-xl p-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-white font-medium">{cleanDescricao(s.descricao)}</p>
+                    <p className="text-white font-medium">{s.numero && <span className="text-slate-300" data-testid="admin-numero-pedido">Pedido {s.numero} · </span>}{cleanDescricao(s.descricao)}</p>
                     <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_BADGE[s.status] || 'bg-slate-500/20 text-slate-300'}`}>
                       {STATUS_SOLICITACAO[s.status as keyof typeof STATUS_SOLICITACAO]?.label || s.status}
                     </span>

@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     if (tipo === 'veiculos') {
       let query = supabaseAdmin
         .from('veiculos')
-        .select('id, placa, fipe_marca, fipe_modelo, fipe_ano, cor, apelido, created_at, dono:profiles(nome, email, telefone)')
+        .select('id, placa, fipe_marca, fipe_modelo, fipe_ano, cor, apelido, created_at, dono:profiles(nome, email, telefone, codigo)')
         .order('created_at', { ascending: false });
       if (marca) query = query.eq('fipe_marca', marca);
       if (de) query = query.gte('created_at', de);
@@ -51,6 +51,7 @@ export async function GET(req: NextRequest) {
         ano: v.fipe_ano,
         cor: v.cor || '',
         apelido: v.apelido || '',
+        dono_codigo: v.dono?.codigo ?? '',
         dono_nome: v.dono?.nome || '',
         dono_email: v.dono?.email || '',
         dono_telefone: v.dono?.telefone || '',
@@ -71,7 +72,7 @@ export async function GET(req: NextRequest) {
         .from('solicitacoes')
         .select(
           `id, numero, tipo, status, urgencia, descricao, endereco, created_at,
-           cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, telefone),
+           cliente:profiles!solicitacoes_cliente_id_fkey(nome, email, telefone, codigo),
            veiculo:veiculos(fipe_marca, fipe_modelo, fipe_ano, placa),
            orcamentos(valor_total, status)`
         )
@@ -93,6 +94,7 @@ export async function GET(req: NextRequest) {
           urgencia: s.urgencia,
           descricao: s.descricao,
           endereco: s.endereco,
+          cliente_codigo: s.cliente?.codigo ?? '',
           cliente_nome: s.cliente?.nome || '',
           cliente_email: s.cliente?.email || '',
           cliente_telefone: s.cliente?.telefone || '',

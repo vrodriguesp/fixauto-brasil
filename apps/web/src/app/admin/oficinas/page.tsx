@@ -4,12 +4,15 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import type { Oficina } from '@fixauto/shared';
+import { Presenca, usePresenca } from '@/components/admin/Presenca';
 
 export default function AdminOficinasPage() {
   const [oficinas, setOficinas] = useState<Oficina[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
+  // "online agora / visto ha X" do dono de cada oficina (dono 19/11, migracao 101)
+  const presenca = usePresenca([], oficinas.map((o) => o.id));
 
   const fetchOficinas = async () => {
     setLoading(true);
@@ -89,6 +92,7 @@ export default function AdminOficinasPage() {
                   <p className="text-white font-semibold break-words">{oficina.nome_fantasia}</p>
                   <p className="text-slate-400 text-sm">{oficina.cidade}, {oficina.estado}</p>
                   <p className="text-slate-400 text-sm">Registro: {(oficina as any).cnpj || '—'}</p>
+                  <Presenca vistoEm={presenca.oficinas[oficina.id]} className="mt-1" />
                 </div>
                 <span className={`shrink-0 inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${oficina.ativa ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
                   {oficina.ativa ? 'Ativa' : 'Inativa'}
@@ -104,6 +108,9 @@ export default function AdminOficinasPage() {
                 </button>
                 <Link href={`/admin/oficinas/${oficina.id}`} className="flex-1 min-h-[44px] rounded-lg bg-slate-700 text-blue-300 font-medium flex items-center justify-center">
                   Ver detalhes
+                </Link>
+                <Link href={`/admin/suporte?profile=${oficina.profile_id}`} className="flex-1 min-h-[44px] rounded-lg bg-slate-700 text-blue-300 font-medium flex items-center justify-center">
+                  Escrever
                 </Link>
                 <button onClick={() => handleDelete(oficina)} disabled={busyId === oficina.id} className="min-h-[44px] px-3 rounded-lg text-red-400 font-medium disabled:opacity-50">
                   Remover
@@ -131,6 +138,9 @@ export default function AdminOficinasPage() {
                 </th>
                 <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                   Status
+                </th>
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
+                  Online
                 </th>
                 <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-6 py-3">
                   Ações
@@ -180,6 +190,9 @@ export default function AdminOficinasPage() {
                       {oficina.ativa ? 'Ativa' : 'Inativa'}
                     </span>
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <Presenca vistoEm={presenca.oficinas[oficina.id]} />
+                  </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3 text-sm">
                       <Link
@@ -187,6 +200,9 @@ export default function AdminOficinasPage() {
                         className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
                       >
                         Ver detalhes
+                      </Link>
+                      <Link href={`/admin/suporte?profile=${oficina.profile_id}`} className="text-blue-400 hover:text-blue-300 font-medium transition-colors" data-testid="admin-escrever-oficina">
+                        Escrever
                       </Link>
                       <button
                         onClick={() => handleToggleAtiva(oficina)}
@@ -208,7 +224,7 @@ export default function AdminOficinasPage() {
               ))}
               {oficinas.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
                     Nenhuma oficina encontrada
                   </td>
                 </tr>
