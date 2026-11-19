@@ -57,6 +57,49 @@ const telaOk = async (p, nome) => {
 };
 const fotografar = async (p, nome) => { foto++; await p.screenshot({ path: path.join(OUT, `${String(foto).padStart(2, '0')}_${nome}.png`), fullPage: true }); };
 try {
+  // 0) pedido em ETAPAS sem conta (19/11): cada tela e uma entrada do historico - o "voltar" do celular
+  //    volta UM passo (servico <- detalhe <- fotos <- carro <- local <- contato) e so depois sai da pagina;
+  //    nada se perde ao ir e voltar. (O "voltar xN depois de enviar" esta em pedido-v2-telas.mjs e
+  //    site-pedido-sem-conta.mjs.)
+  {
+    const ctx = await b.newContext({ viewport: { width: 390, height: 664 }, isMobile: true, hasTouch: true, locale: 'et-EE' });
+    await ctx.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); localStorage.removeItem('bipfix_pedido_rascunho'); } catch {} });
+    await ctx.route('**/api/funil', (r) => r.fulfill({ status: 200, body: '{"ok":true}' }));
+    const p = await ctx.newPage();
+    const erros = []; p.on('pageerror', (e) => erros.push(e.message));
+    const etapaDe = () => p.locator('.pedido-pagina').getAttribute('data-etapa').catch(() => null);
+    const edasi = (passo) => p.getByTestId(`passo-${passo}`).getByTestId('edasi');
+    await p.goto(`${SITE}/ee/et/paring`, { waitUntil: 'networkidle' });
+    await fotografar(p, 'pedido_1_teenus'); await telaOk(p, 'pedido 1 teenus');
+    await p.getByTestId('passo-servico').locator('button').nth(3).click(); await p.getByTestId('passo-detalhe').waitFor();
+    await p.getByTestId('chip-servico').first().click();
+    await fotografar(p, 'pedido_2_detalhe'); await telaOk(p, 'pedido 2 detalhe');
+    await edasi('detalhe').click(); await p.getByTestId('passo-fotos').waitFor();
+    await fotografar(p, 'pedido_3_fotod'); await telaOk(p, 'pedido 3 fotod');
+    await edasi('fotos').click(); await p.getByTestId('passo-carro').waitFor({ state: 'visible' });
+    await p.locator('#cbbe3-101').click(); await p.locator('#cbbe3-101').fill('Toyo');
+    await p.getByTestId('cbbe3-101-lista').getByRole('option', { name: 'Toyota', exact: true }).click();
+    await p.locator('#cbbe3-102').click(); await p.locator('#cbbe3-102').fill('Coro');
+    await p.getByTestId('cbbe3-102-lista').getByRole('option', { name: /Corolla/ }).first().click();
+    await fotografar(p, 'pedido_4_auto'); await telaOk(p, 'pedido 4 auto');
+    await edasi('carro').click(); await p.getByTestId('passo-local').waitFor();
+    await p.locator('#pedido-endereco').fill('Tallinn');
+    await fotografar(p, 'pedido_5_asukoht'); await telaOk(p, 'pedido 5 asukoht');
+    await edasi('local').click(); await p.getByTestId('passo-contato').waitFor();
+    await p.locator('#pedido-nome').fill('Kliendi Test');
+    await fotografar(p, 'pedido_6_kontakt'); await telaOk(p, 'pedido 6 kontakt');
+    const visitas = [];
+    for (let i = 0; i < 8; i++) {
+      await p.goBack({ timeout: 8000 }).catch(() => {}); await p.waitForTimeout(600);
+      if (!p.url().includes('/paring')) { visitas.push('(saiu)'); break; }
+      visitas.push(await etapaDe());
+    }
+    ok('pedido: voltar (navegador) xN = um passo de cada vez, depois sai', visitas.join('>') === 'local>carro>fotos>detalhe>servico>(saiu)', visitas.join(' > '));
+    for (let i = 0; i < 6; i++) { await p.goForward({ timeout: 8000 }).catch(() => {}); await p.waitForTimeout(400); }
+    ok('pedido: avancar xN volta ao contato com os dados (nome, carro, chip)', (await etapaDe()) === 'contato' && (await p.locator('#pedido-nome').inputValue()) === 'Kliendi Test' && (await p.locator('#cbbe3-101').inputValue()) === 'Toyota', await etapaDe());
+    ok('pedido: sem erro de JavaScript', !erros.length, erros.join(' || ').slice(0, 400));
+    await ctx.close();
+  }
   for (const [modo, larg, alt] of [['celular', 390, 664], ['computador', 1280, 860]]) {
     const ctx = await b.newContext({ viewport: { width: larg, height: alt }, isMobile: larg < 500, hasTouch: larg < 500, locale: 'et-EE' });
     await ctx.addInitScript(() => { try { localStorage.setItem('bipfix_cookie_consent', 'denied'); } catch {} });

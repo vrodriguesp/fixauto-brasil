@@ -357,11 +357,15 @@ try {
           ok(`${nome}: passo 2 mostra "${especial ? ICONE[tipo] + ' ' : ''}${rot}"`, det.endsWith(rot) && (!especial || det.startsWith(ICONE[tipo])), det);
           if (tipo === 'vidros') ok(`${nome}: exemplo do passo 2 e o de vidros`, (await p.locator('#pedido-descricao').getAttribute('placeholder')) === T[l]('pedidoSemConta.exemploVidro'));
           await p.locator('#pedido-descricao').fill(`TESTE-VIDRO tela ${l} ${tipo} ${tag}`);
-          await p.getByTestId('passo-detalhe').locator('input[type=file][multiple]').setInputFiles({ name: 'foto.png', mimeType: 'image/png', buffer: FOTO });
-          await p.waitForTimeout(800);
           await conferirTela(p, `${nome} 2 detalhe`, v);
           await p.getByTestId('passo-detalhe').getByRole('button', { name: T[l]('clienteNovaSolicitacao.next'), exact: true }).click();
-          await p.getByTestId('passo-carro').waitFor();
+          // pedido em etapas (19/11): a foto tem tela propria (passo 3)
+          await p.getByTestId('passo-fotos').waitFor({ timeout: 10000 });
+          await p.getByTestId('passo-fotos').locator('input[type=file][multiple]').setInputFiles({ name: 'foto.png', mimeType: 'image/png', buffer: FOTO });
+          await p.waitForTimeout(800);
+          await conferirTela(p, `${nome} 2b fotos`, v);
+          await p.getByTestId('passo-fotos').getByRole('button', { name: T[l]('clienteNovaSolicitacao.next'), exact: true }).click();
+          await p.getByTestId('passo-carro').waitFor({ state: 'visible' });
           await escolherCarroCampo(p, 'cbbe3-101', 'Toyota');
           await escolherCarroCampo(p, 'cbbe3-102', 'Corolla', /Corolla/);
           const ano = p.locator('#cbbe3-103');

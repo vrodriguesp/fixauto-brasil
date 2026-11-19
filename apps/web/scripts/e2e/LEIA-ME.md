@@ -8,6 +8,7 @@ Criam contas de teste e **apagam tudo no fim**. Precisam do `.env.local` do site
 | Script | O que testa |
 |---|---|
 | `site-varredura.mjs` | Todas as paginas das areas logadas (cliente, oficina, loja, admin) nos 6 idiomas: texto sem traducao, codigo interno na tela, elemento saindo da tela, erro no console, 404/login, links |
+| `pedido-v2-telas.mjs` | Pedido em ETAPAS sem conta (19/11): ET/RU a 390x844 e 360x640, Chromium e WebKit (`MOTOR=webkit`), UA do Facebook/Instagram; cada tela cabe sem rolar, chips/"Naita koiki", fotos opcionais, mapa, rascunho ao recarregar, voltar xN em todos os passos e depois de enviar, funil |
 | `site-fluxos.mjs` | Oficina se cadastra -> confirma -> admin ativa pela tela -> cliente se cadastra -> veiculo -> pedido -> oficina manda orcamento -> cliente aceita |
 | `site-pecas.mjs` | Loja se cadastra -> admin ativa -> catalogo -> oficina pede peca -> loja responde -> oficina fecha pedido |
 | `e2e-cadastro.mjs`, `e2e-acidente.mjs`, `e2e-seguro.mjs`, `teste-idioma-painel.mjs` | Cadastro com confirmacao, acidente, "quem paga o reparo", idioma dos paineis |
