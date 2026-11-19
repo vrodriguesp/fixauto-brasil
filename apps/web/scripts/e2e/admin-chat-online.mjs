@@ -63,7 +63,7 @@ try {
   ofId = of.id;
   const { data: v } = await sb.from('veiculos').insert({ profile_id: cli.id, fipe_tipo: 'cars', fipe_marca: 'Skoda', fipe_modelo: 'Octavia', fipe_ano: '2016', placa: `ACO${tag.slice(0, 3).toUpperCase()}` }).select('id').single();
   veicId = v.id;
-  const { data: s } = await sb.from('solicitacoes').insert({ cliente_id: cli.id, veiculo_id: v.id, tipo: 'mecanica', descricao: `Pidurid kriuksuvad ${tag}`, urgencia: 'media', latitude: 59.43, longitude: 24.75, endereco: 'Tallinn', status: 'em_orcamento' }).select('id, numero').single();
+  const { data: s } = await sb.from('solicitacoes').insert({ cliente_id: cli.id, veiculo_id: v.id, tipo: 'mecanica', descricao: `Pidurid kriuksuvad ${tag}`, urgencia: 'media', latitude: 59.4371, longitude: 24.7536, endereco: `Pikk 12, 10123 Tallinn, Estonia`, status: 'em_orcamento' }).select('id, numero, endereco').single();
   solId = s.id;
   // a oficina orcou: aparece em "Contato com as oficinas" do pedido e em "Solicitacoes recentes" da oficina
   await sb.from('orcamentos').insert({ solicitacao_id: s.id, oficina_id: of.id, valor_total: 120, prazo_dias: 2, tempo_execucao_horas: 3, validade: dia(10), garantia_dias: 30 });
@@ -95,10 +95,18 @@ try {
   await pA.goto(`${SITE}/admin/solicitacoes/${s.id}`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(2000);
   ok('A.3 detalhe do pedido: "Pedido N" em destaque', (await pA.getByTestId('admin-detalhe-numero').innerText()) === `Pedido ${s.numero}`);
   ok('A.3 detalhe do pedido: numero do cliente no cartao do cliente', (await pA.getByTestId('admin-detalhe-cliente-codigo').innerText()).includes(String(cli.codigo)));
+  // 102: a linha publica guarda so a area; o admin ve a RUA (tabela privada) na lista (API), no detalhe e no CSV
+  const corpoDetalhe = await pA.locator('body').innerText();
+  ok('A.3 detalhe do pedido: rua completa (102, tabela privada)', corpoDetalhe.includes('Pikk 12, 10123 Tallinn'), corpoDetalhe.match(/[^\n]*Tallinn[^\n]*/)?.[0]);
   ok('A.3 detalhe do pedido: oficina que recebeu com "Escrever a oficina"', (await pA.getByTestId('contato-oficina').filter({ hasText: `ACO Autoteenindus ${tag}` }).innerText()).includes('Escrever à oficina'));
 
   const csv = await (await pA.request.get(`${SITE}/api/admin/export?tipo=solicitacoes`)).text();
   const cab = csv.split('\n')[0].split(','); const linhaCsv = csv.split('\n').find((l) => l.includes(tag)) || '';
+  ok('A.4 CSV: rua completa na linha (102)', linhaCsv.includes('Pikk 12'), linhaCsv.slice(0, 160));
+  ok('setup 102: a linha publica do pedido ficou so com a area', s.endereco === 'Tallinn, Estonia', s.endereco);
+  const listaRua = await (await pA.request.get(`${SITE}/api/admin/solicitacoes?q=${encodeURIComponent('Pikk 12')}`)).json();
+  const naLista = (listaRua.solicitacoes || []).find((x) => x.id === s.id);
+  ok('A.4 lista (API): busca pela RUA acha o pedido e devolve a rua completa ao admin (102)', !!naLista && naLista.endereco === 'Pikk 12, 10123 Tallinn, Estonia', JSON.stringify({ n: (listaRua.solicitacoes || []).length, endereco: naLista?.endereco }));
   ok('A.4 CSV: coluna cliente_codigo e numero na linha', cab.includes('cliente_codigo') && cab.includes('numero') && linhaCsv.split(',')[cab.indexOf('cliente_codigo')] === String(cli.codigo) && linhaCsv.split(',')[cab.indexOf('numero')] === String(s.numero), `${cab.join('|')} / ${linhaCsv.slice(0, 120)}`);
 
   await pA.goto(`${SITE}/admin/oficinas/${of.id}`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(2000);

@@ -49,15 +49,20 @@ export async function GET(req: NextRequest) {
     if (q && /^\d{4,9}$/.test(q)) {
       const { data: cli } = await supabaseAdmin.from('profiles').select('id').eq('codigo', Number(q)).maybeSingle();
       query = cli ? query.or(`numero.eq.${Number(q)},cliente_id.eq.${cli.id}`) : query.eq('numero', Number(q));
-    } else if (q) query = query.or(`descricao.ilike.%${q}%,endereco.ilike.%${q}%`);
+    } else if (q) {
+      // 102: a linha publica so tem a area; a rua esta em solicitacoes_privado (so o admin, pela service role)
+      const { data: ruas } = await supabaseAdmin.from('solicitacoes_privado').select('solicitacao_id').ilike('endereco', `%${q}%`).limit(300);
+      const ids = (ruas || []).map((r: any) => r.solicitacao_id as string);
+      query = query.or(`descricao.ilike.%${q}%,endereco.ilike.%${q}%${ids.length ? `,id.in.(${ids.join(',')})` : ''}`);
+    }
 
     const { data, error } = await query;
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-    // 102: o admin ve a rua (tabela privada); a linha so tem a area
+    // 102: o admin ve a rua (tabela privada); a linha so tem a area - o privado vem DEPOIS do spread
     const solicitacoes = (data || []).map(({ dispensas, vistos, privado, ...s }: any) => ({
-      endereco: privado?.endereco || s.endereco,
       ...s,
+      endereco: privado?.endereco || s.endereco,
       // oficinas que abriram o pedido e que marcaram "nao tenho interesse" (migracao 070)
       totalVistos: vistos?.length || 0,
       totalDispensas: dispensas?.length || 0,

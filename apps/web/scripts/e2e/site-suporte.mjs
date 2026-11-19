@@ -129,6 +129,19 @@ try {
   // contador no botao fechado
   const cont = await esperar(async () => (await pV.getByTestId('chat-suporte-nao-lidas').innerText().catch(() => '')) === '1', 60000);
   ok('2 botao fechado mostra 1 nao lida', !!cont);
+  // release 20/11: na pagina do pedido em etapas (celular) o botao do chat so aparece com mensagem por ler
+  // e fica ACIMA da barra Tagasi/Edasi (nunca a cobre); sem nada por ler nem aparece (site-pedido-sem-conta)
+  await pV.goto(`${SITE}/ee/ru/pedido`, { waitUntil: 'networkidle' }); await pV.waitForTimeout(2500);
+  const geoPedido = await esperar(async () => pV.evaluate(() => {
+    const el = document.querySelector('[data-testid="chat-suporte-botao"]'); const n = document.querySelector('[data-testid="navegar"]');
+    if (!el || !n) return null;
+    const b = el.getBoundingClientRect(); const r = n.getBoundingClientRect();
+    return { visivel: b.width > 0 && getComputedStyle(el).display !== 'none', botaoBottom: Math.round(b.bottom), barraTop: Math.round(r.top), naoLidas: el.getAttribute('data-nao-lidas') };
+  }), 30000);
+  ok('2 pedido em etapas (celular): botao com 1 nao lida visivel e ACIMA da barra Tagasi/Edasi', !!geoPedido && geoPedido.visivel && geoPedido.naoLidas === '1' && geoPedido.botaoBottom <= geoPedido.barraTop, JSON.stringify(geoPedido));
+  await pV.screenshot({ path: `pedido-etapas-balao-acima-barra.png` }).catch(() => {});
+  await pV.goto(`${SITE}/ee/ru`, { waitUntil: 'networkidle' }); await pV.waitForTimeout(1500);
+  await esperar(async () => (await pV.getByTestId('chat-suporte-nao-lidas').innerText().catch(() => '')) === '1', 30000);
   await pV.getByTestId('chat-suporte-botao').click();
   const tV = await esperar(async () => { const t = await janela(pV).innerText(); return t.includes(RU('traducao.verOriginal')) ? t : null; });
   ok('2 visitante le a resposta em russo com "показать оригинал"', !!tV && !tV.includes('You can upload'), (tV || '').slice(-300));

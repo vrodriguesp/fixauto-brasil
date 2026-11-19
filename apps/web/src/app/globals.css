@@ -174,6 +174,13 @@ body.com-chat-suporte footer { padding-bottom: 5rem; }
 /* no celular o rodape do site sai da pagina do pedido: a tela e o formulario (termos e privacidade estao
    no passo do contato); com o rodape a pagina rolava 3 telas abaixo do Edasi (medido 19/11) */
 @media (max-width: 639.98px) { body.pagina-pedido footer.rodape-site { display: none; } }
+/* botao do chat de suporte no pedido em etapas (celular): nunca cobre a barra Tagasi/Edasi - sobe pela altura
+   medida da barra (--altura-navegar, PedidoSemConta.tsx) e pelo aviso de cookies; e como cada tela cabe sem
+   rolar (cartoes/campos ate ao pe), so aparece quando ha mensagem por ler (data-nao-lidas) - release 20/11 */
+@media (max-width: 639.98px) {
+  body.pagina-pedido .chat-suporte-botao { bottom: calc(var(--altura-navegar, 72px) + var(--altura-cookies, 0px) + 0.75rem); }
+  body.pagina-pedido .chat-suporte-botao:not([data-nao-lidas]) { display: none; }
+}
 body.pagina-pedido .pedido-lista-rolavel { max-height: calc(100dvh - 25rem - var(--altura-cookies, 0px)); }
 @media (max-width: 639.98px) { body.pagina-pedido [data-testid="passo-contato"] .input-field { padding-top: 0.625rem; padding-bottom: 0.625rem; } }
 /* tela do carro no celular: ano e numbrimark lado a lado (mesma entidade - Baymard), ajudas de marca/modelo

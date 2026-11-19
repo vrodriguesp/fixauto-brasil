@@ -392,6 +392,17 @@ export default function PedidoSemConta() {
   const faltas = mostrarFaltas ? faltasPasso() : {};
   // barra: com UM campo em falta repete o aviso dele; com varios, "preenche os campos marcados a vermelho" (mesmo texto do app)
   const faltando = Object.keys(faltas).length > 1 ? t('faltaCampos') : Object.values(faltas)[0] || '';
+  // altura real da barra Tagasi/Edasi (presa ao pe da tela no celular): globals.css poe o botao do chat de
+  // suporte acima dela (--altura-navegar) - antes o botao redondo cobria a ponta do Edasi (release 20/11)
+  useEffect(() => {
+    const el = document.querySelector<HTMLElement>('[data-testid="navegar"]');
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const medir = () => document.body.style.setProperty('--altura-navegar', `${el.offsetHeight}px`);
+    medir();
+    const ro = new ResizeObserver(medir);
+    ro.observe(el);
+    return () => { ro.disconnect(); document.body.style.removeProperty('--altura-navegar'); };
+  }, [etapa, faltando]);
   const erroDe = (id: string) => faltas[id] || null;
   const classeErro = (id: string) => (faltas[id] ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '');
   const Aviso = ({ id }: { id: string }) => (faltas[id] ? <p id={`${id}-erro`} role="alert" className="mt-1 text-sm text-red-700" data-testid={`${id}-erro`}>{faltas[id]}</p> : null);
