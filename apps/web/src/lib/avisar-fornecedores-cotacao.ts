@@ -29,6 +29,8 @@ export type CotacaoParaAviso = {
   id: string; oficina_id: string; peca_descricao: string | null; fipe_marca: string | null; fipe_modelo: string | null; fipe_ano: string | null;
   quantidade: number; observacao: string | null; fotos: unknown; status: string; tipo?: string | null; unidade?: string | null; alvo?: string | null;
   expira_em?: string | null; urgencia?: string | null; reaberta_vezes?: number | null;
+  // lote 5 (105): cotacao de 1 fornecedor (alvo = 'fornecedor_unico') - so o alvo e avisado
+  fornecedor_alvo_tipo?: string | null; fornecedor_alvo_id?: string | null;
 };
 export type ResultadoAviso = { success: true; lojasNotificadas: number; oficinasNotificadas: number; semCoordenadas?: boolean; emailsImediatos: number; naFila: number };
 
@@ -36,6 +38,9 @@ export const CAMPOS_COTACAO_AVISO = 'id, oficina_id, peca_descricao, fipe_marca,
 export const SEM_AVISO: ResultadoAviso = { success: true, lojasNotificadas: 0, oficinasNotificadas: 0, emailsImediatos: 0, naFila: 0 };
 
 export async function carregarCotacaoParaAviso(cotacaoId: string): Promise<CotacaoParaAviso | null> {
+  // lote 5: + o alvo da cotacao de 1 fornecedor; sem as colunas (banco antes da 105) le como hoje (nenhuma e de 1 fornecedor)
+  const comAlvo = await supabaseAdmin.from('cotacoes_pecas').select(`${CAMPOS_COTACAO_AVISO}, fornecedor_alvo_tipo, fornecedor_alvo_id`).eq('id', cotacaoId).maybeSingle();
+  if (!comAlvo.error) return (comAlvo.data as CotacaoParaAviso | null) || null;
   const { data } = await supabaseAdmin.from('cotacoes_pecas').select(CAMPOS_COTACAO_AVISO).eq('id', cotacaoId).maybeSingle();
   return (data as CotacaoParaAviso | null) || null;
 }
@@ -154,6 +159,8 @@ export async function avisarFornecedoresCotacao(cot: CotacaoParaAviso, reaberta 
     for (const l of lojas || []) {
       const p = (l as any).profile;
       if (!l.profile_id || !p || p.ativo === false || !!p.conta_teste !== compradoraTeste) continue;
+      // lote 5: cotacao de 1 fornecedor - so a loja-alvo
+      if (cot.alvo === 'fornecedor_unico' && !(cot.fornecedor_alvo_tipo === 'loja' && cot.fornecedor_alvo_id === l.id)) continue;
       if (await avisar({ profileId: l.profile_id, idioma: p.idioma, email: p.email, nome: p.nome || l.nome_fantasia, tipo: 'loja', fornecedorId: l.id, pais: compradora.pais }, true)) lojasNotificadas++;
     }
   }
@@ -163,7 +170,7 @@ export async function avisarFornecedoresCotacao(cot: CotacaoParaAviso, reaberta 
   let oficinasNotificadas = 0;
   const latitude = compradora.latitude;
   const longitude = compradora.longitude;
-  if (latitude != null && longitude != null && cot.alvo !== 'so_lojas') {
+  if (latitude != null && longitude != null && cot.alvo !== 'so_lojas' && cot.alvo !== 'fornecedor_unico') {
     // Caixa larga (100km) so pra pre-filtrar no banco; o corte de verdade e o
     // raio de atendimento de cada oficina (o mesmo da aba "Vender excedente").
     const BOUNDING_BOX_KM = 100;

@@ -51,6 +51,11 @@ export async function GET(req: NextRequest) {
 
     // (b) fornecedor que ainda pode ofertar
     if (!cot.enviar_placa || !['aberta', 'respondida'].includes(String(cot.status))) return nada();
+    // lote 5 (105): cotacao de 1 fornecedor - so a loja-alvo (as colunas so sao lidas quando o alvo existe)
+    if (cot.alvo === 'fornecedor_unico') {
+      const { data: alvo } = await supabaseAdmin.from('cotacoes_pecas').select('fornecedor_alvo_tipo, fornecedor_alvo_id').eq('id', cot.id).maybeSingle();
+      if (!alvo || alvo.fornecedor_alvo_tipo !== 'loja' || !(minhasLojas || []).some((l) => l.ativa && l.id === alvo.fornecedor_alvo_id)) return nada();
+    }
     const compradora = (cot as any).oficina as { pais: string | null; profile: { conta_teste: boolean | null } | null } | null;
     const compradoraTeste = !!compradora?.profile?.conta_teste;
     if ((minhasLojas || []).some((l) => l.ativa && !!compradora?.pais && l.pais === compradora.pais)) {

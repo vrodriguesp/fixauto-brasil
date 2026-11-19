@@ -16,6 +16,7 @@ import { usePecasV3, usePlacasDoFornecedor } from '@/hooks/use-pecas-v3';
 import { UNIDADES_PECA, TETO_REABERTURAS, lerQuantidade, numeroDaQuantidade, normalizarPlaca, placaValida, diasParaExpirar } from '@/lib/pecas-formato';
 import { totalDaOferta } from '@/lib/pecas-iva';
 import { NaoTenhoCartao, CamposRespostaV3, camposOfertaV3, textoIvaOferta } from '@/components/pecas/FornecedorV3';
+import { LinkShop, EtiquetaPedidoDireto, PedirDeNovo } from '@/components/pecas/PecasLote5Oficina';
 import { RecebiProblema, CancelarPedidoV3, CanceladoInfo, AvaliarForm, PosCancelamento, BannerP7, NotaOferta, ModalAvaliacoes, AvaliacoesDoFornecedor, ResumoProprio, lerResumo, chaveCondicao, chaveProblema, CONDICOES, type PedidoV3, type DadosP7, type PendenteP7, type ResumoFornecedor } from '@/components/pecas/ConfiancaV3';
 
 interface CotacaoComRespostas extends CotacaoPeca {
@@ -639,6 +640,8 @@ export default function OficinaPecasPage() {
         <h1 className="text-2xl font-bold text-gray-900">{t('titulo')}</h1>
         <p className="text-gray-600 mt-1">{t('subtitulo')}</p>
       </div>
+      {/* lote 5 (20/11): link do Shop (so com o Shop valendo para a sessao; desligado nao renderiza nada) */}
+      {v3 && <LinkShop />}
 
       <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-6 w-fit">
         <button onClick={() => setTab('comprar')} className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${tab === 'comprar' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}>
@@ -833,12 +836,13 @@ export default function OficinaPecasPage() {
                 const comOferta = new Set((c.respostas || []).map((r) => chaveConversa(c.id, r.fornecedor_tipo, r.loja_id || r.oficina_fornecedora_id)));
                 const semOferta = Object.entries(conversas).filter(([k, v]) => v.cotacaoId === c.id && !comOferta.has(k)).map(([, v]) => v);
                 return (
-                <div key={c.id} className="card" data-testid="cotacao-peca">
+                <div key={c.id} id={v3 ? `cotacao-${c.id}` : undefined} className="card" data-testid="cotacao-peca">
                   <div className="flex items-start justify-between gap-4 mb-3">
                     <div className="min-w-0">
                       <p className="font-medium text-gray-900">{c.peca_descricao}</p>
                       {v3 ? (
                         <>
+                          <EtiquetaPedidoDireto cotacao={c as any} pais={oficina?.pais} />
                           <p className="text-sm text-gray-500">
                             {c.tipo === 'sem_carro'
                               ? <span data-testid="cotacao-sem-carro" className="mr-1.5 inline-block rounded-full bg-amber-100 px-1.5 py-0.5 text-[11px] font-semibold text-amber-800 align-middle">{tp('semCarro')}</span>
@@ -877,6 +881,10 @@ export default function OficinaPecasPage() {
                     </div>
                   </div>
 
+                  {/* lote 5 (20/11): pedir de novo a mesma loja (so com o Shop valendo; a dona; pedido entregue) */}
+                  {v3 && dona && pedido?.status === 'entregue' && (pedido as any).fornecedor_tipo === 'loja' && (
+                    <PedirDeNovo pedidoId={pedido.id} lojaNome={(c.respostas || []).find((r) => r.id === pedido.resposta_id)?.loja?.nome_fantasia || ''} aoCriar={async (id) => { await recarregarTudo(); setTimeout(() => document.getElementById(`cotacao-${id}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 100); }} />
+                  )}
                   {/* M9 (16/11): detalhes e fotos tambem no cartao da propria compradora */}
                   {editandoId !== c.id && (c.observacao || (c.fotos && c.fotos.length > 0)) && (
                     <div className="mb-3 -mt-2"><DetalhesPedidoPeca observacao={c.observacao} fotos={c.fotos} /></div>

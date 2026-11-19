@@ -20,6 +20,7 @@ const sidebarLinks = [
   { href: '/admin/comissoes', label: 'Comissões', icon: CurrencyIcon },
   { href: '/admin/oficinas/performance-ruim', label: 'Performance Ruim', icon: AlertIcon },
   { href: '/admin/pecas', label: 'Peças', icon: PackageIcon },
+  { href: '/admin/shop-pagina', label: 'Shop (peças)', icon: PackageIcon },
   { href: '/admin/comissoes-pecas', label: 'Comissão de Peças', icon: CurrencyIcon },
   { href: '/admin/monitoramento', label: 'Monitoramento', icon: MonitorIcon },
   { href: '/admin/auditoria', label: 'Histórico do admin', icon: ListIcon },

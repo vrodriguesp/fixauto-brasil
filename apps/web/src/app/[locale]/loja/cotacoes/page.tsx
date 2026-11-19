@@ -21,6 +21,7 @@ interface CotacaoComOficina extends Omit<CotacaoPeca, 'oficina'> {
 export default function LojaCotacoesPage() {
   const t = useTranslations('lojaCotacoes');
   const tp = useTranslations('pecas');
+  const t5 = useTranslations('pecasL5');
   const locale = useLocale();
   const { loja } = useAuth();
   const [cotacoes, setCotacoes] = useState<CotacaoComOficina[]>([]);
@@ -144,6 +145,9 @@ export default function LojaCotacoesPage() {
     setErroResposta(null);
     setRespQtd(String(Number(c.quantidade) || 1));
     setRespUsada(false);
+    // lote 5: pedido direto do Shop - preco do catalogo/promocao ja preenchido (a loja confirma ou muda)
+    const ref = (c as any).alvo === 'fornecedor_unico' ? Number((c as any).preco_referencia) : NaN;
+    if (v3 && ref > 0) setRespostaForm((f) => ({ ...f, preco: String(ref) }));
   };
 
   // espera tambem o interruptor: os cartoes nao aparecem na forma de hoje para depois trocar
@@ -174,6 +178,9 @@ export default function LojaCotacoesPage() {
               <div className="flex items-start justify-between gap-4 mb-2">
                 <div>
                   <p className="font-medium text-gray-900">{c.peca_descricao}</p>
+                  {v3 && (c as any).alvo === 'fornecedor_unico' && (
+                    <p className="text-sm" data-testid="cotacao-pedido-direto-loja"><span className="inline-block rounded-full bg-blue-100 px-1.5 py-0.5 text-[11px] font-semibold text-blue-800">{(c as any).origem === 'pedir_de_novo' ? t5('etiquetaLojaPedirDeNovo') : t5('etiquetaLojaPedidoDireto')}</span></p>
+                  )}
                   <p className="text-sm text-gray-500">
                     {c.oficina?.nome_fantasia} - {c.oficina?.cidade}, {c.oficina?.estado}
                   </p>

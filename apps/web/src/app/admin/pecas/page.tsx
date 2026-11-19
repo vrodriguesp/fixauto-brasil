@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { formatCurrency } from '@/lib/utils';
 import PedidosPecasAdmin from '@/components/admin/PedidosPecasAdmin';
 import PecasConfiancaAdmin from '@/components/admin/PecasConfiancaAdmin';
+import PecasShopAdmin from '@/components/admin/PecasShopAdmin';
 
 interface Fornecedor {
   id: string;
@@ -335,6 +336,9 @@ export default function AdminPecasPage() {
       <PedidosPecasAdmin />
       {/* lote 3 de pecas: entregas, avaliacoes e P-7 */}
       <PecasConfiancaAdmin />
+
+      {/* lote 5 (20/11): Shop - interruptor e moderacao */}
+      <PecasShopAdmin />
     </div>
   );
 }

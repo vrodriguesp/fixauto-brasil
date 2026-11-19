@@ -7,12 +7,27 @@ import { supabase } from '@/lib/supabase';
 import { formatCurrency } from '@/lib/utils';
 import { currencyForCountry } from '@/lib/currency';
 import type { PecaCatalogo } from '@fixauto/shared';
+import { Link } from '@/i18n/navigation';
+import { usePecasV3 } from '@/hooks/use-pecas-v3';
+
+// lote 5 de pecas (20/11, migracao 105): com a tela nova (usePecasV3: global v3 ou conta de teste) o item ganha
+// codigo, especificacao, unidade, embalagem, condicao e "quem ve" (interno = so a loja; oficinas = entra no Shop
+// quando o Shop for ligado). Sem a tela nova: o formulario e a lista de hoje, iguais (so o aviso de erro e novo).
+type ItemV3 = PecaCatalogo & { codigo?: string | null; especificacao?: string | null; unidade?: string | null; embalagem?: string | null; condicao?: string | null; visibilidade?: string | null; oculto?: boolean | null; oculto_motivo?: string | null };
+const UNIDADES = ['un', 'jogo', 'par', 'litro', 'kg', 'metro', 'caixa'];
+const CONDICOES = ['nova', 'usada', 'recondicionada'];
+const EXTRA_VAZIO = { codigo: '', especificacao: '', unidade: 'un', embalagem: '', condicao: 'nova', visibilidade: 'interno' };
 
 export default function LojaCatalogoPage() {
   const t = useTranslations('lojaCatalogo');
+  const t5 = useTranslations('pecasL5');
+  const tp = useTranslations('pecas');
+  const v3 = usePecasV3();
+  const [erroSalvar, setErroSalvar] = useState(false);
+  const [extra, setExtra] = useState(EXTRA_VAZIO);
   const locale = useLocale();
   const { loja } = useAuth();
-  const [pecas, setPecas] = useState<PecaCatalogo[]>([]);
+  const [pecas, setPecas] = useState<ItemV3[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -28,7 +43,7 @@ export default function LojaCatalogoPage() {
       .select('*')
       .eq('loja_id', loja.id)
       .order('created_at', { ascending: false });
-    setPecas((data as PecaCatalogo[]) || []);
+    setPecas((data as ItemV3[]) || []);
     setLoading(false);
   };
 
@@ -37,7 +52,8 @@ export default function LojaCatalogoPage() {
   const handleAdd = async () => {
     if (!loja || !form.nome || !form.preco) return;
     setSaving(true);
-    await supabase.from('pecas_catalogo').insert({
+    setErroSalvar(false);
+    const { error } = await supabase.from('pecas_catalogo').insert({
       loja_id: loja.id,
       nome: form.nome,
       descricao: form.descricao || null,
@@ -46,7 +62,11 @@ export default function LojaCatalogoPage() {
       fipe_ano: form.fipe_ano || null,
       preco: parseFloat(form.preco),
       quantidade_estoque: parseInt(form.quantidade_estoque) || 0,
+      ...(v3 ? { codigo: extra.codigo.trim() || null, especificacao: extra.especificacao.trim() || null, unidade: extra.unidade, embalagem: extra.embalagem.trim() || null, condicao: extra.condicao, visibilidade: extra.visibilidade } : {}),
     });
+    // recusado pelo banco (preco 0, texto longo demais - CHECK da 105): o formulario fica aberto com o aviso
+    if (error) { setErroSalvar(true); setSaving(false); return; }
+    setExtra(EXTRA_VAZIO);
     setForm({ nome: '', descricao: '', fipe_marca: '', fipe_modelo: '', fipe_ano: '', preco: '', quantidade_estoque: '1' });
     setShowForm(false);
     setSaving(false);
@@ -55,6 +75,11 @@ export default function LojaCatalogoPage() {
 
   const handleToggleAtivo = async (peca: PecaCatalogo) => {
     await supabase.from('pecas_catalogo').update({ ativo: !peca.ativo }).eq('id', peca.id);
+    await fetchPecas();
+  };
+
+  const mudarVisibilidade = async (peca: ItemV3) => {
+    await supabase.from('pecas_catalogo').update({ visibilidade: peca.visibilidade === 'interno' ? 'oficinas' : 'interno' }).eq('id', peca.id);
     await fetchPecas();
   };
 
@@ -82,8 +107,12 @@ export default function LojaCatalogoPage() {
           <h1 className="text-2xl font-bold text-gray-900">{t('pageTitle')}</h1>
           <p className="text-gray-600 mt-1">{t('pageSubtitle')}</p>
         </div>
-        <button onClick={() => setShowForm(true)} className="btn-primary">{t('addButton')}</button>
+        <div className="flex flex-wrap gap-2 justify-end">
+          {v3 && <Link href="/loja/promocoes" data-testid="link-promocoes" className="btn-secondary">{t5('promocoesTitulo')}</Link>}
+          <button onClick={() => setShowForm(true)} className="btn-primary">{t('addButton')}</button>
+        </div>
       </div>
+      {v3 && <p className="text-sm text-gray-600 mb-6" data-testid="catalogo-v3-aviso">{t5('catalogoAviso')}</p>}
 
       {showForm && (
         <div className="card mb-6">
@@ -118,6 +147,42 @@ export default function LojaCatalogoPage() {
               <input id="c50c4-7" type="number" className="input-field" value={form.quantidade_estoque} onChange={(e) => setForm({ ...form, quantidade_estoque: e.target.value })} />
             </div>
           </div>
+          {v3 && (
+            <div className="grid sm:grid-cols-2 gap-4 mt-4" data-testid="catalogo-campos-v3">
+              <div>
+                <label htmlFor="p5c-codigo" className="block text-sm font-medium text-gray-700 mb-1">{t5('codigo')}</label>
+                <input id="p5c-codigo" data-testid="catalogo-codigo" type="text" maxLength={60} className="input-field" value={extra.codigo} onChange={(e) => setExtra({ ...extra, codigo: e.target.value })} />
+              </div>
+              <div>
+                <label htmlFor="p5c-espec" className="block text-sm font-medium text-gray-700 mb-1">{t5('especificacao')}</label>
+                <input id="p5c-espec" data-testid="catalogo-especificacao" type="text" maxLength={200} className="input-field" value={extra.especificacao} onChange={(e) => setExtra({ ...extra, especificacao: e.target.value })} />
+              </div>
+              <div>
+                <label htmlFor="p5c-unidade" className="block text-sm font-medium text-gray-700 mb-1">{tp('unidade')}</label>
+                <select id="p5c-unidade" data-testid="catalogo-unidade" className="input-field" value={extra.unidade} onChange={(e) => setExtra({ ...extra, unidade: e.target.value })}>
+                  {UNIDADES.map((u) => <option key={u} value={u}>{tp(`unidadesNome.${u}`)}</option>)}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="p5c-embalagem" className="block text-sm font-medium text-gray-700 mb-1">{t5('embalagem')}</label>
+                <input id="p5c-embalagem" data-testid="catalogo-embalagem" type="text" maxLength={40} className="input-field" placeholder={t5('embalagemExemplo')} value={extra.embalagem} onChange={(e) => setExtra({ ...extra, embalagem: e.target.value })} />
+              </div>
+              <div>
+                <label htmlFor="p5c-condicao" className="block text-sm font-medium text-gray-700 mb-1">{t5('condicaoRotulo')}</label>
+                <select id="p5c-condicao" data-testid="catalogo-condicao" className="input-field" value={extra.condicao} onChange={(e) => setExtra({ ...extra, condicao: e.target.value })}>
+                  {CONDICOES.map((c) => <option key={c} value={c}>{t5(`condicao.${c}`)}</option>)}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="p5c-vis" className="block text-sm font-medium text-gray-700 mb-1">{t5('quemVe')}</label>
+                <select id="p5c-vis" data-testid="catalogo-visibilidade" className="input-field" value={extra.visibilidade} onChange={(e) => setExtra({ ...extra, visibilidade: e.target.value })}>
+                  <option value="interno">{t5('visibilidade.interno')}</option>
+                  <option value="oficinas">{t5('visibilidade.oficinas')}</option>
+                </select>
+              </div>
+            </div>
+          )}
+          {erroSalvar && <p role="alert" data-testid="catalogo-erro" className="mt-4 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{t5('erroSalvarItem')}</p>}
           <div className="flex justify-end gap-3 mt-6">
             <button onClick={() => setShowForm(false)} className="btn-secondary">{t('cancelButton')}</button>
             <button onClick={handleAdd} disabled={saving || !form.nome || !form.preco} className="btn-primary disabled:opacity-50">
@@ -141,8 +206,20 @@ export default function LojaCatalogoPage() {
                   <p className="text-sm text-gray-500">{peca.fipe_marca} {peca.fipe_modelo} {peca.fipe_ano}</p>
                 )}
                 <p className="text-sm text-gray-600 mt-1">{t('estoqueInfo', { preco: formatCurrency(peca.preco, currencyForCountry(loja?.pais), locale), quantidade: peca.quantidade_estoque })}</p>
+                {v3 && (
+                  <p className="text-xs text-gray-500 mt-1" data-testid="catalogo-item-v3">
+                    {[peca.codigo, peca.especificacao, peca.embalagem, peca.condicao ? t5(`condicao.${peca.condicao}`) : null, tp(`unidades.${UNIDADES.includes(String(peca.unidade)) ? peca.unidade : 'un'}`)].filter(Boolean).join(' · ')}
+                    {' · '}<span data-testid="catalogo-item-visibilidade">{t5(`visibilidade.${peca.visibilidade === 'oficinas' || peca.visibilidade === 'publico' ? 'oficinas' : 'interno'}`)}</span>
+                  </p>
+                )}
+                {v3 && peca.oculto && <p className="text-xs text-red-700 mt-1" data-testid="catalogo-item-oculto">{t5('ocultoPeloAdmin', { motivo: peca.oculto_motivo || '-' })}</p>}
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
+                {v3 && (
+                  <button onClick={() => mudarVisibilidade(peca)} data-testid="catalogo-mudar-visibilidade" className="px-3 py-1 text-xs rounded-lg font-medium bg-blue-50 text-blue-800">
+                    {peca.visibilidade === 'interno' ? t5('mostrarOficinas') : t5('soEu')}
+                  </button>
+                )}
                 <button onClick={() => handleToggleAtivo(peca)} className={`px-3 py-1 text-xs rounded-lg font-medium ${peca.ativo ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
                   {peca.ativo ? t('desativarButton') : t('ativarButton')}
                 </button>
