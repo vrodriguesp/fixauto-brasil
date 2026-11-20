@@ -10,6 +10,7 @@ import MidiaPrivada from '@/components/midia/MidiaPrivada';
 import { formatarJanela, janelaDaAgenda } from '@/lib/turnos';
 import TriagemPedido, { rotuloTipo } from '@/components/admin/TriagemPedido';
 import { Presenca, usePresenca } from '@/components/admin/Presenca';
+import OficinasAvisadasSms from '@/components/admin/OficinasAvisadasSms';
 
 const STATUS_BADGE: Record<string, string> = {
   aberta: 'bg-blue-500/20 text-blue-400',
@@ -58,6 +59,7 @@ const ACAO_LABEL: Record<string, string> = {
   mudar_tipo: 'Tipo do pedido alterado',
   avisar_tipo_novo: 'Oficinas avisadas após mudar o tipo',
   convidar_oficinas: 'Pedido enviado a oficinas escolhidas',
+  sms_oficinas: 'SMS às oficinas avisadas',
 };
 
 // <input type="datetime-local"> trabalha no horario local, sem fuso
@@ -487,6 +489,9 @@ export default function AdminSolicitacaoDetalhePage() {
           </div>
         )}
       </div>
+
+      {/* oficinas avisadas + SMS com o link do pedido (dono 20/11) */}
+      <OficinasAvisadasSms solicitacaoId={id} numero={solicitacao.numero ?? null} />
 
       {/* oficinas que marcaram "nao tenho interesse" (migracao 070) */}
       <div className="mb-8" data-testid="admin-dispensas">

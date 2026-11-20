@@ -291,7 +291,7 @@ const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM;
 // paises liberados em Geo Permissions (console da Twilio - decisao do dono).
 const TWILIO_SMS_FROM = process.env.TWILIO_SMS_FROM || 'BipFix';
 const TWILIO_SMS_FROM_NUMERO = process.env.TWILIO_SMS_FROM_NUMERO;
-const SMS_LINK_BASE = (process.env.SMS_LINK_BASE || SITE_URL.replace('://www.', '://')).replace(/\/$/, '');
+export const SMS_LINK_BASE = (process.env.SMS_LINK_BASE || SITE_URL.replace('://www.', '://')).replace(/\/$/, '');
 
 // Telefone em E.164 (padrao internacional). "+372 5..." / "00372..." ja traz o
 // pais; numero nacional recebe o codigo do pais do servico. Antes todo numero
@@ -334,14 +334,26 @@ async function twilioMensagem(params: Record<string, string>): Promise<{ success
 
 // SMS de servico (so sobre o pedido do proprio cliente; nada de marketing - §103¹ ESS).
 // Quem decide se envia (interruptor, app, pedido aberto) e lib/sms.ts.
+// Teste local sem Twilio (Documentos/_teste_local): SMS_PASTA_TESTE e NENHUMA chave da Twilio -> o SMS
+// vira um arquivo .json na pasta (como EMAIL_PASTA_TESTE). Producao tem as chaves: la nada muda.
+export const smsModoPasta = () => !TWILIO_SID && !TWILIO_TOKEN && !!process.env.SMS_PASTA_TESTE;
+
 async function sendSms(to: string, message: string, pais?: string | null): Promise<{ success: boolean; error?: string; sid?: string }> {
-  if (!TWILIO_SID || !TWILIO_TOKEN) return { success: false, error: 'SMS service not configured' };
+  const pasta = smsModoPasta() ? process.env.SMS_PASTA_TESTE! : null;
+  if ((!TWILIO_SID || !TWILIO_TOKEN) && !pasta) return { success: false, error: 'SMS service not configured' };
   const phone = telefoneE164(to, pais);
   if (!phone) return { success: false, error: 'Telefone sem país' };
   // E.164: 8 a 15 digitos; numero estoniano tem 7-8 digitos depois do 372 (barra numero
   // estrangeiro digitado sem "+", que viraria +372...)
   if (!/^\d{8,15}$/.test(phone)) return { success: false, error: 'Número inválido' };
   if (phone.startsWith('372') && !/^372\d{7,8}$/.test(phone)) return { success: false, error: 'Número estoniano inválido' };
+  if (pasta) {
+    const fs = await import('node:fs/promises');
+    const sid = `teste-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    await fs.mkdir(pasta, { recursive: true });
+    await fs.writeFile(`${pasta}/${sid}_${phone}.json`, JSON.stringify({ para: `+${phone}`, de: TWILIO_SMS_FROM, texto: message, sid }));
+    return { success: true, sid };
+  }
   try {
     let r = await twilioMensagem({ From: TWILIO_SMS_FROM, To: `+${phone}`, Body: message });
     // pais sem remetente alfanumerico: de novo com o numero da conta, se houver
@@ -369,6 +381,11 @@ export async function sendQuoteSms(params: {
   const url = `${SMS_LINK_BASE}/r/${params.numero}`;
   const tmpl = SMS_I18N.quoteSms[resolveEmailLocale(params.locale)];
   return sendSms(params.toPhone, fmt(tmpl, { url }), params.pais);
+}
+
+/** SMS com texto pronto (texto e link sao de quem chama: lib/sms-oficinas.ts) */
+export async function sendSmsTexto(p: { toPhone: string; pais?: string | null; texto: string }) {
+  return sendSms(p.toPhone, p.texto, p.pais);
 }
 
 async function sendWhatsApp(to: string, message: string, pais?: string | null): Promise<{ success: boolean; error?: string }> {
