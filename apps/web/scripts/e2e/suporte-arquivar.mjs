@@ -144,6 +144,15 @@ try {
   ok('B.8 arquivada: Desarquivar visivel, sem Excluir', await pA.getByTestId('suporte-desarquivar').isVisible() && !(await pA.getByTestId('suporte-excluir').count()));
   await pA.getByTestId('suporte-desarquivar').click(); await pA.waitForTimeout(2000);
   ok('B.9 Desarquivar: volta para Ativas', !(await linha(cC.id)).arquivada_em && !!(await naLista(adm, cC.id)));
+  // B.11 (Fable B1) responder uma arquivada pela aba Arquivadas: vai para Ativas com a conversa aberta
+  await api(`/api/admin/suporte/${cC.id}`, { token: adm.token, metodo: 'PATCH', corpo: { acao: 'arquivar' } });
+  await pA.goto(`${SITE}/admin/suporte?arquivadas=1`, { waitUntil: 'networkidle' }); await pA.waitForTimeout(1500);
+  await pA.getByTestId('suporte-conversa').filter({ hasText: `Olga Arquivo ${tag}` }).click(); await pA.waitForTimeout(1500);
+  await pA.getByTestId('suporte-resposta').fill('Resposta pela aba arquivadas'); await pA.keyboard.press('Enter'); await pA.waitForTimeout(3500);
+  ok('B.11 respondeu pela aba Arquivadas: desarquivada, aba Ativas, conversa continua aberta com aviso',
+    !(await linha(cC.id)).arquivada_em && !pA.url().includes('arquivadas=1') && await pA.getByTestId('suporte-arquivar').isVisible()
+    && (await pA.getByTestId('suporte-aviso-lista').innerText().catch(() => '')).includes('voltou para Ativas')
+    && (await pA.locator('section[aria-label^="Conversa com"]').innerText()).includes('Resposta pela aba arquivadas'), pA.url());
   ok('B.10 PATCH com acao invalida 400; id inexistente 404', (await api(`/api/admin/suporte/${cC.id}`, { token: adm.token, metodo: 'PATCH', corpo: { acao: 'apagar' } })).status === 400
     && (await api(`/api/admin/suporte/${crypto.randomUUID()}`, { token: adm.token, metodo: 'PATCH', corpo: { acao: 'arquivar' } })).status === 404);
 
@@ -184,7 +193,7 @@ try {
   ok('C.5 "Escrever" numa conta arquivada: conversa aberta e aviso "voltou para Ativas"', (await pA.locator('[role=status]').allInnerTexts()).join(' ').includes('voltou para Ativas') && await pA.getByTestId('suporte-arquivar').isVisible());
   // C.6 a pessoa: GET do balao nunca mostra arquivada_em nem muda nada
   const gC = await (await api('/api/suporte', { token: cli.token })).json();
-  ok('C.6 balao do cliente: so a propria conversa, sem campo de arquivo', gC.conversa?.id === cC.id && !JSON.stringify(gC).includes('arquivad'));
+  ok('C.6 balao do cliente: so a propria conversa, sem campo de arquivo', gC.conversa?.id === cC.id && !/arquivada_?[eE]m/.test(JSON.stringify(gC)));
 
   // ---------- D seguranca
   for (const [n, t, esperado] of [['sem login', null, 401], ['oficina', ofi.token, 403], ['cliente', cli.token, 403]]) {

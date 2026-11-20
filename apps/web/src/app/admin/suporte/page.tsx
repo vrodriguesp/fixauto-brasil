@@ -201,6 +201,15 @@ function SuporteAdmin() {
     if (d.semTraducao) novos.push({ tom: 'alerta', texto: 'Atenção: a mensagem foi SEM tradução (DeepL sem resposta ou limite do dia).' });
     if (d.porEmail) novos.push({ tom: 'info', texto: 'A pessoa não está com o chat aberto: a resposta foi também por e-mail.' });
     setAvisos(novos);
+    // respondeu uma arquivada pela aba Arquivadas: o servidor desarquivou -> vai para Ativas
+    // com a conversa aberta (senao ela sumia da aba e o painel ficava vazio - Fable B1)
+    if (abaRef.current && cAtual?.arquivadaEm) {
+      setCarregado(false); setConversas([]);
+      setAvisoLista('Conversa respondida: voltou para Ativas.');
+      router.replace('/admin/suporte');
+      carregarConversa(aberta);
+      return;
+    }
     carregarConversa(aberta); carregarLista();
   }
 
