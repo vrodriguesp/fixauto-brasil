@@ -711,7 +711,7 @@
     "codigoBotaoEmail": "Võid ka vajutada kirjas nuppu „Kinnita ja saada päring“ – see avaneb brauseris.",
     "faltaEndereco": "Kirjuta aadress, linnaosa või linn.",
     "placaRotulo": "Numbrimärk (soovi korral)",
-    "placaAjuda": "Töökoda näeb selle järgi auto täpsed andmed.",
+    "placaAjuda": "Soovituslik: numbri järgi saavad töökojad anda täpsema hinnapakkumise.",
     "localTitulo": "Kus auto umbes asub?",
     "localPlaceholder": "Nt Lasnamäe või Tallinn",
     "localAjuda": "Võid kirjutada täpse aadressi, linnaosa (nt Lasnamäe) või ainult „Tallinn“. Selle järgi leiame lähedal asuvad töökojad.",

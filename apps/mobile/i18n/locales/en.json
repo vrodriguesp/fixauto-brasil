@@ -711,7 +711,7 @@
     "codigoBotaoEmail": "You can also tap “Confirm and send the request” in the e-mail – it opens in the browser.",
     "faltaEndereco": "Enter an address, district or city.",
     "placaRotulo": "Number plate (optional)",
-    "placaAjuda": "The workshop can see the car's exact details from it.",
+    "placaAjuda": "Recommended: with the plate, repair shops can give a more precise quote.",
     "localTitulo": "Where is the car, roughly?",
     "localPlaceholder": "E.g. Lasnamäe or Tallinn",
     "localAjuda": "You can enter the exact address, a district or just the city. We use it to find workshops nearby.",

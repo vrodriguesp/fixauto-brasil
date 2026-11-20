@@ -234,6 +234,13 @@ body.pagina-pedido .pedido-lista-rolavel { max-height: calc(100dvh - 25rem - var
   body.pagina-pedido [data-testid="navegar"] { margin-top: 0.75rem; padding-top: 0.5rem; padding-bottom: 0.5rem; }
   body.pagina-pedido [data-testid="navegar"] button { padding-top: 0.625rem; padding-bottom: 0.625rem; }
 }
+/* a recomendacao da placa (dono 20/11) continua visivel no celular pequeno em pe: as outras ajudas saem,
+   esta cabe (Edasi medido a 390x700 e 360x640, +32 px); deitado (<= 500 px) sai como as outras */
+@media (max-height: 700px) and (min-height: 500.02px) {
+  body.pagina-pedido .pedido-carro > p.pedido-ajuda.pedido-placa-ajuda { display: block; }
+  /* com avisos de erro na tela ela sai de novo, para o passo continuar sem rolar (medido 390x700) */
+  body.pagina-pedido [data-testid="passo-carro"]:has([role="alert"]) .pedido-carro > p.pedido-ajuda.pedido-placa-ajuda { display: none; }
+}
 
 /* Conversa (mensagens): cabe na parte visivel da tela, com a caixa de digitar
    sempre a vista. No iPhone a caixa ficava atras da barra de baixo da oficina

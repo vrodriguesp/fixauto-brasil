@@ -21,6 +21,7 @@ export default function EditarPedido({ solicitacaoId, descricao, veiculo, aoSalv
 }) {
   const t = useTranslations('editarPedido');
   const tErros = useTranslations('erros');
+  const tp = useTranslations('pedidoSemConta');
   const incompleto = !veiculo?.fipe_marca;
   const [aberto, setAberto] = useState(false);
   const [marca, setMarca] = useState(veiculo?.fipe_marca || '');
@@ -80,8 +81,10 @@ export default function EditarPedido({ solicitacaoId, descricao, veiculo, aoSalv
           </div>
           <div>
             <label htmlFor="ep-placa" className="block text-sm font-medium text-gray-700 mb-1">{t('placa')}</label>
-            <input id="ep-placa" className="input-field uppercase" aria-invalid={!placaValida(placa)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} maxLength={10} />
+            <input id="ep-placa" className="input-field uppercase" aria-describedby="ep-placa-ajuda" aria-invalid={!placaValida(placa)} value={placa} onChange={(e) => setPlaca(e.target.value.toUpperCase())} maxLength={10} />
             {!placaValida(placa) && <p role="alert" className="mt-1 text-sm text-red-700">{tErros('PLACA_INVALIDA')}</p>}
+            {/* placa opcional, mas recomendada (dono 20/11: oficina recusou 100153 sem placa/VIN) */}
+            <p id="ep-placa-ajuda" className="text-xs text-gray-500 mt-1">{tp('placaAjuda')}</p>
           </div>
         </div>
       )}

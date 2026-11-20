@@ -347,7 +347,8 @@ export default function NovaSolicitacaoPage() {
                 <div className="grid sm:grid-cols-3 gap-4 mt-4">
                   <div>
                     <label htmlFor="caee7-1" className="block text-sm font-medium text-gray-700 mb-1">{t('plateLabel')}</label>
-                    <input id="caee7-1" type="text" className="input-field" placeholder={exemploPlaca(locale)} maxLength={10} aria-invalid={!placaValida(novoVeiculo.placa)} value={novoVeiculo.placa} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, placa: e.target.value.toUpperCase() })} />
+                    <input id="caee7-1" type="text" className="input-field" aria-describedby="caee7-1-ajuda" placeholder={exemploPlaca(locale)} maxLength={10} aria-invalid={!placaValida(novoVeiculo.placa)} value={novoVeiculo.placa} onChange={(e) => setNovoVeiculo({ ...novoVeiculo, placa: e.target.value.toUpperCase() })} />
+                    <p id="caee7-1-ajuda" className="text-xs text-gray-500 mt-1">{tp('placaAjuda')}</p>
                     {!placaValida(novoVeiculo.placa) && <p role="alert" className="mt-1 text-sm text-red-700">{tErros('PLACA_INVALIDA')}</p>}
                     {!anoDoCarroValido(novoVeiculo.fipe_ano) && <p role="alert" className="mt-1 text-sm text-red-700">{tErros('ANO_INVALIDO')}</p>}
                   </div>
